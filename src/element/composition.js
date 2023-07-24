@@ -1279,11 +1279,17 @@ JXG.createArrowParallel = function (board, parents, attributes) {
 
     /* parallel arrow point polynomials are done in createParallelPoint */
     try {
-        attributes.firstArrow = false;
-        attributes.lastArrow = true;
+        if (!Type.isObject(attributes.firstArrow) && !Type.isObject(attributes.firstarrow)) {
+            attributes.firstArrow = false;
+            attributes.firstarrow = false;
+        }
+        if (!Type.isObject(attributes.lastArrow) && !Type.isObject(attributes.lastarrow)) {
+            attributes.lastArrow = true;
+            attributes.lastarrow = true;
+        }
         p = JXG.createParallel(board, parents, attributes).setAttribute({
-            straightFirst: false,
-            straightLast: false
+            straightFirst: attributes.straightFirst ?? false,
+            straightLast: attributes.straightLast ?? false
         });
         p.elType = "arrowparallel";
 

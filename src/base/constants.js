@@ -182,7 +182,7 @@ constants = /** @lends JXG */ {
     GENTYPE_ROTATE: 44,
     GENTYPE_CIRCLECLONE: 45,
     GENTYPE_MIGRATE: 46,
-    GENTYPE_VECTORCOPY: 47,
+    GENTYPE_VECTORCLONE: 47,
     GENTYPE_POLYGONCOPY: 48,
     /**
      * Constants

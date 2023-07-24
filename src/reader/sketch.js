@@ -189,7 +189,7 @@ import type from "../utils/type";
                             if (JXG.isString(val))
                                 val = "'" + val + "'";
                             if (JXG.isObject(val))
-                                val = '<<' + getAttribsString(val) + '>>';
+                                val = '<<' + getAttribsString(val).substring(2) + '>>';
                             str += ", " + key + ": " + val;
                         }
                         return str;
@@ -2451,7 +2451,7 @@ import type from "../utils/type";
                                 ", withLabel: false" +
                                 ">>; ";
                             set_str +=
-                                "circle('" + step.dest_sub_ids[0] + "', 1) " +
+                                "circle(" + step.dest_sub_ids[0] + ", 1) " +
                                 "<<id: '" + step.dest_id + "'" +
                                 ", name: '', withLabel: false" +
                                 ", creationGesture: 'copy'" +
@@ -2538,69 +2538,99 @@ import type from "../utils/type";
                         }
                         break;
 
-                    case JXG.GENTYPE_VECTORCOPY:
-                        xstart = getObject(step.src_ids[0]).coords.usrCoords[1];
-                        ystart = getObject(step.src_ids[0]).coords.usrCoords[2];
+                    case JXG.GENTYPE_VECTORCLONE:
+                        if (step.args.useArrowparallel) {
 
-                        set_str =
-                            "point(" +
-                            pn(xstart - step.args.x) +
-                            ", " +
-                            pn(ystart - step.args.y) +
-                            ") <<id: '";
-                        set_str += step.dest_sub_ids[0] + "', name: '', withLabel: false>>; ";
-                        set_str +=
-                            "parallelpoint('" +
-                            step.src_ids[0] +
-                            "','" +
-                            step.src_ids[1] +
-                            "','" +
-                            step.dest_sub_ids[0] +
-                            "') <<id: '" +
-                            step.dest_sub_ids[1];
-                        set_str +=
-                            "', strokeColor: '#888888', visible: true, priv: false, name: '', ";
-                        set_str +=
-                            "layer: " +
-                            JXG.Options.layer.line +
-                            ", opacity: 0.2, withLabel: false>>; ";
-                        set_str +=
-                            "arrow('" +
-                            step.dest_sub_ids[0] +
-                            "','" +
-                            step.dest_sub_ids[1] +
-                            "') <<id: '" +
-                            step.dest_sub_ids[2];
-                        set_str +=
-                            "', strokeColor: '#888888', visible: true, name: '', withLabel: false>>; ";
+                            pid1 = step.src_ids[0];
+                            pid2 = step.src_ids[1];
+                            pid3 = step.dest_sub_ids[0];
+                            pid4 = step.dest_sub_ids[1];
+                            set_str =
+                                "point(" + pn(step.args.baseCoords[1]) + ", " + pn(step.args.baseCoords[2]) + ") " +
+                                "<<id: '" + pid3 + "'" +
+                                ", name: ''" +
+                                ", withLabel: false" +
+                                ">>; ";
+                            set_str +=
+                                "arrowparallel(" + pid1 + ", " + pid2 + ", " + pid3 + ") " +
+                                "<<id: '" + step.dest_id + "'" +
+                                ", name: '', withLabel: false" +
+                                // TODO after solving issue #567
+                                getAttribsString(board.options.sketchometry.vectorClone) +
+                                ", point: <<id: '" + pid4 + "', name: ''" + getAttribsString(board.options.sketchometry.vectorClone.point) + ">>" +
+                                ">>; ";
+                            set_str += step.dest_id + '.highlightStrokeWidth = function() { ' +
+                                'return ' + step.dest_id + '.strokeWidth ' + JXG.Options.sketchometry.highlightStrokeWidthOperation + '; ' +
+                                ' };'
 
-                        for (j = 0; j < step.src_ids.length; j++) {
-                            set_str +=
-                                step.src_ids[j] + ".addChild(" + step.dest_sub_ids[0] + "); ";
-                            set_str +=
-                                step.src_ids[j] + ".addChild(" + step.dest_sub_ids[1] + "); ";
-                            set_str +=
-                                step.src_ids[j] + ".addChild(" + step.dest_sub_ids[2] + "); ";
-                        }
+                            reset_str =
+                                "remove(" + step.dest_id + "); " +
+                                "remove(" + pid3 + "); ";
 
-                        if (step.args.migrate !== 0 && step.args.migrate !== -1) {
-                            set_str +=
-                                "$board.migratePoint(" +
-                                step.dest_sub_ids[0] +
+                        } else { // backwards compatibility
+
+                            xstart = getObject(step.src_ids[0]).coords.usrCoords[1];
+                            ystart = getObject(step.src_ids[0]).coords.usrCoords[2];
+
+                            set_str =
+                                "point(" +
+                                pn(xstart - step.args.x) +
                                 ", " +
-                                step.args.migrate +
-                                "); ";
+                                pn(ystart - step.args.y) +
+                                ") <<id: '";
+                            set_str += step.dest_sub_ids[0] + "', name: '', withLabel: false>>; ";
+                            set_str +=
+                                "parallelpoint('" +
+                                step.src_ids[0] +
+                                "','" +
+                                step.src_ids[1] +
+                                "','" +
+                                step.dest_sub_ids[0] +
+                                "') <<id: '" +
+                                step.dest_sub_ids[1];
+                            set_str +=
+                                "', strokeColor: '#888888', visible: true, priv: false, name: '', ";
+                            set_str +=
+                                "layer: " +
+                                JXG.Options.layer.line +
+                                ", opacity: 0.2, withLabel: false>>; ";
+                            set_str +=
+                                "arrow('" +
+                                step.dest_sub_ids[0] +
+                                "','" +
+                                step.dest_sub_ids[1] +
+                                "') <<id: '" +
+                                step.dest_sub_ids[2];
+                            set_str +=
+                                "', strokeColor: '#888888', visible: true, name: '', withLabel: false>>; ";
+
+                            for (j = 0; j < step.src_ids.length; j++) {
+                                set_str +=
+                                    step.src_ids[j] + ".addChild(" + step.dest_sub_ids[0] + "); ";
+                                set_str +=
+                                    step.src_ids[j] + ".addChild(" + step.dest_sub_ids[1] + "); ";
+                                set_str +=
+                                    step.src_ids[j] + ".addChild(" + step.dest_sub_ids[2] + "); ";
+                            }
+
+                            if (step.args.migrate !== 0 && step.args.migrate !== -1) {
+                                set_str +=
+                                    "$board.migratePoint(" +
+                                    step.dest_sub_ids[0] +
+                                    ", " +
+                                    step.args.migrate +
+                                    "); ";
+                            }
+
+                            reset_str =
+                                "remove(" +
+                                step.dest_sub_ids[1] +
+                                "); remove(" +
+                                step.dest_sub_ids[0] +
+                                "); remove(" +
+                                step.dest_sub_ids[2] +
+                                ");";
                         }
-
-                        reset_str =
-                            "remove(" +
-                            step.dest_sub_ids[1] +
-                            "); remove(" +
-                            step.dest_sub_ids[0] +
-                            "); remove(" +
-                            step.dest_sub_ids[2] +
-                            ");";
-
                         break;
 
                     case JXG.GENTYPE_MOVEMENT:

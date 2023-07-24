@@ -5843,7 +5843,7 @@ JXG.extend(
 
         /**
          * Migrate the dependency properties of the point src
-         * to the point dest and  delete the point src.
+         * to the point dest and delete the point src.
          * For example, a circle around the point src
          * receives the new center dest. The old center src
          * will be deleted.
