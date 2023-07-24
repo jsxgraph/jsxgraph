@@ -3109,7 +3109,6 @@ JXG.Options = {
 
     /* special arrowparallel options */
     arrowparallel: {
-
     },
 
     /* special axis options */
