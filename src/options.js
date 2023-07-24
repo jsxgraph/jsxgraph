@@ -3107,6 +3107,11 @@ JXG.Options = {
         /**#@-*/
     },
 
+    /* special arrowparallel options */
+    arrowparallel: {
+
+    },
+
     /* special axis options */
     axis: {
         /**#@+
@@ -6224,7 +6229,6 @@ JXG.Options = {
 
     /* special tangent options */
     tangent: {
-
     },
 
     /* special tape measure options */
