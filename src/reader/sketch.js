@@ -1831,6 +1831,17 @@ import type from "../utils/type";
                         reset_str = "remove(" + step.dest_id + "); ";
                         break;
 
+                    case JXG.GENTYPE_PARALLELPOINT:
+                        set_str =
+                            assign +
+                            "parallelpoint( " + step.src_ids.join(', ') + ") <<" +
+                            attrid + "name: ''" +
+                            // TODO after solving issue #569
+                            getAttribsString(board.options.parallelpoint) +
+                            " >>; ";
+                        reset_str = "remove(" + step.dest_id + "); ";
+                        break;
+
                     case JXG.GENTYPE_POLYGON:
                         if (step.args.create_point) {
                             for (i = 0; i < step.args.create_point.length; i++) {

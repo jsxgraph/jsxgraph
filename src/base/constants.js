@@ -184,12 +184,8 @@ constants = /** @lends JXG */ {
     GENTYPE_MIGRATE: 46,
     GENTYPE_VECTORCLONE: 47,
     GENTYPE_POLYGONCOPY: 48,
-    /**
-     * Constants
-     * @name Constants
-     * @namespace
-     */ //        GENTYPE_TRANSFORM: 48, // unused
-    // 49 ... 50 // unused ...
+    GENTYPE_PARALLELPOINT: 49,
+    GENTYPE_PARALLELOGRAM: 50,
 
     // IMPORTANT:
     // ----------
