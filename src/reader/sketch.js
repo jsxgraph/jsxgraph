@@ -439,6 +439,7 @@ import type from "../utils/type";
                             "normal(" + pid4 + ", " + pid3 + ") " +
                             "<<id: '" + step.dest_id + "', name: ''" +
                             ", point: <<id: '" + pid5 + "', name: ''>>" +
+                            ", isPerpendicularBisector: true" +
                             " >>; ";
                         set_str += step.dest_id + '.highlightStrokeWidth = function() { ' +
                             'return ' + step.dest_id + '.strokeWidth ' + JXG.Options.sketchometry.highlightStrokeWidthOperation + '; ' +
