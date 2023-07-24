@@ -6222,6 +6222,11 @@ JXG.Options = {
         /**#@-*/
     },
 
+    /* special tangent options */
+    tangent: {
+
+    },
+
     /* special tape measure options */
     tapemeasure: {
         /**#@+
