@@ -407,21 +407,47 @@ import type from "../utils/type";
 
                         break;
 
-                    case JXG.GENTYPE_MID:
+                    case JXG.GENTYPE_MIDPOINT:
                         set_str =
                             assign +
                             "midpoint(" +
                             step.src_ids[0] +
                             ", " +
                             step.src_ids[1] +
-                            ") <<" +
-                            attrid;
-                        set_str += "fillColor: '" + step.args.fillColor + "'";
-                        if (JXG.exists(step.args.strokeColor)) {
-                            set_str += ", strokeColor: '" + step.args.strokeColor + "'";
-                        }
-                        set_str += ">>; ";
+                            ") <<" + attrid + "name: ''>>; ";
                         reset_str = "remove(" + step.dest_id + "); ";
+                        break;
+
+                    case JXG.GENTYPE_PERPBISECTOR:
+                        pid1 = step.src_ids[0]; // point 1
+                        pid2 = step.src_ids[1]; // point 2
+                        pid3 = step.dest_sub_ids[0]; // midpoint
+                        pid4 = step.dest_sub_ids[1]; // segment
+                        pid5 = step.dest_sub_ids[2]; // additional point of perpendicular bisector
+
+                        set_str = "";
+                        reset_str = "";
+
+                        set_str +=
+                            "midpoint(" + pid1 + ", " + pid2 + ") " +
+                            "<<id: '" + pid3 + "', name: '', priv: true, visible: false>>; ";
+                        set_str +=
+                            "segment(" + pid1 + ", " + pid2 + ") " +
+                            "<<id: '" + pid4 + "', name: '', priv: true, visible: false>>; ";
+                        set_str +=
+                            assign +
+                            "normal(" + pid4 + ", " + pid3 + ") " +
+                            "<<id: '" + step.dest_id + "', name: ''" +
+                            ", point: <<id: '" + pid5 + "', name: ''>>" +
+                            " >>; ";
+                        set_str += step.dest_id + '.highlightStrokeWidth = function() { ' +
+                            'return ' + step.dest_id + '.strokeWidth ' + JXG.Options.sketchometry.highlightStrokeWidthOperation + '; ' +
+                            ' };'
+
+                        reset_str = "remove(" + step.dest_id + "); ";
+                        reset_str = "remove(" + pid5 + "); ";
+                        reset_str = "remove(" + pid4 + "); ";
+                        reset_str = "remove(" + pid3 + "); ";
                         break;
 
                     case JXG.GENTYPE_REFLECTION_ON_LINE:

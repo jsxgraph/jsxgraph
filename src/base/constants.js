@@ -133,8 +133,8 @@ constants = /** @lends JXG */ {
     // SketchReader constants
     GENTYPE_ABC: 1, // unused
     GENTYPE_AXIS: 2,
-    GENTYPE_MID: 3,
 
+    GENTYPE_MIDPOINT: 3,
     GENTYPE_REFLECTION_ON_LINE: 4,
     GENTYPE_REFLECTION_ON_POINT: 5,
     GENTYPE_TANGENT: 6,
@@ -175,7 +175,7 @@ constants = /** @lends JXG */ {
     GENTYPE_REFLEXANGLE: 37,
     GENTYPE_PATH: 38,
     GENTYPE_DERIVATIVE: 39,
-    // 40 // unused ...
+    GENTYPE_PERPBISECTOR: 40,
     GENTYPE_DELETE: 41,
     GENTYPE_COPY: 42,
     GENTYPE_MIRROR: 43,
