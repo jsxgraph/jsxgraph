@@ -218,7 +218,7 @@ JXG.JSXGraph = {
      * @private
      */
     _fillBoard: function (board, attr, dimensions) {
-        board.initInfobox();
+        board.initInfobox(attr.infobox);
         board.maxboundingbox = attr.maxboundingbox;
         board.resizeContainer(dimensions.width, dimensions.height, true, true);
         board._createSelectionPolygon(attr);

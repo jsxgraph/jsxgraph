@@ -3923,8 +3923,8 @@ JXG.extend(
          * the coordinates of points near the mouse pointer,
          * @returns {JXG.Board} Reference to the board
          */
-        initInfobox: function () {
-            var attr = Type.copyAttributes({}, this.options, 'infobox');
+        initInfobox: function (attributes) {
+            var attr = Type.copyAttributes(attributes, this.options, 'infobox');
 
             attr.id = this.id + '_infobox';
             /**
@@ -3967,19 +3967,30 @@ JXG.extend(
                 distX = Type.evaluate(this.infobox.visProp.distancex);
                 distY = Type.evaluate(this.infobox.visProp.distancey);
 
-                vpinfoboxdigits = Type.evaluate(el.visProp.infoboxdigits);
                 this.infobox.setCoords(
                     xc + distX / this.unitX,
                     yc + distY / this.unitY
                 );
 
+                vpinfoboxdigits = Type.evaluate(el.visProp.infoboxdigits);
                 if (typeof el.infoboxText !== 'string') {
                     if (vpinfoboxdigits === 'auto') {
-                        x = Type.autoDigits(xc);
-                        y = Type.autoDigits(yc);
+                        if (this.infobox.useLocale()) {
+                            x = this.infobox.formatNumberLocale(xc);
+                            y = this.infobox.formatNumberLocale(yc);
+                        } else {
+                            x = Type.autoDigits(xc);
+                            y = Type.autoDigits(yc);
+                        }
                     } else if (Type.isNumber(vpinfoboxdigits)) {
-                        x = Type.toFixed(xc, vpinfoboxdigits);
-                        y = Type.toFixed(yc, vpinfoboxdigits);
+                        if (this.infobox.useLocale()) {
+                            x = this.infobox.formatNumberLocale(xc, vpinfoboxdigits);
+                            y = this.infobox.formatNumberLocale(yc, vpinfoboxdigits);
+                        } else {
+                            x = Type.toFixed(xc, vpinfoboxdigits);
+                            y = Type.toFixed(yc, vpinfoboxdigits);
+                        }
+
                     } else {
                         x = xc;
                         y = yc;

@@ -4177,6 +4177,12 @@ JXG.Options = {
          */
         distanceY: 25,
 
+        intl: {
+            enabled: false,
+            options: {
+            }
+        },
+
         fontSize: 12,
         isLabel: false,
         strokeColor: '#bbbbbb',
