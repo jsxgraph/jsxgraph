@@ -1836,8 +1836,6 @@ import type from "../utils/type";
                             assign +
                             "parallelpoint( " + step.src_ids.join(', ') + ") <<" +
                             attrid + "name: ''" +
-                            // TODO after solving issue #569
-                            getAttribsString(board.options.parallelpoint) +
                             " >>; ";
                         reset_str = "remove(" + step.dest_id + "); ";
                         break;
@@ -1849,8 +1847,6 @@ import type from "../utils/type";
                             assign +
                             "parallelpoint( " + step.src_ids.join(', ') + ") <<" +
                             "id: '" + pid1 + "', name: ''" +
-                            // TODO after solving issue #569
-                            getAttribsString(board.options.parallelpoint) +
                             " >>; ";
                         reset_str = "remove(" + pid1 + "); ";
 
@@ -1867,6 +1863,7 @@ import type from "../utils/type";
                             ", fillOpacity: " + JXG.Options.opacityLevel +
                             ", hasInnerPoints: " + JXG.Options.polygon.hasInnerPoints +
                             ">>; ";
+                        set_str += step.dest_id + ".setAttribute(<<" + getAttribsString(JXG.Options.sketchometry.parallelogram).substring(2) + ">>);";
                         set_str += step.dest_id + ".hasInnerPoints = function() { " +
                             "return !(" + step.dest_id + ".fillColor == 'transparent' || " + step.dest_id + ".fillColor == 'none' || " + step.dest_id + ".fillOpacity == 0); " +
                             "}; "
