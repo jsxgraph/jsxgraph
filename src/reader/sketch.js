@@ -2625,9 +2625,7 @@ import type from "../utils/type";
                                 "arrowparallel(" + pid1 + ", " + pid2 + ", " + pid3 + ") " +
                                 "<<id: '" + step.dest_id + "'" +
                                 ", name: '', withLabel: false" +
-                                // TODO after solving issue #567
-                                getAttribsString(board.options.sketchometry.vectorClone) +
-                                ", point: <<id: '" + pid4 + "', name: ''" + getAttribsString(board.options.sketchometry.vectorClone.point) + ">>" +
+                                ", point: <<id: '" + pid4 + "', name: ''>>" +
                                 ">>; ";
                             set_str += step.dest_id + '.highlightStrokeWidth = function() { ' +
                                 'return ' + step.dest_id + '.strokeWidth ' + JXG.Options.sketchometry.highlightStrokeWidthOperation + '; ' +
