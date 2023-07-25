@@ -1221,10 +1221,7 @@ JXG.extend(
  *
  */
 JXG.createPolygon = function (board, parents, attributes) {
-    var el,
-        i,
-        le,
-        obj,
+    var el, i, le, obj,
         points = [],
         attr,
         attr_points,
@@ -1340,12 +1337,9 @@ JXG.createPolygon = function (board, parents, attributes) {
  *
  */
 JXG.createRegularPolygon = function (board, parents, attributes) {
-    var el,
-        i,
-        n,
+    var el, i, n,
         p = [],
-        rot,
-        len,
+        rot, len,
         pointsExist,
         attr;
 

@@ -73,7 +73,7 @@ JXG.Options = {
          * @type Array
          * @see JXG.Board#maxBoundingBox
          * @see JXG.Board#keepAspectRatio
-         * 
+         *
          * @default [-5, 5, 5, -5]
          * @example
          * var board = JXG.JSXGraph.initBoard('jxgbox', {
@@ -90,7 +90,7 @@ JXG.Options = {
          *
          * The bounding box of the canvas must be inside of this maximal
          * bounding box.
-         * 
+         *
          * @name JXG.Board#maxboundingbox
          * @type Array
          * @see JXG.Board#boundingBox
@@ -2655,7 +2655,7 @@ JXG.Options = {
          * @type Boolean
          * @name Ticks#includeBoundaries
          * @default false
-         * 
+         *
          * @example
          * var li = board.create('segment', [[-4, 2], [4, 2]]);
          * var t = board.create('ticks', [li], {
@@ -2670,7 +2670,7 @@ JXG.Options = {
          *         offset: [0, -5]
          *     }
          * });
-         * 
+         *
          * var li2 = board.create('segment', [[-4, -2], [4, -2]]);
          * var t2 = board.create('ticks', [li2], {
          *     includeBoundaries: false,
@@ -2684,7 +2684,7 @@ JXG.Options = {
          *         offset: [0, -5]
          *     }
          * });
-         * 
+         *
          * </pre><div id="JXG08e79180-7c9a-4638-bb72-8aa7fd8a8b96" class="jxgbox" style="width: 300px; height: 300px;"></div>
          * <script type="text/javascript">
          *     (function() {
@@ -2703,7 +2703,7 @@ JXG.Options = {
          *             offset: [0, -5]
          *         }
          *     });
-         *     
+         *
          *     var li2 = board.create('segment', [[-4, -2], [4, -2]]);
          *     var t2 = board.create('ticks', [li2], {
          *         includeBoundaries: false,
@@ -2717,11 +2717,11 @@ JXG.Options = {
          *             offset: [0, -5]
          *         }
          *     });
-         * 
+         *
          *     })();
-         * 
+         *
          * </script><pre>
-         * 
+         *
          */
         includeBoundaries: false,
 
@@ -2732,23 +2732,23 @@ JXG.Options = {
          * @type String
          * @name Ticks#type
          * @default 'linear'
-         * 
+         *
          * @example
-         * var ax = board.create('axis', [[0,0], [1,0]], { 
-         *              needsRegularUpdate: false, 
-         *              ticks: { 
-         *                      type: 'linear', 
+         * var ax = board.create('axis', [[0,0], [1,0]], {
+         *              needsRegularUpdate: false,
+         *              ticks: {
+         *                      type: 'linear',
          *                      majorHeight: 0
          *                  }
          *              });
-         * var ay = board.create('axis', [[0,0], [0,1]], { 
-         *              ticks: { 
+         * var ay = board.create('axis', [[0,0], [0,1]], {
+         *              ticks: {
          *                      type: 'polar'
          *                  }
          *              });
-         * 
+         *
          * var p = board.create('point', [3, 2]);
-         * 
+         *
          * </pre><div id="JXG9ab0b50c-b486-4f95-9698-c0dd276155ff" class="jxgbox" style="width: 300px; height: 300px;"></div>
          * <script type="text/javascript">
          *     (function() {
@@ -2756,13 +2756,13 @@ JXG.Options = {
          *             {boundingbox: [-8, 8, 8,-8], axis: false, showcopyright: false, shownavigation: false});
          *     var ax = board.create('axis', [[0,0], [1,0]], { needsRegularUpdate: false, ticks: { type: 'linear', majorHeight: 0}});
          *     var ay = board.create('axis', [[0,0], [0,1]], { ticks: { type: 'polar'}});
-         *     
+         *
          *     var p = board.create('point', [3, 2]);
-         * 
+         *
          *     })();
-         * 
+         *
          * </script><pre>
-         * 
+         *
          */
         type: 'linear',
 
@@ -5389,6 +5389,19 @@ JXG.Options = {
             },
             visible: 'inherit'
         },
+
+        /**
+         * By default, the strokewidths of the borders of a polygon are not changed during highlighting (only strokeColor and strokeOpacity are changed
+         * to highlightStrokeColor, and highlightStrokeOpacity).
+         * However, strokewidth is changed to highlightStrokewidth if an individual border gets the focus.
+         * <p>
+         * With this attribute set to true, also the borders change strokeWidth if the polygon itself gets the focus.
+         *
+         * @type Boolean
+         * @name Polygon#highlightByStrokeWidth
+         * @default false
+         */
+        highlightByStrokeWidth: false,
 
         /**
          * Attributes for the polygon vertices.
