@@ -265,6 +265,7 @@ JXG.createSmartLabel = function (board, parents, attributes) {
 
         return function () {
             var str = '',
+                val,
                 txt = Type.evaluate(user_supplied_text),
                 digits = Type.evaluate(el.visProp.digits),
                 u = Type.evaluate(el.visProp.unit),
@@ -272,17 +273,16 @@ JXG.createSmartLabel = function (board, parents, attributes) {
                 suf = Type.evaluate(el.visProp.suffix),
                 mj = Type.evaluate(el.visProp.usemathjax) || Type.evaluate(el.visProp.usekatex);
 
-            // if (elType === 'point') {
-            //     dir = Type.evaluate(el.visProp.dir),
-            //         x = Type.toFixed(p.X(), digits),
-            //         y = Type.toFixed(p.Y(), digits);
-            // }
-
             if (txt === '') {
-                if (mj) {
-                    str = ['\\(', pre, Type.toFixed(measure(), digits), '\\,', u, suf, '\\)'].join('');
+                if (el.useLocale()) {
+                    val = el.formatNumberLocale(measure(), digits);
                 } else {
-                    str = [pre, Type.toFixed(measure(), digits), u, suf].join('');
+                    val = Type.toFixed(measure(), digits);
+                }
+                if (mj) {
+                    str = ['\\(', pre, val, '\\,', u, suf, '\\)'].join('');
+                } else {
+                    str = [pre, val, u, suf].join('');
                 }
             } else {
                 str = txt;
@@ -307,8 +307,15 @@ JXG.createSmartLabel = function (board, parents, attributes) {
                 suf = Type.evaluate(el.visProp.suffix),
                 dir = Type.evaluate(el.visProp.dir),
                 mj = Type.evaluate(el.visProp.usemathjax) || Type.evaluate(el.visProp.usekatex),
-                x = Type.toFixed(p.X(), digits),
+                x, y;
+
+            if (el.useLocale()) {
+                x = el.formatNumberLocale(p.X(), digits);
+                y = el.formatNumberLocale(p.Y(), digits);
+            } else {
+                x = Type.toFixed(p.X(), digits);
                 y = Type.toFixed(p.Y(), digits);
+            }
 
             if (txt === '') {
                 if (dir === 'row') {

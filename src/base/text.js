@@ -194,12 +194,13 @@ JXG.extend(
 
         /**
          * This sets the updateText function of this element depending on the type of text content passed.
-         * Used by {@link JXG.Text#_setText} and {@link JXG.Text} constructor.
+         * Used by {@link JXG.Text#_setText}.
          * @param {String|Function|Number} text
          * @private
+         * @see JXG.Text#_setText
          */
         _createFctUpdateText: function (text) {
-            var updateText, e,
+            var updateText, e, digits,
                 resolvedText,
                 ev_p = Type.evaluate(this.visProp.parse),
                 ev_um = Type.evaluate(this.visProp.usemathjax),
@@ -233,7 +234,12 @@ JXG.extend(
                 };
             } else {
                 if (Type.isNumber(text)) {
-                    this.content = Type.toFixed(text, Type.evaluate(this.visProp.digits));
+                    digits = Type.evaluate(this.visProp.digits);
+                    if (this.useLocale()) {
+                        this.content = this.formatNumberLocale(text, digits);
+                    } else {
+                        this.content = Type.toFixed(text, digits);
+                    }
                 } else if (Type.isString(text) && ev_p) {
                     if (Type.evaluate(this.visProp.useasciimathml)) {
                         // ASCIIMathML
@@ -253,6 +259,8 @@ JXG.extend(
                         this.content = this.poorMansTeX(this.valueTagToJessieCode(text));
                     }
                     convertJessieCode = true;
+                } else {
+                    this.content = text;
                 }
 
                 // Generate function which returns the text to be displayed
@@ -270,7 +278,7 @@ JXG.extend(
                     };
                 } else {
                     this.updateText = function () {
-                        this.plaintext = text;
+                        this.plaintext = this.content; // text;
                     };
                 }
             }
@@ -696,21 +704,16 @@ JXG.extend(
                         // output of a value tag
                         if (
                             Type.isNumber(
-                                Type.bind(this.board.jc.snippet(res, true, "", false), this)()
+                                Type.bind(this.board.jc.snippet(res, true, '', false), this)()
                             )
                         ) {
                             // may also be a string
-                            plaintext +=
-                                "+(" +
-                                res +
-                                ").toFixed(" +
-                                Type.evaluate(this.visProp.digits) +
-                                ")";
+                            plaintext += '+(' + res + ').toFixed(' + Type.evaluate(this.visProp.digits) + ')';
                         } else {
-                            plaintext += "+(" + res + ")";
+                            plaintext += '+(' + res + ')';
                         }
                     } else {
-                        plaintext += "+(" + res + ")";
+                        plaintext += '+(' + res + ')';
                     }
 
                     contentStr = contentStr.slice(j + 8);
@@ -779,11 +782,7 @@ JXG.extend(
                         ) {
                             // Output is number
                             textComps.push(
-                                "(" +
-                                    res +
-                                    ").toFixed(" +
-                                    Type.evaluate(this.visProp.digits) +
-                                    ")"
+                                '(' + res + ').toFixed(' + Type.evaluate(this.visProp.digits) + ')'
                             );
                         } else {
                             // Output is a string

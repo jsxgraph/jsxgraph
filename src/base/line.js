@@ -1547,7 +1547,7 @@ JXG.registerElement("axis", JXG.createAxis);
  * </script><pre>
  */
 JXG.createTangent = function (board, parents, attributes) {
-    var p, c, j, el, tangent;
+    var p, c, j, el, tangent, attr;
 
     // One argument: glider on line, circle or curve
     if (parents.length === 1) {
@@ -1583,8 +1583,9 @@ JXG.createTangent = function (board, parents, attributes) {
         );
     }
 
+    attr = Type.copyAttributes(attributes, board.options, 'tangent');
     if (c.elementClass === Const.OBJECT_CLASS_LINE) {
-        tangent = board.create("line", [c.point1, c.point2], attributes);
+        tangent = board.create("line", [c.point1, c.point2], attr);
         tangent.glider = p;
     } else if (
         c.elementClass === Const.OBJECT_CLASS_CURVE &&
@@ -1609,7 +1610,7 @@ JXG.createTangent = function (board, parents, attributes) {
                         return -Numerics.D(c.X)(p.position);
                     }
                 ],
-                attributes
+                attr
             );
 
             p.addChild(tangent);
@@ -1632,16 +1633,7 @@ JXG.createTangent = function (board, parents, attributes) {
                 [
                     function () {
                         var i = Math.floor(p.position),
-                            p1,
-                            p2,
-                            t,
-                            A,
-                            B,
-                            C,
-                            D,
-                            dx,
-                            dy,
-                            d;
+                            p1, p2, t, A, B, C, D, dx, dy, d;
 
                         if (c.bezierDegree === 1) {
                             if (i === c.numberPoints - 1) {
@@ -1692,16 +1684,7 @@ JXG.createTangent = function (board, parents, attributes) {
                     },
                     function () {
                         var i = Math.floor(p.position),
-                            p1,
-                            p2,
-                            t,
-                            A,
-                            B,
-                            C,
-                            D,
-                            dx,
-                            dy,
-                            d;
+                            p1, p2, t, A, B, C, D, dx, dy, d;
 
                         if (c.bezierDegree === 1) {
                             if (i === c.numberPoints - 1) {
@@ -1752,16 +1735,7 @@ JXG.createTangent = function (board, parents, attributes) {
                     },
                     function () {
                         var i = Math.floor(p.position),
-                            p1,
-                            p2,
-                            t,
-                            A,
-                            B,
-                            C,
-                            D,
-                            dx,
-                            dy,
-                            d;
+                            p1, p2, t, A, B, C, D, dx, dy, d;
 
                         if (c.bezierDegree === 1) {
                             if (i === c.numberPoints - 1) {
@@ -1811,7 +1785,7 @@ JXG.createTangent = function (board, parents, attributes) {
                         return p1[1] - p2[1];
                     }
                 ],
-                attributes
+                attr
             );
 
             p.addChild(tangent);
@@ -1897,7 +1871,7 @@ JXG.createTangent = function (board, parents, attributes) {
                     return el.X(i) - el.X(i + 1);
                 }
             ],
-            attributes
+            attr
         );
         p.addChild(tangent);
 
@@ -1922,7 +1896,7 @@ JXG.createTangent = function (board, parents, attributes) {
                     return Mat.matVecMult(c.quadraticform, p.coords.usrCoords)[2];
                 }
             ],
-            attributes
+            attr
         );
 
         p.addChild(tangent);

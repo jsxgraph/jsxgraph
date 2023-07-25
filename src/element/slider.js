@@ -306,10 +306,8 @@ JXG.createSlider = function (board, parents, attributes) {
     };
 
     if (withText) {
-        attr = Type.copyAttributes(attributes, board.options, "slider", "label");
-        t = board.create(
-            "text",
-            [
+        attr = Type.copyAttributes(attributes, board.options, 'slider', 'label');
+        t = board.create('text', [
                 function () {
                     return (p2.X() - p1.X()) * 0.05 + p2.X();
                 },
@@ -336,7 +334,11 @@ JXG.createSlider = function (board, parents, attributes) {
                         n = "";
                     }
 
-                    n += Type.toFixed(p3.Value(), d);
+                    if (p3.useLocale()) {
+                        n += p3.formatNumberLocale(p3.Value(), d);
+                    } else {
+                        n += Type.toFixed(p3.Value(), d);
+                    }
 
                     if (ul !== null) {
                         n += ul;

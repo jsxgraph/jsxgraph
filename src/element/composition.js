@@ -201,66 +201,10 @@ JXG.createOrthogonalProjection = function (board, parents, attributes) {
             p2 = p.symbolic.y,
             t1 = t.symbolic.x,
             t2 = t.symbolic.y,
-            poly1 =
-                "(" +
-                a2 +
-                ")*(" +
-                t1 +
-                ")-(" +
-                a2 +
-                ")*(" +
-                b1 +
-                ")+(" +
-                t2 +
-                ")*(" +
-                b1 +
-                ")-(" +
-                a1 +
-                ")*(" +
-                t2 +
-                ")+(" +
-                a1 +
-                ")*(" +
-                b2 +
-                ")-(" +
-                t1 +
-                ")*(" +
-                b2 +
-                ")",
-            poly2 =
-                "(" +
-                p2 +
-                ")*(" +
-                a2 +
-                ")-(" +
-                p2 +
-                ")*(" +
-                b2 +
-                ")-(" +
-                t2 +
-                ")*(" +
-                a2 +
-                ")+(" +
-                t2 +
-                ")*(" +
-                b2 +
-                ")+(" +
-                p1 +
-                ")*(" +
-                a1 +
-                ")-(" +
-                p1 +
-                ")*(" +
-                b1 +
-                ")-(" +
-                t1 +
-                ")*(" +
-                a1 +
-                ")+(" +
-                t1 +
-                ")*(" +
-                b1 +
-                ")";
+            poly1 = "(" + a2 + ")*(" + t1 + ")-(" + a2 + ")*(" + b1 + ")+(" + t2 + ")*(" + b1 + ")-(" + a1 + ")*(" + t2 + ")+(" + a1 + ")*(" +
+                b2 + ")-(" + t1 + ")*(" + b2 + ")",
+            poly2 = "(" + p2 + ")*(" + a2 + ")-(" + p2 + ")*(" + b2 + ")-(" + t2 + ")*(" + a2 + ")+(" + t2 + ")*(" + b2 + ")+(" + p1 + ")*(" +
+                a1 + ")-(" + p1 + ")*(" + b1 + ")-(" + t1 + ")*(" + a1 + ")+(" + t1 + ")*(" + b1 + ")";
 
         return [poly1, poly2];
     };
@@ -489,66 +433,10 @@ JXG.createPerpendicularPoint = function (board, parents, attributes) {
             p2 = p.symbolic.y,
             t1 = t.symbolic.x,
             t2 = t.symbolic.y,
-            poly1 =
-                "(" +
-                a2 +
-                ")*(" +
-                t1 +
-                ")-(" +
-                a2 +
-                ")*(" +
-                b1 +
-                ")+(" +
-                t2 +
-                ")*(" +
-                b1 +
-                ")-(" +
-                a1 +
-                ")*(" +
-                t2 +
-                ")+(" +
-                a1 +
-                ")*(" +
-                b2 +
-                ")-(" +
-                t1 +
-                ")*(" +
-                b2 +
-                ")",
-            poly2 =
-                "(" +
-                p2 +
-                ")*(" +
-                a2 +
-                ")-(" +
-                p2 +
-                ")*(" +
-                b2 +
-                ")-(" +
-                t2 +
-                ")*(" +
-                a2 +
-                ")+(" +
-                t2 +
-                ")*(" +
-                b2 +
-                ")+(" +
-                p1 +
-                ")*(" +
-                a1 +
-                ")-(" +
-                p1 +
-                ")*(" +
-                b1 +
-                ")-(" +
-                t1 +
-                ")*(" +
-                a1 +
-                ")+(" +
-                t1 +
-                ")*(" +
-                b1 +
-                ")";
+            poly1 = "(" + a2 + ")*(" + t1 + ")-(" + a2 + ")*(" + b1 + ")+(" + t2 + ")*(" + b1 + ")-(" + a1 + ")*(" + t2 + ")+(" + a1 + ")*(" + b2 + ")-(" + t1 +
+                ")*(" + b2 + ")",
+            poly2 = "(" + p2 + ")*(" + a2 + ")-(" + p2 + ")*(" + b2 + ")-(" + t2 + ")*(" + a2 + ")+(" + t2 + ")*(" + b2 + ")+(" + p1 + ")*(" + a1 + ")-(" + p1 +
+                ")*(" + b1 + ")-(" + t1 + ")*(" + a1 + ")+(" + t1 + ")*(" + b1 + ")";
 
         return [poly1, poly2];
     };
@@ -804,58 +692,10 @@ JXG.createMidpoint = function (board, parents, attributes) {
             b2 = b.symbolic.y,
             t1 = t.symbolic.x,
             t2 = t.symbolic.y,
-            poly1 =
-                "(" +
-                a2 +
-                ")*(" +
-                t1 +
-                ")-(" +
-                a2 +
-                ")*(" +
-                b1 +
-                ")+(" +
-                t2 +
-                ")*(" +
-                b1 +
-                ")-(" +
-                a1 +
-                ")*(" +
-                t2 +
-                ")+(" +
-                a1 +
-                ")*(" +
-                b2 +
-                ")-(" +
-                t1 +
-                ")*(" +
-                b2 +
-                ")",
-            poly2 =
-                "(" +
-                a1 +
-                ")^2 - 2*(" +
-                a1 +
-                ")*(" +
-                t1 +
-                ")+(" +
-                a2 +
-                ")^2-2*(" +
-                a2 +
-                ")*(" +
-                t2 +
-                ")-(" +
-                b1 +
-                ")^2+2*(" +
-                b1 +
-                ")*(" +
-                t1 +
-                ")-(" +
-                b2 +
-                ")^2+2*(" +
-                b2 +
-                ")*(" +
-                t2 +
-                ")";
+            poly1 = "(" + a2 + ")*(" + t1 + ")-(" + a2 + ")*(" + b1 + ")+(" + t2 + ")*(" + b1 + ")-(" + a1 + ")*(" + t2 + ")+(" + a1 + ")*(" + b2 +
+                ")-(" + t1 + ")*(" + b2 + ")",
+            poly2 = "(" + a1 + ")^2 - 2*(" + a1 + ")*(" + t1 + ")+(" + a2 + ")^2-2*(" + a2 + ")*(" + t2 + ")-(" + b1 + ")^2+2*(" + b1 + ")*(" + t1 +
+                ")-(" + b2 + ")^2+2*(" + b2 + ")*(" + t2 + ")";
 
         return [poly1, poly2];
     };
@@ -893,7 +733,7 @@ JXG.createMidpoint = function (board, parents, attributes) {
  * </script><pre>
  */
 JXG.createParallelPoint = function (board, parents, attributes) {
-    var a, b, c, p, i;
+    var a, b, c, p, i, attr;
 
     for (i = 0; i < parents.length; ++i) {
         parents[i] = board.select(parents[i]);
@@ -935,6 +775,7 @@ JXG.createParallelPoint = function (board, parents, attributes) {
         );
     }
 
+    attr = Type.copyAttributes(attributes, board.options, 'parallelpoint');
     p = board.create(
         "point",
         [
@@ -945,7 +786,7 @@ JXG.createParallelPoint = function (board, parents, attributes) {
                 return c.coords.usrCoords[2] + b.coords.usrCoords[2] - a.coords.usrCoords[2];
             }
         ],
-        attributes
+        attr
     );
 
     // required for algorithms requiring dependencies between elements
@@ -1018,74 +859,10 @@ JXG.createParallelPoint = function (board, parents, attributes) {
             c2 = c.symbolic.y,
             t1 = p.symbolic.x,
             t2 = p.symbolic.y,
-            poly1 =
-                "(" +
-                b2 +
-                ")*(" +
-                t1 +
-                ")-(" +
-                b2 +
-                ")*(" +
-                c1 +
-                ")-(" +
-                a2 +
-                ")*(" +
-                t1 +
-                ")+(" +
-                a2 +
-                ")*(" +
-                c1 +
-                ")-(" +
-                t2 +
-                ")*(" +
-                b1 +
-                ")+(" +
-                t2 +
-                ")*(" +
-                a1 +
-                ")+(" +
-                c2 +
-                ")*(" +
-                b1 +
-                ")-(" +
-                c2 +
-                ")*(" +
-                a1 +
-                ")",
-            poly2 =
-                "(" +
-                t2 +
-                ")*(" +
-                a1 +
-                ")-(" +
-                t2 +
-                ")*(" +
-                c1 +
-                ")-(" +
-                b2 +
-                ")*(" +
-                a1 +
-                ")+(" +
-                b2 +
-                ")*(" +
-                c1 +
-                ")-(" +
-                t1 +
-                ")*(" +
-                a2 +
-                ")+(" +
-                t1 +
-                ")*(" +
-                c2 +
-                ")+(" +
-                b1 +
-                ")*(" +
-                a2 +
-                ")-(" +
-                b1 +
-                ")*(" +
-                c2 +
-                ")";
+            poly1 = "(" + b2 + ")*(" + t1 + ")-(" + b2 + ")*(" + c1 + ")-(" + a2 + ")*(" + t1 + ")+(" + a2 + ")*(" + c1 + ")-(" + t2 + ")*(" + b1 + ")+(" + t2 + ")*(" +
+                a1 + ")+(" + c2 + ")*(" + b1 + ")-(" + c2 + ")*(" + a1 + ")",
+            poly2 = "(" + t2 + ")*(" + a1 + ")-(" + t2 + ")*(" + c1 + ")-(" + b2 + ")*(" + a1 + ")+(" + b2 + ")*(" + c1 + ")-(" + t1 + ")*(" + a2 + ")+(" + t1 + ")*(" +
+                c2 + ")+(" + b1 + ")*(" + a2 + ")-(" + b1 + ")*(" + c2 + ")";
 
         return [poly1, poly2];
     };
@@ -1253,7 +1030,7 @@ JXG.createParallel = function (board, parents, attributes) {
  * @type Parallel
  * @augments Parallel
  * @throws {Error} If the element cannot be constructed with the given parent objects an exception is thrown.
- * @param JXG.Point_JXG.Point_JXG.Point} p1, p2,p3 The constructed arrow contains p3 and has the same slope as the line through p1 and p2.
+ * @param {JXG.Point_JXG.Point_JXG.Point} p1,p2,p3 The constructed arrow contains p3 and has the same slope as the line through p1 and p2.
  * @example
  * // Create a parallel
  * var p1 = board.create('point', [0.0, 2.0]);
@@ -1275,21 +1052,16 @@ JXG.createParallel = function (board, parents, attributes) {
  * </script><pre>
  */
 JXG.createArrowParallel = function (board, parents, attributes) {
-    var p;
+    var p, attr;
 
     /* parallel arrow point polynomials are done in createParallelPoint */
     try {
-        if (!Type.isObject(attributes.firstArrow) && !Type.isObject(attributes.firstarrow)) {
-            attributes.firstArrow = false;
-            attributes.firstarrow = false;
-        }
-        if (!Type.isObject(attributes.lastArrow) && !Type.isObject(attributes.lastarrow)) {
-            attributes.lastArrow = true;
-            attributes.lastarrow = true;
-        }
-        p = JXG.createParallel(board, parents, attributes).setAttribute({
-            straightFirst: attributes.straightFirst ?? false,
-            straightLast: attributes.straightLast ?? false
+        attr = Type.copyAttributes(attributes, board.options, 'arrowparallel');
+        attr.firstArrow = false;
+        attr.lastArrow = true;
+        p = JXG.createParallel(board, parents, attr).setAttribute({
+            straightFirst: false,
+            straightLast: false
         });
         p.elType = "arrowparallel";
 
@@ -2158,44 +1930,8 @@ JXG.createCircumcenter = function (board, parents, attributes) {
                 c2 = c.symbolic.y,
                 t1 = p.symbolic.x,
                 t2 = p.symbolic.y,
-                poly1 = [
-                    "((",
-                    t1,
-                    ")-(",
-                    a1,
-                    "))^2+((",
-                    t2,
-                    ")-(",
-                    a2,
-                    "))^2-((",
-                    t1,
-                    ")-(",
-                    b1,
-                    "))^2-((",
-                    t2,
-                    ")-(",
-                    b2,
-                    "))^2"
-                ].join(""),
-                poly2 = [
-                    "((",
-                    t1,
-                    ")-(",
-                    a1,
-                    "))^2+((",
-                    t2,
-                    ")-(",
-                    a2,
-                    "))^2-((",
-                    t1,
-                    ")-(",
-                    c1,
-                    "))^2-((",
-                    t2,
-                    ")-(",
-                    c2,
-                    "))^2"
-                ].join("");
+                poly1 = ["((", t1, ")-(", a1, "))^2+((", t2, ")-(", a2, "))^2-((", t1, ")-(", b1, "))^2-((", t2, ")-(", b2, "))^2"].join(""),
+                poly2 = ["((", t1, ")-(", a1, "))^2+((", t2, ")-(", a2, "))^2-((", t1, ")-(", c1, "))^2-((", t2, ")-(", c2, "))^2"].join("");
 
             return [poly1, poly2];
         };
@@ -2992,6 +2728,7 @@ JXG.createIntegral = function (board, parents, attributes) {
     var interval, curve, attr, start, end,
         startx, starty, endx, endy,
         pa_on_curve, pa_on_axis, pb_on_curve, pb_on_axis,
+        txt_fun,
         t = null, p;
 
     if (Type.isArray(parents[0]) && parents[1].elementClass === Const.OBJECT_CLASS_CURVE) {
@@ -3141,12 +2878,22 @@ JXG.createIntegral = function (board, parents, attributes) {
 
                     return y + off.usrCoords[2];
                 },
-                function () {
-                    var Int = Numerics.NewtonCotes([pa_on_axis.X(), pb_on_axis.X()], curve.Y);
-                    return "&int; = " + Type.toFixed(Int, 4);
-                }
+                ''
             ], attr);
 
+        txt_fun = function () {
+            var Int = Numerics.NewtonCotes([pa_on_axis.X(), pb_on_axis.X()], curve.Y),
+                digits = Type.evaluate(t.visProp.digits),
+                val;
+
+            if (t.useLocale()) {
+                val = t.formatNumberLocale(Int, digits);
+            } else {
+                val = Type.toFixed(Int, digits);
+            }
+            return '&int; = ' + val;
+        };
+        t.setText(txt_fun);
         t.dump = false;
 
         pa_on_curve.addChild(t);

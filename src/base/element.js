@@ -883,6 +883,11 @@ JXG.extend(
         /**
          * Show the element or hide it. If hidden, it will still exist but not be
          * visible on the board.
+         * <p>
+         * Sets also the display of the inherits elements. These can be
+         * JSXGraph elements or arrays of JSXGraph elements.
+         * However, deeper nesting than this is not supported.
+         *
          * @param  {Boolean} val true: show the element, false: hide the element
          * @return {JXG.GeometryElement} Reference to the element
          * @private
@@ -911,7 +916,7 @@ JXG.extend(
                         if (
                             Type.exists(obj[i]) &&
                             Type.exists(obj[i].rendNode) &&
-                            Type.evaluate(obj[i].visProp.visible) === "inherit"
+                            Type.evaluate(obj[i].visProp.visible) === 'inherit'
                         ) {
                             obj[i].setDisplayRendNode(val);
                         }
@@ -920,7 +925,7 @@ JXG.extend(
                     if (
                         Type.exists(obj) &&
                         Type.exists(obj.rendNode) &&
-                        Type.evaluate(obj.visProp.visible) === "inherit"
+                        Type.evaluate(obj.visProp.visible) === 'inherit'
                     ) {
                         obj.setDisplayRendNode(val);
                     }
@@ -2255,6 +2260,93 @@ JXG.extend(
          */
         removeEvent: JXG.shortcut(JXG.GeometryElement.prototype, 'off'),
 
+        formatNumberLocale: function(value, digits) {
+            var loc, opt, key,
+                optCalc = {},
+                // These options are case sensitive:
+                translate = {
+                    maximumfractiondigits: 'maximumFractionDigits',
+                    minimumfractiondigits: 'minimumFractionDigits',
+                    compactdisplay: 'compactDisplay',
+                    currencydisplay: 'currencyDisplay',
+                    currencysign: 'currencySign',
+                    localematcher: 'localeMatcher',
+                    numberingsystem: 'numberingSystem',
+                    signdisplay: 'signDisplay',
+                    unitdisplay: 'unitDisplay',
+                    usegrouping: 'useGrouping',
+                    roundingmode: 'roundingMode',
+                    roundingpriority: 'roundingPriority',
+                    roundingincrement: 'roundingIncrement',
+                    trailingzerodisplay: 'trailingZeroDisplay',
+                    minimumintegerdigits: 'minimumIntegerDigits',
+                    minimumsignificantdigits: 'minimumSignificantDigits',
+                    maximumsignificantdigits: 'maximumSignificantDigits',
+                };
+
+            if (Type.exists(Intl) &&
+                this.useLocale())  {
+
+                loc = Type.evaluate(this.visProp.intl.locale) ||
+                        Type.evaluate(this.board.attr.intl.locale);
+                opt = Type.evaluate(this.visProp.intl.options) || {};
+
+                // Transfer back to camel case if necessary
+                // and evaluate
+                for (key in opt) {
+                    if (opt.hasOwnProperty(key)) {
+                        if (translate.hasOwnProperty(key)) {
+                            optCalc[translate[key]] = Type.evaluate(opt[key]);
+                        } else {
+                            optCalc[key] = Type.evaluate(opt[key]);
+                        }
+                    }
+                }
+
+                // If maximumfractiondigits is not set,
+                // the value of the attribute "digits" is taken instead.
+                key = 'maximumfractiondigits';
+                if (!Type.exists(opt[key])) {
+                    optCalc[translate[key]] = digits;
+
+                    // key = 'minimumfractiondigits';
+                    // if (!Type.exists(opt[key]) || Type.evaluate(opt[key]) > digits) {
+                    //     optCalc[translate[key]] = digits;
+                    // }
+                }
+
+                return Intl.NumberFormat(loc, optCalc).format(value);
+            }
+
+            return value;
+        },
+
+        useLocale: function() {
+            var val;
+
+            // Check if element supports intl
+            if (!Type.exists(this.visProp.intl) ||
+                !Type.exists(this.visProp.intl.enabled)) {
+                return false;
+            }
+
+            // Check if intl is supported explicitly enabled for this element
+            val = Type.evaluate(this.visProp.intl.enabled);
+
+            if (val === true) {
+                return true;
+            }
+
+            // Check intl attribute of the board
+            if (val === 'inherit') {
+                if (Type.evaluate(this.board.attr.intl.enabled) === true) {
+                    return true;
+                }
+            }
+
+            return false;
+        },
+
         /* **************************
          *     EVENT DEFINITION
          * for documentation purposes
@@ -2343,7 +2435,7 @@ JXG.extend(
 
         /**
          * @event
-         * @description This event is fired whenever the user drags the element by pressing arrow keys 
+         * @description This event is fired whenever the user drags the element by pressing arrow keys
          * on the keyboard.
          * @name JXG.GeometryElement#keydrag
          * @param {Event} e The browser's event object.

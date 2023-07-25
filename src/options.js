@@ -71,6 +71,9 @@ JXG.Options = {
          *
          * @name JXG.Board#boundingbox
          * @type Array
+         * @see JXG.Board#maxBoundingBox
+         * @see JXG.Board#keepAspectRatio
+         * 
          * @default [-5, 5, 5, -5]
          * @example
          * var board = JXG.JSXGraph.initBoard('jxgbox', {
@@ -86,10 +89,11 @@ JXG.Options = {
          * [x<sub>1</sub>, y<sub>1</sub>, x<sub>2</sub>, y<sub>2</sub>]
          *
          * The bounding box of the canvas must be inside of this maximal
-         * boundings box.
+         * bounding box.
+         * 
          * @name JXG.Board#maxboundingbox
          * @type Array
-         * @see JXG.Board#boundingbox
+         * @see JXG.Board#boundingBox
          * @default [-Infinity, Infinity, Infinity, -Infinity]
          *
          * @example
@@ -117,6 +121,28 @@ JXG.Options = {
          *
          */
         maxBoundingBox: [-Infinity, Infinity, Infinity, -Infinity],
+
+        /**
+         * If set to true, the ratio between horizontal and vertical unit sizes
+         * stays constant - independent of size changes of the hosting HTML div element.
+         * <p>
+         * If the aspect ration of the hosting div changes, JSXGraphs will change
+         * the user supplied bounding box accordingly.
+         * This is necessary if circles should look like circles and not
+         * like ellipses. It is recommended to set keepAspectRatio = true
+         * for geometric applets.
+         * <p>
+         * For function plotting keepAspectRatio = false
+         * might be the better choice.
+         *
+         * @name JXG.Board#keepAspectRatio
+         * @see JXG.Board#boundingBox
+         * @see JXG.Board#maxBoundingBox
+         * @see JXG.Board#setBoundingBox
+         * @type Boolean
+         * @default false
+         */
+        keepAspectRatio: false,
 
         /**
          * Additional zoom factor multiplied to {@link JXG.Board#zoomX} and {@link JXG.Board#zoomY}.
@@ -444,27 +470,6 @@ JXG.Options = {
          * @see JXG.AbstractRenderer#drawZoomBar
          */
         showClearTraces: false,
-
-        /**
-         * If set to true, the ratio between horizontal and vertical unit sizes
-         * stays constant - independent of size changes of the hosting HTML div element.
-         * <p>
-         * If the aspect ration of the hosting div changes, JSXGraphs will change
-         * the user supplied bounding box accordingly.
-         * This is necessary if circles should look like circles and not
-         * like ellipses. It is recommended to set keepAspectRatio = true
-         * for geometric applets.
-         * <p>
-         * For function plotting keepAspectRatio = false
-         * might be the better choice.
-         *
-         * @name JXG.Board#keepAspectRatio
-         * @see JXG.Board#boundingbox
-         * @see JXG.Board#setBoundingBox
-         * @type Boolean
-         * @default false
-         */
-        keepAspectRatio: false,
 
         /**
          * If set true and
@@ -1053,6 +1058,11 @@ JXG.Options = {
          */
         logging: {
             enabled: false
+        },
+
+        intl: {
+            enabled: true,
+            locale: 'en-US'
         }
 
         /**#@-*/
@@ -2645,6 +2655,73 @@ JXG.Options = {
          * @type Boolean
          * @name Ticks#includeBoundaries
          * @default false
+         * 
+         * @example
+         * var li = board.create('segment', [[-4, 2], [4, 2]]);
+         * var t = board.create('ticks', [li], {
+         *     includeBoundaries: true,
+         *     drawZero: true,
+         *     anchor: 'middle',
+         *     drawLabels: true,
+         *     minorTicks: 0,
+         *     label: {
+         *         anchorX: 'middle',
+         *         anchorY: 'top',
+         *         offset: [0, -5]
+         *     }
+         * });
+         * 
+         * var li2 = board.create('segment', [[-4, -2], [4, -2]]);
+         * var t2 = board.create('ticks', [li2], {
+         *     includeBoundaries: false,
+         *     drawZero: true,
+         *     anchor: 'middle',
+         *     drawLabels: true,
+         *     minorTicks: 0,
+         *     label: {
+         *         anchorX: 'middle',
+         *         anchorY: 'top',
+         *         offset: [0, -5]
+         *     }
+         * });
+         * 
+         * </pre><div id="JXG08e79180-7c9a-4638-bb72-8aa7fd8a8b96" class="jxgbox" style="width: 300px; height: 300px;"></div>
+         * <script type="text/javascript">
+         *     (function() {
+         *         var board = JXG.JSXGraph.initBoard('JXG08e79180-7c9a-4638-bb72-8aa7fd8a8b96',
+         *             {boundingbox: [-8, 8, 8,-8], axis: false, showcopyright: false, shownavigation: false});
+         *     var li = board.create('segment', [[-4, 2], [4, 2]]);
+         *     var t = board.create('ticks', [li], {
+         *         includeBoundaries: true,
+         *         drawZero: true,
+         *         anchor: 'middle',
+         *         drawLabels: true,
+         *         minorTicks: 0,
+         *         label: {
+         *             anchorX: 'middle',
+         *             anchorY: 'top',
+         *             offset: [0, -5]
+         *         }
+         *     });
+         *     
+         *     var li2 = board.create('segment', [[-4, -2], [4, -2]]);
+         *     var t2 = board.create('ticks', [li2], {
+         *         includeBoundaries: false,
+         *         drawZero: true,
+         *         anchor: 'middle',
+         *         drawLabels: true,
+         *         minorTicks: 0,
+         *         label: {
+         *             anchorX: 'middle',
+         *             anchorY: 'top',
+         *             offset: [0, -5]
+         *         }
+         *     });
+         * 
+         *     })();
+         * 
+         * </script><pre>
+         * 
          */
         includeBoundaries: false,
 
@@ -2687,7 +2764,20 @@ JXG.Options = {
          * </script><pre>
          * 
          */
-        type: 'linear'
+        type: 'linear',
+
+        intl: {
+            enabled: 'inherit',
+            options: {
+            }
+        },
+
+        minorTicksInArrow: false,
+        majorTicksInArrow: true,
+        labelInArrow: true,
+        minorTicksInMargin: false,
+        majorTicksInMargin: true,
+        labelInMargin: true
 
         // close the meta tag
         /**#@-*/
@@ -3015,6 +3105,10 @@ JXG.Options = {
         }
 
         /**#@-*/
+    },
+
+    /* special arrowparallel options */
+    arrowparallel: {
     },
 
     /* special axis options */
@@ -4083,6 +4177,12 @@ JXG.Options = {
          */
         distanceY: 25,
 
+        intl: {
+            enabled: false,
+            options: {
+            }
+        },
+
         fontSize: 12,
         isLabel: false,
         strokeColor: '#bbbbbb',
@@ -4184,7 +4284,13 @@ JXG.Options = {
          * @name Integral#label
          */
         label: {
-            fontSize: 20
+            fontSize: 20,
+            digits: 4,
+            intl: {
+                enabled: false,
+                options: {
+                }
+            }
         }
         /**#@-*/
     },
@@ -4902,6 +5008,10 @@ JXG.Options = {
             position: 'llft'
         }
         /**#@-*/
+    },
+
+    /* special parallelpoint options */
+    parallelpoint: {
     },
 
     /* special perpendicular options */
@@ -6132,6 +6242,10 @@ JXG.Options = {
         /**#@-*/
     },
 
+    /* special tangent options */
+    tangent: {
+    },
+
     /* special tape measure options */
     tapemeasure: {
         /**#@+
@@ -6320,6 +6434,12 @@ JXG.Options = {
          * @type Number
          */
         digits: 2,
+
+        intl: {
+            enabled: 'inherit',
+            options: {
+            }
+        },
 
         /**
          * If set to true, the text is parsed and evaluated.

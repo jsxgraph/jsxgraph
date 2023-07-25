@@ -172,9 +172,22 @@ JXG.JSXGraph = {
      */
     _setAttributes: function (attributes) {
         // merge attributes
-        var attr = Type.copyAttributes(attributes, Options, "board");
+        var attr = Type.copyAttributes(attributes, Options, 'board'),
 
-        // The attributes which are objects have to be copied separately
+            // These attributes which are objects have to be copied separately
+            list = ['drag', 'fullscreen', 'intl',
+                'keyboard', 'logging',
+                'navbar', 'pan', 'resize',
+                'screenshot', 'selection',
+                'zoom'],
+            len = list.length, i, key;
+
+        for (i = 0; i < len; i++) {
+            key = list[i];
+            attr[key] = Type.copyAttributes(attr, Options, 'board', key);
+        }
+
+/*
         attr.zoom = Type.copyAttributes(attr, Options, "board", "zoom");
         attr.pan = Type.copyAttributes(attr, Options, "board", "pan");
         attr.drag = Type.copyAttributes(attr, Options, "board", "drag");
@@ -185,6 +198,7 @@ JXG.JSXGraph = {
         attr.resize = Type.copyAttributes(attr, Options, "board", "resize");
         attr.fullscreen = Type.copyAttributes(attr, Options, "board", "fullscreen");
         attr.logging = Type.copyAttributes(attr, Options, 'board', 'logging');
+*/
 
         // Treat moveTarget separately, because deepCopy will not work here.
         // Reason: moveTarget will be an HTML node and it is prevented that Type.deepCopy will copy it.
@@ -204,7 +218,7 @@ JXG.JSXGraph = {
      * @private
      */
     _fillBoard: function (board, attr, dimensions) {
-        board.initInfobox();
+        board.initInfobox(attr.infobox);
         board.maxboundingbox = attr.maxboundingbox;
         board.resizeContainer(dimensions.width, dimensions.height, true, true);
         board._createSelectionPolygon(attr);
@@ -286,7 +300,7 @@ JXG.JSXGraph = {
     },
 
     /**
-     * Initialise a new board.
+     * Initialize a new board.
      * @param {String} box HTML-ID to the HTML-element in which the board is painted.
      * @param {Object} attributes An object that sets some of the board properties. Most of these properties can be set via JXG.Options.
      * @param {Array} [attributes.boundingbox=[-5, 5, 5, -5]] An array containing four numbers describing the left, top, right and bottom boundary of the board in user coordinates
@@ -305,13 +319,9 @@ JXG.JSXGraph = {
      * @see JXG.AbstractRenderer#drawZoomBar
      */
     initBoard: function (box, attributes) {
-        var originX, originY,
-            unitX, unitY,
-            renderer,
-            offX = 0,
-            offY = 0,
-            w, h,
-            dimensions, bbox,
+        var originX, originY, unitX, unitY, w, h,
+            offX = 0, offY = 0,
+            renderer, dimensions, bbox,
             attr, axattr, axattr_x, axattr_y,
             board;
 
@@ -606,31 +616,15 @@ JXG.JSXGraph = {
 };
 
 // JessieScript/JessieCode startup:
-// Search for script tags of type text/jessiescript and interprete them.
-if (Env.isBrowser && typeof window === "object" && typeof document === "object") {
-    Env.addEvent(
-        window,
-        "load",
+// Search for script tags of type text/jessiecode and execute them.
+if (Env.isBrowser && typeof window === 'object' && typeof document === 'object') {
+    Env.addEvent(window, 'load',
         function () {
-            var type,
-                i,
-                j,
-                div,
-                id,
-                board,
-                txt,
-                width,
-                height,
-                maxWidth,
-                aspectRatio,
-                cssClasses,
-                bbox,
-                axis,
-                grid,
-                code,
-                src,
-                request,
+            var type, i, j, div, id,
+                board, txt, width, height, maxWidth, aspectRatio,
+                cssClasses, bbox, axis, grid, code, src, request,
                 postpone = false,
+
                 scripts = document.getElementsByTagName("script"),
                 init = function (code, type, bbox) {
                     var board = JXG.JSXGraph.initBoard(id, {

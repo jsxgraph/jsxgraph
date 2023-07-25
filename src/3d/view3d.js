@@ -810,6 +810,7 @@ JXG.createView3D = function (board, parents, attributes) {
         var d, i, c3d, foot,
             pre = '<span style="color:black; font-size:200%">\u21C4 &nbsp;</span>',
             brd = el.board,
+            arr, infobox,
             p = null;
 
         if (view.isVerticalDrag()) {
@@ -826,37 +827,29 @@ JXG.createView3D = function (board, parents, attributes) {
             foot = [1, 0, 0, p.coords[3]];
             c3d = view.project2DTo3DPlane(p.element2D, [1, 0, 0, 1], foot);
             if (!view.isInCube(c3d)) {
-                view.board.highlightCustomInfobox("", p);
+                view.board.highlightCustomInfobox('', p);
                 return;
             }
             d = Type.evaluate(p.visProp.infoboxdigits);
-            if (d === "auto") {
-                view.board.highlightCustomInfobox(
-                    pre +
-                    "(" +
-                    Type.autoDigits(p.X()) +
-                    " | " +
-                    Type.autoDigits(p.Y()) +
-                    " | " +
-                    Type.autoDigits(p.Z()) +
-                    ")",
-                    p
-                );
+            infobox = view.board.infobox;
+            console.log(infobox.useLocale())
+            if (d === 'auto') {
+                if (infobox.useLocale()) {
+                    arr = [pre, '(', infobox.formatNumberLocale(p.X()), ' | ', infobox.formatNumberLocale(p.Y()), ' | ', infobox.formatNumberLocale(p.Z()), ')']
+                } else {
+                    arr = [pre, '(', Type.autoDigits(p.X()), ' | ', Type.autoDigits(p.Y()), ' | ', Type.autoDigits(p.Z()), ')']
+                }
+
             } else {
-                view.board.highlightCustomInfobox(
-                    pre +
-                    "(" +
-                    Type.toFixed(p.X(), d) +
-                    " | " +
-                    Type.toFixed(p.Y(), d) +
-                    " | " +
-                    Type.toFixed(p.Z(), d) +
-                    ")",
-                    p
-                );
+                if (infobox.useLocale()) {
+                    arr = [pre, '(', infobox.formatNumberLocale(p.X(), d), ' | ', infobox.formatNumberLocale(p.Y(), d), ' | ', infobox.formatNumberLocale(p.Z(), d), ')'];
+                } else {
+                    arr = [pre, '(', Type.toFixed(p.X(), d), ' | ', Type.toFixed(p.Y(), d), ' | ', Type.toFixed(p.Z(), d), ')'];
+                }
             }
+            view.board.highlightCustomInfobox(arr.join(''), p);
         } else {
-            view.board.highlightCustomInfobox("(" + x + ", " + y + ")", el);
+            view.board.highlightCustomInfobox('(' + x + ', ' + y + ')', el);
         }
     };
 

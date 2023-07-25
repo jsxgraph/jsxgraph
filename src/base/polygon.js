@@ -55,11 +55,7 @@ import GeometryElement from "./element";
 JXG.Polygon = function (board, vertices, attributes) {
     this.constructor(board, attributes, Const.OBJECT_TYPE_POLYGON, Const.OBJECT_CLASS_AREA);
 
-    var i,
-        l,
-        len,
-        j,
-        p,
+    var i, l, len, j, p,
         attr_line = Type.copyAttributes(attributes, board.options, "polygon", "borders");
 
     this.withLines = attributes.withlines;
@@ -119,6 +115,7 @@ JXG.Polygon = function (board, vertices, attributes) {
             l.dump = false;
             this.borders[i] = l;
             l.parentPolygon = this;
+            this.addChild(l);
         }
     }
 
@@ -246,16 +243,14 @@ JXG.extend(
          * Uses the boards renderer to update the polygon.
          */
         updateRenderer: function () {
-            var i, len; // wasReal,
+            var i, len;
 
             if (!this.needsUpdate) {
                 return this;
             }
 
             if (this.visPropCalc.visible) {
-                // wasReal = this.isReal;
-
-                len = this.vertices.length;
+                len = this.vertices.length - ((this.elType === "polygonalchain") ? 0 : 1);
                 this.isReal = true;
                 for (i = 0; i < len; ++i) {
                     if (!this.vertices[i].isReal) {
@@ -264,11 +259,16 @@ JXG.extend(
                     }
                 }
 
-                if (
-                    //wasReal &&
-                    !this.isReal
-                ) {
+                if (!this.isReal) {
                     this.updateVisibility(false);
+
+                    for (i in this.childElements) {
+                        if (this.childElements.hasOwnProperty(i)) {
+                            // All child elements are hidden.
+                            // This may be weakened to all borders and only vertices with with visible:'inherit'
+                            this.childElements[i].setDisplayRendNode(false);
+                        }
+                    }
                 }
             }
 
@@ -277,8 +277,7 @@ JXG.extend(
             }
 
             /* Update the label if visible. */
-            if (
-                this.hasLabel &&
+            if (this.hasLabel &&
                 this.visPropCalc.visible &&
                 this.label &&
                 this.label.visPropCalc.visible &&
@@ -290,14 +289,6 @@ JXG.extend(
 
             // Update rendNode display
             this.setDisplayRendNode();
-            // if (this.visPropCalc.visible !== this.visPropOld.visible) {
-            //     this.board.renderer.display(this, this.visPropCalc.visible);
-            //     this.visPropOld.visible = this.visPropCalc.visible;
-            //
-            //     if (this.hasLabel) {
-            //         this.board.renderer.display(this.label, this.label.visPropCalc.visible);
-            //     }
-            // }
 
             this.needsUpdate = false;
             return this;

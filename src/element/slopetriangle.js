@@ -117,15 +117,9 @@ var priv = {
  * </script><pre>
  */
 JXG.createSlopeTriangle = function (board, parents, attributes) {
-    var el,
-        tangent,
-        tglide,
-        glider,
-        toppoint,
-        baseline,
-        basepoint,
-        label,
-        attr,
+    var el, tangent, tglide, glider,
+        toppoint, baseline, basepoint,
+        label, attr,
         isPrivateTangent = false;
 
     if (parents.length === 1 && parents[0].type === Const.OBJECT_TYPE_TANGENT) {
@@ -219,7 +213,12 @@ JXG.createSlopeTriangle = function (board, parents, attributes) {
     );
 
     label._setText(function () {
-        return Type.toFixed(el.Value(), Type.evaluate(label.visProp.digits));
+        var digits = Type.evaluate(label.visProp.digits);
+
+        if (label.useLocale()) {
+            return label.formatNumberLocale(el.Value(), digits);
+        }
+        return Type.toFixed(el.Value(), digits);
     });
     label.fullUpdate();
 
