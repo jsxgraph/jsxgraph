@@ -232,6 +232,24 @@ JXG.Board = function (container, renderer, id,
     this.unitY = unitY * this.zoomY;
 
     /**
+     * This stores the factor which was applied by setScaleX(factor).
+     * @name JXG.Board.scaleX
+     * @type Number
+     * @private
+     * @ignore
+     */
+    this.scaleX = 1;
+
+    /**
+     * This stores the factor which was applied by setScaleY(factor).
+     * @name JXG.Board.scaleY
+     * @type Number
+     * @private
+     * @ignore
+     */
+    this.scaleY = 1;
+
+    /**
      * Keep aspect ratio if bounding box is set and the width/height ratio differs from the
      * width/height ratio of the canvas.
      * @type Boolean
@@ -618,6 +636,8 @@ JXG.Board = function (container, renderer, id,
         trigger: 'trigger',
         setView: 'setBoundingBox',
         setBoundingBox: 'setBoundingBox',
+        getView: 'getBoundingBox',
+        getBoundingBox: 'getBoundingBox',
         migratePoint: 'migratePoint',
         colorblind: 'emulateColorblindness',
         suspendUpdate: 'suspendUpdate',
@@ -631,6 +651,8 @@ JXG.Board = function (container, renderer, id,
         zoomOut: 'zoomOut',
         zoom100: 'zoom100',
         zoomElements: 'zoomElements',
+        setScaleX: 'setScaleX',
+        setScaleY: 'setScaleY',
         remove: 'removeObject',
         removeObject: 'removeObject'
     };
@@ -2311,8 +2333,7 @@ JXG.extend(
          * @param {Event} evt The browsers event object.
          * @param {Object} object If the object to be dragged is already known, it can be submitted via this parameter
          * @param {Boolean} [allowDefaultEventHandling=false] If true event is not canceled, i.e. prevent call of evt.preventDefault()
-         * @returns {Boolean} false if the the first finger event is sent twice, or not a browser, or
-         *  or in selection mode. Otherwise returns true.
+         * @returns {Boolean} false if the first finger event is sent twice, or not a browser, or in selection mode. Otherwise returns true.
          */
         pointerDownListener: function (evt, object, allowDefaultEventHandling) {
             var i, j, k, pos,
@@ -4481,6 +4502,40 @@ JXG.extend(
         },
 
         /**
+         * Sets the x-direction (horizontal) scaling to the given factor.
+         *  - If factor > 1, the board is stretched horizontally.
+         *  - If 0 < factor < 1, the board is compressed in the horizontal direction.
+         *  - If factor < 0, the board is mirrored on the y-axis.
+         * @param {Number} factor
+         * @returns {JXG.Board} Reference to the board
+         */
+        setScaleX: function (factor) {
+            this.unitX = this.unitX / Type.evaluate(this.scaleX);
+            this.scaleX = Type.createFunction(factor, this.board, null, true);
+            this.unitX = this.unitX * Type.evaluate(this.scaleX);
+            this.applyZoom();
+
+            return this;
+        },
+
+        /**
+         * Sets the y-direction (vertical) scaling to the given factor.
+         *  - If factor > 1, the board is stretched vertically.
+         *  - If 0 < factor < 1, the board is compressed in the vertical direction.
+         *  - If factor < 0, the board is mirrored on the x-axis.
+         * @param {Number} factor
+         * @returns {JXG.Board} Reference to the board
+         */
+        setScaleY: function (factor) {
+            this.unitY = this.unitY / Type.evaluate(this.scaleY);
+            this.scaleY = Type.createFunction(factor, this.board, null, true);
+            this.unitY = this.unitY * Type.evaluate(this.scaleY);
+            this.applyZoom();
+
+            return this;
+        },
+
+        /**
          * Zooms into the board by the factors board.attr.zoom.factorX and board.attr.zoom.factorY and applies the zoom.
          * The zoom operation is centered at x, y.
          * @param {Number} [x]
@@ -5697,7 +5752,7 @@ JXG.extend(
 
         /**
          * Migrate the dependency properties of the point src
-         * to the point dest and  delete the point src.
+         * to the point dest and delete the point src.
          * For example, a circle around the point src
          * receives the new center dest. The old center src
          * will be deleted.

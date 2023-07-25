@@ -822,6 +822,61 @@ JXG.rgb2cb = function (color, deficiency) {
 };
 
 /**
+ * Lightens (percent > 0) or darkens (percent < 0) the color by the specified factor.
+ * @param {String} color
+ * @param {Number} percent
+ * @returns {String}
+ */
+JXG.shadeColor = function (color, percent) {
+    var arr = JXG.rgbParser(color),
+        r = arr[0],
+        g = arr[1],
+        b = arr[2];
+
+    r = parseInt(r + 255 * percent);
+    g = parseInt(g + 255 * percent);
+    b = parseInt(b + 255 * percent);
+
+    r = (r > 0) ? r : 0;
+    g = (g > 0) ? g : 0;
+    b = (b > 0) ? b : 0;
+
+    r = (r < 255) ? r : 255;
+    g = (g < 255) ? g : 255;
+    b = (b < 255) ? b : 255;
+
+    r = Math.round(r)
+    g = Math.round(g)
+    b = Math.round(b)
+
+    return JXG.rgb2hex([r, g, b]);
+};
+
+/**
+ * Lightens the color by the specified factor.
+ * @param {String} color
+ * @param {Number} percent
+ * @returns {String}
+ *
+ * @see JXG.shadeColor
+ */
+JXG.lightenColor = function (color, percent) {
+    return JXG.shadeColor(color, percent)
+};
+
+/**
+ * Darkens the color by the specified factor.
+ * @param {String} color
+ * @param {Number} percent
+ * @returns {String}
+ *
+ * @see JXG.shadeColor
+ */
+JXG.darkenColor = function (color, percent) {
+    return JXG.shadeColor(color, -1 * percent)
+};
+
+/**
  * Determines highlight color to a given color. Done by reducing (or increasing) the opacity.
  * @param {String} color HTML RGBA string containing the HTML color code.
  * @returns {String} Returns a HTML RGBA color string

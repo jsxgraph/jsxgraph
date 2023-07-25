@@ -33,6 +33,8 @@
 /*global JXG: true*/
 /*jslint nomen: true, plusplus: true*/
 
+import type from "../utils/type";
+
 (function () {
     "use strict";
 
@@ -102,7 +104,9 @@
                 toFixed: 8, // should be enough for now ...
                 freeLine: false,
                 useGlider: false,
-                useSymbols: false
+                useSymbols: false,
+                useSliderVars: false,
+                sliderVarPrefix: 'slider'
             },
 
             /**
@@ -143,7 +147,7 @@
                     le,
                     x,
                     y,
-                    key,
+                    operator,
                     copy_log = [],
                     set_str = "",
                     reset_str = "",
@@ -175,6 +179,20 @@
                         }
 
                         return o;
+                    },
+
+                    getAttribsString = function (object) {
+                        var str = "", key, val;
+                        for (key in object) {
+                            if (!object.hasOwnProperty(key)) continue;
+                            val = object[key];
+                            if (JXG.isString(val))
+                                val = "'" + val + "'";
+                            if (JXG.isObject(val))
+                                val = '<<' + getAttribsString(val).substring(2) + '>>';
+                            str += ", " + key + ": " + val;
+                        }
+                        return str;
                     };
 
                 options = JXG.SketchReader.generator;
@@ -186,7 +204,7 @@
                 if (
                     JXG.exists(board) &&
                     options.useSymbols &&
-                    step.type !== JXG.GENTYPE_ABLATION
+                    step.type !== JXG.GENTYPE_CIRCLECLONE
                 ) {
                     attrid = "";
                     assign = step.dest_id + " = ";
@@ -209,7 +227,12 @@
 
                 switch (step.type) {
                     case JXG.GENTYPE_TRUNCATE:
-                        set_str = "trunclen = " + JXG.Options.trunclen + "; ";
+                        if (!JXG.exists(step.args) || !JXG.exists(step.args.s)) {
+                            set_str = "trunclen = " + JXG.Options.trunclen + "; ";
+                        } else {
+                            set_str = "trunclen = " + step.args.s + "; ";
+                            reset_str = "trunclen = " + step.args.old + "; ";
+                        }
                         break;
 
                     case JXG.GENTYPE_JCODE:
@@ -252,49 +275,122 @@
                             "', fixed: true, priv: true, visible: false>>; ";
 
                         // x-axis
+                        set_str += step.args.name[3] + " = axis(" + step.args.name[0] + ", " + step.args.name[1] + ") ";
                         set_str +=
-                            step.args.name[3] +
-                            " = axis(" +
-                            step.args.name[0] +
-                            ", " +
-                            step.args.name[1] +
-                            ") ";
-                        set_str +=
-                            "<<id: '" +
-                            step.dest_sub_ids[3] +
-                            "', name: '" +
-                            step.args.name[3] +
-                            "', ticks: ";
-                        set_str +=
-                            "<<minorHeight:0, majorHeight:10, insertTicks: true, ticksDistance: 1, drawLabels: true";
-                        set_str +=
-                            ', label: <<offset: [-4, -16], parse: false, display: "internal">>';
-                        set_str += ", drawZero: false>>>>; ";
+                            "<<id: '" + step.dest_sub_ids[3] + "', name: '" + step.args.name[3] + "', ticks: ";
+                        set_str += '<<' +
+                            'label: <<offset: [-4, -16], parse: false, display: "internal">>, ' +
+                            'drawLabels: true, ' +
+                            'drawZero: false' +
+                            '>> ';
+                        set_str += '>>; ';
 
                         // y-axis
+                        set_str += step.args.name[4] + " = axis(" + step.args.name[0] + ", " + step.args.name[2] + ") ";
                         set_str +=
-                            step.args.name[4] +
-                            " = axis(" +
-                            step.args.name[0] +
-                            ", " +
-                            step.args.name[2] +
-                            ") ";
-                        set_str +=
-                            "<<id: '" +
-                            step.dest_sub_ids[4] +
-                            "', name: '" +
-                            step.args.name[4] +
-                            "', ticks: ";
-                        set_str +=
-                            "<<minorHeight:0, majorHeight:10, insertTicks: true, ticksDistance: 1, drawLabels: true";
-                        set_str +=
-                            ', label: <<offset: [10, 0], parse: false, display: "internal">>';
-                        set_str += ", drawZero: false>>>>; ";
+                            "<<id: '" + step.dest_sub_ids[4] + "', name: '" + step.args.name[4] + "', ticks: ";
+                        set_str += '<<' +
+                            'label: <<offset: [10, 0], parse: false, display: "internal">>, ' +
+                            'drawLabels: true, ' +
+                            'drawZero: false' +
+                            '>> ';
+                        set_str += '>>; ';
 
+                        // automatics x-axis
+                        set_str += step.dest_sub_ids[3] + '.ticks.visible = function() { return ' + step.dest_sub_ids[3] + '.visible; }; ';
+                        set_str += step.dest_sub_ids[3] + '.ticks.drawZero = function() { ' +
+                            'return !' + step.dest_sub_ids[4] + '.visible; ' +
+                            '}; ';
+                        set_str += step.dest_sub_ids[3] + '.ticks.drawLabels = function() { ' +
+                            'return ' + step.dest_sub_ids[3] + '.visible; ' +
+                            '}; ';
+                        set_str += step.dest_sub_ids[3] + '.ticks.strokeColor = function() { ' +
+                            'if(' + step.dest_sub_ids[3] + '.ticks.majorHeight >= 0) {' +
+                            'if(' + step.dest_sub_ids[3] + '.ticks.tickColor == "auto") {' +
+                            ' return ' + step.dest_sub_ids[3] + '.strokeColor; ' +
+                            '} else {' +
+                            ' return ' + step.dest_sub_ids[3] + '.ticks.tickColor; ' +
+                            '} ' +
+                            '} else {' +
+                            ' return ' + step.dest_sub_ids[3] + '.ticks.gridColor;' +
+                            '} ' +
+                            '}; ';
+                        set_str += step.dest_sub_ids[3] + '.ticks.strokeOpacity = function() { ' +
+                            'if(' + step.dest_sub_ids[3] + '.ticks.majorHeight >= 0) {' +
+                            'if(' + step.dest_sub_ids[3] + '.ticks.tickOpacity == "auto") {' +
+                            ' return ' + step.dest_sub_ids[3] + '.strokeOpacity; ' +
+                            '} else {' +
+                            ' return ' + step.dest_sub_ids[3] + '.ticks.tickOpacity; ' +
+                            '} ' +
+                            '} else {' +
+                            ' return ' + step.dest_sub_ids[3] + '.ticks.gridOpacity;' +
+                            '} ' +
+                            '}; ';
+                        set_str += step.dest_sub_ids[3] + '.ticks.strokeWidth = function() { ' +
+                            'if(' + step.dest_sub_ids[3] + '.ticks.majorHeight >= 0) {' +
+                            'if(' + step.dest_sub_ids[3] + '.ticks.tickWidth == "auto") {' +
+                            step.dest_sub_ids[3] + '.ticks.minorHeight = ' + JXG.Options.axis.ticks.minorHeight + ' + 1*' + step.dest_sub_ids[3] + '.strokeWidth; ' +
+                            step.dest_sub_ids[3] + '.ticks.majorHeight = ' + JXG.Options.axis.ticks.majorHeight + ' + 2*' + step.dest_sub_ids[3] + '.strokeWidth; ' +
+                            ' return ' + step.dest_sub_ids[3] + '.strokeWidth; ' +
+                            '} else {' +
+                            step.dest_sub_ids[3] + '.ticks.minorHeight = ' + JXG.Options.axis.ticks.minorHeight + ' + 1*' + step.dest_sub_ids[3] + '.ticks.tickWidth; ' +
+                            step.dest_sub_ids[3] + '.ticks.majorHeight = ' + JXG.Options.axis.ticks.majorHeight + ' + 2*' + step.dest_sub_ids[3] + '.ticks.tickWidth; ' +
+                            ' return ' + step.dest_sub_ids[3] + '.ticks.tickWidth; ' +
+                            '} ' +
+                            '} else {' +
+                            ' return ' + step.dest_sub_ids[3] + '.ticks.gridWidth;' +
+                            '} ' +
+                            '}; ';
+
+                        // automatics y-axis
+                        set_str += step.dest_sub_ids[4] + '.ticks.visible = function() { return ' + step.dest_sub_ids[4] + '.visible; }; ';
+                        set_str += step.dest_sub_ids[4] + '.ticks.drawZero = function() { ' +
+                            'return !' + step.dest_sub_ids[3] + '.visible; ' +
+                            '}; ';
+                        set_str += step.dest_sub_ids[4] + '.ticks.drawLabels = function() { ' +
+                            'return ' + step.dest_sub_ids[4] + '.visible; ' +
+                            '}; ';
+                        set_str += step.dest_sub_ids[4] + '.ticks.strokeColor = function() { ' +
+                            'if(' + step.dest_sub_ids[4] + '.ticks.majorHeight >= 0) {' +
+                            'if(' + step.dest_sub_ids[4] + '.ticks.tickColor == "auto") {' +
+                            ' return ' + step.dest_sub_ids[4] + '.strokeColor; ' +
+                            '} else {' +
+                            ' return ' + step.dest_sub_ids[4] + '.ticks.tickColor; ' +
+                            '} ' +
+                            '} else {' +
+                            ' return ' + step.dest_sub_ids[4] + '.ticks.gridColor;' +
+                            '} ' +
+                            '}; ';
+                        set_str += step.dest_sub_ids[4] + '.ticks.strokeOpacity = function() { ' +
+                            'if(' + step.dest_sub_ids[4] + '.ticks.majorHeight >= 0) {' +
+                            'if(' + step.dest_sub_ids[4] + '.ticks.tickOpacity == "auto") {' +
+                            ' return ' + step.dest_sub_ids[4] + '.strokeOpacity; ' +
+                            '} else {' +
+                            ' return ' + step.dest_sub_ids[4] + '.ticks.tickOpacity; ' +
+                            '} ' +
+                            '} else {' +
+                            ' return ' + step.dest_sub_ids[4] + '.ticks.gridOpacity;' +
+                            '} ' +
+                            '}; ';
+                        set_str += step.dest_sub_ids[4] + '.ticks.strokeWidth = function() { ' +
+                            'if(' + step.dest_sub_ids[4] + '.ticks.majorHeight >= 0) {' +
+                            'if(' + step.dest_sub_ids[4] + '.ticks.tickWidth == "auto") {' +
+                            step.dest_sub_ids[4] + '.ticks.minorHeight = ' + JXG.Options.axis.ticks.minorHeight + ' + 1*' + step.dest_sub_ids[4] + '.strokeWidth; ' +
+                            step.dest_sub_ids[4] + '.ticks.majorHeight = ' + JXG.Options.axis.ticks.majorHeight + ' + 2*' + step.dest_sub_ids[4] + '.strokeWidth; ' +
+                            ' return ' + step.dest_sub_ids[4] + '.strokeWidth; ' +
+                            '} else {' +
+                            step.dest_sub_ids[4] + '.ticks.minorHeight = ' + JXG.Options.axis.ticks.minorHeight + ' + 1*' + step.dest_sub_ids[4] + '.ticks.tickWidth; ' +
+                            step.dest_sub_ids[4] + '.ticks.majorHeight = ' + JXG.Options.axis.ticks.majorHeight + ' + 2*' + step.dest_sub_ids[4] + '.ticks.tickWidth; ' +
+                            ' return ' + step.dest_sub_ids[4] + '.ticks.tickWidth; ' +
+                            '} ' +
+                            '} else {' +
+                            ' return ' + step.dest_sub_ids[4] + '.ticks.gridWidth;' +
+                            '} ' +
+                            '}; ';
+
+                        // hide
                         set_str += step.dest_sub_ids[3] + ".visible = false; ";
                         set_str += step.dest_sub_ids[4] + ".visible = false; ";
-
-                        // set_str += 'remove(jxgBoard1_infobox); ';
 
                         reset_str =
                             "remove(" +
@@ -311,25 +407,57 @@
 
                         break;
 
-                    case JXG.GENTYPE_MID:
+                    case JXG.GENTYPE_MIDPOINT:
                         set_str =
                             assign +
                             "midpoint(" +
                             step.src_ids[0] +
                             ", " +
                             step.src_ids[1] +
-                            ") <<" +
-                            attrid;
-                        set_str += "fillColor: '" + step.args.fillColor + "'";
-                        if (JXG.exists(step.args.strokeColor)) {
-                            set_str += ", strokeColor: '" + step.args.strokeColor + "'";
-                        }
-                        set_str += ">>; ";
+                            ") <<" + attrid + "name: ''>>; ";
                         reset_str = "remove(" + step.dest_id + "); ";
                         break;
 
-                    case JXG.GENTYPE_REFLECTION:
+                    case JXG.GENTYPE_PERPBISECTOR:
+                        pid1 = step.src_ids[0]; // point 1
+                        pid2 = step.src_ids[1]; // point 2
+                        pid3 = step.dest_sub_ids[0]; // midpoint
+                        pid4 = step.dest_sub_ids[1]; // segment
+                        pid5 = step.dest_sub_ids[2]; // additional point of perpendicular bisector
+
+                        set_str = "";
+                        reset_str = "";
+
+                        set_str +=
+                            "midpoint(" + pid1 + ", " + pid2 + ") " +
+                            "<<id: '" + pid3 + "', name: '', priv: true, visible: false>>; ";
+                        set_str +=
+                            "segment(" + pid1 + ", " + pid2 + ") " +
+                            "<<id: '" + pid4 + "', name: '', priv: true, visible: false>>; ";
+                        set_str +=
+                            assign +
+                            "normal(" + pid4 + ", " + pid3 + ") " +
+                            "<<id: '" + step.dest_id + "', name: ''" +
+                            ", point: <<id: '" + pid5 + "', name: ''>>" +
+                            ", isPerpendicularBisector: true" +
+                            " >>; ";
+                        set_str += step.dest_id + '.highlightStrokeWidth = function() { ' +
+                            'return ' + step.dest_id + '.strokeWidth ' + JXG.Options.sketchometry.highlightStrokeWidthOperation + '; ' +
+                            ' };'
+
+                        reset_str = "remove(" + step.dest_id + "); ";
+                        reset_str = "remove(" + pid5 + "); ";
+                        reset_str = "remove(" + pid4 + "); ";
+                        reset_str = "remove(" + pid3 + "); ";
+                        break;
+
                     case JXG.GENTYPE_REFLECTION_ON_LINE:
+                    case JXG.GENTYPE_REFLECTION_ON_POINT:
+
+                        operator = 'reflection';
+                        if (step.type === JXG.GENTYPE_REFLECTION_ON_POINT)
+                            operator = 'mirrorelement'
+
                         // Polygon:
                         if (step.args.type === "polygon") {
                             set_str = "";
@@ -337,24 +465,18 @@
                             for (i = 1; i < step.src_ids.length - 1; i++) {
                                 set_str +=
                                     assign +
-                                    "reflection(" +
+                                    operator + "(" +
                                     step.src_ids[i] +
                                     ", " +
                                     el +
-                                    ') <<id:"' +
-                                    step.dest_sub_ids[i - 1] +
-                                    '"';
+                                    ') <<id:"' + step.dest_sub_ids[i - 1] + '"';
                                 if (JXG.exists(step.args.subnames)) {
                                     set_str += ', name:"' + step.args.subnames[i - 1] + '"';
                                 } else {
                                     set_str += ', name: ""';
                                 }
-                                set_str += ", color: '" + step.args.strokeColor + "'";
-                                set_str += ", snaptogrid: " + JXG.Options.elements.snapToGrid;
-                                set_str +=
-                                    ", snaptopoints: " +
-                                    JXG.Options.elements.snapToPoints +
-                                    ">>;\n";
+                                set_str += getAttribsString(board.options.sketchometry.reflection.point);
+                                set_str += ">>;\n";
                             }
 
                             le = step.dest_sub_ids.length / 2;
@@ -368,25 +490,29 @@
                             for (i = 0; i < le; i++) {
                                 x.push("''");
                             }
-
                             set_str += ", names: [" + x.join() + "]";
-                            set_str += ">>, " + attrid + " fillOpacity: ";
-                            set_str += step.args.opacity + ", name: '' ";
-                            /* set_str +=
-                             ", hasInnerPoints_Org: " + JXG.Options.polygon.hasInnerPoints; */
-                            set_str +=
-                                ", hasInnerPoints: " + JXG.Options.polygon.hasInnerPoints;
+                            set_str += getAttribsString(board.options.sketchometry.reflection.stroke);
+                            set_str += ">>, " + attrid + " hasInnerPoints: " + JXG.Options.polygon.hasInnerPoints;
                             if (step.args.name !== "") {
                                 set_str += ', name: "' + step.args.name + '"';
                                 set_str += ", withLabel: true";
                             }
-                            set_str += ", fillColor: '" + step.args.fillColor + "'";
-                            set_str += ", snaptogrid: " + JXG.Options.elements.snapToGrid;
-                            set_str +=
-                                ", snaptopoints: " + JXG.Options.elements.snapToPoints + ">>; ";
+                            if (!step.args.isEmpty)
+                                set_str += getAttribsString(board.options.sketchometry.reflection.fill);
+                            else
+                                set_str += ", fillColor: 'transparent'";
+                            set_str += ">>; ";
                             set_str += step.dest_id + ".hasInnerPoints = function() { " +
                                 "return !(" + step.dest_id + ".fillColor == 'transparent' || " + step.dest_id + ".fillColor == 'none' || " + step.dest_id + ".fillOpacity == 0); " +
                                 "}; "
+                            for (i = le; i < 2 * le; i++) {
+                                set_str += step.dest_sub_ids[i] + '.highlightStrokeWidth = function() { ' +
+                                    'return ' + step.dest_sub_ids[i] + '.strokeWidth ' + JXG.Options.sketchometry.highlightStrokeWidthOperation + '; ' +
+                                    ' };'
+                            }
+
+                            ///////////////
+
                         } else if (step.args.type === "line" || step.args.type === "vector") {
                             set_str = "";
                             el = step.src_ids[step.src_ids.length - 1];
@@ -394,7 +520,7 @@
                             for (i = 1; i < step.src_ids.length - 1; i++) {
                                 set_str +=
                                     assign +
-                                    "reflection(" +
+                                    operator + "(" +
                                     step.src_ids[i] +
                                     ", " +
                                     el +
@@ -406,12 +532,8 @@
                                 } else {
                                     set_str += ', name: ""';
                                 }
-                                set_str += ", color: '" + step.args.strokeColor + "'";
-                                set_str += ", snaptogrid: " + JXG.Options.elements.snapToGrid;
-                                set_str +=
-                                    ", snaptopoints: " +
-                                    JXG.Options.elements.snapToPoints +
-                                    ">>;\n";
+                                set_str += getAttribsString(board.options.sketchometry.reflection.point);
+                                set_str += ">>;\n";
                             }
 
                             if (step.args.type === "vector") {
@@ -432,42 +554,46 @@
                                     ") ";
                             }
                             set_str += "<<";
-                            set_str += attrid;
-                            set_str += "strokeColor: '" + step.args.strokeColor + "'";
-                            set_str += ", opacity: '" + step.args.opacity + "'";
-                            set_str += ', name: "' + step.args.name + '"';
-                            set_str += ', id: "' + step.dest_id + '"';
-                            if (JXG.exists(step.args.attr)) {
-                                for (key in step.args.attr)
-                                    if (step.args.attr.hasOwnProperty(key)) {
-                                        set_str += ", " + key + ": " + step.args.attr[key] + "";
-                                    }
-                            }
+                            set_str += attrid + ' name: "' + step.args.name + '"';
+                            set_str += getAttribsString(board.options.sketchometry.reflection.stroke);
+                            if (step.args.type === "line")
+                                if (JXG.exists(step.args.attr)) {
+                                    set_str += ", firstArrow: " + step.args.attr.firstArrow;
+                                    set_str += ", lastArrow: " + step.args.attr.lastArrow;
+                                    set_str += ", straightFirst: " + step.args.attr.straightFirst;
+                                    set_str += ", straightLast: " + step.args.attr.straightLast;
+                                } else {
+                                    set_str += ", firstArrow: " + step.args.firstArrow;
+                                    set_str += ", lastArrow: " + step.args.lastArrow;
+                                    set_str += ", straightFirst: " + step.args.straightFirst;
+                                    set_str += ", straightLast: " + step.args.straightLast;
+                                }
 
                             if (step.args.name !== "") {
                                 set_str += ", withLabel: true";
                             }
                             set_str += ">>; ";
+                            set_str += step.dest_id + '.highlightStrokeWidth = function() { ' +
+                                'return ' + step.dest_id + '.strokeWidth ' + JXG.Options.sketchometry.highlightStrokeWidthOperation + '; ' +
+                                ' };'
+
+                            ///////////////
+
                         } else if (step.args.type === "circle") {
                             set_str +=
                                 assign +
-                                "reflection(" +
+                                operator + "(" +
                                 step.src_ids[0] +
                                 "," +
                                 step.src_ids[2] +
                                 ") ";
                             set_str += "<<";
-                            set_str += attrid;
-                            set_str += "strokeColor: '" + step.args.strokeColor + "'";
-                            set_str += ", opacity: '" + step.args.opacity + "'";
-                            set_str += ', name: "' + step.args.name + '"';
-                            set_str += ', id: "' + step.dest_id + '"';
-                            if (JXG.exists(step.args.attr)) {
-                                for (key in step.args.attr)
-                                    if (step.args.attr.hasOwnProperty(key)) {
-                                        set_str += ", " + key + ": " + step.args.attr[key] + "";
-                                    }
-                            }
+                            set_str += attrid + ' name: "' + step.args.name + '"';
+                            set_str += getAttribsString(board.options.sketchometry.reflection.stroke);
+                            if (!step.args.isEmpty)
+                                set_str += getAttribsString(board.options.sketchometry.reflection.fill);
+                            else
+                                set_str += ", fillColor: 'transparent'";
                             if (step.args.name !== "") {
                                 set_str += ", withLabel: true";
                             }
@@ -478,41 +604,55 @@
                             } else {
                                 set_str += ', name: ""';
                             }
-                            set_str += ", color: '" + step.args.strokeColor + "'";
-                            set_str += ", snaptogrid: " + JXG.Options.elements.snapToGrid;
-                            set_str +=
-                                ", snaptopoints: " + JXG.Options.elements.snapToPoints + ">>";
+                            set_str += getAttribsString(board.options.sketchometry.reflection.point);
+                            set_str += ">>";
                             set_str += ">>; ";
                             set_str += step.dest_id + ".hasInnerPoints = function() { " +
                                 "return !(" + step.dest_id + ".fillColor == 'transparent' || " + step.dest_id + ".fillColor == 'none' || " + step.dest_id + ".fillOpacity == 0); " +
                                 "}; "
-                        } else {
+                            set_str += step.dest_id + '.highlightStrokeWidth = function() { ' +
+                                'return ' + step.dest_id + '.strokeWidth ' + JXG.Options.sketchometry.highlightStrokeWidthOperation + '; ' +
+                                ' };'
+
+                            ///////////////
+
+                        } else if (step.args.type === "point") {
                             set_str =
                                 assign +
-                                "reflection(" +
+                                operator + "(" +
                                 step.src_ids[0] +
                                 ", " +
                                 step.src_ids[1] +
-                                ") <<" +
-                                attrid;
-                            set_str += "fillColor: '" + step.args.fillColor + "'";
-                            if (JXG.exists(step.args.strokeColor)) {
-                                set_str += ", strokeColor: '" + step.args.strokeColor + "'";
-                                set_str += ", opacity: '" + step.args.opacity + "'";
-                            }
-                            set_str += ', name: "' + step.args.name + '"';
-                            set_str += ', id: "' + step.dest_id + '"';
-                            if (JXG.exists(step.args.attr)) {
-                                for (key in step.args.attr)
-                                    if (step.args.attr.hasOwnProperty(key)) {
-                                        set_str += ", " + key + ": " + step.args.attr[key] + "";
-                                    }
-                            }
-
-                            if (step.args.name !== "") {
+                                ")";
+                            set_str += "<<" + attrid + ' name: "' + step.args.name + '"';
+                            set_str += getAttribsString(board.options.sketchometry.reflection.point);
+                            if (step.args.name !== "")
                                 set_str += ", withLabel: true";
-                            }
                             set_str += ">>; ";
+
+                            ///////////////
+
+                        } else {
+                            set_str =
+                                assign +
+                                operator + "(" +
+                                step.src_ids[0] +
+                                ", " +
+                                step.src_ids[1] +
+                                ")";
+                            set_str += "<<" + attrid + ' name: "' + step.args.name + '"';
+                            set_str += getAttribsString(board.options.sketchometry.reflection.stroke);
+                            if (!step.args.isEmpty)
+                                set_str += getAttribsString(board.options.sketchometry.reflection.fill);
+                            else
+                                set_str += ", fillColor: 'transparent'";
+
+                            if (step.args.name !== "")
+                                set_str += ", withLabel: true";
+                            set_str += ">>; ";
+                            set_str += step.dest_id + '.highlightStrokeWidth = function() { ' +
+                                'return ' + step.dest_id + '.strokeWidth ' + JXG.Options.sketchometry.highlightStrokeWidthOperation + '; ' +
+                                ' };'
                         }
 
                         reset_str = "";
@@ -525,202 +665,6 @@
 
                         break;
 
-                    case JXG.GENTYPE_MIRRORELEMENT:
-                    case JXG.GENTYPE_REFLECTION_ON_POINT:
-                        if (step.args.type === "polygon") {
-                            set_str = "";
-                            el = step.src_ids[step.src_ids.length - 1];
-                            for (i = 1; i < step.src_ids.length - 1; i++) {
-                                set_str +=
-                                    assign +
-                                    "mirrorelement(" +
-                                    step.src_ids[i] +
-                                    ", " +
-                                    el +
-                                    ') <<id:"' +
-                                    step.dest_sub_ids[i - 1] +
-                                    '"';
-                                if (JXG.exists(step.args.subnames)) {
-                                    set_str += ', name:"' + step.args.subnames[i - 1] + '"';
-                                } else {
-                                    set_str += ', name: ""';
-                                }
-                                set_str += ", color: '" + step.args.strokeColor + "'";
-                                set_str += ", snaptogrid: " + JXG.Options.elements.snapToGrid;
-                                set_str +=
-                                    ", snaptopoints: " +
-                                    JXG.Options.elements.snapToPoints +
-                                    ">>;\n";
-                            }
-
-                            le = step.dest_sub_ids.length / 2;
-                            set_str += assign + "polygon(";
-                            set_str += step.dest_sub_ids.slice(0, le).join();
-                            set_str +=
-                                ") <<borders: <<ids: ['" +
-                                step.dest_sub_ids.slice(le, 2 * le).join("', '") +
-                                "']";
-                            x = [];
-                            for (i = 0; i < le; i++) {
-                                x.push("''");
-                            }
-                            set_str += ", names: [" + x.join() + "]";
-                            set_str += ">>, " + attrid + " fillOpacity: ";
-                            set_str += step.args.opacity + ", name: '' ";
-                            /* set_str +=
-                             ", hasInnerPoints_Org: " + JXG.Options.polygon.hasInnerPoints; */
-                            set_str +=
-                                ", hasInnerPoints: " + JXG.Options.polygon.hasInnerPoints;
-                            if (step.args.name !== "") {
-                                set_str += ', name: "' + step.args.name + '"';
-                                set_str += ", withLabel: true";
-                            }
-                            set_str += ", fillColor: '" + step.args.fillColor + "'";
-                            set_str += ", snaptogrid: " + JXG.Options.elements.snapToGrid;
-                            set_str +=
-                                ", snaptopoints: " + JXG.Options.elements.snapToPoints + ">>; ";
-                            set_str += step.dest_id + ".hasInnerPoints = function() { " +
-                                "return !(" + step.dest_id + ".fillColor == 'transparent' || " + step.dest_id + ".fillColor == 'none' || " + step.dest_id + ".fillOpacity == 0); " +
-                                "}; "
-                        } else if (step.args.type === "line" || step.args.type === "vector") {
-                            set_str = "";
-                            el = step.src_ids[step.src_ids.length - 1];
-                            // Create two end points.
-                            for (i = 1; i < step.src_ids.length - 1; i++) {
-                                set_str +=
-                                    assign +
-                                    "mirrorelement(" +
-                                    step.src_ids[i] +
-                                    ", " +
-                                    el +
-                                    ') <<id:"' +
-                                    step.dest_sub_ids[i - 1] +
-                                    '"';
-                                if (JXG.exists(step.args.subnames)) {
-                                    set_str += ', name:"' + step.args.subnames[i - 1] + '"';
-                                } else {
-                                    set_str += ', name: ""';
-                                }
-                                set_str += ", color: '" + step.args.strokeColor + "'";
-                                set_str += ", snaptogrid: " + JXG.Options.elements.snapToGrid;
-                                set_str +=
-                                    ", snaptopoints: " +
-                                    JXG.Options.elements.snapToPoints +
-                                    ">>;\n";
-                            }
-
-                            if (step.args.type === "vector") {
-                                set_str +=
-                                    assign +
-                                    "arrow(" +
-                                    step.dest_sub_ids[0] +
-                                    "," +
-                                    step.dest_sub_ids[1] +
-                                    ") ";
-                            } else {
-                                set_str +=
-                                    assign +
-                                    "line(" +
-                                    step.dest_sub_ids[0] +
-                                    "," +
-                                    step.dest_sub_ids[1] +
-                                    ") ";
-                            }
-                            set_str += "<<";
-                            set_str += attrid;
-                            set_str += "strokeColor: '" + step.args.strokeColor + "'";
-                            set_str += ", opacity: '" + step.args.opacity + "'";
-                            set_str += ', name: "' + step.args.name + '"';
-                            set_str += ', id: "' + step.dest_id + '"';
-                            if (JXG.exists(step.args.attr)) {
-                                for (key in step.args.attr)
-                                    if (step.args.attr.hasOwnProperty(key)) {
-                                        set_str += ", " + key + ": " + step.args.attr[key] + "";
-                                    }
-                            }
-
-                            if (step.args.name !== "") {
-                                set_str += ", withLabel: true";
-                            }
-                            set_str += ">>; ";
-                        } else if (step.args.type === "circle") {
-                            set_str +=
-                                assign +
-                                "mirrorelement(" +
-                                step.src_ids[0] +
-                                "," +
-                                step.src_ids[2] +
-                                ") ";
-                            set_str += "<<";
-                            set_str += attrid;
-                            set_str += "strokeColor: '" + step.args.strokeColor + "'";
-                            set_str += ", opacity: '" + step.args.opacity + "'";
-                            set_str += ', name: "' + step.args.name + '"';
-                            set_str += ', id: "' + step.dest_id + '"';
-                            if (JXG.exists(step.args.attr)) {
-                                for (key in step.args.attr)
-                                    if (step.args.attr.hasOwnProperty(key)) {
-                                        set_str += ", " + key + ": " + step.args.attr[key] + "";
-                                    }
-                            }
-                            if (step.args.name !== "") {
-                                set_str += ", withLabel: true";
-                            }
-
-                            set_str += ', center: <<id:"' + step.dest_sub_ids[0] + '"';
-                            if (JXG.exists(step.args.subnames)) {
-                                set_str += ', name:"' + step.args.subnames[0] + '"';
-                            } else {
-                                set_str += ', name: ""';
-                            }
-                            set_str += ", color: '" + step.args.strokeColor + "'";
-                            set_str += ", snaptogrid: " + JXG.Options.elements.snapToGrid;
-                            set_str +=
-                                ", snaptopoints: " + JXG.Options.elements.snapToPoints + ">>";
-
-                            set_str += ">>; ";
-                            set_str += step.dest_id + ".hasInnerPoints = function() { " +
-                                "return !(" + step.dest_id + ".fillColor == 'transparent' || " + step.dest_id + ".fillColor == 'none' || " + step.dest_id + ".fillOpacity == 0); " +
-                                "}; "
-                        } else {
-                            set_str =
-                                assign +
-                                "mirrorelement(" +
-                                step.src_ids[0] +
-                                ", " +
-                                step.src_ids[1] +
-                                ") <<" +
-                                attrid;
-                            set_str += "fillColor: '" + step.args.fillColor + "'";
-                            if (JXG.exists(step.args.strokeColor)) {
-                                set_str += ", strokeColor: '" + step.args.strokeColor + "'";
-                                set_str += ", opacity: '" + step.args.opacity + "'";
-                            }
-                            set_str += ', id: "' + step.dest_id + '"';
-                            set_str += ', name: "' + step.args.name + '"';
-                            if (JXG.exists(step.args.attr)) {
-                                for (key in step.args.attr)
-                                    if (step.args.attr.hasOwnProperty(key)) {
-                                        set_str += ", " + key + ": " + step.args.attr[key] + "";
-                                    }
-                            }
-                            if (step.args.name !== "") {
-                                set_str += ", withLabel: true";
-                            }
-                            set_str += ">>; ";
-                        }
-
-                        reset_str = "";
-                        for (i = 0; i < step.dest_sub_ids.length; i++) {
-                            if (step.dest_sub_ids[i] !== 0) {
-                                reset_str +=
-                                    "remove(" + step.dest_sub_ids[i] + "); " + reset_str;
-                            }
-                        }
-                        reset_str += "remove(" + step.dest_id + "); " + reset_str;
-
-                        break;
-
                     case JXG.GENTYPE_TANGENT:
                         if (step.args.create_point) {
                             sub_id = step.dest_sub_ids[2];
@@ -730,15 +674,17 @@
                                 "," +
                                 pn(step.args.usrCoords[2]) +
                                 ") <<id: '";
-                            set_str += sub_id + "', fillColor: '" + step.args.fillColor + "'";
-                            if (JXG.exists(step.args.strokeColor)) {
-                                set_str += ", strokeColor: '" + step.args.strokeColor + "'";
-                            }
-                            set_str += ">>; " + sub_id + ".glide(";
+                            set_str += sub_id + "'" +
+                                getAttribsString(board.options.glider) +
+                                ">>; " +
+                                sub_id + ".glide(";
                             set_str += step.src_ids[0] + "); ";
+                            set_str += sub_id + '.isPartOfTangent = true;'
                             reset_str = "remove(" + sub_id + "); ";
                         } else {
                             sub_id = step.src_ids[0];
+                            set_str += sub_id + '.isPartOfTangent = true;'
+                            reset_str = sub_id + '.isPartOfTangent = false;'
                         }
 
                         set_str +=
@@ -753,6 +699,9 @@
                             step.dest_sub_ids[0] +
                             "', priv: true>>, point2: <<name: '";
                         set_str += "', id: '" + step.dest_sub_ids[1] + "', priv: true>> >>; ";
+                        set_str += step.dest_id + '.highlightStrokeWidth = function() { ' +
+                            'return ' + step.dest_id + '.strokeWidth ' + JXG.Options.sketchometry.highlightStrokeWidthOperation + '; ' +
+                            ' };'
                         reset_str = "remove(" + step.dest_sub_ids[0] + "); " + reset_str;
                         reset_str =
                             "remove(" +
@@ -788,6 +737,9 @@
                             attrid +
                             "name: '', point: <<id: '";
                         set_str += step.dest_sub_ids[0] + "', name: ''>> >>; ";
+                        set_str += step.dest_id + '.highlightStrokeWidth = function() { ' +
+                            'return ' + step.dest_id + '.strokeWidth ' + JXG.Options.sketchometry.highlightStrokeWidthOperation + '; ' +
+                            ' };'
                         reset_str =
                             "remove(" +
                             step.dest_id +
@@ -964,6 +916,9 @@
                                 step.dest_sub_ids[0] +
                                 ");";
                         }
+                        set_str += step.dest_id + '.highlightStrokeWidth = function() { ' +
+                            'return ' + step.dest_id + '.strokeWidth ' + JXG.Options.sketchometry.highlightStrokeWidthOperation + '; ' +
+                            ' };'
                         break;
 
                     case JXG.GENTYPE_NORMAL:
@@ -994,6 +949,9 @@
                         set_str +=
                             "name: '', point: <<id: '" + step.dest_sub_ids[0] + "', name: '";
                         set_str += "'>> >>; ";
+                        set_str += step.dest_id + '.highlightStrokeWidth = function() { ' +
+                            'return ' + step.dest_id + '.strokeWidth ' + JXG.Options.sketchometry.highlightStrokeWidthOperation + '; ' +
+                            ' };'
                         reset_str =
                             "remove(" +
                             step.dest_id +
@@ -1015,6 +973,9 @@
                         set_str +=
                             "name: '', point: <<id: '" + step.dest_sub_ids[0] + "', name: '";
                         set_str += "'>> >>; ";
+                        set_str += step.dest_id + '.highlightStrokeWidth = function() { ' +
+                            'return ' + step.dest_id + '.strokeWidth ' + JXG.Options.sketchometry.highlightStrokeWidthOperation + '; ' +
+                            ' };'
                         reset_str =
                             "remove(" +
                             step.dest_id +
@@ -1027,24 +988,23 @@
                     case JXG.GENTYPE_POINT:
                         set_str =
                             assign +
-                            "point(" +
-                            pn(step.args.usrCoords[1]) +
-                            ", " +
-                            pn(step.args.usrCoords[2]);
+                            "point(" + pn(step.args.usrCoords[1]) + ", " + pn(step.args.usrCoords[2]) + ")";
                         set_str +=
-                            ")" +
                             (options.useSymbols
                                 ? ""
-                                : " <<id: '" +
-                                step.dest_id +
-                                "'" +
-                                ", snaptogrid: " +
-                                JXG.Options.elements.snapToGrid +
-                                ", snaptopoints: " +
-                                JXG.Options.elements.snapToPoints +
+                                : " <<id: '" + step.dest_id + "'" +
+                                ", snapToGridIntern: " + JXG.Options.elements.snapToGrid +
+                                ", snapToPointsIntern: " + JXG.Options.elements.snapToPoints +
                                 (JXG.exists(step.args.name) ? ", name: '" + step.args.name + "'" : "") +
                                 ">>") +
                             "; ";
+                        set_str += step.dest_id + ".snapToGrid = function() { " +
+                            "return sketchoAttribute('snapToGridGlobal') ? sketchoAttribute('snapToGridGlobal') : " + step.dest_id + ".snapToGridIntern; " +
+                            "}; ";
+                        set_str += step.dest_id + ".snapToPoints = function() { " +
+                            "return sketchoAttribute('snapToPointsGlobal') ? sketchoAttribute('snapToPointsGlobal') : " + step.dest_id + ".snapToPointsIntern; " +
+                            "}; ";
+                        set_str += step.dest_id + ".moveTo([" + pn(step.args.usrCoords[1]) + ", " + pn(step.args.usrCoords[2]) + "]); ";
 
                         reset_str = "remove(" + step.dest_id + "); ";
                         break;
@@ -1053,39 +1013,37 @@
                         if (options.useGlider) {
                             set_str =
                                 assign +
-                                "glider(" +
-                                pn(step.args.usrCoords[1]) +
-                                ", " +
-                                pn(step.args.usrCoords[2]);
-                            set_str += ", " + step.src_ids[0] + ")";
+                                "glider(" + pn(step.args.usrCoords[1]) + ", " + pn(step.args.usrCoords[2]) + ", " + step.src_ids[0] + ")";
                             set_str +=
                                 (options.useSymbols
                                     ? ""
-                                    : "<<id: '" +
-                                    step.dest_id +
-                                    "'" +
-                                    ", snaptogrid: false, snaptopoints: false" +
-                                    ", snaptopoints: " +
-                                    JXG.Options.elements.snapToPoints +
+                                    : "<<id: '" + step.dest_id + "'" +
+                                    ", snapToGrid: false" +
+                                    ", snapToPointsIntern: " + JXG.Options.elements.snapToPoints +
                                     ">>") + ";";
+                            set_str += step.dest_id + ".snapToPoints = function() { " +
+                                "return sketchoAttribute('snapToPointsGlobal') ? sketchoAttribute('snapToPointsGlobal') : " + step.dest_id + ".snapToPointsIntern; " +
+                                "}; ";
+                            set_str += step.dest_id + ".moveTo([" + pn(step.args.usrCoords[1]) + ", " + pn(step.args.usrCoords[2]) + "]); ";
                         } else {
                             set_str =
                                 assign +
-                                "point(" +
-                                pn(step.args.usrCoords[1]) +
-                                ", " +
-                                pn(step.args.usrCoords[2]);
+                                "point(" + pn(step.args.usrCoords[1]) + ", " + pn(step.args.usrCoords[2]) + ")";
                             set_str +=
-                                ") <<" +
+                                " <<" +
                                 attrid +
-                                "fillColor: '" +
-                                JXG.Options.glider.fillColor +
+                                "fillColor: '" + JXG.Options.glider.fillColor +
                                 "'";
                             set_str +=
-                                ", strokeColor: '" + JXG.Options.glider.strokeColor + "'";
-                            set_str += ", snapToGrid: false, snapToPoints: false";
-                            set_str += ">>; " + step.dest_id;
-                            set_str += ".glide(" + step.src_ids[0] + "); ";
+                                ", strokeColor: '" + JXG.Options.glider.strokeColor + "'" +
+                                ", snapToGrid: false" +
+                                ", snapToPointsIntern: " + JXG.Options.elements.snapToPoints;
+                            set_str += ">>; "
+                            set_str += step.dest_id + ".glide(" + step.src_ids[0] + "); ";
+                            set_str += step.dest_id + ".snapToPoints = function() { " +
+                                "return sketchoAttribute('snapToPointsGlobal') ? sketchoAttribute('snapToPointsGlobal') : " + step.dest_id + ".snapToPointsIntern; " +
+                                "}; ";
+                            set_str += step.dest_id + ".moveTo([" + pn(step.args.usrCoords[1]) + ", " + pn(step.args.usrCoords[2]) + "]); ";
                         }
                         set_str += step.dest_id + ".onPolygon = " + !!step.args.onPolygon + ";";
 
@@ -1195,53 +1153,56 @@
 
                         if (
                             step.args.create_by_additional_point ||
-                            /* backwards compatibility */ step.args.create_point
+                            step.args.create_point // backwards compatibility
                         ) {
                             if (
                                 !JXG.exists(step.args.center_existing) ||
                                 !step.args.center_existing
                             ) {
                                 set_str =
-                                    "point(" +
-                                    pn(step.args.usrCoords[1]) +
-                                    ", " +
-                                    pn(step.args.usrCoords[2]) +
-                                    ") ";
+                                    "point(" + pn(step.args.usrCoords[1]) + ", " + pn(step.args.usrCoords[2]) + ") ";
                                 set_str +=
-                                    "<<id: '" +
-                                    step.dest_sub_ids[0] +
-                                    "', " +
+                                    "<<id: '" + step.dest_sub_ids[0] + "', " +
                                     withName +
-                                    " visible: true, priv: false>>; ";
+                                    " snapToGridIntern: " + JXG.Options.elements.snapToGrid +
+                                    ", snapToPointsIntern: " + JXG.Options.elements.snapToPoints +
+                                    ", visible: true, priv: false>>; ";
+                                set_str += step.dest_sub_ids[0] + ".snapToGrid = function() { " +
+                                    "return sketchoAttribute('snapToGridGlobal') ? sketchoAttribute('snapToGridGlobal') : " + step.dest_sub_ids[0] + ".snapToGridIntern; " +
+                                    "}; ";
+                                set_str += step.dest_sub_ids[0] + ".snapToPoints = function() { " +
+                                    "return sketchoAttribute('snapToPointsGlobal') ? sketchoAttribute('snapToPointsGlobal') : " + step.dest_sub_ids[0] + ".snapToPointsIntern; " +
+                                    "}; ";
+                                set_str += step.dest_sub_ids[0] + ".moveTo([" + pn(step.args.usrCoords[1]) + ", " + pn(step.args.usrCoords[2]) + "]); ";
                             }
 
                             set_str +=
                                 assign +
                                 "circle(" +
-                                step.dest_sub_ids[0] +
+                                (!JXG.exists(step.args.center_existing) || !step.args.center_existing ? step.dest_sub_ids[0] : step.src_ids[0]) +
                                 ", " +
-                                step.src_ids[0] +
+                                step.src_ids[1] +
                                 ") <<" +
                                 attrid;
                             set_str +=
-                                "name: '', fillOpacity: " +
-                                JXG.Options.opacityLevel +
-                                ", snaptogrid: " +
-                                JXG.Options.elements.snapToGrid +
-                                ", snaptopoints: " +
-                                JXG.Options.elements.snapToPoints +
+                                "name: ''" +
+                                ", creationGesture: 'center-point'" +
+                                ", creationCenterExisting: " + (JXG.exists(step.args.center_existing) && step.args.center_existing) +
+                                ", fillOpacity: " + JXG.Options.opacityLevel +
                                 ", hasInnerPoints: true" +
                                 ">>; ";
                             set_str += step.dest_id + ".hasInnerPoints = function() { " +
                                 "return !(" + step.dest_id + ".fillColor == 'transparent' || " + step.dest_id + ".fillColor == 'none' || " + step.dest_id + ".fillOpacity == 0); " +
                                 "}; "
+                            set_str += step.dest_id + '.highlightStrokeWidth = function() { ' +
+                                'return ' + step.dest_id + '.strokeWidth ' + JXG.Options.sketchometry.highlightStrokeWidthOperation + '; ' +
+                                ' };'
 
-                            reset_str =
-                                "remove(" +
-                                step.dest_id +
-                                "); remove(" +
-                                step.dest_sub_ids[0] +
-                                "); ";
+                            reset_str = "remove(" + step.dest_id + "); ";
+                            if (!JXG.exists(step.args.center_existing) || !step.args.center_existing) {
+                                reset_str += "remove(" + step.dest_sub_ids[0] + "); ";
+                            }
+
                         } else if (step.args.create_by_radius) {
                             set_str = "";
                             if (
@@ -1250,71 +1211,61 @@
                             ) {
                                 if (JXG.exists(step.args.x) && JXG.exists(step.args.y))
                                     set_str +=
-                                        "point(" +
-                                        pn(step.args.x) +
-                                        ", " +
-                                        pn(step.args.y) +
-                                        ") ";
+                                        "point(" + pn(step.args.x) + ", " + pn(step.args.y) + ") ";
                                 else
                                     set_str +=
-                                        "point(" +
-                                        pn(step.args.usrCoords[1]) +
-                                        ", " +
-                                        pn(step.args.usrCoords[2]) +
-                                        ") ";
+                                        "point(" + pn(step.args.usrCoords[1]) + ", " + pn(step.args.usrCoords[2]) + ") ";
                                 set_str +=
                                     "<<id: '" +
                                     step.dest_sub_ids[0] +
                                     "', " +
                                     withName +
-                                    " visible: true, priv: false>>; ";
+                                    " snapToGridIntern: " + JXG.Options.elements.snapToGrid +
+                                    ", snapToPointsIntern: " + JXG.Options.elements.snapToPoints +
+                                    ", visible: true, priv: false>>; ";
+                                set_str += step.dest_sub_ids[0] + ".snapToGrid = function() { " +
+                                    "return sketchoAttribute('snapToGridGlobal') ? sketchoAttribute('snapToGridGlobal') : " + step.dest_sub_ids[0] + ".snapToGridIntern; " +
+                                    "}; ";
+                                set_str += step.dest_sub_ids[0] + ".snapToPoints = function() { " +
+                                    "return sketchoAttribute('snapToPointsGlobal') ? sketchoAttribute('snapToPointsGlobal') : " + step.dest_sub_ids[0] + ".snapToPointsIntern; " +
+                                    "}; ";
+                                if (JXG.exists(step.args.x) && JXG.exists(step.args.y))
+                                    set_str += step.dest_sub_ids[0] + ".moveTo([" + pn(step.args.x) + ", " + pn(step.args.y) + "]); ";
+                                else
+                                    set_str += step.dest_sub_ids[0] + ".moveTo([" + pn(step.args.usrCoords[1]) + ", " + pn(step.args.usrCoords[2]) + "]); ";
                             }
 
-                            if (JXG.exists(step.args.r))
-                                set_str +=
-                                    assign +
-                                    "circle('" +
-                                    step.dest_sub_ids[0] +
-                                    "', " +
-                                    pn(step.args.r) +
-                                    ") <<" +
-                                    attrid;
-                            else
-                                set_str +=
-                                    assign +
-                                    "circle('" +
-                                    step.dest_sub_ids[0] +
-                                    "', " +
-                                    pn(step.args.radius) +
-                                    ") <<" +
-                                    attrid;
                             set_str +=
-                                "name: '', fillOpacity: " +
-                                JXG.Options.opacityLevel +
-                                ", snaptogrid: " +
-                                JXG.Options.elements.snapToGrid +
-                                ", snaptopoints: " +
-                                JXG.Options.elements.snapToPoints +
+                                assign +
+                                "circle('" +
+                                (!JXG.exists(step.args.center_existing) || !step.args.center_existing ? step.dest_sub_ids[0] : step.src_ids[0]) +
+                                "', " +
+                                pn(JXG.exists(step.args.r) ? step.args.r : step.args.radius) +
+                                ") <<" +
+                                attrid;
+                            set_str +=
+                                " name: ''" +
+                                ", creationGesture: 'free'" +
+                                ", creationCenterExisting: " + (JXG.exists(step.args.center_existing) && step.args.center_existing) +
+                                ", fillOpacity: " + JXG.Options.opacityLevel +
                                 ", hasInnerPoints: true" +
                                 ">>; ";
                             set_str += step.dest_id + ".hasInnerPoints = function() { " +
                                 "return !(" + step.dest_id + ".fillColor == 'transparent' || " + step.dest_id + ".fillColor == 'none' || " + step.dest_id + ".fillOpacity == 0); " +
                                 "}; "
+                            set_str += step.dest_id + '.highlightStrokeWidth = function() { ' +
+                                'return ' + step.dest_id + '.strokeWidth ' + JXG.Options.sketchometry.highlightStrokeWidthOperation + '; ' +
+                                ' };'
 
-                            reset_str =
-                                "remove(" +
-                                step.dest_id +
-                                "); remove(" +
-                                step.dest_sub_ids[0] +
-                                "); ";
+                            reset_str = "remove(" + step.dest_id + "); ";
+                            if (!JXG.exists(step.args.center_existing) || !step.args.center_existing) {
+                                reset_str += "remove(" + step.dest_sub_ids[0] + "); ";
+                            }
+
                         } else {
                             if (step.src_ids.length === 2) {
                                 set_str =
-                                    "midpoint(" +
-                                    step.src_ids[0] +
-                                    ", " +
-                                    step.src_ids[1] +
-                                    ")";
+                                    "midpoint(" + step.src_ids[0] + ", " + step.src_ids[1] + ")";
                                 set_str +=
                                     "<<id: '" +
                                     step.dest_sub_ids[0] +
@@ -1331,20 +1282,23 @@
                                     ") <<" +
                                     attrid;
                                 set_str +=
-                                    "name: '', fillOpacity: " +
-                                    JXG.Options.opacityLevel +
-                                    ", snaptogrid: " +
-                                    JXG.Options.elements.snapToGrid +
-                                    ", snaptopoints: " +
-                                    JXG.Options.elements.snapToPoints +
-                                    ">>;";
+                                    "name: ''" +
+                                    ", creationGesture: 'circum-2-points'" +
+                                    ", creationCenterExisting: false" +
+                                    ", fillOpacity: " + JXG.Options.opacityLevel +
+                                    ", hasInnerPoints: true" +
+                                    ">>; ";
+                                set_str += step.dest_id + ".hasInnerPoints = function() { " +
+                                    "return !(" + step.dest_id + ".fillColor == 'transparent' || " + step.dest_id + ".fillColor == 'none' || " + step.dest_id + ".fillOpacity == 0); " +
+                                    "}; "
+                                set_str += step.dest_id + '.highlightStrokeWidth = function() { ' +
+                                    'return ' + step.dest_id + '.strokeWidth ' + JXG.Options.sketchometry.highlightStrokeWidthOperation + '; ' +
+                                    ' };'
 
-                                reset_str =
-                                    "remove(" +
-                                    step.dest_id +
-                                    "); remove(" +
-                                    step.dest_sub_ids[0] +
-                                    "); ";
+                                reset_str = "remove(" + step.dest_id + "); ";
+                                if (!JXG.exists(step.args.center_existing) || !step.args.center_existing) {
+                                    reset_str += "remove(" + step.dest_sub_ids[0] + "); ";
+                                }
                             } else {
                                 set_str =
                                     assign +
@@ -1355,27 +1309,30 @@
                                     ", " +
                                     step.src_ids[2];
                                 set_str +=
-                                    ") <<center: <<id: '" +
-                                    step.dest_sub_ids[0] +
-                                    "', " +
-                                    withName;
+                                    ") <<center: <<id: '" + step.dest_sub_ids[0] + "', " +
+                                    withName +
+                                    " visible: true";
+                                set_str += getAttribsString(board.options.sketchometry.circle3pointsCenter);
                                 set_str +=
-                                    " visible: true>>, " +
+                                    ">>, " +
                                     attrid +
-                                    "name: '', fillOpacity: " +
-                                    JXG.Options.opacityLevel +
-                                    ", snaptogrid: " +
-                                    JXG.Options.elements.snapToGrid +
-                                    ", snaptopoints: " +
-                                    JXG.Options.elements.snapToPoints +
+                                    "name: ''" +
+                                    ", creationGesture: 'circum-3-points'" +
+                                    ", creationCenterExisting: false" +
+                                    ", fillOpacity: " + JXG.Options.opacityLevel +
+                                    ", hasInnerPoints: true" +
                                     ">>; ";
+                                set_str += step.dest_id + ".hasInnerPoints = function() { " +
+                                    "return !(" + step.dest_id + ".fillColor == 'transparent' || " + step.dest_id + ".fillColor == 'none' || " + step.dest_id + ".fillOpacity == 0); " +
+                                    "}; "
+                                set_str += step.dest_id + '.highlightStrokeWidth = function() { ' +
+                                    'return ' + step.dest_id + '.strokeWidth ' + JXG.Options.sketchometry.highlightStrokeWidthOperation + '; ' +
+                                    ' };'
 
-                                reset_str =
-                                    "remove(" +
-                                    step.dest_id +
-                                    "); remove(" +
-                                    step.dest_sub_ids[0] +
-                                    "); ";
+                                reset_str = "remove(" + step.dest_id + "); ";
+                                if (!JXG.exists(step.args.center_existing) || !step.args.center_existing) {
+                                    reset_str += "remove(" + step.dest_sub_ids[0] + "); ";
+                                }
                             }
                         }
                         break;
@@ -1387,20 +1344,33 @@
                     case JXG.GENTYPE_CIRCLE2POINTS:
                         if (step.args.create_two_points) {
                             set_str =
-                                "point(" +
-                                pn(step.args.x1) +
-                                ", " +
-                                pn(step.args.y1) +
-                                ") <<id: '" +
-                                step.dest_sub_ids[0];
-                            set_str += "'>>; ";
+                                "point(" + pn(step.args.x1) + ", " + pn(step.args.y1) + ")" +
+                                " <<id: '" + step.dest_sub_ids[0] + "'" +
+                                ", snapToGridIntern: " + JXG.Options.elements.snapToGrid +
+                                ", snapToPointsIntern: " + JXG.Options.elements.snapToPoints +
+                                ">>; ";
+                            set_str += step.dest_sub_ids[0] + ".snapToGrid = function() { " +
+                                "return sketchoAttribute('snapToGridGlobal') ? sketchoAttribute('snapToGridGlobal') : " + step.dest_sub_ids[0] + ".snapToGridIntern; " +
+                                "}; ";
+                            set_str += step.dest_sub_ids[0] + ".snapToPoints = function() { " +
+                                "return sketchoAttribute('snapToPointsGlobal') ? sketchoAttribute('snapToPointsGlobal') : " + step.dest_sub_ids[0] + ".snapToPointsIntern; " +
+                                "}; ";
+                            set_str += step.dest_sub_ids[0] + ".moveTo([" + pn(step.args.x1) + ", " + pn(step.args.y1) + "]); ";
+
                             set_str +=
-                                "point(" +
-                                pn(step.args.x2) +
-                                ", " +
-                                pn(step.args.y2) +
-                                ") <<id: '";
-                            set_str += step.dest_sub_ids[1] + "'>>; ";
+                                "point(" + pn(step.args.x2) + ", " + pn(step.args.y2) + ")" +
+                                " <<id: '" + step.dest_sub_ids[1] + "'" +
+                                ", snapToGridIntern: " + JXG.Options.elements.snapToGrid +
+                                ", snapToPointsIntern: " + JXG.Options.elements.snapToPoints +
+                                ">>; ";
+                            set_str += step.dest_sub_ids[1] + ".snapToGrid = function() { " +
+                                "return sketchoAttribute('snapToGridGlobal') ? sketchoAttribute('snapToGridGlobal') : " + step.dest_sub_ids[1] + ".snapToGridIntern; " +
+                                "}; ";
+                            set_str += step.dest_sub_ids[1] + ".snapToPoints = function() { " +
+                                "return sketchoAttribute('snapToPointsGlobal') ? sketchoAttribute('snapToPointsGlobal') : " + step.dest_sub_ids[1] + ".snapToPointsIntern; " +
+                                "}; ";
+                            set_str += step.dest_sub_ids[1] + ".moveTo([" + pn(step.args.x2) + ", " + pn(step.args.y2) + "]); ";
+
                             set_str +=
                                 assign +
                                 "circle(" +
@@ -1410,12 +1380,7 @@
                                 ") <<" +
                                 attrid;
                             set_str +=
-                                "name: '', fillOpacity: " +
-                                JXG.Options.opacityLevel +
-                                ", snaptogrid: " +
-                                JXG.Options.elements.snapToGrid +
-                                ", snaptopoints: " +
-                                JXG.Options.elements.snapToPoints +
+                                "name: '', fillOpacity: " + JXG.Options.opacityLevel +
                                 ">>; ";
 
                             reset_str =
@@ -1427,13 +1392,19 @@
                             reset_str += step.dest_sub_ids[0] + "); ";
                         } else if (step.args.create_point) {
                             set_str =
-                                "point(" +
-                                pn(step.args.x) +
-                                ", " +
-                                pn(step.args.y) +
-                                ") <<id: '" +
-                                step.dest_sub_ids[0];
-                            set_str += "'>>; ";
+                                "point(" + pn(step.args.x) + ", " + pn(step.args.y) + ")" +
+                                " <<id: '" + step.dest_sub_ids[0] + "'" +
+                                ", snapToGridIntern: " + JXG.Options.elements.snapToGrid +
+                                ", snapToPointsIntern: " + JXG.Options.elements.snapToPoints +
+                                ">>; ";
+                            set_str += step.dest_sub_ids[0] + ".snapToGrid = function() { " +
+                                "return sketchoAttribute('snapToGridGlobal') ? sketchoAttribute('snapToGridGlobal') : " + step.dest_sub_ids[0] + ".snapToGridIntern; " +
+                                "}; ";
+                            set_str += step.dest_sub_ids[0] + ".snapToPoints = function() { " +
+                                "return sketchoAttribute('snapToPointsGlobal') ? sketchoAttribute('snapToPointsGlobal') : " + step.dest_sub_ids[0] + ".snapToPointsIntern; " +
+                                "}; ";
+                            set_str += step.dest_sub_ids[0] + ".moveTo([" + pn(step.args.x) + ", " + pn(step.args.y) + "]); ";
+
                             set_str +=
                                 assign +
                                 "circle(" +
@@ -1443,12 +1414,7 @@
                                 ") <<" +
                                 attrid;
                             set_str +=
-                                "name: '', fillOpacity: " +
-                                JXG.Options.opacityLevel +
-                                ", snaptogrid: " +
-                                JXG.Options.elements.snapToGrid +
-                                ", snaptopoints: " +
-                                JXG.Options.elements.snapToPoints +
+                                "name: '', fillOpacity: " + JXG.Options.opacityLevel +
                                 ">>; ";
 
                             reset_str =
@@ -1467,12 +1433,7 @@
                                 ") <<" +
                                 attrid;
                             set_str +=
-                                "name: '', fillOpacity: " +
-                                JXG.Options.opacityLevel +
-                                ", snaptogrid: " +
-                                JXG.Options.elements.snapToGrid +
-                                ", snaptopoints: " +
-                                JXG.Options.elements.snapToPoints +
+                                "name: '', fillOpacity: " + JXG.Options.opacityLevel +
                                 ">>; ";
 
                             reset_str = "remove(" + step.dest_id + "); ";
@@ -1486,12 +1447,7 @@
                                 ") <<" +
                                 attrid;
                             set_str +=
-                                "name: '', fillOpacity: " +
-                                JXG.Options.opacityLevel +
-                                ", snaptogrid: " +
-                                JXG.Options.elements.snapToGrid +
-                                ", snaptopoints: " +
-                                JXG.Options.elements.snapToPoints +
+                                "name: '', fillOpacity: " + JXG.Options.opacityLevel +
                                 ">>; ";
 
                             reset_str = "remove(" + step.dest_id + "); ";
@@ -1606,107 +1562,94 @@
                                 " <<" +
                                 str1 +
                                 attrid +
-                                ", name: '', snaptogrid: " +
-                                JXG.Options.elements.snapToGrid +
-                                ", snaptopoints: " +
-                                JXG.Options.elements.snapToPoints +
-                                ">>; ";
+                                ", name: ''>>; ";
                         } else {
                             set_str +=
-                                " <<name: '', snaptogrid: " +
-                                JXG.Options.elements.snapToGrid +
-                                ", snaptopoints: " +
-                                JXG.Options.elements.snapToPoints +
-                                ">>; ";
+                                " <<name: ''>>; ";
                         }
+                        set_str += step.dest_id + '.highlightStrokeWidth = function() { ' +
+                            'return ' + step.dest_id + '.strokeWidth ' + JXG.Options.sketchometry.highlightStrokeWidthOperation + '; ' +
+                            ' };'
 
                         reset_str = "remove(" + step.dest_id + "); " + reset_str;
-
                         break;
 
                     case JXG.GENTYPE_VECTOR:
                         k = 0;
                         j = 0;
 
+                        set_str = "";
+                        reset_str = "";
+
                         if (step.args.create_point1) {
                             pid1 = step.dest_sub_ids[k];
-                            k += 1;
-                            str1 = [];
-                            for (i = 0; i < step.args.p1.length; i++) {
-                                str1[i] = pn(step.args.p1[i]);
-                            }
+                            k++;
+                            str = [];
+                            for (i = 0; i < step.args.p1.length; i++)
+                                str[i] = pn(step.args.p1[i]);
 
-                            set_str =
-                                "point(" +
-                                str1.join(", ") +
-                                ") <<id: '" +
-                                pid1 +
-                                "', name: '', visible: true, ";
                             set_str +=
-                                "snaptogrid: " +
-                                JXG.Options.elements.snapToGrid +
-                                ", snaptopoints: false, priv: false>>; ";
-                            reset_str = "remove(" + pid1 + "); ";
+                                "point(" + str.join(", ") + ") <<id: '" + pid1 + "', name: ''" +
+                                ", visible: true" +
+                                ", snapToGridIntern: " + JXG.Options.elements.snapToGrid +
+                                ", snapToPointsIntern: " + JXG.Options.elements.snapToPoints +
+                                getAttribsString(board.options.sketchometry.vectorBasepoint) +
+                                ", priv: false>>; ";
+                            set_str += pid1 + '.isPartOfVector = true;'
+                            set_str += pid1 + ".snapToGrid = function() { " +
+                                "return sketchoAttribute('snapToGridGlobal') ? sketchoAttribute('snapToGridGlobal') : " + pid1 + ".snapToGridIntern; " +
+                                "}; ";
+                            set_str += pid1 + ".snapToPoints = function() { " +
+                                "return sketchoAttribute('snapToPointsGlobal') ? sketchoAttribute('snapToPointsGlobal') : " + pid1 + ".snapToPointsIntern; " +
+                                "}; ";
+                            set_str += pid1 + ".moveTo([" + str.join(", ") + "]); ";
+
+                            reset_str += "remove(" + pid1 + "); ";
                         } else {
                             pid1 = step.src_ids[j];
                             j += 1;
                         }
 
                         if (step.args.create_point2) {
-                            pid2 = step.dest_sub_ids[k++];
-                            str1 = [];
-                            for (i = 0; i < step.args.p2.length; i++) {
-                                str1[i] = pn(step.args.p2[i]);
-                            }
+                            pid2 = step.dest_sub_ids[k];
+                            k++;
+                            str = [];
+                            for (i = 0; i < step.args.p2.length; i++)
+                                str[i] = pn(step.args.p2[i]);
 
                             set_str +=
-                                "point(" +
-                                str1.join(", ") +
-                                ") <<id: '" +
-                                pid2 +
-                                "', name: '', visible: true, ";
-                            set_str += "layer: " + JXG.Options.layer.line + ", opacity: 0.2, ";
-                            set_str +=
-                                "snaptogrid: " +
-                                JXG.Options.elements.snapToGrid +
-                                ", snaptopoints: false, priv: false>>; ";
-                            reset_str = "remove(" + pid2 + "); " + reset_str;
+                                "point(" + str.join(", ") + ") <<id: '" + pid2 + "', name: ''" +
+                                ", visible: true" +
+                                ", snapToGridIntern: " + JXG.Options.elements.snapToGrid +
+                                ", snapToPointsIntern: " + JXG.Options.elements.snapToPoints +
+                                getAttribsString(board.options.sketchometry.vectorLacepoint) +
+                                ", priv: false>>; ";
+                            set_str += pid2 + '.isPartOfVector = true;'
+                            set_str += pid2 + ".snapToGrid = function() { " +
+                                "return sketchoAttribute('snapToGridGlobal') ? sketchoAttribute('snapToGridGlobal') : " + pid1 + ".snapToGridIntern; " +
+                                "}; ";
+                            set_str += pid2 + ".snapToPoints = function() { " +
+                                "return sketchoAttribute('snapToPointsGlobal') ? sketchoAttribute('snapToPointsGlobal') : " + pid1 + ".snapToPointsIntern; " +
+                                "}; ";
+                            set_str += pid2 + ".moveTo([" + str.join(", ") + "]); ";
+
+                            reset_str += "remove(" + pid2 + "); ";
                         } else {
                             pid2 = step.src_ids[j];
                             j += 1;
                         }
 
-                        str1 = "";
-                        // the line's parents
-                        str2 = pid1 + ", " + pid2;
-                        str = "arrow";
-
                         // this is a corner case, we have to get rid of the ',' at the end
                         // simple solution: rebuild attrid
-                        if (!options.useSymbols) {
-                            attrid = "id: '" + step.dest_id + "'";
-                        }
-
-                        set_str += assign + str + "(" + str2 + ")";
-
-                        if (str1.length + attrid.length > 0) {
-                            set_str +=
-                                " <<" +
-                                str1 +
-                                attrid +
-                                ", name: '', strokeColor: 'black', snaptogrid: " +
-                                JXG.Options.elements.snapToGrid +
-                                ", snaptopoints: " +
-                                JXG.Options.elements.snapToPoints +
-                                ">>; ";
-                        } else {
-                            set_str +=
-                                " <<name: '', strokeColor: 'black', snaptogrid: " +
-                                JXG.Options.elements.snapToGrid +
-                                ", snaptopoints: " +
-                                JXG.Options.elements.snapToPoints +
-                                ">>; ";
-                        }
+                        if (!options.useSymbols) attrid = "id: '" + step.dest_id + "'";
+                        set_str += assign + "arrow(" + pid1 + ", " + pid2 + ") <<";
+                        if (attrid.length > 0)
+                            set_str += attrid + ", ";
+                        set_str += "name: '' " +
+                            ">>; ";
+                        set_str += step.dest_id + '.highlightStrokeWidth = function() { ' +
+                            'return ' + step.dest_id + '.strokeWidth ' + JXG.Options.sketchometry.highlightStrokeWidthOperation + '; ' +
+                            ' };'
 
                         reset_str = "remove(" + step.dest_id + "); " + reset_str;
 
@@ -1716,16 +1659,18 @@
                         for (i = 0; i < step.args.create_point.length; i++) {
                             if (step.args.create_point[i]) {
                                 set_str +=
-                                    "point(" + pn(step.args.coords[i].usrCoords[1]) + ", ";
-                                set_str +=
-                                    pn(step.args.coords[i].usrCoords[2]) +
-                                    ") <<id: '" +
-                                    step.dest_sub_ids[i];
-                                set_str += "', snaptogrid: " + JXG.Options.elements.snapToGrid;
-                                set_str +=
-                                    ", snaptopoints: " +
-                                    JXG.Options.elements.snapToPoints +
+                                    "point(" + pn(step.args.coords[i].usrCoords[1]) + ", " + pn(step.args.coords[i].usrCoords[2]) + ")" +
+                                    " <<id: '" + step.dest_sub_ids[i] + "'" +
+                                    ", snapToGridIntern: " + JXG.Options.elements.snapToGrid +
+                                    ", snapToPointsIntern: " + JXG.Options.elements.snapToPoints +
                                     ">>; ";
+                                set_str += step.dest_sub_ids[i] + ".snapToGrid = function() { " +
+                                    "return sketchoAttribute('snapToGridGlobal') ? sketchoAttribute('snapToGridGlobal') : " + step.dest_sub_ids[i] + ".snapToGridIntern; " +
+                                    "}; ";
+                                set_str += step.dest_sub_ids[i] + ".snapToPoints = function() { " +
+                                    "return sketchoAttribute('snapToPointsGlobal') ? sketchoAttribute('snapToPointsGlobal') : " + step.dest_sub_ids[i] + ".snapToPointsIntern; " +
+                                    "}; ";
+                                set_str += step.dest_sub_ids[i] + ".moveTo([" + pn(step.args.coords[i].usrCoords[1]) + ", " + pn(step.args.coords[i].usrCoords[2]) + "]); ";
                             }
                         }
 
@@ -1760,21 +1705,20 @@
 
                         set_str +=
                             ") <<borders: <<ids: ['" +
-                            step.dest_sub_ids[3] +
-                            "', '" +
-                            step.dest_sub_ids[4] +
-                            "', '" +
+                            step.dest_sub_ids[3] + "', '" +
+                            step.dest_sub_ids[4] + "', '" +
                             step.dest_sub_ids[5] +
                             "']";
                         set_str += ", names: ['', '', '']";
                         set_str += ">>, " + attrid + " fillOpacity: ";
                         set_str += JXG.Options.opacityLevel + ", name: '' ";
-                        /* set_str +=
-                         ", hasInnerPoints_Org: " + JXG.Options.polygon.hasInnerPoints; */
-                        set_str += ", hasInnerPoints: " + JXG.Options.polygon.hasInnerPoints;
-                        set_str += ", snaptogrid: " + JXG.Options.elements.snapToGrid;
-                        set_str +=
-                            ", snaptopoints: " + JXG.Options.elements.snapToPoints + ">>; ";
+                        set_str += ", hasInnerPoints: " + JXG.Options.polygon.hasInnerPoints +
+                            ">>; ";
+                        for (i = 3; i < 6; i++) {
+                            set_str += step.dest_sub_ids[i] + '.highlightStrokeWidth = function() { ' +
+                                'return ' + step.dest_sub_ids[i] + '.strokeWidth ' + JXG.Options.sketchometry.highlightStrokeWidthOperation + '; ' +
+                                ' };'
+                        }
                         set_str += step.dest_id + ".hasInnerPoints = function() { " +
                             "return !(" + step.dest_id + ".fillColor == 'transparent' || " + step.dest_id + ".fillColor == 'none' || " + step.dest_id + ".fillOpacity == 0); " +
                             "}; "
@@ -1784,16 +1728,18 @@
                         for (i = 0; i < step.args.create_point.length; i++) {
                             if (step.args.create_point[i]) {
                                 set_str +=
-                                    "point(" + pn(step.args.coords[i].usrCoords[1]) + ", ";
-                                set_str +=
-                                    pn(step.args.coords[i].usrCoords[2]) +
-                                    ") <<id: '" +
-                                    step.dest_sub_ids[i];
-                                set_str += "', snaptogrid: " + JXG.Options.elements.snapToGrid;
-                                set_str +=
-                                    ", snaptopoints: " +
-                                    JXG.Options.elements.snapToPoints +
+                                    "point(" + pn(step.args.coords[i].usrCoords[1]) + ", " + pn(step.args.coords[i].usrCoords[2]) + ")" +
+                                    " <<id: '" + step.dest_sub_ids[i] + "'" +
+                                    ", snapToGridIntern: " + JXG.Options.elements.snapToGrid +
+                                    ", snapToPointsIntern: " + JXG.Options.elements.snapToPoints +
                                     ">>; ";
+                                set_str += step.dest_sub_ids[i] + ".snapToGrid = function() { " +
+                                    "return sketchoAttribute('snapToGridGlobal') ? sketchoAttribute('snapToGridGlobal') : " + step.dest_sub_ids[i] + ".snapToGridIntern; " +
+                                    "}; ";
+                                set_str += step.dest_sub_ids[i] + ".snapToPoints = function() { " +
+                                    "return sketchoAttribute('snapToPointsGlobal') ? sketchoAttribute('snapToPointsGlobal') : " + step.dest_sub_ids[i] + ".snapToPointsIntern; " +
+                                    "}; ";
+                                set_str += step.dest_sub_ids[i] + ".moveTo([" + pn(step.args.coords[i].usrCoords[1]) + ", " + pn(step.args.coords[i].usrCoords[2]) + "]); ";
                             }
                         }
 
@@ -1817,24 +1763,24 @@
 
                         set_str +=
                             ") <<borders: <<ids: [ '" +
-                            step.dest_sub_ids[4] +
-                            "', '" +
-                            step.dest_sub_ids[5];
-                        set_str += "', '";
-                        set_str += step.dest_sub_ids[6] + "', '" + step.dest_sub_ids[7] + "' ]";
+                            step.dest_sub_ids[4] + "', '" +
+                            step.dest_sub_ids[5] + "', '" +
+                            step.dest_sub_ids[6] + "', '" +
+                            step.dest_sub_ids[7] +
+                            "' ]";
                         set_str += ", names: ['', '', '', '']";
                         set_str += ">>, " + attrid;
-                        set_str += " fillOpacity: ";
-                        set_str += JXG.Options.opacityLevel + ", name: '' ";
-                        /* set_str +=
-                         ", hasInnerPoints_Org: " + JXG.Options.polygon.hasInnerPoints; */
-                        set_str += ", hasInnerPoints: " + JXG.Options.polygon.hasInnerPoints;
-                        set_str += ", snaptogrid: " + JXG.Options.elements.snapToGrid;
-                        set_str +=
-                            ", snaptopoints: " + JXG.Options.elements.snapToPoints + ">>; ";
+                        set_str += " fillOpacity: " + JXG.Options.opacityLevel + ", name: ''";
+                        set_str += ", hasInnerPoints: " + JXG.Options.polygon.hasInnerPoints +
+                            ">>; ";
                         set_str += step.dest_id + ".hasInnerPoints = function() { " +
                             "return !(" + step.dest_id + ".fillColor == 'transparent' || " + step.dest_id + ".fillColor == 'none' || " + step.dest_id + ".fillOpacity == 0); " +
                             "}; "
+                        for (i = 4; i < 8; i++) {
+                            set_str += step.dest_sub_ids[i] + '.highlightStrokeWidth = function() { ' +
+                                'return ' + step.dest_sub_ids[i] + '.strokeWidth ' + JXG.Options.sketchometry.highlightStrokeWidthOperation + '; ' +
+                                ' };'
+                        }
                         break;
 
                     case JXG.GENTYPE_TEXT:
@@ -1872,49 +1818,85 @@
                             " ], [ " +
                             step.args.p2 +
                             " ]) <<";
-                        /*
-                         set_str += attrid + 'name: \'\', point1: <<id: \'' + step.dest_sub_ids[0] + '\', snaptogrid: '
-                         + JXG.Options.elements.snapToGrid + ', snaptopoints: ' + JXG.Options.elements.snapToPoints + '>>, '
-                         + 'point2: <<id: \'' + step.dest_sub_ids[1] + '\''+ ', snaptogrid: '
-                         + JXG.Options.elements.snapToGrid + ', snaptopoints: ' + JXG.Options.elements.snapToPoints + '>> >>; ';
-                         */
                         set_str +=
                             attrid +
                             "name: ''" +
-                            ", precision: " +
-                            JXG.Options.trunclen +
-                            ", point1: <<id: '" +
-                            step.dest_sub_ids[0] +
-                            "', snaptogrid: " +
-                            JXG.Options.elements.snapToGrid +
+                            ", precision: " + JXG.Options.trunclen +
+                            ", point1: <<id: '" + step.dest_sub_ids[0] + "'" +
+                            ", snapToGrid: false" +
                             ">>, " +
-                            "point2: <<id: '" +
-                            step.dest_sub_ids[1] +
-                            "'" +
-                            ", snaptogrid: " +
-                            JXG.Options.elements.snapToGrid +
+                            "point2: <<id: '" + step.dest_sub_ids[1] + "'" +
+                            ", snapToGrid: false" +
                             ">> >>; ";
                         reset_str = "remove(" + step.dest_id + "); ";
                         break;
 
+                    case JXG.GENTYPE_PARALLELPOINT:
+                        set_str =
+                            assign +
+                            "parallelpoint( " + step.src_ids.join(', ') + ") <<" +
+                            attrid + "name: ''" +
+                            // TODO after solving issue #569
+                            getAttribsString(board.options.parallelpoint) +
+                            " >>; ";
+                        reset_str = "remove(" + step.dest_id + "); ";
+                        break;
+
+                    case JXG.GENTYPE_PARALLELOGRAM:
+                        pid1 = step.dest_sub_ids[0] // id for parallelpoint
+
+                        set_str =
+                            assign +
+                            "parallelpoint( " + step.src_ids.join(', ') + ") <<" +
+                            "id: '" + pid1 + "', name: ''" +
+                            // TODO after solving issue #569
+                            getAttribsString(board.options.parallelpoint) +
+                            " >>; ";
+                        reset_str = "remove(" + pid1 + "); ";
+
+                        set_str += assign + "polygon(" + step.src_ids[0] + ", " + step.src_ids[1] + ", " + pid1 + ", " + step.src_ids[2] + ") << " +
+                            attrid + "name: ''" +
+                            ", borders: <<ids: [ '" +
+                            step.dest_sub_ids[1] + "', '" +
+                            step.dest_sub_ids[2] + "', '" +
+                            step.dest_sub_ids[3] + "', '" +
+                            step.dest_sub_ids[4] +
+                            "' ]" +
+                            ", names: ['', '', '', '']" +
+                            ">>" +
+                            ", fillOpacity: " + JXG.Options.opacityLevel +
+                            ", hasInnerPoints: " + JXG.Options.polygon.hasInnerPoints +
+                            ">>; ";
+                        set_str += step.dest_id + ".hasInnerPoints = function() { " +
+                            "return !(" + step.dest_id + ".fillColor == 'transparent' || " + step.dest_id + ".fillColor == 'none' || " + step.dest_id + ".fillOpacity == 0); " +
+                            "}; "
+                        for (i = 1; i <= 4; i++) {
+                            set_str += step.dest_sub_ids[i] + '.highlightStrokeWidth = function() { ' +
+                                'return ' + step.dest_sub_ids[i] + '.strokeWidth ' + JXG.Options.sketchometry.highlightStrokeWidthOperation + '; ' +
+                                ' };'
+                        }
+                        break;
+
                     case JXG.GENTYPE_POLYGON:
-                        if (step.args.create_point)
+                        if (step.args.create_point) {
                             for (i = 0; i < step.args.create_point.length; i++) {
                                 if (step.args.create_point[i]) {
                                     set_str +=
-                                        "point(" + pn(step.args.coords[i].usrCoords[1]) + ", ";
-                                    set_str +=
-                                        pn(step.args.coords[i].usrCoords[2]) +
-                                        ") <<id: '" +
-                                        step.dest_sub_ids[i];
-                                    set_str +=
-                                        "', snaptogrid: " + JXG.Options.elements.snapToGrid;
-                                    set_str +=
-                                        ", snaptopoints: " +
-                                        JXG.Options.elements.snapToPoints +
+                                        "point(" + pn(step.args.coords[i].usrCoords[1]) + ", " + pn(step.args.coords[i].usrCoords[2]) + ") <<" +
+                                        "id: '" + step.dest_sub_ids[i] + "'" +
+                                        ", snapToGridIntern: " + JXG.Options.elements.snapToGrid +
+                                        ", snapToPointsIntern: " + JXG.Options.elements.snapToPoints +
                                         ">>; ";
+                                    set_str += step.dest_sub_ids[i] + ".snapToGrid = function() { " +
+                                        "return sketchoAttribute('snapToGridGlobal') ? sketchoAttribute('snapToGridGlobal') : " + step.dest_sub_ids[i] + ".snapToGridIntern; " +
+                                        "}; ";
+                                    set_str += step.dest_sub_ids[i] + ".snapToPoints = function() { " +
+                                        "return sketchoAttribute('snapToPointsGlobal') ? sketchoAttribute('snapToPointsGlobal') : " + step.dest_sub_ids[i] + ".snapToPointsIntern; " +
+                                        "}; ";
+                                    set_str += step.dest_sub_ids[i] + ".moveTo([" + pn(step.args.coords[i].usrCoords[1]) + ", " + pn(step.args.coords[i].usrCoords[2]) + "]); ";
                                 }
                             }
+                        }
 
                         if (step.dest_sub_ids)
                             for (i = 0; i < step.dest_sub_ids.length; i++) {
@@ -1937,7 +1919,7 @@
 
                         set_str += ") <<borders: <<ids: ['";
 
-                        for (i = 0; i < step.dest_sub_ids.length; i++) {
+                        for (i = step.args.coords.length; i < step.dest_sub_ids.length; i++) {
                             set_str += step.dest_sub_ids[i];
                             if (i < step.dest_sub_ids.length - 1) {
                                 set_str += "', '";
@@ -1946,7 +1928,7 @@
                         set_str += "']";
 
                         set_str += ", names: [";
-                        for (i = 0; i < step.dest_sub_ids.length; i++) {
+                        for (i = step.args.coords.length; i < step.dest_sub_ids.length; i++) {
                             set_str += "''";
                             if (i < step.dest_sub_ids.length - 1) {
                                 set_str += ", ";
@@ -1955,13 +1937,16 @@
                         set_str += "]";
                         set_str +=
                             ">>, " + attrid + " fillOpacity: " + JXG.Options.opacityLevel;
-                        /* set_str +=
-                         ", hasInnerPoints_Org: " + JXG.Options.polygon.hasInnerPoints; */
                         set_str += ", hasInnerPoints: " + JXG.Options.polygon.hasInnerPoints;
                         set_str += ", name: ''>>; ";
                         set_str += step.dest_id + ".hasInnerPoints = function() { " +
                             "return !(" + step.dest_id + ".fillColor == 'transparent' || " + step.dest_id + ".fillColor == 'none' || " + step.dest_id + ".fillOpacity == 0); " +
                             "}; "
+                        for (i = step.args.coords.length; i < step.dest_sub_ids.length; i++) {
+                            set_str += step.dest_sub_ids[i] + '.highlightStrokeWidth = function() { ' +
+                                'return ' + step.dest_sub_ids[i] + '.strokeWidth ' + JXG.Options.sketchometry.highlightStrokeWidthOperation + '; ' +
+                                ' };'
+                        }
                         reset_str = "remove(" + step.dest_id + "); ";
                         break;
 
@@ -1974,23 +1959,22 @@
                         for (i = 0; i < le; ++i) {
                             set_str +=
                                 assign +
-                                "point(" +
-                                pn(step.args.points[i][1]) +
-                                ", " +
-                                pn(step.args.points[i][2]);
+                                "point(" + pn(step.args.points[i][1]) + ", " + pn(step.args.points[i][2]) + ")";
                             set_str +=
-                                ")" +
                                 (options.useSymbols
                                     ? ""
-                                    : " <<id: '" +
-                                    step.dest_sub_ids[i] +
-                                    "'" +
-                                    ", snaptogrid: " +
-                                    JXG.Options.elements.snapToGrid +
-                                    ", snaptopoints: " +
-                                    JXG.Options.elements.snapToPoints +
+                                    : " <<id: '" + step.dest_sub_ids[i] + "'" +
+                                    ", snapToGridIntern: " + JXG.Options.elements.snapToGrid +
+                                    ", snapToPointsIntern: " + JXG.Options.elements.snapToPoints +
                                     ">>") +
                                 "; ";
+                            set_str += step.dest_sub_ids[i] + ".snapToGrid = function() { " +
+                                "return sketchoAttribute('snapToGridGlobal') ? sketchoAttribute('snapToGridGlobal') : " + step.dest_sub_ids[i] + ".snapToGridIntern; " +
+                                "}; ";
+                            set_str += step.dest_sub_ids[i] + ".snapToPoints = function() { " +
+                                "return sketchoAttribute('snapToPointsGlobal') ? sketchoAttribute('snapToPointsGlobal') : " + step.dest_sub_ids[i] + ".snapToPointsIntern; " +
+                                "}; ";
+                            set_str += step.dest_sub_ids[i] + ".moveTo([" + pn(step.args.points[i][1]) + ", " + pn(step.args.points[i][2]) + "]); ";
 
                             reset_str += "remove(" + step.dest_sub_ids[i] + "); ";
                         }
@@ -2024,13 +2008,16 @@
                         set_str += "]";
                         set_str +=
                             ">>, " + attrid + " fillOpacity: " + JXG.Options.opacityLevel;
-                        /* set_str +=
-                         ", hasInnerPoints_Org: " + JXG.Options.polygon.hasInnerPoints; */
                         set_str += ", hasInnerPoints: " + JXG.Options.polygon.hasInnerPoints;
                         set_str += ", name: ''>>; ";
                         set_str += step.dest_id + ".hasInnerPoints = function() { " +
                             "return !(" + step.dest_id + ".fillColor == 'transparent' || " + step.dest_id + ".fillColor == 'none' || " + step.dest_id + ".fillOpacity == 0); " +
                             "}; "
+                        for (i = le; i < step.dest_sub_ids.length; i++) {
+                            set_str += step.dest_sub_ids[i] + '.highlightStrokeWidth = function() { ' +
+                                'return ' + step.dest_sub_ids[i] + '.strokeWidth ' + JXG.Options.sketchometry.highlightStrokeWidthOperation + '; ' +
+                                ' };'
+                        }
                         reset_str += "remove(" + step.dest_id + "); ";
                         break;
 
@@ -2072,19 +2059,19 @@
                                 reset_str;
                         }
                         set_str += " ]";
-                        set_str += ", name: ''";
-                        // set_str += ', fillColor: \'' + JXG.Options.regularpolygon.fillColor + '\'';
-                        // set_str += ', strokeColor: \'' + JXG.Options.intersection.strokeColor + '\'';
-                        // set_str += ', opacity: \'' + JXG.Options.intersection.opacity + '\'';
+                        set_str += ", name: '', isPartOfRegpol: true";
                         set_str += ">>, " + attrid;
                         set_str += " fillOpacity: " + JXG.Options.opacityLevel;
-                        /* set_str +=
-                         ", hasInnerPoints_Org: " + JXG.Options.polygon.hasInnerPoints; */
                         set_str += ", hasInnerPoints: " + JXG.Options.polygon.hasInnerPoints;
                         set_str += ", name: ''>>; ";
                         set_str += step.dest_id + ".hasInnerPoints = function() { " +
                             "return !(" + step.dest_id + ".fillColor == 'transparent' || " + step.dest_id + ".fillColor == 'none' || " + step.dest_id + ".fillOpacity == 0); " +
                             "}; "
+                        for (i = 0; i < step.args.corners; i++) {
+                            set_str += step.dest_sub_ids[i] + '.highlightStrokeWidth = function() { ' +
+                                'return ' + step.dest_sub_ids[i] + '.strokeWidth ' + JXG.Options.sketchometry.highlightStrokeWidthOperation + '; ' +
+                                ' };'
+                        }
                         reset_str = "remove(" + step.dest_id + "); " + reset_str;
 
                         break;
@@ -2093,30 +2080,44 @@
                         set_str = assign;
 
                         // ids
-                        pid1 = step.dest_id;                                      // id of sector
-                        pid2 = step.dest_sub_ids[0];                              // id of arc
-                        pid3 = pid1 + (step.args.suffix_glider ?? "_glider");     // id of glider
-                        pid4 = pid1 + (step.args.suffix_segment1 ?? "_segment1"); // id of segment 1 (mid - radiuspoint)
-                        pid5 = pid1 + (step.args.suffix_segment2 ?? "_segment2"); // id of segment 2 (mid - glider)
+                        pid1 = step.dest_id;                  // id of sector
+                        pid2 = step.dest_sub_ids[0];          // id of arc
+                        if (JXG.exists(step.dest_sub_ids[1])) // id of glider
+                            pid3 = step.dest_sub_ids[1];
+                        else
+                            pid3 = pid1 + "_glider";
+                        if (JXG.exists(step.dest_sub_ids[2])) // id of segment 1 (mid - radiuspoint)
+                            pid4 = step.dest_sub_ids[2];
+                        else
+                            pid4 = pid1 + "_segment1";
+                        if (JXG.exists(step.dest_sub_ids[3])) // id of segment 2 (mid - glider)
+                            pid5 = step.dest_sub_ids[3];
+                        else
+                            pid5 = pid1 + "_segment2";
 
                         // sector
                         set_str += "sector(" + step.src_ids.join(", ") + ") ";
-                        set_str += "<<" + attrid + " name: '', fillOpacity: " + JXG.Options.opacityLevel + ", hasInnerPoints: true, arc: <<id: '" + pid2 + "', priv:true>> >>; ";
+                        set_str += "<<" + attrid + " name: '', fillOpacity: " + JXG.Options.opacityLevel + ", hasInnerPoints: true, arc: <<id: '" + pid2 + "'>>, "
+                        set_str += "idArc: '" + pid2 + "', idGlider: '" + pid3 + "', idSegment1: '" + pid4 + "', idSegment2: '" + pid5 + "'"
+                        set_str += ">>; ";
                         set_str += pid1 + ".hasInnerPoints = function() { " +
                             "return !(" + pid1 + ".fillColor == 'transparent' || " + pid1 + ".fillColor == 'none' || " + pid1 + ".fillOpacity == 0); " +
                             "}; ";
+                        set_str += pid1 + ".arc.name = ''; ";
 
                         // glider
                         set_str += "glider(function () { return " + step.src_ids[2] + ".X(); }, function () { return " + step.src_ids[2] + ".Y(); }, " + pid2 + ") ";
-                        set_str += "<<id: '" + pid3 + "', name:'', parents: ['" + pid1 + "', '" + pid2 + "', '" + step.src_ids[2] + "'], priv:true>>; ";
+                        set_str += "<<id: '" + pid3 + "', name:'', parents: ['" + pid1 + "', '" + pid2 + "', '" + step.src_ids[2] + "'], isPartOfSector:true" +
+                            getAttribsString(board.options.sketchometry.sectorCorner) +
+                            ">>; ";
 
                         // segment 1 (mid - radiuspoint)
                         set_str += "segment(" + step.src_ids[0] + ", " + step.src_ids[1] + ") ";
-                        set_str += "<<id: '" + pid4 + "', name:'', parents: ['" + pid1 + "', '" + step.src_ids[0] + "', '" + step.src_ids[1] + "'], priv:true>>; ";
+                        set_str += "<<id: '" + pid4 + "', name:'', fixed:true, parents: ['" + pid1 + "', '" + step.src_ids[0] + "', '" + step.src_ids[1] + "'], isPartOfSector:true>>; ";
 
                         // segment 2 (mid - glider)
                         set_str += "segment(" + step.src_ids[0] + ", " + pid3 + ") ";
-                        set_str += "<<id: '" + pid5 + "', name:'', parents: ['" + pid1 + "', '" + step.src_ids[0] + "', '" + pid3 + "'], priv:true>>; ";
+                        set_str += "<<id: '" + pid5 + "', name:'', fixed:true, parents: ['" + pid1 + "', '" + step.src_ids[0] + "', '" + pid3 + "'], isPartOfSector:true>>; ";
 
                         reset_str = "";
                         reset_str += "remove(" + pid3 + "); ";
@@ -2183,7 +2184,7 @@
                         set_str = assign + "slopetriangle(" + step.src_ids.join(", ") + ") <<";
                         set_str += attrid + " name: '',";
                         set_str +=
-                            "borders:   <<ids: ['" +
+                            "borders: <<ids: ['" +
                             step.dest_sub_ids[4] +
                             "', '" +
                             step.dest_sub_ids[5] +
@@ -2193,19 +2194,19 @@
                         set_str +=
                             "basepoint: <<id: '" +
                             step.dest_sub_ids[0] +
-                            "', name: '', priv: true >>, ";
+                            "', name: '', priv: true, isPartOfSlopetriangle:true >>, ";
                         set_str +=
-                            "baseline:  <<id: '" +
+                            "baseline: <<id: '" +
                             step.dest_sub_ids[1] +
-                            "', name: '', priv: true >>,";
+                            "', name: '', priv: true, isPartOfSlopetriangle:true >>,";
                         set_str +=
-                            "glider:    <<id: '" +
+                            "glider: <<id: '" +
                             step.dest_sub_ids[2] +
-                            "', name: '', priv: false >>, ";
+                            "', name: '', priv: false, isPartOfSlopetriangle:true >>, ";
                         set_str +=
-                            "toppoint:  <<id: '" +
+                            "toppoint: <<id: '" +
                             step.dest_sub_ids[3] +
-                            "', name: '', priv: false >>";
+                            "', name: '', priv: false, isPartOfSlopetriangle:true >>";
                         if (step.dest_sub_ids.length === 8) {
                             // The test is needed for backwards compatibility
                             set_str +=
@@ -2214,6 +2215,11 @@
                                 "', priv: true, point1: <<name: '', priv: true >>, point2: <<name: '', priv: true >> >>";
                         }
                         set_str += ">>;";
+                        /* for (i = 4; i <= 6; i++) {
+                         set_str += step.dest_sub_ids[i] + '.highlightStrokeWidth = function() { ' +
+                         'return ' + step.dest_sub_ids[i] + '.strokeWidth ' + JXG.Options.sketchometry.highlightStrokeWidthOperation + '; ' +
+                         ' };'
+                         } */
                         reset_str = "remove(" + step.dest_id + "); ";
 
                         break;
@@ -2288,9 +2294,10 @@
                         if (!step.args.createPoints) {
                             set_str += "createPoints: false, ";
                         }
-                        set_str += "isArrayOfCoordinates: true, ";
-                        set_str += "strokeWidth: " + step.args.strokeWidth + ", ";
-                        set_str += "strokeColor: '" + step.args.strokeColor + "' >>; ";
+                        set_str += "isArrayOfCoordinates: true >>; ";
+                        set_str += step.dest_id + '.highlightStrokeWidth = function() { ' +
+                            'return ' + step.dest_id + '.strokeWidth ' + JXG.Options.sketchometry.highlightStrokeWidthOperation + '; ' +
+                            ' };'
                         reset_str = "remove(" + step.dest_id + "); ";
 
                         break;
@@ -2303,7 +2310,11 @@
                         break;
 
                     case JXG.GENTYPE_SLIDER:
-                        set_str =
+                        set_str = "";
+                        if (options.useSliderVars) {
+                            set_str += options.sliderVarPrefix + step.dest_id + " = ";
+                        }
+                        set_str +=
                             assign +
                             "slider(" +
                             "[" + pn(step.args.x1) + ", " + pn(step.args.y1) + "], " +
@@ -2503,239 +2514,300 @@
 
                         break;
 
-                    case JXG.GENTYPE_ABLATION:
-                        xstart = getObject(step.src_ids[0]).coords.usrCoords[1];
-                        ystart = getObject(step.src_ids[0]).coords.usrCoords[2];
+                    case JXG.GENTYPE_CIRCLECLONE:
+                        if (JXG.exists(step.args.centerCoords)) {
 
-                        set_str =
-                            "point(" +
-                            pn(xstart - step.args.x) +
-                            ", " +
-                            pn(ystart - step.args.y) +
-                            ") <<id: '";
-                        set_str += step.dest_sub_ids[0] + "', name: '', withLabel: false>>; ";
-                        set_str +=
-                            "circle('" +
-                            step.dest_sub_ids[0] +
-                            "', 1) <<id: '" +
-                            step.dest_sub_ids[1];
-                        set_str += "', fillOpacity: " + JXG.Options.opacityLevel;
-                        set_str +=
-                            ", strokeColor: '#888888', visible: true, name: '', withLabel: false>>; ";
-
-                        if (step.args.fids.length === 1) {
-                            step.args.func = step.args.fids[0] + ".radius()";
-                        } else {
-                            step.args.func =
-                                "dist(" + step.args.fids[0] + ", " + step.args.fids[1] + ")";
-                        }
-
-                        set_str +=
-                            step.dest_sub_ids[1] +
-                            ".setRadius(function() { return " +
-                            step.args.func +
-                            "; }); ";
-
-                        for (j = 0; j < step.src_ids.length; j++) {
+                            set_str =
+                                "point(" + pn(step.args.centerCoords[1]) + ", " + pn(step.args.centerCoords[2]) + ") " +
+                                "<<id: '" + step.dest_sub_ids[0] + "'" +
+                                ", name: ''" +
+                                ", withLabel: false" +
+                                ">>; ";
                             set_str +=
-                                step.src_ids[j] + ".addChild(" + step.dest_sub_ids[0] + "); ";
-                            set_str +=
-                                step.src_ids[j] + ".addChild(" + step.dest_sub_ids[1] + "); ";
-                        }
+                                "circle(" + step.dest_sub_ids[0] + ", 1) " +
+                                "<<id: '" + step.dest_id + "'" +
+                                ", name: '', withLabel: false" +
+                                ", creationGesture: 'copy'" +
+                                ", creationCenterExisting: false" +
+                                getAttribsString(board.options.sketchometry.migration.stroke) +
+                                (!step.args.isEmpty
+                                        ? getAttribsString(board.options.sketchometry.migration.fill)
+                                        : ", fillColor: 'transparent'"
+                                ) +
+                                ">>; ";
+                            if (step.args.createdBy === 'segment') {
+                                set_str += step.dest_id + ".setRadius(function() { " +
+                                    "return dist(" + step.src_ids[0] + ", " + step.src_ids[1] + "); " +
+                                    "}); ";
+                            } else if (step.args.createdBy === 'circle') {
+                                set_str += step.dest_id + ".setRadius(function() { " +
+                                    "return " + step.src_ids[0] + ".radius(); " +
+                                    "}); ";
+                            }
+                            set_str += step.dest_id + '.highlightStrokeWidth = function() { ' +
+                                'return ' + step.dest_id + '.strokeWidth ' + JXG.Options.sketchometry.highlightStrokeWidthOperation + '; ' +
+                                ' };'
 
-                        if (step.args.migrate !== 0 && step.args.migrate !== -1) {
-                            set_str +=
-                                "$board.migratePoint(" +
-                                step.dest_sub_ids[0] +
+                            reset_str =
+                                "remove(" + step.dest_id + "); " +
+                                "remove(" + step.dest_sub_ids[0] + "); ";
+
+                        } else { // backwards compatibility
+
+                            xstart = getObject(step.src_ids[0]).coords.usrCoords[1];
+                            ystart = getObject(step.src_ids[0]).coords.usrCoords[2];
+
+                            set_str =
+                                "point(" +
+                                pn(xstart - step.args.x) +
                                 ", " +
-                                step.args.migrate +
+                                pn(ystart - step.args.y) +
+                                ") <<id: '";
+                            set_str += step.dest_sub_ids[0] + "', name: '', withLabel: false>>; ";
+                            set_str +=
+                                "circle('" +
+                                step.dest_sub_ids[0] +
+                                "', 1) <<id: '" +
+                                step.dest_sub_ids[1];
+                            set_str += "', fillOpacity: " + JXG.Options.opacityLevel;
+                            set_str +=
+                                ", strokeColor: '#888888', visible: true, name: '', withLabel: false>>; ";
+
+                            if (step.args.fids.length === 1) {
+                                step.args.func = step.args.fids[0] + ".radius()";
+                            } else {
+                                step.args.func =
+                                    "dist(" + step.args.fids[0] + ", " + step.args.fids[1] + ")";
+                            }
+
+                            set_str +=
+                                step.dest_sub_ids[1] +
+                                ".setRadius(function() { return " +
+                                step.args.func +
+                                "; }); ";
+
+                            for (j = 0; j < step.src_ids.length; j++) {
+                                set_str +=
+                                    step.src_ids[j] + ".addChild(" + step.dest_sub_ids[0] + "); ";
+                                set_str +=
+                                    step.src_ids[j] + ".addChild(" + step.dest_sub_ids[1] + "); ";
+                            }
+
+                            if (step.args.migrate !== 0 && step.args.migrate !== -1) {
+                                set_str +=
+                                    "$board.migratePoint(" +
+                                    step.dest_sub_ids[0] +
+                                    ", " +
+                                    step.args.migrate +
+                                    "); ";
+                            }
+
+                            reset_str =
+                                "remove(" +
+                                step.dest_sub_ids[1] +
+                                "); remove(" +
+                                step.dest_sub_ids[0] +
                                 "); ";
                         }
-
-                        reset_str =
-                            "remove(" +
-                            step.dest_sub_ids[1] +
-                            "); remove(" +
-                            step.dest_sub_ids[0] +
-                            "); ";
-
                         break;
 
-                    case JXG.GENTYPE_VECTORCOPY:
-                        xstart = getObject(step.src_ids[0]).coords.usrCoords[1];
-                        ystart = getObject(step.src_ids[0]).coords.usrCoords[2];
+                    case JXG.GENTYPE_VECTORCLONE:
+                        if (step.args.useArrowparallel) {
 
-                        set_str =
-                            "point(" +
-                            pn(xstart - step.args.x) +
-                            ", " +
-                            pn(ystart - step.args.y) +
-                            ") <<id: '";
-                        set_str += step.dest_sub_ids[0] + "', name: '', withLabel: false>>; ";
-                        set_str +=
-                            "parallelpoint('" +
-                            step.src_ids[0] +
-                            "','" +
-                            step.src_ids[1] +
-                            "','" +
-                            step.dest_sub_ids[0] +
-                            "') <<id: '" +
-                            step.dest_sub_ids[1];
-                        set_str +=
-                            "', strokeColor: '#888888', visible: true, priv: false, name: '', ";
-                        set_str +=
-                            "layer: " +
-                            JXG.Options.layer.line +
-                            ", opacity: 0.2, withLabel: false>>; ";
-                        set_str +=
-                            "arrow('" +
-                            step.dest_sub_ids[0] +
-                            "','" +
-                            step.dest_sub_ids[1] +
-                            "') <<id: '" +
-                            step.dest_sub_ids[2];
-                        set_str +=
-                            "', strokeColor: '#888888', visible: true, name: '', withLabel: false>>; ";
+                            pid1 = step.src_ids[0];
+                            pid2 = step.src_ids[1];
+                            pid3 = step.dest_sub_ids[0];
+                            pid4 = step.dest_sub_ids[1];
+                            set_str =
+                                "point(" + pn(step.args.baseCoords[1]) + ", " + pn(step.args.baseCoords[2]) + ") " +
+                                "<<id: '" + pid3 + "'" +
+                                ", name: ''" +
+                                ", withLabel: false" +
+                                ">>; ";
+                            set_str +=
+                                "arrowparallel(" + pid1 + ", " + pid2 + ", " + pid3 + ") " +
+                                "<<id: '" + step.dest_id + "'" +
+                                ", name: '', withLabel: false" +
+                                // TODO after solving issue #567
+                                getAttribsString(board.options.sketchometry.vectorClone) +
+                                ", point: <<id: '" + pid4 + "', name: ''" + getAttribsString(board.options.sketchometry.vectorClone.point) + ">>" +
+                                ">>; ";
+                            set_str += step.dest_id + '.highlightStrokeWidth = function() { ' +
+                                'return ' + step.dest_id + '.strokeWidth ' + JXG.Options.sketchometry.highlightStrokeWidthOperation + '; ' +
+                                ' };'
 
-                        for (j = 0; j < step.src_ids.length; j++) {
-                            set_str +=
-                                step.src_ids[j] + ".addChild(" + step.dest_sub_ids[0] + "); ";
-                            set_str +=
-                                step.src_ids[j] + ".addChild(" + step.dest_sub_ids[1] + "); ";
-                            set_str +=
-                                step.src_ids[j] + ".addChild(" + step.dest_sub_ids[2] + "); ";
-                        }
+                            reset_str =
+                                "remove(" + step.dest_id + "); " +
+                                "remove(" + pid3 + "); ";
 
-                        if (step.args.migrate !== 0 && step.args.migrate !== -1) {
-                            set_str +=
-                                "$board.migratePoint(" +
-                                step.dest_sub_ids[0] +
+                        } else { // backwards compatibility
+
+                            xstart = getObject(step.src_ids[0]).coords.usrCoords[1];
+                            ystart = getObject(step.src_ids[0]).coords.usrCoords[2];
+
+                            set_str =
+                                "point(" +
+                                pn(xstart - step.args.x) +
                                 ", " +
-                                step.args.migrate +
-                                "); ";
+                                pn(ystart - step.args.y) +
+                                ") <<id: '";
+                            set_str += step.dest_sub_ids[0] + "', name: '', withLabel: false>>; ";
+                            set_str +=
+                                "parallelpoint('" +
+                                step.src_ids[0] +
+                                "','" +
+                                step.src_ids[1] +
+                                "','" +
+                                step.dest_sub_ids[0] +
+                                "') <<id: '" +
+                                step.dest_sub_ids[1];
+                            set_str +=
+                                "', strokeColor: '#888888', visible: true, priv: false, name: '', ";
+                            set_str +=
+                                "layer: " +
+                                JXG.Options.layer.line +
+                                ", opacity: 0.2, withLabel: false>>; ";
+                            set_str +=
+                                "arrow('" +
+                                step.dest_sub_ids[0] +
+                                "','" +
+                                step.dest_sub_ids[1] +
+                                "') <<id: '" +
+                                step.dest_sub_ids[2];
+                            set_str +=
+                                "', strokeColor: '#888888', visible: true, name: '', withLabel: false>>; ";
+
+                            for (j = 0; j < step.src_ids.length; j++) {
+                                set_str +=
+                                    step.src_ids[j] + ".addChild(" + step.dest_sub_ids[0] + "); ";
+                                set_str +=
+                                    step.src_ids[j] + ".addChild(" + step.dest_sub_ids[1] + "); ";
+                                set_str +=
+                                    step.src_ids[j] + ".addChild(" + step.dest_sub_ids[2] + "); ";
+                            }
+
+                            if (step.args.migrate !== 0 && step.args.migrate !== -1) {
+                                set_str +=
+                                    "$board.migratePoint(" +
+                                    step.dest_sub_ids[0] +
+                                    ", " +
+                                    step.args.migrate +
+                                    "); ";
+                            }
+
+                            reset_str =
+                                "remove(" +
+                                step.dest_sub_ids[1] +
+                                "); remove(" +
+                                step.dest_sub_ids[0] +
+                                "); remove(" +
+                                step.dest_sub_ids[2] +
+                                ");";
                         }
-
-                        reset_str =
-                            "remove(" +
-                            step.dest_sub_ids[1] +
-                            "); remove(" +
-                            step.dest_sub_ids[0] +
-                            "); remove(" +
-                            step.dest_sub_ids[2] +
-                            ");";
-
                         break;
 
                     case JXG.GENTYPE_MOVEMENT:
-                        if (
-                            step.args.obj_type === JXG.OBJECT_TYPE_LINE ||
-                            step.args.obj_type === JXG.OBJECT_TYPE_VECTOR
-                        ) {
-                            set_str =
-                                step.src_ids[0] +
-                                ".move([" +
-                                pn(step.args.coords[0].usrCoords[0]) +
-                                ", ";
-                            set_str +=
-                                pn(step.args.coords[0].usrCoords[1]) +
-                                ", " +
-                                pn(step.args.coords[0].usrCoords[2]) +
-                                "]); ";
-                            reset_str =
-                                step.src_ids[0] +
-                                ".move([" +
-                                step.args.zstart[0] +
-                                ", " +
-                                step.args.xstart[0] +
-                                ", ";
-                            reset_str += step.args.ystart[0] + "]); ";
-
-                            set_str +=
-                                step.src_ids[1] +
-                                ".move([" +
-                                pn(step.args.coords[1].usrCoords[0]) +
-                                ", ";
-                            set_str +=
-                                pn(step.args.coords[1].usrCoords[1]) +
-                                ", " +
-                                pn(step.args.coords[1].usrCoords[2]) +
-                                "]); ";
-                            reset_str +=
-                                step.src_ids[1] +
-                                ".move([" +
-                                step.args.zstart[1] +
-                                ", " +
-                                step.args.xstart[1] +
-                                ", ";
-                            reset_str += step.args.ystart[1] + "]); ";
-                        } else if (step.args.obj_type === JXG.OBJECT_TYPE_CIRCLE) {
-                            set_str =
-                                step.src_ids[0] +
-                                ".move([" +
-                                pn(step.args.coords[0].usrCoords[1]) +
-                                ", ";
-                            set_str += pn(step.args.coords[0].usrCoords[2]) + "]); ";
-                            reset_str =
-                                step.src_ids[0] +
-                                ".move([" +
-                                step.args.xstart +
-                                ", " +
-                                step.args.ystart +
-                                "]); ";
-
-                            if (step.args.has_point2) {
-                                set_str +=
-                                    step.src_ids[1] +
-                                    ".move([" +
-                                    pn(step.args.coords[1].usrCoords[1]) +
-                                    ", ";
-                                set_str += pn(step.args.coords[1].usrCoords[2]) + "]); ";
-                                reset_str +=
-                                    step.src_ids[1] +
-                                    ".move([" +
-                                    step.args.old_p2x +
-                                    ", " +
-                                    step.args.old_p2y;
-                                reset_str += "]); ";
-                            }
-                        } else if (step.args.obj_type === JXG.OBJECT_TYPE_POLYGON) {
-                            set_str = reset_str = "";
+                        if (JXG.exists(step.args.coordsTo) && JXG.exists(step.args.coordsFrom)) {
 
                             for (i = 0; i < step.src_ids.length; i++) {
-                                set_str +=
-                                    step.src_ids[i] +
-                                    ".move([" +
-                                    pn(step.args.coords[i].usrCoords[1]) +
-                                    ", ";
-                                set_str += pn(step.args.coords[i].usrCoords[2]) + "]); ";
-                                reset_str +=
-                                    step.src_ids[i] +
-                                    ".move([" +
-                                    step.args.xstart[i] +
-                                    ", " +
-                                    step.args.ystart[i];
-                                reset_str += "]); ";
-                            }
-                        } else {
-                            // Upwards compatibility of pre 1.0 files
-                            if (JXG.exists(step.args.coords[0])) {
-                                set_str =
-                                    step.src_ids[0] +
-                                    ".move([" +
-                                    pn(step.args.coords[0].usrCoords[1]) +
-                                    ", ";
-                                set_str += pn(step.args.coords[0].usrCoords[2]) + "]); ";
-
-                                reset_str =
-                                    step.src_ids[0] +
-                                    ".move([" +
-                                    step.args.xstart +
-                                    ", " +
-                                    step.args.ystart +
+                                set_str += step.src_ids[i] + ".moveTo([" +
+                                    pn(step.args.coordsTo[i][0]) + ", " +
+                                    pn(step.args.coordsTo[i][1]) + ", " +
+                                    pn(step.args.coordsTo[i][2]) +
+                                    "]); ";
+                                reset_str += step.src_ids[i] + ".moveTo([" +
+                                    pn(step.args.coordsFrom[i][0]) + ", " +
+                                    pn(step.args.coordsFrom[i][1]) + ", " +
+                                    pn(step.args.coordsFrom[i][2]) +
                                     "]); ";
                             }
-                        }
 
+                        } else { // Backwards compatibility
+                            if (
+                                step.args.obj_type === JXG.OBJECT_TYPE_LINE ||
+                                step.args.obj_type === JXG.OBJECT_TYPE_VECTOR
+                            ) {
+                                set_str =
+                                    step.src_ids[0] + ".moveTo([" +
+                                    pn(step.args.coords[0].usrCoords[0]) + ", " +
+                                    pn(step.args.coords[0].usrCoords[1]) + ", " +
+                                    pn(step.args.coords[0].usrCoords[2]) +
+                                    "]); ";
+                                reset_str =
+                                    step.src_ids[0] + ".moveTo([" +
+                                    step.args.zstart[0] + ", " +
+                                    step.args.xstart[0] + ", " +
+                                    step.args.ystart[0] +
+                                    "]); ";
+
+                                set_str +=
+                                    step.src_ids[1] + ".moveTo([" +
+                                    pn(step.args.coords[1].usrCoords[0]) + ", " +
+                                    pn(step.args.coords[1].usrCoords[1]) + ", " +
+                                    pn(step.args.coords[1].usrCoords[2]) +
+                                    "]); ";
+                                reset_str +=
+                                    step.src_ids[1] + ".moveTo([" +
+                                    step.args.zstart[1] + ", " +
+                                    step.args.xstart[1] + ", " +
+                                    step.args.ystart[1] +
+                                    "]); ";
+
+                            } else if (step.args.obj_type === JXG.OBJECT_TYPE_CIRCLE) {
+                                set_str =
+                                    step.src_ids[0] + ".moveTo([" +
+                                    pn(step.args.coords[0].usrCoords[1]) + ", " +
+                                    pn(step.args.coords[0].usrCoords[2]) +
+                                    "]); ";
+                                reset_str =
+                                    step.src_ids[0] + ".moveTo([" +
+                                    step.args.xstart + ", " +
+                                    step.args.ystart +
+                                    "]); ";
+
+                                if (step.args.has_point2) {
+                                    set_str +=
+                                        step.src_ids[1] + ".moveTo([" +
+                                        pn(step.args.coords[1].usrCoords[1]) + ", " +
+                                        pn(step.args.coords[1].usrCoords[2]) +
+                                        "]); ";
+                                    reset_str +=
+                                        step.src_ids[1] + ".moveTo([" +
+                                        step.args.old_p2x + ", " +
+                                        step.args.old_p2y +
+                                        "]); ";
+                                }
+                            } else if (step.args.obj_type === JXG.OBJECT_TYPE_POLYGON) {
+                                set_str = reset_str = "";
+
+                                for (i = 0; i < step.src_ids.length; i++) {
+                                    set_str +=
+                                        step.src_ids[i] + ".moveTo([" +
+                                        pn(step.args.coords[i].usrCoords[1]) + ", " +
+                                        pn(step.args.coords[i].usrCoords[2]) +
+                                        "]); ";
+                                    reset_str +=
+                                        step.src_ids[i] + ".moveTo([" +
+                                        step.args.xstart[i] + ", " +
+                                        step.args.ystart[i] +
+                                        "]); ";
+                                }
+                            } else {
+                                // Backwards compatibility of pre 1.0 files
+                                if (JXG.exists(step.args.coords[0])) {
+                                    set_str =
+                                        step.src_ids[0] + ".moveTo([" +
+                                        pn(step.args.coords[0].usrCoords[1]) + ", " +
+                                        pn(step.args.coords[0].usrCoords[2]) +
+                                        "]); ";
+                                    reset_str =
+                                        step.src_ids[0] + ".moveTo([" +
+                                        step.args.xstart + ", " +
+                                        step.args.ystart +
+                                        "]); ";
+                                }
+                            }
+                        }
                         break;
 
                     default:
