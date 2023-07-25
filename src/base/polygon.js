@@ -55,11 +55,7 @@ import GeometryElement from "./element";
 JXG.Polygon = function (board, vertices, attributes) {
     this.constructor(board, attributes, Const.OBJECT_TYPE_POLYGON, Const.OBJECT_CLASS_AREA);
 
-    var i,
-        l,
-        len,
-        j,
-        p,
+    var i, l, len, j, p,
         attr_line = Type.copyAttributes(attributes, board.options, "polygon", "borders");
 
     this.withLines = attributes.withlines;

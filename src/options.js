@@ -5010,6 +5010,10 @@ JXG.Options = {
         /**#@-*/
     },
 
+    /* special parallelpoint options */
+    parallelpoint: {
+    },
+
     /* special perpendicular options */
     perpendicular: {
         /**#@+
