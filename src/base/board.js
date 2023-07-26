@@ -3927,11 +3927,64 @@ JXG.extend(
             var attr = Type.copyAttributes(attributes, this.options, 'infobox');
 
             attr.id = this.id + '_infobox';
+
             /**
              * Infobox close to points in which the points' coordinates are displayed.
              * This is simply a JXG.Text element. Access through board.infobox.
              * Uses CSS class .JXGinfobox.
+             *
+             * @namespace
+             * @name JXG.Board.infobox
              * @type JXG.Text
+             *
+             * @example
+             * const board = JXG.JSXGraph.initBoard(BOARDID, {
+             *     boundingbox: [-0.5, 0.5, 0.5, -0.5],
+             *     intl: {
+             *         enabled: false,
+             *         locale: 'de-DE'
+             *     },
+             *     keepaspectratio: true,
+             *     axis: true,
+             *     infobox: {
+             *         distanceY: 40,
+             *         intl: {
+             *             enabled: true,
+             *             options: {
+             *                 minimumFractionDigits: 1,
+             *                 maximumFractionDigits: 2
+             *             }
+             *         }
+             *     }
+             * });
+             * var p = board.create('point', [0.1, 0.1], {});
+             *
+             * </pre><div id="JXG822161af-fe77-4769-850f-cdf69935eab0" class="jxgbox" style="width: 300px; height: 300px;"></div>
+             * <script type="text/javascript">
+             *     (function() {
+             *     const board = JXG.JSXGraph.initBoard('JXG822161af-fe77-4769-850f-cdf69935eab0', {
+             *         boundingbox: [-0.5, 0.5, 0.5, -0.5], showcopyright: false, shownavigation: false,
+             *         intl: {
+             *             enabled: false,
+             *             locale: 'de-DE'
+             *         },
+             *         keepaspectratio: true,
+             *         axis: true,
+             *         infobox: {
+             *             distanceY: 40,
+             *             intl: {
+             *                 enabled: true,
+             *                 options: {
+             *                     minimumFractionDigits: 1,
+             *                     maximumFractionDigits: 2
+             *                 }
+             *             }
+             *         }
+             *     });
+             *     var p = board.create('point', [0.1, 0.1], {});
+             *     })();
+             *
+             * </script><pre>
              *
              */
             this.infobox = this.create('text', [0, 0, '0,0'], attr);

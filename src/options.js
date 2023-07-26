@@ -1060,9 +1060,172 @@ JXG.Options = {
             enabled: false
         },
 
+        /**
+         * Support for internationalization of number formatting. This affects
+         * <ul>
+         *  <li> axis labels
+         *  <li> infobox
+         *  <li> texts consisting of numbers only
+         *  <li> smartlabel elements
+         *  <li> slider labels
+         *  <li> tapemeasure elements
+         *  <li> integral element labels
+         * </ul>
+         * User generated texts consisting of texts and numbers have to be internationalized by the user.
+         * Language locale and options can be individually controlled for each element by its intl attribute.
+         * If no locale is set, the default language of the browser is used.
+         *
+         * @name JXG.Board#intl
+         * @type Object
+         * @default {enabled: false}
+         * @see Integral#label
+         * @see Slider#intl
+         * @see Text#intl
+         * @see Ticks#intl
+         * @see JXG.Board.infobox#intl
+         *
+         * @example
+         * // Set the board-wide locale and use individual
+         * // options for a text.
+         * const board = JXG.JSXGraph.initBoard(BOARDID, {
+         *     axis: true,
+         *     intl: {
+         *         enabled: true,
+         *         locale: 'de-DE'
+         *     },
+         *     boundingbox:[-0.5, 0.5, 0.5, -0.5]
+         * });
+         *
+         * var t = board.create('text', [0.05, 0.2, -Math.PI*100], {
+         *         digits: 2,
+         *         intl: {
+         *                 enabled: true,
+         *                 options: {
+         *                     style: 'unit',
+         *                     unit: 'celsius'
+         *                 }
+         *             }
+         *     });
+         *
+         * </pre><div id="JXGcbb0305d-92e2-4628-a58a-d0d515c8fec9" class="jxgbox" style="width: 300px; height: 300px;"></div>
+         * <script type="text/javascript">
+         *     (function() {
+         *     var board = JXG.JSXGraph.initBoard('JXGcbb0305d-92e2-4628-a58a-d0d515c8fec9', {
+         *         axis: true, showcopyright: false, shownavigation: false,
+         *         intl: {
+         *             enabled: true,
+         *             locale: 'de-DE'
+         *         },
+         *     boundingbox:[-0.5, 0.5, 0.5, -0.5]
+         *     });
+         *     var t = board.create('text', [0.05, 0.2, -Math.PI*100], {
+         *         digits: 2,
+         *         intl: {
+         *                 enabled: true,
+         *                 options: {
+         *                     style: 'unit',
+         *                     unit: 'celsius'
+         *                 }
+         *             }
+         *     });
+         *
+         *     })();
+         *
+         * </script><pre>
+         *
+         * @example
+         * // Here, locale is disabled in general, but enabled for the horizontal
+         * // axis and the infobox.
+         * const board = JXG.JSXGraph.initBoard(BOARDID, {
+         *     boundingbox: [-0.5, 0.5, 0.5, -0.5],
+         *     intl: {
+         *         enabled: false,
+         *         locale: 'de-DE'
+         *     },
+         *     keepaspectratio: true,
+         *     axis: true,
+         *     defaultAxes: {
+         *         x: {
+         *             ticks: {
+         *                 intl: {
+         *                         enabled: true,
+         *                         options: {
+         *                             style: 'unit',
+         *                             unit: 'kilometer-per-hour',
+         *                             unitDisplay: 'narrow'
+         *                         }
+         *                 }
+         *             }
+         *         },
+         *         y: {
+         *             ticks: {
+         *             }
+         *         }
+         *     },
+         *     infobox: {
+         *         fontSize: 12,
+         *         intl: {
+         *             enabled: true,
+         *             options: {
+         *                 minimumFractionDigits: 4,
+         *                 maximumFractionDigits: 5
+         *             }
+         *         }
+         *     }
+         * });
+         *
+         * var p = board.create('point', [0.1, 0.1], {});
+         *
+         * </pre><div id="JXG07d5d95c-9324-4fc4-aad3-098e433f195f" class="jxgbox" style="width: 600px; height: 300px;"></div>
+         * <script type="text/javascript">
+         *     (function() {
+         *     var board = JXG.JSXGraph.initBoard('JXG07d5d95c-9324-4fc4-aad3-098e433f195f', {
+         *         boundingbox: [-0.5, 0.5, 0.5, -0.5], showcopyright: false, shownavigation: false,
+         *         intl: {
+         *             enabled: false,
+         *             locale: 'de-DE'
+         *         },
+         *         keepaspectratio: true,
+         *         axis: true,
+         *         defaultAxes: {
+         *             x: {
+         *                 ticks: {
+         *                     intl: {
+         *                             enabled: true,
+         *                             options: {
+         *                                 style: 'unit',
+         *                                 unit: 'kilometer-per-hour',
+         *                                 unitDisplay: 'narrow'
+         *                             }
+         *                     }
+         *                 }
+         *             },
+         *             y: {
+         *                 ticks: {
+         *                 }
+         *             }
+         *         },
+         *         infobox: {
+         *             fontSize: 12,
+         *             intl: {
+         *                 enabled: true,
+         *                 options: {
+         *                     minimumFractionDigits: 4,
+         *                     maximumFractionDigits: 5
+         *                 }
+         *             }
+         *         }
+         *     });
+         *
+         *     var p = board.create('point', [0.1, 0.1], {});
+         *
+         *     })();
+         *
+         * </script><pre>
+         *
+         */
         intl: {
-            enabled: true,
-            locale: 'en-US'
+            enabled: false
         }
 
         /**#@-*/
@@ -2766,12 +2929,114 @@ JXG.Options = {
          */
         type: 'linear',
 
+        /**
+         * Internationalization support for ticks labels.
+         * @name intl
+         * @memberOf Ticks.prototype
+         * @default {
+         *    enabled: 'inherit',
+         *    options: {}
+         * }
+         * @see JXG.Board#intl
+         * @see Text#intl
+         *
+                  * @example
+         * // Here, locale is disabled in general, but enabled for the horizontal
+         * // axis and the infobox.
+         * const board = JXG.JSXGraph.initBoard(BOARDID, {
+         *     boundingbox: [-0.5, 0.5, 0.5, -0.5],
+         *     intl: {
+         *         enabled: false,
+         *         locale: 'de-DE'
+         *     },
+         *     keepaspectratio: true,
+         *     axis: true,
+         *     defaultAxes: {
+         *         x: {
+         *             ticks: {
+         *                 intl: {
+         *                         enabled: true,
+         *                         options: {
+         *                             style: 'unit',
+         *                             unit: 'kilometer-per-hour',
+         *                             unitDisplay: 'narrow'
+         *                         }
+         *                 }
+         *             }
+         *         },
+         *         y: {
+         *             ticks: {
+         *             }
+         *         }
+         *     },
+         *     infobox: {
+         *         fontSize: 12,
+         *         intl: {
+         *             enabled: true,
+         *             options: {
+         *                 minimumFractionDigits: 4,
+         *                 maximumFractionDigits: 5
+         *             }
+         *         }
+         *     }
+         * });
+         *
+         * var p = board.create('point', [0.1, 0.1], {});
+         *
+         * </pre><div id="JXG820b60ff-b453-4be9-a9d5-06c0342a9dbe" class="jxgbox" style="width: 600px; height: 300px;"></div>
+         * <script type="text/javascript">
+         *     (function() {
+         *     var board = JXG.JSXGraph.initBoard('JXG820b60ff-b453-4be9-a9d5-06c0342a9dbe', {
+         *         boundingbox: [-0.5, 0.5, 0.5, -0.5], showcopyright: false, shownavigation: false,
+         *         intl: {
+         *             enabled: false,
+         *             locale: 'de-DE'
+         *         },
+         *         keepaspectratio: true,
+         *         axis: true,
+         *         defaultAxes: {
+         *             x: {
+         *                 ticks: {
+         *                     intl: {
+         *                             enabled: true,
+         *                             options: {
+         *                                 style: 'unit',
+         *                                 unit: 'kilometer-per-hour',
+         *                                 unitDisplay: 'narrow'
+         *                             }
+         *                     }
+         *                 }
+         *             },
+         *             y: {
+         *                 ticks: {
+         *                 }
+         *             }
+         *         },
+         *         infobox: {
+         *             fontSize: 12,
+         *             intl: {
+         *                 enabled: true,
+         *                 options: {
+         *                     minimumFractionDigits: 4,
+         *                     maximumFractionDigits: 5
+         *                 }
+         *             }
+         *         }
+         *     });
+         *
+         *     var p = board.create('point', [0.1, 0.1], {});
+         *
+         *     })();
+         *
+         * </script><pre>
+         *
+         */
         intl: {
             enabled: 'inherit',
-            options: {
-            }
+            options: {}
         },
 
+        // TODO implementation and documentation
         minorTicksInArrow: false,
         majorTicksInArrow: true,
         labelInArrow: true,
@@ -4177,10 +4442,22 @@ JXG.Options = {
          */
         distanceY: 25,
 
+        /**
+         * Internationalization support for infobox text.
+         *
+         * @name JXG.Board.infobox#intl
+         * @type object
+                  * @default {
+         *    enabled: 'inherit',
+         *    options: {}
+         * }
+         * @visprop
+         * @see JXG.Board#intl
+         * @see Text#intl
+         */
         intl: {
-            enabled: false,
-            options: {
-            }
+            enabled: 'inherit',
+            options: {}
         },
 
         fontSize: 12,
@@ -4282,14 +4559,21 @@ JXG.Options = {
          *
          * @type Label
          * @name Integral#label
+         * @default {
+         *      fontSize: 20,
+         *      digits: 4,
+         *      intl: {
+         *          enabled: false,
+         *          options: {}
+         *      }
+         *    }
          */
         label: {
             fontSize: 20,
             digits: 4,
             intl: {
                 enabled: false,
-                options: {
-                }
+                options: {}
             }
         }
         /**#@-*/
@@ -5747,6 +6031,59 @@ JXG.Options = {
          */
         digits: 2,
 
+        /**
+         * Internationalization support for slider labels.
+         *
+         * @name intl
+         * @memberOf Slider.prototype
+         * @type object
+         * @default {
+         *    enabled: 'inherit',
+         *    options: {}
+         * }
+         * @see JXG.Board#intl
+         * @see Text#intl
+         *
+         * @example
+         * var s = board.create('slider', [[-2, 3], [2, 3], [0, 1, 360]], {
+         *     name: '&alpha;',
+         *     snapWidth: 1,
+         *     intl: {
+         *         enabled: true,
+         *         options: {
+         *             style: 'unit',
+         *             unit: 'degree',
+         *         }
+         *     }
+         * });
+         *
+         * </pre><div id="JXGb49a9779-c0c8-419d-9173-c67232cfd65c" class="jxgbox" style="width: 300px; height: 300px;"></div>
+         * <script type="text/javascript">
+         *     (function() {
+         *         var board = JXG.JSXGraph.initBoard('JXGb49a9779-c0c8-419d-9173-c67232cfd65c',
+         *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
+         *     var s = board.create('slider', [[-2, 3], [2, 3], [0, 1, 360]], {
+         *         name: '&alpha;',
+         *         snapWidth: 1,
+         *         intl: {
+         *             enabled: true,
+         *             options: {
+         *                 style: 'unit',
+         *                 unit: 'degree',
+         *             }
+         *         }
+         *     });
+         *
+         *     })();
+         *
+         * </script><pre>
+         *
+         */
+        intl: {
+            enabled: 'inherit',
+            options: {}
+        },
+
         firstArrow: false,
         lastArrow: false,
 
@@ -6448,10 +6785,128 @@ JXG.Options = {
          */
         digits: 2,
 
+        /**
+         * Internationalization support for texts consisting of a number only.
+         * <p>
+         * Setting the local overwrites the board-wide locale set in the board attributes.
+         * The JSXGraph attribute digits is overruled by the
+         * Intl attributes "minimumFractionDigits" and "maximumFractionDigits".
+         * See <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat/NumberFormat">https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat/NumberFormat</a>
+         * for more information about possible options.
+         * <p>
+         * See below for an example where the text is composed from a string and a locale formatted number.
+         *
+         * @name intl
+         * @memberOf Text.prototype
+         * @type object
+         * @default {
+         *    enabled: 'inherit',
+         *    options: {}
+         * }
+         * @see JXG.Board#intl
+         *
+         * @example
+         * var t = board.create('text', [1, 2, -Math.PI*100], {
+         *         digits: 2,
+         *         intl: {
+         *                 enabled: true,
+         *                 options: {
+         *                     style: 'unit',
+         *                     unit: 'celsius'
+         *                 }
+         *             }
+         *     });
+         *
+         * </pre><div id="JXGb7162923-1beb-4e56-8817-19aa66e226d1" class="jxgbox" style="width: 300px; height: 300px;"></div>
+         * <script type="text/javascript">
+         *     (function() {
+         *         var board = JXG.JSXGraph.initBoard('JXGb7162923-1beb-4e56-8817-19aa66e226d1',
+         *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
+         *     var t = board.create('text', [1, 2, -Math.PI*100], {
+         *             digits: 2,
+         *             intl: {
+         *                     enabled: true,
+         *                     options: {
+         *                         style: 'unit',
+         *                         unit: 'celsius'
+         *                     }
+         *                 }
+         *         });
+         *
+         *     })();
+         *
+         * </script><pre>
+         *
+         *
+         * @example
+         * var t = board.create('text', [0.05, -0.2, ''], {
+         *     intl: {
+         *         enabled: true,
+         *         locale: 'it-IT',
+         *         options: {
+         *             style: 'unit',
+         *             unit: 'kilometer-per-hour',
+         *             unitDisplay: 'narrow',
+         *             maximumFractionDigits: 2
+         *         }
+         *     }
+         * });
+         *
+         * // Set dynamic text consisting of text and number.
+         * t.setText(function() {
+         *     var txt = 'Speed: ',
+         *         number = t.X();
+         *
+         *     // Add formatted number to variable txt
+         *     // with fallback if locale is not supported.
+         *     if (t.useLocale()) {
+         *         txt += t.formatNumberLocale(number);
+         *     } else {
+         *         txt += JXG.toFixed(number, 2);
+         *     }
+         *     return txt;
+         * });
+         *
+         * </pre><div id="JXG560aeb1c-55fb-45da-8ad5-d3ad26216056" class="jxgbox" style="width: 300px; height: 300px;"></div>
+         * <script type="text/javascript">
+         *     (function() {
+         *         var board = JXG.JSXGraph.initBoard('JXG560aeb1c-55fb-45da-8ad5-d3ad26216056',
+         *             {boundingbox: [-0.5, 0.5, 0.5, -0.5], axis: true, showcopyright: false, shownavigation: false});
+         *     var t = board.create('text', [0.3, -0.3, ''], {
+         *         intl: {
+         *             enabled: true,
+         *             locale: 'it-IT',
+         *             options: {
+         *                 style: 'unit',
+         *                 unit: 'kilometer-per-hour',
+         *                 unitDisplay: 'narrow',
+         *                 maximumFractionDigits: 2
+         *             }
+         *         }
+         *     });
+         *
+         *     // Set dynamic text consisting of text and number.
+         *     t.setText(function() {
+         *         var txt = 'Speed: ',
+         *             number = t.X();
+         *
+         *         // Add formatted number to variable txt
+         *         if (t.useLocale()) {
+         *             txt += t.formatNumberLocale(number);
+         *         } else {
+         *             txt += JXG.toFixed(number, 2);
+         *         }
+         *         return txt;
+         *     });
+         *
+         *     })();
+         *
+         * </script><pre>
+         *
+         */
         intl: {
             enabled: 'inherit',
-            options: {
-            }
+            options: {}
         },
 
         /**

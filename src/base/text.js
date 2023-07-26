@@ -103,7 +103,7 @@ JXG.Text = function (board, coords, attributes, content) {
     // this._createFctUpdateText(content);
     // this.updateText();
 
-    // Set attribute visible to true. This is necessary to 
+    // Set attribute visible to true. This is necessary to
     // create all sub-elements for button, input and checkbox
     tmp = this.visProp.visible;
     this.visProp.visible = true;
@@ -211,14 +211,14 @@ JXG.extend(
 
             if (Type.isFunction(text)) {
                 /**
-                 * Dynamically created function to update the content 
+                 * Dynamically created function to update the content
                  * of a text. Can not be overwritten.
                  * <p>
                  * &lt;value&gt; tags will not be evaluated if text is provided by a function
                  * <p>
                  * Sets the property <tt>plaintext</tt> of the text element.
-                 * 
-                 * @private 
+                 *
+                 * @private
                  */
                 this.updateText = function () {
                     resolvedText = text().toString(); // Evaluate function
@@ -634,7 +634,7 @@ JXG.extend(
          * Also, all Objects whose name appears in the term are searched and
          * the text is added as child to these objects.
          * This method is called if the attribute parse==true is set.
-         * 
+         *
          * Obsolete, replaced by JXG.Text.valueTagToJessieCode
          *
          * @param{String} contentStr String to be parsed
@@ -649,7 +649,7 @@ JXG.extend(
          * @private
          * @see JXG.GeonextParser#geonext2JS
          * @see JXG.Text#valueTagToJessieCode
-         * 
+         *
          */
         generateTerm: function (contentStr, expand, avoidGeonext2JS) {
             var res,
@@ -734,12 +734,12 @@ JXG.extend(
 
         /**
          * Replace value-tags in string by JessieCode functions.
-         * @param {String} contentStr 
+         * @param {String} contentStr
          * @returns String
-         * @private 
+         * @private
          * @example
          * "The x-coordinate of A is &lt;value&gt;X(A)&lt;/value&gt;"
-         * 
+         *
          */
         valueTagToJessieCode: function (contentStr) {
             var res, term,
@@ -804,8 +804,8 @@ JXG.extend(
 
         /**
          * Simple math rendering using HTML / CSS only.
-         * 
-         * @param {String} s 
+         *
+         * @param {String} s
          * @returns String
          * @see JXG.Text#convertGeonextAndSketchometry2CSS
          * @private
@@ -824,11 +824,11 @@ JXG.extend(
 
         /**
          * Replace ticks by URI escape sequences
-         * 
-         * @param {String} s 
+         *
+         * @param {String} s
          * @returns String
          * @private
-         * 
+         *
          */
         escapeTicks: function (s) {
             return s.replace(/"/g, "%22").replace(/'/g, "%27");
@@ -836,8 +836,8 @@ JXG.extend(
 
         /**
          * Replace escape sequences for ticks by ticks
-         * 
-         * @param {String} s 
+         *
+         * @param {String} s
          * @returns String
          * @private
          */
@@ -963,15 +963,15 @@ JXG.extend(
         },
 
         /**
-         * Returns the bounding box of the text element in user coordinates as an 
+         * Returns the bounding box of the text element in user coordinates as an
          * array of length 4: [upper left x, upper left y, lower right x, lower right y].
          * The method assumes that the lower left corner is at position [el.X(), el.Y()]
          * of the text element el, i.e. the attributes anchorX, anchorY are ignored.
-         * 
+         *
          * <p>
          * or labels, [0, 0, 0, 0] is returned.
-         * 
-         * @returns Array 
+         *
+         * @returns Array
          */
         bounds: function () {
             var c = this.coords.usrCoords;
@@ -993,7 +993,7 @@ JXG.extend(
 
         /**
          * Returns the value of the attribute "anchorX". If this equals "auto",
-         * returns "left", "middle", or "right", depending on the 
+         * returns "left", "middle", or "right", depending on the
          * value of the attribute "position".
          * @returns String
          */
@@ -1020,7 +1020,7 @@ JXG.extend(
 
         /**
          * Returns the value of the attribute "anchorY". If this equals "auto",
-         * returns "bottom", "middle", or "top", depending on the 
+         * returns "bottom", "middle", or "top", depending on the
          * value of the attribute "position".
          * @returns String
          */
