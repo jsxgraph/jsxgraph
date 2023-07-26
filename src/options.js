@@ -1071,7 +1071,10 @@ JXG.Options = {
          *  <li> tapemeasure elements
          *  <li> integral element labels
          * </ul>
-         * User generated texts consisting of texts and numbers have to be internationalized by the user, see
+         * See <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat">https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat</a>
+         * for an overview on the possibilities and the options.
+         * <p>
+         * User generated texts consisting of texts AND numbers have to be internationalized by the user, see
          * {@link Text#intl}.
          * Language locale and options can be individually controlled for each element by its intl attribute.
          * If no locale is set, the default language of the browser is used.
