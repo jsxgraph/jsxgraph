@@ -1931,7 +1931,7 @@ JXG.Options = {
          * If this is set to true, the element is updated in every update
          * call of the board. If set to false, the element is updated only after
          * zoom events or more generally, when the bounding box has been changed.
-         * Examples for the latter behaviour should be axes.
+         * Examples for the latter behavior should be axes.
          * @type Boolean
          * @default true
          * @see JXG.GeometryElement#needsRegularUpdate
