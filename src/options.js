@@ -69,7 +69,7 @@ JXG.Options = {
          * The canvas will be spanned from the upper left corner (<sub>1</sub>, y<sub>1</sub>)
          * to the lower right corner (x<sub>2</sub>, y<sub>2</sub>).
          *
-         * @name JXG.Board#boundingbox
+         * @name JXG.Board#boundingBox
          * @type Array
          * @see JXG.Board#maxBoundingBox
          * @see JXG.Board#keepAspectRatio
@@ -91,15 +91,15 @@ JXG.Options = {
          * The bounding box of the canvas must be inside of this maximal
          * bounding box.
          *
-         * @name JXG.Board#maxboundingbox
+         * @name JXG.Board#maxBoundingBox
          * @type Array
          * @see JXG.Board#boundingBox
          * @default [-Infinity, Infinity, Infinity, -Infinity]
          *
          * @example
          * var board = JXG.JSXGraph.initBoard('jxgbox', {
-         *         boundingbox: [-5, 5, 5, -5],
-         *         maxboundingbox: [-8, 8, 8, -8],
+         *         boundingBox: [-5, 5, 5, -5],
+         *         maxBoundingBox: [-8, 8, 8, -8],
          *         pan: {enabled: true},
          *         axis: true
          *     });
