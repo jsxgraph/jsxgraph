@@ -591,7 +591,7 @@ JXG.Options = {
         /**
          * Listen to fullscreen event.
          *
-         * @name JXG.Board#registerFullscreenEvents
+         * @name JXG.Board#registerFullscreenEvent
          * @see JXG.Board#registerEvents
          * @see JXG.Board#registerResizeEvent
          * @type Boolean

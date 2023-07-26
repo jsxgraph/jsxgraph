@@ -92,7 +92,6 @@ JXG.Board = function (container, renderer, id,
      * {@link JXG.Board#mouse} is updated on mouse movement.
      * @type Number
      * @constant
-     * @see JXG.Board#drag_obj
      */
     this.BOARD_MODE_DRAG = 0x0001;
 
@@ -358,7 +357,6 @@ JXG.Board = function (container, renderer, id,
      * The distance from the mouse to the dragged object in x direction when the user clicked the mouse button.
      * @type Number
      * @see JXG.Board#drag_dy
-     * @see JXG.Board#drag_obj
      */
     this.drag_dx = 0;
 
@@ -366,7 +364,6 @@ JXG.Board = function (container, renderer, id,
      * The distance from the mouse to the dragged object in y direction when the user clicked the mouse button.
      * @type Number
      * @see JXG.Board#drag_dx
-     * @see JXG.Board#drag_obj
      */
     this.drag_dy = 0;
 
@@ -467,10 +464,10 @@ JXG.Board = function (container, renderer, id,
     /**
      * If GEONExT constructions are displayed, then this property should be set to true.
      * At the moment there should be no difference. But this may change.
-     * This is set in {@link JXG.GeonextReader.readGeonext}.
+     * This is set in {@link JXG.GeonextReader#readGeonext}.
      * @type Boolean
      * @default false
-     * @see JXG.GeonextReader.readGeonext
+     * @see JXG.GeonextReader#readGeonext
      */
     this.geonextCompatibilityMode = false;
 
