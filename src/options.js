@@ -1071,7 +1071,8 @@ JXG.Options = {
          *  <li> tapemeasure elements
          *  <li> integral element labels
          * </ul>
-         * User generated texts consisting of texts and numbers have to be internationalized by the user.
+         * User generated texts consisting of texts and numbers have to be internationalized by the user, see 
+         * {@link Text#intl}.
          * Language locale and options can be individually controlled for each element by its intl attribute.
          * If no locale is set, the default language of the browser is used.
          *
@@ -1082,7 +1083,7 @@ JXG.Options = {
          * @see Slider#intl
          * @see Text#intl
          * @see Ticks#intl
-         * @see JXG.Board.infobox#intl
+         * @see JXG.Board.infobox
          *
          * @example
          * // Set the board-wide locale and use individual
