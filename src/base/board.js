@@ -1294,13 +1294,18 @@ JXG.extend(
 
         /**
          * Moves, rotates and scales a line or polygon with two fingers.
+         * <p>
+         * If one vertex of the polygon snaps to the grid or to points or is not draggable,
+         * two-finger-movement is cancelled.
+         *
          * @param {Array} tar Array containing touch event objects: {JXG.Board#touches.targets}.
          * @param {object} drag The object that is dragged:
          * @param {Number} id pointerId of the event. In case of old touch event this is emulated.
          */
         twoFingerTouchObject: function (tar, drag, id) {
             var t, T,
-                ar, i, len;
+                ar, i, len, vp,
+                snap = false;
 
             if (
                 Type.exists(tar[0]) &&
@@ -1325,14 +1330,23 @@ JXG.extend(
                     }
                     t.applyOnce(ar);
                 } else if (drag.type === Const.OBJECT_TYPE_POLYGON) {
-                    ar = [];
                     len = drag.vertices.length - 1;
-                    for (i = 0; i < len; ++i) {
-                        if (drag.vertices[i].draggable()) {
-                            ar.push(drag.vertices[i]);
-                        }
+                    vp = drag.visProp;
+                    snap = Type.evaluate(vp.snaptogrid) || Type.evaluate(vp.snaptopoints);
+                    for (i = 0; i < len && !snap; ++i) {
+                        vp = drag.vertices[i].visProp;
+                        snap = snap || Type.evaluate(vp.snaptogrid) || Type.evaluate(vp.snaptopoints);
+                        snap = snap || (!drag.vertices[i].draggable())
                     }
-                    t.applyOnce(ar);
+                    if (!snap) {
+                        ar = [];
+                        for (i = 0; i < len; ++i) {
+                            if (drag.vertices[i].draggable()) {
+                                ar.push(drag.vertices[i]);
+                            }
+                        }
+                        t.applyOnce(ar);
+                    }
                 }
 
                 this.update();

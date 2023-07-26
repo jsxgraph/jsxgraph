@@ -1420,7 +1420,7 @@ JXG.createRegularPolygon = function (board, parents, attributes) {
  * @param {Array} vertices The polygon's vertices.
  *
  * Additionally, a polygonal chain can be created by providing a polygonal chain and a transformation (or an array of transformations).
- * The result is a polygonal chain which is the transformation of the supplied polygona chain.
+ * The result is a polygonal chain which is the transformation of the supplied polygonal chain.
  *
  * @example
  *     var attr = {

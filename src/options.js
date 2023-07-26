@@ -1071,7 +1071,7 @@ JXG.Options = {
          *  <li> tapemeasure elements
          *  <li> integral element labels
          * </ul>
-         * User generated texts consisting of texts and numbers have to be internationalized by the user, see 
+         * User generated texts consisting of texts and numbers have to be internationalized by the user, see
          * {@link Text#intl}.
          * Language locale and options can be individually controlled for each element by its intl attribute.
          * If no locale is set, the default language of the browser is used.
@@ -1962,6 +1962,10 @@ JXG.Options = {
          * moving the element with two fingers results in a rotation or translation.
          * <p>
          * If an element is set to be neither scalable nor rotatable, it can only be translated.
+         * <p>
+         * In case of a polygon, scaling is only possible if <i>no</i> vertex has snapToGrid or snapToPoints
+         * enabled and no vertex is fixed by some other constraint. Also, the polygon itself has to have
+         * snapToGrid disabled.
          *
          * @type Boolean
          * @default true
@@ -1979,6 +1983,10 @@ JXG.Options = {
          * moving the element with two fingers results in a rotation or translation.
          * <p>
          * If an element is set to be neither scalable nor rotatable, it can only be translated.
+         * <p>
+         * In case of a polygon, scaling is only possible if <i>no</i> vertex has snapToGrid or snapToPoints
+         * enabled and no vertex is fixed by some other constraint. Also, the polygon itself has to have
+         * snapToGrid disabled.
          *
          * @type Boolean
          * @default true
