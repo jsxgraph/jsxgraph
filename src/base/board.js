@@ -1689,7 +1689,7 @@ JXG.extend(
         },
 
         /**
-         * Registers the MSPointer* event handlers.
+         * Registers pointer event handlers.
          */
         addPointerEventHandlers: function () {
             if (!this.hasPointerHandlers && Env.isBrowser) {
@@ -2004,14 +2004,8 @@ JXG.extend(
                 // Save zoomFactors
                 zx = this.attr.zoom.factorx,
                 zy = this.attr.zoom.factory,
-                factor,
-                dist,
-                dx,
-                dy,
-                theta,
-                cx,
-                cy,
-                bound;
+                factor, dist,theta, bound,
+                dx, dy, cx, cy;
 
             if (this.mode !== this.BOARD_MODE_ZOOM) {
                 return true;
@@ -2077,13 +2071,11 @@ JXG.extend(
 
             if (this.attr.pan.enabled && this.attr.pan.needtwofingers && !isPinch) {
                 // Pan detected
-
                 this.isPreviousGesture = 'pan';
-
                 this.moveOrigin(c.scrCoords[1], c.scrCoords[2], true);
+
             } else if (this.attr.zoom.enabled && Math.abs(factor - 1.0) < 0.5) {
                 // Pinch detected
-
                 if (this.attr.zoom.pinchhorizontal || this.attr.zoom.pinchvertical) {
                     dx = Math.abs(evt.touches[0].clientX - evt.touches[1].clientX);
                     dy = Math.abs(evt.touches[0].clientY - evt.touches[1].clientY);
@@ -3497,10 +3489,7 @@ JXG.extend(
          */
         keyDownListener: function (evt) {
             var id_node = evt.target.id,
-                id,
-                el,
-                res,
-                doc,
+                id, el, res, doc,
                 sX = 0,
                 sY = 0,
                 // dx, dy are provided in screen units and
