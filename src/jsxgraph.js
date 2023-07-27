@@ -119,7 +119,7 @@ JXG.JSXGraph = {
      * @param  {Object} dim        The dimensions of the board
      * @param  {Object} doc        Usually, this is document object of the browser window.  If false or null, this defaults
      * to the document object of the browser.
-     * @param  {Object} attrRenderer Attribute 'renderer', speficies the rendering engine. Possible values are 'auto', 'svg',
+     * @param  {Object} attrRenderer Attribute 'renderer', specifies the rendering engine. Possible values are 'auto', 'svg',
      *  'canvas', 'no', and 'vml'.
      * @returns {Object}           Reference to the rendering engine object.
      * @private
