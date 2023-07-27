@@ -174,31 +174,21 @@ JXG.JSXGraph = {
         // merge attributes
         var attr = Type.copyAttributes(attributes, Options, 'board'),
 
-            // These attributes which are objects have to be copied separately
-            list = ['drag', 'fullscreen', 'intl',
+            // These attributes - which are objects - have to be copied separately.
+            list = [
+                'drag', 'fullscreen',
+                'intl',
                 'keyboard', 'logging',
                 'navbar', 'pan', 'resize',
                 'screenshot', 'selection',
-                'zoom'],
+                'zoom'
+            ],
             len = list.length, i, key;
 
         for (i = 0; i < len; i++) {
             key = list[i];
             attr[key] = Type.copyAttributes(attr, Options, 'board', key);
         }
-
-/*
-        attr.zoom = Type.copyAttributes(attr, Options, "board", "zoom");
-        attr.pan = Type.copyAttributes(attr, Options, "board", "pan");
-        attr.drag = Type.copyAttributes(attr, Options, "board", "drag");
-        attr.keyboard = Type.copyAttributes(attr, Options, "board", "keyboard");
-        attr.selection = Type.copyAttributes(attr, Options, "board", "selection");
-        attr.navbar = Type.copyAttributes(attr.navbar, Options, "navbar");
-        attr.screenshot = Type.copyAttributes(attr, Options, "board", "screenshot");
-        attr.resize = Type.copyAttributes(attr, Options, "board", "resize");
-        attr.fullscreen = Type.copyAttributes(attr, Options, "board", "fullscreen");
-        attr.logging = Type.copyAttributes(attr, Options, 'board', 'logging');
-*/
 
         // Treat moveTarget separately, because deepCopy will not work here.
         // Reason: moveTarget will be an HTML node and it is prevented that Type.deepCopy will copy it.
