@@ -1309,6 +1309,7 @@ JXG.extend(
                             ')';
                         el.rendNode.style['transform-origin'] = to_v + ' ' + to_h;
                     }
+                    this.transformImage(el, el.transformations);
                 } else {
                     this.updateInternalText(el);
                 }

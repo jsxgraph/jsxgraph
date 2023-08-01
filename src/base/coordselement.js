@@ -237,29 +237,16 @@ JXG.extend(
          * @private
          */
         updateGlider: function () {
-            var i,
-                p1c,
-                p2c,
-                d,
-                v,
-                poly,
-                cc,
-                pos,
-                sgn,
-                alpha,
-                beta,
+            var i, d, v,
+                p1c, p2c, poly, cc, pos,
+                angle, sgn, alpha, beta,
                 delta = 2.0 * Math.PI,
-                angle,
-                cp,
-                c,
-                invMat,
-                newCoords,
-                newPos,
+                cp, c, invMat,
+                newCoords, newPos,
                 doRound = false,
                 ev_sw,
                 slide = this.slideObject,
-                res,
-                cu,
+                res, cu,
                 slides = [],
                 isTransformed;
 
@@ -476,7 +463,7 @@ JXG.extend(
                     // In case, the point is a constrained glider.
                     this.updateConstraint();
 
-                    // Handle the case if the curve comes from a transformation of a continous curve.
+                    // Handle the case if the curve comes from a transformation of a continuous curve.
                     if (slide.transformations.length > 0) {
                         isTransformed = false;
                         res = slide.getTransformationSource();
