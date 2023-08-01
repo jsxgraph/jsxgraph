@@ -1307,7 +1307,7 @@ JXG.extend(
                         el.rendNode.style['transform'] = 'matrix(' +
                                 [co, -1 * si, si, co, 0, 0].join(',') +
                             ')';
-                        el.rendNode.style['transform-origin'] = to_v + ' ' + to_h;
+                        el.rendNode.style['transform-origin'] = to_h + ' ' + to_v;
                     }
                     this.transformImage(el, el.transformations);
                 } else {
