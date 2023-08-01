@@ -202,6 +202,7 @@ JXG.extend(
         _createFctUpdateText: function (text) {
             var updateText, e, digits,
                 resolvedText,
+                i, that,
                 ev_p = Type.evaluate(this.visProp.parse),
                 ev_um = Type.evaluate(this.visProp.usemathjax),
                 ev_uk = Type.evaluate(this.visProp.usekatex),
@@ -249,7 +250,13 @@ JXG.extend(
                         // Replace value-tags by functions
                         // sketchofont is ignored
                         this.content = this.valueTagToJessieCode(text);
-                        this.content = this.content.replace(/\\/g, "\\\\"); // Replace single backslash by double
+                        if (Type.isArray(this.content)) {
+                            for (i = 0; i < this.content.length; i++) {
+                                this.content[i] = this.content[i].replace(/\\/g, "\\\\"); // Replace single backslash by double                
+                            }
+                        } else {
+                            this.content = this.content.replace(/\\/g, "\\\\"); // Replace single backslash by double
+                        }
                     } else {
                         // No TeX involved.
                         // Converts GEONExT syntax into JavaScript string
@@ -266,10 +273,49 @@ JXG.extend(
                 // Generate function which returns the text to be displayed
                 if (convertJessieCode) {
                     // Convert JessieCode to JS function
-                    updateText = this.board.jc.snippet(this.content, true, "", false);
-                    for (e in updateText.deps) {
-                        this.addParents(updateText.deps[e]);
-                        updateText.deps[e].addChild(this);
+
+                    if (Type.isArray(this.content)) {
+                        that = this;
+                        for (i = 0; i < this.content.length; i++) {
+                            if (this.content[i][0] !== '"') {
+                                this.content[i] = this.board.jc.snippet(this.content[i], true, "", false);
+                                for (e in this.content[i].deps) {
+                                    this.addParents(this.content[i].deps[e]);
+                                    this.content[i].deps[e].addChild(this);
+                                }
+                            }
+                        }
+
+                        updateText = function() {
+                            var i, t,
+                                digits = Type.evaluate(that.visProp.digits),
+                                txt = '';
+
+                            for (i = 0; i < that.content.length; i++) {
+                                if (Type.isFunction(that.content[i])) {
+                                    t = that.content[i]();
+                                    if (that.useLocale()) {
+                                        t = that.formatNumberLocale(t, digits);
+                                    } else {
+                                        t = Type.toFixed(t, digits);
+                                    }
+                                } else {
+                                    t = that.content[i];
+                                    if (t.at(0) === '"' && t.at(-1) === '"') {
+                                        t = t.slice(1, -1);
+                                    }
+                                }
+
+                                txt += t;
+                            }
+                            return txt;
+                        };
+                    } else {
+                        updateText = this.board.jc.snippet(this.content, true, "", false);
+                        for (e in updateText.deps) {
+                            this.addParents(updateText.deps[e]);
+                            updateText.deps[e].addChild(this);
+                        }
                     }
 
                     // Ticks have been escaped in valueTagToJessieCode
@@ -771,26 +817,27 @@ JXG.extend(
                     res = term;
                     res = res.replace(/\\"/g, "'").replace(/\\'/g, "'");
 
-                    // Hack: apply rounding once only.
-                    if (res.indexOf("toFixed") < 0) {
-                        // Output of a value tag
-                        // Run the JessieCode parser
-                        if (
-                            Type.isNumber(
-                                Type.bind(this.board.jc.snippet(res, true, "", false), this)()
-                            )
-                        ) {
-                            // Output is number
-                            textComps.push(
-                                '(' + res + ').toFixed(' + Type.evaluate(this.visProp.digits) + ')'
-                            );
-                        } else {
-                            // Output is a string
-                            textComps.push("(" + res + ")");
-                        }
-                    } else {
+                    // // Hack: apply rounding once only.
+                    // if (res.indexOf("toFixed") < 0) {
+                    //     // Output of a value tag
+                    //     // Run the JessieCode parser
+                    //     if (
+                    //         Type.isNumber(
+                    //             Type.bind(this.board.jc.snippet(res, true, "", false), this)()
+                    //         )
+                    //     ) {
+                    //         // Output is number
+                    //         // textComps.push(
+                    //         //     '(' + res + ').toFixed(' + Type.evaluate(this.visProp.digits) + ')'
+                    //         // );
+                    //         textComps.push('(' + res + ')');
+                    //     } else {
+                    //         // Output is a string
+                    //         textComps.push("(" + res + ")");
+                    //     }
+                    // } else {
                         textComps.push("(" + res + ")");
-                    }
+                    // }
                     contentStr = contentStr.slice(j + 8);
                     i = contentStr.indexOf("<value>");
                     j = contentStr.indexOf("</value>");
@@ -799,14 +846,20 @@ JXG.extend(
             // Add trailing string fragment
             textComps.push(tick + this.escapeTicks(contentStr) + tick);
 
-            return textComps.join(" + ").replace(/&amp;/g, "&");
+            // return textComps.join(" + ").replace(/&amp;/g, "&");
+            for (i = 0; i < textComps.length; i++) {
+                textComps[i] = textComps[i].replace(/&amp;/g, "&");
+            }
+            return textComps;
         },
 
         /**
-         * Simple math rendering using HTML / CSS only.
+         * Simple math rendering using HTML / CSS only. In case of array,
+         * handle each entry separately and return array with the
+         * rendering strings.
          *
-         * @param {String} s
-         * @returns String
+         * @param {String|Array} s
+         * @returns {String|Array}
          * @see JXG.Text#convertGeonextAndSketchometry2CSS
          * @private
          * @see JXG.Text#replaceSub
@@ -814,6 +867,15 @@ JXG.extend(
          * @see JXG.Text#convertGeonextAndSketchometry2CSS
          */
         poorMansTeX: function (s) {
+            var i, a;
+            if (Type.isArray(s)) {
+                a = [];
+                for (i = 0; i < s.length; i++) {
+                    a.push(this.poorMansTeX(s[i]));
+                }
+                return a;
+            }
+
             s = s
                 .replace(/<arc\s*\/*>/g, "&ang;")
                 .replace(/&lt;arc\s*\/*&gt;/g, "&ang;")
