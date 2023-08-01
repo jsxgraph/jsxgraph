@@ -3386,6 +3386,19 @@ JXG.Options = {
 
     /* special arrowparallel options */
     arrowparallel: {
+        /**#@+
+         * @visprop
+         */
+
+        firstArrow: false,
+
+        lastArrow: {
+            type: 1,
+            highlightSize: 6,
+            size: 6
+        }
+
+        /**#@-*/
     },
 
     /* special axis options */

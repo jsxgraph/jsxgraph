@@ -2516,8 +2516,6 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
         this._addedBuiltIn[name].src = '$jc$.' + name;
 
         JXG.JessieCode.prototype[name] = func;
-
-        console.log('added', name, func)
     },
 
     /**

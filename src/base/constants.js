@@ -133,20 +133,8 @@ constants = /** @lends JXG */ {
     // SketchReader constants
     GENTYPE_ABC: 1, // unused
     GENTYPE_AXIS: 2,
-    GENTYPE_MID: 3,
 
-    /**
-     * @ignore
-     * @deprecated, now use {@link JXG.GENTYPE_REFLECTION_ON_LINE}
-     *
-     */
-    GENTYPE_REFLECTION: 4,
-    /**
-     * @ignore
-     * @deprecated, now use {@link JXG.GENTYPE_REFLECTION_ON_POINT}
-     */
-    GENTYPE_MIRRORELEMENT: 5,
-
+    GENTYPE_MIDPOINT: 3,
     GENTYPE_REFLECTION_ON_LINE: 4,
     GENTYPE_REFLECTION_ON_POINT: 5,
     GENTYPE_TANGENT: 6,
@@ -187,21 +175,17 @@ constants = /** @lends JXG */ {
     GENTYPE_REFLEXANGLE: 37,
     GENTYPE_PATH: 38,
     GENTYPE_DERIVATIVE: 39,
-    // 40 // unused ...
+    GENTYPE_PERPBISECTOR: 40,
     GENTYPE_DELETE: 41,
     GENTYPE_COPY: 42,
     GENTYPE_MIRROR: 43,
     GENTYPE_ROTATE: 44,
-    GENTYPE_ABLATION: 45,
+    GENTYPE_CIRCLECLONE: 45,
     GENTYPE_MIGRATE: 46,
-    GENTYPE_VECTORCOPY: 47,
+    GENTYPE_VECTORCLONE: 47,
     GENTYPE_POLYGONCOPY: 48,
-    /**
-     * Constants
-     * @name Constants
-     * @namespace
-     */ //        GENTYPE_TRANSFORM: 48, // unused
-    // 49 ... 50 // unused ...
+    GENTYPE_PARALLELPOINT: 49,
+    GENTYPE_PARALLELOGRAM: 50,
 
     // IMPORTANT:
     // ----------
@@ -209,12 +193,12 @@ constants = /** @lends JXG */ {
     // (CORE-specific) non-CTX steps, the non-CTX steps MUST NOT be changed
     // to values > 50.
 
-    GENTYPE_CTX_TYPE_G: 51,
-    GENTYPE_CTX_TYPE_P: 52,
+    GENTYPE_CTX_POINT_GLIDE: 51,
+    GENTYPE_CTX_POINT_FREE: 52,
     GENTYPE_CTX_TRACE: 53,
     GENTYPE_CTX_VISIBILITY: 54,
-    GENTYPE_CTX_CCVISIBILITY: 55, // unused
-    GENTYPE_CTX_MPVISIBILITY: 56,
+    GENTYPE_CTX_POINT_MERGE: 55,
+    GENTYPE_CTX_POINT_UNMERGE: 56,
     GENTYPE_CTX_WITHLABEL: 57,
     GENTYPE_CTX_LABEL: 58,
     GENTYPE_CTX_FIXED: 59,
@@ -237,7 +221,7 @@ constants = /** @lends JXG */ {
     GENTYPE_CTX_POINT1: 76,
     GENTYPE_CTX_POINT2: 77,
     GENTYPE_CTX_LABELSTICKY: 78,
-    GENTYPE_CTX_TYPE_I: 79,
+    GENTYPE_CTX_POINT_INTERSECT: 79,
     GENTYPE_CTX_HASINNERPOINTS: 80,
     GENTYPE_CTX_SLIDER_STEP: 81,
     GENTYPE_CTX_SNAPTOGRID: 82,
@@ -246,7 +230,15 @@ constants = /** @lends JXG */ {
     GENTYPE_CTX_SLIDER_VALUE: 85,
     GENTYPE_CTX_SECTORBORDERS: 86,
     GENTYPE_CTX_CURVETAU: 87,
-    GENTYPE_CTX_SLIDER_POS: 88
+    GENTYPE_CTX_SLIDER_POS: 88,
+    // space for 89 - 99
+    GENTYPE_CTX_GRID_VISIBILITY: 100,
+    GENTYPE_CTX_AXES_VISIBILITY: 101,
+    GENTYPE_CTX_AXES_SCALE: 102,
+    GENTYPE_CTX_BACKGROUND_COLOR: 103,
+    GENTYPE_CTX_BACKGROUND_OPACITY: 104,
+    GENTYPE_CTX_SNAPTOGRID_GLOBAL: 105,
+    GENTYPE_CTX_SNAPTOPOINTS_GLOBAL: 106,
 };
 
 JXG.extendConstants(JXG, constants);
