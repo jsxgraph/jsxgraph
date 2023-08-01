@@ -724,11 +724,11 @@ JXG.extend(
                         switch (Type.evaluate(el.visProp.anchorx)) {
                             case 'right': cx += el.size[0]; break;
                             case 'middle': cx += el.size[0] * 0.5; break;
-                        };
+                        }
                         switch (Type.evaluate(el.visProp.anchory)) {
                             case 'bottom': cy += el.size[1]; break;
                             case 'middle': cy += el.size[1] * 0.5; break;
-                        };
+                        }
                         node.style['transform-origin'] = (cx) + 'px ' + (cy) + 'px';
                     }
                 }
