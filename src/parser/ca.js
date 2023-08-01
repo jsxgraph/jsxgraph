@@ -701,18 +701,9 @@ JXG.extend(
          *
          */
         expandDerivatives: function (node, parent, ast) {
-            var len,
-                i,
-                j,
-                mapNode,
-                codeNode,
-                ret,
-                node2,
-                newNode,
-                mapName,
-                varname,
-                vArray,
-                order;
+            var len, i, j, mapNode, codeNode,
+                ret, node2, newNode, mapName,
+                varname, vArray, order;
 
             ret = 0;
             if (!node) {
@@ -815,8 +806,12 @@ JXG.extend(
                                 this.setMath(node2);
                                 node.type = node2.type;
                                 node.value = node2.value;
-                                node.children[0] = node2.children[0];
-                                node.children[1] = node2.children[1];
+                                if (node2.children.length > 0) {
+                                    node.children[0] = node2.children[0];
+                                }
+                                if (node2.children.length > 1) {
+                                    node.children[1] = node2.children[1];
+                                }
                             }
                     }
                     break;
@@ -977,7 +972,7 @@ JXG.extend(
                         this.mayNotBeSimplified = true;
                         return node;
                     }
-                    // a + (-const) -> -const * a
+                    // a + (-const) -> -const + a
                     if (
                         n0.type != "node_const" &&
                         n1.type == "node_op" &&
@@ -1002,7 +997,7 @@ JXG.extend(
                         return node;
                     }
 
-                    // a + (-var) -> -var * a
+                    // a + (-var) -> -var  + a
                     if (
                         n0.type != "node_op" &&
                         n1.type == "node_op" &&
