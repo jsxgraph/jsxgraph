@@ -1221,10 +1221,7 @@ JXG.extend(
  *
  */
 JXG.createPolygon = function (board, parents, attributes) {
-    var el,
-        i,
-        le,
-        obj,
+    var el, i, le, obj,
         points = [],
         attr,
         attr_points,
@@ -1340,12 +1337,9 @@ JXG.createPolygon = function (board, parents, attributes) {
  *
  */
 JXG.createRegularPolygon = function (board, parents, attributes) {
-    var el,
-        i,
-        n,
+    var el, i, n,
         p = [],
-        rot,
-        len,
+        rot, len,
         pointsExist,
         attr;
 
@@ -1426,7 +1420,7 @@ JXG.createRegularPolygon = function (board, parents, attributes) {
  * @param {Array} vertices The polygon's vertices.
  *
  * Additionally, a polygonal chain can be created by providing a polygonal chain and a transformation (or an array of transformations).
- * The result is a polygonal chain which is the transformation of the supplied polygona chain.
+ * The result is a polygonal chain which is the transformation of the supplied polygonal chain.
  *
  * @example
  *     var attr = {

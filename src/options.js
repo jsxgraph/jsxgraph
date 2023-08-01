@@ -62,155 +62,18 @@ JXG.Options = {
         //updateType: 'hierarchical', // 'all'
 
         /**
-         * Bounding box of the visible area in user coordinates.
-         * It is an array consisting of four values:
-         * [x<sub>1</sub>, y<sub>1</sub>, x<sub>2</sub>, y<sub>2</sub>]
+         * Time (in msec) between two animation steps. Used in
+         * {@link JXG.CoordsElement#moveAlong}, {@link JXG.CoordsElement#moveTo} and
+         * {@link JXG.CoordsElement#visit}.
          *
-         * The canvas will be spanned from the upper left corner (<sub>1</sub>, y<sub>1</sub>)
-         * to the lower right corner (x<sub>2</sub>, y<sub>2</sub>).
-         *
-         * @name JXG.Board#boundingbox
-         * @type Array
-         * @see JXG.Board#maxBoundingBox
-         * @see JXG.Board#keepAspectRatio
-         *
-         * @default [-5, 5, 5, -5]
-         * @example
-         * var board = JXG.JSXGraph.initBoard('jxgbox', {
-         *         boundingbox: [-5, 5, 5, -5],
-         *         axis: true
-         *     });
-         */
-        boundingBox: [-5, 5, 5, -5],
-
-        /**
-         * Maximal bounding box of the visible area in user coordinates.
-         * It is an array consisting of four values:
-         * [x<sub>1</sub>, y<sub>1</sub>, x<sub>2</sub>, y<sub>2</sub>]
-         *
-         * The bounding box of the canvas must be inside of this maximal
-         * bounding box.
-         *
-         * @name JXG.Board#maxboundingbox
-         * @type Array
-         * @see JXG.Board#boundingBox
-         * @default [-Infinity, Infinity, Infinity, -Infinity]
-         *
-         * @example
-         * var board = JXG.JSXGraph.initBoard('jxgbox', {
-         *         boundingbox: [-5, 5, 5, -5],
-         *         maxboundingbox: [-8, 8, 8, -8],
-         *         pan: {enabled: true},
-         *         axis: true
-         *     });
-         *
-         * </pre><div id="JXG065e2750-217c-48ed-a52b-7d7df6de7055" class="jxgbox" style="width: 300px; height: 300px;"></div>
-         * <script type="text/javascript">
-         *     (function() {
-         *         var board = JXG.JSXGraph.initBoard('JXG065e2750-217c-48ed-a52b-7d7df6de7055', {
-         *             showcopyright: false, shownavigation: false,
-         *             boundingbox: [-5,5,5,-5],
-         *             maxboundingbox: [-8,8,8,-8],
-         *             pan: {enabled: true},
-         *             axis:true
-         *         });
-         *
-         *     })();
-         *
-         * </script><pre>
-         *
-         */
-        maxBoundingBox: [-Infinity, Infinity, Infinity, -Infinity],
-
-        /**
-         * If set to true, the ratio between horizontal and vertical unit sizes
-         * stays constant - independent of size changes of the hosting HTML div element.
-         * <p>
-         * If the aspect ration of the hosting div changes, JSXGraphs will change
-         * the user supplied bounding box accordingly.
-         * This is necessary if circles should look like circles and not
-         * like ellipses. It is recommended to set keepAspectRatio = true
-         * for geometric applets.
-         * <p>
-         * For function plotting keepAspectRatio = false
-         * might be the better choice.
-         *
-         * @name JXG.Board#keepAspectRatio
-         * @see JXG.Board#boundingBox
-         * @see JXG.Board#maxBoundingBox
-         * @see JXG.Board#setBoundingBox
-         * @type Boolean
-         * @default false
-         */
-        keepAspectRatio: false,
-
-        /**
-         * Additional zoom factor multiplied to {@link JXG.Board#zoomX} and {@link JXG.Board#zoomY}.
-         *
-         * @name JXG.Board#zoomFactor
+         * @name JXG.Board#animationDelay
          * @type Number
-         * @default 1.0
+         * @default 35
+         * @see JXG.CoordsElement#moveAlong
+         * @see JXG.CoordsElement#moveTo
+         * @see JXG.CoordsElement#visit
          */
-        zoomFactor: 1,
-
-        /**
-         * Zoom factor in horizontal direction.
-         *
-         * @name JXG.Board#zoomX
-         * @see JXG.Board#zoomY
-         * @type Number
-         * @default 1.0
-         */
-        zoomX: 1,
-
-        /**
-         * Zoom factor in vertical direction.
-         *
-         * @name JXG.Board#zoomY
-         * @see JXG.Board#zoomX
-         * @type Number
-         * @default 1.0
-         */
-        zoomY: 1,
-
-        /**
-         * Title string for the board.
-         * Primarily used in an invisible text element which is adressed by
-         * the attribute 'aria-labelledby' from the JSXGraph container.
-         * JSXGraph creates a new div-element with id "{containerid}_ARIAlabel"
-         * containing this string.
-         *
-         * @name JXG.Board#title
-         * @see JXG.Board#description
-         * @type String
-         * @default ''
-         *
-         */
-        title: '',
-
-        /**
-         * Description string for the board.
-         * Primarily used in an invisible text element which is adressed by
-         * the attribute 'aria-describedby' from the JSXGraph container.
-         * JSXGraph creates a new div-element with id "{containerid}_ARIAdescription"
-         * containing this string.
-         *
-         * @name JXG.Board#description
-         * @see JXG.Board#title
-         * @type String
-         * @default ''
-         *
-         */
-        description: '',
-
-        /**
-         * Show copyright string in canvas.
-         *
-         * @name JXG.Board#showCopyright
-         * @type Boolean
-         * @default true
-         */
-        showCopyright: true,
+        animationDelay: 35,
 
         /**
          * Show default axis.
@@ -225,6 +88,88 @@ JXG.Options = {
          * @default false
          */
         axis: false,
+
+        /**
+         * Bounding box of the visible area in user coordinates.
+         * It is an array consisting of four values:
+         * [x<sub>1</sub>, y<sub>1</sub>, x<sub>2</sub>, y<sub>2</sub>]
+         *
+         * The canvas will be spanned from the upper left corner (<sub>1</sub>, y<sub>1</sub>)
+         * to the lower right corner (x<sub>2</sub>, y<sub>2</sub>).
+         *
+         * @name JXG.Board#boundingBox
+         * @type Array
+         * @see JXG.Board#maxBoundingBox
+         * @see JXG.Board#keepAspectRatio
+         *
+         * @default [-5, 5, 5, -5]
+         * @example
+         * var board = JXG.JSXGraph.initBoard('jxgbox', {
+         *         boundingbox: [-5, 5, 5, -5],
+         *         axis: true
+         *     });
+         */
+        boundingBox: [-5, 5, 5, -5],
+
+        /**
+         * Enable browser scrolling on touch interfaces if the user double taps into an empty region
+         * of the board.
+         *
+         * <ul>
+         * <li> Implemented for pointer touch devices - not with mouse, pen or old iOS touch.
+         * <li> It only works if browserPan:true
+         * <li> One finger action by the settings "pan.enabled:true" and "pan.needTwoFingers:false" has priority
+         * </ul>
+         *
+         * @name JXG.Board#browserPan
+         * @see JXG.Board#pan
+         * @type Boolean
+         * @default false
+         *
+         * @example
+         * const board = JXG.JSXGraph.initBoard('jxgbox', {
+         *     boundingbox: [-5, 5, 5, -5], axis: true,
+         *     pan: {
+         *         enabled: true,
+         *         needTwoFingers: true,
+         *     },
+         *     browserPan: true,
+         *     zoom: {
+         *         enabled: false
+         *     }
+         * });
+         *
+         * var p1 = board.create('point', [1, -1]);
+         * var p2 = board.create('point', [2.5, -2]);
+         * var li1 = board.create('line', [p1, p2]);
+         *
+         * </pre><div id="JXGcd50c814-be81-4280-9458-d73e50cece8d" class="jxgbox" style="width: 300px; height: 300px;"></div>
+         * <script type="text/javascript">
+         *     (function() {
+         *         var board = JXG.JSXGraph.initBoard('JXGcd50c814-be81-4280-9458-d73e50cece8d',
+         *             {showcopyright: false, shownavigation: false,
+         *              axis: true,
+         *              pan: {
+         *                enabled: true,
+         *                needTwoFingers: true,
+         *             },
+         *             browserPan: true,
+         *             zoom: {
+         *               enabled: false
+         *             }
+         *          });
+         *
+         *     var p1 = board.create('point', [1, -1]);
+         *     var p2 = board.create('point', [2.5, -2]);
+         *     var li1 = board.create('line', [p1, p2]);
+         *
+         *     })();
+         *
+         * </script><pre>
+         *
+         *
+         */
+        browserPan: false,
 
         /**
          * Attributes for the default axes in case of the attribute
@@ -332,80 +277,46 @@ JXG.Options = {
         },
 
         /**
-         * Display of navigation arrows and zoom buttons in the navigation bar.
+         * Description string for the board.
+         * Primarily used in an invisible text element which is adressed by
+         * the attribute 'aria-describedby' from the JSXGraph container.
+         * JSXGraph creates a new div-element with id "{containerid}_ARIAdescription"
+         * containing this string.
          *
-         * @name JXG.Board#showNavigation
-         * @type Boolean
-         * @default true
-         * @see JXG.AbstractRenderer#drawZoomBar
+         * @name JXG.Board#description
+         * @see JXG.Board#title
+         * @type String
+         * @default ''
+         *
          */
-        showNavigation: true,
+        description: '',
 
         /**
-         * Display of zoom buttons in the navigation bar. To show zoom buttons, additionally
-         * showNavigation has to be set to true.
+         * Supply the document object. Defaults to window.document
          *
-         * @name JXG.Board#showZoom
-         * @type Boolean
-         * @default true
-         * @see JXG.AbstractRenderer#drawZoomBar
+         * @name JXG.Board#document
+         * @type DOM object
+         * @default false (meaning window.document)
          */
-        showZoom: true,
+        document: false,
 
         /**
-         * Show a button in the navigation bar to force reload of a construction.
-         * Works only with the JessieCode tag.
+         * Control the possibilities for dragging objects.
          *
-         * @name JXG.Board#showReload
-         * @type Boolean
-         * @default false
-         * @see JXG.AbstractRenderer#drawZoomBar
-         */
-        showReload: false,
-
-        /**
-         * Show a button in the navigation bar to enable screenshots.
+         * Possible sub-attributes with default values are:
+         * <pre>
+         * drag: {
+         *   enabled: true   // Allow dragging
+         * }
+         * </pre>
          *
-         * @name JXG.Board#showScreenshot
-         * @type Boolean
-         * @default false
-         * @see JXG.AbstractRenderer#drawZoomBar
-         */
-        showScreenshot: false,
-
-        /**
-         * Attributes to control the screenshot function.
-         * The following attributes can be set:
-         * <ul>
-         *  <li>scale: scaling factor (default=1.0)
-         *  <li>type: format of the screenshot image. Default: png
-         *  <li>symbol: Unicode symbol which is shown in the navigation bar. Default: '\u2318'
-         *  <li>css: CSS rules to format the div element containing the screen shot image
-         *  <li>cssButton: CSS rules to format the close button of the div element containing the screen shot image
-         * </ul>
-         *
-         * @name JXG.Board#screenshot
+         * @name JXG.Board#drag
          * @type Object
+         * @default {enabled: true}
          */
-        screenshot: {
-            scale: 1.0,
-            type: 'png',
-            symbol: '\u2318', //'\u22b9', //'\u26f6',
-            css: 'background-color:#eeeeee; opacity:1.0; border:2px solid black; border-radius:10px; text-align:center',
-            cssButton: 'padding: 4px 10px; border: solid #356AA0 1px; border-radius: 5px; position: absolute; right: 2ex; top: 2ex; background-color: rgba(255, 255, 255, 0.3);'
+        drag: {
+            enabled: true
         },
-
-        /**
-         * Show a button in the navigation bar to start fullscreen mode.
-         *
-         * @name JXG.Board#showFullscreen
-         * @type Boolean
-         * @see JXG.Board#fullscreen
-         * @default false
-         * @see JXG.AbstractRenderer#drawZoomBar
-         * @see JXG.AbstractRenderer#drawZoomBar
-         */
-        showFullscreen: false,
 
         /**
          * Attribute(s) to control the fullscreen icon. The attribute "showFullscreen"
@@ -462,16 +373,6 @@ JXG.Options = {
         },
 
         /**
-         * Show a button which allows to clear all traces of a board.
-         *
-         * @name JXG.Board#showClearTraces
-         * @type Boolean
-         * @default false
-         * @see JXG.AbstractRenderer#drawZoomBar
-         */
-        showClearTraces: false,
-
-        /**
          * If set true and
          * hasPoint() is true for both an element and it's label,
          * the element (and not the label) is taken as drag element.
@@ -486,303 +387,198 @@ JXG.Options = {
         ignoreLabels: true,
 
         /**
-         * Maximum number of digits in automatic label generation.
-         * For example, if set to 1 automatic point labels end at "Z".
-         * If set to 2, point labels end at "ZZ".
-         *
-         * @name JXG.Board#maxNameLength
-         * @see JXG.Board#generateName
-         * @type Number
-         * @default 1
-         */
-        maxNameLength: 1,
-
-        /**
-         * Supply the document object. Defaults to window.document
-         *
-         * @name JXG.Board#document
-         * @type DOM object
-         * @default false (meaning window.document)
-         */
-        document: false,
-
-        /**
-         * If true the first element of the set JXG.board.objects having hasPoint==true is taken as drag element.
-         *
-         * @name JXG.Board#takeFirst
-         * @type Boolean
-         * @default false
-         */
-        takeFirst: false,
-
-        /**
-        * If true, when read from a file or string - the size of the div can be changed by the construction text.
-        *
-        * @name JXG.Board#takeSizeFromFile
-        * @type Boolean
-        * @default false
-        */
-        takeSizeFromFile: false,
-
-        /**
-         * Default rendering engine. Possible values are 'svg', 'canvas', 'vml', 'no', or 'auto'.
-         * If the rendering engine is not available JSXGraph tries to detect a different engine.
-         *
-         * <p>
-         * In case of 'canvas' it is advisable to call 'board.update()' after all elements have been
-         * constructed. This ensures that all elements are drawn with their intended visual appearance.
-         *
-         * @name JXG.Board#renderer
-         * @type String
-         * @default 'auto'
-         */
-        renderer: 'auto',
-
-        /**
-         * Time (in msec) between two animation steps. Used in
-         * {@link JXG.CoordsElement#moveAlong}, {@link JXG.CoordsElement#moveTo} and
-         * {@link JXG.CoordsElement#visit}.
-         *
-         * @name JXG.Board#animationDelay
-         * @type Number
-         * @default 35
-         * @see JXG.CoordsElement#moveAlong
-         * @see JXG.CoordsElement#moveTo
-         * @see JXG.CoordsElement#visit
-         */
-        animationDelay: 35,
-
-        /**
-         * Maximum frame rate of the board, i.e. maximum number of updates per second
-         * triggered by move events.
-         *
-         * @name JXG.Board#maxFrameRate
-         * @type Number
-         * @default 40
-         */
-        maxFrameRate: 40,
-
-        /**
-         * Allow user interaction by registering mouse, pointer, keyboard or touch events.
-         * Decide if JSXGraph listens to these events. Keyboard events can then turned off
-         * separately with the keyboard attribute.
-         *
-         * @name JXG.Board#registerEvents
-         * @see JXG.Board#keyboard
-         * @see JXG.Board#registerResizeEvent
-         * @see JXG.Board#registerFullscreenEvent
-         * @type Boolean
-         * @default true
-         */
-        registerEvents: true,
-
-        /**
-         * Listen to resize events, i.e. start "resizeObserver" or handle the resize event with
-         * "resizeListener". This is independent from the mouse, touch, pointer events.
-         *
-         * @name JXG.Board#registerResizeEvent
-         * @see JXG.Board#registerEvents
-         * @see JXG.Board#registerFullscreenEvent
-         * @type Boolean
-         * @default true
-         */
-        registerResizeEvent: true,
-
-        /**
-         * Listen to fullscreen event.
-         *
-         * @name JXG.Board#registerFullscreenEvents
-         * @see JXG.Board#registerEvents
-         * @see JXG.Board#registerResizeEvent
-         * @type Boolean
-         * @default true
-         */
-        registerFullscreenEvent: true,
-
-        /**
-         * Change redraw strategy in SVG rendering engine.
-         * <p>
-         * This optimization seems to be <b>obsolete</b> in newer browsers (from 2021 on, at least)
-         * and even slow down the constructions. Therefore, the default is set to 'none' since v1.2.4.
-         * <p>
-         * If set to 'svg', before every redrawing of the JSXGraph construction
-         * the SVG sub-tree of the DOM tree is taken out of the DOM.
-         *
-         * If set to 'all', before every redrawing of the JSXGraph construction the
-         * complete DOM tree is taken out of the DOM.
-         * If set to 'none' the redrawing is done in-place.
-         *
-         * Using 'svg' or 'all' speeds up the update process considerably. The risk
-         * is that if there is an exception, only a white div or window is left.
-         *
-         *
-         * @name JXG.Board#minimizeReflow
-         * @type String
-         * @default 'none'
-         */
-        minimizeReflow: 'none',
-
-        /**
-         * A number that will be added to the absolute position of the board used in mouse coordinate
-         * calculations in {@link JXG.Board#getCoordsTopLeftCorner}.
-         *
-         * @name JXG.Board#offsetX
-         * @see JXG.Board#offsetY
-         * @type Number
-         * @default 0
-         */
-        offsetX: 0,
-
-        /**
-         * A number that will be added to the absolute position of the board used in mouse coordinate
-         * calculations in {@link JXG.Board#getCoordsTopLeftCorner}.
-         *
-         * @name JXG.Board#offsetY
-         * @see JXG.Board#offsetX
-         * @type Number
-         * @default 0
-         */
-        offsetY: 0,
-
-        /**
-         * Control the possibilities for zoom interaction.
-         *
-         * Possible sub-attributes with default values are:
-         * <pre>
-         * zoom: {
-         *   factorX: 1.25,  // horizontal zoom factor (multiplied to {@link JXG.Board#zoomX})
-         *   factorY: 1.25,  // vertical zoom factor (multiplied to {@link JXG.Board#zoomY})
-         *   wheel: true,     // allow zooming by mouse wheel or
-         *   				   // by pinch-to-toom gesture on touch devices
-         *   needShift: true,   // mouse wheel zooming needs pressing of the shift key
-         *   min: 0.001,        // minimal values of {@link JXG.Board#zoomX} and {@link JXG.Board#zoomY}, limits zoomOut
-         *   max: 1000.0,       // maximal values of {@link JXG.Board#zoomX} and {@link JXG.Board#zoomY}, limits zoomIn
-         *
-         *   pinchHorizontal: true, // Allow pinch-to-zoom to zoom only horizontal axis
-         *   pinchVertical: true,   // Allow pinch-to-zoom to zoom only vertical axis
-         *   pinchSensitivity: 7    // Sensitivity (in degrees) for recognizing horizontal or vertical pinch-to-zoom gestures.
-         * }
-         * </pre>
-         *
-         * Deprecated: zoom.eps which is superseded by zoom.min
-         *
-         * @name JXG.Board#zoom
-         * @type Object
-         * @default
-         */
-        zoom: {
-            enabled: true,
-            factorX: 1.25,
-            factorY: 1.25,
-            wheel: true,
-            needShift: true,
-            min: 0.0001,
-            max: 10000.0,
-            pinchHorizontal: true,
-            pinchVertical: true,
-            pinchSensitivity: 7
-        },
-
-        /**
-         * Control the possibilities for panning interaction (i.e. moving the origin).
-         *
-         * Possible sub-attributes with default values are:
-         * <pre>
-         * pan: {
-         *   enabled: true   // Allow panning
-         *   needTwoFingers: false, // panning is done with two fingers on touch devices
-         *   needShift: true, // mouse panning needs pressing of the shift key
-         * }
-         * </pre>
-         *
-         * @name JXG.Board#pan
-         * @see JXG.Board#browserPan
-         *
-         * @type Object
-         */
-        pan: {
-            enabled: true,
-            needShift: true,
-            needTwoFingers: false
-        },
-
-        /**
-         * Enable browser scrolling on touch interfaces if the user double taps into an empty region
-         * of the board.
-         *
+         * Support for internationalization of number formatting. This affects
          * <ul>
-         * <li> Implemented for pointer touch devices - not with mouse, pen or old iOS touch.
-         * <li> It only works if browserPan:true
-         * <li> One finger action by the settings "pan.enabled:true" and "pan.needTwoFingers:false" has priority
+         *  <li> axis labels
+         *  <li> infobox
+         *  <li> texts consisting of numbers only
+         *  <li> smartlabel elements
+         *  <li> slider labels
+         *  <li> tapemeasure elements
+         *  <li> integral element labels
          * </ul>
+         * See <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat">https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat</a>
+         * for an overview on the possibilities and the options.
+         * <p>
+         * User generated texts consisting of texts AND numbers have to be internationalized by the user, see
+         * {@link Text#intl}.
+         * Language locale and options can be individually controlled for each element by its intl attribute.
+         * If no locale is set, the default language of the browser is used.
          *
-         * @name JXG.Board#browserPan
-         * @see JXG.Board#pan
-         * @type Boolean
-         * @default false
+         * @name JXG.Board#intl
+         * @type Object
+         * @default {enabled: false}
+         * @see Integral#label
+         * @see Slider#intl
+         * @see Text#intl
+         * @see Ticks#intl
+         * @see JXG.Board.infobox
          *
          * @example
-         * const board = JXG.JSXGraph.initBoard('jxgbox', {
-         *     boundingbox: [-5, 5, 5, -5], axis: true,
-         *     pan: {
+         * // Set the board-wide locale and use individual
+         * // options for a text.
+         * const board = JXG.JSXGraph.initBoard(BOARDID, {
+         *     axis: true,
+         *     intl: {
          *         enabled: true,
-         *         needTwoFingers: true,
+         *         locale: 'de-DE'
          *     },
-         *     browserPan: true,
-         *     zoom: {
-         *         enabled: false
-         *     }
+         *     boundingbox:[-0.5, 0.5, 0.5, -0.5]
          * });
          *
-         * var p1 = board.create('point', [1, -1]);
-         * var p2 = board.create('point', [2.5, -2]);
-         * var li1 = board.create('line', [p1, p2]);
+         * var t = board.create('text', [0.05, 0.2, -Math.PI*100], {
+         *         digits: 2,
+         *         intl: {
+         *                 enabled: true,
+         *                 options: {
+         *                     style: 'unit',
+         *                     unit: 'celsius'
+         *                 }
+         *             }
+         *     });
          *
-         * </pre><div id="JXGcd50c814-be81-4280-9458-d73e50cece8d" class="jxgbox" style="width: 300px; height: 300px;"></div>
+         * </pre><div id="JXGcbb0305d-92e2-4628-a58a-d0d515c8fec9" class="jxgbox" style="width: 300px; height: 300px;"></div>
          * <script type="text/javascript">
          *     (function() {
-         *         var board = JXG.JSXGraph.initBoard('JXGcd50c814-be81-4280-9458-d73e50cece8d',
-         *             {showcopyright: false, shownavigation: false,
-         *              axis: true,
-         *              pan: {
-         *                enabled: true,
-         *                needTwoFingers: true,
-         *             },
-         *             browserPan: true,
-         *             zoom: {
-         *               enabled: false
+         *     var board = JXG.JSXGraph.initBoard('JXGcbb0305d-92e2-4628-a58a-d0d515c8fec9', {
+         *         axis: true, showcopyright: false, shownavigation: false,
+         *         intl: {
+         *             enabled: true,
+         *             locale: 'de-DE'
+         *         },
+         *     boundingbox:[-0.5, 0.5, 0.5, -0.5]
+         *     });
+         *     var t = board.create('text', [0.05, 0.2, -Math.PI*100], {
+         *         digits: 2,
+         *         intl: {
+         *                 enabled: true,
+         *                 options: {
+         *                     style: 'unit',
+         *                     unit: 'celsius'
+         *                 }
          *             }
-         *          });
-         *
-         *     var p1 = board.create('point', [1, -1]);
-         *     var p2 = board.create('point', [2.5, -2]);
-         *     var li1 = board.create('line', [p1, p2]);
+         *     });
          *
          *     })();
          *
          * </script><pre>
          *
+         * @example
+         * // Here, locale is disabled in general, but enabled for the horizontal
+         * // axis and the infobox.
+         * const board = JXG.JSXGraph.initBoard(BOARDID, {
+         *     boundingbox: [-0.5, 0.5, 0.5, -0.5],
+         *     intl: {
+         *         enabled: false,
+         *         locale: 'de-DE'
+         *     },
+         *     keepaspectratio: true,
+         *     axis: true,
+         *     defaultAxes: {
+         *         x: {
+         *             ticks: {
+         *                 intl: {
+         *                         enabled: true,
+         *                         options: {
+         *                             style: 'unit',
+         *                             unit: 'kilometer-per-hour',
+         *                             unitDisplay: 'narrow'
+         *                         }
+         *                 }
+         *             }
+         *         },
+         *         y: {
+         *             ticks: {
+         *             }
+         *         }
+         *     },
+         *     infobox: {
+         *         fontSize: 12,
+         *         intl: {
+         *             enabled: true,
+         *             options: {
+         *                 minimumFractionDigits: 4,
+         *                 maximumFractionDigits: 5
+         *             }
+         *         }
+         *     }
+         * });
+         *
+         * var p = board.create('point', [0.1, 0.1], {});
+         *
+         * </pre><div id="JXG07d5d95c-9324-4fc4-aad3-098e433f195f" class="jxgbox" style="width: 600px; height: 300px;"></div>
+         * <script type="text/javascript">
+         *     (function() {
+         *     var board = JXG.JSXGraph.initBoard('JXG07d5d95c-9324-4fc4-aad3-098e433f195f', {
+         *         boundingbox: [-0.5, 0.5, 0.5, -0.5], showcopyright: false, shownavigation: false,
+         *         intl: {
+         *             enabled: false,
+         *             locale: 'de-DE'
+         *         },
+         *         keepaspectratio: true,
+         *         axis: true,
+         *         defaultAxes: {
+         *             x: {
+         *                 ticks: {
+         *                     intl: {
+         *                             enabled: true,
+         *                             options: {
+         *                                 style: 'unit',
+         *                                 unit: 'kilometer-per-hour',
+         *                                 unitDisplay: 'narrow'
+         *                             }
+         *                     }
+         *                 }
+         *             },
+         *             y: {
+         *                 ticks: {
+         *                 }
+         *             }
+         *         },
+         *         infobox: {
+         *             fontSize: 12,
+         *             intl: {
+         *                 enabled: true,
+         *                 options: {
+         *                     minimumFractionDigits: 4,
+         *                     maximumFractionDigits: 5
+         *                 }
+         *             }
+         *         }
+         *     });
+         *
+         *     var p = board.create('point', [0.1, 0.1], {});
+         *
+         *     })();
+         *
+         * </script><pre>
          *
          */
-        browserPan: false,
+        intl: {
+            enabled: false
+        },
 
         /**
-         * Control the possibilities for dragging objects.
+         * If set to true, the ratio between horizontal and vertical unit sizes
+         * stays constant - independent of size changes of the hosting HTML div element.
+         * <p>
+         * If the aspect ration of the hosting div changes, JSXGraphs will change
+         * the user supplied bounding box accordingly.
+         * This is necessary if circles should look like circles and not
+         * like ellipses. It is recommended to set keepAspectRatio = true
+         * for geometric applets.
+         * <p>
+         * For function plotting keepAspectRatio = false
+         * might be the better choice.
          *
-         * Possible sub-attributes with default values are:
-         * <pre>
-         * drag: {
-         *   enabled: true   // Allow dragging
-         * }
-         * </pre>
-         *
-         * @name JXG.Board#drag
-         * @type Object
-         * @default {enabled: true}
+         * @name JXG.Board#keepAspectRatio
+         * @see JXG.Board#boundingBox
+         * @see JXG.Board#maxBoundingBox
+         * @see JXG.Board#setBoundingBox
+         * @type Boolean
+         * @default false
          */
-        drag: {
-            enabled: true
-        },
+        keepAspectRatio: false,
 
         /**
          * Control using the keyboard to change the construction.
@@ -845,46 +641,145 @@ JXG.Options = {
         },
 
         /**
-         * Control if JSXGraph reacts to resizing of the JSXGraph container element
-         * by the user / browser.
-         * The attribute "throttle" determines the minimal time in msec between to
-         * resize calls.
+         * If enabled, user activities are logged in array "board.userLog".
          *
-         * @see JXG.Board#startResizeObserver
-         * @see JXG.Board#resizeListener
-         *
-         * @name JXG.Board#resize
+         * @name JXG.Board#logging
          * @type Object
-         * @default {enabled: true, throttle: 10}
+         * @default {enabled: false}
          *
          * @example
-         *     var board = JXG.JSXGraph.initBoard('jxgbox', {
-         *         boundingbox: [-5,5,5,-5],
-         *         keepAspectRatio: true,
-         *         axis: true,
-         *         resize: {enabled: true, throttle: 200}
-         *     });
+         * var board = JXG.JSXGraph.initBoard(BOARDID,
+         *          {
+         *              boundingbox: [-8, 8, 8,-8],
+         *              axis: true,
+         *              logging: {enabled: true},
+         *              showcopyright: false,
+         *              shownavigation: false
+         *          });
+         * var A = board.create('point', [-4, 0], { name: 'A' });
+         * var B = board.create('point', [1, 2], { name: 'B' });
+         * var showUserLog = function() {
+         *     var txt = '';
          *
-         * </pre><div id="JXGb55d4608-5d71-4bc3-b332-18c15fbda8c3" class="jxgbox" style="width: 300px; height: 300px;"></div>
+         *     for (let i = 0; i < board.userLog.length; i++) {
+         *         txt += JSON.stringify(board.userLog[i]) + '\n';
+         *     }
+         *     alert(txt);
+         * };
+         * var but = board.create('button', [4, 4, 'Show user log', showUserLog]);
+         *
+         * </pre><div id="JXGe152375c-f478-41aa-a9e6-e104403fc75d" class="jxgbox" style="width: 300px; height: 300px;"></div>
          * <script type="text/javascript">
          *     (function() {
-         *         var board = JXG.JSXGraph.initBoard('JXGb55d4608-5d71-4bc3-b332-18c15fbda8c3', {
-         *             boundingbox: [-5,5,5,-5],
-         *             keepAspectRatio: true,
-         *             axis: true,
-         *             resize: {enabled: true, throttle: 200}
-         *         });
+         *         var board = JXG.JSXGraph.initBoard('JXGe152375c-f478-41aa-a9e6-e104403fc75d',
+         *             {boundingbox: [-8, 8, 8,-8], axis: true, logging: {enabled: true},
+         *              showcopyright: false, shownavigation: false});
+         *     var A = board.create('point', [-4, 0], { name: 'A' });
+         *     var B = board.create('point', [1, 2], { name: 'B' });
+         *     var showUserLog = function() {
+         *         var txt = '';
+         *
+         *         for (let i = 0; i < board.userLog.length; i++) {
+         *             txt += JSON.stringify(board.userLog[i]) + '\n';
+         *         }
+         *         alert(txt);
+         *     };
+         *     var but = board.create('button', [4, 4, 'Show user log', showUserLog]);
          *
          *     })();
          *
          * </script><pre>
          *
          *
+         * @see JXG.Board#userLog
          */
-        resize: {
-            enabled: true,
-            throttle: 10
+        logging: {
+            enabled: false
         },
+
+        /**
+         * Change redraw strategy in SVG rendering engine.
+         * <p>
+         * This optimization seems to be <b>obsolete</b> in newer browsers (from 2021 on, at least)
+         * and even slow down the constructions. Therefore, the default is set to 'none' since v1.2.4.
+         * <p>
+         * If set to 'svg', before every redrawing of the JSXGraph construction
+         * the SVG sub-tree of the DOM tree is taken out of the DOM.
+         *
+         * If set to 'all', before every redrawing of the JSXGraph construction the
+         * complete DOM tree is taken out of the DOM.
+         * If set to 'none' the redrawing is done in-place.
+         *
+         * Using 'svg' or 'all' speeds up the update process considerably. The risk
+         * is that if there is an exception, only a white div or window is left.
+         *
+         *
+         * @name JXG.Board#minimizeReflow
+         * @type String
+         * @default 'none'
+         */
+        minimizeReflow: 'none',
+
+        /**
+         * Maximal bounding box of the visible area in user coordinates.
+         * It is an array consisting of four values:
+         * [x<sub>1</sub>, y<sub>1</sub>, x<sub>2</sub>, y<sub>2</sub>]
+         *
+         * The bounding box of the canvas must be inside of this maximal
+         * bounding box.
+         *
+         * @name JXG.Board#maxBoundingBox
+         * @type Array
+         * @see JXG.Board#boundingBox
+         * @default [-Infinity, Infinity, Infinity, -Infinity]
+         *
+         * @example
+         * var board = JXG.JSXGraph.initBoard('jxgbox', {
+         *         boundingBox: [-5, 5, 5, -5],
+         *         maxBoundingBox: [-8, 8, 8, -8],
+         *         pan: {enabled: true},
+         *         axis: true
+         *     });
+         *
+         * </pre><div id="JXG065e2750-217c-48ed-a52b-7d7df6de7055" class="jxgbox" style="width: 300px; height: 300px;"></div>
+         * <script type="text/javascript">
+         *     (function() {
+         *         var board = JXG.JSXGraph.initBoard('JXG065e2750-217c-48ed-a52b-7d7df6de7055', {
+         *             showcopyright: false, shownavigation: false,
+         *             boundingbox: [-5,5,5,-5],
+         *             maxboundingbox: [-8,8,8,-8],
+         *             pan: {enabled: true},
+         *             axis:true
+         *         });
+         *
+         *     })();
+         *
+         * </script><pre>
+         *
+         */
+        maxBoundingBox: [-Infinity, Infinity, Infinity, -Infinity],
+
+        /**
+         * Maximum frame rate of the board, i.e. maximum number of updates per second
+         * triggered by move events.
+         *
+         * @name JXG.Board#maxFrameRate
+         * @type Number
+         * @default 40
+         */
+        maxFrameRate: 40,
+
+        /**
+         * Maximum number of digits in automatic label generation.
+         * For example, if set to 1 automatic point labels end at "Z".
+         * If set to 2, point labels end at "ZZ".
+         *
+         * @name JXG.Board#maxNameLength
+         * @see JXG.Board#generateName
+         * @type Number
+         * @default 1
+         */
+        maxNameLength: 1,
 
         /**
          * Element which listens to move events of the pointing device.
@@ -931,6 +826,166 @@ JXG.Options = {
          *
          */
         moveTarget: null,
+
+        /**
+         * A number that will be added to the absolute position of the board used in mouse coordinate
+         * calculations in {@link JXG.Board#getCoordsTopLeftCorner}.
+         *
+         * @name JXG.Board#offsetX
+         * @see JXG.Board#offsetY
+         * @type Number
+         * @default 0
+         */
+        offsetX: 0,
+
+        /**
+         * A number that will be added to the absolute position of the board used in mouse coordinate
+         * calculations in {@link JXG.Board#getCoordsTopLeftCorner}.
+         *
+         * @name JXG.Board#offsetY
+         * @see JXG.Board#offsetX
+         * @type Number
+         * @default 0
+         */
+        offsetY: 0,
+
+        /**
+         * Control the possibilities for panning interaction (i.e. moving the origin).
+         *
+         * Possible sub-attributes with default values are:
+         * <pre>
+         * pan: {
+         *   enabled: true   // Allow panning
+         *   needTwoFingers: false, // panning is done with two fingers on touch devices
+         *   needShift: true, // mouse panning needs pressing of the shift key
+         * }
+         * </pre>
+         *
+         * @name JXG.Board#pan
+         * @see JXG.Board#browserPan
+         *
+         * @type Object
+         */
+        pan: {
+            enabled: true,
+            needShift: true,
+            needTwoFingers: false
+        },
+
+        /**
+         * Allow user interaction by registering mouse, pointer, keyboard or touch events.
+         * Decide if JSXGraph listens to these events. Keyboard events can then turned off
+         * separately with the keyboard attribute.
+         *
+         * @name JXG.Board#registerEvents
+         * @see JXG.Board#keyboard
+         * @see JXG.Board#registerResizeEvent
+         * @see JXG.Board#registerFullscreenEvent
+         * @type Boolean
+         * @default true
+         */
+        registerEvents: true,
+
+        /**
+         * Listen to fullscreen event.
+         *
+         * @name JXG.Board#registerFullscreenEvent
+         * @see JXG.Board#registerEvents
+         * @see JXG.Board#registerResizeEvent
+         * @type Boolean
+         * @default true
+         */
+        registerFullscreenEvent: true,
+
+        /**
+         * Listen to resize events, i.e. start "resizeObserver" or handle the resize event with
+         * "resizeListener". This is independent from the mouse, touch, pointer events.
+         *
+         * @name JXG.Board#registerResizeEvent
+         * @see JXG.Board#registerEvents
+         * @see JXG.Board#registerFullscreenEvent
+         * @type Boolean
+         * @default true
+         */
+        registerResizeEvent: true,
+
+        /**
+         * Default rendering engine. Possible values are 'svg', 'canvas', 'vml', 'no', or 'auto'.
+         * If the rendering engine is not available JSXGraph tries to detect a different engine.
+         *
+         * <p>
+         * In case of 'canvas' it is advisable to call 'board.update()' after all elements have been
+         * constructed. This ensures that all elements are drawn with their intended visual appearance.
+         *
+         * @name JXG.Board#renderer
+         * @type String
+         * @default 'auto'
+         */
+        renderer: 'auto',
+
+        /**
+         * Control if JSXGraph reacts to resizing of the JSXGraph container element
+         * by the user / browser.
+         * The attribute "throttle" determines the minimal time in msec between to
+         * resize calls.
+         *
+         * @see JXG.Board#startResizeObserver
+         * @see JXG.Board#resizeListener
+         *
+         * @name JXG.Board#resize
+         * @type Object
+         * @default {enabled: true, throttle: 10}
+         *
+         * @example
+         *     var board = JXG.JSXGraph.initBoard('jxgbox', {
+         *         boundingbox: [-5,5,5,-5],
+         *         keepAspectRatio: true,
+         *         axis: true,
+         *         resize: {enabled: true, throttle: 200}
+         *     });
+         *
+         * </pre><div id="JXGb55d4608-5d71-4bc3-b332-18c15fbda8c3" class="jxgbox" style="width: 300px; height: 300px;"></div>
+         * <script type="text/javascript">
+         *     (function() {
+         *         var board = JXG.JSXGraph.initBoard('JXGb55d4608-5d71-4bc3-b332-18c15fbda8c3', {
+         *             boundingbox: [-5,5,5,-5],
+         *             keepAspectRatio: true,
+         *             axis: true,
+         *             resize: {enabled: true, throttle: 200}
+         *         });
+         *
+         *     })();
+         *
+         * </script><pre>
+         *
+         *
+         */
+        resize: {
+            enabled: true,
+            throttle: 10
+        },
+
+        /**
+         * Attributes to control the screenshot function.
+         * The following attributes can be set:
+         * <ul>
+         *  <li>scale: scaling factor (default=1.0)
+         *  <li>type: format of the screenshot image. Default: png
+         *  <li>symbol: Unicode symbol which is shown in the navigation bar. Default: '\u2318'
+         *  <li>css: CSS rules to format the div element containing the screen shot image
+         *  <li>cssButton: CSS rules to format the close button of the div element containing the screen shot image
+         * </ul>
+         *
+         * @name JXG.Board#screenshot
+         * @type Object
+         */
+        screenshot: {
+            scale: 1.0,
+            type: 'png',
+            symbol: '\u2318', //'\u22b9', //'\u26f6',
+            css: 'background-color:#eeeeee; opacity:1.0; border:2px solid black; border-radius:10px; text-align:center',
+            cssButton: 'padding: 4px 10px; border: solid #356AA0 1px; border-radius: 5px; position: absolute; right: 2ex; top: 2ex; background-color: rgba(255, 255, 255, 0.3);'
+        },
 
         /**
          * Control the possibilities for a selection rectangle.
@@ -991,6 +1046,37 @@ JXG.Options = {
         },
 
         /**
+         * Show a button which allows to clear all traces of a board.
+         *
+         * @name JXG.Board#showClearTraces
+         * @type Boolean
+         * @default false
+         * @see JXG.AbstractRenderer#drawZoomBar
+         */
+        showClearTraces: false,
+
+        /**
+         * Show copyright string in canvas.
+         *
+         * @name JXG.Board#showCopyright
+         * @type Boolean
+         * @default true
+         */
+        showCopyright: true,
+
+        /**
+         * Show a button in the navigation bar to start fullscreen mode.
+         *
+         * @name JXG.Board#showFullscreen
+         * @type Boolean
+         * @see JXG.Board#fullscreen
+         * @default false
+         * @see JXG.AbstractRenderer#drawZoomBar
+         * @see JXG.AbstractRenderer#drawZoomBar
+         */
+        showFullscreen: false,
+
+        /**
          * If true, the infobox is shown on mouse/pen over for all points
          * which have set their attribute showInfobox to 'inherit'.
          * If a point has set its attribute showInfobox to false or true,
@@ -1004,66 +1090,147 @@ JXG.Options = {
         showInfobox: true,
 
         /**
-         * If enabled, user activities are logged in array "board.userLog".
+         * Display of navigation arrows and zoom buttons in the navigation bar.
          *
-         * @name JXG.Board#logging
-         * @type Object
-         * @default {enabled: false}
-         *
-         * @example
-         * var board = JXG.JSXGraph.initBoard(BOARDID,
-         *          {
-         *              boundingbox: [-8, 8, 8,-8],
-         *              axis: true,
-         *              logging: {enabled: true},
-         *              showcopyright: false,
-         *              shownavigation: false
-         *          });
-         * var A = board.create('point', [-4, 0], { name: 'A' });
-         * var B = board.create('point', [1, 2], { name: 'B' });
-         * var showUserLog = function() {
-         *     var txt = '';
-         *
-         *     for (let i = 0; i < board.userLog.length; i++) {
-         *         txt += JSON.stringify(board.userLog[i]) + '\n';
-         *     }
-         *     alert(txt);
-         * };
-         * var but = board.create('button', [4, 4, 'Show user log', showUserLog]);
-         *
-         * </pre><div id="JXGe152375c-f478-41aa-a9e6-e104403fc75d" class="jxgbox" style="width: 300px; height: 300px;"></div>
-         * <script type="text/javascript">
-         *     (function() {
-         *         var board = JXG.JSXGraph.initBoard('JXGe152375c-f478-41aa-a9e6-e104403fc75d',
-         *             {boundingbox: [-8, 8, 8,-8], axis: true, logging: {enabled: true},
-         *              showcopyright: false, shownavigation: false});
-         *     var A = board.create('point', [-4, 0], { name: 'A' });
-         *     var B = board.create('point', [1, 2], { name: 'B' });
-         *     var showUserLog = function() {
-         *         var txt = '';
-         *
-         *         for (let i = 0; i < board.userLog.length; i++) {
-         *             txt += JSON.stringify(board.userLog[i]) + '\n';
-         *         }
-         *         alert(txt);
-         *     };
-         *     var but = board.create('button', [4, 4, 'Show user log', showUserLog]);
-         *
-         *     })();
-         *
-         * </script><pre>
-         *
-         *
-         * @see JXG.Board#userLog
+         * @name JXG.Board#showNavigation
+         * @type Boolean
+         * @default true
+         * @see JXG.AbstractRenderer#drawZoomBar
          */
-        logging: {
-            enabled: false
+        showNavigation: true,
+
+        /**
+         * Show a button in the navigation bar to force reload of a construction.
+         * Works only with the JessieCode tag.
+         *
+         * @name JXG.Board#showReload
+         * @type Boolean
+         * @default false
+         * @see JXG.AbstractRenderer#drawZoomBar
+         */
+        showReload: false,
+
+        /**
+         * Show a button in the navigation bar to enable screenshots.
+         *
+         * @name JXG.Board#showScreenshot
+         * @type Boolean
+         * @default false
+         * @see JXG.AbstractRenderer#drawZoomBar
+         */
+        showScreenshot: false,
+
+        /**
+         * Display of zoom buttons in the navigation bar. To show zoom buttons, additionally
+         * showNavigation has to be set to true.
+         *
+         * @name JXG.Board#showZoom
+         * @type Boolean
+         * @default true
+         * @see JXG.AbstractRenderer#drawZoomBar
+         */
+        showZoom: true,
+
+        /**
+         * If true the first element of the set JXG.board.objects having hasPoint==true is taken as drag element.
+         *
+         * @name JXG.Board#takeFirst
+         * @type Boolean
+         * @default false
+         */
+        takeFirst: false,
+
+        /**
+        * If true, when read from a file or string - the size of the div can be changed by the construction text.
+        *
+        * @name JXG.Board#takeSizeFromFile
+        * @type Boolean
+        * @default false
+        */
+        takeSizeFromFile: false,
+
+        /**
+         * Title string for the board.
+         * Primarily used in an invisible text element which is adressed by
+         * the attribute 'aria-labelledby' from the JSXGraph container.
+         * JSXGraph creates a new div-element with id "{containerid}_ARIAlabel"
+         * containing this string.
+         *
+         * @name JXG.Board#title
+         * @see JXG.Board#description
+         * @type String
+         * @default ''
+         *
+         */
+        title: '',
+
+        /**
+         * Control the possibilities for zoom interaction.
+         *
+         * Possible sub-attributes with default values are:
+         * <pre>
+         * zoom: {
+         *   factorX: 1.25,  // horizontal zoom factor (multiplied to {@link JXG.Board#zoomX})
+         *   factorY: 1.25,  // vertical zoom factor (multiplied to {@link JXG.Board#zoomY})
+         *   wheel: true,     // allow zooming by mouse wheel or
+         *   				   // by pinch-to-toom gesture on touch devices
+         *   needShift: true,   // mouse wheel zooming needs pressing of the shift key
+         *   min: 0.001,        // minimal values of {@link JXG.Board#zoomX} and {@link JXG.Board#zoomY}, limits zoomOut
+         *   max: 1000.0,       // maximal values of {@link JXG.Board#zoomX} and {@link JXG.Board#zoomY}, limits zoomIn
+         *
+         *   pinchHorizontal: true, // Allow pinch-to-zoom to zoom only horizontal axis
+         *   pinchVertical: true,   // Allow pinch-to-zoom to zoom only vertical axis
+         *   pinchSensitivity: 7    // Sensitivity (in degrees) for recognizing horizontal or vertical pinch-to-zoom gestures.
+         * }
+         * </pre>
+         *
+         * Deprecated: zoom.eps which is superseded by zoom.min
+         *
+         * @name JXG.Board#zoom
+         * @type Object
+         * @default
+         */
+        zoom: {
+            enabled: true,
+            factorX: 1.25,
+            factorY: 1.25,
+            wheel: true,
+            needShift: true,
+            min: 0.0001,
+            max: 10000.0,
+            pinchHorizontal: true,
+            pinchVertical: true,
+            pinchSensitivity: 7
         },
 
-        intl: {
-            enabled: true,
-            locale: 'en-US'
-        }
+        /**
+         * Additional zoom factor multiplied to {@link JXG.Board#zoomX} and {@link JXG.Board#zoomY}.
+         *
+         * @name JXG.Board#zoomFactor
+         * @type Number
+         * @default 1.0
+         */
+        zoomFactor: 1,
+
+        /**
+         * Zoom factor in horizontal direction.
+         *
+         * @name JXG.Board#zoomX
+         * @see JXG.Board#zoomY
+         * @type Number
+         * @default 1.0
+         */
+        zoomX: 1,
+
+        /**
+         * Zoom factor in vertical direction.
+         *
+         * @name JXG.Board#zoomY
+         * @see JXG.Board#zoomX
+         * @type Number
+         * @default 1.0
+         */
+        zoomY: 1
 
         /**#@-*/
     },
@@ -1767,7 +1934,7 @@ JXG.Options = {
          * If this is set to true, the element is updated in every update
          * call of the board. If set to false, the element is updated only after
          * zoom events or more generally, when the bounding box has been changed.
-         * Examples for the latter behaviour should be axes.
+         * Examples for the latter behavior should be axes.
          * @type Boolean
          * @default true
          * @see JXG.GeometryElement#needsRegularUpdate
@@ -1798,6 +1965,10 @@ JXG.Options = {
          * moving the element with two fingers results in a rotation or translation.
          * <p>
          * If an element is set to be neither scalable nor rotatable, it can only be translated.
+         * <p>
+         * In case of a polygon, scaling is only possible if <i>no</i> vertex has snapToGrid or snapToPoints
+         * enabled and no vertex is fixed by some other constraint. Also, the polygon itself has to have
+         * snapToGrid disabled.
          *
          * @type Boolean
          * @default true
@@ -1815,6 +1986,10 @@ JXG.Options = {
          * moving the element with two fingers results in a rotation or translation.
          * <p>
          * If an element is set to be neither scalable nor rotatable, it can only be translated.
+         * <p>
+         * In case of a polygon, scaling is only possible if <i>no</i> vertex has snapToGrid or snapToPoints
+         * enabled and no vertex is fixed by some other constraint. Also, the polygon itself has to have
+         * snapToGrid disabled.
          *
          * @type Boolean
          * @default true
@@ -2766,12 +2941,114 @@ JXG.Options = {
          */
         type: 'linear',
 
+        /**
+         * Internationalization support for ticks labels.
+         * @name intl
+         * @memberOf Ticks.prototype
+         * @default {
+         *    enabled: 'inherit',
+         *    options: {}
+         * }
+         * @see JXG.Board#intl
+         * @see Text#intl
+         *
+                  * @example
+         * // Here, locale is disabled in general, but enabled for the horizontal
+         * // axis and the infobox.
+         * const board = JXG.JSXGraph.initBoard(BOARDID, {
+         *     boundingbox: [-0.5, 0.5, 0.5, -0.5],
+         *     intl: {
+         *         enabled: false,
+         *         locale: 'de-DE'
+         *     },
+         *     keepaspectratio: true,
+         *     axis: true,
+         *     defaultAxes: {
+         *         x: {
+         *             ticks: {
+         *                 intl: {
+         *                         enabled: true,
+         *                         options: {
+         *                             style: 'unit',
+         *                             unit: 'kilometer-per-hour',
+         *                             unitDisplay: 'narrow'
+         *                         }
+         *                 }
+         *             }
+         *         },
+         *         y: {
+         *             ticks: {
+         *             }
+         *         }
+         *     },
+         *     infobox: {
+         *         fontSize: 12,
+         *         intl: {
+         *             enabled: true,
+         *             options: {
+         *                 minimumFractionDigits: 4,
+         *                 maximumFractionDigits: 5
+         *             }
+         *         }
+         *     }
+         * });
+         *
+         * var p = board.create('point', [0.1, 0.1], {});
+         *
+         * </pre><div id="JXG820b60ff-b453-4be9-a9d5-06c0342a9dbe" class="jxgbox" style="width: 600px; height: 300px;"></div>
+         * <script type="text/javascript">
+         *     (function() {
+         *     var board = JXG.JSXGraph.initBoard('JXG820b60ff-b453-4be9-a9d5-06c0342a9dbe', {
+         *         boundingbox: [-0.5, 0.5, 0.5, -0.5], showcopyright: false, shownavigation: false,
+         *         intl: {
+         *             enabled: false,
+         *             locale: 'de-DE'
+         *         },
+         *         keepaspectratio: true,
+         *         axis: true,
+         *         defaultAxes: {
+         *             x: {
+         *                 ticks: {
+         *                     intl: {
+         *                             enabled: true,
+         *                             options: {
+         *                                 style: 'unit',
+         *                                 unit: 'kilometer-per-hour',
+         *                                 unitDisplay: 'narrow'
+         *                             }
+         *                     }
+         *                 }
+         *             },
+         *             y: {
+         *                 ticks: {
+         *                 }
+         *             }
+         *         },
+         *         infobox: {
+         *             fontSize: 12,
+         *             intl: {
+         *                 enabled: true,
+         *                 options: {
+         *                     minimumFractionDigits: 4,
+         *                     maximumFractionDigits: 5
+         *                 }
+         *             }
+         *         }
+         *     });
+         *
+         *     var p = board.create('point', [0.1, 0.1], {});
+         *
+         *     })();
+         *
+         * </script><pre>
+         *
+         */
         intl: {
             enabled: 'inherit',
-            options: {
-            }
+            options: {}
         },
 
+        // TODO implementation and documentation
         minorTicksInArrow: false,
         majorTicksInArrow: true,
         labelInArrow: true,
@@ -4190,10 +4467,22 @@ JXG.Options = {
          */
         distanceY: 25,
 
+        /**
+         * Internationalization support for infobox text.
+         *
+         * @name JXG.Board.infobox#intl
+         * @type object
+                  * @default {
+         *    enabled: 'inherit',
+         *    options: {}
+         * }
+         * @visprop
+         * @see JXG.Board#intl
+         * @see Text#intl
+         */
         intl: {
-            enabled: false,
-            options: {
-            }
+            enabled: 'inherit',
+            options: {}
         },
 
         fontSize: 12,
@@ -4295,14 +4584,21 @@ JXG.Options = {
          *
          * @type Label
          * @name Integral#label
+         * @default {
+         *      fontSize: 20,
+         *      digits: 4,
+         *      intl: {
+         *          enabled: false,
+         *          options: {}
+         *      }
+         *    }
          */
         label: {
             fontSize: 20,
             digits: 4,
             intl: {
                 enabled: false,
-                options: {
-                }
+                options: {}
             }
         }
         /**#@-*/
@@ -5404,6 +5700,19 @@ JXG.Options = {
         },
 
         /**
+         * By default, the strokewidths of the borders of a polygon are not changed during highlighting (only strokeColor and strokeOpacity are changed
+         * to highlightStrokeColor, and highlightStrokeOpacity).
+         * However, strokewidth is changed to highlightStrokewidth if an individual border gets the focus.
+         * <p>
+         * With this attribute set to true, also the borders change strokeWidth if the polygon itself gets the focus.
+         *
+         * @type Boolean
+         * @name Polygon#highlightByStrokeWidth
+         * @default false
+         */
+        highlightByStrokeWidth: false,
+
+        /**
          * Attributes for the polygon vertices.
          *
          * @type Point
@@ -5746,6 +6055,59 @@ JXG.Options = {
          * @default 2
          */
         digits: 2,
+
+        /**
+         * Internationalization support for slider labels.
+         *
+         * @name intl
+         * @memberOf Slider.prototype
+         * @type object
+         * @default {
+         *    enabled: 'inherit',
+         *    options: {}
+         * }
+         * @see JXG.Board#intl
+         * @see Text#intl
+         *
+         * @example
+         * var s = board.create('slider', [[-2, 3], [2, 3], [0, 1, 360]], {
+         *     name: '&alpha;',
+         *     snapWidth: 1,
+         *     intl: {
+         *         enabled: true,
+         *         options: {
+         *             style: 'unit',
+         *             unit: 'degree',
+         *         }
+         *     }
+         * });
+         *
+         * </pre><div id="JXGb49a9779-c0c8-419d-9173-c67232cfd65c" class="jxgbox" style="width: 300px; height: 300px;"></div>
+         * <script type="text/javascript">
+         *     (function() {
+         *         var board = JXG.JSXGraph.initBoard('JXGb49a9779-c0c8-419d-9173-c67232cfd65c',
+         *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
+         *     var s = board.create('slider', [[-2, 3], [2, 3], [0, 1, 360]], {
+         *         name: '&alpha;',
+         *         snapWidth: 1,
+         *         intl: {
+         *             enabled: true,
+         *             options: {
+         *                 style: 'unit',
+         *                 unit: 'degree',
+         *             }
+         *         }
+         *     });
+         *
+         *     })();
+         *
+         * </script><pre>
+         *
+         */
+        intl: {
+            enabled: 'inherit',
+            options: {}
+        },
 
         firstArrow: false,
         lastArrow: false,
@@ -6448,10 +6810,128 @@ JXG.Options = {
          */
         digits: 2,
 
+        /**
+         * Internationalization support for texts consisting of a number only.
+         * <p>
+         * Setting the local overwrites the board-wide locale set in the board attributes.
+         * The JSXGraph attribute digits is overruled by the
+         * Intl attributes "minimumFractionDigits" and "maximumFractionDigits".
+         * See <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat/NumberFormat">https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat/NumberFormat</a>
+         * for more information about possible options.
+         * <p>
+         * See below for an example where the text is composed from a string and a locale formatted number.
+         *
+         * @name intl
+         * @memberOf Text.prototype
+         * @type object
+         * @default {
+         *    enabled: 'inherit',
+         *    options: {}
+         * }
+         * @see JXG.Board#intl
+         *
+         * @example
+         * var t = board.create('text', [1, 2, -Math.PI*100], {
+         *         digits: 2,
+         *         intl: {
+         *                 enabled: true,
+         *                 options: {
+         *                     style: 'unit',
+         *                     unit: 'celsius'
+         *                 }
+         *             }
+         *     });
+         *
+         * </pre><div id="JXGb7162923-1beb-4e56-8817-19aa66e226d1" class="jxgbox" style="width: 300px; height: 300px;"></div>
+         * <script type="text/javascript">
+         *     (function() {
+         *         var board = JXG.JSXGraph.initBoard('JXGb7162923-1beb-4e56-8817-19aa66e226d1',
+         *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
+         *     var t = board.create('text', [1, 2, -Math.PI*100], {
+         *             digits: 2,
+         *             intl: {
+         *                     enabled: true,
+         *                     options: {
+         *                         style: 'unit',
+         *                         unit: 'celsius'
+         *                     }
+         *                 }
+         *         });
+         *
+         *     })();
+         *
+         * </script><pre>
+         *
+         *
+         * @example
+         * var t = board.create('text', [0.05, -0.2, ''], {
+         *     intl: {
+         *         enabled: true,
+         *         locale: 'it-IT',
+         *         options: {
+         *             style: 'unit',
+         *             unit: 'kilometer-per-hour',
+         *             unitDisplay: 'narrow',
+         *             maximumFractionDigits: 2
+         *         }
+         *     }
+         * });
+         *
+         * // Set dynamic text consisting of text and number.
+         * t.setText(function() {
+         *     var txt = 'Speed: ',
+         *         number = t.X();
+         *
+         *     // Add formatted number to variable txt
+         *     // with fallback if locale is not supported.
+         *     if (t.useLocale()) {
+         *         txt += t.formatNumberLocale(number);
+         *     } else {
+         *         txt += JXG.toFixed(number, 2);
+         *     }
+         *     return txt;
+         * });
+         *
+         * </pre><div id="JXG560aeb1c-55fb-45da-8ad5-d3ad26216056" class="jxgbox" style="width: 300px; height: 300px;"></div>
+         * <script type="text/javascript">
+         *     (function() {
+         *         var board = JXG.JSXGraph.initBoard('JXG560aeb1c-55fb-45da-8ad5-d3ad26216056',
+         *             {boundingbox: [-0.5, 0.5, 0.5, -0.5], axis: true, showcopyright: false, shownavigation: false});
+         *     var t = board.create('text', [0.3, -0.3, ''], {
+         *         intl: {
+         *             enabled: true,
+         *             locale: 'it-IT',
+         *             options: {
+         *                 style: 'unit',
+         *                 unit: 'kilometer-per-hour',
+         *                 unitDisplay: 'narrow',
+         *                 maximumFractionDigits: 2
+         *             }
+         *         }
+         *     });
+         *
+         *     // Set dynamic text consisting of text and number.
+         *     t.setText(function() {
+         *         var txt = 'Speed: ',
+         *             number = t.X();
+         *
+         *         // Add formatted number to variable txt
+         *         if (t.useLocale()) {
+         *             txt += t.formatNumberLocale(number);
+         *         } else {
+         *             txt += JXG.toFixed(number, 2);
+         *         }
+         *         return txt;
+         *     });
+         *
+         *     })();
+         *
+         * </script><pre>
+         *
+         */
         intl: {
             enabled: 'inherit',
-            options: {
-            }
+            options: {}
         },
 
         /**

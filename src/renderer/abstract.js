@@ -746,13 +746,13 @@ JXG.extend(
          * <p>
          * The Coords objects c1 and c2 are changed in place. In object a, the Boolean properties
          * 'showFirst' and 'showLast' are set.
-         * 
+         *
          * @param  {JXG.Line} el Reference to the line object that gets arrow heads.
          * @param  {JXG.Coords} c1  Coords of the first point of the line (after {@link JXG.Math.Geometry#calcStraight}).
          * @param  {JXG.Coords} c2  Coords of the second point of the line (after {@link JXG.Math.Geometry#calcStraight}).
          * @param  {Object}  a Object { evFirst: Boolean, evLast: Boolean} containing information about arrow heads.
          * @see JXG.AbstractRenderer#getArrowHeadData
-         * 
+         *
          */
         getPositionArrowHead: function (el, c1, c2, a) {
             var d, d1x, d1y, d2x, d2y;
@@ -1981,13 +1981,16 @@ JXG.extend(
 
         /**
          * Highlights an object, i.e. changes the current colors of the object to its highlighting colors
-         * and highlighting stroke width.
+         * and highlighting strokewidth.
          * @param {JXG.GeometryElement} el Reference of the object that will be highlighted.
+         * @param {Boolean} [suppressHighlightStrokeWidth=undefined] If undefined or false, highlighting also changes strokeWidth. This might not be
+         * the cases for polygon borders. Thus, if a polygon is highlighted, its polygon borders change strokeWidth only if the polygon attribute
+         * highlightByStrokeWidth == true.
          * @returns {JXG.AbstractRenderer} Reference to the renderer
          * @see JXG.AbstractRenderer#updateTextStyle
          */
-        highlight: function (el) {
-            var i,
+        highlight: function (el, suppressHighlightStrokeWidth) {
+            var i, do_hl,
                 ev = el.visProp,
                 sw;
 
@@ -1995,6 +1998,11 @@ JXG.extend(
             if (!ev.draft) {
                 if (el.type === Const.OBJECT_TYPE_POLYGON) {
                     this.setObjectFillColor(el, ev.highlightfillcolor, ev.highlightfillopacity);
+                    do_hl = Type.evaluate(ev.highlightbystrokewidth);
+                    for (i = 0; i < el.borders.length; i++) {
+                        this.highlight(el.borders[i], !do_hl);
+                    }
+                    /*
                     for (i = 0; i < el.borders.length; i++) {
                         this.setObjectStrokeColor(
                             el.borders[i],
@@ -2002,6 +2010,7 @@ JXG.extend(
                             el.borders[i].visProp.highlightstrokeopacity
                         );
                     }
+                    */
                 } else {
                     if (el.elementClass === Const.OBJECT_CLASS_TEXT) {
                         this.updateTextStyle(el, true);
@@ -2025,7 +2034,12 @@ JXG.extend(
                         );
                     }
                 }
-                if (ev.highlightstrokewidth) {
+
+                // Highlight strokeWidth is suppressed if
+                // parameter suppressHighlightStrokeWidth is false or undefined.
+                // suppressHighlightStrokeWidth is false if polygon attribute
+                // highlightbystrokewidth is true.
+                if (ev.highlightstrokewidth && !suppressHighlightStrokeWidth) {
                     sw = Math.max(
                         Type.evaluate(ev.highlightstrokewidth),
                         Type.evaluate(ev.strokewidth)
@@ -2059,12 +2073,15 @@ JXG.extend(
                 if (el.type === Const.OBJECT_TYPE_POLYGON) {
                     this.setObjectFillColor(el, ev.fillcolor, ev.fillopacity);
                     for (i = 0; i < el.borders.length; i++) {
-                        this.setObjectStrokeColor(
-                            el.borders[i],
-                            el.borders[i].visProp.strokecolor,
-                            el.borders[i].visProp.strokeopacity
-                        );
+                        this.noHighlight(el.borders[i]);
                     }
+                    // for (i = 0; i < el.borders.length; i++) {
+                    //     this.setObjectStrokeColor(
+                    //         el.borders[i],
+                    //         el.borders[i].visProp.strokecolor,
+                    //         el.borders[i].visProp.strokeopacity
+                    //     );
+                    // }
                 } else {
                     if (el.elementClass === Const.OBJECT_CLASS_TEXT) {
                         this.updateTextStyle(el, false);

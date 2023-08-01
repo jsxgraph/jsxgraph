@@ -2260,6 +2260,18 @@ JXG.extend(
          */
         removeEvent: JXG.shortcut(JXG.GeometryElement.prototype, 'off'),
 
+        /**
+         * Format a number according to the locale set in the attribute "intl".
+         * If in the options of the intl-attribute "maximumFractionDigits" is not set, 
+         * the optional parameter digits is used instead.
+         * See <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat/NumberFormat">https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat/NumberFormat</a>
+         * for more  information about internationalization.
+         * 
+         * @param {Number} value Number to be formatted
+         * @param {Number} [digits=undefined] Optional number of digits
+         * @returns {String|Number} string containing the formatted number according to the locale 
+         * or the number itself of the formatting is not possible.
+         */
         formatNumberLocale: function(value, digits) {
             var loc, opt, key,
                 optCalc = {},
@@ -2321,6 +2333,13 @@ JXG.extend(
             return value;
         },
 
+        /**
+         * Checks if locale is enabled in the attribute. This may be in the attributes of the board,
+         * or in the attributes of the text. The latter has higher priority. The board attribute is taken if 
+         * attribute "intl.enabled" of the text element is set to 'inherit'.
+         * 
+         * @returns {Boolean} if locale can be used for number formatting.
+         */
         useLocale: function() {
             var val;
 

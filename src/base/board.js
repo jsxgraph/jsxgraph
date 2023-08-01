@@ -92,7 +92,6 @@ JXG.Board = function (container, renderer, id,
      * {@link JXG.Board#mouse} is updated on mouse movement.
      * @type Number
      * @constant
-     * @see JXG.Board#drag_obj
      */
     this.BOARD_MODE_DRAG = 0x0001;
 
@@ -376,7 +375,6 @@ JXG.Board = function (container, renderer, id,
      * The distance from the mouse to the dragged object in x direction when the user clicked the mouse button.
      * @type Number
      * @see JXG.Board#drag_dy
-     * @see JXG.Board#drag_obj
      */
     this.drag_dx = 0;
 
@@ -384,7 +382,6 @@ JXG.Board = function (container, renderer, id,
      * The distance from the mouse to the dragged object in y direction when the user clicked the mouse button.
      * @type Number
      * @see JXG.Board#drag_dx
-     * @see JXG.Board#drag_obj
      */
     this.drag_dy = 0;
 
@@ -485,10 +482,10 @@ JXG.Board = function (container, renderer, id,
     /**
      * If GEONExT constructions are displayed, then this property should be set to true.
      * At the moment there should be no difference. But this may change.
-     * This is set in {@link JXG.GeonextReader.readGeonext}.
+     * This is set in {@link JXG.GeonextReader#readGeonext}.
      * @type Boolean
      * @default false
-     * @see JXG.GeonextReader.readGeonext
+     * @see JXG.GeonextReader#readGeonext
      */
     this.geonextCompatibilityMode = false;
 
@@ -1316,13 +1313,18 @@ JXG.extend(
 
         /**
          * Moves, rotates and scales a line or polygon with two fingers.
+         * <p>
+         * If one vertex of the polygon snaps to the grid or to points or is not draggable,
+         * two-finger-movement is cancelled.
+         *
          * @param {Array} tar Array containing touch event objects: {JXG.Board#touches.targets}.
          * @param {object} drag The object that is dragged:
          * @param {Number} id pointerId of the event. In case of old touch event this is emulated.
          */
         twoFingerTouchObject: function (tar, drag, id) {
             var t, T,
-                ar, i, len;
+                ar, i, len, vp,
+                snap = false;
 
             if (
                 Type.exists(tar[0]) &&
@@ -1347,14 +1349,23 @@ JXG.extend(
                     }
                     t.applyOnce(ar);
                 } else if (drag.type === Const.OBJECT_TYPE_POLYGON) {
-                    ar = [];
                     len = drag.vertices.length - 1;
-                    for (i = 0; i < len; ++i) {
-                        if (drag.vertices[i].draggable()) {
-                            ar.push(drag.vertices[i]);
-                        }
+                    vp = drag.visProp;
+                    snap = Type.evaluate(vp.snaptogrid) || Type.evaluate(vp.snaptopoints);
+                    for (i = 0; i < len && !snap; ++i) {
+                        vp = drag.vertices[i].visProp;
+                        snap = snap || Type.evaluate(vp.snaptogrid) || Type.evaluate(vp.snaptopoints);
+                        snap = snap || (!drag.vertices[i].draggable())
                     }
-                    t.applyOnce(ar);
+                    if (!snap) {
+                        ar = [];
+                        for (i = 0; i < len; ++i) {
+                            if (drag.vertices[i].draggable()) {
+                                ar.push(drag.vertices[i]);
+                            }
+                        }
+                        t.applyOnce(ar);
+                    }
                 }
 
                 this.update();
@@ -1700,7 +1711,7 @@ JXG.extend(
         },
 
         /**
-         * Registers the MSPointer* event handlers.
+         * Registers pointer event handlers.
          */
         addPointerEventHandlers: function () {
             if (!this.hasPointerHandlers && Env.isBrowser) {
@@ -2015,14 +2026,8 @@ JXG.extend(
                 // Save zoomFactors
                 zx = this.attr.zoom.factorx,
                 zy = this.attr.zoom.factory,
-                factor,
-                dist,
-                dx,
-                dy,
-                theta,
-                cx,
-                cy,
-                bound;
+                factor, dist,theta, bound,
+                dx, dy, cx, cy;
 
             if (this.mode !== this.BOARD_MODE_ZOOM) {
                 return true;
@@ -2088,13 +2093,11 @@ JXG.extend(
 
             if (this.attr.pan.enabled && this.attr.pan.needtwofingers && !isPinch) {
                 // Pan detected
-
                 this.isPreviousGesture = 'pan';
-
                 this.moveOrigin(c.scrCoords[1], c.scrCoords[2], true);
+
             } else if (this.attr.zoom.enabled && Math.abs(factor - 1.0) < 0.5) {
                 // Pinch detected
-
                 if (this.attr.zoom.pinchhorizontal || this.attr.zoom.pinchvertical) {
                     dx = Math.abs(evt.touches[0].clientX - evt.touches[1].clientX);
                     dy = Math.abs(evt.touches[0].clientY - evt.touches[1].clientY);
@@ -3507,10 +3510,7 @@ JXG.extend(
          */
         keyDownListener: function (evt) {
             var id_node = evt.target.id,
-                id,
-                el,
-                res,
-                doc,
+                id, el, res, doc,
                 sX = 0,
                 sY = 0,
                 // dx, dy are provided in screen units and
@@ -3948,11 +3948,64 @@ JXG.extend(
             var attr = Type.copyAttributes(attributes, this.options, 'infobox');
 
             attr.id = this.id + '_infobox';
+
             /**
              * Infobox close to points in which the points' coordinates are displayed.
              * This is simply a JXG.Text element. Access through board.infobox.
              * Uses CSS class .JXGinfobox.
+             *
+             * @namespace
+             * @name JXG.Board.infobox
              * @type JXG.Text
+             *
+             * @example
+             * const board = JXG.JSXGraph.initBoard(BOARDID, {
+             *     boundingbox: [-0.5, 0.5, 0.5, -0.5],
+             *     intl: {
+             *         enabled: false,
+             *         locale: 'de-DE'
+             *     },
+             *     keepaspectratio: true,
+             *     axis: true,
+             *     infobox: {
+             *         distanceY: 40,
+             *         intl: {
+             *             enabled: true,
+             *             options: {
+             *                 minimumFractionDigits: 1,
+             *                 maximumFractionDigits: 2
+             *             }
+             *         }
+             *     }
+             * });
+             * var p = board.create('point', [0.1, 0.1], {});
+             *
+             * </pre><div id="JXG822161af-fe77-4769-850f-cdf69935eab0" class="jxgbox" style="width: 300px; height: 300px;"></div>
+             * <script type="text/javascript">
+             *     (function() {
+             *     const board = JXG.JSXGraph.initBoard('JXG822161af-fe77-4769-850f-cdf69935eab0', {
+             *         boundingbox: [-0.5, 0.5, 0.5, -0.5], showcopyright: false, shownavigation: false,
+             *         intl: {
+             *             enabled: false,
+             *             locale: 'de-DE'
+             *         },
+             *         keepaspectratio: true,
+             *         axis: true,
+             *         infobox: {
+             *             distanceY: 40,
+             *             intl: {
+             *                 enabled: true,
+             *                 options: {
+             *                     minimumFractionDigits: 1,
+             *                     maximumFractionDigits: 2
+             *                 }
+             *             }
+             *         }
+             *     });
+             *     var p = board.create('point', [0.1, 0.1], {});
+             *     })();
+             *
+             * </script><pre>
              *
              */
             this.infobox = this.create('text', [0, 0, '0,0'], attr);

@@ -103,7 +103,7 @@ JXG.Text = function (board, coords, attributes, content) {
     // this._createFctUpdateText(content);
     // this.updateText();
 
-    // Set attribute visible to true. This is necessary to 
+    // Set attribute visible to true. This is necessary to
     // create all sub-elements for button, input and checkbox
     tmp = this.visProp.visible;
     this.visProp.visible = true;
@@ -202,6 +202,7 @@ JXG.extend(
         _createFctUpdateText: function (text) {
             var updateText, e, digits,
                 resolvedText,
+                i, that,
                 ev_p = Type.evaluate(this.visProp.parse),
                 ev_um = Type.evaluate(this.visProp.usemathjax),
                 ev_uk = Type.evaluate(this.visProp.usekatex),
@@ -211,14 +212,14 @@ JXG.extend(
 
             if (Type.isFunction(text)) {
                 /**
-                 * Dynamically created function to update the content 
+                 * Dynamically created function to update the content
                  * of a text. Can not be overwritten.
                  * <p>
                  * &lt;value&gt; tags will not be evaluated if text is provided by a function
                  * <p>
                  * Sets the property <tt>plaintext</tt> of the text element.
-                 * 
-                 * @private 
+                 *
+                 * @private
                  */
                 this.updateText = function () {
                     resolvedText = text().toString(); // Evaluate function
@@ -243,13 +244,23 @@ JXG.extend(
                 } else if (Type.isString(text) && ev_p) {
                     if (Type.evaluate(this.visProp.useasciimathml)) {
                         // ASCIIMathML
+                        // value-tags are not supported
                         this.content = "'`" + text + "`'";
                     } else if (ev_um || ev_uk) {
                         // MathJax or KaTeX
                         // Replace value-tags by functions
                         // sketchofont is ignored
                         this.content = this.valueTagToJessieCode(text);
-                        this.content = this.content.replace(/\\/g, "\\\\"); // Replace single backslash by double
+                        if (!Type.isArray(this.content)) {
+                            // For some reason we don't have to mask backslashes in an array of strings
+                            // anymore.
+                            //
+                            // for (i = 0; i < this.content.length; i++) {
+                            //     this.content[i] = this.content[i].replace(/\\/g, "\\\\"); // Replace single backslash by double
+                            // }
+                            // } else {
+                            this.content = this.content.replace(/\\/g, "\\\\"); // Replace single backslash by double
+                        }
                     } else {
                         // No TeX involved.
                         // Converts GEONExT syntax into JavaScript string
@@ -266,10 +277,51 @@ JXG.extend(
                 // Generate function which returns the text to be displayed
                 if (convertJessieCode) {
                     // Convert JessieCode to JS function
-                    updateText = this.board.jc.snippet(this.content, true, "", false);
-                    for (e in updateText.deps) {
-                        this.addParents(updateText.deps[e]);
-                        updateText.deps[e].addChild(this);
+                    if (Type.isArray(this.content)) {
+                        // This is the case if the text contained value-tags.
+                        // These value-tags consist of JessieCode snippets
+                        // which are now replaced by JavaScript functions
+                        that = this;
+                        for (i = 0; i < this.content.length; i++) {
+                            if (this.content[i][0] !== '"') {
+                                this.content[i] = this.board.jc.snippet(this.content[i], true, "", false);
+                                for (e in this.content[i].deps) {
+                                    this.addParents(this.content[i].deps[e]);
+                                    this.content[i].deps[e].addChild(this);
+                                }
+                            }
+                        }
+
+                        updateText = function() {
+                            var i, t,
+                                digits = Type.evaluate(that.visProp.digits),
+                                txt = '';
+
+                            for (i = 0; i < that.content.length; i++) {
+                                if (Type.isFunction(that.content[i])) {
+                                    t = that.content[i]();
+                                    if (that.useLocale()) {
+                                        t = that.formatNumberLocale(t, digits);
+                                    } else {
+                                        t = Type.toFixed(t, digits);
+                                    }
+                                } else {
+                                    t = that.content[i];
+                                    if (t.at(0) === '"' && t.at(-1) === '"') {
+                                        t = t.slice(1, -1);
+                                    }
+                                }
+
+                                txt += t;
+                            }
+                            return txt;
+                        };
+                    } else {
+                        updateText = this.board.jc.snippet(this.content, true, "", false);
+                        for (e in updateText.deps) {
+                            this.addParents(updateText.deps[e]);
+                            updateText.deps[e].addChild(this);
+                        }
                     }
 
                     // Ticks have been escaped in valueTagToJessieCode
@@ -634,7 +686,7 @@ JXG.extend(
          * Also, all Objects whose name appears in the term are searched and
          * the text is added as child to these objects.
          * This method is called if the attribute parse==true is set.
-         * 
+         *
          * Obsolete, replaced by JXG.Text.valueTagToJessieCode
          *
          * @param{String} contentStr String to be parsed
@@ -649,7 +701,7 @@ JXG.extend(
          * @private
          * @see JXG.GeonextParser#geonext2JS
          * @see JXG.Text#valueTagToJessieCode
-         * 
+         *
          */
         generateTerm: function (contentStr, expand, avoidGeonext2JS) {
             var res,
@@ -734,12 +786,12 @@ JXG.extend(
 
         /**
          * Replace value-tags in string by JessieCode functions.
-         * @param {String} contentStr 
+         * @param {String} contentStr
          * @returns String
-         * @private 
+         * @private
          * @example
          * "The x-coordinate of A is &lt;value&gt;X(A)&lt;/value&gt;"
-         * 
+         *
          */
         valueTagToJessieCode: function (contentStr) {
             var res, term,
@@ -771,26 +823,27 @@ JXG.extend(
                     res = term;
                     res = res.replace(/\\"/g, "'").replace(/\\'/g, "'");
 
-                    // Hack: apply rounding once only.
-                    if (res.indexOf("toFixed") < 0) {
-                        // Output of a value tag
-                        // Run the JessieCode parser
-                        if (
-                            Type.isNumber(
-                                Type.bind(this.board.jc.snippet(res, true, "", false), this)()
-                            )
-                        ) {
-                            // Output is number
-                            textComps.push(
-                                '(' + res + ').toFixed(' + Type.evaluate(this.visProp.digits) + ')'
-                            );
-                        } else {
-                            // Output is a string
-                            textComps.push("(" + res + ")");
-                        }
-                    } else {
+                    // // Hack: apply rounding once only.
+                    // if (res.indexOf("toFixed") < 0) {
+                    //     // Output of a value tag
+                    //     // Run the JessieCode parser
+                    //     if (
+                    //         Type.isNumber(
+                    //             Type.bind(this.board.jc.snippet(res, true, "", false), this)()
+                    //         )
+                    //     ) {
+                    //         // Output is number
+                    //         // textComps.push(
+                    //         //     '(' + res + ').toFixed(' + Type.evaluate(this.visProp.digits) + ')'
+                    //         // );
+                    //         textComps.push('(' + res + ')');
+                    //     } else {
+                    //         // Output is a string
+                    //         textComps.push("(" + res + ")");
+                    //     }
+                    // } else {
                         textComps.push("(" + res + ")");
-                    }
+                    // }
                     contentStr = contentStr.slice(j + 8);
                     i = contentStr.indexOf("<value>");
                     j = contentStr.indexOf("</value>");
@@ -799,14 +852,20 @@ JXG.extend(
             // Add trailing string fragment
             textComps.push(tick + this.escapeTicks(contentStr) + tick);
 
-            return textComps.join(" + ").replace(/&amp;/g, "&");
+            // return textComps.join(" + ").replace(/&amp;/g, "&");
+            for (i = 0; i < textComps.length; i++) {
+                textComps[i] = textComps[i].replace(/&amp;/g, "&");
+            }
+            return textComps;
         },
 
         /**
-         * Simple math rendering using HTML / CSS only.
-         * 
-         * @param {String} s 
-         * @returns String
+         * Simple math rendering using HTML / CSS only. In case of array,
+         * handle each entry separately and return array with the
+         * rendering strings.
+         *
+         * @param {String|Array} s
+         * @returns {String|Array}
          * @see JXG.Text#convertGeonextAndSketchometry2CSS
          * @private
          * @see JXG.Text#replaceSub
@@ -814,6 +873,15 @@ JXG.extend(
          * @see JXG.Text#convertGeonextAndSketchometry2CSS
          */
         poorMansTeX: function (s) {
+            var i, a;
+            if (Type.isArray(s)) {
+                a = [];
+                for (i = 0; i < s.length; i++) {
+                    a.push(this.poorMansTeX(s[i]));
+                }
+                return a;
+            }
+
             s = s
                 .replace(/<arc\s*\/*>/g, "&ang;")
                 .replace(/&lt;arc\s*\/*&gt;/g, "&ang;")
@@ -824,11 +892,11 @@ JXG.extend(
 
         /**
          * Replace ticks by URI escape sequences
-         * 
-         * @param {String} s 
+         *
+         * @param {String} s
          * @returns String
          * @private
-         * 
+         *
          */
         escapeTicks: function (s) {
             return s.replace(/"/g, "%22").replace(/'/g, "%27");
@@ -836,8 +904,8 @@ JXG.extend(
 
         /**
          * Replace escape sequences for ticks by ticks
-         * 
-         * @param {String} s 
+         *
+         * @param {String} s
          * @returns String
          * @private
          */
@@ -963,15 +1031,15 @@ JXG.extend(
         },
 
         /**
-         * Returns the bounding box of the text element in user coordinates as an 
+         * Returns the bounding box of the text element in user coordinates as an
          * array of length 4: [upper left x, upper left y, lower right x, lower right y].
          * The method assumes that the lower left corner is at position [el.X(), el.Y()]
          * of the text element el, i.e. the attributes anchorX, anchorY are ignored.
-         * 
+         *
          * <p>
          * or labels, [0, 0, 0, 0] is returned.
-         * 
-         * @returns Array 
+         *
+         * @returns Array
          */
         bounds: function () {
             var c = this.coords.usrCoords;
@@ -993,7 +1061,7 @@ JXG.extend(
 
         /**
          * Returns the value of the attribute "anchorX". If this equals "auto",
-         * returns "left", "middle", or "right", depending on the 
+         * returns "left", "middle", or "right", depending on the
          * value of the attribute "position".
          * @returns String
          */
@@ -1020,7 +1088,7 @@ JXG.extend(
 
         /**
          * Returns the value of the attribute "anchorY". If this equals "auto",
-         * returns "bottom", "middle", or "top", depending on the 
+         * returns "bottom", "middle", or "top", depending on the
          * value of the attribute "position".
          * @returns String
          */
