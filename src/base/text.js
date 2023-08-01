@@ -244,17 +244,21 @@ JXG.extend(
                 } else if (Type.isString(text) && ev_p) {
                     if (Type.evaluate(this.visProp.useasciimathml)) {
                         // ASCIIMathML
+                        // value-tags are not supported
                         this.content = "'`" + text + "`'";
                     } else if (ev_um || ev_uk) {
                         // MathJax or KaTeX
                         // Replace value-tags by functions
                         // sketchofont is ignored
                         this.content = this.valueTagToJessieCode(text);
-                        if (Type.isArray(this.content)) {
-                            for (i = 0; i < this.content.length; i++) {
-                                this.content[i] = this.content[i].replace(/\\/g, "\\\\"); // Replace single backslash by double                
-                            }
-                        } else {
+                        if (!Type.isArray(this.content)) {
+                            // For some reason we don't have to mask backslashes in an array of strings
+                            // anymore.
+                            //
+                            // for (i = 0; i < this.content.length; i++) {
+                            //     this.content[i] = this.content[i].replace(/\\/g, "\\\\"); // Replace single backslash by double
+                            // }
+                            // } else {
                             this.content = this.content.replace(/\\/g, "\\\\"); // Replace single backslash by double
                         }
                     } else {
@@ -273,8 +277,10 @@ JXG.extend(
                 // Generate function which returns the text to be displayed
                 if (convertJessieCode) {
                     // Convert JessieCode to JS function
-
                     if (Type.isArray(this.content)) {
+                        // This is the case if the text contained value-tags.
+                        // These value-tags consist of JessieCode snippets
+                        // which are now replaced by JavaScript functions
                         that = this;
                         for (i = 0; i < this.content.length; i++) {
                             if (this.content[i][0] !== '"') {

@@ -70,7 +70,7 @@ describe("Test text handling", function () {
             el = board.create("text", [0, 10, txt]),
             el2;
 
-        // JSXGraph texts allo arbitrary HTML
+        // JSXGraph texts allow arbitrary HTML
         expect(el.plaintext).toEqual(txt);
 
         // JessieCode texts are sanitized
