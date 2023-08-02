@@ -714,7 +714,7 @@ JXG.extend(
  *     }),
  *
  *     p0 = board.create('point', [0, 3], {name: 'angle'}),
- *     // Rotate the square around point sq[0] by dragging A
+ *     // Rotate the square around point sq[0] by dragging A vertically.
  *     rot = board.create('transform', ['Y(angle)', sq[0]], {type: 'rotate'});
  *
  *     // Apply the rotation to all but the first point of the square
@@ -749,7 +749,7 @@ JXG.extend(
  *     }),
  *
  *     p0 = board.create('point', [0, 3], {name: 'angle'}),
- *     // Rotate the square around point sq[0] by dragging A
+ *     // Rotate the square around point sq[0] by dragging A vertically.
  *     rot = board.create('transform', ['Y(angle)', sq[0]], {type: 'rotate'});
  *
  *     // Apply the rotation to all but the first point of the square
