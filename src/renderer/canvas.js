@@ -430,7 +430,7 @@ JXG.extend(
                     context.setLineDash(
                         // sw could distinguish highlighting or not.
                         // But it seems to preferable to ignore this.
-                        this.dashArray[ev_dash - 1].map(function(x) { return x * sw; })
+                        this.dashArray[ev_dash - 1].map(function (x) { return x * sw; })
                     );
                 }
             } else {
@@ -1305,14 +1305,33 @@ JXG.extend(
 
         // Already documented in JXG.AbstractRenderer
         transformImage: function (el, t) {
-            var m,
+            var m, s, cx, cy, node,
                 len = t.length,
                 ctx = this.context;
 
             if (len > 0) {
                 m = this.joinTransforms(el, t);
-                if (Math.abs(Numerics.det(m)) >= Mat.eps) {
-                    ctx.transform(m[1][1], m[2][1], m[1][2], m[2][2], m[1][0], m[2][0]);
+                if (el.elementClass === Const.OBJECT_CLASS_TEXT && el.visProp.display === 'html') {
+                    s = " matrix(" + [m[1][1], m[2][1], m[1][2], m[2][2], m[1][0], m[2][0]].join(",") + ") ";
+                    if (s.indexOf('NaN') === -1) {
+                        node = el.rendNode;
+                        node.style.transform = s;
+                        cx = -el.coords.scrCoords[1];
+                        cy = -el.coords.scrCoords[2];
+                        switch (Type.evaluate(el.visProp.anchorx)) {
+                            case 'right': cx += el.size[0]; break;
+                            case 'middle': cx += el.size[0] * 0.5; break;
+                        }
+                        switch (Type.evaluate(el.visProp.anchory)) {
+                            case 'bottom': cy += el.size[1]; break;
+                            case 'middle': cy += el.size[1] * 0.5; break;
+                        }
+                        node.style['transform-origin'] = (cx) + 'px ' + (cy) + 'px';
+                    }
+                } else {
+                    if (Math.abs(Numerics.det(m)) >= Mat.eps) {
+                        ctx.transform(m[1][1], m[2][1], m[1][2], m[2][2], m[1][0], m[2][0]);
+                    }
                 }
             }
         },
@@ -1674,7 +1693,7 @@ JXG.extend(
         },
 
         removeToInsertLater: function () {
-            return function () {};
+            return function () { };
         }
     }
 );

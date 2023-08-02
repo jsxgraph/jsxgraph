@@ -715,9 +715,7 @@ JXG.extend(
                 s = [m[1][1], m[2][1], m[1][2], m[2][2], m[1][0], m[2][0]].join(",");
                 if (s.indexOf('NaN') === -1) {
                     str += " matrix(" + s + ") ";
-                    if (el.visProp.display === 'internal') {
-                        node.setAttributeNS(null, "transform", str);
-                    } else {
+                    if (el.elementClass === Const.OBJECT_CLASS_TEXT && el.visProp.display === 'html') {
                         node.style.transform = str;
                         cx = -el.coords.scrCoords[1];
                         cy = -el.coords.scrCoords[2];
@@ -730,6 +728,9 @@ JXG.extend(
                             case 'middle': cy += el.size[1] * 0.5; break;
                         }
                         node.style['transform-origin'] = (cx) + 'px ' + (cy) + 'px';
+                    } else {
+                        // Images and texts with display:'internal'
+                        node.setAttributeNS(null, "transform", str);
                     }
                 }
             }

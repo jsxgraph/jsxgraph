@@ -480,6 +480,20 @@ JXG.extend(
  * @class This element is used to provide projective transformations.
  * @pseudo
  * @description A transformation consists of a 3x3 matrix, i.e. it is a projective transformation.
+ * <p>
+ * Internally, a transformation is applied to an element by multiplying the 3x3 matrix from the left to
+ * the homogeneous coordinates of the element. JSXGraph represents homogeneous coordinates in the order
+ * (z, x, y). The matrix has the form 
+ * <pre>
+ * ( a  b  c )   ( z )
+ * ( d  e  f ) * ( x )
+ * ( g  h  i )   ( y )
+ * </pre>
+ * where in general a=1. If b = c = 0, the transformation is called <i>affine</i>.
+ * In this case, finite points will stay finite. This is not the case for general projective coordinates.
+ * <p>
+ * Transformations acting on texts and images are considered to be affine, i.e. b and c are ignored.
+ * 
  * @name Transformation
  * @augments JXG.Transformation
  * @constructor
