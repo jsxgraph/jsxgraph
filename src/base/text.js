@@ -1276,10 +1276,18 @@ JXG.extend(
 /**
  * @class Construct and handle texts.
  *
- * The coordinates can be relative to the coordinates of an element
- * given in {@link JXG.Options#text.anchor}.
- *
- * MathJaX, HTML and GEONExT syntax can be handled.
+ * The coordinates can either be abslute (i.e. respective to the coordinate system of the board) or be relative to the coordinates of an element
+ * given in {@link Text#anchor}.
+ * <p>
+ * HTML, MathJaX, KaTeX and GEONExT syntax can be handled.
+ * <p>
+ * There are two ways to display texts:
+ * <ul>
+ * <li> using the text element of the renderer (canvas or svg). In most cases this is the suitable approach if speed matters.
+ * However, advanced rendering like MathJax, KaTeX or HTML/CSS are not possible.
+ * <li> using HTML &lt;div&gt;. This is the most flexible approach. The drawback is that HTML can only be display "above" the geometry elements.
+ * If HTML should be displayed in an inbetween layer, conder to use an element of type {@link ForeignObject} (available in svg renderer, only).
+ * </ul>
  * @pseudo
  * @description
  * @name Text
@@ -1290,7 +1298,8 @@ JXG.extend(
  * @param {number,function_number,function_number,function_String,function} z_,x,y,str Parent elements for text elements.
  *                     <p>
  *   Parent elements can be two or three elements of type number, a string containing a GEONE<sub>x</sub>T
- *   constraint, or a function which takes no parameter and returns a number. Every parent element determines one coordinate. If a coordinate is
+ *   constraint, or a function which takes no parameter and returns a number. Every parent element beside the last determines one coordinate.
+ *   If a coordinate is
  *   given by a number, the number determines the initial position of a free text. If given by a string or a function that coordinate will be constrained
  *   that means the user won't be able to change the texts's position directly by mouse because it will be calculated automatically depending on the string
  *   or the function's return value. If two parent elements are given the coordinates will be interpreted as 2D affine Euclidean coordinates, if three such
@@ -1298,8 +1307,11 @@ JXG.extend(
  *                     <p>
  *                     The text to display may be given as string or as function returning a string.
  *
- * There is the attribute 'display' which takes the values 'html' or 'internal'. In case of 'html' a HTML division tag is created to display
- * the text. In this case it is also possible to use ASCIIMathML. Incase of 'internal', a SVG or VML text element is used to display the text.
+ * There is the attribute 'display' which takes the values 'html' or 'internal'. In case of 'html' an HTML division tag is created to display
+ * the text. In this case it is also possible to use MathJax, KaTeX, or ASCIIMathML. If neither of these is used, basic Math rendering is
+ * applied.
+ * <p>
+ * In case of 'internal', an SVG text element is used to display the text.
  * @see JXG.Text
  * @example
  * // Create a fixed text at position [0,1].
