@@ -1307,8 +1307,9 @@ JXG.extend(
                         el.rendNode.style['transform'] = 'matrix(' +
                                 [co, -1 * si, si, co, 0, 0].join(',') +
                             ')';
-                        el.rendNode.style['transform-origin'] = to_v + ' ' + to_h;
+                        el.rendNode.style['transform-origin'] = to_h + ' ' + to_v;
                     }
+                    this.transformImage(el, el.transformations);
                 } else {
                     this.updateInternalText(el);
                 }
@@ -1576,8 +1577,12 @@ JXG.extend(
         },
 
         /**
-         * Applies transformations on images and text elements. This method is just a stub and has to be implemented in
+         * Applies transformations on images and text elements. This method has to implemented in
          * all descendant classes where text and image transformations are to be supported.
+         * <p>
+         * Only affine transformation are supported, no proper projective transformations. This means, the 
+         * respective entries of the transformation matrix are simply ignored.
+         * 
          * @param {JXG.Image|JXG.Text} element A {@link JXG.Image} or {@link JXG.Text} object.
          * @param {Array} transformations An array of {@link JXG.Transformation} objects. This is usually the
          * transformations property of the given element <tt>el</tt>.

@@ -1905,9 +1905,13 @@ JXG.Options = {
          * deletes all traces of this element. By calling
          * element.setAttribute({trace:'pause'})
          * the removal of already existing traces can be prevented.
+         * 
+         * The visual appearance of the trace can be influenced by {@link JXG.GeometryElement#traceAttributes}.
+         * 
          * @see JXG.GeometryElement#clearTrace
          * @see JXG.GeometryElement#traces
          * @see JXG.GeometryElement#numTraces
+         * @see JXG.GeometryElement#traceAttributes
          * @type Boolean|String
          * @default false
          * @name JXG.GeometryElement#trace
@@ -1919,6 +1923,49 @@ JXG.Options = {
          * @type Object
          * @see JXG.GeometryElement#trace
          * @name JXG.GeometryElement#traceAttributes
+         * @default {}
+         *
+         * @example
+         * JXG.Options.elements.traceAttributes = {
+         *     size: 2
+         * };
+         * 
+         * const board = JXG.JSXGraph.initBoard(BOARDID, {
+         *     boundingbox: [-4, 4, 4, -4],
+         *     keepaspectratio: true
+         * });
+         * 
+         * var p = board.create('point', [0.0, 2.0], {
+         *     trace: true,
+         *     size: 10,
+         *     traceAttributes: {
+         *         color: 'black',
+         *         face: 'x'
+         *     }
+         * });
+         * 
+         * </pre><div id="JXG504889cb-bb6f-4b65-85db-3ad555c08bcf" class="jxgbox" style="width: 300px; height: 300px;"></div>
+         * <script type="text/javascript">
+         *     (function() {
+         *     JXG.Options.elements.traceAttributes = {
+         *         size: 2
+         *     };
+         *         var board = JXG.JSXGraph.initBoard('JXG504889cb-bb6f-4b65-85db-3ad555c08bcf',
+         *             {boundingbox: [-4, 4, 4, -4], axis: true, showcopyright: false, shownavigation: true, showClearTraces: true});
+         *     
+         *     var p = board.create('point', [0.0, 2.0], {
+         *         trace: true,
+         *         size: 10,
+         *         traceAttributes: {
+         *             color: 'black',
+         *             face: 'x'
+         *         }
+         *     });
+         * 
+         *     })();
+         * 
+         * </script><pre>
+         * 
          */
         traceAttributes: {},
 

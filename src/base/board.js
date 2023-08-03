@@ -1724,6 +1724,7 @@ JXG.extend(
                 } else {
                     Env.addEvent(this.containerObj, 'pointerdown', this.pointerDownListener, this);
                     Env.addEvent(moveTarget, 'pointermove', this.pointerMoveListener, this);
+                    Env.addEvent(moveTarget, 'pointerleave', this.pointerLeaveListener, this);
                 }
                 Env.addEvent(this.containerObj, 'mousewheel', this.mouseWheelListener, this);
                 Env.addEvent(this.containerObj, 'DOMMouseScroll', this.mouseWheelListener, this);
@@ -1856,58 +1857,24 @@ JXG.extend(
 
                 if (window.navigator.msPointerEnabled) {
                     // IE10-
-                    Env.removeEvent(
-                        this.containerObj,
-                        'MSPointerDown',
-                        this.pointerDownListener,
-                        this
-                    );
-                    Env.removeEvent(
-                        moveTarget,
-                        'MSPointerMove',
-                        this.pointerMoveListener,
-                        this
-                    );
+                    Env.removeEvent(this.containerObj, 'MSPointerDown', this.pointerDownListener, this);
+                    Env.removeEvent(moveTarget, 'MSPointerMove', this.pointerMoveListener, this);
                 } else {
-                    Env.removeEvent(
-                        this.containerObj,
-                        'pointerdown',
-                        this.pointerDownListener,
-                        this
-                    );
+                    Env.removeEvent(this.containerObj, 'pointerdown', this.pointerDownListener, this);
                     Env.removeEvent(moveTarget, 'pointermove', this.pointerMoveListener, this);
+                    Env.removeEvent(moveTarget, 'pointerleave', this.pointerLeaveListener, this);
                 }
 
                 Env.removeEvent(this.containerObj, 'mousewheel', this.mouseWheelListener, this);
-                Env.removeEvent(
-                    this.containerObj,
-                    'DOMMouseScroll',
-                    this.mouseWheelListener,
-                    this
-                );
+                Env.removeEvent(this.containerObj, 'DOMMouseScroll', this.mouseWheelListener, this);
 
                 if (this.hasPointerUp) {
                     if (window.navigator.msPointerEnabled) {
                         // IE10-
-                        Env.removeEvent(
-                            this.document,
-                            'MSPointerUp',
-                            this.pointerUpListener,
-                            this
-                        );
+                        Env.removeEvent(this.document, 'MSPointerUp', this.pointerUpListener, this);
                     } else {
-                        Env.removeEvent(
-                            this.document,
-                            'pointerup',
-                            this.pointerUpListener,
-                            this
-                        );
-                        Env.removeEvent(
-                            this.document,
-                            'pointercancel',
-                            this.pointerUpListener,
-                            this
-                        );
+                        Env.removeEvent(this.document, 'pointerup', this.pointerUpListener, this);
+                        Env.removeEvent(this.document, 'pointercancel', this.pointerUpListener, this);
                     }
                     this.hasPointerUp = false;
                 }
@@ -2653,13 +2620,12 @@ JXG.extend(
 
         /**
          * Triggered as soon as the user stops touching the device with at least one finger.
+         *
          * @param {Event} evt
          * @returns {Boolean}
          */
         pointerUpListener: function (evt) {
-            var i,
-                j,
-                found,
+            var i, j, found,
                 touchTargets,
                 updateNeeded = false;
 
@@ -2734,17 +2700,32 @@ JXG.extend(
                 this.hasPointerUp = false;
             }
 
-            // this.dehighlightAll();
-            // this.updateQuality = this.BOARD_QUALITY_HIGH;
-            // this.mode = this.BOARD_MODE_NONE;
+            // After one finger leaves the screen the gesture is stopped.
+            this._pointerClearTouches(evt.pointerId);
+            if (this._getPointerInputDevice(evt) !== 'touch') {
+                this.dehighlightAll();
+            }
 
-            // this.originMoveEnd();
             if (updateNeeded) {
                 this.update();
             }
 
-            // After one finger leaves the screen the gesture is stopped.
-            this._pointerClearTouches(evt.pointerId);
+            return true;
+        },
+
+        /**
+         * Triggered by the pointerleave event. This is needed in addition to
+         * {@link JXG.Board#pointerUpListener} in the situation that a pen is used
+         * and after an up event the pen leaves the hover range vertically. Here, it happens that
+         * after the pointerup event further pointermove events are fired and elements get highlighted.
+         * This highlighting has to be cancelled.
+         *
+         * @param {Event} evt
+         * @returns {Boolean}
+         */
+        pointerLeaveListener: function (evt) {
+            this.displayInfobox(false);
+            this.dehighlightAll();
 
             return true;
         },
