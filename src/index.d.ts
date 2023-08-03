@@ -5465,11 +5465,11 @@ declare namespace JXG {
          */
         zoom: boolean | ZoomOptions;
 
-        /**
-         * Additional zoom factor multiplied to zoomX and zoomY.
-         * default 1.0
-         */
-        zoomFactor: number;
+        // /**
+        //  * Additional zoom factor multiplied to zoomX and zoomY.
+        //  * default 1.0
+        //  */
+        // zoomFactor: number;
 
         /**
          * Zoom factor in horizontal direction.

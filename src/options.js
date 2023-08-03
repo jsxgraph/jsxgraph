@@ -1203,14 +1203,14 @@ JXG.Options = {
             pinchSensitivity: 7
         },
 
-        /**
-         * Additional zoom factor multiplied to {@link JXG.Board#zoomX} and {@link JXG.Board#zoomY}.
-         *
-         * @name JXG.Board#zoomFactor
-         * @type Number
-         * @default 1.0
-         */
-        zoomFactor: 1,
+        // /**
+        //  * Additional zoom factor multiplied to {@link JXG.Board#zoomX} and {@link JXG.Board#zoomY}.
+        //  *
+        //  * @name JXG.Board#zoomFactor
+        //  * @type Number
+        //  * @default 1.0
+        //  */
+        // zoomFactor: 1,
 
         /**
          * Zoom factor in horizontal direction.

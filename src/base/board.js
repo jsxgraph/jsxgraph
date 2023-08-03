@@ -5495,10 +5495,7 @@ JXG.extend(
          * @returns {JXG.Board} Reference to the board
          */
         setBoundingBox: function (bbox, keepaspectratio, setZoom) {
-            var h,
-                w,
-                ux,
-                uy,
+            var h, w, ux, uy,
                 offX = 0,
                 offY = 0,
                 zoom_ratio = 1,
@@ -5647,28 +5644,12 @@ JXG.extend(
                 }
             }
 
-            for (i in this.attr) {
-                console.log(i, this.attr[i])
-            }
             for (i in attributes) {
                 if (attributes.hasOwnProperty(i)) {
                     key = i.replace(/\s+/g, "").toLowerCase();
                     value = attributes[i];
                 }
 
-                // if (Type.isObject(value) && Type.exists(this.attr[key])) {
-                //     this.attr[key] = Type.merge(this.attr[key], value);
-                //     if (Type.exists(this[key])) {
-                //         if (Type.isArray(this[key])) {
-                //             for (j = 0; j < this[key].length; j++) {
-                //                 this[key][j].setAttribute(value);
-                //             }
-                //         } else {
-                //             this[key].setAttribute(value);
-                //         }
-                //     }
-                //     continue;
-                // }
                 oldvalue = this.attr[key];
                 switch (key) {
                     case 'axis':
@@ -5678,9 +5659,8 @@ JXG.extend(
                                 this.defaultAxes.y.setAttribute({visible: false});
                             }
                         } else {
-
+                            // TODO
                         }
-                        // TODO
                         break;
                     case 'boundingbox':
                         this.setBoundingBox(value, this.keepaspectratio);
@@ -5699,13 +5679,67 @@ JXG.extend(
                             .innerHTML = value;
                         this._set(key, value);
                         break;
-                    case 'keepaspectratio':
-                        console.log(this.getBoundingBox())
+                    case 'title':
+                        this.document.getElementById(this.container + '_ARIAlabel')
+                            .innerHTML = value;
                         this._set(key, value);
-                        this[key] = value;
-                        this.setBoundingBox(this.getBoundingBox(), value);
+                        break;
+                    case 'keepaspectratio':
+                       // Does not work, yet.
+                        this._set(key, value);
+                        oldvalue = this.getBoundingBox();
+                        this.setBoundingBox([0, this.canvasHeight, this.canvasWidth, 0], false, 'keep');
+                        this.setBoundingBox(oldvalue, value, 'keep');
                         break;
 
+                    case 'document':
+                    case 'maxboundingbox':
+                        this[key] = value;
+                        this._set(key, value);
+                        break;
+        
+
+                    case 'zoomx':
+                    case 'zoomy':
+                        this[key] = value;
+                        this._set(key, value);
+                        this.setZoom(this.attr.zoomx, this.attr.zoomy);
+                        break;
+
+                    case 'movetarget':
+                    case 'renderer':
+                        // immutable
+                        break;
+
+                    case 'registerevents':
+                        if (this.attr.registerevents !== value) {
+                            this._set(key, value);
+                            if (!value) {
+                                this.removeEventHandlers();
+                            } else {
+                                this.addEventHandlers();
+                            }
+                        }
+                        break;
+                    case 'registerfullscreenevent':
+                    case 'registerresizeevent':
+                        // Need removing and readding events
+                        this._set(key, value);
+
+                    case 'fullscreen':
+                    case 'screenshot':
+                    case 'selection':
+                    case 'showcopyright':
+                        // Change icon
+                        // Need to set attributes for polygon
+
+                    case 'showfullscreen':
+                    case 'shownavigation':
+                    case 'showreload':
+                    case 'showscreenshot':
+                    case 'showzoom':
+
+                    
                     default:
                         if (Type.exists(this.attr[key])) {
                             value = (value.toLowerCase && value.toLowerCase() === 'false')
@@ -5719,10 +5753,6 @@ JXG.extend(
 
             // this.triggerEventHandlers(["attribute"], [attributes, this]);
             this.fullUpdate();
-            console.log("------------------")
-            for (i in this.attr) {
-                console.log(i, this.attr[i])
-            }
 
             return this;
 
