@@ -1118,7 +1118,7 @@ JXG.extend(
          *
          * @param {Object} attr Object with attributes - usually containing default options
          * @param {Object} special Special option values which overwrite (recursively) the default options
-         * @param {Boolean} [toLower=true] If true the keys are convert to lower case.
+         * @param {Boolean} [toLower=true] If true the keys are converted to lower case.
          *
          * @see JXG#merge
          *

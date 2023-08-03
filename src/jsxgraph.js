@@ -219,7 +219,7 @@ JXG.JSXGraph = {
     /**
      *
      * @param {String} container HTML-ID to the HTML-element in which the board is painted.
-     * @param {*} attr An object that sets some of the board properties.
+     * @param {Object} attr An object that sets some of the board properties.
      *
      * @private
      */

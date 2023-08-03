@@ -5596,6 +5596,139 @@ JXG.extend(
         },
 
         /**
+         * Sets the value of attribute <tt>key</tt> to <tt>value</tt>.
+         * @param {String} key The attribute's name.
+         * @param value The new value
+         * @private
+         */
+        _set: function (key, value) {
+            var el;
+
+            key = key.toLocaleLowerCase();
+
+            if (
+                value !== null &&
+                Type.isObject(value) &&
+                !Type.exists(value.id) &&
+                !Type.exists(value.name)
+            ) {
+                // value is of type {prop: val, prop: val,...}
+                // Convert these attributes to lowercase, too
+                // this.attr[key] = {};
+                // for (el in value) {
+                //     if (value.hasOwnProperty(el)) {
+                //         this.attr[key][el.toLocaleLowerCase()] = value[el];
+                //     }
+                // }
+                Type.mergeAttr(this.attr[key], value);
+            } else {
+                this.attr[key] = value;
+            }
+        },
+
+        setAttribute: function(attr) {
+            var i, arg, pair,
+                key, value, oldvalue, // j, le,
+                attributes = {};
+
+            // Normalize the user input
+            for (i = 0; i < arguments.length; i++) {
+                arg = arguments[i];
+                if (Type.isString(arg)) {
+                    // pairRaw is string of the form 'key:value'
+                    pair = arg.split(":");
+                    attributes[Type.trim(pair[0])] = Type.trim(pair[1]);
+                } else if (!Type.isArray(arg)) {
+                    // pairRaw consists of objects of the form {key1:value1,key2:value2,...}
+                    JXG.extend(attributes, arg);
+                } else {
+                    // pairRaw consists of array [key,value]
+                    attributes[arg[0]] = arg[1];
+                }
+            }
+
+            for (i in this.attr) {
+                console.log(i, this.attr[i])
+            }
+            for (i in attributes) {
+                if (attributes.hasOwnProperty(i)) {
+                    key = i.replace(/\s+/g, "").toLowerCase();
+                    value = attributes[i];
+                }
+
+                // if (Type.isObject(value) && Type.exists(this.attr[key])) {
+                //     this.attr[key] = Type.merge(this.attr[key], value);
+                //     if (Type.exists(this[key])) {
+                //         if (Type.isArray(this[key])) {
+                //             for (j = 0; j < this[key].length; j++) {
+                //                 this[key][j].setAttribute(value);
+                //             }
+                //         } else {
+                //             this[key].setAttribute(value);
+                //         }
+                //     }
+                //     continue;
+                // }
+                oldvalue = this.attr[key];
+                switch (key) {
+                    case 'axis':
+                        if (value === false) {
+                            if (Type.exists(this.defaultAxes)) {
+                                this.defaultAxes.x.setAttribute({visible: false});
+                                this.defaultAxes.y.setAttribute({visible: false});
+                            }
+                        } else {
+
+                        }
+                        // TODO
+                        break;
+                    case 'boundingbox':
+                        this.setBoundingBox(value, this.keepaspectratio);
+                        this._set(key, value);
+                        break;
+                    case 'defaultaxes':
+                        if (Type.exists(this.defaultAxes.x) && Type.exists(value.x)) {
+                            this.defaultAxes.x.setAttribute(value.x);
+                        }
+                        if (Type.exists(this.defaultAxes.y) && Type.exists(value.y)) {
+                            this.defaultAxes.y.setAttribute(value.y);
+                        }
+                        break;           
+                    case 'description':
+                        this.document.getElementById(this.container + '_ARIAdescription')
+                            .innerHTML = value;
+                        this._set(key, value);
+                        break;
+                    case 'keepaspectratio':
+                        console.log(this.getBoundingBox())
+                        this._set(key, value);
+                        this[key] = value;
+                        this.setBoundingBox(this.getBoundingBox(), value);
+                        break;
+
+                    default:
+                        if (Type.exists(this.attr[key])) {
+                            value = (value.toLowerCase && value.toLowerCase() === 'false')
+                                    ? false
+                                    : value;
+                            this._set(key, value);
+                        }
+                        break;
+            }
+            }
+
+            // this.triggerEventHandlers(["attribute"], [attributes, this]);
+            this.fullUpdate();
+            console.log("------------------")
+            for (i in this.attr) {
+                console.log(i, this.attr[i])
+            }
+
+            return this;
+
+        },
+
+        /**
          * Adds an animation. Animations are controlled by the boards, so the boards need to be aware of the
          * animated elements. This function tells the board about new elements to animate.
          * @param {JXG.GeometryElement} element The element which is to be animated.
