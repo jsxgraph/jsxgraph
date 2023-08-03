@@ -196,7 +196,7 @@ JXG.SVGRenderer = function (container, dim) {
      * @return {String}
      * @private
      */
-    this.uniqName = function() {
+    this.uniqName = function () {
         return this.container.id + '_' +
             Array.prototype.slice.call(arguments).join('_');
     };
@@ -598,7 +598,7 @@ JXG.extend(
             node.setAttributeNS(null, 'x', '20px');
             node.setAttributeNS(null, 'y', 2 + fontsize + 'px');
             node.setAttributeNS(null, 'style', 'font-family:Arial,Helvetica,sans-serif; font-size:' +
-                    fontsize + 'px; fill:#356AA0;  opacity:0.3;');
+                fontsize + 'px; fill:#356AA0;  opacity:0.3;');
             t = this.container.ownerDocument.createTextNode(str);
             node.appendChild(t);
             this.appendChildPrim(node, 0);
@@ -2053,12 +2053,12 @@ JXG.extend(
             if (this.container.hasChildNodes() && Type.exists(this.foreignObjLayer)) {
                 if (!ignoreTexts) {
                     this.foreignObjLayer.setAttribute("display", "inline");
-                }
-                while (svgRoot.nextSibling) {
-                    // Copy all value attributes
-                    values = values.concat(this._getValuesOfDOMElements(svgRoot.nextSibling));
+                    while (svgRoot.nextSibling) {
+                        // Copy all value attributes
+                        values = values.concat(this._getValuesOfDOMElements(svgRoot.nextSibling));
 
-                    this.foreignObjLayer.appendChild(svgRoot.nextSibling);
+                        this.foreignObjLayer.appendChild(svgRoot.nextSibling);
+                    }
                 }
             }
 
