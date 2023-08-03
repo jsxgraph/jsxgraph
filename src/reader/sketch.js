@@ -182,7 +182,7 @@ import type from '../utils/type';
                     },
 
                     getAttribsString = function (object) {
-                        var str = '', key, val;
+                        var str = '', key, val, i;
                         for (key in object) {
                             if (!object.hasOwnProperty(key)) continue;
                             val = object[key];
@@ -190,6 +190,8 @@ import type from '../utils/type';
                                 val = '\'' + val + '\'';
                             if (JXG.isObject(val))
                                 val = '<<' + getAttribsString(val).substring(2) + '>>';
+                            if (JXG.isArray(val))
+                                val = '[' + val.join(',') + ']';
                             str += ', ' + key + ': ' + val;
                         }
                         return str;
@@ -239,61 +241,31 @@ import type from '../utils/type';
                         break;
 
                     case JXG.GENTYPE_AXIS:
-                        set_str =
-                            step.args.name[0] +
-                            ' = point(' +
-                            step.args.coords[0].usrCoords[1] +
-                            ', ';
-                        set_str +=
-                            step.args.coords[0].usrCoords[2] +
-                            ') <<id: \'' +
-                            step.dest_sub_ids[0] +
-                            '\', name: \'';
-                        set_str +=
-                            step.args.name[0] +
-                            '\', fixed: true, priv: true, visible: false>>; ' +
-                            step.args.name[1];
-                        set_str += ' = point(' + step.args.coords[1].usrCoords[1] + ', ';
-                        set_str +=
-                            step.args.coords[1].usrCoords[2] +
-                            ') <<id: \'' +
-                            step.dest_sub_ids[1] +
-                            '\', name: \'';
-                        set_str +=
-                            step.args.name[1] +
-                            '\', fixed: true, priv: true, visible: false>>; ' +
-                            step.args.name[2];
-                        set_str += ' = point(' + step.args.coords[2].usrCoords[1] + ', ';
-                        set_str +=
-                            step.args.coords[2].usrCoords[2] +
-                            ') <<id: \'' +
-                            step.dest_sub_ids[2] +
-                            '\', name: \'';
-                        set_str +=
-                            step.args.name[2] +
-                            '\', fixed: true, priv: true, visible: false>>; ';
+                        set_str = '';
+
+                        set_str += step.args.name[0] +
+                            ' = point(' + step.args.coords[0].usrCoords[1] + ', ' + step.args.coords[0].usrCoords[2] + ') <<id: \'' +
+                            step.dest_sub_ids[0] + '\', name: \'' + step.args.name[0] + '\', fixed: true, priv: true, visible: false>>; ';
+                        set_str += step.args.name[1] +
+                            ' = point(' + step.args.coords[1].usrCoords[1] + ', ' + step.args.coords[1].usrCoords[2] + ') <<id: \'' +
+                            step.dest_sub_ids[1] + '\', name: \'' + step.args.name[1] + '\', fixed: true, priv: true, visible: false>>; ';
+                        set_str += step.args.name[2] +
+                            ' = point(' + step.args.coords[2].usrCoords[1] + ', ' + step.args.coords[2].usrCoords[2] + ') <<id: \'' +
+                            step.dest_sub_ids[2] + '\', name: \'' + step.args.name[2] + '\', fixed: true, priv: true, visible: false>>; ';
 
                         // x-axis
-                        set_str += step.args.name[3] + ' = axis(' + step.args.name[0] + ', ' + step.args.name[1] + ') ';
-                        set_str +=
-                            '<<id: \'' + step.dest_sub_ids[3] + '\', name: \'' + step.args.name[3] + '\', ticks: ';
-                        set_str += '<<' +
-                            'label: <<offset: [-4, -16], parse: false, display: "internal">>, ' +
-                            'drawLabels: true, ' +
-                            'drawZero: false' +
-                            '>> ';
-                        set_str += '>>; ';
+                        set_str += step.args.name[3] +
+                            ' = axis(' + step.args.name[0] + ', ' + step.args.name[1] + ') <<id: \'' +
+                            step.dest_sub_ids[3] + '\', name: \'' + step.args.name[3] + '\' ' +
+                            getAttribsString(JXG.Options.sketchometry.axisX) +
+                            '>>; ';
 
                         // y-axis
-                        set_str += step.args.name[4] + ' = axis(' + step.args.name[0] + ', ' + step.args.name[2] + ') ';
-                        set_str +=
-                            '<<id: \'' + step.dest_sub_ids[4] + '\', name: \'' + step.args.name[4] + '\', ticks: ';
-                        set_str += '<<' +
-                            'label: <<offset: [10, 0], parse: false, display: "internal">>, ' +
-                            'drawLabels: true, ' +
-                            'drawZero: false' +
-                            '>> ';
-                        set_str += '>>; ';
+                        set_str += step.args.name[4] +
+                            ' = axis(' + step.args.name[0] + ', ' + step.args.name[2] + ') <<id: \'' +
+                            step.dest_sub_ids[4] + '\', name: \'' + step.args.name[4] + '\' ' +
+                            getAttribsString(JXG.Options.sketchometry.axisY) +
+                            '>>; ';
 
                         // automatics x-axis
                         set_str += step.dest_sub_ids[3] + '.ticks.visible = function() { return ' + step.dest_sub_ids[3] + '.visible; }; ';
@@ -1088,7 +1060,7 @@ import type from '../utils/type';
                         set_str += '>>; ';
                         set_str += step.dest_id + '.setAttribute(<<traceattributes: <<size: function() {' +
                             ' return ' + step.dest_id + '.size ' + JXG.Options.sketchometry.traceSizeOperation + '; ' +
-                            '} >> >>); '
+                            '} >> >>); ';
 
                         if (!(step.args && step.args.undoIsEmpty)) {
                             reset_str = 'remove(' + step.dest_id + '); ';
@@ -2656,7 +2628,7 @@ import type from '../utils/type';
                                 '>>; ';
                             set_str += pid3 + '.setAttribute(<<traceattributes: <<size: function() {' +
                                 ' return ' + pid3 + '.size ' + JXG.Options.sketchometry.traceSizeOperation + '; ' +
-                                '} >> >>); '
+                                '} >> >>); ';
                             set_str +=
                                 'arrowparallel(' + pid1 + ', ' + pid2 + ', ' + pid3 + ') ' +
                                 '<<id: \'' + step.dest_id + '\'' +
@@ -2685,7 +2657,7 @@ import type from '../utils/type';
                             set_str += step.dest_sub_ids[0] + '\', name: \'\', withLabel: false>>; ';
                             set_str += step.dest_sub_ids[0] + '.setAttribute(<<traceattributes: <<size: function() {' +
                                 ' return ' + step.dest_sub_ids[0] + '.size ' + JXG.Options.sketchometry.traceSizeOperation + '; ' +
-                                '} >> >>); '
+                                '} >> >>); ';
                             set_str +=
                                 'parallelpoint(\'' +
                                 step.src_ids[0] +
@@ -2703,7 +2675,7 @@ import type from '../utils/type';
                                 ', opacity: 0.2, withLabel: false>>; ';
                             set_str += step.dest_sub_ids[1] + '.setAttribute(<<traceattributes: <<size: function() {' +
                                 ' return ' + step.dest_sub_ids[1] + '.size ' + JXG.Options.sketchometry.traceSizeOperation + '; ' +
-                                '} >> >>); '
+                                '} >> >>); ';
                             set_str +=
                                 'arrow(\'' +
                                 step.dest_sub_ids[0] +
