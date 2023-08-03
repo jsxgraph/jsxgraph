@@ -5599,7 +5599,7 @@ JXG.extend(
          * @private
          */
         _set: function (key, value) {
-            var el;
+            // var el;
 
             key = key.toLocaleLowerCase();
 
@@ -5673,7 +5673,7 @@ JXG.extend(
                         if (Type.exists(this.defaultAxes.y) && Type.exists(value.y)) {
                             this.defaultAxes.y.setAttribute(value.y);
                         }
-                        break;           
+                        break;
                     case 'description':
                         this.document.getElementById(this.container + '_ARIAdescription')
                             .innerHTML = value;
@@ -5692,12 +5692,12 @@ JXG.extend(
                         this.setBoundingBox(oldvalue, value, 'keep');
                         break;
 
+/* eslint-disable no-fallthrough */
                     case 'document':
                     case 'maxboundingbox':
                         this[key] = value;
                         this._set(key, value);
                         break;
-        
 
                     case 'zoomx':
                     case 'zoomy':
@@ -5739,7 +5739,6 @@ JXG.extend(
                     case 'showscreenshot':
                     case 'showzoom':
 
-                    
                     default:
                         if (Type.exists(this.attr[key])) {
                             value = (value.toLowerCase && value.toLowerCase() === 'false')
@@ -5748,7 +5747,8 @@ JXG.extend(
                             this._set(key, value);
                         }
                         break;
-            }
+                }
+/* eslint-enable no-fallthrough */
             }
 
             // this.triggerEventHandlers(["attribute"], [attributes, this]);
