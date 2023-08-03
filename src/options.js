@@ -376,10 +376,11 @@ JXG.Options = {
          * If set true and
          * hasPoint() is true for both an element and it's label,
          * the element (and not the label) is taken as drag element.
-         *
+         * <p>
          * If set false and hasPoint() is true for both an element and it's label,
          * the label is taken (if it is on a higher layer than the element)
-         *
+         * <p>
+         * Meanwhile, this feature might be irrelevant.
          * @name JXG.Board#ignoreLabels
          * @type Booelan
          * @default true

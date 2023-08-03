@@ -2134,10 +2134,8 @@ JXG.extend(
          * 	setTimeout(function() { console.log('done'); }, 400);
          */
         dumpToCanvas: function (canvasId, w, h, ignoreTexts) {
-            var svg,
-                tmpImg,
-                cv,
-                ctx,
+            var svg, tmpImg,
+                cv, ctx,
                 doc = this.container.ownerDocument;
 
             // Prepare the canvas element
@@ -2219,16 +2217,11 @@ JXG.extend(
                 doc = this.container.ownerDocument,
                 parent = this.container.parentNode,
                 cPos,
-                canvas,
-                id,
-                img,
-                button,
-                buttonText,
-                w,
-                h,
+                canvas, id, img,
+                button, buttonText,
+                w, h,
                 bas = board.attr.screenshot,
-                zbar,
-                zbarDisplay,
+                zbar, zbarDisplay,
                 cssTxt,
                 newImg = false,
                 _copyCanvasToImg,
