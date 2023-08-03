@@ -2599,7 +2599,7 @@ JXG.extend(
 
         /**
          * Triggered as soon as the user stops touching the device with at least one finger.
-         * 
+         *
          * @param {Event} evt
          * @returns {Boolean}
          */
@@ -2693,13 +2693,13 @@ JXG.extend(
         },
 
         /**
-         * Triggered by the pointerleave event. This is needed in addition to 
+         * Triggered by the pointerleave event. This is needed in addition to
          * {@link JXG.Board#pointerUpListener} in the situation that a pen is used
-         * and after an up event the pen leaves the hover range vertically. Here, it happens that 
+         * and after an up event the pen leaves the hover range vertically. Here, it happens that
          * after the pointerup event further pointermove events are fired and elements get highlighted.
          * This highlighting has to be cancelled.
-         * 
-         * @param {Event} evt 
+         *
+         * @param {Event} evt
          * @returns {Boolean}
          */
         pointerLeaveListener: function (evt) {
