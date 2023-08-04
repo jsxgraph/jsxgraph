@@ -5692,7 +5692,7 @@ JXG.extend(
                         this.setBoundingBox(oldvalue, value, 'keep');
                         break;
 
-/* eslint-disable no-fallthrough */
+                    /* eslint-disable no-fallthrough */
                     case 'document':
                     case 'maxboundingbox':
                         this[key] = value;
@@ -5706,31 +5706,18 @@ JXG.extend(
                         this.setZoom(this.attr.zoomx, this.attr.zoomy);
                         break;
 
-                    case 'movetarget':
+                    case 'registerevents':
+                    case 'registerfullscreenevent':
+                    case 'registerresizeevent':
                     case 'renderer':
                         // immutable
                         break;
 
-                    case 'registerevents':
-                        if (this.attr.registerevents !== value) {
-                            this._set(key, value);
-                            if (!value) {
-                                this.removeEventHandlers();
-                            } else {
-                                this.addEventHandlers();
-                            }
-                        }
-                        break;
-                    case 'registerfullscreenevent':
-                    case 'registerresizeevent':
-                        // Need removing and readding events
-                        this._set(key, value);
-
                     case 'fullscreen':
                     case 'screenshot':
-                    case 'selection':
-                    case 'showcopyright':
                         // Change icon
+                    case 'showcopyright':
+                    case 'selection':
                         // Need to set attributes for polygon
 
                     case 'showfullscreen':
@@ -5738,7 +5725,7 @@ JXG.extend(
                     case 'showreload':
                     case 'showscreenshot':
                     case 'showzoom':
-
+                        // TODO
                     default:
                         if (Type.exists(this.attr[key])) {
                             value = (value.toLowerCase && value.toLowerCase() === 'false')
@@ -5747,8 +5734,8 @@ JXG.extend(
                             this._set(key, value);
                         }
                         break;
+                    /* eslint-enable no-fallthrough */
                 }
-/* eslint-enable no-fallthrough */
             }
 
             // this.triggerEventHandlers(["attribute"], [attributes, this]);

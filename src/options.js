@@ -796,9 +796,17 @@ JXG.Options = {
          * Possible values for this attributes are:
          * <ul>
          * <li> an element specified by document.getElementById('some id');
-         * <li> null: to use the JSXgraph container div element
+         * <li> null: to use the JSXGraph container div element
          * <li> document
          * </ul>
+         * <p>
+         * This attribute is immutable.
+         * It can be changed as follows:
+         * 
+         * @example
+         * board.setAttribute({moveTarget: null});
+         * board.removeEventHandlers();
+         * board.addEventHandlers();
          *
          * @name JXG.Board#moveTarget
          * @type HTML node or document
@@ -877,6 +885,10 @@ JXG.Options = {
          * Allow user interaction by registering mouse, pointer, keyboard or touch events.
          * Decide if JSXGraph listens to these events. Keyboard events can then turned off
          * separately with the keyboard attribute.
+         * 
+         * <p>This attribute is immutable. Please use
+         * {@link JXG.Board#addEventHandlers()} and 
+         * {@link JXG.Board#removeEventHandlers()} directly.
          *
          * @name JXG.Board#registerEvents
          * @see JXG.Board#keyboard
@@ -890,6 +902,10 @@ JXG.Options = {
         /**
          * Listen to fullscreen event.
          *
+         * <p>This attribute is immutable. Please use
+         * {@link JXG.Board#addFullscreenEventHandlers()} and 
+         * {@link JXG.Board#removeEventHandlers()} directly.
+         *
          * @name JXG.Board#registerFullscreenEvent
          * @see JXG.Board#registerEvents
          * @see JXG.Board#registerResizeEvent
@@ -901,8 +917,16 @@ JXG.Options = {
         /**
          * Listen to resize events, i.e. start "resizeObserver" or handle the resize event with
          * "resizeListener". This is independent from the mouse, touch, pointer events.
-         *
+         * 
+         * <p>This attribute is immutable. Please use
+         * {@link JXG.Board#addResizeEventHandlers()} and 
+         * {@link JXG.Board#removeEventHandlers()} directly.
+         * <p>
+         * This attribute just starts a resizeObserver. If the resizeObserver reacts
+         * to size changed is controled wuth {@link JXG.Board#resize}.
+         * 
          * @name JXG.Board#registerResizeEvent
+         * @see JXG.Board#resize
          * @see JXG.Board#registerEvents
          * @see JXG.Board#registerFullscreenEvent
          * @type Boolean
