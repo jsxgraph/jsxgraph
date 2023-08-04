@@ -2056,7 +2056,6 @@ JXG.extend(
                     while (svgRoot.nextSibling) {
                         // Copy all value attributes
                         values = values.concat(this._getValuesOfDOMElements(svgRoot.nextSibling));
-
                         this.foreignObjLayer.appendChild(svgRoot.nextSibling);
                     }
                 }
@@ -2093,7 +2092,6 @@ JXG.extend(
             // Safari fails if the svg string contains a "&nbsp;"
             // Obsolete with Safari 12+
             svg = svg.replace(/&nbsp;/g, " ");
-
             svg = svg.replace(/url\(&quot;(.*)&quot;\)/g, "url($1)");
 
             // Move all HTML tags back from
@@ -2112,6 +2110,9 @@ JXG.extend(
         /**
          * Convert the SVG construction into an HTML canvas image.
          * This works for all SVG supporting browsers. Implemented as Promise.
+         * <p>
+         * Might fail if any text element or foreign object element contains SVG. This
+         * is the case e.g. for the default fullscreen symbol.
          * <p>
          * For IE, it is realized as function.
          * It works from version 9, with the exception that HTML texts
@@ -2199,7 +2200,7 @@ JXG.extend(
          * <ul>
          * <li> IE: No
          * <li> Edge: full
-         * <li>Firefox: full
+         * <li> Firefox: full
          * <li> Chrome: full
          * <li> Safari: full (No text support in versions prior to 12).
          * </ul>
@@ -2222,7 +2223,7 @@ JXG.extend(
                 button, buttonText,
                 w, h,
                 bas = board.attr.screenshot,
-                zbar, zbarDisplay,
+                navbar, navbarDisplay, insert,
                 newImg = false,
                 _copyCanvasToImg,
                 isDebug = false;
@@ -2295,11 +2296,11 @@ JXG.extend(
             }
 
             // Hide navigation bar in board
-            // zbar = document.getElementById(this.container.id + '_navigationbar');
-            zbar = doc.getElementById(this.uniqName('navigationbar'));
-            if (Type.exists(zbar)) {
-                zbarDisplay = zbar.style.display;
-                zbar.style.display = "none";
+            navbar = doc.getElementById(this.uniqName('navigationbar'));
+            if (Type.exists(navbar)) {
+                navbarDisplay = navbar.style.display;
+                navbar.style.display = "none";
+                insert = this.removeToInsertLater(navbar);
             }
 
             _copyCanvasToImg = function () {
@@ -2321,9 +2322,10 @@ JXG.extend(
                 window.setTimeout(_copyCanvasToImg, 200);
             }
 
-            // Show navigation bar in board
-            if (Type.exists(zbar)) {
-                zbar.style.display = zbarDisplay;
+            // Reinsert navigation bar in board
+            if (Type.exists(navbar)) {
+                navbar.style.display = navbarDisplay;
+                insert();
             }
 
             return this;

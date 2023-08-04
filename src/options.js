@@ -366,9 +366,8 @@ JXG.Options = {
          * @type Object
          */
         fullscreen: {
-            // symbol: '<svg height="1em" width="1em" version="1.1" viewBox="10 10 18 18"><path fill="#666" d="m 10,16 2,0 0,-4 4,0 0,-2 L 10,10 l 0,6 0,0 z"></path><path fill="#666" d="m 20,10 0,2 4,0 0,4 2,0 L 26,10 l -6,0 0,0 z"></path><path fill="#666" d="m 24,24 -4,0 0,2 L 26,26 l 0,-6 -2,0 0,4 0,0 z"></path><path fill="#666" d="M 12,20 10,20 10,26 l 6,0 0,-2 -4,0 0,-4 0,0 z"></path></svg>',
-            symbol: '\u1f5d6',
-            // '\u25a1', // '\u26f6' (not supported by MacOS),
+            symbol: '<svg height="1em" width="1em" version="1.1" viewBox="10 10 18 18"><path fill="#666" d="m 10,16 2,0 0,-4 4,0 0,-2 L 10,10 l 0,6 0,0 z"></path><path fill="#666" d="m 20,10 0,2 4,0 0,4 2,0 L 26,10 l -6,0 0,0 z"></path><path fill="#666" d="m 24,24 -4,0 0,2 L 26,26 l 0,-6 -2,0 0,4 0,0 z"></path><path fill="#666" d="M 12,20 10,20 10,26 l 6,0 0,-2 -4,0 0,-4 0,0 z"></path></svg>',
+            // symbol: '\u26f6', // '\u26f6' (not supported by MacOS),
             scale: 0.85,
             id: null
         },
@@ -977,12 +976,14 @@ JXG.Options = {
          *  <li>css: CSS rules to format the div element containing the screen shot image
          *  <li>cssButton: CSS rules to format the close button of the div element containing the screen shot image
          * </ul>
+         * The screenshot will fail if the board contains text elements or foreign objects
+         * containing SVG again.
          *
          * @name JXG.Board#screenshot
          * @type Object
          */
         screenshot: {
-            scale: 1.0,
+            scale: 1,
             type: 'png',
             symbol: '\u2318', //'\u22b9', //'\u26f6',
             css: 'background-color:#eeeeee; opacity:1.0; border:2px solid black; border-radius:10px; text-align:center',
@@ -1907,9 +1908,9 @@ JXG.Options = {
          * deletes all traces of this element. By calling
          * element.setAttribute({trace:'pause'})
          * the removal of already existing traces can be prevented.
-         * 
+         *
          * The visual appearance of the trace can be influenced by {@link JXG.GeometryElement#traceAttributes}.
-         * 
+         *
          * @see JXG.GeometryElement#clearTrace
          * @see JXG.GeometryElement#traces
          * @see JXG.GeometryElement#numTraces
@@ -1931,12 +1932,12 @@ JXG.Options = {
          * JXG.Options.elements.traceAttributes = {
          *     size: 2
          * };
-         * 
+         *
          * const board = JXG.JSXGraph.initBoard(BOARDID, {
          *     boundingbox: [-4, 4, 4, -4],
          *     keepaspectratio: true
          * });
-         * 
+         *
          * var p = board.create('point', [0.0, 2.0], {
          *     trace: true,
          *     size: 10,
@@ -1945,7 +1946,7 @@ JXG.Options = {
          *         face: 'x'
          *     }
          * });
-         * 
+         *
          * </pre><div id="JXG504889cb-bb6f-4b65-85db-3ad555c08bcf" class="jxgbox" style="width: 300px; height: 300px;"></div>
          * <script type="text/javascript">
          *     (function() {
@@ -1954,7 +1955,7 @@ JXG.Options = {
          *     };
          *         var board = JXG.JSXGraph.initBoard('JXG504889cb-bb6f-4b65-85db-3ad555c08bcf',
          *             {boundingbox: [-4, 4, 4, -4], axis: true, showcopyright: false, shownavigation: true, showClearTraces: true});
-         *     
+         *
          *     var p = board.create('point', [0.0, 2.0], {
          *         trace: true,
          *         size: 10,
@@ -1963,11 +1964,11 @@ JXG.Options = {
          *             face: 'x'
          *         }
          *     });
-         * 
+         *
          *     })();
-         * 
+         *
          * </script><pre>
-         * 
+         *
          */
         traceAttributes: {},
 
