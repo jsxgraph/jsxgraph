@@ -941,6 +941,9 @@ JXG.Options = {
          * <p>
          * In case of 'canvas' it is advisable to call 'board.update()' after all elements have been
          * constructed. This ensures that all elements are drawn with their intended visual appearance.
+         * 
+         * <p>
+         * This attribute is immutable.
          *
          * @name JXG.Board#renderer
          * @type String

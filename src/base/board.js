@@ -5710,7 +5710,7 @@ JXG.extend(
                     case 'registerfullscreenevent':
                     case 'registerresizeevent':
                     case 'renderer':
-                        // immutable
+                        // immutable, i.e. ignored
                         break;
 
                     case 'fullscreen':
