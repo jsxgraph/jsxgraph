@@ -5311,6 +5311,15 @@ JXG.Options = {
         /**#@-*/
     },
 
+    /* special nonreflexangle options */
+    nonreflexangle: {
+        /**#@+
+         * @visprop
+         */
+
+        /**#@-*/
+    },
+
     // /* special options for Msector of 3 points */
     // msector: {
     //     strokeColor: '#000000', // Msector line
@@ -5868,6 +5877,15 @@ JXG.Options = {
          * @default 'Euclidean'
          */
         type: 'Euclidean'
+
+        /**#@-*/
+    },
+
+    /* special reflexangle options */
+    reflexangle: {
+        /**#@+
+         * @visprop
+         */
 
         /**#@-*/
     },
