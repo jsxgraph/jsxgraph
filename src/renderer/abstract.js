@@ -2137,10 +2137,10 @@ JXG.extend(
         /**
          * The tiny zoom bar shown on the bottom of a board (if showNavigation on board creation is true).
          * It is a div element and gets the CSS class "JXG_navigation" and the id {board id}_navigationbar.
-         *
+         * <p>
          * The buttons get the CSS class "JXG_navigation_button" and the id {board_id}_name where name is
          * one of [top, down, left, right, out, 100, in, fullscreen, screenshot, reload, cleartraces].
-         *
+         * <p>
          * The symbols are hard-coded.
          *
          * @param {JXG.Board} board Reference to a JSXGraph board.
@@ -2183,17 +2183,6 @@ JXG.extend(
                     button.setAttribute("id", id);
                     node.appendChild(button);
 
-                    // Highlighting is now done with CSS
-                    // Env.addEvent(button, 'mouseover', function () {
-                    //     this.style.backgroundColor = attr.highlightfillcolor;
-                    // }, button);
-                    // Env.addEvent(button, 'mouseover', function () {
-                    //     this.style.backgroundColor = attr.highlightfillcolor;
-                    // }, button);
-                    // Env.addEvent(button, 'mouseout', function () {
-                    //     this.style.backgroundColor = attr.fillcolor;
-                    // }, button);
-
                     Env.addEvent(
                         button,
                         "click",
@@ -2204,6 +2193,9 @@ JXG.extend(
                         board
                     );
                     // prevent the click from bubbling down to the board
+                    Env.addEvent(button, "pointerup", cancelbubble, board);
+                    Env.addEvent(button, "pointerdown", cancelbubble, board);
+                    Env.addEvent(button, "pointerleave", cancelbubble, board);
                     Env.addEvent(button, "mouseup", cancelbubble, board);
                     Env.addEvent(button, "mousedown", cancelbubble, board);
                     Env.addEvent(button, "touchend", cancelbubble, board);
