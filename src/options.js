@@ -362,7 +362,7 @@ JXG.Options = {
          * @name JXG.Board#fullscreen
          * @default svg code
          * @see JXG.Board#showFullscreen
-         * @see JXG.AbstractRenderer#drawZoomBar
+         * @see JXG.AbstractRenderer#drawNavigationBar
          * @type Object
          */
         fullscreen: {
@@ -1021,7 +1021,9 @@ JXG.Options = {
          * Control the possibilities for a selection rectangle.
          * Starting a selection event triggers the "startselecting" event.
          * When the mouse pointer is released, the "stopselecting" event is fired.
-         * The "stopselecting" event must be supplied by the user.
+         * The "stopselecting" event is supplied by the user.
+         * <p>
+         * So far it works in SVG renderer only.
          * <p>
          * Possible sub-attributes with default values are:
          * <pre>
@@ -1030,12 +1032,7 @@ JXG.Options = {
          *   name: 'selectionPolygon',
          *   needShift: false,  // mouse selection needs pressing of the shift key
          *   needCtrl: true,    // mouse selection needs pressing of the shift key
-         *   withLines: false,  // Selection polygon has border lines
-         *   vertices: {
-         *       visible: false
-         *   },
-         *   fillColor: '#ffff00',
-         *   visible: false      // Initial visibility. Should be set to false always
+         *   fillColor: '#ffff00'
          * }
          * </pre>
          * <p>
@@ -1067,12 +1064,14 @@ JXG.Options = {
             name: 'selectionPolygon',
             needShift: false,
             needCtrl: true,
+            fillColor: '#ffff00',
+
+            // immutable:
+            visible: false,
             withLines: false,
             vertices: {
                 visible: false
-            },
-            fillColor: '#ffff00',
-            visible: false
+            }
         },
 
         /**
@@ -1081,7 +1080,7 @@ JXG.Options = {
          * @name JXG.Board#showClearTraces
          * @type Boolean
          * @default false
-         * @see JXG.AbstractRenderer#drawZoomBar
+         * @see JXG.AbstractRenderer#drawNavigationBar
          */
         showClearTraces: false,
 
@@ -1101,8 +1100,8 @@ JXG.Options = {
          * @type Boolean
          * @see JXG.Board#fullscreen
          * @default false
-         * @see JXG.AbstractRenderer#drawZoomBar
-         * @see JXG.AbstractRenderer#drawZoomBar
+         * @see JXG.AbstractRenderer#drawNavigationBar
+         * @see JXG.AbstractRenderer#drawNavigationBar
          */
         showFullscreen: false,
 
@@ -1125,7 +1124,7 @@ JXG.Options = {
          * @name JXG.Board#showNavigation
          * @type Boolean
          * @default true
-         * @see JXG.AbstractRenderer#drawZoomBar
+         * @see JXG.AbstractRenderer#drawNavigationBar
          */
         showNavigation: true,
 
@@ -1136,7 +1135,7 @@ JXG.Options = {
          * @name JXG.Board#showReload
          * @type Boolean
          * @default false
-         * @see JXG.AbstractRenderer#drawZoomBar
+         * @see JXG.AbstractRenderer#drawNavigationBar
          */
         showReload: false,
 
@@ -1146,7 +1145,7 @@ JXG.Options = {
          * @name JXG.Board#showScreenshot
          * @type Boolean
          * @default false
-         * @see JXG.AbstractRenderer#drawZoomBar
+         * @see JXG.AbstractRenderer#drawNavigationBar
          */
         showScreenshot: false,
 
@@ -1157,7 +1156,7 @@ JXG.Options = {
          * @name JXG.Board#showZoom
          * @type Boolean
          * @default true
-         * @see JXG.AbstractRenderer#drawZoomBar
+         * @see JXG.AbstractRenderer#drawNavigationBar
          */
         showZoom: true,
 

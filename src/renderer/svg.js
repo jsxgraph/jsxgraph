@@ -593,7 +593,7 @@ JXG.extend(
 
         // Already documented in JXG.AbstractRenderer
         displayCopyright: function (str, fontsize) {
-            var node = this.createPrim("text", "licenseText"),
+            var node = this.createPrim("text", 'licenseText'),
                 t;
             node.setAttributeNS(null, 'x', '20px');
             node.setAttributeNS(null, 'y', 2 + fontsize + 'px');

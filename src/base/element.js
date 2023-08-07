@@ -1192,8 +1192,8 @@ JXG.extend(
          * parameters of the following types:
          * <ul>
          * <li> object: {key1:value1,key2:value2,...}
-         * <li> string: "key1:value"
-         * <li> array: [key, value]
+         * <li> string: 'key:value'
+         * <li> array: ['key', value]
          * </ul>
          * @param {Object} attributes An object with attributes.
          * @returns {JXG.GeometryElement} A reference to the element.

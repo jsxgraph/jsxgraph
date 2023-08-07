@@ -2135,19 +2135,19 @@ JXG.extend(
         },
 
         /**
-         * The tiny zoom bar shown on the bottom of a board (if showNavigation on board creation is true).
+         * The tiny zoom bar shown on the bottom of a board (if board attribute "showNavigation" is true).
          * It is a div element and gets the CSS class "JXG_navigation" and the id {board id}_navigationbar.
          * <p>
          * The buttons get the CSS class "JXG_navigation_button" and the id {board_id}_name where name is
          * one of [top, down, left, right, out, 100, in, fullscreen, screenshot, reload, cleartraces].
          * <p>
-         * The symbols are hard-coded.
+         * The symbols for zoom, navigation and reload are hard-coded.
          *
          * @param {JXG.Board} board Reference to a JSXGraph board.
          * @param {Object} attr Attributes of the navigation bar
-         *
+         * @private
          */
-        drawZoomBar: function (board, attr) {
+        drawNavigationBar: function (board, attr) {
             var doc,
                 node,
                 cancelbubble = function (e) {
