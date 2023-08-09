@@ -14,7 +14,7 @@
     "src",
     "distrib",
     "extensions",
-    "*.md"
+    "CHANGELOG.md"
   ],
   "maintainers": [
     {

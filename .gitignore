@@ -3,8 +3,12 @@ trunk
 .c9revisions
 *.sublime-*
 .idea/
+.vscode
+**/.vscode
+src/.vscode
 *.tgz
 **/*.tgz
+beta/*
 distrib/docs.zip
 distrib/jsxgraphcore.js*
 distrib/jsxgraphsrc.js*
@@ -18,4 +22,5 @@ tmp/*
 doc/jsdoc-tk/template/static/jquery.min.js
 doc/jsdoc-tk/template/static/jsxgraphcore.js
 doc/jsdoc-tk/template/static/jsxgraph.css
-html-report/
+html-report
+HOWTO-RELEASE.md
