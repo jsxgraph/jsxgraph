@@ -2740,6 +2740,11 @@ declare namespace JXG {
          * The distance between the two points defining the line.
          */
         L(): number;
+
+        /**
+         * Calculates the slope of the line.
+         */
+        Slope(): number;
         setAttribute(attributes: LineAttributes): this;
     }
     /**
@@ -2779,7 +2784,7 @@ declare namespace JXG {
                   size?: number;
               };
         /**
-         * Line endings (linecap) of a straight line.
+         * Line endings (linecap) of a stroke element, i.e. line, circle, curve.
          *
          * Not available for VML renderer.
          *
@@ -2880,7 +2885,7 @@ declare namespace JXG {
                   size?: number;
               };
         /**
-         * Line endings (linecap) of a straight line.
+         * Line endings (linecap) of a stroke element, i.e. line, circle, curve.
          *
          * Not available for VML renderer.
          *
@@ -3211,7 +3216,7 @@ declare namespace JXG {
         /**
          *
          */
-        defaultDistance?: number;
+        // defaultDistance?: number;
         /**
          *
          */
@@ -3299,7 +3304,7 @@ declare namespace JXG {
     export interface TicksOptions extends GeometryElementOptions {
         anchor?: "left" | "middle" | "right";
         beautifulScientificTickLabels?: boolean;
-        defaultDistance?: number;
+        // defaultDistance?: number;
         drawLabels?: boolean;
         drawZero?: boolean;
         face?: "|" | "<" | ">";
@@ -3310,7 +3315,7 @@ declare namespace JXG {
         generateLabelValue?: ((labeled: Coords, center: Coords) => string) | null;
         highlightFillColor?: string;
         highlightStrokeColor?: string;
-        includeBoundaries?: boolean | number;
+        includeBoundaries?: boolean;
         insertTicks?: boolean;
         label?: LabelOptions;
         labels?: any[];
@@ -5460,11 +5465,11 @@ declare namespace JXG {
          */
         zoom: boolean | ZoomOptions;
 
-        /**
-         * Additional zoom factor multiplied to zoomX and zoomY.
-         * default 1.0
-         */
-        zoomFactor: number;
+        // /**
+        //  * Additional zoom factor multiplied to zoomX and zoomY.
+        //  * default 1.0
+        //  */
+        // zoomFactor: number;
 
         /**
          * Zoom factor in horizontal direction.
