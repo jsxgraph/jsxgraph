@@ -5,7 +5,6 @@ New features
 -----------
 
 - New elements `vectorfield` and `slopefield`
-- New board attributes: `registerResizeEvent` and `registerFullscreenEvent`
 - New element `smartlabel` for displaying measurements
 - New method: `board.setAttribute()`
 - Add internationalization for formatting numbers: new attribute `intl`
@@ -14,6 +13,7 @@ New features
 - Allow KaTeX macros
 - Line elements: New values for label attribute `position:first' and 'position:last'
 - Transformations can handle HTML texts now
+- New board attributes: `registerResizeEvent` and `registerFullscreenEvent`
 
 Improvements
 ------------
@@ -27,6 +27,7 @@ Improvements
 - 3D: Improved API and bug fixes
 - 3D: Allow vertical movements of 3D points by pressing the shift key
 - 3D: add method `removeObject`, `set/getAttribute`
+- 3D: azimuth rotates around center of box, not around origin
 - Keyboard control: move texts and polygons, keep elements highlighted while having focus
 - Much improved two-finger handling of objects
 - Logging of user activity: add more data, like positions
@@ -39,13 +40,12 @@ Improvements
 - New method `JXG.isBoard()`
 - Add attribute `lineCap` for circles
 - foreignObjects has new default attribute `needsRegularUpdate:false`
-- 3D: azimuth rotates around center of box, not around origin
 - Make touchpoint offset dependent on point visibility
 - PointerDownListener: Add parameter to prevent evt canceling
 - Refactor ticks, especially insertTicks algorithm
 - Ticks: mark attribute `precision` as deprecated
 - Add missing options entries for various derived elements like tangent
-- Enable infobox attributes as subattribute of board
+- Enable infobox attributes as sub-attribute of the board
 - New attribute `polygon.highlightByStrokeWidth``
 - Add pointerleave listener
 
@@ -272,7 +272,7 @@ New features
 - API change: the number of digits in a text element is now set generally with
 the attribute `digits`. The attribute "precision" is used to decide if
 a pointer device is close enough to a JSXGraph element to be considered as touching the element.
-The old attributes `precision` for the number of digits are still working 
+The old attributes `precision` for the number of digits are still working
 but marked as deprecated.
 
 Improvements
