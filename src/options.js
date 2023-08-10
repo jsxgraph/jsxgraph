@@ -3972,11 +3972,11 @@ JXG.Options = {
         width: 0.4,
 
         /**
-         * Angle under which comb elements are positioned.
+         * Angle - given in radians - under which comb elements are positioned.
          *
          * @type Number
          * @name Comb#angle
-         * @default 60 degrees
+         * @default Math.PI / 3 (i.e. &pi; /3  or 60^° degrees)
          */
         angle: Math.PI / 3,
 

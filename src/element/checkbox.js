@@ -131,36 +131,36 @@ var priv = {
  * }, checkbox);
  * })();
  * </script><pre>
- *
  * @example
- *         var i1 = board.create('input', [-3, 4, 'sin(x)', 'f(x)='], {cssStyle: 'width:4em', maxlength: 2});
- *         var c1 = board.create('checkbox', [-3, 2, 'label 1'], {});
- *         var b1 = board.create('button', [-3, -1, 'Change texts', function () {
- *                 i1.setText('g(x)');
+ *     var i1 = board.create('input', [1, 5, 'sin(x)', 'f(x)='], {cssStyle: 'width:4em', maxlength: 2});
+ *         var c1 = board.create('checkbox', [1, 3, 'label 1'], {});
+ *         var b1 = board.create('button', [1, 1, 'Change texts', function () {
+ *                 i1.setText('g(x)=');
  *                 i1.set('cos(x)');
  *                 c1.setText('label 2');
  *                 b1.setText('Texts are changed');
  *             }],
- *             {cssStyle: 'width:400px'});
- *
- * </pre><div id="JXG11cac8gg-2354-47e7-9da4-eb298e53de05" class="jxgbox" style="width: 300px; height: 300px;"></div>
+ *             {cssStyle: 'width:200px'});
+ * 
+ * </pre><div id="JXG31c6d070-354b-4f09-aab9-9aaa796f730c" class="jxgbox" style="width: 300px; height: 300px;"></div>
  * <script type="text/javascript">
  *     (function() {
- *         var board = JXG.JSXGraph.initBoard('JXG11cac8gg-2354-47e7-9da4-eb298e53de05',
- *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
- *             var i1 = board.create('input', [-3, 4, 'sin(x)', 'f(x)='], {cssStyle: 'width:4em', maxlength: 2});
- *             var c1 = board.create('checkbox', [-3, 2, 'label 1'], {});
- *             var b1 = board.create('button', [-3, -1, 'Change texts', function () {
- *                     i1.setText('g(x)');
+ *         var board = JXG.JSXGraph.initBoard('JXG31c6d070-354b-4f09-aab9-9aaa796f730c',
+ *             {boundingbox: [-1, 7, 7, -1], axis: true, showcopyright: false, shownavigation: false});
+ *         var i1 = board.create('input', [1, 5, 'sin(x)', 'f(x)='], {cssStyle: 'width:4em', maxlength: 2});
+ *             var c1 = board.create('checkbox', [1, 3, 'label 1'], {});
+ *             var b1 = board.create('button', [1, 1, 'Change texts', function () {
+ *                     i1.setText('g(x)=');
  *                     i1.set('cos(x)');
  *                     c1.setText('label 2');
  *                     b1.setText('Texts are changed');
  *                 }],
- *                 {cssStyle: 'width:400px'});
- *
+ *                 {cssStyle: 'width:200px'});
+ * 
  *     })();
- *
+ * 
  * </script><pre>
+ * 
  */
 JXG.createCheckbox = function (board, parents, attributes) {
     var t,
