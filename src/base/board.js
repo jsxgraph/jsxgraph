@@ -2534,9 +2534,9 @@ JXG.extend(
             type = this._inputDevice;
             this.options.precision.hasPoint = this.options.precision[type];
 
+            pos = this.getMousePosition(evt);
             // selection
             if (this.selectingMode) {
-                pos = this.getMousePosition(evt);
                 this._moveSelecting(pos);
                 this.triggerEventHandlers(
                     ['touchmoveselecting', 'moveselecting', 'pointermoveselecting'],
@@ -2544,7 +2544,6 @@ JXG.extend(
                 );
             } else if (!this.mouseOriginMove(evt)) {
                 if (this.mode === this.BOARD_MODE_DRAG) {
-                    pos = this.getMousePosition(evt);
                     // Run through all jsxgraph elements which are touched by at least one finger.
                     for (i = 0; i < this.touches.length; i++) {
                         touchTargets = this.touches[i].targets;
@@ -2581,7 +2580,6 @@ JXG.extend(
                     }
 
                     // Move event without dragging an element
-                    pos = this.getMousePosition(evt);
                     this.highlightElements(pos[0], pos[1], evt, -1);
                 }
             }
