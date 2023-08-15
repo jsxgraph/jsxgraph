@@ -788,7 +788,7 @@ JXG.Options = {
          * Especially, on mobile devices this enhances the user experience.
          * However, it is recommended to allow dragging outside of the JSXGraph board only
          * in certain constructions where users may not "loose" points outside of the board.
-         * Then points may become unreachable.
+         * In such a case, points may become unreachable.
          * <p>
          * A situation where dragging outside of the board is uncritical is for example if
          * only sliders are used to interact with the construction.
@@ -798,6 +798,15 @@ JXG.Options = {
          * <li> an element specified by document.getElementById('some id');
          * <li> null: to use the JSXGraph container div element
          * <li> document
+         * </ul>
+         * <p>
+         * Since the introduction of this attribute "moveTarget", the value "document" has become sort of
+         * default on touch devices like smartphones. However, it is no longer the case that the document listens to
+         * move events, but there is the new feature "setPointerCapture", which is also implicitly enabled on certain devices.
+         * In future versions, JSXGraph may adopt this new standard and distinguish only two cases:
+         * <ul>
+         * <li>null: no pointerCapture
+         * <li>document: use pointerCapture
          * </ul>
          * <p>
          * This attribute is immutable.

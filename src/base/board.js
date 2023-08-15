@@ -2296,6 +2296,10 @@ JXG.extend(
                 return false;
             }
 
+            if (Type.evaluate(this.attr.movetarget) === null) {
+                evt.target.releasePointerCapture(evt.pointerId);
+            }
+
             if (!object && evt.isPrimary) {
                 // First finger down. To be on the safe side this._board_touches is cleared.
                 // this._pointerClearTouches();
@@ -2498,9 +2502,7 @@ JXG.extend(
          * @returns {Boolean}
          */
         pointerMoveListener: function (evt) {
-            var i,
-                j,
-                pos,
+            var i, j, pos, eps,
                 touchTargets,
                 type = 'mouse'; // in case of no browser
 
@@ -2533,8 +2535,19 @@ JXG.extend(
             this._inputDevice = this._getPointerInputDevice(evt);
             type = this._inputDevice;
             this.options.precision.hasPoint = this.options.precision[type];
+            eps = this.options.precision.hasPoint * 0.3333;
 
             pos = this.getMousePosition(evt);
+            // Ignore pointer move event if too close at the border
+            // and setPointerCapture is off
+            if (Type.evaluate(this.attr.movetarget) === null && 
+                pos[0] <= eps || pos[1] <= eps ||
+                pos[0] >= this.canvasWidth - eps ||
+                pos[1] >= this.canvasHeight - eps
+            ) {
+                return this.mode === this.BOARD_MODE_NONE;
+            }
+
             // selection
             if (this.selectingMode) {
                 this._moveSelecting(pos);
@@ -5628,10 +5641,10 @@ JXG.extend(
          * <li> array: ['key', value]
          * </ul>
          * Some board attributes are immutable, like e.g. the renderer type.
-         * 
+         *
          * @param {Object} attributes An object with attributes.
          * @returns {JXG.Board} Reference to the board
-         * 
+         *
          * @example
          * const board = JXG.JSXGraph.initBoard('jxgbox', {
          *     boundingbox: [-5, 5, 5, -5],
@@ -5641,7 +5654,7 @@ JXG.extend(
          *     showScreenshot: true,
          *     showCopyright: false
          * });
-         * 
+         *
          * board.setAttribute({
          *     animationDelay: 10,
          *     boundingbox: [-10, 5, 10, -5],
@@ -5657,7 +5670,7 @@ JXG.extend(
          *         locale: 'de-DE'
          *     }
          * });
-         * 
+         *
          * board.setAttribute({
          *     selection: {
          *         enabled: true,
@@ -5675,7 +5688,7 @@ JXG.extend(
          *     showNavigation: false
          * });
          * board.setAttribute('showCopyright:false');
-         * 
+         *
          * var p = board.create('point', [1, 1], {size: 10,
          *     label: {
          *         fontSize: 24,
@@ -5683,8 +5696,8 @@ JXG.extend(
          *         offset: [5, 0]
          *     }
          * });
-         * 
-         * 
+         *
+         *
          * </pre><div id="JXGea7b8e09-beac-4d95-9a0c-5fc1c761ffbc" class="jxgbox" style="width: 300px; height: 300px;"></div>
          * <script type="text/javascript">
          *     (function() {
@@ -5696,7 +5709,7 @@ JXG.extend(
          *         showScreenshot: true,
          *         showCopyright: false
          *     });
-         *     
+         *
          *     board.setAttribute({
          *         animationDelay: 10,
          *         boundingbox: [-10, 5, 10, -5],
@@ -5712,7 +5725,7 @@ JXG.extend(
          *             locale: 'de-DE'
          *         }
          *     });
-         *     
+         *
          *     board.setAttribute({
          *         selection: {
          *             enabled: true,
@@ -5729,9 +5742,9 @@ JXG.extend(
          *         showZoom: false,
          *         showNavigation: false
          *     });
-         *     
+         *
          *     board.setAttribute('showCopyright:false');
-         *     
+         *
          *     var p = board.create('point', [1, 1], {size: 10,
          *         label: {
          *             fontSize: 24,
@@ -5739,13 +5752,13 @@ JXG.extend(
          *             offset: [5, 0]
          *         }
          *     });
-         *     
-         * 
+         *
+         *
          *     })();
-         * 
+         *
          * </script><pre>
-         * 
-         * 
+         *
+         *
          */
         setAttribute: function (attr) {
             var i, arg, pair,
