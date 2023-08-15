@@ -2540,7 +2540,7 @@ JXG.extend(
             pos = this.getMousePosition(evt);
             // Ignore pointer move event if too close at the border
             // and setPointerCapture is off
-            if (Type.evaluate(this.attr.movetarget) === null && 
+            if (Type.evaluate(this.attr.movetarget) === null &&
                 pos[0] <= eps || pos[1] <= eps ||
                 pos[0] >= this.canvasWidth - eps ||
                 pos[1] >= this.canvasHeight - eps
