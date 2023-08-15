@@ -2296,7 +2296,8 @@ JXG.extend(
                 return false;
             }
 
-            if (Type.evaluate(this.attr.movetarget) === null) {
+            if (Type.evaluate(this.attr.movetarget) === null &&
+                Type.exists(evt.target) && Type.exists(evt.target.releasePointerCapture)) {
                 evt.target.releasePointerCapture(evt.pointerId);
             }
 

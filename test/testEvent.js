@@ -89,14 +89,14 @@ describe("Test board events", function () {
         evt = new PointerEvent("pointerdown", {
             pointerId: pointerId,
             clientX: 1,
-            clientY: 499
+            clientY: 495
         });
         board.pointerDownListener(evt);
 
         evt = new PointerEvent("pointermove", {
             pointerId: pointerId,
             clientX: 201,
-            clientY: 499
+            clientY: 495
         });
         board.pointerMoveListener(evt);
         board.pointerUpListener(evt);
