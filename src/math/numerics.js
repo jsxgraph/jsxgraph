@@ -3087,7 +3087,7 @@ Mat.Numerics = {
     },
 
     /**
-     * Solve initial value problems numerically using Runge-Kutta-methods.
+     * Solve initial value problems numerically using <i>explicit</i> Runge-Kutta methods.
      * See {@link https://en.wikipedia.org/wiki/Runge-Kutta_methods} for more information on the algorithm.
      * @param {object,String} butcher Butcher tableau describing the Runge-Kutta method to use. This can be either a string describing
      * a Runge-Kutta method with a Butcher tableau predefined in JSXGraph like 'euler', 'heun', 'rk4' or an object providing the structure
@@ -3100,13 +3100,14 @@ Mat.Numerics = {
      * }
      * </pre>
      * which corresponds to the Butcher tableau structure
-     * shown here: https://en.wikipedia.org/w/index.php?title=List_of_Runge%E2%80%93Kutta_methods&oldid=357796696
-     * @param {Array} x0 Initial value vector. If the problem is of one-dimensional, the initial value also has to be given in an array.
+     * shown here: https://en.wikipedia.org/w/index.php?title=List_of_Runge%E2%80%93Kutta_methods&oldid=357796696 .
+     * <i>Default</i> is 'euler'.
+     * @param {Array} x0 Initial value vector. Even if the problem is one-dimensional, the initial value has to be given in an array.
      * @param {Array} I Interval on which to integrate.
-     * @param {Number} N Number of evaluation points.
+     * @param {Number} N Number of integration intervals, i.e. there are <i>N+1</i> evaluation points.
      * @param {function} f Function describing the right hand side of the first order ordinary differential equation, i.e. if the ode
-     * is given by the equation <pre>dx/dt = f(t, x(t)).</pre> So f has to take two parameters, a number <tt>t</tt> and a
-     * vector <tt>x</tt>, and has to return a vector of the same dimension as <tt>x</tt> has.
+     * is given by the equation <pre>dx/dt = f(t, x(t))</pre>. So, f has to take two parameters, a number <tt>t</tt> and a
+     * vector <tt>x</tt>, and has to return a vector of the same length as <tt>x</tt> has.
      * @returns {Array} An array of vectors describing the solution of the ode on the given interval I.
      * @example
      * // A very simple autonomous system dx(t)/dt = x(t);
