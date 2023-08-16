@@ -3099,7 +3099,8 @@ Mat.Numerics = {
      *     c: &lt;Array&gt;
      * }
      * </pre>
-     * which corresponds to the Butcher tableau structure shown here: https://en.wikipedia.org/w/index.php?title=List_of_Runge%E2%80%93Kutta_methods&oldid=357796696
+     * which corresponds to the Butcher tableau structure
+     * shown here: https://en.wikipedia.org/w/index.php?title=List_of_Runge%E2%80%93Kutta_methods&oldid=357796696
      * @param {Array} x0 Initial value vector. If the problem is of one-dimensional, the initial value also has to be given in an array.
      * @param {Array} I Interval on which to integrate.
      * @param {Number} N Number of evaluation points.
@@ -3121,7 +3122,8 @@ Mat.Numerics = {
      * var dataX = [];
      * var dataY = [];
      * var h = 0.1;        // (I[1] - I[0])/N  = (2-0)/20
-     * for(var i=0; i&lt;data.length; i++) {
+     * var i;
+     * for(i=0; i&lt;data.length; i++) {
      *     dataX[i] = i*h;
      *     dataY[i] = data[i][0];
      * }
@@ -3148,11 +3150,7 @@ Mat.Numerics = {
      */
     rungeKutta: function (butcher, x0, I, N, f) {
         var e,
-            i,
-            j,
-            k,
-            l,
-            s,
+            i, j, k, l, s,
             x = [],
             y = [],
             h = (I[1] - I[0]) / N,
@@ -3167,17 +3165,19 @@ Mat.Numerics = {
         s = butcher.s;
 
         // don't change x0, so copy it
-        for (e = 0; e < dim; e++) {
-            x[e] = x0[e];
-        }
+        // for (e = 0; e < dim; e++) {
+        //     x[e] = x0[e];
+        // }
+        x = x0.slice();
 
-        for (i = 0; i < N; i++) {
+        for (i = 0; i <= N; i++) {
             // Optimization doesn't work for ODEs plotted using time
             //        if((i % quotient == 0) || (i == N-1)) {
-            result[r] = [];
-            for (e = 0; e < dim; e++) {
-                result[r][e] = x[e];
-            }
+            // result[r] = [];
+            // for (e = 0; e < dim; e++) {
+            //     result[r][e] = x[e];
+            // }
+            result[r] = x.slice();
 
             r += 1;
             k = [];
@@ -3250,7 +3250,7 @@ Mat.Numerics = {
      * @param {Function} f Function, whose root is to be found
      * @param {Number} x0 Start value
      * @param {Object} object Parent object in case f is method of it
-     * @returns {Array} [x_0, f(x_0), x_1, f(x_1)] in case that x_0 <= x_1 
+     * @returns {Array} [x_0, f(x_0), x_1, f(x_1)] in case that x_0 <= x_1
      *   or [x_1, f(x_1), x_0, f(x_0)] in case that x_1 < x_0.
      *
      * @see JXG.Math.Numerics.fzero
