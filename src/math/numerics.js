@@ -3110,8 +3110,8 @@ Mat.Numerics = {
      * @returns {Array} An array of vectors describing the solution of the ode on the given interval I.
      * @example
      * // A very simple autonomous system dx(t)/dt = x(t);
-     * function f(t, x) {
-     *     return x;
+     * var f = function(t, x) {
+     *     return [x[0]];
      * }
      *
      * // Solve it with initial value x(0) = 1 on the interval [0, 2]
@@ -3131,7 +3131,7 @@ Mat.Numerics = {
      * </pre><div class="jxgbox" id="JXGd2432d04-4ef7-4159-a90b-a2eb8d38c4f6" style="width: 300px; height: 300px;"></div>
      * <script type="text/javascript">
      * var board = JXG.JSXGraph.initBoard('JXGd2432d04-4ef7-4159-a90b-a2eb8d38c4f6', {boundingbox: [-1, 5, 5, -1], axis: true, showcopyright: false, shownavigation: false});
-     * function f(t, x) {
+     * var f = function(t, x) {
      *     // we have to copy the value.
      *     // return x; would just return the reference.
      *     return [x[0]];
