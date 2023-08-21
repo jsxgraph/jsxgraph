@@ -196,7 +196,7 @@ JXG.SVGRenderer = function (container, dim) {
      * @return {String}
      * @private
      */
-    this.uniqName = function() {
+    this.uniqName = function () {
         return this.container.id + '_' +
             Array.prototype.slice.call(arguments).join('_');
     };
@@ -593,12 +593,12 @@ JXG.extend(
 
         // Already documented in JXG.AbstractRenderer
         displayCopyright: function (str, fontsize) {
-            var node = this.createPrim("text", "licenseText"),
+            var node = this.createPrim("text", 'licenseText'),
                 t;
             node.setAttributeNS(null, 'x', '20px');
             node.setAttributeNS(null, 'y', 2 + fontsize + 'px');
             node.setAttributeNS(null, 'style', 'font-family:Arial,Helvetica,sans-serif; font-size:' +
-                    fontsize + 'px; fill:#356AA0;  opacity:0.3;');
+                fontsize + 'px; fill:#356AA0;  opacity:0.3;');
             t = this.container.ownerDocument.createTextNode(str);
             node.appendChild(t);
             this.appendChildPrim(node, 0);
@@ -2053,12 +2053,11 @@ JXG.extend(
             if (this.container.hasChildNodes() && Type.exists(this.foreignObjLayer)) {
                 if (!ignoreTexts) {
                     this.foreignObjLayer.setAttribute("display", "inline");
-                }
-                while (svgRoot.nextSibling) {
-                    // Copy all value attributes
-                    values = values.concat(this._getValuesOfDOMElements(svgRoot.nextSibling));
-
-                    this.foreignObjLayer.appendChild(svgRoot.nextSibling);
+                    while (svgRoot.nextSibling) {
+                        // Copy all value attributes
+                        values = values.concat(this._getValuesOfDOMElements(svgRoot.nextSibling));
+                        this.foreignObjLayer.appendChild(svgRoot.nextSibling);
+                    }
                 }
             }
 
@@ -2093,7 +2092,6 @@ JXG.extend(
             // Safari fails if the svg string contains a "&nbsp;"
             // Obsolete with Safari 12+
             svg = svg.replace(/&nbsp;/g, " ");
-
             svg = svg.replace(/url\(&quot;(.*)&quot;\)/g, "url($1)");
 
             // Move all HTML tags back from
@@ -2112,6 +2110,9 @@ JXG.extend(
         /**
          * Convert the SVG construction into an HTML canvas image.
          * This works for all SVG supporting browsers. Implemented as Promise.
+         * <p>
+         * Might fail if any text element or foreign object element contains SVG. This
+         * is the case e.g. for the default fullscreen symbol.
          * <p>
          * For IE, it is realized as function.
          * It works from version 9, with the exception that HTML texts
@@ -2134,10 +2135,8 @@ JXG.extend(
          * 	setTimeout(function() { console.log('done'); }, 400);
          */
         dumpToCanvas: function (canvasId, w, h, ignoreTexts) {
-            var svg,
-                tmpImg,
-                cv,
-                ctx,
+            var svg, tmpImg,
+                cv, ctx,
                 doc = this.container.ownerDocument;
 
             // Prepare the canvas element
@@ -2201,7 +2200,7 @@ JXG.extend(
          * <ul>
          * <li> IE: No
          * <li> Edge: full
-         * <li>Firefox: full
+         * <li> Firefox: full
          * <li> Chrome: full
          * <li> Safari: full (No text support in versions prior to 12).
          * </ul>
@@ -2218,18 +2217,13 @@ JXG.extend(
             var node,
                 doc = this.container.ownerDocument,
                 parent = this.container.parentNode,
-                cPos,
-                canvas,
-                id,
-                img,
-                button,
-                buttonText,
-                w,
-                h,
+                // cPos,
+                // cssTxt,
+                canvas, id, img,
+                button, buttonText,
+                w, h,
                 bas = board.attr.screenshot,
-                zbar,
-                zbarDisplay,
-                cssTxt,
+                navbar, navbarDisplay, insert,
                 newImg = false,
                 _copyCanvasToImg,
                 isDebug = false;
@@ -2302,11 +2296,11 @@ JXG.extend(
             }
 
             // Hide navigation bar in board
-            // zbar = document.getElementById(this.container.id + '_navigationbar');
-            zbar = doc.getElementById(this.uniqName('navigationbar'));
-            if (Type.exists(zbar)) {
-                zbarDisplay = zbar.style.display;
-                zbar.style.display = "none";
+            navbar = doc.getElementById(this.uniqName('navigationbar'));
+            if (Type.exists(navbar)) {
+                navbarDisplay = navbar.style.display;
+                navbar.style.display = "none";
+                insert = this.removeToInsertLater(navbar);
             }
 
             _copyCanvasToImg = function () {
@@ -2328,9 +2322,10 @@ JXG.extend(
                 window.setTimeout(_copyCanvasToImg, 200);
             }
 
-            // Show navigation bar in board
-            if (Type.exists(zbar)) {
-                zbar.style.display = zbarDisplay;
+            // Reinsert navigation bar in board
+            if (Type.exists(navbar)) {
+                navbar.style.display = navbarDisplay;
+                insert();
             }
 
             return this;

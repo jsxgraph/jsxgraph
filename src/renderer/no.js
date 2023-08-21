@@ -696,7 +696,7 @@ JXG.extend(
          * The tiny zoom bar shown on the bottom of a board (if showNavigation on board creation is true).
          * @param {JXG.Board} board Reference to a JSXGraph board.
          */
-        drawZoomBar: function (board) {},
+        drawNavigationBar: function (board) {},
 
         /**
          * Wrapper for getElementById for maybe other renderers which elements are not directly accessible by DOM methods like document.getElementById().

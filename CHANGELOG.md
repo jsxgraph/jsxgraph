@@ -4,52 +4,61 @@
 New features
 -----------
 
-- New board attributes: registerResizeEvent  and registerFullscreenEvent
-- Allow KaTeX macros
-- Line elements: New values for label attribute position 'first' and 'last'
-- New elements vectorfield and slopefield
-- New attribute `dashScale` for line dashes
+- New elements `vectorfield` and `slopefield`
+- New element `smartlabel` for displaying measurements
+- New method: `board.setAttribute()`
+- Add internationalization for formatting numbers: new attribute `intl`
 - Dotted lines (with attribute `dash:7`)
-- Display measurements with new element `smartlabel`
-
+- New attribute `dashScale` for line dashes
+- Allow KaTeX macros
+- Line elements: New values for label attribute `position:first' and 'position:last'
+- Transformations can handle HTML texts now
+- New board attributes: `registerResizeEvent` and `registerFullscreenEvent`
 
 Improvements
 ------------
 
-- TypeScript support
-- API documen04efe2f1707d2951c807d273b00bf833f038cf78tation
-- Intersections: allow function as number of the intersection
-- Metapost curves: new API, improved support of tension, curl, ...
-- Improve 3D API and bug fixes
-- Keyboard control: mode texts and polygons
-- Keyboard control: keep elements highlighted while having focus
-- Allow slashes in IDs, i.e. SVG IDs are escaped.
-- Numerical stability of path clipping
-- Logging of 04efe2f1707d2951c807d273b00bf833f038cf78user activity: add more data, like positions
-- 3D: Allow vertical movements of 3D points by pressing the shift key
-- 3D: add method `removeObject`, `set/getAttribute`
-- Much improved two-finger handling of objects
-- New method `JXG.isBoard()`
-- Add attribute `lineCap` for circles
-- `Sector.setRadius`
-- Allow text elements to be rotated
 - New circle method `circle.Perimeter()`
 - New line method `line.Slope()`
 - New polygon method "L()", alias for Perimeter()
-- foreignObjects has new default attribute `needsRegularUpdate:false`
 - `JXG.Math.Numerics`: New methods getLangrangePolynomialCoefficients, f.getCoefficients
+- New method `Sector.setRadius`
+- Allow all text elements to be rotated
+- 3D: Improved API and bug fixes
+- 3D: Allow vertical movements of 3D points by pressing the shift key
+- 3D: add method `removeObject`, `set/getAttribute`
 - 3D: azimuth rotates around center of box, not around origin
+- Keyboard control: move texts and polygons, keep elements highlighted while having focus
+- Much improved two-finger handling of objects
+- Logging of user activity: add more data, like positions
+- Improved TypeScript support
+- API documentation
+- Intersections: allow function as number of the intersection
+- Metapost curves: new API, improved support of tension, curl, ...
+- Allow slashes in IDs, i.e. SVG IDs are escaped.
+- Numerical stability of path clipping
+- New method `JXG.isBoard()`
+- Add attribute `lineCap` for circles
+- foreignObjects has new default attribute `needsRegularUpdate:false`
+- Make touchpoint offset dependent on point visibility
+- PointerDownListener: Add parameter to prevent evt canceling
+- Refactor ticks, especially insertTicks algorithm
+- Ticks: mark attribute `precision` as deprecated
+- Add missing options entries for various derived elements like tangent
+- Enable infobox attributes as sub-attribute of the board
+- New attribute `polygon.highlightByStrokeWidth``
+- Add pointerleave listener
 
 Bug fixes
 ---------
 
+- Dependency check for transformations. This bug broke reflections and mirror elements
 - `hasPoint` method of curves of Bezier degree 3
 - Fix regression: dragging of lines
 - Triangles were hexagons
-- Dependency check for transformations. This bug broke reflections and mirror elements
 - intersection of polygons with line through infinite point
 - Add and remove polygon vertices
-- circle.setRadius(0)
+- `circle.setRadius(0)``
 - Attributes for foreignobject
 - 3D panning
 - Invisible button, checkbox, input element was not created correctly
@@ -61,6 +70,15 @@ Bug fixes
 - JessieCode dump: remove name conflict of function variables and object names
 - Projection of glider to curve, if curve is partly undefined.
 - Ignore touchFirstPoint, touchLastPoint for invisible points
+- Initial positioning with snapToGrid
+- Jessiecode compile(): introduce `needsAngleBrackets` to distinguish parenthesis in functions and property delimiters.
+- SVG dump: remove `&quot;` from URLs
+- Numerical instability in `meetLineLine`
+- Ticks: fix numerical instability with includeBoundaries
+- Visibility issue if a polygon becomes undefined
+- Touch events: executed twice
+- polygons and snapToGrid: prevent rotation, scaling by two fingers
+- Correct symbolic simplification
 
 1.5.0
 ====
@@ -254,7 +272,7 @@ New features
 - API change: the number of digits in a text element is now set generally with
 the attribute `digits`. The attribute "precision" is used to decide if
 a pointer device is close enough to a JSXGraph element to be considered as touching the element.
-The old attributes `precision` for the number of digits are still working 
+The old attributes `precision` for the number of digits are still working
 but marked as deprecated.
 
 Improvements

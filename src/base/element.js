@@ -1063,29 +1063,29 @@ JXG.extend(
         },
 
         /**
-         * Sets the value of attribute <tt>attribute</tt> to <tt>value</tt>.
-         * @param {String} attribute The attribute's name.
+         * Sets the value of attribute <tt>key</tt> to <tt>value</tt>.
+         * @param {String} key The attribute's name.
          * @param value The new value
          * @private
          */
-        _set: function (property, value) {
+        _set: function (key, value) {
             var el;
 
-            property = property.toLocaleLowerCase();
+            key = key.toLocaleLowerCase();
 
-            // Search for entries in visProp with "color" as part of the property name
+            // Search for entries in visProp with "color" as part of the key name
             // and containing a RGBA string
             if (
-                this.visProp.hasOwnProperty(property) &&
-                property.indexOf("color") >= 0 &&
+                this.visProp.hasOwnProperty(key) &&
+                key.indexOf("color") >= 0 &&
                 Type.isString(value) &&
                 value.length === 9 &&
                 value.charAt(0) === "#"
             ) {
                 value = Color.rgba2rgbo(value);
-                this.visProp[property] = value[0];
+                this.visProp[key] = value[0];
                 // Previously: *=. But then, we can only decrease opacity.
-                this.visProp[property.replace("color", "opacity")] = value[1];
+                this.visProp[key.replace("color", "opacity")] = value[1];
             } else {
                 if (
                     value !== null &&
@@ -1095,14 +1095,14 @@ JXG.extend(
                 ) {
                     // value is of type {prop: val, prop: val,...}
                     // Convert these attributes to lowercase, too
-                    this.visProp[property] = {};
+                    this.visProp[key] = {};
                     for (el in value) {
                         if (value.hasOwnProperty(el)) {
-                            this.visProp[property][el.toLocaleLowerCase()] = value[el];
+                            this.visProp[key][el.toLocaleLowerCase()] = value[el];
                         }
                     }
                 } else {
-                    this.visProp[property] = value;
+                    this.visProp[key] = value;
                 }
             }
         },
@@ -1192,8 +1192,8 @@ JXG.extend(
          * parameters of the following types:
          * <ul>
          * <li> object: {key1:value1,key2:value2,...}
-         * <li> string: "key1:value"
-         * <li> array: [key, value]
+         * <li> string: 'key:value'
+         * <li> array: ['key', value]
          * </ul>
          * @param {Object} attributes An object with attributes.
          * @returns {JXG.GeometryElement} A reference to the element.

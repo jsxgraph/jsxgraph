@@ -212,14 +212,14 @@ JXG.JSXGraph = {
         board.maxboundingbox = attr.maxboundingbox;
         board.resizeContainer(dimensions.width, dimensions.height, true, true);
         board._createSelectionPolygon(attr);
-        board.renderer.drawZoomBar(board, attr.navbar);
+        board.renderer.drawNavigationBar(board, attr.navbar);
         JXG.boards[board.id] = board;
     },
 
     /**
      *
      * @param {String} container HTML-ID to the HTML-element in which the board is painted.
-     * @param {*} attr An object that sets some of the board properties.
+     * @param {Object} attr An object that sets some of the board properties.
      *
      * @private
      */
@@ -306,7 +306,7 @@ JXG.JSXGraph = {
      * @param {Boolean} [attributes.registerEvents=true] Register mouse / touch events.
      * @returns {JXG.Board} Reference to the created board.
      *
-     * @see JXG.AbstractRenderer#drawZoomBar
+     * @see JXG.AbstractRenderer#drawNavigationBar
      */
     initBoard: function (box, attributes) {
         var originX, originY, unitX, unitY, w, h,
@@ -381,8 +381,8 @@ JXG.JSXGraph = {
             renderer,
             attr.id,
             [originX, originY],
-            attr.zoomfactor * attr.zoomx,
-            attr.zoomfactor * attr.zoomy,
+            /*attr.zoomfactor * */ attr.zoomx,
+            /*attr.zoomfactor * */ attr.zoomy,
             unitX,
             unitY,
             dimensions.width,

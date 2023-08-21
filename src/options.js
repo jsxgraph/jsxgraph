@@ -362,12 +362,12 @@ JXG.Options = {
          * @name JXG.Board#fullscreen
          * @default svg code
          * @see JXG.Board#showFullscreen
-         * @see JXG.AbstractRenderer#drawZoomBar
+         * @see JXG.AbstractRenderer#drawNavigationBar
          * @type Object
          */
         fullscreen: {
             symbol: '<svg height="1em" width="1em" version="1.1" viewBox="10 10 18 18"><path fill="#666" d="m 10,16 2,0 0,-4 4,0 0,-2 L 10,10 l 0,6 0,0 z"></path><path fill="#666" d="m 20,10 0,2 4,0 0,4 2,0 L 26,10 l -6,0 0,0 z"></path><path fill="#666" d="m 24,24 -4,0 0,2 L 26,26 l 0,-6 -2,0 0,4 0,0 z"></path><path fill="#666" d="M 12,20 10,20 10,26 l 6,0 0,-2 -4,0 0,-4 0,0 z"></path></svg>',
-            // '\u25a1', // '\u26f6' (not supported by MacOS),
+            // symbol: '\u26f6', // '\u26f6' (not supported by MacOS),
             scale: 0.85,
             id: null
         },
@@ -376,10 +376,11 @@ JXG.Options = {
          * If set true and
          * hasPoint() is true for both an element and it's label,
          * the element (and not the label) is taken as drag element.
-         *
+         * <p>
          * If set false and hasPoint() is true for both an element and it's label,
          * the label is taken (if it is on a higher layer than the element)
-         *
+         * <p>
+         * Meanwhile, this feature might be irrelevant.
          * @name JXG.Board#ignoreLabels
          * @type Booelan
          * @default true
@@ -787,7 +788,7 @@ JXG.Options = {
          * Especially, on mobile devices this enhances the user experience.
          * However, it is recommended to allow dragging outside of the JSXGraph board only
          * in certain constructions where users may not "loose" points outside of the board.
-         * Then points may become unreachable.
+         * In such a case, points may become unreachable.
          * <p>
          * A situation where dragging outside of the board is uncritical is for example if
          * only sliders are used to interact with the construction.
@@ -795,9 +796,26 @@ JXG.Options = {
          * Possible values for this attributes are:
          * <ul>
          * <li> an element specified by document.getElementById('some id');
-         * <li> null: to use the JSXgraph container div element
+         * <li> null: to use the JSXGraph container div element
          * <li> document
          * </ul>
+         * <p>
+         * Since the introduction of this attribute "moveTarget", the value "document" has become sort of
+         * default on touch devices like smartphones. However, it is no longer the case that the document listens to
+         * move events, but there is the new feature "setPointerCapture", which is also implicitly enabled on certain devices.
+         * In future versions, JSXGraph may adopt this new standard and distinguish only two cases:
+         * <ul>
+         * <li>null: no pointerCapture
+         * <li>document: use pointerCapture
+         * </ul>
+         * <p>
+         * This attribute is immutable.
+         * It can be changed as follows:
+         * 
+         * @example
+         * board.setAttribute({moveTarget: null});
+         * board.removeEventHandlers();
+         * board.addEventHandlers();
          *
          * @name JXG.Board#moveTarget
          * @type HTML node or document
@@ -876,6 +894,10 @@ JXG.Options = {
          * Allow user interaction by registering mouse, pointer, keyboard or touch events.
          * Decide if JSXGraph listens to these events. Keyboard events can then turned off
          * separately with the keyboard attribute.
+         * 
+         * <p>This attribute is immutable. Please use
+         * {@link JXG.Board#addEventHandlers()} and 
+         * {@link JXG.Board#removeEventHandlers()} directly.
          *
          * @name JXG.Board#registerEvents
          * @see JXG.Board#keyboard
@@ -889,6 +911,10 @@ JXG.Options = {
         /**
          * Listen to fullscreen event.
          *
+         * <p>This attribute is immutable. Please use
+         * {@link JXG.Board#addFullscreenEventHandlers()} and 
+         * {@link JXG.Board#removeEventHandlers()} directly.
+         *
          * @name JXG.Board#registerFullscreenEvent
          * @see JXG.Board#registerEvents
          * @see JXG.Board#registerResizeEvent
@@ -900,8 +926,16 @@ JXG.Options = {
         /**
          * Listen to resize events, i.e. start "resizeObserver" or handle the resize event with
          * "resizeListener". This is independent from the mouse, touch, pointer events.
-         *
+         * 
+         * <p>This attribute is immutable. Please use
+         * {@link JXG.Board#addResizeEventHandlers()} and 
+         * {@link JXG.Board#removeEventHandlers()} directly.
+         * <p>
+         * This attribute just starts a resizeObserver. If the resizeObserver reacts
+         * to size changed is controled wuth {@link JXG.Board#resize}.
+         * 
          * @name JXG.Board#registerResizeEvent
+         * @see JXG.Board#resize
          * @see JXG.Board#registerEvents
          * @see JXG.Board#registerFullscreenEvent
          * @type Boolean
@@ -916,6 +950,9 @@ JXG.Options = {
          * <p>
          * In case of 'canvas' it is advisable to call 'board.update()' after all elements have been
          * constructed. This ensures that all elements are drawn with their intended visual appearance.
+         * 
+         * <p>
+         * This attribute is immutable.
          *
          * @name JXG.Board#renderer
          * @type String
@@ -975,12 +1012,14 @@ JXG.Options = {
          *  <li>css: CSS rules to format the div element containing the screen shot image
          *  <li>cssButton: CSS rules to format the close button of the div element containing the screen shot image
          * </ul>
+         * The screenshot will fail if the board contains text elements or foreign objects
+         * containing SVG again.
          *
          * @name JXG.Board#screenshot
          * @type Object
          */
         screenshot: {
-            scale: 1.0,
+            scale: 1,
             type: 'png',
             symbol: '\u2318', //'\u22b9', //'\u26f6',
             css: 'background-color:#eeeeee; opacity:1.0; border:2px solid black; border-radius:10px; text-align:center',
@@ -991,7 +1030,9 @@ JXG.Options = {
          * Control the possibilities for a selection rectangle.
          * Starting a selection event triggers the "startselecting" event.
          * When the mouse pointer is released, the "stopselecting" event is fired.
-         * The "stopselecting" event must be supplied by the user.
+         * The "stopselecting" event is supplied by the user.
+         * <p>
+         * So far it works in SVG renderer only.
          * <p>
          * Possible sub-attributes with default values are:
          * <pre>
@@ -1000,12 +1041,7 @@ JXG.Options = {
          *   name: 'selectionPolygon',
          *   needShift: false,  // mouse selection needs pressing of the shift key
          *   needCtrl: true,    // mouse selection needs pressing of the shift key
-         *   withLines: false,  // Selection polygon has border lines
-         *   vertices: {
-         *       visible: false
-         *   },
-         *   fillColor: '#ffff00',
-         *   visible: false      // Initial visibility. Should be set to false always
+         *   fillColor: '#ffff00'
          * }
          * </pre>
          * <p>
@@ -1037,12 +1073,14 @@ JXG.Options = {
             name: 'selectionPolygon',
             needShift: false,
             needCtrl: true,
+            fillColor: '#ffff00',
+
+            // immutable:
+            visible: false,
             withLines: false,
             vertices: {
                 visible: false
-            },
-            fillColor: '#ffff00',
-            visible: false
+            }
         },
 
         /**
@@ -1051,7 +1089,7 @@ JXG.Options = {
          * @name JXG.Board#showClearTraces
          * @type Boolean
          * @default false
-         * @see JXG.AbstractRenderer#drawZoomBar
+         * @see JXG.AbstractRenderer#drawNavigationBar
          */
         showClearTraces: false,
 
@@ -1071,8 +1109,8 @@ JXG.Options = {
          * @type Boolean
          * @see JXG.Board#fullscreen
          * @default false
-         * @see JXG.AbstractRenderer#drawZoomBar
-         * @see JXG.AbstractRenderer#drawZoomBar
+         * @see JXG.AbstractRenderer#drawNavigationBar
+         * @see JXG.AbstractRenderer#drawNavigationBar
          */
         showFullscreen: false,
 
@@ -1095,7 +1133,7 @@ JXG.Options = {
          * @name JXG.Board#showNavigation
          * @type Boolean
          * @default true
-         * @see JXG.AbstractRenderer#drawZoomBar
+         * @see JXG.AbstractRenderer#drawNavigationBar
          */
         showNavigation: true,
 
@@ -1106,7 +1144,7 @@ JXG.Options = {
          * @name JXG.Board#showReload
          * @type Boolean
          * @default false
-         * @see JXG.AbstractRenderer#drawZoomBar
+         * @see JXG.AbstractRenderer#drawNavigationBar
          */
         showReload: false,
 
@@ -1116,7 +1154,7 @@ JXG.Options = {
          * @name JXG.Board#showScreenshot
          * @type Boolean
          * @default false
-         * @see JXG.AbstractRenderer#drawZoomBar
+         * @see JXG.AbstractRenderer#drawNavigationBar
          */
         showScreenshot: false,
 
@@ -1127,7 +1165,7 @@ JXG.Options = {
          * @name JXG.Board#showZoom
          * @type Boolean
          * @default true
-         * @see JXG.AbstractRenderer#drawZoomBar
+         * @see JXG.AbstractRenderer#drawNavigationBar
          */
         showZoom: true,
 
@@ -1203,14 +1241,14 @@ JXG.Options = {
             pinchSensitivity: 7
         },
 
-        /**
-         * Additional zoom factor multiplied to {@link JXG.Board#zoomX} and {@link JXG.Board#zoomY}.
-         *
-         * @name JXG.Board#zoomFactor
-         * @type Number
-         * @default 1.0
-         */
-        zoomFactor: 1,
+        // /**
+        //  * Additional zoom factor multiplied to {@link JXG.Board#zoomX} and {@link JXG.Board#zoomY}.
+        //  *
+        //  * @name JXG.Board#zoomFactor
+        //  * @type Number
+        //  * @default 1.0
+        //  */
+        // zoomFactor: 1,
 
         /**
          * Zoom factor in horizontal direction.
@@ -1905,9 +1943,9 @@ JXG.Options = {
          * deletes all traces of this element. By calling
          * element.setAttribute({trace:'pause'})
          * the removal of already existing traces can be prevented.
-         * 
+         *
          * The visual appearance of the trace can be influenced by {@link JXG.GeometryElement#traceAttributes}.
-         * 
+         *
          * @see JXG.GeometryElement#clearTrace
          * @see JXG.GeometryElement#traces
          * @see JXG.GeometryElement#numTraces
@@ -1929,12 +1967,12 @@ JXG.Options = {
          * JXG.Options.elements.traceAttributes = {
          *     size: 2
          * };
-         * 
+         *
          * const board = JXG.JSXGraph.initBoard(BOARDID, {
          *     boundingbox: [-4, 4, 4, -4],
          *     keepaspectratio: true
          * });
-         * 
+         *
          * var p = board.create('point', [0.0, 2.0], {
          *     trace: true,
          *     size: 10,
@@ -1943,7 +1981,7 @@ JXG.Options = {
          *         face: 'x'
          *     }
          * });
-         * 
+         *
          * </pre><div id="JXG504889cb-bb6f-4b65-85db-3ad555c08bcf" class="jxgbox" style="width: 300px; height: 300px;"></div>
          * <script type="text/javascript">
          *     (function() {
@@ -1952,7 +1990,7 @@ JXG.Options = {
          *     };
          *         var board = JXG.JSXGraph.initBoard('JXG504889cb-bb6f-4b65-85db-3ad555c08bcf',
          *             {boundingbox: [-4, 4, 4, -4], axis: true, showcopyright: false, shownavigation: true, showClearTraces: true});
-         *     
+         *
          *     var p = board.create('point', [0.0, 2.0], {
          *         trace: true,
          *         size: 10,
@@ -1961,11 +1999,11 @@ JXG.Options = {
          *             face: 'x'
          *         }
          *     });
-         * 
+         *
          *     })();
-         * 
+         *
          * </script><pre>
-         * 
+         *
          */
         traceAttributes: {},
 
@@ -3956,11 +3994,11 @@ JXG.Options = {
         width: 0.4,
 
         /**
-         * Angle under which comb elements are positioned.
+         * Angle - given in radians - under which comb elements are positioned.
          *
          * @type Number
          * @name Comb#angle
-         * @default 60 degrees
+         * @default Math.PI / 3 (i.e. &pi; /3  or 60^° degrees)
          */
         angle: Math.PI / 3,
 
@@ -5295,6 +5333,15 @@ JXG.Options = {
         /**#@-*/
     },
 
+    /* special nonreflexangle options */
+    nonreflexangle: {
+        /**#@+
+         * @visprop
+         */
+
+        /**#@-*/
+    },
+
     // /* special options for Msector of 3 points */
     // msector: {
     //     strokeColor: '#000000', // Msector line
@@ -5852,6 +5899,15 @@ JXG.Options = {
          * @default 'Euclidean'
          */
         type: 'Euclidean'
+
+        /**#@-*/
+    },
+
+    /* special reflexangle options */
+    reflexangle: {
+        /**#@+
+         * @visprop
+         */
 
         /**#@-*/
     },

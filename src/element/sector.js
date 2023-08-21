@@ -1602,6 +1602,7 @@ JXG.createNonreflexAngle = function (board, parents, attributes) {
     var el;
 
     attributes.selection = "minor";
+    attributes = Type.copyAttributes(attributes, board.options, 'nonreflexangle');
     el = JXG.createAngle(board, parents, attributes);
 
     // Documented in createAngle
@@ -1651,6 +1652,7 @@ JXG.createReflexAngle = function (board, parents, attributes) {
     var el;
 
     attributes.selection = "major";
+    attributes = Type.copyAttributes(attributes, board.options, 'reflexangle');
     el = JXG.createAngle(board, parents, attributes);
 
     // Documented in createAngle

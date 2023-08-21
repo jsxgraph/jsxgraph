@@ -77,8 +77,8 @@ import Composition from './composition';
  * @borrows JXG.EventEmitter#eventHandlers as this.eventHandlers
  */
 JXG.Board = function (container, renderer, id,
-                        origin, zoomX, zoomY, unitX, unitY,
-                        canvasWidth, canvasHeight, attributes) {
+    origin, zoomX, zoomY, unitX, unitY,
+    canvasWidth, canvasHeight, attributes) {
     /**
      * Board is in no special mode, objects are highlighted on mouse over and objects may be
      * clicked to start drag&drop.
@@ -683,17 +683,17 @@ JXG.extend(
             if (Type.isPoint(object) || Type.isPoint3D(object)) {
                 // points have capital letters
                 possibleNames = [
-                    '','A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z'
+                    '', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'
                 ];
             } else if (object.type === Const.OBJECT_TYPE_ANGLE) {
                 possibleNames = [
-                    '','&alpha;','&beta;','&gamma;','&delta;','&epsilon;','&zeta;','&eta;','&theta;','&iota;','&kappa;','&lambda;',
-                    '&mu;','&nu;','&xi;','&omicron;','&pi;','&rho;','&sigma;','&tau;','&upsilon;','&phi;','&chi;','&psi;','&omega;'
+                    '', '&alpha;', '&beta;', '&gamma;', '&delta;', '&epsilon;', '&zeta;', '&eta;', '&theta;', '&iota;', '&kappa;', '&lambda;',
+                    '&mu;', '&nu;', '&xi;', '&omicron;', '&pi;', '&rho;', '&sigma;', '&tau;', '&upsilon;', '&phi;', '&chi;', '&psi;', '&omega;'
                 ];
             } else {
                 // all other elements get lowercase labels
                 possibleNames = [
-                    '','a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z'
+                    '', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'
                 ];
             }
 
@@ -1148,10 +1148,10 @@ JXG.extend(
          */
         moveObject: function (x, y, o, evt, type) {
             var newPos = new Coords(
-                    Const.COORDS_BY_SCREEN,
-                    this.getScrCoordsOfMouse(x, y),
-                    this
-                ),
+                Const.COORDS_BY_SCREEN,
+                this.getScrCoordsOfMouse(x, y),
+                this
+            ),
                 drag,
                 dragScrCoords,
                 newDragScrCoords;
@@ -1306,9 +1306,9 @@ JXG.extend(
             tx = 0.5 * (xx1 + xx2 - C * (x1 + x2) + S * (y1 + y2));
             ty = 0.5 * (yy1 + yy2 - S * (x1 + x2) - C * (y1 + y2));
 
-            return [1, 0 , 0,
-                    tx, C, -S,
-                    ty, S, C];
+            return [1, 0, 0,
+                tx, C, -S,
+                ty, S, C];
         },
 
         /**
@@ -1333,10 +1333,10 @@ JXG.extend(
             ) {
 
                 T = this.getTwoFingerTransform(
-                        tar[0], tar[1],
-                        Type.evaluate(drag.visProp.scalable),
-                        Type.evaluate(drag.visProp.rotatable));
-                t = this.create('transform', T, {type: 'generic'});
+                    tar[0], tar[1],
+                    Type.evaluate(drag.visProp.scalable),
+                    Type.evaluate(drag.visProp.rotatable));
+                t = this.create('transform', T, { type: 'generic' });
                 t.update();
 
                 if (drag.elementClass === Const.OBJECT_CLASS_LINE) {
@@ -1993,7 +1993,7 @@ JXG.extend(
                 // Save zoomFactors
                 zx = this.attr.zoom.factorx,
                 zy = this.attr.zoom.factory,
-                factor, dist,theta, bound,
+                factor, dist, theta, bound,
                 dx, dy, cx, cy;
 
             if (this.mode !== this.BOARD_MODE_ZOOM) {
@@ -2317,6 +2317,11 @@ JXG.extend(
                 return false;
             }
 
+            if (Type.evaluate(this.attr.movetarget) === null &&
+                Type.exists(evt.target) && Type.exists(evt.target.releasePointerCapture)) {
+                evt.target.releasePointerCapture(evt.pointerId);
+            }
+
             if (!object && evt.isPrimary) {
                 // First finger down. To be on the safe side this._board_touches is cleared.
                 // this._pointerClearTouches();
@@ -2350,7 +2355,7 @@ JXG.extend(
                 if (sel.removeAllRanges) {
                     try {
                         sel.removeAllRanges();
-                    } catch (e) {}
+                    } catch (e) { }
                 }
             }
 
@@ -2488,7 +2493,7 @@ JXG.extend(
             if (this.mode === this.BOARD_MODE_NONE &&
                 Type.evaluate(this.attr.browserpan) &&
                 !(Type.evaluate(this.attr.pan.enabled) && !Type.evaluate(this.attr.pan.needtwofingers))
-               ) {
+            ) {
                 ta = 'pan-x pan-y';  // JSXGraph allows browser scrolling
             }
             this.containerObj.style.touchAction = ta;
@@ -2519,9 +2524,7 @@ JXG.extend(
          * @returns {Boolean}
          */
         pointerMoveListener: function (evt) {
-            var i,
-                j,
-                pos,
+            var i, j, pos, eps,
                 touchTargets,
                 type = 'mouse'; // in case of no browser
 
@@ -2554,10 +2557,21 @@ JXG.extend(
             this._inputDevice = this._getPointerInputDevice(evt);
             type = this._inputDevice;
             this.options.precision.hasPoint = this.options.precision[type];
+            eps = this.options.precision.hasPoint * 0.3333;
+
+            pos = this.getMousePosition(evt);
+            // Ignore pointer move event if too close at the border
+            // and setPointerCapture is off
+            if (Type.evaluate(this.attr.movetarget) === null &&
+                pos[0] <= eps || pos[1] <= eps ||
+                pos[0] >= this.canvasWidth - eps ||
+                pos[1] >= this.canvasHeight - eps
+            ) {
+                return this.mode === this.BOARD_MODE_NONE;
+            }
 
             // selection
             if (this.selectingMode) {
-                pos = this.getMousePosition(evt);
                 this._moveSelecting(pos);
                 this.triggerEventHandlers(
                     ['touchmoveselecting', 'moveselecting', 'pointermoveselecting'],
@@ -2565,7 +2579,6 @@ JXG.extend(
                 );
             } else if (!this.mouseOriginMove(evt)) {
                 if (this.mode === this.BOARD_MODE_DRAG) {
-                    pos = this.getMousePosition(evt);
                     // Run through all jsxgraph elements which are touched by at least one finger.
                     for (i = 0; i < this.touches.length; i++) {
                         touchTargets = this.touches[i].targets;
@@ -2602,7 +2615,6 @@ JXG.extend(
                     }
 
                     // Move event without dragging an element
-                    pos = this.getMousePosition(evt);
                     this.highlightElements(pos[0], pos[1], evt, -1);
                 }
             }
@@ -2810,7 +2822,7 @@ JXG.extend(
                             if (
                                 Math.abs(
                                     Math.pow(evtTouches[k].screenX - touchTargets[j].X, 2) +
-                                        Math.pow(evtTouches[k].screenY - touchTargets[j].Y, 2)
+                                    Math.pow(evtTouches[k].screenY - touchTargets[j].Y, 2)
                                 ) <
                                 eps * eps
                             ) {
@@ -2831,12 +2843,12 @@ JXG.extend(
                     if (touchTargets[j].num === -1) {
                         JXG.debug(
                             "i couldn't find a targettouches for target no " +
-                                j +
-                                ' on ' +
-                                this.touches[i].obj.name +
-                                ' (' +
-                                this.touches[i].obj.id +
-                                '). Removed the target.'
+                            j +
+                            ' on ' +
+                            this.touches[i].obj.name +
+                            ' (' +
+                            this.touches[i].obj.id +
+                            '). Removed the target.'
                         );
                         JXG.debug(
                             'eps = ' + eps + ', touchMax = ' + Options.precision.touchMax
@@ -3165,7 +3177,7 @@ JXG.extend(
                             if (
                                 Math.abs(
                                     Math.pow(evtTouches[k].screenX - touchTargets[j].X, 2) +
-                                        Math.pow(evtTouches[k].screenY - touchTargets[j].Y, 2)
+                                    Math.pow(evtTouches[k].screenY - touchTargets[j].Y, 2)
                                 ) <
                                 eps * eps
                             ) {
@@ -3617,13 +3629,13 @@ JXG.extend(
                 }
 
                 if (dir && el.isDraggable &&
-                        el.visPropCalc.visible &&
-                        ((this.geonextCompatibilityMode &&
-                            (Type.isPoint(el) ||
+                    el.visPropCalc.visible &&
+                    ((this.geonextCompatibilityMode &&
+                        (Type.isPoint(el) ||
                             el.elementClass === Const.OBJECT_CLASS_TEXT)
-                        ) || !this.geonextCompatibilityMode) &&
-                        !Type.evaluate(el.visProp.fixed)
-                    ) {
+                    ) || !this.geonextCompatibilityMode) &&
+                    !Type.evaluate(el.visProp.fixed)
+                ) {
 
 
                     this.mode = this.BOARD_MODE_DRAG;
@@ -3724,7 +3736,7 @@ JXG.extend(
          * @see JXG.Board#setBoundingBox
          *
          */
-        updateContainerDims: function() {
+        updateContainerDims: function () {
             var w, h,
                 bb, css,
                 width_adjustment, height_adjustment;
@@ -3738,11 +3750,11 @@ JXG.extend(
             if (window && window.getComputedStyle) {
                 css = window.getComputedStyle(this.containerObj, null);
                 width_adjustment = parseFloat(css.getPropertyValue('border-left-width')) + parseFloat(css.getPropertyValue('border-right-width'));
-                if(!isNaN(width_adjustment)) {
+                if (!isNaN(width_adjustment)) {
                     w -= width_adjustment;
                 }
-                height_adjustment = parseFloat(css.getPropertyValue('border-top-width'))  + parseFloat(css.getPropertyValue('border-bottom-width'));
-                if(!isNaN(height_adjustment)) {
+                height_adjustment = parseFloat(css.getPropertyValue('border-top-width')) + parseFloat(css.getPropertyValue('border-bottom-width'));
+                if (!isNaN(height_adjustment)) {
                     h -= height_adjustment;
                 }
             }
@@ -4280,7 +4292,7 @@ JXG.extend(
                     } else {
                         if (el.is3D) {
                             el.element2D.coords.usr2screen();
-                        } else{
+                        } else {
                             el.coords.usr2screen();
                         }
                     }
@@ -4460,9 +4472,9 @@ JXG.extend(
                         default:
                             JXG.debug(
                                 'property "' +
-                                    property +
-                                    '" in conditions not yet implemented:' +
-                                    right
+                                property +
+                                '" in conditions not yet implemented:' +
+                                right
                             );
                             break;
                     }
@@ -5468,7 +5480,7 @@ JXG.extend(
                         (i === 2 || i === 3)
                     ) &&
                     !(elementType === 'curve' /*&& i > 0*/) && // Allow curve plots with jessiecode, parents[0] is the
-                                                               // variable name
+                    // variable name
                     !(elementType === 'functiongraph') // Prevent problems with function terms like 'x'
                 ) {
                     parents[i] = this.select(parents[i]);
@@ -5550,10 +5562,7 @@ JXG.extend(
          * @returns {JXG.Board} Reference to the board
          */
         setBoundingBox: function (bbox, keepaspectratio, setZoom) {
-            var h,
-                w,
-                ux,
-                uy,
+            var h, w, ux, uy,
                 offX = 0,
                 offY = 0,
                 zoom_ratio = 1,
@@ -5648,6 +5657,307 @@ JXG.extend(
                 ).usrCoords;
 
             return [ul[1], ul[2], lr[1], lr[2]];
+        },
+
+        /**
+         * Sets the value of attribute <tt>key</tt> to <tt>value</tt>.
+         * @param {String} key The attribute's name.
+         * @param value The new value
+         * @private
+         */
+        _set: function (key, value) {
+            key = key.toLocaleLowerCase();
+
+            if (
+                value !== null &&
+                Type.isObject(value) &&
+                !Type.exists(value.id) &&
+                !Type.exists(value.name)
+            ) {
+                // value is of type {prop: val, prop: val,...}
+                // Convert these attributes to lowercase, too
+                // this.attr[key] = {};
+                // for (el in value) {
+                //     if (value.hasOwnProperty(el)) {
+                //         this.attr[key][el.toLocaleLowerCase()] = value[el];
+                //     }
+                // }
+                Type.mergeAttr(this.attr[key], value);
+            } else {
+                this.attr[key] = value;
+            }
+        },
+
+        /**
+         * Sets an arbitrary number of attributes. This method has one or more
+         * parameters of the following types:
+         * <ul>
+         * <li> object: {key1:value1,key2:value2,...}
+         * <li> string: 'key:value'
+         * <li> array: ['key', value]
+         * </ul>
+         * Some board attributes are immutable, like e.g. the renderer type.
+         *
+         * @param {Object} attributes An object with attributes.
+         * @returns {JXG.Board} Reference to the board
+         *
+         * @example
+         * const board = JXG.JSXGraph.initBoard('jxgbox', {
+         *     boundingbox: [-5, 5, 5, -5],
+         *     keepAspectRatio: false,
+         *     axis:true,
+         *     showFullscreen: true,
+         *     showScreenshot: true,
+         *     showCopyright: false
+         * });
+         *
+         * board.setAttribute({
+         *     animationDelay: 10,
+         *     boundingbox: [-10, 5, 10, -5],
+         *     defaultAxes: {
+         *         x: { strokeColor: 'blue', ticks: { strokeColor: 'blue'}}
+         *     },
+         *     description: 'test',
+         *     fullscreen: {
+         *         scale: 0.5
+         *     },
+         *     intl: {
+         *         enabled: true,
+         *         locale: 'de-DE'
+         *     }
+         * });
+         *
+         * board.setAttribute({
+         *     selection: {
+         *         enabled: true,
+         *         fillColor: 'blue'
+         *     },
+         *     showInfobox: false,
+         *     zoomX: 0.5,
+         *     zoomY: 2,
+         *     fullscreen: { symbol: 'x' },
+         *     screenshot: { symbol: 'y' },
+         *     showCopyright: true,
+         *     showFullscreen: false,
+         *     showScreenshot: false,
+         *     showZoom: false,
+         *     showNavigation: false
+         * });
+         * board.setAttribute('showCopyright:false');
+         *
+         * var p = board.create('point', [1, 1], {size: 10,
+         *     label: {
+         *         fontSize: 24,
+         *         highlightStrokeOpacity: 0.1,
+         *         offset: [5, 0]
+         *     }
+         * });
+         *
+         *
+         * </pre><div id="JXGea7b8e09-beac-4d95-9a0c-5fc1c761ffbc" class="jxgbox" style="width: 300px; height: 300px;"></div>
+         * <script type="text/javascript">
+         *     (function() {
+         *     const board = JXG.JSXGraph.initBoard('JXGea7b8e09-beac-4d95-9a0c-5fc1c761ffbc', {
+         *         boundingbox: [-5, 5, 5, -5],
+         *         keepAspectRatio: false,
+         *         axis:true,
+         *         showFullscreen: true,
+         *         showScreenshot: true,
+         *         showCopyright: false
+         *     });
+         *
+         *     board.setAttribute({
+         *         animationDelay: 10,
+         *         boundingbox: [-10, 5, 10, -5],
+         *         defaultAxes: {
+         *             x: { strokeColor: 'blue', ticks: { strokeColor: 'blue'}}
+         *         },
+         *         description: 'test',
+         *         fullscreen: {
+         *             scale: 0.5
+         *         },
+         *         intl: {
+         *             enabled: true,
+         *             locale: 'de-DE'
+         *         }
+         *     });
+         *
+         *     board.setAttribute({
+         *         selection: {
+         *             enabled: true,
+         *             fillColor: 'blue'
+         *         },
+         *         showInfobox: false,
+         *         zoomX: 0.5,
+         *         zoomY: 2,
+         *         fullscreen: { symbol: 'x' },
+         *         screenshot: { symbol: 'y' },
+         *         showCopyright: true,
+         *         showFullscreen: false,
+         *         showScreenshot: false,
+         *         showZoom: false,
+         *         showNavigation: false
+         *     });
+         *
+         *     board.setAttribute('showCopyright:false');
+         *
+         *     var p = board.create('point', [1, 1], {size: 10,
+         *         label: {
+         *             fontSize: 24,
+         *             highlightStrokeOpacity: 0.1,
+         *             offset: [5, 0]
+         *         }
+         *     });
+         *
+         *
+         *     })();
+         *
+         * </script><pre>
+         *
+         *
+         */
+        setAttribute: function (attr) {
+            var i, arg, pair,
+                key, value, oldvalue, // j, le,
+                node,
+                attributes = {};
+
+            // Normalize the user input
+            for (i = 0; i < arguments.length; i++) {
+                arg = arguments[i];
+                if (Type.isString(arg)) {
+                    // pairRaw is string of the form 'key:value'
+                    pair = arg.split(":");
+                    attributes[Type.trim(pair[0])] = Type.trim(pair[1]);
+                } else if (!Type.isArray(arg)) {
+                    // pairRaw consists of objects of the form {key1:value1,key2:value2,...}
+                    JXG.extend(attributes, arg);
+                } else {
+                    // pairRaw consists of array [key,value]
+                    attributes[arg[0]] = arg[1];
+                }
+            }
+
+            for (i in attributes) {
+                if (attributes.hasOwnProperty(i)) {
+                    key = i.replace(/\s+/g, "").toLowerCase();
+                    value = attributes[i];
+                }
+                value = (value.toLowerCase && value.toLowerCase() === 'false')
+                    ? false
+                    : value;
+
+                oldvalue = this.attr[key];
+                switch (key) {
+                    case 'axis':
+                        if (value === false) {
+                            if (Type.exists(this.defaultAxes)) {
+                                this.defaultAxes.x.setAttribute({ visible: false });
+                                this.defaultAxes.y.setAttribute({ visible: false });
+                            }
+                        } else {
+                            // TODO
+                        }
+                        break;
+                    case 'boundingbox':
+                        this.setBoundingBox(value, this.keepaspectratio);
+                        this._set(key, value);
+                        break;
+                    case 'defaultaxes':
+                        if (Type.exists(this.defaultAxes.x) && Type.exists(value.x)) {
+                            this.defaultAxes.x.setAttribute(value.x);
+                        }
+                        if (Type.exists(this.defaultAxes.y) && Type.exists(value.y)) {
+                            this.defaultAxes.y.setAttribute(value.y);
+                        }
+                        break;
+                    case 'description':
+                        this.document.getElementById(this.container + '_ARIAdescription')
+                            .innerHTML = value;
+                        this._set(key, value);
+                        break;
+                    case 'title':
+                        this.document.getElementById(this.container + '_ARIAlabel')
+                            .innerHTML = value;
+                        this._set(key, value);
+                        break;
+                    case 'keepaspectratio':
+                        // Does not work, yet.
+                        this._set(key, value);
+                        oldvalue = this.getBoundingBox();
+                        this.setBoundingBox([0, this.canvasHeight, this.canvasWidth, 0], false, 'keep');
+                        this.setBoundingBox(oldvalue, value, 'keep');
+                        break;
+
+                    /* eslint-disable no-fallthrough */
+                    case 'document':
+                    case 'maxboundingbox':
+                        this[key] = value;
+                        this._set(key, value);
+                        break;
+
+                    case 'zoomx':
+                    case 'zoomy':
+                        this[key] = value;
+                        this._set(key, value);
+                        this.setZoom(this.attr.zoomx, this.attr.zoomy);
+                        break;
+
+                    case 'registerevents':
+                    case 'registerfullscreenevent':
+                    case 'registerresizeevent':
+                    case 'renderer':
+                        // immutable, i.e. ignored
+                        break;
+
+                    case 'fullscreen':
+                    case 'screenshot':
+                        node = this.containerObj.ownerDocument.getElementById(
+                            this.container + '_navigation_' + key);
+                        if (node && Type.exists(value.symbol)) {
+                            node.innerHTML = Type.evaluate(value.symbol);
+                        }
+                        this._set(key, value);
+                        break;
+
+                    case 'selection':
+                        value.visible = false;
+                        value.withLines = false;
+                        value.vertices = { visible: false };
+                        this._set(key, value);
+                        break;
+
+                    case 'showcopyright':
+                        if (this.renderer.type === 'svg') {
+                            node = this.containerObj.ownerDocument.getElementById(
+                                this.renderer.uniqName('licenseText')
+                            );
+                            if (node) {
+                                node.style.display = ((Type.evaluate(value)) ? 'inline' : 'none');
+                            } else if (Type.evaluate(value)) {
+                                this.renderer.displayCopyright(Const.licenseText, parseInt(this.options.text.fontSize, 10));
+                            }
+                        }
+
+                    default:
+                        if (Type.exists(this.attr[key])) {
+                            this._set(key, value);
+                        }
+                        break;
+                    /* eslint-enable no-fallthrough */
+                }
+            }
+
+            // Redraw navbar to handle the remaining show* attributes
+            this.containerObj.ownerDocument.getElementById(
+                this.container + "_navigationbar"
+            ).remove();
+            this.renderer.drawNavigationBar(this, this.attr.navbar);
+
+            this.triggerEventHandlers(["attribute"], [attributes, this]);
+            this.fullUpdate();
+
+            return this;
         },
 
         /**
@@ -6315,11 +6625,19 @@ JXG.extend(
 
         /**
          * @event
+         * @description Whenever the {@link JXG.Board#setAttribute} is called.
+         * @name JXG.Board#attribute
+         * @param {Event} e The browser's event object.
+         */
+        __evt__attribute: function (e) { },
+
+        /**
+         * @event
          * @description Whenever the user starts to touch or click the board.
          * @name JXG.Board#down
          * @param {Event} e The browser's event object.
          */
-        __evt__down: function (e) {},
+        __evt__down: function (e) { },
 
         /**
          * @event
@@ -6327,7 +6645,7 @@ JXG.extend(
          * @name JXG.Board#mousedown
          * @param {Event} e The browser's event object.
          */
-        __evt__mousedown: function (e) {},
+        __evt__mousedown: function (e) { },
 
         /**
          * @event
@@ -6335,7 +6653,7 @@ JXG.extend(
          * @name JXG.Board#pendown
          * @param {Event} e The browser's event object.
          */
-        __evt__pendown: function (e) {},
+        __evt__pendown: function (e) { },
 
         /**
          * @event
@@ -6344,7 +6662,7 @@ JXG.extend(
          * @name JXG.Board#pointerdown
          * @param {Event} e The browser's event object.
          */
-        __evt__pointerdown: function (e) {},
+        __evt__pointerdown: function (e) { },
 
         /**
          * @event
@@ -6352,7 +6670,7 @@ JXG.extend(
          * @name JXG.Board#touchstart
          * @param {Event} e The browser's event object.
          */
-        __evt__touchstart: function (e) {},
+        __evt__touchstart: function (e) { },
 
         /**
          * @event
@@ -6360,7 +6678,7 @@ JXG.extend(
          * @name JXG.Board#up
          * @param {Event} e The browser's event object.
          */
-        __evt__up: function (e) {},
+        __evt__up: function (e) { },
 
         /**
          * @event
@@ -6368,7 +6686,7 @@ JXG.extend(
          * @name JXG.Board#mouseup
          * @param {Event} e The browser's event object.
          */
-        __evt__mouseup: function (e) {},
+        __evt__mouseup: function (e) { },
 
         /**
          * @event
@@ -6377,7 +6695,7 @@ JXG.extend(
          * @name JXG.Board#pointerup
          * @param {Event} e The browser's event object.
          */
-        __evt__pointerup: function (e) {},
+        __evt__pointerup: function (e) { },
 
         /**
          * @event
@@ -6385,7 +6703,7 @@ JXG.extend(
          * @name JXG.Board#touchend
          * @param {Event} e The browser's event object.
          */
-        __evt__touchend: function (e) {},
+        __evt__touchend: function (e) { },
 
         /**
          * @event
@@ -6395,7 +6713,7 @@ JXG.extend(
          * @param {Number} mode The mode the board currently is in
          * @see JXG.Board#mode
          */
-        __evt__move: function (e, mode) {},
+        __evt__move: function (e, mode) { },
 
         /**
          * @event
@@ -6405,7 +6723,7 @@ JXG.extend(
          * @param {Number} mode The mode the board currently is in
          * @see JXG.Board#mode
          */
-        __evt__mousemove: function (e, mode) {},
+        __evt__mousemove: function (e, mode) { },
 
         /**
          * @event
@@ -6415,7 +6733,7 @@ JXG.extend(
          * @param {Number} mode The mode the board currently is in
          * @see JXG.Board#mode
          */
-        __evt__penmove: function (e, mode) {},
+        __evt__penmove: function (e, mode) { },
 
         /**
          * @event
@@ -6426,7 +6744,7 @@ JXG.extend(
          * @param {Number} mode The mode the board currently is in
          * @see JXG.Board#mode
          */
-        __evt__pointermove: function (e, mode) {},
+        __evt__pointermove: function (e, mode) { },
 
         /**
          * @event
@@ -6436,7 +6754,7 @@ JXG.extend(
          * @param {Number} mode The mode the board currently is in
          * @see JXG.Board#mode
          */
-        __evt__touchmove: function (e, mode) {},
+        __evt__touchmove: function (e, mode) { },
 
         /**
          * @event
@@ -6477,7 +6795,7 @@ JXG.extend(
          *
          * </script><pre>
          */
-        __evt__hit: function (e, el, target) {},
+        __evt__hit: function (e, el, target) { },
 
         /**
          * @event
@@ -6488,21 +6806,21 @@ JXG.extend(
          * @param {JXG.GeometryElement} el The hit element.
          * @param target
          */
-        __evt__mousehit: function (e, el, target) {},
+        __evt__mousehit: function (e, el, target) { },
 
         /**
          * @event
          * @description This board is updated.
          * @name JXG.Board#update
          */
-        __evt__update: function () {},
+        __evt__update: function () { },
 
         /**
          * @event
          * @description The bounding box of the board has changed.
          * @name JXG.Board#boundingbox
          */
-        __evt__boundingbox: function () {},
+        __evt__boundingbox: function () { },
 
         /**
          * @event
@@ -6510,7 +6828,7 @@ JXG.extend(
          * {@link JXG.Board.startSelectionMode}
          * @name JXG.Board#startselecting
          */
-        __evt__startselecting: function () {},
+        __evt__startselecting: function () { },
 
         /**
          * @event
@@ -6519,7 +6837,7 @@ JXG.extend(
          * {@link JXG.Board.startSelectionMode}.
          * @name JXG.Board#mousestartselecting
          */
-        __evt__mousestartselecting: function () {},
+        __evt__mousestartselecting: function () { },
 
         /**
          * @event
@@ -6528,7 +6846,7 @@ JXG.extend(
          * {@link JXG.Board.startSelectionMode}.
          * @name JXG.Board#pointerstartselecting
          */
-        __evt__pointerstartselecting: function () {},
+        __evt__pointerstartselecting: function () { },
 
         /**
          * @event
@@ -6537,14 +6855,14 @@ JXG.extend(
          * {@link JXG.Board.startSelectionMode}.
          * @name JXG.Board#touchstartselecting
          */
-        __evt__touchstartselecting: function () {},
+        __evt__touchstartselecting: function () { },
 
         /**
          * @event
          * @description Selection of a region is stopped during an up event.
          * @name JXG.Board#stopselecting
          */
-        __evt__stopselecting: function () {},
+        __evt__stopselecting: function () { },
 
         /**
          * @event
@@ -6552,7 +6870,7 @@ JXG.extend(
          * from a device sending mouse events.
          * @name JXG.Board#mousestopselecting
          */
-        __evt__mousestopselecting: function () {},
+        __evt__mousestopselecting: function () { },
 
         /**
          * @event
@@ -6560,7 +6878,7 @@ JXG.extend(
          * from a device sending pointer events.
          * @name JXG.Board#pointerstopselecting
          */
-        __evt__pointerstopselecting: function () {},
+        __evt__pointerstopselecting: function () { },
 
         /**
          * @event
@@ -6568,14 +6886,14 @@ JXG.extend(
          * from a device sending touch events.
          * @name JXG.Board#touchstopselecting
          */
-        __evt__touchstopselecting: function () {},
+        __evt__touchstopselecting: function () { },
 
         /**
          * @event
          * @description A move event while selecting of a region is active.
          * @name JXG.Board#moveselecting
          */
-        __evt__moveselecting: function () {},
+        __evt__moveselecting: function () { },
 
         /**
          * @event
@@ -6583,7 +6901,7 @@ JXG.extend(
          * from a device sending mouse events.
          * @name JXG.Board#mousemoveselecting
          */
-        __evt__mousemoveselecting: function () {},
+        __evt__mousemoveselecting: function () { },
 
         /**
          * @event
@@ -6591,7 +6909,7 @@ JXG.extend(
          * from a device sending mouse events.
          * @name JXG.Board#pointermoveselecting
          */
-        __evt__pointermoveselecting: function () {},
+        __evt__pointermoveselecting: function () { },
 
         /**
          * @event
@@ -6599,12 +6917,12 @@ JXG.extend(
          * from a device sending touch events.
          * @name JXG.Board#touchmoveselecting
          */
-        __evt__touchmoveselecting: function () {},
+        __evt__touchmoveselecting: function () { },
 
         /**
          * @ignore
          */
-        __evt: function () {},
+        __evt: function () { },
 
         //endregion
 
@@ -6825,7 +7143,7 @@ JXG.extend(
          * @see JXG.Board#userLog
          * @return {JXG.Board} Reference to the board
          */
-        addLogEntry: function(type, obj, pos) {
+        addLogEntry: function (type, obj, pos) {
             var t, id,
                 last = this.userLog.length - 1;
 
