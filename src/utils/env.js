@@ -951,13 +951,7 @@ JXG.extend(
 
             // CSS rules to center the inner div horizontally and vertically.
             rule_inner_l =
-                "{margin:0 auto;transform:matrix(" +
-                scale_l +
-                ",0,0," +
-                scale_l +
-                ",0," +
-                vshift_l +
-                ");}";
+                "{margin:0 auto;transform:matrix(" + scale_l + ",0,0," + scale_l + ",0," + vshift_l + ");}";
 
             if (len === 0) {
                 // In case there is not a single CSS rule defined at all.
