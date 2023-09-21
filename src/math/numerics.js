@@ -2960,12 +2960,18 @@ Mat.Numerics = {
     /**
      * Helper function to create curve which displays Riemann sums.
      * Compute coordinates for the rectangles showing the Riemann sum.
+     * <p>
+     * In case of type "simpson" and "trapezoidal", the horizontal line approximating the function value 
+     * is replaced by a parabola or a secant. IN case of "simpson", 
+     * the parabola is approximated visually by a polygonal chain of fixed step width. 
+     * 
      * @param {Function,Array} f Function or array of two functions.
      * If f is a function the integral of this function is approximated by the Riemann sum.
      * If f is an array consisting of two functions the area between the two functions is filled
      * by the Riemann sum bars.
      * @param {Number} n number of rectangles.
      * @param {String} type Type of approximation. Possible values are: 'left', 'right', 'middle', 'lower', 'upper', 'random', 'simpson', or 'trapezoidal'.
+     * "simpson" is Simpson's 1/3 rule.
      * @param {Number} start Left border of the approximation interval
      * @param {Number} end Right border of the approximation interval
      * @returns {Array} An array of two arrays containing the x and y coordinates for the rectangles showing the Riemann sum. This
@@ -2974,18 +2980,14 @@ Mat.Numerics = {
      * @memberof JXG.Math.Numerics
      */
     riemann: function (gf, n, type, start, end) {
-        var i,
-            delta,
+        var i, delta,
+            k, a, b, c, f0, f1, f2, xx, h,
+            steps = 30, // Fixed step width for Simpson's rule
             xarr = [],
             yarr = [],
-            j = 0,
             x = start,
-            y,
             sum = 0,
-            f,
-            g,
-            ylow,
-            yup;
+            y, f, g;
 
         if (Type.isArray(gf)) {
             g = gf[0];
@@ -3002,61 +3004,94 @@ Mat.Numerics = {
 
         delta = (end - start) / n;
 
-        // Upper bar ends
+        // "Upper" horizontal line defined by function
         for (i = 0; i < n; i++) {
-            y = this._riemannValue(x, f, type, delta);
-            xarr[j] = x;
-            yarr[j] = y;
+            if (type === "simpson") {
+                sum += this._riemannValue(x, f, type, delta) * delta;
 
-            j += 1;
-            x += delta;
-            if (type === "trapezoidal") {
-                y = f(x);
+                h = delta * 0.5;
+                f0 = f(x);
+                f1 = f(x + h);
+                f2 = f(x + 2 * h);
+
+                a = (f2 + f0 - 2 * f1) / (h * h) * 0.5;
+                b = (f2 - f0) / (2 * h);
+                c = f1;
+                for (k = 0; k < steps; k++) {
+                    xx = k * delta / steps - h;
+                    xarr.push(x + xx + h);
+                    yarr.push(a * xx * xx + b * xx + c);
+                }
+                x += delta;
+                y = f2;
+            } else {
+                y = this._riemannValue(x, f, type, delta);
+                xarr.push(x);
+                yarr.push(y);
+
+                x += delta;
+                if (type === "trapezoidal") {
+                    f2 = f(x);
+                    sum += (y + f2) * 0.5 * delta;
+                    y = f2;
+                } else {
+                    sum += y * delta;
+                }
+
+                xarr.push(x);
+                yarr.push(y);
             }
-            xarr[j] = x;
-            yarr[j] = y;
-
-            j += 1;
+            xarr.push(x);
+            yarr.push(y);
         }
 
-        // Lower bar ends
+        // "Lower" horizontal line
+        // Go backwards
         for (i = 0; i < n; i++) {
-            if (g) {
-                y = this._riemannValue(x, g, type, -delta);
-            } else {
-                y = 0.0;
-            }
-            xarr[j] = x;
-            yarr[j] = y;
+            if (type === "simpson" && g) {
+                sum -= this._riemannValue(x, g, type, -delta) * delta;
 
-            j += 1;
-            x -= delta;
-            if (type === "trapezoidal" && g) {
-                y = g(x);
-            }
-            xarr[j] = x;
-            yarr[j] = y;
+                h = delta * 0.5;
+                f0 = g(x);
+                f1 = g(x - h);
+                f2 = g(x - 2 * h);
 
-            // Add the area of the bar to 'sum'
-            if (type !== "trapezoidal") {
-                ylow = y;
-                yup = yarr[2 * (n - 1) - 2 * i];
+                a = (f2 + f0 - 2 * f1) / (h * h) * 0.5;
+                b = (f2 - f0) / (2 * h);
+                c = f1;
+                for (k = 0; k < steps; k++) {
+                    xx = k * delta / steps - h;
+                    xarr.push(x - xx - h);
+                    yarr.push(a * xx * xx + b * xx + c);
+                }
+                x -= delta;
+                y = f2;
             } else {
-                yup = 0.5 * (f(x + delta) + f(x));
                 if (g) {
-                    ylow = 0.5 * (g(x + delta) + g(x));
+                    y = this._riemannValue(x, g, type, -delta);
                 } else {
-                    ylow = 0.0;
+                    y = 0.0;
+                }
+                xarr.push(x);
+                yarr.push(y);
+
+                x -= delta;
+                if (g) {
+                    if (type === "trapezoidal") {
+                        f2 = g(x);
+                        sum -= (y + f2) * 0.5 * delta;
+                        y = f2;
+                    } else {
+                        sum -= y * delta;
+                    }
                 }
             }
-            sum += (yup - ylow) * delta;
+            xarr.push(x);
+            yarr.push(y);
 
             // Draw the vertical lines
-            j += 1;
-            xarr[j] = x;
-            yarr[j] = yarr[2 * (n - 1) - 2 * i];
-
-            j += 1;
+            xarr.push(x);
+            yarr.push(f(x));
         }
 
         return [xarr, yarr, sum];
