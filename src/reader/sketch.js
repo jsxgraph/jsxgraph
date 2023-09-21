@@ -1943,21 +1943,23 @@ import type from '../utils/type';
                             }
                         }
 
-                        set_str += ') <<borders: <<ids: [\'';
-
-                        for (i = step.args.coords.length; i < step.dest_sub_ids.length; i++) {
-                            set_str += step.dest_sub_ids[i];
-                            if (i < step.dest_sub_ids.length - 1) {
-                                set_str += '\', \'';
+                        set_str += ') <<borders: <<ids: [';
+                        if (JXG.exists(step.args.coords)) {
+                            set_str += '\'';
+                            for (i = step.args.coords.length; i < step.dest_sub_ids.length; i++) {
+                                set_str += step.dest_sub_ids[i];
+                                if (i < step.dest_sub_ids.length - 1) {
+                                    set_str += '\', \'';
+                                }
                             }
-                        }
-                        set_str += '\']';
+                            set_str += '\']';
 
-                        set_str += ', names: [';
-                        for (i = step.args.coords.length; i < step.dest_sub_ids.length; i++) {
-                            set_str += '\'\'';
-                            if (i < step.dest_sub_ids.length - 1) {
-                                set_str += ', ';
+                            set_str += ', names: [';
+                            for (i = step.args.coords.length; i < step.dest_sub_ids.length; i++) {
+                                set_str += '\'\'';
+                                if (i < step.dest_sub_ids.length - 1) {
+                                    set_str += ', ';
+                                }
                             }
                         }
                         set_str += ']';
@@ -1968,10 +1970,12 @@ import type from '../utils/type';
                         set_str += step.dest_id + '.hasInnerPoints = function() { ' +
                             'return !(' + step.dest_id + '.fillColor == \'transparent\' || ' + step.dest_id + '.fillColor == \'none\' || ' + step.dest_id + '.fillOpacity == 0); ' +
                             '}; ';
-                        for (i = step.args.coords.length; i < step.dest_sub_ids.length; i++) {
-                            set_str += step.dest_sub_ids[i] + '.highlightStrokeWidth = function() { ' +
-                                'return ' + step.dest_sub_ids[i] + '.strokeWidth ' + JXG.Options.sketchometry.highlightStrokeWidthOperation + '; ' +
-                                ' };';
+                        if (JXG.exists(step.args.coords)) {
+                            for (i = step.args.coords.length; i < step.dest_sub_ids.length; i++) {
+                                set_str += step.dest_sub_ids[i] + '.highlightStrokeWidth = function() { ' +
+                                    'return ' + step.dest_sub_ids[i] + '.strokeWidth ' + JXG.Options.sketchometry.highlightStrokeWidthOperation + '; ' +
+                                    ' };';
+                            }
                         }
                         reset_str = 'remove(' + step.dest_id + '); ';
                         break;
