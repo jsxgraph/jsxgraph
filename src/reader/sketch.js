@@ -471,6 +471,9 @@ import type from '../utils/type';
                             if (step.args.name !== '') {
                                 set_str += ', name: "' + step.args.name + '"';
                                 set_str += ', withLabel: true';
+                            } else {
+                                set_str += ', name: ""';
+                                set_str += ', withLabel: false';
                             }
                             if (!step.args.isEmpty)
                                 set_str += getAttribsString(board.options.sketchometry.reflection.fill);
