@@ -6875,6 +6875,8 @@ JXG.extend(
          * Expand the JSXGraph construction to fullscreen.
          * In order to preserve the proportions of the JSXGraph element,
          * a wrapper div is created which is set to fullscreen.
+         * This function is called when fullscreen mode is triggered
+         * and when it is closed.
          * <p>
          * The wrapping div has the CSS class 'jxgbox_wrap_private' which is
          * defined in the file 'jsxgraph.css'
@@ -6947,15 +6949,21 @@ JXG.extend(
             var wrap_id,
                 wrap_node,
                 inner_node,
+                dim,
                 doc = this.document,
                 fullscreenElement;
 
+            dim = this.containerObj.getBoundingClientRect();
             id = id || this.container;
             this._fullscreen_inner_id = id;
             inner_node = doc.getElementById(id);
             wrap_id = 'fullscreenwrap_' + id;
-
+            inner_node._cssFullscreenStore = {
+                w: dim.width,
+                h: dim.height
+            }
             // Wrap a div around the JSXGraph div.
+            // It is deleted when fullscreen mode is closed.
             if (doc.getElementById(wrap_id)) {
                 wrap_node = doc.getElementById(wrap_id);
             } else {
@@ -6984,6 +6992,7 @@ JXG.extend(
             } else {
                 fullscreenElement = doc.msFullscreenElement;
             }
+
             if (fullscreenElement === null) {
                 // Start fullscreen mode
                 if (wrap_node.requestFullscreen) {
@@ -7010,7 +7019,8 @@ JXG.extend(
         fullscreenListener: function (evt) {
             var inner_id,
                 inner_node,
-                fullscreenElement, // res,
+                fullscreenElement,
+                i,
                 doc = this.document;
 
             inner_id = this._fullscreen_inner_id;
@@ -7041,22 +7051,16 @@ JXG.extend(
                 // which is removed by MathJax.
                 // Further, the CSS margin has to be removed when in fullscreen mode,
                 // and must be restored later.
-                inner_node._cssFullscreenStore = {
-                    id: fullscreenElement.id,
-                    isFullscreen: true,
-                    margin: inner_node.style.margin
-                    // width: inner_node.style.width
-                    // scale: res.scale,
-                    // vshift: res.vshift
-                };
-
+                inner_node._cssFullscreenStore.id = fullscreenElement.id;
+                inner_node._cssFullscreenStore.isFullscreen = true;
+                inner_node._cssFullscreenStore.margin = inner_node.style.margin;
                 inner_node.style.margin = '';
-                // inner_node.style.width = res.width + 'px';
 
                 // Do the shifting and scaling via CSS pseudo rules
                 // We do this after fullscreen mode has been established to get the correct size
                 // of the JSXGraph div.
-                Env.scaleJSXGraphDiv(fullscreenElement.id, inner_id, doc, Type.evaluate(this.attr.fullscreen.scale));
+                Env.scaleJSXGraphDiv(fullscreenElement.id, inner_id, doc,
+                    Type.evaluate(this.attr.fullscreen.scale));
 
                 // Clear this.doc.fullscreenElement, because Safari doesn't to it and
                 // when leaving full screen mode it is still set.
@@ -7065,15 +7069,18 @@ JXG.extend(
                 // Just left the fullscreen mode
 
                 // Remove the CSS rules added in Env.scaleJSXGraphDiv
-                try {
-                    doc.styleSheets[doc.styleSheets.length - 1].deleteRule(0);
-                } catch (err) {
-                    console.log('JSXGraph: Could not remove CSS rules for full screen mode');
+                for (i = doc.styleSheets.length - 1; i >= 0; i--) {
+                    if (doc.styleSheets[i].title === 'jsxgraph_fullscreen_css') {
+                        doc.styleSheets[i].deleteRule(0);
+                        break;
+                    }
                 }
 
                 inner_node._cssFullscreenStore.isFullscreen = false;
                 inner_node.style.margin = inner_node._cssFullscreenStore.margin;
-                // inner_node.style.width = inner_node._cssFullscreenStore.width;
+
+                // Remove the wrapper div
+                inner_node.parentElement.replaceWith(inner_node);
             }
 
             this.updateCSSTransforms();
