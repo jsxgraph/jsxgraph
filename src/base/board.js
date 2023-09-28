@@ -6876,7 +6876,7 @@ JXG.extend(
          * In order to preserve the proportions of the JSXGraph element,
          * a wrapper div is created which is set to fullscreen.
          * This function is called when fullscreen mode is triggered
-         * and when it is closed.
+         * <b>and</b> when it is closed.
          * <p>
          * The wrapping div has the CSS class 'jxgbox_wrap_private' which is
          * defined in the file 'jsxgraph.css'
@@ -6959,7 +6959,7 @@ JXG.extend(
             wrap_id = 'fullscreenwrap_' + id;
 
             // Store the original data.
-            // This is used to establish the ratio h / w in 
+            // This is used to establish the ratio h / w in
             // fullscreen mode
             dim = this.containerObj.getBoundingClientRect();
             inner_node._cssFullscreenStore = {
@@ -6998,8 +6998,10 @@ JXG.extend(
                 // Start fullscreen mode
                 if (wrap_node.requestFullscreen) {
                     wrap_node.requestFullscreen();
+                    this.startFullscreenResizeObserver(wrap_node);
                 }
             } else {
+                this.stopFullscreenResizeObserver(wrap_node);
                 if (Type.exists(document.exitFullscreen)) {
                     document.exitFullscreen();
                 } else if (Type.exists(document.webkitExitFullscreen)) {
@@ -7083,6 +7085,76 @@ JXG.extend(
             }
 
             this.updateCSSTransforms();
+        },
+
+        /**
+         * Start resize observer in to handle
+         * orientation changes in fullscreen mode.
+         *
+         * @param {Object} node DOM object which is in fullscreen mode. It is the wrapper element
+         * around the JSXGraph div.
+         * @returns {JXG.Board} Reference to the board
+         * @private
+         * @see JXG.Board#toFullscreen
+         *
+         */
+        startFullscreenResizeObserver: function(node) {
+            var that = this;
+
+            if (!Env.isBrowser || !this.attr.resize || !this.attr.resize.enabled) {
+                return this;
+            }
+
+            this.resizeObserver = new ResizeObserver(function (entries) {
+                var inner_id,
+                    fullscreenElement,
+                    doc = that.document;
+
+                if (!that._isResizing) {
+                    that._isResizing = true;
+                    window.setTimeout(function () {
+                        try {
+                            inner_id = that._fullscreen_inner_id;
+                            if (doc.fullscreenElement !== undefined) {
+                                fullscreenElement = doc.fullscreenElement;
+                            } else if (doc.webkitFullscreenElement !== undefined) {
+                                fullscreenElement = doc.webkitFullscreenElement;
+                            } else {
+                                fullscreenElement = doc.msFullscreenElement;
+                            }
+                            if (fullscreenElement !== null) {
+                                Env.scaleJSXGraphDiv(fullscreenElement.id, inner_id, doc,
+                                    Type.evaluate(that.attr.fullscreen.scale));
+                            }
+                        } catch (err) {
+                            that.stopFullscreenResizeObserver(node);
+                        } finally {
+                            that._isResizing = false;
+                        }
+                    }, that.attr.resize.throttle);
+                }
+            });
+            this.resizeObserver.observe(node);
+            return this;
+        },
+
+        /**
+         * Remove resize observer to handle orientation changes in fullscreen mode.
+         * @param {Object} node DOM object which is in fullscreen mode. It is the wrapper element
+         * around the JSXGraph div.
+         * @returns {JXG.Board} Reference to the board
+         * @private
+         * @see JXG.Board#toFullscreen
+         */
+        stopFullscreenResizeObserver: function(node) {
+            if (!Env.isBrowser || !this.attr.resize || !this.attr.resize.enabled) {
+                return this;
+            }
+
+            if (Type.exists(this.resizeObserver)) {
+                this.resizeObserver.unobserve(node);
+            }
+            return this;
         },
 
         /**

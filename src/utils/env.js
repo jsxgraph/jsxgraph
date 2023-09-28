@@ -961,6 +961,7 @@ JXG.extend(
 
             wi = wo;
             hi = ho;
+            // Compare this.setBoundingBox() 
             if (ratio > 1) {
                 // h > w
                 if (ratio < h / w) {
