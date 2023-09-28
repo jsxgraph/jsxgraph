@@ -988,7 +988,7 @@ JXG.extend(
                 "}";
 
             found_css = false;
-            // Removing of the CSS here should be only necessary
+            // Removing of the CSS here should happen only
             // in emergency cases.
             for (i = len - 1; i >= 0; i--) {
                 if (doc.styleSheets[i].title === title) {
@@ -1026,14 +1026,10 @@ JXG.extend(
                     doc.styleSheets[len - 1].insertRule(rule, 0);
 
                     break;
-                } catch (err) {
-                    // console.log('JXG.scaleJSXGraphDiv: Could not add CSS rule "' + pseudo_keys[i] + '".');
-                    // console.log('One possible reason could be that the id of the JSXGraph container does not start with a letter.');
-                }
+                } catch (err) {}
             }
             if (i === len_pseudo) {
-                console.log("JXG.scaleJSXGraphDiv: Could not add any CSS rule.");
-                console.log(
+                JXG.debug("JXG.scaleJSXGraphDiv: Could not add any CSS rule.\n" +
                     "One possible reason could be that the id of the JSXGraph container does not start with a letter."
                 );
             }

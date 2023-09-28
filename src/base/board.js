@@ -3889,7 +3889,7 @@ JXG.extend(
                 }, options);
                 this.intersectionObserver.observe(that.containerObj);
             } catch (err) {
-                console.log('JSXGraph: IntersectionObserver not available in this browser.');
+                JXG.debug('JSXGraph: IntersectionObserver not available in this browser.');
             }
         },
 
@@ -6953,17 +6953,22 @@ JXG.extend(
                 doc = this.document,
                 fullscreenElement;
 
-            dim = this.containerObj.getBoundingClientRect();
             id = id || this.container;
             this._fullscreen_inner_id = id;
             inner_node = doc.getElementById(id);
             wrap_id = 'fullscreenwrap_' + id;
+
+            // Store the original data.
+            // This is used to establish the ratio h / w in 
+            // fullscreen mode
+            dim = this.containerObj.getBoundingClientRect();
             inner_node._cssFullscreenStore = {
                 w: dim.width,
                 h: dim.height
             }
+
             // Wrap a div around the JSXGraph div.
-            // It is deleted when fullscreen mode is closed.
+            // It is removed when fullscreen mode is closed.
             if (doc.getElementById(wrap_id)) {
                 wrap_node = doc.getElementById(wrap_id);
             } else {
@@ -6973,10 +6978,6 @@ JXG.extend(
                 inner_node.parentNode.insertBefore(wrap_node, inner_node);
                 wrap_node.appendChild(inner_node);
             }
-
-            // Get the real width and height of the JSXGraph div
-            // and determine the scaling and vertical shift amount
-            // this._fullscreen_res = Env._getScaleFactors(inner_node);
 
             // Trigger fullscreen mode
             wrap_node.requestFullscreen =
@@ -7043,14 +7044,12 @@ JXG.extend(
             if (fullscreenElement) {
                 // Just entered fullscreen mode
 
-                // Get the data computed in board.toFullscreen()
-                // res = this._fullscreen_res;
-
-                // Store the scaling data.
-                // It is used in AbstractRenderer.updateText to restore the scaling matrix
-                // which is removed by MathJax.
+                // Store the original data.
                 // Further, the CSS margin has to be removed when in fullscreen mode,
                 // and must be restored later.
+                // Obsolete:
+                // It is used in AbstractRenderer.updateText to restore the scaling matrix
+                // which is removed by MathJax.
                 inner_node._cssFullscreenStore.id = fullscreenElement.id;
                 inner_node._cssFullscreenStore.isFullscreen = true;
                 inner_node._cssFullscreenStore.margin = inner_node.style.margin;
