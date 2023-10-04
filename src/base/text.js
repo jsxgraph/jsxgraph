@@ -654,7 +654,7 @@ JXG.extend(
         },
 
         /**
-         * The update function of the renderert
+         * The update function of the renderer
          * is called.
          * @private
          */

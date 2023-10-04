@@ -1687,7 +1687,7 @@ JXG.extend(
             }
             this.context = this.canvasRoot.getContext("2d");
             // The width and height of the canvas is set to twice the CSS values,
-            // followed by an appropiate scaling.
+            // followed by an appropriate scaling.
             // See https://stackoverflow.com/questions/22416462/canvas-element-with-blurred-lines
             this.context.scale(2, 2);
         },
