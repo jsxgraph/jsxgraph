@@ -547,7 +547,7 @@ JXG.extend(
         /**
          * Cross browser mouse / pointer / touch coordinates retrieval relative to the documents's top left corner.
          * This method might be a bit outdated today, since pointer events and clientX/Y are omnipresent.
-         * 
+         *
          * @param {Object} [e] The browsers event object. If omitted, <tt>window.event</tt> will be used.
          * @param {Number} [index] If <tt>e</tt> is a touch event, this provides the index of the touch coordinates, i.e. it determines which finger.
          * @param {Object} [doc] The document object.
@@ -912,10 +912,16 @@ JXG.extend(
          *
          */
         scaleJSXGraphDiv: function (wrap_id, inner_id, doc, scale) {
-            var len = doc.styleSheets.length, style, rule, w, h, b, wi, hi, bi,
-                scale_l, vshift_l, // scale_p, vshift_p,
+            var len = doc.styleSheets.length, style, rule,
+                w, h, b,
+                wi, hi,
+                wo, ho, inner,
+                scale_l, vshift_l,
                 f = scale,
-                rule_inner_l, // rule_inner_p,
+                ratio,
+                rule_inner_l,
+                title = 'jsxgraph_fullscreen_css',
+                found_css,
                 pseudo_keys = [
                     ":fullscreen",
                     ":-webkit-full-screen",
@@ -938,45 +944,80 @@ JXG.extend(
             h = b.height;
             w = b.width;
 
-            bi = doc.getElementById(inner_id).getBoundingClientRect();
-            hi = bi.height;
-            wi = bi.width;
+            inner = doc.getElementById(inner_id);
+            wo = inner._cssFullscreenStore.w;
+            ho = inner._cssFullscreenStore.h;
+            ratio = ho / wo;
 
-            if (wi / hi >= w / h) {
-                scale_l = (f * w) / wi;
+            // Scale the div such that fits into the fullscreen.
+            if (wo > w * f) {
+                wo = w * f;
+                ho = wo * ratio;
+            }
+            if (ho > h * f) {
+                ho = h * f;
+                wo = ho / ratio;
+            }
+
+            wi = wo;
+            hi = ho;
+            // Compare this.setBoundingBox() 
+            if (ratio > 1) {
+                // h > w
+                if (ratio < h / w) {
+                    scale_l =  w * f / wo;
+                } else {
+                    scale_l =  h * f / ho;
+                }
             } else {
-                scale_l = (f * h) / hi;
+                // h <= w
+                if (ratio < h / w) {
+                    scale_l = w * f / wo;
+                } else {
+                    scale_l = h * f / ho;
+                }
             }
             vshift_l = (h - hi) * 0.5;
 
             // CSS rules to center the inner div horizontally and vertically.
             rule_inner_l =
-                "{margin:0 auto;transform:matrix(" +
-                scale_l +
-                ",0,0," +
-                scale_l +
-                ",0," +
-                vshift_l +
-                ");}";
+                "{" +
+                "width:" + wi + "px !important;" +
+                "height:" + hi + "px !important;" +
+                "margin:0 auto;" +
+                "transform:matrix(" + scale_l + ",0,0," + scale_l + ",0," + vshift_l + ");" +
+                "}";
 
-            if (len === 0) {
-                // In case there is not a single CSS rule defined at all.
+            found_css = false;
+            // Removing of the CSS here should happen only
+            // in emergency cases.
+            for (i = len - 1; i >= 0; i--) {
+                if (doc.styleSheets[i].title === title) {
+                    found_css = true;
+
+                    if (doc.styleSheets[i].title === title &&
+                        doc.styleSheets[i].cssRules.length > 0 &&
+                        regex.test(doc.styleSheets[i].cssRules[0].cssText) &&
+                        doc.styleSheets[i].deleteRule
+                    ) {
+                        doc.styleSheets[i].deleteRule(0);
+                        break;
+                    }
+                }
+            }
+            if (!found_css) {
+                // In case there is not yet a CSS style sheet for fullscreen
+                // defined, do it now.
                 style = document.createElement("style");
+                style.setAttribute('title', title);
                 // WebKit hack :(
                 style.appendChild(document.createTextNode(""));
-                // Add the <style> element to the page
-                doc.appendChild(style);
-                len = doc.styleSheets.length;
+                // Add the <style> element to the page head.
+                // It must be document, not the shadowDOM root.
+                // It seems that the head tag does always exist.
+                document.head.appendChild(style);
             }
-
-            // Remove a previously installed CSS rule.
-            if (
-                doc.styleSheets[len - 1].cssRules.length > 0 &&
-                regex.test(doc.styleSheets[len - 1].cssRules[0].cssText) &&
-                doc.styleSheets[len - 1].deleteRule
-            ) {
-                doc.styleSheets[len - 1].deleteRule(0);
-            }
+            len = doc.styleSheets.length;
 
             // Install a CSS rule to center the JSXGraph div at the first position of the list.
             for (i = 0; i < len_pseudo; i++) {
@@ -986,14 +1027,10 @@ JXG.extend(
                     doc.styleSheets[len - 1].insertRule(rule, 0);
 
                     break;
-                } catch (err) {
-                    // console.log('JXG.scaleJSXGraphDiv: Could not add CSS rule "' + pseudo_keys[i] + '".');
-                    // console.log('One possible reason could be that the id of the JSXGraph container does not start with a letter.');
-                }
+                } catch (err) {}
             }
             if (i === len_pseudo) {
-                console.log("JXG.scaleJSXGraphDiv: Could not add any CSS rule.");
-                console.log(
+                JXG.debug("JXG.scaleJSXGraphDiv: Could not add any CSS rule.\n" +
                     "One possible reason could be that the id of the JSXGraph container does not start with a letter."
                 );
             }

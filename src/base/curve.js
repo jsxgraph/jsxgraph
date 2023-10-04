@@ -2231,6 +2231,11 @@ JXG.registerElement("metapostspline", JXG.createMetapostSpline);
 /**
  * @class This element is used to provide a constructor for Riemann sums, which is realized as a special curve.
  * The returned element has the method Value() which returns the sum of the areas of the bars.
+ * <p>
+ * In case of type "simpson" and "trapezoidal", the horizontal line approximating the function value 
+ * is replaced by a parabola or a secant. IN case of "simpson", 
+ * the parabola is approximated visually by a polygonal chain of fixed step width. 
+ * 
  * @pseudo
  * @description
  * @name Riemannsum
@@ -2244,7 +2249,7 @@ JXG.registerElement("metapostspline", JXG.createMetapostSpline);
  *         n determines the number of bars, it is either a fixed number or a function.
  *         <p>
  *         type is a string or function returning one of the values:  'left', 'right', 'middle', 'lower', 'upper', 'random', 'simpson', or 'trapezoidal'.
- *         Default value is 'left'.
+ *         Default value is 'left'. "simpson" is Simpson's 1/3 rule.
  *         <p>
  *         Further parameters are an optional number or function for the left interval border a,
  *         and an optional number or function for the right interval border b.

@@ -1257,20 +1257,21 @@ JXG.extend(
                                     MathJax.Hub.Queue(["Typeset", MathJax.Hub, el.rendNode]);
                                 }
 
-                                // Restore the transformation necessary for fullscreen mode
-                                // MathJax removes it when handling dynamic content
-                                id = el.board.container;
-                                wrap_id = "fullscreenwrap_" + id;
-                                if (document.getElementById(wrap_id)) {
-                                    scale = el.board.containerObj._cssFullscreenStore.scale;
-                                    vshift = el.board.containerObj._cssFullscreenStore.vshift;
-                                    Env.scaleJSXGraphDiv(
-                                        "#" + wrap_id,
-                                        "#" + id,
-                                        scale,
-                                        vshift
-                                    );
-                                }
+                                // Obsolete:
+                                // // Restore the transformation necessary for fullscreen mode
+                                // // MathJax removes it when handling dynamic content
+                                // id = el.board.container;
+                                // wrap_id = "fullscreenwrap_" + id;
+                                // if (document.getElementById(wrap_id)) {
+                                //     scale = el.board.containerObj._cssFullscreenStore.scale;
+                                //     vshift = el.board.containerObj._cssFullscreenStore.vshift;
+                                //     Env.scaleJSXGraphDiv(
+                                //         "#" + wrap_id,
+                                //         "#" + id,
+                                //         scale,
+                                //         vshift
+                                //     );
+                                // }
                             } catch (e) {
                                 JXG.debug("MathJax (not yet) loaded");
                             }

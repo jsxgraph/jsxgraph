@@ -3910,7 +3910,7 @@ JXG.extend(
                 }, options);
                 this.intersectionObserver.observe(that.containerObj);
             } catch (err) {
-                console.log('JSXGraph: IntersectionObserver not available in this browser.');
+                JXG.debug('JSXGraph: IntersectionObserver not available in this browser.');
             }
         },
 
@@ -6930,6 +6930,8 @@ JXG.extend(
          * Expand the JSXGraph construction to fullscreen.
          * In order to preserve the proportions of the JSXGraph element,
          * a wrapper div is created which is set to fullscreen.
+         * This function is called when fullscreen mode is triggered
+         * <b>and</b> when it is closed.
          * <p>
          * The wrapping div has the CSS class 'jxgbox_wrap_private' which is
          * defined in the file 'jsxgraph.css'
@@ -7002,6 +7004,7 @@ JXG.extend(
             var wrap_id,
                 wrap_node,
                 inner_node,
+                dim,
                 doc = this.document,
                 fullscreenElement;
 
@@ -7010,7 +7013,17 @@ JXG.extend(
             inner_node = doc.getElementById(id);
             wrap_id = 'fullscreenwrap_' + id;
 
+            // Store the original data.
+            // This is used to establish the ratio h / w in
+            // fullscreen mode
+            dim = this.containerObj.getBoundingClientRect();
+            inner_node._cssFullscreenStore = {
+                w: dim.width,
+                h: dim.height
+            }
+
             // Wrap a div around the JSXGraph div.
+            // It is removed when fullscreen mode is closed.
             if (doc.getElementById(wrap_id)) {
                 wrap_node = doc.getElementById(wrap_id);
             } else {
@@ -7020,10 +7033,6 @@ JXG.extend(
                 inner_node.parentNode.insertBefore(wrap_node, inner_node);
                 wrap_node.appendChild(inner_node);
             }
-
-            // Get the real width and height of the JSXGraph div
-            // and determine the scaling and vertical shift amount
-            // this._fullscreen_res = Env._getScaleFactors(inner_node);
 
             // Trigger fullscreen mode
             wrap_node.requestFullscreen =
@@ -7039,12 +7048,15 @@ JXG.extend(
             } else {
                 fullscreenElement = doc.msFullscreenElement;
             }
+
             if (fullscreenElement === null) {
                 // Start fullscreen mode
                 if (wrap_node.requestFullscreen) {
                     wrap_node.requestFullscreen();
+                    this.startFullscreenResizeObserver(wrap_node);
                 }
             } else {
+                this.stopFullscreenResizeObserver(wrap_node);
                 if (Type.exists(document.exitFullscreen)) {
                     document.exitFullscreen();
                 } else if (Type.exists(document.webkitExitFullscreen)) {
@@ -7065,7 +7077,8 @@ JXG.extend(
         fullscreenListener: function (evt) {
             var inner_id,
                 inner_node,
-                fullscreenElement, // res,
+                fullscreenElement,
+                i,
                 doc = this.document;
 
             inner_id = this._fullscreen_inner_id;
@@ -7088,30 +7101,22 @@ JXG.extend(
             if (fullscreenElement) {
                 // Just entered fullscreen mode
 
-                // Get the data computed in board.toFullscreen()
-                // res = this._fullscreen_res;
-
-                // Store the scaling data.
-                // It is used in AbstractRenderer.updateText to restore the scaling matrix
-                // which is removed by MathJax.
+                // Store the original data.
                 // Further, the CSS margin has to be removed when in fullscreen mode,
                 // and must be restored later.
-                inner_node._cssFullscreenStore = {
-                    id: fullscreenElement.id,
-                    isFullscreen: true,
-                    margin: inner_node.style.margin
-                    // width: inner_node.style.width
-                    // scale: res.scale,
-                    // vshift: res.vshift
-                };
-
+                // Obsolete:
+                // It is used in AbstractRenderer.updateText to restore the scaling matrix
+                // which is removed by MathJax.
+                inner_node._cssFullscreenStore.id = fullscreenElement.id;
+                inner_node._cssFullscreenStore.isFullscreen = true;
+                inner_node._cssFullscreenStore.margin = inner_node.style.margin;
                 inner_node.style.margin = '';
-                // inner_node.style.width = res.width + 'px';
 
                 // Do the shifting and scaling via CSS pseudo rules
                 // We do this after fullscreen mode has been established to get the correct size
                 // of the JSXGraph div.
-                Env.scaleJSXGraphDiv(fullscreenElement.id, inner_id, doc, Type.evaluate(this.attr.fullscreen.scale));
+                Env.scaleJSXGraphDiv(fullscreenElement.id, inner_id, doc,
+                    Type.evaluate(this.attr.fullscreen.scale));
 
                 // Clear this.doc.fullscreenElement, because Safari doesn't to it and
                 // when leaving full screen mode it is still set.
@@ -7120,18 +7125,91 @@ JXG.extend(
                 // Just left the fullscreen mode
 
                 // Remove the CSS rules added in Env.scaleJSXGraphDiv
-                try {
-                    doc.styleSheets[doc.styleSheets.length - 1].deleteRule(0);
-                } catch (err) {
-                    console.log('JSXGraph: Could not remove CSS rules for full screen mode');
+                for (i = doc.styleSheets.length - 1; i >= 0; i--) {
+                    if (doc.styleSheets[i].title === 'jsxgraph_fullscreen_css') {
+                        doc.styleSheets[i].deleteRule(0);
+                        break;
+                    }
                 }
 
                 inner_node._cssFullscreenStore.isFullscreen = false;
                 inner_node.style.margin = inner_node._cssFullscreenStore.margin;
-                // inner_node.style.width = inner_node._cssFullscreenStore.width;
+
+                // Remove the wrapper div
+                inner_node.parentElement.replaceWith(inner_node);
             }
 
             this.updateCSSTransforms();
+        },
+
+        /**
+         * Start resize observer in to handle
+         * orientation changes in fullscreen mode.
+         *
+         * @param {Object} node DOM object which is in fullscreen mode. It is the wrapper element
+         * around the JSXGraph div.
+         * @returns {JXG.Board} Reference to the board
+         * @private
+         * @see JXG.Board#toFullscreen
+         *
+         */
+        startFullscreenResizeObserver: function(node) {
+            var that = this;
+
+            if (!Env.isBrowser || !this.attr.resize || !this.attr.resize.enabled) {
+                return this;
+            }
+
+            this.resizeObserver = new ResizeObserver(function (entries) {
+                var inner_id,
+                    fullscreenElement,
+                    doc = that.document;
+
+                if (!that._isResizing) {
+                    that._isResizing = true;
+                    window.setTimeout(function () {
+                        try {
+                            inner_id = that._fullscreen_inner_id;
+                            if (doc.fullscreenElement !== undefined) {
+                                fullscreenElement = doc.fullscreenElement;
+                            } else if (doc.webkitFullscreenElement !== undefined) {
+                                fullscreenElement = doc.webkitFullscreenElement;
+                            } else {
+                                fullscreenElement = doc.msFullscreenElement;
+                            }
+                            if (fullscreenElement !== null) {
+                                Env.scaleJSXGraphDiv(fullscreenElement.id, inner_id, doc,
+                                    Type.evaluate(that.attr.fullscreen.scale));
+                            }
+                        } catch (err) {
+                            that.stopFullscreenResizeObserver(node);
+                        } finally {
+                            that._isResizing = false;
+                        }
+                    }, that.attr.resize.throttle);
+                }
+            });
+            this.resizeObserver.observe(node);
+            return this;
+        },
+
+        /**
+         * Remove resize observer to handle orientation changes in fullscreen mode.
+         * @param {Object} node DOM object which is in fullscreen mode. It is the wrapper element
+         * around the JSXGraph div.
+         * @returns {JXG.Board} Reference to the board
+         * @private
+         * @see JXG.Board#toFullscreen
+         */
+        stopFullscreenResizeObserver: function(node) {
+            if (!Env.isBrowser || !this.attr.resize || !this.attr.resize.enabled) {
+                return this;
+            }
+
+            if (Type.exists(this.resizeObserver)) {
+                this.resizeObserver.unobserve(node);
+            }
+            return this;
         },
 
         /**
