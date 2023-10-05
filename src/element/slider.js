@@ -168,6 +168,7 @@ JXG.createSlider = function (board, parents, attributes) {
         ticks, ti, t,
         startx, starty,
         withText, withTicks,
+        snapValues, snapValueDistance,
         snapWidth, sw, s,
         attr;
 
@@ -175,6 +176,8 @@ JXG.createSlider = function (board, parents, attributes) {
     withTicks = attr.withticks;
     withText = attr.withlabel;
     snapWidth = attr.snapwidth;
+    snapValues = attr.snapvalues;
+    snapValueDistance = attr.snapvaluedistance;
 
     // start point
     attr = Type.copyAttributes(attributes, board.options, "slider", "point1");
@@ -211,7 +214,7 @@ JXG.createSlider = function (board, parents, attributes) {
     attr.withLabel = false;
     // gliders set snapwidth=-1 by default (i.e. deactivate them)
     p3 = board.create("glider", [startx, starty, l1], attr);
-    p3.setAttribute({ snapwidth: snapWidth });
+    p3.setAttribute({ snapwidth: snapWidth, snapvalues: snapValues, snapvaluedistance: snapValueDistance });
 
     // Segment from start point to glider point: highline
     attr = Type.copyAttributes(attributes, board.options, "slider", "highline");
@@ -226,7 +229,18 @@ JXG.createSlider = function (board, parents, attributes) {
      */
     p3.Value = function () {
         var sdiff = this._smax - this._smin,
-            ev_sw = Type.evaluate(this.visProp.snapwidth);
+            ev_sw = Type.evaluate(this.visProp.snapwidth),
+            snapValues, i, v;
+
+        snapValues = Type.evaluate(this.visProp.snapvalues);
+        if (Type.isArray(snapValues)) {
+            for (i=0; i < snapValues.length; i++) {
+                v = (snapValues[i] - this._smin) / (this._smax - this._smin);
+                if(this.position === v) {
+                    return snapValues[i];
+                }
+            }
+        }
 
         return ev_sw === -1
             ? this.position * sdiff + this._smin
