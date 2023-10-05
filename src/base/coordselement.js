@@ -256,6 +256,7 @@ define([
                 cp, c, invMat, newCoords, newPos,
                 doRound = false,
                 ev_sw,
+                snappedTo, snapValues,
                 slide = this.slideObject,
                 res, cu,
                 slides = [],
@@ -373,18 +374,26 @@ define([
                     }
                 }
 
-                // Snap the glider point of the slider into its appropiate position
-                // First, recalculate the new value of this.position
-                // Second, call update(fromParent==true) to make the positioning snappier.
-                ev_sw = Type.evaluate(this.visProp.snapwidth);
-                if (Type.evaluate(ev_sw) > 0.0 &&
-                    Math.abs(this._smax - this._smin) >= Mat.eps) {
-                    newPos = Math.max(Math.min(newPos, 1), 0);
-
-                    v = newPos * (this._smax - this._smin) + this._smin;
-                    v = Math.round(v / ev_sw) * ev_sw;
-                    newPos = (v - this._smin) / (this._smax - this._smin);
+                // Snap the glider to snap values.
+                snappedTo = this.findClosestSnapValue(newPos);
+                if(snappedTo !== null) {
+                    snapValues = Type.evaluate(this.visProp.snapvalues);
+                    newPos = (snapValues[snappedTo] - this._smin) / (this._smax - this._smin);
                     this.update(true);
+                } else {
+                    // Snap the glider point of the slider into its appropriate position
+                    // First, recalculate the new value of this.position
+                    // Second, call update(fromParent==true) to make the positioning snappier.
+                    ev_sw = Type.evaluate(this.visProp.snapwidth);
+                    if (Type.evaluate(ev_sw) > 0.0 &&
+                        Math.abs(this._smax - this._smin) >= Mat.eps) {
+                        newPos = Math.max(Math.min(newPos, 1), 0);
+
+                        v = newPos * (this._smax - this._smin) + this._smin;
+                        v = Math.round(v / ev_sw) * ev_sw;
+                        newPos = (v - this._smin) / (this._smax - this._smin);
+                        this.update(true);
+                    }
                 }
 
                 p1c = slide.point1.coords;
@@ -507,6 +516,35 @@ define([
 
             this.coords.setCoordinates(Const.COORDS_BY_USER, newCoords.usrCoords, doRound);
             this.position = newPos;
+        },
+
+        /** 
+         * Find the closest entry in snapValues that is within snapValueDistance of pos.
+         *
+         * @returns {Number} Index of the value to snap to, or null.
+         */
+        findClosestSnapValue: function(pos) {
+            var i, d,
+                snapValues, snapValueDistance, 
+                snappedTo = null;
+
+            // Snap the glider to snap values.
+            snapValues = Type.evaluate(this.visProp.snapvalues);
+            snapValueDistance = Type.evaluate(this.visProp.snapvaluedistance);
+
+            if (Type.isArray(snapValues) &&
+                Math.abs(this._smax - this._smin) >= Mat.eps &&
+                snapValueDistance > 0.0) {
+                for (i = 0; i < snapValues.length; i++) {
+                    d = Math.abs(pos * (this._smax - this._smin) + this._smin - snapValues[i]);
+                    if (d < snapValueDistance) {
+                        snapValueDistance = d;
+                        snappedTo = i;
+                    }
+                }
+            }
+
+            return snappedTo;
         },
 
         /**
