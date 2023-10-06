@@ -811,7 +811,7 @@ JXG.Options = {
          * <p>
          * This attribute is immutable.
          * It can be changed as follows:
-         * 
+         *
          * @example
          * board.setAttribute({moveTarget: null});
          * board.removeEventHandlers();
@@ -894,9 +894,9 @@ JXG.Options = {
          * Allow user interaction by registering mouse, pointer, keyboard or touch events.
          * Decide if JSXGraph listens to these events. Keyboard events can then turned off
          * separately with the keyboard attribute.
-         * 
+         *
          * <p>This attribute is immutable. Please use
-         * {@link JXG.Board#addEventHandlers()} and 
+         * {@link JXG.Board#addEventHandlers()} and
          * {@link JXG.Board#removeEventHandlers()} directly.
          *
          * @name JXG.Board#registerEvents
@@ -912,7 +912,7 @@ JXG.Options = {
          * Listen to fullscreen event.
          *
          * <p>This attribute is immutable. Please use
-         * {@link JXG.Board#addFullscreenEventHandlers()} and 
+         * {@link JXG.Board#addFullscreenEventHandlers()} and
          * {@link JXG.Board#removeEventHandlers()} directly.
          *
          * @name JXG.Board#registerFullscreenEvent
@@ -926,14 +926,14 @@ JXG.Options = {
         /**
          * Listen to resize events, i.e. start "resizeObserver" or handle the resize event with
          * "resizeListener". This is independent from the mouse, touch, pointer events.
-         * 
+         *
          * <p>This attribute is immutable. Please use
-         * {@link JXG.Board#addResizeEventHandlers()} and 
+         * {@link JXG.Board#addResizeEventHandlers()} and
          * {@link JXG.Board#removeEventHandlers()} directly.
          * <p>
          * This attribute just starts a resizeObserver. If the resizeObserver reacts
          * to size changed is controled wuth {@link JXG.Board#resize}.
-         * 
+         *
          * @name JXG.Board#registerResizeEvent
          * @see JXG.Board#resize
          * @see JXG.Board#registerEvents
@@ -950,7 +950,7 @@ JXG.Options = {
          * <p>
          * In case of 'canvas' it is advisable to call 'board.update()' after all elements have been
          * constructed. This ensures that all elements are drawn with their intended visual appearance.
-         * 
+         *
          * <p>
          * This attribute is immutable.
          *
@@ -6124,27 +6124,68 @@ JXG.Options = {
         snapWidth: -1,      // -1 = deactivated
 
         /**
-         * List of values to snap to. If the glider is within snapValueDistance of one of these points, 
+         * List of values to snap to. If the glider is within snapValueDistance 
+         * (in user coordinate units) of one of these points,
          * then the glider snaps to that point.
          *
          * @memberOf Slider.prototype
          * @name snapValues
          * @type Array
+         * @see Slider#snapValueDistance
          * @default empty
+         *
+         * @example
+         *         var n = board.create('slider', [[-2, 3], [4, 3], [1, 5, 100]], {
+         *             name: 'n',
+         *             snapWidth: 1,
+         *             snapValues: [1, 22, 77, 100],
+         *             snapValueDistance: 5
+         *         });
+         *
+         *         var k = board.create('slider', [[-2, -1], [4, -1], [-4, 0, 4]], {
+         *             name: 'k',
+         *             snapWidth: 0.1,
+         *             snapValues: [-3, -1, 1, 3],
+         *             snapValueDistance: 0.4
+         *         });
+         *
+         * </pre><div id="JXG9be68014-4e14-479a-82b4-e92d9b8f6eef" class="jxgbox" style="width: 300px; height: 300px;"></div>
+         * <script type="text/javascript">
+         *     (function() {
+         *         var board = JXG.JSXGraph.initBoard('JXG9be68014-4e14-479a-82b4-e92d9b8f6eef',
+         *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
+         *             var n = board.create('slider', [[-2, 3], [4, 3], [1, 5, 100]], {
+         *                 name: 'n',
+         *                 snapWidth: 1,
+         *                 snapValues: [1, 22, 77, 100],
+         *                 snapValueDistance: 5
+         *             });
+         *
+         *             var k = board.create('slider', [[-2, -1], [4, -1], [-4, 0, 4]], {
+         *                 name: 'k',
+         *                 snapWidth: 0.1,
+         *                 snapValues: [-3, -1, 1, 3],
+         *                 snapValueDistance: 0.4
+         *             });
+         *
+         *     })();
+         *
+         * </script><pre>
+         *
          */
         snapValues: [],
 
         /**
          * If the difference between the slider value and one of the elements of snapValues is less
-         * than this number, the slider will snap to that value.
+         * than this number (in user coordinate units), the slider will snap to that value.
          *
          * @memberOf Slider.prototype
          * @name snapValueDistance
          * @type Number
+         * @see Slider#snapValues
          * @default 0.0
          */
         snapValueDistance: 0.0,
-
 
         /**
          * The precision of the slider value displayed in the optional text.

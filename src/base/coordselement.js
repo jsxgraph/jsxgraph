@@ -542,14 +542,16 @@ JXG.extend(
             this.position = newPos;
         },
 
-        /** 
+        /**
          * Find the closest entry in snapValues that is within snapValueDistance of pos.
          *
+         * @param {Number} pos Value for which snapping is calculated.
          * @returns {Number} Index of the value to snap to, or null.
+         * @private
          */
         findClosestSnapValue: function(pos) {
             var i, d,
-                snapValues, snapValueDistance, 
+                snapValues, snapValueDistance,
                 snappedTo = null;
 
             // Snap the glider to snap values.
@@ -1956,7 +1958,7 @@ JXG.extend(
          * @returns {JXG.CoordsElement} Reference to itself.
          */
         _anim: function (direction, stepCount) {
-            var dX, dY, alpha, startPoint, newX, radius, sp1c, sp2c, res, d;
+            var dX, dY, alpha, startPoint, newX, radius, sp1c, sp2c, res;
 
             this.intervalCount += 1;
             if (this.intervalCount > stepCount) {
