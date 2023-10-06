@@ -6124,6 +6124,29 @@ JXG.Options = {
         snapWidth: -1,      // -1 = deactivated
 
         /**
+         * List of values to snap to. If the glider is within snapValueDistance of one of these points, 
+         * then the glider snaps to that point.
+         *
+         * @memberOf Slider.prototype
+         * @name snapValues
+         * @type Array
+         * @default empty
+         */
+        snapValues: [],
+
+        /**
+         * If the difference between the slider value and one of the elements of snapValues is less
+         * than this number, the slider will snap to that value.
+         *
+         * @memberOf Slider.prototype
+         * @name snapValueDistance
+         * @type Number
+         * @default 0.0
+         */
+        snapValueDistance: 0.0,
+
+
+        /**
          * The precision of the slider value displayed in the optional text.
          * Replaced by the attribute "digits".
          *
