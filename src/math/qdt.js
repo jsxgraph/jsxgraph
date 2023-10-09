@@ -33,6 +33,7 @@
 /*jslint nomen: true, plusplus: true*/
 
 import Mat from "./math";
+import Geometry from "./geometry";
 import Type from "../utils/type";
 
 /**
@@ -43,14 +44,18 @@ import Type from "../utils/type";
  * @param {Array} bbox Bounding box of the new quad (sub)tree.
  * @constructor
  */
-Mat.Quadtree = function (bbox) {
+Mat.Quadtree = function (bbox, config) {
+    config = config || {
+        capacity: 10
+    };
+
     /**
      * The maximum number of points stored in a quad tree node
      * before it is subdivided.
      * @type Number
      * @default 10
      */
-    this.capacity = 10;
+    this.capacity = config.capacity || 10;
 
     /**
      * Point storage.
@@ -90,6 +95,7 @@ Mat.Quadtree = function (bbox) {
      * @type JXG.Math.Quadtree
      */
     this.southWest = null;
+
 };
 
 Type.extend(
@@ -144,21 +150,26 @@ Type.extend(
          */
         subdivide: function () {
             var i,
-                l = this.points.length,
+                le = this.points.length,
                 mx = this.xlb + (this.xub - this.xlb) / 2,
                 my = this.ylb + (this.yub - this.ylb) / 2;
 
-            this.northWest = new Mat.Quadtree([this.xlb, this.yub, mx, my]);
-            this.northEast = new Mat.Quadtree([mx, this.yub, this.xub, my]);
-            this.southEast = new Mat.Quadtree([this.xlb, my, mx, this.ylb]);
-            this.southWest = new Mat.Quadtree([mx, my, this.xub, this.ylb]);
+            this.northWest = new Mat.Quadtree([this.xlb, this.yub, mx, my], this.config);
+            this.northEast = new Mat.Quadtree([mx, this.yub, this.xub, my], this.config);
+            this.southEast = new Mat.Quadtree([this.xlb, my, mx, this.ylb], this.config);
+            this.southWest = new Mat.Quadtree([mx, my, this.xub, this.ylb], this.config);
 
-            for (i = 0; i < l; i += 1) {
-                this.northWest.insert(this.points[i]);
-                this.northEast.insert(this.points[i]);
-                this.southEast.insert(this.points[i]);
-                this.southWest.insert(this.points[i]);
+            for (i = 0; i < le; i += 1) {
+                // this.northWest.insert(this.points[i]);
+                // this.northEast.insert(this.points[i]);
+                // this.southEast.insert(this.points[i]);
+                // this.southWest.insert(this.points[i]);
+                this.insert(this.points[i]);
             }
+
+            // We empty this node points
+            this.points.length = 0;
+            this.points = [];
         },
 
         /**
@@ -225,7 +236,81 @@ Type.extend(
             }
 
             return this._query(_x, _y);
+        },
+
+        /**
+         *
+         * @param {*} x
+         * @param {*} y
+         * @param {*} tol
+         * @returns {Boolean}
+         */
+        isIn: function (x, y, tol) {
+            var r, i, le;
+
+            if (this.contains(x, y)) {
+                le = this.points.length;
+                for (i = 0; i < le; i++) {
+                    if (Geometry.distance([x, y], this.points[i].usrCoords.slice(1), 2) < tol) {
+                        return true;
+                    }
+                }
+
+                if (this.northWest === null) {
+                    return false;
+                }
+
+                r = this.northWest.isIn(x, y, tol);
+                if (r) {
+                    return r;
+                }
+
+                r = this.northEast.isIn(x, y, tol);
+                if (r) {
+                    return r;
+                }
+
+                r = this.southEast.isIn(x, y, tol);
+                if (r) {
+                    return r;
+                }
+
+                r = this.southWest.isIn(x, y, tol);
+                if (r) {
+                    return r;
+                }
+            }
+
+            return false;
+        },
+
+        /**
+         *
+         * @returns {Array}
+         */
+        getAllPoints: function() {
+            var pointsList = [];
+            this.getAllPointsRecursive(pointsList);
+            return pointsList;
+        },
+
+        /**
+         *
+         * @param {Array} pointsList
+         * @private
+         */
+        getAllPointsRecursive(pointsList) {
+            if (this.northWest === null) {
+                Array.prototype.push.apply(pointsList, this.points.slice());
+                return;
+            }
+
+            this.northWest.getAllPointsRecursive(pointsList);
+            this.northEast.getAllPointsRecursive(pointsList);
+            this.southEast.getAllPointsRecursive(pointsList);
+            this.southWest.getAllPointsRecursive(pointsList);
         }
+
     }
 );
 
