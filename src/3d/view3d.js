@@ -832,7 +832,6 @@ JXG.createView3D = function (board, parents, attributes) {
             }
             d = Type.evaluate(p.visProp.infoboxdigits);
             infobox = view.board.infobox;
-            console.log(infobox.useLocale())
             if (d === 'auto') {
                 if (infobox.useLocale()) {
                     arr = [pre, '(', infobox.formatNumberLocale(p.X()), ' | ', infobox.formatNumberLocale(p.Y()), ' | ', infobox.formatNumberLocale(p.Z()), ')']
