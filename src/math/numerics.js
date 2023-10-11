@@ -3117,7 +3117,7 @@ Mat.Numerics = {
      * @memberof JXG.Math.Numerics
      */
     riemannsum: function (f, n, type, start, end) {
-        JXG.deprecated("Numerics.riemannsum()", "Numerics.riemann()");
+        JXG.deprecated("Numerics.riemannsum()", "Numerics.riemann()[2]");
         return this.riemann(f, n, type, start, end)[2];
     },
 

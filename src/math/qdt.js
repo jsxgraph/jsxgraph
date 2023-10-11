@@ -42,6 +42,8 @@ import Type from "../utils/type";
  * @name JXG.Math.Quadtree
  * @exports Mat.Quadtree as JXG.Math.Quadtree
  * @param {Array} bbox Bounding box of the new quad (sub)tree.
+ * @param {Object} config Configuration object. Default value: to {capacity: 10}
+ * 
  * @constructor
  */
 Mat.Quadtree = function (bbox, config) {

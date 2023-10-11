@@ -33,10 +33,17 @@
 /*jslint nomen: true, plusplus: true*/
 
 import Mat from "./math";
-import Type from "../utils/type";
 
 /**
- * Heap
+ * Instantiate a new heap.
+ * Elements of the heap are objects (node) with a property <tt>v</tt>.
+ * <p>
+ * The heap nodes are stored in a JavaScript array.
+ *
+ * @name JXG.Math.Heap
+ * @exports Mat.Heap as JXG.Math.Heap
+ *
+ * @constructor
  */
 Mat.Heap = function () {
     this.pq = [];
@@ -44,19 +51,28 @@ Mat.Heap = function () {
 };
 
 /**
- * public
+ * Clear the heap, i.e. remove all nodes.
  */
 Mat.Heap.prototype.empty = function () {
     this.pq = [];
     this.N = 0;
 };
 
+/**
+ * Insert element <tt>node</tt>into heap. An element is an object having at least the property <tt>v</tt>.
+ * @param {Object} node
+ */
 Mat.Heap.prototype.insert = function (node) {
     this.pq[this.N] = node;
     this.N++;
     this.fixUp(this.N);
 };
 
+/**
+ * Remove and return largest node in heap.
+ *
+ * @returns largest (in respect to property <tt>v</tt>) node
+ */
 Mat.Heap.prototype.delmax = function () {
     this.exchange(0, this.N - 1);
     this.fixDown(0, this.N - 1);
@@ -66,7 +82,9 @@ Mat.Heap.prototype.delmax = function () {
 };
 
 /**
- * private
+ * Restore heap properties from position k, i.e. positions < k.
+ * @param {Number} k
+ * @private
  */
 Mat.Heap.prototype.fixUp = function (k) {
     var i = k - 1;
@@ -77,9 +95,16 @@ Mat.Heap.prototype.fixUp = function (k) {
     }
 };
 
+/**
+ * Restore heap properties between positions k and N.
+ * @param {Number} k
+ * @param {Number} N
+ * @private
+ */
 Mat.Heap.prototype.fixDown = function (k, N) {
     var j,
         i = k;
+
     while (2 * i < N) {
         j = 2 * i;
 
@@ -96,6 +121,11 @@ Mat.Heap.prototype.fixDown = function (k, N) {
     }
 };
 
+/**
+ * Swap heap elements at position i and j
+ * @param {Number} i
+ * @param {Number} j
+ */
 Mat.Heap.prototype.exchange = function (i, j) {
     var t = this.pq[i];
     this.pq[i] = this.pq[j];
