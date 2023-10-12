@@ -1124,7 +1124,7 @@ JXG.extend(
          * @param  {Number} h width of the box in pixel
          * @return {Number}   Number of overlapping elements
          */
-        getNumberofConflicts: function (x, y, w, h) {
+        getNumberOfConflicts: function (x, y, w, h) {
             var count = 0,
                 i,
                 obj,
@@ -1163,33 +1163,22 @@ JXG.extend(
          * @returns {JXG.Text} Reference to the text object.
          */
         setAutoPosition: function () {
-            var x,
-                y,
-                cx,
-                cy,
+            var x, y, cx, cy,
                 anchorCoords,
                 // anchorX, anchorY,
                 w = this.size[0],
                 h = this.size[1],
-                start_angle,
-                angle,
+                start_angle, angle,
                 optimum = {
                     conflicts: Infinity,
                     angle: 0,
                     r: 0
                 },
-                max_r,
-                delta_r,
-                conflicts,
-                offset,
-                r,
+                max_r, delta_r,
+                conflicts, offset, r,
                 num_positions = 12,
                 step = (2 * Math.PI) / num_positions,
-                j,
-                dx,
-                dy,
-                co,
-                si;
+                j, dx, dy, co, si;
 
             if (
                 this === this.board.infobox ||
@@ -1212,7 +1201,7 @@ JXG.extend(
             dx = offset[0];
             dy = offset[1];
 
-            conflicts = this.getNumberofConflicts(cx + dx, cy - dy, w, h);
+            conflicts = this.getNumberOfConflicts(cx + dx, cy - dy, w, h);
             if (conflicts === 0) {
                 return this;
             }
@@ -1241,7 +1230,7 @@ JXG.extend(
                     x = cx + r * co;
                     y = cy - r * si;
 
-                    conflicts = this.getNumberofConflicts(x, y, w, h);
+                    conflicts = this.getNumberOfConflicts(x, y, w, h);
                     if (conflicts < optimum.conflicts) {
                         optimum.conflicts = conflicts;
                         optimum.angle = angle;
