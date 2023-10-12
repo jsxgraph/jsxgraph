@@ -1126,9 +1126,7 @@ JXG.extend(
          */
         getNumberOfConflicts: function (x, y, w, h) {
             var count = 0,
-                i,
-                obj,
-                le,
+                i, obj, le,
                 savePointPrecision;
 
             // Set the precision of hasPoint to half the max if label isn't too long
@@ -1208,8 +1206,8 @@ JXG.extend(
             // console.log(this.id, conflicts, w, h);
             // r = Geometry.distance([0, 0], offset, 2);
 
-            r = 12;
-            max_r = 28;
+            r = Type.evaluate(this.visProp.autopositionmindistance);
+            max_r = Type.evaluate(this.visProp.autopositionmaxdistance);
             delta_r = 0.2 * r;
 
             start_angle = Math.atan2(dy, dx);
@@ -1218,7 +1216,7 @@ JXG.extend(
             optimum.angle = start_angle;
             optimum.r = r;
 
-            while (optimum.conflicts > 0 && r < max_r) {
+            while (optimum.conflicts > 0 && r <= max_r) {
                 for (
                     j = 1, angle = start_angle + step;
                     j < num_positions && optimum.conflicts > 0;

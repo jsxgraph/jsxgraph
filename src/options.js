@@ -4821,7 +4821,37 @@ JXG.Options = {
          *
          *
          */
-        autoPosition: false
+        autoPosition: false,
+
+        /**
+         * The auto position algorithm tries to put a label to a conflict-free
+         * position around it's anchor element. For this, the algorithm tests 12 positions
+         * around the anchor element starting at a distance from the anchor
+         * defined here (in pixel).
+         *
+         * @name Label#autoPositionMinDistance
+         * @see Label#autoPosition
+         * @see Label#autoPositionMaxDistance
+         * @type Number
+         * @default 12
+         *
+         */
+        autoPositionMinDistance: 12,
+
+        /**
+         * The auto position algorithm tries to put a label to a conflict-free
+         * position around it's anchor element. For this, the algorithm tests 12 positions
+         * around the anchor element up to a distance from the anchor
+         * defined here (in pixel).
+         *
+         * @name Label#autoPositionMaxDistance
+         * @see Label#autoPosition
+         * @see Label#autoPositionMinDistance
+         * @type Number
+         * @default 28
+         *
+         */
+        autoPositionMaxDistance: 28
 
         /**#@-*/
     },
@@ -6124,7 +6154,7 @@ JXG.Options = {
         snapWidth: -1,      // -1 = deactivated
 
         /**
-         * List of values to snap to. If the glider is within snapValueDistance 
+         * List of values to snap to. If the glider is within snapValueDistance
          * (in user coordinate units) of one of these points,
          * then the glider snaps to that point.
          *
