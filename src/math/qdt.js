@@ -43,12 +43,13 @@ import Type from "../utils/type";
  * @exports Mat.Quadtree as JXG.Math.Quadtree
  * @param {Array} bbox Bounding box of the new quad (sub)tree.
  * @param {Object} config Configuration object. Default value: to {capacity: 10}
- * 
+ *
  * @constructor
  */
 Mat.Quadtree = function (bbox, config) {
     config = config || {
-        capacity: 10
+        capacity: 10,
+        pointType: 'coords'
     };
 
     /**
@@ -58,6 +59,14 @@ Mat.Quadtree = function (bbox, config) {
      * @default 10
      */
     this.capacity = config.capacity || 10;
+
+    /**
+     * Type of a point object. Possible values are:
+     * 'coords', 'object'.
+     * @type String
+     * @default 'coords'
+     */
+    this.pointType = config.pointType || 'coords';
 
     /**
      * Point storage.
@@ -119,8 +128,17 @@ Type.extend(
          * @returns {Boolean}
          */
         insert: function (p) {
-            if (!this.contains(p.usrCoords[1], p.usrCoords[2])) {
-                return false;
+            switch (this.pointType) {
+                case 'coords':
+                    if (!this.contains(p.usrCoords[1], p.usrCoords[2])) {
+                        return false;
+                    }
+                    break;
+                case 'object':
+                    if (!this.contains(p.x, p.y)) {
+                        return false;
+                    }
+                    break;
             }
 
             if (this.points.length < this.capacity) {
@@ -162,10 +180,6 @@ Type.extend(
             this.southWest = new Mat.Quadtree([mx, my, this.xub, this.ylb], this.config);
 
             for (i = 0; i < le; i += 1) {
-                // this.northWest.insert(this.points[i]);
-                // this.northEast.insert(this.points[i]);
-                // this.southEast.insert(this.points[i]);
-                // this.southWest.insert(this.points[i]);
                 this.insert(this.points[i]);
             }
 
@@ -217,7 +231,7 @@ Type.extend(
         },
 
         /**
-         * Retrieve the smallest quad tree that contains the given point.
+         * Retrieve the smallest quad tree that contains the given coordinate pair.
          * @name JXG.Math.Quadtree#_query
          * @param {JXG.Coords|Number} xp
          * @param {Number} y
@@ -252,11 +266,24 @@ Type.extend(
 
             if (this.contains(x, y)) {
                 le = this.points.length;
-                for (i = 0; i < le; i++) {
-                    if (Geometry.distance([x, y], this.points[i].usrCoords.slice(1), 2) < tol) {
-                        return true;
-                    }
-                }
+
+                switch (this.pointType) {
+                    case 'coords':
+                        for (i = 0; i < le; i++) {
+                            if (Geometry.distance([x, y], this.points[i].usrCoords.slice(1), 2) < tol) {
+                                return true;
+                            }
+                        }
+                        break;
+                    case 'object':
+                        for (i = 0; i < le; i++) {
+                            if (Geometry.distance([x, y], [this.points[i].x, this.points[i].y], 2) < tol) {
+                                return true;
+                            }
+                        }
+                        break;
+               }
+
 
                 if (this.northWest === null) {
                     return false;
