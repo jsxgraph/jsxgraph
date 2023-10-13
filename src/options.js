@@ -4281,7 +4281,18 @@ JXG.Options = {
 
         fixed: true,
         visible: true,
-        needsRegularUpdate: false
+        needsRegularUpdate: false,
+
+        /**
+         * List of attractor elements. If the distance of the foreignobject is less than
+         * attractorDistance the foreignobject is made to glider of this element.
+         *
+         * @name ForeignObject#attractors
+         *
+         * @type Array
+         * @default empty
+         */
+        attractors: []
 
         /**#@-*/
     },
