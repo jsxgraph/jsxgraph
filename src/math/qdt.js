@@ -46,7 +46,7 @@ import Type from "../utils/type";
  *
  * @constructor
  */
-Mat.Quadtree = function (bbox, config) {
+Mat.Quadtree = function (bbox, config, parent) {
     config = config || {
         capacity: 10,
         pointType: 'coords'
@@ -78,6 +78,15 @@ Mat.Quadtree = function (bbox, config) {
     this.xub = bbox[2];
     this.ylb = bbox[3];
     this.yub = bbox[1];
+
+    /**
+     * Parent quad tree or null if there is not parent.
+     *
+     * @name JXG.Math.Quadtree#northWest
+     * @type JXG.Math.Quadtree
+     *
+     */
+    this.parent = parent || null;
 
     /**
      * In a subdivided quad tree this represents the top left subtree.
@@ -123,7 +132,9 @@ Type.extend(
         },
 
         /**
-         * Insert a new point into this quad tree.
+         * Insert a new point into this quad tree. Do this only,
+         * if the point is not yet in the quadtree (test exactly).
+         *
          * @param {JXG.Coords} p
          * @returns {Boolean}
          */
@@ -174,10 +185,10 @@ Type.extend(
                 mx = this.xlb + (this.xub - this.xlb) / 2,
                 my = this.ylb + (this.yub - this.ylb) / 2;
 
-            this.northWest = new Mat.Quadtree([this.xlb, this.yub, mx, my], this.config);
-            this.northEast = new Mat.Quadtree([mx, this.yub, this.xub, my], this.config);
-            this.southEast = new Mat.Quadtree([this.xlb, my, mx, this.ylb], this.config);
-            this.southWest = new Mat.Quadtree([mx, my, this.xub, this.ylb], this.config);
+            this.northWest = new Mat.Quadtree([this.xlb, this.yub, mx, my], this.config, this);
+            this.northEast = new Mat.Quadtree([mx, this.yub, this.xub, my], this.config, this);
+            this.southEast = new Mat.Quadtree([this.xlb, my, mx, this.ylb], this.config, this);
+            this.southWest = new Mat.Quadtree([mx, my, this.xub, this.ylb], this.config, this);
 
             for (i = 0; i < le; i += 1) {
                 this.insert(this.points[i]);
@@ -238,7 +249,6 @@ Type.extend(
          * @returns {Boolean|JXG.Quadtree} The quad tree if the point is found, false
          * if none of the quad trees contains the point (i.e. the point is not inside
          * the root tree's AABB).
-         * @private
          */
         query: function (xp, y) {
             var _x, _y;

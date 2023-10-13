@@ -5,7 +5,6 @@ New features
 -----------
 
 - Slider snap values
-- Riemann sum: Display Simpson's rule as quadratic function
 - New text attributes `autoPositionMaxDistance`, `autoPositionMinDistance` for label positioning
 
 Improvements
@@ -13,6 +12,7 @@ Improvements
 
 - Fullscreen mode scaling is independent from original CSS
 - Fullscreen mode reacts to orientation change
+- Riemann sum: Display Simpson's rule as quadratic function
 - Enhance quadtree API
 
 Bug fixes
