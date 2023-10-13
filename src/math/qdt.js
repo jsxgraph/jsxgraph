@@ -52,13 +52,14 @@ Mat.Quadtree = function (bbox, config, parent) {
         pointType: 'coords'
     };
 
+    this.config = {};
     /**
      * The maximum number of points stored in a quad tree node
      * before it is subdivided.
      * @type Number
      * @default 10
      */
-    this.capacity = config.capacity || 10;
+    this.config.capacity = config.capacity || 10;
 
     /**
      * Type of a point object. Possible values are:
@@ -66,7 +67,7 @@ Mat.Quadtree = function (bbox, config, parent) {
      * @type String
      * @default 'coords'
      */
-    this.pointType = config.pointType || 'coords';
+    this.config.pointType = config.pointType || 'coords';
 
     /**
      * Point storage.
@@ -139,7 +140,7 @@ Type.extend(
          * @returns {Boolean}
          */
         insert: function (p) {
-            switch (this.pointType) {
+            switch (this.config.pointType) {
                 case 'coords':
                     if (!this.contains(p.usrCoords[1], p.usrCoords[2])) {
                         return false;
@@ -152,7 +153,7 @@ Type.extend(
                     break;
             }
 
-            if (this.points.length < this.capacity) {
+            if (this.points.length < this.config.capacity) {
                 this.points.push(p);
                 return true;
             }
@@ -277,7 +278,7 @@ Type.extend(
             if (this.contains(x, y)) {
                 le = this.points.length;
 
-                switch (this.pointType) {
+                switch (this.config.pointType) {
                     case 'coords':
                         for (i = 0; i < le; i++) {
                             if (Geometry.distance([x, y], this.points[i].usrCoords.slice(1), 2) < tol) {
