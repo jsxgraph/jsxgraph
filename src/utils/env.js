@@ -387,7 +387,7 @@ JXG.extend(
 
             doc = doc || document;
             // Borrowed from prototype.js
-            element = doc.getElementById(elementId);
+            element = (Type.isString(elementId)) ? doc.getElementById(elementId) : elementId;
             if (!Type.exists(element)) {
                 throw new Error(
                     "\nJSXGraph: HTML container element '" + elementId + "' not found."

@@ -140,13 +140,28 @@ JXG.Board = function (container, renderer, id,
      * The html-id of the html element containing the board.
      * @type String
      */
-    this.container = container;
+    this.container = ''; // container
 
     /**
      * Pointer to the html element containing the board.
      * @type Object
      */
-    this.containerObj = (Env.isBrowser ? this.document.getElementById(this.container) : null);
+    this.containerObj = null; // (Env.isBrowser ? this.document.getElementById(this.container) : null);
+
+    if (Type.isString(container)) {
+        // Hosting div is given as string
+        this.container = container; // container
+        this.containerObj = (Env.isBrowser ? this.document.getElementById(this.container) : null);
+    } else if (Env.isBrowser) {
+        // Hosting div is given as object pointer
+        this.containerObj = container;
+        this.container = this.containerObj.getAttribute('id');
+        if (this.container === null) {
+            // Set random id to this.container,
+            // but not to the DOM element
+            this.container = 'null' + parseInt(Math.random() * 100000000).toString();
+        }
+    }
 
     if (Env.isBrowser && renderer.type !== 'no' && this.containerObj === null) {
         throw new Error('\nJSXGraph: HTML container element "' + container + '" not found.');

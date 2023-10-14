@@ -82,7 +82,8 @@ JXG.SVGRenderer = function (container, dim) {
      */
     this.xlinkNamespace = "http://www.w3.org/1999/xlink";
 
-    // container is documented in AbstractRenderer
+    // container is documented in AbstractRenderer.
+    // Type node
     this.container = container;
 
     // prepare the div container and the svg root node for use with JSXGraph

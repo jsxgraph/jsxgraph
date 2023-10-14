@@ -91,18 +91,18 @@ release: core docs
 
 beta: docs
 	# $(WEBPACK) --config config/webpack.config.js
+	mkdir -p $(BETA)
 	cp $(OUTPUT)/*.js $(BETA)
 	cp $(OUTPUT)/*.mjs $(BETA)
 	cp $(OUTPUT)/*.map $(BETA)
 	cp $(OUTPUT)/*.css $(BETA)
-	rm -r $(BETA)/docs
+	rm -fr $(BETA)/docs
 	cp -r $(OUTPUT)/docs/ $(BETA)/docs
 	# Update version number in line 2 of file COPYRIGHT
 	sed -i '2s/.*/    JSXGraph $(VERSION)/' COPYRIGHT
 	# Prepend file to the jsxgraphcore.* files
 	cat COPYRIGHT $(BETA)/jsxgraphcore.js >$(BETA)/tmp.file; mv $(BETA)/tmp.file $(BETA)/jsxgraphcore.js
 	cat COPYRIGHT $(BETA)/jsxgraphcore.mjs >$(BETA)/tmp.file; mv $(BETA)/tmp.file $(BETA)/jsxgraphcore.mjs
-
 
 docs: core
 	# Set up tmp dir

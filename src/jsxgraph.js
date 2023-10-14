@@ -134,7 +134,7 @@ JXG.JSXGraph = {
         }
 
         if (typeof doc === "object" && box !== null) {
-            boxid = doc.getElementById(box);
+            boxid = (Type.isString(box)) ? doc.getElementById(box) : box;
 
             // Remove everything from the container before initializing the renderer and the board
             while (boxid.firstChild) {
@@ -239,7 +239,7 @@ JXG.JSXGraph = {
                 doc = document;
             }
 
-        node_jsx = doc.getElementById(container);
+        node_jsx = (Type.isString(container)) ? doc.getElementById(container) : container;
         doc_glob = node_jsx.ownerDocument; // This is the window.document element, needed below.
         parent = node_jsx.parentNode;
 
@@ -525,9 +525,9 @@ JXG.JSXGraph = {
         attributes = attributes || {};
         attr = this._setAttributes(attributes);
 
-            dimensions = Env.getDimensions(box, attr.document);
-            renderer = this.initRenderer(box, dimensions, attr.document, attr.renderer);
-            this._setARIA(box, attr);
+        dimensions = Env.getDimensions(box, attr.document);
+        renderer = this.initRenderer(box, dimensions, attr.document, attr.renderer);
+        this._setARIA(box, attr);
 
         /* User default parameters, in parse* the values in the gxt files are submitted to board */
         board = new Board(
