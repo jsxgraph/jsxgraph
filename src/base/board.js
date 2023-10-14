@@ -60,7 +60,8 @@ import Composition from './composition';
  * elements, managing mouse and touch events, etc. You probably don't want to use this constructor directly.
  * Please use {@link JXG.JSXGraph.initBoard} to initialize a board.
  * @constructor
- * @param {String} container The id or reference of the HTML DOM element the board is drawn in. This is usually a HTML div.
+ * @param {String|Object} container The id of or reference to the HTML DOM element
+ * the board is drawn in. This is usually a HTML div.
  * @param {JXG.AbstractRenderer} renderer The reference of a renderer.
  * @param {String} id Unique identifier for the board, may be an empty string or null or even undefined.
  * @param {JXG.Coords} origin The coordinates where the origin is placed, in user coordinates.

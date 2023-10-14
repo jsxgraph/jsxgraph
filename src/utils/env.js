@@ -363,7 +363,7 @@ JXG.extend(
 
         /**
          * Reads the width and height of an HTML element.
-         * @param {String} elementId The HTML id of an HTML DOM node.
+         * @param {String|Object} elementId id of or reference to an HTML DOM node.
          * @returns {Object} An object with the two properties width and height.
          */
         getDimensions: function (elementId, doc) {

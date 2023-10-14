@@ -183,6 +183,9 @@ JXG.createVectorField = function(board, parents, attributes) {
         if (Type.isArray(func)) {
             f0 = Type.createFunction(func[0], this.board, varnames);
             f1 = Type.createFunction(func[1], this.board, varnames);
+            /**
+             * @ignore
+             */
             this.F = function(x, y) { return [f0(x, y), f1(x, y)]; };
         } else {
             this.F = Type.createFunction(func, el.board, varnames);
@@ -399,6 +402,9 @@ JXG.createSlopeField = function(board, parents, attributes) {
     el.setF = function(func, varnames) {
         var f = Type.createFunction(func, el.board, varnames);
 
+        /**
+         * @ignore
+         */
         this.F = function(x, y) {
             var z = f(x, y),
                 nrm = Math.sqrt(1 + z * z);

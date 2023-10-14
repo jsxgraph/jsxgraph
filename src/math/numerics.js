@@ -2961,10 +2961,10 @@ Mat.Numerics = {
      * Helper function to create curve which displays Riemann sums.
      * Compute coordinates for the rectangles showing the Riemann sum.
      * <p>
-     * In case of type "simpson" and "trapezoidal", the horizontal line approximating the function value 
-     * is replaced by a parabola or a secant. IN case of "simpson", 
-     * the parabola is approximated visually by a polygonal chain of fixed step width. 
-     * 
+     * In case of type "simpson" and "trapezoidal", the horizontal line approximating the function value
+     * is replaced by a parabola or a secant. IN case of "simpson",
+     * the parabola is approximated visually by a polygonal chain of fixed step width.
+     *
      * @param {Function,Array} f Function or array of two functions.
      * If f is a function the integral of this function is approximated by the Riemann sum.
      * If f is an array consisting of two functions the area between the two functions is filled
