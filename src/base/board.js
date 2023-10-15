@@ -149,6 +149,7 @@ JXG.Board = function (container, renderer, id,
      */
     this.containerObj = null; // (Env.isBrowser ? this.document.getElementById(this.container) : null);
 
+    // Set this.container and this.containerObj
     if (Type.isString(container)) {
         // Hosting div is given as string
         this.container = container; // container

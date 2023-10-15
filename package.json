@@ -2,7 +2,7 @@
   "name": "jsxgraph",
   "description": "Interactive geometry, plotting, visualization",
   "homepage": "https://jsxgraph.org",
-  "version": "1.6.1",
+  "version": "1.6.2",
   "exports": {
     "types": "./src/index.d.ts",
     "default": "./src/index.js"

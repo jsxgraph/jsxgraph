@@ -1,3 +1,21 @@
+1.6.2
+====
+
+New features
+-----------
+
+- `JXG.JSXGraph.initBoard()` accepts a reference to the hosting HTML element
+
+Improvements
+------------
+
+- Quadtree functionality
+
+Bug fixes
+---------
+
+- `foreignobject` regression
+
 1.6.1
 ====
 
