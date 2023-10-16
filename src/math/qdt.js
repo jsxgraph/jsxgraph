@@ -75,6 +75,7 @@ Mat.Quadtree = function (bbox, config, parent) {
      * @type Array
      */
     this.points = [];
+
     this.xlb = bbox[0];
     this.xub = bbox[2];
     this.ylb = bbox[3];
@@ -123,7 +124,10 @@ Type.extend(
     Mat.Quadtree.prototype,
     /** @lends JXG.Math.Quadtree.prototype */ {
         /**
-         * Checks if the given coordinates are inside the quad tree.
+         * Checks if the given coordinates are inside of the boundaries of the quad tree.
+         * The quad tree is open to the left and botton and closed to
+         * right and top.
+         * 
          * @param {Number} x
          * @param {Number} y
          * @returns {Boolean}
@@ -133,11 +137,11 @@ Type.extend(
         },
 
         /**
-         * Insert a new point into this quad tree. Do this only,
-         * if the point is not yet in the quadtree (test exactly).
+         * Insert a new point into this quad tree if it is inside of 
+         * the quad tree's boundaries.
          *
          * @param {JXG.Coords} p
-         * @returns {Boolean}
+         * @returns {Boolean} true if insert succeeded, false otherwise.
          */
         insert: function (p) {
             switch (this.config.pointType) {
@@ -153,11 +157,12 @@ Type.extend(
                     break;
             }
 
-            if (this.points.length < this.config.capacity) {
+            if (this.points.length < this.config.capacity && this.northWest === null) {
                 this.points.push(p);
                 return true;
             }
 
+            // At this point the point has to be inserted into a subtree.
             if (this.northWest === null) {
                 this.subdivide();
             }
@@ -191,13 +196,12 @@ Type.extend(
             this.southEast = new Mat.Quadtree([this.xlb, my, mx, this.ylb], this.config, this);
             this.southWest = new Mat.Quadtree([mx, my, this.xub, this.ylb], this.config, this);
 
-            for (i = 0; i < le; i += 1) {
-                this.insert(this.points[i]);
-            }
-
-            // We empty this node points
-            this.points.length = 0;
-            this.points = [];
+            // for (i = 0; i < le; i++) {
+            //     if (this.northWest.insert(this.points[i])) { continue; }
+            //     if (this.northEast.insert(this.points[i])) { continue; }
+            //     if (this.southEast.insert(this.points[i])) { continue; }
+            //     this.southWest.insert(this.points[i]);
+            // }
         },
 
         /**
@@ -266,13 +270,14 @@ Type.extend(
         },
 
         /**
-         *
-         * @param {*} x
-         * @param {*} y
-         * @param {*} tol
+         * Check if the quad tree has a point which is inside of a sphere of 
+         * radius tol around [x, y].
+         * @param {Number} x
+         * @param {Number} y
+         * @param {Number} tol
          * @returns {Boolean}
          */
-        isIn: function (x, y, tol) {
+        hasPoint: function (x, y, tol) {
             var r, i, le;
 
             if (this.contains(x, y)) {
@@ -300,22 +305,22 @@ Type.extend(
                     return false;
                 }
 
-                r = this.northWest.isIn(x, y, tol);
+                r = this.northWest.hasPoint(x, y, tol);
                 if (r) {
                     return r;
                 }
 
-                r = this.northEast.isIn(x, y, tol);
+                r = this.northEast.hasPoint(x, y, tol);
                 if (r) {
                     return r;
                 }
 
-                r = this.southEast.isIn(x, y, tol);
+                r = this.southEast.hasPoint(x, y, tol);
                 if (r) {
                     return r;
                 }
 
-                r = this.southWest.isIn(x, y, tol);
+                r = this.southWest.hasPoint(x, y, tol);
                 if (r) {
                     return r;
                 }
@@ -340,8 +345,9 @@ Type.extend(
          * @private
          */
         getAllPointsRecursive(pointsList) {
+            Array.prototype.push.apply(pointsList, this.points.slice());
+
             if (this.northWest === null) {
-                Array.prototype.push.apply(pointsList, this.points.slice());
                 return;
             }
 
