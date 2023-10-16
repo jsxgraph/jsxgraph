@@ -1,10 +1,251 @@
+1.6.2
+====
+
+New features
+-----------
+
+- `JXG.JSXGraph.initBoard()` accepts a reference to the hosting HTML element
+
+Improvements
+------------
+
+- Quadtree functionality
+
+Bug fixes
+---------
+
+- `foreignobject` regression
+
+1.6.1
+====
+
+New features
+-----------
+
+- Slider snap values
+- New text attributes `autoPositionMaxDistance`, `autoPositionMinDistance` for label positioning
+
+Improvements
+------------
+
+- Fullscreen mode scaling is independent from original CSS
+- Fullscreen mode reacts to orientation change
+- Riemann sum: Display Simpson's rule as quadratic function
+- Enhance quadtree API
+
+Bug fixes
+---------
+
+- API docs
+- Runge-Kutta method
+
+1.6.0
+====
+
+New features
+-----------
+
+- New elements `vectorfield` and `slopefield`
+- New element `smartlabel` for displaying measurements
+- New method: `board.setAttribute()`
+- Add internationalization for formatting numbers: new attribute `intl`
+- Dotted lines (with attribute `dash:7`)
+- New attribute `dashScale` for line dashes
+- Allow KaTeX macros
+- Line elements: New values for label attribute `position:first' and 'position:last'
+- Transformations can handle HTML texts now
+- New board attributes: `registerResizeEvent` and `registerFullscreenEvent`
+
+Improvements
+------------
+
+- New circle method `circle.Perimeter()`
+- New line method `line.Slope()`
+- New polygon method "L()", alias for Perimeter()
+- `JXG.Math.Numerics`: New methods getLagrangePolynomialCoefficients, f.getCoefficients
+- New method `Sector.setRadius`
+- Allow all text elements to be rotated
+- 3D: Improved API and bug fixes
+- 3D: Allow vertical movements of 3D points by pressing the shift key
+- 3D: add method `removeObject`, `set/getAttribute`
+- 3D: azimuth rotates around center of box, not around origin
+- Keyboard control: move texts and polygons, keep elements highlighted while having focus
+- Much improved two-finger handling of objects
+- Logging of user activity: add more data, like positions
+- Improved TypeScript support
+- API documentation
+- Intersections: allow function as number of the intersection
+- Metapost curves: new API, improved support of tension, curl, ...
+- Allow slashes in IDs, i.e. SVG IDs are escaped.
+- Numerical stability of path clipping
+- New method `JXG.isBoard()`
+- Add attribute `lineCap` for circles
+- foreignObjects has new default attribute `needsRegularUpdate:false`
+- Make touchpoint offset dependent on point visibility
+- PointerDownListener: Add parameter to prevent evt canceling
+- Refactor ticks, especially insertTicks algorithm
+- Ticks: mark attribute `precision` as deprecated
+- Add missing options entries for various derived elements like tangent
+- Enable infobox attributes as sub-attribute of the board
+- New attribute `polygon.highlightByStrokeWidth``
+- Add pointerleave listener
+
+Bug fixes
+---------
+
+- Dependency check for transformations. This bug broke reflections and mirror elements
+- `hasPoint` method of curves of Bezier degree 3
+- Fix regression: dragging of lines
+- Triangles were hexagons
+- intersection of polygons with line through infinite point
+- Add and remove polygon vertices
+- `circle.setRadius(0)``
+- Attributes for foreignobject
+- 3D panning
+- Invisible button, checkbox, input element was not created correctly
+- Point face 'triangleup'
+- Out of memory bug for grid size 0
+- `hasPoint` if one axis is "flipped"
+- Some API doc hyperrefs
+- Imports in `index.js`
+- JessieCode dump: remove name conflict of function variables and object names
+- Projection of glider to curve, if curve is partly undefined.
+- Ignore touchFirstPoint, touchLastPoint for invisible points
+- Initial positioning with snapToGrid
+- Jessiecode compile(): introduce `needsAngleBrackets` to distinguish parenthesis in functions and property delimiters.
+- SVG dump: remove `&quot;` from URLs
+- Numerical instability in `meetLineLine`
+- Ticks: fix numerical instability with includeBoundaries
+- Visibility issue if a polygon becomes undefined
+- Touch events: executed twice
+- polygons and snapToGrid: prevent rotation, scaling by two fingers
+- Correct symbolic simplification
+
+1.5.0
+====
+
+New features
+-----------
+
+- API change in JSXCompressor. Old: `JXG.decompress` New: `JSXCompressor.default.decompress`
+- Code base switched from AMD to ES6 imports
+- New attributes `majorTickEndings`, `ignoreInfiniteTickEndings`
+- New math class Mat.Heap
+- New board attribute `browserPan`: allows to scroll web page by swiping in JSXGraph board
+- New element attribute `shadow`: enables individual shadows for each stroke element (in SVG)
+- New turtle methods: getPenColor, getHighlightPenColor, getPenSize
+- New events for keyboard handling:
+    - keymove for board
+    - keydrag for elements
+- New board attribute fullscreen{ scale: 0.85 }
+- New board attribute `logging`: enables logs of user activity
+- New attribute transitionProperties: enables more flexible transitions
+- New point faces | ('divide') and - ('minus')
+- New attributes distanceX/Y for infobox element
+
+Improvements
+------------
+
+- Stability of bounding box after orientation changes or resizes if `keepaspectratio=true`
+- Remove all 3rd party dependencies of jsxgraphcore.js, e.g. canvas.
+- Ecosystem:
+    - .gitignore, Makefile, package.json
+    - Add github actions
+    - Add `distrib/jsxgraphcore.js` and `distrib/jsxgraphsrc.js` to .gitignore
+    - Update README.md
+    - Add version number to API references
+- Add unit tests
+- Continuous improvement of `index.d.ts`
+- Deep merging of attributes: new method `mergeAttr` in `env.js`
+- Merge document attribute as black box instead of object (shadowDOM)
+- Improve shadow DOM support
+- Improve browserless support
+- API docs
+- Click on slider triggers 'drag' event
+- Add dependence on elements when creating JessieCode function
+- startAnimation: allow functions as parameters
+- Update JSXCompressor package
+
+Bug fixes
+---------
+
+- 3D curves
+- Swap ids of navigation buttons up/down
+- Coords event handler
+- Pass explicit reference to $jc$ in jessiecode.js
+- inherited visibility of hatch
+- Keep resized view centered if not setting bounding box
+- Set renderer argument when loading board from string
+- Some fixes for IE11 compatibility
+- Fix regression in snapToGrid
+- updateContainerDims: avoid NaN when containerObj is not attached to the page
+- Remove the global variable `x_internalload`
+- Speed improvement in defaultAxes
+
+1.4.6
+====
+
+New features
+-----------
+
+- New feature: ids for navigation buttons
+- New ticks attribute `ticksPerLabel`: allows minor ticks to be labelled as well
+- Attribute `hasInnerPoints` for curves
+- Set evenodd fill rule for polygon fills
+
+Improvements
+------------
+
+- Refactor 3D API
+- Refactor text handling (MathJax / JessieCode / HTML)
+- Allow functions as input for labels of checkbox, input and button
+- TypeScript: fontUnit added to TextOptions
+- Clipping: handle more extreme cases
+- Fullscreen mode support independent from browser zoom level (webkit)
+
+Bug fixes
+---------
+
+- Conflicting 2D and 3D calls
+- polygonalchain: add / remove points
+- Replace fullscreen icon by SVG image
+- Problems with integral element / gliders on function graphs which are not defined everywhere (like log)
+
+1.4.5
+====
+
+New features
+-----------
+
+- New element attribute `rotatable`
+- 3D points: new method setPosition3D()
+
+Improvements
+------------
+
+- Allow value tags in strings in combination with MathJax
+- Gradually improvement of index.d.ts
+- API doc
+- JSXGraph in shadowDOM
+- FullscreenMode in shadowDOM
+- Speed improvement COBYLA
+
+Bug fixes
+---------
+
+- Handling of backslashes in strings. Improves MathJax in JessieCode
+- Keyboard mode: allow o-key and arrow keys in input fields
+- Precision problem in tick labels
+- Fix regression: snapToGrid for lines
+- Fix regression: resizeObserver was broken in v1.4.4
+
 1.4.4
 ====
 
 New features
 -----------
 
-- Intersecting points of polygons with other elements 
+- Intersecting points of polygons with other elements
 - Support usage of jsxgraph in shadowDOM
 
 Improvements
@@ -72,7 +313,7 @@ New features
 - API change: the number of digits in a text element is now set generally with
 the attribute `digits`. The attribute "precision" is used to decide if
 a pointer device is close enough to a JSXGraph element to be considered as touching the element.
-The old attributes `precision` for the number of digits are still working 
+The old attributes `precision` for the number of digits are still working
 but marked as deprecated.
 
 Improvements

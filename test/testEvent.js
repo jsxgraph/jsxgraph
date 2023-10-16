@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2022
+    Copyright 2008-2023
         Matthias Ehmann,
         Carsten Miller,
         Andreas Walter,
@@ -23,19 +23,21 @@
     GNU Lesser General Public License for more details.
 
     You should have received a copy of the GNU Lesser General Public License and
-    the MIT License along with JSXGraph. If not, see <http://www.gnu.org/licenses/>
-    and <http://opensource.org/licenses/MIT/>.
+    the MIT License along with JSXGraph. If not, see <https://www.gnu.org/licenses/>
+    and <https://opensource.org/licenses/MIT/>.
  */
 describe("Test board events", function () {
-    var board, target,
+    var board,
+        target,
         pointerId = 0;
 
     // 1 user unit = 100px
-    document.getElementsByTagName('body')[0].innerHTML = '<div id="jxgbox" style="width: 500px; height: 500px;"></div>';
-    target = document.getElementById('jxgbox');
+    document.getElementsByTagName("body")[0].innerHTML =
+        '<div id="jxgbox" style="width: 500px; height: 500px;"></div>';
+    target = document.getElementById("jxgbox");
 
-    board = JXG.JSXGraph.initBoard('jxgbox', {
-        renderer: 'svg',
+    board = JXG.JSXGraph.initBoard("jxgbox", {
+        renderer: "svg",
         axis: false,
         grid: false,
         boundingbox: [0, 5, 5, 0],
@@ -54,10 +56,10 @@ describe("Test board events", function () {
         var spy, event;
         spy = jasmine.createSpy("xyzevent");
 
-        document.addEventListener('xyzevent', function () {
+        document.addEventListener("xyzevent", function () {
             spy();
         });
-        event = new CustomEvent('xyzevent', {
+        event = new CustomEvent("xyzevent", {
             bubbles: true,
             cancelable: true,
             view: window
@@ -82,19 +84,19 @@ describe("Test board events", function () {
 
         pointerId++;
 
-        p = board.create('point', [0, 0]);
+        p = board.create("point", [0, 0]);
 
-        evt = new PointerEvent('pointerdown', {
+        evt = new PointerEvent("pointerdown", {
             pointerId: pointerId,
             clientX: 1,
-            clientY: 499
+            clientY: 495
         });
         board.pointerDownListener(evt);
 
-        evt = new PointerEvent('pointermove', {
+        evt = new PointerEvent("pointermove", {
             pointerId: pointerId,
             clientX: 201,
-            clientY: 499
+            clientY: 495
         });
         board.pointerMoveListener(evt);
         board.pointerUpListener(evt);
@@ -106,16 +108,16 @@ describe("Test board events", function () {
         var p, evt;
 
         pointerId++;
-        p = board.create('point', [0, 0], { snapToGrid: true });
+        p = board.create("point", [0, 0], { snapToGrid: true });
 
-        evt = new PointerEvent('pointerdown', {
+        evt = new PointerEvent("pointerdown", {
             pointerId: pointerId,
             clientX: 1,
             clientY: 499
         });
         board.pointerDownListener(evt);
 
-        evt = new PointerEvent('pointermove', {
+        evt = new PointerEvent("pointermove", {
             pointerId: pointerId,
             clientX: 131,
             clientY: 280
@@ -140,13 +142,13 @@ describe("Test board events", function () {
 
         expect(board.hasKeyboardHandlers).toBeTrue();
 
-        p = board.create('point', [0, 0], { id: 'p1' });
+        p = board.create("point", [0, 0], { id: "p1" });
         evt = {
             target: {
                 id: p.rendNode.id
             },
             keyCode: 38,
-            key: ''
+            key: ""
         };
         board.keyDownListener(evt);
         board.keyDownListener(evt);
@@ -162,13 +164,13 @@ describe("Test board events", function () {
 
         expect(board.hasKeyboardHandlers).toBeTrue();
 
-        p = board.create('point', [0, 0], { id: 'p1' });
+        p = board.create("point", [0, 0], { id: "p1" });
         evt = {
             target: {
                 id: p.rendNode.id
             },
             keyCode: 38,
-            key: ''
+            key: ""
         };
 
         board.keyDownListener(evt);
@@ -179,16 +181,16 @@ describe("Test board events", function () {
         board.keyDownListener(evt);
         expect(p.Y()).toBeCloseTo(1, 15);
 
-        p.setAttribute({ snapToGrid: false,
+        p.setAttribute({
+            snapToGrid: false,
             attractToGrid: true,
             attractorDistance: 0.27,
-            attractorunit: 'user' });
+            attractorunit: "user"
+        });
         board.keyDownListener(evt);
         board.keyDownListener(evt);
         board.keyDownListener(evt);
 
         expect(p.Y()).toBeCloseTo(2, 15);
-
     });
-
 });

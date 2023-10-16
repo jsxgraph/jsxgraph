@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2022
+    Copyright 2008-2023
         Matthias Ehmann,
         Carsten Miller,
         Andreas Walter,
@@ -23,18 +23,20 @@
     GNU Lesser General Public License for more details.
 
     You should have received a copy of the GNU Lesser General Public License and
-    the MIT License along with JSXGraph. If not, see <http://www.gnu.org/licenses/>
-    and <http://opensource.org/licenses/MIT/>.
+    the MIT License along with JSXGraph. If not, see <https://www.gnu.org/licenses/>
+    and <https://opensource.org/licenses/MIT/>.
  */
 describe("Test regular polygons", function () {
-    var board, target,
+    var board,
+        target,
         pointerId = 0;
 
-    document.getElementsByTagName('body')[0].innerHTML = '<div id="jxgbox" style="width: 500px; height: 500px;"></div>';
-    target = document.getElementById('jxgbox');
+    document.getElementsByTagName("body")[0].innerHTML =
+        '<div id="jxgbox" style="width: 500px; height: 500px;"></div>';
+    target = document.getElementById("jxgbox");
 
-    board = JXG.JSXGraph.initBoard('jxgbox', {
-        renderer: 'svg',
+    board = JXG.JSXGraph.initBoard("jxgbox", {
+        renderer: "svg",
         axis: false,
         grid: false,
         boundingbox: [-10, 10, 10, -10],
@@ -49,28 +51,27 @@ describe("Test regular polygons", function () {
         showNavigation: false
     });
 
-
     it("Test drag reg. polygon", function () {
-        var p = [], 
+        var p = [],
             evt;
 
-        p[0] = board.create('point', [-2, 0]);
-        p[1] = board.create('point', [2, 0]);
-        p[2] = board.create('point', [2, 4]);
-        p[3] = board.create('point', [-2, 3]);
-        board.create('regularpolygon', p, {hasInnerPoints: true});
+        p[0] = board.create("point", [-2, 0]);
+        p[1] = board.create("point", [2, 0]);
+        p[2] = board.create("point", [2, 4]);
+        p[3] = board.create("point", [-2, 3]);
+        board.create("regularpolygon", p, { hasInnerPoints: true });
 
         expect(p[3].coords.scrCoords[1]).toBeCloseTo(200, 12);
         expect(p[3].coords.scrCoords[2]).toBeCloseTo(150, 12);
 
-        evt = new PointerEvent('pointerdown', {
+        evt = new PointerEvent("pointerdown", {
             pointerId: pointerId,
             clientX: 200,
             clientY: 150
         });
         board.pointerDownListener(evt);
 
-        evt = new PointerEvent('pointermove', {
+        evt = new PointerEvent("pointermove", {
             pointerId: pointerId,
             clientX: 200,
             clientY: 100
@@ -81,14 +82,14 @@ describe("Test regular polygons", function () {
         expect(p[3].coords.scrCoords[2]).toBeCloseTo(150, 12);
 
         pointerId++;
-        evt = new PointerEvent('pointerdown', {
+        evt = new PointerEvent("pointerdown", {
             pointerId: pointerId,
             clientX: 300,
             clientY: 250
         });
         board.pointerDownListener(evt);
 
-        evt = new PointerEvent('pointermove', {
+        evt = new PointerEvent("pointermove", {
             pointerId: pointerId,
             clientX: 200,
             clientY: 150
@@ -106,7 +107,5 @@ describe("Test regular polygons", function () {
 
         expect(p[3].coords.scrCoords[1]).toBeCloseTo(100, 12);
         expect(p[3].coords.scrCoords[2]).toBeCloseTo(250, 12);
-
     });
-
 });

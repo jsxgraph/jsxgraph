@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2022
+    Copyright 2008-2023
         Matthias Ehmann,
         Carsten Miller,
         Andreas Walter,
@@ -23,18 +23,20 @@
     GNU Lesser General Public License for more details.
 
     You should have received a copy of the GNU Lesser General Public License and
-    the MIT License along with JSXGraph. If not, see <http://www.gnu.org/licenses/>
-    and <http://opensource.org/licenses/MIT/>.
+    the MIT License along with JSXGraph. If not, see <https://www.gnu.org/licenses/>
+    and <https://opensource.org/licenses/MIT/>.
  */
 describe("Test angles", function () {
-    var board, target,
+    var board,
+        target,
         pointerId = 0;
 
-    document.getElementsByTagName('body')[0].innerHTML = '<div id="jxgbox" style="width: 500px; height: 500px;"></div>';
-    target = document.getElementById('jxgbox');
+    document.getElementsByTagName("body")[0].innerHTML =
+        '<div id="jxgbox" style="width: 500px; height: 500px;"></div>';
+    target = document.getElementById("jxgbox");
 
-    board = JXG.JSXGraph.initBoard('jxgbox', {
-        renderer: 'svg',
+    board = JXG.JSXGraph.initBoard("jxgbox", {
+        renderer: "svg",
         axis: false,
         grid: false,
         boundingbox: [-5, 5, 5, -5],
@@ -49,31 +51,28 @@ describe("Test angles", function () {
         showNavigation: false
     });
 
-
     it("Test bidrectional setAngle", function () {
-        var A, B, C, angle, phi,
-            evt;
+        var A, B, C, angle, phi, evt;
 
+        phi = Math.PI / 2;
+        A = board.create("point", [3, 0]);
+        B = board.create("point", [0, 0]);
+        C = board.create("point", [2, 2]);
 
-        phi = Math.PI/2;
-        A = board.create('point', [3, 0]);
-        B = board.create('point', [0, 0]);
-        C = board.create('point', [2, 2]);
-
-        angle = board.create('angle', [A, B, C], {radius: 'auto'});
+        angle = board.create("angle", [A, B, C], { radius: "auto" });
         angle.setAngle(phi);
         expect(C.X()).toBeCloseTo(0, 12);
         expect(C.Y()).toBeCloseTo(3, 12);
-        
+
         // Move A
-        evt = new PointerEvent('pointerdown', {
+        evt = new PointerEvent("pointerdown", {
             pointerId: pointerId,
             clientX: 400,
             clientY: 250
         });
         board.pointerDownListener(evt);
 
-        evt = new PointerEvent('pointermove', {
+        evt = new PointerEvent("pointermove", {
             pointerId: pointerId,
             clientX: 250,
             clientY: 100
@@ -85,14 +84,14 @@ describe("Test angles", function () {
 
         // Move C
         pointerId++;
-        evt = new PointerEvent('pointerdown', {
+        evt = new PointerEvent("pointerdown", {
             pointerId: pointerId,
             clientX: 100,
             clientY: 250
         });
         board.pointerDownListener(evt);
 
-        evt = new PointerEvent('pointermove', {
+        evt = new PointerEvent("pointermove", {
             pointerId: pointerId,
             clientX: 250,
             clientY: 100
@@ -101,7 +100,5 @@ describe("Test angles", function () {
         board.pointerUpListener(evt);
         expect(A.X()).toBeCloseTo(3, 12);
         expect(A.Y()).toBeCloseTo(0, 12);
-    
     });
-
 });

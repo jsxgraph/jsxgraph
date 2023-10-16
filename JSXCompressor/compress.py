@@ -22,11 +22,11 @@
     GNU Lesser General Public License for more details.
 
     You should have received a copy of the GNU Lesser General Public License
-    along with JSXGraph.  If not, see <http://www.gnu.org/licenses/>.
+    along with JSXGraph.  If not, see <https://www.gnu.org/licenses/>.
 '''
 import sys
 import os
-import urllib
+import urllib.request, urllib.parse, urllib.error
 import base64
 import zlib
 
@@ -40,6 +40,5 @@ if __name__ == '__main__':
         sys.exit(0) 
     f = open(filename, "r")
     text = f.read()
-    text = base64.b64encode(zlib.compress(urllib.quote(text), 9))
-    print text
+    print(base64.b64encode(zlib.compress(urllib.parse.quote(text).encode(), 9)).decode())
     

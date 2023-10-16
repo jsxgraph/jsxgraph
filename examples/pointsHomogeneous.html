@@ -2,7 +2,7 @@
 <head>
    <title>JSXGraph example</title>
    <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
-   <script type="text/javascript" src="../src/loadjsxgraph.js"></script>
+   <script type="text/javascript" src="../distrib/jsxgraphcore.js"></script>
 </head>
 <body>
 <h2>Points and lines</h2>
@@ -19,20 +19,20 @@
 
         board = JXG.JSXGraph.initBoard('jxgbox', {originX: 250, originY: 250, unitX: 25, unitY: 25});
         var p = [];
-        p[0] = board.createElement('point', [1.0,-2.4,4.0], {style:6}); 
-        p[1] = board.createElement('point', [1.0,2.28,3], {style:6,name:"B"}); 
-        p[2] = board.createElement('point', [1.0,0.32,1.96], {style:6,name:"C"}); 
-        p[3] = board.createElement('point', [12.648,29.22368,5.90784], {style:6,name:"D"}); 
-        p[4] = board.createElement('point', [9.255999,-21.828159,-8.16608], {style:6,name:"E"}); 
-        p[5] = board.createElement('point', [0,3357.549,28.6970], {style:6,name:"F"}); 
-        p[6] = board.createElement('point', [0,1,2], {style:6,name:"G"}); 
+        p[0] = board.createElement('point', [1.0,-2.4,4.0], {style:6});
+        p[1] = board.createElement('point', [1.0,2.28,3], {style:6,name:"B"});
+        p[2] = board.createElement('point', [1.0,0.32,1.96], {style:6,name:"C"});
+        p[3] = board.createElement('point', [12.648,29.22368,5.90784], {style:6,name:"D"});
+        p[4] = board.createElement('point', [9.255999,-21.828159,-8.16608], {style:6,name:"E"});
+        p[5] = board.createElement('point', [0,3357.549,28.6970], {style:6,name:"F"});
+        p[6] = board.createElement('point', [0,1,2], {style:6,name:"G"});
 
-        //board.createElement('line', [p[1],p[2]], {}); 
-        board.createElement('line', [p[1],p[5]], {name:"x"}); 
-        board.createElement('line', [p[4],p[5]]); 
+        //board.createElement('line', [p[1],p[2]], {});
+        board.createElement('line', [p[1],p[5]], {name:"x"});
+        board.createElement('line', [p[4],p[5]]);
 
-        board.createElement('line', [p[0],p[6]]); 
-        
+        board.createElement('line', [p[0],p[6]]);
+
   /* ]]> */
   </script>
 </body>

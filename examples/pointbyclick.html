@@ -3,7 +3,7 @@
     <title>JSXGraph example</title>
     <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
     <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.3/jquery.min.js"></script>
-    <script type="text/javascript" src="../src/loadjsxgraph.js"></script>
+    <script type="text/javascript" src="../distrib/jsxgraphcore.js"></script>
 </head>
 <body>
 
@@ -25,12 +25,12 @@
             // bestFit, the best-fitting circle or line is found by least-squares fitting.
             //
             bestFit = function(p, testOnly) {
-                var i, angle, co, si, 
-                    delta = 0.8, 
+                var i, angle, co, si,
+                    delta = 0.8,
                     isLine = false,
                     M = [], y = [], MT, B, c, z, n, d, xm, ym, r;
- 
-                // Having constructed the points, we can fit a circle 
+
+                // Having constructed the points, we can fit a circle
                 // through the point set, consisting of n points.
                 // The (n times 3) matrix consists of
                 //   x_1, y_1, 1
@@ -39,15 +39,15 @@
                 //   x_n, y_n, 1
                 // where x_i, y_i is the position of point p_i
                 // The vector y of length n consists of
-                //    x_i*x_i+y_i*y_i 
+                //    x_i*x_i+y_i*y_i
                 // for i=1,...n.
-                
+
                 n = p.length;
                 for (i=0;i<n;i++) {
                     M.push([p[i].length ? p[i][0] : p[i].X(), p[i].length ? p[i][1] : p[i].Y(), 1.0]);
                     y.push(M[i][0]*M[i][0]+M[i][1]*M[i][1]);
                 }
- 
+
                 // Now, the general linear least-square fitting problem
                 //    min_z || M*z - y||_2^2
                 // is solved by solving the system of linear equations
@@ -70,15 +70,15 @@
                     }
                 }
                 if (isLine) {
-                    if (!testOnly) 
+                    if (!testOnly)
                         board.create('line',[points[0], points[points.length-1]], {strokeColor:'green'});
                 } else {
-                    if (!testOnly) 
+                    if (!testOnly)
                         board.create('circle', [[xm,ym],r]);
                 }
                 return isLine;
             }, // End of bestFit
-            
+
             /*
             bestFitOld = function(p) {
                 var i, j, r = [], rbar = [], A = [
@@ -158,7 +158,7 @@
                 }
             }, // end of bestFit()
             */
-            
+
             getMouseCoords = function(e) {
                 if (!document.all) { // not IE
                     var em = document.createEvent('MouseEvents'), i = 0;
@@ -168,7 +168,7 @@
                             e.targetTouches[i].screenX, e.targetTouches[i].screenY,
                             e.targetTouches[i].clientX, e.targetTouches[i].clientY,
                             false, false, false, false, 0, null);
-                        
+
                         e = em;
                     }
                 }
@@ -191,7 +191,7 @@
         };
         draftcurve.highlight = function() {};
         draftcurve.noHighlight = function() {};
-        
+
         var down = function(e) {
             var coords = getMouseCoords(e),
                 i;

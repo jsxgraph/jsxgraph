@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2022
+    Copyright 2008-2023
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -25,386 +25,383 @@
     GNU Lesser General Public License for more details.
 
     You should have received a copy of the GNU Lesser General Public License and
-    the MIT License along with JSXGraph. If not, see <http://www.gnu.org/licenses/>
-    and <http://opensource.org/licenses/MIT/>.
+    the MIT License along with JSXGraph. If not, see <https://www.gnu.org/licenses/>
+    and <https://opensource.org/licenses/MIT/>.
  */
-
 
 /*global JXG: true, define: true*/
 /*jslint nomen: true, plusplus: true, unparam: true*/
 
-/* depends:
- jxg
- base/constants
- base/coords
- math/math
- options
- parser/geonext
- utils/event
- utils/color
- utils/type
+import JXG from "../jxg";
+import Const from "./constants";
+import Coords from "./coords";
+import Mat from "../math/math";
+import Statistics from "../math/statistics";
+import Options from "../options";
+import EventEmitter from "../utils/event";
+import Color from "../utils/color";
+import Type from "../utils/type";
+
+/**
+ * Constructs a new GeometryElement object.
+ * @class This is the basic class for geometry elements like points, circles and lines.
+ * @constructor
+ * @param {JXG.Board} board Reference to the board the element is constructed on.
+ * @param {Object} attributes Hash of attributes and their values.
+ * @param {Number} type Element type (a <tt>JXG.OBJECT_TYPE_</tt> value).
+ * @param {Number} oclass The element's class (a <tt>JXG.OBJECT_CLASS_</tt> value).
+ * @borrows JXG.EventEmitter#on as this.on
+ * @borrows JXG.EventEmitter#off as this.off
+ * @borrows JXG.EventEmitter#triggerEventHandlers as this.triggerEventHandlers
+ * @borrows JXG.EventEmitter#eventHandlers as this.eventHandlers
  */
-
-define([
-    'jxg', 'base/constants', 'base/coords', 'math/math', 'math/statistics', 'options', 'utils/event', 'utils/color', 'utils/type'
-], function (JXG, Const, Coords, Mat, Statistics, Options, EventEmitter, Color, Type) {
-
-    "use strict";
+JXG.GeometryElement = function (board, attributes, type, oclass) {
+    var name, key, attr;
 
     /**
-     * Constructs a new GeometryElement object.
-     * @class This is the basic class for geometry elements like points, circles and lines.
-     * @constructor
-     * @param {JXG.Board} board Reference to the board the element is constructed on.
-     * @param {Object} attributes Hash of attributes and their values.
-     * @param {Number} type Element type (a <tt>JXG.OBJECT_TYPE_</tt> value).
-     * @param {Number} oclass The element's class (a <tt>JXG.OBJECT_CLASS_</tt> value).
-     * @borrows JXG.EventEmitter#on as this.on
-     * @borrows JXG.EventEmitter#off as this.off
-     * @borrows JXG.EventEmitter#triggerEventHandlers as this.triggerEventHandlers
-     * @borrows JXG.EventEmitter#eventHandlers as this.eventHandlers
+     * Controls if updates are necessary
+     * @type Boolean
+     * @default true
      */
-    JXG.GeometryElement = function (board, attributes, type, oclass) {
-        var name, key, attr;
+    this.needsUpdate = true;
 
-        /**
-         * Controls if updates are necessary
-         * @type Boolean
-         * @default true
-         */
-        this.needsUpdate = true;
+    /**
+     * Controls if this element can be dragged. In GEONExT only
+     * free points and gliders can be dragged.
+     * @type Boolean
+     * @default false
+     */
+    this.isDraggable = false;
 
-        /**
-         * Controls if this element can be dragged. In GEONExT only
-         * free points and gliders can be dragged.
-         * @type Boolean
-         * @default false
-         */
-        this.isDraggable = false;
+    /**
+     * If element is in two dimensional real space this is true, else false.
+     * @type Boolean
+     * @default true
+     */
+    this.isReal = true;
 
-        /**
-         * If element is in two dimensional real space this is true, else false.
-         * @type Boolean
-         * @default true
-         */
-        this.isReal = true;
+    /**
+     * Stores all dependent objects to be updated when this point is moved.
+     * @type Object
+     */
+    this.childElements = {};
 
-        /**
-         * Stores all dependent objects to be updated when this point is moved.
-         * @type Object
-         */
-        this.childElements = {};
+    /**
+     * If element has a label subelement then this property will be set to true.
+     * @type Boolean
+     * @default false
+     */
+    this.hasLabel = false;
 
-        /**
-         * If element has a label subelement then this property will be set to true.
-         * @type Boolean
-         * @default false
-         */
-        this.hasLabel = false;
+    /**
+     * True, if the element is currently highlighted.
+     * @type Boolean
+     * @default false
+     */
+    this.highlighted = false;
 
-        /**
-         * True, if the element is currently highlighted.
-         * @type Boolean
-         * @default false
-         */
-        this.highlighted = false;
+    /**
+     * Stores all Intersection Objects which in this moment are not real and
+     * so hide this element.
+     * @type Object
+     */
+    this.notExistingParents = {};
 
-        /**
-         * Stores all Intersection Objects which in this moment are not real and
-         * so hide this element.
-         * @type Object
-         */
-        this.notExistingParents = {};
+    /**
+     * Keeps track of all objects drawn as part of the trace of the element.
+     * @see JXG.GeometryElement#clearTrace
+     * @see JXG.GeometryElement#numTraces
+     * @type Object
+     */
+    this.traces = {};
 
-        /**
-         * Keeps track of all objects drawn as part of the trace of the element.
-         * @see JXG.GeometryElement#clearTrace
-         * @see JXG.GeometryElement#numTraces
-         * @type Object
-         */
-        this.traces = {};
+    /**
+     * Counts the number of objects drawn as part of the trace of the element.
+     * @see JXG.GeometryElement#clearTrace
+     * @see JXG.GeometryElement#traces
+     * @type Number
+     */
+    this.numTraces = 0;
 
-        /**
-         * Counts the number of objects drawn as part of the trace of the element.
-         * @see JXG.GeometryElement#clearTrace
-         * @see JXG.GeometryElement#traces
-         * @type Number
-         */
-        this.numTraces = 0;
+    /**
+     * Stores the  transformations which are applied during update in an array
+     * @type Array
+     * @see JXG.Transformation
+     */
+    this.transformations = [];
 
-        /**
-         * Stores the  transformations which are applied during update in an array
-         * @type Array
-         * @see JXG.Transformation
-         */
-        this.transformations = [];
+    /**
+     * @type JXG.GeometryElement
+     * @default null
+     * @private
+     */
+    this.baseElement = null;
 
-        /**
-         * @type JXG.GeometryElement
-         * @default null
-         * @private
-         */
-        this.baseElement = null;
+    /**
+     * Elements depending on this element are stored here.
+     * @type Object
+     */
+    this.descendants = {};
 
-        /**
-         * Elements depending on this element are stored here.
-         * @type Object
-         */
-        this.descendants = {};
+    /**
+     * Elements on which this element depends on are stored here.
+     * @type Object
+     */
+    this.ancestors = {};
 
-        /**
-         * Elements on which this element depends on are stored here.
-         * @type Object
-         */
-        this.ancestors = {};
+    /**
+     * Ids of elements on which this element depends directly are stored here.
+     * @type Object
+     */
+    this.parents = [];
 
-        /**
-         * Ids of elements on which this element depends directly are stored here.
-         * @type Object
-         */
-        this.parents = [];
+    /**
+     * Stores variables for symbolic computations
+     * @type Object
+     */
+    this.symbolic = {};
 
-        /**
-         * Stores variables for symbolic computations
-         * @type Object
-         */
-        this.symbolic = {};
+    /**
+     * Stores the SVG (or VML) rendering node for the element. This enables low-level
+     * access to SVG nodes. The properties of such an SVG node can then be changed
+     * by calling setAttribute(). Note that there are a few elements which consist
+     * of more than one SVG nodes:
+     * <ul>
+     * <li> Elements with arrow tail or head: rendNodeTriangleStart, rendNodeTriangleEnd
+     * <li> SVG (or VML) texts: rendNodeText
+     * <li> Button: rendNodeForm, rendNodeButton, rendNodeTag
+     * <li> Checkbox: rendNodeForm, rendNodeCheckbox, rendNodeLabel, rendNodeTag
+     * <li> Input: rendNodeForm, rendNodeInput, rendNodeLabel, rendNodeTag
+     * </ul>
+     *
+     * Here is are two examples: The first example shows how to access the SVG node,
+     * the second example demonstrates how to change SVG attributes.
+     * @example
+     *     var p1 = board.create('point', [0, 0]);
+     *     console.log(p1.rendNode);
+     *     // returns the full SVG node details of the point p1, something like:
+     *     // &lt;ellipse id='box_jxgBoard1P6' stroke='#ff0000' stroke-opacity='1' stroke-width='2px'
+     *     //   fill='#ff0000' fill-opacity='1' cx='250' cy='250' rx='4' ry='4'
+     *     //   style='position: absolute;'&gt;
+     *     // &lt;/ellipse&gt;
+     *
+     * @example
+     *     var s = board.create('segment', [p1, p2], {strokeWidth: 60});
+     *     s.rendNode.setAttribute('stroke-linecap', 'round');
+     *
+     * @type Object
+     */
+    this.rendNode = null;
 
-        /**
-         * Stores the SVG (or VML) rendering node for the element. This enables low-level
-         * access to SVG nodes. The properties of such an SVG node can then be changed
-         * by calling setAttribute(). Note that there are a few elements which consist
-         * of more than one SVG nodes:
-         * <ul>
-         * <li> Elements with arrow tail or head: rendNodeTriangleStart, rendNodeTriangleEnd
-         * <li> SVG (or VML) texts: rendNodeText
-         * <li> Button: rendNodeForm, rendNodeButton, rendNodeTag
-         * <li> Checkbox: rendNodeForm, rendNodeCheckbox, rendNodeLabel, rendNodeTag
-         * <li> Input: rendNodeForm, rendNodeInput, rendNodeLabel, rendNodeTag
-         * </ul>
-         *
-         * Here is are two examples: The first example shows how to access the SVG node,
-         * the second example demonstrates how to change SVG attributes.
-         * @example
-         *     var p1 = board.create('point', [0, 0]);
-         *     console.log(p1.rendNode);
-         *     // returns the full SVG node details of the point p1, something like:
-         *     // &lt;ellipse id='box_jxgBoard1P6' stroke='#ff0000' stroke-opacity='1' stroke-width='2px'
-         *     //   fill='#ff0000' fill-opacity='1' cx='250' cy='250' rx='4' ry='4'
-         *     //   style='position: absolute;'&gt;
-         *     // &lt;/ellipse&gt;
-         *
-         * @example
-         *     var s = board.create('segment', [p1, p2], {strokeWidth: 60});
-         *     s.rendNode.setAttribute('stroke-linecap', 'round');
-         *
-         * @type Object
-         */
-        this.rendNode = null;
+    /**
+     * The string used with {@link JXG.Board#create}
+     * @type String
+     */
+    this.elType = "";
 
-        /**
-         * The string used with {@link JXG.Board#create}
-         * @type String
-         */
-        this.elType = '';
+    /**
+     * The element is saved with an explicit entry in the file (<tt>true</tt>) or implicitly
+     * via a composition.
+     * @type Boolean
+     * @default true
+     */
+    this.dump = true;
 
-        /**
-         * The element is saved with an explicit entry in the file (<tt>true</tt>) or implicitly
-         * via a composition.
-         * @type Boolean
-         * @default true
-         */
-        this.dump = true;
+    /**
+     * Subs contains the subelements, created during the create method.
+     * @type Object
+     */
+    this.subs = {};
 
-        /**
-         * Subs contains the subelements, created during the create method.
-         * @type Object
-         */
-        this.subs = {};
+    /**
+     * Inherits contains the subelements, which may have an attribute
+     * (in particular the attribute "visible") having value 'inherit'.
+     * @type Object
+     */
+    this.inherits = [];
 
-        /**
-         * Inherits contains the subelements, which may have an attribute
-         * (in particular the attribute "visible") having value 'inherit'.
-         * @type Object
-         */
-        this.inherits = [];
+    /**
+     * The position of this element inside the {@link JXG.Board#objectsList}.
+     * @type Number
+     * @default -1
+     * @private
+     */
+    this._pos = -1;
 
-        /**
-         * The position of this element inside the {@link JXG.Board#objectsList}.
-         * @type Number
-         * @default -1
-         * @private
-         */
-        this._pos = -1;
+    /**
+     * [c, b0, b1, a, k, r, q0, q1]
+     *
+     * See
+     * A.E. Middleditch, T.W. Stacey, and S.B. Tor:
+     * "Intersection Algorithms for Lines and Circles",
+     * ACM Transactions on Graphics, Vol. 8, 1, 1989, pp 25-40.
+     *
+     * The meaning of the parameters is:
+     * Circle: points p=[p0, p1] on the circle fulfill
+     *  a&lt;p, p&gt; + &lt;b, p&gt; + c = 0
+     * For convenience we also store
+     *  r: radius
+     *  k: discriminant = sqrt(&lt;b,b&gt;-4ac)
+     *  q=[q0, q1] center
+     *
+     * Points have radius = 0.
+     * Lines have radius = infinity.
+     * b: normalized vector, representing the direction of the line.
+     *
+     * Should be put into Coords, when all elements possess Coords.
+     * @type Array
+     * @default [1, 0, 0, 0, 1, 1, 0, 0]
+     */
+    this.stdform = [1, 0, 0, 0, 1, 1, 0, 0];
 
-        /**
-         * [c, b0, b1, a, k, r, q0, q1]
-         *
-         * See
-         * A.E. Middleditch, T.W. Stacey, and S.B. Tor:
-         * "Intersection Algorithms for Lines and Circles",
-         * ACM Transactions on Graphics, Vol. 8, 1, 1989, pp 25-40.
-         *
-         * The meaning of the parameters is:
-         * Circle: points p=[p0, p1] on the circle fulfill
-         *  a&lt;p, p&gt; + &lt;b, p&gt; + c = 0
-         * For convenience we also store
-         *  r: radius
-         *  k: discriminant = sqrt(&lt;b,b&gt;-4ac)
-         *  q=[q0, q1] center
-         *
-         * Points have radius = 0.
-         * Lines have radius = infinity.
-         * b: normalized vector, representing the direction of the line.
-         *
-         * Should be put into Coords, when all elements possess Coords.
-         * @type Array
-         * @default [1, 0, 0, 0, 1, 1, 0, 0]
-         */
-        this.stdform = [1, 0, 0, 0, 1, 1, 0, 0];
-
-        /**
-         * The methodMap determines which methods can be called from within JessieCode and under which name it
-         * can be used. The map is saved in an object, the name of a property is the name of the method used in JessieCode,
-         * the value of a property is the name of the method in JavaScript.
-         * @type Object
-         */
-        this.methodMap = {
-            setLabel: 'setLabel',
-            label: 'label',
-            setName: 'setName',
-            getName: 'getName',
-            addTransform: 'addTransform',
-            setProperty: 'setAttribute',
-            setAttribute: 'setAttribute',
-            addChild: 'addChild',
-            animate: 'animate',
-            on: 'on',
-            off: 'off',
-            trigger: 'trigger',
-            addTicks: 'addTicks',
-            removeTicks: 'removeTicks',
-            removeAllTicks: 'removeAllTicks'
-        };
-
-        /**
-         * Quadratic form representation of circles (and conics)
-         * @type Array
-         * @default [[1,0,0],[0,1,0],[0,0,1]]
-         */
-        this.quadraticform = [[1, 0, 0], [0, 1, 0], [0, 0, 1]];
-
-        /**
-         * An associative array containing all visual properties.
-         * @type Object
-         * @default empty object
-         */
-        this.visProp = {};
-
-        /**
-         * An associative array containing visual properties which are calculated from
-         * the attribute values (i.e. visProp) and from other constraints.
-         * An example: if an intersection point does not have real coordinates,
-         * visPropCalc.visible is set to false.
-         * Additionally, the user can control visibility with the attribute "visible",
-         * even by supplying a functions as value.
-         *
-         * @type Object
-         * @default empty object
-         */
-        this.visPropCalc = {
-            visible: false
-        };
-
-        EventEmitter.eventify(this);
-
-        /**
-         * Is the mouse over this element?
-         * @type Boolean
-         * @default false
-         */
-        this.mouseover = false;
-
-        /**
-         * Time stamp containing the last time this element has been dragged.
-         * @type Date
-         * @default creation time
-         */
-        this.lastDragTime = new Date();
-
-        if (arguments.length > 0) {
-            /**
-             * Reference to the board associated with the element.
-             * @type JXG.Board
-             */
-            this.board = board;
-
-            /**
-             * Type of the element.
-             * @constant
-             * @type Number
-             */
-            this.type = type;
-
-            /**
-             * Original type of the element at construction time. Used for removing glider property.
-             * @constant
-             * @type Number
-             */
-            this._org_type = type;
-
-            /**
-             * The element's class.
-             * @constant
-             * @type Number
-             */
-            this.elementClass = oclass || Const.OBJECT_CLASS_OTHER;
-
-            /**
-             * Unique identifier for the element. Equivalent to id-attribute of renderer element.
-             * @type String
-             */
-            this.id = attributes.id;
-
-            name = attributes.name;
-            /* If name is not set or null or even undefined, generate an unique name for this object */
-            if (!Type.exists(name)) {
-                name = this.board.generateName(this);
-            }
-
-            if (name !== '') {
-                this.board.elementsByName[name] = this;
-            }
-
-            /**
-             * Not necessarily unique name for the element.
-             * @type String
-             * @default Name generated by {@link JXG.Board#generateName}.
-             * @see JXG.Board#generateName
-             */
-            this.name = name;
-
-            this.needsRegularUpdate = attributes.needsregularupdate;
-
-            // create this.visPropOld and set default values
-            Type.clearVisPropOld(this);
-
-            attr = this.resolveShortcuts(attributes);
-            for (key in attr) {
-                if (attr.hasOwnProperty(key)) {
-                    this._set(key, attr[key]);
-                }
-            }
-
-            this.visProp.draft = attr.draft && attr.draft.draft;
-            //this.visProp.gradientangle = '270';
-            // this.visProp.gradientsecondopacity = Type.evaluate(this.visProp.fillopacity);
-            //this.visProp.gradientpositionx = 0.5;
-            //this.visProp.gradientpositiony = 0.5;
-        }
+    /**
+     * The methodMap determines which methods can be called from within JessieCode and under which name it
+     * can be used. The map is saved in an object, the name of a property is the name of the method used in JessieCode,
+     * the value of a property is the name of the method in JavaScript.
+     * @type Object
+     */
+    this.methodMap = {
+        setLabel: "setLabel",
+        label: "label",
+        setName: "setName",
+        getName: "getName",
+        addTransform: "addTransform",
+        setProperty: "setAttribute",
+        setAttribute: "setAttribute",
+        addChild: "addChild",
+        animate: "animate",
+        on: "on",
+        off: "off",
+        trigger: "trigger",
+        addTicks: "addTicks",
+        removeTicks: "removeTicks",
+        removeAllTicks: "removeAllTicks"
     };
 
-    JXG.extend(JXG.GeometryElement.prototype, /** @lends JXG.GeometryElement.prototype */ {
+    /**
+     * Quadratic form representation of circles (and conics)
+     * @type Array
+     * @default [[1,0,0],[0,1,0],[0,0,1]]
+     */
+    this.quadraticform = [
+        [1, 0, 0],
+        [0, 1, 0],
+        [0, 0, 1]
+    ];
+
+    /**
+     * An associative array containing all visual properties.
+     * @type Object
+     * @default empty object
+     */
+    this.visProp = {};
+
+    /**
+     * An associative array containing visual properties which are calculated from
+     * the attribute values (i.e. visProp) and from other constraints.
+     * An example: if an intersection point does not have real coordinates,
+     * visPropCalc.visible is set to false.
+     * Additionally, the user can control visibility with the attribute "visible",
+     * even by supplying a functions as value.
+     *
+     * @type Object
+     * @default empty object
+     */
+    this.visPropCalc = {
+        visible: false
+    };
+
+    EventEmitter.eventify(this);
+
+    /**
+     * Is the mouse over this element?
+     * @type Boolean
+     * @default false
+     */
+    this.mouseover = false;
+
+    /**
+     * Time stamp containing the last time this element has been dragged.
+     * @type Date
+     * @default creation time
+     */
+    this.lastDragTime = new Date();
+
+    if (arguments.length > 0) {
+        /**
+         * Reference to the board associated with the element.
+         * @type JXG.Board
+         */
+        this.board = board;
+
+        /**
+         * Type of the element.
+         * @constant
+         * @type Number
+         */
+        this.type = type;
+
+        /**
+         * Original type of the element at construction time. Used for removing glider property.
+         * @constant
+         * @type Number
+         */
+        this._org_type = type;
+
+        /**
+         * The element's class.
+         * @constant
+         * @type Number
+         */
+        this.elementClass = oclass || Const.OBJECT_CLASS_OTHER;
+
+        /**
+         * Unique identifier for the element. Equivalent to id-attribute of renderer element.
+         * @type String
+         */
+        this.id = attributes.id;
+
+        name = attributes.name;
+        /* If name is not set or null or even undefined, generate an unique name for this object */
+        if (!Type.exists(name)) {
+            name = this.board.generateName(this);
+        }
+
+        if (name !== "") {
+            this.board.elementsByName[name] = this;
+        }
+
+        /**
+         * Not necessarily unique name for the element.
+         * @type String
+         * @default Name generated by {@link JXG.Board#generateName}.
+         * @see JXG.Board#generateName
+         */
+        this.name = name;
+
+        this.needsRegularUpdate = attributes.needsregularupdate;
+
+        // create this.visPropOld and set default values
+        Type.clearVisPropOld(this);
+
+        attr = this.resolveShortcuts(attributes);
+        for (key in attr) {
+            if (attr.hasOwnProperty(key)) {
+                this._set(key, attr[key]);
+            }
+        }
+
+        this.visProp.draft = attr.draft && attr.draft.draft;
+        //this.visProp.gradientangle = '270';
+        // this.visProp.gradientsecondopacity = Type.evaluate(this.visProp.fillopacity);
+        //this.visProp.gradientpositionx = 0.5;
+        //this.visProp.gradientpositiony = 0.5;
+    }
+};
+
+JXG.extend(
+    JXG.GeometryElement.prototype,
+    /** @lends JXG.GeometryElement.prototype */ {
         /**
          * Add an element as a child to the current element. Can be used to model dependencies between geometry elements.
          * @param {JXG.GeometryElement} obj The dependent object.
@@ -422,7 +419,8 @@ define([
 
                     for (el2 in this.ancestors) {
                         if (this.ancestors.hasOwnProperty(el2)) {
-                            this.descendants[el].ancestors[this.ancestors[el2].id] = this.ancestors[el2];
+                            this.descendants[el].ancestors[this.ancestors[el2].id] =
+                                this.ancestors[el2];
                         }
                     }
                 }
@@ -432,7 +430,8 @@ define([
                 if (this.ancestors.hasOwnProperty(el)) {
                     for (el2 in this.descendants) {
                         if (this.descendants.hasOwnProperty(el2)) {
-                            this.ancestors[el].descendants[this.descendants[el2].id] = this.descendants[el2];
+                            this.ancestors[el].descendants[this.descendants[el2].id] =
+                                this.descendants[el2];
                         }
                     }
                 }
@@ -529,14 +528,34 @@ define([
          * Alternatively, one can give a list of objects as parameters.
          * @returns {JXG.Object} reference to the object itself.
          **/
-        setParents: function(parents) {
+        setParents: function (parents) {
             this.parents = [];
             this.addParents(parents);
         },
 
         /**
+         * Add dependence on elements in JessieCode functions.
+         * @param {Array} function_array Array of functions containing potential properties "deps" with
+         * elements the function depends on.
+         * @returns {JXG.Object} reference to the object itself
+         * @private
+         */
+        addParentsFromJCFunctions: function(function_array) {
+            var i, e, obj;
+            for (i = 0; i < function_array.length; i++) {
+                for (e in function_array[i].deps) {
+                    obj = function_array[i].deps[e];
+                    this.addParents(obj);
+                    obj.addChild(this);
+                }
+            }
+            return this;
+        },
+
+        /**
          * Remove an element as a child from the current element.
          * @param {JXG.GeometryElement} obj The dependent object.
+         * @returns {JXG.Object} reference to the object itself
          */
         removeChild: function (obj) {
             //var el, el2;
@@ -576,7 +595,7 @@ define([
          * Removes the given object from the descendants list of this object and all its child objects.
          * @param {JXG.GeometryElement} obj The element that is to be removed from the descendants list.
          * @private
-         * @return
+         * @returns {JXG.Object} reference to the object itself
          */
         removeDescendants: function (obj) {
             var el;
@@ -596,12 +615,13 @@ define([
          * @returns {number} Number of children
          */
         countChildren: function () {
-            var prop, d,
+            var prop,
+                d,
                 s = 0;
 
             d = this.childElements;
             for (prop in d) {
-                if (d.hasOwnProperty(prop) && prop.indexOf('Label') < 0) {
+                if (d.hasOwnProperty(prop) && prop.indexOf("Label") < 0) {
                     s++;
                 }
             }
@@ -634,8 +654,12 @@ define([
          * @returns {boolean}
          */
         draggable: function () {
-            return this.isDraggable && !Type.evaluate(this.visProp.fixed) &&
-                /*!this.visProp.frozen &&*/ this.type !== Const.OBJECT_TYPE_GLIDER;
+            return (
+                this.isDraggable &&
+                !Type.evaluate(this.visProp.fixed) &&
+                // !this.visProp.frozen &&
+                this.type !== Const.OBJECT_TYPE_GLIDER
+            );
         },
 
         /**
@@ -648,7 +672,10 @@ define([
          */
         setPosition: function (method, coords) {
             var parents = [],
-                el, i, len, t;
+                el,
+                i,
+                len,
+                t;
 
             if (!Type.exists(this.parents)) {
                 return this;
@@ -669,7 +696,7 @@ define([
                 coords = coords.slice(1);
             }
 
-            t = this.board.create('transform', coords, {type: 'translate'});
+            t = this.board.create("transform", coords, { type: "translate" });
 
             // We distinguish two cases:
             // 1) elements which depend on free elements, i.e. arcs and sectors
@@ -682,8 +709,10 @@ define([
             if (len > 0) {
                 t.applyOnce(parents);
             } else {
-                if (this.transformations.length > 0 &&
-                        this.transformations[this.transformations.length - 1].isNumericMatrix) {
+                if (
+                    this.transformations.length > 0 &&
+                    this.transformations[this.transformations.length - 1].isNumericMatrix
+                ) {
                     this.transformations[this.transformations.length - 1].melt(t);
                 } else {
                     this.addTransform(t);
@@ -741,11 +770,12 @@ define([
          */
         animate: function (hash, time, options) {
             options = options || {};
-            var r, p, i,
+            var r,
+                p,
+                i,
                 delay = this.board.attr.animationdelay,
                 steps = Math.ceil(time / delay),
                 self = this,
-
                 animateColor = function (startRGB, endRGB, property) {
                     var hsv1, hsv2, sh, ss, sv;
                     hsv1 = Color.rgb2hsv(startRGB);
@@ -757,10 +787,13 @@ define([
                     self.animationData[property] = [];
 
                     for (i = 0; i < steps; i++) {
-                        self.animationData[property][steps - i - 1] = Color.hsv2rgb(hsv1[0] + (i + 1) * sh, hsv1[1] + (i + 1) * ss, hsv1[2] + (i + 1) * sv);
+                        self.animationData[property][steps - i - 1] = Color.hsv2rgb(
+                            hsv1[0] + (i + 1) * sh,
+                            hsv1[1] + (i + 1) * ss,
+                            hsv1[2] + (i + 1) * sv
+                        );
                     }
                 },
-
                 animateFloat = function (start, end, property, round) {
                     var tmp, s;
 
@@ -779,7 +812,9 @@ define([
 
                     for (i = 0; i < steps; i++) {
                         tmp = start + (i + 1) * s;
-                        self.animationData[property][steps - i - 1] = round ? Math.floor(tmp) : tmp;
+                        self.animationData[property][steps - i - 1] = round
+                            ? Math.floor(tmp)
+                            : tmp;
                     }
                 };
 
@@ -790,21 +825,21 @@ define([
                     p = r.toLowerCase();
 
                     switch (p) {
-                    case 'strokecolor':
-                    case 'fillcolor':
-                        animateColor(this.visProp[p], hash[r], p);
-                        break;
-                    case 'size':
-                        if (!Type.isPoint(this)) {
+                        case "strokecolor":
+                        case "fillcolor":
+                            animateColor(this.visProp[p], hash[r], p);
                             break;
-                        }
-                        animateFloat(this.visProp[p], hash[r], p, true);
-                        break;
-                    case 'strokeopacity':
-                    case 'strokewidth':
-                    case 'fillopacity':
-                        animateFloat(this.visProp[p], hash[r], p, false);
-                        break;
+                        case "size":
+                            if (!Type.isPoint(this)) {
+                                break;
+                            }
+                            animateFloat(this.visProp[p], hash[r], p, true);
+                            break;
+                        case "strokeopacity":
+                        case "strokewidth":
+                        case "fillopacity":
+                            animateFloat(this.visProp[p], hash[r], p, false);
+                            break;
                     }
                 }
             }
@@ -841,21 +876,23 @@ define([
          * @return {JXG.GeometryElement} Reference to the element
          * @private
          */
-        fullUpdate: function(visible) {
-            return this.prepareUpdate()
-                .update()
-                .updateVisibility(visible)
-                .updateRenderer();
+        fullUpdate: function (visible) {
+            return this.prepareUpdate().update().updateVisibility(visible).updateRenderer();
         },
 
         /**
          * Show the element or hide it. If hidden, it will still exist but not be
          * visible on the board.
+         * <p>
+         * Sets also the display of the inherits elements. These can be
+         * JSXGraph elements or arrays of JSXGraph elements.
+         * However, deeper nesting than this is not supported.
+         *
          * @param  {Boolean} val true: show the element, false: hide the element
          * @return {JXG.GeometryElement} Reference to the element
          * @private
          */
-        setDisplayRendNode: function(val) {
+        setDisplayRendNode: function (val) {
             var i, len, s, len_s, obj;
 
             if (val === undefined) {
@@ -876,22 +913,28 @@ define([
                 if (Type.isArray(obj)) {
                     len_s = obj.length;
                     for (i = 0; i < len_s; i++) {
-                        if (Type.exists(obj[i]) && Type.exists(obj[i].rendNode) &&
-                            Type.evaluate(obj[i].visProp.visible) === 'inherit') {
+                        if (
+                            Type.exists(obj[i]) &&
+                            Type.exists(obj[i].rendNode) &&
+                            Type.evaluate(obj[i].visProp.visible) === 'inherit'
+                        ) {
                             obj[i].setDisplayRendNode(val);
                         }
                     }
                 } else {
-                    if (Type.exists(obj) && Type.exists(obj.rendNode) &&
-                        Type.evaluate(obj.visProp.visible) === 'inherit') {
-                            obj.setDisplayRendNode(val);
+                    if (
+                        Type.exists(obj) &&
+                        Type.exists(obj.rendNode) &&
+                        Type.evaluate(obj.visProp.visible) === 'inherit'
+                    ) {
+                        obj.setDisplayRendNode(val);
                     }
                 }
             }
 
             // Set the visibility of the label if it inherits the attribute 'visible'
             if (this.hasLabel && Type.exists(this.label) && Type.exists(this.label.rendNode)) {
-                if (Type.evaluate(this.label.visProp.visible) === 'inherit') {
+                if (Type.evaluate(this.label.visProp.visible) === "inherit") {
                     this.label.setDisplayRendNode(val);
                 }
             }
@@ -905,7 +948,7 @@ define([
          * @return {JXG.GeometryElement} Reference to the element
          */
         hide: function () {
-            this.setAttribute({visible: false});
+            this.setAttribute({ visible: false });
             return this;
         },
 
@@ -914,7 +957,7 @@ define([
          * Alias for {@link JXG.GeometryElement#hide}
          * @returns {JXG.GeometryElement} Reference to the element
          */
-        hideElement: function() {
+        hideElement: function () {
             this.hide();
             return this;
         },
@@ -925,7 +968,7 @@ define([
          * @return {JXG.GeometryElement} Reference to the element
          */
         show: function () {
-            this.setAttribute({visible: true});
+            this.setAttribute({ visible: true });
             return this;
         },
 
@@ -934,7 +977,7 @@ define([
          * Alias for {@link JXG.GeometryElement#show}
          * @returns {JXG.GeometryElement} Reference to the element
          */
-        showElement: function() {
+        showElement: function () {
             this.show();
             return this;
         },
@@ -962,7 +1005,7 @@ define([
          * @return {JXG.GeometryElement} Reference to the element.
          * @private
          */
-        updateVisibility: function(parent_val) {
+        updateVisibility: function (parent_val) {
             var i, len, s, len_s, obj, val;
 
             if (this.needsUpdate) {
@@ -976,7 +1019,7 @@ define([
                     if (Type.exists(this.hiddenByParent) && this.hiddenByParent) {
                         val = false;
                     }
-                    if (val !== 'inherit') {
+                    if (val !== "inherit") {
                         this.visPropCalc.visible = val;
                     }
                 }
@@ -988,22 +1031,31 @@ define([
                     if (Type.isArray(obj)) {
                         len_s = obj.length;
                         for (i = 0; i < len_s; i++) {
-                            if (Type.exists(obj[i]) /*&& Type.exists(obj[i].rendNode)*/ &&
-                                Type.evaluate(obj[i].visProp.visible) === 'inherit') {
-                                obj[i].prepareUpdate().updateVisibility(this.visPropCalc.visible);
+                            if (
+                                Type.exists(obj[i]) /*&& Type.exists(obj[i].rendNode)*/ &&
+                                Type.evaluate(obj[i].visProp.visible) === "inherit"
+                            ) {
+                                obj[i]
+                                    .prepareUpdate()
+                                    .updateVisibility(this.visPropCalc.visible);
                             }
                         }
                     } else {
-                        if (Type.exists(obj) /*&& Type.exists(obj.rendNode)*/ &&
-                            Type.evaluate(obj.visProp.visible) === 'inherit') {
+                        if (
+                            Type.exists(obj) /*&& Type.exists(obj.rendNode)*/ &&
+                            Type.evaluate(obj.visProp.visible) === "inherit"
+                        ) {
                             obj.prepareUpdate().updateVisibility(this.visPropCalc.visible);
                         }
                     }
                 }
 
                 // Handle the label if it inherits the visibility
-                if (Type.exists(this.label) && Type.exists(this.label.visProp) &&
-                    Type.evaluate(this.label.visProp.visible)) {
+                if (
+                    Type.exists(this.label) &&
+                    Type.exists(this.label.visProp) &&
+                    Type.evaluate(this.label.visProp.visible)
+                ) {
                     this.label.prepareUpdate().updateVisibility(this.visPropCalc.visible);
                 }
             }
@@ -1011,42 +1063,46 @@ define([
         },
 
         /**
-         * Sets the value of property <tt>property</tt> to <tt>value</tt>.
-         * @param {String} property The property's name.
+         * Sets the value of attribute <tt>key</tt> to <tt>value</tt>.
+         * @param {String} key The attribute's name.
          * @param value The new value
          * @private
          */
-        _set: function (property, value) {
+        _set: function (key, value) {
             var el;
 
-            property = property.toLocaleLowerCase();
+            key = key.toLocaleLowerCase();
 
-            // Search for entries in visProp with "color" as part of the property name
+            // Search for entries in visProp with "color" as part of the key name
             // and containing a RGBA string
-            if (this.visProp.hasOwnProperty(property) &&
-                  property.indexOf('color') >= 0 &&
-                  Type.isString(value) &&
-                  value.length === 9 &&
-                  value.charAt(0) === '#') {
-
+            if (
+                this.visProp.hasOwnProperty(key) &&
+                key.indexOf("color") >= 0 &&
+                Type.isString(value) &&
+                value.length === 9 &&
+                value.charAt(0) === "#"
+            ) {
                 value = Color.rgba2rgbo(value);
-                this.visProp[property] = value[0];
+                this.visProp[key] = value[0];
                 // Previously: *=. But then, we can only decrease opacity.
-                this.visProp[property.replace('color', 'opacity')] = value[1];
+                this.visProp[key.replace("color", "opacity")] = value[1];
             } else {
-                if (value !== null &&Type.isObject(value) &&
+                if (
+                    value !== null &&
+                    Type.isObject(value) &&
                     !Type.exists(value.id) &&
-                    !Type.exists(value.name)) {
+                    !Type.exists(value.name)
+                ) {
                     // value is of type {prop: val, prop: val,...}
                     // Convert these attributes to lowercase, too
-                    this.visProp[property] = {};
+                    this.visProp[key] = {};
                     for (el in value) {
                         if (value.hasOwnProperty(el)) {
-                            this.visProp[property][el.toLocaleLowerCase()] = value[el];
+                            this.visProp[key][el.toLocaleLowerCase()] = value[el];
                         }
                     }
                 } else {
-                    this.visProp[property] = value;
+                    this.visProp[key] = value;
                 }
             }
         },
@@ -1059,26 +1115,28 @@ define([
          * @private
          */
         resolveShortcuts: function (attributes) {
-            var key, i,
+            var key,
+                i,
                 j,
-                subattr = ['traceattributes', 'traceAttributes'];
+                subattr = ["traceattributes", "traceAttributes"];
 
             for (key in Options.shortcuts) {
                 if (Options.shortcuts.hasOwnProperty(key)) {
-
-                        if (Type.exists(attributes[key])) {
-                            for (i = 0; i < Options.shortcuts[key].length; i++) {
-                                if (!Type.exists(attributes[Options.shortcuts[key][i]])) {
-                                    attributes[Options.shortcuts[key][i]] = attributes[key];
-                                }
+                    if (Type.exists(attributes[key])) {
+                        for (i = 0; i < Options.shortcuts[key].length; i++) {
+                            if (!Type.exists(attributes[Options.shortcuts[key][i]])) {
+                                attributes[Options.shortcuts[key][i]] = attributes[key];
                             }
                         }
-                        for (j = 0; j < subattr.length; j++) {
-                            if (Type.isObject(attributes[subattr[j]])) {
-                                    attributes[subattr[j]] = this.resolveShortcuts(attributes[subattr[j]]);
-                                }
-                            }
+                    }
+                    for (j = 0; j < subattr.length; j++) {
+                        if (Type.isObject(attributes[subattr[j]])) {
+                            attributes[subattr[j]] = this.resolveShortcuts(
+                                attributes[subattr[j]]
+                            );
                         }
+                    }
+                }
             }
             return attributes;
         },
@@ -1090,7 +1148,7 @@ define([
          */
         setLabel: function (str) {
             if (!this.hasLabel) {
-                this.setAttribute({'withlabel': true});
+                this.setAttribute({ withlabel: true });
             }
             this.setLabelText(str);
         },
@@ -1100,9 +1158,8 @@ define([
          * @param {String} str
          */
         setLabelText: function (str) {
-
             if (Type.exists(this.label)) {
-                str = str.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+                str = str.replace(/</g, "&lt;").replace(/>/g, "&gt;");
                 this.label.setText(str);
             }
 
@@ -1114,11 +1171,11 @@ define([
          * @param {String} str
          */
         setName: function (str) {
-            str = str.replace(/</g, '&lt;').replace(/>/g, '&gt;');
-            if (this.elType !== 'slider') {
+            str = str.replace(/</g, "&lt;").replace(/>/g, "&gt;");
+            if (this.elType !== "slider") {
                 this.setLabelText(str);
             }
-            this.setAttribute({name: str});
+            this.setAttribute({ name: str });
         },
 
         /**
@@ -1126,7 +1183,7 @@ define([
          * @deprecated Use {@link JXG.GeometryElement#setAttribute}.
          */
         setProperty: function () {
-            JXG.deprecated('setProperty()', 'setAttribute()');
+            JXG.deprecated("setProperty()", "setAttribute()");
             this.setAttribute.apply(this, arguments);
         },
 
@@ -1135,15 +1192,15 @@ define([
          * parameters of the following types:
          * <ul>
          * <li> object: {key1:value1,key2:value2,...}
-         * <li> string: "key1:value"
-         * <li> array: [key, value]
+         * <li> string: 'key:value'
+         * <li> array: ['key', value]
          * </ul>
          * @param {Object} attributes An object with attributes.
          * @returns {JXG.GeometryElement} A reference to the element.
          *
          * @function
          * @example
-         * // Set property directly on creation of an element using the attributes object parameter
+         * // Set attribute directly on creation of an element using the attributes object parameter
          * var board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox: [-1, 5, 5, 1]};
          * var p = board.create('point', [2, 2], {visible: false});
          *
@@ -1153,33 +1210,34 @@ define([
          *     visible: true
          * });
          */
-        setAttribute: function (attributes) {
-            var i, j, le, key, value, arg, opacity, pair, oldvalue,
-                properties = {};
+        setAttribute: function (attr) {
+            var i, j, le, key, value, arg,
+                opacity, pair, oldvalue,
+                attributes = {};
 
             // Normalize the user input
             for (i = 0; i < arguments.length; i++) {
                 arg = arguments[i];
                 if (Type.isString(arg)) {
                     // pairRaw is string of the form 'key:value'
-                    pair = arg.split(':');
-                    properties[Type.trim(pair[0])] = Type.trim(pair[1]);
+                    pair = arg.split(":");
+                    attributes[Type.trim(pair[0])] = Type.trim(pair[1]);
                 } else if (!Type.isArray(arg)) {
                     // pairRaw consists of objects of the form {key1:value1,key2:value2,...}
-                    JXG.extend(properties, arg);
+                    JXG.extend(attributes, arg);
                 } else {
                     // pairRaw consists of array [key,value]
-                    properties[arg[0]] = arg[1];
+                    attributes[arg[0]] = arg[1];
                 }
             }
 
             // Handle shortcuts
-            properties = this.resolveShortcuts(properties);
+            attributes = this.resolveShortcuts(attributes);
 
-            for (i in properties) {
-                if (properties.hasOwnProperty(i)) {
-                    key = i.replace(/\s+/g, '').toLowerCase();
-                    value = properties[i];
+            for (i in attributes) {
+                if (attributes.hasOwnProperty(i)) {
+                    key = i.replace(/\s+/g, "").toLowerCase();
+                    value = attributes[i];
 
                     // This handles the subobjects, if the key:value pairs are contained in an object.
                     // Example:
@@ -1191,9 +1249,7 @@ define([
                     // })
                     // Now, only the supplied label attributes are overwritten.
                     // Otherwise, the value of label would be {visible:false} only.
-                    if (Type.isObject(value) &&
-                        Type.exists(this.visProp[key])) {
-
+                    if (Type.isObject(value) && Type.exists(this.visProp[key])) {
                         this.visProp[key] = Type.merge(this.visProp[key], value);
 
                         // First, handle the special case
@@ -1217,178 +1273,199 @@ define([
 
                     oldvalue = this.visProp[key];
                     switch (key) {
-                    case 'name':
-                        oldvalue = this.name;
-                        delete this.board.elementsByName[this.name];
-                        this.name = value;
-                        this.board.elementsByName[this.name] = this;
-                        break;
-                    case 'needsregularupdate':
-                        this.needsRegularUpdate = !(value === 'false' || value === false);
-                        this.board.renderer.setBuffering(this, this.needsRegularUpdate ? 'auto' : 'static');
-                        break;
-                    case 'labelcolor':
-                        value = Color.rgba2rgbo(value);
-                        opacity = value[1];
-                        value = value[0];
-                        if (opacity === 0) {
+                        case "name":
+                            oldvalue = this.name;
+                            delete this.board.elementsByName[this.name];
+                            this.name = value;
+                            this.board.elementsByName[this.name] = this;
+                            break;
+                        case "needsregularupdate":
+                            this.needsRegularUpdate = !(value === "false" || value === false);
+                            this.board.renderer.setBuffering(
+                                this,
+                                this.needsRegularUpdate ? "auto" : "static"
+                            );
+                            break;
+                        case "labelcolor":
+                            value = Color.rgba2rgbo(value);
+                            opacity = value[1];
+                            value = value[0];
+                            if (opacity === 0) {
+                                if (Type.exists(this.label) && this.hasLabel) {
+                                    this.label.hideElement();
+                                }
+                            }
                             if (Type.exists(this.label) && this.hasLabel) {
-                                this.label.hideElement();
+                                this.label.visProp.strokecolor = value;
+                                this.board.renderer.setObjectStrokeColor(
+                                    this.label,
+                                    value,
+                                    opacity
+                                );
                             }
-                        }
-                        if (Type.exists(this.label) && this.hasLabel) {
-                            this.label.visProp.strokecolor = value;
-                            this.board.renderer.setObjectStrokeColor(this.label,
-                                value, opacity);
-                        }
-                        if (this.elementClass === Const.OBJECT_CLASS_TEXT) {
-                            this.visProp.strokecolor = value;
-                            this.visProp.strokeopacity = opacity;
-                            this.board.renderer.setObjectStrokeColor(this,
-                                value, opacity);
-                        }
-                        break;
-                    case 'infoboxtext':
-                        if (Type.isString(value)) {
-                            this.infoboxText = value;
-                        } else {
-                            this.infoboxText = false;
-                        }
-                        break;
-                    case 'visible':
-                        if (value === 'false') {
-                            this.visProp.visible = false;
-                        } else if (value === 'true') {
-                            this.visProp.visible = true;
-                        } else {
-                            this.visProp.visible = value;
-                        }
+                            if (this.elementClass === Const.OBJECT_CLASS_TEXT) {
+                                this.visProp.strokecolor = value;
+                                this.visProp.strokeopacity = opacity;
+                                this.board.renderer.setObjectStrokeColor(this, value, opacity);
+                            }
+                            break;
+                        case "infoboxtext":
+                            if (Type.isString(value)) {
+                                this.infoboxText = value;
+                            } else {
+                                this.infoboxText = false;
+                            }
+                            break;
+                        case "visible":
+                            if (value === "false") {
+                                this.visProp.visible = false;
+                            } else if (value === "true") {
+                                this.visProp.visible = true;
+                            } else {
+                                this.visProp.visible = value;
+                            }
 
-                        this.setDisplayRendNode(Type.evaluate(this.visProp.visible));
-                        if (Type.evaluate(this.visProp.visible) && Type.exists(this.updateSize)) {
-                            this.updateSize();
-                        }
+                            this.setDisplayRendNode(Type.evaluate(this.visProp.visible));
+                            if (
+                                Type.evaluate(this.visProp.visible) &&
+                                Type.exists(this.updateSize)
+                            ) {
+                                this.updateSize();
+                            }
 
-                        break;
-                    case 'face':
-                        if (Type.isPoint(this)) {
-                            this.visProp.face = value;
-                            this.board.renderer.changePointStyle(this);
-                        }
-                        break;
-                    case 'trace':
-                        if (value === 'false' || value === false) {
-                            this.clearTrace();
-                            this.visProp.trace = false;
-                        } else if (value === 'pause') {
+                            break;
+                        case "face":
+                            if (Type.isPoint(this)) {
+                                this.visProp.face = value;
+                                this.board.renderer.changePointStyle(this);
+                            }
+                            break;
+                        case "trace":
+                            if (value === "false" || value === false) {
+                                this.clearTrace();
                                 this.visProp.trace = false;
-                        } else {
-                            this.visProp.trace = true;
-                        }
-                        break;
-                    case 'gradient':
-                        this.visProp.gradient = value;
-                        this.board.renderer.setGradient(this);
-                        break;
-                    case 'gradientsecondcolor':
-                        value = Color.rgba2rgbo(value);
-                        this.visProp.gradientsecondcolor = value[0];
-                        this.visProp.gradientsecondopacity = value[1];
-                        this.board.renderer.updateGradient(this);
-                        break;
-                    case 'gradientsecondopacity':
-                        this.visProp.gradientsecondopacity = value;
-                        this.board.renderer.updateGradient(this);
-                        break;
-                    case 'withlabel':
-                        this.visProp.withlabel = value;
-                        if (!Type.evaluate(value)) {
-                            if (this.label && this.hasLabel) {
-                                //this.label.hideElement();
-                                this.label.setAttribute({visible: false});
+                            } else if (value === "pause") {
+                                this.visProp.trace = false;
+                            } else {
+                                this.visProp.trace = true;
                             }
-                        } else {
-                            if (!this.label) {
-                                this.createLabel();
+                            break;
+                        case "gradient":
+                            this.visProp.gradient = value;
+                            this.board.renderer.setGradient(this);
+                            break;
+                        case "gradientsecondcolor":
+                            value = Color.rgba2rgbo(value);
+                            this.visProp.gradientsecondcolor = value[0];
+                            this.visProp.gradientsecondopacity = value[1];
+                            this.board.renderer.updateGradient(this);
+                            break;
+                        case "gradientsecondopacity":
+                            this.visProp.gradientsecondopacity = value;
+                            this.board.renderer.updateGradient(this);
+                            break;
+                        case "withlabel":
+                            this.visProp.withlabel = value;
+                            if (!Type.evaluate(value)) {
+                                if (this.label && this.hasLabel) {
+                                    //this.label.hideElement();
+                                    this.label.setAttribute({ visible: false });
+                                }
+                            } else {
+                                if (!this.label) {
+                                    this.createLabel();
+                                }
+                                //this.label.showElement();
+                                this.label.setAttribute({ visible: "inherit" });
+                                //this.label.setDisplayRendNode(Type.evaluate(this.visProp.visible));
                             }
-                            //this.label.showElement();
-                            this.label.setAttribute({visible: 'inherit'});
-                            //this.label.setDisplayRendNode(Type.evaluate(this.visProp.visible));
-                        }
-                        this.hasLabel = value;
-                        break;
-                    case 'radius':
-                        if (this.type === Const.OBJECT_TYPE_ANGLE || this.type === Const.OBJECT_TYPE_SECTOR) {
-                            this.setRadius(value);
-                        }
-                        break;
-                    case 'rotate':
-                        if ((this.elementClass === Const.OBJECT_CLASS_TEXT &&
-                             Type.evaluate(this.visProp.display) === 'internal') ||
-                            this.type === Const.OBJECT_TYPE_IMAGE) {
-                            this.addRotation(value);
-                        }
-                        break;
-                    case 'ticksdistance':
-                        if (this.type === Const.OBJECT_TYPE_TICKS && Type.isNumber(value)) {
-                            this.ticksFunction = this.makeTicksFunction(value);
-                        }
-                        break;
-                    case 'generatelabelvalue':
-                        if (this.type === Const.OBJECT_TYPE_TICKS && Type.isFunction(value)) {
-                            this.generateLabelValue = value;
-                        }
-                        break;
-                    case 'onpolygon':
-                        if (this.type === Const.OBJECT_TYPE_GLIDER) {
-                            this.onPolygon = !!value;
-                        }
-                        break;
-                    case 'disabled':
-                        // button, checkbox, input. Is not available on initial call.
-                        if (Type.exists(this.rendNodeTag)) {
-                            this.rendNodeTag.disabled = !!value;
-                        }
-                        break;
-                    case 'checked':
-                        // checkbox Is not available on initial call.
-                        if (Type.exists(this.rendNodeTag)) {
-                            this.rendNodeCheckbox.checked = !!value;
-                        }
-                        break;
-                    case 'maxlength':
-                        // input. Is not available on initial call.
-                        if (Type.exists(this.rendNodeTag)) {
-                            this.rendNodeTag.maxlength = !!value;
-                        }
-                        break;
-                    case 'layer':
-                        this.board.renderer.setLayer(this, Type.evaluate(value));
-                        this._set(key, value);
-                        break;
-                    case 'tabindex':
-                        if (Type.exists(this.rendNode)) {
-                            this.rendNode.setAttribute('tabindex', value);
+                            this.hasLabel = value;
+                            break;
+                        case "radius":
+                            if (
+                                this.type === Const.OBJECT_TYPE_ANGLE ||
+                                this.type === Const.OBJECT_TYPE_SECTOR
+                            ) {
+                                this.setRadius(value);
+                            }
+                            break;
+                        case "rotate":
+                            if (
+                                (this.elementClass === Const.OBJECT_CLASS_TEXT &&
+                                    Type.evaluate(this.visProp.display) === "internal") ||
+                                this.type === Const.OBJECT_TYPE_IMAGE
+                            ) {
+                                this.addRotation(value);
+                            }
+                            break;
+                        // case "ticksdistance":
+                        //     if (this.type === Const.OBJECT_TYPE_TICKS && Type.isNumber(value)) {
+                        //         this.ticksFunction = this.makeTicksFunction(value);
+                        //     }
+                        //     break;
+                        case "generatelabelvalue":
+                            if (
+                                this.type === Const.OBJECT_TYPE_TICKS &&
+                                Type.isFunction(value)
+                            ) {
+                                this.generateLabelValue = value;
+                            }
+                            break;
+                        case "onpolygon":
+                            if (this.type === Const.OBJECT_TYPE_GLIDER) {
+                                this.onPolygon = !!value;
+                            }
+                            break;
+                        case "disabled":
+                            // button, checkbox, input. Is not available on initial call.
+                            if (Type.exists(this.rendNodeTag)) {
+                                this.rendNodeTag.disabled = !!value;
+                            }
+                            break;
+                        case "checked":
+                            // checkbox Is not available on initial call.
+                            if (Type.exists(this.rendNodeTag)) {
+                                this.rendNodeCheckbox.checked = !!value;
+                            }
+                            break;
+                        case "maxlength":
+                            // input. Is not available on initial call.
+                            if (Type.exists(this.rendNodeTag)) {
+                                this.rendNodeTag.maxlength = !!value;
+                            }
+                            break;
+                        case "layer":
+                            this.board.renderer.setLayer(this, Type.evaluate(value));
                             this._set(key, value);
-                        }
-                        break;
-                    default:
-                        if (Type.exists(this.visProp[key]) &&
-                            (!JXG.Validator[key] ||
-                                (JXG.Validator[key] && JXG.Validator[key](value)) ||
-                                (JXG.Validator[key] && Type.isFunction(value) && JXG.Validator[key](value()))
-                            )
-                        ) {
-                            value = (value.toLowerCase && value.toLowerCase() === 'false') ? false : value;
-                            this._set(key, value);
-                        }
-                        break;
+                            break;
+                        case "tabindex":
+                            if (Type.exists(this.rendNode)) {
+                                this.rendNode.setAttribute("tabindex", value);
+                                this._set(key, value);
+                            }
+                            break;
+                        default:
+                            if (
+                                Type.exists(this.visProp[key]) &&
+                                (!JXG.Validator[key] ||
+                                    (JXG.Validator[key] && JXG.Validator[key](value)) ||
+                                    (JXG.Validator[key] &&
+                                        Type.isFunction(value) &&
+                                        JXG.Validator[key](value())))
+                            ) {
+                                value =
+                                    value.toLowerCase && value.toLowerCase() === "false"
+                                        ? false
+                                        : value;
+                                this._set(key, value);
+                            }
+                            break;
                     }
-                    this.triggerEventHandlers(['attribute:' + key], [oldvalue, value, this]);
+                    this.triggerEventHandlers(["attribute:" + key], [oldvalue, value, this]);
                 }
             }
 
-            this.triggerEventHandlers(['attribute'], [properties, this]);
+            this.triggerEventHandlers(["attribute"], [attributes, this]);
 
             if (!Type.evaluate(this.visProp.needsregularupdate)) {
                 this.board.fullUpdate();
@@ -1404,7 +1481,7 @@ define([
          * @deprecated Use {@link JXG.GeometryElement#getAttribute}.
          */
         getProperty: function () {
-            JXG.deprecated('getProperty()', 'getAttribute()');
+            JXG.deprecated("getProperty()", "getAttribute()");
             this.getProperty.apply(this, arguments);
         },
 
@@ -1418,21 +1495,21 @@ define([
             key = key.toLowerCase();
 
             switch (key) {
-            case 'needsregularupdate':
-                result = this.needsRegularUpdate;
-                break;
-            case 'labelcolor':
-                result = this.label.visProp.strokecolor;
-                break;
-            case 'infoboxtext':
-                result = this.infoboxText;
-                break;
-            case 'withlabel':
-                result = this.hasLabel;
-                break;
-            default:
-                result = this.visProp[key];
-                break;
+                case "needsregularupdate":
+                    result = this.needsRegularUpdate;
+                    break;
+                case "labelcolor":
+                    result = this.label.visProp.strokecolor;
+                    break;
+                case "infoboxtext":
+                    result = this.infoboxText;
+                    break;
+                case "withlabel":
+                    result = this.hasLabel;
+                    break;
+                default:
+                    result = this.visProp[key];
+                    break;
             }
 
             return result;
@@ -1447,7 +1524,7 @@ define([
          * @private
          */
         setDash: function (dash) {
-            this.setAttribute({dash: dash});
+            this.setAttribute({ dash: dash });
             return this;
         },
 
@@ -1505,7 +1582,7 @@ define([
             this.visProp.lastarrow = lastArrow;
             if (lastArrow) {
                 this.type = Const.OBJECT_TYPE_VECTOR;
-                this.elType = 'arrow';
+                this.elType = "arrow";
             }
 
             this.prepareUpdate().update().updateVisibility().updateRenderer();
@@ -1519,12 +1596,12 @@ define([
          */
         createGradient: function () {
             var ev_g = Type.evaluate(this.visProp.gradient);
-            if (ev_g === 'linear' || ev_g === 'radial') {
+            if (ev_g === "linear" || ev_g === "radial") {
                 this.board.renderer.setGradient(this);
             }
         },
 
-         /**
+        /**
          * Creates a label element for this geometry element.
          * @see #addLabelToElement
          */
@@ -1536,19 +1613,27 @@ define([
             // just don't create a label. This method is usually not called by a user, so we won't throw
             // an exception here and simply output a warning via JXG.debug.
             if (JXG.elements.text) {
-                attr =  Type.deepCopy(this.visProp.label, null);
-                attr.id = this.id + 'Label';
+                attr = Type.deepCopy(this.visProp.label, null);
+                attr.id = this.id + "Label";
                 attr.isLabel = true;
                 attr.anchor = this;
                 attr.priv = this.visProp.priv;
 
                 if (this.visProp.withlabel) {
-                    this.label = JXG.elements.text(this.board, [0, 0, function () {
-                        if (Type.isFunction(that.name)) {
-                            return that.name();
-                        }
-                        return that.name;
-                    }], attr);
+                    this.label = JXG.elements.text(
+                        this.board,
+                        [
+                            0,
+                            0,
+                            function () {
+                                if (Type.isFunction(that.name)) {
+                                    return that.name();
+                                }
+                                return that.name;
+                            }
+                        ],
+                        attr
+                    );
                     this.label.needsUpdate = true;
                     this.label.dump = false;
                     this.label.fullUpdate();
@@ -1556,7 +1641,9 @@ define([
                     this.hasLabel = true;
                 }
             } else {
-                JXG.debug('JSXGraph: Can\'t create label: text element is not available. Make sure you include base/text');
+                JXG.debug(
+                    "JSXGraph: Can't create label: text element is not available. Make sure you include base/text"
+                );
             }
 
             return this;
@@ -1634,7 +1721,7 @@ define([
          * Dimensions of the smallest rectangle enclosing the element.
          * @returns {Array} The coordinates of the enclosing rectangle in a format
          * like the bounding box in {@link JXG.Board#setBoundingBox}.
-         * 
+         *
          * @returns {Array} similar to {@link JXG.Board#setBoundingBox}.
          */
         bounds: function () {
@@ -1658,10 +1745,11 @@ define([
          * @returns JSON string containing element's properties.
          */
         toJSON: function () {
-            var vis, key,
+            var vis,
+                key,
                 json = ['{"name":', this.name];
 
-            json.push(', ' + '"id":' + this.id);
+            json.push(", " + '"id":' + this.id);
 
             vis = [];
             for (key in this.visProp) {
@@ -1671,60 +1759,91 @@ define([
                     }
                 }
             }
-            json.push(', "visProp":{' + vis.toString() + '}');
-            json.push('}');
+            json.push(', "visProp":{' + vis.toString() + "}");
+            json.push("}");
 
-            return json.join('');
+            return json.join("");
         },
 
         /**
-         * Rotate texts or images by a given degree. Works only for texts where JXG.Text#display equal to "internal".
+         * Rotate texts or images by a given degree.
          * @param {number} angle The degree of the rotation (90 means vertical text).
          * @see JXG.GeometryElement#rotate
          */
         addRotation: function (angle) {
-            var tOffInv, tOff, tS, tSInv, tRot,
+            var tOffInv,
+                tOff,
+                tS,
+                tSInv,
+                tRot,
                 that = this;
 
-            if (((this.elementClass === Const.OBJECT_CLASS_TEXT &&
-                    Type.evaluate(this.visProp.display) === 'internal') ||
-                    this.type === Const.OBJECT_TYPE_IMAGE) && angle !== 0) {
+            if (
+                (this.elementClass === Const.OBJECT_CLASS_TEXT ||
+                    this.type === Const.OBJECT_TYPE_IMAGE) &&
+                angle !== 0
+            ) {
+                tOffInv = this.board.create(
+                    "transform",
+                    [
+                        function () {
+                            return -that.X();
+                        },
+                        function () {
+                            return -that.Y();
+                        }
+                    ],
+                    { type: "translate" }
+                );
 
-                tOffInv = this.board.create('transform', [
-                    function () {
-                        return -that.X();
-                    }, function () {
-                        return -that.Y();
-                    }
-                ], {type: 'translate'});
+                tOff = this.board.create(
+                    "transform",
+                    [
+                        function () {
+                            return that.X();
+                        },
+                        function () {
+                            return that.Y();
+                        }
+                    ],
+                    { type: "translate" }
+                );
 
-                tOff = this.board.create('transform', [
-                    function () {
-                        return that.X();
-                    }, function () {
-                        return that.Y();
-                    }
-                ], {type: 'translate'});
+                tS = this.board.create(
+                    "transform",
+                    [
+                        function () {
+                            return that.board.unitX / that.board.unitY;
+                        },
+                        function () {
+                            return 1;
+                        }
+                    ],
+                    { type: "scale" }
+                );
 
-                tS = this.board.create('transform', [
-                    function () {
-                        return that.board.unitX / that.board.unitY;
-                    }, function () {
-                        return 1;
-                    }
-                ], {type: 'scale'});
+                tSInv = this.board.create(
+                    "transform",
+                    [
+                        function () {
+                            return that.board.unitY / that.board.unitX;
+                        },
+                        function () {
+                            return 1;
+                        }
+                    ],
+                    { type: "scale" }
+                );
 
-                tSInv = this.board.create('transform', [
-                    function () {
-                        return that.board.unitY / that.board.unitX;
-                    }, function () {
-                        return 1;
-                    }
-                ], {type: 'scale'});
-
-                tRot = this.board.create('transform', [
-                        function() { return Type.evaluate(angle) * Math.PI / 180; }
-                    ], {type: 'rotate'});
+                tRot = this.board.create(
+                    "transform",
+                    [
+                        function () {
+                            return (Type.evaluate(angle) * Math.PI) / 180;
+                        }
+                    ],
+                    { type: "rotate" }
+                );
 
                 tOffInv.bindTo(this);
                 tS.bindTo(this);
@@ -1743,8 +1862,8 @@ define([
          * @deprecated Use {@link JXG.GeometryElement#setAttribute}
          */
         highlightStrokeColor: function (sColor) {
-            JXG.deprecated('highlightStrokeColor()', 'setAttribute()');
-            this.setAttribute({highlightStrokeColor: sColor});
+            JXG.deprecated("highlightStrokeColor()", "setAttribute()");
+            this.setAttribute({ highlightStrokeColor: sColor });
             return this;
         },
 
@@ -1755,8 +1874,8 @@ define([
          * @deprecated Use {@link JXG.GeometryElement#setAttribute}
          */
         strokeColor: function (sColor) {
-            JXG.deprecated('strokeColor()', 'setAttribute()');
-            this.setAttribute({strokeColor: sColor});
+            JXG.deprecated("strokeColor()", "setAttribute()");
+            this.setAttribute({ strokeColor: sColor });
             return this;
         },
 
@@ -1767,8 +1886,8 @@ define([
          * @deprecated Use {@link JXG.GeometryElement#setAttribute}
          */
         strokeWidth: function (width) {
-            JXG.deprecated('strokeWidth()', 'setAttribute()');
-            this.setAttribute({strokeWidth: width});
+            JXG.deprecated("strokeWidth()", "setAttribute()");
+            this.setAttribute({ strokeWidth: width });
             return this;
         },
 
@@ -1779,8 +1898,8 @@ define([
          * @deprecated Use {@link JXG.GeometryElement#setAttribute}
          */
         fillColor: function (fColor) {
-            JXG.deprecated('fillColor()', 'setAttribute()');
-            this.setAttribute({fillColor: fColor});
+            JXG.deprecated("fillColor()", "setAttribute()");
+            this.setAttribute({ fillColor: fColor });
             return this;
         },
 
@@ -1791,8 +1910,8 @@ define([
          * @deprecated Use {@link JXG.GeometryElement#setAttribute}
          */
         highlightFillColor: function (fColor) {
-            JXG.deprecated('highlightFillColor()', 'setAttribute()');
-            this.setAttribute({highlightFillColor: fColor});
+            JXG.deprecated("highlightFillColor()", "setAttribute()");
+            this.setAttribute({ highlightFillColor: fColor });
             return this;
         },
 
@@ -1803,8 +1922,8 @@ define([
          * @deprecated Use {@link JXG.GeometryElement#setAttribute}
          */
         labelColor: function (lColor) {
-            JXG.deprecated('labelColor()', 'setAttribute()');
-            this.setAttribute({labelColor: lColor});
+            JXG.deprecated("labelColor()", "setAttribute()");
+            this.setAttribute({ labelColor: lColor });
             return this;
         },
 
@@ -1815,8 +1934,8 @@ define([
          * @deprecated Use {@link JXG.GeometryElement#setAttribute}
          */
         dash: function (d) {
-            JXG.deprecated('dash()', 'setAttribute()');
-            this.setAttribute({dash: d});
+            JXG.deprecated("dash()", "setAttribute()");
+            this.setAttribute({ dash: d });
             return this;
         },
 
@@ -1827,8 +1946,8 @@ define([
          * @deprecated Use {@link JXG.GeometryElement#setAttribute}
          */
         visible: function (v) {
-            JXG.deprecated('visible()', 'setAttribute()');
-            this.setAttribute({visible: v});
+            JXG.deprecated("visible()", "setAttribute()");
+            this.setAttribute({ visible: v });
             return this;
         },
 
@@ -1839,8 +1958,8 @@ define([
          * @deprecated Use {@link JXG.GeometryElement#setAttribute}
          */
         shadow: function (s) {
-            JXG.deprecated('shadow()', 'setAttribute()');
-            this.setAttribute({shadow: s});
+            JXG.deprecated("shadow()", "setAttribute()");
+            this.setAttribute({ shadow: s });
             return this;
         },
 
@@ -1893,7 +2012,8 @@ define([
                     'needsregularupdate', 'zoom', 'layer', 'offset'],
                 */
                 cleanThis = [],
-                i, len = cleanThis.length;
+                i,
+                len = cleanThis.length;
 
             attributes.id = this.id;
             attributes.name = this.name;
@@ -1921,8 +2041,8 @@ define([
          * @returns {String} Id of the ticks object.
          */
         addTicks: function (ticks) {
-            if (ticks.id === '' || !Type.exists(ticks.id)) {
-                ticks.id = this.id + '_ticks_' + (this.ticks.length + 1);
+            if (ticks.id === "" || !Type.exists(ticks.id)) {
+                ticks.id = this.id + "_ticks_" + (this.ticks.length + 1);
             }
 
             this.board.renderer.drawTicks(ticks);
@@ -1984,7 +2104,7 @@ define([
          * @returns {Array} containing the snap sizes for x and y direction.
          * @private
          */
-        getSnapSizes: function() {
+        getSnapSizes: function () {
             var sX, sY, ticks;
 
             sX = Type.evaluate(this.visProp.snapsizex);
@@ -2015,6 +2135,7 @@ define([
          */
         handleSnapToGrid: function (force, fromParent) {
             var x, y, rx, ry, rcoords,
+                mi, ma,
                 boardBB, res, sX, sY,
                 needsSnapToGrid = false,
                 attractToGrid = Type.evaluate(this.visProp.attracttogrid),
@@ -2025,7 +2146,8 @@ define([
                 return this;
             }
 
-            needsSnapToGrid = Type.evaluate(this.visProp.snaptogrid) || attractToGrid || force === true;
+            needsSnapToGrid =
+                Type.evaluate(this.visProp.snaptogrid) || attractToGrid || force === true;
 
             if (needsSnapToGrid) {
                 x = this.coords.usrCoords[1];
@@ -2039,26 +2161,34 @@ define([
                     boardBB = this.board.getBoundingBox();
                     rx = Math.round(x / sX) * sX;
                     ry = Math.round(y / sY) * sY;
+
                     rcoords = new JXG.Coords(Const.COORDS_BY_USER, [rx, ry], this.board);
-                    if (!attractToGrid ||
+                    if (
+                        !attractToGrid ||
                         rcoords.distance(
-                            ev_au === 'screen' ? Const.COORDS_BY_SCREEN : Const.COORDS_BY_USER, this.coords
-                            ) < ev_ad) {
+                            ev_au === "screen" ? Const.COORDS_BY_SCREEN : Const.COORDS_BY_USER,
+                            this.coords
+                        ) < ev_ad
+                    ) {
                         x = rx;
                         y = ry;
                         // Checking whether x and y are still within boundingBox.
                         // If not, adjust them to remain within the board.
                         // Otherwise a point may become invisible.
                         if (!fromParent) {
-                            if (x < boardBB[0]) {
+                            mi = Math.min(boardBB[0], boardBB[2]);
+                            ma = Math.max(boardBB[0], boardBB[2]);
+                            if (x < mi && x > mi - sX) {
                                 x += sX;
-                            } else if (x > boardBB[2]) {
+                            } else if (x > ma && x < ma + sX) {
                                 x -= sX;
                             }
 
-                            if (y < boardBB[3]) {
+                            mi = Math.min(boardBB[1], boardBB[3]);
+                            ma = Math.max(boardBB[1], boardBB[3]);
+                            if (y < mi && y > mi - sY) {
                                 y += sY;
-                            } else if (y > boardBB[1]) {
+                            } else if (y > ma && y < ma + sY) {
                                 y -= sY;
                             }
                         }
@@ -2069,8 +2199,12 @@ define([
             return this;
         },
 
-        getBoundingBox: function() {
-            var i, le, v, x, y,
+        getBoundingBox: function () {
+            var i,
+                le,
+                v,
+                x,
+                y,
                 bb = [Infinity, Infinity, -Infinity, -Infinity];
 
             if (this.type === Const.OBJECT_TYPE_POLYGON) {
@@ -2080,11 +2214,11 @@ define([
                 }
                 for (i = 0; i < le; i++) {
                     v = this.vertices[i].X();
-                    bb[0] = (v < bb[0]) ? v : bb[0];
-                    bb[2] = (v > bb[2]) ? v : bb[2];
+                    bb[0] = v < bb[0] ? v : bb[0];
+                    bb[2] = v > bb[2] ? v : bb[2];
                     v = this.vertices[i].Y();
-                    bb[1] = (v < bb[1]) ? v : bb[1];
-                    bb[3] = (v > bb[3]) ? v : bb[3];
+                    bb[1] = v < bb[1] ? v : bb[1];
+                    bb[3] = v > bb[3] ? v : bb[3];
                 }
             } else if (this.elementClass === Const.OBJECT_CLASS_CIRCLE) {
                 x = this.center.X();
@@ -2097,11 +2231,11 @@ define([
                 }
                 for (i = 0; i < le; i++) {
                     v = this.points[i].coords.usrCoords[1];
-                    bb[0] = (v < bb[0]) ? v : bb[0];
-                    bb[2] = (v > bb[2]) ? v : bb[2];
+                    bb[0] = v < bb[0] ? v : bb[0];
+                    bb[2] = v > bb[2] ? v : bb[2];
                     v = this.points[i].coords.usrCoords[1];
-                    bb[1] = (v < bb[1]) ? v : bb[1];
-                    bb[3] = (v > bb[3]) ? v : bb[3];
+                    bb[1] = v < bb[1] ? v : bb[1];
+                    bb[3] = v > bb[3] ? v : bb[3];
                 }
             }
 
@@ -2126,6 +2260,112 @@ define([
          */
         removeEvent: JXG.shortcut(JXG.GeometryElement.prototype, 'off'),
 
+        /**
+         * Format a number according to the locale set in the attribute "intl".
+         * If in the options of the intl-attribute "maximumFractionDigits" is not set, 
+         * the optional parameter digits is used instead.
+         * See <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat/NumberFormat">https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat/NumberFormat</a>
+         * for more  information about internationalization.
+         * 
+         * @param {Number} value Number to be formatted
+         * @param {Number} [digits=undefined] Optional number of digits
+         * @returns {String|Number} string containing the formatted number according to the locale 
+         * or the number itself of the formatting is not possible.
+         */
+        formatNumberLocale: function(value, digits) {
+            var loc, opt, key,
+                optCalc = {},
+                // These options are case sensitive:
+                translate = {
+                    maximumfractiondigits: 'maximumFractionDigits',
+                    minimumfractiondigits: 'minimumFractionDigits',
+                    compactdisplay: 'compactDisplay',
+                    currencydisplay: 'currencyDisplay',
+                    currencysign: 'currencySign',
+                    localematcher: 'localeMatcher',
+                    numberingsystem: 'numberingSystem',
+                    signdisplay: 'signDisplay',
+                    unitdisplay: 'unitDisplay',
+                    usegrouping: 'useGrouping',
+                    roundingmode: 'roundingMode',
+                    roundingpriority: 'roundingPriority',
+                    roundingincrement: 'roundingIncrement',
+                    trailingzerodisplay: 'trailingZeroDisplay',
+                    minimumintegerdigits: 'minimumIntegerDigits',
+                    minimumsignificantdigits: 'minimumSignificantDigits',
+                    maximumsignificantdigits: 'maximumSignificantDigits',
+                };
+
+            if (Type.exists(Intl) &&
+                this.useLocale())  {
+
+                loc = Type.evaluate(this.visProp.intl.locale) ||
+                        Type.evaluate(this.board.attr.intl.locale);
+                opt = Type.evaluate(this.visProp.intl.options) || {};
+
+                // Transfer back to camel case if necessary
+                // and evaluate
+                for (key in opt) {
+                    if (opt.hasOwnProperty(key)) {
+                        if (translate.hasOwnProperty(key)) {
+                            optCalc[translate[key]] = Type.evaluate(opt[key]);
+                        } else {
+                            optCalc[key] = Type.evaluate(opt[key]);
+                        }
+                    }
+                }
+
+                // If maximumfractiondigits is not set,
+                // the value of the attribute "digits" is taken instead.
+                key = 'maximumfractiondigits';
+                if (!Type.exists(opt[key])) {
+                    optCalc[translate[key]] = digits;
+
+                    // key = 'minimumfractiondigits';
+                    // if (!Type.exists(opt[key]) || Type.evaluate(opt[key]) > digits) {
+                    //     optCalc[translate[key]] = digits;
+                    // }
+                }
+
+                return Intl.NumberFormat(loc, optCalc).format(value);
+            }
+
+            return value;
+        },
+
+        /**
+         * Checks if locale is enabled in the attribute. This may be in the attributes of the board,
+         * or in the attributes of the text. The latter has higher priority. The board attribute is taken if 
+         * attribute "intl.enabled" of the text element is set to 'inherit'.
+         * 
+         * @returns {Boolean} if locale can be used for number formatting.
+         */
+        useLocale: function() {
+            var val;
+
+            // Check if element supports intl
+            if (!Type.exists(this.visProp.intl) ||
+                !Type.exists(this.visProp.intl.enabled)) {
+                return false;
+            }
+
+            // Check if intl is supported explicitly enabled for this element
+            val = Type.evaluate(this.visProp.intl.enabled);
+
+            if (val === true) {
+                return true;
+            }
+
+            // Check intl attribute of the board
+            if (val === 'inherit') {
+                if (Type.evaluate(this.board.attr.intl.enabled) === true) {
+                    return true;
+                }
+            }
+
+            return false;
+        },
+
         /* **************************
          *     EVENT DEFINITION
          * for documentation purposes
@@ -2138,7 +2378,7 @@ define([
          * @name JXG.GeometryElement#over
          * @param {Event} e The browser's event object.
          */
-        __evt__over: function (e) { },
+        __evt__over: function (e) {},
 
         /**
          * @event
@@ -2146,7 +2386,7 @@ define([
          * @name JXG.GeometryElement#mouseover
          * @param {Event} e The browser's event object.
          */
-        __evt__mouseover: function (e) { },
+        __evt__mouseover: function (e) {},
 
         /**
          * @event
@@ -2154,7 +2394,7 @@ define([
          * @name JXG.GeometryElement#out
          * @param {Event} e The browser's event object.
          */
-        __evt__out: function (e) { },
+        __evt__out: function (e) {},
 
         /**
          * @event
@@ -2162,7 +2402,7 @@ define([
          * @name JXG.GeometryElement#mouseout
          * @param {Event} e The browser's event object.
          */
-        __evt__mouseout: function (e) { },
+        __evt__mouseout: function (e) {},
 
         /**
          * @event
@@ -2170,7 +2410,7 @@ define([
          * @name JXG.GeometryElement#move
          * @param {Event} e The browser's event object.
          */
-        __evt__move: function (e) { },
+        __evt__move: function (e) {},
 
         /**
          * @event
@@ -2178,7 +2418,7 @@ define([
          * @name JXG.GeometryElement#mousemove
          * @param {Event} e The browser's event object.
          */
-        __evt__mousemove: function (e) { },
+        __evt__mousemove: function (e) {},
 
         /**
          * @event
@@ -2186,7 +2426,7 @@ define([
          * @name JXG.GeometryElement#drag
          * @param {Event} e The browser's event object.
          */
-        __evt__drag: function (e) { },
+        __evt__drag: function (e) {},
 
         /**
          * @event
@@ -2194,7 +2434,7 @@ define([
          * @name JXG.GeometryElement#mousedrag
          * @param {Event} e The browser's event object.
          */
-        __evt__mousedrag: function (e) { },
+        __evt__mousedrag: function (e) {},
 
         /**
          * @event
@@ -2202,7 +2442,7 @@ define([
          * @name JXG.GeometryElement#pendrag
          * @param {Event} e The browser's event object.
          */
-        __evt__pendrag: function (e) { },
+        __evt__pendrag: function (e) {},
 
         /**
          * @event
@@ -2210,7 +2450,16 @@ define([
          * @name JXG.GeometryElement#touchdrag
          * @param {Event} e The browser's event object.
          */
-        __evt__touchdrag: function (e) { },
+        __evt__touchdrag: function (e) {},
+
+        /**
+         * @event
+         * @description This event is fired whenever the user drags the element by pressing arrow keys
+         * on the keyboard.
+         * @name JXG.GeometryElement#keydrag
+         * @param {Event} e The browser's event object.
+         */
+        __evt__keydrag: function (e) { },
 
         /**
          * @event
@@ -2218,7 +2467,7 @@ define([
          * @name JXG.GeometryElement#down
          * @param {Event} e The browser's event object.
          */
-        __evt__down: function (e) { },
+        __evt__down: function (e) {},
 
         /**
          * @event
@@ -2226,7 +2475,7 @@ define([
          * @name JXG.GeometryElement#mousedown
          * @param {Event} e The browser's event object.
          */
-        __evt__mousedown: function (e) { },
+        __evt__mousedown: function (e) {},
 
         /**
          * @event
@@ -2234,7 +2483,7 @@ define([
          * @name JXG.GeometryElement#pendown
          * @param {Event} e The browser's event object.
          */
-        __evt__pendown: function (e) { },
+        __evt__pendown: function (e) {},
 
         /**
          * @event
@@ -2242,7 +2491,7 @@ define([
          * @name JXG.GeometryElement#touchdown
          * @param {Event} e The browser's event object.
          */
-        __evt__touchdown: function (e) { },
+        __evt__touchdown: function (e) {},
 
         /**
          * @event
@@ -2250,7 +2499,7 @@ define([
          * @name JXG.GeometryElement#up
          * @param {Event} e The browser's event object.
          */
-        __evt__up: function (e) { },
+        __evt__up: function (e) {},
 
         /**
          * @event
@@ -2258,7 +2507,7 @@ define([
          * @name JXG.GeometryElement#mouseup
          * @param {Event} e The browser's event object.
          */
-        __evt__mouseup: function (e) { },
+        __evt__mouseup: function (e) {},
 
         /**
          * @event
@@ -2266,7 +2515,7 @@ define([
          * @name JXG.GeometryElement#penup
          * @param {Event} e The browser's event object.
          */
-        __evt__penup: function (e) { },
+        __evt__penup: function (e) {},
 
         /**
          * @event
@@ -2302,8 +2551,9 @@ define([
          */
         __evt: function () {}
         //endregion
+    }
+);
 
-    });
-
-    return JXG.GeometryElement;
-});
+export default JXG.GeometryElement;
+// const GeometryElement = JXG.GeometryElement;
+// export { GeometryElement as default,  GeometryElement };

@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2022
+    Copyright 2008-2023
         Matthias Ehmann,
         Carsten Miller,
         Andreas Walter,
@@ -23,15 +23,16 @@
     GNU Lesser General Public License for more details.
 
     You should have received a copy of the GNU Lesser General Public License and
-    the MIT License along with JSXGraph. If not, see <http://www.gnu.org/licenses/>
-    and <http://opensource.org/licenses/MIT/>.
+    the MIT License along with JSXGraph. If not, see <https://www.gnu.org/licenses/>
+    and <https://opensource.org/licenses/MIT/>.
  */
-describe("Test geometry functions", function() {
+describe("Test geometry functions", function () {
     var board;
 
-    document.getElementsByTagName('body')[0].innerHTML = '<div id="jxgbox" style="width: 100px; height: 100px;"></div>';
-    board = JXG.JSXGraph.initBoard('jxgbox', {
-        renderer: 'svg',
+    document.getElementsByTagName("body")[0].innerHTML =
+        '<div id="jxgbox" style="width: 100px; height: 100px;"></div>';
+    board = JXG.JSXGraph.initBoard("jxgbox", {
+        renderer: "svg",
         axis: false,
         grid: false,
         boundingbox: [-8, 8, 8, -8],
@@ -39,7 +40,7 @@ describe("Test geometry functions", function() {
         showNavigation: false
     });
 
-    it("affineRatio Coords", function() {
+    it("affineRatio Coords", function () {
         var a = new JXG.Coords(JXG.COORDS_BY_USER, [1, 0, 0], board),
             b = new JXG.Coords(JXG.COORDS_BY_USER, [1, 1, 0], board),
             c = new JXG.Coords(JXG.COORDS_BY_USER, [1, 3, 0], board);
@@ -47,7 +48,7 @@ describe("Test geometry functions", function() {
         expect(JXG.Math.Geometry.affineRatio(a, b, c)).toEqual(3);
     });
 
-    it("affineRatio Array", function() {
+    it("affineRatio Array", function () {
         var a = [1, 0, 0],
             b = [1, 1, 0],
             c = [1, 3, 0];
@@ -55,45 +56,93 @@ describe("Test geometry functions", function() {
         expect(JXG.Math.Geometry.affineRatio(a, b, c)).toEqual(3);
     });
 
-    it("meetSegmentSegment", function() {
+    it("meetSegmentSegment", function () {
         var res = JXG.Math.Geometry.meetSegmentSegment(
-                    [1, -1, -1], [1, -1, 1], 
-                    [1, 1, 2], [1, -1, 2]
-                );
+            [1, -1, -1],
+            [1, -1, 1],
+            [1, 1, 2],
+            [1, -1, 2]
+        );
 
         expect(res).toEqual([[1, -1, 2], 1.5, 1]);
 
         res = JXG.Math.Geometry.meetSegmentSegment(
-            [1, -1, -1], [1, -1, 1], 
-            [2, 2, 4], [2, -2, 4]
+            [1, -1, -1],
+            [1, -1, 1],
+            [2, 2, 4],
+            [2, -2, 4]
         );
         expect(res).toEqual([[1, -1, 2], 1.5, 1]);
 
         res = JXG.Math.Geometry.meetSegmentSegment(
-            [1, -1, -1], [1, -1, 1], 
-            [1, 1, 2], [2, -2, 4]
+            [1, -1, -1],
+            [1, -1, 1],
+            [1, 1, 2],
+            [2, -2, 4]
         );
         expect(res).toEqual([[1, -1, 2], 1.5, 1]);
     });
 
-    it("meetPathPath", function() {
+    it("meetPathPath", function () {
         var pol1, pol2, p;
 
-        pol1 = board.create('polygon', [[1, 1], [2, 0], [1, 2], [-1,1]]);
-        pol2 = board.create('polygon', [[1, 1.5], [2, 2], [0, 3], [0,0.5]]);
-        p = board.create('intersection', [pol1, pol2, 3]);
+        pol1 = board.create("polygon", [
+            [1, 1],
+            [2, 0],
+            [1, 2],
+            [-1, 1]
+        ]);
+        pol2 = board.create("polygon", [
+            [1, 1.5],
+            [2, 2],
+            [0, 3],
+            [0, 0.5]
+        ]);
+        p = board.create("intersection", [pol1, pol2, 3]);
         expect([p.X(), p.Y()]).toEqual([0.5, 1]);
     });
 
-    it("meetPolygonLine", function() {
+    it("meetPolygonLine", function () {
         var pol1, li, p;
 
-        pol1 = board.create('polygon', [[1, 1], [2, 0], [1, 2], [-1,1]]);
-        li = board.create('line', [[-2,2], [4,-2]]);
-        p = board.create('intersection', [pol1, li, 0]);
+        pol1 = board.create("polygon", [
+            [1, 1],
+            [2, 0],
+            [1, 2],
+            [-1, 1]
+        ]);
+        li = board.create("line", [
+            [-2, 2],
+            [4, -2]
+        ]);
+        p = board.create("intersection", [pol1, li, 0]);
 
         expect(p.X()).toBeCloseTo(-0.7142857142857143, 7);
         expect(p.Y()).toBeCloseTo(1.1428571428571428, 7);
     });
+
+    it("bisectorParallels", function () {
+        var li1, li2,
+
+        li1 = board.create('line', [[0, -5], [-4, 2]]);
+        li2 = board.create('parallel', [[2, 1], li1]);
+
+        // First bisector
+        g1 =  board.create('glider', [-156972, 19333, li1]);
+        g2 =  board.create('glider', [-156972, 19333, li2]);
+        i1 = board.create('intersection', [li1, li2]);
+        a1 = board.create('bisector', [g1, i1, g2]);
+
+        // Second bisector
+        g3 =  board.create('glider', [-186972, 19333, li1]);
+        g4 =  board.create('glider', [-186972, 19333, a1]);
+        i2 = board.create('intersection', [li1, a1]);
+        // a2 = board.create('bisector', [g3, i2, g4]);
+
+        expect(i2.Z()).toEqual(0);
+        expect(i2.X()).toBeCloseTo(-1.169230769228601, 10);
+        expect(i2.Y()).toBeCloseTo(2.046153846150052, 10);
+    });
+
 
 });

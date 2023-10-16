@@ -2,11 +2,11 @@
 <head>
    <title>JSXGraph example</title>
    <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
-   <script type="text/javascript" src="../src/loadjsxgraph.js"></script>
+   <script type="text/javascript" src="../distrib/jsxgraphcore.js"></script>
 </head>
 <body>
   <h2>Bezier curves</h2>
-  
+
   <span onClick="document.getElementById('jxgbox_navigationbar').style.display='none'">Hide navigation bar</span><br>
   <span onClick="document.getElementById('jxgbox_navigationbar').style.display='block'">Show navigation bar</span>
   <div id="jxgbox" class="jxgbox" style="width:600px; height:600px;"></div>
@@ -16,7 +16,7 @@
 
         var board, i, p, col, nseq;
         board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox:[-4,4,4,-4], keepaspectratio:true, axis:true});
-        
+
         nseq = 2;
         p = [];
         for (i=0;i<nseq*3+1;i++) {
@@ -28,13 +28,13 @@
             p.push(board.createElement('point',[Math.random()*8-4,Math.random()*8-4],{strokeColor:col,fillColor:col}));
             p[i].isDraggable = true;
         }
-/*        
+/*
         bezier = [function(t) {
                         var len =  Math.floor(p.length/3),
                             z = Math.floor(t)*3,
                             t0 = t % 1,
                             t1 = 1-t0;
-                        
+
                         if (t<0) { return p[0].X(); }
                         if (t>=len) { return p[p.length-1].X(); }
                         if (isNaN(t)) { return NaN; }
@@ -45,14 +45,14 @@
                             z = Math.floor(t)*3,
                             t0 = t % 1,
                             t1 = 1-t0;
-                            
+
                         if (t<0) { return p[0].Z(); }
                         if (t>=len) { return p[p.length-1].Y(); }
                         if (isNaN(t)) { return NaN; }
                         return t1*t1*(t1*p[z].Y()+3*t0*p[z+1].Y())+(3*t1*p[z+2].Y()+t0*p[z+3].Y())*t0*t0;
                     }, 0, function() {return Math.floor(p.length/3);}];
-*/                    
-        var c = board.createElement('curve', JXG.Math.Numerics.bezier(p),{strokeColor:'blue', name:"curve", strokeWidth:5, lastArrow:true}); 
+*/
+        var c = board.createElement('curve', JXG.Math.Numerics.bezier(p),{strokeColor:'blue', name:"curve", strokeWidth:5, lastArrow:true});
 /*
         for (i=0;i<2*3;i++) {
             if (i%3==2) {
@@ -63,7 +63,7 @@
             p.push(board.createElement('point',[Math.random()*8-4,Math.random()*8-4],{strokeColor:col,fillColor:col}));
             board.update();
         }
-*/        
+*/
   /* ]]> */
   </script>
 </body>

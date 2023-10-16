@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2022
+    Copyright 2008-2023
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -25,10 +25,9 @@
     GNU Lesser General Public License for more details.
 
     You should have received a copy of the GNU Lesser General Public License and
-    the MIT License along with JSXGraph. If not, see <http://www.gnu.org/licenses/>
-    and <http://opensource.org/licenses/MIT/>.
+    the MIT License along with JSXGraph. If not, see <https://www.gnu.org/licenses/>
+    and <https://opensource.org/licenses/MIT/>.
  */
-
 
 /*
  *  Js-Test-Driver Test Suite for Generic JavaScript language tests
@@ -37,7 +36,7 @@
 
 TestCase("Generic", {
     setUp: function () {
-        abcdefg = 0
+        abcdefg = 0;
     },
 
     tearDown: function () {
@@ -45,11 +44,12 @@ TestCase("Generic", {
     },
 
     testModulo: function () {
-        var i, max = 5,
+        var i,
+            max = 5,
             empty = [],
             notempty = [1, 2, 3];
 
-        expectAsserts(2*max);
+        expectAsserts(2 * max);
 
         for (i = 0; i < max; i++) {
             assertUndefined(empty[i % empty.length]);
@@ -61,13 +61,13 @@ TestCase("Generic", {
         expectAsserts(2);
 
         var f = (function () {
-            var foo = 'bar';
+            var foo = "bar";
 
-            return eval('var abcdefg = function () { return foo; }; abcdefg;');
+            return eval("var abcdefg = function () { return foo; }; abcdefg;");
         })();
 
-        assertEquals('return value is ok', 'bar', f());
-        assertEquals('global variables are not introduced', 0, abcdefg);
+        assertEquals("return value is ok", "bar", f());
+        assertEquals("global variables are not introduced", 0, abcdefg);
     },
 
     testConcat: function () {
@@ -75,10 +75,10 @@ TestCase("Generic", {
 
         var f = (function (a, b, c) {
             var x = Array.prototype.slice.call(arguments, 0);
-            return ['a', 'b'].concat(x).length;
+            return ["a", "b"].concat(x).length;
         })(1, 2, 3);
 
-        assertEquals('length is ok', 5, f);
+        assertEquals("length is ok", 5, f);
     },
 
     testInheritance: function () {
@@ -86,16 +86,11 @@ TestCase("Generic", {
 
         var successSuper = false,
             successBase = false,
-
             woopSuper = function () {
                 successSuper = true;
             },
-
-            Super = function () {
-            },
-            Class = function () {
-            },
-
+            Super = function () {},
+            Class = function () {},
             o;
 
         JXG.extend(Super.prototype, {
@@ -113,8 +108,8 @@ TestCase("Generic", {
         o = new Class();
         o.woop();
 
-        assertTrue('super called', successSuper);
-        assertTrue('base called', successBase);
+        assertTrue("super called", successSuper);
+        assertTrue("base called", successBase);
     },
 
     testHiddenProperty: function () {
@@ -122,7 +117,7 @@ TestCase("Generic", {
 
         var inst,
             Base = function (prop) {
-                this.property = prop || 'Default';
+                this.property = prop || "Default";
             },
             Sub = function () {
                 // nothing
@@ -136,14 +131,14 @@ TestCase("Generic", {
 
         inst = new Sub();
 
-        assertEquals('Property value is Default', 'Default', inst.foo());
+        assertEquals("Property value is Default", "Default", inst.foo());
 
-        inst.property = 'bar';
+        inst.property = "bar";
 
-        assertEquals('Property value is bar', 'bar', inst.foo());
+        assertEquals("Property value is bar", "bar", inst.foo());
 
         delete inst.property;
 
-        assertEquals('Property value is now Default again', 'Default', inst.foo());
+        assertEquals("Property value is now Default again", "Default", inst.foo());
     }
 });

@@ -1,0 +1,8 @@
+# Ignore artifacts:
+build/*.json
+build/*.md
+3rdparty
+distrib
+doc
+src/loadjsxgraph.js
+.*

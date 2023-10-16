@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2022
+    Copyright 2008-2023
         Matthias Ehmann,
         Carsten Miller,
         Andreas Walter,
@@ -23,62 +23,166 @@
     GNU Lesser General Public License for more details.
 
     You should have received a copy of the GNU Lesser General Public License and
-    the MIT License along with JSXGraph. If not, see <http://www.gnu.org/licenses/>
-    and <http://opensource.org/licenses/MIT/>.
+    the MIT License along with JSXGraph. If not, see <https://www.gnu.org/licenses/>
+    and <https://opensource.org/licenses/MIT/>.
  */
 /*global JXG:true, define: true*/
 
-define(['jxg'], function (JXG) {
-    "use strict";
+import JXG from "../jxg";
+import Type from "../utils/type";
+
+/**
+ * Constructs a new GeometryElement3D object.
+ * @class This is the basic class for 3D geometry elements like Point3D and Line3D.
+ * @constructor
+ * @param {string} elType
+ * @borrows JXG.EventEmitter#on as this.on
+ * @borrows JXG.EventEmitter#off as this.off
+ * @borrows JXG.EventEmitter#triggerEventHandlers as this.triggerEventHandlers
+ * @borrows JXG.EventEmitter#eventHandlers as this.eventHandlers
+ */
+JXG.GeometryElement3D = function (view, elType) {
+    this.elType = elType;
+    this.id = this.board.setId(this, elType);
 
     /**
-     * Constructs a new GeometryElement3D object.
-     * @class This is the basic class for 3D geometry elements like Point3D and Line3D.
-     * @constructor
-     * @param {string} elType
-     * @borrows JXG.EventEmitter#on as this.on
-     * @borrows JXG.EventEmitter#off as this.off
-     * @borrows JXG.EventEmitter#triggerEventHandlers as this.triggerEventHandlers
-     * @borrows JXG.EventEmitter#eventHandlers as this.eventHandlers
+     * Pointer to the view3D in which the element is constructed
+     * @type JXG.View3D
+     * @private
      */
-    JXG.GeometryElement3D = function (view, elType) {
-        this.elType = elType;
-        this.id = this.board.setId(this, elType);
+    this.view = view;
 
-        /**
-         * Pointer to the view3D in which the elemtn is constructed
-         * @type JXG.View3D
-         * @private
-         */
-        this.view = view;
+    /**
+     * Link to the 2D element(s) used to visualize the 3D element
+     * in a view. In case, there are several 2D elements, it is an array.
+     *
+     * @type JXG.GeometryElement,Array
+     * @private
+     *
+     * @example
+     *   p.element2D;
+     */
+    this.element2D = null;
 
-        /**
-         * Link to the 2D element(s) used to visualize the 3D element
-         * in a view. In case, there are several 2D elements, it is an array.
-         *
-         * @type JXG.GeometryElement,Array
-         * @private
-         *
-         * @example
-         *   p.element2D;
-         */
-        this.element2D = null;
+    /**
+     * If this property exists (and is true) the element is a 3D element.
+     *
+     * @type Boolean
+     * @private
+     */
+    this.is3D = true;
 
-        /**
-         * If this property exists (and is true) the element is a 3D element.
-         *
-         * @type Boolean
-         * @private
-         */
-        this.is3D = true;
-        this.view.objects[this.id] = this;
-        this.view.objectsList.push(this);
+    this.view.objects[this.id] = this;
 
-        if (this.name !== '') {
-            this.view.elementsByName[this.name] = this;
+    if (this.name !== "") {
+        this.view.elementsByName[this.name] = this;
+    }
+};
+
+JXG.extend(JXG.GeometryElement3D.prototype, {
+
+    setAttr2D: function(attr3D) {
+        var attr2D = attr3D;
+
+        attr2D.name = this.name;
+
+        return attr2D;
+    },
+
+    // Documented in element.js
+    setAttribute: function(attr) {
+        var i, key, value, arg, pair,
+        attributes = {};
+
+        // Normalize the user input
+        for (i = 0; i < arguments.length; i++) {
+            arg = arguments[i];
+            if (Type.isString(arg)) {
+                // pairRaw is string of the form 'key:value'
+                pair = arg.split(":");
+                attributes[Type.trim(pair[0])] = Type.trim(pair[1]);
+            } else if (!Type.isArray(arg)) {
+                // pairRaw consists of objects of the form {key1:value1,key2:value2,...}
+                JXG.extend(attributes, arg);
+            } else {
+                // pairRaw consists of array [key,value]
+                attributes[arg[0]] = arg[1];
+            }
         }
 
-    };
+        for (i in attributes) {
+            if (attributes.hasOwnProperty(i)) {
+                key = i.replace(/\s+/g, "").toLowerCase();
+                value = attributes[i];
+                switch (key) {
+                    case "numberpointshigh":
+                    case "stepsu":
+                    case "stepsv":
+                        if (Type.exists(this.visProp[key]) &&
+                        (!JXG.Validator[key] ||
+                            (JXG.Validator[key] && JXG.Validator[key](value)) ||
+                            (JXG.Validator[key] &&
+                                Type.isFunction(value) &&
+                                JXG.Validator[key](value())))
+                        ) {
+                            value =
+                                value.toLowerCase && value.toLowerCase() === "false"
+                                    ? false
+                                    : value;
+                            this._set(key, value);
+                        }
+                    break;
+                    default:
+                        if (Type.exists(this.element2D)) {
+                            this.element2D.setAttribute(attributes);
+                        }
+                }
+            }
+        }
+    },
 
-    return JXG.GeometryElement3D;
+    // Documented in element.js
+    getAttribute: function(key) {
+        var result;
+        key = key.toLowerCase();
+
+        switch (key) {
+            case "numberpointshigh":
+            case "stepsu":
+            case "stepsv":
+                result = this.visProp[key];
+                break;
+            default:
+                if (Type.exists(this.element2D)) {
+                    result = this.element2D.getAttribute(key);
+                }
+                break;
+        }
+
+        return result;
+    },
+
+    // Documented in element.js
+    getAttributes: function() {
+        var attr = {},
+            i, key,
+            attr3D = ['numberpointshigh', 'stepsu', 'stepsv'],
+            le = attr3D.length;
+
+        if (Type.exists(this.element2D)) {
+            attr = Type.merge(this.element2D.getAttributes());
+        }
+
+        for (i = 0; i < le; i++) {
+            key = attr3D[i];
+            if (Type.exists(this.visProp[key])) {
+                attr[key] = this.visProp[key];
+            }
+        }
+
+        return attr;
+    }
+
 });
+
+export default JXG.GeometryElement3D;

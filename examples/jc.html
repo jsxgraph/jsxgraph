@@ -2,7 +2,7 @@
 <head>
     <title>JSXGraph example</title>
     <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
-    <script type="text/javascript" src="../src/loadjsxgraph.js"></script>
+    <script type="text/javascript" src="../distrib/jsxgraphcore.js"></script>
 </head>
 <body>
 <textarea id="input" style="display:block;" cols="40" rows="10"></textarea>
@@ -12,7 +12,7 @@
     /* <![CDATA[ */
     function exec() {
         var code = 'use jxgbox;\n' + document.getElementById('input').value,
-            board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox: [-5, 5, 5, -5], 
+            board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox: [-5, 5, 5, -5],
                                 axis: false, keepaspectratio: true}),
             p;
 
@@ -24,4 +24,3 @@
 </script>
 </body>
 </html>
-

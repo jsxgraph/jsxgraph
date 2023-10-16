@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2022
+    Copyright 2008-2023
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -25,27 +25,12 @@
     GNU Lesser General Public License for more details.
 
     You should have received a copy of the GNU Lesser General Public License and
-    the MIT License along with JSXGraph. If not, see <http://www.gnu.org/licenses/>
-    and <http://opensource.org/licenses/MIT/>.
+    the MIT License along with JSXGraph. If not, see <https://www.gnu.org/licenses/>
+    and <https://opensource.org/licenses/MIT/>.
  */
-
 
 /*global JXG: true, define: true*/
 /*jslint nomen: true, plusplus: true*/
-
-/* depends:
- jxg
- base/element
- base/constants
- base/coords
- parser/geonext
- math/geometry
- math/statistics
- utils/type
-  elements:
-   transform
-   point
- */
 
 /**
  * @fileoverview The geometry object Circle is defined in this file. Circle stores all
@@ -53,161 +38,168 @@
  * a board.
  */
 
-define([
-    'jxg', 'base/element', 'base/coords', 'base/constants', 'element/conic', 'parser/geonext', 'utils/type'
-], function (JXG, GeometryElement, Coords, Const, Conic, GeonextParser, Type) {
+import JXG from "../jxg";
+import GeometryElement from "./element";
+import Coords from "./coords";
+import Const from "./constants";
+import GeonextParser from "../parser/geonext";
+import Type from "../utils/type";
 
-    "use strict";
+/**
+ * A circle consists of all points with a given distance from one point. This point is called center, the distance is called radius.
+ * A circle can be constructed by providing a center and a point on the circle or a center and a radius (given as a number, function,
+ * line, or circle).
+ * @class Creates a new circle object. Do not use this constructor to create a circle. Use {@link JXG.Board#create} with
+ * type {@link Circle} instead.
+ * @constructor
+ * @augments JXG.GeometryElement
+ * @param {JXG.Board} board The board the new circle is drawn on.
+ * @param {String} method Can be
+ * <ul><li> <b>'twoPoints'</b> which means the circle is defined by its center and a point on the circle.</li>
+ * <li><b>'pointRadius'</b> which means the circle is defined by its center and its radius in user units</li>
+ * <li><b>'pointLine'</b> which means the circle is defined by its center and its radius given by the distance from the startpoint and the endpoint of the line</li>
+ * <li><b>'pointCircle'</b> which means the circle is defined by its center and its radius given by the radius of another circle</li></ul>
+ * The parameters p1, p2 and radius must be set according to this method parameter.
+ * @param {JXG.Point} par1 center of the circle.
+ * @param {JXG.Point|JXG.Line|JXG.Circle} par2 Can be
+ * <ul><li>a point on the circle if method is 'twoPoints'</li>
+ * <li>a line if the method is 'pointLine'</li>
+ * <li>a circle if the method is 'pointCircle'</li></ul>
+ * @param {Object} attributes
+ * @see JXG.Board#generateName
+ */
+JXG.Circle = function (board, method, par1, par2, attributes) {
+    // Call the constructor of GeometryElement
+    this.constructor(board, attributes, Const.OBJECT_TYPE_CIRCLE, Const.OBJECT_CLASS_CIRCLE);
 
     /**
-     * A circle consists of all points with a given distance from one point. This point is called center, the distance is called radius.
-     * A circle can be constructed by providing a center and a point on the circle or a center and a radius (given as a number, function,
-     * line, or circle).
-     * @class Creates a new circle object. Do not use this constructor to create a circle. Use {@link JXG.Board#create} with
-     * type {@link Circle} instead.
-     * @constructor
-     * @augments JXG.GeometryElement
-     * @param {JXG.Board} board The board the new circle is drawn on.
-     * @param {String} method Can be
-     * <ul><li> <b>'twoPoints'</b> which means the circle is defined by its center and a point on the circle.</li>
-     * <li><b>'pointRadius'</b> which means the circle is defined by its center and its radius in user units</li>
-     * <li><b>'pointLine'</b> which means the circle is defined by its center and its radius given by the distance from the startpoint and the endpoint of the line</li>
-     * <li><b>'pointCircle'</b> which means the circle is defined by its center and its radius given by the radius of another circle</li></ul>
-     * The parameters p1, p2 and radius must be set according to this method parameter.
-     * @param {JXG.Point} par1 center of the circle.
-     * @param {JXG.Point|JXG.Line|JXG.Circle} par2 Can be
-     * <ul><li>a point on the circle if method is 'twoPoints'</li>
-     * <li>a line if the method is 'pointLine'</li>
-     * <li>a circle if the method is 'pointCircle'</li></ul>
-     * @param {Object} attributes
-     * @see JXG.Board#generateName
+     * Stores the given method.
+     * Can be
+     * <ul><li><b>'twoPoints'</b> which means the circle is defined by its center and a point on the circle.</li>
+     * <li><b>'pointRadius'</b> which means the circle is defined by its center and its radius given in user units or as term.</li>
+     * <li><b>'pointLine'</b> which means the circle is defined by its center and its radius given by the distance from the startpoint and the endpoint of the line.</li>
+     * <li><b>'pointCircle'</b> which means the circle is defined by its center and its radius given by the radius of another circle.</li></ul>
+     * @type String
+     * @see #center
+     * @see #point2
+     * @see #radius
+     * @see #line
+     * @see #circle
      */
-    JXG.Circle = function (board, method, par1, par2, attributes) {
-        // Call the constructor of GeometryElement
-        this.constructor(board, attributes, Const.OBJECT_TYPE_CIRCLE, Const.OBJECT_CLASS_CIRCLE);
+    this.method = method;
 
-        /**
-         * Stores the given method.
-         * Can be
-         * <ul><li><b>'twoPoints'</b> which means the circle is defined by its center and a point on the circle.</li>
-         * <li><b>'pointRadius'</b> which means the circle is defined by its center and its radius given in user units or as term.</li>
-         * <li><b>'pointLine'</b> which means the circle is defined by its center and its radius given by the distance from the startpoint and the endpoint of the line.</li>
-         * <li><b>'pointCircle'</b> which means the circle is defined by its center and its radius given by the radius of another circle.</li></ul>
-         * @type String
-         * @see #center
-         * @see #point2
-         * @see #radius
-         * @see #line
-         * @see #circle
-         */
-        this.method = method;
+    // this is kept so existing code won't ne broken
+    this.midpoint = this.board.select(par1);
 
-        // this is kept so existing code won't ne broken
-        this.midpoint = this.board.select(par1);
+    /**
+     * The circles center. Do not set this parameter directly as it will break JSXGraph's update system.
+     * @type JXG.Point
+     */
+    this.center = this.board.select(par1);
 
-        /**
-         * The circles center. Do not set this parameter directly as it will break JSXGraph's update system.
-         * @type JXG.Point
-         */
-        this.center = this.board.select(par1);
+    /** Point on the circle only set if method equals 'twoPoints'. Do not set this parameter directly as it will break JSXGraph's update system.
+     * @type JXG.Point
+     * @see #method
+     */
+    this.point2 = null;
 
-        /** Point on the circle only set if method equals 'twoPoints'. Do not set this parameter directly as it will break JSXGraph's update system.
-         * @type JXG.Point
-         * @see #method
-         */
-        this.point2 = null;
+    /** Radius of the circle
+     * only set if method equals 'pointRadius'
+     * @type Number
+     * @default null
+     * @see #method
+     */
+    this.radius = 0;
 
-        /** Radius of the circle
-         * only set if method equals 'pointRadius'
-         * @type Number
-         * @default null
-         * @see #method
-         */
-        this.radius = 0;
+    /** Line defining the radius of the circle given by the distance from the startpoint and the endpoint of the line
+     * only set if method equals 'pointLine'. Do not set this parameter directly as it will break JSXGraph's update system.
+     * @type JXG.Line
+     * @default null
+     * @see #method
+     */
+    this.line = null;
 
-        /** Line defining the radius of the circle given by the distance from the startpoint and the endpoint of the line
-         * only set if method equals 'pointLine'. Do not set this parameter directly as it will break JSXGraph's update system.
-         * @type JXG.Line
-         * @default null
-         * @see #method
-         */
-        this.line = null;
+    /** Circle defining the radius of the circle given by the radius of the other circle
+     * only set if method equals 'pointLine'. Do not set this parameter directly as it will break JSXGraph's update system.
+     * @type JXG.Circle
+     * @default null
+     * @see #method
+     */
+    this.circle = null;
 
-        /** Circle defining the radius of the circle given by the radius of the other circle
-         * only set if method equals 'pointLine'. Do not set this parameter directly as it will break JSXGraph's update system.
-         * @type JXG.Circle
-         * @default null
-         * @see #method
-         */
-        this.circle = null;
+    this.points = [];
 
-        this.points = [];
+    if (method === "twoPoints") {
+        this.point2 = board.select(par2);
+        this.radius = this.Radius();
+    } else if (method === "pointRadius") {
+        this.gxtterm = par2;
+        // Converts GEONExT syntax into JavaScript syntax and generally ensures that the radius is a function
+        this.updateRadius = Type.createFunction(par2, this.board, null, true);
+        // First evaluation of the radius function
+        this.updateRadius();
+        this.addParentsFromJCFunctions([this.updateRadius]);
+    } else if (method === "pointLine") {
+        // dann ist p2 die Id eines Objekts vom Typ Line!
+        this.line = board.select(par2);
+        this.radius = this.line.point1.coords.distance(
+            Const.COORDS_BY_USER,
+            this.line.point2.coords
+        );
+    } else if (method === "pointCircle") {
+        // dann ist p2 die Id eines Objekts vom Typ Circle!
+        this.circle = board.select(par2);
+        this.radius = this.circle.Radius();
+    }
 
-        if (method === 'twoPoints') {
-            this.point2 = board.select(par2);
-            this.radius = this.Radius();
-        } else if (method === 'pointRadius') {
-            this.gxtterm = par2;
-            // Converts GEONExT syntax into JavaScript syntax and generally ensures that the radius is a function
-            this.updateRadius = Type.createFunction(par2, this.board, null, true);
-            // First evaluation of the radius function
-            this.updateRadius();
-        } else if (method === 'pointLine') {
-            // dann ist p2 die Id eines Objekts vom Typ Line!
-            this.line = board.select(par2);
-            this.radius = this.line.point1.coords.distance(Const.COORDS_BY_USER, this.line.point2.coords);
-        } else if (method === 'pointCircle') {
-            // dann ist p2 die Id eines Objekts vom Typ Circle!
-            this.circle = board.select(par2);
-            this.radius = this.circle.Radius();
-        }
+    // create Label
+    this.id = this.board.setId(this, "C");
+    this.board.renderer.drawEllipse(this);
+    this.board.finalizeAdding(this);
 
-        // create Label
-        this.id = this.board.setId(this, 'C');
-        this.board.renderer.drawEllipse(this);
-        this.board.finalizeAdding(this);
+    this.createGradient();
+    this.elType = "circle";
+    this.createLabel();
 
-        this.createGradient();
-        this.elType = 'circle';
-        this.createLabel();
+    if (Type.exists(this.center._is_new)) {
+        this.addChild(this.center);
+        delete this.center._is_new;
+    } else {
+        this.center.addChild(this);
+    }
 
-        if (Type.exists(this.center._is_new)) {
-            this.addChild(this.center);
-            delete this.center._is_new;
+    if (method === "pointRadius") {
+        this.notifyParents(par2);
+    } else if (method === "pointLine") {
+        this.line.addChild(this);
+    } else if (method === "pointCircle") {
+        this.circle.addChild(this);
+    } else if (method === "twoPoints") {
+        if (Type.exists(this.point2._is_new)) {
+            this.addChild(this.point2);
+            delete this.point2._is_new;
         } else {
-            this.center.addChild(this);
+            this.point2.addChild(this);
         }
+    }
 
-        if (method === 'pointRadius') {
-            this.notifyParents(par2);
-        } else if (method === 'pointLine') {
-            this.line.addChild(this);
-        } else if (method === 'pointCircle') {
-            this.circle.addChild(this);
-        } else if (method === 'twoPoints') {
-            if (Type.exists(this.point2._is_new)) {
-                this.addChild(this.point2);
-                delete this.point2._is_new;
-            } else {
-                this.point2.addChild(this);
-            }
-        }
+    this.methodMap = Type.deepCopy(this.methodMap, {
+        setRadius: "setRadius",
+        getRadius: "getRadius",
+        Area: "Area",
+        area: "Area",
+        radius: "Radius",
+        center: "center",
+        line: "line",
+        point2: "point2"
+    });
+};
 
-        this.methodMap = Type.deepCopy(this.methodMap, {
-            setRadius: 'setRadius',
-            getRadius: 'getRadius',
-            Area: 'Area',
-            area: 'Area',
-            radius: 'Radius',
-            center: 'center',
-            line: 'line',
-            point2: 'point2'
-        });
-    };
+JXG.Circle.prototype = new GeometryElement();
 
-    JXG.Circle.prototype = new GeometryElement();
-
-    JXG.extend(JXG.Circle.prototype, /** @lends JXG.Circle.prototype */ {
+JXG.extend(
+    JXG.Circle.prototype,
+    /** @lends JXG.Circle.prototype */ {
         /**
          * Checks whether (x,y) is near the circle line or inside of the ellipse
          * (in case JXG.Options.conic#hasInnerPoints is true).
@@ -223,7 +215,6 @@ define([
                 r = this.Radius(),
                 dx, dy, dist;
 
-
             if (Type.isObject(Type.evaluate(this.visProp.precision))) {
                 type = this.board._inputDevice;
                 prec = Type.evaluate(this.visProp.precision[type]);
@@ -234,23 +225,24 @@ define([
             dx = mp[1] - p.usrCoords[1];
             dy = mp[2] - p.usrCoords[2];
             dist = Math.sqrt(dx * dx + dy * dy);
+
             // We have to use usrCoords, since Radius is available in usrCoords only.
             prec += Type.evaluate(this.visProp.strokewidth) * 0.5;
-            prec /= Math.sqrt(this.board.unitX * this.board.unitY);
+            prec /= Math.sqrt(Math.abs(this.board.unitX * this.board.unitY));
 
             if (Type.evaluate(this.visProp.hasinnerpoints)) {
-                return (dist < r + prec);
+                return dist < r + prec;
             }
 
-            return (Math.abs(dist - r) < prec);
+            return Math.abs(dist - r) < prec;
         },
 
-        /**
-         * Used to generate a polynomial for a point p that lies on this circle.
-         * @param {JXG.Point} p The point for which the polynomial is generated.
-         * @returns {Array} An array containing the generated polynomial.
-         * @private
-         */
+        // /**
+        //  * Used to generate a polynomial for a point p that lies on this circle.
+        //  * @param {JXG.Point} p The point for which the polynomial is generated.
+        //  * @returns {Array} An array containing the generated polynomial.
+        //  * @private
+        //  */
         generatePolynomial: function (p) {
             /*
              * We have four methods to construct a circle:
@@ -291,11 +283,13 @@ define([
                 rsq = this.generateRadiusSquared();
 
             /* No radius can be calculated (Case b.ii) */
-            if (rsq === '') {
+            if (rsq === "") {
                 return [];
             }
 
-            return ['((' + g1 + ')-(' + m1 + '))^2 + ((' + g2 + ')-(' + m2 + '))^2 - (' + rsq + ')'];
+            return [
+                "((" + g1 + ")-(" + m1 + "))^2 + ((" + g2 + ")-(" + m2 + "))^2 - (" + rsq + ")"
+            ];
         },
 
         /**
@@ -313,8 +307,13 @@ define([
              *   (c) center and radius given by length of a segment
              *   (d) center and radius given by another circle
              */
-            var m1, m2, p1, p2, q1, q2,
-                rsq = '';
+            var m1,
+                m2,
+                p1,
+                p2,
+                q1,
+                q2,
+                rsq = "";
 
             if (this.method === "twoPoints") {
                 m1 = this.center.symbolic.x;
@@ -322,7 +321,7 @@ define([
                 p1 = this.point2.symbolic.x;
                 p2 = this.point2.symbolic.y;
 
-                rsq = '((' + p1 + ')-(' + m1 + '))^2 + ((' + p2 + ')-(' + m2 + '))^2';
+                rsq = "((" + p1 + ")-(" + m1 + "))^2 + ((" + p2 + ")-(" + m2 + "))^2";
             } else if (this.method === "pointRadius") {
                 if (Type.isNumber(this.radius)) {
                     rsq = (this.radius * this.radius).toString();
@@ -334,7 +333,7 @@ define([
                 q1 = this.line.point2.symbolic.x;
                 q2 = this.line.point2.symbolic.y;
 
-                rsq = '((' + p1 + ')-(' + q1 + '))^2 + ((' + p2 + ')-(' + q2 + '))^2';
+                rsq = "((" + p1 + ")-(" + q1 + "))^2 + ((" + p2 + ")-(" + q2 + "))^2";
             } else if (this.method === "pointCircle") {
                 rsq = this.circle.Radius();
             }
@@ -353,11 +352,14 @@ define([
                     this.cloneToBackground(true);
                 }
 
-                if (this.method === 'pointLine') {
-                    this.radius = this.line.point1.coords.distance(Const.COORDS_BY_USER, this.line.point2.coords);
-                } else if (this.method === 'pointCircle') {
+                if (this.method === "pointLine") {
+                    this.radius = this.line.point1.coords.distance(
+                        Const.COORDS_BY_USER,
+                        this.line.point2.coords
+                    );
+                } else if (this.method === "pointCircle") {
                     this.radius = this.circle.Radius();
-                } else if (this.method === 'pointRadius') {
+                } else if (this.method === "pointRadius") {
                     this.radius = this.updateRadius();
                 }
 
@@ -375,11 +377,19 @@ define([
                 c = 0.551915024494;
 
                 this.numberPoints = 13;
-                this.dataX = [x + r, x + r, x + r * c, x, x - r * c, x - r, x - r, x - r, x - r * c, x, x + r * c, x + r, x + r];
-                this.dataY = [y, y + r * c, y + r, y + r, y + r, y + r * c, y, y - r * c, y - r, y - r, y - r, y - r * c, y];
+                this.dataX = [
+                    x + r, x + r, x + r * c, x, x - r * c, x - r, x - r, x - r, x - r * c, x, x + r * c, x + r, x + r
+                ];
+                this.dataY = [
+                    y, y + r * c, y + r, y + r, y + r, y + r * c, y, y - r * c, y - r, y - r, y - r, y - r * c, y
+                ];
                 this.bezierDegree = 3;
                 for (i = 0; i < this.numberPoints; i++) {
-                    this.points[i] = new Coords(Const.COORDS_BY_USER, [this.dataX[i], this.dataY[i]], this.board);
+                    this.points[i] = new Coords(
+                        Const.COORDS_BY_USER,
+                        [this.dataX[i], this.dataY[i]],
+                        this.board
+                    );
                 }
             }
 
@@ -413,10 +423,12 @@ define([
             this.stdform[1] = -this.center.coords.usrCoords[1];
             this.stdform[2] = -this.center.coords.usrCoords[2];
             if (!isFinite(this.stdform[4])) {
-                this.stdform[0] = Type.exists(this.point2) ? -(
-                    this.stdform[1] * this.point2.coords.usrCoords[1] +
-                    this.stdform[2] * this.point2.coords.usrCoords[2]
-                ) : 0;
+                this.stdform[0] = Type.exists(this.point2)
+                    ? -(
+                          this.stdform[1] * this.point2.coords.usrCoords[1] +
+                          this.stdform[2] * this.point2.coords.usrCoords[2]
+                      )
+                    : 0;
             }
             this.normalize();
         },
@@ -434,10 +446,17 @@ define([
 
             if (this.visPropCalc.visible) {
                 // wasReal = this.isReal;
-                this.isReal = (!isNaN(this.center.coords.usrCoords[1] + this.center.coords.usrCoords[2] + this.Radius())) && this.center.isReal;
+                this.isReal =
+                    !isNaN(
+                        this.center.coords.usrCoords[1] +
+                            this.center.coords.usrCoords[2] +
+                            this.Radius()
+                    ) && this.center.isReal;
 
-                if (//wasReal &&
-                    !this.isReal) {
+                if (
+                    //wasReal &&
+                    !this.isReal
+                ) {
                     this.updateVisibility(false);
                 }
             }
@@ -448,9 +467,13 @@ define([
             }
 
             // Update the label if visible.
-            if (this.hasLabel && this.visPropCalc.visible && this.label &&
-                this.label.visPropCalc.visible && this.isReal) {
-
+            if (
+                this.hasLabel &&
+                this.visPropCalc.visible &&
+                this.label &&
+                this.label.visPropCalc.visible &&
+                this.isReal
+            ) {
                 this.label.update();
                 this.board.renderer.updateText(this.label);
             }
@@ -489,6 +512,7 @@ define([
          */
         setRadius: function (r) {
             this.updateRadius = Type.createFunction(r, this.board, null, true);
+            this.addParentsFromJCFunctions([this.updateRadius]);
             this.board.update();
 
             return this;
@@ -505,21 +529,22 @@ define([
                 return this.Radius();
             }
 
-            if (this.method === 'twoPoints') {
-                if (Type.cmpArrays(this.point2.coords.usrCoords, [0, 0, 0]) ||
-                        Type.cmpArrays(this.center.coords.usrCoords, [0, 0, 0])) {
-
+            if (this.method === "twoPoints") {
+                if (
+                    Type.cmpArrays(this.point2.coords.usrCoords, [0, 0, 0]) ||
+                    Type.cmpArrays(this.center.coords.usrCoords, [0, 0, 0])
+                ) {
                     return NaN;
                 }
 
                 return this.center.Dist(this.point2);
             }
 
-            if (this.method === 'pointLine' || this.method === 'pointCircle') {
+            if (this.method === "pointLine" || this.method === "pointCircle") {
                 return this.radius;
             }
 
-            if (this.method === 'pointRadius') {
+            if (this.method === "pointRadius") {
                 return this.updateRadius();
             }
 
@@ -531,7 +556,7 @@ define([
          * @deprecated
          */
         getRadius: function () {
-            JXG.deprecated('Circle.getRadius()', 'Circle.Radius()');
+            JXG.deprecated("Circle.getRadius()", "Circle.Radius()");
             return this.Radius();
         },
 
@@ -542,45 +567,46 @@ define([
 
         // documented in geometry element
         getLabelAnchor: function () {
-            var x, y,
+            var x,
+                y,
                 r = this.Radius(),
                 c = this.center.coords.usrCoords,
-                SQRTH = 7.07106781186547524401E-1;      // sqrt(2)/2
+                SQRTH = 7.071067811865e-1; // sqrt(2)/2
 
             switch (Type.evaluate(this.visProp.label.position)) {
-            case 'lft':
-                x = c[1] - r;
-                y = c[2];
-                break;
-            case 'llft':
-                x = c[1] - SQRTH * r;
-                y = c[2] - SQRTH * r;
-                break;
-            case 'rt':
-                x = c[1] + r;
-                y = c[2];
-                break;
-            case 'lrt':
-                x = c[1] + SQRTH * r;
-                y = c[2] - SQRTH * r;
-                break;
-            case 'urt':
-                x = c[1] + SQRTH * r;
-                y = c[2] + SQRTH * r;
-                break;
-            case 'top':
-                x = c[1];
-                y = c[2] + r;
-                break;
-            case 'bot':
-                x = c[1];
-                y = c[2] - r;
-                break;
-            default:
-                // includes case 'ulft'
-                x = c[1] - SQRTH * r;
-                y = c[2] + SQRTH * r;
-                break;
+                case "lft":
+                    x = c[1] - r;
+                    y = c[2];
+                    break;
+                case "llft":
+                    x = c[1] - SQRTH * r;
+                    y = c[2] - SQRTH * r;
+                    break;
+                case "rt":
+                    x = c[1] + r;
+                    y = c[2];
+                    break;
+                case "lrt":
+                    x = c[1] + SQRTH * r;
+                    y = c[2] - SQRTH * r;
+                    break;
+                case "urt":
+                    x = c[1] + SQRTH * r;
+                    y = c[2] + SQRTH * r;
+                    break;
+                case "top":
+                    x = c[1];
+                    y = c[2] + r;
+                    break;
+                case "bot":
+                    x = c[1];
+                    y = c[2] - r;
+                    break;
+                default:
+                    // includes case 'ulft'
+                    x = c[1] - SQRTH * r;
+                    y = c[2] + SQRTH * r;
+                    break;
             }
 
             return new Coords(Const.COORDS_BY_USER, [x, y], this.board);
@@ -591,7 +617,7 @@ define([
             var er,
                 r = this.Radius(),
                 copy = {
-                    id: this.id + 'T' + this.numTraces,
+                    id: this.id + "T" + this.numTraces,
                     elementClass: Const.OBJECT_CLASS_CIRCLE,
                     center: {
                         coords: this.center.coords
@@ -636,7 +662,7 @@ define([
             for (i = 0; i < len; i++) {
                 this.center.transformations.push(list[i]);
 
-                if (this.method === 'twoPoints') {
+                if (this.method === "twoPoints") {
                     this.point2.transformations.push(list[i]);
                 }
             }
@@ -649,7 +675,7 @@ define([
             var forceIt = Type.evaluate(this.visProp.snaptogrid);
 
             this.center.handleSnapToGrid(forceIt, true);
-            if (this.method === 'twoPoints') {
+            if (this.method === "twoPoints") {
                 this.point2.handleSnapToGrid(forceIt, true);
             }
 
@@ -661,7 +687,7 @@ define([
             var forceIt = Type.evaluate(this.visProp.snaptopoints);
 
             this.center.handleSnapToPoints(forceIt);
-            if (this.method === 'twoPoints') {
+            if (this.method === "twoPoints") {
                 this.point2.handleSnapToPoints(forceIt);
             }
 
@@ -722,6 +748,14 @@ define([
         },
 
         /**
+         * Perimeter (circumference) of circle.
+         * @returns {Number} Perimeter of circle in user units.
+         */
+        Perimeter: function () {
+            return 2 * this.Radius() * Math.PI;
+        },
+
+        /**
          * Get bounding box of the circle.
          * @returns {Array} [x1, y1, x2, y2]
          */
@@ -737,194 +771,230 @@ define([
          * and static data like radius.
          * @returns {Array} data necessary to construct this element
          */
-        getParents: function() {
-            if (this.parents.length === 1) {  // i.e. this.method === 'pointRadius'
+        getParents: function () {
+            if (this.parents.length === 1) {
+                // i.e. this.method === 'pointRadius'
                 return this.parents.concat(this.radius);
             }
             return this.parents;
         }
-    });
+    }
+);
 
-    /**
-     * @class This element is used to provide a constructor for a circle.
-     * @pseudo
-     * @description  A circle consists of all points with a given distance from one point. This point is called center, the distance is called radius.
-     * A circle can be constructed by providing a center and a point on the circle or a center and a radius (given as a number, function,
-     * line, or circle).
-     * @name Circle
-     * @augments JXG.Circle
-     * @constructor
-     * @type JXG.Circle
-     * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
-     * @param {JXG.Point_number,JXG.Point,JXG.Line,JXG.Circle} center,radius The center must be given as a {@link JXG.Point}, see {@link JXG.providePoints}, but the radius can be given
-     * as a number (which will create a circle with a fixed radius), another {@link JXG.Point}, a {@link JXG.Line} (the distance of start and end point of the
-     * line will determine the radius), or another {@link JXG.Circle}.
-     * @example
-     * // Create a circle providing two points
-     * var p1 = board.create('point', [2.0, 2.0]),
-     *     p2 = board.create('point', [2.0, 0.0]),
-     *     c1 = board.create('circle', [p1, p2]);
-     *
-     * // Create another circle using the above circle
-     * var p3 = board.create('point', [3.0, 2.0]),
-     *     c2 = board.create('circle', [p3, c1]);
-     * </pre><div class="jxgbox" id="JXG5f304d31-ef20-4a8e-9c0e-ea1a2b6c79e0" style="width: 400px; height: 400px;"></div>
-     * <script type="text/javascript">
-     * (function() {
-     *   var cex1_board = JXG.JSXGraph.initBoard('JXG5f304d31-ef20-4a8e-9c0e-ea1a2b6c79e0', {boundingbox: [-1, 9, 9, -1], axis: true, showcopyright: false, shownavigation: false});
-     *       cex1_p1 = cex1_board.create('point', [2.0, 2.0]),
-     *       cex1_p2 = cex1_board.create('point', [2.0, 0.0]),
-     *       cex1_c1 = cex1_board.create('circle', [cex1_p1, cex1_p2]),
-     *       cex1_p3 = cex1_board.create('point', [3.0, 2.0]),
-     *       cex1_c2 = cex1_board.create('circle', [cex1_p3, cex1_c1]);
-     * })();
-     * </script><pre>
-     * @example
-     * // Create a circle providing two points
-     * var p1 = board.create('point', [2.0, 2.0]),
-     *     c1 = board.create('circle', [p1, 3]);
-     *
-     * // Create another circle using the above circle
-     * var c2 = board.create('circle', [function() { return [p1.X(), p1.Y() + 1];}, function() { return c1.Radius(); }]);
-     * </pre><div class="jxgbox" id="JXG54165f60-93b9-441d-8979-ac5d0f193020" style="width: 400px; height: 400px;"></div>
-     * <script type="text/javascript">
-     * (function() {
-     * var board = JXG.JSXGraph.initBoard('JXG54165f60-93b9-441d-8979-ac5d0f193020', {boundingbox: [-1, 9, 9, -1], axis: true, showcopyright: false, shownavigation: false});
-     * var p1 = board.create('point', [2.0, 2.0]);
-     * var c1 = board.create('circle', [p1, 3]);
-     *
-     * // Create another circle using the above circle
-     * var c2 = board.create('circle', [function() { return [p1.X(), p1.Y() + 1];}, function() { return c1.Radius(); }]);
-     * })();
-     * </script><pre>
-     * @example
-     * var li = board.create('line', [1,1,1], {strokeColor: '#aaaaaa'});
-     * var reflect = board.create('transform', [li], {type: 'reflect'});
-     *
-     * var c1 = board.create('circle', [[-2,-2], [-2, -1]], {center: {visible:true}});
-     * var c2 = board.create('circle', [c1, reflect]);
-     *      * </pre><div id="JXGa2a5a870-5dbb-11e8-9fb9-901b0e1b8723" class="jxgbox" style="width: 300px; height: 300px;"></div>
-     * <script type="text/javascript">
-     *     (function() {
-     *         var board = JXG.JSXGraph.initBoard('JXGa2a5a870-5dbb-11e8-9fb9-901b0e1b8723',
-     *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
-     *             var li = board.create('line', [1,1,1], {strokeColor: '#aaaaaa'});
-     *             var reflect = board.create('transform', [li], {type: 'reflect'});
-     *
-     *             var c1 = board.create('circle', [[-2,-2], [-2, -1]], {center: {visible:true}});
-     *             var c2 = board.create('circle', [c1, reflect]);
-     *     })();
-     *
-     * </script><pre>
-     *
-     * @example
-     * var t = board.create('transform', [2, 1.5], {type: 'scale'});
-     * var c1 = board.create('circle', [[1.3, 1.3], [0, 1.3]], {strokeColor: 'black', center: {visible:true}});
-     * var c2 = board.create('circle', [c1, t], {strokeColor: 'black'});
-     *
-     * </pre><div id="JXG0686a222-6339-11e8-9fb9-901b0e1b8723" class="jxgbox" style="width: 300px; height: 300px;"></div>
-     * <script type="text/javascript">
-     *     (function() {
-     *         var board = JXG.JSXGraph.initBoard('JXG0686a222-6339-11e8-9fb9-901b0e1b8723',
-     *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
-     *     var t = board.create('transform', [2, 1.5], {type: 'scale'});
-     *     var c1 = board.create('circle', [[1.3, 1.3], [0, 1.3]], {strokeColor: 'black', center: {visible:true}});
-     *     var c2 = board.create('circle', [c1, t], {strokeColor: 'black'});
-     *
-     *     })();
-     *
-     * </script><pre>
-     *
-     */
-    JXG.createCircle = function (board, parents, attributes) {
-        var el, p, i, attr, obj,
-            isDraggable = true,
-            point_style = ['center', 'point2'];
+/**
+ * @class This element is used to provide a constructor for a circle.
+ * @pseudo
+ * @description  A circle consists of all points with a given distance from one point. This point is called center, the distance is called radius.
+ * A circle can be constructed by providing a center and a point on the circle or a center and a radius (given as a number, function,
+ * line, or circle).
+ * @name Circle
+ * @augments JXG.Circle
+ * @constructor
+ * @type JXG.Circle
+ * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
+ * @param {JXG.Point_number,JXG.Point,JXG.Line,JXG.Circle} center,radius The center must be given as a {@link JXG.Point}, see {@link JXG.providePoints}, but the radius can be given
+ * as a number (which will create a circle with a fixed radius), another {@link JXG.Point}, a {@link JXG.Line} (the distance of start and end point of the
+ * line will determine the radius), or another {@link JXG.Circle}.
+ * @example
+ * // Create a circle providing two points
+ * var p1 = board.create('point', [2.0, 2.0]),
+ *     p2 = board.create('point', [2.0, 0.0]),
+ *     c1 = board.create('circle', [p1, p2]);
+ *
+ * // Create another circle using the above circle
+ * var p3 = board.create('point', [3.0, 2.0]),
+ *     c2 = board.create('circle', [p3, c1]);
+ * </pre><div class="jxgbox" id="JXG5f304d31-ef20-4a8e-9c0e-ea1a2b6c79e0" style="width: 400px; height: 400px;"></div>
+ * <script type="text/javascript">
+ * (function() {
+ *   var cex1_board = JXG.JSXGraph.initBoard('JXG5f304d31-ef20-4a8e-9c0e-ea1a2b6c79e0', {boundingbox: [-1, 9, 9, -1], axis: true, showcopyright: false, shownavigation: false});
+ *       cex1_p1 = cex1_board.create('point', [2.0, 2.0]),
+ *       cex1_p2 = cex1_board.create('point', [2.0, 0.0]),
+ *       cex1_c1 = cex1_board.create('circle', [cex1_p1, cex1_p2]),
+ *       cex1_p3 = cex1_board.create('point', [3.0, 2.0]),
+ *       cex1_c2 = cex1_board.create('circle', [cex1_p3, cex1_c1]);
+ * })();
+ * </script><pre>
+ * @example
+ * // Create a circle providing two points
+ * var p1 = board.create('point', [2.0, 2.0]),
+ *     c1 = board.create('circle', [p1, 3]);
+ *
+ * // Create another circle using the above circle
+ * var c2 = board.create('circle', [function() { return [p1.X(), p1.Y() + 1];}, function() { return c1.Radius(); }]);
+ * </pre><div class="jxgbox" id="JXG54165f60-93b9-441d-8979-ac5d0f193020" style="width: 400px; height: 400px;"></div>
+ * <script type="text/javascript">
+ * (function() {
+ * var board = JXG.JSXGraph.initBoard('JXG54165f60-93b9-441d-8979-ac5d0f193020', {boundingbox: [-1, 9, 9, -1], axis: true, showcopyright: false, shownavigation: false});
+ * var p1 = board.create('point', [2.0, 2.0]);
+ * var c1 = board.create('circle', [p1, 3]);
+ *
+ * // Create another circle using the above circle
+ * var c2 = board.create('circle', [function() { return [p1.X(), p1.Y() + 1];}, function() { return c1.Radius(); }]);
+ * })();
+ * </script><pre>
+ * @example
+ * var li = board.create('line', [1,1,1], {strokeColor: '#aaaaaa'});
+ * var reflect = board.create('transform', [li], {type: 'reflect'});
+ *
+ * var c1 = board.create('circle', [[-2,-2], [-2, -1]], {center: {visible:true}});
+ * var c2 = board.create('circle', [c1, reflect]);
+ *      * </pre><div id="JXGa2a5a870-5dbb-11e8-9fb9-901b0e1b8723" class="jxgbox" style="width: 300px; height: 300px;"></div>
+ * <script type="text/javascript">
+ *     (function() {
+ *         var board = JXG.JSXGraph.initBoard('JXGa2a5a870-5dbb-11e8-9fb9-901b0e1b8723',
+ *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
+ *             var li = board.create('line', [1,1,1], {strokeColor: '#aaaaaa'});
+ *             var reflect = board.create('transform', [li], {type: 'reflect'});
+ *
+ *             var c1 = board.create('circle', [[-2,-2], [-2, -1]], {center: {visible:true}});
+ *             var c2 = board.create('circle', [c1, reflect]);
+ *     })();
+ *
+ * </script><pre>
+ *
+ * @example
+ * var t = board.create('transform', [2, 1.5], {type: 'scale'});
+ * var c1 = board.create('circle', [[1.3, 1.3], [0, 1.3]], {strokeColor: 'black', center: {visible:true}});
+ * var c2 = board.create('circle', [c1, t], {strokeColor: 'black'});
+ *
+ * </pre><div id="JXG0686a222-6339-11e8-9fb9-901b0e1b8723" class="jxgbox" style="width: 300px; height: 300px;"></div>
+ * <script type="text/javascript">
+ *     (function() {
+ *         var board = JXG.JSXGraph.initBoard('JXG0686a222-6339-11e8-9fb9-901b0e1b8723',
+ *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
+ *     var t = board.create('transform', [2, 1.5], {type: 'scale'});
+ *     var c1 = board.create('circle', [[1.3, 1.3], [0, 1.3]], {strokeColor: 'black', center: {visible:true}});
+ *     var c2 = board.create('circle', [c1, t], {strokeColor: 'black'});
+ *
+ *     })();
+ *
+ * </script><pre>
+ *
+ */
+JXG.createCircle = function (board, parents, attributes) {
+    var el,
+        p,
+        i,
+        attr,
+        obj,
+        isDraggable = true,
+        point_style = ["center", "point2"];
 
-        p = [];
-        obj = board.select(parents[0]);
-        if (Type.isObject(obj) && obj.elementClass === Const.OBJECT_CLASS_CIRCLE &&
-            Type.isTransformationOrArray(parents[1])) {
-
-            attr = Type.copyAttributes(attributes, board.options, 'circle');
-            // if (!Type.exists(attr.type) || attr.type.toLowerCase() !== 'euclidean') {
-            //     // Create a circle element from a circle and a Euclidean transformation
-            //     el = JXG.createCircle(board, [obj.center, function() { return obj.Radius(); }], attr);
-            // } else {
-                // Create a conic element from a circle and a projective transformation
-                el = Conic.createEllipse(board, [obj.center, obj.center, function() { return 2 * obj.Radius(); }], attr);
-            // }
-            el.addTransform(parents[1]);
-            return el;
-
-        }
-        // Circle defined by points
-        for (i = 0; i < parents.length; i++) {
-            if (Type.isPointType(board, parents[i])) {
-                p = p.concat(Type.providePoints(board, [parents[i]], attributes, 'circle', [point_style[i]]));
-                if (p[p.length - 1] === false) {
-                    throw new Error('JSXGraph: Can\'t create circle from this type. Please provide a point type.');
+    p = [];
+    obj = board.select(parents[0]);
+    if (
+        Type.isObject(obj) &&
+        obj.elementClass === Const.OBJECT_CLASS_CIRCLE &&
+        Type.isTransformationOrArray(parents[1])
+    ) {
+        attr = Type.copyAttributes(attributes, board.options, "circle");
+        // if (!Type.exists(attr.type) || attr.type.toLowerCase() !== 'euclidean') {
+        //     // Create a circle element from a circle and a Euclidean transformation
+        //     el = JXG.createCircle(board, [obj.center, function() { return obj.Radius(); }], attr);
+        // } else {
+        // Create a conic element from a circle and a projective transformation
+        el = JXG.createEllipse(
+            board,
+            [
+                obj.center,
+                obj.center,
+                function () {
+                    return 2 * obj.Radius();
                 }
-            } else {
-                p.push(parents[i]);
-            }
-        }
-
-        attr = Type.copyAttributes(attributes, board.options, 'circle');
-
-        if (p.length === 2 && Type.isPoint(p[0]) && Type.isPoint(p[1])) {
-            // Point/Point
-            el = new JXG.Circle(board, 'twoPoints', p[0], p[1], attr);
-        } else if ((Type.isNumber(p[0]) || Type.isFunction(p[0]) || Type.isString(p[0])) &&
-                    Type.isPoint(p[1])) {
-            // Number/Point
-            el = new JXG.Circle(board, 'pointRadius', p[1], p[0], attr);
-        } else if ((Type.isNumber(p[1]) || Type.isFunction(p[1]) || Type.isString(p[1])) &&
-                Type.isPoint(p[0])) {
-            // Point/Number
-            el = new JXG.Circle(board, 'pointRadius', p[0], p[1], attr);
-        } else if ((p[0].elementClass === Const.OBJECT_CLASS_CIRCLE) && Type.isPoint(p[1])) {
-            // Circle/Point
-            el = new JXG.Circle(board, 'pointCircle', p[1], p[0], attr);
-        } else if ((p[1].elementClass === Const.OBJECT_CLASS_CIRCLE) && Type.isPoint(p[0])) {
-            // Point/Circle
-            el = new JXG.Circle(board, 'pointCircle', p[0], p[1], attr);
-        } else if ((p[0].elementClass === Const.OBJECT_CLASS_LINE) && Type.isPoint(p[1])) {
-            // Line/Point
-            el = new JXG.Circle(board, 'pointLine', p[1], p[0], attr);
-        } else if ((p[1].elementClass === Const.OBJECT_CLASS_LINE) && Type.isPoint(p[0])) {
-            // Point/Line
-            el = new JXG.Circle(board, 'pointLine', p[0], p[1], attr);
-        } else if (parents.length === 3 && Type.isPoint(p[0]) && Type.isPoint(p[1]) && Type.isPoint(p[2])) {
-            // Circle through three points
-            // Check if circumcircle element is available
-            if (JXG.elements.circumcircle) {
-                el = JXG.elements.circumcircle(board, p, attr);
-            } else {
-                throw new Error('JSXGraph: Can\'t create circle with three points. Please include the circumcircle element (element/composition).');
-            }
-
-        } else {
-            throw new Error("JSXGraph: Can't create circle with parent types '" +
-                (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'." +
-                "\nPossible parent types: [point,point], [point,number], [point,function], [point,circle], [point,point,point], [circle,transformation]");
-        }
-
-        el.isDraggable = isDraggable;
-        el.setParents(p);
-        el.elType = 'circle';
-        for (i = 0; i < p.length; i++) {
-            if (Type.isPoint(p[i])) {
-                el.inherits.push(p[i]);
-            }
-        }
+            ],
+            attr
+        );
+        // }
+        el.addTransform(parents[1]);
         return el;
-    };
+    }
+    // Circle defined by points
+    for (i = 0; i < parents.length; i++) {
+        if (Type.isPointType(board, parents[i])) {
+            p = p.concat(
+                Type.providePoints(board, [parents[i]], attributes, "circle", [point_style[i]])
+            );
+            if (p[p.length - 1] === false) {
+                throw new Error(
+                    "JSXGraph: Can't create circle from this type. Please provide a point type."
+                );
+            }
+        } else {
+            p.push(parents[i]);
+        }
+    }
 
-    JXG.registerElement('circle', JXG.createCircle);
+    attr = Type.copyAttributes(attributes, board.options, "circle");
 
-    return {
-        Circle: JXG.Circle,
-        createCircle: JXG.createCircle
-    };
-});
+    if (p.length === 2 && Type.isPoint(p[0]) && Type.isPoint(p[1])) {
+        // Point/Point
+        el = new JXG.Circle(board, "twoPoints", p[0], p[1], attr);
+    } else if (
+        (Type.isNumber(p[0]) || Type.isFunction(p[0]) || Type.isString(p[0])) &&
+        Type.isPoint(p[1])
+    ) {
+        // Number/Point
+        el = new JXG.Circle(board, "pointRadius", p[1], p[0], attr);
+    } else if (
+        (Type.isNumber(p[1]) || Type.isFunction(p[1]) || Type.isString(p[1])) &&
+        Type.isPoint(p[0])
+    ) {
+        // Point/Number
+        el = new JXG.Circle(board, "pointRadius", p[0], p[1], attr);
+    } else if (p[0].elementClass === Const.OBJECT_CLASS_CIRCLE && Type.isPoint(p[1])) {
+        // Circle/Point
+        el = new JXG.Circle(board, "pointCircle", p[1], p[0], attr);
+    } else if (p[1].elementClass === Const.OBJECT_CLASS_CIRCLE && Type.isPoint(p[0])) {
+        // Point/Circle
+        el = new JXG.Circle(board, "pointCircle", p[0], p[1], attr);
+    } else if (p[0].elementClass === Const.OBJECT_CLASS_LINE && Type.isPoint(p[1])) {
+        // Line/Point
+        el = new JXG.Circle(board, "pointLine", p[1], p[0], attr);
+    } else if (p[1].elementClass === Const.OBJECT_CLASS_LINE && Type.isPoint(p[0])) {
+        // Point/Line
+        el = new JXG.Circle(board, "pointLine", p[0], p[1], attr);
+    } else if (
+        parents.length === 3 &&
+        Type.isPoint(p[0]) &&
+        Type.isPoint(p[1]) &&
+        Type.isPoint(p[2])
+    ) {
+        // Circle through three points
+        // Check if circumcircle element is available
+        if (JXG.elements.circumcircle) {
+            el = JXG.elements.circumcircle(board, p, attr);
+        } else {
+            throw new Error(
+                "JSXGraph: Can't create circle with three points. Please include the circumcircle element (element/composition)."
+            );
+        }
+    } else {
+        throw new Error(
+            "JSXGraph: Can't create circle with parent types '" +
+                typeof parents[0] +
+                "' and '" +
+                typeof parents[1] +
+                "'." +
+                "\nPossible parent types: [point,point], [point,number], [point,function], [point,circle], [point,point,point], [circle,transformation]"
+        );
+    }
+
+    el.isDraggable = isDraggable;
+    el.setParents(p);
+    el.elType = "circle";
+    for (i = 0; i < p.length; i++) {
+        if (Type.isPoint(p[i])) {
+            el.inherits.push(p[i]);
+        }
+    }
+    return el;
+};
+
+JXG.registerElement("circle", JXG.createCircle);
+
+export default JXG.Circle;
+// export default {
+//     Circle: JXG.Circle,
+//     createCircle: JXG.createCircle
+// };

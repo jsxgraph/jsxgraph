@@ -3,7 +3,7 @@
    <title>JSXGraph example</title>
    <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
    <script type="text/javascript" src="prototype.js"></script>
-   <script type="text/javascript" src="../src/loadjsxgraph.js"></script>
+   <script type="text/javascript" src="../distrib/jsxgraphcore.js"></script>
 </head>
 <body>
 <h1>Sierpinski triangle</h1>
@@ -17,17 +17,17 @@
         /* <![CDATA[ */
 
         board = JXG.JSXGraph.initBoard('box', {originX: 10, originY: 390, unitX: 380, unitY: 380});
-                
+
         var level = 0;
         function run() {
-            JXG.JSXGraph.freeBoard(board);        
-            board = JXG.JSXGraph.initBoard('box', {originX: 10, originY: 390, unitX: 380, unitY: 380});            
+            JXG.JSXGraph.freeBoard(board);
+            board = JXG.JSXGraph.initBoard('box', {originX: 10, originY: 390, unitX: 380, unitY: 380});
             level++;
             board.suspendUpdate();
              paint();
             board.unsuspendUpdate();
         }
-        
+
         function paint() {
             // Initial triangle
             var xCoords = [0, 1, 0.5];
@@ -35,7 +35,7 @@
             drawPolygon(xCoords, yCoords, level);
             drawTriangle({x:0,y:0}, {x:1,y:0}, {x:0.5,y:1}, level);
         }
-        
+
         function drawPolygon(xCoords, yCoords,level) {
             p1 = board.createElement('point', [xCoords[0], yCoords[0]], {visible:false,name:''});
             p2 = board.createElement('point', [xCoords[1], yCoords[1]], {visible:false,name:''});

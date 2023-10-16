@@ -2,7 +2,7 @@
 <head>
    <title>Watt | JSXGraph Example</title>
    <link rel="stylesheet" type="text/css" href="../../distrib/jsxgraph.css" />
-   <script type="text/javascript" src="../../src/loadjsxgraph.js"></script>
+   <script type="text/javascript" src="../../distrib/jsxgraphcore.js"></script>
 </head>
 <body>
 <div id="debug" style="display: none"></div>
@@ -28,7 +28,7 @@
   A = board.create('point', [2,0]);
 
   k1 = board.create('circle', [A, 5]);
-  
+
   c = board.create('functiongraph', [function (x) { return x*x*x;}]);
 
   c.generatePolynomial = function(p) {

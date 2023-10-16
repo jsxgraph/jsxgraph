@@ -3,14 +3,14 @@
 <head>
    <title>JSXGraph example</title>
     <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
-    <script type="text/javascript" src="../src/loadjsxgraph.js"></script>
+    <script type="text/javascript" src="../distrib/jsxgraphcore.js"></script>
     <!--<script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/jsxgraph/0.94/jsxgraphcore.js"></script>-->
     <!--<script type="text/javascript" src="http://jsxgraph.uni-bayreuth.de/distrib/jsxgraphcore.js"></script>-->
     <script type="text/javascript" src="../src/reader/geonext.js"></script>
     <script type="text/javascript" src="../src/renderer/canvas.js"></script>
 </head>
 <body id="body">
-    
+
 <input type="button" id="schalter" onClick="A.remove(); board.fullUpdate()" value="Spur an">
 <div id='jxgbox' class='jxgbox' style='width:600px; height:600px;'></div>
 
@@ -26,8 +26,8 @@
 //JXG.Options.text.display = 'internal';
 
 /*
-var brd = JXG.JSXGraph.initBoard('jxgbox', {boundingbox:[-6,6,6,-6], 
-axis:false, keepaspectratio:true, 
+var brd = JXG.JSXGraph.initBoard('jxgbox', {boundingbox:[-6,6,6,-6],
+axis:false, keepaspectratio:true,
 grid:false, showNavigation:true});
 */
 
@@ -37,11 +37,11 @@ JXG.Options.glider = {label:{}};
 JXG.Options.point.label = {};
 */
     JXG.joinCurves = function(board, parents, attributes) {
-        var cu1 = parents[0], 
+        var cu1 = parents[0],
             cu2 = parents[1],
             attr = JXG.copyAttributes(attributes, board.options, 'curve'),
             c = board.create('curve', [[0], [0]], attr);
-        
+
         c.updateDataArray = function() {
             // The two paths have to be connected
             this.dataX = cu1.dataX.slice(0,-1).concat(cu2.dataX);
@@ -73,7 +73,7 @@ var board = JXG.JSXGraph.initBoard('jxgbox',{boundingbox: [-4, 4, 4, -4], axis:f
             ticks: {visible:true, needsRegularUpdate:true}
         }
         );
-/*    
+/*
     sli.point1.moveTo([0,0]);
     sli.point2.moveTo([3,0]);
     board.fullUpdate();
@@ -81,7 +81,7 @@ var board = JXG.JSXGraph.initBoard('jxgbox',{boundingbox: [-4, 4, 4, -4], axis:f
 } else {
 	brdyy = JXG.JSXGraph.initBoard('jxgbox',{axis:false, boundingbox: [-2, 4.9, 15, 0]});
 	brdyy.options.text.anchorY = 'top';
-	
+
 	brdyy.create("text", [-1.5, 1.5, "<strong>b)</strong>"]);
 	brdyy.create("text", [-1.5, 3.5, "<strong>a)</strong>"]);
 
@@ -98,15 +98,15 @@ var board = JXG.JSXGraph.initBoard('jxgbox',{boundingbox: [-4, 4, 4, -4], axis:f
 	brdyy.create("segment", [p11,p13], {color:'orange', strokewidth:5});
 	brdyy.create("segment", [p21,p23], {color:'blue', strokewidth:5});
 
-	brdyy.create("text", [function() { return p13.X()-0.17;}, 2, function() { 
+	brdyy.create("text", [function() { return p13.X()-0.17;}, 2, function() {
 		var pos = Math.floor(p13.X()*10)/10;
-		pos = pos.toString().replace(".",","); 
+		pos = pos.toString().replace(".",",");
 		return "$" + pos + "$"; }]);
-	brdyy.create("text", [function() { return p23.X()-0.17;}, 3.9, function() { 		
+	brdyy.create("text", [function() { return p23.X()-0.17;}, 3.9, function() {
 		var pos = Math.floor(p23.X()*10)/10;
-		pos = pos.toString().replace(".",","); 
+		pos = pos.toString().replace(".",",");
 		return "$" + pos + "$"; }]);
-	
+
 	brdyy.create("text", [7, 4, "PRAVILNO"], {color:'red', opacity:function() {
 		if(Math.floor(p23.X()*10)/10 == 11.2)
 			return 1;
@@ -120,7 +120,7 @@ var board = JXG.JSXGraph.initBoard('jxgbox',{boundingbox: [-4, 4, 4, -4], axis:f
 			return 0;
 	}});
 }
-    
-</script> 
+
+</script>
 </body>
 </html>

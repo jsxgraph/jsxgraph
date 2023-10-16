@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2022
+    Copyright 2008-2023
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -25,21 +25,22 @@
     GNU Lesser General Public License for more details.
 
     You should have received a copy of the GNU Lesser General Public License and
-    the MIT License along with JSXGraph. If not, see <http://www.gnu.org/licenses/>
-    and <http://opensource.org/licenses/MIT/>.
+    the MIT License along with JSXGraph. If not, see <https://www.gnu.org/licenses/>
+    and <https://opensource.org/licenses/MIT/>.
  */
 
 describe("Test GeonextParser", function () {
-
     it("Geonext2JS", function () {
         var ob = {
-            Val: function () { return 2.0; }
+            Val: function () {
+                return 2.0;
+            }
         };
 
-        expect(JXG.GeonextParser.geonext2JS('x^2', null)).toEqual('pow(x,2)');
-        expect(JXG.GeonextParser.geonext2JS('sin(x)', null)).toEqual('sin(x)');
-        expect(JXG.GeonextParser.geonext2JS('asin(x)', null)).toEqual('asin(x)');
-        expect(JXG.GeonextParser.geonext2JS('sin(x^2)', null)).toEqual('sin(pow(x,2))');
-        expect(JXG.GeonextParser.geonext2JS('ob.Val()^x', null)).toEqual('pow(ob.Val(),x)');
+        expect(JXG.GeonextParser.geonext2JS("x^2", null)).toEqual("pow(x,2)");
+        expect(JXG.GeonextParser.geonext2JS("sin(x)", null)).toEqual("sin(x)");
+        expect(JXG.GeonextParser.geonext2JS("asin(x)", null)).toEqual("asin(x)");
+        expect(JXG.GeonextParser.geonext2JS("sin(x^2)", null)).toEqual("sin(pow(x,2))");
+        expect(JXG.GeonextParser.geonext2JS("ob.Val()^x", null)).toEqual("pow(ob.Val(),x)");
     });
 });

@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2022
+    Copyright 2008-2023
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -25,527 +25,451 @@
     GNU Lesser General Public License for more details.
 
     You should have received a copy of the GNU Lesser General Public License and
-    the MIT License along with JSXGraph. If not, see <http://www.gnu.org/licenses/>
-    and <http://opensource.org/licenses/MIT/>.
+    the MIT License along with JSXGraph. If not, see <https://www.gnu.org/licenses/>
+    and <https://opensource.org/licenses/MIT/>.
  */
-
 
 /*global JXG:true, define: true*/
 /*jslint nomen: true, plusplus: true*/
 
-/* depends:
- math/math
- utils/type
+import Mat from "./math";
+import Type from "../utils/type";
+
+/**
+ * Balanced binary search tree
  */
+Mat.BST = function () {
+    this.head = null;
+    this.z = null;
+    this.randomized = true;
+};
 
-define(['math/math', 'utils/type'], function (Mat, Type) {
-
-    "use strict";
-
-    /**
-     * Balanced binary search tree
-     */
-    Mat.BST = function () {
-        this.head = null;
-        this.z = null;
-        this.randomized = true;
+/**
+ * public
+ */
+Mat.BST.prototype.newNode = function (it, le, ri, n) {
+    return {
+        item: it,
+        l: le,
+        r: ri,
+        N: n
     };
+};
 
-    /**
-     * public
-     */
-    Mat.BST.prototype.newNode = function (it, le, ri, n) {
-        return {
-            item: it,
-            l: le,
-            r: ri,
-            N: n
-        };
-    };
+Mat.BST.prototype.init = function (random) {
+    this.z = this.newNode(null, 0, 0, 0);
+    this.head = this.z;
 
-    Mat.BST.prototype.init = function (random) {
-        this.z = this.newNode(null, 0, 0, 0);
-        this.head = this.z;
+    if (Type.exists(random)) {
+        this.randomized = random;
+    }
+};
 
-        if (Type.exists(random)) {
-            this.randomized = random;
-        }
-    };
+Mat.BST.prototype.count = function () {
+    return this.head.N;
+};
 
-    Mat.BST.prototype.count = function () {
-        return this.head.N;
-    };
+Mat.BST.prototype.search = function (val) {
+    return this.searchR(this.head, val);
+};
 
-    Mat.BST.prototype.search = function (val) {
-        return this.searchR(this.head, val);
-    };
+Mat.BST.prototype.insert = function (item) {
+    if (this.randomized) {
+        this.head = this.insertRandR(this.head, item);
+    } else {
+        this.head = this.insertR(this.head, item);
+    }
+};
 
-    Mat.BST.prototype.insert = function (item) {
-        if (this.randomized) {
-            this.head = this.insertRandR(this.head, item);
-        } else {
-            this.head = this.insertR(this.head, item);
-        }
-    };
+Mat.BST.prototype.traverse = function (h, visit) {
+    if (this.isNil(h)) {
+        return;
+    }
+    visit(h);
+    this.traverse(h.l, visit);
+    this.traverse(h.r, visit);
+};
 
-    Mat.BST.prototype.traverse = function (h, visit) {
-        if (this.isNil(h)) {
-            return;
-        }
-        visit(h);
-        this.traverse(h.l, visit);
-        this.traverse(h.r, visit);
-    };
+Mat.BST.prototype.insertHead = function (item) {
+    this.head = this.insertT(this.head, item);
+};
 
-    Mat.BST.prototype.insertHead = function (item) {
-        this.head = this.insertT(this.head, item);
-    };
+Mat.BST.prototype.deleteNode = function (v) {
+    this.head = this.deleteR(this.head, v);
+};
 
-    Mat.BST.prototype.deleteNode = function (v) {
-        this.head = this.deleteR(this.head, v);
-    };
+Mat.BST.prototype.join = function (a, b) {
+    if (this.isNil(b)) {
+        return a;
+    }
 
-    Mat.BST.prototype.join = function (a, b) {
-        if (this.isNil(b)) {
-            return a;
-        }
-
-        if (this.isNil(a)) {
-            return b;
-        }
-
-        b = this.insertT(b, a.item);
-        b.l = this.join(a.l, b.l);
-        b.r = this.join(a.r, b.r);
-
-        this.fixN(b);
-
+    if (this.isNil(a)) {
         return b;
-    };
+    }
 
-    Mat.BST.prototype.select = function (k) {
-        return this.selectR(this.head, k);
-    };
+    b = this.insertT(b, a.item);
+    b.l = this.join(a.l, b.l);
+    b.r = this.join(a.r, b.r);
 
-    Mat.BST.prototype.balance = function () {
-        this.head = this.balanceR(this.head);
-    };
+    this.fixN(b);
 
-    Mat.BST.prototype.show = function () {
-        this.showR(this.head, 0);
-    };
+    return b;
+};
 
-    Mat.BST.prototype.joinRand = function (a, b) {
-        if (Math.random() / (1 / (a.N + b.N) + 1) < a.N) {
-            return this.joinRandR(a, b);
-        }
+Mat.BST.prototype.select = function (k) {
+    return this.selectR(this.head, k);
+};
 
-        return this.joinRandR(b, a);
-    };
+Mat.BST.prototype.balance = function () {
+    this.head = this.balanceR(this.head);
+};
 
-    Mat.BST.prototype.minimum = function (h) {
-        if (this.isNil(h)) {
-            return h;
-        }
+Mat.BST.prototype.show = function () {
+    this.showR(this.head, 0);
+};
 
-        while (!this.isNil(h.l)) {
+Mat.BST.prototype.joinRand = function (a, b) {
+    if (Math.random() / (1 / (a.N + b.N) + 1) < a.N) {
+        return this.joinRandR(a, b);
+    }
+
+    return this.joinRandR(b, a);
+};
+
+Mat.BST.prototype.minimum = function (h) {
+    if (this.isNil(h)) {
+        return h;
+    }
+
+    while (!this.isNil(h.l)) {
+        h = h.l;
+    }
+
+    return h;
+};
+
+Mat.BST.prototype.maximum = function (h) {
+    if (this.isNil(h)) {
+        return h;
+    }
+
+    while (!this.isNil(h.r)) {
+        h = h.r;
+    }
+
+    return h;
+};
+
+Mat.BST.prototype.next = function (node) {
+    var nxt,
+        h = this.head;
+
+    // Trivial case
+    if (this.isNil(h)) {
+        return h;
+    }
+
+    if (!this.isNil(node.r)) {
+        return this.minimum(node.r);
+    }
+
+    while (!this.isNil(h)) {
+        if (node.item < h.item) {
+            nxt = h;
             h = h.l;
-        }
-
-        return h;
-    };
-
-    Mat.BST.prototype.maximum = function (h) {
-        if (this.isNil(h)) {
-            return h;
-        }
-
-        while (!this.isNil(h.r)) {
+        } else if (h.item < node.item) {
             h = h.r;
-        }
-
-        return h;
-    };
-
-    Mat.BST.prototype.next = function (node) {
-        var nxt, h = this.head;
-
-        // Trivial case
-        if (this.isNil(h)) {
-            return h;
-        }
-
-        if (!this.isNil(node.r)) {
-            return this.minimum(node.r);
-        }
-
-        while (!this.isNil(h)) {
-            if (node.item < h.item) {
-                nxt = h;
-                h = h.l;
-            } else if (h.item < node.item) {
-                h = h.r;
-            } else {
-                break;
-            }
-        }
-
-        return nxt;
-    };
-
-    Mat.BST.prototype.prev = function (node) {
-        var nxt, h = this.head;
-
-        // Trivial case
-        if (this.isNil(h)) {
-            return h;
-        }
-
-        if (!this.isNil(node.l)) {
-            return this.maximum(node.l);
-        }
-
-        while (!this.isNil(h)) {
-            if (node.item < h.item) {
-                h = h.l;
-            } else if (h.item < node.item) {
-                nxt = h;
-                h = h.r;
-            } else {
-                break;
-            }
-        }
-
-        return nxt;
-    };
-
-
-    /**
-     * private
-     */
-    Mat.BST.prototype.fixN = function (h) {
-        h.N = h.l.N + h.r.N + 1;
-    };
-
-    Mat.BST.prototype.isNil = function (h) {
-        return h.l === 0 && h.r === 0;
-    };
-
-    Mat.BST.prototype.searchR = function (h, val) {
-        var t = h.item;
-        if (this.isNil(h)) {
-            return this.z;
-        }
-
-        if (val === t) {
-            return h;
-        }
-
-        if (val < t) {
-            return this.searchR(h.l, val);
-        }
-
-        return this.searchR(h.r, val);
-    };
-
-    Mat.BST.prototype.insertR = function (h, item) {
-        if (this.isNil(h)) {
-            return this.newNode(item, this.z, this.z, 1);
-        }
-
-        if (item < h.item) {
-            h.l = this.insertR(h.l, item);
         } else {
-            h.r = this.insertR(h.r, item);
+            break;
         }
+    }
 
-        h.N++;
+    return nxt;
+};
+
+Mat.BST.prototype.prev = function (node) {
+    var nxt,
+        h = this.head;
+
+    // Trivial case
+    if (this.isNil(h)) {
         return h;
-    };
+    }
 
-    Mat.BST.prototype.rotR = function (h) {
-        var x = h.l;
+    if (!this.isNil(node.l)) {
+        return this.maximum(node.l);
+    }
 
-        h.l = x.r;
-        x.r = h;
+    while (!this.isNil(h)) {
+        if (node.item < h.item) {
+            h = h.l;
+        } else if (h.item < node.item) {
+            nxt = h;
+            h = h.r;
+        } else {
+            break;
+        }
+    }
 
+    return nxt;
+};
+
+/**
+ * private
+ */
+Mat.BST.prototype.fixN = function (h) {
+    h.N = h.l.N + h.r.N + 1;
+};
+
+Mat.BST.prototype.isNil = function (h) {
+    return h.l === 0 && h.r === 0;
+};
+
+Mat.BST.prototype.searchR = function (h, val) {
+    var t = h.item;
+    if (this.isNil(h)) {
+        return this.z;
+    }
+
+    if (val === t) {
+        return h;
+    }
+
+    if (val < t) {
+        return this.searchR(h.l, val);
+    }
+
+    return this.searchR(h.r, val);
+};
+
+Mat.BST.prototype.insertR = function (h, item) {
+    if (this.isNil(h)) {
+        return this.newNode(item, this.z, this.z, 1);
+    }
+
+    if (item < h.item) {
+        h.l = this.insertR(h.l, item);
+    } else {
+        h.r = this.insertR(h.r, item);
+    }
+
+    h.N++;
+    return h;
+};
+
+Mat.BST.prototype.rotR = function (h) {
+    var x = h.l;
+
+    h.l = x.r;
+    x.r = h;
+
+    this.fixN(h);
+    this.fixN(x);
+
+    return x;
+};
+
+Mat.BST.prototype.rotL = function (h) {
+    var x = h.r,
+        n = x.N;
+
+    h.r = x.l;
+    x.l = h;
+
+    this.fixN(h);
+    this.fixN(x);
+
+    return x;
+};
+
+Mat.BST.prototype.insertT = function (h, item) {
+    if (this.isNil(h)) {
+        return this.newNode(item, this.z, this.z, 1);
+    }
+
+    if (item < h.item) {
+        h.l = this.insertT(h.l, item);
+        h = this.rotR(h);
+    } else {
+        h.r = this.insertT(h.r, item);
+        h = this.rotL(h);
+    }
+
+    return h;
+};
+
+Mat.BST.prototype.selectR = function (h, k) {
+    var t;
+
+    if (this.isNil(h)) {
+        return null;
+    }
+
+    t = this.isNil(h.l) ? 0 : h.l.N;
+
+    if (t > k) {
+        return this.selectR(h.l, k);
+    }
+
+    if (t < k) {
+        return this.selectR(h.r, k - t - 1);
+    }
+
+    return h.item;
+};
+
+Mat.BST.prototype.partR = function (h, k) {
+    var t = h.l.N;
+
+    if (t > k) {
+        h.l = this.partR(h.l, k);
+        h = this.rotR(h);
+        this.head = h;
+    }
+
+    if (t < k) {
+        h.r = this.partR(h.r, k - t - 1);
+        h = this.rotL(h);
+        this.head = h;
+    }
+
+    return h;
+};
+
+Mat.BST.prototype.joinLR = function (a, b) {
+    if (this.isNil(b)) {
+        return a;
+    }
+
+    b = this.partR(b, 0);
+    b.l = a;
+    this.fixN(b);
+    return b;
+};
+
+Mat.BST.prototype.deleteR = function (h, v) {
+    var x,
+        t = h.item;
+
+    if (this.isNil(h)) {
+        return this.z;
+    }
+
+    if (v < t) {
+        h.l = this.deleteR(h.l, v);
+    }
+    if (t < v) {
+        h.r = this.deleteR(h.r, v);
+    }
+
+    if (t === v) {
+        x = h;
+
+        if (this.randomized) {
+            h = this.joinRandLR(h.l, h.r);
+        } else {
+            h = this.joinLR(h.l, h.r);
+        }
+    }
+
+    if (this.isNil(h)) {
         this.fixN(h);
-        this.fixN(x);
+    }
 
-        return x;
-    };
+    return h;
+};
 
-    Mat.BST.prototype.rotL = function (h) {
-        var x = h.r,
-            n = x.N;
-
-        h.r = x.l;
-        x.l = h;
-
-        this.fixN(h);
-        this.fixN(x);
-
-        return x;
-    };
-
-    Mat.BST.prototype.insertT = function (h, item) {
-        if (this.isNil(h)) {
-            return this.newNode(item, this.z, this.z, 1);
-        }
-
-        if (item < h.item) {
-            h.l = this.insertT(h.l, item);
-            h = this.rotR(h);
-        } else {
-            h.r = this.insertT(h.r, item);
-            h = this.rotL(h);
-        }
-
+Mat.BST.prototype.balanceR = function (h) {
+    if (h.N < 2) {
         return h;
-    };
+    }
 
-    Mat.BST.prototype.selectR = function (h, k) {
-        var t;
+    h = this.partR(h, Math.floor(h.N / 2));
 
-        if (this.isNil(h)) {
-            return null;
-        }
+    h.l = this.balanceR(h.l);
+    h.r = this.balanceR(h.r);
 
-        t = (this.isNil(h.l)) ? 0 : h.l.N;
+    return h;
+};
 
-        if (t > k) {
-            return this.selectR(h.l, k);
-        }
+/**
+ * Randomized Balnaced Binary Trees
+ */
+Mat.BST.prototype.insertRandR = function (h, item) {
+    var t = h.item;
 
-        if (t < k) {
-            return this.selectR(h.r, k - t - 1);
-        }
+    if (this.isNil(h)) {
+        return this.newNode(item, this.z, this.z, 1);
+    }
 
-        return h.item;
-    };
+    if (Math.random() < 1 / (h.N + 1)) {
+        return this.insertT(h, item);
+    }
 
-    Mat.BST.prototype.partR = function (h, k) {
-        var t = h.l.N;
+    if (item < t) {
+        h.l = this.insertRandR(h.l, item);
+    } else {
+        h.r = this.insertRandR(h.r, item);
+    }
+    h.N++;
 
-        if (t > k) {
-            h.l = this.partR(h.l, k);
-            h = this.rotR(h);
-            this.head = h;
-        }
+    return h;
+};
 
-        if (t < k) {
-            h.r = this.partR(h.r, k - t - 1);
-            h = this.rotL(h);
-            this.head = h;
-        }
-
-        return h;
-    };
-
-    Mat.BST.prototype.joinLR = function (a, b) {
-        if (this.isNil(b)) {
-            return a;
-        }
-
-        b = this.partR(b, 0);
-        b.l = a;
-        this.fixN(b);
+Mat.BST.prototype.joinRandR = function (a, b) {
+    if (this.isNil(a)) {
         return b;
-    };
+    }
 
-    Mat.BST.prototype.deleteR = function (h, v) {
-        var x,
-            t = h.item;
+    b = this.insertRandR(b, a.item);
+    b.l = this.joinRand(a.l, b.l);
+    b.r = this.joinRand(a.r, b.r);
 
-        if (this.isNil(h)) {
-            return this.z;
-        }
+    this.fixN(b);
 
-        if (v < t) {
-            h.l = this.deleteR(h.l, v);
-        }
-        if (t < v) {
-            h.r = this.deleteR(h.r, v);
-        }
+    return b;
+};
 
-        if (t === v) {
-            x = h;
-
-            if (this.randomized) {
-                h = this.joinRandLR(h.l, h.r);
-            } else {
-                h = this.joinLR(h.l, h.r);
-            }
-        }
-
-        if (this.isNil(h)) {
-            this.fixN(h);
-        }
-
-        return h;
-    };
-
-    Mat.BST.prototype.balanceR = function (h) {
-        if (h.N < 2) {
-            return h;
-        }
-
-        h = this.partR(h, Math.floor(h.N / 2));
-
-        h.l = this.balanceR(h.l);
-        h.r = this.balanceR(h.r);
-
-        return h;
-    };
-
-    /**
-     * Randomized Balnaced Binary Trees
-     */
-    Mat.BST.prototype.insertRandR = function (h, item) {
-        var t = h.item;
-
-        if (this.isNil(h)) {
-            return this.newNode(item, this.z, this.z, 1);
-        }
-
-        if (Math.random() < 1 / (h.N + 1)) {
-            return this.insertT(h, item);
-        }
-
-        if (item < t) {
-            h.l = this.insertRandR(h.l, item);
-        } else {
-            h.r = this.insertRandR(h.r, item);
-        }
-        h.N++;
-
-        return h;
-    };
-
-    Mat.BST.prototype.joinRandR = function (a, b) {
-        if (this.isNil(a)) {
-            return b;
-        }
-
-        b = this.insertRandR(b, a.item);
-        b.l  = this.joinRand(a.l, b.l);
-        b.r  = this.joinRand(a.r, b.r);
-
-        this.fixN(b);
-
+Mat.BST.prototype.joinRandLR = function (a, b) {
+    if (this.isNil(a)) {
         return b;
-    };
+    }
+    if (this.isNil(b)) {
+        return a;
+    }
 
-    Mat.BST.prototype.joinRandLR = function (a, b) {
-        if (this.isNil(a)) { return b; }
-        if (this.isNil(b)) { return a; }
+    if (Math.random() / (1 / (a.N + b.N) + 1) < a.N) {
+        a.r = this.joinRandLR(a.r, b);
+        return a;
+    }
 
-        if (Math.random() / (1 / (a.N + b.N) + 1) < a.N) {
-            a.r = this.joinRandLR(a.r, b);
-            return a;
-        }
+    b.l = this.joinRandLR(a, b.l);
+    return b;
+};
 
-        b.l = this.joinRandLR(a, b.l);
-        return b;
-    };
+/**
+ * Test output
+ */
+Mat.BST.prototype.printnode = function (node, hgt) {
+    var i,
+        t = "";
 
-    /**
-     * Test output
-     */
-    Mat.BST.prototype.printnode = function (node, hgt) {
-        var i,
-            t = '';
+    for (i = 0; i < hgt; i++) {
+        t += " ";
+    }
+    t += "(" + node.item + "," + node.N + ")";
+    // console.log(t);
+};
 
-        for (i = 0; i < hgt; i++) {
-            t += ' ';
-        }
-        t += '(' + node.item + ',' + node.N + ')';
-        // console.log(t);
-    };
-
-    Mat.BST.prototype.showR = function (x, hgt) {
-        if (this.isNil(x)) {
-            this.printnode(x, hgt);
-            return;
-        }
-
-        this.showR(x.r, hgt + 1);
+Mat.BST.prototype.showR = function (x, hgt) {
+    if (this.isNil(x)) {
         this.printnode(x, hgt);
-        this.showR(x.l, hgt + 1);
-    };
+        return;
+    }
 
-    return Mat.BST;
-});
+    this.showR(x.r, hgt + 1);
+    this.printnode(x, hgt);
+    this.showR(x.l, hgt + 1);
+};
 
-define(['math/math', 'utils/type'], function (Mat, Type) {
-
-    "use strict";
-
-        /**
-         * Heap
-         */
-        Mat.Heap = function () {
-            this.pq = [];
-            this.N = 0;
-        };
-
-        /**
-         * public
-         */
-        Mat.Heap.prototype.empty = function () {
-            this.pq = [];
-            this.N = 0;
-        };
-
-        Mat.Heap.prototype.insert = function (node) {
-            this.pq[this.N] = node;
-            this.N++;
-            this.fixUp(this.N);
-        };
-
-        Mat.Heap.prototype.delmax = function () {
-            this.exchange(0, this.N - 1);
-            this.fixDown(0, this.N - 1);
-            this.N--;
-
-            return this.pq[this.N];
-        };
-
-        /**
-         * private
-         */
-        Mat.Heap.prototype.fixUp = function (k) {
-            var i = k - 1;
-
-            while (i > 0 && this.pq[Math.floor(i / 2)].v < this.pq[i].v) {
-                this.exchange(Math.floor(i / 2), i);
-                i = Math.floor(i / 2);
-            }
-        };
-
-        Mat.Heap.prototype.fixDown = function (k, N) {
-            var j, i = k;
-            while (2 * i < N) {
-                j = 2 * i;
-
-                if (j < N && this.pq[j].v < this.pq[j + 1].v) {
-                    j++;
-                }
-
-                if (this.pq[i].v >= this.pq[j].v) {
-                    break;
-                }
-
-                this.exchange(i, j);
-                i = j;
-            }
-        };
-
-        Mat.Heap.prototype.exchange = function (i, j) {
-            var t = this.pq[i];
-            this.pq[i] = this.pq[j];
-            this.pq[j] = t;
-        };
-
-        return Mat.Heap;
-});
+export default Mat.BST;

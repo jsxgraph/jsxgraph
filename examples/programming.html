@@ -3,7 +3,7 @@
    <title>JSXGraph example</title>
    <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
    <script type="text/javascript" src="prototype.js"></script>
-   <script type="text/javascript" src="../src/loadjsxgraph.js"></script>
+   <script type="text/javascript" src="../distrib/jsxgraphcore.js"></script>
 </head>
 <body>
 <h2>Funktionsplotter-Beispiel mit Eingabefenster</h2>
@@ -25,8 +25,8 @@ i_m = JXG.Math.Numerics.I(interval, f);
 
 board.createElement('integral', [interval, c]);
 </textarea> <br>
-<input type="button" value="run" onClick="doIt()" style='margin:1em'> 
-<input type="button" value="clear all" onClick="board=clearAll(board)"> 
+<input type="button" value="run" onClick="doIt()" style='margin:1em'>
+<input type="button" value="clear all" onClick="board=clearAll(board)">
 </p>
 </div>
 <br clear=all>
@@ -44,14 +44,14 @@ board.createElement('integral', [interval, c]);
             var f = board.createElement('functiongraph', [func], atts);
             return f;
         }
-        
+
         // Simplified plotting function
         function plot(func, atts) {
             if (atts==null) {
                 return funktionsPlotter(board, func, {strokewidth:2});
             } else {
                 return funktionsPlotter(board, func, atts);
-            }    
+            }
         }
 
         /**
@@ -66,24 +66,24 @@ board.createElement('integral', [interval, c]);
             var re = /([\)0-9\.])\s*([\(a-zA-Z_])/g;
             return expr.replace(re, '$1*$2');
         };
-        
+
         function plotjc(func, atts) {
             /*String func */
-            
-            
+
+
             func = expandShortMath(func);
             console.log(func);
-            
-            
+
+
             if (atts==null) {
                 return funktionsPlotter(board, func, {strokewidth:2});
             } else {
                 return funktionsPlotter(board, func, atts);
-            }    
+            }
         }
 
         // Free point
-        var p = board.createElement('point', [3,-4], {style:6, name:'drag me'}); 
+        var p = board.createElement('point', [3,-4], {style:6, name:'drag me'});
 
         // Usage of the macro
         function doIt() {
@@ -100,7 +100,7 @@ board.createElement('integral', [interval, c]);
         }
 /*
     i_s = board.I(interval, f);
-*/        
+*/
   /* ]]> */
   </script>
 </body>

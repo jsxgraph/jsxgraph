@@ -1,5 +1,5 @@
 /*
- Copyright 2008-2022
+ Copyright 2008-2023
  Matthias Ehmann,
  Michael Gerhaeuser,
  Carsten Miller,
@@ -25,164 +25,158 @@
  GNU Lesser General Public License for more details.
 
  You should have received a copy of the GNU Lesser General Public License and
- the MIT License along with JSXGraph. If not, see <http://www.gnu.org/licenses/>
- and <http://opensource.org/licenses/MIT/>.
+ the MIT License along with JSXGraph. If not, see <https://www.gnu.org/licenses/>
+ and <https://opensource.org/licenses/MIT/>.
  */
-
 
 /*global JXG: true, define: true*/
 /*jslint nomen: true, plusplus: true*/
 
-/* depends:
- jxg
- utils/type
+import JXG from "../jxg";
+import Type from "../utils/type";
+
+/**
+ * A composition is a simple container that manages none or more {@link JXG.GeometryElement}s.
+ * @param {Object} elements A list of elements with a descriptive name for the element as the key and a reference
+ * to the element as the value of every list entry. The name is used to access the element later on.
+ * @example
+ * var p1 = board.create('point', [1, 2]),
+ *     p2 = board.create('point', [2, 3]),
+ *     c = new JXG.Composition({
+ *         start: p1,
+ *         end: p2
+ *     });
+ *
+ * // moves p1 to [3, 3]
+ * c.start.moveTo([3, 3]);
+ * @class JXG.Composition
  */
+JXG.Composition = function (elements) {
+    var e,
+        that = this,
+        genericMethods = [
+            /**
+             * Invokes setAttribute for every stored element with a setAttribute method and hands over the given arguments.
+             * See {@link JXG.GeometryElement#setAttribute} for further description, valid parameters and return values.
+             * @name setAttribute
+             * @memberOf JXG.Composition.prototype
+             * @function
+             */
+            "setAttribute",
 
-define(['jxg', 'utils/type'], function (JXG, Type) {
+            /**
+             * Invokes setParents for every stored element with a setParents method and hands over the given arguments.
+             * See {@link JXG.GeometryElement#setParents} for further description, valid parameters and return values.
+             * @name setParents
+             * @memberOf JXG.Composition.prototype
+             * @function
+             */
+            "setParents",
 
-    "use strict";
+            /**
+             * Invokes prepareUpdate for every stored element with a prepareUpdate method and hands over the given arguments.
+             * See {@link JXG.GeometryElement#prepareUpdate} for further description, valid parameters and return values.
+             * @name prepareUpdate
+             * @memberOf JXG.Composition.prototype
+             * @function
+             */
+            "prepareUpdate",
 
-    /**
-     * A composition is a simple container that manages none or more {@link JXG.GeometryElement}s.
-     * @param {Object} elements A list of elements with a descriptive name for the element as the key and a reference
-     * to the element as the value of every list entry. The name is used to access the element later on.
-     * @example
-     * var p1 = board.create('point', [1, 2]),
-     *     p2 = board.create('point', [2, 3]),
-     *     c = new JXG.Composition({
-     *         start: p1,
-     *         end: p2
-     *     });
-     *
-     * // moves p1 to [3, 3]
-     * c.start.moveTo([3, 3]);
-     * @class JXG.Composition
-     */
-    JXG.Composition = function (elements) {
-        var e,
-            that = this,
-            genericMethods = [
-                /**
-                 * Invokes setAttribute for every stored element with a setAttribute method and hands over the given arguments.
-                 * See {@link JXG.GeometryElement#setAttribute} for further description, valid parameters and return values.
-                 * @name setAttribute
-                 * @memberOf JXG.Composition.prototype
-                 * @function
-                 */
-                'setAttribute',
+            /**
+             * Invokes updateRenderer for every stored element with a updateRenderer method and hands over the given arguments.
+             * See {@link JXG.GeometryElement#updateRenderer} for further description, valid parameters and return values.
+             * @name updateRenderer
+             * @memberOf JXG.Composition.prototype
+             * @function
+             */
+            "updateRenderer",
 
-                /**
-                * Invokes setParents for every stored element with a setParents method and hands over the given arguments.
-                * See {@link JXG.GeometryElement#setParents} for further description, valid parameters and return values.
-                * @name setParents
-                * @memberOf JXG.Composition.prototype
-                * @function
-                */
-                'setParents',
+            /**
+             * Invokes update for every stored element with a update method and hands over the given arguments.
+             * See {@link JXG.GeometryElement#update} for further description, valid parameters and return values.
+             * @name update
+             * @memberOf JXG.Composition.prototype
+             * @function
+             */
+            "update",
 
-                /**
-                 * Invokes prepareUpdate for every stored element with a prepareUpdate method and hands over the given arguments.
-                 * See {@link JXG.GeometryElement#prepareUpdate} for further description, valid parameters and return values.
-                 * @name prepareUpdate
-                 * @memberOf JXG.Composition.prototype
-                 * @function
-                 */
-                'prepareUpdate',
+            /**
+             * Invokes fullUpdate for every stored element with a fullUpdate method and hands over the given arguments.
+             * See {@link JXG.GeometryElement#fullUpdate} for further description, valid parameters and return values.
+             * @name fullUpdate
+             * @memberOf JXG.Composition.prototype
+             * @function
+             */
+            "fullUpdate",
 
-                /**
-                 * Invokes updateRenderer for every stored element with a updateRenderer method and hands over the given arguments.
-                 * See {@link JXG.GeometryElement#updateRenderer} for further description, valid parameters and return values.
-                 * @name updateRenderer
-                 * @memberOf JXG.Composition.prototype
-                 * @function
-                 */
-                'updateRenderer',
+            /**
+             * Invokes highlight for every stored element with a highlight method and hands over the given arguments.
+             * See {@link JXG.GeometryElement#highlight} for further description, valid parameters and return values.
+             * @name highlight
+             * @memberOf JXG.Composition.prototype
+             * @function
+             */
+            "highlight",
 
-                /**
-                 * Invokes update for every stored element with a update method and hands over the given arguments.
-                 * See {@link JXG.GeometryElement#update} for further description, valid parameters and return values.
-                 * @name update
-                 * @memberOf JXG.Composition.prototype
-                 * @function
-                 */
-                'update',
+            /**
+             * Invokes noHighlight for every stored element with a noHighlight method and hands over the given arguments.
+             * See {@link JXG.GeometryElement#noHighlight} for further description, valid parameters and return values.
+             * @name noHighlight
+             * @memberOf JXG.Composition.prototype
+             * @function
+             */
+            "noHighlight"
+        ],
+        generateMethod = function (what) {
+            return function () {
+                var i;
 
-                /**
-                 * Invokes fullUpdate for every stored element with a fullUpdate method and hands over the given arguments.
-                 * See {@link JXG.GeometryElement#fullUpdate} for further description, valid parameters and return values.
-                 * @name fullUpdate
-                 * @memberOf JXG.Composition.prototype
-                 * @function
-                 */
-                'fullUpdate',
-
-                /**
-                 * Invokes highlight for every stored element with a highlight method and hands over the given arguments.
-                 * See {@link JXG.GeometryElement#highlight} for further description, valid parameters and return values.
-                 * @name highlight
-                 * @memberOf JXG.Composition.prototype
-                 * @function
-                 */
-                'highlight',
-
-                /**
-                 * Invokes noHighlight for every stored element with a noHighlight method and hands over the given arguments.
-                 * See {@link JXG.GeometryElement#noHighlight} for further description, valid parameters and return values.
-                 * @name noHighlight
-                 * @memberOf JXG.Composition.prototype
-                 * @function
-                 */
-                'noHighlight'
-            ],
-            generateMethod = function (what) {
-                return function () {
-                    var i;
-
-                    for (i in that.elements) {
-                        if (that.elements.hasOwnProperty(i)) {
-                            if (Type.exists(that.elements[i][what])) {
-                                that.elements[i][what].apply(that.elements[i], arguments);
-                            }
+                for (i in that.elements) {
+                    if (that.elements.hasOwnProperty(i)) {
+                        if (Type.exists(that.elements[i][what])) {
+                            that.elements[i][what].apply(that.elements[i], arguments);
                         }
                     }
-                    return that;
-                };
+                }
+                return that;
             };
-
-        for (e = 0; e < genericMethods.length; e++) {
-            this[genericMethods[e]] = generateMethod(genericMethods[e]);
-        }
-
-        this.elements = {};
-        this.objects = this.elements;
-
-        this.elementsByName = {};
-        this.objectsList = [];
-
-        // unused, required for select()
-        this.groups = {};
-
-        this.methodMap = {
-            setAttribute: 'setAttribute',
-            setProperty: 'setAttribute',
-            setParents: 'setParents',
-            add: 'add',
-            remove: 'remove',
-            select: 'select'
         };
 
-        for (e in elements) {
-            if (elements.hasOwnProperty(e)) {
-                this.add(e, elements[e]);
-            }
-        }
+    for (e = 0; e < genericMethods.length; e++) {
+        this[genericMethods[e]] = generateMethod(genericMethods[e]);
+    }
 
-        this.dump = true;
-        this.subs = {};
+    this.elements = {};
+    this.objects = this.elements;
+
+    this.elementsByName = {};
+    this.objectsList = [];
+
+    // unused, required for select()
+    this.groups = {};
+
+    this.methodMap = {
+        setAttribute: "setAttribute",
+        setProperty: "setAttribute",
+        setParents: "setParents",
+        add: "add",
+        remove: "remove",
+        select: "select"
     };
 
-    JXG.extend(JXG.Composition.prototype, /** @lends JXG.Composition.prototype */ {
+    for (e in elements) {
+        if (elements.hasOwnProperty(e)) {
+            this.add(e, elements[e]);
+        }
+    }
 
+    this.dump = true;
+    this.subs = {};
+};
+
+JXG.extend(
+    JXG.Composition.prototype,
+    /** @lends JXG.Composition.prototype */ {
         /**
          * Adds an element to the composition container.
          * @param {String} what Descriptive name for the element, e.g. <em>startpoint</em> or <em>area</em>. This is used to
@@ -206,7 +200,7 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
                     this.elementsByName[element.name] = element;
                 }
 
-                element.on('attribute:name', this.nameListener, this);
+                element.on("attribute:name", this.nameListener, this);
 
                 this.objectsList.push(element);
                 this[what] = element;
@@ -278,7 +272,7 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
 
             return this.attr;
         }
-    });
+    }
+);
 
-    return JXG.Composition;
-});
+export default JXG.Composition;

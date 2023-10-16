@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2022
+    Copyright 2008-2023
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -26,17 +26,12 @@
     GNU Lesser General Public License for more details.
 
     You should have received a copy of the GNU Lesser General Public License and
-    the MIT License along with JSXGraph. If not, see <http://www.gnu.org/licenses/>
-    and <http://opensource.org/licenses/MIT/>.
+    the MIT License along with JSXGraph. If not, see <https://www.gnu.org/licenses/>
+    and <https://opensource.org/licenses/MIT/>.
  */
 
 /*global JXG: true, define: true, html_sanitize: true*/
 /*jslint nomen: true, plusplus: true*/
-
-/* depends:
- jxg
- base/constants
- */
 
 /**
  * @fileoverview type.js contains several functions to help deal with javascript's weak types.
@@ -45,13 +40,28 @@
  * the type of a variable.
  */
 
-define([
-    'jxg', 'base/constants'
-], function (JXG, Const) {
+import JXG from "../jxg";
+import Const from "../base/constants";
 
-    'use strict';
+JXG.extend(
+    JXG,
+    /** @lends JXG */ {
+        /**
+         * Checks if the given object is an JSXGraph board.
+         * @param {Object} v
+         * @returns {Boolean}
+         */
+        isBoard: function (v) {
+            return v !== null &&
+                typeof v === "object" &&
+                this.isNumber(v.BOARD_MODE_NONE) &&
+                this.isObject(v.objects) &&
+                this.isObject(v.jc) &&
+                this.isFunction(v.update) &&
+                !!v.containerObj &&
+                this.isString(v.id);
+        },
 
-    JXG.extend(JXG, /** @lends JXG */ {
         /**
          * Checks if the given string is an id within the given board.
          * @param {JXG.Board} board
@@ -59,7 +69,7 @@ define([
          * @returns {Boolean}
          */
         isId: function (board, s) {
-            return (typeof s === 'string') && !!board.objects[s];
+            return typeof s === "string" && !!board.objects[s];
         },
 
         /**
@@ -69,7 +79,7 @@ define([
          * @returns {Boolean}
          */
         isName: function (board, s) {
-            return typeof s === 'string' && !!board.elementsByName[s];
+            return typeof s === "string" && !!board.elementsByName[s];
         },
 
         /**
@@ -79,7 +89,7 @@ define([
          * @returns {Boolean}
          */
         isGroup: function (board, s) {
-            return typeof s === 'string' && !!board.groups[s];
+            return typeof s === "string" && !!board.groups[s];
         },
 
         /**
@@ -88,16 +98,25 @@ define([
          * @returns {Boolean} True, if v is of type string.
          */
         isString: function (v) {
-            return typeof v === 'string';
+            return typeof v === "string";
         },
 
         /**
          * Checks if the value of a given variable is of type number.
          * @param v A variable of any type.
+         * @param {Boolean} [dontAcceptNaN=false] If set to true, the function returns true for v=NaN.
          * @returns {Boolean} True, if v is of type number.
          */
-        isNumber: function (v) {
-            return typeof v === 'number' || Object.prototype.toString.call(v) === '[Object Number]';
+        isNumber: function (v, dontAcceptNaN) {
+            var result = (
+                typeof v === "number" || Object.prototype.toString.call(v) === "[Object Number]"
+            );
+            dontAcceptNaN = dontAcceptNaN || false;
+
+            if(dontAcceptNaN) {
+                return result && !isNaN(v);
+            }
+            return result;
         },
 
         /**
@@ -106,7 +125,7 @@ define([
          * @returns {Boolean} True, if v is a function.
          */
         isFunction: function (v) {
-            return typeof v === 'function';
+            return typeof v === "function";
         },
 
         /**
@@ -121,7 +140,11 @@ define([
             if (Array.isArray) {
                 r = Array.isArray(v);
             } else {
-                r = (v !== null && typeof v === 'object' && typeof v.splice === 'function' && typeof v.join === 'function');
+                r =
+                    v !== null &&
+                    typeof v === "object" &&
+                    typeof v.splice === "function" &&
+                    typeof v.join === "function";
             }
 
             return r;
@@ -132,7 +155,18 @@ define([
          * @param v
          */
         isObject: function (v) {
-            return typeof v === 'object' && !this.isArray(v);
+            return typeof v === "object" && !this.isArray(v);
+        },
+
+        /**
+         * Tests if the input variable is a DOM Document or DocumentFragment node
+         * @param v A variable of any type
+         */
+        isDocumentOrFragment: function (v) {
+            return this.isObject(v) && (
+                v.nodeType === 9 || // Node.DOCUMENT_NODE
+                v.nodeType === 11   // Node.DOCUMENT_FRAGMENT_NODE
+            );
         },
 
         /**
@@ -141,16 +175,16 @@ define([
          * @returns {Boolean} True, if v is of type JXG.Point.
          */
         isPoint: function (v) {
-            if (v !== null && typeof v === 'object' && this.exists(v.elementClass)) {
-                return (v.elementClass === Const.OBJECT_CLASS_POINT);
+            if (v !== null && typeof v === "object" && this.exists(v.elementClass)) {
+                return v.elementClass === Const.OBJECT_CLASS_POINT;
             }
 
             return false;
         },
 
         isPoint3D: function (v) {
-            if (v !== null && typeof v === 'object' && this.exists(v.elType)) {
-                return (v.elType === 'point3d');
+            if (v !== null && typeof v === "object" && this.exists(v.elType)) {
+                return v.elType === "point3d";
             }
 
             return false;
@@ -190,11 +224,20 @@ define([
                 if (this.isArray(v) && v.length > 0) {
                     return this.isTransformationOrArray(v[0]);
                 }
-                if (typeof v === 'object') {
-                    return (v.type === Const.OBJECT_TYPE_TRANSFORMATION);
+                if (typeof v === "object") {
+                    return v.type === Const.OBJECT_TYPE_TRANSFORMATION;
                 }
             }
             return false;
+        },
+
+        /**
+         * Checks if v is an empty object or empty.
+         * @param v {Object|Array}
+         * @returns {boolean} True, if v is an empty object or array.
+         */
+        isEmpty: function (v) {
+            return Object.keys(v).length === 0;
         },
 
         /**
@@ -211,7 +254,7 @@ define([
             checkEmptyString = checkEmptyString || false;
 
             if (checkEmptyString) {
-                return result && v !== '';
+                return result && v !== "";
             }
             return result;
         },
@@ -227,15 +270,6 @@ define([
         //         return result;
         //     };
         // }()),
-
-        /**
-         * Checks if v is an empty object or empty.
-         * @param v {Object|Array}
-         * @returns {boolean} True, if v is an empty object or array.
-         */
-        isEmpty: function(v) {
-            return Object.keys(v).length === 0;
-        },
 
         /**
          * Handle default parameters.
@@ -261,12 +295,12 @@ define([
                 return true;
             }
 
-            if (typeof s === 'boolean') {
+            if (typeof s === "boolean") {
                 return s;
             }
 
             if (this.isString(s)) {
-                return (s.toLowerCase() === 'true');
+                return s.toLowerCase() === "true";
             }
 
             return false;
@@ -283,15 +317,22 @@ define([
          * to evaluate.
          */
         createEvalFunction: function (board, param, n) {
-            var f = [], i;
+            var f = [], func, i, e,
+                deps = {};
 
             for (i = 0; i < n; i++) {
-                f[i] = JXG.createFunction(param[i], board, '', true);
+                f[i] = JXG.createFunction(param[i], board, "", true);
+                for (e in f[i].deps) {
+                    deps[e] = f[i].deps;
+                }
             }
 
-            return function (k) {
+            func = function (k) {
                 return f[k]();
             };
+            func.deps = deps;
+
+            return func;
         },
 
         /**
@@ -300,8 +341,8 @@ define([
          * @param {JXG.Board} board Reference to a JSXGraph board. It is required to resolve dependencies given
          * by a GEONE<sub>X</sub>T string, thus it must be a valid reference only in case one of the param
          * values is of type string.
-         * @param {String} variableName Only required if evalGeonext is set to true. Describes the variable name
-         * of the variable in a GEONE<sub>X</sub>T string given as term.
+         * @param {String} variableName Only required if function is supplied as JessieCode string or evalGeonext is set to true.
+         * Describes the variable name of the variable in a GEONE<sub>X</sub>T string given as term.
          * @param {Boolean} [evalGeonext=true] Set this true, if term should be treated as a GEONE<sub>X</sub>T string.
          * @returns {Function} A function evaluation the value given by term or null if term is not of type string,
          * function or number.
@@ -319,17 +360,16 @@ define([
                 f = board.jc.snippet(term, true, variableName, true);
             } else if (this.isFunction(term)) {
                 f = term;
+                f.deps = {};
             } else if (this.isNumber(term)) {
                 /** @ignore */
-                f = function () {
-                    return term;
-                };
+                f = function () { return term; };
+                f.deps = {};
             } else if (this.isString(term)) {
                 // In case of string function like fontsize
                 /** @ignore */
-                f = function () {
-                    return term;
-                };
+                f = function () { return term; };
+                f.deps = {};
             }
 
             if (f !== null) {
@@ -361,10 +401,13 @@ define([
          * @returns {Array} List of newly created {@link JXG.Point} elements or false if not all returned elements are points.
          */
         providePoints: function (board, parents, attributes, attrClass, attrArray) {
-            var i, j,
+            var i,
+                j,
                 len,
                 lenAttr = 0,
-                points = [], attr, val;
+                points = [],
+                attr,
+                val;
 
             if (!this.isArray(parents)) {
                 parents = [parents];
@@ -380,15 +423,20 @@ define([
             for (i = 0; i < len; ++i) {
                 if (lenAttr > 0) {
                     j = Math.min(i, lenAttr - 1);
-                    attr = this.copyAttributes(attributes, board.options, attrClass, attrArray[j]);
+                    attr = this.copyAttributes(
+                        attributes,
+                        board.options,
+                        attrClass,
+                        attrArray[j]
+                    );
                 }
                 if (this.isArray(parents[i]) && parents[i].length > 1) {
-                    points.push(board.create('point', parents[i], attr));
+                    points.push(board.create("point", parents[i], attr));
                     points[points.length - 1]._is_new = true;
                 } else if (this.isFunction(parents[i])) {
                     val = parents[i]();
-                    if (this.isArray(val) && (val.length > 1)) {
-                        points.push(board.create('point', [parents[i]], attr));
+                    if (this.isArray(val) && val.length > 1) {
+                        points.push(board.create("point", [parents[i]], attr));
                         points[points.length - 1]._is_new = true;
                     }
                 } else {
@@ -424,11 +472,14 @@ define([
          * @param {Array} attrArray List of subtype attributes for the newly created 3D points. The list of subtypes is mapped to the list of new 3D points.
          * @returns {Array} List of newly created {@link JXG.Point3D} elements or false if not all returned elements are 3D points.
          */
-         providePoints3D: function (view, parents, attributes, attrClass, attrArray) {
-            var i, j,
+        providePoints3D: function (view, parents, attributes, attrClass, attrArray) {
+            var i,
+                j,
                 len,
                 lenAttr = 0,
-                points = [], attr, val;
+                points = [],
+                attr,
+                val;
 
             if (!this.isArray(parents)) {
                 parents = [parents];
@@ -444,16 +495,21 @@ define([
             for (i = 0; i < len; ++i) {
                 if (lenAttr > 0) {
                     j = Math.min(i, lenAttr - 1);
-                    attr = this.copyAttributes(attributes, view.board.options, attrClass, attrArray[j]);
+                    attr = this.copyAttributes(
+                        attributes,
+                        view.board.options,
+                        attrClass,
+                        attrArray[j]
+                    );
                 }
 
                 if (this.isArray(parents[i]) && parents[i].length > 1) {
-                    points.push(view.create('point3d', parents[i], attr));
+                    points.push(view.create("point3d", parents[i], attr));
                     points[points.length - 1]._is_new = true;
                 } else if (this.isFunction(parents[i])) {
                     val = parents[i]();
-                    if (this.isArray(val) && (val.length > 1)) {
-                        points.push(view.create('point3d', [parents[i]], attr));
+                    if (this.isArray(val) && val.length > 1) {
+                        points.push(view.create("point3d", [parents[i]], attr));
                         points[points.length - 1]._is_new = true;
                     }
                 } else {
@@ -503,7 +559,8 @@ define([
          * <tt>-1</tt> if the value was not found.
          */
         indexOf: function (array, value, sub) {
-            var i, s = this.exists(sub);
+            var i,
+                s = this.exists(sub);
 
             if (Array.indexOf && !s) {
                 return array.indexOf(value);
@@ -566,7 +623,10 @@ define([
          * @returns {Array}
          */
         uniqueArray: function (arr) {
-            var i, j, isArray, ret = [];
+            var i,
+                j,
+                isArray,
+                ret = [];
 
             if (arr.length === 0) {
                 return [];
@@ -576,14 +636,14 @@ define([
                 isArray = this.isArray(arr[i]);
 
                 if (!this.exists(arr[i])) {
-                    arr[i] = '';
+                    arr[i] = "";
                     continue;
                 }
                 for (j = i + 1; j < arr.length; j++) {
                     if (isArray && JXG.cmpArrays(arr[i], arr[j])) {
                         arr[i] = [];
                     } else if (!isArray && arr[i] === arr[j]) {
-                        arr[i] = '';
+                        arr[i] = "";
                     }
                 }
             }
@@ -593,11 +653,11 @@ define([
             for (i = 0; i < arr.length; i++) {
                 isArray = this.isArray(arr[i]);
 
-                if (!isArray && arr[i] !== '') {
+                if (!isArray && arr[i] !== "") {
                     ret[j] = arr[i];
                     j++;
                 } else if (isArray && arr[i].length !== 0) {
-                    ret[j] = (arr[i].slice(0));
+                    ret[j] = arr[i].slice(0);
                     j++;
                 }
             }
@@ -725,17 +785,17 @@ define([
             value = +value;
             exp = +exp;
             // If the value is not a number or the exp is not an integer...
-            if (isNaN(value) || !(typeof exp === 'number' && exp % 1 === 0)) {
+            if (isNaN(value) || !(typeof exp === "number" && exp % 1 === 0)) {
                 return NaN;
             }
 
             // Shift
-            value = value.toString().split('e');
-            value = Math[type](+(value[0] + 'e' + (value[1] ? (+value[1] - exp) : -exp)));
+            value = value.toString().split("e");
+            value = Math[type](+(value[0] + "e" + (value[1] ? +value[1] - exp : -exp)));
 
             // Shift back
-            value = value.toString().split('e');
-            return +(value[0] + 'e' + (value[1] ? (+value[1] + exp) : exp));
+            value = value.toString().split("e");
+            return +(value[0] + "e" + (value[1] ? +value[1] + exp : exp));
         },
 
         /**
@@ -749,7 +809,7 @@ define([
          * @private
          */
         _round10: function (value, exp) {
-            return this._decimalAdjust('round', value, exp);
+            return this._decimalAdjust("round", value, exp);
         },
 
         /**
@@ -763,7 +823,7 @@ define([
          * @private
          */
         _floor10: function (value, exp) {
-            return this._decimalAdjust('floor', value, exp);
+            return this._decimalAdjust("floor", value, exp);
         },
 
         /**
@@ -777,7 +837,7 @@ define([
          * @private
          */
         _ceil10: function (value, exp) {
-            return this._decimalAdjust('ceil', value, exp);
+            return this._decimalAdjust("ceil", value, exp);
         },
 
         /**
@@ -805,7 +865,7 @@ define([
             var x = Math.abs(val),
                 str;
 
-            if (x > 0.1) {
+            if (x >= 0.1) {
                 str = this.toFixed(val, 2);
             } else if (x >= 0.01) {
                 str = this.toFixed(val, 4);
@@ -825,7 +885,8 @@ define([
          * @returns {Array} All keys of the given object.
          */
         keys: function (object, onlyOwn) {
-            var keys = [], property;
+            var keys = [],
+                property;
 
             // the caller decides if we use hasOwnProperty
             /*jslint forin:true*/
@@ -867,7 +928,9 @@ define([
          */
         cloneAndCopy: function (obj, obj2) {
             var r,
-                cObj = function () { return undefined; };
+                cObj = function () {
+                    return undefined;
+                };
 
             cObj.prototype = obj;
 
@@ -886,37 +949,86 @@ define([
         },
 
         /**
-         * Recursively merges obj2 into obj1. Contrary to {@link JXG#deepCopy} this won't create a new object
+         * Recursively merges obj2 into obj1 in-place. Contrary to {@link JXG#deepCopy} this won't create a new object
          * but instead will overwrite obj1.
+         * <p>
+         * In contrast to method JXG.mergeAttr, merge recurses into any kind of object, e.g. DOM object and JSXGraph objects.
+         * So, please be careful.
          * @param {Object} obj1
          * @param {Object} obj2
          * @returns {Object}
+         * @see JXG#mergeAttr
+         *
+         * @example
+         * JXG.Options = JXG.merge(JXG.Options, {
+         *     board: {
+         *         showNavigation: false,
+         *         showInfobox: true
+         *     },
+         *     point: {
+         *         face: 'o',
+         *         size: 4,
+         *         fillColor: '#eeeeee',
+         *         highlightFillColor: '#eeeeee',
+         *         strokeColor: 'white',
+         *         highlightStrokeColor: 'white',
+         *         showInfobox: 'inherit'
+         *     }
+         * });
+         *
+         * </pre><div id="JXGc5bf0f2a-bd5a-4612-97c2-09f17b1bbc6b" class="jxgbox" style="width: 300px; height: 300px;"></div>
+         * <script type="text/javascript">
+         *     (function() {
+         *         var board = JXG.JSXGraph.initBoard('JXGc5bf0f2a-bd5a-4612-97c2-09f17b1bbc6b',
+         *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
+         *     JXG.Options = JXG.merge(JXG.Options, {
+         *         board: {
+         *             showNavigation: false,
+         *             showInfobox: true
+         *         },
+         *         point: {
+         *             face: 'o',
+         *             size: 4,
+         *             fillColor: '#eeeeee',
+         *             highlightFillColor: '#eeeeee',
+         *             strokeColor: 'white',
+         *             highlightStrokeColor: 'white',
+         *             showInfobox: 'inherit'
+         *         }
+         *     });
+         *
+         *
+         *     })();
+         *
+         * </script><pre>
          */
         merge: function (obj1, obj2) {
-            var i, j;
+            var i, j, o, oo;
 
             for (i in obj2) {
                 if (obj2.hasOwnProperty(i)) {
-                    if (this.isArray(obj2[i])) {
+                    o = obj2[i];
+                    if (this.isArray(o)) {
                         if (!obj1[i]) {
                             obj1[i] = [];
                         }
 
-                        for (j = 0; j < obj2[i].length; j++) {
+                        for (j = 0; j < o.length; j++) {
+                            oo = obj2[i][j];
                             if (typeof obj2[i][j] === 'object') {
-                                obj1[i][j] = this.merge(obj1[i][j], obj2[i][j]);
+                                obj1[i][j] = this.merge(obj1[i][j], oo);
                             } else {
                                 obj1[i][j] = obj2[i][j];
                             }
                         }
-                    } else if (typeof obj2[i] === 'object') {
+                    } else if (typeof o === 'object') {
                         if (!obj1[i]) {
                             obj1[i] = {};
                         }
 
-                        obj1[i] = this.merge(obj1[i], obj2[i]);
+                        obj1[i] = this.merge(obj1[i], o);
                     } else {
-                        obj1[i] = obj2[i];
+                        obj1[i] = o;
                     }
                 }
             }
@@ -937,17 +1049,16 @@ define([
             var c, i, prop, i2;
 
             toLower = toLower || false;
-
             if (typeof obj !== 'object' || obj === null) {
                 return obj;
             }
 
-            // missing hasOwnProperty is on purpose in this function
+            // Missing hasOwnProperty is on purpose in this function
             if (this.isArray(obj)) {
                 c = [];
                 for (i = 0; i < obj.length; i++) {
                     prop = obj[i];
-                    if (typeof prop === 'object') {
+                    if (typeof prop === "object") {
                         // We certainly do not want to recurse into a JSXGraph object.
                         // This would for sure result in an infinite recursion.
                         // As alternative we copy the id of the object.
@@ -966,7 +1077,7 @@ define([
                     if (obj.hasOwnProperty(i)) {
                         i2 = toLower ? i.toLowerCase() : i;
                         prop = obj[i];
-                        if (prop !== null && typeof prop === 'object') {
+                        if (prop !== null && typeof prop === "object") {
                             if (this.exists(prop.board)) {
                                 c[i2] = prop.id;
                             } else {
@@ -983,7 +1094,7 @@ define([
                         i2 = toLower ? i.toLowerCase() : i;
 
                         prop = obj2[i];
-                        if (typeof prop === 'object') {
+                        if (typeof prop === "object") {
                             if (this.isArray(prop) || !this.exists(c[i2])) {
                                 c[i2] = this.deepCopy(prop);
                             } else {
@@ -1000,6 +1111,54 @@ define([
         },
 
         /**
+         * In-place (deep) merging of attributes. Allows attributes like `{shadow: {enabled: true...}}`
+         * <p>
+         * In contrast to method JXG.merge, mergeAttr does not recurse into DOM objects and JSXGraph objects. Instead
+         * handles (pointers) to these objects are used.
+         *
+         * @param {Object} attr Object with attributes - usually containing default options
+         * @param {Object} special Special option values which overwrite (recursively) the default options
+         * @param {Boolean} [toLower=true] If true the keys are converted to lower case.
+         *
+         * @see JXG#merge
+         *
+         */
+        mergeAttr: function (attr, special, toLower) {
+            var e, e2, o;
+
+            toLower = toLower || true;
+
+            for (e in special) {
+                if (special.hasOwnProperty(e)) {
+                    e2 = (toLower) ? e.toLowerCase(): e;
+
+                    o = special[e];
+                    if (this.isObject(o) && o !== null &&
+                        // Do not recurse into a document object or a JSXGraph object
+                        !this.isDocumentOrFragment(o) && !this.exists(o.board) &&
+                        // Do not recurse if a string is provided as "new String(...)"
+                        typeof o.valueOf() !== 'string') {
+                        if (attr[e2] === undefined || attr[e2] === null || !this.isObject(attr[e2])) {
+                            // The last test handles the case:
+                            //   attr.draft = false;
+                            //   special.draft = { strokewidth: 4}
+                            attr[e2] = {};
+                        }
+                        this.mergeAttr(attr[e2], o, toLower);
+                    } else {
+                        // Flat copy
+                        // This is also used in the cases
+                        //   attr.shadow = { enabled: true ...}
+                        //   special.shadow = false;
+                        // and
+                        //   special.anchor is a JSXGraph element
+                        attr[e2] = o;
+                    }
+                }
+            }
+        },
+
+        /**
          * Generates an attributes object that is filled with default values from the Options object
          * and overwritten by the user specified attributes.
          * @param {Object} attributes user specified attributes
@@ -1010,20 +1169,21 @@ define([
         copyAttributes: function (attributes, options, s) {
             var a, i, len, o, isAvail,
                 primitives = {
-                    'circle': 1,
-                    'curve': 1,
-                    'image': 1,
-                    'line': 1,
-                    'point': 1,
-                    'polygon': 1,
-                    'text': 1,
-                    'ticks': 1,
-                    'integral': 1
+                    circle: 1,
+                    curve: 1,
+                    foreignobject: 1,
+                    image: 1,
+                    line: 1,
+                    point: 1,
+                    polygon: 1,
+                    text: 1,
+                    ticks: 1,
+                    integral: 1
                 };
 
             len = arguments.length;
             if (len < 3 || primitives[s]) {
-                // default options from Options.elements
+                // Default options from Options.elements
                 a = JXG.deepCopy(options.elements, null, true);
             } else {
                 a = {};
@@ -1034,7 +1194,8 @@ define([
                 a.layer = options.layer[s];
             }
 
-            // default options from specific elements
+            // Default options from the specific element like 'line' in
+            // copyAttribute(attributes, board.options, 'line')
             o = options;
             isAvail = true;
             for (i = 2; i < len; i++) {
@@ -1049,7 +1210,11 @@ define([
                 a = JXG.deepCopy(a, o, true);
             }
 
-            // options from attributes
+            // Merge the specific options given in the parameter 'attributes'
+            // into the default options.
+            // Additionally, we step into a subelement of attribute like line.point1 in case it is supplied as in
+            // copyAttribute(attributes, board.options, 'line', 'point1')
+            // In this case we would merge attributes.point1 into the global line.point1 attributes.
             o = (typeof attributes === 'object') ? attributes : {};
             isAvail = true;
             for (i = 3; i < len; i++) {
@@ -1061,10 +1226,10 @@ define([
                 }
             }
             if (isAvail) {
-                this.extend(a, o, null, true);
+                this.mergeAttr(a, o, true);
             }
 
-            if (arguments[2] === 'board') {
+            if (arguments[2] === "board") {
                 // For board attributes we are done now.
                 return a;
             }
@@ -1132,7 +1297,7 @@ define([
             }
 
             switch (typeof obj) {
-                case 'object':
+                case "object":
                     if (obj) {
                         list = [];
 
@@ -1141,7 +1306,7 @@ define([
                                 list.push(JXG.toJSON(obj[i], noquote));
                             }
 
-                            return '[' + list.join(',') + ']';
+                            return "[" + list.join(",") + "]";
                         }
 
                         for (prop in obj) {
@@ -1149,28 +1314,28 @@ define([
                                 try {
                                     val = JXG.toJSON(obj[prop], noquote);
                                 } catch (e2) {
-                                    val = '';
+                                    val = "";
                                 }
 
                                 if (noquote) {
-                                    list.push(prop + ':' + val);
+                                    list.push(prop + ":" + val);
                                 } else {
                                     list.push('"' + prop + '":' + val);
                                 }
                             }
                         }
 
-                        return '{' + list.join(',') + '} ';
+                        return "{" + list.join(",") + "} ";
                     }
-                    return 'null';
-                case 'string':
-                    return '\'' + obj.replace(/(["'])/g, '\\$1') + '\'';
-                case 'number':
-                case 'boolean':
+                    return "null";
+                case "string":
+                    return "'" + obj.replace(/(["'])/g, "\\$1") + "'";
+                case "number":
+                case "boolean":
                     return obj.toString();
             }
 
-            return '0';
+            return "0";
         },
 
         /**
@@ -1180,20 +1345,20 @@ define([
          */
         clearVisPropOld: function (el) {
             el.visPropOld = {
-                cssclass: '',
-                cssdefaultstyle: '',
-                cssstyle: '',
-                fillcolor: '',
-                fillopacity: '',
+                cssclass: "",
+                cssdefaultstyle: "",
+                cssstyle: "",
+                fillcolor: "",
+                fillopacity: "",
                 firstarrow: false,
                 fontsize: -1,
                 lastarrow: false,
                 left: -100000,
-                linecap: '',
+                linecap: "",
                 shadow: false,
-                strokecolor: '',
-                strokeopacity: '',
-                strokewidth: '',
+                strokecolor: "",
+                strokeopacity: "",
+                strokewidth: "",
                 tabindex: -100000,
                 transitionduration: 0,
                 top: -100000,
@@ -1229,7 +1394,7 @@ define([
          * @returns {String}
          */
         escapeHTML: function (str) {
-            return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+            return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
         },
 
         /**
@@ -1241,7 +1406,11 @@ define([
         unescapeHTML: function (str) {
             // This regex is NOT insecure. We are replacing everything found with ''
             /*jslint regexp:true*/
-            return str.replace(/<\/?[^>]+>/gi, '').replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>');
+            return str
+                .replace(/<\/?[^>]+>/gi, "")
+                .replace(/&amp;/g, "&")
+                .replace(/&lt;/g, "<")
+                .replace(/&gt;/g, ">");
         },
 
         /**
@@ -1259,15 +1428,15 @@ define([
          * @returns {String}
          */
         trimNumber: function (str) {
-            str = str.replace(/^0+/, '');
-            str = str.replace(/0+$/, '');
+            str = str.replace(/^0+/, "");
+            str = str.replace(/0+$/, "");
 
-            if (str[str.length - 1] === '.' || str[str.length - 1] === ',') {
+            if (str[str.length - 1] === "." || str[str.length - 1] === ",") {
                 str = str.slice(0, -1);
             }
 
-            if (str[0] === '.' || str[0] === ',') {
-                str = '0' + str;
+            if (str[0] === "." || str[0] === ",") {
+                str = "0" + str;
             }
 
             return str;
@@ -1280,11 +1449,17 @@ define([
          * @returns {Array}
          */
         filterElements: function (list, filter) {
-            var i, f, item, flower, value, visPropValue, pass,
+            var i,
+                f,
+                item,
+                flower,
+                value,
+                visPropValue,
+                pass,
                 l = list.length,
                 result = [];
 
-            if (typeof filter !== 'function' && typeof filter !== 'object') {
+            if (typeof filter !== "function" && typeof filter !== "object") {
                 return result;
             }
 
@@ -1292,27 +1467,27 @@ define([
                 pass = true;
                 item = list[i];
 
-                if (typeof filter === 'object') {
+                if (typeof filter === "object") {
                     for (f in filter) {
                         if (filter.hasOwnProperty(f)) {
                             flower = f.toLowerCase();
 
-                            if (typeof item[f] === 'function') {
+                            if (typeof item[f] === "function") {
                                 value = item[f]();
                             } else {
                                 value = item[f];
                             }
 
-                            if (item.visProp && typeof item.visProp[flower] === 'function') {
+                            if (item.visProp && typeof item.visProp[flower] === "function") {
                                 visPropValue = item.visProp[flower]();
                             } else {
                                 visPropValue = item.visProp && item.visProp[flower];
                             }
 
-                            if (typeof filter[f] === 'function') {
+                            if (typeof filter[f] === "function") {
                                 pass = filter[f](value) || filter[f](visPropValue);
                             } else {
-                                pass = (value === filter[f] || visPropValue === filter[f]);
+                                pass = value === filter[f] || visPropValue === filter[f];
                             }
 
                             if (!pass) {
@@ -1320,7 +1495,7 @@ define([
                             }
                         }
                     }
-                } else if (typeof filter === 'function') {
+                } else if (typeof filter === "function") {
                     pass = filter(item);
                 }
 
@@ -1342,7 +1517,7 @@ define([
             // str = str.replace(/\s+$/, '');
             //
             // return str;
-            return str.replace(/^[\s\uFEFF\xA0]+|[\s\uFEFF\xA0]+$/g, '');
+            return str.replace(/^[\s\uFEFF\xA0]+|[\s\uFEFF\xA0]+$/g, "");
         },
 
         /**
@@ -1352,12 +1527,20 @@ define([
          * @returns {String} Sanitized string
          */
         sanitizeHTML: function (str, caja) {
-            if (typeof html_sanitize === 'function' && caja) {
-                return html_sanitize(str, function () { return undefined; }, function (id) { return id; });
+            if (typeof html_sanitize === "function" && caja) {
+                return html_sanitize(
+                    str,
+                    function () {
+                        return undefined;
+                    },
+                    function (id) {
+                        return id;
+                    }
+                );
             }
 
-            if (str && typeof str === 'string') {
-                str = str.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+            if (str && typeof str === "string") {
+                str = str.replace(/</g, "&lt;").replace(/>/g, "&gt;");
             }
 
             return str;
@@ -1369,13 +1552,13 @@ define([
          * @returns {*} s.Value() if s is an element of type slider, s otherwise
          */
         evalSlider: function (s) {
-            if (s && s.type === Const.OBJECT_TYPE_GLIDER && typeof s.Value === 'function') {
+            if (s && s.type === Const.OBJECT_TYPE_GLIDER && typeof s.Value === "function") {
                 return s.Value();
             }
 
             return s;
         }
-    });
+    }
+);
 
-    return JXG;
-});
+export default JXG;

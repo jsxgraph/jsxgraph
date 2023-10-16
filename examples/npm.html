@@ -1,0 +1,13 @@
+<div id="jxgbox" class="jxgbox" style="width: 600px; height: 600px"></div>
+<script type="module">
+    import JXG from "../distrib/jsxgraphsrc.mjs";
+
+    const board = JXG.JSXGraph.initBoard("jxgbox", {
+        boundingbox: [-5, 5, 5, -5],
+        axis: true
+    });
+
+    let relation = board.jc.snippet("ln(x)", true, "x", false);
+    let curve = board.create("functiongraph", [relation]);
+    let integral = board.create("integral", [[2, 4], curve]);
+</script>

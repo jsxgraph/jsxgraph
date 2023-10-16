@@ -2,7 +2,7 @@
 <head>
    <title>Watt | JSXGraph Example</title>
    <link rel="stylesheet" type="text/css" href="../../distrib/jsxgraph.css" />
-   <script type="text/javascript" src="../../src/loadjsxgraph.js"></script>
+   <script type="text/javascript" src="../../distrib/jsxgraphcore.js"></script>
 </head>
 <body>
 <div id="debug" style="display: none"></div>
@@ -33,7 +33,7 @@ B = A;
   k1 = board.create('circle', [A, 8]);
 
   D = board.create('glider', [1,1,k1]);
-  
+
   T1 = board.create('midpoint', [D, B], {color: 'green'});
   T2 = board.create('midpoint', [T1, B]);
   T3 = board.create('midpoint', [T2, B]);

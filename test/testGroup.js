@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2022
+    Copyright 2008-2023
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -25,30 +25,29 @@
     GNU Lesser General Public License for more details.
 
     You should have received a copy of the GNU Lesser General Public License and
-    the MIT License along with JSXGraph. If not, see <http://www.gnu.org/licenses/>
-    and <http://opensource.org/licenses/MIT/>.
+    the MIT License along with JSXGraph. If not, see <https://www.gnu.org/licenses/>
+    and <https://opensource.org/licenses/MIT/>.
  */
 
 describe("Test JXG.Group", function () {
     var board, A, B, C;
 
-    document.getElementsByTagName('body')[0].innerHTML = '<div id="jxgbox" style="width: 100px; height: 100px;"></div>';
-    board = JXG.JSXGraph.initBoard('jxgbox', {
-        renderer: 'svg',
+    document.getElementsByTagName("body")[0].innerHTML =
+        '<div id="jxgbox" style="width: 100px; height: 100px;"></div>';
+    board = JXG.JSXGraph.initBoard("jxgbox", {
+        renderer: "svg",
         axis: false,
         grid: false,
         boundingbox: [-5, 5, 5, -5],
         showCopyright: false,
         showNavigation: false
     });
-    A = board.create('point', [1, 1]);
-    B = board.create('point', [1, 1]);
-    C = board.create('point', [1, 1]);
+    A = board.create("point", [1, 1]);
+    B = board.create("point", [1, 1]);
+    C = board.create("point", [1, 1]);
 
     it("Create group", function () {
-        var g = board.create('group', [A, B, C]);
+        var g = board.create("group", [A, B, C]);
         expect(g).toBeInstanceOf(JXG.Group);
     });
-
 });
-

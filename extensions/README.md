@@ -1,6 +1,4 @@
-JSXGraph Extensions
-===================
-
+# JSXGraph Extensions
 
 You can easily extend JSXGraph on your own with new elements. In this folder are
 examples on how to do this.
@@ -9,23 +7,18 @@ Please note that the examples given in this directory currently can only be used
 when JSXGraph is loaded as a requirejs module. This means these extensions can
 not be used with jsxgraphcore.js at the moment.
 
-
-Create your own extension
--------------------------
+## Create your own extension
 
 To write your own element define a function that takes three arguments:
-
 
     board
 
 A reference to the board the element will be created on. This can be used to
 add all subelements.
 
-
     parents
 
 This is an array that holds all required depdendencies of your element.
-
 
     attributes
 
@@ -37,7 +30,7 @@ to make it available through our `JXG.Board.create()` interface:
 
     JXG.registerElement(elementName, creatorFunction);
 
-where `elementName` is the name of your new element and ```creatorFunction```
+where `elementName` is the name of your new element and `creatorFunction`
 references the function mentioned above.
 
 Now you can create instances of your element with
@@ -45,9 +38,7 @@ Now you can create instances of your element with
     var board = JXG.JSXGraph.initBoard(...);
     board.create(elementName, [parent1, parent2], {strokeColor: 'red'});
 
-
-Change the default appearance
------------------------------
+## Change the default appearance
 
 If you want to change the default appearance of your element's subelements, e.g.
 if you create a new triangle element that should have a nice red filling and

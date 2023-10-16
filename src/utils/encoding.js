@@ -1,95 +1,89 @@
 /*global JXG: true, define: true, escape: true, unescape: true*/
 /*jslint nomen: true, plusplus: true, bitwise: true*/
 
-/* depends:
- jxg
+import JXG from "../jxg";
+
+// constants
+var UTF8_ACCEPT = 0,
+    // UTF8_REJECT = 12,
+    UTF8D = [
+        // The first part of the table maps bytes to character classes that
+        // to reduce the size of the transition table and create bitmasks.
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 9,
+        9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7,
+        7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 8, 8, 2, 2, 2, 2, 2, 2, 2, 2, 2,
+        2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 10, 3, 3, 3, 3, 3, 3, 3,
+        3, 3, 3, 3, 3, 4, 3, 3, 11, 6, 6, 6, 5, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8,
+
+        // The second part is a transition table that maps a combination
+        // of a state of the automaton and a character class to a state.
+        0, 12, 24, 36, 60, 96, 84, 12, 12, 12, 48, 72, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12,
+        12, 12, 12, 0, 12, 12, 12, 12, 12, 0, 12, 0, 12, 12, 12, 24, 12, 12, 12, 12, 12, 24, 12,
+        24, 12, 12, 12, 12, 12, 12, 12, 12, 12, 24, 12, 12, 12, 12, 12, 24, 12, 12, 12, 12, 12,
+        12, 12, 24, 12, 12, 12, 12, 12, 12, 12, 12, 12, 36, 12, 36, 12, 12, 12, 36, 12, 12, 12,
+        12, 12, 36, 12, 36, 12, 12, 12, 36, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12
+    ];
+
+// Util namespace
+JXG.Util = JXG.Util || {};
+
+/**
+ * UTF8 encoding routines
+ * @namespace
  */
+JXG.Util.UTF8 = {
+    /**
+     * Encode a string to utf-8.
+     * @param {String} string
+     * @returns {String} utf8 encoded string
+     */
+    encode: function (string) {
+        var n,
+            c,
+            utftext = "",
+            len = string.length;
 
-define(['jxg'], function (JXG) {
+        string = string.replace(/\r\n/g, "\n");
 
-    "use strict";
+        // See
+        // http://ecmanaut.blogspot.ca/2006/07/encoding-decoding-utf8-in-javascript.html
+        if (typeof unescape === "function" && typeof encodeURIComponent === "function") {
+            return unescape(encodeURIComponent(string));
+        }
 
-    // constants
-    var UTF8_ACCEPT = 0,
-        UTF8_REJECT = 12,
-        UTF8D = [
-            // The first part of the table maps bytes to character classes that
-            // to reduce the size of the transition table and create bitmasks.
-            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-            1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,   9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9,
-            7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7,   7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7,
-            8, 8, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,   2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
-            10, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 4, 3, 3,  11, 6, 6, 6, 5, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8,
+        for (n = 0; n < len; n++) {
+            c = string.charCodeAt(n);
 
-            // The second part is a transition table that maps a combination
-            // of a state of the automaton and a character class to a state.
-            0, 12, 24, 36, 60, 96, 84, 12, 12, 12, 48, 72,  12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12,
-            12,  0, 12, 12, 12, 12, 12,  0, 12,  0, 12, 12,  12, 24, 12, 12, 12, 12, 12, 24, 12, 24, 12, 12,
-            12, 12, 12, 12, 12, 12, 12, 24, 12, 12, 12, 12,  12, 24, 12, 12, 12, 12, 12, 12, 12, 24, 12, 12,
-            12, 12, 12, 12, 12, 12, 12, 36, 12, 36, 12, 12,  12, 36, 12, 12, 12, 12, 12, 36, 12, 36, 12, 12,
-            12, 36, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12
-        ];
+            if (c < 128) {
+                utftext += String.fromCharCode(c);
+            } else if (c > 127 && c < 2048) {
+                utftext += String.fromCharCode((c >> 6) | 192);
+                utftext += String.fromCharCode((c & 63) | 128);
+            } else {
+                utftext += String.fromCharCode((c >> 12) | 224);
+                utftext += String.fromCharCode(((c >> 6) & 63) | 128);
+                utftext += String.fromCharCode((c & 63) | 128);
+            }
+        }
 
-    // Util namespace
-    JXG.Util = JXG.Util || {};
+        return utftext;
+    },
 
     /**
-     * UTF8 encoding routines
-     * @namespace
+     * Decode a string from utf-8.
+     * @param {String} utftext to decode
+     * @returns {String} utf8 decoded string
      */
-    JXG.Util.UTF8 = {
-        /**
-         * Encode a string to utf-8.
-         * @param {String} string
-         * @returns {String} utf8 encoded string
-         */
-        encode : function (string) {
-            var n, c,
-                utftext = '',
-                len = string.length;
-
-            string = string.replace(/\r\n/g, '\n');
-
-            // See
-            // http://ecmanaut.blogspot.ca/2006/07/encoding-decoding-utf8-in-javascript.html
-            // http://monsur.hossa.in/2012/07/20/utf-8-in-javascript.html
-            if (typeof unescape === 'function' && typeof encodeURIComponent === 'function') {
-                return unescape(encodeURIComponent(string));
-            }
-
-            for (n = 0; n < len; n++) {
-                c = string.charCodeAt(n);
-
-                if (c < 128) {
-                    utftext += String.fromCharCode(c);
-                } else if ((c > 127) && (c < 2048)) {
-                    utftext += String.fromCharCode((c >> 6) | 192);
-                    utftext += String.fromCharCode((c & 63) | 128);
-                } else {
-                    utftext += String.fromCharCode((c >> 12) | 224);
-                    utftext += String.fromCharCode(((c >> 6) & 63) | 128);
-                    utftext += String.fromCharCode((c & 63) | 128);
-                }
-
-            }
-
-            return utftext;
-        },
-
-        /**
-         * Decode a string from utf-8.
-         * @param {String} utftext to decode
-         * @returns {String} utf8 decoded string
-         */
-        decode : function (utftext) {
-            /*
+    decode: function (utftext) {
+        /*
                  The following code is a translation from C99 to JavaScript.
 
                  The original C99 code can be found at
-                 http://bjoern.hoehrmann.de/utf-8/decoder/dfa/
+                    https://bjoern.hoehrmann.de/utf-8/decoder/dfa/
 
                  Original copyright note:
 
@@ -98,57 +92,59 @@ define(['jxg'], function (JXG) {
                  License: MIT License (see LICENSE.MIT)
             */
 
-            var i, charCode, type,
-                j = 0,
-                codepoint = 0,
-                state = UTF8_ACCEPT,
-                chars = [],
-                len = utftext.length,
-                results = [];
+        var i,
+            charCode,
+            type,
+            j = 0,
+            codepoint = 0,
+            state = UTF8_ACCEPT,
+            chars = [],
+            len = utftext.length,
+            results = [];
 
-            for (i = 0; i < len; i++) {
-                charCode = utftext.charCodeAt(i);
-                type = UTF8D[charCode];
+        for (i = 0; i < len; i++) {
+            charCode = utftext.charCodeAt(i);
+            type = UTF8D[charCode];
 
-                if (state !== UTF8_ACCEPT) {
-                    codepoint = (charCode & 0x3f) | (codepoint << 6);
+            if (state !== UTF8_ACCEPT) {
+                codepoint = (charCode & 0x3f) | (codepoint << 6);
+            } else {
+                codepoint = (0xff >> type) & charCode;
+            }
+
+            state = UTF8D[256 + state + type];
+
+            if (state === UTF8_ACCEPT) {
+                if (codepoint > 0xffff) {
+                    chars.push(0xd7c0 + (codepoint >> 10), 0xdc00 + (codepoint & 0x3ff));
                 } else {
-                    codepoint = (0xff >> type) & charCode;
+                    chars.push(codepoint);
                 }
 
-                state = UTF8D[256 + state + type];
+                j++;
 
-                if (state === UTF8_ACCEPT) {
-                    if (codepoint > 0xffff) {
-                        chars.push(0xD7C0 + (codepoint >> 10), 0xDC00 + (codepoint & 0x3FF));
-                    } else {
-                        chars.push(codepoint);
-                    }
-
-                    j++;
-
-                    if (j % 10000 === 0) {
-                        results.push(String.fromCharCode.apply(null, chars));
-                        chars = [];
-                    }
+                if (j % 10000 === 0) {
+                    results.push(String.fromCharCode.apply(null, chars));
+                    chars = [];
                 }
             }
-            results.push(String.fromCharCode.apply(null, chars));
-            return results.join("");
-        },
+        }
+        results.push(String.fromCharCode.apply(null, chars));
+        return results.join("");
+    },
 
-        /**
-         * Extends the standard charCodeAt() method of the String class to find the ASCII char code of
-         * a character at a given position in a UTF8 encoded string.
-         * @param {String} str
-         * @param {Number} i position of the character
-         * @returns {Number}
-         */
-        asciiCharCodeAt: function (str, i) {
-            var c = str.charCodeAt(i);
+    /**
+     * Extends the standard charCodeAt() method of the String class to find the ASCII char code of
+     * a character at a given position in a UTF8 encoded string.
+     * @param {String} str
+     * @param {Number} i position of the character
+     * @returns {Number}
+     */
+    asciiCharCodeAt: function (str, i) {
+        var c = str.charCodeAt(i);
 
-            if (c > 255) {
-                switch (c) {
+        if (c > 255) {
+            switch (c) {
                 case 8364:
                     c = 128;
                     break;
@@ -232,11 +228,10 @@ define(['jxg'], function (JXG) {
                     break;
                 default:
                     break;
-                }
             }
-            return c;
         }
-    };
+        return c;
+    }
+};
 
-    return JXG.Util.UTF8;
-});
+export default JXG.Util.UTF8;

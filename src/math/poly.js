@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2022
+    Copyright 2008-2023
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -25,103 +25,99 @@
     GNU Lesser General Public License for more details.
 
     You should have received a copy of the GNU Lesser General Public License and
-    the MIT License along with JSXGraph. If not, see <http://www.gnu.org/licenses/>
-    and <http://opensource.org/licenses/MIT/>.
+    the MIT License along with JSXGraph. If not, see <https://www.gnu.org/licenses/>
+    and <https://opensource.org/licenses/MIT/>.
  */
-
 
 /*global JXG: true, define: true*/
 /*jslint nomen: true, plusplus: true*/
-
-/* depends:
- jxg
- math/math
- utils/type
- */
 
 /**
  * @fileoverview In this file the namespace Math.Poly is defined, which holds algorithms to create and
  * manipulate polynomials.
  */
 
-define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
+import JXG from "../jxg";
+import Mat from "./math";
+import Type from "../utils/type";
 
-    "use strict";
+/**
+ * The JXG.Math.Poly namespace holds algorithms to create and manipulate polynomials.
+ * @name JXG.Math.Poly
+ * @exports Mat.Poly as JXG.Math.Poly
+ * @namespace
+ */
+Mat.Poly = {};
 
+/**
+ * Define a polynomial ring over R.
+ * @class
+ * @name JXG.Math.Poly.Ring
+ * @param {Array} variables List of indeterminates.
+ */
+Mat.Poly.Ring = function (variables) {
     /**
-     * The JXG.Math.Poly namespace holds algorithms to create and manipulate polynomials.
-     * @name JXG.Math.Poly
-     * @exports Mat.Poly as JXG.Math.Poly
-     * @namespace
+     * A list of variables in this polynomial ring.
+     * @type Array
      */
-    Mat.Poly = {};
+    this.vars = variables;
+};
 
-    /**
-     * Define a polynomial ring over R.
-     * @class
-     * @name JXG.Math.Poly.Ring
-     * @param {Array} variables List of indeterminates.
-     */
-    Mat.Poly.Ring = function (variables) {
-        /**
-         * A list of variables in this polynomial ring.
-         * @type Array
-         */
-        this.vars = variables;
-    };
-
-    JXG.extend(Mat.Poly.Ring.prototype, /** @lends JXG.Math.Poly.Ring.prototype */ {
+JXG.extend(
+    Mat.Poly.Ring.prototype,
+    /** @lends JXG.Math.Poly.Ring.prototype */ {
         // nothing yet.
-    });
+    }
+);
 
+/**
+ * Define a monomial over the polynomial ring <tt>ring</tt>.
+ * @class
+ * @name JXG.Math.Poly.Monomial
+ * @param {JXG.Math.Poly.Ring} ring
+ * @param {Number} coefficient
+ * @param {Array} exponents An array of exponents, corresponding to ring
+ */
+Mat.Poly.Monomial = function (ring, coefficient, exponents) {
+    var i;
+
+    if (!Type.exists(ring)) {
+        throw new Error("JSXGraph error: In JXG.Math.Poly.monomial missing parameter 'ring'.");
+    }
+
+    if (!Type.isArray(exponents)) {
+        exponents = [];
+    }
+
+    exponents = exponents.slice(0, ring.vars.length);
+
+    for (i = exponents.length; i < ring.vars.length; i++) {
+        exponents.push(0);
+    }
 
     /**
-     * Define a monomial over the polynomial ring <tt>ring</tt>.
-     * @class
-     * @name JXG.Math.Poly.Monomial
-     * @param {JXG.Math.Poly.Ring} ring
-     * @param {Number} coefficient
-     * @param {Array} exponents An array of exponents, corresponding to ring
+     * A polynomial ring.
+     * @type JXG.Math.Poly.Ring
      */
-    Mat.Poly.Monomial = function (ring, coefficient, exponents) {
-        var i;
+    this.ring = ring;
 
-        if (!Type.exists(ring)) {
-            throw new Error('JSXGraph error: In JXG.Math.Poly.monomial missing parameter \'ring\'.');
-        }
+    /**
+     * The monomial's coefficient
+     * @type Number
+     */
+    this.coefficient = coefficient || 0;
 
-        if (!Type.isArray(exponents)) {
-            exponents = [];
-        }
+    /**
+     * Exponent vector, the order depends on the order of the variables
+     * in the ring definition.
+     * @type Array
+     */
+    this.exponents = Type.deepCopy(exponents);
+};
 
-        exponents = exponents.slice(0, ring.vars.length);
-
-        for (i = exponents.length; i < ring.vars.length; i++) {
-            exponents.push(0);
-        }
-
-        /**
-         * A polynomial ring.
-         * @type JXG.Math.Poly.Ring
-         */
-        this.ring = ring;
-
-        /**
-         * The monomial's coefficient
-         * @type Number
-         */
-        this.coefficient = coefficient || 0;
-
-        /**
-         * Exponent vector, the order depends on the order of the variables
-         * in the ring definition.
-         * @type Array
-         */
-        this.exponents = Type.deepCopy(exponents);
-    };
-
-    JXG.extend(Mat.Poly.Monomial.prototype, /** @lends JXG.Math.Poly.Monomial.prototype */ {
-
+JXG.extend(
+    Mat.Poly.Monomial.prototype,
+    /** @lends JXG.Math.Poly.Monomial.prototype */ {
         /**
          * Creates a deep copy of the monomial.
          *
@@ -144,51 +140,53 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
                 i;
 
             for (i = 0; i < this.ring.vars.length; i++) {
-                s.push(this.ring.vars[i] + '^' + this.exponents[i]);
+                s.push(this.ring.vars[i] + "^" + this.exponents[i]);
             }
 
-            return this.coefficient + '*' + s.join('*');
+            return this.coefficient + "*" + s.join("*");
         }
-    });
+    }
+);
 
+/**
+ * A polynomial is a sum of monomials.
+ * @class
+ * @name JXG.Math.Poly.Polynomial
+ * @param {JXG.Math.Poly.Ring} ring A polynomial ring.
+ * @param {String} str TODO String representation of the polynomial, will be parsed.
+ */
+Mat.Poly.Polynomial = function (ring, str) {
+    var parse = function () {},
+        mons;
+
+    if (!Type.exists(ring)) {
+        throw new Error(
+            "JSXGraph error: In JXG.Math.Poly.polynomial missing parameter 'ring'."
+        );
+    }
+
+    if (Type.exists(str) && Type.isString(str)) {
+        mons = parse(str);
+    } else {
+        mons = [];
+    }
 
     /**
-     * A polynomial is a sum of monomials.
-     * @class
-     * @name JXG.Math.Poly.Polynomial
-     * @param {JXG.Math.Poly.Ring} ring A polynomial ring.
-     * @param {String} str TODO String representation of the polynomial, will be parsed.
+     * A polynomial ring.
+     * @type JXG.Math.Poly.Ring
      */
-    Mat.Poly.Polynomial = function (ring, str) {
-        var parse = function () {
+    this.ring = ring;
 
-            },
-            mons;
+    /**
+     * List of monomials.
+     * @type Array
+     */
+    this.monomials = mons;
+};
 
-        if (!Type.exists(ring)) {
-            throw new Error('JSXGraph error: In JXG.Math.Poly.polynomial missing parameter \'ring\'.');
-        }
-
-        if (Type.exists(str) && Type.isString(str)) {
-            mons = parse(str);
-        } else {
-            mons = [];
-        }
-
-        /**
-         * A polynomial ring.
-         * @type JXG.Math.Poly.Ring
-         */
-        this.ring = ring;
-
-        /**
-         * List of monomials.
-         * @type Array
-         */
-        this.monomials = mons;
-    };
-
-    JXG.extend(Mat.Poly.Polynomial.prototype, /** @lends JXG.Math.Poly.Polynomial.prototype */ {
+JXG.extend(
+    Mat.Poly.Polynomial.prototype,
+    /** @lends JXG.Math.Poly.Polynomial.prototype */ {
         /**
          * Find a monomial with the given signature, i.e. exponent vector.
          * @param {Array} sig An array of numbers
@@ -247,7 +245,9 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
                     }
                 }
             } else {
-                throw new Error('JSXGraph error: In JXG.Math.Poly.polynomial.add either summand is undefined or rings don\'t match.');
+                throw new Error(
+                    "JSXGraph error: In JXG.Math.Poly.polynomial.add either summand is undefined or rings don't match."
+                );
             }
         },
 
@@ -271,7 +271,9 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
                     }
                 }
             } else {
-                throw new Error('JSXGraph error: In JXG.Math.Poly.polynomial.sub either summand is undefined or rings don\'t match.');
+                throw new Error(
+                    "JSXGraph error: In JXG.Math.Poly.polynomial.sub either summand is undefined or rings don't match."
+                );
             }
         },
 
@@ -301,12 +303,12 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
                 i;
 
             for (i = 0; i < this.monomials.length; i++) {
-                s.push('(' + this.monomials[i].print() + ')');
+                s.push("(" + this.monomials[i].print() + ")");
             }
 
-            return s.join('+');
+            return s.join("+");
         }
-    });
+    }
+);
 
-    return Mat.Poly;
-});
+export default Mat.Poly;

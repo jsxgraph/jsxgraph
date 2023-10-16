@@ -2,7 +2,7 @@
 <head>
   <title>JSXGraph example</title>
   <link rel="stylesheet" type="text/css" href="../../distrib/jsxgraph.css" />
-  <script type="text/javascript" src="../../src/loadjsxgraph.js"></script>
+  <script type="text/javascript" src="../../distrib/jsxgraphcore.js"></script>
   <script type="text/javascript" src="../../src/reader/geogebra.js"></script>
   <script type="text/javascript" src="../../distrib/AM3.js"></script>
 </head>
@@ -26,7 +26,7 @@
 		<option value='./elements/geradedurchzweipunkte.ggb'>[X] geradedurchzweipunkte</option>
 		<option value='./elements/geradenspiegelung.ggb'>[X] geradenspiegelung</option>
 		<option value='./elements/halbkreisdurchzweipunkte.ggb'>[X] halbkreisdurchzweipunkte (semicircle)</option><!-- noch mit Fehler, wird aber richtig angezeigt, Konstr. ueber sector -->
-		<option value='./elements/kegelschnittdurchfuenfpunkte.ggb'>[X] kegelschnittdurchfuenfpunkte (conic)</option>	
+		<option value='./elements/kegelschnittdurchfuenfpunkte.ggb'>[X] kegelschnittdurchfuenfpunkte (conic)</option>
 		<option value='./elements/kreisbogenmitmittelpunktundzweipunkte.ggb'>[X] kreisbogenmitmittelpunktundzweipunkte</option>
 		<option value='./elements/kreisdurchdreipunkte.ggb'>[X] kreisdurchdreipunkte</option>
 		<option value='./elements/kreismitmittelpunktdurchpunkt.ggb'>[X] kreismitmittelpunktdurchpunkt</option>
@@ -37,7 +37,7 @@
 		<option value='./elements/parallelegerade.ggb'>[X] parallelegerade</option>
 		<option value='./elements/polareoderkonguierterdurchmesser.ggb'>[X] polareoderkonguierterdurchmesser (polar)</option>
 		<option value='./elements/punkt.ggb'>[X] punkt</option>
-		<option value='./elements/punkt-ya.ggb'>[X] Punkt: y(A)</option>		
+		<option value='./elements/punkt-ya.ggb'>[X] Punkt: y(A)</option>
 		<option value='./elements/punktspiegelung.ggb'>[X] punktspiegelung</option>
 		<option value='./elements/schieberegler.ggb'>[X] schieberegler (slider + abhaengiger Punkt)</option>
 		<option value='./elements/schieberegler-pow.ggb'>[X] schieberegler pow</option>
@@ -60,7 +60,7 @@
 		<option value='./elements/vieleck.ggb'>[X] vieleck</option>
 		<option value='./elements/winkelhalbierende.ggb'>[X] winkelhalbierende</option>
 		<option>--Elemente--------</option>
-		<option value='./elements/winkelmitfestergroesse.ggb'>[ ] winkelmitfestergroesse</option>  <!-- Die Linien vom Mittelpunkt an die Kreisraender sind inkorrekt,-->      
+		<option value='./elements/winkelmitfestergroesse.ggb'>[ ] winkelmitfestergroesse</option>  <!-- Die Linien vom Mittelpunkt an die Kreisraender sind inkorrekt,-->
 		<option value='./elements/winkel.ggb'>[ ] winkel</option><!-- Die Linien vom Mittelpunkt an die Kreisraender sind inkorrekt, mit dem neuen Arc/Angle sollte das aber moeglich sein? -->
 		<option value='./elements/flaeche.ggb'>[ ] flaeche</option><!-- Umrechung absoluter Screenangaben in -->
 		<option>--Worksheets------</option>
@@ -153,7 +153,7 @@
         <option value='./elements/bianca/parallele.ggb'>[X] parallele</option>
         <option value='./elements/bianca/vectorStyles.ggb'>[X] vectorStyles</option>
         <option value='./elements/bianca/vectorSimple.ggb'>[X] vectorSimple</option>
-        <option value='./elements/bianca/circleRadius2.ggb'>[X] circleRadius2</option>        
+        <option value='./elements/bianca/circleRadius2.ggb'>[X] circleRadius2</option>
         <option value='./elements/bianca/conics.ggb'>[X] conics</option>
         <option value='./elements/bianca/conics2.ggb'>[X] conics2</option>
         <option value='./elements/bianca/conics3.ggb'>[X] conics3</option>
@@ -166,12 +166,12 @@
         <option value='./elements/bianca/intersection2.ggb'>[ ] intersection2</option><!-- Punkt E wird doppelt angelegt ; was ist mit output[1]? -->
         <option value='./elements/bianca/schieberegler.ggb'>[X] schieberegler</option><!-- geht gar nichts -->
         <option value='./elements/bianca/schieberegler2.ggb'>[ ] schieberegler2</option><!-- geht gar nichts -->
-        <option value='./elements/bianca/circleRadius.ggb'>[ ] circleRadius</option> <!-- Problem mit Festlegung des Radius durch zwei Punkte -->  
+        <option value='./elements/bianca/circleRadius.ggb'>[ ] circleRadius</option> <!-- Problem mit Festlegung des Radius durch zwei Punkte -->
         <option value='./elements/matthias/calc.ggb'>[ ] Berechnungen</option><!-- Auflösung von Name[A], bisher nicht in Parser o.ä. berücksichtigt -->
         <option value='./elements/matthias/vect.ggb'>[X] Vektoren</option>
         <option value='./Bourne/roots-polynomial.ggb' selected>[ ] Murray Bourne example</option>
-        
-        
+
+
     </select>
     <input type='button' value='Read Geogebra file' onclick="loadFile('beispiele_geo','Geogebra')" />
     <br/>

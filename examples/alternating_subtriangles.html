@@ -3,12 +3,12 @@
    <title>JSXGraph example</title>
    <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
    <script type="text/javascript" src="prototype.js"></script>
-   <script type="text/javascript" src="../src/loadjsxgraph.js"></script>
+   <script type="text/javascript" src="../distrib/jsxgraphcore.js"></script>
 </head>
 <body>
 <h1>Total Areas of Alternating Subtriangles in a n-gon with n=2m</h1>
-Let P be a point connected to and inside the vertices of a 2m-gon. 
-Number the triangles counterclockwise from 1 to 2n. Then the sum of the areas of the even-numbered triangles is equal to the sum of the areas 
+Let P be a point connected to and inside the vertices of a 2m-gon.
+Number the triangles counterclockwise from 1 to 2n. Then the sum of the areas of the even-numbered triangles is equal to the sum of the areas
 of the odd-numbered triangles.<br>
 Drag the point P to change the figure or change with the radio buttons the number of vertices.
 <br><br>
@@ -51,11 +51,11 @@ Drag the point P to change the figure or change with the radio buttons the numbe
 <script type="text/javascript">
 /* <![CDATA[ */
     var board = JXG.JSXGraph.initBoard('box', {originX: 400, originY: 200, unitX: 150, unitY: 150});
-    
+
     function run(n) {
         // Tabellen oberhalb der Zeichenflaeche abhaengig von n anlegen
         var tr1=document.getElementById("input1");
-        
+
         while(tr1.firstChild) {
             var node = tr1.firstChild;
             var away = tr1.removeChild(node);
@@ -81,24 +81,24 @@ Drag the point P to change the figure or change with the radio buttons the numbe
                 neu2.appendChild(neuText2);
                 neu.appendChild(neuText);
                 neu.appendChild(neu2);
-                tr1.appendChild(neu);        
+                tr1.appendChild(neu);
                 neu.style.backgroundColor = '#DA70D6';
             }
-        }    
-        
+        }
+
         var tr2=document.getElementById("input2");
         while(tr2.firstChild) {
             var node = tr2.firstChild;
             var away = tr2.removeChild(node);
-        }    
+        }
         for(var i = 1; i <= n; i++) {
             var neu = document.createElement("td");
             neu.setAttribute("id","area_"+i);
             var neuText = document.createTextNode("1");
             neu.appendChild(neuText);
-            tr2.appendChild(neu);    
+            tr2.appendChild(neu);
         }
-        
+
         var tr3a=document.getElementById("input3a");
         var s = "";
         for(var i = 1; i <= n; i=i+2) {
@@ -122,22 +122,22 @@ Drag the point P to change the figure or change with the radio buttons the numbe
             }
         }
         tr3b.innerHTML = s;
-        
+
         // Board erzeugen
         JXG.JSXGraph.freeBoard(board);
         board = JXG.JSXGraph.initBoard('box', {originX: 400, originY: 200, unitX: 150, unitY: 150});
         //board.renderer.suspendRedraw();
         var r = 1;
-        
+
         // n-Eck
         var p = new Array(n);
         for(var i = 0; i < n; i++) {
             p[i] = board.create('point', [r*Math.sin(i*2*Math.PI/n), r*Math.cos(i*2*Math.PI/n)] , {fixed:true,fillColor:'blue'});
         }
-        
+
         // Zieh-Punkt im Inneren
         var q = board.create('point',[-0.3,-0.3],{fillColor:'red',strokeColor:'red',name:'P'});
-        
+
         // Polygone
         var polygones = new Array(n);
         var mp = new Array(n);
@@ -149,7 +149,7 @@ Drag the point P to change the figure or change with the radio buttons the numbe
                 else {
                     polygones[i] = board.create('polygon',[q,p[i],p[i+1]], {fillColor:'#DA70D6',name:''});
                 }
-                
+
                 // Labels fuer die Polygone....
                 mp[i] = board.create('circumcircleMidpoint',[q,p[i],p[i+1]], {name:'',visible:false});
                 board.create('text',[
@@ -160,7 +160,7 @@ Drag the point P to change the figure or change with the radio buttons the numbe
             }
             else {
                 polygones[i] = board.create('polygon',[q,p[i],p[0]], {fillColor:'#DA70D6',name:''});
-                
+
                 // Labels fuer die Polygone....
                 mp[i] = board.create('circumcircleMidpoint',[q,p[i],p[0]], {name:'',visible:false});
                 board.create('text',[
@@ -170,21 +170,21 @@ Drag the point P to change the figure or change with the radio buttons the numbe
                 ],{});
             }
         }
-        
+
         // Labels der Polygonseiten verstecken
 /*
         for(var j=0; j < n; j++) {
             for(var i=0; i < polygones[j].borders.length; i++) {
                 polygones[j].borders[i].label.content.hideElement();
-            }  
+            }
         }
-*/        
+*/
         // Hook-Funktion definieren, die die Tabelleninhalte updatet
         function print_table(board) {
             var distances = new Array(n);
             for(var i=0; i<n; i++) {
                 distances[i] = q.coords.distance(JXG.COORDS_BY_USER, p[i].coords);
-            }  
+            }
             var border_poly = 2*r*Math.sin(Math.PI/n);
             var areas = new Array(n);
             for(var i=0; i<n; i++) {
@@ -200,7 +200,7 @@ Drag the point P to change the figure or change with the radio buttons the numbe
             for(var i=0; i<n; i++) {
                 $('area_'+(i+1)).innerHTML = areas[i].toFixed(2);
             }
-            
+
             var sum = 0;
             for(var i=0; i<n; i=i+2) {
                 sum += areas[i];
@@ -210,16 +210,16 @@ Drag the point P to change the figure or change with the radio buttons the numbe
             for(var i=1; i<n; i=i+2) {
                 sum += areas[i];
             }
-            $('sum_1').innerHTML = sum.toFixed(4);            
-            
+            $('sum_1').innerHTML = sum.toFixed(4);
+
         }
         //board.renderer.unsuspendRedraw();
-        
+
         // und beim board registrieren.
         print_table_id = board.addHook(print_table);
     }
     run(10);
-     
+
 /* ]]> */
 </script>
 </body>

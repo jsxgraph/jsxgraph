@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2022
+    Copyright 2008-2023
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -26,45 +26,39 @@
     GNU Lesser General Public License for more details.
 
     You should have received a copy of the GNU Lesser General Public License and
-    the MIT License along with JSXGraph. If not, see <http://www.gnu.org/licenses/>
-    and <http://opensource.org/licenses/MIT/>.
+    the MIT License along with JSXGraph. If not, see <https://www.gnu.org/licenses/>
+    and <https://opensource.org/licenses/MIT/>.
  */
-
 
 /*global JXG: true, define: true*/
 /*jslint nomen: true, plusplus: true*/
-
-/* depends:
- jxg
- base/constants
- base/coords
- math/math
- math/numerics
- utils/type
- */
 
 /**
  * @fileoverview This file contains the Math.Geometry namespace for calculating algebraic/geometric
  * stuff like intersection points, angles, midpoint, and so on.
  */
 
-define([
-    'jxg', 'base/constants', 'base/coords', 'math/math', 'math/numerics', 'utils/type', 'utils/expect'
-], function (JXG, Const, Coords, Mat, Numerics, Type, Expect) {
+import JXG from "../jxg";
+import Const from "../base/constants";
+import Coords from "../base/coords";
+import Mat from "./math";
+import Numerics from "./numerics";
+import Type from "../utils/type";
+import Expect from "../utils/expect";
 
-    "use strict";
-
-    /**
-     * Math.Geometry namespace definition. This namespace holds geometrical algorithms,
-     * especially intersection algorithms.
-     * @name JXG.Math.Geometry
-     * @namespace
-     */
-    Mat.Geometry = {};
+/**
+ * Math.Geometry namespace definition. This namespace holds geometrical algorithms,
+ * especially intersection algorithms.
+ * @name JXG.Math.Geometry
+ * @namespace
+ */
+Mat.Geometry = {};
 
 // the splitting is necessary due to the shortcut for the circumcircleMidpoint method to circumcenter.
 
-    JXG.extend(Mat.Geometry, /** @lends JXG.Math.Geometry */ {
+JXG.extend(
+    Mat.Geometry,
+    /** @lends JXG.Math.Geometry */ {
         /* ***************************************/
         /* *** GENERAL GEOMETRIC CALCULATIONS ****/
         /* ***************************************/
@@ -80,12 +74,15 @@ define([
          * @returns {Number} The angle in radian measure.
          */
         angle: function (A, B, C) {
-            var u, v, s, t,
+            var u,
+                v,
+                s,
+                t,
                 a = [],
                 b = [],
                 c = [];
 
-            JXG.deprecated('Geometry.angle()', 'Geometry.rad()');
+            JXG.deprecated("Geometry.angle()", "Geometry.rad()");
             if (A.coords) {
                 a[0] = A.coords.usrCoords[1];
                 a[1] = A.coords.usrCoords[2];
@@ -186,11 +183,14 @@ define([
          * @returns {JXG.Coords} Coordinates of the second point defining the bisection.
          */
         angleBisector: function (A, B, C, board) {
-            var phiA, phiC, phi,
+            var phiA,
+                phiC,
+                phi,
                 Ac = A.coords.usrCoords,
                 Bc = B.coords.usrCoords,
                 Cc = C.coords.usrCoords,
-                x, y;
+                x,
+                y;
 
             if (!Type.exists(board)) {
                 board = A.board;
@@ -198,18 +198,21 @@ define([
 
             // Parallel lines
             if (Bc[0] === 0) {
-                return new Coords(Const.COORDS_BY_USER,
-                    [1, (Ac[1] + Cc[1]) * 0.5, (Ac[2] + Cc[2]) * 0.5], board);
+                return new Coords(
+                    Const.COORDS_BY_USER,
+                    [1, (Ac[1] + Cc[1]) * 0.5, (Ac[2] + Cc[2]) * 0.5],
+                    board
+                );
             }
 
             // Non-parallel lines
             x = Ac[1] - Bc[1];
             y = Ac[2] - Bc[2];
-            phiA =  Math.atan2(y, x);
+            phiA = Math.atan2(y, x);
 
             x = Cc[1] - Bc[1];
             y = Cc[2] - Bc[2];
-            phiC =  Math.atan2(y, x);
+            phiC = Math.atan2(y, x);
 
             phi = (phiA + phiC) * 0.5;
 
@@ -284,7 +287,13 @@ define([
          */
         reflection: function (line, point, board) {
             // (v,w) defines the slope of the line
-            var x0, y0, x1, y1, v, w, mu,
+            var x0,
+                y0,
+                x1,
+                y1,
+                v,
+                w,
+                mu,
                 pc = point.coords.usrCoords,
                 p1c = line.point1.coords.usrCoords,
                 p2c = line.point2.coords.usrCoords;
@@ -318,7 +327,12 @@ define([
          * @returns {JXG.Coords} Coordinates of the new position.
          */
         rotation: function (rotpoint, point, phi, board) {
-            var x0, y0, c, s, x1, y1,
+            var x0,
+                y0,
+                c,
+                s,
+                x1,
+                y1,
                 pc = point.coords.usrCoords,
                 rotpc = rotpoint.coords.usrCoords;
 
@@ -348,8 +362,11 @@ define([
          *                  through the given point and boolean flag "change".
          */
         perpendicular: function (line, point, board) {
-            var x, y, change,
-                c, z,
+            var x,
+                y,
+                change,
+                c,
+                z,
                 A = line.point1.coords.usrCoords,
                 B = line.point2.coords.usrCoords,
                 C = point.coords.usrCoords;
@@ -365,50 +382,54 @@ define([
                 z = A[0] * B[0];
 
                 if (Math.abs(z) < Mat.eps) {
-                    x =  B[2];
+                    x = B[2];
                     y = -B[1];
                 }
                 c = [z, x, y];
                 change = true;
 
-            // special case: point is the second point of the line
+                // special case: point is the second point of the line
             } else if (point === line.point2) {
                 x = B[1] + A[2] - B[2];
                 y = B[2] - A[1] + B[1];
                 z = A[0] * B[0];
 
                 if (Math.abs(z) < Mat.eps) {
-                    x =  A[2];
+                    x = A[2];
                     y = -A[1];
                 }
                 c = [z, x, y];
                 change = false;
 
-            // special case: point lies somewhere else on the line
+                // special case: point lies somewhere else on the line
             } else if (Math.abs(Mat.innerProduct(C, line.stdform, 3)) < Mat.eps) {
                 x = C[1] + B[2] - C[2];
                 y = C[2] - B[1] + C[1];
                 z = B[0];
 
                 if (Math.abs(z) < Mat.eps) {
-                    x =  B[2];
+                    x = B[2];
                     y = -B[1];
                 }
 
                 change = true;
-                if (Math.abs(z) > Mat.eps && Math.abs(x - C[1]) < Mat.eps && Math.abs(y - C[2]) < Mat.eps) {
+                if (
+                    Math.abs(z) > Mat.eps &&
+                    Math.abs(x - C[1]) < Mat.eps &&
+                    Math.abs(y - C[2]) < Mat.eps
+                ) {
                     x = C[1] + A[2] - C[2];
                     y = C[2] - A[1] + C[1];
                     change = false;
                 }
                 c = [z, x, y];
 
-            // general case: point does not lie on the line
-            // -> calculate the foot of the dropped perpendicular
+                // general case: point does not lie on the line
+                // -> calculate the foot of the dropped perpendicular
             } else {
                 c = [0, line.stdform[1], line.stdform[2]];
-                c = Mat.crossProduct(c, C);                  // perpendicuar to line
-                c = Mat.crossProduct(c, line.stdform);       // intersection of line and perpendicular
+                c = Mat.crossProduct(c, C); // perpendicuar to line
+                c = Mat.crossProduct(c, line.stdform); // intersection of line and perpendicular
                 change = true;
             }
 
@@ -419,7 +440,7 @@ define([
          * @deprecated Please use {@link JXG.Math.Geometry.circumcenter} instead.
          */
         circumcenterMidpoint: function () {
-            JXG.deprecated('Geometry.circumcenterMidpoint()', 'Geometry.circumcenter()');
+            JXG.deprecated("Geometry.circumcenterMidpoint()", "Geometry.circumcenter()");
             this.circumcenter.apply(this, arguments);
         },
 
@@ -432,7 +453,10 @@ define([
          * @returns {JXG.Coords} Coordinates of the center of the circumcircle of the given points.
          */
         circumcenter: function (point1, point2, point3, board) {
-            var u, v, m1, m2,
+            var u,
+                v,
+                m1,
+                m2,
                 A = point1.coords.usrCoords,
                 B = point2.coords.usrCoords,
                 C = point3.coords.usrCoords;
@@ -442,7 +466,7 @@ define([
             }
 
             u = [B[0] - A[0], -B[2] + A[2], B[1] - A[1]];
-            v = [(A[0] + B[0])  * 0.5, (A[1] + B[1]) * 0.5, (A[2] + B[2]) * 0.5];
+            v = [(A[0] + B[0]) * 0.5, (A[1] + B[1]) * 0.5, (A[2] + B[2]) * 0.5];
             m1 = Mat.crossProduct(u, v);
 
             u = [C[0] - B[0], -C[2] + B[2], C[1] - B[1]];
@@ -488,7 +512,10 @@ define([
 
             d = this.distance(array1, array2, n);
 
-            if (d > Mat.eps && (Math.abs(array1[0]) < Mat.eps || Math.abs(array2[0]) < Mat.eps)) {
+            if (
+                d > Mat.eps &&
+                (Math.abs(array1[0]) < Mat.eps || Math.abs(array2[0]) < Mat.eps)
+            ) {
                 return Infinity;
             }
 
@@ -504,8 +531,9 @@ define([
          * @param {Array|JXG.Coords} c
          * @returns {Number} affine ratio (c - a) / (b - a)
          */
-        affineRatio: function(a, b, c) {
-            var r = 0.0, dx;
+        affineRatio: function (a, b, c) {
+            var r = 0.0,
+                dx;
 
             if (Type.exists(a.usrCoords)) {
                 a = a.usrCoords;
@@ -517,7 +545,7 @@ define([
                 c = c.usrCoords;
             }
 
-            dx =  b[1] - a[1];
+            dx = b[1] - a[1];
 
             if (Math.abs(dx) > Mat.eps) {
                 r = (c[1] - a[1]) / dx;
@@ -544,7 +572,11 @@ define([
             // It may be that the several points at the end of the array are equal to the first point.
             // The polygonal chain is been closed by JSXGraph, but this may also have been done by the user.
             // Therefore, we use a while lopp to pop the last points.
-            while (ps[0][0] === ps[N - 1][0] && ps[0][1] === ps[N - 1][1] && ps[0][2] === ps[N - 1][2]) {
+            while (
+                ps[0][0] === ps[N - 1][0] &&
+                ps[0][1] === ps[N - 1][1] &&
+                ps[0][2] === ps[N - 1][2]
+            ) {
                 lastPoint = ps.pop();
                 N--;
             }
@@ -565,8 +597,14 @@ define([
             // Otherwise, atan2 would return zero, which is a value which also attained by points
             // on the same horizontal line.
             ps.sort(function (a, b) {
-                var rad1 = (a[2] === ll[2] && a[1] === ll[1]) ? -Infinity : Math.atan2(a[2] - ll[2], a[1] - ll[1]),
-                    rad2 = (b[2] === ll[2] && b[1] === ll[1]) ? -Infinity : Math.atan2(b[2] - ll[2], b[1] - ll[1]);
+                var rad1 =
+                        a[2] === ll[2] && a[1] === ll[1]
+                            ? -Infinity
+                            : Math.atan2(a[2] - ll[2], a[1] - ll[1]),
+                    rad2 =
+                        b[2] === ll[2] && b[1] === ll[1]
+                            ? -Infinity
+                            : Math.atan2(b[2] - ll[2], b[1] - ll[1]);
 
                 return rad1 - rad2;
             });
@@ -606,7 +644,8 @@ define([
          * @returns {Number}
          */
         signedPolygon: function (p, sort) {
-            var i, N,
+            var i,
+                N,
                 A = 0,
                 ps = Expect.each(p, Expect.coordsArray);
 
@@ -679,8 +718,16 @@ define([
          * @see JXG.Line
          */
         calcStraight: function (el, point1, point2, margin) {
-            var takePoint1, takePoint2, intersection, intersect1, intersect2, straightFirst, straightLast,
-                c, p1, p2;
+            var takePoint1,
+                takePoint2,
+                intersection,
+                intersect1,
+                intersect2,
+                straightFirst,
+                straightLast,
+                c,
+                p1,
+                p2;
 
             if (!Type.exists(margin)) {
                 // Enlarge the drawable region slightly. This hides the small sides
@@ -707,10 +754,11 @@ define([
 
             // Compute the stdform of the line in screen coordinates.
             c = [];
-            c[0] = el.stdform[0] -
-                el.stdform[1] * el.board.origin.scrCoords[1] / el.board.unitX +
-                el.stdform[2] * el.board.origin.scrCoords[2] / el.board.unitY;
-            c[1] =  el.stdform[1] / el.board.unitX;
+            c[0] =
+                el.stdform[0] -
+                (el.stdform[1] * el.board.origin.scrCoords[1]) / el.board.unitX +
+                (el.stdform[2] * el.board.origin.scrCoords[2]) / el.board.unitY;
+            c[1] = el.stdform[1] / el.board.unitX;
             c[2] = -el.stdform[2] / el.board.unitY;
 
             // p1=p2
@@ -722,16 +770,22 @@ define([
             takePoint2 = false;
 
             // Line starts at point1 and point1 is inside the board
-            takePoint1 = !straightFirst &&
+            takePoint1 =
+                !straightFirst &&
                 Math.abs(point1.usrCoords[0]) >= Mat.eps &&
-                point1.scrCoords[1] >= 0.0 && point1.scrCoords[1] <= el.board.canvasWidth &&
-                point1.scrCoords[2] >= 0.0 && point1.scrCoords[2] <= el.board.canvasHeight;
+                point1.scrCoords[1] >= 0.0 &&
+                point1.scrCoords[1] <= el.board.canvasWidth &&
+                point1.scrCoords[2] >= 0.0 &&
+                point1.scrCoords[2] <= el.board.canvasHeight;
 
             // Line ends at point2 and point2 is inside the board
-            takePoint2 = !straightLast &&
+            takePoint2 =
+                !straightLast &&
                 Math.abs(point2.usrCoords[0]) >= Mat.eps &&
-                point2.scrCoords[1] >= 0.0 && point2.scrCoords[1] <= el.board.canvasWidth &&
-                point2.scrCoords[2] >= 0.0 && point2.scrCoords[2] <= el.board.canvasHeight;
+                point2.scrCoords[1] >= 0.0 &&
+                point2.scrCoords[1] <= el.board.canvasWidth &&
+                point2.scrCoords[2] >= 0.0 &&
+                point2.scrCoords[2] <= el.board.canvasHeight;
 
             // Intersect the line with the four borders of the board.
             intersection = this.meetLineBoard(c, el.board, margin);
@@ -750,14 +804,22 @@ define([
             // If both points are outside and the complete ray is outside we do nothing
             if (!takePoint1 && !takePoint2) {
                 // Ray starting at point 1
-                if (!straightFirst && straightLast &&
-                        !this.isSameDirection(point1, point2, intersect1) && !this.isSameDirection(point1, point2, intersect2)) {
+                if (
+                    !straightFirst &&
+                    straightLast &&
+                    !this.isSameDirection(point1, point2, intersect1) &&
+                    !this.isSameDirection(point1, point2, intersect2)
+                ) {
                     return;
                 }
 
                 // Ray starting at point 2
-                if (straightFirst && !straightLast &&
-                        !this.isSameDirection(point2, point1, intersect1) && !this.isSameDirection(point2, point1, intersect2)) {
+                if (
+                    straightFirst &&
+                    !straightLast &&
+                    !this.isSameDirection(point2, point1, intersect1) &&
+                    !this.isSameDirection(point2, point1, intersect2)
+                ) {
                     return;
                 }
             }
@@ -826,9 +888,16 @@ define([
          * @see JXG.Line
          */
         calcLineDelimitingPoints: function (el, point1, point2) {
-            var distP1P2, boundingBox, lineSlope,
-                intersect1, intersect2, straightFirst, straightLast,
-                c, p1, p2,
+            var distP1P2,
+                boundingBox,
+                lineSlope,
+                intersect1,
+                intersect2,
+                straightFirst,
+                straightLast,
+                c,
+                p1,
+                p2,
                 takePoint1 = false,
                 takePoint2 = false;
 
@@ -846,10 +915,11 @@ define([
 
             // Compute the stdform of the line in screen coordinates.
             c = [];
-            c[0] = el.stdform[0] -
-                el.stdform[1] * el.board.origin.scrCoords[1] / el.board.unitX +
-                el.stdform[2] * el.board.origin.scrCoords[2] / el.board.unitY;
-            c[1] =  el.stdform[1] / el.board.unitX;
+            c[0] =
+                el.stdform[0] -
+                (el.stdform[1] * el.board.origin.scrCoords[1]) / el.board.unitX +
+                (el.stdform[2] * el.board.origin.scrCoords[2]) / el.board.unitY;
+            c[1] = el.stdform[1] / el.board.unitX;
             c[2] = -el.stdform[2] / el.board.unitY;
 
             // p1=p2
@@ -867,12 +937,28 @@ define([
             lineSlope = el.getSlope();
             if (lineSlope >= 0) {
                 // project vertices (x2,y1) (x1, y2)
-                intersect1 = this.projectPointToLine({ coords: { usrCoords: [1, boundingBox[2], boundingBox[1]] } }, el, el.board);
-                intersect2 = this.projectPointToLine({ coords: { usrCoords: [1, boundingBox[0], boundingBox[3]] } }, el, el.board);
+                intersect1 = this.projectPointToLine(
+                    { coords: { usrCoords: [1, boundingBox[2], boundingBox[1]] } },
+                    el,
+                    el.board
+                );
+                intersect2 = this.projectPointToLine(
+                    { coords: { usrCoords: [1, boundingBox[0], boundingBox[3]] } },
+                    el,
+                    el.board
+                );
             } else {
                 // project vertices (x1, y1) (x2, y2)
-                intersect1 = this.projectPointToLine({ coords: { usrCoords: [1, boundingBox[0], boundingBox[1]] } }, el, el.board);
-                intersect2 = this.projectPointToLine({ coords: { usrCoords: [1, boundingBox[2], boundingBox[3]] } }, el, el.board);
+                intersect1 = this.projectPointToLine(
+                    { coords: { usrCoords: [1, boundingBox[0], boundingBox[1]] } },
+                    el,
+                    el.board
+                );
+                intersect2 = this.projectPointToLine(
+                    { coords: { usrCoords: [1, boundingBox[2], boundingBox[3]] } },
+                    el,
+                    el.board
+                );
             }
 
             /**
@@ -889,27 +975,45 @@ define([
                 if (!straightFirst && !straightLast) {
                     distP1P2 = point1.distance(Const.COORDS_BY_USER, point2);
                     // if  intersect1 not between point1 and point2
-                    if (Math.abs(point1.distance(Const.COORDS_BY_USER, intersect1) +
-                            intersect1.distance(Const.COORDS_BY_USER, point2) - distP1P2) > Mat.eps) {
+                    if (
+                        Math.abs(
+                            point1.distance(Const.COORDS_BY_USER, intersect1) +
+                                intersect1.distance(Const.COORDS_BY_USER, point2) -
+                                distP1P2
+                        ) > Mat.eps
+                    ) {
                         return;
                     }
                     // if insersect2 not between point1 and point2
-                    if (Math.abs(point1.distance(Const.COORDS_BY_USER, intersect2) +
-                            intersect2.distance(Const.COORDS_BY_USER, point2) - distP1P2) > Mat.eps) {
+                    if (
+                        Math.abs(
+                            point1.distance(Const.COORDS_BY_USER, intersect2) +
+                                intersect2.distance(Const.COORDS_BY_USER, point2) -
+                                distP1P2
+                        ) > Mat.eps
+                    ) {
                         return;
                     }
                 }
 
                 // If both points are outside and the complete ray is outside we do nothing
                 // Ray starting at point 1
-                if (!straightFirst && straightLast &&
-                        !this.isSameDirection(point1, point2, intersect1) && !this.isSameDirection(point1, point2, intersect2)) {
+                if (
+                    !straightFirst &&
+                    straightLast &&
+                    !this.isSameDirection(point1, point2, intersect1) &&
+                    !this.isSameDirection(point1, point2, intersect2)
+                ) {
                     return;
                 }
 
                 // Ray starting at point 2
-                if (straightFirst && !straightLast &&
-                        !this.isSameDirection(point2, point1, intersect1) && !this.isSameDirection(point2, point1, intersect2)) {
+                if (
+                    straightFirst &&
+                    !straightLast &&
+                    !this.isSameDirection(point2, point1, intersect1) &&
+                    !this.isSameDirection(point2, point1, intersect2)
+                ) {
                     return;
                 }
             }
@@ -963,13 +1067,13 @@ define([
          * Calculates the visProp.position corresponding to a given angle.
          * @param {number} angle angle in radians. Must be in range (-2pi,2pi).
          */
-        calcLabelQuadrant: function(angle) {
+        calcLabelQuadrant: function (angle) {
             var q;
             if (angle < 0) {
-                angle += 2*Math.PI;
+                angle += 2 * Math.PI;
             }
-            q = Math.floor((angle+Math.PI/8)/(Math.PI/4))%8;
-            return ['rt','urt','top','ulft','lft','llft','lrt'][q];
+            q = Math.floor((angle + Math.PI / 8) / (Math.PI / 4)) % 8;
+            return ["rt", "urt", "top", "ulft", "lft", "llft", "lrt"][q];
         },
 
         /**
@@ -1009,7 +1113,11 @@ define([
          * @returns {Boolean} True, if from start the point p is in the same direction as s is, that means s-start = k*(p-start) with k>=0.
          */
         isSameDirection: function (start, p, s) {
-            var dx, dy, sx, sy, r = false;
+            var dx,
+                dy,
+                sx,
+                sy,
+                r = false;
 
             dx = p.usrCoords[1] - start.usrCoords[1];
             dy = p.usrCoords[2] - start.usrCoords[2];
@@ -1042,6 +1150,231 @@ define([
             return r;
         },
 
+        /**
+         * Determinant of three points in the Euclidean plane.
+         * Zero, if the points are collinear. Used to determine of a point q is left or
+         * right to a segment defined by points p1 and p2.
+         *
+         * @param  {Array} p1 Coordinates of the first point of the segment. Array of length 3. First coordinate is equal to 1.
+         * @param  {Array} p2 Coordinates of the second point of the segment. Array of length 3. First coordinate is equal to 1.
+         * @param  {Array} q Coordinates of the point. Array of length 3. First coordinate is equal to 1.
+         * @return {Number} Signed area of the triangle formed by these three points.
+         *
+         * @see #windingNumber
+         */
+        det3p: function (p1, p2, q) {
+            return (p1[1] - q[1]) * (p2[2] - q[2]) - (p2[1] - q[1]) * (p1[2] - q[2]);
+        },
+
+        /**
+         * Winding number of a point in respect to a polygon path.
+         *
+         * The point is regarded outside if the winding number is zero,
+         * inside otherwise. The algorithm tries to find degenerate cases, i.e.
+         * if the point is on the path. This is regarded as "outside".
+         * If the point is a vertex of the path, it is regarded as "inside".
+         *
+         * Implementation of algorithm 7 from "The point in polygon problem for
+         * arbitrary polygons" by Kai Hormann and Alexander Agathos, Computational Geometry,
+         * Volume 20, Issue 3, November 2001, Pages 131-144.
+         *
+         * @param  {Array} usrCoords Homogenous coordinates of the point
+         * @param  {Array} path      Array of points / coords determining a path, i.e. the vertices of the polygon / path. The array elements
+         * do not have to be full points, but have to have a subobject "coords" or should be of type JXG.Coords.
+         * @param  {Boolean} [doNotClosePath=false] If true the last point of the path is not connected to the first point.
+         * This is necessary if the path consists of two or more closed subpaths, e.g. if the figure has a hole.
+         *
+         * @return {Number}          Winding number of the point. The point is
+         *                           regarded outside if the winding number is zero,
+         *                           inside otherwise.
+         */
+        windingNumber: function (usrCoords, path, doNotClosePath) {
+            var wn = 0,
+                le = path.length,
+                x = usrCoords[1],
+                y = usrCoords[2],
+                p0,
+                p1,
+                p2,
+                d,
+                sign,
+                i,
+                off = 0;
+
+            if (le === 0) {
+                return 0;
+            }
+
+            doNotClosePath = doNotClosePath || false;
+            if (doNotClosePath) {
+                off = 1;
+            }
+
+            // Infinite points are declared outside
+            if (isNaN(x) || isNaN(y)) {
+                return 1;
+            }
+
+            if (Type.exists(path[0].coords)) {
+                p0 = path[0].coords;
+                p1 = path[le - 1].coords;
+            } else {
+                p0 = path[0];
+                p1 = path[le - 1];
+            }
+            // Handle the case if the point is the first vertex of the path, i.e. inside.
+            if (p0.usrCoords[1] === x && p0.usrCoords[2] === y) {
+                return 1;
+            }
+
+            for (i = 0; i < le - off; i++) {
+                // Consider the edge from p1 = path[i] to p2 = path[i+1]isClosedPath
+                if (Type.exists(path[i].coords)) {
+                    p1 = path[i].coords.usrCoords;
+                    p2 = path[(i + 1) % le].coords.usrCoords;
+                } else {
+                    p1 = path[i].usrCoords;
+                    p2 = path[(i + 1) % le].usrCoords;
+                }
+
+                // If one of the two points p1, p2 is undefined or infinite,
+                // move on.
+                if (
+                    p1[0] === 0 ||
+                    p2[0] === 0 ||
+                    isNaN(p1[1]) ||
+                    isNaN(p2[1]) ||
+                    isNaN(p1[2]) ||
+                    isNaN(p2[2])
+                ) {
+                    continue;
+                }
+
+                if (p2[2] === y) {
+                    if (p2[1] === x) {
+                        return 1;
+                    }
+                    if (p1[2] === y && p2[1] > x === p1[1] < x) {
+                        return 0;
+                    }
+                }
+
+                if (p1[2] < y !== p2[2] < y) {
+                    // Crossing
+                    sign = 2 * (p2[2] > p1[2] ? 1 : 0) - 1;
+                    if (p1[1] >= x) {
+                        if (p2[1] > x) {
+                            wn += sign;
+                        } else {
+                            d = this.det3p(p1, p2, usrCoords);
+                            if (d === 0) {
+                                // Point is on line, i.e. outside
+                                return 0;
+                            }
+                            if (d > 0 + Mat.eps === p2[2] > p1[2]) {
+                                // Right crossing
+                                wn += sign;
+                            }
+                        }
+                    } else {
+                        if (p2[1] > x) {
+                            d = this.det3p(p1, p2, usrCoords);
+                            if (d > 0 + Mat.eps === p2[2] > p1[2]) {
+                                // Right crossing
+                                wn += sign;
+                            }
+                        }
+                    }
+                }
+            }
+
+            return wn;
+        },
+
+        /**
+         * Decides if a point (x,y) is inside of a path / polygon.
+         * Does not work correct if the path has hole. In this case, windingNumber is the preferred method.
+         * Implements W. Randolf Franklin's pnpoly method.
+         *
+         * See <a href="https://wrf.ecse.rpi.edu/Research/Short_Notes/pnpoly.html">https://wrf.ecse.rpi.edu/Research/Short_Notes/pnpoly.html</a>.
+         *
+         * @param {Number} x_in x-coordinate (screen or user coordinates)
+         * @param {Number} y_in y-coordinate (screen or user coordinates)
+         * @param  {Array} path  Array of points / coords determining a path, i.e. the vertices of the polygon / path. The array elements
+         * do not have to be full points, but have to have a subobject "coords" or should be of type JXG.Coords.
+         * @param {Number} [coord_type=JXG.COORDS_BY_SCREEN] Type of coordinates used here.
+         *   Possible values are <b>JXG.COORDS_BY_USER</b> and <b>JXG.COORDS_BY_SCREEN</b>.
+         *   Default value is JXG.COORDS_BY_SCREEN.
+         *
+         * @returns {Boolean} if (x_in, y_in) is inside of the polygon.
+         * @see JXG.Polygon.hasPoint
+         * @see JXG.Polygon.pnpoly
+         * @see #windingNumber
+         *
+         * @example
+         * var pol = board.create('polygon', [[-1,2], [2,2], [-1,4]]);
+         * var p = board.create('point', [4, 3]);
+         * var txt = board.create('text', [-1, 0.5, function() {
+         *   return 'Point A is inside of the polygon = ' +
+         *     JXG.Math.Geometry.pnpoly(p.X(), p.Y(), JXG.COORDS_BY_USER, pol.vertices);
+         * }]);
+         *
+         * </pre><div id="JXG4656ed42-f965-4e35-bb66-c334a4529683" class="jxgbox" style="width: 300px; height: 300px;"></div>
+         * <script type="text/javascript">
+         *     (function() {
+         *         var board = JXG.JSXGraph.initBoard('JXG4656ed42-f965-4e35-bb66-c334a4529683',
+         *             {boundingbox: [-2, 5, 5,-2], axis: true, showcopyright: false, shownavigation: false});
+         *     var pol = board.create('polygon', [[-1,2], [2,2], [-1,4]]);
+         *     var p = board.create('point', [4, 3]);
+         *     var txt = board.create('text', [-1, 0.5, function() {
+         *     		return 'Point A is inside of the polygon = ' + JXG.Math.Geometry.pnpoly(p.X(), p.Y(), JXG.COORDS_BY_USER, pol.vertices);
+         *     }]);
+         *
+         *     })();
+         *
+         * </script><pre>
+         *
+         */
+        pnpoly: function (x_in, y_in, path, coord_type) {
+            var i,
+                j,
+                len,
+                x,
+                y,
+                crds,
+                v = path,
+                vi,
+                vj,
+                isIn = false;
+
+            if (coord_type === Const.COORDS_BY_USER) {
+                crds = new Coords(Const.COORDS_BY_USER, [x_in, y_in], this.board);
+                x = crds.scrCoords[1];
+                y = crds.scrCoords[2];
+            } else {
+                x = x_in;
+                y = y_in;
+            }
+
+            len = path.length;
+            for (i = 0, j = len - 2; i < len - 1; j = i++) {
+                vi = Type.exists(v[i].coords) ? v[i].coords : v[i];
+                vj = Type.exists(v[j].coords) ? v[j].coords : v[j];
+
+                if (
+                    vi.scrCoords[2] > y !== vj.scrCoords[2] > y &&
+                    x <
+                        ((vj.scrCoords[1] - vi.scrCoords[1]) * (y - vi.scrCoords[2])) /
+                            (vj.scrCoords[2] - vi.scrCoords[2]) +
+                            vi.scrCoords[1]
+                ) {
+                    isIn = !isIn;
+                }
+            }
+
+            return isIn;
+        },
+
         /****************************************/
         /****          INTERSECTIONS         ****/
         /****************************************/
@@ -1050,7 +1383,7 @@ define([
          * Generate the function which computes the coordinates of the intersection point.
          * Primarily used in {@link JXG.Point#createIntersectionPoint}.
          * @param {JXG.Board} board object
-         * @param {JXG.Line,JXG.Circle_JXG.Line,JXG.Circle_Number} el1,el2,i The result will be a intersection point on el1 and el2.
+         * @param {JXG.Line,JXG.Circle_JXG.Line,JXG.Circle_Number|Function} el1,el2,i The result will be a intersection point on el1 and el2.
          * i determines the intersection point if two points are available: <ul>
          *   <li>i==0: use the positive square root,</li>
          *   <li>i==1: use the negative square root.</li></ul>
@@ -1061,47 +1394,55 @@ define([
          * the intersection point.
          */
         intersectionFunction: function (board, el1, el2, i, j, alwaysintersect) {
-            var func, that = this,
+            var func,
+                that = this,
                 el1_isArcType = false,
                 el2_isArcType = false;
 
-            el1_isArcType = (el1.elementClass === Const.OBJECT_CLASS_CURVE &&
+            el1_isArcType =
+                el1.elementClass === Const.OBJECT_CLASS_CURVE &&
                 (el1.type === Const.OBJECT_TYPE_ARC || el1.type === Const.OBJECT_TYPE_SECTOR)
-                ) ? true : false;
-            el2_isArcType = (el2.elementClass === Const.OBJECT_CLASS_CURVE &&
+                    ? true
+                    : false;
+            el2_isArcType =
+                el2.elementClass === Const.OBJECT_CLASS_CURVE &&
                 (el2.type === Const.OBJECT_TYPE_ARC || el2.type === Const.OBJECT_TYPE_SECTOR)
-                ) ? true : false;
+                    ? true
+                    : false;
 
-            if ((el1.elementClass === Const.OBJECT_CLASS_CURVE || el2.elementClass === Const.OBJECT_CLASS_CURVE) &&
-                (el1.elementClass === Const.OBJECT_CLASS_CURVE || el1.elementClass === Const.OBJECT_CLASS_CIRCLE) &&
-                (el2.elementClass === Const.OBJECT_CLASS_CURVE || el2.elementClass === Const.OBJECT_CLASS_CIRCLE) /*&&
-                !(el1_isArcType && el2_isArcType)*/ ) {
+            if (
+                (el1.elementClass === Const.OBJECT_CLASS_CURVE ||
+                    el2.elementClass === Const.OBJECT_CLASS_CURVE) &&
+                (el1.elementClass === Const.OBJECT_CLASS_CURVE ||
+                    el1.elementClass === Const.OBJECT_CLASS_CIRCLE) &&
+                (el2.elementClass === Const.OBJECT_CLASS_CURVE ||
+                    el2.elementClass === Const.OBJECT_CLASS_CIRCLE) /*&&
+                !(el1_isArcType && el2_isArcType)*/
+            ) {
                 // curve - curve
                 // with the exception that both elements are arc types
                 /** @ignore */
                 func = function () {
                     return that.meetCurveCurve(el1, el2, i, j, el1.board);
                 };
-
-            } else if ((
-                        el1.elementClass === Const.OBJECT_CLASS_CURVE &&
-                        !el1_isArcType &&
-                        el2.elementClass === Const.OBJECT_CLASS_LINE
-                       ) ||
-                       (
-                        el2.elementClass === Const.OBJECT_CLASS_CURVE &&
-                        !el2_isArcType &&
-                        el1.elementClass === Const.OBJECT_CLASS_LINE
-                       )
-                    ) {
+            } else if (
+                (el1.elementClass === Const.OBJECT_CLASS_CURVE &&
+                    !el1_isArcType &&
+                    el2.elementClass === Const.OBJECT_CLASS_LINE) ||
+                (el2.elementClass === Const.OBJECT_CLASS_CURVE &&
+                    !el2_isArcType &&
+                    el1.elementClass === Const.OBJECT_CLASS_LINE)
+            ) {
                 // curve - line (this includes intersections between conic sections and lines)
                 // with the exception that the curve is of arc type
                 /** @ignore */
                 func = function () {
-                    return that.meetCurveLine(el1, el2, i, el1.board, alwaysintersect);
+                    return that.meetCurveLine(el1, el2, i, el1.board, Type.evaluate(alwaysintersect));
                 };
-
-            } else if (el1.type === Const.OBJECT_TYPE_POLYGON || el2.type === Const.OBJECT_TYPE_POLYGON) {
+            } else if (
+                el1.type === Const.OBJECT_TYPE_POLYGON ||
+                el2.type === Const.OBJECT_TYPE_POLYGON
+            ) {
                 // polygon - other
                 // Uses the Greiner-Hormann clipping algorithm
                 // Not implemented: polygon - point
@@ -1110,12 +1451,26 @@ define([
                     // line - path
                     /** @ignore */
                     func = function () {
-                        return that.meetPolygonLine(el2, el1, i, el1.board, alwaysintersect);
+                        var first1 = Type.evaluate(el1.visProp.straightfirst),
+                            last1 = Type.evaluate(el1.visProp.straightlast),
+                            first2 = Type.evaluate(el2.visProp.straightfirst),
+                            last2 = Type.evaluate(el2.visProp.straightlast),
+                            a_not;
+
+                        a_not = (!Type.evaluate(alwaysintersect) && (!first1 || !last1 || !first2 || !last2));
+                        return that.meetPolygonLine(el2, el1, i, el1.board, a_not);
                     };
                 } else if (el2.elementClass === Const.OBJECT_CLASS_LINE) {
                     // path - line
                     func = function () {
-                        return that.meetPolygonLine(el1, el2, i, el1.board, alwaysintersect);
+                        var first1 = Type.evaluate(el1.visProp.straightfirst),
+                            last1 = Type.evaluate(el1.visProp.straightlast),
+                            first2 = Type.evaluate(el2.visProp.straightfirst),
+                            last2 = Type.evaluate(el2.visProp.straightlast),
+                            a_not;
+
+                        a_not = (!Type.evaluate(alwaysintersect) && (!first1 || !last1 || !first2 || !last2));
+                        return that.meetPolygonLine(el1, el2, i, el1.board, a_not);
                     };
                 } else {
                     // path - path
@@ -1124,12 +1479,15 @@ define([
                         return that.meetPathPath(el1, el2, i, el1.board);
                     };
                 }
-
-            } else if (el1.elementClass === Const.OBJECT_CLASS_LINE && el2.elementClass === Const.OBJECT_CLASS_LINE) {
+            } else if (
+                el1.elementClass === Const.OBJECT_CLASS_LINE &&
+                el2.elementClass === Const.OBJECT_CLASS_LINE
+            ) {
                 // line - line, lines may also be segments.
                 /** @ignore */
                 func = function () {
-                    var res, c,
+                    var res,
+                        c,
                         first1 = Type.evaluate(el1.visProp.straightfirst),
                         last1 = Type.evaluate(el1.visProp.straightlast),
                         first2 = Type.evaluate(el2.visProp.straightfirst),
@@ -1141,7 +1499,10 @@ define([
                      * of the segment or ray we call
                      * meetSegmentSegment
                      */
-                    if (!Type.evaluate(alwaysintersect) && (!first1 || !last1 || !first2 || !last2)) {
+                    if (
+                        !Type.evaluate(alwaysintersect) &&
+                        (!first1 || !last1 || !first2 || !last2)
+                    ) {
                         res = that.meetSegmentSegment(
                             el1.point1.coords.usrCoords,
                             el1.point2.coords.usrCoords,
@@ -1149,15 +1510,19 @@ define([
                             el2.point2.coords.usrCoords
                         );
 
-                        if ((!first1 && res[1] < 0) || (!last1 && res[1] > 1) ||
-                                (!first2 && res[2] < 0) || (!last2 && res[2] > 1)) {
+                        if (
+                            (!first1 && res[1] < 0) ||
+                            (!last1 && res[1] > 1) ||
+                            (!first2 && res[2] < 0) ||
+                            (!last2 && res[2] > 1)
+                        ) {
                             // Non-existent
                             c = [0, NaN, NaN];
                         } else {
                             c = res[0];
                         }
 
-                        return (new Coords(Const.COORDS_BY_USER, c, el1.board));
+                        return new Coords(Const.COORDS_BY_USER, c, el1.board);
                     }
 
                     return that.meet(el1.stdform, el2.stdform, i, el1.board);
@@ -1169,28 +1534,31 @@ define([
                 func = function () {
                     var res = that.meet(el1.stdform, el2.stdform, i, el1.board),
                         has = true,
-                        first, last, r, dx;
+                        first,
+                        last,
+                        r,
+                        dx;
 
-                    if (alwaysintersect) {
+                    if (Type.evaluate(alwaysintersect)) {
                         return res;
                     }
                     if (el1.elementClass === Const.OBJECT_CLASS_LINE) {
                         first = Type.evaluate(el1.visProp.straightfirst);
-                        last  = Type.evaluate(el1.visProp.straightlast);
+                        last = Type.evaluate(el1.visProp.straightlast);
                         if (!first || !last) {
                             r = that.affineRatio(el1.point1.coords, el1.point2.coords, res);
-                            if ( (!last && r > 1 + Mat.eps) || (!first && r < 0 - Mat.eps) ) {
-                                return (new Coords(JXG.COORDS_BY_USER, [0, NaN, NaN], el1.board));
+                            if ((!last && r > 1 + Mat.eps) || (!first && r < 0 - Mat.eps)) {
+                                return new Coords(JXG.COORDS_BY_USER, [0, NaN, NaN], el1.board);
                             }
                         }
                     }
                     if (el2.elementClass === Const.OBJECT_CLASS_LINE) {
                         first = Type.evaluate(el2.visProp.straightfirst);
-                        last  = Type.evaluate(el2.visProp.straightlast);
+                        last = Type.evaluate(el2.visProp.straightlast);
                         if (!first || !last) {
                             r = that.affineRatio(el2.point1.coords, el2.point2.coords, res);
-                            if ( (!last && r > 1 + Mat.eps) || (!first && r < 0 - Mat.eps) ) {
-                                return (new Coords(JXG.COORDS_BY_USER, [0, NaN, NaN], el1.board));
+                            if ((!last && r > 1 + Mat.eps) || (!first && r < 0 - Mat.eps)) {
+                                return new Coords(JXG.COORDS_BY_USER, [0, NaN, NaN], el1.board);
                             }
                         }
                     }
@@ -1200,7 +1568,7 @@ define([
                             has = that.coordsOnArc(el2, res);
                         }
                         if (!has) {
-                            return (new Coords(JXG.COORDS_BY_USER, [0, NaN, NaN], el1.board));
+                            return new Coords(JXG.COORDS_BY_USER, [0, NaN, NaN], el1.board);
                         }
                     }
                     return res;
@@ -1220,14 +1588,13 @@ define([
          * @returns {Boolean}
          * @private
          */
-        coordsOnArc: function(arc, coords) {
+        coordsOnArc: function (arc, coords) {
             var angle = this.rad(arc.radiuspoint, arc.center, coords.usrCoords.slice(1)),
                 alpha = 0.0,
                 beta = this.rad(arc.radiuspoint, arc.center, arc.anglepoint),
                 ev_s = Type.evaluate(arc.visProp.selection);
 
-            if ((ev_s === 'minor' && beta > Math.PI) ||
-                (ev_s === 'major' && beta < Math.PI)) {
+            if ((ev_s === "minor" && beta > Math.PI) || (ev_s === "major" && beta < Math.PI)) {
                 alpha = beta;
                 beta = 2 * Math.PI;
             }
@@ -1242,7 +1609,7 @@ define([
          * It uses the internal data array stdform of these elements.
          * @param {Array} el1 stdform of the first element (line or circle)
          * @param {Array} el2 stdform of the second element (line or circle)
-         * @param {Number} i Index of the intersection point that should be returned.
+         * @param {Number|Function} i Index of the intersection point that should be returned.
          * @param board Reference to the board.
          * @returns {JXG.Coords} Coordinates of one of the possible two or more intersection points.
          * Which point will be returned is determined by i.
@@ -1251,17 +1618,17 @@ define([
             var result,
                 eps = Mat.eps;
 
-            // line line
             if (Math.abs(el1[3]) < eps && Math.abs(el2[3]) < eps) {
+                // line line
                 result = this.meetLineLine(el1, el2, i, board);
-            // circle line
             } else if (Math.abs(el1[3]) >= eps && Math.abs(el2[3]) < eps) {
+                // circle line
                 result = this.meetLineCircle(el2, el1, i, board);
-            // line circle
             } else if (Math.abs(el1[3]) < eps && Math.abs(el2[3]) >= eps) {
+                // line circle
                 result = this.meetLineCircle(el1, el2, i, board);
-            // circle circle
             } else {
+                // circle circle
                 result = this.meetCircleCircle(el1, el2, i, board);
             }
 
@@ -1276,8 +1643,12 @@ define([
          * @returns {Array}            [intersection coords 1, intersection coords 2]
          */
         meetLineBoard: function (line, board, margin) {
-             // Intersect the line with the four borders of the board.
-            var s = [], intersect1, intersect2, i, j;
+            // Intersect the line with the four borders of the board.
+            var s = [],
+                intersect1,
+                intersect2,
+                i,
+                j;
 
             if (!Type.exists(margin)) {
                 margin = 0;
@@ -1304,43 +1675,43 @@ define([
 
             // line is parallel to "left", take "top" and "bottom"
             if (Math.abs(s[1][0]) < Mat.eps) {
-                intersect1 = s[0];                          // top
-                intersect2 = s[2];                          // bottom
-            // line is parallel to "top", take "left" and "right"
+                intersect1 = s[0]; // top
+                intersect2 = s[2]; // bottom
+                // line is parallel to "top", take "left" and "right"
             } else if (Math.abs(s[0][0]) < Mat.eps) {
-                intersect1 = s[1];                          // left
-                intersect2 = s[3];                          // right
-            // left intersection out of board (above)
+                intersect1 = s[1]; // left
+                intersect2 = s[3]; // right
+                // left intersection out of board (above)
             } else if (s[1][2] < 0) {
-                intersect1 = s[0];                          // top
+                intersect1 = s[0]; // top
 
                 // right intersection out of board (below)
                 if (s[3][2] > board.canvasHeight) {
-                    intersect2 = s[2];                      // bottom
+                    intersect2 = s[2]; // bottom
                 } else {
-                    intersect2 = s[3];                      // right
+                    intersect2 = s[3]; // right
                 }
-            // left intersection out of board (below)
+                // left intersection out of board (below)
             } else if (s[1][2] > board.canvasHeight) {
-                intersect1 = s[2];                          // bottom
+                intersect1 = s[2]; // bottom
 
                 // right intersection out of board (above)
                 if (s[3][2] < 0) {
-                    intersect2 = s[0];                      // top
+                    intersect2 = s[0]; // top
                 } else {
-                    intersect2 = s[3];                      // right
+                    intersect2 = s[3]; // right
                 }
             } else {
-                intersect1 = s[1];                          // left
+                intersect1 = s[1]; // left
 
                 // right intersection out of board (above)
                 if (s[3][2] < 0) {
-                    intersect2 = s[0];                      // top
-                // right intersection out of board (below)
+                    intersect2 = s[0]; // top
+                    // right intersection out of board (below)
                 } else if (s[3][2] > board.canvasHeight) {
-                    intersect2 = s[2];                      // bottom
+                    intersect2 = s[2]; // bottom
                 } else {
-                    intersect2 = s[3];                      // right
+                    intersect2 = s[3]; // right
                 }
             }
 
@@ -1358,16 +1729,12 @@ define([
          * @returns {JXG.Coords} Coordinates of the intersection point.
          */
         meetLineLine: function (l1, l2, i, board) {
-            /*
-            var s = Mat.crossProduct(l1, l2);
-
-            if (Math.abs(s[0]) > Mat.eps) {
-                s[1] /= s[0];
-                s[2] /= s[0];
-                s[0] = 1.0;
-            }
-            */
             var s = isNaN(l1[5] + l2[5]) ? [0, 0, 0] : Mat.crossProduct(l1, l2);
+
+            // Make intersection of parallel lines more robust:
+            if (Math.abs(s[0]) < 1.0e-14) {
+                s[0] = 0;
+            }
             return new Coords(Const.COORDS_BY_USER, s, board);
         },
 
@@ -1375,15 +1742,14 @@ define([
          * Intersection of line and circle.
          * @param {Array} lin stdform of the line
          * @param {Array} circ stdform of the circle
-         * @param {number} i number of the returned intersection point.
+         * @param {number|function} i number of the returned intersection point.
          *   i==0: use the positive square root,
          *   i==1: use the negative square root.
          * @param {JXG.Board} board Reference to a board.
          * @returns {JXG.Coords} Coordinates of the intersection point
          */
         meetLineCircle: function (lin, circ, i, board) {
-            var a, b, c, d, n,
-                A, B, C, k, t;
+            var a, b, c, d, n, A, B, C, k, t;
 
             // Radius is zero, return center of circle
             if (circ[4] < Mat.eps) {
@@ -1407,7 +1773,7 @@ define([
              C = a*d*d - (b[0]*n[0]+b[1]*n[1])*d + c*nn;
              */
             A = a;
-            B = (b[0] * n[1] - b[1] * n[0]);
+            B = b[0] * n[1] - b[1] * n[0];
             C = a * d * d - (b[0] * n[0] + b[1] * n[1]) * d + c;
 
             k = B * B - 4 * A * C;
@@ -1415,10 +1781,17 @@ define([
                 k = Math.sqrt(Math.abs(k));
                 t = [(-B + k) / (2 * A), (-B - k) / (2 * A)];
 
-                return ((i === 0) ?
-                        new Coords(Const.COORDS_BY_USER, [-t[0] * (-n[1]) - d * n[0], -t[0] * n[0] - d * n[1]], board) :
-                        new Coords(Const.COORDS_BY_USER, [-t[1] * (-n[1]) - d * n[0], -t[1] * n[0] - d * n[1]], board)
-                    );
+                return Type.evaluate(i) === 0
+                    ? new Coords(
+                          Const.COORDS_BY_USER,
+                          [-t[0] * -n[1] - d * n[0], -t[0] * n[0] - d * n[1]],
+                          board
+                      )
+                    : new Coords(
+                          Const.COORDS_BY_USER,
+                          [-t[1] * -n[1] - d * n[0], -t[1] * n[0] - d * n[1]],
+                          board
+                      );
             }
 
             return new Coords(Const.COORDS_BY_USER, [0, 0, 0], board);
@@ -1428,7 +1801,7 @@ define([
          * Intersection of two circles.
          * @param {Array} circ1 stdform of the first circle
          * @param {Array} circ2 stdform of the second circle
-         * @param {number} i number of the returned intersection point.
+         * @param {number|function} i number of the returned intersection point.
          *   i==0: use the positive square root,
          *   i==1: use the negative square root.
          * @param {JXG.Board} board Reference to the board.
@@ -1439,7 +1812,10 @@ define([
 
             // Radius is zero, return center of circle, if on other circle
             if (circ1[4] < Mat.eps) {
-                if (Math.abs(this.distance(circ1.slice(6, 2), circ2.slice(6, 8)) - circ2[4]) < Mat.eps) {
+                if (
+                    Math.abs(this.distance(circ1.slice(6, 2), circ2.slice(6, 8)) - circ2[4]) <
+                    Mat.eps
+                ) {
                     return new Coords(Const.COORDS_BY_USER, circ1.slice(6, 8), board);
                 }
 
@@ -1448,17 +1824,26 @@ define([
 
             // Radius is zero, return center of circle, if on other circle
             if (circ2[4] < Mat.eps) {
-                if (Math.abs(this.distance(circ2.slice(6, 2), circ1.slice(6, 8)) - circ1[4]) < Mat.eps) {
+                if (
+                    Math.abs(this.distance(circ2.slice(6, 2), circ1.slice(6, 8)) - circ1[4]) <
+                    Mat.eps
+                ) {
                     return new Coords(Const.COORDS_BY_USER, circ2.slice(6, 8), board);
                 }
 
                 return new Coords(Const.COORDS_BY_USER, [0, 0, 0], board);
             }
 
-            radicalAxis = [circ2[3] * circ1[0] - circ1[3] * circ2[0],
+            radicalAxis = [
+                circ2[3] * circ1[0] - circ1[3] * circ2[0],
                 circ2[3] * circ1[1] - circ1[3] * circ2[1],
                 circ2[3] * circ1[2] - circ1[3] * circ2[2],
-                0, 1, Infinity, Infinity, Infinity];
+                0,
+                1,
+                Infinity,
+                Infinity,
+                Infinity
+            ];
             radicalAxis = Mat.normalize(radicalAxis);
 
             return this.meetLineCircle(radicalAxis, circ1, i, board);
@@ -1472,7 +1857,7 @@ define([
          * Methods: segment-wise intersections (default) or generalized Newton method.
          * @param {JXG.Curve} c1 Curve, Line or Circle
          * @param {JXG.Curve} c2 Curve, Line or Circle
-         * @param {Number} nr the nr-th intersection point will be returned.
+         * @param {Number|Function} nr the nr-th intersection point will be returned.
          * @param {Number} t2ini not longer used.
          * @param {JXG.Board} [board=c1.board] Reference to a board object.
          * @param {String} [method='segment'] Intersection method, possible values are 'newton' and 'segment'.
@@ -1481,8 +1866,8 @@ define([
         meetCurveCurve: function (c1, c2, nr, t2ini, board, method) {
             var co;
 
-            if (Type.exists(method) && method === 'newton') {
-                co = Numerics.generalizedNewton(c1, c2, nr, t2ini);
+            if (Type.exists(method) && method === "newton") {
+                co = Numerics.generalizedNewton(c1, c2, Type.evaluate(nr), t2ini);
             } else {
                 if (c1.bezierDegree === 3 || c2.bezierDegree === 3) {
                     co = this.meetBezierCurveRedBlueSegments(c1, c2, nr);
@@ -1491,7 +1876,7 @@ define([
                 }
             }
 
-            return (new Coords(Const.COORDS_BY_USER, co, board));
+            return new Coords(Const.COORDS_BY_USER, co, board);
         },
 
         /**
@@ -1504,14 +1889,16 @@ define([
          *
          * @param {JXG.Curve,JXG.Line} el1 Curve or Line
          * @param {JXG.Curve,JXG.Line} el2 Curve or Line
-         * @param {Number} nr the nr-th intersection point will be returned.
+         * @param {Number|Function} nr the nr-th intersection point will be returned.
          * @param {JXG.Board} [board=el1.board] Reference to a board object.
          * @param {Boolean} alwaysIntersect If false just the segment between the two defining points are tested for intersection
          * @returns {JXG.Coords} Intersection point. In case no intersection point is detected,
          * the ideal point [0,1,0] is returned.
          */
         meetCurveLine: function (el1, el2, nr, board, alwaysIntersect) {
-            var v = [0, NaN, NaN], cu, li;
+            var v = [0, NaN, NaN],
+                cu,
+                li;
 
             if (!Type.exists(board)) {
                 board = el1.board;
@@ -1538,18 +1925,29 @@ define([
          *
          * @param {JXG.Curve} cu Curve
          * @param {JXG.Line} li Line
-         * @param {Number} nr Will return the nr-th intersection point.
+         * @param {NumberFunction} nr Will return the nr-th intersection point.
          * @param {JXG.Board} board
          * @param {Boolean} testSegment Test if intersection has to be inside of the segment or somewhere on the
          * line defined by the segment
          * @returns {JXG.Coords} Coords object containing the intersection.
          */
         meetCurveLineContinuous: function (cu, li, nr, board, testSegment) {
-            var t, func0, func1, v, x, y, z,
+            var t,
+                func0,
+                func1,
+                v,
+                x,
+                y,
+                z,
                 eps = Mat.eps,
                 epsLow = Mat.eps,
-                steps, delta, tnew, i,
-                tmin, fmin, ft;
+                steps,
+                delta,
+                tnew,
+                i,
+                tmin,
+                fmin,
+                ft;
 
             v = this.meetCurveLineDiscrete(cu, li, nr, board, testSegment);
             x = v.usrCoords[1];
@@ -1579,7 +1977,10 @@ define([
             fmin = 0.0001; //eps;
             tmin = NaN;
             for (i = 0; i < steps; i++) {
-                t = Numerics.root(func0, [Math.max(tnew, cu.minX()), Math.min(tnew + delta, cu.maxX())]);
+                t = Numerics.root(func0, [
+                    Math.max(tnew, cu.minX()),
+                    Math.min(tnew + delta, cu.maxX())
+                ]);
                 ft = Math.abs(func0(t));
                 if (ft <= fmin) {
                     fmin = ft;
@@ -1593,7 +1994,10 @@ define([
             }
             t = tmin;
             // Compute "exact" t
-            t = Numerics.root(func1, [Math.max(t - delta, cu.minX()), Math.min(t + delta, cu.maxX())]);
+            t = Numerics.root(func1, [
+                Math.max(t - delta, cu.minX()),
+                Math.min(t + delta, cu.maxX())
+            ]);
 
             ft = func1(t);
             // Is the point on the line?
@@ -1603,7 +2007,7 @@ define([
                 z = 1.0;
             }
 
-            return (new Coords(Const.COORDS_BY_USER, [z, cu.X(t), cu.Y(t)], board));
+            return new Coords(Const.COORDS_BY_USER, [z, cu.X(t), cu.Y(t)], board);
         },
 
         /**
@@ -1612,7 +2016,7 @@ define([
          * Finding the nr-th intersection point should work for all nr.
          * @param {JXG.Curve} cu
          * @param {JXG.Line} li
-         * @param {Number} nr
+         * @param {Number|Function} nr
          * @param {JXG.Board} board
          * @param {Boolean} testSegment Test if intersection has to be inside of the segment or somewhere on the
          * line defined by the segment
@@ -1621,11 +2025,17 @@ define([
          * the ideal point [0,1,0] is returned.
          */
         meetCurveLineDiscrete: function (cu, li, nr, board, testSegment) {
-            var i, j,
-                p1, p2, p, q,
+            var i,
+                j,
+                n = Type.evaluate(nr),
+                p1,
+                p2,
+                p,
+                q,
                 lip1 = li.point1.coords.usrCoords,
                 lip2 = li.point2.coords.usrCoords,
-                d, res,
+                d,
+                res,
                 cnt = 0,
                 len = cu.numberPoints,
                 ev_sf = Type.evaluate(li.visProp.straightfirst),
@@ -1649,15 +2059,16 @@ define([
                 // The defining points are not identical
                 if (d > Mat.eps) {
                     if (cu.bezierDegree === 3) {
-                        res = this.meetBeziersegmentBeziersegment([
-                            cu.points[i - 1].usrCoords.slice(1),
-                            cu.points[i].usrCoords.slice(1),
-                            cu.points[i + 1].usrCoords.slice(1),
-                            cu.points[i + 2].usrCoords.slice(1)
-                        ], [
-                            lip1.slice(1),
-                            lip2.slice(1)
-                        ], testSegment);
+                        res = this.meetBeziersegmentBeziersegment(
+                            [
+                                cu.points[i - 1].usrCoords.slice(1),
+                                cu.points[i].usrCoords.slice(1),
+                                cu.points[i + 1].usrCoords.slice(1),
+                                cu.points[i + 2].usrCoords.slice(1)
+                            ],
+                            [lip1.slice(1), lip2.slice(1)],
+                            testSegment
+                        );
                     } else {
                         res = [this.meetSegmentSegment(p1, p2, lip1, lip2)];
                     }
@@ -1665,20 +2076,22 @@ define([
                     for (j = 0; j < res.length; j++) {
                         p = res[j];
                         if (0 <= p[1] && p[1] <= 1) {
-                            if (cnt === nr) {
+                            if (cnt === n) {
                                 /**
-                                * If the intersection point is not part of the segment,
-                                * this intersection point is set to non-existent.
-                                * This prevents jumping behavior of the intersection points.
-                                * But it may be discussed if it is the desired behavior.
-                                */
-                                if (testSegment &&
-                                        ((!ev_sf && p[2] < 0) || (!ev_sl && p[2] > 1))) {
-                                    return q;  // break;
+                                 * If the intersection point is not part of the segment,
+                                 * this intersection point is set to non-existent.
+                                 * This prevents jumping behavior of the intersection points.
+                                 * But it may be discussed if it is the desired behavior.
+                                 */
+                                if (
+                                    testSegment &&
+                                    ((!ev_sf && p[2] < 0) || (!ev_sl && p[2] > 1))
+                                ) {
+                                    return q; // break;
                                 }
 
                                 q = new Coords(Const.COORDS_BY_USER, p[0], board);
-                                return q;      // break;
+                                return q; // break;
                             }
                             cnt += 1;
                         }
@@ -1701,12 +2114,19 @@ define([
          *
          * @param {JXG.Curve} red
          * @param {JXG.Curve} blue
-         * @param {Number} nr
+         * @param {Number|Function} nr
          */
         meetCurveRedBlueSegments: function (red, blue, nr) {
-            var i, j,
-                red1, red2, blue1, blue2, m,
-                minX, maxX,
+            var i,
+                j,
+                n = Type.evaluate(nr),
+                red1,
+                red2,
+                blue1,
+                blue2,
+                m,
+                minX,
+                maxX,
                 iFound = 0,
                 lenBlue = blue.numberPoints, //points.length,
                 lenRed = red.numberPoints; //points.length;
@@ -1726,15 +2146,21 @@ define([
                     blue1 = blue2;
                     blue2 = blue.points[j].usrCoords;
 
-                    if (Math.min(blue1[1], blue2[1]) < maxX && Math.max(blue1[1], blue2[1]) > minX) {
+                    if (
+                        Math.min(blue1[1], blue2[1]) < maxX &&
+                        Math.max(blue1[1], blue2[1]) > minX
+                    ) {
                         m = this.meetSegmentSegment(red1, red2, blue1, blue2);
-                        if (m[1] >= 0.0 && m[2] >= 0.0 &&
-                                // The two segments meet in the interior or at the start points
-                                ((m[1] < 1.0 && m[2] < 1.0) ||
+                        if (
+                            m[1] >= 0.0 &&
+                            m[2] >= 0.0 &&
+                            // The two segments meet in the interior or at the start points
+                            ((m[1] < 1.0 && m[2] < 1.0) ||
                                 // One of the curve is intersected in the very last point
                                 (i === lenRed - 1 && m[1] === 1.0) ||
-                                (j === lenBlue - 1 && m[2] === 1.0))) {
-                            if (iFound === nr) {
+                                (j === lenBlue - 1 && m[2] === 1.0))
+                        ) {
+                            if (iFound === n) {
                                 return m[0];
                             }
 
@@ -1760,7 +2186,10 @@ define([
          * If the two segments are collinear, [[0,0,0], Infinity, Infinity] is returned.
          **/
         meetSegmentSegment: function (p1, p2, q1, q2) {
-            var t, u, i, d,
+            var t,
+                u,
+                i,
+                d,
                 li1 = Mat.crossProduct(p1, p2),
                 li2 = Mat.crossProduct(q1, q2),
                 c = Mat.crossProduct(li1, li2);
@@ -1781,13 +2210,13 @@ define([
             // coordinates might be not normalized.
             // Note that the z-coordinates of p2 and q2 are used to determine whether it should be interpreted
             // as a segment coordinate or a direction.
-            i = (Math.abs(p2[1] - p2[0] * p1[1]) < Mat.eps) ? 2 : 1;
+            i = Math.abs(p2[1] - p2[0] * p1[1]) < Mat.eps ? 2 : 1;
             d = p1[i] / p1[0];
-            t = (c[i] - d) / ( (p2[0] !== 0) ? (p2[i] / p2[0] - d) : p2[i] );
+            t = (c[i] - d) / (p2[0] !== 0 ? p2[i] / p2[0] - d : p2[i]);
 
-            i = (Math.abs(q2[1] - q2[0] * q1[1]) < Mat.eps) ? 2 : 1;
+            i = Math.abs(q2[1] - q2[0] * q1[1]) < Mat.eps ? 2 : 1;
             d = q1[i] / q1[0];
-            u = (c[i] - d) / ( (q2[0] !== 0) ? (q2[i] / q2[0] - d) : q2[i] );
+            u = (c[i] - d) / (q2[0] !== 0 ? q2[i] / q2[0] - d : q2[i]);
 
             return [c, t, u];
         },
@@ -1798,57 +2227,68 @@ define([
          *
          * @param {JXG.Circle|JXG.Curve|JXG.Polygon} path1
          * @param {JXG.Circle|JXG.Curve|JXG.Polygon} path2
-         * @param {Number} n
+         * @param {Number|Function} n
          * @param {JXG.Board} board
          *
          * @returns {JXG.Coords} Intersection point. In case no intersection point is detected,
          * the ideal point [0,0,0] is returned.
          *
          */
-        meetPathPath: function(path1, path2, nr, board) {
-            var S, C, len, intersections;
+        meetPathPath: function (path1, path2, nr, board) {
+            var S, C, len, intersections,
+                n = Type.evaluate(nr);
 
             S = JXG.Math.Clip._getPath(path1, board);
             len = S.length;
-            if (len > 0 && this.distance(S[0].coords.usrCoords, S[len - 1].coords.usrCoords, 3) < Mat.eps) {
+            if (
+                len > 0 &&
+                this.distance(S[0].coords.usrCoords, S[len - 1].coords.usrCoords, 3) < Mat.eps
+            ) {
                 S.pop();
             }
 
             C = JXG.Math.Clip._getPath(path2, board);
             len = C.length;
-            if (len > 0 && this.distance(C[0].coords.usrCoords, C[len - 1].coords.usrCoords, 3) < Mat.eps * Mat.eps) {
+            if (
+                len > 0 &&
+                this.distance(C[0].coords.usrCoords, C[len - 1].coords.usrCoords, 3) <
+                    Mat.eps * Mat.eps
+            ) {
                 C.pop();
             }
 
             // Handle cases where at least one of the paths is empty
-            if (nr < 0 || JXG.Math.Clip.isEmptyCase(S, C, 'intersection')) {
-                return (new Coords(Const.COORDS_BY_USER, [0, 0, 0], board));
+            if (nr < 0 || JXG.Math.Clip.isEmptyCase(S, C, "intersection")) {
+                return new Coords(Const.COORDS_BY_USER, [0, 0, 0], board);
             }
 
             JXG.Math.Clip.makeDoublyLinkedList(S);
             JXG.Math.Clip.makeDoublyLinkedList(C);
 
             intersections = JXG.Math.Clip.findIntersections(S, C, board)[0];
-            if (nr < intersections.length) {
-                return intersections[nr].coords;
+            if (n < intersections.length) {
+                return intersections[n].coords;
             }
-            return (new Coords(Const.COORDS_BY_USER, [0, 0, 0], board));
+            return new Coords(Const.COORDS_BY_USER, [0, 0, 0], board);
         },
 
         /**
          * Find the n-th intersection point between a polygon and a line.
          * @param {JXG.Polygon} path
          * @param {JXG.Line} line
-         * @param {Number} nr
+         * @param {Number|Function} nr
          * @param {JXG.Board} board
          * @param {Boolean} alwaysIntersect If false just the segment between the two defining points of the line are tested for intersection.
          *
          * @returns {JXG.Coords} Intersection point. In case no intersection point is detected,
          * the ideal point [0,0,0] is returned.
          */
-        meetPolygonLine: function(path, line, nr, board, alwaysIntersect) {
-            var i, res, border,
-                crds = [0,0,0],
+        meetPolygonLine: function (path, line, nr, board, alwaysIntersect) {
+            var i,
+                n = Type.evaluate(nr),
+                res,
+                border,
+                crds = [0, 0, 0],
                 len = path.borders.length,
                 intersections = [];
 
@@ -1858,19 +2298,22 @@ define([
                     border.point1.coords.usrCoords,
                     border.point2.coords.usrCoords,
                     line.point1.coords.usrCoords,
-                    line.point2.coords.usrCoords);
+                    line.point2.coords.usrCoords
+                );
 
                 if (
                     (!alwaysIntersect || (res[2] >= 0 && res[2] < 1)) &&
-                    res[1] >= 0 && res[1] < 1) {
+                    res[1] >= 0 &&
+                    res[1] < 1
+                ) {
                     intersections.push(res[0]);
                 }
             }
 
-            if (nr >= 0 && nr < intersections.length) {
-                crds = intersections[nr];
+            if (n >= 0 && n < intersections.length) {
+                crds = intersections[n];
             }
-            return (new Coords(Const.COORDS_BY_USER, crds, board));
+            return new Coords(Const.COORDS_BY_USER, crds, board);
         },
 
         /****************************************/
@@ -1896,7 +2339,10 @@ define([
 
             p000 = [(p00[0] + p22[0]) * 0.5, (p00[1] + p22[1]) * 0.5];
 
-            return [[curve[0], p0, p00, p000], [p000, p22, p2, curve[3]]];
+            return [
+                [curve[0], p0, p00, p000],
+                [p000, p22, p2, curve[3]]
+            ];
         },
 
         /**
@@ -1909,12 +2355,14 @@ define([
         _bezierBbox: function (curve) {
             var bb = [];
 
-            if (curve.length === 4) {   // bezierDegree == 3
+            if (curve.length === 4) {
+                // bezierDegree == 3
                 bb[0] = Math.min(curve[0][0], curve[1][0], curve[2][0], curve[3][0]); // minX
                 bb[1] = Math.max(curve[0][1], curve[1][1], curve[2][1], curve[3][1]); // maxY
                 bb[2] = Math.max(curve[0][0], curve[1][0], curve[2][0], curve[3][0]); // maxX
                 bb[3] = Math.min(curve[0][1], curve[1][1], curve[2][1], curve[3][1]); // minY
-            } else {                   // bezierDegree == 1
+            } else {
+                // bezierDegree == 1
                 bb[0] = Math.min(curve[0][0], curve[1][0]); // minX
                 bb[1] = Math.max(curve[0][1], curve[1][1]); // maxY
                 bb[2] = Math.max(curve[0][0], curve[1][0]); // maxX
@@ -1945,9 +2393,12 @@ define([
                 len = Lnew.length,
                 le = L.length;
 
-            if (le > 0 && len > 0 &&
-                    ((L[le - 1][1] === 1 && Lnew[0][1] === 0) ||
-                    (t2exists && L[le - 1][2] === 1 && Lnew[0][2] === 0))) {
+            if (
+                le > 0 &&
+                len > 0 &&
+                ((L[le - 1][1] === 1 && Lnew[0][1] === 0) ||
+                    (t2exists && L[le - 1][2] === 1 && Lnew[0][2] === 0))
+            ) {
                 start = 1;
             }
 
@@ -1976,11 +2427,20 @@ define([
          * array of length three (homogeneous coordinates) plus preimages.
          */
         _bezierMeetSubdivision: function (red, blue, level) {
-            var bbb, bbr,
-                ar, b0, b1, r0, r1, m,
-                p0, p1, q0, q1,
+            var bbb,
+                bbr,
+                ar,
+                b0,
+                b1,
+                r0,
+                r1,
+                m,
+                p0,
+                p1,
+                q0,
+                q1,
                 L = [],
-                maxLev = 5;      // Maximum recursion level
+                maxLev = 5; // Maximum recursion level
 
             bbr = this._bezierBbox(blue);
             bbb = this._bezierBbox(red);
@@ -1998,10 +2458,30 @@ define([
                 b0 = ar[0];
                 b1 = ar[1];
 
-                this._bezierListConcat(L, this._bezierMeetSubdivision(r0, b0, level + 1), 0.0, 0.0);
-                this._bezierListConcat(L, this._bezierMeetSubdivision(r0, b1, level + 1), 0, 0.5);
-                this._bezierListConcat(L, this._bezierMeetSubdivision(r1, b0, level + 1), 0.5, 0.0);
-                this._bezierListConcat(L, this._bezierMeetSubdivision(r1, b1, level + 1), 0.5, 0.5);
+                this._bezierListConcat(
+                    L,
+                    this._bezierMeetSubdivision(r0, b0, level + 1),
+                    0.0,
+                    0.0
+                );
+                this._bezierListConcat(
+                    L,
+                    this._bezierMeetSubdivision(r0, b1, level + 1),
+                    0,
+                    0.5
+                );
+                this._bezierListConcat(
+                    L,
+                    this._bezierMeetSubdivision(r1, b0, level + 1),
+                    0.5,
+                    0.0
+                );
+                this._bezierListConcat(
+                    L,
+                    this._bezierMeetSubdivision(r1, b1, level + 1),
+                    0.5,
+                    0.5
+                );
 
                 return L;
             }
@@ -2025,11 +2505,18 @@ define([
          * @param {Boolean} testSegment Test if intersection has to be inside of the segment or somewhere on the line defined by the segment
          */
         _bezierLineMeetSubdivision: function (red, blue, level, testSegment) {
-            var bbb, bbr,
-                ar, r0, r1, m,
-                p0, p1, q0, q1,
+            var bbb,
+                bbr,
+                ar,
+                r0,
+                r1,
+                m,
+                p0,
+                p1,
+                q0,
+                q1,
                 L = [],
-                maxLev = 5;      // Maximum recursion level
+                maxLev = 5; // Maximum recursion level
 
             bbb = this._bezierBbox(blue);
             bbr = this._bezierBbox(red);
@@ -2043,8 +2530,16 @@ define([
                 r0 = ar[0];
                 r1 = ar[1];
 
-                this._bezierListConcat(L, this._bezierLineMeetSubdivision(r0, blue, level + 1), 0.0);
-                this._bezierListConcat(L, this._bezierLineMeetSubdivision(r1, blue, level + 1), 0.5);
+                this._bezierListConcat(
+                    L,
+                    this._bezierLineMeetSubdivision(r0, blue, level + 1),
+                    0.0
+                );
+                this._bezierListConcat(
+                    L,
+                    this._bezierLineMeetSubdivision(r1, blue, level + 1),
+                    0.5
+                );
 
                 return L;
             }
@@ -2093,7 +2588,7 @@ define([
             L2 = [];
             for (i = 0; i < L.length; i++) {
                 // Only push entries different from their predecessor
-                if (i === 0 || (L[i][1] !== L[i - 1][1] || L[i][2] !== L[i - 1][2])) {
+                if (i === 0 || L[i][1] !== L[i - 1][1] || L[i][2] !== L[i - 1][2]) {
                     L2.push(L[i]);
                 }
             }
@@ -2104,13 +2599,21 @@ define([
          * Find the nr-th intersection point of two Bezier curves, i.e. curves with bezierDegree == 3.
          * @param {JXG.Curve} red Curve with bezierDegree == 3
          * @param {JXG.Curve} blue Curve with bezierDegree == 3
-         * @param {Number} nr The number of the intersection point which should be returned.
+         * @param {Number|Function} nr The number of the intersection point which should be returned.
          * @returns {Array} The homogeneous coordinates of the nr-th intersection point.
          */
         meetBezierCurveRedBlueSegments: function (red, blue, nr) {
-            var p, i, j, k, po,
-                redArr, blueArr,
-                bbr, bbb, intersections,
+            var p,
+                i,
+                j,
+                k,
+                n = Type.evaluate(nr),
+                po,
+                redArr,
+                blueArr,
+                bbr,
+                bbb,
+                intersections,
                 startRed = 0,
                 startBlue = 0,
                 lenBlue = blue.numberPoints,
@@ -2121,24 +2624,21 @@ define([
                 return [0, NaN, NaN];
             }
             lenBlue -= blue.bezierDegree;
-            lenRed  -= red.bezierDegree;
+            lenRed -= red.bezierDegree;
 
             // For sectors, we ignore the "legs"
             if (red.type === Const.OBJECT_TYPE_SECTOR) {
                 startRed = 3;
-                lenRed  -= 3;
+                lenRed -= 3;
             }
             if (blue.type === Const.OBJECT_TYPE_SECTOR) {
                 startBlue = 3;
-                lenBlue  -= 3;
+                lenBlue -= 3;
             }
 
             for (i = startRed; i < lenRed; i += red.bezierDegree) {
                 p = red.points;
-                redArr = [
-                    p[i].usrCoords.slice(1),
-                    p[i + 1].usrCoords.slice(1)
-                ];
+                redArr = [p[i].usrCoords.slice(1), p[i + 1].usrCoords.slice(1)];
                 if (red.bezierDegree === 3) {
                     redArr[2] = p[i + 2].usrCoords.slice(1);
                     redArr[3] = p[i + 3].usrCoords.slice(1);
@@ -2148,10 +2648,7 @@ define([
 
                 for (j = startBlue; j < lenBlue; j += blue.bezierDegree) {
                     p = blue.points;
-                    blueArr = [
-                        p[j].usrCoords.slice(1),
-                        p[j + 1].usrCoords.slice(1)
-                    ];
+                    blueArr = [p[j].usrCoords.slice(1), p[j + 1].usrCoords.slice(1)];
                     if (blue.bezierDegree === 3) {
                         blueArr[2] = p[j + 2].usrCoords.slice(1);
                         blueArr[3] = p[j + 3].usrCoords.slice(1);
@@ -2165,29 +2662,33 @@ define([
                         }
                         for (k = 0; k < intersections.length; k++) {
                             po = intersections[k];
-                            if (po[1] < -Mat.eps ||
+                            if (
+                                po[1] < -Mat.eps ||
                                 po[1] > 1 + Mat.eps ||
                                 po[2] < -Mat.eps ||
-                                po[2] > 1 + Mat.eps) {
+                                po[2] > 1 + Mat.eps
+                            ) {
                                 continue;
                             }
                             L.push(po);
                         }
-                        if (L.length > nr) {
-                            return L[nr][0];
+                        if (L.length > n) {
+                            return L[n][0];
                         }
                     }
                 }
             }
-            if (L.length > nr) {
-                return L[nr][0];
+            if (L.length > n) {
+                return L[n][0];
             }
 
             return [0, NaN, NaN];
         },
 
         bezierSegmentEval: function (t, curve) {
-            var f, x, y,
+            var f,
+                x,
+                y,
                 t1 = 1.0 - t;
 
             x = 0;
@@ -2223,14 +2724,29 @@ define([
          * @param {Number} sgn Wither 1 or -1. Needed for minor and major arcs. In case of doubt, use 1.
          */
         bezierArc: function (A, B, C, withLegs, sgn) {
-            var p1, p2, p3, p4,
-                r, phi, beta,
+            var p1,
+                p2,
+                p3,
+                p4,
+                r,
+                phi,
+                beta,
                 PI2 = Math.PI * 0.5,
                 x = B[1],
                 y = B[2],
                 z = B[0],
-                dataX = [], dataY = [],
-                co, si, ax, ay, bx, by, k, v, d, matrix;
+                dataX = [],
+                dataY = [],
+                co,
+                si,
+                ax,
+                ay,
+                bx,
+                by,
+                k,
+                v,
+                d,
+                matrix;
 
             r = this.distance(B, A);
 
@@ -2273,7 +2789,7 @@ define([
                 matrix = [
                     [1, 0, 0],
                     [x * (1 - co) + y * si, co, -si],
-                    [y * (1 - co) - x * si, si,  co]
+                    [y * (1 - co) - x * si, si, co]
                 ];
                 v = Mat.matVecMult(matrix, p1);
                 p4 = [v[0] / v[0], v[1] / v[0], v[2] / v[0]];
@@ -2286,9 +2802,9 @@ define([
                 d = Math.sqrt((ax + bx) * (ax + bx) + (ay + by) * (ay + by));
 
                 if (Math.abs(by - ay) > Mat.eps) {
-                    k = (ax + bx) * (r / d - 0.5) / (by - ay) * 8 / 3;
+                    k = ((((ax + bx) * (r / d - 0.5)) / (by - ay)) * 8) / 3;
                 } else {
-                    k = (ay + by) * (r / d - 0.5) / (ax - bx) * 8 / 3;
+                    k = ((((ay + by) * (r / d - 0.5)) / (ax - bx)) * 8) / 3;
                 }
 
                 p2 = [1, p1[1] - k * ay, p1[2] + k * ax];
@@ -2300,8 +2816,16 @@ define([
             }
 
             if (withLegs) {
-                dataX = dataX.concat([ p4[1] + 0.333 * (x - p4[1]), p4[1] + 0.666 * (x - p4[1]), x]);
-                dataY = dataY.concat([ p4[2] + 0.333 * (y - p4[2]), p4[2] + 0.666 * (y - p4[2]), y]);
+                dataX = dataX.concat([
+                    p4[1] + 0.333 * (x - p4[1]),
+                    p4[1] + 0.666 * (x - p4[1]),
+                    x
+                ]);
+                dataY = dataY.concat([
+                    p4[2] + 0.333 * (y - p4[2]),
+                    p4[2] + 0.666 * (y - p4[2]),
+                    y
+                ]);
             }
 
             return [dataX, dataY];
@@ -2321,7 +2845,11 @@ define([
          * @returns {JXG.Coords} The coordinates of the projection of the given point on the given circle.
          */
         projectPointToCircle: function (point, circle, board) {
-            var dist, P, x, y, factor,
+            var dist,
+                P,
+                x,
+                y,
+                factor,
                 M = circle.center.coords.usrCoords;
 
             if (!Type.exists(board)) {
@@ -2332,7 +2860,7 @@ define([
             if (Type.isPoint(point)) {
                 dist = point.coords.distance(Const.COORDS_BY_USER, circle.center.coords);
                 P = point.coords.usrCoords;
-            // gave us coords
+                // gave us coords
             } else {
                 dist = point.distance(Const.COORDS_BY_USER, circle.center.coords);
                 P = point.usrCoords;
@@ -2390,7 +2918,8 @@ define([
          * two endpoints q1 and q2 of the segment.
          */
         projectCoordsToSegment: function (p, q1, q2) {
-            var t, denom,
+            var t,
+                denom,
                 s = [q2[1] - q1[1], q2[2] - q1[2]],
                 v = [p[1] - q1[1], p[2] - q1[2]];
 
@@ -2406,7 +2935,7 @@ define([
             denom = Mat.innerProduct(s, s);
             t /= denom;
 
-            return [ [1, t * s[0] + q1[1], t * s[1] + q1[2]], t];
+            return [[1, t * s[0] + q1[1], t * s[1] + q1[2]], t];
         },
 
         /**
@@ -2476,19 +3005,18 @@ define([
          * the position on the curve.
          */
         projectCoordsToCurve: function (x, y, t, curve, board) {
-            var newCoords, newCoordsObj, i, j,
-                mindist, dist, lbda, v, coords, d,
-                p1, p2, res,
-                minfunc, t_new, f_new, f_old, delta, steps,
-                minX, maxX,
+            var newCoords, newCoordsObj,
+                i, j, mindist, dist, lbda,
+                v, coords, d, p1, p2, res, minfunc,
+                t_new, f_new, f_old,
+                delta, delta1, delta2, steps, minX, maxX,
                 infty = Number.POSITIVE_INFINITY;
 
             if (!Type.exists(board)) {
                 board = curve.board;
             }
 
-
-            if (Type.evaluate(curve.visProp.curvetype) === 'plot') {
+            if (Type.evaluate(curve.visProp.curvetype) === "plot") {
                 t = 0;
                 mindist = infty;
                 if (curve.numberPoints === 0) {
@@ -2543,7 +3071,8 @@ define([
                 }
 
                 newCoordsObj = new Coords(Const.COORDS_BY_USER, newCoords, board);
-            } else {   // 'parameter', 'polar', 'functiongraph'
+            } else {
+                // 'parameter', 'polar', 'functiongraph'
                 /** @ignore */
                 minfunc = function (t) {
                     var dx, dy;
@@ -2566,7 +3095,7 @@ define([
                 for (i = 0; i < steps; i++) {
                     f_new = minfunc(t_new);
 
-                    if (f_new < f_old || f_old === Infinity) {
+                    if (f_new < f_old || f_old === Infinity || isNaN(f_old)) {
                         t = t_new;
                         f_old = f_new;
                     }
@@ -2574,26 +3103,51 @@ define([
                     t_new += delta;
                 }
 
-                //t = Numerics.root(Numerics.D(minfunc), t);
-                t = Numerics.fminbr(minfunc, [Math.max(t - delta, minX), Math.min(t + delta, maxX)]);
+                // t = Numerics.root(Numerics.D(minfunc), t);
+                // Ensure that minfunc is defined on the
+                // enclsoing interval [t-delta1, t+delta2]
+                delta1 = delta;
+                for (i = 0;
+                    i < 20 && isNaN(minfunc(t - delta1));
+                    i++, delta1 *= 0.5);
+
+                if (isNaN(minfunc(t - delta1))) {
+                    delta1 = 0.0;
+                }
+                delta2 = delta;
+                for (i = 0;
+                    i < 20 && isNaN(minfunc(t + delta2));
+                    i++, delta2 *= 0.5);
+                if (isNaN(minfunc(t + delta2))) {
+                    delta2 = 0.0;
+                }
+
+                t = Numerics.fminbr(minfunc, [
+                    Math.max(t - delta1, minX),
+                    Math.min(t + delta2, maxX)
+                ]);
 
                 // Distinction between closed and open curves is not necessary.
                 // If closed, the cyclic projection shift will work anyhow
                 // if (Math.abs(curve.X(minX) - curve.X(maxX)) < Mat.eps &&
                 //     Math.abs(curve.Y(minX) - curve.Y(maxX)) < Mat.eps) {
                 //     // Cyclically
-                //     if (t < minX) {
+                //     if (t < minX) {console.log(t)
                 //         t = maxX + t - minX;
                 //     }
                 //     if (t > maxX) {
                 //         t = minX + t - maxX;
                 //     }
                 // } else {
-                    t = (t < minX) ? minX : t;
-                    t = (t > maxX) ? maxX : t;
+                t = t < minX ? minX : t;
+                t = t > maxX ? maxX : t;
                 // }
 
-                newCoordsObj = new Coords(Const.COORDS_BY_USER, [curve.X(t), curve.Y(t)], board);
+                newCoordsObj = new Coords(
+                    Const.COORDS_BY_USER,
+                    [curve.X(t), curve.Y(t)],
+                    board
+                );
             }
 
             return [curve.updateTransform(newCoordsObj), t];
@@ -2611,7 +3165,8 @@ define([
                 len = pol.vertices.length,
                 d_best = Infinity,
                 d,
-                projection, proj,
+                projection,
+                proj,
                 bestprojection;
 
             for (i = 0; i < len - 1; i++) {
@@ -2649,8 +3204,16 @@ define([
          * the position on the turtle.
          */
         projectPointToTurtle: function (point, turtle, board) {
-            var newCoords, t, x, y, i, dist, el, minEl,
-                res, newPos,
+            var newCoords,
+                t,
+                x,
+                y,
+                i,
+                dist,
+                el,
+                minEl,
+                res,
+                newPos,
                 np = 0,
                 npmin = 0,
                 mindist = Number.POSITIVE_INFINITY,
@@ -2704,7 +3267,9 @@ define([
          * @param {JXG.Board} [board]
          */
         projectPointToBoard: function (point, board) {
-            var i, l, c,
+            var i,
+                l,
+                c,
                 brd = board || point.board,
                 // comparison factor, point coord idx, bbox idx, 1st bbox corner x & y idx, 2nd bbox corner x & y idx
                 config = [
@@ -2724,12 +3289,15 @@ define([
                 c = config[i];
                 if (c[0] * coords.usrCoords[c[1]] < c[0] * bbox[c[2]]) {
                     // define border
-                    l = Mat.crossProduct([1, bbox[c[3]], bbox[c[4]]], [1, bbox[c[5]], bbox[c[6]]]);
+                    l = Mat.crossProduct(
+                        [1, bbox[c[3]], bbox[c[4]]],
+                        [1, bbox[c[5]], bbox[c[6]]]
+                    );
                     l[3] = 0;
                     l = Mat.normalize(l);
 
                     // project point
-                    coords = this.projectPointToLine({coords: coords}, {stdform: l}, brd);
+                    coords = this.projectPointToLine({ coords: coords }, { stdform: l }, brd);
                 }
             }
 
@@ -2794,12 +3362,16 @@ define([
                 d = 0,
                 makeFct = function (which, trig) {
                     return function (t, suspendUpdate) {
-                        var t1 = (t % pi2 + pi2) % pi2,
+                        var t1 = ((t % pi2) + pi2) % pi2,
                             j = Math.floor(t1 / pi2_n) % nr;
 
                         if (!suspendUpdate) {
                             d = points[0].Dist(points[diag]);
-                            beta = Mat.Geometry.rad([points[0].X() + 1, points[0].Y()], points[0], points[diag % nr]);
+                            beta = Mat.Geometry.rad(
+                                [points[0].X() + 1, points[0].Y()],
+                                points[0],
+                                points[diag % nr]
+                            );
                         }
 
                         if (isNaN(j)) {
@@ -2812,13 +3384,15 @@ define([
                     };
                 };
 
-            return [makeFct('X', 'cos'), makeFct('Y', 'sin'), 0, pi2];
+            return [makeFct("X", "cos"), makeFct("Y", "sin"), 0, pi2];
         },
-
 
         meet3Planes: function (n1, d1, n2, d2, n3, d3) {
             var p = [0, 0, 0],
-                n31, n12, n23, denom,
+                n31,
+                n12,
+                n23,
+                denom,
                 i;
 
             n31 = Mat.crossProduct(n3, n1);
@@ -2831,9 +3405,10 @@ define([
             return p;
         },
 
-
         meetPlanePlane: function (v11, v12, v21, v22) {
-            var i, no1, no2,
+            var i,
+                no1,
+                no2,
                 v = [0, 0, 0],
                 w = [0, 0, 0];
 
@@ -2855,7 +3430,10 @@ define([
         project3DTo3DPlane: function (point, normal, foot) {
             // TODO: homogeneous 3D coordinates
             var sol = [0, 0, 0],
-                le, d1, d2, lbda;
+                le,
+                d1,
+                d2,
+                lbda;
 
             foot = foot || [0, 0, 0];
 
@@ -2891,9 +3469,8 @@ define([
                 return [s1, e1, s2, e2];
             }
             return null;
-        },
+        }
+    }
+);
 
-    });
-
-    return Mat.Geometry;
-});
+export default Mat.Geometry;

@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2022
+    Copyright 2008-2023
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -25,10 +25,9 @@
     GNU Lesser General Public License for more details.
 
     You should have received a copy of the GNU Lesser General Public License and
-    the MIT License along with JSXGraph. If not, see <http://www.gnu.org/licenses/>
-    and <http://opensource.org/licenses/MIT/>.
+    the MIT License along with JSXGraph. If not, see <https://www.gnu.org/licenses/>
+    and <https://opensource.org/licenses/MIT/>.
  */
-
 
 /*global JXG: true, define: true, AMprocessNode: true, MathJax: true, document: true, window: true */
 
@@ -40,17 +39,6 @@
 /*jslint nomen: true, plusplus: true, newcap: true, unparam: true*/
 /*eslint no-unused-vars: "off"*/
 
-/* depends:
- jxg
- options
- base/coords
- base/constants
- math/math
- math/geometry
- utils/type
- utils/env
-*/
-
 /**
  * @fileoverview JSXGraph can use various technologies to render the contents of a construction, e.g.
  * SVG, VML, and HTML5 Canvas. To accomplish this, The rendering and the logic and control mechanisms
@@ -59,120 +47,154 @@
  * renderers is the class AbstractRenderer defined in this file.
  */
 
-define([
-    'jxg', 'options', 'base/coords', 'base/constants', 'math/math', 'math/geometry', 'utils/type', 'utils/env'
-], function (JXG, Options, Coords, Const, Mat, Geometry, Type, Env) {
+import JXG from "../jxg";
+import Options from "../options";
+import Coords from "../base/coords";
+import Const from "../base/constants";
+import Mat from "../math/math";
+import Geometry from "../math/geometry";
+import Type from "../utils/type";
+import Env from "../utils/env";
 
-    "use strict";
+/**
+ * <p>This class defines the interface to the graphics part of JSXGraph. This class is an abstract class, it
+ * actually does not render anything. This is up to the {@link JXG.SVGRenderer}, {@link JXG.VMLRenderer},
+ * and {@link JXG.CanvasRenderer} classes. We strongly discourage you from using the methods in these classes
+ * directly. Only the methods which are defined in this class and are not marked as private are guaranteed
+ * to exist in any renderer instance you can access via {@link JXG.Board#renderer}. But not all methods may
+ * work as expected.</p>
+ * <p>The methods of this renderer can be divided into different categories:
+ * <dl>
+ *     <dt>Draw basic elements</dt>
+ *     <dd>In this category we find methods to draw basic elements like {@link JXG.Point}, {@link JXG.Line},
+ *     and {@link JXG.Curve} as well as assisting methods tightly bound to these basic painters. You do not
+ *     need to implement these methods in a descendant renderer but instead implement the primitive drawing
+ *     methods described below. This approach is encouraged when you're using a XML based rendering engine
+ *     like VML and SVG. If you want to use a bitmap based rendering technique you are supposed to override
+ *     these methods instead of the primitive drawing methods.</dd>
+ *     <dt>Draw primitives</dt>
+ *     <dd>This category summarizes methods to handle primitive nodes. As creation and management of these nodes
+ *     is different among different the rendering techniques most of these methods are purely virtual and need
+ *     proper implementation if you choose to not overwrite the basic element drawing methods.</dd>
+ *     <dt>Attribute manipulation</dt>
+ *     <dd>In XML based renders you have to manipulate XML nodes and their attributes to change the graphics.
+ *     For that purpose attribute manipulation methods are defined to set the color, opacity, and other things.
+ *     Please note that some of these methods are required in bitmap based renderers, too, because some elements
+ *     like {@link JXG.Text} can be HTML nodes floating over the construction.</dd>
+ *     <dt>Renderer control</dt>
+ *     <dd>Methods to clear the drawing board or to stop and to resume the rendering engine.</dd>
+ * </dl></p>
+ * @class JXG.AbstractRenderer
+ * @constructor
+ * @see JXG.SVGRenderer
+ * @see JXG.VMLRenderer
+ * @see JXG.CanvasRenderer
+ */
+JXG.AbstractRenderer = function () {
+    // WHY THIS IS A CLASS INSTEAD OF A SINGLETON OBJECT:
+    //
+    // The renderers need to keep track of some stuff which is not always the same on different boards,
+    // like enhancedRendering, reference to the container object, and resolution in VML. Sure, those
+    // things could be stored in board. But they are rendering related and JXG.Board is already very
+    // very big.
+    //
+    // And we can't save the rendering related data in {SVG,VML,Canvas}Renderer and make only the
+    // JXG.AbstractRenderer a singleton because of that:
+    //
+    // Given an object o with property a set to true
+    //     var o = {a: true};
+    // and a class c doing nothing
+    //     c = function() {};
+    // Set c's prototype to o
+    //     c.prototype = o;
+    // and create an instance of c we get i.a to be true
+    //     i = new c();
+    //     i.a;
+    //     > true
+    // But we can overwrite this property via
+    //     c.prototype.a = false;
+    //     i.a;
+    //     > false
 
     /**
-     * <p>This class defines the interface to the graphics part of JSXGraph. This class is an abstract class, it
-     * actually does not render anything. This is up to the {@link JXG.SVGRenderer}, {@link JXG.VMLRenderer},
-     * and {@link JXG.CanvasRenderer} classes. We strongly discourage you from using the methods in these classes
-     * directly. Only the methods which are defined in this class and are not marked as private are guaranteed
-     * to exist in any renderer instance you can access via {@link JXG.Board#renderer}. But not all methods may
-     * work as expected.</p>
-     * <p>The methods of this renderer can be divided into different categories:
-     * <dl>
-     *     <dt>Draw basic elements</dt>
-     *     <dd>In this category we find methods to draw basic elements like {@link JXG.Point}, {@link JXG.Line},
-     *     and {@link JXG.Curve} as well as assisting methods tightly bound to these basic painters. You do not
-     *     need to implement these methods in a descendant renderer but instead implement the primitive drawing
-     *     methods described below. This approach is encouraged when you're using a XML based rendering engine
-     *     like VML and SVG. If you want to use a bitmap based rendering technique you are supposed to override
-     *     these methods instead of the primitive drawing methods.</dd>
-     *     <dt>Draw primitives</dt>
-     *     <dd>This category summarizes methods to handle primitive nodes. As creation and management of these nodes
-     *     is different among different the rendering techniques most of these methods are purely virtual and need
-     *     proper implementation if you choose to not overwrite the basic element drawing methods.</dd>
-     *     <dt>Attribute manipulation</dt>
-     *     <dd>In XML based renders you have to manipulate XML nodes and their attributes to change the graphics.
-     *     For that purpose attribute manipulation methods are defined to set the color, opacity, and other things.
-     *     Please note that some of these methods are required in bitmap based renderers, too, because some elements
-     *     like {@link JXG.Text} can be HTML nodes floating over the construction.</dd>
-     *     <dt>Renderer control</dt>
-     *     <dd>Methods to clear the drawing board or to stop and to resume the rendering engine.</dd>
-     * </dl></p>
-     * @class JXG.AbstractRenderer
-     * @constructor
-     * @see JXG.SVGRenderer
-     * @see JXG.VMLRenderer
-     * @see JXG.CanvasRenderer
+     * The vertical offset for {@link Text} elements. Every {@link Text} element will
+     * be placed this amount of pixels below the user given coordinates.
+     * @type Number
+     * @default 0
      */
-    JXG.AbstractRenderer = function () {
+    this.vOffsetText = 0;
 
-        // WHY THIS IS A CLASS INSTEAD OF A SINGLETON OBJECT:
-        //
-        // The renderers need to keep track of some stuff which is not always the same on different boards,
-        // like enhancedRendering, reference to the container object, and resolution in VML. Sure, those
-        // things could be stored in board. But they are rendering related and JXG.Board is already very
-        // very big.
-        //
-        // And we can't save the rendering related data in {SVG,VML,Canvas}Renderer and make only the
-        // JXG.AbstractRenderer a singleton because of that:
-        //
-        // Given an object o with property a set to true
-        //     var o = {a: true};
-        // and a class c doing nothing
-        //     c = function() {};
-        // Set c's prototype to o
-        //     c.prototype = o;
-        // and create an instance of c we get i.a to be true
-        //     i = new c();
-        //     i.a;
-        //     > true
-        // But we can overwrite this property via
-        //     c.prototype.a = false;
-        //     i.a;
-        //     > false
+    /**
+     * If this property is set to <tt>true</tt> the visual properties of the elements are updated
+     * on every update. Visual properties means: All the stuff stored in the
+     * {@link JXG.GeometryElement#visProp} property won't be set if enhancedRendering is <tt>false</tt>
+     * @type Boolean
+     * @default true
+     */
+    this.enhancedRendering = true;
 
-        /**
-         * The vertical offset for {@link Text} elements. Every {@link Text} element will
-         * be placed this amount of pixels below the user given coordinates.
-         * @type Number
-         * @default 0
-         */
-        this.vOffsetText = 0;
+    /**
+     * The HTML element that stores the JSXGraph board in it.
+     * @type Node
+     */
+    this.container = null;
 
-        /**
-         * If this property is set to <tt>true</tt> the visual properties of the elements are updated
-         * on every update. Visual properties means: All the stuff stored in the
-         * {@link JXG.GeometryElement#visProp} property won't be set if enhancedRendering is <tt>false</tt>
-         * @type Boolean
-         * @default true
-         */
-        this.enhancedRendering = true;
+    /**
+     * This is used to easily determine which renderer we are using
+     * @example if (board.renderer.type === 'vml') {
+     *     // do something
+     * }
+     * @type String
+     */
+    this.type = "";
 
-        /**
-         * The HTML element that stores the JSXGraph board in it.
-         * @type Node
-         */
-        this.container = null;
+    /**
+     * True if the browsers' SVG engine supports foreignObject.
+     * Not supported browsers are IE 9 - 11.
+     * It is tested in svg renderer.
+     *
+     * @type Boolean
+     * @private
+     */
+    this.supportsForeignObject = false;
 
-        /**
-         * This is used to easily determine which renderer we are using
-         * @example if (board.renderer.type === 'vml') {
-          *     // do something
-         * }
-         * @type String
-         */
-        this.type = '';
+    /**
+     * Defines dash patterns. Sizes are in pixel.
+     * Defined styles are:
+     * <ol>
+     * <li> 2 dash, 2 space</li>
+     * <li> 5 dash, 5 space</li>
+     * <li> 10 dash, 10 space</li>
+     * <li> 20 dash, 20 space</li>
+     * <li> 20 dash, 10 space, 10 dash, 10 space</li>
+     * <li> 20 dash, 5 space, 10 dash, 5 space</li>
+     * <li> 0 dash, 5 space (dotted line)</li>
+     * </ol>
+     * This means, the numbering is <b>1-based</b>.
+     * Solid lines are set with dash:0.
+     * If the object's attribute "dashScale:true" the dash pattern is multiplied by
+     * strokeWidth / 2.
+     *
+     * @type Array
+     * @default [[2, 2], [5, 5], [10, 10], [20, 20], [20, 10, 10, 10], [20, 5, 10, 5], [0, 5]]
+     * @see JXG.GeometryElement#dash
+     * @see JXG.GeometryElement#dashScale
+     */
+    this.dashArray = [
+        [2, 2],
+        [5, 5],
+        [10, 10],
+        [20, 20],
+        [20, 10, 10, 10],
+        [20, 5, 10, 5],
+        [0, 5]
+    ];
 
-        /**
-         * True if the browsers' SVG engine supports foreignObject.
-         * Not supported browsers are IE 9 - 11.
-         * All other browsers return ture, since it is tested with
-         * document.implementation.hasFeature() which is deprecated.
-         *
-         * @type Boolean
-         * @private
-         */
-        this.supportsForeignObject = false;
+};
 
-    };
-
-    JXG.extend(JXG.AbstractRenderer.prototype, /** @lends JXG.AbstractRenderer.prototype */ {
-
+JXG.extend(
+    JXG.AbstractRenderer.prototype,
+    /** @lends JXG.AbstractRenderer.prototype */ {
         /* ******************************** *
          *    private methods               *
          *    should not be called from     *
@@ -195,27 +217,35 @@ define([
                 if (!Type.evaluate(el.visProp.draft)) {
                     if (!not.stroke) {
                         if (el.highlighted) {
-                            this.setObjectStrokeColor(el,
+                            this.setObjectStrokeColor(
+                                el,
                                 el.visProp.highlightstrokecolor,
-                                el.visProp.highlightstrokeopacity);
+                                el.visProp.highlightstrokeopacity
+                            );
                             this.setObjectStrokeWidth(el, el.visProp.highlightstrokewidth);
                         } else {
-                            this.setObjectStrokeColor(el,
+                            this.setObjectStrokeColor(
+                                el,
                                 el.visProp.strokecolor,
-                                el.visProp.strokeopacity);
+                                el.visProp.strokeopacity
+                            );
                             this.setObjectStrokeWidth(el, el.visProp.strokewidth);
                         }
                     }
 
                     if (!not.fill) {
                         if (el.highlighted) {
-                            this.setObjectFillColor(el,
+                            this.setObjectFillColor(
+                                el,
                                 el.visProp.highlightfillcolor,
-                                el.visProp.highlightfillopacity);
+                                el.visProp.highlightfillopacity
+                            );
                         } else {
-                            this.setObjectFillColor(el,
+                            this.setObjectFillColor(
+                                el,
                                 el.visProp.fillcolor,
-                                el.visProp.fillopacity);
+                                el.visProp.fillopacity
+                            );
                         }
                     }
 
@@ -227,9 +257,10 @@ define([
                         this.setShadow(el);
                     }
 
-                    if (!not.gradient) {
-                        this.setShadow(el);
-                    }
+                    // if (!not.gradient) {
+                    //     // this.setGradient(el);
+                    //     this.setShadow(el);
+                    // }
 
                     if (!not.tabindex) {
                         this.setTabindex(el);
@@ -246,7 +277,7 @@ define([
          * @returns {String} 'highlight' if highlighted, otherwise the ampty string '' is returned.
          * @private
          */
-        _getHighlighted: function(el) {
+        _getHighlighted: function (el) {
             var isTrace = false,
                 hl;
 
@@ -257,9 +288,9 @@ define([
             }
 
             if (!isTrace && Type.exists(el.board.highlightedObjects[el.id])) {
-                hl = 'highlight';
+                hl = "highlight";
             } else {
-                hl = '';
+                hl = "";
             }
             return hl;
         },
@@ -283,21 +314,24 @@ define([
                 face = Options.normalizePointFace(Type.evaluate(el.visProp.face));
 
             // determine how the point looks like
-            if (face === 'o') {
-                prim = 'ellipse';
-            } else if (face === '[]') {
-                prim = 'rect';
+            if (face === "o") {
+                prim = "ellipse";
+            } else if (face === "[]") {
+                prim = "rect";
             } else {
-                // cross/x, diamond/<>, triangleup/a/^, triangledown/v, triangleleft/<,
-                // triangleright/>, plus/+,
-                prim = 'path';
+                // cross/x, diamond/<>, triangleup/A/^, triangledown/v, triangleleft/<,
+                // triangleright/>, plus/+, |, -
+                prim = "path";
             }
 
-            el.rendNode = this.appendChildPrim(this.createPrim(prim, el.id), Type.evaluate(el.visProp.layer));
+            el.rendNode = this.appendChildPrim(
+                this.createPrim(prim, el.id),
+                Type.evaluate(el.visProp.layer)
+            );
             this.appendNodesToElement(el, prim);
 
             // adjust visual propertys
-            this._updateVisual(el, {dash: true, shadow: true}, true);
+            this._updateVisual(el, { dash: true, shadow: true }, true);
 
             // By now we only created the xml nodes and set some styles, in updatePoint
             // the attributes are filled with data.
@@ -322,24 +356,39 @@ define([
                 s1;
 
             if (!isNaN(el.coords.scrCoords[2] + el.coords.scrCoords[1])) {
-                if (unit === 'user') {
-                    size *= Math.sqrt(el.board.unitX * el.board.unitY);
+                if (unit === "user") {
+                    size *= Math.sqrt(Math.abs(el.board.unitX * el.board.unitY));
                 }
-                size *= ((!el.board || !zoom) ?
-                    1.0 : Math.sqrt(el.board.zoomX * el.board.zoomY));
-                s1 = (size === 0) ? 0 : size + 1;
+                size *= !el.board || !zoom ? 1.0 : Math.sqrt(el.board.zoomX * el.board.zoomY);
+                s1 = size === 0 ? 0 : size + 1;
 
-                if (face === 'o') { // circle
-                    this.updateEllipsePrim(el.rendNode, el.coords.scrCoords[1],
-                         el.coords.scrCoords[2], s1, s1);
-                } else if (face === '[]') { // rectangle
-                    this.updateRectPrim(el.rendNode, el.coords.scrCoords[1] - size,
-                         el.coords.scrCoords[2] - size, size * 2, size * 2);
-                } else { // x, +, <>, ^, v, <, >
-                    this.updatePathPrim(el.rendNode,
-                        this.updatePathStringPoint(el, size, face), el.board);
+                if (face === "o") {
+                    // circle
+                    this.updateEllipsePrim(
+                        el.rendNode,
+                        el.coords.scrCoords[1],
+                        el.coords.scrCoords[2],
+                        s1,
+                        s1
+                    );
+                } else if (face === "[]") {
+                    // rectangle
+                    this.updateRectPrim(
+                        el.rendNode,
+                        el.coords.scrCoords[1] - size,
+                        el.coords.scrCoords[2] - size,
+                        size * 2,
+                        size * 2
+                    );
+                } else {
+                    // x, +, <>, ^, v, <, >
+                    this.updatePathPrim(
+                        el.rendNode,
+                        this.updatePathStringPoint(el, size, face),
+                        el.board
+                    );
                 }
-                this._updateVisual(el, {dash: false, shadow: false});
+                this._updateVisual(el, { dash: false, shadow: false });
                 this.setShadow(el);
             }
         },
@@ -388,9 +437,11 @@ define([
          * @see JXG.AbstractRenderer#updateLine
          */
         drawLine: function (el) {
-            el.rendNode = this.appendChildPrim(this.createPrim('line', el.id),
-                                    Type.evaluate(el.visProp.layer));
-            this.appendNodesToElement(el, 'lines');
+            el.rendNode = this.appendChildPrim(
+                this.createPrim("line", el.id),
+                Type.evaluate(el.visProp.layer)
+            );
+            this.appendNodesToElement(el, "lines");
             this.updateLine(el);
         },
 
@@ -403,7 +454,7 @@ define([
          */
         updateLine: function (el) {
             this._updateVisual(el);
-            this.updatePathWithArrowHeads(el);  // Calls the renderer primitive
+            this.updatePathWithArrowHeads(el); // Calls the renderer primitive
             this.setLineCap(el);
         },
 
@@ -419,8 +470,11 @@ define([
          * @see JXG.AbstractRenderer#updateCurve
          */
         drawCurve: function (el) {
-            el.rendNode = this.appendChildPrim(this.createPrim('path', el.id), Type.evaluate(el.visProp.layer));
-            this.appendNodesToElement(el, 'path');
+            el.rendNode = this.appendChildPrim(
+                this.createPrim("path", el.id),
+                Type.evaluate(el.visProp.layer)
+            );
+            this.appendNodesToElement(el, "path");
             this.updateCurve(el);
         },
 
@@ -457,14 +511,17 @@ define([
          * @see JXG.AbstractRenderer#makeArrows
          * @see JXG.AbstractRenderer#getArrowHeadData
          */
-        updatePathWithArrowHeads: function(el, doHighlight) {
+        updatePathWithArrowHeads: function (el, doHighlight) {
             var ev = el.visProp,
                 hl = doHighlight ? 'highlight' : '',
                 w,
                 arrowData;
 
             if (doHighlight && ev.highlightstrokewidth) {
-                w = Math.max(Type.evaluate(ev.highlightstrokewidth), Type.evaluate(ev.strokewidth));
+                w = Math.max(
+                    Type.evaluate(ev.highlightstrokewidth),
+                    Type.evaluate(ev.strokewidth)
+                );
             } else {
                 w = Type.evaluate(ev.strokewidth);
             }
@@ -499,25 +556,26 @@ define([
          *
          * @private
          */
-        getArrowHeadData: function(el, strokewidth, hl) {
+        getArrowHeadData: function (el, strokewidth, hl) {
             var minlen = Mat.eps,
-                typeFirst, typeLast,
+                typeFirst,
+                typeLast,
                 offFirst = 0,
                 offLast = 0,
                 sizeFirst = 0,
                 sizeLast = 0,
                 ev_fa = Type.evaluate(el.visProp.firstarrow),
                 ev_la = Type.evaluate(el.visProp.lastarrow),
-                off, size;
+                off,
+                size;
 
             /*
                Handle arrow heads.
 
                The default arrow head is an isosceles triangle with base length 10 units and height 10 units.
-               These 10 units are scaled to strokeWidth * arrowSize pixels pixels.
+               These 10 units are scaled to strokeWidth * arrowSize pixels.
             */
             if (ev_fa || ev_la) {
-
                 if (Type.exists(ev_fa.type)) {
                     typeFirst = Type.evaluate(ev_fa.type);
                 } else {
@@ -542,8 +600,8 @@ define([
                     if (Type.exists(ev_fa.size)) {
                         size = Type.evaluate(ev_fa.size);
                     }
-                    if (hl !== '' && Type.exists(ev_fa[hl + 'size'])) {
-                        size = Type.evaluate(ev_fa[hl + 'size']);
+                    if (hl !== "" && Type.exists(ev_fa[hl + "size"])) {
+                        size = Type.evaluate(ev_fa[hl + "size"]);
                     }
 
                     off = strokewidth * size;
@@ -551,10 +609,10 @@ define([
                         off *= 0.5;
                         minlen += strokewidth * size;
                     } else if (typeFirst === 3) {
-                        off = strokewidth * size / 3;
+                        off = (strokewidth * size) / 3;
                         minlen += strokewidth;
                     } else if (typeFirst === 4 || typeFirst === 5 || typeFirst === 6) {
-                        off = strokewidth * size / 1.5;
+                        off = (strokewidth * size) / 1.5;
                         minlen += strokewidth * size;
                     } else if (typeFirst === 7) {
                         off = 0;
@@ -572,18 +630,18 @@ define([
                     if (Type.exists(ev_la.size)) {
                         size = Type.evaluate(ev_la.size);
                     }
-                    if (hl !== '' && Type.exists(ev_la[hl + 'size'])) {
-                        size = Type.evaluate(ev_la[hl + 'size']);
+                    if (hl !== "" && Type.exists(ev_la[hl + "size"])) {
+                        size = Type.evaluate(ev_la[hl + "size"]);
                     }
                     off = strokewidth * size;
                     if (typeLast === 2) {
                         off *= 0.5;
                         minlen += strokewidth * size;
                     } else if (typeLast === 3) {
-                        off = strokewidth * size / 3;
+                        off = (strokewidth * size) / 3;
                         minlen += strokewidth;
                     } else if (typeLast === 4 || typeLast === 5 || typeLast === 6) {
-                        off = strokewidth * size / 1.5;
+                        off = (strokewidth * size) / 1.5;
                         minlen += strokewidth * size;
                     } else if (typeLast === 7) {
                         off = 0;
@@ -609,7 +667,7 @@ define([
                 sizeFirst: sizeFirst,
                 sizeLast: sizeLast,
                 showFirst: 1, // Show arrow head. 0 if the distance is too small
-                showLast: 1,  // Show arrow head. 0 if the distance is too small
+                showLast: 1, // Show arrow head. 0 if the distance is too small
                 minLen: minlen,
                 strokeWidth: strokewidth
             };
@@ -632,8 +690,9 @@ define([
          * @see JXG.AbstractRenderer#getPositionArrowHead
          *
          */
-        updateLineWithEndings: function(el, arrowData) {
-            var c1, c2,
+        updateLineWithEndings: function (el, arrowData) {
+            var c1,
+                c2,
                 // useTotalLength = true,
                 margin = null;
 
@@ -645,9 +704,14 @@ define([
             this.handleTouchpoints(el, c1, c2, arrowData);
             this.getPositionArrowHead(el, c1, c2, arrowData);
 
-            this.updateLinePrim(el.rendNode,
-                c1.scrCoords[1], c1.scrCoords[2],
-                c2.scrCoords[1], c2.scrCoords[2], el.board);
+            this.updateLinePrim(
+                el.rendNode,
+                c1.scrCoords[1],
+                c1.scrCoords[2],
+                c2.scrCoords[1],
+                c2.scrCoords[2],
+                el.board
+            );
 
             return this;
         },
@@ -665,7 +729,7 @@ define([
          * @see JXG.AbstractRenderer#updateCurve
          *
          */
-        updatePath: function(el) {
+        updatePath: function (el) {
             if (Type.evaluate(el.visProp.handdrawing)) {
                 this.updatePathPrim(el.rendNode, this.updatePathStringBezierPrim(el), el.board);
             } else {
@@ -679,52 +743,58 @@ define([
          * Shorten the length of a line element such that the arrow head touches
          * the start or end point and such that the arrow head ends exactly
          * at the start / end position of the line.
+         * <p>
+         * The Coords objects c1 and c2 are changed in place. In object a, the Boolean properties
+         * 'showFirst' and 'showLast' are set.
          *
          * @param  {JXG.Line} el Reference to the line object that gets arrow heads.
          * @param  {JXG.Coords} c1  Coords of the first point of the line (after {@link JXG.Math.Geometry#calcStraight}).
          * @param  {JXG.Coords} c2  Coords of the second point of the line (after {@link JXG.Math.Geometry#calcStraight}).
-         * @param  {Object}  a
-         * @return {object} Object containing how much the line has to be shortened.
-         * Data structure: {c1, c2, d1x, d1y, d2x, d2y, sFirst, sLast}. sFirst and sLast is the length by which
-         * firstArrow and lastArrow have to shifted such that there is no gap between arrow head and line.
-         * Additionally, if one of these values is zero, the arrow is not displayed. This is the case, if the
-         * line length is very short.
+         * @param  {Object}  a Object { evFirst: Boolean, evLast: Boolean} containing information about arrow heads.
+         * @see JXG.AbstractRenderer#getArrowHeadData
+         *
          */
-         getPositionArrowHead: function(el, c1, c2, a) {
+        getPositionArrowHead: function (el, c1, c2, a) {
             var d, d1x, d1y, d2x, d2y;
 
-            /*
-               Handle arrow heads.
+            //    Handle arrow heads.
 
-               The default arrow head (type==1) is an isosceles triangle with base length 10 units and height 10 units.
-               These 10 units are scaled to strokeWidth * arrowSize pixels pixels.
-            */
+            //    The default arrow head (type==1) is an isosceles triangle with base length 10 units and height 10 units.
+            //    These 10 units are scaled to strokeWidth * arrowSize pixels.
             if (a.evFirst || a.evLast) {
                 // Correct the position of the arrow heads
                 d1x = d1y = d2x = d2y = 0.0;
                 d = c1.distance(Const.COORDS_BY_SCREEN, c2);
 
-                if (a.evFirst &&
-                    el.board.renderer.type !== 'vml') {
+                if (a.evFirst && el.board.renderer.type !== "vml") {
                     if (d >= a.minLen) {
-                        d1x = (c2.scrCoords[1] - c1.scrCoords[1]) * a.offFirst / d;
-                        d1y = (c2.scrCoords[2] - c1.scrCoords[2]) * a.offFirst / d;
+                        d1x = ((c2.scrCoords[1] - c1.scrCoords[1]) * a.offFirst) / d;
+                        d1y = ((c2.scrCoords[2] - c1.scrCoords[2]) * a.offFirst) / d;
                     } else {
                         a.showFirst = 0;
                     }
                 }
 
-                if (a.evLast &&
-                    el.board.renderer.type !== 'vml') {
+                if (a.evLast && el.board.renderer.type !== "vml") {
                     if (d >= a.minLen) {
-                        d2x = (c2.scrCoords[1] - c1.scrCoords[1]) * a.offLast / d;
-                        d2y = (c2.scrCoords[2] - c1.scrCoords[2]) * a.offLast / d;
+                        d2x = ((c2.scrCoords[1] - c1.scrCoords[1]) * a.offLast) / d;
+                        d2y = ((c2.scrCoords[2] - c1.scrCoords[2]) * a.offLast) / d;
                     } else {
                         a.showLast = 0;
                     }
                 }
-                c1.setCoordinates(Const.COORDS_BY_SCREEN, [c1.scrCoords[1] + d1x, c1.scrCoords[2] + d1y], false, true);
-                c2.setCoordinates(Const.COORDS_BY_SCREEN, [c2.scrCoords[1] - d2x, c2.scrCoords[2] - d2y], false, true);
+                c1.setCoordinates(
+                    Const.COORDS_BY_SCREEN,
+                    [c1.scrCoords[1] + d1x, c1.scrCoords[2] + d1y],
+                    false,
+                    true
+                );
+                c2.setCoordinates(
+                    Const.COORDS_BY_SCREEN,
+                    [c2.scrCoords[1] - d2x, c2.scrCoords[2] - d2y],
+                    false,
+                    true
+                );
             }
 
             return this;
@@ -737,34 +807,49 @@ define([
          * @param {JXG.Coords} c1 Coordinates of the start of the line. The coordinates are changed in place.
          * @param {JXG.Coords} c2 Coordinates of the end of the line. The coordinates are changed in place.
          * @param {Object} a
+         * @see JXG.AbstractRenderer#getArrowHeadData
          */
-        handleTouchpoints: function(el, c1, c2, a) {
-            var s1, s2, d,
-                d1x, d1y, d2x, d2y;
+        handleTouchpoints: function (el, c1, c2, a) {
+            var s1, s2, d, d1x, d1y, d2x, d2y;
 
             if (a.evFirst || a.evLast) {
                 d = d1x = d1y = d2x = d2y = 0.0;
 
-                s1 = Type.evaluate(el.point1.visProp.size) + Type.evaluate(el.point1.visProp.strokewidth);
-                s2 = Type.evaluate(el.point2.visProp.size) + Type.evaluate(el.point2.visProp.strokewidth);
+                s1 = Type.evaluate(el.point1.visProp.size) +
+                    Type.evaluate(el.point1.visProp.strokewidth);
+
+                s2 = Type.evaluate(el.point2.visProp.size) +
+                    Type.evaluate(el.point2.visProp.strokewidth);
 
                 // Handle touchlastpoint /touchfirstpoint
-                if (a.evFirst && Type.evaluate(el.visProp.touchfirstpoint)) {
+                if (a.evFirst && Type.evaluate(el.visProp.touchfirstpoint) &&
+                        Type.evaluate(el.point1.visProp.visible)) {
                     d = c1.distance(Const.COORDS_BY_SCREEN, c2);
                     //if (d > s) {
-                        d1x = (c2.scrCoords[1] - c1.scrCoords[1]) * s1 / d;
-                        d1y = (c2.scrCoords[2] - c1.scrCoords[2]) * s1 / d;
+                    d1x = ((c2.scrCoords[1] - c1.scrCoords[1]) * s1) / d;
+                    d1y = ((c2.scrCoords[2] - c1.scrCoords[2]) * s1) / d;
                     //}
                 }
-                if (a.evLast && Type.evaluate(el.visProp.touchlastpoint)) {
+                if (a.evLast && Type.evaluate(el.visProp.touchlastpoint) &&
+                        Type.evaluate(el.point2.visProp.visible)) {
                     d = c1.distance(Const.COORDS_BY_SCREEN, c2);
                     //if (d > s) {
-                        d2x = (c2.scrCoords[1] - c1.scrCoords[1]) * s2 / d;
-                        d2y = (c2.scrCoords[2] - c1.scrCoords[2]) * s2 / d;
+                    d2x = ((c2.scrCoords[1] - c1.scrCoords[1]) * s2) / d;
+                    d2y = ((c2.scrCoords[2] - c1.scrCoords[2]) * s2) / d;
                     //}
                 }
-                c1.setCoordinates(Const.COORDS_BY_SCREEN, [c1.scrCoords[1] + d1x, c1.scrCoords[2] + d1y], false, true);
-                c2.setCoordinates(Const.COORDS_BY_SCREEN, [c2.scrCoords[1] - d2x, c2.scrCoords[2] - d2y], false, true);
+                c1.setCoordinates(
+                    Const.COORDS_BY_SCREEN,
+                    [c1.scrCoords[1] + d1x, c1.scrCoords[2] + d1y],
+                    false,
+                    true
+                );
+                c2.setCoordinates(
+                    Const.COORDS_BY_SCREEN,
+                    [c2.scrCoords[1] - d2x, c2.scrCoords[2] - d2y],
+                    false,
+                    true
+                );
             }
 
             return this;
@@ -785,12 +870,22 @@ define([
          * @see JXG.AbstractRenderer#updatePathWithArrowHeads
          * @see JXG.AbstractRenderer#getArrowHeadData
          */
-        setArrowSize: function(el, a) {
+        setArrowSize: function (el, a) {
             if (a.evFirst) {
-                this._setArrowWidth(el.rendNodeTriangleStart, a.showFirst * a.strokeWidth, el.rendNode, a.sizeFirst);
+                this._setArrowWidth(
+                    el.rendNodeTriangleStart,
+                    a.showFirst * a.strokeWidth,
+                    el.rendNode,
+                    a.sizeFirst
+                );
             }
             if (a.evLast) {
-                this._setArrowWidth(el.rendNodeTriangleEnd, a.showLast * a.strokeWidth, el.rendNode, a.sizeLast);
+                this._setArrowWidth(
+                    el.rendNodeTriangleEnd,
+                    a.showLast * a.strokeWidth,
+                    el.rendNode,
+                    a.sizeLast
+                );
             }
             return this;
         },
@@ -806,7 +901,9 @@ define([
          * @see JXG.Line
          * @see JXG.AbstractRenderer#updateLine
          */
-        setLineCap: function(el) { /* stub */ },
+        setLineCap: function (el) {
+            /* stub */
+        },
 
         /* **************************
          *    Ticks related stuff
@@ -822,8 +919,11 @@ define([
          * @see JXG.AbstractRenderer#updateTicks
          */
         drawTicks: function (el) {
-            el.rendNode = this.appendChildPrim(this.createPrim('path', el.id), Type.evaluate(el.visProp.layer));
-            this.appendNodesToElement(el, 'path');
+            el.rendNode = this.appendChildPrim(
+                this.createPrim("path", el.id),
+                Type.evaluate(el.visProp.layer)
+            );
+            this.appendNodesToElement(el, "path");
         },
 
         /**
@@ -836,7 +936,9 @@ define([
          * @see JXG.Ticks
          * @see JXG.AbstractRenderer#drawTicks
          */
-        updateTicks: function (element) { /* stub */ },
+        updateTicks: function (element) {
+            /* stub */
+        },
 
         /* **************************
          *    Circle related stuff
@@ -850,9 +952,11 @@ define([
          * @see JXG.AbstractRenderer#updateEllipse
          */
         drawEllipse: function (el) {
-            el.rendNode = this.appendChildPrim(this.createPrim('ellipse', el.id),
-                                    Type.evaluate(el.visProp.layer));
-            this.appendNodesToElement(el, 'ellipse');
+            el.rendNode = this.appendChildPrim(
+                this.createPrim("ellipse", el.id),
+                Type.evaluate(el.visProp.layer)
+            );
+            this.appendNodesToElement(el, "ellipse");
             this.updateEllipse(el);
         },
 
@@ -868,15 +972,21 @@ define([
 
             var radius = el.Radius();
 
-            if (radius > 0.0 &&
-                    Math.abs(el.center.coords.usrCoords[0]) > Mat.eps &&
-                    !isNaN(radius + el.center.coords.scrCoords[1] + el.center.coords.scrCoords[2]) &&
-                    radius * el.board.unitX < 2000000) {
-                this.updateEllipsePrim(el.rendNode, el.center.coords.scrCoords[1],
+            if (
+                /*radius > 0.0 &&*/
+                Math.abs(el.center.coords.usrCoords[0]) > Mat.eps &&
+                !isNaN(radius + el.center.coords.scrCoords[1] + el.center.coords.scrCoords[2]) &&
+                radius * el.board.unitX < 2000000
+            ) {
+                this.updateEllipsePrim(
+                    el.rendNode,
+                    el.center.coords.scrCoords[1],
                     el.center.coords.scrCoords[2],
-                    (radius * el.board.unitX),
-                    (radius * el.board.unitY));
+                    radius * el.board.unitX,
+                    radius * el.board.unitY
+                );
             }
+            this.setLineCap(el);
         },
 
         /* **************************
@@ -891,9 +1001,11 @@ define([
          * @see JXG.AbstractRenderer#updatePolygon
          */
         drawPolygon: function (el) {
-            el.rendNode = this.appendChildPrim(this.createPrim('polygon', el.id),
-                                        Type.evaluate(el.visProp.layer));
-            this.appendNodesToElement(el, 'polygon');
+            el.rendNode = this.appendChildPrim(
+                this.createPrim("polygon", el.id),
+                Type.evaluate(el.visProp.layer)
+            );
+            this.appendNodesToElement(el, "polygon");
             this.updatePolygon(el);
         },
 
@@ -907,7 +1019,7 @@ define([
         updatePolygon: function (el) {
             // Here originally strokecolor wasn't updated but strokewidth was.
             // But if there's no strokecolor i don't see why we should update strokewidth.
-            this._updateVisual(el, {stroke: true, dash: true});
+            this._updateVisual(el, { stroke: true, dash: true });
             this.updatePolygonPrim(el.rendNode, el);
         },
 
@@ -920,7 +1032,9 @@ define([
          * @param {String} str The copyright notice itself
          * @param {Number} fontsize Size of the font the copyright notice is written in
          */
-        displayCopyright: function (str, fontsize) { /* stub */ },
+        displayCopyright: function (str, fontsize) {
+            /* stub */
+        },
 
         /**
          * An internal text is a {@link JXG.Text} element which is drawn using only
@@ -934,7 +1048,9 @@ define([
          * @see JXG.AbstractRenderer#updateText
          * @see JXG.AbstractRenderer#updateTextStyle
          */
-        drawInternalText: function (element) { /* stub */ },
+        drawInternalText: function (element) {
+            /* stub */
+        },
 
         /**
          * Updates visual properties of an already existing {@link JXG.Text} element.
@@ -946,7 +1062,9 @@ define([
          * @see JXG.AbstractRenderer#updateText
          * @see JXG.AbstractRenderer#updateTextStyle
          */
-        updateInternalText: function (element) { /* stub */ },
+        updateInternalText: function (element) {
+            /* stub */
+        },
 
         /**
          * Displays a {@link JXG.Text} on the {@link JXG.Board} by putting a HTML div over it.
@@ -959,21 +1077,25 @@ define([
          * @see JXG.AbstractRenderer#updateTextStyle
          */
         drawText: function (el) {
-            var node, z, level,
-                ev_visible;
+            var node, z, level, ev_visible;
 
-            if (Type.evaluate(el.visProp.display) === 'html' && Env.isBrowser && this.type !== 'no') {
-                node = this.container.ownerDocument.createElement('div');
+            if (
+                Type.evaluate(el.visProp.display) === "html" &&
+                Env.isBrowser &&
+                this.type !== "no"
+            ) {
+                node = this.container.ownerDocument.createElement("div");
                 //node = this.container.ownerDocument.createElementNS('http://www.w3.org/1999/xhtml', 'div'); //
-                node.style.position = 'absolute';
+                node.style.position = "absolute";
                 node.className = Type.evaluate(el.visProp.cssclass);
 
                 level = Type.evaluate(el.visProp.layer);
-                if (!Type.exists(level)) { // trace nodes have level not set
+                if (!Type.exists(level)) {
+                    // trace nodes have level not set
                     level = 0;
                 }
 
-                if (this.container.style.zIndex === '') {
+                if (this.container.style.zIndex === "") {
                     z = 0;
                 } else {
                     z = parseInt(this.container.style.zIndex, 10);
@@ -982,13 +1104,13 @@ define([
                 node.style.zIndex = z + level;
                 this.container.appendChild(node);
 
-                node.setAttribute('id', this.container.id + '_' + el.id);
+                node.setAttribute("id", this.container.id + "_" + el.id);
             } else {
                 node = this.drawInternalText(el);
             }
 
             el.rendNode = node;
-            el.htmlStr = '';
+            el.htmlStr = "";
 
             // Set el.visPropCalc.visible
             if (el.visProp.islabel && Type.exists(el.visProp.anchor)) {
@@ -1014,31 +1136,36 @@ define([
             var content = el.plaintext,
                 v, c,
                 parentNode,
-                scale, vshift, id, wrap_id,
-                ax, ay;
+                scale, vshift,
+                id, wrap_id,
+                ax, ay, angle, co, si,
+                to_h, to_v;
 
             if (el.visPropCalc.visible) {
                 this.updateTextStyle(el, false);
 
-                if (Type.evaluate(el.visProp.display) === 'html' && this.type !== 'no') {
+                if (Type.evaluate(el.visProp.display) === "html" && this.type !== "no") {
                     // Set the position
                     if (!isNaN(el.coords.scrCoords[1] + el.coords.scrCoords[2])) {
-
                         // Horizontal
                         c = el.coords.scrCoords[1];
                         // webkit seems to fail for extremely large values for c.
                         c = Math.abs(c) < 1000000 ? c : 1000000;
                         ax = el.getAnchorX();
 
-                        if (ax === 'right') {
+                        if (ax === "right") {
                             // v = Math.floor(el.board.canvasWidth - c);
                             v = el.board.canvasWidth - c;
-                        } else if (ax === 'middle') {
+                            to_h = "right";
+                        } else if (ax === "middle") {
                             // v = Math.floor(c - 0.5 * el.size[0]);
                             v = c - 0.5 * el.size[0];
-                        } else { // 'left'
+                            to_h = "center";
+                        } else {
+                            // 'left'
                             // v = Math.floor(c);
                             v = c;
+                            to_h = "left";
                         }
 
                         // This may be useful for foreignObj.
@@ -1046,13 +1173,13 @@ define([
                         //v *= window.devicePixelRatio;
                         //}
 
-                        if (el.visPropOld.left !== (ax + v)) {
-                            if (ax === 'right') {
-                                el.rendNode.style.right = v + 'px';
-                                el.rendNode.style.left = 'auto';
+                        if (el.visPropOld.left !== ax + v) {
+                            if (ax === "right") {
+                                el.rendNode.style.right = v + "px";
+                                el.rendNode.style.left = "auto";
                             } else {
-                                el.rendNode.style.left = v + 'px';
-                                el.rendNode.style.right = 'auto';
+                                el.rendNode.style.left = v + "px";
+                                el.rendNode.style.right = "auto";
                             }
                             el.visPropOld.left = ax + v;
                         }
@@ -1062,15 +1189,19 @@ define([
                         c = Math.abs(c) < 1000000 ? c : 1000000;
                         ay = el.getAnchorY();
 
-                        if (ay === 'bottom') {
+                        if (ay === "bottom") {
                             // v = Math.floor(el.board.canvasHeight - c);
                             v = el.board.canvasHeight - c;
-                        } else if (ay === 'middle') {
+                            to_v = "bottom";
+                        } else if (ay === "middle") {
                             // v = Math.floor(c - 0.5 * el.size[1]);
                             v = c - 0.5 * el.size[1];
-                        } else { // top
+                            to_v = "center";
+                        } else {
+                            // top
                             // v = Math.floor(c);
                             v = c;
+                            to_v = "top";
                         }
 
                         // This may be useful for foreignObj.
@@ -1078,13 +1209,13 @@ define([
                         //v *= window.devicePixelRatio;
                         //}
 
-                        if (el.visPropOld.top !== (ay + v)) {
-                            if (ay === 'bottom') {
-                                el.rendNode.style.top = 'auto';
-                                el.rendNode.style.bottom = v + 'px';
+                        if (el.visPropOld.top !== ay + v) {
+                            if (ay === "bottom") {
+                                el.rendNode.style.top = "auto";
+                                el.rendNode.style.bottom = v + "px";
                             } else {
-                                el.rendNode.style.bottom = 'auto';
-                                el.rendNode.style.top = v + 'px';
+                                el.rendNode.style.bottom = "auto";
+                                el.rendNode.style.top = v + "px";
                             }
                             el.visPropOld.top = ay + v;
                         }
@@ -1095,8 +1226,10 @@ define([
                         try {
                             if (el.type === Type.OBJECT_TYPE_BUTTON) {
                                 el.rendNodeButton.innerHTML = content;
-                            } else if (el.type === Type.OBJECT_TYPE_CHECKBOX ||
-                                el.type === Type.OBJECT_TYPE_INPUT) {
+                            } else if (
+                                el.type === Type.OBJECT_TYPE_CHECKBOX ||
+                                el.type === Type.OBJECT_TYPE_INPUT
+                            ) {
                                 el.rendNodeLabel.innerHTML = content;
                             } else {
                                 el.rendNode.innerHTML = content;
@@ -1115,49 +1248,67 @@ define([
 
                         if (Type.evaluate(el.visProp.usemathjax)) {
                             // Typesetting directly might not work because mathjax was not loaded completely
-                            // see http://www.mathjax.org/docs/1.1/typeset.html
                             try {
                                 if (MathJax.typeset) {
                                     // Version 3
                                     MathJax.typeset([el.rendNode]);
                                 } else {
                                     // Version 2
-                                    MathJax.Hub.Queue(['Typeset', MathJax.Hub, el.rendNode]);
+                                    MathJax.Hub.Queue(["Typeset", MathJax.Hub, el.rendNode]);
                                 }
 
-                                // Restore the transformation necessary for fullscreen mode
-                                // MathJax removes it when handling dynamic content
-                                id = el.board.container;
-                                wrap_id = 'fullscreenwrap_' + id;
-                                if (document.getElementById(wrap_id)) {
-                                    scale = el.board.containerObj._cssFullscreenStore.scale;
-                                    vshift = el.board.containerObj._cssFullscreenStore.vshift;
-                                    Env.scaleJSXGraphDiv('#' + wrap_id, '#' + id, scale, vshift);
-                                }
-
+                                // Obsolete:
+                                // // Restore the transformation necessary for fullscreen mode
+                                // // MathJax removes it when handling dynamic content
+                                // id = el.board.container;
+                                // wrap_id = "fullscreenwrap_" + id;
+                                // if (document.getElementById(wrap_id)) {
+                                //     scale = el.board.containerObj._cssFullscreenStore.scale;
+                                //     vshift = el.board.containerObj._cssFullscreenStore.vshift;
+                                //     Env.scaleJSXGraphDiv(
+                                //         "#" + wrap_id,
+                                //         "#" + id,
+                                //         scale,
+                                //         vshift
+                                //     );
+                                // }
                             } catch (e) {
-                                JXG.debug('MathJax (not yet) loaded');
+                                JXG.debug("MathJax (not yet) loaded");
                             }
                         } else if (Type.evaluate(el.visProp.usekatex)) {
                             try {
                                 /* eslint-disable no-undef */
                                 katex.render(content, el.rendNode, {
+                                    macros: Type.evaluate(el.visProp.katexmacros),
                                     throwOnError: false
                                 });
                                 /* eslint-enable no-undef */
                             } catch (e) {
-                                JXG.debug('KaTeX (not yet) loaded');
+                                JXG.debug("KaTeX not loaded (yet)");
                             }
-                    } else if (Type.evaluate(el.visProp.useasciimathml)) {
+                        } else if (Type.evaluate(el.visProp.useasciimathml)) {
                             // This is not a constructor.
-                            // See http://www1.chapman.edu/~jipsen/mathml/asciimath.html for more information
+                            // See http://asciimath.org/ for more information
                             // about AsciiMathML and the project's source code.
                             try {
                                 AMprocessNode(el.rendNode, false);
                             } catch (e) {
-                                JXG.debug('AsciiMathML (not yet) loaded');
+                                JXG.debug("AsciiMathML not loaded (yet)");
                             }
                         }
+                    }
+
+                    angle = Type.evaluate(el.visProp.rotate);
+                    if (angle !== 0) {
+                        // Don't forget to convert to rad
+                        angle *= (Math.PI / 180);
+                        co = Math.cos(angle);
+                        si = Math.sin(angle);
+
+                        el.rendNode.style['transform'] = 'matrix(' +
+                                [co, -1 * si, si, co, 0, 0].join(',') +
+                            ')';
+                        el.rendNode.style['transform-origin'] = to_h + ' ' + to_v;
                     }
                     this.transformImage(el, el.transformations);
                 } else {
@@ -1177,22 +1328,29 @@ define([
          * @param  {String} cssString String containing CSS properties
          * @return {Array}           Array of CSS key-value pairs
          */
-        _css2js: function(cssString) {
+        _css2js: function (cssString) {
             var pairs = [],
-                i, len, key, val, s,
-                list = Type.trim(cssString).replace(/;$/, '').split(";");
+                i,
+                len,
+                key,
+                val,
+                s,
+                list = Type.trim(cssString).replace(/;$/, "").split(";");
 
             len = list.length;
             for (i = 0; i < len; ++i) {
-                if (Type.trim(list[i]) !== '') {
-                    s = list[i].split(':');
-                    key = Type.trim(s[0].replace(/-([a-z])/gi, function(match, char) { return char.toUpperCase(); }));
+                if (Type.trim(list[i]) !== "") {
+                    s = list[i].split(":");
+                    key = Type.trim(
+                        s[0].replace(/-([a-z])/gi, function (match, char) {
+                            return char.toUpperCase();
+                        })
+                    );
                     val = Type.trim(s[1]);
-                    pairs.push({'key': key, 'val': val});
+                    pairs.push({ key: key, val: val });
                 }
             }
             return pairs;
-
         },
 
         /**
@@ -1209,14 +1367,21 @@ define([
          * @see JXG.AbstractRenderer#updateInternalTextStyle
          */
         updateTextStyle: function (el, doHighlight) {
-            var fs, so, sc, css, node,
+            var fs,
+                so,
+                sc,
+                css,
+                node,
                 ev = el.visProp,
-                display = Env.isBrowser ? ev.display : 'internal',
-                nodeList = ['rendNode', 'rendNodeTag', 'rendNodeLabel'],
+                display = Env.isBrowser ? ev.display : "internal",
+                nodeList = ["rendNode", "rendNodeTag", "rendNodeLabel"],
                 lenN = nodeList.length,
                 fontUnit = Type.evaluate(ev.fontunit),
-                cssList, prop, style, cssString,
-                styleList = ['cssdefaultstyle', 'cssstyle'],
+                cssList,
+                prop,
+                style,
+                cssString,
+                styleList = ["cssdefaultstyle", "cssstyle"],
                 lenS = styleList.length;
 
             if (doHighlight) {
@@ -1236,23 +1401,23 @@ define([
             //  VML        +         +
             //  canvas     +         -
             //  no         -         -
-            if ((this.type !== 'no') &&
-                (display === 'html' || this.type !== 'canvas')
-               ) {
+            if (this.type !== "no" && (display === "html" || this.type !== "canvas")) {
                 for (style = 0; style < lenS; style++) {
                     // First set cssString to
                     // ev.cssdefaultstyle of ev.highlightcssdefaultstyle,
                     // then to
                     // ev.cssstyle of ev.highlightcssstyle
-                    cssString = Type.evaluate(ev[(doHighlight ? 'highlight' : '') + styleList[style]]);
-                    if (cssString !== '' &&
-                        el.visPropOld[styleList[style]] !== cssString) {
+                    cssString = Type.evaluate(
+                        ev[(doHighlight ? "highlight" : "") + styleList[style]]
+                    );
+                    if (cssString !== "" && el.visPropOld[styleList[style]] !== cssString) {
                         cssList = this._css2js(cssString);
                         for (node = 0; node < lenN; node++) {
                             if (Type.exists(el[nodeList[node]])) {
                                 for (prop in cssList) {
                                     if (cssList.hasOwnProperty(prop)) {
-                                        el[nodeList[node]].style[cssList[prop].key] = cssList[prop].val;
+                                        el[nodeList[node]].style[cssList[prop].key] =
+                                            cssList[prop].val;
                                     }
                                 }
                             }
@@ -1282,8 +1447,10 @@ define([
                 }
             }
 
+            this.setTabindex(el);
+
             this.setObjectTransition(el);
-            if (display === 'html' && this.type !== 'no') {
+            if (display === "html" && this.type !== "no") {
                 // Set new CSS class
                 if (el.visPropOld.cssclass !== css) {
                     el.rendNode.className = css;
@@ -1322,7 +1489,9 @@ define([
          * @see JXG.Image
          * @see JXG.AbstractRenderer#updateImage
          */
-        drawImage: function (element) { /* stub */ },
+        drawImage: function (element) {
+            /* stub */
+        },
 
         /**
          * Updates the properties of an {@link JXG.Image} element.
@@ -1332,12 +1501,17 @@ define([
          * @see JXG.AbstractRenderer#drawImage
          */
         updateImage: function (el) {
-            this.updateRectPrim(el.rendNode, el.coords.scrCoords[1],
-                el.coords.scrCoords[2] - el.size[1], el.size[0], el.size[1]);
+            this.updateRectPrim(
+                el.rendNode,
+                el.coords.scrCoords[1],
+                el.coords.scrCoords[2] - el.size[1],
+                el.size[0],
+                el.size[1]
+            );
 
             this.updateImageURL(el);
             this.transformImage(el, el.transformations);
-            this._updateVisual(el, {stroke: true, dash: true}, true);
+            this._updateVisual(el, { stroke: true, dash: true }, true);
         },
 
         /**
@@ -1378,9 +1552,11 @@ define([
                 */
                 len = transformations.length,
                 // Translate to 0,0 in screen coords and then scale
-                m = [[1,        0,       0],
-                     [-ox / ux, 1 / ux,  0],
-                     [ oy / uy, 0, -1 / uy]];
+                m = [
+                    [1, 0, 0],
+                    [-ox / ux, 1 / ux, 0],
+                    [oy / uy, 0, -1 / uy]
+                ];
 
             for (i = 0; i < len; i++) {
                 //m = Mat.matMatMult(mpre1, m);
@@ -1390,27 +1566,40 @@ define([
                 //m = Mat.matMatMult(mpost1, m);
             }
             // Scale back and then translate back
-            m = Mat.matMatMult([[1,   0, 0],
-                                [ox, ux, 0],
-                                [oy,  0, -uy]], m);
+            m = Mat.matMatMult(
+                [
+                    [1, 0, 0],
+                    [ox, ux, 0],
+                    [oy, 0, -uy]
+                ],
+                m
+            );
             return m;
         },
 
         /**
-         * Applies transformations on images and text elements. This method is just a stub and has to be implemented in
+         * Applies transformations on images and text elements. This method has to implemented in
          * all descendant classes where text and image transformations are to be supported.
+         * <p>
+         * Only affine transformation are supported, no proper projective transformations. This means, the 
+         * respective entries of the transformation matrix are simply ignored.
+         * 
          * @param {JXG.Image|JXG.Text} element A {@link JXG.Image} or {@link JXG.Text} object.
          * @param {Array} transformations An array of {@link JXG.Transformation} objects. This is usually the
          * transformations property of the given element <tt>el</tt>.
          */
-        transformImage: function (element, transformations) { /* stub */ },
+        transformImage: function (element, transformations) {
+            /* stub */
+        },
 
         /**
          * If the URL of the image is provided by a function the URL has to be updated during updateImage()
          * @param {JXG.Image} element Reference to an image object.
          * @see JXG.AbstractRenderer#updateImage
          */
-        updateImageURL: function (element) { /* stub */ },
+        updateImageURL: function (element) {
+            /* stub */
+        },
 
         /**
          * Updates CSS style properties of a {@link JXG.Image} node.
@@ -1427,12 +1616,18 @@ define([
          * @see JXG.AbstractRenderer#noHighlight
          */
         updateImageStyle: function (el, doHighlight) {
-            el.rendNode.className = Type.evaluate(doHighlight ? el.visProp.highlightcssclass : el.visProp.cssclass);
+            el.rendNode.className = Type.evaluate(
+                doHighlight ? el.visProp.highlightcssclass : el.visProp.cssclass
+            );
         },
 
-        drawForeignObject: function (el) { /* stub */ },
+        drawForeignObject: function (el) {
+            /* stub */
+        },
 
-        updateForeignObject: function(el) { /* stub */ },
+        updateForeignObject: function (el) {
+            /* stub */
+        },
 
         /* **************************
          * Render primitive objects
@@ -1445,7 +1640,9 @@ define([
          * @param {Number} level The layer the node is attached to. This is the index of the layer in
          * {@link JXG.SVGRenderer#layer} or the <tt>z-index</tt> style property of the node in VMLRenderer.
          */
-        appendChildPrim: function (node, level) { /* stub */ },
+        appendChildPrim: function (node, level) {
+            /* stub */
+        },
 
         /**
          * Stores the rendering nodes. This is an abstract method which has to be implemented in all renderers that use
@@ -1453,7 +1650,9 @@ define([
          * @param {JXG.GeometryElement} element A JSXGraph element.
          * @param {String} type The XML node name. Only used in VMLRenderer.
          */
-        appendNodesToElement: function (element, type) { /* stub */ },
+        appendNodesToElement: function (element, type) {
+            /* stub */
+        },
 
         /**
          * Creates a node of a given type with a given id.
@@ -1470,7 +1669,9 @@ define([
          * Removes an element node. Just a stub.
          * @param {Node} node The node to remove.
          */
-        remove: function (node) { /* stub */ },
+        remove: function (node) {
+            /* stub */
+        },
 
         /**
          * Can be used to create the nodes to display arrows. This is an abstract method which has to be implemented
@@ -1479,7 +1680,9 @@ define([
          * @param {Object} arrowData Data concerning possible arrow heads
          *
          */
-        makeArrows: function (element, arrowData) { /* stub */ },
+        makeArrows: function (element, arrowData) {
+            /* stub */
+        },
 
         /**
          * Updates width of an arrow DOM node. Used in
@@ -1487,7 +1690,9 @@ define([
          * @param {Number} width
          * @param {Node} parentNode Used in IE only
          */
-        _setArrowWidth: function(node, width, parentNode) { /* stub */},
+        _setArrowWidth: function (node, width, parentNode) {
+            /* stub */
+        },
 
         /**
          * Updates an ellipse node primitive. This is an abstract method which has to be implemented in all renderers
@@ -1498,7 +1703,9 @@ define([
          * @param {Number} rx The x-axis radius.
          * @param {Number} ry The y-axis radius.
          */
-        updateEllipsePrim: function (node, x, y, rx, ry) { /* stub */ },
+        updateEllipsePrim: function (node, x, y, rx, ry) {
+            /* stub */
+        },
 
         /**
          * Refreshes a line node. This is an abstract method which has to be implemented in all renderers that use
@@ -1510,7 +1717,9 @@ define([
          * @param {Number} p2y The second point's y coordinate.
          * @param {JXG.Board} board
          */
-        updateLinePrim: function (node, p1x, p1y, p2x, p2y, board) { /* stub */ },
+        updateLinePrim: function (node, p1x, p1y, p2x, p2y, board) {
+            /* stub */
+        },
 
         /**
          * Updates a path element. This is an abstract method which has to be implemented in all renderers that use
@@ -1520,7 +1729,9 @@ define([
          * depends on the rendering engine.
          * @param {JXG.Board} board Reference to the element's board.
          */
-        updatePathPrim: function (node, pathString, board) { /* stub */ },
+        updatePathPrim: function (node, pathString, board) {
+            /* stub */
+        },
 
         /**
          * Builds a path data string to draw a point with a face other than <em>rect</em> and <em>circle</em>. Since
@@ -1531,9 +1742,11 @@ define([
          * @param {Number} size A positive number describing the size. Usually the half of the width and height of
          * the drawn point.
          * @param {String} type A string describing the point's face. This method only accepts the shortcut version of
-         * each possible face: <tt>x, +, <>, ^, v, >, < </tt>
+         * each possible face: <tt>x, +, |, -, [], <>, ^, v, >, < </tt>
          */
-        updatePathStringPoint: function (element, size, type) { /* stub */ },
+        updatePathStringPoint: function (element, size, type) {
+            /* stub */
+        },
 
         /**
          * Builds a path data string from a {@link JXG.Curve} element. Since the path data strings heavily depend on the
@@ -1541,7 +1754,9 @@ define([
          * CanvasRenderer, this method is used there to draw a path directly.
          * @param element
          */
-        updatePathStringPrim: function (element) { /* stub */ },
+        updatePathStringPrim: function (element) {
+            /* stub */
+        },
 
         /**
          * Builds a path data string from a {@link JXG.Curve} element such that the curve looks like hand drawn. Since
@@ -1550,15 +1765,18 @@ define([
          * directly.
          * @param element
          */
-        updatePathStringBezierPrim: function (element) { /* stub */ },
-
+        updatePathStringBezierPrim: function (element) {
+            /* stub */
+        },
 
         /**
          * Update a polygon primitive.
          * @param {Node} node
          * @param {JXG.Polygon} element A JSXGraph element of type {@link JXG.Polygon}
          */
-        updatePolygonPrim: function (node, element) { /* stub */ },
+        updatePolygonPrim: function (node, element) {
+            /* stub */
+        },
 
         /**
          * Update a rectangle primitive. This is used only for points with face of type 'rect'.
@@ -1568,7 +1786,9 @@ define([
          * @param {Number} w Width of the rectangle.
          * @param {Number} h The rectangle's height.
          */
-        updateRectPrim: function (node, x, y, w, h) { /* stub */ },
+        updateRectPrim: function (node, x, y, w, h) {
+            /* stub */
+        },
 
         /* **************************
          *  Set Attributes
@@ -1580,9 +1800,11 @@ define([
          * @param {String} key Name of the attribute.
          * @param {String} val New value for the attribute.
          */
-        setPropertyPrim: function (node, key, val) { /* stub */ },
+        setPropertyPrim: function (node, key, val) {
+            /* stub */
+        },
 
-        setTabindex: function(element) {
+        setTabindex: function (element) {
             var val;
             if (element.board.attr.keyboard.enabled && Type.exists(element.rendNode)) {
                 val = Type.evaluate(element.visProp.tabindex);
@@ -1590,7 +1812,7 @@ define([
                     val = null;
                 }
                 if (val !== element.visPropOld.tabindex) {
-                    element.rendNode.setAttribute('tabindex', val);
+                    element.rendNode.setAttribute("tabindex", val);
                     element.visPropOld.tabindex = val;
                 }
             }
@@ -1615,7 +1837,9 @@ define([
          * @see JXG.AbstractRenderer#hide
          * @deprecated
          */
-        show: function (element) { /* stub */ },
+        show: function (element) {
+            /* stub */
+        },
 
         /**
          * Hides an element on the canvas; Only a stub, requires implementation in the derived renderer.
@@ -1625,7 +1849,9 @@ define([
          * @see JXG.AbstractRenderer#show
          * @deprecated
          */
-        hide: function (element) { /* stub */ },
+        hide: function (element) {
+            /* stub */
+        },
 
         /**
          * Sets the buffering as recommended by SVGWG. Until now only Opera supports this and will be ignored by other
@@ -1633,15 +1859,19 @@ define([
          * because it is called from outside the renderer.
          * @param {Node} node The SVG DOM Node which buffering type to update.
          * @param {String} type Either 'auto', 'dynamic', or 'static'. For an explanation see
-         *   {@link http://www.w3.org/TR/SVGTiny12/painting.html#BufferedRenderingProperty}.
+         *   {@link https://www.w3.org/TR/SVGTiny12/painting.html#BufferedRenderingProperty}.
          */
-        setBuffering: function (node, type) { /* stub */ },
+        setBuffering: function (node, type) {
+            /* stub */
+        },
 
         /**
          * Sets an element's dash style.
          * @param {JXG.GeometryElement} element An JSXGraph element.
          */
-        setDashStyle: function (element) { /* stub */ },
+        setDashStyle: function (element) {
+            /* stub */
+        },
 
         /**
          * Puts an object into draft mode, i.e. it's visual appearance will be changed. For GEONE<sub>x</sub>T backwards
@@ -1662,7 +1892,7 @@ define([
                 if (el.elementClass === Const.OBJECT_CLASS_POINT) {
                     this.setObjectFillColor(el, draftColor, draftOpacity);
                 } else {
-                    this.setObjectFillColor(el, 'none', 0);
+                    this.setObjectFillColor(el, "none", 0);
                 }
                 this.setObjectStrokeColor(el, draftColor, draftOpacity);
                 this.setObjectStrokeWidth(el, el.board.options.elements.draft.strokeWidth);
@@ -1676,14 +1906,10 @@ define([
         removeDraft: function (el) {
             this.setObjectTransition(el);
             if (el.type === Const.OBJECT_TYPE_POLYGON) {
-                this.setObjectFillColor(el,
-                    el.visProp.fillcolor,
-                    el.visProp.fillopacity);
+                this.setObjectFillColor(el, el.visProp.fillcolor, el.visProp.fillopacity);
             } else {
                 if (el.type === Const.OBJECT_CLASS_POINT) {
-                    this.setObjectFillColor(el,
-                        el.visProp.fillcolor,
-                        el.visProp.fillopacity);
+                    this.setObjectFillColor(el, el.visProp.fillcolor, el.visProp.fillopacity);
                 }
                 this.setObjectStrokeColor(el, el.visProp.strokecolor, el.visProp.strokeopacity);
                 this.setObjectStrokeWidth(el, el.visProp.strokewidth);
@@ -1694,13 +1920,17 @@ define([
          * Sets up nodes for rendering a gradient fill.
          * @param element
          */
-        setGradient: function (element) { /* stub */ },
+        setGradient: function (element) {
+            /* stub */
+        },
 
         /**
          * Updates the gradient fill.
          * @param {JXG.GeometryElement} element An JSXGraph element with an area that can be filled.
          */
-        updateGradient: function (element) { /* stub */ },
+        updateGradient: function (element) {
+            /* stub */
+        },
 
         /**
          * Sets the transition duration (in milliseconds) for fill color and stroke
@@ -1710,7 +1940,9 @@ define([
          * @param {Number} duration (Optional) duration in milliseconds. If not given,
          *        element.visProp.transitionDuration is taken. This is the default.
          */
-        setObjectTransition: function (element, duration) { /* stub */ },
+        setObjectTransition: function (element, duration) {
+            /* stub */
+        },
 
         /**
          * Sets an objects fill color.
@@ -1719,7 +1951,9 @@ define([
          * 'none'.
          * @param {Number} opacity Opacity of the fill color. Must be between 0 and 1.
          */
-        setObjectFillColor: function (element, color, opacity) { /* stub */ },
+        setObjectFillColor: function (element, color, opacity) {
+            /* stub */
+        },
 
         /**
          * Changes an objects stroke color to the given color.
@@ -1729,62 +1963,98 @@ define([
          * <strong>green</strong> for green.
          * @param {Number} opacity Opacity of the fill color. Must be between 0 and 1.
          */
-        setObjectStrokeColor: function (element, color, opacity) { /* stub */ },
+        setObjectStrokeColor: function (element, color, opacity) {
+            /* stub */
+        },
 
         /**
          * Sets an element's stroke width.
          * @param {JXG.GeometryElement} element Reference to the geometry element.
          * @param {Number} width The new stroke width to be assigned to the element.
          */
-        setObjectStrokeWidth: function (element, width) { /* stub */ },
+        setObjectStrokeWidth: function (element, width) {
+            /* stub */
+        },
 
         /**
          * Sets the shadow properties to a geometry element. This method is only a stub, it is implemented in the actual
          * renderers.
          * @param {JXG.GeometryElement} element Reference to a geometry object, that should get a shadow
          */
-        setShadow: function (element) { /* stub */ },
+        setShadow: function (element) {
+            /* stub */
+        },
 
         /**
          * Highlights an object, i.e. changes the current colors of the object to its highlighting colors
-         * and highlighting stroke width.
+         * and highlighting strokewidth.
          * @param {JXG.GeometryElement} el Reference of the object that will be highlighted.
+         * @param {Boolean} [suppressHighlightStrokeWidth=undefined] If undefined or false, highlighting also changes strokeWidth. This might not be
+         * the cases for polygon borders. Thus, if a polygon is highlighted, its polygon borders change strokeWidth only if the polygon attribute
+         * highlightByStrokeWidth == true.
          * @returns {JXG.AbstractRenderer} Reference to the renderer
          * @see JXG.AbstractRenderer#updateTextStyle
          */
-        highlight: function (el) {
-            var i, ev = el.visProp, sw;
+        highlight: function (el, suppressHighlightStrokeWidth) {
+            var i, do_hl,
+                ev = el.visProp,
+                sw;
 
             this.setObjectTransition(el);
             if (!ev.draft) {
                 if (el.type === Const.OBJECT_TYPE_POLYGON) {
-                    this.setObjectFillColor(el,
-                        ev.highlightfillcolor,
-                        ev.highlightfillopacity);
+                    this.setObjectFillColor(el, ev.highlightfillcolor, ev.highlightfillopacity);
+                    do_hl = Type.evaluate(ev.highlightbystrokewidth);
                     for (i = 0; i < el.borders.length; i++) {
-                        this.setObjectStrokeColor(el.borders[i],
-                            el.borders[i].visProp.highlightstrokecolor,
-                            el.borders[i].visProp.highlightstrokeopacity);
+                        this.highlight(el.borders[i], !do_hl);
                     }
+                    /*
+                    for (i = 0; i < el.borders.length; i++) {
+                        this.setObjectStrokeColor(
+                            el.borders[i],
+                            el.borders[i].visProp.highlightstrokecolor,
+                            el.borders[i].visProp.highlightstrokeopacity
+                        );
+                    }
+                    */
                 } else {
                     if (el.elementClass === Const.OBJECT_CLASS_TEXT) {
                         this.updateTextStyle(el, true);
                     } else if (el.type === Const.OBJECT_TYPE_IMAGE) {
                         this.updateImageStyle(el, true);
-                        this.setObjectFillColor(el,
+                        this.setObjectFillColor(
+                            el,
                             ev.highlightfillcolor,
-                            ev.highlightfillopacity);
+                            ev.highlightfillopacity
+                        );
                     } else {
-                        this.setObjectStrokeColor(el, ev.highlightstrokecolor, ev.highlightstrokeopacity);
-                        this.setObjectFillColor(el,
+                        this.setObjectStrokeColor(
+                            el,
+                            ev.highlightstrokecolor,
+                            ev.highlightstrokeopacity
+                        );
+                        this.setObjectFillColor(
+                            el,
                             ev.highlightfillcolor,
-                            ev.highlightfillopacity);
+                            ev.highlightfillopacity
+                        );
                     }
                 }
-                if (ev.highlightstrokewidth) {
-                    sw = Math.max(Type.evaluate(ev.highlightstrokewidth), Type.evaluate(ev.strokewidth));
+
+                // Highlight strokeWidth is suppressed if
+                // parameter suppressHighlightStrokeWidth is false or undefined.
+                // suppressHighlightStrokeWidth is false if polygon attribute
+                // highlightbystrokewidth is true.
+                if (ev.highlightstrokewidth && !suppressHighlightStrokeWidth) {
+                    sw = Math.max(
+                        Type.evaluate(ev.highlightstrokewidth),
+                        Type.evaluate(ev.strokewidth)
+                    );
                     this.setObjectStrokeWidth(el, sw);
-                    if (el.elementClass === Const.OBJECT_CLASS_LINE || el.elementClass === Const.OBJECT_CLASS_CURVE) {
+                    if (
+                        el.elementClass === Const.OBJECT_CLASS_LINE ||
+                        el.elementClass === Const.OBJECT_CLASS_CURVE
+                    ) {
                         this.updatePathWithArrowHeads(el, true);
                     }
                 }
@@ -1800,43 +2070,44 @@ define([
          * @see JXG.AbstractRenderer#updateTextStyle
          */
         noHighlight: function (el) {
-            var i, ev = el.visProp, sw;
+            var i,
+                ev = el.visProp,
+                sw;
 
             this.setObjectTransition(el);
             if (!Type.evaluate(el.visProp.draft)) {
                 if (el.type === Const.OBJECT_TYPE_POLYGON) {
-                    this.setObjectFillColor(el,
-                        ev.fillcolor,
-                        ev.fillopacity);
+                    this.setObjectFillColor(el, ev.fillcolor, ev.fillopacity);
                     for (i = 0; i < el.borders.length; i++) {
-                        this.setObjectStrokeColor(el.borders[i],
-                            el.borders[i].visProp.strokecolor,
-                            el.borders[i].visProp.strokeopacity);
+                        this.noHighlight(el.borders[i]);
                     }
+                    // for (i = 0; i < el.borders.length; i++) {
+                    //     this.setObjectStrokeColor(
+                    //         el.borders[i],
+                    //         el.borders[i].visProp.strokecolor,
+                    //         el.borders[i].visProp.strokeopacity
+                    //     );
+                    // }
                 } else {
                     if (el.elementClass === Const.OBJECT_CLASS_TEXT) {
                         this.updateTextStyle(el, false);
                     } else if (el.type === Const.OBJECT_TYPE_IMAGE) {
                         this.updateImageStyle(el, false);
-                        this.setObjectFillColor(el,
-                            ev.fillcolor,
-                            ev.fillopacity);
+                        this.setObjectFillColor(el, ev.fillcolor, ev.fillopacity);
                     } else {
-                        this.setObjectStrokeColor(el,
-                            ev.strokecolor,
-                            ev.strokeopacity);
-                        this.setObjectFillColor(el,
-                            ev.fillcolor,
-                            ev.fillopacity);
+                        this.setObjectStrokeColor(el, ev.strokecolor, ev.strokeopacity);
+                        this.setObjectFillColor(el, ev.fillcolor, ev.fillopacity);
                     }
                 }
 
                 sw = Type.evaluate(ev.strokewidth);
                 this.setObjectStrokeWidth(el, sw);
-                if (el.elementClass === Const.OBJECT_CLASS_LINE || el.elementClass === Const.OBJECT_CLASS_CURVE) {
+                if (
+                    el.elementClass === Const.OBJECT_CLASS_LINE ||
+                    el.elementClass === Const.OBJECT_CLASS_CURVE
+                ) {
                     this.updatePathWithArrowHeads(el, false);
                 }
-
             }
 
             return this;
@@ -1852,21 +2123,32 @@ define([
          * should implement, if appropriate.
          * @see JXG.AbstractRenderer#unsuspendRedraw
          */
-        suspendRedraw: function () { /* stub */ },
+        suspendRedraw: function () {
+            /* stub */
+        },
 
         /**
          * Restart redraw. This method is called after updating all the rendering node attributes.
          * @see JXG.AbstractRenderer#suspendRedraw
          */
-        unsuspendRedraw: function () { /* stub */ },
+        unsuspendRedraw: function () {
+            /* stub */
+        },
 
         /**
-         * The tiny zoom bar shown on the bottom of a board (if showNavigation on board creation is true).
+         * The tiny zoom bar shown on the bottom of a board (if board attribute "showNavigation" is true).
+         * It is a div element and gets the CSS class "JXG_navigation" and the id {board id}_navigationbar.
+         * <p>
+         * The buttons get the CSS class "JXG_navigation_button" and the id {board_id}_name where name is
+         * one of [top, down, left, right, out, 100, in, fullscreen, screenshot, reload, cleartraces].
+         * <p>
+         * The symbols for zoom, navigation and reload are hard-coded.
+         *
          * @param {JXG.Board} board Reference to a JSXGraph board.
          * @param {Object} attr Attributes of the navigation bar
-         *
+         * @private
          */
-        drawZoomBar: function (board, attr) {
+        drawNavigationBar: function (board, attr) {
             var doc,
                 node,
                 cancelbubble = function (e) {
@@ -1881,46 +2163,51 @@ define([
                         e.cancelBubble = true;
                     }
                 },
-                createButton = function (label, handler) {
+                createButton = function (label, handler, id) {
                     var button;
 
-                    button = doc.createElement('span');
-                    node.appendChild(button);
-                    button.appendChild(doc.createTextNode(label));
+                    id = id || "";
+
+                    button = doc.createElement("span");
+                    button.innerHTML = label; // button.appendChild(doc.createTextNode(label));
 
                     // Style settings are superseded by adding the CSS class below
-                    button.style.paddingLeft = '7px';
-                    button.style.paddingRight = '7px';
+                    button.style.paddingLeft = "7px";
+                    button.style.paddingRight = "7px";
 
-                    if (button.classList !== undefined) { // classList not available in IE 9
-                        button.classList.add('JXG_navigation_button');
+                    if (button.classList !== undefined) {
+                        // classList not available in IE 9
+                        button.classList.add("JXG_navigation_button");
                     }
                     // button.setAttribute('tabindex', 0);
 
-                    // Highlighting is now done with CSS
-                    // Env.addEvent(button, 'mouseover', function () {
-                    //     this.style.backgroundColor = attr.highlightfillcolor;
-                    // }, button);
-                    // Env.addEvent(button, 'mouseover', function () {
-                    //     this.style.backgroundColor = attr.highlightfillcolor;
-                    // }, button);
-                    // Env.addEvent(button, 'mouseout', function () {
-                    //     this.style.backgroundColor = attr.fillcolor;
-                    // }, button);
+                    button.setAttribute("id", id);
+                    node.appendChild(button);
 
-                    Env.addEvent(button, 'click', function(e) { (Type.bind(handler, board))(); return false; }, board);
+                    Env.addEvent(
+                        button,
+                        "click",
+                        function (e) {
+                            Type.bind(handler, board)();
+                            return false;
+                        },
+                        board
+                    );
                     // prevent the click from bubbling down to the board
-                    Env.addEvent(button, 'mouseup', cancelbubble, board);
-                    Env.addEvent(button, 'mousedown', cancelbubble, board);
-                    Env.addEvent(button, 'touchend', cancelbubble, board);
-                    Env.addEvent(button, 'touchstart', cancelbubble, board);
+                    Env.addEvent(button, "pointerup", cancelbubble, board);
+                    Env.addEvent(button, "pointerdown", cancelbubble, board);
+                    Env.addEvent(button, "pointerleave", cancelbubble, board);
+                    Env.addEvent(button, "mouseup", cancelbubble, board);
+                    Env.addEvent(button, "mousedown", cancelbubble, board);
+                    Env.addEvent(button, "touchend", cancelbubble, board);
+                    Env.addEvent(button, "touchstart", cancelbubble, board);
                 };
 
-            if (Env.isBrowser && this.type !== 'no') {
+            if (Env.isBrowser && this.type !== "no") {
                 doc = board.containerObj.ownerDocument;
-                node = doc.createElement('div');
+                node = doc.createElement("div");
 
-                node.setAttribute('id', board.containerObj.id + '_navigationbar');
+                node.setAttribute("id", board.container + "_navigationbar");
 
                 // Style settings are superseded by adding the CSS class below
                 node.style.color = attr.strokecolor;
@@ -1934,51 +2221,88 @@ define([
                 node.style.right = attr.right;
                 node.style.bottom = attr.bottom;
 
-                if (node.classList !== undefined) { // classList not available in IE 9
-                    node.classList.add('JXG_navigation');
+                if (node.classList !== undefined) {
+                    // classList not available in IE 9
+                    node.classList.add("JXG_navigation");
                 }
                 // For XHTML we need unicode instead of HTML entities
 
                 if (board.attr.showfullscreen) {
-                    createButton(board.attr.fullscreen.symbol, function () {
-                        board.toFullscreen(board.attr.fullscreen.id);
-                    });
+                    createButton(
+                        board.attr.fullscreen.symbol,
+                        function () {
+                            board.toFullscreen(board.attr.fullscreen.id);
+                        },
+                        board.container + "_navigation_fullscreen"
+                    );
                 }
 
                 if (board.attr.showscreenshot) {
-                    createButton(board.attr.screenshot.symbol, function () {
-                        window.setTimeout(function() {
-                            board.renderer.screenshot(board, '', false);
-                        }, 330);
-                    });
+                    createButton(
+                        board.attr.screenshot.symbol,
+                        function () {
+                            window.setTimeout(function () {
+                                board.renderer.screenshot(board, "", false);
+                            }, 330);
+                        },
+                        board.container + "_navigation_screenshot"
+                    );
                 }
 
                 if (board.attr.showreload) {
                     // full reload circle: \u27F2
                     // the board.reload() method does not exist during the creation
                     // of this button. That's why this anonymous function wrapper is required.
-                    createButton('\u21BB', function () {
-                        board.reload();
-                    });
+                    createButton(
+                        "\u21BB",
+                        function () {
+                            board.reload();
+                        },
+                        board.container + "_navigation_reload"
+                    );
                 }
 
                 if (board.attr.showcleartraces) {
                     // clear traces symbol (otimes): \u27F2
-                    createButton('\u2297', function () {
-                        board.clearTraces();
-                    });
+                    createButton(
+                        "\u2297",
+                        function () {
+                            board.clearTraces();
+                        },
+                        board.container + "_navigation_cleartraces"
+                    );
                 }
 
                 if (board.attr.shownavigation) {
                     if (board.attr.showzoom) {
-                        createButton('\u2013', board.zoomOut);
-                        createButton('o', board.zoom100);
-                        createButton('+', board.zoomIn);
+                        createButton(
+                            "\u2013",
+                            board.zoomOut,
+                            board.container + "_navigation_out"
+                        );
+                        createButton("o", board.zoom100, board.container + "_navigation_100");
+                        createButton("+", board.zoomIn, board.container + "_navigation_in");
                     }
-                    createButton('\u2190', board.clickLeftArrow);
-                    createButton('\u2193', board.clickUpArrow);
-                    createButton('\u2191', board.clickDownArrow);
-                    createButton('\u2192', board.clickRightArrow);
+                    createButton(
+                        "\u2190",
+                        board.clickLeftArrow,
+                        board.container + "_navigation_left"
+                    );
+                    createButton(
+                        "\u2193",
+                        board.clickUpArrow,
+                        board.container + "_navigation_down"
+                    ); // Down arrow
+                    createButton(
+                        "\u2191",
+                        board.clickDownArrow,
+                        board.container + "_navigation_up"
+                    ); // Up arrow
+                    createButton(
+                        "\u2192",
+                        board.clickRightArrow,
+                        board.container + "_navigation_right"
+                    );
                 }
             }
         },
@@ -1987,14 +2311,21 @@ define([
          * Wrapper for getElementById for maybe other renderers which elements are not directly accessible by DOM
          * methods like document.getElementById().
          * @param {String} id Unique identifier for element.
-         * @returns {Object} Reference to a JavaScript object. In case of SVG/VMLRenderer it's a reference to a SVG/VML
-         * node.
+         * @returns {Object} Reference to a JavaScript object. In case of SVG/VMLRenderer it's a reference to a SVG/VML node.
          */
         getElementById: function (id) {
+            var str;
             if (Type.exists(this.container)) {
-                return this.container.ownerDocument.getElementById(this.container.id + '_' + id);
+                // Use querySelector over getElementById for compatibility with both 'regular' document
+                // and ShadowDOM fragments.
+                str = this.container.id + '_' + id;
+                // Mask special symbols like '/' and '\' in id
+                if (Type.exists(CSS) && Type.exists(CSS.escape)) {
+                    str = CSS.escape(str);
+                }
+                return this.container.querySelector('#' + str);
             }
-            return '';
+            return "";
         },
 
         /**
@@ -2027,7 +2358,9 @@ define([
          * @param {Number} w New width
          * @param {Number} h New height
          */
-        resize: function (w, h) { /* stub */},
+        resize: function (w, h) {
+            /* stub */
+        },
 
         /**
          * Create crosshair elements (Fadenkreuz) for presentations.
@@ -2086,9 +2419,8 @@ define([
          * @param {Number} value Layer number
          * @private
          */
-        setLayer: function(el, level) {}
+        setLayer: function (el, level) {}
+    }
+);
 
-    });
-
-    return JXG.AbstractRenderer;
-});
+export default JXG.AbstractRenderer;

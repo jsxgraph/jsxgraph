@@ -5,7 +5,7 @@
    <title>JSXGraph example</title>
    <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
 <script type="text/javascript" src="prototype.js"></script>
-   <script type="text/javascript" src="../src/loadjsxgraph.js"></script>
+   <script type="text/javascript" src="../distrib/jsxgraphcore.js"></script>
    <script type="text/javascript" src="../src/reader/geonext.js"></script>
     <script type="text/javascript" src="../src/reader/intergeo.js"></script>
 </head>
@@ -28,7 +28,7 @@
         <option>mittelsenkrechte_new.gxt</option>
         <option>quadratische_funktion_ax2.gxt</option>
         <option>quadratische_funktion_ax2_bx_c.gxt</option>
-       <option> wuerfel_schnitt2.nc.gxt </option>       
+       <option> wuerfel_schnitt2.nc.gxt </option>
         <option> owl_circle.nc.gxt </option>
         <option> owl_point.nc.gxt </option>
         <option> owl_line.nc.gxt </option>
@@ -64,7 +64,7 @@
         <option> uhr.nc.gxt </option>
         <option> viereck-parkett.nc.gxt </option>
        <option> bisector.nc.gxt </option>
-       <option> kreis_beispiel.gxt </option>       
+       <option> kreis_beispiel.gxt </option>
 	</select>
 </td>
 <td>
@@ -172,7 +172,7 @@
         <option> 02_Wohlfahrt_Importland.gxt </option>
         <option> 02 - Wohlfahrtseffekte.gxt </option>
         <option> 01_aussenhandel.gxt </option>
-        <option> 01 - erhebung.gxt        <option> 
+        <option> 01 - erhebung.gxt        <option>
         <option> 00.wahlmoeglichkeiten.nc.gxt </option>
         <option> 01.budgetgerade.nc.gxt </option>
         <option> 02.indifferenzkurve3.nc.gxt </option>
@@ -190,22 +190,22 @@
 </td>
 <td>
     <select id="beispiele_carsten">
-        <option> achensymmetrie_achtecke_diagonal.gxt        </option> 
-        <option> balkendiagramm.gxt        </option> 
-        <option> bushaltestelle.gxt        </option> 
-        <option> einschiebekonstruktion.gxt        </option> 
-        <option> gaertner_ludwig.gxt        </option> 
-        <option> kreisdiagramm.gxt        </option> 
-        <option> kreisverkehr.gxt        </option> 
-        <option> Parabelspur.gxt        </option> 
-        <option> parallelogramm_eigenschaften.gxt        </option> 
-        <option> potenzreihe.gxt        </option> 
-        <option> prozent-anteile-L-vierfarbig.gxt        </option> 
-        <option> prozent-anteile-quadrat-windrad.gxt        </option> 
-        <option> pythagoras_allgemein.gxt        </option> 
-        <option> sinus_asinbx_c.gxt        </option> 
-        <option> sinus_einheitskreis.gxt        </option> 
-        <option> symmetrische_figuren_vertikal.gxt        </option> 
+        <option> achensymmetrie_achtecke_diagonal.gxt        </option>
+        <option> balkendiagramm.gxt        </option>
+        <option> bushaltestelle.gxt        </option>
+        <option> einschiebekonstruktion.gxt        </option>
+        <option> gaertner_ludwig.gxt        </option>
+        <option> kreisdiagramm.gxt        </option>
+        <option> kreisverkehr.gxt        </option>
+        <option> Parabelspur.gxt        </option>
+        <option> parallelogramm_eigenschaften.gxt        </option>
+        <option> potenzreihe.gxt        </option>
+        <option> prozent-anteile-L-vierfarbig.gxt        </option>
+        <option> prozent-anteile-quadrat-windrad.gxt        </option>
+        <option> pythagoras_allgemein.gxt        </option>
+        <option> sinus_asinbx_c.gxt        </option>
+        <option> sinus_einheitskreis.gxt        </option>
+        <option> symmetrische_figuren_vertikal.gxt        </option>
     </select>
 </td>
 <td>
@@ -218,20 +218,20 @@
 </tr>
 <tr>
 <td>
-    <input type='button' value='Read Geonext file' onclick="loadFile('beispiele_nc_gxt','Geonext')" /> 
+    <input type='button' value='Read Geonext file' onclick="loadFile('beispiele_nc_gxt','Geonext')" />
 </td>
 <td>
     <input type='button' value='Read compressed Geonext file' onclick="loadFile('beispiele_gxt','Geonext')" /> <br />
-    <input type='button' value='Komprimierten Geonext-String einlesen' onclick="loadString('beispiele_gxt','Geonext')" /> 
+    <input type='button' value='Komprimierten Geonext-String einlesen' onclick="loadString('beispiele_gxt','Geonext')" />
 </td>
 <td>
-    <input type='button' value='Read Geonext VWL examples' onclick="loadFile('beispiele_vwl','Geonext')" /> 
+    <input type='button' value='Read Geonext VWL examples' onclick="loadFile('beispiele_vwl','Geonext')" />
 </td>
 <td>
-    <input type='button' value='Read Geonext II' onclick="loadFile('beispiele_carsten','Geonext')" /> 
+    <input type='button' value='Read Geonext II' onclick="loadFile('beispiele_carsten','Geonext')" />
 </td>
 <td>
-    <input type='button' value='Read Geonext III' onclick="loadFile('beispiele_matthias','Geonext')" /> 
+    <input type='button' value='Read Geonext III' onclick="loadFile('beispiele_matthias','Geonext')" />
 </td>
 </tr>
 </table>
@@ -239,7 +239,7 @@
     <p>
 	<input type='button' value='Zoom In' onclick='board.zoomIn()'>
 	<input type='button' value='Zoom Out' onclick='board.zoomOut()'>
-	<input type='button' value='Zoom 100%' onclick='board.zoom100()'>	  
+	<input type='button' value='Zoom 100%' onclick='board.zoom100()'>
     <!--<input type='button' value='Zeichnungen' onclick="alert('Redraws: ' + countDrawings + ', Benoetigte Zeit: ' + countTime + '. Durchschnitt: ' + (countTime/countDrawings) + 'ms/Redraw');" />-->
     <input type='button' value='Show XML' onclick='board.showXML()'>
     <input type='button' value='Test speed (only for "17eck")' onclick='speedTest(board)'>
@@ -252,9 +252,9 @@
         <option value='intergeo/intergeo2.i2g'> intergeo2.i2g </option>
         <option value='intergeo/linear-004.i2g'> linear-004.i2g </option>
         <option value='intergeo/geonext/all.i2g'> all.i2g (GEONExT) </option>
-		
+
     </select>
-    <input type='button' value='Read InterGeo file' onclick="loadFile('beispiele_i2g','Intergeo')" /> 
+    <input type='button' value='Read InterGeo file' onclick="loadFile('beispiele_i2g','Intergeo')" />
     <p>
     <!-- Geogebra examples: <br>
     <select id="beispiele_geo">
@@ -335,7 +335,7 @@
          </form>
    <div id="debug" style="overflow:scroll;"></div>
    <textarea id="output" cols="130" rows="50"></textarea>
-   
+
 <script>
 //JXG.Options.renderer = 'canvas';
 
@@ -343,7 +343,7 @@
    function loadFile(bspname,format) {
         document.getElementById('box').innerHTML = '';
         //document.getElementById('debug').innerHTML = "<b>Debug:</b><p>";
-    
+
         if(typeof board != 'undefined') {
             JXG.JSXGraph.freeBoard(board);
         }
@@ -365,11 +365,11 @@
    function loadString(bspname, format) {
         document.getElementById('box').innerHTML = '';
         document.getElementById('debug').innerHTML = "<b>Debug:</b><p>";
-    
+
         if(typeof board != 'undefined') {
             JXG.JSXGraph.freeBoard(board);
         }
-        
+
         board = JXG.JSXGraph.loadBoardFromString('box', document.getElementById(bspname).options[document.getElementById(bspname).selectedIndex].value, format);
    }
 

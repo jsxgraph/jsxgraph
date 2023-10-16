@@ -2,7 +2,7 @@
 <head>
    <title>JSXGraph example</title>
    <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
-   <script type="text/javascript" src="../src/loadjsxgraph.js"></script>
+   <script type="text/javascript" src="../distrib/jsxgraphcore.js"></script>
 </head>
 <body>
   <h2>Hypotrochoid</h2>
@@ -11,7 +11,7 @@
 
 <h2 id="parameter">0
 </h2>
-Bogenl&auml;nge =<input type="text" id="D" size="2" maxlength="7" 
+Bogenl&auml;nge =<input type="text" id="D" size="2" maxlength="7"
     style="border:none; text-align:right; font-size:1.2em; "
     onKeyUp="g4.coords.setCoordinates(JXG.COORDS_BY_USER, [this.value,g4.Y()], board); board.update();"
 >*7*&pi;
@@ -35,8 +35,8 @@ Bogenl&auml;nge =<input type="text" id="D" size="2" maxlength="7"
                     strokeOpacity:function(){return g5.Y()*0.6;}
                 });
 
-        t = board.createElement('text', [function() { return g5.X()+0.2; },function() { return g5.Y()+0.25; },'X(B)=<value>X(B)</value>, Y(B)=<value>Y(B)</value>'], { 
-            digits:3, 
+        t = board.createElement('text', [function() { return g5.X()+0.2; },function() { return g5.Y()+0.25; },'X(B)=<value>X(B)</value>, Y(B)=<value>Y(B)</value>'], {
+            digits:3,
             fontSize:function(){return g5.Y()*10;}
         });
 

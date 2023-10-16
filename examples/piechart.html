@@ -3,7 +3,7 @@
    <title>JSXGraph example</title>
    <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
    <script type="text/javascript" src="prototype.js"></script>
-   <script type="text/javascript" src="../src/loadjsxgraph.js"></script>
+   <script type="text/javascript" src="../distrib/jsxgraphcore.js"></script>
 </head>
 <body>
   <h2>Chart examples</h2>
@@ -39,12 +39,12 @@ unitX: 50, unitY: 50, axis:true});
                           function(){return f[2]();},
                           function(){return f[3]();},
                           function(){return f[4]();}],
-             center:[5,2], 
+             center:[5,2],
              radius:function(){return r.Value();},
-             strokeColor:'white', 
+             strokeColor:'white',
              highlightStrokeColor:'black',
              strokeWidth:4,
-             highlightOnSector:true, 
+             highlightOnSector:true,
              highlightBySize:true
              }
         );

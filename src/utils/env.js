@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2022
+    Copyright 2008-2023
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -26,17 +26,12 @@
     GNU Lesser General Public License for more details.
 
     You should have received a copy of the GNU Lesser General Public License and
-    the MIT License along with JSXGraph. If not, see <http://www.gnu.org/licenses/>
-    and <http://opensource.org/licenses/MIT/>.
+    the MIT License along with JSXGraph. If not, see <https://www.gnu.org/licenses/>
+    and <https://opensource.org/licenses/MIT/>.
  */
 
 /*global JXG: true, define: true, window: true, document: true, navigator: true, module: true, global: true, self: true, require: true*/
 /*jslint nomen: true, plusplus: true*/
-
-/* depends:
- jxg
- utils/type
- */
 
 /**
  * @fileoverview The functions in this file help with the detection of the environment JSXGraph runs in. We can distinguish
@@ -44,21 +39,25 @@
  * the browser runs on is a tablet/cell or a desktop computer.
  */
 
-define(['jxg', 'utils/type'], function (JXG, Type) {
+import JXG from "../jxg";
+import Type from "./type";
 
-    'use strict';
-
-    JXG.extendConstants(JXG, /** @lends JXG */{
+JXG.extendConstants(
+    JXG,
+    /** @lends JXG */ {
         /**
          * Determines the property that stores the relevant information in the event object.
          * @type String
          * @default 'touches'
          * @private
          */
-        touchProperty: 'touches',
-    });
+        touchProperty: "touches"
+    }
+);
 
-    JXG.extend(JXG, /** @lends JXG */ {
+JXG.extend(
+    JXG,
+    /** @lends JXG */ {
         /**
          * Determines whether evt is a touch event.
          * @param evt {Event}
@@ -83,7 +82,7 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
          * @returns {Boolean}
          */
         isMouseEvent: function (evt) {
-            return !JXG.isTouchEvent(evt)&&!JXG.isPointerEvent(evt);
+            return !JXG.isTouchEvent(evt) && !JXG.isPointerEvent(evt);
         },
 
         /**
@@ -116,7 +115,7 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
                 return evt.isPrimary;
             }
 
-            return (touchPoints === 1);
+            return touchPoints === 1;
         },
 
         /**
@@ -124,7 +123,7 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
          * @type Boolean
          * @default false
          */
-        isBrowser: typeof window === 'object' && typeof document === 'object',
+        isBrowser: typeof window === "object" && typeof document === "object",
 
         /**
          * Features of ECMAScript 6+ are available.
@@ -132,11 +131,11 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
          * @default false
          */
         supportsES6: function () {
-            var testMap;
+            // var testMap;
             /* jshint ignore:start */
             try {
                 // This would kill the old uglifyjs: testMap = (a = 0) => a;
-                new Function('(a = 0) => a');
+                new Function("(a = 0) => a");
                 return true;
             } catch (err) {
                 return false;
@@ -158,7 +157,12 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
          * @returns {Boolean} True, if the browser supports SVG.
          */
         supportsSVG: function () {
-            return this.isBrowser && document.implementation.hasFeature('http://www.w3.org/TR/SVG11/feature#BasicStructure', '1.1');
+            var svgSupport;
+            if (!this.isBrowser) {
+                return false;
+            }
+            svgSupport = !!document.createElementNS && !!document.createElementNS('http://www.w3.org/2000/svg', 'svg').createSVGRect;
+            return svgSupport;
         },
 
         /**
@@ -166,17 +170,32 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
          * @returns {Boolean} True, if the browser supports HTML canvas.
          */
         supportsCanvas: function () {
-            var c, hasCanvas = false;
+            var hasCanvas = false;
+
+            // if (this.isNode()) {
+            //     try {
+            //         // c = typeof module === "object" ? module.require("canvas") : $__canvas;
+            //         c = typeof module === "object" ? module.require("canvas") : import('canvas');
+            //         hasCanvas = !!c;
+            //     } catch (err) {}
+            // }
 
             if (this.isNode()) {
-                try {
-                    c = (typeof module === 'object' ? module.require('canvas') : require('canvas'));
-                    hasCanvas = !!c;
-                } catch (err) {
-                }
+                //try {
+                //    JXG.createCanvas(500, 500);
+                    hasCanvas = true;
+                // } catch (err) {
+                //     throw new Error('JXG.createCanvas not available.\n' +
+                //         'Install the npm package `canvas`\n' +
+                //         'and call:\n' +
+                //         '    import { createCanvas } from "canvas";\n' +
+                //         '    JXG.createCanvas = createCanvas;\n');
+                // }
             }
 
-            return hasCanvas || (this.isBrowser && !!document.createElement('canvas').getContext);
+            return (
+                hasCanvas || (this.isBrowser && !!document.createElement("canvas").getContext)
+            );
         },
 
         /**
@@ -184,14 +203,22 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
          * @returns {Boolean}
          */
         isNode: function () {
-            // this is not a 100% sure but should be valid in most cases
+            // This is not a 100% sure but should be valid in most cases
+            // We are not inside a browser
+            /* eslint-disable no-undef */
+            return (
+                !this.isBrowser &&
+                (typeof process !== 'undefined') &&
+                (process.release.name.search(/node|io.js/) !== -1)
+            /* eslint-enable no-undef */
 
-            // we are not inside a browser
-            return !this.isBrowser && (
                 // there is a module object (plain node, no requirejs)
-                (typeof module === 'object' && !!module.exports) ||
-                // there is a global object and requirejs is loaded
-                (typeof global === 'object' && global.requirejsVars && !global.requirejsVars.isBrowser)
+                // ((typeof module === "object" && !!module.exports) ||
+                //     // there is a global object and requirejs is loaded
+                //     (typeof global === "object" &&
+                //         global.requirejsVars &&
+                //         !global.requirejsVars.isBrowser)
+                // )
             );
         },
 
@@ -200,19 +227,26 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
          * @returns {Boolean}
          */
         isWebWorker: function () {
-            return !this.isBrowser && (typeof self === 'object' && typeof self.postMessage === 'function');
+            return (
+                !this.isBrowser &&
+                typeof self === "object" &&
+                typeof self.postMessage === "function"
+            );
         },
 
         /**
-         * Checks if the environments supports the W3C Pointer Events API {@link http://www.w3.org/Submission/pointer-events/}
+         * Checks if the environments supports the W3C Pointer Events API {@link https://www.w3.org/TR/pointerevents/}
          * @returns {Boolean}
          */
         supportsPointerEvents: function () {
-            return !!(this.isBrowser && window.navigator &&
-                (window.PointerEvent ||             // Chrome/Edge/IE11+
-                    window.navigator.pointerEnabled || // IE11+
-                    window.navigator.msPointerEnabled  // IE10-
-                )
+            return !!(
+                (
+                    this.isBrowser &&
+                    window.navigator &&
+                    (window.PointerEvent || // Chrome/Edge/IE11+
+                        window.navigator.pointerEnabled || // IE11+
+                        window.navigator.msPointerEnabled)
+                ) // IE10-
             );
         },
 
@@ -229,7 +263,10 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
          * @returns {Boolean}
          */
         isAndroid: function () {
-            return Type.exists(navigator) && navigator.userAgent.toLowerCase().indexOf('android') > -1;
+            return (
+                Type.exists(navigator) &&
+                navigator.userAgent.toLowerCase().indexOf("android") > -1
+            );
         },
 
         /**
@@ -237,7 +274,7 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
          * @returns {Boolean}
          */
         isWebkitAndroid: function () {
-            return this.isAndroid() && navigator.userAgent.indexOf(' AppleWebKit/') > -1;
+            return this.isAndroid() && navigator.userAgent.indexOf(" AppleWebKit/") > -1;
         },
 
         /**
@@ -245,7 +282,11 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
          * @returns {Boolean}
          */
         isApple: function () {
-            return Type.exists(navigator) && (navigator.userAgent.indexOf('iPad') > -1 || navigator.userAgent.indexOf('iPhone') > -1);
+            return (
+                Type.exists(navigator) &&
+                (navigator.userAgent.indexOf("iPad") > -1 ||
+                    navigator.userAgent.indexOf("iPhone") > -1)
+            );
         },
 
         /**
@@ -253,7 +294,9 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
          * @returns {Boolean}
          */
         isWebkitApple: function () {
-            return this.isApple() && (navigator.userAgent.search(/Mobile\/[0-9A-Za-z.]*Safari/) > -1);
+            return (
+                this.isApple() && navigator.userAgent.search(/Mobile\/[0-9A-Za-z.]*Safari/) > -1
+            );
         },
 
         /**
@@ -261,7 +304,12 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
          * @returns {Boolean}
          */
         isMetroApp: function () {
-            return typeof window === 'object' && window.clientInformation && window.clientInformation.appVersion && window.clientInformation.appVersion.indexOf('MSAppHost') > -1;
+            return (
+                typeof window === "object" &&
+                window.clientInformation &&
+                window.clientInformation.appVersion &&
+                window.clientInformation.appVersion.indexOf("MSAppHost") > -1
+            );
         },
 
         /**
@@ -269,9 +317,11 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
          * @returns {Boolean}
          */
         isMozilla: function () {
-            return Type.exists(navigator) &&
-                navigator.userAgent.toLowerCase().indexOf('mozilla') > -1 &&
-                navigator.userAgent.toLowerCase().indexOf('apple') === -1;
+            return (
+                Type.exists(navigator) &&
+                navigator.userAgent.toLowerCase().indexOf("mozilla") > -1 &&
+                navigator.userAgent.toLowerCase().indexOf("apple") === -1
+            );
         },
 
         /**
@@ -279,11 +329,13 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
          * @returns {Boolean}
          */
         isFirefoxOS: function () {
-            return Type.exists(navigator) &&
-                navigator.userAgent.toLowerCase().indexOf('android') === -1 &&
-                navigator.userAgent.toLowerCase().indexOf('apple') === -1 &&
-                navigator.userAgent.toLowerCase().indexOf('mobile') > -1 &&
-                navigator.userAgent.toLowerCase().indexOf('mozilla') > -1;
+            return (
+                Type.exists(navigator) &&
+                navigator.userAgent.toLowerCase().indexOf("android") === -1 &&
+                navigator.userAgent.toLowerCase().indexOf("apple") === -1 &&
+                navigator.userAgent.toLowerCase().indexOf("mobile") > -1 &&
+                navigator.userAgent.toLowerCase().indexOf("mozilla") > -1
+            );
         },
 
         /**
@@ -291,32 +343,39 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
          * @type Number
          */
         ieVersion: (function () {
-            var div, all,
+            var div,
+                all,
                 v = 3;
 
-            if (typeof document !== 'object') {
+            if (typeof document !== "object") {
                 return 0;
             }
 
-            div = document.createElement('div');
-            all = div.getElementsByTagName('i');
+            div = document.createElement("div");
+            all = div.getElementsByTagName("i");
 
             do {
-                div.innerHTML = '<!--[if gt IE ' + (++v) + ']><' + 'i><' + '/i><![endif]-->';
+                div.innerHTML = "<!--[if gt IE " + ++v + "]><" + "i><" + "/i><![endif]-->";
             } while (all[0]);
 
             return v > 4 ? v : undefined;
-
-        }()),
+        })(),
 
         /**
          * Reads the width and height of an HTML element.
-         * @param {String} elementId The HTML id of an HTML DOM node.
+         * @param {String|Object} elementId id of or reference to an HTML DOM node.
          * @returns {Object} An object with the two properties width and height.
          */
         getDimensions: function (elementId, doc) {
-            var element, display, els, originalVisibility, originalPosition,
-                originalDisplay, originalWidth, originalHeight, style,
+            var element,
+                display,
+                els,
+                originalVisibility,
+                originalPosition,
+                originalDisplay,
+                originalWidth,
+                originalHeight,
+                style,
                 pixelDimRegExp = /\d+(\.\d*)?px/;
 
             if (!this.isBrowser || elementId === null) {
@@ -328,20 +387,22 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
 
             doc = doc || document;
             // Borrowed from prototype.js
-            element = doc.getElementById(elementId);
+            element = (Type.isString(elementId)) ? doc.getElementById(elementId) : elementId;
             if (!Type.exists(element)) {
-                throw new Error('\nJSXGraph: HTML container element \'' + elementId + '\' not found.');
+                throw new Error(
+                    "\nJSXGraph: HTML container element '" + elementId + "' not found."
+                );
             }
 
             display = element.style.display;
 
             // Work around a bug in Safari
-            if (display !== 'none' && display !== null) {
+            if (display !== "none" && display !== null) {
                 if (element.clientWidth > 0 && element.clientHeight > 0) {
-                    return {width: element.clientWidth, height: element.clientHeight};
+                    return { width: element.clientWidth, height: element.clientHeight };
                 }
 
-                // a parent might be set to display:none; try reading them from styles
+                // A parent might be set to display:none; try reading them from styles
                 style = window.getComputedStyle ? window.getComputedStyle(element) : element.style;
                 return {
                     width: pixelDimRegExp.test(style.width) ? parseFloat(style.width) : 0,
@@ -359,9 +420,9 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
             originalDisplay = els.display;
 
             // show element
-            els.visibility = 'hidden';
-            els.position = 'absolute';
-            els.display = 'block';
+            els.visibility = "hidden";
+            els.position = "absolute";
+            els.display = "block";
 
             // read the dimension
             originalWidth = element.clientWidth;
@@ -384,24 +445,31 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
          * @param {String} type The event to catch, without leading 'on', e.g. 'mousemove' instead of 'onmousemove'.
          * @param {Function} fn The function to call when the event is triggered.
          * @param {Object} owner The scope in which the event trigger is called.
+         * @param {Object|Boolean} [options=false] This parameter is passed as the third parameter to the method addEventListener. Depending on the data type it is either
+         * an options object or the useCapture Boolean.
+         *
          */
-        addEvent: function (obj, type, fn, owner) {
+        addEvent: function (obj, type, fn, owner, options) {
             var el = function () {
                 return fn.apply(owner, arguments);
             };
 
             el.origin = fn;
-            owner['x_internal' + type] = owner['x_internal' + type] || [];
-            owner['x_internal' + type].push(el);
+            // Check if owner is a board
+            if (typeof owner === 'object' && Type.exists(owner.BOARD_MODE_NONE)) {
+                owner['x_internal' + type] = owner['x_internal' + type] || [];
+                owner['x_internal' + type].push(el);
+            }
 
             // Non-IE browser
             if (Type.exists(obj) && Type.exists(obj.addEventListener)) {
-                obj.addEventListener(type, el, false);
+                options = options || false;  // options or useCapture
+                obj.addEventListener(type, el, options);
             }
 
             // IE
             if (Type.exists(obj) && Type.exists(obj.attachEvent)) {
-                obj.attachEvent('on' + type, el);
+                obj.attachEvent("on" + type, el);
             }
         },
 
@@ -416,42 +484,42 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
             var i;
 
             if (!Type.exists(owner)) {
-                JXG.debug('no such owner');
+                JXG.debug("no such owner");
                 return;
             }
 
-            if (!Type.exists(owner['x_internal' + type])) {
-                JXG.debug('no such type: ' + type);
+            if (!Type.exists(owner["x_internal" + type])) {
+                JXG.debug("no such type: " + type);
                 return;
             }
 
-            if (!Type.isArray(owner['x_internal' + type])) {
-                JXG.debug('owner[x_internal + ' + type + '] is not an array');
+            if (!Type.isArray(owner["x_internal" + type])) {
+                JXG.debug("owner[x_internal + " + type + "] is not an array");
                 return;
             }
 
-            i = Type.indexOf(owner['x_internal' + type], fn, 'origin');
+            i = Type.indexOf(owner["x_internal" + type], fn, "origin");
 
             if (i === -1) {
-                JXG.debug('removeEvent: no such event function in internal list: ' + fn);
+                JXG.debug("removeEvent: no such event function in internal list: " + fn);
                 return;
             }
 
             try {
                 // Non-IE browser
                 if (Type.exists(obj) && Type.exists(obj.removeEventListener)) {
-                    obj.removeEventListener(type, owner['x_internal' + type][i], false);
+                    obj.removeEventListener(type, owner["x_internal" + type][i], false);
                 }
 
                 // IE
                 if (Type.exists(obj) && Type.exists(obj.detachEvent)) {
-                    obj.detachEvent('on' + type, owner['x_internal' + type][i]);
+                    obj.detachEvent("on" + type, owner["x_internal" + type][i]);
                 }
             } catch (e) {
-                JXG.debug('event not registered in browser: (' + type + ' -- ' + fn + ')');
+                JXG.debug("event not registered in browser: (" + type + " -- " + fn + ")");
             }
 
-            owner['x_internal' + type].splice(i, 1);
+            owner["x_internal" + type].splice(i, 1);
         },
 
         /**
@@ -463,28 +531,32 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
          */
         removeAllEvents: function (obj, type, owner) {
             var i, len;
-            if (owner['x_internal' + type]) {
-                len = owner['x_internal' + type].length;
+            if (owner["x_internal" + type]) {
+                len = owner["x_internal" + type].length;
 
                 for (i = len - 1; i >= 0; i--) {
-                    JXG.removeEvent(obj, type, owner['x_internal' + type][i].origin, owner);
+                    JXG.removeEvent(obj, type, owner["x_internal" + type][i].origin, owner);
                 }
 
-                if (owner['x_internal' + type].length > 0) {
-                    JXG.debug('removeAllEvents: Not all events could be removed.');
+                if (owner["x_internal" + type].length > 0) {
+                    JXG.debug("removeAllEvents: Not all events could be removed.");
                 }
             }
         },
 
         /**
-         * Cross browser mouse / touch coordinates retrieval relative to the board's top left corner.
+         * Cross browser mouse / pointer / touch coordinates retrieval relative to the documents's top left corner.
+         * This method might be a bit outdated today, since pointer events and clientX/Y are omnipresent.
+         *
          * @param {Object} [e] The browsers event object. If omitted, <tt>window.event</tt> will be used.
          * @param {Number} [index] If <tt>e</tt> is a touch event, this provides the index of the touch coordinates, i.e. it determines which finger.
          * @param {Object} [doc] The document object.
          * @returns {Array} Contains the position as x,y-coordinates in the first resp. second component.
          */
         getPosition: function (e, index, doc) {
-            var i, len, evtTouches,
+            var i,
+                len,
+                evtTouches,
                 posx = 0,
                 posy = 0;
 
@@ -510,7 +582,6 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
                             break;
                         }
                     }
-
                 } else {
                     e = evtTouches[index];
                 }
@@ -600,7 +671,7 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
             } else {
                 if (obj.style) {
                     // make stylename lower camelcase
-                    stylename = stylename.replace(/-([a-z]|[0-9])/ig, function (all, letter) {
+                    stylename = stylename.replace(/-([a-z]|[0-9])/gi, function (all, letter) {
                         return letter.toUpperCase();
                     });
                     r = obj.style[stylename];
@@ -632,13 +703,26 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
          * @returns {Array} The corrected position.
          */
         getCSSTransform: function (cPos, obj) {
-            var i, j, str, arrStr, start, len, len2, arr,
-                t = ['transform', 'webkitTransform', 'MozTransform', 'msTransform', 'oTransform'];
+            var i,
+                j,
+                str,
+                arrStr,
+                start,
+                len,
+                len2,
+                arr,
+                t = [
+                    "transform",
+                    "webkitTransform",
+                    "MozTransform",
+                    "msTransform",
+                    "oTransform"
+                ];
 
             // Take the first transformation matrix
             len = t.length;
 
-            for (i = 0, str = ''; i < len; i++) {
+            for (i = 0, str = ""; i < len; i++) {
                 if (Type.exists(obj.style[t[i]])) {
                     str = obj.style[t[i]];
                     break;
@@ -649,26 +733,26 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
              * Extract the coordinates and apply the transformation
              * to cPos
              */
-            if (str !== '') {
-                start = str.indexOf('(');
+            if (str !== "") {
+                start = str.indexOf("(");
 
                 if (start > 0) {
                     len = str.length;
                     arrStr = str.substring(start + 1, len - 1);
-                    arr = arrStr.split(',');
+                    arr = arrStr.split(",");
 
                     for (j = 0, len2 = arr.length; j < len2; j++) {
                         arr[j] = parseFloat(arr[j]);
                     }
 
-                    if (str.indexOf('matrix') === 0) {
+                    if (str.indexOf("matrix") === 0) {
                         cPos[0] += arr[4];
                         cPos[1] += arr[5];
-                    } else if (str.indexOf('translateX') === 0) {
+                    } else if (str.indexOf("translateX") === 0) {
                         cPos[0] += arr[0];
-                    } else if (str.indexOf('translateY') === 0) {
+                    } else if (str.indexOf("translateY") === 0) {
                         cPos[1] += arr[0];
-                    } else if (str.indexOf('translate') === 0) {
+                    } else if (str.indexOf("translate") === 0) {
                         cPos[0] += arr[0];
                         cPos[1] += arr[1];
                     }
@@ -678,7 +762,7 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
             // Zoom is used by reveal.js
             if (Type.exists(obj.style.zoom)) {
                 str = obj.style.zoom;
-                if (str !== '') {
+                if (str !== "") {
                     cPos[0] *= parseFloat(str);
                     cPos[1] *= parseFloat(str);
                 }
@@ -693,26 +777,42 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
          * @returns {Array} 3x3 transformation matrix without translation part. See {@link JXG.Board#updateCSSTransforms}.
          */
         getCSSTransformMatrix: function (obj) {
-            var i, j, str, arrstr, start, len, len2, arr,
+            var i,
+                j,
+                str,
+                arrstr,
+                start,
+                len,
+                len2,
+                arr,
                 st,
                 doc = obj.ownerDocument,
-                t = ['transform', 'webkitTransform', 'MozTransform', 'msTransform', 'oTransform'],
-                mat = [[1, 0, 0],
+                t = [
+                    "transform",
+                    "webkitTransform",
+                    "MozTransform",
+                    "msTransform",
+                    "oTransform"
+                ],
+                mat = [
+                    [1, 0, 0],
                     [0, 1, 0],
-                    [0, 0, 1]];
+                    [0, 0, 1]
+                ];
 
             // This should work on all browsers except IE 6-8
             if (doc.defaultView && doc.defaultView.getComputedStyle) {
                 st = doc.defaultView.getComputedStyle(obj, null);
-                str = st.getPropertyValue('-webkit-transform') ||
-                    st.getPropertyValue('-moz-transform') ||
-                    st.getPropertyValue('-ms-transform') ||
-                    st.getPropertyValue('-o-transform') ||
-                    st.getPropertyValue('transform');
+                str =
+                    st.getPropertyValue("-webkit-transform") ||
+                    st.getPropertyValue("-moz-transform") ||
+                    st.getPropertyValue("-ms-transform") ||
+                    st.getPropertyValue("-o-transform") ||
+                    st.getPropertyValue("transform");
             } else {
                 // Take the first transformation matrix
                 len = t.length;
-                for (i = 0, str = ''; i < len; i++) {
+                for (i = 0, str = ""; i < len; i++) {
                     if (Type.exists(obj.style[t[i]])) {
                         str = obj.style[t[i]];
                         break;
@@ -720,27 +820,29 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
                 }
             }
 
-            if (str !== '') {
-                start = str.indexOf('(');
+            if (str !== "") {
+                start = str.indexOf("(");
 
                 if (start > 0) {
                     len = str.length;
                     arrstr = str.substring(start + 1, len - 1);
-                    arr = arrstr.split(',');
+                    arr = arrstr.split(",");
 
                     for (j = 0, len2 = arr.length; j < len2; j++) {
                         arr[j] = parseFloat(arr[j]);
                     }
 
-                    if (str.indexOf('matrix') === 0) {
-                        mat = [[1, 0, 0],
+                    if (str.indexOf("matrix") === 0) {
+                        mat = [
+                            [1, 0, 0],
                             [0, arr[0], arr[1]],
-                            [0, arr[2], arr[3]]];
-                    } else if (str.indexOf('scaleX') === 0) {
+                            [0, arr[2], arr[3]]
+                        ];
+                    } else if (str.indexOf("scaleX") === 0) {
                         mat[1][1] = arr[0];
-                    } else if (str.indexOf('scaleY') === 0) {
+                    } else if (str.indexOf("scaleY") === 0) {
                         mat[2][2] = arr[0];
-                    } else if (str.indexOf('scale') === 0) {
+                    } else if (str.indexOf("scale") === 0) {
                         mat[1][1] = arr[0];
                         mat[2][2] = arr[1];
                     }
@@ -753,7 +855,7 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
             // It fails if the user does zooming
             if (Type.exists(obj.style.zoom)) {
                 str = obj.style.zoom;
-                if (str !== '') {
+                if (str !== "") {
                     mat[1][1] *= parseFloat(str);
                     mat[2][2] *= parseFloat(str);
                 }
@@ -781,7 +883,7 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
 
                     do {
                         process.call(context, todo.shift());
-                    } while (todo.length > 0 && (+new Date() - start < 300));
+                    } while (todo.length > 0 && +new Date() - start < 300);
 
                     if (todo.length > 0) {
                         window.setTimeout(timerFun, 1);
@@ -794,105 +896,147 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
         },
 
         /**
-         * Calculate the scale factor and vertical shift for the JSXGraph div
-         * in full screen mode.
-         *
-         * @param {Object} obj Reference to a DOM node.
-         * @returns Object {scale: number, vshift: number}
-         * @see JXG.Board#fullscreenListener
-         * @private
-         */
-        _getScaleFactors: function (node) {
-            var width = node.getBoundingClientRect().width,
-                height = node.getBoundingClientRect().height,
-
-                // Determine the maximum scale factor.
-                r_w = window.screen.width / width,
-                r_h = window.screen.height / height,
-
-                // Determine the vertical shift to place the div in the center of the screen
-                vshift = (window.screen.height - height) * 0.5,
-
-                // Scaling factor: if not supplied, it's taken as large as possible
-                scale = Math.min(r_w, r_h);
-
-            // Adapt vshift and scale for landscape on tablets
-            if (window.matchMedia && window.matchMedia('(orientation:landscape)').matches &&
-                window.screen.width < window.screen.height) {
-                // Landscape on iOS: it returns 'landscape', but still width < height.
-                r_w = window.screen.height / width;
-                r_h = window.screen.width / height;
-                scale = Math.min(r_w, r_h);
-                vshift = (window.screen.width - height) * 0.5;
-            }
-            scale *= 0.85;
-
-            return { scale: scale, vshift: vshift, width: width };
-        },
-
-        /**
          * Scale and vertically shift a DOM element (usually a JSXGraph div)
          * inside of a parent DOM
          * element which is set to fullscreen.
          * This is realized with a CSS transformation.
-         *          *
+         *
          * @param  {String} wrap_id  id of the parent DOM element which is in fullscreen mode
          * @param  {String} inner_id id of the DOM element which is scaled and shifted
-         * @param  {Number} scale    Scaling factor
-         * @param  {Number} vshift   Vertical shift (in pixel)
          * @param  {Object} doc      document object or shadow root
+         * @param  {Number} scale    Relative size of the JSXGraph board in the fullscreen window.
          *
          * @private
          * @see JXG.Board#toFullscreen
          * @see JXG.Board#fullscreenListener
          *
          */
-        scaleJSXGraphDiv: function (wrap_id, inner_id, scale, vshift, doc) {
-            var len = doc.styleSheets.length, style,
-
-                pseudo_keys = [':fullscreen', ':-webkit-full-screen', ':-moz-full-screen', ':-ms-fullscreen'],
-                len_pseudo = pseudo_keys.length, i,
-
-                // CSS rules to center the inner div horizontally and vertically.
-                rule_inner = '{margin:0 auto;transform:matrix(' + scale + ',0,0,' + scale + ',0,' + vshift + ');}',
-
+        scaleJSXGraphDiv: function (wrap_id, inner_id, doc, scale) {
+            var len = doc.styleSheets.length, style, rule,
+                w, h, b,
+                wi, hi,
+                wo, ho, inner,
+                scale_l, vshift_l,
+                f = scale,
+                ratio,
+                rule_inner_l,
+                title = 'jsxgraph_fullscreen_css',
+                found_css,
+                pseudo_keys = [
+                    ":fullscreen",
+                    ":-webkit-full-screen",
+                    ":-moz-full-screen",
+                    ":-ms-fullscreen"
+                ],
+                len_pseudo = pseudo_keys.length,
+                i,
                 // A previously installed CSS rule to center the JSXGraph div has to
                 // be searched and removed again.
-                regex = new RegExp('.*#' + wrap_id + ':.*full.*screen.*#' + inner_id + '.*auto;.*transform:.*matrix');
+                regex = new RegExp(
+                    ".*#" +
+                        wrap_id +
+                        ":.*full.*screen.*#" +
+                        inner_id +
+                        ".*auto;.*transform:.*matrix"
+                );
 
-            if (len === 0) {
-                // In case there is not a single CSS rule defined at all.
-                style = document.createElement('style');
+            b = doc.getElementById(wrap_id).getBoundingClientRect();
+            h = b.height;
+            w = b.width;
+
+            inner = doc.getElementById(inner_id);
+            wo = inner._cssFullscreenStore.w;
+            ho = inner._cssFullscreenStore.h;
+            ratio = ho / wo;
+
+            // Scale the div such that fits into the fullscreen.
+            if (wo > w * f) {
+                wo = w * f;
+                ho = wo * ratio;
+            }
+            if (ho > h * f) {
+                ho = h * f;
+                wo = ho / ratio;
+            }
+
+            wi = wo;
+            hi = ho;
+            // Compare this.setBoundingBox() 
+            if (ratio > 1) {
+                // h > w
+                if (ratio < h / w) {
+                    scale_l =  w * f / wo;
+                } else {
+                    scale_l =  h * f / ho;
+                }
+            } else {
+                // h <= w
+                if (ratio < h / w) {
+                    scale_l = w * f / wo;
+                } else {
+                    scale_l = h * f / ho;
+                }
+            }
+            vshift_l = (h - hi) * 0.5;
+
+            // CSS rules to center the inner div horizontally and vertically.
+            rule_inner_l =
+                "{" +
+                "width:" + wi + "px !important;" +
+                "height:" + hi + "px !important;" +
+                "margin:0 auto;" +
+                "transform:matrix(" + scale_l + ",0,0," + scale_l + ",0," + vshift_l + ");" +
+                "}";
+
+            found_css = false;
+            // Removing of the CSS here should happen only
+            // in emergency cases.
+            for (i = len - 1; i >= 0; i--) {
+                if (doc.styleSheets[i].title === title) {
+                    found_css = true;
+
+                    if (doc.styleSheets[i].title === title &&
+                        doc.styleSheets[i].cssRules.length > 0 &&
+                        regex.test(doc.styleSheets[i].cssRules[0].cssText) &&
+                        doc.styleSheets[i].deleteRule
+                    ) {
+                        doc.styleSheets[i].deleteRule(0);
+                        break;
+                    }
+                }
+            }
+            if (!found_css) {
+                // In case there is not yet a CSS style sheet for fullscreen
+                // defined, do it now.
+                style = document.createElement("style");
+                style.setAttribute('title', title);
                 // WebKit hack :(
-                style.appendChild(document.createTextNode(''));
-                // Add the <style> element to the page
-                doc.appendChild(style);
-                len = doc.styleSheets.length;
+                style.appendChild(document.createTextNode(""));
+                // Add the <style> element to the page head.
+                // It must be document, not the shadowDOM root.
+                // It seems that the head tag does always exist.
+                document.head.appendChild(style);
             }
-
-            // Remove a previously installed CSS rule.
-            if (doc.styleSheets[len - 1].cssRules.length > 0 &&
-                regex.test(doc.styleSheets[len - 1].cssRules[0].cssText) &&
-                doc.styleSheets[len - 1].deleteRule) {
-                    doc.styleSheets[len - 1].deleteRule(0);
-            }
+            len = doc.styleSheets.length;
 
             // Install a CSS rule to center the JSXGraph div at the first position of the list.
             for (i = 0; i < len_pseudo; i++) {
                 try {
-                    doc.styleSheets[len - 1].insertRule('#' + wrap_id + pseudo_keys[i] + ' #' + inner_id + rule_inner, 0);
+                    rule = "#" + wrap_id + pseudo_keys[i] + " #" + inner_id + rule_inner_l;
+                    // rule = '@media all and (orientation:landscape) {' + rule + '}';
+                    doc.styleSheets[len - 1].insertRule(rule, 0);
+
                     break;
-                } catch (err) {
-                    // console.log('JXG.scaleJSXGraphDiv: Could not add CSS rule "' + pseudo_keys[i] + '".');
-                    // console.log('One possible reason could be that the id of the JSXGraph container does not start with a letter.');
-                }
+                } catch (err) {}
             }
             if (i === len_pseudo) {
-                console.log('JXG.scaleJSXGraphDiv: Could not add any CSS rule.');
-                console.log('One possible reason could be that the id of the JSXGraph container does not start with a letter.');
+                JXG.debug("JXG.scaleJSXGraphDiv: Could not add any CSS rule.\n" +
+                    "One possible reason could be that the id of the JSXGraph container does not start with a letter."
+                );
             }
         }
-    });
 
-    return JXG;
-});
+    }
+);
+
+export default JXG;

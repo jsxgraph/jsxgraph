@@ -4,7 +4,7 @@
     <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
 
     <!--script type="text/javascript" src="http://jsxgraph.uni-bayreuth.de/distrib/MathJax/MathJax.js"></script-->
-    <script type="text/javascript" src="../src/loadjsxgraph.js"></script>
+    <script type="text/javascript" src="../distrib/jsxgraphcore.js"></script>
     <script type="text/javascript" src="../src/reader/geonext.js"></script>
 
     <script type="text/javascript" src="http://code.jquery.com/jquery-1.6.4.js"></script>
@@ -63,7 +63,7 @@
                 if (board) {
                     JXG.JSXGraph.freeBoard(board);
                 }
-                
+
                 board = JXG.JSXGraph.loadBoardFromString('jxgbox', e.target.result, 'geonext');
                 if ($('#type-jc').is(':checked')) {
                     console.log('dumping jessie');
@@ -85,7 +85,7 @@
 
             if (files.length > 0) {
                 f = files[0];
-                
+
                 playFile(f);
             }
         }
@@ -98,7 +98,7 @@
         file_drop.addEventListener('dragover', handleDragOver, false);
         file_drop.addEventListener('drop', handleDrop, false);
     })();
-    
+
     /* ]]> */
 </script>
 </body>

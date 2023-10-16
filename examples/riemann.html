@@ -2,7 +2,7 @@
 <head>
    <title>JSXGraph example</title>
    <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
-<script type="text/javascript" src="../src/loadjsxgraph.js"></script>
+<script type="text/javascript" src="../distrib/jsxgraphcore.js"></script>
 </head>
 <body>
 <h1>Playground</h1>
@@ -33,18 +33,18 @@ var f = function(x){ return Math.sin(x); }
 var plot = brd.create('functiongraph',[f,function(){return a.Value();}, function(){return b.Value();}]);
 brd.unsuspendUpdate();
 
-var os = brd.create('riemannsum',[f, 
+var os = brd.create('riemannsum',[f,
     function(){ return s.Value();}, function(){ return document.getElementById('sumtype').value;},
-    function(){return a.Value();}, 
+    function(){return a.Value();},
     function(){return b.Value();}
-    ], 
+    ],
     {fillColor:'#ffff00', fillOpacity:0.3});
 
-brd.create('text',[-6,-3,function(){ 
+brd.create('text',[-6,-3,function(){
     return 'Sum=' +(JXG.Math.Numerics.riemannsum(f,s.Value(),document.getElementById('sumtype').value,a.Value(),b.Value())).toFixed(4); }
     ],{fontSize:40});
 
-brd.create('text',[1,-3,function(){ 
+brd.create('text',[1,-3,function(){
     return 'Sum=' + os.Value().toFixed(4); }
     ],{fontSize:40});
 

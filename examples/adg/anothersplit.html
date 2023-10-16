@@ -2,7 +2,7 @@
 <head>
    <title>Lima&ccedil;on | JSXGraph Example</title>
    <link rel="stylesheet" type="text/css" href="../../distrib/jsxgraph.css" />
-   <script type="text/javascript" src="../../src/loadjsxgraph.js"></script>
+   <script type="text/javascript" src="../../distrib/jsxgraphcore.js"></script>
 </head>
 <body>
 <div id="debug" style="display: none"></div>
@@ -58,20 +58,20 @@
 
     p1 = board.createElement('point', [8, 7]);
     c1 = board.createElement('circle', [p1, 4], {withLabel: false, name: 'c_{1}'});
-    
+
     p2 = board.create('point', [14, 7]);
     l1 = board.create('line', [p1, p2], {withLabel: true, name: 'g', strokeWidth: 1});
-    
+
     g = board.create('glider', [11.5, 9, c1], {name: 'G'});
     c2 = board.create('circle', [g, 4], {withLabel: false, name: 'c_{2}'});
-    
+
     i = board.create('intersection', [c2, l1, 0], {name: 'I_1'});
-    
+
     p14_1 = board.create('midpoint', [i, g], {trace: false, name: 'M'});
-    
-    
-    
-    
+
+
+
+
 
 
     loc = null;
@@ -88,7 +88,7 @@
     loc3 = null;
 
     opt = false;
-    
+
     //board.options.locus.translateToOrigin = true;
 //    p14_2 = board.createElement('intersection', [c2,g,1]);
 
@@ -186,7 +186,7 @@
         tg = board.create('glider', [3.5, 8.3, loc]);
 
     c3 = board.create('circle', [tg, 3]);
-    
+
     // war: p5
     tm = board.create('intersection', [l1, c3, 0], {trace: false, name: 'I_2'});
     //tm = board.create('midpoint', [p5, p14_1], {trace: true, size: 1});
@@ -217,8 +217,8 @@
 
     function extend2() {
     c3 = board.create('circle', [p14_1, 3]);
-   
-    // war: p6 
+
+    // war: p6
     tm2 = board.create('intersection', [l1, c3, 0], {trace: false});
     //tm2 = board.create('midpoint', [p6, p14_1], {trace: true});
     }
@@ -319,7 +319,7 @@
     }
 })(window, document);
 
-    
+
   /* ]]> */
   </script>
 <br/>

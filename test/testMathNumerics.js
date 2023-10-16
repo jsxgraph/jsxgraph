@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2022
+    Copyright 2008-2023
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -25,16 +25,32 @@
     GNU Lesser General Public License for more details.
 
     You should have received a copy of the GNU Lesser General Public License and
-    the MIT License along with JSXGraph. If not, see <http://www.gnu.org/licenses/>
-    and <http://opensource.org/licenses/MIT/>.
+    the MIT License along with JSXGraph. If not, see <https://www.gnu.org/licenses/>
+    and <https://opensource.org/licenses/MIT/>.
  */
 
 describe("Test JXG.Math.Numerics", function () {
     it("Gauss", function () {
-        var A = [[1, 1, 1], [0, -2, -3], [0, -6, -8]],
-            Atest = [[1, 1, 1], [0, -2, -3], [0, -6, -8]],
-            Apivot = [[0, 1, 0], [1, 0, 0], [0, 0, 1]],
-            Asing = [[0, 0, 0], [0, 1, 0], [0, 0, 1]],
+        var A = [
+                [1, 1, 1],
+                [0, -2, -3],
+                [0, -6, -8]
+            ],
+            Atest = [
+                [1, 1, 1],
+                [0, -2, -3],
+                [0, -6, -8]
+            ],
+            Apivot = [
+                [0, 1, 0],
+                [1, 0, 0],
+                [0, 0, 1]
+            ],
+            Asing = [
+                [0, 0, 0],
+                [0, 1, 0],
+                [0, 0, 1]
+            ],
             b = [0, 1, 3],
             excep;
 
@@ -72,26 +88,42 @@ describe("Test JXG.Math.Numerics", function () {
         expect(JXG.Math.Numerics.gaussBareiss(A2)).toEqual(5);
         expect(JXG.Math.Numerics.gaussBareiss(A3)).toEqual(1);
         expect(JXG.Math.Numerics.gaussBareiss(A4)).toEqual(1);
-        A3 = [[0, 0, 1], [14, 2, 999], [-32, 1, 999]];
+        A3 = [
+            [0, 0, 1],
+            [14, 2, 999],
+            [-32, 1, 999]
+        ];
         expect(JXG.Math.Numerics.gaussBareiss(A3)).toEqual(78);
-        A3 = [[0, 14, -32], [0, 2, 1], [1, 999, 999]];
+        A3 = [
+            [0, 14, -32],
+            [0, 2, 1],
+            [1, 999, 999]
+        ];
         expect(JXG.Math.Numerics.gaussBareiss(A3)).toEqual(78);
     });
 
     it("Jacobi", function () {
-        var A = [[2, 0, 0], [0, 4, 0], [0, 0, 8]];
+        var A = [
+            [2, 0, 0],
+            [0, 4, 0],
+            [0, 0, 8]
+        ];
         expect(JXG.Math.Numerics.Jacobi(A)).toEqual([A, JXG.Math.identity(3)]);
     });
 
     it("Newton-Cotes", function () {
-        var f = function (x) { return Math.sin(x); },
+        var f = function (x) {
+                return Math.sin(x);
+            },
             interval = [0, 2 * Math.PI];
 
         expect(JXG.Math.Numerics.NewtonCotes(interval, f)).toBeCloseTo(0, 15);
     });
 
     it("Newton", function () {
-        var f = function (x) { return x - 2; };
+        var f = function (x) {
+            return x - 2;
+        };
         expect(JXG.Math.Numerics.Newton(f, 0)).toBeCloseTo(2, 8);
     });
 
@@ -114,18 +146,25 @@ describe("Test JXG.Math.Numerics", function () {
     it("General polynomial term", function () {
         var coeff = [5.12345, 4.12345, 3, 2, 1],
             deg = 4,
-            varname = 'x',
+            varname = "x",
             prec = 3;
 
-        expect(JXG.Math.Numerics.generatePolynomialTerm(coeff, deg, varname, prec)).toEqual('(1.00)*x<sup>4</sup> + (2.00)*x<sup>3</sup> + (3.00)*x<sup>2</sup> + (4.12)*x + (5.12)');
+        expect(JXG.Math.Numerics.generatePolynomialTerm(coeff, deg, varname, prec)).toEqual(
+            "(1.00)*x<sup>4</sup> + (2.00)*x<sup>3</sup> + (3.00)*x<sup>2</sup> + (4.12)*x + (5.12)"
+        );
     });
 
     it("Lagrange polynomial", function () {
         // This will look a little bit strange. We need points, but all we need in lagrangePolynomial() from those points
         // is the X() and Y() method. Hence, we're faking some points.
         var p = [],
-            P = [[1, 1], [2, 3], [3, 2]],
-            i, lagrange,
+            P = [
+                [1, 1],
+                [2, 3],
+                [3, 2]
+            ],
+            i,
+            lagrange,
             makeFakeFunction = function (P, i, j) {
                 return function () {
                     return P[i][j];
@@ -147,8 +186,13 @@ describe("Test JXG.Math.Numerics", function () {
 
     it("Neville", function () {
         var p = [],
-            P = [[1, 1], [2, 3], [3, 2]],
-            i, neville,
+            P = [
+                [1, 1],
+                [2, 3],
+                [3, 2]
+            ],
+            i,
+            neville,
             makeFakeFunction = function (P, i, j) {
                 return function () {
                     return P[i][j];
@@ -170,8 +214,14 @@ describe("Test JXG.Math.Numerics", function () {
     });
 
     it("Regression polynomial", function () {
-        var p = [], P = [[1, 2, 3], [1, 3, 2]], i,
-            regressionPoints, regressionArrays,
+        var p = [],
+            P = [
+                [1, 2, 3],
+                [1, 3, 2]
+            ],
+            i,
+            regressionPoints,
+            regressionArrays,
             fakeSlider = {
                 elementClass: JXG.OBJECT_CLASS_POINT,
                 Value: function () {
@@ -183,8 +233,6 @@ describe("Test JXG.Math.Numerics", function () {
                     return P[i][j];
                 };
             };
-        ;
-
         for (i = 0; i < P[0].length; i++) {
             p[i] = {
                 elementClass: JXG.OBJECT_CLASS_POINT,
@@ -202,16 +250,22 @@ describe("Test JXG.Math.Numerics", function () {
 
     it("Numerical derivative", function () {
         var f = function (x) {
-            return x * x;
-        },
+                return x * x;
+            },
             df = JXG.Math.Numerics.D(f);
         expect(df(1)).toBeCloseTo(2, 10);
     });
 
     it("Fzero", function () {
-        var f = function (x) { return x - 2; },
-            f2 = function (x) { return (x - 1) * (x - 1) * (x - 1); },
-            f3 = function (x) { return (x - 5) * (x - 5); };
+        var f = function (x) {
+                return x - 2;
+            },
+            f2 = function (x) {
+                return (x - 1) * (x - 1) * (x - 1);
+            },
+            f3 = function (x) {
+                return (x - 5) * (x - 5);
+            };
 
         expect(JXG.Math.Numerics.fzero(f, 0)).toBeCloseTo(2.0, 25);
         expect(f2(JXG.Math.Numerics.root(f2, 0))).toBeCloseTo(0.0, 25);

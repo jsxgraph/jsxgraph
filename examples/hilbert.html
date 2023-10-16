@@ -3,14 +3,14 @@
    <title>JSXGraph example</title>
    <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
    <script type="text/javascript" src="prototype.js"></script>
-   <script type="text/javascript" src="../src/loadjsxgraph.js"></script>
+   <script type="text/javascript" src="../distrib/jsxgraphcore.js"></script>
 </head>
 <body>
 <h2>The Hilbert curve</h2>
 <p>
 The famous space filling curve drawn with JavaScript.
 This web page uses the open source library <a href="http://jsxgraph.org">JSXGraph (http://jsxgraph.org)</a>.
-If it is set to level=9 the curve is defined by 
+If it is set to level=9 the curve is defined by
 262 144 points - so be careful if you are using the Internet Explorer.
 </p>
 <div style="width:800px">
@@ -61,7 +61,7 @@ If it is set to level=9 the curve is defined by
                     case DOWN:
                         pos[1] -= step;
                         break;
-                } 
+                }
                 pointsX[pointsX.length] = pos[0];
                 pointsY[pointsY.length] = pos[1];
         };
@@ -70,8 +70,8 @@ If it is set to level=9 the curve is defined by
             if (level<=1) {
                 switch (dir) {
                     case LEFT:
-                        move(RIGHT);     
-                        move(DOWN);      
+                        move(RIGHT);
+                        move(DOWN);
                         move(LEFT);
                         break;
                     case RIGHT:
@@ -89,7 +89,7 @@ If it is set to level=9 the curve is defined by
                         move(LEFT);
                         move(DOWN);
                         break;
-                } 
+                }
             } else {
                 switch (dir) {
                     case LEFT:
@@ -128,7 +128,7 @@ If it is set to level=9 the curve is defined by
                         move(DOWN);
                         hilbert(level-1,LEFT);
                         break;
-                } 
+                }
             }
         };
 
@@ -146,7 +146,7 @@ If it is set to level=9 the curve is defined by
             curve.dataX = pointsX;
             curve.dataY = pointsY;
             b.update();
-        } 
+        }
 
         var oldlev = -1;
         curve.updateDataArray = function() {
@@ -163,7 +163,7 @@ If it is set to level=9 the curve is defined by
             this.dataY = pointsY;
             oldlev=maxlev;
         };
-       
+
   /* ]]> */
   </script>
 </body>

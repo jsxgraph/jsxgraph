@@ -18,7 +18,8 @@ body {
   color: #404040;
   position: relative;
   background: #FFF;
-  width: 800px;
+  /*width: 1028px;*/
+  margin: 0;
 }
 
 h1,h2,h3,h4,h5,h6 {
@@ -87,6 +88,17 @@ pre.code
 {
 	margin-left: 260px;
 	width: 800px;
+}
+
+.details {
+    margin-top: 0.5em;
+    margin-bottom: 0.5em;
+}
+
+.summary {
+    font-family: arial, sans-serif;
+    font-weight: bold;
+    font-size: 1em;
 }
 
 .classList
@@ -195,6 +207,7 @@ ul.inheritsList
 
 .fineprint
 {
-	text-align: right;
+    margin-left: 260px;
+	text-align: left;
 	font-size: 10px;
 }

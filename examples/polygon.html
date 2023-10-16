@@ -3,7 +3,7 @@
    <title>JSXGraph example</title>
    <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
 <script type="text/javascript" src="jquery-3.5.1.min.js"></script>
-<script type="text/javascript" src="../src/loadjsxgraph.js"></script>
+<script type="text/javascript" src="../distrib/jsxgraphcore.js"></script>
 </head>
 <body>
 <h1 onclick="brd.clearTraces();">Polygon</h1>
@@ -30,22 +30,22 @@ B[0] = brd.create('point', [8,8], {name:'B_0'});
 C[0] = brd.create('point', [-8,-3], {name:'C_0'});
 D[0] = brd.create('point', [9,-8], {name:'D_0'});
 for (var i = 0; i<=18; i++) {
-  
-  A[i+1]= brd.create('point', (function(i){var p = 0.05*(i+1); return [  
+
+  A[i+1]= brd.create('point', (function(i){var p = 0.05*(i+1); return [
                                 function () {return (1-p)*A[0].X()+p*B[0].X();},
                                 function () {return (1-p)*A[0].Y()+p*B[0].Y();}] })(i), {name:' ',visible:false});
-  B[i+1]= brd.create('point', (function(i){var p = 0.05*(i+1); return [  
+  B[i+1]= brd.create('point', (function(i){var p = 0.05*(i+1); return [
                                 function () {return (1-p)*B[0].X()+p*C[0].X();},
                                 function () {return (1-p)*B[0].Y()+p*C[0].Y();}] })(i), {name:' ',visible:false});
-  C[i+1]= brd.create('point', (function(i){var p = 0.05*(i+1); return [  
+  C[i+1]= brd.create('point', (function(i){var p = 0.05*(i+1); return [
                                 function () {return (1-p)*C[0].X()+p*D[0].X();},
                                 function () {return (1-p)*C[0].Y()+p*D[0].Y();}] })(i), {name:' ',visible:false});
 }
 
-var p1 = brd.create('polygon', [A[0], B[1], B[2], A[1], A[2], B[3], B[4], A[3], A[4], B[5], B[6], A[5], A[6], B[7], B[8], A[7], A[8], B[9], B[10], A[9], A[10], B[11], B[12], A[11], A[12], B[13], B[14], A[13], A[14], B[15], B[16], A[15], A[16], B[17], B[18], A[17], A[18], B[19], C[0], A[19]], 
+var p1 = brd.create('polygon', [A[0], B[1], B[2], A[1], A[2], B[3], B[4], A[3], A[4], B[5], B[6], A[5], A[6], B[7], B[8], A[7], A[8], B[9], B[10], A[9], A[10], B[11], B[12], A[11], A[12], B[13], B[14], A[13], A[14], B[15], B[16], A[15], A[16], B[17], B[18], A[17], A[18], B[19], C[0], A[19]],
     {lines:{strokeWidth:1}, withLabel:false});
-var p2 = brd.create('polygon', [C[1], B[0], B[1], C[2], C[3], B[2], B[3], C[4], C[5], B[4], B[5], C[6], C[7], B[6], B[7], C[8], C[9], B[8], B[9], C[10], C[11], B[10], B[11], C[12], C[13], B[12], B[13], C[14], C[15], B[14], B[15], C[16], C[17], B[16], B[17], C[18], C[19], B[18], B[19], D[0]], 
-    {withLabel:false, fillColor:'blue', 
+var p2 = brd.create('polygon', [C[1], B[0], B[1], C[2], C[3], B[2], B[3], C[4], C[5], B[4], B[5], C[6], C[7], B[6], B[7], C[8], C[9], B[8], B[9], C[10], C[11], B[10], B[11], C[12], C[13], B[12], B[13], C[14], C[15], B[14], B[15], C[16], C[17], B[16], B[17], C[18], C[19], B[18], B[19], D[0]],
+    {withLabel:false, fillColor:'blue',
     lines: {strokeWidth:1, strokeColor:'black'},
     trace:false
     });
@@ -56,11 +56,11 @@ brd.create('line',[C[0],D[0]],{straightFirst:false,straightLast:false,strokeWidt
 
 for (i=0;i<p1.borders.length;i++) p1.borders[i].setProperty({strokeWidth:1});
 for (i=0;i<p2.borders.length;i++) p2.borders[i].setProperty({strokeWidth:1});
-     
+
 };
-doit();   
-JXG.JSXGraph.freeBoard(brd);  
-doit();   
+doit();
+JXG.JSXGraph.freeBoard(brd);
+doit();
 
 /* ]]> */
 </script>

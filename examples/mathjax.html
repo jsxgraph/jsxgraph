@@ -3,7 +3,7 @@
     <title>JSXGraph example</title>
     <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
-    <script type="text/javascript" src="../src/loadjsxgraph.js"></script>
+    <script type="text/javascript" src="../distrib/jsxgraphcore.js"></script>
 </head>
 <body>
 <h1>MathJax</h1>
@@ -15,16 +15,16 @@
     k = brd.create('slider',[[-4,-2],[3,-2],[-5,1,5]],{name:'n', snapWidth:1});
     brd.create('functiongraph', [function(t) {return Math.pow(Math.E,t*k.Value());}],{strokeColor:'#ff0000'});
     brd.create('text',[-4,15,
-      function() { 
+      function() {
         var temp;
         if (k.Value() == 1) {
-          temp = '\\[f(x) = e^x \\]'; 
+          temp = '\\[f(x) = e^x \\]';
         } else {
           temp = '\\[f(x) = e^{' + k.Value() + 'x}\\]';
         }
        return temp;
      }], {fontSize:60});
     brd.update();
-</script> 
+</script>
 </body>
 </html>

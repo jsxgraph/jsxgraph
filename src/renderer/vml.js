@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2022
+    Copyright 2008-2023
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -25,86 +25,90 @@
     GNU Lesser General Public License for more details.
 
     You should have received a copy of the GNU Lesser General Public License and
-    the MIT License along with JSXGraph. If not, see <http://www.gnu.org/licenses/>
-    and <http://opensource.org/licenses/MIT/>.
+    the MIT License along with JSXGraph. If not, see <https://www.gnu.org/licenses/>
+    and <https://opensource.org/licenses/MIT/>.
  */
-
 
 /*global JXG: true, define: true, AMprocessNode: true, MathJax: true, document: true */
 /*jslint nomen: true, plusplus: true, newcap:true*/
 
-/* depends:
- jxg
- renderer/abstract
- base/constants
- utils/type
- utils/color
- math/math
- math/numerics
-*/
+import JXG from "../jxg";
+import AbstractRenderer from "./abstract";
+import Const from "../base/constants";
+import Type from "../utils/type";
+import Color from "../utils/color";
+import Mat from "../math/math";
+import Numerics from "../math/numerics";
 
-define([
-    'jxg', 'renderer/abstract', 'base/constants', 'utils/type', 'utils/color', 'math/math', 'math/numerics'
-], function (JXG, AbstractRenderer, Const, Type, Color, Mat, Numerics) {
+/**
+ * Uses VML to implement the rendering methods defined in {@link JXG.AbstractRenderer}.
+ * VML was used in very old Internet Explorer versions upto IE 8.
+ *
+ *
+ * @class JXG.VMLRenderer
+ * @augments JXG.AbstractRenderer
+ * @param {Node} container Reference to a DOM node containing the board.
+ * @see JXG.AbstractRenderer
+ * @deprecated
+ */
+JXG.VMLRenderer = function (container) {
+    this.type = "vml";
 
-    "use strict";
-
-    /**
-     * Uses VML to implement the rendering methods defined in {@link JXG.AbstractRenderer}.
-     * VML was used in very old Internet Explorer versions upto IE 8.
-     * 
-     * 
-     * @class JXG.VMLRenderer
-     * @augments JXG.AbstractRenderer
-     * @param {Node} container Reference to a DOM node containing the board.
-     * @see JXG.AbstractRenderer
-     * @deprecated
-     */
-    JXG.VMLRenderer = function (container) {
-        this.type = 'vml';
-
-        this.container = container;
-        this.container.style.overflow = 'hidden';
-        if (this.container.style.position === '') {
-            this.container.style.position = 'relative';
-        }
-        this.container.onselectstart = function () {
-            return false;
-        };
-
-        this.resolution = 10; // Paths are drawn with a a resolution of this.resolution/pixel.
-
-        // Add VML includes and namespace
-        // Original: IE <=7
-        //container.ownerDocument.createStyleSheet().addRule("v\\:*", "behavior: url(#default#VML);");
-        if (!Type.exists(JXG.vmlStylesheet)) {
-            container.ownerDocument.namespaces.add("jxgvml", "urn:schemas-microsoft-com:vml");
-            JXG.vmlStylesheet = this.container.ownerDocument.createStyleSheet();
-            JXG.vmlStylesheet.addRule(".jxgvml", "behavior:url(#default#VML)");
-        }
-
-        try {
-            if (!container.ownerDocument.namespaces.jxgvml) {
-                container.ownerDocument.namespaces.add("jxgvml", "urn:schemas-microsoft-com:vml");
-            }
-
-            this.createNode = function (tagName) {
-                return container.ownerDocument.createElement('<jxgvml:' + tagName + ' class="jxgvml">');
-            };
-        } catch (e) {
-            this.createNode = function (tagName) {
-                return container.ownerDocument.createElement('<' + tagName + ' xmlns="urn:schemas-microsoft.com:vml" class="jxgvml">');
-            };
-        }
-
-        // dash styles
-        this.dashArray = ['Solid', '1 1', 'ShortDash', 'Dash', 'LongDash', 'ShortDashDot', 'LongDashDot'];
+    this.container = container;
+    this.container.style.overflow = "hidden";
+    if (this.container.style.position === "") {
+        this.container.style.position = "relative";
+    }
+    this.container.onselectstart = function () {
+        return false;
     };
 
-    JXG.VMLRenderer.prototype = new AbstractRenderer();
+    this.resolution = 10; // Paths are drawn with a resolution of this.resolution/pixel.
 
-    JXG.extend(JXG.VMLRenderer.prototype, /** @lends JXG.VMLRenderer.prototype */ {
+    // Add VML includes and namespace
+    // Original: IE <=7
+    //container.ownerDocument.createStyleSheet().addRule("v\\:*", "behavior: url(#default#VML);");
+    if (!Type.exists(JXG.vmlStylesheet)) {
+        container.ownerDocument.namespaces.add("jxgvml", "urn:schemas-microsoft-com:vml");
+        JXG.vmlStylesheet = this.container.ownerDocument.createStyleSheet();
+        JXG.vmlStylesheet.addRule(".jxgvml", "behavior:url(#default#VML)");
+    }
 
+    try {
+        if (!container.ownerDocument.namespaces.jxgvml) {
+            container.ownerDocument.namespaces.add("jxgvml", "urn:schemas-microsoft-com:vml");
+        }
+
+        this.createNode = function (tagName) {
+            return container.ownerDocument.createElement(
+                "<jxgvml:" + tagName + ' class="jxgvml">'
+            );
+        };
+    } catch (e) {
+        this.createNode = function (tagName) {
+            return container.ownerDocument.createElement(
+                "<" + tagName + ' xmlns="urn:schemas-microsoft.com:vml" class="jxgvml">'
+            );
+        };
+    }
+
+    // dash styles
+    this.dashArray = [
+        "Solid",
+        "1 1",
+        "ShortDash",
+        "Dash",
+        "LongDash",
+        "ShortDashDot",
+        "LongDashDot"
+    ];
+};
+
+JXG.VMLRenderer.prototype = new AbstractRenderer();
+
+JXG.extend(
+    JXG.VMLRenderer.prototype,
+    /** @lends JXG.VMLRenderer.prototype */ {
         /**
          * Sets attribute <tt>key</tt> of node <tt>node</tt> to <tt>value</tt>.
          * @param {Node} node A DOM node.
@@ -120,7 +124,7 @@ define([
                     node.setAttribute(key, val, iFlag);
                 }
             } catch (e) {
-                JXG.debug('_setAttr:'/*node.id*/ + ' ' + key + ' ' + val + '<br>\n');
+                JXG.debug("_setAttr:" /*node.id*/ + " " + key + " " + val + "<br>\n");
             }
         },
 
@@ -137,7 +141,11 @@ define([
 
         // documented in AbstractRenderer
         updateTicks: function (ticks) {
-            var i, len, c, x, y,
+            var i,
+                len,
+                c,
+                x,
+                y,
                 r = this.resolution,
                 tickArr = [];
 
@@ -148,20 +156,42 @@ define([
                 y = c[1];
 
                 if (Type.isNumber(x[0]) && Type.isNumber(x[1])) {
-                    tickArr.push(' m ' + Math.round(r * x[0]) + ', ' + Math.round(r * y[0]) +
-                        ' l ' + Math.round(r * x[1]) + ', ' + Math.round(r * y[1]) + ' ');
+                    tickArr.push(
+                        " m " +
+                            Math.round(r * x[0]) +
+                            ", " +
+                            Math.round(r * y[0]) +
+                            " l " +
+                            Math.round(r * x[1]) +
+                            ", " +
+                            Math.round(r * y[1]) +
+                            " "
+                    );
                 }
             }
 
             if (!Type.exists(ticks.rendNode)) {
-                ticks.rendNode = this.createPrim('path', ticks.id);
+                ticks.rendNode = this.createPrim("path", ticks.id);
                 this.appendChildPrim(ticks.rendNode, Type.evaluate(ticks.visProp.layer));
             }
 
-            this._setAttr(ticks.rendNode, 'stroked', 'true');
-            this._setAttr(ticks.rendNode, 'strokecolor', Type.evaluate(ticks.visProp.strokecolor), 1);
-            this._setAttr(ticks.rendNode, 'strokeweight', Type.evaluate(ticks.visProp.strokewidth));
-            this._setAttr(ticks.rendNodeStroke, 'opacity', (Type.evaluate(ticks.visProp.strokeopacity) * 100) + '%');
+            this._setAttr(ticks.rendNode, "stroked", "true");
+            this._setAttr(
+                ticks.rendNode,
+                "strokecolor",
+                Type.evaluate(ticks.visProp.strokecolor),
+                1
+            );
+            this._setAttr(
+                ticks.rendNode,
+                "strokeweight",
+                Type.evaluate(ticks.visProp.strokewidth)
+            );
+            this._setAttr(
+                ticks.rendNodeStroke,
+                "opacity",
+                Type.evaluate(ticks.visProp.strokeopacity) * 100 + "%"
+            );
             this.updatePathPrim(ticks.rendNode, tickArr, ticks.board);
         },
 
@@ -173,17 +203,18 @@ define([
         displayCopyright: function (str, fontsize) {
             var node, t;
 
-            node = this.createNode('textbox');
-            node.style.position = 'absolute';
-            this._setAttr(node, 'id', this.container.id + '_' + 'licenseText');
+            node = this.createNode("textbox");
+            node.style.position = "absolute";
+            this._setAttr(node, "id", this.container.id + "_" + "licenseText");
 
             node.style.left = 20;
             node.style.top = 2;
             node.style.fontSize = fontsize;
-            node.style.color = '#356AA0';
-            node.style.fontFamily = 'Arial,Helvetica,sans-serif';
-            this._setAttr(node, 'opacity', '30%');
-            node.style.filter = "progid:DXImageTransform.Microsoft.Matrix(M11='1.0', sizingMethod='auto expand', enabled = false) progid:DXImageTransform.Microsoft.Alpha(opacity = 30, enabled = true)";
+            node.style.color = "#356AA0";
+            node.style.fontFamily = "Arial,Helvetica,sans-serif";
+            this._setAttr(node, "opacity", "30%");
+            node.style.filter =
+                "progid:DXImageTransform.Microsoft.Matrix(M11='1.0', sizingMethod='auto expand', enabled = false) progid:DXImageTransform.Microsoft.Alpha(opacity = 30, enabled = true)";
 
             t = this.container.ownerDocument.createTextNode(str);
             node.appendChild(t);
@@ -193,22 +224,28 @@ define([
         // documented in AbstractRenderer
         drawInternalText: function (el) {
             var node;
-            node = this.createNode('textbox');
-            node.style.position = 'absolute';
-            el.rendNodeText = this.container.ownerDocument.createTextNode('');
+            node = this.createNode("textbox");
+            node.style.position = "absolute";
+            el.rendNodeText = this.container.ownerDocument.createTextNode("");
             node.appendChild(el.rendNodeText);
             this.appendChildPrim(node, 9);
-            node.style.filter = "progid:DXImageTransform.Microsoft.Matrix(M11='1.0', sizingMethod='auto expand', enabled = false) progid:DXImageTransform.Microsoft.Alpha(opacity = 100, enabled = false)";
+            node.style.filter =
+                "progid:DXImageTransform.Microsoft.Matrix(M11='1.0', sizingMethod='auto expand', enabled = false) progid:DXImageTransform.Microsoft.Alpha(opacity = 100, enabled = false)";
 
             return node;
         },
 
         // documented in AbstractRenderer
         updateInternalText: function (el) {
-            var v, content = el.plaintext,
+            var v,
+                content = el.plaintext,
                 m = this.joinTransforms(el, el.transformations),
                 offset = [0, 0],
-                maxX, maxY, minX, minY, i,
+                maxX,
+                maxY,
+                minX,
+                minY,
+                i,
                 node = el.rendNode,
                 p = [],
                 ev_ax = el.getAnchorX(),
@@ -216,38 +253,46 @@ define([
 
             if (!isNaN(el.coords.scrCoords[1] + el.coords.scrCoords[2])) {
                 // Horizontal
-                if (ev_ax === 'right') {
+                if (ev_ax === "right") {
                     offset[0] = 1;
-                } else if (ev_ax === 'middle') {
+                } else if (ev_ax === "middle") {
                     offset[0] = 0.5;
                 } // default (ev_ax === 'left') offset[0] = 0;
 
                 // Vertical
-                if (ev_ay === 'bottom') {
+                if (ev_ay === "bottom") {
                     offset[1] = 1;
-                } else if (ev_ay === 'middle') {
+                } else if (ev_ay === "middle") {
                     offset[1] = 0.5;
                 } // default (ev_ay === 'top') offset[1] = 0;
 
                 // Compute maxX, maxY, minX, minY
-                p[0] = Mat.matVecMult(m, [1,
-                                          el.coords.scrCoords[1] - offset[0] * el.size[0],
-                                          el.coords.scrCoords[2] + (1 - offset[1]) * el.size[1] + this.vOffsetText]);
+                p[0] = Mat.matVecMult(m, [
+                    1,
+                    el.coords.scrCoords[1] - offset[0] * el.size[0],
+                    el.coords.scrCoords[2] + (1 - offset[1]) * el.size[1] + this.vOffsetText
+                ]);
                 p[0][1] /= p[0][0];
                 p[0][2] /= p[0][0];
-                p[1] = Mat.matVecMult(m, [1,
-                                          el.coords.scrCoords[1] + (1 - offset[0]) * el.size[0],
-                                          el.coords.scrCoords[2] + (1 - offset[1]) * el.size[1] + this.vOffsetText]);
+                p[1] = Mat.matVecMult(m, [
+                    1,
+                    el.coords.scrCoords[1] + (1 - offset[0]) * el.size[0],
+                    el.coords.scrCoords[2] + (1 - offset[1]) * el.size[1] + this.vOffsetText
+                ]);
                 p[1][1] /= p[1][0];
                 p[1][2] /= p[1][0];
-                p[2] = Mat.matVecMult(m, [1,
-                                          el.coords.scrCoords[1] + (1 - offset[0]) * el.size[0],
-                                          el.coords.scrCoords[2] - offset[1] * el.size[1] + this.vOffsetText]);
+                p[2] = Mat.matVecMult(m, [
+                    1,
+                    el.coords.scrCoords[1] + (1 - offset[0]) * el.size[0],
+                    el.coords.scrCoords[2] - offset[1] * el.size[1] + this.vOffsetText
+                ]);
                 p[2][1] /= p[2][0];
                 p[2][2] /= p[2][0];
-                p[3] = Mat.matVecMult(m, [1,
-                                          el.coords.scrCoords[1] - offset[0] * el.size[0],
-                                          el.coords.scrCoords[2] - offset[1] * el.size[1] + this.vOffsetText]);
+                p[3] = Mat.matVecMult(m, [
+                    1,
+                    el.coords.scrCoords[1] - offset[0] * el.size[0],
+                    el.coords.scrCoords[2] - offset[1] * el.size[1] + this.vOffsetText
+                ]);
                 p[3][1] /= p[3][0];
                 p[3][2] /= p[3][0];
                 maxX = p[0][1];
@@ -263,31 +308,36 @@ define([
                 }
 
                 // Horizontal
-                v = offset[0] === 1 ? Math.floor(el.board.canvasWidth - maxX) : Math.floor(minX);
-                if (el.visPropOld.left !== (ev_ax + v)) {
+                v =
+                    offset[0] === 1
+                        ? Math.floor(el.board.canvasWidth - maxX)
+                        : Math.floor(minX);
+                if (el.visPropOld.left !== ev_ax + v) {
                     if (offset[0] === 1) {
-                        el.rendNode.style.right = v + 'px';
-                        el.rendNode.style.left = 'auto';
+                        el.rendNode.style.right = v + "px";
+                        el.rendNode.style.left = "auto";
                     } else {
-                        el.rendNode.style.left = v + 'px';
-                        el.rendNode.style.right = 'auto';
+                        el.rendNode.style.left = v + "px";
+                        el.rendNode.style.right = "auto";
                     }
                     el.visPropOld.left = ev_ax + v;
                 }
 
                 // Vertical
-                v = offset[1] === 1 ? Math.floor(el.board.canvasHeight - maxY) : Math.floor(minY);
-                if (el.visPropOld.top !== (ev_ay + v)) {
+                v =
+                    offset[1] === 1
+                        ? Math.floor(el.board.canvasHeight - maxY)
+                        : Math.floor(minY);
+                if (el.visPropOld.top !== ev_ay + v) {
                     if (offset[1] === 1) {
-                        el.rendNode.style.bottom = v + 'px';
-                        el.rendNode.style.top = 'auto';
+                        el.rendNode.style.bottom = v + "px";
+                        el.rendNode.style.top = "auto";
                     } else {
-                        el.rendNode.style.top = v + 'px';
-                        el.rendNode.style.bottom = 'auto';
+                        el.rendNode.style.top = v + "px";
+                        el.rendNode.style.bottom = "auto";
                     }
                     el.visPropOld.top = ev_ay + v;
                 }
-
             }
 
             if (el.htmlStr !== content) {
@@ -312,9 +362,9 @@ define([
             // IE 8: Bilder ueber data URIs werden bis 32kB unterstuetzt.
             var node;
 
-            node = this.container.ownerDocument.createElement('img');
-            node.style.position = 'absolute';
-            this._setAttr(node, 'id', this.container.id + '_' + el.id);
+            node = this.container.ownerDocument.createElement("img");
+            node.style.position = "absolute";
+            this._setAttr(node, "id", this.container.id + "_" + el.id);
 
             this.container.appendChild(node);
             this.appendChildPrim(node, Type.evaluate(el.visProp.layer));
@@ -324,14 +374,20 @@ define([
             // Also add the alpha filter. This is always filter item 1
             // node.filters.item(1), see setObjectFillColor and setObjectSTrokeColor
             //node.style.filter = node.style['-ms-filter'] = "progid:DXImageTransform.Microsoft.Matrix(M11='1.0', sizingMethod='auto expand')";
-            node.style.filter = "progid:DXImageTransform.Microsoft.Matrix(M11='1.0', sizingMethod='auto expand') progid:DXImageTransform.Microsoft.Alpha(opacity = 100, enabled = false)";
+            node.style.filter =
+                "progid:DXImageTransform.Microsoft.Matrix(M11='1.0', sizingMethod='auto expand') progid:DXImageTransform.Microsoft.Alpha(opacity = 100, enabled = false)";
             el.rendNode = node;
             this.updateImage(el);
         },
 
         // Already documented in JXG.AbstractRenderer
         transformImage: function (el, t) {
-            var m, s, maxX, maxY, minX, minY, i, nt,
+            var m,
+                maxX,
+                maxY,
+                minX,
+                minY,
+                i,
                 node = el.rendNode,
                 p = [],
                 len = t.length;
@@ -348,13 +404,25 @@ define([
                 p[0] = Mat.matVecMult(m, el.coords.scrCoords);
                 p[0][1] /= p[0][0];
                 p[0][2] /= p[0][0];
-                p[1] = Mat.matVecMult(m, [1, el.coords.scrCoords[1] + el.size[0], el.coords.scrCoords[2]]);
+                p[1] = Mat.matVecMult(m, [
+                    1,
+                    el.coords.scrCoords[1] + el.size[0],
+                    el.coords.scrCoords[2]
+                ]);
                 p[1][1] /= p[1][0];
                 p[1][2] /= p[1][0];
-                p[2] = Mat.matVecMult(m, [1, el.coords.scrCoords[1] + el.size[0], el.coords.scrCoords[2] - el.size[1]]);
+                p[2] = Mat.matVecMult(m, [
+                    1,
+                    el.coords.scrCoords[1] + el.size[0],
+                    el.coords.scrCoords[2] - el.size[1]
+                ]);
                 p[2][1] /= p[2][0];
                 p[2][2] /= p[2][0];
-                p[3] = Mat.matVecMult(m, [1, el.coords.scrCoords[1], el.coords.scrCoords[2] - el.size[1]]);
+                p[3] = Mat.matVecMult(m, [
+                    1,
+                    el.coords.scrCoords[1],
+                    el.coords.scrCoords[2] - el.size[1]
+                ]);
                 p[3][1] /= p[3][0];
                 p[3][2] /= p[3][0];
                 maxX = p[0][1];
@@ -368,8 +436,8 @@ define([
                     maxY = Math.max(maxY, p[i][2]);
                     minY = Math.min(minY, p[i][2]);
                 }
-                node.style.left = Math.floor(minX) + 'px';
-                node.style.top  = Math.floor(minY) + 'px';
+                node.style.left = Math.floor(minX) + "px";
+                node.style.top = Math.floor(minY) + "px";
 
                 node.filters.item(0).M11 = m[1][1];
                 node.filters.item(0).M12 = m[1][2];
@@ -383,7 +451,7 @@ define([
         updateImageURL: function (el) {
             var url = Type.evaluate(el.url);
 
-            this._setAttr(el.rendNode, 'src', url);
+            this._setAttr(el.rendNode, "src", url);
         },
 
         /* **************************
@@ -405,38 +473,44 @@ define([
 
         // Already documented in JXG.AbstractRenderer
         appendNodesToElement: function (el, type) {
-            if (type === 'shape' || type === 'path' || type === 'polygon') {
-                el.rendNodePath = this.getElementById(el.id + '_path');
+            if (type === "shape" || type === "path" || type === "polygon") {
+                el.rendNodePath = this.getElementById(el.id + "_path");
             }
-            el.rendNodeFill = this.getElementById(el.id + '_fill');
-            el.rendNodeStroke = this.getElementById(el.id + '_stroke');
-            el.rendNodeShadow = this.getElementById(el.id + '_shadow');
+            el.rendNodeFill = this.getElementById(el.id + "_fill");
+            el.rendNodeStroke = this.getElementById(el.id + "_stroke");
+            el.rendNodeShadow = this.getElementById(el.id + "_shadow");
             el.rendNode = this.getElementById(el.id);
         },
 
         // Already documented in JXG.AbstractRenderer
         createPrim: function (type, id) {
-            var node, pathNode,
-                fillNode = this.createNode('fill'),
-                strokeNode = this.createNode('stroke'),
-                shadowNode = this.createNode('shadow');
+            var node,
+                pathNode,
+                fillNode = this.createNode("fill"),
+                strokeNode = this.createNode("stroke"),
+                shadowNode = this.createNode("shadow");
 
-            this._setAttr(fillNode, 'id', this.container.id + '_' + id + '_fill');
-            this._setAttr(strokeNode, 'id', this.container.id + '_' + id + '_stroke');
-            this._setAttr(shadowNode, 'id', this.container.id + '_' + id + '_shadow');
+            this._setAttr(fillNode, "id", this.container.id + "_" + id + "_fill");
+            this._setAttr(strokeNode, "id", this.container.id + "_" + id + "_stroke");
+            this._setAttr(shadowNode, "id", this.container.id + "_" + id + "_shadow");
 
-            if (type === 'circle' || type === 'ellipse') {
-                node = this.createNode('oval');
+            if (type === "circle" || type === "ellipse") {
+                node = this.createNode("oval");
                 node.appendChild(fillNode);
                 node.appendChild(strokeNode);
                 node.appendChild(shadowNode);
-            } else if (type === 'polygon' || type === 'path' || type === 'shape' || type === 'line') {
-                node = this.createNode('shape');
+            } else if (
+                type === "polygon" ||
+                type === "path" ||
+                type === "shape" ||
+                type === "line"
+            ) {
+                node = this.createNode("shape");
                 node.appendChild(fillNode);
                 node.appendChild(strokeNode);
                 node.appendChild(shadowNode);
-                pathNode = this.createNode('path');
-                this._setAttr(pathNode, 'id', this.container.id + '_' + id + '_path');
+                pathNode = this.createNode("path");
+                this._setAttr(pathNode, "id", this.container.id + "_" + id + "_path");
                 node.appendChild(pathNode);
             } else {
                 node = this.createNode(type);
@@ -445,10 +519,10 @@ define([
                 node.appendChild(shadowNode);
             }
 
-            node.style.position = 'absolute';
-            node.style.left = '0px';
-            node.style.top = '0px';
-            this._setAttr(node, 'id', this.container.id + '_' + id);
+            node.style.position = "absolute";
+            node.style.left = "0px";
+            node.style.top = "0px";
+            this._setAttr(node, "id", this.container.id + "_" + id);
 
             return node;
         },
@@ -472,24 +546,24 @@ define([
 
             if (ev_fa) {
                 nodeStroke = el.rendNodeStroke;
-                this._setAttr(nodeStroke, 'startarrow', 'block');
-                this._setAttr(nodeStroke, 'startarrowlength', 'long');
+                this._setAttr(nodeStroke, "startarrow", "block");
+                this._setAttr(nodeStroke, "startarrowlength", "long");
             } else {
                 nodeStroke = el.rendNodeStroke;
                 if (Type.exists(nodeStroke)) {
-                    this._setAttr(nodeStroke, 'startarrow', 'none');
+                    this._setAttr(nodeStroke, "startarrow", "none");
                 }
             }
 
             if (ev_la) {
                 nodeStroke = el.rendNodeStroke;
-                this._setAttr(nodeStroke, 'id', this.container.id + '_' + el.id + "stroke");
-                this._setAttr(nodeStroke, 'endarrow', 'block');
-                this._setAttr(nodeStroke, 'endarrowlength', 'long');
+                this._setAttr(nodeStroke, "id", this.container.id + "_" + el.id + "stroke");
+                this._setAttr(nodeStroke, "endarrow", "block");
+                this._setAttr(nodeStroke, "endarrowlength", "long");
             } else {
                 nodeStroke = el.rendNodeStroke;
                 if (Type.exists(nodeStroke)) {
-                    this._setAttr(nodeStroke, 'endarrow', 'none');
+                    this._setAttr(nodeStroke, "endarrow", "none");
                 }
             }
             el.visPropOld.firstarrow = ev_fa;
@@ -498,18 +572,28 @@ define([
 
         // Already documented in JXG.AbstractRenderer
         updateEllipsePrim: function (node, x, y, rx, ry) {
-            node.style.left = Math.floor(x - rx) + 'px';
-            node.style.top =  Math.floor(y - ry) + 'px';
-            node.style.width = Math.floor(Math.abs(rx) * 2) + 'px';
-            node.style.height = Math.floor(Math.abs(ry) * 2) + 'px';
+            node.style.left = Math.floor(x - rx) + "px";
+            node.style.top = Math.floor(y - ry) + "px";
+            node.style.width = Math.floor(Math.abs(rx) * 2) + "px";
+            node.style.height = Math.floor(Math.abs(ry) * 2) + "px";
         },
 
         // Already documented in JXG.AbstractRenderer
         updateLinePrim: function (node, p1x, p1y, p2x, p2y, board) {
-            var s, r = this.resolution;
+            var s,
+                r = this.resolution;
 
             if (!isNaN(p1x + p1y + p2x + p2y)) {
-                s = ['m ', Math.floor(r * p1x), ', ', Math.floor(r * p1y), ' l ', Math.floor(r * p2x), ', ', Math.floor(r * p2y)];
+                s = [
+                    "m ",
+                    Math.floor(r * p1x),
+                    ", ",
+                    Math.floor(r * p1y),
+                    " l ",
+                    Math.floor(r * p2x),
+                    ", ",
+                    Math.floor(r * p2y)
+                ];
                 this.updatePathPrim(node, s, board);
             }
         },
@@ -519,12 +603,16 @@ define([
             var x = board.canvasWidth,
                 y = board.canvasHeight;
             if (pointString.length <= 0) {
-                pointString = ['m 0,0'];
+                pointString = ["m 0,0"];
             }
             node.style.width = x;
             node.style.height = y;
-            this._setAttr(node, 'coordsize', [Math.floor(this.resolution * x), Math.floor(this.resolution * y)].join(','));
-            this._setAttr(node, 'path', pointString.join(""));
+            this._setAttr(
+                node,
+                "coordsize",
+                [Math.floor(this.resolution * x), Math.floor(this.resolution * y)].join(",")
+            );
+            this._setAttr(node, "path", pointString.join(""));
         },
 
         // Already documented in JXG.AbstractRenderer
@@ -536,57 +624,145 @@ define([
                 s05 = size * 0.5,
                 r = this.resolution;
 
-            if (type === 'x') {
-                s.push([
-                    ' m ', mround(r * (scr[1] - size)), ', ', mround(r * (scr[2] - size)),
-                    ' l ', mround(r * (scr[1] + size)), ', ', mround(r * (scr[2] + size)),
-                    ' m ', mround(r * (scr[1] + size)), ', ', mround(r * (scr[2] - size)),
-                    ' l ', mround(r * (scr[1] - size)), ', ', mround(r * (scr[2] + size))
-                ].join(''));
-            } else if (type === '+') {
-                s.push([
-                    ' m ', mround(r * (scr[1] - size)), ', ', mround(r * (scr[2])),
-                    ' l ', mround(r * (scr[1] + size)), ', ', mround(r * (scr[2])),
-                    ' m ', mround(r * (scr[1])),        ', ', mround(r * (scr[2] - size)),
-                    ' l ', mround(r * (scr[1])),        ', ', mround(r * (scr[2] + size))
-                ].join(''));
-            } else if (type === '<>') {
-
-                s.push([
-                    ' m ', mround(r * (scr[1] - size)), ', ', mround(r * (scr[2])),
-                    ' l ', mround(r * (scr[1])),        ', ', mround(r * (scr[2] + size)),
-                    ' l ', mround(r * (scr[1] + size)), ', ', mround(r * (scr[2])),
-                    ' l ', mround(r * (scr[1])),        ', ', mround(r * (scr[2] - size)),
-                    ' x e '
-                ].join(''));
-            } else if (type === '^') {
-                s.push([
-                    ' m ', mround(r * (scr[1])),          ', ', mround(r * (scr[2] - size)),
-                    ' l ', mround(r * (scr[1] - sqrt32)), ', ', mround(r * (scr[2] + s05)),
-                    ' l ', mround(r * (scr[1] + sqrt32)), ', ', mround(r * (scr[2] + s05)),
-                    ' x e '
-                ].join(''));
-            } else if (type === 'v') {
-                s.push([
-                    ' m ', mround(r * (scr[1])),          ', ', mround(r * (scr[2] + size)),
-                    ' l ', mround(r * (scr[1] - sqrt32)), ', ', mround(r * (scr[2] - s05)),
-                    ' l ', mround(r * (scr[1] + sqrt32)), ', ', mround(r * (scr[2] - s05)),
-                    ' x e '
-                ].join(''));
-            } else if (type === '>') {
-                s.push([
-                    ' m ', mround(r * (scr[1] + size)), ', ', mround(r * (scr[2])),
-                    ' l ', mround(r * (scr[1] - s05)),  ', ', mround(r * (scr[2] - sqrt32)),
-                    ' l ', mround(r * (scr[1] - s05)),  ', ', mround(r * (scr[2] + sqrt32)),
-                    ' l ', mround(r * (scr[1] + size)), ', ', mround(r * (scr[2]))
-                ].join(''));
-            } else if (type === '<') {
-                s.push([
-                    ' m ', mround(r * (scr[1] - size)), ', ', mround(r * (scr[2])),
-                    ' l ', mround(r * (scr[1] + s05)),  ', ', mround(r * (scr[2] - sqrt32)),
-                    ' l ', mround(r * (scr[1] + s05)),  ', ', mround(r * (scr[2] + sqrt32)),
-                    ' x e '
-                ].join(''));
+            if (type === "x") {
+                s.push(
+                    [
+                        " m ",
+                        mround(r * (scr[1] - size)),
+                        ", ",
+                        mround(r * (scr[2] - size)),
+                        " l ",
+                        mround(r * (scr[1] + size)),
+                        ", ",
+                        mround(r * (scr[2] + size)),
+                        " m ",
+                        mround(r * (scr[1] + size)),
+                        ", ",
+                        mround(r * (scr[2] - size)),
+                        " l ",
+                        mround(r * (scr[1] - size)),
+                        ", ",
+                        mround(r * (scr[2] + size))
+                    ].join("")
+                );
+            } else if (type === "+") {
+                s.push(
+                    [
+                        " m ",
+                        mround(r * (scr[1] - size)),
+                        ", ",
+                        mround(r * scr[2]),
+                        " l ",
+                        mround(r * (scr[1] + size)),
+                        ", ",
+                        mround(r * scr[2]),
+                        " m ",
+                        mround(r * scr[1]),
+                        ", ",
+                        mround(r * (scr[2] - size)),
+                        " l ",
+                        mround(r * scr[1]),
+                        ", ",
+                        mround(r * (scr[2] + size))
+                    ].join("")
+                );
+            } else if (type === "<>") {
+                s.push(
+                    [
+                        " m ",
+                        mround(r * (scr[1] - size)),
+                        ", ",
+                        mround(r * scr[2]),
+                        " l ",
+                        mround(r * scr[1]),
+                        ", ",
+                        mround(r * (scr[2] + size)),
+                        " l ",
+                        mround(r * (scr[1] + size)),
+                        ", ",
+                        mround(r * scr[2]),
+                        " l ",
+                        mround(r * scr[1]),
+                        ", ",
+                        mround(r * (scr[2] - size)),
+                        " x e "
+                    ].join("")
+                );
+            } else if (type === "^") {
+                s.push(
+                    [
+                        " m ",
+                        mround(r * scr[1]),
+                        ", ",
+                        mround(r * (scr[2] - size)),
+                        " l ",
+                        mround(r * (scr[1] - sqrt32)),
+                        ", ",
+                        mround(r * (scr[2] + s05)),
+                        " l ",
+                        mround(r * (scr[1] + sqrt32)),
+                        ", ",
+                        mround(r * (scr[2] + s05)),
+                        " x e "
+                    ].join("")
+                );
+            } else if (type === "v") {
+                s.push(
+                    [
+                        " m ",
+                        mround(r * scr[1]),
+                        ", ",
+                        mround(r * (scr[2] + size)),
+                        " l ",
+                        mround(r * (scr[1] - sqrt32)),
+                        ", ",
+                        mround(r * (scr[2] - s05)),
+                        " l ",
+                        mround(r * (scr[1] + sqrt32)),
+                        ", ",
+                        mround(r * (scr[2] - s05)),
+                        " x e "
+                    ].join("")
+                );
+            } else if (type === ">") {
+                s.push(
+                    [
+                        " m ",
+                        mround(r * (scr[1] + size)),
+                        ", ",
+                        mround(r * scr[2]),
+                        " l ",
+                        mround(r * (scr[1] - s05)),
+                        ", ",
+                        mround(r * (scr[2] - sqrt32)),
+                        " l ",
+                        mround(r * (scr[1] - s05)),
+                        ", ",
+                        mround(r * (scr[2] + sqrt32)),
+                        " l ",
+                        mround(r * (scr[1] + size)),
+                        ", ",
+                        mround(r * scr[2])
+                    ].join("")
+                );
+            } else if (type === "<") {
+                s.push(
+                    [
+                        " m ",
+                        mround(r * (scr[1] - size)),
+                        ", ",
+                        mround(r * scr[2]),
+                        " l ",
+                        mround(r * (scr[1] + s05)),
+                        ", ",
+                        mround(r * (scr[2] - sqrt32)),
+                        " l ",
+                        mround(r * (scr[1] + s05)),
+                        ", ",
+                        mround(r * (scr[2] + sqrt32)),
+                        " x e "
+                    ].join("")
+                );
             }
 
             return s;
@@ -594,18 +770,19 @@ define([
 
         // Already documented in JXG.AbstractRenderer
         updatePathStringPrim: function (el) {
-            var i, scr,
+            var i,
+                scr,
                 pStr = [],
                 r = this.resolution,
                 mround = Math.round,
-                symbm = ' m ',
-                symbl = ' l ',
-                symbc = ' c ',
+                symbm = " m ",
+                symbl = " l ",
+                symbc = " c ",
                 nextSymb = symbm,
                 len = Math.min(el.numberPoints, 8192); // otherwise IE 7 crashes in hilbert.html
 
             if (el.numberPoints <= 0) {
-                return '';
+                return "";
             }
             len = Math.min(len, el.points.length);
 
@@ -618,7 +795,8 @@ define([
 
                 for (i = 0; i < len; i++) {
                     scr = el.points[i].scrCoords;
-                    if (isNaN(scr[1]) || isNaN(scr[2])) {  // PenUp
+                    if (isNaN(scr[1]) || isNaN(scr[2])) {
+                        // PenUp
                         nextSymb = symbm;
                     } else {
                         // IE has problems with values  being too far away.
@@ -634,7 +812,9 @@ define([
                             scr[2] = -20000.0;
                         }
 
-                        pStr.push([nextSymb, mround(r * scr[1]), ', ', mround(r * scr[2])].join(''));
+                        pStr.push(
+                            [nextSymb, mround(r * scr[1]), ", ", mround(r * scr[2])].join("")
+                        );
                         nextSymb = symbl;
                     }
                 }
@@ -642,42 +822,54 @@ define([
                 i = 0;
                 while (i < len) {
                     scr = el.points[i].scrCoords;
-                    if (isNaN(scr[1]) || isNaN(scr[2])) {  // PenUp
+                    if (isNaN(scr[1]) || isNaN(scr[2])) {
+                        // PenUp
                         nextSymb = symbm;
                     } else {
-                        pStr.push([nextSymb, mround(r * scr[1]), ', ', mround(r * scr[2])].join(''));
+                        pStr.push(
+                            [nextSymb, mround(r * scr[1]), ", ", mround(r * scr[2])].join("")
+                        );
                         if (nextSymb === symbc) {
                             i += 1;
                             scr = el.points[i].scrCoords;
-                            pStr.push([' ', mround(r * scr[1]), ', ', mround(r * scr[2])].join(''));
+                            pStr.push(
+                                [" ", mround(r * scr[1]), ", ", mround(r * scr[2])].join("")
+                            );
                             i += 1;
                             scr = el.points[i].scrCoords;
-                            pStr.push([' ', mround(r * scr[1]), ', ', mround(r * scr[2])].join(''));
+                            pStr.push(
+                                [" ", mround(r * scr[1]), ", ", mround(r * scr[2])].join("")
+                            );
                         }
                         nextSymb = symbc;
                     }
                     i += 1;
                 }
             }
-            pStr.push(' e');
+            pStr.push(" e");
             return pStr;
         },
 
         // Already documented in JXG.AbstractRenderer
         updatePathStringBezierPrim: function (el) {
-            var i, j, k, scr, lx, ly,
+            var i,
+                j,
+                k,
+                scr,
+                lx,
+                ly,
                 pStr = [],
                 f = Type.evaluate(el.visProp.strokewidth),
                 r = this.resolution,
                 mround = Math.round,
-                symbm = ' m ',
-                symbl = ' c ',
+                symbm = " m ",
+                symbl = " c ",
                 nextSymb = symbm,
-                isNoPlot = (Type.evaluate(el.visProp.curvetype) !== 'plot'),
+                isNoPlot = Type.evaluate(el.visProp.curvetype) !== "plot",
                 len = Math.min(el.numberPoints, 8192); // otherwise IE 7 crashes in hilbert.html
 
             if (el.numberPoints <= 0) {
-                return '';
+                return "";
             }
             if (isNoPlot && el.board.options.curve.RDPsmoothing) {
                 el.points = Numerics.RamerDouglasPeucker(el.points, 1.0);
@@ -688,7 +880,8 @@ define([
                 nextSymb = symbm;
                 for (i = 0; i < len; i++) {
                     scr = el.points[i].scrCoords;
-                    if (isNaN(scr[1]) || isNaN(scr[2])) {  // PenUp
+                    if (isNaN(scr[1]) || isNaN(scr[2])) {
+                        // PenUp
                         nextSymb = symbm;
                     } else {
                         // IE has problems with values  being too far away.
@@ -705,17 +898,47 @@ define([
                         }
 
                         if (nextSymb === symbm) {
-                            pStr.push([nextSymb,
-                                mround(r * (scr[1])), ' ', mround(r * (scr[2]))].join(''));
+                            pStr.push(
+                                [nextSymb, mround(r * scr[1]), " ", mround(r * scr[2])].join("")
+                            );
                         } else {
                             k = 2 * j;
-                            pStr.push([nextSymb,
-                                mround(r * (lx + (scr[1] - lx) * 0.333 + f * (k * Math.random() - j))), ' ',
-                                mround(r * (ly + (scr[2] - ly) * 0.333 + f * (k * Math.random() - j))), ' ',
-                                mround(r * (lx + (scr[1] - lx) * 0.666 + f * (k * Math.random() - j))), ' ',
-                                mround(r * (ly + (scr[2] - ly) * 0.666 + f * (k * Math.random() - j))), ' ',
-                                mround(r * scr[1]), ' ',
-                                mround(r * scr[2])].join(''));
+                            pStr.push(
+                                [
+                                    nextSymb,
+                                    mround(
+                                        r *
+                                            (lx +
+                                                (scr[1] - lx) * 0.333 +
+                                                f * (k * Math.random() - j))
+                                    ),
+                                    " ",
+                                    mround(
+                                        r *
+                                            (ly +
+                                                (scr[2] - ly) * 0.333 +
+                                                f * (k * Math.random() - j))
+                                    ),
+                                    " ",
+                                    mround(
+                                        r *
+                                            (lx +
+                                                (scr[1] - lx) * 0.666 +
+                                                f * (k * Math.random() - j))
+                                    ),
+                                    " ",
+                                    mround(
+                                        r *
+                                            (ly +
+                                                (scr[2] - ly) * 0.666 +
+                                                f * (k * Math.random() - j))
+                                    ),
+                                    " ",
+                                    mround(r * scr[1]),
+                                    " ",
+                                    mround(r * scr[2])
+                                ].join("")
+                            );
                         }
                         nextSymb = symbl;
                         lx = scr[1];
@@ -723,7 +946,7 @@ define([
                     }
                 }
             }
-            pStr.push(' e');
+            pStr.push(" e");
             return pStr;
         },
 
@@ -735,14 +958,16 @@ define([
                 scr,
                 pStr = [];
 
-            this._setAttr(node, 'stroked', 'false');
+            this._setAttr(node, "stroked", "false");
             scr = el.vertices[0].coords.scrCoords;
 
             if (isNaN(scr[1] + scr[2])) {
                 return;
             }
 
-            pStr.push(["m ", Math.floor(r * scr[1]), ",", Math.floor(r * scr[2]), " l "].join(''));
+            pStr.push(
+                ["m ", Math.floor(r * scr[1]), ",", Math.floor(r * scr[2]), " l "].join("")
+            );
 
             for (i = 1; i < len - 1; i++) {
                 if (el.vertices[i].isReal) {
@@ -754,7 +979,7 @@ define([
 
                     pStr.push(Math.floor(r * scr[1]) + "," + Math.floor(r * scr[2]));
                 } else {
-                    this.updatePathPrim(node, '', el.board);
+                    this.updatePathPrim(node, "", el.board);
                     return;
                 }
                 if (i < len - 2) {
@@ -767,15 +992,15 @@ define([
 
         // Already documented in JXG.AbstractRenderer
         updateRectPrim: function (node, x, y, w, h) {
-            node.style.left = Math.floor(x) + 'px';
-            node.style.top = Math.floor(y) + 'px';
+            node.style.left = Math.floor(x) + "px";
+            node.style.top = Math.floor(y) + "px";
 
             if (w >= 0) {
-                node.style.width = w + 'px';
+                node.style.width = w + "px";
             }
 
             if (h >= 0) {
-                node.style.height = h + 'px';
+                node.style.height = h + "px";
             }
         },
 
@@ -785,29 +1010,29 @@ define([
 
         // Already documented in JXG.AbstractRenderer
         setPropertyPrim: function (node, key, val) {
-            var keyVml = '',
+            var keyVml = "",
                 v;
 
             switch (key) {
-            case 'stroke':
-                keyVml = 'strokecolor';
-                break;
-            case 'stroke-width':
-                keyVml = 'strokeweight';
-                break;
-            case 'stroke-dasharray':
-                keyVml = 'dashstyle';
-                break;
+                case "stroke":
+                    keyVml = "strokecolor";
+                    break;
+                case "stroke-width":
+                    keyVml = "strokeweight";
+                    break;
+                case "stroke-dasharray":
+                    keyVml = "dashstyle";
+                    break;
             }
 
-            if (keyVml !== '') {
+            if (keyVml !== "") {
                 v = Type.evaluate(val);
                 this._setAttr(node, keyVml, v);
             }
         },
 
         // Already documented in JXG.AbstractRenderer
-        display: function(el, val) {
+        display: function (el, val) {
             if (el && el.rendNode) {
                 el.visPropOld.visible = val;
                 if (val) {
@@ -820,7 +1045,7 @@ define([
 
         // Already documented in JXG.AbstractRenderer
         show: function (el) {
-            JXG.deprecated('Board.renderer.show()', 'Board.renderer.display()');
+            JXG.deprecated("Board.renderer.show()", "Board.renderer.display()");
 
             if (el && el.rendNode) {
                 el.rendNode.style.visibility = "inherit";
@@ -829,7 +1054,7 @@ define([
 
         // Already documented in JXG.AbstractRenderer
         hide: function (el) {
-            JXG.deprecated('Board.renderer.hide()', 'Board.renderer.display()');
+            JXG.deprecated("Board.renderer.hide()", "Board.renderer.display()");
 
             if (el && el.rendNode) {
                 el.rendNode.style.visibility = "hidden";
@@ -841,7 +1066,7 @@ define([
             var node;
             if (visProp.dash >= 0) {
                 node = el.rendNodeStroke;
-                this._setAttr(node, 'dashstyle', this.dashArray[visProp.dash]);
+                this._setAttr(node, "dashstyle", this.dashArray[visProp.dash]);
             }
         },
 
@@ -850,31 +1075,55 @@ define([
             var nodeFill = el.rendNodeFill,
                 ev_g = Type.evaluate(el.visProp.gradient);
 
-            if (ev_g === 'linear') {
-                this._setAttr(nodeFill, 'type', 'gradient');
-                this._setAttr(nodeFill, 'color2', Type.evaluate(el.visProp.gradientsecondcolor));
-                this._setAttr(nodeFill, 'opacity2', Type.evaluate(el.visProp.gradientsecondopacity));
-                this._setAttr(nodeFill, 'angle', Type.evaluate(el.visProp.gradientangle));
-            } else if (ev_g === 'radial') {
-                this._setAttr(nodeFill, 'type', 'gradientradial');
-                this._setAttr(nodeFill, 'color2', Type.evaluate(el.visProp.gradientsecondcolor));
-                this._setAttr(nodeFill, 'opacity2', Type.evaluate(el.visProp.gradientsecondopacity));
-                this._setAttr(nodeFill, 'focusposition', Type.evaluate(el.visProp.gradientpositionx) * 100 + '%,' +
-                            Type.evaluate(el.visProp.gradientpositiony) * 100 + '%');
-                this._setAttr(nodeFill, 'focussize', '0,0');
+            if (ev_g === "linear") {
+                this._setAttr(nodeFill, "type", "gradient");
+                this._setAttr(
+                    nodeFill,
+                    "color2",
+                    Type.evaluate(el.visProp.gradientsecondcolor)
+                );
+                this._setAttr(
+                    nodeFill,
+                    "opacity2",
+                    Type.evaluate(el.visProp.gradientsecondopacity)
+                );
+                this._setAttr(nodeFill, "angle", Type.evaluate(el.visProp.gradientangle));
+            } else if (ev_g === "radial") {
+                this._setAttr(nodeFill, "type", "gradientradial");
+                this._setAttr(
+                    nodeFill,
+                    "color2",
+                    Type.evaluate(el.visProp.gradientsecondcolor)
+                );
+                this._setAttr(
+                    nodeFill,
+                    "opacity2",
+                    Type.evaluate(el.visProp.gradientsecondopacity)
+                );
+                this._setAttr(
+                    nodeFill,
+                    "focusposition",
+                    Type.evaluate(el.visProp.gradientpositionx) * 100 +
+                        "%," +
+                        Type.evaluate(el.visProp.gradientpositiony) * 100 +
+                        "%"
+                );
+                this._setAttr(nodeFill, "focussize", "0,0");
             } else {
-                this._setAttr(nodeFill, 'type', 'solid');
+                this._setAttr(nodeFill, "type", "solid");
             }
         },
 
         // Already documented in JXG.AbstractRenderer
         setObjectFillColor: function (el, color, opacity) {
-            var rgba = Type.evaluate(color), c, rgbo,
-                o = Type.evaluate(opacity), oo,
-                node = el.rendNode,
-                t;
+            var rgba = Type.evaluate(color),
+                c,
+                rgbo,
+                o = Type.evaluate(opacity),
+                oo,
+                node = el.rendNode;
 
-            o = (o > 0) ? o : 0;
+            o = o > 0 ? o : 0;
 
             if (el.visPropOld.fillcolor === rgba && el.visPropOld.fillopacity === o) {
                 return;
@@ -885,20 +1134,20 @@ define([
                 if (rgba.length !== 9) {
                     c = rgba;
                     oo = o;
-                // True RGBA, not RGB
+                    // True RGBA, not RGB
                 } else {
                     rgbo = Color.rgba2rgbo(rgba);
                     c = rgbo[0];
                     oo = o * rgbo[1];
                 }
-                if (c === 'none' || c === false) {
-                    this._setAttr(el.rendNode, 'filled', 'false');
+                if (c === "none" || c === false) {
+                    this._setAttr(el.rendNode, "filled", "false");
                 } else {
-                    this._setAttr(el.rendNode, 'filled', 'true');
-                    this._setAttr(el.rendNode, 'fillcolor', c);
+                    this._setAttr(el.rendNode, "filled", "true");
+                    this._setAttr(el.rendNode, "fillcolor", c);
 
                     if (Type.exists(oo) && el.rendNodeFill) {
-                        this._setAttr(el.rendNodeFill, 'opacity', (oo * 100) + '%');
+                        this._setAttr(el.rendNodeFill, "opacity", oo * 100 + "%");
                     }
                 }
                 if (el.type === Const.OBJECT_TYPE_IMAGE) {
@@ -924,11 +1173,15 @@ define([
 
         // Already documented in JXG.AbstractRenderer
         setObjectStrokeColor: function (el, color, opacity) {
-            var rgba = Type.evaluate(color), c, rgbo, t,
-                o = Type.evaluate(opacity), oo,
-                node = el.rendNode, nodeStroke;
+            var rgba = Type.evaluate(color),
+                c,
+                rgbo,
+                o = Type.evaluate(opacity),
+                oo,
+                node = el.rendNode,
+                nodeStroke;
 
-            o = (o > 0) ? o : 0;
+            o = o > 0 ? o : 0;
 
             if (el.visPropOld.strokecolor === rgba && el.visPropOld.strokeopacity === o) {
                 return;
@@ -941,7 +1194,7 @@ define([
                 if (rgba.length !== 9) {
                     c = rgba;
                     oo = o;
-                // True RGBA, not RGB
+                    // True RGBA, not RGB
                 } else {
                     rgbo = color.rgba2rgbo(rgba);
                     c = rgbo[0];
@@ -968,13 +1221,13 @@ define([
                     node.style.color = c;
                 } else {
                     if (c !== false) {
-                        this._setAttr(node, 'stroked', 'true');
-                        this._setAttr(node, 'strokecolor', c);
+                        this._setAttr(node, "stroked", "true");
+                        this._setAttr(node, "strokecolor", c);
                     }
 
                     nodeStroke = el.rendNodeStroke;
                     if (Type.exists(oo) && el.type !== Const.OBJECT_TYPE_IMAGE) {
-                        this._setAttr(nodeStroke, 'opacity', (oo * 100) + '%');
+                        this._setAttr(nodeStroke, "opacity", oo * 100 + "%");
                     }
                 }
             }
@@ -992,18 +1245,16 @@ define([
             }
 
             node = el.rendNode;
-            this.setPropertyPrim(node, 'stroked', 'true');
+            this.setPropertyPrim(node, "stroked", "true");
 
             if (Type.exists(w)) {
-
-                this.setPropertyPrim(node, 'stroke-width', w);
+                this.setPropertyPrim(node, "stroke-width", w);
                 if (w === 0 && Type.exists(el.rendNodeStroke)) {
-                    this._setAttr(node, 'stroked', 'false');
+                    this._setAttr(node, "stroked", "false");
                 }
             }
 
             el.visPropOld.strokewidth = w;
-
         },
 
         // Already documented in JXG.AbstractRenderer
@@ -1016,12 +1267,12 @@ define([
             }
 
             if (ev_s) {
-                this._setAttr(nodeShadow, 'On', 'True');
-                this._setAttr(nodeShadow, 'Offset', '3pt,3pt');
-                this._setAttr(nodeShadow, 'Opacity', '60%');
-                this._setAttr(nodeShadow, 'Color', '#aaaaaa');
+                this._setAttr(nodeShadow, "On", "True");
+                this._setAttr(nodeShadow, "Offset", "3pt,3pt");
+                this._setAttr(nodeShadow, "Opacity", "60%");
+                this._setAttr(nodeShadow, "Color", "#aaaaaa");
             } else {
-                this._setAttr(nodeShadow, 'On', 'False');
+                this._setAttr(nodeShadow, "On", "False");
             }
 
             el.visPropOld.shadow = ev_s;
@@ -1033,14 +1284,14 @@ define([
 
         // Already documented in JXG.AbstractRenderer
         suspendRedraw: function () {
-            this.container.style.display = 'none';
+            this.container.style.display = "none";
         },
 
         // Already documented in JXG.AbstractRenderer
         unsuspendRedraw: function () {
-            this.container.style.display = '';
+            this.container.style.display = "";
         }
-    });
+    }
+);
 
-    return JXG.VMLRenderer;
-});
+export default JXG.VMLRenderer;

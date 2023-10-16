@@ -36,7 +36,7 @@ class YahooFinance(JXGServerModule):
             # if data is gzip compressed no exception is thrown
         except:
             # data is not compressed, read original response from server
-            data = compresseddata            
+            data = compresseddata
         return data
 
     def getCurrentSharePrice(self, resp, share):

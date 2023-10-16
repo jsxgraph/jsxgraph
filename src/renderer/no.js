@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2022
+    Copyright 2008-2023
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -25,19 +25,13 @@
     GNU Lesser General Public License for more details.
 
     You should have received a copy of the GNU Lesser General Public License and
-    the MIT License along with JSXGraph. If not, see <http://www.gnu.org/licenses/>
-    and <http://opensource.org/licenses/MIT/>.
+    the MIT License along with JSXGraph. If not, see <https://www.gnu.org/licenses/>
+    and <https://opensource.org/licenses/MIT/>.
  */
-
 
 /*global JXG: true, define: true, AMprocessNode: true, MathJax: true, document: true */
 /*jslint nomen: true, plusplus: true, newcap:true, unparam: true*/
 /*eslint no-unused-vars: "off"*/
-
-/* depends:
- jxg
- renderer/abstract
-*/
 
 /**
  * @fileoverview JSXGraph can use various technologies to render the contents of a construction, e.g.
@@ -47,39 +41,40 @@
  * renderers is the class AbstractRenderer.
  */
 
-define(['jxg', 'renderer/abstract'], function (JXG, AbstractRenderer) {
+import JXG from "../jxg";
+import AbstractRenderer from "./abstract";
 
-    "use strict";
+/**
+ * This renderer draws nothing. It is intended to be used in environments where none of our rendering engines
+ * are available, e.g. WebWorkers. All methods are empty.
+ *
+ * @class JXG.NoRenderer
+ * @augments JXG.AbstractRenderer
+ * @see JXG.AbstractRenderer
+ */
+JXG.NoRenderer = function () {
+    /**
+     * If this property is set to <tt>true</tt> the visual properties of the elements are updated
+     * on every update. Visual properties means: All the stuff stored in the
+     * {@link JXG.GeometryElement#visProp} property won't be set if enhancedRendering is <tt>false</tt>
+     * @type Boolean
+     * @default true
+     */
+    this.enhancedRendering = false;
 
     /**
-     * This renderer draws nothing. It is intended to be used in environments where none of our rendering engines
-     * are available, e.g. WebWorkers. All methods are empty.
-     * 
-     * @class JXG.NoRenderer
-     * @augments JXG.AbstractRenderer
-     * @see JXG.AbstractRenderer
+     * This is used to easily determine which renderer we are using
+     * @example if (board.renderer.type === 'vml') {
+     *     // do something
+     * }
+     * @type String
      */
-    JXG.NoRenderer = function () {
-        /**
-         * If this property is set to <tt>true</tt> the visual properties of the elements are updated
-         * on every update. Visual properties means: All the stuff stored in the
-         * {@link JXG.GeometryElement#visProp} property won't be set if enhancedRendering is <tt>false</tt>
-         * @type Boolean
-         * @default true
-         */
-        this.enhancedRendering = false;
+    this.type = "no";
+};
 
-        /**
-         * This is used to easily determine which renderer we are using
-         * @example if (board.renderer.type === 'vml') {
-         *     // do something
-         * }
-         * @type String
-         */
-        this.type = 'no';
-    };
-
-    JXG.extend(JXG.NoRenderer.prototype, /** @lends JXG.NoRenderer.prototype */ {
+JXG.extend(
+    JXG.NoRenderer.prototype,
+    /** @lends JXG.NoRenderer.prototype */ {
         /* ******************************** *
          *    Point drawing and updating    *
          * ******************************** */
@@ -102,7 +97,7 @@ define(['jxg', 'renderer/abstract'], function (JXG, AbstractRenderer) {
          * @see JXG.AbstractRenderer#drawPoint
          * @see JXG.AbstractRenderer#changePointStyle
          */
-        updatePoint: function (element) { },
+        updatePoint: function (element) {},
 
         /**
          * Changes the style of a {@link JXG.Point}. This is required because the point styles differ in what
@@ -115,7 +110,7 @@ define(['jxg', 'renderer/abstract'], function (JXG, AbstractRenderer) {
          * @see JXG.AbstractRenderer#updatePoint
          * @see JXG.AbstractRenderer#drawPoint
          */
-        changePointStyle: function (element) { },
+        changePointStyle: function (element) {},
 
         /* ******************************** *
          *           Lines                  *
@@ -128,7 +123,7 @@ define(['jxg', 'renderer/abstract'], function (JXG, AbstractRenderer) {
          * @see JXG.Line
          * @see JXG.AbstractRenderer#updateLine
          */
-        drawLine: function (element) { },
+        drawLine: function (element) {},
 
         /**
          * Updates visual appearance of the renderer element assigned to the given {@link JXG.Line}.
@@ -137,7 +132,7 @@ define(['jxg', 'renderer/abstract'], function (JXG, AbstractRenderer) {
          * @see JXG.Line
          * @see JXG.AbstractRenderer#drawLine
          */
-        updateLine: function (element) { },
+        updateLine: function (element) {},
 
         /**
          * Creates a rendering node for ticks added to a line.
@@ -148,7 +143,7 @@ define(['jxg', 'renderer/abstract'], function (JXG, AbstractRenderer) {
          * @see JXG.Ticks
          * @see JXG.AbstractRenderer#updateTicks
          */
-        drawTicks: function (element) { },
+        drawTicks: function (element) {},
 
         /**
          * Update {@link Ticks} on a {@link JXG.Line}. This method is only a stub and has to be implemented
@@ -160,7 +155,9 @@ define(['jxg', 'renderer/abstract'], function (JXG, AbstractRenderer) {
          * @see JXG.Ticks
          * @see JXG.AbstractRenderer#drawTicks
          */
-        updateTicks: function (element) { /* stub */ },
+        updateTicks: function (element) {
+            /* stub */
+        },
 
         /* **************************
          *    Curves
@@ -173,7 +170,7 @@ define(['jxg', 'renderer/abstract'], function (JXG, AbstractRenderer) {
          * @see JXG.Curve
          * @see JXG.AbstractRenderer#updateCurve
          */
-        drawCurve: function (element) { },
+        drawCurve: function (element) {},
 
         /**
          * Updates visual appearance of the renderer element assigned to the given {@link JXG.Curve}.
@@ -182,7 +179,7 @@ define(['jxg', 'renderer/abstract'], function (JXG, AbstractRenderer) {
          * @see JXG.Curve
          * @see JXG.AbstractRenderer#drawCurve
          */
-        updateCurve: function (element) { },
+        updateCurve: function (element) {},
 
         /* **************************
          *    Circle related stuff
@@ -195,7 +192,7 @@ define(['jxg', 'renderer/abstract'], function (JXG, AbstractRenderer) {
          * @see JXG.Circle
          * @see JXG.AbstractRenderer#updateEllipse
          */
-        drawEllipse: function (element) { },
+        drawEllipse: function (element) {},
 
         /**
          * Updates visual appearance of a given {@link JXG.Circle} on the {@link JXG.Board}.
@@ -204,8 +201,7 @@ define(['jxg', 'renderer/abstract'], function (JXG, AbstractRenderer) {
          * @see JXG.Circle
          * @see JXG.AbstractRenderer#drawEllipse
          */
-        updateEllipse: function (element) { },
-
+        updateEllipse: function (element) {},
 
         /* **************************
          *   Polygon related stuff
@@ -218,7 +214,7 @@ define(['jxg', 'renderer/abstract'], function (JXG, AbstractRenderer) {
          * @see JXG.Polygon
          * @see JXG.AbstractRenderer#updatePolygon
          */
-        drawPolygon: function (element) { },
+        drawPolygon: function (element) {},
 
         /**
          * Updates properties of a {@link JXG.Polygon}'s rendering node.
@@ -227,7 +223,7 @@ define(['jxg', 'renderer/abstract'], function (JXG, AbstractRenderer) {
          * @see JXG.Polygon
          * @see JXG.AbstractRenderer#drawPolygon
          */
-        updatePolygon: function (element) { },
+        updatePolygon: function (element) {},
 
         /* **************************
          *    Text related stuff
@@ -238,7 +234,9 @@ define(['jxg', 'renderer/abstract'], function (JXG, AbstractRenderer) {
          * @param {String} str The copyright notice itself
          * @param {Number} fontsize Size of the font the copyright notice is written in
          */
-        displayCopyright: function (str, fontsize) { /* stub */ },
+        displayCopyright: function (str, fontsize) {
+            /* stub */
+        },
 
         /**
          * An internal text is a {@link JXG.Text} element which is drawn using only
@@ -252,7 +250,9 @@ define(['jxg', 'renderer/abstract'], function (JXG, AbstractRenderer) {
          * @see JXG.AbstractRenderer#updateText
          * @see JXG.AbstractRenderer#updateTextStyle
          */
-        drawInternalText: function (element) { /* stub */ },
+        drawInternalText: function (element) {
+            /* stub */
+        },
 
         /**
          * Updates visual properties of an already existing {@link JXG.Text} element.
@@ -264,7 +264,9 @@ define(['jxg', 'renderer/abstract'], function (JXG, AbstractRenderer) {
          * @see JXG.AbstractRenderer#updateText
          * @see JXG.AbstractRenderer#updateTextStyle
          */
-        updateInternalText: function (element) { /* stub */ },
+        updateInternalText: function (element) {
+            /* stub */
+        },
 
         /**
          * Displays a {@link JXG.Text} on the {@link JXG.Board} by putting a HTML div over it.
@@ -276,7 +278,7 @@ define(['jxg', 'renderer/abstract'], function (JXG, AbstractRenderer) {
          * @see JXG.AbstractRenderer#updateInternalText
          * @see JXG.AbstractRenderer#updateTextStyle
          */
-        drawText: function (element) { },
+        drawText: function (element) {},
 
         /**
          * Updates visual properties of an already existing {@link JXG.Text} element.
@@ -288,7 +290,7 @@ define(['jxg', 'renderer/abstract'], function (JXG, AbstractRenderer) {
          * @see JXG.AbstractRenderer#updateInternalText
          * @see JXG.AbstractRenderer#updateTextStyle
          */
-        updateText: function (element) { },
+        updateText: function (element) {},
 
         /**
          * Updates CSS style properties of a {@link JXG.Text} node.
@@ -301,7 +303,7 @@ define(['jxg', 'renderer/abstract'], function (JXG, AbstractRenderer) {
          * @see JXG.AbstractRenderer#updateText
          * @see JXG.AbstractRenderer#updateInternalText
          */
-        updateTextStyle: function (element, doHighlight) { },
+        updateTextStyle: function (element, doHighlight) {},
 
         /**
          * Set color and opacity of internal texts.
@@ -310,7 +312,9 @@ define(['jxg', 'renderer/abstract'], function (JXG, AbstractRenderer) {
          * @see JXG.AbstractRenderer#updateTextStyle
          * @see JXG.AbstractRenderer#updateInternalTextStyle
          */
-        updateInternalTextStyle: function (element, strokeColor, strokeOpacity) { /* stub */ },
+        updateInternalTextStyle: function (element, strokeColor, strokeOpacity) {
+            /* stub */
+        },
 
         /* **************************
          *    Image related stuff
@@ -323,7 +327,9 @@ define(['jxg', 'renderer/abstract'], function (JXG, AbstractRenderer) {
          * @see JXG.Image
          * @see JXG.AbstractRenderer#updateImage
          */
-        drawImage: function (element) { /* stub */ },
+        drawImage: function (element) {
+            /* stub */
+        },
 
         /**
          * Updates the properties of an {@link JXG.Image} element.
@@ -332,7 +338,7 @@ define(['jxg', 'renderer/abstract'], function (JXG, AbstractRenderer) {
          * @see JXG.Image
          * @see JXG.AbstractRenderer#drawImage
          */
-        updateImage: function (element) { },
+        updateImage: function (element) {},
 
         /**
          * Applies transformations on images and text elements. This method is just a stub and has to be implemented in all
@@ -341,14 +347,18 @@ define(['jxg', 'renderer/abstract'], function (JXG, AbstractRenderer) {
          * @param {Array} transformations An array of {@link JXG.Transformation} objects. This is usually the transformations property
          * of the given element <tt>el</tt>.
          */
-        transformImage: function (element, transformations) { /* stub */ },
+        transformImage: function (element, transformations) {
+            /* stub */
+        },
 
         /**
          * If the URL of the image is provided by a function the URL has to be updated during updateImage()
          * @param {JXG.Image} element Reference to an image object.
          * @see JXG.AbstractRenderer#updateImage
          */
-        updateImageURL: function (element) { /* stub */ },
+        updateImageURL: function (element) {
+            /* stub */
+        },
 
         /* **************************
          * Render primitive objects
@@ -361,7 +371,9 @@ define(['jxg', 'renderer/abstract'], function (JXG, AbstractRenderer) {
          * @param {Number} level The layer the node is attached to. This is the index of the layer in
          * {@link JXG.SVGRenderer#layer} or the <tt>z-index</tt> style property of the node in VMLRenderer.
          */
-        appendChildPrim: function (node, level) { /* stub */ },
+        appendChildPrim: function (node, level) {
+            /* stub */
+        },
 
         /**
          * Stores the rendering nodes. This is an abstract method which has to be implemented in all renderers that use
@@ -369,7 +381,9 @@ define(['jxg', 'renderer/abstract'], function (JXG, AbstractRenderer) {
          * @param {JXG.GeometryElement} element A JSXGraph element.
          * @param {String} type The XML node name. Only used in VMLRenderer.
          */
-        appendNodesToElement: function (element, type) { /* stub */ },
+        appendNodesToElement: function (element, type) {
+            /* stub */
+        },
 
         /**
          * Creates a node of a given type with a given id.
@@ -386,14 +400,18 @@ define(['jxg', 'renderer/abstract'], function (JXG, AbstractRenderer) {
          * Removes an element node. Just a stub.
          * @param {Node} node The node to remove.
          */
-        remove: function (node) { /* stub */ },
+        remove: function (node) {
+            /* stub */
+        },
 
         /**
          * Can be used to create the nodes to display arrows. This is an abstract method which has to be implemented
          * in any descendant renderer.
          * @param {JXG.GeometryElement} element The element the arrows are to be attached to.
          */
-        makeArrows: function (element) { /* stub */ },
+        makeArrows: function (element) {
+            /* stub */
+        },
 
         /**
          * Updates an ellipse node primitive. This is an abstract method which has to be implemented in all renderers
@@ -404,7 +422,9 @@ define(['jxg', 'renderer/abstract'], function (JXG, AbstractRenderer) {
          * @param {Number} rx The x-axis radius.
          * @param {Number} ry The y-axis radius.
          */
-        updateEllipsePrim: function (node, x, y, rx, ry) { /* stub */ },
+        updateEllipsePrim: function (node, x, y, rx, ry) {
+            /* stub */
+        },
 
         /**
          * Refreshes a line node. This is an abstract method which has to be implemented in all renderers that use
@@ -416,7 +436,9 @@ define(['jxg', 'renderer/abstract'], function (JXG, AbstractRenderer) {
          * @param {Number} p2y The second point's y coordinate.
          * @param {JXG.Board} board
          */
-        updateLinePrim: function (node, p1x, p1y, p2x, p2y, board) { /* stub */ },
+        updateLinePrim: function (node, p1x, p1y, p2x, p2y, board) {
+            /* stub */
+        },
 
         /**
          * Updates a path element. This is an abstract method which has to be implemented in all renderers that use
@@ -426,7 +448,9 @@ define(['jxg', 'renderer/abstract'], function (JXG, AbstractRenderer) {
          * depends on the rendering engine.
          * @param {JXG.Board} board Reference to the element's board.
          */
-        updatePathPrim: function (node, pathString, board) { /* stub */ },
+        updatePathPrim: function (node, pathString, board) {
+            /* stub */
+        },
 
         /**
          * Builds a path data string to draw a point with a face other than <em>rect</em> and <em>circle</em>. Since
@@ -437,9 +461,11 @@ define(['jxg', 'renderer/abstract'], function (JXG, AbstractRenderer) {
          * @param {Number} size A positive number describing the size. Usually the half of the width and height of
          * the drawn point.
          * @param {String} type A string describing the point's face. This method only accepts the shortcut version of
-         * each possible face: <tt>x, +, <>, ^, v, >, <
+         * each possible face: <tt>x, +, |, -, [], <>, ^, v, >, <
          */
-        updatePathStringPoint: function (element, size, type) { /* stub */ },
+        updatePathStringPoint: function (element, size, type) {
+            /* stub */
+        },
 
         /**
          * Builds a path data string from a {@link JXG.Curve} element. Since the path data strings heavily depend on the
@@ -447,7 +473,9 @@ define(['jxg', 'renderer/abstract'], function (JXG, AbstractRenderer) {
          * CanvasRenderer, this method is used there to draw a path directly.
          * @param element
          */
-        updatePathStringPrim: function (element) { /* stub */ },
+        updatePathStringPrim: function (element) {
+            /* stub */
+        },
 
         /**
          * Builds a path data string from a {@link JXG.Curve} element such that the curve looks like
@@ -457,15 +485,18 @@ define(['jxg', 'renderer/abstract'], function (JXG, AbstractRenderer) {
          * CanvasRenderer, this method is used there to draw a path directly.
          * @param element
          */
-        updatePathStringBezierPrim: function (element) { /* stub */ },
-
+        updatePathStringBezierPrim: function (element) {
+            /* stub */
+        },
 
         /**
          * Update a polygon primitive.
          * @param {Node} node
          * @param {JXG.Polygon} element A JSXGraph element of type {@link JXG.Polygon}
          */
-        updatePolygonPrim: function (node, element) { /* stub */ },
+        updatePolygonPrim: function (node, element) {
+            /* stub */
+        },
 
         /**
          * Update a rectangle primitive. This is used only for points with face of type 'rect'.
@@ -475,7 +506,9 @@ define(['jxg', 'renderer/abstract'], function (JXG, AbstractRenderer) {
          * @param {Number} w Width of the rectangle.
          * @param {Number} h The rectangle's height.
          */
-        updateRectPrim: function (node, x, y, w, h) { /* stub */ },
+        updateRectPrim: function (node, x, y, w, h) {
+            /* stub */
+        },
 
         /* **************************
          *  Set Attributes
@@ -487,7 +520,9 @@ define(['jxg', 'renderer/abstract'], function (JXG, AbstractRenderer) {
          * @param {String} key Name of the attribute.
          * @param {String} val New value for the attribute.
          */
-        setPropertyPrim: function (node, key, val) { /* stub */ },
+        setPropertyPrim: function (node, key, val) {
+            /* stub */
+        },
 
         /**
          * Shows or hides an element on the canvas; Only a stub, requires implementation in the derived renderer.
@@ -508,7 +543,9 @@ define(['jxg', 'renderer/abstract'], function (JXG, AbstractRenderer) {
          * @see JXG.AbstractRenderer#hide
          * @deprecated
          */
-        show: function (element) { /* stub */ },
+        show: function (element) {
+            /* stub */
+        },
 
         /**
          * Hides an element on the canvas; Only a stub, requires implementation in the derived renderer.
@@ -518,7 +555,9 @@ define(['jxg', 'renderer/abstract'], function (JXG, AbstractRenderer) {
          * @see JXG.AbstractRenderer#show
          * @deprecated
          */
-        hide: function (element) { /* stub */ },
+        hide: function (element) {
+            /* stub */
+        },
 
         /**
          * Sets the buffering as recommended by SVGWG. Until now only Opera supports this and will be ignored by
@@ -526,39 +565,47 @@ define(['jxg', 'renderer/abstract'], function (JXG, AbstractRenderer) {
          * because it is called from outside the renderer.
          * @param {Node} node The SVG DOM Node which buffering type to update.
          * @param {String} type Either 'auto', 'dynamic', or 'static'. For an explanation see
-         *   {@link http://www.w3.org/TR/SVGTiny12/painting.html#BufferedRenderingProperty}.
+         *   {@link https://www.w3.org/TR/SVGTiny12/painting.html#BufferedRenderingProperty}.
          */
-        setBuffering: function (node, type) { /* stub */ },
+        setBuffering: function (node, type) {
+            /* stub */
+        },
 
         /**
          * Sets an element's dash style.
          * @param {JXG.GeometryElement} element An JSXGraph element.
          */
-        setDashStyle: function (element) { /* stub */ },
+        setDashStyle: function (element) {
+            /* stub */
+        },
 
         /**
          * Puts an object into draft mode, i.e. it's visual appearance will be changed. For GEONE<sub>x</sub>T backwards compatibility.
          * @param {JXG.GeometryElement} element Reference of the object that is in draft mode.
          */
-        setDraft: function (element) { },
+        setDraft: function (element) {},
 
         /**
          * Puts an object from draft mode back into normal mode.
          * @param {JXG.GeometryElement} element Reference of the object that no longer is in draft mode.
          */
-        removeDraft: function (element) { },
+        removeDraft: function (element) {},
 
         /**
          * Sets up nodes for rendering a gradient fill.
          * @param element
          */
-        setGradient: function (element) { /* stub */ },
+        setGradient: function (element) {
+            /* stub */
+        },
 
         /**
          * Updates the gradient fill.
          * @param {JXG.GeometryElement} element An JSXGraph element with an area that can be filled.
          */
-        updateGradient: function (element) { /* stub */ },
+        updateGradient: function (element) {
+            /* stub */
+        },
 
         /**
          * Sets the transition duration (in milliseconds) for fill color and stroke
@@ -568,7 +615,9 @@ define(['jxg', 'renderer/abstract'], function (JXG, AbstractRenderer) {
          * @param {Number} duration (Optional) duration in milliseconds. If not given,
          *        element.visProp.transitionDuration is taken. This is the default.
          */
-        setObjectTransition: function (element, duration) { /* stub */ },
+        setObjectTransition: function (element, duration) {
+            /* stub */
+        },
 
         /**
          * Sets an objects fill color.
@@ -576,7 +625,9 @@ define(['jxg', 'renderer/abstract'], function (JXG, AbstractRenderer) {
          * @param {String} color Color in a HTML/CSS compatible format. If you don't want any fill color at all, choose 'none'.
          * @param {Number} opacity Opacity of the fill color. Must be between 0 and 1.
          */
-        setObjectFillColor: function (element, color, opacity) { /* stub */ },
+        setObjectFillColor: function (element, color, opacity) {
+            /* stub */
+        },
 
         /**
          * Changes an objects stroke color to the given color.
@@ -584,35 +635,40 @@ define(['jxg', 'renderer/abstract'], function (JXG, AbstractRenderer) {
          * @param {String} color Color value in a HTML compatible format, e.g. <strong>#00ff00</strong> or <strong>green</strong> for green.
          * @param {Number} opacity Opacity of the fill color. Must be between 0 and 1.
          */
-        setObjectStrokeColor: function (element, color, opacity) { /* stub */ },
+        setObjectStrokeColor: function (element, color, opacity) {
+            /* stub */
+        },
 
         /**
          * Sets an element's stroke width.
          * @param {JXG.GeometryElement} element Reference to the geometry element.
          * @param {Number} width The new stroke width to be assigned to the element.
          */
-        setObjectStrokeWidth: function (element, width) { /* stub */ },
+        setObjectStrokeWidth: function (element, width) {
+            /* stub */
+        },
 
         /**
          * Sets the shadow properties to a geometry element. This method is only a stub, it is implemented in the actual renderers.
          * @param {JXG.GeometryElement} element Reference to a geometry object, that should get a shadow
          */
-        setShadow: function (element) { /* stub */ },
+        setShadow: function (element) {
+            /* stub */
+        },
 
         /**
          * Highlights an object, i.e. changes the current colors of the object to its highlighting colors
          * @param {JXG.GeometryElement} element Reference of the object that will be highlighted.
          * @returns {JXG.AbstractRenderer} Reference to the renderer
          */
-        highlight: function (element) { },
+        highlight: function (element) {},
 
         /**
          * Uses the normal colors of an object, i.e. the opposite of {@link JXG.AbstractRenderer#highlight}.
          * @param {JXG.GeometryElement} element Reference of the object that will get its normal colors.
          * @returns {JXG.AbstractRenderer} Reference to the renderer
          */
-        noHighlight: function (element) { },
-
+        noHighlight: function (element) {},
 
         /* **************************
          * renderer control
@@ -624,19 +680,23 @@ define(['jxg', 'renderer/abstract'], function (JXG, AbstractRenderer) {
          * descendant renderer should implement, if appropriate.
          * @see JXG.AbstractRenderer#unsuspendRedraw
          */
-        suspendRedraw: function () { /* stub */ },
+        suspendRedraw: function () {
+            /* stub */
+        },
 
         /**
          * Restart redraw. This method is called after updating all the rendering node attributes.
          * @see JXG.AbstractRenderer#suspendRedraw
          */
-        unsuspendRedraw: function () { /* stub */ },
+        unsuspendRedraw: function () {
+            /* stub */
+        },
 
         /**
          * The tiny zoom bar shown on the bottom of a board (if showNavigation on board creation is true).
          * @param {JXG.Board} board Reference to a JSXGraph board.
          */
-        drawZoomBar: function (board) { },
+        drawNavigationBar: function (board) {},
 
         /**
          * Wrapper for getElementById for maybe other renderers which elements are not directly accessible by DOM methods like document.getElementById().
@@ -652,18 +712,19 @@ define(['jxg', 'renderer/abstract'], function (JXG, AbstractRenderer) {
          * @param {Number} w New width
          * @param {Number} h New height
          */
-        resize: function (w, h) { /* stub */},
+        resize: function (w, h) {
+            /* stub */
+        },
 
         removeToInsertLater: function () {
             return function () {};
         }
+    }
+);
 
-    });
+/**
+ * @ignore
+ */
+JXG.NoRenderer.prototype = new AbstractRenderer();
 
-    /**
-     * @ignore
-     */
-    JXG.NoRenderer.prototype = new AbstractRenderer();
-
-    return JXG.NoRenderer;
-});
+export default JXG.NoRenderer;

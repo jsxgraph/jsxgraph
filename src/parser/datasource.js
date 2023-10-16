@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2022
+    Copyright 2008-2023
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -25,37 +25,32 @@
     GNU Lesser General Public License for more details.
 
     You should have received a copy of the GNU Lesser General Public License and
-    the MIT License along with JSXGraph. If not, see <http://www.gnu.org/licenses/>
-    and <http://opensource.org/licenses/MIT/>.
+    the MIT License along with JSXGraph. If not, see <https://www.gnu.org/licenses/>
+    and <https://opensource.org/licenses/MIT/>.
  */
-
 
 /*global JXG: true, define: true, document: true*/
 /*jslint nomen: true, plusplus: true*/
-
-/* depends:
- jxg
- utils/type
- */
 
 /**
  * @fileoverview The JXG.DataSource is a helper class for data organization. Currently supported data sources are
  * javascript arrays and HTML tables.
  */
 
-define(['jxg', 'utils/type'], function (JXG, Type) {
+import JXG from "../jxg";
+import Type from "../utils/type";
 
-    "use strict";
+JXG.DataSource = function () {
+    this.data = [];
+    this.columnHeaders = [];
+    this.rowHeaders = [];
 
-    JXG.DataSource = function () {
-        this.data = [];
-        this.columnHeaders = [];
-        this.rowHeaders = [];
+    return this;
+};
 
-        return this;
-    };
-
-    JXG.extend(JXG.DataSource.prototype, /** @lends JXG.DataSource.prototype */ {
+JXG.extend(
+    JXG.DataSource.prototype,
+    /** @lends JXG.DataSource.prototype */ {
         loadFromArray: function (table, columnHeader, rowHeader) {
             var i, j, cell;
 
@@ -90,7 +85,7 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
                         cell = table[i][j];
                         if (parseFloat(cell).toString() === cell) {
                             this.data[i][j] = parseFloat(cell);
-                        } else if (cell !== '-') {
+                        } else if (cell !== "-") {
                             this.data[i][j] = cell;
                         } else {
                             this.data[i][j] = NaN;
@@ -143,11 +138,11 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
 
             if (Type.exists(table)) {
                 // extract the data
-                row = table.getElementsByTagName('tr');
+                row = table.getElementsByTagName("tr");
                 this.data = [];
 
                 for (i = 0; i < row.length; i++) {
-                    col = row[i].getElementsByTagName('td');
+                    col = row[i].getElementsByTagName("td");
                     this.data[i] = [];
 
                     for (j = 0; j < col.length; j++) {
@@ -155,7 +150,7 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
 
                         if (parseFloat(cell).toString() === cell) {
                             this.data[i][j] = parseFloat(cell);
-                        } else if (cell !== '-') {
+                        } else if (cell !== "-") {
                             this.data[i][j] = cell;
                         } else {
                             this.data[i][j] = NaN;
@@ -181,11 +176,11 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
         },
 
         addColumn: function (name, pos, data) {
-            throw new Error('not implemented');
+            throw new Error("not implemented");
         },
 
         addRow: function (name, pos, data) {
-            throw new Error('not implemented');
+            throw new Error("not implemented");
         },
 
         getColumn: function (col) {
@@ -236,7 +231,7 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
 
             return result;
         }
-    });
+    }
+);
 
-    return JXG.DataSource;
-});
+export default JXG.DataSource;

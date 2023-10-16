@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2022
+    Copyright 2008-2023
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -25,83 +25,77 @@
     GNU Lesser General Public License for more details.
 
     You should have received a copy of the GNU Lesser General Public License and
-    the MIT License along with JSXGraph. If not, see <http://www.gnu.org/licenses/>
-    and <http://opensource.org/licenses/MIT/>.
+    the MIT License along with JSXGraph. If not, see <https://www.gnu.org/licenses/>
+    and <https://opensource.org/licenses/MIT/>.
  */
-
 
 /*global JXG: true, define: true, AMprocessNode: true, MathJax: true, document: true */
 /*jslint nomen: true, plusplus: true*/
 
-/* depends:
- jxg
- base/constants
- utils/event
- math/math
+import JXG from "../jxg";
+import Const from "./constants";
+import EventEmitter from "../utils/event";
+import Type from "../utils/type";
+import Mat from "../math/math";
+
+/**
+ * @fileoverview In this file the Coords object is defined, a class to manage all
+ * properties and methods coordinates usually have.
  */
 
-define([
-    'jxg', 'base/constants', 'utils/event', 'utils/type', 'math/math'
-], function (JXG, Const, EventEmitter, Type, Mat) {
-
-    "use strict";
+/**
+ * Constructs a new Coordinates object.
+ * @class This is the Coordinates class.
+ * All members a coordinate has to provide
+ * are defined here.
+ * @param {Number} method The type of coordinates given by the user. Accepted values are <b>COORDS_BY_SCREEN</b> and <b>COORDS_BY_USER</b>.
+ * @param {Array} coordinates An array of affine coordinates.
+ * @param {JXG.Board} board A reference to a board.
+ * @oaram {Boolean} [emitter=true]
+ * @borrows JXG.EventEmitter#on as this.on
+ * @borrows JXG.EventEmitter#off as this.off
+ * @borrows JXG.EventEmitter#triggerEventHandlers as this.triggerEventHandlers
+ * @borrows JXG.EventEmitter#eventHandlers as this.eventHandlers
+ * @constructor
+ */
+JXG.Coords = function (method, coordinates, board, emitter) {
+    /**
+     * Stores the board the object is used on.
+     * @type JXG.Board
+     */
+    this.board = board;
 
     /**
-     * @fileoverview In this file the Coords object is defined, a class to manage all
-     * properties and methods coordinates usually have.
+     * Stores coordinates for user view as homogeneous coordinates.
+     * @type Array
      */
+    this.usrCoords = [];
+    //this.usrCoords = new Float64Array(3);
 
     /**
-     * Constructs a new Coordinates object.
-     * @class This is the Coordinates class.
-     * All members a coordinate has to provide
-     * are defined here.
-     * @param {Number} method The type of coordinates given by the user. Accepted values are <b>COORDS_BY_SCREEN</b> and <b>COORDS_BY_USER</b>.
-     * @param {Array} coordinates An array of affine coordinates.
-     * @param {JXG.Board} board A reference to a board.
-     * @oaram {Boolean} [emitter=true]
-     * @borrows JXG.EventEmitter#on as this.on
-     * @borrows JXG.EventEmitter#off as this.off
-     * @borrows JXG.EventEmitter#triggerEventHandlers as this.triggerEventHandlers
-     * @borrows JXG.EventEmitter#eventHandlers as this.eventHandlers
-     * @constructor
+     * Stores coordinates for screen view as homogeneous coordinates.
+     * @type Array
      */
-    JXG.Coords = function (method, coordinates, board, emitter) {
-        /**
-         * Stores the board the object is used on.
-         * @type JXG.Board
-         */
-        this.board = board;
+    this.scrCoords = [];
+    //this.scrCoords = new Float64Array(3);
 
-        /**
-         * Stores coordinates for user view as homogeneous coordinates.
-         * @type Array
-         */
-        this.usrCoords = [];
-        //this.usrCoords = new Float64Array(3);
+    /**
+     * If true, this coordinates object will emit update events every time
+     * the coordinates are set.
+     * @type boolean
+     * @default true
+     */
+    this.emitter = !Type.exists(emitter) || emitter;
 
-        /**
-         * Stores coordinates for screen view as homogeneous coordinates.
-         * @type Array
-         */
-        this.scrCoords = [];
-        //this.scrCoords = new Float64Array(3);
+    if (this.emitter) {
+        EventEmitter.eventify(this);
+    }
+    this.setCoordinates(method, coordinates, false, true);
+};
 
-        /**
-         * If true, this coordinates object will emit update events every time
-         * the coordinates are set.
-         * @type boolean
-         * @default true
-         */
-        this.emitter = !Type.exists(emitter) || emitter;
-
-        if (this.emitter) {
-            EventEmitter.eventify(this);
-        }
-        this.setCoordinates(method, coordinates, false, true);
-    };
-
-    JXG.extend(JXG.Coords.prototype, /** @lends JXG.Coords.prototype */ {
+JXG.extend(
+    JXG.Coords.prototype,
+    /** @lends JXG.Coords.prototype */ {
         /**
          * Normalize homogeneous coordinates
          * @private
@@ -119,7 +113,7 @@ define([
          * @private
          */
         usr2screen: function (doRound) {
-            var mround = Math.round,  // Is faster on IE, maybe slower with JIT compilers
+            var mround = Math.round, // Is faster on IE, maybe slower with JIT compilers
                 b = this.board,
                 uc = this.usrCoords,
                 oc = b.origin.scrCoords;
@@ -144,7 +138,7 @@ define([
                 sc = this.scrCoords,
                 b = this.board;
 
-            this.usrCoords[0] =  1.0;
+            this.usrCoords[0] = 1.0;
             this.usrCoords[1] = (sc[1] - o[1]) / b.unitX;
             this.usrCoords[2] = (o[2] - sc[2]) / b.unitY;
         },
@@ -204,11 +198,13 @@ define([
                 os = [sc[0], sc[1], sc[2]];
 
             if (coord_type === Const.COORDS_BY_USER) {
-                if (coordinates.length === 2) { // Euclidean coordinates
+                if (coordinates.length === 2) {
+                    // Euclidean coordinates
                     uc[0] = 1.0;
                     uc[1] = coordinates[0];
                     uc[2] = coordinates[1];
-                } else { // Homogeneous coordinates (normalized)
+                } else {
+                    // Homogeneous coordinates (normalized)
                     uc[0] = coordinates[0];
                     uc[1] = coordinates[1];
                     uc[2] = coordinates[2];
@@ -216,10 +212,12 @@ define([
                 }
                 this.usr2screen(doRound);
             } else {
-                if (coordinates.length === 2) { // Euclidean coordinates
+                if (coordinates.length === 2) {
+                    // Euclidean coordinates
                     sc[1] = coordinates[0];
                     sc[2] = coordinates[1];
-                } else { // Homogeneous coordinates (normalized)
+                } else {
+                    // Homogeneous coordinates (normalized)
                     sc[1] = coordinates[1];
                     sc[2] = coordinates[2];
                 }
@@ -227,22 +225,22 @@ define([
             }
 
             if (this.emitter && !noevent && (os[1] !== sc[1] || os[2] !== sc[2])) {
-                this.triggerEventHandlers(['update'], [ou, os]);
+                this.triggerEventHandlers(["update"], [ou, os]);
             }
 
             return this;
         },
 
         /**
-        * Copy array, either scrCoords or usrCoords
-        * Uses slice() in case of standard arrays and set() in case of
-        * typed arrays.
-        * @private
-        * @param {String} obj Either 'scrCoords' or 'usrCoords'
-        * @param {Number} offset Offset, defaults to 0 if not given
-        * @returns {Array} Returns copy of the coords array either as standard array or as
-        *   typed array.
-        */
+         * Copy array, either scrCoords or usrCoords
+         * Uses slice() in case of standard arrays and set() in case of
+         * typed arrays.
+         * @private
+         * @param {String} obj Either 'scrCoords' or 'usrCoords'
+         * @param {Number} offset Offset, defaults to 0 if not given
+         * @returns {Array} Returns copy of the coords array either as standard array or as
+         *   typed array.
+         */
         copy: function (obj, offset) {
             if (offset === undefined) {
                 offset = 0;
@@ -255,8 +253,11 @@ define([
          * Test if one of the usrCoords is NaN or the coordinates are infinite.
          * @returns {Boolean} true if the coordinates are finite, false otherwise.
          */
-        isReal: function() {
-            return (!isNaN(this.usrCoords[1] + this.usrCoords[2])) && (Math.abs(this.usrCoords[0]) > Mat.eps);
+        isReal: function () {
+            return (
+                !isNaN(this.usrCoords[1] + this.usrCoords[2]) &&
+                Math.abs(this.usrCoords[0]) > Mat.eps
+            );
         },
 
         /**
@@ -266,13 +267,13 @@ define([
          * @param {Array} os Old screen coordinates
          * @event
          */
-        __evt__update: function (ou, os) { },
+        __evt__update: function (ou, os) {},
 
         /**
          * @ignore
          */
         __evt: function () {}
-    });
+    }
+);
 
-    return JXG.Coords;
-});
+export default JXG.Coords;

@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2022
+    Copyright 2008-2023
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -25,115 +25,116 @@
     GNU Lesser General Public License for more details.
 
     You should have received a copy of the GNU Lesser General Public License and
-    the MIT License along with JSXGraph. If not, see <http://www.gnu.org/licenses/>
-    and <http://opensource.org/licenses/MIT/>.
+    the MIT License along with JSXGraph. If not, see <https://www.gnu.org/licenses/>
+    and <https://opensource.org/licenses/MIT/>.
  */
 
 /*global JXG: true, define: true, window: true*/
 /*jslint nomen: true, plusplus: true*/
 
-/* depends:
- jxg
- base/constants
- base/coords
- base/element
- parser/geonext
- math/statistics
- utils/env
- utils/type
- */
-
 /**
  * @fileoverview In this file the Text element is defined.
  */
 
-define([
-    'jxg', 'base/constants', 'base/element', 'parser/geonext',
-    'utils/env', 'utils/type', 'math/math', 'base/coordselement'
-], function (JXG, Const, GeometryElement, GeonextParser, Env, Type, Mat, CoordsElement) {
+import JXG from "../jxg";
+import Const from "./constants";
+import GeometryElement from "./element";
+import GeonextParser from "../parser/geonext";
+import Env from "../utils/env";
+import Type from "../utils/type";
+import Mat from "../math/math";
+import CoordsElement from "./coordselement";
 
-    "use strict";
+var priv = {
+    HTMLSliderInputEventHandler: function () {
+        this._val = parseFloat(this.rendNodeRange.value);
+        this.rendNodeOut.value = this.rendNodeRange.value;
+        this.board.update();
+    }
+};
 
-    var priv = {
-        HTMLSliderInputEventHandler: function () {
-            this._val = parseFloat(this.rendNodeRange.value);
-            this.rendNodeOut.value = this.rendNodeRange.value;
-            this.board.update();
-        }
-    };
+/**
+ * Construct and handle texts.
+ *
+ * The coordinates can be relative to the coordinates of an element
+ * given in {@link JXG.Options#text.anchor}.
+ *
+ * MathJax, HTML and GEONExT syntax can be handled.
+ * @class Creates a new text object. Do not use this constructor to create a text. Use {@link JXG.Board#create} with
+ * type {@link Text} instead.
+ * @augments JXG.GeometryElement
+ * @augments JXG.CoordsElement
+ * @param {string|JXG.Board} board The board the new text is drawn on.
+ * @param {Array} coordinates An array with the user coordinates of the text.
+ * @param {Object} attributes An object containing visual properties and optional a name and a id.
+ * @param {string|function} content A string or a function returning a string.
+ *
+ */
+JXG.Text = function (board, coords, attributes, content) {
+    var tmp;
+
+    this.constructor(board, attributes, Const.OBJECT_TYPE_TEXT, Const.OBJECT_CLASS_TEXT);
+
+    this.element = this.board.select(attributes.anchor);
+    this.coordsConstructor(coords, Type.evaluate(this.visProp.islabel));
+
+    this.content = "";
+    this.plaintext = "";
+    this.plaintextOld = null;
+    this.orgText = "";
+
+    this.needsSizeUpdate = false;
+    // Only used by infobox anymore
+    this.hiddenByParent = false;
 
     /**
-     * Construct and handle texts.
+     * Width and height of the text element in pixel.
      *
-     * The coordinates can be relative to the coordinates of an element
-     * given in {@link JXG.Options#text.anchor}.
-     *
-     * MathJax, HTML and GEONExT syntax can be handled.
-     * @class Creates a new text object. Do not use this constructor to create a text. Use {@link JXG.Board#create} with
-     * type {@link Text} instead.
-     * @augments JXG.GeometryElement
-     * @augments JXG.CoordsElement
-     * @param {string|JXG.Board} board The board the new text is drawn on.
-     * @param {Array} coordinates An array with the user coordinates of the text.
-     * @param {Object} attributes An object containing visual properties and optional a name and a id.
-     * @param {string|function} content A string or a function returning a string.
-     *
+     * @private
+     * @type Array
      */
-    JXG.Text = function (board, coords, attributes, content) {
-        this.constructor(board, attributes, Const.OBJECT_TYPE_TEXT, Const.OBJECT_CLASS_TEXT);
+    this.size = [1.0, 1.0];
+    this.id = this.board.setId(this, "T");
 
-        this.element = this.board.select(attributes.anchor);
-        this.coordsConstructor(coords, Type.evaluate(this.visProp.islabel));
+    this.board.renderer.drawText(this);
+    this.board.finalizeAdding(this);
 
-        this.content = '';
-        this.plaintext = '';
-        this.plaintextOld = null;
-        this.orgText = '';
+    // Set text before drawing
+    // this._createFctUpdateText(content);
+    // this.updateText();
 
-        this.needsSizeUpdate = false;
-        // Only used by infobox anymore
-        this.hiddenByParent = false;
+    // Set attribute visible to true. This is necessary to
+    // create all sub-elements for button, input and checkbox
+    tmp = this.visProp.visible;
+    this.visProp.visible = true;
+    this.setText(content);
+    // Restore the correct attribute visible.
+    this.visProp.visible = tmp;
 
-        /**
-         * Width and height of the the text element in pixel.
-         *
-         * @private
-         * @type Array
-         */
-        this.size = [1.0, 1.0];
-        this.id = this.board.setId(this, 'T');
+    if (Type.isString(this.content)) {
+        this.notifyParents(this.content);
+    }
+    this.elType = "text";
 
-        this.board.renderer.drawText(this);
-        this.board.finalizeAdding(this);
+    this.methodMap = Type.deepCopy(this.methodMap, {
+        setText: "setTextJessieCode",
+        // free: 'free',
+        // move: "setCoords"
+    });
+};
 
-        // Set text before drawing
-        // this._createFctUpdateText(content);
-        // this.updateText();
+JXG.Text.prototype = new GeometryElement();
+Type.copyPrototypeMethods(JXG.Text, CoordsElement, "coordsConstructor");
 
-        this.setText(content);
-
-        if (Type.isString(this.content)) {
-            this.notifyParents(this.content);
-        }
-        this.elType = 'text';
-
-        this.methodMap = Type.deepCopy(this.methodMap, {
-            setText: 'setTextJessieCode',
-            // free: 'free',
-            move: 'setCoords'
-        });
-    };
-
-    JXG.Text.prototype = new GeometryElement();
-    Type.copyPrototypeMethods(JXG.Text, CoordsElement, 'coordsConstructor');
-
-    JXG.extend(JXG.Text.prototype, /** @lends JXG.Text.prototype */ {
+JXG.extend(
+    JXG.Text.prototype,
+    /** @lends JXG.Text.prototype */ {
         /**
          * @private
-         * Test if the the screen coordinates (x,y) are in a small stripe
+         * Test if the screen coordinates (x,y) are in a small stripe
          * at the left side or at the right side of the text.
          * Sensitivity is set in this.board.options.precision.hasPoint.
-         * If dragarea is set to 'all' (default), tests if the the screen
+         * If dragarea is set to 'all' (default), tests if the screen
          * coordinates (x,y) are in within the text boundary.
          * @param {Number} x
          * @param {Number} y
@@ -152,15 +153,18 @@ define([
             if (this.transformations.length > 0) {
                 //Transform the mouse/touch coordinates
                 // back to the original position of the text.
-                lft = Mat.matVecMult(Mat.inverse(this.board.renderer.joinTransforms(this, this.transformations)), [1, x, y]);
+                lft = Mat.matVecMult(
+                    Mat.inverse(this.board.renderer.joinTransforms(this, this.transformations)),
+                    [1, x, y]
+                );
                 x = lft[1];
                 y = lft[2];
             }
 
             ax = this.getAnchorX();
-            if (ax === 'right') {
+            if (ax === "right") {
                 lft = this.coords.scrCoords[1] - this.size[0];
-            } else if (ax === 'middle') {
+            } else if (ax === "middle") {
                 lft = this.coords.scrCoords[1] - 0.5 * this.size[0];
             } else {
                 lft = this.coords.scrCoords[1];
@@ -168,77 +172,167 @@ define([
             rt = lft + this.size[0];
 
             ay = this.getAnchorY();
-            if (ay === 'top') {
+            if (ay === "top") {
                 bot = this.coords.scrCoords[2] + this.size[1];
-            } else if (ay === 'middle') {
+            } else if (ay === "middle") {
                 bot = this.coords.scrCoords[2] + 0.5 * this.size[1];
             } else {
                 bot = this.coords.scrCoords[2];
             }
             top = bot - this.size[1];
 
-            if (Type.evaluate(this.visProp.dragarea) === 'all') {
+            if (Type.evaluate(this.visProp.dragarea) === "all") {
                 return x >= lft - r && x < rt + r && y >= top - r && y <= bot + r;
             }
             // e.g. 'small'
-            return (y >= top - r && y <= bot + r) &&
-                ((x >= lft - r && x <= lft + 2 * r) ||
-                    (x >= rt - 2 * r && x <= rt + r));
+            return (
+                y >= top - r &&
+                y <= bot + r &&
+                ((x >= lft - r && x <= lft + 2 * r) || (x >= rt - 2 * r && x <= rt + r))
+            );
         },
 
         /**
          * This sets the updateText function of this element depending on the type of text content passed.
-         * Used by {@link JXG.Text#_setText} and {@link JXG.Text} constructor.
+         * Used by {@link JXG.Text#_setText}.
          * @param {String|Function|Number} text
          * @private
+         * @see JXG.Text#_setText
          */
         _createFctUpdateText: function (text) {
-            var updateText, resolvedText,
+            var updateText, e, digits,
+                resolvedText,
+                i, that,
                 ev_p = Type.evaluate(this.visProp.parse),
                 ev_um = Type.evaluate(this.visProp.usemathjax),
-                ev_uk = Type.evaluate(this.visProp.usekatex);
+                ev_uk = Type.evaluate(this.visProp.usekatex),
+                convertJessieCode = false;
 
             this.orgText = text;
+
             if (Type.isFunction(text)) {
-                // <value> tags will not be evaluated.
+                /**
+                 * Dynamically created function to update the content
+                 * of a text. Can not be overwritten.
+                 * <p>
+                 * &lt;value&gt; tags will not be evaluated if text is provided by a function
+                 * <p>
+                 * Sets the property <tt>plaintext</tt> of the text element.
+                 *
+                 * @private
+                 */
                 this.updateText = function () {
-                    resolvedText = text().toString();
+                    resolvedText = text().toString(); // Evaluate function
                     if (ev_p && !ev_um && !ev_uk) {
-                        this.plaintext = this.replaceSub(this.replaceSup(this.convertGeonextAndSketchometry2CSS(resolvedText)));
+                        this.plaintext = this.replaceSub(
+                            this.replaceSup(
+                                this.convertGeonextAndSketchometry2CSS(resolvedText, false)
+                            )
+                        );
                     } else {
                         this.plaintext = resolvedText;
                     }
                 };
-            } else if (Type.isString(text) && !ev_p) {   // Do not parse
-                this.updateText = function () {
-                    this.plaintext = text;
-                };
-            } else {                                     // Parse
+            } else {
                 if (Type.isNumber(text)) {
-                    this.content = Type.toFixed(text, Type.evaluate(this.visProp.digits));
-                } else {
+                    digits = Type.evaluate(this.visProp.digits);
+                    if (this.useLocale()) {
+                        this.content = this.formatNumberLocale(text, digits);
+                    } else {
+                        this.content = Type.toFixed(text, digits);
+                    }
+                } else if (Type.isString(text) && ev_p) {
                     if (Type.evaluate(this.visProp.useasciimathml)) {
-                        // Convert via ASCIIMathML
+                        // ASCIIMathML
+                        // value-tags are not supported
                         this.content = "'`" + text + "`'";
                     } else if (ev_um || ev_uk) {
-                        if (ev_p) {
-                            this.content = this.generateTerm(text, true, true, true); // Replace value-tags
-                            this.content = this.content.replace(/\\/g, "\\\\");
-                        } else {
-                            this.content = "'" + text + "'";
+                        // MathJax or KaTeX
+                        // Replace value-tags by functions
+                        // sketchofont is ignored
+                        this.content = this.valueTagToJessieCode(text);
+                        if (!Type.isArray(this.content)) {
+                            // For some reason we don't have to mask backslashes in an array of strings
+                            // anymore.
+                            //
+                            // for (i = 0; i < this.content.length; i++) {
+                            //     this.content[i] = this.content[i].replace(/\\/g, "\\\\"); // Replace single backslash by double
+                            // }
+                            // } else {
+                            this.content = this.content.replace(/\\/g, "\\\\"); // Replace single backslash by double
                         }
                     } else {
+                        // No TeX involved.
                         // Converts GEONExT syntax into JavaScript string
                         // Short math is allowed
+                        // Replace value-tags by functions
                         // Avoid geonext2JS calls
-                        this.content = this.generateTerm(text, true, true, false);
+                        this.content = this.poorMansTeX(this.valueTagToJessieCode(text));
                     }
+                    convertJessieCode = true;
+                } else {
+                    this.content = text;
                 }
-                // Convert JessieCode to JS function
-                updateText = this.board.jc.snippet(this.content, true, '', false);
-                this.updateText = function () {
-                    this.plaintext = updateText();
-                };
+
+                // Generate function which returns the text to be displayed
+                if (convertJessieCode) {
+                    // Convert JessieCode to JS function
+                    if (Type.isArray(this.content)) {
+                        // This is the case if the text contained value-tags.
+                        // These value-tags consist of JessieCode snippets
+                        // which are now replaced by JavaScript functions
+                        that = this;
+                        for (i = 0; i < this.content.length; i++) {
+                            if (this.content[i][0] !== '"') {
+                                this.content[i] = this.board.jc.snippet(this.content[i], true, "", false);
+                                for (e in this.content[i].deps) {
+                                    this.addParents(this.content[i].deps[e]);
+                                    this.content[i].deps[e].addChild(this);
+                                }
+                            }
+                        }
+
+                        updateText = function() {
+                            var i, t,
+                                digits = Type.evaluate(that.visProp.digits),
+                                txt = '';
+
+                            for (i = 0; i < that.content.length; i++) {
+                                if (Type.isFunction(that.content[i])) {
+                                    t = that.content[i]();
+                                    if (that.useLocale()) {
+                                        t = that.formatNumberLocale(t, digits);
+                                    } else {
+                                        t = Type.toFixed(t, digits);
+                                    }
+                                } else {
+                                    t = that.content[i];
+                                    if (t.at(0) === '"' && t.at(-1) === '"') {
+                                        t = t.slice(1, -1);
+                                    }
+                                }
+
+                                txt += t;
+                            }
+                            return txt;
+                        };
+                    } else {
+                        updateText = this.board.jc.snippet(this.content, true, "", false);
+                        for (e in updateText.deps) {
+                            this.addParents(updateText.deps[e]);
+                            updateText.deps[e].addChild(this);
+                        }
+                    }
+
+                    // Ticks have been escaped in valueTagToJessieCode
+                    this.updateText = function () {
+                        this.plaintext = this.unescapeTicks(updateText());
+                    };
+                } else {
+                    this.updateText = function () {
+                        this.plaintext = this.content; // text;
+                    };
+                }
             }
         },
 
@@ -259,7 +353,7 @@ define([
 
             // We do not call updateSize for the infobox to speed up rendering
             if (!this.board.infobox || this.id !== this.board.infobox.id) {
-                this.updateSize();    // updateSize() is called at least once.
+                this.updateSize(); // updateSize() is called at least once.
             }
 
             // This may slow down canvas renderer
@@ -315,10 +409,12 @@ define([
          * @return {[type]} [description]
          */
         updateSize: function () {
-            var tmp, that, node,
+            var tmp,
+                that,
+                node,
                 ev_d = Type.evaluate(this.visProp.display);
 
-            if (!Env.isBrowser || this.board.renderer.type === 'no') {
+            if (!Env.isBrowser || this.board.renderer.type === "no") {
                 return this;
             }
             node = this.rendNode;
@@ -326,7 +422,7 @@ define([
             /**
              * offsetWidth and offsetHeight seem to be supported for internal vml elements by IE10+ in IE8 mode.
              */
-            if (ev_d === 'html' || this.board.renderer.type === 'vml') {
+            if (ev_d === "html" || this.board.renderer.type === "vml") {
                 if (Type.exists(node.offsetWidth)) {
                     that = this;
                     window.setTimeout(function () {
@@ -350,8 +446,8 @@ define([
                 } else {
                     this.size = this.crudeSizeEstimate();
                 }
-            } else if (ev_d === 'internal') {
-                if (this.board.renderer.type === 'svg') {
+            } else if (ev_d === "internal") {
+                if (this.board.renderer.type === "svg") {
                     that = this;
                     window.setTimeout(function () {
                         try {
@@ -359,10 +455,9 @@ define([
                             that.size = [tmp.width, tmp.height];
                             that.needsUpdate = true;
                             that.updateRenderer();
-                        } catch (e) {
-                        }
+                        } catch (e) {}
                     }, 0);
-                } else if (this.board.renderer.type === 'canvas') {
+                } else if (this.board.renderer.type === "canvas") {
                     this.size = this.crudeSizeEstimate();
                 }
             }
@@ -401,25 +496,25 @@ define([
             }
 
             var j,
-                i = te.indexOf('_{');
+                i = te.indexOf("_{");
 
             // the regexp in here are not used for filtering but to provide some kind of sugar for label creation,
             // i.e. replacing _{...} with <sub>...</sub>. What is passed would get out anyway.
             /*jslint regexp: true*/
 
             while (i >= 0) {
-                te = te.substr(0, i) + te.substr(i).replace(/_\{/, '<sub>');
-                j = te.substr(i).indexOf('}');
+                te = te.substr(0, i) + te.substr(i).replace(/_\{/, "<sub>");
+                j = te.substr(i).indexOf("}");
                 if (j >= 0) {
-                    te = te.substr(0, j) + te.substr(j).replace(/\}/, '</sub>');
+                    te = te.substr(0, j) + te.substr(j).replace(/\}/, "</sub>");
                 }
-                i = te.indexOf('_{');
+                i = te.indexOf("_{");
             }
 
-            i = te.indexOf('_');
+            i = te.indexOf("_");
             while (i >= 0) {
-                te = te.substr(0, i) + te.substr(i).replace(/_(.?)/, '<sub>$1</sub>');
-                i = te.indexOf('_');
+                te = te.substr(0, i) + te.substr(i).replace(/_(.?)/, "<sub>$1</sub>");
+                i = te.indexOf("_");
             }
 
             return te;
@@ -436,25 +531,25 @@ define([
             }
 
             var j,
-                i = te.indexOf('^{');
+                i = te.indexOf("^{");
 
             // the regexp in here are not used for filtering but to provide some kind of sugar for label creation,
             // i.e. replacing ^{...} with <sup>...</sup>. What is passed would get out anyway.
             /*jslint regexp: true*/
 
             while (i >= 0) {
-                te = te.substr(0, i) + te.substr(i).replace(/\^\{/, '<sup>');
-                j = te.substr(i).indexOf('}');
+                te = te.substr(0, i) + te.substr(i).replace(/\^\{/, "<sup>");
+                j = te.substr(i).indexOf("}");
                 if (j >= 0) {
-                    te = te.substr(0, j) + te.substr(j).replace(/\}/, '</sup>');
+                    te = te.substr(0, j) + te.substr(j).replace(/\}/, "</sup>");
                 }
-                i = te.indexOf('^{');
+                i = te.indexOf("^{");
             }
 
-            i = te.indexOf('^');
+            i = te.indexOf("^");
             while (i >= 0) {
-                te = te.substr(0, i) + te.substr(i).replace(/\^(.?)/, '<sup>$1</sup>');
-                i = te.indexOf('^');
+                te = te.substr(0, i) + te.substr(i).replace(/\^(.?)/, "<sup>$1</sup>");
+                i = te.indexOf("^");
             }
 
             return te;
@@ -520,7 +615,7 @@ define([
             this.updateCoords(fromParent);
             this.updateText();
 
-            if (Type.evaluate(this.visProp.display) === 'internal') {
+            if (Type.evaluate(this.visProp.display) === "internal") {
                 if (Type.isString(this.plaintext)) {
                     this.plaintext = this.utf8_decode(this.plaintext);
                 }
@@ -550,28 +645,27 @@ define([
             } else {
                 // For some magic reason it is more efficient on the iPad to
                 // call updateSize() for EVERY text element EVERY time.
-                this.needsSizeUpdate = (this.plaintextOld !== this.plaintext);
+                this.needsSizeUpdate = this.plaintextOld !== this.plaintext;
 
                 if (this.needsSizeUpdate) {
                     this.plaintextOld = this.plaintext;
                 }
             }
-
         },
 
         /**
-         * The update function of the renderert
+         * The update function of the renderer
          * is called.
          * @private
          */
         updateRenderer: function () {
-            if (//this.board.updateQuality === this.board.BOARD_QUALITY_HIGH &&
-                Type.evaluate(this.visProp.autoposition)) {
-
-                this.setAutoPosition()
-                    .updateConstraint();
+            if (
+                //this.board.updateQuality === this.board.BOARD_QUALITY_HIGH &&
+                Type.evaluate(this.visProp.autoposition)
+            ) {
+                this.setAutoPosition().updateConstraint();
             }
-            return this.updateRendererGeneric('updateText');
+            return this.updateRendererGeneric("updateText");
         },
 
         /**
@@ -584,66 +678,68 @@ define([
          */
         expandShortMath: function (expr) {
             var re = /([)0-9.])\s*([(a-zA-Z_])/g;
-            return expr.replace(re, '$1*$2');
+            return expr.replace(re, "$1*$2");
         },
 
         /**
          * Converts the GEONExT syntax of the <value> terms into JavaScript.
          * Also, all Objects whose name appears in the term are searched and
-         * the text is added as child to these objects. 
+         * the text is added as child to these objects.
          * This method is called if the attribute parse==true is set.
+         *
+         * Obsolete, replaced by JXG.Text.valueTagToJessieCode
          *
          * @param{String} contentStr String to be parsed
          * @param{Boolean} [expand] Optional flag if shortened math syntax is allowed (e.g. 3x instead of 3*x).
          * @param{Boolean} [avoidGeonext2JS] Optional flag if geonext2JS should be called. For backwards compatibility
          * this has to be set explicitely to true.
-         * @param{Boolean} [outputTeX] Optional flag which has to be true if the resulting term will be sent to MathJax or KaTeX. 
+         * @param{Boolean} [outputTeX] Optional flag which has to be true if the resulting term will be sent to MathJax or KaTeX.
          * If true, "_" and "^" are NOT replaced by HTML tags sub and sup. Default: false, i.e. the replacement is done.
          * This flag allows the combination of &lt;value&gt; tag containing calculations with TeX output.
          *
+         * @deprecated
          * @private
-         * @see JXG.GeonextParser.geonext2JS
+         * @see JXG.GeonextParser#geonext2JS
+         * @see JXG.Text#valueTagToJessieCode
+         *
          */
-        generateTerm: function (contentStr, expand, avoidGeonext2JS, outputTeX) {
-            var res, term, i, j,
+        generateTerm: function (contentStr, expand, avoidGeonext2JS) {
+            var res,
+                term,
+                i,
+                j,
                 plaintext = '""';
 
-            outputTeX = outputTeX || false;
-
             // Revert possible jc replacement
-            contentStr = contentStr || '';
-            contentStr = contentStr.replace(/\r/g, '');
-            contentStr = contentStr.replace(/\n/g, '');
-            contentStr = contentStr.replace(/"/g, '\'');
+            contentStr = contentStr || "";
+            contentStr = contentStr.replace(/\r/g, "");
+            contentStr = contentStr.replace(/\n/g, "");
+            contentStr = contentStr.replace(/"/g, "'");
             contentStr = contentStr.replace(/'/g, "\\'");
 
-            if (!outputTeX) {
-                // Old GEONExT syntax, not (yet) supported as TeX output.
-                // Otherwise, the else clause should be used.
-                // That means, i.e. the <arc> tag and <sqrt> tag are not 
-                // converted into TeX syntax.
-                contentStr = contentStr.replace(/&amp;arc;/g, '&ang;');
-                contentStr = contentStr.replace(/<arc\s*\/>/g, '&ang;');
-                contentStr = contentStr.replace(/&lt;arc\s*\/&gt;/g, '&ang;');
-                contentStr = contentStr.replace(/&lt;sqrt\s*\/&gt;/g, '&radic;');
-            }
+            // Old GEONExT syntax, not (yet) supported as TeX output.
+            // Otherwise, the else clause should be used.
+            // That means, i.e. the <arc> tag and <sqrt> tag are not
+            // converted into TeX syntax.
+            contentStr = contentStr.replace(/&amp;arc;/g, "&ang;");
+            contentStr = contentStr.replace(/<arc\s*\/>/g, "&ang;");
+            contentStr = contentStr.replace(/&lt;arc\s*\/&gt;/g, "&ang;");
+            contentStr = contentStr.replace(/&lt;sqrt\s*\/&gt;/g, "&radic;");
 
-            contentStr = contentStr.replace(/&lt;value&gt;/g, '<value>');
-            contentStr = contentStr.replace(/&lt;\/value&gt;/g, '</value>');
+            contentStr = contentStr.replace(/&lt;value&gt;/g, "<value>");
+            contentStr = contentStr.replace(/&lt;\/value&gt;/g, "</value>");
 
             // Convert GEONExT syntax into  JavaScript syntax
-            i = contentStr.indexOf('<value>');
-            j = contentStr.indexOf('</value>');
+            i = contentStr.indexOf("<value>");
+            j = contentStr.indexOf("</value>");
             if (i >= 0) {
                 while (i >= 0) {
-                    if (!outputTeX) {
-                        plaintext += ' + "' + this.replaceSub(this.replaceSup(contentStr.slice(0, i))) + '"';
-                        // plaintext += ' + "' + this.replaceSub(contentStr.slice(0, i)) + '"';
-                    } else {
-                        plaintext += ' + "' + contentStr.slice(0, i) + '"';
-                    }
+                    plaintext +=
+                        ' + "' + this.replaceSub(this.replaceSup(contentStr.slice(0, i))) + '"';
+                    // plaintext += ' + "' + this.replaceSub(contentStr.slice(0, i)) + '"';
+
                     term = contentStr.slice(i + 7, j);
-                    term = term.replace(/\s+/g, ''); // Remove all whitespace
+                    term = term.replace(/\s+/g, ""); // Remove all whitespace
                     if (expand === true) {
                         term = this.expandShortMath(term);
                     }
@@ -656,11 +752,15 @@ define([
                     res = res.replace(/\\'/g, "'");
 
                     // GEONExT-Hack: apply rounding once only.
-                    if (res.indexOf('toFixed') < 0) {
+                    if (res.indexOf("toFixed") < 0) {
                         // output of a value tag
-                        if (Type.isNumber((Type.bind(this.board.jc.snippet(res, true, '', false), this))())) {
+                        if (
+                            Type.isNumber(
+                                Type.bind(this.board.jc.snippet(res, true, '', false), this)()
+                            )
+                        ) {
                             // may also be a string
-                            plaintext += '+(' + res + ').toFixed(' + (Type.evaluate(this.visProp.digits)) + ')';
+                            plaintext += '+(' + res + ').toFixed(' + Type.evaluate(this.visProp.digits) + ')';
                         } else {
                             plaintext += '+(' + res + ')';
                         }
@@ -669,50 +769,169 @@ define([
                     }
 
                     contentStr = contentStr.slice(j + 8);
-                    i = contentStr.indexOf('<value>');
-                    j = contentStr.indexOf('</value>');
+                    i = contentStr.indexOf("<value>");
+                    j = contentStr.indexOf("</value>");
                 }
             }
 
-            if (!outputTeX) {
-                plaintext += ' + "' + this.replaceSub(this.replaceSup(contentStr)) + '"';
-                plaintext = this.convertGeonextAndSketchometry2CSS(plaintext);
-            } else {
-                plaintext += ' + "' + contentStr + '"';
-            }
+            plaintext += ' + "' + this.replaceSub(this.replaceSup(contentStr)) + '"';
+            plaintext = this.convertGeonextAndSketchometry2CSS(plaintext);
 
             // This should replace e.g. &amp;pi; by &pi;
-            plaintext = plaintext.replace(/&amp;/g, '&');
+            plaintext = plaintext.replace(/&amp;/g, "&");
             plaintext = plaintext.replace(/"/g, "'");
 
             return plaintext;
         },
 
         /**
+         * Replace value-tags in string by JessieCode functions.
+         * @param {String} contentStr
+         * @returns String
+         * @private
+         * @example
+         * "The x-coordinate of A is &lt;value&gt;X(A)&lt;/value&gt;"
+         *
+         */
+        valueTagToJessieCode: function (contentStr) {
+            var res, term,
+                i, j,
+                expandShortMath = true,
+                textComps = [],
+                tick = '"';
+
+            contentStr = contentStr || "";
+            contentStr = contentStr.replace(/\r/g, "");
+            contentStr = contentStr.replace(/\n/g, "");
+
+            contentStr = contentStr.replace(/&lt;value&gt;/g, "<value>");
+            contentStr = contentStr.replace(/&lt;\/value&gt;/g, "</value>");
+
+            // Convert content of value tag (GEONExT/JessieCode) syntax into JavaScript syntax
+            i = contentStr.indexOf("<value>");
+            j = contentStr.indexOf("</value>");
+            if (i >= 0) {
+                while (i >= 0) {
+                    // Add string fragment before <value> tag
+                    textComps.push(tick + this.escapeTicks(contentStr.slice(0, i)) + tick);
+
+                    term = contentStr.slice(i + 7, j);
+                    term = term.replace(/\s+/g, ""); // Remove all whitespace
+                    if (expandShortMath === true) {
+                        term = this.expandShortMath(term);
+                    }
+                    res = term;
+                    res = res.replace(/\\"/g, "'").replace(/\\'/g, "'");
+
+                    // // Hack: apply rounding once only.
+                    // if (res.indexOf("toFixed") < 0) {
+                    //     // Output of a value tag
+                    //     // Run the JessieCode parser
+                    //     if (
+                    //         Type.isNumber(
+                    //             Type.bind(this.board.jc.snippet(res, true, "", false), this)()
+                    //         )
+                    //     ) {
+                    //         // Output is number
+                    //         // textComps.push(
+                    //         //     '(' + res + ').toFixed(' + Type.evaluate(this.visProp.digits) + ')'
+                    //         // );
+                    //         textComps.push('(' + res + ')');
+                    //     } else {
+                    //         // Output is a string
+                    //         textComps.push("(" + res + ")");
+                    //     }
+                    // } else {
+                        textComps.push("(" + res + ")");
+                    // }
+                    contentStr = contentStr.slice(j + 8);
+                    i = contentStr.indexOf("<value>");
+                    j = contentStr.indexOf("</value>");
+                }
+            }
+            // Add trailing string fragment
+            textComps.push(tick + this.escapeTicks(contentStr) + tick);
+
+            // return textComps.join(" + ").replace(/&amp;/g, "&");
+            for (i = 0; i < textComps.length; i++) {
+                textComps[i] = textComps[i].replace(/&amp;/g, "&");
+            }
+            return textComps;
+        },
+
+        /**
+         * Simple math rendering using HTML / CSS only. In case of array,
+         * handle each entry separately and return array with the
+         * rendering strings.
+         *
+         * @param {String|Array} s
+         * @returns {String|Array}
+         * @see JXG.Text#convertGeonextAndSketchometry2CSS
+         * @private
+         * @see JXG.Text#replaceSub
+         * @see JXG.Text#replaceSup
+         * @see JXG.Text#convertGeonextAndSketchometry2CSS
+         */
+        poorMansTeX: function (s) {
+            var i, a;
+            if (Type.isArray(s)) {
+                a = [];
+                for (i = 0; i < s.length; i++) {
+                    a.push(this.poorMansTeX(s[i]));
+                }
+                return a;
+            }
+
+            s = s
+                .replace(/<arc\s*\/*>/g, "&ang;")
+                .replace(/&lt;arc\s*\/*&gt;/g, "&ang;")
+                .replace(/<sqrt\s*\/*>/g, "&radic;")
+                .replace(/&lt;sqrt\s*\/*&gt;/g, "&radic;");
+            return this.convertGeonextAndSketchometry2CSS(this.replaceSub(this.replaceSup(s)), true);
+        },
+
+        /**
+         * Replace ticks by URI escape sequences
+         *
+         * @param {String} s
+         * @returns String
+         * @private
+         *
+         */
+        escapeTicks: function (s) {
+            return s.replace(/"/g, "%22").replace(/'/g, "%27");
+        },
+
+        /**
+         * Replace escape sequences for ticks by ticks
+         *
+         * @param {String} s
+         * @returns String
+         * @private
+         */
+        unescapeTicks: function (s) {
+            return s.replace(/%22/g, '"').replace(/%27/g, "'");
+        },
+
+        /**
          * Converts the GEONExT tags <overline> and <arrow> to
          * HTML span tags with proper CSS formatting.
          * @private
-         * @see JXG.Text.generateTerm
+         * @see JXG.Text.poorMansTeX
          * @see JXG.Text._setText
          */
         convertGeonext2CSS: function (s) {
             if (Type.isString(s)) {
                 s = s.replace(
                     /(<|&lt;)overline(>|&gt;)/g,
-                    '<span style=text-decoration:overline;>'
+                    "<span style=text-decoration:overline;>"
                 );
-                s = s.replace(
-                    /(<|&lt;)\/overline(>|&gt;)/g,
-                    '</span>'
-                );
+                s = s.replace(/(<|&lt;)\/overline(>|&gt;)/g, "</span>");
                 s = s.replace(
                     /(<|&lt;)arrow(>|&gt;)/g,
-                    '<span style=text-decoration:overline;>'
+                    "<span style=text-decoration:overline;>"
                 );
-                s = s.replace(
-                    /(<|&lt;)\/arrow(>|&gt;)/g,
-                    '</span>'
-                );
+                s = s.replace(/(<|&lt;)\/arrow(>|&gt;)/g, "</span>");
             }
 
             return s;
@@ -721,28 +940,26 @@ define([
         /**
          * Converts the sketchometry tag <sketchofont> to
          * HTML span tags with proper CSS formatting.
+         *
+         * @param {String|Function|Number} s Text
+         * @param {Boolean} escape Flag if ticks should be escaped. Escaping is necessary
+         * if s is a text. It has to be avoided if s is a function returning text.
          * @private
-         * @see JXG.Text.generateTerm
          * @see JXG.Text._setText
+         * @see JXG.Text.convertGeonextAndSketchometry2CSS
+         *
          */
-        convertSketchometry2CSS: function (s) {
+        convertSketchometry2CSS: function (s, escape) {
+            var t1 = "<span class=\"sketcho sketcho-inherit sketcho-",
+                t2 = "\"></span>";
+
             if (Type.isString(s)) {
-                s = s.replace(
-                    /(<|&lt;)sketchofont(>|&gt;)/g,
-                    '<span style=font-family:sketchometry-light;font-weight:500;>'
-                );
-                s = s.replace(
-                    /(<|&lt;)\/sketchofont(>|&gt;)/g,
-                    '</span>'
-                );
-                s = s.replace(
-                    /(<|&lt;)sketchometry-light(>|&gt;)/g,
-                    '<span style=font-family:sketchometry-light;font-weight:500;>'
-                );
-                s = s.replace(
-                    /(<|&lt;)\/sketchometry-light(>|&gt;)/g,
-                    '</span>'
-                );
+                if (escape) {
+                    t1 = this.escapeTicks(t1);
+                    t2 = this.escapeTicks(t2);
+                }
+                s = s.replace(/(<|&lt;)sketchofont(>|&gt;)/g, t1);
+                s = s.replace(/(<|&lt;)\/sketchofont(>|&gt;)/g, t2);
             }
 
             return s;
@@ -750,13 +967,16 @@ define([
 
         /**
          * Alias for convertGeonext2CSS and convertSketchometry2CSS
+         *
+         * @param {String|Function|Number} s Text
+         * @param {Boolean} escape Flag if ticks should be escaped
          * @private
          * @see JXG.Text.convertGeonext2CSS
          * @see JXG.Text.convertSketchometry2CSS
          */
-        convertGeonextAndSketchometry2CSS: function (s){
+        convertGeonextAndSketchometry2CSS: function (s, escape) {
             s = this.convertGeonext2CSS(s);
-            s = this.convertSketchometry2CSS(s);
+            s = this.convertSketchometry2CSS(s, escape);
             return s;
         },
 
@@ -771,8 +991,8 @@ define([
                 res = null;
 
             // revert possible jc replacement
-            content = content.replace(/&lt;value&gt;/g, '<value>');
-            content = content.replace(/&lt;\/value&gt;/g, '</value>');
+            content = content.replace(/&lt;value&gt;/g, "<value>");
+            content = content.replace(/&lt;\/value&gt;/g, "</value>");
 
             do {
                 search = /<value>([\w\s*/^\-+()[\],<>=!]+)<\/value>/;
@@ -781,7 +1001,7 @@ define([
                 if (res !== null) {
                     GeonextParser.findDependencies(this, res[1], this.board);
                     content = content.substr(res.index);
-                    content = content.replace(search, '');
+                    content = content.replace(search, "");
                 }
             } while (res !== null);
 
@@ -791,9 +1011,15 @@ define([
         // documented in element.js
         getParents: function () {
             var p;
-            if (this.relativeCoords !== undefined) { // Texts with anchor elements, excluding labels
-                p = [this.relativeCoords.usrCoords[1], this.relativeCoords.usrCoords[2], this.orgText];
-            } else {                                 // Other texts
+            if (this.relativeCoords !== undefined) {
+                // Texts with anchor elements, excluding labels
+                p = [
+                    this.relativeCoords.usrCoords[1],
+                    this.relativeCoords.usrCoords[2],
+                    this.orgText
+                ];
+            } else {
+                // Other texts
                 p = [this.Z(), this.X(), this.Y(), this.orgText];
             }
 
@@ -804,52 +1030,84 @@ define([
             return p;
         },
 
+        /**
+         * Returns the bounding box of the text element in user coordinates as an
+         * array of length 4: [upper left x, upper left y, lower right x, lower right y].
+         * The method assumes that the lower left corner is at position [el.X(), el.Y()]
+         * of the text element el, i.e. the attributes anchorX, anchorY are ignored.
+         *
+         * <p>
+         * or labels, [0, 0, 0, 0] is returned.
+         *
+         * @returns Array
+         */
         bounds: function () {
             var c = this.coords.usrCoords;
 
-            if (Type.evaluate(this.visProp.islabel) || this.board.unitY === 0 || this.board.unitX === 0) {
+            if (
+                Type.evaluate(this.visProp.islabel) ||
+                this.board.unitY === 0 ||
+                this.board.unitX === 0
+            ) {
                 return [0, 0, 0, 0];
             }
-            return [c[1], c[2] + this.size[1] / this.board.unitY, c[1] + this.size[0] / this.board.unitX, c[2]];
+            return [
+                c[1],
+                c[2] + this.size[1] / this.board.unitY,
+                c[1] + this.size[0] / this.board.unitX,
+                c[2]
+            ];
         },
 
+        /**
+         * Returns the value of the attribute "anchorX". If this equals "auto",
+         * returns "left", "middle", or "right", depending on the
+         * value of the attribute "position".
+         * @returns String
+         */
         getAnchorX: function () {
             var a = Type.evaluate(this.visProp.anchorx);
-            if (a === 'auto') {
+            if (a === "auto") {
                 switch (this.visProp.position) {
-                    case 'top':
-                    case 'bot':
-                        return 'middle';
-                    case 'rt':
-                    case 'lrt':
-                    case 'urt':
-                        return 'left';
-                    case 'lft':
-                    case 'llft':
-                    case 'ulft':
+                    case "top":
+                    case "bot":
+                        return "middle";
+                    case "rt":
+                    case "lrt":
+                    case "urt":
+                        return "left";
+                    case "lft":
+                    case "llft":
+                    case "ulft":
                     default:
-                        return 'right';
+                        return "right";
                 }
             }
             return a;
         },
 
+        /**
+         * Returns the value of the attribute "anchorY". If this equals "auto",
+         * returns "bottom", "middle", or "top", depending on the
+         * value of the attribute "position".
+         * @returns String
+         */
         getAnchorY: function () {
             var a = Type.evaluate(this.visProp.anchory);
-            if (a === 'auto') {
+            if (a === "auto") {
                 switch (this.visProp.position) {
-                    case 'top':
-                    case 'ulft':
-                    case 'urt':
-                        return 'bottom';
-                    case 'bot':
-                    case 'lrt':
-                    case 'llft':
-                        return 'top';
-                    case 'rt':
-                    case 'lft':
+                    case "top":
+                    case "ulft":
+                    case "urt":
+                        return "bottom";
+                    case "bot":
+                    case "lrt":
+                    case "llft":
+                        return "top";
+                    case "rt":
+                    case "lft":
                     default:
-                        return 'middle';
+                        return "middle";
                 }
             }
             return a;
@@ -866,7 +1124,7 @@ define([
          * @param  {Number} h width of the box in pixel
          * @return {Number}   Number of overlapping elements
          */
-        getNumberofConflicts: function (x, y, w, h) {
+        getNumberOfConflicts: function (x, y, w, h) {
             var count = 0,
                 i, obj, le,
                 savePointPrecision;
@@ -879,13 +1137,14 @@ define([
             // Make it compatible with the objects' visProp.precision attribute
             for (i = 0, le = this.board.objectsList.length; i < le; i++) {
                 obj = this.board.objectsList[i];
-                if (obj.visPropCalc.visible &&
-                    obj.elType !== 'axis' &&
-                    obj.elType !== 'ticks' &&
+                if (
+                    obj.visPropCalc.visible &&
+                    obj.elType !== "axis" &&
+                    obj.elType !== "ticks" &&
                     obj !== this.board.infobox &&
                     obj !== this &&
-                    obj.hasPoint(x, y)) {
-
+                    obj.hasPoint(x, y)
+                ) {
                     count++;
                 }
             }
@@ -916,13 +1175,15 @@ define([
                 max_r, delta_r,
                 conflicts, offset, r,
                 num_positions = 12,
-                step = 2 * Math.PI / num_positions,
+                step = (2 * Math.PI) / num_positions,
                 j, dx, dy, co, si;
 
-            if (this === this.board.infobox ||
+            if (
+                this === this.board.infobox ||
                 !this.visPropCalc.visible ||
                 !Type.evaluate(this.visProp.islabel) ||
-                !this.element) {
+                !this.element
+            ) {
                 return this;
             }
 
@@ -938,15 +1199,15 @@ define([
             dx = offset[0];
             dy = offset[1];
 
-            conflicts = this.getNumberofConflicts(cx + dx, cy - dy, w, h);
+            conflicts = this.getNumberOfConflicts(cx + dx, cy - dy, w, h);
             if (conflicts === 0) {
                 return this;
             }
             // console.log(this.id, conflicts, w, h);
             // r = Geometry.distance([0, 0], offset, 2);
 
-            r = 12;
-            max_r = 28;
+            r = Type.evaluate(this.visProp.autopositionmindistance);
+            max_r = Type.evaluate(this.visProp.autopositionmaxdistance);
             delta_r = 0.2 * r;
 
             start_angle = Math.atan2(dy, dx);
@@ -955,15 +1216,19 @@ define([
             optimum.angle = start_angle;
             optimum.r = r;
 
-            while (optimum.conflicts > 0 && r < max_r) {
-                for (j = 1, angle = start_angle + step; j < num_positions && optimum.conflicts > 0; j++) {
+            while (optimum.conflicts > 0 && r <= max_r) {
+                for (
+                    j = 1, angle = start_angle + step;
+                    j < num_positions && optimum.conflicts > 0;
+                    j++
+                ) {
                     co = Math.cos(angle);
                     si = Math.sin(angle);
 
                     x = cx + r * co;
                     y = cy - r * si;
 
-                    conflicts = this.getNumberofConflicts(x, y, w, h);
+                    conflicts = this.getNumberOfConflicts(x, y, w, h);
                     if (conflicts < optimum.conflicts) {
                         optimum.conflicts = conflicts;
                         optimum.angle = angle;
@@ -983,205 +1248,233 @@ define([
             this.visProp.offset = [r * co, r * si];
 
             if (co < -0.2) {
-                this.visProp.anchorx = 'right';
+                this.visProp.anchorx = "right";
             } else if (co > 0.2) {
-                this.visProp.anchorx = 'left';
+                this.visProp.anchorx = "left";
             } else {
-                this.visProp.anchorx = 'middle';
+                this.visProp.anchorx = "middle";
             }
 
             return this;
         }
-    });
+    }
+);
 
-    /**
-     * @class Construct and handle texts.
-     *
-     * The coordinates can be relative to the coordinates of an element
-     * given in {@link JXG.Options#text.anchor}.
-     *
-     * MathJaX, HTML and GEONExT syntax can be handled.
-     * @pseudo
-     * @description
-     * @name Text
-     * @augments JXG.Text
-     * @constructor
-     * @type JXG.Text
-     *
-     * @param {number,function_number,function_number,function_String,function} z_,x,y,str Parent elements for text elements.
-     *                     <p>
-     *   Parent elements can be two or three elements of type number, a string containing a GEONE<sub>x</sub>T
-     *   constraint, or a function which takes no parameter and returns a number. Every parent element determines one coordinate. If a coordinate is
-     *   given by a number, the number determines the initial position of a free text. If given by a string or a function that coordinate will be constrained
-     *   that means the user won't be able to change the texts's position directly by mouse because it will be calculated automatically depending on the string
-     *   or the function's return value. If two parent elements are given the coordinates will be interpreted as 2D affine Euclidean coordinates, if three such
-     *   parent elements are given they will be interpreted as homogeneous coordinates.
-     *                     <p>
-     *                     The text to display may be given as string or as function returning a string.
-     *
-     * There is the attribute 'display' which takes the values 'html' or 'internal'. In case of 'html' a HTML division tag is created to display
-     * the text. In this case it is also possible to use ASCIIMathML. Incase of 'internal', a SVG or VML text element is used to display the text.
-     * @see JXG.Text
-     * @example
-     * // Create a fixed text at position [0,1].
-     *   var t1 = board.create('text',[0,1,"Hello World"]);
-     * </pre><div class="jxgbox" id="JXG896013aa-f24e-4e83-ad50-7bc7df23f6b7" style="width: 300px; height: 300px;"></div>
-     * <script type="text/javascript">
-     *   var t1_board = JXG.JSXGraph.initBoard('JXG896013aa-f24e-4e83-ad50-7bc7df23f6b7', {boundingbox: [-3, 6, 5, -3], axis: true, showcopyright: false, shownavigation: false});
-     *   var t1 = t1_board.create('text',[0,1,"Hello World"]);
-     * </script><pre>
-     * @example
-     * // Create a variable text at a variable position.
-     *   var s = board.create('slider',[[0,4],[3,4],[-2,0,2]]);
-     *   var graph = board.create('text',
-     *                        [function(x){ return s.Value();}, 1,
-     *                         function(){return "The value of s is"+JXG.toFixed(s.Value(), 2);}
-     *                        ]
-     *                     );
-     * </pre><div class="jxgbox" id="JXG5441da79-a48d-48e8-9e53-75594c384a1c" style="width: 300px; height: 300px;"></div>
-     * <script type="text/javascript">
-     *   var t2_board = JXG.JSXGraph.initBoard('JXG5441da79-a48d-48e8-9e53-75594c384a1c', {boundingbox: [-3, 6, 5, -3], axis: true, showcopyright: false, shownavigation: false});
-     *   var s = t2_board.create('slider',[[0,4],[3,4],[-2,0,2]]);
-     *   var t2 = t2_board.create('text',[function(x){ return s.Value();}, 1, function(){return "The value of s is "+JXG.toFixed(s.Value(), 2);}]);
-     * </script><pre>
-     * @example
-     * // Create a text bound to the point A
-     * var p = board.create('point',[0, 1]),
-     *     t = board.create('text',[0, -1,"Hello World"], {anchor: p});
-     *
-     * </pre><div class="jxgbox" id="JXGff5a64b2-2b9a-11e5-8dd9-901b0e1b8723" style="width: 300px; height: 300px;"></div>
-     * <script type="text/javascript">
-     *     (function() {
-     *         var board = JXG.JSXGraph.initBoard('JXGff5a64b2-2b9a-11e5-8dd9-901b0e1b8723',
-     *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
-     *     var p = board.create('point',[0, 1]),
-     *         t = board.create('text',[0, -1,"Hello World"], {anchor: p});
-     *
-     *     })();
-     *
-     * </script><pre>
-     *
-     */
-    JXG.createText = function (board, parents, attributes) {
-        var t,
-            attr = Type.copyAttributes(attributes, board.options, 'text'),
-            coords = parents.slice(0, -1),
-            content = parents[parents.length - 1];
+/**
+ * @class Construct and handle texts.
+ *
+ * The coordinates can either be abslute (i.e. respective to the coordinate system of the board) or be relative to the coordinates of an element
+ * given in {@link Text#anchor}.
+ * <p>
+ * HTML, MathJaX, KaTeX and GEONExT syntax can be handled.
+ * <p>
+ * There are two ways to display texts:
+ * <ul>
+ * <li> using the text element of the renderer (canvas or svg). In most cases this is the suitable approach if speed matters.
+ * However, advanced rendering like MathJax, KaTeX or HTML/CSS are not possible.
+ * <li> using HTML &lt;div&gt;. This is the most flexible approach. The drawback is that HTML can only be display "above" the geometry elements.
+ * If HTML should be displayed in an inbetween layer, conder to use an element of type {@link ForeignObject} (available in svg renderer, only).
+ * </ul>
+ * @pseudo
+ * @description
+ * @name Text
+ * @augments JXG.Text
+ * @constructor
+ * @type JXG.Text
+ *
+ * @param {number,function_number,function_number,function_String,function} z_,x,y,str Parent elements for text elements.
+ *                     <p>
+ *   Parent elements can be two or three elements of type number, a string containing a GEONE<sub>x</sub>T
+ *   constraint, or a function which takes no parameter and returns a number. Every parent element beside the last determines one coordinate.
+ *   If a coordinate is
+ *   given by a number, the number determines the initial position of a free text. If given by a string or a function that coordinate will be constrained
+ *   that means the user won't be able to change the texts's position directly by mouse because it will be calculated automatically depending on the string
+ *   or the function's return value. If two parent elements are given the coordinates will be interpreted as 2D affine Euclidean coordinates, if three such
+ *   parent elements are given they will be interpreted as homogeneous coordinates.
+ *                     <p>
+ *                     The text to display may be given as string or as function returning a string.
+ *
+ * There is the attribute 'display' which takes the values 'html' or 'internal'. In case of 'html' an HTML division tag is created to display
+ * the text. In this case it is also possible to use MathJax, KaTeX, or ASCIIMathML. If neither of these is used, basic Math rendering is
+ * applied.
+ * <p>
+ * In case of 'internal', an SVG text element is used to display the text.
+ * @see JXG.Text
+ * @example
+ * // Create a fixed text at position [0,1].
+ *   var t1 = board.create('text',[0,1,"Hello World"]);
+ * </pre><div class="jxgbox" id="JXG896013aa-f24e-4e83-ad50-7bc7df23f6b7" style="width: 300px; height: 300px;"></div>
+ * <script type="text/javascript">
+ *   var t1_board = JXG.JSXGraph.initBoard('JXG896013aa-f24e-4e83-ad50-7bc7df23f6b7', {boundingbox: [-3, 6, 5, -3], axis: true, showcopyright: false, shownavigation: false});
+ *   var t1 = t1_board.create('text',[0,1,"Hello World"]);
+ * </script><pre>
+ * @example
+ * // Create a variable text at a variable position.
+ *   var s = board.create('slider',[[0,4],[3,4],[-2,0,2]]);
+ *   var graph = board.create('text',
+ *                        [function(x){ return s.Value();}, 1,
+ *                         function(){return "The value of s is"+JXG.toFixed(s.Value(), 2);}
+ *                        ]
+ *                     );
+ * </pre><div class="jxgbox" id="JXG5441da79-a48d-48e8-9e53-75594c384a1c" style="width: 300px; height: 300px;"></div>
+ * <script type="text/javascript">
+ *   var t2_board = JXG.JSXGraph.initBoard('JXG5441da79-a48d-48e8-9e53-75594c384a1c', {boundingbox: [-3, 6, 5, -3], axis: true, showcopyright: false, shownavigation: false});
+ *   var s = t2_board.create('slider',[[0,4],[3,4],[-2,0,2]]);
+ *   var t2 = t2_board.create('text',[function(x){ return s.Value();}, 1, function(){return "The value of s is "+JXG.toFixed(s.Value(), 2);}]);
+ * </script><pre>
+ * @example
+ * // Create a text bound to the point A
+ * var p = board.create('point',[0, 1]),
+ *     t = board.create('text',[0, -1,"Hello World"], {anchor: p});
+ *
+ * </pre><div class="jxgbox" id="JXGff5a64b2-2b9a-11e5-8dd9-901b0e1b8723" style="width: 300px; height: 300px;"></div>
+ * <script type="text/javascript">
+ *     (function() {
+ *         var board = JXG.JSXGraph.initBoard('JXGff5a64b2-2b9a-11e5-8dd9-901b0e1b8723',
+ *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
+ *     var p = board.create('point',[0, 1]),
+ *         t = board.create('text',[0, -1,"Hello World"], {anchor: p});
+ *
+ *     })();
+ *
+ * </script><pre>
+ *
+ */
+JXG.createText = function (board, parents, attributes) {
+    var t,
+        attr = Type.copyAttributes(attributes, board.options, "text"),
+        coords = parents.slice(0, -1),
+        content = parents[parents.length - 1];
 
-        // downwards compatibility
-        attr.anchor = attr.parent || attr.anchor;
-        t = CoordsElement.create(JXG.Text, board, coords, attr, content);
+    // downwards compatibility
+    attr.anchor = attr.parent || attr.anchor;
+    t = CoordsElement.create(JXG.Text, board, coords, attr, content);
 
-        if (!t) {
-            throw new Error("JSXGraph: Can't create text with parent types '" +
-                (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'." +
-                "\nPossible parent types: [x,y], [z,x,y], [element,transformation]");
-        }
+    if (!t) {
+        throw new Error(
+            "JSXGraph: Can't create text with parent types '" +
+                typeof parents[0] +
+                "' and '" +
+                typeof parents[1] +
+                "'." +
+                "\nPossible parent types: [x,y], [z,x,y], [element,transformation]"
+        );
+    }
 
-        if (attr.rotate !== 0 && attr.display === 'internal') { // This is the default value, i.e. no rotation
-            t.addRotation(attr.rotate);
-        }
+    if (attr.rotate !== 0) {
+        // This is the default value, i.e. no rotation
+        t.addRotation(attr.rotate);
+    }
 
-        return t;
-    };
+    return t;
+};
 
-    JXG.registerElement('text', JXG.createText);
+JXG.registerElement("text", JXG.createText);
 
-    /**
-     * @class Labels are text objects tied to other elements like points, lines and curves.
-     * Labels are handled internally by JSXGraph, only. There is NO constructor "board.create('label', ...)".
-     *
-     * @pseudo
-     * @description
-     * @name Label
-     * @augments JXG.Text
-     * @constructor
-     * @type JXG.Text
-     */
-    //  See element.js#createLabel
+/**
+ * @class Labels are text objects tied to other elements like points, lines and curves.
+ * Labels are handled internally by JSXGraph, only. There is NO constructor "board.create('label', ...)".
+ *
+ * @pseudo
+ * @description
+ * @name Label
+ * @augments JXG.Text
+ * @constructor
+ * @type JXG.Text
+ */
+//  See element.js#createLabel
 
-    /**
-     * [[x,y], [w px, h px], [range]
-     */
-    JXG.createHTMLSlider = function (board, parents, attributes) {
-        var t, par,
-            attr = Type.copyAttributes(attributes, board.options, 'htmlslider');
+/**
+ * [[x,y], [w px, h px], [range]
+ */
+JXG.createHTMLSlider = function (board, parents, attributes) {
+    var t,
+        par,
+        attr = Type.copyAttributes(attributes, board.options, "htmlslider");
 
-        if (parents.length !== 2 || parents[0].length !== 2 || parents[1].length !== 3) {
-            throw new Error("JSXGraph: Can't create htmlslider with parent types '" +
-                (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'." +
-                "\nPossible parents are: [[x,y], [min, start, max]]");
-        }
+    if (parents.length !== 2 || parents[0].length !== 2 || parents[1].length !== 3) {
+        throw new Error(
+            "JSXGraph: Can't create htmlslider with parent types '" +
+                typeof parents[0] +
+                "' and '" +
+                typeof parents[1] +
+                "'." +
+                "\nPossible parents are: [[x,y], [min, start, max]]"
+        );
+    }
 
-        // backwards compatibility
-        attr.anchor = attr.parent || attr.anchor;
-        attr.fixed = attr.fixed || true;
+    // backwards compatibility
+    attr.anchor = attr.parent || attr.anchor;
+    attr.fixed = attr.fixed || true;
 
-        par = [parents[0][0], parents[0][1],
-            '<form style="display:inline">' +
+    par = [
+        parents[0][0],
+        parents[0][1],
+        '<form style="display:inline">' +
             '<input type="range" /><span></span><input type="text" />' +
-            '</form>'];
+            "</form>"
+    ];
 
-        t = JXG.createText(board, par, attr);
-        t.type = Type.OBJECT_TYPE_HTMLSLIDER;
+    t = JXG.createText(board, par, attr);
+    t.type = Type.OBJECT_TYPE_HTMLSLIDER;
 
-        t.rendNodeForm = t.rendNode.childNodes[0];
+    t.rendNodeForm = t.rendNode.childNodes[0];
 
-        t.rendNodeRange = t.rendNodeForm.childNodes[0];
-        t.rendNodeRange.min = parents[1][0];
-        t.rendNodeRange.max = parents[1][2];
-        t.rendNodeRange.step = attr.step;
-        t.rendNodeRange.value = parents[1][1];
+    t.rendNodeRange = t.rendNodeForm.childNodes[0];
+    t.rendNodeRange.min = parents[1][0];
+    t.rendNodeRange.max = parents[1][2];
+    t.rendNodeRange.step = attr.step;
+    t.rendNodeRange.value = parents[1][1];
 
-        t.rendNodeLabel = t.rendNodeForm.childNodes[1];
-        t.rendNodeLabel.id = t.rendNode.id + '_label';
+    t.rendNodeLabel = t.rendNodeForm.childNodes[1];
+    t.rendNodeLabel.id = t.rendNode.id + "_label";
 
-        if (attr.withlabel) {
-            t.rendNodeLabel.innerHTML = t.name + '=';
-        }
+    if (attr.withlabel) {
+        t.rendNodeLabel.innerHTML = t.name + "=";
+    }
 
-        t.rendNodeOut = t.rendNodeForm.childNodes[2];
-        t.rendNodeOut.value = parents[1][1];
+    t.rendNodeOut = t.rendNodeForm.childNodes[2];
+    t.rendNodeOut.value = parents[1][1];
 
-        try {
-            t.rendNodeForm.id = t.rendNode.id + '_form';
-            t.rendNodeRange.id = t.rendNode.id + '_range';
-            t.rendNodeOut.id = t.rendNode.id + '_out';
-        } catch (e) {
-            JXG.debug(e);
-        }
+    try {
+        t.rendNodeForm.id = t.rendNode.id + "_form";
+        t.rendNodeRange.id = t.rendNode.id + "_range";
+        t.rendNodeOut.id = t.rendNode.id + "_out";
+    } catch (e) {
+        JXG.debug(e);
+    }
 
-        t.rendNodeRange.style.width = attr.widthrange + 'px';
-        t.rendNodeRange.style.verticalAlign = 'middle';
-        t.rendNodeOut.style.width = attr.widthout + 'px';
+    t.rendNodeRange.style.width = attr.widthrange + "px";
+    t.rendNodeRange.style.verticalAlign = "middle";
+    t.rendNodeOut.style.width = attr.widthout + "px";
 
-        t._val = parents[1][1];
+    t._val = parents[1][1];
 
-        if (JXG.supportsVML()) {
-            /*
-            * OnChange event is used for IE browsers
-            * The range element is supported since IE10
-            */
-            Env.addEvent(t.rendNodeForm, 'change', priv.HTMLSliderInputEventHandler, t);
-        } else {
-            /*
-            * OnInput event is used for non-IE browsers
-            */
-            Env.addEvent(t.rendNodeForm, 'input', priv.HTMLSliderInputEventHandler, t);
-        }
+    if (JXG.supportsVML()) {
+        /*
+         * OnChange event is used for IE browsers
+         * The range element is supported since IE10
+         */
+        Env.addEvent(t.rendNodeForm, "change", priv.HTMLSliderInputEventHandler, t);
+    } else {
+        /*
+         * OnInput event is used for non-IE browsers
+         */
+        Env.addEvent(t.rendNodeForm, "input", priv.HTMLSliderInputEventHandler, t);
+    }
 
-        t.Value = function () {
-            return this._val;
-        };
-
-        return t;
+    t.Value = function () {
+        return this._val;
     };
 
-    JXG.registerElement('htmlslider', JXG.createHTMLSlider);
+    return t;
+};
 
-    return {
-        Text: JXG.Text,
-        createText: JXG.createText,
-        createHTMLSlider: JXG.createHTMLSlider
-    };
-});
+JXG.registerElement("htmlslider", JXG.createHTMLSlider);
+
+export default JXG.Text;
+// export default {
+//     Text: JXG.Text,
+//     createText: JXG.createText,
+//     createHTMLSlider: JXG.createHTMLSlider
+// };

@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2022
+    Copyright 2008-2023
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -25,25 +25,12 @@
     GNU Lesser General Public License for more details.
 
     You should have received a copy of the GNU Lesser General Public License and
-    the MIT License along with JSXGraph. If not, see <http://www.gnu.org/licenses/>
-    and <http://opensource.org/licenses/MIT/>.
+    the MIT License along with JSXGraph. If not, see <https://www.gnu.org/licenses/>
+    and <https://opensource.org/licenses/MIT/>.
  */
-
 
 /*global JXG: true, define: true*/
 /*jslint nomen: true, plusplus: true*/
-
-/* depends:
- jxg
- base/constants
- base/element
- utils/type
-  elements:
-   curve
-   point
-   line
-   transform
- */
 
 /**
  * @fileoverview The JSXGraph object Turtle is defined. It acts like
@@ -51,130 +38,129 @@
  * @author A.W.
  */
 
-define([
-    'jxg', 'base/constants', 'base/element', 'utils/type'
-], function (JXG, Const, GeometryElement, Type) {
+import JXG from "../jxg";
+import Const from "./constants";
+import GeometryElement from "./element";
+import Type from "../utils/type";
 
-    "use strict";
+/**
+ * Constructs a new Turtle object.
+ * @class This is the Turtle class.
+ * It is derived from {@link JXG.GeometryElement}.
+ * It stores all properties required
+ * to move a turtle.
+ * @constructor
+ * @param {JXG.Board} board The board the new turtle is drawn on.
+ * @param {Array} parents Start position and start direction of the turtle. Possible values are
+ * [x, y, angle]
+ * [[x, y], angle]
+ * [x, y]
+ * [[x, y]]
+ * @param {Object} attributes Attributes to change the visual properties of the turtle object
+ * All angles are in degrees.
+ *
+ * @example
+ *
+ * //creates a figure 8 animation
+ * var board = JXG.JSXGraph.initBoard('jxgbox',{boundingbox: [-250, 250, 250, -250]});
+ * var t = board.create('turtle',[0, 0], {strokeOpacity:0.5});
+ * t.setPenSize(3);
+ * t.right(90);
+ * var alpha = 0;
+ *
+ * var run = function() {
+ *  t.forward(2);
+ *  if (Math.floor(alpha / 360) % 2 === 0) {
+ *   t.left(1);        // turn left by 1 degree
+ *  } else {
+ *   t.right(1);       // turn right by 1 degree
+ *  }
+ *  alpha += 1;
+ *
+ *  if (alpha < 1440) {  // stop after two rounds
+ *   setTimeout(run, 20);
+ *  }
+ * }
+ *
+ *run();
+ *
+ * </pre><div class="jxgbox" id="JXG14167b1c-2ad3-11e5-8dd9-901b0e1b8723" style="width: 300px; height: 300px;"></div>
+ * <script type="text/javascript">
+ *     (function() {
+ *         var brd = JXG.JSXGraph.initBoard('JXG14167b1c-2ad3-11e5-8dd9-901b0e1b8723',
+ *             {boundingbox: [-250, 250, 250, -250], axis: true, showcopyright: false, shownavigation: false});
+ *               var t = brd.create('turtle',[0, 0], {strokeOpacity:0.5});
+ *               t.setPenSize(3);
+ *               t.right(90);
+ *               var alpha = 0;
+ *
+ *              var run = function() {
+ *              t.forward(2);
+ *             if (Math.floor(alpha / 360) % 2 === 0) {
+ *                t.left(1);        // turn left by 1 degree
+ *              } else {
+ *                   t.right(1);       // turn right by 1 degree
+ *             }
+ *             alpha += 1;
+ *
+ *             if (alpha < 1440) {  // stop after two rounds
+ *                 setTimeout(run, 20);
+ *               }
+ *             }
+ *
+ *          run();
+ *
+ *     })();
+ *
+ * </script><pre>
+ */
+JXG.Turtle = function (board, parents, attributes) {
+    var x, y, dir;
 
-    /**
-     * Constructs a new Turtle object.
-     * @class This is the Turtle class.
-     * It is derived from {@link JXG.GeometryElement}.
-     * It stores all properties required
-     * to move a turtle.
-     * @constructor
-     * @param {JXG.Board} board The board the new turtle is drawn on.
-     * @param {Array} parents Start position and start direction of the turtle. Possible values are
-     * [x, y, angle]
-     * [[x, y], angle]
-     * [x, y]
-     * [[x, y]]
-     * @param {Object} attributes Attributes to change the visual properties of the turtle object
-     * All angles are in degrees.
-     *
-     * @example
-     *
-     * //creates a figure 8 animation
-     * var board = JXG.JSXGraph.initBoard('jxgbox',{boundingbox: [-250, 250, 250, -250]});
-     * var t = board.create('turtle',[0, 0], {strokeOpacity:0.5});
-     * t.setPenSize(3);
-     * t.right(90);
-     * var alpha = 0;
-     *
-     * var run = function() {
-     *  t.forward(2);
-     *  if (Math.floor(alpha / 360) % 2 === 0) {
-     *   t.left(1);        // turn left by 1 degree
-     *  } else {
-     *   t.right(1);       // turn right by 1 degree
-     *  }
-     *  alpha += 1;
-     *
-     *  if (alpha < 1440) {  // stop after two rounds
-     *   setTimeout(run, 20);
-     *  }
-     * }
-     *
-     *run();
-     *
-     * </pre><div class="jxgbox" id="JXG14167b1c-2ad3-11e5-8dd9-901b0e1b8723" style="width: 300px; height: 300px;"></div>
-     * <script type="text/javascript">
-     *     (function() {
-     *         var brd = JXG.JSXGraph.initBoard('JXG14167b1c-2ad3-11e5-8dd9-901b0e1b8723',
-     *             {boundingbox: [-250, 250, 250, -250], axis: true, showcopyright: false, shownavigation: false});
-     *               var t = brd.create('turtle',[0, 0], {strokeOpacity:0.5});
-     *               t.setPenSize(3);
-     *               t.right(90);
-     *               var alpha = 0;
-     *
-     *              var run = function() {
-     *              t.forward(2);
-     *             if (Math.floor(alpha / 360) % 2 === 0) {
-     *                t.left(1);        // turn left by 1 degree
-     *              } else {
-     *                   t.right(1);       // turn right by 1 degree
-     *             }
-     *             alpha += 1;
-     *
-     *             if (alpha < 1440) {  // stop after two rounds
-     *                 setTimeout(run, 20);
-     *               }
-     *             }
-     *
-     *          run();
-     *
-     *     })();
-     *
-     * </script><pre>
-     */
-    JXG.Turtle = function (board, parents, attributes) {
-        var x, y, dir;
+    this.constructor(board, attributes, Const.OBJECT_TYPE_TURTLE, Const.OBJECT_CLASS_OTHER);
 
-        this.constructor(board, attributes, Const.OBJECT_TYPE_TURTLE, Const.OBJECT_CLASS_OTHER);
+    this.turtleIsHidden = false;
+    this.board = board;
+    this.visProp.curveType = "plot";
 
-        this.turtleIsHidden = false;
-        this.board = board;
-        this.visProp.curveType = 'plot';
+    // Save visProp in this._attributes.
+    // this._attributes is overwritten by setPenSize, setPenColor...
+    // Setting the color or size affects the turtle from the time of
+    // calling the method,
+    // whereas Turtle.setAttribute affects all turtle curves.
+    this._attributes = Type.copyAttributes(this.visProp, board.options, "turtle");
+    delete this._attributes.id;
 
-        // Save visProp in this._attributes.
-        // this._attributes is overwritten by setPenSize, setPenColor...
-        // Setting the color or size affects the turtle from the time of
-        // calling the method,
-        // whereas Turtle.setAttribute affects all turtle curves.
-        this._attributes = Type.copyAttributes(this.visProp, board.options, 'turtle');
-        delete this._attributes.id;
+    x = 0;
+    y = 0;
+    dir = 90;
 
-        x = 0;
-        y = 0;
-        dir = 90;
-
-        if (parents.length !== 0) {
-            // [x,y,dir]
-            if (parents.length === 3) {
-                // Only numbers are accepted at the moment
-                x = parents[0];
-                y = parents[1];
-                dir = parents[2];
-            } else if (parents.length === 2) {
-                // [[x,y],dir]
-                if (Type.isArray(parents[0])) {
-                    x = parents[0][0];
-                    y = parents[0][1];
-                    dir = parents[1];
-                // [x,y]
-                } else {
-                    x = parents[0];
-                    y = parents[1];
-                }
-            // [[x,y]]
-            } else {
+    if (parents.length !== 0) {
+        // [x,y,dir]
+        if (parents.length === 3) {
+            // Only numbers are accepted at the moment
+            x = parents[0];
+            y = parents[1];
+            dir = parents[2];
+        } else if (parents.length === 2) {
+            // [[x,y],dir]
+            if (Type.isArray(parents[0])) {
                 x = parents[0][0];
                 y = parents[0][1];
+                dir = parents[1];
+                // [x,y]
+            } else {
+                x = parents[0];
+                y = parents[1];
             }
+            // [[x,y]]
+        } else {
+            x = parents[0][0];
+            y = parents[0][1];
         }
+    }
 
-        this.init(x, y, dir);
+    this.init(x, y, dir);
 
         this.methodMap = Type.deepCopy(this.methodMap, {
             forward: 'forward',
@@ -200,6 +186,9 @@ define([
             st: 'showTurtle',
             penSize: 'setPenSize',
             penColor: 'setPenColor',
+            getPenColor: 'getPenColor',
+            getHighlightPenColor: 'getHighlightPenColor',
+            getPenSize: 'getPenSize',
             pushTurtle: 'pushTurtle',
             push: 'pushTurtle',
             popTurtle: 'popTurtle',
@@ -211,44 +200,62 @@ define([
             Y: 'Y'
         });
 
-        return this;
-    };
+    return this;
+};
 
-    JXG.Turtle.prototype = new GeometryElement();
+JXG.Turtle.prototype = new GeometryElement();
 
-    JXG.extend(JXG.Turtle.prototype, /** @lends JXG.Turtle.prototype */ {
+JXG.extend(
+    JXG.Turtle.prototype,
+    /** @lends JXG.Turtle.prototype */ {
         /**
          * Initialize a new turtle or reinitialize a turtle after {@link JXG.Turtle#clearScreen}.
          * @private
          */
         init: function (x, y, dir) {
             var hiddenPointAttr = {
-                    fixed: true,
-                    name: '',
-                    visible: false,
-                    withLabel: false
-                };
+                fixed: true,
+                name: "",
+                visible: false,
+                withLabel: false
+            };
 
-            this.arrowLen = 20 / Math.sqrt(this.board.unitX * this.board.unitX + this.board.unitY * this.board.unitY);
+            this.arrowLen =
+                20 /
+                Math.sqrt(
+                    this.board.unitX * this.board.unitX + this.board.unitY * this.board.unitY
+                );
 
             this.pos = [x, y];
             this.isPenDown = true;
             this.dir = 90;
             this.stack = [];
             this.objects = [];
-            this.curve = this.board.create('curve', [[this.pos[0]], [this.pos[1]]], this._attributes);
+            this.curve = this.board.create(
+                "curve",
+                [[this.pos[0]], [this.pos[1]]],
+                this._attributes
+            );
             this.objects.push(this.curve);
 
-            this.turtle = this.board.create('point', this.pos, hiddenPointAttr);
+            this.turtle = this.board.create("point", this.pos, hiddenPointAttr);
             this.objects.push(this.turtle);
 
-            this.turtle2 = this.board.create('point', [this.pos[0], this.pos[1] + this.arrowLen], hiddenPointAttr);
+            this.turtle2 = this.board.create(
+                "point",
+                [this.pos[0], this.pos[1] + this.arrowLen],
+                hiddenPointAttr
+            );
             this.objects.push(this.turtle2);
 
             this.visProp.arrow.lastArrow = true;
             this.visProp.arrow.straightFirst = false;
             this.visProp.arrow.straightLast = false;
-            this.arrow = this.board.create('line', [this.turtle, this.turtle2], this.visProp.arrow);
+            this.arrow = this.board.create(
+                "line",
+                [this.turtle, this.turtle2],
+                this.visProp.arrow
+            );
             this.objects.push(this.arrow);
 
             this.subs = {
@@ -271,11 +278,11 @@ define([
             }
 
             var t,
-                dx = len * Math.cos(this.dir * Math.PI / 180),
-                dy = len * Math.sin(this.dir * Math.PI / 180);
+                dx = len * Math.cos((this.dir * Math.PI) / 180),
+                dy = len * Math.sin((this.dir * Math.PI) / 180);
 
             if (!this.turtleIsHidden) {
-                t = this.board.create('transform', [dx, dy], {type: 'translate'});
+                t = this.board.create("transform", [dx, dy], { type: "translate" });
 
                 t.applyOnce(this.turtle);
                 t.applyOnce(this.turtle2);
@@ -284,7 +291,11 @@ define([
             if (this.isPenDown) {
                 // IE workaround
                 if (this.curve.dataX.length >= 8192) {
-                    this.curve = this.board.create('curve', [[this.pos[0]], [this.pos[1]]], this._attributes);
+                    this.curve = this.board.create(
+                        "curve",
+                        [[this.pos[0]], [this.pos[1]]],
+                        this._attributes
+                    );
                     this.objects.push(this.curve);
                 }
             }
@@ -320,7 +331,11 @@ define([
             this.dir %= 360;
 
             if (!this.turtleIsHidden) {
-                var t = this.board.create('transform', [-angle * Math.PI / 180, this.turtle], {type: 'rotate'});
+                var t = this.board.create(
+                    "transform",
+                    [(-angle * Math.PI) / 180, this.turtle],
+                    { type: "rotate" }
+                );
                 t.applyOnce(this.turtle2);
             }
 
@@ -352,7 +367,11 @@ define([
          */
         penDown: function () {
             this.isPenDown = true;
-            this.curve = this.board.create('curve', [[this.pos[0]], [this.pos[1]]], this._attributes);
+            this.curve = this.board.create(
+                "curve",
+                [[this.pos[0]], [this.pos[1]]],
+                this._attributes
+            );
             this.objects.push(this.curve);
 
             return this;
@@ -373,7 +392,11 @@ define([
                 }
             }
 
-            this.curve = this.board.create('curve', [[this.pos[0]], [this.pos[1]]], this._attributes);
+            this.curve = this.board.create(
+                "curve",
+                [[this.pos[0]], [this.pos[1]]],
+                this._attributes
+            );
             this.objects.push(this.curve);
             this.board.update();
 
@@ -385,7 +408,8 @@ define([
          * @returns {JXG.Turtle} pointer to the turtle object
          */
         clearScreen: function () {
-            var i, el,
+            var i,
+                el,
                 len = this.objects.length;
 
             for (i = 0; i < len; i++) {
@@ -415,11 +439,19 @@ define([
             if (!this.turtleIsHidden) {
                 this.turtle.setPositionDirectly(Const.COORDS_BY_USER, [x, y]);
                 this.turtle2.setPositionDirectly(Const.COORDS_BY_USER, [x, y + this.arrowLen]);
-                t = this.board.create('transform', [-(this.dir - 90) * Math.PI / 180, this.turtle], {type: 'rotate'});
+                t = this.board.create(
+                    "transform",
+                    [(-(this.dir - 90) * Math.PI) / 180, this.turtle],
+                    { type: "rotate" }
+                );
                 t.applyOnce(this.turtle2);
             }
 
-            this.curve = this.board.create('curve', [[this.pos[0]], [this.pos[1]]], this._attributes);
+            this.curve = this.board.create(
+                "curve",
+                [[this.pos[0]], [this.pos[1]]],
+                this._attributes
+            );
             this.objects.push(this.curve);
             this.board.update();
 
@@ -434,7 +466,11 @@ define([
          */
         setPenSize: function (size) {
             //this.visProp.strokewidth = size;
-            this.curve = this.board.create('curve', [[this.pos[0]], [this.pos[1]]], this.copyAttr('strokeWidth', size));
+            this.curve = this.board.create(
+                "curve",
+                [[this.pos[0]], [this.pos[1]]],
+                this.copyAttr("strokeWidth", size)
+            );
             this.objects.push(this.curve);
             return this;
         },
@@ -446,10 +482,56 @@ define([
          * @returns {JXG.Turtle} pointer to the turtle object
          */
         setPenColor: function (color) {
-            this.curve = this.board.create('curve', [[this.pos[0]], [this.pos[1]]], this.copyAttr('strokeColor', color));
+            this.curve = this.board.create(
+                "curve",
+                [[this.pos[0]], [this.pos[1]]],
+                this.copyAttr("strokeColor", color)
+            );
             this.objects.push(this.curve);
 
             return this;
+        },
+
+        /**
+         * Get attribute of the last turtle curve object.
+         * 
+         * @param {String} key 
+         * @returns attribute value
+         * @private
+         */
+        getPenAttribute: function(key) {
+            var pos, le = this.objects.length;
+            if (le === 4) {
+                // No new turtle objects have been created
+                pos = 0;
+            } else {
+                pos = le - 1;
+            }
+            return Type.evaluate(this.objects[pos].visProp[key]);
+        },
+
+        /**
+         * Get most recently set turtle size (in pixel).
+         * @returns Number Size of the last turtle segment in pixel.
+         */
+        getPenSize: function() {
+            return this.getPenAttribute('strokewidth');
+        },
+
+        /**
+         * Get most recently set turtle color.
+         * @returns String RGB color value of the last turtle segment.
+         */
+        getPenColor: function() {
+            return this.getPenAttribute('strokecolor');
+        },
+
+        /**
+         * Get most recently set turtle color.
+         * @returns String RGB highlight color value of the last turtle segment.
+         */
+         getHighlightPenColor: function() {
+            return this.getPenAttribute('highlightstrokecolor');
         },
 
         /**
@@ -460,7 +542,11 @@ define([
          */
         setHighlightPenColor: function (color) {
             //this.visProp.highlightstrokecolor = colStr;
-            this.curve = this.board.create('curve', [[this.pos[0]], [this.pos[1]]], this.copyAttr('highlightStrokeColor', color));
+            this.curve = this.board.create(
+                "curve",
+                [[this.pos[0]], [this.pos[1]]],
+                this.copyAttr("highlightStrokeColor", color)
+            );
             this.objects.push(this.curve);
             return this;
         },
@@ -472,7 +558,9 @@ define([
          * @returns {JXG.Turtle} pointer to the turtle object
          */
         setAttribute: function (attributes) {
-            var i, el, tmp,
+            var i,
+                el,
+                tmp,
                 len = this.objects.length;
 
             for (i = 0; i < len; i++) {
@@ -510,7 +598,7 @@ define([
          */
         showTurtle: function () {
             this.turtleIsHidden = false;
-            this.arrow.setAttribute({visible: true});
+            this.arrow.setAttribute({ visible: true });
             this.visProp.arrow.visible = false;
             this.setPos(this.pos[0], this.pos[1]);
             this.board.update();
@@ -524,7 +612,7 @@ define([
          */
         hideTurtle: function () {
             this.turtleIsHidden = true;
-            this.arrow.setAttribute({visible: false});
+            this.arrow.setAttribute({ visible: false });
             this.visProp.arrow.visible = false;
             this.board.update();
 
@@ -585,7 +673,7 @@ define([
 
                 // Rotate by the slope of the line [this.pos, target]
                 beta = Math.atan2(by - ay, bx - ax);
-                this.right(this.dir - (beta * 180 / Math.PI));
+                this.right(this.dir - (beta * 180) / Math.PI);
             } else if (Type.isNumber(target)) {
                 this.right(this.dir - target);
             }
@@ -606,7 +694,7 @@ define([
                 dy = target[1] - this.pos[1];
 
                 if (!this.turtleIsHidden) {
-                    t = this.board.create('transform', [dx, dy], {type: 'translate'});
+                    t = this.board.create("transform", [dx, dy], { type: "translate" });
                     t.applyOnce(this.turtle);
                     t.applyOnce(this.turtle2);
                 }
@@ -614,7 +702,11 @@ define([
                 if (this.isPenDown) {
                     // IE workaround
                     if (this.curve.dataX.length >= 8192) {
-                        this.curve = this.board.create('curve', [[this.pos[0]], [this.pos[1]]], this._attributes);
+                        this.curve = this.board.create(
+                            "curve",
+                            [[this.pos[0]], [this.pos[1]]],
+                            this._attributes
+                        );
                         this.objects.push(this.curve);
                     }
                 }
@@ -635,47 +727,69 @@ define([
         /**
          * Alias for {@link JXG.Turtle#forward}
          */
-        fd: function (len) { return this.forward(len); },
+        fd: function (len) {
+            return this.forward(len);
+        },
         /**
          * Alias for {@link JXG.Turtle#back}
          */
-        bk: function (len) { return this.back(len); },
+        bk: function (len) {
+            return this.back(len);
+        },
         /**
          * Alias for {@link JXG.Turtle#left}
          */
-        lt: function (angle) { return this.left(angle); },
+        lt: function (angle) {
+            return this.left(angle);
+        },
         /**
          * Alias for {@link JXG.Turtle#right}
          */
-        rt: function (angle) { return this.right(angle); },
+        rt: function (angle) {
+            return this.right(angle);
+        },
         /**
          * Alias for {@link JXG.Turtle#penUp}
          */
-        pu: function () { return this.penUp(); },
+        pu: function () {
+            return this.penUp();
+        },
         /**
          * Alias for {@link JXG.Turtle#penDown}
          */
-        pd: function () { return this.penDown(); },
+        pd: function () {
+            return this.penDown();
+        },
         /**
          * Alias for {@link JXG.Turtle#hideTurtle}
          */
-        ht: function () { return this.hideTurtle(); },
+        ht: function () {
+            return this.hideTurtle();
+        },
         /**
          * Alias for {@link JXG.Turtle#showTurtle}
          */
-        st: function () { return this.showTurtle(); },
+        st: function () {
+            return this.showTurtle();
+        },
         /**
          * Alias for {@link JXG.Turtle#clearScreen}
          */
-        cs: function () { return this.clearScreen(); },
+        cs: function () {
+            return this.clearScreen();
+        },
         /**
          * Alias for {@link JXG.Turtle#pushTurtle}
          */
-        push: function () { return this.pushTurtle(); },
+        push: function () {
+            return this.pushTurtle();
+        },
         /**
          * Alias for {@link JXG.Turtle#popTurtle}
          */
-        pop: function () { return this.popTurtle(); },
+        pop: function () {
+            return this.popTurtle();
+        },
 
         /**
          * The "co"-coordinate of the turtle curve at position t is returned.
@@ -685,7 +799,10 @@ define([
          * @returns {Number} x-coordinate of the turtle position or x-coordinate of turtle at position t
          */
         evalAt: function (t, co) {
-            var i, j, el, tc,
+            var i,
+                j,
+                el,
+                tc,
                 len = this.objects.length;
 
             for (i = 0, j = 0; i < len; i++) {
@@ -693,7 +810,7 @@ define([
 
                 if (el.elementClass === Const.OBJECT_CLASS_CURVE) {
                     if (j <= t && t < j + el.numberPoints) {
-                        tc = (t - j);
+                        tc = t - j;
                         return el[co](tc);
                     }
                     j += el.numberPoints;
@@ -714,7 +831,7 @@ define([
                 return this.pos[0];
             }
 
-            return this.evalAt(t, 'X');
+            return this.evalAt(t, "X");
         },
 
         /**
@@ -727,7 +844,7 @@ define([
             if (!Type.exists(t)) {
                 return this.pos[1];
             }
-            return this.evalAt(t, 'Y');
+            return this.evalAt(t, "Y");
         },
 
         /**
@@ -738,18 +855,19 @@ define([
         },
 
         /**
-         * Gives the lower bound of the parameter if the the turtle is treated as parametric curve.
+         * Gives the lower bound of the parameter if the turtle is treated as parametric curve.
          */
         minX: function () {
             return 0;
         },
 
         /**
-         * Gives the upper bound of the parameter if the the turtle is treated as parametric curve.
+         * Gives the upper bound of the parameter if the turtle is treated as parametric curve.
          * May be overwritten in @see generateTerm.
          */
         maxX: function () {
-            var i, el,
+            var i,
+                el,
                 len = this.objects.length,
                 np = 0;
 
@@ -785,34 +903,35 @@ define([
             }
             return false;
         }
-    });
+    }
+);
 
-    /**
-     * @class This element is used to provide a constructor for a turtle.
-     * @pseudo
-     * @description  Creates a new turtle
-     * @name Turtle
-     * @augments JXG.Turtle
-     * @constructor
-     * @type JXG.Turtle
-     *
-     * @param {JXG.Board} board The board the turtle is put on.
-     * @param {Array} parents
-     * @param {Object} attributes Object containing properties for the element such as stroke-color and visibility. See {@link JXG.GeometryElement#setAttribute}
-     * @returns {JXG.Turtle} Reference to the created turtle object.
-     */
-    JXG.createTurtle = function (board, parents, attributes) {
-        var attr;
-        parents = parents || [];
+/**
+ * @class This element is used to provide a constructor for a turtle.
+ * @pseudo
+ * @description  Creates a new turtle
+ * @name Turtle
+ * @augments JXG.Turtle
+ * @constructor
+ * @type JXG.Turtle
+ *
+ * @param {JXG.Board} board The board the turtle is put on.
+ * @param {Array} parents
+ * @param {Object} attributes Object containing properties for the element such as stroke-color and visibility. See {@link JXG.GeometryElement#setAttribute}
+ * @returns {JXG.Turtle} Reference to the created turtle object.
+ */
+JXG.createTurtle = function (board, parents, attributes) {
+    var attr;
+    parents = parents || [];
 
-        attr = Type.copyAttributes(attributes, board.options, 'turtle');
-        return new JXG.Turtle(board, parents, attr);
-    };
+    attr = Type.copyAttributes(attributes, board.options, "turtle");
+    return new JXG.Turtle(board, parents, attr);
+};
 
-    JXG.registerElement('turtle', JXG.createTurtle);
+JXG.registerElement("turtle", JXG.createTurtle);
 
-    return {
-        Turtle: JXG.Turtle,
-        createTurtle: JXG.createTurtle
-    };
-});
+export default JXG.Turtle;
+// export default {
+//     Turtle: JXG.Turtle,
+//     createTurtle: JXG.createTurtle
+// };

@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2022
+    Copyright 2008-2023
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -25,38 +25,68 @@
     GNU Lesser General Public License for more details.
 
     You should have received a copy of the GNU Lesser General Public License and
-    the MIT License along with JSXGraph. If not, see <http://www.gnu.org/licenses/>
-    and <http://opensource.org/licenses/MIT/>.
+    the MIT License along with JSXGraph. If not, see <https://www.gnu.org/licenses/>
+    and <https://opensource.org/licenses/MIT/>.
  */
 
 describe("Test JXG.Math", function () {
     it("Matrices, vectors", function () {
-        var A = [[2, 1], [1, 3]],
+        var A = [
+                [2, 1],
+                [1, 3]
+            ],
             b = [4, 5];
 
         expect(JXG.Math.matVecMult(A, b)).toEqual([13, 19]);
         expect(JXG.Math.vector(3)).toEqual([0, 0, 0]);
         expect(JXG.Math.vector(2, 1)).toEqual([1, 1]);
-        expect(JXG.Math.matrix(2)).toEqual([[0, 0], [0, 0]]);
-        expect(JXG.Math.matrix(3, 3)).toEqual([[0, 0, 0], [0, 0, 0], [0, 0, 0]]);
-        expect(JXG.Math.matrix(2, 3, 1)).toEqual([[1, 1, 1], [1, 1, 1]]);
+        expect(JXG.Math.matrix(2)).toEqual([
+            [0, 0],
+            [0, 0]
+        ]);
+        expect(JXG.Math.matrix(3, 3)).toEqual([
+            [0, 0, 0],
+            [0, 0, 0],
+            [0, 0, 0]
+        ]);
+        expect(JXG.Math.matrix(2, 3, 1)).toEqual([
+            [1, 1, 1],
+            [1, 1, 1]
+        ]);
 
         // JXG.Math.identity, square matrix case
-        expect(JXG.Math.identity(3)).toEqual([[1, 0, 0], [0, 1, 0], [0, 0, 1]]);
+        expect(JXG.Math.identity(3)).toEqual([
+            [1, 0, 0],
+            [0, 1, 0],
+            [0, 0, 1]
+        ]);
         // JXG.Math.identity, non-square matrix case
-        expect(JXG.Math.identity(2, 3)).toEqual([[1, 0, 0], [0, 1, 0]]);
+        expect(JXG.Math.identity(2, 3)).toEqual([
+            [1, 0, 0],
+            [0, 1, 0]
+        ]);
     });
 
     it("MatMatMult", function () {
-        var A = [[1, 2, 3], [4, 5, 6], [7, 8, 9]];
+        var A = [
+            [1, 2, 3],
+            [4, 5, 6],
+            [7, 8, 9]
+        ];
 
-        expect(JXG.Math.matMatMult(A, A)).toEqual([[30, 36, 42], [66, 81, 96], [102, 126, 150]]);
+        expect(JXG.Math.matMatMult(A, A)).toEqual([
+            [30, 36, 42],
+            [66, 81, 96],
+            [102, 126, 150]
+        ]);
     });
 
     it("Transpose", function () {
-        var A = [[1, 2, 3],
-        [4, 5, 6],
-        [7, 8, 9]];
+        var A = [
+            [1, 2, 3],
+            [4, 5, 6],
+            [7, 8, 9]
+        ];
 
         expect(JXG.Math.transpose(JXG.Math.transpose(A))).toEqual(A);
         // JXG.Math.transpose, non-square matrix
@@ -88,7 +118,6 @@ describe("Test JXG.Math", function () {
     });
 
     it("Binomial", function () {
-
         expect(JXG.Math.binomial(5, 3)).toEqual(10);
         expect(JXG.Math.binomial(5.1, 3.14152)).toEqual(10);
         expect(JXG.Math.binomial(2, -2)).toBeNaN();
@@ -101,29 +130,43 @@ describe("Test JXG.Math", function () {
 
     beforeEach(function () {
         jasmine.addCustomEqualityTester(function floatEquality(a, b) {
-            if (a === +a && b === +b && (a !== (a | 0) || b !== (b | 0))) { // if float
+            if (a === +a && b === +b && (a !== (a | 0) || b !== (b | 0))) {
+                // if float
                 return Math.abs(a - b) < 5e-10;
             }
         });
     });
 
     it("Normalize", function () {
-        var i, res = [0, 0.5, 0, 0.5, 0.5, 0.5, -0.5, 0];
+        var i,
+            res = [0, 0.5, 0, 0.5, 0.5, 0.5, -0.5, 0];
         for (i = 0; i < res.length; i++) {
             expect(JXG.Math.normalize([1, 1, 0, 1, 1, 0, 1, 1])[i]).toBeCloseTo(res[i], 15);
         }
     });
 
     it("Matrix inverse", function () {
-        var A = [[2, 0, 0], [0, 4, 0], [0, 0, 8]], i, j;
+        var A = [
+                [2, 0, 0],
+                [0, 4, 0],
+                [0, 0, 8]
+            ],
+            i,
+            j;
 
         for (i = 0; i < 3; i++) {
             for (j = 0; j < 3; j++) {
-                expect(JXG.Math.inverse(A)[i][j]).toBeCloseTo([[0.5, 0, 0], [0, 0.25, 0], [0, 0, 0.125]][i][j], 15);
+                expect(JXG.Math.inverse(A)[i][j]).toBeCloseTo(
+                    [
+                        [0.5, 0, 0],
+                        [0, 0.25, 0],
+                        [0, 0, 0.125]
+                    ][i][j],
+                    15
+                );
             }
         }
     });
-
 });
 
 // TestCase("Math", {

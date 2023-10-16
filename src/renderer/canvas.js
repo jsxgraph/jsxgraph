@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2022
+    Copyright 2008-2023
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -25,90 +25,81 @@
     GNU Lesser General Public License for more details.
 
     You should have received a copy of the GNU Lesser General Public License and
-    the MIT License along with JSXGraph. If not, see <http://www.gnu.org/licenses/>
-    and <http://opensource.org/licenses/MIT/>.
+    the MIT License along with JSXGraph. If not, see <https://www.gnu.org/licenses/>
+    and <https://opensource.org/licenses/MIT/>.
  */
-
 
 /*global JXG: true, define: true, AMprocessNode: true, document: true, Image: true, module: true, require: true */
 /*jslint nomen: true, plusplus: true, newcap:true*/
 
-/* depends:
- jxg
- renderer/abstract
- base/constants
- utils/env
- utils/type
- utils/uuid
- utils/color
- base/coords
- math/math
- math/geometry
- math/numerics
-*/
+import JXG from "../jxg";
+import AbstractRenderer from "./abstract";
+import Const from "../base/constants";
+import Env from "../utils/env";
+import Type from "../utils/type";
+import UUID from "../utils/uuid";
+import Color from "../utils/color";
+import Coords from "../base/coords";
+import Mat from "../math/math";
+import Geometry from "../math/geometry";
+import Numerics from "../math/numerics";
+// import $__canvas from "canvas";
 
-define([
-    'jxg', 'renderer/abstract', 'base/constants', 'utils/env', 'utils/type', 'utils/uuid', 'utils/color',
-    'base/coords', 'math/math', 'math/geometry', 'math/numerics'
-], function (JXG, AbstractRenderer, Const, Env, Type, UUID, Color, Coords, Mat, Geometry, Numerics) {
+/**
+ * Uses HTML Canvas to implement the rendering methods defined in {@link JXG.AbstractRenderer}.
+ *
+ * @class JXG.CanvasRenderer
+ * @augments JXG.AbstractRenderer
+ * @param {Node} container Reference to a DOM node containing the board.
+ * @param {Object} dim The dimensions of the board
+ * @param {Number} dim.width
+ * @param {Number} dim.height
+ * @see JXG.AbstractRenderer
+ */
+JXG.CanvasRenderer = function (container, dim) {
+    this.type = "canvas";
 
-    "use strict";
+    this.canvasRoot = null;
+    this.suspendHandle = null;
+    this.canvasId = UUID.genUUID();
 
-    /**
-     * Uses HTML Canvas to implement the rendering methods defined in {@link JXG.AbstractRenderer}.
-     * 
-     * @class JXG.CanvasRenderer
-     * @augments JXG.AbstractRenderer
-     * @param {Node} container Reference to a DOM node containing the board.
-     * @param {Object} dim The dimensions of the board
-     * @param {Number} dim.width
-     * @param {Number} dim.height
-     * @see JXG.AbstractRenderer
-     */
-    JXG.CanvasRenderer = function (container, dim) {
-        this.type = 'canvas';
+    this.canvasNamespace = null;
 
-        this.canvasRoot = null;
-        this.suspendHandle = null;
-        this.canvasId = UUID.genUUID();
+    if (Env.isBrowser) {
+        this.container = container;
+        this.container.style.MozUserSelect = "none";
+        this.container.style.userSelect = "none";
 
-        this.canvasNamespace = null;
-
-        if (Env.isBrowser) {
-            this.container = container;
-            this.container.style.MozUserSelect = 'none';
-            this.container.style.userSelect = 'none';
-
-            this.container.style.overflow = 'hidden';
-            if (this.container.style.position === '') {
-                this.container.style.position = 'relative';
-            }
-
-            this.container.innerHTML = ['<canvas id="', this.canvasId,
-                '" width="', dim.width,
-                'px" height="', dim.height,
-                'px"><', '/canvas>'].join('');
-            this.canvasRoot = this.container.ownerDocument.getElementById(this.canvasId);
-            this.canvasRoot.style.display = 'block';
-            this.context = this.canvasRoot.getContext('2d');
-
-        } else if (Env.isNode()) {
-            try {
-                this.canvasId = (typeof module === 'object' ? module.require('canvas') : require('canvas'));
-                this.canvasRoot = new this.canvasId(500, 500);
-                this.context = this.canvasRoot.getContext('2d');
-            } catch (err) {
-                console.log("Warning: 'canvas' not found. You might need to call 'npm install canvas'");
-            }
+        this.container.style.overflow = "hidden";
+        if (this.container.style.position === "") {
+            this.container.style.position = "relative";
         }
 
-        this.dashArray = [[2, 2], [5, 5], [10, 10], [20, 20], [20, 10, 10, 10], [20, 5, 10, 5]];
-    };
+        this.container.innerHTML = [
+            '<canvas id="', this.canvasId, '" width="', dim.width, 'px" height="', dim.height, 'px"></canvas>'
+        ].join("");
+        this.canvasRoot = this.container.ownerDocument.getElementById(this.canvasId);
+        this.canvasRoot.style.display = "block";
+        this.context = this.canvasRoot.getContext("2d");
+    } else if (Env.isNode()) {
+        try {
+            this.canvasRoot = JXG.createCanvas(500, 500);
+            this.context = this.canvasRoot.getContext("2d");
+        } catch (err) {
+            throw new Error('JXG.createCanvas not available.\n' +
+                'Install the npm package `canvas`\n' +
+                'and call:\n' +
+                '    import { createCanvas } from "canvas";\n' +
+                '    JXG.createCanvas = createCanvas;\n');
+        }
+    }
+};
 
-    JXG.CanvasRenderer.prototype = new AbstractRenderer();
+JXG.CanvasRenderer.prototype = new AbstractRenderer();
 
-    JXG.extend(JXG.CanvasRenderer.prototype, /** @lends JXG.CanvasRenderer.prototype */ {
-
+JXG.extend(
+    JXG.CanvasRenderer.prototype,
+    /** @lends JXG.CanvasRenderer.prototype */ {
         /* **************************
          *   private methods only used
          *   in this renderer. Should
@@ -122,7 +113,8 @@ define([
          * @private
          */
         _drawPolygon: function (shape, degree, doFill) {
-            var i, len = shape.length,
+            var i,
+                len = shape.length,
                 context = this.context;
 
             if (len > 0) {
@@ -137,13 +129,20 @@ define([
                     }
                 } else {
                     for (i = 1; i < len; i += 3) {
-                        context.bezierCurveTo(shape[i][0], shape[i][1], shape[i + 1][0], shape[i + 1][1], shape[i + 2][0], shape[i + 2][1]);
+                        context.bezierCurveTo(
+                            shape[i][0],
+                            shape[i][1],
+                            shape[i + 1][0],
+                            shape[i + 1][1],
+                            shape[i + 2][0],
+                            shape[i + 2][1]
+                        );
                     }
                 }
                 if (doFill) {
                     context.lineTo(shape[0][0], shape[0][1]);
                     context.closePath();
-                    context.fill();
+                    context.fill("evenodd");
                 } else {
                     context.stroke();
                 }
@@ -159,8 +158,8 @@ define([
             var context = this.context;
 
             context.save();
-            if (this._setColor(el, 'fill')) {
-                context.fill();
+            if (this._setColor(el, "fill")) {
+                context.fill("evenodd");
             }
             context.restore();
         },
@@ -175,8 +174,8 @@ define([
          */
         _rotatePoint: function (angle, x, y) {
             return [
-                (x * Math.cos(angle)) - (y * Math.sin(angle)),
-                (x * Math.sin(angle)) + (y * Math.cos(angle))
+                x * Math.cos(angle) - y * Math.sin(angle),
+                x * Math.sin(angle) + y * Math.cos(angle)
             ];
         },
 
@@ -188,7 +187,9 @@ define([
          * @private
          */
         _rotateShape: function (shape, angle) {
-            var i, rv = [], len = shape.length;
+            var i,
+                rv = [],
+                len = shape.length;
 
             if (len <= 0) {
                 return shape;
@@ -208,7 +209,7 @@ define([
          * @param {JXG.GeometryElement} node An arbitrary JSXGraph element, preferably one with an area.
          * @param {Number} radians angle value in radians. 0 is horizontal from left to right, Pi/4 is vertical from top to bottom.
          */
-        updateGradientAngle: function(el, radians) {
+        updateGradientAngle: function (el, radians) {
             // Angles:
             // 0: ->
             // 90: down
@@ -218,7 +219,18 @@ define([
                 co = Math.cos(-radians),
                 si = Math.sin(-radians),
                 bb = el.getBoundingBox(),
-                c1, c2, x1, x2, y1, y2, x1s, x2s, y1s, y2s, dx, dy;
+                c1,
+                c2,
+                x1,
+                x2,
+                y1,
+                y2,
+                x1s,
+                x2s,
+                y1s,
+                y2s,
+                dx,
+                dy;
 
             if (Math.abs(co) > Math.abs(si)) {
                 f /= Math.abs(co);
@@ -264,9 +276,18 @@ define([
          * @param {Number} fy  Canvas value x1 (but value between 0 and 1)
          * @param {Number} fr  Canvas value r0 (but value between 0 and 1)
          */
-        updateGradientCircle: function(el, cx, cy, r, fx, fy, fr) {
+        updateGradientCircle: function (el, cx, cy, r, fx, fy, fr) {
             var bb = el.getBoundingBox(),
-                c1, c2, cxs, cys, rs, fxs, fys, frs, dx, dy;
+                c1,
+                c2,
+                cxs,
+                cys,
+                rs,
+                fxs,
+                fys,
+                frs,
+                dx,
+                dy;
 
             c1 = new Coords(Const.COORDS_BY_USER, [bb[0], bb[1]], el.board);
             c2 = new Coords(Const.COORDS_BY_USER, [bb[2], bb[3]], el.board);
@@ -284,19 +305,24 @@ define([
         },
 
         // documented in JXG.AbstractRenderer
-        updateGradient: function(el) {
-            var col, op,
+        updateGradient: function (el) {
+            var col,
+                op,
                 ev_g = Type.evaluate(el.visProp.gradient),
                 gradient;
 
             op = Type.evaluate(el.visProp.fillopacity);
-            op = (op > 0) ? op : 0;
+            op = op > 0 ? op : 0;
             col = Type.evaluate(el.visProp.fillcolor);
 
-            if (ev_g === 'linear') {
-                gradient = this.updateGradientAngle(el, Type.evaluate(el.visProp.gradientangle));
-            } else if (ev_g === 'radial') {
-                gradient = this.updateGradientCircle(el,
+            if (ev_g === "linear") {
+                gradient = this.updateGradientAngle(
+                    el,
+                    Type.evaluate(el.visProp.gradientangle)
+                );
+            } else if (ev_g === "radial") {
+                gradient = this.updateGradientCircle(
+                    el,
                     Type.evaluate(el.visProp.gradientcx),
                     Type.evaluate(el.visProp.gradientcy),
                     Type.evaluate(el.visProp.gradientr),
@@ -306,9 +332,11 @@ define([
                 );
             }
             gradient.addColorStop(Type.evaluate(el.visProp.gradientstartoffset), col);
-            gradient.addColorStop(Type.evaluate(el.visProp.gradientendoffset),
-                                  Type.evaluate(el.visProp.gradientsecondcolor));
-        return gradient;
+            gradient.addColorStop(
+                Type.evaluate(el.visProp.gradientendoffset),
+                Type.evaluate(el.visProp.gradientsecondcolor)
+            );
+            return gradient;
         },
 
         /**
@@ -323,33 +351,39 @@ define([
          */
         _setColor: function (el, type, targetType) {
             var hasColor = true,
-                ev = el.visProp, hl, sw,
-                rgba, rgbo, c, o, oo,
+                ev = el.visProp,
+                hl,
+                sw,
+                rgba,
+                rgbo,
+                c,
+                o,
+                oo,
                 grad;
 
-            type = type || 'stroke';
+            type = type || "stroke";
             targetType = targetType || type;
 
             hl = this._getHighlighted(el);
 
             grad = Type.evaluate(el.visProp.gradient);
-            if (grad === 'linear' || grad === 'radial') {
+            if (grad === "linear" || grad === "radial") {
                 // TODO: opacity
-                this.context[targetType + 'Style'] = this.updateGradient(el);
+                this.context[targetType + "Style"] = this.updateGradient(el);
                 return hasColor;
             }
 
             // type is equal to 'fill' or 'stroke'
-            rgba = Type.evaluate(ev[hl + type + 'color']);
-            if (rgba !== 'none' && rgba !== false) {
-                o = Type.evaluate(ev[hl + type + 'opacity']);
-                o = (o > 0) ? o : 0;
+            rgba = Type.evaluate(ev[hl + type + "color"]);
+            if (rgba !== "none" && rgba !== false) {
+                o = Type.evaluate(ev[hl + type + "opacity"]);
+                o = o > 0 ? o : 0;
 
                 // RGB, not RGBA
                 if (rgba.length !== 9) {
                     c = rgba;
                     oo = o;
-                // True RGBA, not RGB
+                    // True RGBA, not RGB
                 } else {
                     rgbo = Color.rgba2rgbo(rgba);
                     c = rgbo[0];
@@ -357,14 +391,13 @@ define([
                 }
                 this.context.globalAlpha = oo;
 
-                this.context[targetType + 'Style'] = c;
-
+                this.context[targetType + "Style"] = c;
             } else {
                 hasColor = false;
             }
 
-            sw = parseFloat(Type.evaluate(ev[hl + 'strokewidth']));
-            if (type === 'stroke' && !isNaN(sw)) {
+            sw = parseFloat(Type.evaluate(ev[hl + "strokewidth"]));
+            if (type === "stroke" && !isNaN(sw)) {
                 if (sw === 0) {
                     this.context.globalAlpha = 0;
                 } else {
@@ -372,7 +405,7 @@ define([
                 }
             }
 
-            if (type === 'stroke' && ev.linecap !== undefined && ev.linecap !== '') {
+            if (type === "stroke" && ev.linecap !== undefined && ev.linecap !== "") {
                 this.context.lineCap = ev.linecap;
             }
 
@@ -386,19 +419,25 @@ define([
          */
         _stroke: function (el) {
             var context = this.context,
-                ev_dash = Type.evaluate(el.visProp.dash);
+                ev_dash = Type.evaluate(el.visProp.dash),
+                ds = Type.evaluate(el.visProp.dashscale),
+                sw = ds ? 0.5 * Type.evaluate(el.visProp.strokewidth) : 1;
 
             context.save();
 
             if (ev_dash > 0) {
                 if (context.setLineDash) {
-                    context.setLineDash(this.dashArray[ev_dash]);
+                    context.setLineDash(
+                        // sw could distinguish highlighting or not.
+                        // But it seems to preferable to ignore this.
+                        this.dashArray[ev_dash - 1].map(function (x) { return x * sw; })
+                    );
                 }
             } else {
                 this.context.lineDashArray = [];
             }
 
-            if (this._setColor(el, 'stroke')) {
+            if (this._setColor(el, "stroke")) {
                 context.stroke();
             }
 
@@ -414,14 +453,16 @@ define([
          * @private
          */
         _translateShape: function (shape, x, y) {
-            var i, rv = [], len = shape.length;
+            var i,
+                rv = [],
+                len = shape.length;
 
             if (len <= 0) {
                 return shape;
             }
 
             for (i = 0; i < len; i++) {
-                rv.push([ shape[i][0] + x, shape[i][1] + y ]);
+                rv.push([shape[i][0] + x, shape[i][1] + y]);
             }
 
             return rv;
@@ -446,106 +487,137 @@ define([
             }
 
             switch (f) {
-            case 'cross':  // x
-            case 'x':
-                context.beginPath();
-                context.moveTo(scr[1] - size, scr[2] - size);
-                context.lineTo(scr[1] + size, scr[2] + size);
-                context.moveTo(scr[1] + size, scr[2] - size);
-                context.lineTo(scr[1] - size, scr[2] + size);
-                context.lineCap = 'round';
-                context.lineJoin = 'round';
-                context.closePath();
-                this._stroke(el);
-                break;
-            case 'circle': // dot
-            case 'o':
-                context.beginPath();
-                context.arc(scr[1], scr[2], size + 1 + stroke05, 0, 2 * Math.PI, false);
-                context.closePath();
-                this._fill(el);
-                this._stroke(el);
-                break;
-            case 'square':  // rectangle
-            case '[]':
-                if (size <= 0) {
+                case "cross": // x
+                case "x":
+                    context.beginPath();
+                    context.moveTo(scr[1] - size, scr[2] - size);
+                    context.lineTo(scr[1] + size, scr[2] + size);
+                    context.moveTo(scr[1] + size, scr[2] - size);
+                    context.lineTo(scr[1] - size, scr[2] + size);
+                    context.lineCap = "round";
+                    context.lineJoin = "round";
+                    context.closePath();
+                    this._stroke(el);
                     break;
-                }
+                case "circle": // dot
+                case "o":
+                    context.beginPath();
+                    context.arc(scr[1], scr[2], size + 1 + stroke05, 0, 2 * Math.PI, false);
+                    context.closePath();
+                    this._fill(el);
+                    this._stroke(el);
+                    break;
+                case "square": // rectangle
+                case "[]":
+                    if (size <= 0) {
+                        break;
+                    }
 
-                context.save();
-                if (this._setColor(el, 'stroke', 'fill')) {
-                    context.fillRect(scr[1] - size - stroke05, scr[2] - size - stroke05, size * 2 + 3 * stroke05, size * 2 + 3 * stroke05);
-                }
-                context.restore();
-                context.save();
-                this._setColor(el, 'fill');
-                context.fillRect(scr[1] - size + stroke05, scr[2] - size + stroke05, size * 2 - stroke05, size * 2 - stroke05);
-                context.restore();
-                break;
-            case 'plus':  // +
-            case '+':
-                context.beginPath();
-                context.moveTo(scr[1] - size, scr[2]);
-                context.lineTo(scr[1] + size, scr[2]);
-                context.moveTo(scr[1], scr[2] - size);
-                context.lineTo(scr[1], scr[2] + size);
-                context.lineCap = 'round';
-                context.lineJoin = 'round';
-                context.closePath();
-                this._stroke(el);
-                break;
-            case 'diamond':   // <>
-            case '<>':
-                context.beginPath();
-                context.moveTo(scr[1] - size, scr[2]);
-                context.lineTo(scr[1], scr[2] + size);
-                context.lineTo(scr[1] + size, scr[2]);
-                context.lineTo(scr[1], scr[2] - size);
-                context.closePath();
-                this._fill(el);
-                this._stroke(el);
-                break;
-            case 'triangleup':
-            case 'a':
-            case '^':
-                context.beginPath();
-                context.moveTo(scr[1], scr[2] - size);
-                context.lineTo(scr[1] - sqrt32, scr[2] + s05);
-                context.lineTo(scr[1] + sqrt32, scr[2] + s05);
-                context.closePath();
-                this._fill(el);
-                this._stroke(el);
-                break;
-            case 'triangledown':
-            case 'v':
-                context.beginPath();
-                context.moveTo(scr[1], scr[2] + size);
-                context.lineTo(scr[1] - sqrt32, scr[2] - s05);
-                context.lineTo(scr[1] + sqrt32, scr[2] - s05);
-                context.closePath();
-                this._fill(el);
-                this._stroke(el);
-                break;
-            case 'triangleleft':
-            case '<':
-                context.beginPath();
-                context.moveTo(scr[1] - size, scr[2]);
-                context.lineTo(scr[1] + s05, scr[2] - sqrt32);
-                context.lineTo(scr[1] + s05, scr[2] + sqrt32);
-                context.closePath();
-                this._fill(el);
-                this._stroke(el);
-                break;
-            case 'triangleright':
-            case '>':
-                context.beginPath();
-                context.moveTo(scr[1] + size, scr[2]);
-                context.lineTo(scr[1] - s05, scr[2] - sqrt32);
-                context.lineTo(scr[1] - s05, scr[2] + sqrt32);
-                context.closePath();
-                this._fill(el);
-                this._stroke(el);
-                break;
+                    context.save();
+                    if (this._setColor(el, "stroke", "fill")) {
+                        context.fillRect(
+                            scr[1] - size - stroke05,
+                            scr[2] - size - stroke05,
+                            size * 2 + 3 * stroke05,
+                            size * 2 + 3 * stroke05
+                        );
+                    }
+                    context.restore();
+                    context.save();
+                    this._setColor(el, "fill");
+                    context.fillRect(
+                        scr[1] - size + stroke05,
+                        scr[2] - size + stroke05,
+                        size * 2 - stroke05,
+                        size * 2 - stroke05
+                    );
+                    context.restore();
+                    break;
+                case "plus": // +
+                case "+":
+                    context.beginPath();
+                    context.moveTo(scr[1] - size, scr[2]);
+                    context.lineTo(scr[1] + size, scr[2]);
+                    context.moveTo(scr[1], scr[2] - size);
+                    context.lineTo(scr[1], scr[2] + size);
+                    context.lineCap = "round";
+                    context.lineJoin = "round";
+                    context.closePath();
+                    this._stroke(el);
+                    break;
+                case "divide":
+                case "|":
+                    context.beginPath();
+                    context.moveTo(scr[1], scr[2] - size);
+                    context.lineTo(scr[1], scr[2] + size);
+                    context.lineCap = "round";
+                    context.lineJoin = "round";
+                    context.closePath();
+                    this._stroke(el);
+                    break;
+                case "minus":
+                case "-":
+                    context.beginPath();
+                    context.moveTo(scr[1] - size, scr[2]);
+                    context.lineTo(scr[1] + size, scr[2]);
+                    context.lineCap = "round";
+                    context.lineJoin = "round";
+                    context.closePath();
+                    this._stroke(el);
+                    break;
+                case "diamond": // <>
+                case "<>":
+                    context.beginPath();
+                    context.moveTo(scr[1] - size, scr[2]);
+                    context.lineTo(scr[1], scr[2] + size);
+                    context.lineTo(scr[1] + size, scr[2]);
+                    context.lineTo(scr[1], scr[2] - size);
+                    context.closePath();
+                    this._fill(el);
+                    this._stroke(el);
+                    break;
+                case "triangleup":
+                case "A":
+                case "a":
+                case "^":
+                    context.beginPath();
+                    context.moveTo(scr[1], scr[2] - size);
+                    context.lineTo(scr[1] - sqrt32, scr[2] + s05);
+                    context.lineTo(scr[1] + sqrt32, scr[2] + s05);
+                    context.closePath();
+                    this._fill(el);
+                    this._stroke(el);
+                    break;
+                case "triangledown":
+                case "v":
+                    context.beginPath();
+                    context.moveTo(scr[1], scr[2] + size);
+                    context.lineTo(scr[1] - sqrt32, scr[2] - s05);
+                    context.lineTo(scr[1] + sqrt32, scr[2] - s05);
+                    context.closePath();
+                    this._fill(el);
+                    this._stroke(el);
+                    break;
+                case "triangleleft":
+                case "<":
+                    context.beginPath();
+                    context.moveTo(scr[1] - size, scr[2]);
+                    context.lineTo(scr[1] + s05, scr[2] - sqrt32);
+                    context.lineTo(scr[1] + s05, scr[2] + sqrt32);
+                    context.closePath();
+                    this._fill(el);
+                    this._stroke(el);
+                    break;
+                case "triangleright":
+                case ">":
+                    context.beginPath();
+                    context.moveTo(scr[1] + size, scr[2]);
+                    context.lineTo(scr[1] - s05, scr[2] - sqrt32);
+                    context.lineTo(scr[1] - s05, scr[2] + sqrt32);
+                    context.closePath();
+                    this._fill(el);
+                    this._stroke(el);
+                    break;
             }
         },
 
@@ -567,26 +639,35 @@ define([
          * @private
          */
         drawArrows: function (el, scr1, scr2, hl, a) {
-             var x1, y1, x2, y2,
-                 w0, w,
-                 arrowHead,
-                 arrowTail,
-                 context = this.context,
-                 size = 6,
-                 type = 1,
-                 type_fa, type_la,
-                 degree_fa = 1,
-                 degree_la = 1,
-                 doFill,
-                 i, len,
-                 d1x, d1y, d2x, d2y, last,
-                 ang1, ang2,
-                 ev_fa = a.evFirst,
-                 ev_la = a.evLast;
+            var x1,
+                y1,
+                x2,
+                y2,
+                w0,
+                w,
+                arrowHead,
+                arrowTail,
+                context = this.context,
+                size = 6,
+                type = 1,
+                type_fa,
+                type_la,
+                degree_fa = 1,
+                degree_la = 1,
+                doFill,
+                i,
+                len,
+                d1x,
+                d1y,
+                d2x,
+                d2y,
+                last,
+                ang1,
+                ang2,
+                ev_fa = a.evFirst,
+                ev_la = a.evLast;
 
-            if (Type.evaluate(el.visProp.strokecolor) !== 'none' &&
-                     (ev_fa || ev_la)) {
-
+            if (Type.evaluate(el.visProp.strokecolor) !== "none" && (ev_fa || ev_la)) {
                 if (el.elementClass === Const.OBJECT_CLASS_LINE) {
                     x1 = scr1.scrCoords[1];
                     y1 = scr1.scrCoords[2];
@@ -617,7 +698,7 @@ define([
                     }
                 }
 
-                w0 = Type.evaluate(el.visProp[hl + 'strokewidth']);
+                w0 = Type.evaluate(el.visProp[hl + "strokewidth"]);
 
                 if (ev_fa) {
                     size = a.sizeFirst;
@@ -629,35 +710,35 @@ define([
 
                     if (type === 2) {
                         arrowTail = [
-                                 [ w,      -w * 0.5],
-                                 [ 0.0,         0.0],
-                                 [ w,       w * 0.5],
-                                 [ w * 0.5,     0.0],
-                             ];
+                            [w, -w * 0.5],
+                            [0.0, 0.0],
+                            [w, w * 0.5],
+                            [w * 0.5, 0.0]
+                        ];
                     } else if (type === 3) {
                         arrowTail = [
-                                 [ w / 3.0,   -w * 0.5],
-                                 [ 0.0,       -w * 0.5],
-                                 [ 0.0,        w * 0.5],
-                                 [ w / 3.0,    w * 0.5]
-                             ];
+                            [w / 3.0, -w * 0.5],
+                            [0.0, -w * 0.5],
+                            [0.0, w * 0.5],
+                            [w / 3.0, w * 0.5]
+                        ];
                     } else if (type === 4) {
                         w /= 10;
                         degree_fa = 3;
                         arrowTail = [
-                            [10.00, 3.31],
+                            [10.0, 3.31],
                             [6.47, 3.84],
-                            [2.87, 4.50],
-                            [0.00, 6.63],
+                            [2.87, 4.5],
+                            [0.0, 6.63],
                             [0.67, 5.52],
                             [1.33, 4.42],
-                            [2.00, 3.31],
+                            [2.0, 3.31],
                             [1.33, 2.21],
-                            [0.67, 1.10],
-                            [0.00, 0.00],
+                            [0.67, 1.1],
+                            [0.0, 0.0],
                             [2.87, 2.13],
                             [6.47, 2.79],
-                            [10.00, 3.31]
+                            [10.0, 3.31]
                         ];
                         len = arrowTail.length;
                         for (i = 0; i < len; i++) {
@@ -670,19 +751,19 @@ define([
                         w /= 10;
                         degree_fa = 3;
                         arrowTail = [
-                            [10.00,3.28],
-                            [6.61,4.19],
-                            [3.19,5.07],
-                            [0.00,6.55],
-                            [0.62,5.56],
-                            [1.00,4.44],
-                            [1.00,3.28],
-                            [1.00,2.11],
-                            [0.62,0.99],
-                            [0.00,0.00],
-                            [3.19,1.49],
-                            [6.61,2.37],
-                            [10.00,3.28]
+                            [10.0, 3.28],
+                            [6.61, 4.19],
+                            [3.19, 5.07],
+                            [0.0, 6.55],
+                            [0.62, 5.56],
+                            [1.0, 4.44],
+                            [1.0, 3.28],
+                            [1.0, 2.11],
+                            [0.62, 0.99],
+                            [0.0, 0.0],
+                            [3.19, 1.49],
+                            [6.61, 2.37],
+                            [10.0, 3.28]
                         ];
                         len = arrowTail.length;
                         for (i = 0; i < len; i++) {
@@ -695,19 +776,19 @@ define([
                         w /= 10;
                         degree_fa = 3;
                         arrowTail = [
-                            [10.00,2.84],
-                            [6.61,3.59],
-                            [3.21,4.35],
-                            [0.00,5.68],
-                            [0.33,4.73],
-                            [0.67,3.78],
-                            [1.00,2.84],
-                            [0.67,1.89],
-                            [0.33,0.95],
-                            [0.00,0.00],
-                            [3.21,1.33],
-                            [6.61,2.09],
-                            [10.00,2.84]
+                            [10.0, 2.84],
+                            [6.61, 3.59],
+                            [3.21, 4.35],
+                            [0.0, 5.68],
+                            [0.33, 4.73],
+                            [0.67, 3.78],
+                            [1.0, 2.84],
+                            [0.67, 1.89],
+                            [0.33, 0.95],
+                            [0.0, 0.0],
+                            [3.21, 1.33],
+                            [6.61, 2.09],
+                            [10.0, 2.84]
                         ];
                         len = arrowTail.length;
                         for (i = 0; i < len; i++) {
@@ -720,26 +801,26 @@ define([
                         w = w0;
                         degree_fa = 3;
                         arrowTail = [
-                            [0.00,10.39],
-                            [2.01,6.92],
-                            [5.96,5.20],
-                            [10.00,5.20],
-                            [5.96,5.20],
-                            [2.01,3.47],
-                            [0.00,0.00]
+                            [0.0, 10.39],
+                            [2.01, 6.92],
+                            [5.96, 5.2],
+                            [10.0, 5.2],
+                            [5.96, 5.2],
+                            [2.01, 3.47],
+                            [0.0, 0.0]
                         ];
                         len = arrowTail.length;
                         for (i = 0; i < len; i++) {
                             arrowTail[i][0] *= -w;
                             arrowTail[i][1] *= w;
                             arrowTail[i][0] += 10 * w;
-                            arrowTail[i][1] -= 5.20 * w;
+                            arrowTail[i][1] -= 5.2 * w;
                         }
                     } else {
                         arrowTail = [
-                             [ w,   -w * 0.5],
-                             [ 0.0,      0.0],
-                             [ w,    w * 0.5]
+                            [w, -w * 0.5],
+                            [0.0, 0.0],
+                            [w, w * 0.5]
                         ];
                     }
                 }
@@ -752,35 +833,35 @@ define([
                     type_la = type;
                     if (type === 2) {
                         arrowHead = [
-                             [ -w, -w * 0.5],
-                             [ 0.0,     0.0],
-                             [ -w,  w * 0.5],
-                             [ -w * 0.5, 0.0]
+                            [-w, -w * 0.5],
+                            [0.0, 0.0],
+                            [-w, w * 0.5],
+                            [-w * 0.5, 0.0]
                         ];
                     } else if (type === 3) {
                         arrowHead = [
-                                 [-w / 3.0,   -w * 0.5],
-                                 [ 0.0,       -w * 0.5],
-                                 [ 0.0,        w * 0.5],
-                                 [-w / 3.0,    w * 0.5]
-                             ];
+                            [-w / 3.0, -w * 0.5],
+                            [0.0, -w * 0.5],
+                            [0.0, w * 0.5],
+                            [-w / 3.0, w * 0.5]
+                        ];
                     } else if (type === 4) {
                         w /= 10;
                         degree_la = 3;
                         arrowHead = [
-                            [10.00, 3.31],
+                            [10.0, 3.31],
                             [6.47, 3.84],
-                            [2.87, 4.50],
-                            [0.00, 6.63],
+                            [2.87, 4.5],
+                            [0.0, 6.63],
                             [0.67, 5.52],
                             [1.33, 4.42],
-                            [2.00, 3.31],
+                            [2.0, 3.31],
                             [1.33, 2.21],
-                            [0.67, 1.10],
-                            [0.00, 0.00],
+                            [0.67, 1.1],
+                            [0.0, 0.0],
                             [2.87, 2.13],
                             [6.47, 2.79],
-                            [10.00, 3.31]
+                            [10.0, 3.31]
                         ];
                         len = arrowHead.length;
                         for (i = 0; i < len; i++) {
@@ -788,25 +869,24 @@ define([
                             arrowHead[i][1] *= w;
                             arrowHead[i][0] -= 10 * w;
                             arrowHead[i][1] -= 3.31 * w;
-
                         }
                     } else if (type === 5) {
                         w /= 10;
                         degree_la = 3;
                         arrowHead = [
-                            [10.00,3.28],
-                            [6.61,4.19],
-                            [3.19,5.07],
-                            [0.00,6.55],
-                            [0.62,5.56],
-                            [1.00,4.44],
-                            [1.00,3.28],
-                            [1.00,2.11],
-                            [0.62,0.99],
-                            [0.00,0.00],
-                            [3.19,1.49],
-                            [6.61,2.37],
-                            [10.00,3.28]
+                            [10.0, 3.28],
+                            [6.61, 4.19],
+                            [3.19, 5.07],
+                            [0.0, 6.55],
+                            [0.62, 5.56],
+                            [1.0, 4.44],
+                            [1.0, 3.28],
+                            [1.0, 2.11],
+                            [0.62, 0.99],
+                            [0.0, 0.0],
+                            [3.19, 1.49],
+                            [6.61, 2.37],
+                            [10.0, 3.28]
                         ];
                         len = arrowHead.length;
                         for (i = 0; i < len; i++) {
@@ -814,25 +894,24 @@ define([
                             arrowHead[i][1] *= w;
                             arrowHead[i][0] -= 10 * w;
                             arrowHead[i][1] -= 3.28 * w;
-
                         }
                     } else if (type === 6) {
                         w /= 10;
                         degree_la = 3;
                         arrowHead = [
-                            [10.00,2.84],
-                            [6.61,3.59],
-                            [3.21,4.35],
-                            [0.00,5.68],
-                            [0.33,4.73],
-                            [0.67,3.78],
-                            [1.00,2.84],
-                            [0.67,1.89],
-                            [0.33,0.95],
-                            [0.00,0.00],
-                            [3.21,1.33],
-                            [6.61,2.09],
-                            [10.00,2.84]
+                            [10.0, 2.84],
+                            [6.61, 3.59],
+                            [3.21, 4.35],
+                            [0.0, 5.68],
+                            [0.33, 4.73],
+                            [0.67, 3.78],
+                            [1.0, 2.84],
+                            [0.67, 1.89],
+                            [0.33, 0.95],
+                            [0.0, 0.0],
+                            [3.21, 1.33],
+                            [6.61, 2.09],
+                            [10.0, 2.84]
                         ];
                         len = arrowHead.length;
                         for (i = 0; i < len; i++) {
@@ -840,48 +919,49 @@ define([
                             arrowHead[i][1] *= w;
                             arrowHead[i][0] -= 10 * w;
                             arrowHead[i][1] -= 2.84 * w;
-
                         }
-
                     } else if (type === 7) {
                         w = w0;
                         degree_la = 3;
                         arrowHead = [
-                            [0.00,10.39],
-                            [2.01,6.92],
-                            [5.96,5.20],
-                            [10.00,5.20],
-                            [5.96,5.20],
-                            [2.01,3.47],
-                            [0.00,0.00]
+                            [0.0, 10.39],
+                            [2.01, 6.92],
+                            [5.96, 5.2],
+                            [10.0, 5.2],
+                            [5.96, 5.2],
+                            [2.01, 3.47],
+                            [0.0, 0.0]
                         ];
                         len = arrowHead.length;
                         for (i = 0; i < len; i++) {
                             arrowHead[i][0] *= w;
                             arrowHead[i][1] *= w;
                             arrowHead[i][0] -= 10 * w;
-                            arrowHead[i][1] -= 5.20 * w;
-
+                            arrowHead[i][1] -= 5.2 * w;
                         }
                     } else {
                         arrowHead = [
-                             [ -w, -w * 0.5],
-                             [ 0.0,     0.0],
-                             [ -w,  w * 0.5]
-                         ];
+                            [-w, -w * 0.5],
+                            [0.0, 0.0],
+                            [-w, w * 0.5]
+                        ];
                     }
                 }
 
                 context.save();
-                if (this._setColor(el, 'stroke', 'fill')) {
-                    this._setColor(el, 'stroke');
+                if (this._setColor(el, "stroke", "fill")) {
+                    this._setColor(el, "stroke");
                     if (ev_fa) {
                         if (type_fa === 7) {
                             doFill = false;
                         } else {
                             doFill = true;
                         }
-                        this._drawPolygon(this._translateShape(this._rotateShape(arrowTail, ang1), x1, y1), degree_fa, doFill);
+                        this._drawPolygon(
+                            this._translateShape(this._rotateShape(arrowTail, ang1), x1, y1),
+                            degree_fa,
+                            doFill
+                        );
                     }
                     if (ev_la) {
                         if (type_la === 7) {
@@ -889,7 +969,11 @@ define([
                         } else {
                             doFill = true;
                         }
-                        this._drawPolygon(this._translateShape(this._rotateShape(arrowHead, ang2), x2, y2), degree_la, doFill);
+                        this._drawPolygon(
+                            this._translateShape(this._rotateShape(arrowHead, ang2), x2, y2),
+                            degree_la,
+                            doFill
+                        );
                     }
                 }
                 context.restore();
@@ -898,18 +982,21 @@ define([
 
         // documented in AbstractRenderer
         drawLine: function (el) {
-            var c1_org, c2_org,
+            var c1_org,
+                c2_org,
                 c1 = new Coords(Const.COORDS_BY_USER, el.point1.coords.usrCoords, el.board),
                 c2 = new Coords(Const.COORDS_BY_USER, el.point2.coords.usrCoords, el.board),
                 margin = null,
-                hl, w, arrowData;
+                hl,
+                w,
+                arrowData;
 
             if (!el.visPropCalc.visible) {
                 return;
             }
 
             hl = this._getHighlighted(el);
-            w = Type.evaluate(el.visProp[hl + 'strokewidth']);
+            w = Type.evaluate(el.visProp[hl + "strokewidth"]);
             arrowData = this.getArrowHeadData(el, w, hl);
 
             if (arrowData.evFirst || arrowData.evLast) {
@@ -928,9 +1015,10 @@ define([
             this.context.lineTo(c2.scrCoords[1], c2.scrCoords[2]);
             this._stroke(el);
 
-            if ((arrowData.evFirst/* && obj.sFirst > 0*/) ||
-                (arrowData.evLast/* && obj.sLast > 0*/)) {
-
+            if (
+                arrowData.evFirst /* && obj.sFirst > 0*/ ||
+                arrowData.evLast /* && obj.sLast > 0*/
+            ) {
                 this.drawArrows(el, c1_org, c2_org, hl, arrowData);
             }
         },
@@ -949,9 +1037,13 @@ define([
 
         // documented in AbstractRenderer
         updateTicks: function (ticks) {
-            var i, c, x, y,
+            var i,
+                c,
+                x,
+                y,
                 len = ticks.ticks.length,
-                len2, j,
+                len2,
+                j,
                 context = this.context;
 
             context.beginPath();
@@ -967,7 +1059,6 @@ define([
                 for (j = 1; j < len2; ++j) {
                     context.lineTo(x[j], y[j]);
                 }
-
             }
             // Labels
             // for (i = 0; i < len; i++) {
@@ -979,7 +1070,7 @@ define([
             //         this.updateText(ticks.labels[i]);
             //     }
             // }
-            context.lineCap = 'round';
+            context.lineCap = "round";
             this._stroke(ticks);
         },
 
@@ -998,10 +1089,12 @@ define([
             }
             if (el.numberPoints > 1) {
                 hl = this._getHighlighted(el);
-                w = Type.evaluate(el.visProp[hl + 'strokewidth']);
+                w = Type.evaluate(el.visProp[hl + "strokewidth"]);
                 arrowData = this.getArrowHeadData(el, w, hl);
-                if ((arrowData.evFirst/* && obj.sFirst > 0*/) ||
-                    (arrowData.evLast/* && obj.sLast > 0*/)) {
+                if (
+                    arrowData.evFirst /* && obj.sFirst > 0*/ ||
+                    arrowData.evLast /* && obj.sLast > 0*/
+                ) {
                     this.drawArrows(el, null, null, hl, arrowData);
                 }
             }
@@ -1070,8 +1163,8 @@ define([
 
             // this should be called on EVERY update, otherwise it won't be shown after the first update
             context.save();
-            context.font = fontSize + 'px Arial';
-            context.fillStyle = '#aaa';
+            context.font = fontSize + "px Arial";
+            context.fillStyle = "#aaa";
             context.lineWidth = 0.5;
             context.fillText(str, 10, 2 + fontSize);
             context.restore();
@@ -1086,24 +1179,26 @@ define([
                 context = this.context;
 
             context.save();
-            if (this._setColor(el, 'stroke', 'fill') &&
-                    !isNaN(el.coords.scrCoords[1] + el.coords.scrCoords[2])) {
-                context.font = (ev_fs > 0 ? ev_fs : 0) + fontUnit + ' Arial';
+            if (
+                this._setColor(el, "stroke", "fill") &&
+                !isNaN(el.coords.scrCoords[1] + el.coords.scrCoords[2])
+            ) {
+                context.font = (ev_fs > 0 ? ev_fs : 0) + fontUnit + " Arial";
 
                 this.transformImage(el, el.transformations);
-                if (ev_ax === 'left') {
-                    context.textAlign = 'left';
-                } else if (ev_ax === 'right') {
-                    context.textAlign = 'right';
-                } else if (ev_ax === 'middle') {
-                    context.textAlign = 'center';
+                if (ev_ax === "left") {
+                    context.textAlign = "left";
+                } else if (ev_ax === "right") {
+                    context.textAlign = "right";
+                } else if (ev_ax === "middle") {
+                    context.textAlign = "center";
                 }
-                if (ev_ay === 'bottom') {
-                    context.textBaseline = 'bottom';
-                } else if (ev_ay === 'top') {
-                    context.textBaseline = 'top';
-                } else if (ev_ay === 'middle') {
-                    context.textBaseline = 'middle';
+                if (ev_ay === "bottom") {
+                    context.textBaseline = "bottom";
+                } else if (ev_ay === "top") {
+                    context.textBaseline = "top";
+                } else if (ev_ay === "middle") {
+                    context.textBaseline = "middle";
                 }
                 context.fillText(el.plaintext, el.coords.scrCoords[1], el.coords.scrCoords[2]);
             }
@@ -1119,11 +1214,14 @@ define([
         // documented in JXG.AbstractRenderer
         // Only necessary for texts
         setObjectStrokeColor: function (el, color, opacity) {
-            var rgba = Type.evaluate(color), c, rgbo,
-                o = Type.evaluate(opacity), oo,
+            var rgba = Type.evaluate(color),
+                c,
+                rgbo,
+                o = Type.evaluate(opacity),
+                oo,
                 node;
 
-            o = (o > 0) ? o : 0;
+            o = o > 0 ? o : 0;
 
             if (el.visPropOld.strokecolor === rgba && el.visPropOld.strokeopacity === o) {
                 return;
@@ -1136,14 +1234,17 @@ define([
                 if (rgba.length !== 9) {
                     c = rgba;
                     oo = o;
-                // True RGBA, not RGB
+                    // True RGBA, not RGB
                 } else {
                     rgbo = Color.rgba2rgbo(rgba);
                     c = rgbo[0];
                     oo = o * rgbo[1];
                 }
                 node = el.rendNode;
-                if (el.elementClass === Const.OBJECT_CLASS_TEXT && Type.evaluate(el.visProp.display) === 'html') {
+                if (
+                    el.elementClass === Const.OBJECT_CLASS_TEXT &&
+                    Type.evaluate(el.visProp.display) === "html"
+                ) {
                     node.style.color = c;
                     node.style.opacity = oo;
                 }
@@ -1165,7 +1266,7 @@ define([
             // But there, the file name is expanded to
             // the full url. This may be different from
             // the url computed in updateImageURL().
-            el._src = '';
+            el._src = "";
             this.updateImage(el);
         },
 
@@ -1183,11 +1284,13 @@ define([
                     // If det(el.transformations)=0, FireFox 3.6. breaks down.
                     // This is tested in transformImage
                     this.transformImage(el, el.transformations);
-                    context.drawImage(el.rendNode,
+                    context.drawImage(
+                        el.rendNode,
                         el.coords.scrCoords[1],
                         el.coords.scrCoords[2] - el.size[1],
                         el.size[0],
-                        el.size[1]);
+                        el.size[1]
+                    );
                     context.restore();
                 }, this);
 
@@ -1202,13 +1305,33 @@ define([
 
         // Already documented in JXG.AbstractRenderer
         transformImage: function (el, t) {
-            var m, len = t.length,
+            var m, s, cx, cy, node,
+                len = t.length,
                 ctx = this.context;
 
             if (len > 0) {
                 m = this.joinTransforms(el, t);
-                if (Math.abs(Numerics.det(m)) >= Mat.eps) {
-                    ctx.transform(m[1][1], m[2][1], m[1][2], m[2][2], m[1][0], m[2][0]);
+                if (el.elementClass === Const.OBJECT_CLASS_TEXT && el.visProp.display === 'html') {
+                    s = " matrix(" + [m[1][1], m[2][1], m[1][2], m[2][2], m[1][0], m[2][0]].join(",") + ") ";
+                    if (s.indexOf('NaN') === -1) {
+                        node = el.rendNode;
+                        node.style.transform = s;
+                        cx = -el.coords.scrCoords[1];
+                        cy = -el.coords.scrCoords[2];
+                        switch (Type.evaluate(el.visProp.anchorx)) {
+                            case 'right': cx += el.size[0]; break;
+                            case 'middle': cx += el.size[0] * 0.5; break;
+                        }
+                        switch (Type.evaluate(el.visProp.anchory)) {
+                            case 'bottom': cy += el.size[1]; break;
+                            case 'middle': cy += el.size[1] * 0.5; break;
+                        }
+                        node.style['transform-origin'] = (cx) + 'px ' + (cy) + 'px';
+                    }
+                } else {
+                    if (Math.abs(Numerics.det(m)) >= Mat.eps) {
+                        ctx.transform(m[1][1], m[2][1], m[1][2], m[2][2], m[1][0], m[2][0]);
+                    }
                 }
             }
         },
@@ -1242,10 +1365,14 @@ define([
 
         // documented in AbstractRenderer
         updatePathStringPrim: function (el) {
-            var i, scr, scr1, scr2, len,
-                symbm = 'M',
-                symbl = 'L',
-                symbc = 'C',
+            var i,
+                scr,
+                scr1,
+                scr2,
+                len,
+                symbm = "M",
+                symbl = "L",
+                symbc = "C",
                 nextSymb = symbm,
                 maxSize = 5000.0,
                 context = this.context;
@@ -1267,7 +1394,8 @@ define([
                 for (i = 0; i < len; i++) {
                     scr = el.points[i].scrCoords;
 
-                    if (isNaN(scr[1]) || isNaN(scr[2])) {  // PenUp
+                    if (isNaN(scr[1]) || isNaN(scr[2])) {
+                        // PenUp
                         nextSymb = symbm;
                     } else {
                         // Chrome has problems with values  being too far away.
@@ -1295,7 +1423,8 @@ define([
                 i = 0;
                 while (i < len) {
                     scr = el.points[i].scrCoords;
-                    if (isNaN(scr[1]) || isNaN(scr[2])) {  // PenUp
+                    if (isNaN(scr[1]) || isNaN(scr[2])) {
+                        // PenUp
                         nextSymb = symbm;
                     } else {
                         if (nextSymb === symbm) {
@@ -1305,27 +1434,40 @@ define([
                             scr1 = el.points[i].scrCoords;
                             i += 1;
                             scr2 = el.points[i].scrCoords;
-                            context.bezierCurveTo(scr[1], scr[2], scr1[1], scr1[2], scr2[1], scr2[2]);
+                            context.bezierCurveTo(
+                                scr[1],
+                                scr[2],
+                                scr1[1],
+                                scr1[2],
+                                scr2[1],
+                                scr2[2]
+                            );
                         }
                         nextSymb = symbc;
                     }
                     i += 1;
                 }
             }
-            context.lineCap = 'round';
+            context.lineCap = "round";
             this._fill(el);
             this._stroke(el);
         },
 
         // Already documented in JXG.AbstractRenderer
         updatePathStringBezierPrim: function (el) {
-            var i, j, k, scr, lx, ly, len,
-                symbm = 'M',
-                symbl = 'C',
+            var i,
+                j,
+                k,
+                scr,
+                lx,
+                ly,
+                len,
+                symbm = "M",
+                symbl = "C",
                 nextSymb = symbm,
                 maxSize = 5000.0,
                 f = Type.evaluate(el.visProp.strokewidth),
-                isNoPlot = (Type.evaluate(el.visProp.curvetype) !== 'plot'),
+                isNoPlot = Type.evaluate(el.visProp.curvetype) !== "plot",
                 context = this.context;
 
             if (el.numberPoints <= 0) {
@@ -1344,7 +1486,8 @@ define([
                 for (i = 0; i < len; i++) {
                     scr = el.points[i].scrCoords;
 
-                    if (isNaN(scr[1]) || isNaN(scr[2])) {  // PenUp
+                    if (isNaN(scr[1]) || isNaN(scr[2])) {
+                        // PenUp
                         nextSymb = symbm;
                     } else {
                         // Chrome has problems with values being too far away.
@@ -1365,10 +1508,10 @@ define([
                         } else {
                             k = 2 * j;
                             context.bezierCurveTo(
-                                (lx + (scr[1] - lx) * 0.333 + f * (k * Math.random() - j)),
-                                (ly + (scr[2] - ly) * 0.333 + f * (k * Math.random() - j)),
-                                (lx + (scr[1] - lx) * 0.666 + f * (k * Math.random() - j)),
-                                (ly + (scr[2] - ly) * 0.666 + f * (k * Math.random() - j)),
+                                lx + (scr[1] - lx) * 0.333 + f * (k * Math.random() - j),
+                                ly + (scr[2] - ly) * 0.333 + f * (k * Math.random() - j),
+                                lx + (scr[1] - lx) * 0.666 + f * (k * Math.random() - j),
+                                ly + (scr[2] - ly) * 0.666 + f * (k * Math.random() - j),
                                 scr[1],
                                 scr[2]
                             );
@@ -1379,14 +1522,16 @@ define([
                     }
                 }
             }
-            context.lineCap = 'round';
+            context.lineCap = "round";
             this._fill(el);
             this._stroke(el);
         },
 
         // documented in AbstractRenderer
         updatePolygonPrim: function (node, el) {
-            var scrCoords, i, j,
+            var scrCoords,
+                i,
+                j,
                 len = el.vertices.length,
                 context = this.context,
                 isReal = true;
@@ -1394,7 +1539,7 @@ define([
             if (len <= 0 || !el.visPropCalc.visible) {
                 return;
             }
-            if (el.elType === 'polygonalchain') {
+            if (el.elType === "polygonalchain") {
                 len++;
             }
 
@@ -1417,27 +1562,27 @@ define([
             context.closePath();
 
             if (isReal) {
-                this._fill(el);    // The edges of a polygon are displayed separately (as segments).
+                this._fill(el); // The edges of a polygon are displayed separately (as segments).
             }
         },
 
         // **************************  Set Attributes *************************
 
         // Already documented in JXG.AbstractRenderer
-        display: function(el, val) {
-             if (el && el.rendNode) {
-                 el.visPropOld.visible = val;
-                 if (val) {
-                     el.rendNode.style.visibility = "inherit";
-                 } else {
-                     el.rendNode.style.visibility = "hidden";
-                 }
-             }
-         },
+        display: function (el, val) {
+            if (el && el.rendNode) {
+                el.visPropOld.visible = val;
+                if (val) {
+                    el.rendNode.style.visibility = "inherit";
+                } else {
+                    el.rendNode.style.visibility = "hidden";
+                }
+            }
+        },
 
         // documented in AbstractRenderer
         show: function (el) {
-            JXG.deprecated('Board.renderer.show()', 'Board.renderer.display()');
+            JXG.deprecated("Board.renderer.show()", "Board.renderer.display()");
 
             if (Type.exists(el.rendNode)) {
                 el.rendNode.style.visibility = "inherit";
@@ -1446,7 +1591,7 @@ define([
 
         // documented in AbstractRenderer
         hide: function (el) {
-            JXG.deprecated('Board.renderer.hide()', 'Board.renderer.display()');
+            JXG.deprecated("Board.renderer.hide()", "Board.renderer.display()");
 
             if (Type.exists(el.rendNode)) {
                 el.rendNode.style.visibility = "hidden";
@@ -1459,7 +1604,7 @@ define([
                 op;
 
             op = Type.evaluate(el.visProp.fillopacity);
-            op = (op > 0) ? op : 0;
+            op = op > 0 ? op : 0;
 
             // col = Type.evaluate(el.visProp.fillcolor);
         },
@@ -1479,7 +1624,10 @@ define([
 
         // documented in AbstractRenderer
         highlight: function (obj) {
-            if (obj.elementClass === Const.OBJECT_CLASS_TEXT && Type.evaluate(obj.visProp.display) === 'html') {
+            if (
+                obj.elementClass === Const.OBJECT_CLASS_TEXT &&
+                Type.evaluate(obj.visProp.display) === "html"
+            ) {
                 this.updateTextStyle(obj, true);
             } else {
                 obj.board.prepareUpdate();
@@ -1492,7 +1640,10 @@ define([
 
         // documented in AbstractRenderer
         noHighlight: function (obj) {
-            if (obj.elementClass === Const.OBJECT_CLASS_TEXT && Type.evaluate(obj.visProp.display) === 'html') {
+            if (
+                obj.elementClass === Const.OBJECT_CLASS_TEXT &&
+                Type.evaluate(obj.visProp.display) === "html"
+            ) {
                 this.updateTextStyle(obj, false);
             } else {
                 obj.board.prepareUpdate();
@@ -1525,26 +1676,26 @@ define([
         // document in AbstractRenderer
         resize: function (w, h) {
             if (this.container) {
-                this.canvasRoot.style.width = parseFloat(w) + 'px';
-                this.canvasRoot.style.height = parseFloat(h) + 'px';
+                this.canvasRoot.style.width = parseFloat(w) + "px";
+                this.canvasRoot.style.height = parseFloat(h) + "px";
 
-                this.canvasRoot.setAttribute('width', (2 * parseFloat(w)) + 'px');
-                this.canvasRoot.setAttribute('height',(2 * parseFloat(h)) + 'px');
+                this.canvasRoot.setAttribute("width", 2 * parseFloat(w) + "px");
+                this.canvasRoot.setAttribute("height", 2 * parseFloat(h) + "px");
             } else {
                 this.canvasRoot.width = 2 * parseFloat(w);
                 this.canvasRoot.height = 2 * parseFloat(h);
             }
-            this.context = this.canvasRoot.getContext('2d');
+            this.context = this.canvasRoot.getContext("2d");
             // The width and height of the canvas is set to twice the CSS values,
-            // followed by an appropiate scaling.
-            // See http://stackoverflow.com/questions/22416462/canvas-element-with-blurred-lines
+            // followed by an appropriate scaling.
+            // See https://stackoverflow.com/questions/22416462/canvas-element-with-blurred-lines
             this.context.scale(2, 2);
         },
 
         removeToInsertLater: function () {
-            return function () {};
+            return function () { };
         }
-    });
+    }
+);
 
-    return JXG.CanvasRenderer;
-});
+export default JXG.CanvasRenderer;
