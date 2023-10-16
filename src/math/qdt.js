@@ -183,8 +183,8 @@ Type.extend(
         subdivide: function () {
             var i,
                 le = this.points.length,
-                mx = this.xlb + (this.xub - this.xlb) / 2,
-                my = this.ylb + (this.yub - this.ylb) / 2;
+                mx = this.xlb + (this.xub - this.xlb) * 0.5,
+                my = this.ylb + (this.yub - this.ylb) * 0.5;
 
             this.northWest = new Mat.Quadtree([this.xlb, this.yub, mx, my], this.config, this);
             this.northEast = new Mat.Quadtree([mx, this.yub, this.xub, my], this.config, this);
