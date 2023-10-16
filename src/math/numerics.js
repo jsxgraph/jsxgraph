@@ -3856,6 +3856,7 @@ Mat.Numerics = {
                 var d, k, ci, cj, ck,
                     x0, y0, x1, y1,
                     den, lbda,
+                    eps = Mat.eps * Mat.eps,
                     huge = 10000,
                     dist = 0,
                     f = i;
@@ -3894,7 +3895,7 @@ Mat.Numerics = {
                     y1 = y1 === -Infinity ? -huge : y1;
                     den = x1 * x1 + y1 * y1;
 
-                    if (den >= Mat.eps) {
+                    if (den > eps) {
                         lbda = (x0 * x1 + y0 * y1) / den;
 
                         if (lbda < 0.0) {
