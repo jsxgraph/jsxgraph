@@ -11,6 +11,7 @@ import "./math/probfuncs";
 import "./math/ia";
 import "./math/extrapolate";
 import "./math/qdt";
+import "./math/bqdt";
 import "./math/numerics";
 import "./math/nlp";
 import "./math/plot";
