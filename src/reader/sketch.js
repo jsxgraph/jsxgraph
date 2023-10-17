@@ -2551,6 +2551,9 @@ import type from '../utils/type';
                                     'return ' + step.src_ids[0] + '.radius(); ' +
                                     '}); ';
                             }
+                            set_str += step.dest_id + '.hasInnerPoints = function() { ' +
+                                'return !(' + step.dest_id + '.fillColor == \'transparent\' || ' + step.dest_id + '.fillColor == \'none\' || ' + step.dest_id + '.fillOpacity == 0); ' +
+                                '}; ';
                             set_str += step.dest_id + '.highlightStrokeWidth = function() { ' +
                                 'return ' + step.dest_id + '.strokeWidth ' + JXG.Options.sketchometry.highlightStrokeWidthOperation + '; ' +
                                 ' };';
