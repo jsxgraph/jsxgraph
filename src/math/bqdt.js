@@ -33,7 +33,6 @@
 /*jslint nomen: true, plusplus: true*/
 
 import Mat from "./math";
-import Geometry from "./geometry";
 import Type from "../utils/type";
 
 /**
@@ -137,7 +136,7 @@ Mat.BoxQuadtree = function (items, depth, capacity, bbox) {
     }
 
     le  = items.length;
-    for (i = 0; i < items.length; i++) {
+    for (i = 0; i < le; i++) {
         it = items[i];
         in_nw = it.xlb <= this.cx && it.yub > this.cy;
         in_sw = it.xlb <= this.cx && it.ylb <= this.cy;

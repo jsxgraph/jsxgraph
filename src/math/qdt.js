@@ -128,7 +128,7 @@ Type.extend(
          * Checks if the given coordinates are inside of the boundaries of the quad tree.
          * The quad tree is open to the left and botton and closed to
          * right and top.
-         * 
+         *
          * @param {Number} x
          * @param {Number} y
          * @returns {Boolean}
@@ -138,7 +138,7 @@ Type.extend(
         },
 
         /**
-         * Insert a new point into this quad tree if it is inside of 
+         * Insert a new point into this quad tree if it is inside of
          * the quad tree's boundaries.
          *
          * @param {JXG.Coords} p
@@ -187,15 +187,14 @@ Type.extend(
          * Subdivide the quad tree.
          */
         subdivide: function () {
-            var i,
-                le = this.points.length,
-                mx = this.xlb + (this.xub - this.xlb) * 0.5,
-                my = this.ylb + (this.yub - this.ylb) * 0.5;
+            var // i, le,
+                cx = this.xlb + (this.xub - this.xlb) * 0.5,
+                cy = this.ylb + (this.yub - this.ylb) * 0.5;
 
-            this.northWest = new Mat.Quadtree([this.xlb, this.yub, mx, my], this.config, this);
-            this.northEast = new Mat.Quadtree([mx, this.yub, this.xub, my], this.config, this);
-            this.southEast = new Mat.Quadtree([this.xlb, my, mx, this.ylb], this.config, this);
-            this.southWest = new Mat.Quadtree([mx, my, this.xub, this.ylb], this.config, this);
+            this.northWest = new Mat.Quadtree([this.xlb, this.yub, cx, cy], this.config, this);
+            this.northEast = new Mat.Quadtree([cx, this.yub, this.xub, cy], this.config, this);
+            this.southEast = new Mat.Quadtree([this.xlb, cy, cx, this.ylb], this.config, this);
+            this.southWest = new Mat.Quadtree([cx, cy, this.xub, this.ylb], this.config, this);
 
             // for (i = 0; i < le; i++) {
             //     if (this.northWest.insert(this.points[i])) { continue; }
@@ -271,7 +270,7 @@ Type.extend(
         },
 
         /**
-         * Check if the quad tree has a point which is inside of a sphere of 
+         * Check if the quad tree has a point which is inside of a sphere of
          * radius tol around [x, y].
          * @param {Number} x
          * @param {Number} y
