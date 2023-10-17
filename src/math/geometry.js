@@ -3329,6 +3329,52 @@ JXG.extend(
         },
 
         /**
+         * Determine the (Euclidean) distance between a point q and a line segment
+         * defined by two points p1 and p2. In case p1 equals p2, the distance to this
+         * point is returned.
+         * 
+         * @param {Array} q Homogeneous coordinates of q
+         * @param {Array} p1 Homogeneous coordinates of p1
+         * @param {Array} p2 Homogeneous coordinates of p2
+         * @returns {Number} Distance of q to line segment [p1, p2]
+         */
+        distPointSegment: function (q, p1, p2) {
+            var x, y, dx, dy, 
+                den, dist_sqr, lbda,
+                eps = Mat.eps * Mat.eps,
+                huge = 1000000;
+
+            // Difference q - p1
+            x = q[1] - p1[1];
+            y = q[2] - p1[2];
+            x = (x === Infinity) ? huge : (x === -Infinity) ? -huge : x;
+            y = (y === Infinity) ? huge : (y === -Infinity) ? -huge : y;
+
+            // Difference p2 - p1
+            dx = p2[1] - p1[1];
+            dy = p2[2] - p1[2];
+            dx = (dx === Infinity) ? huge : (dx === -Infinity) ? -huge : dx;
+            dy = (dy === Infinity) ? huge : (dy === -Infinity) ? -huge : dy;
+
+            // If den==0 then p1 and p2 are identical
+            // In this case the distance to p1 is returned
+            den = dx * dx + dy * dy;
+            if (den > eps) {
+                lbda = (x * dx + y * dy) / den;
+                if (lbda < 0.0) {
+                    lbda = 0.0;
+                } else if (lbda > 1.0) {
+                    lbda = 1.0;
+                }
+                x -= lbda * dx;
+                y -= lbda * dy;
+            }
+            dist_sqr = x * x + y * y;
+
+            return Math.sqrt(dist_sqr);
+        },
+
+        /**
          * Helper function to create curve which displays a Reuleaux polygons.
          * @param {Array} points Array of points which should be the vertices of the Reuleaux polygon. Typically,
          * these point list is the array vertices of a regular polygon.
