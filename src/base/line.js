@@ -1633,7 +1633,8 @@ JXG.createTangent = function (board, parents, attributes) {
                 [
                     function () {
                         var i = Math.floor(p.position),
-                            p1, p2, t, A, B, C, D, dx, dy, d;
+                            p1, p2, t, A, B, C, D, dx, dy, d,
+                            points, le;
 
                         if (c.bezierDegree === 1) {
                             if (i === c.numberPoints - 1) {
@@ -1642,12 +1643,25 @@ JXG.createTangent = function (board, parents, attributes) {
                         } else if (c.bezierDegree === 3) {
                             // i is start of the Bezier segment
                             // t is the position in the Bezier segment
-                            i = Math.floor((p.position * (c.numberPoints - 1)) / 3) * 3;
-                            t = (p.position * (c.numberPoints - 1) - i) / 3;
-                            if (i >= c.numberPoints - 1) {
-                                i = c.numberPoints - 4;
+                            if (c.elType === 'sector') {
+                                points = c.points.slice(3, c.numberPoints - 3);
+                                le = points.length;
+                            } else {
+                                points = c.points;
+                                le = points.length;
+                            }
+                            i = Math.floor((p.position * (le- 1)) / 3) * 3;
+                            t = (p.position * (le - 1) - i) / 3;
+                            if (i >= le - 1) {
+                                i = le - 4;
                                 t = 1;
                             }
+                            // i = Math.floor((p.position * (c.numberPoints - 1)) / 3) * 3;
+                            // t = (p.position * (c.numberPoints - 1) - i) / 3;
+                            // if (i >= c.numberPoints - 1) {
+                            //     i = c.numberPoints - 4;
+                            //     t = 1;
+                            // }
                         } else {
                             return 0;
                         }
@@ -1662,10 +1676,10 @@ JXG.createTangent = function (board, parents, attributes) {
                             p1 = c.points[i].usrCoords;
                             p2 = c.points[i + 1].usrCoords;
                         } else {
-                            A = c.points[i].usrCoords;
-                            B = c.points[i + 1].usrCoords;
-                            C = c.points[i + 2].usrCoords;
-                            D = c.points[i + 3].usrCoords;
+                            A = points[i].usrCoords;
+                            B = points[i + 1].usrCoords;
+                            C = points[i + 2].usrCoords;
+                            D = points[i + 3].usrCoords;
                             dx =
                                 (1 - t) * (1 - t) * (B[1] - A[1]) +
                                 2 * (1 - t) * t * (C[1] - B[1]) +
@@ -1684,7 +1698,8 @@ JXG.createTangent = function (board, parents, attributes) {
                     },
                     function () {
                         var i = Math.floor(p.position),
-                            p1, p2, t, A, B, C, D, dx, dy, d;
+                            p1, p2, t, A, B, C, D, dx, dy, d,
+                            points, le;
 
                         if (c.bezierDegree === 1) {
                             if (i === c.numberPoints - 1) {
@@ -1693,12 +1708,25 @@ JXG.createTangent = function (board, parents, attributes) {
                         } else if (c.bezierDegree === 3) {
                             // i is start of the Bezier segment
                             // t is the position in the Bezier segment
-                            i = Math.floor((p.position * (c.numberPoints - 1)) / 3) * 3;
-                            t = (p.position * (c.numberPoints - 1) - i) / 3;
-                            if (i >= c.numberPoints - 1) {
-                                i = c.numberPoints - 4;
+                            if (c.elType === 'sector') {
+                                points = c.points.slice(3, c.numberPoints - 3);
+                                le = points.length;
+                            } else {
+                                points = c.points;
+                                le = points.length;
+                            }
+                            i = Math.floor((p.position * (le- 1)) / 3) * 3;
+                            t = (p.position * (le - 1) - i) / 3;
+                            if (i >= le - 1) {
+                                i = le - 4;
                                 t = 1;
                             }
+                            // i = Math.floor((p.position * (c.numberPoints - 1)) / 3) * 3;
+                            // t = (p.position * (c.numberPoints - 1) - i) / 3;
+                            // if (i >= c.numberPoints - 1) {
+                            //     i = c.numberPoints - 4;
+                            //     t = 1;
+                            // }
                         } else {
                             return 0;
                         }
@@ -1713,10 +1741,10 @@ JXG.createTangent = function (board, parents, attributes) {
                             p1 = c.points[i].usrCoords;
                             p2 = c.points[i + 1].usrCoords;
                         } else {
-                            A = c.points[i].usrCoords;
-                            B = c.points[i + 1].usrCoords;
-                            C = c.points[i + 2].usrCoords;
-                            D = c.points[i + 3].usrCoords;
+                            A = points[i].usrCoords;
+                            B = points[i + 1].usrCoords;
+                            C = points[i + 2].usrCoords;
+                            D = points[i + 3].usrCoords;
                             dx =
                                 (1 - t) * (1 - t) * (B[1] - A[1]) +
                                 2 * (1 - t) * t * (C[1] - B[1]) +
@@ -1735,7 +1763,9 @@ JXG.createTangent = function (board, parents, attributes) {
                     },
                     function () {
                         var i = Math.floor(p.position),
-                            p1, p2, t, A, B, C, D, dx, dy, d;
+                            p1, p2, t, A, B, C, D, dx, dy, d,
+                            points, le;
+
 
                         if (c.bezierDegree === 1) {
                             if (i === c.numberPoints - 1) {
@@ -1744,12 +1774,25 @@ JXG.createTangent = function (board, parents, attributes) {
                         } else if (c.bezierDegree === 3) {
                             // i is start of the Bezier segment
                             // t is the position in the Bezier segment
-                            i = Math.floor((p.position * (c.numberPoints - 1)) / 3) * 3;
-                            t = (p.position * (c.numberPoints - 1) - i) / 3;
-                            if (i >= c.numberPoints - 1) {
-                                i = c.numberPoints - 4;
+                            if (c.elType === 'sector') {
+                                points = c.points.slice(3, c.numberPoints - 3);
+                                le = points.length;
+                            } else {
+                                points = c.points;
+                                le = points.length;
+                            }
+                            i = Math.floor((p.position * (le- 1)) / 3) * 3;
+                            t = (p.position * (le - 1) - i) / 3;
+                            if (i >= le - 1) {
+                                i = le - 4;
                                 t = 1;
                             }
+                            // i = Math.floor((p.position * (c.numberPoints - 1)) / 3) * 3;
+                            // t = (p.position * (c.numberPoints - 1) - i) / 3;
+                            // if (i >= c.numberPoints - 1) {
+                            //     i = c.numberPoints - 4;
+                            //     t = 1;
+                            // }
                         } else {
                             return 0;
                         }
@@ -1764,10 +1807,10 @@ JXG.createTangent = function (board, parents, attributes) {
                             p1 = c.points[i].usrCoords;
                             p2 = c.points[i + 1].usrCoords;
                         } else {
-                            A = c.points[i].usrCoords;
-                            B = c.points[i + 1].usrCoords;
-                            C = c.points[i + 2].usrCoords;
-                            D = c.points[i + 3].usrCoords;
+                            A = points[i].usrCoords;
+                            B = points[i + 1].usrCoords;
+                            C = points[i + 2].usrCoords;
+                            D = points[i + 3].usrCoords;
                             dx =
                                 (1 - t) * (1 - t) * (B[1] - A[1]) +
                                 2 * (1 - t) * t * (C[1] - B[1]) +
