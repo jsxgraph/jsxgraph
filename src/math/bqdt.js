@@ -61,6 +61,7 @@ Mat.BoxQuadtree = function (depth, capacity, bbox) {
      * Maximum depth of the box quadtree node
      * @name JXG.Math.BoxQuadtree#depth
      * @type Number
+     * @private
      */
     this.depth = depth;
 
@@ -68,6 +69,7 @@ Mat.BoxQuadtree = function (depth, capacity, bbox) {
      * Capacity of the box quadtree node
      * @name JXG.Math.BoxQuadtree#capacity
      * @type Number
+     * @private
      */
     this.capacity = capacity;
 
@@ -76,6 +78,7 @@ Mat.BoxQuadtree = function (depth, capacity, bbox) {
      *
      * @name JXG.Math.BoxQuadtree#items
      * @type Array
+     * @private
      */
     this.items = [];
 
@@ -83,6 +86,7 @@ Mat.BoxQuadtree = function (depth, capacity, bbox) {
      * In a subdivided quadtree this represents the top left subtree.
      * @name JXG.Math.BoxQuadtree#northWest
      * @type JXG.Math.BoxQuadtree
+     * @private
      */
     this.northWest = null;
 
@@ -90,6 +94,7 @@ Mat.BoxQuadtree = function (depth, capacity, bbox) {
      * In a subdivided quadtree this represents the top right subtree.
      * @name JXG.Math.BoxQuadtree#northEast
      * @type JXG.Math.BoxQuadtree
+     * @private
      */
     this.northEast = null;
 
@@ -97,6 +102,7 @@ Mat.BoxQuadtree = function (depth, capacity, bbox) {
      * In a subdivided quadtree this represents the bottom right subtree.
      * @name JXG.Math.BoxQuadtree#southEast
      * @type JXG.Math.BoxQuadtree
+     * @private
      */
     this.southEast = null;
 
@@ -104,6 +110,7 @@ Mat.BoxQuadtree = function (depth, capacity, bbox) {
      * In a subdivided quadtree this represents the bottom left subtree.
      * @name JXG.Math.BoxQuadtree#southWest
      * @type JXG.Math.BoxQuadtree
+     * @private
      */
     this.southWest = null;
 
@@ -112,6 +119,7 @@ Mat.BoxQuadtree = function (depth, capacity, bbox) {
      *
      * @name JXG.Math.BoxQuadtree#bbox
      * @type Array
+     * @private
      */
     this.bbox = null;
 
@@ -120,6 +128,7 @@ Mat.BoxQuadtree = function (depth, capacity, bbox) {
      *
      * @name JXG.Math.BoxQuadtree#cx
      * @type Number
+     * @private
      */
     this.cx = null;
 
@@ -128,6 +137,7 @@ Mat.BoxQuadtree = function (depth, capacity, bbox) {
      *
      * @name JXG.Math.BoxQuadtree#cy
      * @type Number
+     * @private
      */
     this.cy = null;
 
@@ -151,15 +161,15 @@ Type.extend(
          * Insert an array of items into the box quadtree. An item is an object
          * containing at least the properties
          * <ul>
-         *  <li> xlb
-         *  <li> xub
-         *  <li> ylb
-         *  <li> yub
+         *  <li> xlb: lower bound on x
+         *  <li> xub: upper bound on x
+         *  <li> ylb: lower bound on y
+         *  <li> yub: upper bound on y
          * </ul>
          * which define the axis-aligned bounding box (AABB) of that item. Additionally,
          * more properties can be given.
          *
-         * @param {Array} items
+         * @param {Array} items to be inserted
          * @returns {Object} reference to the box quadtree
          */
         insert: function(items) {
@@ -257,7 +267,7 @@ Type.extend(
          * with the given rectangle (AABB). Items may appear multiple times.
          *
          * @param {Array} box AABB of the form [l, t, r, b]
-         * @returns {Array} items
+         * @returns {Array} list of items overlapping with box
          */
         find: function(box) {
             var overlaps = function(item) {
@@ -331,13 +341,16 @@ Type.extend(
          * @returns {Array} containing arrays dataX and dataY
          *
          * @example
+         * 
+         * // qdt contains a BoxQuadtree
+         * 
          * var qdtcurve = board.create('curve', [[], []], { strokeWidth: 1, strokeColor: '#0000ff', strokeOpacity: 0.3 });
          * qdtcurve.updateDataArray = function () {
          *    var ret = qdt.plot();
          *
          *    this.dataX = ret[0];
          *    this.dataY = ret[1];
-         *    console.log(QDT.analyzeTree());
+         *    console.log(qdt.analyzeTree());
          * };
          * board.update();
          */
