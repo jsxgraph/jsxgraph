@@ -36,10 +36,18 @@ import Mat from "./math";
 import Type from "../utils/type";
 
 /**
- * Instantiate a new quad tree.
+ * Instantiate a new box quadtree.
+ * A box quadtree stores AABBs, i.e. axis-aligned bounding boxes.
+ * The box quadtree has four sub-quadtress which maybe null if not needed.
  *
  * @name JXG.Math.BoxQuadtree
  * @exports Mat.BoxQuadtree as JXG.Math.BoxQuadtree
+ *
+ * @param {Number} depth Maximum recursion depth.
+ * @param {Number} capacity Maximum number of items stored in this node.
+ * @param {Array} [bbox] Optional bounding box of the box quadtree. If not given, the bounding box is
+ * determined by the items in the insert method. This will only work correctly if the first
+ * call of insert contains the maximum bounding box.
  *
  * @constructor
  */
@@ -48,40 +56,52 @@ Mat.BoxQuadtree = function (depth, capacity, bbox) {
 
     // console.log("---------------------------------------")
     depth--;
+
+    /**
+     * Maximum depth of the box quadtree node
+     * @name JXG.Math.BoxQuadtree#depth
+     * @type Number
+     */
     this.depth = depth;
+
+    /**
+     * Capacity of the box quadtree node
+     * @name JXG.Math.BoxQuadtree#capacity
+     * @type Number
+     */
     this.capacity = capacity;
 
     /**
      * Item storage.
      *
-     * @nam JXG.Math.BoxQuadtree#items
+     * @name JXG.Math.BoxQuadtree#items
      * @type Array
      */
     this.items = [];
 
     /**
-     * In a subdivided quad tree this represents the top left subtree.
+     * In a subdivided quadtree this represents the top left subtree.
      * @name JXG.Math.BoxQuadtree#northWest
      * @type JXG.Math.BoxQuadtree
      */
     this.northWest = null;
 
     /**
-     * In a subdivided quad tree this represents the top right subtree.
+     * In a subdivided quadtree this represents the top right subtree.
      * @name JXG.Math.BoxQuadtree#northEast
      * @type JXG.Math.BoxQuadtree
      */
     this.northEast = null;
 
     /**
-     * In a subdivided quad tree this represents the bottom right subtree.
+     * In a subdivided quadtree this represents the bottom right subtree.
      * @name JXG.Math.BoxQuadtree#southEast
      * @type JXG.Math.BoxQuadtree
      */
     this.southEast = null;
 
     /**
-     * In a subdivided quad tree this represents the bottom left subtree.
+     * In a subdivided quadtree this represents the bottom left subtree.
      * @name JXG.Math.BoxQuadtree#southWest
      * @type JXG.Math.BoxQuadtree
      */
@@ -127,6 +147,21 @@ Type.extend(
     Mat.BoxQuadtree.prototype,
     /** @lends JXG.Math.BoxQuadtree.prototype */ {
 
+        /**
+         * Insert an array of items into the box quadtree. An item is an object
+         * containing at least the properties
+         * <ul>
+         *  <li> xlb
+         *  <li> xub
+         *  <li> ylb
+         *  <li> yub
+         * </ul>
+         * which define the axis-aligned bounding box (AABB) of that item. Additionally,
+         * more properties can be given.
+         *
+         * @param {Array} items
+         * @returns {Object} reference to the box quadtree
+         */
         insert: function(items) {
             var i, le,
                 l, t, r, b,
@@ -136,7 +171,7 @@ Type.extend(
                 sw_it = [],
                 se_it = [],
                 in_nw, in_ne, in_sw, in_se;
-        
+
             if (this.bbox === null) {
                 // Use bounding box of the supplied items
                 le  = items.length;
@@ -158,15 +193,15 @@ Type.extend(
                 r = this.bbox[2];
                 b = this.bbox[3];
             }
-        
-        
+
+
             if (this.depth === 0 || items.length < this.capacity) {
                 // if (items.length < capacity) {console.log("Capacity sufficient, D=", this.depth); }
                 // if (depth === 0) {console.log("Max depth reached", items.length, this.capacity); }
                 this.items = items;
-                return;
+                return this;
             }
-        
+
             le  = items.length;
             for (i = 0; i < le; i++) {
                 it = items[i];
@@ -174,7 +209,7 @@ Type.extend(
                 in_sw = it.xlb <= this.cx && it.ylb <= this.cy;
                 in_ne = it.xub > this.cx && it.yub > this.cy;
                 in_se = it.xub > this.cx && it.ylb <= this.cy;
-        
+
                 // If it overlaps all 4 quadrants then insert it at the current
                 // depth, otherwise append it to a list to be inserted under every
                 // quadrant that it overlaps.
@@ -187,8 +222,7 @@ Type.extend(
                     if (in_se) { se_it.push(it); }
                 }
             }
-            // console.log("In IT", this.items)
-        
+
             // Create the sub-quadrants, recursively.
             if (nw_it.length > 0) {
                 if (this.northWest === null) {
@@ -214,9 +248,18 @@ Type.extend(
                 }
                 this.southEast.insert(se_it);
             }
+
+            return this;
         },
 
-        hit: function(box) {
+        /**
+         * Find all entries of the box quadtree which have an overlap
+         * with the given rectangle (AABB). Items may appear multiple times.
+         *
+         * @param {Array} box AABB of the form [l, t, r, b]
+         * @returns {Array} items
+         */
+        find: function(box) {
             var overlaps = function(item) {
                     return box[2] >= item.xlb && box[0] <= item.xub &&
                         box[3] <= item.yub && box[1] >= item.ylb;
@@ -232,19 +275,109 @@ Type.extend(
             }
 
             if (this.northWest !== null && box[0] <= this.cx & box[1] >= this.cy) {
-                hits = hits.concat(this.northWest.hit(box));
+                hits = hits.concat(this.northWest.find(box));
             }
             if (this.southWest !== null && box[0] <= this.cx & box[3] <= this.cy) {
-                hits = hits.concat(this.southWest.hit(box));
+                hits = hits.concat(this.southWest.find(box));
             }
             if (this.northEast !== null && box[2] >= this.cx & box[1] >= this.cy) {
-                hits = hits.concat(this.northEast.hit(box));
+                hits = hits.concat(this.northEast.find(box));
             }
             if (this.southEast !== null && box[2] >= this.cx & box[3] <= this.cy) {
-                hits = hits.concat(this.southEast.hit(box));
+                hits = hits.concat(this.southEast.find(box));
             }
 
             return hits;
+        },
+
+        /**
+         * Analyze the box quadtree.
+         *
+         * @returns {Object} data about the box quadtree
+         */
+        analyzeTree: function() {
+            var stats = {
+                    number_items: this.items.length,
+                    depth: 1
+                }, tmp;
+
+            if (this.northWest !== null) {
+                tmp = this.northWest.analyzeTree();
+                stats.number_items += tmp.number_items;
+                stats.depth = Math.max(stats.depth, 1 + tmp.depth);
+            }
+            if (this.southWest !== null) {
+                tmp = this.southWest.analyzeTree();
+                stats.number_items += tmp.number_items;
+                stats.depth = Math.max(stats.depth, 1 + tmp.depth);
+            }
+            if (this.northEast !== null) {
+                tmp = this.northEast.analyzeTree();
+                stats.number_items += tmp.number_items;
+                stats.depth = Math.max(stats.depth, 1 + tmp.depth);
+            }
+            if (this.southEast !== null) {
+                tmp = this.southEast.analyzeTree();
+                stats.number_items += tmp.number_items;
+                stats.depth = Math.max(stats.depth, 1 + tmp.depth);
+            }
+
+            return stats;
+        },
+
+        /**
+         * Generate data to plot the box quadtree as curve using updateDataArray.
+         *
+         * @returns {Array} containing arrays dataX and dataY
+         *
+         * @example
+         * var qdtcurve = board.create('curve', [[], []], { strokeWidth: 1, strokeColor: '#0000ff', strokeOpacity: 0.3 });
+         * qdtcurve.updateDataArray = function () {
+         *    var ret = qdt.plot();
+         *
+         *    this.dataX = ret[0];
+         *    this.dataY = ret[1];
+         *    console.log(QDT.analyzeTree());
+         * };
+         * board.update();
+         */
+        plot: function () {
+            var dataX = [],
+                dataY = [],
+                ret;
+
+            dataX.push(this.bbox[0]); dataY.push(this.bbox[3]);
+            dataX.push(this.bbox[2]); dataY.push(this.bbox[3]);
+            dataX.push(this.bbox[2]); dataY.push(this.bbox[1]);
+            dataX.push(this.bbox[0]); dataY.push(this.bbox[1]);
+            dataX.push(this.bbox[0]); dataY.push(this.bbox[3]);
+            dataX.push(NaN); dataY.push(NaN);
+
+            if (this.northWest !== null) {
+                ret = this.northWest.plotQdt();
+                dataX = dataX.concat(ret[0]);
+                dataY = dataY.concat(ret[1]);
+            }
+
+            if (this.northEast !== null) {
+                ret = this.northEast.plotQdt();
+                dataX = dataX.concat(ret[0]);
+                dataY = dataY.concat(ret[1]);
+            }
+
+            if (this.southEast !== null) {
+                ret = this.southEast.plotQdt();
+                dataX = dataX.concat(ret[0]);
+                dataY = dataY.concat(ret[1]);
+            }
+
+            if (this.southWest !== null) {
+                ret = this.southWest.plotQdt();
+                dataX = dataX.concat(ret[0]);
+                dataY = dataY.concat(ret[1]);
+            }
+
+            return [dataX, dataY];
         }
     }
 );

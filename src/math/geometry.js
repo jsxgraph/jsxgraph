@@ -3332,14 +3332,14 @@ JXG.extend(
          * Determine the (Euclidean) distance between a point q and a line segment
          * defined by two points p1 and p2. In case p1 equals p2, the distance to this
          * point is returned.
-         * 
+         *
          * @param {Array} q Homogeneous coordinates of q
          * @param {Array} p1 Homogeneous coordinates of p1
          * @param {Array} p2 Homogeneous coordinates of p2
          * @returns {Number} Distance of q to line segment [p1, p2]
          */
         distPointSegment: function (q, p1, p2) {
-            var x, y, dx, dy, 
+            var x, y, dx, dy,
                 den, dist_sqr, lbda,
                 eps = Mat.eps * Mat.eps,
                 huge = 1000000;

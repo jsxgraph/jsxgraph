@@ -37,7 +37,7 @@ import Geometry from "./geometry";
 import Type from "../utils/type";
 
 /**
- * Instantiate a new quad tree.
+ * Instantiate a new quadtree.
  *
  * @name JXG.Math.Quadtree
  * @exports Mat.Quadtree as JXG.Math.Quadtree
@@ -55,7 +55,7 @@ Mat.Quadtree = function (bbox, config, parent) {
 
     this.config = {};
     /**
-     * The maximum number of points stored in a quad tree node
+     * The maximum number of points stored in a quadtree node
      * before it is subdivided.
      * @type Number
      * @default 10
@@ -83,7 +83,7 @@ Mat.Quadtree = function (bbox, config, parent) {
     this.yub = bbox[1];
 
     /**
-     * Parent quad tree or null if there is not parent.
+     * Parent quadtree or null if there is not parent.
      *
      * @name JXG.Math.Quadtree#parent
      * @type JXG.Math.Quadtree
@@ -92,28 +92,28 @@ Mat.Quadtree = function (bbox, config, parent) {
     this.parent = parent || null;
 
     /**
-     * In a subdivided quad tree this represents the top left subtree.
+     * In a subdivided quadtree this represents the top left subtree.
      * @name JXG.Math.Quadtree#northWest
      * @type JXG.Math.Quadtree
      */
     this.northWest = null;
 
     /**
-     * In a subdivided quad tree this represents the top right subtree.
+     * In a subdivided quadtree this represents the top right subtree.
      * @name JXG.Math.Quadtree#northEast
      * @type JXG.Math.Quadtree
      */
     this.northEast = null;
 
     /**
-     * In a subdivided quad tree this represents the bottom right subtree.
+     * In a subdivided quadtree this represents the bottom right subtree.
      * @name JXG.Math.Quadtree#southEast
      * @type JXG.Math.Quadtree
      */
     this.southEast = null;
 
     /**
-     * In a subdivided quad tree this represents the bottom left subtree.
+     * In a subdivided quadtree this represents the bottom left subtree.
      * @name JXG.Math.Quadtree#southWest
      * @type JXG.Math.Quadtree
      */
@@ -125,8 +125,8 @@ Type.extend(
     Mat.Quadtree.prototype,
     /** @lends JXG.Math.Quadtree.prototype */ {
         /**
-         * Checks if the given coordinates are inside of the boundaries of the quad tree.
-         * The quad tree is open to the left and botton and closed to
+         * Checks if the given coordinates are inside of the boundaries of the quadtree.
+         * The quadtree is open to the left and botton and closed to
          * right and top.
          *
          * @param {Number} x
@@ -138,8 +138,8 @@ Type.extend(
         },
 
         /**
-         * Insert a new point into this quad tree if it is inside of
-         * the quad tree's boundaries.
+         * Insert a new point into this quadtree if it is inside of
+         * the quadtree's boundaries.
          *
          * @param {JXG.Coords} p
          * @returns {Boolean} true if insert succeeded, false otherwise.
@@ -184,7 +184,7 @@ Type.extend(
         },
 
         /**
-         * Subdivide the quad tree.
+         * Subdivide the quadtree.
          */
         subdivide: function () {
             var // i, le,
@@ -209,9 +209,9 @@ Type.extend(
          * @name JXG.Math.Quadtree#_query
          * @param {Number} x
          * @param {Number} y
-         * @returns {Boolean|JXG.Quadtree} The quad tree if the point is found, false
-         * if none of the quad trees contains the point (i.e. the point is not inside
-         * the root tree's AABB).
+         * @returns {Boolean|JXG.Quadtree} The quadtree if the point is found, false
+         * if none of the quadtrees contains the point (i.e. the point is not inside
+         * the root tree's AABB,i.e. axis-aligned bounding box).
          * @private
          */
         _query: function (x, y) {
@@ -247,13 +247,13 @@ Type.extend(
         },
 
         /**
-         * Retrieve the smallest quad tree that contains the given coordinate pair.
+         * Retrieve the smallest quadtree that contains the given coordinate pair.
          * @name JXG.Math.Quadtree#_query
          * @param {JXG.Coords|Number} xp
          * @param {Number} y
-         * @returns {Boolean|JXG.Quadtree} The quad tree if the point is found, false
-         * if none of the quad trees contains the point (i.e. the point is not inside
-         * the root tree's AABB).
+         * @returns {Boolean|JXG.Quadtree} The quadtree if the point is found, false
+         * if none of the quadtrees contains the point (i.e. the point is not inside
+         * the root tree's AABB (Axis-Aligned Bounding Box)).
          */
         query: function (xp, y) {
             var _x, _y;
@@ -270,7 +270,7 @@ Type.extend(
         },
 
         /**
-         * Check if the quad tree has a point which is inside of a sphere of
+         * Check if the quadtree has a point which is inside of a sphere of
          * radius tol around [x, y].
          * @param {Number} x
          * @param {Number} y
