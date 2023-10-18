@@ -354,25 +354,25 @@ Type.extend(
             dataX.push(NaN); dataY.push(NaN);
 
             if (this.northWest !== null) {
-                ret = this.northWest.plotQdt();
+                ret = this.northWest.plot();
                 dataX = dataX.concat(ret[0]);
                 dataY = dataY.concat(ret[1]);
             }
 
             if (this.northEast !== null) {
-                ret = this.northEast.plotQdt();
+                ret = this.northEast.plot();
                 dataX = dataX.concat(ret[0]);
                 dataY = dataY.concat(ret[1]);
             }
 
             if (this.southEast !== null) {
-                ret = this.southEast.plotQdt();
+                ret = this.southEast.plot();
                 dataX = dataX.concat(ret[0]);
                 dataY = dataY.concat(ret[1]);
             }
 
             if (this.southWest !== null) {
-                ret = this.southWest.plotQdt();
+                ret = this.southWest.plot();
                 dataX = dataX.concat(ret[0]);
                 dataY = dataY.concat(ret[1]);
             }
