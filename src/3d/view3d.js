@@ -240,7 +240,7 @@ JXG.extend(
         // Update 3D-to-2D transformation matrix with the actual
         // elevation and azimuth angles.
 
-        var e, r, a, f, mat, shift;
+        var e, r, a, f, mat2D, shift;
 
         if (
             !Type.exists(this.el_slide) ||
@@ -254,7 +254,7 @@ JXG.extend(
         r = this.r;
         a = this.az_slide.Value();
         f = r * Math.sin(e);
-        mat = [
+        mat2D = [
             [1, 0, 0],
             [0, 1, 0],
             [0, 0, 1]
@@ -285,13 +285,13 @@ JXG.extend(
 
         // Add a second transformation to scale and shift the projection
         // on the board
-        mat[1][1] = this.size[0] / (this.bbox3D[0][1] - this.bbox3D[0][0]); // w / d_x
-        mat[2][2] = this.size[1] / (this.bbox3D[1][1] - this.bbox3D[1][0]); // h / d_y
-        mat[1][0] = this.llftCorner[0] + mat[1][1] * 0.5 * (this.bbox3D[0][1] - this.bbox3D[0][0]); // llft_x
-        mat[2][0] = this.llftCorner[1] + mat[2][2] * 0.5 * (this.bbox3D[1][1] - this.bbox3D[1][0]); // llft_y
+        mat2D[1][1] = this.size[0] / (this.bbox3D[0][1] - this.bbox3D[0][0]); // w / d_x
+        mat2D[2][2] = this.size[1] / (this.bbox3D[1][1] - this.bbox3D[1][0]); // h / d_y
+        mat2D[1][0] = this.llftCorner[0] + mat2D[1][1] * 0.5 * (this.bbox3D[0][1] - this.bbox3D[0][0]); // llft_x
+        mat2D[2][0] = this.llftCorner[1] + mat2D[2][2] * 0.5 * (this.bbox3D[1][1] - this.bbox3D[1][0]); // llft_y
 
         // Combine the two projections
-        this.matrix3D = Mat.matMatMult(mat,
+        this.matrix3D = Mat.matMatMult(mat2D,
             Mat.matMatMult(this.matrix3D, shift)
         );
 
