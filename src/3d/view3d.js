@@ -292,9 +292,7 @@ JXG.extend(
 
         // Combine the two projections
         this.matrix3D = Mat.matMatMult(mat,
-            // Mat.matMatMult(shift2,
-                Mat.matMatMult(this.matrix3D, shift)
-            //)
+            Mat.matMatMult(this.matrix3D, shift)
         );
 
         return this;
