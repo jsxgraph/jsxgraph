@@ -46,7 +46,10 @@ ZIPFLAGS=-r
 VERSION=$(shell grep -o '"version": "[^"]*' package.json | grep -o '[^"]*$$')
 
 # List of all included JavaScript files - required for docs, linters, and to build the readers
-FILELIST=$(shell cat src/index.js | awk '/import/ {if (match($$0,/"\.(.+)"/,m)) print "src"m[1]".js" }')
+# Double quotes:
+# FILELIST=$(shell cat src/index.js | awk '/import/ {if (match($$0,/"\.(.+)"/,m)) print "src"m[1]".js" }')
+# Single quotes:
+FILELIST=$(shell cat src/index.js | awk '/import/ {if (match($$0,/\x27\.(.+)\x27/,m)) print "src"m[1]".js" }')
 
 # Lintlist - jessiecode.js is developed externally (github:jsxgraph/jessiecode) and won't be linted in here
 LINTLIST=$(shell echo $(FILELIST) | sed 's/src\/parser\/jessiecode\.js//')

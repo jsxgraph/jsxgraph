@@ -182,6 +182,7 @@ Type.extend(
                 se_it = [],
                 in_nw, in_ne, in_sw, in_se;
 
+
             if (this.bbox === null) {
                 // Use bounding box of the supplied items
                 le  = items.length;
@@ -205,10 +206,13 @@ Type.extend(
             }
 
 
-            if (this.depth === 0 || items.length < this.capacity) {
-                // if (items.length < capacity) {console.log("Capacity sufficient, D=", this.depth); }
+            if (this.depth === 0 || this.items.length + items.length < this.capacity) {
+                // if (items.length + items.length < this.capacity) {
+                //     console.log("Capacity sufficient, D=", this.depth, this.items.length, items.length); 
+                // }
                 // if (depth === 0) {console.log("Max depth reached", items.length, this.capacity); }
-                this.items = items;
+
+                this.items = this.items.concat(items);
                 return this;
             }
 
@@ -231,6 +235,87 @@ Type.extend(
                     if (in_ne) { ne_it.push(it); }
                     if (in_se) { se_it.push(it); }
                 }
+            }
+
+            // Create the sub-quadrants, recursively.
+            if (nw_it.length > 0) {
+                if (this.northWest === null) {
+                    this.northWest = new JXG.Math.BoxQuadtree(this.depth, this.capacity, [l, t, this.cx, this.cy]);
+                }
+                this.northWest.insert(nw_it);
+            }
+            if (sw_it.length > 0) {
+                if (this.southWest === null) {
+                    this.southWest = new JXG.Math.BoxQuadtree(this.depth, this.capacity, [l, this.cy, this.cx, b]);
+                }
+                this.southWest.insert(sw_it);
+            }
+            if (ne_it.length > 0) {
+                if (this.northEast === null) {
+                    this.northEast = new JXG.Math.BoxQuadtree(this.depth, this.capacity, [this.cx, t, r, this.cy]);
+                }
+                this.northEast.insert(ne_it);
+            }
+            if (se_it.length > 0) {
+                if (this.southEast === null) {
+                    this.southEast = new JXG.Math.BoxQuadtree(this.depth, this.capacity, [this.cx, this.cy, r, b]);
+                }
+                this.southEast.insert(se_it);
+            }
+
+            return this;
+        },
+
+        insertItem: function(it) {
+            var l, t, r, b,
+                nw_it = [],
+                ne_it = [],
+                sw_it = [],
+                se_it = [],
+                in_nw, in_ne, in_sw, in_se;
+
+
+            if (this.bbox === null) {
+                // Use bounding box of the supplied items
+                l = b = Infinity;
+                r = t = -Infinity;
+
+                l = (it.xlb < l) ? it.xlb : l;
+                t = (it.yub > t) ? it.yub : t;
+                r = (it.xub > r) ? it.xub : r;
+                b = (it.ylb < b) ? it.ylb : b;
+
+                this.cx = (l + r) * 0.5;
+                this.cy = (t + b) * 0.5;
+                this.bbox = [l, t, r, b];
+            } else {
+                l = this.bbox[0];
+                t = this.bbox[1];
+                r = this.bbox[2];
+                b = this.bbox[3];
+            }
+
+
+            if (this.depth === 0 || this.items.length + 1 < this.capacity) {
+                this.items.push(it);
+                return this;
+            }
+
+            in_nw = it.xlb <= this.cx && it.yub > this.cy;
+            in_sw = it.xlb <= this.cx && it.ylb <= this.cy;
+            in_ne = it.xub > this.cx && it.yub > this.cy;
+            in_se = it.xub > this.cx && it.ylb <= this.cy;
+
+            // If it overlaps all 4 quadrants then insert it at the current
+            // depth, otherwise append it to a list to be inserted under every
+            // quadrant that it overlaps.
+            if (in_nw && in_ne && in_se && in_sw) {
+                this.items.push(it);
+            } else {
+                if (in_nw) { nw_it.push(it); }
+                if (in_sw) { sw_it.push(it); }
+                if (in_ne) { ne_it.push(it); }
+                if (in_se) { se_it.push(it); }
             }
 
             // Create the sub-quadrants, recursively.
@@ -341,9 +426,9 @@ Type.extend(
          * @returns {Array} containing arrays dataX and dataY
          *
          * @example
-         * 
+         *
          * // qdt contains a BoxQuadtree
-         * 
+         *
          * var qdtcurve = board.create('curve', [[], []], { strokeWidth: 1, strokeColor: '#0000ff', strokeOpacity: 0.3 });
          * qdtcurve.updateDataArray = function () {
          *    var ret = qdt.plot();
