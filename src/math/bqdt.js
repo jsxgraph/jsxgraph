@@ -205,7 +205,6 @@ Type.extend(
                 b = this.bbox[3];
             }
 
-
             if (this.depth === 0 || this.items.length + items.length < this.capacity) {
                 // if (items.length + items.length < this.capacity) {
                 //     console.log("Capacity sufficient, D=", this.depth, this.items.length, items.length);
@@ -243,6 +242,22 @@ Type.extend(
             return this;
         },
 
+        /**
+         * Insert an item into the box quadtree, where an item is an object
+         * containing at least the properties
+         *
+         * <ul>
+         *  <li> xlb: lower bound on x
+         *  <li> xub: upper bound on x
+         *  <li> ylb: lower bound on y
+         *  <li> yub: upper bound on y
+         * </ul>
+         * which define the axis-aligned bounding box (AABB) of that item. Additionally,
+         * more properties can be given.
+         *
+         * @param {Object} it Item to be inserted
+         * @returns {Object} reference to the box quadtree
+         */
         insertItem: function(it) {
             var l, t, r, b,
                 nw_it = [],
