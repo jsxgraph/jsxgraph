@@ -208,7 +208,7 @@ Type.extend(
 
             if (this.depth === 0 || this.items.length + items.length < this.capacity) {
                 // if (items.length + items.length < this.capacity) {
-                //     console.log("Capacity sufficient, D=", this.depth, this.items.length, items.length); 
+                //     console.log("Capacity sufficient, D=", this.depth, this.items.length, items.length);
                 // }
                 // if (depth === 0) {console.log("Max depth reached", items.length, this.capacity); }
 
@@ -238,30 +238,7 @@ Type.extend(
             }
 
             // Create the sub-quadrants, recursively.
-            if (nw_it.length > 0) {
-                if (this.northWest === null) {
-                    this.northWest = new JXG.Math.BoxQuadtree(this.depth, this.capacity, [l, t, this.cx, this.cy]);
-                }
-                this.northWest.insert(nw_it);
-            }
-            if (sw_it.length > 0) {
-                if (this.southWest === null) {
-                    this.southWest = new JXG.Math.BoxQuadtree(this.depth, this.capacity, [l, this.cy, this.cx, b]);
-                }
-                this.southWest.insert(sw_it);
-            }
-            if (ne_it.length > 0) {
-                if (this.northEast === null) {
-                    this.northEast = new JXG.Math.BoxQuadtree(this.depth, this.capacity, [this.cx, t, r, this.cy]);
-                }
-                this.northEast.insert(ne_it);
-            }
-            if (se_it.length > 0) {
-                if (this.southEast === null) {
-                    this.southEast = new JXG.Math.BoxQuadtree(this.depth, this.capacity, [this.cx, this.cy, r, b]);
-                }
-                this.southEast.insert(se_it);
-            }
+            this.subdivide(nw_it, sw_it, ne_it, se_it, l, t, r, b);
 
             return this;
         },
@@ -295,7 +272,6 @@ Type.extend(
                 b = this.bbox[3];
             }
 
-
             if (this.depth === 0 || this.items.length + 1 < this.capacity) {
                 this.items.push(it);
                 return this;
@@ -319,6 +295,25 @@ Type.extend(
             }
 
             // Create the sub-quadrants, recursively.
+            this.subdivide(nw_it, sw_it, ne_it, se_it, l, t, r, b);
+
+            return this;
+        },
+
+        /**
+         * Create the sub-quadrants if necessary, recursively
+         * @param {Array} nw_it list of items for northWest subtree
+         * @param {Array} sw_it list of items for southWest subtree
+         * @param {Array} ne_it list of items for northEast subtree
+         * @param {Array} se_it list of items for southEast subtree
+         * @param {Number} l bounding box left
+         * @param {Number} t bounding box top
+         * @param {Number} r bounding box right
+         * @param {Number} b bounding box bottom
+         * @returns {Object} reference to the box quadtree
+         * @private
+         */
+        subdivide: function(nw_it, sw_it, ne_it, se_it, l, t, r, b) {
             if (nw_it.length > 0) {
                 if (this.northWest === null) {
                     this.northWest = new JXG.Math.BoxQuadtree(this.depth, this.capacity, [l, t, this.cx, this.cy]);
