@@ -598,9 +598,9 @@ JXG.extend(
             // on the same horizontal line.
             ps.sort(function (a, b) {
                 var rad1 =
-                        a[2] === ll[2] && a[1] === ll[1]
-                            ? -Infinity
-                            : Math.atan2(a[2] - ll[2], a[1] - ll[1]),
+                    a[2] === ll[2] && a[1] === ll[1]
+                        ? -Infinity
+                        : Math.atan2(a[2] - ll[2], a[1] - ll[1]),
                     rad2 =
                         b[2] === ll[2] && b[1] === ll[1]
                             ? -Infinity
@@ -978,8 +978,8 @@ JXG.extend(
                     if (
                         Math.abs(
                             point1.distance(Const.COORDS_BY_USER, intersect1) +
-                                intersect1.distance(Const.COORDS_BY_USER, point2) -
-                                distP1P2
+                            intersect1.distance(Const.COORDS_BY_USER, point2) -
+                            distP1P2
                         ) > Mat.eps
                     ) {
                         return;
@@ -988,8 +988,8 @@ JXG.extend(
                     if (
                         Math.abs(
                             point1.distance(Const.COORDS_BY_USER, intersect2) +
-                                intersect2.distance(Const.COORDS_BY_USER, point2) -
-                                distP1P2
+                            intersect2.distance(Const.COORDS_BY_USER, point2) -
+                            distP1P2
                         ) > Mat.eps
                     ) {
                         return;
@@ -1364,9 +1364,9 @@ JXG.extend(
                 if (
                     vi.scrCoords[2] > y !== vj.scrCoords[2] > y &&
                     x <
-                        ((vj.scrCoords[1] - vi.scrCoords[1]) * (y - vi.scrCoords[2])) /
-                            (vj.scrCoords[2] - vi.scrCoords[2]) +
-                            vi.scrCoords[1]
+                    ((vj.scrCoords[1] - vi.scrCoords[1]) * (y - vi.scrCoords[2])) /
+                    (vj.scrCoords[2] - vi.scrCoords[2]) +
+                    vi.scrCoords[1]
                 ) {
                     isIn = !isIn;
                 }
@@ -1401,12 +1401,12 @@ JXG.extend(
 
             el1_isArcType =
                 el1.elementClass === Const.OBJECT_CLASS_CURVE &&
-                (el1.type === Const.OBJECT_TYPE_ARC || el1.type === Const.OBJECT_TYPE_SECTOR)
+                    (el1.type === Const.OBJECT_TYPE_ARC || el1.type === Const.OBJECT_TYPE_SECTOR)
                     ? true
                     : false;
             el2_isArcType =
                 el2.elementClass === Const.OBJECT_CLASS_CURVE &&
-                (el2.type === Const.OBJECT_TYPE_ARC || el2.type === Const.OBJECT_TYPE_SECTOR)
+                    (el2.type === Const.OBJECT_TYPE_ARC || el2.type === Const.OBJECT_TYPE_SECTOR)
                     ? true
                     : false;
 
@@ -1783,15 +1783,15 @@ JXG.extend(
 
                 return Type.evaluate(i) === 0
                     ? new Coords(
-                          Const.COORDS_BY_USER,
-                          [-t[0] * -n[1] - d * n[0], -t[0] * n[0] - d * n[1]],
-                          board
-                      )
+                        Const.COORDS_BY_USER,
+                        [-t[0] * -n[1] - d * n[0], -t[0] * n[0] - d * n[1]],
+                        board
+                    )
                     : new Coords(
-                          Const.COORDS_BY_USER,
-                          [-t[1] * -n[1] - d * n[0], -t[1] * n[0] - d * n[1]],
-                          board
-                      );
+                        Const.COORDS_BY_USER,
+                        [-t[1] * -n[1] - d * n[0], -t[1] * n[0] - d * n[1]],
+                        board
+                    );
             }
 
             return new Coords(Const.COORDS_BY_USER, [0, 0, 0], board);
@@ -2252,7 +2252,7 @@ JXG.extend(
             if (
                 len > 0 &&
                 this.distance(C[0].coords.usrCoords, C[len - 1].coords.usrCoords, 3) <
-                    Mat.eps * Mat.eps
+                Mat.eps * Mat.eps
             ) {
                 C.pop();
             }
@@ -2505,16 +2505,10 @@ JXG.extend(
          * @param {Boolean} testSegment Test if intersection has to be inside of the segment or somewhere on the line defined by the segment
          */
         _bezierLineMeetSubdivision: function (red, blue, level, testSegment) {
-            var bbb,
-                bbr,
-                ar,
-                r0,
-                r1,
+            var bbb, bbr, ar,
+                r0, r1,
                 m,
-                p0,
-                p1,
-                q0,
-                q1,
+                p0, p1, q0, q1,
                 L = [],
                 maxLev = 5; // Maximum recursion level
 
@@ -2603,12 +2597,9 @@ JXG.extend(
          * @returns {Array} The homogeneous coordinates of the nr-th intersection point.
          */
         meetBezierCurveRedBlueSegments: function (red, blue, nr) {
-            var p,
-                i,
-                j,
-                k,
+            var p, i, j, k,
                 n = Type.evaluate(nr),
-                po,
+                po, tmp,
                 redArr,
                 blueArr,
                 bbr,
@@ -2616,13 +2607,20 @@ JXG.extend(
                 intersections,
                 startRed = 0,
                 startBlue = 0,
-                lenBlue = blue.numberPoints,
-                lenRed = red.numberPoints,
+                lenBlue, lenRed,
                 L = [];
 
-            if (lenBlue < blue.bezierDegree + 1 || lenRed < red.bezierDegree + 1) {
+            if (blue.numberPoints < blue.bezierDegree + 1 || red.numberPoints < red.bezierDegree + 1) {
                 return [0, NaN, NaN];
             }
+            if (red.bezierDegree === 1 && blue.bezierDegree === 3) {
+                tmp = red;
+                red = blue;
+                blue = tmp;
+            }
+
+            lenBlue = blue.numberPoints;
+            lenRed = red.numberPoints;
             lenBlue -= blue.bezierDegree;
             lenRed -= red.bezierDegree;
 
