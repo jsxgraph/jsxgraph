@@ -3892,10 +3892,10 @@ Mat.Numerics = {
             y, y0, y1, y2, y3, yb,
             z0, z1, z2,
             a, b, c, x,
-            m = 10000.0,
+            m = 10000000.0,
             t = Mat.eps, // * Mat.eps,
             e = Mat.eps * Mat.eps,
-            machep = Mat.eps * Mat.eps;
+            machep = Mat.eps * Mat.eps * Mat.eps;
 
         a = x0[0];
         b = x0[1];
