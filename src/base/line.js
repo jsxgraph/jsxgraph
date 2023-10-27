@@ -140,7 +140,8 @@ JXG.Line = function (board, p1, p2, attributes) {
         getAngle: "getAngle",
         Slope: "Slope",
         L: "L",
-        length: "L"
+        length: "L",
+        setFixedLength: "setFixedLength"
     });
 };
 
@@ -891,6 +892,22 @@ JXG.extend(
          */
         L: function () {
             return this.point1.Dist(this.point2);
+        },
+
+        /**
+         * Set a new fixed length, then update the board.
+         * @param {String|Number|function} l A string, function or number describing the new length.
+         * @returns {JXG.Line} Reference to this line
+         */
+        setFixedLength: function (l) {
+            if(!this.hasFixedLength) {
+                return this;
+            }
+
+            this.fixedLength = Type.createFunction(l, this.board, null, true);
+            this.board.update();
+
+            return this;
         },
 
         /**
