@@ -1359,7 +1359,7 @@ JXG.createSegment = function (board, parents, attributes) {
                 return parents[2];
             };
         } else if (Type.isFunction(parents[2])) {
-            el.fixedLength = parents[2];
+            el.fixedLength = Type.createFunction(parents[2], this.board, null, true);
         } else {
             throw new Error(
                 "JSXGraph: Can't create segment with third parent type '" +
