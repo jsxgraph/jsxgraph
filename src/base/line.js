@@ -140,7 +140,8 @@ JXG.Line = function (board, p1, p2, attributes) {
         getAngle: "getAngle",
         Slope: "Slope",
         L: "L",
-        length: "L"
+        length: "L",
+        setFixedLength: "setFixedLength"
     });
 };
 
@@ -894,6 +895,22 @@ JXG.extend(
         },
 
         /**
+         * Set a new fixed length, then update the board.
+         * @param {String|Number|function} l A string, function or number describing the new length.
+         * @returns {JXG.Line} Reference to this line
+         */
+        setFixedLength: function (l) {
+            if(!this.hasFixedLength) {
+                return this;
+            }
+
+            this.fixedLength = Type.createFunction(l, this.board, null, true);
+            this.board.update();
+
+            return this;
+        },
+
+        /**
          * Treat the element  as a parametric curve
          * @private
          */
@@ -1360,7 +1377,7 @@ JXG.createSegment = function (board, parents, attributes) {
                 return parents[2];
             };
         } else if (Type.isFunction(parents[2])) {
-            el.fixedLength = parents[2];
+            el.fixedLength = Type.createFunction(parents[2], this.board, null, true);
         } else {
             throw new Error(
                 "JSXGraph: Can't create segment with third parent type '" +
