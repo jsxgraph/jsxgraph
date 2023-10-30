@@ -309,7 +309,7 @@ JXG.extend(
          * @private
          */
         updateSegmentFixedLength: function () {
-            var d, dnew, d1, d2, drag1, drag2, x, y;
+            var d, d_new, d1, d2, drag1, drag2, x, y;
 
             if (!this.hasFixedLength) {
                 return this;
@@ -318,7 +318,8 @@ JXG.extend(
             // Compute the actual length of the segment
             d = this.point1.Dist(this.point2);
             // Determine the length the segment ought to have
-            dnew = this.fixedLength();
+            d_new = Math.abs(this.fixedLength());
+
             // Distances between the two points and their respective
             // position before the update
             d1 = this.fixedLengthOldCoords[0].distance(
@@ -331,7 +332,7 @@ JXG.extend(
             );
 
             // If the position of the points or the fixed length function has been changed we have to work.
-            if (d1 > Mat.eps || d2 > Mat.eps || d !== dnew) {
+            if (d1 > Mat.eps || d2 > Mat.eps || d !== d_new) {
                 drag1 =
                     this.point1.isDraggable &&
                     this.point1.type !== Const.OBJECT_TYPE_GLIDER &&
@@ -348,14 +349,14 @@ JXG.extend(
                 if (d > Mat.eps) {
                     if ((d1 > d2 && drag2) || (d1 <= d2 && drag2 && !drag1)) {
                         this.point2.setPositionDirectly(Const.COORDS_BY_USER, [
-                            this.point1.X() + ((this.point2.X() - this.point1.X()) * dnew) / d,
-                            this.point1.Y() + ((this.point2.Y() - this.point1.Y()) * dnew) / d
+                            this.point1.X() + ((this.point2.X() - this.point1.X()) * d_new) / d,
+                            this.point1.Y() + ((this.point2.Y() - this.point1.Y()) * d_new) / d
                         ]);
                         this.point2.fullUpdate();
                     } else if ((d1 <= d2 && drag1) || (d1 > d2 && drag1 && !drag2)) {
                         this.point1.setPositionDirectly(Const.COORDS_BY_USER, [
-                            this.point2.X() + ((this.point1.X() - this.point2.X()) * dnew) / d,
-                            this.point2.Y() + ((this.point1.Y() - this.point2.Y()) * dnew) / d
+                            this.point2.X() + ((this.point1.X() - this.point2.X()) * d_new) / d,
+                            this.point2.Y() + ((this.point1.Y() - this.point2.Y()) * d_new) / d
                         ]);
                         this.point1.fullUpdate();
                     }
@@ -368,14 +369,14 @@ JXG.extend(
 
                     if (drag2) {
                         this.point2.setPositionDirectly(Const.COORDS_BY_USER, [
-                            this.point1.X() + (x * dnew) / d,
-                            this.point1.Y() + (y * dnew) / d
+                            this.point1.X() + (x * d_new) / d,
+                            this.point1.Y() + (y * d_new) / d
                         ]);
                         this.point2.fullUpdate();
                     } else if (drag1) {
                         this.point1.setPositionDirectly(Const.COORDS_BY_USER, [
-                            this.point2.X() + (x * dnew) / d,
-                            this.point2.Y() + (y * dnew) / d
+                            this.point2.X() + (x * d_new) / d,
+                            this.point2.Y() + (y * d_new) / d
                         ]);
                         this.point1.fullUpdate();
                     }
@@ -1318,8 +1319,8 @@ JXG.registerElement("line", JXG.createLine);
  * @param {JXG.Point,array_JXG.Point,array} point1,point2 Parent elements can be two elements either of type {@link JXG.Point}
  * or array of numbers describing the
  * coordinates of a point. In the latter case the point will be constructed automatically as a fixed invisible point.
- * @param {number,function} length (optional) The points are adapted - if possible - such that their distance
- * has this value.
+ * @param {number,function} [length] The points are adapted - if possible - such that their distance
+ * is equal to the absolute value of this number.  
  * @see Line
  * @example
  * // Create a segment providing two points.
