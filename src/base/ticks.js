@@ -374,8 +374,8 @@ JXG.extend(
             if (Type.evaluate(this.visProp.type) === "polar") {
                 bb = this.board.getBoundingBox();
                 r_max = Math.max(
-                    Math.sqrt(bb[0] * bb[0] + bb[1] * bb[1]),
-                    Math.sqrt(bb[2] * bb[2] + bb[3] * bb[3])
+                    Mat.hypot(bb[0], bb[1]),
+                    Mat.hypot(bb[2], bb[3])
                 );
                 b.upper = r_max;
             }
@@ -443,10 +443,7 @@ JXG.extend(
             this.dy = this.dyMaj;
 
             // After this, the length of the vector (dxMaj, dyMaj) in screen coordinates is equal to distMaj pixel.
-            d = Math.sqrt(
-                this.dxMaj * this.dxMaj * this.board.unitX * this.board.unitX +
-                this.dyMaj * this.dyMaj * this.board.unitY * this.board.unitY
-            );
+            d = Mat.hypot(this.dxMaj * this.board.unitX, this.dyMaj * this.board.unitY);
             this.dxMaj *= (distMaj / d) * this.board.unitX;
             this.dyMaj *= (distMaj / d) * this.board.unitY;
             this.dxMin *= (distMin / d) * this.board.unitX;
@@ -825,7 +822,7 @@ JXG.extend(
                 d = this.getXandYdeltas();
                 d.x *= this.board.unitX;
                 d.y *= this.board.unitY;
-                minDist /= Math.sqrt(d.x * d.x + d.y * d.y);
+                minDist /= Mat.hypot(d.x, d.y);
                 minDist *= (ev_minti + 1);
 
                 // Determine minimal delta to fulfill the minTicksDistance constraint
@@ -1166,10 +1163,10 @@ JXG.extend(
 
                 // usrCoords: Test if 'circle' is inside of the canvas
                 c = coords.usrCoords;
-                r = Math.sqrt(c[1] * c[1] + c[2] * c[2]);
+                r = Mat.hypot(c[1], c[2]);
                 r_max = Math.max(
-                    Math.sqrt(bb[0] * bb[0] + bb[1] * bb[1]),
-                    Math.sqrt(bb[2] * bb[2] + bb[3] * bb[3])
+                    Mat.hypot(bb[0], bb[1]),
+                    Mat.hypot(bb[2], bb[3])
                 );
 
                 if (r < r_max) {

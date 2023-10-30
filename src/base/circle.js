@@ -42,6 +42,7 @@ import JXG from "../jxg";
 import GeometryElement from "./element";
 import Coords from "./coords";
 import Const from "./constants";
+import Mat from "../math/math";
 import GeonextParser from "../parser/geonext";
 import Type from "../utils/type";
 
@@ -224,7 +225,7 @@ JXG.extend(
             }
             dx = mp[1] - p.usrCoords[1];
             dy = mp[2] - p.usrCoords[2];
-            dist = Math.sqrt(dx * dx + dy * dy);
+            dist = Mat.hypot(dx, dy);
 
             // We have to use usrCoords, since Radius is available in usrCoords only.
             prec += Type.evaluate(this.visProp.strokewidth) * 0.5;

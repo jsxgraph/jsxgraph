@@ -1263,7 +1263,7 @@ JXG.createNormal = function (board, parents, attributes) {
                                 (1 - t) * (1 - t) * (B[2] - A[2]) +
                                 2 * (1 - t) * t * (C[2] - B[2]) +
                                 t * t * (D[2] - C[2]);
-                            d = Math.sqrt(dx * dx + dy * dy);
+                            d = Mat.hypot(dx, dy);
                             dx /= d;
                             dy /= d;
                             p1 = p.coords.usrCoords;
@@ -1319,7 +1319,7 @@ JXG.createNormal = function (board, parents, attributes) {
                                 (1 - t) * (1 - t) * (B[2] - A[2]) +
                                 2 * (1 - t) * t * (C[2] - B[2]) +
                                 t * t * (D[2] - C[2]);
-                            d = Math.sqrt(dx * dx + dy * dy);
+                            d = Mat.hypot(dx, dy);
                             dx /= d;
                             dy /= d;
                             p1 = p.coords.usrCoords;
@@ -1376,7 +1376,7 @@ JXG.createNormal = function (board, parents, attributes) {
                                 (1 - t) * (1 - t) * (B[2] - A[2]) +
                                 2 * (1 - t) * t * (C[2] - B[2]) +
                                 t * t * (D[2] - C[2]);
-                            d = Math.sqrt(dx * dx + dy * dy);
+                            d = Mat.hypot(dx, dy);
                             dx /= d;
                             dy /= d;
                             p1 = p.coords.usrCoords;
@@ -1668,32 +1668,20 @@ JXG.createAngularBisectorsOfTwoLines = function (board, parents, attributes) {
         "line",
         [
             function () {
-                var d1 = Math.sqrt(
-                        l1.stdform[1] * l1.stdform[1] + l1.stdform[2] * l1.stdform[2]
-                    ),
-                    d2 = Math.sqrt(
-                        l2.stdform[1] * l2.stdform[1] + l2.stdform[2] * l2.stdform[2]
-                    );
+                var d1 = Mat.hypot(l1.stdform[1], l1.stdform[2]),
+                    d2 = Mat.hypot(l2.stdform[1], l2.stdform[2]);
 
                 return l1.stdform[0] / d1 - l2.stdform[0] / d2;
             },
             function () {
-                var d1 = Math.sqrt(
-                        l1.stdform[1] * l1.stdform[1] + l1.stdform[2] * l1.stdform[2]
-                    ),
-                    d2 = Math.sqrt(
-                        l2.stdform[1] * l2.stdform[1] + l2.stdform[2] * l2.stdform[2]
-                    );
+                var d1 = Mat.hypot(l1.stdform[1], l1.stdform[2]),
+                    d2 = Mat.hypot(l2.stdform[1], l2.stdform[2]);
 
                 return l1.stdform[1] / d1 - l2.stdform[1] / d2;
             },
             function () {
-                var d1 = Math.sqrt(
-                        l1.stdform[1] * l1.stdform[1] + l1.stdform[2] * l1.stdform[2]
-                    ),
-                    d2 = Math.sqrt(
-                        l2.stdform[1] * l2.stdform[1] + l2.stdform[2] * l2.stdform[2]
-                    );
+                var d1 = Mat.hypot(l1.stdform[1], l1.stdform[2]),
+                    d2 = Mat.hypot(l2.stdform[1], l2.stdform[2]);
 
                 return l1.stdform[2] / d1 - l2.stdform[2] / d2;
             }
@@ -1709,32 +1697,20 @@ JXG.createAngularBisectorsOfTwoLines = function (board, parents, attributes) {
         "line",
         [
             function () {
-                var d1 = Math.sqrt(
-                        l1.stdform[1] * l1.stdform[1] + l1.stdform[2] * l1.stdform[2]
-                    ),
-                    d2 = Math.sqrt(
-                        l2.stdform[1] * l2.stdform[1] + l2.stdform[2] * l2.stdform[2]
-                    );
+                var d1 = Mat.hypot(l1.stdform[1], l1.stdform[2]),
+                    d2 = Mat.hypot(l2.stdform[1], l2.stdform[2]);
 
                 return l1.stdform[0] / d1 + l2.stdform[0] / d2;
             },
             function () {
-                var d1 = Math.sqrt(
-                        l1.stdform[1] * l1.stdform[1] + l1.stdform[2] * l1.stdform[2]
-                    ),
-                    d2 = Math.sqrt(
-                        l2.stdform[1] * l2.stdform[1] + l2.stdform[2] * l2.stdform[2]
-                    );
+                var d1 = Mat.hypot(l1.stdform[1], l1.stdform[2]),
+                    d2 = Mat.hypot(l2.stdform[1], l2.stdform[2]);
 
                 return l1.stdform[1] / d1 + l2.stdform[1] / d2;
             },
             function () {
-                var d1 = Math.sqrt(
-                        l1.stdform[1] * l1.stdform[1] + l1.stdform[2] * l1.stdform[2]
-                    ),
-                    d2 = Math.sqrt(
-                        l2.stdform[1] * l2.stdform[1] + l2.stdform[2] * l2.stdform[2]
-                    );
+                var d1 = Mat.hypot(l1.stdform[1], l1.stdform[2]),
+                    d2 = Mat.hypot(l2.stdform[1], l2.stdform[2]);
 
                 return l1.stdform[2] / d1 + l2.stdform[2] / d2;
             }
@@ -1997,15 +1973,9 @@ JXG.createIncenter = function (board, parents, attributes) {
                 function () {
                     var a, b, c;
 
-                    a = Math.sqrt(
-                        (B.X() - C.X()) * (B.X() - C.X()) + (B.Y() - C.Y()) * (B.Y() - C.Y())
-                    );
-                    b = Math.sqrt(
-                        (A.X() - C.X()) * (A.X() - C.X()) + (A.Y() - C.Y()) * (A.Y() - C.Y())
-                    );
-                    c = Math.sqrt(
-                        (B.X() - A.X()) * (B.X() - A.X()) + (B.Y() - A.Y()) * (B.Y() - A.Y())
-                    );
+                    a = Mat.hypot(B.X() - C.X(), B.Y() - C.Y());
+                    b = Mat.hypot(A.X() - C.X(), A.Y() - C.Y());
+                    c = Mat.hypot(B.X() - A.X(), B.Y() - A.Y());
 
                     return new Coords(
                         Const.COORDS_BY_USER,
@@ -2188,24 +2158,9 @@ JXG.createIncircle = function (board, parents, attributes) {
             [
                 p,
                 function () {
-                    var a = Math.sqrt(
-                            (parents[1].X() - parents[2].X()) *
-                                (parents[1].X() - parents[2].X()) +
-                                (parents[1].Y() - parents[2].Y()) *
-                                    (parents[1].Y() - parents[2].Y())
-                        ),
-                        b = Math.sqrt(
-                            (parents[0].X() - parents[2].X()) *
-                                (parents[0].X() - parents[2].X()) +
-                                (parents[0].Y() - parents[2].Y()) *
-                                    (parents[0].Y() - parents[2].Y())
-                        ),
-                        c = Math.sqrt(
-                            (parents[1].X() - parents[0].X()) *
-                                (parents[1].X() - parents[0].X()) +
-                                (parents[1].Y() - parents[0].Y()) *
-                                    (parents[1].Y() - parents[0].Y())
-                        ),
+                    var a = Mat.hypot(parents[1].X() - parents[2].X(), parents[1].Y() - parents[2].Y()),
+                        b = Mat.hypot(parents[0].X() - parents[2].X(), parents[0].Y() - parents[2].Y()),
+                        c = Mat.hypot(parents[1].X() - parents[0].X(), parents[1].Y() - parents[0].Y()),
                         s = (a + b + c) / 2;
 
                     return Math.sqrt(((s - a) * (s - b) * (s - c)) / s);

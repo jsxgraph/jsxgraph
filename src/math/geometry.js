@@ -2801,8 +2801,7 @@ JXG.extend(
                 ay = p1[2] - y;
                 bx = p4[1] - x;
                 by = p4[2] - y;
-
-                d = Math.sqrt((ax + bx) * (ax + bx) + (ay + by) * (ay + by));
+                d = Mat.hypot(ax + bx, ay + by);
 
                 if (Math.abs(by - ay) > Mat.eps) {
                     k = ((((ax + bx) * (r / d - 0.5)) / (by - ay)) * 8) / 3;
@@ -3343,7 +3342,7 @@ JXG.extend(
          */
         distPointSegment: function (q, p1, p2) {
             var x, y, dx, dy,
-                den, dist_sqr, lbda,
+                den, lbda,
                 eps = Mat.eps * Mat.eps,
                 huge = 1000000;
 
@@ -3372,9 +3371,8 @@ JXG.extend(
                 x -= lbda * dx;
                 y -= lbda * dy;
             }
-            dist_sqr = x * x + y * y;
 
-            return Math.sqrt(dist_sqr);
+            return Mat.hypot(x, y);
         },
 
         /**

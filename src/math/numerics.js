@@ -2377,7 +2377,7 @@ Mat.Numerics = {
                         Dist: function (p) {
                             var dx = this.X() - p.X(),
                                 dy = this.Y() - p.Y();
-                            return Math.sqrt(dx * dx + dy * dy);
+                            return Mat.hypot(dx, dy);
                         }
                     };
 
@@ -2397,7 +2397,7 @@ Mat.Numerics = {
                         Dist: function (p) {
                             var dx = this.X() - p.X(),
                                 dy = this.Y() - p.Y();
-                            return Math.sqrt(dx * dx + dy * dy);
+                            return Mat.hypot(dx, dy);
                         }
                     };
 

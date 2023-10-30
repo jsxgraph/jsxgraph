@@ -1016,7 +1016,7 @@ JXG.createConic = function (board, parents, attributes) {
 
     /** @ignore */
     polarForm = function (phi, suspendUpdate) {
-        var i, j, len, v;
+        var i, j, v; // len,;
 
         if (!suspendUpdate) {
             if (givenByPoints) {
@@ -1054,16 +1054,16 @@ JXG.createConic = function (board, parents, attributes) {
             }
 
             // Normalize the Eigenvectors
-            for (i = 0; i < 3; i++) {
-                len = 0.0;
-                for (j = 0; j < 3; j++) {
-                    len += eigen[1][j][i] * eigen[1][j][i];
-                }
-                len = Math.sqrt(len);
-                /*for (j = 0; j < 3; j++) {
-                        //eigen[1][j][i] /= len;
-                    }*/
-            }
+            // for (i = 0; i < 3; i++) {
+            //     // len = Mat.hypot(eigen[1][0][i], eigen[1][1][i], eigen[1][2][i])
+            //     for (j = 0; j < 3; j++) {
+            //         len += eigen[1][j][i] * eigen[1][j][i];
+            //     }
+            //     len = Math.sqrt(len);
+            //     /*for (j = 0; j < 3; j++) {
+            //             //eigen[1][j][i] /= len;
+            //         }*/
+            // }
             rotationMatrix = eigen[1];
             c = Math.sqrt(Math.abs(eigen[0][0][0]));
             a = Math.sqrt(Math.abs(eigen[0][1][1]));

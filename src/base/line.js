@@ -365,7 +365,7 @@ JXG.extend(
                 } else {
                     x = Math.random() - 0.5;
                     y = Math.random() - 0.5;
-                    d = Math.sqrt(x * x + y * y);
+                    d = Mat.hypot(x, y);
 
                     if (drag2) {
                         this.point2.setPositionDirectly(Const.COORDS_BY_USER, [
@@ -391,6 +391,7 @@ JXG.extend(
                     this.point2.coords.usrCoords
                 );
             }
+
             return this;
         },
 
@@ -1703,7 +1704,7 @@ JXG.createTangent = function (board, parents, attributes) {
                         (1 - t) * (1 - t) * (B[2] - A[2]) +
                         2 * (1 - t) * t * (C[2] - B[2]) +
                         t * t * (D[2] - C[2]);
-                    d = Math.sqrt(dx * dx + dy * dy);
+                    d = Mat.hypot(dx, dy);
                     dx /= d;
                     dy /= d;
                     p1 = p.coords.usrCoords;
