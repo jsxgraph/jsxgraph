@@ -1313,6 +1313,8 @@ JXG.createAngle = function (board, parents, attributes) {
                 });
 
                 p.setParents(q);
+
+                this.hasFixedAngle = true;
             }
             return this;
         };
@@ -1336,6 +1338,8 @@ JXG.createAngle = function (board, parents, attributes) {
 
                 p.coords.off("update");
             }
+
+            this.hasFixedAngle = false;
 
             return this;
         };
