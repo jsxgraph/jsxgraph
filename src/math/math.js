@@ -471,11 +471,11 @@ JXG.Math = {
 
     /**
      * Compute a * x + y for a scalar a and vectors x and y.
-     * 
-     * @param {Number} a 
-     * @param {Array} x 
-     * @param {Array} y 
-     * @returns 
+     *
+     * @param {Number} a
+     * @param {Array} x
+     * @param {Array} y
+     * @returns
      */
     axpy: function (a, x, y) {
         var i,
@@ -917,7 +917,7 @@ JXG.Math = {
      * Returns sqrt(a * a + b * b) for a variable number of arguments.
      * This is a naive implementation which might be faster than Math.hypot.
      * The latter is numerically more stable.
-     * 
+     *
      * @param {Number} a Variable number of arguments.
      * @returns Number
      */
@@ -930,6 +930,17 @@ JXG.Math = {
             sum += a * a;
         }
         return Math.sqrt(sum);
+    },
+
+    /**
+     * Heaviside unit step function. Returns 0 for x &lt;, 1 for x &gt; 0, and 0.5 for x == 0.
+     *
+     * @param {Number} x
+     * @returns Number
+     */
+    hstep: function(x) {
+        return (x > 0.0) ? 1 :
+            ((x < 0.0) ? 0.0 : 0.5);
     },
 
     /* ********************  Comparisons and logical operators ************** */
