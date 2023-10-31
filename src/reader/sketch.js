@@ -33,7 +33,14 @@
 /*global JXG: true*/
 /*jslint nomen: true, plusplus: true*/
 
-import type from '../utils/type';
+/////////////////////////////////////////////////////////
+/////                   ATTENTION                   /////
+/////  This reader is not used anymore. For files   /////
+///// which were created in sketchometry 2+ please  /////
+/////        use the new SketchometryReader!        /////
+/////                                               /////
+/////   THIS CODE WILL NOT BE DEVELOPED FURTHER!    /////
+/////////////////////////////////////////////////////////
 
 (function () {
     'use strict';
@@ -2875,6 +2882,113 @@ import type from '../utils/type';
             }
         }
     );
+
+    // SketchReader constants
+    JXG.extendConstants(JXG, {
+        GENTYPE_ABC: 1, // unused
+        GENTYPE_AXIS: 2,
+        GENTYPE_MIDPOINT: 3,
+        GENTYPE_REFLECTION_ON_LINE: 4,
+        GENTYPE_REFLECTION_ON_POINT: 5,
+        GENTYPE_TANGENT: 6,
+        GENTYPE_PARALLEL: 7,
+        GENTYPE_BISECTORLINES: 8,
+        GENTYPE_BOARDIMG: 9,
+        GENTYPE_BISECTOR: 10,
+        GENTYPE_NORMAL: 11,
+        GENTYPE_POINT: 12,
+        GENTYPE_GLIDER: 13,
+        GENTYPE_INTERSECTION: 14,
+        GENTYPE_CIRCLE: 15,
+        GENTYPE_CIRCLE2POINTS: 16, // deprecated NOT USED ANY MORE SINCE SKETCHOMETRY 2.0 (only for old constructions needed)
+        GENTYPE_LINE: 17,
+        GENTYPE_TRIANGLE: 18,
+        GENTYPE_QUADRILATERAL: 19,
+        GENTYPE_TEXT: 20,
+        GENTYPE_POLYGON: 21,
+        GENTYPE_REGULARPOLYGON: 22,
+        GENTYPE_SECTOR: 23,
+        GENTYPE_ANGLE: 24,
+        GENTYPE_PLOT: 25,
+        GENTYPE_SLIDER: 26,
+        GENTYPE_TRUNCATE: 27,
+        GENTYPE_JCODE: 28,
+        GENTYPE_MOVEMENT: 29,
+        GENTYPE_COMBINED: 30,
+        GENTYPE_RULER: 31,
+        GENTYPE_SLOPETRIANGLE: 32,
+        GENTYPE_PERPSEGMENT: 33,
+        GENTYPE_LABELMOVEMENT: 34,
+        GENTYPE_VECTOR: 35,
+        GENTYPE_NONREFLEXANGLE: 36,
+        GENTYPE_REFLEXANGLE: 37,
+        GENTYPE_PATH: 38,
+        GENTYPE_DERIVATIVE: 39,
+        GENTYPE_PERPBISECTOR: 40,
+        GENTYPE_DELETE: 41,
+        GENTYPE_COPY: 42,
+        GENTYPE_MIRROR: 43,
+        GENTYPE_ROTATE: 44,
+        GENTYPE_CIRCLECLONE: 45,
+        GENTYPE_MIGRATE: 46,
+        GENTYPE_VECTORCLONE: 47,
+        GENTYPE_POLYGONCOPY: 48,
+        GENTYPE_PARALLELPOINT: 49,
+        GENTYPE_PARALLELOGRAM: 50,
+
+        // IMPORTANT:
+        // ----------
+        // For being able to differentiate between the (GUI-specific) CTX and
+        // (CORE-specific) non-CTX steps, the non-CTX steps MUST NOT be changed
+        // to values > 50.
+
+        GENTYPE_CTX_POINT_GLIDE: 51,
+        GENTYPE_CTX_POINT_FREE: 52,
+        GENTYPE_CTX_TRACE: 53,
+        GENTYPE_CTX_VISIBILITY: 54,
+        GENTYPE_CTX_POINT_MERGE: 55,
+        GENTYPE_CTX_POINT_UNMERGE: 56,
+        GENTYPE_CTX_WITHLABEL: 57,
+        GENTYPE_CTX_LABEL: 58,
+        GENTYPE_CTX_FIXED: 59,
+        GENTYPE_CTX_STROKEWIDTH: 60,
+        GENTYPE_CTX_LABELSIZE: 61,
+        GENTYPE_CTX_SIZE: 62,
+        GENTYPE_CTX_FACE: 63,
+        GENTYPE_CTX_STRAIGHT: 64,
+        GENTYPE_CTX_ARROW: 65,
+        GENTYPE_CTX_COLOR: 66,
+        GENTYPE_CTX_RADIUS: 67,
+        GENTYPE_CTX_COORDS: 68,
+        GENTYPE_CTX_TEXT: 69,
+        GENTYPE_CTX_ANGLERADIUS: 70,
+        GENTYPE_CTX_DOTVISIBILITY: 71,
+        GENTYPE_CTX_FILLOPACITY: 72,
+        GENTYPE_CTX_PLOT: 73,
+        GENTYPE_CTX_SCALE: 74,
+        GENTYPE_CTX_SLIDER_BOUND: 75,
+        GENTYPE_CTX_POINT1: 76,
+        GENTYPE_CTX_POINT2: 77,
+        GENTYPE_CTX_LABELSTICKY: 78,
+        GENTYPE_CTX_POINT_INTERSECT: 79,
+        GENTYPE_CTX_HASINNERPOINTS: 80,
+        GENTYPE_CTX_SLIDER_STEP: 81,
+        GENTYPE_CTX_SNAPTOGRID: 82,
+        GENTYPE_CTX_SNAPTOPOINTS: 83,
+        GENTYPE_CTX_STROKEDASH: 84,
+        GENTYPE_CTX_SLIDER_VALUE: 85,
+        GENTYPE_CTX_SECTORBORDERS: 86,
+        GENTYPE_CTX_CURVETAU: 87,
+        GENTYPE_CTX_SLIDER_POS: 88,
+        // space for 89 - 99
+        GENTYPE_CTX_GRID_VISIBILITY: 100,
+        GENTYPE_CTX_AXES_VISIBILITY: 101,
+        GENTYPE_CTX_AXES_SCALE: 102,
+        GENTYPE_CTX_BACKGROUND_COLOR: 103,
+        GENTYPE_CTX_BACKGROUND_OPACITY: 104,
+        GENTYPE_CTX_SNAPTOGRID_GLOBAL: 105,
+        GENTYPE_CTX_SNAPTOPOINTS_GLOBAL: 106,
+    })
 
     JXG.registerReader(JXG.SketchReader, ['sketch', 'sketchometry']);
 })();
