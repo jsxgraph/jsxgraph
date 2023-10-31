@@ -307,12 +307,12 @@ JXG.extend(
         // documented in JXG.AbstractRenderer
         updateGradient: function (el) {
             var col,
-                op,
+                // op,
                 ev_g = Type.evaluate(el.visProp.gradient),
                 gradient;
 
-            op = Type.evaluate(el.visProp.fillopacity);
-            op = op > 0 ? op : 0;
+            // op = Type.evaluate(el.visProp.fillopacity);
+            // op = op > 0 ? op : 0;
             col = Type.evaluate(el.visProp.fillcolor);
 
             if (ev_g === "linear") {
@@ -1600,11 +1600,11 @@ JXG.extend(
 
         // documented in AbstractRenderer
         setGradient: function (el) {
-            var // col,
-                op;
+            // var // col,
+            //     op;
 
-            op = Type.evaluate(el.visProp.fillopacity);
-            op = op > 0 ? op : 0;
+            // op = Type.evaluate(el.visProp.fillopacity);
+            // op = op > 0 ? op : 0;
 
             // col = Type.evaluate(el.visProp.fillcolor);
         },

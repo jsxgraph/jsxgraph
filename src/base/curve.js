@@ -2233,10 +2233,10 @@ JXG.registerElement("metapostspline", JXG.createMetapostSpline);
  * @class This element is used to provide a constructor for Riemann sums, which is realized as a special curve.
  * The returned element has the method Value() which returns the sum of the areas of the bars.
  * <p>
- * In case of type "simpson" and "trapezoidal", the horizontal line approximating the function value 
- * is replaced by a parabola or a secant. IN case of "simpson", 
- * the parabola is approximated visually by a polygonal chain of fixed step width. 
- * 
+ * In case of type "simpson" and "trapezoidal", the horizontal line approximating the function value
+ * is replaced by a parabola or a secant. IN case of "simpson",
+ * the parabola is approximated visually by a polygonal chain of fixed step width.
+ *
  * @pseudo
  * @description
  * @name Riemannsum
@@ -2935,7 +2935,7 @@ JXG.registerElement("curveunion", JXG.createCurveUnion);
  *
  */
 JXG.createBoxPlot = function (board, parents, attributes) {
-    var box, i, len, w2,
+    var box, i, len,
         attr = Type.copyAttributes(attributes, board.options, "boxplot");
 
     if (parents.length !== 3) {

@@ -534,9 +534,9 @@ JXG.GeonextParser = {
      * @returns {String} Given expression translated to JavaScript.
      */
     gxt2jc: function (term, board) {
-        var newterm,
-            from = ["Sqrt"],
-            to = ["sqrt"];
+        var newterm;
+            // from = ["Sqrt"],
+            // to = ["sqrt"];
 
         // Hacks, to enable not well formed XML, @see JXG.GeonextReader#replaceLessThan
         term = term.replace(/&lt;/g, "<");

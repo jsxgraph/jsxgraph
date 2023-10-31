@@ -1536,8 +1536,7 @@ JXG.extend(
                         has = true,
                         first,
                         last,
-                        r,
-                        dx;
+                        r;
 
                     if (Type.evaluate(alwaysintersect)) {
                         return res;

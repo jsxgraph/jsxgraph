@@ -719,9 +719,9 @@ JXG.extend(
             var tickPosition,
                 eps = Mat.eps,
                 deltas, ticksDelta,
-                ev_mia = Type.evaluate(this.visProp.minorticksinarrow),
-                ev_maa = Type.evaluate(this.visProp.minorticksinarrow),
-                ev_mla = Type.evaluate(this.visProp.minorticksinarrow),
+                // ev_mia = Type.evaluate(this.visProp.minorticksinarrow),
+                // ev_maa = Type.evaluate(this.visProp.minorticksinarrow),
+                // ev_mla = Type.evaluate(this.visProp.minorticksinarrow),
                 ev_mt = Type.evaluate(this.visProp.minorticks);
 
             // Determine a proposed distance between major ticks in user units
