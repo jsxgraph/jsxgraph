@@ -15,6 +15,7 @@ import './math/bqdt';
 import './math/numerics';
 import './math/nlp';
 import './math/plot';
+import './math/implicitplot';
 import './math/metapost';
 import './math/statistics';
 import './math/symbolic';
