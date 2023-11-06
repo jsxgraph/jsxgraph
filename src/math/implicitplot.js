@@ -28,7 +28,6 @@
 
 "use strict";
 
-import JXG from "../jxg";
 import Type from "../utils/type";
 import Mat from "./math";
 import Geometry from "./geometry";
@@ -40,6 +39,14 @@ import Quadtree from "./bqdt";
  * <i>f(x,y) = 0</i>.
  * <p>
  * The main class initializes a new implicit plot instance.
+ * <p>
+ * The algorithm should be able to plot most implicit curves as long as the equations
+ * are not too complex. We are aware of the paper by Oliver Labs,
+ * <a href="https://link.springer.com/chapter/10.1007/978-1-4419-0999-2_6">A List of Challenges for Real Algebraic Plane Curve Visualization Software</a>
+ * which contains many equations where this algorithm may fail.
+ * For example,  at the time being there is no attempt to detect <i>solitary points</i>.
+ * Also, it is always a trade off to find all components of the curve and
+ * keep the construction responsive.
  *
  * @name JXG.Math.ImplicitPlot
  * @exports Mat.ImplicitPlot as JXG.Math.ImplicitPlot
@@ -513,7 +520,7 @@ Type.extend(
         },
 
         /**
-         * Starting at a point u0, this routine traces the curve <i>f(u)=0</i> until
+         * Starting at a point <i>u0</i>, this routine traces the curve <i>f(u)=0</i> until
          * a loop is detected, a critical point is reached, the curve leaves the bounding box,
          * or the maximum number of points is reached.
          * <p>
@@ -521,7 +528,7 @@ Type.extend(
          * together with step width adaption.
          * <p>
          * The algorithm is an adaption of the algorithm in
-         * Eugene L. Allgower, Kurt Georg: Introduction to Numerical Continuation methods.
+         * Eugene L. Allgower, Kurt Georg: <i>Introduction to Numerical Continuation methods.</i>
          *
          * @param {Array} u0 Starting point in homogenous coordinates  [1, x, y].
          * @param {Number} direction 1 or -1
