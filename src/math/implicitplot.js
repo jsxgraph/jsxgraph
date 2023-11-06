@@ -35,7 +35,126 @@ import Geometry from "./geometry";
 import Numerics from "./numerics";
 import Quadtree from "./bqdt";
 
-JXG.Math.ImplicitPlot = function (bbox, config, f, dfx, dfy) {
+/**
+ * Plotting of curves which are given implicitly as the set of points solving an equation
+ * <i>f(x,y) = 0</i>.
+ * <p>
+ * The main class initializes a new implicit plot instance.
+ *
+ * @name JXG.Math.ImplicitPlot
+ * @exports Mat.ImplicitPlot as JXG.Math.ImplicitPlot
+ * @param {Array} bbox Bounding box of the area in which solutions of the equation
+ * are determined.
+ * @param {Object} config Configuration object. Default:
+ * <pre>
+ *  {
+ *      resolution_out: 5,    // Distance between vertical lines to search for components
+ *      resolution_in: 5,     // Distance between vertical lines to search for components
+ *      max_steps: 1024,      // Max number of points in one call of tracing
+ *      alpha_0: 0.05,        // Angle between two successive tangents: smoothness of curve
+ *
+ *      tol_u0: Mat.eps,      // Tolerance to find starting points for tracing.
+ *      tol_newton: 1.0e-7,   // Tolerance for Newton steps.
+ *      tol_cusp: 0.05,       // Tolerance for cusp / bifurcation detection
+ *      tol_progress: 0.0001, // If two points are closer than this value, we bail out
+ *      qdt_box: 0.2,         // half of box size to search in qdt
+ *      kappa_0: 0.2,         // Inverse of planned number of Newton steps
+ *      delta_0: 0.05,        // Distance of predictor point to curve
+ *
+ *      h_initial: 0.1,       // Initial stepwidth
+ *      h_critical: 0.001,    // If h is below this threshold we bail out
+ *      h_max: 1,             // Maximal value of h (user units)
+ *      loop_dist: 0.09,      // Allowed distance (multiplied by actual stepwidth) to detect loop
+ *      loop_dir: 0.99,       // Should be > 0.95
+ *      loop_detection: true, // Use Gosper's loop detector
+ *      unitX: 10,            // unitX of board
+ *      unitY: 10             // unitX of board
+ *   };
+ * </pre>
+ * @param {function} f function from <b>R</b><sup>2</sup> to <b>R</b>
+ * @param {function} [dfx] Optional partial derivative of <i>f</i> with regard to <i>x</i>
+ * @param {function} [dfy] Optional partial derivative of <i>f</i> with regard to <i>y</i>
+ *
+ * @constructor
+ * @example
+ *     var f = (x, y) => x**3 - 2 * x * y + y**3;
+ *     var c = board.create('curve', [[], []], {
+ *             strokeWidth: 3,
+ *             strokeColor: JXG.palette.red
+ *         });
+ *
+ *     c.updateDataArray = function () {
+ *         var bbox = this.board.getBoundingBox(),
+ *             ip, cfg,
+ *             ret = [],
+ *             mgn = 1;
+ *
+ *         bbox[0] -= mgn;
+ *         bbox[1] += mgn;
+ *         bbox[2] += mgn;
+ *         bbox[3] -= mgn;
+ *
+ *         cfg = {
+ *             resolution_out: 5,
+ *             resolution_in: 5,
+ *             unitX: this.board.unitX,
+ *             unitY: this.board.unitX
+ *         };
+ *
+ *         this.dataX = [];
+ *         this.dataY = [];
+ *         ip = new JXG.Math.ImplicitPlot(bbox, cfg, f, null, null);
+ *         ret = ip.plot();
+ *         this.dataX = ret[0];
+ *         this.dataY = ret[1];
+ *     };
+ *     board.update();
+ * </pre><div id="JXGf3e8cd82-2b67-4efb-900a-471eb92b3b96" class="jxgbox" style="width: 300px; height: 300px;"></div>
+ * <script type="text/javascript">
+ *     (function() {
+ *         var board = JXG.JSXGraph.initBoard('JXGf3e8cd82-2b67-4efb-900a-471eb92b3b96',
+ *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
+ *             var f = (x, y) => x**3 - 2 * x * y + y**3;
+ *             var c = board.create('curve', [[], []], {
+ *                     strokeWidth: 3,
+ *                     strokeColor: JXG.palette.red
+ *                 });
+ *
+ *             c.updateDataArray = function () {
+ *                 var bbox = this.board.getBoundingBox(),
+ *                     ip, cfg,
+ *                     ret = [],
+ *                     mgn = 1;
+ *
+ *                 bbox[0] -= mgn;
+ *                 bbox[1] += mgn;
+ *                 bbox[2] += mgn;
+ *                 bbox[3] -= mgn;
+ *
+ *                 cfg = {
+ *                     resolution_out: 5,
+ *                     resolution_in: 5,
+ *                     unitX: this.board.unitX,
+ *                     unitY: this.board.unitX
+ *                 };
+ *
+ *                 this.dataX = [];
+ *                 this.dataY = [];
+ *
+ *                 ip = new JXG.Math.ImplicitPlot(bbox, cfg, f, null, null);
+ *                 ret = ip.plot();
+ *
+ *                 this.dataX = ret[0];
+ *                 this.dataY = ret[1];
+ *             };
+ *             board.update();
+ *
+ *     })();
+ *
+ * </script><pre>
+ *
+ */
+Mat.ImplicitPlot = function (bbox, config, f, dfx, dfy) {
 
     // Default values
     var cfg_default = {
@@ -703,7 +822,7 @@ Type.extend(
         },
 
         /**
-         * If both eigenvalues are different from zero, the critical point at u
+         * If both eigenvalues of the Hessian are different from zero, the critical point at u
          * is a simple bifurcation point.
          *
          * @param {Array} u Critical point [x, y]
