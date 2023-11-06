@@ -35,12 +35,6 @@ import Geometry from "./geometry";
 import Numerics from "./numerics";
 import Quadtree from "./bqdt";
 
-// var Type = JXG;
-// var Mat = JXG.Math;
-// var Geometry = JXG.Math.Geometry;
-// var Numerics = JXG.Math.Numerics;
-// var Quadtree = JXG.Math.BoxQuadtree;
-
 JXG.Math.ImplicitPlot = function (bbox, config, f, dfx, dfy) {
 
     // Default values
@@ -103,6 +97,11 @@ Type.extend(
     Mat.ImplicitPlot.prototype,
     /** @lends JXG.Math.ImplicitPlot.prototype */ {
 
+        /**
+         * Implicit plotting method.
+         *
+         * @returns {Array} consisting of [dataX, dataY, number_of_components]-
+         */
         plot: function () {
             var // components = [],
                 doVerticalSearch = true,
@@ -148,9 +147,9 @@ Type.extend(
                         num_components, dataX, dataY);
 
                     if (ret !== false) {
-                        num_components = ret[0];
-                        dataX = ret[1];
-                        dataY = ret[2];
+                        dataX = ret[0];
+                        dataY = ret[1];
+                        num_components = ret[2];
                     }
 
                 }
@@ -167,9 +166,9 @@ Type.extend(
                         num_components, dataX, dataY);
 
                     if (ret !== false) {
-                        num_components = ret[0];
-                        dataX = ret[1];
-                        dataY = ret[2];
+                        dataX = ret[0];
+                        dataY = ret[1];
+                        num_components = ret[2];
                     }
                 }
             }
@@ -177,6 +176,21 @@ Type.extend(
             return [dataX, dataY, num_components];
         },
 
+        /**
+         * Recursively search a horizontal or vertical line for points on the
+         * fulfilling the given equation.
+         *
+         * @param {Function} fmi Minimization function
+         * @param {Function} fma Maximization function
+         * @param {Number} fix Value of the fixed variable
+         * @param {Array} interval Search interval of the free variable
+         * @param {String} dir 'vertical' or 'horizontal'
+         * @param {Number} num_components Number of components before search
+         * @param {Array} dataX x-coordinates of points so far
+         * @param {Array} dataY y-coordinates of points so far
+         * @returns {Array} consisting of [dataX, dataY, number_of_components]-
+         * @private
+         */
         searchLine: function (fmi, fma, fix, interval, dir,
             num_components, dataX, dataY) {
             var t_mi, t_ma, t,
@@ -231,7 +245,6 @@ Type.extend(
                         console.log("Found in quadtree", u0);
                     }
                 } else {
-                    u0 = u0.slice(1);
                     if (DEBUG) {
                         console.log("Not in quadtree", u0, dataX.length);
                     }
@@ -269,9 +282,9 @@ Type.extend(
                         fmi, fma, fix, [b, m], dir,
                         num_components, dataX, dataY);
                     if (ret !== false) {
-                        num_components = ret[0];
-                        dataX = ret[1];
-                        dataY = ret[2];
+                        dataX = ret[0];
+                        dataY = ret[1];
+                        num_components = ret[2];
                     }
                 }
                 m = t + delta * 0.01;
@@ -280,20 +293,31 @@ Type.extend(
                         fmi, fma, fix, [m, e], dir,
                         num_components, dataX, dataY);
                     if (ret !== false) {
-                        num_components = ret[0];
-                        dataX = ret[1];
-                        dataY = ret[2];
+                        dataX = ret[0];
+                        dataY = ret[1];
+                        num_components = ret[2];
                     }
                 }
 
-                return [num_components, dataX, dataY];
+                return [dataX, dataY, num_components];
             }
 
             return false;
         },
 
+        /**
+         * Test if the data points contain a given coordinate, i.e. if the
+         * given coordinate is close enough to the polygonal chain
+         * through the data points.
+         *
+         * @param {Array} p Homogenous coordinates [1, x, y] of the coordinate point
+         * @param {Array} dataX x-coordinates of points so far
+         * @param {Array} dataY y-coordinates of points so far
+         * @param {Number} tol Maximal distance of p from the polygonal chain through the data points
+         * @param {Number} eps Helper tolerance used for the quadtree
+         * @returns Boolean
+         */
         curveContainsPoint: function (p, dataX, dataY, tol, eps) {
-            // p = [1, x, y]
             var i, le, hits, d,
                 x = p[1],
                 y = p[2];
@@ -314,6 +338,16 @@ Type.extend(
             return false;
         },
 
+        /**
+         * Starting at an initial point the curve is traced with a Euler-Newton method.
+         * After tracing in one direction the algorithm stops if the component is a closed loop.
+         * Otherwise, the curved is traced in the opposite direction, starting from
+         * the same initial point. Finally, the two components are glued together.
+         *
+         * @param {Array} u0 Initial point in homogenous coordinates [1, x, y].
+         * @returns Array [dataX, dataY] containing a new component.
+         * @private
+         */
         traceComponent: function (u0) {
             var dataX = [],
                 dataY = [],
@@ -324,7 +358,7 @@ Type.extend(
             arr = this.tracing(u0, 1);
 
             if (arr.length === 0) {
-                console.log("Could not start tracing due to singularity")
+                // console.log("Could not start tracing due to singularity")
             } else {
                 // console.log("Trace from", [arr[0][0], arr[1][0]], "to", [arr[0][arr[0].length - 1], arr[1][arr[1].length - 1]],
                 //     "num points:", arr[0].length);
@@ -333,7 +367,7 @@ Type.extend(
             }
 
             // Trace in the other direction
-            if (true && !arr[2]) {
+            if (!arr[2]) {
                 // No loop in the first tracing step,
                 // now explore the other direction.
 
@@ -341,7 +375,7 @@ Type.extend(
                 arr = this.tracing(u0, -1);
 
                 if (arr.length === 0) {
-                    console.log("Could not start backward tracing due to singularity")
+                    // console.log("Could not start backward tracing due to singularity")
                 } else {
                     // console.log("Trace backwards from", [arr[0][0], arr[1][0]], "to",
                     //     [arr[0][arr[0].length - 1], arr[1][arr[1].length - 1]], "num points:", arr[0].length);
@@ -370,7 +404,7 @@ Type.extend(
          * The algorithm is an adaption of the algorithm in
          * Eugene L. Allgower, Kurt Georg: Introduction to Numerical Continuation methods.
          *
-         * @param {Array} u0 Starting point
+         * @param {Array} u0 Starting point in homogenous coordinates  [1, x, y].
          * @param {Number} direction 1 or -1
          * @returns Array [pathX, pathY, loop_closed] or []
          * @private
@@ -408,7 +442,7 @@ Type.extend(
                 T = [],            // Gosper's loop detector table
                 n, m, i, e;
 
-            u = u0.slice();
+            u = u0.slice(1);
             pathX.push(u[0]);
             pathY.push(u[1]);
 
@@ -461,7 +495,7 @@ Type.extend(
                         // console.log("\t", "inner:", Mat.innerProduct(t_u, t_u_0, 2));
                         // console.log("\t", "h", h);
 
-                        u = u0.slice();
+                        u = u0.slice(1);
                         pathX.push(u[0]);
                         pathY.push(u[1]);
 
@@ -668,7 +702,17 @@ Type.extend(
             return [pathX, pathY, loop_closed];
         },
 
+        /**
+         * If both eigenvalues are different from zero, the critical point at u
+         * is a simple bifurcation point.
+         *
+         * @param {Array} u Critical point [x, y]
+         * @param {Number} tol Tolerance of the eigenvalues to be zero.
+         * @returns Boolean True if the point is a simple bifurcation point.
+         * @private
+         */
         isBifurcation: function (u, tol) {
+            // Former experiments:
             // If the Hessian has exactly one zero eigenvalue,
             // we claim that there is a cusp.
             // Otherwise, we decide that there is a bifurcation point.
@@ -706,6 +750,17 @@ Type.extend(
             return false;
         },
 
+        /**
+         * Search in an arc around a critical point for a further point on the curve.
+         * Unused for the moment.
+         *
+         * @param {Array} u Critical point [x, y]
+         * @param {Array} t_u Tangent at u
+         * @param {Number} r Radius
+         * @param {Number} omega angle
+         * @returns {Array} Coordinates [x, y] of a new point.
+         * @private
+         */
         handleCriticalPoint: function (u, t_u, r, omega) {
             var a = Math.atan2(omega * t_u[1], omega * t_u[0]),
                 // s = a - 0.75 * Math.PI,
@@ -727,8 +782,17 @@ Type.extend(
             return [x, y];
         },
 
+        /**
+         * Quasi-Newton update of the Moore-Penrose inverse.
+         * See (7.2.3) in Allgower, Georg.
+         *
+         * @param {Array} A
+         * @param {Array} u0
+         * @param {Array} u1
+         * @returns Array
+         * @private
+         */
         updateA: function (A, u0, u1) {
-            // (7.2.3) in Allgower, Georg
             var s = [u1[0] - u0[0], u1[1] - u0[1]],
                 y = this.f(u1[0], u1[1]) - this.f(u0[0], u0[1]),
                 nom, denom;
@@ -742,6 +806,12 @@ Type.extend(
             return A;
         },
 
+        /**
+         * Approximate tangent (of norm 1) with Quasi-Newton method
+         * @param {Array} A
+         * @returns Array
+         * @private
+         */
         tangent_A: function (A) {
             var t = [-A[1], A[0]],
                 nrm = Mat.norm(t, 2);
@@ -752,6 +822,12 @@ Type.extend(
             return [t[0] / nrm, t[1] / nrm];
         },
 
+        /**
+         * Tangent of norm 1 at point u.
+         * @param {Array} u Point [x, y]
+         * @returns Array
+         * @private
+         */
         tangent: function (u) {
             var t = [-this.dfy(u[0], u[1]), this.dfx(u[0], u[1])],
                 nrm = Mat.norm(t, 2);
@@ -761,10 +837,10 @@ Type.extend(
                 return false;
             }
             return [t[0] / nrm, t[1] / nrm];
-        },
+        }
     }
 
 );
 
-// export default Mat.ImplicitPlot;
+export default Mat.ImplicitPlot;
 
