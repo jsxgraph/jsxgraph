@@ -42,7 +42,8 @@ var major = 1,
     version = major + '.' + minor + '.' + patch + (add ? '-' + add : ''),
     constants;
 
-constants = /** @lends JXG */ {
+constants =
+    /** @lends JXG */ {
     /**
      * Constant: the currently used JSXGraph version.
      *
@@ -135,16 +136,7 @@ constants = /** @lends JXG */ {
     GENTYPE_AXIS: 2,
     GENTYPE_MID: 3,
 
-    /**
-     * @ignore
-     * @deprecated, now use {@link JXG.GENTYPE_REFLECTION_ON_LINE}
-     *
-     */
     GENTYPE_REFLECTION: 4,
-    /**
-     * @ignore
-     * @deprecated, now use {@link JXG.GENTYPE_REFLECTION_ON_POINT}
-     */
     GENTYPE_MIRRORELEMENT: 5,
 
     GENTYPE_REFLECTION_ON_LINE: 4,
@@ -196,11 +188,7 @@ constants = /** @lends JXG */ {
     GENTYPE_MIGRATE: 46,
     GENTYPE_VECTORCOPY: 47,
     GENTYPE_POLYGONCOPY: 48,
-    /**
-     * Constants
-     * @name Constants
-     * @namespace
-     */ //        GENTYPE_TRANSFORM: 48, // unused
+    //        GENTYPE_TRANSFORM: 48, // unused
     // 49 ... 50 // unused ...
 
     // IMPORTANT:

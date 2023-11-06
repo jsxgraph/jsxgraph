@@ -46,7 +46,10 @@
 
 /**
  * JXG is the top object of JSXGraph and defines the namespace
+ *
+ * @name JXG
  * @exports jxg as JXG
+ * @namespace
  */
 var jxg = {};
 
