@@ -2473,7 +2473,6 @@ Mat.Plot = {
                     j = Math.max(0, i - 2);
                     // Add more points in critical intervals
                     if (
-                        true &&
                         //degree_y === -1 && // No polynomial
                         i >= start + 3 &&
                         i < le - 3 && // Do not do this if too close to a critical point
