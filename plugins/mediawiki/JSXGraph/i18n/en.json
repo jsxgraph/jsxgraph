@@ -1,0 +1,9 @@
+{
+	"@metadata": {
+		"authors": [
+			"Alfred Wassermann",
+			"Peter Wilfahrt"
+		]
+	},
+	"jsxgraph-desc": "Execute JSXGraph code inside jsxgraph tags."
+}
