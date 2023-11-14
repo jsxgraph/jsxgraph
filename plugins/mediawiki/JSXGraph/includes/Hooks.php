@@ -105,12 +105,14 @@ class Hooks implements
 		$height = (isset($attr['height'])) ? htmlspecialchars(strip_tags($attr['height'])) : 400;
 
 		if ($markercount == 0) {
-			$output .= "<link rel='stylesheet' type='text/css' href='" . $outputURICDN . "/jsxgraph.css' />";
 			if (preg_match("/^132\.180/", getenv("REMOTE_ADDR"))) {
 				// Use the local version when developing
+				$output .= "<pre>IP:". getenv("REMOTE_ADDR") ." - use developer version</pre>";
+				$output .= "<link rel='stylesheet' type='text/css' href='" . $outputURI . "/jsxgraph.css' />";
 				$output .= "<script src='" . $outputURI . "/jsxgraphcore.js' type='text/javascript'></script>";
 				$output .= "<script src='" . $outputURI . "/geonext.min.js' type='text/javascript'></script>";
 			} else {
+				$output .= "<link rel='stylesheet' type='text/css' href='" . $outputURICDN . "/jsxgraph.css' />";
 				$output .= "<script src='" . $outputURICDN . "/jsxgraphcore.js' type='text/javascript'></script>";
 				$output .= "<script src='" . $outputURICDN . "/geonext.min.js' type='text/javascript'></script>";
 			}
