@@ -22,21 +22,25 @@ class Hooks implements
 	private $markerList = array();
 
 	/**
-	 * Register parser hooks.
+	 * Register parser hook.
+     *
+     * The content of tags of the form &lt;jsxgraph&gt;...&lt;/jsxgraph&gt;
+     * is stored in the array $this->markerList
 	 *
 	 * @see https://www.mediawiki.org/wiki/Manual:Hooks/ParserFirstCallInit
 	 * @see https://www.mediawiki.org/wiki/Manual:Parser_functions
 	 * @param Parser $parser
 	 * @throws \MWException
 	 */
-	//onParserFirstCallInit onParserAfterTidy
 	public function onParserFirstCallInit($parser)
 	{
-		// <jsxgraph>test</jsxgraph>
-		// <jsxgraph foo="bar" baz="quux">test content</jsxgraph>
 		$parser->setHook('jsxgraph', [$this, 'parserTagJSXGraph']);
 	}
 
+    /**
+     * After call of tidy, the required JSXGraph divs and script
+     * tags are injected. jsxgraphcore.js is loaded only once.
+     */
 	public function onParserAfterTidy($parser, &$text)
 	{
 		$keys = array();
@@ -50,7 +54,8 @@ class Hooks implements
 	}
 
 	/**
-	 * Parser hook handler for <jsxgraph>
+	 * Parser hook handler for &lt;jsxgraph&gt;.
+     * Called by onParserFirstCallInit
 	 *
 	 * @param string $data The content of the tag.
 	 * @param array $attribs The attributes of the tag.
@@ -69,6 +74,10 @@ class Hooks implements
 		return $this->markJSXGraphTags($jsxgraph);
 	}
 
+    /**
+     * Here, the real work is done. The attributes of the jsxgraph tag are analyzed,
+     * the JSXGraph divs are created, source code is stored.
+     */
 	private function markJSXGraphTags($jsxgraph)
 	{
 		$output = "";
@@ -88,15 +97,9 @@ class Hooks implements
 			$error_message = "Missing parameter (width or height, filename, string or input).";
 		}
 
-
-		// foreach ($jsxgraph as $key => $val) {
-		// 	$output .= $key ." : ". FormatJson::encode($val) ."\n";
-		// }
-		// return $output;
-
 		$outputURI = '//jsxgraph.uni-bayreuth.de/~alfred/jsxgraph/distrib';
 		// $jsxgraph_version = "";
-		// $outputURICDN = 'https://cdn.jsdelivr.net/npm/jsxgraph@' . $ . '/distrib';
+		// $outputURICDN = 'https://cdn.jsdelivr.net/npm/jsxgraph@' . $jsxgraph_version . '/distrib';
 		$outputURICDN = 'https://cdn.jsdelivr.net/npm/jsxgraph/distrib';
 
 		$outputDivId = (isset($attr['box'])) ? htmlspecialchars(strip_tags($attr['box'])) : $default_box;
@@ -157,7 +160,6 @@ class Hooks implements
 		$this->markerList[$markercount] = $output;
 		return $marker;
 	}
-
 }
 
 
