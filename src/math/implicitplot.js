@@ -320,7 +320,7 @@ Type.extend(
         searchLine: function (fmi, fma, fix, interval, dir,
             num_components, dataX, dataY) {
             var t_mi, t_ma, t,
-                // ft,
+                ft,
                 mi, ma, tmp, m,
                 is_in,
                 u0, i, le,
@@ -345,8 +345,8 @@ Type.extend(
                 t = Numerics.fzero(fmi, [t_mi, t_ma]);
                 // t = Numerics.chandrupatla(fmi, [t_mi, t_ma]);
 
-                var ft = fmi(t);
-                if (Math.abs(ft) > Math.max((ma - mi) * 0.0001, 0.001)) {
+                ft = fmi(t);
+                if (Math.abs(ft) > Math.max((ma - mi) * Mat.eps, 0.001)) {
                     //console.log("searchLine:",  dir, fix, t, "no root " + ft);
                     return false;
                     // throw new Error("searchLine: no root " + ft);
