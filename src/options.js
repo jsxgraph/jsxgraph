@@ -5270,6 +5270,8 @@ JXG.Options = {
          * @visprop
          */
 
+        baseUnit: '',
+        dim: 0
         
         /**#@-*/
     },

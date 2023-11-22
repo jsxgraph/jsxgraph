@@ -39,6 +39,7 @@
  */
 
 import JXG from "../jxg";
+import Const from "../base/constants";
 import Type from "../utils/type";
 import GeometryElement from "../base/element";
 
@@ -190,20 +191,65 @@ JXG.createTapemeasure = function (board, parents, attributes) {
 JXG.registerElement("tapemeasure", JXG.createTapemeasure);
 
 JXG.createMeasurement = function (board, parents, attributes) {
-    var el, attr, content, obj, method;
+    var el, attr, obj, method,
+        x, y,
+        content, value,
+        dim = -1,
+        suffix = '';
 
     attr = Type.copyAttributes(attributes, board.options, "measurement");
 
-    obj = parents[0];
-    method = parents[1];
+    if (parents.length === 4) {
+        x = parents[2];
+        y = parents[3];
+        obj = board.select(parents[0]);
+        method = parents[1];
+
+        if (Type.isString(attr.baseunit) && attr.baseunit !== '') {
+            suffix = ' ' + attr.baseunit;
+            if (Type.isInArray(['Area', 'A'], method)) {
+                suffix += '^{2}';
+                dim = 2;
+            } else if (Type.isInArray(['Length', 'L', 'Perimeter', 'Radius', 'R'], method)) {
+                suffix += '';
+                dim = 1;
+            } else if (Type.isInArray(['Value'], method)) {
+                dim = attr.dim;
+                if (attr.dim > 1) {
+                    suffix += '^{' + dim + '}';
+                }
+            } else {
+                suffix = '';
+                dim = 0;
+            }
+        }
+
+        value = function() {
+            return obj[method]();
+        };
+
+    } else if (parents.length === 3) {
+        x = parents[1];
+        y = parents[2];
+
+        value = board.jc.snippet(parents[0], true, '');
+    }
+
     content = function() {
-        return obj[method]();
+        return value().toFixed(3) + suffix;
     };
 
-    el = board.create("text", [parents[2], parents[3], content], attr);
+    el = board.create("text", [x, y, content], attr);
+    el.Value = value;
+    el.dim = dim;
+
+    el.methodMap = Type.deepCopy(el.methodMap, {
+        Value: "Value"
+    });
 
     return el;
 };
+
 JXG.registerElement("measurement", JXG.createMeasurement);
 
 // export default {
