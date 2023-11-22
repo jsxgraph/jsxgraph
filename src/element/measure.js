@@ -189,6 +189,23 @@ JXG.createTapemeasure = function (board, parents, attributes) {
 
 JXG.registerElement("tapemeasure", JXG.createTapemeasure);
 
+JXG.createMeasurement = function (board, parents, attributes) {
+    var el, attr, content, obj, method;
+
+    attr = Type.copyAttributes(attributes, board.options, "measurement");
+
+    obj = parents[0];
+    method = parents[1];
+    content = function() {
+        return obj[method]();
+    };
+
+    el = board.create("text", [parents[2], parents[3], content], attr);
+
+    return el;
+};
+JXG.registerElement("measurement", JXG.createMeasurement);
+
 // export default {
 //     createTapemeasure: JXG.createTapemeasure
 // };

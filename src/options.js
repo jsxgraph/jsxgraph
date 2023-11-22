@@ -5264,7 +5264,17 @@ JXG.Options = {
         /**#@-*/
     },
 
-    /* special cardinal spline options */
+    /* special measurement options */
+    measurement: {
+        /**#@+
+         * @visprop
+         */
+
+        
+        /**#@-*/
+    },
+
+    /* special metapost spline options */
     metapostspline: {
         /**#@+
          * @visprop
