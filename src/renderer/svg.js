@@ -257,6 +257,21 @@ JXG.SVGRenderer = function (container, dim) {
     } catch (e) {
         this.supportsForeignObject = false;
     }
+
+    // this.viewportClip = this.container.ownerDocument.createElementNS(
+    //     this.svgNamespace,
+    //     "clipPath"
+    // );
+    // this.viewportId = this.uniqName('viewport');
+    // this.viewportClip.setAttributeNS(null, "id", this.viewportId);
+    // var rect = this.container.ownerDocument.createElementNS(this.svgNamespace, 'rect');
+    // rect.setAttributeNS(null, "x", 20);
+    // rect.setAttributeNS(null, "y", 20);
+    // rect.setAttributeNS(null, "width", dim.width - 2 * 20);
+    // rect.setAttributeNS(null, "height", dim.height - 2 * 20);
+    // this.viewportClip.appendChild(rect);
+    // this.svgRoot.appendChild(this.viewportClip);
+
 };
 
 JXG.SVGRenderer.prototype = new AbstractRenderer();
@@ -820,6 +835,7 @@ JXG.extend(
                 node.setAttributeNS(null, "stroke-linejoin", "round");
                 node.setAttributeNS(null, "fill-rule", "evenodd");
             }
+            // node.setAttributeNS(null, "clip-path", this.toURL(this.viewportId));
             return node;
         },
 
@@ -1830,6 +1846,7 @@ JXG.extend(
         resize: function (w, h) {
             this.svgRoot.setAttribute("width", parseFloat(w));
             this.svgRoot.setAttribute("height", parseFloat(h));
+            // this.svgRoot.setAttribute("viewBox", '-100 -100 800, 800');
         },
 
         // documented in JXG.AbstractRenderer
