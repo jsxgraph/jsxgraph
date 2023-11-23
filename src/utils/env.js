@@ -1025,6 +1025,7 @@ JXG.extend(
                     rule = "#" + wrap_id + pseudo_keys[i] + " #" + inner_id + rule_inner_l;
                     // rule = '@media all and (orientation:landscape) {' + rule + '}';
                     doc.styleSheets[len - 1].insertRule(rule, 0);
+                    // inner.style.scale = 2;
                     break;
                 } catch (err) {
                     JXG.debug("JXG.scaleJSXGraphDiv:\n" + err);
