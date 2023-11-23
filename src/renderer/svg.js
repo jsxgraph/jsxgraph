@@ -835,12 +835,12 @@ JXG.extend(
                 node.setAttributeNS(null, "stroke-linejoin", "round");
                 node.setAttributeNS(null, "fill-rule", "evenodd");
             }
-            if (type !== 'marker') {
-                // node.setAttributeNS(null, "clip-path", 'view-box inset(20px 20px)');
-                // node.setAttributeNS(null, "clip-path", this.toURL(this.viewportId));
-                // node.style.clipPath = 'view-box inset(20px 20px)';
-                // node.style.clipPath = this.toURL(this.viewportId);
-            }
+            // if (type !== 'marker' && type!=='text') {
+            //     node.setAttributeNS(null, "clip-path", 'view-box inset(50px 50px)');
+            //     // node.setAttributeNS(null, "clip-path", this.toURL(this.viewportId));
+            //     // node.style.clipPath = 'view-box inset(20px 20px)';
+            //     // node.style.clipPath = this.toURL(this.viewportId);
+            // }
             return node;
         },
 

@@ -364,6 +364,7 @@ JXG.extend(
                     this.radius = this.updateRadius();
                 }
                 this.radius = Math.abs(this.radius);
+                // this.radius = Math.max(0.0, this.radius);
 
                 this.updateStdform();
                 this.updateQuadraticform();

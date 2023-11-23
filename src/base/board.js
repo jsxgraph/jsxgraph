@@ -7087,13 +7087,13 @@ JXG.extend(
             } else if (Type.exists(inner_node._cssFullscreenStore)) {
                 // Just left the fullscreen mode
 
-                // Remove the CSS rules added in Env.scaleJSXGraphDiv
-                for (i = doc.styleSheets.length - 1; i >= 0; i--) {
-                    if (doc.styleSheets[i].title === 'jsxgraph_fullscreen_css') {
-                        doc.styleSheets[i].deleteRule(0);
-                        break;
-                    }
-                }
+                // // Remove the CSS rules added in Env.scaleJSXGraphDiv
+                // for (i = doc.styleSheets.length - 1; i >= 0; i--) {
+                //     if (doc.styleSheets[i].title === 'jsxgraph_fullscreen_css') {
+                //         doc.styleSheets[i].deleteRule(0);
+                //         break;
+                //     }
+                // }
 
                 inner_node._cssFullscreenStore.isFullscreen = false;
                 inner_node.style.margin = inner_node._cssFullscreenStore.margin;
