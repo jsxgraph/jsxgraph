@@ -666,7 +666,10 @@ JXG.extend(
                         mround(r * (scr[2] + size))
                     ].join("")
                 );
-            } else if (type === "<>") {
+            } else if (type === "<>" || type === "<<>>") {
+                if (type === "<<>>") {
+                    size *= 1.41;
+                }
                 s.push(
                     [
                         " m ",

@@ -1,3 +1,44 @@
+1.6.2
+====
+
+New features
+-----------
+
+- `JXG.JSXGraph.initBoard()` accepts a reference to the hosting HTML element
+
+Improvements
+------------
+
+- Quadtree functionality
+
+Bug fixes
+---------
+
+- `foreignobject` regression
+
+1.6.1
+====
+
+New features
+-----------
+
+- Slider snap values
+- New text attributes `autoPositionMaxDistance`, `autoPositionMinDistance` for label positioning
+
+Improvements
+------------
+
+- Fullscreen mode scaling is independent from original CSS
+- Fullscreen mode reacts to orientation change
+- Riemann sum: Display Simpson's rule as quadratic function
+- Enhance quadtree API
+
+Bug fixes
+---------
+
+- API docs
+- Runge-Kutta method
+
 1.6.0
 ====
 
@@ -21,7 +62,7 @@ Improvements
 - New circle method `circle.Perimeter()`
 - New line method `line.Slope()`
 - New polygon method "L()", alias for Perimeter()
-- `JXG.Math.Numerics`: New methods getLangrangePolynomialCoefficients, f.getCoefficients
+- `JXG.Math.Numerics`: New methods getLagrangePolynomialCoefficients, f.getCoefficients
 - New method `Sector.setRadius`
 - Allow all text elements to be rotated
 - 3D: Improved API and bug fixes
@@ -93,7 +134,7 @@ New features
 - New board attribute `browserPan`: allows to scroll web page by swiping in JSXGraph board
 - New element attribute `shadow`: enables individual shadows for each stroke element (in SVG)
 - New turtle methods: getPenColor, getHighlightPenColor, getPenSize
-- New events for keyboad handling:
+- New events for keyboard handling:
     - keymove for board
     - keydrag for elements
 - New board attribute fullscreen{ scale: 0.85 }

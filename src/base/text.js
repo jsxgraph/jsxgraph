@@ -1124,11 +1124,9 @@ JXG.extend(
          * @param  {Number} h width of the box in pixel
          * @return {Number}   Number of overlapping elements
          */
-        getNumberofConflicts: function (x, y, w, h) {
+        getNumberOfConflicts: function (x, y, w, h) {
             var count = 0,
-                i,
-                obj,
-                le,
+                i, obj, le,
                 savePointPrecision;
 
             // Set the precision of hasPoint to half the max if label isn't too long
@@ -1163,33 +1161,22 @@ JXG.extend(
          * @returns {JXG.Text} Reference to the text object.
          */
         setAutoPosition: function () {
-            var x,
-                y,
-                cx,
-                cy,
+            var x, y, cx, cy,
                 anchorCoords,
                 // anchorX, anchorY,
                 w = this.size[0],
                 h = this.size[1],
-                start_angle,
-                angle,
+                start_angle, angle,
                 optimum = {
                     conflicts: Infinity,
                     angle: 0,
                     r: 0
                 },
-                max_r,
-                delta_r,
-                conflicts,
-                offset,
-                r,
+                max_r, delta_r,
+                conflicts, offset, r,
                 num_positions = 12,
                 step = (2 * Math.PI) / num_positions,
-                j,
-                dx,
-                dy,
-                co,
-                si;
+                j, dx, dy, co, si;
 
             if (
                 this === this.board.infobox ||
@@ -1212,15 +1199,15 @@ JXG.extend(
             dx = offset[0];
             dy = offset[1];
 
-            conflicts = this.getNumberofConflicts(cx + dx, cy - dy, w, h);
+            conflicts = this.getNumberOfConflicts(cx + dx, cy - dy, w, h);
             if (conflicts === 0) {
                 return this;
             }
             // console.log(this.id, conflicts, w, h);
             // r = Geometry.distance([0, 0], offset, 2);
 
-            r = 12;
-            max_r = 28;
+            r = Type.evaluate(this.visProp.autopositionmindistance);
+            max_r = Type.evaluate(this.visProp.autopositionmaxdistance);
             delta_r = 0.2 * r;
 
             start_angle = Math.atan2(dy, dx);
@@ -1229,7 +1216,7 @@ JXG.extend(
             optimum.angle = start_angle;
             optimum.r = r;
 
-            while (optimum.conflicts > 0 && r < max_r) {
+            while (optimum.conflicts > 0 && r <= max_r) {
                 for (
                     j = 1, angle = start_angle + step;
                     j < num_positions && optimum.conflicts > 0;
@@ -1241,7 +1228,7 @@ JXG.extend(
                     x = cx + r * co;
                     y = cy - r * si;
 
-                    conflicts = this.getNumberofConflicts(x, y, w, h);
+                    conflicts = this.getNumberOfConflicts(x, y, w, h);
                     if (conflicts < optimum.conflicts) {
                         optimum.conflicts = conflicts;
                         optimum.angle = angle;

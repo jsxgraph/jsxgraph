@@ -42,6 +42,7 @@ import JXG from "../jxg";
 import GeometryElement from "./element";
 import Coords from "./coords";
 import Const from "./constants";
+import Mat from "../math/math";
 import GeonextParser from "../parser/geonext";
 import Type from "../utils/type";
 
@@ -224,7 +225,7 @@ JXG.extend(
             }
             dx = mp[1] - p.usrCoords[1];
             dy = mp[2] - p.usrCoords[2];
-            dist = Math.sqrt(dx * dx + dy * dy);
+            dist = Mat.hypot(dx, dy);
 
             // We have to use usrCoords, since Radius is available in usrCoords only.
             prec += Type.evaluate(this.visProp.strokewidth) * 0.5;
@@ -362,6 +363,7 @@ JXG.extend(
                 } else if (this.method === "pointRadius") {
                     this.radius = this.updateRadius();
                 }
+                this.radius = Math.abs(this.radius);
 
                 this.updateStdform();
                 this.updateQuadraticform();
@@ -545,7 +547,7 @@ JXG.extend(
             }
 
             if (this.method === "pointRadius") {
-                return this.updateRadius();
+                return Math.abs(this.updateRadius());
             }
 
             return NaN;
@@ -792,9 +794,14 @@ JXG.extend(
  * @constructor
  * @type JXG.Circle
  * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
- * @param {JXG.Point_number,JXG.Point,JXG.Line,JXG.Circle} center,radius The center must be given as a {@link JXG.Point}, see {@link JXG.providePoints}, but the radius can be given
- * as a number (which will create a circle with a fixed radius), another {@link JXG.Point}, a {@link JXG.Line} (the distance of start and end point of the
+ * @param {JXG.Point_number,JXG.Point,JXG.Line,JXG.Circle} center,radius The center must be given as a {@link JXG.Point}, 
+ * see {@link JXG.providePoints}, but the radius can be given
+ * as a number (which will create a circle with a fixed radius), 
+ * another {@link JXG.Point}, a {@link JXG.Line} (the distance of start and end point of the
  * line will determine the radius), or another {@link JXG.Circle}.
+ * <p>
+ * If the radius is supplied as number or output of a function, its absolute value is taken.
+ * 
  * @example
  * // Create a circle providing two points
  * var p1 = board.create('point', [2.0, 2.0]),

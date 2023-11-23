@@ -309,7 +309,7 @@ JXG.extend(
          * @private
          */
         updateSegmentFixedLength: function () {
-            var d, dnew, d1, d2, drag1, drag2, x, y;
+            var d, d_new, d1, d2, drag1, drag2, x, y;
 
             if (!this.hasFixedLength) {
                 return this;
@@ -318,7 +318,8 @@ JXG.extend(
             // Compute the actual length of the segment
             d = this.point1.Dist(this.point2);
             // Determine the length the segment ought to have
-            dnew = this.fixedLength();
+            d_new = Math.abs(this.fixedLength());
+
             // Distances between the two points and their respective
             // position before the update
             d1 = this.fixedLengthOldCoords[0].distance(
@@ -331,7 +332,7 @@ JXG.extend(
             );
 
             // If the position of the points or the fixed length function has been changed we have to work.
-            if (d1 > Mat.eps || d2 > Mat.eps || d !== dnew) {
+            if (d1 > Mat.eps || d2 > Mat.eps || d !== d_new) {
                 drag1 =
                     this.point1.isDraggable &&
                     this.point1.type !== Const.OBJECT_TYPE_GLIDER &&
@@ -348,14 +349,14 @@ JXG.extend(
                 if (d > Mat.eps) {
                     if ((d1 > d2 && drag2) || (d1 <= d2 && drag2 && !drag1)) {
                         this.point2.setPositionDirectly(Const.COORDS_BY_USER, [
-                            this.point1.X() + ((this.point2.X() - this.point1.X()) * dnew) / d,
-                            this.point1.Y() + ((this.point2.Y() - this.point1.Y()) * dnew) / d
+                            this.point1.X() + ((this.point2.X() - this.point1.X()) * d_new) / d,
+                            this.point1.Y() + ((this.point2.Y() - this.point1.Y()) * d_new) / d
                         ]);
                         this.point2.fullUpdate();
                     } else if ((d1 <= d2 && drag1) || (d1 > d2 && drag1 && !drag2)) {
                         this.point1.setPositionDirectly(Const.COORDS_BY_USER, [
-                            this.point2.X() + ((this.point1.X() - this.point2.X()) * dnew) / d,
-                            this.point2.Y() + ((this.point1.Y() - this.point2.Y()) * dnew) / d
+                            this.point2.X() + ((this.point1.X() - this.point2.X()) * d_new) / d,
+                            this.point2.Y() + ((this.point1.Y() - this.point2.Y()) * d_new) / d
                         ]);
                         this.point1.fullUpdate();
                     }
@@ -364,18 +365,18 @@ JXG.extend(
                 } else {
                     x = Math.random() - 0.5;
                     y = Math.random() - 0.5;
-                    d = Math.sqrt(x * x + y * y);
+                    d = Mat.hypot(x, y);
 
                     if (drag2) {
                         this.point2.setPositionDirectly(Const.COORDS_BY_USER, [
-                            this.point1.X() + (x * dnew) / d,
-                            this.point1.Y() + (y * dnew) / d
+                            this.point1.X() + (x * d_new) / d,
+                            this.point1.Y() + (y * d_new) / d
                         ]);
                         this.point2.fullUpdate();
                     } else if (drag1) {
                         this.point1.setPositionDirectly(Const.COORDS_BY_USER, [
-                            this.point2.X() + (x * dnew) / d,
-                            this.point2.Y() + (y * dnew) / d
+                            this.point2.X() + (x * d_new) / d,
+                            this.point2.Y() + (y * d_new) / d
                         ]);
                         this.point1.fullUpdate();
                     }
@@ -390,6 +391,7 @@ JXG.extend(
                     this.point2.coords.usrCoords
                 );
             }
+
             return this;
         },
 
@@ -963,6 +965,7 @@ JXG.extend(
         //         this.ticks[i].showElement();
         //     }
         // }
+
     }
 );
 
@@ -1317,8 +1320,8 @@ JXG.registerElement("line", JXG.createLine);
  * @param {JXG.Point,array_JXG.Point,array} point1,point2 Parent elements can be two elements either of type {@link JXG.Point}
  * or array of numbers describing the
  * coordinates of a point. In the latter case the point will be constructed automatically as a fixed invisible point.
- * @param {number,function} length (optional) The points are adapted - if possible - such that their distance
- * has this value.
+ * @param {number,function} [length] The points are adapted - if possible - such that their distance
+ * is equal to the absolute value of this number.  
  * @see Line
  * @example
  * // Create a segment providing two points.
@@ -1564,7 +1567,8 @@ JXG.registerElement("axis", JXG.createAxis);
  * </script><pre>
  */
 JXG.createTangent = function (board, parents, attributes) {
-    var p, c, j, el, tangent, attr;
+    var p, c, j, el, tangent, attr,
+        getCurveTangentDir;
 
     // One argument: glider on line, circle or curve
     if (parents.length === 1) {
@@ -1635,171 +1639,100 @@ JXG.createTangent = function (board, parents, attributes) {
             tangent.glider = p;
         } else {
             // curveType 'plot'
-            // In case of bezierDegree == 1:
-            // Find two points p1, p2 enclosing the glider.
-            // Then the equation of the line segment is: 0 = y*(x1-x2) + x*(y2-y1) + y1*x2-x1*y2,
-            // which is the cross product of p1 and p2.
-            //
-            // In case of bezieDegree === 3:
-            // The slope dy / dx of the tangent is determined. Then the
-            // tangent is computed as cross product between
-            // the glider p and [1, p.X() + dx, p.Y() + dy]
-            //
+            /**
+             * @ignore
+             *
+             * In case of bezierDegree == 1:
+             * Find two points p1, p2 enclosing the glider.
+             * Then the equation of the line segment is: 0 = y*(x1-x2) + x*(y2-y1) + y1*x2-x1*y2,
+             * which is the cross product of p1 and p2.
+             *
+             * In case of bezierDegree === 3:
+             * The slope dy / dx of the tangent is determined. Then the
+             * tangent is computed as cross product between
+             * the glider p and [1, p.X() + dx, p.Y() + dy]
+             *
+             */
+            getCurveTangentDir = function (position, curve, num) {
+                var i = Math.floor(position),
+                    p1, p2, t, A, B, C, D, dx, dy, d,
+                    points, le;
+
+                if (curve.bezierDegree === 1) {
+                    if (i === curve.numberPoints - 1) {
+                        i--;
+                    }
+                } else if (curve.bezierDegree === 3) {
+                    // i is start of the Bezier segment
+                    // t is the position in the Bezier segment
+                    if (curve.elType === 'sector') {
+                        points = curve.points.slice(3, curve.numberPoints - 3);
+                        le = points.length;
+                    } else {
+                        points = curve.points;
+                        le = points.length;
+                    }
+                    i = Math.floor((position * (le - 1)) / 3) * 3;
+                    t = (position * (le - 1) - i) / 3;
+                    if (i >= le - 1) {
+                        i = le - 4;
+                        t = 1;
+                    }
+                } else {
+                    return 0;
+                }
+
+                if (i < 0) {
+                    return 1;
+                }
+
+                // The curve points are transformed (if there is a transformation)
+                // c.X(i) is not transformed.
+                if (curve.bezierDegree === 1) {
+                    p1 = curve.points[i].usrCoords;
+                    p2 = curve.points[i + 1].usrCoords;
+                } else {
+                    A = points[i].usrCoords;
+                    B = points[i + 1].usrCoords;
+                    C = points[i + 2].usrCoords;
+                    D = points[i + 3].usrCoords;
+                    dx =
+                        (1 - t) * (1 - t) * (B[1] - A[1]) +
+                        2 * (1 - t) * t * (C[1] - B[1]) +
+                        t * t * (D[1] - C[1]);
+                    dy =
+                        (1 - t) * (1 - t) * (B[2] - A[2]) +
+                        2 * (1 - t) * t * (C[2] - B[2]) +
+                        t * t * (D[2] - C[2]);
+                    d = Mat.hypot(dx, dy);
+                    dx /= d;
+                    dy /= d;
+                    p1 = p.coords.usrCoords;
+                    p2 = [1, p1[1] + dx, p1[2] + dy];
+                }
+
+                switch (num) {
+                    case 0:
+                        return p1[2] * p2[1] - p1[1] * p2[2];
+                    case 1:
+                        return p2[2] - p1[2];
+                    case 2:
+                        return p1[1] - p2[1];
+                }
+                return 0;
+            };
+
             tangent = board.create(
                 "line",
                 [
-                    function () {
-                        var i = Math.floor(p.position),
-                            p1, p2, t, A, B, C, D, dx, dy, d;
-
-                        if (c.bezierDegree === 1) {
-                            if (i === c.numberPoints - 1) {
-                                i--;
-                            }
-                        } else if (c.bezierDegree === 3) {
-                            // i is start of the Bezier segment
-                            // t is the position in the Bezier segment
-                            i = Math.floor((p.position * (c.numberPoints - 1)) / 3) * 3;
-                            t = (p.position * (c.numberPoints - 1) - i) / 3;
-                            if (i >= c.numberPoints - 1) {
-                                i = c.numberPoints - 4;
-                                t = 1;
-                            }
-                        } else {
-                            return 0;
-                        }
-
-                        if (i < 0) {
-                            return 1;
-                        }
-
-                        // The curve points are transformed (if there is a transformation)
-                        // c.X(i) is not transformed.
-                        if (c.bezierDegree === 1) {
-                            p1 = c.points[i].usrCoords;
-                            p2 = c.points[i + 1].usrCoords;
-                        } else {
-                            A = c.points[i].usrCoords;
-                            B = c.points[i + 1].usrCoords;
-                            C = c.points[i + 2].usrCoords;
-                            D = c.points[i + 3].usrCoords;
-                            dx =
-                                (1 - t) * (1 - t) * (B[1] - A[1]) +
-                                2 * (1 - t) * t * (C[1] - B[1]) +
-                                t * t * (D[1] - C[1]);
-                            dy =
-                                (1 - t) * (1 - t) * (B[2] - A[2]) +
-                                2 * (1 - t) * t * (C[2] - B[2]) +
-                                t * t * (D[2] - C[2]);
-                            d = Math.sqrt(dx * dx + dy * dy);
-                            dx /= d;
-                            dy /= d;
-                            p1 = p.coords.usrCoords;
-                            p2 = [1, p1[1] + dx, p1[2] + dy];
-                        }
-                        return p1[2] * p2[1] - p1[1] * p2[2];
+                    function() {
+                        return getCurveTangentDir(p.position, c, 0);
                     },
-                    function () {
-                        var i = Math.floor(p.position),
-                            p1, p2, t, A, B, C, D, dx, dy, d;
-
-                        if (c.bezierDegree === 1) {
-                            if (i === c.numberPoints - 1) {
-                                i--;
-                            }
-                        } else if (c.bezierDegree === 3) {
-                            // i is start of the Bezier segment
-                            // t is the position in the Bezier segment
-                            i = Math.floor((p.position * (c.numberPoints - 1)) / 3) * 3;
-                            t = (p.position * (c.numberPoints - 1) - i) / 3;
-                            if (i >= c.numberPoints - 1) {
-                                i = c.numberPoints - 4;
-                                t = 1;
-                            }
-                        } else {
-                            return 0;
-                        }
-
-                        if (i < 0) {
-                            return 0;
-                        }
-
-                        // The curve points are transformed (if there is a transformation)
-                        // c.X(i) is not transformed.
-                        if (c.bezierDegree === 1) {
-                            p1 = c.points[i].usrCoords;
-                            p2 = c.points[i + 1].usrCoords;
-                        } else {
-                            A = c.points[i].usrCoords;
-                            B = c.points[i + 1].usrCoords;
-                            C = c.points[i + 2].usrCoords;
-                            D = c.points[i + 3].usrCoords;
-                            dx =
-                                (1 - t) * (1 - t) * (B[1] - A[1]) +
-                                2 * (1 - t) * t * (C[1] - B[1]) +
-                                t * t * (D[1] - C[1]);
-                            dy =
-                                (1 - t) * (1 - t) * (B[2] - A[2]) +
-                                2 * (1 - t) * t * (C[2] - B[2]) +
-                                t * t * (D[2] - C[2]);
-                            d = Math.sqrt(dx * dx + dy * dy);
-                            dx /= d;
-                            dy /= d;
-                            p1 = p.coords.usrCoords;
-                            p2 = [1, p1[1] + dx, p1[2] + dy];
-                        }
-                        return p2[2] - p1[2];
+                    function() {
+                        return getCurveTangentDir(p.position, c, 1);
                     },
-                    function () {
-                        var i = Math.floor(p.position),
-                            p1, p2, t, A, B, C, D, dx, dy, d;
-
-                        if (c.bezierDegree === 1) {
-                            if (i === c.numberPoints - 1) {
-                                i--;
-                            }
-                        } else if (c.bezierDegree === 3) {
-                            // i is start of the Bezier segment
-                            // t is the position in the Bezier segment
-                            i = Math.floor((p.position * (c.numberPoints - 1)) / 3) * 3;
-                            t = (p.position * (c.numberPoints - 1) - i) / 3;
-                            if (i >= c.numberPoints - 1) {
-                                i = c.numberPoints - 4;
-                                t = 1;
-                            }
-                        } else {
-                            return 0;
-                        }
-
-                        if (i < 0) {
-                            return 0.0;
-                        }
-
-                        // The curve points are transformed (if there is a transformation)
-                        // c.X(i) is not transformed.
-                        if (c.bezierDegree === 1) {
-                            p1 = c.points[i].usrCoords;
-                            p2 = c.points[i + 1].usrCoords;
-                        } else {
-                            A = c.points[i].usrCoords;
-                            B = c.points[i + 1].usrCoords;
-                            C = c.points[i + 2].usrCoords;
-                            D = c.points[i + 3].usrCoords;
-                            dx =
-                                (1 - t) * (1 - t) * (B[1] - A[1]) +
-                                2 * (1 - t) * t * (C[1] - B[1]) +
-                                t * t * (D[1] - C[1]);
-                            dy =
-                                (1 - t) * (1 - t) * (B[2] - A[2]) +
-                                2 * (1 - t) * t * (C[2] - B[2]) +
-                                t * t * (D[2] - C[2]);
-                            d = Math.sqrt(dx * dx + dy * dy);
-                            dx /= d;
-                            dy /= d;
-                            p1 = p.coords.usrCoords;
-                            p2 = [1, p1[1] + dx, p1[2] + dy];
-                        }
-                        return p1[1] - p2[1];
+                    function() {
+                        return getCurveTangentDir(p.position, c, 2);
                     }
                 ],
                 attr

@@ -36,7 +36,7 @@
  * @fileoverview The JSXGraph object is defined in this file. JXG.JSXGraph controls all boards.
  * It has methods to create, save, load and free boards. Additionally some helper functions are
  * defined in this file directly in the JXG namespace.
- * @version 0.99
+ *
  */
 
 import JXG from "./jxg";
@@ -115,7 +115,7 @@ JXG.JSXGraph = {
     /**
      * Initialize the rendering engine
      *
-     * @param  {String} box        HTML id of the div-element which hosts the JSXGraph construction
+     * @param  {String} box        id of or reference to the div element which hosts the JSXGraph construction
      * @param  {Object} dim        The dimensions of the board
      * @param  {Object} doc        Usually, this is document object of the browser window.  If false or null, this defaults
      * to the document object of the browser.
@@ -134,7 +134,7 @@ JXG.JSXGraph = {
         }
 
         if (typeof doc === "object" && box !== null) {
-            boxid = doc.getElementById(box);
+            boxid = (Type.isString(box)) ? doc.getElementById(box) : box;
 
             // Remove everything from the container before initializing the renderer and the board
             while (boxid.firstChild) {
@@ -218,7 +218,7 @@ JXG.JSXGraph = {
 
     /**
      *
-     * @param {String} container HTML-ID to the HTML-element in which the board is painted.
+     * @param {String|Object} container id of or reference to the HTML element in which the board is painted.
      * @param {Object} attr An object that sets some of the board properties.
      *
      * @private
@@ -239,7 +239,7 @@ JXG.JSXGraph = {
                 doc = document;
             }
 
-        node_jsx = doc.getElementById(container);
+        node_jsx = (Type.isString(container)) ? doc.getElementById(container) : container;
         doc_glob = node_jsx.ownerDocument; // This is the window.document element, needed below.
         parent = node_jsx.parentNode;
 
@@ -291,7 +291,7 @@ JXG.JSXGraph = {
 
     /**
      * Initialize a new board.
-     * @param {String} box HTML-ID to the HTML-element in which the board is painted.
+     * @param {String|Object} box id of or reference to the HTML element in which the board is painted.
      * @param {Object} attributes An object that sets some of the board properties. Most of these properties can be set via JXG.Options.
      * @param {Array} [attributes.boundingbox=[-5, 5, 5, -5]] An array containing four numbers describing the left, top, right and bottom boundary of the board in user coordinates
      * @param {Boolean} [attributes.keepaspectratio=false] If <tt>true</tt>, the bounding box is adjusted to the same aspect ratio as the aspect ratio of the div containing the board.
@@ -439,7 +439,7 @@ JXG.JSXGraph = {
     /**
      * Load a board from a file containing a construction made with either GEONExT,
      * Intergeo, Geogebra, or Cinderella.
-     * @param {String} box HTML-ID to the HTML-element in which the board is painted.
+     * @param {String|Object} box id of or reference to the HTML element in which the board is painted.
      * @param {String} file base64 encoded string.
      * @param {String} format containing the file format: 'Geonext' or 'Intergeo'.
      * @param {Object} attributes Attributes for the board and 'encoding'.
@@ -506,7 +506,7 @@ JXG.JSXGraph = {
     /**
      * Load a board from a base64 encoded string containing a construction made with either GEONExT,
      * Intergeo, Geogebra, or Cinderella.
-     * @param {String} box HTML-ID to the HTML-element in which the board is painted.
+     * @param {String|Object} box id of or reference to the HTML element in which the board is painted.
      * @param {String} string base64 encoded string.
      * @param {String} format containing the file format: 'Geonext', 'Intergeo', 'Geogebra'.
      * @param {Object} attributes Attributes for the board and 'encoding'.
@@ -525,9 +525,9 @@ JXG.JSXGraph = {
         attributes = attributes || {};
         attr = this._setAttributes(attributes);
 
-            dimensions = Env.getDimensions(box, attr.document);
-            renderer = this.initRenderer(box, dimensions, attr.document, attr.renderer);
-            this._setARIA(box, attr);
+        dimensions = Env.getDimensions(box, attr.document);
+        renderer = this.initRenderer(box, dimensions, attr.document, attr.renderer);
+        this._setARIA(box, attr);
 
         /* User default parameters, in parse* the values in the gxt files are submitted to board */
         board = new Board(
@@ -551,7 +551,7 @@ JXG.JSXGraph = {
 
     /**
      * Delete a board and all its contents.
-     * @param {JXG.Board,String} board HTML-ID to the DOM-element in which the board is drawn.
+     * @param {JXG.Board,String} board id of or reference to the DOM element in which the board is drawn.
      */
     freeBoard: function (board) {
         var el;

@@ -270,14 +270,18 @@ JXG.createLine3D = function (board, parents, attributes) {
         el = new JXG.Line3D(view, point, direction, range, attr);
 
         // Now set the real points which define the line
-        /** @ignore */
+        /**
+         * @ignore
+         */
         points[0].F = function () {
             return el.getPointCoords(Type.evaluate(el.range[0]));
         };
         points[0].prepareUpdate().update();
         point1 = points[0];
 
-        /** @ignore */
+        /**
+         * @ignore
+         */
         points[1].F = function () {
             return el.getPointCoords(Type.evaluate(el.range[1]));
         };

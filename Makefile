@@ -46,7 +46,10 @@ ZIPFLAGS=-r
 VERSION=$(shell grep -o '"version": "[^"]*' package.json | grep -o '[^"]*$$')
 
 # List of all included JavaScript files - required for docs, linters, and to build the readers
-FILELIST=$(shell cat src/index.js | awk '/import/ {if (match($$0,/"\.(.+)"/,m)) print "src"m[1]".js" }')
+# Double quotes:
+# FILELIST=$(shell cat src/index.js | awk '/import/ {if (match($$0,/"\.(.+)"/,m)) print "src"m[1]".js" }')
+# Single quotes:
+FILELIST=$(shell cat src/index.js | awk '/import/ {if (match($$0,/\x27\.(.+)\x27/,m)) print "src"m[1]".js" }')
 
 # Lintlist - jessiecode.js is developed externally (github:jsxgraph/jessiecode) and won't be linted in here
 LINTLIST=$(shell echo $(FILELIST) | sed 's/src\/parser\/jessiecode\.js//')
@@ -91,18 +94,18 @@ release: core docs
 
 beta: docs
 	# $(WEBPACK) --config config/webpack.config.js
+	mkdir -p $(BETA)
 	cp $(OUTPUT)/*.js $(BETA)
 	cp $(OUTPUT)/*.mjs $(BETA)
 	cp $(OUTPUT)/*.map $(BETA)
 	cp $(OUTPUT)/*.css $(BETA)
-	rm -r $(BETA)/docs
+	rm -fr $(BETA)/docs
 	cp -r $(OUTPUT)/docs/ $(BETA)/docs
 	# Update version number in line 2 of file COPYRIGHT
 	sed -i '2s/.*/    JSXGraph $(VERSION)/' COPYRIGHT
 	# Prepend file to the jsxgraphcore.* files
 	cat COPYRIGHT $(BETA)/jsxgraphcore.js >$(BETA)/tmp.file; mv $(BETA)/tmp.file $(BETA)/jsxgraphcore.js
 	cat COPYRIGHT $(BETA)/jsxgraphcore.mjs >$(BETA)/tmp.file; mv $(BETA)/tmp.file $(BETA)/jsxgraphcore.mjs
-
 
 docs: core
 	# Set up tmp dir

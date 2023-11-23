@@ -111,7 +111,7 @@ JXG.extend(
         },
 
         loadFromTable: function (table, columnHeader, rowHeader) {
-            var row, i, j, col, cell, name;
+            var row, i, j, col, cell;
 
             if (Type.isArray(columnHeader)) {
                 this.columnHeaders = columnHeader;

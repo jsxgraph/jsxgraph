@@ -100,14 +100,11 @@ JXG.Util = JXG.Util || {};
  */
 JXG.Util.Unzip = function (barray) {
     var gpflags,
-        crc,
-        SIZE,
+        // SIZE,
         fileout,
         flens,
         fmax,
         outputArr = [],
-        output = "",
-        debug = false,
         files = 0,
         unzipped = [],
         buf32k = new Array(32768),
@@ -115,16 +112,19 @@ JXG.Util.Unzip = function (barray) {
         modeZIP = false,
         barraylen = barray.length,
         bytepos = 0,
-        bitpos = 0,
         bb = 1,
-        bits = 0,
+        // bits = 0,
         literalTree = new Array(288),
         distanceTree = new Array(32),
         treepos = 0,
         Places = null,
-        Places2 = null,
-        impDistanceTree = new Array(64),
-        impLengthTree = new Array(64),
+        // crc,
+        // output = "",
+        // debug = false,
+        // bitpos = 0,
+        // Places2 = null,
+        // impDistanceTree = new Array(64),
+        // impLengthTree = new Array(64),
         len = 0,
         fpos = new Array(17),
         nameBuf = [];
@@ -132,7 +132,7 @@ JXG.Util.Unzip = function (barray) {
     fpos[0] = 0;
 
     function readByte() {
-        bits += 8;
+        // bits += 8;
 
         if (bytepos < barraylen) {
             return barray[bytepos++];
@@ -150,7 +150,7 @@ JXG.Util.Unzip = function (barray) {
 
         // Prevent problems on iOS7 with >>
         try {
-            bits++;
+            // bits++;
             carry = bb & 1;
             bb >>= 1;
 
@@ -192,7 +192,7 @@ JXG.Util.Unzip = function (barray) {
     }
 
     function addBuffer(a) {
-        SIZE++;
+        // SIZE++;
         buf32k[bIdx++] = a;
         outputArr.push(String.fromCharCode(a));
 
@@ -327,7 +327,7 @@ JXG.Util.Unzip = function (barray) {
 
     function deflateLoop() {
         var last, c, type, i, j, l, ll, ll2,
-            len, blockLen, dist, cSum, n, z,
+            len, blockLen, dist, cSum, n,// z,
             literalCodes, distCodes, lenCodes,
             endless = true;
 
@@ -451,10 +451,10 @@ JXG.Util.Unzip = function (barray) {
                 //read in literal and distance code lengths
                 n = literalCodes + distCodes;
                 i = 0;
-                z = -1;
+                // z = -1;
 
                 while (i < n) {
-                    z++;
+                    // z++;
                     j = decodeValue(distanceTree);
 
                     // length of code in bits (0..15)
@@ -572,6 +572,7 @@ JXG.Util.Unzip = function (barray) {
      *
      */
     function nextFile() {
+        /* eslint-disable no-unused-vars */
         var i,
             c,
             extralen,
@@ -668,7 +669,7 @@ JXG.Util.Unzip = function (barray) {
                         i++;
                     }
 
-                    SIZE = 0;
+                    // SIZE = 0;
                     if (method === 8) {
                         deflateLoop();
                         unzipped[files] = new Array(2);
@@ -690,6 +691,7 @@ JXG.Util.Unzip = function (barray) {
             throw e;
         }
         return false;
+        /* eslint-enable no-unused-vars */
     }
 
     /**
@@ -702,6 +704,7 @@ JXG.Util.Unzip = function (barray) {
      * @private
      */
     function skipdir() {
+        /* eslint-disable no-unused-vars */
         var crc, compSize, size, os, i, c,
             tmp = [];
 
@@ -822,6 +825,8 @@ JXG.Util.Unzip = function (barray) {
         // We are here in non-ZIP-files only,
         // In that case the eturn value doesn't matter
         return false;
+        /* eslint-enable no-unused-vars */
+
     }
 
     JXG.Util.Unzip.prototype.unzipFile = function (name) {

@@ -1,0 +1,38 @@
+{
+	"name": "JSXGraph",
+	"author": [
+		"Alfred Wassermann",
+		"Peter Wilfahrt"
+	],
+	"url": "https://github.com/jsxgraph/jsxgraph/",
+	"descriptionmsg": "mediawiki extension for filtering jsxgraph tags",
+	"license-name": "MIT",
+	"type": "other",
+	"requires": {
+		"MediaWiki": ">= 1.35.0"
+	},
+	"config": {
+		"JSXGraphEnableWelcome": {
+			"description": "Enable the JSXGraph",
+			"value": true
+		}
+	},
+	"MessagesDirs": {
+		"JSXGraph": [
+			"i18n"
+		]
+	},
+	"AutoloadNamespaces": {
+		"MediaWiki\\Extension\\JSXGraph\\": "includes/"
+	},
+	"Hooks": {
+		"ParserFirstCallInit": "handleHooks",
+		"ParserAfterTidy": "handleHooks"
+	},
+	"HookHandlers": {
+		"handleHooks": {
+			"class": "MediaWiki\\Extension\\JSXGraph\\Hooks"
+		}
+	},
+	"manifest_version": 2
+}

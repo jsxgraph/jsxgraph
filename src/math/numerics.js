@@ -2377,7 +2377,7 @@ Mat.Numerics = {
                         Dist: function (p) {
                             var dx = this.X() - p.X(),
                                 dy = this.Y() - p.Y();
-                            return Math.sqrt(dx * dx + dy * dy);
+                            return Mat.hypot(dx, dy);
                         }
                     };
 
@@ -2397,7 +2397,7 @@ Mat.Numerics = {
                         Dist: function (p) {
                             var dx = this.X() - p.X(),
                                 dy = this.Y() - p.Y();
-                            return Math.sqrt(dx * dx + dy * dy);
+                            return Mat.hypot(dx, dy);
                         }
                     };
 
@@ -2961,10 +2961,10 @@ Mat.Numerics = {
      * Helper function to create curve which displays Riemann sums.
      * Compute coordinates for the rectangles showing the Riemann sum.
      * <p>
-     * In case of type "simpson" and "trapezoidal", the horizontal line approximating the function value 
-     * is replaced by a parabola or a secant. IN case of "simpson", 
-     * the parabola is approximated visually by a polygonal chain of fixed step width. 
-     * 
+     * In case of type "simpson" and "trapezoidal", the horizontal line approximating the function value
+     * is replaced by a parabola or a secant. IN case of "simpson",
+     * the parabola is approximated visually by a polygonal chain of fixed step width.
+     *
      * @param {Function,Array} f Function or array of two functions.
      * If f is a function the integral of this function is approximated by the Riemann sum.
      * If f is an array consisting of two functions the area between the two functions is filled
@@ -3117,7 +3117,7 @@ Mat.Numerics = {
      * @memberof JXG.Math.Numerics
      */
     riemannsum: function (f, n, type, start, end) {
-        JXG.deprecated("Numerics.riemannsum()", "Numerics.riemann()");
+        JXG.deprecated("Numerics.riemannsum()", "Numerics.riemann()[2]");
         return this.riemann(f, n, type, start, end)[2];
     },
 
@@ -3388,14 +3388,10 @@ Mat.Numerics = {
             t1,
             cb,
             t2,
-            // Actual tolerance
-            tol_act,
-            // Interpolation step is calculated in the form p/q; division
-            // operations is delayed until the last moment
-            p,
-            q,
-            // Step at this iteration
-            new_step,
+            tol_act,   // Actual tolerance
+            p,         // Interpolation step is calculated in the form p/q; division
+            q,         // operations is delayed until the last moment
+            new_step,  // Step at this iteration
             eps = Mat.eps,
             maxiter = this.maxIterationsRoot,
             niter = 0;
@@ -3550,10 +3546,7 @@ Mat.Numerics = {
      * @memberof JXG.Math.Numerics
      */
     chandrupatla: function (f, x0, object) {
-        var a,
-            fa,
-            b,
-            fb,
+        var a, b, fa, fb,
             res,
             niter = 0,
             maxiter = this.maxIterationsRoot,
@@ -3561,14 +3554,8 @@ Mat.Numerics = {
             t = 0.5 * rand,
             eps = Mat.eps, // 1.e-10,
             dlt = 0.00001,
-            x1,
-            x2,
-            x3,
-            x,
-            f1,
-            f2,
-            f3,
-            y,
+            x1, x2, x3, x,
+            f1, f2, f3, y,
             xm,
             fm,
             tol,
@@ -3577,11 +3564,7 @@ Mat.Numerics = {
             ph,
             fl,
             fh,
-            AL,
-            A,
-            B,
-            C,
-            D;
+            AL, A, B, C, D;
 
         if (Type.isArray(x0)) {
             if (x0.length < 2) {
@@ -3695,10 +3678,9 @@ Mat.Numerics = {
             fx, fv, fw,
             range, middle_range, tol_act, new_step,
             p, q, t, ft,
-            // Golden section ratio
-            r = (3.0 - Math.sqrt(5.0)) * 0.5,
+            r = (3.0 - Math.sqrt(5.0)) * 0.5,      // Golden section ratio
             tol = Mat.eps,
-            sqrteps = Mat.eps, //Math.sqrt(Mat.eps),
+            sqrteps = Mat.eps, // Math.sqrt(Mat.eps),
             maxiter = this.maxIterationsMinimize,
             niter = 0;
         // nfev = 0;
@@ -3737,7 +3719,7 @@ Mat.Numerics = {
             // Obtain the golden section step
             new_step = r * (x < middle_range ? b - x : a - x);
 
-            // Decide if the interpolation can be tried. If x and w are distinct interpolatiom may be tried
+            // Decide if the interpolation can be tried. If x and w are distinct, interpolatiom may be tried
             if (Math.abs(x - w) >= tol_act) {
                 // Interpolation step is calculated as p/q;
                 // division operation is delayed until last moment
@@ -3747,21 +3729,19 @@ Mat.Numerics = {
                 q = 2 * (q - t);
 
                 if (q > 0) {
-                    // q was calculated with the op-
-                    p = -p; // posite sign; make q positive
+                    p = -p; // q was calculated with the opposite sign; make q positive
                 } else {
-                    // and assign possible minus to
-                    q = -q; // p
+                    q = -q; // // and assign possible minus to p
                 }
                 if (
                     Math.abs(p) < Math.abs(new_step * q) && // If x+p/q falls in [a,b]
-                    p > q * (a - x + 2 * tol_act) && //  not too close to a and
+                    p > q * (a - x + 2 * tol_act) &&        //  not too close to a and
                     p < q * (b - x - 2 * tol_act)
                 ) {
                     // b, and isn't too large
                     new_step = p / q; // it is accepted
                 }
-                // If p/q is too large then the
+                // If p / q is too large then the
                 // golden section procedure can
                 // reduce [a,b] range to more
                 // extent
@@ -3827,6 +3807,240 @@ Mat.Numerics = {
     },
 
     /**
+     *
+     *   Purpose:
+     *
+     *   GLOMIN seeks a global minimum of a function F(X) in an interval [A,B].
+     *
+     * Discussion:
+     *
+     *  This function assumes that F(X) is twice continuously differentiable over [A,B]
+     * and that F''(X) <= M for all X in [A,B].
+     *
+     * Licensing:
+     *   This code is distributed under the GNU LGPL license.
+     *
+     * Modified:
+     *
+     *   17 April 2008
+     *
+     * Author:
+     *
+     *   Original FORTRAN77 version by Richard Brent.
+     *   C version by John Burkardt.
+     *   https://people.math.sc.edu/Burkardt/c_src/brent/brent.c
+     *
+     * Reference:
+     *
+     *   Richard Brent,
+     *  Algorithms for Minimization Without Derivatives,
+     *   Dover, 2002,
+     *  ISBN: 0-486-41998-3,
+     *   LC: QA402.5.B74.
+     *
+     * Parameters:
+     *
+     *   Input, double A, B, the endpoints of the interval.
+     *  It must be the case that A < B.
+     *
+     *   Input, double C, an initial guess for the global
+     *  minimizer.  If no good guess is known, C = A or B is acceptable.
+     *
+     *  Input, double M, the bound on the second derivative.
+     *
+     *   Input, double MACHEP, an estimate for the relative machine
+     *  precision.
+     *
+     *   Input, double E, a positive tolerance, a bound for the
+     *  absolute error in the evaluation of F(X) for any X in [A,B].
+     *
+     *   Input, double T, a positive error tolerance.
+     *
+     *    Input, double F (double x ), a user-supplied
+     *  function whose global minimum is being sought.
+     *
+     *   Output, double *X, the estimated value of the abscissa
+     *  for which F attains its global minimum value in [A,B].
+     *
+     *   Output, double GLOMIN, the value F(X).
+     */
+    glomin: function (f, x0) {
+        var a0, a2, a3, d0, d1, d2, h,
+            k, m2,
+            p, q, qs,
+            r, s, sc,
+            y, y0, y1, y2, y3, yb,
+            z0, z1, z2,
+            a, b, c, x,
+            m = 10000000.0,
+            t = Mat.eps, // * Mat.eps,
+            e = Mat.eps * Mat.eps,
+            machep = Mat.eps * Mat.eps * Mat.eps;
+
+        a = x0[0];
+        b = x0[1];
+        c = (f(a) < f(b)) ? a : b;
+
+        a0 = b;
+        x = a0;
+        a2 = a;
+        y0 = f(b);
+        yb = y0;
+        y2 = f(a);
+        y = y2;
+
+        if (y0 < y) {
+            y = y0;
+        } else {
+            x = a;
+        }
+
+        if (m <= 0.0 || b <= a) {
+            return y;
+        }
+
+        m2 = 0.5 * (1.0 + 16.0 * machep) * m;
+
+        if (c <= a || b <= c) {
+            sc = 0.5 * (a + b);
+        } else {
+            sc = c;
+        }
+
+        y1 = f(sc);
+        k = 3;
+        d0 = a2 - sc;
+        h = 9.0 / 11.0;
+
+        if (y1 < y) {
+            x = sc;
+            y = y1;
+        }
+
+        for (; ;) {
+            d1 = a2 - a0;
+            d2 = sc - a0;
+            z2 = b - a2;
+            z0 = y2 - y1;
+            z1 = y2 - y0;
+            r = d1 * d1 * z0 - d0 * d0 * z1;
+            p = r;
+            qs = 2.0 * (d0 * z1 - d1 * z0);
+            q = qs;
+
+            if (k < 1000000 || y2 <= y) {
+                for (; ;) {
+                    if (q * (r * (yb - y2) + z2 * q * ((y2 - y) + t)) <
+                        z2 * m2 * r * (z2 * q - r)) {
+
+                        a3 = a2 + r / q;
+                        y3 = f(a3);
+
+                        if (y3 < y) {
+                            x = a3;
+                            y = y3;
+                        }
+                    }
+                    k = ((1611 * k) % 1048576);
+                    q = 1.0;
+                    r = (b - a) * 0.00001 * k;
+
+                    if (z2 <= r) {
+                        break;
+                    }
+                }
+            } else {
+                k = ((1611 * k) % 1048576);
+                q = 1.0;
+                r = (b - a) * 0.00001 * k;
+
+                while (r < z2) {
+                    if (q * (r * (yb - y2) + z2 * q * ((y2 - y) + t)) <
+                        z2 * m2 * r * (z2 * q - r)) {
+
+                        a3 = a2 + r / q;
+                        y3 = f(a3);
+
+                        if (y3 < y) {
+                            x = a3;
+                            y = y3;
+                        }
+                    }
+                    k = ((1611 * k) % 1048576);
+                    q = 1.0;
+                    r = (b - a) * 0.00001 * k;
+                }
+            }
+
+            r = m2 * d0 * d1 * d2;
+            s = Math.sqrt(((y2 - y) + t) / m2);
+            h = 0.5 * (1.0 + h);
+            p = h * (p + 2.0 * r * s);
+            q = q + 0.5 * qs;
+            r = - 0.5 * (d0 + (z0 + 2.01 * e) / (d0 * m2));
+
+            if (r < s || d0 < 0.0) {
+                r = a2 + s;
+            } else {
+                r = a2 + r;
+            }
+
+            if (0.0 < p * q) {
+                a3 = a2 + p / q;
+            } else {
+                a3 = r;
+            }
+
+            for (; ;) {
+                a3 = Math.max(a3, r);
+
+                if (b <= a3) {
+                    a3 = b;
+                    y3 = yb;
+                } else {
+                    y3 = f(a3);
+                }
+
+                if (y3 < y) {
+                    x = a3;
+                    y = y3;
+                }
+
+                d0 = a3 - a2;
+
+                if (a3 <= r) {
+                    break;
+                }
+
+                p = 2.0 * (y2 - y3) / (m * d0);
+
+                if ((1.0 + 9.0 * machep) * d0 <= Math.abs(p)) {
+                    break;
+                }
+
+                if (0.5 * m2 * (d0 * d0 + p * p) <= (y2 - y) + (y3 - y) + 2.0 * t) {
+                    break;
+                }
+                a3 = 0.5 * (a2 + a3);
+                h = 0.9 * h;
+            }
+
+            if (b <= a3) {
+                break;
+            }
+
+            a0 = sc;
+            sc = a2;
+            a2 = a3;
+            y0 = y1;
+            y1 = y2;
+            y2 = y3;
+        }
+
+        return [x, y];
+    },
+
+    /**
      * Implements the Ramer-Douglas-Peucker algorithm.
      * It discards points which are not necessary from the polygonal line defined by the point array
      * pts. The computation is done in screen coordinates.
@@ -3856,6 +4070,7 @@ Mat.Numerics = {
                 var d, k, ci, cj, ck,
                     x0, y0, x1, y1,
                     den, lbda,
+                    eps = Mat.eps * Mat.eps,
                     huge = 10000,
                     dist = 0,
                     f = i;
@@ -3894,7 +4109,7 @@ Mat.Numerics = {
                     y1 = y1 === -Infinity ? -huge : y1;
                     den = x1 * x1 + y1 * y1;
 
-                    if (den >= Mat.eps) {
+                    if (den > eps) {
                         lbda = (x0 * x1 + y0 * y1) / den;
 
                         if (lbda < 0.0) {

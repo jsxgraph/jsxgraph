@@ -643,7 +643,7 @@ JXG.createSector = function (board, parents, attributes) {
         vecx = coords.usrCoords[1] - pmc[1];
         vecy = coords.usrCoords[2] - pmc[2];
 
-        len = Math.sqrt(vecx * vecx + vecy * vecy);
+        len = Mat.hypot(vecx, vecy);
         vecx = (vecx * (len + dx)) / len;
         vecy = (vecy * (len + dy)) / len;
         vec = [pmc[1] + vecx, pmc[2] + vecy];

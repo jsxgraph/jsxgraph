@@ -60,7 +60,8 @@ import Composition from './composition';
  * elements, managing mouse and touch events, etc. You probably don't want to use this constructor directly.
  * Please use {@link JXG.JSXGraph.initBoard} to initialize a board.
  * @constructor
- * @param {String} container The id or reference of the HTML DOM element the board is drawn in. This is usually a HTML div.
+ * @param {String|Object} container The id of or reference to the HTML DOM element
+ * the board is drawn in. This is usually a HTML div.
  * @param {JXG.AbstractRenderer} renderer The reference of a renderer.
  * @param {String} id Unique identifier for the board, may be an empty string or null or even undefined.
  * @param {JXG.Coords} origin The coordinates where the origin is placed, in user coordinates.
@@ -140,13 +141,29 @@ JXG.Board = function (container, renderer, id,
      * The html-id of the html element containing the board.
      * @type String
      */
-    this.container = container;
+    this.container = ''; // container
 
     /**
      * Pointer to the html element containing the board.
      * @type Object
      */
-    this.containerObj = (Env.isBrowser ? this.document.getElementById(this.container) : null);
+    this.containerObj = null; // (Env.isBrowser ? this.document.getElementById(this.container) : null);
+
+    // Set this.container and this.containerObj
+    if (Type.isString(container)) {
+        // Hosting div is given as string
+        this.container = container; // container
+        this.containerObj = (Env.isBrowser ? this.document.getElementById(this.container) : null);
+    } else if (Env.isBrowser) {
+        // Hosting div is given as object pointer
+        this.containerObj = container;
+        this.container = this.containerObj.getAttribute('id');
+        if (this.container === null) {
+            // Set random id to this.container,
+            // but not to the DOM element
+            this.container = 'null' + parseInt(Math.random() * 100000000).toString();
+        }
+    }
 
     if (Env.isBrowser && renderer.type !== 'no' && this.containerObj === null) {
         throw new Error('\nJSXGraph: HTML container element "' + container + '" not found.');
@@ -1296,7 +1313,7 @@ JXG.extend(
             C = (dxx * dx + dyy * dy) / LL;
             S = (dyy * dx - dxx * dy) / LL;
             if (!scalable) {
-                lbda = Math.sqrt(C * C + S * S);
+                lbda = Mat.hypot(C, S);
                 C /= lbda;
                 S /= lbda;
             }
@@ -4347,7 +4364,7 @@ JXG.extend(
 
         /**
          * Add conditional updates to the elements.
-         * @param {String} str String containing coniditional update in geonext syntax
+         * @param {String} str String containing conditional update in geonext syntax
          */
         addConditions: function (str) {
             var term,
@@ -4426,7 +4443,7 @@ JXG.extend(
                 m = term.indexOf('=');
                 left = term.slice(0, m);
                 right = term.slice(m + 1);
-                m = left.indexOf('.'); // Dies erzeugt Probleme bei Variablennamen der Form ' Steuern akt.'
+                m = left.indexOf('.');   // Resulting variable names must not contain dots, e.g. ' Steuern akt.'
                 name = left.slice(0, m); //.replace(/\s+$/,''); // do NOT cut out name (with whitespace)
                 el = this.elementsByName[Type.unescapeHTML(name)];
 
@@ -5375,6 +5392,7 @@ JXG.extend(
             }
 
             this.prepareUpdate().updateElements(drag).updateConditions();
+
             this.renderer.suspendRedraw(this);
             this.updateRenderer();
             this.renderer.unsuspendRedraw();
@@ -7391,9 +7409,9 @@ JXG.extend(
                                 cpyb = Numerics.D(c.Y)(b),
                                 cpxab = Numerics.D(c.X)((a + b) * 0.5),
                                 cpyab = Numerics.D(c.Y)((a + b) * 0.5),
-                                fa = Math.sqrt(cpxa * cpxa + cpya * cpya),
-                                fb = Math.sqrt(cpxb * cpxb + cpyb * cpyb),
-                                fab = Math.sqrt(cpxab * cpxab + cpyab * cpyab);
+                                fa = Mat.hypot(cpxa, cpya),
+                                fb = Mat.hypot(cpxb, cpyb),
+                                fab = Mat.hypot(cpxab, cpyab);
 
                             return ((fa + 4 * fab + fb) * (b - a)) / 6;
                         },

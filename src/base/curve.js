@@ -98,7 +98,7 @@ JXG.Curve = function (board, parents, attributes) {
     this.ticks = [];
 
     /**
-     * Stores a quad tree if it is required. The quad tree is generated in the curve
+     * Stores a quadtree if it is required. The quadtree is generated in the curve
      * updates and can be used to speed up the hasPoint method.
      * @type JXG.Math.Quadtree
      */
@@ -1949,7 +1949,8 @@ JXG.createCardinalSpline = function (board, parents, attributes) {
                 Dist: function (p) {
                     var dx = this.X() - p.X(),
                         dy = this.Y() - p.Y();
-                    return Math.sqrt(dx * dx + dy * dy);
+
+                    return Mat.hypot(dx, dy);
                 }
             };
         };
@@ -2232,10 +2233,10 @@ JXG.registerElement("metapostspline", JXG.createMetapostSpline);
  * @class This element is used to provide a constructor for Riemann sums, which is realized as a special curve.
  * The returned element has the method Value() which returns the sum of the areas of the bars.
  * <p>
- * In case of type "simpson" and "trapezoidal", the horizontal line approximating the function value 
- * is replaced by a parabola or a secant. IN case of "simpson", 
- * the parabola is approximated visually by a polygonal chain of fixed step width. 
- * 
+ * In case of type "simpson" and "trapezoidal", the horizontal line approximating the function value
+ * is replaced by a parabola or a secant. IN case of "simpson",
+ * the parabola is approximated visually by a polygonal chain of fixed step width.
+ *
  * @pseudo
  * @description
  * @name Riemannsum
@@ -2934,7 +2935,7 @@ JXG.registerElement("curveunion", JXG.createCurveUnion);
  *
  */
 JXG.createBoxPlot = function (board, parents, attributes) {
-    var box, i, len, w2,
+    var box, i, len,
         attr = Type.copyAttributes(attributes, board.options, "boxplot");
 
     if (parents.length !== 3) {

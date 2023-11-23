@@ -368,7 +368,7 @@ declare namespace JXG {
     export function getCSSTransform(cPos: number[], obj: Element): number[];
     export function getCSSTransformMatrix(obj: unknown): number[];
     export function getDimensions(
-        elementId: string,
+        elementId: string | object,
         doc: Document
     ): { width: number; height: number };
     export function getOffset(obj: Element): [left: number, top: number];
@@ -1585,8 +1585,8 @@ declare namespace JXG {
          */
         numberPoints: number;
         /**
-         * Stores a quad tree if it is required.
-         * The quad tree is generated in the curve updates and can be used to speed up the hasPoint method.
+         * Stores a quadtree if it is required.
+         * The quadtree is generated in the curve updates and can be used to speed up the hasPoint method.
          */
         qdt: any;
         /**
@@ -2199,6 +2199,8 @@ declare namespace JXG {
         | "plus"
         | "<>"
         | "diamond"
+        | "<<>>"
+        | "diamond2"
         | "^"
         | "triangleUp"
         | "triangleDown"
@@ -5498,7 +5500,7 @@ declare namespace JXG {
          * @param elementId HTML identifier (id) of the HTML element in which the board is painted.
          * @param attributes An object that sets some of the board properties.
          */
-        initBoard(elementId: string, attributes?: Partial<BoardAttributes>): Board;
+        initBoard(elementId: string | object, attributes?: Partial<BoardAttributes>): Board;
 
         /**
          * Delete a board and all its contents.

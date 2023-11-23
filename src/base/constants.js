@@ -36,13 +36,14 @@
 import JXG from "../jxg";
 
 var major = 1,
-    minor = 6,
-    patch = 1,
-    add = 'beta1', //'dev' 'beta'
+    minor = 7,
+    patch = 0,
+    add = 'dev', //'dev' 'beta'
     version = major + '.' + minor + '.' + patch + (add ? '-' + add : ''),
     constants;
 
-constants = /** @lends JXG */ {
+constants =
+    /** @lends JXG */ {
     /**
      * Constant: the currently used JSXGraph version.
      *

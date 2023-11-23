@@ -239,27 +239,51 @@ JXG.createSmartLabel = function (board, parents, attributes) {
         var measure;
         switch (mType) {
             case 'length':
+                /**
+                 * @ignore
+                 */
                 measure = function () { return p.L(); };
                 break;
             case 'slope':
+                /**
+                 * @ignore
+                 */
                 measure = function () { return p.Slope(); };
                 break;
             case 'area':
+                /**
+                 * @ignore
+                 */
                 measure = function () { return p.Area(); };
                 break;
             case 'radius':
+                /**
+                 * @ignore
+                 */
                 measure = function () { return p.Radius(); };
                 break;
             case 'perimeter':
+                /**
+                 * @ignore
+                 */
                 measure = function () { return p.Perimeter(); };
                 break;
             case 'rad':
+                /**
+                 * @ignore
+                 */
                 measure = function () { return p.Value(); };
                 break;
             case 'deg':
+                /**
+                 * @ignore
+                 */
                 measure = function () { return p.Value() * 180 / Math.PI; };
                 break;
             default:
+                /**
+                 * @ignore
+                 */
                 measure = function () { return 0.0; };
         }
 

@@ -82,7 +82,8 @@ JXG.SVGRenderer = function (container, dim) {
      */
     this.xlinkNamespace = "http://www.w3.org/1999/xlink";
 
-    // container is documented in AbstractRenderer
+    // container is documented in AbstractRenderer.
+    // Type node
     this.container = container;
 
     // prepare the div container and the svg root node for use with JSXGraph
@@ -256,6 +257,21 @@ JXG.SVGRenderer = function (container, dim) {
     } catch (e) {
         this.supportsForeignObject = false;
     }
+
+    // this.viewportClip = this.container.ownerDocument.createElementNS(
+    //     this.svgNamespace,
+    //     "clipPath"
+    // );
+    // this.viewportId = this.uniqName('viewport');
+    // this.viewportClip.setAttributeNS(null, "id", this.viewportId);
+    // var rect = this.container.ownerDocument.createElementNS(this.svgNamespace, 'rect');
+    // rect.setAttributeNS(null, "x", 20);
+    // rect.setAttributeNS(null, "y", 20);
+    // rect.setAttributeNS(null, "width", dim.width - 2 * 20);
+    // rect.setAttributeNS(null, "height", dim.height - 2 * 20);
+    // this.viewportClip.appendChild(rect);
+    // this.svgRoot.appendChild(this.viewportClip);
+
 };
 
 JXG.SVGRenderer.prototype = new AbstractRenderer();
@@ -819,6 +835,12 @@ JXG.extend(
                 node.setAttributeNS(null, "stroke-linejoin", "round");
                 node.setAttributeNS(null, "fill-rule", "evenodd");
             }
+            if (type !== 'marker') {
+                // node.setAttributeNS(null, "clip-path", 'view-box inset(20px 20px)');
+                // node.setAttributeNS(null, "clip-path", this.toURL(this.viewportId));
+                // node.style.clipPath = 'view-box inset(20px 20px)';
+                // node.style.clipPath = this.toURL(this.viewportId);
+            }
             return node;
         },
 
@@ -1009,7 +1031,10 @@ JXG.extend(
                     (scr[1] + size) +
                     " " +
                     scr[2];
-            } else if (type === "<>") {
+            } else if (type === "<>" || type === "<<>>") {
+                if (type === "<<>>") {
+                    size *= 1.41;
+                }
                 s =
                     " M " +
                     (scr[1] - size) +
@@ -1028,8 +1053,8 @@ JXG.extend(
                     " " +
                     (scr[2] - size) +
                     " Z ";
-            } else if (type === "^") {
-                s =
+                } else if (type === "^") {
+                    s =
                     " M " +
                     scr[1] +
                     " " +

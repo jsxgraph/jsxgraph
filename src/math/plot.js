@@ -181,7 +181,6 @@ Mat.Plot = {
             j = 0,
             distFromLine = function (p1, p2, p0) {
                 var lbda,
-                    d,
                     x0 = p0[1] - p1[1],
                     y0 = p0[2] - p1[2],
                     x1 = p2[0] - p1[1],
@@ -201,8 +200,7 @@ Mat.Plot = {
                         }
                     }
                 }
-                d = x0 * x0 + y0 * y0;
-                return Math.sqrt(d);
+                return Mat.hypot(x0, y0);
             };
 
         JXG.deprecated("Curve.updateParametricCurveOld()");
@@ -1181,8 +1179,8 @@ Mat.Plot = {
             max_func = function (t) {
                 var c = [curve.X(t, true), curve.Y(t, true)];
                 return -(
-                    Math.sqrt((a[0] - c[0]) * (a[0] - c[0]) + (a[1] - c[1]) * (a[1] - c[1])) +
-                    Math.sqrt((b[0] - c[0]) * (b[0] - c[0]) + (b[1] - c[1]) * (b[1] - c[1]))
+                    Mat.hypot(a[0] - c[0], a[1] - c[1]) +
+                    Mat.hypot(b[0] - c[0], b[1] - c[1])
                 );
             };
 
@@ -2221,7 +2219,7 @@ Mat.Plot = {
         dx = (x - x1) * curve.board.unitX;
         dy = (y - y1) * curve.board.unitY;
         // console.log("D1", Math.sqrt(dx * dx + dy * dy))
-        if (Math.sqrt(dx * dx + dy * dy) > tol) {
+        if (Mat.hypot(dx, dy) > tol) {
             this._recurse_v4(curve, t1, t, x1, y1, x, y, level - 1);
         } else {
             this._insertPoint_v4(curve, [1, x, y], t);
@@ -2229,7 +2227,7 @@ Mat.Plot = {
         dx = (x - x2) * curve.board.unitX;
         dy = (y - y2) * curve.board.unitY;
         // console.log("D2", Math.sqrt(dx * dx + dy * dy), x-x2, y-y2)
-        if (Math.sqrt(dx * dx + dy * dy) > tol) {
+        if (Mat.hypot(dx, dy) > tol) {
             this._recurse_v4(curve, t, t2, x, y, x2, y2, level - 1);
         } else {
             this._insertPoint_v4(curve, [1, x, y], t);
@@ -2475,7 +2473,6 @@ Mat.Plot = {
                     j = Math.max(0, i - 2);
                     // Add more points in critical intervals
                     if (
-                        true &&
                         //degree_y === -1 && // No polynomial
                         i >= start + 3 &&
                         i < le - 3 && // Do not do this if too close to a critical point

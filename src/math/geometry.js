@@ -598,9 +598,9 @@ JXG.extend(
             // on the same horizontal line.
             ps.sort(function (a, b) {
                 var rad1 =
-                        a[2] === ll[2] && a[1] === ll[1]
-                            ? -Infinity
-                            : Math.atan2(a[2] - ll[2], a[1] - ll[1]),
+                    a[2] === ll[2] && a[1] === ll[1]
+                        ? -Infinity
+                        : Math.atan2(a[2] - ll[2], a[1] - ll[1]),
                     rad2 =
                         b[2] === ll[2] && b[1] === ll[1]
                             ? -Infinity
@@ -978,8 +978,8 @@ JXG.extend(
                     if (
                         Math.abs(
                             point1.distance(Const.COORDS_BY_USER, intersect1) +
-                                intersect1.distance(Const.COORDS_BY_USER, point2) -
-                                distP1P2
+                            intersect1.distance(Const.COORDS_BY_USER, point2) -
+                            distP1P2
                         ) > Mat.eps
                     ) {
                         return;
@@ -988,8 +988,8 @@ JXG.extend(
                     if (
                         Math.abs(
                             point1.distance(Const.COORDS_BY_USER, intersect2) +
-                                intersect2.distance(Const.COORDS_BY_USER, point2) -
-                                distP1P2
+                            intersect2.distance(Const.COORDS_BY_USER, point2) -
+                            distP1P2
                         ) > Mat.eps
                     ) {
                         return;
@@ -1364,9 +1364,9 @@ JXG.extend(
                 if (
                     vi.scrCoords[2] > y !== vj.scrCoords[2] > y &&
                     x <
-                        ((vj.scrCoords[1] - vi.scrCoords[1]) * (y - vi.scrCoords[2])) /
-                            (vj.scrCoords[2] - vi.scrCoords[2]) +
-                            vi.scrCoords[1]
+                    ((vj.scrCoords[1] - vi.scrCoords[1]) * (y - vi.scrCoords[2])) /
+                    (vj.scrCoords[2] - vi.scrCoords[2]) +
+                    vi.scrCoords[1]
                 ) {
                     isIn = !isIn;
                 }
@@ -1401,12 +1401,12 @@ JXG.extend(
 
             el1_isArcType =
                 el1.elementClass === Const.OBJECT_CLASS_CURVE &&
-                (el1.type === Const.OBJECT_TYPE_ARC || el1.type === Const.OBJECT_TYPE_SECTOR)
+                    (el1.type === Const.OBJECT_TYPE_ARC || el1.type === Const.OBJECT_TYPE_SECTOR)
                     ? true
                     : false;
             el2_isArcType =
                 el2.elementClass === Const.OBJECT_CLASS_CURVE &&
-                (el2.type === Const.OBJECT_TYPE_ARC || el2.type === Const.OBJECT_TYPE_SECTOR)
+                    (el2.type === Const.OBJECT_TYPE_ARC || el2.type === Const.OBJECT_TYPE_SECTOR)
                     ? true
                     : false;
 
@@ -1536,8 +1536,7 @@ JXG.extend(
                         has = true,
                         first,
                         last,
-                        r,
-                        dx;
+                        r;
 
                     if (Type.evaluate(alwaysintersect)) {
                         return res;
@@ -1783,15 +1782,15 @@ JXG.extend(
 
                 return Type.evaluate(i) === 0
                     ? new Coords(
-                          Const.COORDS_BY_USER,
-                          [-t[0] * -n[1] - d * n[0], -t[0] * n[0] - d * n[1]],
-                          board
-                      )
+                        Const.COORDS_BY_USER,
+                        [-t[0] * -n[1] - d * n[0], -t[0] * n[0] - d * n[1]],
+                        board
+                    )
                     : new Coords(
-                          Const.COORDS_BY_USER,
-                          [-t[1] * -n[1] - d * n[0], -t[1] * n[0] - d * n[1]],
-                          board
-                      );
+                        Const.COORDS_BY_USER,
+                        [-t[1] * -n[1] - d * n[0], -t[1] * n[0] - d * n[1]],
+                        board
+                    );
             }
 
             return new Coords(Const.COORDS_BY_USER, [0, 0, 0], board);
@@ -2252,7 +2251,7 @@ JXG.extend(
             if (
                 len > 0 &&
                 this.distance(C[0].coords.usrCoords, C[len - 1].coords.usrCoords, 3) <
-                    Mat.eps * Mat.eps
+                Mat.eps * Mat.eps
             ) {
                 C.pop();
             }
@@ -2603,12 +2602,9 @@ JXG.extend(
          * @returns {Array} The homogeneous coordinates of the nr-th intersection point.
          */
         meetBezierCurveRedBlueSegments: function (red, blue, nr) {
-            var p,
-                i,
-                j,
-                k,
+            var p, i, j, k,
                 n = Type.evaluate(nr),
-                po,
+                po, tmp,
                 redArr,
                 blueArr,
                 bbr,
@@ -2616,15 +2612,21 @@ JXG.extend(
                 intersections,
                 startRed = 0,
                 startBlue = 0,
-                lenBlue = blue.numberPoints,
-                lenRed = red.numberPoints,
+                lenBlue, lenRed,
                 L = [];
 
-            if (lenBlue < blue.bezierDegree + 1 || lenRed < red.bezierDegree + 1) {
+            if (blue.numberPoints < blue.bezierDegree + 1 || red.numberPoints < red.bezierDegree + 1) {
                 return [0, NaN, NaN];
             }
-            lenBlue -= blue.bezierDegree;
-            lenRed -= red.bezierDegree;
+
+            if (red.bezierDegree === 1 && blue.bezierDegree === 3) {
+                tmp = red;
+                red = blue;
+                blue = tmp;
+            }
+
+            lenBlue = blue.numberPoints - blue.bezierDegree;
+            lenRed = red.numberPoints - red.bezierDegree;
 
             // For sectors, we ignore the "legs"
             if (red.type === Const.OBJECT_TYPE_SECTOR) {
@@ -2798,8 +2800,7 @@ JXG.extend(
                 ay = p1[2] - y;
                 bx = p4[1] - x;
                 by = p4[2] - y;
-
-                d = Math.sqrt((ax + bx) * (ax + bx) + (ay + by) * (ay + by));
+                d = Mat.hypot(ax + bx, ay + by);
 
                 if (Math.abs(by - ay) > Mat.eps) {
                     k = ((((ax + bx) * (r / d - 0.5)) / (by - ay)) * 8) / 3;
@@ -3326,6 +3327,51 @@ JXG.extend(
             b *= b;
 
             return Math.abs(nom) / Math.sqrt(a + b);
+        },
+
+        /**
+         * Determine the (Euclidean) distance between a point q and a line segment
+         * defined by two points p1 and p2. In case p1 equals p2, the distance to this
+         * point is returned.
+         *
+         * @param {Array} q Homogeneous coordinates of q
+         * @param {Array} p1 Homogeneous coordinates of p1
+         * @param {Array} p2 Homogeneous coordinates of p2
+         * @returns {Number} Distance of q to line segment [p1, p2]
+         */
+        distPointSegment: function (q, p1, p2) {
+            var x, y, dx, dy,
+                den, lbda,
+                eps = Mat.eps * Mat.eps,
+                huge = 1000000;
+
+            // Difference q - p1
+            x = q[1] - p1[1];
+            y = q[2] - p1[2];
+            x = (x === Infinity) ? huge : (x === -Infinity) ? -huge : x;
+            y = (y === Infinity) ? huge : (y === -Infinity) ? -huge : y;
+
+            // Difference p2 - p1
+            dx = p2[1] - p1[1];
+            dy = p2[2] - p1[2];
+            dx = (dx === Infinity) ? huge : (dx === -Infinity) ? -huge : dx;
+            dy = (dy === Infinity) ? huge : (dy === -Infinity) ? -huge : dy;
+
+            // If den==0 then p1 and p2 are identical
+            // In this case the distance to p1 is returned
+            den = dx * dx + dy * dy;
+            if (den > eps) {
+                lbda = (x * dx + y * dy) / den;
+                if (lbda < 0.0) {
+                    lbda = 0.0;
+                } else if (lbda > 1.0) {
+                    lbda = 1.0;
+                }
+                x -= lbda * dx;
+                y -= lbda * dy;
+            }
+
+            return Mat.hypot(x, y);
         },
 
         /**

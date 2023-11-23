@@ -2,7 +2,7 @@
   "name": "jsxgraph",
   "description": "Interactive geometry, plotting, visualization",
   "homepage": "https://jsxgraph.org",
-  "version": "1.6.1b1",
+  "version": "1.6.2",
   "exports": {
     "types": "./src/index.d.ts",
     "default": "./src/index.js"
@@ -58,7 +58,7 @@
     "trailingComma": "none"
   },
   "devDependencies": {
-    "eslint": "^8.4.1",
+    "eslint": ">=8.14.0",
     "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-prettier": "^4.2.1",
     "http-server": "^14.1.1",

@@ -164,21 +164,11 @@ JXG.extend(
                 if (sum > Mat.eps * Mat.eps) {
                     return Number.POSITIVE_INFINITY;
                 }
-                f = ucr[1] - c[1];
-                sum += f * f;
-                f = ucr[2] - c[2];
-                sum += f * f;
+                return Mat.hypot(ucr[1] - c[1], ucr[2] - c[2]);
             } else {
                 c = coordinates.scrCoords;
-                //f = scr[0]-c[0];
-                //sum = f*f;
-                f = scr[1] - c[1];
-                sum += f * f;
-                f = scr[2] - c[2];
-                sum += f * f;
+                return Mat.hypot(scr[1] - c[1], scr[2] - c[2]);
             }
-
-            return Math.sqrt(sum);
         },
 
         /**

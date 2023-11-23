@@ -1286,7 +1286,7 @@ JXG.extend(
             noquote = JXG.def(noquote, false);
 
             // check for native JSON support:
-            if (typeof JSON && JSON.stringify && !noquote) {
+            if (JSON !== undefined && JSON.stringify && !noquote) {
                 try {
                     s = JSON.stringify(obj);
                     return s;

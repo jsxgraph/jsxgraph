@@ -472,7 +472,7 @@ Mat.Metapost = {
      * @private
      */
     mp_pyth_add: function (a, b) {
-        return Math.sqrt(a * a + b * b);
+        return Mat.hypot(a, b);
     },
 
     /**

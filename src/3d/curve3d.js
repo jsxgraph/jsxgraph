@@ -53,6 +53,9 @@ JXG.Curve3D = function (view, F, X, Y, Z, range, attributes) {
 
     this.board.finalizeAdding(this);
 
+    /**
+     * @ignore
+     */
     this.F = F;
 
     /**
