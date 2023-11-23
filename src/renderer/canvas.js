@@ -565,6 +565,7 @@ JXG.extend(
                     context.closePath();
                     this._stroke(el);
                     break;
+                /* eslint-disable no-fallthrough */
                 case "diamond2":
                 case "<<>>":
                     size *= 1.41;
@@ -579,6 +580,7 @@ JXG.extend(
                     this._fill(el);
                     this._stroke(el);
                     break;
+                /* eslint-enable no-fallthrough */
                 case "triangleup":
                 case "A":
                 case "a":

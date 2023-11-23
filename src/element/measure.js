@@ -39,7 +39,6 @@
  */
 
 import JXG from "../jxg";
-import Const from "../base/constants";
 import Type from "../utils/type";
 import GeometryElement from "../base/element";
 

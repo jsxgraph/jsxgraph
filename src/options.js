@@ -5272,7 +5272,7 @@ JXG.Options = {
 
         baseUnit: '',
         dim: 0
-        
+
         /**#@-*/
     },
 
