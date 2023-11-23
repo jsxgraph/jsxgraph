@@ -835,7 +835,12 @@ JXG.extend(
                 node.setAttributeNS(null, "stroke-linejoin", "round");
                 node.setAttributeNS(null, "fill-rule", "evenodd");
             }
-            // node.setAttributeNS(null, "clip-path", this.toURL(this.viewportId));
+            if (type !== 'marker') {
+                // node.setAttributeNS(null, "clip-path", this.toURL(this.viewportId));
+                node.setAttributeNS(null, "clip-path", 'view-box inset(20px 20px)');
+                // node.style.clipPath = 'view-box inset(20px 20px)';
+                // node.style.clipPath = this.toURL(this.viewportId);
+            }
             return node;
         },
 
@@ -1846,7 +1851,6 @@ JXG.extend(
         resize: function (w, h) {
             this.svgRoot.setAttribute("width", parseFloat(w));
             this.svgRoot.setAttribute("height", parseFloat(h));
-            // this.svgRoot.setAttribute("viewBox", '-100 -100 800, 800');
         },
 
         // documented in JXG.AbstractRenderer
