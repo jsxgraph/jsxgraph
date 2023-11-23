@@ -1031,7 +1031,10 @@ JXG.extend(
                     (scr[1] + size) +
                     " " +
                     scr[2];
-            } else if (type === "<>") {
+            } else if (type === "<>" || type === "<<>>") {
+                if (type === "<<>>") {
+                    size *= 1.41;
+                }
                 s =
                     " M " +
                     (scr[1] - size) +
@@ -1050,8 +1053,8 @@ JXG.extend(
                     " " +
                     (scr[2] - size) +
                     " Z ";
-            } else if (type === "^") {
-                s =
+                } else if (type === "^") {
+                    s =
                     " M " +
                     scr[1] +
                     " " +

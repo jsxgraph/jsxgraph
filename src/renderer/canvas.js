@@ -565,6 +565,9 @@ JXG.extend(
                     context.closePath();
                     this._stroke(el);
                     break;
+                case "diamond2":
+                case "<<>>":
+                    size *= 1.41;
                 case "diamond": // <>
                 case "<>":
                     context.beginPath();

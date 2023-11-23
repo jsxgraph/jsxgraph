@@ -2199,6 +2199,8 @@ declare namespace JXG {
         | "plus"
         | "<>"
         | "diamond"
+        | "<<>>"
+        | "diamond2"
         | "^"
         | "triangleUp"
         | "triangleDown"

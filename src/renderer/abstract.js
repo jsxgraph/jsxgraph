@@ -381,7 +381,7 @@ JXG.extend(
                         size * 2
                     );
                 } else {
-                    // x, +, <>, ^, v, <, >
+                    // x, +, <>, <<>>, ^, v, <, >
                     this.updatePathPrim(
                         el.rendNode,
                         this.updatePathStringPoint(el, size, face),
@@ -1742,7 +1742,7 @@ JXG.extend(
          * @param {Number} size A positive number describing the size. Usually the half of the width and height of
          * the drawn point.
          * @param {String} type A string describing the point's face. This method only accepts the shortcut version of
-         * each possible face: <tt>x, +, |, -, [], <>, ^, v, >, < </tt>
+         * each possible face: <tt>x, +, |, -, [], <>, <<>>,^, v, >, < </tt>
          */
         updatePathStringPoint: function (element, size, type) {
             /* stub */
