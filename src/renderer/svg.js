@@ -836,8 +836,8 @@ JXG.extend(
                 node.setAttributeNS(null, "fill-rule", "evenodd");
             }
             if (type !== 'marker') {
+                // node.setAttributeNS(null, "clip-path", 'view-box inset(20px 20px)');
                 // node.setAttributeNS(null, "clip-path", this.toURL(this.viewportId));
-                node.setAttributeNS(null, "clip-path", 'view-box inset(20px 20px)');
                 // node.style.clipPath = 'view-box inset(20px 20px)';
                 // node.style.clipPath = this.toURL(this.viewportId);
             }
