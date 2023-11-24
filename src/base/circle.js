@@ -364,7 +364,6 @@ JXG.extend(
                     this.radius = this.updateRadius();
                 }
                 this.radius = Math.abs(this.radius);
-                // this.radius = Math.max(0.0, this.radius);
 
                 this.updateStdform();
                 this.updateQuadraticform();
@@ -789,7 +788,7 @@ JXG.extend(
  * @pseudo
  * @description  A circle consists of all points with a given distance from one point. This point is called center, the distance is called radius.
  * A circle can be constructed by providing a center and a point on the circle or a center and a radius (given as a number, function,
- * line, or circle).
+ * line, or circle). If the radius is a negative value, its absolute values is taken.
  * @name Circle
  * @augments JXG.Circle
  * @constructor
