@@ -925,7 +925,7 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
         funwrap = Type.def(funwrap, true);
         varname = Type.def(varname, '');
         geonext = Type.def(geonext, false);
-        this.forceMath = Type.def(forceMath, true);
+        this.forceMath = Type.def(forceMath, false);
 
         c = (funwrap ? ' function (' + varname + ') { return ' : '') +
                 code +
@@ -1034,7 +1034,6 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
 
         node = this.createNode('node_op', 'op_execfun',
             this.createNode('node_var', (this.forceMath ? '$value' : '$')),
-            // this.createNode('node_var', '$'),
             [this.createNode('node_str', el.id)]);
 
         node.replaced = true;

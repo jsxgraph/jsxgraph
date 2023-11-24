@@ -1420,7 +1420,7 @@ JXG.extend(
                     //t  = JXG.GeonextParser.geonext2JS(v, this.board);
                     //newfuncs[i] = new Function('','return ' + t + ';');
                     //v = GeonextParser.replaceNameById(v, this.board);
-                    newfuncs[i] = this.board.jc.snippet(v, true, null, true);
+                    newfuncs[i] = this.board.jc.snippet(v, true, null, true, true);
                     this.addParentsFromJCFunctions([newfuncs[i]]);
 
                     // Store original term as 'Xjc' or 'Yjc'

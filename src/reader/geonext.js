@@ -1326,10 +1326,10 @@
                         board.create(
                             "curve",
                             [
-                                board.jc.snippet(gxtEl.functionx, true, "t", true),
-                                board.jc.snippet(gxtEl.functiony, true, "t", true),
-                                board.jc.snippet(gxtEl.min, true, "", true),
-                                board.jc.snippet(gxtEl.max, true, "", true)
+                                board.jc.snippet(gxtEl.functionx, true, "t", true, true),
+                                board.jc.snippet(gxtEl.functiony, true, "t", true, true),
+                                board.jc.snippet(gxtEl.min, true, "", true, true),
+                                board.jc.snippet(gxtEl.max, true, "", true, true)
                             ],
                             gxtEl
                         );
