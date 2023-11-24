@@ -1541,11 +1541,7 @@ JXG.extend(
             el.visPropOld.transitionproperties = props;
         },
 
-        /**
-         * 
-         * @param {*} el 
-         * @param {*} isHtml 
-         */
+        // documented in JXG.AbstractRenderer
         setObjectViewport: function(el, isHtml) {
             var val = Type.evaluate(el.visProp.viewport),
                 vp, i,
@@ -1562,10 +1558,28 @@ JXG.extend(
             if (isHtml) {
                 bb = el.rendNode.getBoundingClientRect();
                 bbc = this.container.getBoundingClientRect();
-                t = parseFloat(bbc.top) - parseFloat(bb.top) + parseFloat(val[1]) ;
-                r = parseFloat(bb.right) - parseFloat(bbc.right) + parseFloat(val[2]);
-                b = parseFloat(bb.bottom) - parseFloat(bbc.bottom) + parseFloat(val[3]);
-                l = parseFloat(bbc.left) - parseFloat(bb.left) + parseFloat(val[0]);
+                t = parseFloat(val[1]);
+                r = parseFloat(val[2]);
+                b = parseFloat(val[3]);
+                l = parseFloat(val[0]);
+
+                if (Type.isString(val[1]) && val[1].indexOf('%') > 0) {
+                    t = (bbc.height) * t / 100;
+                }
+                if (Type.isString(val[2]) && val[2].indexOf('%') > 0) {
+                    r = (bbc.width) * r / 100;
+                }
+                if (Type.isString(val[3]) && val[3].indexOf('%') > 0) {
+                    b = (bbc.height) * b / 100;
+                }
+                if (Type.isString(val[0]) && val[0].indexOf('%') > 0) {
+                    l = (bbc.width) * l / 100;
+                }
+
+                t = parseFloat(bbc.top) - parseFloat(bb.top) + t;
+                r = parseFloat(bb.right) - parseFloat(bbc.right) + r;
+                b = parseFloat(bb.bottom) - parseFloat(bbc.bottom) + b;
+                l = parseFloat(bbc.left) - parseFloat(bb.left) + l;
                 val = [l, t, r, b];
             }
 

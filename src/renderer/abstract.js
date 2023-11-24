@@ -1949,6 +1949,15 @@ JXG.extend(
         },
 
         /**
+         * 
+         * @param {*} element 
+         * @param {*} isHTML 
+         */
+        setObjectViewport: function (element, isHTML) {
+            /* stub */
+        },
+
+        /**
          * Sets an objects fill color.
          * @param {JXG.GeometryElement} element Reference of the object that wants a new fill color.
          * @param {String} color Color in a HTML/CSS compatible format. If you don't want any fill color at all, choose
