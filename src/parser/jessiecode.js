@@ -177,6 +177,12 @@ JXG.JessieCode = function (code, geonext) {
     this.board = null;
 
     /**
+     * Force slider names to return value instead of node
+     * @type Boolean
+     */
+    this.forceMath = false;
+
+    /**
      * Keep track of which element is created in which line.
      * @type Object
      */
@@ -799,8 +805,9 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
      * @param  {String} code      JessieCode code to be parsed
      * @param  {String} cmd       Type of manipulation to be done with AST
      * @param {Boolean} [geonext=false] Geonext compatibility mode.
-     * @param {Boolean} dontstore If false, the code string is stored in this.code.
-     * @return {Object}           Returns result of computation as directed in cmd.
+     * @param {Boolean} [dontstore=false] If false, the code string is stored in this.code,
+     *  i.e. in the JessieCode object, e.g. in board.jc.
+     * @return {Object} Returns result of computation as directed in cmd.
      */
     _genericParse: function (code, cmd, geonext, dontstore) {
         var i, setTextBackup, ast, result,
@@ -869,7 +876,7 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
      *
      * @param {String} code             JessieCode code to be parsed
      * @param {Boolean} [geonext=false] Geonext compatibility mode.
-     * @param {Boolean} dontstore       If false, the code string is stored in this.code.
+     * @param {Boolean} [dontstore=false] If false, the code string is stored in this.code.
      * @return {Object}                 Parse JessieCode code and execute it.
      */
     parse: function (code, geonext, dontstore) {
@@ -879,12 +886,12 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
     /**
      * Manipulate JessieCode.
      * This consists of generating an AST with parser.parse,
-     * apply simlifying rules from CA
+     * apply simplifying rules from CA
      * and compile the AST back to JessieCode.
      *
      * @param {String} code             JessieCode code to be parsed
      * @param {Boolean} [geonext=false] Geonext compatibility mode.
-     * @param {Boolean} dontstore       If false, the code string is stored in this.code.
+     * @param {Boolean} [dontstore=false] If false, the code string is stored in this.code.
      * @return {String}                 Simplified JessieCode code
      */
     manipulate: function (code, geonext, dontstore) {
@@ -897,7 +904,7 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
      *
      * @param {String} code
      * @param {Boolean} [geonext=false] Geonext compatibility mode.
-     * @param {Boolean} dontstore
+     * @param {Boolean} [dontstore=false] If false, the code string is stored in this.code.
      * @return {Node}  AST
      */
     getAST: function (code, geonext, dontstore) {
@@ -907,18 +914,22 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
     /**
      * Parses a JessieCode snippet, e.g. "3+4", and wraps it into a function, if desired.
      * @param {String} code A small snippet of JessieCode. Must not be an assignment.
-     * @param {Boolean} funwrap If true, the code is wrapped in a function.
-     * @param {String} varname Name of the parameter(s)
+     * @param {Boolean} [funwrap=true] If true, the code is wrapped in a function.
+     * @param {String} [varname=''] Name of the parameter(s)
      * @param {Boolean} [geonext=false] Geonext compatibility mode.
+     * @param {Boolean} [forceMath=true] Force evaluation of value method of sliders.
      */
-    snippet: function (code, funwrap, varname, geonext) {
+    snippet: function (code, funwrap, varname, geonext, forceMath) {
         var c;
 
         funwrap = Type.def(funwrap, true);
         varname = Type.def(varname, '');
         geonext = Type.def(geonext, false);
+        this.forceMath = Type.def(forceMath, true);
 
-        c = (funwrap ? ' function (' + varname + ') { return ' : '') + code + (funwrap ? '; }' : '') + ';';
+        c = (funwrap ? ' function (' + varname + ') { return ' : '') +
+                code +
+            (funwrap ? '; }' : '') + ';';
 
         return this.parse(c, geonext, true);
     },
@@ -1022,7 +1033,7 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
             el = this.board.elementsByName[v];
 
         node = this.createNode('node_op', 'op_execfun',
-            this.createNode('node_var', '$'),
+            this.createNode('node_var', (this.forceMath ? '$value' : '$')),
             [this.createNode('node_str', el.id)]);
 
         node.replaced = true;
@@ -1119,7 +1130,7 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
 
     /**
      * Type inspection: check if the string vname appears as function name in the
-     * AST node. Used in "op_execfun". This allows the JessieCode exmples below.
+     * AST node. Used in "op_execfun". This allows the JessieCode examples below.
      *
      * @private
      * @param {String} vname
@@ -2422,6 +2433,7 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
                 'use': that.use,
                 'remove': that.del,
                 '$': that.getElementById,
+                '$value': function(e) {return that.getElementById(e).Value(); },
                 getName: that.getName,
                 name: that.getName,
                 '$board': that.board,
@@ -2486,6 +2498,7 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
         builtIn.IfThen.src = '$jc$.ifthen';
         // usually unused, see node_op > op_execfun
         builtIn.$.src = '(function (n) { return $jc$.board.select(n); })';
+        builtIn.$value.src = '(function (n) { return $jc$.board.select(n).Value(); })';
         builtIn.getName.src = '$jc$.getName';
         builtIn.name.src = '$jc$.getName';
         if (builtIn.$board) {
