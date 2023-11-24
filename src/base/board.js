@@ -6976,13 +6976,14 @@ JXG.extend(
             inner_node = doc.getElementById(id);
             wrap_id = 'fullscreenwrap_' + id;
 
-            // Store the original data.
-            // This is used to establish the ratio h / w in
-            // fullscreen mode
-            dim = this.containerObj.getBoundingClientRect();
-            inner_node._cssFullscreenStore = {
-                w: dim.width,
-                h: dim.height
+            if (!Type.exists(inner_node._cssFullscreenStore)) {
+                // Store the actual, absolute size of the div
+                // This is used in scaleJSXGraphDiv
+                dim = this.containerObj.getBoundingClientRect();
+                inner_node._cssFullscreenStore = {
+                    w: dim.width,
+                    h: dim.height
+                }
             }
 
             // Wrap a div around the JSXGraph div.
@@ -7041,7 +7042,6 @@ JXG.extend(
             var inner_id,
                 inner_node,
                 fullscreenElement,
-                i,
                 doc = this.document;
 
             inner_id = this._fullscreen_inner_id;
@@ -7067,15 +7067,22 @@ JXG.extend(
                 // Store the original data.
                 // Further, the CSS margin has to be removed when in fullscreen mode,
                 // and must be restored later.
+                //
                 // Obsolete:
                 // It is used in AbstractRenderer.updateText to restore the scaling matrix
                 // which is removed by MathJax.
                 inner_node._cssFullscreenStore.id = fullscreenElement.id;
                 inner_node._cssFullscreenStore.isFullscreen = true;
                 inner_node._cssFullscreenStore.margin = inner_node.style.margin;
+                inner_node._cssFullscreenStore.width = inner_node.style.width;
+                inner_node._cssFullscreenStore.height = inner_node.style.height;
+                inner_node._cssFullscreenStore.transform = inner_node.style.transform;
+                // Be sure to replace relative width / height units by absolute units
+                inner_node.style.width = inner_node._cssFullscreenStore.w + 'px';
+                inner_node.style.height = inner_node._cssFullscreenStore.h + 'px';
                 inner_node.style.margin = '';
 
-                // Do the shifting and scaling via CSS pseudo rules
+                // Do the shifting and scaling via CSS properties
                 // We do this after fullscreen mode has been established to get the correct size
                 // of the JSXGraph div.
                 Env.scaleJSXGraphDiv(fullscreenElement.id, inner_id, doc,
@@ -7087,16 +7094,12 @@ JXG.extend(
             } else if (Type.exists(inner_node._cssFullscreenStore)) {
                 // Just left the fullscreen mode
 
-                // // Remove the CSS rules added in Env.scaleJSXGraphDiv
-                // for (i = doc.styleSheets.length - 1; i >= 0; i--) {
-                //     if (doc.styleSheets[i].title === 'jsxgraph_fullscreen_css') {
-                //         doc.styleSheets[i].deleteRule(0);
-                //         break;
-                //     }
-                // }
-
                 inner_node._cssFullscreenStore.isFullscreen = false;
                 inner_node.style.margin = inner_node._cssFullscreenStore.margin;
+                inner_node.style.width = inner_node._cssFullscreenStore.width;
+                inner_node.style.height = inner_node._cssFullscreenStore.height;
+                inner_node.style.transform = inner_node._cssFullscreenStore.transform;
+                inner_node._cssFullscreenStore = null;
 
                 // Remove the wrapper div
                 inner_node.parentElement.replaceWith(inner_node);
@@ -7106,7 +7109,7 @@ JXG.extend(
         },
 
         /**
-         * Start resize observer in to handle
+         * Start resize observer to handle
          * orientation changes in fullscreen mode.
          *
          * @param {Object} node DOM object which is in fullscreen mode. It is the wrapper element

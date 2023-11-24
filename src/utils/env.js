@@ -912,16 +912,12 @@ JXG.extend(
          *
          */
         scaleJSXGraphDiv: function (wrap_id, inner_id, doc, scale) {
-            var len = doc.styleSheets.length, style, rule,
-                w, h, b,
+            var w, h, b,
                 wi, hi,
                 wo, ho, inner,
                 scale_l, vshift_l,
                 f = scale,
                 ratio,
-                rule_inner_l,
-                title = 'jsxgraph_fullscreen_css',
-                found_css,
                 pseudo_keys = [
                     ":fullscreen",
                     ":-webkit-full-screen",
@@ -929,16 +925,7 @@ JXG.extend(
                     ":-ms-fullscreen"
                 ],
                 len_pseudo = pseudo_keys.length,
-                i,
-                // A previously installed CSS rule to center the JSXGraph div has to
-                // be searched and removed again.
-                regex = new RegExp(
-                    ".*#" +
-                        wrap_id +
-                        ":.*full.*screen.*#" +
-                        inner_id +
-                        ".*auto;.*transform:.*matrix"
-                );
+                i;
 
             b = doc.getElementById(wrap_id).getBoundingClientRect();
             h = b.height;
@@ -961,7 +948,7 @@ JXG.extend(
 
             wi = wo;
             hi = ho;
-            // Compare this.setBoundingBox() 
+            // Compare the code in this.setBoundingBox()
             if (ratio > 1) {
                 // h > w
                 if (ratio < h / w) {
@@ -979,62 +966,23 @@ JXG.extend(
             }
             vshift_l = (h - hi) * 0.5;
 
-            // CSS rules to center the inner div horizontally and vertically.
-            rule_inner_l =
-                "{" +
-                "width:" + wi + "px !important;" +
-                "height:" + hi + "px !important;" +
-                "margin:0 auto;" +
-                "transform:matrix(" + scale_l + ",0,0," + scale_l + ",0," + vshift_l + ");" +
-                "}";
-
-            found_css = false;
-            // Removing of the CSS here should happen only
-            // in emergency cases.
-            for (i = len - 1; i >= 0; i--) {
-                if (doc.styleSheets[i].title === title) {
-                    found_css = true;
-
-                    if (doc.styleSheets[i].title === title &&
-                        doc.styleSheets[i].cssRules.length > 0 &&
-                        regex.test(doc.styleSheets[i].cssRules[0].cssText) &&
-                        doc.styleSheets[i].deleteRule
-                    ) {
-                        doc.styleSheets[i].deleteRule(0);
-                        break;
-                    }
-                }
-            }
-            if (!found_css) {
-                // In case there is not yet a CSS style sheet for fullscreen
-                // defined, do it now.
-                style = document.createElement("style");
-                style.setAttribute('title', title);
-                // WebKit hack :(
-                style.appendChild(document.createTextNode(""));
-                // Add the <style> element to the page head.
-                // It must be document, not the shadowDOM root.
-                // It seems that the head tag does always exist.
-                document.head.appendChild(style);
-            }
-            len = doc.styleSheets.length;
-
-            // Install a CSS rule to center the JSXGraph div at the first position of the list.
+            // Set a CSS properties to center the JSXGraph div horizontally and vertically
+            // at the first position of the fullscreen pseudo classes.
             for (i = 0; i < len_pseudo; i++) {
                 try {
-                    rule = "#" + wrap_id + pseudo_keys[i] + " #" + inner_id + rule_inner_l;
-                    // rule = '@media all and (orientation:landscape) {' + rule + '}';
-                    doc.styleSheets[len - 1].insertRule(rule, 0);
-                    // inner.style.scale = 2;
+                    inner.style.width = wi + 'px !important';
+                    inner.style.height = hi + 'px !important';
+                    inner.style.margin = '0 auto';
+                    // Add the transform to a possibly already existing transform
+                    inner.style.transform = inner._cssFullscreenStore.transform +
+                        ' matrix(' + scale_l + ',0,0,' + scale_l + ',0,' + vshift_l + ')';
                     break;
                 } catch (err) {
                     JXG.debug("JXG.scaleJSXGraphDiv:\n" + err);
                 }
             }
             if (i === len_pseudo) {
-                JXG.debug("JXG.scaleJSXGraphDiv: Could not add any CSS rule.\n" +
-                    "One possible reason could be that the id of the JSXGraph container does not start with a letter."
-                );
+                JXG.debug("JXG.scaleJSXGraphDiv: Could not set any CSS property.");
             }
         }
 
