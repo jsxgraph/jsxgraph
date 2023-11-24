@@ -917,7 +917,7 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
      * @param {Boolean} [funwrap=true] If true, the code is wrapped in a function.
      * @param {String} [varname=''] Name of the parameter(s)
      * @param {Boolean} [geonext=false] Geonext compatibility mode.
-     * @param {Boolean} [forceMath=true] Force evaluation of value method of sliders.
+     * @param {Boolean} [forceMath=false] Force evaluation of value method of sliders.
      */
     snippet: function (code, funwrap, varname, geonext, forceMath) {
         var c;
@@ -1034,6 +1034,7 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
 
         node = this.createNode('node_op', 'op_execfun',
             this.createNode('node_var', (this.forceMath ? '$value' : '$')),
+            // this.createNode('node_var', '$'),
             [this.createNode('node_str', el.id)]);
 
         node.replaced = true;

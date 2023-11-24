@@ -284,7 +284,7 @@ JXG.extend(
                         that = this;
                         for (i = 0; i < this.content.length; i++) {
                             if (this.content[i][0] !== '"') {
-                                this.content[i] = this.board.jc.snippet(this.content[i], true, "", false);
+                                this.content[i] = this.board.jc.snippet(this.content[i], true, "", false, false);
                                 for (e in this.content[i].deps) {
                                     this.addParents(this.content[i].deps[e]);
                                     this.content[i].deps[e].addChild(this);
@@ -317,7 +317,7 @@ JXG.extend(
                             return txt;
                         };
                     } else {
-                        updateText = this.board.jc.snippet(this.content, true, "", false);
+                        updateText = this.board.jc.snippet(this.content, true, "", false, false);
                         for (e in updateText.deps) {
                             this.addParents(updateText.deps[e]);
                             updateText.deps[e].addChild(this);
@@ -756,7 +756,7 @@ JXG.extend(
                         // output of a value tag
                         if (
                             Type.isNumber(
-                                Type.bind(this.board.jc.snippet(res, true, '', false), this)()
+                                Type.bind(this.board.jc.snippet(res, true, '', false, false), this)()
                             )
                         ) {
                             // may also be a string
