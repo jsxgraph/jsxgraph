@@ -1137,8 +1137,8 @@ JXG.extend(
             var content = el.plaintext,
                 v, c,
                 parentNode,
-                scale, vshift,
-                id, wrap_id,
+                // scale, vshift,
+                // id, wrap_id,
                 ax, ay, angle, co, si,
                 to_h, to_v;
 
