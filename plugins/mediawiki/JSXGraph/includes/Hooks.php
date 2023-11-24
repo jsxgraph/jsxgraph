@@ -108,7 +108,7 @@ class Hooks implements
 		$height = (isset($attr['height'])) ? htmlspecialchars(strip_tags($attr['height'])) : 400;
 
 		if ($markercount == 0) {
-			if (preg_match("/^132\.180/", getenv("REMOTE_ADDR"))) {
+			if (FALSE && preg_match("/^132\.180/", getenv("REMOTE_ADDR"))) {
 				// Use the local version when developing
 				$output .= "<pre>IP:". getenv("REMOTE_ADDR") ." - use developer version</pre>";
 				$output .= "<link rel='stylesheet' type='text/css' href='" . $outputURI . "/jsxgraph.css' />";
