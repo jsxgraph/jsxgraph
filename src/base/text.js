@@ -692,7 +692,7 @@ JXG.extend(
          * @param{String} contentStr String to be parsed
          * @param{Boolean} [expand] Optional flag if shortened math syntax is allowed (e.g. 3x instead of 3*x).
          * @param{Boolean} [avoidGeonext2JS] Optional flag if geonext2JS should be called. For backwards compatibility
-         * this has to be set explicitely to true.
+         * this has to be set explicitly to true.
          * @param{Boolean} [outputTeX] Optional flag which has to be true if the resulting term will be sent to MathJax or KaTeX.
          * If true, "_" and "^" are NOT replaced by HTML tags sub and sup. Default: false, i.e. the replacement is done.
          * This flag allows the combination of &lt;value&gt; tag containing calculations with TeX output.

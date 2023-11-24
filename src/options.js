@@ -1202,6 +1202,8 @@ JXG.Options = {
          */
         title: '',
 
+        viewport: [0, 0, 0, 0],
+
         /**
          * Control the possibilities for zoom interaction.
          *
@@ -2181,7 +2183,9 @@ JXG.Options = {
          * @see JXG.GeometryElement#dash
          * @see JXG.AbstractRenderer#dashArray
          */
-        dashScale: false
+        dashScale: false,
+
+        viewport: 'inherit'
 
         // close the meta tag
         /**#@-*/
@@ -4583,7 +4587,8 @@ JXG.Options = {
         parse: false,
         transitionDuration: 0,
         needsRegularUpdate: false,
-        tabindex: null
+        tabindex: null,
+        viewport: [0, 0, 0, 0]
 
         /**#@-*/
     },

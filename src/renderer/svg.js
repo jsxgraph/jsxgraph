@@ -257,21 +257,6 @@ JXG.SVGRenderer = function (container, dim) {
     } catch (e) {
         this.supportsForeignObject = false;
     }
-
-    // this.viewportClip = this.container.ownerDocument.createElementNS(
-    //     this.svgNamespace,
-    //     "clipPath"
-    // );
-    // this.viewportId = this.uniqName('viewport');
-    // this.viewportClip.setAttributeNS(null, "id", this.viewportId);
-    // var rect = this.container.ownerDocument.createElementNS(this.svgNamespace, 'rect');
-    // rect.setAttributeNS(null, "x", 20);
-    // rect.setAttributeNS(null, "y", 20);
-    // rect.setAttributeNS(null, "width", dim.width - 2 * 20);
-    // rect.setAttributeNS(null, "height", dim.height - 2 * 20);
-    // this.viewportClip.appendChild(rect);
-    // this.svgRoot.appendChild(this.viewportClip);
-
 };
 
 JXG.SVGRenderer.prototype = new AbstractRenderer();
@@ -601,6 +586,7 @@ JXG.extend(
             );
             node.setAttributeNS(null, "stroke-width", Type.evaluate(ticks.visProp.strokewidth));
             this.updatePathPrim(node, tickStr, ticks.board);
+            this.setObjectViewport(ticks);
         },
 
         /* **************************
@@ -694,12 +680,12 @@ JXG.extend(
 
         /**
          * Set color and opacity of internal texts.
-         * SVG needs its own version.
          * @private
          * @see JXG.AbstractRenderer#updateTextStyle
          * @see JXG.AbstractRenderer#updateInternalTextStyle
          */
         updateInternalTextStyle: function (el, strokeColor, strokeOpacity, duration) {
+            this.setObjectViewport(el);
             this.setObjectFillColor(el, strokeColor, strokeOpacity);
         },
 
@@ -835,12 +821,6 @@ JXG.extend(
                 node.setAttributeNS(null, "stroke-linejoin", "round");
                 node.setAttributeNS(null, "fill-rule", "evenodd");
             }
-            // if (type !== 'marker' && type!=='text') {
-            //     node.setAttributeNS(null, "clip-path", 'view-box inset(50px 50px)');
-            //     // node.setAttributeNS(null, "clip-path", this.toURL(this.viewportId));
-            //     // node.style.clipPath = 'view-box inset(20px 20px)';
-            //     // node.style.clipPath = this.toURL(this.viewportId);
-            // }
             return node;
         },
 
@@ -1559,6 +1539,53 @@ JXG.extend(
 
             el.visPropOld.transitionduration = duration;
             el.visPropOld.transitionproperties = props;
+        },
+
+        /**
+         * 
+         * @param {*} el 
+         * @param {*} isHtml 
+         */
+        setObjectViewport: function(el, isHtml) {
+            var val = Type.evaluate(el.visProp.viewport),
+                vp, i,
+                len = 0,
+                bb, bbc, l, t, r, b,
+                nodes = ['rendNode']; //, "rendNodeTriangleStart", "rendNodeTriangleEnd"];
+
+            // Check viewport attribute of the board
+            if (val === 'inherit') {
+                val = Type.evaluate(el.board.attr.viewport);
+            }
+
+            // Required order: top, right, bottom, left
+            if (isHtml) {
+                bb = el.rendNode.getBoundingClientRect();
+                bbc = this.container.getBoundingClientRect();
+                t = parseFloat(bbc.top) - parseFloat(bb.top) + parseFloat(val[1]) ;
+                r = parseFloat(bb.right) - parseFloat(bbc.right) + parseFloat(val[2]);
+                b = parseFloat(bb.bottom) - parseFloat(bbc.bottom) + parseFloat(val[3]);
+                l = parseFloat(bbc.left) - parseFloat(bb.left) + parseFloat(val[0]);
+                val = [l, t, r, b];
+            }
+
+            vp = [
+                (typeof val[1] === 'number') ? val[1] + 'px' : val[1],
+                (typeof val[2] === 'number') ? val[2] + 'px' : val[2],
+                (typeof val[3] === 'number') ? val[3] + 'px' : val[3],
+                (typeof val[0] === 'number') ? val[0] + 'px' : val[0]
+            ].join(' ');
+
+            len = nodes.length;
+            for (i = 0; i < len; ++i) {
+                if (el[nodes[i]]) {
+                    if (isHtml) {
+                        el[nodes[i]].style.clipPath = 'inset(' + vp + ')';
+                    } else {
+                        el[nodes[i]].setAttributeNS(null, "clip-path", 'view-box inset(' + vp + ')');
+                    }
+                }
+            }
         },
 
         /**
