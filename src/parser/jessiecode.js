@@ -644,8 +644,6 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
                 scope.locals[list[i]] = list[i];
             }
 
-            console.log("DF ReplaceNames")
-            printAST(node);
             this.replaceNames(node.children[1]);
 
             /** @ignore */
@@ -839,7 +837,6 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
 
             code = cleaned.join('\n');
             ast = parser.parse(code);
-            printAST(ast)
             if (this.CA) {
                 ast = this.CA.expandDerivatives(ast, null, ast);
                 ast = this.CA.removeTrivialNodes(ast);
@@ -985,8 +982,13 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
      * has not been blacklisted within the codeblock determined by the given subtree.
      * @param {Object} node
      */
-    replaceNames: function (node) {
-        var i, v;
+    replaceNames: function (node, callValuePar) {
+        var i, v,
+            callValue = false;
+
+        if (callValuePar !== undefined) {
+            callValue = callValuePar;
+        }
 
         v = node.value;
 
@@ -999,22 +1001,38 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
             if (this.isLHS) {
                 this.letvar(v, true);
             } else if (!Type.exists(this.getvar(v, true)) && Type.exists(this.board.elementsByName[v])) {
-                console.log("createReplacementNode", node)
-                node = this.createReplacementNode(node);
+                node = this.createReplacementNode(node, callValue);
             }
         }
 
         if (Type.isArray(node)) {
             for (i = 0; i < node.length; i++) {
-                node[i] = this.replaceNames(node[i]);
+                node[i] = this.replaceNames(node[i], callValue);
             }
         }
 
         if (node.children) {
+            if (this.forceMath &&
+                (
+                    (node.value === "op_execfun" &&
+                        node.children[0].value !== 'V' && node.children[0].value !== '$' &&
+                        node.children[1].length === 1 &&
+                        node.children[1][0].type === 'node_var'
+                    ) ||
+                    (node.value === "op_return" &&
+                        node.children.length === 1 &&
+                        node.children[0].type === 'node_var'
+                    )
+                )
+            ) {
+                    callValue = true;
+            }
+
             // Assignments are first evaluated on the right hand side
             for (i = node.children.length; i > 0; i--) {
                 if (Type.exists(node.children[i - 1])) {
-                    node.children[i - 1] = this.replaceNames(node.children[i - 1]);
+                    node.children[i - 1] = this.replaceNames(node.children[i - 1], callValue);
+                    callValue = false;
                 }
             }
         }
@@ -1032,13 +1050,13 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
      * @param {Object} node
      * @returns {Object} op_execfun node
      */
-    createReplacementNode: function (node) {
+    createReplacementNode: function (node, callValue) {
         var v = node.value,
             el = this.board.elementsByName[v];
 
         node = this.createNode('node_op', 'op_execfun',
-            // this.createNode('node_var', (this.forceMath ? '$value' : '$')),
-            this.createNode('node_var', '$'),
+            this.createNode('node_var', (callValue === true ? '$value' : '$')),
+            // this.createNode('node_var', '$'),
             [this.createNode('node_str', el.id)]);
 
         node.replaced = true;
