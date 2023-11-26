@@ -499,10 +499,29 @@ JXG.createSector = function (board, parents, attributes) {
             return this.point2.Dist(this.point1);
         };
 
-        attr = Type.copyAttributes(attributes, board.options, "sector", "arc");
+        attr = Type.copyAttributes(attributes, board.options, "arc");
+        attr = Type.copyAttributes(attr, board.options, "sector", "arc");
         attr.withLabel = false;
         attr.name += "_arc";
-        el.arc = board.create("arc", [el.point1, el.point2, el.point3], attr);
+
+        // el.arc = board.create("arc", [el.point1, el.point2, el.point3], attr);
+
+        // The arc's radius is always the radius of sector.
+        // This is important for angles.
+        el.arc = board.create("arc", [
+            el.point1, // Center
+            function() {
+                var d = el.point2.Dist(el.point1);
+                if (d === 0) {
+                    return [el.point1.X(), el.point1.Y()];
+                }
+                return [
+                    el.point1.X() + el.Radius() * (el.point2.X() - el.point1.X()) / d,
+                    el.point1.Y() + el.Radius() * (el.point2.Y() - el.point1.Y()) / d
+                ];
+            },
+            el.point3
+        ], attr);
         el.addChild(el.arc);
     } // end '3points'
 
