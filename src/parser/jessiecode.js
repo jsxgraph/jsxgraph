@@ -1033,7 +1033,8 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
             el = this.board.elementsByName[v];
 
         node = this.createNode('node_op', 'op_execfun',
-            this.createNode('node_var', (this.forceMath ? '$value' : '$')),
+            // this.createNode('node_var', (this.forceMath ? '$value' : '$')),
+            this.createNode('node_var', '$'),
             [this.createNode('node_str', el.id)]);
 
         node.replaced = true;

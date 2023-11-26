@@ -366,6 +366,9 @@ JXG.createSector = function (board, parents, attributes) {
             this.bezierDegree = 3;
         };
 
+        // Arc does not work yet, since point1, point2 and point3 are
+        // virtual points.
+        //
         // attr = Type.copyAttributes(attributes, board.options, "arc");
         // attr = Type.copyAttributes(attr, board.options, "sector", "arc");
         // attr.withLabel = false;
