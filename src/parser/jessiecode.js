@@ -180,7 +180,7 @@ JXG.JessieCode = function (code, geonext) {
      * Force slider names to return value instead of node
      * @type Boolean
      */
-    this.forceMath = false;
+    this.forceValueCall = false;
 
     /**
      * Keep track of which element is created in which line.
@@ -917,15 +917,15 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
      * @param {Boolean} [funwrap=true] If true, the code is wrapped in a function.
      * @param {String} [varname=''] Name of the parameter(s)
      * @param {Boolean} [geonext=false] Geonext compatibility mode.
-     * @param {Boolean} [forceMath=false] Force evaluation of value method of sliders.
+     * @param {Boolean} [forceValueCall=true] Force evaluation of value method of sliders.
      */
-    snippet: function (code, funwrap, varname, geonext, forceMath) {
+    snippet: function (code, funwrap, varname, geonext, forceValueCall) {
         var c;
 
         funwrap = Type.def(funwrap, true);
         varname = Type.def(varname, '');
         geonext = Type.def(geonext, false);
-        this.forceMath = Type.def(forceMath, false);
+        this.forceValueCall = Type.def(forceValueCall, true);
 
         c = (funwrap ? ' function (' + varname + ') { return ' : '') +
                 code +
@@ -981,6 +981,7 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
      * An identifier is only replaced if it is not found in all scopes above the current scope and if it
      * has not been blacklisted within the codeblock determined by the given subtree.
      * @param {Object} node
+     * @param {Boolean} [callValuePar=false] if true, uses $value() instead of $() in createReplacementNode
      */
     replaceNames: function (node, callValuePar) {
         var i, v,
@@ -1001,6 +1002,9 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
             if (this.isLHS) {
                 this.letvar(v, true);
             } else if (!Type.exists(this.getvar(v, true)) && Type.exists(this.board.elementsByName[v])) {
+                if (callValue && this.board.elementsByName[v].elType !== 'slider') {
+                    callValue = false;
+                }
                 node = this.createReplacementNode(node, callValue);
             }
         }
@@ -1012,10 +1016,11 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
         }
 
         if (node.children) {
-            if (this.forceMath &&
+            if (this.forceValueCall &&
                 (
                     (node.value === "op_execfun" &&
                         node.children[0].value !== 'V' && node.children[0].value !== '$' &&
+                        (Type.exists(Math[node.children[0].value]) || Type.exists(Mat[node.children[0].value])) &&
                         node.children[1].length === 1 &&
                         node.children[1][0].type === 'node_var'
                     ) ||
@@ -1048,15 +1053,17 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
      * Replaces node_var nodes with node_op&gt;op_execfun nodes, calling the internal $() function with the id of the
      * element accessed by the node_var node.
      * @param {Object} node
+     * @param {Boolean} [callValue=undefined] if true, uses $value() instead of $()
      * @returns {Object} op_execfun node
      */
     createReplacementNode: function (node, callValue) {
         var v = node.value,
             el = this.board.elementsByName[v];
 
+        // If callValue: get handle to this node_var and call its Value method.
+        // Otherwise return the object.
         node = this.createNode('node_op', 'op_execfun',
             this.createNode('node_var', (callValue === true ? '$value' : '$')),
-            // this.createNode('node_var', '$'),
             [this.createNode('node_str', el.id)]);
 
         node.replaced = true;
