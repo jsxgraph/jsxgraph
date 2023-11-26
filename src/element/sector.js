@@ -383,7 +383,7 @@ JXG.createSector = function (board, parents, attributes) {
         el.point1 = points[0];
 
         /**
-         * This point together with {@link Sector#point1} defines the radius..
+         * This point together with {@link Sector#point1} defines the radius.
          * @memberOf Sector.prototype
          * @name point2
          * @type JXG.Point

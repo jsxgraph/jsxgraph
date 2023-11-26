@@ -284,7 +284,7 @@ JXG.extend(
                         that = this;
                         for (i = 0; i < this.content.length; i++) {
                             if (this.content[i][0] !== '"') {
-                                this.content[i] = this.board.(this.content[i], true, "", false, false);
+                                this.content[i] = this.board.jc.snippet(this.content[i], true, "", false);
                                 for (e in this.content[i].deps) {
                                     this.addParents(this.content[i].deps[e]);
                                     this.content[i].deps[e].addChild(this);
