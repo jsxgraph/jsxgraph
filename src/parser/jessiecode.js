@@ -644,6 +644,8 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
                 scope.locals[list[i]] = list[i];
             }
 
+            console.log("DF ReplaceNames")
+            printAST(node);
             this.replaceNames(node.children[1]);
 
             /** @ignore */
@@ -837,6 +839,7 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
 
             code = cleaned.join('\n');
             ast = parser.parse(code);
+            printAST(ast)
             if (this.CA) {
                 ast = this.CA.expandDerivatives(ast, null, ast);
                 ast = this.CA.removeTrivialNodes(ast);
@@ -996,6 +999,7 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
             if (this.isLHS) {
                 this.letvar(v, true);
             } else if (!Type.exists(this.getvar(v, true)) && Type.exists(this.board.elementsByName[v])) {
+                console.log("createReplacementNode", node)
                 node = this.createReplacementNode(node);
             }
         }
