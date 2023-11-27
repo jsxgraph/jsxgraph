@@ -1386,7 +1386,7 @@ JXG.createRegularPolygon = function (board, parents, attributes) {
             p[i] = board.create("point", [p[i - 2], rot], attr);
             p[i].type = Const.OBJECT_TYPE_CAS;
 
-            // The next two lines of code are needed to make regular polygones draggable
+            // The next two lines of code are needed to make regular polygons draggable
             // The new helper points are set to be draggable.
             p[i].isDraggable = true;
             p[i].visProp.fixed = false;
