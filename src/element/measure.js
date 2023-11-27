@@ -191,7 +191,7 @@ JXG.registerElement("tapemeasure", JXG.createTapemeasure);
 
 JXG.prefixParser = {
     parse: function (term, action) {
-        var method, i, le, res, fun;
+        var method, i, le, res, fun, v;
 
         if (!Type.isArray(term) || term.length < 2) {
             throw new Error('prefixParser.parse: term is not an array');
@@ -205,18 +205,19 @@ JXG.prefixParser = {
 
                 res = this.parse(term[1], action);
                 for (i = 2; i < le; i++) {
+                    v = this.parse(term[i], action);
                     switch (method) {
                         case '+':
-                            res += this.parse(term[i], action);
+                            res += v;
                             break;
                         case '-':
-                            res -= this.parse(term[i], action);
+                            res -= v;
                             break;
                         case '*':
-                            res *= this.parse(term[i], action);
+                            res *= v;
                             break;
                         case '/':
-                            res /= this.parse(term[i], action);
+                            res /= v;
                             break;
                         default:
                     }
@@ -240,7 +241,7 @@ JXG.prefixParser = {
     },
 
     dimension: function (term) {
-        var method, i, le, res, fun, d;
+        var method, i, le, res, fun, d, v;
 
         if (!Type.isArray(term) || term.length < 2) {
             throw new Error('prefixParser.dimension: term is not an array');
@@ -253,22 +254,23 @@ JXG.prefixParser = {
 
             res = this.dimension(term[1]);
             for (i = 2; i < le; i++) {
+                v = this.dimension(term[i]);
                 switch (method) {
                     case '+':
-                        if (this.dimension(term[i]) !== res) {
+                        if (v !== res) {
                             res = NaN;
                         }
                         break;
                     case '-':
-                        if (this.dimension(term[i]) !== res) {
+                        if (v !== res) {
                             res = NaN;
                         }
                         break;
                     case '*':
-                        res += this.dimension(term[i]);
+                        res += v;
                         break;
                     case '/':
-                        res -= this.dimension(term[i]);
+                        res -= v;
                         break;
                     default:
                 }
@@ -307,7 +309,98 @@ JXG.prefixParser = {
         }
 
         return res;
+    },
+
+    // toInfix: function(term, type) {
+    //     var method, i, le, res, fun, v;
+
+    //     if (!Type.isArray(term) || term.length < 2) {
+    //         throw new Error('prefixParser.toInfix: term is not an array');
+    //     }
+
+    //     method = term[0];
+    //     le = term.length;
+
+    //     if (Type.isInArray(['+', '-', '*', '/'], method)) {
+
+    //         res = this.toInfix(term[1], type);
+    //         for (i = 2; i < le; i++) {
+    //             v = this.toInfix(term[i], type);
+    //             switch (method) {
+    //                 case '+':
+    //                     res += ' + ' + v;
+    //                     break;
+    //                 case '-':
+    //                     res += ' - ' + v;
+    //                     break;
+    //                 case '*':
+    //                     res += ' * ' + v;
+    //                     break;
+    //                 case '/':
+    //                     res += ' / ' + v;
+    //                     break;
+    //                 default:
+    //             }
+    //         }
+
+    //     } else {
+    //         // Allow shortcut 'V' for 'Value'
+    //         fun = term[0];
+
+    //         if (type === 'name') {
+    //             v = term[1].name;
+    //         } else {
+    //             v = term[1].id;
+    //         }
+
+    //         switch (fun) {
+    //             case 'L':
+    //             case 'Length':
+    //             case 'Perimeter':
+    //             case 'Radius':
+    //             case 'R':
+    //             case 'Area':
+    //             case 'A':
+    //                 res = fun + '(' + v + ')';
+    //                 break;
+    //             default: // 'V', 'Value'
+    //                 if (term[1].elType === 'measurement') {
+    //                     res = fun + '(' + term[1].toInfix(type) + ')';
+    //                 } else {
+    //                     res = fun + '(' + v + ')';
+    //                 }
+    //         }
+    //     }
+
+    //     return res;
+    // },
+
+    toPrefix: function(term) {
+        var method, i, le, res;
+
+        if (!Type.isArray(term) || term.length < 2) {
+            throw new Error('prefixParser.toPrefix: term is not an array');
+        }
+
+        method = term[0];
+        le = term.length;
+        res = [method];
+
+        for (i = 1; i < le; i++) {
+            if (Type.isInArray(['+', '-', '*', '/'], method)) {
+                res.push(this.toPrefix(term[i]));
+            } else {
+                if (method === 'V' && term[i].elType === 'measurement') {
+                    res = term[i].toPrefix();
+                } else {
+                    res = [method, term[i].id];
+                }
+            }
+        }
+
+        return res;
     }
+
 };
 
 JXG.createMeasurement = function (board, parents, attributes) {
@@ -333,6 +426,12 @@ JXG.createMeasurement = function (board, parents, attributes) {
     el.elType = 'measurement';
     el.Value = value;
     el.Dimension = dim;
+    el.toInfix = function (type) {
+        return JXG.prefixParser.toInfix(term, type);
+    };
+    el.toPrefix = function () {
+        return JXG.prefixParser.toPrefix(term);
+    };
 
     el.setText(function () {
         var d = el.Dimension(),
