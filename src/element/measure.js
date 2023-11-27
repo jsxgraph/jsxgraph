@@ -431,7 +431,7 @@ JXG.prefixParser = {
 JXG.createMeasurement = function (board, parents, attributes) {
     var el, attr,
         x, y, term,
-        value,
+        value, i,
         dim,
 
     attr = Type.copyAttributes(attributes, board.options, "measurement");
@@ -461,6 +461,9 @@ JXG.createMeasurement = function (board, parents, attributes) {
         return JXG.prefixParser.getParents(term);
     };
     el.addParents(el.getParents());
+    for (i = 0; i < el.parents.length; i++) {
+        board.select(el.parents[i]).addChild(el);
+    }
 
     el.setText(function () {
         var d = el.Dimension(),
