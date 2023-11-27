@@ -5479,6 +5479,14 @@ JXG.Options = {
         /**#@-*/
     },
 
+    /* special parallelogram options */
+    parallelogram: {
+        parallelpoint: {
+            withLabel: false,
+            name: ''
+        }
+    },
+
     /* special parallelpoint options */
     parallelpoint: {
     },
