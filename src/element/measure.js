@@ -399,8 +399,33 @@ JXG.prefixParser = {
         }
 
         return res;
-    }
+    },
 
+    getParents: function(term) {
+        var method, i, le, res;
+
+        if (!Type.isArray(term) || term.length < 2) {
+            throw new Error('prefixParser.getParents: term is not an array');
+        }
+
+        method = term[0];
+        le = term.length;
+        res = [];
+
+        for (i = 1; i < le; i++) {
+            if (Type.isInArray(['+', '-', '*', '/'], method)) {
+                res = res.concat(this.getParents(term[i]));
+            } else {
+                if (method === 'V' && term[i].elType === 'measurement') {
+                    res = res.concat(term[i].getParents());
+                } else {
+                    res.push(term[i]);
+                }
+            }
+        }
+
+        return res;
+    }
 };
 
 JXG.createMeasurement = function (board, parents, attributes) {
@@ -432,6 +457,10 @@ JXG.createMeasurement = function (board, parents, attributes) {
     el.toPrefix = function () {
         return JXG.prefixParser.toPrefix(term);
     };
+    el.getParents = function () {
+        return JXG.prefixParser.getParents(term);
+    };
+    el.addParents(el.getParents());
 
     el.setText(function () {
         var d = el.Dimension(),
@@ -453,7 +482,9 @@ JXG.createMeasurement = function (board, parents, attributes) {
 
     el.methodMap = Type.deepCopy(el.methodMap, {
         Value: "Value",
-        Dimension: "Dimension"
+        Dimension: "Dimension",
+        toPrefix: "toPrefix",
+        getParents: "getParents"
     });
 
     return el;
