@@ -189,61 +189,305 @@ JXG.createTapemeasure = function (board, parents, attributes) {
 
 JXG.registerElement("tapemeasure", JXG.createTapemeasure);
 
-JXG.createMeasurement = function (board, parents, attributes) {
-    var el, attr, obj, method,
-        x, y,
-        content, value,
-        dim = -1,
-        suffix = '';
+JXG.prefixParser = {
+    parse: function (term, action) {
+        var method, i, le, res, fun, v;
 
-    attr = Type.copyAttributes(attributes, board.options, "measurement");
+        if (!Type.isArray(term) || term.length < 2) {
+            throw new Error('prefixParser.parse: term is not an array');
+        }
 
-    if (parents.length === 4) {
-        x = parents[2];
-        y = parents[3];
-        obj = board.select(parents[0]);
-        method = parents[1];
+        method = term[0];
+        le = term.length;
 
-        if (Type.isString(attr.baseunit) && attr.baseunit !== '') {
-            suffix = ' ' + attr.baseunit;
-            if (Type.isInArray(['Area', 'A'], method)) {
-                suffix += '^{2}';
-                dim = 2;
-            } else if (Type.isInArray(['Length', 'L', 'Perimeter', 'Radius', 'R'], method)) {
-                suffix += '';
-                dim = 1;
-            } else if (Type.isInArray(['Value'], method)) {
-                dim = attr.dim;
-                if (attr.dim > 1) {
-                    suffix += '^{' + dim + '}';
+        if (action === 'execute') {
+            if (Type.isInArray(['+', '-', '*', '/'], method)) {
+
+                res = this.parse(term[1], action);
+                for (i = 2; i < le; i++) {
+                    v = this.parse(term[i], action);
+                    switch (method) {
+                        case '+':
+                            res += v;
+                            break;
+                        case '-':
+                            res -= v;
+                            break;
+                        case '*':
+                            res *= v;
+                            break;
+                        case '/':
+                            res /= v;
+                            break;
+                        default:
+                    }
                 }
+
             } else {
-                suffix = '';
-                dim = 0;
+                // Allow shortcut 'V' for 'Value'
+                fun = term[0];
+                if (fun === 'V') {
+                    fun = 'Value';
+                }
+
+                if (!Type.exists(term[1][fun])) {
+                    throw new Error("prefixParser.parse: " + fun + " is not a method of " + term[1]);
+                }
+                res = term[1][fun]();
             }
         }
 
-        value = function() {
-            return obj[method]();
-        };
+        return res;
+    },
 
-    } else if (parents.length === 3) {
-        x = parents[1];
-        y = parents[2];
+    dimension: function (term) {
+        var method, i, le, res, fun, d, v;
 
-        value = board.jc.snippet(parents[0], true, '');
+        if (!Type.isArray(term) || term.length < 2) {
+            throw new Error('prefixParser.dimension: term is not an array');
+        }
+
+        method = term[0];
+        le = term.length;
+
+        if (Type.isInArray(['+', '-', '*', '/'], method)) {
+
+            res = this.dimension(term[1]);
+            for (i = 2; i < le; i++) {
+                v = this.dimension(term[i]);
+                switch (method) {
+                    case '+':
+                        if (v !== res) {
+                            res = NaN;
+                        }
+                        break;
+                    case '-':
+                        if (v !== res) {
+                            res = NaN;
+                        }
+                        break;
+                    case '*':
+                        res += v;
+                        break;
+                    case '/':
+                        res -= v;
+                        break;
+                    default:
+                }
+            }
+
+        } else {
+            // Allow shortcut 'V' for 'Value'
+            fun = term[0];
+
+            switch (fun) {
+                case 'L':
+                case 'Length':
+                case 'Perimeter':
+                case 'Radius':
+                case 'R':
+                    res = 1;
+                    break;
+                case 'Area':
+                case 'A':
+                    res = 2;
+                    break;
+                default: // 'V', 'Value'
+                    if (term[1].elType === 'measurement') {
+                        res = term[1].Dimension();
+                        // If attribute "dim" is set, this overrules anything else.
+                        if (Type.exists(term[1].visProp.dim)) {
+                            d = Type.evaluate(term[1].visProp.dim);
+                            if (d > 0) {
+                                res = d;
+                            }
+                        }
+                    } else {
+                        res = 0;
+                    }
+            }
+        }
+
+        return res;
+    },
+
+    // toInfix: function(term, type) {
+    //     var method, i, le, res, fun, v;
+
+    //     if (!Type.isArray(term) || term.length < 2) {
+    //         throw new Error('prefixParser.toInfix: term is not an array');
+    //     }
+
+    //     method = term[0];
+    //     le = term.length;
+
+    //     if (Type.isInArray(['+', '-', '*', '/'], method)) {
+
+    //         res = this.toInfix(term[1], type);
+    //         for (i = 2; i < le; i++) {
+    //             v = this.toInfix(term[i], type);
+    //             switch (method) {
+    //                 case '+':
+    //                     res += ' + ' + v;
+    //                     break;
+    //                 case '-':
+    //                     res += ' - ' + v;
+    //                     break;
+    //                 case '*':
+    //                     res += ' * ' + v;
+    //                     break;
+    //                 case '/':
+    //                     res += ' / ' + v;
+    //                     break;
+    //                 default:
+    //             }
+    //         }
+
+    //     } else {
+    //         // Allow shortcut 'V' for 'Value'
+    //         fun = term[0];
+
+    //         if (type === 'name') {
+    //             v = term[1].name;
+    //         } else {
+    //             v = term[1].id;
+    //         }
+
+    //         switch (fun) {
+    //             case 'L':
+    //             case 'Length':
+    //             case 'Perimeter':
+    //             case 'Radius':
+    //             case 'R':
+    //             case 'Area':
+    //             case 'A':
+    //                 res = fun + '(' + v + ')';
+    //                 break;
+    //             default: // 'V', 'Value'
+    //                 if (term[1].elType === 'measurement') {
+    //                     res = fun + '(' + term[1].toInfix(type) + ')';
+    //                 } else {
+    //                     res = fun + '(' + v + ')';
+    //                 }
+    //         }
+    //     }
+
+    //     return res;
+    // },
+
+    toPrefix: function(term) {
+        var method, i, le, res;
+
+        if (!Type.isArray(term) || term.length < 2) {
+            throw new Error('prefixParser.toPrefix: term is not an array');
+        }
+
+        method = term[0];
+        le = term.length;
+        res = [method];
+
+        for (i = 1; i < le; i++) {
+            if (Type.isInArray(['+', '-', '*', '/'], method)) {
+                res.push(this.toPrefix(term[i]));
+            } else {
+                if (method === 'V' && term[i].elType === 'measurement') {
+                    res = term[i].toPrefix();
+                } else {
+                    res = [method, term[i].id];
+                }
+            }
+        }
+
+        return res;
+    },
+
+    getParents: function(term) {
+        var method, i, le, res;
+
+        if (!Type.isArray(term) || term.length < 2) {
+            throw new Error('prefixParser.getParents: term is not an array');
+        }
+
+        method = term[0];
+        le = term.length;
+        res = [];
+
+        for (i = 1; i < le; i++) {
+            if (Type.isInArray(['+', '-', '*', '/'], method)) {
+                res = res.concat(this.getParents(term[i]));
+            } else {
+                if (method === 'V' && term[i].elType === 'measurement') {
+                    res = res.concat(term[i].getParents());
+                } else {
+                    res.push(term[i]);
+                }
+            }
+        }
+
+        return res;
+    }
+};
+
+JXG.createMeasurement = function (board, parents, attributes) {
+    var el, attr,
+        x, y, term,
+        value, i,
+        dim;
+
+    attr = Type.copyAttributes(attributes, board.options, "measurement");
+
+    x = parents[0];
+    y = parents[1];
+    term = parents[2];
+
+    value = function () {
+        return JXG.prefixParser.parse(term, 'execute');
+    }
+    dim = function () {
+        return JXG.prefixParser.dimension(term);
     }
 
-    content = function() {
-        return value().toFixed(3) + suffix;
-    };
-
-    el = board.create("text", [x, y, content], attr);
+    el = board.create("text", [x, y, ''], attr);
+    el.elType = 'measurement';
     el.Value = value;
-    el.dim = dim;
+    el.Dimension = dim;
+    el.toInfix = function (type) {
+        return JXG.prefixParser.toInfix(term, type);
+    };
+    el.toPrefix = function () {
+        return JXG.prefixParser.toPrefix(term);
+    };
+    el.getParents = function () {
+        return JXG.prefixParser.getParents(term);
+    };
+    el.addParents(el.getParents());
+    for (i = 0; i < el.parents.length; i++) {
+        board.select(el.parents[i]).addChild(el);
+    }
+
+    el.setText(function () {
+        var d = el.Dimension(),
+            b = Type.evaluate(el.visProp.baseunit),
+            v = el.Value().toFixed(Type.evaluate(el.visProp.digits));
+
+        if (d === 0 || b === '') {
+            return v;
+        }
+        if (isNaN(d)) {
+            return 'NaN';
+        }
+        if (d === 1) {
+            return v + ' ' + b;
+        }
+
+        return v + ' ' + b + '^{' + d + '}';
+    });
 
     el.methodMap = Type.deepCopy(el.methodMap, {
-        Value: "Value"
+        Value: "Value",
+        Dimension: "Dimension",
+        toPrefix: "toPrefix",
+        getParents: "getParents"
     });
 
     return el;

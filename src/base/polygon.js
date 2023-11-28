@@ -1386,7 +1386,7 @@ JXG.createRegularPolygon = function (board, parents, attributes) {
             p[i] = board.create("point", [p[i - 2], rot], attr);
             p[i].type = Const.OBJECT_TYPE_CAS;
 
-            // The next two lines of code are needed to make regular polygones draggable
+            // The next two lines of code are needed to make regular polygons draggable
             // The new helper points are set to be draggable.
             p[i].isDraggable = true;
             p[i].visProp.fixed = false;
@@ -1474,9 +1474,89 @@ JXG.createPolygonalChain = function (board, parents, attributes) {
     return el;
 };
 
+/**
+ * @class Parallelogram element. This is a quadrilateral with parallel opposite sides.
+ * @pseudo
+ * @description Constructs a parallelogram. As input, three points or coordinate arrays are expected.
+ * @constructor
+ * @name Parallelogram
+ * @type Polygon
+ * @augments Polygon
+ * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
+ * @param {JXG.Point,Array_JXG.Point,Array_JXG.Point,Array} p1,p2,p3 The parallelogram is a polygon through
+ * the points [p1, p2, pp, p3], where pp is a parallelpoint, available as sub-object parallelogram.parallelPoint.
+ *
+ * @example
+ * var p1 = board.create('point', [-3, -4]);
+ * var p2 = board.create('point', [3, -1]);
+ * var p3 = board.create('point', [-2, 0]);
+ * var par = board.create('parallelogram', [p1, p2, p3], {
+ *     hasInnerPoints: true,
+ *     parallelpoint: {
+ *         size: 6,
+ *         face: '<<>>'
+ *     }
+ * });
+ *
+ * </pre><div id="JXG05ff162f-7cee-4fd2-bd90-3d9ee5b489cc" class="jxgbox" style="width: 300px; height: 300px;"></div>
+ * <script type="text/javascript">
+ *     (function() {
+ *         var board = JXG.JSXGraph.initBoard('JXG05ff162f-7cee-4fd2-bd90-3d9ee5b489cc',
+ *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
+ *     var p1 = board.create('point', [-3, -4]);
+ *     var p2 = board.create('point', [3, -1]);
+ *     var p3 = board.create('point', [-2, 0]);
+ *     var par = board.create('parallelogram', [p1, p2, p3], {
+ *         hasInnerPoints: true,
+ *         parallelpoint: {
+ *             size: 6,
+ *             face: '<<>>'
+ *         }
+ *     });
+ *
+ *     })();
+ *
+ * </script><pre>
+ *
+ *
+ */
+JXG.createParallelogram = function (board, parents, attributes) {
+    var el, pp,
+        points = [],
+        attr,
+        attr_pp;
+
+    points = Type.providePoints(board, parents, attributes, "polygon", ["vertices"]);
+    if (points === false || points.length < 3) {
+        throw new Error(
+            "JSXGraph: Can't create parallelogram with parent types other than 'point' and 'coordinate arrays' or a function returning an array of coordinates."
+        );
+    }
+
+    attr_pp = Type.copyAttributes(attributes, board.options, "parallelogram", ["parallelpoint"]);
+    pp = board.create('parallelpoint', points, attr_pp);
+    attr = Type.copyAttributes(attributes, board.options, "parallelogram");
+    el = board.create('polygon', [points[0], points[1], pp, points[2]], attr);
+
+    /**
+     * Parallel point which makes the quadrilateral a parallelogram. Can also be accessed with
+     * parallelogram.vertices[2].
+     * @name Parallelogram#parallelPoint
+     * @type {JXG.Point}
+     */
+    el.parallelPoint = pp;
+
+    el.isDraggable = true;
+    pp.isDraggable = true;
+    pp.visProp.fixed = false;
+
+    return el;
+};
+
 JXG.registerElement("polygon", JXG.createPolygon);
 JXG.registerElement("regularpolygon", JXG.createRegularPolygon);
 JXG.registerElement("polygonalchain", JXG.createPolygonalChain);
+JXG.registerElement("parallelogram", JXG.createParallelogram);
 
 export default JXG.Polygon;
 // export default {

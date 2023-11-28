@@ -1203,30 +1203,50 @@ JXG.Options = {
         title: '',
 
         /**
+         *
+         * Set a viewport of the board. viewport is determined by an array of the form '[left, top, right, bottom]'.
+         * whose entries determine an inner margin (i.e. a padding) of the board. The entries of the array have to be given
+         * as numbers or strings. In the latter case the units 'px' or '%' are supported.
+         * The viewport can be individually controlled for each element, too.
+         *
+         * @type {Array|String}
+         * @name JXG.GeometryElement#viewport
+         * @default [0, 0, 0, 0]
+         * @see JXG.GeometryElement#viewport
+         */
+        viewport: [0, 0, 0, 0],
+
+        /**
          * Control the possibilities for zoom interaction.
          *
          * Possible sub-attributes with default values are:
          * <pre>
          * zoom: {
+         *   enabled: true,  // turns off zooming completely, if set to false.
          *   factorX: 1.25,  // horizontal zoom factor (multiplied to {@link JXG.Board#zoomX})
          *   factorY: 1.25,  // vertical zoom factor (multiplied to {@link JXG.Board#zoomY})
-         *   wheel: true,     // allow zooming by mouse wheel or
-         *   				   // by pinch-to-toom gesture on touch devices
-         *   needShift: true,   // mouse wheel zooming needs pressing of the shift key
-         *   min: 0.001,        // minimal values of {@link JXG.Board#zoomX} and {@link JXG.Board#zoomY}, limits zoomOut
-         *   max: 1000.0,       // maximal values of {@link JXG.Board#zoomX} and {@link JXG.Board#zoomY}, limits zoomIn
-         *
+         *   wheel: true,    // allow zooming by mouse wheel
+         *   needShift: true,  // mouse wheel zooming needs pressing of the shift key
+         *   min: 0.001,       // minimal values of {@link JXG.Board#zoomX} and {@link JXG.Board#zoomY}, limits zoomOut
+         *   max: 1000.0,      // maximal values of {@link JXG.Board#zoomX} and {@link JXG.Board#zoomY}, limits zoomIn
+         *   
+         *   pinch: true,      // by pinch-to-zoom gesture on touch devices
          *   pinchHorizontal: true, // Allow pinch-to-zoom to zoom only horizontal axis
          *   pinchVertical: true,   // Allow pinch-to-zoom to zoom only vertical axis
          *   pinchSensitivity: 7    // Sensitivity (in degrees) for recognizing horizontal or vertical pinch-to-zoom gestures.
          * }
          * </pre>
+         * 
+         * If the zoom buttons are visible, zooming is still possible, regardless of zoom.enabled:true/false.
+         * If this should be prevented, set showZoom:false.
          *
          * Deprecated: zoom.eps which is superseded by zoom.min
          *
          * @name JXG.Board#zoom
          * @type Object
-         * @default
+         * @default See above
+         * @see JXG.Board#showZoom
+         *
          */
         zoom: {
             enabled: true,
@@ -1323,28 +1343,81 @@ JXG.Options = {
          */
 
         /**
-         * The stroke color of the given geometry element.
-         * @type String
-         * @name JXG.GeometryElement#strokeColor
-         * @see JXG.GeometryElement#highlightStrokeColor
-         * @see JXG.GeometryElement#strokeWidth
-         * @see JXG.GeometryElement#strokeOpacity
-         * @see JXG.GeometryElement#highlightStrokeOpacity
-         * @default {@link JXG.Options.elements.color#strokeColor}
+         * Determines the elements border-style.
+         * Possible values are:
+         * <ul><li>0 for a solid line</li>
+         * <li>1 for a dotted line</li>
+         * <li>2 for a line with small dashes</li>
+         * <li>3 for a line with medium dashes</li>
+         * <li>4 for a line with big dashes</li>
+         * <li>5 for a line with alternating medium and big dashes and large gaps</li>
+         * <li>6 for a line with alternating medium and big dashes and small gaps</li>
+         * <li>7 for a dotted line. Needs {@link JXG.GeometryElement#linecap} set to "round" for round dots.</li>
+         * </ul>
+         * The dash patterns are defined in {@link JXG.AbstractRenderer#dashArray}.
+         *
+         * @type Number
+         * @name JXG.GeometryElement#dash
+         * @default 0
+         *
+         * @see JXG.GeometryElement#lineCap
+         * @see JXG.AbstractRenderer#dashArray
          */
-        strokeColor: Color.palette.blue,
+        dash: 0,
 
         /**
-         * The stroke color of the given geometry element when the user moves the mouse over it.
-         * @type String
-         * @name JXG.GeometryElement#highlightStrokeColor
-         * @see JXG.GeometryElement#strokeColor
-         * @see JXG.GeometryElement#strokeWidth
-         * @see JXG.GeometryElement#strokeOpacity
-         * @see JXG.GeometryElement#highlightStrokeOpacity
-         * @default {@link JXG.Options.elements.color#highlightStrokeColor}
+         * If true, the dash pattern is multiplied by strokeWidth / 2.
+         * @name JXG.GeometryElement#dashScale
+         * @type Boolean
+         * @default false
+         *
+         * @see JXG.GeometryElement#dash
+         * @see JXG.AbstractRenderer#dashArray
          */
-        highlightStrokeColor: '#c3d9ff',
+        dashScale: false,
+
+        /**
+         * If draft.draft: true the element will be drawn in grey scale colors (as default)
+         * to visualize that it's only a draft.
+         *
+         * @name JXG.GeometryElement#draft
+         * @type Object
+         * @default {@link JXG.Options.elements.draft#draft}
+         */
+        draft: {
+            draft: false,
+            strokeColor: '#565656',
+            fillColor: '#565656',
+            strokeOpacity: 0.8,
+            fillOpacity: 0.8,
+            strokeWidth: 1
+        },
+
+        /**
+         * If the element is dragged it will be moved on mousedown or touchstart to the
+         * top of its layer. Works only for SVG renderer and for simple elements
+         * consisting of one SVG node.
+         * @example
+         * var li1 = board.create('line', [1, 1, 1], {strokeWidth: 20, dragToTopOfLayer: true});
+         * var li2 = board.create('line', [1, -1, 1], {strokeWidth: 20, strokeColor: 'red'});
+         *
+         * </pre><div id="JXG38449fee-1ab4-44de-b7d1-43caa1f50f86" class="jxgbox" style="width: 300px; height: 300px;"></div>
+         * <script type="text/javascript">
+         *     (function() {
+         *         var board = JXG.JSXGraph.initBoard('JXG38449fee-1ab4-44de-b7d1-43caa1f50f86',
+         *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
+         *     var li1 = board.create('line', [1, 1, 1], {strokeWidth: 20, dragToTopOfLayer: true});
+         *     var li2 = board.create('line', [1, -1, 1], {strokeWidth: 20, strokeColor: 'red'});
+         *
+         *     })();
+         *
+         * </script><pre>
+         *
+         * @type Boolean
+         * @default false
+         * @name JXG.GeometryElement#dragToTopOfLayer
+         */
+        dragToTopOfLayer: false,
 
         /**
          * The fill color of this geometry element.
@@ -1358,41 +1431,6 @@ JXG.Options = {
         fillColor: Color.palette.red,
 
         /**
-         * The fill color of the given geometry element when the mouse is pointed over it.
-         * @type String
-         * @name JXG.GeometryElement#highlightFillColor
-         * @see JXG.GeometryElement#fillColor
-         * @see JXG.GeometryElement#fillOpacity
-         * @see JXG.GeometryElement#highlightFillOpacity
-         * @default {@link JXG.Options.elements.color#highlightFillColor}
-         */
-        highlightFillColor: 'none',
-
-        /**
-         * Opacity for element's stroke color.
-         * @type Number
-         * @name JXG.GeometryElement#strokeOpacity
-         * @see JXG.GeometryElement#strokeColor
-         * @see JXG.GeometryElement#highlightStrokeColor
-         * @see JXG.GeometryElement#strokeWidth
-         * @see JXG.GeometryElement#highlightStrokeOpacity
-         * @default {@link JXG.Options.elements#strokeOpacity}
-         */
-        strokeOpacity: 1,
-
-        /**
-         * Opacity for stroke color when the object is highlighted.
-         * @type Number
-         * @name JXG.GeometryElement#highlightStrokeOpacity
-         * @see JXG.GeometryElement#strokeColor
-         * @see JXG.GeometryElement#highlightStrokeColor
-         * @see JXG.GeometryElement#strokeWidth
-         * @see JXG.GeometryElement#strokeOpacity
-         * @default {@link JXG.Options.elements#highlightStrokeOpacity}
-         */
-        highlightStrokeOpacity: 1,
-
-        /**
          * Opacity for fill color.
          * @type Number
          * @name JXG.GeometryElement#fillOpacity
@@ -1404,15 +1442,23 @@ JXG.Options = {
         fillOpacity: 1,
 
         /**
-         * Opacity for fill color when the object is highlighted.
-         * @type Number
-         * @name JXG.GeometryElement#highlightFillOpacity
-         * @see JXG.GeometryElement#fillColor
-         * @see JXG.GeometryElement#highlightFillColor
-         * @see JXG.GeometryElement#fillOpacity
-         * @default {@link JXG.Options.elements.color#highlightFillOpacity}
+         * If true the element is fixed and can not be dragged around. The element
+         * will be repositioned on zoom and moveOrigin events.
+         * @type Boolean
+         * @default false
+         * @name JXG.GeometryElement#fixed
          */
-        highlightFillOpacity: 1,
+        fixed: false,
+
+        /**
+         * If true the element is fixed and can not be dragged around. The element
+         * will even stay at its position on zoom and moveOrigin events.
+         * Only free elements like points, texts, curves can be frozen.
+         * @type Boolean
+         * @default false
+         * @name JXG.GeometryElement#frozen
+         */
+        frozen: false,
 
         /**
          * Gradient type. Possible values are 'linear'. 'radial' or null.
@@ -1523,52 +1569,6 @@ JXG.Options = {
         gradient: null,
 
         /**
-         * Second color for gradient.
-         * @type String
-         * @name JXG.GeometryElement#gradientSecondColor
-         * @see JXG.GeometryElement#gradient
-         * @see JXG.GeometryElement#gradientSecondOpacity
-         * @default '#ffffff'
-         */
-        gradientSecondColor: '#ffffff',
-
-        /**
-         * Opacity of second gradient color. Takes a value between 0 and 1.
-         * @type Number
-         * @name JXG.GeometryElement#gradientSecondOpacity
-         * @see JXG.GeometryElement#gradient
-         * @see JXG.GeometryElement#gradientSecondColor
-         * @default 1
-         */
-        gradientSecondOpacity: 1,
-
-        /**
-         * The gradientStartOffset attribute is a number (ranging from 0 to 1) which indicates where the first gradient stop is placed,
-         * see the SVG specification for more information.
-         * For linear gradients, this attribute represents a location along the gradient vector.
-         * For radial gradients, it represents a percentage distance from (fx,fy) to the edge of the outermost/largest circle.
-         * @type Number
-         * @name JXG.GeometryElement#gradientStartOffset
-         * @see JXG.GeometryElement#gradient
-         * @see JXG.GeometryElement#gradientEndOffset
-         * @default 0.0
-         */
-        gradientStartOffset: 0.0,
-
-        /**
-         * The gradientEndOffset attribute is a number (ranging from 0 to 1) which indicates where the second gradient stop is placed,
-         * see the SVG specification for more information.
-         * For linear gradients, this attribute represents a location along the gradient vector.
-         * For radial gradients, it represents a percentage distance from (fx,fy) to the edge of the outermost/largest circle.
-         * @type Number
-         * @name JXG.GeometryElement#gradientEndOffset
-         * @see JXG.GeometryElement#gradient
-         * @see JXG.GeometryElement#gradientStartOffset
-         * @default 1.0
-         */
-        gradientEndOffset: 1.0,
-
-        /**
          * Angle (in radians) of the gradiant in case the gradient is of type 'linear'.
          * If the angle is 0, the first color is on the left and the second color is on the right.
          * If the angle is &pi;/2 the first color is on top and the second color at the
@@ -1609,18 +1609,17 @@ JXG.Options = {
         gradientCY: 0.5,
 
         /**
-         * From the SVG specification: ‘cx’, ‘cy’ and ‘r’ define the largest (i.e., outermost) circle for the radial gradient.
-         * The gradient will be drawn such that the 100% gradient stop is mapped to the perimeter of this largest (i.e., outermost) circle.
-         * For radial gradients in canvas this is the value 'r1'.
-         * Takes a value between 0 and 1.
+         * The gradientEndOffset attribute is a number (ranging from 0 to 1) which indicates where the second gradient stop is placed,
+         * see the SVG specification for more information.
+         * For linear gradients, this attribute represents a location along the gradient vector.
+         * For radial gradients, it represents a percentage distance from (fx,fy) to the edge of the outermost/largest circle.
          * @type Number
-         * @name JXG.GeometryElement#gradientR
+         * @name JXG.GeometryElement#gradientEndOffset
          * @see JXG.GeometryElement#gradient
-         * @see JXG.GeometryElement#gradientCX
-         * @see JXG.GeometryElement#gradientCY
-         * @default 0.5
+         * @see JXG.GeometryElement#gradientStartOffset
+         * @default 1.0
          */
-        gradientR: 0.5,
+        gradientEndOffset: 1.0,
 
         /**
          * ‘fx’ and ‘fy’ define the focal point for the radial gradient.
@@ -1664,74 +1663,105 @@ JXG.Options = {
         gradientFR: 0.0,
 
         /**
-         * Transition duration (in milliseconds) for certain cahnges of properties like color and opacity.
-         * The properties can be set in the attribute transitionProperties
-         * Works in SVG renderer, only.
+         * From the SVG specification: ‘cx’, ‘cy’ and ‘r’ define the largest (i.e., outermost) circle for the radial gradient.
+         * The gradient will be drawn such that the 100% gradient stop is mapped to the perimeter of this largest (i.e., outermost) circle.
+         * For radial gradients in canvas this is the value 'r1'.
+         * Takes a value between 0 and 1.
          * @type Number
-         * @name JXG.GeometryElement#transitionDuration
-         * @see JXG.GeometryElement#transitionProperties
-         * @see JXG.GeometryElement#strokeColor
-         * @see JXG.GeometryElement#highlightStrokeColor
-         * @see JXG.GeometryElement#strokeOpacity
-         * @see JXG.GeometryElement#highlightStrokeOpacity
+         * @name JXG.GeometryElement#gradientR
+         * @see JXG.GeometryElement#gradient
+         * @see JXG.GeometryElement#gradientCX
+         * @see JXG.GeometryElement#gradientCY
+         * @default 0.5
+         */
+        gradientR: 0.5,
+
+        /**
+         * Second color for gradient.
+         * @type String
+         * @name JXG.GeometryElement#gradientSecondColor
+         * @see JXG.GeometryElement#gradient
+         * @see JXG.GeometryElement#gradientSecondOpacity
+         * @default '#ffffff'
+         */
+        gradientSecondColor: '#ffffff',
+
+        /**
+         * Opacity of second gradient color. Takes a value between 0 and 1.
+         * @type Number
+         * @name JXG.GeometryElement#gradientSecondOpacity
+         * @see JXG.GeometryElement#gradient
+         * @see JXG.GeometryElement#gradientSecondColor
+         * @default 1
+         */
+        gradientSecondOpacity: 1,
+
+        /**
+         * The gradientStartOffset attribute is a number (ranging from 0 to 1) which indicates where the first gradient stop is placed,
+         * see the SVG specification for more information.
+         * For linear gradients, this attribute represents a location along the gradient vector.
+         * For radial gradients, it represents a percentage distance from (fx,fy) to the edge of the outermost/largest circle.
+         * @type Number
+         * @name JXG.GeometryElement#gradientStartOffset
+         * @see JXG.GeometryElement#gradient
+         * @see JXG.GeometryElement#gradientEndOffset
+         * @default 0.0
+         */
+        gradientStartOffset: 0.0,
+
+        /**
+         *
+         * @type Boolean
+         * @default true
+         * @name JXG.GeometryElement#highlight
+         */
+        highlight: true,
+
+        /**
+         * The fill color of the given geometry element when the mouse is pointed over it.
+         * @type String
+         * @name JXG.GeometryElement#highlightFillColor
+         * @see JXG.GeometryElement#fillColor
+         * @see JXG.GeometryElement#fillOpacity
+         * @see JXG.GeometryElement#highlightFillOpacity
+         * @default {@link JXG.Options.elements.color#highlightFillColor}
+         */
+        highlightFillColor: 'none',
+
+        /**
+         * Opacity for fill color when the object is highlighted.
+         * @type Number
+         * @name JXG.GeometryElement#highlightFillOpacity
          * @see JXG.GeometryElement#fillColor
          * @see JXG.GeometryElement#highlightFillColor
          * @see JXG.GeometryElement#fillOpacity
-         * @see JXG.GeometryElement#highlightFillOpacity
-         * @default 100 {@link JXG.Options.elements#transitionDuration}
+         * @default {@link JXG.Options.elements.color#highlightFillOpacity}
          */
-        transitionDuration: 100,
+        highlightFillOpacity: 1,
 
         /**
-         * Properties which change smoothly in the time set in transitionDuration.
-         * Possible values are
-         * ['fill', 'fill-opacity', 'stroke', 'stroke-opacity', 'stroke-width', 'width', 'height', 'rx', 'ry']
-         * (and maybe more) for geometry elements and
-         * ['color', 'opacity', 'all'] for HTML texts.
-         *
-         * @type Array
-         * @name JXG.GeometryElement#transitionProperties
-         * @see JXG.GeometryElement#transitionDuration
-         *
-         *
-         * @example
-         * var p1 = board.create("point", [0, 2], {
-         *     name: "A",
-         *     highlightStrokeWidth: 10,
-         *     transitionDuration: 1000,
-         *     transitionProperties: ['width', 'height', 'stroke-width',
-         *         'fill', 'fill-opacity', 'rx', 'ry', 'stroke', 'stroke-opacity'] });
-         *
-         * </pre><div id="JXGdf5230a1-5870-43db-b6ff-4d5b2f5b786b" class="jxgbox" style="width: 300px; height: 300px;"></div>
-         * <script type="text/javascript">
-         *     (function() {
-         *         var board = JXG.JSXGraph.initBoard('JXGdf5230a1-5870-43db-b6ff-4d5b2f5b786b',
-         *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
-         *     var p1 = board.create("point", [0, 2], {
-         *         name: "A",
-         *         highlightStrokeWidth: 20,
-         *         transitionDuration: 1000,
-         *         transitionProperties: ['width', 'height', 'stroke-width',
-         *             'fill', 'fill-opacity', 'rx', 'ry', 'stroke', 'stroke-opacity'] });
-         *
-         *     })();
-         *
-         * </script><pre>
-         *
-         */
-        transitionProperties: ['fill', 'fill-opacity', 'stroke', 'stroke-opacity', 'stroke-width'],
-
-        /**
-         * Width of the element's stroke.
-         * @type Number
-         * @name JXG.GeometryElement#strokeWidth
+         * The stroke color of the given geometry element when the user moves the mouse over it.
+         * @type String
+         * @name JXG.GeometryElement#highlightStrokeColor
          * @see JXG.GeometryElement#strokeColor
-         * @see JXG.GeometryElement#highlightStrokeColor
+         * @see JXG.GeometryElement#strokeWidth
          * @see JXG.GeometryElement#strokeOpacity
          * @see JXG.GeometryElement#highlightStrokeOpacity
-         * @default {@link JXG.Options.elements#strokeWidth}
+         * @default {@link JXG.Options.elements.color#highlightStrokeColor}
          */
-        strokeWidth: 2,
+        highlightStrokeColor: '#c3d9ff',
+
+        /**
+         * Opacity for stroke color when the object is highlighted.
+         * @type Number
+         * @name JXG.GeometryElement#highlightStrokeOpacity
+         * @see JXG.GeometryElement#strokeColor
+         * @see JXG.GeometryElement#highlightStrokeColor
+         * @see JXG.GeometryElement#strokeWidth
+         * @see JXG.GeometryElement#strokeOpacity
+         * @default {@link JXG.Options.elements#highlightStrokeOpacity}
+         */
+        highlightStrokeOpacity: 1,
 
         /**
          * Width of the element's stroke when the mouse is pointed over it.
@@ -1747,50 +1777,12 @@ JXG.Options = {
         highlightStrokeWidth: 2,
 
         /**
-         * If true the element is fixed and can not be dragged around. The element
-         * will be repositioned on zoom and moveOrigin events.
-         * @type Boolean
+         * @name JXG.GeometryElement#isLabel
          * @default false
-         * @name JXG.GeometryElement#fixed
+         * @private
+         * By default, an element is not a label. Do not change this.
          */
-        fixed: false,
-
-        /**
-         * If true the element is fixed and can not be dragged around. The element
-         * will even stay at its position on zoom and moveOrigin events.
-         * Only free elements like points, texts, curves can be frozen.
-         * @type Boolean
-         * @default false
-         * @name JXG.GeometryElement#frozen
-         */
-        frozen: false,
-
-        /**
-         * If true a label will display the element's name.
-         * @type Boolean
-         * @default false
-         * @name JXG.GeometryElement#withLabel
-         */
-        withLabel: false,
-
-        /**
-         * If false the element won't be visible on the board, otherwise it is shown.
-         * @type Boolean
-         * @name JXG.GeometryElement#visible
-         * @see JXG.GeometryElement#hideElement
-         * @see JXG.GeometryElement#showElement
-         * @default true
-         */
-        visible: true,
-
-        /**
-         * A private element will be inaccessible in certain environments, e.g. a graphical user interface.
-         *
-         * @name JXG.GeometryElement#priv
-         * @type Boolean
-         * @default false
-         */
-        priv: false,
+        isLabel: false,
 
         /**
          * Display layer which will contain the element.
@@ -1817,27 +1809,92 @@ JXG.Options = {
         lineCap: 'butt',
 
         /**
-         * Determines the elements border-style.
-         * Possible values are:
-         * <ul><li>0 for a solid line</li>
-         * <li>1 for a dotted line</li>
-         * <li>2 for a line with small dashes</li>
-         * <li>3 for a line with medium dashes</li>
-         * <li>4 for a line with big dashes</li>
-         * <li>5 for a line with alternating medium and big dashes and large gaps</li>
-         * <li>6 for a line with alternating medium and big dashes and small gaps</li>
-         * <li>7 for a dotted line. Needs {@link JXG.GeometryElement#linecap} set to "round" for round dots.</li>
-         * </ul>
-         * The dash patterns are defined in {@link JXG.AbstractRenderer#dashArray}.
-         *
-         * @type Number
-         * @name JXG.GeometryElement#dash
-         * @default 0
-         *
-         * @see JXG.GeometryElement#lineCap
-         * @see JXG.AbstractRenderer#dashArray
+         * If this is set to true, the element is updated in every update
+         * call of the board. If set to false, the element is updated only after
+         * zoom events or more generally, when the bounding box has been changed.
+         * Examples for the latter behavior should be axes.
+         * @type Boolean
+         * @default true
+         * @see JXG.GeometryElement#needsRegularUpdate
+         * @name JXG.GeometryElement#needsRegularUpdate
          */
-        dash: 0,
+        needsRegularUpdate: true,
+
+        /**
+         * Precision options for JSXGraph elements.
+         * This attributes takes either the value 'inherit' or an object of the form:
+         * <pre>
+         * precision: {
+         *      touch: 30,
+         *      mouse: 4,
+         *      pen: 4
+         * }
+         * </pre>
+         *
+         * In the first case, the global, JSXGraph-wide values of JXGraph.Options.precision
+         * are taken.
+         *
+         * @type {String|Object}
+         * @name JXG.GeometryElement#precision
+         * @see JXG.Options#precision
+         * @default 'inherit'
+         */
+        precision: 'inherit',
+
+        /**
+         * A private element will be inaccessible in certain environments, e.g. a graphical user interface.
+         *
+         * @name JXG.GeometryElement#priv
+         * @type Boolean
+         * @default false
+         */
+        priv: false,
+
+        /**
+         * Determines whether two-finger manipulation may rotate this object.
+         * If set to false, the object can only be scaled and translated.
+         * <p>
+         * In case the element is a polygon or line and it has the attribute "rotatable:false",
+         * moving the element with two fingers results in a rotation or translation.
+         * <p>
+         * If an element is set to be neither scalable nor rotatable, it can only be translated.
+         * <p>
+         * In case of a polygon, scaling is only possible if <i>no</i> vertex has snapToGrid or snapToPoints
+         * enabled and no vertex is fixed by some other constraint. Also, the polygon itself has to have
+         * snapToGrid disabled.
+         *
+         * @type Boolean
+         * @default true
+         * @name JXG.GeometryElement#rotatable
+         * @see JXG.GeometryElement#scalable
+         */
+        rotatable: true,
+
+        /**
+         * Determines whether two-finger manipulation of this object may change its size.
+         * If set to false, the object is only rotated and translated.
+         * <p>
+         * In case the element is a horizontal or vertical line having ticks, "scalable:true"
+         * enables zooming of the board by dragging ticks lines. This feature is enabled,
+         * for the ticks element of the line element the attribute "fixed" has to be false
+         * and the line element's scalable attribute has to be true.
+         * <p>
+         * In case the element is a polygon or line and it has the attribute "scalable:false",
+         * moving the element with two fingers results in a rotation or translation.
+         * <p>
+         * If an element is set to be neither scalable nor rotatable, it can only be translated.
+         * <p>
+         * In case of a polygon, scaling is only possible if <i>no</i> vertex has snapToGrid or snapToPoints
+         * enabled and no vertex is fixed by some other constraint. Also, the polygon itself has to have
+         * snapToGrid disabled.
+         *
+         * @type Boolean
+         * @default true
+         * @name JXG.GeometryElement#scalable
+         * @see JXG.Ticks#fixed
+         * @see JXG.GeometryElement#rotatable
+         */
+        scalable: true,
 
         /**
          * If enabled:true the (stroke) element will get a customized shadow.
@@ -1936,6 +1993,69 @@ JXG.Options = {
         },
 
         /**
+         * Snaps the element or its parents to the grid. Currently only relevant for points, circles,
+         * and lines. Points are snapped to grid directly, on circles and lines it's only the parent
+         * points that are snapped
+         * @type Boolean
+         * @default false
+         * @name JXG.GeometryElement#snapToGrid
+         */
+        snapToGrid: false,
+
+        /**
+         * The stroke color of the given geometry element.
+         * @type String
+         * @name JXG.GeometryElement#strokeColor
+         * @see JXG.GeometryElement#highlightStrokeColor
+         * @see JXG.GeometryElement#strokeWidth
+         * @see JXG.GeometryElement#strokeOpacity
+         * @see JXG.GeometryElement#highlightStrokeOpacity
+         * @default {@link JXG.Options.elements.color#strokeColor}
+         */
+        strokeColor: Color.palette.blue,
+
+        /**
+         * Opacity for element's stroke color.
+         * @type Number
+         * @name JXG.GeometryElement#strokeOpacity
+         * @see JXG.GeometryElement#strokeColor
+         * @see JXG.GeometryElement#highlightStrokeColor
+         * @see JXG.GeometryElement#strokeWidth
+         * @see JXG.GeometryElement#highlightStrokeOpacity
+         * @default {@link JXG.Options.elements#strokeOpacity}
+         */
+        strokeOpacity: 1,
+
+        /**
+         * Width of the element's stroke.
+         * @type Number
+         * @name JXG.GeometryElement#strokeWidth
+         * @see JXG.GeometryElement#strokeColor
+         * @see JXG.GeometryElement#highlightStrokeColor
+         * @see JXG.GeometryElement#strokeOpacity
+         * @see JXG.GeometryElement#highlightStrokeOpacity
+         * @default {@link JXG.Options.elements#strokeWidth}
+         */
+        strokeWidth: 2,
+
+        /**
+         * Controls if an element can get the focus with the tab key.
+         * tabindex corresponds to the HTML attribute of the same name.
+         * See <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/tabindex">descriptiona at MDN</a>.
+         * The additional value "null" completely disables focus of an element.
+         * The value will be ignored if keyboard control of the board is not enabled or
+         * the element is fixed or not visible.
+         *
+         * @name JXG.GeometryElement#tabindex
+         * @type Number
+         * @default 0
+         * @see JXG.Board#keyboard
+         * @see JXG.GeometryElement#fixed
+         * @see JXG.GeometryElement#visible
+         */
+        tabindex: 0,
+
+        /**
          * If true the element will be traced, i.e. on every movement the element will be copied
          * to the background. Use {@link JXG.GeometryElement#clearTrace} to delete the trace elements.
          *
@@ -2008,180 +2128,91 @@ JXG.Options = {
         traceAttributes: {},
 
         /**
+         * Transition duration (in milliseconds) for certain cahnges of properties like color and opacity.
+         * The properties can be set in the attribute transitionProperties
+         * Works in SVG renderer, only.
+         * @type Number
+         * @name JXG.GeometryElement#transitionDuration
+         * @see JXG.GeometryElement#transitionProperties
+         * @see JXG.GeometryElement#strokeColor
+         * @see JXG.GeometryElement#highlightStrokeColor
+         * @see JXG.GeometryElement#strokeOpacity
+         * @see JXG.GeometryElement#highlightStrokeOpacity
+         * @see JXG.GeometryElement#fillColor
+         * @see JXG.GeometryElement#highlightFillColor
+         * @see JXG.GeometryElement#fillOpacity
+         * @see JXG.GeometryElement#highlightFillOpacity
+         * @default 100 {@link JXG.Options.elements#transitionDuration}
+         */
+        transitionDuration: 100,
+
+        /**
+         * Properties which change smoothly in the time set in transitionDuration.
+         * Possible values are
+         * ['fill', 'fill-opacity', 'stroke', 'stroke-opacity', 'stroke-width', 'width', 'height', 'rx', 'ry']
+         * (and maybe more) for geometry elements and
+         * ['color', 'opacity', 'all'] for HTML texts.
          *
-         * @type Boolean
-         * @default true
-         * @name JXG.GeometryElement#highlight
-         */
-        highlight: true,
-
-        /**
-         * If this is set to true, the element is updated in every update
-         * call of the board. If set to false, the element is updated only after
-         * zoom events or more generally, when the bounding box has been changed.
-         * Examples for the latter behavior should be axes.
-         * @type Boolean
-         * @default true
-         * @see JXG.GeometryElement#needsRegularUpdate
-         * @name JXG.GeometryElement#needsRegularUpdate
-         */
-        needsRegularUpdate: true,
-
-        /**
-         * Snaps the element or its parents to the grid. Currently only relevant for points, circles,
-         * and lines. Points are snapped to grid directly, on circles and lines it's only the parent
-         * points that are snapped
-         * @type Boolean
-         * @default false
-         * @name JXG.GeometryElement#snapToGrid
-         */
-        snapToGrid: false,
-
-        /**
-         * Determines whether two-finger manipulation of this object may change its size.
-         * If set to false, the object is only rotated and translated.
-         * <p>
-         * In case the element is a horizontal or vertical line having ticks, "scalable:true"
-         * enables zooming of the board by dragging ticks lines. This feature is enabled,
-         * for the ticks element of the line element the attribute "fixed" has to be false
-         * and the line element's scalable attribute has to be true.
-         * <p>
-         * In case the element is a polygon or line and it has the attribute "scalable:false",
-         * moving the element with two fingers results in a rotation or translation.
-         * <p>
-         * If an element is set to be neither scalable nor rotatable, it can only be translated.
-         * <p>
-         * In case of a polygon, scaling is only possible if <i>no</i> vertex has snapToGrid or snapToPoints
-         * enabled and no vertex is fixed by some other constraint. Also, the polygon itself has to have
-         * snapToGrid disabled.
+         * @type Array
+         * @name JXG.GeometryElement#transitionProperties
+         * @see JXG.GeometryElement#transitionDuration
          *
-         * @type Boolean
-         * @default true
-         * @name JXG.GeometryElement#scalable
-         * @see JXG.Ticks#fixed
-         * @see JXG.GeometryElement#rotatable
-         */
-        scalable: true,
-
-        /**
-         * Determines whether two-finger manipulation may rotate this object.
-         * If set to false, the object can only be scaled and translated.
-         * <p>
-         * In case the element is a polygon or line and it has the attribute "rotatable:false",
-         * moving the element with two fingers results in a rotation or translation.
-         * <p>
-         * If an element is set to be neither scalable nor rotatable, it can only be translated.
-         * <p>
-         * In case of a polygon, scaling is only possible if <i>no</i> vertex has snapToGrid or snapToPoints
-         * enabled and no vertex is fixed by some other constraint. Also, the polygon itself has to have
-         * snapToGrid disabled.
          *
-         * @type Boolean
-         * @default true
-         * @name JXG.GeometryElement#rotatable
-         * @see JXG.GeometryElement#scalable
-         */
-        rotatable: true,
-
-        /**
-         * If the element is dragged it will be moved on mousedown or touchstart to the
-         * top of its layer. Works only for SVG renderer and for simple elements
-         * consisting of one SVG node.
          * @example
-         * var li1 = board.create('line', [1, 1, 1], {strokeWidth: 20, dragToTopOfLayer: true});
-         * var li2 = board.create('line', [1, -1, 1], {strokeWidth: 20, strokeColor: 'red'});
+         * var p1 = board.create("point", [0, 2], {
+         *     name: "A",
+         *     highlightStrokeWidth: 10,
+         *     transitionDuration: 1000,
+         *     transitionProperties: ['width', 'height', 'stroke-width',
+         *         'fill', 'fill-opacity', 'rx', 'ry', 'stroke', 'stroke-opacity'] });
          *
-         * </pre><div id="JXG38449fee-1ab4-44de-b7d1-43caa1f50f86" class="jxgbox" style="width: 300px; height: 300px;"></div>
+         * </pre><div id="JXGdf5230a1-5870-43db-b6ff-4d5b2f5b786b" class="jxgbox" style="width: 300px; height: 300px;"></div>
          * <script type="text/javascript">
          *     (function() {
-         *         var board = JXG.JSXGraph.initBoard('JXG38449fee-1ab4-44de-b7d1-43caa1f50f86',
+         *         var board = JXG.JSXGraph.initBoard('JXGdf5230a1-5870-43db-b6ff-4d5b2f5b786b',
          *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
-         *     var li1 = board.create('line', [1, 1, 1], {strokeWidth: 20, dragToTopOfLayer: true});
-         *     var li2 = board.create('line', [1, -1, 1], {strokeWidth: 20, strokeColor: 'red'});
+         *     var p1 = board.create("point", [0, 2], {
+         *         name: "A",
+         *         highlightStrokeWidth: 20,
+         *         transitionDuration: 1000,
+         *         transitionProperties: ['width', 'height', 'stroke-width',
+         *             'fill', 'fill-opacity', 'rx', 'ry', 'stroke', 'stroke-opacity'] });
          *
          *     })();
          *
          * </script><pre>
          *
-         * @type Boolean
-         * @default false
-         * @name JXG.GeometryElement#dragToTopOfLayer
          */
-        dragToTopOfLayer: false,
+        transitionProperties: ['fill', 'fill-opacity', 'stroke', 'stroke-opacity', 'stroke-width'],
 
         /**
-         * Precision options for JSXGraph elements.
-         * This attributes takes either the value 'inherit' or an object of the form:
-         * <pre>
-         * precision: {
-         *      touch: 30,
-         *      mouse: 4,
-         *      pen: 4
-         * }
-         * </pre>
+         * If false the element won't be visible on the board, otherwise it is shown.
+         * @type Boolean
+         * @name JXG.GeometryElement#visible
+         * @see JXG.GeometryElement#hideElement
+         * @see JXG.GeometryElement#showElement
+         * @default true
+         */
+        visible: true,
+
+        /**
+         * Set individual viewport for an element. If not set to 'inherit', to
+         * use the board-wide viewport, an array of the form '[left, top, right, bottom]' has to be given.
          *
-         * In the first case, the global, JSXGraph-wide values of JXGraph.Options.precision
-         * are taken.
-         *
-         * @type {String|Object}
-         * @name JXG.GeometryElement#precision
-         * @see JXG.Options#precision
+         * @type {Array|String}
+         * @name JXG.GeometryElement#viewport
          * @default 'inherit'
+         * @see JXG.Board#viewport
          */
-        precision: 'inherit',
+        viewport: 'inherit',
 
         /**
-         * If draft.draft: true the element will be drawn in grey scale colors (as default)
-         * to visualize that it's only a draft.
-         *
-         * @name JXG.GeometryElement#draft
-         * @type Object
-         * @default {@link JXG.Options.elements.draft#draft}
-         */
-        draft: {
-            draft: false,
-            strokeColor: '#565656',
-            fillColor: '#565656',
-            strokeOpacity: 0.8,
-            fillOpacity: 0.8,
-            strokeWidth: 1
-        },
-
-        /**
-         * @name JXG.GeometryElement#isLabel
-         * @default false
-         * @private
-         * By default, an element is not a label. Do not change this.
-         */
-        isLabel: false,
-
-        /**
-         * Controls if an element can get the focus with the tab key.
-         * tabindex corresponds to the HTML attribute of the same name.
-         * See <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/tabindex">descriptiona at MDN</a>.
-         * The additional value "null" completely disables focus of an element.
-         * The value will be ignored if keyboard control of the board is not enabled or
-         * the element is fixed or not visible.
-         *
-         * @name JXG.GeometryElement#tabindex
-         * @type Number
-         * @default 0
-         * @see JXG.Board#keyboard
-         * @see JXG.GeometryElement#fixed
-         * @see JXG.GeometryElement#visible
-         */
-        tabindex: 0,
-
-        /**
-         * If true, the dash pattern is multiplied by strokeWidth / 2.
-         * @name JXG.GeometryElement#dashScale
+         * If true a label will display the element's name.
          * @type Boolean
          * @default false
-         *
-         * @see JXG.GeometryElement#dash
-         * @see JXG.AbstractRenderer#dashArray
+         * @name JXG.GeometryElement#withLabel
          */
-        dashScale: false
+        withLabel: false
 
         // close the meta tag
         /**#@-*/
@@ -4596,7 +4627,8 @@ JXG.Options = {
         parse: false,
         transitionDuration: 0,
         needsRegularUpdate: false,
-        tabindex: null
+        tabindex: null,
+        viewport: [0, 0, 0, 0]
 
         /**#@-*/
     },
@@ -5466,6 +5498,14 @@ JXG.Options = {
         /**#@-*/
     },
 
+    /* special parallelogram options */
+    parallelogram: {
+        parallelpoint: {
+            withLabel: false,
+            name: ''
+        }
+    },
+
     /* special parallelpoint options */
     parallelpoint: {
     },
@@ -6085,6 +6125,7 @@ JXG.Options = {
          */
         arc: {
             visible: false,
+            radiusPoint: {visible: false},
             fillColor: 'none'
         },
 

@@ -49,16 +49,18 @@ import Type from "../utils/type";
  * @type JXG.Curve
  * @throws {Error} If the element cannot be constructed with the given parent objects an exception is thrown.
  *
- * First possiblity of input parameters are:
+ * First possibility of input parameters are:
  * @param {JXG.Point_JXG.Point_JXG.Point} p1,p2,p3 A sector is defined by three points: The sector's center <tt>p1</tt>,
  * a second point <tt>p2</tt> defining the radius and a third point <tt>p3</tt> defining the angle of the sector. The
- * Sector is always drawn counter clockwise from <tt>p2</tt> to <tt>p3</tt>
+ * Sector is always drawn counter clockwise from <tt>p2</tt> to <tt>p3</tt>.
+ * <p>
+ * In this case, the sector will have an arc as sub-object.
  * <p>
  * Second possibility of input parameters are:
  * @param {JXG.Line_JXG.Line_array,number_array,number_number,function} line, line2, coords1 or direction1, coords2 or direction2, radius The sector is defined by two lines.
  * The two legs which define the sector are given by two coordinates arrays which are project initially two the two lines or by two directions (+/- 1).
  * The last parameter is the radius of the sector.
- *
+ * <p>In this case, the sector will <b>not</b> have an arc as sub-object.
  *
  * @example
  * // Create a sector out of three free points
@@ -364,6 +366,37 @@ JXG.createSector = function (board, parents, attributes) {
             this.bezierDegree = 3;
         };
 
+        // Arc does not work yet, since point1, point2 and point3 are
+        // virtual points.
+        //
+        // attr = Type.copyAttributes(attributes, board.options, "arc");
+        // attr = Type.copyAttributes(attr, board.options, "sector", "arc");
+        // attr.withLabel = false;
+        // attr.name += "_arc";
+        // // el.arc = board.create("arc", [el.point1, el.point2, el.point3], attr);
+        // // The arc's radius is always the radius of sector.
+        // // This is important for angles.
+        // el.updateDataArray();
+        // el.arc = board.create("arc", [
+        //     function() {
+        //         return el.point1.coords.ursCoords;
+        //     }, // Center
+        //     function() {
+        //         var d = el.point2.coords.distance(Const.COORDS_BY_USER, el.point1.coords);
+        //         if (d === 0) {
+        //             return [el.point1.coords.usrCoords[1], el.point1.coords.usrCoords[2]];
+        //         }
+        //         return [
+        //             el.point1.coords.usrCoords[1] + el.Radius() * (el.point2.coords.usrCoords[1] - el.point1.coords.usrCoords[1]) / d,
+        //             el.point1.coords.usrCoords[2] + el.Radius() * (el.point2.coords.usrCoords[2] - el.point1.coords.usrCoords[2]) / d
+        //         ];
+        //     },
+        //     function() {
+        //         return el.point3.coords.usrCoords;
+        //     }, // Center
+        // ], attr);
+        // el.addChild(el.arc);
+
         el.methodMap = JXG.deepCopy(el.methodMap, {
             radius: "Radius",
             getRadius: "Radius",
@@ -383,7 +416,7 @@ JXG.createSector = function (board, parents, attributes) {
         el.point1 = points[0];
 
         /**
-         * This point together with {@link Sector#point1} defines the radius..
+         * This point together with {@link Sector#point1} defines the radius.
          * @memberOf Sector.prototype
          * @name point2
          * @type JXG.Point
@@ -499,10 +532,27 @@ JXG.createSector = function (board, parents, attributes) {
             return this.point2.Dist(this.point1);
         };
 
-        attr = Type.copyAttributes(attributes, board.options, "sector", "arc");
+        attr = Type.copyAttributes(attributes, board.options, "arc");
+        attr = Type.copyAttributes(attr, board.options, "sector", "arc");
         attr.withLabel = false;
         attr.name += "_arc";
-        el.arc = board.create("arc", [el.point1, el.point2, el.point3], attr);
+        // el.arc = board.create("arc", [el.point1, el.point2, el.point3], attr);
+        // The arc's radius is always the radius of sector.
+        // This is important for angles.
+        el.arc = board.create("arc", [
+            el.point1, // Center
+            function() {
+                var d = el.point2.Dist(el.point1);
+                if (d === 0) {
+                    return [el.point1.X(), el.point1.Y()];
+                }
+                return [
+                    el.point1.X() + el.Radius() * (el.point2.X() - el.point1.X()) / d,
+                    el.point1.Y() + el.Radius() * (el.point2.Y() - el.point1.Y()) / d
+                ];
+            },
+            el.point3
+        ], attr);
         el.addChild(el.arc);
     } // end '3points'
 

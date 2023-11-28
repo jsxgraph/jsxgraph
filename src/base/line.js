@@ -1309,7 +1309,8 @@ JXG.registerElement("line", JXG.createLine);
  * @class This element is used to provide a constructor for a segment.
  * It's strictly spoken just a wrapper for element {@link Line} with {@link Line#straightFirst}
  * and {@link Line#straightLast} properties set to false. If there is a third variable then the
- * segment has a fixed length (which may be a function, too).
+ * segment has a fixed length (which may be a function, too) determined by the absolute value of
+ * that number.
  * @pseudo
  * @description
  * @name Segment
@@ -1340,13 +1341,16 @@ JXG.registerElement("line", JXG.createLine);
  * // Create a segment providing two points.
  *   var p1 = board.create('point', [4.0, 1.0]);
  *   var p2 = board.create('point', [1.0, 1.0]);
+ *   // AB
  *   var l1 = board.create('segment', [p1, p2]);
  *   var p3 = board.create('point', [4.0, 2.0]);
  *   var p4 = board.create('point', [1.0, 2.0]);
- *   var l2 = board.create('segment', [p3, p4, 3]);
+ *   // CD
+ *   var l2 = board.create('segment', [p3, p4, 3]); // Fixed length
  *   var p5 = board.create('point', [4.0, 3.0]);
  *   var p6 = board.create('point', [1.0, 4.0]);
- *   var l3 = board.create('segment', [p5, p6, function(){ return l1.L();} ]);
+ *   // EF
+ *   var l3 = board.create('segment', [p5, p6, function(){ return l1.L();} ]); // Fixed, but dependent length
  * </pre><div class="jxgbox" id="JXG617336ba-0705-4b2b-a236-c87c28ef25be" style="width: 300px; height: 300px;"></div>
  * <script type="text/javascript">
  *   var slex2_board = JXG.JSXGraph.initBoard('JXG617336ba-0705-4b2b-a236-c87c28ef25be', {boundingbox: [-1, 7, 7, -1], axis: true, showcopyright: false, shownavigation: false});

@@ -427,7 +427,7 @@ JXG.extend(
                         attributes,
                         board.options,
                         attrClass,
-                        attrArray[j]
+                        attrArray[j].toLowerCase()
                     );
                 }
                 if (this.isArray(parents[i]) && parents[i].length > 1) {

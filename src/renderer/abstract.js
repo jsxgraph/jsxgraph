@@ -213,6 +213,7 @@ JXG.extend(
             if (enhanced || this.enhancedRendering) {
                 not = not || {};
 
+                this.setObjectViewport(el);
                 this.setObjectTransition(el);
                 if (!Type.evaluate(el.visProp.draft)) {
                     if (!not.stroke) {
@@ -1136,8 +1137,8 @@ JXG.extend(
             var content = el.plaintext,
                 v, c,
                 parentNode,
-                scale, vshift,
-                id, wrap_id,
+                // scale, vshift,
+                // id, wrap_id,
                 ax, ay, angle, co, si,
                 to_h, to_v;
 
@@ -1451,6 +1452,7 @@ JXG.extend(
 
             this.setObjectTransition(el);
             if (display === "html" && this.type !== "no") {
+                this.setObjectViewport(el, true);
                 // Set new CSS class
                 if (el.visPropOld.cssclass !== css) {
                     el.rendNode.className = css;
@@ -1885,7 +1887,8 @@ JXG.extend(
             var draftColor = el.board.options.elements.draft.color,
                 draftOpacity = el.board.options.elements.draft.opacity;
 
-            this.setObjectTransition(el);
+                this.setObjectViewport(el);
+                this.setObjectTransition(el);
             if (el.type === Const.OBJECT_TYPE_POLYGON) {
                 this.setObjectFillColor(el, draftColor, draftOpacity);
             } else {
@@ -1904,6 +1907,7 @@ JXG.extend(
          * @param {JXG.GeometryElement} el Reference of the object that no longer is in draft mode.
          */
         removeDraft: function (el) {
+            this.setObjectViewport(el);
             this.setObjectTransition(el);
             if (el.type === Const.OBJECT_TYPE_POLYGON) {
                 this.setObjectFillColor(el, el.visProp.fillcolor, el.visProp.fillopacity);
@@ -1941,6 +1945,15 @@ JXG.extend(
          *        element.visProp.transitionDuration is taken. This is the default.
          */
         setObjectTransition: function (element, duration) {
+            /* stub */
+        },
+
+        /**
+         * 
+         * @param {*} element 
+         * @param {*} isHTML 
+         */
+        setObjectViewport: function (element, isHTML) {
             /* stub */
         },
 
@@ -2000,6 +2013,7 @@ JXG.extend(
                 ev = el.visProp,
                 sw;
 
+            this.setObjectViewport(el);
             this.setObjectTransition(el);
             if (!ev.draft) {
                 if (el.type === Const.OBJECT_TYPE_POLYGON) {
@@ -2074,6 +2088,7 @@ JXG.extend(
                 ev = el.visProp,
                 sw;
 
+            this.setObjectViewport(el);
             this.setObjectTransition(el);
             if (!Type.evaluate(el.visProp.draft)) {
                 if (el.type === Const.OBJECT_TYPE_POLYGON) {

@@ -1573,7 +1573,7 @@ JXG.extend(
             for (j = lenData; j < lenLabels; j++) {
                 this.board.renderer.display(this.labels[j], false);
                 // Tick labels have the attribute "visible: 'inherit'"
-                // This must explicitely set to false, otherwise
+                // This must explicitly set to false, otherwise
                 // this labels would be set to visible in the upcoming
                 // update of the labels.
                 this.labels[j].visProp.visible = this.labels[j].visPropCalc.visible = false;

@@ -460,7 +460,7 @@ JXG.extend(
         /**
          * Adds ids of elements to the array this.parents. This method needs to be called if some dependencies
          * can not be detected automatically by JSXGraph. For example if a function graph is given by a function
-         * which referes to coordinates of a point, calling addParents() is necessary.
+         * which refers to coordinates of a point, calling addParents() is necessary.
          *
          * @param {Array} parents Array of elements or ids of elements.
          * Alternatively, one can give a list of objects as parameters.

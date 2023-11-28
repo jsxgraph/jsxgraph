@@ -2504,16 +2504,10 @@ JXG.extend(
          * @param {Boolean} testSegment Test if intersection has to be inside of the segment or somewhere on the line defined by the segment
          */
         _bezierLineMeetSubdivision: function (red, blue, level, testSegment) {
-            var bbb,
-                bbr,
-                ar,
-                r0,
-                r1,
+            var bbb, bbr, ar,
+                r0, r1,
                 m,
-                p0,
-                p1,
-                q0,
-                q1,
+                p0, p1, q0, q1,
                 L = [],
                 maxLev = 5; // Maximum recursion level
 
@@ -2618,7 +2612,6 @@ JXG.extend(
             if (blue.numberPoints < blue.bezierDegree + 1 || red.numberPoints < red.bezierDegree + 1) {
                 return [0, NaN, NaN];
             }
-
             if (red.bezierDegree === 1 && blue.bezierDegree === 3) {
                 tmp = red;
                 red = blue;
