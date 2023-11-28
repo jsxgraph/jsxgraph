@@ -1322,7 +1322,7 @@ JXG.registerElement("line", JXG.createLine);
  * or array of numbers describing the
  * coordinates of a point. In the latter case the point will be constructed automatically as a fixed invisible point.
  * @param {number,function} [length] The points are adapted - if possible - such that their distance
- * is equal to the absolute value of this number.  
+ * is equal to the absolute value of this number.
  * @see Line
  * @example
  * // Create a segment providing two points.
@@ -1489,57 +1489,70 @@ JXG.createAxis = function (board, parents, attributes) {
     var attr, attr_ticks, el, els, dist;
 
     // Arrays or points, that is all we need.
-    if (
-        (Type.isArray(parents[0]) || Type.isPoint(parents[0])) &&
-        (Type.isArray(parents[1]) || Type.isPoint(parents[1]))
-    ) {
-        // Create line
-        attr = Type.copyAttributes(attributes, board.options, "axis");
+    // if (
+    //     (Type.isArray(parents[0]) || Type.isPoint(parents[0])) &&
+    //     (Type.isArray(parents[1]) || Type.isPoint(parents[1]))
+    // ) {
+
+    // Create line
+    attr = Type.copyAttributes(attributes, board.options, "axis");
+    try {
         el = board.create("line", parents, attr);
-        el.type = Const.OBJECT_TYPE_AXIS;
-        el.isDraggable = false;
-        el.point1.isDraggable = false;
-        el.point2.isDraggable = false;
-
-        for (els in el.ancestors) {
-            if (el.ancestors.hasOwnProperty(els)) {
-                el.ancestors[els].type = Const.OBJECT_TYPE_AXISPOINT;
-            }
-        }
-
-        // Create ticks
-        attr_ticks = Type.copyAttributes(attributes, board.options, "axis", "ticks");
-        if (Type.exists(attr_ticks.ticksdistance)) {
-            dist = attr_ticks.ticksdistance;
-        } else if (Type.isArray(attr_ticks.ticks)) {
-            dist = attr_ticks.ticks;
-        } else {
-            dist = 1.0;
-        }
-
-        /**
-         * The ticks attached to the axis.
-         * @memberOf Axis.prototype
-         * @name defaultTicks
-         * @type JXG.Ticks
-         */
-        el.defaultTicks = board.create("ticks", [el, dist], attr_ticks);
-        el.defaultTicks.dump = false;
-        el.elType = "axis";
-        el.subs = {
-            ticks: el.defaultTicks
-        };
-        el.inherits.push(el.defaultTicks);
-    } else {
+    } catch (err) {
         throw new Error(
             "JSXGraph: Can't create axis with parent types '" +
-                typeof parents[0] +
-                "' and '" +
-                typeof parents[1] +
-                "'." +
-                "\nPossible parent types: [point,point], [[x1,y1],[x2,y2]]"
+            typeof parents[0] +
+            "' and '" +
+            typeof parents[1] +
+            "'." +
+            "\nPossible parent types: [point,point], [[x1,y1],[x2,y2]]"
         );
     }
+
+    el.type = Const.OBJECT_TYPE_AXIS;
+    el.isDraggable = false;
+    el.point1.isDraggable = false;
+    el.point2.isDraggable = false;
+
+    for (els in el.ancestors) {
+        if (el.ancestors.hasOwnProperty(els)) {
+            el.ancestors[els].type = Const.OBJECT_TYPE_AXISPOINT;
+        }
+    }
+
+    // Create ticks
+    attr_ticks = Type.copyAttributes(attributes, board.options, "axis", "ticks");
+    if (Type.exists(attr_ticks.ticksdistance)) {
+        dist = attr_ticks.ticksdistance;
+    } else if (Type.isArray(attr_ticks.ticks)) {
+        dist = attr_ticks.ticks;
+    } else {
+        dist = 1.0;
+    }
+
+    /**
+     * The ticks attached to the axis.
+     * @memberOf Axis.prototype
+     * @name defaultTicks
+     * @type JXG.Ticks
+     */
+    el.defaultTicks = board.create("ticks", [el, dist], attr_ticks);
+    el.defaultTicks.dump = false;
+    el.elType = "axis";
+    el.subs = {
+        ticks: el.defaultTicks
+    };
+    el.inherits.push(el.defaultTicks);
+    // } else {
+    //     throw new Error(
+    //         "JSXGraph: Can't create axis with parent types '" +
+    //             typeof parents[0] +
+    //             "' and '" +
+    //             typeof parents[1] +
+    //             "'." +
+    //             "\nPossible parent types: [point,point], [[x1,y1],[x2,y2]]"
+    //     );
+    // }
 
     return el;
 };
