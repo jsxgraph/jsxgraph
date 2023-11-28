@@ -432,7 +432,7 @@ JXG.createMeasurement = function (board, parents, attributes) {
     var el, attr,
         x, y, term,
         value, i,
-        dim,
+        dim;
 
     attr = Type.copyAttributes(attributes, board.options, "measurement");
 

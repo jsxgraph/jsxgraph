@@ -1486,6 +1486,39 @@ JXG.createPolygonalChain = function (board, parents, attributes) {
  * @param {JXG.Point,Array_JXG.Point,Array_JXG.Point,Array} p1,p2,p3 The parallelogram is a polygon through
  * the points [p1, p2, pp, p3], where pp is a parallelpoint, available as sub-object parallelogram.parallelPoint.
  *
+ * @example
+ * var p1 = board.create('point', [-3, -4]);
+ * var p2 = board.create('point', [3, -1]);
+ * var p3 = board.create('point', [-2, 0]);
+ * var par = board.create('parallelogram', [p1, p2, p3], {
+ *     hasInnerPoints: true,
+ *     parallelpoint: {
+ *         size: 6,
+ *         face: '<<>>'
+ *     }
+ * });
+ *
+ * </pre><div id="JXG05ff162f-7cee-4fd2-bd90-3d9ee5b489cc" class="jxgbox" style="width: 300px; height: 300px;"></div>
+ * <script type="text/javascript">
+ *     (function() {
+ *         var board = JXG.JSXGraph.initBoard('JXG05ff162f-7cee-4fd2-bd90-3d9ee5b489cc',
+ *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
+ *     var p1 = board.create('point', [-3, -4]);
+ *     var p2 = board.create('point', [3, -1]);
+ *     var p3 = board.create('point', [-2, 0]);
+ *     var par = board.create('parallelogram', [p1, p2, p3], {
+ *         hasInnerPoints: true,
+ *         parallelpoint: {
+ *             size: 6,
+ *             face: '<<>>'
+ *         }
+ *     });
+ *
+ *     })();
+ *
+ * </script><pre>
+ *
+ *
  */
 JXG.createParallelogram = function (board, parents, attributes) {
     var el, pp,
