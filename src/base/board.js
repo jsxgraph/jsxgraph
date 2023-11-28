@@ -1989,6 +1989,7 @@ JXG.extend(
                 zx = this.attr.zoom.factorx,
                 zy = this.attr.zoom.factory,
                 factor, dist, theta, bound,
+                doZoom = false,
                 dx, dy, cx, cy;
 
             if (this.mode !== this.BOARD_MODE_ZOOM) {
@@ -2059,6 +2060,7 @@ JXG.extend(
                 this.moveOrigin(c.scrCoords[1], c.scrCoords[2], true);
 
             } else if (this.attr.zoom.enabled && Math.abs(factor - 1.0) < 0.5) {
+                doZoom = false;
                 // Pinch detected
                 if (this.attr.zoom.pinchhorizontal || this.attr.zoom.pinchvertical) {
                     dx = Math.abs(evt.touches[0].clientX - evt.touches[1].clientX);
@@ -2072,26 +2074,30 @@ JXG.extend(
                     this.attr.zoom.factory = 1.0;
                     cx = 0;
                     cy = 0;
+                    doZoom = true;
                 } else if (
-                    this.attr.zoom.pinchvertical &&
-                    Math.abs(theta - Math.PI * 0.5) < bound
+                    this.attr.zoom.pinchvertical && Math.abs(theta - Math.PI * 0.5) < bound
                 ) {
                     this.attr.zoom.factorx = 1.0;
                     this.attr.zoom.factory = factor;
                     cx = 0;
                     cy = 0;
-                } else {
+                    doZoom = true;
+                } else if (this.attr.zoom.pinch) {
                     this.attr.zoom.factorx = factor;
                     this.attr.zoom.factory = factor;
                     cx = c.usrCoords[1];
                     cy = c.usrCoords[2];
+                    doZoom = true;
                 }
 
-                this.zoomIn(cx, cy);
+                if (doZoom) {
+                    this.zoomIn(cx, cy);
 
-                // Restore zoomFactors
-                this.attr.zoom.factorx = zx;
-                this.attr.zoom.factory = zy;
+                    // Restore zoomFactors
+                    this.attr.zoom.factorx = zx;
+                    this.attr.zoom.factory = zy;
+                }
             }
 
             return false;
@@ -3456,7 +3462,10 @@ JXG.extend(
          * @returns {Boolean}
          */
         mouseWheelListener: function (evt) {
-            if (!this.attr.zoom.wheel || !this._isRequiredKeyPressed(evt, 'zoom')) {
+            if (!this.attr.zoom.enabled ||
+                !this.attr.zoom.wheel ||
+                !this._isRequiredKeyPressed(evt, 'zoom')) {
+
                 return true;
             }
 

@@ -1208,25 +1208,31 @@ JXG.Options = {
          * Possible sub-attributes with default values are:
          * <pre>
          * zoom: {
+         *   enabled: true,  // turns off zooming completely, if set to false.
          *   factorX: 1.25,  // horizontal zoom factor (multiplied to {@link JXG.Board#zoomX})
          *   factorY: 1.25,  // vertical zoom factor (multiplied to {@link JXG.Board#zoomY})
-         *   wheel: true,     // allow zooming by mouse wheel or
-         *   				   // by pinch-to-toom gesture on touch devices
-         *   needShift: true,   // mouse wheel zooming needs pressing of the shift key
-         *   min: 0.001,        // minimal values of {@link JXG.Board#zoomX} and {@link JXG.Board#zoomY}, limits zoomOut
-         *   max: 1000.0,       // maximal values of {@link JXG.Board#zoomX} and {@link JXG.Board#zoomY}, limits zoomIn
-         *
+         *   wheel: true,    // allow zooming by mouse wheel
+         *   needShift: true,  // mouse wheel zooming needs pressing of the shift key
+         *   min: 0.001,       // minimal values of {@link JXG.Board#zoomX} and {@link JXG.Board#zoomY}, limits zoomOut
+         *   max: 1000.0,      // maximal values of {@link JXG.Board#zoomX} and {@link JXG.Board#zoomY}, limits zoomIn
+         *   
+         *   pinch: true,      // by pinch-to-zoom gesture on touch devices
          *   pinchHorizontal: true, // Allow pinch-to-zoom to zoom only horizontal axis
          *   pinchVertical: true,   // Allow pinch-to-zoom to zoom only vertical axis
          *   pinchSensitivity: 7    // Sensitivity (in degrees) for recognizing horizontal or vertical pinch-to-zoom gestures.
          * }
          * </pre>
+         * 
+         * If the zoom buttons are visible, zooming is still possible, regardless of zoom.enabled:true/false.
+         * If this should be prevented, set showZoom:false.
          *
          * Deprecated: zoom.eps which is superseded by zoom.min
          *
          * @name JXG.Board#zoom
          * @type Object
-         * @default
+         * @default See above
+         * @see JXG.Board#showZoom
+         *
          */
         zoom: {
             enabled: true,
