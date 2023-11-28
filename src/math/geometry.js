@@ -2618,13 +2618,8 @@ JXG.extend(
                 blue = tmp;
             }
 
-            // lenBlue = blue.numberPoints - blue.bezierDegree;
-            // lenRed = red.numberPoints - red.bezierDegree;
-
-            lenBlue = blue.numberPoints;
-            lenRed = red.numberPoints;
-            lenBlue -= blue.bezierDegree;
-            lenRed -= red.bezierDegree;
+            lenBlue = blue.numberPoints - blue.bezierDegree;
+            lenRed = red.numberPoints - red.bezierDegree;
 
             // For sectors, we ignore the "legs"
             if (red.type === Const.OBJECT_TYPE_SECTOR) {
