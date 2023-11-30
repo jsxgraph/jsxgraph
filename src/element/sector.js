@@ -379,7 +379,7 @@ JXG.createSector = function (board, parents, attributes) {
         // el.updateDataArray();
         // el.arc = board.create("arc", [
         //     function() {
-        //         return el.point1.coords.ursCoords;
+        //         return el.point1.coords.usrCoords;
         //     }, // Center
         //     function() {
         //         var d = el.point2.coords.distance(Const.COORDS_BY_USER, el.point1.coords);
@@ -531,12 +531,38 @@ JXG.createSector = function (board, parents, attributes) {
         el.Radius = function () {
             return this.point2.Dist(this.point1);
         };
+    } // end '3points'
 
-        attr = Type.copyAttributes(attributes, board.options, "arc");
-        attr = Type.copyAttributes(attr, board.options, "sector", "arc");
-        attr.withLabel = false;
-        attr.name += "_arc";
-        // el.arc = board.create("arc", [el.point1, el.point2, el.point3], attr);
+    el.center = el.point1;
+    el.radiuspoint = el.point2;
+    el.anglepoint = el.point3;
+
+    attr = Type.copyAttributes(attributes, board.options, "arc");
+    attr = Type.copyAttributes(attr, board.options, "sector", "arc");
+    attr.withLabel = false;
+    attr.name += "_arc";
+
+    if (type === "2lines") {
+        el.updateDataArray();
+        el.arc = board.create("arc", [
+            function() {
+                return el.point1.coords.usrCoords;
+            }, // Center
+            function() {
+                var d = el.point2.coords.distance(Const.COORDS_BY_USER, el.point1.coords);
+                if (d === 0) {
+                    return [el.point1.coords.usrCoords[1], el.point1.coords.usrCoords[2]];
+                }
+                return [
+                    el.point1.coords.usrCoords[1] + el.Radius() * (el.point2.coords.usrCoords[1] - el.point1.coords.usrCoords[1]) / d,
+                    el.point1.coords.usrCoords[2] + el.Radius() * (el.point2.coords.usrCoords[2] - el.point1.coords.usrCoords[2]) / d
+                ];
+            },
+            function() {
+                return el.point3.coords.usrCoords;
+            }, // Center
+        ], attr);
+    } else {
         // The arc's radius is always the radius of sector.
         // This is important for angles.
         el.arc = board.create("arc", [
@@ -553,12 +579,8 @@ JXG.createSector = function (board, parents, attributes) {
             },
             el.point3
         ], attr);
-        el.addChild(el.arc);
-    } // end '3points'
-
-    el.center = el.point1;
-    el.radiuspoint = el.point2;
-    el.anglepoint = el.point3;
+    }
+    el.addChild(el.arc);
 
     // Default hasPoint method. Documented in geometry element
     el.hasPointCurve = function (x, y) {
@@ -771,7 +793,7 @@ JXG.createSector = function (board, parents, attributes) {
         };
     }
 
-    el.prepareUpdate().update();
+    // el.prepareUpdate().update();
 
     return el;
 };
