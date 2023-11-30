@@ -6125,7 +6125,6 @@ JXG.Options = {
          */
         arc: {
             visible: false,
-            radiusPoint: {visible: false},
             fillColor: 'none',
             withLabel: false,
             name: '',
