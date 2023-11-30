@@ -1229,14 +1229,14 @@ JXG.Options = {
          *   needShift: true,  // mouse wheel zooming needs pressing of the shift key
          *   min: 0.001,       // minimal values of {@link JXG.Board#zoomX} and {@link JXG.Board#zoomY}, limits zoomOut
          *   max: 1000.0,      // maximal values of {@link JXG.Board#zoomX} and {@link JXG.Board#zoomY}, limits zoomIn
-         *   
+         *
          *   pinch: true,      // by pinch-to-zoom gesture on touch devices
          *   pinchHorizontal: true, // Allow pinch-to-zoom to zoom only horizontal axis
          *   pinchVertical: true,   // Allow pinch-to-zoom to zoom only vertical axis
          *   pinchSensitivity: 7    // Sensitivity (in degrees) for recognizing horizontal or vertical pinch-to-zoom gestures.
          * }
          * </pre>
-         * 
+         *
          * If the zoom buttons are visible, zooming is still possible, regardless of zoom.enabled:true/false.
          * If this should be prevented, set showZoom:false.
          *
@@ -6113,7 +6113,27 @@ JXG.Options = {
         arc: {
             visible: false,
             radiusPoint: {visible: false},
-            fillColor: 'none'
+            fillColor: 'none',
+            withLabel: false,
+            name: '',
+
+            center: {
+                visible: false,
+                withLabel: false,
+                name: ''
+            },
+
+            radiusPoint: {
+                visible: false,
+                withLabel: false,
+                name: ''
+            },
+
+            anglePoint: {
+                visible: false,
+                withLabel: false,
+                name: ''
+            }
         },
 
         /**
