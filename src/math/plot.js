@@ -597,12 +597,18 @@ Mat.Plot = {
         isSmooth = depth < this.smoothLevel && ds[3] < delta;
 
         isJump =
-            depth < this.jumpLevel &&
-            (ds[2] > jump_threshold * ds[0] ||
-                ds[1] > jump_threshold * ds[0] ||
-                ds[0] === Infinity ||
-                ds[1] === Infinity ||
-                ds[2] === Infinity);
+            (
+                depth <= this.jumpLevel && (isNaN(ds[0]) || isNaN(ds[1]) || isNaN(ds[2]))
+            ) || (
+                depth < this.jumpLevel &&
+                (
+                    ds[2] > jump_threshold * ds[0] ||
+                    ds[1] > jump_threshold * ds[0] ||
+                    ds[0] === Infinity ||
+                    ds[1] === Infinity ||
+                    ds[2] === Infinity
+                )
+            );
 
         isCusp = depth < this.smoothLevel + 2 && ds[0] < cusp_threshold * (ds[1] + ds[2]);
 
