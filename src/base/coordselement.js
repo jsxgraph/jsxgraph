@@ -158,7 +158,9 @@ JXG.CoordsElement = function (coordinates, isLabel) {
         setGliderPosition: "setGliderPosition",
         addConstraint: "addConstraint",
         dist: "Dist",
-        onPolygon: "onPolygon"
+        onPolygon: "onPolygon",
+        startAnimation: "startAnimation",
+        stopAnimation: "stopAnimation",
     });
 
     /*
