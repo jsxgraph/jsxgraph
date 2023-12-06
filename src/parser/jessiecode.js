@@ -1016,14 +1016,19 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
         }
 
         if (node.children) {
-            if (this.forceValueCall &&
+            // Replace slider reference by call of slider.Value()
+            if (this.forceValueCall &&              // It must be enforced, see snippet.
                 (
+                    // 1. case: sin(a), max(a, 0), ...
                     (node.value === "op_execfun" &&
+                        // Not in cases V(a), $(a)
                         node.children[0].value !== 'V' && node.children[0].value !== '$' &&
+                        // Function must be a math function. This ensures that a number is required as input.
                         (Type.exists(Math[node.children[0].value]) || Type.exists(Mat[node.children[0].value])) &&
-                        node.children[1].length === 1 &&
+                        // node.children[1].length === 1 &&
                         node.children[1][0].type === 'node_var'
                     ) ||
+                    // 2. case: slider is the whole expression: 'a'
                     (node.value === "op_return" &&
                         node.children.length === 1 &&
                         node.children[0].type === 'node_var'
@@ -1037,7 +1042,6 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
             for (i = node.children.length; i > 0; i--) {
                 if (Type.exists(node.children[i - 1])) {
                     node.children[i - 1] = this.replaceNames(node.children[i - 1], callValue);
-                    callValue = false;
                 }
             }
         }
