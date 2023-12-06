@@ -589,7 +589,7 @@ JXG.extend(
                 m2 = this.getDistanceFromZero(coordsZero, point2);
                 Geometry.calcStraight(this.line, point1, point2, Type.evaluate(this.line.visProp.margin));
                 m1 = this.getDistanceFromZero(coordsZero, point1) - m1;
-                m2 = this.getDistanceFromZero(coordsZero, point2) . m2;
+                m2 = this.getDistanceFromZero(coordsZero, point2).m2;
             } else {
                 // This function projects the corners of the board to the line.
                 // This is important for diagonal lines with infinite tick lines.
