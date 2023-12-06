@@ -215,11 +215,8 @@ JXG.extend(
          * @returns {Boolean} True if (x,y) is near the line, False otherwise.
          */
         hasPoint: function (x, y) {
-            var i,
-                t,
-                len = (this.ticks && this.ticks.length) || 0,
-                r,
-                type;
+            var i, t, r, type,
+                len = (this.ticks && this.ticks.length) || 0;
 
             if (Type.isObject(Type.evaluate(this.visProp.precision))) {
                 type = this.board._inputDevice;
@@ -233,6 +230,7 @@ JXG.extend(
                 !Type.evaluate(this.line.visProp.scalable) ||
                 this.line.elementClass === Const.OBJECT_CLASS_CURVE
             ) {
+                console.log('Skip hasPoint');
                 return false;
             }
 
@@ -269,17 +267,15 @@ JXG.extend(
                             if (this.line.stdform[1] === 0) {
                                 // Allow dragging near axes only.
                                 if (
-                                    Math.abs(y - (t[1][0] + t[1][1]) * 0.5) < 2 * r &&
-                                    t[0][0] - r < x &&
-                                    x < t[0][1] + r
+                                    Math.abs(y - this.line.point1.coords.scrCoords[2]) < 2 * r &&
+                                    t[0][0] - r < x && x < t[0][1] + r
                                 ) {
                                     return true;
                                 }
                             } else if (this.line.stdform[2] === 0) {
                                 if (
-                                    Math.abs(x - (t[0][0] + t[0][1]) * 0.5) < 2 * r &&
-                                    t[1][0] - r < y &&
-                                    y < t[1][1] + r
+                                    Math.abs(x - this.line.point1.coords.scrCoords[1]) < 2 * r &&
+                                    t[1][0] - r < y && y < t[1][1] + r
                                 ) {
                                     return true;
                                 }
@@ -300,8 +296,7 @@ JXG.extend(
          * @returns {JXG.Ticks} this element
          */
         setPositionDirectly: function (method, coords, oldcoords) {
-            var dx,
-                dy,
+            var dx, dy,
                 c = new Coords(method, coords, this.board),
                 oldc = new Coords(method, oldcoords, this.board),
                 bb = this.board.getBoundingBox();
