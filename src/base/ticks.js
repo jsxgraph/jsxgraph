@@ -230,7 +230,7 @@ JXG.extend(
                 !Type.evaluate(this.line.visProp.scalable) ||
                 this.line.elementClass === Const.OBJECT_CLASS_CURVE
             ) {
-                console.log('Skip hasPoint');
+                // Skip hasPoint
                 return false;
             }
 
