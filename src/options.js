@@ -4069,7 +4069,7 @@ JXG.Options = {
         strokeWidth: 1,
         strokeColor: '#0000ff',
         fillColor: 'none'
-},
+    },
 
     /* special conic options */
     conic: {
@@ -4135,24 +4135,14 @@ JXG.Options = {
 
     /* special curve options */
     curve: {
-        strokeWidth: 1,
-        strokeColor: Color.palette.blue,
-        fillColor: 'none',
-        fixed: true,
-
-        useQDT: false,
-
         /**#@+
          * @visprop
          */
 
-        /**
-         * The data points of the curve are not connected with straight lines but with bezier curves.
-         * @name Curve#handDrawing
-         * @type Boolean
-         * @default false
-         */
-        handDrawing: false,
+        strokeWidth: 1,
+        strokeColor: Color.palette.blue,
+        fillColor: 'none',
+        fixed: true,
 
         /**
          * The curveType is set in {@link JXG.Curve#generateTerm} and used in {@link JXG.Curve#updateCurve}.
@@ -4171,13 +4161,81 @@ JXG.Options = {
         curveType: null,
 
         /**
-         * Apply Ramer-Douglas-Peuker smoothing.
+         * If true use a recursive bisection algorithm.
+         * It is slower, but usually the result is better. It tries to detect jumps
+         * and singularities.
          *
+         * @name Curve#doAdvancedPlot
          * @type Boolean
-         * @name Curve#RDPsmoothing
+         * @default true
+         */
+        doAdvancedPlot: true,
+
+        /**
+         * If true use the algorithm by Gillam and Hohenwarter, which was default until version 0.98.
+         *
+         * @name Curve#doAdvancedPlotOld
+         * @see Curve#doAdvancedPlot
+         * @type Boolean
+         * @default false
+         * @deprecated
+         */
+        doAdvancedPlotOld: false,   // v1
+
+        /**
+         * Configure arrow head at the start position for curve.
+         * Recommended arrow head type is 7.
+         *
+         * @name Curve#firstArrow
+         * @type Boolean / Object
+         * @default false
+         * @see Line#firstArrow for options
+         */
+        firstArrow: false,
+
+        /**
+         * The data points of the curve are not connected with straight lines but with bezier curves.
+         * @name Curve#handDrawing
+         * @type Boolean
          * @default false
          */
-        RDPsmoothing: false,     // Apply the Ramer-Douglas-Peuker algorithm
+        handDrawing: false,
+
+        /**
+         * Attributes for circle label.
+         *
+         * @type Label
+         * @name Circle#label
+         */
+        label: {
+            position: 'lft'
+        },
+
+        /**
+         * Configure arrow head at the end position for curve.
+         * Recommended arrow head type is 7.
+         *
+         * @name Curve#lastArrow
+         * @see Line#lastArrow for options
+         * @type Boolean / Object
+         * @default false
+         */
+        lastArrow: false,
+
+        /**
+         * Line endings (linecap) of a curve stroke.
+         * Possible values are:
+         * <ul>
+         * <li> 'butt',
+         * <li> 'round',
+         * <li> 'square'.
+         * </ul>
+         *
+         * @name JXG.Curve#lineCap
+         * @type String
+         * @default 'round'
+         */
+        lineCap: 'round',
 
         /**
          * Number of points used for plotting triggered by up events
@@ -4204,15 +4262,32 @@ JXG.Options = {
         numberPointsLow: 400,    // Number of points on curves after mousemove
 
         /**
-         * If true use a recursive bisection algorithm.
-         * It is slower, but usually the result is better. It tries to detect jumps
-         * and singularities.
+         * Select the version of the plot algorithm.
+         * <ul>
+         * <li> Version 1 is very outdated
+         * <li> Version 2 is the default version in JSXGraph v0.99.*, v1.0, and v1.1, v1.2.0
+         * <li> Version 3 is an internal version that was never published in  a stable version.
+         * <li> Version 4 is available since JSXGraph v1.2.0
+         * </ul>
+         * Version 4 plots correctly logarithms if the function term is supplied as string (i.e. as JessieCode)
          *
-         * @name Curve#doAdvancedPlot
-         * @type Boolean
-         * @default true
+         * @example
+         *   var c = board.create('functiongraph', ["log(x)"]);
+         *
+         * @name Curve#plotVersion
+         * @type Number
+         * @default 2
          */
-        doAdvancedPlot: true,
+        plotVersion: 2,
+
+        /**
+         * Apply Ramer-Douglas-Peuker smoothing.
+         *
+         * @type Boolean
+         * @name Curve#RDPsmoothing
+         * @default false
+         */
+        RDPsmoothing: false,     // Apply the Ramer-Douglas-Peuker algorithm
 
         /**
          *
@@ -4239,67 +4314,7 @@ JXG.Options = {
          */
         recursionDepthLow: 15,
 
-        /**
-         * If true use the algorithm by Gillam and Hohenwarter, which was default until version 0.98.
-         *
-         * @name Curve#doAdvancedPlotOld
-         * @see Curve#doAdvancedPlot
-         * @type Boolean
-         * @default false
-         * @deprecated
-         */
-        doAdvancedPlotOld: false,   // v1
-
-        /**
-         * Select the version of the plot algorithm.
-         * <ul>
-         * <li> Version 1 is very outdated
-         * <li> Version 2 is the default version in JSXGraph v0.99.*, v1.0, and v1.1, v1.2.0
-         * <li> Version 3 is an internal version that was never published in  a stable version.
-         * <li> Version 4 is available since JSXGraph v1.2.0
-         * </ul>
-         * Version 4 plots correctly logarithms if the function term is supplied as string (i.e. as JessieCode)
-         *
-         * @example
-         *   var c = board.create('functiongraph', ["log(x)"]);
-         *
-         * @name Curve#plotVersion
-         * @type Number
-         * @default 2
-         */
-        plotVersion: 2,
-
-        /**
-         * Attributes for circle label.
-         *
-         * @type Label
-         * @name Circle#label
-         */
-        label: {
-            position: 'lft'
-        },
-
-        /**
-         * Configure arrow head at the start position for curve.
-         * Recommended arrow head type is 7.
-         *
-         * @name Curve#firstArrow
-         * @type Boolean / Object
-         * @default false
-         * @see Line#firstArrow for options
-         */
-        firstArrow: false,
-
-        /**
-         * Configure arrow head at the end position for curve.
-         * Recommended arrow head type is 7.
-         *
-         * @name Curve#lastArrow
-         * @see Line#lastArrow for options
-         * @type Boolean / Object
-         * @default false
-         */
-        lastArrow: false
+        useQDT: false
 
         /**#@-*/
     },
@@ -4324,6 +4339,16 @@ JXG.Options = {
          * @default empty
          */
         attractors: []
+
+        /**#@-*/
+    },
+
+    /* special functiongraph options */
+    functiongraph: {
+        /**#@+
+         * @visprop
+         */
+
 
         /**#@-*/
     },

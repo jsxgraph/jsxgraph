@@ -1637,7 +1637,8 @@ JXG.createFunctiongraph = function (board, parents, attributes) {
         par = ["x", "x"].concat(parents); // variable name and identity function for x-coordinate
         // par = ["x", function(x) { return x; }].concat(parents);
 
-    attr = Type.copyAttributes(attributes, board.options, "curve");
+    attr = Type.copyAttributes(attributes, board.options, "functiongraph");
+    attr = Type.copyAttributes(attr, board.options, "curve");
     attr.curvetype = "functiongraph";
     return new JXG.Curve(board, par, attr);
 };

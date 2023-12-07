@@ -1243,6 +1243,17 @@ JXG.Math.IntervalArithmetic = {
      * @param {JXG.Math.Interval} x
      * @returns JXG.Math.Interval
      */
+    acot: function (x) {
+        if (this.isEmpty(x)) {
+            return this.EMPTY.clone();
+        }
+        return new MatInterval(this.acotLo(x.lo), this.acotHi(x.hi));
+    },
+
+    /**
+     * @param {JXG.Math.Interval} x
+     * @returns JXG.Math.Interval
+     */
     atan: function (x) {
         if (this.isEmpty(x)) {
             return this.EMPTY.clone();
@@ -1511,6 +1522,12 @@ JXG.Math.IntervalArithmetic = {
     },
     acosHi: function (x) {
         return this.next(Math.acos(x));
+    },
+    acotLo: function (x) {
+        return this.prev(Mat.acot(x));
+    },
+    acotHi: function (x) {
+        return this.next(Mat.acot(x));
     },
     atanLo: function (x) {
         return this.prev(Math.atan(x));
