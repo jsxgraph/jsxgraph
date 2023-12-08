@@ -478,11 +478,16 @@ JXG.createSlider = function (board, parents, attributes) {
     };
 
     p1.dump = false;
+    p1.slider = p3;
     p2.dump = false;
+    p2.slider = p3;
     l1.dump = false;
+    l1.slider = p3;
     l2.dump = false;
+    l2.slider = p3;
     if (withText) {
         t.dump = false;
+        t.slider = p3;
     }
 
     p3.elType = "slider";
