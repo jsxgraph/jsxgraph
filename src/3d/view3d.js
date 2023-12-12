@@ -261,7 +261,7 @@ JXG.extend(
     },
 
     updatePerspectiveProjection: function() {
-        var foc = 1 / Math.tan(0.5 * Math.PI / 3),
+        var foc = 1 / Math.tan(0.5 * Math.PI / 2),
             zf = 100,
             zn = 2,
             r, e, a,
@@ -277,9 +277,9 @@ JXG.extend(
             ];
 
         a = this.az_slide.Value();
-        e = this.el_slide.Value();
+        e = this.el_slide.Value() + Math.PI/2;
         r = this.r;
-        r *= 10;
+        r *= 8;
         eye = [
             r * Math.cos(a) * Math.sin(e),
             r * Math.sin(a) * Math.sin(e),
@@ -295,7 +295,7 @@ JXG.extend(
 
         ax = Mat.crossProduct(v, az);
         ay = Mat.crossProduct(az, ax);
-        
+
         v = Mat.matVecMult([ax, ay, az], eye);
         Tcam1 = [
             [1, 0, 0, 0],
@@ -422,13 +422,15 @@ JXG.extend(
             }
         }
 
-        // var x = Mat.matVecMult(this.matrix3D, vec);
-        // x[1] /= x[0];
-        // x[2] /= x[0];
-        // x[3] /= x[0];
-        // x[0] /= x[0];
-        // console.log(x)
         return Mat.matVecMult(this.matrix3D, vec);
+
+        // var w = Mat.matVecMult(this.matrix3D, vec);
+        // w[1] /= w[0];
+        // w[2] /= w[0];
+        // w[3] /= w[0];
+        // w[0] /= w[0];
+
+        // return w.slice(0, 3);
     },
 
     /**
