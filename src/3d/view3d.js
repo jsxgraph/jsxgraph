@@ -262,8 +262,8 @@ JXG.extend(
 
     updatePerspectiveProjection: function() {
         var foc = 1 / Math.tan(0.5 * Math.PI / 2),
-            zf = 100,
-            zn = 2,
+            zf = 20,
+            zn = 8,
             r, e, a,
             eye = [0, 0, 0],
             up = [0, 0, 1],
@@ -348,9 +348,9 @@ JXG.extend(
         mat2D[2][0] = this.llftCorner[1] + mat2D[2][2] * 0.5 * (this.bbox3D[1][1] - this.bbox3D[1][0]); // llft_y
 
         // Combine the three projections
-        this.matrix3D = Mat.matMatMult(mat2D,
+        this.matrix3D = // Mat.matMatMult(mat2D,
             Mat.matMatMult(this.matrix3D, shift)
-        );
+        // );
 
         return this;
     },
@@ -429,7 +429,6 @@ JXG.extend(
         // w[2] /= w[0];
         // w[3] /= w[0];
         // w[0] /= w[0];
-
         // return w.slice(0, 3);
     },
 
