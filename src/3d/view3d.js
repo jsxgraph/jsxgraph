@@ -260,6 +260,54 @@ JXG.extend(
         return mat;
     },
 
+    updatePerspectiveProjection: function() {
+        var foc = 1 / Math.tan(0.5 * Math.PI / 3),
+            zf = 100,
+            zn = 2,
+            r, e, a,
+            eye = [0, 0, 0],
+            up = [0, 0, 1],
+            az, ax, ay, v, nrm,
+            Tcam1,
+            mat = [
+                [0, 0, 0, -1],
+                [0, foc, 0, 0],
+                [0, 0, foc, 0],
+                [2 * zf * zn / (zn - zf), 0, 0, (zf + zn) / (zn -zf)]
+            ];
+
+        a = this.az_slide.Value();
+        e = this.el_slide.Value();
+        r = this.r;
+        r *= 10;
+        eye = [
+            r * Math.cos(a) * Math.sin(e),
+            r * Math.sin(a) * Math.sin(e),
+            r * Math.cos(e)
+        ]
+
+        // d = eye - P_ref (=origin)
+        nrm = Mat.norm(eye, 3);
+        az = [eye[0] / nrm, eye[1] / nrm, eye[2] / nrm];
+
+        nrm = Mat.norm(up, 3);
+        v = [up[0] / nrm, up[1] / nrm, up[2] / nrm];
+
+        ax = Mat.crossProduct(v, az);
+        ay = Mat.crossProduct(az, ax);
+        
+        v = Mat.matVecMult([ax, ay, az], eye);
+        Tcam1 = [
+            [1, 0, 0, 0],
+            [-v[0], ax[0], ax[1], ax[2]],
+            [-v[1], ay[0], ay[1], ay[2]],
+            [-v[2], az[0], az[1], az[2]]
+        ]
+        mat = Mat.matMatMult(mat, Tcam1);
+
+        return mat;
+    },
+
     update: function () {
         // Update 3D-to-2D transformation matrix with the actual
         // elevation and azimuth angles.
@@ -289,20 +337,8 @@ JXG.extend(
             [-0.5 * (this.bbox3D[2][0] + this.bbox3D[2][1]), 0, 0, 1]
         ];
 
-        // matrix3D projects homogeneous 3D coords in the View3D
-        // to homogeneous 2D coordinates in the board
-        // this.matrix3D = [
-        //     [1, 0, 0, 0],
-        //     [0, 1, 0, 0],
-        //     [0, 0, 1, 0]
-        // ];
-        // this.matrix3D[1][1] = r * Math.cos(a);
-        // this.matrix3D[1][2] = -r * Math.sin(a);
-        // this.matrix3D[2][1] = f * Math.sin(a);
-        // this.matrix3D[2][2] = f * Math.cos(a);
-        // this.matrix3D[2][3] = Math.cos(e);
-
         this.matrix3D = this.updateParallelProjection();
+        // this.matrix3D = this.updatePerspectiveProjection();
 
         // Add a second transformation to scale and shift the projection
         // on the board
@@ -311,7 +347,7 @@ JXG.extend(
         mat2D[1][0] = this.llftCorner[0] + mat2D[1][1] * 0.5 * (this.bbox3D[0][1] - this.bbox3D[0][0]); // llft_x
         mat2D[2][0] = this.llftCorner[1] + mat2D[2][2] * 0.5 * (this.bbox3D[1][1] - this.bbox3D[1][0]); // llft_y
 
-        // Combine the two projections
+        // Combine the three projections
         this.matrix3D = Mat.matMatMult(mat2D,
             Mat.matMatMult(this.matrix3D, shift)
         );
@@ -385,6 +421,13 @@ JXG.extend(
                 vec = x;
             }
         }
+
+        // var x = Mat.matVecMult(this.matrix3D, vec);
+        // x[1] /= x[0];
+        // x[2] /= x[0];
+        // x[3] /= x[0];
+        // x[0] /= x[0];
+        // console.log(x)
         return Mat.matVecMult(this.matrix3D, vec);
     },
 
