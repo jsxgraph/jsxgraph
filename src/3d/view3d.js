@@ -236,11 +236,35 @@ JXG.extend(
         return s;
     },
 
+    updateParallelProjection: function() {
+        var r, a, e, f,
+            mat = [
+                [1, 0, 0, 0],
+                [0, 1, 0, 0],
+                [0, 0, 1, 0]
+            ];
+
+        // mat projects homogeneous 3D coords in View3D
+        // to homogeneous 2D coordinates in the board
+        e = this.el_slide.Value();
+        r = this.r;
+        a = this.az_slide.Value();
+        f = r * Math.sin(e);
+
+        mat[1][1] = r * Math.cos(a);
+        mat[1][2] = -r * Math.sin(a);
+        mat[2][1] = f * Math.sin(a);
+        mat[2][2] = f * Math.cos(a);
+        mat[2][3] = Math.cos(e);
+
+        return mat;
+    },
+
     update: function () {
         // Update 3D-to-2D transformation matrix with the actual
         // elevation and azimuth angles.
 
-        var e, r, a, f, mat2D, shift;
+        var mat2D, shift;
 
         if (
             !Type.exists(this.el_slide) ||
@@ -250,10 +274,6 @@ JXG.extend(
             return this;
         }
 
-        e = this.el_slide.Value();
-        r = this.r;
-        a = this.az_slide.Value();
-        f = r * Math.sin(e);
         mat2D = [
             [1, 0, 0],
             [0, 1, 0],
@@ -271,17 +291,18 @@ JXG.extend(
 
         // matrix3D projects homogeneous 3D coords in the View3D
         // to homogeneous 2D coordinates in the board
-        this.matrix3D = [
-            [1, 0, 0, 0],
-            [0, 1, 0, 0],
-            [0, 0, 1, 0]
-        ];
+        // this.matrix3D = [
+        //     [1, 0, 0, 0],
+        //     [0, 1, 0, 0],
+        //     [0, 0, 1, 0]
+        // ];
+        // this.matrix3D[1][1] = r * Math.cos(a);
+        // this.matrix3D[1][2] = -r * Math.sin(a);
+        // this.matrix3D[2][1] = f * Math.sin(a);
+        // this.matrix3D[2][2] = f * Math.cos(a);
+        // this.matrix3D[2][3] = Math.cos(e);
 
-        this.matrix3D[1][1] = r * Math.cos(a);
-        this.matrix3D[1][2] = -r * Math.sin(a);
-        this.matrix3D[2][1] = f * Math.sin(a);
-        this.matrix3D[2][2] = f * Math.cos(a);
-        this.matrix3D[2][3] = Math.cos(e);
+        this.matrix3D = this.updateParallelProjection();
 
         // Add a second transformation to scale and shift the projection
         // on the board
