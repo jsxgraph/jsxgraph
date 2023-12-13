@@ -1135,7 +1135,7 @@ JXG.extend(
         updateText: function (el) {
             var content = el.plaintext,
                 v, c,
-                parentNode,
+                parentNode, node,
                 scale, vshift,
                 id, wrap_id,
                 ax, ay, angle, co, si,
@@ -1252,6 +1252,7 @@ JXG.extend(
                                 if (MathJax.typeset) {
                                     // Version 3
                                     MathJax.typeset([el.rendNode]);
+                                    console.log(el.id, el.rendNode);
                                 } else {
                                     // Version 2
                                     MathJax.Hub.Queue(["Typeset", MathJax.Hub, el.rendNode]);
@@ -1277,12 +1278,30 @@ JXG.extend(
                             }
                         } else if (Type.evaluate(el.visProp.usekatex)) {
                             try {
-                                /* eslint-disable no-undef */
-                                katex.render(content, el.rendNode, {
-                                    macros: Type.evaluate(el.visProp.katexmacros),
-                                    throwOnError: false
-                                });
-                                /* eslint-enable no-undef */
+                                // Checkboxes et. al. do not possess rendNodeLabel during the first update.
+                                // In this case node will be undefined and not rendered by KaTeX.
+                                if (el.rendNode.innerHTML.indexOf('<span') === 0 &&
+                                    el.rendNode.innerHTML.indexOf('<label') > 0 &&
+                                    (
+                                        el.rendNode.innerHTML.indexOf('<checkbox') > 0 ||
+                                        el.rendNode.innerHTML.indexOf('<input') > 0
+                                    )
+                                 ) {
+                                    node = el.rendNodeLabel;
+                                } else if (el.rendNode.innerHTML.indexOf('<button') === 0) {
+                                    node = el.rendNodeButton;
+                                } else {
+                                    node = el.rendNode;
+                                }
+
+                                if (node) {
+                                    /* eslint-disable no-undef */
+                                    katex.render(content, node, {
+                                        macros: Type.evaluate(el.visProp.katexmacros),
+                                        throwOnError: false
+                                    });
+                                    /* eslint-enable no-undef */
+                                }
                             } catch (e) {
                                 JXG.debug("KaTeX not loaded (yet)");
                             }
@@ -1581,9 +1600,9 @@ JXG.extend(
          * Applies transformations on images and text elements. This method has to implemented in
          * all descendant classes where text and image transformations are to be supported.
          * <p>
-         * Only affine transformation are supported, no proper projective transformations. This means, the 
+         * Only affine transformation are supported, no proper projective transformations. This means, the
          * respective entries of the transformation matrix are simply ignored.
-         * 
+         *
          * @param {JXG.Image|JXG.Text} element A {@link JXG.Image} or {@link JXG.Text} object.
          * @param {Array} transformations An array of {@link JXG.Transformation} objects. This is usually the
          * transformations property of the given element <tt>el</tt>.
