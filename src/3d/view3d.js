@@ -262,16 +262,25 @@ JXG.extend(
         return mat;
     },
 
-    updatePerspectiveProjection: function() {
-        var foc = 1 / Math.tan(0.5 * Math.PI / 2),
+    updateCentralProjection: function() {
+        var r, e, a,
+            az, ax, ay, v, nrm,
+            // See https://www.mathematik.uni-marburg.de/~thormae/lectures/graphics1/graphics_6_1_eng_web.html
+            // bbox3D is always at the world origin, i.e. T_obj is the unit matrix.
+            // All vectors contain affine coordinates and have length 3
+            // The matrices are of size 4x4.
+            Tcam1, // The inverse camera transformation
+            eye, d,
+            foc = 1 / Math.tan(0.5 * Math.PI / 2),
             zf = 20,
             zn = 8,
-            r, e, a,
-            eye = [0, 0, 0],
+            Pref = [
+                0.5 * (this.bbox3D[0][0] + this.bbox3D[0][1]),
+                0.5 * (this.bbox3D[0][0] + this.bbox3D[0][1]),
+                0.5 * (this.bbox3D[0][0] + this.bbox3D[0][1])
+            ],
             up = [0, 0, 1],
-            az, ax, ay, v, nrm,
-            Tcam1,
-            mat = [
+            A = [
                 [0, 0, 0, -1],
                 [0, foc, 0, 0],
                 [0, 0, foc, 0],
@@ -279,7 +288,7 @@ JXG.extend(
             ];
 
         a = this.az_slide.Value();
-        e = this.el_slide.Value();
+        e = this.el_slide.Value() * 2;
         // r = this.r;
 
         // Sphere
@@ -293,16 +302,16 @@ JXG.extend(
 
         // Circle
         // r = 8;
+        // up = [0, Math.cos(e), Math.sin(e)];
         // eye = [
-        //     r * Math.cos(a),
-        //     r * Math.sin(a),
-        //     1.2 * r
+        //     -r * Math.cos(a),
+        //     -r * Math.sin(a),
+        //     1. * r
         // ];
 
-
-        // d = eye - P_ref (=origin)
-        nrm = Mat.norm(eye, 3);
-        az = [eye[0] / nrm, eye[1] / nrm, eye[2] / nrm];
+        d = [eye[0] - Pref[0], eye[1] - Pref[1], eye[2] - Pref[2]];
+        nrm = Mat.norm(d, 3);
+        az = [d[0] / nrm, d[1] / nrm, d[2] / nrm];
 
         nrm = Mat.norm(up, 3);
         v = [up[0] / nrm, up[1] / nrm, up[2] / nrm];
@@ -317,9 +326,9 @@ JXG.extend(
             [-v[1], ay[0], ay[1], ay[2]],
             [-v[2], az[0], az[1], az[2]]
         ]
-        mat = Mat.matMatMult(mat, Tcam1);
+        A = Mat.matMatMult(A, Tcam1);
 
-        return mat;
+        return A;
     },
 
     update: function () {
@@ -352,7 +361,7 @@ JXG.extend(
         ];
 
         // Add a second transformation to scale and shift the projection
-        // on the board
+        // on the board, usually called viewport.
         mat2D[1][1] = this.size[0] / (this.bbox3D[0][1] - this.bbox3D[0][0]); // w / d_x
         mat2D[2][2] = this.size[1] / (this.bbox3D[1][1] - this.bbox3D[1][0]); // h / d_y
         mat2D[1][0] = this.llftCorner[0] + mat2D[1][1] * 0.5 * (this.bbox3D[0][1] - this.bbox3D[0][0]); // llft_x
@@ -360,23 +369,22 @@ JXG.extend(
 
         this.projectionType = Type.evaluate(this.visProp.projection);
 
-        // Combine the projections
         if (this.projectionType === 'parallel') {
             this.matrix3D = this.updateParallelProjection();
-            this.matrix3D = Mat.matMatMult(mat2D,
-                Mat.matMatMult(this.matrix3D, shift)
-            );
+            // Combine the projections
+            this.matrix3D = Mat.matMatMult(mat2D, Mat.matMatMult(this.matrix3D, shift));
         } else {
-            this.matrix3D = this.updatePerspectiveProjection();
-
+            this.matrix3D = this.updateCentralProjection();
             // size = 1;
             size = 0.4;
+            // The transformation can not be combined yet, since 
+            // the projected vector has to be normalized in between in 
+            // project3DTo2D
             mat2D[1][1] = this.size[0] / (2 * size); // w / d_x
             mat2D[2][2] = this.size[1] / (2 * size); // h / d_y
             mat2D[1][0] = this.llftCorner[0] + mat2D[1][1] * 0.5 * (2 * size); // llft_x
             mat2D[2][0] = this.llftCorner[1] + mat2D[2][2] * 0.5 * (2 * size); // llft_y
             this.viewPortTransform = mat2D;
-            this.matrix3D = Mat.matMatMult(this.matrix3D, shift);
         }
 
         return this;
