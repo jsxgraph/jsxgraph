@@ -238,7 +238,7 @@ JXG.extend(
         return s;
     },
 
-    updateParallelProjection: function() {
+    updateParallelProjection: function () {
         var r, a, e, f,
             mat = [
                 [1, 0, 0, 0],
@@ -262,7 +262,7 @@ JXG.extend(
         return mat;
     },
 
-    updateCentralProjection: function() {
+    updateCentralProjection: function () {
         var r, e, a,
             az, ax, ay, v, nrm,
             // See https://www.mathematik.uni-marburg.de/~thormae/lectures/graphics1/graphics_6_1_eng_web.html
@@ -284,7 +284,7 @@ JXG.extend(
                 [0, 0, 0, -1],
                 [0, foc, 0, 0],
                 [0, 0, foc, 0],
-                [2 * zf * zn / (zn - zf), 0, 0, (zf + zn) / (zn -zf)]
+                [2 * zf * zn / (zn - zf), 0, 0, (zf + zn) / (zn - zf)]
             ];
 
         a = this.az_slide.Value();
@@ -351,39 +351,45 @@ JXG.extend(
             [0, 0, 1]
         ];
 
-        // Rotate the scenery around the center of the box,
-        // not around the origin
-        shift = [
-            [1, 0, 0, 0],
-            [-0.5 * (this.bbox3D[0][0] + this.bbox3D[0][1]), 1, 0, 0],
-            [-0.5 * (this.bbox3D[1][0] + this.bbox3D[1][1]), 0, 1, 0],
-            [-0.5 * (this.bbox3D[2][0] + this.bbox3D[2][1]), 0, 0, 1]
-        ];
-
-        // Add a second transformation to scale and shift the projection
-        // on the board, usually called viewport.
-        mat2D[1][1] = this.size[0] / (this.bbox3D[0][1] - this.bbox3D[0][0]); // w / d_x
-        mat2D[2][2] = this.size[1] / (this.bbox3D[1][1] - this.bbox3D[1][0]); // h / d_y
-        mat2D[1][0] = this.llftCorner[0] + mat2D[1][1] * 0.5 * (this.bbox3D[0][1] - this.bbox3D[0][0]); // llft_x
-        mat2D[2][0] = this.llftCorner[1] + mat2D[2][2] * 0.5 * (this.bbox3D[1][1] - this.bbox3D[1][0]); // llft_y
-
         this.projectionType = Type.evaluate(this.visProp.projection);
 
         if (this.projectionType === 'parallel') {
+            // Parallel projection
+            // Rotate the scenery around the center of the box,
+            // not around the origin
+            shift = [
+                [1, 0, 0, 0],
+                [-0.5 * (this.bbox3D[0][0] + this.bbox3D[0][1]), 1, 0, 0],
+                [-0.5 * (this.bbox3D[1][0] + this.bbox3D[1][1]), 0, 1, 0],
+                [-0.5 * (this.bbox3D[2][0] + this.bbox3D[2][1]), 0, 0, 1]
+            ];
+
+            // Add a second transformation to scale and shift the projection
+            // on the board, usually called viewport.
+            mat2D[1][1] = this.size[0] / (this.bbox3D[0][1] - this.bbox3D[0][0]); // w / d_x
+            mat2D[2][2] = this.size[1] / (this.bbox3D[1][1] - this.bbox3D[1][0]); // h / d_y
+            mat2D[1][0] = this.llftCorner[0] + mat2D[1][1] * 0.5 * (this.bbox3D[0][1] - this.bbox3D[0][0]); // llft_x
+            mat2D[2][0] = this.llftCorner[1] + mat2D[2][2] * 0.5 * (this.bbox3D[1][1] - this.bbox3D[1][0]); // llft_y
+
+            // this.matrix3D is a 3x4 matrix
             this.matrix3D = this.updateParallelProjection();
             // Combine the projections
             this.matrix3D = Mat.matMatMult(mat2D, Mat.matMatMult(this.matrix3D, shift));
+
         } else {
+            // Central projection
+            // this.matrix3D is a 4x4 matrix
             this.matrix3D = this.updateCentralProjection();
-            // size = 1;
+
             size = 0.4;
-            // The transformation can not be combined yet, since 
-            // the projected vector has to be normalized in between in 
-            // project3DTo2D
             mat2D[1][1] = this.size[0] / (2 * size); // w / d_x
             mat2D[2][2] = this.size[1] / (2 * size); // h / d_y
             mat2D[1][0] = this.llftCorner[0] + mat2D[1][1] * 0.5 * (2 * size); // llft_x
             mat2D[2][0] = this.llftCorner[1] + mat2D[2][2] * 0.5 * (2 * size); // llft_y
+
+            // The transformations this.matrix3D and mat2D can not be combined yet, since
+            // the projected vector has to be normalized in between in
+            // project3DTo2D
             this.viewPortTransform = mat2D;
         }
 
@@ -395,7 +401,7 @@ JXG.extend(
         return this;
     },
 
-    removeObject: function(object, saveMethod) {
+    removeObject: function (object, saveMethod) {
         var i;
 
         // this.board.removeObject(object, saveMethod);
@@ -415,12 +421,12 @@ JXG.extend(
         }
 
         try {
-        //     // remove all children.
-        //     for (el in object.childElements) {
-        //         if (object.childElements.hasOwnProperty(el)) {
-        //             object.childElements[el].board.removeObject(object.childElements[el]);
-        //         }
-        //     }
+            //     // remove all children.
+            //     for (el in object.childElements) {
+            //         if (object.childElements.hasOwnProperty(el)) {
+            //             object.childElements[el].board.removeObject(object.childElements[el]);
+            //         }
+            //     }
 
             delete this.objects[object.id];
         } catch (e) {
@@ -456,24 +462,24 @@ JXG.extend(
                 vec = x;
             }
         }
-        
+
         w = Mat.matVecMult(this.matrix3D, vec);
-        
+
         if (this.projectionType === 'parallel') {
             return w;
-        } 
+        }
 
+        // Central projection
         w[1] /= w[0];
         w[2] /= w[0];
         w[3] /= w[0];
         w[0] /= w[0];
 
         return Mat.matVecMult(this.viewPortTransform, w.slice(0, 3));
-        // return w.slice(0, 3);
     },
 
     /**
-     * Project a 2D coordinate to the plane defined by the point foot
+     * Project a 2D coordinate to the plane defined by point "foot"
      * and the normal vector `normal`.
      *
      * @param  {JXG.Point} point2d
@@ -483,10 +489,7 @@ JXG.extend(
      * point in homogeneous coordinates.
      */
     project2DTo3DPlane: function (point2d, normal, foot) {
-        var mat,
-            rhs,
-            d,
-            le,
+        var mat, rhs, d, le,
             n = normal.slice(1),
             sol = [1, 0, 0, 0];
 
