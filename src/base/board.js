@@ -3583,7 +3583,7 @@ JXG.extend(
                     done = false;
                 }
             } else {
-                // Adapt dx, dy to snapToGrid and attractToGrid
+                // Adapt dx, dy to snapToGrid and attractToGrid.
                 // snapToGrid has priority.
                 if (Type.exists(el.visProp)) {
                     if (
@@ -3596,8 +3596,10 @@ JXG.extend(
                         res = el.getSnapSizes();
                         sX = res[0];
                         sY = res[1];
-                        dx = Math.max(sX, dx);
-                        dy = Math.max(sY, dy);
+                        // If snaptogrid is true,
+                        // we can only jump from grid point to grid point.
+                        dx = sX;
+                        dy = sY;
                     } else if (
                         Type.exists(el.visProp.attracttogrid) &&
                         el.visProp.attracttogrid &&
