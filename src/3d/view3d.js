@@ -292,22 +292,23 @@ JXG.extend(
         // r = this.r;
 
         // Sphere
-        r = 12;
-        a += 3 * Math.PI * 0.5;
-        eye = [
-            r * Math.cos(a) * Math.cos(e),
-            -r * Math.sin(a) * Math.cos(e),
-            r * Math.sin(e)
-        ];
+        // r = 12;
+        // a += 3 * Math.PI * 0.5;
+        // eye = [
+        //     r * Math.cos(a) * Math.cos(e),
+        //     -r * Math.sin(a) * Math.cos(e),
+        //     r * Math.sin(e)
+        // ];
 
         // Circle
-        // r = 8;
+        r = 8;
         // up = [0, Math.cos(e), Math.sin(e)];
-        // eye = [
-        //     -r * Math.cos(a),
-        //     -r * Math.sin(a),
-        //     1. * r
-        // ];
+        up = [0, 0, 1];
+        eye = [
+            -r * Math.cos(a),
+            -r * Math.sin(a),
+            1. * r
+        ];
 
         d = [eye[0] - Pref[0], eye[1] - Pref[1], eye[2] - Pref[2]];
         nrm = Mat.norm(d, 3);
