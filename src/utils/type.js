@@ -357,7 +357,7 @@ JXG.extend(
 
                 //term = JXG.GeonextParser.replaceNameById(term, board);
                 //term = JXG.GeonextParser.geonext2JS(term, board);
-                f = board.jc.snippet(term, true, variableName, true);
+                f = board.jc.snippet(term, true, variableName, false);
             } else if (this.isFunction(term)) {
                 f = term;
                 f.deps = {};

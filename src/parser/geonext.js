@@ -452,7 +452,7 @@ JXG.GeonextParser = {
         term = term.replace(/&gt;/g, ">");
         term = term.replace(/&amp;/g, "&");
 
-        // Umwandeln der GEONExT-Syntax in JavaScript-Syntax
+        // Convert GEONExT syntax to JavaScript syntax
         newterm = term;
         newterm = this.replaceNameById(newterm, board);
         newterm = this.replaceIf(newterm);
