@@ -135,8 +135,8 @@ JXG.Circle = function (board, method, par1, par2, attributes) {
         this.radius = this.Radius();
     } else if (method === "pointRadius") {
         this.gxtterm = par2;
-        // Converts GEONExT syntax into JavaScript syntax and generally ensures that the radius is a function
-        this.updateRadius = Type.createFunction(par2, this.board, null, true);
+        // Converts JessieCode syntax into JavaScript syntax and generally ensures that the radius is a function
+        this.updateRadius = Type.createFunction(par2, this.board);
         // First evaluation of the radius function
         this.updateRadius();
         this.addParentsFromJCFunctions([this.updateRadius]);
@@ -513,7 +513,7 @@ JXG.extend(
          * @returns {JXG.Circle} Reference to this circle
          */
         setRadius: function (r) {
-            this.updateRadius = Type.createFunction(r, this.board, null, true);
+            this.updateRadius = Type.createFunction(r, this.board);
             this.addParentsFromJCFunctions([this.updateRadius]);
             this.board.update();
 

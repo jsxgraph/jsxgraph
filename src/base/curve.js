@@ -2338,7 +2338,7 @@ JXG.createRiemannsum = function (board, parents, attributes) {
         );
     }
 
-    type = Type.createFunction(parents[2], board, "", false);
+    type = Type.createFunction(parents[2], board, "");
     if (!Type.exists(type)) {
         throw new Error(
             "JSXGraph: JXG.createRiemannsum: argument 3 'type' has to be string or function." +
@@ -2969,10 +2969,10 @@ JXG.createBoxPlot = function (board, parents, attributes) {
     len = parents[0].length; // Quantiles
     box.Q = [];
     for (i = 0; i < len; i++) {
-        box.Q[i] = Type.createFunction(parents[0][i], board, null, true);
+        box.Q[i] = Type.createFunction(parents[0][i], board);
     }
-    box.x = Type.createFunction(parents[1], board, null, true);
-    box.w = Type.createFunction(parents[2], board, null, true);
+    box.x = Type.createFunction(parents[1], board);
+    box.w = Type.createFunction(parents[2], board);
 
     box.updateDataArray = function () {
         var v1, v2, l1, l2, r1, r2, w2, dir, x;

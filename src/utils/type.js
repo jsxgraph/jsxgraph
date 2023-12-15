@@ -309,7 +309,7 @@ JXG.extend(
         /**
          * Convert a String, a number or a function into a function. This method is used in Transformation.js
          * @param {JXG.Board} board Reference to a JSXGraph board. It is required to resolve dependencies given
-         * by a GEONE<sub>X</sub>T string, thus it must be a valid reference only in case one of the param
+         * by a JessieCode string, thus it must be a valid reference only in case one of the param
          * values is of type string.
          * @param {Array} param An array containing strings, numbers, or functions.
          * @param {Number} n Length of <tt>param</tt>.
@@ -321,7 +321,7 @@ JXG.extend(
                 deps = {};
 
             for (i = 0; i < n; i++) {
-                f[i] = JXG.createFunction(param[i], board, "", true);
+                f[i] = JXG.createFunction(param[i], board);
                 for (e in f[i].deps) {
                     deps[e] = f[i].deps;
                 }
@@ -339,10 +339,10 @@ JXG.extend(
          * Convert a String, number or function into a function.
          * @param {String|Number|Function} term A variable of type string, function or number.
          * @param {JXG.Board} board Reference to a JSXGraph board. It is required to resolve dependencies given
-         * by a GEONE<sub>X</sub>T string, thus it must be a valid reference only in case one of the param
+         * by a JessieCode/GEONE<sub>X</sub>T string, thus it must be a valid reference only in case one of the param
          * values is of type string.
          * @param {String} variableName Only required if function is supplied as JessieCode string or evalGeonext is set to true.
-         * Describes the variable name of the variable in a GEONE<sub>X</sub>T string given as term.
+         * Describes the variable name of the variable in a JessieCode/GEONE<sub>X</sub>T string given as term.
          * @param {Boolean} [evalGeonext=true] Set this true, if term should be treated as a GEONE<sub>X</sub>T string.
          * @returns {Function} A function evaluation the value given by term or null if term is not of type string,
          * function or number.
