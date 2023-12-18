@@ -4792,12 +4792,13 @@ JXG.extend(
         /**
          * Inner, recursive method of removeObject.
          *
-         * @param {JXG.GeometryElement|Array} object
-         * @param {Boolean} saveMethod If true, the algorithm runs through all elements
-         * and tests if the element to be deleted is a child element. If yes, it will be
-         * removed from the list of child elements. If false (default), the element
+         * @param {JXG.GeometryElement|Array} object The object to remove or array of objects to be removed.
+         * The element(s) is/are given by name, id or a reference.
+         * @param {Boolean} [saveMethod=false] If saveMethod=true, the algorithm runs through all elements
+         * and tests if the element to be deleted is a child element. If this is the case, it will be
+         * removed from the list of child elements. If saveMethod=false (default), the element
          * is removed from the lists of child elements of all its ancestors.
-         * This should be much faster.
+         * The latter should be much faster.
          * @returns {JXG.Board} Reference to the board
          * @private
          */
