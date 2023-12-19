@@ -181,7 +181,9 @@ JXG.extend(JXG.GeometryElement3D.prototype, {
         }
 
         return attr;
-    }
+    },
+
+    remove: function() {}
 
 });
 

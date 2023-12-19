@@ -4790,29 +4790,23 @@ JXG.extend(
         },
 
         /**
-         * Removes object from board and renderer.
-         * <p>
-         * <b>Performance hints:</b> It is recommended to use the object's id.
-         * If many elements are removed, it is best to call <tt>board.suspendUpdate()</tt>
-         * before looping through the elements to be removed and call
-         * <tt>board.unsuspendUpdate()</tt> after the loop. Further, it is advisable to loop
-         * in reverse order, i.e. remove the object in reverse order of their creation time.
+         * Inner, recursive method of removeObject.
          *
-         * @param {JXG.GeometryElement|Array} object The object to remove or array of objects to be removed.
-         * The element(s) is/are given by name, id or a reference.
+         * @param {JXG.GeometryElement|Array} object
          * @param {Boolean} saveMethod If true, the algorithm runs through all elements
          * and tests if the element to be deleted is a child element. If yes, it will be
          * removed from the list of child elements. If false (default), the element
          * is removed from the lists of child elements of all its ancestors.
          * This should be much faster.
          * @returns {JXG.Board} Reference to the board
+         * @private
          */
-        removeObject: function (object, saveMethod) {
+        _removeObj: function (object, saveMethod) {
             var el, i;
 
             if (Type.isArray(object)) {
                 for (i = 0; i < object.length; i++) {
-                    this.removeObject(object[i]);
+                    this._removeObj(object[i], saveMethod);
                 }
 
                 return this;
@@ -4830,14 +4824,14 @@ JXG.extend(
                 // remove all children.
                 for (el in object.childElements) {
                     if (object.childElements.hasOwnProperty(el)) {
-                        object.childElements[el].board.removeObject(object.childElements[el]);
+                        object.childElements[el].board._removeObj(object.childElements[el]);
                     }
                 }
 
                 // Remove all children in elements like turtle
                 for (el in object.objects) {
                     if (object.objects.hasOwnProperty(el)) {
-                        object.objects[el].board.removeObject(object.objects[el]);
+                        object.objects[el].board._removeObj(object.objects[el]);
                     }
                 }
 
@@ -4901,8 +4895,42 @@ JXG.extend(
                 JXG.debug(object.id + ': Could not be removed: ' + e);
             }
 
-            this.update();
+            return this;
+        },
 
+        /**
+         * Removes object from board and renderer.
+         * <p>
+         * <b>Performance hints:</b> It is recommended to use the object's id.
+         * If many elements are removed, it is best to call <tt>board.suspendUpdate()</tt>
+         * before looping through the elements to be removed and call
+         * <tt>board.unsuspendUpdate()</tt> after the loop. Further, it is advisable to loop
+         * in reverse order, i.e. remove the object in reverse order of their creation time.
+         * @param {JXG.GeometryElement|Array} object The object to remove or array of objects to be removed.
+         * The element(s) is/are given by name, id or a reference.
+         * @param {Boolean} saveMethod If true, the algorithm runs through all elements
+         * and tests if the element to be deleted is a child element. If yes, it will be
+         * removed from the list of child elements. If false (default), the element
+         * is removed from the lists of child elements of all its ancestors.
+         * This should be much faster.
+         * @returns {JXG.Board} Reference to the board
+         */
+        removeObject: function (object, saveMethod) {
+            var i;
+
+            this.renderer.suspendRedraw(this);
+
+            if (Type.isArray(object)) {
+                for (i = 0; i < object.length; i++) {
+                    this._removeObj(object[i], saveMethod);
+                }
+            } else {
+                this._removeObj(object[i], saveMethod);
+            }
+            // this.renderer.trashbin.innerHTML = ''; // Attempt to speed up mass removal
+            this.renderer.unsuspendRedraw();
+
+            this.update();
             return this;
         },
 
@@ -5365,7 +5393,7 @@ JXG.extend(
                 if (Type.exists(b) && b !== this) {
                     b.updateQuality = this.updateQuality;
                     b.prepareUpdate().updateElements().updateConditions();
-                    b.renderer.suspendRedraw();
+                    b.renderer.suspendRedraw(this);
                     b.updateRenderer();
                     b.renderer.unsuspendRedraw();
                     b.triggerEventHandlers(['update'], []);

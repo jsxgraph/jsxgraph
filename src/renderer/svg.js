@@ -257,6 +257,9 @@ JXG.SVGRenderer = function (container, dim) {
     } catch (e) {
         this.supportsForeignObject = false;
     }
+
+    // this.trashbin = this.container.ownerDocument.createElementNS(this.svgNamespace, 'g');
+    // this.svgRoot.appendChild(this.trashbin);
 };
 
 JXG.SVGRenderer.prototype = new AbstractRenderer();
@@ -828,6 +831,7 @@ JXG.extend(
         remove: function (shape) {
             if (Type.exists(shape) && Type.exists(shape.parentNode)) {
                 shape.parentNode.removeChild(shape);
+                // this.trashbin.appendChild(shape);
             }
         },
 
@@ -1881,13 +1885,13 @@ JXG.extend(
         // documented in JXG.AbstractRenderer
         suspendRedraw: function () {
             // It seems to be important for the Linux version of firefox
-            //this.suspendHandle = this.svgRoot.suspendRedraw(10000);
+            this.suspendHandle = this.svgRoot.suspendRedraw(10000);
         },
 
         // documented in JXG.AbstractRenderer
         unsuspendRedraw: function () {
-            //this.svgRoot.unsuspendRedraw(this.suspendHandle);
-            //this.svgRoot.unsuspendRedrawAll();
+            this.svgRoot.unsuspendRedraw(this.suspendHandle);
+            // this.svgRoot.unsuspendRedrawAll();
             //this.svgRoot.forceRedraw();
         },
 
