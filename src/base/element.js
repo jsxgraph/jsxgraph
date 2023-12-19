@@ -1542,7 +1542,8 @@ JXG.extend(
          * the renderer, to remove the element completely you should use {@link JXG.Board#removeObject}.
          */
         remove: function () {
-            this.board.renderer.remove(this.board.renderer.getElementById(this.id));
+            // this.board.renderer.remove(this.board.renderer.getElementById(this.id));
+            this.board.renderer.remove(this.rendNode);
 
             if (this.hasLabel) {
                 this.board.renderer.remove(this.board.renderer.getElementById(this.label.id));

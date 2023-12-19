@@ -257,9 +257,6 @@ JXG.SVGRenderer = function (container, dim) {
     } catch (e) {
         this.supportsForeignObject = false;
     }
-
-    // this.trashbin = this.container.ownerDocument.createElementNS(this.svgNamespace, 'g');
-    // this.svgRoot.appendChild(this.trashbin);
 };
 
 JXG.SVGRenderer.prototype = new AbstractRenderer();
@@ -831,7 +828,6 @@ JXG.extend(
         remove: function (shape) {
             if (Type.exists(shape) && Type.exists(shape.parentNode)) {
                 shape.parentNode.removeChild(shape);
-                // this.trashbin.appendChild(shape);
             }
         },
 

@@ -4919,7 +4919,6 @@ JXG.extend(
             var i;
 
             this.renderer.suspendRedraw(this);
-
             if (Type.isArray(object)) {
                 for (i = 0; i < object.length; i++) {
                     this._removeObj(object[i], saveMethod);
@@ -4927,7 +4926,6 @@ JXG.extend(
             } else {
                 this._removeObj(object[i], saveMethod);
             }
-            // this.renderer.trashbin.innerHTML = ''; // Attempt to speed up mass removal
             this.renderer.unsuspendRedraw();
 
             this.update();
