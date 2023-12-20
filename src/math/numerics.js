@@ -2522,7 +2522,7 @@ Mat.Numerics = {
      * @param {Array} dataY Array containing the y-coordinates of the data set,
      * @returns {function} A function of one parameter which returns the value of the regression polynomial of the given degree.
      * It possesses the method getTerm() which returns the string containing the function term of the polynomial.
-     * The function returned will throw an exception, if the data set is malformed. 
+     * The function returned will throw an exception, if the data set is malformed.
      * @memberof JXG.Math.Numerics
      */
     regressionPolynomial: function (degree, dataX, dataY) {
@@ -3201,26 +3201,17 @@ Mat.Numerics = {
         }
         s = butcher.s;
 
-        // don't change x0, so copy it
-        // for (e = 0; e < dim; e++) {
-        //     x[e] = x0[e];
-        // }
+        // Don't change x0, so copy it
         x = x0.slice();
 
         for (i = 0; i <= N; i++) {
-            // Optimization doesn't work for ODEs plotted using time
-            //        if((i % quotient == 0) || (i == N-1)) {
-            // result[r] = [];
-            // for (e = 0; e < dim; e++) {
-            //     result[r][e] = x[e];
-            // }
             result[r] = x.slice();
 
-            r += 1;
+            r++;
             k = [];
 
             for (j = 0; j < s; j++) {
-                // init y = 0
+                // Init y = 0
                 for (e = 0; e < dim; e++) {
                     y[e] = 0.0;
                 }
@@ -3232,16 +3223,16 @@ Mat.Numerics = {
                     }
                 }
 
-                // add x(t) to y
+                // Add x(t) to y
                 for (e = 0; e < dim; e++) {
                     y[e] += x[e];
                 }
 
-                // calculate new k and add it to the k matrix
+                // Calculate new k and add it to the k matrix
                 k.push(f(t + butcher.c[j] * h, y));
             }
 
-            // init y = 0
+            // Init y = 0
             for (e = 0; e < dim; e++) {
                 y[e] = 0.0;
             }
