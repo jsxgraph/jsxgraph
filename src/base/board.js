@@ -982,12 +982,19 @@ JXG.extend(
             // Position of cursor using clientX/Y
             absPos = Env.getPosition(e, i, this.document);
 
-            /**
-             * In case there has been no down event before.
-             */
-            if (!Type.exists(this.cssTransMat)) {
-                this.updateCSSTransforms();
-            }
+            // Old:
+            // This seems to be obsolete anyhow:
+            // "In case there has been no down event before."
+            // if (!Type.exists(this.cssTransMat)) {
+            // this.updateCSSTransforms();
+            // }
+            // New:
+            // We have to update the CSS transform matrix all the time,
+            // since libraries like ZIMJS do not notify JSXGraph about a change.
+            // In particular, sending a resize event event to JSXGraph
+            // would be necessary.
+            this.updateCSSTransforms();
+
             // Position relative to the top left corner
             v = [1, absPos[0] - cPos[0], absPos[1] - cPos[1]];
             v = Mat.matVecMult(this.cssTransMat, v);
