@@ -2376,7 +2376,7 @@ JXG.extend(
             //    b. if an object is found, check the number of pointers. If appropriate, add the pointer.
             pos = this.getMousePosition(evt);
 
-            // selection
+            // Handle selection rectangle
             this._testForSelection(evt);
             if (this.selectingMode) {
                 this._startSelecting(pos);
