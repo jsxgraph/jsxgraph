@@ -3354,7 +3354,7 @@ declare namespace JXG {
         point1?: PointAttributes;
         point2?: PointAttributes;
         digits?: number;
-        ticks?: TicksAttributes;
+        ticks?: TicksOptions;
         withLabel?: boolean;
         withTicks?: boolean;
     }
