@@ -188,9 +188,10 @@ JXG.createComb = function (board, parents, attributes) {
 
     attr = Type.copyAttributes(attributes, board.options, 'comb');
     // Type.merge(attr, Type.copyAttributes(attributes, board.options, 'comb', 'curve'));
-    c = board.create('curve', [[0], [0]], attr);
+     c = board.create('curve', [[0], [0]], attr);
 
     /**
+     * @class
      * @ignore
      */
     c.updateDataArray = function () {

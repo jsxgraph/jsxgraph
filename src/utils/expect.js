@@ -41,6 +41,9 @@ import Type from "./type";
 import Const from "../base/constants";
 import Coords from "../base/coords";
 
+/**
+ * @class
+ */
 var Expect = {
     /**
      * Apply an expect method on every element of an array.

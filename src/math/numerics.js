@@ -2522,7 +2522,7 @@ Mat.Numerics = {
      * @param {Array} dataY Array containing the y-coordinates of the data set,
      * @returns {function} A function of one parameter which returns the value of the regression polynomial of the given degree.
      * It possesses the method getTerm() which returns the string containing the function term of the polynomial.
-     * The function returned will throw an exception, if the data set is malformed. 
+     * The function returned will throw an exception, if the data set is malformed.
      * @memberof JXG.Math.Numerics
      */
     regressionPolynomial: function (degree, dataX, dataY) {
@@ -2654,6 +2654,7 @@ Mat.Numerics = {
             return s;
         };
 
+        /** @ignore */
         fct.getTerm = function () {
             return term;
         };

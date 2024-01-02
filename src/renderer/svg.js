@@ -2156,6 +2156,7 @@ JXG.extend(
             }
 
             // Display the SVG string as data-uri in an HTML img.
+            /** {ignore} */
             tmpImg = new Image();
             svg = this.dumpToDataURI(ignoreTexts);
             tmpImg.src = svg;

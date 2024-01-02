@@ -3322,7 +3322,6 @@ JXG.extend(
                 this.mode = this.BOARD_MODE_NONE;
                 result = true;
             } else {
-                /** @ignore */
                 this.mouse = {
                     obj: null,
                     targets: [
@@ -3459,7 +3458,6 @@ JXG.extend(
             }
 
             // release dragged mouse object
-            /** @ignore */
             this.mouse = null;
         },
 
