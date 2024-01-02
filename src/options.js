@@ -1215,14 +1215,14 @@ JXG.Options = {
          *   needShift: true,  // mouse wheel zooming needs pressing of the shift key
          *   min: 0.001,       // minimal values of {@link JXG.Board#zoomX} and {@link JXG.Board#zoomY}, limits zoomOut
          *   max: 1000.0,      // maximal values of {@link JXG.Board#zoomX} and {@link JXG.Board#zoomY}, limits zoomIn
-         *   
+         *
          *   pinch: true,      // by pinch-to-zoom gesture on touch devices
          *   pinchHorizontal: true, // Allow pinch-to-zoom to zoom only horizontal axis
          *   pinchVertical: true,   // Allow pinch-to-zoom to zoom only vertical axis
          *   pinchSensitivity: 7    // Sensitivity (in degrees) for recognizing horizontal or vertical pinch-to-zoom gestures.
          * }
          * </pre>
-         * 
+         *
          * If the zoom buttons are visible, zooming is still possible, regardless of zoom.enabled:true/false.
          * If this should be prevented, set showZoom:false.
          *
@@ -3851,7 +3851,7 @@ JXG.Options = {
          * Attributes for center point.
          *
          * @type Point
-         * @name Circle#center
+         * @name Circle#point2
          */
         point2: {
             fillColor: Color.palette.red,
@@ -4244,11 +4244,11 @@ JXG.Options = {
          */
         plotVersion: 2,
 
-        /**
-         * Attributes for circle label.
+/**
+         * Attributes for curve label.
          *
          * @type Label
-         * @name Circle#label
+         * @name Curve#label
          */
         label: {
             position: 'lft'
@@ -5884,6 +5884,7 @@ JXG.Options = {
 
     /* special prescribed angle options
     * Not yet implemented. But angle.setAngle(val) is implemented.
+
     */
     prescribedangle: {
         /**#@+
@@ -5894,7 +5895,8 @@ JXG.Options = {
          * Attributes for the helper point of the prescribed angle.
          *
          * @type Point
-         * @name PrescribedAngle#anglePoint
+         * @name Prescribedangle#anglePoint
+         * @ignore
          */
         anglePoint: {
             size: 2,
@@ -5917,8 +5919,8 @@ JXG.Options = {
          * Attributes of circle center, i.e. the center of the circle,
          * if a circle is the mirror element and the transformation type is 'Euclidean'
          *
-         * @type Point
-         * @name Mirrorelement#center
+         * @type center
+         * @name Prescribedangle#center
          */
         center: {},
 
@@ -6010,7 +6012,7 @@ JXG.Options = {
          * Attributes for the polygon label.
          *
          * @type Label
-         * @name Polygon#label
+         * @name regularPolygon#label
          */
         label: {
             offset: [0, 0]
@@ -6875,7 +6877,7 @@ JXG.Options = {
         /**
          * The precision of the tape measure value displayed in the optional text.
          * @memberOf Tapemeasure.prototype
-         * @name precision
+         * @name digits
          * @type Number
          * @default 2
          */
@@ -7719,6 +7721,10 @@ JXG.Options = {
          */
         rotate: 0,
 
+        /**
+         * @name visible
+         * @default true
+         */
         visible: true,
 
         /**

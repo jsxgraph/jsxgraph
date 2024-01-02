@@ -83,7 +83,7 @@ Mat.Quadtree = function (bbox, config, parent) {
     /**
      * Parent quad tree or null if there is not parent.
      *
-     * @name JXG.Math.Quadtree#northWest
+     * @name JXG.Math.Quadtree#parent
      * @type JXG.Math.Quadtree
      *
      */
@@ -244,7 +244,7 @@ Type.extend(
 
         /**
          * Retrieve the smallest quad tree that contains the given coordinate pair.
-         * @name JXG.Math.Quadtree#_query
+         * @name JXG.Math.Quadtree#query
          * @param {JXG.Coords|Number} xp
          * @param {Number} y
          * @returns {Boolean|JXG.Quadtree} The quad tree if the point is found, false
