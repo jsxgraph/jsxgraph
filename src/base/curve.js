@@ -1001,7 +1001,14 @@ JXG.extend(
          * Converts the JavaScript/JessieCode/GEONExT syntax of the defining function term into JavaScript.
          * New methods X() and Y() for the Curve object are generated, further
          * new methods for minX() and maxX().
-         * @see JXG.GeonextParser.geonext2JS.
+         * If mi or ma are not supplied, default functions are set.
+         * 
+         * @param {String} varname Name of the parameter in xterm and yterm, e.g. 'x' or 't'
+         * @param {String|Number|Function|Array} xterm Term for the x coordinate. Can also be an array consisting of discrete values.
+         * @param {String|Number|Function|Array} yterm Term for the y coordinate. Can also be an array consisting of discrete values.
+         * @param {String|Number|Function} [mi] Lower bound on the parameter
+         * @param {String|Number|Function} [ma] Upper bound on the parameter
+         * @see JXG.GeonextParser.geonext2JS
          */
         generateTerm: function (varname, xterm, yterm, mi, ma) {
             var fx, fy;
@@ -1056,12 +1063,18 @@ JXG.extend(
                 this.visProp.curvetype = "polar";
             }
 
-            // Set the bounds lower bound
+            // Set the upper and lower bounds for the parameter of the curve.
+            // If not defined, reset the bounds to the default values
+            // given in Curve.prototype.minX, Curve.prototype.maxX
             if (Type.exists(mi)) {
                 this.minX = Type.createFunction(mi, this.board, "");
+            } else {
+                delete this.minX;
             }
             if (Type.exists(ma)) {
                 this.maxX = Type.createFunction(ma, this.board, "");
+            } else {
+                delete this.maxX;
             }
 
             this.addParentsFromJCFunctions([this.X, this.Y, this.minX, this.maxX]);
@@ -1624,7 +1637,8 @@ JXG.createFunctiongraph = function (board, parents, attributes) {
         par = ["x", "x"].concat(parents); // variable name and identity function for x-coordinate
         // par = ["x", function(x) { return x; }].concat(parents);
 
-    attr = Type.copyAttributes(attributes, board.options, "curve");
+    attr = Type.copyAttributes(attributes, board.options, "functiongraph");
+    attr = Type.copyAttributes(attr, board.options, "curve");
     attr.curvetype = "functiongraph";
     return new JXG.Curve(board, par, attr);
 };

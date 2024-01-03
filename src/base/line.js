@@ -1554,6 +1554,14 @@ JXG.createAxis = function (board, parents, attributes) {
     //     );
     // }
 
+    // el.update = function() {
+    //     JXG.Line.prototype.update.call(this);
+
+    //     console.log("Additional axis stuff");
+
+    //     return this;
+    // };
+
     return el;
 };
 

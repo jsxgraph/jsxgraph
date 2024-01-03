@@ -325,6 +325,8 @@ JXG.extend(Options, {
          */
         needsRegularUpdate: true,
 
+        projection: 'parallel',
+
         /**
          * Allow vertical dragging of objects, i.e. in direction of the z-axis.
          * Subobjects are
