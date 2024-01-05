@@ -4815,7 +4815,7 @@ JXG.extend(
 
             object = this.select(object);
 
-            // If the object which is about to be removed unknown or a string, do nothing.
+            // If the object which is about to be removed is unknown or a string, do nothing.
             // it is a string if a string was given and could not be resolved to an element.
             if (!Type.exists(object) || Type.isString(object)) {
                 return this;
@@ -4925,7 +4925,7 @@ JXG.extend(
                     this._removeObj(object[i], saveMethod);
                 }
             } else {
-                this._removeObj(object[i], saveMethod);
+                this._removeObj(object, saveMethod);
             }
             this.renderer.unsuspendRedraw();
 
