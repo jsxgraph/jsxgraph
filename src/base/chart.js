@@ -58,7 +58,7 @@ import Env from "../utils/env";
  * Use {@link JXG.Board#create} with type {@link Chart} instead.
  * @constructor
  * @augments JXG.GeometryElement
- * @param {String,JXG.Board} board The board the new chart is drawn on.
+ * @param {String|JXG.Board} board The board the new chart is drawn on.
  * @param {Array} parent data arrays for the chart
  * @param {Object} attributes Javascript object containing attributes like name, id and colors.
  *
@@ -150,7 +150,7 @@ JXG.extend(
         /**
          * Create line chart defined by two data arrays.
          *
-         * @param  {String,JXG.Board} board      The board the chart is drawn on
+         * @param  {String|JXG.Board} board      The board the chart is drawn on
          * @param  {Array} x          Array of x-coordinates
          * @param  {Array} y          Array of y-coordinates
          * @param  {Object} attributes  Javascript object containing attributes like colors
@@ -168,7 +168,7 @@ JXG.extend(
          * Create line chart that consists of a natural spline curve
          * defined by two data arrays.
          *
-         * @param  {String,JXG.Board} board      The board the chart is drawn on
+         * @param  {String|JXG.Board} board      The board the chart is drawn on
          * @param  {Array} x          Array of x-coordinates
          * @param  {Array} y          Array of y-coordinates
          * @param  {Object} attributes Javascript object containing attributes like colors
@@ -187,7 +187,7 @@ JXG.extend(
          * defined by two data arrays. The degree of the polynomial is supplied
          * through the attribute "degree" in attributes.
          *
-         * @param  {String,JXG.Board} board      The board the chart is drawn on
+         * @param  {String|JXG.Board} board      The board the chart is drawn on
          * @param  {Array} x          Array of x-coordinates
          * @param  {Array} y          Array of y-coordinates
          * @param  {Object} attributes Javascript object containing attributes like colors
@@ -219,7 +219,7 @@ JXG.extend(
          * <li> labels: array of labels
          * </ul>
          *
-         * @param  {String,JXG.Board} board      The board the chart is drawn on
+         * @param  {String|JXG.Board} board      The board the chart is drawn on
          * @param  {Array} x          Array of x-coordinates
          * @param  {Array} y          Array of y-coordinates
          * @param  {Object} attributes Javascript object containing attributes like colors
@@ -347,7 +347,7 @@ JXG.extend(
          * <li> infoboxArray (Array): Texts for the infobox
          * </ul>
          *
-         * @param  {String,JXG.Board} board      The board the chart is drawn on
+         * @param  {String|JXG.Board} board      The board the chart is drawn on
          * @param  {Array} x          Array of x-coordinates
          * @param  {Array} y          Array of y-coordinates
          * @param  {Object} attributes Javascript object containing attributes like colors
@@ -383,7 +383,7 @@ JXG.extend(
          * <li> highlightOnSector (Boolean)
          * </ul>
          *
-         * @param  {String,JXG.Board} board      The board the chart is drawn on
+         * @param  {String|JXG.Board} board      The board the chart is drawn on
          * @param  {Array} y          Array of x-coordinates
          * @param  {Object} attributes Javascript object containing attributes like colors
          * @returns {Object}  with keys: "{sectors, points, midpoint}"
@@ -553,7 +553,7 @@ JXG.extend(
          * <li> circleStrokeWidth
          * </ul>
          *
-         * @param  {String,JXG.Board} board      The board the chart is drawn on
+         * @param  {String|JXG.Board} board      The board the chart is drawn on
          * @param  {Array} parents    Array of coordinates, e.g. [[x1, y1, z1], [x2, y2, z2], [x3, y3, z3]]
          * @param  {Object} attributes Javascript object containing attributes like colors
          * @returns {Object} with keys "{circles, lines, points, midpoint, polygons}"
@@ -968,7 +968,6 @@ JXG.extend(
 /**
  * @class Constructor for a chart.
  * @pseudo
- * @description
  * @name Chart
  * @augments JXG.Chart
  * @constructor
@@ -1346,7 +1345,7 @@ JXG.registerElement("chart", JXG.createChart);
  * access with the property "lines" of the element.
  * @constructor
  * @augments JXG.GeometryElement
- * @param {String,JXG.Board} board The board the new legend is drawn on.
+ * @param {String|JXG.Board} board The board the new legend is drawn on.
  * @param {Array} coords Coordinates of the left top point of the legend.
  * @param  {Object} attributes Attributes of the legend
  */
@@ -1384,7 +1383,7 @@ JXG.Legend.prototype = new GeometryElement();
  * Draw a vertical legend.
  *
  * @private
- * @param  {String,JXG.Board} board      The board the legend is drawn on
+ * @param  {String|JXG.Board} board      The board the legend is drawn on
  * @param  {Object} attributes Attributes of the legend
  */
 JXG.Legend.prototype.drawVerticalLegend = function (board, attributes) {
@@ -1442,7 +1441,6 @@ JXG.Legend.prototype.drawVerticalLegend = function (board, attributes) {
  * </ul>
  *
  * @pseudo
- * @description
  * @name Legend
  * @augments JXG.Legend
  * @constructor

@@ -551,7 +551,8 @@ JXG.JSXGraph = {
 
     /**
      * Delete a board and all its contents.
-     * @param {JXG.Board,String} board id of or reference to the DOM element in which the board is drawn.
+     * @param {JXG.Board|String} board id of or reference to the DOM element in which the board is drawn.
+     *
      */
     freeBoard: function (board) {
         var el;

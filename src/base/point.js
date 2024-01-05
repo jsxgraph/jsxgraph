@@ -463,7 +463,6 @@ JXG.extend(
  * position directly.
  * @see Glider for a non-free point that is attached to another geometric element.
  * @pseudo
- * @description
  * @name Point
  * @augments JXG.Point
  * @constructor

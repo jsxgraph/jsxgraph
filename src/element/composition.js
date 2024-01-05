@@ -128,7 +128,7 @@ JXG.createOrthogonalProjection = function (board, parents, attributes) {
 
     attr = Type.copyAttributes(attributes, board.options, "orthogonalprojection");
 
-    /** @type t {JXG.Element} */
+    /** @type {JXG.Element} */
     t = board.create(
         "point",
         [
@@ -777,7 +777,7 @@ JXG.createParallelPoint = function (board, parents, attributes) {
     }
 
     attr = Type.copyAttributes(attributes, board.options, 'parallelpoint');
-    /** @type p {JXG.Element} */
+    /** @type {JXG.Element} */
     p = board.create(
         "point",
         [

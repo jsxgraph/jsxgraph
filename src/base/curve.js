@@ -1363,7 +1363,7 @@ JXG.extend(
 );
 
 /**
- * @class This element is used to provide a constructor for curve, which is just a wrapper for element {@link Curve}.
+ * @class  This element is used to provide a constructor for curve, which is just a wrapper for element {@link Curve}.
  * A curve is a mapping from R to R^2. t mapsto (x(t),y(t)). The graph is drawn for t in the interval [a,b].
  * <p>
  * The following types of curves can be plotted:
@@ -1373,13 +1373,13 @@ JXG.extend(
  *  <li> data plots: plot line segments through a given list of coordinates.
  * </ul>
  * @pseudo
- * @description
  * @name Curve
  * @augments JXG.Curve
  * @constructor
- * @type JXG.Curve
- *
- * @param {function,number_function,number_function,number_function,number} x,y,a_,b_ Parent elements for Parametric Curves.
+ * @type Object
+ * @description JXG.Curve
+
+ * @param {function,number_function,number_function,number_function,number}  x,y,a_,b_ Parent elements for Parametric Curves.
  *                     <p>
  *                     x describes the x-coordinate of the curve. It may be a function term in one variable, e.g. x(t).
  *                     In case of x being of type number, x(t) is set to  a constant function.
@@ -1396,14 +1396,18 @@ JXG.extend(
  *                     <p>
  *                     Default values are a=-10 and b=10.
  *                     </p>
- * @param {array_array,function,number} x,y Parent elements for Data Plots.
+ *
+ * @param {array_array,function,number}
+ *
+ * @description x,y Parent elements for Data Plots.
  *                     <p>
  *                     x and y are arrays contining the x and y coordinates of the data points which are connected by
  *                     line segments. The individual entries of x and y may also be functions.
  *                     In case of x being an array the curve type is data plot, regardless of the second parameter and
  *                     if additionally the second parameter y is a function term the data plot evaluates.
  *                     </p>
- * @param {function_array,function,number_function,number_function,number} r,offset_,a_,b_ Parent elements for Polar Curves.
+ * @param {function_array,function,number_function,number_function,number}
+ * @description r,offset_,a_,b_ Parent elements for Polar Curves.
  *                     <p>
  *                     The first parameter is a function term r(phi) describing the polar curve.
  *                     </p>
@@ -1582,7 +1586,6 @@ JXG.registerElement("curve", JXG.createCurve);
  * which is just a wrapper for element {@link Curve} with {@link JXG.Curve#X}()
  * set to x. The graph is drawn for x in the interval [a,b].
  * @pseudo
- * @description
  * @name Functiongraph
  * @augments JXG.Curve
  * @constructor
@@ -1636,7 +1639,6 @@ JXG.registerElement("plot", JXG.createFunctiongraph);
  * @class This element is used to provide a constructor for (natural) cubic spline curves.
  * Create a dynamic spline interpolated curve given by sample points p_1 to p_n.
  * @pseudo
- * @description
  * @name Spline
  * @augments JXG.Curve
  * @constructor
@@ -1786,7 +1788,6 @@ JXG.registerElement("spline", JXG.createSpline);
  * @class This element is used to provide a constructor for cardinal spline curves.
  * Create a dynamic cardinal spline interpolated curve given by sample points p_1 to p_n.
  * @pseudo
- * @description
  * @name Cardinalspline
  * @augments JXG.Curve
  * @constructor
@@ -1997,7 +1998,6 @@ JXG.registerElement("cardinalspline", JXG.createCardinalSpline);
  * @class This element is used to provide a constructor for metapost spline curves.
  * Create a dynamic metapost spline interpolated curve given by sample points p_1 to p_n.
  * @pseudo
- * @description
  * @name Metapostspline
  * @augments JXG.Curve
  * @constructor
@@ -2237,11 +2237,10 @@ JXG.registerElement("metapostspline", JXG.createMetapostSpline);
  * the parabola is approximated visually by a polygonal chain of fixed step width.
  *
  * @pseudo
- * @description
  * @name Riemannsum
  * @augments JXG.Curve
  * @constructor
- * @type JXG.Curve
+ * @type Curve
  * @param {function,array_number,function_string,function_function,number_function,number} f,n,type_,a_,b_ Parent elements of Riemannsum are a
  *         Either a function term f(x) describing the function graph which is filled by the Riemann bars, or
  *         an array consisting of two functions and the area between is filled by the Riemann bars.
@@ -2369,13 +2368,14 @@ JXG.registerElement("riemannsum", JXG.createRiemannsum);
 /**
  * @class This element is used to provide a constructor for trace curve (simple locus curve), which is realized as a special curve.
  * @pseudo
- * @description
  * @name Tracecurve
  * @augments JXG.Curve
  * @constructor
- * @type JXG.Curve
- * @param {Point,Point} Parent elements of Tracecurve are a
+ * @type Object
+ * @descript JXG.Curve
+ * @param {Point} Parent elements of Tracecurve are a
  *         glider point and a point whose locus is traced.
+ * @param {point}
  * @see JXG.Curve
  * @example
  * // Create trace curve.
@@ -2534,12 +2534,13 @@ JXG.registerElement("tracecurve", JXG.createTracecurve);
      *
      * In case the data points should be updated after creation time, they can be accessed by curve.xterm and curve.yterm.
      * @pseudo
-     * @description
      * @name Stepfunction
      * @augments JXG.Curve
      * @constructor
-     * @type JXG.Curve
-     * @param {Array,Array|Function} Parent elements of Stepfunction are two arrays containing the coordinates.
+     * @type Curve
+     * @description JXG.Curve
+     * @param {Array|Function} Parent1 elements of Stepfunction are two arrays containing the coordinates.
+     * @param {Array|Function} Parent2
      * @see JXG.Curve
      * @example
      * // Create step function.
@@ -2601,7 +2602,6 @@ JXG.registerElement("stepfunction", JXG.createStepfunction);
  * the (numerical) derivative of a given curve.
  *
  * @pseudo
- * @description
  * @name Derivative
  * @augments JXG.Curve
  * @constructor
@@ -2668,7 +2668,6 @@ JXG.registerElement("derivative", JXG.createDerivative);
  * If one element is a curve, it has to be closed.
  * The resulting element is of type curve.
  * @pseudo
- * @description
  * @name CurveIntersection
  * @param {JXG.Curve|JXG.Polygon|JXG.Circle} curve1 First element which is intersected
  * @param {JXG.Curve|JXG.Polygon|JXG.Circle} curve2 Second element which is intersected
@@ -2724,7 +2723,6 @@ JXG.createCurveIntersection = function (board, parents, attributes) {
  * If one element is a curve, it has to be closed.
  * The resulting element is of type curve.
  * @pseudo
- * @description
  * @name CurveUnion
  * @param {JXG.Curve|JXG.Polygon|JXG.Circle} curve1 First element defining the union
  * @param {JXG.Curve|JXG.Polygon|JXG.Circle} curve2 Second element defining the union
@@ -2780,7 +2778,6 @@ JXG.createCurveUnion = function (board, parents, attributes) {
  * If one element is a curve, it has to be closed.
  * The resulting element is of type curve.
  * @pseudo
- * @description
  * @name CurveDifference
  * @param {JXG.Curve|JXG.Polygon|JXG.Circle} curve1 First element from which the second element is "subtracted"
  * @param {JXG.Curve|JXG.Polygon|JXG.Circle} curve2 Second element which is subtracted from the first element
@@ -2839,7 +2836,6 @@ JXG.registerElement("curveunion", JXG.createCurveUnion);
  * @class Box plot curve. The direction of the box plot can be either vertical or horizontal which
  * is controlled by the attribute "dir".
  * @pseudo
- * @description
  * @name Boxplot
  * @param {Array} quantiles Array conatining at least five quantiles. The elements can be of type number, function or string.
  * @param {Number|Function} axis Axis position of the box plot
