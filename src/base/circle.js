@@ -886,8 +886,7 @@ JXG.createCircle = function (board, parents, attributes) {
         attr,
         obj,
         isDraggable = true,
-        point_style = ["center", "point2"],
-        ps;
+        point_style = ["center", "point2"];
 
     p = [];
     obj = board.select(parents[0]);
@@ -921,13 +920,14 @@ JXG.createCircle = function (board, parents, attributes) {
     for (i = 0; i < parents.length; i++) {
         if (Type.isPointType(board, parents[i])) {
             if (parents.length < 3) {
-                ps = point_style[i];
+                p = p.concat(
+                    Type.providePoints(board, [parents[i]], attributes, "circle", [point_style[i]])
+                );
             } else {
-                ps = point_style[1]; // In circumcircle all points look like 'point2'
-            }
-            p = p.concat(
-                Type.providePoints(board, [parents[i]], attributes, "circle", [ps])
-            );
+                p = p.concat(
+                    Type.providePoints(board, [parents[i]], attributes, "point")
+                );
+                }
             if (p[p.length - 1] === false) {
                 throw new Error(
                     "JSXGraph: Can't create circle from this type. Please provide a point type."
