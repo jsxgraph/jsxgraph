@@ -794,14 +794,14 @@ JXG.extend(
  * @constructor
  * @type JXG.Circle
  * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
- * @param {JXG.Point_number,JXG.Point,JXG.Line,JXG.Circle} center,radius The center must be given as a {@link JXG.Point}, 
+ * @param {JXG.Point_number,JXG.Point,JXG.Line,JXG.Circle} center,radius The center must be given as a {@link JXG.Point},
  * see {@link JXG.providePoints}, but the radius can be given
- * as a number (which will create a circle with a fixed radius), 
+ * as a number (which will create a circle with a fixed radius),
  * another {@link JXG.Point}, a {@link JXG.Line} (the distance of start and end point of the
  * line will determine the radius), or another {@link JXG.Circle}.
  * <p>
  * If the radius is supplied as number or output of a function, its absolute value is taken.
- * 
+ *
  * @example
  * // Create a circle providing two points
  * var p1 = board.create('point', [2.0, 2.0]),
