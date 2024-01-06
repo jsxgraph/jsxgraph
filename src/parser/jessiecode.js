@@ -1474,7 +1474,7 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
                         delete node.children[0]._isFunctionName;
 
                         // determine the scope the function wants to run in
-                        if (fun && fun.sc) {
+                        if (Type.exists(fun) && Type.exists(fun.sc)) {
                             sc = fun.sc;
                         } else {
                             sc = this;
