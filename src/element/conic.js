@@ -207,6 +207,7 @@ JXG.createEllipse = function (board, parents, attributes) {
         attr_center
     );
 
+    /** type curve {JGX.Element} */
     curve = board.create(
         "curve",
         [

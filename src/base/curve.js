@@ -2354,7 +2354,7 @@ JXG.createRiemannsum = function (board, parents, attributes) {
     /**
      * Returns the value of the Riemann sum, i.e. the sum of the (signed) areas of the rectangles.
      * @name Value
-     * @memberOf Riemann.prototype
+     * @memberOf Riemannsum.prototype
      * @function
      * @returns {Number} value of Riemann sum.
      */

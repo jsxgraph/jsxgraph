@@ -982,12 +982,19 @@ JXG.extend(
             // Position of cursor using clientX/Y
             absPos = Env.getPosition(e, i, this.document);
 
-            /**
-             * In case there has been no down event before.
-             */
-            if (!Type.exists(this.cssTransMat)) {
-                this.updateCSSTransforms();
-            }
+            // Old:
+            // This seems to be obsolete anyhow:
+            // "In case there has been no down event before."
+            // if (!Type.exists(this.cssTransMat)) {
+            // this.updateCSSTransforms();
+            // }
+            // New:
+            // We have to update the CSS transform matrix all the time,
+            // since libraries like ZIMJS do not notify JSXGraph about a change.
+            // In particular, sending a resize event event to JSXGraph
+            // would be necessary.
+            this.updateCSSTransforms();
+
             // Position relative to the top left corner
             v = [1, absPos[0] - cPos[0], absPos[1] - cPos[1]];
             v = Mat.matVecMult(this.cssTransMat, v);
@@ -2376,7 +2383,7 @@ JXG.extend(
             //    b. if an object is found, check the number of pointers. If appropriate, add the pointer.
             pos = this.getMousePosition(evt);
 
-            // selection
+            // Handle selection rectangle
             this._testForSelection(evt);
             if (this.selectingMode) {
                 this._startSelecting(pos);
@@ -3315,7 +3322,6 @@ JXG.extend(
                 this.mode = this.BOARD_MODE_NONE;
                 result = true;
             } else {
-                /** @ignore */
                 this.mouse = {
                     obj: null,
                     targets: [
@@ -3452,7 +3458,6 @@ JXG.extend(
             }
 
             // release dragged mouse object
-            /** @ignore */
             this.mouse = null;
         },
 
@@ -3583,7 +3588,7 @@ JXG.extend(
                     done = false;
                 }
             } else {
-                // Adapt dx, dy to snapToGrid and attractToGrid
+                // Adapt dx, dy to snapToGrid and attractToGrid.
                 // snapToGrid has priority.
                 if (Type.exists(el.visProp)) {
                     if (
@@ -3596,8 +3601,10 @@ JXG.extend(
                         res = el.getSnapSizes();
                         sX = res[0];
                         sY = res[1];
-                        dx = Math.max(sX, dx);
-                        dy = Math.max(sY, dy);
+                        // If snaptogrid is true,
+                        // we can only jump from grid point to grid point.
+                        dx = sX;
+                        dy = sY;
                     } else if (
                         Type.exists(el.visProp.attracttogrid) &&
                         el.visProp.attracttogrid &&

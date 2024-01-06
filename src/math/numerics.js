@@ -2654,6 +2654,7 @@ Mat.Numerics = {
             return s;
         };
 
+        /** @ignore */
         fct.getTerm = function () {
             return term;
         };

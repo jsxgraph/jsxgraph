@@ -162,6 +162,8 @@ JXG.createVectorField = function(board, parents, attributes) {
     }
 
     attr = Type.copyAttributes(attributes, board.options, 'vectorfield');
+
+    /** @type { JXG.Curve } */
     el = board.create('curve', [[], []], attr);
     el.elType = 'vectorfield';
 

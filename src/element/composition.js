@@ -128,6 +128,7 @@ JXG.createOrthogonalProjection = function (board, parents, attributes) {
 
     attr = Type.copyAttributes(attributes, board.options, "orthogonalprojection");
 
+    /** @type t {JXG.Element} */
     t = board.create(
         "point",
         [
@@ -776,6 +777,7 @@ JXG.createParallelPoint = function (board, parents, attributes) {
     }
 
     attr = Type.copyAttributes(attributes, board.options, 'parallelpoint');
+    /** @type p {JXG.Element} */
     p = board.create(
         "point",
         [
@@ -2445,7 +2447,7 @@ JXG.createReflection = function (board, parents, attributes) {
  * @pseudo
  * @description A mirror element is determined by the reflection of a given point, line, circle, curve, polygon across another given point.
  * @constructor
- * @name Mirrorelement
+ * @name mirrorelement
  * @type JXG.GeometryElement
  * @augments JXG.GeometryElement
  * @throws {Error} If the element cannot be constructed with the given parent objects an exception is thrown.
@@ -2890,6 +2892,7 @@ JXG.createIntegral = function (board, parents, attributes) {
 
     /**
      * documented in JXG.Curve
+     * @class
      * @ignore
      */
     p.updateDataArray = function () {
@@ -3272,6 +3275,10 @@ JXG.createInequality = function (board, parents, attributes) {
         a.hasPoint = function () {
             return false;
         };
+
+        /**
+         * @ignore
+         */
         a.updateDataArray = function () {
             var i1,
                 i2,
@@ -3439,6 +3446,7 @@ JXG.createInequality = function (board, parents, attributes) {
         };
 
         // Previous code:
+        /** @ignore */
         a.hasPoint = function () {
             return false;
         };

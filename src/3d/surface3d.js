@@ -109,6 +109,7 @@ JXG.extend(
     /** @lends JXG.Surface3D.prototype */ {
 
         /**
+         * @class
          * @ignore
          */
         updateDataArray: function () {
@@ -230,6 +231,7 @@ JXG.createParametricSurface3D = function (board, parents, attributes) {
     el.element2D = view.create("curve", [[], []], attr);
 
     /**
+     * @class
      * @ignore
      */
     el.element2D.updateDataArray = function () {

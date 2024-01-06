@@ -3876,7 +3876,7 @@ JXG.Options = {
          * Attributes for center point.
          *
          * @type Point
-         * @name Circle#center
+         * @name Circle#point2
          */
         point2: {
             fillColor: Color.palette.red,
@@ -4202,10 +4202,10 @@ JXG.Options = {
         handDrawing: false,
 
         /**
-         * Attributes for circle label.
+         * Attributes for curve label.
          *
          * @type Label
-         * @name Circle#label
+         * @name Curve#label
          */
         label: {
             position: 'lft'
@@ -4281,19 +4281,8 @@ JXG.Options = {
         plotVersion: 2,
 
         /**
-         * Apply Ramer-Douglas-Peuker smoothing.
-         *
-         * @type Boolean
-         * @name Curve#RDPsmoothing
-         * @default false
-         */
-        RDPsmoothing: false,     // Apply the Ramer-Douglas-Peuker algorithm
-
-        /**
-         *
-         * Recursion depth used for plotting triggered by up events
-         * (i.e. high quality plotting) in case
-         * {@link Curve#doAdvancedPlot} is true.
+         * Configure arrow head at the start position for curve.
+         * Recommended arrow head type is 7.
          *
          * @name Curve#recursionDepthHigh
          * @see Curve#doAdvancedPlot
@@ -5955,6 +5944,7 @@ JXG.Options = {
 
     /* special prescribed angle options
     * Not yet implemented. But angle.setAngle(val) is implemented.
+
     */
     prescribedangle: {
         /**#@+
@@ -5965,7 +5955,8 @@ JXG.Options = {
          * Attributes for the helper point of the prescribed angle.
          *
          * @type Point
-         * @name PrescribedAngle#anglePoint
+         * @name Prescribedangle#anglePoint
+         * @ignore
          */
         anglePoint: {
             size: 2,
@@ -5988,8 +5979,8 @@ JXG.Options = {
          * Attributes of circle center, i.e. the center of the circle,
          * if a circle is the mirror element and the transformation type is 'Euclidean'
          *
-         * @type Point
-         * @name Mirrorelement#center
+         * @type center
+         * @name Prescribedangle#center
          */
         center: {},
 
@@ -6081,7 +6072,7 @@ JXG.Options = {
          * Attributes for the polygon label.
          *
          * @type Label
-         * @name Polygon#label
+         * @name regularPolygon#label
          */
         label: {
             offset: [0, 0]
@@ -6966,7 +6957,7 @@ JXG.Options = {
         /**
          * The precision of the tape measure value displayed in the optional text.
          * @memberOf Tapemeasure.prototype
-         * @name precision
+         * @name digits
          * @type Number
          * @default 2
          */
@@ -7810,6 +7801,10 @@ JXG.Options = {
          */
         rotate: 0,
 
+        /**
+         * @name visible
+         * @default true
+         */
         visible: true,
 
         /**

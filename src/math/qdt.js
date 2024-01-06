@@ -247,8 +247,8 @@ Type.extend(
         },
 
         /**
-         * Retrieve the smallest quadtree that contains the given coordinate pair.
-         * @name JXG.Math.Quadtree#_query
+         * Retrieve the smallest quad tree that contains the given coordinate pair.
+         * @name JXG.Math.Quadtree#query
          * @param {JXG.Coords|Number} xp
          * @param {Number} y
          * @returns {Boolean|JXG.Quadtree} The quadtree if the point is found, false

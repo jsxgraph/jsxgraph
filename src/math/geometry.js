@@ -725,9 +725,7 @@ JXG.extend(
                 intersect2,
                 straightFirst,
                 straightLast,
-                c,
-                p1,
-                p2;
+                c, p1, p2;
 
             if (!Type.exists(margin)) {
                 // Enlarge the drawable region slightly. This hides the small sides
@@ -761,7 +759,7 @@ JXG.extend(
             c[1] = el.stdform[1] / el.board.unitX;
             c[2] = -el.stdform[2] / el.board.unitY;
 
-            // p1=p2
+            // If p1=p2
             if (isNaN(c[0] + c[1] + c[2])) {
                 return;
             }
@@ -1646,8 +1644,7 @@ JXG.extend(
             var s = [],
                 intersect1,
                 intersect2,
-                i,
-                j;
+                i, j;
 
             if (!Type.exists(margin)) {
                 margin = 0;
@@ -1714,9 +1711,10 @@ JXG.extend(
                 }
             }
 
-            intersect1 = new Coords(Const.COORDS_BY_SCREEN, intersect1.slice(1), board);
-            intersect2 = new Coords(Const.COORDS_BY_SCREEN, intersect2.slice(1), board);
-            return [intersect1, intersect2];
+            return [
+                new Coords(Const.COORDS_BY_SCREEN, intersect1.slice(1), board),
+                new Coords(Const.COORDS_BY_SCREEN, intersect2.slice(1), board)
+            ];
         },
 
         /**
