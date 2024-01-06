@@ -53,6 +53,7 @@ FILELIST=$(shell cat src/index.js | awk '/import/ {if (match($$0,/\x27\.(.+)\x27
 
 # Lintlist - jessiecode.js is developed externally (github:jsxgraph/jessiecode) and won't be linted in here
 LINTLIST=$(shell echo $(FILELIST) | sed 's/src\/parser\/jessiecode\.js//')
+# LINTLIST=$(shell echo $(FILELIST))
 LINTFLAGS=--bitwise true --white true --continue true
 ESLINTFLAGS=
 

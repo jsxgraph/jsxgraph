@@ -235,7 +235,7 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
             n.children.push(arguments[i]);
         }
 
-        if (n.type == 'node_const' && Type.isNumber(n.value)) {
+        if (n.type === 'node_const' && Type.isNumber(n.value)) {
             n.isMath = true;
         }
 
@@ -450,7 +450,7 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
             return this.builtIn[vname];
         }
 
-        if (!!isFunctionName) {
+        if (isFunctionName) {
             if (this.isBuiltIn(vname)) {
                 return this.builtIn[vname];
             }
@@ -535,6 +535,7 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
                 return r;
             }
 
+            /* eslint-disable no-useless-escape */
             vname = r.split('.').pop();
             if (Type.exists(this.board.mathLib)) {
                 // Handle builtin case: ln(x) -> Math.log
@@ -551,6 +552,7 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
                 }
                 return r;
             }
+            /* eslint-enable no-useless-escape */
             return r;
 
             // return this.builtIn[vname].src || this.builtIn[vname];
@@ -1554,14 +1556,18 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
                     case 'op_eq':
                         // == is intentional
                         /*jslint eqeq:true*/
+                        /* eslint-disable eqeqeq */
                         ret = this.execute(node.children[0]) == this.execute(node.children[1]);
                         /*jslint eqeq:false*/
+                        /* eslint-enable eqeqeq */
                         break;
                     case 'op_neq':
                         // != is intentional
                         /*jslint eqeq:true*/
+                        /* eslint-disable eqeqeq */
                         ret = this.execute(node.children[0]) != this.execute(node.children[1]);
                         /*jslint eqeq:true*/
+                        /* eslint-enable eqeqeq */
                         break;
                     case 'op_approx':
                         ret = Math.abs(this.execute(node.children[0]) - this.execute(node.children[1])) < Mat.eps;
@@ -1973,10 +1979,10 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
 
         if (Type.exists(obj) && Type.exists(obj.getName)) {
             name = obj.getName();
-            if ((!Type.exists(name) || name === '') && !!useId) {
+            if ((!Type.exists(name) || name === '') && useId) {
                 name = obj.id;
             }
-        } else if (!!useId) {
+        } else if (useId) {
             name = obj.id;
         }
 
@@ -2298,7 +2304,7 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
     },
     geq: function (a, b) {
         if (Interval.isInterval(a) || Interval.isInterval(b)) {
-            return Intervalt.geq(a, b);
+            return Interval.geq(a, b);
         }
         return a >= b;
     },
