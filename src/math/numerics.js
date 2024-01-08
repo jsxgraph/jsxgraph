@@ -2043,7 +2043,7 @@ Mat.Numerics = {
          * Get the term of the Lagrange polynomial as string.
          * Calls {@link JXG.Math.Numerics#lagrangePolynomialTerm}.
          *
-         * @name JXG.Math.Numerics#lagrangePolynomial.getTerm
+         * @name JXG.Math.Numerics.lagrangePolynomial#getTerm
          * @param {Number} digits Number of digits of the coefficients
          * @param {String} param Variable name
          * @param {String} dot Dot symbol
@@ -2087,9 +2087,9 @@ Mat.Numerics = {
          * coefficient is at position 0.
          * Calls {@link JXG.Math.Numerics#lagrangePolynomialCoefficients}.
          *
-         * @name JXG.Math.Numerics#lagrangePolynomial.getCoefficients
+         * @name JXG.Math.Numerics.lagrangePolynomial#getCoefficients
          * @returns {Array} containing the coefficients of the Lagrange polynomial.
-         * @see JXG.Math.Numerics#lagrangePolynomial.getTerm
+         * @see JXG.Math.Numerics.lagrangePolynomial#getTerm
          * @see JXG.Math.Numerics#lagrangePolynomialTerm
          * @see JXG.Math.Numerics#lagrangePolynomialCoefficients
          * @example

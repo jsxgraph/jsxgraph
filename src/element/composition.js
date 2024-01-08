@@ -3277,6 +3277,7 @@ JXG.createInequality = function (board, parents, attributes) {
         };
 
         /**
+         * @class
          * @ignore
          */
         a.updateDataArray = function () {
@@ -3354,6 +3355,10 @@ JXG.createInequality = function (board, parents, attributes) {
         parents[0].visProp.curvetype === "functiongraph"
     ) {
         a = board.create("curve", [[], []], attr);
+        /**
+         * @class
+         * @ignore
+         */
         a.updateDataArray = function () {
             var bbox = this.board.getBoundingBox(),
                 points = [],

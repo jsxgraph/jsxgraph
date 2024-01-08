@@ -46,6 +46,10 @@ import Mat from "../math/math";
 import CoordsElement from "./coordselement";
 
 var priv = {
+    /**
+     * @class
+     * @ignore
+     */
     HTMLSliderInputEventHandler: function () {
         this._val = parseFloat(this.rendNodeRange.value);
         this.rendNodeOut.value = this.rendNodeRange.value;

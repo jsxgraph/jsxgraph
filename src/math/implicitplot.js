@@ -226,7 +226,7 @@ Type.extend(
         /**
          * Implicit plotting method.
          *
-         * @returns {Array} consisting of [dataX, dataY, number_of_components]-
+         * @returns {Array} consisting of [dataX, dataY, number_of_components]
          */
         plot: function () {
             var // components = [],

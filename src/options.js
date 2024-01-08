@@ -1212,7 +1212,7 @@ JXG.Options = {
          * The viewport can be individually controlled for each element, too.
          *
          * @type {Array|String}
-         * @name JXG.GeometryElement#viewport
+         * @name JXG.Board#viewport
          * @default [0, 0, 0, 0]
          * @see JXG.GeometryElement#viewport
          */
@@ -2209,11 +2209,12 @@ JXG.Options = {
         viewport: 'inherit',
 
         /**
-         * If true, the dash pattern is multiplied by strokeWidth / 2.
-         * @name JXG.GeometryElement#dashScale
+         * If true a label will display the element's name. 
+         * Using this to suppress labels is more efficient than visible:false.
+         * 
+         * @name JXG.GeometryElement#withLabel
          * @type Boolean
          * @default false
-         * @name JXG.GeometryElement#withLabel
          */
         withLabel: false
 
@@ -5982,7 +5983,7 @@ JXG.Options = {
          * if a circle is the mirror element and the transformation type is 'Euclidean'
          *
          * @type center
-         * @name Prescribedangle#center
+         * @name Reflection#center
          */
         center: {},
 
@@ -6074,7 +6075,7 @@ JXG.Options = {
          * Attributes for the polygon label.
          *
          * @type Label
-         * @name regularPolygon#label
+         * @name RegularPolygon#label
          */
         label: {
             offset: [0, 0]

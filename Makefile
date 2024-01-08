@@ -133,7 +133,6 @@ docs: core
 	# Compress the result: zip -r tmp/docs.zip tmp/docs/
 	$(CD) $(TMP) && $(ZIP) $(ZIPFLAGS) docs.zip docs/
 	$(CP) $(TMP)/docs.zip $(OUTPUT)/docs.zip
-
 	$(RM) $(RMFLAGS) tmp
 
 	# Test

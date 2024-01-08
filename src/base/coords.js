@@ -51,11 +51,7 @@ import Mat from "../math/math";
  * @param {Number} method The type of coordinates given by the user. Accepted values are <b>COORDS_BY_SCREEN</b> and <b>COORDS_BY_USER</b>.
  * @param {Array} coordinates An array of affine coordinates.
  * @param {JXG.Board} board A reference to a board.
- * @oaram {Boolean} [emitter=true]
- * @borrows JXG.EventEmitter#on as this.on
- * @borrows JXG.EventEmitter#off as this.off
- * @borrows JXG.EventEmitter#triggerEventHandlers as this.triggerEventHandlers
- * @borrows JXG.EventEmitter#eventHandlers as this.eventHandlers
+ * @param {Boolean} [emitter=true]
  * @constructor
  */
 JXG.Coords = function (method, coordinates, board, emitter) {

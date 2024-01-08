@@ -1569,6 +1569,10 @@ JXG.createCurve = function (board, parents, attributes) {
         attr = Type.copyAttributes(attr, board.options, "curve");
 
         cu = new JXG.Curve(board, ["x", [], []], attr);
+        /**
+         * @class
+         * @ignore
+         */
         cu.updateDataArray = function () {
             var i,
                 le = obj.numberPoints;
@@ -2213,6 +2217,10 @@ JXG.createMetapostSpline = function (board, parents, attributes) {
     controls = parents[1];
 
     el = new JXG.Curve(board, ["t", [], [], 0, p.length - 1], attributes);
+    /**
+     * @class
+     * @ignore
+     */
     el.updateDataArray = function () {
         var res,
             i,
@@ -2362,6 +2370,7 @@ JXG.createRiemannsum = function (board, parents, attributes) {
     };
 
     /**
+     * @class
      * @ignore
      */
     c.updateDataArray = function () {
@@ -2441,6 +2450,7 @@ JXG.createTracecurve = function (board, parents, attributes) {
     c = board.create("curve", [[0], [0]], attr);
 
     /**
+     * @class
      * @ignore
      */
     c.updateDataArray = function () {
@@ -2579,6 +2589,7 @@ JXG.createStepfunction = function (board, parents, attributes) {
     attr = Type.copyAttributes(attributes, board.options, "stepfunction");
     c = board.create("curve", parents, attr);
     /**
+     * @class
      * @ignore
      */
     c.updateDataArray = function () {
@@ -2723,6 +2734,7 @@ JXG.createCurveIntersection = function (board, parents, attributes) {
 
     c = board.create("curve", [[], []], attributes);
     /**
+     * @class
      * @ignore
      */
     c.updateDataArray = function () {
@@ -2778,6 +2790,7 @@ JXG.createCurveUnion = function (board, parents, attributes) {
 
     c = board.create("curve", [[], []], attributes);
     /**
+     * @class
      * @ignore
      */
     c.updateDataArray = function () {
@@ -2833,6 +2846,7 @@ JXG.createCurveDifference = function (board, parents, attributes) {
 
     c = board.create("curve", [[], []], attributes);
     /**
+     * @class
      * @ignore
      */
     c.updateDataArray = function () {
@@ -2970,6 +2984,10 @@ JXG.createBoxPlot = function (board, parents, attributes) {
     box.x = Type.createFunction(parents[1], board);
     box.w = Type.createFunction(parents[2], board);
 
+    /**
+     * @class
+     * @ignore
+     */
     box.updateDataArray = function () {
         var v1, v2, l1, l2, r1, r2, w2, dir, x;
 

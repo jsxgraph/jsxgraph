@@ -316,6 +316,10 @@ JXG.createSector = function (board, parents, attributes) {
             el.direction2 = parents[3] >= 0 ? 1 : -1;
         }
 
+        /**
+         * @class
+         * @ignore
+         */
         el.updateDataArray = function () {
             var r,
                 l1,
@@ -467,7 +471,7 @@ JXG.createSector = function (board, parents, attributes) {
         });
 
         /**
-         * documented in JXG.Curve
+         * @class
          * @ignore
          */
         el.updateDataArray = function () {
@@ -728,6 +732,9 @@ JXG.createSector = function (board, parents, attributes) {
     /**
      * Overwrite the Radius method of the sector.
      * Used in {@link GeometryElement#setAttribute}.
+     * @memberOf Sector.prototype
+     * @name setRadius
+     * @function
      * @param {Number|Function} value New radius.
      */
     el.setRadius = function (val) {
@@ -1172,6 +1179,10 @@ JXG.createAngle = function (board, parents, attributes) {
     if (type === "2lines") {
         parents.push(radius);
         el = board.create("sector", parents, attr);
+        /**
+         * @class
+         * @ignore
+         */
         el.updateDataArraySector = el.updateDataArray;
 
         // TODO
@@ -1211,6 +1222,10 @@ JXG.createAngle = function (board, parents, attributes) {
             return r;
         };
 
+        /**
+         * @class
+         * @ignore
+         */
         el.updateDataArraySector = function () {
             var A = this.point2,
                 B = this.point1,
@@ -1424,6 +1439,10 @@ JXG.createAngle = function (board, parents, attributes) {
     el.type = Const.OBJECT_TYPE_ANGLE;
     el.subs = {};
 
+    /**
+     * @class
+     * @ignore
+     */
     el.updateDataArraySquare = function () {
         var A, B, C,
             d1, d2, v, l1, l2,
@@ -1464,12 +1483,20 @@ JXG.createAngle = function (board, parents, attributes) {
         this.bezierDegree = 1;
     };
 
+    /**
+     * @class
+     * @ignore
+     */
     el.updateDataArrayNone = function () {
         this.dataX = [NaN];
         this.dataY = [NaN];
         this.bezierDegree = 1;
     };
 
+    /**
+     * @class
+     * @ignore
+     */
     el.updateDataArray = function () {
         var type = Type.evaluate(this.visProp.type),
             deg = Geometry.trueAngle(this.point2, this.point1, this.point3),
