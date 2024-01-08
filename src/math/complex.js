@@ -105,7 +105,7 @@ JXG.extend(
 
         /**
          * Add another complex number to this complex number.
-         * @param {JXG.Complex,Number} c A JavaScript number or a JXG.Complex object to be added to the current object.
+         * @param {JXG.Complex|Number} c A JavaScript number or a JXG.Complex object to be added to the current object.
          * @returns {JXG.Complex} Reference to this complex number
          */
         add: function (c) {
@@ -121,7 +121,7 @@ JXG.extend(
 
         /**
          * Subtract another complex number from this complex number.
-         * @param {JXG.Complex,Number} c A JavaScript number or a JXG.Complex object to subtract from the current object.
+         * @param {JXG.Complex|Number} c A JavaScript number or a JXG.Complex object to subtract from the current object.
          * @returns {JXG.Complex} Reference to this complex number
          */
         sub: function (c) {
@@ -137,7 +137,7 @@ JXG.extend(
 
         /**
          * Multiply another complex number to this complex number.
-         * @param {JXG.Complex,Number} c A JavaScript number or a JXG.Complex object to
+         * @param {JXG.Complex|Number} c A JavaScript number or a JXG.Complex object to
          * multiply with the current object.
          * @returns {JXG.Complex} Reference to this complex number
          */
@@ -161,7 +161,7 @@ JXG.extend(
 
         /**
          * Divide this complex number by the given complex number.
-         * @param {JXG.Complex,Number} c A JavaScript number or a JXG.Complex object to
+         * @param {JXG.Complex|Number} c A JavaScript number or a JXG.Complex object to
          * divide the current object by.
          * @returns {JXG.Complex} Reference to this complex number
          */
@@ -230,8 +230,8 @@ JXG.C = {};
 
 /**
  * Add two (complex) numbers z1 and z2 and return the result as a (complex) number.
- * @param {JXG.Complex,Number} z1 Summand
- * @param {JXG.Complex,Number} z2 Summand
+ * @param {JXG.Complex|Number} z1 Summand
+ * @param {JXG.Complex|Number} z2 Summand
  * @returns {JXG.Complex} A complex number equal to the sum of the given parameters.
  */
 JXG.C.add = function (z1, z2) {
@@ -242,8 +242,8 @@ JXG.C.add = function (z1, z2) {
 
 /**
  * Subtract two (complex) numbers z1 and z2 and return the result as a (complex) number.
- * @param {JXG.Complex,Number} z1 Minuend
- * @param {JXG.Complex,Number} z2 Subtrahend
+ * @param {JXG.Complex|Number} z1 Minuend
+ * @param {JXG.Complex|Number} z2 Subtrahend
  * @returns {JXG.Complex} A complex number equal to the difference of the given parameters.
  */
 JXG.C.sub = function (z1, z2) {
@@ -254,8 +254,8 @@ JXG.C.sub = function (z1, z2) {
 
 /**
  * Multiply two (complex) numbers z1 and z2 and return the result as a (complex) number.
- * @param {JXG.Complex,Number} z1 Factor
- * @param {JXG.Complex,Number} z2 Factor
+ * @param {JXG.Complex|Number} z1 Factor
+ * @param {JXG.Complex|Number} z2 Factor
  * @returns {JXG.Complex} A complex number equal to the product of the given parameters.
  */
 JXG.C.mult = function (z1, z2) {
@@ -266,8 +266,8 @@ JXG.C.mult = function (z1, z2) {
 
 /**
  * Divide two (complex) numbers z1 and z2 and return the result as a (complex) number.
- * @param {JXG.Complex,Number} z1 Dividend
- * @param {JXG.Complex,Number} z2 Divisor
+ * @param {JXG.Complex|Number} z1 Dividend
+ * @param {JXG.Complex|Number} z2 Divisor
  * @returns {JXG.Complex} A complex number equal to the quotient of the given parameters.
  */
 JXG.C.div = function (z1, z2) {
@@ -278,7 +278,7 @@ JXG.C.div = function (z1, z2) {
 
 /**
  * Conjugate a complex number and return the result.
- * @param {JXG.Complex,Number} z1 Complex number
+ * @param {JXG.Complex|Number} z1 Complex number
  * @returns {JXG.Complex} A complex number equal to the conjugate of the given parameter.
  */
 JXG.C.conj = function (z1) {
@@ -289,7 +289,7 @@ JXG.C.conj = function (z1) {
 
 /**
  * Absolute value of a complex number.
- * @param {JXG.Complex,Number} z1 Complex number
+ * @param {JXG.Complex|Number} z1 Complex number
  * @returns {Number} real number equal to the absolute value of the given parameter.
  */
 JXG.C.abs = function (z1) {

@@ -209,7 +209,6 @@ JXG.createSmartLabel = function (board, parents, attributes) {
         attr = Type.copyAttributes(attributes, board.options, 'smartlabelpoint');
 
     } else if (p.elementClass === Const.OBJECT_CLASS_LINE) {
-        /** @type attr {attrArray} */
         attr = Type.copyAttributes(attributes, board.options, 'smartlabelline');
         attr.rotate = function () { return Math.atan(p.getSlope()) * 180 / Math.PI; };
         attr.visible = function () { return (p.L() < 1.5) ? false : true; };

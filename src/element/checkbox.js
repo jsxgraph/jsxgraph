@@ -61,7 +61,6 @@ var priv = {
  * add event listeners.
  *
  * @pseudo
- * @description
  * @name Checkbox
  * @augments Text
  * @constructor

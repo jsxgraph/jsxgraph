@@ -187,16 +187,16 @@ Mat.Numerics = {
 
     /**
      * @private
-     * Gauss-Bareiss algorithm to compute the
-     * determinant of matrix without fractions.
-     * See Henri Cohen, "A Course in Computational
-     * Algebraic Number Theory (Graduate texts
-     * in mathematics; 138)", Springer-Verlag,
-     * ISBN 3-540-55640-0 / 0-387-55640-0
-     * Third, Corrected Printing 1996
-     * "Algorithm 2.2.6", pg. 52-53
      * @memberof JXG.Math.Numerics
      */
+    //  Gauss-Bareiss algorithm to compute the
+    //  determinant of matrix without fractions.
+    //  See Henri Cohen, "A Course in Computational
+    //  Algebraic Number Theory (Graduate texts
+    //  in mathematics; 138)", Springer-Verlag,
+    //  ISBN 3-540-55640-0 / 0-387-55640-0
+    //  Third, Corrected Printing 1996
+    //  "Algorithm 2.2.6", pg. 52-53
     gaussBareiss: function (mat) {
         var k,
             c,
@@ -1832,12 +1832,12 @@ Mat.Numerics = {
 
     /**
      * Evaluate points on spline.
-     * @param {Number,Array} x0 A single float value or an array of values to evaluate
+     * @param {Number|Array} x0 A single float value or an array of values to evaluate
      * @param {Array} x x values of knots
      * @param {Array} y y values of knots
      * @param {Array} F Second derivatives at knots, calculated by {@link JXG.Math.Numerics.splineDef}
      * @see #splineDef
-     * @returns {Number,Array} A single value or an array, depending on what is given as x0.
+     * @returns {Number|Array} A single value or an array, depending on what is given as x0.
      * @memberof JXG.Math.Numerics
      */
     splineEval: function (x0, x, y, F) {
@@ -2514,7 +2514,7 @@ Mat.Numerics = {
     /**
      * Computes the regression polynomial of a given degree through a given set of coordinates.
      * Returns the regression polynomial function.
-     * @param {Number,function,Slider} degree number, function or slider.
+     * @param {Number|function|Slider} degree number, function or slider.
      * Either
      * @param {Array} dataX Array containing either the x-coordinates of the data set or both coordinates in
      * an array of {@link JXG.Point}s or {@link JXG.Coords}.
@@ -2967,7 +2967,7 @@ Mat.Numerics = {
      * is replaced by a parabola or a secant. IN case of "simpson",
      * the parabola is approximated visually by a polygonal chain of fixed step width.
      *
-     * @param {Function,Array} f Function or array of two functions.
+     * @param {Function|Array} f Function or array of two functions.
      * If f is a function the integral of this function is approximated by the Riemann sum.
      * If f is an array consisting of two functions the area between the two functions is filled
      * by the Riemann sum bars.
@@ -3126,7 +3126,7 @@ Mat.Numerics = {
     /**
      * Solve initial value problems numerically using <i>explicit</i> Runge-Kutta methods.
      * See {@link https://en.wikipedia.org/wiki/Runge-Kutta_methods} for more information on the algorithm.
-     * @param {object,String} butcher Butcher tableau describing the Runge-Kutta method to use. This can be either a string describing
+     * @param {object|String} butcher Butcher tableau describing the Runge-Kutta method to use. This can be either a string describing
      * a Runge-Kutta method with a Butcher tableau predefined in JSXGraph like 'euler', 'heun', 'rk4' or an object providing the structure
      * <pre>
      * {
@@ -3358,7 +3358,7 @@ Mat.Numerics = {
      *
      * Find zero of an univariate function f.
      * @param {function} f Function, whose root is to be found
-     * @param {Array,Number} x0  Start value or start interval enclosing the root
+     * @param {Array|Number} x0  Start value or start interval enclosing the root
      * @param {Object} object Parent object in case f is method of it
      * @returns {Number} the approximation of the root
      * Algorithm:
@@ -3533,7 +3533,7 @@ Mat.Numerics = {
     /**
      * Find zero of an univariate function f.
      * @param {function} f Function, whose root is to be found
-     * @param {Array,Number} x0  Start value or start interval enclosing the root
+     * @param {Array|Number} x0  Start value or start interval enclosing the root
      * @param {Object} object Parent object in case f is method of it
      * @returns {Number} the approximation of the root
      * Algorithm:

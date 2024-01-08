@@ -740,7 +740,7 @@ JXG.Math = {
      *
      * @function
      * @param  {Number} x A Number
-     * @returns {[type]}  This function has 5 kinds of return values,
+     * @returns {Number}  This function has 5 kinds of return values,
      *    1, -1, 0, -0, NaN, which represent "positive number", "negative number", "positive zero", "negative zero"
      *    and NaN respectively.
      */

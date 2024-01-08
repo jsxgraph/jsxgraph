@@ -295,7 +295,8 @@ JXG.Options = {
          * Supply the document object. Defaults to window.document
          *
          * @name JXG.Board#document
-         * @type DOM object
+         * @type Object
+         * @description DOM object
          * @default false (meaning window.document)
          */
         document: false,
@@ -818,7 +819,8 @@ JXG.Options = {
          * board.addEventHandlers();
          *
          * @name JXG.Board#moveTarget
-         * @type HTML node or document
+         * @type Object
+         * @description HTML node or document
          * @default null
          *
          * @example
@@ -2157,8 +2159,8 @@ JXG.Options = {
          * @name JXG.GeometryElement#isLabel
          * @default false
          * @private
-         * By default, an element is not a label. Do not change this.
-         */
+        */
+        // By default, an element is not a label. Do not change this.
         isLabel: false,
 
         /**
@@ -4259,7 +4261,7 @@ JXG.Options = {
          * Recommended arrow head type is 7.
          *
          * @name Curve#firstArrow
-         * @type Boolean / Object
+         * @type Boolean | Object
          * @default false
          * @see Line#firstArrow for options
          */
@@ -4271,7 +4273,7 @@ JXG.Options = {
          *
          * @name Curve#lastArrow
          * @see Line#lastArrow for options
-         * @type Boolean / Object
+         * @type Boolean | Object
          * @default false
          */
         lastArrow: false
@@ -4980,7 +4982,7 @@ JXG.Options = {
          * @name Line#firstArrow
          * @see Line#lastArrow
          * @see Line#touchFirstPoint
-         * @type Boolean / Object
+         * @type Boolean | Object
          * @default false
          */
         firstArrow: false,
@@ -5074,7 +5076,7 @@ JXG.Options = {
          * @name Line#lastArrow
          * @see Line#firstArrow
          * @see Line#touchLastPoint
-         * @type Boolean / Object
+         * @type Boolean | Object
          * @default false
          */
         lastArrow: false,
@@ -5591,7 +5593,8 @@ JXG.Options = {
          *
          * @name Point#showInfobox
          * @see JXG.Board#showInfobox
-         * @type {Boolean|String} true | false | 'inherit'
+         * @type Boolean|String
+         * @description true | false | 'inherit'
          * @default true
          */
         showInfobox: 'inherit',
@@ -5606,7 +5609,7 @@ JXG.Options = {
          *
          * @name Point#infoboxDigits
          *
-         * @type String, Number
+         * @type String| Number
          * @default 'auto'
          * @see JXG#autoDigits
          * @see JXG#toFixed
