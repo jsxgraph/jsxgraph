@@ -45,7 +45,6 @@ import GeometryElement from "../base/element";
 /**
  * @class A tape measure can be used to measure distances between points.
  * @pseudo
- * @description
  * @name Tapemeasure
  * @augments Segment
  * @constructor

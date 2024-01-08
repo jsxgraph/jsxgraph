@@ -1663,7 +1663,6 @@ JXG.extend(
  * The default value is "left".
  *
  * @pseudo
- * @description
  * @name Ticks
  * @augments JXG.Ticks
  * @constructor
@@ -1738,7 +1737,6 @@ JXG.createTicks = function (board, parents, attributes) {
 /**
  * @class Hatches can be used to mark congruent lines or curves.
  * @pseudo
- * @description
  * @name Hatch
  * @augments JXG.Ticks
  * @constructor

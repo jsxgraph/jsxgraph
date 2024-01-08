@@ -131,15 +131,15 @@ JXG.extend(
     /** @lends JXG.Text.prototype */ {
         /**
          * @private
-         * Test if the screen coordinates (x,y) are in a small stripe
-         * at the left side or at the right side of the text.
-         * Sensitivity is set in this.board.options.precision.hasPoint.
-         * If dragarea is set to 'all' (default), tests if the screen
-         * coordinates (x,y) are in within the text boundary.
          * @param {Number} x
          * @param {Number} y
          * @returns {Boolean}
-         */
+        */
+        // Test if the screen coordinates (x,y) are in a small stripe
+        // at the left side or at the right side of the text.
+        // Sensitivity is set in this.board.options.precision.hasPoint.
+        // If dragarea is set to 'all' (default), tests if the screen
+        // coordinates (x,y) are in within the text boundary.
         hasPoint: function (x, y) {
             var lft, rt, top, bot, ax, ay, type, r;
 
@@ -406,7 +406,7 @@ JXG.extend(
          * JSXGraph needs {@link JXG.Text#size} for applying rotations in IE and
          * for aligning text.
          *
-         * @return {[type]} [description]
+         * @return {this} [description]
          */
         updateSize: function () {
             var tmp,
@@ -1276,7 +1276,6 @@ JXG.extend(
  * If HTML should be displayed in an inbetween layer, conder to use an element of type {@link ForeignObject} (available in svg renderer, only).
  * </ul>
  * @pseudo
- * @description
  * @name Text
  * @augments JXG.Text
  * @constructor
@@ -1376,7 +1375,6 @@ JXG.registerElement("text", JXG.createText);
  * Labels are handled internally by JSXGraph, only. There is NO constructor "board.create('label', ...)".
  *
  * @pseudo
- * @description
  * @name Label
  * @augments JXG.Text
  * @constructor

@@ -294,9 +294,9 @@ JXG.extend(
          * Set the width and height of the foreignObject. After setting a new size,
          * board.update() or foreignobject.fullUpdate()
          * has to be called to make the change visible.
-         * @param  {number, function, string} width  Number, function or string
+         * @param  {numbe|function|string} width  Number, function or string
          *                            that determines the new width of the foreignObject
-         * @param  {number, function, string} height Number, function or string
+         * @param  {number|function|string} height Number, function or string
          *                            that determines the new height of the foreignObject
          * @returns {JXG.ForeignObject} A reference to the element
          *
@@ -337,7 +337,6 @@ JXG.extend(
  * </p>
  *
  * @pseudo
- * @description
  * @name ForeignObject
  * @augments JXG.ForeignObject
  * @constructor

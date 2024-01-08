@@ -295,7 +295,8 @@ JXG.Options = {
          * Supply the document object. Defaults to window.document
          *
          * @name JXG.Board#document
-         * @type DOM object
+         * @type Object
+         * @description DOM object
          * @default false (meaning window.document)
          */
         document: false,
@@ -818,7 +819,8 @@ JXG.Options = {
          * board.addEventHandlers();
          *
          * @name JXG.Board#moveTarget
-         * @type HTML node or document
+         * @type Object
+         * @description HTML node or document
          * @default null
          *
          * @example
@@ -2207,7 +2209,50 @@ JXG.Options = {
         viewport: 'inherit',
 
         /**
-         * If true a label will display the element's name.
+         * If draft.draft: true the element will be drawn in grey scale colors (as default)
+         * to visualize that it's only a draft.
+         *
+         * @name JXG.GeometryElement#draft
+         * @type Object
+         * @default {@link JXG.Options.elements.draft#draft}
+         */
+        draft: {
+            draft: false,
+            strokeColor: '#565656',
+            fillColor: '#565656',
+            strokeOpacity: 0.8,
+            fillOpacity: 0.8,
+            strokeWidth: 1
+        },
+
+        /**
+         * @name JXG.GeometryElement#isLabel
+         * @default false
+         * @private
+        */
+        // By default, an element is not a label. Do not change this.
+        isLabel: false,
+
+        /**
+         * Controls if an element can get the focus with the tab key.
+         * tabindex corresponds to the HTML attribute of the same name.
+         * See <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/tabindex">descriptiona at MDN</a>.
+         * The additional value "null" completely disables focus of an element.
+         * The value will be ignored if keyboard control of the board is not enabled or
+         * the element is fixed or not visible.
+         *
+         * @name JXG.GeometryElement#tabindex
+         * @type Number
+         * @default 0
+         * @see JXG.Board#keyboard
+         * @see JXG.GeometryElement#fixed
+         * @see JXG.GeometryElement#visible
+         */
+        tabindex: 0,
+
+        /**
+         * If true, the dash pattern is multiplied by strokeWidth / 2.
+         * @name JXG.GeometryElement#dashScale
          * @type Boolean
          * @default false
          * @name JXG.GeometryElement#withLabel
@@ -4303,7 +4348,67 @@ JXG.Options = {
          */
         recursionDepthLow: 15,
 
-        useQDT: false
+        /**
+         * If true use the algorithm by Gillam and Hohenwarter, which was default until version 0.98.
+         *
+         * @name Curve#doAdvancedPlotOld
+         * @see Curve#doAdvancedPlot
+         * @type Boolean
+         * @default false
+         * @deprecated
+         */
+        doAdvancedPlotOld: false,   // v1
+
+        /**
+         * Select the version of the plot algorithm.
+         * <ul>
+         * <li> Version 1 is very outdated
+         * <li> Version 2 is the default version in JSXGraph v0.99.*, v1.0, and v1.1, v1.2.0
+         * <li> Version 3 is an internal version that was never published in  a stable version.
+         * <li> Version 4 is available since JSXGraph v1.2.0
+         * </ul>
+         * Version 4 plots correctly logarithms if the function term is supplied as string (i.e. as JessieCode)
+         *
+         * @example
+         *   var c = board.create('functiongraph', ["log(x)"]);
+         *
+         * @name Curve#plotVersion
+         * @type Number
+         * @default 2
+         */
+        plotVersion: 2,
+
+        /**
+         * Attributes for curve label.
+         *
+         * @type Label
+         * @name Curve#label
+         */
+        label: {
+            position: 'lft'
+        },
+
+        /**
+         * Configure arrow head at the start position for curve.
+         * Recommended arrow head type is 7.
+         *
+         * @name Curve#firstArrow
+         * @type Boolean | Object
+         * @default false
+         * @see Line#firstArrow for options
+         */
+        firstArrow: false,
+
+        /**
+         * Configure arrow head at the end position for curve.
+         * Recommended arrow head type is 7.
+         *
+         * @name Curve#lastArrow
+         * @see Line#lastArrow for options
+         * @type Boolean | Object
+         * @default false
+         */
+        lastArrow: false
 
         /**#@-*/
     },
@@ -5020,7 +5125,7 @@ JXG.Options = {
          * @name Line#firstArrow
          * @see Line#lastArrow
          * @see Line#touchFirstPoint
-         * @type Boolean / Object
+         * @type Boolean | Object
          * @default false
          */
         firstArrow: false,
@@ -5114,7 +5219,7 @@ JXG.Options = {
          * @name Line#lastArrow
          * @see Line#firstArrow
          * @see Line#touchLastPoint
-         * @type Boolean / Object
+         * @type Boolean | Object
          * @default false
          */
         lastArrow: false,
@@ -5651,7 +5756,8 @@ JXG.Options = {
          *
          * @name Point#showInfobox
          * @see JXG.Board#showInfobox
-         * @type {Boolean|String} true | false | 'inherit'
+         * @type Boolean|String
+         * @description true | false | 'inherit'
          * @default true
          */
         showInfobox: 'inherit',
@@ -5666,7 +5772,7 @@ JXG.Options = {
          *
          * @name Point#infoboxDigits
          *
-         * @type String, Number
+         * @type String| Number
          * @default 'auto'
          * @see JXG#autoDigits
          * @see JXG#toFixed

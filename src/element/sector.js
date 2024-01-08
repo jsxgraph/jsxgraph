@@ -728,7 +728,7 @@ JXG.createSector = function (board, parents, attributes) {
     /**
      * Overwrite the Radius method of the sector.
      * Used in {@link GeometryElement#setAttribute}.
-     * @param {Number, Function} value New radius.
+     * @param {Number|Function} value New radius.
      */
     el.setRadius = function (val) {
         var res,

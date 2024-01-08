@@ -73,7 +73,7 @@ JXG.Line3D = function (view, point, direction, range, attributes) {
      * Direction which - together with a point - defines the line. Array of numbers or functions (of length 3) or function
      * returning array of length 3.
      *
-     * @type Array,Function
+     * @type Array|Function
      * @see JXG.Line3D#point
      */
     this.direction = direction;
@@ -337,7 +337,7 @@ JXG.registerElement('line3d', JXG.createLine3D);
  * @augments JXG.GeometryElement3D
  * @augments JXG.GeometryElement
  * @param {View3D} view
- * @param {Point3D,Array} point
+ * @param {Point3D|Array} point
  * @param {Array} direction1
  * @param {Array} range1
  * @param {Array} direction2
@@ -365,7 +365,7 @@ JXG.Plane3D = function (view, point, dir1, range1, dir2, range2, attributes) {
      * Two linearly independent vectors - together with a point - define the plane. Each of these direction vectors is an
      * array of numbers or functions (of length 3) or function returning array of length 3.
      *
-     * @type Array,Function
+     * @type Array|Function
      *
      * @see JXG.Plane3D#point
      * @see JXG.Plane3D#direction2
@@ -376,7 +376,7 @@ JXG.Plane3D = function (view, point, dir1, range1, dir2, range2, attributes) {
      * Two linearly independent vectors - together with a point - define the plane. Each of these direction vectors is an
      * array of numbers or functions (of length 3) or function returning array of length 3.
      *
-     * @type Array,Function
+     * @type Array|Function
      * @see JXG.Plane3D#point
      * @see JXG.Plane3D#direction1
      */

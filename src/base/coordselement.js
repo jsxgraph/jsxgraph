@@ -1624,10 +1624,10 @@ JXG.extend(
 
         /**
          * Animate the point.
-         * @param {Number,Function} direction The direction the glider is animated. Can be +1 or -1.
-         * @param {Number,Function} stepCount The number of steps in which the parent element is divided.
+         * @param {Number|Function} direction The direction the glider is animated. Can be +1 or -1.
+         * @param {Number|Function} stepCount The number of steps in which the parent element is divided.
          * Must be at least 1.
-         * @param {Number,Function} delay Time in msec between two animation steps. Default is 250.
+         * @param {Number|Function} delay Time in msec between two animation steps. Default is 250.
          * @returns {JXG.CoordsElement} Reference to iself.
          *
          * @name Glider#startAnimation

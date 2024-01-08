@@ -56,7 +56,8 @@ JXG.GeometryElement3D = function (view, elType) {
      * Link to the 2D element(s) used to visualize the 3D element
      * in a view. In case, there are several 2D elements, it is an array.
      *
-     * @type JXG.GeometryElement,Array
+     * @type Array
+     * @description JXG.GeometryElement,Array
      * @private
      *
      * @example

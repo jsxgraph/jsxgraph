@@ -42,7 +42,7 @@ import Type from "../utils/type";
  * @augments JXG.GeometryElement3D
  * @augments JXG.GeometryElement
  * @param {JXG.View3D} view The 3D view the point is drawn on.
- * @param {Function,Array} F Array of numbers, array of functions or function returning an array with defines the user coordinates of the point.
+ * @param {Function|Array} F Array of numbers, array of functions or function returning an array with defines the user coordinates of the point.
  * @parame {JXG.GeometryElement3D} slide Object the 3D point should be bound to. If null, the point is a free point.
  * @param {Object} attributes An object containing visual properties like in {@link JXG.Options#point3d} and
  * {@link JXG.Options#elements}, and optional a name and an id.
