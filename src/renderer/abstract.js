@@ -530,7 +530,7 @@ JXG.extend(
             // Get information if there are arrow heads and how large they are.
             arrowData = this.getArrowHeadData(el, w, hl);
 
-            // Create the SVG nodes if neccessary
+            // Create the SVG nodes if necessary
             this.makeArrows(el, arrowData);
 
             // Draw the paths with arrow heads

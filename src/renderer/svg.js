@@ -282,6 +282,9 @@ JXG.extend(
             if (Type.exists(idAppendix)) {
                 id += idAppendix;
             }
+            if (Type.exists(type)) {
+                id += type;
+            }
             node2 = this.createPrim("marker", id);
 
             node2.setAttributeNS(null, "stroke", Type.evaluate(el.visProp.strokecolor));
@@ -844,12 +847,14 @@ JXG.extend(
 
         // Already documented in JXG.AbstractRenderer
         makeArrows: function (el, a) {
-            var node2,
+            var node2, url,
                 ev_fa = a.evFirst,
                 ev_la = a.evLast;
 
+            // console.log(el.visPropOld.lastarrow.type, ev_la.type)
             // Test if the arrow heads already exist
-            if (el.visPropOld.firstarrow === ev_fa && el.visPropOld.lastarrow === ev_la) {
+            // Does not work anymore, since always true???
+            if (true && el.visPropOld.firstarrow === ev_fa && el.visPropOld.lastarrow === ev_la) {
                 if (this.isIE && el.visPropCalc.visible && (ev_fa || ev_la)) {
                     el.rendNode.parentNode.insertBefore(el.rendNode, el.rendNode);
                 }
@@ -858,16 +863,12 @@ JXG.extend(
 
             if (ev_fa) {
                 node2 = el.rendNodeTriangleStart;
-                if (!Type.exists(node2)) {
+                url = this.toURL(this.container.id, '_', el.id, 'TriangleEnd' + a.typeFirst);
+                if (!Type.exists(node2) || node2.id !== url) {
                     node2 = this._createArrowHead(el, "End", a.typeFirst);
                     this.defs.appendChild(node2);
                     el.rendNodeTriangleStart = node2;
-                    el.rendNode.setAttributeNS(
-                        null,
-                        "marker-start",
-                        // "url(#" + this.container.id + "_" + el.id + "TriangleEnd)"
-                        this.toURL(this.container.id, '_', el.id, 'TriangleEnd')
-                    );
+                    el.rendNode.setAttributeNS(null, "marker-start", url);
                 } else {
                     this.defs.appendChild(node2);
                 }
@@ -877,18 +878,15 @@ JXG.extend(
                     this.remove(node2);
                 }
             }
+
             if (ev_la) {
                 node2 = el.rendNodeTriangleEnd;
-                if (!Type.exists(node2)) {
+                url = this.toURL(this.container.id, '_', el.id, 'TriangleStart' + a.typeLast);
+                if (!Type.exists(node2) || node2.id !== url) {
                     node2 = this._createArrowHead(el, "Start", a.typeLast);
                     this.defs.appendChild(node2);
                     el.rendNodeTriangleEnd = node2;
-                    el.rendNode.setAttributeNS(
-                        null,
-                        "marker-end",
-                        // "url(#" + this.container.id + "_" + el.id + "TriangleStart)"
-                        this.toURL(this.container.id, '_', el.id, 'TriangleStart')
-                    );
+                    el.rendNode.setAttributeNS(null, "marker-end", url);
                 } else {
                     this.defs.appendChild(node2);
                 }
