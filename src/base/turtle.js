@@ -492,8 +492,8 @@ JXG.extend(
 
         /**
          * Get attribute of the last turtle curve object.
-         * 
-         * @param {String} key 
+         *
+         * @param {String} key
          * @returns attribute value
          * @private
          */

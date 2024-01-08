@@ -11,7 +11,7 @@ module.exports = {
     },
     "rules": {
         "eqeqeq": ["error", "smart"],
-        "no-trailing-spaces": ["warn", { "ignoreComments": true }],
+        "no-trailing-spaces": ["warn", { "ignoreComments": false }],
         "one-var": ["warn", "always"],
         "no-unused-vars": ["warn", { "vars": "local", "args": "none"}],
         "no-redeclare": ["error", { "builtinGlobals": false }],

@@ -2209,9 +2209,9 @@ JXG.Options = {
         viewport: 'inherit',
 
         /**
-         * If true a label will display the element's name. 
+         * If true a label will display the element's name.
          * Using this to suppress labels is more efficient than visible:false.
-         * 
+         *
          * @name JXG.GeometryElement#withLabel
          * @type Boolean
          * @default false

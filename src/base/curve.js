@@ -1002,7 +1002,7 @@ JXG.extend(
          * New methods X() and Y() for the Curve object are generated, further
          * new methods for minX() and maxX().
          * If mi or ma are not supplied, default functions are set.
-         * 
+         *
          * @param {String} varname Name of the parameter in xterm and yterm, e.g. 'x' or 't'
          * @param {String|Number|Function|Array} xterm Term for the x coordinate. Can also be an array consisting of discrete values.
          * @param {String|Number|Function|Array} yterm Term for the y coordinate. Can also be an array consisting of discrete values.

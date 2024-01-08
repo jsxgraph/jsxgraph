@@ -1968,9 +1968,9 @@ JXG.extend(
         },
 
         /**
-         * 
-         * @param {*} element 
-         * @param {*} isHTML 
+         *
+         * @param {*} element
+         * @param {*} isHTML
          */
         setObjectViewport: function (element, isHTML) {
             /* stub */
