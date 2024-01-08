@@ -48,7 +48,6 @@ import Type from "../utils/type";
  * @class This element is used to provide a constructor for an ellipse. An ellipse is given by two points (the foci) and a third point on the ellipse or
  * the length of the major axis.
  * @pseudo
- * @description
  * @name Ellipse
  * @augments Conic
  * @constructor
@@ -327,7 +326,6 @@ JXG.createEllipse = function (board, parents, attributes) {
  * @class This element is used to provide a constructor for an hyperbola. An hyperbola is given by two points (the foci) and a third point on the hyperbola or
  * the length of the major axis.
  * @pseudo
- * @description
  * @name Hyperbola
  * @augments Conic
  * @constructor
@@ -546,11 +544,11 @@ JXG.createHyperbola = function (board, parents, attributes) {
 /**
  * @class This element is used to provide a constructor for a parabola. A parabola is given by one point (the focus) and a line (the directrix).
  * @pseudo
- * @description
  * @name Parabola
  * @augments Conic
  * @constructor
- * @type JXG.Curve
+ * @type Object
+ * @description JXG.Curve
  * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
  * @param {JXG.Point,array_JXG.Line} point,line Parent elements are a point and a line or a pair of coordinates.
  * Optional parameters three and four are numbers which define the curve length (e.g. start/end). Default values are -pi and pi.
@@ -769,7 +767,6 @@ JXG.createParabola = function (board, parents, attributes) {
  *     board.create('conic', [A, C, F, B/2, D/2, E/2]);
  * </pre>
  * @pseudo
- * @description
  * @name Conic
  * @augments JXG.Curve
  * @constructor

@@ -1265,7 +1265,7 @@ JXG.extend(
          * @param {Object} finger1 Actual and previous position of finger 1
          * @param {Boolean} scalable Flag if element may be scaled
          * @param {Boolean} rotatable Flag if element may be rotated
-         * @returns
+         * @returns {Array}
          */
         getTwoFingerTransform(finger1, finger2, scalable, rotatable) {
             var crd,

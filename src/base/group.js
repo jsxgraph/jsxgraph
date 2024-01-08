@@ -336,9 +336,9 @@ JXG.extend(
 
         /**
          * @private
-         * Determine what the dragging of a group element should do:
-         * rotation, translation, scaling or nothing.
-         */
+        */
+        //  Determine what the dragging of a group element should do:
+        //  rotation, translation, scaling or nothing.
         _update_find_drag_type: function () {
             var el,
                 obj,
@@ -400,9 +400,9 @@ JXG.extend(
 
         /**
          * @private
-         * Determine the Euclidean coordinates of the centroid of the group.
          * @returns {Array} array of length two,
-         */
+        */
+        // Determine the Euclidean coordinates of the centroid of the group.
         _update_centroid_center: function () {
             var center, len, el;
 
@@ -425,8 +425,8 @@ JXG.extend(
 
         /**
          * @private
-         * Apply the transformation to all elements of the group
-         */
+        */
+        // Apply the transformation to all elements of the group
         _update_apply_transformation: function (drag, t) {
             var el, obj;
 
@@ -736,7 +736,6 @@ JXG.extend(
  *
  *
  * @pseudo
- * @description
  * @name Group
  * @augments JXG.Group
  * @constructor

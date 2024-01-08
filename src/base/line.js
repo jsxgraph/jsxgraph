@@ -56,7 +56,7 @@ import Type from "../utils/type";
  * type {@link Line}, {@link Arrow}, or {@link Axis} instead.
  * @constructor
  * @augments JXG.GeometryElement
- * @param {String,JXG.Board} board The board the new line is drawn on.
+ * @param {String|JXG.Board} board The board the new line is drawn on.
  * @param {Point} p1 Startpoint of the line.
  * @param {Point} p2 Endpoint of the line.
  * @param {Object} attributes Javascript object containing attributes like name, id and colors.
@@ -953,7 +953,6 @@ JXG.extend(
  * @class This element is used to provide a constructor for a general line. A general line is given by two points. By setting additional properties
  * a line can be used as an arrow and/or axis.
  * @pseudo
- * @description
  * @name Line
  * @augments JXG.Line
  * @constructor
@@ -1291,7 +1290,6 @@ JXG.registerElement("line", JXG.createLine);
  * and {@link Line#straightLast} properties set to false. If there is a third variable then the
  * segment has a fixed length (which may be a function, too).
  * @pseudo
- * @description
  * @name Segment
  * @augments JXG.Line
  * @constructor
@@ -1401,7 +1399,6 @@ JXG.registerElement("segment", JXG.createSegment);
  * {@link Line} with {@link Line#straightFirst}
  * and {@link Line#straightLast} properties set to false and {@link Line#lastArrow} set to true.
  * @pseudo
- * @description
  * @name Arrow
  * @augments JXG.Line
  * @constructor
@@ -1445,7 +1442,6 @@ JXG.registerElement("arrow", JXG.createArrow);
  * @class This element is used to provide a constructor for an axis. It's strictly spoken just a wrapper for element {@link Line} with {@link Line#straightFirst}
  * and {@link Line#straightLast} properties set to true. Additionally {@link Line#lastArrow} is set to true and default {@link Ticks} will be created.
  * @pseudo
- * @description
  * @name Axis
  * @augments JXG.Line
  * @constructor
@@ -1529,7 +1525,6 @@ JXG.registerElement("axis", JXG.createAxis);
  * @class With the element tangent the slope of a line, circle, or curve in a certain point can be visualized. A tangent is always constructed
  * by a glider on a line, circle, or curve and describes the tangent in the glider point on that line, circle, or curve.
  * @pseudo
- * @description
  * @name Tangent
  * @augments JXG.Line
  * @constructor
@@ -1967,7 +1962,6 @@ JXG.createTangent = function (board, parents, attributes) {
  * The radical axis passes through the intersection points when the circles intersect.
  * When a circle about the midpoint of circle centers, passing through the circle centers, intersects the circles, the polar lines pass through those intersection points.
  * @pseudo
- * @description
  * @name RadicalAxis
  * @augments JXG.Line
  * @constructor

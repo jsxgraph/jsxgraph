@@ -357,7 +357,7 @@ JXG.extend(
          * Applies a transformation once to a GeometryElement or an array of elements.
          * If it is a free point, then it can be dragged around later
          * and will overwrite the transformed coordinates.
-         * @param {JXG.Point,Array} p
+         * @param {JXG.Point|Array} p
          */
         applyOnce: function (p) {
             var c, len, i;
@@ -379,7 +379,7 @@ JXG.extend(
          * Binds a transformation to a GeometryElement or an array of elements. In every update of the
          * GeometryElement(s), the transformation is executed. That means, in order to immediately
          * apply the transformation, a call of board.update() has to follow.
-         * @param  {Array,JXG.Object} p JXG.Object or array of JXG.Object to
+         * @param  {Array|JXG.Object} p JXG.Object or array of JXG.Object to
          *                            which the transformation is bound to.
          */
         bindTo: function (p) {
@@ -483,7 +483,7 @@ JXG.extend(
  * <p>
  * Internally, a transformation is applied to an element by multiplying the 3x3 matrix from the left to
  * the homogeneous coordinates of the element. JSXGraph represents homogeneous coordinates in the order
- * (z, x, y). The matrix has the form 
+ * (z, x, y). The matrix has the form
  * <pre>
  * ( a  b  c )   ( z )
  * ( d  e  f ) * ( x )
@@ -493,13 +493,13 @@ JXG.extend(
  * In this case, finite points will stay finite. This is not the case for general projective coordinates.
  * <p>
  * Transformations acting on texts and images are considered to be affine, i.e. b and c are ignored.
- * 
+ *
  * @name Transformation
  * @augments JXG.Transformation
  * @constructor
  * @type JXG.Transformation
  * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
- * @param {numbers,functions} parameters The parameters depend on the transformation type, supplied as attribute 'type'.
+ * @param {numbers|functions} parameters The parameters depend on the transformation type, supplied as attribute 'type'.
  * Possible transformation types are
  * <ul><li> 'translate'
  * <li> 'scale'
@@ -764,17 +764,17 @@ JXG.extend(
      * var p0 = board.create('point', [0, 0], {name: 'p_0'});
      * var p1 = board.create('point', [3, 0], {name: 'p_1'});
      * var txt = board.create('text',[0.5, 0, 'Hello World'], {display:'html'});
-     * 
+     *
      * // If p_0 is dragged, translate p_1 and text accordingly
      * var tOff = board.create('transform', [() => p0.X(), () => p0.Y()], {type:'translate'});
      * tOff.bindTo(txt);
      * tOff.bindTo(p1);
-     * 
+     *
      * // Rotate text around p_0 by dragging point p_1
      * var tRot = board.create('transform', [
      *     () => Math.atan2(p1.Y() - p0.Y(), p1.X() - p0.X()), p0], {type:'rotate'});
      * tRot.bindTo(txt);
-     * 
+     *
      * // Scale text by dragging point "p_1"
      * // We do this by
      * // - moving text by -p_0 (inverse of transformation tOff),
@@ -790,7 +790,7 @@ JXG.extend(
      *         () => p1.Dist(p0) / 3
      * ], {type:'scale'});
      * tOffInv.bindTo(txt); tScale.bindTo(txt); tOff.bindTo(txt);
-     * 
+     *
      * </pre><div id="JXG50d6d546-3b91-41dd-8c0f-3eaa6cff7e66" class="jxgbox" style="width: 300px; height: 300px;"></div>
      * <script type="text/javascript">
      *     (function() {
@@ -799,17 +799,17 @@ JXG.extend(
      *     var p0 = board.create('point', [0, 0], {name: 'p_0'});
      *     var p1 = board.create('point', [3, 0], {name: 'p_1'});
      *     var txt = board.create('text',[0.5, 0, 'Hello World'], {display:'html'});
-     *     
+     *
      *     // If p_0 is dragged, translate p_1 and text accordingly
      *     var tOff = board.create('transform', [() => p0.X(), () => p0.Y()], {type:'translate'});
      *     tOff.bindTo(txt);
      *     tOff.bindTo(p1);
-     *     
+     *
      *     // Rotate text around p_0 by dragging point p_1
      *     var tRot = board.create('transform', [
      *         () => Math.atan2(p1.Y() - p0.Y(), p1.X() - p0.X()), p0], {type:'rotate'});
      *     tRot.bindTo(txt);
-     *     
+     *
      *     // Scale text by dragging point "p_1"
      *     // We do this by
      *     // - moving text by -p_0 (inverse of transformation tOff),
@@ -825,11 +825,11 @@ JXG.extend(
      *             () => p1.Dist(p0) / 3
      *     ], {type:'scale'});
      *     tOffInv.bindTo(txt); tScale.bindTo(txt); tOff.bindTo(txt);
-     * 
+     *
      *     })();
-     * 
+     *
      * </script><pre>
-     * 
+     *
  */
 JXG.createTransform = function (board, parents, attributes) {
     return new JXG.Transformation(board, attributes.type, parents);
