@@ -1782,8 +1782,8 @@ JXG.Options = {
          * @name JXG.GeometryElement#isLabel
          * @default false
          * @private
-         * By default, an element is not a label. Do not change this.
-         */
+        */
+        // By default, an element is not a label. Do not change this.
         isLabel: false,
 
         /**
@@ -2043,7 +2043,7 @@ JXG.Options = {
         /**
          * Controls if an element can get the focus with the tab key.
          * tabindex corresponds to the HTML attribute of the same name.
-         * See <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/tabindex">descriptiona at MDN</a>.
+         * See <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/tabindex">description at MDN</a>.
          * The additional value "null" completely disables focus of an element.
          * The value will be ignored if keyboard control of the board is not enabled or
          * the element is fixed or not visible.
@@ -2207,48 +2207,6 @@ JXG.Options = {
          * @see JXG.Board#viewport
          */
         viewport: 'inherit',
-
-        /**
-         * If draft.draft: true the element will be drawn in grey scale colors (as default)
-         * to visualize that it's only a draft.
-         *
-         * @name JXG.GeometryElement#draft
-         * @type Object
-         * @default {@link JXG.Options.elements.draft#draft}
-         */
-        draft: {
-            draft: false,
-            strokeColor: '#565656',
-            fillColor: '#565656',
-            strokeOpacity: 0.8,
-            fillOpacity: 0.8,
-            strokeWidth: 1
-        },
-
-        /**
-         * @name JXG.GeometryElement#isLabel
-         * @default false
-         * @private
-        */
-        // By default, an element is not a label. Do not change this.
-        isLabel: false,
-
-        /**
-         * Controls if an element can get the focus with the tab key.
-         * tabindex corresponds to the HTML attribute of the same name.
-         * See <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/tabindex">descriptiona at MDN</a>.
-         * The additional value "null" completely disables focus of an element.
-         * The value will be ignored if keyboard control of the board is not enabled or
-         * the element is fixed or not visible.
-         *
-         * @name JXG.GeometryElement#tabindex
-         * @type Number
-         * @default 0
-         * @see JXG.Board#keyboard
-         * @see JXG.GeometryElement#fixed
-         * @see JXG.GeometryElement#visible
-         */
-        tabindex: 0,
 
         /**
          * If true, the dash pattern is multiplied by strokeWidth / 2.
@@ -4232,7 +4190,7 @@ JXG.Options = {
          * Recommended arrow head type is 7.
          *
          * @name Curve#firstArrow
-         * @type Boolean / Object
+         * @type Boolean | Object
          * @default false
          * @see Line#firstArrow for options
          */
@@ -4262,7 +4220,7 @@ JXG.Options = {
          *
          * @name Curve#lastArrow
          * @see Line#lastArrow for options
-         * @type Boolean / Object
+         * @type Boolean | Object
          * @default false
          */
         lastArrow: false,
@@ -4346,69 +4304,7 @@ JXG.Options = {
          * @type Number
          * @default 13
          */
-        recursionDepthLow: 15,
-
-        /**
-         * If true use the algorithm by Gillam and Hohenwarter, which was default until version 0.98.
-         *
-         * @name Curve#doAdvancedPlotOld
-         * @see Curve#doAdvancedPlot
-         * @type Boolean
-         * @default false
-         * @deprecated
-         */
-        doAdvancedPlotOld: false,   // v1
-
-        /**
-         * Select the version of the plot algorithm.
-         * <ul>
-         * <li> Version 1 is very outdated
-         * <li> Version 2 is the default version in JSXGraph v0.99.*, v1.0, and v1.1, v1.2.0
-         * <li> Version 3 is an internal version that was never published in  a stable version.
-         * <li> Version 4 is available since JSXGraph v1.2.0
-         * </ul>
-         * Version 4 plots correctly logarithms if the function term is supplied as string (i.e. as JessieCode)
-         *
-         * @example
-         *   var c = board.create('functiongraph', ["log(x)"]);
-         *
-         * @name Curve#plotVersion
-         * @type Number
-         * @default 2
-         */
-        plotVersion: 2,
-
-        /**
-         * Attributes for curve label.
-         *
-         * @type Label
-         * @name Curve#label
-         */
-        label: {
-            position: 'lft'
-        },
-
-        /**
-         * Configure arrow head at the start position for curve.
-         * Recommended arrow head type is 7.
-         *
-         * @name Curve#firstArrow
-         * @type Boolean | Object
-         * @default false
-         * @see Line#firstArrow for options
-         */
-        firstArrow: false,
-
-        /**
-         * Configure arrow head at the end position for curve.
-         * Recommended arrow head type is 7.
-         *
-         * @name Curve#lastArrow
-         * @see Line#lastArrow for options
-         * @type Boolean | Object
-         * @default false
-         */
-        lastArrow: false
+        recursionDepthLow: 15
 
         /**#@-*/
     },
