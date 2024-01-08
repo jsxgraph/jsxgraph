@@ -1271,8 +1271,8 @@ JXG.extend(
                 // It may not be sufficient to remove the point from
                 // the list of childElement. For complex dependencies
                 // one may have to go to the list of ancestor and descendants.  A.W.
-                // Yes indeed, see #51 on github bugtracker
-                //  delete this.slideObject.childElements[this.id];
+                // Yes indeed, see #51 on github bug tracker
+                //   delete this.slideObject.childElements[this.id];
                 this.slideObject.removeChild(this);
 
                 if (this.slideObjects.length === 0) {
@@ -1361,6 +1361,7 @@ JXG.extend(
 
             // A free point does not depend on anything. Remove all ancestors.
             this.ancestors = {}; // only remove the reference
+            this.parents = [];
 
             // Completely remove all slideObjects of the element
             this.slideObject = null;
