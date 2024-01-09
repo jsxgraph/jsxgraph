@@ -55,8 +55,8 @@ import Quadtree from "./bqdt";
  * @param {Object} config Configuration object. Default:
  * <pre>
  *  {
- *      resolution_out: 5,    // Distance between vertical lines to search for components
- *      resolution_in: 5,     // Distance between vertical lines to search for components
+ *      resolution_out: 5,    // Horizontal resolution: distance between vertical lines to search for components
+ *      resolution_in: 5,     // Vertical resolution to search for components
  *      max_steps: 1024,      // Max number of points in one call of tracing
  *      alpha_0: 0.05,        // Angle between two successive tangents: smoothness of curve
  *
@@ -178,10 +178,10 @@ Mat.ImplicitPlot = function (bbox, config, f, dfx, dfy) {
         kappa_0: 0.2,         // Inverse of planned number of Newton steps
         delta_0: 0.05,        // Distance of predictor point to curve
 
-        h_initial: 0.1,       // Initial stepwidth
+        h_initial: 0.1,       // Initial step width
         h_critical: 0.001,    // If h is below this threshold we bail out
-        h_max: 1,             // Maximal value of h (user units)
-        loop_dist: 0.09,      // Allowed distance (multiplied by actual stepwidth) to detect loop
+        h_max: 1,             // Maximum value of h (user units)
+        loop_dist: 0.09,      // Allowed distance (multiplied by actual step width) to detect loop
         loop_dir: 0.99,       // Should be > 0.95
         loop_detection: true, // Use Gosper's loop detector
         unitX: 10,            // unitX of board

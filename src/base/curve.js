@@ -234,28 +234,18 @@ JXG.extend(
          * @returns {Boolean} True if (x,y) is near the curve, False otherwise.
          */
         hasPoint: function (x, y, start) {
-            var t,
-                checkPoint,
-                len,
-                invMat,
-                c,
-                i,
-                tX,
-                tY,
-                isIn,
+            var t, c, i, tX, tY,
+                checkPoint, len, invMat, isIn,
                 res = [],
                 points,
                 qdt,
                 steps = Type.evaluate(this.visProp.numberpointslow),
                 d = (this.maxX() - this.minX()) / steps,
-                prec,
-                type,
+                prec, type,
                 dist = Infinity,
-                ux2,
-                uy2,
+                ux2, uy2,
                 ev_ct,
-                mi,
-                ma,
+                mi, ma,
                 suspendUpdate = true;
 
             if (Type.isObject(Type.evaluate(this.visProp.precision))) {
@@ -1900,7 +1890,7 @@ JXG.createCardinalSpline = function (board, parents, attributes) {
     p = parents[0];
     q = [];
 
-    // given as [x[], y[]]
+    // Given as [x[], y[]]
     if (
         !attributes.isarrayofcoordinates &&
         p.length === 2 &&
@@ -2454,14 +2444,7 @@ JXG.createTracecurve = function (board, parents, attributes) {
      * @ignore
      */
     c.updateDataArray = function () {
-        var i,
-            step,
-            t,
-            el,
-            pEl,
-            x,
-            y,
-            from,
+        var i, step, t, el, pEl, x, y, from,
             savetrace,
             le = attr.numberpoints,
             savePos = glider.position,
@@ -2866,7 +2849,7 @@ JXG.registerElement("curveunion", JXG.createCurveUnion);
  * is controlled by the attribute "dir".
  * @pseudo
  * @name Boxplot
- * @param {Array} quantiles Array conatining at least five quantiles. The elements can be of type number, function or string.
+ * @param {Array} quantiles Array containing at least five quantiles. The elements can be of type number, function or string.
  * @param {Number|Function} axis Axis position of the box plot
  * @param {Number|Function} width Width of the rectangle part of the box plot. The width of the first and 4th quantile
  * is relative to this width and can be controlled by the attribute "smallWidth".
@@ -2971,7 +2954,7 @@ JXG.createBoxPlot = function (board, parents, attributes) {
     if (parents[0].length < 5) {
         throw new Error(
             "JSXGraph: Can't create box plot with given parent[0]'" +
-                "\nparent[0] has to conatin at least 5 quantiles."
+                "\nparent[0] has to contain at least 5 quantiles."
         );
     }
     box = board.create("curve", [[], []], attr);
@@ -3035,6 +3018,144 @@ JXG.createBoxPlot = function (board, parents, attributes) {
 };
 
 JXG.registerElement("boxplot", JXG.createBoxPlot);
+
+/**
+ *
+ * @class 
+ * From <a href="https://en.wikipedia.org/wiki/Implicit_curve">Wikipedia</a>:
+ * "An implicit curve is a plane curve defined by an implicit equation
+ * relating two coordinate variables, commonly <i>x</i> and <i>y</i>.
+ * For example, the unit circle is defined by the implicit equation
+ * x<sup>2</sup> + y<sup>2</sup> = 1.
+ * In general, every implicit curve is defined by an equation of the form
+ * <i>f(x, y) = 0</i>
+ * for some function <i>f</i> of two variables."
+ * <p>
+ * The partial derivatives for <i>f</i> are optional. If not given, numerical
+ * derivatives are used instead. This is good enough for most practical use cases.
+ * But if supplied, both partial derivatives must be supplied.
+ * <p>
+ * The most effective attributes to tinker with if the implicit curve algorithm fails are
+ * {@link ImplicitCurve#resolution_outer},
+ * {@link ImplicitCurve#resolution_inner},
+ * {@link ImplicitCurve#alpha_0},
+ * {@link ImplicitCurve#h_initial},
+ * {@link ImplicitCurve#h_max}, and
+ * {@link ImplicitCurve#qdt_box}.
+ *
+ * @pseudo
+ * @name ImplicitCurve
+ * @param {Function} f Function of two variables for the left side of the equation <i>f(x,y)=0</i>.
+ * @param {Function} [dfx=null] Optional partial derivative in respect to the first variable
+ * @param {Function} [dfy=null] Optional partial derivative in respect to the second variable
+ * @augments JXG.Curve
+ * @constructor
+ * @type JXG.Curve
+ */
+JXG.createImplicitCurve = function(board, parents, attributes) {
+    var c, attr;
+    if (parents.length !== 1 && parents.length !== 3) {
+        throw new Error(
+            "JSXGraph: Can't create curve implicitCurve with given parent'" +
+                "\nPossible parent types: [f] or [f, dfx, dfy]" +
+                "\nwith functions f, dfx, dfy"
+        );
+    }
+
+    attr = Type.copyAttributes(attributes, board.options, "implicitcurve");
+    c = board.create("curve", [[], []], attr);
+
+    /**
+     * Function of two variables for the left side of the equation <i>f(x,y)=0</i>.
+     *
+     * @name f
+     * @memberOf ImplicitCurve.prototype
+     * @function
+     * @returns {Number}
+     */
+    c.f = parents[0];
+
+    /**
+     * Partial derivative in the first variable of
+     * the left side of the equation <i>f(x,y)=0</i>.
+     * If null, then numerical derivative is used.
+     *
+     * @name dfx
+     * @memberOf ImplicitCurve.prototype
+     * @function
+     * @returns {Number}
+     */
+    c.dfx = parents[1];
+
+    /**
+     * Partial derivative in the second variable of
+     * the left side of the equation <i>f(x,y)=0</i>.
+     * If null, then numerical derivative is used.
+     *
+     * @name dfy
+     * @memberOf ImplicitCurve.prototype
+     * @function
+     * @returns {Number}
+     */
+    c.dfy = parents[2];
+
+    /**
+     * @class
+     * @ignore
+     */
+    c.updateDataArray = function () {
+        var bbox = this.board.getBoundingBox(),
+            ip, cfg,
+            ret = [],
+            mgn = Type.evaluate(this.visProp.margin);
+
+        bbox[0] -= mgn;
+        bbox[1] += mgn;
+        bbox[2] += mgn;
+        bbox[3] -= mgn;
+
+        cfg = {
+            resolution_out: Math.max(0.01, Type.evaluate(this.visProp.resolution_outer)),
+            resolution_in: Math.max(0.01, Type.evaluate(this.visProp.resolution_inner)),
+            max_steps: Type.evaluate(this.visProp.max_steps),
+            alpha_0: Type.evaluate(this.visProp.alpha_0),
+            tol_u0: Type.evaluate(this.visProp.tol_u0),
+            tol_newton: Type.evaluate(this.visProp.tol_newton),
+            tol_cusp: Type.evaluate(this.visProp.tol_cusp),
+            tol_progress: Type.evaluate(this.visProp.tol_progress),
+            qdt_box: Type.evaluate(this.visProp.qdt_box),
+            kappa_0: Type.evaluate(this.visProp.kappa_0),
+            delta_0: Type.evaluate(this.visProp.delta_0),
+            h_initial: Type.evaluate(this.visProp.h_initial),
+            h_critical: Type.evaluate(this.visProp.h_critical),
+            h_max: Type.evaluate(this.visProp.h_max),
+            loop_dist: Type.evaluate(this.visProp.loop_dist),
+            loop_dir: Type.evaluate(this.visProp.loop_dir),
+            loop_detection: Type.evaluate(this.visProp.loop_detection),
+            unitX: this.board.unitX,
+            unitY: this.board.unitY
+        };
+        this.dataX = [];
+        this.dataY = [];
+
+        console.time("implicit plot");
+        ip = new JXG.Math.ImplicitPlot(bbox, cfg, this.f, this.dfx, this.dfy);
+        this.qdt = ip.qdt;
+
+        ret = ip.plot();
+        console.timeEnd("implicit plot");
+
+        this.dataX = ret[0];
+        this.dataY = ret[1];
+    };
+
+    c.elType = 'implicitcurve';
+
+    return c;
+};
+
+JXG.registerElement("implicitcurve", JXG.createImplicitCurve);
+
 
 export default JXG.Curve;
 

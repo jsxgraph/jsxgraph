@@ -1377,7 +1377,7 @@ JXG.extend(
 
         /*
          * Moves, rotates and scales a circle with two fingers.
-         * @param {Array} tar Array conatining touch event objects: {JXG.Board#touches.targets}.
+         * @param {Array} tar Array containing touch event objects: {JXG.Board#touches.targets}.
          * @param {object} drag The object that is dragged:
          * @param {Number} id pointerId of the event. In case of old touch event this is emulated.
          */

@@ -4520,6 +4520,185 @@ JXG.Options = {
         /**#@-*/
     },
 
+    /* special implicitcurve options */
+    implicitcurve: {
+        /**#@+
+         * @visprop
+         */
+
+        /**
+         * Defines the margin (in user coordinates) around the JSXGraph board in which the
+         * implicit curve is plotted.
+         *
+         * @name ImplicitCurve#margin
+         * @type {Number|Function}
+         * @default 1
+         */
+        margin: 1,
+
+        /**
+         * Horizontal resolution: distance (in pixel) between vertical lines to search for components of the implicit curve.
+         * A small number increases the running time. For large number components may be missed.
+         * Minimum value is 0.01.
+         *
+         * @name ImplicitCurve#resolution_outer
+         * @type {Number|Function}
+         * @default 5
+         */
+        resolution_outer: 5,
+
+        /**
+         * Vertical resolution (in pixel) to search for components of the implicit curve.
+         * A small number increases the running time. For large number components may be missed.
+         * Minimum value is 0.01.
+         *
+         * @name ImplicitCurve#resolution_inner
+         * @type {Number|Function}
+         * @default 5
+         */
+        resolution_inner: 5,
+
+        /**
+         * Maximum iterations for one component of the implicit curve.
+         *
+         * @name ImplicitCurve#max_steps
+         * @type {Number|Function}
+         * @default 1024
+         */
+        max_steps: 1024,
+
+        /**
+         * Angle &alpha;<sub>0</sub> between two successive tangents: determines the smoothness of
+         * the curve.
+         *
+         * @name ImplicitCurve#alpha_0
+         * @type {Number|Function}
+         * @default 0.05
+         */
+        alpha_0: 0.05,
+
+        /**
+         * Tolerance to find starting points for the tracing phase of a component.
+         *
+         * @name ImplicitCurve#tol_0
+         * @type {Number|Function}
+         * @default JXG.Math.eps
+         */
+        tol_u0: Mat.eps,
+
+        /**
+         * Tolerance for the Newton steps.
+         *
+         * @name ImplicitCurve#tol_newton
+         * @type {Number|Function}
+         * @default 1.0e-7
+         */
+        tol_newton: 1.0e-7,
+
+        /**
+         * Tolerance for cusp / bifurcation detection.
+         *
+         * @name ImplicitCurve#tol_newton
+         * @type {Number|Function}
+         * @default 0.05
+         */
+        tol_cusp: 0.05,
+
+        /**
+         * If two points are closer than this value, we bail out of the tracing phase for that
+         * component.
+         *
+         * @name ImplicitCurve#tol_progress
+         * @type {Number|Function}
+         * @default 0.0001
+         */
+        tol_progress: 0.0001,
+
+        /**
+         * Half of the box size (in user units) to search for existing line segments in the quadtree.
+         *
+         * @name ImplicitCurve#qdt_box
+         * @type {Number|Function}
+         * @default 0.2
+         */
+        qdt_box: 0.2,
+
+        /**
+         * Inverse of desired number of Newton steps.
+         *
+         * @name ImplicitCurve#kappa_0
+         * @type {Number|Function}
+         * @default 0.2
+         */
+        kappa_0: 0.2,
+
+        /**
+         * Allowed distance (in user units) of predictor point to curve.
+         *
+         * @name ImplicitCurve#delta_0
+         * @type {Number|Function}
+         * @default 0.05
+         */
+        delta_0: 0.05,
+
+        /**
+         * Initial step width (in user units).
+         *
+         * @name ImplicitCurve#h_initial
+         * @type {Number|Function}
+         * @default 0.1
+         */
+        h_initial: 0.1,
+
+        /**
+         * If h is below this threshold (in user units), we bail out
+         * of the tracing phase of that component.
+         *
+         * @name ImplicitCurve#h_initial
+         * @type {Number|Function}
+         * @default 0.001
+         */
+        h_critical: 0.001,
+
+        /**
+         * Maximum step width (in user units).
+         *
+         * @name ImplicitCurve#h_max
+         * @type {Number|Function}
+         * @default 1
+         */
+        h_max: 1,
+
+        /**
+         * Allowed distance (in user units multiplied by actual step width) to detect loop.
+         *
+         * @name ImplicitCurve#loop_dist
+         * @type {Number|Function}
+         * @default 0.09
+         */
+        loop_dist: 0.09,
+
+        /**
+         * Minimum acos of angle to detect loop.
+         *
+         * @name ImplicitCurve#loop_dir
+         * @type {Number|Function}
+         * @default 0.99
+         */
+        loop_dir: 0.99,
+
+        /**
+         * Use Gosper's loop detector.
+         *
+         * @name ImplicitCurve#loop_dir
+         * @type {Boolean|Function}
+         * @default true
+         */
+        loop_detection: true
+
+        /**#@-*/
+    },
+
     /* special options for incircle of 3 points */
     incircle: {
         /**#@+
