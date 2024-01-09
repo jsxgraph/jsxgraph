@@ -4969,7 +4969,7 @@ JXG.Options = {
          * Configure the arrow head at the position of its first point or the corresponding
          * intersection with the canvas border
          *
-         * In case firstArrow is an object it has the sub-attributes:
+         * The attribute firstArrow can be a Boolean or an object with the following sub-attributes:
          * <pre>
          * {
          *      type: 1, // possible values are 1, 2, ..., 7. Default value is 1.
@@ -4980,6 +4980,8 @@ JXG.Options = {
          * }
          * </pre>
          * type=7 is the default for curves if firstArrow: true
+         * <p>
+         * An arrow head can be turned off with line.setAttribute({firstArrow: false}).
          *
          * @example
          *     board.options.line.lastArrow = false;
@@ -5031,7 +5033,7 @@ JXG.Options = {
          * Configure the arrow head at the position of its second point or the corresponding
          * intersection with the canvas border.
          *
-         * In case lastArrow is an object it has the sub-attributes:
+         * The attribute lastArrow can be a Boolean or an object with the following sub-attributes:
          * <pre>
          * {
          *      type: 1, // possible values are 1, 2, ..., 7. Default value is 1.
@@ -5042,6 +5044,8 @@ JXG.Options = {
          * }
          * </pre>
          * type=7 is the default for curves if lastArrow: true
+         * <p>
+         * An arrow head can be turned off with line.setAttribute({lastArrow: false}).
          *
          * @example
          *     var p1 = board.create('point', [-5, 2], {size:1});

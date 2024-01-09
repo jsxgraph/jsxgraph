@@ -1033,6 +1033,13 @@ JXG.extend(
 
                         obj1[i] = this.merge(obj1[i], o);
                     } else {
+                        if (typeof obj1 === 'boolean') {
+                            // This is necessary in the following scenario:
+                            //   lastArrow == false
+                            // and call of
+                            //   setAttribute({lastArrow: {type: 7}})
+                            obj1 = {};
+                        }
                         obj1[i] = o;
                     }
                 }
