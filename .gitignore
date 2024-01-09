@@ -15,6 +15,7 @@ distrib/jsxgraphsrc.js*
 distrib/jsxgraphcore.mjs*
 distrib/jsxgraphsrc.mjs*
 distrib/jsxgraph.zip
+JSXCompressor/jsxcompressor.min.js
 build/bin/*
 src/require.js
 node_modules
