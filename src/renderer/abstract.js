@@ -2197,10 +2197,10 @@ JXG.extend(
                         e.cancelBubble = true;
                     }
                 },
-                createButton = function (label, handler, id) {
+                createButton = function (label, handler, board_id, type) {
                     var button;
 
-                    id = id || "";
+                    board_id = board_id || "";
 
                     button = doc.createElement("span");
                     button.innerHTML = label; // button.appendChild(doc.createTextNode(label));
@@ -2212,10 +2212,11 @@ JXG.extend(
                     if (button.classList !== undefined) {
                         // classList not available in IE 9
                         button.classList.add("JXG_navigation_button");
+                        button.classList.add("JXG_navigation_button_" + type);
                     }
                     // button.setAttribute('tabindex', 0);
 
-                    button.setAttribute("id", id);
+                    button.setAttribute("id", board_id + '_navigation_button_' + type);
                     node.appendChild(button);
 
                     Env.addEvent(
@@ -2267,7 +2268,7 @@ JXG.extend(
                         function () {
                             board.toFullscreen(board.attr.fullscreen.id);
                         },
-                        board.container + "_navigation_fullscreen"
+                        board.container, "fullscreen"
                     );
                 }
 
@@ -2279,7 +2280,7 @@ JXG.extend(
                                 board.renderer.screenshot(board, "", false);
                             }, 330);
                         },
-                        board.container + "_navigation_screenshot"
+                        board.container, "screenshot"
                     );
                 }
 
@@ -2292,51 +2293,30 @@ JXG.extend(
                         function () {
                             board.reload();
                         },
-                        board.container + "_navigation_reload"
+                        board.container, "reload"
                     );
                 }
 
                 if (board.attr.showcleartraces) {
                     // clear traces symbol (otimes): \u27F2
-                    createButton(
-                        "\u2297",
+                    createButton("\u2297",
                         function () {
                             board.clearTraces();
                         },
-                        board.container + "_navigation_cleartraces"
+                        board.container, "cleartraces"
                     );
                 }
 
                 if (board.attr.shownavigation) {
                     if (board.attr.showzoom) {
-                        createButton(
-                            "\u2013",
-                            board.zoomOut,
-                            board.container + "_navigation_out"
-                        );
-                        createButton("o", board.zoom100, board.container + "_navigation_100");
-                        createButton("+", board.zoomIn, board.container + "_navigation_in");
+                        createButton("\u2013", board.zoomOut, board.container, "out");
+                        createButton("o", board.zoom100, board.container, "100");
+                        createButton("+", board.zoomIn, board.container, "in");
                     }
-                    createButton(
-                        "\u2190",
-                        board.clickLeftArrow,
-                        board.container + "_navigation_left"
-                    );
-                    createButton(
-                        "\u2193",
-                        board.clickUpArrow,
-                        board.container + "_navigation_down"
-                    ); // Down arrow
-                    createButton(
-                        "\u2191",
-                        board.clickDownArrow,
-                        board.container + "_navigation_up"
-                    ); // Up arrow
-                    createButton(
-                        "\u2192",
-                        board.clickRightArrow,
-                        board.container + "_navigation_right"
-                    );
+                    createButton("\u2190", board.clickLeftArrow, board.container, "left");
+                    createButton("\u2193", board.clickUpArrow, board.container, "down"); // Down arrow
+                    createButton("\u2191", board.clickDownArrow, board.container, "up"); // Up arrow
+                    createButton("\u2192", board.clickRightArrow, board.container, "right");
                 }
             }
         },
