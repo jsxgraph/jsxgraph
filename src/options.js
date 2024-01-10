@@ -4631,7 +4631,7 @@ JXG.Options = {
         /**
          * Tolerance for cusp / bifurcation detection.
          *
-         * @name ImplicitCurve#tol_newton
+         * @name ImplicitCurve#tol_cusp
          * @type {Number|Function}
          * @default 0.05
          */
@@ -4687,7 +4687,7 @@ JXG.Options = {
          * If h is below this threshold (in user units), we bail out
          * of the tracing phase of that component.
          *
-         * @name ImplicitCurve#h_initial
+         * @name ImplicitCurve#h_critical
          * @type {Number|Function}
          * @default 0.001
          */
@@ -4723,7 +4723,7 @@ JXG.Options = {
         /**
          * Use Gosper's loop detector.
          *
-         * @name ImplicitCurve#loop_dir
+         * @name ImplicitCurve#loop_detection
          * @type {Boolean|Function}
          * @default true
          */
