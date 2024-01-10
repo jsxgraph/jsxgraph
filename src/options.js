@@ -1371,11 +1371,10 @@ JXG.Options = {
      *  Generic options used by {@link JXG.GeometryElement}
      */
     elements: {
-        // the following tag is a meta tag: http://code.google.com/p/jsdoc-toolkit/wiki/MetaTags
-
         /**#@+
          * @visprop
          */
+        // This is a meta tag: http://code.google.com/p/jsdoc-toolkit/wiki/MetaTags
 
         /**
          * Determines the elements border-style.
@@ -1745,7 +1744,6 @@ JXG.Options = {
         gradientStartOffset: 0.0,
 
         /**
-         *
          * @type Boolean
          * @default true
          * @name JXG.GeometryElement#highlight
