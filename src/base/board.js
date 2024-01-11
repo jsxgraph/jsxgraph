@@ -1004,12 +1004,19 @@ JXG.extend(
             // Position of cursor using clientX/Y
             absPos = Env.getPosition(e, i, this.document);
 
-            /**
-             * In case there has been no down event before.
-             */
-            if (!Type.exists(this.cssTransMat)) {
-                this.updateCSSTransforms();
-            }
+            // Old:
+            // This seems to be obsolete anyhow:
+            // "In case there has been no down event before."
+            // if (!Type.exists(this.cssTransMat)) {
+            // this.updateCSSTransforms();
+            // }
+            // New:
+            // We have to update the CSS transform matrix all the time,
+            // since libraries like ZIMJS do not notify JSXGraph about a change.
+            // In particular, sending a resize event event to JSXGraph
+            // would be necessary.
+            this.updateCSSTransforms();
+
             // Position relative to the top left corner
             v = [1, absPos[0] - cPos[0], absPos[1] - cPos[1]];
             v = Mat.matVecMult(this.cssTransMat, v);
@@ -1280,7 +1287,7 @@ JXG.extend(
          * @param {Object} finger1 Actual and previous position of finger 1
          * @param {Boolean} scalable Flag if element may be scaled
          * @param {Boolean} rotatable Flag if element may be rotated
-         * @returns
+         * @returns {Array}
          */
         getTwoFingerTransform(finger1, finger2, scalable, rotatable) {
             var crd,
@@ -1392,7 +1399,7 @@ JXG.extend(
 
         /*
          * Moves, rotates and scales a circle with two fingers.
-         * @param {Array} tar Array conatining touch event objects: {JXG.Board#touches.targets}.
+         * @param {Array} tar Array containing touch event objects: {JXG.Board#touches.targets}.
          * @param {object} drag The object that is dragged:
          * @param {Number} id pointerId of the event. In case of old touch event this is emulated.
          */
@@ -2397,7 +2404,7 @@ JXG.extend(
             //    b. if an object is found, check the number of pointers. If appropriate, add the pointer.
             pos = this.getMousePosition(evt);
 
-            // selection
+            // Handle selection rectangle
             this._testForSelection(evt);
             if (this.selectingMode) {
                 this._startSelecting(pos);
@@ -3336,7 +3343,6 @@ JXG.extend(
                 this.mode = this.BOARD_MODE_NONE;
                 result = true;
             } else {
-                /** @ignore */
                 this.mouse = {
                     obj: null,
                     targets: [
@@ -3473,7 +3479,6 @@ JXG.extend(
             }
 
             // release dragged mouse object
-            /** @ignore */
             this.mouse = null;
         },
 
@@ -3604,7 +3609,7 @@ JXG.extend(
                     done = false;
                 }
             } else {
-                // Adapt dx, dy to snapToGrid and attractToGrid
+                // Adapt dx, dy to snapToGrid and attractToGrid.
                 // snapToGrid has priority.
                 if (Type.exists(el.visProp)) {
                     if (
@@ -3617,8 +3622,10 @@ JXG.extend(
                         res = el.getSnapSizes();
                         sX = res[0];
                         sY = res[1];
-                        dx = Math.max(sX, dx);
-                        dy = Math.max(sY, dy);
+                        // If snaptogrid is true,
+                        // we can only jump from grid point to grid point.
+                        dx = sX;
+                        dy = sY;
                     } else if (
                         Type.exists(el.visProp.attracttogrid) &&
                         el.visProp.attracttogrid &&
@@ -4845,29 +4852,24 @@ JXG.extend(
         },
 
         /**
-         * Removes object from board and renderer.
-         * <p>
-         * <b>Performance hints:</b> It is recommended to use the object's id.
-         * If many elements are removed, it is best to call <tt>board.suspendUpdate()</tt>
-         * before looping through the elements to be removed and call
-         * <tt>board.unsuspendUpdate()</tt> after the loop. Further, it is advisable to loop
-         * in reverse order, i.e. remove the object in reverse order of their creation time.
+         * Inner, recursive method of removeObject.
          *
          * @param {JXG.GeometryElement|Array} object The object to remove or array of objects to be removed.
          * The element(s) is/are given by name, id or a reference.
-         * @param {Boolean} saveMethod If true, the algorithm runs through all elements
-         * and tests if the element to be deleted is a child element. If yes, it will be
-         * removed from the list of child elements. If false (default), the element
+         * @param {Boolean} [saveMethod=false] If saveMethod=true, the algorithm runs through all elements
+         * and tests if the element to be deleted is a child element. If this is the case, it will be
+         * removed from the list of child elements. If saveMethod=false (default), the element
          * is removed from the lists of child elements of all its ancestors.
-         * This should be much faster.
+         * The latter should be much faster.
          * @returns {JXG.Board} Reference to the board
+         * @private
          */
-        removeObject: function (object, saveMethod) {
+        _removeObj: function (object, saveMethod) {
             var el, i;
 
             if (Type.isArray(object)) {
                 for (i = 0; i < object.length; i++) {
-                    this.removeObject(object[i]);
+                    this._removeObj(object[i], saveMethod);
                 }
 
                 return this;
@@ -4875,7 +4877,7 @@ JXG.extend(
 
             object = this.select(object);
 
-            // If the object which is about to be removed unknown or a string, do nothing.
+            // If the object which is about to be removed is unknown or a string, do nothing.
             // it is a string if a string was given and could not be resolved to an element.
             if (!Type.exists(object) || Type.isString(object)) {
                 return this;
@@ -4885,14 +4887,14 @@ JXG.extend(
                 // remove all children.
                 for (el in object.childElements) {
                     if (object.childElements.hasOwnProperty(el)) {
-                        object.childElements[el].board.removeObject(object.childElements[el]);
+                        object.childElements[el].board._removeObj(object.childElements[el]);
                     }
                 }
 
                 // Remove all children in elements like turtle
                 for (el in object.objects) {
                     if (object.objects.hasOwnProperty(el)) {
-                        object.objects[el].board.removeObject(object.objects[el]);
+                        object.objects[el].board._removeObj(object.objects[el]);
                     }
                 }
 
@@ -4956,8 +4958,40 @@ JXG.extend(
                 JXG.debug(object.id + ': Could not be removed: ' + e);
             }
 
-            this.update();
+            return this;
+        },
 
+        /**
+         * Removes object from board and renderer.
+         * <p>
+         * <b>Performance hints:</b> It is recommended to use the object's id.
+         * If many elements are removed, it is best to call <tt>board.suspendUpdate()</tt>
+         * before looping through the elements to be removed and call
+         * <tt>board.unsuspendUpdate()</tt> after the loop. Further, it is advisable to loop
+         * in reverse order, i.e. remove the object in reverse order of their creation time.
+         * @param {JXG.GeometryElement|Array} object The object to remove or array of objects to be removed.
+         * The element(s) is/are given by name, id or a reference.
+         * @param {Boolean} saveMethod If true, the algorithm runs through all elements
+         * and tests if the element to be deleted is a child element. If yes, it will be
+         * removed from the list of child elements. If false (default), the element
+         * is removed from the lists of child elements of all its ancestors.
+         * This should be much faster.
+         * @returns {JXG.Board} Reference to the board
+         */
+        removeObject: function (object, saveMethod) {
+            var i;
+
+            this.renderer.suspendRedraw(this);
+            if (Type.isArray(object)) {
+                for (i = 0; i < object.length; i++) {
+                    this._removeObj(object[i], saveMethod);
+                }
+            } else {
+                this._removeObj(object, saveMethod);
+            }
+            this.renderer.unsuspendRedraw();
+
+            this.update();
             return this;
         },
 
@@ -5420,7 +5454,7 @@ JXG.extend(
                 if (Type.exists(b) && b !== this) {
                     b.updateQuality = this.updateQuality;
                     b.prepareUpdate().updateElements().updateConditions();
-                    b.renderer.suspendRedraw();
+                    b.renderer.suspendRedraw(this);
                     b.updateRenderer();
                     b.renderer.unsuspendRedraw();
                     b.triggerEventHandlers(['update'], []);

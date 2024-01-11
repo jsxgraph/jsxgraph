@@ -41,6 +41,10 @@ import Env from "../utils/env";
 import Type from "../utils/type";
 
 var priv = {
+    /**
+     * @class
+     * @ignore
+     */
     CheckboxChangeEventHandler: function () {
         this._value = this.rendNodeCheckbox.checked;
         this.board.update();
@@ -55,9 +59,8 @@ var priv = {
  * <p>
  * The underlying HTML checkbox element can be accessed through the sub-object 'rendNodeCheck', e.g. to
  * add event listeners.
- * 
+ *
  * @pseudo
- * @description
  * @name Checkbox
  * @augments Text
  * @constructor
@@ -141,7 +144,7 @@ var priv = {
  *                 b1.setText('Texts are changed');
  *             }],
  *             {cssStyle: 'width:200px'});
- * 
+ *
  * </pre><div id="JXG31c6d070-354b-4f09-aab9-9aaa796f730c" class="jxgbox" style="width: 300px; height: 300px;"></div>
  * <script type="text/javascript">
  *     (function() {
@@ -156,11 +159,11 @@ var priv = {
  *                     b1.setText('Texts are changed');
  *                 }],
  *                 {cssStyle: 'width:200px'});
- * 
+ *
  *     })();
- * 
+ *
  * </script><pre>
- * 
+ *
  */
 JXG.createCheckbox = function (board, parents, attributes) {
     var t,
@@ -219,6 +222,10 @@ JXG.createCheckbox = function (board, parents, attributes) {
         return this._value;
     };
 
+     /**
+     * @class
+     * @ignore
+     */
     t.update = function () {
         if (this.needsUpdate) {
             JXG.Text.prototype.update.call(this);

@@ -182,6 +182,10 @@ JXG.createArc = function (board, parents, attributes) {
     el.useDirection = attr.usedirection;
 
     // documented in JXG.Curve
+    /**
+     * @class
+     * @ignore
+     */
     el.updateDataArray = function () {
         var ar,
             phi,

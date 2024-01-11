@@ -295,7 +295,8 @@ JXG.Options = {
          * Supply the document object. Defaults to window.document
          *
          * @name JXG.Board#document
-         * @type DOM object
+         * @type Object
+         * @description DOM object
          * @default false (meaning window.document)
          */
         document: false,
@@ -818,7 +819,8 @@ JXG.Options = {
          * board.addEventHandlers();
          *
          * @name JXG.Board#moveTarget
-         * @type HTML node or document
+         * @type Object
+         * @description HTML node or document
          * @default null
          *
          * @example
@@ -1085,6 +1087,10 @@ JXG.Options = {
 
         /**
          * Show a button which allows to clear all traces of a board.
+         * This button can be accessed by JavaScript or CSS with
+         * the ID <tt>"{board_id}_navigation_button_cleartraces"</tt> or by the CSS classes
+         * <tt>JXG_navigation_button"</tt> or
+         * <tt>JXG_navigation_button_cleartraces"</tt>.
          *
          * @name JXG.Board#showClearTraces
          * @type Boolean
@@ -1104,6 +1110,10 @@ JXG.Options = {
 
         /**
          * Show a button in the navigation bar to start fullscreen mode.
+         * This button can be accessed by JavaScript or CSS with
+         * the ID <tt>"{board_id}_navigation_button_fullscreen"</tt> or by the CSS classes
+         * <tt>JXG_navigation_button"</tt> or
+         * <tt>JXG_navigation_button_fullscreen"</tt>.
          *
          * @name JXG.Board#showFullscreen
          * @type Boolean
@@ -1129,6 +1139,17 @@ JXG.Options = {
 
         /**
          * Display of navigation arrows and zoom buttons in the navigation bar.
+         * <p>
+         * The navigation bar has the
+         * the ID <tt>"{board_id}_navigation"</tt> and the CSS class
+         * <tt>JXG_navigation"</tt>.
+         * The individual buttons can be accessed by JavaScript or CSS with
+         * the ID <tt>"{board_id}_navigation_button_{type}"</tt> or by the CSS classes
+         * <tt>JXG_navigation_button"</tt> or
+         * <tt>JXG_navigation_button_{type}"</tt>, where <tt>{type}</tt>
+         * is one of <tt>left</tt>, <tt>right</tt>, or <tt>up</tt>, <tt>down</tt>,
+         * <tt>in</tt>, <tt>100</tt>, or <tt>out</tt>,
+         * <tt>fullscreen</tt>, <tt>screenshot</tt>, <tt>cleartraces</tt>, <tt>reload</tt>.
          *
          * @name JXG.Board#showNavigation
          * @type Boolean
@@ -1140,6 +1161,10 @@ JXG.Options = {
         /**
          * Show a button in the navigation bar to force reload of a construction.
          * Works only with the JessieCode tag.
+         * This button can be accessed by JavaScript or CSS with
+         * the ID <tt>"{board_id}_navigation_button_reload"</tt> or by the CSS classes
+         * <tt>JXG_navigation_button"</tt> or
+         * <tt>JXG_navigation_button_reload"</tt>.
          *
          * @name JXG.Board#showReload
          * @type Boolean
@@ -1150,6 +1175,10 @@ JXG.Options = {
 
         /**
          * Show a button in the navigation bar to enable screenshots.
+         * This button can be accessed by JavaScript or CSS with
+         * the ID <tt>"{board_id}_navigation_button_screenshot"</tt> or by the CSS classes
+         * <tt>JXG_navigation_button"</tt> or
+         * <tt>JXG_navigation_button_screenshot"</tt>.
          *
          * @name JXG.Board#showScreenshot
          * @type Boolean
@@ -1161,6 +1190,12 @@ JXG.Options = {
         /**
          * Display of zoom buttons in the navigation bar. To show zoom buttons, additionally
          * showNavigation has to be set to true.
+         * <p>
+         * The individual buttons can be accessed by JavaScript or CSS with
+         * the ID <tt>"{board_id}_navigation_button_{type}"</tt> or by the CSS classes
+         * <tt>JXG_navigation_button"</tt> or
+         * <tt>JXG_navigation_button_{type}"</tt>, where <tt>{type}</tt>
+         * is <tt>in</tt>, <tt>100</tt>, or <tt>out</tt>.
          *
          * @name JXG.Board#showZoom
          * @type Boolean
@@ -1210,7 +1245,7 @@ JXG.Options = {
          * The viewport can be individually controlled for each element, too.
          *
          * @type {Array|String}
-         * @name JXG.GeometryElement#viewport
+         * @name JXG.Board#viewport
          * @default [0, 0, 0, 0]
          * @see JXG.GeometryElement#viewport
          */
@@ -1336,11 +1371,10 @@ JXG.Options = {
      *  Generic options used by {@link JXG.GeometryElement}
      */
     elements: {
-        // the following tag is a meta tag: http://code.google.com/p/jsdoc-toolkit/wiki/MetaTags
-
         /**#@+
          * @visprop
          */
+        // This is a meta tag: http://code.google.com/p/jsdoc-toolkit/wiki/MetaTags
 
         /**
          * Determines the elements border-style.
@@ -1710,7 +1744,6 @@ JXG.Options = {
         gradientStartOffset: 0.0,
 
         /**
-         *
          * @type Boolean
          * @default true
          * @name JXG.GeometryElement#highlight
@@ -1780,8 +1813,8 @@ JXG.Options = {
          * @name JXG.GeometryElement#isLabel
          * @default false
          * @private
-         * By default, an element is not a label. Do not change this.
-         */
+        */
+        // By default, an element is not a label. Do not change this.
         isLabel: false,
 
         /**
@@ -2041,7 +2074,7 @@ JXG.Options = {
         /**
          * Controls if an element can get the focus with the tab key.
          * tabindex corresponds to the HTML attribute of the same name.
-         * See <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/tabindex">descriptiona at MDN</a>.
+         * See <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/tabindex">description at MDN</a>.
          * The additional value "null" completely disables focus of an element.
          * The value will be ignored if keyboard control of the board is not enabled or
          * the element is fixed or not visible.
@@ -2208,9 +2241,11 @@ JXG.Options = {
 
         /**
          * If true a label will display the element's name.
+         * Using this to suppress labels is more efficient than visible:false.
+         *
+         * @name JXG.GeometryElement#withLabel
          * @type Boolean
          * @default false
-         * @name JXG.GeometryElement#withLabel
          */
         withLabel: false
 
@@ -3889,7 +3924,7 @@ JXG.Options = {
          * Attributes for center point.
          *
          * @type Point
-         * @name Circle#center
+         * @name Circle#point2
          */
         point2: {
             fillColor: Color.palette.red,
@@ -4200,7 +4235,7 @@ JXG.Options = {
          * Recommended arrow head type is 7.
          *
          * @name Curve#firstArrow
-         * @type Boolean / Object
+         * @type Boolean | Object
          * @default false
          * @see Line#firstArrow for options
          */
@@ -4215,10 +4250,10 @@ JXG.Options = {
         handDrawing: false,
 
         /**
-         * Attributes for circle label.
+         * Attributes for curve label.
          *
          * @type Label
-         * @name Circle#label
+         * @name Curve#label
          */
         label: {
             position: 'lft'
@@ -4230,7 +4265,7 @@ JXG.Options = {
          *
          * @name Curve#lastArrow
          * @see Line#lastArrow for options
-         * @type Boolean / Object
+         * @type Boolean | Object
          * @default false
          */
         lastArrow: false,
@@ -4294,19 +4329,8 @@ JXG.Options = {
         plotVersion: 2,
 
         /**
-         * Apply Ramer-Douglas-Peuker smoothing.
-         *
-         * @type Boolean
-         * @name Curve#RDPsmoothing
-         * @default false
-         */
-        RDPsmoothing: false,     // Apply the Ramer-Douglas-Peuker algorithm
-
-        /**
-         *
-         * Recursion depth used for plotting triggered by up events
-         * (i.e. high quality plotting) in case
-         * {@link Curve#doAdvancedPlot} is true.
+         * Configure arrow head at the start position for curve.
+         * Recommended arrow head type is 7.
          *
          * @name Curve#recursionDepthHigh
          * @see Curve#doAdvancedPlot
@@ -4325,9 +4349,7 @@ JXG.Options = {
          * @type Number
          * @default 13
          */
-        recursionDepthLow: 15,
-
-        useQDT: false
+        recursionDepthLow: 15
 
         /**#@-*/
     },
@@ -4538,6 +4560,185 @@ JXG.Options = {
          * @default empty
          */
         attractors: []
+
+        /**#@-*/
+    },
+
+    /* special implicitcurve options */
+    implicitcurve: {
+        /**#@+
+         * @visprop
+         */
+
+        /**
+         * Defines the margin (in user coordinates) around the JSXGraph board in which the
+         * implicit curve is plotted.
+         *
+         * @name ImplicitCurve#margin
+         * @type {Number|Function}
+         * @default 1
+         */
+        margin: 1,
+
+        /**
+         * Horizontal resolution: distance (in pixel) between vertical lines to search for components of the implicit curve.
+         * A small number increases the running time. For large number components may be missed.
+         * Minimum value is 0.01.
+         *
+         * @name ImplicitCurve#resolution_outer
+         * @type {Number|Function}
+         * @default 5
+         */
+        resolution_outer: 5,
+
+        /**
+         * Vertical resolution (in pixel) to search for components of the implicit curve.
+         * A small number increases the running time. For large number components may be missed.
+         * Minimum value is 0.01.
+         *
+         * @name ImplicitCurve#resolution_inner
+         * @type {Number|Function}
+         * @default 5
+         */
+        resolution_inner: 5,
+
+        /**
+         * Maximum iterations for one component of the implicit curve.
+         *
+         * @name ImplicitCurve#max_steps
+         * @type {Number|Function}
+         * @default 1024
+         */
+        max_steps: 1024,
+
+        /**
+         * Angle &alpha;<sub>0</sub> between two successive tangents: determines the smoothness of
+         * the curve.
+         *
+         * @name ImplicitCurve#alpha_0
+         * @type {Number|Function}
+         * @default 0.05
+         */
+        alpha_0: 0.05,
+
+        /**
+         * Tolerance to find starting points for the tracing phase of a component.
+         *
+         * @name ImplicitCurve#tol_0
+         * @type {Number|Function}
+         * @default JXG.Math.eps
+         */
+        tol_u0: Mat.eps,
+
+        /**
+         * Tolerance for the Newton steps.
+         *
+         * @name ImplicitCurve#tol_newton
+         * @type {Number|Function}
+         * @default 1.0e-7
+         */
+        tol_newton: 1.0e-7,
+
+        /**
+         * Tolerance for cusp / bifurcation detection.
+         *
+         * @name ImplicitCurve#tol_cusp
+         * @type {Number|Function}
+         * @default 0.05
+         */
+        tol_cusp: 0.05,
+
+        /**
+         * If two points are closer than this value, we bail out of the tracing phase for that
+         * component.
+         *
+         * @name ImplicitCurve#tol_progress
+         * @type {Number|Function}
+         * @default 0.0001
+         */
+        tol_progress: 0.0001,
+
+        /**
+         * Half of the box size (in user units) to search for existing line segments in the quadtree.
+         *
+         * @name ImplicitCurve#qdt_box
+         * @type {Number|Function}
+         * @default 0.2
+         */
+        qdt_box: 0.2,
+
+        /**
+         * Inverse of desired number of Newton steps.
+         *
+         * @name ImplicitCurve#kappa_0
+         * @type {Number|Function}
+         * @default 0.2
+         */
+        kappa_0: 0.2,
+
+        /**
+         * Allowed distance (in user units) of predictor point to curve.
+         *
+         * @name ImplicitCurve#delta_0
+         * @type {Number|Function}
+         * @default 0.05
+         */
+        delta_0: 0.05,
+
+        /**
+         * Initial step width (in user units).
+         *
+         * @name ImplicitCurve#h_initial
+         * @type {Number|Function}
+         * @default 0.1
+         */
+        h_initial: 0.1,
+
+        /**
+         * If h is below this threshold (in user units), we bail out
+         * of the tracing phase of that component.
+         *
+         * @name ImplicitCurve#h_critical
+         * @type {Number|Function}
+         * @default 0.001
+         */
+        h_critical: 0.001,
+
+        /**
+         * Maximum step width (in user units).
+         *
+         * @name ImplicitCurve#h_max
+         * @type {Number|Function}
+         * @default 1
+         */
+        h_max: 1,
+
+        /**
+         * Allowed distance (in user units multiplied by actual step width) to detect loop.
+         *
+         * @name ImplicitCurve#loop_dist
+         * @type {Number|Function}
+         * @default 0.09
+         */
+        loop_dist: 0.09,
+
+        /**
+         * Minimum acos of angle to detect loop.
+         *
+         * @name ImplicitCurve#loop_dir
+         * @type {Number|Function}
+         * @default 0.99
+         */
+        loop_dir: 0.99,
+
+        /**
+         * Use Gosper's loop detector.
+         *
+         * @name ImplicitCurve#loop_detection
+         * @type {Boolean|Function}
+         * @default true
+         */
+        loop_detection: true
 
         /**#@-*/
     },
@@ -4991,7 +5192,7 @@ JXG.Options = {
          * Configure the arrow head at the position of its first point or the corresponding
          * intersection with the canvas border
          *
-         * In case firstArrow is an object it has the sub-attributes:
+         * The attribute firstArrow can be a Boolean or an object with the following sub-attributes:
          * <pre>
          * {
          *      type: 1, // possible values are 1, 2, ..., 7. Default value is 1.
@@ -5002,6 +5203,8 @@ JXG.Options = {
          * }
          * </pre>
          * type=7 is the default for curves if firstArrow: true
+         * <p>
+         * An arrow head can be turned off with line.setAttribute({firstArrow: false}).
          *
          * @example
          *     board.options.line.lastArrow = false;
@@ -5044,7 +5247,7 @@ JXG.Options = {
          * @name Line#firstArrow
          * @see Line#lastArrow
          * @see Line#touchFirstPoint
-         * @type Boolean / Object
+         * @type Boolean | Object
          * @default false
          */
         firstArrow: false,
@@ -5053,7 +5256,7 @@ JXG.Options = {
          * Configure the arrow head at the position of its second point or the corresponding
          * intersection with the canvas border.
          *
-         * In case lastArrow is an object it has the sub-attributes:
+         * The attribute lastArrow can be a Boolean or an object with the following sub-attributes:
          * <pre>
          * {
          *      type: 1, // possible values are 1, 2, ..., 7. Default value is 1.
@@ -5064,6 +5267,8 @@ JXG.Options = {
          * }
          * </pre>
          * type=7 is the default for curves if lastArrow: true
+         * <p>
+         * An arrow head can be turned off with line.setAttribute({lastArrow: false}).
          *
          * @example
          *     var p1 = board.create('point', [-5, 2], {size:1});
@@ -5138,7 +5343,7 @@ JXG.Options = {
          * @name Line#lastArrow
          * @see Line#firstArrow
          * @see Line#touchLastPoint
-         * @type Boolean / Object
+         * @type Boolean | Object
          * @default false
          */
         lastArrow: false,
@@ -5675,7 +5880,8 @@ JXG.Options = {
          *
          * @name Point#showInfobox
          * @see JXG.Board#showInfobox
-         * @type {Boolean|String} true | false | 'inherit'
+         * @type Boolean|String
+         * @description true | false | 'inherit'
          * @default true
          */
         showInfobox: 'inherit',
@@ -5690,7 +5896,7 @@ JXG.Options = {
          *
          * @name Point#infoboxDigits
          *
-         * @type String, Number
+         * @type String| Number
          * @default 'auto'
          * @see JXG#autoDigits
          * @see JXG#toFixed
@@ -5968,6 +6174,7 @@ JXG.Options = {
 
     /* special prescribed angle options
     * Not yet implemented. But angle.setAngle(val) is implemented.
+
     */
     prescribedangle: {
         /**#@+
@@ -5978,7 +6185,8 @@ JXG.Options = {
          * Attributes for the helper point of the prescribed angle.
          *
          * @type Point
-         * @name PrescribedAngle#anglePoint
+         * @name Prescribedangle#anglePoint
+         * @ignore
          */
         anglePoint: {
             size: 2,
@@ -6001,8 +6209,8 @@ JXG.Options = {
          * Attributes of circle center, i.e. the center of the circle,
          * if a circle is the mirror element and the transformation type is 'Euclidean'
          *
-         * @type Point
-         * @name Mirrorelement#center
+         * @type center
+         * @name Reflection#center
          */
         center: {},
 
@@ -6094,7 +6302,7 @@ JXG.Options = {
          * Attributes for the polygon label.
          *
          * @type Label
-         * @name Polygon#label
+         * @name RegularPolygon#label
          */
         label: {
             offset: [0, 0]
@@ -6979,7 +7187,7 @@ JXG.Options = {
         /**
          * The precision of the tape measure value displayed in the optional text.
          * @memberOf Tapemeasure.prototype
-         * @name precision
+         * @name digits
          * @type Number
          * @default 2
          */
@@ -7823,6 +8031,10 @@ JXG.Options = {
          */
         rotate: 0,
 
+        /**
+         * @name visible
+         * @default true
+         */
         visible: true,
 
         /**

@@ -59,7 +59,6 @@ var priv = {
  * add event listeners.
  *
  * @pseudo
- * @description
  * @name Button
  * @augments Text
  * @constructor

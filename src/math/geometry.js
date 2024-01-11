@@ -65,9 +65,9 @@ JXG.extend(
 
         /**
          * Calculates the angle defined by the points A, B, C.
-         * @param {JXG.Point,Array} A A point  or [x,y] array.
-         * @param {JXG.Point,Array} B Another point or [x,y] array.
-         * @param {JXG.Point,Array} C A circle - no, of course the third point or [x,y] array.
+         * @param {JXG.Point|Array} A A point  or [x,y] array.
+         * @param {JXG.Point|Array} B Another point or [x,y] array.
+         * @param {JXG.Point|Array} C A circle - no, of course the third point or [x,y] array.
          * @deprecated Use {@link JXG.Math.Geometry.rad} instead.
          * @see #rad
          * @see #trueAngle
@@ -117,9 +117,9 @@ JXG.extend(
 
         /**
          * Calculates the angle defined by the three points A, B, C if you're going from A to C around B counterclockwise.
-         * @param {JXG.Point,Array} A Point or [x,y] array
-         * @param {JXG.Point,Array} B Point or [x,y] array
-         * @param {JXG.Point,Array} C Point or [x,y] array
+         * @param {JXG.Point|Array} A Point or [x,y] array
+         * @param {JXG.Point|Array} B Point or [x,y] array
+         * @param {JXG.Point|Array} C Point or [x,y] array
          * @see #rad
          * @returns {Number} The angle in degrees.
          */
@@ -129,9 +129,9 @@ JXG.extend(
 
         /**
          * Calculates the internal angle defined by the three points A, B, C if you're going from A to C around B counterclockwise.
-         * @param {JXG.Point,Array} A Point or [x,y] array
-         * @param {JXG.Point,Array} B Point or [x,y] array
-         * @param {JXG.Point,Array} C Point or [x,y] array
+         * @param {JXG.Point|Array} A Point or [x,y] array
+         * @param {JXG.Point|Array} B Point or [x,y] array
+         * @param {JXG.Point|Array} C Point or [x,y] array
          * @see #trueAngle
          * @returns {Number} Angle in radians.
          */
@@ -725,9 +725,7 @@ JXG.extend(
                 intersect2,
                 straightFirst,
                 straightLast,
-                c,
-                p1,
-                p2;
+                c, p1, p2;
 
             if (!Type.exists(margin)) {
                 // Enlarge the drawable region slightly. This hides the small sides
@@ -761,7 +759,7 @@ JXG.extend(
             c[1] = el.stdform[1] / el.board.unitX;
             c[2] = -el.stdform[2] / el.board.unitY;
 
-            // p1=p2
+            // If p1=p2
             if (isNaN(c[0] + c[1] + c[2])) {
                 return;
             }
@@ -1646,8 +1644,7 @@ JXG.extend(
             var s = [],
                 intersect1,
                 intersect2,
-                i,
-                j;
+                i, j;
 
             if (!Type.exists(margin)) {
                 margin = 0;
@@ -1714,9 +1711,10 @@ JXG.extend(
                 }
             }
 
-            intersect1 = new Coords(Const.COORDS_BY_SCREEN, intersect1.slice(1), board);
-            intersect2 = new Coords(Const.COORDS_BY_SCREEN, intersect2.slice(1), board);
-            return [intersect1, intersect2];
+            return [
+                new Coords(Const.COORDS_BY_SCREEN, intersect1.slice(1), board),
+                new Coords(Const.COORDS_BY_SCREEN, intersect2.slice(1), board)
+            ];
         },
 
         /**
@@ -1886,8 +1884,8 @@ JXG.extend(
          * If higher precision is needed, {@link JXG.Math.Geometry.meetCurveLineContinuous}
          * has to be used.
          *
-         * @param {JXG.Curve,JXG.Line} el1 Curve or Line
-         * @param {JXG.Curve,JXG.Line} el2 Curve or Line
+         * @param {JXG.Curve|JXG.Line} el1 Curve or Line
+         * @param {JXG.Curve|JXG.Line} el2 Curve or Line
          * @param {Number|Function} nr the nr-th intersection point will be returned.
          * @param {JXG.Board} [board=el1.board] Reference to a board object.
          * @param {Boolean} alwaysIntersect If false just the segment between the two defining points are tested for intersection
@@ -2833,7 +2831,7 @@ JXG.extend(
          * Calculates the coordinates of the projection of a given point on a given circle. I.o.w. the
          * nearest one of the two intersection points of the line through the given point and the circles
          * center.
-         * @param {JXG.Point,JXG.Coords} point Point to project or coords object to project.
+         * @param {JXG.Point|JXG.Coords} point Point to project or coords object to project.
          * @param {JXG.Circle} circle Circle on that the point is projected.
          * @param {JXG.Board} [board=point.board] Reference to the board
          * @returns {JXG.Coords} The coordinates of the projection of the given point on the given circle.

@@ -53,10 +53,17 @@ Mat.Quadtree = function (bbox, config, parent) {
         pointType: 'coords'
     };
 
+    /**
+     * Configuration object for quadtree.
+     *
+     * @name JXG.Math.Quadtree.config
+     * @type Object
+     */
     this.config = {};
     /**
      * The maximum number of points stored in a quadtree node
      * before it is subdivided.
+     * @name JXG.Math.Quadtree.config#capacity
      * @type Number
      * @default 10
      */
@@ -65,6 +72,7 @@ Mat.Quadtree = function (bbox, config, parent) {
     /**
      * Type of a point object. Possible values are:
      * 'coords', 'object'.
+     * @name JXG.Math.Quadtree.config#pointType
      * @type String
      * @default 'coords'
      */
@@ -247,8 +255,8 @@ Type.extend(
         },
 
         /**
-         * Retrieve the smallest quadtree that contains the given coordinate pair.
-         * @name JXG.Math.Quadtree#_query
+         * Retrieve the smallest quad tree that contains the given coordinate pair.
+         * @name JXG.Math.Quadtree#query
          * @param {JXG.Coords|Number} xp
          * @param {Number} y
          * @returns {Boolean|JXG.Quadtree} The quadtree if the point is found, false

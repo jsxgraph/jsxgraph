@@ -80,10 +80,11 @@ JXG.View3D = function (board, parents, attributes) {
     this.defaultAxes = null;
 
     /**
-     * 3D-to-2D transformation matrix
-     * @type  {Array} 3 x 4 matrix
+     * @type  {Array}
      * @private
-     */
+    */
+    // 3 x 4 matrix
+    // 3D-to-2D transformation matrix
     this.matrix3D = [
         [1, 0, 0, 0],
         [0, 1, 0, 0],
@@ -91,10 +92,10 @@ JXG.View3D = function (board, parents, attributes) {
     ];
 
     /**
-     * Lower left corner [x, y] of the 3D view if elevation and azimuth are set to 0.
      * @type array
      * @private
-     */
+    */
+    //     Lower left corner [x, y] of the 3D view if elevation and azimuth are set to 0.
     this.llftCorner = parents[0];
 
     /**
@@ -302,7 +303,8 @@ JXG.extend(
 
         // Circle
         // r = 8;
-        // up = [0, Math.cos(e), Math.sin(e)];
+        // // up = [0, Math.cos(e), Math.sin(e)];
+        // up = [0, 0, 1];
         // eye = [
         //     -r * Math.cos(a),
         //     -r * Math.sin(a),
@@ -445,8 +447,8 @@ JXG.extend(
      * The 3D coordinates are provides as three numbers x, y, z or one array of length 3.
      *
      * @param  {Number|Array} x
-     * @param  {[Number]} y
-     * @param  {[Number]} z
+     * @param  {Number[]} y
+     * @param  {Number[]} z
      * @returns {Array} Array of length 3 containing the projection on to the board
      * in homogeneous user coordinates.
      */
@@ -656,7 +658,7 @@ JXG.extend(
     /**
      * Generate mesh for a surface / plane.
      * Returns array [dataX, dataY] for a JSXGraph curve's updateDataArray function.
-     * @param {Array,Function} func
+     * @param {Array|Function} func
      * @param {Array} interval_u
      * @param {Array} interval_v
      * @returns Array

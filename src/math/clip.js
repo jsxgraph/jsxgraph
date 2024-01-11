@@ -122,7 +122,7 @@ Mat.Clip = {
      * The intersection point is inserted into the doubly linked list of the path.
      *
      * @private
-     * @param  {JXG.Coords} coords JSXGraph Coords object conatining the coordinates of the intersection
+     * @param  {JXG.Coords} coords JSXGraph Coords object containing the coordinates of the intersection
      * @param  {Number} i        Number of the segment of the subject path (first path) containing the intersection.
      * @param  {Number} alpha    The intersection is a p_1 + alpha*(p_2 - p_1), where p_1 and p_2 are the end points
      *      of the i-th segment.

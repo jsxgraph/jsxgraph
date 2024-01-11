@@ -530,7 +530,7 @@ JXG.extend(
             // Get information if there are arrow heads and how large they are.
             arrowData = this.getArrowHeadData(el, w, hl);
 
-            // Create the SVG nodes if neccessary
+            // Create the SVG nodes if necessary
             this.makeArrows(el, arrowData);
 
             // Draw the paths with arrow heads
@@ -1136,7 +1136,7 @@ JXG.extend(
         updateText: function (el) {
             var content = el.plaintext,
                 v, c,
-                parentNode,
+                parentNode, node,
                 // scale, vshift,
                 // id, wrap_id,
                 ax, ay, angle, co, si,
@@ -1253,6 +1253,7 @@ JXG.extend(
                                 if (MathJax.typeset) {
                                     // Version 3
                                     MathJax.typeset([el.rendNode]);
+                                    console.log(el.id, el.rendNode);
                                 } else {
                                     // Version 2
                                     MathJax.Hub.Queue(["Typeset", MathJax.Hub, el.rendNode]);
@@ -1278,12 +1279,30 @@ JXG.extend(
                             }
                         } else if (Type.evaluate(el.visProp.usekatex)) {
                             try {
-                                /* eslint-disable no-undef */
-                                katex.render(content, el.rendNode, {
-                                    macros: Type.evaluate(el.visProp.katexmacros),
-                                    throwOnError: false
-                                });
-                                /* eslint-enable no-undef */
+                                // Checkboxes et. al. do not possess rendNodeLabel during the first update.
+                                // In this case node will be undefined and not rendered by KaTeX.
+                                if (el.rendNode.innerHTML.indexOf('<span') === 0 &&
+                                    el.rendNode.innerHTML.indexOf('<label') > 0 &&
+                                    (
+                                        el.rendNode.innerHTML.indexOf('<checkbox') > 0 ||
+                                        el.rendNode.innerHTML.indexOf('<input') > 0
+                                    )
+                                 ) {
+                                    node = el.rendNodeLabel;
+                                } else if (el.rendNode.innerHTML.indexOf('<button') === 0) {
+                                    node = el.rendNodeButton;
+                                } else {
+                                    node = el.rendNode;
+                                }
+
+                                if (node) {
+                                    /* eslint-disable no-undef */
+                                    katex.render(content, node, {
+                                        macros: Type.evaluate(el.visProp.katexmacros),
+                                        throwOnError: false
+                                    });
+                                    /* eslint-enable no-undef */
+                                }
                             } catch (e) {
                                 JXG.debug("KaTeX not loaded (yet)");
                             }
@@ -1583,9 +1602,9 @@ JXG.extend(
          * Applies transformations on images and text elements. This method has to implemented in
          * all descendant classes where text and image transformations are to be supported.
          * <p>
-         * Only affine transformation are supported, no proper projective transformations. This means, the 
+         * Only affine transformation are supported, no proper projective transformations. This means, the
          * respective entries of the transformation matrix are simply ignored.
-         * 
+         *
          * @param {JXG.Image|JXG.Text} element A {@link JXG.Image} or {@link JXG.Text} object.
          * @param {Array} transformations An array of {@link JXG.Transformation} objects. This is usually the
          * transformations property of the given element <tt>el</tt>.
@@ -1949,9 +1968,9 @@ JXG.extend(
         },
 
         /**
-         * 
-         * @param {*} element 
-         * @param {*} isHTML 
+         *
+         * @param {*} element
+         * @param {*} isHTML
          */
         setObjectViewport: function (element, isHTML) {
             /* stub */
@@ -2178,10 +2197,10 @@ JXG.extend(
                         e.cancelBubble = true;
                     }
                 },
-                createButton = function (label, handler, id) {
+                createButton = function (label, handler, board_id, type) {
                     var button;
 
-                    id = id || "";
+                    board_id = board_id || "";
 
                     button = doc.createElement("span");
                     button.innerHTML = label; // button.appendChild(doc.createTextNode(label));
@@ -2193,10 +2212,11 @@ JXG.extend(
                     if (button.classList !== undefined) {
                         // classList not available in IE 9
                         button.classList.add("JXG_navigation_button");
+                        button.classList.add("JXG_navigation_button_" + type);
                     }
                     // button.setAttribute('tabindex', 0);
 
-                    button.setAttribute("id", id);
+                    button.setAttribute("id", board_id + '_navigation_button_' + type);
                     node.appendChild(button);
 
                     Env.addEvent(
@@ -2248,7 +2268,7 @@ JXG.extend(
                         function () {
                             board.toFullscreen(board.attr.fullscreen.id);
                         },
-                        board.container + "_navigation_fullscreen"
+                        board.container, "fullscreen"
                     );
                 }
 
@@ -2260,7 +2280,7 @@ JXG.extend(
                                 board.renderer.screenshot(board, "", false);
                             }, 330);
                         },
-                        board.container + "_navigation_screenshot"
+                        board.container, "screenshot"
                     );
                 }
 
@@ -2273,51 +2293,30 @@ JXG.extend(
                         function () {
                             board.reload();
                         },
-                        board.container + "_navigation_reload"
+                        board.container, "reload"
                     );
                 }
 
                 if (board.attr.showcleartraces) {
                     // clear traces symbol (otimes): \u27F2
-                    createButton(
-                        "\u2297",
+                    createButton("\u2297",
                         function () {
                             board.clearTraces();
                         },
-                        board.container + "_navigation_cleartraces"
+                        board.container, "cleartraces"
                     );
                 }
 
                 if (board.attr.shownavigation) {
                     if (board.attr.showzoom) {
-                        createButton(
-                            "\u2013",
-                            board.zoomOut,
-                            board.container + "_navigation_out"
-                        );
-                        createButton("o", board.zoom100, board.container + "_navigation_100");
-                        createButton("+", board.zoomIn, board.container + "_navigation_in");
+                        createButton("\u2013", board.zoomOut, board.container, "out");
+                        createButton("o", board.zoom100, board.container, "100");
+                        createButton("+", board.zoomIn, board.container, "in");
                     }
-                    createButton(
-                        "\u2190",
-                        board.clickLeftArrow,
-                        board.container + "_navigation_left"
-                    );
-                    createButton(
-                        "\u2193",
-                        board.clickUpArrow,
-                        board.container + "_navigation_down"
-                    ); // Down arrow
-                    createButton(
-                        "\u2191",
-                        board.clickDownArrow,
-                        board.container + "_navigation_up"
-                    ); // Up arrow
-                    createButton(
-                        "\u2192",
-                        board.clickRightArrow,
-                        board.container + "_navigation_right"
-                    );
+                    createButton("\u2190", board.clickLeftArrow, board.container, "left");
+                    createButton("\u2193", board.clickUpArrow, board.container, "down"); // Down arrow
+                    createButton("\u2191", board.clickDownArrow, board.container, "up"); // Up arrow
+                    createButton("\u2192", board.clickRightArrow, board.container, "right");
                 }
             }
         },

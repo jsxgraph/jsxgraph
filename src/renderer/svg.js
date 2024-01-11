@@ -203,27 +203,46 @@ JXG.SVGRenderer = function (container, dim) {
     };
 
     /**
-     * Combine arguments to an URL string of the form
-     * url(#...)
-     * Masks the container id.
+     * Combine arguments to a string, joined by empty string.
+     * Masks the container id with CSS.escape.
      *
-     * @params {Objects} parts of the string
-     * @returns URL string
+     * @params {String} str variable number of strings
+     * @returns String
+     * @see JXG.SVGRenderer#toURL
      * @private
      * @example
-     * this.toURL('aaa', '_', 'bbb', 'TriangleEnd')
+     * this.toStr('aaa', '_', 'bbb', 'TriangleEnd')
      * // Output:
-     * // url(#xxx_bbbTriangleEnd)
-     *
+     * // xxx_bbbTriangleEnd
      */
-    this.toURL = function () {
+    this.toStr = function() {
         // ES6 would be [...arguments].join()
         var str = Array.prototype.slice.call(arguments).join('');
         // Mask special symbols like '/' and '\' in id
         if (Type.exists(CSS) && Type.exists(CSS.escape)) {
             str = CSS.escape(str);
         }
-        return 'url(#' + str + ')';
+        return str;
+    };
+
+    /**
+     * Combine arguments to an URL string of the form
+     * url(#...)
+     * Masks the container id. Calls {@link JXG.SVGRenderer#toStr}.
+     *
+     * @params {String} str variable number of strings
+     * @returns URL string
+     * @see JXG.SVGRenderer#toStr
+     * @private
+     * @example
+     * this.toURL('aaa', '_', 'bbb', 'TriangleEnd')
+     * // Output:
+     * // url(#xxx_bbbTriangleEnd)
+     */
+    this.toURL = function () {
+        return 'url(#' +
+            this.toStr.apply(this, arguments) + // Pass the arguments to toStr
+            ')';
     };
 
     /* Default shadow filter */
@@ -282,6 +301,9 @@ JXG.extend(
             if (Type.exists(idAppendix)) {
                 id += idAppendix;
             }
+            if (Type.exists(type)) {
+                id += type;
+            }
             node2 = this.createPrim("marker", id);
 
             node2.setAttributeNS(null, "stroke", Type.evaluate(el.visProp.strokecolor));
@@ -323,7 +345,7 @@ JXG.extend(
             */
             node3 = this.container.ownerDocument.createElementNS(this.svgNamespace, "path");
             h = 5;
-            if (idAppendix === "End") {
+            if (idAppendix === "Start") {
                 // First arrow
                 //type = a.typeFirst;
                 // if (JXG.exists(ev_fa.type)) {
@@ -844,62 +866,54 @@ JXG.extend(
 
         // Already documented in JXG.AbstractRenderer
         makeArrows: function (el, a) {
-            var node2,
+            var node2, str,
                 ev_fa = a.evFirst,
                 ev_la = a.evLast;
 
-            // Test if the arrow heads already exist
-            if (el.visPropOld.firstarrow === ev_fa && el.visPropOld.lastarrow === ev_la) {
-                if (this.isIE && el.visPropCalc.visible && (ev_fa || ev_la)) {
-                    el.rendNode.parentNode.insertBefore(el.rendNode, el.rendNode);
-                }
+            if (this.isIE && el.visPropCalc.visible && (ev_fa || ev_la)) {
+                el.rendNode.parentNode.insertBefore(el.rendNode, el.rendNode);
                 return;
             }
 
+            // We can not compare against visPropOld if there is need for a new arrow head,
+            // since here visPropOld and ev_fa / ev_la already have the same value.
+            // This has been set in _updateVisual.
+            //
+            node2 = el.rendNodeTriangleStart;
             if (ev_fa) {
-                node2 = el.rendNodeTriangleStart;
-                if (!Type.exists(node2)) {
-                    node2 = this._createArrowHead(el, "End", a.typeFirst);
-                    this.defs.appendChild(node2);
+                str = this.toStr(this.container.id, '_', el.id, 'TriangleStart', a.typeFirst);
+                if (!Type.exists(node2) || node2.id !== str) {
+                    node2 = this.container.ownerDocument.getElementById(str);
+                    // Check if the marker already exists.
+                    // If not, create a new marker
+                    if (node2 === null) {
+                        node2 = this._createArrowHead(el, "Start", a.typeFirst);
+                        this.defs.appendChild(node2);
+                    }
                     el.rendNodeTriangleStart = node2;
-                    el.rendNode.setAttributeNS(
-                        null,
-                        "marker-start",
-                        // "url(#" + this.container.id + "_" + el.id + "TriangleEnd)"
-                        this.toURL(this.container.id, '_', el.id, 'TriangleEnd')
-                    );
-                } else {
-                    this.defs.appendChild(node2);
+                    el.rendNode.setAttributeNS(null, "marker-start", this.toURL(str));
                 }
-            } else {
-                node2 = el.rendNodeTriangleStart;
-                if (Type.exists(node2)) {
-                    this.remove(node2);
-                }
+            } else if (Type.exists(node2)) {
+                this.remove(node2);
             }
+
+            node2 = el.rendNodeTriangleEnd;
             if (ev_la) {
-                node2 = el.rendNodeTriangleEnd;
-                if (!Type.exists(node2)) {
-                    node2 = this._createArrowHead(el, "Start", a.typeLast);
-                    this.defs.appendChild(node2);
+                str = this.toStr(this.container.id, '_', el.id, 'TriangleEnd', a.typeLast);
+                if (!Type.exists(node2) || node2.id !== str) {
+                    node2 = this.container.ownerDocument.getElementById(str);
+                    // Check if the marker already exists.
+                    // If not, create a new marker
+                    if (node2 === null) {
+                        node2 = this._createArrowHead(el, "End", a.typeLast);
+                        this.defs.appendChild(node2);
+                    }
                     el.rendNodeTriangleEnd = node2;
-                    el.rendNode.setAttributeNS(
-                        null,
-                        "marker-end",
-                        // "url(#" + this.container.id + "_" + el.id + "TriangleStart)"
-                        this.toURL(this.container.id, '_', el.id, 'TriangleStart')
-                    );
-                } else {
-                    this.defs.appendChild(node2);
+                    el.rendNode.setAttributeNS(null, "marker-end", this.toURL(str));
                 }
-            } else {
-                node2 = el.rendNodeTriangleEnd;
-                if (Type.exists(node2)) {
-                    this.remove(node2);
-                }
+            } else if (Type.exists(node2)) {
+                this.remove(node2);
             }
-            el.visPropOld.firstarrow = ev_fa;
-            el.visPropOld.lastarrow = ev_la;
         },
 
         // Already documented in JXG.AbstractRenderer
@@ -1881,13 +1895,13 @@ JXG.extend(
         // documented in JXG.AbstractRenderer
         suspendRedraw: function () {
             // It seems to be important for the Linux version of firefox
-            //this.suspendHandle = this.svgRoot.suspendRedraw(10000);
+            this.suspendHandle = this.svgRoot.suspendRedraw(10000);
         },
 
         // documented in JXG.AbstractRenderer
         unsuspendRedraw: function () {
-            //this.svgRoot.unsuspendRedraw(this.suspendHandle);
-            //this.svgRoot.unsuspendRedrawAll();
+            this.svgRoot.unsuspendRedraw(this.suspendHandle);
+            // this.svgRoot.unsuspendRedrawAll();
             //this.svgRoot.forceRedraw();
         },
 
@@ -2221,6 +2235,7 @@ JXG.extend(
             }
 
             // Display the SVG string as data-uri in an HTML img.
+            /** {ignore} */
             tmpImg = new Image();
             svg = this.dumpToDataURI(ignoreTexts);
             tmpImg.src = svg;

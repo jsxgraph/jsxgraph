@@ -48,7 +48,6 @@ import Point from "../base/point";
 /**
  * @class A slider can be used to choose values from a given range of numbers.
  * @pseudo
- * @description
  * @name Slider
  * @augments Glider
  * @constructor

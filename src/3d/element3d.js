@@ -36,10 +36,6 @@ import Type from "../utils/type";
  * @class This is the basic class for 3D geometry elements like Point3D and Line3D.
  * @constructor
  * @param {string} elType
- * @borrows JXG.EventEmitter#on as this.on
- * @borrows JXG.EventEmitter#off as this.off
- * @borrows JXG.EventEmitter#triggerEventHandlers as this.triggerEventHandlers
- * @borrows JXG.EventEmitter#eventHandlers as this.eventHandlers
  */
 JXG.GeometryElement3D = function (view, elType) {
     this.elType = elType;
@@ -56,7 +52,8 @@ JXG.GeometryElement3D = function (view, elType) {
      * Link to the 2D element(s) used to visualize the 3D element
      * in a view. In case, there are several 2D elements, it is an array.
      *
-     * @type JXG.GeometryElement,Array
+     * @type Array
+     * @description JXG.GeometryElement,Array
      * @private
      *
      * @example
@@ -181,7 +178,9 @@ JXG.extend(JXG.GeometryElement3D.prototype, {
         }
 
         return attr;
-    }
+    },
+
+    remove: function() {}
 
 });
 

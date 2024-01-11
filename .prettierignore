@@ -4,5 +4,4 @@ build/*.md
 3rdparty
 distrib
 doc
-src/loadjsxgraph.js
 .*

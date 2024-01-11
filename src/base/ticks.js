@@ -230,7 +230,6 @@ JXG.extend(
                 !Type.evaluate(this.line.visProp.scalable) ||
                 this.line.elementClass === Const.OBJECT_CLASS_CURVE
             ) {
-                // Skip hasPoint
                 return false;
             }
 
@@ -546,7 +545,7 @@ JXG.extend(
                 isPoint1inBoard, isPoint2inBoard,
                 // We use the distance from zero to P1 and P2 to establish lower and higher points
                 dZeroPoint1, dZeroPoint2,
-                arrowData,
+                arrowData, angle,
                 a1, a2, m1, m2,
                 eps = Mat.eps * 10,
                 ev_sf = Type.evaluate(this.line.visProp.straightfirst),
@@ -587,11 +586,30 @@ JXG.extend(
                 m2 = this.getDistanceFromZero(coordsZero, point2);
                 Geometry.calcStraight(this.line, point1, point2, Type.evaluate(this.line.visProp.margin));
                 m1 = this.getDistanceFromZero(coordsZero, point1) - m1;
-                m2 = this.getDistanceFromZero(coordsZero, point2) . m2;
+                m2 = this.getDistanceFromZero(coordsZero, point2).m2;
             } else {
                 // This function projects the corners of the board to the line.
                 // This is important for diagonal lines with infinite tick lines.
                 Geometry.calcLineDelimitingPoints(this.line, point1, point2);
+            }
+
+            // If the hosting line points backwards,
+            // the respective coordinates have to be multiplied by -1.
+            // Otherwise the ticks  are created in the wrong direction.
+            angle = Math.atan2(this.line.point2.Y() - this.line.point1.Y(), this.line.point2.X() - this.line.point1.X());
+            angle = (angle + 2 * Math.PI) % (2 * Math.PI);
+
+            if (angle > Math.PI * 0.5 && angle < 3 * Math.PI * 0.5) {
+                point1.usrCoords[1] *= -1;
+                point2.usrCoords[1] *= -1;
+                point1.usr2screen();
+                point2.usr2screen();
+            }
+            if (angle > Math.PI && angle < 2 * Math.PI) {
+                point1.usrCoords[2] *= -1;
+                point2.usrCoords[2] *= -1;
+                point1.usr2screen();
+                point2.usr2screen();
             }
 
             // Shorten ticks bounds such that ticks are not through arrow heads
@@ -1645,7 +1663,6 @@ JXG.extend(
  * The default value is "left".
  *
  * @pseudo
- * @description
  * @name Ticks
  * @augments JXG.Ticks
  * @constructor
@@ -1720,7 +1737,6 @@ JXG.createTicks = function (board, parents, attributes) {
 /**
  * @class Hatches can be used to mark congruent lines or curves.
  * @pseudo
- * @description
  * @name Hatch
  * @augments JXG.Ticks
  * @constructor

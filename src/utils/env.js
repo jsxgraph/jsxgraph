@@ -806,15 +806,8 @@ JXG.extend(
          * @returns {Array} 3x3 transformation matrix without translation part. See {@link JXG.Board#updateCSSTransforms}.
          */
         getCSSTransformMatrix: function (obj) {
-            var i,
-                j,
-                str,
-                arrstr,
-                start,
-                len,
-                len2,
-                arr,
-                st,
+            var i, j, str, arrstr, arr,
+                start, len, len2, st,
                 doc = obj.ownerDocument,
                 t = [
                     "transform",
@@ -849,6 +842,7 @@ JXG.extend(
                 }
             }
 
+            // Convert and reorder the matrix for JSXGraph
             if (str !== "") {
                 start = str.indexOf("(");
 

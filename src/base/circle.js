@@ -135,8 +135,8 @@ JXG.Circle = function (board, method, par1, par2, attributes) {
         this.radius = this.Radius();
     } else if (method === "pointRadius") {
         this.gxtterm = par2;
-        // Converts GEONExT syntax into JavaScript syntax and generally ensures that the radius is a function
-        this.updateRadius = Type.createFunction(par2, this.board, null, true);
+        // Converts JessieCode syntax into JavaScript syntax and generally ensures that the radius is a function
+        this.updateRadius = Type.createFunction(par2, this.board);
         // First evaluation of the radius function
         this.updateRadius();
         this.addParentsFromJCFunctions([this.updateRadius]);
@@ -516,7 +516,7 @@ JXG.extend(
          * @returns {JXG.Circle} Reference to this circle
          */
         setRadius: function (r) {
-            this.updateRadius = Type.createFunction(r, this.board, null, true);
+            this.updateRadius = Type.createFunction(r, this.board);
             this.addParentsFromJCFunctions([this.updateRadius]);
             this.board.update();
 
@@ -930,9 +930,15 @@ JXG.createCircle = function (board, parents, attributes) {
     // Circle defined by points
     for (i = 0; i < parents.length; i++) {
         if (Type.isPointType(board, parents[i])) {
-            p = p.concat(
-                Type.providePoints(board, [parents[i]], attributes, "circle", [point_style[i]])
-            );
+            if (parents.length < 3) {
+                p = p.concat(
+                    Type.providePoints(board, [parents[i]], attributes, "circle", [point_style[i]])
+                );
+            } else {
+                p = p.concat(
+                    Type.providePoints(board, [parents[i]], attributes, "point")
+                );
+                }
             if (p[p.length - 1] === false) {
                 throw new Error(
                     "JSXGraph: Can't create circle from this type. Please provide a point type."
