@@ -5548,7 +5548,12 @@ JXG.Options = {
          */
 
         baseUnit: '',
-        dim: 0
+        dim: 0,
+        prefix: '',
+        suffix: '',
+
+        showPrefix: true,
+        showSuffix: true
 
         /**#@-*/
     },
