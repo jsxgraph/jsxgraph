@@ -115,6 +115,8 @@ constants =
     OBJECT_TYPE_CURVE3D: 36,
     OBJECT_TYPE_SURFACE3D: 37,
 
+    OBJECT_TYPE_MEASUREMENT: 38,
+
     // IMPORTANT:
     // ----------
     // For being able to differentiate between the (sketchometry specific) SPECIAL_OBJECT_TYPEs and
