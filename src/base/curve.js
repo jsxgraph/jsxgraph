@@ -3021,7 +3021,7 @@ JXG.registerElement("boxplot", JXG.createBoxPlot);
 
 /**
  *
- * @class 
+ * @class
  * From <a href="https://en.wikipedia.org/wiki/Implicit_curve">Wikipedia</a>:
  * "An implicit curve is a plane curve defined by an implicit equation
  * relating two coordinate variables, commonly <i>x</i> and <i>y</i>.
