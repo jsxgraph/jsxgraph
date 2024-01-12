@@ -206,7 +206,10 @@ JXG.createEllipse = function (board, parents, attributes) {
         attr_center
     );
 
-    /** type curve {JGX.Element} */
+    /**
+     * @class
+     * @ignore
+     */
     curve = board.create(
         "curve",
         [
@@ -452,6 +455,10 @@ JXG.createHyperbola = function (board, parents, attributes) {
         attr_center
     );
 
+    /**
+     * @class
+     * @ignore
+     */
     curve = board.create(
         "curve",
         [
@@ -653,7 +660,10 @@ JXG.createParabola = function (board, parents, attributes) {
         attr_center
     );
 
-    /** @ignore */
+    /**
+     * @class
+     * @ignore
+     */
     curve = board.create(
         "curve",
         [
@@ -997,6 +1007,10 @@ JXG.createConic = function (board, parents, attributes) {
 
     // Here, the defining functions for the curve are just dummy functions.
     // In polarForm there is a reference to curve.quadraticform.
+    /**
+     * @class
+     * @ignore
+     */
     curve = board.create(
         "curve",
         [

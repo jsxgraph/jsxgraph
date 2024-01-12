@@ -1101,6 +1101,10 @@ JXG.Options = {
 
         /**
          * Show a button which allows to clear all traces of a board.
+         * This button can be accessed by JavaScript or CSS with
+         * the ID <tt>"{board_id}_navigation_button_cleartraces"</tt> or by the CSS classes
+         * <tt>JXG_navigation_button"</tt> or
+         * <tt>JXG_navigation_button_cleartraces"</tt>.
          *
          * @name JXG.Board#showClearTraces
          * @type Boolean
@@ -1120,6 +1124,10 @@ JXG.Options = {
 
         /**
          * Show a button in the navigation bar to start fullscreen mode.
+         * This button can be accessed by JavaScript or CSS with
+         * the ID <tt>"{board_id}_navigation_button_fullscreen"</tt> or by the CSS classes
+         * <tt>JXG_navigation_button"</tt> or
+         * <tt>JXG_navigation_button_fullscreen"</tt>.
          *
          * @name JXG.Board#showFullscreen
          * @type Boolean
@@ -1145,6 +1153,17 @@ JXG.Options = {
 
         /**
          * Display of navigation arrows and zoom buttons in the navigation bar.
+         * <p>
+         * The navigation bar has the
+         * the ID <tt>"{board_id}_navigation"</tt> and the CSS class
+         * <tt>JXG_navigation"</tt>.
+         * The individual buttons can be accessed by JavaScript or CSS with
+         * the ID <tt>"{board_id}_navigation_button_{type}"</tt> or by the CSS classes
+         * <tt>JXG_navigation_button"</tt> or
+         * <tt>JXG_navigation_button_{type}"</tt>, where <tt>{type}</tt>
+         * is one of <tt>left</tt>, <tt>right</tt>, or <tt>up</tt>, <tt>down</tt>,
+         * <tt>in</tt>, <tt>100</tt>, or <tt>out</tt>,
+         * <tt>fullscreen</tt>, <tt>screenshot</tt>, <tt>cleartraces</tt>, <tt>reload</tt>.
          *
          * @name JXG.Board#showNavigation
          * @type Boolean
@@ -1156,6 +1175,10 @@ JXG.Options = {
         /**
          * Show a button in the navigation bar to force reload of a construction.
          * Works only with the JessieCode tag.
+         * This button can be accessed by JavaScript or CSS with
+         * the ID <tt>"{board_id}_navigation_button_reload"</tt> or by the CSS classes
+         * <tt>JXG_navigation_button"</tt> or
+         * <tt>JXG_navigation_button_reload"</tt>.
          *
          * @name JXG.Board#showReload
          * @type Boolean
@@ -1166,6 +1189,10 @@ JXG.Options = {
 
         /**
          * Show a button in the navigation bar to enable screenshots.
+         * This button can be accessed by JavaScript or CSS with
+         * the ID <tt>"{board_id}_navigation_button_screenshot"</tt> or by the CSS classes
+         * <tt>JXG_navigation_button"</tt> or
+         * <tt>JXG_navigation_button_screenshot"</tt>.
          *
          * @name JXG.Board#showScreenshot
          * @type Boolean
@@ -1177,6 +1204,12 @@ JXG.Options = {
         /**
          * Display of zoom buttons in the navigation bar. To show zoom buttons, additionally
          * showNavigation has to be set to true.
+         * <p>
+         * The individual buttons can be accessed by JavaScript or CSS with
+         * the ID <tt>"{board_id}_navigation_button_{type}"</tt> or by the CSS classes
+         * <tt>JXG_navigation_button"</tt> or
+         * <tt>JXG_navigation_button_{type}"</tt>, where <tt>{type}</tt>
+         * is <tt>in</tt>, <tt>100</tt>, or <tt>out</tt>.
          *
          * @name JXG.Board#showZoom
          * @type Boolean
@@ -1353,11 +1386,10 @@ JXG.Options = {
      *  Generic options used by {@link JXG.GeometryElement}
      */
     elements: {
-        // the following tag is a meta tag: http://code.google.com/p/jsdoc-toolkit/wiki/MetaTags
-
         /**#@+
          * @visprop
          */
+        // This is a meta tag: http://code.google.com/p/jsdoc-toolkit/wiki/MetaTags
 
         /**
          * Determines the elements border-style.
@@ -1727,7 +1759,6 @@ JXG.Options = {
         gradientStartOffset: 0.0,
 
         /**
-         *
          * @type Boolean
          * @default true
          * @name JXG.GeometryElement#highlight
@@ -4613,7 +4644,7 @@ JXG.Options = {
         /**
          * Tolerance for cusp / bifurcation detection.
          *
-         * @name ImplicitCurve#tol_newton
+         * @name ImplicitCurve#tol_cusp
          * @type {Number|Function}
          * @default 0.05
          */
@@ -4669,7 +4700,7 @@ JXG.Options = {
          * If h is below this threshold (in user units), we bail out
          * of the tracing phase of that component.
          *
-         * @name ImplicitCurve#h_initial
+         * @name ImplicitCurve#h_critical
          * @type {Number|Function}
          * @default 0.001
          */
@@ -4705,7 +4736,7 @@ JXG.Options = {
         /**
          * Use Gosper's loop detector.
          *
-         * @name ImplicitCurve#loop_dir
+         * @name ImplicitCurve#loop_detection
          * @type {Boolean|Function}
          * @default true
          */
