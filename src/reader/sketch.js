@@ -1839,9 +1839,9 @@
 
                     case JXG.GENTYPE_TEXT:
                         if (
-                            step.args.str.substr(0, 1) !== "'" &&
-                            step.args.str.substr(0, 1) !== '"' &&
-                            step.args.str.substr(0, 8) !== "function"
+                            step.args.str.slice(0, 1) !== "'" &&
+                            step.args.str.slice(0, 1) !== '"' &&
+                            step.args.str.slice(0, 8) !== "function"
                         ) {
                             step.args.str = "'" + step.args.str + "'";
                         }

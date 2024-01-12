@@ -227,7 +227,7 @@ JXG.TracenpocheReader = function (board, str) {
                                 if (i >= length) {
                                     error("string", str, "Unterminated string");
                                 }
-                                c = parseInt(inputStr.substr(i + 1, 4), 16);
+                                c = parseInt(inputStr.slice(i + 1, i + 5), 16);
                                 if (!isFinite(c) || c < 0) {
                                     error("string", str, "Unterminated string");
                                 }

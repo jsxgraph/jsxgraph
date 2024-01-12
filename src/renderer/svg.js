@@ -2340,7 +2340,7 @@ JXG.extend(
                 // Create canvas element and add it to the DOM
                 // It will be removed after the image has been stored.
                 canvas = doc.createElement("canvas");
-                id = Math.random().toString(36).substr(2, 5);
+                id = Math.random().toString(36).slice(2, 7);
                 canvas.setAttribute("id", id);
                 canvas.setAttribute("width", w);
                 canvas.setAttribute("height", h);

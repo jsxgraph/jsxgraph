@@ -1002,7 +1002,7 @@ JXG.extend(
 
                 if (res !== null) {
                     GeonextParser.findDependencies(this, res[1], this.board);
-                    content = content.substr(res.index);
+                    content = content.slice(res.index);
                     content = content.replace(search, "");
                 }
             } while (res !== null);
