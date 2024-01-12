@@ -516,6 +516,13 @@ JXG.Board = function (container, renderer, id,
     this.hasPointerHandlers = false;
 
     /**
+     * A flag which stores if the board registered zoom events, i.e. mouse wheel scroll events.
+     * @type Boolean
+     * @default false
+     */
+    this.hasZoomHandlers = false;
+
+    /**
      * A flag which tells if the board the JXG.Board#mouseUpListener is currently registered.
      * @type Boolean
      * @default false
@@ -614,14 +621,56 @@ JXG.Board = function (container, renderer, id,
     this.mathLib = Math;        // Math or JXG.Math.IntervalArithmetic
     this.mathLibJXG = JXG.Math; // JXG.Math or JXG.Math.IntervalArithmetic
 
-    if (this.attr.registerevents) {
-        this.addEventHandlers();
+    // if (this.attr.registerevents) {
+    //     this.addEventHandlers();
+    // }
+    // if (this.attr.registerresizeevent) {
+    //     this.addResizeEventHandlers();
+    // }
+    // if (this.attr.registerfullscreenevent) {
+    //     this.addFullscreenEventHandlers();
+    // }
+    if (this.attr.registerevents === true) {
+        this.attr.registerevents = {
+            fullscreen: true,
+            keyboard: true,
+            pointer: true,
+            resize: true,
+            zoom: true
+        }
+    } else if (typeof this.attr.registerevents === 'object') {
+        if (!Type.exists(this.attr.registerevents.fullscreen)) {
+            this.attr.registerevents.fullscreen = true;
+        }
+        if (!Type.exists(this.attr.registerevents.keyboard)) {
+            this.attr.registerevents.keyboard = true;
+        }
+        if (!Type.exists(this.attr.registerevents.pointer)) {
+            this.attr.registerevents.pointer = true;
+        }
+        if (!Type.exists(this.attr.registerevents.resize)) {
+            this.attr.registerevents.resize = true;
+        }
+        if (!Type.exists(this.attr.registerevents.zoom)) {
+            this.attr.registerevents.zoom = true;
+        }
     }
-    if (this.attr.registerresizeevent) {
-        this.addResizeEventHandlers();
-    }
-    if (this.attr.registerfullscreenevent) {
-        this.addFullscreenEventHandlers();
+    if (this.attr.registerevents !== false) {
+        if (this.attr.registerevents.fullscreen) {
+            this.addFullscreenEventHandlers();
+        }
+        if (this.attr.registerevents.keyboard) {
+            this.addFullscreenEventHandlers();
+        }
+        if (this.attr.registerevents.pointer) {
+            this.addEventHandlers();
+        }
+        if (this.attr.registerevents.resize) {
+            this.addResizeEventHandlers();
+        }
+        if (this.attr.registerevents.zoom) {
+            this.addZoomEventHandlers();
+        }
     }
 
     this.methodMap = {
@@ -1728,8 +1777,8 @@ JXG.extend(
                     Env.addEvent(moveTarget, 'pointermove', this.pointerMoveListener, this);
                     Env.addEvent(moveTarget, 'pointerleave', this.pointerLeaveListener, this);
                 }
-                Env.addEvent(this.containerObj, 'mousewheel', this.mouseWheelListener, this);
-                Env.addEvent(this.containerObj, 'DOMMouseScroll', this.mouseWheelListener, this);
+                // Env.addEvent(this.containerObj, 'mousewheel', this.mouseWheelListener, this);
+                // Env.addEvent(this.containerObj, 'DOMMouseScroll', this.mouseWheelListener, this);
 
                 if (this.containerObj !== null) {
                     // This is needed for capturing touch events.
@@ -1751,8 +1800,8 @@ JXG.extend(
                 Env.addEvent(this.containerObj, 'mousedown', this.mouseDownListener, this);
                 Env.addEvent(moveTarget, 'mousemove', this.mouseMoveListener, this);
 
-                Env.addEvent(this.containerObj, 'mousewheel', this.mouseWheelListener, this);
-                Env.addEvent(this.containerObj, 'DOMMouseScroll', this.mouseWheelListener, this);
+                // Env.addEvent(this.containerObj, 'mousewheel', this.mouseWheelListener, this);
+                // Env.addEvent(this.containerObj, 'DOMMouseScroll', this.mouseWheelListener, this);
 
                 this.hasMouseHandlers = true;
             }
@@ -1783,6 +1832,18 @@ JXG.extend(
                 this.hasTouchHandlers = true;
             }
         },
+
+        /**
+         * Registers pointer event handlers.
+         */
+        addZoomEventHandlers: function () {
+            if (!this.hasZoomHandlers && Env.isBrowser) {
+                Env.addEvent(this.containerObj, 'mousewheel', this.mouseWheelListener, this);
+                Env.addEvent(this.containerObj, 'DOMMouseScroll', this.mouseWheelListener, this);
+                this.hasZoomHandlers = true;
+            }
+        },
+
 
         /**
          * Add fullscreen events which update the CSS transformation matrix to correct
@@ -1867,8 +1928,10 @@ JXG.extend(
                     Env.removeEvent(moveTarget, 'pointerleave', this.pointerLeaveListener, this);
                 }
 
-                Env.removeEvent(this.containerObj, 'mousewheel', this.mouseWheelListener, this);
-                Env.removeEvent(this.containerObj, 'DOMMouseScroll', this.mouseWheelListener, this);
+                if (this.hasZoomHandlers) {
+                    Env.removeEvent(this.containerObj, 'mousewheel', this.mouseWheelListener, this);
+                    Env.removeEvent(this.containerObj, 'DOMMouseScroll', this.mouseWheelListener, this);
+                }
 
                 if (this.hasPointerUp) {
                     if (window.navigator.msPointerEnabled) {
@@ -1900,13 +1963,15 @@ JXG.extend(
                     this.hasMouseUp = false;
                 }
 
-                Env.removeEvent(this.containerObj, 'mousewheel', this.mouseWheelListener, this);
-                Env.removeEvent(
-                    this.containerObj,
-                    'DOMMouseScroll',
-                    this.mouseWheelListener,
-                    this
-                );
+                if (this.hasZoomHandlers) {
+                    Env.removeEvent(this.containerObj, 'mousewheel', this.mouseWheelListener, this);
+                    Env.removeEvent(
+                        this.containerObj,
+                        'DOMMouseScroll',
+                        this.mouseWheelListener,
+                        this
+                    );
+                }
 
                 this.hasMouseHandlers = false;
             }

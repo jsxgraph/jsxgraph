@@ -893,10 +893,24 @@ JXG.Options = {
         },
 
         /**
-         * Allow user interaction by registering mouse, pointer, keyboard or touch events.
-         * Decide if JSXGraph listens to these events. Keyboard events can then turned off
-         * separately with the keyboard attribute.
-         *
+         * Allow user interaction by registering pointer events (including mouse and
+         * touch events), fullscreen, keyboard, resize, and zoom events.
+         * The latter events are essentially mouse wheel events.
+         * Decide if JSXGraph listens to these events.
+         * <p>
+         * Using a Boolean value turns on all events (or not), supplying an object of
+         * the form
+         * <pre>
+         *  {
+         *     fullscreen: true / false,
+         *     keyboard: true / false,
+         *     pointer: true / false,
+         *     resize: true / false,
+         *     zoom: true / false
+         *  }
+         * </pre>
+         * activates individual event handlers. If an event is NOT given,
+         * it will be activated.
          * <p>This attribute is immutable. Please use
          * {@link JXG.Board#addEventHandlers()} and
          * {@link JXG.Board#removeEventHandlers()} directly.
@@ -910,40 +924,40 @@ JXG.Options = {
          */
         registerEvents: true,
 
-        /**
-         * Listen to fullscreen event.
-         *
-         * <p>This attribute is immutable. Please use
-         * {@link JXG.Board#addFullscreenEventHandlers()} and
-         * {@link JXG.Board#removeEventHandlers()} directly.
-         *
-         * @name JXG.Board#registerFullscreenEvent
-         * @see JXG.Board#registerEvents
-         * @see JXG.Board#registerResizeEvent
-         * @type Boolean
-         * @default true
-         */
-        registerFullscreenEvent: true,
+        // /**
+        //  * Listen to fullscreen event.
+        //  *
+        //  * <p>This attribute is immutable. Please use
+        //  * {@link JXG.Board#addFullscreenEventHandlers()} and
+        //  * {@link JXG.Board#removeEventHandlers()} directly.
+        //  *
+        //  * @name JXG.Board#registerFullscreenEvent
+        //  * @see JXG.Board#registerEvents
+        //  * @see JXG.Board#registerResizeEvent
+        //  * @type Boolean
+        //  * @default true
+        //  */
+        // registerFullscreenEvent: true,
 
-        /**
-         * Listen to resize events, i.e. start "resizeObserver" or handle the resize event with
-         * "resizeListener". This is independent from the mouse, touch, pointer events.
-         *
-         * <p>This attribute is immutable. Please use
-         * {@link JXG.Board#addResizeEventHandlers()} and
-         * {@link JXG.Board#removeEventHandlers()} directly.
-         * <p>
-         * This attribute just starts a resizeObserver. If the resizeObserver reacts
-         * to size changed is controled wuth {@link JXG.Board#resize}.
-         *
-         * @name JXG.Board#registerResizeEvent
-         * @see JXG.Board#resize
-         * @see JXG.Board#registerEvents
-         * @see JXG.Board#registerFullscreenEvent
-         * @type Boolean
-         * @default true
-         */
-        registerResizeEvent: true,
+        // /**
+        //  * Listen to resize events, i.e. start "resizeObserver" or handle the resize event with
+        //  * "resizeListener". This is independent from the mouse, touch, pointer events.
+        //  *
+        //  * <p>This attribute is immutable. Please use
+        //  * {@link JXG.Board#addResizeEventHandlers()} and
+        //  * {@link JXG.Board#removeEventHandlers()} directly.
+        //  * <p>
+        //  * This attribute just starts a resizeObserver. If the resizeObserver reacts
+        //  * to size changed is controled wuth {@link JXG.Board#resize}.
+        //  *
+        //  * @name JXG.Board#registerResizeEvent
+        //  * @see JXG.Board#resize
+        //  * @see JXG.Board#registerEvents
+        //  * @see JXG.Board#registerFullscreenEvent
+        //  * @type Boolean
+        //  * @default true
+        //  */
+        // registerResizeEvent: true,
 
         /**
          * Default rendering engine. Possible values are 'svg', 'canvas', 'vml', 'no', or 'auto'.
@@ -1232,9 +1246,9 @@ JXG.Options = {
          *   min: 0.001,       // minimal values of {@link JXG.Board#zoomX} and {@link JXG.Board#zoomY}, limits zoomOut
          *   max: 1000.0,      // maximal values of {@link JXG.Board#zoomX} and {@link JXG.Board#zoomY}, limits zoomIn
          *
-         *   pinch: true,      // by pinch-to-zoom gesture on touch devices
-         *   pinchHorizontal: true, // Allow pinch-to-zoom to zoom only horizontal axis
-         *   pinchVertical: true,   // Allow pinch-to-zoom to zoom only vertical axis
+         *   pinch: true,      // pinch-to-zoom gesture for proportional zoom
+         *   pinchHorizontal: true, // Horizontal pinch-to-zoom zooms horizontal axis only
+         *   pinchVertical: true,   // Vertical pinch-to-zoom zooms vertical axis only
          *   pinchSensitivity: 7    // Sensitivity (in degrees) for recognizing horizontal or vertical pinch-to-zoom gestures.
          * }
          * </pre>
@@ -1258,6 +1272,7 @@ JXG.Options = {
             needShift: true,
             min: 0.0001,
             max: 10000.0,
+            pinch: true,
             pinchHorizontal: true,
             pinchVertical: true,
             pinchSensitivity: 7
