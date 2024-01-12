@@ -2216,7 +2216,7 @@ JXG.extend(
                     }
                     // button.setAttribute('tabindex', 0);
 
-                    button.setAttribute("id", board_id + '_navigation_button_' + type);
+                    button.setAttribute("id", board_id + '_navigation_' + type);
                     node.appendChild(button);
 
                     Env.addEvent(
