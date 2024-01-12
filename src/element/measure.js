@@ -292,7 +292,7 @@ JXG.prefixParser = {
                     res = 2;
                     break;
                 default: // 'V', 'Value'
-                    if (term[1].elType === 'measurement') {
+                    if (term[1].type === Type.OBJECT_TYPE_MEASUREMENT) {
                         res = term[1].Dimension();
                         // If attribute "dim" is set, this overrules anything else.
                         if (Type.exists(term[1].visProp.dim)) {
@@ -363,7 +363,7 @@ JXG.prefixParser = {
     //                 res = fun + '(' + v + ')';
     //                 break;
     //             default: // 'V', 'Value'
-    //                 if (term[1].elType === 'measurement') {
+    //                 if (term[1].type === Type.OBJECT_TYPE_MEASUREMENT) {
     //                     res = fun + '(' + term[1].toInfix(type) + ')';
     //                 } else {
     //                     res = fun + '(' + v + ')';
@@ -389,7 +389,7 @@ JXG.prefixParser = {
             if (Type.isInArray(['+', '-', '*', '/'], method)) {
                 res.push(this.toPrefix(term[i]));
             } else {
-                if (method === 'V' && term[i].elType === 'measurement') {
+                if (method === 'V' && term[i].type === Type.OBJECT_TYPE_MEASUREMENT) {
                     res = term[i].toPrefix();
                 } else {
                     res = [method, term[i].id];
@@ -415,7 +415,7 @@ JXG.prefixParser = {
             if (Type.isInArray(['+', '-', '*', '/'], method)) {
                 res = res.concat(this.getParents(term[i]));
             } else {
-                if (method === 'V' && term[i].elType === 'measurement') {
+                if (method === 'V' && term[i].type === Type.OBJECT_TYPE_MEASUREMENT) {
                     res = res.concat(term[i].getParents());
                 } else {
                     res.push(term[i]);
@@ -447,6 +447,7 @@ JXG.createMeasurement = function (board, parents, attributes) {
     }
 
     el = board.create("text", [x, y, ''], attr);
+    el.type = Type.OBJECT_TYPE_MEASUREMENT;
     el.elType = 'measurement';
     el.Value = value;
     el.Dimension = dim;
@@ -465,21 +466,30 @@ JXG.createMeasurement = function (board, parents, attributes) {
     }
 
     el.setText(function () {
-        var d = el.Dimension(),
+        var prefix = '',
+            suffix = '',
+            d = el.Dimension(),
             b = Type.evaluate(el.visProp.baseunit),
             v = el.Value().toFixed(Type.evaluate(el.visProp.digits));
 
+        if (Type.evaluate(el.visProp.showprefix)) {
+            prefix = Type.evaluate(el.visProp.prefix)
+        }
+        if (Type.evaluate(el.visProp.showsuffix)) {
+            suffix = Type.evaluate(el.visProp.suffix)
+        }
+
         if (d === 0 || b === '') {
-            return v;
+            return prefix + v + suffix;
         }
         if (isNaN(d)) {
             return 'NaN';
         }
         if (d === 1) {
-            return v + ' ' + b;
+            return prefix  + v + ' ' + b + suffix;
         }
 
-        return v + ' ' + b + '^{' + d + '}';
+        return prefix + v + ' ' + b + '^{' + d + '}' + suffix;
     });
 
     el.methodMap = Type.deepCopy(el.methodMap, {
