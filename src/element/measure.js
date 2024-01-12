@@ -430,8 +430,8 @@ JXG.prefixParser = {
 JXG.createMeasurement = function (board, parents, attributes) {
     var el, attr,
         x, y, term,
-        value, i,
-        dim;
+        valueFunc, i,
+        dimFunc;
 
     attr = Type.copyAttributes(attributes, board.options, "measurement");
 
@@ -439,18 +439,18 @@ JXG.createMeasurement = function (board, parents, attributes) {
     y = parents[1];
     term = parents[2];
 
-    value = function () {
+    valueFunc = function () {
         return JXG.prefixParser.parse(term, 'execute');
     }
-    dim = function () {
+    dimFunc = function () {
         return JXG.prefixParser.dimension(term);
     }
 
     el = board.create("text", [x, y, ''], attr);
     el.type = Type.OBJECT_TYPE_MEASUREMENT;
     el.elType = 'measurement';
-    el.Value = value;
-    el.Dimension = dim;
+    el.Value = valueFunc;
+    el.Dimension = dimFunc;
     el.toInfix = function (type) {
         return JXG.prefixParser.toInfix(term, type);
     };
