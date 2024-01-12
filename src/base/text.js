@@ -502,22 +502,21 @@ JXG.extend(
             var j,
                 i = te.indexOf("_{");
 
-            // the regexp in here are not used for filtering but to provide some kind of sugar for label creation,
+            // The regexp in here are not used for filtering but to provide some kind of sugar for label creation,
             // i.e. replacing _{...} with <sub>...</sub>. What is passed would get out anyway.
             /*jslint regexp: true*/
-
             while (i >= 0) {
-                te = te.substr(0, i) + te.substr(i).replace(/_\{/, "<sub>");
-                j = te.substr(i).indexOf("}");
+                te = te.slice(0, i) + te.slice(i).replace(/_\{/, "<sub>");
+                j = te.indexOf("}", i + 4);
                 if (j >= 0) {
-                    te = te.substr(0, j) + te.substr(j).replace(/\}/, "</sub>");
+                    te = te.slice(0, j) + te.slice(j).replace(/\}/, "</sub>");
                 }
                 i = te.indexOf("_{");
             }
 
             i = te.indexOf("_");
             while (i >= 0) {
-                te = te.substr(0, i) + te.substr(i).replace(/_(.?)/, "<sub>$1</sub>");
+                te = te.slice(0, i) + te.slice(i).replace(/_(.?)/, "<sub>$1</sub>");
                 i = te.indexOf("_");
             }
 
@@ -537,22 +536,21 @@ JXG.extend(
             var j,
                 i = te.indexOf("^{");
 
-            // the regexp in here are not used for filtering but to provide some kind of sugar for label creation,
+            // The regexp in here are not used for filtering but to provide some kind of sugar for label creation,
             // i.e. replacing ^{...} with <sup>...</sup>. What is passed would get out anyway.
             /*jslint regexp: true*/
-
             while (i >= 0) {
-                te = te.substr(0, i) + te.substr(i).replace(/\^\{/, "<sup>");
-                j = te.substr(i).indexOf("}");
+                te = te.slice(0, i) + te.slice(i).replace(/\^\{/, "<sup>");
+                j = te.indexOf("}", i + 4);
                 if (j >= 0) {
-                    te = te.substr(0, j) + te.substr(j).replace(/\}/, "</sup>");
+                    te = te.slice(0, j) + te.slice(j).replace(/\}/, "</sup>");
                 }
                 i = te.indexOf("^{");
             }
 
             i = te.indexOf("^");
             while (i >= 0) {
-                te = te.substr(0, i) + te.substr(i).replace(/\^(.?)/, "<sup>$1</sup>");
+                te = te.slice(0, i) + te.slice(i).replace(/\^(.?)/, "<sup>$1</sup>");
                 i = te.indexOf("^");
             }
 
