@@ -192,6 +192,9 @@ JXG.prefixParser = {
     parse: function (term, action) {
         var method, i, le, res, fun, v;
 
+        if (Type.isNumber(term)) {
+            return term;
+        }
         if (!Type.isArray(term) || term.length < 2) {
             throw new Error('prefixParser.parse: term is not an array');
         }
@@ -221,7 +224,19 @@ JXG.prefixParser = {
                         default:
                     }
                 }
-
+            } else if (method === 'exec') {
+                fun = term[1];
+                v = [];
+                for (i = 2; i < le; i++) {
+                    v.push(this.parse(term[i], action));
+                }
+                if (Type.exists(Math[fun])) {
+                    res = Math[fun].apply(this, v);
+                } else if (Type.exists(JXG.Math[fun])) {
+                    res = JXG.Math[fun].apply(this, v);
+                } else {
+                    throw new Error("prefixParser.parse: " + fun + " is not allowed");
+                }
             } else {
                 // Allow shortcut 'V' for 'Value'
                 fun = term[0];
@@ -242,6 +257,9 @@ JXG.prefixParser = {
     dimension: function (term) {
         var method, i, le, res, fun, d, v;
 
+        if (Type.isNumber(term)) {
+            return 0;
+        }
         if (!Type.isArray(term) || term.length < 2) {
             throw new Error('prefixParser.dimension: term is not an array');
         }
@@ -275,6 +293,19 @@ JXG.prefixParser = {
                 }
             }
 
+        } else if (method === 'exec') {
+            if (term[2].type === Type.OBJECT_TYPE_MEASUREMENT) {
+                res = term[2].Dimension();
+                // If attribute "dim" is set, this overrules anything else.
+                if (Type.exists(term[2].visProp.dim)) {
+                    d = Type.evaluate(term[2].visProp.dim);
+                    if (d > 0) {
+                        res = d;
+                    }
+                }
+            } else {
+                res = 0;
+            }
         } else {
             // Allow shortcut 'V' for 'Value'
             fun = term[0];
@@ -310,73 +341,12 @@ JXG.prefixParser = {
         return res;
     },
 
-    // toInfix: function(term, type) {
-    //     var method, i, le, res, fun, v;
-
-    //     if (!Type.isArray(term) || term.length < 2) {
-    //         throw new Error('prefixParser.toInfix: term is not an array');
-    //     }
-
-    //     method = term[0];
-    //     le = term.length;
-
-    //     if (Type.isInArray(['+', '-', '*', '/'], method)) {
-
-    //         res = this.toInfix(term[1], type);
-    //         for (i = 2; i < le; i++) {
-    //             v = this.toInfix(term[i], type);
-    //             switch (method) {
-    //                 case '+':
-    //                     res += ' + ' + v;
-    //                     break;
-    //                 case '-':
-    //                     res += ' - ' + v;
-    //                     break;
-    //                 case '*':
-    //                     res += ' * ' + v;
-    //                     break;
-    //                 case '/':
-    //                     res += ' / ' + v;
-    //                     break;
-    //                 default:
-    //             }
-    //         }
-
-    //     } else {
-    //         // Allow shortcut 'V' for 'Value'
-    //         fun = term[0];
-
-    //         if (type === 'name') {
-    //             v = term[1].name;
-    //         } else {
-    //             v = term[1].id;
-    //         }
-
-    //         switch (fun) {
-    //             case 'L':
-    //             case 'Length':
-    //             case 'Perimeter':
-    //             case 'Radius':
-    //             case 'R':
-    //             case 'Area':
-    //             case 'A':
-    //                 res = fun + '(' + v + ')';
-    //                 break;
-    //             default: // 'V', 'Value'
-    //                 if (term[1].type === Type.OBJECT_TYPE_MEASUREMENT) {
-    //                     res = fun + '(' + term[1].toInfix(type) + ')';
-    //                 } else {
-    //                     res = fun + '(' + v + ')';
-    //                 }
-    //         }
-    //     }
-
-    //     return res;
-    // },
-
-    toPrefix: function(term) {
+    toPrefix: function (term) {
         var method, i, le, res;
 
+        if (Type.isNumber(term)) {
+            return term;
+        }
         if (!Type.isArray(term) || term.length < 2) {
             throw new Error('prefixParser.toPrefix: term is not an array');
         }
@@ -391,6 +361,12 @@ JXG.prefixParser = {
             } else {
                 if (method === 'V' && term[i].type === Type.OBJECT_TYPE_MEASUREMENT) {
                     res = term[i].toPrefix();
+                } else if (method === 'exec') {
+                    if (i === 1) {
+                        res.push(term[i])
+                    } else {
+                        res.push(this.toPrefix(term[i]));
+                    }
                 } else {
                     res = [method, term[i].id];
                 }
@@ -400,9 +376,12 @@ JXG.prefixParser = {
         return res;
     },
 
-    getParents: function(term) {
+    getParents: function (term) {
         var method, i, le, res;
 
+        if (Type.isNumber(term)) {
+            return [];
+        }
         if (!Type.isArray(term) || term.length < 2) {
             throw new Error('prefixParser.getParents: term is not an array');
         }
@@ -417,6 +396,10 @@ JXG.prefixParser = {
             } else {
                 if (method === 'V' && term[i].type === Type.OBJECT_TYPE_MEASUREMENT) {
                     res = res.concat(term[i].getParents());
+                } else if (method === 'exec') {
+                    if (i > 1) {
+                        res = res.concat(this.getParents(term[i]));
+                    }
                 } else {
                     res.push(term[i]);
                 }
@@ -486,7 +469,7 @@ JXG.createMeasurement = function (board, parents, attributes) {
             return 'NaN';
         }
         if (d === 1) {
-            return prefix  + v + ' ' + b + suffix;
+            return prefix + v + ' ' + b + suffix;
         }
 
         return prefix + v + ' ' + b + '^{' + d + '}' + suffix;
