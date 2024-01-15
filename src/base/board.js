@@ -520,7 +520,7 @@ JXG.Board = function (container, renderer, id,
      * @type Boolean
      * @default false
      */
-    this.hasZoomHandlers = false;
+    this.hasWheelHandlers = false;
 
     /**
      * A flag which tells if the board the JXG.Board#mouseUpListener is currently registered.
@@ -636,7 +636,7 @@ JXG.Board = function (container, renderer, id,
             keyboard: true,
             pointer: true,
             resize: true,
-            zoom: true
+            wheel: true
         }
     } else if (typeof this.attr.registerevents === 'object') {
         if (!Type.exists(this.attr.registerevents.fullscreen)) {
@@ -651,8 +651,8 @@ JXG.Board = function (container, renderer, id,
         if (!Type.exists(this.attr.registerevents.resize)) {
             this.attr.registerevents.resize = true;
         }
-        if (!Type.exists(this.attr.registerevents.zoom)) {
-            this.attr.registerevents.zoom = true;
+        if (!Type.exists(this.attr.registerevents.wheel)) {
+            this.attr.registerevents.wheel = true;
         }
     }
     if (this.attr.registerevents !== false) {
@@ -668,8 +668,8 @@ JXG.Board = function (container, renderer, id,
         if (this.attr.registerevents.resize) {
             this.addResizeEventHandlers();
         }
-        if (this.attr.registerevents.zoom) {
-            this.addZoomEventHandlers();
+        if (this.attr.registerevents.wheel) {
+            this.addWheelEventHandlers();
         }
     }
 
@@ -1836,11 +1836,11 @@ JXG.extend(
         /**
          * Registers pointer event handlers.
          */
-        addZoomEventHandlers: function () {
-            if (!this.hasZoomHandlers && Env.isBrowser) {
+        addWheelEventHandlers: function () {
+            if (!this.hasWheelHandlers && Env.isBrowser) {
                 Env.addEvent(this.containerObj, 'mousewheel', this.mouseWheelListener, this);
                 Env.addEvent(this.containerObj, 'DOMMouseScroll', this.mouseWheelListener, this);
-                this.hasZoomHandlers = true;
+                this.hasWheelHandlers = true;
             }
         },
 
@@ -1928,7 +1928,7 @@ JXG.extend(
                     Env.removeEvent(moveTarget, 'pointerleave', this.pointerLeaveListener, this);
                 }
 
-                if (this.hasZoomHandlers) {
+                if (this.hasWheelHandlers) {
                     Env.removeEvent(this.containerObj, 'mousewheel', this.mouseWheelListener, this);
                     Env.removeEvent(this.containerObj, 'DOMMouseScroll', this.mouseWheelListener, this);
                 }
@@ -1963,7 +1963,7 @@ JXG.extend(
                     this.hasMouseUp = false;
                 }
 
-                if (this.hasZoomHandlers) {
+                if (this.hasWheelHandlers) {
                     Env.removeEvent(this.containerObj, 'mousewheel', this.mouseWheelListener, this);
                     Env.removeEvent(
                         this.containerObj,

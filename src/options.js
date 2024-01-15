@@ -906,7 +906,7 @@ JXG.Options = {
          *     keyboard: true / false,
          *     pointer: true / false,
          *     resize: true / false,
-         *     zoom: true / false
+         *     wheel: true / false
          *  }
          * </pre>
          * activates individual event handlers. If an event is NOT given,
