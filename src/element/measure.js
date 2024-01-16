@@ -41,6 +41,7 @@
 import JXG from "../jxg";
 import Type from "../utils/type";
 import GeometryElement from "../base/element";
+import Prefix from "../parser/prefix";
 
 /**
  * @class A tape measure can be used to measure distances between points.
@@ -188,228 +189,6 @@ JXG.createTapemeasure = function (board, parents, attributes) {
 
 JXG.registerElement("tapemeasure", JXG.createTapemeasure);
 
-JXG.prefixParser = {
-    parse: function (term, action) {
-        var method, i, le, res, fun, v;
-
-        if (Type.isNumber(term)) {
-            return term;
-        }
-        if (!Type.isArray(term) || term.length < 2) {
-            throw new Error('prefixParser.parse: term is not an array');
-        }
-
-        method = term[0];
-        le = term.length;
-
-        if (action === 'execute') {
-            if (Type.isInArray(['+', '-', '*', '/'], method)) {
-
-                res = this.parse(term[1], action);
-                for (i = 2; i < le; i++) {
-                    v = this.parse(term[i], action);
-                    switch (method) {
-                        case '+':
-                            res += v;
-                            break;
-                        case '-':
-                            res -= v;
-                            break;
-                        case '*':
-                            res *= v;
-                            break;
-                        case '/':
-                            res /= v;
-                            break;
-                        default:
-                    }
-                }
-            } else if (method === 'exec') {
-                fun = term[1];
-                v = [];
-                for (i = 2; i < le; i++) {
-                    v.push(this.parse(term[i], action));
-                }
-                if (Type.exists(Math[fun])) {
-                    res = Math[fun].apply(this, v);
-                } else if (Type.exists(JXG.Math[fun])) {
-                    res = JXG.Math[fun].apply(this, v);
-                } else {
-                    throw new Error("prefixParser.parse: " + fun + " is not allowed");
-                }
-            } else {
-                // Allow shortcut 'V' for 'Value'
-                fun = term[0];
-                if (fun === 'V') {
-                    fun = 'Value';
-                }
-
-                if (!Type.exists(term[1][fun])) {
-                    throw new Error("prefixParser.parse: " + fun + " is not a method of " + term[1]);
-                }
-                res = term[1][fun]();
-            }
-        }
-
-        return res;
-    },
-
-    dimension: function (term) {
-        var method, i, le, res, fun, d, v;
-
-        if (Type.isNumber(term)) {
-            return 0;
-        }
-        if (!Type.isArray(term) || term.length < 2) {
-            throw new Error('prefixParser.dimension: term is not an array');
-        }
-
-        method = term[0];
-        le = term.length;
-
-        if (Type.isInArray(['+', '-', '*', '/'], method)) {
-
-            res = this.dimension(term[1]);
-            for (i = 2; i < le; i++) {
-                v = this.dimension(term[i]);
-                switch (method) {
-                    case '+':
-                        if (v !== res) {
-                            res = NaN;
-                        }
-                        break;
-                    case '-':
-                        if (v !== res) {
-                            res = NaN;
-                        }
-                        break;
-                    case '*':
-                        res += v;
-                        break;
-                    case '/':
-                        res -= v;
-                        break;
-                    default:
-                }
-            }
-
-        } else if (method === 'exec') {
-            if (term[2].type === Type.OBJECT_TYPE_MEASUREMENT) {
-                res = term[2].Dimension();
-                // If attribute "dim" is set, this overrules anything else.
-                if (Type.exists(term[2].visProp.dim)) {
-                    d = Type.evaluate(term[2].visProp.dim);
-                    if (d > 0) {
-                        res = d;
-                    }
-                }
-            } else {
-                res = 0;
-            }
-        } else {
-            // Allow shortcut 'V' for 'Value'
-            fun = term[0];
-
-            switch (fun) {
-                case 'L':
-                case 'Length':
-                case 'Perimeter':
-                case 'Radius':
-                case 'R':
-                    res = 1;
-                    break;
-                case 'Area':
-                case 'A':
-                    res = 2;
-                    break;
-                default: // 'V', 'Value'
-                    if (term[1].type === Type.OBJECT_TYPE_MEASUREMENT) {
-                        res = term[1].Dimension();
-                        // If attribute "dim" is set, this overrules anything else.
-                        if (Type.exists(term[1].visProp.dim)) {
-                            d = Type.evaluate(term[1].visProp.dim);
-                            if (d > 0) {
-                                res = d;
-                            }
-                        }
-                    } else {
-                        res = 0;
-                    }
-            }
-        }
-
-        return res;
-    },
-
-    toPrefix: function (term) {
-        var method, i, le, res;
-
-        if (Type.isNumber(term)) {
-            return term;
-        }
-        if (!Type.isArray(term) || term.length < 2) {
-            throw new Error('prefixParser.toPrefix: term is not an array');
-        }
-
-        method = term[0];
-        le = term.length;
-        res = [method];
-
-        for (i = 1; i < le; i++) {
-            if (Type.isInArray(['+', '-', '*', '/'], method)) {
-                res.push(this.toPrefix(term[i]));
-            } else {
-                if (method === 'V' && term[i].type === Type.OBJECT_TYPE_MEASUREMENT) {
-                    res = term[i].toPrefix();
-                } else if (method === 'exec') {
-                    if (i === 1) {
-                        res.push(term[i])
-                    } else {
-                        res.push(this.toPrefix(term[i]));
-                    }
-                } else {
-                    res = [method, term[i].id];
-                }
-            }
-        }
-
-        return res;
-    },
-
-    getParents: function (term) {
-        var method, i, le, res;
-
-        if (Type.isNumber(term)) {
-            return [];
-        }
-        if (!Type.isArray(term) || term.length < 2) {
-            throw new Error('prefixParser.getParents: term is not an array');
-        }
-
-        method = term[0];
-        le = term.length;
-        res = [];
-
-        for (i = 1; i < le; i++) {
-            if (Type.isInArray(['+', '-', '*', '/'], method)) {
-                res = res.concat(this.getParents(term[i]));
-            } else {
-                if (method === 'V' && term[i].type === Type.OBJECT_TYPE_MEASUREMENT) {
-                    res = res.concat(term[i].getParents());
-                } else if (method === 'exec') {
-                    if (i > 1) {
-                        res = res.concat(this.getParents(term[i]));
-                    }
-                } else {
-                    res.push(term[i]);
-                }
-            }
-        }
-
-        return res;
-    }
-};
-
 JXG.createMeasurement = function (board, parents, attributes) {
     var el, attr,
         x, y, term,
@@ -423,10 +202,10 @@ JXG.createMeasurement = function (board, parents, attributes) {
     term = parents[2];
 
     valueFunc = function () {
-        return JXG.prefixParser.parse(term, 'execute');
+        return Prefix.parse(term, 'execute');
     }
     dimFunc = function () {
-        return JXG.prefixParser.dimension(term);
+        return Prefix.dimension(term);
     }
 
     el = board.create("text", [x, y, ''], attr);
@@ -435,13 +214,13 @@ JXG.createMeasurement = function (board, parents, attributes) {
     el.Value = valueFunc;
     el.Dimension = dimFunc;
     el.toInfix = function (type) {
-        return JXG.prefixParser.toInfix(term, type);
+        return Prefix.toInfix(term, type);
     };
     el.toPrefix = function () {
-        return JXG.prefixParser.toPrefix(term);
+        return Prefix.toPrefix(term);
     };
     el.getParents = function () {
-        return JXG.prefixParser.getParents(term);
+        return Prefix.getParents(term);
     };
     el.addParents(el.getParents());
     for (i = 0; i < el.parents.length; i++) {
@@ -486,7 +265,3 @@ JXG.createMeasurement = function (board, parents, attributes) {
 };
 
 JXG.registerElement("measurement", JXG.createMeasurement);
-
-// export default {
-//     createTapemeasure: JXG.createTapemeasure
-// };
