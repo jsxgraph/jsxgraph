@@ -1,8 +1,10 @@
-{
-    let size = 0.75;
-    let color = '#000';
+import JXG from "../jxg";
 
-    JXG.Options = JXG.merge(JXG.Options, {
+JXG.themes['mono_thin'] = function(options) {
+    let size = 0.75,
+        color = '#000';
+
+    options = JXG.merge(options, {
 
         board: {
             showInfobox: false,
@@ -43,8 +45,6 @@
             fillColor: '#aaaaaa55',
             fillOpacity: 0.3,
             highlightFillColor: '#aaaaaa33',
-            highlightFillOpacity: 0.3,
-            fillOpacity: 0.3,
             highlightFillOpacity: 0.3,
             label: {
                 strokeColor: color
@@ -121,8 +121,6 @@
             fillColor: '#aaaaaa55',
             fillOpacity: 0.3,
             highlightFillColor: '#aaaaaa33',
-            highlightFillOpacity: 0.3,
-            fillOpacity: 0.3,
             highlightFillOpacity: 0.3
         },
 
@@ -255,8 +253,6 @@
             fillColor: '#aaaaaa55',
             fillOpacity: 0.3,
             highlightFillColor: '#aaaaaa33',
-            highlightFillOpacity: 0.3,
-            fillOpacity: 0.3,
             highlightFillOpacity: 0.3
         },
 
@@ -354,4 +350,6 @@
             highlightStrokeOpacity: 0.8
         }
     });
-}
+};
+
+export default JXG;

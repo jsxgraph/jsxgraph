@@ -1236,6 +1236,8 @@ JXG.Options = {
         */
         takeSizeFromFile: false,
 
+        theme: 'default',
+
         /**
          * Title string for the board.
          * Primarily used in an invisible text element which is adressed by

@@ -82,6 +82,7 @@ import './3d/point3d';
 import './3d/curve3d';
 import './3d/linspace3d';
 import './3d/surface3d';
+import './themes/mono_thin';
 
 // The following exports are used to restore granular objects.
 // This is consistent with 1.4.x when a UMD bundle is used with a SystemJS loader.
