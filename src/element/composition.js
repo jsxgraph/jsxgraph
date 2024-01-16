@@ -3295,7 +3295,7 @@ JXG.createInequality = function (board, parents, attributes) {
                 // contains centroid of the board
                 dp = {
                     coords: {
-                        usrCoords: [1, (bb[0] + bb[2]) / 2, inverse ? bb[1] : bb[3]]
+                        usrCoords: [1, (bb[0] + bb[2]) * 0.5, inverse ? bb[1] : bb[3]]
                     }
                 },
                 slope1 = parents[0].stdform.slice(1),
@@ -3318,7 +3318,7 @@ JXG.createInequality = function (board, parents, attributes) {
             // reuse dp
             dp = {
                 coords: {
-                    usrCoords: [1, (bb[0] + bb[2]) / 2, (bb[1] + bb[3]) / 2]
+                    usrCoords: [1, (bb[0] + bb[2]) * 0.5, (bb[1] + bb[3]) * 0.5]
                 }
             };
 
