@@ -301,9 +301,15 @@ JXG.C.abs = function (z1) {
     return Math.sqrt(z.real);
 };
 
+/**
+ * Create copy of complex number.
+ *
+ * @param {JXG.Complex|Number} z
+ * @returns {JXG.Complex}
+ */
 JXG.C.copy = function(z) {
     return new JXG.Complex(z);
-}
+};
 
 JXG.Complex.C = JXG.C;
 
