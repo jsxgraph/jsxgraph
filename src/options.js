@@ -2600,7 +2600,7 @@ JXG.Options = {
          * </script><pre>
          *
          */
-           drawZero: false,
+        drawZero: false,
 
         /**
          * Let JSXGraph determine the distance between ticks automatically.

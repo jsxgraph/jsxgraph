@@ -190,10 +190,15 @@ JXG.Board = function (container, renderer, id,
      * @type JXG.Options
      */
     this.options = Type.deepCopy(Options);
+
+    /**
+     * Board attributes
+     * @type Object
+     */
     this.attr = attributes;
 
     if (this.attr.theme !== 'default' && Type.exists(JXG.themes[this.attr.theme])) {
-        JXG.themes[this.attr.theme](this.options);
+        Type.mergeAttr(this.options, JXG.themes[this.attr.theme], true);
     }
 
     /**

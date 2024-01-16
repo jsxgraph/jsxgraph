@@ -1072,14 +1072,15 @@ JXG.extend(
                 c = [];
                 for (i = 0; i < obj.length; i++) {
                     prop = obj[i];
-                    if (typeof prop === "object") {
+                    // Attention: typeof null === 'object'
+                    if (prop !== null && typeof prop === "object") {
                         // We certainly do not want to recurse into a JSXGraph object.
                         // This would for sure result in an infinite recursion.
                         // As alternative we copy the id of the object.
                         if (this.exists(prop.board)) {
                             c[i] = prop.id;
                         } else {
-                            c[i] = this.deepCopy(prop);
+                            c[i] = this.deepCopy(prop, {}, toLower);
                         }
                     } else {
                         c[i] = prop;
@@ -1095,7 +1096,7 @@ JXG.extend(
                             if (this.exists(prop.board)) {
                                 c[i2] = prop.id;
                             } else {
-                                c[i2] = this.deepCopy(prop);
+                                c[i2] = this.deepCopy(prop, {}, toLower);
                             }
                         } else {
                             c[i2] = prop;
@@ -1108,9 +1109,9 @@ JXG.extend(
                         i2 = toLower ? i.toLowerCase() : i;
 
                         prop = obj2[i];
-                        if (typeof prop === "object") {
+                        if (prop !== null && typeof prop === "object") {
                             if (this.isArray(prop) || !this.exists(c[i2])) {
-                                c[i2] = this.deepCopy(prop);
+                                c[i2] = this.deepCopy(prop, {}, toLower);
                             } else {
                                 c[i2] = this.deepCopy(c[i2], prop, toLower);
                             }

@@ -27,14 +27,15 @@
  */
 import JXG from "../jxg";
 
-JXG.themes['mono_thin'] = function(options) {
-    let size = 0.75,
-        color = '#000';
+// Constants for this theme:
+let size = 0.75,
+    color = '#000';
 
-    options = JXG.merge(options, {
+JXG.themes['mono_thin'] = {
 
         board: {
             showInfobox: false,
+            showCopyright: true,
             defaultAxes: {
                 x: {
                     ticks: {
@@ -83,6 +84,12 @@ JXG.themes['mono_thin'] = function(options) {
             strokeWidth: size,
             highlightStrokeColor: color,
             highlightStrokeWidth: size
+        },
+
+        axis: {
+            // ticks: {
+            //     strokeColor: '#bbb'
+            // }
         },
 
         boxplot: {
@@ -376,7 +383,7 @@ JXG.themes['mono_thin'] = function(options) {
             highlightStrokeColor: color,
             highlightStrokeOpacity: 0.8
         }
-    });
+    // });
 };
 
 export default JXG;
