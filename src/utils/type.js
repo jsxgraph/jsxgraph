@@ -348,20 +348,22 @@ JXG.extend(
          * values is of type string.
          * @param {String} variableName Only required if function is supplied as JessieCode string or evalGeonext is set to true.
          * Describes the variable name of the variable in a JessieCode/GEONE<sub>X</sub>T string given as term.
-         * @param {Boolean} [evalGeonext=true] Set this true, if term should be treated as a GEONE<sub>X</sub>T string.
-         * @returns {Function} A function evaluation the value given by term or null if term is not of type string,
+         * @param {Boolean} [evalGeonext=false] Obsolete and ignored! Set this true
+         * if term should be treated as a GEONE<sub>X</sub>T string.
+         * @returns {Function} A function evaluating the value given by term or null if term is not of type string,
          * function or number.
          */
         createFunction: function (term, board, variableName, evalGeonext) {
             var f = null;
 
-            if ((!this.exists(evalGeonext) || evalGeonext) && this.isString(term)) {
+            // if ((!this.exists(evalGeonext) || evalGeonext) && this.isString(term)) {
+            if (this.isString(term)) {
                 // Convert GEONExT syntax into  JavaScript syntax
                 //newTerm = JXG.GeonextParser.geonext2JS(term, board);
                 //return new Function(variableName,'return ' + newTerm + ';');
-
                 //term = JXG.GeonextParser.replaceNameById(term, board);
                 //term = JXG.GeonextParser.geonext2JS(term, board);
+
                 f = board.jc.snippet(term, true, variableName, false);
             } else if (this.isFunction(term)) {
                 f = term;
@@ -370,11 +372,11 @@ JXG.extend(
                 /** @ignore */
                 f = function () { return term; };
                 f.deps = {};
-            } else if (this.isString(term)) {
-                // In case of string function like fontsize
-                /** @ignore */
-                f = function () { return term; };
-                f.deps = {};
+            // } else if (this.isString(term)) {
+            //     // In case of string function like fontsize
+            //     /** @ignore */
+            //     f = function () { return term; };
+            //     f.deps = {};
             }
 
             if (f !== null) {
