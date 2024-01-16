@@ -1572,6 +1572,41 @@ JXG.extend(
             }
 
             return s;
+        },
+
+        /**
+         * Convert a string containing a MAXIMA /STACK expression into a JSXGraph / JessieCode string
+         * or an array of JSXGraph / JessieCode strings.
+         *
+         * @example
+         * console.log( JXG.stack2jsxgraph("%e**x") );
+         * // Output:
+         * //    "EULER**x"
+         *
+         * @example
+         * console.log( JXG.stack2jsxgraph("[%pi*(x**2 - 1), %phi*(x - 1), %gamma*(x+1)]") );
+         * // Output:
+         * //    [ "PI*(x**2 - 1)", "1.618033988749895*(x - 1)", "0.5772156649015329*(x+1)" ]
+         *
+         * @param {String} str
+         * @returns String
+         */
+        stack2jsxgraph: function(str) {
+            var t;
+
+            t = str.
+                replace(/%pi/g, 'PI').
+                replace(/%e/g, 'EULER').
+                replace(/%phi/g, '1.618033988749895').
+                replace(/%gamma/g, '0.5772156649015329').
+                trim();
+
+            // String containing array -> array containing strings
+            if (t[0] === '[' && t[t.length - 1] === ']') {
+                t = t.slice(1, -1).split(/\s*,\s*/);
+            }
+
+            return t;
         }
     }
 );
