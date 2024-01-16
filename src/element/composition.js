@@ -3287,27 +3287,19 @@ JXG.createInequality = function (board, parents, attributes) {
                 // such that the line is not visible anymore, the borders of the area will get visible in some cases.
                 h,
                 bb = board.getBoundingBox(),
-                factor = attr.inverse ? -1 : 1,
+                inverse = Type.evaluate(this.visProp.inverse),
+                factor = inverse ? -1 : 1,
                 expansion = 1.5,
                 w = expansion * Math.max(bb[2] - bb[0], bb[1] - bb[3]),
                 // Fake a point (for Math.Geometry.perpendicular)
                 // contains centroid of the board
                 dp = {
                     coords: {
-                        usrCoords: [1, (bb[0] + bb[2]) / 2, attr.inverse ? bb[1] : bb[3]]
+                        usrCoords: [1, (bb[0] + bb[2]) / 2, inverse ? bb[1] : bb[3]]
                     }
                 },
                 slope1 = parents[0].stdform.slice(1),
                 slope2 = slope1;
-
-            // This is wrong. Example:
-            // var line = board.create('line', [0, -1, -1]);
-            // var ineq = board.create('inequality', [line]);
-            //
-            // if (slope1[1] > 0) {
-            //     slope1 = Statistics.multiply(slope1, -1);
-            //     slope2 = slope1;
-            // }
 
             // Calculate the area height as
             //  expansion times the distance of the line to the
