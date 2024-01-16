@@ -301,6 +301,10 @@ JXG.C.abs = function (z1) {
     return Math.sqrt(z.real);
 };
 
+JXG.C.copy = function(z) {
+    return new JXG.Complex(z);
+}
+
 JXG.Complex.C = JXG.C;
 
 export default JXG.Complex;
