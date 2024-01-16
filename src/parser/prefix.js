@@ -26,20 +26,82 @@
     and <https://opensource.org/licenses/MIT/>.
  */
 
-/*global JXG: true, define: true*/
-/*jslint nomen: true, plusplus: true*/
-
 /**
- * @fileoverview Geometry objects for measurements are defined in this file. This file stores all
- * style and functional properties that are required to use a tape measure on
- * a board.
+ * @fileoverview Simple prefix parser for measurements and expressions of measurements.
+ * An expression is given as
+ * <ul>
+ * <li> array starting with an operator as first element, followed
+ * by one or more operands,
+ * <li> number.
+ * </ul>
+ * <p>
+ * Possible operands are:
+ * <ul>
+ * <li> '+', '-', '*', '/'
+ * </ul>
+ *
+ * @example
+ *
  */
-
 import JXG from "../jxg";
 import Type from "../utils/type";
 import Mat from "../math/math";
 
+/**
+ * Prefix expression parser, i.e. a poor man's parser.
+ * This is a simple prefix parser for measurements and expressions of measurements,
+ * see {@link Measurement}.
+ * An expression is given as
+ * <ul>
+ * <li> array starting with an operator as first element, followed
+ * by one or more operands,
+ * <li> number.
+ * </ul>
+ * <p>
+ * Possible operators are:
+ * <ul>
+ * <li> '+', '-', '*', '/': binary operators
+ * <li> 'Area', 'Radius', 'Value', 'V', 'L': arbitrary methods of JSXGraph elements, supplied as strings.
+ * <li> 'exec': call a function
+ * </ul>
+ * <p>
+ * Possible operands are:
+ * <ul>
+ * <li> numbers
+ * <li> JSXGraph elements in case the operator is a method. Example: ['Area', circle] calls
+ * the method circle.Area().
+ * <li> prefix expressions (for binary operators)
+ * <li> 'exec': call functions. Example: ['exec', 'sin', ['V', slider]] computes 'Math.sin(slider.Value())'.
+ * As functions only functions in Math or JXG.Math are allowed.
+ * </ul>
+ *
+ * @example
+ *   ['+', 100, 200]
+ * @example
+ * var p1 = board.create('point', [1, 1]);
+ * var p2 = board.create('point', [1, 3]);
+ * var seg = board.create('segment', [[-2,-3], [-2, 3]]);
+ *
+ * // Valid prefix expression: ['L', seg]
+ *
+ * @example
+ * var p1 = board.create('point', [1, 1]);
+ * var p2 = board.create('point', [1, 3]);
+ * var seg = board.create('segment', [[-2,-3], [-2, 3]]);
+ * var ci = board.create('circle', [p1, 7]);
+ *
+ * // Valid prefix expression:  ['+', ['Radius', ci], ['L', seg]]
+ *
+ * @namespace
+ */
 JXG.PrefixParser = {
+    /**
+     * Parse a prefix expression and apply an action.
+     * @param {array|number} term Expression
+     * @param {String} action Determines what to do. So far, the only
+     * action available is 'execute', which evaluates the expression.
+     * @returns {Number} What ever the action does.
+     */
     parse: function (term, action) {
         var method, i, le, res, fun, v;
 
@@ -105,6 +167,19 @@ JXG.PrefixParser = {
         return res;
     },
 
+    /**
+     * Determine the dimension of the resulting value, i.e. ['L', obj] as well as
+     * ['+', ['L', obj1], ['L', obj2]] have dimension 1.
+     * <p>
+     * ['+', ['Area', obj1], ['L', obj2]] will retrun NaN, because the two
+     * operands have conflicting dimensions.
+     * <p>
+     * If an element is a measurement element, then it's dimension can be set as attribute.
+     * This overrules the computed dimension.
+     *
+     * @param {Array|Number} term Prefix expression
+     * @returns Number
+     */
     dimension: function (term) {
         var method, i, le, res, fun, d, v;
 
@@ -192,6 +267,13 @@ JXG.PrefixParser = {
         return res;
     },
 
+    /**
+     * Convert a prefix expression into a new prefix expression in which
+     * JSXGraph elements have been replaced by their ids.
+     *
+     * @param {Array|Number} term
+     * @returns {Array|Number}
+     */
     toPrefix: function (term) {
         var method, i, le, res;
 
@@ -227,6 +309,12 @@ JXG.PrefixParser = {
         return res;
     },
 
+    /**
+     * Determine parent elements of a prefix expression.
+     * @param {Array|Number} term prefix expression
+     * @returns Array
+     * @private
+     */
     getParents: function (term) {
         var method, i, le, res;
 

@@ -189,6 +189,131 @@ JXG.createTapemeasure = function (board, parents, attributes) {
 
 JXG.registerElement("tapemeasure", JXG.createTapemeasure);
 
+
+/**
+ * @class Measurement element. Under the hood this is a text element which has a method Value. The text to be displayed
+ * is the result of the evaluation of a prefix expression, see {@link JXG.PrefixParser}.
+ * <p>
+ * The purpose of this element is to display values of measurements of geometric objects, like the radius of a circle,
+ * as well as expressions consisting of measurements.
+ *
+ * @pseudo
+ * @name Measurement
+ * @augments Text
+ * @constructor
+ * @type JXG.Text
+ * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
+ * @param {Point|Array_Point|Array_Array} x,y,expression
+ * Here, expression is a prefix expression, see {@link JXG.PrefixParser}.
+ * @example
+ * var p1 = board.create('point', [1, 1]);
+ * var p2 = board.create('point', [1, 3]);
+ * var ci1 = board.create('circle', [p1, p2]);
+ *
+ * var m1 = board.create('measurement', [1, -2, ['Area', ci1]], {
+ *     visible: true,
+ *     prefix: 'area: ',
+ *     baseUnit: 'cm'
+ * });
+ *
+ * var m2 = board.create('measurement', [1, -4, ['Radius', ci1]], {
+ *     prefix: 'radius: ',
+ *     baseUnit: 'cm'
+ * });
+ *
+ * </pre><div id="JXG6359237a-79bc-4689-92fc-38d3ebeb769d" class="jxgbox" style="width: 300px; height: 300px;"></div>
+ * <script type="text/javascript">
+ *     (function() {
+ *         var board = JXG.JSXGraph.initBoard('JXG6359237a-79bc-4689-92fc-38d3ebeb769d',
+ *             {boundingbox: [-5, 5, 5, -5], axis: true, showcopyright: false, shownavigation: false});
+ *     var p1 = board.create('point', [1, 1]);
+ *     var p2 = board.create('point', [1, 3]);
+ *     var ci1 = board.create('circle', [p1, p2]);
+ *
+ *     var m1 = board.create('measurement', [1, -2, ['Area', ci1]], {
+ *         visible: true,
+ *         prefix: 'area: ',
+ *         baseUnit: 'cm'
+ *     });
+ *
+ *     var m2 = board.create('measurement', [1, -4, ['Radius', ci1]], {
+ *         prefix: 'radius: ',
+ *         baseUnit: 'cm'
+ *     });
+ *
+ *     })();
+ *
+ * </script><pre>
+ *
+ * @example
+ * var p1 = board.create('point', [1, 1]);
+ * var p2 = board.create('point', [1, 3]);
+ * var ci1 = board.create('circle', [p1, p2]);
+ * var seg = board.create('segment', [[-2,-3], [-2, 3]], { firstArrow: true, lastArrow: true});
+ * var sli = board.create('slider', [[-4, 4], [-1.5, 4], [-10, 1, 10]], {name:'a'});
+ *
+ * var m1 = board.create('measurement', [-6, -2, ['Radius', ci1]], {
+ *     prefix: 'm1: ',
+ *     baseUnit: 'cm'
+ * });
+ *
+ * var m2 = board.create('measurement', [-6, -4, ['L', seg]], {
+ *     prefix: 'm2: ',
+ *     baseUnit: 'cm'
+ * });
+ *
+ * var m3 = board.create('measurement', [-6, -6, ['V', sli]], {
+ *     prefix: 'm3: ',
+ *     baseUnit: 'cm',
+ *     dim: 1
+ * });
+ *
+ * var m4 = board.create('measurement', [2, -6,
+ *         ['+', ['V', m1], ['V', m2], ['V', m3]]
+ *     ], {
+ *     prefix: 'm4: ',
+ *     baseUnit: 'cm'
+ * });
+ *
+ * </pre><div id="JXG49903663-6450-401e-b0d9-f025a6677d4a" class="jxgbox" style="width: 300px; height: 300px;"></div>
+ * <script type="text/javascript">
+ *     (function() {
+ *         var board = JXG.JSXGraph.initBoard('JXG49903663-6450-401e-b0d9-f025a6677d4a',
+ *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
+ *     var p1 = board.create('point', [1, 1]);
+ *     var p2 = board.create('point', [1, 3]);
+ *     var ci1 = board.create('circle', [p1, p2]);
+ *     var seg = board.create('segment', [[-2,-3], [-2, 3]], { firstArrow: true, lastArrow: true});
+ *     var sli = board.create('slider', [[-4, 4], [-1.5, 4], [-10, 1, 10]], {name:'a'});
+ *
+ * var m1 = board.create('measurement', [-6, -2, ['Radius', ci1]], {
+ *     prefix: 'm1: ',
+ *     baseUnit: 'cm'
+ * });
+ *
+ * var m2 = board.create('measurement', [-6, -4, ['L', seg]], {
+ *     prefix: 'm2: ',
+ *     baseUnit: 'cm'
+ * });
+ *
+ * var m3 = board.create('measurement', [-6, -6, ['V', sli]], {
+ *     prefix: 'm3: ',
+ *     baseUnit: 'cm',
+ *     dim: 1
+ * });
+ *
+ * var m4 = board.create('measurement', [2, -6,
+ *         ['+', ['V', m1], ['V', m2], ['V', m3]]
+ *     ], {
+ *     prefix: 'm4: ',
+ *     baseUnit: 'cm'
+ * });
+ *
+ *     })();
+ *
+ * </script><pre>
+ *
+ */
 JXG.createMeasurement = function (board, parents, attributes) {
     var el, attr,
         x, y, term,
@@ -227,6 +352,10 @@ JXG.createMeasurement = function (board, parents, attributes) {
         board.select(el.parents[i]).addChild(el);
     }
 
+    /**
+     * @class
+     * @ignore
+     */
     el.setText(function () {
         var prefix = '',
             suffix = '',
