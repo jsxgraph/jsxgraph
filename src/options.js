@@ -1236,6 +1236,59 @@ JXG.Options = {
         */
         takeSizeFromFile: false,
 
+        /**
+         * Set a visual theme for a board. At the moment this attribute is immutable.
+         * Available themes are
+         * <ul>
+         * <li> 'default'
+         * <li> 'mono_thin': a black / white theme using thin strokes. Restricted to 2D.
+         * </ul>
+         *
+         * @name JXG.Board#theme
+         * @type String
+         * @default 'default'
+         * @example
+         *  const board = JXG.JSXGraph.initBoard('jxgbox', {
+         *      boundingbox: [-5, 5, 5, -5], axis: true,
+         *      theme: 'mono_thin'
+         *  });
+         *
+         *  var a = board.create('slider', [[1, 4], [3, 4], [-10, 1, 10]]);
+         *  var p1 = board.create('point', [1, 2]);
+         *  var ci1 = board.create('circle', [p1, 0.7]);
+         *  var cu = board.create('functiongraph', ['x^2']);
+         *  var l1 = board.create('line', [2, 3, -1]);
+         *  var l2 = board.create('line', [-5, -3, -1], { dash: 2 });
+         *  var i1 = board.create('intersection', [l1, l2]);
+         *  var pol = board.create('polygon', [[1, 0], [4, 0], [3.5, 1]]);
+         *  var an = board.create('angle', [pol.vertices[1], pol.vertices[0], pol.vertices[2]]);
+         *  var se = board.create('sector', [pol.vertices[1], pol.vertices[2], pol.vertices[0]]);
+         *  var ci1 = board.create('circle', [[-3, -3], 0.7], { center: { visible: true } });
+         *
+         * </pre><div id="JXG1c5f7a2a-176b-4410-ac06-8593f1a09879" class="jxgbox" style="width: 300px; height: 300px;"></div>
+         * <script type="text/javascript">
+         *     (function() {
+         *         var board = JXG.JSXGraph.initBoard('JXG1c5f7a2a-176b-4410-ac06-8593f1a09879',
+         *             {boundingbox: [-5, 5, 5, -5], axis: true, showcopyright: false, shownavigation: false,
+         *              theme: 'mono_thin' });
+         *
+         *    var a = board.create('slider', [[1, 4], [3, 4], [-10, 1, 10]]);
+         *    var p1 = board.create('point', [1, 2]);
+         *    var ci1 = board.create('circle', [p1, 0.7]);
+         *    var cu = board.create('functiongraph', ['x^2']);
+         *    var l1 = board.create('line', [2, 3, -1]);
+         *    var l2 = board.create('line', [-5, -3, -1], { dash: 2 });
+         *    var i1 = board.create('intersection', [l1, l2]);
+         *    var pol = board.create('polygon', [[1, 0], [4, 0], [3.5, 1]]);
+         *    var an = board.create('angle', [pol.vertices[1], pol.vertices[0], pol.vertices[2]]);
+         *    var se = board.create('sector', [pol.vertices[1], pol.vertices[2], pol.vertices[0]]);
+         *    var ci1 = board.create('circle', [[-3, -3], 0.7], { center: { visible: true } });
+         *
+         *     })();
+         *
+         * </script><pre>
+         *
+         */
         theme: 'default',
 
         /**
