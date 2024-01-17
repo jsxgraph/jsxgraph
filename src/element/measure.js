@@ -189,7 +189,6 @@ JXG.createTapemeasure = function (board, parents, attributes) {
 
 JXG.registerElement("tapemeasure", JXG.createTapemeasure);
 
-
 /**
  * @class Measurement element. Under the hood this is a text element which has a method Value. The text to be displayed
  * is the result of the evaluation of a prefix expression, see {@link JXG.PrefixParser}.
@@ -359,9 +358,9 @@ JXG.createMeasurement = function (board, parents, attributes) {
     el.setText(function () {
         var prefix = '',
             suffix = '',
-            d = el.Dimension(),
-            b = Type.evaluate(el.visProp.baseunit),
-            v = el.Value().toFixed(Type.evaluate(el.visProp.digits));
+            dim = el.Dimension(),
+            unit = Type.evaluate(el.visProp.baseunit),
+            val = el.Value().toFixed(Type.evaluate(el.visProp.digits));
 
         if (Type.evaluate(el.visProp.showprefix)) {
             prefix = Type.evaluate(el.visProp.prefix);
@@ -370,17 +369,19 @@ JXG.createMeasurement = function (board, parents, attributes) {
             suffix = Type.evaluate(el.visProp.suffix);
         }
 
-        if (d === 0 || b === '') {
-            return prefix + v + suffix;
-        }
-        if (isNaN(d)) {
+        if (isNaN(dim)) {
             return prefix + 'NaN' + suffix;
         }
-        if (d === 1) {
-            return prefix + v + ' ' + b + suffix;
+
+        if (dim === 0 || unit === '') {
+            unit = '';
+        } else if (dim === 1) {
+            unit = ' ' + unit;
+        } else {
+            unit = ' ' + unit + '^{' + dim + '}';
         }
 
-        return prefix + v + ' ' + b + '^{' + d + '}' + suffix;
+        return prefix + val + unit + suffix;
     });
 
     el.methodMap = Type.deepCopy(el.methodMap, {
