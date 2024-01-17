@@ -328,10 +328,10 @@ JXG.createMeasurement = function (board, parents, attributes) {
 
     valueFunc = function () {
         return Prefix.parse(term, 'execute');
-    }
+    };
     dimFunc = function () {
         return Prefix.dimension(term);
-    }
+    };
 
     el = board.create("text", [x, y, ''], attr);
     el.type = Type.OBJECT_TYPE_MEASUREMENT;
@@ -364,17 +364,17 @@ JXG.createMeasurement = function (board, parents, attributes) {
             v = el.Value().toFixed(Type.evaluate(el.visProp.digits));
 
         if (Type.evaluate(el.visProp.showprefix)) {
-            prefix = Type.evaluate(el.visProp.prefix)
+            prefix = Type.evaluate(el.visProp.prefix);
         }
         if (Type.evaluate(el.visProp.showsuffix)) {
-            suffix = Type.evaluate(el.visProp.suffix)
+            suffix = Type.evaluate(el.visProp.suffix);
         }
 
         if (d === 0 || b === '') {
             return prefix + v + suffix;
         }
         if (isNaN(d)) {
-            return 'NaN';
+            return prefix + 'NaN' + suffix;
         }
         if (d === 1) {
             return prefix + v + ' ' + b + suffix;
