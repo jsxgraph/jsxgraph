@@ -359,7 +359,8 @@ JXG.createMeasurement = function (board, parents, attributes) {
         var prefix = '',
             suffix = '',
             dim = el.Dimension(),
-            unit = Type.evaluate(el.visProp.baseunit),
+            unit = '',
+            units = Type.evaluate(el.visProp.units),
             val = el.Value().toFixed(Type.evaluate(el.visProp.digits));
 
         if (Type.evaluate(el.visProp.showprefix)) {
@@ -371,6 +372,12 @@ JXG.createMeasurement = function (board, parents, attributes) {
 
         if (isNaN(dim)) {
             return prefix + 'NaN' + suffix;
+        }
+
+        if (Type.isObject(units) && Type.exists(units[dim])) {
+            unit = Type.evaluate(units[dim]);
+        } else {
+            unit = Type.evaluate(el.visProp.baseunit);
         }
 
         if (dim === 0 || unit === '') {

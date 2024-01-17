@@ -5619,6 +5619,7 @@ JXG.Options = {
          */
 
         baseUnit: '',
+        units: {},
         dim: 0,
         prefix: '',
         suffix: '',
