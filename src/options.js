@@ -893,10 +893,24 @@ JXG.Options = {
         },
 
         /**
-         * Allow user interaction by registering mouse, pointer, keyboard or touch events.
-         * Decide if JSXGraph listens to these events. Keyboard events can then turned off
-         * separately with the keyboard attribute.
-         *
+         * Allow user interaction by registering pointer events (including mouse and
+         * touch events), fullscreen, keyboard, resize, and zoom events.
+         * The latter events are essentially mouse wheel events.
+         * Decide if JSXGraph listens to these events.
+         * <p>
+         * Using a Boolean value turns on all events (or not), supplying an object of
+         * the form
+         * <pre>
+         *  {
+         *     fullscreen: true / false,
+         *     keyboard: true / false,
+         *     pointer: true / false,
+         *     resize: true / false,
+         *     wheel: true / false
+         *  }
+         * </pre>
+         * activates individual event handlers. If an event is NOT given,
+         * it will be activated.
          * <p>This attribute is immutable. Please use
          * {@link JXG.Board#addEventHandlers()} and
          * {@link JXG.Board#removeEventHandlers()} directly.
@@ -910,40 +924,40 @@ JXG.Options = {
          */
         registerEvents: true,
 
-        /**
-         * Listen to fullscreen event.
-         *
-         * <p>This attribute is immutable. Please use
-         * {@link JXG.Board#addFullscreenEventHandlers()} and
-         * {@link JXG.Board#removeEventHandlers()} directly.
-         *
-         * @name JXG.Board#registerFullscreenEvent
-         * @see JXG.Board#registerEvents
-         * @see JXG.Board#registerResizeEvent
-         * @type Boolean
-         * @default true
-         */
-        registerFullscreenEvent: true,
+        // /**
+        //  * Listen to fullscreen event.
+        //  *
+        //  * <p>This attribute is immutable. Please use
+        //  * {@link JXG.Board#addFullscreenEventHandlers()} and
+        //  * {@link JXG.Board#removeEventHandlers()} directly.
+        //  *
+        //  * @name JXG.Board#registerFullscreenEvent
+        //  * @see JXG.Board#registerEvents
+        //  * @see JXG.Board#registerResizeEvent
+        //  * @type Boolean
+        //  * @default true
+        //  */
+        // registerFullscreenEvent: true,
 
-        /**
-         * Listen to resize events, i.e. start "resizeObserver" or handle the resize event with
-         * "resizeListener". This is independent from the mouse, touch, pointer events.
-         *
-         * <p>This attribute is immutable. Please use
-         * {@link JXG.Board#addResizeEventHandlers()} and
-         * {@link JXG.Board#removeEventHandlers()} directly.
-         * <p>
-         * This attribute just starts a resizeObserver. If the resizeObserver reacts
-         * to size changed is controled wuth {@link JXG.Board#resize}.
-         *
-         * @name JXG.Board#registerResizeEvent
-         * @see JXG.Board#resize
-         * @see JXG.Board#registerEvents
-         * @see JXG.Board#registerFullscreenEvent
-         * @type Boolean
-         * @default true
-         */
-        registerResizeEvent: true,
+        // /**
+        //  * Listen to resize events, i.e. start "resizeObserver" or handle the resize event with
+        //  * "resizeListener". This is independent from the mouse, touch, pointer events.
+        //  *
+        //  * <p>This attribute is immutable. Please use
+        //  * {@link JXG.Board#addResizeEventHandlers()} and
+        //  * {@link JXG.Board#removeEventHandlers()} directly.
+        //  * <p>
+        //  * This attribute just starts a resizeObserver. If the resizeObserver reacts
+        //  * to size changed is controled wuth {@link JXG.Board#resize}.
+        //  *
+        //  * @name JXG.Board#registerResizeEvent
+        //  * @see JXG.Board#resize
+        //  * @see JXG.Board#registerEvents
+        //  * @see JXG.Board#registerFullscreenEvent
+        //  * @type Boolean
+        //  * @default true
+        //  */
+        // registerResizeEvent: true,
 
         /**
          * Default rendering engine. Possible values are 'svg', 'canvas', 'vml', 'no', or 'auto'.
@@ -1223,6 +1237,61 @@ JXG.Options = {
         takeSizeFromFile: false,
 
         /**
+         * Set a visual theme for a board. At the moment this attribute is immutable.
+         * Available themes are
+         * <ul>
+         * <li> 'default'
+         * <li> 'mono_thin': a black / white theme using thin strokes. Restricted to 2D.
+         * </ul>
+         *
+         * @name JXG.Board#theme
+         * @type String
+         * @default 'default'
+         * @example
+         *  const board = JXG.JSXGraph.initBoard('jxgbox', {
+         *      boundingbox: [-5, 5, 5, -5], axis: true,
+         *      theme: 'mono_thin'
+         *  });
+         *
+         *  var a = board.create('slider', [[1, 4], [3, 4], [-10, 1, 10]]);
+         *  var p1 = board.create('point', [1, 2]);
+         *  var ci1 = board.create('circle', [p1, 0.7]);
+         *  var cu = board.create('functiongraph', ['x^2']);
+         *  var l1 = board.create('line', [2, 3, -1]);
+         *  var l2 = board.create('line', [-5, -3, -1], { dash: 2 });
+         *  var i1 = board.create('intersection', [l1, l2]);
+         *  var pol = board.create('polygon', [[1, 0], [4, 0], [3.5, 1]]);
+         *  var an = board.create('angle', [pol.vertices[1], pol.vertices[0], pol.vertices[2]]);
+         *  var se = board.create('sector', [pol.vertices[1], pol.vertices[2], pol.vertices[0]]);
+         *  var ci1 = board.create('circle', [[-3, -3], 0.7], { center: { visible: true } });
+         *
+         * </pre><div id="JXG1c5f7a2a-176b-4410-ac06-8593f1a09879" class="jxgbox" style="width: 300px; height: 300px;"></div>
+         * <script type="text/javascript">
+         *     (function() {
+         *         var board = JXG.JSXGraph.initBoard('JXG1c5f7a2a-176b-4410-ac06-8593f1a09879',
+         *             {boundingbox: [-5, 5, 5, -5], axis: true, showcopyright: false, shownavigation: false,
+         *              theme: 'mono_thin' });
+         *
+         *    var a = board.create('slider', [[1, 4], [3, 4], [-10, 1, 10]]);
+         *    var p1 = board.create('point', [1, 2]);
+         *    var ci1 = board.create('circle', [p1, 0.7]);
+         *    var cu = board.create('functiongraph', ['x^2']);
+         *    var l1 = board.create('line', [2, 3, -1]);
+         *    var l2 = board.create('line', [-5, -3, -1], { dash: 2 });
+         *    var i1 = board.create('intersection', [l1, l2]);
+         *    var pol = board.create('polygon', [[1, 0], [4, 0], [3.5, 1]]);
+         *    var an = board.create('angle', [pol.vertices[1], pol.vertices[0], pol.vertices[2]]);
+         *    var se = board.create('sector', [pol.vertices[1], pol.vertices[2], pol.vertices[0]]);
+         *    var ci1 = board.create('circle', [[-3, -3], 0.7], { center: { visible: true } });
+         *
+         *     })();
+         *
+         * </script><pre>
+         *
+         */
+        theme: 'default',
+
+        /**
          * Title string for the board.
          * Primarily used in an invisible text element which is adressed by
          * the attribute 'aria-labelledby' from the JSXGraph container.
@@ -1265,9 +1334,9 @@ JXG.Options = {
          *   min: 0.001,       // minimal values of {@link JXG.Board#zoomX} and {@link JXG.Board#zoomY}, limits zoomOut
          *   max: 1000.0,      // maximal values of {@link JXG.Board#zoomX} and {@link JXG.Board#zoomY}, limits zoomIn
          *
-         *   pinch: true,      // by pinch-to-zoom gesture on touch devices
-         *   pinchHorizontal: true, // Allow pinch-to-zoom to zoom only horizontal axis
-         *   pinchVertical: true,   // Allow pinch-to-zoom to zoom only vertical axis
+         *   pinch: true,      // pinch-to-zoom gesture for proportional zoom
+         *   pinchHorizontal: true, // Horizontal pinch-to-zoom zooms horizontal axis only
+         *   pinchVertical: true,   // Vertical pinch-to-zoom zooms vertical axis only
          *   pinchSensitivity: 7    // Sensitivity (in degrees) for recognizing horizontal or vertical pinch-to-zoom gestures.
          * }
          * </pre>
@@ -1291,6 +1360,7 @@ JXG.Options = {
             needShift: true,
             min: 0.0001,
             max: 10000.0,
+            pinch: true,
             pinchHorizontal: true,
             pinchVertical: true,
             pinchSensitivity: 7
@@ -2583,7 +2653,7 @@ JXG.Options = {
          * </script><pre>
          *
          */
-           drawZero: false,
+        drawZero: false,
 
         /**
          * Let JSXGraph determine the distance between ticks automatically.

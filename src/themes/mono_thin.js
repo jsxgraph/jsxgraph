@@ -1,11 +1,41 @@
-{
-    let size = 0.75;
-    let color = '#000';
+/*
+    Copyright 2008-2023
+        Matthias Ehmann,
+        Carsten Miller,
+        Alfred Wassermann
 
-    JXG.Options = JXG.merge(JXG.Options, {
+    This file is part of JSXGraph.
+
+    JSXGraph is free software dual licensed under the GNU LGPL or MIT License.
+
+    You can redistribute it and/or modify it under the terms of the
+
+      * GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version
+      OR
+      * MIT License: https://github.com/jsxgraph/jsxgraph/blob/master/LICENSE.MIT
+
+    JSXGraph is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Lesser General Public License for more details.
+
+    You should have received a copy of the GNU Lesser General Public License and
+    the MIT License along with JSXGraph. If not, see <https://www.gnu.org/licenses/>
+    and <https://opensource.org/licenses/MIT/>.
+ */
+import JXG from "../jxg";
+
+// Constants for this theme:
+let size = 0.75,
+    color = '#000';
+
+JXG.themes['mono_thin'] = {
 
         board: {
             showInfobox: false,
+            showCopyright: true,
             defaultAxes: {
                 x: {
                     ticks: {
@@ -44,8 +74,6 @@
             fillOpacity: 0.3,
             highlightFillColor: '#aaaaaa33',
             highlightFillOpacity: 0.3,
-            fillOpacity: 0.3,
-            highlightFillOpacity: 0.3,
             label: {
                 strokeColor: color
             }
@@ -56,6 +84,12 @@
             strokeWidth: size,
             highlightStrokeColor: color,
             highlightStrokeWidth: size
+        },
+
+        axis: {
+            // ticks: {
+            //     strokeColor: '#bbb'
+            // }
         },
 
         boxplot: {
@@ -121,8 +155,6 @@
             fillColor: '#aaaaaa55',
             fillOpacity: 0.3,
             highlightFillColor: '#aaaaaa33',
-            highlightFillOpacity: 0.3,
-            fillOpacity: 0.3,
             highlightFillOpacity: 0.3
         },
 
@@ -255,8 +287,6 @@
             fillColor: '#aaaaaa55',
             fillOpacity: 0.3,
             highlightFillColor: '#aaaaaa33',
-            highlightFillOpacity: 0.3,
-            fillOpacity: 0.3,
             highlightFillOpacity: 0.3
         },
 
@@ -353,5 +383,7 @@
             highlightStrokeColor: color,
             highlightStrokeOpacity: 0.8
         }
-    });
-}
+    // });
+};
+
+export default JXG;

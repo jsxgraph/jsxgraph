@@ -71,7 +71,8 @@ var undef,
     };
 
 /**
- * Math namespace.
+ * Math namespace. Contains mathematics related methods which are
+ * specific to JSXGraph or which extend the JavaScript Math class.
  * @namespace
  */
 JXG.Math = {

@@ -3021,7 +3021,7 @@ JXG.registerElement("boxplot", JXG.createBoxPlot);
 
 /**
  *
- * @class 
+ * @class
  * From <a href="https://en.wikipedia.org/wiki/Implicit_curve">Wikipedia</a>:
  * "An implicit curve is a plane curve defined by an implicit equation
  * relating two coordinate variables, commonly <i>x</i> and <i>y</i>.
@@ -3045,12 +3045,100 @@ JXG.registerElement("boxplot", JXG.createBoxPlot);
  *
  * @pseudo
  * @name ImplicitCurve
- * @param {Function} f Function of two variables for the left side of the equation <i>f(x,y)=0</i>.
- * @param {Function} [dfx=null] Optional partial derivative in respect to the first variable
- * @param {Function} [dfy=null] Optional partial derivative in respect to the second variable
+ * @param {Function|String} f Function of two variables for the left side of the equation <i>f(x,y)=0</i>.
+ * If f is supplied as string, it has to use the variables 'x' and 'y'.
+ * @param {Function|String} [dfx=null] Optional partial derivative in respect to the first variable
+ * If dfx is supplied as string, it has to use the variables 'x' and 'y'.
+ * @param {Function|String} [dfy=null] Optional partial derivative in respect to the second variable
+ * If dfy is supplied as string, it has to use the variables 'x' and 'y'.
  * @augments JXG.Curve
  * @constructor
  * @type JXG.Curve
+ *
+ * @example
+ *   var f, c;
+ *   f = (x, y) => 1 / 16 * x ** 2 + y ** 2 - 1;
+ *   c = board.create('implicitcurve', [f], {
+ *       strokeWidth: 3,
+ *       strokeColor: JXG.palette.red,
+ *       strokeOpacity: 0.8
+ *   });
+ *
+ * </pre><div id="JXGa6e86701-1a82-48d0-b007-3a3d32075076" class="jxgbox" style="width: 300px; height: 300px;"></div>
+ * <script type="text/javascript">
+ *     (function() {
+ *         var board = JXG.JSXGraph.initBoard('JXGa6e86701-1a82-48d0-b007-3a3d32075076',
+ *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
+ *             var f, c;
+ *             f = (x, y) => 1 / 16 * x ** 2 + y ** 2 - 1;
+ *             c = board.create('implicitcurve', [f], {
+ *                 strokeWidth: 3,
+ *                 strokeColor: JXG.palette.red,
+ *                 strokeOpacity: 0.8
+ *             });
+ *
+ *     })();
+ *
+ * </script><pre>
+ *
+ * @example
+ *  var a, c, f;
+ *  a = board.create('slider', [[-3, 6], [3, 6], [-3, 1, 3]], {
+ *      name: 'a', stepWidth: 0.1
+ *  });
+ *  f = (x, y) => x ** 2 - 2 * x * y - 2 * x + (a.Value() + 1) * y ** 2 + (4 * a.Value() + 2) * y + 4 * a.Value() - 3;
+ *  c = board.create('implicitcurve', [f], {
+ *      strokeWidth: 3,
+ *      strokeColor: JXG.palette.red,
+ *      strokeOpacity: 0.8,
+ *      resolution_outer: 20,
+ *      resolution_inner: 20
+ *  });
+ *
+ * </pre><div id="JXG0b133a54-9509-4a65-9722-9c5145e23b40" class="jxgbox" style="width: 300px; height: 300px;"></div>
+ * <script type="text/javascript">
+ *     (function() {
+ *         var board = JXG.JSXGraph.initBoard('JXG0b133a54-9509-4a65-9722-9c5145e23b40',
+ *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
+ *             var a, c, f;
+ *             a = board.create('slider', [[-3, 6], [3, 6], [-3, 1, 3]], {
+ *                 name: 'a', stepWidth: 0.1
+ *             });
+ *             f = (x, y) => x ** 2 - 2 * x * y - 2 * x + (a.Value() + 1) * y ** 2 + (4 * a.Value() + 2) * y + 4 * a.Value() - 3;
+ *             c = board.create('implicitcurve', [f], {
+ *                 strokeWidth: 3,
+ *                 strokeColor: JXG.palette.red,
+ *                 strokeOpacity: 0.8,
+ *                 resolution_outer: 20,
+ *                 resolution_inner: 20
+ *             });
+ *
+ *     })();
+ *
+ * </script><pre>
+ *
+ * @example
+ *  var c = board.create('implicitcurve', ['abs(x * y) - 3'], {
+ *      strokeWidth: 3,
+ *      strokeColor: JXG.palette.red,
+ *      strokeOpacity: 0.8
+ *  });
+ *
+ * </pre><div id="JXG02802981-0abb-446b-86ea-ee588f02ed1a" class="jxgbox" style="width: 300px; height: 300px;"></div>
+ * <script type="text/javascript">
+ *     (function() {
+ *         var board = JXG.JSXGraph.initBoard('JXG02802981-0abb-446b-86ea-ee588f02ed1a',
+ *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
+ *             var c = board.create('implicitcurve', ['abs(x * y) - 3'], {
+ *                 strokeWidth: 3,
+ *                 strokeColor: JXG.palette.red,
+ *                 strokeOpacity: 0.8
+ *             });
+ *
+ *     })();
+ *
+ * </script><pre>
+ *
  */
 JXG.createImplicitCurve = function(board, parents, attributes) {
     var c, attr;
@@ -3073,7 +3161,7 @@ JXG.createImplicitCurve = function(board, parents, attributes) {
      * @function
      * @returns {Number}
      */
-    c.f = parents[0];
+    c.f = Type.createFunction(parents[0], board, 'x, y');
 
     /**
      * Partial derivative in the first variable of
@@ -3085,7 +3173,7 @@ JXG.createImplicitCurve = function(board, parents, attributes) {
      * @function
      * @returns {Number}
      */
-    c.dfx = parents[1];
+    c.dfx = Type.createFunction(parents[1], board, 'x, y');
 
     /**
      * Partial derivative in the second variable of
@@ -3097,7 +3185,7 @@ JXG.createImplicitCurve = function(board, parents, attributes) {
      * @function
      * @returns {Number}
      */
-    c.dfy = parents[2];
+    c.dfy = Type.createFunction(parents[2], board, 'x, y');
 
     /**
      * @class
@@ -3138,12 +3226,12 @@ JXG.createImplicitCurve = function(board, parents, attributes) {
         this.dataX = [];
         this.dataY = [];
 
-        console.time("implicit plot");
+        // console.time("implicit plot");
         ip = new JXG.Math.ImplicitPlot(bbox, cfg, this.f, this.dfx, this.dfy);
         this.qdt = ip.qdt;
 
         ret = ip.plot();
-        console.timeEnd("implicit plot");
+        // console.timeEnd("implicit plot");
 
         this.dataX = ret[0];
         this.dataY = ret[1];

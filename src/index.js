@@ -60,6 +60,7 @@ import './utils/encoding';
 import './server/server';
 import './parser/datasource';
 import './parser/jessiecode';
+import './parser/prefix';
 import './parser/ca';
 import './utils/dump';
 import './renderer/svg';
@@ -82,6 +83,7 @@ import './3d/point3d';
 import './3d/curve3d';
 import './3d/linspace3d';
 import './3d/surface3d';
+import './themes/mono_thin';
 
 // The following exports are used to restore granular objects.
 // This is consistent with 1.4.x when a UMD bundle is used with a SystemJS loader.
@@ -113,6 +115,7 @@ export const GeometryElement = JXG.GeometryElement;
 export const Group = JXG.Group;
 export const Image = JXG.Image;
 export const JessieCode = JXG.JessieCode;
+export const Prefix = JXG.PrefixParser;
 export const Line = JXG.Line;
 export const Point = JXG.Point;
 export const Polygon = JXG.Polygon;

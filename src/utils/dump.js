@@ -106,7 +106,7 @@ JXG.Dump = {
      * @returns {String} " + s + "
      */
     str: function (s) {
-        if (typeof s === "string" && s.substr(0, 7) !== "function") {
+        if (typeof s === "string" && s.slice(0, 7) !== "function") {
             s = '"' + s + '"';
         }
 

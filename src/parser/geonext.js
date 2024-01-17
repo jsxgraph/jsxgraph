@@ -93,7 +93,7 @@ JXG.GeonextParser = {
                     // Search for F or p.M before (...)^
                     pre = left.substring(0, pos + 1);
                     p = pos;
-                    while (p >= 0 && pre.substr(p, 1).match(/([\w.]+)/)) {
+                    while (p >= 0 && pre.slice(p, p + 1).match(/([\w.]+)/)) {
                         leftop = RegExp.$1 + leftop;
                         p -= 1;
                     }

@@ -343,7 +343,9 @@ jxg.extend(
          */
         debug: function (s) {
             jxg.debugInt.apply(this, arguments);
-        }
+        },
+
+        themes: {}
     }
 );
 
