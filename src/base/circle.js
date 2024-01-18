@@ -189,7 +189,11 @@ JXG.Circle = function (board, method, par1, par2, attributes) {
         getRadius: "getRadius",
         Area: "Area",
         area: "Area",
+        Perimeter: "Perimeter",
+        Circumference: "Perimeter",
         radius: "Radius",
+        Radius: "Radius",
+        Diameter: "Diameter",
         center: "center",
         line: "line",
         point2: "point2"
@@ -551,6 +555,14 @@ JXG.extend(
             }
 
             return NaN;
+        },
+
+        /**
+         * Calculates the diameter of the circle.
+         * @returns {Number} The Diameter of the circle
+         */
+        Diameter: function () {
+            return 2 * this.Radius();
         },
 
         /**
