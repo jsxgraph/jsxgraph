@@ -376,17 +376,20 @@ JXG.createMeasurement = function (board, parents, attributes) {
 
         if (Type.isObject(units) && Type.exists(units[dim])) {
             unit = Type.evaluate(units[dim]);
+        } else if (Type.isObject(units) && Type.exists(units['dim' + dim])) {
+            // In some cases, object keys must not be numbers. This allows key 'dim1' instead of '1'.
+            unit = Type.evaluate(units['dim' + dim]);
         } else {
             unit = Type.evaluate(el.visProp.baseunit);
 
-            if (dim > 1) {
+            if (dim === 0) {
+                unit = '';
+            } else if (dim > 1 && unit !== '') {
                 unit = unit + '^{' + dim + '}';
             }
         }
 
-        if (dim === 0 || unit === '') {
-            unit = '';
-        } else {
+        if (unit !== '') {
             unit = ' ' + unit;
         }
 
