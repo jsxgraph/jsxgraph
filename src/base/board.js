@@ -2151,14 +2151,17 @@ JXG.extend(
                     bound = (Math.PI * this.attr.zoom.pinchsensitivity) / 90.0;
                 }
 
-                if (this.attr.zoom.pinchhorizontal && theta < bound) {
+                if (!this.keepaspectratio && 
+                    this.attr.zoom.pinchhorizontal && 
+                    theta < bound) {
                     this.attr.zoom.factorx = factor;
                     this.attr.zoom.factory = 1.0;
                     cx = 0;
                     cy = 0;
                     doZoom = true;
-                } else if (
-                    this.attr.zoom.pinchvertical && Math.abs(theta - Math.PI * 0.5) < bound
+                } else if (!this.keepaspectratio && 
+                    this.attr.zoom.pinchvertical && 
+                    Math.abs(theta - Math.PI * 0.5) < bound
                 ) {
                     this.attr.zoom.factorx = 1.0;
                     this.attr.zoom.factory = factor;
