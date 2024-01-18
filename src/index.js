@@ -94,6 +94,7 @@ import './themes/mono_thin';
 export const COORDS_BY_SCREEN = JXG.COORDS_BY_SCREEN;
 export const COORDS_BY_USER = JXG.COORDS_BY_USER;
 export const Dump = JXG.Dump;
+export const Expect = JXG.Expect;
 export const JSXGraph = JXG.JSXGraph;
 export const Mat = JXG.Math;
 export const Options = JXG.Options;

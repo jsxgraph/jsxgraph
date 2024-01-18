@@ -2235,13 +2235,21 @@ JXG.extend(
             }
 
             // Display the SVG string as data-uri in an HTML img.
-            /** {ignore} */
+            /**
+             * @type {Image}
+             * @ignore
+             * {ignore}
+             */
             tmpImg = new Image();
             svg = this.dumpToDataURI(ignoreTexts);
             tmpImg.src = svg;
 
             // Finally, draw the HTML img in the canvas.
             if (!("Promise" in window)) {
+                /**
+                 * @function
+                 * @ignore
+                 */
                 tmpImg.onload = function () {
                     // IE needs a pause...
                     // Seems to be broken

@@ -294,6 +294,7 @@ JXG.createEllipse = function (board, parents, attributes) {
      * @param {Number} y Coordinate in y direction, screen coordinates.
      * @returns {Boolean} True if (x,y) is near the ellipse, False otherwise.
      * @private
+     * @ignore
      */
     curve.hasPoint = function (x, y) {
         var ac, bc, r, p, dist;

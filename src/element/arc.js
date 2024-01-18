@@ -344,6 +344,10 @@ JXG.createArc = function (board, parents, attributes) {
     };
 
     // documented in geometry element
+    /**
+     * @class
+     * @ignore
+     */
     el.getLabelAnchor = function () {
         var coords,
             vec,

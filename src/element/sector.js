@@ -682,6 +682,10 @@ JXG.createSector = function (board, parents, attributes) {
     // this method is very similar to arc.getLabelAnchor()
     // there are some additions in the arc version though, mainly concerning
     // "major" and "minor" arcs. but maybe these methods can be merged.
+    /**
+     * @class
+     * @ignore
+     */
     el.getLabelAnchor = function () {
         var coords,
             vec,
@@ -1186,7 +1190,15 @@ JXG.createAngle = function (board, parents, attributes) {
         el.updateDataArraySector = el.updateDataArray;
 
         // TODO
+        /**
+         * @class
+         * @ignore
+         */
         el.setAngle = function (val) {};
+        /**
+         * @class
+         * @ignore
+         */
         el.free = function (val) {};
     } else {
         el = board.create("sector", [points[1], points[0], points[2]], attr);
@@ -1589,6 +1601,10 @@ JXG.createAngle = function (board, parents, attributes) {
     }
 
     // documented in GeometryElement
+    /**
+     * @class
+     * @ignore
+     */
     el.getLabelAnchor = function () {
         var vec,
             dx = 12,

@@ -8098,7 +8098,8 @@ JXG.Options = {
         rotate: 0,
 
         /**
-         * @name visible
+         * @name Text#visible
+         * @type Boolean
          * @default true
          */
         visible: true,

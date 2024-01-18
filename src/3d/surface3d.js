@@ -59,6 +59,12 @@ JXG.Surface3D = function (view, F, X, Y, Z, range_u, range_v, attributes) {
 
     this.board.finalizeAdding(this);
 
+    /**
+     * Function defining the surface
+     *
+     * @function
+     * @private
+     */
     this.F = F;
 
     /**
