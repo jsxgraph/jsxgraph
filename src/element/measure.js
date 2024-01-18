@@ -361,7 +361,11 @@ JXG.createMeasurement = function (board, parents, attributes) {
             dim = el.Dimension(),
             unit = '',
             units = Type.evaluate(el.visProp.units),
-            val = el.Value().toFixed(Type.evaluate(el.visProp.digits));
+            val = el.Value();
+
+        if(Type.isNumber(val)) {
+            val = val.toFixed(Type.evaluate(el.visProp.digits));
+        }
 
         if (Type.evaluate(el.visProp.showprefix)) {
             prefix = Type.evaluate(el.visProp.prefix);

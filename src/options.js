@@ -1335,13 +1335,13 @@ JXG.Options = {
          *   max: 1000.0,      // maximal values of {@link JXG.Board#zoomX} and {@link JXG.Board#zoomY}, limits zoomIn
          *
          *   pinch: true,      // pinch-to-zoom gesture for proportional zoom
-         *   pinchHorizontal: true, // Horizontal pinch-to-zoom zooms horizontal axis only
-         *   pinchVertical: true,   // Vertical pinch-to-zoom zooms vertical axis only
+         *   pinchHorizontal: true, // Horizontal pinch-to-zoom zooms horizontal axis. Only available if keepaspectratio:false
+         *   pinchVertical: true,   // Vertical pinch-to-zoom zooms vertical axis only. Only available if keepaspectratio:false
          *   pinchSensitivity: 7    // Sensitivity (in degrees) for recognizing horizontal or vertical pinch-to-zoom gestures.
          * }
          * </pre>
          *
-         * If the zoom buttons are visible, zooming is still possible, regardless of zoom.enabled:true/false.
+         * If the zoom buttons are visible, zooming by clicking the buttons is still possible, regardless of zoom.enabled:true/false.
          * If this should be prevented, set showZoom:false.
          *
          * Deprecated: zoom.eps which is superseded by zoom.min

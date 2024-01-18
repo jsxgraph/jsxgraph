@@ -428,9 +428,9 @@ Mat.Numerics = {
             available_types = { trapez: true, simpson: true, milne: true },
             integration_type =
                 config &&
-                config.integration_type &&
-                available_types.hasOwnProperty(config.integration_type) &&
-                available_types[config.integration_type]
+                    config.integration_type &&
+                    available_types.hasOwnProperty(config.integration_type) &&
+                    available_types[config.integration_type]
                     ? config.integration_type
                     : "milne",
             step_size = (interval[1] - interval[0]) / number_of_nodes;
@@ -975,13 +975,13 @@ Mat.Numerics = {
                 L. W. Fullerton, Bell Labs, Nov. 1981. */
 
         var xgk =
-                /* abscissae of the 15-point kronrod rule */
-                [
-                    0.991455371120812639206854697526329, 0.949107912342758524526189684047851,
-                    0.864864423359769072789712788640926, 0.741531185599394439863864773280788,
-                    0.58608723546769113029414483825873, 0.405845151377397166906606412076961,
-                    0.207784955007898467600689403773245, 0.0
-                ],
+            /* abscissae of the 15-point kronrod rule */
+            [
+                0.991455371120812639206854697526329, 0.949107912342758524526189684047851,
+                0.864864423359769072789712788640926, 0.741531185599394439863864773280788,
+                0.58608723546769113029414483825873, 0.405845151377397166906606412076961,
+                0.207784955007898467600689403773245, 0.0
+            ],
             /* xgk[1], xgk[3], ... abscissae of the 7-point gauss rule.
                 xgk[0], xgk[2], ... abscissae to optimally extend the 7-point gauss rule */
 
@@ -1020,14 +1020,14 @@ Mat.Numerics = {
                 L. W. Fullerton, Bell Labs, Nov. 1981. */
 
         var xgk =
-                /* abscissae of the 21-point kronrod rule */
-                [
-                    0.995657163025808080735527280689003, 0.973906528517171720077964012084452,
-                    0.930157491355708226001207180059508, 0.865063366688984510732096688423493,
-                    0.780817726586416897063717578345042, 0.679409568299024406234327365114874,
-                    0.562757134668604683339000099272694, 0.433395394129247190799265943165784,
-                    0.294392862701460198131126603103866, 0.14887433898163121088482600112972, 0.0
-                ],
+            /* abscissae of the 21-point kronrod rule */
+            [
+                0.995657163025808080735527280689003, 0.973906528517171720077964012084452,
+                0.930157491355708226001207180059508, 0.865063366688984510732096688423493,
+                0.780817726586416897063717578345042, 0.679409568299024406234327365114874,
+                0.562757134668604683339000099272694, 0.433395394129247190799265943165784,
+                0.294392862701460198131126603103866, 0.14887433898163121088482600112972, 0.0
+            ],
             /* xgk[1], xgk[3], ... abscissae of the 10-point gauss rule.
                 xgk[0], xgk[2], ... abscissae to optimally extend the 10-point gauss rule */
             wg =
@@ -1068,17 +1068,17 @@ Mat.Numerics = {
                 L. W. Fullerton, Bell Labs, Nov. 1981. */
 
         var xgk =
-                /* abscissae of the 21-point kronrod rule */
-                [
-                    0.998002298693397060285172840152271, 0.987992518020485428489565718586613,
-                    0.967739075679139134257347978784337, 0.937273392400705904307758947710209,
-                    0.897264532344081900882509656454496, 0.848206583410427216200648320774217,
-                    0.790418501442465932967649294817947, 0.724417731360170047416186054613938,
-                    0.650996741297416970533735895313275, 0.570972172608538847537226737253911,
-                    0.485081863640239680693655740232351, 0.394151347077563369897207370981045,
-                    0.299180007153168812166780024266389, 0.201194093997434522300628303394596,
-                    0.101142066918717499027074231447392, 0.0
-                ],
+            /* abscissae of the 21-point kronrod rule */
+            [
+                0.998002298693397060285172840152271, 0.987992518020485428489565718586613,
+                0.967739075679139134257347978784337, 0.937273392400705904307758947710209,
+                0.897264532344081900882509656454496, 0.848206583410427216200648320774217,
+                0.790418501442465932967649294817947, 0.724417731360170047416186054613938,
+                0.650996741297416970533735895313275, 0.570972172608538847537226737253911,
+                0.485081863640239680693655740232351, 0.394151347077563369897207370981045,
+                0.299180007153168812166780024266389, 0.201194093997434522300628303394596,
+                0.101142066918717499027074231447392, 0.0
+            ],
             /* xgk[1], xgk[3], ... abscissae of the 10-point gauss rule.
                 xgk[0], xgk[2], ... abscissae to optimally extend the 10-point gauss rule */
             wg =
@@ -2547,8 +2547,8 @@ Mat.Numerics = {
         } else {
             throw new Error(
                 "JSXGraph: Can't create regressionPolynomial from degree of type'" +
-                    typeof degree +
-                    "'."
+                typeof degree +
+                "'."
             );
         }
 
@@ -2646,7 +2646,6 @@ Mat.Numerics = {
 
             // Horner's scheme to evaluate polynomial
             s = coeffs[d];
-
             for (i = d - 1; i >= 0; i--) {
                 s = s * x + coeffs[i];
             }
@@ -2702,8 +2701,8 @@ Mat.Numerics = {
                     return (
                         t1 * t1 * (t1 * points[z][which]() + 3 * t0 * points[z + 1][which]()) +
                         (3 * t1 * points[z + 2][which]() + t0 * points[z + 3][which]()) *
-                            t0 *
-                            t0
+                        t0 *
+                        t0
                     );
                 };
             };
@@ -4031,6 +4030,345 @@ Mat.Numerics = {
         }
 
         return [x, y];
+    },
+
+    /**
+     * Determine all roots of a polynomial with real or complex coefficients by using the
+     * iterative method attributed to Weierstrass, Durand, Kerner, Aberth, and Ehrlich. In particular,
+     * the iteration method with cubic convergence is used that is usually attributed to Ehrlich-Aberth.
+     * <p>
+     * The returned roots are sorted with respect to their real values.
+     * <p> This method makes use of the JSXGraph classes {@link JXG.Complex} and {@link JXG.C} to handle
+     * complex numbers.
+     *
+     * @param {Array} a Array of coefficients of the polynomial a[0] + a[1]*x+ a[2]*x**2...
+     * The coefficients are of type Number or JXG.Complex.
+     * @param {Number} [deg] Optional degree of the polynomial. Otherwise all entries are taken, with
+     * leading zeros removed.
+     * @param {Number} [tol=Number.EPSILON] Approximation tolerance
+     * @param {Number} [max_it=30] Maximum number of iterations
+     * @param {Array} [initial_values=null] Array of initial values for the roots. If not given,
+     * starting values are determined by the method of Ozawa.
+     * @returns {Array} Array of complex numbers (of JXG.Complex) approximating the roots of the polynomial.
+     * @memberof JXG.Math.Numerics
+     * @see JXG.Complex
+     * @see JXG.C
+     *
+     * @example
+     * // Polynomial p(z) = -1 + 1z^2
+     * var i, roots,
+     *     p = [-1, 0, 1];
+     *
+     * roots = JXG.Math.Numerics.polzeros(p);
+     * for (i = 0; i < roots.length; i++) {
+     *     console.log(i, roots[i].toString());
+     * }
+     * // Output:
+     *   0 -1 + -3.308722450212111e-24i
+     *   1 1 + 0i
+     *
+     * @example
+     * // Polynomial p(z) = -1 + 3z - 9z^2 + z^3 - 8z^6 + 9z^7 - 9z^8 + z^9
+     * var i, roots,
+     *     p = [-1, 3, -9, 1, 0, 0, -8, 9, -9, 1];
+     *
+     * roots = JXG.Math.Numerics.polzeros(p);
+     * for (i = 0; i < roots.length; i++) {
+     *     console.log(i, roots[i].toString());
+     * }
+     * // Output:
+     * 0 -0.7424155888401961 + 0.4950476539211721i
+     * 1 -0.7424155888401961 + -0.4950476539211721i
+     * 2 0.16674869833354108 + 0.2980502714610669i
+     * 3 0.16674869833354108 + -0.29805027146106694i
+     * 4 0.21429002063640837 + 1.0682775088132996i
+     * 5 0.21429002063640842 + -1.0682775088132999i
+     * 6 0.861375497926218 + -0.6259177003583295i
+     * 7 0.8613754979262181 + 0.6259177003583295i
+     * 8 8.000002743888055 + -1.8367099231598242e-40i
+     *
+     */
+    polzeros: function (coeffs, deg, tol, max_it, initial_values) {
+        var i, le, off,
+            a,
+            cc = [],
+            obvious = [],
+            roots = [],
+
+            /**
+             * Horner method to evaluate polynomial or the derivative thereof for complex numbers,
+             * i.e. coefficients and variable are complex.
+             * @function
+             * @param {Array} a Array of complex coefficients of the polynomial a[0] + a[1]*x+ a[2]*x**2...
+             * @param {JXG.Complex} z Value for which the polynomial will be evaluated.
+             * @param {Boolean} [derivative=false] If true the derivative will be evaluated.
+             * @ignore
+             */
+            hornerComplex = function (a, z, derivative) {
+                var i, s,
+                    n = a.length - 1;
+
+                derivative = derivative || false;
+                if (derivative) {
+                    // s = n * a_n
+                    s = JXG.C.mult(n, a[n]);
+                    for (i = n - 1; i > 0; i--) {
+                        // s = s * z + i * a_i
+                        s.mult(z);
+                        s.add(JXG.C.mult(a[i], i));
+                    }
+                } else {
+                    // s = a_n
+                    s = JXG.C.copy(a[n]);
+                    for (i = n - 1; i >= 0; i--) {
+                        // s = s * z + a_i
+                        s.mult(z);
+                        s.add(a[i]);
+                    }
+                }
+                return s;
+            },
+
+            /**
+             * Horner method to evaluate reciprocal polynomial or the derivative thereof for complex numbers,
+             * i.e. coefficients and variable are complex.
+             * @function
+             * @param {Array} a Array of complex coefficients of the polynomial a[0] + a[1]*x+ a[2]*x**2...
+             * @param {JXG.Complex} z Value for which the reciprocal polynomial will be evaluated.
+             * @param {Boolean} [derivative=false] If true the derivative will be evaluated.
+             * @ignore
+             */
+            hornerRec = function (a, x, derivative) {
+                var i, s,
+                    n = a.length - 1;
+
+                derivative = derivative || false;
+                if (derivative) {
+                    // s = n * a_0
+                    s = JXG.C.mult(n, a[0]);
+                    for (i = n - 1; i > 0; i--) {
+                        // s = s * x + i * a_{n-i}
+                        s.mult(x);
+                        s.add(JXG.C.mult(a[n - i], i));
+                    }
+                } else {
+                    // s = a_0
+                    s = JXG.C.copy(a[0]);
+                    for (i = n - 1; i >= 0; i--) {
+                        // s = s * x + a_{n-i}
+                        s.mult(x);
+                        s.add(a[n - i]);
+                    }
+                }
+                return s;
+            },
+
+            /**
+             * Horner method to evaluate real polynomial at a real value.
+             * @function
+             * @param {Array} a Array of real coefficients of the polynomial a[0] + a[1]*x+ a[2]*x**2...
+             * @param {Number} z Value for which the polynomial will be evaluated.
+             * @ignore
+             */
+            horner = function (a, x) {
+                var i, s,
+                    n = a.length - 1;
+
+                s = a[n];
+                for (i = n - 1; i >= 0; i--) {
+                    s = s * x + a[i];
+                }
+                return s;
+            },
+
+            /**
+             * Determine start values for the Aberth iteration, see
+             * Ozawa, "An experimental study of the starting values
+             * of the Durand-Kerner-Aberth iteration" (1995).
+             *
+             * @function
+             * @param {Array} a Array of complex coefficients of the polynomial a[0] + a[1]*x+ a[2]*x**2...
+             * @returns {Array} Array Initial values for the roots.
+             * @ignore
+             */
+            initial_guess = function (cc) {
+                var i, r,
+                    n = cc.length - 1, // degree
+                    alpha1 = Math.PI * 2 / n,
+                    alpha0 = Math.PI / n * 0.5,
+                    b, z,
+                    init = [];
+
+
+                // From Ozawa, "An experimental study of the starting values
+                // of the Durand-Kerner-Aberth iteration" (1995)
+
+                // b = -a_{n-1} / (n * a_n)
+                b = JXG.C.mult(-1, cc[n - 1]);
+                b.div(JXG.C.mult(n, cc[n]));
+
+                // r = |p(b)/a_n|^(1/n)
+                z = JXG.C.div(hornerComplex(cc, b), cc[n]);
+                r = Math.pow(JXG.C.abs(z), 1 / n);
+                if (r === 0) { r = 1; }
+
+                for (i = 0; i < n; i++) {
+                    a = new JXG.Complex(r * Math.cos(alpha1 * i + alpha0), r * Math.sin(alpha1 * i + alpha0))
+                    init[i] = JXG.C.add(b, a);
+                }
+
+                return init;
+            },
+
+            /**
+             * Ehrlich-Aberth iteration. The stopping criterion is from
+             * D.A. Bini, "Numerical computation of polynomial zeros
+             * by means of Aberths's method", Numerical Algorithms (1996).
+             *
+             * @function
+             * @param {Array} a Array of complex coefficients of the polynomial a[0] + a[1]*x+ a[2]*x**2...
+             * @param {Number} mu Machine precision
+             * @param {Number} max_it Maximum number of iterations
+             * @param {Array} Initial guess for the roots. Will be changed in place.
+             * @ignore
+             */
+            aberthIteration = function (cc, mu, max_it, roots) {
+                var k, i, j,
+                    done = [],
+                    cr = [],
+                    gamma, x,
+                    done_sum = 0,
+                    num, denom, s, pp,
+                    n = roots.length;
+
+                for (i = 0; i < n; i++) {
+                    done.push(false);
+                }
+                for (i = 0; i < cc.length; i++) {
+                    cr.push(JXG.C.abs(cc[i]) * (4 * i + 1));
+                }
+                for (k = 0; k < max_it && done_sum < n; k++) {
+                    for (i = 0; i < n; i++) {
+                        if (done[i]) {
+                            continue;
+                        }
+                        num = hornerComplex(cc, roots[i]);
+                        x = JXG.C.abs(roots[i]);
+
+                        // Stopping criterion by D.A. Bini
+                        // "Numerical computation of polynomial zeros
+                        // by means of Aberths's method", Numerical Algorithms (1996).
+                        //
+                        if (JXG.C.abs(num) < mu * horner(cr, x)) {
+                            done[i] = true;
+                            done_sum++;
+                            if (done_sum === n) {
+                                break;
+                            }
+                        }
+                        if (x > 1) {
+                            gamma = JXG.C.div(1, roots[i]);
+                            pp = hornerRec(cc, gamma, true);
+                            pp.div(hornerRec(cc, gamma));
+                            pp.mult(gamma);
+                            num = JXG.C.sub(n, pp);
+                            num = JXG.C.div(roots[i], num);
+                        } else {
+                            num.div(hornerComplex(cc, roots[i], true));
+                        }
+
+                        denom = new JXG.Complex(0);
+                        for (j = 0; j < n; j++) {
+                            if (j === i) {
+                                continue;
+                            }
+                            s = JXG.C.sub(roots[i], roots[j]);
+                            s = JXG.C.div(1, s);
+                            denom.add(s);
+                        }
+                        denom.mult(num);
+                        denom = JXG.C.sub(1, denom);
+                        num.div(denom);
+                        roots[i].sub(num);
+                    }
+                }
+                // console.log("Iterations", k)
+
+                return roots;
+            };
+
+
+        tol = tol || Number.EPSILON;
+        max_it = max_it || 30;
+
+        le = coeffs.length;
+        if (JXG.isNumber(deg) && deg >= 0 && deg < le - 1) {
+            le = deg + 1;
+        }
+
+        // Convert coefficient array to complex numbers
+        for (i = 0; i < le; i++) {
+            cc.push(new JXG.Complex(coeffs[i]));
+        }
+
+        // Search for (multiple) roots at x=0
+        for (i = 0; i < le; i++) {
+            if (cc[i].real !== 0 || cc[i].imaginary !== 0) {
+                off = i;
+                break;
+            }
+        }
+
+        // Deflate root x=0, store roots at x=0 in obvious
+        for (i = 0; i < off; i++) {
+            obvious.push(new JXG.Complex(0));
+        }
+        cc = cc.slice(off);
+        le = cc.length;
+
+        // Remove leading zeros
+        for (i = le - 1; i >= 0; i--) {
+            if (cc[i].real !== 0 || cc[i].imaginary !== 0) {
+                break;
+            }
+            cc.pop();
+        }
+        le = cc.length;
+        if (le === 0) {
+            return [];
+        }
+
+        // From now on we can assume that the
+        // constant coefficient and the leading coefficient
+        // are not zero.
+        if (initial_values) {
+            for (i = 0; i < le - 1; i++) {
+                roots.push(new JXG.Complex(initial_values[i]));
+            }
+        } else {
+            roots = initial_guess(cc);
+        }
+        aberthIteration(cc, tol, max_it, roots);
+
+        // Append the roots at x=0
+        roots = obvious.concat(roots);
+
+        console.log('Roots:');
+        for (i = 0; i < roots.length; i++) {
+            console.log(i, roots[i].toString(), JXG.C.abs(hornerComplex(cc, roots[i])));
+        }
+        // Sort roots according to their real part
+        roots.sort(function (a, b) {
+            if (a.real < b.real) {
+                return -1;
+            }
+            if (a.real > b.real) {
+                return 1;
+            }
+            return 0;
+        });
+
+        return roots;
     },
 
     /**
