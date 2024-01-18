@@ -4353,10 +4353,10 @@ Mat.Numerics = {
         // Append the roots at x=0
         roots = obvious.concat(roots);
 
-        console.log('Roots:');
-        for (i = 0; i < roots.length; i++) {
-            console.log(i, roots[i].toString(), JXG.C.abs(hornerComplex(cc, roots[i])));
-        }
+        // console.log('Roots:');
+        // for (i = 0; i < roots.length; i++) {
+        //     console.log(i, roots[i].toString(), JXG.C.abs(hornerComplex(cc, roots[i])));
+        // }
         // Sort roots according to their real part
         roots.sort(function (a, b) {
             if (a.real < b.real) {
