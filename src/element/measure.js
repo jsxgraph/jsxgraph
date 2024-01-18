@@ -378,14 +378,16 @@ JXG.createMeasurement = function (board, parents, attributes) {
             unit = Type.evaluate(units[dim]);
         } else {
             unit = Type.evaluate(el.visProp.baseunit);
+
+            if (dim > 1) {
+                unit = unit + '^{' + dim + '}';
+            }
         }
 
         if (dim === 0 || unit === '') {
             unit = '';
-        } else if (dim === 1) {
-            unit = ' ' + unit;
         } else {
-            unit = ' ' + unit + '^{' + dim + '}';
+            unit = ' ' + unit;
         }
 
         return prefix + val + unit + suffix;
