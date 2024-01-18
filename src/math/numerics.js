@@ -4035,7 +4035,9 @@ Mat.Numerics = {
     /**
      * Determine all roots of a polynomial with real or complex coefficients by using the
      * iterative method of Weierstrass, Durand, Kerner, Aberth, Ehrlich. In particular,
-     * the iteration method with cubic convergence which is usually attributed to Ehrlich-Aberth is used.
+     * the iteration method with cubic convergence is used that is usually attributed to Ehrlich-Aberth.
+     * <p>
+     * The returned roots are sorted with respect to their real values.
      *
      * @param {Array} a Array of coefficients of the polynomial a[0] + a[1]*x+ a[2]*x**2...
      * The coefficients are of type Number or JXG.Complex.
@@ -4046,6 +4048,43 @@ Mat.Numerics = {
      * @param {Array} [initial_values=null] Array of initial values for the roots. If not given,
      * starting values are determined by the nethod of Ozawa.
      * @returns {Array} Array of complex numbers (of JXG.Complex) approximating the roots of the polynomial.
+     * @memberof JXG.Math.Numerics
+     * @see JXG.Complex
+     * @see JXG.Complex
+     *
+     * @example
+     * // Polynomial p(z) = -1 + 1z^2
+     * var i, roots,
+     *     p = [-1, 0, 1];
+     *
+     * roots = JXG.Math.Numerics.polzeros(p);
+     * for (i = 0; i < roots.length; i++) {
+     *     console.log(i, roots[i].toString());
+     * }
+     * // Output:
+     *   0 -1 + -3.308722450212111e-24i
+     *   1 1 + 0i
+     *
+     * @example
+     * // Polynomial p(z) = -1 + 3z - 9z^2 + z^3 - 8z^6 + 9z^7 - 9z^8 + z^9
+     * var i, roots,
+     *     p = [-1, 3, -9, 1, 0, 0, -8, 9, -9, 1];
+     *
+     * roots = JXG.Math.Numerics.polzeros(p);
+     * for (i = 0; i < roots.length; i++) {
+     *     console.log(i, roots[i].toString());
+     * }
+     * // Output:
+     * 0 -0.7424155888401961 + 0.4950476539211721i
+     * 1 -0.7424155888401961 + -0.4950476539211721i
+     * 2 0.16674869833354108 + 0.2980502714610669i
+     * 3 0.16674869833354108 + -0.29805027146106694i
+     * 4 0.21429002063640837 + 1.0682775088132996i
+     * 5 0.21429002063640842 + -1.0682775088132999i
+     * 6 0.861375497926218 + -0.6259177003583295i
+     * 7 0.8613754979262181 + 0.6259177003583295i
+     * 8 8.000002743888055 + -1.8367099231598242e-40i
+     *
      */
     polzeros: function (coeffs, deg, tol, max_it, initial_values) {
         var i, le, off,
@@ -4189,6 +4228,7 @@ Mat.Numerics = {
              * @param {Number} mu Machine precision
              * @param {Number} max_it Maximum number of iterations
              * @param {Array} Initial guess for the roots. Will be changed in place.
+             * @ignore
              */
             aberthIteration = function (cc, mu, max_it, roots) {
                 var k, i, j,
@@ -4250,7 +4290,7 @@ Mat.Numerics = {
                         roots[i].sub(num);
                     }
                 }
-                console.log("Iterations", k)
+                // console.log("Iterations", k)
 
                 return roots;
             };

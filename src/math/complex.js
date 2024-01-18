@@ -42,11 +42,12 @@ import JXG from "../jxg";
 import Type from "../utils/type";
 
 /**
- * Creates a new complex number.
+ * Creates a new complex number. See also {@link JXG.C}.
  * @class This class is for calculating with complex numbers.
  * @constructor
  * @param {Number} [x=0] Real part.
  * @param {Number} [y=0] Imaginary part.
+ * @see JXG.C
  */
 JXG.Complex = function (x, y) {
     /**
