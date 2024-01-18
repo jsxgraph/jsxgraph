@@ -4475,6 +4475,7 @@ JXG.Options = {
         /**
          * @name Grid#snapToGrid
          * @type Boolean
+         * @ignore
          * @deprecated
          */
         snapToGrid: false,
@@ -4482,6 +4483,7 @@ JXG.Options = {
         /**
          * @name Grid#snapSizeX
          * @type Boolean
+         * @ignore
          * @deprecated
          */
         snapSizeX: 10,
@@ -4489,6 +4491,7 @@ JXG.Options = {
         /**
          * @name Grid#snapSizeY
          * @type Boolean
+         * @ignore
          * @deprecated
          */
         snapSizeY: 10
@@ -5603,6 +5606,7 @@ JXG.Options = {
          */
 
         baseUnit: '',
+        units: {},
         dim: 0,
         prefix: '',
         suffix: '',

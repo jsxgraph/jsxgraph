@@ -189,7 +189,6 @@ JXG.createTapemeasure = function (board, parents, attributes) {
 
 JXG.registerElement("tapemeasure", JXG.createTapemeasure);
 
-
 /**
  * @class Measurement element. Under the hood this is a text element which has a method Value. The text to be displayed
  * is the result of the evaluation of a prefix expression, see {@link JXG.PrefixParser}.
@@ -328,10 +327,10 @@ JXG.createMeasurement = function (board, parents, attributes) {
 
     valueFunc = function () {
         return Prefix.parse(term, 'execute');
-    }
+    };
     dimFunc = function () {
         return Prefix.dimension(term);
-    }
+    };
 
     el = board.create("text", [x, y, ''], attr);
     el.type = Type.OBJECT_TYPE_MEASUREMENT;
@@ -359,28 +358,42 @@ JXG.createMeasurement = function (board, parents, attributes) {
     el.setText(function () {
         var prefix = '',
             suffix = '',
-            d = el.Dimension(),
-            b = Type.evaluate(el.visProp.baseunit),
-            v = el.Value().toFixed(Type.evaluate(el.visProp.digits));
+            dim = el.Dimension(),
+            unit = '',
+            units = Type.evaluate(el.visProp.units),
+            val = el.Value().toFixed(Type.evaluate(el.visProp.digits));
 
         if (Type.evaluate(el.visProp.showprefix)) {
-            prefix = Type.evaluate(el.visProp.prefix)
+            prefix = Type.evaluate(el.visProp.prefix);
         }
         if (Type.evaluate(el.visProp.showsuffix)) {
-            suffix = Type.evaluate(el.visProp.suffix)
+            suffix = Type.evaluate(el.visProp.suffix);
         }
 
-        if (d === 0 || b === '') {
-            return prefix + v + suffix;
-        }
-        if (isNaN(d)) {
-            return 'NaN';
-        }
-        if (d === 1) {
-            return prefix + v + ' ' + b + suffix;
+        if (isNaN(dim)) {
+            return prefix + 'NaN' + suffix;
         }
 
-        return prefix + v + ' ' + b + '^{' + d + '}' + suffix;
+        if (Type.isObject(units) && Type.exists(units[dim])) {
+            unit = Type.evaluate(units[dim]);
+        } else if (Type.isObject(units) && Type.exists(units['dim' + dim])) {
+            // In some cases, object keys must not be numbers. This allows key 'dim1' instead of '1'.
+            unit = Type.evaluate(units['dim' + dim]);
+        } else {
+            unit = Type.evaluate(el.visProp.baseunit);
+
+            if (dim === 0) {
+                unit = '';
+            } else if (dim > 1 && unit !== '') {
+                unit = unit + '^{' + dim + '}';
+            }
+        }
+
+        if (unit !== '') {
+            unit = ' ' + unit;
+        }
+
+        return prefix + val + unit + suffix;
     });
 
     el.methodMap = Type.deepCopy(el.methodMap, {
