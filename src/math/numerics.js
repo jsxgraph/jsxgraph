@@ -4032,6 +4032,21 @@ Mat.Numerics = {
         return [x, y];
     },
 
+    /**
+     * Determine all roots of a polynomial with real or complex coefficients by using the
+     * iterative method of Weierstrass, Durand, Kerner, Aberth, Ehrlich. In particular,
+     * the iteration method with cubic convergence which is usually attributed to Ehrlich-Aberth is used.
+     *
+     * @param {Array} a Array of coefficients of the polynomial a[0] + a[1]*x+ a[2]*x**2...
+     * The coefficients are of type Number or JXG.Complex.
+     * @param {Number} [deg] Optional degree of the polynomial. Otherwise all entries are taken, with
+     * leading zeros removed.
+     * @param {Number} [tol=Number.EPSILON] Approximation tolerance
+     * @param {Number} [max_it=30] Maximum number of iterations
+     * @param {Array} [initial_values=null] Array of initial values for the roots. If not given,
+     * starting values are determined by the nethod of Ozawa.
+     * @returns
+     */
     polzeros: function (coeffs, deg, tol, max_it, initial_values) {
         var i, le, off,
             a,
@@ -4039,9 +4054,15 @@ Mat.Numerics = {
             obvious = [],
             roots = [],
 
-            // Horner method for complex numbers, i.e. coefficients
-            // and variable are complex.
-            //
+            /**
+             * Horner method to evaluate polynomial or the derivative thereof for complex numbers,
+             * i.e. coefficients and variable are complex.
+             * @function
+             * @param {Array} a Array of complex coefficients of the polynomial a[0] + a[1]*x+ a[2]*x**2...
+             * @param {JXG.Complex} z Value for which the polynomial will be evaluated.
+             * @param {Boolean} [derivative=false] If true the derivative will be evaluated.
+             * @ignore
+             */
             hornerComplex = function (a, z, derivative) {
                 var i, s,
                     n = a.length - 1;
@@ -4067,6 +4088,15 @@ Mat.Numerics = {
                 return s;
             },
 
+            /**
+             * Horner method to evaluate reciprocal polynomial or the derivative thereof for complex numbers,
+             * i.e. coefficients and variable are complex.
+             * @function
+             * @param {Array} a Array of complex coefficients of the polynomial a[0] + a[1]*x+ a[2]*x**2...
+             * @param {JXG.Complex} z Value for which the reciprocal polynomial will be evaluated.
+             * @param {Boolean} [derivative=false] If true the derivative will be evaluated.
+             * @ignore
+             */
             hornerRec = function (a, x, derivative) {
                 var i, s,
                     n = a.length - 1;
@@ -4092,6 +4122,13 @@ Mat.Numerics = {
                 return s;
             },
 
+            /**
+             * Horner method to evaluate real polynomial at a real value.
+             * @function
+             * @param {Array} a Array of real coefficients of the polynomial a[0] + a[1]*x+ a[2]*x**2...
+             * @param {Number} z Value for which the polynomial will be evaluated.
+             * @ignore
+             */
             horner = function (a, x) {
                 var i, s,
                     n = a.length - 1;
