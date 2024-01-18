@@ -4034,10 +4034,12 @@ Mat.Numerics = {
 
     /**
      * Determine all roots of a polynomial with real or complex coefficients by using the
-     * iterative method of Weierstrass, Durand, Kerner, Aberth, Ehrlich. In particular,
+     * iterative method attributed to Weierstrass, Durand, Kerner, Aberth, and Ehrlich. In particular,
      * the iteration method with cubic convergence is used that is usually attributed to Ehrlich-Aberth.
      * <p>
      * The returned roots are sorted with respect to their real values.
+     * <p> This method makes use of the JSXGraph classes {@link JXG.Complex} and {@link JXG.C} to handle
+     * complex numbers.
      *
      * @param {Array} a Array of coefficients of the polynomial a[0] + a[1]*x+ a[2]*x**2...
      * The coefficients are of type Number or JXG.Complex.
@@ -4046,11 +4048,11 @@ Mat.Numerics = {
      * @param {Number} [tol=Number.EPSILON] Approximation tolerance
      * @param {Number} [max_it=30] Maximum number of iterations
      * @param {Array} [initial_values=null] Array of initial values for the roots. If not given,
-     * starting values are determined by the nethod of Ozawa.
+     * starting values are determined by the method of Ozawa.
      * @returns {Array} Array of complex numbers (of JXG.Complex) approximating the roots of the polynomial.
      * @memberof JXG.Math.Numerics
      * @see JXG.Complex
-     * @see JXG.Complex
+     * @see JXG.C
      *
      * @example
      * // Polynomial p(z) = -1 + 1z^2
