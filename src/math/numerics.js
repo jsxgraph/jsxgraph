@@ -4045,7 +4045,7 @@ Mat.Numerics = {
      * @param {Number} [max_it=30] Maximum number of iterations
      * @param {Array} [initial_values=null] Array of initial values for the roots. If not given,
      * starting values are determined by the nethod of Ozawa.
-     * @returns
+     * @returns {Array} Array of complex numbers (of JXG.Complex) approximating the roots of the polynomial.
      */
     polzeros: function (coeffs, deg, tol, max_it, initial_values) {
         var i, le, off,
@@ -4140,6 +4140,16 @@ Mat.Numerics = {
                 return s;
             },
 
+            /**
+             * Determine start values for the Aberth iteration, see
+             * Ozawa, "An experimental study of the starting values
+             * of the Durand-Kerner-Aberth iteration" (1995).
+             *
+             * @function
+             * @param {Array} a Array of complex coefficients of the polynomial a[0] + a[1]*x+ a[2]*x**2...
+             * @returns {Array} Array Initial values for the roots.
+             * @ignore
+             */
             initial_guess = function (cc) {
                 var i, r,
                     n = cc.length - 1, // degree
@@ -4169,6 +4179,17 @@ Mat.Numerics = {
                 return init;
             },
 
+            /**
+             * Ehrlich-Aberth iteration. The stopping criterion is from
+             * D.A. Bini, "Numerical computation of polynomial zeros
+             * by means of Aberths's method", Numerical Algorithms (1996).
+             *
+             * @function
+             * @param {Array} a Array of complex coefficients of the polynomial a[0] + a[1]*x+ a[2]*x**2...
+             * @param {Number} mu Machine precision
+             * @param {Number} max_it Maximum number of iterations
+             * @param {Array} Initial guess for the roots. Will be changed in place.
+             */
             aberthIteration = function (cc, mu, max_it, roots) {
                 var k, i, j,
                     done = [],
