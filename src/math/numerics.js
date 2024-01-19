@@ -4201,15 +4201,17 @@ Mat.Numerics = {
                 // From Ozawa, "An experimental study of the starting values
                 // of the Durand-Kerner-Aberth iteration" (1995)
 
-                // b is the arithmetic mean of the roots. 
+                // b is the arithmetic mean of the roots.
                 // With is Vieta's formula <https://en.wikipedia.org/wiki/Vieta%27s_formulas>
                 //   b = -a_{n-1} / (n * a_n)
                 b = JXG.C.mult(-1, a[n - 1]);
                 b.div(JXG.C.mult(n, a[n]));
 
-                // r is the geometric mean of the deviations |root_i - b|.
+                // r is the geometric mean of the deviations |b - root_i|.
                 // Using
-                //   p(z) = a_n prod(|z - root_i|) = |p(b)|
+                //   p(z) = a_n prod(z - root_i)
+                // and therefore
+                //   |p(b)| = |a_n| prod(|b - root_i|)
                 // we arrive at:
                 //   r = |p(b)/a_n|^(1/n)
                 z = JXG.C.div(hornerComplex(a, b), a[n]);
