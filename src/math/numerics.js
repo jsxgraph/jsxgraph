@@ -4189,9 +4189,9 @@ Mat.Numerics = {
              * @returns {Array} Array Initial values for the roots.
              * @ignore
              */
-            initial_guess = function (cc) {
+            initial_guess = function (a) {
                 var i, r,
-                    n = cc.length - 1, // degree
+                    n = a.length - 1, // degree
                     alpha1 = Math.PI * 2 / n,
                     alpha0 = Math.PI / n * 0.5,
                     b, z,
@@ -4201,12 +4201,18 @@ Mat.Numerics = {
                 // From Ozawa, "An experimental study of the starting values
                 // of the Durand-Kerner-Aberth iteration" (1995)
 
-                // b = -a_{n-1} / (n * a_n)
-                b = JXG.C.mult(-1, cc[n - 1]);
-                b.div(JXG.C.mult(n, cc[n]));
+                // b is the arithmetic mean of the roots. 
+                // With is Vieta's formula <https://en.wikipedia.org/wiki/Vieta%27s_formulas>
+                //   b = -a_{n-1} / (n * a_n)
+                b = JXG.C.mult(-1, a[n - 1]);
+                b.div(JXG.C.mult(n, a[n]));
 
-                // r = |p(b)/a_n|^(1/n)
-                z = JXG.C.div(hornerComplex(cc, b), cc[n]);
+                // r is the geometric mean of the deviations |root_i - b|.
+                // Using
+                //   p(z) = a_n prod(|z - root_i|) = |p(b)|
+                // we arrive at:
+                //   r = |p(b)/a_n|^(1/n)
+                z = JXG.C.div(hornerComplex(a, b), a[n]);
                 r = Math.pow(JXG.C.abs(z), 1 / n);
                 if (r === 0) { r = 1; }
 
