@@ -145,7 +145,7 @@ import Type from "../utils/type";
  * </script><pre>
  *
  */
-JXG.createVectorField = function(board, parents, attributes) {
+JXG.createVectorField = function (board, parents, attributes) {
     var el, attr;
 
     if (!(parents.length >= 3 &&
@@ -155,9 +155,9 @@ JXG.createVectorField = function(board, parents, attributes) {
     )) {
         throw new Error(
             "JSXGraph: Can't create vector field with parent types " +
-                "'" + typeof parents[0] + "', " +
-                "'" + typeof parents[1] + "', " +
-                "'" + typeof parents[2] + "'."
+            "'" + typeof parents[0] + "', " +
+            "'" + typeof parents[1] + "', " +
+            "'" + typeof parents[2] + "'."
         );
     }
 
@@ -183,7 +183,7 @@ JXG.createVectorField = function(board, parents, attributes) {
      * board.update();
      *
      */
-    el.setF = function(func, varnames) {
+    el.setF = function (func, varnames) {
         var f0, f1;
         if (Type.isArray(func)) {
             f0 = Type.createFunction(func[0], this.board, varnames);
@@ -191,7 +191,7 @@ JXG.createVectorField = function(board, parents, attributes) {
             /**
              * @ignore
              */
-            this.F = function(x, y) { return [f0(x, y), f1(x, y)]; };
+            this.F = function (x, y) { return [f0(x, y), f1(x, y)]; };
         } else {
             this.F = Type.createFunction(func, el.board, varnames);
         }
@@ -202,7 +202,7 @@ JXG.createVectorField = function(board, parents, attributes) {
     el.xData = parents[1];
     el.yData = parents[2];
 
-    el.updateDataArray = function() {
+    el.updateDataArray = function () {
         var x, y, i, j,
             scale = Type.evaluate(this.visProp.scale),
             start_x = Type.evaluate(this.xData[0]),
@@ -222,9 +222,9 @@ JXG.createVectorField = function(board, parents, attributes) {
 
         if (showArrow) {
             // Arrow head style
-            leg = Type.evaluate(this.visProp.arrowhead.size),
-            leg_x = leg / board.unitX,
-            leg_y = leg / board.unitY,
+            leg = Type.evaluate(this.visProp.arrowhead.size);
+            leg_x = leg / board.unitX;
+            leg_y = leg / board.unitY;
             alpha = Type.evaluate(this.visProp.arrowhead.angle);
         }
 
@@ -365,7 +365,7 @@ JXG.registerElement("vectorfield", JXG.createVectorField);
  * </script><pre>
  *
  */
-JXG.createSlopeField = function(board, parents, attributes) {
+JXG.createSlopeField = function (board, parents, attributes) {
     var el, f, attr;
 
     if (!(parents.length >= 3 &&
@@ -375,14 +375,14 @@ JXG.createSlopeField = function(board, parents, attributes) {
     )) {
         throw new Error(
             "JSXGraph: Can't create slope field with parent types " +
-                "'" + typeof parents[0] + "', " +
-                "'" + typeof parents[1] + "', " +
-                "'" + typeof parents[2] + "'."
+            "'" + typeof parents[0] + "', " +
+            "'" + typeof parents[1] + "', " +
+            "'" + typeof parents[2] + "'."
         );
     }
 
     f = Type.createFunction(parents[0], board, 'x, y');
-    parents[0] = function(x, y) {
+    parents[0] = function (x, y) {
         var z = f(x, y),
             nrm = Math.sqrt(1 + z * z);
         return [1 / nrm, z / nrm];
@@ -407,13 +407,13 @@ JXG.createSlopeField = function(board, parents, attributes) {
      * board.update();
      *
      */
-    el.setF = function(func, varnames) {
+    el.setF = function (func, varnames) {
         var f = Type.createFunction(func, el.board, varnames);
 
         /**
          * @ignore
          */
-        this.F = function(x, y) {
+        this.F = function (x, y) {
             var z = f(x, y),
                 nrm = Math.sqrt(1 + z * z);
             return [1 / nrm, z / nrm];

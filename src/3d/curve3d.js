@@ -80,6 +80,10 @@ JXG.Curve3D = function (view, F, X, Y, Z, range, attributes) {
      */
     this.Z = Z;
 
+    this.dataX = null;
+    this.dataY = null;
+    this.dataZ = null;
+
     if (this.F !== null) {
         this.X = function (u) {
             return this.F(u)[0];
@@ -104,7 +108,7 @@ Type.copyPrototypeMethods(JXG.Curve3D, JXG.GeometryElement3D, "constructor3D");
 JXG.extend(
     JXG.Curve3D.prototype,
     /** @lends JXG.Curve3D.prototype */ {
-        updateDataArray: function () {
+        updateDataArray2D: function () {
             var steps = Type.evaluate(this.visProp.numberpointshigh),
                 r, s, e, delta, c2d, u, dataX, dataY,
                 i,
@@ -113,7 +117,15 @@ JXG.extend(
             dataX = [];
             dataY = [];
 
-            if (Type.isArray(this.X)) {
+            if (Type.exists(this.dataX)) {
+                steps = this.dataX.length;
+                for (u = 0; u < steps; u++) {
+                    p = [this.dataX[u], this.dataY[u], this.dataZ[u]];
+                    c2d = this.view.project3DTo2D(p);
+                    dataX.push(c2d[1]);
+                    dataY.push(c2d[2]);
+                }
+            } else if (Type.isArray(this.X)) {
                 steps = this.X.length;
                 for (u = 0; u < steps; u++) {
                     p = [this.X[u], this.Y[u], this.Z[u]];
@@ -140,7 +152,13 @@ JXG.extend(
             return { X: dataX, Y: dataY };
         },
 
+        updateDataArray: function() {
+        },
+
         update: function () {
+            // if (this.needsUpdate) {
+                this.updateDataArray();
+            // }
             return this;
         },
 
@@ -198,7 +216,7 @@ JXG.createCurve3D = function (board, parents, attributes) {
      * @ignore
      */
     el.element2D.updateDataArray = function () {
-        var ret = el.updateDataArray();
+        var ret = el.updateDataArray2D();
         this.dataX = ret.X;
         this.dataY = ret.Y;
     };
