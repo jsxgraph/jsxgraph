@@ -163,13 +163,16 @@ JXG.createVectorField = function(board, parents, attributes) {
 
     attr = Type.copyAttributes(attributes, board.options, 'vectorfield');
 
-    /** @type { JXG.Curve } */
+    /**
+     * @type {JXG.Curve}
+     * @ignore
+     */
     el = board.create('curve', [[], []], attr);
     el.elType = 'vectorfield';
 
     /**
      * Set the defining functions of vector field.
-     * @memberOf Vectorfield.prototype
+     * @memberOf Vectorfield
      * @name setF
      * @function
      * @param {Array|Function} func Either an array containing two functions f1(x, y) and f2(x, y) or function f(x, y) returning an array of length 2.
@@ -385,13 +388,16 @@ JXG.createSlopeField = function(board, parents, attributes) {
         return [1 / nrm, z / nrm];
     };
     attr = Type.copyAttributes(attributes, board.options, 'slopefield');
+    /**
+     * @type {JXG.Curve}
+     * @ignore
+     */
     el = board.create('vectorfield', parents, attr);
     el.elType = 'slopefield';
 
     /**
      * Set the defining functions of slope field.
-     * @memberOf Slopefield.prototype
-     * @name setF
+     * @name Slopefield#setF
      * @function
      * @param {Function} func Function f(x, y) returning a number.
      * @returns {Object} Reference to the slope field object.

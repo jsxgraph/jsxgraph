@@ -186,27 +186,24 @@ Mat.Numerics = {
     },
 
     /**
+     *  Gauss-Bareiss algorithm to compute the
+     *  determinant of matrix without fractions.
+     *  See Henri Cohen, "A Course in Computational
+     *  Algebraic Number Theory (Graduate texts
+     *  in mathematics; 138)", Springer-Verlag,
+     *  ISBN 3-540-55640-0 / 0-387-55640-0
+     *  Third, Corrected Printing 1996
+     *  "Algorithm 2.2.6", pg. 52-53
+     *
+     * @param {Array} mat Matrix
+     * @returns Number
      * @private
      * @memberof JXG.Math.Numerics
      */
-    //  Gauss-Bareiss algorithm to compute the
-    //  determinant of matrix without fractions.
-    //  See Henri Cohen, "A Course in Computational
-    //  Algebraic Number Theory (Graduate texts
-    //  in mathematics; 138)", Springer-Verlag,
-    //  ISBN 3-540-55640-0 / 0-387-55640-0
-    //  Third, Corrected Printing 1996
-    //  "Algorithm 2.2.6", pg. 52-53
     gaussBareiss: function (mat) {
-        var k,
-            c,
-            s,
-            i,
-            j,
-            p,
-            n,
-            M,
-            t,
+        var k, c, s,
+            i, j, p,
+            n, M, t,
             eps = Mat.eps;
 
         n = mat.length;
@@ -4089,8 +4086,9 @@ Mat.Numerics = {
      *
      */
     polzeros: function (coeffs, deg, tol, max_it, initial_values) {
-        var i, le, off,
+        var i, le, off, it,
             a,
+            debug = false,
             cc = [],
             obvious = [],
             roots = [],
@@ -4191,9 +4189,9 @@ Mat.Numerics = {
              * @returns {Array} Array Initial values for the roots.
              * @ignore
              */
-            initial_guess = function (cc) {
+            initial_guess = function (a) {
                 var i, r,
-                    n = cc.length - 1, // degree
+                    n = a.length - 1, // degree
                     alpha1 = Math.PI * 2 / n,
                     alpha0 = Math.PI / n * 0.5,
                     b, z,
@@ -4203,12 +4201,20 @@ Mat.Numerics = {
                 // From Ozawa, "An experimental study of the starting values
                 // of the Durand-Kerner-Aberth iteration" (1995)
 
-                // b = -a_{n-1} / (n * a_n)
-                b = JXG.C.mult(-1, cc[n - 1]);
-                b.div(JXG.C.mult(n, cc[n]));
+                // b is the arithmetic mean of the roots.
+                // With is Vieta's formula <https://en.wikipedia.org/wiki/Vieta%27s_formulas>
+                //   b = -a_{n-1} / (n * a_n)
+                b = JXG.C.mult(-1, a[n - 1]);
+                b.div(JXG.C.mult(n, a[n]));
 
-                // r = |p(b)/a_n|^(1/n)
-                z = JXG.C.div(hornerComplex(cc, b), cc[n]);
+                // r is the geometric mean of the deviations |b - root_i|.
+                // Using
+                //   p(z) = a_n prod(z - root_i)
+                // and therefore
+                //   |p(b)| = |a_n| prod(|b - root_i|)
+                // we arrive at:
+                //   r = |p(b)/a_n|^(1/n)
+                z = JXG.C.div(hornerComplex(a, b), a[n]);
                 r = Math.pow(JXG.C.abs(z), 1 / n);
                 if (r === 0) { r = 1; }
 
@@ -4229,17 +4235,18 @@ Mat.Numerics = {
              * @param {Array} a Array of complex coefficients of the polynomial a[0] + a[1]*x+ a[2]*x**2...
              * @param {Number} mu Machine precision
              * @param {Number} max_it Maximum number of iterations
-             * @param {Array} Initial guess for the roots. Will be changed in place.
+             * @param {Array} z Initial guess for the roots. Will be changed in place.
+             * @returns {Number} Number of iterations
              * @ignore
              */
-            aberthIteration = function (cc, mu, max_it, roots) {
+            aberthIteration = function (cc, mu, max_it, z) {
                 var k, i, j,
                     done = [],
                     cr = [],
                     gamma, x,
                     done_sum = 0,
                     num, denom, s, pp,
-                    n = roots.length;
+                    n = z.length;
 
                 for (i = 0; i < n; i++) {
                     done.push(false);
@@ -4252,8 +4259,8 @@ Mat.Numerics = {
                         if (done[i]) {
                             continue;
                         }
-                        num = hornerComplex(cc, roots[i]);
-                        x = JXG.C.abs(roots[i]);
+                        num = hornerComplex(cc, z[i]);
+                        x = JXG.C.abs(z[i]);
 
                         // Stopping criterion by D.A. Bini
                         // "Numerical computation of polynomial zeros
@@ -4265,36 +4272,42 @@ Mat.Numerics = {
                             if (done_sum === n) {
                                 break;
                             }
+                            continue;
                         }
+
+                        // num = P(z_i) / P'(z_i)
                         if (x > 1) {
-                            gamma = JXG.C.div(1, roots[i]);
+                            gamma = JXG.C.div(1, z[i]);
                             pp = hornerRec(cc, gamma, true);
                             pp.div(hornerRec(cc, gamma));
                             pp.mult(gamma);
                             num = JXG.C.sub(n, pp);
-                            num = JXG.C.div(roots[i], num);
+                            num = JXG.C.div(z[i], num);
                         } else {
-                            num.div(hornerComplex(cc, roots[i], true));
+                            num.div(hornerComplex(cc, z[i], true));
                         }
 
+                        // denom = sum_{i\neq j} 1 / (z_i  - z_j)
                         denom = new JXG.Complex(0);
                         for (j = 0; j < n; j++) {
                             if (j === i) {
                                 continue;
                             }
-                            s = JXG.C.sub(roots[i], roots[j]);
+                            s = JXG.C.sub(z[i], z[j]);
                             s = JXG.C.div(1, s);
                             denom.add(s);
                         }
+
+                        // num = num / 1 - num * sum_{i\neq j} 1 / (z_i - z_j)
                         denom.mult(num);
                         denom = JXG.C.sub(1, denom);
                         num.div(denom);
-                        roots[i].sub(num);
+                        // z_i = z_i - num
+                        z[i].sub(num);
                     }
                 }
-                // console.log("Iterations", k)
 
-                return roots;
+                return k;
             };
 
 
@@ -4348,15 +4361,19 @@ Mat.Numerics = {
         } else {
             roots = initial_guess(cc);
         }
-        aberthIteration(cc, tol, max_it, roots);
+        it = aberthIteration(cc, tol, max_it, roots);
 
         // Append the roots at x=0
         roots = obvious.concat(roots);
 
-        console.log('Roots:');
-        for (i = 0; i < roots.length; i++) {
-            console.log(i, roots[i].toString(), JXG.C.abs(hornerComplex(cc, roots[i])));
+        if (debug) {
+            console.log("Iterations:", it);
+            console.log('Roots:');
+            for (i = 0; i < roots.length; i++) {
+                console.log(i, roots[i].toString(), JXG.C.abs(hornerComplex(cc, roots[i])));
+            }
         }
+
         // Sort roots according to their real part
         roots.sort(function (a, b) {
             if (a.real < b.real) {

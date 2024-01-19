@@ -679,6 +679,8 @@ JXG.createIntersectionPoint = function (board, parents, attributes) {
      * The intersection point is i-th intersection point.
      * j is unused.
      * @type Array
+     * @name intersectionNumbers
+     * @memberOf Intersection
      * @private
      */
     el.intersectionNumbers = [i, j];

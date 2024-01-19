@@ -260,6 +260,39 @@ JXG.createArc = function (board, parents, attributes) {
     };
 
     /**
+     * Returns the value of the angle described by the arc in Radians.
+     * @memberOf Arc.prototype
+     * @name Angle
+     * @function
+     * @returns {Number} The angle value in Radians.
+     */
+    el.Angle = function () {
+        return Geometry.rad(this.radiuspoint, this.center, this.anglepoint);
+    };
+
+    /**
+     * Returns the value of the angle described by the arc depending on PI. E.g. the angle is 1.5*PI, this function returns 1.5.
+     * @memberOf Arc.prototype
+     * @name AnglePI
+     * @function
+     * @returns {Number} The angle value depending on PI.
+     */
+    el.AnglePI = function () {
+        return this.Angle() / Math.PI;
+    };
+
+    /**
+     * Returns the value of the angle described by the arc in Degrees.
+     * @memberOf Arc.prototype
+     * @name AngleDeg
+     * @function
+     * @returns {Number} The angle value in Degrees.
+     */
+    el.AngleDeg = function () {
+        return this.AnglePI() * 180;
+    };
+
+    /**
      * Returns the length of the arc.
      * @memberOf Arc.prototype
      * @name Value
@@ -267,7 +300,7 @@ JXG.createArc = function (board, parents, attributes) {
      * @returns {Number} The arc length
      */
     el.Value = function () {
-        return this.Radius() * Geometry.rad(this.radiuspoint, this.center, this.anglepoint);
+        return this.Radius() * this.Angle();
     };
 
     // documented in geometry element
@@ -344,6 +377,10 @@ JXG.createArc = function (board, parents, attributes) {
     };
 
     // documented in geometry element
+    /**
+     * @class
+     * @ignore
+     */
     el.getLabelAnchor = function () {
         var coords,
             vec,
@@ -403,6 +440,10 @@ JXG.createArc = function (board, parents, attributes) {
         center: "center",
         radiuspoint: "radiuspoint",
         anglepoint: "anglepoint",
+        Angle: "Angle",
+        Rad: "Angle",
+        Deg: "AngleDeg",
+        PI: "AnglePI",
         Value: "Value"
     });
 

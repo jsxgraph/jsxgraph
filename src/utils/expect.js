@@ -42,9 +42,11 @@ import Const from "../base/constants";
 import Coords from "../base/coords";
 
 /**
- * @class
+ * The JXG.Expect namespace provides method to normalize access on coordinates,
+ * i.e. provides utilities for parameter magic by normalizing multi-type parameters.
+ * @namespace
  */
-var Expect = {
+JXG.Expect = {
     /**
      * Apply an expect method on every element of an array.
      *
@@ -122,6 +124,4 @@ var Expect = {
     }
 };
 
-JXG.Expect = Expect;
-
-export default Expect;
+export default JXG.Expect;

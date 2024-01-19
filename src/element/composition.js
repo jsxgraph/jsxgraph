@@ -128,7 +128,10 @@ JXG.createOrthogonalProjection = function (board, parents, attributes) {
 
     attr = Type.copyAttributes(attributes, board.options, "orthogonalprojection");
 
-    /** @type {JXG.Element} */
+    /**
+     * @type JXG.Element
+     * @ignore
+     */
     t = board.create(
         "point",
         [
@@ -152,12 +155,14 @@ JXG.createOrthogonalProjection = function (board, parents, attributes) {
 
     t.update();
 
-    // /**
-    //  * Used to generate a polynomial for the orthogonal projection
-    //  * @name Orthogonalprojection#generatePolynomial
-    //  * @returns {Array} An array containing the generated polynomial.
-    //  * @private
-    //  */
+    /**
+     * Used to generate a polynomial for the orthogonal projection
+     * @name Orthogonalprojection#generatePolynomial
+     * @returns {Array} An array containing the generated polynomial.
+     * @private
+     * @function
+     * @ignore
+     */
     t.generatePolynomial = function () {
         /*
          *  Perpendicular takes point P and line L and creates point T and line M:
@@ -362,6 +367,10 @@ JXG.createPerpendicularPoint = function (board, parents, attributes) {
         );
     }
 
+    /**
+     * @class
+     * @ignore
+     */
     t = board.create(
         "point",
         [
@@ -385,12 +394,14 @@ JXG.createPerpendicularPoint = function (board, parents, attributes) {
 
     t.update();
 
-    // /**
-    //  * Used to generate a polynomial for the perpendicular point
-    //  * @name PerpendicularPoint#generatePolynomial
-    //  * @returns {Array} An array containing the generated polynomial.
-    //  * @private
-    //  */
+    /**
+     * Used to generate a polynomial for the perpendicular point
+     * @name PerpendicularPoint#generatePolynomial
+     * @returns {Array} An array containing the generated polynomial.
+     * @private
+     * @function
+     * @ignore
+     */
     t.generatePolynomial = function () {
         /*
          *  Perpendicular takes point P and line L and creates point T and line M:
@@ -606,6 +617,10 @@ JXG.createMidpoint = function (board, parents, attributes) {
     }
 
     attr = Type.copyAttributes(attributes, board.options, "midpoint");
+    /**
+     * @type JXG.Element
+     * @ignore
+     */
     t = board.create(
         "point",
         [
@@ -654,12 +669,14 @@ JXG.createMidpoint = function (board, parents, attributes) {
 
     t.prepareUpdate().update();
 
-    // /**
-    //  * Used to generate a polynomial for the midpoint.
-    //  * @name Midpoint#generatePolynomial
-    //  * @returns {Array} An array containing the generated polynomial.
-    //  * @private
-    //  */
+    /**
+     * Used to generate a polynomial for the midpoint.
+     * @name Midpoint#generatePolynomial
+     * @returns {Array} An array containing the generated polynomial.
+     * @private
+     * @function
+     * @ignore
+     */
     t.generatePolynomial = function () {
         /*
          *  Midpoint takes two point A and B or line L (with points P and Q) and creates point T:
@@ -777,7 +794,10 @@ JXG.createParallelPoint = function (board, parents, attributes) {
     }
 
     attr = Type.copyAttributes(attributes, board.options, 'parallelpoint');
-    /** @type {JXG.Element} */
+    /**
+     * @type {JXG.Element}
+     * @ignore
+     */
     p = board.create(
         "point",
         [
@@ -818,6 +838,10 @@ JXG.createParallelPoint = function (board, parents, attributes) {
     // can be removed if the above issue is resolved.
     p.prepareUpdate().update();
 
+    /**
+     * @function
+     * @ignore
+     */
     p.generatePolynomial = function () {
         /*
          *  Parallelpoint takes three points A, B and C or line L (with points B and C) and creates point T:
@@ -3441,7 +3465,10 @@ JXG.createInequality = function (board, parents, attributes) {
         };
 
         // Previous code:
-        /** @ignore */
+        /**
+         * @class
+         * @ignore
+         */
         a.hasPoint = function () {
             return false;
         };

@@ -70,8 +70,7 @@ JXG.Point3D = function (view, F, slide, attributes) {
     /**
      * Function or array of functions or array of numbers defining the coordinates of the point, used in {@link updateCoords}.
      *
-     * @name F
-     * @memberOf Point3D
+     * @name Point3D#F
      * @function
      * @private
      *
