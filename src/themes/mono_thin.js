@@ -169,7 +169,7 @@ JXG.themes['mono_thin'] = {
             strokeColor: color,
             highlightStrokeColor: color,
             fillColor: 'none',
-            highlightFillColor: 'none',
+            highlightFillColor: 'none'
         },
 
         curve: {

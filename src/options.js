@@ -3516,7 +3516,7 @@ JXG.Options = {
         arc: {
             visible: false,
             fillColor: 'none'
-        },
+        }
 
         /**#@-*/
     },
@@ -5580,7 +5580,7 @@ JXG.Options = {
          * @name Line#touchLastPoint
          * @default false
          */
-        touchLastPoint: false,
+        touchLastPoint: false
 
         /**#@-*/
     },
@@ -7132,7 +7132,7 @@ JXG.Options = {
          *   <li> 'deg' for angles</li>
          * </ul>
          */
-        measure: 'radius',
+        measure: 'radius'
 
         /**#@-*/
     },
@@ -7171,7 +7171,15 @@ JXG.Options = {
          */
         dir: 'row',
 
+        /**
+         * Supply a unit suffix.
+         *
+         * @type String
+         * @name Smartlabel#unit
+         * @default ''
+         */
         unit: ''
+
         /**#@-*/
     },
 
@@ -8147,7 +8155,7 @@ JXG.Options = {
          * @type Array
          * @default empty
          */
-        attractors: [],
+        attractors: []
 
         /**#@-*/
     },

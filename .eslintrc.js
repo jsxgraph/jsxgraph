@@ -17,7 +17,8 @@ module.exports = {
         "no-redeclare": ["error", { "builtinGlobals": false }],
         "no-prototype-builtins": "off",
         "no-empty": "off",
-        "no-constant-binary-expression": "error"
+        "no-constant-binary-expression": "error",
+        "comma-dangle": ["error", "never"]
     },
     "globals": {
         "JXG": "readonly"

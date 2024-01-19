@@ -2315,7 +2315,7 @@ JXG.extend(
                     trailingzerodisplay: 'trailingZeroDisplay',
                     minimumintegerdigits: 'minimumIntegerDigits',
                     minimumsignificantdigits: 'minimumSignificantDigits',
-                    maximumsignificantdigits: 'maximumSignificantDigits',
+                    maximumsignificantdigits: 'maximumSignificantDigits'
                 };
 
             if (Type.exists(Intl) &&

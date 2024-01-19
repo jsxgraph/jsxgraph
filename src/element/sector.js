@@ -456,7 +456,7 @@ JXG.createSector = function (board, parents, attributes) {
             arc: "arc",
             center: "center",
             radiuspoint: "radiuspoint",
-            anglepoint: "anglepoint",
+            anglepoint: "anglepoint"
         });
 
         /**
@@ -553,7 +553,7 @@ JXG.createSector = function (board, parents, attributes) {
             },
             function() {
                 return el.point3.coords.usrCoords;
-            }, // Center
+            } // Center
         ], attr);
     } else {
         // The arc's radius is always the radius of sector.
@@ -865,7 +865,7 @@ JXG.createSector = function (board, parents, attributes) {
         Deg: "AngleDeg",
         PI: "AnglePI",
         Area: "Area",
-        Perimeter: "Perimeter",
+        Perimeter: "Perimeter"
     });
 
     return el;
