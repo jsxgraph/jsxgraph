@@ -669,7 +669,7 @@ JXG.Board = function (container, renderer, id,
             this.addFullscreenEventHandlers();
         }
         if (this.attr.registerevents.keyboard) {
-            this.addFullscreenEventHandlers();
+            this.addKeyboardEventHandlers();
         }
         if (this.attr.registerevents.pointer) {
             this.addEventHandlers();
@@ -1710,6 +1710,7 @@ JXG.extend(
 
             // This one produces errors on IE
             // // Env.addEvent(this.containerObj, 'contextmenu', function (e) { e.preventDefault(); return false;}, this);
+
             // This one works on IE, Firefox and Chromium with default configurations. On some Safari
             // or Opera versions the user must explicitly allow the deactivation of the context menu.
             if (this.containerObj !== null) {
@@ -1721,7 +1722,7 @@ JXG.extend(
                 };
             }
 
-            this.addKeyboardEventHandlers();
+            // this.addKeyboardEventHandlers();
         },
 
         /**
@@ -1854,7 +1855,6 @@ JXG.extend(
             }
         },
 
-
         /**
          * Add fullscreen events which update the CSS transformation matrix to correct
          * the mouse/touch/pointer positions in case of CSS transformations.
@@ -1878,6 +1878,9 @@ JXG.extend(
             }
         },
 
+        /**
+         * Register keyboard event handlers.
+         */
         addKeyboardEventHandlers: function () {
             if (this.attr.keyboard.enabled && !this.hasKeyboardHandlers && Env.isBrowser) {
                 Env.addEvent(this.containerObj, 'keydown', this.keyDownListener, this);
@@ -5988,8 +5991,6 @@ JXG.extend(
                         break;
 
                     case 'registerevents':
-                    case 'registerfullscreenevent':
-                    case 'registerresizeevent':
                     case 'renderer':
                         // immutable, i.e. ignored
                         break;
