@@ -214,7 +214,7 @@ JXG.createVectorField = function (board, parents, attributes) {
             steps_y = Type.evaluate(this.yData[1]),
             end_y = Type.evaluate(this.yData[2]),
             delta_y = (end_y - start_y) / steps_y,
-            dx, dy, d, theta, phi,
+            v, theta, phi1, phi2,
 
             showArrow = Type.evaluate(this.visProp.arrowhead.enabled),
             leg, leg_x, leg_y, alpha;
@@ -233,30 +233,21 @@ JXG.createVectorField = function (board, parents, attributes) {
 
         for (i = 0, x = start_x; i <= steps_x; x += delta_x, i++) {
             for (j = 0, y = start_y; j <= steps_y; y += delta_y, j++) {
-                d = this.F(x, y);
-                dx = d[0] * scale;
-                dy = d[1] * scale;
+                v = this.F(x, y);
+                v[0] *= scale;
+                v[1] *= scale;
 
-                this.dataX.push(x);
-                this.dataY.push(y);
-                this.dataX.push(x + dx);
-                this.dataY.push(y + dy);
+                this.dataX = this.dataX.concat([x, x + v[0], NaN]);
+                this.dataY = this.dataY.concat([y, y + v[1], NaN]);
 
-                if (showArrow && Math.abs(dx) + Math.abs(dy) > 0.0) {
+                if (showArrow && Math.abs(v[0]) + Math.abs(v[1]) > 0.0) {
                     // Arrow head
-                    theta = Math.atan2(dy, dx);
-                    phi = theta + alpha;
-                    this.dataX.push(x + dx - Math.cos(phi) * leg_x);
-                    this.dataY.push(y + dy - Math.sin(phi) * leg_y);
-                    this.dataX.push(x + dx);
-                    this.dataY.push(y + dy);
-                    phi = theta - alpha;
-                    this.dataX.push(x + dx - Math.cos(phi) * leg_x);
-                    this.dataY.push(y + dy - Math.sin(phi) * leg_y);
+                    theta = Math.atan2(v[1], v[0]);
+                    phi1 = theta + alpha;
+                    phi2 = theta - alpha;
+                    this.dataX = this.dataX.concat([x + v[0] - Math.cos(phi1) * leg_x, x + v[0], x + v[0] - Math.cos(phi2) * leg_x, NaN]);
+                    this.dataY = this.dataY.concat([y + v[1] - Math.sin(phi1) * leg_y, y + v[1], y + v[1] - Math.sin(phi2) * leg_y, NaN]);
                 }
-
-                this.dataX.push(NaN);
-                this.dataY.push(NaN);
             }
         }
     };

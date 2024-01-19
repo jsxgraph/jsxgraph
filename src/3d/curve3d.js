@@ -116,7 +116,6 @@ JXG.extend(
 
             dataX = [];
             dataY = [];
-
             if (Type.exists(this.dataX)) {
                 steps = this.dataX.length;
                 for (u = 0; u < steps; u++) {
