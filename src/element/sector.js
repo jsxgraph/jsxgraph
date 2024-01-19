@@ -401,14 +401,6 @@ JXG.createSector = function (board, parents, attributes) {
         // ], attr);
         // el.addChild(el.arc);
 
-        el.methodMap = JXG.deepCopy(el.methodMap, {
-            radius: "Radius",
-            getRadius: "Radius",
-            setRadius: "setRadius"
-        });
-
-        //    el.prepareUpdate().update();
-
         // end '2lines'
     } else if (type === "3points") {
         /**
@@ -465,9 +457,6 @@ JXG.createSector = function (board, parents, attributes) {
             center: "center",
             radiuspoint: "radiuspoint",
             anglepoint: "anglepoint",
-            radius: "Radius",
-            getRadius: "Radius",
-            setRadius: "setRadius"
         });
 
         /**
@@ -780,6 +769,66 @@ JXG.createSector = function (board, parents, attributes) {
     };
 
     /**
+     * Returns the length of the arc of the sector.
+     * @name ArcLength
+     * @function
+     * @returns {Number} The arc length.
+     */
+    el.ArcLength = function () {
+        return this.arc.Value();
+    };
+
+    /**
+     * Returns the value of the angle described by the sector in Radians.
+     * @name Angle
+     * @function
+     * @returns {Number} The angle value in Radians.
+     */
+    el.Angle = function () {
+        return this.arc.Angle();
+    };
+
+    /**
+     * Returns the value of the angle described by the sector depending on PI. E.g. the angle is 1.5*PI, this function returns 1.5.
+     * @name AnglePI
+     * @function
+     * @returns {Number} The angle value depending on PI.
+     */
+    el.AnglePI = function () {
+        return this.arc.AnglePI();
+    };
+
+    /**
+     * Returns the value of the angle described by the sector in Degrees.
+     * @name AngleDeg
+     * @function
+     * @returns {Number} The angle value in Degrees.
+     */
+    el.AngleDeg = function () {
+        return this.arc.AngleDeg();
+    };
+
+    /**
+     * Area of the sector.
+     * @name Area
+     * @function
+     * @returns {Number} The area of the sector.
+     */
+    el.Area = function () {
+        var r = this.Radius();
+
+        return 0.5 * r * r * this.Angle();
+    };
+
+    /**
+     * Sector perimeter.
+     * @returns {Number} Perimeter of sector.
+     */
+    el.Perimeter = function () {
+        return this.ArcLength() + 2 * this.Radius();
+    };
+
+    /**
      * Moves the sector by the difference of two coordinates.
      * @param {Number} method The type of coordinates used here. Possible values are {@link JXG.COORDS_BY_USER} and {@link JXG.COORDS_BY_SCREEN}.
      * @param {Array} coords coordinates in screen/user units
@@ -806,6 +855,19 @@ JXG.createSector = function (board, parents, attributes) {
 
     // el.prepareUpdate().update();
 
+    el.methodMap = JXG.deepCopy(el.methodMap, {
+        radius: "Radius",
+        getRadius: "Radius",
+        setRadius: "setRadius",
+        ArcLength: "ArcLength",
+        Angle: "Angle",
+        Rad: "Angle",
+        Deg: "AngleDeg",
+        PI: "AnglePI",
+        Area: "Area",
+        Perimeter: "Perimeter",
+    });
+
     return el;
 };
 
@@ -813,7 +875,7 @@ JXG.registerElement("sector", JXG.createSector);
 
 /**
  * @class A circumcircle sector is different from a {@link Sector} mostly in the way the parent elements are interpreted.
- * At first, the circum centre is determined from the three given points. Then the sector is drawn from <tt>p1</tt> through
+ * At first, the circum center is determined from the three given points. Then the sector is drawn from <tt>p1</tt> through
  * <tt>p2</tt> to <tt>p3</tt>.
  * @pseudo
  * @name CircumcircleSector
@@ -1663,14 +1725,40 @@ JXG.createAngle = function (board, parents, attributes) {
      * @memberOf Angle.prototype
      * @name Value
      * @function
-     * @returns {Number} The angle value in Radians
+     * @returns {Number} The angle value in Radians.
      */
     el.Value = function () {
         return Geometry.rad(this.point2, this.point1, this.point3);
     };
 
+    /**
+     * Returns the value of the angle depending on PI. E.g. the angle is 1.5*PI, this function returns 1.5.
+     * @memberOf Angle.prototype
+     * @name ValuePI
+     * @function
+     * @returns {Number} The angle value depending on PI.
+     */
+    el.ValuePI = function () {
+        return this.Angle() / Math.PI;
+    };
+
+    /**
+     * Returns the value of the angle in Degrees.
+     * @memberOf Angle.prototype
+     * @name ValueDeg
+     * @function
+     * @returns {Number} The angle value in Degrees.
+     */
+    el.ValueDeg = function () {
+        return this.AnglePI() * 180;
+    };
+
     el.methodMap = Type.deepCopy(el.methodMap, {
         Value: "Value",
+        Angle: "Value",
+        Rad: "Value",
+        Deg: "ValueDeg",
+        PI: "ValuePI",
         setAngle: "setAngle",
         free: "free"
     });
