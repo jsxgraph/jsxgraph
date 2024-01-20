@@ -12,12 +12,13 @@ module.exports = {
     "rules": {
         "comma-dangle": ["error", "never"],
         "eqeqeq": ["error", "smart"],
+        "no-constant-binary-expression": "error",
+        "no-empty": "off",
+        "no-prototype-builtins": "off",
+        "no-redeclare": ["error", { "builtinGlobals": false }],
+	"no-sequences": ["error"],
         "no-trailing-spaces": ["warn", { "ignoreComments": false }],
         "no-unused-vars": ["warn", { "vars": "local", "args": "none"}],
-        "no-redeclare": ["error", { "builtinGlobals": false }],
-        "no-prototype-builtins": "off",
-        "no-empty": "off",
-        "no-constant-binary-expression": "error",
         "one-var": ["warn", "always"],
 	"semi": ["error", "always"]
     },
