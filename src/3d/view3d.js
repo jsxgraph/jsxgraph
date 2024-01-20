@@ -327,7 +327,7 @@ JXG.extend(
             [-v[0], ax[0], ax[1], ax[2]],
             [-v[1], ay[0], ay[1], ay[2]],
             [-v[2], az[0], az[1], az[2]]
-        ]
+        ];
         A = Mat.matMatMult(A, Tcam1);
 
         return A;
@@ -942,9 +942,9 @@ JXG.createView3D = function (board, parents, attributes) {
             infobox = view.board.infobox;
             if (d === 'auto') {
                 if (infobox.useLocale()) {
-                    arr = [pre, '(', infobox.formatNumberLocale(p.X()), ' | ', infobox.formatNumberLocale(p.Y()), ' | ', infobox.formatNumberLocale(p.Z()), ')']
+                    arr = [pre, '(', infobox.formatNumberLocale(p.X()), ' | ', infobox.formatNumberLocale(p.Y()), ' | ', infobox.formatNumberLocale(p.Z()), ')'];
                 } else {
-                    arr = [pre, '(', Type.autoDigits(p.X()), ' | ', Type.autoDigits(p.Y()), ' | ', Type.autoDigits(p.Z()), ')']
+                    arr = [pre, '(', Type.autoDigits(p.X()), ' | ', Type.autoDigits(p.Y()), ' | ', Type.autoDigits(p.Z()), ')'];
                 }
 
             } else {

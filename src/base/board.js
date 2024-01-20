@@ -646,7 +646,7 @@ JXG.Board = function (container, renderer, id,
             pointer: true,
             resize: true,
             wheel: true
-        }
+        };
     } else if (typeof this.attr.registerevents === 'object') {
         if (!Type.exists(this.attr.registerevents.fullscreen)) {
             this.attr.registerevents.fullscreen = true;
@@ -1416,7 +1416,7 @@ JXG.extend(
                     for (i = 0; i < len && !snap; ++i) {
                         vp = drag.vertices[i].visProp;
                         snap = snap || Type.evaluate(vp.snaptogrid) || Type.evaluate(vp.snaptopoints);
-                        snap = snap || (!drag.vertices[i].draggable())
+                        snap = snap || (!drag.vertices[i].draggable());
                     }
                     if (!snap) {
                         ar = [];
@@ -7105,7 +7105,7 @@ JXG.extend(
                 inner_node._cssFullscreenStore = {
                     w: dim.width,
                     h: dim.height
-                }
+                };
             }
 
             // Wrap a div around the JSXGraph div.

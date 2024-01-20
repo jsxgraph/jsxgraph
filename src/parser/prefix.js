@@ -296,7 +296,7 @@ JXG.PrefixParser = {
                     res = term[i].toPrefix();
                 } else if (method === 'exec') {
                     if (i === 1) {
-                        res.push(term[i])
+                        res.push(term[i]);
                     } else {
                         res.push(this.toPrefix(term[i]));
                     }

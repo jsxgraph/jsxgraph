@@ -408,7 +408,7 @@ JXG.createSlopeField = function (board, parents, attributes) {
             var z = f(x, y),
                 nrm = Math.sqrt(1 + z * z);
             return [1 / nrm, z / nrm];
-        }
+        };
     };
 
     el.methodMap = Type.deepCopy(el.methodMap, {

@@ -201,7 +201,7 @@ Mat.ImplicitPlot = function (bbox, config, f, dfx, dfy) {
         this.dfx = function (x, y) {
             var h = Mat.eps * Mat.eps;
             return (this.f(x + h, y) - this.f(x - h, y)) * 0.5 / h;
-        }
+        };
     }
 
     if (Type.isFunction(dfy)) {
@@ -210,7 +210,7 @@ Mat.ImplicitPlot = function (bbox, config, f, dfx, dfy) {
         this.dfy = function (x, y) {
             var h = Mat.eps * Mat.eps;
             return (this.f(x, y + h) - this.f(x, y - h)) * 0.5 / h;
-        }
+        };
     }
 
     this.bbox = bbox;
@@ -724,7 +724,7 @@ Type.extend(
                     k++;
                 } while (k < 20 &&
                     Math.abs(this.f(v[0], v[1])) > this.config.tol_newton
-                )
+                );
 
                 delta = k0;
                 if (k > 1) {
@@ -818,7 +818,7 @@ Type.extend(
                 u[1] <= this.bbox[1] &&
                 u[0] <= this.bbox[2] &&
                 u[1] >= this.bbox[3]
-            )
+            );
 
             // if (!loop_closed) {
             //     console.log("No loop", steps);

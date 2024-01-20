@@ -4211,7 +4211,7 @@ Mat.Numerics = {
                 if (r === 0) { r = 1; }
 
                 for (i = 0; i < n; i++) {
-                    a = new JXG.Complex(r * Math.cos(alpha1 * i + alpha0), r * Math.sin(alpha1 * i + alpha0))
+                    a = new JXG.Complex(r * Math.cos(alpha1 * i + alpha0), r * Math.sin(alpha1 * i + alpha0));
                     init[i] = JXG.C.add(b, a);
                 }
 

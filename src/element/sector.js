@@ -1213,7 +1213,7 @@ JXG.createAngle = function (board, parents, attributes) {
     } else {
         attr = {
             name: ''
-        }
+        };
         points = Type.providePoints(board, parents, attr, "point");
         if (points === false) {
             throw new Error(
