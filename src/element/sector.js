@@ -804,7 +804,7 @@ JXG.createSector = function (board, parents, attributes) {
      * @returns {Number} Perimeter of sector.
      */
     el.Perimeter = function () {
-        return this.ArcLength() + 2 * this.Radius();
+        return this.L() + 2 * this.Radius();
     };
 
     /**
