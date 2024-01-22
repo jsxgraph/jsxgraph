@@ -769,43 +769,22 @@ JXG.createSector = function (board, parents, attributes) {
     };
 
     /**
-     * Returns the length of the arc of the sector.
-     * @name ArcLength
-     * @function
-     * @returns {Number} The arc length.
+     * Length of the sector's arc or the angle in various units, see {@link Arc#Value}.
+     * @param {String} unit
+     * @returns {Number} The arc length or the angle value in various units.
+     * @see Arc#Value
      */
-    el.ArcLength = function () {
-        return this.arc.Value();
+    el.Value = function(unit) {
+        return this.arc.Value(unit);
     };
 
     /**
-     * Returns the value of the angle described by the sector in Radians.
-     * @name Angle
-     * @function
-     * @returns {Number} The angle value in Radians.
+     * Arc length.
+     * @returns {Number} Length of the sector's arc.
+     * @see Arc#L
      */
-    el.Angle = function () {
-        return this.arc.Angle();
-    };
-
-    /**
-     * Returns the value of the angle described by the sector depending on PI. E.g. the angle is 1.5*PI, this function returns 1.5.
-     * @name AnglePI
-     * @function
-     * @returns {Number} The angle value depending on PI.
-     */
-    el.AnglePI = function () {
-        return this.arc.AnglePI();
-    };
-
-    /**
-     * Returns the value of the angle described by the sector in Degrees.
-     * @name AngleDeg
-     * @function
-     * @returns {Number} The angle value in Degrees.
-     */
-    el.AngleDeg = function () {
-        return this.arc.AngleDeg();
+    el.L = function() {
+        return this.arc.L();
     };
 
     /**
@@ -853,17 +832,12 @@ JXG.createSector = function (board, parents, attributes) {
         };
     }
 
-    // el.prepareUpdate().update();
-
     el.methodMap = JXG.deepCopy(el.methodMap, {
         radius: "Radius",
         getRadius: "Radius",
         setRadius: "setRadius",
-        ArcLength: "ArcLength",
-        Angle: "Angle",
-        Rad: "Angle",
-        Deg: "AngleDeg",
-        PI: "AnglePI",
+        Value: "Value",
+        L: "L",
         Area: "Area",
         Perimeter: "Perimeter"
     });
@@ -1242,6 +1216,7 @@ JXG.createAngle = function (board, parents, attributes) {
         radius = 0;
     }
 
+    board.suspendUpdate(); // Necessary for immediate availability of radius.
     if (type === "2lines") {
         parents.push(radius);
         el = board.create("sector", parents, attr);
@@ -1661,6 +1636,61 @@ JXG.createAngle = function (board, parents, attributes) {
             board.select(points[i]).addChild(el.dot);
         }
     }
+    board.unsuspendUpdate();
+
+    /**
+     * Returns the value of the angle.
+     * @memberOf Angle.prototype
+     * @name Value
+     * @function
+     * @param {String} [unit='length'] Unit of the returned values. Possible units are
+     * <ul>
+     * <li> 'radians' (default): angle value in radians
+     * <li> 'degrees': angle value in degrees
+     * <li> 'semicircle': angle value in radians as a multiple of &pi;, e.g. if the angle is 1.5&pi;, 1.5 will be returned.
+     * <li> 'circle': angle value in radians as a multiple of 2&pi;
+     * <li> 'length': length of the arc line of the angle
+     * </ul>
+     * It is sufficient to supply the first three characters of the unit, e.g. 'len'.
+     * @returns {Number} angle value in various units.
+     * @see Sector#L
+     * @example
+     * var A, B, C, ang,
+     *     r = 0.5;
+     * A = board.create("point", [3, 0]);
+     * B = board.create("point", [0, 0]);
+     * C = board.create("point", [2, 2]);
+     * ang = board.create("angle", [A, B, C], {radius: r});
+     *
+     * console.log(ang.Value());
+     * // Output Math.PI * 0.25
+     *
+     * console.log(ang.Value('radian'));
+     * // Output Math.PI * 0.25
+     *
+     * console.log(ang.Value('degree');
+     * // Output 45
+     *
+     * console.log(ang.Value('semicircle'));
+     * // Output 0.25
+     *
+     * console.log(ang.Value('circle'));
+     * // Output 0.125
+     *
+     * console.log(ang.Value('length'));
+     * // Output r * Math.PI * 0.25
+     *
+     * console.log(ang.L());
+     * // Output r * Math.PI * 0.25
+     *
+     */
+    el.Value = function(unit) {
+        unit = unit || 'radians';
+        if (unit === '') {
+            unit = 'radians';
+        }
+        return el.arc.Value(unit);
+    };
 
     // documented in GeometryElement
     /**
@@ -1720,46 +1750,9 @@ JXG.createAngle = function (board, parents, attributes) {
         return new Coords(Const.COORDS_BY_USER, vec, this.board);
     };
 
-    /**
-     * Returns the value of the angle in Radians.
-     * @memberOf Angle.prototype
-     * @name Value
-     * @function
-     * @returns {Number} The angle value in Radians.
-     */
-    el.Value = function () {
-        return Geometry.rad(this.point2, this.point1, this.point3);
-    };
-
-    /**
-     * Returns the value of the angle depending on PI. E.g. the angle is 1.5*PI, this function returns 1.5.
-     * @memberOf Angle.prototype
-     * @name ValuePI
-     * @function
-     * @returns {Number} The angle value depending on PI.
-     */
-    el.ValuePI = function () {
-        return this.Angle() / Math.PI;
-    };
-
-    /**
-     * Returns the value of the angle in Degrees.
-     * @memberOf Angle.prototype
-     * @name ValueDeg
-     * @function
-     * @returns {Number} The angle value in Degrees.
-     */
-    el.ValueDeg = function () {
-        return this.AnglePI() * 180;
-    };
-
     el.methodMap = Type.deepCopy(el.methodMap, {
-        Value: "Value",
-        Angle: "Value",
-        Rad: "Value",
-        Deg: "ValueDeg",
-        PI: "ValuePI",
         setAngle: "setAngle",
+        Value: "Value",
         free: "free"
     });
 
@@ -1809,9 +1802,15 @@ JXG.createNonreflexAngle = function (board, parents, attributes) {
     el = JXG.createAngle(board, parents, attributes);
 
     // Documented in createAngle
-    el.Value = function () {
-        var v = Geometry.rad(this.point2, this.point1, this.point3);
-        return v < Math.PI ? v : 2.0 * Math.PI - v;
+    el.Value = function (unit) {
+        var rad = Geometry.rad(this.point2, this.point1, this.point3);
+        unit = unit || 'radians';
+        if (unit === '') {
+            unit = 'radians';
+        }
+        rad = (rad < Math.PI) ? rad : 2.0 * Math.PI - rad;
+
+        return this.arc.Value(unit, rad);
     };
     return el;
 };
@@ -1859,21 +1858,18 @@ JXG.createReflexAngle = function (board, parents, attributes) {
     el = JXG.createAngle(board, parents, attributes);
 
     // Documented in createAngle
-    el.Value = function () {
-        var v = Geometry.rad(this.point2, this.point1, this.point3);
-        return v >= Math.PI ? v : 2.0 * Math.PI - v;
+    el.Value = function (unit) {
+        var rad = Geometry.rad(this.point2, this.point1, this.point3);
+        unit = unit || 'radians';
+        if (unit === '') {
+            unit = 'radians';
+        }
+        rad = (rad >= Math.PI) ? rad : 2.0 * Math.PI - rad;
+
+        return this.arc.Value(unit, rad);
     };
+
     return el;
 };
 
 JXG.registerElement("reflexangle", JXG.createReflexAngle);
-
-// export default {
-//     createSector: JXG.createSector,
-//     createCircumcircleSector: JXG.createCircumcircleSector,
-//     createMinorSector: JXG.createMinorSector,
-//     createMajorSector: JXG.createMajorSector,
-//     createAngle: JXG.createAngle,
-//     createReflexAngle: JXG.createReflexAngle,
-//     createNonreflexAngle: JXG.createNonreflexAngle
-// };

@@ -293,7 +293,7 @@ JXG.createArc = function (board, parents, attributes) {
     // };
 
     /**
-     * Returns the length of the arc or the angle spanned by the arc.
+     * Returns the length of the arc or the value of the angle spanned by the arc.
      * @memberOf Arc.prototype
      * @name Value
      * @function
@@ -306,11 +306,13 @@ JXG.createArc = function (board, parents, attributes) {
      * <li> 'circle': angle spanned by the arc in radians as a multiple of 2&pi;
      * </ul>
      * It is sufficient to supply the first three characters of the unit, e.g. 'len'.
-     * @returns {Number} The arc length
+     * @param {Number} [rad=undefined] Value of angle which can be used instead of the generic one.
+     * @returns {Number} The arc length or the angle value in various units.
      */
-    el.Value = function (unit) {
-        var val,
-            rad = Geometry.rad(this.radiuspoint, this.center, this.anglepoint);
+    el.Value = function (unit, rad) {
+        var val;
+
+        rad = rad || Geometry.rad(this.radiuspoint, this.center, this.anglepoint);
 
         unit = unit || 'length';
         unit = unit.toLocaleLowerCase();
@@ -329,6 +331,11 @@ JXG.createArc = function (board, parents, attributes) {
         return val;
     };
 
+    /**
+     * Arc length.
+     * @returns {Number} Length of the arc.
+     * @see Arc#Value
+     */
     el.L = function() {
         return this.Value('length');
     };
