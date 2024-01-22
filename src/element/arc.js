@@ -259,48 +259,78 @@ JXG.createArc = function (board, parents, attributes) {
         return this.Radius();
     };
 
-    /**
-     * Returns the value of the angle described by the arc in Radians.
-     * @memberOf Arc.prototype
-     * @name Angle
-     * @function
-     * @returns {Number} The angle value in Radians.
-     */
-    el.Angle = function () {
-        return Geometry.rad(this.radiuspoint, this.center, this.anglepoint);
-    };
+    // /**
+    //  * Returns the value of the angle described by the arc in Radians.
+    //  * @memberOf Arc.prototype
+    //  * @name Angle
+    //  * @function
+    //  * @returns {Number} The angle value in Radians.
+    //  */
+    // el.Angle = function () {
+    //     return Geometry.rad(this.radiuspoint, this.center, this.anglepoint);
+    // };
+
+    // /**
+    //  * Returns the value of the angle described by the arc depending on PI. E.g. the angle is 1.5*PI, this function returns 1.5.
+    //  * @memberOf Arc.prototype
+    //  * @name AnglePI
+    //  * @function
+    //  * @returns {Number} The angle value depending on PI.
+    //  */
+    // el.AnglePI = function () {
+    //     return this.Angle() / Math.PI;
+    // };
+
+    // /**
+    //  * Returns the value of the angle described by the arc in Degrees.
+    //  * @memberOf Arc.prototype
+    //  * @name AngleDeg
+    //  * @function
+    //  * @returns {Number} The angle value in Degrees.
+    //  */
+    // el.AngleDeg = function () {
+    //     return this.AnglePI() * 180;
+    // };
 
     /**
-     * Returns the value of the angle described by the arc depending on PI. E.g. the angle is 1.5*PI, this function returns 1.5.
-     * @memberOf Arc.prototype
-     * @name AnglePI
-     * @function
-     * @returns {Number} The angle value depending on PI.
-     */
-    el.AnglePI = function () {
-        return this.Angle() / Math.PI;
-    };
-
-    /**
-     * Returns the value of the angle described by the arc in Degrees.
-     * @memberOf Arc.prototype
-     * @name AngleDeg
-     * @function
-     * @returns {Number} The angle value in Degrees.
-     */
-    el.AngleDeg = function () {
-        return this.AnglePI() * 180;
-    };
-
-    /**
-     * Returns the length of the arc.
+     * Returns the length of the arc or the angle spanned by the arc.
      * @memberOf Arc.prototype
      * @name Value
      * @function
+     * @param {String} [unit='length'] Unit of the returned values. Possible units are
+     * <ul>
+     * <li> 'length' (default): length of the arc line
+     * <li> 'radians': angle spanned by the arc in radians
+     * <li> 'degrees': angle spanned by the arc in degrees
+     * <li> 'semicircle': angle spanned by the arc in radians as a multiple of &pi;, e.g. if the angle is 1.5&pi;, 1.5 will be returned.
+     * <li> 'circle': angle spanned by the arc in radians as a multiple of 2&pi;
+     * </ul>
+     * It is sufficient to supply the first three characters of the unit, e.g. 'len'.
      * @returns {Number} The arc length
      */
-    el.Value = function () {
-        return this.Radius() * this.Angle();
+    el.Value = function (unit) {
+        var val,
+            rad = Geometry.rad(this.radiuspoint, this.center, this.anglepoint);
+
+        unit = unit || 'length';
+        unit = unit.toLocaleLowerCase();
+        if (unit === '' || unit.indexOf('len') === 0) {
+            val = rad * this.Radius();
+        } else if (unit.indexOf('rad') === 0) {
+            val = rad;
+        } else if (unit.indexOf('deg') === 0) {
+            val = rad * 180 / Math.PI;
+        } else if (unit.indexOf('sem') === 0) {
+            val = rad / Math.PI;
+        } else if (unit.indexOf('cir') === 0) {
+            val = rad * 0.5 / Math.PI;
+        }
+
+        return val;
+    };
+
+    el.L = function() {
+        return this.Value('length');
     };
 
     // documented in geometry element
@@ -440,11 +470,12 @@ JXG.createArc = function (board, parents, attributes) {
         center: "center",
         radiuspoint: "radiuspoint",
         anglepoint: "anglepoint",
-        Angle: "Angle",
-        Rad: "Angle",
-        Deg: "AngleDeg",
-        PI: "AnglePI",
-        Value: "Value"
+        // Angle: "Angle",
+        // Rad: "Angle",
+        // Deg: "AngleDeg",
+        // PI: "AnglePI",
+        Value: "Value",
+        L: "L"
     });
 
     el.prepareUpdate().update();
@@ -674,11 +705,3 @@ JXG.createMajorArc = function (board, parents, attributes) {
 };
 
 JXG.registerElement("majorarc", JXG.createMajorArc);
-
-// export default {
-//     createArc: JXG.createArc,
-//     createSemicircle: JXG.createSemicircle,
-//     createCircumcircleArc: JXG.createCircumcircleArc,
-//     createMinorArc: JXG.createMinorArc,
-//     createMajorArc: JXG.createMajorArc
-// };

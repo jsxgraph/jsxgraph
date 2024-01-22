@@ -51,7 +51,7 @@ describe("Test angles", function () {
         showNavigation: false
     });
 
-    it("Test bidrectional setAngle", function () {
+    it("Test bidirectional setAngle", function () {
         var A, B, C, angle, phi, evt;
 
         phi = Math.PI / 2;
@@ -101,4 +101,23 @@ describe("Test angles", function () {
         expect(A.X()).toBeCloseTo(3, 12);
         expect(A.Y()).toBeCloseTo(0, 12);
     });
+
+    it("Test arc.Value()", function () {
+        var A, B, C, arc;
+
+        phi = Math.PI / 2;
+        A = board.create("point", [3, 0]);
+        B = board.create("point", [0, 0]);
+        C = board.create("point", [2, 2]);
+
+        arc = board.create("arc", [B, A, C], {});
+        expect(arc.Value()).toBeCloseTo(3 * Math.PI * 0.25, 12);
+        expect(arc.Value('length')).toBeCloseTo(3 * Math.PI * 0.25, 12);
+        expect(arc.Value('radian')).toBeCloseTo(Math.PI * 0.25, 12);
+        expect(arc.Value('degree')).toBeCloseTo(45, 12);
+        expect(arc.Value('semicircle')).toBeCloseTo(0.25, 12);
+        expect(arc.Value('circle')).toBeCloseTo(0.125, 12);
+        expect(arc.L()).toBeCloseTo(3 * Math.PI * 0.25, 12);
+    });
+
 });
