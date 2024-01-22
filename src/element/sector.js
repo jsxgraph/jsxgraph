@@ -796,7 +796,7 @@ JXG.createSector = function (board, parents, attributes) {
     el.Area = function () {
         var r = this.Radius();
 
-        return 0.5 * r * r * this.Angle();
+        return 0.5 * r * r * this.Value('radians');
     };
 
     /**
