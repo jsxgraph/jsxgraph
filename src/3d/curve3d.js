@@ -230,4 +230,80 @@ JXG.createCurve3D = function (board, parents, attributes) {
 
     return el;
 };
+
 JXG.registerElement("curve3d", JXG.createCurve3D);
+
+JXG.createVectorfield3D = function (board, parents, attributes) {
+    var view = parents[0],
+        f = parents[1],
+        len = parents[2],
+        step = 0.8,
+        el;
+
+    // arrowhead: {
+    //     enabled: true,
+    //     size: 5,
+    //     angle: Math.PI * 0.125
+    // }
+    el = view.create('curve3d', [[], [], []], attributes);
+    el.updateDataArray = function () {
+        var k, i, j,
+            v, nrm,
+            phi1, phi2, theta,
+            // showArrow = Type.evaluate(this.visProp.arrowhead.enabled),
+            showArrow = true,
+            leg, leg_x, leg_y, leg_z, alpha,
+            scale = Type.evaluate(len);
+
+        if (showArrow) {
+            // Arrow head style
+            // leg = Type.evaluate(this.visProp.arrowhead.size);
+            // alpha = Type.evaluate(this.visProp.arrowhead.angle);
+            leg = 4;
+            leg_x = leg / board.unitX;
+            leg_y = leg / board.unitY;
+            leg_z = 0;
+            alpha = Math.PI * 0.125;
+        }
+
+        this.dataX = [];
+        this.dataY = [];
+        this.dataZ = [];
+        for (k = -2; k <= 2; k += step) {
+            for (i = -2; i <= 2; i += step) {
+                for (j = -2; j <= 2; j += step) {
+                    v = [
+                        f[0](i, j, k),
+                        f[1](i, j, k),
+                        f[2](i, j, k)
+                    ];
+                    nrm = JXG.Math.norm(v);
+                    if (nrm < Number.EPSILON) {
+                        continue;
+                    }
+                    v[0] *= scale;
+                    v[1] *= scale;
+                    v[2] *= scale;
+
+                    this.dataX = this.dataX.concat([i, i + v[0], NaN]);
+                    this.dataY = this.dataY.concat([j, j + v[1], NaN]);
+                    this.dataZ = this.dataZ.concat([k, k + v[2], NaN]);
+
+                    if (showArrow) {
+                        // Arrow head
+                        theta = Math.atan2(v[1], v[0]);
+                        phi1 = theta + alpha;
+                        phi2 = theta - alpha;
+                        leg_z = v[2] * leg / scale / board.unitX;
+                        this.dataX = this.dataX.concat([i + v[0] - Math.cos(phi1) * leg_x, i + v[0], i + v[0] - Math.cos(phi2) * leg_x, NaN]);
+                        this.dataY = this.dataY.concat([j + v[1] - Math.sin(phi1) * leg_y, j + v[1], j + v[1] - Math.sin(phi2) * leg_y, NaN]);
+                        this.dataZ = this.dataZ.concat([k + v[2] - leg_z, k + v[2], k + v[2] - leg_z, NaN]);
+                    }
+                }
+            }
+        }
+    };
+    return el;
+};
+
+JXG.registerElement("vectorfield3D", JXG.createVectorfield3D);
