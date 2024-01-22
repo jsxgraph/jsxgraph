@@ -1868,7 +1868,7 @@ JXG.extend(
             if (Type.exists(el.rendNode)) {
                 if (show) {
                     if (use_board_filter) {
-                        el.rendNode.setAttributeNS(null, 'filter', this.toURL(this.container.id + '_' + 'f1'))
+                        el.rendNode.setAttributeNS(null, 'filter', this.toURL(this.container.id + '_' + 'f1'));
                         // 'url(#' + this.container.id + '_' + 'f1)');
                     } else {
                         node = this.container.ownerDocument.getElementById(id);

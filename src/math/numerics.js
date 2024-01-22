@@ -2262,9 +2262,9 @@ Mat.Numerics = {
                 zeroes = [],
                 coeffs = [],
                 coeffs_sum = [],
-                n, i, j, c, p;
+                i, j, c, p;
 
-            n = len - 1; // (Max) degree of the polynomial
+            // n = len - 1; // (Max) degree of the polynomial
             for (j = 0; j < len; j++) {
                 coeffs_sum[j] = 0;
             }
@@ -3364,19 +3364,12 @@ Mat.Numerics = {
      * @memberof JXG.Math.Numerics
      */
     fzero: function (f, x0, object) {
-        var a,
-            b,
-            c,
-            d,
-            e,
-            fa,
-            fb,
-            fc,
+        var a, b, c,
+            fa, fb, fc,
             res,
             prev_step,
-            t1,
+            t1, t2,
             cb,
-            t2,
             tol_act,   // Actual tolerance
             p,         // Interpolation step is calculated in the form p/q; division
             q,         // operations is delayed until the last moment
@@ -4087,7 +4080,6 @@ Mat.Numerics = {
      */
     polzeros: function (coeffs, deg, tol, max_it, initial_values) {
         var i, le, off, it,
-            a,
             debug = false,
             cc = [],
             obvious = [],
@@ -4219,7 +4211,7 @@ Mat.Numerics = {
                 if (r === 0) { r = 1; }
 
                 for (i = 0; i < n; i++) {
-                    a = new JXG.Complex(r * Math.cos(alpha1 * i + alpha0), r * Math.sin(alpha1 * i + alpha0))
+                    a = new JXG.Complex(r * Math.cos(alpha1 * i + alpha0), r * Math.sin(alpha1 * i + alpha0));
                     init[i] = JXG.C.add(b, a);
                 }
 
@@ -4339,7 +4331,7 @@ Mat.Numerics = {
         cc = cc.slice(off);
         le = cc.length;
 
-        // Remove leading zeros
+        // Remove leading zeros from the coefficient array
         for (i = le - 1; i >= 0; i--) {
             if (cc[i].real !== 0 || cc[i].imaginary !== 0) {
                 break;

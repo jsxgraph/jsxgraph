@@ -622,11 +622,11 @@ JXG.extend(
                 case 'last':
                     x = c2[1];
                     y = c2[2];
-                    break
+                    break;
                 case 'first':
                     x = c1[1];
                     y = c1[2];
-                    break
+                    break;
                 case "lft":
                 case "llft":
                 case "ulft":

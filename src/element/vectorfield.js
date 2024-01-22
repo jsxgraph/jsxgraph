@@ -145,7 +145,7 @@ import Type from "../utils/type";
  * </script><pre>
  *
  */
-JXG.createVectorField = function(board, parents, attributes) {
+JXG.createVectorField = function (board, parents, attributes) {
     var el, attr;
 
     if (!(parents.length >= 3 &&
@@ -155,9 +155,9 @@ JXG.createVectorField = function(board, parents, attributes) {
     )) {
         throw new Error(
             "JSXGraph: Can't create vector field with parent types " +
-                "'" + typeof parents[0] + "', " +
-                "'" + typeof parents[1] + "', " +
-                "'" + typeof parents[2] + "'."
+            "'" + typeof parents[0] + "', " +
+            "'" + typeof parents[1] + "', " +
+            "'" + typeof parents[2] + "'."
         );
     }
 
@@ -183,7 +183,7 @@ JXG.createVectorField = function(board, parents, attributes) {
      * board.update();
      *
      */
-    el.setF = function(func, varnames) {
+    el.setF = function (func, varnames) {
         var f0, f1;
         if (Type.isArray(func)) {
             f0 = Type.createFunction(func[0], this.board, varnames);
@@ -191,7 +191,7 @@ JXG.createVectorField = function(board, parents, attributes) {
             /**
              * @ignore
              */
-            this.F = function(x, y) { return [f0(x, y), f1(x, y)]; };
+            this.F = function (x, y) { return [f0(x, y), f1(x, y)]; };
         } else {
             this.F = Type.createFunction(func, el.board, varnames);
         }
@@ -202,7 +202,7 @@ JXG.createVectorField = function(board, parents, attributes) {
     el.xData = parents[1];
     el.yData = parents[2];
 
-    el.updateDataArray = function() {
+    el.updateDataArray = function () {
         var x, y, i, j,
             scale = Type.evaluate(this.visProp.scale),
             start_x = Type.evaluate(this.xData[0]),
@@ -214,7 +214,7 @@ JXG.createVectorField = function(board, parents, attributes) {
             steps_y = Type.evaluate(this.yData[1]),
             end_y = Type.evaluate(this.yData[2]),
             delta_y = (end_y - start_y) / steps_y,
-            dx, dy, d, theta, phi,
+            v, theta, phi1, phi2,
 
             showArrow = Type.evaluate(this.visProp.arrowhead.enabled),
             leg, leg_x, leg_y, alpha;
@@ -222,9 +222,9 @@ JXG.createVectorField = function(board, parents, attributes) {
 
         if (showArrow) {
             // Arrow head style
-            leg = Type.evaluate(this.visProp.arrowhead.size),
-            leg_x = leg / board.unitX,
-            leg_y = leg / board.unitY,
+            leg = Type.evaluate(this.visProp.arrowhead.size);
+            leg_x = leg / board.unitX;
+            leg_y = leg / board.unitY;
             alpha = Type.evaluate(this.visProp.arrowhead.angle);
         }
 
@@ -233,30 +233,21 @@ JXG.createVectorField = function(board, parents, attributes) {
 
         for (i = 0, x = start_x; i <= steps_x; x += delta_x, i++) {
             for (j = 0, y = start_y; j <= steps_y; y += delta_y, j++) {
-                d = this.F(x, y);
-                dx = d[0] * scale;
-                dy = d[1] * scale;
+                v = this.F(x, y);
+                v[0] *= scale;
+                v[1] *= scale;
 
-                this.dataX.push(x);
-                this.dataY.push(y);
-                this.dataX.push(x + dx);
-                this.dataY.push(y + dy);
+                this.dataX = this.dataX.concat([x, x + v[0], NaN]);
+                this.dataY = this.dataY.concat([y, y + v[1], NaN]);
 
-                if (showArrow && Math.abs(dx) + Math.abs(dy) > 0.0) {
+                if (showArrow && Math.abs(v[0]) + Math.abs(v[1]) > 0.0) {
                     // Arrow head
-                    theta = Math.atan2(dy, dx);
-                    phi = theta + alpha;
-                    this.dataX.push(x + dx - Math.cos(phi) * leg_x);
-                    this.dataY.push(y + dy - Math.sin(phi) * leg_y);
-                    this.dataX.push(x + dx);
-                    this.dataY.push(y + dy);
-                    phi = theta - alpha;
-                    this.dataX.push(x + dx - Math.cos(phi) * leg_x);
-                    this.dataY.push(y + dy - Math.sin(phi) * leg_y);
+                    theta = Math.atan2(v[1], v[0]);
+                    phi1 = theta + alpha;
+                    phi2 = theta - alpha;
+                    this.dataX = this.dataX.concat([x + v[0] - Math.cos(phi1) * leg_x, x + v[0], x + v[0] - Math.cos(phi2) * leg_x, NaN]);
+                    this.dataY = this.dataY.concat([y + v[1] - Math.sin(phi1) * leg_y, y + v[1], y + v[1] - Math.sin(phi2) * leg_y, NaN]);
                 }
-
-                this.dataX.push(NaN);
-                this.dataY.push(NaN);
             }
         }
     };
@@ -365,7 +356,7 @@ JXG.registerElement("vectorfield", JXG.createVectorField);
  * </script><pre>
  *
  */
-JXG.createSlopeField = function(board, parents, attributes) {
+JXG.createSlopeField = function (board, parents, attributes) {
     var el, f, attr;
 
     if (!(parents.length >= 3 &&
@@ -375,14 +366,14 @@ JXG.createSlopeField = function(board, parents, attributes) {
     )) {
         throw new Error(
             "JSXGraph: Can't create slope field with parent types " +
-                "'" + typeof parents[0] + "', " +
-                "'" + typeof parents[1] + "', " +
-                "'" + typeof parents[2] + "'."
+            "'" + typeof parents[0] + "', " +
+            "'" + typeof parents[1] + "', " +
+            "'" + typeof parents[2] + "'."
         );
     }
 
     f = Type.createFunction(parents[0], board, 'x, y');
-    parents[0] = function(x, y) {
+    parents[0] = function (x, y) {
         var z = f(x, y),
             nrm = Math.sqrt(1 + z * z);
         return [1 / nrm, z / nrm];
@@ -407,17 +398,17 @@ JXG.createSlopeField = function(board, parents, attributes) {
      * board.update();
      *
      */
-    el.setF = function(func, varnames) {
+    el.setF = function (func, varnames) {
         var f = Type.createFunction(func, el.board, varnames);
 
         /**
          * @ignore
          */
-        this.F = function(x, y) {
+        this.F = function (x, y) {
             var z = f(x, y),
                 nrm = Math.sqrt(1 + z * z);
             return [1 / nrm, z / nrm];
-        }
+        };
     };
 
     el.methodMap = Type.deepCopy(el.methodMap, {

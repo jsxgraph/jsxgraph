@@ -68,12 +68,14 @@ import Mat from "../math/math";
  * Possible operands are:
  * <ul>
  * <li> numbers
+ * <li> strings
  * <li> JSXGraph elements in case the operator is a method. Example: ['Area', circle] calls
  * the method circle.Area().
  * <li> prefix expressions (for binary operators)
  * <li> 'exec': call functions. Example: ['exec', 'sin', ['V', slider]] computes 'Math.sin(slider.Value())'.
  * As functions only functions in Math or JXG.Math are allowed.
  * </ul>
+ * @namespace
  *
  * @example
  *   ['+', 100, 200]
@@ -92,7 +94,9 @@ import Mat from "../math/math";
  *
  * // Valid prefix expression:  ['+', ['Radius', ci], ['L', seg]]
  *
- * @namespace
+ * @example
+ * var ang = board.create('angle', [[4, 0], [0, 0], [2, 2]]);
+ * // Valid prefix expression:  ['V', ang, 'degrees']);
  */
 JXG.PrefixParser = {
     /**
@@ -105,11 +109,11 @@ JXG.PrefixParser = {
     parse: function (term, action) {
         var method, i, le, res, fun, v;
 
-        if (Type.isNumber(term)) {
+        if (Type.isNumber(term) || Type.isString(term)) {
             return term;
         }
         if (!Type.isArray(term) || term.length < 2) {
-            throw new Error('prefixParser.parse: term is not an array');
+            throw new Error('prefixParser.parse: term is not an array, number or string');
         }
 
         method = term[0];
@@ -160,7 +164,11 @@ JXG.PrefixParser = {
                 if (!Type.exists(term[1][fun])) {
                     throw new Error("PrefixParser.parse: " + fun + " is not a method of " + term[1]);
                 }
-                res = term[1][fun]();
+                v = [];
+                for (i = 2; i < le; i++) {
+                    v.push(this.parse(term[i], action));
+                }
+                res = term[1][fun].apply(term[1], v);
             }
         }
 
@@ -296,7 +304,7 @@ JXG.PrefixParser = {
                     res = term[i].toPrefix();
                 } else if (method === 'exec') {
                     if (i === 1) {
-                        res.push(term[i])
+                        res.push(term[i]);
                     } else {
                         res.push(this.toPrefix(term[i]));
                     }

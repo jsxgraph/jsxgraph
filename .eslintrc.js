@@ -10,14 +10,17 @@ module.exports = {
         "sourceType": "module"
     },
     "rules": {
+        "comma-dangle": ["error", "never"],
         "eqeqeq": ["error", "smart"],
-        "no-trailing-spaces": ["warn", { "ignoreComments": false }],
-        "one-var": ["warn", "always"],
-        "no-unused-vars": ["warn", { "vars": "local", "args": "none"}],
-        "no-redeclare": ["error", { "builtinGlobals": false }],
-        "no-prototype-builtins": "off",
+        "no-constant-binary-expression": "error",
         "no-empty": "off",
-        "no-constant-binary-expression": "error"
+        "no-prototype-builtins": "off",
+        "no-redeclare": ["error", { "builtinGlobals": false }],
+	"no-sequences": ["error"],
+        "no-trailing-spaces": ["warn", { "ignoreComments": false }],
+        "no-unused-vars": ["warn", { "vars": "local", "args": "none"}],
+        "one-var": ["warn", "always"],
+	"semi": ["error", "always"]
     },
     "globals": {
         "JXG": "readonly"

@@ -1225,7 +1225,7 @@ JXG.extend(
                             Mat.innerProduct(
                                 intersection[1].usrCoords.slice(1, 3),
                                 this.line.stdform.slice(1, 3)
-                            ) + this.line.stdform[0],
+                            ) + this.line.stdform[0]
                         ];
 
                         // Reverse intersection array order if first intersection is not the leftmost one.
