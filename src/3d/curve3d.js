@@ -260,11 +260,11 @@ JXG.createVectorfield3D = function (board, parents, attributes) {
     var view = parents[0],
         el, attr;
 
-    if (!(parents.length >= 4 &&
-        (Type.isArray(parents[0]) || Type.isFunction(parents[0]) || Type.isString(parents[0])) &&
-        (Type.isArray(parents[1]) && parents[1].length === 3) &&
-        (Type.isArray(parents[2]) && parents[2].length === 3) &&
-        (Type.isArray(parents[3]) && parents[3].length === 3)
+    if (!(parents.length >= 5 &&
+        (Type.isArray(parents[1]) || Type.isFunction(parents[0]) || Type.isString(parents[0])) &&
+        (Type.isArray(parents[2]) && parents[1].length === 3) &&
+        (Type.isArray(parents[3]) && parents[2].length === 3) &&
+        (Type.isArray(parents[4]) && parents[3].length === 3)
     )) {
         throw new Error(
             "JSXGraph: Can't create vector field 3D with parent types " +
@@ -275,8 +275,7 @@ JXG.createVectorfield3D = function (board, parents, attributes) {
         );
     }
 
-        attr = Type.copyAttributes(attributes, board.options, 'vectorfield3d');
-
+    attr = Type.copyAttributes(attributes, board.options, 'vectorfield3d');
     el = view.create('curve3d', [[], [], []], attr);
 
     /**
@@ -311,10 +310,10 @@ JXG.createVectorfield3D = function (board, parents, attributes) {
         return this;
     };
 
-    el.setF(parents[0], 'x, y, z');
-    el.xData = parents[1];
-    el.yData = parents[2];
-    el.zData = parents[2];
+    el.setF(parents[1], 'x, y, z');
+    el.xData = parents[2];
+    el.yData = parents[3];
+    el.zData = parents[4];
 
     el.updateDataArray = function () {
         var k, i, j,
@@ -368,9 +367,9 @@ JXG.createVectorfield3D = function (board, parents, attributes) {
                     v[1] *= scale;
                     v[2] *= scale;
 
-                    this.dataX = this.dataX.concat([i, i + v[0], NaN]);
-                    this.dataY = this.dataY.concat([j, j + v[1], NaN]);
-                    this.dataZ = this.dataZ.concat([k, k + v[2], NaN]);
+                    this.dataX = this.dataX.concat([x, x + v[0], NaN]);
+                    this.dataY = this.dataY.concat([y, y + v[1], NaN]);
+                    this.dataZ = this.dataZ.concat([z, z + v[2], NaN]);
 
                     if (showArrow) {
                         if (nrm < Number.EPSILON) {
@@ -381,9 +380,9 @@ JXG.createVectorfield3D = function (board, parents, attributes) {
                         phi1 = theta + alpha;
                         phi2 = theta - alpha;
                         leg_z = v[2] * leg / scale / board.unitX;
-                        this.dataX = this.dataX.concat([i + v[0] - Math.cos(phi1) * leg_x, i + v[0], i + v[0] - Math.cos(phi2) * leg_x, NaN]);
-                        this.dataY = this.dataY.concat([j + v[1] - Math.sin(phi1) * leg_y, j + v[1], j + v[1] - Math.sin(phi2) * leg_y, NaN]);
-                        this.dataZ = this.dataZ.concat([k + v[2] - leg_z, k + v[2], k + v[2] - leg_z, NaN]);
+                        this.dataX = this.dataX.concat([x + v[0] - Math.cos(phi1) * leg_x, x + v[0], x + v[0] - Math.cos(phi2) * leg_x, NaN]);
+                        this.dataY = this.dataY.concat([y + v[1] - Math.sin(phi1) * leg_y, y + v[1], y + v[1] - Math.sin(phi2) * leg_y, NaN]);
+                        this.dataZ = this.dataZ.concat([z + v[2] - leg_z, z + v[2], z + v[2] - leg_z, NaN]);
                     }
                 }
             }
