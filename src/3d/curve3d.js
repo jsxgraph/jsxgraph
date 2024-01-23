@@ -340,19 +340,19 @@ JXG.createVectorfield3D = function (board, parents, attributes) {
                 (end[1] - start[1]) / steps[1],
                 (end[2] - start[2]) / steps[2]
             ],
-            phi1, phi2, theta,
+            phi, theta1, theta2, theta,
             showArrow = Type.evaluate(this.visProp.arrowhead.enabled),
             leg, leg_x, leg_y, leg_z, alpha;
 
         if (showArrow) {
             // Arrow head style
-            // leg = Type.evaluate(this.visProp.arrowhead.size);
-            // alpha = Type.evaluate(this.visProp.arrowhead.angle);
-            leg = 4;
+            // leg = 8;
+            // alpha = Math.PI * 0.125;
+            leg = Type.evaluate(this.visProp.arrowhead.size);
+            alpha = Type.evaluate(this.visProp.arrowhead.angle);
             leg_x = leg / board.unitX;
             leg_y = leg / board.unitY;
-            leg_z = 0;
-            alpha = Math.PI * 0.125;
+            leg_z = leg / Math.sqrt(board.unitX * board.unitY);
         }
 
         this.dataX = [];
@@ -363,26 +363,39 @@ JXG.createVectorfield3D = function (board, parents, attributes) {
                 for (k = 0, z = start[2]; k <= steps[2]; z += delta[2], k++) {
                     v = this.F(x, y, z);
                     nrm = JXG.Math.norm(v);
+                    if (nrm < Number.EPSILON) {
+                        continue;
+                    }
+
                     v[0] *= scale;
                     v[1] *= scale;
                     v[2] *= scale;
-
                     this.dataX = this.dataX.concat([x, x + v[0], NaN]);
                     this.dataY = this.dataY.concat([y, y + v[1], NaN]);
                     this.dataZ = this.dataZ.concat([z, z + v[2], NaN]);
 
                     if (showArrow) {
-                        if (nrm < Number.EPSILON) {
-                            continue;
-                        }
                         // Arrow head
-                        theta = Math.atan2(v[1], v[0]);
-                        phi1 = theta + alpha;
-                        phi2 = theta - alpha;
-                        leg_z = v[2] * leg / scale / board.unitX;
-                        this.dataX = this.dataX.concat([x + v[0] - Math.cos(phi1) * leg_x, x + v[0], x + v[0] - Math.cos(phi2) * leg_x, NaN]);
-                        this.dataY = this.dataY.concat([y + v[1] - Math.sin(phi1) * leg_y, y + v[1], y + v[1] - Math.sin(phi2) * leg_y, NaN]);
-                        this.dataZ = this.dataZ.concat([z + v[2] - leg_z, z + v[2], z + v[2] - leg_z, NaN]);
+                        nrm *= scale;
+                        phi = Math.atan2(v[1], v[0]);
+                        theta = Math.asin(v[2] / nrm);
+                        theta1 = theta - alpha;
+                        theta2 = theta + alpha;
+                        this.dataX = this.dataX.concat([
+                            x + v[0] - leg_x * Math.cos(phi) * Math.cos(theta1),
+                            x + v[0],
+                            x + v[0] - leg_x * Math.cos(phi) * Math.cos(theta2),
+                            NaN]);
+                        this.dataY = this.dataY.concat([
+                            y + v[1] - leg_y * Math.sin(phi) * Math.cos(theta1),
+                            y + v[1],
+                            y + v[1] - leg_y * Math.sin(phi) * Math.cos(theta2),
+                            NaN]);
+                        this.dataZ = this.dataZ.concat([
+                            z + v[2] - leg_z * Math.sin(theta2),
+                            z + v[2],
+                            z + v[2] - leg_z * Math.sin(theta1),
+                            NaN]);
                     }
                 }
             }
