@@ -319,6 +319,43 @@ JXG.extend(Options, {
         /**#@-*/
     },
 
+    vectorfield3d: {
+        /**#@+
+         * @visprop
+         */
+
+        /**
+         * Scaling factor of the vectors. This in contrast to slope fields, where this attribute sets the vector to the given length.
+         * @name scale
+         * @memberOf Vectorfield3D.prototype
+         * @type {Number|Function}
+         * @see Slopefield.scale
+         * @default 1
+         */
+        scale: 1,
+
+        /**
+         * Customize arrow heads of vectors. Be careful! If enabled this will slow down the performance.
+         * Fields are:
+         * <ul>
+         *  <li> enabled: Boolean
+         *  <li> size: length of the arrow head legs (in pixel)
+         *  <li> angle: angle of the arrow head legs In radians.
+         * </ul>
+         * @name arrowhead
+         * @memberOf Vectorfield3D.prototype
+         * @type {Object}
+         * @default <tt>{enabled: true, size: 5, angle: Math.PI * 0.125}</tt>
+         */
+        arrowhead: {
+            enabled: true,
+            size: 5,
+            angle: Math.PI * 0.125
+        }
+
+        /**#@-*/
+    },
+
     view3d: {
         /**#@+
          * @visprop

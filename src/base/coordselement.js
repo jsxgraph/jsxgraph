@@ -153,6 +153,7 @@ JXG.CoordsElement = function (coordinates, isLabel) {
         makeIntersection: "makeIntersection",
         X: "X",
         Y: "Y",
+        Coords: "Coords",
         free: "free",
         setPosition: "setGliderPosition",
         setGliderPosition: "setGliderPosition",
@@ -849,6 +850,64 @@ JXG.extend(
         },
 
         /**
+         * Getter method for coordinates x, y and (optional) z.
+         * @param {Number|String} [digits='auto'] Truncating rule for the digits in the infobox.
+         * <ul>
+         * <li>'auto': done automatically by JXG.autoDigits()
+         * <li>'none': no truncation
+         * <li>number: truncate after "number digits" with JXG.toFixed()
+         * </ul>
+         * @param {Boolean} [withZ=false] If set to true the return value will be <tt>(x | y | z)</tt> instead of <tt>(x, y)</tt>.
+         * @returns {String} User coordinates of point.
+         */
+        Coords: function (digits, withZ) {
+            var arr, sep;
+
+            digits = digits || 'auto';
+
+            if (withZ) {
+                sep = ' | ';
+            } else {
+                sep = ', ';
+            }
+
+            if (digits === 'none') {
+                arr = [this.X(), sep, this.Y()];
+                if (withZ) {
+                    arr.push(sep, this.Z());
+                }
+
+            } else if (digits === 'auto') {
+                if (this.useLocale()) {
+                    arr = [this.formatNumberLocale(this.X()), sep, this.formatNumberLocale(this.Y())];
+                    if (withZ) {
+                        arr.push(sep, this.formatNumberLocale(this.Z()));
+                    }
+                } else {
+                    arr = [Type.autoDigits(this.X()), sep, Type.autoDigits(this.Y())];
+                    if (withZ) {
+                        arr.push(sep, Type.autoDigits(this.Z()));
+                    }
+                }
+
+            } else {
+                if (this.useLocale()) {
+                    arr = [this.formatNumberLocale(this.X(), digits), sep, this.formatNumberLocale(this.Y(), digits)];
+                    if (withZ) {
+                        arr.push(sep, this.formatNumberLocale(this.Z(), digits));
+                    }
+                } else {
+                    arr = [Type.toFixed(this.X(), digits), sep, Type.toFixed(this.Y(), digits)];
+                    if (withZ) {
+                        arr.push(sep, Type.toFixed(this.Z(), digits));
+                    }
+                }
+            }
+
+            return '(' + arr.join('') + ')';
+        },
+
+        /**
          * New evaluation of the function term.
          * This is required for CAS-points: Their XTerm() method is
          * overwritten in {@link JXG.CoordsElement#addConstraint}.
@@ -886,7 +945,7 @@ JXG.extend(
 
         /**
          * Getter method for the distance to a second point, this is required for CAS-elements.
-         * Here, function inlining seems to be worthwile  (for plotting).
+         * Here, function inlining seems to be worthwile (for plotting).
          * @param {JXG.Point} point2 The point to which the distance shall be calculated.
          * @returns {Number} Distance in user coordinate to the given point
          */
@@ -899,7 +958,7 @@ JXG.extend(
 
         /**
          * Alias for {@link JXG.Element#handleSnapToGrid}
-         * @param {Boolean} force force snapping independent from what the snaptogrid attribute says
+         * @param {Boolean} force force snapping independent of what the snaptogrid attribute says
          * @returns {JXG.CoordsElement} Reference to this element
          */
         snapToGrid: function (force) {
@@ -911,7 +970,7 @@ JXG.extend(
          * {@link JXG.Point#attractorDistance}.
          * The function uses the coords object of the point as
          * its actual position.
-         * @param {Boolean} force force snapping independent from what the snaptogrid attribute says
+         * @param {Boolean} force force snapping independent of what the snaptogrid attribute says
          * @returns {JXG.Point} Reference to this element
          */
         handleSnapToPoints: function (force) {
@@ -981,7 +1040,7 @@ JXG.extend(
         /**
          * Alias for {@link JXG.CoordsElement#handleSnapToPoints}.
          *
-         * @param {Boolean} force force snapping independent from what the snaptogrid attribute says
+         * @param {Boolean} force force snapping independent of what the snaptogrid attribute says
          * @returns {JXG.Point} Reference to this element
          */
         snapToPoints: function (force) {

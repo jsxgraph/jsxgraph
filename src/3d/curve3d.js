@@ -230,4 +230,183 @@ JXG.createCurve3D = function (board, parents, attributes) {
 
     return el;
 };
+
 JXG.registerElement("curve3d", JXG.createCurve3D);
+
+/**
+ * @class 3D vector field.
+ * <p>
+ * Plot a vector field either given by three functions
+ * f1(x, y, z), f2(x, y, z), and f3(x, y, z) or by a function f(x, y, z)
+ * returning an array of size 3.
+ *
+ * @pseudo
+ * @name Vectorfield3D
+ * @augments JXG.Curve3D
+ * @constructor
+ * @type JXG.Curve3D
+ * @throws {Error} If the element cannot be constructed with the given parent objects an exception is thrown.
+ * Parameter options:
+ * @param {Array|Function|String} F Either an array containing three functions f1(x, y, z), f2(x, y, z),
+ * and f3(x, y) or function f(x, y, z) returning an array of length 3.
+ * @param {Array} xData Array of length 3 containing start value for x, number of steps,
+ * end value of x. The vector field will contain (number of steps) + 1 vectors in direction of x.
+ * @param {Array} yData Array of length 3 containing start value for y, number of steps,
+ * end value of y. The vector field will contain (number of steps) + 1 vectors in direction of y.
+ * @param {Array} zData Array of length 3 containing start value for z, number of steps,
+ * end value of z. The vector field will contain (number of steps) + 1 vectors in direction of z.
+ */
+JXG.createVectorfield3D = function (board, parents, attributes) {
+    var view = parents[0],
+        el, attr;
+
+    if (!(parents.length >= 5 &&
+        (Type.isArray(parents[1]) || Type.isFunction(parents[0]) || Type.isString(parents[0])) &&
+        (Type.isArray(parents[2]) && parents[1].length === 3) &&
+        (Type.isArray(parents[3]) && parents[2].length === 3) &&
+        (Type.isArray(parents[4]) && parents[3].length === 3)
+    )) {
+        throw new Error(
+            "JSXGraph: Can't create vector field 3D with parent types " +
+            "'" + typeof parents[0] + "', " +
+            "'" + typeof parents[1] + "', " +
+            "'" + typeof parents[2] + "'."  +
+            "'" + typeof parents[1] + "', "
+        );
+    }
+
+    attr = Type.copyAttributes(attributes, board.options, 'vectorfield3d');
+    el = view.create('curve3d', [[], [], []], attr);
+
+    /**
+     * Set the defining functions of 3D vector field.
+     * @memberOf Vectorfield3D
+     * @name setF
+     * @function
+     * @param {Array|Function} func Either an array containing three functions f1(x, y, z),
+     * f2(x, y, z), and f3(x, y, z) or function f(x, y, z) returning an array of length 3.
+     * @returns {Object} Reference to the 3D vector field object.
+     *
+     * @example
+     * field.setF([(x, y, z) => Math.sin(y), (x, y, z) => Math.cos(x), (x, y, z) => z]);
+     * board.update();
+     *
+     */
+    el.setF = function (func, varnames) {
+        var f0, f1, f2;
+        if (Type.isArray(func)) {
+            f0 = Type.createFunction(func[0], this.board, varnames);
+            f1 = Type.createFunction(func[1], this.board, varnames);
+            f2 = Type.createFunction(func[2], this.board, varnames);
+            /**
+             * @ignore
+             */
+            this.F = function (x, y, z) {
+                return [f0(x, y, z), f1(x, y, z), f2(x, y, z)];
+            };
+        } else {
+            this.F = Type.createFunction(func, el.board, varnames);
+        }
+        return this;
+    };
+
+    el.setF(parents[1], 'x, y, z');
+    el.xData = parents[2];
+    el.yData = parents[3];
+    el.zData = parents[4];
+
+    el.updateDataArray = function () {
+        var k, i, j,
+            v, nrm,
+            x, y, z,
+            scale = Type.evaluate(this.visProp.scale),
+            start = [
+                Type.evaluate(this.xData[0]),
+                Type.evaluate(this.yData[0]),
+                Type.evaluate(this.zData[0])
+            ],
+            steps = [
+                Type.evaluate(this.xData[1]),
+                Type.evaluate(this.yData[1]),
+                Type.evaluate(this.zData[1])
+            ],
+            end = [
+                Type.evaluate(this.xData[2]),
+                Type.evaluate(this.yData[2]),
+                Type.evaluate(this.zData[2])
+            ],
+            delta = [
+                (end[0] - start[0]) / steps[0],
+                (end[1] - start[1]) / steps[1],
+                (end[2] - start[2]) / steps[2]
+            ],
+            phi, theta1, theta2, theta,
+            showArrow = Type.evaluate(this.visProp.arrowhead.enabled),
+            leg, leg_x, leg_y, leg_z, alpha;
+
+        if (showArrow) {
+            // Arrow head style
+            // leg = 8;
+            // alpha = Math.PI * 0.125;
+            leg = Type.evaluate(this.visProp.arrowhead.size);
+            alpha = Type.evaluate(this.visProp.arrowhead.angle);
+            leg_x = leg / board.unitX;
+            leg_y = leg / board.unitY;
+            leg_z = leg / Math.sqrt(board.unitX * board.unitY);
+        }
+
+        this.dataX = [];
+        this.dataY = [];
+        this.dataZ = [];
+        for (i = 0, x = start[0]; i <= steps[0]; x += delta[0], i++) {
+            for (j = 0, y = start[1]; j <= steps[1]; y += delta[1], j++) {
+                for (k = 0, z = start[2]; k <= steps[2]; z += delta[2], k++) {
+                    v = this.F(x, y, z);
+                    nrm = JXG.Math.norm(v);
+                    if (nrm < Number.EPSILON) {
+                        continue;
+                    }
+
+                    v[0] *= scale;
+                    v[1] *= scale;
+                    v[2] *= scale;
+                    this.dataX = this.dataX.concat([x, x + v[0], NaN]);
+                    this.dataY = this.dataY.concat([y, y + v[1], NaN]);
+                    this.dataZ = this.dataZ.concat([z, z + v[2], NaN]);
+
+                    if (showArrow) {
+                        // Arrow head
+                        nrm *= scale;
+                        phi = Math.atan2(v[1], v[0]);
+                        theta = Math.asin(v[2] / nrm);
+                        theta1 = theta - alpha;
+                        theta2 = theta + alpha;
+                        this.dataX = this.dataX.concat([
+                            x + v[0] - leg_x * Math.cos(phi) * Math.cos(theta1),
+                            x + v[0],
+                            x + v[0] - leg_x * Math.cos(phi) * Math.cos(theta2),
+                            NaN]);
+                        this.dataY = this.dataY.concat([
+                            y + v[1] - leg_y * Math.sin(phi) * Math.cos(theta1),
+                            y + v[1],
+                            y + v[1] - leg_y * Math.sin(phi) * Math.cos(theta2),
+                            NaN]);
+                        this.dataZ = this.dataZ.concat([
+                            z + v[2] - leg_z * Math.sin(theta2),
+                            z + v[2],
+                            z + v[2] - leg_z * Math.sin(theta1),
+                            NaN]);
+                    }
+                }
+            }
+        }
+    };
+
+    el.methodMap = Type.deepCopy(el.methodMap, {
+        setF: "setF"
+    });
+
+    return el;
+};
+
+JXG.registerElement("vectorfield3D", JXG.createVectorfield3D);
