@@ -46,6 +46,7 @@
 import JXG from "../jxg";
 import Type from "../utils/type";
 import Mat from "../math/math";
+import Const from "../base/constants";
 
 /**
  * Prefix expression parser, i.e. a poor man's parser.
@@ -189,7 +190,7 @@ JXG.PrefixParser = {
      * @returns Number
      */
     dimension: function (term) {
-        var method, i, le, res, fun, d, v;
+        var method, i, le, res, fun, d, v, unit;
 
         if (Type.isNumber(term)) {
             return 0;
@@ -268,6 +269,33 @@ JXG.PrefixParser = {
                         }
                     } else {
                         res = 0;
+
+                        if (fun === 'Value' || fun === 'V') {
+                            // The Value method of sector, angle and arc does not have the same dimension
+                            // for all units.
+                            if ([Const.OBJECT_TYPE_ARC, Const.OBJECT_TYPE_SECTOR, Const.OBJECT_TYPE_ANGLE].indexOf(term[1].type) >= 0) {
+                                unit = '';
+                                if (term.length === 3 && Type.isString(term[2])) {
+                                    unit = term[2].toLowerCase();
+                                }
+                                if (unit === '') {
+                                    // Default values:
+                                    if (term[1].type === Const.OBJECT_TYPE_ANGLE) {
+                                        // Default for angle.Value() is radians, i.e. dim 0
+                                        res = 0;
+                                    } else {
+                                        // Default for sector|arc.Value() is length, i.e. dim 1
+                                        res = 1;
+                                    }
+                                } else if (unit.indexOf('len') === 0) {
+                                    // Length has dim 1
+                                    res = 1;
+                                } else {
+                                    // Angles in various units has dimension 0
+                                    res = 0;
+                                }
+                            }
+                        }
                     }
             }
         }
