@@ -317,7 +317,7 @@ JXG.extend(
          * @returns {Object} Object containing CSS styles.
          */
         cssParse: function (styles) {
-            let str = styles;
+            var str = styles;
             if (!this.isString(str)) return {};
 
             str = str.replace(/\s*;\s*$/g, '');
@@ -335,7 +335,7 @@ JXG.extend(
          * @returns {String} String containing CSS styles.
          */
         cssStringify: function (styles) {
-            let str = '',
+            var str = '',
                 attr, val;
             if (!this.isObject(styles)) return '';
 
