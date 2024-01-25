@@ -10,6 +10,7 @@ src/.vscode
 **/*.tgz
 beta/*
 distrib/docs.zip
+distrib/docs
 distrib/jsxgraphcore.js*
 distrib/jsxgraphsrc.js*
 distrib/jsxgraphcore.mjs*
