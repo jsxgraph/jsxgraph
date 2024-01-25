@@ -14,6 +14,5 @@ jobs:
         with:
           node-version: "20"
           cache: "npm"
-          cache-dependency-path: package-lock.json
       - run: npm ci
       - run: npm run eslint
