@@ -232,7 +232,7 @@ var simpleColors = {
  * Converts a valid HTML/CSS color string into a rgb value array. This is the base
  * function for the following wrapper functions which only adjust the output to
  * different flavors like an object, string or hex values.
- * @param {String|Array|Number} color A valid HTML or CSS styled color value, e.g. '#12ab21', '#abc', 'black',
+ * @param {String|Array|Number} color A valid HTML or CSS styled color value, e.g. '#12ab21', '#abc', 'black'
  * or 'rgb(12, 132, 233)'. This can also be an array containing three color values either from 0.0 to 1.0 or
  * from 0 to 255. They will be interpreted as red, green, and blue values. In case this is a number this method
  * expects the parameters ag and ab.
@@ -326,9 +326,15 @@ JXG.rgbParser = function (color, ag, ab) {
     return [r, g, b];
 };
 
+JXG.isColor = function (strColor) {
+    var s = new Option().style;
+    s.color = strColor;
+    return s.color !== '';
+};
+
 /**
  * Converts a valid HTML/CSS color string into a string of the 'rgb(r, g, b)' format.
- * @param {String|Array|Number} color A valid HTML or CSS styled color value, e.g. '#12ab21', '#abc', 'black',
+ * @param {String|Array|Number} color A valid HTML or CSS styled color value, e.g. '#12ab21', '#abc', 'black'
  * or 'rgb(12, 132, 233)'. This can also be an array containing three color values either from 0.0 to 1.0 or
  * from 0 to 255. They will be interpreted as red, green, and blue values. In case this is a number this method
  * expects the parameters ag and ab.
@@ -346,7 +352,7 @@ JXG.rgb2css = function (color, ag, ab) {
 
 /**
  * Converts a valid HTML/CSS color string into a HTML rgb string.
- * @param {String|Array|Number} color A valid HTML or CSS styled color value, e.g. '#12ab21', '#abc', 'black',
+ * @param {String|Array|Number} color A valid HTML or CSS styled color value, e.g. '#12ab21', '#abc', 'black'
  * or 'rgb(12, 132, 233)'. This can also be an array containing three color values either from 0.0 to 1.0 or
  * from 0 to 255. They will be interpreted as red, green, and blue values. In case this is a number this method
  * expects the parameters ag and ab.
@@ -477,7 +483,7 @@ JXG.hsv2rgb = function (H, S, V) {
 
 /**
  * Converts a color from the RGB color space into the HSV space. Input can be any valid HTML/CSS color definition.
- * @param {String|Array|Number} color A valid HTML or CSS styled color value, e.g. '#12ab21', '#abc', 'black',
+ * @param {String|Array|Number} color A valid HTML or CSS styled color value, e.g. '#12ab21', '#abc', 'black'
  * or 'rgb(12, 132, 233)'. This can also be an array containing three color values either from 0.0 to 1.0 or
  * from 0 to 255. They will be interpreted as red, green, and blue values. In case this is a number this method
  * expects the parameters ag and ab.
@@ -536,7 +542,7 @@ JXG.rgb2hsv = function (color, ag, ab) {
 
 /**
  * Converts a color from the RGB color space into the LMS space. Input can be any valid HTML/CSS color definition.
- * @param {String|Array|Number} color A valid HTML or CSS styled color value, e.g. '#12ab21', '#abc', 'black',
+ * @param {String|Array|Number} color A valid HTML or CSS styled color value, e.g. '#12ab21', '#abc', 'black'
  * or 'rgb(12, 132, 233)'. This can also be an array containing three color values either from 0.0 to 1.0 or
  * from 0 to 255. They will be interpreted as red, green, and blue values. In case this is a number this method
  * expects the parameters ag and ab.
@@ -671,14 +677,16 @@ JXG.rgba2rgbo = function (rgba) {
 
 /**
  * Generates a RGBA color value like #112233AA from it's RGB and opacity parts.
- * @param {String} rgb A RGB color value.
+ * @param {String|Array} rgb A valid HTML or CSS styled color value, e.g. '#12ab21', '#abc', 'black'
+ * or 'rgb(12, 132, 233)'. This can also be an array containing three color values either from 0.0 to 1.0 or
+ * from 0 to 255. They will be interpreted as red, green, and blue values.
  * @param {Number} o The desired opacity >=0, <=1.
  * @returns {String} The RGBA color value.
  */
 JXG.rgbo2rgba = function (rgb, o) {
     var rgba;
 
-    if (rgb === "none") {
+    if (rgb === "none" || rgb === "transparent") {
         return rgb;
     }
 
@@ -687,7 +695,7 @@ JXG.rgbo2rgba = function (rgb, o) {
         rgba = "0" + rgba;
     }
 
-    return rgb + rgba;
+    return JXG.rgb2hex(rgb) + rgba;
 };
 
 /**
