@@ -316,8 +316,7 @@ JXG.registerElement("tapemeasure", JXG.createTapemeasure);
 JXG.createMeasurement = function (board, parents, attributes) {
     var el, attr,
         x, y, term,
-        valueFunc, i,
-        dimFunc;
+        i;
 
     attr = Type.copyAttributes(attributes, board.options, "measurement");
 
@@ -329,10 +328,10 @@ JXG.createMeasurement = function (board, parents, attributes) {
     el.type = Type.OBJECT_TYPE_MEASUREMENT;
     el.elType = 'measurement';
 
-    valueFunc = function () {
+    el.Value = function () {
         return Prefix.parse(term, 'execute');
     };
-    dimFunc = function () {
+    el.Dimension = function () {
         var d = Type.evaluate(el.visProp.dim);
 
         if (d !== null) {
@@ -340,9 +339,6 @@ JXG.createMeasurement = function (board, parents, attributes) {
         }
         return Prefix.dimension(term);
     };
-
-    el.Value = valueFunc;
-    el.Dimension = dimFunc;
     el.toInfix = function (type) {
         return Prefix.toInfix(term, type);
     };
@@ -365,12 +361,71 @@ JXG.createMeasurement = function (board, parents, attributes) {
         var prefix = '',
             suffix = '',
             dim = el.Dimension(),
+            digits = Type.evaluate(el.visProp.digits),
             unit = '',
             units = Type.evaluate(el.visProp.units),
-            val = el.Value();
+            val = el.Value(),
+            coordsPattern='',
+            i, coords;
 
-        if(Type.isNumber(val)) {
-            val = val.toFixed(Type.evaluate(el.visProp.digits));
+        if (Type.isNumber(val)) {
+            if (digits === 'none') {
+                // do nothing
+            } else if (digits === 'auto') {
+                if (el.useLocale()) {
+                    val = el.formatNumberLocale(val);
+                } else {
+                    val = Type.autoDigits(val);
+                }
+            } else {
+                if (el.useLocale()) {
+                    val = el.formatNumberLocale(val, digits);
+                } else {
+                    val = Type.toFixed(val, digits);
+                }
+            }
+        } else if(Type.isArray(val)) {
+            for (i = 0; i<val.length;i++) {
+                if(!Type.isNumber(val[i])){
+                    continue;
+                }
+                if (digits === 'none') {
+                    // do nothing
+                } else if (digits === 'auto') {
+                    if (el.useLocale()) {
+                        val[i] = el.formatNumberLocale(val[i]);
+                    } else {
+                        val[i] = Type.autoDigits(val[i]);
+                    }
+                } else {
+                    if (el.useLocale()) {
+                        val[i] = el.formatNumberLocale(val[i], digits);
+                    } else {
+                        val[i] = Type.toFixed(val[i], digits);
+                    }
+                }
+            }
+        }
+
+        if (dim === 'coords' && Type.isArray(val)) {
+            coordsPattern = Type.evaluate(el.visProp.coordspattern).split('');
+
+            if (val.length === 2) {
+                val.unshift(undefined);
+            }
+            coords = [];
+            for (i = 0; i < coordsPattern.length; i++) {
+                if (coordsPattern[i] === 'x') {
+                    coords.push(val[1]);
+                } else if (coordsPattern[i] === 'y') {
+                    coords.push(val[2]);
+                } else if (coordsPattern[i] === 'z') {
+                    coords.push(val[0]);
+                } else {
+                    coords.push(coordsPattern[i])
+                }
+            }
+            val = coords.join('');
         }
 
         if (Type.evaluate(el.visProp.showprefix)) {
