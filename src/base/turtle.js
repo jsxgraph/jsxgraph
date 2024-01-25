@@ -40,6 +40,7 @@
 
 import JXG from "../jxg";
 import Const from "./constants";
+import Mat from "../math/math";
 import GeometryElement from "./element";
 import Type from "../utils/type";
 
@@ -221,10 +222,7 @@ JXG.extend(
             };
 
             this.arrowLen =
-                20 /
-                Math.sqrt(
-                    this.board.unitX * this.board.unitX + this.board.unitY * this.board.unitY
-                );
+                20 / Mat.hypot(this.board.unitX, this.board.unitY);
 
             this.pos = [x, y];
             this.isPenDown = true;
@@ -494,8 +492,8 @@ JXG.extend(
 
         /**
          * Get attribute of the last turtle curve object.
-         * 
-         * @param {String} key 
+         *
+         * @param {String} key
          * @returns attribute value
          * @private
          */

@@ -42,11 +42,12 @@ import JXG from "../jxg";
 import Type from "../utils/type";
 
 /**
- * Creates a new complex number.
- * @class This class is for calculating with complex numbers.
+ * Creates a new complex number. See also {@link JXG.C}.
+ * @class This class is for calculating with complex numbers, see also {@link JXG.C} for more methods.
  * @constructor
  * @param {Number} [x=0] Real part.
  * @param {Number} [y=0] Imaginary part.
+ * @see JXG.C
  */
 JXG.Complex = function (x, y) {
     /**
@@ -211,6 +212,7 @@ JXG.extend(
 );
 
 /**
+ * @namespace Namespace for the complex number arithmetic functions, see also {@link JXG.Complex}.
  * @description
  * JXG.C is the complex number (name)space. It provides functions to calculate with
  * complex numbers (defined in {@link JXG.Complex}). With this namespace you don't have to modify
@@ -224,7 +226,7 @@ JXG.extend(
  *    var z2 = new JXG.Complex(0, 1);
  *    var z = new JXG.Complex(z1);
  *    z.add(z2);</pre>
- * @namespace Namespace for the complex number arithmetic functions.
+ * @see JXG.Complex
  */
 JXG.C = {};
 
@@ -299,6 +301,16 @@ JXG.C.abs = function (z1) {
     z.mult(z1);
 
     return Math.sqrt(z.real);
+};
+
+/**
+ * Create copy of complex number.
+ *
+ * @param {JXG.Complex|Number} z
+ * @returns {JXG.Complex}
+ */
+JXG.C.copy = function(z) {
+    return new JXG.Complex(z);
 };
 
 JXG.Complex.C = JXG.C;

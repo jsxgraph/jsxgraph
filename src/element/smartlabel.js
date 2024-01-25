@@ -210,23 +210,43 @@ JXG.createSmartLabel = function (board, parents, attributes) {
 
     } else if (p.elementClass === Const.OBJECT_CLASS_LINE) {
         attr = Type.copyAttributes(attributes, board.options, 'smartlabelline');
+        /**
+         * @class
+         * @ignore
+         */
         attr.rotate = function () { return Math.atan(p.getSlope()) * 180 / Math.PI; };
+        /**
+         * @class
+         * @ignore
+         */
         attr.visible = function () { return (p.L() < 1.5) ? false : true; };
 
     } else if (p.elementClass === Const.OBJECT_CLASS_CIRCLE) {
         attr = Type.copyAttributes(attributes, board.options, 'smartlabelcircle');
+        /**
+         * @class
+         * @ignore
+         */
         attr.visible = function () { return (p.Radius() < 1.5) ? false : true; };
 
     } else if (p.type === Const.OBJECT_TYPE_POLYGON) {
         attr = Type.copyAttributes(attributes, board.options, 'smartlabelpolygon');
     } else if (p.type === Const.OBJECT_TYPE_ANGLE) {
         attr = Type.copyAttributes(attributes, board.options, 'smartlabelangle');
+        /**
+         * @class
+         * @ignore
+         */
         attr.rotate = function () {
             var c1 = p.center.coords.usrCoords,
                 c2 = p.getLabelAnchor().usrCoords,
                 v = Math.atan2(c2[2] - c1[2], c2[1] - c1[1]) * 180 / Math.PI;
             return (v > 90 && v < 270) ? v + 180 : v;
         };
+        /**
+         * @class
+         * @ignore
+         */
         attr.anchorX = function () {
             var c1 = p.center.coords.usrCoords,
                 c2 = p.getLabelAnchor().usrCoords,

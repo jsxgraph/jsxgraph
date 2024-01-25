@@ -314,7 +314,7 @@ JXG.extend(
         /**
          * Convert a String, a number or a function into a function. This method is used in Transformation.js
          * @param {JXG.Board} board Reference to a JSXGraph board. It is required to resolve dependencies given
-         * by a GEONE<sub>X</sub>T string, thus it must be a valid reference only in case one of the param
+         * by a JessieCode string, thus it must be a valid reference only in case one of the param
          * values is of type string.
          * @param {Array} param An array containing strings, numbers, or functions.
          * @param {Number} n Length of <tt>param</tt>.
@@ -326,7 +326,7 @@ JXG.extend(
                 deps = {};
 
             for (i = 0; i < n; i++) {
-                f[i] = JXG.createFunction(param[i], board, "", true);
+                f[i] = JXG.createFunction(param[i], board);
                 for (e in f[i].deps) {
                     deps[e] = f[i].deps;
                 }
@@ -344,25 +344,27 @@ JXG.extend(
          * Convert a String, number or function into a function.
          * @param {String|Number|Function} term A variable of type string, function or number.
          * @param {JXG.Board} board Reference to a JSXGraph board. It is required to resolve dependencies given
-         * by a GEONE<sub>X</sub>T string, thus it must be a valid reference only in case one of the param
+         * by a JessieCode/GEONE<sub>X</sub>T string, thus it must be a valid reference only in case one of the param
          * values is of type string.
          * @param {String} variableName Only required if function is supplied as JessieCode string or evalGeonext is set to true.
-         * Describes the variable name of the variable in a GEONE<sub>X</sub>T string given as term.
-         * @param {Boolean} [evalGeonext=true] Set this true, if term should be treated as a GEONE<sub>X</sub>T string.
-         * @returns {Function} A function evaluation the value given by term or null if term is not of type string,
+         * Describes the variable name of the variable in a JessieCode/GEONE<sub>X</sub>T string given as term.
+         * @param {Boolean} [evalGeonext=false] Obsolete and ignored! Set this true
+         * if term should be treated as a GEONE<sub>X</sub>T string.
+         * @returns {Function} A function evaluating the value given by term or null if term is not of type string,
          * function or number.
          */
         createFunction: function (term, board, variableName, evalGeonext) {
             var f = null;
 
-            if ((!this.exists(evalGeonext) || evalGeonext) && this.isString(term)) {
+            // if ((!this.exists(evalGeonext) || evalGeonext) && this.isString(term)) {
+            if (this.isString(term)) {
                 // Convert GEONExT syntax into  JavaScript syntax
                 //newTerm = JXG.GeonextParser.geonext2JS(term, board);
                 //return new Function(variableName,'return ' + newTerm + ';');
-
                 //term = JXG.GeonextParser.replaceNameById(term, board);
                 //term = JXG.GeonextParser.geonext2JS(term, board);
-                f = board.jc.snippet(term, true, variableName, true);
+
+                f = board.jc.snippet(term, true, variableName, false);
             } else if (this.isFunction(term)) {
                 f = term;
                 f.deps = {};
@@ -370,11 +372,11 @@ JXG.extend(
                 /** @ignore */
                 f = function () { return term; };
                 f.deps = {};
-            } else if (this.isString(term)) {
-                // In case of string function like fontsize
-                /** @ignore */
-                f = function () { return term; };
-                f.deps = {};
+            // } else if (this.isString(term)) {
+            //     // In case of string function like fontsize
+            //     /** @ignore */
+            //     f = function () { return term; };
+            //     f.deps = {};
             }
 
             if (f !== null) {
@@ -432,7 +434,7 @@ JXG.extend(
                         attributes,
                         board.options,
                         attrClass,
-                        attrArray[j]
+                        attrArray[j].toLowerCase()
                     );
                 }
                 if (this.isArray(parents[i]) && parents[i].length > 1) {
@@ -1033,6 +1035,13 @@ JXG.extend(
 
                         obj1[i] = this.merge(obj1[i], o);
                     } else {
+                        if (typeof obj1 === 'boolean') {
+                            // This is necessary in the following scenario:
+                            //   lastArrow == false
+                            // and call of
+                            //   setAttribute({lastArrow: {type: 7}})
+                            obj1 = {};
+                        }
                         obj1[i] = o;
                     }
                 }
@@ -1063,14 +1072,15 @@ JXG.extend(
                 c = [];
                 for (i = 0; i < obj.length; i++) {
                     prop = obj[i];
-                    if (typeof prop === "object") {
+                    // Attention: typeof null === 'object'
+                    if (prop !== null && typeof prop === "object") {
                         // We certainly do not want to recurse into a JSXGraph object.
                         // This would for sure result in an infinite recursion.
                         // As alternative we copy the id of the object.
                         if (this.exists(prop.board)) {
                             c[i] = prop.id;
                         } else {
-                            c[i] = this.deepCopy(prop);
+                            c[i] = this.deepCopy(prop, {}, toLower);
                         }
                     } else {
                         c[i] = prop;
@@ -1086,7 +1096,7 @@ JXG.extend(
                             if (this.exists(prop.board)) {
                                 c[i2] = prop.id;
                             } else {
-                                c[i2] = this.deepCopy(prop);
+                                c[i2] = this.deepCopy(prop, {}, toLower);
                             }
                         } else {
                             c[i2] = prop;
@@ -1099,9 +1109,9 @@ JXG.extend(
                         i2 = toLower ? i.toLowerCase() : i;
 
                         prop = obj2[i];
-                        if (typeof prop === "object") {
+                        if (prop !== null && typeof prop === "object") {
                             if (this.isArray(prop) || !this.exists(c[i2])) {
-                                c[i2] = this.deepCopy(prop);
+                                c[i2] = this.deepCopy(prop, {}, toLower);
                             } else {
                                 c[i2] = this.deepCopy(c[i2], prop, toLower);
                             }
@@ -1291,7 +1301,7 @@ JXG.extend(
             noquote = JXG.def(noquote, false);
 
             // check for native JSON support:
-            if (typeof JSON && JSON.stringify && !noquote) {
+            if (JSON !== undefined && JSON.stringify && !noquote) {
                 try {
                     s = JSON.stringify(obj);
                     return s;
@@ -1562,6 +1572,41 @@ JXG.extend(
             }
 
             return s;
+        },
+
+        /**
+         * Convert a string containing a MAXIMA /STACK expression into a JSXGraph / JessieCode string
+         * or an array of JSXGraph / JessieCode strings.
+         *
+         * @example
+         * console.log( JXG.stack2jsxgraph("%e**x") );
+         * // Output:
+         * //    "EULER**x"
+         *
+         * @example
+         * console.log( JXG.stack2jsxgraph("[%pi*(x**2 - 1), %phi*(x - 1), %gamma*(x+1)]") );
+         * // Output:
+         * //    [ "PI*(x**2 - 1)", "1.618033988749895*(x - 1)", "0.5772156649015329*(x+1)" ]
+         *
+         * @param {String} str
+         * @returns String
+         */
+        stack2jsxgraph: function(str) {
+            var t;
+
+            t = str.
+                replace(/%pi/g, 'PI').
+                replace(/%e/g, 'EULER').
+                replace(/%phi/g, '1.618033988749895').
+                replace(/%gamma/g, '0.5772156649015329').
+                trim();
+
+            // String containing array -> array containing strings
+            if (t[0] === '[' && t[t.length - 1] === ']') {
+                t = t.slice(1, -1).split(/\s*,\s*/);
+            }
+
+            return t;
         }
     }
 );

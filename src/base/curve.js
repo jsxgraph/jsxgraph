@@ -98,7 +98,7 @@ JXG.Curve = function (board, parents, attributes) {
     this.ticks = [];
 
     /**
-     * Stores a quad tree if it is required. The quad tree is generated in the curve
+     * Stores a quadtree if it is required. The quadtree is generated in the curve
      * updates and can be used to speed up the hasPoint method.
      * @type JXG.Math.Quadtree
      */
@@ -234,28 +234,18 @@ JXG.extend(
          * @returns {Boolean} True if (x,y) is near the curve, False otherwise.
          */
         hasPoint: function (x, y, start) {
-            var t,
-                checkPoint,
-                len,
-                invMat,
-                c,
-                i,
-                tX,
-                tY,
-                isIn,
+            var t, c, i, tX, tY,
+                checkPoint, len, invMat, isIn,
                 res = [],
                 points,
                 qdt,
                 steps = Type.evaluate(this.visProp.numberpointslow),
                 d = (this.maxX() - this.minX()) / steps,
-                prec,
-                type,
+                prec, type,
                 dist = Infinity,
-                ux2,
-                uy2,
+                ux2, uy2,
                 ev_ct,
-                mi,
-                ma,
+                mi, ma,
                 suspendUpdate = true;
 
             if (Type.isObject(Type.evaluate(this.visProp.precision))) {
@@ -1001,7 +991,14 @@ JXG.extend(
          * Converts the JavaScript/JessieCode/GEONExT syntax of the defining function term into JavaScript.
          * New methods X() and Y() for the Curve object are generated, further
          * new methods for minX() and maxX().
-         * @see JXG.GeonextParser.geonext2JS.
+         * If mi or ma are not supplied, default functions are set.
+         *
+         * @param {String} varname Name of the parameter in xterm and yterm, e.g. 'x' or 't'
+         * @param {String|Number|Function|Array} xterm Term for the x coordinate. Can also be an array consisting of discrete values.
+         * @param {String|Number|Function|Array} yterm Term for the y coordinate. Can also be an array consisting of discrete values.
+         * @param {String|Number|Function} [mi] Lower bound on the parameter
+         * @param {String|Number|Function} [ma] Upper bound on the parameter
+         * @see JXG.GeonextParser.geonext2JS
          */
         generateTerm: function (varname, xterm, yterm, mi, ma) {
             var fx, fy;
@@ -1056,12 +1053,18 @@ JXG.extend(
                 this.visProp.curvetype = "polar";
             }
 
-            // Set the bounds lower bound
+            // Set the upper and lower bounds for the parameter of the curve.
+            // If not defined, reset the bounds to the default values
+            // given in Curve.prototype.minX, Curve.prototype.maxX
             if (Type.exists(mi)) {
                 this.minX = Type.createFunction(mi, this.board, "");
+            } else {
+                delete this.minX;
             }
             if (Type.exists(ma)) {
                 this.maxX = Type.createFunction(ma, this.board, "");
+            } else {
+                delete this.maxX;
             }
 
             this.addParentsFromJCFunctions([this.X, this.Y, this.minX, this.maxX]);
@@ -1556,6 +1559,10 @@ JXG.createCurve = function (board, parents, attributes) {
         attr = Type.copyAttributes(attr, board.options, "curve");
 
         cu = new JXG.Curve(board, ["x", [], []], attr);
+        /**
+         * @class
+         * @ignore
+         */
         cu.updateDataArray = function () {
             var i,
                 le = obj.numberPoints;
@@ -1627,7 +1634,8 @@ JXG.createFunctiongraph = function (board, parents, attributes) {
         par = ["x", "x"].concat(parents); // variable name and identity function for x-coordinate
         // par = ["x", function(x) { return x; }].concat(parents);
 
-    attr = Type.copyAttributes(attributes, board.options, "curve");
+    attr = Type.copyAttributes(attributes, board.options, "functiongraph");
+    attr = Type.copyAttributes(attr, board.options, "curve");
     attr.curvetype = "functiongraph";
     return new JXG.Curve(board, par, attr);
 };
@@ -1882,7 +1890,7 @@ JXG.createCardinalSpline = function (board, parents, attributes) {
     p = parents[0];
     q = [];
 
-    // given as [x[], y[]]
+    // Given as [x[], y[]]
     if (
         !attributes.isarrayofcoordinates &&
         p.length === 2 &&
@@ -1950,7 +1958,8 @@ JXG.createCardinalSpline = function (board, parents, attributes) {
                 Dist: function (p) {
                     var dx = this.X() - p.X(),
                         dy = this.Y() - p.Y();
-                    return Math.sqrt(dx * dx + dy * dy);
+
+                    return Mat.hypot(dx, dy);
                 }
             };
         };
@@ -2198,6 +2207,10 @@ JXG.createMetapostSpline = function (board, parents, attributes) {
     controls = parents[1];
 
     el = new JXG.Curve(board, ["t", [], [], 0, p.length - 1], attributes);
+    /**
+     * @class
+     * @ignore
+     */
     el.updateDataArray = function () {
         var res,
             i,
@@ -2322,7 +2335,7 @@ JXG.createRiemannsum = function (board, parents, attributes) {
         );
     }
 
-    type = Type.createFunction(parents[2], board, "", false);
+    type = Type.createFunction(parents[2], board, "");
     if (!Type.exists(type)) {
         throw new Error(
             "JSXGraph: JXG.createRiemannsum: argument 3 'type' has to be string or function." +
@@ -2347,6 +2360,7 @@ JXG.createRiemannsum = function (board, parents, attributes) {
     };
 
     /**
+     * @class
      * @ignore
      */
     c.updateDataArray = function () {
@@ -2426,17 +2440,11 @@ JXG.createTracecurve = function (board, parents, attributes) {
     c = board.create("curve", [[0], [0]], attr);
 
     /**
+     * @class
      * @ignore
      */
     c.updateDataArray = function () {
-        var i,
-            step,
-            t,
-            el,
-            pEl,
-            x,
-            y,
-            from,
+        var i, step, t, el, pEl, x, y, from,
             savetrace,
             le = attr.numberpoints,
             savePos = glider.position,
@@ -2564,6 +2572,7 @@ JXG.createStepfunction = function (board, parents, attributes) {
     attr = Type.copyAttributes(attributes, board.options, "stepfunction");
     c = board.create("curve", parents, attr);
     /**
+     * @class
      * @ignore
      */
     c.updateDataArray = function () {
@@ -2708,6 +2717,7 @@ JXG.createCurveIntersection = function (board, parents, attributes) {
 
     c = board.create("curve", [[], []], attributes);
     /**
+     * @class
      * @ignore
      */
     c.updateDataArray = function () {
@@ -2763,6 +2773,7 @@ JXG.createCurveUnion = function (board, parents, attributes) {
 
     c = board.create("curve", [[], []], attributes);
     /**
+     * @class
      * @ignore
      */
     c.updateDataArray = function () {
@@ -2818,6 +2829,7 @@ JXG.createCurveDifference = function (board, parents, attributes) {
 
     c = board.create("curve", [[], []], attributes);
     /**
+     * @class
      * @ignore
      */
     c.updateDataArray = function () {
@@ -2837,7 +2849,7 @@ JXG.registerElement("curveunion", JXG.createCurveUnion);
  * is controlled by the attribute "dir".
  * @pseudo
  * @name Boxplot
- * @param {Array} quantiles Array conatining at least five quantiles. The elements can be of type number, function or string.
+ * @param {Array} quantiles Array containing at least five quantiles. The elements can be of type number, function or string.
  * @param {Number|Function} axis Axis position of the box plot
  * @param {Number|Function} width Width of the rectangle part of the box plot. The width of the first and 4th quantile
  * is relative to this width and can be controlled by the attribute "smallWidth".
@@ -2930,7 +2942,7 @@ JXG.registerElement("curveunion", JXG.createCurveUnion);
  *
  */
 JXG.createBoxPlot = function (board, parents, attributes) {
-    var box, i, len, w2,
+    var box, i, len,
         attr = Type.copyAttributes(attributes, board.options, "boxplot");
 
     if (parents.length !== 3) {
@@ -2942,7 +2954,7 @@ JXG.createBoxPlot = function (board, parents, attributes) {
     if (parents[0].length < 5) {
         throw new Error(
             "JSXGraph: Can't create box plot with given parent[0]'" +
-                "\nparent[0] has to conatin at least 5 quantiles."
+                "\nparent[0] has to contain at least 5 quantiles."
         );
     }
     box = board.create("curve", [[], []], attr);
@@ -2950,11 +2962,15 @@ JXG.createBoxPlot = function (board, parents, attributes) {
     len = parents[0].length; // Quantiles
     box.Q = [];
     for (i = 0; i < len; i++) {
-        box.Q[i] = Type.createFunction(parents[0][i], board, null, true);
+        box.Q[i] = Type.createFunction(parents[0][i], board);
     }
-    box.x = Type.createFunction(parents[1], board, null, true);
-    box.w = Type.createFunction(parents[2], board, null, true);
+    box.x = Type.createFunction(parents[1], board);
+    box.w = Type.createFunction(parents[2], board);
 
+    /**
+     * @class
+     * @ignore
+     */
     box.updateDataArray = function () {
         var v1, v2, l1, l2, r1, r2, w2, dir, x;
 
@@ -3002,6 +3018,232 @@ JXG.createBoxPlot = function (board, parents, attributes) {
 };
 
 JXG.registerElement("boxplot", JXG.createBoxPlot);
+
+/**
+ *
+ * @class
+ * From <a href="https://en.wikipedia.org/wiki/Implicit_curve">Wikipedia</a>:
+ * "An implicit curve is a plane curve defined by an implicit equation
+ * relating two coordinate variables, commonly <i>x</i> and <i>y</i>.
+ * For example, the unit circle is defined by the implicit equation
+ * x<sup>2</sup> + y<sup>2</sup> = 1.
+ * In general, every implicit curve is defined by an equation of the form
+ * <i>f(x, y) = 0</i>
+ * for some function <i>f</i> of two variables."
+ * <p>
+ * The partial derivatives for <i>f</i> are optional. If not given, numerical
+ * derivatives are used instead. This is good enough for most practical use cases.
+ * But if supplied, both partial derivatives must be supplied.
+ * <p>
+ * The most effective attributes to tinker with if the implicit curve algorithm fails are
+ * {@link ImplicitCurve#resolution_outer},
+ * {@link ImplicitCurve#resolution_inner},
+ * {@link ImplicitCurve#alpha_0},
+ * {@link ImplicitCurve#h_initial},
+ * {@link ImplicitCurve#h_max}, and
+ * {@link ImplicitCurve#qdt_box}.
+ *
+ * @pseudo
+ * @name ImplicitCurve
+ * @param {Function|String} f Function of two variables for the left side of the equation <i>f(x,y)=0</i>.
+ * If f is supplied as string, it has to use the variables 'x' and 'y'.
+ * @param {Function|String} [dfx=null] Optional partial derivative in respect to the first variable
+ * If dfx is supplied as string, it has to use the variables 'x' and 'y'.
+ * @param {Function|String} [dfy=null] Optional partial derivative in respect to the second variable
+ * If dfy is supplied as string, it has to use the variables 'x' and 'y'.
+ * @augments JXG.Curve
+ * @constructor
+ * @type JXG.Curve
+ *
+ * @example
+ *   var f, c;
+ *   f = (x, y) => 1 / 16 * x ** 2 + y ** 2 - 1;
+ *   c = board.create('implicitcurve', [f], {
+ *       strokeWidth: 3,
+ *       strokeColor: JXG.palette.red,
+ *       strokeOpacity: 0.8
+ *   });
+ *
+ * </pre><div id="JXGa6e86701-1a82-48d0-b007-3a3d32075076" class="jxgbox" style="width: 300px; height: 300px;"></div>
+ * <script type="text/javascript">
+ *     (function() {
+ *         var board = JXG.JSXGraph.initBoard('JXGa6e86701-1a82-48d0-b007-3a3d32075076',
+ *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
+ *             var f, c;
+ *             f = (x, y) => 1 / 16 * x ** 2 + y ** 2 - 1;
+ *             c = board.create('implicitcurve', [f], {
+ *                 strokeWidth: 3,
+ *                 strokeColor: JXG.palette.red,
+ *                 strokeOpacity: 0.8
+ *             });
+ *
+ *     })();
+ *
+ * </script><pre>
+ *
+ * @example
+ *  var a, c, f;
+ *  a = board.create('slider', [[-3, 6], [3, 6], [-3, 1, 3]], {
+ *      name: 'a', stepWidth: 0.1
+ *  });
+ *  f = (x, y) => x ** 2 - 2 * x * y - 2 * x + (a.Value() + 1) * y ** 2 + (4 * a.Value() + 2) * y + 4 * a.Value() - 3;
+ *  c = board.create('implicitcurve', [f], {
+ *      strokeWidth: 3,
+ *      strokeColor: JXG.palette.red,
+ *      strokeOpacity: 0.8,
+ *      resolution_outer: 20,
+ *      resolution_inner: 20
+ *  });
+ *
+ * </pre><div id="JXG0b133a54-9509-4a65-9722-9c5145e23b40" class="jxgbox" style="width: 300px; height: 300px;"></div>
+ * <script type="text/javascript">
+ *     (function() {
+ *         var board = JXG.JSXGraph.initBoard('JXG0b133a54-9509-4a65-9722-9c5145e23b40',
+ *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
+ *             var a, c, f;
+ *             a = board.create('slider', [[-3, 6], [3, 6], [-3, 1, 3]], {
+ *                 name: 'a', stepWidth: 0.1
+ *             });
+ *             f = (x, y) => x ** 2 - 2 * x * y - 2 * x + (a.Value() + 1) * y ** 2 + (4 * a.Value() + 2) * y + 4 * a.Value() - 3;
+ *             c = board.create('implicitcurve', [f], {
+ *                 strokeWidth: 3,
+ *                 strokeColor: JXG.palette.red,
+ *                 strokeOpacity: 0.8,
+ *                 resolution_outer: 20,
+ *                 resolution_inner: 20
+ *             });
+ *
+ *     })();
+ *
+ * </script><pre>
+ *
+ * @example
+ *  var c = board.create('implicitcurve', ['abs(x * y) - 3'], {
+ *      strokeWidth: 3,
+ *      strokeColor: JXG.palette.red,
+ *      strokeOpacity: 0.8
+ *  });
+ *
+ * </pre><div id="JXG02802981-0abb-446b-86ea-ee588f02ed1a" class="jxgbox" style="width: 300px; height: 300px;"></div>
+ * <script type="text/javascript">
+ *     (function() {
+ *         var board = JXG.JSXGraph.initBoard('JXG02802981-0abb-446b-86ea-ee588f02ed1a',
+ *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
+ *             var c = board.create('implicitcurve', ['abs(x * y) - 3'], {
+ *                 strokeWidth: 3,
+ *                 strokeColor: JXG.palette.red,
+ *                 strokeOpacity: 0.8
+ *             });
+ *
+ *     })();
+ *
+ * </script><pre>
+ *
+ */
+JXG.createImplicitCurve = function(board, parents, attributes) {
+    var c, attr;
+    if (parents.length !== 1 && parents.length !== 3) {
+        throw new Error(
+            "JSXGraph: Can't create curve implicitCurve with given parent'" +
+                "\nPossible parent types: [f] or [f, dfx, dfy]" +
+                "\nwith functions f, dfx, dfy"
+        );
+    }
+
+    attr = Type.copyAttributes(attributes, board.options, "implicitcurve");
+    c = board.create("curve", [[], []], attr);
+
+    /**
+     * Function of two variables for the left side of the equation <i>f(x,y)=0</i>.
+     *
+     * @name f
+     * @memberOf ImplicitCurve.prototype
+     * @function
+     * @returns {Number}
+     */
+    c.f = Type.createFunction(parents[0], board, 'x, y');
+
+    /**
+     * Partial derivative in the first variable of
+     * the left side of the equation <i>f(x,y)=0</i>.
+     * If null, then numerical derivative is used.
+     *
+     * @name dfx
+     * @memberOf ImplicitCurve.prototype
+     * @function
+     * @returns {Number}
+     */
+    c.dfx = Type.createFunction(parents[1], board, 'x, y');
+
+    /**
+     * Partial derivative in the second variable of
+     * the left side of the equation <i>f(x,y)=0</i>.
+     * If null, then numerical derivative is used.
+     *
+     * @name dfy
+     * @memberOf ImplicitCurve.prototype
+     * @function
+     * @returns {Number}
+     */
+    c.dfy = Type.createFunction(parents[2], board, 'x, y');
+
+    /**
+     * @class
+     * @ignore
+     */
+    c.updateDataArray = function () {
+        var bbox = this.board.getBoundingBox(),
+            ip, cfg,
+            ret = [],
+            mgn = Type.evaluate(this.visProp.margin);
+
+        bbox[0] -= mgn;
+        bbox[1] += mgn;
+        bbox[2] += mgn;
+        bbox[3] -= mgn;
+
+        cfg = {
+            resolution_out: Math.max(0.01, Type.evaluate(this.visProp.resolution_outer)),
+            resolution_in: Math.max(0.01, Type.evaluate(this.visProp.resolution_inner)),
+            max_steps: Type.evaluate(this.visProp.max_steps),
+            alpha_0: Type.evaluate(this.visProp.alpha_0),
+            tol_u0: Type.evaluate(this.visProp.tol_u0),
+            tol_newton: Type.evaluate(this.visProp.tol_newton),
+            tol_cusp: Type.evaluate(this.visProp.tol_cusp),
+            tol_progress: Type.evaluate(this.visProp.tol_progress),
+            qdt_box: Type.evaluate(this.visProp.qdt_box),
+            kappa_0: Type.evaluate(this.visProp.kappa_0),
+            delta_0: Type.evaluate(this.visProp.delta_0),
+            h_initial: Type.evaluate(this.visProp.h_initial),
+            h_critical: Type.evaluate(this.visProp.h_critical),
+            h_max: Type.evaluate(this.visProp.h_max),
+            loop_dist: Type.evaluate(this.visProp.loop_dist),
+            loop_dir: Type.evaluate(this.visProp.loop_dir),
+            loop_detection: Type.evaluate(this.visProp.loop_detection),
+            unitX: this.board.unitX,
+            unitY: this.board.unitY
+        };
+        this.dataX = [];
+        this.dataY = [];
+
+        // console.time("implicit plot");
+        ip = new JXG.Math.ImplicitPlot(bbox, cfg, this.f, this.dfx, this.dfy);
+        this.qdt = ip.qdt;
+
+        ret = ip.plot();
+        // console.timeEnd("implicit plot");
+
+        this.dataX = ret[0];
+        this.dataY = ret[1];
+    };
+
+    c.elType = 'implicitcurve';
+
+    return c;
+};
+
+JXG.registerElement("implicitcurve", JXG.createImplicitCurve);
+
 
 export default JXG.Curve;
 

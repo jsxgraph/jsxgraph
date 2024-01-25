@@ -51,11 +51,7 @@ import Mat from "../math/math";
  * @param {Number} method The type of coordinates given by the user. Accepted values are <b>COORDS_BY_SCREEN</b> and <b>COORDS_BY_USER</b>.
  * @param {Array} coordinates An array of affine coordinates.
  * @param {JXG.Board} board A reference to a board.
- * @oaram {Boolean} [emitter=true]
- * @borrows JXG.EventEmitter#on as this.on
- * @borrows JXG.EventEmitter#off as this.off
- * @borrows JXG.EventEmitter#triggerEventHandlers as this.triggerEventHandlers
- * @borrows JXG.EventEmitter#eventHandlers as this.eventHandlers
+ * @param {Boolean} [emitter=true]
  * @constructor
  */
 JXG.Coords = function (method, coordinates, board, emitter) {
@@ -164,21 +160,11 @@ JXG.extend(
                 if (sum > Mat.eps * Mat.eps) {
                     return Number.POSITIVE_INFINITY;
                 }
-                f = ucr[1] - c[1];
-                sum += f * f;
-                f = ucr[2] - c[2];
-                sum += f * f;
+                return Mat.hypot(ucr[1] - c[1], ucr[2] - c[2]);
             } else {
                 c = coordinates.scrCoords;
-                //f = scr[0]-c[0];
-                //sum = f*f;
-                f = scr[1] - c[1];
-                sum += f * f;
-                f = scr[2] - c[2];
-                sum += f * f;
+                return Mat.hypot(scr[1] - c[1], scr[2] - c[2]);
             }
-
-            return Math.sqrt(sum);
         },
 
         /**

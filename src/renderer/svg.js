@@ -203,27 +203,46 @@ JXG.SVGRenderer = function (container, dim) {
     };
 
     /**
-     * Combine arguments to an URL string of the form
-     * url(#...)
-     * Masks the container id.
+     * Combine arguments to a string, joined by empty string.
+     * Masks the container id with CSS.escape.
      *
-     * @params {Objects} parts of the string
-     * @returns URL string
+     * @params {String} str variable number of strings
+     * @returns String
+     * @see JXG.SVGRenderer#toURL
      * @private
      * @example
-     * this.toURL('aaa', '_', 'bbb', 'TriangleEnd')
+     * this.toStr('aaa', '_', 'bbb', 'TriangleEnd')
      * // Output:
-     * // url(#xxx_bbbTriangleEnd)
-     *
+     * // xxx_bbbTriangleEnd
      */
-    this.toURL = function () {
+    this.toStr = function() {
         // ES6 would be [...arguments].join()
         var str = Array.prototype.slice.call(arguments).join('');
         // Mask special symbols like '/' and '\' in id
         if (Type.exists(CSS) && Type.exists(CSS.escape)) {
             str = CSS.escape(str);
         }
-        return 'url(#' + str + ')';
+        return str;
+    };
+
+    /**
+     * Combine arguments to an URL string of the form
+     * url(#...)
+     * Masks the container id. Calls {@link JXG.SVGRenderer#toStr}.
+     *
+     * @params {String} str variable number of strings
+     * @returns URL string
+     * @see JXG.SVGRenderer#toStr
+     * @private
+     * @example
+     * this.toURL('aaa', '_', 'bbb', 'TriangleEnd')
+     * // Output:
+     * // url(#xxx_bbbTriangleEnd)
+     */
+    this.toURL = function () {
+        return 'url(#' +
+            this.toStr.apply(this, arguments) + // Pass the arguments to toStr
+            ')';
     };
 
     /* Default shadow filter */
@@ -282,6 +301,9 @@ JXG.extend(
             if (Type.exists(idAppendix)) {
                 id += idAppendix;
             }
+            if (Type.exists(type)) {
+                id += type;
+            }
             node2 = this.createPrim("marker", id);
 
             node2.setAttributeNS(null, "stroke", Type.evaluate(el.visProp.strokecolor));
@@ -323,7 +345,7 @@ JXG.extend(
             */
             node3 = this.container.ownerDocument.createElementNS(this.svgNamespace, "path");
             h = 5;
-            if (idAppendix === "End") {
+            if (idAppendix === "Start") {
                 // First arrow
                 //type = a.typeFirst;
                 // if (JXG.exists(ev_fa.type)) {
@@ -586,6 +608,7 @@ JXG.extend(
             );
             node.setAttributeNS(null, "stroke-width", Type.evaluate(ticks.visProp.strokewidth));
             this.updatePathPrim(node, tickStr, ticks.board);
+            this.setObjectViewport(ticks);
         },
 
         /* **************************
@@ -679,12 +702,12 @@ JXG.extend(
 
         /**
          * Set color and opacity of internal texts.
-         * SVG needs its own version.
          * @private
          * @see JXG.AbstractRenderer#updateTextStyle
          * @see JXG.AbstractRenderer#updateInternalTextStyle
          */
         updateInternalTextStyle: function (el, strokeColor, strokeOpacity, duration) {
+            this.setObjectViewport(el);
             this.setObjectFillColor(el, strokeColor, strokeOpacity);
         },
 
@@ -843,62 +866,54 @@ JXG.extend(
 
         // Already documented in JXG.AbstractRenderer
         makeArrows: function (el, a) {
-            var node2,
+            var node2, str,
                 ev_fa = a.evFirst,
                 ev_la = a.evLast;
 
-            // Test if the arrow heads already exist
-            if (el.visPropOld.firstarrow === ev_fa && el.visPropOld.lastarrow === ev_la) {
-                if (this.isIE && el.visPropCalc.visible && (ev_fa || ev_la)) {
-                    el.rendNode.parentNode.insertBefore(el.rendNode, el.rendNode);
-                }
+            if (this.isIE && el.visPropCalc.visible && (ev_fa || ev_la)) {
+                el.rendNode.parentNode.insertBefore(el.rendNode, el.rendNode);
                 return;
             }
 
+            // We can not compare against visPropOld if there is need for a new arrow head,
+            // since here visPropOld and ev_fa / ev_la already have the same value.
+            // This has been set in _updateVisual.
+            //
+            node2 = el.rendNodeTriangleStart;
             if (ev_fa) {
-                node2 = el.rendNodeTriangleStart;
-                if (!Type.exists(node2)) {
-                    node2 = this._createArrowHead(el, "End", a.typeFirst);
-                    this.defs.appendChild(node2);
+                str = this.toStr(this.container.id, '_', el.id, 'TriangleStart', a.typeFirst);
+                if (!Type.exists(node2) || node2.id !== str) {
+                    node2 = this.container.ownerDocument.getElementById(str);
+                    // Check if the marker already exists.
+                    // If not, create a new marker
+                    if (node2 === null) {
+                        node2 = this._createArrowHead(el, "Start", a.typeFirst);
+                        this.defs.appendChild(node2);
+                    }
                     el.rendNodeTriangleStart = node2;
-                    el.rendNode.setAttributeNS(
-                        null,
-                        "marker-start",
-                        // "url(#" + this.container.id + "_" + el.id + "TriangleEnd)"
-                        this.toURL(this.container.id, '_', el.id, 'TriangleEnd')
-                    );
-                } else {
-                    this.defs.appendChild(node2);
+                    el.rendNode.setAttributeNS(null, "marker-start", this.toURL(str));
                 }
-            } else {
-                node2 = el.rendNodeTriangleStart;
-                if (Type.exists(node2)) {
-                    this.remove(node2);
-                }
+            } else if (Type.exists(node2)) {
+                this.remove(node2);
             }
+
+            node2 = el.rendNodeTriangleEnd;
             if (ev_la) {
-                node2 = el.rendNodeTriangleEnd;
-                if (!Type.exists(node2)) {
-                    node2 = this._createArrowHead(el, "Start", a.typeLast);
-                    this.defs.appendChild(node2);
+                str = this.toStr(this.container.id, '_', el.id, 'TriangleEnd', a.typeLast);
+                if (!Type.exists(node2) || node2.id !== str) {
+                    node2 = this.container.ownerDocument.getElementById(str);
+                    // Check if the marker already exists.
+                    // If not, create a new marker
+                    if (node2 === null) {
+                        node2 = this._createArrowHead(el, "End", a.typeLast);
+                        this.defs.appendChild(node2);
+                    }
                     el.rendNodeTriangleEnd = node2;
-                    el.rendNode.setAttributeNS(
-                        null,
-                        "marker-end",
-                        // "url(#" + this.container.id + "_" + el.id + "TriangleStart)"
-                        this.toURL(this.container.id, '_', el.id, 'TriangleStart')
-                    );
-                } else {
-                    this.defs.appendChild(node2);
+                    el.rendNode.setAttributeNS(null, "marker-end", this.toURL(str));
                 }
-            } else {
-                node2 = el.rendNodeTriangleEnd;
-                if (Type.exists(node2)) {
-                    this.remove(node2);
-                }
+            } else if (Type.exists(node2)) {
+                this.remove(node2);
             }
-            el.visPropOld.firstarrow = ev_fa;
-            el.visPropOld.lastarrow = ev_la;
         },
 
         // Already documented in JXG.AbstractRenderer
@@ -1010,7 +1025,10 @@ JXG.extend(
                     (scr[1] + size) +
                     " " +
                     scr[2];
-            } else if (type === "<>") {
+            } else if (type === "<>" || type === "<<>>") {
+                if (type === "<<>>") {
+                    size *= 1.41;
+                }
                 s =
                     " M " +
                     (scr[1] - size) +
@@ -1029,8 +1047,8 @@ JXG.extend(
                     " " +
                     (scr[2] - size) +
                     " Z ";
-            } else if (type === "^") {
-                s =
+                } else if (type === "^") {
+                    s =
                     " M " +
                     scr[1] +
                     " " +
@@ -1537,6 +1555,67 @@ JXG.extend(
             el.visPropOld.transitionproperties = props;
         },
 
+        // documented in JXG.AbstractRenderer
+        setObjectViewport: function(el, isHtml) {
+            var val = Type.evaluate(el.visProp.viewport),
+                vp, i,
+                len = 0,
+                bb, bbc, l, t, r, b,
+                nodes = ['rendNode']; //, "rendNodeTriangleStart", "rendNodeTriangleEnd"];
+
+            // Check viewport attribute of the board
+            if (val === 'inherit') {
+                val = Type.evaluate(el.board.attr.viewport);
+            }
+
+            // Required order: top, right, bottom, left
+            if (isHtml) {
+                bb = el.rendNode.getBoundingClientRect();
+                bbc = this.container.getBoundingClientRect();
+                t = parseFloat(val[1]);
+                r = parseFloat(val[2]);
+                b = parseFloat(val[3]);
+                l = parseFloat(val[0]);
+
+                if (Type.isString(val[1]) && val[1].indexOf('%') > 0) {
+                    t = (bbc.height) * t / 100;
+                }
+                if (Type.isString(val[2]) && val[2].indexOf('%') > 0) {
+                    r = (bbc.width) * r / 100;
+                }
+                if (Type.isString(val[3]) && val[3].indexOf('%') > 0) {
+                    b = (bbc.height) * b / 100;
+                }
+                if (Type.isString(val[0]) && val[0].indexOf('%') > 0) {
+                    l = (bbc.width) * l / 100;
+                }
+
+                t = parseFloat(bbc.top) - parseFloat(bb.top) + t;
+                r = parseFloat(bb.right) - parseFloat(bbc.right) + r;
+                b = parseFloat(bb.bottom) - parseFloat(bbc.bottom) + b;
+                l = parseFloat(bbc.left) - parseFloat(bb.left) + l;
+                val = [l, t, r, b];
+            }
+
+            vp = [
+                (typeof val[1] === 'number') ? val[1] + 'px' : val[1],
+                (typeof val[2] === 'number') ? val[2] + 'px' : val[2],
+                (typeof val[3] === 'number') ? val[3] + 'px' : val[3],
+                (typeof val[0] === 'number') ? val[0] + 'px' : val[0]
+            ].join(' ');
+
+            len = nodes.length;
+            for (i = 0; i < len; ++i) {
+                if (el[nodes[i]]) {
+                    if (isHtml) {
+                        el[nodes[i]].style.clipPath = 'inset(' + vp + ')';
+                    } else {
+                        el[nodes[i]].setAttributeNS(null, "clip-path", 'view-box inset(' + vp + ')');
+                    }
+                }
+            }
+        },
+
         /**
          * Call user-defined function to set visual attributes.
          * If "testAttribute" is the empty string, the function
@@ -1789,7 +1868,7 @@ JXG.extend(
             if (Type.exists(el.rendNode)) {
                 if (show) {
                     if (use_board_filter) {
-                        el.rendNode.setAttributeNS(null, 'filter', this.toURL(this.container.id + '_' + 'f1'))
+                        el.rendNode.setAttributeNS(null, 'filter', this.toURL(this.container.id + '_' + 'f1'));
                         // 'url(#' + this.container.id + '_' + 'f1)');
                     } else {
                         node = this.container.ownerDocument.getElementById(id);
@@ -1816,13 +1895,13 @@ JXG.extend(
         // documented in JXG.AbstractRenderer
         suspendRedraw: function () {
             // It seems to be important for the Linux version of firefox
-            //this.suspendHandle = this.svgRoot.suspendRedraw(10000);
+            this.suspendHandle = this.svgRoot.suspendRedraw(10000);
         },
 
         // documented in JXG.AbstractRenderer
         unsuspendRedraw: function () {
-            //this.svgRoot.unsuspendRedraw(this.suspendHandle);
-            //this.svgRoot.unsuspendRedrawAll();
+            this.svgRoot.unsuspendRedraw(this.suspendHandle);
+            // this.svgRoot.unsuspendRedrawAll();
             //this.svgRoot.forceRedraw();
         },
 
@@ -2156,13 +2235,21 @@ JXG.extend(
             }
 
             // Display the SVG string as data-uri in an HTML img.
-            /** {ignore} */
+            /**
+             * @type {Image}
+             * @ignore
+             * {ignore}
+             */
             tmpImg = new Image();
             svg = this.dumpToDataURI(ignoreTexts);
             tmpImg.src = svg;
 
             // Finally, draw the HTML img in the canvas.
             if (!("Promise" in window)) {
+                /**
+                 * @function
+                 * @ignore
+                 */
                 tmpImg.onload = function () {
                     // IE needs a pause...
                     // Seems to be broken
@@ -2261,7 +2348,7 @@ JXG.extend(
                 // Create canvas element and add it to the DOM
                 // It will be removed after the image has been stored.
                 canvas = doc.createElement("canvas");
-                id = Math.random().toString(36).substr(2, 5);
+                id = Math.random().toString(36).slice(2, 7);
                 canvas.setAttribute("id", id);
                 canvas.setAttribute("width", w);
                 canvas.setAttribute("height", h);

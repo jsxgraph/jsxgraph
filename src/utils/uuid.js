@@ -33,7 +33,7 @@ JXG.Util.genUUID = function (prefix) {
 
     prefix = prefix || "";
 
-    if (prefix !== "" && prefix.substr(prefix.length - 1) !== "-") {
+    if (prefix !== "" && prefix.slice(prefix.length - 1) !== "-") {
         prefix = prefix + "-";
     }
 

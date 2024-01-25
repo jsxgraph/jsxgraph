@@ -144,5 +144,25 @@ describe("Test geometry functions", function () {
         expect(i2.Y()).toBeCloseTo(2.046153846150052, 10);
     });
 
+    it("distPointSegment", function () {
+        var d;
+
+        d = JXG.Math.Geometry.distPointSegment([1, 2, 1], [1, -1, 0], [1,  1, 0]);
+        expect(d).toBeCloseTo(1.4142135623730951, 10);
+
+        d = JXG.Math.Geometry.distPointSegment([1, 1, 1], [1, 1, 0], [1,  1, 0]);
+        expect(d).toBeCloseTo(1.0, 10);
+
+        d = JXG.Math.Geometry.distPointSegment([1, 0, 1], [1, -1, 0], [1,  2, 0]);
+        expect(d).toBeCloseTo(1.0, 10);
+
+        d = JXG.Math.Geometry.distPointSegment([1, -1, 0], [1, -1, 0], [1,  2, 0]);
+        expect(d).toBeCloseTo(0.0, 10);
+
+        d = JXG.Math.Geometry.distPointSegment([1, -1, 1], [1, -1, 0], [1,  2, 0]);
+        expect(d).toBeCloseTo(1.0, 10);
+
+    });
+
 
 });

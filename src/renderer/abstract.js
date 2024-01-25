@@ -213,6 +213,7 @@ JXG.extend(
             if (enhanced || this.enhancedRendering) {
                 not = not || {};
 
+                this.setObjectViewport(el);
                 this.setObjectTransition(el);
                 if (!Type.evaluate(el.visProp.draft)) {
                     if (!not.stroke) {
@@ -381,7 +382,7 @@ JXG.extend(
                         size * 2
                     );
                 } else {
-                    // x, +, <>, ^, v, <, >
+                    // x, +, <>, <<>>, ^, v, <, >
                     this.updatePathPrim(
                         el.rendNode,
                         this.updatePathStringPoint(el, size, face),
@@ -529,7 +530,7 @@ JXG.extend(
             // Get information if there are arrow heads and how large they are.
             arrowData = this.getArrowHeadData(el, w, hl);
 
-            // Create the SVG nodes if neccessary
+            // Create the SVG nodes if necessary
             this.makeArrows(el, arrowData);
 
             // Draw the paths with arrow heads
@@ -1136,8 +1137,8 @@ JXG.extend(
             var content = el.plaintext,
                 v, c,
                 parentNode, node,
-                scale, vshift,
-                id, wrap_id,
+                // scale, vshift,
+                // id, wrap_id,
                 ax, ay, angle, co, si,
                 to_h, to_v;
 
@@ -1470,6 +1471,7 @@ JXG.extend(
 
             this.setObjectTransition(el);
             if (display === "html" && this.type !== "no") {
+                this.setObjectViewport(el, true);
                 // Set new CSS class
                 if (el.visPropOld.cssclass !== css) {
                     el.rendNode.className = css;
@@ -1761,7 +1763,7 @@ JXG.extend(
          * @param {Number} size A positive number describing the size. Usually the half of the width and height of
          * the drawn point.
          * @param {String} type A string describing the point's face. This method only accepts the shortcut version of
-         * each possible face: <tt>x, +, |, -, [], <>, ^, v, >, < </tt>
+         * each possible face: <tt>x, +, |, -, [], <>, <<>>,^, v, >, < </tt>
          */
         updatePathStringPoint: function (element, size, type) {
             /* stub */
@@ -1904,7 +1906,8 @@ JXG.extend(
             var draftColor = el.board.options.elements.draft.color,
                 draftOpacity = el.board.options.elements.draft.opacity;
 
-            this.setObjectTransition(el);
+                this.setObjectViewport(el);
+                this.setObjectTransition(el);
             if (el.type === Const.OBJECT_TYPE_POLYGON) {
                 this.setObjectFillColor(el, draftColor, draftOpacity);
             } else {
@@ -1923,6 +1926,7 @@ JXG.extend(
          * @param {JXG.GeometryElement} el Reference of the object that no longer is in draft mode.
          */
         removeDraft: function (el) {
+            this.setObjectViewport(el);
             this.setObjectTransition(el);
             if (el.type === Const.OBJECT_TYPE_POLYGON) {
                 this.setObjectFillColor(el, el.visProp.fillcolor, el.visProp.fillopacity);
@@ -1960,6 +1964,15 @@ JXG.extend(
          *        element.visProp.transitionDuration is taken. This is the default.
          */
         setObjectTransition: function (element, duration) {
+            /* stub */
+        },
+
+        /**
+         *
+         * @param {*} element
+         * @param {*} isHTML
+         */
+        setObjectViewport: function (element, isHTML) {
             /* stub */
         },
 
@@ -2019,6 +2032,7 @@ JXG.extend(
                 ev = el.visProp,
                 sw;
 
+            this.setObjectViewport(el);
             this.setObjectTransition(el);
             if (!ev.draft) {
                 if (el.type === Const.OBJECT_TYPE_POLYGON) {
@@ -2093,6 +2107,7 @@ JXG.extend(
                 ev = el.visProp,
                 sw;
 
+            this.setObjectViewport(el);
             this.setObjectTransition(el);
             if (!Type.evaluate(el.visProp.draft)) {
                 if (el.type === Const.OBJECT_TYPE_POLYGON) {
@@ -2182,10 +2197,10 @@ JXG.extend(
                         e.cancelBubble = true;
                     }
                 },
-                createButton = function (label, handler, id) {
+                createButton = function (label, handler, board_id, type) {
                     var button;
 
-                    id = id || "";
+                    board_id = board_id || "";
 
                     button = doc.createElement("span");
                     button.innerHTML = label; // button.appendChild(doc.createTextNode(label));
@@ -2197,10 +2212,11 @@ JXG.extend(
                     if (button.classList !== undefined) {
                         // classList not available in IE 9
                         button.classList.add("JXG_navigation_button");
+                        button.classList.add("JXG_navigation_button_" + type);
                     }
                     // button.setAttribute('tabindex', 0);
 
-                    button.setAttribute("id", id);
+                    button.setAttribute("id", board_id + '_navigation_' + type);
                     node.appendChild(button);
 
                     Env.addEvent(
@@ -2252,7 +2268,7 @@ JXG.extend(
                         function () {
                             board.toFullscreen(board.attr.fullscreen.id);
                         },
-                        board.container + "_navigation_fullscreen"
+                        board.container, "fullscreen"
                     );
                 }
 
@@ -2264,7 +2280,7 @@ JXG.extend(
                                 board.renderer.screenshot(board, "", false);
                             }, 330);
                         },
-                        board.container + "_navigation_screenshot"
+                        board.container, "screenshot"
                     );
                 }
 
@@ -2277,51 +2293,30 @@ JXG.extend(
                         function () {
                             board.reload();
                         },
-                        board.container + "_navigation_reload"
+                        board.container, "reload"
                     );
                 }
 
                 if (board.attr.showcleartraces) {
                     // clear traces symbol (otimes): \u27F2
-                    createButton(
-                        "\u2297",
+                    createButton("\u2297",
                         function () {
                             board.clearTraces();
                         },
-                        board.container + "_navigation_cleartraces"
+                        board.container, "cleartraces"
                     );
                 }
 
                 if (board.attr.shownavigation) {
                     if (board.attr.showzoom) {
-                        createButton(
-                            "\u2013",
-                            board.zoomOut,
-                            board.container + "_navigation_out"
-                        );
-                        createButton("o", board.zoom100, board.container + "_navigation_100");
-                        createButton("+", board.zoomIn, board.container + "_navigation_in");
+                        createButton("\u2013", board.zoomOut, board.container, "out");
+                        createButton("o", board.zoom100, board.container, "100");
+                        createButton("+", board.zoomIn, board.container, "in");
                     }
-                    createButton(
-                        "\u2190",
-                        board.clickLeftArrow,
-                        board.container + "_navigation_left"
-                    );
-                    createButton(
-                        "\u2193",
-                        board.clickUpArrow,
-                        board.container + "_navigation_down"
-                    ); // Down arrow
-                    createButton(
-                        "\u2191",
-                        board.clickDownArrow,
-                        board.container + "_navigation_up"
-                    ); // Up arrow
-                    createButton(
-                        "\u2192",
-                        board.clickRightArrow,
-                        board.container + "_navigation_right"
-                    );
+                    createButton("\u2190", board.clickLeftArrow, board.container, "left");
+                    createButton("\u2193", board.clickUpArrow, board.container, "down"); // Down arrow
+                    createButton("\u2191", board.clickDownArrow, board.container, "up"); // Up arrow
+                    createButton("\u2192", board.clickRightArrow, board.container, "right");
                 }
             }
         },

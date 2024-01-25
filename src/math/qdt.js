@@ -37,12 +37,13 @@ import Geometry from "./geometry";
 import Type from "../utils/type";
 
 /**
- * Instantiate a new quad tree.
+ * Instantiate a new quadtree.
  *
  * @name JXG.Math.Quadtree
  * @exports Mat.Quadtree as JXG.Math.Quadtree
  * @param {Array} bbox Bounding box of the new quad (sub)tree.
  * @param {Object} config Configuration object. Default value: to {capacity: 10}
+ * @param {Object} [parent] Parent object or null if root.
  *
  * @constructor
  */
@@ -52,10 +53,17 @@ Mat.Quadtree = function (bbox, config, parent) {
         pointType: 'coords'
     };
 
+    /**
+     * Configuration object for quadtree.
+     *
+     * @name JXG.Math.Quadtree.config
+     * @type Object
+     */
     this.config = {};
     /**
-     * The maximum number of points stored in a quad tree node
+     * The maximum number of points stored in a quadtree node
      * before it is subdivided.
+     * @name JXG.Math.Quadtree.config#capacity
      * @type Number
      * @default 10
      */
@@ -64,6 +72,7 @@ Mat.Quadtree = function (bbox, config, parent) {
     /**
      * Type of a point object. Possible values are:
      * 'coords', 'object'.
+     * @name JXG.Math.Quadtree.config#pointType
      * @type String
      * @default 'coords'
      */
@@ -75,13 +84,14 @@ Mat.Quadtree = function (bbox, config, parent) {
      * @type Array
      */
     this.points = [];
+
     this.xlb = bbox[0];
     this.xub = bbox[2];
     this.ylb = bbox[3];
     this.yub = bbox[1];
 
     /**
-     * Parent quad tree or null if there is not parent.
+     * Parent quadtree or null if there is not parent.
      *
      * @name JXG.Math.Quadtree#parent
      * @type JXG.Math.Quadtree
@@ -90,28 +100,28 @@ Mat.Quadtree = function (bbox, config, parent) {
     this.parent = parent || null;
 
     /**
-     * In a subdivided quad tree this represents the top left subtree.
+     * In a subdivided quadtree this represents the top left subtree.
      * @name JXG.Math.Quadtree#northWest
      * @type JXG.Math.Quadtree
      */
     this.northWest = null;
 
     /**
-     * In a subdivided quad tree this represents the top right subtree.
+     * In a subdivided quadtree this represents the top right subtree.
      * @name JXG.Math.Quadtree#northEast
      * @type JXG.Math.Quadtree
      */
     this.northEast = null;
 
     /**
-     * In a subdivided quad tree this represents the bottom right subtree.
+     * In a subdivided quadtree this represents the bottom right subtree.
      * @name JXG.Math.Quadtree#southEast
      * @type JXG.Math.Quadtree
      */
     this.southEast = null;
 
     /**
-     * In a subdivided quad tree this represents the bottom left subtree.
+     * In a subdivided quadtree this represents the bottom left subtree.
      * @name JXG.Math.Quadtree#southWest
      * @type JXG.Math.Quadtree
      */
@@ -123,7 +133,10 @@ Type.extend(
     Mat.Quadtree.prototype,
     /** @lends JXG.Math.Quadtree.prototype */ {
         /**
-         * Checks if the given coordinates are inside the quad tree.
+         * Checks if the given coordinates are inside of the boundaries of the quadtree.
+         * The quadtree is open to the left and botton and closed to
+         * right and top.
+         *
          * @param {Number} x
          * @param {Number} y
          * @returns {Boolean}
@@ -133,11 +146,11 @@ Type.extend(
         },
 
         /**
-         * Insert a new point into this quad tree. Do this only,
-         * if the point is not yet in the quadtree (test exactly).
+         * Insert a new point into this quadtree if it is inside of
+         * the quadtree's boundaries.
          *
          * @param {JXG.Coords} p
-         * @returns {Boolean}
+         * @returns {Boolean} true if insert succeeded, false otherwise.
          */
         insert: function (p) {
             switch (this.config.pointType) {
@@ -153,11 +166,12 @@ Type.extend(
                     break;
             }
 
-            if (this.points.length < this.config.capacity) {
+            if (this.points.length < this.config.capacity && this.northWest === null) {
                 this.points.push(p);
                 return true;
             }
 
+            // At this point the point has to be inserted into a subtree.
             if (this.northWest === null) {
                 this.subdivide();
             }
@@ -178,26 +192,24 @@ Type.extend(
         },
 
         /**
-         * Subdivide the quad tree.
+         * Subdivide the quadtree.
          */
         subdivide: function () {
-            var i,
-                le = this.points.length,
-                mx = this.xlb + (this.xub - this.xlb) * 0.5,
-                my = this.ylb + (this.yub - this.ylb) * 0.5;
+            var // i, le,
+                cx = this.xlb + (this.xub - this.xlb) * 0.5,
+                cy = this.ylb + (this.yub - this.ylb) * 0.5;
 
-            this.northWest = new Mat.Quadtree([this.xlb, this.yub, mx, my], this.config, this);
-            this.northEast = new Mat.Quadtree([mx, this.yub, this.xub, my], this.config, this);
-            this.southEast = new Mat.Quadtree([this.xlb, my, mx, this.ylb], this.config, this);
-            this.southWest = new Mat.Quadtree([mx, my, this.xub, this.ylb], this.config, this);
+            this.northWest = new Mat.Quadtree([this.xlb, this.yub, cx, cy], this.config, this);
+            this.northEast = new Mat.Quadtree([cx, this.yub, this.xub, cy], this.config, this);
+            this.southEast = new Mat.Quadtree([this.xlb, cy, cx, this.ylb], this.config, this);
+            this.southWest = new Mat.Quadtree([cx, cy, this.xub, this.ylb], this.config, this);
 
-            for (i = 0; i < le; i += 1) {
-                this.insert(this.points[i]);
-            }
-
-            // We empty this node points
-            this.points.length = 0;
-            this.points = [];
+            // for (i = 0; i < le; i++) {
+            //     if (this.northWest.insert(this.points[i])) { continue; }
+            //     if (this.northEast.insert(this.points[i])) { continue; }
+            //     if (this.southEast.insert(this.points[i])) { continue; }
+            //     this.southWest.insert(this.points[i]);
+            // }
         },
 
         /**
@@ -205,9 +217,9 @@ Type.extend(
          * @name JXG.Math.Quadtree#_query
          * @param {Number} x
          * @param {Number} y
-         * @returns {Boolean|JXG.Quadtree} The quad tree if the point is found, false
-         * if none of the quad trees contains the point (i.e. the point is not inside
-         * the root tree's AABB).
+         * @returns {Boolean|JXG.Quadtree} The quadtree if the point is found, false
+         * if none of the quadtrees contains the point (i.e. the point is not inside
+         * the root tree's AABB,i.e. axis-aligned bounding box).
          * @private
          */
         _query: function (x, y) {
@@ -247,9 +259,9 @@ Type.extend(
          * @name JXG.Math.Quadtree#query
          * @param {JXG.Coords|Number} xp
          * @param {Number} y
-         * @returns {Boolean|JXG.Quadtree} The quad tree if the point is found, false
-         * if none of the quad trees contains the point (i.e. the point is not inside
-         * the root tree's AABB).
+         * @returns {Boolean|JXG.Quadtree} The quadtree if the point is found, false
+         * if none of the quadtrees contains the point (i.e. the point is not inside
+         * the root tree's AABB (Axis-Aligned Bounding Box)).
          */
         query: function (xp, y) {
             var _x, _y;
@@ -266,13 +278,14 @@ Type.extend(
         },
 
         /**
-         *
-         * @param {*} x
-         * @param {*} y
-         * @param {*} tol
+         * Check if the quadtree has a point which is inside of a sphere of
+         * radius tol around [x, y].
+         * @param {Number} x
+         * @param {Number} y
+         * @param {Number} tol
          * @returns {Boolean}
          */
-        isIn: function (x, y, tol) {
+        hasPoint: function (x, y, tol) {
             var r, i, le;
 
             if (this.contains(x, y)) {
@@ -300,22 +313,22 @@ Type.extend(
                     return false;
                 }
 
-                r = this.northWest.isIn(x, y, tol);
+                r = this.northWest.hasPoint(x, y, tol);
                 if (r) {
                     return r;
                 }
 
-                r = this.northEast.isIn(x, y, tol);
+                r = this.northEast.hasPoint(x, y, tol);
                 if (r) {
                     return r;
                 }
 
-                r = this.southEast.isIn(x, y, tol);
+                r = this.southEast.hasPoint(x, y, tol);
                 if (r) {
                     return r;
                 }
 
-                r = this.southWest.isIn(x, y, tol);
+                r = this.southWest.hasPoint(x, y, tol);
                 if (r) {
                     return r;
                 }
@@ -340,8 +353,9 @@ Type.extend(
          * @private
          */
         getAllPointsRecursive(pointsList) {
+            Array.prototype.push.apply(pointsList, this.points.slice());
+
             if (this.northWest === null) {
-                Array.prototype.push.apply(pointsList, this.points.slice());
                 return;
             }
 

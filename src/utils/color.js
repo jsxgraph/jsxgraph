@@ -291,7 +291,7 @@ JXG.rgbParser = function (color, ag, ab) {
     // strip any leading #
     if (color_string.charAt(0) === "#") {
         // remove # if any
-        color_string = color_string.substr(1, 6);
+        color_string = color_string.slice(1, 7);
     }
 
     color_string = color_string.replace(/ /g, "").toLowerCase();
@@ -660,8 +660,8 @@ JXG.rgba2rgbo = function (rgba) {
     var opacity;
 
     if (rgba.length === 9 && rgba.charAt(0) === "#") {
-        opacity = parseInt(rgba.substr(7, 2).toUpperCase(), 16) / 255;
-        rgba = rgba.substr(0, 7);
+        opacity = parseInt(rgba.slice(7, 9).toUpperCase(), 16) / 255;
+        rgba = rgba.slice(0, 7);
     } else {
         opacity = 1;
     }

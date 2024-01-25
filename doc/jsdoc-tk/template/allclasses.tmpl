@@ -37,7 +37,7 @@
       var val, c,
         cookieList = document.cookie.split('; ');
 
-    console.log(document.cookie);
+     // console.log(document.cookie);
       for(c = 0; c < cookieList.length; c++) {
         if(cookieList[c].indexOf(id.toLowerCase() + 'open') != -1) {
           val = cookieList[c].split('=')[1];

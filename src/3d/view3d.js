@@ -118,6 +118,8 @@ JXG.View3D = function (board, parents, attributes) {
      */
     this.r = -1;
 
+    this.projectionType = 'parallel';
+
     this.timeoutAzimuth = null;
 
     this.id = this.board.setId(this, "V");
@@ -237,11 +239,105 @@ JXG.extend(
         return s;
     },
 
+    updateParallelProjection: function () {
+        var r, a, e, f,
+            mat = [
+                [1, 0, 0, 0],
+                [0, 1, 0, 0],
+                [0, 0, 1, 0]
+            ];
+
+        // mat projects homogeneous 3D coords in View3D
+        // to homogeneous 2D coordinates in the board
+        e = this.el_slide.Value();
+        r = this.r;
+        a = this.az_slide.Value();
+        f = r * Math.sin(e);
+
+        mat[1][1] = r * Math.cos(a);
+        mat[1][2] = -r * Math.sin(a);
+        mat[2][1] = f * Math.sin(a);
+        mat[2][2] = f * Math.cos(a);
+        mat[2][3] = Math.cos(e);
+
+        return mat;
+    },
+
+    updateCentralProjection: function () {
+        var r, e, a,
+            az, ax, ay, v, nrm,
+            // See https://www.mathematik.uni-marburg.de/~thormae/lectures/graphics1/graphics_6_1_eng_web.html
+            // bbox3D is always at the world origin, i.e. T_obj is the unit matrix.
+            // All vectors contain affine coordinates and have length 3
+            // The matrices are of size 4x4.
+            Tcam1, // The inverse camera transformation
+            eye, d,
+            foc = 1 / Math.tan(0.5 * Math.PI / 2),
+            zf = 20,
+            zn = 8,
+            Pref = [
+                0.5 * (this.bbox3D[0][0] + this.bbox3D[0][1]),
+                0.5 * (this.bbox3D[0][0] + this.bbox3D[0][1]),
+                0.5 * (this.bbox3D[0][0] + this.bbox3D[0][1])
+            ],
+            up = [0, 0, 1],
+            A = [
+                [0, 0, 0, -1],
+                [0, foc, 0, 0],
+                [0, 0, foc, 0],
+                [2 * zf * zn / (zn - zf), 0, 0, (zf + zn) / (zn - zf)]
+            ];
+
+        a = this.az_slide.Value();
+        e = this.el_slide.Value() * 2;
+        // r = this.r;
+
+        // Sphere
+        r = 12;
+        a += 3 * Math.PI * 0.5;
+        eye = [
+            r * Math.cos(a) * Math.cos(e),
+            -r * Math.sin(a) * Math.cos(e),
+            r * Math.sin(e)
+        ];
+
+        // Circle
+        // r = 8;
+        // // up = [0, Math.cos(e), Math.sin(e)];
+        // up = [0, 0, 1];
+        // eye = [
+        //     -r * Math.cos(a),
+        //     -r * Math.sin(a),
+        //     1. * r
+        // ];
+
+        d = [eye[0] - Pref[0], eye[1] - Pref[1], eye[2] - Pref[2]];
+        nrm = Mat.norm(d, 3);
+        az = [d[0] / nrm, d[1] / nrm, d[2] / nrm];
+
+        nrm = Mat.norm(up, 3);
+        v = [up[0] / nrm, up[1] / nrm, up[2] / nrm];
+
+        ax = Mat.crossProduct(v, az);
+        ay = Mat.crossProduct(az, ax);
+
+        v = Mat.matVecMult([ax, ay, az], eye);
+        Tcam1 = [
+            [1, 0, 0, 0],
+            [-v[0], ax[0], ax[1], ax[2]],
+            [-v[1], ay[0], ay[1], ay[2]],
+            [-v[2], az[0], az[1], az[2]]
+        ];
+        A = Mat.matMatMult(A, Tcam1);
+
+        return A;
+    },
+
     update: function () {
         // Update 3D-to-2D transformation matrix with the actual
         // elevation and azimuth angles.
 
-        var e, r, a, f, mat, shift;
+        var mat2D, shift, size;
 
         if (
             !Type.exists(this.el_slide) ||
@@ -251,52 +347,53 @@ JXG.extend(
             return this;
         }
 
-        e = this.el_slide.Value();
-        r = this.r;
-        a = this.az_slide.Value();
-        f = r * Math.sin(e);
-        mat = [
+        mat2D = [
             [1, 0, 0],
             [0, 1, 0],
             [0, 0, 1]
         ];
 
-        // Rotate the scenery around the center of the box,
-        // not around the origin
-        shift = [
-            [1, 0, 0, 0],
-            [-0.5 * (this.bbox3D[0][0] + this.bbox3D[0][1]), 1, 0, 0],
-            [-0.5 * (this.bbox3D[1][0] + this.bbox3D[1][1]), 0, 1, 0],
-            [-0.5 * (this.bbox3D[2][0] + this.bbox3D[2][1]), 0, 0, 1]
-        ];
+        this.projectionType = Type.evaluate(this.visProp.projection);
 
-        // matrix3D projects homogeneous 3D coords in the View3D
-        // to homogeneous 2D coordinates in the board
-        this.matrix3D = [
-            [1, 0, 0, 0],
-            [0, 1, 0, 0],
-            [0, 0, 1, 0]
-        ];
+        if (this.projectionType === 'parallel') {
+            // Parallel projection
+            // Rotate the scenery around the center of the box,
+            // not around the origin
+            shift = [
+                [1, 0, 0, 0],
+                [-0.5 * (this.bbox3D[0][0] + this.bbox3D[0][1]), 1, 0, 0],
+                [-0.5 * (this.bbox3D[1][0] + this.bbox3D[1][1]), 0, 1, 0],
+                [-0.5 * (this.bbox3D[2][0] + this.bbox3D[2][1]), 0, 0, 1]
+            ];
 
-        this.matrix3D[1][1] = r * Math.cos(a);
-        this.matrix3D[1][2] = -r * Math.sin(a);
-        this.matrix3D[2][1] = f * Math.sin(a);
-        this.matrix3D[2][2] = f * Math.cos(a);
-        this.matrix3D[2][3] = Math.cos(e);
+            // Add a second transformation to scale and shift the projection
+            // on the board, usually called viewport.
+            mat2D[1][1] = this.size[0] / (this.bbox3D[0][1] - this.bbox3D[0][0]); // w / d_x
+            mat2D[2][2] = this.size[1] / (this.bbox3D[1][1] - this.bbox3D[1][0]); // h / d_y
+            mat2D[1][0] = this.llftCorner[0] + mat2D[1][1] * 0.5 * (this.bbox3D[0][1] - this.bbox3D[0][0]); // llft_x
+            mat2D[2][0] = this.llftCorner[1] + mat2D[2][2] * 0.5 * (this.bbox3D[1][1] - this.bbox3D[1][0]); // llft_y
 
-        // Add a second transformation to scale and shift the projection
-        // on the board
-        mat[1][1] = this.size[0] / (this.bbox3D[0][1] - this.bbox3D[0][0]); // w / d_x
-        mat[2][2] = this.size[1] / (this.bbox3D[1][1] - this.bbox3D[1][0]); // h / d_y
-        mat[1][0] = this.llftCorner[0] + mat[1][1] * 0.5 * (this.bbox3D[0][1] - this.bbox3D[0][0]); // llft_x
-        mat[2][0] = this.llftCorner[1] + mat[2][2] * 0.5 * (this.bbox3D[1][1] - this.bbox3D[1][0]); // llft_y
+            // this.matrix3D is a 3x4 matrix
+            this.matrix3D = this.updateParallelProjection();
+            // Combine the projections
+            this.matrix3D = Mat.matMatMult(mat2D, Mat.matMatMult(this.matrix3D, shift));
 
-        // Combine the two projections
-        this.matrix3D = Mat.matMatMult(mat,
-            // Mat.matMatMult(shift2,
-            Mat.matMatMult(this.matrix3D, shift)
-            //)
-        );
+        } else {
+            // Central projection
+            // this.matrix3D is a 4x4 matrix
+            this.matrix3D = this.updateCentralProjection();
+
+            size = 0.4;
+            mat2D[1][1] = this.size[0] / (2 * size); // w / d_x
+            mat2D[2][2] = this.size[1] / (2 * size); // h / d_y
+            mat2D[1][0] = this.llftCorner[0] + mat2D[1][1] * 0.5 * (2 * size); // llft_x
+            mat2D[2][0] = this.llftCorner[1] + mat2D[2][2] * 0.5 * (2 * size); // llft_y
+
+            // The transformations this.matrix3D and mat2D can not be combined yet, since
+            // the projected vector has to be normalized in between in
+            // project3DTo2D
+            this.viewPortTransform = mat2D;
+        }
 
         return this;
     },
@@ -356,7 +453,7 @@ JXG.extend(
      * in homogeneous user coordinates.
      */
     project3DTo2D: function (x, y, z) {
-        var vec;
+        var vec, w;
         if (arguments.length === 3) {
             vec = [1, x, y, z];
         } else {
@@ -367,11 +464,24 @@ JXG.extend(
                 vec = x;
             }
         }
-        return Mat.matVecMult(this.matrix3D, vec);
+
+        w = Mat.matVecMult(this.matrix3D, vec);
+
+        if (this.projectionType === 'parallel') {
+            return w;
+        }
+
+        // Central projection
+        w[1] /= w[0];
+        w[2] /= w[0];
+        w[3] /= w[0];
+        w[0] /= w[0];
+
+        return Mat.matVecMult(this.viewPortTransform, w.slice(0, 3));
     },
 
     /**
-     * Project a 2D coordinate to the plane defined by the point foot
+     * Project a 2D coordinate to the plane defined by point "foot"
      * and the normal vector `normal`.
      *
      * @param  {JXG.Point} point2d
@@ -381,10 +491,7 @@ JXG.extend(
      * point in homogeneous coordinates.
      */
     project2DTo3DPlane: function (point2d, normal, foot) {
-        var mat,
-            rhs,
-            d,
-            le,
+        var mat, rhs, d, le,
             n = normal.slice(1),
             sol = [1, 0, 0, 0];
 
@@ -835,9 +942,9 @@ JXG.createView3D = function (board, parents, attributes) {
             infobox = view.board.infobox;
             if (d === 'auto') {
                 if (infobox.useLocale()) {
-                    arr = [pre, '(', infobox.formatNumberLocale(p.X()), ' | ', infobox.formatNumberLocale(p.Y()), ' | ', infobox.formatNumberLocale(p.Z()), ')']
+                    arr = [pre, '(', infobox.formatNumberLocale(p.X()), ' | ', infobox.formatNumberLocale(p.Y()), ' | ', infobox.formatNumberLocale(p.Z()), ')'];
                 } else {
-                    arr = [pre, '(', Type.autoDigits(p.X()), ' | ', Type.autoDigits(p.Y()), ' | ', Type.autoDigits(p.Z()), ')']
+                    arr = [pre, '(', Type.autoDigits(p.X()), ' | ', Type.autoDigits(p.Y()), ' | ', Type.autoDigits(p.Z()), ')'];
                 }
 
             } else {

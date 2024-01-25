@@ -162,7 +162,7 @@ import Point from "../base/point";
  */
 JXG.createSlider = function (board, parents, attributes) {
     var pos0, pos1,
-        smin, start, smax, sdiff,
+        smin, start, smax, diff,
         p1, p2, p3, l1, l2,
         ticks, ti, t,
         startx, starty,
@@ -199,7 +199,7 @@ JXG.createSlider = function (board, parents, attributes) {
     smin = parents[2][0];
     start = parents[2][1];
     smax = parents[2][2];
-    sdiff = smax - smin;
+    diff = smax - smin;
 
     sw = Type.evaluate(snapWidth);
     s = sw === -1 ? start : Math.round(start / sw) * sw;
@@ -227,23 +227,23 @@ JXG.createSlider = function (board, parents, attributes) {
      * @returns {Number}
      */
     p3.Value = function () {
-        var sdiff = this._smax - this._smin,
-            ev_sw = Type.evaluate(this.visProp.snapwidth),
-            snapValues, i, v;
+        var d = this._smax - this._smin,
+            ev_sw = Type.evaluate(this.visProp.snapwidth);
+            // snapValues, i, v;
 
-        snapValues = Type.evaluate(this.visProp.snapvalues);
-        if (Type.isArray(snapValues)) {
-            for (i=0; i < snapValues.length; i++) {
-                v = (snapValues[i] - this._smin) / (this._smax - this._smin);
-                if(this.position === v) {
-                    return snapValues[i];
-                }
-            }
-        }
+        // snapValues = Type.evaluate(this.visProp.snapvalues);
+        // if (Type.isArray(snapValues)) {
+        //     for (i = 0; i < snapValues.length; i++) {
+        //         v = (snapValues[i] - this._smin) / (this._smax - this._smin);
+        //         if (this.position === v) {
+        //             return snapValues[i];
+        //         }
+        //     }
+        // }
 
         return ev_sw === -1
-            ? this.position * sdiff + this._smin
-            : Math.round((this.position * sdiff + this._smin) / ev_sw) * ev_sw;
+            ? this.position * d + this._smin
+            : Math.round((this.position * d + this._smin) / ev_sw) * ev_sw;
     };
 
     p3.methodMap = Type.deepCopy(p3.methodMap, {
@@ -294,10 +294,10 @@ JXG.createSlider = function (board, parents, attributes) {
      * @returns {Object} this object
      */
     p3.setValue = function (val) {
-        var sdiff = this._smax - this._smin;
+        var d = this._smax - this._smin;
 
-        if (Math.abs(sdiff) > Mat.eps) {
-            this.position = (val - this._smin) / sdiff;
+        if (Math.abs(d) > Mat.eps) {
+            this.position = (val - this._smin) / d;
         } else {
             this.position = 0.0; //this._smin;
         }
@@ -447,7 +447,7 @@ JXG.createSlider = function (board, parents, attributes) {
                         return 0;
                     }
 
-                    return (d / dFull) * sdiff + smin;
+                    return (d / dFull) * diff + smin;
                 }
             ],
             attr

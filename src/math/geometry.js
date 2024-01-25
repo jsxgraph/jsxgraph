@@ -1534,8 +1534,7 @@ JXG.extend(
                         has = true,
                         first,
                         last,
-                        r,
-                        dx;
+                        r;
 
                     if (Type.evaluate(alwaysintersect)) {
                         return res;
@@ -2617,10 +2616,8 @@ JXG.extend(
                 blue = tmp;
             }
 
-            lenBlue = blue.numberPoints;
-            lenRed = red.numberPoints;
-            lenBlue -= blue.bezierDegree;
-            lenRed -= red.bezierDegree;
+            lenBlue = blue.numberPoints - blue.bezierDegree;
+            lenRed = red.numberPoints - red.bezierDegree;
 
             // For sectors, we ignore the "legs"
             if (red.type === Const.OBJECT_TYPE_SECTOR) {
@@ -2794,8 +2791,7 @@ JXG.extend(
                 ay = p1[2] - y;
                 bx = p4[1] - x;
                 by = p4[2] - y;
-
-                d = Math.sqrt((ax + bx) * (ax + bx) + (ay + by) * (ay + by));
+                d = Mat.hypot(ax + bx, ay + by);
 
                 if (Math.abs(by - ay) > Mat.eps) {
                     k = ((((ax + bx) * (r / d - 0.5)) / (by - ay)) * 8) / 3;
@@ -3322,6 +3318,51 @@ JXG.extend(
             b *= b;
 
             return Math.abs(nom) / Math.sqrt(a + b);
+        },
+
+        /**
+         * Determine the (Euclidean) distance between a point q and a line segment
+         * defined by two points p1 and p2. In case p1 equals p2, the distance to this
+         * point is returned.
+         *
+         * @param {Array} q Homogeneous coordinates of q
+         * @param {Array} p1 Homogeneous coordinates of p1
+         * @param {Array} p2 Homogeneous coordinates of p2
+         * @returns {Number} Distance of q to line segment [p1, p2]
+         */
+        distPointSegment: function (q, p1, p2) {
+            var x, y, dx, dy,
+                den, lbda,
+                eps = Mat.eps * Mat.eps,
+                huge = 1000000;
+
+            // Difference q - p1
+            x = q[1] - p1[1];
+            y = q[2] - p1[2];
+            x = (x === Infinity) ? huge : (x === -Infinity) ? -huge : x;
+            y = (y === Infinity) ? huge : (y === -Infinity) ? -huge : y;
+
+            // Difference p2 - p1
+            dx = p2[1] - p1[1];
+            dy = p2[2] - p1[2];
+            dx = (dx === Infinity) ? huge : (dx === -Infinity) ? -huge : dx;
+            dy = (dy === Infinity) ? huge : (dy === -Infinity) ? -huge : dy;
+
+            // If den==0 then p1 and p2 are identical
+            // In this case the distance to p1 is returned
+            den = dx * dx + dy * dy;
+            if (den > eps) {
+                lbda = (x * dx + y * dy) / den;
+                if (lbda < 0.0) {
+                    lbda = 0.0;
+                } else if (lbda > 1.0) {
+                    lbda = 1.0;
+                }
+                x -= lbda * dx;
+                y -= lbda * dy;
+            }
+
+            return Mat.hypot(x, y);
         },
 
         /**

@@ -78,16 +78,17 @@ JXG.Server = {
      * @param {Boolean} sync If the call should be synchronous or not.
      */
     callServer: function (action, callback, data, sync) {
-        var fileurl, passdata, AJAX, params, id, dataJSONStr, k;
+        var fileurl, passdata, AJAX,// params, k,
+            id, dataJSONStr;
 
         sync = sync || false;
 
-        params = "";
-        for (k in data) {
-            if (data.hasOwnProperty(k)) {
-                params += "&" + escape(k) + "=" + escape(data[k]);
-            }
-        }
+        // params = "";
+        // for (k in data) {
+        //     if (data.hasOwnProperty(k)) {
+        //         params += "&" + escape(k) + "=" + escape(data[k]);
+        //     }
+        // }
 
         dataJSONStr = Type.toJSON(data);
 

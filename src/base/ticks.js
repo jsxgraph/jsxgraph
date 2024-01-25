@@ -368,8 +368,8 @@ JXG.extend(
             if (Type.evaluate(this.visProp.type) === "polar") {
                 bb = this.board.getBoundingBox();
                 r_max = Math.max(
-                    Math.sqrt(bb[0] * bb[0] + bb[1] * bb[1]),
-                    Math.sqrt(bb[2] * bb[2] + bb[3] * bb[3])
+                    Mat.hypot(bb[0], bb[1]),
+                    Mat.hypot(bb[2], bb[3])
                 );
                 b.upper = r_max;
             }
@@ -437,10 +437,7 @@ JXG.extend(
             this.dy = this.dyMaj;
 
             // After this, the length of the vector (dxMaj, dyMaj) in screen coordinates is equal to distMaj pixel.
-            d = Math.sqrt(
-                this.dxMaj * this.dxMaj * this.board.unitX * this.board.unitX +
-                this.dyMaj * this.dyMaj * this.board.unitY * this.board.unitY
-            );
+            d = Mat.hypot(this.dxMaj * this.board.unitX, this.dyMaj * this.board.unitY);
             this.dxMaj *= (distMaj / d) * this.board.unitX;
             this.dyMaj *= (distMaj / d) * this.board.unitY;
             this.dxMin *= (distMin / d) * this.board.unitX;
@@ -735,9 +732,9 @@ JXG.extend(
             var tickPosition,
                 eps = Mat.eps,
                 deltas, ticksDelta,
-                ev_mia = Type.evaluate(this.visProp.minorticksinarrow),
-                ev_maa = Type.evaluate(this.visProp.minorticksinarrow),
-                ev_mla = Type.evaluate(this.visProp.minorticksinarrow),
+                // ev_mia = Type.evaluate(this.visProp.minorticksinarrow),
+                // ev_maa = Type.evaluate(this.visProp.minorticksinarrow),
+                // ev_mla = Type.evaluate(this.visProp.minorticksinarrow),
                 ev_mt = Type.evaluate(this.visProp.minorticks);
 
             // Determine a proposed distance between major ticks in user units
@@ -838,7 +835,7 @@ JXG.extend(
                 d = this.getXandYdeltas();
                 d.x *= this.board.unitX;
                 d.y *= this.board.unitY;
-                minDist /= Math.sqrt(d.x * d.x + d.y * d.y);
+                minDist /= Mat.hypot(d.x, d.y);
                 minDist *= (ev_minti + 1);
 
                 // Determine minimal delta to fulfill the minTicksDistance constraint
@@ -1179,10 +1176,10 @@ JXG.extend(
 
                 // usrCoords: Test if 'circle' is inside of the canvas
                 c = coords.usrCoords;
-                r = Math.sqrt(c[1] * c[1] + c[2] * c[2]);
+                r = Mat.hypot(c[1], c[2]);
                 r_max = Math.max(
-                    Math.sqrt(bb[0] * bb[0] + bb[1] * bb[1]),
-                    Math.sqrt(bb[2] * bb[2] + bb[3] * bb[3])
+                    Mat.hypot(bb[0], bb[1]),
+                    Mat.hypot(bb[2], bb[3])
                 );
 
                 if (r < r_max) {
@@ -1228,7 +1225,7 @@ JXG.extend(
                             Mat.innerProduct(
                                 intersection[1].usrCoords.slice(1, 3),
                                 this.line.stdform.slice(1, 3)
-                            ) + this.line.stdform[0],
+                            ) + this.line.stdform[0]
                         ];
 
                         // Reverse intersection array order if first intersection is not the leftmost one.
@@ -1589,7 +1586,7 @@ JXG.extend(
             for (j = lenData; j < lenLabels; j++) {
                 this.board.renderer.display(this.labels[j], false);
                 // Tick labels have the attribute "visible: 'inherit'"
-                // This must explicitely set to false, otherwise
+                // This must explicitly set to false, otherwise
                 // this labels would be set to visible in the upcoming
                 // update of the labels.
                 this.labels[j].visProp.visible = this.labels[j].visPropCalc.visible = false;

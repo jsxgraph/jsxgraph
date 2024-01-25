@@ -41,6 +41,7 @@
 import JXG from "../jxg";
 import Type from "../utils/type";
 import GeometryElement from "../base/element";
+import Prefix from "../parser/prefix";
 
 /**
  * @class A tape measure can be used to measure distances between points.
@@ -188,6 +189,235 @@ JXG.createTapemeasure = function (board, parents, attributes) {
 
 JXG.registerElement("tapemeasure", JXG.createTapemeasure);
 
-// export default {
-//     createTapemeasure: JXG.createTapemeasure
-// };
+/**
+ * @class Measurement element. Under the hood this is a text element which has a method Value. The text to be displayed
+ * is the result of the evaluation of a prefix expression, see {@link JXG.PrefixParser}.
+ * <p>
+ * The purpose of this element is to display values of measurements of geometric objects, like the radius of a circle,
+ * as well as expressions consisting of measurements.
+ *
+ * @pseudo
+ * @name Measurement
+ * @augments Text
+ * @constructor
+ * @type JXG.Text
+ * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
+ * @param {Point|Array_Point|Array_Array} x,y,expression
+ * Here, expression is a prefix expression, see {@link JXG.PrefixParser}.
+ * @example
+ * var p1 = board.create('point', [1, 1]);
+ * var p2 = board.create('point', [1, 3]);
+ * var ci1 = board.create('circle', [p1, p2]);
+ *
+ * var m1 = board.create('measurement', [1, -2, ['Area', ci1]], {
+ *     visible: true,
+ *     prefix: 'area: ',
+ *     baseUnit: 'cm'
+ * });
+ *
+ * var m2 = board.create('measurement', [1, -4, ['Radius', ci1]], {
+ *     prefix: 'radius: ',
+ *     baseUnit: 'cm'
+ * });
+ *
+ * </pre><div id="JXG6359237a-79bc-4689-92fc-38d3ebeb769d" class="jxgbox" style="width: 300px; height: 300px;"></div>
+ * <script type="text/javascript">
+ *     (function() {
+ *         var board = JXG.JSXGraph.initBoard('JXG6359237a-79bc-4689-92fc-38d3ebeb769d',
+ *             {boundingbox: [-5, 5, 5, -5], axis: true, showcopyright: false, shownavigation: false});
+ *     var p1 = board.create('point', [1, 1]);
+ *     var p2 = board.create('point', [1, 3]);
+ *     var ci1 = board.create('circle', [p1, p2]);
+ *
+ *     var m1 = board.create('measurement', [1, -2, ['Area', ci1]], {
+ *         visible: true,
+ *         prefix: 'area: ',
+ *         baseUnit: 'cm'
+ *     });
+ *
+ *     var m2 = board.create('measurement', [1, -4, ['Radius', ci1]], {
+ *         prefix: 'radius: ',
+ *         baseUnit: 'cm'
+ *     });
+ *
+ *     })();
+ *
+ * </script><pre>
+ *
+ * @example
+ * var p1 = board.create('point', [1, 1]);
+ * var p2 = board.create('point', [1, 3]);
+ * var ci1 = board.create('circle', [p1, p2]);
+ * var seg = board.create('segment', [[-2,-3], [-2, 3]], { firstArrow: true, lastArrow: true});
+ * var sli = board.create('slider', [[-4, 4], [-1.5, 4], [-10, 1, 10]], {name:'a'});
+ *
+ * var m1 = board.create('measurement', [-6, -2, ['Radius', ci1]], {
+ *     prefix: 'm1: ',
+ *     baseUnit: 'cm'
+ * });
+ *
+ * var m2 = board.create('measurement', [-6, -4, ['L', seg]], {
+ *     prefix: 'm2: ',
+ *     baseUnit: 'cm'
+ * });
+ *
+ * var m3 = board.create('measurement', [-6, -6, ['V', sli]], {
+ *     prefix: 'm3: ',
+ *     baseUnit: 'cm',
+ *     dim: 1
+ * });
+ *
+ * var m4 = board.create('measurement', [2, -6,
+ *         ['+', ['V', m1], ['V', m2], ['V', m3]]
+ *     ], {
+ *     prefix: 'm4: ',
+ *     baseUnit: 'cm'
+ * });
+ *
+ * </pre><div id="JXG49903663-6450-401e-b0d9-f025a6677d4a" class="jxgbox" style="width: 300px; height: 300px;"></div>
+ * <script type="text/javascript">
+ *     (function() {
+ *         var board = JXG.JSXGraph.initBoard('JXG49903663-6450-401e-b0d9-f025a6677d4a',
+ *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
+ *     var p1 = board.create('point', [1, 1]);
+ *     var p2 = board.create('point', [1, 3]);
+ *     var ci1 = board.create('circle', [p1, p2]);
+ *     var seg = board.create('segment', [[-2,-3], [-2, 3]], { firstArrow: true, lastArrow: true});
+ *     var sli = board.create('slider', [[-4, 4], [-1.5, 4], [-10, 1, 10]], {name:'a'});
+ *
+ * var m1 = board.create('measurement', [-6, -2, ['Radius', ci1]], {
+ *     prefix: 'm1: ',
+ *     baseUnit: 'cm'
+ * });
+ *
+ * var m2 = board.create('measurement', [-6, -4, ['L', seg]], {
+ *     prefix: 'm2: ',
+ *     baseUnit: 'cm'
+ * });
+ *
+ * var m3 = board.create('measurement', [-6, -6, ['V', sli]], {
+ *     prefix: 'm3: ',
+ *     baseUnit: 'cm',
+ *     dim: 1
+ * });
+ *
+ * var m4 = board.create('measurement', [2, -6,
+ *         ['+', ['V', m1], ['V', m2], ['V', m3]]
+ *     ], {
+ *     prefix: 'm4: ',
+ *     baseUnit: 'cm'
+ * });
+ *
+ *     })();
+ *
+ * </script><pre>
+ *
+ */
+JXG.createMeasurement = function (board, parents, attributes) {
+    var el, attr,
+        x, y, term,
+        valueFunc, i,
+        dimFunc;
+
+    attr = Type.copyAttributes(attributes, board.options, "measurement");
+
+    x = parents[0];
+    y = parents[1];
+    term = parents[2];
+
+    el = board.create("text", [x, y, ''], attr);
+    el.type = Type.OBJECT_TYPE_MEASUREMENT;
+    el.elType = 'measurement';
+
+    valueFunc = function () {
+        return Prefix.parse(term, 'execute');
+    };
+    dimFunc = function () {
+        var d = Type.evaluate(el.visProp.dim);
+
+        if (d !== null) {
+            return d;
+        }
+        return Prefix.dimension(term);
+    };
+
+    el.Value = valueFunc;
+    el.Dimension = dimFunc;
+    el.toInfix = function (type) {
+        return Prefix.toInfix(term, type);
+    };
+    el.toPrefix = function () {
+        return Prefix.toPrefix(term);
+    };
+    el.getParents = function () {
+        return Prefix.getParents(term);
+    };
+    el.addParents(el.getParents());
+    for (i = 0; i < el.parents.length; i++) {
+        board.select(el.parents[i]).addChild(el);
+    }
+
+    /**
+     * @class
+     * @ignore
+     */
+    el.setText(function () {
+        var prefix = '',
+            suffix = '',
+            dim = el.Dimension(),
+            unit = '',
+            units = Type.evaluate(el.visProp.units),
+            val = el.Value();
+
+        if(Type.isNumber(val)) {
+            val = val.toFixed(Type.evaluate(el.visProp.digits));
+        }
+
+        if (Type.evaluate(el.visProp.showprefix)) {
+            prefix = Type.evaluate(el.visProp.prefix);
+        }
+        if (Type.evaluate(el.visProp.showsuffix)) {
+            suffix = Type.evaluate(el.visProp.suffix);
+        }
+
+        if (Type.isString(dim)) {
+            return prefix + val + suffix;
+        }
+
+        if (isNaN(dim)) {
+            return prefix + 'NaN' + suffix;
+        }
+
+        if (Type.isObject(units) && Type.exists(units[dim])) {
+            unit = Type.evaluate(units[dim]);
+        } else if (Type.isObject(units) && Type.exists(units['dim' + dim])) {
+            // In some cases, object keys must not be numbers. This allows key 'dim1' instead of '1'.
+            unit = Type.evaluate(units['dim' + dim]);
+        } else {
+            unit = Type.evaluate(el.visProp.baseunit);
+
+            if (dim === 0) {
+                unit = '';
+            } else if (dim > 1 && unit !== '') {
+                unit = unit + '^{' + dim + '}';
+            }
+        }
+
+        if (unit !== '') {
+            unit = ' ' + unit;
+        }
+
+        return prefix + val + unit + suffix;
+    });
+
+    el.methodMap = Type.deepCopy(el.methodMap, {
+        Value: "Value",
+        Dimension: "Dimension",
+        toPrefix: "toPrefix",
+        getParents: "getParents"
+    });
+
+    return el;
+};
+
+JXG.registerElement("measurement", JXG.createMeasurement);

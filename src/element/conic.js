@@ -206,7 +206,10 @@ JXG.createEllipse = function (board, parents, attributes) {
         attr_center
     );
 
-    /** type curve {JGX.Element} */
+    /**
+     * @class
+     * @ignore
+     */
     curve = board.create(
         "curve",
         [
@@ -291,6 +294,7 @@ JXG.createEllipse = function (board, parents, attributes) {
      * @param {Number} y Coordinate in y direction, screen coordinates.
      * @returns {Boolean} True if (x,y) is near the ellipse, False otherwise.
      * @private
+     * @ignore
      */
     curve.hasPoint = function (x, y) {
         var ac, bc, r, p, dist;
@@ -452,6 +456,10 @@ JXG.createHyperbola = function (board, parents, attributes) {
         attr_center
     );
 
+    /**
+     * @class
+     * @ignore
+     */
     curve = board.create(
         "curve",
         [
@@ -653,7 +661,10 @@ JXG.createParabola = function (board, parents, attributes) {
         attr_center
     );
 
-    /** @ignore */
+    /**
+     * @class
+     * @ignore
+     */
     curve = board.create(
         "curve",
         [
@@ -997,6 +1008,10 @@ JXG.createConic = function (board, parents, attributes) {
 
     // Here, the defining functions for the curve are just dummy functions.
     // In polarForm there is a reference to curve.quadraticform.
+    /**
+     * @class
+     * @ignore
+     */
     curve = board.create(
         "curve",
         [
@@ -1014,7 +1029,7 @@ JXG.createConic = function (board, parents, attributes) {
 
     /** @ignore */
     polarForm = function (phi, suspendUpdate) {
-        var i, j, len, v;
+        var i, j, v; // len,;
 
         if (!suspendUpdate) {
             if (givenByPoints) {
@@ -1052,16 +1067,16 @@ JXG.createConic = function (board, parents, attributes) {
             }
 
             // Normalize the Eigenvectors
-            for (i = 0; i < 3; i++) {
-                len = 0.0;
-                for (j = 0; j < 3; j++) {
-                    len += eigen[1][j][i] * eigen[1][j][i];
-                }
-                len = Math.sqrt(len);
-                /*for (j = 0; j < 3; j++) {
-                        //eigen[1][j][i] /= len;
-                    }*/
-            }
+            // for (i = 0; i < 3; i++) {
+            //     // len = Mat.hypot(eigen[1][0][i], eigen[1][1][i], eigen[1][2][i])
+            //     for (j = 0; j < 3; j++) {
+            //         len += eigen[1][j][i] * eigen[1][j][i];
+            //     }
+            //     len = Math.sqrt(len);
+            //     /*for (j = 0; j < 3; j++) {
+            //             //eigen[1][j][i] /= len;
+            //         }*/
+            // }
             rotationMatrix = eigen[1];
             c = Math.sqrt(Math.abs(eigen[0][0][0]));
             a = Math.sqrt(Math.abs(eigen[0][1][1]));

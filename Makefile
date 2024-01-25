@@ -46,10 +46,14 @@ ZIPFLAGS=-r
 VERSION=$(shell grep -o '"version": "[^"]*' package.json | grep -o '[^"]*$$')
 
 # List of all included JavaScript files - required for docs, linters, and to build the readers
-FILELIST=$(shell cat src/index.js | awk '/import/ {if (match($$0,/"\.(.+)"/,m)) print "src"m[1]".js" }')
+# Double quotes:
+# FILELIST=$(shell cat src/index.js | awk '/import/ {if (match($$0,/"\.(.+)"/,m)) print "src"m[1]".js" }')
+# Single quotes:
+FILELIST=$(shell cat src/index.js | awk '/import/ {if (match($$0,/\x27\.(.+)\x27/,m)) print "src"m[1]".js" }')
 
 # Lintlist - jessiecode.js is developed externally (github:jsxgraph/jessiecode) and won't be linted in here
 LINTLIST=$(shell echo $(FILELIST) | sed 's/src\/parser\/jessiecode\.js//')
+# LINTLIST=$(shell echo $(FILELIST))
 LINTFLAGS=--bitwise true --white true --continue true
 ESLINTFLAGS=
 
@@ -62,7 +66,7 @@ all: core readers docs
 
 core:
 	# Build uncompressed AND minified files
-	#   jsgraphsrc.js, jsxgraphsrc.mjs, jsxgraphcore.js, jsxgraphcore.mjs and
+	#   jsxgraphsrc.js, jsxgraphsrc.mjs, jsxgraphcore.js, jsxgraphcore.mjs and
 	# copy them to the distrib directory.
 	$(WEBPACK) --config config/webpack.config.js
 	# Update version number in line 2 of file COPYRIGHT
@@ -129,7 +133,6 @@ docs: core
 	# Compress the result: zip -r tmp/docs.zip tmp/docs/
 	$(CD) $(TMP) && $(ZIP) $(ZIPFLAGS) docs.zip docs/
 	$(CP) $(TMP)/docs.zip $(OUTPUT)/docs.zip
-
 	$(RM) $(RMFLAGS) tmp
 
 	# Test

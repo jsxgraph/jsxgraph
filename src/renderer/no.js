@@ -461,7 +461,7 @@ JXG.extend(
          * @param {Number} size A positive number describing the size. Usually the half of the width and height of
          * the drawn point.
          * @param {String} type A string describing the point's face. This method only accepts the shortcut version of
-         * each possible face: <tt>x, +, |, -, [], <>, ^, v, >, <
+         * each possible face: <tt>x, +, |, -, [], <>, <<>>, ^, v, >, <
          */
         updatePathStringPoint: function (element, size, type) {
             /* stub */

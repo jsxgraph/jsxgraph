@@ -1585,8 +1585,8 @@ declare namespace JXG {
          */
         numberPoints: number;
         /**
-         * Stores a quad tree if it is required.
-         * The quad tree is generated in the curve updates and can be used to speed up the hasPoint method.
+         * Stores a quadtree if it is required.
+         * The quadtree is generated in the curve updates and can be used to speed up the hasPoint method.
          */
         qdt: any;
         /**
@@ -2199,6 +2199,8 @@ declare namespace JXG {
         | "plus"
         | "<>"
         | "diamond"
+        | "<<>>"
+        | "diamond2"
         | "^"
         | "triangleUp"
         | "triangleDown"

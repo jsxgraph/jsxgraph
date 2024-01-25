@@ -162,7 +162,8 @@ JXG.extend(
          *
          */
         setMatrix: function (board, type, params) {
-            var i, e, obj;
+            var i;
+                // e, obj; // Handle dependencies
 
             this.isNumericMatrix = true;
 

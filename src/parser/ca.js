@@ -696,14 +696,15 @@ JXG.extend(
         /**
          * f = map (x) -> x*sin(x);
          * Usages:
-         * h = D(f, x);
-         * h = map (x) -> D(f, x);
-         *
+         *   h = D(f, x);
+         *   h = map (x) -> D(f, x);
+         * or
+         *   D(x^2, x);
          */
         expandDerivatives: function (node, parent, ast) {
             var len, i, j, mapNode, codeNode,
                 ret, node2, newNode, mapName,
-                varname, vArray, order;
+                varname, vArray, order, isMap;
 
             ret = 0;
             if (!node) {
@@ -737,15 +738,31 @@ JXG.extend(
                     switch (node.value) {
                         case "op_execfun":
                             if (node.children[0] && node.children[0].value === "D") {
+                                /*
+                                 * Distinguish the cases:
+                                 *   D(f, x) where f is map -> isMap = true
+                                 * and
+                                 *   D(2*x, x), D(sin(x), x), ...  -> isMap = false
+                                 */
+                                isMap = false;
                                 if (node.children[1][0].type == "node_var") {
+                                    mapName = node.children[1][0].value;
+                                    mapNode = this.findMapNode(mapName, ast);
+                                    if (mapNode !== null) {
+                                        isMap = true;
+                                    }
+                                }
+
+                                if (isMap) {
                                     /*
-                                     * Derive map, that is compute D(f,x)
+                                     * Derivative of map, that is compute D(f,x)
                                      * where e.g. f = map (x) -> x^2
                                      *
                                      * First step: find node where the map is defined
                                      */
-                                    mapName = node.children[1][0].value;
-                                    mapNode = this.findMapNode(mapName, ast);
+                                    // Already done above
+                                    // mapName = node.children[1][0].value;
+                                    // mapNode = this.findMapNode(mapName, ast);
                                     vArray = mapNode.children[0];
 
                                     // Variable name for differentiation
@@ -757,8 +774,8 @@ JXG.extend(
                                     codeNode = mapNode.children[1];
                                 } else {
                                     /*
-                                     * Derive expression, e.g.
-                                     *     D(2*x, x)
+                                     * Derivative of expression, e.g.
+                                     *     D(2*x, x) or D(sin(x), x)
                                      */
                                     codeNode = node.children[1][0];
                                     vArray = ["x"];

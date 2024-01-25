@@ -170,9 +170,9 @@ JXG.JSXGraph = {
      *
      * @private
      */
-    _setAttributes: function (attributes) {
+    _setAttributes: function (attributes, options) {
         // merge attributes
-        var attr = Type.copyAttributes(attributes, Options, 'board'),
+        var attr = Type.copyAttributes(attributes, options, 'board'),
 
             // These attributes - which are objects - have to be copied separately.
             list = [
@@ -187,13 +187,13 @@ JXG.JSXGraph = {
 
         for (i = 0; i < len; i++) {
             key = list[i];
-            attr[key] = Type.copyAttributes(attr, Options, 'board', key);
+            attr[key] = Type.copyAttributes(attr, options, 'board', key);
         }
 
         // Treat moveTarget separately, because deepCopy will not work here.
         // Reason: moveTarget will be an HTML node and it is prevented that Type.deepCopy will copy it.
         attr.movetarget =
-            attributes.moveTarget || attributes.movetarget || Options.board.moveTarget;
+            attributes.moveTarget || attributes.movetarget || options.board.moveTarget;
 
         return attr;
     },
@@ -313,10 +313,17 @@ JXG.JSXGraph = {
             offX = 0, offY = 0,
             renderer, dimensions, bbox,
             attr, axattr, axattr_x, axattr_y,
+            options,
+            theme = {},
             board;
 
         attributes = attributes || {};
-        attr = this._setAttributes(attributes);
+        // Merge a possible theme
+        if (attributes.theme !== 'default' && Type.exists(JXG.themes[attributes.theme])) {
+            theme = JXG.themes[attributes.theme];
+        }
+        options = Type.deepCopy(Options, theme, true);
+        attr = this._setAttributes(attributes, options);
 
         dimensions = Env.getDimensions(box, attr.document);
 
@@ -375,7 +382,8 @@ JXG.JSXGraph = {
         renderer = this.initRenderer(box, dimensions, attr.document, attr.renderer);
         this._setARIA(box, attr);
 
-        // create the board
+        // Create the board.
+        // board.options will contain the user supplied board attributes
         board = new Board(
             box,
             renderer,
@@ -394,14 +402,16 @@ JXG.JSXGraph = {
 
         this._fillBoard(board, attr, dimensions);
 
-        // create elements like axes, grid, navigation, ...
+        // Create elements like axes, grid, navigation, ...
         board.suspendUpdate();
+        attr = board.attr;
         if (attr.axis) {
             axattr = typeof attr.axis === "object" ? attr.axis : {};
 
             // The defaultAxes attributes are overwritten by user supplied axis object.
-            axattr_x = Type.deepCopy(Options.board.defaultAxes.x, axattr);
-            axattr_y = Type.deepCopy(Options.board.defaultAxes.y, axattr);
+            axattr_x = Type.deepCopy(options.board.defaultaxes.x, axattr);
+            axattr_y = Type.deepCopy(options.board.defaultaxes.y, axattr);
+
             // The user supplied defaultAxes attributes are merged in.
             if (attr.defaultaxes.x) {
                 axattr_x = Type.deepCopy(axattr_x, attr.defaultaxes.x);
@@ -411,22 +421,8 @@ JXG.JSXGraph = {
             }
 
             board.defaultAxes = {};
-            board.defaultAxes.x = board.create(
-                "axis",
-                [
-                    [0, 0],
-                    [1, 0]
-                ],
-                axattr_x
-            );
-            board.defaultAxes.y = board.create(
-                "axis",
-                [
-                    [0, 0],
-                    [0, 1]
-                ],
-                axattr_y
-            );
+            board.defaultAxes.x = board.create("axis", [[0, 0], [1, 0]], axattr_x);
+            board.defaultAxes.y = board.create("axis", [[0, 0], [0, 1]], axattr_y);
         }
         if (attr.grid) {
             board.create("grid", [], typeof attr.grid === "object" ? attr.grid : {});

@@ -460,7 +460,7 @@ JXG.extend(
         /**
          * Adds ids of elements to the array this.parents. This method needs to be called if some dependencies
          * can not be detected automatically by JSXGraph. For example if a function graph is given by a function
-         * which referes to coordinates of a point, calling addParents() is necessary.
+         * which refers to coordinates of a point, calling addParents() is necessary.
          *
          * @param {Array} parents Array of elements or ids of elements.
          * Alternatively, one can give a list of objects as parameters.
@@ -1542,7 +1542,8 @@ JXG.extend(
          * the renderer, to remove the element completely you should use {@link JXG.Board#removeObject}.
          */
         remove: function () {
-            this.board.renderer.remove(this.board.renderer.getElementById(this.id));
+            // this.board.renderer.remove(this.board.renderer.getElementById(this.id));
+            this.board.renderer.remove(this.rendNode);
 
             if (this.hasLabel) {
                 this.board.renderer.remove(this.board.renderer.getElementById(this.label.id));
@@ -1651,6 +1652,7 @@ JXG.extend(
 
         /**
          * Highlights the element.
+         * @private
          * @param {Boolean} [force=false] Force the highlighting
          * @returns {JXG.Board}
          */
@@ -1857,6 +1859,8 @@ JXG.extend(
 
         /**
          * Set the highlightStrokeColor of an element
+         * @ignore
+         * @name JXG.GeometryElement#highlightStrokeColorMethod
          * @param {String} sColor String which determines the stroke color of an object when its highlighted.
          * @see JXG.GeometryElement#highlightStrokeColor
          * @deprecated Use {@link JXG.GeometryElement#setAttribute}
@@ -1869,6 +1873,8 @@ JXG.extend(
 
         /**
          * Set the strokeColor of an element
+         * @ignore
+         * @name JXG.GeometryElement#strokeColorMethod
          * @param {String} sColor String which determines the stroke color of an object.
          * @see JXG.GeometryElement#strokeColor
          * @deprecated Use {@link JXG.GeometryElement#setAttribute}
@@ -1881,6 +1887,8 @@ JXG.extend(
 
         /**
          * Set the strokeWidth of an element
+         * @ignore
+         * @name JXG.GeometryElement#strokeWidthMethod
          * @param {Number} width Integer which determines the stroke width of an outline.
          * @see JXG.GeometryElement#strokeWidth
          * @deprecated Use {@link JXG.GeometryElement#setAttribute}
@@ -1893,6 +1901,8 @@ JXG.extend(
 
         /**
          * Set the fillColor of an element
+         * @ignore
+         * @name JXG.GeometryElement#fillColorMethod
          * @param {String} fColor String which determines the fill color of an object.
          * @see JXG.GeometryElement#fillColor
          * @deprecated Use {@link JXG.GeometryElement#setAttribute}
@@ -1905,6 +1915,8 @@ JXG.extend(
 
         /**
          * Set the highlightFillColor of an element
+         * @ignore
+         * @name JXG.GeometryElement#highlightFillColorMethod
          * @param {String} fColor String which determines the fill color of an object when its highlighted.
          * @see JXG.GeometryElement#highlightFillColor
          * @deprecated Use {@link JXG.GeometryElement#setAttribute}
@@ -1917,6 +1929,7 @@ JXG.extend(
 
         /**
          * Set the labelColor of an element
+         * @ignore
          * @param {String} lColor String which determines the text color of an object's label.
          * @see JXG.GeometryElement#labelColor
          * @deprecated Use {@link JXG.GeometryElement#setAttribute}
@@ -1929,6 +1942,8 @@ JXG.extend(
 
         /**
          * Set the dash type of an element
+         * @ignore
+         * @name JXG.GeometryElement#dashMethod
          * @param {Number} d Integer which determines the way of dashing an element's outline.
          * @see JXG.GeometryElement#dash
          * @deprecated Use {@link JXG.GeometryElement#setAttribute}
@@ -1941,6 +1956,8 @@ JXG.extend(
 
         /**
          * Set the visibility of an element
+         * @ignore
+         * @name JXG.GeometryElement#visibleMethod
          * @param {Boolean} v Boolean which determines whether the element is drawn.
          * @see JXG.GeometryElement#visible
          * @deprecated Use {@link JXG.GeometryElement#setAttribute}
@@ -1953,6 +1970,8 @@ JXG.extend(
 
         /**
          * Set the shadow of an element
+         * @ignore
+         * @name JXG.GeometryElement#shadowMethod
          * @param {Boolean} s Boolean which determines whether the element has a shadow or not.
          * @see JXG.GeometryElement#shadow
          * @deprecated Use {@link JXG.GeometryElement#setAttribute}
@@ -1980,6 +1999,8 @@ JXG.extend(
         },
 
         /**
+         * @ignore
+         * @private
          * Snaps the element to the grid. Only works for points, lines and circles. Points will snap to the grid
          * as defined in their properties {@link JXG.Point#snapSizeX} and {@link JXG.Point#snapSizeY}. Lines and circles
          * will snap their parent points to the grid, if they have {@link JXG.Point#snapToGrid} set to true.
@@ -1994,6 +2015,7 @@ JXG.extend(
          * as defined in their properties {@link JXG.Point#attractorDistance} and {@link JXG.Point#attractorUnit}.
          * Lines and circles
          * will snap their parent points to points.
+         * @private
          * @returns {JXG.GeometryElement} Reference to the element.
          */
         snapToPoints: function () {
@@ -2293,7 +2315,7 @@ JXG.extend(
                     trailingzerodisplay: 'trailingZeroDisplay',
                     minimumintegerdigits: 'minimumIntegerDigits',
                     minimumsignificantdigits: 'minimumSignificantDigits',
-                    maximumsignificantdigits: 'maximumSignificantDigits',
+                    maximumsignificantdigits: 'maximumSignificantDigits'
                 };
 
             if (Type.exists(Intl) &&

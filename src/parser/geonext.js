@@ -93,7 +93,7 @@ JXG.GeonextParser = {
                     // Search for F or p.M before (...)^
                     pre = left.substring(0, pos + 1);
                     p = pos;
-                    while (p >= 0 && pre.substr(p, 1).match(/([\w.]+)/)) {
+                    while (p >= 0 && pre.slice(p, p + 1).match(/([\w.]+)/)) {
                         leftop = RegExp.$1 + leftop;
                         p -= 1;
                     }
@@ -452,7 +452,7 @@ JXG.GeonextParser = {
         term = term.replace(/&gt;/g, ">");
         term = term.replace(/&amp;/g, "&");
 
-        // Umwandeln der GEONExT-Syntax in JavaScript-Syntax
+        // Convert GEONExT syntax to JavaScript syntax
         newterm = term;
         newterm = this.replaceNameById(newterm, board);
         newterm = this.replaceIf(newterm);
@@ -534,9 +534,9 @@ JXG.GeonextParser = {
      * @returns {String} Given expression translated to JavaScript.
      */
     gxt2jc: function (term, board) {
-        var newterm,
-            from = ["Sqrt"],
-            to = ["sqrt"];
+        var newterm;
+            // from = ["Sqrt"],
+            // to = ["sqrt"];
 
         // Hacks, to enable not well formed XML, @see JXG.GeonextReader#replaceLessThan
         term = term.replace(/&lt;/g, "<");

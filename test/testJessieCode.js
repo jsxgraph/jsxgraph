@@ -101,4 +101,29 @@ describe("Test JessieCode", function () {
         expect(f.X(2)).toEqual(4);
     });
 
+    it("Jessiecode slider 1", function() {
+        board.create('slider', [[1,1], [1,3], [-10, 3, 10]], {name: 'a1'});
+        var f = board.jc.snippet('a1', true, '', false, true);
+        expect(f()).toBeCloseTo(3, 7);
+    });
+
+    it("Jessiecode slider 2", function() {
+        board.create('slider', [[1,1], [1,3], [0, 0, 10]], {name: 'a2'});
+        var f = board.jc.snippet('exp(a2)', true, '', false, true);
+        expect(f()).toBeCloseTo(1, 9);
+    });
+
+    it("Jessiecode slider 3", function() {
+        board.create('slider', [[1,1], [1,3], [0, 0, 10]], {name: 'a3'});
+        var f = board.jc.snippet('exp(V(a3))', true, '', false, true);
+        expect(f()).toBeCloseTo(1, 9);
+    });
+
+    it("Jessiecode slider 4", function() {
+        board.create('slider', [[1,1], [1,3], [0, 0, 10]], {name: 'a4'});
+        var f = board.jc.snippet('a4', true, '', false, false);
+        var obj = f();
+        expect(JXG.exists(obj.elType)).toEqual(true);
+    });
+
 });

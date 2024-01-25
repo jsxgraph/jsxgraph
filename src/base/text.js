@@ -46,6 +46,10 @@ import Mat from "../math/math";
 import CoordsElement from "./coordselement";
 
 var priv = {
+    /**
+     * @class
+     * @ignore
+     */
     HTMLSliderInputEventHandler: function () {
         this._val = parseFloat(this.rendNodeRange.value);
         this.rendNodeOut.value = this.rendNodeRange.value;
@@ -117,7 +121,7 @@ JXG.Text = function (board, coords, attributes, content) {
     this.elType = "text";
 
     this.methodMap = Type.deepCopy(this.methodMap, {
-        setText: "setTextJessieCode",
+        setText: "setTextJessieCode"
         // free: 'free',
         // move: "setCoords"
     });
@@ -498,22 +502,21 @@ JXG.extend(
             var j,
                 i = te.indexOf("_{");
 
-            // the regexp in here are not used for filtering but to provide some kind of sugar for label creation,
+            // The regexp in here are not used for filtering but to provide some kind of sugar for label creation,
             // i.e. replacing _{...} with <sub>...</sub>. What is passed would get out anyway.
             /*jslint regexp: true*/
-
             while (i >= 0) {
-                te = te.substr(0, i) + te.substr(i).replace(/_\{/, "<sub>");
-                j = te.substr(i).indexOf("}");
+                te = te.slice(0, i) + te.slice(i).replace(/_\{/, "<sub>");
+                j = te.indexOf("}", i + 4);
                 if (j >= 0) {
-                    te = te.substr(0, j) + te.substr(j).replace(/\}/, "</sub>");
+                    te = te.slice(0, j) + te.slice(j).replace(/\}/, "</sub>");
                 }
                 i = te.indexOf("_{");
             }
 
             i = te.indexOf("_");
             while (i >= 0) {
-                te = te.substr(0, i) + te.substr(i).replace(/_(.?)/, "<sub>$1</sub>");
+                te = te.slice(0, i) + te.slice(i).replace(/_(.?)/, "<sub>$1</sub>");
                 i = te.indexOf("_");
             }
 
@@ -533,22 +536,21 @@ JXG.extend(
             var j,
                 i = te.indexOf("^{");
 
-            // the regexp in here are not used for filtering but to provide some kind of sugar for label creation,
+            // The regexp in here are not used for filtering but to provide some kind of sugar for label creation,
             // i.e. replacing ^{...} with <sup>...</sup>. What is passed would get out anyway.
             /*jslint regexp: true*/
-
             while (i >= 0) {
-                te = te.substr(0, i) + te.substr(i).replace(/\^\{/, "<sup>");
-                j = te.substr(i).indexOf("}");
+                te = te.slice(0, i) + te.slice(i).replace(/\^\{/, "<sup>");
+                j = te.indexOf("}", i + 4);
                 if (j >= 0) {
-                    te = te.substr(0, j) + te.substr(j).replace(/\}/, "</sup>");
+                    te = te.slice(0, j) + te.slice(j).replace(/\}/, "</sup>");
                 }
                 i = te.indexOf("^{");
             }
 
             i = te.indexOf("^");
             while (i >= 0) {
-                te = te.substr(0, i) + te.substr(i).replace(/\^(.?)/, "<sup>$1</sup>");
+                te = te.slice(0, i) + te.slice(i).replace(/\^(.?)/, "<sup>$1</sup>");
                 i = te.indexOf("^");
             }
 
@@ -692,7 +694,7 @@ JXG.extend(
          * @param{String} contentStr String to be parsed
          * @param{Boolean} [expand] Optional flag if shortened math syntax is allowed (e.g. 3x instead of 3*x).
          * @param{Boolean} [avoidGeonext2JS] Optional flag if geonext2JS should be called. For backwards compatibility
-         * this has to be set explicitely to true.
+         * this has to be set explicitly to true.
          * @param{Boolean} [outputTeX] Optional flag which has to be true if the resulting term will be sent to MathJax or KaTeX.
          * If true, "_" and "^" are NOT replaced by HTML tags sub and sup. Default: false, i.e. the replacement is done.
          * This flag allows the combination of &lt;value&gt; tag containing calculations with TeX output.
@@ -1000,7 +1002,7 @@ JXG.extend(
 
                 if (res !== null) {
                     GeonextParser.findDependencies(this, res[1], this.board);
-                    content = content.substr(res.index);
+                    content = content.slice(res.index);
                     content = content.replace(search, "");
                 }
             } while (res !== null);

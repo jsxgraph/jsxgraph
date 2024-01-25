@@ -190,7 +190,16 @@ JXG.Board = function (container, renderer, id,
      * @type JXG.Options
      */
     this.options = Type.deepCopy(Options);
+
+    /**
+     * Board attributes
+     * @type Object
+     */
     this.attr = attributes;
+
+    if (this.attr.theme !== 'default' && Type.exists(JXG.themes[this.attr.theme])) {
+        Type.mergeAttr(this.options, JXG.themes[this.attr.theme], true);
+    }
 
     /**
      * Dimension of the board.
@@ -516,6 +525,13 @@ JXG.Board = function (container, renderer, id,
     this.hasPointerHandlers = false;
 
     /**
+     * A flag which stores if the board registered zoom events, i.e. mouse wheel scroll events.
+     * @type Boolean
+     * @default false
+     */
+    this.hasWheelHandlers = false;
+
+    /**
      * A flag which tells if the board the JXG.Board#mouseUpListener is currently registered.
      * @type Boolean
      * @default false
@@ -614,14 +630,56 @@ JXG.Board = function (container, renderer, id,
     this.mathLib = Math;        // Math or JXG.Math.IntervalArithmetic
     this.mathLibJXG = JXG.Math; // JXG.Math or JXG.Math.IntervalArithmetic
 
-    if (this.attr.registerevents) {
-        this.addEventHandlers();
+    // if (this.attr.registerevents) {
+    //     this.addEventHandlers();
+    // }
+    // if (this.attr.registerresizeevent) {
+    //     this.addResizeEventHandlers();
+    // }
+    // if (this.attr.registerfullscreenevent) {
+    //     this.addFullscreenEventHandlers();
+    // }
+    if (this.attr.registerevents === true) {
+        this.attr.registerevents = {
+            fullscreen: true,
+            keyboard: true,
+            pointer: true,
+            resize: true,
+            wheel: true
+        };
+    } else if (typeof this.attr.registerevents === 'object') {
+        if (!Type.exists(this.attr.registerevents.fullscreen)) {
+            this.attr.registerevents.fullscreen = true;
+        }
+        if (!Type.exists(this.attr.registerevents.keyboard)) {
+            this.attr.registerevents.keyboard = true;
+        }
+        if (!Type.exists(this.attr.registerevents.pointer)) {
+            this.attr.registerevents.pointer = true;
+        }
+        if (!Type.exists(this.attr.registerevents.resize)) {
+            this.attr.registerevents.resize = true;
+        }
+        if (!Type.exists(this.attr.registerevents.wheel)) {
+            this.attr.registerevents.wheel = true;
+        }
     }
-    if (this.attr.registerresizeevent) {
-        this.addResizeEventHandlers();
-    }
-    if (this.attr.registerfullscreenevent) {
-        this.addFullscreenEventHandlers();
+    if (this.attr.registerevents !== false) {
+        if (this.attr.registerevents.fullscreen) {
+            this.addFullscreenEventHandlers();
+        }
+        if (this.attr.registerevents.keyboard) {
+            this.addKeyboardEventHandlers();
+        }
+        if (this.attr.registerevents.pointer) {
+            this.addEventHandlers();
+        }
+        if (this.attr.registerevents.resize) {
+            this.addResizeEventHandlers();
+        }
+        if (this.attr.registerevents.wheel) {
+            this.addWheelEventHandlers();
+        }
     }
 
     this.methodMap = {
@@ -630,8 +688,9 @@ JXG.Board = function (container, renderer, id,
         on: 'on',
         off: 'off',
         trigger: 'trigger',
-        setView: 'setBoundingBox',
+        setAttribute: 'setAttribute',
         setBoundingBox: 'setBoundingBox',
+        setView: 'setBoundingBox',
         migratePoint: 'migratePoint',
         colorblind: 'emulateColorblindness',
         suspendUpdate: 'suspendUpdate',
@@ -1298,7 +1357,7 @@ JXG.extend(
             C = (dxx * dx + dyy * dy) / LL;
             S = (dyy * dx - dxx * dy) / LL;
             if (!scalable) {
-                lbda = Math.sqrt(C * C + S * S);
+                lbda = Mat.hypot(C, S);
                 C /= lbda;
                 S /= lbda;
             }
@@ -1357,7 +1416,7 @@ JXG.extend(
                     for (i = 0; i < len && !snap; ++i) {
                         vp = drag.vertices[i].visProp;
                         snap = snap || Type.evaluate(vp.snaptogrid) || Type.evaluate(vp.snaptopoints);
-                        snap = snap || (!drag.vertices[i].draggable())
+                        snap = snap || (!drag.vertices[i].draggable());
                     }
                     if (!snap) {
                         ar = [];
@@ -1377,7 +1436,7 @@ JXG.extend(
 
         /*
          * Moves, rotates and scales a circle with two fingers.
-         * @param {Array} tar Array conatining touch event objects: {JXG.Board#touches.targets}.
+         * @param {Array} tar Array containing touch event objects: {JXG.Board#touches.targets}.
          * @param {object} drag The object that is dragged:
          * @param {Number} id pointerId of the event. In case of old touch event this is emulated.
          */
@@ -1651,6 +1710,7 @@ JXG.extend(
 
             // This one produces errors on IE
             // // Env.addEvent(this.containerObj, 'contextmenu', function (e) { e.preventDefault(); return false;}, this);
+
             // This one works on IE, Firefox and Chromium with default configurations. On some Safari
             // or Opera versions the user must explicitly allow the deactivation of the context menu.
             if (this.containerObj !== null) {
@@ -1662,7 +1722,7 @@ JXG.extend(
                 };
             }
 
-            this.addKeyboardEventHandlers();
+            // this.addKeyboardEventHandlers();
         },
 
         /**
@@ -1728,8 +1788,8 @@ JXG.extend(
                     Env.addEvent(moveTarget, 'pointermove', this.pointerMoveListener, this);
                     Env.addEvent(moveTarget, 'pointerleave', this.pointerLeaveListener, this);
                 }
-                Env.addEvent(this.containerObj, 'mousewheel', this.mouseWheelListener, this);
-                Env.addEvent(this.containerObj, 'DOMMouseScroll', this.mouseWheelListener, this);
+                // Env.addEvent(this.containerObj, 'mousewheel', this.mouseWheelListener, this);
+                // Env.addEvent(this.containerObj, 'DOMMouseScroll', this.mouseWheelListener, this);
 
                 if (this.containerObj !== null) {
                     // This is needed for capturing touch events.
@@ -1751,8 +1811,8 @@ JXG.extend(
                 Env.addEvent(this.containerObj, 'mousedown', this.mouseDownListener, this);
                 Env.addEvent(moveTarget, 'mousemove', this.mouseMoveListener, this);
 
-                Env.addEvent(this.containerObj, 'mousewheel', this.mouseWheelListener, this);
-                Env.addEvent(this.containerObj, 'DOMMouseScroll', this.mouseWheelListener, this);
+                // Env.addEvent(this.containerObj, 'mousewheel', this.mouseWheelListener, this);
+                // Env.addEvent(this.containerObj, 'DOMMouseScroll', this.mouseWheelListener, this);
 
                 this.hasMouseHandlers = true;
             }
@@ -1785,6 +1845,17 @@ JXG.extend(
         },
 
         /**
+         * Registers pointer event handlers.
+         */
+        addWheelEventHandlers: function () {
+            if (!this.hasWheelHandlers && Env.isBrowser) {
+                Env.addEvent(this.containerObj, 'mousewheel', this.mouseWheelListener, this);
+                Env.addEvent(this.containerObj, 'DOMMouseScroll', this.mouseWheelListener, this);
+                this.hasWheelHandlers = true;
+            }
+        },
+
+        /**
          * Add fullscreen events which update the CSS transformation matrix to correct
          * the mouse/touch/pointer positions in case of CSS transformations.
          */
@@ -1807,6 +1878,9 @@ JXG.extend(
             }
         },
 
+        /**
+         * Register keyboard event handlers.
+         */
         addKeyboardEventHandlers: function () {
             if (this.attr.keyboard.enabled && !this.hasKeyboardHandlers && Env.isBrowser) {
                 Env.addEvent(this.containerObj, 'keydown', this.keyDownListener, this);
@@ -1867,8 +1941,10 @@ JXG.extend(
                     Env.removeEvent(moveTarget, 'pointerleave', this.pointerLeaveListener, this);
                 }
 
-                Env.removeEvent(this.containerObj, 'mousewheel', this.mouseWheelListener, this);
-                Env.removeEvent(this.containerObj, 'DOMMouseScroll', this.mouseWheelListener, this);
+                if (this.hasWheelHandlers) {
+                    Env.removeEvent(this.containerObj, 'mousewheel', this.mouseWheelListener, this);
+                    Env.removeEvent(this.containerObj, 'DOMMouseScroll', this.mouseWheelListener, this);
+                }
 
                 if (this.hasPointerUp) {
                     if (window.navigator.msPointerEnabled) {
@@ -1900,13 +1976,15 @@ JXG.extend(
                     this.hasMouseUp = false;
                 }
 
-                Env.removeEvent(this.containerObj, 'mousewheel', this.mouseWheelListener, this);
-                Env.removeEvent(
-                    this.containerObj,
-                    'DOMMouseScroll',
-                    this.mouseWheelListener,
-                    this
-                );
+                if (this.hasWheelHandlers) {
+                    Env.removeEvent(this.containerObj, 'mousewheel', this.mouseWheelListener, this);
+                    Env.removeEvent(
+                        this.containerObj,
+                        'DOMMouseScroll',
+                        this.mouseWheelListener,
+                        this
+                    );
+                }
 
                 this.hasMouseHandlers = false;
             }
@@ -2076,14 +2154,17 @@ JXG.extend(
                     bound = (Math.PI * this.attr.zoom.pinchsensitivity) / 90.0;
                 }
 
-                if (this.attr.zoom.pinchhorizontal && theta < bound) {
+                if (!this.keepaspectratio &&
+                    this.attr.zoom.pinchhorizontal &&
+                    theta < bound) {
                     this.attr.zoom.factorx = factor;
                     this.attr.zoom.factory = 1.0;
                     cx = 0;
                     cy = 0;
                     doZoom = true;
-                } else if (
-                    this.attr.zoom.pinchvertical && Math.abs(theta - Math.PI * 0.5) < bound
+                } else if (!this.keepaspectratio &&
+                    this.attr.zoom.pinchvertical &&
+                    Math.abs(theta - Math.PI * 0.5) < bound
                 ) {
                     this.attr.zoom.factorx = 1.0;
                     this.attr.zoom.factory = factor;
@@ -4359,7 +4440,7 @@ JXG.extend(
 
         /**
          * Add conditional updates to the elements.
-         * @param {String} str String containing coniditional update in geonext syntax
+         * @param {String} str String containing conditional update in geonext syntax
          */
         addConditions: function (str) {
             var term,
@@ -4438,7 +4519,7 @@ JXG.extend(
                 m = term.indexOf('=');
                 left = term.slice(0, m);
                 right = term.slice(m + 1);
-                m = left.indexOf('.'); // Dies erzeugt Probleme bei Variablennamen der Form ' Steuern akt.'
+                m = left.indexOf('.');   // Resulting variable names must not contain dots, e.g. ' Steuern akt.'
                 name = left.slice(0, m); //.replace(/\s+$/,''); // do NOT cut out name (with whitespace)
                 el = this.elementsByName[Type.unescapeHTML(name)];
 
@@ -4797,29 +4878,24 @@ JXG.extend(
         },
 
         /**
-         * Removes object from board and renderer.
-         * <p>
-         * <b>Performance hints:</b> It is recommended to use the object's id.
-         * If many elements are removed, it is best to call <tt>board.suspendUpdate()</tt>
-         * before looping through the elements to be removed and call
-         * <tt>board.unsuspendUpdate()</tt> after the loop. Further, it is advisable to loop
-         * in reverse order, i.e. remove the object in reverse order of their creation time.
+         * Inner, recursive method of removeObject.
          *
          * @param {JXG.GeometryElement|Array} object The object to remove or array of objects to be removed.
          * The element(s) is/are given by name, id or a reference.
-         * @param {Boolean} saveMethod If true, the algorithm runs through all elements
-         * and tests if the element to be deleted is a child element. If yes, it will be
-         * removed from the list of child elements. If false (default), the element
+         * @param {Boolean} [saveMethod=false] If saveMethod=true, the algorithm runs through all elements
+         * and tests if the element to be deleted is a child element. If this is the case, it will be
+         * removed from the list of child elements. If saveMethod=false (default), the element
          * is removed from the lists of child elements of all its ancestors.
-         * This should be much faster.
+         * The latter should be much faster.
          * @returns {JXG.Board} Reference to the board
+         * @private
          */
-        removeObject: function (object, saveMethod) {
+        _removeObj: function (object, saveMethod) {
             var el, i;
 
             if (Type.isArray(object)) {
                 for (i = 0; i < object.length; i++) {
-                    this.removeObject(object[i]);
+                    this._removeObj(object[i], saveMethod);
                 }
 
                 return this;
@@ -4827,7 +4903,7 @@ JXG.extend(
 
             object = this.select(object);
 
-            // If the object which is about to be removed unknown or a string, do nothing.
+            // If the object which is about to be removed is unknown or a string, do nothing.
             // it is a string if a string was given and could not be resolved to an element.
             if (!Type.exists(object) || Type.isString(object)) {
                 return this;
@@ -4837,14 +4913,14 @@ JXG.extend(
                 // remove all children.
                 for (el in object.childElements) {
                     if (object.childElements.hasOwnProperty(el)) {
-                        object.childElements[el].board.removeObject(object.childElements[el]);
+                        object.childElements[el].board._removeObj(object.childElements[el]);
                     }
                 }
 
                 // Remove all children in elements like turtle
                 for (el in object.objects) {
                     if (object.objects.hasOwnProperty(el)) {
-                        object.objects[el].board.removeObject(object.objects[el]);
+                        object.objects[el].board._removeObj(object.objects[el]);
                     }
                 }
 
@@ -4908,8 +4984,40 @@ JXG.extend(
                 JXG.debug(object.id + ': Could not be removed: ' + e);
             }
 
-            this.update();
+            return this;
+        },
 
+        /**
+         * Removes object from board and renderer.
+         * <p>
+         * <b>Performance hints:</b> It is recommended to use the object's id.
+         * If many elements are removed, it is best to call <tt>board.suspendUpdate()</tt>
+         * before looping through the elements to be removed and call
+         * <tt>board.unsuspendUpdate()</tt> after the loop. Further, it is advisable to loop
+         * in reverse order, i.e. remove the object in reverse order of their creation time.
+         * @param {JXG.GeometryElement|Array} object The object to remove or array of objects to be removed.
+         * The element(s) is/are given by name, id or a reference.
+         * @param {Boolean} saveMethod If true, the algorithm runs through all elements
+         * and tests if the element to be deleted is a child element. If yes, it will be
+         * removed from the list of child elements. If false (default), the element
+         * is removed from the lists of child elements of all its ancestors.
+         * This should be much faster.
+         * @returns {JXG.Board} Reference to the board
+         */
+        removeObject: function (object, saveMethod) {
+            var i;
+
+            this.renderer.suspendRedraw(this);
+            if (Type.isArray(object)) {
+                for (i = 0; i < object.length; i++) {
+                    this._removeObj(object[i], saveMethod);
+                }
+            } else {
+                this._removeObj(object, saveMethod);
+            }
+            this.renderer.unsuspendRedraw();
+
+            this.update();
             return this;
         },
 
@@ -5353,6 +5461,7 @@ JXG.extend(
             }
 
             this.prepareUpdate().updateElements(drag).updateConditions();
+
             this.renderer.suspendRedraw(this);
             this.updateRenderer();
             this.renderer.unsuspendRedraw();
@@ -5371,7 +5480,7 @@ JXG.extend(
                 if (Type.exists(b) && b !== this) {
                     b.updateQuality = this.updateQuality;
                     b.prepareUpdate().updateElements().updateConditions();
-                    b.renderer.suspendRedraw();
+                    b.renderer.suspendRedraw(this);
                     b.updateRenderer();
                     b.renderer.unsuspendRedraw();
                     b.triggerEventHandlers(['update'], []);
@@ -5882,8 +5991,6 @@ JXG.extend(
                         break;
 
                     case 'registerevents':
-                    case 'registerfullscreenevent':
-                    case 'registerresizeevent':
                     case 'renderer':
                         // immutable, i.e. ignored
                         break;
@@ -6991,13 +7098,14 @@ JXG.extend(
             inner_node = doc.getElementById(id);
             wrap_id = 'fullscreenwrap_' + id;
 
-            // Store the original data.
-            // This is used to establish the ratio h / w in
-            // fullscreen mode
-            dim = this.containerObj.getBoundingClientRect();
-            inner_node._cssFullscreenStore = {
-                w: dim.width,
-                h: dim.height
+            if (!Type.exists(inner_node._cssFullscreenStore)) {
+                // Store the actual, absolute size of the div
+                // This is used in scaleJSXGraphDiv
+                dim = this.containerObj.getBoundingClientRect();
+                inner_node._cssFullscreenStore = {
+                    w: dim.width,
+                    h: dim.height
+                };
             }
 
             // Wrap a div around the JSXGraph div.
@@ -7056,7 +7164,6 @@ JXG.extend(
             var inner_id,
                 inner_node,
                 fullscreenElement,
-                i,
                 doc = this.document;
 
             inner_id = this._fullscreen_inner_id;
@@ -7082,15 +7189,22 @@ JXG.extend(
                 // Store the original data.
                 // Further, the CSS margin has to be removed when in fullscreen mode,
                 // and must be restored later.
+                //
                 // Obsolete:
                 // It is used in AbstractRenderer.updateText to restore the scaling matrix
                 // which is removed by MathJax.
                 inner_node._cssFullscreenStore.id = fullscreenElement.id;
                 inner_node._cssFullscreenStore.isFullscreen = true;
                 inner_node._cssFullscreenStore.margin = inner_node.style.margin;
+                inner_node._cssFullscreenStore.width = inner_node.style.width;
+                inner_node._cssFullscreenStore.height = inner_node.style.height;
+                inner_node._cssFullscreenStore.transform = inner_node.style.transform;
+                // Be sure to replace relative width / height units by absolute units
+                inner_node.style.width = inner_node._cssFullscreenStore.w + 'px';
+                inner_node.style.height = inner_node._cssFullscreenStore.h + 'px';
                 inner_node.style.margin = '';
 
-                // Do the shifting and scaling via CSS pseudo rules
+                // Do the shifting and scaling via CSS properties
                 // We do this after fullscreen mode has been established to get the correct size
                 // of the JSXGraph div.
                 Env.scaleJSXGraphDiv(fullscreenElement.id, inner_id, doc,
@@ -7102,16 +7216,12 @@ JXG.extend(
             } else if (Type.exists(inner_node._cssFullscreenStore)) {
                 // Just left the fullscreen mode
 
-                // Remove the CSS rules added in Env.scaleJSXGraphDiv
-                for (i = doc.styleSheets.length - 1; i >= 0; i--) {
-                    if (doc.styleSheets[i].title === 'jsxgraph_fullscreen_css') {
-                        doc.styleSheets[i].deleteRule(0);
-                        break;
-                    }
-                }
-
                 inner_node._cssFullscreenStore.isFullscreen = false;
                 inner_node.style.margin = inner_node._cssFullscreenStore.margin;
+                inner_node.style.width = inner_node._cssFullscreenStore.width;
+                inner_node.style.height = inner_node._cssFullscreenStore.height;
+                inner_node.style.transform = inner_node._cssFullscreenStore.transform;
+                inner_node._cssFullscreenStore = null;
 
                 // Remove the wrapper div
                 inner_node.parentElement.replaceWith(inner_node);
@@ -7121,7 +7231,7 @@ JXG.extend(
         },
 
         /**
-         * Start resize observer in to handle
+         * Start resize observer to handle
          * orientation changes in fullscreen mode.
          *
          * @param {Object} node DOM object which is in fullscreen mode. It is the wrapper element
@@ -7369,9 +7479,9 @@ JXG.extend(
                                 cpyb = Numerics.D(c.Y)(b),
                                 cpxab = Numerics.D(c.X)((a + b) * 0.5),
                                 cpyab = Numerics.D(c.Y)((a + b) * 0.5),
-                                fa = Math.sqrt(cpxa * cpxa + cpya * cpya),
-                                fb = Math.sqrt(cpxb * cpxb + cpyb * cpyb),
-                                fab = Math.sqrt(cpxab * cpxab + cpyab * cpyab);
+                                fa = Mat.hypot(cpxa, cpya),
+                                fb = Mat.hypot(cpxb, cpyb),
+                                fab = Mat.hypot(cpxab, cpyab);
 
                             return ((fa + 4 * fab + fb) * (b - a)) / 6;
                         },

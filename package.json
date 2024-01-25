@@ -58,7 +58,7 @@
     "trailingComma": "none"
   },
   "devDependencies": {
-    "eslint": "^8.4.1",
+    "eslint": ">=8.14.0",
     "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-prettier": "^4.2.1",
     "http-server": "^14.1.1",

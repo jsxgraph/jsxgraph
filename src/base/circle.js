@@ -42,6 +42,7 @@ import JXG from "../jxg";
 import GeometryElement from "./element";
 import Coords from "./coords";
 import Const from "./constants";
+import Mat from "../math/math";
 import GeonextParser from "../parser/geonext";
 import Type from "../utils/type";
 
@@ -134,8 +135,8 @@ JXG.Circle = function (board, method, par1, par2, attributes) {
         this.radius = this.Radius();
     } else if (method === "pointRadius") {
         this.gxtterm = par2;
-        // Converts GEONExT syntax into JavaScript syntax and generally ensures that the radius is a function
-        this.updateRadius = Type.createFunction(par2, this.board, null, true);
+        // Converts JessieCode syntax into JavaScript syntax and generally ensures that the radius is a function
+        this.updateRadius = Type.createFunction(par2, this.board);
         // First evaluation of the radius function
         this.updateRadius();
         this.addParentsFromJCFunctions([this.updateRadius]);
@@ -188,7 +189,11 @@ JXG.Circle = function (board, method, par1, par2, attributes) {
         getRadius: "getRadius",
         Area: "Area",
         area: "Area",
+        Perimeter: "Perimeter",
+        Circumference: "Perimeter",
         radius: "Radius",
+        Radius: "Radius",
+        Diameter: "Diameter",
         center: "center",
         line: "line",
         point2: "point2"
@@ -224,7 +229,7 @@ JXG.extend(
             }
             dx = mp[1] - p.usrCoords[1];
             dy = mp[2] - p.usrCoords[2];
-            dist = Math.sqrt(dx * dx + dy * dy);
+            dist = Mat.hypot(dx, dy);
 
             // We have to use usrCoords, since Radius is available in usrCoords only.
             prec += Type.evaluate(this.visProp.strokewidth) * 0.5;
@@ -362,6 +367,7 @@ JXG.extend(
                 } else if (this.method === "pointRadius") {
                     this.radius = this.updateRadius();
                 }
+                this.radius = Math.abs(this.radius);
 
                 this.updateStdform();
                 this.updateQuadraticform();
@@ -511,7 +517,7 @@ JXG.extend(
          * @returns {JXG.Circle} Reference to this circle
          */
         setRadius: function (r) {
-            this.updateRadius = Type.createFunction(r, this.board, null, true);
+            this.updateRadius = Type.createFunction(r, this.board);
             this.addParentsFromJCFunctions([this.updateRadius]);
             this.board.update();
 
@@ -545,10 +551,18 @@ JXG.extend(
             }
 
             if (this.method === "pointRadius") {
-                return this.updateRadius();
+                return Math.abs(this.updateRadius());
             }
 
             return NaN;
+        },
+
+        /**
+         * Calculates the diameter of the circle.
+         * @returns {Number} The Diameter of the circle
+         */
+        Diameter: function () {
+            return 2 * this.Radius();
         },
 
         /**
@@ -786,15 +800,20 @@ JXG.extend(
  * @pseudo
  * @description  A circle consists of all points with a given distance from one point. This point is called center, the distance is called radius.
  * A circle can be constructed by providing a center and a point on the circle or a center and a radius (given as a number, function,
- * line, or circle).
+ * line, or circle). If the radius is a negative value, its absolute values is taken.
  * @name Circle
  * @augments JXG.Circle
  * @constructor
  * @type JXG.Circle
  * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
- * @param {JXG.Point_number,JXG.Point,JXG.Line,JXG.Circle} center,radius The center must be given as a {@link JXG.Point}, see {@link JXG.providePoints}, but the radius can be given
- * as a number (which will create a circle with a fixed radius), another {@link JXG.Point}, a {@link JXG.Line} (the distance of start and end point of the
+ * @param {JXG.Point_number,JXG.Point,JXG.Line,JXG.Circle} center,radius The center must be given as a {@link JXG.Point},
+ * see {@link JXG.providePoints}, but the radius can be given
+ * as a number (which will create a circle with a fixed radius),
+ * another {@link JXG.Point}, a {@link JXG.Line} (the distance of start and end point of the
  * line will determine the radius), or another {@link JXG.Circle}.
+ * <p>
+ * If the radius is supplied as number or output of a function, its absolute value is taken.
+ *
  * @example
  * // Create a circle providing two points
  * var p1 = board.create('point', [2.0, 2.0]),
@@ -912,9 +931,15 @@ JXG.createCircle = function (board, parents, attributes) {
     // Circle defined by points
     for (i = 0; i < parents.length; i++) {
         if (Type.isPointType(board, parents[i])) {
-            p = p.concat(
-                Type.providePoints(board, [parents[i]], attributes, "circle", [point_style[i]])
-            );
+            if (parents.length < 3) {
+                p = p.concat(
+                    Type.providePoints(board, [parents[i]], attributes, "circle", [point_style[i]])
+                );
+            } else {
+                p = p.concat(
+                    Type.providePoints(board, [parents[i]], attributes, "point")
+                );
+                }
             if (p[p.length - 1] === false) {
                 throw new Error(
                     "JSXGraph: Can't create circle from this type. Please provide a point type."

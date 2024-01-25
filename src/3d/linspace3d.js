@@ -271,6 +271,7 @@ JXG.createLine3D = function (board, parents, attributes) {
 
         // Now set the real points which define the line
         /**
+         * @class
          * @ignore
          */
         points[0].F = function () {
@@ -280,6 +281,7 @@ JXG.createLine3D = function (board, parents, attributes) {
         point1 = points[0];
 
         /**
+         * @class
          * @ignore
          */
         points[1].F = function () {
@@ -297,10 +299,28 @@ JXG.createLine3D = function (board, parents, attributes) {
     el.element2D.setParents(el);
     // el.setParents([point1.id, point2.id]);
 
-    point1.addChild(el);
-    point2.addChild(el);
     el.point1 = point1;
     el.point2 = point2;
+    if (el.point1._is_new) {
+        el.addChild(el.point1);
+        delete el.point1._is_new;
+    } else {
+        el.point1.addChild(el);
+    }
+    if (el.point2._is_new) {
+        el.addChild(el.point2);
+        delete el.point2._is_new;
+    } else {
+        el.point2.addChild(el);
+    }
+    if (Type.exists(point)) {
+        if (point._is_new) {
+            el.addChild(point);
+            delete point._is_new;
+        } else {
+            point.addChild(el);
+        }
+    }
 
     el.update();
     el.element2D.prepareUpdate().update().updateRenderer();

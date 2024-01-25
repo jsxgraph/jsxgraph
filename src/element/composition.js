@@ -128,7 +128,10 @@ JXG.createOrthogonalProjection = function (board, parents, attributes) {
 
     attr = Type.copyAttributes(attributes, board.options, "orthogonalprojection");
 
-    /** @type {JXG.Element} */
+    /**
+     * @type JXG.Element
+     * @ignore
+     */
     t = board.create(
         "point",
         [
@@ -152,12 +155,14 @@ JXG.createOrthogonalProjection = function (board, parents, attributes) {
 
     t.update();
 
-    // /**
-    //  * Used to generate a polynomial for the orthogonal projection
-    //  * @name Orthogonalprojection#generatePolynomial
-    //  * @returns {Array} An array containing the generated polynomial.
-    //  * @private
-    //  */
+    /**
+     * Used to generate a polynomial for the orthogonal projection
+     * @name Orthogonalprojection#generatePolynomial
+     * @returns {Array} An array containing the generated polynomial.
+     * @private
+     * @function
+     * @ignore
+     */
     t.generatePolynomial = function () {
         /*
          *  Perpendicular takes point P and line L and creates point T and line M:
@@ -362,6 +367,10 @@ JXG.createPerpendicularPoint = function (board, parents, attributes) {
         );
     }
 
+    /**
+     * @class
+     * @ignore
+     */
     t = board.create(
         "point",
         [
@@ -385,12 +394,14 @@ JXG.createPerpendicularPoint = function (board, parents, attributes) {
 
     t.update();
 
-    // /**
-    //  * Used to generate a polynomial for the perpendicular point
-    //  * @name PerpendicularPoint#generatePolynomial
-    //  * @returns {Array} An array containing the generated polynomial.
-    //  * @private
-    //  */
+    /**
+     * Used to generate a polynomial for the perpendicular point
+     * @name PerpendicularPoint#generatePolynomial
+     * @returns {Array} An array containing the generated polynomial.
+     * @private
+     * @function
+     * @ignore
+     */
     t.generatePolynomial = function () {
         /*
          *  Perpendicular takes point P and line L and creates point T and line M:
@@ -606,6 +617,10 @@ JXG.createMidpoint = function (board, parents, attributes) {
     }
 
     attr = Type.copyAttributes(attributes, board.options, "midpoint");
+    /**
+     * @type JXG.Element
+     * @ignore
+     */
     t = board.create(
         "point",
         [
@@ -654,12 +669,14 @@ JXG.createMidpoint = function (board, parents, attributes) {
 
     t.prepareUpdate().update();
 
-    // /**
-    //  * Used to generate a polynomial for the midpoint.
-    //  * @name Midpoint#generatePolynomial
-    //  * @returns {Array} An array containing the generated polynomial.
-    //  * @private
-    //  */
+    /**
+     * Used to generate a polynomial for the midpoint.
+     * @name Midpoint#generatePolynomial
+     * @returns {Array} An array containing the generated polynomial.
+     * @private
+     * @function
+     * @ignore
+     */
     t.generatePolynomial = function () {
         /*
          *  Midpoint takes two point A and B or line L (with points P and Q) and creates point T:
@@ -777,7 +794,10 @@ JXG.createParallelPoint = function (board, parents, attributes) {
     }
 
     attr = Type.copyAttributes(attributes, board.options, 'parallelpoint');
-    /** @type {JXG.Element} */
+    /**
+     * @type {JXG.Element}
+     * @ignore
+     */
     p = board.create(
         "point",
         [
@@ -818,6 +838,10 @@ JXG.createParallelPoint = function (board, parents, attributes) {
     // can be removed if the above issue is resolved.
     p.prepareUpdate().update();
 
+    /**
+     * @function
+     * @ignore
+     */
     p.generatePolynomial = function () {
         /*
          *  Parallelpoint takes three points A, B and C or line L (with points B and C) and creates point T:
@@ -1265,7 +1289,7 @@ JXG.createNormal = function (board, parents, attributes) {
                                 (1 - t) * (1 - t) * (B[2] - A[2]) +
                                 2 * (1 - t) * t * (C[2] - B[2]) +
                                 t * t * (D[2] - C[2]);
-                            d = Math.sqrt(dx * dx + dy * dy);
+                            d = Mat.hypot(dx, dy);
                             dx /= d;
                             dy /= d;
                             p1 = p.coords.usrCoords;
@@ -1321,7 +1345,7 @@ JXG.createNormal = function (board, parents, attributes) {
                                 (1 - t) * (1 - t) * (B[2] - A[2]) +
                                 2 * (1 - t) * t * (C[2] - B[2]) +
                                 t * t * (D[2] - C[2]);
-                            d = Math.sqrt(dx * dx + dy * dy);
+                            d = Mat.hypot(dx, dy);
                             dx /= d;
                             dy /= d;
                             p1 = p.coords.usrCoords;
@@ -1378,7 +1402,7 @@ JXG.createNormal = function (board, parents, attributes) {
                                 (1 - t) * (1 - t) * (B[2] - A[2]) +
                                 2 * (1 - t) * t * (C[2] - B[2]) +
                                 t * t * (D[2] - C[2]);
-                            d = Math.sqrt(dx * dx + dy * dy);
+                            d = Mat.hypot(dx, dy);
                             dx /= d;
                             dy /= d;
                             p1 = p.coords.usrCoords;
@@ -1670,32 +1694,20 @@ JXG.createAngularBisectorsOfTwoLines = function (board, parents, attributes) {
         "line",
         [
             function () {
-                var d1 = Math.sqrt(
-                        l1.stdform[1] * l1.stdform[1] + l1.stdform[2] * l1.stdform[2]
-                    ),
-                    d2 = Math.sqrt(
-                        l2.stdform[1] * l2.stdform[1] + l2.stdform[2] * l2.stdform[2]
-                    );
+                var d1 = Mat.hypot(l1.stdform[1], l1.stdform[2]),
+                    d2 = Mat.hypot(l2.stdform[1], l2.stdform[2]);
 
                 return l1.stdform[0] / d1 - l2.stdform[0] / d2;
             },
             function () {
-                var d1 = Math.sqrt(
-                        l1.stdform[1] * l1.stdform[1] + l1.stdform[2] * l1.stdform[2]
-                    ),
-                    d2 = Math.sqrt(
-                        l2.stdform[1] * l2.stdform[1] + l2.stdform[2] * l2.stdform[2]
-                    );
+                var d1 = Mat.hypot(l1.stdform[1], l1.stdform[2]),
+                    d2 = Mat.hypot(l2.stdform[1], l2.stdform[2]);
 
                 return l1.stdform[1] / d1 - l2.stdform[1] / d2;
             },
             function () {
-                var d1 = Math.sqrt(
-                        l1.stdform[1] * l1.stdform[1] + l1.stdform[2] * l1.stdform[2]
-                    ),
-                    d2 = Math.sqrt(
-                        l2.stdform[1] * l2.stdform[1] + l2.stdform[2] * l2.stdform[2]
-                    );
+                var d1 = Mat.hypot(l1.stdform[1], l1.stdform[2]),
+                    d2 = Mat.hypot(l2.stdform[1], l2.stdform[2]);
 
                 return l1.stdform[2] / d1 - l2.stdform[2] / d2;
             }
@@ -1711,32 +1723,20 @@ JXG.createAngularBisectorsOfTwoLines = function (board, parents, attributes) {
         "line",
         [
             function () {
-                var d1 = Math.sqrt(
-                        l1.stdform[1] * l1.stdform[1] + l1.stdform[2] * l1.stdform[2]
-                    ),
-                    d2 = Math.sqrt(
-                        l2.stdform[1] * l2.stdform[1] + l2.stdform[2] * l2.stdform[2]
-                    );
+                var d1 = Mat.hypot(l1.stdform[1], l1.stdform[2]),
+                    d2 = Mat.hypot(l2.stdform[1], l2.stdform[2]);
 
                 return l1.stdform[0] / d1 + l2.stdform[0] / d2;
             },
             function () {
-                var d1 = Math.sqrt(
-                        l1.stdform[1] * l1.stdform[1] + l1.stdform[2] * l1.stdform[2]
-                    ),
-                    d2 = Math.sqrt(
-                        l2.stdform[1] * l2.stdform[1] + l2.stdform[2] * l2.stdform[2]
-                    );
+                var d1 = Mat.hypot(l1.stdform[1], l1.stdform[2]),
+                    d2 = Mat.hypot(l2.stdform[1], l2.stdform[2]);
 
                 return l1.stdform[1] / d1 + l2.stdform[1] / d2;
             },
             function () {
-                var d1 = Math.sqrt(
-                        l1.stdform[1] * l1.stdform[1] + l1.stdform[2] * l1.stdform[2]
-                    ),
-                    d2 = Math.sqrt(
-                        l2.stdform[1] * l2.stdform[1] + l2.stdform[2] * l2.stdform[2]
-                    );
+                var d1 = Mat.hypot(l1.stdform[1], l1.stdform[2]),
+                    d2 = Mat.hypot(l2.stdform[1], l2.stdform[2]);
 
                 return l1.stdform[2] / d1 + l2.stdform[2] / d2;
             }
@@ -1999,15 +1999,9 @@ JXG.createIncenter = function (board, parents, attributes) {
                 function () {
                     var a, b, c;
 
-                    a = Math.sqrt(
-                        (B.X() - C.X()) * (B.X() - C.X()) + (B.Y() - C.Y()) * (B.Y() - C.Y())
-                    );
-                    b = Math.sqrt(
-                        (A.X() - C.X()) * (A.X() - C.X()) + (A.Y() - C.Y()) * (A.Y() - C.Y())
-                    );
-                    c = Math.sqrt(
-                        (B.X() - A.X()) * (B.X() - A.X()) + (B.Y() - A.Y()) * (B.Y() - A.Y())
-                    );
+                    a = Mat.hypot(B.X() - C.X(), B.Y() - C.Y());
+                    b = Mat.hypot(A.X() - C.X(), A.Y() - C.Y());
+                    c = Mat.hypot(B.X() - A.X(), B.Y() - A.Y());
 
                     return new Coords(
                         Const.COORDS_BY_USER,
@@ -2190,24 +2184,9 @@ JXG.createIncircle = function (board, parents, attributes) {
             [
                 p,
                 function () {
-                    var a = Math.sqrt(
-                            (parents[1].X() - parents[2].X()) *
-                                (parents[1].X() - parents[2].X()) +
-                                (parents[1].Y() - parents[2].Y()) *
-                                    (parents[1].Y() - parents[2].Y())
-                        ),
-                        b = Math.sqrt(
-                            (parents[0].X() - parents[2].X()) *
-                                (parents[0].X() - parents[2].X()) +
-                                (parents[0].Y() - parents[2].Y()) *
-                                    (parents[0].Y() - parents[2].Y())
-                        ),
-                        c = Math.sqrt(
-                            (parents[1].X() - parents[0].X()) *
-                                (parents[1].X() - parents[0].X()) +
-                                (parents[1].Y() - parents[0].Y()) *
-                                    (parents[1].Y() - parents[0].Y())
-                        ),
+                    var a = Mat.hypot(parents[1].X() - parents[2].X(), parents[1].Y() - parents[2].Y()),
+                        b = Mat.hypot(parents[0].X() - parents[2].X(), parents[0].Y() - parents[2].Y()),
+                        c = Mat.hypot(parents[1].X() - parents[0].X(), parents[1].Y() - parents[0].Y()),
                         s = (a + b + c) / 2;
 
                     return Math.sqrt(((s - a) * (s - b) * (s - c)) / s);
@@ -3322,6 +3301,7 @@ JXG.createInequality = function (board, parents, attributes) {
         };
 
         /**
+         * @class
          * @ignore
          */
         a.updateDataArray = function () {
@@ -3331,27 +3311,19 @@ JXG.createInequality = function (board, parents, attributes) {
                 // such that the line is not visible anymore, the borders of the area will get visible in some cases.
                 h,
                 bb = board.getBoundingBox(),
-                factor = attr.inverse ? -1 : 1,
+                inverse = Type.evaluate(this.visProp.inverse),
+                factor = inverse ? -1 : 1,
                 expansion = 1.5,
                 w = expansion * Math.max(bb[2] - bb[0], bb[1] - bb[3]),
                 // Fake a point (for Math.Geometry.perpendicular)
                 // contains centroid of the board
                 dp = {
                     coords: {
-                        usrCoords: [1, (bb[0] + bb[2]) / 2, attr.inverse ? bb[1] : bb[3]]
+                        usrCoords: [1, (bb[0] + bb[2]) * 0.5, inverse ? bb[1] : bb[3]]
                     }
                 },
                 slope1 = parents[0].stdform.slice(1),
                 slope2 = slope1;
-
-            // This is wrong. Example:
-            // var line = board.create('line', [0, -1, -1]);
-            // var ineq = board.create('inequality', [line]);
-            //
-            // if (slope1[1] > 0) {
-            //     slope1 = Statistics.multiply(slope1, -1);
-            //     slope2 = slope1;
-            // }
 
             // Calculate the area height as
             //  expansion times the distance of the line to the
@@ -3370,7 +3342,7 @@ JXG.createInequality = function (board, parents, attributes) {
             // reuse dp
             dp = {
                 coords: {
-                    usrCoords: [1, (bb[0] + bb[2]) / 2, (bb[1] + bb[3]) / 2]
+                    usrCoords: [1, (bb[0] + bb[2]) * 0.5, (bb[1] + bb[3]) * 0.5]
                 }
             };
 
@@ -3399,6 +3371,10 @@ JXG.createInequality = function (board, parents, attributes) {
         parents[0].visProp.curvetype === "functiongraph"
     ) {
         a = board.create("curve", [[], []], attr);
+        /**
+         * @class
+         * @ignore
+         */
         a.updateDataArray = function () {
             var bbox = this.board.getBoundingBox(),
                 points = [],
@@ -3491,7 +3467,10 @@ JXG.createInequality = function (board, parents, attributes) {
         };
 
         // Previous code:
-        /** @ignore */
+        /**
+         * @class
+         * @ignore
+         */
         a.hasPoint = function () {
             return false;
         };
