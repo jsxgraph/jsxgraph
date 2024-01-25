@@ -4,13 +4,12 @@
 New features
 -----------
 
-- New quadtree implementation `BoxQuadtree` for storing segments
 - New element `implicitcurve`: plot curve given by an equation F(x, y) = 0
 - New element `parallelogram`
 - New element `measurement` and new simple prefix parser
 - New element `vectorfield3d`
-- Add theme `mono_thin`
 - Add board attribute `theme`
+- Add theme `mono_thin`
 - New function `JXG.stack2jsxgraph`New method JXG.Math.Numerics.polzeros
 - Extend method `Value` for angle, arc and sector.
 - New method `Coords` for point, image and text
@@ -24,6 +23,7 @@ Improvements
 - New function `JXG.Math.hypot`: Euclidean length of a vector
 - New function `JXG.Math.hstep`: Heaviside unit step function
 - New function `JXG.Math.Numerics.polzeros` to compute all zeros (including the complex ones) of a polynomial
+- New quadtree implementation `BoxQuadtree` for storing segments
 - Add new point face `<<>>` or `diamond2` (enlarged to match size of `[]`)
 - API reference: many bug fixes, improvements, many new examples
 - Improve Jessiecode support in text elements
