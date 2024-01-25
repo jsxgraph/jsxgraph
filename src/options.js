@@ -5608,11 +5608,14 @@ JXG.Options = {
         baseUnit: '',
         units: {},
         dim: null,
+
+        showPrefix: true,
+        showSuffix: true,
+
         prefix: '',
         suffix: '',
 
-        showPrefix: true,
-        showSuffix: true
+        coordsPattern: '(x,y)'
 
         /**#@-*/
     },
