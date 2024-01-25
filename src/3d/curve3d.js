@@ -31,6 +31,7 @@
 import JXG from "../jxg";
 import Const from "../base/constants";
 import Type from "../utils/type";
+import Mat from "../math/math";
 
 /**
  * Constructor for 3D curves.
@@ -362,7 +363,7 @@ JXG.createVectorfield3D = function (board, parents, attributes) {
             for (j = 0, y = start[1]; j <= steps[1]; y += delta[1], j++) {
                 for (k = 0, z = start[2]; k <= steps[2]; z += delta[2], k++) {
                     v = this.F(x, y, z);
-                    nrm = JXG.Math.norm(v);
+                    nrm = Mat.norm(v);
                     if (nrm < Number.EPSILON) {
                         continue;
                     }

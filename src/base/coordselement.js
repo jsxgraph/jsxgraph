@@ -860,52 +860,58 @@ JXG.extend(
          * @param {Boolean} [withZ=false] If set to true the return value will be <tt>(x | y | z)</tt> instead of <tt>(x, y)</tt>.
          * @returns {String} User coordinates of point.
          */
-        Coords: function (digits, withZ) {
-            var arr, sep;
-
-            digits = digits || 'auto';
-
+        Coords: function(withZ) {
             if (withZ) {
-                sep = ' | ';
-            } else {
-                sep = ', ';
+                return this.coords.usrCoords.slice();
             }
-
-            if (digits === 'none') {
-                arr = [this.X(), sep, this.Y()];
-                if (withZ) {
-                    arr.push(sep, this.Z());
-                }
-
-            } else if (digits === 'auto') {
-                if (this.useLocale()) {
-                    arr = [this.formatNumberLocale(this.X()), sep, this.formatNumberLocale(this.Y())];
-                    if (withZ) {
-                        arr.push(sep, this.formatNumberLocale(this.Z()));
-                    }
-                } else {
-                    arr = [Type.autoDigits(this.X()), sep, Type.autoDigits(this.Y())];
-                    if (withZ) {
-                        arr.push(sep, Type.autoDigits(this.Z()));
-                    }
-                }
-
-            } else {
-                if (this.useLocale()) {
-                    arr = [this.formatNumberLocale(this.X(), digits), sep, this.formatNumberLocale(this.Y(), digits)];
-                    if (withZ) {
-                        arr.push(sep, this.formatNumberLocale(this.Z(), digits));
-                    }
-                } else {
-                    arr = [Type.toFixed(this.X(), digits), sep, Type.toFixed(this.Y(), digits)];
-                    if (withZ) {
-                        arr.push(sep, Type.toFixed(this.Z(), digits));
-                    }
-                }
-            }
-
-            return '(' + arr.join('') + ')';
+            return this.coords.usrCoords.slice(1);
         },
+        // Coords: function (digits, withZ) {
+        //     var arr, sep;
+
+        //     digits = digits || 'auto';
+
+        //     if (withZ) {
+        //         sep = ' | ';
+        //     } else {
+        //         sep = ', ';
+        //     }
+
+        //     if (digits === 'none') {
+        //         arr = [this.X(), sep, this.Y()];
+        //         if (withZ) {
+        //             arr.push(sep, this.Z());
+        //         }
+
+        //     } else if (digits === 'auto') {
+        //         if (this.useLocale()) {
+        //             arr = [this.formatNumberLocale(this.X()), sep, this.formatNumberLocale(this.Y())];
+        //             if (withZ) {
+        //                 arr.push(sep, this.formatNumberLocale(this.Z()));
+        //             }
+        //         } else {
+        //             arr = [Type.autoDigits(this.X()), sep, Type.autoDigits(this.Y())];
+        //             if (withZ) {
+        //                 arr.push(sep, Type.autoDigits(this.Z()));
+        //             }
+        //         }
+
+        //     } else {
+        //         if (this.useLocale()) {
+        //             arr = [this.formatNumberLocale(this.X(), digits), sep, this.formatNumberLocale(this.Y(), digits)];
+        //             if (withZ) {
+        //                 arr.push(sep, this.formatNumberLocale(this.Z(), digits));
+        //             }
+        //         } else {
+        //             arr = [Type.toFixed(this.X(), digits), sep, Type.toFixed(this.Y(), digits)];
+        //             if (withZ) {
+        //                 arr.push(sep, Type.toFixed(this.Z(), digits));
+        //             }
+        //         }
+        //     }
+
+        //     return '(' + arr.join('') + ')';
+        // },
 
         /**
          * New evaluation of the function term.

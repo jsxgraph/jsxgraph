@@ -66,7 +66,7 @@ all: core readers docs
 
 core:
 	# Build uncompressed AND minified files
-	#   jsgraphsrc.js, jsxgraphsrc.mjs, jsxgraphcore.js, jsxgraphcore.mjs and
+	#   jsxgraphsrc.js, jsxgraphsrc.mjs, jsxgraphcore.js, jsxgraphcore.mjs and
 	# copy them to the distrib directory.
 	$(WEBPACK) --config config/webpack.config.js
 	# Update version number in line 2 of file COPYRIGHT

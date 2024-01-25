@@ -312,6 +312,46 @@ JXG.extend(
         },
 
         /**
+         * Converts a given CSS style string into a JavaScript object.
+         * @param {String} styles String containing CSS styles.
+         * @returns {Object} Object containing CSS styles.
+         */
+        cssParse: function (styles) {
+            var str = styles;
+            if (!this.isString(str)) return {};
+
+            str = str.replace(/\s*;\s*$/g, '');
+            str = str.replace(/\s*;\s*/g, '","');
+            str = str.replace(/\s*:\s*/g, '":"');
+            str = str.trim();
+            str = '{"' + str + '"}';
+
+            return JSON.parse(str);
+        },
+
+        /**
+         * Converts a given object into a CSS style string.
+         * @param {Object} styles Object containing CSS styles.
+         * @returns {String} String containing CSS styles.
+         */
+        cssStringify: function (styles) {
+            var str = '',
+                attr, val;
+            if (!this.isObject(styles)) return '';
+
+            for (attr in styles) {
+                if (!styles.hasOwnProperty(attr)) continue;
+                val = styles[attr];
+                if (!this.isString(val) && !this.isNumber(val)) continue;
+
+                str += attr + ':' + val + '; ';
+            }
+            str = str.trim();
+
+            return str;
+        },
+
+        /**
          * Convert a String, a number or a function into a function. This method is used in Transformation.js
          * @param {JXG.Board} board Reference to a JSXGraph board. It is required to resolve dependencies given
          * by a JessieCode string, thus it must be a valid reference only in case one of the param
