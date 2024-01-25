@@ -53,10 +53,11 @@
  */
 var jxg = {};
 
-// Make sure JXG.extend is not defined
-// If jsxgraph is compiled as an amd module, it is possible that another jsxgraph version is already loaded and we
+// Make sure JXG.extend is not defined.
+// If JSXGraph is compiled as an amd module, it is possible that another JSXGraph version is already loaded and we
 // therefore must not re-use the global JXG variable. But in this case JXG.extend will already be defined.
 // This is the reason for this check.
+// The try-statement is necessary, otherwise an error is thrown in certain imports, e.g. in deno.
 try {
     if (typeof JXG === "object" && !JXG.extend) {
         jxg = JXG;
