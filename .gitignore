@@ -19,6 +19,7 @@ JSXCompressor/jsxcompressor.min.js
 build/bin/*
 src/require.js
 node_modules
+package-lock.json
 tmp/*
 doc/jsdoc-tk/template/static/jquery.min.js
 doc/jsdoc-tk/template/static/jsxgraphcore.js
