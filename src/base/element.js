@@ -1273,18 +1273,52 @@ JXG.extend(
 
                     oldvalue = this.visProp[key];
                     switch (key) {
-                        case "name":
-                            oldvalue = this.name;
-                            delete this.board.elementsByName[this.name];
-                            this.name = value;
-                            this.board.elementsByName[this.name] = this;
+                        case "checked":
+                            // checkbox Is not available on initial call.
+                            if (Type.exists(this.rendNodeTag)) {
+                                this.rendNodeCheckbox.checked = !!value;
+                            }
                             break;
-                        case "needsregularupdate":
-                            this.needsRegularUpdate = !(value === "false" || value === false);
-                            this.board.renderer.setBuffering(
-                                this,
-                                this.needsRegularUpdate ? "auto" : "static"
-                            );
+                        case "disabled":
+                            // button, checkbox, input. Is not available on initial call.
+                            if (Type.exists(this.rendNodeTag)) {
+                                this.rendNodeTag.disabled = !!value;
+                            }
+                            break;
+                        case "face":
+                            if (Type.isPoint(this)) {
+                                this.visProp.face = value;
+                                this.board.renderer.changePointStyle(this);
+                            }
+                            break;
+                        case "generatelabelvalue":
+                            if (
+                                this.type === Const.OBJECT_TYPE_TICKS &&
+                                Type.isFunction(value)
+                            ) {
+                                this.generateLabelValue = value;
+                            }
+                            break;
+                        case "gradient":
+                            this.visProp.gradient = value;
+                            this.board.renderer.setGradient(this);
+                            break;
+                        case "gradientsecondcolor":
+                            value = Color.rgba2rgbo(value);
+                            this.visProp.gradientsecondcolor = value[0];
+                            this.visProp.gradientsecondopacity = value[1];
+                            this.board.renderer.updateGradient(this);
+                            break;
+                        case "gradientsecondopacity":
+                            this.visProp.gradientsecondopacity = value;
+                            this.board.renderer.updateGradient(this);
+                            break;
+                        case "infoboxtext":
+                            if (Type.isString(value)) {
+                                this.infoboxText = value;
+                            } else {
+                                this.infoboxText = false;
+                            }
                             break;
                         case "labelcolor":
                             value = Color.rgba2rgbo(value);
@@ -1309,11 +1343,70 @@ JXG.extend(
                                 this.board.renderer.setObjectStrokeColor(this, value, opacity);
                             }
                             break;
-                        case "infoboxtext":
-                            if (Type.isString(value)) {
-                                this.infoboxText = value;
+                        case "layer":
+                            this.board.renderer.setLayer(this, Type.evaluate(value));
+                            this._set(key, value);
+                            break;
+                        case "maxlength":
+                            // input. Is not available on initial call.
+                            if (Type.exists(this.rendNodeTag)) {
+                                this.rendNodeTag.maxlength = !!value;
+                            }
+                            break;
+                        case "name":
+                            oldvalue = this.name;
+                            delete this.board.elementsByName[this.name];
+                            this.name = value;
+                            this.board.elementsByName[this.name] = this;
+                            break;
+                        case "needsregularupdate":
+                            this.needsRegularUpdate = !(value === "false" || value === false);
+                            this.board.renderer.setBuffering(
+                                this,
+                                this.needsRegularUpdate ? "auto" : "static"
+                            );
+                            break;
+                        case "onpolygon":
+                            if (this.type === Const.OBJECT_TYPE_GLIDER) {
+                                this.onPolygon = !!value;
+                            }
+                            break;
+                        case "radius":
+                            if (
+                                this.type === Const.OBJECT_TYPE_ANGLE ||
+                                this.type === Const.OBJECT_TYPE_SECTOR
+                            ) {
+                                this.setRadius(value);
+                            }
+                            break;
+                        case "rotate":
+                            if (
+                                (this.elementClass === Const.OBJECT_CLASS_TEXT &&
+                                    Type.evaluate(this.visProp.display) === "internal") ||
+                                this.type === Const.OBJECT_TYPE_IMAGE
+                            ) {
+                                this.addRotation(value);
+                            }
+                            break;
+                        case "tabindex":
+                            if (Type.exists(this.rendNode)) {
+                                this.rendNode.setAttribute("tabindex", value);
+                                this._set(key, value);
+                            }
+                            break;
+                        // case "ticksdistance":
+                        //     if (this.type === Const.OBJECT_TYPE_TICKS && Type.isNumber(value)) {
+                        //         this.ticksFunction = this.makeTicksFunction(value);
+                        //     }
+                        //     break;
+                        case "trace":
+                            if (value === "false" || value === false) {
+                                this.clearTrace();
+                                this.visProp.trace = false;
+                            } else if (value === "pause") {
+                                this.visProp.trace = false;
                             } else {
-                                this.infoboxText = false;
+                                this.visProp.trace = true;
                             }
                             break;
                         case "visible":
@@ -1334,36 +1427,6 @@ JXG.extend(
                             }
 
                             break;
-                        case "face":
-                            if (Type.isPoint(this)) {
-                                this.visProp.face = value;
-                                this.board.renderer.changePointStyle(this);
-                            }
-                            break;
-                        case "trace":
-                            if (value === "false" || value === false) {
-                                this.clearTrace();
-                                this.visProp.trace = false;
-                            } else if (value === "pause") {
-                                this.visProp.trace = false;
-                            } else {
-                                this.visProp.trace = true;
-                            }
-                            break;
-                        case "gradient":
-                            this.visProp.gradient = value;
-                            this.board.renderer.setGradient(this);
-                            break;
-                        case "gradientsecondcolor":
-                            value = Color.rgba2rgbo(value);
-                            this.visProp.gradientsecondcolor = value[0];
-                            this.visProp.gradientsecondopacity = value[1];
-                            this.board.renderer.updateGradient(this);
-                            break;
-                        case "gradientsecondopacity":
-                            this.visProp.gradientsecondopacity = value;
-                            this.board.renderer.updateGradient(this);
-                            break;
                         case "withlabel":
                             this.visProp.withlabel = value;
                             if (!Type.evaluate(value)) {
@@ -1380,69 +1443,6 @@ JXG.extend(
                                 //this.label.setDisplayRendNode(Type.evaluate(this.visProp.visible));
                             }
                             this.hasLabel = value;
-                            break;
-                        case "radius":
-                            if (
-                                this.type === Const.OBJECT_TYPE_ANGLE ||
-                                this.type === Const.OBJECT_TYPE_SECTOR
-                            ) {
-                                this.setRadius(value);
-                            }
-                            break;
-                        case "rotate":
-                            if (
-                                (this.elementClass === Const.OBJECT_CLASS_TEXT &&
-                                    Type.evaluate(this.visProp.display) === "internal") ||
-                                this.type === Const.OBJECT_TYPE_IMAGE
-                            ) {
-                                this.addRotation(value);
-                            }
-                            break;
-                        // case "ticksdistance":
-                        //     if (this.type === Const.OBJECT_TYPE_TICKS && Type.isNumber(value)) {
-                        //         this.ticksFunction = this.makeTicksFunction(value);
-                        //     }
-                        //     break;
-                        case "generatelabelvalue":
-                            if (
-                                this.type === Const.OBJECT_TYPE_TICKS &&
-                                Type.isFunction(value)
-                            ) {
-                                this.generateLabelValue = value;
-                            }
-                            break;
-                        case "onpolygon":
-                            if (this.type === Const.OBJECT_TYPE_GLIDER) {
-                                this.onPolygon = !!value;
-                            }
-                            break;
-                        case "disabled":
-                            // button, checkbox, input. Is not available on initial call.
-                            if (Type.exists(this.rendNodeTag)) {
-                                this.rendNodeTag.disabled = !!value;
-                            }
-                            break;
-                        case "checked":
-                            // checkbox Is not available on initial call.
-                            if (Type.exists(this.rendNodeTag)) {
-                                this.rendNodeCheckbox.checked = !!value;
-                            }
-                            break;
-                        case "maxlength":
-                            // input. Is not available on initial call.
-                            if (Type.exists(this.rendNodeTag)) {
-                                this.rendNodeTag.maxlength = !!value;
-                            }
-                            break;
-                        case "layer":
-                            this.board.renderer.setLayer(this, Type.evaluate(value));
-                            this._set(key, value);
-                            break;
-                        case "tabindex":
-                            if (Type.exists(this.rendNode)) {
-                                this.rendNode.setAttribute("tabindex", value);
-                                this._set(key, value);
-                            }
                             break;
                         default:
                             if (
