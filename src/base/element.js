@@ -540,7 +540,7 @@ JXG.extend(
          * @returns {JXG.Object} reference to the object itself
          * @private
          */
-        addParentsFromJCFunctions: function(function_array) {
+        addParentsFromJCFunctions: function (function_array) {
             var i, e, obj;
             for (i = 0; i < function_array.length; i++) {
                 for (e in function_array[i].deps) {
@@ -1472,6 +1472,9 @@ JXG.extend(
             } else {
                 this.board.update(this);
             }
+            if (this.elementClass === Const.OBJECT_CLASS_TEXT) {
+                this.updateSize();
+            }
 
             return this;
         },
@@ -2294,7 +2297,7 @@ JXG.extend(
          * @returns {String|Number} string containing the formatted number according to the locale
          * or the number itself of the formatting is not possible.
          */
-        formatNumberLocale: function(value, digits) {
+        formatNumberLocale: function (value, digits) {
             var loc, opt, key,
                 optCalc = {},
                 // These options are case sensitive:
@@ -2319,10 +2322,10 @@ JXG.extend(
                 };
 
             if (Type.exists(Intl) &&
-                this.useLocale())  {
+                this.useLocale()) {
 
                 loc = Type.evaluate(this.visProp.intl.locale) ||
-                        Type.evaluate(this.board.attr.intl.locale);
+                    Type.evaluate(this.board.attr.intl.locale);
                 opt = Type.evaluate(this.visProp.intl.options) || {};
 
                 // Transfer back to camel case if necessary
@@ -2362,7 +2365,7 @@ JXG.extend(
          *
          * @returns {Boolean} if locale can be used for number formatting.
          */
-        useLocale: function() {
+        useLocale: function () {
             var val;
 
             // Check if element supports intl
@@ -2400,7 +2403,7 @@ JXG.extend(
          * @name JXG.GeometryElement#over
          * @param {Event} e The browser's event object.
          */
-        __evt__over: function (e) {},
+        __evt__over: function (e) { },
 
         /**
          * @event
@@ -2408,7 +2411,7 @@ JXG.extend(
          * @name JXG.GeometryElement#mouseover
          * @param {Event} e The browser's event object.
          */
-        __evt__mouseover: function (e) {},
+        __evt__mouseover: function (e) { },
 
         /**
          * @event
@@ -2416,7 +2419,7 @@ JXG.extend(
          * @name JXG.GeometryElement#out
          * @param {Event} e The browser's event object.
          */
-        __evt__out: function (e) {},
+        __evt__out: function (e) { },
 
         /**
          * @event
@@ -2424,7 +2427,7 @@ JXG.extend(
          * @name JXG.GeometryElement#mouseout
          * @param {Event} e The browser's event object.
          */
-        __evt__mouseout: function (e) {},
+        __evt__mouseout: function (e) { },
 
         /**
          * @event
@@ -2432,7 +2435,7 @@ JXG.extend(
          * @name JXG.GeometryElement#move
          * @param {Event} e The browser's event object.
          */
-        __evt__move: function (e) {},
+        __evt__move: function (e) { },
 
         /**
          * @event
@@ -2440,7 +2443,7 @@ JXG.extend(
          * @name JXG.GeometryElement#mousemove
          * @param {Event} e The browser's event object.
          */
-        __evt__mousemove: function (e) {},
+        __evt__mousemove: function (e) { },
 
         /**
          * @event
@@ -2448,7 +2451,7 @@ JXG.extend(
          * @name JXG.GeometryElement#drag
          * @param {Event} e The browser's event object.
          */
-        __evt__drag: function (e) {},
+        __evt__drag: function (e) { },
 
         /**
          * @event
@@ -2456,7 +2459,7 @@ JXG.extend(
          * @name JXG.GeometryElement#mousedrag
          * @param {Event} e The browser's event object.
          */
-        __evt__mousedrag: function (e) {},
+        __evt__mousedrag: function (e) { },
 
         /**
          * @event
@@ -2464,7 +2467,7 @@ JXG.extend(
          * @name JXG.GeometryElement#pendrag
          * @param {Event} e The browser's event object.
          */
-        __evt__pendrag: function (e) {},
+        __evt__pendrag: function (e) { },
 
         /**
          * @event
@@ -2472,7 +2475,7 @@ JXG.extend(
          * @name JXG.GeometryElement#touchdrag
          * @param {Event} e The browser's event object.
          */
-        __evt__touchdrag: function (e) {},
+        __evt__touchdrag: function (e) { },
 
         /**
          * @event
@@ -2489,7 +2492,7 @@ JXG.extend(
          * @name JXG.GeometryElement#down
          * @param {Event} e The browser's event object.
          */
-        __evt__down: function (e) {},
+        __evt__down: function (e) { },
 
         /**
          * @event
@@ -2497,7 +2500,7 @@ JXG.extend(
          * @name JXG.GeometryElement#mousedown
          * @param {Event} e The browser's event object.
          */
-        __evt__mousedown: function (e) {},
+        __evt__mousedown: function (e) { },
 
         /**
          * @event
@@ -2505,7 +2508,7 @@ JXG.extend(
          * @name JXG.GeometryElement#pendown
          * @param {Event} e The browser's event object.
          */
-        __evt__pendown: function (e) {},
+        __evt__pendown: function (e) { },
 
         /**
          * @event
@@ -2513,7 +2516,7 @@ JXG.extend(
          * @name JXG.GeometryElement#touchdown
          * @param {Event} e The browser's event object.
          */
-        __evt__touchdown: function (e) {},
+        __evt__touchdown: function (e) { },
 
         /**
          * @event
@@ -2521,7 +2524,7 @@ JXG.extend(
          * @name JXG.GeometryElement#up
          * @param {Event} e The browser's event object.
          */
-        __evt__up: function (e) {},
+        __evt__up: function (e) { },
 
         /**
          * @event
@@ -2529,7 +2532,7 @@ JXG.extend(
          * @name JXG.GeometryElement#mouseup
          * @param {Event} e The browser's event object.
          */
-        __evt__mouseup: function (e) {},
+        __evt__mouseup: function (e) { },
 
         /**
          * @event
@@ -2537,7 +2540,7 @@ JXG.extend(
          * @name JXG.GeometryElement#penup
          * @param {Event} e The browser's event object.
          */
-        __evt__penup: function (e) {},
+        __evt__penup: function (e) { },
 
         /**
          * @event
@@ -2545,7 +2548,7 @@ JXG.extend(
          * @name JXG.GeometryElement#touchup
          * @param {Event} e The browser's event object.
          */
-        __evt__touchup: function (e) {},
+        __evt__touchup: function (e) { },
 
         /**
          * @event
@@ -2554,7 +2557,7 @@ JXG.extend(
          * @param {Object} o A list of changed attributes and their new value.
          * @param {Object} el Reference to the element
          */
-        __evt__attribute: function (o, el) {},
+        __evt__attribute: function (o, el) { },
 
         /**
          * @event
@@ -2566,12 +2569,12 @@ JXG.extend(
          * @param nval The new value
          * @param {Object} el Reference to the element
          */
-        __evt__attribute_: function (val, nval, el) {},
+        __evt__attribute_: function (val, nval, el) { },
 
         /**
          * @ignore
          */
-        __evt: function () {}
+        __evt: function () { }
         //endregion
     }
 );
