@@ -1253,7 +1253,6 @@ JXG.extend(
                                 if (MathJax.typeset) {
                                     // Version 3
                                     MathJax.typeset([el.rendNode]);
-                                    console.log(el.id, el.rendNode);
                                 } else {
                                     // Version 2
                                     MathJax.Hub.Queue(["Typeset", MathJax.Hub, el.rendNode]);

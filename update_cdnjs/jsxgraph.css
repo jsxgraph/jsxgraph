@@ -105,6 +105,39 @@
     color: #666;
 }
 
+.JXG_navigation_button_left {
+}
+
+.JXG_navigation_button_right {
+}
+
+.JXG_navigation_button_up {
+}
+
+.JXG_navigation_button_down {
+}
+
+.JXG_navigation_button_out {
+}
+
+.JXG_navigation_button_100 {
+}
+
+.JXG_navigation_button_in {
+}
+
+.JXG_navigation_button_fullscreen {
+}
+
+.JXG_navigation_button_reload {
+}
+
+.JXG_navigation_button_cleartraces {
+}
+
+.JXG_navigation_button_screenshot {
+}
+
 .JXG_navigation_button:hover {
     border-radius: 2px;
     background: rgba(184, 184, 184, 0.5);

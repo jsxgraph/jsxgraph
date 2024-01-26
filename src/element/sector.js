@@ -727,8 +727,8 @@ JXG.createSector = function (board, parents, attributes) {
      * Used in {@link GeometryElement#setAttribute}.
      * @memberOf Sector.prototype
      * @name setRadius
-     * @function
      * @param {Number|Function} value New radius.
+     * @function
      */
     el.setRadius = function (val) {
         var res,
@@ -770,6 +770,9 @@ JXG.createSector = function (board, parents, attributes) {
 
     /**
      * Length of the sector's arc or the angle in various units, see {@link Arc#Value}.
+     * @memberOf Sector.prototype
+     * @name Value
+     * @function
      * @param {String} unit
      * @returns {Number} The arc length or the angle value in various units.
      * @see Arc#Value
@@ -780,7 +783,10 @@ JXG.createSector = function (board, parents, attributes) {
 
     /**
      * Arc length.
+     * @memberOf Sector.prototype
+     * @name L
      * @returns {Number} Length of the sector's arc.
+     * @function
      * @see Arc#L
      */
     el.L = function() {
@@ -789,6 +795,7 @@ JXG.createSector = function (board, parents, attributes) {
 
     /**
      * Area of the sector.
+     * @memberOf Sector.prototype
      * @name Area
      * @function
      * @returns {Number} The area of the sector.
@@ -800,21 +807,28 @@ JXG.createSector = function (board, parents, attributes) {
     };
 
     /**
-     * Sector perimeter.
+     * Sector perimeter, i.e. arc length plus 2 * radius.
+     * @memberOf Sector.prototype
+     * @name Perimeter
+     * @function
      * @returns {Number} Perimeter of sector.
      */
     el.Perimeter = function () {
         return this.L() + 2 * this.Radius();
     };
 
-    /**
-     * Moves the sector by the difference of two coordinates.
-     * @param {Number} method The type of coordinates used here. Possible values are {@link JXG.COORDS_BY_USER} and {@link JXG.COORDS_BY_SCREEN}.
-     * @param {Array} coords coordinates in screen/user units
-     * @param {Array} oldcoords previous coordinates in screen/user units
-     * @returns {JXG.Curve} this element
-     */
     if (type === "3points") {
+        /**
+         * Moves the sector by the difference of two coordinates.
+         * @memberOf Sector.prototype
+         * @name setPositionDirectly
+         * @function
+         * @param {Number} method The type of coordinates used here. Possible values are {@link JXG.COORDS_BY_USER} and {@link JXG.COORDS_BY_SCREEN}.
+         * @param {Array} coords coordinates in screen/user units
+         * @param {Array} oldcoords previous coordinates in screen/user units
+         * @returns {JXG.Curve} this element
+         * @private
+         */
         el.setPositionDirectly = function (method, coords, oldcoords) {
             var dc, t,
                 c = new Coords(method, coords, this.board),
