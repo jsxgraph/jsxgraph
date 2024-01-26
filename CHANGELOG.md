@@ -14,7 +14,6 @@ New features
 - Extend method `Value` for angle, arc and sector.
 - New method `Coords` for point, image and text
 
-
 Improvements
 ------------
 
@@ -44,7 +43,6 @@ Improvements
 - New method for complex numbers: `JXG.C.copy`
 - Arc: add method 'L'
 - Sector: add methods Area and Perimeter
-
 
 Bug fixes
 ---------
