@@ -365,7 +365,7 @@ JXG.createMeasurement = function (board, parents, attributes) {
             unit = '',
             units = Type.evaluate(el.visProp.units),
             val = el.Value(),
-            coordsPattern='',
+            coordsPattern = '',
             i, coords;
 
         if (Type.isNumber(val)) {
@@ -384,9 +384,9 @@ JXG.createMeasurement = function (board, parents, attributes) {
                     val = Type.toFixed(val, digits);
                 }
             }
-        } else if(Type.isArray(val)) {
-            for (i = 0; i<val.length;i++) {
-                if(!Type.isNumber(val[i])){
+        } else if (Type.isArray(val)) {
+            for (i = 0; i < val.length; i++) {
+                if (!Type.isNumber(val[i])) {
                     continue;
                 }
                 if (digits === 'none') {
@@ -422,7 +422,7 @@ JXG.createMeasurement = function (board, parents, attributes) {
                 } else if (coordsPattern[i] === 'z') {
                     coords.push(val[0]);
                 } else {
-                    coords.push(coordsPattern[i])
+                    coords.push(coordsPattern[i]);
                 }
             }
             val = coords.join('');
@@ -443,9 +443,9 @@ JXG.createMeasurement = function (board, parents, attributes) {
             return prefix + 'NaN' + suffix;
         }
 
-        if (Type.isObject(units) && Type.exists(units[dim])) {
+        if (Type.isObject(units) && Type.exists(units[dim]) && units[dim] !== false) {
             unit = Type.evaluate(units[dim]);
-        } else if (Type.isObject(units) && Type.exists(units['dim' + dim])) {
+        } else if (Type.isObject(units) && Type.exists(units['dim' + dim]) && units['dim' + dim] !== false) {
             // In some cases, object keys must not be numbers. This allows key 'dim1' instead of '1'.
             unit = Type.evaluate(units['dim' + dim]);
         } else {
