@@ -1,3 +1,69 @@
+1.7.0
+===
+
+New features
+-----------
+
+- New element `implicitcurve`: plot curve given by an equation F(x, y) = 0
+- New element `parallelogram`
+- New element `measurement` and new simple prefix parser
+- New element `vectorfield3d`
+- Add board attribute `theme`
+- Add theme `mono_thin`
+- New function `JXG.stack2jsxgraph`New method JXG.Math.Numerics.polzeros
+- Extend method `Value` for angle, arc and sector.
+- New method `Coords` for point, image and text
+
+Improvements
+------------
+
+- New function `JXG.Math.Geometry.distPointSegment`: computes distance point from segment
+- New function `JXG.Math.Numerics.glomin`: Brent's global minimizer
+- New function `JXG.Math.hypot`: Euclidean length of a vector
+- New function `JXG.Math.hstep`: Heaviside unit step function
+- New function `JXG.Math.Numerics.polzeros` to compute all zeros (including the complex ones) of a polynomial
+- New quadtree implementation `BoxQuadtree` for storing segments
+- Add new point face `<<>>` or `diamond2` (enlarged to match size of `[]`)
+- API reference: many bug fixes, improvements, many new examples
+- Improve Jessiecode support in text elements
+- JessieCode support of available functions and methods
+- Angle element: set correct radius in sub-object arc
+- Remove `bst.js` and `heap.js` from core
+- Adapt mediawiki plug-in for the latest version of mediawiki
+- Improve fullscreen mode
+- JessieCode: improved handling of expressions containing a slider value `a`
+- Defining points of axes
+- Curves: set default values for min and max values of the parameter
+- Attribute handling
+- Massive speed up of `board.removeObject`
+- Allow change of arrow heads with `setAttribute`
+- Navigation buttons: individual CSS classes
+- Refactor `board.registerEvents`
+- Refactor JavaScript (replace `String.substr()`)
+- New method for complex numbers: `JXG.C.copy`
+- Arc: add method 'L'
+- Sector: add methods Area and Perimeter
+
+Bug fixes
+---------
+
+- Address many eslint warnings
+- Tangent on sector
+- Intersection curve, circle
+- Use absolute lengths for circle construction by radius and fixed segment lengths
+- pinch-to-zoom
+- function plot algorithm
+- Retire `geonext2js`
+- Symbolic derivatives
+- Circum circle handling
+- slopetriangle: attribute borders
+- `glider.free`
+- Remove `jsxcompressor.min.js` from version control
+- super- und sub-scripts without TeX
+- `inequality`: attribute `inverse`
+- Handling of lower case in `deepCopy`, `copyAttributes`
+- ES6 support of JSXGraph
+
 1.6.2
 ====
 

@@ -108,20 +108,18 @@ JXG.Options = JXG.merge(JXG.Options, {
     },
 
     curve: {
-        strokeWidth: "2px",
+        strokeWidth: 2,
         strokeColor: "#6BBA70"
     },
 
     slider: {
         withTicks: false,
-        glider: {
-            fillColor: "#eeeeee",
-            highlightFillColor: "#eeeeee",
-            strokeColor: "white",
-            highlightStrokeColor: "white",
-            size: 6,
-            face: "<>"
-        },
+        fillColor: "#eeeeee",
+        highlightFillColor: "#eeeeee",
+        strokeColor: "white",
+        highlightStrokeColor: "white",
+        size: 6,
+        face: "<>",
         baseline: {
             needsRegularUpdate: false,
             name: "",
