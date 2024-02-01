@@ -56,6 +56,7 @@ import Point from "../base/point";
  * @param {Array_Array_Array} start,end,data The first two arrays give the start and the end where the slider is drawn
  * on the board. The third array gives the start and the end of the range the slider operates as the first resp. the
  * third component of the array. The second component of the third array gives its start value.
+ *
  * @example
  * // Create a slider with values between 1 and 10, initial position is 5.
  * var s = board.create('slider', [[1, 2], [3, 2], [1, 5, 10]]);
@@ -158,6 +159,30 @@ import Point from "../base/point";
  *     })();
  *
  * </script><pre>
+ *
+ * @example
+ * // Create a "frozen" slider
+ * var sli = board.create('slider', [[-4, 4], [-1.5, 4], [-10, 1, 10]], {
+ *     name:'a',
+ *     point1: {frozen: true},
+ *     point2: {frozen: true}
+ * });
+ *
+ * </pre><div id="JXG23afea4f-2e91-4006-a505-2895033cf1fc" class="jxgbox" style="width: 300px; height: 300px;"></div>
+ * <script type="text/javascript">
+ *     (function() {
+ *         var board = JXG.JSXGraph.initBoard('JXG23afea4f-2e91-4006-a505-2895033cf1fc',
+ *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
+ *     var sli = board.create('slider', [[-4, 4], [-1.5, 4], [-10, 1, 10]], {
+ *         name:'a',
+ *         point1: {frozen: true},
+ *         point2: {frozen: true}
+ *     });
+ *
+ *     })();
+ *
+ * </script><pre>
+ *
  *
  */
 JXG.createSlider = function (board, parents, attributes) {
