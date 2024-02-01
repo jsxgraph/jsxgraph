@@ -1581,7 +1581,7 @@ JXG.extend(
         setArrow: function (firstArrow, lastArrow) {
             this.visProp.firstarrow = firstArrow;
             this.visProp.lastarrow = lastArrow;
-            if (lastArrow) {
+            if (!firstArrow && lastArrow) {
                 this.type = Const.OBJECT_TYPE_VECTOR;
                 this.elType = "arrow";
             }
