@@ -409,40 +409,26 @@ JXG.createMeasurement = function (board, parents, attributes) {
         }
 
         if (dim === 'coords' && Type.isArray(val)) {
-            pattern = Type.evaluate(el.visProp.coordspattern).split('');
+            pattern = Type.evaluate(el.visProp.coordspattern);
 
             if (val.length === 2) {
                 val.unshift(undefined);
             }
-            valArr = [];
-            for (i = 0; i < pattern.length; i++) {
-                if (pattern[i] === 'x') {
-                    valArr.push(val[1]);
-                } else if (pattern[i] === 'y') {
-                    valArr.push(val[2]);
-                } else if (pattern[i] === 'z') {
-                    valArr.push(val[0]);
-                } else {
-                    valArr.push(pattern[i]);
-                }
-            }
-            val = valArr.join('');
+
+            pattern = pattern.replace(/%x%/g, val[1]);
+            pattern = pattern.replace(/%y%/g, val[2]);
+            pattern = pattern.replace(/%z%/g, val[0]);
+
+            val = pattern;
         }
 
         if (dim === 'direction' && Type.isArray(val)) {
-            pattern = Type.evaluate(el.visProp.directionpattern).split('');
+            pattern = Type.evaluate(el.visProp.directionpattern);
 
-            valArr = [];
-            for (i = 0; i < pattern.length; i++) {
-                if (pattern[i] === 'x') {
-                    valArr.push(val[0]);
-                } else if (pattern[i] === 'y') {
-                    valArr.push(val[1]);
-                } else {
-                    valArr.push(pattern[i]);
-                }
-            }
-            val = valArr.join('');
+            pattern = pattern.replace(/%x%/g, val[0]);
+            pattern = pattern.replace(/%y%/g, val[1]);
+
+            val = pattern;
         }
 
         if (Type.evaluate(el.visProp.showprefix)) {

@@ -5615,8 +5615,8 @@ JXG.Options = {
         prefix: '',
         suffix: '',
 
-        coordsPattern: '(x, y)',
-        directionPattern: '(x, y)'
+        coordsPattern: '(%x%, %y%)',
+        directionPattern: '(%x%, %y%)'
 
         /**#@-*/
     },
