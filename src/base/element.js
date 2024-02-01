@@ -1454,7 +1454,7 @@ JXG.extend(
                                         JXG.Validator[key](value())))
                             ) {
                                 value =
-                                    value.toLowerCase && value.toLowerCase() === "false"
+                                    (value.toLowerCase && value.toLowerCase() === "false")
                                         ? false
                                         : value;
                                 this._set(key, value);
