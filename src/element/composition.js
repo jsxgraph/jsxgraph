@@ -1089,6 +1089,7 @@ JXG.createArrowParallel = function (board, parents, attributes) {
             straightFirst: false,
             straightLast: false
         });
+        p.type = Const.OBJECT_TYPE_VECTOR;
         p.elType = "arrowparallel";
 
         // parents are set in createParallel
