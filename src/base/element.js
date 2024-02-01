@@ -1584,6 +1584,18 @@ JXG.extend(
             if (!firstArrow && lastArrow) {
                 this.type = Const.OBJECT_TYPE_VECTOR;
                 this.elType = "arrow";
+
+                this.Direction = function () {
+                    var coords1 = this.point1.coords.usrCoords,
+                        coords2 = this.point2.coords.usrCoords;
+
+                    return [
+                        coords2[1] - coords1[1],
+                        coords2[2] - coords1[2]
+                    ];
+                };
+            } else {
+                this.Direction = undefined;
             }
 
             this.prepareUpdate().update().updateVisibility().updateRenderer();
