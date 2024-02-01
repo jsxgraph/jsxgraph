@@ -365,8 +365,9 @@ JXG.createMeasurement = function (board, parents, attributes) {
             unit = '',
             units = Type.evaluate(el.visProp.units),
             val = el.Value(),
-            coordsPattern = '',
-            i, coords;
+            valArr,
+            pattern = '',
+            i;
 
         if (Type.isNumber(val)) {
             if (digits === 'none') {
@@ -408,24 +409,40 @@ JXG.createMeasurement = function (board, parents, attributes) {
         }
 
         if (dim === 'coords' && Type.isArray(val)) {
-            coordsPattern = Type.evaluate(el.visProp.coordspattern).split('');
+            pattern = Type.evaluate(el.visProp.coordspattern).split('');
 
             if (val.length === 2) {
                 val.unshift(undefined);
             }
-            coords = [];
-            for (i = 0; i < coordsPattern.length; i++) {
-                if (coordsPattern[i] === 'x') {
-                    coords.push(val[1]);
-                } else if (coordsPattern[i] === 'y') {
-                    coords.push(val[2]);
-                } else if (coordsPattern[i] === 'z') {
-                    coords.push(val[0]);
+            valArr = [];
+            for (i = 0; i < pattern.length; i++) {
+                if (pattern[i] === 'x') {
+                    valArr.push(val[1]);
+                } else if (pattern[i] === 'y') {
+                    valArr.push(val[2]);
+                } else if (pattern[i] === 'z') {
+                    valArr.push(val[0]);
                 } else {
-                    coords.push(coordsPattern[i]);
+                    valArr.push(pattern[i]);
                 }
             }
-            val = coords.join('');
+            val = valArr.join('');
+        }
+
+        if (dim === 'direction' && Type.isArray(val)) {
+            pattern = Type.evaluate(el.visProp.directionpattern).split('');
+
+            valArr = [];
+            for (i = 0; i < pattern.length; i++) {
+                if (pattern[i] === 'x') {
+                    valArr.push(val[0]);
+                } else if (pattern[i] === 'y') {
+                    valArr.push(val[1]);
+                } else {
+                    valArr.push(pattern[i]);
+                }
+            }
+            val = valArr.join('');
         }
 
         if (Type.evaluate(el.visProp.showprefix)) {
