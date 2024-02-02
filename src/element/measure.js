@@ -339,6 +339,28 @@ JXG.createMeasurement = function (board, parents, attributes) {
         }
         return Prefix.dimension(term);
     };
+    el.Unit = function () {
+        let unit = '',
+            units = Type.evaluate(el.visProp.units),
+            dim = el.Dimension();
+
+        if (Type.isObject(units) && Type.exists(units[dim]) && units[dim] !== false) {
+            unit = Type.evaluate(units[dim]);
+        } else if (Type.isObject(units) && Type.exists(units['dim' + dim]) && units['dim' + dim] !== false) {
+            // In some cases, object keys must not be numbers. This allows key 'dim1' instead of '1'.
+            unit = Type.evaluate(units['dim' + dim]);
+        } else {
+            unit = Type.evaluate(el.visProp.baseunit);
+
+            if (dim === 0) {
+                unit = '';
+            } else if (dim > 1 && unit !== '') {
+                unit = unit + '^{' + dim + '}';
+            }
+        }
+
+        return unit;
+    };
     el.toInfix = function (type) {
         return Prefix.toInfix(term, type);
     };
@@ -362,10 +384,8 @@ JXG.createMeasurement = function (board, parents, attributes) {
             suffix = '',
             dim = el.Dimension(),
             digits = Type.evaluate(el.visProp.digits),
-            unit = '',
-            units = Type.evaluate(el.visProp.units),
+            unit = el.Unit(),
             val = el.Value(),
-            valArr,
             pattern = '',
             i;
 
@@ -444,21 +464,6 @@ JXG.createMeasurement = function (board, parents, attributes) {
 
         if (isNaN(dim)) {
             return prefix + 'NaN' + suffix;
-        }
-
-        if (Type.isObject(units) && Type.exists(units[dim]) && units[dim] !== false) {
-            unit = Type.evaluate(units[dim]);
-        } else if (Type.isObject(units) && Type.exists(units['dim' + dim]) && units['dim' + dim] !== false) {
-            // In some cases, object keys must not be numbers. This allows key 'dim1' instead of '1'.
-            unit = Type.evaluate(units['dim' + dim]);
-        } else {
-            unit = Type.evaluate(el.visProp.baseunit);
-
-            if (dim === 0) {
-                unit = '';
-            } else if (dim > 1 && unit !== '') {
-                unit = unit + '^{' + dim + '}';
-            }
         }
 
         if (unit !== '') {
