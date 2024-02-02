@@ -1087,9 +1087,26 @@ JXG.createArrowParallel = function (board, parents, attributes) {
             straightFirst: false,
             straightLast: false
         });
+        p.type = Const.OBJECT_TYPE_VECTOR;
         p.elType = "arrowparallel";
 
         // parents are set in createParallel
+
+        /**
+         * Returns the direction vector of the arrow.
+         * @name Direction
+         * @function
+         * @returns {Array} direction vector as [x, y] of the arrow.
+         */
+        p.Direction = function () {
+            var coords1 = this.point1.coords.usrCoords,
+                coords2 = this.point2.coords.usrCoords;
+
+            return [
+                coords2[1] - coords1[1],
+                coords2[2] - coords1[2]
+            ];
+        };
 
         return p;
     } catch (e) {

@@ -339,6 +339,28 @@ JXG.createMeasurement = function (board, parents, attributes) {
         }
         return Prefix.dimension(term);
     };
+    el.Unit = function () {
+        let unit = '',
+            units = Type.evaluate(el.visProp.units),
+            dim = el.Dimension();
+
+        if (Type.isObject(units) && Type.exists(units[dim]) && units[dim] !== false) {
+            unit = Type.evaluate(units[dim]);
+        } else if (Type.isObject(units) && Type.exists(units['dim' + dim]) && units['dim' + dim] !== false) {
+            // In some cases, object keys must not be numbers. This allows key 'dim1' instead of '1'.
+            unit = Type.evaluate(units['dim' + dim]);
+        } else {
+            unit = Type.evaluate(el.visProp.baseunit);
+
+            if (dim === 0) {
+                unit = '';
+            } else if (dim > 1 && unit !== '') {
+                unit = unit + '^{' + dim + '}';
+            }
+        }
+
+        return unit;
+    };
     el.toInfix = function (type) {
         return Prefix.toInfix(term, type);
     };
@@ -362,11 +384,10 @@ JXG.createMeasurement = function (board, parents, attributes) {
             suffix = '',
             dim = el.Dimension(),
             digits = Type.evaluate(el.visProp.digits),
-            unit = '',
-            units = Type.evaluate(el.visProp.units),
+            unit = el.Unit(),
             val = el.Value(),
-            coordsPattern = '',
-            i, coords;
+            pattern = '',
+            i;
 
         if (Type.isNumber(val)) {
             if (digits === 'none') {
@@ -408,24 +429,26 @@ JXG.createMeasurement = function (board, parents, attributes) {
         }
 
         if (dim === 'coords' && Type.isArray(val)) {
-            coordsPattern = Type.evaluate(el.visProp.coordspattern).split('');
+            pattern = Type.evaluate(el.visProp.coordspattern);
 
             if (val.length === 2) {
                 val.unshift(undefined);
             }
-            coords = [];
-            for (i = 0; i < coordsPattern.length; i++) {
-                if (coordsPattern[i] === 'x') {
-                    coords.push(val[1]);
-                } else if (coordsPattern[i] === 'y') {
-                    coords.push(val[2]);
-                } else if (coordsPattern[i] === 'z') {
-                    coords.push(val[0]);
-                } else {
-                    coords.push(coordsPattern[i]);
-                }
-            }
-            val = coords.join('');
+
+            pattern = pattern.replace(/%x%/g, val[1]);
+            pattern = pattern.replace(/%y%/g, val[2]);
+            pattern = pattern.replace(/%z%/g, val[0]);
+
+            val = pattern;
+        }
+
+        if (dim === 'direction' && Type.isArray(val)) {
+            pattern = Type.evaluate(el.visProp.directionpattern);
+
+            pattern = pattern.replace(/%x%/g, val[0]);
+            pattern = pattern.replace(/%y%/g, val[1]);
+
+            val = pattern;
         }
 
         if (Type.evaluate(el.visProp.showprefix)) {
@@ -441,21 +464,6 @@ JXG.createMeasurement = function (board, parents, attributes) {
 
         if (isNaN(dim)) {
             return prefix + 'NaN' + suffix;
-        }
-
-        if (Type.isObject(units) && Type.exists(units[dim]) && units[dim] !== false) {
-            unit = Type.evaluate(units[dim]);
-        } else if (Type.isObject(units) && Type.exists(units['dim' + dim]) && units['dim' + dim] !== false) {
-            // In some cases, object keys must not be numbers. This allows key 'dim1' instead of '1'.
-            unit = Type.evaluate(units['dim' + dim]);
-        } else {
-            unit = Type.evaluate(el.visProp.baseunit);
-
-            if (dim === 0) {
-                unit = '';
-            } else if (dim > 1 && unit !== '') {
-                unit = unit + '^{' + dim + '}';
-            }
         }
 
         if (unit !== '') {
