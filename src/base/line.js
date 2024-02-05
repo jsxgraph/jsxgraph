@@ -554,13 +554,25 @@ JXG.extend(
         },
 
         /**
-         * Returns the direction vector of the arrow, i.e. point2 - point1.
+         * Returns the direction vector of the arrow. This is an array of length two
+         * containing the direction vector as [x, y]. It is defined as
+         *  <li> the difference of the x- and y-coordinate of the second and first point, in case both points are finite or both points are infinite.
+         *  <li> [x, y] coordinates of point2, in case only point2 is infinite.
+         *  <li> [-x, -y] coordinates of point1, in case only point1 is infinite.
          * @function
-         * @returns {Array} direction vector as [x, y] of the difference of the second and first point.
+         * @returns {Array} of length 2.
          */
         Direction: function () {
             var coords1 = this.point1.coords.usrCoords,
                 coords2 = this.point2.coords.usrCoords;
+
+            if (coords2[0] === 0 && coords1[0] !== 0) {
+                return coords2.slice(1);
+            }
+
+            if (coords1[0] === 0 && coords2[0] !== 0) {
+                return [-coords1[1], -coords1[2]];
+            }
 
             return [
                 coords2[1] - coords1[1],
@@ -1088,11 +1100,9 @@ JXG.createLine = function (board, parents, attributes) {
         constrained = false,
         isDraggable;
 
-    /**
-     * The line is defined by two points or coordinates of two points.
-     * In the latter case, the points are created.
-     */
     if (parents.length === 2) {
+        // The line is defined by two points or coordinates of two points.
+        // In the latter case, the points are created.
         attr = Type.copyAttributes(attributes, board.options, "line", "point1");
         if (Type.isArray(parents[0]) && parents[0].length > 1) {
             p1 = board.create("point", parents[0], attr);
@@ -1166,10 +1176,10 @@ JXG.createLine = function (board, parents, attributes) {
         el.setParents([p1.id, p2.id]);
         //}
 
+    } else if (parents.length === 3) {
+        // Free line:
         // Line is defined by three homogeneous coordinates.
         // Also in this case points are created.
-    } else if (parents.length === 3) {
-        // free line
         isDraggable = true;
         for (i = 0; i < 3; i++) {
             if (Type.isNumber(parents[i])) {
@@ -1247,8 +1257,8 @@ JXG.createLine = function (board, parents, attributes) {
         el.isDraggable = isDraggable;
         el.setParents([p1, p2]);
 
-        // The parent array contains a function which returns two points.
     } else if (
+        // The parent array contains a function which returns two points.
         parents.length === 1 &&
         Type.isFunction(parents[0]) &&
         parents[0]().length === 2 &&
