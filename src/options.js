@@ -1557,10 +1557,37 @@ JXG.Options = {
         /**
          * If true the element is fixed and can not be dragged around. The element
          * will even stay at its position on zoom and moveOrigin events.
-         * Only free elements like points, texts, curves can be frozen.
+         * Only free elements like points, texts, images, curves can be frozen.
+         * For slider elements, the subobjects point1 and point2 have to be "frozen".
+         *
          * @type Boolean
          * @default false
          * @name JXG.GeometryElement#frozen
+         *
+         * @example
+         * var txt = board.create('text', [1, 2, 'Hello'], {frozen: true, fontSize: 24});
+         * var sli = board.create('slider', [[-4, 4], [-1.5, 4], [-10, 1, 10]], {
+         *     name:'a',
+         *     point1: {frozen: true},
+         *     point2: {frozen: true}
+         * });
+         *
+         * </pre><div id="JXG02f88c9d-8c0a-4174-9219-f0ea43749159" class="jxgbox" style="width: 300px; height: 300px;"></div>
+         * <script type="text/javascript">
+         *     (function() {
+         *         var board = JXG.JSXGraph.initBoard('JXG02f88c9d-8c0a-4174-9219-f0ea43749159',
+         *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
+         *     var txt = board.create('text', [1, 2, 'Hello'], {frozen: true, fontSize: 24});
+         *     var sli = board.create('slider', [[-4, 4], [-1.5, 4], [-10, 1, 10]], {
+         *         name:'a',
+         *         point1: {frozen: true},
+         *         point2: {frozen: true}
+         *     });
+         *
+         *     })();
+         *
+         * </script><pre>
+         *
          */
         frozen: false,
 

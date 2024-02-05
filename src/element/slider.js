@@ -56,6 +56,7 @@ import Point from "../base/point";
  * @param {Array_Array_Array} start,end,data The first two arrays give the start and the end where the slider is drawn
  * on the board. The third array gives the start and the end of the range the slider operates as the first resp. the
  * third component of the array. The second component of the third array gives its start value.
+ *
  * @example
  * // Create a slider with values between 1 and 10, initial position is 5.
  * var s = board.create('slider', [[1, 2], [3, 2], [1, 5, 10]]);
@@ -159,6 +160,30 @@ import Point from "../base/point";
  *
  * </script><pre>
  *
+ * @example
+ * // Create a "frozen" slider
+ * var sli = board.create('slider', [[-4, 4], [-1.5, 4], [-10, 1, 10]], {
+ *     name:'a',
+ *     point1: {frozen: true},
+ *     point2: {frozen: true}
+ * });
+ *
+ * </pre><div id="JXG23afea4f-2e91-4006-a505-2895033cf1fc" class="jxgbox" style="width: 300px; height: 300px;"></div>
+ * <script type="text/javascript">
+ *     (function() {
+ *         var board = JXG.JSXGraph.initBoard('JXG23afea4f-2e91-4006-a505-2895033cf1fc',
+ *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
+ *     var sli = board.create('slider', [[-4, 4], [-1.5, 4], [-10, 1, 10]], {
+ *         name:'a',
+ *         point1: {frozen: true},
+ *         point2: {frozen: true}
+ *     });
+ *
+ *     })();
+ *
+ * </script><pre>
+ *
+ *
  */
 JXG.createSlider = function (board, parents, attributes) {
     var pos0, pos1,
@@ -179,17 +204,17 @@ JXG.createSlider = function (board, parents, attributes) {
     snapValueDistance = attr.snapvaluedistance;
 
     // start point
-    attr = Type.copyAttributes(attributes, board.options, "slider", "point1");
-    p1 = board.create("point", parents[0], attr);
+    // attr = Type.copyAttributes(attributes, board.options, "slider", "point1");
+    p1 = board.create("point", parents[0], attr.point1);
 
     // end point
-    attr = Type.copyAttributes(attributes, board.options, "slider", "point2");
-    p2 = board.create("point", parents[1], attr);
+    // attr = Type.copyAttributes(attributes, board.options, "slider", "point2");
+    p2 = board.create("point", parents[1], attr.point2);
     //g = board.create('group', [p1, p2]);
 
     // Base line
-    attr = Type.copyAttributes(attributes, board.options, "slider", "baseline");
-    l1 = board.create("segment", [p1, p2], attr);
+    // attr = Type.copyAttributes(attributes, board.options, "slider", "baseline");
+    l1 = board.create("segment", [p1, p2], attr.baseline);
 
     // This is required for a correct projection of the glider onto the segment below
     l1.updateStdform();
@@ -207,7 +232,7 @@ JXG.createSlider = function (board, parents, attributes) {
     starty = pos0[1] + ((pos1[1] - pos0[1]) * (s - smin)) / (smax - smin);
 
     // glider point
-    attr = Type.copyAttributes(attributes, board.options, "slider");
+    // attr = Type.copyAttributes(attributes, board.options, "slider");
     // overwrite this in any case; the sliders label is a special text element, not the gliders label.
     // this will be set back to true after the text was created (and only if withlabel was true initially).
     attr.withLabel = false;
@@ -216,8 +241,8 @@ JXG.createSlider = function (board, parents, attributes) {
     p3.setAttribute({ snapwidth: snapWidth, snapvalues: snapValues, snapvaluedistance: snapValueDistance });
 
     // Segment from start point to glider point: highline
-    attr = Type.copyAttributes(attributes, board.options, "slider", "highline");
-    l2 = board.create("segment", [p1, p3], attr);
+    // attr = Type.copyAttributes(attributes, board.options, "slider", "highline");
+    l2 = board.create("segment", [p1, p3], attr.highline);
 
     /**
      * Returns the current slider value.
@@ -319,7 +344,7 @@ JXG.createSlider = function (board, parents, attributes) {
     };
 
     if (withText) {
-        attr = Type.copyAttributes(attributes, board.options, 'slider', 'label');
+        // attr = Type.copyAttributes(attributes, board.options, 'slider', 'label');
         t = board.create('text', [
                 function () {
                     return (p2.X() - p1.X()) * 0.05 + p2.X();
@@ -363,7 +388,7 @@ JXG.createSlider = function (board, parents, attributes) {
                     return n;
                 }
             ],
-            attr
+            attr.label
         );
 
         /**
@@ -414,9 +439,9 @@ JXG.createSlider = function (board, parents, attributes) {
     if (withTicks) {
         // Function to generate correct label texts
 
-        attr = Type.copyAttributes(attributes, board.options, "slider", "ticks");
+        // attr = Type.copyAttributes(attributes, board.options, "slider", "ticks");
         if (!Type.exists(attr.generatelabeltext)) {
-            attr.generateLabelText = function (tick, zero, value) {
+            attr.ticks.generateLabelText = function (tick, zero, value) {
                 var labelText,
                     dFull = p3.point1.Dist(p3.point2),
                     smin = p3._smin,
@@ -450,7 +475,7 @@ JXG.createSlider = function (board, parents, attributes) {
                     return (d / dFull) * diff + smin;
                 }
             ],
-            attr
+            attr.ticks
         );
 
         /**
