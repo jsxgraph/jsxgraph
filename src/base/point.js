@@ -614,11 +614,11 @@ JXG.createGlider = function (board, parents, attributes) {
  *   <li>i==1: use the negative square root.</li></ul>
  * @example
  * // Create an intersection point of circle and line
- * var p1 = board.create('point', [2.0, 2.0]);
+ * var p1 = board.create('point', [4.0, 4.0]);
  * var c1 = board.create('circle', [p1, 2.0]);
  *
- * var p2 = board.create('point', [2.0, 2.0]);
- * var p3 = board.create('point', [2.0, 2.0]);
+ * var p2 = board.create('point', [1.0, 1.0]);
+ * var p3 = board.create('point', [5.0, 3.0]);
  * var l1 = board.create('line', [p2, p3]);
  *
  * var i = board.create('intersection', [c1, l1, 0]);
