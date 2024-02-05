@@ -554,6 +554,21 @@ JXG.extend(
         },
 
         /**
+         * Returns the direction vector of the arrow, i.e. point2 - point1.
+         * @function
+         * @returns {Array} direction vector as [x, y] of the difference of the second and first point.
+         */
+        Direction: function () {
+            var coords1 = this.point1.coords.usrCoords,
+                coords2 = this.point2.coords.usrCoords;
+
+            return [
+                coords2[1] - coords1[1],
+                coords2[2] - coords1[2]
+            ];
+        },
+
+        /**
          * Determines whether the line is drawn beyond {@link JXG.Line#point1} and
          * {@link JXG.Line#point2} and updates the line.
          * @param {Boolean} straightFirst True if the Line shall be drawn beyond
