@@ -258,21 +258,21 @@ JXG.Board = function (container, renderer, id,
 
     /**
      * This stores the factor which was applied by setScaleX(factor).
-     * @name JXG.Board.scaleX
+     * @name JXG.Board.scaleFactorX
      * @type Number
      * @private
      * @ignore
      */
-    this.scaleX = 1;
+    this.scaleFactorX = 1;
 
     /**
      * This stores the factor which was applied by setScaleY(factor).
-     * @name JXG.Board.scaleY
+     * @name JXG.Board.scaleFactorY
      * @type Number
      * @private
      * @ignore
      */
-    this.scaleY = 1;
+    this.scaleFactorY = 1;
 
     /**
      * Keep aspect ratio if bounding box is set and the width/height ratio differs from the
@@ -726,8 +726,8 @@ JXG.Board = function (container, renderer, id,
         zoomOut: 'zoomOut',
         zoom100: 'zoom100',
         zoomElements: 'zoomElements',
-        setScaleX: 'setScaleX',
-        setScaleY: 'setScaleY',
+        scaleX: 'scaleX',
+        scaleY: 'scaleY',
         remove: 'removeObject',
         removeObject: 'removeObject'
     };
@@ -4671,10 +4671,10 @@ JXG.extend(
          * @param {Number} factor
          * @returns {JXG.Board} Reference to the board
          */
-        setScaleX: function (factor) {
-            this.unitX = this.unitX / Type.evaluate(this.scaleX);
-            this.scaleX = Type.createFunction(factor, this.board, null, true);
-            this.unitX = this.unitX * Type.evaluate(this.scaleX);
+        scaleX: function (factor) {
+            this.unitX = this.unitX / Type.evaluate(this.scaleFactorX);
+            this.scaleFactorX = Type.createFunction(factor, this.board, null, true);
+            this.unitX = this.unitX * Type.evaluate(this.scaleFactorX);
             this.applyZoom();
 
             return this;
@@ -4688,10 +4688,10 @@ JXG.extend(
          * @param {Number} factor
          * @returns {JXG.Board} Reference to the board
          */
-        setScaleY: function (factor) {
-            this.unitY = this.unitY / Type.evaluate(this.scaleY);
-            this.scaleY = Type.createFunction(factor, this.board, null, true);
-            this.unitY = this.unitY * Type.evaluate(this.scaleY);
+        scaleY: function (factor) {
+            this.unitY = this.unitY / Type.evaluate(this.scaleFactorY);
+            this.scaleFactorY = Type.createFunction(factor, this.board, null, true);
+            this.unitY = this.unitY * Type.evaluate(this.scaleFactorY);
             this.applyZoom();
 
             return this;

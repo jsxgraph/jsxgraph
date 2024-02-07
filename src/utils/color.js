@@ -853,9 +853,9 @@ JXG.shadeColor = function (color, percent) {
     g = (g < 255) ? g : 255;
     b = (b < 255) ? b : 255;
 
-    r = Math.round(r)
-    g = Math.round(g)
-    b = Math.round(b)
+    r = Math.round(r);
+    g = Math.round(g);
+    b = Math.round(b);
 
     return JXG.rgb2hex([r, g, b]);
 };
@@ -869,7 +869,7 @@ JXG.shadeColor = function (color, percent) {
  * @see JXG.shadeColor
  */
 JXG.lightenColor = function (color, percent) {
-    return JXG.shadeColor(color, percent)
+    return JXG.shadeColor(color, percent);
 };
 
 /**
@@ -881,7 +881,7 @@ JXG.lightenColor = function (color, percent) {
  * @see JXG.shadeColor
  */
 JXG.darkenColor = function (color, percent) {
-    return JXG.shadeColor(color, -1 * percent)
+    return JXG.shadeColor(color, -1 * percent);
 };
 
 /**
