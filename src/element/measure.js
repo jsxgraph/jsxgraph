@@ -364,6 +364,10 @@ JXG.createMeasurement = function (board, parents, attributes) {
         return unit;
     };
 
+    el.getTerm = function () {
+        return term;
+    };
+
     el.toPrefix = function () {
         return Prefix.toPrefix(term);
     };
