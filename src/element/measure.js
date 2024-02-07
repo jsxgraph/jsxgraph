@@ -331,6 +331,7 @@ JXG.createMeasurement = function (board, parents, attributes) {
     el.Value = function () {
         return Prefix.parse(term, 'execute');
     };
+
     el.Dimension = function () {
         var d = Type.evaluate(el.visProp.dim);
 
@@ -339,6 +340,7 @@ JXG.createMeasurement = function (board, parents, attributes) {
         }
         return Prefix.dimension(term);
     };
+
     el.Unit = function () {
         let unit = '',
             units = Type.evaluate(el.visProp.units),
@@ -361,12 +363,15 @@ JXG.createMeasurement = function (board, parents, attributes) {
 
         return unit;
     };
-    el.toInfix = function (type) {
-        return Prefix.toInfix(term, type);
+
+    el.getTerm = function () {
+        return term;
     };
-    el.toPrefix = function () {
+
+    el.getTermPrefix = function () {
         return Prefix.toPrefix(term);
     };
+
     el.getParents = function () {
         return Prefix.getParents(term);
     };
@@ -376,12 +381,38 @@ JXG.createMeasurement = function (board, parents, attributes) {
     }
 
     /**
+     * @private
+     */
+    el.getPrefix = function() {
+        var str = '';
+
+        if (Type.evaluate(el.visProp.showprefix)) {
+            str = Type.evaluate(el.visProp.prefix);
+        }
+
+        return str;
+    }
+
+    /**
+     * @private
+     */
+    el.getSuffix = function() {
+        var str = '';
+
+        if (Type.evaluate(el.visProp.showsuffix)) {
+            str = Type.evaluate(el.visProp.suffix);
+        }
+
+        return str;
+    }
+
+    /**
      * @class
      * @ignore
      */
     el.setText(function () {
-        var prefix = '',
-            suffix = '',
+        var prefix = el.getPrefix(),
+            suffix = el.getSuffix(),
             dim = el.Dimension(),
             digits = Type.evaluate(el.visProp.digits),
             unit = el.Unit(),
@@ -451,23 +482,12 @@ JXG.createMeasurement = function (board, parents, attributes) {
             val = pattern;
         }
 
-        if (Type.evaluate(el.visProp.showprefix)) {
-            prefix = Type.evaluate(el.visProp.prefix);
-        }
-        if (Type.evaluate(el.visProp.showsuffix)) {
-            suffix = Type.evaluate(el.visProp.suffix);
-        }
-
         if (Type.isString(dim)) {
             return prefix + val + suffix;
         }
 
         if (isNaN(dim)) {
             return prefix + 'NaN' + suffix;
-        }
-
-        if (unit !== '') {
-            unit = ' ' + unit;
         }
 
         return prefix + val + unit + suffix;
