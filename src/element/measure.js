@@ -476,7 +476,9 @@ JXG.createMeasurement = function (board, parents, attributes) {
     el.methodMap = Type.deepCopy(el.methodMap, {
         Value: "Value",
         Dimension: "Dimension",
-        toPrefix: "toPrefix",
+        Unit: "Unit",
+        getTerm: "getTerm",
+        getTermPrefix: "getTermPrefix",
         getParents: "getParents"
     });
 
