@@ -471,10 +471,6 @@ JXG.createMeasurement = function (board, parents, attributes) {
             return prefix + 'NaN' + suffix;
         }
 
-        if (unit !== '') {
-            unit = ' ' + unit;
-        }
-
         return prefix + val + unit + suffix;
     });
 
