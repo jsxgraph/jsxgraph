@@ -265,6 +265,7 @@ JXG.GeometryElement = function (board, attributes, type, oclass) {
         label: "label",
         setName: "setName",
         getName: "getName",
+        Name: "getName",
         addTransform: "addTransform",
         setProperty: "setAttribute",
         setAttribute: "setAttribute",
@@ -275,7 +276,8 @@ JXG.GeometryElement = function (board, attributes, type, oclass) {
         trigger: "trigger",
         addTicks: "addTicks",
         removeTicks: "removeTicks",
-        removeAllTicks: "removeAllTicks"
+        removeAllTicks: "removeAllTicks",
+        Bounds: "bounds"
     };
 
     /**
