@@ -478,8 +478,11 @@ JXG.createMeasurement = function (board, parents, attributes) {
         Dimension: "Dimension",
         Unit: "Unit",
         getTerm: "getTerm",
+        Term: "getTerm",
         getTermPrefix: "getTermPrefix",
-        getParents: "getParents"
+        TermPrefix: "getTermPrefix",
+        getParents: "getParents",
+        Parents: "getParents"
     });
 
     return el;
