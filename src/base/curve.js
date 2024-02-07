@@ -140,7 +140,9 @@ JXG.Curve = function (board, parents, attributes) {
         generateTerm: "generateTerm",
         setTerm: "generateTerm",
         move: "moveTo",
-        moveTo: "moveTo"
+        moveTo: "moveTo",
+        MinX: "minX",
+        MaxX: "maxX"
     });
 };
 
