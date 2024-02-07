@@ -929,7 +929,7 @@ JXG.extend(
          * @returns {JXG.Line} Reference to this line
          */
         setFixedLength: function (l) {
-            if(!this.hasFixedLength) {
+            if (!this.hasFixedLength) {
                 return this;
             }
 
@@ -1770,13 +1770,13 @@ JXG.createTangent = function (board, parents, attributes) {
             tangent = board.create(
                 "line",
                 [
-                    function() {
+                    function () {
                         return getCurveTangentDir(p.position, c, 0);
                     },
-                    function() {
+                    function () {
                         return getCurveTangentDir(p.position, c, 1);
                     },
-                    function() {
+                    function () {
                         return getCurveTangentDir(p.position, c, 2);
                     }
                 ],

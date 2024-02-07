@@ -2392,8 +2392,7 @@ JXG.extend(
          * @param {Event} evt The browsers event object.
          * @param {Object} object If the object to be dragged is already known, it can be submitted via this parameter
          * @param {Boolean} [allowDefaultEventHandling=false] If true event is not canceled, i.e. prevent call of evt.preventDefault()
-         * @returns {Boolean} false if the the first finger event is sent twice, or not a browser, or
-         *  or in selection mode. Otherwise returns true.
+         * @returns {Boolean} false if the first finger event is sent twice, or not a browser, or in selection mode. Otherwise returns true.
          */
         pointerDownListener: function (evt, object, allowDefaultEventHandling) {
             var i, j, k, pos,
@@ -6181,7 +6180,7 @@ JXG.extend(
 
         /**
          * Migrate the dependency properties of the point src
-         * to the point dest and  delete the point src.
+         * to the point dest and delete the point src.
          * For example, a circle around the point src
          * receives the new center dest. The old center src
          * will be deleted.
