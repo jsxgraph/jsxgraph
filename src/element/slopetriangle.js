@@ -59,6 +59,9 @@ var priv = {
     },
     Value: function () {
         return this.tangent.getSlope();
+    },
+    Direction: function() {
+        return this.tangent.Direction();
     }
 };
 
@@ -188,6 +191,16 @@ JXG.createSlopeTriangle = function (board, parents, attributes) {
      * @returns {Number} slope of the tangent.
      */
     el.Value = priv.Value;
+
+    /**
+     * Returns the direction of the slope triangle, that is the direction of the tangent.
+     * @name Direction
+     * @memberOf Slopetriangle.prototype
+     * @see Line#Direction
+     * @function
+     * @returns {Number} slope of the tangent.
+     */
+    el.Direction = priv.Direction;
     el.tangent = tangent;
     el._isPrivateTangent = isPrivateTangent;
 
@@ -245,7 +258,8 @@ JXG.createSlopeTriangle = function (board, parents, attributes) {
         toppoint: "toppoint",
         label: "label",
         Value: "Value",
-        V: "Value"
+        V: "Value",
+        Direction: "Direction"
     });
 
     el.remove = priv.removeSlopeTriangle;
