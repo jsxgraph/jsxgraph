@@ -848,6 +848,7 @@ JXG.createSector = function (board, parents, attributes) {
 
     el.methodMap = JXG.deepCopy(el.methodMap, {
         radius: "Radius",
+        Radius: "Radius",
         getRadius: "Radius",
         setRadius: "setRadius",
         Value: "Value",
@@ -1672,6 +1673,7 @@ JXG.createAngle = function (board, parents, attributes) {
      * It is sufficient to supply the first three characters of the unit, e.g. 'len'.
      * @returns {Number} angle value in various units.
      * @see Sector#L
+     * @see Arc#Value
      * @example
      * var A, B, C, ang,
      *     r = 0.5;

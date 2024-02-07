@@ -443,13 +443,10 @@ JXG.createArc = function (board, parents, attributes) {
     el.methodMap = JXG.deepCopy(el.methodMap, {
         getRadius: "getRadius",
         radius: "Radius",
+        Radius: "Radius",
         center: "center",
         radiuspoint: "radiuspoint",
         anglepoint: "anglepoint",
-        // Angle: "Angle",
-        // Rad: "Angle",
-        // Deg: "AngleDeg",
-        // PI: "AnglePI",
         Value: "Value",
         L: "L"
     });

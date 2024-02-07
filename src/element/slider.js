@@ -275,9 +275,17 @@ JXG.createSlider = function (board, parents, attributes) {
         Value: "Value",
         setValue: "setValue",
         smax: "_smax",
+        Max: "_smax",
         smin: "_smin",
+        Min: "_smin",
         setMax: "setMax",
-        setMin: "setMin"
+        setMin: "setMin",
+        point1: "point1",
+        point2: "point2",
+        baseline: "baseline",
+        highline: "highline",
+        ticks: "ticks",
+        label: "label"
     });
 
     /**
