@@ -391,7 +391,7 @@ JXG.createMeasurement = function (board, parents, attributes) {
         }
 
         return str;
-    }
+    };
 
     /**
      * @private
@@ -404,7 +404,7 @@ JXG.createMeasurement = function (board, parents, attributes) {
         }
 
         return str;
-    }
+    };
 
     /**
      * @class
