@@ -134,14 +134,19 @@ JXG.Line = function (board, p1, p2, attributes) {
     this.methodMap = JXG.deepCopy(this.methodMap, {
         point1: "point1",
         point2: "point2",
-        getSlope: "getSlope",
-        getRise: "getRise",
-        getYIntersect: "getRise",
-        getAngle: "getAngle",
+        getSlope: "Slope",
         Slope: "Slope",
+        Direction: "Direction",
+        getRise: "getRise",
+        Rise: "getRise",
+        getYIntersect: "getRise",
+        YIntersect: "getRise",
+        getAngle: "getAngle",
+        Angle: "getAngle",
         L: "L",
         length: "L",
-        setFixedLength: "setFixedLength"
+        setFixedLength: "setFixedLength",
+        setStraight: "setStraight"
     });
 };
 
