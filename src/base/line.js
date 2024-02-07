@@ -429,9 +429,9 @@ JXG.extend(
                 this.isReal =
                     !isNaN(
                         this.point1.coords.usrCoords[1] +
-                        this.point1.coords.usrCoords[2] +
-                        this.point2.coords.usrCoords[1] +
-                        this.point2.coords.usrCoords[2]
+                            this.point1.coords.usrCoords[2] +
+                            this.point2.coords.usrCoords[1] +
+                            this.point2.coords.usrCoords[2]
                     ) && Mat.innerProduct(this.stdform, this.stdform, 3) >= Mat.eps * Mat.eps;
 
                 if (
@@ -1124,11 +1124,11 @@ JXG.createLine = function (board, parents, attributes) {
         } else {
             throw new Error(
                 "JSXGraph: Can't create line with parent types '" +
-                typeof parents[0] +
-                "' and '" +
-                typeof parents[1] +
-                "'." +
-                "\nPossible parent types: [point,point], [[x1,y1],[x2,y2]], [a,b,c]"
+                    typeof parents[0] +
+                    "' and '" +
+                    typeof parents[1] +
+                    "'." +
+                    "\nPossible parent types: [point,point], [[x1,y1],[x2,y2]], [a,b,c]"
             );
         }
 
@@ -1153,11 +1153,11 @@ JXG.createLine = function (board, parents, attributes) {
         } else {
             throw new Error(
                 "JSXGraph: Can't create line with parent types '" +
-                typeof parents[0] +
-                "' and '" +
-                typeof parents[1] +
-                "'." +
-                "\nPossible parent types: [point,point], [[x1,y1],[x2,y2]], [a,b,c]"
+                    typeof parents[0] +
+                    "' and '" +
+                    typeof parents[1] +
+                    "'." +
+                    "\nPossible parent types: [point,point], [[x1,y1],[x2,y2]], [a,b,c]"
             );
         }
 
@@ -1192,13 +1192,13 @@ JXG.createLine = function (board, parents, attributes) {
             } else {
                 throw new Error(
                     "JSXGraph: Can't create line with parent types '" +
-                    typeof parents[0] +
-                    "' and '" +
-                    typeof parents[1] +
-                    "' and '" +
-                    typeof parents[2] +
-                    "'." +
-                    "\nPossible parent types: [point,point], [[x1,y1],[x2,y2]], [a,b,c]"
+                        typeof parents[0] +
+                        "' and '" +
+                        typeof parents[1] +
+                        "' and '" +
+                        typeof parents[2] +
+                        "'." +
+                        "\nPossible parent types: [point,point], [[x1,y1],[x2,y2]], [a,b,c]"
                 );
             }
         }
@@ -1207,44 +1207,44 @@ JXG.createLine = function (board, parents, attributes) {
         attr = Type.copyAttributes(attributes, board.options, "line", "point1");
         if (isDraggable) {
             p1 = board.create("point", [
-                c[2]() * c[2]() + c[1]() * c[1](),
-                c[2]() - c[1]() * c[0]() + c[2](),
-                -c[1]() - c[2]() * c[0]() - c[1]()
-            ], attr);
+                    c[2]() * c[2]() + c[1]() * c[1](),
+                    c[2]() - c[1]() * c[0]() + c[2](),
+                    -c[1]() - c[2]() * c[0]() - c[1]()
+                ], attr);
         } else {
             p1 = board.create("point", [
-                function () {
-                    return (c[2]() * c[2]() + c[1]() * c[1]()) * 0.5;
-                },
-                function () {
-                    return (c[2]() - c[1]() * c[0]() + c[2]()) * 0.5;
-                },
-                function () {
-                    return (-c[1]() - c[2]() * c[0]() - c[1]()) * 0.5;
-                }
-            ], attr);
+                    function () {
+                        return (c[2]() * c[2]() + c[1]() * c[1]()) * 0.5;
+                    },
+                    function () {
+                        return (c[2]() - c[1]() * c[0]() + c[2]()) * 0.5;
+                    },
+                    function () {
+                        return (-c[1]() - c[2]() * c[0]() - c[1]()) * 0.5;
+                    }
+                ], attr);
         }
 
         // point 2: (b^2+c^2,-ba+c,-ca-b)
         attr = Type.copyAttributes(attributes, board.options, "line", "point2");
         if (isDraggable) {
             p2 = board.create("point", [
-                c[2]() * c[2]() + c[1]() * c[1](),
-                -c[1]() * c[0]() + c[2](),
-                -c[2]() * c[0]() - c[1]()
-            ], attr);
+                    c[2]() * c[2]() + c[1]() * c[1](),
+                    -c[1]() * c[0]() + c[2](),
+                    -c[2]() * c[0]() - c[1]()
+                ], attr);
         } else {
             p2 = board.create("point", [
-                function () {
-                    return c[2]() * c[2]() + c[1]() * c[1]();
-                },
-                function () {
-                    return -c[1]() * c[0]() + c[2]();
-                },
-                function () {
-                    return -c[2]() * c[0]() - c[1]();
-                }
-            ], attr);
+                    function () {
+                        return c[2]() * c[2]() + c[1]() * c[1]();
+                    },
+                    function () {
+                        return -c[1]() * c[0]() + c[2]();
+                    },
+                    function () {
+                        return -c[2]() * c[0]() - c[1]();
+                    }
+                ], attr);
         }
 
         // If the line will have a glider and board.suspendUpdate() has been called, we
@@ -1283,29 +1283,29 @@ JXG.createLine = function (board, parents, attributes) {
 
         attr = Type.copyAttributes(attributes, board.options, "line", "point1");
         p1 = board.create("point", [
-            function () {
-                var c = ps();
+                function () {
+                    var c = ps();
 
-                return [
-                    (c[2] * c[2] + c[1] * c[1]) * 0.5,
-                    (c[2] - c[1] * c[0] + c[2]) * 0.5,
-                    (-c[1] - c[2] * c[0] - c[1]) * 0.5
-                ];
-            }
-        ], attr);
+                    return [
+                        (c[2] * c[2] + c[1] * c[1]) * 0.5,
+                        (c[2] - c[1] * c[0] + c[2]) * 0.5,
+                        (-c[1] - c[2] * c[0] - c[1]) * 0.5
+                    ];
+                }
+            ], attr);
 
         attr = Type.copyAttributes(attributes, board.options, "line", "point2");
         p2 = board.create("point", [
-            function () {
-                var c = ps();
+                function () {
+                    var c = ps();
 
-                return [
-                    c[2] * c[2] + c[1] * c[1],
-                    -c[1] * c[0] + c[2],
-                    -c[2] * c[0] - c[1]
-                ];
-            }
-        ], attr);
+                    return [
+                        c[2] * c[2] + c[1] * c[1],
+                        -c[1] * c[0] + c[2],
+                        -c[2] * c[0] - c[1]
+                    ];
+                }
+            ], attr);
 
         attr = Type.copyAttributes(attributes, board.options, "line");
         el = new JXG.Line(board, p1, p2, attr);
@@ -1316,11 +1316,11 @@ JXG.createLine = function (board, parents, attributes) {
     } else {
         throw new Error(
             "JSXGraph: Can't create line with parent types '" +
-            typeof parents[0] +
-            "' and '" +
-            typeof parents[1] +
-            "'." +
-            "\nPossible parent types: [point,point], [[x1,y1],[x2,y2]], [a,b,c]"
+                typeof parents[0] +
+                "' and '" +
+                typeof parents[1] +
+                "'." +
+                "\nPossible parent types: [point,point], [[x1,y1],[x2,y2]], [a,b,c]"
         );
     }
 
@@ -1410,9 +1410,9 @@ JXG.createSegment = function (board, parents, attributes) {
         } else {
             throw new Error(
                 "JSXGraph: Can't create segment with third parent type '" +
-                typeof parents[2] +
-                "'." +
-                "\nPossible third parent types: number or function"
+                    typeof parents[2] +
+                    "'." +
+                    "\nPossible third parent types: number or function"
             );
         }
 
@@ -1478,22 +1478,6 @@ JXG.createArrow = function (board, parents, attributes) {
     //el.setArrow(false, true);
     el.type = Const.OBJECT_TYPE_VECTOR;
     el.elType = "arrow";
-
-    /**
-     * Returns the direction vector of the arrow.
-     * @name Direction
-     * @function
-     * @returns {Array} direction vector as [x, y] of the arrow.
-     */
-    el.Direction = function () {
-        var coords1 = this.point1.coords.usrCoords,
-            coords2 = this.point2.coords.usrCoords;
-
-        return [
-            coords2[1] - coords1[1],
-            coords2[2] - coords1[2]
-        ];
-    };
 
     return el;
 };
@@ -1647,21 +1631,21 @@ JXG.createTangent = function (board, parents, attributes) {
         } else {
             throw new Error(
                 "JSXGraph: Can't create tangent with parent types '" +
-                typeof parents[0] +
-                "' and '" +
-                typeof parents[1] +
-                "'." +
-                "\nPossible parent types: [glider], [point,line|curve|circle|conic]"
+                    typeof parents[0] +
+                    "' and '" +
+                    typeof parents[1] +
+                    "'." +
+                    "\nPossible parent types: [glider], [point,line|curve|circle|conic]"
             );
         }
     } else {
         throw new Error(
             "JSXGraph: Can't create tangent with parent types '" +
-            typeof parents[0] +
-            "' and '" +
-            typeof parents[1] +
-            "'." +
-            "\nPossible parent types: [glider], [point,line|curve|circle|conic]"
+                typeof parents[0] +
+                "' and '" +
+                typeof parents[1] +
+                "'." +
+                "\nPossible parent types: [glider], [point,line|curve|circle|conic]"
         );
     }
 
@@ -1972,11 +1956,11 @@ JXG.createRadicalAxis = function (board, parents, attributes) {
         // Failure
         throw new Error(
             "JSXGraph: Can't create 'radical axis' with parent types '" +
-            typeof parents[0] +
-            "' and '" +
-            typeof parents[1] +
-            "'." +
-            "\nPossible parent type: [circle,circle]"
+                typeof parents[0] +
+                "' and '" +
+                typeof parents[1] +
+                "'." +
+                "\nPossible parent type: [circle,circle]"
         );
     }
 
@@ -2092,11 +2076,11 @@ JXG.createPolarLine = function (board, parents, attributes) {
         // Failure
         throw new Error(
             "JSXGraph: Can't create 'polar line' with parent types '" +
-            typeof parents[0] +
-            "' and '" +
-            typeof parents[1] +
-            "'." +
-            "\nPossible parent type: [conic|circle,point], [point,conic|circle]"
+                typeof parents[0] +
+                "' and '" +
+                typeof parents[1] +
+                "'." +
+                "\nPossible parent type: [conic|circle,point], [point,conic|circle]"
         );
     }
 
