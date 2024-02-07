@@ -257,6 +257,24 @@ JXG.Board = function (container, renderer, id,
     this.unitY = unitY * this.zoomY;
 
     /**
+     * This stores the factor which was applied by setScaleX(factor).
+     * @name JXG.Board.scaleFactorX
+     * @type Number
+     * @private
+     * @ignore
+     */
+    this.scaleFactorX = 1;
+
+    /**
+     * This stores the factor which was applied by setScaleY(factor).
+     * @name JXG.Board.scaleFactorY
+     * @type Number
+     * @private
+     * @ignore
+     */
+    this.scaleFactorY = 1;
+
+    /**
      * Keep aspect ratio if bounding box is set and the width/height ratio differs from the
      * width/height ratio of the canvas.
      * @type Boolean
@@ -704,6 +722,8 @@ JXG.Board = function (container, renderer, id,
         zoomOut: 'zoomOut',
         zoom100: 'zoom100',
         zoomElements: 'zoomElements',
+        scaleX: 'scaleX',
+        scaleY: 'scaleY',
         remove: 'removeObject',
         removeObject: 'removeObject'
     };
@@ -4635,6 +4655,40 @@ JXG.extend(
          */
         applyZoom: function () {
             this.updateCoords().calculateSnapSizes().clearTraces().fullUpdate();
+
+            return this;
+        },
+
+        /**
+         * Sets the x-direction (horizontal) scaling to the given factor.
+         *  - If factor > 1, the board is stretched horizontally.
+         *  - If 0 < factor < 1, the board is compressed in the horizontal direction.
+         *  - If factor < 0, the board is mirrored on the y-axis.
+         * @param {Number} factor
+         * @returns {JXG.Board} Reference to the board
+         */
+        scaleX: function (factor) {
+            this.unitX = this.unitX / Type.evaluate(this.scaleFactorX);
+            this.scaleFactorX = Type.createFunction(factor, this.board, null, true);
+            this.unitX = this.unitX * Type.evaluate(this.scaleFactorX);
+            this.applyZoom();
+
+            return this;
+        },
+
+        /**
+         * Sets the y-direction (vertical) scaling to the given factor.
+         *  - If factor > 1, the board is stretched vertically.
+         *  - If 0 < factor < 1, the board is compressed in the vertical direction.
+         *  - If factor < 0, the board is mirrored on the x-axis.
+         * @param {Number} factor
+         * @returns {JXG.Board} Reference to the board
+         */
+        scaleY: function (factor) {
+            this.unitY = this.unitY / Type.evaluate(this.scaleFactorY);
+            this.scaleFactorY = Type.createFunction(factor, this.board, null, true);
+            this.unitY = this.unitY * Type.evaluate(this.scaleFactorY);
+            this.applyZoom();
 
             return this;
         },
