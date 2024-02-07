@@ -331,6 +331,7 @@ JXG.createMeasurement = function (board, parents, attributes) {
     el.Value = function () {
         return Prefix.parse(term, 'execute');
     };
+
     el.Dimension = function () {
         var d = Type.evaluate(el.visProp.dim);
 
@@ -339,6 +340,7 @@ JXG.createMeasurement = function (board, parents, attributes) {
         }
         return Prefix.dimension(term);
     };
+
     el.Unit = function () {
         let unit = '',
             units = Type.evaluate(el.visProp.units),
@@ -361,12 +363,11 @@ JXG.createMeasurement = function (board, parents, attributes) {
 
         return unit;
     };
-    el.toInfix = function (type) {
-        return Prefix.toInfix(term, type);
-    };
+
     el.toPrefix = function () {
         return Prefix.toPrefix(term);
     };
+
     el.getParents = function () {
         return Prefix.getParents(term);
     };
