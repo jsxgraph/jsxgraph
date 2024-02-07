@@ -4661,13 +4661,19 @@ JXG.extend(
 
         /**
          * Sets the x-direction (horizontal) scaling to the given factor.
-         *  - If factor > 1, the board is stretched horizontally.
-         *  - If 0 < factor < 1, the board is compressed in the horizontal direction.
-         *  - If factor < 0, the board is mirrored on the y-axis.
+         * <ul>
+         *     <li>If factor > 1, the board is stretched horizontally.
+         *     <li>If 0 < factor < 1, the board is compressed in the horizontal direction.
+         *     <li>If factor < 0, the board is mirrored on the y-axis.
+         *     <li>If factor == 0, nothing is done.
+         * </ul>
          * @param {Number} factor
          * @returns {JXG.Board} Reference to the board
          */
         scaleX: function (factor) {
+            if (factor === 0) {
+                return this;
+            }
             this.unitX = this.unitX / Type.evaluate(this.scaleFactorX);
             this.scaleFactorX = Type.createFunction(factor, this.board, null, true);
             this.unitX = this.unitX * Type.evaluate(this.scaleFactorX);
@@ -4678,13 +4684,19 @@ JXG.extend(
 
         /**
          * Sets the y-direction (vertical) scaling to the given factor.
-         *  - If factor > 1, the board is stretched vertically.
-         *  - If 0 < factor < 1, the board is compressed in the vertical direction.
-         *  - If factor < 0, the board is mirrored on the x-axis.
+         * <ul>
+         *     <li>If factor > 1, the board is stretched vertically.
+         *     <li>If 0 < factor < 1, the board is compressed in the vertical direction.
+         *     <li>If factor < 0, the board is mirrored on the x-axis.
+         *     <li>If factor == 0, nothing is done.
+         * </ul>
          * @param {Number} factor
          * @returns {JXG.Board} Reference to the board
          */
         scaleY: function (factor) {
+            if (factor === 0) {
+                return this;
+            }
             this.unitY = this.unitY / Type.evaluate(this.scaleFactorY);
             this.scaleFactorY = Type.createFunction(factor, this.board, null, true);
             this.unitY = this.unitY * Type.evaluate(this.scaleFactorY);
