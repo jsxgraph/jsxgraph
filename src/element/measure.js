@@ -381,12 +381,38 @@ JXG.createMeasurement = function (board, parents, attributes) {
     }
 
     /**
+     * @private
+     */
+    el.getPrefix = function() {
+        var str = '';
+
+        if (Type.evaluate(el.visProp.showprefix)) {
+            str = Type.evaluate(el.visProp.prefix);
+        }
+
+        return str;
+    }
+
+    /**
+     * @private
+     */
+    el.getSuffix = function() {
+        var str = '';
+
+        if (Type.evaluate(el.visProp.showsuffix)) {
+            str = Type.evaluate(el.visProp.suffix);
+        }
+
+        return str;
+    }
+
+    /**
      * @class
      * @ignore
      */
     el.setText(function () {
-        var prefix = '',
-            suffix = '',
+        var prefix = el.getPrefix(),
+            suffix = el.getSuffix(),
             dim = el.Dimension(),
             digits = Type.evaluate(el.visProp.digits),
             unit = el.Unit(),
@@ -454,13 +480,6 @@ JXG.createMeasurement = function (board, parents, attributes) {
             pattern = pattern.replace(/%y%/g, val[1]);
 
             val = pattern;
-        }
-
-        if (Type.evaluate(el.visProp.showprefix)) {
-            prefix = Type.evaluate(el.visProp.prefix);
-        }
-        if (Type.evaluate(el.visProp.showsuffix)) {
-            suffix = Type.evaluate(el.visProp.suffix);
         }
 
         if (Type.isString(dim)) {
