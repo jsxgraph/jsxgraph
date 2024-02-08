@@ -1538,6 +1538,8 @@ JXG.createParallelogram = function (board, parents, attributes) {
     attr = Type.copyAttributes(attributes, board.options, "parallelogram");
     el = board.create('polygon', [points[0], points[1], pp, points[2]], attr);
 
+    el.elType = 'parallelogram';
+
     /**
      * Parallel point which makes the quadrilateral a parallelogram. Can also be accessed with
      * parallelogram.vertices[2].
