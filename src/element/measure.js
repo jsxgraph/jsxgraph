@@ -387,7 +387,10 @@ JXG.createMeasurement = function (board, parents, attributes) {
         var str = '';
 
         if (Type.evaluate(el.visProp.showprefix)) {
-            str = Type.evaluate(el.visProp.prefix);
+            // Variants:
+            // str = el.visProp.formatprefix(Type.evaluate(el.visProp.prefix));
+            // str = el.visProp.formatprefix.apply(el, []);
+            str = el.visProp.formatprefix.apply(el, [Type.evaluate(el.visProp.prefix)]);
         }
 
         return str;

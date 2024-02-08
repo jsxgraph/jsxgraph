@@ -5642,6 +5642,8 @@ JXG.Options = {
         prefix: '',
         suffix: '',
 
+        formatPrefix: function(txt) { return txt; },
+
         coordsPattern: '(%x%, %y%)',
         directionPattern: '(%x%, %y%)'
 
