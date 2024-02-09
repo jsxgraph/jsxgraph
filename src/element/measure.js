@@ -441,26 +441,17 @@ JXG.createMeasurement = function (board, parents, attributes) {
         }
 
         if (dim === 'coords' && Type.isArray(val)) {
-            pattern = Type.evaluate(el.visProp.coordspattern);
-
             if (val.length === 2) {
                 val.unshift(undefined);
             }
-
-            pattern = pattern.replace(/%x%/g, val[1]);
-            pattern = pattern.replace(/%y%/g, val[2]);
-            pattern = pattern.replace(/%z%/g, val[0]);
-
-            val = pattern;
+            val = el.visProp.formatcoords.apply(el, [val[1], val[2], val[0]]);
         }
 
         if (dim === 'direction' && Type.isArray(val)) {
-            pattern = Type.evaluate(el.visProp.directionpattern);
-
-            pattern = pattern.replace(/%x%/g, val[0]);
-            pattern = pattern.replace(/%y%/g, val[1]);
-
-            val = pattern;
+            if (val.length === 2) {
+                val.unshift(undefined);
+            }
+            val = el.visProp.formatdirection.apply(el, [val[1], val[2]]);
         }
 
         if (Type.isString(dim)) {
