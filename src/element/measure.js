@@ -395,10 +395,10 @@ JXG.createMeasurement = function (board, parents, attributes) {
             i;
 
         if (Type.evaluate(el.visProp.showprefix)) {
-            prefix = Type.evaluate(el.visProp.prefix);
+            prefix = el.visProp.formatprefix.apply(el, [Type.evaluate(el.visProp.prefix)]);
         }
         if (Type.evaluate(el.visProp.showsuffix)) {
-            suffix = Type.evaluate(el.visProp.suffix);
+            suffix = el.visProp.formatsuffix.apply(el, [Type.evaluate(el.visProp.suffix)]);
         }
 
         if (Type.isNumber(val)) {
