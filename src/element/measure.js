@@ -381,47 +381,25 @@ JXG.createMeasurement = function (board, parents, attributes) {
     }
 
     /**
-     * @private
-     */
-    el.getPrefix = function() {
-        var str = '';
-
-        if (Type.evaluate(el.visProp.showprefix)) {
-            // Variants:
-            // str = el.visProp.formatprefix(Type.evaluate(el.visProp.prefix));
-            // str = el.visProp.formatprefix.apply(el, []);
-            str = el.visProp.formatprefix.apply(el, [Type.evaluate(el.visProp.prefix)]);
-        }
-
-        return str;
-    };
-
-    /**
-     * @private
-     */
-    el.getSuffix = function() {
-        var str = '';
-
-        if (Type.evaluate(el.visProp.showsuffix)) {
-            str = Type.evaluate(el.visProp.suffix);
-        }
-
-        return str;
-    };
-
-    /**
      * @class
      * @ignore
      */
     el.setText(function () {
-        var prefix = el.getPrefix(),
-            suffix = el.getSuffix(),
+        var prefix = '',
+            suffix = '',
             dim = el.Dimension(),
             digits = Type.evaluate(el.visProp.digits),
             unit = el.Unit(),
             val = el.Value(),
             pattern = '',
             i;
+
+        if (Type.evaluate(el.visProp.showprefix)) {
+            prefix = Type.evaluate(el.visProp.prefix);
+        }
+        if (Type.evaluate(el.visProp.showsuffix)) {
+            suffix = Type.evaluate(el.visProp.suffix);
+        }
 
         if (Type.isNumber(val)) {
             if (digits === 'none') {
