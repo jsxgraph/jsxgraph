@@ -857,6 +857,18 @@ JXG.Math = {
     },
 
     /**
+     * Special use of Math.round function to round not only to integers but also to chosen decimal values.
+     * @param {Number} value Value to be rounded.
+     * @param {Number} step Distance between the values to be rounded to. (default: 1.0)
+     * @returns {Number} Rounded value (return_value mod step == 0).
+     */
+    roundToStep: function (value, step) { // Source: https://stackoverflow.com/questions/6137986/javascript-roundoff-number-to-nearest-0-5 (11.11.2023)
+        step || (step = 1.0);
+        var inverse = 1.0 / step;
+        return Math.round(value * inverse) / inverse;
+    },
+
+    /**
      *  Error function, see {@link https://en.wikipedia.org/wiki/Error_function}.
      *
      * @see JXG.Math.PropFunc.erf
