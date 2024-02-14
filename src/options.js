@@ -4491,129 +4491,221 @@ JXG.Options = {
         hasGrid: false,
 
         /**
-         * Distance of majorElements in x- or y- direction.
-         * @type {Number|String} Pure numbers (10) or strings of numerics ('10') are interpreted as distance in usrCoords, string with additional 'px' ('100px') determines distance in pixels.
-         * @default 'auto' MajorElements' distance is similar to corresponding axis.
+         * Distance of major grid elements in x-direction. There are three possibilities:
+         * <ul>
+         *     <li>Numbers or strings which are numbers (e.g. '10') are interpreted as distance in usrCoords.
+         *     <li>Strings with additional 'px' ('100px') determine distances in pixels.
+         *     <li>If it is set to 'auto' the distance of the major grid equals the distance of majorTicks of the x-axis.
+         * </ul>
+         *
+         * @type {Number|String}
+         * @name Grid#gridX
+         * @default 'auto'
+         * @see JXG.Ticks#getDistanceMajorTicks
          */
         gridX: 'auto',
+
+        /**
+         * Distance of major grid elements in y-direction. There are three possibilities:
+         * <ul>
+         *     <li>Numbers or strings which are numbers (e.g. '10') are interpreted as distance in usrCoords.
+         *     <li>Strings with additional 'px' ('100px') determine distances in pixels.
+         *     <li>If it is set to 'auto' the distance of the major grid equals the distance of majorTicks of the y-axis.
+         * </ul>
+         *
+         * @type {Number|String}
+         * @name Grid#gridY
+         * @default 'auto'
+         * @see JXG.Ticks#getDistanceMajorTicks
+         */
         gridY: 'auto',
 
-        // NEW ATTRIBUTES
         /**
-         * Number of minorElements between majorElements in x- and y- direction.
-         * @type {Number|String} String 'auto' = number of minorElements between majorElements is similar to corresponding axis. (important: minorX and minorY != 0 for functionality)
-         * @default 0 No minorElements are shown.
+         * Number of elements in minor grid between elements of the major grid in x-direction.
+         * If set to 'auto', the number minor elements is equal to the number of minorTicks of the x-axis.
+         *
+         * @type {Number|String}
+         * @name Grid#minorX
+         * @default 0
          */
         minorX: 0,
+
+        /**
+         * Number of elements in minor grid between elements of the major grid in y-direction.
+         * If set to 'auto', the number minor elements is equal to the number of minorTicks of the y-axis.
+         *
+         * @type {Number|String}
+         * @name Grid#minorY
+         * @default 0
+         */
         minorY: 0,
 
         /**
-         * To print a quadratic grid with same distance of majorElements in x- and y- direction.
-         * @type {Boolean|String} 'min' will set both distances of majorElements in x- and y-direction to the primarily lesser value (im px), 'max' to the primarily greater value (im px).
+         * To print a quadratic grid with same distance of major grid elements in x- and y-direction.
+         * 'min' will set both distances of major grid elements in x- and y-direction to the primarily lesser value, 'max' to the primarily greater value.
+         *
+         * @type {Boolean|String}
+         * @name Grid#forceSquareGrid
          * @default false
          */
         forceSquareGrid: false,
 
         /**
-         * To decide whether major-/minor-Elements on boundaries of the boundingBox shall be shown, half-ones as well.
+         * To decide whether major or minor grid elements on boundaries of the boundingBox shall be shown, half-ones as well.
+         *
          * @type {Boolean}
+         * @name Grid#includeBoundaries
          * @default true
          */
         includeBoundaries: true,
 
-        /* majorGrid options */
+        // majorGrid options
         major: {
+
             /**
-             * Size of majorElements in x-direction (sizeX) and y-direction (sizeY) in pixels
-             * or if value between 0 an 1: ratio of majorElement size to distance between majorElements in x- and y- direction
-             * for faces 'line' and 'point': sizeX will set/override strokeWidth, sizeY is ignored.
-             * @type {Number}
-             * @default null Will be set to 5 later (for face 'line' and 'point' strokeWidth is default value)
-             * if only sizeX or sizeY is set, the other one will be set to the same value.
+             * Size of major grid elements in x-direction in pixels. If it is a string like '60%', it is interpreted as the ratio of used space for one element.
+             * For faces 'line' and 'point' sizeX will be used as strokeWidth, sizeY is ignored.
+             * If sizeX is not set, it will get the same value as sizeY.
+             *
+             * @type {Number|String}
+             * @name Grid#major_sizeX
+             * @default null Will be set to 5 later (for face 'line' and 'point' strokeWidth is default value) // POI That's a little bit confusing...
              */
             sizeX: null,
+
+            /**
+             * Size of major grid elements in y-direction in pixels. If it is a string like '60%', it is interpreted as the ratio of used space for one element.
+             * For faces 'line' and 'point' sizeX will be used as strokeWidth, sizeY is ignored.
+             * If sizeY is not set, it will get the same value as sizeX.
+             *
+             * @type {Number|String}
+             * @name Grid#major_sizeY
+             * @default null Will be set to 5 later (for face 'line' and 'point' strokeWidth is default value) // POI That's a little bit confusing...
+             */
             sizeY: null,
 
             /**
-             * Appearance of majorElement.
+             * Appearance of major grid element.
              * There are different styles which differ in appearance.
-             * Possible values are (compare {@link Point#face})
-             * <table><tr><th> Value </th></tr>
-             * <tr><th> Input </th><th> Output </th></tr>
-             * <tr><td> point, . </td><td> . </td></tr>
-             * <tr><td> line </td><td> </td></tr>
-             * <tr><td> cross, x </td><td> x </td></tr>
-             * <tr><td> circle, o </td><td> o </td></tr>
-             * <tr><td> square, [] </td><td> [] </td></tr>
-             * <tr><td> plus, + </td><td> + </td></tr>
-             * <tr><td> minus, - </td><td> - </td></tr>
-             * <tr><td> divide, | </td><td> | </td></tr>
-             * <tr><td> diamond, <> </td><td> <> </td></tr>
-             * <tr><td> diamond2, <<>> </td><td> <> (bigger) </td></tr>
-             * <tr><td> triangleup, ^, a, A </td><td> ^ </td></tr>
-             * <tr><td> triangledown, v </td><td> v </td></tr>
-             * <tr><td> triangleleft, < </td><td> < </td></tr>
-             * <tr><td> triangleright, > </td><td> > </td></tr>
-             * <tr><td> regularPolygon </td><td> ⬡ </td></tr>
+             * Possible values are (comparing to {@link Point#face})
+             * <table><tr><th>Value</th></tr>
+             * <tr><th>Input</th><th>Output</th></tr>
+             * <tr><td>point, .</td><td>.</td></tr>
+             * <tr><td>line</td><td>&minus;</td></tr>
+             * <tr><td>cross, x</td><td>x</td></tr>
+             * <tr><td>circle, o</td><td>o</td></tr>
+             * <tr><td>square, []</td><td>[]</td></tr>
+             * <tr><td>plus, +</td><td>+</td></tr>
+             * <tr><td>minus, -</td><td>-</td></tr>
+             * <tr><td>divide, |</td><td>|</td></tr>
+             * <tr><td>diamond, &lt;&gt;</td><td>&lt;&gt;</td></tr>
+             * <tr><td>diamond2, &lt;&lt;&gt;&gt;</td><td>&lt;&gt; (bigger)</td></tr>
+             * <tr><td>triangleup, ^, a, A</td><td>^</td></tr>
+             * <tr><td>triangledown, v</td><td>v</td></tr>
+             * <tr><td>triangleleft, &lt;</td><td> &lt;</td></tr>
+             * <tr><td>triangleright, &gt;</td><td>&gt;</td></tr>
+             * <tr><td>regularPolygon</td><td>⬡</td></tr>
              * </table>
+             *
              * @type {String}
+             * @name Grid#major_face
              * @default 'line'
              */
             face: 'line',
 
             /**
-             * Existence of majorElements on axes:
-             * if drawZero0 === true, majorElement at (0,0)
-             * if drawZeroX === true, majorElements on x-axis (but not at (0,0))
-             * if drawZeroY === true, majorElements on y-axis (but not at (0,0))
+             * Draw the major grid element, that lies at (0,0)?
+             *
              * @type {Boolean}
+             * @name Grid#major_drawZero0
              * @default false
              */
             drawZero0: false,
+
+            /**
+             * Draw the major grid elements, that lie at x=0?
+             *
+             * @type {Boolean}
+             * @name Grid#major_drawZeroX
+             * @default false
+             */
             drawZeroX: false,
+
+            /**
+             * Draw the major grid elements, that lie at y=0?
+             *
+             * @type {Boolean}
+             * @name Grid#major_drawZeroY
+             * @default false
+             */
             drawZeroY: false,
 
-            strokeColor: '#c0c0c0', // -> same in old grid
-            strokeWidth: 1,         // -> same in old grid
-            strokeOpacity: 0.5,     // -> same in old grid
+            strokeColor: '#c0c0c0', // same in old grid
+            strokeWidth: 1,         // same in old grid
+            strokeOpacity: 0.5,     // same in old grid
+            highlight: false,
 
             /**
              * Number of vertices for face 'polygon'.
+             *
              * @type {Number}
+             * @name Grid#major_polygonVertices
              * @default 6
              */
             polygonVertices: 6
         },
 
-        /* minorGrid options */
+        // minorGrid options
         minor: {
+
             /**
-             * Size of minorElements in x-direction (sizeX) and y-direction (sizeY) in pixels
-             * or if value between 0 an 1: ratio of minorElement size to distance between minorElements in x- and y- direction
-             * for faces 'line' and 'point': sizeX will set/override strokeWidth, sizeY is ignored.
-             * @type {Number}
-             * @default null Will be set to 3 later (for face 'line' and 'point' strokeWidth is default value)
-             * if only sizeX or sizeY is set, the other one will be set to the same value.
+             * Size of minor grid elements in x-direction in pixels. If it is a string like '60%', it is interpreted as the ratio of used space for one element.
+             * For faces 'line' and 'point' sizeX will be used as strokeWidth, sizeY is ignored.
+             * If sizeX is not set, it will get the same value as sizeY.
+             *
+             * @type {Number|String}
+             * @name Grid#minor_sizeX
+             * @default null Will be set to 3 later (for face 'line' and 'point' strokeWidth is default value) // POI That's a little bit confusing...
              */
             sizeX: null,
+
+            /**
+             * Size of minor grid elements in y-direction in pixels. If it is a string like '60%', it is interpreted as the ratio of used space for one element.
+             * For faces 'line' and 'point' sizeX will be used as strokeWidth, sizeY is ignored.
+             * If sizeY is not set, it will get the same value as sizeX.
+             *
+             * @type {Number|String}
+             * @name Grid#minor_sizeY
+             * @default null Will be set to 3 later (for face 'line' and 'point' strokeWidth is default value) // POI That's a little bit confusing...
+             */
             sizeY: null,
 
             /**
-             * Appearance of minorElements.
-             * @type {String} Same options as for major.
+             * Appearance of minor grid elements. Same options as for major grid elements.
+             *
+             * @type {String}
+             * @name Grid#minor_face
              * @default 'point'
-             * @see Grid#major
+             * @see Grid#major_face
              */
             face: 'point',
 
             /**
-             * Existence of minorElements on axes
-             * if drawZeroX === true, minorElements on x-axis (but not at (0,0))
-             * if drawZeroY === true, minorElements on y-axis (but not at (0,0))
+             * Draw the minor grid elements, that lie at x=0?
+             *
              * @type {Boolean}
+             * @name Grid#minor_drawZeroX
              * @default false
              */
             drawZeroX: false,
+
+            /**
+             * Draw the minor grid elements, that lie at y=0?
+             *
+             * @type {Boolean}
+             * @name Grid#minor_drawZeroY
+             * @default false
+             */
             drawZeroY: false,
 
             strokeColor: '#c0c0c0',
@@ -4623,32 +4715,37 @@ JXG.Options = {
 
             /**
              * Number of vertices for face 'polygon'.
+             *
              * @type {Number}
+             * @name Grid#minor_polygonVertices
              * @default 6
              */
             polygonVertices: 6
         },
 
-        /** @class
+        /**
+         * @class
          * @ignore
-         * @name Grid#snapToGrid
-         * @type {Boolean}
          * @deprecated
          */
         snapToGrid: false,
 
         /**
-         * Predefined themes where some attributes are fixed.
-         * These can be overwritten by explicitly using the attributes.
-         * @type {Number} between 0 and 7 (@see Grid#themes)
+         * Use a predefined theme for grid.
+         * Attributes can be overwritten by explicitly set the specific value.
+         *
+         * @type {Number}
          * @default 0
+         * @see Grid#themes
          */
         theme: 0,
 
         /**
-         * Array of objects in which the theme-specific attributes are set.
+         * Array of theme attributes.
          * The index of the entry is the number of the theme.
+         *
          * @type {Array}
+         * @name Grid#themes
          * @private
          *
          * @example
@@ -4773,14 +4870,14 @@ JXG.Options = {
          */
         themes: [
             {
-                // default values from JXG.Options
+                // default values
             },
 
-            {   // Theme 1: quadratic grid appearence with distance of majorElements in x- and y-direction set to the primarily greater one of both (pixels compared)
+            {   // Theme 1: quadratic grid appearence with distance of major grid elements in x- and y-direction set to the primarily greater one of both (pixels compared)
                 forceSquareGrid: 'max'
             },
 
-            {   // Theme 2: lines and subtle points in between
+            {   // Theme 2: lines and subtile points in between
                 minor: {
                     sizeX: 3,
                     strokeColor: '#101010'
@@ -6229,6 +6326,7 @@ JXG.Options = {
          * <tr><td>minus</td><td>-</td></tr>
          * <tr><td>divide</td><td>|</td></tr>
          * <tr><td>diamond</td><td>&lt;&gt;</td></tr>
+         * <tr><td>diamond2</td><td>&lt;&gt; (bigger)</td></tr>
          * <tr><td>triangleup</td><td>^, a, A</td></tr>
          * <tr><td>triangledown</td><td>v</td></tr>
          * <tr><td>triangleleft</td><td>&lt;</td></tr>

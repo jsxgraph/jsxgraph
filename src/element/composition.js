@@ -3576,16 +3576,20 @@ JXG.createGrid = function (board, parents, attributes) {
         }
 
         // set sizeXuc
-        if (sizeX >= 0 && sizeX < 1) { // ratio-based (for 0 <= size < 1)
+        if (Type.isString(sizeX) && sizeX.indexOf('%')>=0) {
+            sizeX = parseFloat(sizeX) / 100;
             sizeXuc = sizeX * stepX / 2;
-        } else { // pixel-based
+        } else {
+            sizeX = parseFloat(sizeX);
             sizeXuc = sizeX / this.board.unitX / 2; // conversion: size (px) -> usrCoord
         }
         // set sizeYuc
-        if (sizeY >= 0 && sizeY < 1) { // ratio-based (for 0 <= size < 1)
+        if (Type.isString(sizeY) && sizeY.indexOf('%')>=0) {
+            sizeY = parseFloat(sizeY) / 100;
             sizeYuc = sizeY * stepY / 2;
-        } else { // pixel-based
-            sizeYuc = sizeY / this.board.unitY / 2; // conversion: size (px) -> usrCoord
+        } else {
+            sizeY = parseFloat(sizeY);
+            sizeYuc = sizeY / this.board.unitX / 2; // conversion: size (px) -> usrCoord
         }
 
         // calculating start position for curve (to start on first shown cross between tick-lines)
@@ -3713,16 +3717,20 @@ JXG.createGrid = function (board, parents, attributes) {
         minStepY = stepY / (minorY + 1);
 
         // set minSizeXuc
-        if (minSizeX >= 0 && minSizeX < 1) { // ratio-based (for 0 <= size < 1)
+        if (Type.isString(minSizeX) && minSizeX.indexOf('%')>=0) {
+            minSizeX = parseFloat(minSizeX) / 100;
             minSizeXuc = minSizeX * minStepX / 2;
-        } else { // pixel-based
+        } else {
+            minSizeX = parseFloat(minSizeX);
             minSizeXuc = minSizeX / this.board.unitX / 2; // conversion: size (px) -> usrCoord
         }
-        // Set minSizeYuc
-        if (minSizeY >= 0 && minSizeY < 1) { // ratio-based (for 0 <= size < 1)
+        // set minSizeYuc
+        if (Type.isString(minSizeY) && minSizeY.indexOf('%')>=0) {
+            minSizeY = parseFloat(minSizeY) / 100;
             minSizeYuc = minSizeY * minStepY / 2;
-        } else { // pixel-based
-            minSizeYuc = minSizeY / this.board.unitY / 2; // conversion: size (px) -> usrCoord
+        } else {
+            minSizeY = parseFloat(minSizeY);
+            minSizeYuc = minSizeY / this.board.unitX / 2; // conversion: size (px) -> usrCoord
         }
 
         // calculating start position for curve
