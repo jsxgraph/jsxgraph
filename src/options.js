@@ -4577,12 +4577,23 @@ JXG.Options = {
         major: {
 
             /**
+             * This number (pixel value) controls where infinite lines end at the canvas border. If zero, the line
+             * ends exactly at the border, if negative there is a margin to the inside, if positive the line
+             * ends outside of the canvas (which is invisible).
+             *
+             * @name Grid#major_margin
+             * @type Number
+             * @default 0
+             */
+            margin: 0,
+
+            /**
              * Size of major grid elements in x-direction. There are the following possibilities:
              * <ul>
              *     <li>Numbers or strings which are numbers (e.g. '10') are interpreted as size in pixels.
              *     <li>Strings with additional '%' (e.g. '95%') are interpreted as the ratio of used space for one element.
              * </ul>
-             * For faces 'line' and 'point' sizeX will be used as strokeWidth, sizeY is ignored. // POI see composition.js
+             * Unused for 'line' and 'point', which will use the value of strokeWidth.
              * If sizeX is not set, it will get the same value as sizeY. // POI I think, we shouldn't do that...
              *
              * @type {Number|String}
@@ -4679,6 +4690,17 @@ JXG.Options = {
 
         // minorGrid options
         minor: {
+
+            /**
+             * This number (pixel value) controls where infinite lines end at the canvas border. If zero, the line
+             * ends exactly at the border, if negative there is a margin to the inside, if positive the line
+             * ends outside of the canvas (which is invisible).
+             *
+             * @name Grid#major_margin
+             * @type Number
+             * @default 0
+             */
+            margin: 0,
 
             /**
              * Size of minor grid elements in x-direction. There are the following possibilities:
