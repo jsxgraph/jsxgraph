@@ -111,7 +111,11 @@ JXG.ForeignObject = function (board, coords, attributes, content, size) {
 
     this.methodMap = JXG.deepCopy(this.methodMap, {
         addTransformation: "addTransform",
-        trans: "addTransform"
+        trans: "addTransform",
+        W: "W",
+        Width: "W",
+        H: "H",
+        Height: "H"
     });
 };
 

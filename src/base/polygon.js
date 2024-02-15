@@ -155,12 +155,12 @@ JXG.Polygon = function (board, vertices, attributes) {
         Area: "Area",
         Perimeter: "Perimeter",
         L: "Perimeter",
-        Length: "Perimeter",
-        boundingBox: "boundingBox",
-        bounds: "bounds",
+        boundingBox: "bounds",
+        BoundingBox: "bounds",
         addPoints: "addPoints",
         insertPoints: "insertPoints",
-        removePoints: "removePoints"
+        removePoints: "removePoints",
+        Intersect: "intersect"
     });
 };
 
