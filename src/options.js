@@ -7059,7 +7059,8 @@ JXG.Options = {
          * @name Slopetriangle#label
          */
         label: {
-            visible: true
+            visible: true,
+            position: 'first'
         }
         /**#@-*/
     },

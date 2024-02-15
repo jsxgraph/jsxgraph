@@ -209,21 +209,33 @@ JXG.createSlopeTriangle = function (board, parents, attributes) {
     el.borders[2].setArrow(false, false);
 
     attr = Type.copyAttributes(attributes, board.options, "slopetriangle", "label");
-    label = board.create(
-        "text",
-        [
-            function () {
-                return glider.X() + 0.1;
-            },
-            function () {
-                return (glider.Y() + toppoint.Y()) * 0.5;
-            },
-            function () {
-                return "";
-            }
-        ],
-        attr
-    );
+    //label = board.create("text", [
+    //         function () {
+    //             return glider.X() + 0.1;
+    //         },
+    //         function () {
+    //             return (glider.Y() + toppoint.Y()) * 0.5;
+    //         },
+    //         function () {
+    //             return "";
+    //         }
+    //     ],
+    //     attr
+    // );
+
+    attr = Type.copyAttributes(attr, board.options, "label");
+    // Add label to vertical polygon edge
+    attr.isLabel = true;
+    attr.anchor = el.borders[1];
+    attr.priv = el.borders[1].visProp.priv;
+    attr.id = el.borders[1].id + "Label";
+
+    label = board.create("text", [0, 0, function () { return ""; }], attr);
+    label.needsUpdate = true;
+    label.dump = false;
+    el.borders[1].label = label;
+    el.borders[1].hasLabel = true;
+    el.borders[1].visProp.withlabel = true;
 
     label._setText(function () {
         var digits = Type.evaluate(label.visProp.digits);
