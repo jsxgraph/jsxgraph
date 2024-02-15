@@ -3605,9 +3605,9 @@ JXG.createGrid = function (board, parents, attributes) {
             for (x = startX; finite && x <= bbox[2]; x += majorStepX) {
 
                 if (
-                    (!drawZero0 && Math.abs(y) <= eps && Math.abs(x) <= eps) ||
-                    (!drawZeroX && Math.abs(y) <= eps && Math.abs(x) >= eps) ||
-                    (!drawZeroY && Math.abs(x) <= eps && Math.abs(y) >= eps) ||
+                    (!drawZero0 && Math.abs(y) < eps && Math.abs(x) < eps) ||
+                    (!drawZeroX && Math.abs(y) < eps && Math.abs(x) >= eps) ||
+                    (!drawZeroY && Math.abs(x) < eps && Math.abs(y) >= eps) ||
                     (!includeBoundaries && (
                         x <= bbox[0] + majorRadiusX ||
                         x >= bbox[2] - majorRadiusX ||
@@ -3632,8 +3632,8 @@ JXG.createGrid = function (board, parents, attributes) {
             dataArr,
             finite,
 
-            minorStepX,  minorStepY,
-            minorRadiusX,    minorRadiusY,
+            minorStepX, minorStepY,
+            minorRadiusX, minorRadiusY,
             XdisTo0, XdisFrom0, YdisTo0, YdisFrom0, // {Number} absolute distances of minor grid elements center to next major grid element center
             dis0To, dis1To, dis2To, dis3To,         // {Number} absolute distances of borders of the boundingBox to the next major grid element.
             dis0From, dis1From, dis2From, dis3From,
@@ -3736,11 +3736,7 @@ JXG.createGrid = function (board, parents, attributes) {
             for (x = startX; finite && x <= bbox[2]; x += minorStepX) {
 
                 /* explanation:
-                     |<___________X2disTo0____________><__X2disFrom0___>
-                     |                .                .               .
-                     |<___X1disTo0___><___________X1disFrom0___________>
-                     |                .                .               .
-                     |                .                .               .
+                     |<___XdisTo0___><___________XdisFrom0___________>
                      |                .                .               .
                  ____|____            .                .           _________
                 |    |    |         ____              ____        |         |
@@ -3758,7 +3754,7 @@ JXG.createGrid = function (board, parents, attributes) {
                      |                .  <--------------------------->
                      |                             \
                      |                              XdisFrom0 - minorRadiusX <= majorRadiusX ? -> exclude
-                     0
+                     |
                -——---|————————-————---|----------------|---------------|-------->
                      |
                      |<______________________majorStepX_____________________>
@@ -3767,51 +3763,54 @@ JXG.createGrid = function (board, parents, attributes) {
                      |
                      |
                 */
-                XdisTo0 = Math.abs(x % majorStepX);
+                XdisTo0 = Mat.roundToStep(Math.abs(x), majorStepX);
+                XdisTo0 = Math.abs(XdisTo0 - Math.abs(x));
                 XdisFrom0 = majorStepX - XdisTo0;
-                YdisTo0 = Math.abs(y % majorStepY);
+
+                YdisTo0 = Mat.roundToStep(Math.abs(y), majorStepY);
+                YdisTo0 = Math.abs(YdisTo0 - Math.abs(y));
                 YdisFrom0 = majorStepY - YdisTo0;
 
                 if (majorFace === 'line') {
                     // for majorFace 'line' do not draw minor grid elements on lines
                     if (
-                        XdisTo0 - minorRadiusX <= majorRadiusX ||
-                        XdisFrom0 - minorRadiusX <= majorRadiusX ||
-                        YdisTo0 - minorRadiusY <= majorRadiusY ||
-                        YdisFrom0 - minorRadiusY <= majorRadiusY
+                        XdisTo0 - minorRadiusX - majorRadiusX < eps ||
+                        XdisFrom0 - minorRadiusX - majorRadiusX < eps ||
+                        YdisTo0 - minorRadiusY - majorRadiusY < eps ||
+                        YdisFrom0 - minorRadiusY - majorRadiusY < eps
                     ) {
                         continue;
                     }
 
                 } else {
                     if ((
-                        XdisTo0 - minorRadiusX <= majorRadiusX ||
-                        XdisFrom0 - minorRadiusX <= majorRadiusX
+                        XdisTo0 - minorRadiusX - majorRadiusX < eps ||
+                        XdisFrom0 - minorRadiusX - majorRadiusX < eps
                     ) && (
-                        YdisTo0 - minorRadiusY <= majorRadiusY ||
-                        YdisFrom0 - minorRadiusY <= majorRadiusY
+                        YdisTo0 - minorRadiusY - majorRadiusY < eps ||
+                        YdisFrom0 - minorRadiusY - majorRadiusY < eps
                     )) {
                         // if major grid elements (on 0 or axes) are not existing, minor grid elements have to exist. Otherwise:
                         if ((
                             majorDrawZero0 ||
-                            Math.abs(y) - minorRadiusY > majorRadiusY ||
-                            Math.abs(x) - minorRadiusX > majorRadiusX
+                            majorRadiusY - Math.abs(y) + minorRadiusY < eps ||
+                            majorRadiusX - Math.abs(x) + minorRadiusX < eps
                         ) && (
                             majorDrawZeroX ||
-                            Math.abs(y) - minorRadiusY > majorRadiusY ||
-                            Math.abs(x) - minorRadiusX < majorRadiusX
+                            majorRadiusY - Math.abs(y) + minorRadiusY < eps ||
+                            majorRadiusX + Math.abs(x) - minorRadiusX < eps
                         ) && (
                             majorDrawZeroY ||
-                            Math.abs(x) - minorRadiusX > majorRadiusX ||
-                            Math.abs(y) - minorRadiusY < majorRadiusY
+                            majorRadiusX - Math.abs(x) + minorRadiusX < eps ||
+                            majorRadiusY + Math.abs(y) - minorRadiusY < eps
                         )) {
                             continue;
                         }
                     }
                 }
                 if (
-                    (!minorDrawZeroY && Math.abs(x) <= eps) ||
-                    (!minorDrawZeroX && Math.abs(y) <= eps)
+                    (!minorDrawZeroY && Math.abs(x) < eps) ||
+                    (!minorDrawZeroX && Math.abs(y) < eps)
                 ) {
                     continue;
                 }
@@ -3861,20 +3860,20 @@ JXG.createGrid = function (board, parents, attributes) {
 
                 if (
                     !includeBoundaries && (
-                        (x - minorRadiusX <= bbox[0] + majorRadiusX - dis0From && dis0From <= majorRadiusX) ||
-                        (x - minorRadiusX <= bbox[0] + majorRadiusX + dis0To && dis0To <= majorRadiusX) ||
-                        (x + minorRadiusX >= bbox[2] - majorRadiusX + dis2From && dis2From <= majorRadiusX) ||
-                        (x + minorRadiusX >= bbox[2] - majorRadiusX - dis2To && dis2To <= majorRadiusX) ||
+                        (x - minorRadiusX - bbox[0] - majorRadiusX + dis0From < eps && dis0From - majorRadiusX < eps) ||
+                        (x - minorRadiusX - bbox[0] - majorRadiusX - dis0To < eps && dis0To - majorRadiusX < eps) ||
+                        (-x - minorRadiusX + bbox[2] - majorRadiusX + dis2From < eps && dis2From - majorRadiusX < eps) ||
+                        (-x - minorRadiusX + bbox[2] - majorRadiusX - dis2To < eps && dis2To - majorRadiusX < eps) ||
 
-                        (y + minorRadiusY >= bbox[1] - majorRadiusY + dis1From && dis1From <= majorRadiusY) ||
-                        (y + minorRadiusY >= bbox[1] - majorRadiusY - dis1To && dis1To <= majorRadiusY) ||
-                        (y - minorRadiusY <= bbox[3] + majorRadiusY - dis3From && dis3From <= majorRadiusY) ||
-                        (y - minorRadiusY <= bbox[3] + majorRadiusY + dis3To && dis3To <= majorRadiusY) ||
+                        (-y - minorRadiusY + bbox[1] - majorRadiusY + dis1From < eps && dis1From - majorRadiusY < eps) ||
+                        (-y - minorRadiusY + bbox[1] - majorRadiusY - dis1To < eps && dis1To - majorRadiusY < eps) ||
+                        (y - minorRadiusY - bbox[3] - majorRadiusY + dis3From < eps && dis3From - majorRadiusY < eps) ||
+                        (y - minorRadiusY - bbox[3] - majorRadiusY - dis3To < eps && dis3To - majorRadiusY < eps) ||
 
-                        (y >= (bbox[1] - minorRadiusY)) ||
-                        (x <= (bbox[0] + minorRadiusX)) ||
-                        (y <= (bbox[3] + minorRadiusY)) ||
-                        (x >= (bbox[2] - minorRadiusX))
+                        (-y - minorRadiusY + bbox[1] < eps) ||
+                        (x - minorRadiusX - bbox[0] < eps) ||
+                        (y - minorRadiusY - bbox[3] < eps) ||
+                        (-x - minorRadiusX + bbox[2] < eps)
                     )
                 ) {
                     continue;
