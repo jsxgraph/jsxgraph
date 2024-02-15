@@ -4494,7 +4494,7 @@ JXG.Options = {
          * Distance of major grid elements in x-direction. There are three possibilities:
          * <ul>
          *     <li>Numbers or strings which are numbers (e.g. '10') are interpreted as distance in usrCoords.
-         *     <li>Strings with additional 'px' ('100px') determine distances in pixels.
+         *     <li>Strings with additional 'px' (e.g. '100px') determine distances in pixels.
          *     <li>If it is set to 'auto' the distance of the major grid equals the distance of majorTicks of the x-axis.
          * </ul>
          *
@@ -4509,7 +4509,7 @@ JXG.Options = {
          * Distance of major grid elements in y-direction. There are three possibilities:
          * <ul>
          *     <li>Numbers or strings which are numbers (e.g. '10') are interpreted as distance in usrCoords.
-         *     <li>Strings with additional 'px' ('100px') determine distances in pixels.
+         *     <li>Strings with additional 'px' (e.g. '100px') determine distances in pixels.
          *     <li>If it is set to 'auto' the distance of the major grid equals the distance of majorTicks of the y-axis.
          * </ul>
          *
@@ -4542,7 +4542,7 @@ JXG.Options = {
 
         /**
          * To print a quadratic grid with same distance of major grid elements in x- and y-direction.
-         * 'min' will set both distances of major grid elements in x- and y-direction to the primarily lesser value, 'max' to the primarily greater value.
+         * <tt>'min'</tt> will set both distances of major grid elements in x- and y-direction to the primarily lesser value, <tt>'max'</tt> or <tt>true</tt> to the primarily greater value.
          *
          * @type {Boolean|String}
          * @name Grid#forceSquareGrid
@@ -4563,9 +4563,13 @@ JXG.Options = {
         major: {
 
             /**
-             * Size of major grid elements in x-direction in pixels. If it is a string like '60%', it is interpreted as the ratio of used space for one element.
-             * For faces 'line' and 'point' sizeX will be used as strokeWidth, sizeY is ignored.
-             * If sizeX is not set, it will get the same value as sizeY.
+             * Size of major grid elements in x-direction. There are the following possibilities:
+             * <ul>
+             *     <li>Numbers or strings which are numbers (e.g. '10') are interpreted as size in pixels.
+             *     <li>Strings with additional '%' (e.g. '95%') are interpreted as the ratio of used space for one element.
+             * </ul>
+             * For faces 'line' and 'point' sizeX will be used as strokeWidth, sizeY is ignored. // POI see composition.js
+             * If sizeX is not set, it will get the same value as sizeY. // POI I think, we shouldn't do that...
              *
              * @type {Number|String}
              * @name Grid#major_sizeX
@@ -4574,9 +4578,13 @@ JXG.Options = {
             sizeX: null,
 
             /**
-             * Size of major grid elements in y-direction in pixels. If it is a string like '60%', it is interpreted as the ratio of used space for one element.
-             * For faces 'line' and 'point' sizeX will be used as strokeWidth, sizeY is ignored.
-             * If sizeY is not set, it will get the same value as sizeX.
+             * Size of major grid elements in y-direction. There are the following possibilities:
+             * <ul>
+             *     <li>Numbers or strings which are numbers (e.g. '10') are interpreted as size in pixels.
+             *     <li>Strings with additional '%' (e.g. '95%') are interpreted as the ratio of used space for one element.
+             * </ul>
+             * For faces 'line' and 'point' sizeY will be used as strokeWidth, sizeY is ignored. // POI see composition.js
+             * If sizeY is not set, it will get the same value as sizeY. // POI I think, we shouldn't do that...
              *
              * @type {Number|String}
              * @name Grid#major_sizeY
@@ -4588,23 +4596,23 @@ JXG.Options = {
              * Appearance of major grid element.
              * There are different styles which differ in appearance.
              * Possible values are (comparing to {@link Point#face})
-             * <table><tr><th>Value</th></tr>
-             * <tr><th>Input</th><th>Output</th></tr>
-             * <tr><td>point, .</td><td>.</td></tr>
-             * <tr><td>line</td><td>&minus;</td></tr>
-             * <tr><td>cross, x</td><td>x</td></tr>
-             * <tr><td>circle, o</td><td>o</td></tr>
-             * <tr><td>square, []</td><td>[]</td></tr>
-             * <tr><td>plus, +</td><td>+</td></tr>
-             * <tr><td>minus, -</td><td>-</td></tr>
-             * <tr><td>divide, |</td><td>|</td></tr>
-             * <tr><td>diamond, &lt;&gt;</td><td>&lt;&gt;</td></tr>
-             * <tr><td>diamond2, &lt;&lt;&gt;&gt;</td><td>&lt;&gt; (bigger)</td></tr>
-             * <tr><td>triangleup, ^, a, A</td><td>^</td></tr>
-             * <tr><td>triangledown, v</td><td>v</td></tr>
-             * <tr><td>triangleleft, &lt;</td><td> &lt;</td></tr>
-             * <tr><td>triangleright, &gt;</td><td>&gt;</td></tr>
-             * <tr><td>regularPolygon</td><td>⬡</td></tr>
+             * <table>
+             * <tr><th>Input</th><th>Output</th><th>Fillable by fillColor,...</th></tr>
+             * <tr><td>point, .</td><td>.</td><td>no</td></tr>
+             * <tr><td>line</td><td>&minus;</td><td>no</td></tr>
+             * <tr><td>cross, x</td><td>x</td><td>no</td></tr>
+             * <tr><td>circle, o</td><td>o</td><td>yes</td></tr>
+             * <tr><td>square, []</td><td>[]</td><td>yes</td></tr>
+             * <tr><td>plus, +</td><td>+</td><td>no</td></tr>
+             * <tr><td>minus, -</td><td>-</td><td>no</td></tr>
+             * <tr><td>divide, |</td><td>|</td><td>no</td></tr>
+             * <tr><td>diamond, &lt;&gt;</td><td>&lt;&gt;</td><td>yes</td></tr>
+             * <tr><td>diamond2, &lt;&lt;&gt;&gt;</td><td>&lt;&gt; (bigger)</td><td>yes</td></tr>
+             * <tr><td>triangleup, ^, a, A</td><td>^</td><td>no</td></tr>
+             * <tr><td>triangledown, v</td><td>v</td><td>no</td></tr>
+             * <tr><td>triangleleft, &lt;</td><td> &lt;</td><td>no</td></tr>
+             * <tr><td>triangleright, &gt;</td><td>&gt;</td><td>no</td></tr>
+             * <tr><td>regularPolygon, regpol</td><td>⬡</td><td>yes</td></tr>
              * </table>
              *
              * @type {String}
@@ -4659,24 +4667,32 @@ JXG.Options = {
         minor: {
 
             /**
-             * Size of minor grid elements in x-direction in pixels. If it is a string like '60%', it is interpreted as the ratio of used space for one element.
-             * For faces 'line' and 'point' sizeX will be used as strokeWidth, sizeY is ignored.
-             * If sizeX is not set, it will get the same value as sizeY.
+             * Size of minor grid elements in x-direction. There are the following possibilities:
+             * <ul>
+             *     <li>Numbers or strings which are numbers (e.g. '10') are interpreted as size in pixels.
+             *     <li>Strings with additional '%' (e.g. '95%') are interpreted as the ratio of used space for one element.
+             * </ul>
+             * For faces 'line' and 'point' sizeX will be used as strokeWidth, sizeY is ignored. // POI see composition.js
+             * If sizeX is not set, it will get the same value as sizeY. // POI I think, we shouldn't do that...
              *
              * @type {Number|String}
              * @name Grid#minor_sizeX
-             * @default null Will be set to 3 later (for face 'line' and 'point' strokeWidth is default value) // POI That's a little bit confusing...
+             * @default null Will be set to 5 later (for face 'line' and 'point' strokeWidth is default value) // POI That's a little bit confusing...
              */
             sizeX: null,
 
             /**
-             * Size of minor grid elements in y-direction in pixels. If it is a string like '60%', it is interpreted as the ratio of used space for one element.
-             * For faces 'line' and 'point' sizeX will be used as strokeWidth, sizeY is ignored.
-             * If sizeY is not set, it will get the same value as sizeX.
+             * Size of minor grid elements in y-direction. There are the following possibilities:
+             * <ul>
+             *     <li>Numbers or strings which are numbers (e.g. '10') are interpreted as size in pixels.
+             *     <li>Strings with additional '%' (e.g. '95%') are interpreted as the ratio of used space for one element.
+             * </ul>
+             * For faces 'line' and 'point' sizeY will be used as strokeWidth, sizeY is ignored. // POI see composition.js
+             * If sizeY is not set, it will get the same value as sizeY. // POI I think, we shouldn't do that...
              *
              * @type {Number|String}
              * @name Grid#minor_sizeY
-             * @default null Will be set to 3 later (for face 'line' and 'point' strokeWidth is default value) // POI That's a little bit confusing...
+             * @default null Will be set to 5 later (for face 'line' and 'point' strokeWidth is default value) // POI That's a little bit confusing...
              */
             sizeY: null,
 
@@ -6317,7 +6333,7 @@ JXG.Options = {
         /**
          * There are different point styles which differ in appearance.
          * Posssible values are
-         * <table><tr><th>Value</th></tr>
+         * <table>
          * <tr><th>Input</th><th>Output</th></tr>
          * <tr><td>cross</td><td>x</td></tr>
          * <tr><td>circle</td><td>o</td></tr>
