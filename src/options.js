@@ -3667,99 +3667,91 @@ JXG.Options = {
         highlightStrokeWidth: 1,
         highlightStrokeColor: '#888888',
 
-        /** axisType
-         * AxisType is used to define the behaviour of the axis.
-         * It is only usable for axis which are parallel to the default x- or y- axis
-         * Possible values are: 'static', 'fixed' and 'sticky'.
-         * 'static' uses the regular axis as know in JSXGraph.
-         * If the axisType is 'sticky' the axis stays on the visible board (in dependence of the attribute position and distenceBorder), when the user navigates through the board.
-         * If the axisType is 'fixed' the axis will be created in a given position (left or right) and given distanceBorder. The axis will stay at that given position, when the user navigates through the board.
-         * @type String
+        /**
+         * Is used to define the behaviour of the axis.
+         * Settings in this attribute only have an effect if the axis is exactly vertical or horizontal.
+         * Possible values are:
+         * <ul>
+         *     <li><tt>'static'</tt>: Standard behavior of the axes as know in JSXGraph.
+         *     <li><tt>'fixed'</tt>: The axis is placed in a fixed position. Depending on the attribute <tt>position</tt>, it is positioned to the right or left of the edge of the board as seen from the axis with a distance defined in <tt>distanceBoarder</tt>. The axis will stay at that given position, when the user navigates through the board.
+         *     <li><tt>'sticky'</tt>: This mixes the two settings <tt>static</tt> and <tt>fixed</tt>. When the user navigates in the board, the axis remains in the visible area (taking into account <tt>position</tt> and <tt>distanceBorder</tt>). If the axis itself is in the visible area, the axis can be moved by navigation.
+         * </ul>
+         *
+         * @type {String}
          * @name Axis#axisType
          * @default 'static'
-         * @example //Use Navigation to see real use. axis with x:{axisType: 'fixed', position: 'right', distanceBorder: '0.1fr'}, y:{axisType: 'fixed', position:'left', distanceBorder: '1abs'}
+         * @see Axis#position
+         * @see Axis#distanceBorder
+         *
+         * @example // Use navigation to see effect.
          *  var axis1, axis2, circle;
          *
-         *  axis1 = board.create('axis', [[0,0],[1,0]],{
+         *  board.create('axis', [[0,0],[1,0]],{
          *      axisType: 'fixed',
          *      position: 'right',
          *      distanceBorder: '0.1fr'
          *  });
          *
-         *  axis2 = board.create('axis', [[0,0],[0,1]], {
+         *  board.create('axis', [[0,0],[0,1]], {
          *      axisType: 'fixed',
          *      position: 'left',
          *      distanceBorder: '1abs'
          *  });
          *
-         *  circle = board.create('circle', [[5,5], 2.5]);
-         *
-         *
          * </pre><div id="JXG6dff2f81-65ce-46a3-bea0-8ce25cc1cb4a" class="jxgbox" style="width: 300px; height: 300px;"></div>
          * <script type="text/javascript">
          *     (function() {
-         *         var board = JXG.JSXGraph.initBoard('JXG6dff2f81-65ce-46a3-bea0-8ce25cc1cb4a',
+         *      var board = JXG.JSXGraph.initBoard('JXG6dff2f81-65ce-46a3-bea0-8ce25cc1cb4a',
          *             {boundingbox: [-1, 10, 10,-1], axis: false, showcopyright: false, shownavigation: true});
-         *      var axis1, axis2, circle;
          *
-         *      axis1 = board.create('axis', [[0,0],[1,0]],{
+         *      board.create('axis', [[0,0],[1,0]],{
          *          axisType: 'fixed',
          *          position: 'right',
          *          distanceBorder: '0.1fr'
          *      });
          *
-         *      axis2 = board.create('axis', [[0,0],[0,1]], {
+         *      board.create('axis', [[0,0],[0,1]], {
          *          axisType: 'fixed',
          *          position: 'left',
          *          distanceBorder: '1abs'
          *      });
          *
-         *      circle = board.create('circle', [[5,5], 2.5]);
-         *
-         *
+         *      board.create('circle', [[5,5], 2.5]);
          *     })();
          *
          * </script><pre>
          *
-         *
-         * @example //Use Navigation to see real use.
-         *      var axis1, axis2, graph;
-         *
-         *      axis1 = board.create('axis', [[0,0],[1,0]],{
+         * @example // Use navigation to see effect.
+         *      board.create('axis', [[0,0],[1,0]],{
          *          axisType: 'sticky',
          *          position: 'right',
          *          distanceBorder: '0.2fr'
          *      });
          *
-         *      axis2 = board.create('axis', [[0,0],[0,1]], {
+         *      board.create('axis', [[0,0],[0,1]], {
          *          axisType: 'sticky',
          *          position: 'right left',
          *          distanceBorder: '75px'
          *      });
          *
-         *      graph = board.create('functiongraph', [function(x){ return 1/(x-5) + 2;}]);
-         *
          * </pre><div id="JXG42a90935-80aa-4a6b-8adf-279deef84485" class="jxgbox" style="width: 300px; height: 300px;"></div>
          * <script type="text/javascript">
          *     (function() {
-         *         var board = JXG.JSXGraph.initBoard('JXG42a90935-80aa-4a6b-8adf-279deef84485',
+         *          var board = JXG.JSXGraph.initBoard('JXG42a90935-80aa-4a6b-8adf-279deef84485',
          *             {boundingbox: [-8, 8, 8,-8], axis: false, showcopyright: false, shownavigation: true});
-         *          var axis1, axis2, graph;
-         *
-         *          axis1 = board.create('axis', [[0,0],[1,0]],{
+         *          board.create('axis', [[0,0],[1,0]],{
          *              axisType: 'sticky',
          *              position: 'right',
          *              distanceBorder: '0.2fr'
          *          });
          *
-         *          axis2 = board.create('axis', [[0,0],[0,1]], {
+         *          board.create('axis', [[0,0],[0,1]], {
          *              axisType: 'sticky',
          *              position: 'right left',
          *              distanceBorder: '75px'
          *          });
          *
-         *          graph = board.create('functiongraph', [function(x){ return 1/(x-5) + 2;}]);
-         *
+         *          board.create('functiongraph', [function(x){ return 1/(x-5) + 2;}]);
          *     })();
          *
          * </script><pre>
@@ -3767,18 +3759,16 @@ JXG.Options = {
          */
         axisType: 'static',
 
-        /** position
-         * Position is used in cases: axisType: 'sticky' or 'fixed'.
-         * Possible values are 'right', 'left', 'right left'.
-         * Here left and right mean directions as seen from the object axis. The axis 'divides' the board in two parts: The part on the left side of the axis and the part on the right side of the axis.
-         * It is used in combination with the attribute axisType to decide on which side of the Board the axis should stick (sticky) or be fixed.
-         * @type String
+        /**
+         * Position is used in cases: <tt>axisType=='sticky'</tt> or <tt>axisType=='fixed'</tt>.
+         * Possible values are <tt>'right'</tt>, <tt>'left'</tt>, <tt>'right left'</tt>. Left and right indicate the side as seen from the axis.
+         * It is used in combination with the attribute axisType to decide on which side of the board the axis should stick or be fixed.
+         *
+         * @type {String}
          * @name Axis#position
          * @default ''
-         * @example //Example for position. To understand how left and right depends from the direction of the axis.
-         *  var axis1, axis2, axis3;
-         *
-         *  axis1 = board.create('axis', [[0,0],[0,1]],{
+         * @example
+         *  board.create('axis', [[0,0],[0,1]],{
          *      axisType: 'fixed',
          *      position: 'left',
          *      distanceBorder: '2abs',
@@ -3789,7 +3779,7 @@ JXG.Options = {
          *      }
          *  });
          *
-         *  axis2 = board.create('axis', [[0,0],[0,1]], {
+         *  board.create('axis', [[0,0],[0,1]], {
          *      axisType: 'fixed',
          *      position: 'right',
          *      distanceBorder: '2abs',
@@ -3800,7 +3790,7 @@ JXG.Options = {
          *      }
          *  });
          *
-         *  axis3 = board.create('axis', [[0,0],[0,-1]], {
+         *  board.create('axis', [[0,0],[0,-1]], {
          *      axisType: 'fixed',
          *      position: 'left',
          *      distanceBorder: '4abs',
@@ -3814,11 +3804,10 @@ JXG.Options = {
          * </pre><div id="JXG11448b49-02b4-48d4-b0e0-8f06a94e909c" class="jxgbox" style="width: 300px; height: 300px;"></div>
          * <script type="text/javascript">
          *     (function() {
-         *         var board = JXG.JSXGraph.initBoard('JXG11448b49-02b4-48d4-b0e0-8f06a94e909c',
+         *      var board = JXG.JSXGraph.initBoard('JXG11448b49-02b4-48d4-b0e0-8f06a94e909c',
          *             {boundingbox: [-8, 8, 8,-8], axis: false, showcopyright: false, shownavigation: true});
-         *      var axis1, axis2, axis3;
          *
-         *      axis1 = board.create('axis', [[0,0],[0,1]],{
+         *      board.create('axis', [[0,0],[0,1]],{
          *          axisType: 'fixed',
          *          position: 'left',
          *          distanceBorder: '2abs',
@@ -3829,7 +3818,7 @@ JXG.Options = {
          *          }
          *      });
          *
-         *      axis2 = board.create('axis', [[0,0],[0,1]], {
+         *      board.create('axis', [[0,0],[0,1]], {
          *          axisType: 'fixed',
          *          position: 'right',
          *          distanceBorder: '2abs',
@@ -3840,7 +3829,7 @@ JXG.Options = {
          *          }
          *      });
          *
-         *      axis3 = board.create('axis', [[0,0],[0,-1]], {
+         *      board.create('axis', [[0,0],[0,-1]], {
          *          axisType: 'fixed',
          *          position: 'left',
          *          distanceBorder: '4abs',
@@ -3854,41 +3843,90 @@ JXG.Options = {
          *     })();
          *
          * </script><pre>
-         *
          */
         position: '',
 
-        /** distanceBorder
-         * distanceBorder is used to define (when axisType is 'sticky' or 'fixed') what the distance to the border of the board should be.
-         * The string should look like: 'NumberUnit'. Possible Units are: px = Pixel, abs = absolut Values(in usrCoords), fr or % = ratio.
-         * If no unit is provided, it will be checked if the value of Number is < or > 1.  If <: unit will be set to 'fr'. If >: unit will be set to 'abs'.
-         * @type String
+        /**
+         * Used to define at which distance to the border of the board the axis should stick or be fixed.
+         * This only has an effect if <tt>axisType=='sticky'</tt> or <tt>axisType=='fixed'</tt>.
+         * There are the following possibilities:
+         * <ul>
+         *     <li>Numbers or strings which are numbers (e.g. '10') are interpreted as usrCoords.
+         *     <li>Strings with the unit 'abs' are interpreted as usrCoords, too.
+         *     <li>Strings with the unit 'px' are interpreted as screen pixels.
+         *     <li>Strings with the unit '%' or 'fr' are interpreted as a ratio to the width/height of the board. (e.g. 50% = 0.5fr)
+         * </ul>
+         *
+         * @type {Number|String}
          * @name Axis#distanceBorder
          * @default ''
          */
         distanceBorder: '',
 
-        //Private Attributes
         /**
-         * _point1UsrCoordsOrg is used to store the coords in usrCoords of the points that are used when creating the axis.
+         * This is used to store the coords in usrCoords of the points that are used when creating the axis.
          * @class
          * @ignore
          * @type array
-         * @name Axis#_point1UsrCoordsOrg
          * @default []
          */
         _point1UsrCoordsOrg: [],
 
         /**
-         * _point2UsrCoordsOrg is used to store the coords in usrCoords of the points that are used when creating the axis.
+         * This is used to store the coords in usrCoords of the points that are used when creating the axis.
          * @class
          * @ignore
          * @type array
-         * @name Axis#_point2UsrCoordsOrg
          * @default []
          */
         _point2UsrCoordsOrg: [],
 
+        /**
+         * If set to true, the tick labels of the axis are automatically positioned in the narrower area between the axis and the side of the board.
+         *
+         * @type {Boolean}
+         * @name Axis#autoLabels
+         * @default false
+         * @example
+         * // Navigate to see an effect.
+         * board.create('axis', [[0, 0], [1, 0]], {
+         *     axisType: 'sticky',
+         *     position: 'left right',
+         *     distanceBorder: '0.1',
+         *     autoLabels: true,
+         * });
+         *
+         * board.create('axis', [[0, 0], [0, 1]], {
+         *     axisType: 'sticky',
+         *     position: 'left right',
+         *     distanceBorder: '0.1',
+         *     autoLabels: true,
+         * });
+         *
+         * </pre><div id="JXG557c9b5d-e1bd-4d3b-8362-ff7a863255f3" class="jxgbox" style="width: 300px; height: 300px;"></div>
+         * <script type="text/javascript">
+         *     (function() {
+         *         var board = JXG.JSXGraph.initBoard('JXG557c9b5d-e1bd-4d3b-8362-ff7a863255f3',
+         *             {boundingbox: [-8, 8, 8,-8], axis: false, showcopyright: false, shownavigation: false};
+         *
+         *     board.create('axis', [[0, 0], [1, 0]], {
+         *         axisType: 'sticky',
+         *         position: 'left right',
+         *         distanceBorder: '0.1',
+         *         autoLabels: true,
+         *     });
+         *
+         *     board.create('axis', [[0, 0], [0, 1]], {
+         *         axisType: 'sticky',
+         *         position: 'left right',
+         *         distanceBorder: '0.1',
+         *         autoLabels: true,
+         *     });
+         *
+         *     })();
+         *
+         * </script><pre>
+         */
         autoLabels: false,
 
         /**

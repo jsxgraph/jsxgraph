@@ -1712,9 +1712,6 @@ JXG.createAxis = function (board, parents, attributes) {
     // End of new Methods
 
     el.update = function () {
-
-        //console.log('Additional axis stuff'); // POI
-
         let that = this;
 
         //HelpMethods
@@ -1727,65 +1724,62 @@ JXG.createAxis = function (board, parents, attributes) {
          *@returns {Number}
          */
         function distanceToBorder() {
-            var res, bbx, mycoordsX, mycoordsY, direction,
-                distanceBorderHelp, distanceBorderUnit, distanceBorderValue;
+            var bbox, direction,
+                dist, coords4convert;
 
-            bbx = that.board.getBoundingBox();
+            bbox = that.board.getBoundingBox();
             direction = that.getOrthoDirection();
 
-            distanceBorderHelp = that.visProp.distanceborder.match(/^(\d+(?:\.\d+)?)([a-zA-Z%]+)?$/);
+            dist = Type.evaluate(that.visProp.distanceborder);
 
-            if (distanceBorderHelp) {
-                distanceBorderValue = parseFloat(distanceBorderHelp[1]);
-                distanceBorderUnit = distanceBorderHelp[2] || '';
-            }
+            if (Type.isNumber(dist, true)) {
+                return parseFloat(dist);
 
-            if (distanceBorderUnit === '') {
-                if (distanceBorderValue < 1)
-                    distanceBorderUnit = 'fr';
-                else if (distanceBorderValue > 1)
-                    distanceBorderUnit = 'abs';
-            }
+            } else if (Type.isString(dist) && dist.indexOf('abs') > -1) {
+                return parseFloat(dist);
 
-            //ratio
-            if (distanceBorderUnit === 'fr' || distanceBorderUnit === '%') {
-                if (distanceBorderUnit === '%')
-                    distanceBorderValue = distanceBorderValue * 1 / 100;
+            } else if (Type.isString(dist) && dist.indexOf('px') > -1) {
+                dist = dist.replace(/\s+px\s+/, '');
+                dist = parseFloat(dist);
 
-                if (direction[0] !== 0) { //x-axis
-                    res = (Math.abs(bbx[1] - bbx[3])) * distanceBorderValue;
-                } else if (direction[1] !== 0) {//y-axis
-                    res = (Math.abs(bbx[0] - bbx[2])) * distanceBorderValue;
+                if (direction[0] !== 0) { // x-axis
+                    coords4convert = new JXG.Coords(JXG.COORDS_BY_SCREEN, [dist, dist], that.board);
+                    coords4convert.screen2usr();
+
+                    return Math.abs(bbox[1] - coords4convert.usrCoords[2]);
                 }
-                return res;
-            }
+                if (direction[1] !== 0) { // x-axis
+                    coords4convert = new JXG.Coords(JXG.COORDS_BY_SCREEN, [dist, dist], that.board);
+                    coords4convert.screen2usr();
 
-            //Pixel
-            else if (distanceBorderUnit === 'px') {
-                if (direction[1] !== 0) {//y-axis
-                    mycoordsY = new JXG.Coords(JXG.COORDS_BY_SCREEN, [distanceBorderValue, distanceBorderValue], that.board);
-                    mycoordsY.screen2usr();
+                    return Math.abs(bbox[0] - coords4convert.usrCoords[1]);
+                }
 
-                    //Verhältnis umrechnung
-                    res = (Math.abs(bbx[0] - mycoordsY.usrCoords[1]));
-                    return res;
-                } else if (direction[0] !== 0) {//x-axis
-                    mycoordsX = new JXG.Coords(JXG.COORDS_BY_SCREEN, [distanceBorderValue, distanceBorderValue], that.board);
-                    mycoordsX.screen2usr();
+            } else if (Type.isString(dist) && dist.indexOf('%') > -1) {
+                dist = dist.replace(/\s+%\s+/, '');
+                dist = parseFloat(dist) / 100;
 
-                    //Verhältnis umrechnung
-                    res = (Math.abs(bbx[1] - mycoordsX.usrCoords[2]));
-                    return res;
+                if (direction[0] !== 0) { // x-axis
+                    return Math.abs(bbox[1] - bbox[3]) * dist;
+                }
+                if (direction[1] !== 0) { // y-axis
+                    return Math.abs(bbox[0] - bbox[2]) * dist;
+                }
+
+            } else if (Type.isString(dist) && dist.indexOf('fr') > -1) {
+                dist = dist.replace(/\s+fr\s+/, '');
+                dist = parseFloat(dist);
+
+                if (direction[0] !== 0) { // x-axis
+                    return Math.abs(bbox[1] - bbox[3]) * dist;
+                }
+                if (direction[1] !== 0) { // y-axis
+                    return Math.abs(bbox[0] - bbox[2]) * dist;
                 }
             }
 
-            //Absolut
-            else if (distanceBorderUnit === 'abs') {
-                res = distanceBorderValue;
-                return res;
-            }
+            return -1;
         }
-
 
         //pointsForAxisFixed
         /**
