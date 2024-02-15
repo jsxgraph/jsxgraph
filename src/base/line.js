@@ -1846,7 +1846,7 @@ JXG.createAxis = function (board, parents, attributes) {
             //point für y axis relative to the screen
             if (d[0] === 0 && d[1] !== 0) {
                 dY = distanceToBorder();
-                referencePointonScreen = that.board.getPointLocation(pointOld, [0, dY, 0, dY]);
+                referencePointonScreen = that.board.getLocationPoint(pointOld, [0, dY, 0, dY]);
 
                 if (referencePointonScreen[0] < 0 && ((d[1] === 1 && position.includes('left')) || (d[1] === -1 && position.includes('right')))) {
                     return [[1, bbx[0] + dY, (point1.coords.usrCoords)[2]], [1, bbx[0] + dY, (point2.coords.usrCoords)[2]]];
@@ -1862,7 +1862,7 @@ JXG.createAxis = function (board, parents, attributes) {
             //points for x-axis relative to the screen
             if (d[0] !== 0 && d[1] === 0) {
                 dX = distanceToBorder();
-                referencePointonScreen = that.board.getPointLocation(pointOld, [dX, 0, dX, 0]);
+                referencePointonScreen = that.board.getLocationPoint(pointOld, [dX, 0, dX, 0]);
 
                 if (referencePointonScreen[1] < 0 && ((d[0] === 1 && position.includes('right')) || (d[0] === -1 && position.includes('left')))) {
                     return [[1, (point1.coords.usrCoords)[1], bbx[3] + dX], [1, (point2.coords.usrCoords)[1], bbx[3] + dX]];

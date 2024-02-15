@@ -1030,71 +1030,51 @@ JXG.extend(
         },
 
         /**
-         * for description see @link Board#getPointLocation
-         * @name Board#getLocationOrigin
-         * @param {array} margin
-         * @returns {array}
+         * This function divides the board into 9 sections and returns an array <tt>[u,v]</tt> which symbolizes the location of <tt>position</tt>.
+         * Optional a <tt>margin</tt> to the inner of the board is respected.<br>
          *
-         */
-        getLocationOrigin: function (margin) {
-            return this.getPointLocation([0, 0, 0], margin);
-        },
-
-        /**
-         * Function divides the board in 9 Sections. And returns an array [x,y] which gives back the position. <br>
-         * First param: Coords in usrCoords of the point of which the position is asked <br>
-         * Second param: Margin in absolut values (usrCoords)
-         * Returns: Array gives back where in the nine sections the point is located
+         * @name Board#getLocationPoint
+         * @param {Array} position Array of requested position <tt>[x, y]</tt> or <tt>[w, x, y]</tt>.
+         * @param {Array} [margin] Optional margin for the inner of the board: <tt>[top, right, bottom, left]</tt>.
+         * @returns {Array} [u,v] with the following meanings:
          * <pre>
-         * Board stands for visible Board. Margin makes it posible to make the Board virtuel smaller.
-         *   x  |   -1  |   0   |   1   |
-         * _____
-         *   y
-         *        |	    |	    |	    |
-         *   1	|	    |	    |	    |
-         *        |	    |	    |	    |
-         *        -------------------------
-         *    |	    |	    |   	|
-         *   0	|	    |Board	|	    |
-         *        |	    |	    |	    |
-         *        -------------------------
-         *        |	    |	    |	    |
-         *   -1	|	    |	    |   	|
-         *        |	    |	    |	    |
+         *     v    u > |   -1    |    0   |    1   |
+         * ------------------------------------------
+         *     1        | [-1,1]  |  [0,1] |  [1,1] |
+         * ------------------------------------------
+         *     0        | [-1,0]  |  Board |  [1,0] |
+         * ------------------------------------------
+         *    -1        | [-1,-1] | [0,-1] | [1,-1] |
          * </pre>
-         * @name Board#getPointLocation
-         * @param {array=[a,x,y]} point
-         * @param {array=[top, right, bottom, left]} margin
-         * @returns {array = [x,y]}
+         * Positions inside the board (minus margin) return the value <tt>[0,0]</tt>.
          *
          * @example
-         * var point1, point2, point3, point4, margin,
+         *      var point1, point2, point3, point4, margin,
          *             p1Location, p2Location, p3Location, p4Location,
-         *             text1, text2, text3, text4,
-         *             l1, l2, l3, l4, helppoint1, helppoint2, helppoint3, helppoint4;
+         *             helppoint1, helppoint2, helppoint3, helppoint4;
          *
-         *      //margin to make the BoundingBox virtually smaller
-         *      margin = [2,2,2,2]
+         *      // margin to make the boundingBox virtually smaller
+         *      margin = [2,2,2,2];
          *
-         *      //points which are seen on screen
+         *      // Points which are seen on screen
          *      point1 = board.create('point', [0,0]);
          *      point2 = board.create('point', [0,7]);
          *      point3 = board.create('point', [7,7]);
          *      point4 = board.create('point', [-7,-5]);
          *
-         *      p1Location = board.getPointLocation(point1.coords.usrCoords, margin);
-         *      p2Location = board.getPointLocation(point2.coords.usrCoords, margin);
-         *      p3Location = board.getPointLocation(point3.coords.usrCoords, margin);
-         *      p4Location = board.getPointLocation(point4.coords.usrCoords, margin);
+         *      p1Location = board.getLocationPoint(point1.coords.usrCoords, margin);
+         *      p2Location = board.getLocationPoint(point2.coords.usrCoords, margin);
+         *      p3Location = board.getLocationPoint(point3.coords.usrCoords, margin);
+         *      p4Location = board.getLocationPoint(point4.coords.usrCoords, margin);
          *
-         *      //Text seen on screen
-         *      text1 = board.create('text', [1,-1, "getPointLocation(A): " + "[" + p1Location + "]"])
-         *      text2 = board.create('text', [1,-2, "getPointLocation(B): " + "[" + p2Location + "]"])
-         *      text3 = board.create('text', [1,-3, "getPointLocation(C): " + "[" + p3Location + "]"])
-         *      text4 = board.create('text', [1,-4, "getPointLocation(D): " + "[" + p4Location + "]"])
+         *      // Text seen on screen
+         *      board.create('text', [1,-1, "getLocationPoint(A): " + "[" + p1Location + "]"])
+         *      board.create('text', [1,-2, "getLocationPoint(B): " + "[" + p2Location + "]"])
+         *      board.create('text', [1,-3, "getLocationPoint(C): " + "[" + p3Location + "]"])
+         *      board.create('text', [1,-4, "getLocationPoint(D): " + "[" + p4Location + "]"])
          *
          *
-         *      //Helping points that are used to create the helping lines
+         *      // Helping points that are used to create the helping lines
          *      helppoint1 = board.create('point', [(function (){
          *          var bbx = board.getBoundingBox();
          *          return [bbx[2] - 2, bbx[1] -2];
@@ -1123,110 +1103,119 @@ JXG.extend(
          *          visible: false,
          *      })
          *
-         *      //Helping lines to visualize the 9 sectors and the margin
-         *      l1 = board.create('line', [helppoint1, helppoint2]);
-         *      l2 = board.create('line', [helppoint2, helppoint3]);
-         *      l3 = board.create('line', [helppoint3, helppoint4]);
-         *      l4 = board.create('line', [helppoint4, helppoint1]);
-         *
+         *      // Helping lines to visualize the 9 sectors and the margin
+         *      board.create('line', [helppoint1, helppoint2]);
+         *      board.create('line', [helppoint2, helppoint3]);
+         *      board.create('line', [helppoint3, helppoint4]);
+         *      board.create('line', [helppoint4, helppoint1]);
          *
          * </pre><div id="JXG4b3efef5-839d-4fac-bad1-7a14c0a89c70" class="jxgbox" style="width: 500px; height: 500px;"></div>
          * <script type="text/javascript">
          *     (function() {
          *         var board = JXG.JSXGraph.initBoard('JXG4b3efef5-839d-4fac-bad1-7a14c0a89c70',
          *             {boundingbox: [-8, 8, 8,-8], maxboundingbox: [-7.5,7.5,7.5,-7.5], axis: true, showcopyright: false, shownavigation: false, showZoom: false});
-         *     var  point1, point2, point3, point4, margin,
-         *          p1Location, p2Location, p3Location, p4Location,
-         *          text1, text2, text3, text4,
-         *          l1, l2, l3, l4, helppoint1,
-         *          helppoint2, helppoint3, helppoint4;
+         *     var point1, point2, point3, point4, margin,
+         *             p1Location, p2Location, p3Location, p4Location,
+         *             helppoint1, helppoint2, helppoint3, helppoint4;
          *
-         *      //margin to make the BoundingBox virtually smaller
-         *      margin = [2,2,2,2]
+         *      // margin to make the boundingBox virtually smaller
+         *      margin = [2,2,2,2];
          *
-         *      //points which are seen on screen
+         *      // Points which are seen on screen
          *      point1 = board.create('point', [0,0]);
          *      point2 = board.create('point', [0,7]);
          *      point3 = board.create('point', [7,7]);
          *      point4 = board.create('point', [-7,-5]);
          *
-         *      p1Location = board.getPointLocation(point1.coords.usrCoords, margin);
-         *      p2Location = board.getPointLocation(point2.coords.usrCoords, margin);
-         *      p3Location = board.getPointLocation(point3.coords.usrCoords, margin);
-         *      p4Location = board.getPointLocation(point4.coords.usrCoords, margin);
+         *      p1Location = board.getLocationPoint(point1.coords.usrCoords, margin);
+         *      p2Location = board.getLocationPoint(point2.coords.usrCoords, margin);
+         *      p3Location = board.getLocationPoint(point3.coords.usrCoords, margin);
+         *      p4Location = board.getLocationPoint(point4.coords.usrCoords, margin);
          *
-         *      //Text seen on screen
-         *      text1 = board.create('text', [1,-1, "getPointLocation(A): " + "[" + p1Location + "]"])
-         *      text2 = board.create('text', [1,-2, "getPointLocation(B): " + "[" + p2Location + "]"])
-         *      text3 = board.create('text', [1,-3, "getPointLocation(C): " + "[" + p3Location + "]"])
-         *      text4 = board.create('text', [1,-4, "getPointLocation(D): " + "[" + p4Location + "]"])
+         *      // Text seen on screen
+         *      board.create('text', [1,-1, "getLocationPoint(A): " + "[" + p1Location + "]"])
+         *      board.create('text', [1,-2, "getLocationPoint(B): " + "[" + p2Location + "]"])
+         *      board.create('text', [1,-3, "getLocationPoint(C): " + "[" + p3Location + "]"])
+         *      board.create('text', [1,-4, "getLocationPoint(D): " + "[" + p4Location + "]"])
          *
-         *      //Helping points that are used to create the helping lines
+         *
+         *      // Helping points that are used to create the helping lines
          *      helppoint1 = board.create('point', [(function (){
          *          var bbx = board.getBoundingBox();
          *          return [bbx[2] - 2, bbx[1] -2];
-         *          })], {
-         *              visible: false,
+         *      })], {
+         *          visible: false,
          *      })
          *
          *      helppoint2 = board.create('point', [(function (){
          *          var bbx = board.getBoundingBox();
          *          return [bbx[0] + 2, bbx[1] -2];
-         *          })], {
-         *              visible: false,
+         *      })], {
+         *          visible: false,
          *      })
          *
          *      helppoint3 = board.create('point', [(function (){
          *          var bbx = board.getBoundingBox();
          *          return [bbx[0]+ 2, bbx[3] + 2];
-         *          })],{
-         *              visible: false,
+         *      })],{
+         *          visible: false,
          *      })
          *
          *      helppoint4 = board.create('point', [(function (){
          *          var bbx = board.getBoundingBox();
          *          return [bbx[2] -2, bbx[3] + 2];
-         *          })], {
-         *              visible: false,
+         *      })], {
+         *          visible: false,
          *      })
          *
-         *      //Helping lines to visualize the 9 sectors and the margin
-         *      l1 = board.create('line', [helppoint1, helppoint2]);
-         *      l2 = board.create('line', [helppoint2, helppoint3]);
-         *      l3 = board.create('line', [helppoint3, helppoint4]);
-         *      l4 = board.create('line', [helppoint4, helppoint1]);
-         *
-         *
+         *      // Helping lines to visualize the 9 sectors and the margin
+         *      board.create('line', [helppoint1, helppoint2]);
+         *      board.create('line', [helppoint2, helppoint3]);
+         *      board.create('line', [helppoint3, helppoint4]);
+         *      board.create('line', [helppoint4, helppoint1]);
          *  })();
          *
          * </script><pre>
          *
          */
-        getPointLocation: function (pointUsrCoords, margin) {
-            var bbx, ret;
+        getLocationPoint: function (position, margin) {
+            var bbox, pos, res, marg;
 
-            bbx = this.getBoundingBox();
-            ret = [0, 0];
+            bbox = this.getBoundingBox();
+            pos = position;
+            if (pos.length === 2) {
+                pos.unshift(undefined);
+            }
+            res = [0, 0];
+            marg = margin || [0, 0, 0, 0];
 
-            if (margin === undefined) {
-                margin = [0, 0, 0, 0];
+            if (pos[1] > (bbox[2] - marg[1])) {
+                res[0] = 1;
+            }
+            if (pos[1] < (bbox[0] + marg[3])) {
+                res[0] = -1;
             }
 
-            if (pointUsrCoords[1] > (bbx[2] - margin[1])) {
-                ret[0] = 1;
+            if (pos[2] > (bbox[1] - marg[0])) {
+                res[1] = 1;
             }
-            if (pointUsrCoords[1] < (bbx[0] + margin[3])) {
-                ret[0] = -1;
-            }
-
-            if (pointUsrCoords[2] > (bbx[1] - margin[0])) {
-                ret[1] = 1;
-            }
-            if (pointUsrCoords[2] < (bbx[3] + margin[2])) {
-                ret[1] = -1;
+            if (pos[2] < (bbox[3] + marg[2])) {
+                res[1] = -1;
             }
 
-            return ret;
+            return res;
+        },
+
+        /**
+         * This function calculates where the origin is located (@link Board#getLocationPoint).
+         * Optional a <tt>margin</tt> to the inner of the board is respected.<br>
+         *
+         * @name Board#getLocationOrigin
+         * @param {Array} [margin] Optional margin for the inner of the board: <tt>[top, right, bottom, left]</tt>.
+         * @returns {Array} [u,v] which shows where the origin is located (@link Board#getLocationPoint).
+         */
+        getLocationOrigin: function (margin) {
+            return this.getLocationPoint([0, 0], margin);
         },
 
         /**
