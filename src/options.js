@@ -4485,6 +4485,7 @@ JXG.Options = {
         /**#@-*/
     },
 
+    /* special glider options */
     glider: {
         /**#@+
          * @visprop
