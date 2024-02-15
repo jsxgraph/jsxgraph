@@ -4555,9 +4555,9 @@ JXG.Options = {
          *
          * @type {Boolean}
          * @name Grid#includeBoundaries
-         * @default true
+         * @default false
          */
-        includeBoundaries: true,
+        includeBoundaries: false,
 
         // majorGrid options
         major: {
@@ -4912,7 +4912,6 @@ JXG.Options = {
                 },
                 minorX: 'auto',
                 minorY: 'auto',
-                includeBoundaries: false
             },
 
             {   // Theme 4: lines and thinner lines in between
@@ -4943,7 +4942,6 @@ JXG.Options = {
                 },
                 minorX: 'auto',
                 minorY: 'auto',
-                includeBoundaries: false
             },
 
             { // Theme 7: lines and subtle points in between, also plotted on axes
