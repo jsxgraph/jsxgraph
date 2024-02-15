@@ -31,7 +31,7 @@ import JXG from "../jxg";
 import Mat from "../math/math";
 import Type from "../utils/type";
 import Const from "../base/constants";
-    
+
 /**
  * @class Creates a grid to support the user with element placement or to improve determination of position.
  * @pseudo
@@ -274,19 +274,21 @@ JXG.createGrid = function (board, parents, attributes) {
         parentAxes[1] = board.defaultAxes.y;
     }
 
-    /*
-     Creates for each face the right data array for updateDataArray function.
-     This functions also adapts visProps according to face.
+    /**
+     * Creates for each face the right data array for updateDataArray function.
+     * This functions also adapts visProps according to face.
 
-     @param {String} face Chosen face to be drawn
-     @param {Object} grid Curve/grid to be drawn
-     @param {Number} x x-coordinate of target position
-     @param {Number} y y-coordinate of target position
-     @param {Number} radiusX Half of width in x-direction of face to be drawn
-     @param {Number} radiusY Half of width in y-direction of face to be drawn
-     @param {Array} bbox boundingBox
-
-     @returns {Array} data array of length 2 (x- and y- coordinated for curve)
+     * @param {String} face Chosen face to be drawn
+     * @param {Object} grid Curve/grid to be drawn
+     * @param {Number} x x-coordinate of target position
+     * @param {Number} y y-coordinate of target position
+     * @param {Number} radiusX Half of width in x-direction of face to be drawn
+     * @param {Number} radiusY Half of width in y-direction of face to be drawn
+     * @param {Array} bbox boundingBox
+     *
+     * @returns {Array} data array of length 2 (x- and y- coordinated for curve)
+     * @private
+     * @ignore
      */
     createDataArrayForFace = function (face, grid, x, y, radiusX, radiusY, bbox) {
         var t, q, n, array, rx2, ry2;
@@ -437,19 +439,19 @@ JXG.createGrid = function (board, parents, attributes) {
         }
     };
 
-    // themes
+    // Themes
     attrGrid = Type.copyAttributes(attributes, board.options, 'grid');
     Type.mergeAttr(board.options.grid, attrGrid.themes[attrGrid.theme], false); // POI: I think there should not be `board.options.grid`
     attrGrid = Type.copyAttributes(attributes, board.options, 'grid');
 
-    // create majorGrid
+    // Create majorGrid
     attrMajor = Type.copyAttributes(attributes, board.options, 'grid', 'major');
     Type.mergeAttr(attrMajor, attrGrid, true);
     majorGrid = board.create('curve', [[null], [null]], attrMajor);
     majorGrid.elType = 'grid';
     majorGrid.type = Const.OBJECT_TYPE_GRID;
 
-    // create minorGrid
+    // Create minorGrid
     attrMinor = Type.copyAttributes(attributes, board.options, 'grid', 'minor');
     Type.mergeAttr(attrMinor, attrGrid, true);
     minorGrid = board.create('curve', [[null], [null]], attrMinor);

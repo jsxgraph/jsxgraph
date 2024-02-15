@@ -4501,7 +4501,7 @@ JXG.Options = {
          */
 
         needsRegularUpdate: false,
-        hasGrid: false,
+        hasGrid: false,  // Used in standardoptions
 
         /**
          * Distance of major grid elements in x-direction. There are three possibilities:
@@ -4639,9 +4639,9 @@ JXG.Options = {
              *
              * @type {Boolean}
              * @name Grid#major_drawZero0
-             * @default false
+             * @default true
              */
-            drawZero0: false,
+            drawZero0: true,
 
             /**
              * Draw the major grid elements, that lie at x=0?
@@ -4902,7 +4902,7 @@ JXG.Options = {
                 // default values
             },
 
-            {   // Theme 1: quadratic grid appearence with distance of major grid elements in x- and y-direction set to the primarily greater one of both (pixels compared)
+            {   // Theme 1: quadratic grid appearance with distance of major grid elements in x- and y-direction set to the primarily greater one of both (pixels compared)
                 forceSquareGrid: 'max'
             },
 
@@ -4924,7 +4924,7 @@ JXG.Options = {
                     sizeX: 3
                 },
                 minorX: 'auto',
-                minorY: 'auto',
+                minorY: 'auto'
             },
 
             {   // Theme 4: lines and thinner lines in between
@@ -4954,7 +4954,7 @@ JXG.Options = {
                     sizeX: 3
                 },
                 minorX: 'auto',
-                minorY: 'auto',
+                minorY: 'auto'
             },
 
             { // Theme 7: lines and subtle points in between, also plotted on axes
@@ -4971,7 +4971,6 @@ JXG.Options = {
                 minorX: 4,
                 minorY: 4
             }
-
         ]
 
         /**#@-*/
