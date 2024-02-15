@@ -43,6 +43,7 @@ import './element/arc';
 import './element/sector';
 import './base/composition';
 import './element/composition';
+import './element/grid';
 import './element/locus';
 import './base/text';
 import './base/image';
