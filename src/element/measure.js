@@ -331,6 +331,7 @@ JXG.createMeasurement = function (board, parents, attributes) {
     el.Value = function () {
         return Prefix.parse(term, 'execute');
     };
+
     el.Dimension = function () {
         var d = Type.evaluate(el.visProp.dim);
 
@@ -339,6 +340,7 @@ JXG.createMeasurement = function (board, parents, attributes) {
         }
         return Prefix.dimension(term);
     };
+
     el.Unit = function () {
         let unit = '',
             units = Type.evaluate(el.visProp.units),
@@ -361,12 +363,15 @@ JXG.createMeasurement = function (board, parents, attributes) {
 
         return unit;
     };
-    el.toInfix = function (type) {
-        return Prefix.toInfix(term, type);
+
+    el.getTerm = function () {
+        return term;
     };
+
     el.toPrefix = function () {
         return Prefix.toPrefix(term);
     };
+
     el.getParents = function () {
         return Prefix.getParents(term);
     };
@@ -388,6 +393,13 @@ JXG.createMeasurement = function (board, parents, attributes) {
             val = el.Value(),
             pattern = '',
             i;
+
+        if (Type.evaluate(el.visProp.showprefix)) {
+            prefix = el.visProp.formatprefix.apply(el, [Type.evaluate(el.visProp.prefix)]);
+        }
+        if (Type.evaluate(el.visProp.showsuffix)) {
+            suffix = el.visProp.formatsuffix.apply(el, [Type.evaluate(el.visProp.suffix)]);
+        }
 
         if (Type.isNumber(val)) {
             if (digits === 'none') {
@@ -429,33 +441,17 @@ JXG.createMeasurement = function (board, parents, attributes) {
         }
 
         if (dim === 'coords' && Type.isArray(val)) {
-            pattern = Type.evaluate(el.visProp.coordspattern);
-
             if (val.length === 2) {
                 val.unshift(undefined);
             }
-
-            pattern = pattern.replace(/%x%/g, val[1]);
-            pattern = pattern.replace(/%y%/g, val[2]);
-            pattern = pattern.replace(/%z%/g, val[0]);
-
-            val = pattern;
+            val = el.visProp.formatcoords.apply(el, [val[1], val[2], val[0]]);
         }
 
         if (dim === 'direction' && Type.isArray(val)) {
-            pattern = Type.evaluate(el.visProp.directionpattern);
-
-            pattern = pattern.replace(/%x%/g, val[0]);
-            pattern = pattern.replace(/%y%/g, val[1]);
-
-            val = pattern;
-        }
-
-        if (Type.evaluate(el.visProp.showprefix)) {
-            prefix = Type.evaluate(el.visProp.prefix);
-        }
-        if (Type.evaluate(el.visProp.showsuffix)) {
-            suffix = Type.evaluate(el.visProp.suffix);
+            if (val.length === 2) {
+                val.unshift(undefined);
+            }
+            val = el.visProp.formatdirection.apply(el, [val[1], val[2]]);
         }
 
         if (Type.isString(dim)) {
@@ -464,10 +460,6 @@ JXG.createMeasurement = function (board, parents, attributes) {
 
         if (isNaN(dim)) {
             return prefix + 'NaN' + suffix;
-        }
-
-        if (unit !== '') {
-            unit = ' ' + unit;
         }
 
         return prefix + val + unit + suffix;

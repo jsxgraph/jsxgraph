@@ -5655,8 +5655,15 @@ JXG.Options = {
         prefix: '',
         suffix: '',
 
-        coordsPattern: '(%x%, %y%)',
-        directionPattern: '(%x%, %y%)'
+        formatPrefix: function (txt) { return txt; },
+        formatSuffix: function (txt) { return txt; },
+
+        formatCoords: function (x, y, z) {
+            return '(' + x + ', ' + y + ')';
+        },
+        formatDirection: function (x, y) {
+            return '(' + x + ', ' + y + ')';
+        }
 
         /**#@-*/
     },
