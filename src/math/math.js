@@ -867,7 +867,7 @@ JXG.Math = {
      */
     roundToStep: function (value, step, min, max) {
         var n = value,
-            tmp;
+            tmp, minOr0;
 
         // for performance
         if (!Type.exists(step) && !Type.exists(min) && !Type.exists(max)) {
@@ -881,14 +881,16 @@ JXG.Math = {
             n = Math.max(n, min);
         }
 
-        if (JXG.exists(min) && JXG.exists(step)) {
-            tmp = (n - min) / step;
+        minOr0 = min || 0;
+
+        if ( JXG.exists(step)) {
+            tmp = (n - minOr0) / step;
             if (Number.isInteger(tmp)) {
                 return n;
             }
 
             tmp = Math.round(tmp);
-            n = min + tmp * step;
+            n = minOr0 + tmp * step;
         }
 
         if (JXG.exists(max)) {
