@@ -1521,17 +1521,17 @@ JXG.createAxis = function (board, parents, attributes) {
     // ) {
 
     // Create line
-    attr = Type.copyAttributes(attributes, board.options, 'axis');
+    attr = Type.copyAttributes(attributes, board.options, "axis");
     try {
-        el = board.create('line', parents, attr);
+        el = board.create("line", parents, attr);
     } catch (err) {
         throw new Error(
-            'JSXGraph: Can\'t create axis with parent types \'' +
+            "JSXGraph: Can't create axis with parent types '" +
             typeof parents[0] +
-            '\' and \'' +
+            "' and '" +
             typeof parents[1] +
-            '\'.' +
-            '\nPossible parent types: [point,point], [[x1,y1],[x2,y2]]'
+            "'." +
+            "\nPossible parent types: [point,point], [[x1,y1],[x2,y2]]"
         );
     }
 
@@ -1544,9 +1544,6 @@ JXG.createAxis = function (board, parents, attributes) {
     el._point1UsrCoordsOrg = el.point1.coords.usrCoords.slice();
     el._point2UsrCoordsOrg = el.point2.coords.usrCoords.slice();
 
-    //New methods
-
-    //function getOrthoDirection
     /**
      * function: getOrthoDirection()
      * Returns Information about the direction auf the axis.
@@ -1951,7 +1948,7 @@ JXG.createAxis = function (board, parents, attributes) {
     }
 
     // Create ticks
-    attr_ticks = Type.copyAttributes(attributes, board.options, 'axis', 'ticks');
+    attr_ticks = Type.copyAttributes(attributes, board.options, "axis", "ticks");
     if (Type.exists(attr_ticks.ticksdistance)) {
         dist = attr_ticks.ticksdistance;
     } else if (Type.isArray(attr_ticks.ticks)) {
@@ -1966,9 +1963,9 @@ JXG.createAxis = function (board, parents, attributes) {
      * @name defaultTicks
      * @type JXG.Ticks
      */
-    el.defaultTicks = board.create('ticks', [el, dist], attr_ticks);
+    el.defaultTicks = board.create("ticks", [el, dist], attr_ticks);
     el.defaultTicks.dump = false;
-    el.elType = 'axis';
+    el.elType = "axis";
     el.subs = {
         ticks: el.defaultTicks
     };
@@ -1983,6 +1980,14 @@ JXG.createAxis = function (board, parents, attributes) {
     //             "\nPossible parent types: [point,point], [[x1,y1],[x2,y2]]"
     //     );
     // }
+
+    // el.update = function() {
+    //     JXG.Line.prototype.update.call(this);
+
+    //     console.log("Additional axis stuff");
+
+    //     return this;
+    // };
 
     return el;
 };

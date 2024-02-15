@@ -3864,24 +3864,6 @@ JXG.Options = {
         distanceBorder: '',
 
         /**
-         * This is used to store the coords in usrCoords of the points that are used when creating the axis.
-         * @class
-         * @ignore
-         * @type array
-         * @default []
-         */
-        _point1UsrCoordsOrg: [],
-
-        /**
-         * This is used to store the coords in usrCoords of the points that are used when creating the axis.
-         * @class
-         * @ignore
-         * @type array
-         * @default []
-         */
-        _point2UsrCoordsOrg: [],
-
-        /**
          * If set to true, the tick labels of the axis are automatically positioned in the narrower area between the axis and the side of the board.
          *
          * @type {Boolean}
