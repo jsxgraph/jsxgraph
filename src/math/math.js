@@ -857,6 +857,53 @@ JXG.Math = {
     },
 
     /**
+     * Special use of Math.round function to round not only to integers but also to chosen decimal values.
+     *
+     * @param {Number} value Value to be rounded.
+     * @param {Number} step Distance between the values to be rounded to. (default: 1.0)
+     * @param {Number} [min] If set, it will be returned the maximum of value and min.
+     * @param {Number} [max] If set, it will be returned the minimum of value and max.
+     * @returns {Number} Fitted value.
+     */
+    roundToStep: function (value, step, min, max) {
+        var n = value,
+            tmp, minOr0;
+
+        // for performance
+        if (!Type.exists(step) && !Type.exists(min) && !Type.exists(max)) {
+            return n;
+        }
+
+        if (JXG.exists(max)) {
+            n = Math.min(n, max);
+        }
+        if (JXG.exists(min)) {
+            n = Math.max(n, min);
+        }
+
+        minOr0 = min || 0;
+
+        if ( JXG.exists(step)) {
+            tmp = (n - minOr0) / step;
+            if (Number.isInteger(tmp)) {
+                return n;
+            }
+
+            tmp = Math.round(tmp);
+            n = minOr0 + tmp * step;
+        }
+
+        if (JXG.exists(max)) {
+            n = Math.min(n, max);
+        }
+        if (JXG.exists(min)) {
+            n = Math.max(n, min);
+        }
+
+        return n;
+    },
+
+    /**
      *  Error function, see {@link https://en.wikipedia.org/wiki/Error_function}.
      *
      * @see JXG.Math.PropFunc.erf
