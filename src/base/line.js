@@ -1530,20 +1530,14 @@ JXG.registerElement("arrow", JXG.createArrow);
  * </script><pre>
  */
 JXG.createAxis = function (board, parents, attributes) {
-    var el,
+    var axis,
         attr, attrTicks,
         ancestor, ticksDist;
-
-    // Arrays or points, that is all we need.
-    // if (
-    //     (Type.isArray(parents[0]) || Type.isPoint(parents[0])) &&
-    //     (Type.isArray(parents[1]) || Type.isPoint(parents[1]))
-    // ) {
 
     // Create line
     attr = Type.copyAttributes(attributes, board.options, "axis");
     try {
-        el = board.create("line", parents, attr);
+        axis = board.create("line", parents, attr);
     } catch (err) {
         throw new Error(
             "JSXGraph: Can't create axis with parent types '" +
@@ -1555,16 +1549,16 @@ JXG.createAxis = function (board, parents, attributes) {
         );
     }
 
-    el.type = Const.OBJECT_TYPE_AXIS;
-    el.isDraggable = false;
-    el.point1.isDraggable = false;
-    el.point2.isDraggable = false;
+    axis.type = Const.OBJECT_TYPE_AXIS;
+    axis.isDraggable = false;
+    axis.point1.isDraggable = false;
+    axis.point2.isDraggable = false;
 
     // Save usrCoords of points
-    el._point1UsrCoordsOrg = el.point1.coords.usrCoords.slice();
-    el._point2UsrCoordsOrg = el.point2.coords.usrCoords.slice();
+    axis._point1UsrCoordsOrg = axis.point1.coords.usrCoords.slice();
+    axis._point2UsrCoordsOrg = axis.point2.coords.usrCoords.slice();
 
-    el.getOrthoDirection = function () {
+    axis.getOrthoDirection = function () {
         var d, dX, dY;
 
         dX = this.point2.coords.usrCoords[1] - this.point1.coords.usrCoords[1];
@@ -1586,7 +1580,7 @@ JXG.createAxis = function (board, parents, attributes) {
         return d;
     };
 
-    el.update = function () {
+    axis.update = function () {
         var that = this,
             ret, axisType, originScr,
             direction,
@@ -1744,61 +1738,50 @@ JXG.createAxis = function (board, parents, attributes) {
     };
 
     /**
-     * This function returns the absolut distance to border in usrCoords.
+     * This function returns the absolut distance to the border of the board in usrCoords.
+     * If the axis is not vertical or horizontal -1 is returned.
      * @name getDistanceBorder
-     * @returns {Number} Absolut distance in usrCoords to the border
+     * @returns {Number} Absolut distance in usrCoords to the border of the board.
      */
-    el.getDistanceBorder = function () {
-        var bbox, direction,
-            dist, coords4convert;
+    axis.getDistanceBorder = function () {
+        var bbox, dist, horizontal, vertical;
 
         bbox = this.board.getBoundingBox();
-        direction = this.getOrthoDirection();
-
         dist = Type.evaluate(this.visProp.distanceborder);
+        horizontal = this.isHorizontal();
+        vertical = this.isVertical();
 
-        if (Type.isNumber(dist, true)) {
-            return parseFloat(dist);
+        if (!horizontal && !vertical) {
+            return -1;
+        }
 
-        } else if (Type.isString(dist) && dist.indexOf('abs') > -1) {
+        if (Type.isNumber(dist, true) || (Type.isString(dist) && dist.indexOf('abs') > -1)) {
             return parseFloat(dist);
 
         } else if (Type.isString(dist) && dist.indexOf('px') > -1) {
             dist = dist.replace(/\s+px\s+/, '');
             dist = parseFloat(dist);
 
-            if (direction[0] !== 0) { // x-axis
-                coords4convert = new JXG.Coords(JXG.COORDS_BY_SCREEN, [dist, dist], this.board);
-                coords4convert.screen2usr();
-
-                return Math.abs(bbox[1] - coords4convert.usrCoords[2]);
+            if (horizontal) {
+                return Math.abs(bbox[1] - (new JXG.Coords(JXG.COORDS_BY_SCREEN, [dist, dist], this.board)).usrCoords[2]);
             }
-            if (direction[1] !== 0) { // x-axis
-                coords4convert = new JXG.Coords(JXG.COORDS_BY_SCREEN, [dist, dist], this.board);
-                coords4convert.screen2usr();
-
-                return Math.abs(bbox[0] - coords4convert.usrCoords[1]);
+            if (vertical) {
+                return Math.abs(bbox[0] - (new JXG.Coords(JXG.COORDS_BY_SCREEN, [dist, dist], this.board)).usrCoords[1]);
             }
 
-        } else if (Type.isString(dist) && dist.indexOf('%') > -1) {
-            dist = dist.replace(/\s+%\s+/, '');
-            dist = parseFloat(dist) / 100;
+        } else if (Type.isString(dist) && (dist.indexOf('%') > -1 || dist.indexOf('fr') > -1)) {
+            if (dist.indexOf('%') > -1) {
+                dist = dist.replace(/\s+%\s+/, '');
+                dist = parseFloat(dist) / 100;
+            } else if (dist.indexOf('fr') > -1) {
+                dist = dist.replace(/\s+fr\s+/, '');
+                dist = parseFloat(dist);
+            }
 
-            if (direction[0] !== 0) { // x-axis
+            if (horizontal) {
                 return Math.abs(bbox[1] - bbox[3]) * dist;
             }
-            if (direction[1] !== 0) { // y-axis
-                return Math.abs(bbox[0] - bbox[2]) * dist;
-            }
-
-        } else if (Type.isString(dist) && dist.indexOf('fr') > -1) {
-            dist = dist.replace(/\s+fr\s+/, '');
-            dist = parseFloat(dist);
-
-            if (direction[0] !== 0) { // x-axis
-                return Math.abs(bbox[1] - bbox[3]) * dist;
-            }
-            if (direction[1] !== 0) { // y-axis
+            if (vertical) {
                 return Math.abs(bbox[0] - bbox[2]) * dist;
             }
         }
@@ -1806,9 +1789,9 @@ JXG.createAxis = function (board, parents, attributes) {
         return -1;
     };
 
-    for (ancestor in el.ancestors) {
-        if (el.ancestors.hasOwnProperty(ancestor)) {
-            el.ancestors[ancestor].type = Const.OBJECT_TYPE_AXISPOINT;
+    for (ancestor in axis.ancestors) {
+        if (axis.ancestors.hasOwnProperty(ancestor)) {
+            axis.ancestors[ancestor].type = Const.OBJECT_TYPE_AXISPOINT;
         }
     }
 
@@ -1828,15 +1811,20 @@ JXG.createAxis = function (board, parents, attributes) {
      * @name defaultTicks
      * @type JXG.Ticks
      */
-    el.defaultTicks = board.create("ticks", [el, ticksDist], attrTicks);
-    el.defaultTicks.dump = false;
-    el.elType = "axis";
-    el.subs = {
-        ticks: el.defaultTicks
+    axis.defaultTicks = board.create("ticks", [axis, ticksDist], attrTicks);
+    axis.defaultTicks.dump = false;
+    axis.elType = "axis";
+    axis.subs = {
+        ticks: axis.defaultTicks
     };
-    el.inherits.push(el.defaultTicks);
+    axis.inherits.push(axis.defaultTicks);
 
-    return el;
+    axis.methodMap = JXG.deepCopy(axis.methodMap, {
+        getDistanceBorder: "getDistanceBorder",
+        DistanceBorder: "getDistanceBorder"
+    });
+
+    return axis;
 };
 
 JXG.registerElement("axis", JXG.createAxis);
