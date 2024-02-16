@@ -559,7 +559,7 @@ JXG.extend(
         },
 
         /**
-         * Returns the direction vector of the arrow. This is an array of length two
+         * Returns the direction vector of the line. This is an array of length two
          * containing the direction vector as [x, y]. It is defined as
          *  <li> the difference of the x- and y-coordinate of the second and first point, in case both points are finite or both points are infinite.
          *  <li> [x, y] coordinates of point2, in case only point2 is infinite.
@@ -583,6 +583,24 @@ JXG.extend(
                 coords2[1] - coords1[1],
                 coords2[2] - coords1[2]
             ];
+        },
+
+        /**
+         * Returns true, if the line is vertical (if the x coordinate of the direction vector is 0).
+         * @function
+         * @returns {Boolean}
+         */
+        isVertical: function () {
+            return this.Direction()[0] === 0;
+        },
+
+        /**
+         * Returns true, if the line is horizontal (if the y coordinate of the direction vector is 0).
+         * @function
+         * @returns {Boolean}
+         */
+        isHorizontal: function () {
+            return this.Direction()[1] === 0;
         },
 
         /**
@@ -1668,7 +1686,7 @@ JXG.createAxis = function (board, parents, attributes) {
         /*if (direction[0] != 0 && direction[1] != 0)
             return that;*/
 
-        if (axisType === 'static') {
+        if (axisType === 'static' || (!this.isVertical() && !this.isHorizontal())) {
             //do nothing
 
         } else if (axisType === 'fixed') {
