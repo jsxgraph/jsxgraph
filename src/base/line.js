@@ -1546,142 +1546,6 @@ JXG.createAxis = function (board, parents, attributes) {
     el._point1UsrCoordsOrg = el.point1.coords.usrCoords.slice();
     el._point2UsrCoordsOrg = el.point2.coords.usrCoords.slice();
 
-    /**
-     * Get information about the direction of the axis.
-     * Uses the points that are used for the initialisation of axis, and returns the normalized valus for delta x and delta y
-     * @name Axis#getOrthoDirection
-     * @returns {array = [x,y]}
-     * Example:
-     * the axis is parallel to regular x axis and points in the positive direction the return is [1,0];
-     * the axis is parallel to regulay y axis and points in the positive direction the return is [0,1];
-     * If it points in the negative direction the 1 becomes a -1.
-     * If the axis could be discribed with the term f(x) = x the return would be [1,1].
-     *@example
-     * var a1, a2,a3,a4, a5,
-     *   t1,t2,t3,t4,t5;
-     *
-     *   a1 = board.create('axis', [[0, 0], [1, 0]], {
-     *       ticks:{
-     *           majorHeight: 5,
-     *       },
-     *       axistype: 'fixed',
-     *       position: 'right',
-     *       distanceBorder: '0.1',
-     *       strokeColor: 'red',
-     *
-     *   });
-     *
-     *   a2 = board.create('axis', [[0, 0], [-1, 0]], {
-     *       ticks:{
-     *           majorHeight: 5,
-     *       },
-     *       axisType: 'fixed',
-     *       position: 'right',
-     *       distanceBorder: '0.1',
-     *       strokeColor: 'green'
-     *   });
-     *
-     *   a3 = board.create('axis', [[0,0],[0,1]],{
-     *       ticks:{
-     *           majorHeight: 5,
-     *       },
-     *       axisType: 'fixed',
-     *       position: 'left',
-     *       distanceBorder: '0.1',
-     *       strokeColor: 'blue',
-     *   })
-     *
-     *   a4 = board.create('axis', [[0,0],[0,-1]],{
-     *       ticks:{
-     *           majorHeight: 5,
-     *       },
-     *       axisType: 'fixed',
-     *       position: 'left',
-     *       distanceBorder: '0.1',
-     *       strokeColor: 'orange'
-     *   })
-     *
-     *   a5 = board.create('axis', [[-4,0],[0,4]],{
-     *       ticks:{
-     *           majorHeight: 2,
-     *       },
-     *           strokeColor: 'black'
-     *   })
-     *
-     *   t1 = board.create('text', [0,0.5, 'GetOrthoDirection(RedAxis): ' + '[' +a1.getOrthoDirection() + ']']);
-     *   t2 = board.create('text', [0,-0.5, 'GetOrthoDirection(GreenAxis): ' + '[' +a2.getOrthoDirection() + ']']);
-     *   t3 = board.create('text', [0,-1.5, 'GetOrthoDirection(BlueAxis): ' + '[' +a3.getOrthoDirection() + ']']);
-     *   t4 = board.create('text', [0,-2.5, 'GetOrthoDirection(OrangeAxis): ' + '[' +a4.getOrthoDirection() + ']']);
-     *   t5 = board.create('text', [0,-3.5, 'GetOrthoDirection(BlackAxis): ' + '[' +a5.getOrthoDirection() + ']']);
-     *
-     *
-     * </pre><div id="JXG6317dbfa-e93c-469e-aae9-18345e64d5d7" class="jxgbox" style="width: 500px; height: 500px;"></div>
-     * <script type="text/javascript">
-     *     (function() {
-     *         var board = JXG.JSXGraph.initBoard('JXG6317dbfa-e93c-469e-aae9-18345e64d5d7',
-     *             {boundingbox: [-5, 5, 5,-5], axis: false, showcopyright: false, shownavigation: false});
-     *   var a1, a2,a3,a4, a5,
-     *       t1,t2,t3,t4,t5;
-     *
-     *       a1 = board.create('axis', [[0, 0], [1, 0]], {
-     *           ticks:{
-     *               majorHeight: 5,
-     *           },
-     *           axistype: 'fixed',
-     *           position: 'right',
-     *           distanceBorder: '0.1',
-     *           strokeColor: 'red',
-     *
-     *       });
-     *
-     *       a2 = board.create('axis', [[0, 0], [-1, 0]], {
-     *           ticks:{
-     *               majorHeight: 5,
-     *           },
-     *           axisType: 'fixed',
-     *           position: 'right',
-     *           distanceBorder: '0.1',
-     *           strokeColor: 'green'
-     *       });
-     *
-     *       a3 = board.create('axis', [[0,0],[0,1]],{
-     *           ticks:{
-     *               majorHeight: 5,
-     *           },
-     *           axisType: 'fixed',
-     *           position: 'left',
-     *           distanceBorder: '0.1',
-     *           strokeColor: 'blue',
-     *       })
-     *
-     *       a4 = board.create('axis', [[0,0],[0,-1]],{
-     *           ticks:{
-     *               majorHeight: 5,
-     *           },
-     *           axisType: 'fixed',
-     *           position: 'left',
-     *           distanceBorder: '0.1',
-     *           strokeColor: 'orange'
-     *       })
-     *
-     *       a5 = board.create('axis', [[-4,0],[0,4]],{
-     *           ticks:{
-     *               majorHeight: 2,
-     *           },
-     *           strokeColor: 'black'
-     *       })
-     *
-     *       t1 = board.create('text', [0,0.5, 'GetOrthoDirection(RedAxis): ' + '[' +a1.getOrthoDirection() + ']']);
-     *       t2 = board.create('text', [0,-0.5, 'GetOrthoDirection(GreenAxis): ' + '[' +a2.getOrthoDirection() + ']']);
-     *       t3 = board.create('text', [0,-1.5, 'GetOrthoDirection(BlueAxis): ' + '[' +a3.getOrthoDirection() + ']']);
-     *       t4 = board.create('text', [0,-2.5, 'GetOrthoDirection(OrangeAxis): ' + '[' +a4.getOrthoDirection() + ']']);
-     *       t5 = board.create('text', [0,-3.5, 'GetOrthoDirection(BlackAxis): ' + '[' +a5.getOrthoDirection() + ']']);
-     *
-     *
-     *     })();
-     * </script><pre>
-     *
-     */
     el.getOrthoDirection = function () {
         var d, dX, dY;
 
@@ -1707,8 +1571,8 @@ JXG.createAxis = function (board, parents, attributes) {
     el.update = function () {
         var that = this,
             ret, axisType, originScr,
-            d ,
-        pointCoordsForFixed, pointCoordsForSticky;
+            direction,
+            pointCoordsForFixed, pointCoordsForSticky;
 
         /**
          * Returns the usrCoords for the point1 and point2 for axisType==='fixed'.
@@ -1717,32 +1581,31 @@ JXG.createAxis = function (board, parents, attributes) {
          * @name pointCoordsForFixed
          * @returns {Object} object with the structure: {point1: [1, x1, y1], point2: [1, x2, y2]}
          */
-        pointCoordsForFixed = function () {
-            var bbx, d, point1, point2, position, distance;
+        pointCoordsForFixed = function (direction) {
+            var bbx, point1, point2, position, distance;
 
             bbx = that.board.getBoundingBox();
-            d = that.getOrthoDirection();
             distance = that.getDistanceBorder();
 
             point1 = Type.evaluate(that.point1);
             point2 = Type.evaluate(that.point2);
             position = Type.evaluate(that.visProp.position);
 
-            if (d[1] !== 0) { //y - case
+            if (direction[1] !== 0) { //y - case
                 // if else is used to decide in which direction the axis points and to decide where is left and right out of view of the object
-                if ((d[1] === 1 && position.includes('left')) ||
-                    (d[1] === -1 && position.includes('right'))) {
+                if ((direction[1] === 1 && position.includes('left')) ||
+                    (direction[1] === -1 && position.includes('right'))) {
                     return [[1, bbx[0] + distance, point1.coords.usrCoords[2]], [1, bbx[0] + distance, point2.coords.usrCoords[2]]];
 
-                } else if ((d[1] === 1 && position.includes('right')) || (d[1] === -1 && position.includes('left'))) {
+                } else if ((direction[1] === 1 && position.includes('right')) || (direction[1] === -1 && position.includes('left'))) {
                     return [[1, bbx[2] - distance, point1.coords.usrCoords[2]], [1, bbx[2] - distance, point2.coords.usrCoords[2]]];
                 }
-            } else if (d[0] !== 0) { //x- case
+            } else if (direction[0] !== 0) { //x- case
                 // if else is used to decide in which direction the axis points and to decide where is left and right out of view of the object
-                if ((d[0] === 1 && position.includes('left')) || (d[0] === -1 && position.includes('right'))) {
+                if ((direction[0] === 1 && position.includes('left')) || (direction[0] === -1 && position.includes('right'))) {
                     return [[1, point1.coords.usrCoords[1], bbx[1] - distance], [1, point2.coords.usrCoords[1], bbx[1] - distance]];
 
-                } else if ((d[0] === 1 && position.includes('right')) || (d[0] === -1 && position.includes('left'))) {
+                } else if ((direction[0] === 1 && position.includes('right')) || (direction[0] === -1 && position.includes('left'))) {
                     return [[1, point1.coords.usrCoords[1], bbx[3] + distance], [1, point2.coords.usrCoords[1], bbx[3] + distance]];
                 }
             }
@@ -1755,11 +1618,10 @@ JXG.createAxis = function (board, parents, attributes) {
          * @name pointCoordsForSticky
          * @returns {Object} object with the structure: {point1: [1, x1, y1], point2: [1, x2, y2]}
          */
-        pointCoordsForSticky = function () {
-            var referencePointonScreen, bbx, d, point1, point2, position, dY, dX, pointOld;
+        pointCoordsForSticky = function (direction) {
+            var referencePointonScreen, bbx, point1, point2, position, dY, dX, pointOld;
 
             bbx = that.board.getBoundingBox();
-            d = that.getOrthoDirection();
 
             pointOld = that._point1UsrCoordsOrg;
 
@@ -1768,14 +1630,14 @@ JXG.createAxis = function (board, parents, attributes) {
             position = Type.evaluate(that.visProp.position);
 
             //point für y axis relative to the screen
-            if (d[0] === 0 && d[1] !== 0) {
+            if (direction[0] === 0 && direction[1] !== 0) {
                 dY = that.getDistanceBorder();
                 referencePointonScreen = that.board.getLocationPoint(pointOld, [0, dY, 0, dY]);
 
-                if (referencePointonScreen[0] < 0 && ((d[1] === 1 && position.includes('left')) || (d[1] === -1 && position.includes('right')))) {
+                if (referencePointonScreen[0] < 0 && ((direction[1] === 1 && position.includes('left')) || (direction[1] === -1 && position.includes('right')))) {
                     return [[1, bbx[0] + dY, (point1.coords.usrCoords)[2]], [1, bbx[0] + dY, (point2.coords.usrCoords)[2]]];
 
-                } else if (referencePointonScreen[0] > 0 && ((d[1] === 1 && position.includes('right')) || (d[1] === -1 && position.includes('left')))) {
+                } else if (referencePointonScreen[0] > 0 && ((direction[1] === 1 && position.includes('right')) || (direction[1] === -1 && position.includes('left')))) {
                     return [[1, bbx[2] - dY, (point1.coords.usrCoords)[2]], [1, bbx[2] - dY, (point2.coords.usrCoords)[2]]];
 
                 } else {
@@ -1784,13 +1646,13 @@ JXG.createAxis = function (board, parents, attributes) {
             }
 
             //points for x-axis relative to the screen
-            if (d[0] !== 0 && d[1] === 0) {
+            if (direction[0] !== 0 && direction[1] === 0) {
                 dX = that.getDistanceBorder();
                 referencePointonScreen = that.board.getLocationPoint(pointOld, [dX, 0, dX, 0]);
 
-                if (referencePointonScreen[1] < 0 && ((d[0] === 1 && position.includes('right')) || (d[0] === -1 && position.includes('left')))) {
+                if (referencePointonScreen[1] < 0 && ((direction[0] === 1 && position.includes('right')) || (direction[0] === -1 && position.includes('left')))) {
                     return [[1, (point1.coords.usrCoords)[1], bbx[3] + dX], [1, (point2.coords.usrCoords)[1], bbx[3] + dX]];
-                } else if (referencePointonScreen[1] > 0 && ((d[0] === 1 && position.includes('left')) || (d[0] === -1 && position.includes('right')))) {
+                } else if (referencePointonScreen[1] > 0 && ((direction[0] === 1 && position.includes('left')) || (direction[0] === -1 && position.includes('right')))) {
                     return [[1, (point1.coords.usrCoords)[1], bbx[1] - dX], [1, (point2.coords.usrCoords)[1], bbx[1] - dX]];
                 } else {
                     return [that._point1UsrCoordsOrg, that._point2UsrCoordsOrg];
@@ -1798,12 +1660,12 @@ JXG.createAxis = function (board, parents, attributes) {
             }
         };
 
-        d= d = that.getOrthoDirection();
+        direction = that.getOrthoDirection();
         axisType = Type.evaluate(that.visProp.axistype);
         originScr = this.board.origin.scrCoords;
 
         //if axis is not parallel to sides of the boundingbox
-        /*if (d[0] != 0 && d[1] != 0)
+        /*if (direction[0] != 0 && direction[1] != 0)
             return that;*/
 
         if (axisType === 'static') {
@@ -1811,23 +1673,23 @@ JXG.createAxis = function (board, parents, attributes) {
 
         } else if (axisType === 'fixed') {
 
-            ret = pointCoordsForFixed();
+            ret = pointCoordsForFixed(direction);
 
             this.point1.setPosition(JXG.COORDS_BY_USER, ret[0]);
             this.point2.setPosition(JXG.COORDS_BY_USER, ret[1]);
 
             if (this.visProp.autolabels === true) {
-                if (d[0] > 0 && this.visProp.position.includes('left') || d[0] < 0 && this.visProp.position.includes('right')) {
+                if (direction[0] > 0 && this.visProp.position.includes('left') || direction[0] < 0 && this.visProp.position.includes('right')) {
                     this.defaultTicks.visProp.label.anchory = 'bottom';
                     this.defaultTicks.visProp.label.offset = [0, 20];
-                } else if (d[0] > 0 && this.visProp.position.includes('right') || d[0] < 0 && this.visProp.position.includes('left')) {
+                } else if (direction[0] > 0 && this.visProp.position.includes('right') || direction[0] < 0 && this.visProp.position.includes('left')) {
                     this.defaultTicks.visProp.label.anchory = 'top';
                     this.defaultTicks.visProp.label.offset = [0, -10];
                 }
-                if (d[1] > 0 && this.visProp.position.includes('left') || d[1] < 0 && this.visProp.position.includes('right')) {
+                if (direction[1] > 0 && this.visProp.position.includes('left') || direction[1] < 0 && this.visProp.position.includes('right')) {
                     this.defaultTicks.visProp.label.anchory = 'right';
                     this.defaultTicks.visProp.label.offset = [-10, 0];
-                } else if (d[1] > 0 && this.visProp.position.includes('right') || d[1] < 0 && this.visProp.position.includes('left')) {
+                } else if (direction[1] > 0 && this.visProp.position.includes('right') || direction[1] < 0 && this.visProp.position.includes('left')) {
                     this.defaultTicks.visProp.label.anchorx = 'left';
                     this.defaultTicks.visProp.label.offset = [20, 0];
                 }
@@ -1835,23 +1697,23 @@ JXG.createAxis = function (board, parents, attributes) {
 
         } else if (axisType === 'sticky') {
 
-            ret = pointCoordsForSticky();
+            ret = pointCoordsForSticky(direction);
 
             this.point1.setPosition(JXG.COORDS_BY_USER, ret[0]);
             this.point2.setPosition(JXG.COORDS_BY_USER, ret[1]);
 
             if (this.visProp.autolabels === true) {
-                if (d[0] !== 0 && originScr[2] < ((this.board.canvasHeight / 2) - 10)) {
+                if (direction[0] !== 0 && originScr[2] < ((this.board.canvasHeight / 2) - 10)) {
                     this.defaultTicks.visProp.label.anchory = 'bottom';
                     this.defaultTicks.visProp.label.offset = [0, 20];
-                } else if (d[0] !== 0 && originScr[2] > ((this.board.canvasHeight / 2) + 10)) {
+                } else if (direction[0] !== 0 && originScr[2] > ((this.board.canvasHeight / 2) + 10)) {
                     this.defaultTicks.visProp.label.anchory = 'top';
                     this.defaultTicks.visProp.label.offset = [0, -10];
                 }
-                if (d[1] !== 0 && originScr[1] < ((this.board.canvasWidth / 2) - 10)) {
+                if (direction[1] !== 0 && originScr[1] < ((this.board.canvasWidth / 2) - 10)) {
                     this.defaultTicks.visProp.label.anchorx = 'right';
                     this.defaultTicks.visProp.label.offset = [-10, 0];
-                } else if (d[1] !== 0 && originScr[1] > ((this.board.canvasWidth / 2) + 10)) {
+                } else if (direction[1] !== 0 && originScr[1] > ((this.board.canvasWidth / 2) + 10)) {
                     this.defaultTicks.visProp.label.anchorx = 'left';
                     this.defaultTicks.visProp.label.offset = [20, 0];
                 }
