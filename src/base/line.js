@@ -1594,31 +1594,69 @@ JXG.createAxis = function (board, parents, attributes) {
          * @returns {Object} object with the structure: {point1: [1, x1, y1], point2: [1, x2, y2]}
          */
         pointCoordsForFixed = function (direction) {
-            var bbox, point1, point2, position, distance;
+            var bbox, dist,
+                point1usr, point2usr,
+                position, left, right;
 
             bbox = that.board.getBoundingBox();
-            distance = that.getDistanceBorder();
+            dist = that.getDistanceBorder();
 
-            point1 = Type.evaluate(that.point1);
-            point2 = Type.evaluate(that.point2);
+            point1usr = that.point1.coords.usrCoords;
+            point2usr = that.point2.coords.usrCoords;
+
             position = Type.evaluate(that.visProp.position);
+            left = position.indexOf('left') > -1;
+            right = position.indexOf('right') > -1;
+            if (left && right) {
+                right = false;
+            }
 
-            if (direction[1] !== 0) { //y - case
-                // if else is used to decide in which direction the axis points and to decide where is left and right out of view of the object
-                if ((direction[1] === 1 && position.includes('left')) ||
-                    (direction[1] === -1 && position.includes('right'))) {
-                    return [[1, bbox[0] + distance, point1.coords.usrCoords[2]], [1, bbox[0] + distance, point2.coords.usrCoords[2]]];
+            if (that.isHorizontal()) { // direction[1] === 0
+                if (
+                    (direction[0] > 0 && right) || (direction[0] < 0 && left)
+                ) {
+                    return [
+                        [1, point1usr[1], bbox[3] + dist],
+                        [1, point2usr[1], bbox[3] + dist]
+                    ];
+                } else if (
+                    (direction[0] > 0 && left) || (direction[0] < 0 && right)
+                ) {
+                    return [
+                        [1, point1usr[1], bbox[1] - dist],
+                        [1, point2usr[1], bbox[1] - dist]
+                    ];
 
-                } else if ((direction[1] === 1 && position.includes('right')) || (direction[1] === -1 && position.includes('left'))) {
-                    return [[1, bbox[2] - distance, point1.coords.usrCoords[2]], [1, bbox[2] - distance, point2.coords.usrCoords[2]]];
+                } else {
+                    return [
+                        that._point1UsrCoordsOrg,
+                        that._point2UsrCoordsOrg
+                    ];
                 }
-            } else if (direction[0] !== 0) { //x- case
-                // if else is used to decide in which direction the axis points and to decide where is left and right out of view of the object
-                if ((direction[0] === 1 && position.includes('left')) || (direction[0] === -1 && position.includes('right'))) {
-                    return [[1, point1.coords.usrCoords[1], bbox[1] - distance], [1, point2.coords.usrCoords[1], bbox[1] - distance]];
+            }
 
-                } else if ((direction[0] === 1 && position.includes('right')) || (direction[0] === -1 && position.includes('left'))) {
-                    return [[1, point1.coords.usrCoords[1], bbox[3] + distance], [1, point2.coords.usrCoords[1], bbox[3] + distance]];
+            if (that.isVertical()) { // direction[0] === 0
+                if (
+                    (direction[1] > 0 && left) || (direction[1] < 0 && right)
+                ) {
+                    return [
+                        [1, bbox[0] + dist, point1usr[2]],
+                        [1, bbox[0] + dist, point2usr[2]]
+                    ];
+
+                } else if (
+                    (direction[1] > 0 && right) || (direction[1] < 0 && left)
+                ) {
+                    return [
+                        [1, bbox[2] - dist, point1usr[2]],
+                        [1, bbox[2] - dist, point2usr[2]]
+                    ];
+
+                } else {
+                    return [
+                        that._point1UsrCoordsOrg,
+                        that._point2UsrCoordsOrg
+                    ];
                 }
             }
         };
@@ -1651,16 +1689,25 @@ JXG.createAxis = function (board, parents, attributes) {
                     locationPoint1Org[1] < 0 &&
                     ((direction[0] > 0 && right) || (direction[0] < 0 && left))
                 ) {
-                    return [[1, point1usr[1], bbox[3] + dist], [1, point2usr[1], bbox[3] + dist]];
+                    return [
+                        [1, point1usr[1], bbox[3] + dist],
+                        [1, point2usr[1], bbox[3] + dist]
+                    ];
 
                 } else if (
                     locationPoint1Org[1] > 0 &&
                     ((direction[0] > 0 && left) || (direction[0] < 0 && right))
                 ) {
-                    return [[1, point1usr[1], bbox[1] - dist], [1, point2usr[1], bbox[1] - dist]];
+                    return [
+                        [1, point1usr[1], bbox[1] - dist],
+                        [1, point2usr[1], bbox[1] - dist]
+                    ];
 
                 } else {
-                    return [that._point1UsrCoordsOrg, that._point2UsrCoordsOrg];
+                    return [
+                        that._point1UsrCoordsOrg,
+                        that._point2UsrCoordsOrg
+                    ];
                 }
             }
 
@@ -1669,16 +1716,25 @@ JXG.createAxis = function (board, parents, attributes) {
                     locationPoint1Org[0] < 0 &&
                     ((direction[1] > 0 && left) || (direction[1] < 0 && right))
                 ) {
-                    return [[1, bbox[0] + dist, point1usr[2]], [1, bbox[0] + dist, point2usr[2]]];
+                    return [
+                        [1, bbox[0] + dist, point1usr[2]],
+                        [1, bbox[0] + dist, point2usr[2]]
+                    ];
 
                 } else if (
                     locationPoint1Org[0] > 0 &&
                     ((direction[1] > 0 && right) || (direction[1] < 0 && left))
                 ) {
-                    return [[1, bbox[2] - dist, point1usr[2]], [1, bbox[2] - dist, point2usr[2]]];
+                    return [
+                        [1, bbox[2] - dist, point1usr[2]],
+                        [1, bbox[2] - dist, point2usr[2]]
+                    ];
 
                 } else {
-                    return [that._point1UsrCoordsOrg, that._point2UsrCoordsOrg];
+                    return [
+                        that._point1UsrCoordsOrg,
+                        that._point2UsrCoordsOrg
+                    ];
                 }
             }
         };
