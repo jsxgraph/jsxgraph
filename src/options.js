@@ -3674,14 +3674,14 @@ JXG.Options = {
          * <ul>
          *     <li><tt>'static'</tt>: Standard behavior of the axes as know in JSXGraph.
          *     <li><tt>'fixed'</tt>: The axis is placed in a fixed position. Depending on the attribute <tt>position</tt>, it is positioned to the right or left of the edge of the board as seen from the axis with a distance defined in <tt>distanceBoarder</tt>. The axis will stay at that given position, when the user navigates through the board.
-         *     <li><tt>'sticky'</tt>: This mixes the two settings <tt>static</tt> and <tt>fixed</tt>. When the user navigates in the board, the axis remains in the visible area (taking into account <tt>position</tt> and <tt>distanceBorder</tt>). If the axis itself is in the visible area, the axis can be moved by navigation.
+         *     <li><tt>'sticky'</tt>: This mixes the two settings <tt>static</tt> and <tt>fixed</tt>. When the user navigates in the board, the axis remains in the visible area (taking into account <tt>position</tt> and <tt>distToEdge</tt>). If the axis itself is in the visible area, the axis can be moved by navigation.
          * </ul>
          *
          * @type {String}
          * @name Axis#axisType
          * @default 'static'
          * @see Axis#position
-         * @see Axis#distanceBorder
+         * @see Axis#distToEdge
          *
          * @example // Use navigation to see effect.
          *  var axis1, axis2, circle;
@@ -3689,13 +3689,13 @@ JXG.Options = {
          *  board.create('axis', [[0,0],[1,0]],{
          *      axisType: 'fixed',
          *      position: 'right',
-         *      distanceBorder: '0.1fr'
+         *      distToEdge: '0.1fr'
          *  });
          *
          *  board.create('axis', [[0,0],[0,1]], {
          *      axisType: 'fixed',
          *      position: 'left',
-         *      distanceBorder: '1abs'
+         *      distToEdge: '1abs'
          *  });
          *
          * </pre><div id="JXG6dff2f81-65ce-46a3-bea0-8ce25cc1cb4a" class="jxgbox" style="width: 300px; height: 300px;"></div>
@@ -3707,13 +3707,13 @@ JXG.Options = {
          *      board.create('axis', [[0,0],[1,0]],{
          *          axisType: 'fixed',
          *          position: 'right',
-         *          distanceBorder: '0.1fr'
+         *          distToEdge: '0.1fr'
          *      });
          *
          *      board.create('axis', [[0,0],[0,1]], {
          *          axisType: 'fixed',
          *          position: 'left',
-         *          distanceBorder: '1abs'
+         *          distToEdge: '1abs'
          *      });
          *
          *      board.create('circle', [[5,5], 2.5]);
@@ -3725,13 +3725,13 @@ JXG.Options = {
          *      board.create('axis', [[0,0],[1,0]],{
          *          axisType: 'sticky',
          *          position: 'right',
-         *          distanceBorder: '0.2fr'
+         *          distToEdge: '0.2fr'
          *      });
          *
          *      board.create('axis', [[0,0],[0,1]], {
          *          axisType: 'sticky',
          *          position: 'right left',
-         *          distanceBorder: '75px'
+         *          distToEdge: '75px'
          *      });
          *
          * </pre><div id="JXG42a90935-80aa-4a6b-8adf-279deef84485" class="jxgbox" style="width: 300px; height: 300px;"></div>
@@ -3742,13 +3742,13 @@ JXG.Options = {
          *          board.create('axis', [[0,0],[1,0]],{
          *              axisType: 'sticky',
          *              position: 'right',
-         *              distanceBorder: '0.2fr'
+         *              distToEdge: '0.2fr'
          *          });
          *
          *          board.create('axis', [[0,0],[0,1]], {
          *              axisType: 'sticky',
          *              position: 'right left',
-         *              distanceBorder: '75px'
+         *              distToEdge: '75px'
          *          });
          *
          *          board.create('functiongraph', [function(x){ return 1/(x-5) + 2;}]);
@@ -3771,7 +3771,7 @@ JXG.Options = {
          *  board.create('axis', [[0,0],[0,1]],{
          *      axisType: 'fixed',
          *      position: 'left',
-         *      distanceBorder: '2abs',
+         *      distToEdge: '2abs',
          *      strokeColor : 'green',
          *      ticks: {
          *          majorHeight: 7,
@@ -3782,7 +3782,7 @@ JXG.Options = {
          *  board.create('axis', [[0,0],[0,1]], {
          *      axisType: 'fixed',
          *      position: 'right',
-         *      distanceBorder: '2abs',
+         *      distToEdge: '2abs',
          *      strokeColor : 'blue',
          *      ticks: {
          *          majorHeight: 7,
@@ -3793,7 +3793,7 @@ JXG.Options = {
          *  board.create('axis', [[0,0],[0,-1]], {
          *      axisType: 'fixed',
          *      position: 'left',
-         *      distanceBorder: '4abs',
+         *      distToEdge: '4abs',
          *      strokeColor : 'red',
          *      ticks:{
          *          majorHeight: 7,
@@ -3810,7 +3810,7 @@ JXG.Options = {
          *      board.create('axis', [[0,0],[0,1]],{
          *          axisType: 'fixed',
          *          position: 'left',
-         *          distanceBorder: '2abs',
+         *          distToEdge: '2abs',
          *          strokeColor : 'green',
          *          ticks: {
          *              majorHeight: 7,
@@ -3821,7 +3821,7 @@ JXG.Options = {
          *      board.create('axis', [[0,0],[0,1]], {
          *          axisType: 'fixed',
          *          position: 'right',
-         *          distanceBorder: '2abs',
+         *          distToEdge: '2abs',
          *          strokeColor : 'blue',
          *          ticks: {
          *              majorHeight: 7,
@@ -3832,7 +3832,7 @@ JXG.Options = {
          *      board.create('axis', [[0,0],[0,-1]], {
          *          axisType: 'fixed',
          *          position: 'left',
-         *          distanceBorder: '4abs',
+         *          distToEdge: '4abs',
          *          strokeColor : 'red',
          *          ticks:{
          *              majorHeight: 7,
@@ -3847,7 +3847,7 @@ JXG.Options = {
         position: '',
 
         /**
-         * Used to define at which distance to the border of the board the axis should stick or be fixed.
+         * Used to define at which distance to the edge of the board the axis should stick or be fixed.
          * This only has an effect if <tt>axisType=='sticky'</tt> or <tt>axisType=='fixed'</tt>.
          * There are the following possibilities:
          * <ul>
@@ -3858,10 +3858,10 @@ JXG.Options = {
          * </ul>
          *
          * @type {Number|String}
-         * @name Axis#distanceBorder
-         * @default ''
+         * @name Axis#distToEdge
+         * @default '10%'
          */
-        distanceBorder: '',
+        distToEdge: '10%',
 
         /**
          * If set to true, the tick labels of the axis are automatically positioned in the narrower area between the axis and the side of the board.
@@ -3874,14 +3874,14 @@ JXG.Options = {
          * board.create('axis', [[0, 0], [1, 0]], {
          *     axisType: 'sticky',
          *     position: 'left right',
-         *     distanceBorder: '0.1',
+         *     distToEdge: '0.1',
          *     autoLabels: true,
          * });
          *
          * board.create('axis', [[0, 0], [0, 1]], {
          *     axisType: 'sticky',
          *     position: 'left right',
-         *     distanceBorder: '0.1',
+         *     distToEdge: '0.1',
          *     autoLabels: true,
          * });
          *
@@ -3894,14 +3894,14 @@ JXG.Options = {
          *     board.create('axis', [[0, 0], [1, 0]], {
          *         axisType: 'sticky',
          *         position: 'left right',
-         *         distanceBorder: '0.1',
+         *         distToEdge: '0.1',
          *         autoLabels: true,
          *     });
          *
          *     board.create('axis', [[0, 0], [0, 1]], {
          *         axisType: 'sticky',
          *         position: 'left right',
-         *         distanceBorder: '0.1',
+         *         distToEdge: '0.1',
          *         autoLabels: true,
          *     });
          *

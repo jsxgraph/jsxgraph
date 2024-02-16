@@ -1562,7 +1562,59 @@ JXG.createAxis = function (board, parents, attributes) {
         var that = this,
             ret, axisType, originScr,
             direction,
-            pointCoordsForFixed, pointCoordsForSticky;
+            getDistToEdge, pointCoordsForFixed, pointCoordsForSticky;
+
+        /**
+         * This function returns the absolut distance to the edge of the board in usrCoords.
+         * If the axis is not vertical or horizontal -1 is returned.
+         *
+         * @returns {Number} Absolut distance in usrCoords to the border of the board.
+         */
+        getDistToEdge = function () {
+            var bbox, dist, horizontal, vertical;
+
+            bbox = that.board.getBoundingBox();
+            dist = Type.evaluate(that.visProp.disttoedge);
+            horizontal = that.isHorizontal();
+            vertical = that.isVertical();
+
+            if (!horizontal && !vertical) {
+                return -1;
+            }
+
+            if (Type.isNumber(dist, true) || (Type.isString(dist) && dist.indexOf('abs') > -1)) {
+                return parseFloat(dist);
+
+            } else if (Type.isString(dist) && dist.indexOf('px') > -1) {
+                dist = dist.replace(/\s+px\s+/, '');
+                dist = parseFloat(dist);
+
+                if (horizontal) {
+                    return Math.abs(bbox[1] - (new JXG.Coords(JXG.COORDS_BY_SCREEN, [dist, dist], that.board)).usrCoords[2]);
+                }
+                if (vertical) {
+                    return Math.abs(bbox[0] - (new JXG.Coords(JXG.COORDS_BY_SCREEN, [dist, dist], that.board)).usrCoords[1]);
+                }
+
+            } else if (Type.isString(dist) && (dist.indexOf('%') > -1 || dist.indexOf('fr') > -1)) {
+                if (dist.indexOf('%') > -1) {
+                    dist = dist.replace(/\s+%\s+/, '');
+                    dist = parseFloat(dist) / 100;
+                } else if (dist.indexOf('fr') > -1) {
+                    dist = dist.replace(/\s+fr\s+/, '');
+                    dist = parseFloat(dist);
+                }
+
+                if (horizontal) {
+                    return Math.abs(bbox[1] - bbox[3]) * dist;
+                }
+                if (vertical) {
+                    return Math.abs(bbox[0] - bbox[2]) * dist;
+                }
+            }
+
+            return -1;
+        };
 
         /**
          * Returns the usrCoords for the point1 and point2 for axisType==='fixed'.
@@ -1577,7 +1629,7 @@ JXG.createAxis = function (board, parents, attributes) {
                 position, left, right;
 
             bbox = that.board.getBoundingBox();
-            dist = that.getDistanceBorder();
+            dist = getDistToEdge();
 
             point1usr = that.point1.coords.usrCoords;
             point2usr = that.point2.coords.usrCoords;
@@ -1652,7 +1704,7 @@ JXG.createAxis = function (board, parents, attributes) {
                 position, left, right;
 
             bbox = that.board.getBoundingBox();
-            dist = that.getDistanceBorder();
+            dist = getDistToEdge();
             locationPoint1Org = that.board.getLocationPoint(that._point1UsrCoordsOrg, dist);
 
             point1usr = that.point1.coords.usrCoords;
@@ -1802,58 +1854,6 @@ JXG.createAxis = function (board, parents, attributes) {
         return this;
     };
 
-    /**
-     * This function returns the absolut distance to the border of the board in usrCoords.
-     * If the axis is not vertical or horizontal -1 is returned.
-     * @name getDistanceBorder
-     * @returns {Number} Absolut distance in usrCoords to the border of the board.
-     */
-    axis.getDistanceBorder = function () {
-        var bbox, dist, horizontal, vertical;
-
-        bbox = this.board.getBoundingBox();
-        dist = Type.evaluate(this.visProp.distanceborder);
-        horizontal = this.isHorizontal();
-        vertical = this.isVertical();
-
-        if (!horizontal && !vertical) {
-            return -1;
-        }
-
-        if (Type.isNumber(dist, true) || (Type.isString(dist) && dist.indexOf('abs') > -1)) {
-            return parseFloat(dist);
-
-        } else if (Type.isString(dist) && dist.indexOf('px') > -1) {
-            dist = dist.replace(/\s+px\s+/, '');
-            dist = parseFloat(dist);
-
-            if (horizontal) {
-                return Math.abs(bbox[1] - (new JXG.Coords(JXG.COORDS_BY_SCREEN, [dist, dist], this.board)).usrCoords[2]);
-            }
-            if (vertical) {
-                return Math.abs(bbox[0] - (new JXG.Coords(JXG.COORDS_BY_SCREEN, [dist, dist], this.board)).usrCoords[1]);
-            }
-
-        } else if (Type.isString(dist) && (dist.indexOf('%') > -1 || dist.indexOf('fr') > -1)) {
-            if (dist.indexOf('%') > -1) {
-                dist = dist.replace(/\s+%\s+/, '');
-                dist = parseFloat(dist) / 100;
-            } else if (dist.indexOf('fr') > -1) {
-                dist = dist.replace(/\s+fr\s+/, '');
-                dist = parseFloat(dist);
-            }
-
-            if (horizontal) {
-                return Math.abs(bbox[1] - bbox[3]) * dist;
-            }
-            if (vertical) {
-                return Math.abs(bbox[0] - bbox[2]) * dist;
-            }
-        }
-
-        return -1;
-    };
-
     for (ancestor in axis.ancestors) {
         if (axis.ancestors.hasOwnProperty(ancestor)) {
             axis.ancestors[ancestor].type = Const.OBJECT_TYPE_AXISPOINT;
@@ -1883,11 +1883,6 @@ JXG.createAxis = function (board, parents, attributes) {
         ticks: axis.defaultTicks
     };
     axis.inherits.push(axis.defaultTicks);
-
-    axis.methodMap = JXG.deepCopy(axis.methodMap, {
-        getDistanceBorder: "getDistanceBorder",
-        DistanceBorder: "getDistanceBorder"
-    });
 
     return axis;
 };
