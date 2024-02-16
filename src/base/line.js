@@ -1558,28 +1558,6 @@ JXG.createAxis = function (board, parents, attributes) {
     axis._point1UsrCoordsOrg = axis.point1.coords.usrCoords.slice();
     axis._point2UsrCoordsOrg = axis.point2.coords.usrCoords.slice();
 
-    axis.getOrthoDirection = function () {
-        var d, dX, dY;
-
-        dX = this.point2.coords.usrCoords[1] - this.point1.coords.usrCoords[1];
-        dY = this.point2.coords.usrCoords[2] - this.point1.coords.usrCoords[2];
-
-        d = [dX, dY];
-        if (d[0] < 0) {
-            d[0] = -1;
-        } else if (d[0] > 0) {
-            d[0] = 1;
-        }
-
-        if (d[1] < 0) {
-            d[1] = -1;
-        } else if (d[1] > 0) {
-            d[1] = 1;
-        }
-
-        return d;
-    };
-
     axis.update = function () {
         var that = this,
             ret, axisType, originScr,
@@ -1748,7 +1726,7 @@ JXG.createAxis = function (board, parents, attributes) {
 
         } else if (axisType === 'fixed') {
 
-            ret = pointCoordsForFixed(that.getOrthoDirection());
+            ret = pointCoordsForFixed(direction);
 
             this.point1.setPosition(JXG.COORDS_BY_USER, ret[0]);
             this.point2.setPosition(JXG.COORDS_BY_USER, ret[1]);
