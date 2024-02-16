@@ -1035,7 +1035,7 @@ JXG.extend(
          *
          * @name Board#getLocationPoint
          * @param {Array} position Array of requested position <tt>[x, y]</tt> or <tt>[w, x, y]</tt>.
-         * @param {Array} [margin] Optional margin for the inner of the board: <tt>[top, right, bottom, left]</tt>.
+         * @param {Array|Number} [margin] Optional margin for the inner of the board: <tt>[top, right, bottom, left]</tt>. A single number <tt>m</tt> is interpreted as <tt>[m, m, m, m]</tt>.
          * @returns {Array} [u,v] with the following meanings:
          * <pre>
          *     v    u > |   -1    |    0   |    1   |
@@ -1187,7 +1187,10 @@ JXG.extend(
                 pos.unshift(undefined);
             }
             res = [0, 0];
-            marg = margin || [0, 0, 0, 0];
+            marg = margin || 0;
+            if (Type.isNumber(marg)) {
+                marg = [marg, marg, marg, marg];
+            }
 
             if (pos[1] > (bbox[2] - marg[1])) {
                 res[0] = 1;
@@ -1211,7 +1214,7 @@ JXG.extend(
          * Optional a <tt>margin</tt> to the inner of the board is respected.<br>
          *
          * @name Board#getLocationOrigin
-         * @param {Array} [margin] Optional margin for the inner of the board: <tt>[top, right, bottom, left]</tt>.
+         * @param {Array|Number} [margin] Optional margin for the inner of the board: <tt>[top, right, bottom, left]</tt>. A single number <tt>m</tt> is interpreted as <tt>[m, m, m, m]</tt>.
          * @returns {Array} [u,v] which shows where the origin is located (@link Board#getLocationPoint).
          */
         getLocationOrigin: function (margin) {
