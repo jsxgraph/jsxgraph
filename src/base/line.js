@@ -1594,9 +1594,9 @@ JXG.createAxis = function (board, parents, attributes) {
          * @returns {Object} object with the structure: {point1: [1, x1, y1], point2: [1, x2, y2]}
          */
         pointCoordsForFixed = function (direction) {
-            var bbx, point1, point2, position, distance;
+            var bbox, point1, point2, position, distance;
 
-            bbx = that.board.getBoundingBox();
+            bbox = that.board.getBoundingBox();
             distance = that.getDistanceBorder();
 
             point1 = Type.evaluate(that.point1);
@@ -1607,18 +1607,18 @@ JXG.createAxis = function (board, parents, attributes) {
                 // if else is used to decide in which direction the axis points and to decide where is left and right out of view of the object
                 if ((direction[1] === 1 && position.includes('left')) ||
                     (direction[1] === -1 && position.includes('right'))) {
-                    return [[1, bbx[0] + distance, point1.coords.usrCoords[2]], [1, bbx[0] + distance, point2.coords.usrCoords[2]]];
+                    return [[1, bbox[0] + distance, point1.coords.usrCoords[2]], [1, bbox[0] + distance, point2.coords.usrCoords[2]]];
 
                 } else if ((direction[1] === 1 && position.includes('right')) || (direction[1] === -1 && position.includes('left'))) {
-                    return [[1, bbx[2] - distance, point1.coords.usrCoords[2]], [1, bbx[2] - distance, point2.coords.usrCoords[2]]];
+                    return [[1, bbox[2] - distance, point1.coords.usrCoords[2]], [1, bbox[2] - distance, point2.coords.usrCoords[2]]];
                 }
             } else if (direction[0] !== 0) { //x- case
                 // if else is used to decide in which direction the axis points and to decide where is left and right out of view of the object
                 if ((direction[0] === 1 && position.includes('left')) || (direction[0] === -1 && position.includes('right'))) {
-                    return [[1, point1.coords.usrCoords[1], bbx[1] - distance], [1, point2.coords.usrCoords[1], bbx[1] - distance]];
+                    return [[1, point1.coords.usrCoords[1], bbox[1] - distance], [1, point2.coords.usrCoords[1], bbox[1] - distance]];
 
                 } else if ((direction[0] === 1 && position.includes('right')) || (direction[0] === -1 && position.includes('left'))) {
-                    return [[1, point1.coords.usrCoords[1], bbx[3] + distance], [1, point2.coords.usrCoords[1], bbx[3] + distance]];
+                    return [[1, point1.coords.usrCoords[1], bbox[3] + distance], [1, point2.coords.usrCoords[1], bbox[3] + distance]];
                 }
             }
         };
@@ -1631,77 +1631,96 @@ JXG.createAxis = function (board, parents, attributes) {
          * @returns {Object} object with the structure: {point1: [1, x1, y1], point2: [1, x2, y2]}
          */
         pointCoordsForSticky = function (direction) {
-            var referencePointonScreen, bbx, point1, point2, position, dY, dX, pointOld;
+            var bbox, dist, locationPoint1Org,
+                point1usr, point2usr,
+                position, left, right;
 
-            bbx = that.board.getBoundingBox();
+            bbox = that.board.getBoundingBox();
+            dist = that.getDistanceBorder();
+            locationPoint1Org = that.board.getLocationPoint(that._point1UsrCoordsOrg, dist);
 
-            pointOld = that._point1UsrCoordsOrg;
+            point1usr = that.point1.coords.usrCoords;
+            point2usr = that.point2.coords.usrCoords;
 
-            point1 = Type.evaluate(that.point1);
-            point2 = Type.evaluate(that.point2);
             position = Type.evaluate(that.visProp.position);
+            left = position.indexOf('left') > -1;
+            right = position.indexOf('right') > -1;
 
-            //point für y axis relative to the screen
-            if (direction[0] === 0 && direction[1] !== 0) {
-                dY = that.getDistanceBorder();
-                referencePointonScreen = that.board.getLocationPoint(pointOld, [0, dY, 0, dY]);
+            if (that.isHorizontal()) { // direction[1] === 0
+                if (
+                    locationPoint1Org[1] < 0 &&
+                    ((direction[0] > 0 && right) || (direction[0] < 0 && left))
+                ) {
+                    return [[1, point1usr[1], bbox[3] + dist], [1, point2usr[1], bbox[3] + dist]];
 
-                if (referencePointonScreen[0] < 0 && ((direction[1] === 1 && position.includes('left')) || (direction[1] === -1 && position.includes('right')))) {
-                    return [[1, bbx[0] + dY, (point1.coords.usrCoords)[2]], [1, bbx[0] + dY, (point2.coords.usrCoords)[2]]];
-
-                } else if (referencePointonScreen[0] > 0 && ((direction[1] === 1 && position.includes('right')) || (direction[1] === -1 && position.includes('left')))) {
-                    return [[1, bbx[2] - dY, (point1.coords.usrCoords)[2]], [1, bbx[2] - dY, (point2.coords.usrCoords)[2]]];
+                } else if (
+                    locationPoint1Org[1] > 0 &&
+                    ((direction[0] > 0 && left) || (direction[0] < 0 && right))
+                ) {
+                    return [[1, point1usr[1], bbox[1] - dist], [1, point2usr[1], bbox[1] - dist]];
 
                 } else {
                     return [that._point1UsrCoordsOrg, that._point2UsrCoordsOrg];
                 }
             }
 
-            //points for x-axis relative to the screen
-            if (direction[0] !== 0 && direction[1] === 0) {
-                dX = that.getDistanceBorder();
-                referencePointonScreen = that.board.getLocationPoint(pointOld, [dX, 0, dX, 0]);
+            if (that.isVertical()) { // direction[0] === 0
+                if (
+                    locationPoint1Org[0] < 0 &&
+                    ((direction[1] > 0 && left) || (direction[1] < 0 && right))
+                ) {
+                    return [[1, bbox[0] + dist, point1usr[2]], [1, bbox[0] + dist, point2usr[2]]];
 
-                if (referencePointonScreen[1] < 0 && ((direction[0] === 1 && position.includes('right')) || (direction[0] === -1 && position.includes('left')))) {
-                    return [[1, (point1.coords.usrCoords)[1], bbx[3] + dX], [1, (point2.coords.usrCoords)[1], bbx[3] + dX]];
-                } else if (referencePointonScreen[1] > 0 && ((direction[0] === 1 && position.includes('left')) || (direction[0] === -1 && position.includes('right')))) {
-                    return [[1, (point1.coords.usrCoords)[1], bbx[1] - dX], [1, (point2.coords.usrCoords)[1], bbx[1] - dX]];
+                } else if (
+                    locationPoint1Org[0] > 0 &&
+                    ((direction[1] > 0 && right) || (direction[1] < 0 && left))
+                ) {
+                    return [[1, bbox[2] - dist, point1usr[2]], [1, bbox[2] - dist, point2usr[2]]];
+
                 } else {
                     return [that._point1UsrCoordsOrg, that._point2UsrCoordsOrg];
                 }
             }
         };
 
-        direction = that.getOrthoDirection();
+        direction = that.Direction();
         axisType = Type.evaluate(that.visProp.axistype);
         originScr = this.board.origin.scrCoords;
-
-        //if axis is not parallel to sides of the boundingbox
-        /*if (direction[0] != 0 && direction[1] != 0)
-            return that;*/
 
         if (axisType === 'static' || (!this.isVertical() && !this.isHorizontal())) {
             //do nothing
 
         } else if (axisType === 'fixed') {
 
-            ret = pointCoordsForFixed(direction);
+            ret = pointCoordsForFixed(that.getOrthoDirection());
 
             this.point1.setPosition(JXG.COORDS_BY_USER, ret[0]);
             this.point2.setPosition(JXG.COORDS_BY_USER, ret[1]);
 
             if (this.visProp.autolabels === true) {
-                if (direction[0] > 0 && this.visProp.position.includes('left') || direction[0] < 0 && this.visProp.position.includes('right')) {
+                if (
+                    (direction[0] > 0 && this.visProp.position.includes('left')) ||
+                    (direction[0] < 0 && this.visProp.position.includes('right'))
+                ) {
                     this.defaultTicks.visProp.label.anchory = 'bottom';
                     this.defaultTicks.visProp.label.offset = [0, 20];
-                } else if (direction[0] > 0 && this.visProp.position.includes('right') || direction[0] < 0 && this.visProp.position.includes('left')) {
+                } else if (
+                    (direction[0] > 0 && this.visProp.position.includes('right')) ||
+                    (direction[0] < 0 && this.visProp.position.includes('left'))
+                ) {
                     this.defaultTicks.visProp.label.anchory = 'top';
                     this.defaultTicks.visProp.label.offset = [0, -10];
                 }
-                if (direction[1] > 0 && this.visProp.position.includes('left') || direction[1] < 0 && this.visProp.position.includes('right')) {
+                if (
+                    (direction[1] > 0 && this.visProp.position.includes('left')) ||
+                    (direction[1] < 0 && this.visProp.position.includes('right'))
+                ) {
                     this.defaultTicks.visProp.label.anchory = 'right';
                     this.defaultTicks.visProp.label.offset = [-10, 0];
-                } else if (direction[1] > 0 && this.visProp.position.includes('right') || direction[1] < 0 && this.visProp.position.includes('left')) {
+                } else if (
+                    (direction[1] > 0 && this.visProp.position.includes('right')) ||
+                    (direction[1] < 0 && this.visProp.position.includes('left'))
+                ) {
                     this.defaultTicks.visProp.label.anchorx = 'left';
                     this.defaultTicks.visProp.label.offset = [20, 0];
                 }
@@ -1715,17 +1734,29 @@ JXG.createAxis = function (board, parents, attributes) {
             this.point2.setPosition(JXG.COORDS_BY_USER, ret[1]);
 
             if (this.visProp.autolabels === true) {
-                if (direction[0] !== 0 && originScr[2] < ((this.board.canvasHeight / 2) - 10)) {
+                if (
+                    direction[0] !== 0 &&
+                    originScr[2] < ((this.board.canvasHeight / 2) - 10)
+                ) {
                     this.defaultTicks.visProp.label.anchory = 'bottom';
                     this.defaultTicks.visProp.label.offset = [0, 20];
-                } else if (direction[0] !== 0 && originScr[2] > ((this.board.canvasHeight / 2) + 10)) {
+                } else if (
+                    direction[0] !== 0 &&
+                    originScr[2] > ((this.board.canvasHeight / 2) + 10)
+                ) {
                     this.defaultTicks.visProp.label.anchory = 'top';
                     this.defaultTicks.visProp.label.offset = [0, -10];
                 }
-                if (direction[1] !== 0 && originScr[1] < ((this.board.canvasWidth / 2) - 10)) {
+                if (
+                    direction[1] !== 0 &&
+                    originScr[1] < ((this.board.canvasWidth / 2) - 10)
+                ) {
                     this.defaultTicks.visProp.label.anchorx = 'right';
                     this.defaultTicks.visProp.label.offset = [-10, 0];
-                } else if (direction[1] !== 0 && originScr[1] > ((this.board.canvasWidth / 2) + 10)) {
+                } else if (
+                    direction[1] !== 0 &&
+                    originScr[1] > ((this.board.canvasWidth / 2) + 10)
+                ) {
                     this.defaultTicks.visProp.label.anchorx = 'left';
                     this.defaultTicks.visProp.label.offset = [20, 0];
                 }
