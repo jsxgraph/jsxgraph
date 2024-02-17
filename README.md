@@ -100,11 +100,11 @@ Build and develop JSXGraph
 --------------
 
 1) Clone this repository or download the zip file.
-2) In order to build and develop *JSXGraph* you need [node.js](https://nodejs.org/) v0.6+. First, install all
+2) To build and develop *JSXGraph* you need [node.js](https://nodejs.org/) v0.6+. First, install all
 dependencies required to build JSXGraph using npm in the JSXGraph root directory: `$ npm install`.
 This will create a new subdirectory ```node_modules``` in the JSXGraph root directory which holds
 all tools and libraries required to build ```jsxgraphcore.js```.
-3) To build JSXGraph run `$ npm run buildCore`. This will output an unminified version `jsxgraphsrc.js`
+3) To build JSXGraph run `$ npm run buildCore`. This will output an non-minified version `jsxgraphsrc.js`
 and the minified version `jsxgraphcore.js` into the folder `distrib`.
 4) Develop JSXGraph:
   - Edit the source files in the folder `src`
