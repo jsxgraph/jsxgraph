@@ -924,6 +924,17 @@ JXG.extend(
             return str;
         },
 
+        parseNumber: function(v, ofWhat, toUnit) {
+            var str;
+
+            if (this.isString(v) && v.indexOf('%') > -1) {
+                str = v.replace(/\s+%\s+/, '');
+                return parseFloat(str) * ofWhat * 0.01;
+            }
+            // Number or String containing no unit
+            return parseFloat(v);
+        },
+
         /**
          * Extracts the keys of a given object.
          * @param object The object the keys are to be extracted

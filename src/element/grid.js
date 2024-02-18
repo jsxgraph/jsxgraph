@@ -683,23 +683,32 @@ JXG.createGrid = function (board, parents, attributes) {
 
         // set minorRadiusX and minorRadiusY
         // minorSizeX and minorSizeY can be a number (also a number like '20') or a string ending with '%'
-        if (Type.isString(minorSizeX) && minorSizeX.indexOf('%') > -1) {
-            minorRadiusX = minorSizeX.replace(/\s+%\s+/, '');
-            minorRadiusX = parseFloat(minorRadiusX) / 100;
-            minorRadiusX = minorRadiusX * minorStepX / 2;
+        // if (Type.isString(minorSizeX) && minorSizeX.indexOf('%') > -1) {
+        //     minorRadiusX = minorSizeX.replace(/\s+%\s+/, '');
+        //     minorRadiusX = parseFloat(minorRadiusX) / 100;
+        //     minorRadiusX = minorRadiusX * minorStepX / 2;
+        // } else { // Type.isNumber(minorSizeX, true)
+        //     minorRadiusX = parseFloat(minorSizeX);
+        //     minorRadiusX = minorRadiusX / this.board.unitX / 2; // conversion: px -> usrCoord
+        // }
+        // if (Type.isString(minorSizeY) && minorSizeY.indexOf('%') > -1) {
+        //     minorRadiusY = minorSizeY.replace(/\s+%\s+/, '');
+        //     minorRadiusY = parseFloat(minorRadiusY) / 100;
+        //     minorRadiusY = minorRadiusY * minorStepY / 2;
+        // } else { // Type.isNumber(minorSizeY, true)
+        //     minorRadiusY = parseFloat(minorSizeY);
+        //     minorRadiusY = minorRadiusY / this.board.unitY / 2; // conversion: px -> usrCoord
+        // }
 
+        if (Type.isString(minorSizeX) && minorSizeX.indexOf('%') > -1) {
+            minorRadiusX = Type.parseNumber(minorSizeX, minorStepX / 2);
         } else { // Type.isNumber(minorSizeX, true)
-            minorRadiusX = parseFloat(minorSizeX);
-            minorRadiusX = minorRadiusX / this.board.unitX / 2; // conversion: px -> usrCoord
+            minorRadiusX = parseFloat(minorSizeX) / this.board.unitX / 2; // conversion: px -> usrCoord
         }
         if (Type.isString(minorSizeY) && minorSizeY.indexOf('%') > -1) {
-            minorRadiusY = minorSizeY.replace(/\s+%\s+/, '');
-            minorRadiusY = parseFloat(minorRadiusY) / 100;
-            minorRadiusY = minorRadiusY * minorStepY / 2;
-
+            minorRadiusY = Type.parseNumber(minorSizeY, minorStepY / 2);
         } else { // Type.isNumber(minorSizeY, true)
-            minorRadiusY = parseFloat(minorSizeY);
-            minorRadiusY = minorRadiusY / this.board.unitY / 2; // conversion: px -> usrCoord
+            minorRadiusY = parseFloat(minorSizeY) / this.board.unitY / 2; // conversion: px -> usrCoord
         }
 
         // calculate start position of curve
