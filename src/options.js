@@ -4556,7 +4556,7 @@ JXG.Options = {
 
         /**
          * To print a quadratic grid with same distance of major grid elements in x- and y-direction.
-         * <tt>'min'</tt> will set both distances of major grid elements in x- and y-direction to the primarily lesser value, 
+         * <tt>'min'</tt> will set both distances of major grid elements in x- and y-direction to the primarily lesser value,
          * <tt>'max'</tt> or <tt>true</tt> to the primarily greater value.
          *
          * @type {Boolean|String}

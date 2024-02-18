@@ -935,6 +935,29 @@ JXG.extend(
             return parseFloat(v);
         },
 
+        parsePosition: function(str) {
+            var a, i,
+                side = '',
+                pos = '';
+
+            str = str.trim();
+            if (str !== '') {
+                a = str.split(/[ ,]+/);
+                for (i = 0; i < a.length; i++) {
+                    if (a[i] in ['left', 'right']) {
+                        side = a[i];
+                    } else {
+                        pos = a[i];
+                    }
+                }
+            }
+
+            return {
+                side: side,
+                pos: pos
+            };
+        },
+
         /**
          * Extracts the keys of a given object.
          * @param object The object the keys are to be extracted
