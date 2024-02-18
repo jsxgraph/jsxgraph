@@ -1560,9 +1560,20 @@ JXG.createAxis = function (board, parents, attributes) {
 
     axis.update = function () {
         var that = this,
-            ret, axisType, originScr,
+            bbox,
+            axisType, originScr,
+            dist,
+            position, left, right,
+            autoLabels,
             direction,
-            getDistToEdge, pointCoordsForFixed, pointCoordsForSticky;
+            getDistToEdge,
+            locationPoint1Org,
+            setPositionPoints;
+
+        setPositionPoints = function (coordsPoint1, coordsPoint2) {
+            that.point1.setPosition(JXG.COORDS_BY_USER, coordsPoint1);
+            that.point2.setPosition(JXG.COORDS_BY_USER, coordsPoint2);
+        };
 
         /**
          * This function returns the absolut distance to the edge of the board in usrCoords.
@@ -1616,196 +1627,98 @@ JXG.createAxis = function (board, parents, attributes) {
             return -1;
         };
 
-        /**
-         * Returns the usrCoords for the point1 and point2 for axisType==='fixed'.
-         * @class
-         * @ignore
-         * @name pointCoordsForFixed
-         * @returns {Object} object with the structure: {point1: [1, x1, y1], point2: [1, x2, y2]}
-         */
-        pointCoordsForFixed = function (direction) {
-            var bbox, dist,
-                point1usr, point2usr,
-                position, left, right;
-
-            bbox = that.board.getBoundingBox();
-            dist = getDistToEdge();
-
-            point1usr = that.point1.coords.usrCoords;
-            point2usr = that.point2.coords.usrCoords;
-
-            position = Type.evaluate(that.visProp.position);
-            left = position.indexOf('left') > -1;
-            right = position.indexOf('right') > -1;
-            if (left && right) {
-                right = false;
-            }
-
-            if (that.isHorizontal()) { // direction[1] === 0
-                if (
-                    (direction[0] > 0 && right) || (direction[0] < 0 && left)
-                ) {
-                    return [
-                        [1, point1usr[1], bbox[3] + dist],
-                        [1, point2usr[1], bbox[3] + dist]
-                    ];
-                } else if (
-                    (direction[0] > 0 && left) || (direction[0] < 0 && right)
-                ) {
-                    return [
-                        [1, point1usr[1], bbox[1] - dist],
-                        [1, point2usr[1], bbox[1] - dist]
-                    ];
-
-                } else {
-                    return [
-                        that._point1UsrCoordsOrg,
-                        that._point2UsrCoordsOrg
-                    ];
-                }
-            }
-
-            if (that.isVertical()) { // direction[0] === 0
-                if (
-                    (direction[1] > 0 && left) || (direction[1] < 0 && right)
-                ) {
-                    return [
-                        [1, bbox[0] + dist, point1usr[2]],
-                        [1, bbox[0] + dist, point2usr[2]]
-                    ];
-
-                } else if (
-                    (direction[1] > 0 && right) || (direction[1] < 0 && left)
-                ) {
-                    return [
-                        [1, bbox[2] - dist, point1usr[2]],
-                        [1, bbox[2] - dist, point2usr[2]]
-                    ];
-
-                } else {
-                    return [
-                        that._point1UsrCoordsOrg,
-                        that._point2UsrCoordsOrg
-                    ];
-                }
-            }
-        };
-
-        /**
-         * Returns the usrCoords for the point1 and point2 for axisType==='sticky'.
-         * @class
-         * @ignore
-         * @name pointCoordsForSticky
-         * @returns {Object} object with the structure: {point1: [1, x1, y1], point2: [1, x2, y2]}
-         */
-        pointCoordsForSticky = function (direction) {
-            var bbox, dist, locationPoint1Org,
-                point1usr, point2usr,
-                position, left, right;
-
-            bbox = that.board.getBoundingBox();
-            dist = getDistToEdge();
-            locationPoint1Org = that.board.getLocationPoint(that._point1UsrCoordsOrg, dist);
-
-            point1usr = that.point1.coords.usrCoords;
-            point2usr = that.point2.coords.usrCoords;
-
-            position = Type.evaluate(that.visProp.position);
-            left = position.indexOf('left') > -1;
-            right = position.indexOf('right') > -1;
-
-            if (that.isHorizontal()) { // direction[1] === 0
-                if (
-                    locationPoint1Org[1] < 0 &&
-                    ((direction[0] > 0 && right) || (direction[0] < 0 && left))
-                ) {
-                    return [
-                        [1, point1usr[1], bbox[3] + dist],
-                        [1, point2usr[1], bbox[3] + dist]
-                    ];
-
-                } else if (
-                    locationPoint1Org[1] > 0 &&
-                    ((direction[0] > 0 && left) || (direction[0] < 0 && right))
-                ) {
-                    return [
-                        [1, point1usr[1], bbox[1] - dist],
-                        [1, point2usr[1], bbox[1] - dist]
-                    ];
-
-                } else {
-                    return [
-                        that._point1UsrCoordsOrg,
-                        that._point2UsrCoordsOrg
-                    ];
-                }
-            }
-
-            if (that.isVertical()) { // direction[0] === 0
-                if (
-                    locationPoint1Org[0] < 0 &&
-                    ((direction[1] > 0 && left) || (direction[1] < 0 && right))
-                ) {
-                    return [
-                        [1, bbox[0] + dist, point1usr[2]],
-                        [1, bbox[0] + dist, point2usr[2]]
-                    ];
-
-                } else if (
-                    locationPoint1Org[0] > 0 &&
-                    ((direction[1] > 0 && right) || (direction[1] < 0 && left))
-                ) {
-                    return [
-                        [1, bbox[2] - dist, point1usr[2]],
-                        [1, bbox[2] - dist, point2usr[2]]
-                    ];
-
-                } else {
-                    return [
-                        that._point1UsrCoordsOrg,
-                        that._point2UsrCoordsOrg
-                    ];
-                }
-            }
-        };
-
+        bbox = this.board.getBoundingBox();
         direction = that.Direction();
         axisType = Type.evaluate(that.visProp.axistype);
         originScr = this.board.origin.scrCoords;
+        position = Type.evaluate(this.visProp.position);
+        autoLabels = Type.evaluate(this.visProp.autolabels);
+
+        left = position.indexOf('left') > -1;
+        right = position.indexOf('right') > -1;
+        if (left && right) {
+            right = false;
+        }
 
         if (axisType === 'static' || (!this.isVertical() && !this.isHorizontal())) {
             //do nothing
 
         } else if (axisType === 'fixed') {
 
-            ret = pointCoordsForFixed(direction);
+            // Set position points
 
-            this.point1.setPosition(JXG.COORDS_BY_USER, ret[0]);
-            this.point2.setPosition(JXG.COORDS_BY_USER, ret[1]);
+            dist = getDistToEdge();
 
-            if (this.visProp.autolabels === true) {
+            if (this.isHorizontal()) { // direction[1] === 0
                 if (
-                    (direction[0] > 0 && this.visProp.position.includes('left')) ||
-                    (direction[0] < 0 && this.visProp.position.includes('right'))
+                    (direction[0] > 0 && right) || (direction[0] < 0 && left)
+                ) {
+                    setPositionPoints(
+                        [1, this.point1.coords.usrCoords[1], bbox[3] + dist],
+                        [1, this.point2.coords.usrCoords[1], bbox[3] + dist]
+                    );
+                } else if (
+                    (direction[0] > 0 && left) || (direction[0] < 0 && right)
+                ) {
+                    setPositionPoints(
+                        [1, this.point1.coords.usrCoords[1], bbox[1] - dist],
+                        [1, this.point2.coords.usrCoords[1], bbox[1] - dist]
+                    );
+
+                } else {
+                    setPositionPoints(
+                        this._point1UsrCoordsOrg,
+                        this._point2UsrCoordsOrg
+                    );
+                }
+            }
+
+            if (this.isVertical()) { // direction[0] === 0
+                if (
+                    (direction[1] > 0 && left) || (direction[1] < 0 && right)
+                ) {
+                    setPositionPoints(
+                        [1, bbox[0] + dist, this.point1.coords.usrCoords[2]],
+                        [1, bbox[0] + dist, this.point2.coords.usrCoords[2]]
+                    );
+
+                } else if (
+                    (direction[1] > 0 && right) || (direction[1] < 0 && left)
+                ) {
+                    setPositionPoints(
+                        [1, bbox[2] - dist, this.point1.coords.usrCoords[2]],
+                        [1, bbox[2] - dist, this.point2.coords.usrCoords[2]]
+                    );
+
+                } else {
+                    setPositionPoints(
+                        this._point1UsrCoordsOrg,
+                        this._point2UsrCoordsOrg
+                    );
+                }
+            }
+
+            // Set position labels
+
+            if (autoLabels) {
+                if (
+                    (direction[0] > 0 && left) || (direction[0] < 0 && right)
                 ) {
                     this.defaultTicks.visProp.label.anchory = 'bottom';
                     this.defaultTicks.visProp.label.offset = [0, 20];
                 } else if (
-                    (direction[0] > 0 && this.visProp.position.includes('right')) ||
-                    (direction[0] < 0 && this.visProp.position.includes('left'))
+                    (direction[0] > 0 && right) || (direction[0] < 0 && left)
                 ) {
                     this.defaultTicks.visProp.label.anchory = 'top';
                     this.defaultTicks.visProp.label.offset = [0, -10];
                 }
                 if (
-                    (direction[1] > 0 && this.visProp.position.includes('left')) ||
-                    (direction[1] < 0 && this.visProp.position.includes('right'))
+                    (direction[1] > 0 && left) || (direction[1] < 0 && right)
                 ) {
                     this.defaultTicks.visProp.label.anchory = 'right';
                     this.defaultTicks.visProp.label.offset = [-10, 0];
                 } else if (
-                    (direction[1] > 0 && this.visProp.position.includes('right')) ||
-                    (direction[1] < 0 && this.visProp.position.includes('left'))
+                    (direction[1] > 0 && right) || (direction[1] < 0 && left)
                 ) {
                     this.defaultTicks.visProp.label.anchorx = 'left';
                     this.defaultTicks.visProp.label.offset = [20, 0];
@@ -1814,12 +1727,68 @@ JXG.createAxis = function (board, parents, attributes) {
 
         } else if (axisType === 'sticky') {
 
-            ret = pointCoordsForSticky(direction);
+            // Set position points
 
-            this.point1.setPosition(JXG.COORDS_BY_USER, ret[0]);
-            this.point2.setPosition(JXG.COORDS_BY_USER, ret[1]);
+            dist = getDistToEdge();
+            locationPoint1Org = this.board.getLocationPoint(this._point1UsrCoordsOrg, dist);
 
-            if (this.visProp.autolabels === true) {
+            if (this.isHorizontal()) { // direction[1] === 0
+                if (
+                    locationPoint1Org[1] < 0 &&
+                    ((direction[0] > 0 && right) || (direction[0] < 0 && left))
+                ) {
+                    setPositionPoints(
+                        [1, this.point1.coords.usrCoords[1], bbox[3] + dist],
+                        [1, this.point2.coords.usrCoords[1], bbox[3] + dist]
+                    );
+
+                } else if (
+                    locationPoint1Org[1] > 0 &&
+                    ((direction[0] > 0 && left) || (direction[0] < 0 && right))
+                ) {
+                    setPositionPoints(
+                        [1, this.point1.coords.usrCoords[1], bbox[1] - dist],
+                        [1, this.point2.coords.usrCoords[1], bbox[1] - dist]
+                    );
+
+                } else {
+                    setPositionPoints(
+                        this._point1UsrCoordsOrg,
+                        this._point2UsrCoordsOrg
+                    );
+                }
+            }
+
+            if (this.isVertical()) { // direction[0] === 0
+                if (
+                    locationPoint1Org[0] < 0 &&
+                    ((direction[1] > 0 && left) || (direction[1] < 0 && right))
+                ) {
+                    setPositionPoints(
+                        [1, bbox[0] + dist, this.point1.coords.usrCoords[2]],
+                        [1, bbox[0] + dist, this.point2.coords.usrCoords[2]]
+                    );
+
+                } else if (
+                    locationPoint1Org[0] > 0 &&
+                    ((direction[1] > 0 && right) || (direction[1] < 0 && left))
+                ) {
+                    setPositionPoints(
+                        [1, bbox[2] - dist, this.point1.coords.usrCoords[2]],
+                        [1, bbox[2] - dist, this.point2.coords.usrCoords[2]]
+                    );
+
+                } else {
+                    setPositionPoints(
+                        this._point1UsrCoordsOrg,
+                        this._point2UsrCoordsOrg
+                    );
+                }
+            }
+
+            // Set position labels
+
+            if (autoLabels === true) {
                 if (
                     direction[0] !== 0 &&
                     originScr[2] < ((this.board.canvasHeight / 2) - 10)
