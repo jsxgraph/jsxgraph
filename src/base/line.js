@@ -1567,7 +1567,7 @@ JXG.createAxis = function (board, parents, attributes) {
             direction, horizontal, vertical,
             ticksAutoPos, ticksAutoPosThres = 20, distP1, distP2,
             anchor, left, right,
-            dist,
+            distUsr,
             locationPoint1Org,
             setPositionPoints;
 
@@ -1587,43 +1587,35 @@ JXG.createAxis = function (board, parents, attributes) {
         left = anchor.indexOf('left') > -1;
         right = anchor.indexOf('right') > -1;
 
-        dist = Type.evaluate(this.visProp.anchordist);
+        distUsr = Type.evaluate(this.visProp.anchordist);
         if (!horizontal && !vertical) {
-            dist = 0;
+            distUsr = 0;
 
-        } else if (Type.isNumber(dist, true) || (Type.isString(dist) && dist.indexOf('abs') > -1)) {
-            dist = '' + dist;
-            dist = dist.replace(/\s+px\s+/, '');
-            dist = parseFloat(dist);
+        } else if (Type.isNumber(distUsr, true) || (Type.isString(distUsr) && distUsr.indexOf('abs') > -1)) {
+            distUsr = Type.parseNumber(distUsr);
 
-        } else if (Type.isString(dist) && dist.indexOf('px') > -1) {
-            dist = dist.replace(/\s+px\s+/, '');
-            dist = parseFloat(dist);
+        } else if (Type.isString(distUsr) && distUsr.indexOf('px') > -1) {
+            distUsr = distUsr.replace(/\s+px\s+/, '');
+            distUsr = Type.parseNumber(distUsr);
             if (horizontal) {
-                dist = Math.abs(bbox[1] - (new JXG.Coords(JXG.COORDS_BY_SCREEN, [dist, dist], this.board)).usrCoords[2]);
+                distUsr = Math.abs(bbox[1] - (new JXG.Coords(JXG.COORDS_BY_SCREEN, [distUsr, distUsr], this.board)).usrCoords[2]);
             } else if (vertical) {
-                dist = Math.abs(bbox[0] - (new JXG.Coords(JXG.COORDS_BY_SCREEN, [dist, dist], this.board)).usrCoords[1]);
+                distUsr = Math.abs(bbox[0] - (new JXG.Coords(JXG.COORDS_BY_SCREEN, [distUsr, distUsr], this.board)).usrCoords[1]);
             }
 
-        } else if (Type.isString(dist) && (dist.indexOf('%') > -1 || dist.indexOf('fr') > -1)) {
-            if (dist.indexOf('%') > -1) {
-                dist = dist.replace(/\s+%\s+/, '');
-                dist = parseFloat(dist) / 100;
-            } else if (dist.indexOf('fr') > -1) {
-                dist = dist.replace(/\s+fr\s+/, '');
-                dist = parseFloat(dist);
-            }
+        } else if (Type.isString(distUsr) && (distUsr.indexOf('%') > -1 || distUsr.indexOf('fr') > -1)) {
+            distUsr = Type.parseNumber(distUsr, 1);
             if (horizontal) {
-                dist = Math.abs(bbox[1] - bbox[3]) * dist;
+                distUsr = Math.abs(bbox[1] - bbox[3]) * distUsr;
             } else if (vertical) {
-                dist = Math.abs(bbox[0] - bbox[2]) * dist;
+                distUsr = Math.abs(bbox[0] - bbox[2]) * distUsr;
             }
 
         } else {
-            dist = 0;
+            distUsr = 0;
         }
 
-        locationPoint1Org = this.board.getLocationPoint(this._point1UsrCoordsOrg, dist);
+        locationPoint1Org = this.board.getLocationPoint(this._point1UsrCoordsOrg, distUsr);
 
         // Set position of axis
 
@@ -1634,13 +1626,13 @@ JXG.createAxis = function (board, parents, attributes) {
             if (horizontal) { // direction[1] === 0
                 if ((direction[0] > 0 && right) || (direction[0] < 0 && left)) {
                     setPositionPoints(
-                        [1, this.point1.coords.usrCoords[1], bbox[3] + dist],
-                        [1, this.point2.coords.usrCoords[1], bbox[3] + dist]
+                        [1, this.point1.coords.usrCoords[1], bbox[3] + distUsr],
+                        [1, this.point2.coords.usrCoords[1], bbox[3] + distUsr]
                     );
                 } else if ((direction[0] > 0 && left) || (direction[0] < 0 && right)) {
                     setPositionPoints(
-                        [1, this.point1.coords.usrCoords[1], bbox[1] - dist],
-                        [1, this.point2.coords.usrCoords[1], bbox[1] - dist]
+                        [1, this.point1.coords.usrCoords[1], bbox[1] - distUsr],
+                        [1, this.point2.coords.usrCoords[1], bbox[1] - distUsr]
                     );
 
                 } else {
@@ -1653,14 +1645,14 @@ JXG.createAxis = function (board, parents, attributes) {
             if (vertical) { // direction[0] === 0
                 if ((direction[1] > 0 && left) || (direction[1] < 0 && right)) {
                     setPositionPoints(
-                        [1, bbox[0] + dist, this.point1.coords.usrCoords[2]],
-                        [1, bbox[0] + dist, this.point2.coords.usrCoords[2]]
+                        [1, bbox[0] + distUsr, this.point1.coords.usrCoords[2]],
+                        [1, bbox[0] + distUsr, this.point2.coords.usrCoords[2]]
                     );
 
                 } else if ((direction[1] > 0 && right) || (direction[1] < 0 && left)) {
                     setPositionPoints(
-                        [1, bbox[2] - dist, this.point1.coords.usrCoords[2]],
-                        [1, bbox[2] - dist, this.point2.coords.usrCoords[2]]
+                        [1, bbox[2] - distUsr, this.point1.coords.usrCoords[2]],
+                        [1, bbox[2] - distUsr, this.point2.coords.usrCoords[2]]
                     );
 
                 } else {
@@ -1675,14 +1667,14 @@ JXG.createAxis = function (board, parents, attributes) {
             if (horizontal) { // direction[1] === 0
                 if (locationPoint1Org[1] < 0 && ((direction[0] > 0 && right) || (direction[0] < 0 && left))) {
                     setPositionPoints(
-                        [1, this.point1.coords.usrCoords[1], bbox[3] + dist],
-                        [1, this.point2.coords.usrCoords[1], bbox[3] + dist]
+                        [1, this.point1.coords.usrCoords[1], bbox[3] + distUsr],
+                        [1, this.point2.coords.usrCoords[1], bbox[3] + distUsr]
                     );
 
                 } else if (locationPoint1Org[1] > 0 && ((direction[0] > 0 && left) || (direction[0] < 0 && right))) {
                     setPositionPoints(
-                        [1, this.point1.coords.usrCoords[1], bbox[1] - dist],
-                        [1, this.point2.coords.usrCoords[1], bbox[1] - dist]
+                        [1, this.point1.coords.usrCoords[1], bbox[1] - distUsr],
+                        [1, this.point2.coords.usrCoords[1], bbox[1] - distUsr]
                     );
 
                 } else {
@@ -1695,14 +1687,14 @@ JXG.createAxis = function (board, parents, attributes) {
             if (vertical) { // direction[0] === 0
                 if (locationPoint1Org[0] < 0 && ((direction[1] > 0 && left) || (direction[1] < 0 && right))) {
                     setPositionPoints(
-                        [1, bbox[0] + dist, this.point1.coords.usrCoords[2]],
-                        [1, bbox[0] + dist, this.point2.coords.usrCoords[2]]
+                        [1, bbox[0] + distUsr, this.point1.coords.usrCoords[2]],
+                        [1, bbox[0] + distUsr, this.point2.coords.usrCoords[2]]
                     );
 
                 } else if (locationPoint1Org[0] > 0 && ((direction[1] > 0 && right) || (direction[1] < 0 && left))) {
                     setPositionPoints(
-                        [1, bbox[2] - dist, this.point1.coords.usrCoords[2]],
-                        [1, bbox[2] - dist, this.point2.coords.usrCoords[2]]
+                        [1, bbox[2] - distUsr, this.point1.coords.usrCoords[2]],
+                        [1, bbox[2] - distUsr, this.point2.coords.usrCoords[2]]
                     );
 
                 } else {
