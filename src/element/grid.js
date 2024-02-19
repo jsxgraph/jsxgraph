@@ -38,7 +38,7 @@ import Const from "../base/constants";
  * @description A grid is a set of vertical and horizontal lines or other geometrical objects (faces)
  * to support the user with element placement or to improve determination of position.
  * This method takes up to two facultative parent elements. These are used to set distance between
- * grid elements in case of attribute <tt>majorStep</tt>, <tt>minorX</tt> or <tt>minorY</tt> is set to 'auto'.
+ * grid elements in case of attribute <tt>majorStep</tt> or <tt>minorElements</tt> is set to 'auto'.
  * Then the major/minor grid element distance is set to the ticks distance of parent axes.
  * It is usually instantiated on the board's creation via the attribute <tt>grid</tt> set to true.
  * @constructor
@@ -80,8 +80,7 @@ import Const from "../base/constants";
  *     },
  *     drawZeroX: true,
  *     drawZeroY: true,
- *     minorX: 4,
- *     minorY: 4,
+ *     minorElements: 4,
  * });
  * </pre><div id="JXG02374171-b27c-4ccc-a14a-9f5bd1162623" class="jxgbox" style="width: 300px; height: 300px;"></div>
  * <script type="text/javascript">
@@ -100,8 +99,7 @@ import Const from "../base/constants";
  *             },
  *             drawZeroX: true,
  *             drawZeroY: true,
- *             minorX: 4,
- *             minorY: 4,
+ *             minorElements: 4,
  *         });
  *     })();
  * </script><pre>
@@ -127,8 +125,7 @@ import Const from "../base/constants";
  *         drawZeroX: true,
  *         drawZeroY: true,
  *     },
- *     minorX: 1,
- *     minorY: 1,
+ *     minorElements: 1,
  *     includeBoundaries: false,
  * });
  * </pre><div id="JXG00f3d068-093c-4c1d-a1ab-96c9ee73c173" class="jxgbox" style="width: 300px; height: 300px;"></div>
@@ -155,8 +152,7 @@ import Const from "../base/constants";
  *                 drawZeroX: true,
  *                 drawZeroY: true,
  *             },
- *             minorX: 1,
- *             minorY: 1,
+ *             minorElements: 1,
  *             includeBoundaries: false,
  *         });
  *     })();
@@ -192,8 +188,7 @@ import Const from "../base/constants";
  *         face: 'point',
  *         sizeX: 3
  *     },
- *     minorX: 'auto',
- *     minorY: 'auto',
+ *     minorElements: 'auto',
  *     includeBoundaries: false,
  * });
  * </pre><div id="JXG0568e385-248c-43a9-87ed-07aceb8cc3ab" class="jxgbox" style="width: 300px; height: 300px;"></div>
@@ -229,8 +224,7 @@ import Const from "../base/constants";
  *                 face: 'point',
  *                 sizeX: 3
  *             },
- *             minorX: 'auto',
- *             minorY: 'auto',
+ *             minorElements: 'auto',
  *             includeBoundaries: false,
  *         });
  *     }());
@@ -486,7 +480,6 @@ JXG.createGrid = function (board, parents, attributes) {
         this.dataY = [];
 
         // set global majorStep
-        // values can be 'auto', a number (also a number like '20') or a string ending with 'px'
         majorStep = Type.evaluate(this.visProp.majorstep);
         if (!Type.isArray(majorStep)) {
             majorStep = [majorStep, majorStep];
@@ -510,7 +503,7 @@ JXG.createGrid = function (board, parents, attributes) {
             }
         } else {
             // This allows the value to hate unit px, abs, % or fr.
-            majorStep[0] = Type.parseNumber(majorStep[0], Math.abs(bbox[1] - bbox[3]) , 1 / this.board.unitX);
+            majorStep[0] = Type.parseNumber(majorStep[0], Math.abs(bbox[1] - bbox[3]), 1 / this.board.unitX);
         }
         if (majorStep[1] === 'auto') {
             majorStep[1] = 1; // parentAxes[1] may not be defined
@@ -519,7 +512,7 @@ JXG.createGrid = function (board, parents, attributes) {
             }
         } else {
             // This allows the value to hate unit px, abs, % or fr.
-            majorStep[1] = Type.parseNumber(majorStep[1], Math.abs(bbox[0] - bbox[2]) , 1 / this.board.unitY);
+            majorStep[1] = Type.parseNumber(majorStep[1], Math.abs(bbox[0] - bbox[2]), 1 / this.board.unitY);
         }
 
         if (forceSquareGrid === 'min') {
@@ -619,14 +612,13 @@ JXG.createGrid = function (board, parents, attributes) {
             dataArr,
             finite,
 
-            minorStepX, minorStepY,
-            minorRadiusX, minorRadiusY,
+            minorStep = [],
+            minorRadius=[],
             XdisTo0, XdisFrom0, YdisTo0, YdisFrom0, // {Number} absolute distances of minor grid elements center to next major grid element center
             dis0To, dis1To, dis2To, dis3To,         // {Number} absolute distances of borders of the boundingBox to the next major grid element.
             dis0From, dis1From, dis2From, dis3From,
 
-            minorX = Type.evaluate(this.visProp.minorx),
-            minorY = Type.evaluate(this.visProp.minory),
+            minorElements = Type.evaluate(this.visProp.minorelements),
             minorSizeX = Type.evaluate(this.visProp.sizex),
             minorSizeY = Type.evaluate(this.visProp.sizey),
             minorFace = Type.evaluate(this.visProp.face),
@@ -642,6 +634,37 @@ JXG.createGrid = function (board, parents, attributes) {
 
         this.dataX = [];
         this.dataY = [];
+
+        // set minorStep
+        // minorElements can be 'auto' or a number (also a number like '20')
+        if (!Type.isArray(minorElements)) {
+            minorElements = [minorElements, minorElements];
+        }
+        if (minorElements.length < 2) {
+            minorElements = [minorElements[0], minorElements[0]];
+        }
+
+        if (Type.isNumber(minorElements[0], true)) {
+            minorElements[0] = parseFloat(minorElements[0]);
+
+        } else { // minorElements[0]  === 'auto'
+            minorElements[0] = 0; // parentAxes[0] may not be defined
+            if (Type.exists(parentAxes[0])) {
+                minorElements[0] = Type.evaluate(parentAxes[0].getAttribute('ticks').minorticks);
+            }
+        }
+        minorStep[0] = majorStep[0] / (minorElements[0] + 1);
+
+        if (Type.isNumber(minorElements[1], true)) {
+            minorElements[1] = parseFloat(minorElements[1]);
+
+        } else { // minorElements[1] === 'auto'
+            minorElements[1] = 0; // parentAxes[1] may not be defined
+            if (Type.exists(parentAxes[1])) {
+                minorElements[1] = Type.evaluate(parentAxes[1].getAttribute('ticks').minorticks);
+            }
+        }
+        minorStep[1] = majorStep[1] / (minorElements[1] + 1);
 
         // Set minorSizeX and minorSizeY here because otherwise strokeWidth for line/point not usable
         // and if only one size specified symmetric adaption of other size not possible
@@ -661,48 +684,24 @@ JXG.createGrid = function (board, parents, attributes) {
             }
         }
 
-        // set minorStepX and minorStepY
-        // minorX and minorY can be 'auto' or a number (also a number like '20')
-        if (Type.isNumber(minorX, true)) {
-            minorX = parseFloat(minorX);
-
-        } else { // minorX === 'auto'
-            minorX = 0; // parentAxes[0] may not be defined
-            if (Type.exists(parentAxes[0])) {
-                minorX = Type.evaluate(parentAxes[0].getAttribute('ticks').minorticks);
-            }
-        }
-        minorStepX = majorStep[0] / (minorX + 1);
-
-        if (Type.isNumber(minorY, true)) {
-            minorY = parseFloat(minorY);
-
-        } else { // minorY === 'auto'
-            minorY = 0; // parentAxes[1] may not be defined
-            if (Type.exists(parentAxes[1])) {
-                minorY = Type.evaluate(parentAxes[1].getAttribute('ticks').minorticks);
-            }
-        }
-        minorStepY = majorStep[1] / (minorY + 1);
-
-        minorRadiusX = Type.parseNumber(minorSizeX, minorStepX / 2, 1 / this.board.unitX);
-        minorRadiusY = Type.parseNumber(minorSizeY, minorStepY / 2, 1 / this.board.unitY);
+        minorRadius[0] = Type.parseNumber(minorSizeX, minorStep[0] / 2, 1 / this.board.unitX);
+        minorRadius[1] = Type.parseNumber(minorSizeY, minorStep[1] / 2, 1 / this.board.unitY);
 
         // calculate start position of curve
-        startX = Mat.roundToStep(bbox[0], minorStepX);
-        startY = Mat.roundToStep(bbox[1], minorStepY);
+        startX = Mat.roundToStep(bbox[0], minorStep[0]);
+        startY = Mat.roundToStep(bbox[1], minorStep[1]);
 
         // check if number of grid elements side by side is not too large
         finite = isFinite(startX) && isFinite(startY) &&
             isFinite(bbox[2]) && isFinite(bbox[3]) &&
-            Math.abs(bbox[2]) <= Math.abs(minorStepX * maxLines) &&
-            Math.abs(bbox[3]) < Math.abs(minorStepY * maxLines);
+            Math.abs(bbox[2]) <= Math.abs(minorStep[0] * maxLines) &&
+            Math.abs(bbox[3]) < Math.abs(minorStep[1] * maxLines);
 
         // POI finite = false means that no grid is drawn. Should we change this?
 
         // draw grid elements
-        for (y = startY; finite && y >= bbox[3]; y -= minorStepY) {
-            for (x = startX; finite && x <= bbox[2]; x += minorStepX) {
+        for (y = startY; finite && y >= bbox[3]; y -= minorStep[1]) {
+            for (x = startX; finite && x <= bbox[2]; x += minorStep[0]) {
 
                 /* explanation:
                      |<___XdisTo0___><___________XdisFrom0___________>
@@ -713,22 +712,22 @@ JXG.createGrid = function (board, parents, attributes) {
                 |    |    |        |____|            |____|       |         |
                 |____|____|           | |              .          |_________|
                      |    |           . \              .              .
-                     |  \             . minorRadiusX   .              .
+                     |  \             . minorRadius[0]   .              .
                      |   majorRadiusX .                .              .
                      |                .                .              .
                      |<----------->   .                .              .
                      |    \           .                .              .
-                     |     XdisTo0 - minorRadiusX <= majorRadiusX ? -> exclude
+                     |     XdisTo0 - minorRadius[0] <= majorRadiusX ? -> exclude
                      |                .                .              .
                      |                .  <--------------------------->
                      |                             \
-                     |                              XdisFrom0 - minorRadiusX <= majorRadiusX ? -> exclude
+                     |                              XdisFrom0 - minorRadius[0] <= majorRadiusX ? -> exclude
                      |
                -——---|————————-————---|----------------|---------------|-------->
                      |
                      |<______________________majorStep[0]_____________________>
                      |
-                     |<__minorStepX____><__minorStepX_____><__minorStepX_____>
+                     |<__minorStep[0]____><__minorStep[0]_____><__minorStep[0]_____>
                      |
                      |
                 */
@@ -743,35 +742,35 @@ JXG.createGrid = function (board, parents, attributes) {
                 if (majorFace === 'line') {
                     // for majorFace 'line' do not draw minor grid elements on lines
                     if (
-                        XdisTo0 - minorRadiusX - majorRadiusX < eps ||
-                        XdisFrom0 - minorRadiusX - majorRadiusX < eps ||
-                        YdisTo0 - minorRadiusY - majorRadiusY < eps ||
-                        YdisFrom0 - minorRadiusY - majorRadiusY < eps
+                        XdisTo0 - minorRadius[0] - majorRadiusX < eps ||
+                        XdisFrom0 - minorRadius[0] - majorRadiusX < eps ||
+                        YdisTo0 - minorRadius[1] - majorRadiusY < eps ||
+                        YdisFrom0 - minorRadius[1] - majorRadiusY < eps
                     ) {
                         continue;
                     }
 
                 } else {
                     if ((
-                        XdisTo0 - minorRadiusX - majorRadiusX < eps ||
-                        XdisFrom0 - minorRadiusX - majorRadiusX < eps
+                        XdisTo0 - minorRadius[0] - majorRadiusX < eps ||
+                        XdisFrom0 - minorRadius[0] - majorRadiusX < eps
                     ) && (
-                        YdisTo0 - minorRadiusY - majorRadiusY < eps ||
-                        YdisFrom0 - minorRadiusY - majorRadiusY < eps
+                        YdisTo0 - minorRadius[1] - majorRadiusY < eps ||
+                        YdisFrom0 - minorRadius[1] - majorRadiusY < eps
                     )) {
                         // if major grid elements (on 0 or axes) are not existing, minor grid elements have to exist. Otherwise:
                         if ((
                             majorDrawZero0 ||
-                            majorRadiusY - Math.abs(y) + minorRadiusY < eps ||
-                            majorRadiusX - Math.abs(x) + minorRadiusX < eps
+                            majorRadiusY - Math.abs(y) + minorRadius[1] < eps ||
+                            majorRadiusX - Math.abs(x) + minorRadius[0] < eps
                         ) && (
                             majorDrawZeroX ||
-                            majorRadiusY - Math.abs(y) + minorRadiusY < eps ||
-                            majorRadiusX + Math.abs(x) - minorRadiusX < eps
+                            majorRadiusY - Math.abs(y) + minorRadius[1] < eps ||
+                            majorRadiusX + Math.abs(x) - minorRadius[0] < eps
                         ) && (
                             majorDrawZeroY ||
-                            majorRadiusX - Math.abs(x) + minorRadiusX < eps ||
-                            majorRadiusY + Math.abs(y) - minorRadiusY < eps
+                            majorRadiusX - Math.abs(x) + minorRadius[0] < eps ||
+                            majorRadiusY + Math.abs(y) - minorRadius[1] < eps
                         )) {
                             continue;
                         }
@@ -829,26 +828,26 @@ JXG.createGrid = function (board, parents, attributes) {
 
                 if (
                     !includeBoundaries && (
-                        (x - minorRadiusX - bbox[0] - majorRadiusX + dis0From < eps && dis0From - majorRadiusX < eps) ||
-                        (x - minorRadiusX - bbox[0] - majorRadiusX - dis0To < eps && dis0To - majorRadiusX < eps) ||
-                        (-x - minorRadiusX + bbox[2] - majorRadiusX + dis2From < eps && dis2From - majorRadiusX < eps) ||
-                        (-x - minorRadiusX + bbox[2] - majorRadiusX - dis2To < eps && dis2To - majorRadiusX < eps) ||
+                        (x - minorRadius[0] - bbox[0] - majorRadiusX + dis0From < eps && dis0From - majorRadiusX < eps) ||
+                        (x - minorRadius[0] - bbox[0] - majorRadiusX - dis0To < eps && dis0To - majorRadiusX < eps) ||
+                        (-x - minorRadius[0] + bbox[2] - majorRadiusX + dis2From < eps && dis2From - majorRadiusX < eps) ||
+                        (-x - minorRadius[0] + bbox[2] - majorRadiusX - dis2To < eps && dis2To - majorRadiusX < eps) ||
 
-                        (-y - minorRadiusY + bbox[1] - majorRadiusY + dis1From < eps && dis1From - majorRadiusY < eps) ||
-                        (-y - minorRadiusY + bbox[1] - majorRadiusY - dis1To < eps && dis1To - majorRadiusY < eps) ||
-                        (y - minorRadiusY - bbox[3] - majorRadiusY + dis3From < eps && dis3From - majorRadiusY < eps) ||
-                        (y - minorRadiusY - bbox[3] - majorRadiusY - dis3To < eps && dis3To - majorRadiusY < eps) ||
+                        (-y - minorRadius[1] + bbox[1] - majorRadiusY + dis1From < eps && dis1From - majorRadiusY < eps) ||
+                        (-y - minorRadius[1] + bbox[1] - majorRadiusY - dis1To < eps && dis1To - majorRadiusY < eps) ||
+                        (y - minorRadius[1] - bbox[3] - majorRadiusY + dis3From < eps && dis3From - majorRadiusY < eps) ||
+                        (y - minorRadius[1] - bbox[3] - majorRadiusY - dis3To < eps && dis3To - majorRadiusY < eps) ||
 
-                        (-y - minorRadiusY + bbox[1] < eps) ||
-                        (x - minorRadiusX - bbox[0] < eps) ||
-                        (y - minorRadiusY - bbox[3] < eps) ||
-                        (-x - minorRadiusX + bbox[2] < eps)
+                        (-y - minorRadius[1] + bbox[1] < eps) ||
+                        (x - minorRadius[0] - bbox[0] < eps) ||
+                        (y - minorRadius[1] - bbox[3] < eps) ||
+                        (-x - minorRadius[0] + bbox[2] < eps)
                     )
                 ) {
                     continue;
                 }
 
-                dataArr = createDataArrayForFace(minorFace, minorGrid, x, y, minorRadiusX, minorRadiusY, bbox);
+                dataArr = createDataArrayForFace(minorFace, minorGrid, x, y, minorRadius[0], minorRadius[1], bbox);
                 this.dataX = this.dataX.concat(dataArr[0]);
                 this.dataY = this.dataY.concat(dataArr[1]);
             }

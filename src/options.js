@@ -4547,24 +4547,20 @@ JXG.Options = {
         majorStep: 'auto',
 
         /**
-         * Number of elements in minor grid between elements of the major grid in x-direction.
-         * If set to 'auto', the number minor elements is equal to the number of minorTicks of the x-axis.
+         * Number of elements in minor grid between elements of the major grid. There are three possibilities:
+         * <ul>
+         *     <li>If set to 'auto', the number minor elements is equal to the number of minorTicks of the corresponding axis.
+         *     <li>Numbers or strings which are numbers (e.g. '10') are interpreted as quantity.
+         *     <li>Strings with the unit 'abs' are interpreted as quantity, too.
+         * </ul>
+         * Instead of one value you can provide two values as an array <tt>[x, y]</tt> here.
+         * These are used as number in x- and y-direction.
          *
-         * @type {Number|String}
-         * @name Grid#minorX
+         * @type {Number|String|Array}
+         * @name Grid#minorStep
          * @default 0
          */
-        minorX: 0,
-
-        /**
-         * Number of elements in minor grid between elements of the major grid in y-direction.
-         * If set to 'auto', the number minor elements is equal to the number of minorTicks of the y-axis.
-         *
-         * @type {Number|String}
-         * @name Grid#minorY
-         * @default 0
-         */
-        minorY: 0,
+        minorElements: 0,
 
         /**
          * To print a quadratic grid with same distance of major grid elements in x- and y-direction.
@@ -4841,14 +4837,14 @@ JXG.Options = {
          * // theme 2
          * const board = JXG.JSXGraph.initBoard('jxgbox', {
          *     boundingbox: [-4, 4, 4, -4], axis: false,
-         *     grid: { theme: 2, minorX: 4, minorY: 4, color: 'grey' },
+         *     grid: { theme: 2, minorElements: 4, color: 'grey' },
          * });
          * </pre> <div id="JXG4e11e6e3-472a-48e0-b7d0-f80d397c769b" class="jxgbox" style="width: 300px; height: 300px;"></div>
          * <script type="text/javascript">
          *     (function() {
          *         var board = JXG.JSXGraph.initBoard('JXG4e11e6e3-472a-48e0-b7d0-f80d397c769b',
          *             {boundingbox: [-4, 4, 4, -4], axis: false, showcopyright: false, shownavigation: false,
-         *                 grid: { theme: 2, minorX: 4, minorY: 4, color: 'grey' },
+         *                 grid: { theme: 2, minorElements: 4, color: 'grey' },
          *             })
          *     })();
          * </script> <pre>
@@ -4857,14 +4853,14 @@ JXG.Options = {
          * // theme 3
          * const board = JXG.JSXGraph.initBoard('jxgbox', {
          *     boundingbox: [-4, 4, 4, -4], axis: false,
-         *     grid: { theme: 3, minorX: 4, minorY: 4, strokeColor: 'grey' },
+         *     grid: { theme: 3, minorElements: 4, strokeColor: 'grey' },
          * });
          * </pre> <div id="JXG28bee3da-a7ef-4590-9a18-38d1b99d09ce" class="jxgbox" style="width: 300px; height: 300px;"></div>
          * <script type="text/javascript">
          *     (function() {
          *         var board = JXG.JSXGraph.initBoard('JXG28bee3da-a7ef-4590-9a18-38d1b99d09ce',
          *             {boundingbox: [-4, 4, 4, -4], axis: false, showcopyright: false, shownavigation: false,
-         *                 grid: { theme: 3, minorX: 4, minorY: 4, strokeColor: 'grey' },
+         *                 grid: { theme: 3, minorElements: 4, strokeColor: 'grey' },
          *         });
          *     })();
          * </script> <pre>
@@ -4873,14 +4869,14 @@ JXG.Options = {
          * // theme 4
          * const board = JXG.JSXGraph.initBoard('jxgbox', {
          *     boundingbox: [-4, 4, 4, -4], axis: false,
-         *     grid: { theme: 4, minorX: 4, minorY: 4, color: 'grey' },
+         *     grid: { theme: 4, minorElements: 4, color: 'grey' },
          * });
          * </pre> <div id="JXG334814a3-03a7-4231-a5a7-a42d3b8dc2de" class="jxgbox" style="width: 300px; height: 300px;"></div>
          * <script type="text/javascript">
          *     (function() {
          *         var board = JXG.JSXGraph.initBoard('JXG334814a3-03a7-4231-a5a7-a42d3b8dc2de',
          *             {boundingbox: [-4, 4, 4, -4], axis: false, showcopyright: false, shownavigation: false,
-         *                 grid: { theme: 4, minorX: 4, minorY: 4, color: 'grey' }
+         *                 grid: { theme: 4, minorElements: 4, color: 'grey' }
          *         });
          *     })();
          * </script> <pre>
@@ -4889,14 +4885,14 @@ JXG.Options = {
          * // theme 5
          * const board = JXG.JSXGraph.initBoard('jxgbox', {
          *     boundingbox: [-4, 4, 4, -4], axis: false,
-         *     grid: { theme: 5, minorX: 4, minorY: 4, color: 'grey' },
+         *     grid: { theme: 5, minorElements: 4, color: 'grey' },
          * });
          * </pre> <div id="JXG9e2bb29c-d998-428c-9432-4a7bf6cd9222" class="jxgbox" style="width: 300px; height: 300px;"></div>
          * <script type="text/javascript">
          *     (function() {
          *         var board = JXG.JSXGraph.initBoard('JXG9e2bb29c-d998-428c-9432-4a7bf6cd9222',
          *             {boundingbox: [-4, 4, 4, -4], axis: false, showcopyright: false, shownavigation: false,
-         *                 grid: { theme: 5, minorX: 4, minorY: 4, color: 'grey' },
+         *                 grid: { theme: 5, minorElements: 4, color: 'grey' },
          *             });
          *     })();
          * </script> <pre>
@@ -4905,14 +4901,14 @@ JXG.Options = {
          * // theme 6
          * const board = JXG.JSXGraph.initBoard('jxgbox', {
          *     boundingbox: [-4, 4, 4, -4], axis: false,
-         *     grid: { theme: 6, minorX: 4, minorY: 4, color: 'grey' },
+         *     grid: { theme: 6, minorElements: 4, color: 'grey' },
          * });
          * </pre> <div id="JXG6a967d83-4179-4827-9e97-63fbf1e872c8" class="jxgbox" style="width: 300px; height: 300px;"></div>
          * <script type="text/javascript"
          *     (function() {
          *         var board = JXG.JSXGraph.initBoard('JXG6a967d83-4179-4827-9e97-63fbf1e872c8',
          *             {boundingbox: [-4, 4, 4, -4], axis: false, showcopyright: false, shownavigation: false,
-         *                 grid: { theme: 6, minorX: 4, minorY: 4, color: 'grey' },
+         *                 grid: { theme: 6, minorElements: 4, color: 'grey' },
          *         });
          *     })();
          * </script> <pre>
@@ -4921,14 +4917,14 @@ JXG.Options = {
          * // theme 7
          * const board = JXG.JSXGraph.initBoard('jxgbox', {
          *     boundingbox: [-4, 4, 4, -4], axis: false,
-         *     grid: { theme: 7, minorX: 4, minorY: 4, color: 'grey' },
+         *     grid: { theme: 7, minorElements: 4, color: 'grey' },
          * });
          * </pre> <div id="JXG7a787274-7f7e-4e10-b59c-f99f1aff35e7" class="jxgbox" style="width: 300px; height: 300px;"></div>
          * <script type="text/javascript">
          *     (function() {
          *         var board = JXG.JSXGraph.initBoard('JXG7a787274-7f7e-4e10-b59c-f99f1aff35e7',
          *             {boundingbox: [-4, 4, 4, -4], axis: false, showcopyright: false, shownavigation: false,
-         *                 grid: { theme: 7, minorX: 4, minorY: 4, color: 'grey' },
+         *                 grid: { theme: 7, minorElements: 4, color: 'grey' },
          *         });
          *     })();
          * </script> <pre>
@@ -4947,8 +4943,7 @@ JXG.Options = {
                     sizeX: 3,
                     strokeColor: '#101010'
                 },
-                minorX: 'auto',
-                minorY: 'auto'
+                minorElements: 'auto'
             },
 
             {   // Theme 3: grid of circles with subtle points in between
@@ -4959,16 +4954,14 @@ JXG.Options = {
                 minor: {
                     sizeX: 3
                 },
-                minorX: 'auto',
-                minorY: 'auto'
+                minorElements: 'auto'
             },
 
             {   // Theme 4: lines and thinner lines in between
                 minor: {
                     face: 'line'
                 },
-                minorX: 'auto',
-                minorY: 'auto'
+                minorElements: 'auto'
             },
 
             {   // Theme 5: lines with more subtle grid of '+'s plotted in between
@@ -4976,8 +4969,7 @@ JXG.Options = {
                     face: '+',
                     sizeX: 0.95
                 },
-                minorX: 'auto',
-                minorY: 'auto'
+                minorElements: 'auto'
             },
 
             {   // Theme 6: grid of '+'s and more subtle points in between
@@ -4989,8 +4981,7 @@ JXG.Options = {
                 minor: {
                     sizeX: 3
                 },
-                minorX: 'auto',
-                minorY: 'auto'
+                minorElements: 'auto'
             },
 
             { // Theme 7: lines and subtle points in between, also plotted on axes
@@ -5004,8 +4995,7 @@ JXG.Options = {
                     drawZeroX: true,
                     drawZeroY: true
                 },
-                minorX: 4,
-                minorY: 4
+                minorElements: 4
             }
         ]
 
