@@ -1561,20 +1561,14 @@ JXG.createAxis = function (board, parents, attributes) {
     axis._point2UsrCoordsOrg = axis.point2.coords.usrCoords.slice();
 
     axis.update = function () {
-        var that = this,
-            bbox,
+        var bbox,
             position,
             direction, horizontal, vertical,
             ticksAutoPos, ticksAutoPosThres, distP1, distP2,
             anchor, left, right,
             distUsr,
-            locationPoint1Org,
-            setPositionPoints;
-
-        setPositionPoints = function (coordsPoint1, coordsPoint2) {
-            that.point1.setPosition(JXG.COORDS_BY_USER, coordsPoint1);
-            that.point2.setPosition(JXG.COORDS_BY_USER, coordsPoint2);
-        };
+            newPosP1, newPosP2,
+            locationOrg;
 
         bbox = this.board.getBoundingBox();
         position = Type.evaluate(this.visProp.position);
@@ -1608,9 +1602,12 @@ JXG.createAxis = function (board, parents, attributes) {
             );
         }
 
-        locationPoint1Org = this.board.getLocationPoint(this._point1UsrCoordsOrg, distUsr);
+        locationOrg = this.board.getLocationPoint(this._point1UsrCoordsOrg, distUsr);
 
         // Set position of axis
+
+        newPosP1 = this.point1.coords.usrCoords.slice();
+        newPosP2 = this.point2.coords.usrCoords.slice();
 
         if (position === 'static' || (!vertical && !horizontal)) {
             // Do nothing
@@ -1618,86 +1615,65 @@ JXG.createAxis = function (board, parents, attributes) {
         } else if (position === 'fixed') {
             if (horizontal) { // direction[1] === 0
                 if ((direction[0] > 0 && right) || (direction[0] < 0 && left)) {
-                    setPositionPoints(
-                        [1, this.point1.coords.usrCoords[1], bbox[3] + distUsr],
-                        [1, this.point2.coords.usrCoords[1], bbox[3] + distUsr]
-                    );
+                    newPosP1[2] = bbox[3] + distUsr;
+                    newPosP2[2] = bbox[3] + distUsr;
                 } else if ((direction[0] > 0 && left) || (direction[0] < 0 && right)) {
-                    setPositionPoints(
-                        [1, this.point1.coords.usrCoords[1], bbox[1] - distUsr],
-                        [1, this.point2.coords.usrCoords[1], bbox[1] - distUsr]
-                    );
+                    newPosP1[2] = bbox[1] - distUsr;
+                    newPosP2[2] = bbox[1] - distUsr;
 
                 } else {
-                    setPositionPoints(
-                        this._point1UsrCoordsOrg,
-                        this._point2UsrCoordsOrg
-                    );
+                    newPosP1 = this._point1UsrCoordsOrg.slice();
+                    newPosP2 = this._point2UsrCoordsOrg.slice();
                 }
             }
             if (vertical) { // direction[0] === 0
                 if ((direction[1] > 0 && left) || (direction[1] < 0 && right)) {
-                    setPositionPoints(
-                        [1, bbox[0] + distUsr, this.point1.coords.usrCoords[2]],
-                        [1, bbox[0] + distUsr, this.point2.coords.usrCoords[2]]
-                    );
+                    newPosP1[1] = bbox[0] + distUsr;
+                    newPosP2[1] = bbox[0] + distUsr;
 
                 } else if ((direction[1] > 0 && right) || (direction[1] < 0 && left)) {
-                    setPositionPoints(
-                        [1, bbox[2] - distUsr, this.point1.coords.usrCoords[2]],
-                        [1, bbox[2] - distUsr, this.point2.coords.usrCoords[2]]
-                    );
+                    newPosP1[1] = bbox[2] - distUsr;
+                    newPosP2[1] = bbox[2] - distUsr;
 
                 } else {
-                    setPositionPoints(
-                        this._point1UsrCoordsOrg,
-                        this._point2UsrCoordsOrg
-                    );
+                    newPosP1 = this._point1UsrCoordsOrg.slice();
+                    newPosP2 = this._point2UsrCoordsOrg.slice();
                 }
             }
 
         } else if (position === 'sticky') {
             if (horizontal) { // direction[1] === 0
-                if (locationPoint1Org[1] < 0 && ((direction[0] > 0 && right) || (direction[0] < 0 && left))) {
-                    setPositionPoints(
-                        [1, this.point1.coords.usrCoords[1], bbox[3] + distUsr],
-                        [1, this.point2.coords.usrCoords[1], bbox[3] + distUsr]
-                    );
+                if (locationOrg[1] < 0 && ((direction[0] > 0 && right) || (direction[0] < 0 && left))) {
+                    newPosP1[2] = bbox[3] + distUsr;
+                    newPosP2[2] = bbox[3] + distUsr;
 
-                } else if (locationPoint1Org[1] > 0 && ((direction[0] > 0 && left) || (direction[0] < 0 && right))) {
-                    setPositionPoints(
-                        [1, this.point1.coords.usrCoords[1], bbox[1] - distUsr],
-                        [1, this.point2.coords.usrCoords[1], bbox[1] - distUsr]
-                    );
+                } else if (locationOrg[1] > 0 && ((direction[0] > 0 && left) || (direction[0] < 0 && right))) {
+                    newPosP1[2] = bbox[1] - distUsr;
+                    newPosP2[2] = bbox[1] - distUsr;
 
                 } else {
-                    setPositionPoints(
-                        this._point1UsrCoordsOrg,
-                        this._point2UsrCoordsOrg
-                    );
+                    newPosP1 = this._point1UsrCoordsOrg.slice();
+                    newPosP2 = this._point2UsrCoordsOrg.slice();
                 }
             }
             if (vertical) { // direction[0] === 0
-                if (locationPoint1Org[0] < 0 && ((direction[1] > 0 && left) || (direction[1] < 0 && right))) {
-                    setPositionPoints(
-                        [1, bbox[0] + distUsr, this.point1.coords.usrCoords[2]],
-                        [1, bbox[0] + distUsr, this.point2.coords.usrCoords[2]]
-                    );
+                if (locationOrg[0] < 0 && ((direction[1] > 0 && left) || (direction[1] < 0 && right))) {
+                    newPosP1[1] = bbox[0] + distUsr;
+                    newPosP2[1] = bbox[0] + distUsr;
 
-                } else if (locationPoint1Org[0] > 0 && ((direction[1] > 0 && right) || (direction[1] < 0 && left))) {
-                    setPositionPoints(
-                        [1, bbox[2] - distUsr, this.point1.coords.usrCoords[2]],
-                        [1, bbox[2] - distUsr, this.point2.coords.usrCoords[2]]
-                    );
+                } else if (locationOrg[0] > 0 && ((direction[1] > 0 && right) || (direction[1] < 0 && left))) {
+                    newPosP1[1] = bbox[2] - distUsr;
+                    newPosP2[1] = bbox[2] - distUsr;
 
                 } else {
-                    setPositionPoints(
-                        this._point1UsrCoordsOrg,
-                        this._point2UsrCoordsOrg
-                    );
+                    newPosP1 = this._point1UsrCoordsOrg.slice();
+                    newPosP2 = this._point2UsrCoordsOrg.slice();
                 }
             }
         }
+
+        this.point1.setPositionDirectly(JXG.COORDS_BY_USER, newPosP1);
+        this.point2.setPositionDirectly(JXG.COORDS_BY_USER, newPosP2);
 
         // Set position of tick labels
 
