@@ -3673,29 +3673,29 @@ JXG.Options = {
          * Possible values are:
          * <ul>
          *     <li><tt>'static'</tt>: Standard behavior of the axes as know in JSXGraph.
-         *     <li><tt>'fixed'</tt>: The axis is placed in a fixed position. Depending on the attribute <tt>position</tt>, it is positioned to the right or left of the edge of the board as seen from the axis with a distance defined in <tt>distanceBoarder</tt>. The axis will stay at that given position, when the user navigates through the board.
-         *     <li><tt>'sticky'</tt>: This mixes the two settings <tt>static</tt> and <tt>fixed</tt>. When the user navigates in the board, the axis remains in the visible area (taking into account <tt>position</tt> and <tt>distToEdge</tt>). If the axis itself is in the visible area, the axis can be moved by navigation.
+         *     <li><tt>'fixed'</tt>: The axis is placed in a fixed position. Depending on the attribute <tt>anchor</tt>, it is positioned to the right or left of the edge of the board as seen from the axis with a distance defined in <tt>distanceBoarder</tt>. The axis will stay at the given position, when the user navigates through the board.
+         *     <li><tt>'sticky'</tt>: This mixes the two settings <tt>static</tt> and <tt>fixed</tt>. When the user navigates in the board, the axis remains in the visible area (taking into account <tt>anchor</tt> and <tt>anchorDist</tt>). If the axis itself is in the visible area, the axis can be moved by navigation.
          * </ul>
          *
          * @type {String}
-         * @name Axis#axisType
+         * @name Axis#position
          * @default 'static'
-         * @see Axis#position
-         * @see Axis#distToEdge
+         * @see Axis#anchor
+         * @see Axis#anchorDist
          *
          * @example // Use navigation to see effect.
          *  var axis1, axis2, circle;
          *
          *  board.create('axis', [[0,0],[1,0]],{
-         *      axisType: 'fixed',
-         *      position: 'right',
-         *      distToEdge: '0.1fr'
+         *      position: 'fixed',
+         *      anchor: 'right',
+         *      anchorDist: '0.1fr'
          *  });
          *
          *  board.create('axis', [[0,0],[0,1]], {
-         *      axisType: 'fixed',
-         *      position: 'left',
-         *      distToEdge: '1abs'
+         *      position: 'fixed',
+         *      anchor: 'left',
+         *      anchorDist: '1abs'
          *  });
          *
          * </pre><div id="JXG6dff2f81-65ce-46a3-bea0-8ce25cc1cb4a" class="jxgbox" style="width: 300px; height: 300px;"></div>
@@ -3705,15 +3705,15 @@ JXG.Options = {
          *             {boundingbox: [-1, 10, 10,-1], axis: false, showcopyright: false, shownavigation: true});
          *
          *      board.create('axis', [[0,0],[1,0]],{
-         *          axisType: 'fixed',
-         *          position: 'right',
-         *          distToEdge: '0.1fr'
+         *          position: 'fixed',
+         *          anchor: 'right',
+         *          anchorDist: '0.1fr'
          *      });
          *
          *      board.create('axis', [[0,0],[0,1]], {
-         *          axisType: 'fixed',
-         *          position: 'left',
-         *          distToEdge: '1abs'
+         *          position: 'fixed',
+         *          anchor: 'left',
+         *          anchorDist: '1abs'
          *      });
          *
          *      board.create('circle', [[5,5], 2.5]);
@@ -3723,15 +3723,15 @@ JXG.Options = {
          *
          * @example // Use navigation to see effect.
          *      board.create('axis', [[0,0],[1,0]],{
-         *          axisType: 'sticky',
-         *          position: 'right',
-         *          distToEdge: '0.2fr'
+         *          position: 'sticky',
+         *          anchor: 'right',
+         *          anchorDist: '0.2fr'
          *      });
          *
          *      board.create('axis', [[0,0],[0,1]], {
-         *          axisType: 'sticky',
-         *          position: 'right left',
-         *          distToEdge: '75px'
+         *          position: 'sticky',
+         *          anchor: 'right left',
+         *          anchorDist: '75px'
          *      });
          *
          * </pre><div id="JXG42a90935-80aa-4a6b-8adf-279deef84485" class="jxgbox" style="width: 300px; height: 300px;"></div>
@@ -3740,15 +3740,15 @@ JXG.Options = {
          *          var board = JXG.JSXGraph.initBoard('JXG42a90935-80aa-4a6b-8adf-279deef84485',
          *             {boundingbox: [-8, 8, 8,-8], axis: false, showcopyright: false, shownavigation: true});
          *          board.create('axis', [[0,0],[1,0]],{
-         *              axisType: 'sticky',
-         *              position: 'right',
-         *              distToEdge: '0.2fr'
+         *              position: 'sticky',
+         *              anchor: 'right',
+         *              anchorDist: '0.2fr'
          *          });
          *
          *          board.create('axis', [[0,0],[0,1]], {
-         *              axisType: 'sticky',
-         *              position: 'right left',
-         *              distToEdge: '75px'
+         *              position: 'sticky',
+         *              anchor: 'right left',
+         *              anchorDist: '75px'
          *          });
          *
          *          board.create('functiongraph', [function(x){ return 1/(x-5) + 2;}]);
@@ -3757,21 +3757,21 @@ JXG.Options = {
          * </script><pre>
          *
          */
-        axisType: 'static',
+        position: 'static',
 
         /**
-         * Position is used in cases: <tt>axisType=='sticky'</tt> or <tt>axisType=='fixed'</tt>.
+         * Position is used in cases: <tt>position=='sticky'</tt> or <tt>position=='fixed'</tt>.
          * Possible values are <tt>'right'</tt>, <tt>'left'</tt>, <tt>'right left'</tt>. Left and right indicate the side as seen from the axis.
-         * It is used in combination with the attribute axisType to decide on which side of the board the axis should stick or be fixed.
+         * It is used in combination with the attribute position to decide on which side of the board the axis should stick or be fixed.
          *
          * @type {String}
-         * @name Axis#position
+         * @name Axis#anchor
          * @default ''
          * @example
          *  board.create('axis', [[0,0],[0,1]],{
-         *      axisType: 'fixed',
-         *      position: 'left',
-         *      distToEdge: '2abs',
+         *      position: 'fixed',
+         *      anchor: 'left',
+         *      anchorDist: '2abs',
          *      strokeColor : 'green',
          *      ticks: {
          *          majorHeight: 7,
@@ -3780,9 +3780,9 @@ JXG.Options = {
          *  });
          *
          *  board.create('axis', [[0,0],[0,1]], {
-         *      axisType: 'fixed',
-         *      position: 'right',
-         *      distToEdge: '2abs',
+         *      position: 'fixed',
+         *      anchor: 'right',
+         *      anchorDist: '2abs',
          *      strokeColor : 'blue',
          *      ticks: {
          *          majorHeight: 7,
@@ -3791,9 +3791,9 @@ JXG.Options = {
          *  });
          *
          *  board.create('axis', [[0,0],[0,-1]], {
-         *      axisType: 'fixed',
-         *      position: 'left',
-         *      distToEdge: '4abs',
+         *      position: 'fixed',
+         *      anchor: 'left',
+         *      anchorDist: '4abs',
          *      strokeColor : 'red',
          *      ticks:{
          *          majorHeight: 7,
@@ -3808,9 +3808,9 @@ JXG.Options = {
          *             {boundingbox: [-8, 8, 8,-8], axis: false, showcopyright: false, shownavigation: true});
          *
          *      board.create('axis', [[0,0],[0,1]],{
-         *          axisType: 'fixed',
-         *          position: 'left',
-         *          distToEdge: '2abs',
+         *          position: 'fixed',
+         *          anchor: 'left',
+         *          anchorDist: '2abs',
          *          strokeColor : 'green',
          *          ticks: {
          *              majorHeight: 7,
@@ -3819,9 +3819,9 @@ JXG.Options = {
          *      });
          *
          *      board.create('axis', [[0,0],[0,1]], {
-         *          axisType: 'fixed',
-         *          position: 'right',
-         *          distToEdge: '2abs',
+         *          position: 'fixed',
+         *          anchor: 'right',
+         *          anchorDist: '2abs',
          *          strokeColor : 'blue',
          *          ticks: {
          *              majorHeight: 7,
@@ -3830,9 +3830,9 @@ JXG.Options = {
          *      });
          *
          *      board.create('axis', [[0,0],[0,-1]], {
-         *          axisType: 'fixed',
-         *          position: 'left',
-         *          distToEdge: '4abs',
+         *          position: 'fixed',
+         *          anchor: 'left',
+         *          anchorDist: '4abs',
          *          strokeColor : 'red',
          *          ticks:{
          *              majorHeight: 7,
@@ -3844,11 +3844,11 @@ JXG.Options = {
          *
          * </script><pre>
          */
-        position: '',
+        anchor: '',
 
         /**
          * Used to define at which distance to the edge of the board the axis should stick or be fixed.
-         * This only has an effect if <tt>axisType=='sticky'</tt> or <tt>axisType=='fixed'</tt>.
+         * This only has an effect if <tt>position=='sticky'</tt> or <tt>position=='fixed'</tt>.
          * There are the following possibilities:
          * <ul>
          *     <li>Numbers or strings which are numbers (e.g. '10') are interpreted as usrCoords.
@@ -3858,10 +3858,10 @@ JXG.Options = {
          * </ul>
          *
          * @type {Number|String}
-         * @name Axis#distToEdge
+         * @name Axis#anchorDist
          * @default '10%'
          */
-        distToEdge: '10%',
+        anchorDist: '10%',
 
         /**
          * If set to true, the tick labels of the axis are automatically positioned in the narrower area between the axis and the side of the board.
@@ -3869,22 +3869,22 @@ JXG.Options = {
          * This option overrides <tt>offset</tt>, <tt>anchorX</tt> and <tt>anchorY</tt> of axis tick labels.
          *
          * @type {Boolean}
-         * @name Axis#autoLabels
+         * @name Axis#ticksAutoPos
          * @default false
          * @example
          * // Navigate to see an effect.
          * board.create('axis', [[0, 0], [1, 0]], {
-         *     axisType: 'sticky',
-         *     position: 'left right',
-         *     distToEdge: '0.1',
-         *     autoLabels: true,
+         *     position: 'sticky',
+         *     anchor: 'left right',
+         *     anchorDist: '0.1',
+         *     ticksAutoPos: true,
          * });
          *
          * board.create('axis', [[0, 0], [0, 1]], {
-         *     axisType: 'sticky',
-         *     position: 'left right',
-         *     distToEdge: '0.1',
-         *     autoLabels: true,
+         *     position: 'sticky',
+         *     anchor: 'left right',
+         *     anchorDist: '0.1',
+         *     ticksAutoPos: true,
          * });
          *
          * </pre><div id="JXG557c9b5d-e1bd-4d3b-8362-ff7a863255f3" class="jxgbox" style="width: 300px; height: 300px;"></div>
@@ -3894,24 +3894,24 @@ JXG.Options = {
          *             {boundingbox: [-8, 8, 8,-8], axis: false, showcopyright: false, shownavigation: false};
          *
          *     board.create('axis', [[0, 0], [1, 0]], {
-         *         axisType: 'sticky',
-         *         position: 'left right',
-         *         distToEdge: '0.1',
-         *         autoLabels: true,
+         *         position: 'sticky',
+         *         anchor: 'left right',
+         *         anchorDist: '0.1',
+         *         ticksAutoPos: true,
          *     });
          *
          *     board.create('axis', [[0, 0], [0, 1]], {
-         *         axisType: 'sticky',
-         *         position: 'left right',
-         *         distToEdge: '0.1',
-         *         autoLabels: true,
+         *         position: 'sticky',
+         *         anchor: 'left right',
+         *         anchorDist: '0.1',
+         *         ticksAutoPos: true,
          *     });
          *
          *     })();
          *
          * </script><pre>
          */
-        autoLabels: false,
+        ticksAutoPos: false,
 
         /**
          * Show / hide ticks.
