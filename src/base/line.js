@@ -591,7 +591,8 @@ JXG.extend(
          * @returns {Boolean}
          */
         isVertical: function () {
-            return this.Direction()[0] === 0;
+            var dir = this.Direction();
+            return dir[0] === 0 && dir[1] !== 0;
         },
 
         /**
@@ -600,7 +601,8 @@ JXG.extend(
          * @returns {Boolean}
          */
         isHorizontal: function () {
-            return this.Direction()[1] === 0;
+            var dir = this.Direction();
+            return dir[1] === 0 && dir[0] !== 0;
         },
 
         /**
@@ -1563,10 +1565,9 @@ JXG.createAxis = function (board, parents, attributes) {
             bbox,
             axisType,
             direction, horizontal, vertical,
-            autoLabels,
+            autoLabels, autoLabelsThres = 20, distP1, distP2,
             position, left, right,
             dist,
-            originScr,
             locationPoint1Org,
             setPositionPoints;
 
@@ -1622,7 +1623,6 @@ JXG.createAxis = function (board, parents, attributes) {
             dist = 0;
         }
 
-        originScr = this.board.origin.scrCoords;
         locationPoint1Org = this.board.getLocationPoint(this._point1UsrCoordsOrg, dist);
 
         // Do positioning
@@ -1675,25 +1675,6 @@ JXG.createAxis = function (board, parents, attributes) {
                 }
             }
 
-            // Set position labels
-
-            if (autoLabels) {
-                if ((direction[0] > 0 && left) || (direction[0] < 0 && right)) {
-                    this.defaultTicks.visProp.label.anchory = 'bottom';
-                    this.defaultTicks.visProp.label.offset = [0, 20];
-                } else if ((direction[0] > 0 && right) || (direction[0] < 0 && left)) {
-                    this.defaultTicks.visProp.label.anchory = 'top';
-                    this.defaultTicks.visProp.label.offset = [0, -10];
-                }
-                if ((direction[1] > 0 && left) || (direction[1] < 0 && right)) {
-                    this.defaultTicks.visProp.label.anchory = 'right';
-                    this.defaultTicks.visProp.label.offset = [-10, 0];
-                } else if ((direction[1] > 0 && right) || (direction[1] < 0 && left)) {
-                    this.defaultTicks.visProp.label.anchorx = 'left';
-                    this.defaultTicks.visProp.label.offset = [20, 0];
-                }
-            }
-
         } else if (axisType === 'sticky') {
 
             // Set position points
@@ -1739,25 +1720,66 @@ JXG.createAxis = function (board, parents, attributes) {
                     );
                 }
             }
+        }
 
-            // Set position labels
+        // Set position tick labels
 
-            if (autoLabels === true) {
-                if (direction[0] !== 0 && originScr[2] < ((this.board.canvasHeight / 2) - 10)) {
+        if (autoLabels && (horizontal || vertical)) {
+            this.defaultTicks.visProp.label._anchorx_org = this.defaultTicks.visProp.label._anchorx_org ?? this.defaultTicks.visProp.label.anchorx;
+            this.defaultTicks.visProp.label._anchory_org = this.defaultTicks.visProp.label._anchory_org ?? this.defaultTicks.visProp.label.anchory;
+            this.defaultTicks.visProp.label._offset_org = this.defaultTicks.visProp.label._offset_org ?? this.defaultTicks.visProp.label.offset;
+
+            if (horizontal) {
+                distP1 = axis.point1.coords.scrCoords[2] - (this.board.canvasHeight / 2);
+                distP2 = axis.point2.coords.scrCoords[2] - (this.board.canvasHeight / 2);
+                if (
+                    (distP1 < 0 && distP2 < 0) &&
+                    (Math.abs(distP1) > autoLabelsThres && Math.abs(distP2) > autoLabelsThres)
+                ) {
+                    // POI Should we use dynamic values here?
                     this.defaultTicks.visProp.label.anchory = 'bottom';
                     this.defaultTicks.visProp.label.offset = [0, 20];
-                } else if (direction[0] !== 0 && originScr[2] > ((this.board.canvasHeight / 2) + 10)) {
+                } else if (
+                    (distP1 > 0 && distP2 > 0) &&
+                    (Math.abs(distP1) > autoLabelsThres && Math.abs(distP2) > autoLabelsThres)
+                ) {
+                    // POI Should we use dynamic values here?
                     this.defaultTicks.visProp.label.anchory = 'top';
-                    this.defaultTicks.visProp.label.offset = [0, -10];
+                    this.defaultTicks.visProp.label.offset = [0, -20];
+                } else {
+                    this.defaultTicks.visProp.label.anchorx = this.defaultTicks.visProp.label._anchorx_org;
+                    this.defaultTicks.visProp.label.anchory = this.defaultTicks.visProp.label._anchory_org;
+                    this.defaultTicks.visProp.label.offset = this.defaultTicks.visProp.label._offset_org;
                 }
-                if (direction[1] !== 0 && originScr[1] < ((this.board.canvasWidth / 2) - 10)) {
+
+            } else if (vertical) {
+                distP1 = axis.point1.coords.scrCoords[1] - (this.board.canvasWidth / 2);
+                distP2 = axis.point2.coords.scrCoords[1] - (this.board.canvasWidth / 2);
+                if (
+                    (distP1 < 0 && distP2 < 0) &&
+                    (Math.abs(distP1) > autoLabelsThres && Math.abs(distP2) > autoLabelsThres)
+                ) {
+                    // POI Should we use dynamic values here?
                     this.defaultTicks.visProp.label.anchorx = 'right';
-                    this.defaultTicks.visProp.label.offset = [-10, 0];
-                } else if (direction[1] !== 0 && originScr[1] > ((this.board.canvasWidth / 2) + 10)) {
+                    this.defaultTicks.visProp.label.offset = [-20, 0];
+                } else if (
+                    (distP1 > 0 && distP2 > 0) &&
+                    (Math.abs(distP1) > autoLabelsThres && Math.abs(distP2) > autoLabelsThres)
+                ) {
+                    // POI Should we use dynamic values here?
                     this.defaultTicks.visProp.label.anchorx = 'left';
                     this.defaultTicks.visProp.label.offset = [20, 0];
+                } else {
+                    this.defaultTicks.visProp.label.anchorx = this.defaultTicks.visProp.label._anchorx_org;
+                    this.defaultTicks.visProp.label.anchory = this.defaultTicks.visProp.label._anchory_org;
+                    this.defaultTicks.visProp.label.offset = this.defaultTicks.visProp.label._offset_org;
                 }
             }
+
+        } else {
+            delete this.defaultTicks.visProp.label._anchorx_org;
+            delete this.defaultTicks.visProp.label._anchory_org;
+            delete this.defaultTicks.visProp.label._offset_org;
         }
 
         JXG.Line.prototype.update.call(this);

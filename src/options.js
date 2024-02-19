@@ -3669,7 +3669,7 @@ JXG.Options = {
 
         /**
          * Is used to define the behaviour of the axis.
-         * Settings in this attribute only have an effect if the axis is exactly vertical or horizontal.
+         * Settings in this attribute only have an effect if the axis is exactly horizontal or vertical.
          * Possible values are:
          * <ul>
          *     <li><tt>'static'</tt>: Standard behavior of the axes as know in JSXGraph.
@@ -3865,6 +3865,8 @@ JXG.Options = {
 
         /**
          * If set to true, the tick labels of the axis are automatically positioned in the narrower area between the axis and the side of the board.
+         * Settings in this attribute only have an effect if the axis is exactly horizontal or vertical.
+         * This option overrides <tt>offset</tt>, <tt>anchorX</tt> and <tt>anchorY</tt> of axis tick labels.
          *
          * @type {Boolean}
          * @name Axis#autoLabels
@@ -8775,7 +8777,7 @@ JXG.Options = {
         anchor: null,
 
         /**
-         * The horizontal alignment of the text. Possible values include <tt>'auto</tt>, <tt>'left'</tt>,
+         * The horizontal alignment of the text. Possible values include <tt>'auto'</tt>, <tt>'left'</tt>,
          * <tt>'middle'</tt>, and <tt>'right'</tt>.
          *
          * @name anchorX
