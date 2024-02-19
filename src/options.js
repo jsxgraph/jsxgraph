@@ -4639,31 +4639,20 @@ JXG.Options = {
             face: 'line',
 
             /**
-             * Draw the major grid element, that lies at (0,0)?
+             * This attribute determines whether the grid elements located at <tt>x=0</tt>, <tt>y=0</tt>
+             * and especially at <tt>(0, 0)</tt> are displayed.
+             * <ul>
+             *     <li>If <tt>false</tt>, then all these elements are hidden.
+             *     <li>If <tt>true</tt>, all these elements are shown.
+             *     <li>If an object of the following form is given, the three cases can be distinguished individually:<br>
+             *     <tt>{x: true|false, y: true|false, origin: true|false}</tt>
+             * </ul>
              *
-             * @type {Boolean}
-             * @name Grid#major_drawZeroOrigin
-             * @default true
-             */
-            drawZeroOrigin: true,
-
-            /**
-             * Draw the major grid elements, that lie at x=0?
-             *
-             * @type {Boolean}
-             * @name Grid#major_drawZeroX
+             * @type {Boolean|Object}
+             * @name Grid#major_drawZero
              * @default false
              */
-            drawZeroX: false,
-
-            /**
-             * Draw the major grid elements, that lie at y=0?
-             *
-             * @type {Boolean}
-             * @name Grid#major_drawZeroY
-             * @default false
-             */
-            drawZeroY: false,
+            drawZero: false,
 
             strokeColor: '#c0c0c0', // same in old grid
             strokeWidth: 1,         // same in old grid
@@ -4720,23 +4709,20 @@ JXG.Options = {
              */
             face: 'point',
 
-            /**
-             * Draw the minor grid elements, that lie at x=0?
+             /**
+             * This attribute determines whether the minor grid elements located at <tt>x=0</tt> and <tt>y=0</tt> are displayed.
+             * <ul>
+             *     <li>If <tt>false</tt>, then all these elements are hidden.
+             *     <li>If <tt>true</tt>, all these elements are shown.
+             *     <li>If an object of the following form is given, the three cases can be distinguished individually:<br>
+             *     <tt>{x: true|false, y: true|false}</tt>
+             * </ul>
              *
-             * @type {Boolean}
-             * @name Grid#minor_drawZeroX
+             * @type {Boolean|Object}
+             * @name Grid#minor_drawZero
              * @default false
              */
-            drawZeroX: false,
-
-            /**
-             * Draw the minor grid elements, that lie at y=0?
-             *
-             * @type {Boolean}
-             * @name Grid#minor_drawZeroY
-             * @default false
-             */
-            drawZeroY: false,
+            drawZero: false,
 
             strokeColor: '#c0c0c0',
             strokeWidth: 1,
@@ -4955,14 +4941,11 @@ JXG.Options = {
 
             { // Theme 7: lines and subtile points in between, also plotted on axes
                 major: {
-                    drawZeroOrigin: true,
-                    drawZeroX: true,
-                    drawZeroY: true
+                    drawZero: true
                 },
                 minor: {
                     size: 3,
-                    drawZeroX: true,
-                    drawZeroY: true
+                    drawZero: true
                 },
                 minorElements: 4
             }

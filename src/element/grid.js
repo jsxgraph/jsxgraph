@@ -51,8 +51,7 @@ import Const from "../base/constants";
  * @example
  * // standard grid
  * var g = board.create('grid', [], {
- *     drawZeroX: true,
- *     drawZeroY: true,
+ *     drawZero: true,
  * });
  * </pre><div id="JXGc8dde3f5-22ef-4c43-9505-34b299b5b24d" class="jxgbox" style="width: 300px; height: 300px;"></div>
  * <script type="text/javascript">
@@ -60,8 +59,7 @@ import Const from "../base/constants";
  *      var board = JXG.JSXGraph.initBoard('JXGc8dde3f5-22ef-4c43-9505-34b299b5b24d',
  *          {boundingbox: [-8, 8, 8,-8], axis: false, showcopyright: false, shownavigation: false});
  *      var g = board.create('grid', [], {
- *          drawZeroX: true,
- *          drawZeroY: true,
+ *          drawZero: true,
  *      });
  *  })();
  * </script><pre>
@@ -78,8 +76,7 @@ import Const from "../base/constants";
  *     minor: {
  *         size: 3
  *     },
- *     drawZeroX: true,
- *     drawZeroY: true,
+ *     drawZero: true,
  *     minorElements: 4,
  * });
  * </pre><div id="JXG02374171-b27c-4ccc-a14a-9f5bd1162623" class="jxgbox" style="width: 300px; height: 300px;"></div>
@@ -97,8 +94,7 @@ import Const from "../base/constants";
  *             minor: {
  *                 size: 3
  *             },
- *             drawZeroX: true,
- *             drawZeroY: true,
+ *             drawZero: true,
  *             minorElements: 4,
  *         });
  *     })();
@@ -113,17 +109,14 @@ import Const from "../base/constants";
  *         strokeColor: 'blue',
  *         fillColor: 'orange',
  *         strokeOpacity: 1,
- *         drawZeroX: true,
- *         drawZeroY: true,
- *         drawZeroOrigin: true,
+ *         drawZero: true,
  *     },
  *     minor: {
  *         face: 'diamond',
  *         size: 3,
  *         strokeColor: 'green',
  *         fillColor: 'grey',
- *         drawZeroX: true,
- *         drawZeroY: true,
+ *         drawZero: true,
  *     },
  *     minorElements: 1,
  *     includeBoundaries: false,
@@ -140,17 +133,14 @@ import Const from "../base/constants";
  *                 strokeColor: 'blue',
  *                 fillColor: 'orange',
  *                 strokeOpacity: 1,
- *                 drawZeroX: true,
- *                 drawZeroY: true,
- *                 drawZeroOrigin: true,
+ *                 drawZero: true,
  *             },
  *             minor: {
  *                 face: 'diamond',
  *                 size: 3,
  *                 strokeColor: 'green',
  *                 fillColor: 'grey',
- *                 drawZeroX: true,
- *                 drawZeroY: true,
+ *                 drawZero: true,
  *             },
  *             minorElements: 1,
  *             includeBoundaries: false,
@@ -181,8 +171,7 @@ import Const from "../base/constants";
  * var grid = board.create('grid', [axis1, axis2], {
  *     major: {
  *         face: 'line',
- *         drawZeroX: true,
- *         drawZeroY: true
+ *         drawZero: true
  *     },
  *     minor: {
  *         face: 'point',
@@ -217,8 +206,7 @@ import Const from "../base/constants";
  *         var grid = board.create('grid', [axis1, axis2], {
  *             major: {
  *                 face: 'line',
- *                 drawZeroX: true,
- *                 drawZeroY: true
+ *                 drawZero: true
  *             },
  *             minor: {
  *                 face: 'point',
@@ -467,9 +455,10 @@ JXG.createGrid = function (board, parents, attributes) {
             gridX = Type.evaluate(this.visProp.gridx), // for backwards compatibility
             gridY = Type.evaluate(this.visProp.gridy), // for backwards compatibility
             face = Type.evaluate(this.visProp.face),
-            drawZeroOrigin = Type.evaluate(this.visProp.drawzeroorigin),
-            drawZeroX = Type.evaluate(this.visProp.drawzerox),
-            drawZeroY = Type.evaluate(this.visProp.drawzeroy),
+            drawZero = Type.evaluate(this.visProp.drawzero),
+            drawZeroOrigin = drawZero === true || (Type.isObject(drawZero) && Type.evaluate(drawZero.origin) === true),
+            drawZeroX = drawZero === true || (Type.isObject(drawZero) && Type.evaluate(drawZero.x) === true),
+            drawZeroY = drawZero === true || (Type.isObject(drawZero) && Type.evaluate(drawZero.y) === true),
 
             includeBoundaries = Type.evaluate(this.visProp.includeboundaries),
             forceSquare = Type.evaluate(this.visProp.forcesquare);
@@ -601,13 +590,15 @@ JXG.createGrid = function (board, parents, attributes) {
             minorElements = Type.evaluate(this.visProp.minorelements),
             minorSize = Type.evaluate(this.visProp.size),
             minorFace = Type.evaluate(this.visProp.face),
-            minorDrawZeroX = Type.evaluate(this.visProp.drawzerox),
-            minorDrawZeroY = Type.evaluate(this.visProp.drawzeroy),
+            minorDrawZero = Type.evaluate(this.visProp.drawzero),
+            minorDrawZeroX = minorDrawZero === true || (Type.isObject(minorDrawZero) && Type.evaluate(minorDrawZero.x) === true),
+            minorDrawZeroY = minorDrawZero === true || (Type.isObject(minorDrawZero) && Type.evaluate(minorDrawZero.y) === true),
 
             majorFace = Type.evaluate(this.majorGrid.visProp.face),
-            majorDrawZero0 = Type.evaluate(this.majorGrid.visProp.drawzeroorigin),
-            majorDrawZeroX = Type.evaluate(this.majorGrid.visProp.drawzerox),
-            majorDrawZeroY = Type.evaluate(this.majorGrid.visProp.drawzeroy),
+            majorDrawZero = Type.evaluate(this.majorGrid.visProp.drawzero),
+            majorDrawZeroOrigin = majorDrawZero === true || (Type.isObject(majorDrawZero) && Type.evaluate(majorDrawZero.origin) === true),
+            majorDrawZeroX = majorDrawZero === true || (Type.isObject(majorDrawZero) && Type.evaluate(majorDrawZero.x) === true),
+            majorDrawZeroY = majorDrawZero === true || (Type.isObject(majorDrawZero) && Type.evaluate(majorDrawZero.y) === true),
 
             includeBoundaries = Type.evaluate(this.visProp.includeboundaries);
 
@@ -738,7 +729,7 @@ JXG.createGrid = function (board, parents, attributes) {
                     )) {
                         // if major grid elements (on 0 or axes) are not existing, minor grid elements have to exist. Otherwise:
                         if ((
-                            majorDrawZero0 ||
+                            majorDrawZeroOrigin ||
                             majorRadius[1] - Math.abs(y) + minorRadius[1] < eps ||
                             majorRadius[0] - Math.abs(x) + minorRadius[0] < eps
                         ) && (
