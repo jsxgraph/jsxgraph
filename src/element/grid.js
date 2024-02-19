@@ -38,8 +38,8 @@ import Const from "../base/constants";
  * @description A grid is a set of vertical and horizontal lines or other geometrical objects (faces)
  * to support the user with element placement or to improve determination of position.
  * This method takes up to two facultative parent elements. These are used to set distance between
- * grid elements in case of attribute <tt>gridX</tt>, <tt>gridY</tt>, <tt>minorX</tt> or <tt>minorY</tt> is set to 'auto'.
- * so that major/minor grid element distance (gridX/Y) is the same as the ticks distance of the parent axes.
+ * grid elements in case of attribute <tt>majorStep</tt>, <tt>minorX</tt> or <tt>minorY</tt> is set to 'auto'.
+ * Then the major/minor grid element distance is set to the ticks distance of parent axes.
  * It is usually instantiated on the board's creation via the attribute <tt>grid</tt> set to true.
  * @constructor
  * @name Grid
@@ -248,8 +248,7 @@ JXG.createGrid = function (board, parents, attributes) {
         attrMajor,      // attributes for major grid
         attrMinor,      // attributes for minor grid
 
-        majorStepX,     // {Number} distance (in usrCoords) in x-direction between center of two major grid elements
-        majorStepY,     // {Number} distance (in usrCoords) in y-direction between center of two major grid elements
+        majorStep,      // {[Number]} distance (in usrCoords) in x- and y-direction between center of two major grid elements
         majorRadiusX,   // {Number} half of the size (in usrCoords) of major grid element in x-direction
         majorRadiusY,   // {Number} half of the size (in usrCoords) of major grid element in y-direction
 
@@ -486,6 +485,57 @@ JXG.createGrid = function (board, parents, attributes) {
         this.dataX = [];
         this.dataY = [];
 
+        // set global majorStep
+        // values can be 'auto', a number (also a number like '20') or a string ending with 'px'
+        majorStep = Type.evaluate(this.visProp.majorstep);
+        if (!Type.isArray(majorStep)) {
+            majorStep = [majorStep, majorStep];
+        }
+        if (majorStep.length < 2) {
+            majorStep = [majorStep[0], majorStep[0]];
+        }
+        if (Type.exists(gridX)) {
+            JXG.deprecated("gridX", "majorStep");
+            majorStep[0] = gridX;
+        }
+        if (Type.exists(gridY)) {
+            JXG.deprecated("gridY", "majorStep");
+            majorStep[1] = gridY;
+        }
+
+        if (majorStep[0] === 'auto') {
+            majorStep[0] = 1; // parentAxes[0] may not be defined
+            if (Type.exists(parentAxes[0])) {
+                majorStep[0] = parentAxes[0].ticks[0].getDistanceMajorTicks();
+            }
+        } else {
+            // This allows the value to hate unit px, abs, % or fr.
+            majorStep[0] = Type.parseNumber(majorStep[0], Math.abs(bbox[1] - bbox[3]) , 1 / this.board.unitX);
+        }
+        if (majorStep[1] === 'auto') {
+            majorStep[1] = 1; // parentAxes[1] may not be defined
+            if (Type.exists(parentAxes[1])) {
+                majorStep[1] = parentAxes[1].ticks[0].getDistanceMajorTicks();
+            }
+        } else {
+            // This allows the value to hate unit px, abs, % or fr.
+            majorStep[1] = Type.parseNumber(majorStep[1], Math.abs(bbox[0] - bbox[2]) , 1 / this.board.unitY);
+        }
+
+        if (forceSquareGrid === 'min') {
+            if (majorStep[0] * this.board.unitX <= majorStep[1] * this.board.unitY) { // compare px-values
+                majorStep[1] = majorStep[0] / this.board.unitY * this.board.unitX;
+            } else {
+                majorStep[0] = majorStep[1] / this.board.unitX * this.board.unitY;
+            }
+        } else if (forceSquareGrid === 'max' || forceSquareGrid === true) {
+            if (majorStep[0] * this.board.unitX <= majorStep[1] * this.board.unitY) { // compare px-values
+                majorStep[0] = majorStep[1] / this.board.unitX * this.board.unitY;
+            } else {
+                majorStep[1] = majorStep[0] / this.board.unitY * this.board.unitX;
+            }
+        }
+
         // Set sizeX and sizeY here because otherwise strokeWidth for line/point not usable
         // and if only one size specified symmetric adaption of other size not possible
         // POI: I think we should proceed differently here
@@ -504,56 +554,12 @@ JXG.createGrid = function (board, parents, attributes) {
             }
         }
 
-        // set global majorStepX and majorStepY
-        // gridX and gridY can be 'auto', a number (also a number like '20') or a string ending with 'px'
-        if (Type.isNumber(gridX, true)) {
-            majorStepX = parseFloat(gridX);
-
-        } else if (Type.isString(gridX) && gridX.indexOf('px') > -1) {
-            majorStepX = gridX.replace(/\s+px\s+/, '');
-            majorStepX = parseFloat(majorStepX);
-            majorStepX = majorStepX / this.board.unitX;
-
-        } else { // gridX === 'auto'
-            majorStepX = 1; // parentAxes[0] may not be defined
-            if (Type.exists(parentAxes[0])) {
-                majorStepX = parentAxes[0].ticks[0].getDistanceMajorTicks();
-            }
-        }
-        if (Type.isNumber(gridY, true)) {
-            majorStepY = parseFloat(gridY);
-
-        } else if (Type.isString(gridY) && gridY.indexOf('px') > -1) {
-            majorStepY = gridY.replace(/\s+px\s+/, '');
-            majorStepY = parseFloat(majorStepY);
-            majorStepY = majorStepY / this.board.unitY;
-
-        } else { // gridY === 'auto'
-            majorStepY = 1; // parentAxes[0] may not be defined
-            if (Type.exists(parentAxes[0])) {
-                majorStepY = parentAxes[0].ticks[0].getDistanceMajorTicks();
-            }
-        }
-        if (forceSquareGrid === 'min') {
-            if (majorStepX * this.board.unitX <= majorStepY * this.board.unitY) { // compare px-values
-                majorStepY = majorStepX / this.board.unitY * this.board.unitX;
-            } else {
-                majorStepX = majorStepY / this.board.unitX * this.board.unitY;
-            }
-        } else if (forceSquareGrid === 'max' || forceSquareGrid === true) {
-            if (majorStepX * this.board.unitX <= majorStepY * this.board.unitY) { // compare px-values
-                majorStepX = majorStepY / this.board.unitX * this.board.unitY;
-            } else {
-                majorStepY = majorStepX / this.board.unitY * this.board.unitX;
-            }
-        }
-
         // set global majorRadiusX and majorRadiusY
         // sizeX and sizeY can be a number (also a number like '20') or a string ending with '%'
         if (Type.isString(sizeX) && sizeX.indexOf('%') > -1) {
             majorRadiusX = sizeX.replace(/\s+%\s+/, '');
             majorRadiusX = parseFloat(majorRadiusX) / 100;
-            majorRadiusX = majorRadiusX * majorStepX / 2;
+            majorRadiusX = majorRadiusX * majorStep[0] / 2;
 
         } else { // Type.isNumber(sizeX, true)
             majorRadiusX = parseFloat(sizeX);
@@ -562,7 +568,7 @@ JXG.createGrid = function (board, parents, attributes) {
         if (Type.isString(sizeY) && sizeY.indexOf('%') > -1) {
             majorRadiusY = sizeY.replace(/\s+%\s+/, '');
             majorRadiusY = parseFloat(majorRadiusY) / 100;
-            majorRadiusY = majorRadiusY * majorStepY / 2;
+            majorRadiusY = majorRadiusY * majorStep[1] / 2;
 
         } else { // Type.isNumber(sizeY, true)
             majorRadiusY = parseFloat(sizeY);
@@ -570,20 +576,20 @@ JXG.createGrid = function (board, parents, attributes) {
         }
 
         // calculate start position of curve
-        startX = Mat.roundToStep(bbox[0], majorStepX);
-        startY = Mat.roundToStep(bbox[1], majorStepY);
+        startX = Mat.roundToStep(bbox[0], majorStep[0]);
+        startY = Mat.roundToStep(bbox[1], majorStep[1]);
 
         // check if number of grid elements side by side is not too large
         finite = isFinite(startX) && isFinite(startY) &&
             isFinite(bbox[2]) && isFinite(bbox[3]) &&
-            Math.abs(bbox[2]) < Math.abs(majorStepX * maxLines) &&
-            Math.abs(bbox[3]) < Math.abs(majorStepY * maxLines);
+            Math.abs(bbox[2]) < Math.abs(majorStep[0] * maxLines) &&
+            Math.abs(bbox[3]) < Math.abs(majorStep[1] * maxLines);
 
         // POI finite = false means that no grid is drawn. Should we change this?
 
         // draw grid elements
-        for (y = startY; finite && y >= bbox[3]; y -= majorStepY) {
-            for (x = startX; finite && x <= bbox[2]; x += majorStepX) {
+        for (y = startY; finite && y >= bbox[3]; y -= majorStep[1]) {
+            for (x = startX; finite && x <= bbox[2]; x += majorStep[0]) {
 
                 if (
                     (!drawZero0 && Math.abs(y) < eps && Math.abs(x) < eps) ||
@@ -666,7 +672,7 @@ JXG.createGrid = function (board, parents, attributes) {
                 minorX = Type.evaluate(parentAxes[0].getAttribute('ticks').minorticks);
             }
         }
-        minorStepX = majorStepX / (minorX + 1);
+        minorStepX = majorStep[0] / (minorX + 1);
 
         if (Type.isNumber(minorY, true)) {
             minorY = parseFloat(minorY);
@@ -677,7 +683,7 @@ JXG.createGrid = function (board, parents, attributes) {
                 minorY = Type.evaluate(parentAxes[1].getAttribute('ticks').minorticks);
             }
         }
-        minorStepY = majorStepY / (minorY + 1);
+        minorStepY = majorStep[1] / (minorY + 1);
 
         minorRadiusX = Type.parseNumber(minorSizeX, minorStepX / 2, 1 / this.board.unitX);
         minorRadiusY = Type.parseNumber(minorSizeY, minorStepY / 2, 1 / this.board.unitY);
@@ -720,19 +726,19 @@ JXG.createGrid = function (board, parents, attributes) {
                      |
                -——---|————————-————---|----------------|---------------|-------->
                      |
-                     |<______________________majorStepX_____________________>
+                     |<______________________majorStep[0]_____________________>
                      |
                      |<__minorStepX____><__minorStepX_____><__minorStepX_____>
                      |
                      |
                 */
-                XdisTo0 = Mat.roundToStep(Math.abs(x), majorStepX);
+                XdisTo0 = Mat.roundToStep(Math.abs(x), majorStep[0]);
                 XdisTo0 = Math.abs(XdisTo0 - Math.abs(x));
-                XdisFrom0 = majorStepX - XdisTo0;
+                XdisFrom0 = majorStep[0] - XdisTo0;
 
-                YdisTo0 = Mat.roundToStep(Math.abs(y), majorStepY);
+                YdisTo0 = Mat.roundToStep(Math.abs(y), majorStep[1]);
                 YdisTo0 = Math.abs(YdisTo0 - Math.abs(y));
-                YdisFrom0 = majorStepY - YdisTo0;
+                YdisFrom0 = majorStep[1] - YdisTo0;
 
                 if (majorFace === 'line') {
                     // for majorFace 'line' do not draw minor grid elements on lines
@@ -812,14 +818,14 @@ JXG.createGrid = function (board, parents, attributes) {
                       |             .      >
                       |             bbox[2]-dis2To-majorRadiusX
                  */
-                dis0To = Math.abs(bbox[0] % majorStepX);
-                dis1To = Math.abs(bbox[1] % majorStepY);
-                dis2To = Math.abs(bbox[2] % majorStepX);
-                dis3To = Math.abs(bbox[3] % majorStepY);
-                dis0From = majorStepX - dis0To;
-                dis1From = majorStepY - dis1To;
-                dis2From = majorStepX - dis2To;
-                dis3From = majorStepY - dis3To;
+                dis0To = Math.abs(bbox[0] % majorStep[0]);
+                dis1To = Math.abs(bbox[1] % majorStep[1]);
+                dis2To = Math.abs(bbox[2] % majorStep[0]);
+                dis3To = Math.abs(bbox[3] % majorStep[1]);
+                dis0From = majorStep[0] - dis0To;
+                dis1From = majorStep[1] - dis1To;
+                dis2From = majorStep[0] - dis2To;
+                dis3From = majorStep[1] - dis3To;
 
                 if (
                     !includeBoundaries && (

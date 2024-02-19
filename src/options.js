@@ -4508,34 +4508,43 @@ JXG.Options = {
         hasGrid: false,  // Used in standardoptions
 
         /**
-         * Distance of major grid elements in x-direction. There are three possibilities:
-         * <ul>
-         *     <li>Numbers or strings which are numbers (e.g. '10') are interpreted as distance in usrCoords.
-         *     <li>Strings with additional 'px' (e.g. '100px') determine distances in pixels.
-         *     <li>If it is set to 'auto' the distance of the major grid equals the distance of majorTicks of the x-axis.
-         * </ul>
+         * Deprecated. Use {@link Grid#majorStep} instead.
          *
+         * @deprecated
          * @type {Number|String}
          * @name Grid#gridX
-         * @default 'auto'
-         * @see JXG.Ticks#getDistanceMajorTicks
+         * @default null
          */
-        gridX: 'auto',
+        gridX: null,
 
         /**
-         * Distance of major grid elements in y-direction. There are three possibilities:
-         * <ul>
-         *     <li>Numbers or strings which are numbers (e.g. '10') are interpreted as distance in usrCoords.
-         *     <li>Strings with additional 'px' (e.g. '100px') determine distances in pixels.
-         *     <li>If it is set to 'auto' the distance of the major grid equals the distance of majorTicks of the y-axis.
-         * </ul>
+         * Deprecated. Use {@link Grid#majorStep} instead.
          *
+         * @deprecated
          * @type {Number|String}
          * @name Grid#gridY
+         * @default null
+         */
+        gridY: null,
+
+        /**
+         * Distance of major grid elements. There are three possibilities:
+         * <ul>
+         *     <li>If it is set to 'auto' the distance of the major grid equals the distance of majorTicks of the corresponding axis.
+         *     <li>Numbers or strings which are numbers (e.g. '10') are interpreted as distance in usrCoords.
+         *     <li>Strings with the unit 'abs' are interpreted as distance in usrCoords, too.
+         *     <li>Strings with the unit 'px' are interpreted as distance in screen pixels.
+         *     <li>Strings with the unit '%' or 'fr' are interpreted as a ratio to the width/height of the board. (e.g. 50% = 0.5fr)
+         * </ul>
+         * Instead of one value you can provide two values as an array <tt>[x, y]</tt> here.
+         * These are used as distance in x- and y-direction.
+         *
+         * @type {Number|String|Array}
+         * @name Grid#majorStep
          * @default 'auto'
          * @see JXG.Ticks#getDistanceMajorTicks
          */
-        gridY: 'auto',
+        majorStep: 'auto',
 
         /**
          * Number of elements in minor grid between elements of the major grid in x-direction.
@@ -8847,6 +8856,7 @@ JXG.Options = {
                 dash: validateInteger,
                 gridX: Type.isNumber,
                 gridY: Type.isNumber,
+                // POI: Do we have to add something here?
                 hasGrid: false,
                 highlightFillColor: validateColor,
                 highlightFillOpacity: Type.isNumber,
@@ -8976,6 +8986,7 @@ JXG.Options = {
         board.options.grid.hasGrid = o.grid.hasGrid;
         board.options.grid.gridX = o.grid.gridX;
         board.options.grid.gridY = o.grid.gridY;
+        // POI: Do we have to add something here?
         board.options.grid.gridColor = o.grid.gridColor;
         board.options.grid.gridOpacity = o.grid.gridOpacity;
         board.options.grid.gridDash = o.grid.gridDash;
