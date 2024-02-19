@@ -4609,22 +4609,53 @@ JXG.extend(
          * @returns {JXG.Board} Reference to the board.
          */
         calculateSnapSizes: function () {
-            var p1 = new Coords(Const.COORDS_BY_USER, [0, 0], this),
-                p2 = new Coords(
-                    Const.COORDS_BY_USER,
-                    [this.options.grid.gridX, this.options.grid.gridY],
-                    this
-                ),
-                x = p1.scrCoords[1] - p2.scrCoords[1],
-                y = p1.scrCoords[2] - p2.scrCoords[2];
+            var p1, p2,
+                bbox = this.getBoundingBox(),
+                gridStep = Type.evaluate(this.options.grid.majorStep),
+                gridX = Type.evaluate(this.options.grid.gridX),
+                gridY = Type.evaluate(this.options.grid.gridY),
+                x, y;
 
-            this.options.grid.snapSizeX = this.options.grid.gridX;
+            if (!Type.isArray(gridStep)) {
+                gridStep = [gridStep, gridStep];
+            }
+            if (gridStep.length < 2) {
+                gridStep = [gridStep[0], gridStep[0]];
+            }
+            if (Type.exists(gridX)) {
+                gridStep[0] = gridX;
+            }
+            if (Type.exists(gridY)) {
+                gridStep[1] = gridY;
+            }
+
+            if (gridStep[0] === 'auto') {
+                gridStep[0] = 1;
+            } else {
+                gridStep[0] = Type.parseNumber(gridStep[0], Math.abs(bbox[1] - bbox[3]), 1 / this.unitX);
+            }
+            if (gridStep[1] === 'auto') {
+                gridStep[1] = 1;
+            } else {
+                gridStep[1] = Type.parseNumber(gridStep[1], Math.abs(bbox[0] - bbox[2]), 1 / this.unitY);
+            }
+
+            p1 = new Coords(Const.COORDS_BY_USER, [0, 0], this);
+            p2 = new Coords(
+                Const.COORDS_BY_USER,
+                [gridStep[0], gridStep[1]],
+                this
+            );
+            x = p1.scrCoords[1] - p2.scrCoords[1];
+            y = p1.scrCoords[2] - p2.scrCoords[2];
+
+            this.options.grid.snapSizeX = gridStep[0];
             while (Math.abs(x) > 25) {
                 this.options.grid.snapSizeX *= 2;
                 x /= 2;
             }
 
-            this.options.grid.snapSizeY = this.options.grid.gridY;
+            this.options.grid.snapSizeY = gridStep[1];
             while (Math.abs(y) > 25) {
                 this.options.grid.snapSizeY *= 2;
                 y /= 2;
