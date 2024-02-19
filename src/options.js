@@ -4557,7 +4557,7 @@ JXG.Options = {
          * These are used as number in x- and y-direction.
          *
          * @type {Number|String|Array}
-         * @name Grid#minorStep
+         * @name Grid#minorElements
          * @default 0
          */
         minorElements: 0,
@@ -4597,34 +4597,20 @@ JXG.Options = {
             margin: 0,
 
             /**
-             * Size of major grid elements in x-direction. There are the following possibilities:
+             * Size of major grid elements. There are the following possibilities:
              * <ul>
              *     <li>Numbers or strings which are numbers (e.g. '10') are interpreted as size in pixels.
              *     <li>Strings with additional '%' (e.g. '95%') are interpreted as the ratio of used space for one element.
              * </ul>
              * Unused for 'line' and 'point', which will use the value of strokeWidth.
-             * If sizeX is not set, it will get the same value as sizeY. // POI I think, we shouldn't do that...
+             * Instead of one value you can provide two values as an array <tt>[x, y]</tt> here.
+             * These are used as size in x- and y-direction.
              *
-             * @type {Number|String}
-             * @name Grid#major_sizeX
-             * @default null Will be set to 5 later (for face 'line' and 'point' strokeWidth is default value) // POI That's a little bit confusing...
+             * @type {Number|String|Array}
+             * @name Grid#major_size
+             * @default 5
              */
-            sizeX: null,
-
-            /**
-             * Size of major grid elements in y-direction. There are the following possibilities:
-             * <ul>
-             *     <li>Numbers or strings which are numbers (e.g. '10') are interpreted as size in pixels.
-             *     <li>Strings with additional '%' (e.g. '95%') are interpreted as the ratio of used space for one element.
-             * </ul>
-             * For faces 'line' and 'point' sizeY will be used as strokeWidth, sizeY is ignored. // POI see composition.js
-             * If sizeY is not set, it will get the same value as sizeY. // POI I think, we shouldn't do that...
-             *
-             * @type {Number|String}
-             * @name Grid#major_sizeY
-             * @default null Will be set to 5 later (for face 'line' and 'point' strokeWidth is default value) // POI That's a little bit confusing...
-             */
-            sizeY: null,
+            size: 5,
 
             /**
              * Appearance of major grid element.
@@ -4712,34 +4698,20 @@ JXG.Options = {
             margin: 0,
 
             /**
-             * Size of minor grid elements in x-direction. There are the following possibilities:
+             * Size of minor grid elements. There are the following possibilities:
              * <ul>
              *     <li>Numbers or strings which are numbers (e.g. '10') are interpreted as size in pixels.
              *     <li>Strings with additional '%' (e.g. '95%') are interpreted as the ratio of used space for one element.
              * </ul>
-             * For faces 'line' and 'point' sizeX will be used as strokeWidth, sizeY is ignored. // POI see composition.js
-             * If sizeX is not set, it will get the same value as sizeY. // POI I think, we shouldn't do that...
+             * Unused for 'line' and 'point', which will use the value of strokeWidth.
+             * Instead of one value you can provide two values as an array <tt>[x, y]</tt> here.
+             * These are used as size in x- and y-direction.
              *
-             * @type {Number|String}
-             * @name Grid#minor_sizeX
-             * @default null Will be set to 5 later (for face 'line' and 'point' strokeWidth is default value) // POI That's a little bit confusing...
+             * @type {Number|String|Array}
+             * @name Grid#minor_size
+             * @default 5
              */
-            sizeX: null,
-
-            /**
-             * Size of minor grid elements in y-direction. There are the following possibilities:
-             * <ul>
-             *     <li>Numbers or strings which are numbers (e.g. '10') are interpreted as size in pixels.
-             *     <li>Strings with additional '%' (e.g. '95%') are interpreted as the ratio of used space for one element.
-             * </ul>
-             * For faces 'line' and 'point' sizeY will be used as strokeWidth, sizeY is ignored. // POI see composition.js
-             * If sizeY is not set, it will get the same value as sizeY. // POI I think, we shouldn't do that...
-             *
-             * @type {Number|String}
-             * @name Grid#minor_sizeY
-             * @default null Will be set to 5 later (for face 'line' and 'point' strokeWidth is default value) // POI That's a little bit confusing...
-             */
-            sizeY: null,
+            size: 3,
 
             /**
              * Appearance of minor grid elements. Same options as for major grid elements.
@@ -4940,7 +4912,7 @@ JXG.Options = {
 
             {   // Theme 2: lines and subtile points in between
                 minor: {
-                    sizeX: 3,
+                    size: 3,
                     strokeColor: '#101010'
                 },
                 minorElements: 'auto'
@@ -4967,7 +4939,7 @@ JXG.Options = {
             {   // Theme 5: lines with more subtle grid of '+'s plotted in between
                 minor: {
                     face: '+',
-                    sizeX: 0.95
+                    size: '95%'
                 },
                 minorElements: 'auto'
             },
@@ -4975,11 +4947,11 @@ JXG.Options = {
             {   // Theme 6: grid of '+'s and more subtle points in between
                 major: {
                     face: '+',
-                    sizeX: 10,
+                    size: 10,
                     strokeOpacity: 1
                 },
                 minor: {
-                    sizeX: 3
+                    size: 3
                 },
                 minorElements: 'auto'
             },
@@ -4991,7 +4963,7 @@ JXG.Options = {
                     drawZeroY: true
                 },
                 minor: {
-                    sizeX: 3,
+                    size: 3,
                     drawZeroX: true,
                     drawZeroY: true
                 },
