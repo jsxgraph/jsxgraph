@@ -4568,10 +4568,10 @@ JXG.Options = {
          * <tt>'max'</tt> or <tt>true</tt> to the primarily greater value.
          *
          * @type {Boolean|String}
-         * @name Grid#forceSquareGrid
+         * @name Grid#forceSquare
          * @default false
          */
-        forceSquareGrid: false,
+        forceSquare: false,
 
         /**
          * To decide whether major or minor grid elements on boundaries of the boundingBox shall be shown, half-ones as well.
@@ -4935,7 +4935,7 @@ JXG.Options = {
             },
 
             {   // Theme 1: quadratic grid appearance with distance of major grid elements in x- and y-direction set to the primarily greater one of both (pixels compared)
-                forceSquareGrid: 'max'
+                forceSquare: 'max'
             },
 
             {   // Theme 2: lines and subtile points in between
