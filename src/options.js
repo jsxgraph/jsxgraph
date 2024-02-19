@@ -31,6 +31,7 @@
 
 /*global JXG:true, define: true*/
 /*jslint nomen: true, plusplus: true*/
+// @formatter:off
 
 import JXG from "./jxg";
 import Const from "./base/constants";
@@ -4501,6 +4502,8 @@ JXG.Options = {
          * @visprop
          */
 
+        // @formatter:on
+
         needsRegularUpdate: false,
         hasGrid: false,  // Used in standardoptions
 
@@ -4999,6 +5002,8 @@ JXG.Options = {
 
         /**#@-*/
     },
+
+    // @formatter:off
 
     group: {
         needsRegularUpdate: true

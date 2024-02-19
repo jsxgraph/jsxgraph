@@ -299,7 +299,6 @@ JXG.createGrid = function (board, parents, attributes) {
             case '.':
             case 'point':
                 grid.visProp.linecap = 'round';
-                // grid.visProp.strokewidth = grid.visProp.sizex; // POI: Should we really use sizeX here?
                 return [
                     [x, x, NaN],
                     [y, y, NaN]
@@ -428,7 +427,6 @@ JXG.createGrid = function (board, parents, attributes) {
                 ];
 
             case 'line':
-                // grid.visProp.strokewidth = grid.visProp.sizex; // POI: Should we really use sizeX here?
                 m = Type.evaluate(grid.visProp.margin);
                 return [
                     // [x, x, NaN, bbox[0] + (4 / grid.board.unitX), bbox[2] - (4 / grid.board.unitX), NaN],
@@ -680,25 +678,6 @@ JXG.createGrid = function (board, parents, attributes) {
             }
         }
         minorStepY = majorStepY / (minorY + 1);
-
-        // set minorRadiusX and minorRadiusY
-        // minorSizeX and minorSizeY can be a number (also a number like '20') or a string ending with '%'
-        // if (Type.isString(minorSizeX) && minorSizeX.indexOf('%') > -1) {
-        //     minorRadiusX = minorSizeX.replace(/\s+%\s+/, '');
-        //     minorRadiusX = parseFloat(minorRadiusX) / 100;
-        //     minorRadiusX = minorRadiusX * minorStepX / 2;
-        // } else { // Type.isNumber(minorSizeX, true)
-        //     minorRadiusX = parseFloat(minorSizeX);
-        //     minorRadiusX = minorRadiusX / this.board.unitX / 2; // conversion: px -> usrCoord
-        // }
-        // if (Type.isString(minorSizeY) && minorSizeY.indexOf('%') > -1) {
-        //     minorRadiusY = minorSizeY.replace(/\s+%\s+/, '');
-        //     minorRadiusY = parseFloat(minorRadiusY) / 100;
-        //     minorRadiusY = minorRadiusY * minorStepY / 2;
-        // } else { // Type.isNumber(minorSizeY, true)
-        //     minorRadiusY = parseFloat(minorSizeY);
-        //     minorRadiusY = minorRadiusY / this.board.unitY / 2; // conversion: px -> usrCoord
-        // }
 
         if (Type.isString(minorSizeX) && minorSizeX.indexOf('%') > -1) {
             minorRadiusX = Type.parseNumber(minorSizeX, minorStepX / 2);
