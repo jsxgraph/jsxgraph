@@ -115,7 +115,7 @@ import Const from "../base/constants";
  *         strokeOpacity: 1,
  *         drawZeroX: true,
  *         drawZeroY: true,
- *         drawZero0: true,
+ *         drawZeroOrigin: true,
  *     },
  *     minor: {
  *         face: 'diamond',
@@ -142,7 +142,7 @@ import Const from "../base/constants";
  *                 strokeOpacity: 1,
  *                 drawZeroX: true,
  *                 drawZeroY: true,
- *                 drawZero0: true,
+ *                 drawZeroOrigin: true,
  *             },
  *             minor: {
  *                 face: 'diamond',
@@ -467,7 +467,7 @@ JXG.createGrid = function (board, parents, attributes) {
             gridX = Type.evaluate(this.visProp.gridx), // for backwards compatibility
             gridY = Type.evaluate(this.visProp.gridy), // for backwards compatibility
             face = Type.evaluate(this.visProp.face),
-            drawZero0 = Type.evaluate(this.visProp.drawzero0),
+            drawZeroOrigin = Type.evaluate(this.visProp.drawzeroorigin),
             drawZeroX = Type.evaluate(this.visProp.drawzerox),
             drawZeroY = Type.evaluate(this.visProp.drawzeroy),
 
@@ -565,7 +565,7 @@ JXG.createGrid = function (board, parents, attributes) {
             for (x = startX; finite && x <= bbox[2]; x += majorStep[0]) {
 
                 if (
-                    (!drawZero0 && Math.abs(y) < eps && Math.abs(x) < eps) ||
+                    (!drawZeroOrigin && Math.abs(y) < eps && Math.abs(x) < eps) ||
                     (!drawZeroX && Math.abs(y) < eps && Math.abs(x) >= eps) ||
                     (!drawZeroY && Math.abs(x) < eps && Math.abs(y) >= eps) ||
                     (!includeBoundaries && (
@@ -605,7 +605,7 @@ JXG.createGrid = function (board, parents, attributes) {
             minorDrawZeroY = Type.evaluate(this.visProp.drawzeroy),
 
             majorFace = Type.evaluate(this.majorGrid.visProp.face),
-            majorDrawZero0 = Type.evaluate(this.majorGrid.visProp.drawzero0),
+            majorDrawZero0 = Type.evaluate(this.majorGrid.visProp.drawzeroorigin),
             majorDrawZeroX = Type.evaluate(this.majorGrid.visProp.drawzerox),
             majorDrawZeroY = Type.evaluate(this.majorGrid.visProp.drawzeroy),
 

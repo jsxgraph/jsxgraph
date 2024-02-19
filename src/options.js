@@ -4642,10 +4642,10 @@ JXG.Options = {
              * Draw the major grid element, that lies at (0,0)?
              *
              * @type {Boolean}
-             * @name Grid#major_drawZero0
+             * @name Grid#major_drawZeroOrigin
              * @default true
              */
-            drawZero0: true,
+            drawZeroOrigin: true,
 
             /**
              * Draw the major grid elements, that lie at x=0?
@@ -4955,7 +4955,7 @@ JXG.Options = {
 
             { // Theme 7: lines and subtile points in between, also plotted on axes
                 major: {
-                    drawZero0: true,
+                    drawZeroOrigin: true,
                     drawZeroX: true,
                     drawZeroY: true
                 },
