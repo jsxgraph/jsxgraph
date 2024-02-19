@@ -924,12 +924,31 @@ JXG.extend(
             return str;
         },
 
-        parseNumber: function(v, ofWhat, toUnit) {
+        parseNumber: function(v, percentOfWhat, convertPx, toUnit) {
             var str;
 
             if (this.isString(v) && v.indexOf('%') > -1) {
                 str = v.replace(/\s+%\s+/, '');
-                return parseFloat(str) * ofWhat * 0.01;
+                return parseFloat(str) * percentOfWhat * 0.01;
+            }
+            if (this.isString(v) && v.indexOf('fr') > -1) {
+                str = v.replace(/\s+fr\s+/, '');
+                return parseFloat(str) * percentOfWhat;
+            }
+            if (this.isString(v) && v.indexOf('abs') > -1) {
+                str = v.replace(/\s+abs\s+/, '');
+                return parseFloat(str);
+            }
+            if (this.isString(v) && v.indexOf('px') > -1) {
+                str = v.replace(/\s+px\s+/, '');
+                str = parseFloat(str);
+                if(this.isFunction(convertPx)) {
+                    return convertPx(str);
+                } else if(this.isNumber(convertPx)) {
+                    return str * convertPx;
+                } else {
+                    return str;
+                }
             }
             // Number or String containing no unit
             return parseFloat(v);

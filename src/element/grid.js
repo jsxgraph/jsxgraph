@@ -679,16 +679,8 @@ JXG.createGrid = function (board, parents, attributes) {
         }
         minorStepY = majorStepY / (minorY + 1);
 
-        if (Type.isString(minorSizeX) && minorSizeX.indexOf('%') > -1) {
-            minorRadiusX = Type.parseNumber(minorSizeX, minorStepX / 2);
-        } else { // Type.isNumber(minorSizeX, true)
-            minorRadiusX = parseFloat(minorSizeX) / this.board.unitX / 2; // conversion: px -> usrCoord
-        }
-        if (Type.isString(minorSizeY) && minorSizeY.indexOf('%') > -1) {
-            minorRadiusY = Type.parseNumber(minorSizeY, minorStepY / 2);
-        } else { // Type.isNumber(minorSizeY, true)
-            minorRadiusY = parseFloat(minorSizeY) / this.board.unitY / 2; // conversion: px -> usrCoord
-        }
+        minorRadiusX = Type.parseNumber(minorSizeX, minorStepX / 2, 1 / this.board.unitX);
+        minorRadiusY = Type.parseNumber(minorSizeY, minorStepY / 2, 1 / this.board.unitY);
 
         // calculate start position of curve
         startX = Mat.roundToStep(bbox[0], minorStepX);
