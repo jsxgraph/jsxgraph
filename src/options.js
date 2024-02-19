@@ -3914,6 +3914,22 @@ JXG.Options = {
         ticksAutoPos: false,
 
         /**
+         * Defines, when <tt>ticksAutoPos</tt> takes effect.
+         * There are the following possibilities:
+         * <ul>
+         *     <li>Numbers or strings which are numbers (e.g. '10') are interpreted as usrCoords.
+         *     <li>Strings with the unit 'abs' are interpreted as usrCoords, too.
+         *     <li>Strings with the unit 'px' are interpreted as screen pixels.
+         *     <li>Strings with the unit '%' or 'fr' are interpreted as a ratio to the width/height of the board. (e.g. 50% = 0.5fr)
+         * </ul>
+         *
+         * @type {Number|String}
+         * @name Axis#ticksAutoPosThreshold
+         * @default '5%'
+         */
+        ticksAutoPosThreshold: '5%',
+
+        /**
          * Show / hide ticks.
          *
          * Deprecated. Suggested alternative is "ticks: {visible: false}"

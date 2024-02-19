@@ -1565,7 +1565,7 @@ JXG.createAxis = function (board, parents, attributes) {
             bbox,
             position,
             direction, horizontal, vertical,
-            ticksAutoPos, ticksAutoPosThres = 20, distP1, distP2,
+            ticksAutoPos, ticksAutoPosThres, distP1, distP2,
             anchor, left, right,
             distUsr,
             locationPoint1Org,
@@ -1582,6 +1582,30 @@ JXG.createAxis = function (board, parents, attributes) {
         horizontal = this.isHorizontal();
         vertical = this.isVertical();
         ticksAutoPos = Type.evaluate(this.visProp.ticksautopos);
+        ticksAutoPosThres = Type.evaluate(this.visProp.ticksautoposthreshold);
+        if (Type.isNumber(ticksAutoPosThres, true) || (Type.isString(ticksAutoPosThres) && ticksAutoPosThres.indexOf('abs') > -1)) {
+            ticksAutoPosThres = Type.parseNumber(ticksAutoPosThres);
+
+        } else if (Type.isString(ticksAutoPosThres) && ticksAutoPosThres.indexOf('px') > -1) {
+            ticksAutoPosThres = ticksAutoPosThres.replace(/\s+px\s+/, '');
+            ticksAutoPosThres = Type.parseNumber(ticksAutoPosThres);
+            if (horizontal) {
+                ticksAutoPosThres = Math.abs(bbox[1] - (new JXG.Coords(JXG.COORDS_BY_SCREEN, [ticksAutoPosThres, ticksAutoPosThres], this.board)).usrCoords[2]);
+            } else if (vertical) {
+                ticksAutoPosThres = Math.abs(bbox[0] - (new JXG.Coords(JXG.COORDS_BY_SCREEN, [ticksAutoPosThres, ticksAutoPosThres], this.board)).usrCoords[1]);
+            }
+
+        } else if (Type.isString(ticksAutoPosThres) && (ticksAutoPosThres.indexOf('%') > -1 || ticksAutoPosThres.indexOf('fr') > -1)) {
+            ticksAutoPosThres = Type.parseNumber(ticksAutoPosThres, 1);
+            if (horizontal) {
+                ticksAutoPosThres = Math.abs(bbox[1] - bbox[3]) * ticksAutoPosThres;
+            } else if (vertical) {
+                ticksAutoPosThres = Math.abs(bbox[0] - bbox[2]) * ticksAutoPosThres;
+            }
+
+        } else {
+            ticksAutoPosThres = 0;
+        }
 
         anchor = Type.evaluate(this.visProp.anchor);
         left = anchor.indexOf('left') > -1;
