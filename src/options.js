@@ -31,7 +31,6 @@
 
 /*global JXG:true, define: true*/
 /*jslint nomen: true, plusplus: true*/
-// @formatter:off
 
 import JXG from "./jxg";
 import Const from "./base/constants";
@@ -4502,8 +4501,6 @@ JXG.Options = {
          * @visprop
          */
 
-        // @formatter:on
-
         needsRegularUpdate: false,
         hasGrid: false,  // Used in standardoptions
 
@@ -4782,8 +4779,8 @@ JXG.Options = {
          * @private
          *
          * @example
-         * // theme 1
-         * const board = JXG.JSXGraph.initBoard('jxgbox', {
+         * </pre>Theme 1 (quadratic grid appearance with distance of major grid elements in x- and y-direction set to the primarily greater one)
+         * <pre>const board = JXG.JSXGraph.initBoard('jxgbox', {
          *     boundingbox: [-4, 4, 4, -4], axis: true,
          *     defaultAxes: {
          *         x: { ticks: {majorHeight: 10} },
@@ -4806,8 +4803,8 @@ JXG.Options = {
          * </script> <pre>
          *
          * @example
-         * // theme 2
-         * const board = JXG.JSXGraph.initBoard('jxgbox', {
+         * </pre>Theme 2 (lines and subtile points in between)
+         * <pre>const board = JXG.JSXGraph.initBoard('jxgbox', {
          *     boundingbox: [-4, 4, 4, -4], axis: false,
          *     grid: { theme: 2, minorElements: 4, color: 'grey' },
          * });
@@ -4822,24 +4819,8 @@ JXG.Options = {
          * </script> <pre>
          *
          * @example
-         * // theme 3
-         * const board = JXG.JSXGraph.initBoard('jxgbox', {
-         *     boundingbox: [-4, 4, 4, -4], axis: false,
-         *     grid: { theme: 3, minorElements: 4, strokeColor: 'grey' },
-         * });
-         * </pre> <div id="JXG28bee3da-a7ef-4590-9a18-38d1b99d09ce" class="jxgbox" style="width: 300px; height: 300px;"></div>
-         * <script type="text/javascript">
-         *     (function() {
-         *         var board = JXG.JSXGraph.initBoard('JXG28bee3da-a7ef-4590-9a18-38d1b99d09ce',
-         *             {boundingbox: [-4, 4, 4, -4], axis: false, showcopyright: false, shownavigation: false,
-         *                 grid: { theme: 3, minorElements: 4, strokeColor: 'grey' },
-         *         });
-         *     })();
-         * </script> <pre>
-         *
-         * @example
-         * // theme 4
-         * const board = JXG.JSXGraph.initBoard('jxgbox', {
+         * </pre>Theme 3 (lines and thinner lines in between)
+         * <pre>const board = JXG.JSXGraph.initBoard('jxgbox', {
          *     boundingbox: [-4, 4, 4, -4], axis: false,
          *     grid: { theme: 4, minorElements: 4, color: 'grey' },
          * });
@@ -4854,8 +4835,8 @@ JXG.Options = {
          * </script> <pre>
          *
          * @example
-         * // theme 5
-         * const board = JXG.JSXGraph.initBoard('jxgbox', {
+         * </pre>Theme 4 (lines with more subtle grid of '+'s plotted in between)
+         * <pre>const board = JXG.JSXGraph.initBoard('jxgbox', {
          *     boundingbox: [-4, 4, 4, -4], axis: false,
          *     grid: { theme: 5, minorElements: 4, color: 'grey' },
          * });
@@ -4870,8 +4851,8 @@ JXG.Options = {
          * </script> <pre>
          *
          * @example
-         * // theme 6
-         * const board = JXG.JSXGraph.initBoard('jxgbox', {
+         * </pre>Theme 5 (grid of '+'s and more subtile points in between)
+         * <pre>const board = JXG.JSXGraph.initBoard('jxgbox', {
          *     boundingbox: [-4, 4, 4, -4], axis: false,
          *     grid: { theme: 6, minorElements: 4, color: 'grey' },
          * });
@@ -4886,8 +4867,24 @@ JXG.Options = {
          * </script> <pre>
          *
          * @example
-         * // theme 7
-         * const board = JXG.JSXGraph.initBoard('jxgbox', {
+         * </pre>Theme 6 (grid of circles with subtile points in between)
+         * <pre>const board = JXG.JSXGraph.initBoard('jxgbox', {
+         *     boundingbox: [-4, 4, 4, -4], axis: false,
+         *     grid: { theme: 3, minorElements: 4, strokeColor: 'grey' },
+         * });
+         * </pre> <div id="JXG28bee3da-a7ef-4590-9a18-38d1b99d09ce" class="jxgbox" style="width: 300px; height: 300px;"></div>
+         * <script type="text/javascript">
+         *     (function() {
+         *         var board = JXG.JSXGraph.initBoard('JXG28bee3da-a7ef-4590-9a18-38d1b99d09ce',
+         *             {boundingbox: [-4, 4, 4, -4], axis: false, showcopyright: false, shownavigation: false,
+         *                 grid: { theme: 3, minorElements: 4, strokeColor: 'grey' },
+         *         });
+         *     })();
+         * </script> <pre>
+         *
+         * @example
+         * </pre>Theme 7 (lines and subtile points in between, also plotted on axes)
+         * <pre>const board = JXG.JSXGraph.initBoard('jxgbox', {
          *     boundingbox: [-4, 4, 4, -4], axis: false,
          *     grid: { theme: 7, minorElements: 4, color: 'grey' },
          * });
@@ -4906,7 +4903,7 @@ JXG.Options = {
                 // default values
             },
 
-            {   // Theme 1: quadratic grid appearance with distance of major grid elements in x- and y-direction set to the primarily greater one of both (pixels compared)
+            {   // Theme 1: quadratic grid appearance with distance of major grid elements in x- and y-direction set to the primarily greater one
                 forceSquare: 'max'
             },
 
@@ -4918,25 +4915,14 @@ JXG.Options = {
                 minorElements: 'auto'
             },
 
-            {   // Theme 3: grid of circles with subtle points in between
-                major: {
-                    face: 'circle',
-                    sizeX: 5
-                },
-                minor: {
-                    sizeX: 3
-                },
-                minorElements: 'auto'
-            },
-
-            {   // Theme 4: lines and thinner lines in between
+            {   // Theme 3: lines and thinner lines in between
                 minor: {
                     face: 'line'
                 },
                 minorElements: 'auto'
             },
 
-            {   // Theme 5: lines with more subtle grid of '+'s plotted in between
+            {   // Theme 4: lines with more subtle grid of '+'s plotted in between
                 minor: {
                     face: '+',
                     size: '95%'
@@ -4944,7 +4930,7 @@ JXG.Options = {
                 minorElements: 'auto'
             },
 
-            {   // Theme 6: grid of '+'s and more subtle points in between
+            {   // Theme 5: grid of '+'s and more subtile points in between
                 major: {
                     face: '+',
                     size: 10,
@@ -4956,7 +4942,18 @@ JXG.Options = {
                 minorElements: 'auto'
             },
 
-            { // Theme 7: lines and subtle points in between, also plotted on axes
+            {   // Theme 6: grid of circles with subtile points in between
+                major: {
+                    face: 'circle',
+                    size: 5
+                },
+                minor: {
+                    size: 3
+                },
+                minorElements: 'auto'
+            },
+
+            { // Theme 7: lines and subtile points in between, also plotted on axes
                 major: {
                     drawZero0: true,
                     drawZeroX: true,
@@ -4973,8 +4970,6 @@ JXG.Options = {
 
         /**#@-*/
     },
-
-    // @formatter:off
 
     group: {
         needsRegularUpdate: true
