@@ -1583,29 +1583,13 @@ JXG.createAxis = function (board, parents, attributes) {
         vertical = this.isVertical();
         ticksAutoPos = Type.evaluate(this.visProp.ticksautopos);
         ticksAutoPosThres = Type.evaluate(this.visProp.ticksautoposthreshold);
-        if (Type.isNumber(ticksAutoPosThres, true) || (Type.isString(ticksAutoPosThres) && ticksAutoPosThres.indexOf('abs') > -1)) {
-            ticksAutoPosThres = Type.parseNumber(ticksAutoPosThres);
-
-        } else if (Type.isString(ticksAutoPosThres) && ticksAutoPosThres.indexOf('px') > -1) {
-            ticksAutoPosThres = ticksAutoPosThres.replace(/\s+px\s+/, '');
-            ticksAutoPosThres = Type.parseNumber(ticksAutoPosThres);
-            if (horizontal) {
-                ticksAutoPosThres = Math.abs(bbox[1] - (new JXG.Coords(JXG.COORDS_BY_SCREEN, [ticksAutoPosThres, ticksAutoPosThres], this.board)).usrCoords[2]);
-            } else if (vertical) {
-                ticksAutoPosThres = Math.abs(bbox[0] - (new JXG.Coords(JXG.COORDS_BY_SCREEN, [ticksAutoPosThres, ticksAutoPosThres], this.board)).usrCoords[1]);
-            }
-
-        } else if (Type.isString(ticksAutoPosThres) && (ticksAutoPosThres.indexOf('%') > -1 || ticksAutoPosThres.indexOf('fr') > -1)) {
-            ticksAutoPosThres = Type.parseNumber(ticksAutoPosThres, 1);
-            if (horizontal) {
-                ticksAutoPosThres = Math.abs(bbox[1] - bbox[3]) * ticksAutoPosThres;
-            } else if (vertical) {
-                ticksAutoPosThres = Math.abs(bbox[0] - bbox[2]) * ticksAutoPosThres;
-            }
-
-        } else {
-            ticksAutoPosThres = 0;
-        }
+        ticksAutoPosThres = Type.parseNumber(
+            ticksAutoPosThres,
+            horizontal ? Math.abs(bbox[1] - bbox[3]) :
+                (vertical ? Math.abs(bbox[0] - bbox[2]) : 1),
+            horizontal ? (1 / this.board.unitX) :
+                (vertical ? (1 / this.board.unitY) : 1)
+        );
 
         anchor = Type.evaluate(this.visProp.anchor);
         left = anchor.indexOf('left') > -1;
@@ -1614,29 +1598,14 @@ JXG.createAxis = function (board, parents, attributes) {
         distUsr = Type.evaluate(this.visProp.anchordist);
         if (!horizontal && !vertical) {
             distUsr = 0;
-
-        } else if (Type.isNumber(distUsr, true) || (Type.isString(distUsr) && distUsr.indexOf('abs') > -1)) {
-            distUsr = Type.parseNumber(distUsr);
-
-        } else if (Type.isString(distUsr) && distUsr.indexOf('px') > -1) {
-            distUsr = distUsr.replace(/\s+px\s+/, '');
-            distUsr = Type.parseNumber(distUsr);
-            if (horizontal) {
-                distUsr = Math.abs(bbox[1] - (new JXG.Coords(JXG.COORDS_BY_SCREEN, [distUsr, distUsr], this.board)).usrCoords[2]);
-            } else if (vertical) {
-                distUsr = Math.abs(bbox[0] - (new JXG.Coords(JXG.COORDS_BY_SCREEN, [distUsr, distUsr], this.board)).usrCoords[1]);
-            }
-
-        } else if (Type.isString(distUsr) && (distUsr.indexOf('%') > -1 || distUsr.indexOf('fr') > -1)) {
-            distUsr = Type.parseNumber(distUsr, 1);
-            if (horizontal) {
-                distUsr = Math.abs(bbox[1] - bbox[3]) * distUsr;
-            } else if (vertical) {
-                distUsr = Math.abs(bbox[0] - bbox[2]) * distUsr;
-            }
-
         } else {
-            distUsr = 0;
+            distUsr = Type.parseNumber(
+                distUsr,
+                horizontal ? Math.abs(bbox[1] - bbox[3]) :
+                    (vertical ? Math.abs(bbox[0] - bbox[2]) : 1),
+                horizontal ? (1 / this.board.unitX) :
+                    (vertical ? (1 / this.board.unitY) : 1)
+            );
         }
 
         locationPoint1Org = this.board.getLocationPoint(this._point1UsrCoordsOrg, distUsr);
