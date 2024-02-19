@@ -237,7 +237,7 @@ import Const from "../base/constants";
  * </script><pre>
  */
 JXG.createGrid = function (board, parents, attributes) {
-    const eps = JXG.Math.eps,       // to avoid rounding errors
+    const eps = Mat.eps,       // to avoid rounding errors
         maxLines = 5000;    // maximum number of vertical or horizontal grid elements (abort criterion for performance reasons)
 
     var majorGrid,      // main object which will be returned as grid
@@ -291,7 +291,7 @@ JXG.createGrid = function (board, parents, attributes) {
      * @ignore
      */
     createDataArrayForFace = function (face, grid, x, y, radiusX, radiusY, bbox) {
-        var t, q, n, array, rx2, ry2;
+        var t, q, m, n, array, rx2, ry2;
 
         switch (face.toLowerCase()) {
 
@@ -299,7 +299,7 @@ JXG.createGrid = function (board, parents, attributes) {
             case '.':
             case 'point':
                 grid.visProp.linecap = 'round';
-                grid.visProp.strokewidth = grid.visProp.sizex; // POI: Should we really use sizeX here?
+                // grid.visProp.strokewidth = grid.visProp.sizex; // POI: Should we really use sizeX here?
                 return [
                     [x, x, NaN],
                     [y, y, NaN]
@@ -428,10 +428,12 @@ JXG.createGrid = function (board, parents, attributes) {
                 ];
 
             case 'line':
-                grid.visProp.strokewidth = grid.visProp.sizex; // POI: Should we really use sizeX here?
+                // grid.visProp.strokewidth = grid.visProp.sizex; // POI: Should we really use sizeX here?
+                m = Type.evaluate(grid.visProp.margin);
                 return [
-                    [x, x, NaN, bbox[0] + (4 / grid.board.unitX), bbox[2] - (4 / grid.board.unitX), NaN],
-                    [bbox[1] - (4 / grid.board.unitY), bbox[3] + (4 / grid.board.unitY), NaN, y, y, NaN]
+                    // [x, x, NaN, bbox[0] + (4 / grid.board.unitX), bbox[2] - (4 / grid.board.unitX), NaN],
+                    [x, x, NaN, bbox[0] - m / grid.board.unitX, bbox[2] + m / grid.board.unitX, NaN],
+                    [bbox[1] + m / grid.board.unitY, bbox[3] - m / grid.board.unitY, NaN, y, y, NaN]
                 ];
 
             default:
@@ -681,23 +683,32 @@ JXG.createGrid = function (board, parents, attributes) {
 
         // set minorRadiusX and minorRadiusY
         // minorSizeX and minorSizeY can be a number (also a number like '20') or a string ending with '%'
-        if (Type.isString(minorSizeX) && minorSizeX.indexOf('%') > -1) {
-            minorRadiusX = minorSizeX.replace(/\s+%\s+/, '');
-            minorRadiusX = parseFloat(minorRadiusX) / 100;
-            minorRadiusX = minorRadiusX * minorStepX / 2;
+        // if (Type.isString(minorSizeX) && minorSizeX.indexOf('%') > -1) {
+        //     minorRadiusX = minorSizeX.replace(/\s+%\s+/, '');
+        //     minorRadiusX = parseFloat(minorRadiusX) / 100;
+        //     minorRadiusX = minorRadiusX * minorStepX / 2;
+        // } else { // Type.isNumber(minorSizeX, true)
+        //     minorRadiusX = parseFloat(minorSizeX);
+        //     minorRadiusX = minorRadiusX / this.board.unitX / 2; // conversion: px -> usrCoord
+        // }
+        // if (Type.isString(minorSizeY) && minorSizeY.indexOf('%') > -1) {
+        //     minorRadiusY = minorSizeY.replace(/\s+%\s+/, '');
+        //     minorRadiusY = parseFloat(minorRadiusY) / 100;
+        //     minorRadiusY = minorRadiusY * minorStepY / 2;
+        // } else { // Type.isNumber(minorSizeY, true)
+        //     minorRadiusY = parseFloat(minorSizeY);
+        //     minorRadiusY = minorRadiusY / this.board.unitY / 2; // conversion: px -> usrCoord
+        // }
 
+        if (Type.isString(minorSizeX) && minorSizeX.indexOf('%') > -1) {
+            minorRadiusX = Type.parseNumber(minorSizeX, minorStepX / 2);
         } else { // Type.isNumber(minorSizeX, true)
-            minorRadiusX = parseFloat(minorSizeX);
-            minorRadiusX = minorRadiusX / this.board.unitX / 2; // conversion: px -> usrCoord
+            minorRadiusX = parseFloat(minorSizeX) / this.board.unitX / 2; // conversion: px -> usrCoord
         }
         if (Type.isString(minorSizeY) && minorSizeY.indexOf('%') > -1) {
-            minorRadiusY = minorSizeY.replace(/\s+%\s+/, '');
-            minorRadiusY = parseFloat(minorRadiusY) / 100;
-            minorRadiusY = minorRadiusY * minorStepY / 2;
-
+            minorRadiusY = Type.parseNumber(minorSizeY, minorStepY / 2);
         } else { // Type.isNumber(minorSizeY, true)
-            minorRadiusY = parseFloat(minorSizeY);
-            minorRadiusY = minorRadiusY / this.board.unitY / 2; // conversion: px -> usrCoord
+            minorRadiusY = parseFloat(minorSizeY) / this.board.unitY / 2; // conversion: px -> usrCoord
         }
 
         // calculate start position of curve
