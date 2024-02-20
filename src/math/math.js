@@ -110,11 +110,10 @@ JXG.Math = {
     },
 
     /**
-     * Initializes a vector as an array with the coefficients set to the given value resp. zero.
+     * Initializes a vector of size <tt>n</tt> wih coefficients set to the init value (default 0)
      * @param {Number} n Length of the vector
      * @param {Number} [init=0] Initial value for each coefficient
-     * @returns {Array} A <tt>n</tt> times <tt>m</tt>-matrix represented by a
-     * two-dimensional array. The inner arrays hold the columns, the outer array holds the rows.
+     * @returns {Array} An array of length <tt>n</tt>
      */
     vector: function (n, init) {
         var r, i;
