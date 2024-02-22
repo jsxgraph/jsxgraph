@@ -508,13 +508,13 @@ JXG.createGrid = function (board, parents, attributes) {
             majorStep[1] = Type.parseNumber(majorStep[1], Math.abs(bbox[0] - bbox[2]), 1 / this.board.unitY);
         }
 
-        if (forceSquare === 'min') {
+        if (forceSquare === 'min' || forceSquare === true) {
             if (majorStep[0] * this.board.unitX <= majorStep[1] * this.board.unitY) { // compare px-values
                 majorStep[1] = majorStep[0] / this.board.unitY * this.board.unitX;
             } else {
                 majorStep[0] = majorStep[1] / this.board.unitX * this.board.unitY;
             }
-        } else if (forceSquare === 'max' || forceSquare === true) {
+        } else if (forceSquare === 'max') {
             if (majorStep[0] * this.board.unitX <= majorStep[1] * this.board.unitY) { // compare px-values
                 majorStep[0] = majorStep[1] / this.board.unitX * this.board.unitY;
             } else {
