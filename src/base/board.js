@@ -5719,8 +5719,9 @@ console.log(evt);
                         (i === 2 || i === 3)
                     ) &&
                     !(elementType === 'curve' /*&& i > 0*/) && // Allow curve plots with jessiecode, parents[0] is the
-                    // variable name
-                    !(elementType === 'functiongraph') // Prevent problems with function terms like 'x'
+                                                               // variable name
+                    !(elementType === 'functiongraph') && // Prevent problems with function terms like 'x', 'y'
+                    !(elementType === 'implicitcurve')
                 ) {
                     parents[i] = this.select(parents[i]);
                 }
