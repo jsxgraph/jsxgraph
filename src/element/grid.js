@@ -451,6 +451,8 @@ JXG.createGrid = function (board, parents, attributes) {
     majorGrid.hasPoint = function () { return false; };
     minorGrid.hasPoint = function () { return false; };
 
+    majorGrid.inherits.push(minorGrid);
+
     majorGrid.updateDataArray = function () {
         var bbox = this.board.getBoundingBox(),
             startX, startY,
