@@ -438,6 +438,9 @@ JXG.createGrid = function (board, parents, attributes) {
     if (attrMinor.id === attrMajor.id) {
         attrMinor.id = attrMajor.id + '_minor';
     }
+    if (attrMinor.name === attrMajor.name) {
+        attrMinor.name = attrMajor.name + '_minor';
+    }
     minorGrid = board.create('curve', [[null], [null]], attrMinor);
     minorGrid.elType = 'grid';
     minorGrid.type = Const.OBJECT_TYPE_GRID;
