@@ -435,6 +435,9 @@ JXG.createGrid = function (board, parents, attributes) {
     // Create minorGrid
     attrMinor = Type.copyAttributes(attributes, board.options, 'grid', 'minor');
     Type.mergeAttr(attrMinor, attrGrid, true);
+    if (attrMinor.id === attrMajor.id) {
+        attrMinor.id = attrMajor.id + '_minor';
+    }
     minorGrid = board.create('curve', [[null], [null]], attrMinor);
     minorGrid.elType = 'grid';
     minorGrid.type = Const.OBJECT_TYPE_GRID;
