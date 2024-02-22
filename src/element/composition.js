@@ -1083,6 +1083,11 @@ JXG.createArrowParallel = function (board, parents, attributes) {
     /* parallel arrow point polynomials are done in createParallelPoint */
     try {
         attr = Type.copyAttributes(attributes, board.options, 'arrowparallel');
+
+        if (attr.lastArrow === false) {
+            // An arrow has to have an arrow head.
+            attr.lastArrow = true;
+        }
         p = JXG.createParallel(board, parents, attr).setAttribute({
             straightFirst: false,
             straightLast: false
@@ -3052,168 +3057,6 @@ JXG.createIntegral = function (board, parents, attributes) {
 };
 
 /**
- * @class Creates a grid to support the user with element placement.
- * @pseudo
- * @description A grid is a set of vertical and horizontal lines to support the user with element placement. This method
- * draws such a grid on the given board. This method does not
- * take any parent elements. It is usually instantiated on the board's creation via the attribute <tt>grid</tt> set
- * to true.
- * @parameter None.
- * @constructor
- * @name Grid
- * @type JXG.Curve
- * @augments JXG.Curve
- * @throws {Error} If the element cannot be constructed with the given parent objects an exception is thrown.
- * @example
- * grid = board.create('grid', []);
- * </pre><div class="jxgbox" id="JXGa9a0671f-7a51-4fa2-8697-241142c00940" style="width: 400px; height: 400px;"></div>
- * <script type="text/javascript">
- * (function () {
- *  board = JXG.JSXGraph.initBoard('JXGa9a0671f-7a51-4fa2-8697-241142c00940', {boundingbox:[-4, 6, 10, -6], axis: false, grid: false, keepaspectratio: true});
- *  grid = board.create('grid', []);
- * })();
- * </script><pre>
- */
-JXG.createGrid = function (board, parents, attributes) {
-    var c, attr;
-
-    attr = Type.copyAttributes(attributes, board.options, "grid");
-    c = board.create("curve", [[null], [null]], attr);
-
-    c.elType = "grid";
-    c.type = Const.OBJECT_TYPE_GRID;
-
-    /**
-     * @ignore
-     */
-    c.updateDataArray = function () {
-        var start, end, i,
-            max_lines = 5000,
-            is_finite,
-            topLeft, bottomRight,
-            gridX = Type.evaluate(this.visProp.gridx),
-            gridY = Type.evaluate(this.visProp.gridy);
-
-        if (Type.isArray(this.visProp.topleft)) {
-            topLeft = new Coords(
-                Type.evaluate(this.visProp.tltype) || Const.COORDS_BY_USER,
-                this.visProp.topleft,
-                board
-            );
-        } else {
-            topLeft = new Coords(Const.COORDS_BY_SCREEN, [0, 0], board);
-        }
-
-        if (Type.isArray(this.visProp.bottomright)) {
-            bottomRight = new Coords(
-                Type.evaluate(this.visProp.brtype) || Const.COORDS_BY_USER,
-                this.visProp.bottomright,
-                board
-            );
-        } else {
-            bottomRight = new Coords(
-                Const.COORDS_BY_SCREEN,
-                [board.canvasWidth, board.canvasHeight],
-                board
-            );
-        }
-
-        //
-        //      |         |         |
-        //  ----+---------+---------+-----
-        //      |        /|         |
-        //      |    gridY|     <---+------   Grid Cell
-        //      |        \|         |
-        //  ----+---------+---------+-----
-        //      |         |\ gridX /|
-        //      |         |         |
-        //
-        // uc: usercoordinates
-        //
-        // currently one grid cell is 1/JXG.Options.grid.gridX uc wide and 1/JXG.Options.grid.gridY uc high.
-        // this may work perfectly with GeonextReader (#readGeonext, initialization of gridX and gridY) but it
-        // is absolutely not user friendly when it comes to use it as an API interface.
-        // i changed this to use gridX and gridY as the actual width and height of the grid cell. for this i
-        // had to refactor these methods:
-        //
-        //  DONE JXG.Board.calculateSnapSizes (init p1, p2)
-        //  DONE JXG.GeonextReader.readGeonext (init gridX, gridY)
-        //
-
-        board.options.grid.hasGrid = true;
-
-        // fix_grid: adding integer function to calculation of start and end values, and adding to calculation of start and end values below
-        // To allow this:
-        // (axes on the outside, min value of grid = 0.25)
-        //
-        //      |    |         |          |
-        // 1.5 -+----+---------+----------+-----
-        //      |    |         |          |
-        //      |    |         |          |
-        //      |    |         |          |
-        //   1 -+----+---------+----------+-----
-        //      |    |         |          |
-        //      |    |         |          |
-        //      |    |         |          |
-        // 0.5 -+----+---------+----------+-----
-        //      |    |         |          |
-        //      +----+---------+----------+-----
-        //           |         |          |
-        //          0.5        1         1.5
-        //
-        // fix_grid: these lines disabled:
-        // topLeft.setCoordinates(Const.COORDS_BY_USER, [Math.ceil(topLeft.usrCoords[1] / gridX) * gridX, Math.floor(topLeft.usrCoords[2] / gridY) * gridY]);
-        // bottomRight.setCoordinates(Const.COORDS_BY_USER, [Math.floor(bottomRight.usrCoords[1] / gridX) * gridX, Math.ceil(bottomRight.usrCoords[2] / gridY) * gridY]);
-
-        c.dataX = [];
-        c.dataY = [];
-
-        // Sometimes the bounding box is used to invert the axis. We have to take this into account here.
-        // fix_grid: adding integer function to calculation of start and end values
-        start = Math.floor(topLeft.usrCoords[2] / gridY) * gridY;
-        end = Math.ceil(bottomRight.usrCoords[2] / gridY) * gridY;
-
-        if (topLeft.usrCoords[2] < bottomRight.usrCoords[2]) {
-            start = Math.ceil(bottomRight.usrCoords[2] / gridY) * gridY; // bottomRight.usrCoords[2];
-            end = Math.floor(topLeft.usrCoords[2] / gridY) * gridY;
-        }
-
-        // Start with the horizontal grid:
-        is_finite = (!isFinite(start) || !isFinite(end) || Math.abs(end) > Math.abs(gridY * max_lines)) ? false : true;
-        for (i = start; is_finite && i > end - gridY; i -= gridY) {
-            c.dataX.push(topLeft.usrCoords[1], bottomRight.usrCoords[1], NaN);
-            c.dataY.push(i, i, NaN);
-        }
-
-        // fix_grid: adding integer function to calculation of start and end values
-        start = Math.ceil(topLeft.usrCoords[1] / gridX) * gridX;
-        end = Math.floor(bottomRight.usrCoords[1] / gridX) * gridX;
-
-        if (topLeft.usrCoords[1] > bottomRight.usrCoords[1]) {
-            start = Math.floor(bottomRight.usrCoords[1] / gridX) * gridX;
-            end = Math.ceil(topLeft.usrCoords[1] / gridX) * gridX;
-        }
-
-        // Build vertical grid
-        is_finite = (!isFinite(start) || !isFinite(end) || Math.abs(end) > Math.abs(gridX * max_lines)) ? false : true;
-        for (i = start; is_finite && i < end + gridX; i += gridX) {
-            c.dataX.push(i, i, NaN);
-            c.dataY.push(topLeft.usrCoords[2], bottomRight.usrCoords[2], NaN);
-        }
-    };
-
-    // We don't care about highlighting so we turn it off completely to save a lot of
-    // time on every mouse move
-    c.hasPoint = function () {
-        return false;
-    };
-
-    board.grids.push(c);
-
-    return c;
-};
-
-/**
  * @class Creates an area indicating the solution of a linear inequality or an inequality
  * of a function graph, i.e. an inequality of type y <= f(x).
  * @pseudo
@@ -3511,7 +3354,6 @@ JXG.registerElement("perpendicular", JXG.createPerpendicular);
 JXG.registerElement("perpendicularpoint", JXG.createPerpendicularPoint);
 JXG.registerElement("perpendicularsegment", JXG.createPerpendicularSegment);
 JXG.registerElement("reflection", JXG.createReflection);
-JXG.registerElement("grid", JXG.createGrid);
 JXG.registerElement("inequality", JXG.createInequality);
 
 // export default {

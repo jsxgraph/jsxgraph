@@ -924,6 +924,40 @@ JXG.extend(
             return str;
         },
 
+        parseNumber: function(v, ofWhat, toUnit) {
+            var str;
+
+            if (this.isString(v) && v.indexOf('%') > -1) {
+                str = v.replace(/\s+%\s+/, '');
+                return parseFloat(str) * ofWhat * 0.01;
+            }
+            // Number or String containing no unit
+            return parseFloat(v);
+        },
+
+        parsePosition: function(str) {
+            var a, i,
+                side = '',
+                pos = '';
+
+            str = str.trim();
+            if (str !== '') {
+                a = str.split(/[ ,]+/);
+                for (i = 0; i < a.length; i++) {
+                    if (a[i] in ['left', 'right']) {
+                        side = a[i];
+                    } else {
+                        pos = a[i];
+                    }
+                }
+            }
+
+            return {
+                side: side,
+                pos: pos
+            };
+        },
+
         /**
          * Extracts the keys of a given object.
          * @param object The object the keys are to be extracted

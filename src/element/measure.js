@@ -391,7 +391,6 @@ JXG.createMeasurement = function (board, parents, attributes) {
             digits = Type.evaluate(el.visProp.digits),
             unit = el.Unit(),
             val = el.Value(),
-            pattern = '',
             i;
 
         if (Type.evaluate(el.visProp.showprefix)) {
