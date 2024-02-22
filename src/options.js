@@ -4561,8 +4561,8 @@ JXG.Options = {
 
         /**
          * To print a quadratic grid with same distance of major grid elements in x- and y-direction.
-         * <tt>'min'</tt> will set both distances of major grid elements in x- and y-direction to the primarily lesser value,
-         * <tt>'max'</tt> or <tt>true</tt> to the primarily greater value.
+         * <tt>'min'</tt> or <tt>true</tt> will set both distances of major grid elements in x- and y-direction to the primarily lesser value,
+         * <tt>'max'</tt> to the primarily greater value.
          *
          * @type {Boolean|String}
          * @name Grid#forceSquare
@@ -4889,8 +4889,8 @@ JXG.Options = {
                 // default values
             },
 
-            {   // Theme 1: quadratic grid appearance with distance of major grid elements in x- and y-direction set to the primarily greater one
-                forceSquare: 'max'
+            {   // Theme 1: quadratic grid appearance with distance of major grid elements in x- and y-direction set to the primarily smaller one
+                forceSquare: 'min'
             },
 
             {   // Theme 2: lines and subtile points in between
