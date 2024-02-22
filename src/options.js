@@ -4505,65 +4505,70 @@ JXG.Options = {
         hasGrid: false,  // Used in standardoptions
 
         /**
-         * Distance of major grid elements in x-direction. There are three possibilities:
-         * <ul>
-         *     <li>Numbers or strings which are numbers (e.g. '10') are interpreted as distance in usrCoords.
-         *     <li>Strings with additional 'px' (e.g. '100px') determine distances in pixels.
-         *     <li>If it is set to 'auto' the distance of the major grid equals the distance of majorTicks of the x-axis.
-         * </ul>
+         * Deprecated. Use {@link Grid#majorStep} instead.
          *
+         * @deprecated
          * @type {Number|String}
          * @name Grid#gridX
-         * @default 'auto'
-         * @see JXG.Ticks#getDistanceMajorTicks
+         * @default null
          */
-        gridX: 'auto',
+        gridX: null,
 
         /**
-         * Distance of major grid elements in y-direction. There are three possibilities:
-         * <ul>
-         *     <li>Numbers or strings which are numbers (e.g. '10') are interpreted as distance in usrCoords.
-         *     <li>Strings with additional 'px' (e.g. '100px') determine distances in pixels.
-         *     <li>If it is set to 'auto' the distance of the major grid equals the distance of majorTicks of the y-axis.
-         * </ul>
+         * Deprecated. Use {@link Grid#majorStep} instead.
          *
+         * @deprecated
          * @type {Number|String}
          * @name Grid#gridY
+         * @default null
+         */
+        gridY: null,
+
+        /**
+         * Distance of major grid elements. There are three possibilities:
+         * <ul>
+         *     <li>If it is set to 'auto' the distance of the major grid equals the distance of majorTicks of the corresponding axis.
+         *     <li>Numbers or strings which are numbers (e.g. '10') are interpreted as distance in usrCoords.
+         *     <li>Strings with the unit 'abs' are interpreted as distance in usrCoords, too.
+         *     <li>Strings with the unit 'px' are interpreted as distance in screen pixels.
+         *     <li>Strings with the unit '%' or 'fr' are interpreted as a ratio to the width/height of the board. (e.g. 50% = 0.5fr)
+         * </ul>
+         * Instead of one value you can provide two values as an array <tt>[x, y]</tt> here.
+         * These are used as distance in x- and y-direction.
+         *
+         * @type {Number|String|Array}
+         * @name Grid#majorStep
          * @default 'auto'
          * @see JXG.Ticks#getDistanceMajorTicks
          */
-        gridY: 'auto',
+        majorStep: 'auto',
 
         /**
-         * Number of elements in minor grid between elements of the major grid in x-direction.
-         * If set to 'auto', the number minor elements is equal to the number of minorTicks of the x-axis.
+         * Number of elements in minor grid between elements of the major grid. There are three possibilities:
+         * <ul>
+         *     <li>If set to 'auto', the number minor elements is equal to the number of minorTicks of the corresponding axis.
+         *     <li>Numbers or strings which are numbers (e.g. '10') are interpreted as quantity.
+         *     <li>Strings with the unit 'abs' are interpreted as quantity, too.
+         * </ul>
+         * Instead of one value you can provide two values as an array <tt>[x, y]</tt> here.
+         * These are used as number in x- and y-direction.
          *
-         * @type {Number|String}
-         * @name Grid#minorX
+         * @type {Number|String|Array}
+         * @name Grid#minorElements
          * @default 0
          */
-        minorX: 0,
-
-        /**
-         * Number of elements in minor grid between elements of the major grid in y-direction.
-         * If set to 'auto', the number minor elements is equal to the number of minorTicks of the y-axis.
-         *
-         * @type {Number|String}
-         * @name Grid#minorY
-         * @default 0
-         */
-        minorY: 0,
+        minorElements: 0,
 
         /**
          * To print a quadratic grid with same distance of major grid elements in x- and y-direction.
-         * <tt>'min'</tt> will set both distances of major grid elements in x- and y-direction to the primarily lesser value,
-         * <tt>'max'</tt> or <tt>true</tt> to the primarily greater value.
+         * <tt>'min'</tt> or <tt>true</tt> will set both distances of major grid elements in x- and y-direction to the primarily lesser value,
+         * <tt>'max'</tt> to the primarily greater value.
          *
          * @type {Boolean|String}
-         * @name Grid#forceSquareGrid
+         * @name Grid#forceSquare
          * @default false
          */
-        forceSquareGrid: false,
+        forceSquare: false,
 
         /**
          * To decide whether major or minor grid elements on boundaries of the boundingBox shall be shown, half-ones as well.
@@ -4589,34 +4594,20 @@ JXG.Options = {
             margin: 0,
 
             /**
-             * Size of major grid elements in x-direction. There are the following possibilities:
+             * Size of major grid elements. There are the following possibilities:
              * <ul>
              *     <li>Numbers or strings which are numbers (e.g. '10') are interpreted as size in pixels.
              *     <li>Strings with additional '%' (e.g. '95%') are interpreted as the ratio of used space for one element.
              * </ul>
              * Unused for 'line' and 'point', which will use the value of strokeWidth.
-             * If sizeX is not set, it will get the same value as sizeY. // POI I think, we shouldn't do that...
+             * Instead of one value you can provide two values as an array <tt>[x, y]</tt> here.
+             * These are used as size in x- and y-direction.
              *
-             * @type {Number|String}
-             * @name Grid#major_sizeX
-             * @default null Will be set to 5 later (for face 'line' and 'point' strokeWidth is default value) // POI That's a little bit confusing...
+             * @type {Number|String|Array}
+             * @name Grid#major_size
+             * @default 5
              */
-            sizeX: null,
-
-            /**
-             * Size of major grid elements in y-direction. There are the following possibilities:
-             * <ul>
-             *     <li>Numbers or strings which are numbers (e.g. '10') are interpreted as size in pixels.
-             *     <li>Strings with additional '%' (e.g. '95%') are interpreted as the ratio of used space for one element.
-             * </ul>
-             * For faces 'line' and 'point' sizeY will be used as strokeWidth, sizeY is ignored. // POI see composition.js
-             * If sizeY is not set, it will get the same value as sizeY. // POI I think, we shouldn't do that...
-             *
-             * @type {Number|String}
-             * @name Grid#major_sizeY
-             * @default null Will be set to 5 later (for face 'line' and 'point' strokeWidth is default value) // POI That's a little bit confusing...
-             */
-            sizeY: null,
+            size: 5,
 
             /**
              * Appearance of major grid element.
@@ -4648,31 +4639,20 @@ JXG.Options = {
             face: 'line',
 
             /**
-             * Draw the major grid element, that lies at (0,0)?
+             * This attribute determines whether the grid elements located at <tt>x=0</tt>, <tt>y=0</tt>
+             * and especially at <tt>(0, 0)</tt> are displayed.
+             * <ul>
+             *     <li>If <tt>false</tt>, then all these elements are hidden.
+             *     <li>If <tt>true</tt>, all these elements are shown.
+             *     <li>If an object of the following form is given, the three cases can be distinguished individually:<br>
+             *     <tt>{x: true|false, y: true|false, origin: true|false}</tt>
+             * </ul>
              *
-             * @type {Boolean}
-             * @name Grid#major_drawZero0
-             * @default true
-             */
-            drawZero0: true,
-
-            /**
-             * Draw the major grid elements, that lie at x=0?
-             *
-             * @type {Boolean}
-             * @name Grid#major_drawZeroX
+             * @type {Boolean|Object}
+             * @name Grid#major_drawZero
              * @default false
              */
-            drawZeroX: false,
-
-            /**
-             * Draw the major grid elements, that lie at y=0?
-             *
-             * @type {Boolean}
-             * @name Grid#major_drawZeroY
-             * @default false
-             */
-            drawZeroY: false,
+            drawZero: false,
 
             strokeColor: '#c0c0c0', // same in old grid
             strokeWidth: 1,         // same in old grid
@@ -4693,6 +4673,12 @@ JXG.Options = {
         minor: {
 
             /**
+             * @class
+             * @ignore
+             */
+            visible: 'inherit',
+
+            /**
              * This number (pixel value) controls where infinite lines end at the canvas border. If zero, the line
              * ends exactly at the border, if negative there is a margin to the inside, if positive the line
              * ends outside of the canvas (which is invisible).
@@ -4704,34 +4690,20 @@ JXG.Options = {
             margin: 0,
 
             /**
-             * Size of minor grid elements in x-direction. There are the following possibilities:
+             * Size of minor grid elements. There are the following possibilities:
              * <ul>
              *     <li>Numbers or strings which are numbers (e.g. '10') are interpreted as size in pixels.
              *     <li>Strings with additional '%' (e.g. '95%') are interpreted as the ratio of used space for one element.
              * </ul>
-             * For faces 'line' and 'point' sizeX will be used as strokeWidth, sizeY is ignored. // POI see composition.js
-             * If sizeX is not set, it will get the same value as sizeY. // POI I think, we shouldn't do that...
+             * Unused for 'line' and 'point', which will use the value of strokeWidth.
+             * Instead of one value you can provide two values as an array <tt>[x, y]</tt> here.
+             * These are used as size in x- and y-direction.
              *
-             * @type {Number|String}
-             * @name Grid#minor_sizeX
-             * @default null Will be set to 5 later (for face 'line' and 'point' strokeWidth is default value) // POI That's a little bit confusing...
+             * @type {Number|String|Array}
+             * @name Grid#minor_size
+             * @default 5
              */
-            sizeX: null,
-
-            /**
-             * Size of minor grid elements in y-direction. There are the following possibilities:
-             * <ul>
-             *     <li>Numbers or strings which are numbers (e.g. '10') are interpreted as size in pixels.
-             *     <li>Strings with additional '%' (e.g. '95%') are interpreted as the ratio of used space for one element.
-             * </ul>
-             * For faces 'line' and 'point' sizeY will be used as strokeWidth, sizeY is ignored. // POI see composition.js
-             * If sizeY is not set, it will get the same value as sizeY. // POI I think, we shouldn't do that...
-             *
-             * @type {Number|String}
-             * @name Grid#minor_sizeY
-             * @default null Will be set to 5 later (for face 'line' and 'point' strokeWidth is default value) // POI That's a little bit confusing...
-             */
-            sizeY: null,
+            size: 3,
 
             /**
              * Appearance of minor grid elements. Same options as for major grid elements.
@@ -4743,23 +4715,20 @@ JXG.Options = {
              */
             face: 'point',
 
-            /**
-             * Draw the minor grid elements, that lie at x=0?
+             /**
+             * This attribute determines whether the minor grid elements located at <tt>x=0</tt> and <tt>y=0</tt> are displayed.
+             * <ul>
+             *     <li>If <tt>false</tt>, then all these elements are hidden.
+             *     <li>If <tt>true</tt>, all these elements are shown.
+             *     <li>If an object of the following form is given, the three cases can be distinguished individually:<br>
+             *     <tt>{x: true|false, y: true|false}</tt>
+             * </ul>
              *
-             * @type {Boolean}
-             * @name Grid#minor_drawZeroX
+             * @type {Boolean|Object}
+             * @name Grid#minor_drawZero
              * @default false
              */
-            drawZeroX: false,
-
-            /**
-             * Draw the minor grid elements, that lie at y=0?
-             *
-             * @type {Boolean}
-             * @name Grid#minor_drawZeroY
-             * @default false
-             */
-            drawZeroY: false,
+            drawZero: false,
 
             strokeColor: '#c0c0c0',
             strokeWidth: 1,
@@ -4802,8 +4771,8 @@ JXG.Options = {
          * @private
          *
          * @example
-         * // theme 1
-         * const board = JXG.JSXGraph.initBoard('jxgbox', {
+         * </pre>Theme 1 (quadratic grid appearance with distance of major grid elements in x- and y-direction set to the primarily greater one)
+         * <pre>const board = JXG.JSXGraph.initBoard('jxgbox', {
          *     boundingbox: [-4, 4, 4, -4], axis: true,
          *     defaultAxes: {
          *         x: { ticks: {majorHeight: 10} },
@@ -4826,97 +4795,97 @@ JXG.Options = {
          * </script> <pre>
          *
          * @example
-         * // theme 2
-         * const board = JXG.JSXGraph.initBoard('jxgbox', {
+         * </pre>Theme 2 (lines and subtile points in between)
+         * <pre>const board = JXG.JSXGraph.initBoard('jxgbox', {
          *     boundingbox: [-4, 4, 4, -4], axis: false,
-         *     grid: { theme: 2, minorX: 4, minorY: 4, color: 'grey' },
+         *     grid: { theme: 2, minorElements: 4, color: 'grey' },
          * });
          * </pre> <div id="JXG4e11e6e3-472a-48e0-b7d0-f80d397c769b" class="jxgbox" style="width: 300px; height: 300px;"></div>
          * <script type="text/javascript">
          *     (function() {
          *         var board = JXG.JSXGraph.initBoard('JXG4e11e6e3-472a-48e0-b7d0-f80d397c769b',
          *             {boundingbox: [-4, 4, 4, -4], axis: false, showcopyright: false, shownavigation: false,
-         *                 grid: { theme: 2, minorX: 4, minorY: 4, color: 'grey' },
+         *                 grid: { theme: 2, minorElements: 4, color: 'grey' },
          *             })
          *     })();
          * </script> <pre>
          *
          * @example
-         * // theme 3
-         * const board = JXG.JSXGraph.initBoard('jxgbox', {
+         * </pre>Theme 3 (lines and thinner lines in between)
+         * <pre>const board = JXG.JSXGraph.initBoard('jxgbox', {
          *     boundingbox: [-4, 4, 4, -4], axis: false,
-         *     grid: { theme: 3, minorX: 4, minorY: 4, strokeColor: 'grey' },
-         * });
-         * </pre> <div id="JXG28bee3da-a7ef-4590-9a18-38d1b99d09ce" class="jxgbox" style="width: 300px; height: 300px;"></div>
-         * <script type="text/javascript">
-         *     (function() {
-         *         var board = JXG.JSXGraph.initBoard('JXG28bee3da-a7ef-4590-9a18-38d1b99d09ce',
-         *             {boundingbox: [-4, 4, 4, -4], axis: false, showcopyright: false, shownavigation: false,
-         *                 grid: { theme: 3, minorX: 4, minorY: 4, strokeColor: 'grey' },
-         *         });
-         *     })();
-         * </script> <pre>
-         *
-         * @example
-         * // theme 4
-         * const board = JXG.JSXGraph.initBoard('jxgbox', {
-         *     boundingbox: [-4, 4, 4, -4], axis: false,
-         *     grid: { theme: 4, minorX: 4, minorY: 4, color: 'grey' },
+         *     grid: { theme: 4, minorElements: 4, color: 'grey' },
          * });
          * </pre> <div id="JXG334814a3-03a7-4231-a5a7-a42d3b8dc2de" class="jxgbox" style="width: 300px; height: 300px;"></div>
          * <script type="text/javascript">
          *     (function() {
          *         var board = JXG.JSXGraph.initBoard('JXG334814a3-03a7-4231-a5a7-a42d3b8dc2de',
          *             {boundingbox: [-4, 4, 4, -4], axis: false, showcopyright: false, shownavigation: false,
-         *                 grid: { theme: 4, minorX: 4, minorY: 4, color: 'grey' }
+         *                 grid: { theme: 4, minorElements: 4, color: 'grey' }
          *         });
          *     })();
          * </script> <pre>
          *
          * @example
-         * // theme 5
-         * const board = JXG.JSXGraph.initBoard('jxgbox', {
+         * </pre>Theme 4 (lines with more subtle grid of '+'s plotted in between)
+         * <pre>const board = JXG.JSXGraph.initBoard('jxgbox', {
          *     boundingbox: [-4, 4, 4, -4], axis: false,
-         *     grid: { theme: 5, minorX: 4, minorY: 4, color: 'grey' },
+         *     grid: { theme: 5, minorElements: 4, color: 'grey' },
          * });
          * </pre> <div id="JXG9e2bb29c-d998-428c-9432-4a7bf6cd9222" class="jxgbox" style="width: 300px; height: 300px;"></div>
          * <script type="text/javascript">
          *     (function() {
          *         var board = JXG.JSXGraph.initBoard('JXG9e2bb29c-d998-428c-9432-4a7bf6cd9222',
          *             {boundingbox: [-4, 4, 4, -4], axis: false, showcopyright: false, shownavigation: false,
-         *                 grid: { theme: 5, minorX: 4, minorY: 4, color: 'grey' },
+         *                 grid: { theme: 5, minorElements: 4, color: 'grey' },
          *             });
          *     })();
          * </script> <pre>
          *
          * @example
-         * // theme 6
-         * const board = JXG.JSXGraph.initBoard('jxgbox', {
+         * </pre>Theme 5 (grid of '+'s and more subtile points in between)
+         * <pre>const board = JXG.JSXGraph.initBoard('jxgbox', {
          *     boundingbox: [-4, 4, 4, -4], axis: false,
-         *     grid: { theme: 6, minorX: 4, minorY: 4, color: 'grey' },
+         *     grid: { theme: 6, minorElements: 4, color: 'grey' },
          * });
          * </pre> <div id="JXG6a967d83-4179-4827-9e97-63fbf1e872c8" class="jxgbox" style="width: 300px; height: 300px;"></div>
          * <script type="text/javascript"
          *     (function() {
          *         var board = JXG.JSXGraph.initBoard('JXG6a967d83-4179-4827-9e97-63fbf1e872c8',
          *             {boundingbox: [-4, 4, 4, -4], axis: false, showcopyright: false, shownavigation: false,
-         *                 grid: { theme: 6, minorX: 4, minorY: 4, color: 'grey' },
+         *                 grid: { theme: 6, minorElements: 4, color: 'grey' },
          *         });
          *     })();
          * </script> <pre>
          *
          * @example
-         * // theme 7
-         * const board = JXG.JSXGraph.initBoard('jxgbox', {
+         * </pre>Theme 6 (grid of circles with subtile points in between)
+         * <pre>const board = JXG.JSXGraph.initBoard('jxgbox', {
          *     boundingbox: [-4, 4, 4, -4], axis: false,
-         *     grid: { theme: 7, minorX: 4, minorY: 4, color: 'grey' },
+         *     grid: { theme: 3, minorElements: 4, strokeColor: 'grey' },
+         * });
+         * </pre> <div id="JXG28bee3da-a7ef-4590-9a18-38d1b99d09ce" class="jxgbox" style="width: 300px; height: 300px;"></div>
+         * <script type="text/javascript">
+         *     (function() {
+         *         var board = JXG.JSXGraph.initBoard('JXG28bee3da-a7ef-4590-9a18-38d1b99d09ce',
+         *             {boundingbox: [-4, 4, 4, -4], axis: false, showcopyright: false, shownavigation: false,
+         *                 grid: { theme: 3, minorElements: 4, strokeColor: 'grey' },
+         *         });
+         *     })();
+         * </script> <pre>
+         *
+         * @example
+         * </pre>Theme 7 (lines and subtile points in between, also plotted on axes)
+         * <pre>const board = JXG.JSXGraph.initBoard('jxgbox', {
+         *     boundingbox: [-4, 4, 4, -4], axis: false,
+         *     grid: { theme: 7, minorElements: 4, color: 'grey' },
          * });
          * </pre> <div id="JXG7a787274-7f7e-4e10-b59c-f99f1aff35e7" class="jxgbox" style="width: 300px; height: 300px;"></div>
          * <script type="text/javascript">
          *     (function() {
          *         var board = JXG.JSXGraph.initBoard('JXG7a787274-7f7e-4e10-b59c-f99f1aff35e7',
          *             {boundingbox: [-4, 4, 4, -4], axis: false, showcopyright: false, shownavigation: false,
-         *                 grid: { theme: 7, minorX: 4, minorY: 4, color: 'grey' },
+         *                 grid: { theme: 7, minorElements: 4, color: 'grey' },
          *         });
          *     })();
          * </script> <pre>
@@ -4926,74 +4895,65 @@ JXG.Options = {
                 // default values
             },
 
-            {   // Theme 1: quadratic grid appearance with distance of major grid elements in x- and y-direction set to the primarily greater one of both (pixels compared)
-                forceSquareGrid: 'max'
+            {   // Theme 1: quadratic grid appearance with distance of major grid elements in x- and y-direction set to the primarily smaller one
+                forceSquare: 'min'
             },
 
             {   // Theme 2: lines and subtile points in between
                 minor: {
-                    sizeX: 3,
+                    size: 3,
                     strokeColor: '#101010'
                 },
-                minorX: 'auto',
-                minorY: 'auto'
+                minorElements: 'auto'
             },
 
-            {   // Theme 3: grid of circles with subtle points in between
-                major: {
-                    face: 'circle',
-                    sizeX: 5
-                },
-                minor: {
-                    sizeX: 3
-                },
-                minorX: 'auto',
-                minorY: 'auto'
-            },
-
-            {   // Theme 4: lines and thinner lines in between
+            {   // Theme 3: lines and thinner lines in between
                 minor: {
                     face: 'line'
                 },
-                minorX: 'auto',
-                minorY: 'auto'
+                minorElements: 'auto'
             },
 
-            {   // Theme 5: lines with more subtle grid of '+'s plotted in between
+            {   // Theme 4: lines with more subtle grid of '+'s plotted in between
                 minor: {
                     face: '+',
-                    sizeX: 0.95
+                    size: '95%'
                 },
-                minorX: 'auto',
-                minorY: 'auto'
+                minorElements: 'auto'
             },
 
-            {   // Theme 6: grid of '+'s and more subtle points in between
+            {   // Theme 5: grid of '+'s and more subtile points in between
                 major: {
                     face: '+',
-                    sizeX: 10,
+                    size: 10,
                     strokeOpacity: 1
                 },
                 minor: {
-                    sizeX: 3
+                    size: 3
                 },
-                minorX: 'auto',
-                minorY: 'auto'
+                minorElements: 'auto'
             },
 
-            { // Theme 7: lines and subtle points in between, also plotted on axes
+            {   // Theme 6: grid of circles with subtile points in between
                 major: {
-                    drawZero0: true,
-                    drawZeroX: true,
-                    drawZeroY: true
+                    face: 'circle',
+                    size: 5
                 },
                 minor: {
-                    sizeX: 3,
-                    drawZeroX: true,
-                    drawZeroY: true
+                    size: 3
                 },
-                minorX: 4,
-                minorY: 4
+                minorElements: 'auto'
+            },
+
+            { // Theme 7: lines and subtile points in between, also plotted on axes
+                major: {
+                    drawZero: true
+                },
+                minor: {
+                    size: 3,
+                    drawZero: true
+                },
+                minorElements: 4
             }
         ]
 
@@ -8842,6 +8802,7 @@ JXG.Options = {
                 dash: validateInteger,
                 gridX: Type.isNumber,
                 gridY: Type.isNumber,
+                // POI: Do we have to add something here?
                 hasGrid: false,
                 highlightFillColor: validateColor,
                 highlightFillOpacity: Type.isNumber,
@@ -8971,6 +8932,7 @@ JXG.Options = {
         board.options.grid.hasGrid = o.grid.hasGrid;
         board.options.grid.gridX = o.grid.gridX;
         board.options.grid.gridY = o.grid.gridY;
+        // POI: Do we have to add something here?
         board.options.grid.gridColor = o.grid.gridColor;
         board.options.grid.gridOpacity = o.grid.gridOpacity;
         board.options.grid.gridDash = o.grid.gridDash;
