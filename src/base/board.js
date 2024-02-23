@@ -2639,7 +2639,7 @@ JXG.extend(
          */
         pointerClickListener: function (evt) {
             var i;
-
+console.log(evt);
             this.triggerEventHandlers(['click', 'pointerclick'], [evt]);
             if (!this.selectingMode) {
                 for (i = this.downObjects.length - 1; i > -1; i--) {
@@ -2647,6 +2647,7 @@ JXG.extend(
                     this._waitForDblClick(i);
                 }
             }
+            evt.stopPropagation();
         },
 
         /**
@@ -2672,7 +2673,7 @@ JXG.extend(
          */
         pointerDblClickListener: function (evt) {
             var i;
-            console.log("dbl", this.downObjects.length)
+            console.log("dbl", evt)
 
             this.triggerEventHandlers(['dblclick', 'pointerdblclick'], [evt]);
             if (!this.selectingMode) {
@@ -2683,6 +2684,7 @@ JXG.extend(
                     this.downObjects.splice(i, 1);
                 }
             }
+            evt.stopPropagation();
         },
 
         /**
