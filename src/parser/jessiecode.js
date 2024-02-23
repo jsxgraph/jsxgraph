@@ -2346,6 +2346,14 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
     },
 
     /**
+     * Implementation of the eval() builtin function
+     * @param {String|Number|Function} v
+     */
+    eval: function (v) {
+        return JXG.evaluate(v);
+    },
+
+    /**
      * Implementation of the use() builtin function
      * @param {String} board
      */
@@ -2470,6 +2478,7 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
 
                 IfThen: that.ifthen,
                 'import': that.importModule,
+                'eval': that.eval,
                 'use': that.use,
                 'remove': that.del,
                 '$': that.getElementById,
@@ -2534,6 +2543,7 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
 
         builtIn['import'].src = '$jc$.importModule';
         builtIn.use.src = '$jc$.use';
+        builtIn.eval.src = '$jc$.eval';
         builtIn.remove.src = '$jc$.del';
         builtIn.IfThen.src = '$jc$.ifthen';
         // usually unused, see node_op > op_execfun
