@@ -2358,7 +2358,6 @@ JXG.extend(
             this.mode = this.BOARD_MODE_NONE;
             this._board_touches = [];
             this.touches = [];
-            this.downObjects = [];
         },
 
         /**
@@ -2456,7 +2455,6 @@ JXG.extend(
                 }
             }
 
-console.log("pointer down:", this.downObjects);
             // Mouse, touch or pen device
             this._inputDevice = this._getPointerInputDevice(evt);
             type = this._inputDevice;
@@ -2600,18 +2598,55 @@ console.log("pointer down:", this.downObjects);
         },
 
         /**
+         * Handle entries of this.downObjects to control click and dblclick events.
+         * @param {Number} i
+         * @private
+         */
+        _waitForDblClick: function(i) {
+            var eh = this.downObjects[i].eventHandlers;
+
+            if ((Type.exists(eh.dblclick) && eh.dblclick.length > 0) ||
+                (Type.exists(eh.mousedblclick) && eh.mousedblclick.length > 0)
+            ) {
+
+                eh.clicks += 1;
+                console.log(this.downObjects[i].id, eh.clicks);
+                if (eh.clicks !== 2) {
+                    // If there is dblclick event handler registered,
+                    // we remove the element from downObjects on the first click.
+                    // If there is a second click, it will appear again in
+                    // downObjects and handled in the dblclick listener.
+                    //
+                    // However, we set a timer which resets the clicks to zero after 400 ms.
+                    // This cancels the dblclick event.
+                    this.downObjects.splice(i, 1);
+                    setTimeout((function() {
+                        return function() {
+                            eh.clicks = 0;
+                        }
+                    })(), 1000);
+                }
+            } else {
+                // If there is no dblclick event we can (and have to) remove the
+                // element from downObjects now.
+                this.downObjects.splice(i, 1);
+            }
+        },
+
+        /**
          * This method is called by the browser when a pointer device clicks on the screen.
          * @param {Event} evt The browsers event object.
          */
         pointerClickListener: function (evt) {
             var i;
+
             this.triggerEventHandlers(['click', 'pointerclick'], [evt]);
-            // if (!this.selectingMode) {
-            //     for (i = this.downObjects.length - 1; i > -1; i--) {
-            //         this.downObjects[i].triggerEventHandlers(['click', 'pointerclick'], [evt]);
-            //         // this.downObjects.splice(i, 1);
-            //     }
-            // }
+            if (!this.selectingMode) {
+                for (i = this.downObjects.length - 1; i > -1; i--) {
+                    this.downObjects[i].triggerEventHandlers(['click', 'pointerclick'], [evt]);
+                    this._waitForDblClick(i);
+                }
+            }
         },
 
         /**
@@ -2621,12 +2656,14 @@ console.log("pointer down:", this.downObjects);
         mouseClickListener: function (evt) {
             var i;
             this.triggerEventHandlers(['click', 'mouseclick'], [evt]);
-            // if (!this.selectingMode) {
-            //     for (i = this.downObjects.length - 1; i > -1; i--) {
-            //         this.downObjects[i].triggerEventHandlers(['click', 'mouseclick'], [evt]);
-            //         // this.downObjects.splice(i, 1);
-            //     }
-            // }
+
+            if (!this.selectingMode) {
+                for (i = this.downObjects.length - 1; i > -1; i--) {
+                    this.downObjects[i].triggerEventHandlers(['click', 'mouseclick'], [evt]);
+                    this._waitForDblClick(i);
+                }
+            }
+
         },
 
         /**
@@ -2635,12 +2672,17 @@ console.log("pointer down:", this.downObjects);
          */
         pointerDblClickListener: function (evt) {
             var i;
+            console.log("dbl", this.downObjects.length)
+
             this.triggerEventHandlers(['dblclick', 'pointerdblclick'], [evt]);
-            // if (!this.selectingMode) {
-            //     for (i = 0; i < this.downObjects.length; i++) {
-            //         this.downObjects[i].triggerEventHandlers(['dblclick', 'pointerdblclick'], [evt]);
-            //     }
-            // }
+            if (!this.selectingMode) {
+                for (i = this.downObjects.length - 1; i > -1; i--) {
+                    this.downObjects[i].triggerEventHandlers(['dblclick', 'pointerdblclick'], [evt]);
+
+                    this.downObjects[i].eventHandlers.clicks = 0;
+                    this.downObjects.splice(i, 1);
+                }
+            }
         },
 
         /**
@@ -2650,11 +2692,14 @@ console.log("pointer down:", this.downObjects);
         mouseDblClickListener: function (evt) {
             var i;
             this.triggerEventHandlers(['dblclick', 'mousedblclick'], [evt]);
-            // if (!this.selectingMode) {
-            //     for (i = 0; i < this.downObjects.length; i++) {
-            //         this.downObjects[i].triggerEventHandlers(['dblclick', 'mousedblclick'], [evt]);
-            //     }
-            // }
+            if (!this.selectingMode) {
+                for (i = this.downObjects.length - 1; i > -1; i--) {
+                    this.downObjects[i].triggerEventHandlers(['dblclick', 'mousedblclick'], [evt]);
+
+                    this.downObjects[i].eventHandlers.clicks = 0;
+                    this.downObjects.splice(i, 1);
+                }
+            }
         },
 
         // /**
@@ -2791,7 +2836,7 @@ console.log("pointer down:", this.downObjects);
          * @returns {Boolean}
          */
         pointerUpListener: function (evt) {
-            var i, j, found,
+            var i, j, found, eh,
                 touchTargets,
                 updateNeeded = false;
 
@@ -2845,7 +2890,17 @@ console.log("pointer down:", this.downObjects);
                             this.downObjects[i].snapToPoints();
                             updateNeeded = true;
                         }
-                        this.downObjects.splice(i, 1);
+
+                        // Check if we have to keep the element for a click or dblclick event
+                        // Otherwise remove it from downObjects
+                        eh = this.downObjects[i].eventHandlers;
+                        if (!(Type.exists(eh.click) && eh.click.length > 0) &&
+                            !(Type.exists(eh.pointerclick) && eh.pointerclick.length > 0) &&
+                            !(Type.exists(eh.dblclick) && eh.dblclick.length > 0) &&
+                            !(Type.exists(eh.pointerdblclick) && eh.pointerdblclick.length > 0)
+                        ) {
+                            this.downObjects.splice(i, 1);
+                        }
                     }
                 }
             }

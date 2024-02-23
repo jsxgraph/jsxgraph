@@ -152,7 +152,9 @@ JXG.EventEmitter = {
      * @param {Object} o
      */
     eventify: function (o) {
-        o.eventHandlers = {};
+        o.eventHandlers = {
+            clicks: 0 // Needed to handle dblclicks
+        };
         o.on = this.on;
         o.off = this.off;
         o.triggerEventHandlers = this.trigger;
