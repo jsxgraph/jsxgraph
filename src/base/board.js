@@ -2610,7 +2610,7 @@ JXG.extend(
             ) {
 
                 eh.clicks += 1;
-                console.log(this.downObjects[i].id, eh.clicks);
+                // console.log(this.downObjects[i].id, eh.clicks);
                 if (eh.clicks !== 2) {
                     // If there is dblclick event handler registered,
                     // we remove the element from downObjects on the first click.
@@ -2624,7 +2624,7 @@ JXG.extend(
                         return function() {
                             eh.clicks = 0;
                         }
-                    })(), 1000);
+                    })(), 400);
                 }
             } else {
                 // If there is no dblclick event we can (and have to) remove the
