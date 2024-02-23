@@ -1791,9 +1791,9 @@ JXG.extend(
                     Env.addEvent(this.containerObj, 'pointerdown', this.pointerDownListener, this);
                     Env.addEvent(moveTarget, 'pointermove', this.pointerMoveListener, this);
                     Env.addEvent(moveTarget, 'pointerleave', this.pointerLeaveListener, this);
+                    Env.addEvent(moveTarget, 'click', this.pointerClickListener, this);
+                    Env.addEvent(moveTarget, 'dblclick', this.pointerDblClickListener, this);
                 }
-                // Env.addEvent(this.containerObj, 'mousewheel', this.mouseWheelListener, this);
-                // Env.addEvent(this.containerObj, 'DOMMouseScroll', this.mouseWheelListener, this);
 
                 if (this.containerObj !== null) {
                     // This is needed for capturing touch events.
@@ -1814,9 +1814,8 @@ JXG.extend(
 
                 Env.addEvent(this.containerObj, 'mousedown', this.mouseDownListener, this);
                 Env.addEvent(moveTarget, 'mousemove', this.mouseMoveListener, this);
-
-                // Env.addEvent(this.containerObj, 'mousewheel', this.mouseWheelListener, this);
-                // Env.addEvent(this.containerObj, 'DOMMouseScroll', this.mouseWheelListener, this);
+                Env.addEvent(moveTarget, 'click', this.mouseClickListener, this);
+                Env.addEvent(moveTarget, 'dblclick', this.mouseDblClickListener, this);
 
                 this.hasMouseHandlers = true;
             }
@@ -1943,6 +1942,8 @@ JXG.extend(
                     Env.removeEvent(this.containerObj, 'pointerdown', this.pointerDownListener, this);
                     Env.removeEvent(moveTarget, 'pointermove', this.pointerMoveListener, this);
                     Env.removeEvent(moveTarget, 'pointerleave', this.pointerLeaveListener, this);
+                    Env.removeEvent(moveTarget, 'click', this.pointerClickListener, this);
+                    Env.removeEvent(moveTarget, 'dblclick', this.pointerDblClickListener, this);
                 }
 
                 if (this.hasWheelHandlers) {
@@ -1974,6 +1975,8 @@ JXG.extend(
 
                 Env.removeEvent(this.containerObj, 'mousedown', this.mouseDownListener, this);
                 Env.removeEvent(moveTarget, 'mousemove', this.mouseMoveListener, this);
+                Env.removeEvent(moveTarget, 'click', this.mouseClickListener, this);
+                Env.removeEvent(moveTarget, 'dblclick', this.mouseDblClickListener, this);
 
                 if (this.hasMouseUp) {
                     Env.removeEvent(this.document, 'mouseup', this.mouseUpListener, this);
@@ -2355,6 +2358,7 @@ JXG.extend(
             this.mode = this.BOARD_MODE_NONE;
             this._board_touches = [];
             this.touches = [];
+            this.downObjects = [];
         },
 
         /**
@@ -2452,6 +2456,7 @@ JXG.extend(
                 }
             }
 
+console.log("pointer down:", this.downObjects);
             // Mouse, touch or pen device
             this._inputDevice = this._getPointerInputDevice(evt);
             type = this._inputDevice;
@@ -2533,10 +2538,8 @@ JXG.extend(
                 // this could get us new trouble: input fields, links and drop down boxes placed as text
                 // on the board don't work anymore.
                 if (evt && evt.preventDefault && !allowDefaultEventHandling) {
-                    evt.preventDefault();
                     // All browser supporting pointer events know preventDefault()
-                    // } else if (window.event) {
-                    //     window.event.returnValue = false;
+                    evt.preventDefault();
                 }
             }
 
@@ -2594,6 +2597,64 @@ JXG.extend(
             this.triggerEventHandlers(['touchstart', 'down', 'pointerdown', 'MSPointerDown'], [evt]);
 
             return true;
+        },
+
+        /**
+         * This method is called by the browser when a pointer device clicks on the screen.
+         * @param {Event} evt The browsers event object.
+         */
+        pointerClickListener: function (evt) {
+            var i;
+            this.triggerEventHandlers(['click', 'pointerclick'], [evt]);
+            // if (!this.selectingMode) {
+            //     for (i = this.downObjects.length - 1; i > -1; i--) {
+            //         this.downObjects[i].triggerEventHandlers(['click', 'pointerclick'], [evt]);
+            //         // this.downObjects.splice(i, 1);
+            //     }
+            // }
+        },
+
+        /**
+         * This method is called by the browser when the mouse device clicks on the screen.
+         * @param {Event} evt The browsers event object.
+         */
+        mouseClickListener: function (evt) {
+            var i;
+            this.triggerEventHandlers(['click', 'mouseclick'], [evt]);
+            // if (!this.selectingMode) {
+            //     for (i = this.downObjects.length - 1; i > -1; i--) {
+            //         this.downObjects[i].triggerEventHandlers(['click', 'mouseclick'], [evt]);
+            //         // this.downObjects.splice(i, 1);
+            //     }
+            // }
+        },
+
+        /**
+         * This method is called by the browser when a pointer device double clicks on the screen.
+         * @param {Event} evt The browsers event object.
+         */
+        pointerDblClickListener: function (evt) {
+            var i;
+            this.triggerEventHandlers(['dblclick', 'pointerdblclick'], [evt]);
+            // if (!this.selectingMode) {
+            //     for (i = 0; i < this.downObjects.length; i++) {
+            //         this.downObjects[i].triggerEventHandlers(['dblclick', 'pointerdblclick'], [evt]);
+            //     }
+            // }
+        },
+
+        /**
+         * This method is called by the browser when the mouse device double clicks on the screen.
+         * @param {Event} evt The browsers event object.
+         */
+        mouseDblClickListener: function (evt) {
+            var i;
+            this.triggerEventHandlers(['dblclick', 'mousedblclick'], [evt]);
+            // if (!this.selectingMode) {
+            //     for (i = 0; i < this.downObjects.length; i++) {
+            //         this.downObjects[i].triggerEventHandlers(['dblclick', 'mousedblclick'], [evt]);
+            //     }
+            // }
         },
 
         // /**
@@ -6823,6 +6884,54 @@ JXG.extend(
          * @param {Event} e The browser's event object.
          */
         __evt__touchend: function (e) { },
+
+        /**
+         * @event
+         * @description Whenever the user clicks on the board.
+         * @name JXG.Board#click
+         * @param {Event} e The browser's event object.
+         */
+        __evt__click: function (e) { },
+
+        /**
+         * @event
+         * @description Whenever the user double clicks on the board.
+         * @name JXG.Board#click
+         * @param {Event} e The browser's event object.
+         */
+        __evt__dblclick: function (e) { },
+
+        /**
+         * @event
+         * @description Whenever the user clicks on the board with a mouse device.
+         * @name JXG.Board#click
+         * @param {Event} e The browser's event object.
+         */
+        __evt__mouseclick: function (e) { },
+
+        /**
+         * @event
+         * @description Whenever the user double clicks on the board with a mouse device.
+         * @name JXG.Board#click
+         * @param {Event} e The browser's event object.
+         */
+        __evt__mousedblclick: function (e) { },
+
+        /**
+         * @event
+         * @description Whenever the user clicks on the board with a pointer device.
+         * @name JXG.Board#click
+         * @param {Event} e The browser's event object.
+         */
+        __evt__pointerclick: function (e) { },
+
+        /**
+         * @event
+         * @description Whenever the user double clicks on the board with a pointer device.
+         * @name JXG.Board#click
+         * @param {Event} e The browser's event object.
+         */
+        __evt__pointerdblclick: function (e) { },
 
         /**
          * @event
