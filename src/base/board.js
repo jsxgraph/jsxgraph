@@ -2610,7 +2610,6 @@ JXG.extend(
             ) {
 
                 eh.clicks += 1;
-                // console.log(this.downObjects[i].id, eh.clicks);
                 if (eh.clicks !== 2) {
                     // If there is dblclick event handler registered,
                     // we remove the element from downObjects on the first click.
@@ -2639,7 +2638,7 @@ JXG.extend(
          */
         pointerClickListener: function (evt) {
             var i;
-console.log(evt);
+
             this.triggerEventHandlers(['click', 'pointerclick'], [evt]);
             if (!this.selectingMode) {
                 for (i = this.downObjects.length - 1; i > -1; i--) {
@@ -2673,7 +2672,6 @@ console.log(evt);
          */
         pointerDblClickListener: function (evt) {
             var i;
-            console.log("dbl", evt)
 
             this.triggerEventHandlers(['dblclick', 'pointerdblclick'], [evt]);
             if (!this.selectingMode) {
