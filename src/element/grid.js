@@ -652,10 +652,10 @@ JXG.createGrid = function (board, parents, attributes) {
             minorSize = [minorSize[0], minorSize[0]];
         }
 
-        minorRadius = [
-            Type.parseNumber(minorSize[0], minorStep[0] * 0.5, 1 / this.board.unitX),
-            Type.parseNumber(minorSize[0], minorStep[0] * 0.5, 1 / this.board.unitY)
-        ];
+        // minorRadius = [
+        //     Type.parseNumber(minorSize[0], minorStep[0] * 0.5, 1 / this.board.unitX),
+        //     Type.parseNumber(minorSize[0], minorStep[0] * 0.5, 1 / this.board.unitY)
+        // ];
 
         minorSize[0] = Type.parseNumber(minorSize[0], minorStep[0], 1 / this.board.unitX);
         minorSize[1] = Type.parseNumber(minorSize[1], minorStep[1], 1 / this.board.unitY);
