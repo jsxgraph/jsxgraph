@@ -1033,7 +1033,7 @@ JXG.extend(
          * This function divides the board into 9 sections and returns an array <tt>[u,v]</tt> which symbolizes the location of <tt>position</tt>.
          * Optional a <tt>margin</tt> to the inner of the board is respected.<br>
          *
-         * @name Board#getLocationPoint
+         * @name Board#getPointLoc
          * @param {Array} position Array of requested position <tt>[x, y]</tt> or <tt>[w, x, y]</tt>.
          * @param {Array|Number} [margin] Optional margin for the inner of the board: <tt>[top, right, bottom, left]</tt>. A single number <tt>m</tt> is interpreted as <tt>[m, m, m, m]</tt>.
          * @returns {Array} [u,v] with the following meanings:
@@ -1062,16 +1062,16 @@ JXG.extend(
          *      point3 = board.create('point', [7,7]);
          *      point4 = board.create('point', [-7,-5]);
          *
-         *      p1Location = board.getLocationPoint(point1.coords.usrCoords, margin);
-         *      p2Location = board.getLocationPoint(point2.coords.usrCoords, margin);
-         *      p3Location = board.getLocationPoint(point3.coords.usrCoords, margin);
-         *      p4Location = board.getLocationPoint(point4.coords.usrCoords, margin);
+         *      p1Location = board.getPointLoc(point1.coords.usrCoords, margin);
+         *      p2Location = board.getPointLoc(point2.coords.usrCoords, margin);
+         *      p3Location = board.getPointLoc(point3.coords.usrCoords, margin);
+         *      p4Location = board.getPointLoc(point4.coords.usrCoords, margin);
          *
          *      // Text seen on screen
-         *      board.create('text', [1,-1, "getLocationPoint(A): " + "[" + p1Location + "]"])
-         *      board.create('text', [1,-2, "getLocationPoint(B): " + "[" + p2Location + "]"])
-         *      board.create('text', [1,-3, "getLocationPoint(C): " + "[" + p3Location + "]"])
-         *      board.create('text', [1,-4, "getLocationPoint(D): " + "[" + p4Location + "]"])
+         *      board.create('text', [1,-1, "getPointLoc(A): " + "[" + p1Location + "]"])
+         *      board.create('text', [1,-2, "getPointLoc(B): " + "[" + p2Location + "]"])
+         *      board.create('text', [1,-3, "getPointLoc(C): " + "[" + p3Location + "]"])
+         *      board.create('text', [1,-4, "getPointLoc(D): " + "[" + p4Location + "]"])
          *
          *
          *      // Helping points that are used to create the helping lines
@@ -1127,16 +1127,16 @@ JXG.extend(
          *      point3 = board.create('point', [7,7]);
          *      point4 = board.create('point', [-7,-5]);
          *
-         *      p1Location = board.getLocationPoint(point1.coords.usrCoords, margin);
-         *      p2Location = board.getLocationPoint(point2.coords.usrCoords, margin);
-         *      p3Location = board.getLocationPoint(point3.coords.usrCoords, margin);
-         *      p4Location = board.getLocationPoint(point4.coords.usrCoords, margin);
+         *      p1Location = board.getPointLoc(point1.coords.usrCoords, margin);
+         *      p2Location = board.getPointLoc(point2.coords.usrCoords, margin);
+         *      p3Location = board.getPointLoc(point3.coords.usrCoords, margin);
+         *      p4Location = board.getPointLoc(point4.coords.usrCoords, margin);
          *
          *      // Text seen on screen
-         *      board.create('text', [1,-1, "getLocationPoint(A): " + "[" + p1Location + "]"])
-         *      board.create('text', [1,-2, "getLocationPoint(B): " + "[" + p2Location + "]"])
-         *      board.create('text', [1,-3, "getLocationPoint(C): " + "[" + p3Location + "]"])
-         *      board.create('text', [1,-4, "getLocationPoint(D): " + "[" + p4Location + "]"])
+         *      board.create('text', [1,-1, "getPointLoc(A): " + "[" + p1Location + "]"])
+         *      board.create('text', [1,-2, "getPointLoc(B): " + "[" + p2Location + "]"])
+         *      board.create('text', [1,-3, "getPointLoc(C): " + "[" + p3Location + "]"])
+         *      board.create('text', [1,-4, "getPointLoc(D): " + "[" + p4Location + "]"])
          *
          *
          *      // Helping points that are used to create the helping lines
@@ -1178,7 +1178,7 @@ JXG.extend(
          * </script><pre>
          *
          */
-        getLocationPoint: function (position, margin) {
+        getPointLoc: function (position, margin) {
             var bbox, pos, res, marg;
 
             bbox = this.getBoundingBox();
@@ -1210,15 +1210,15 @@ JXG.extend(
         },
 
         /**
-         * This function calculates where the origin is located (@link Board#getLocationPoint).
+         * This function calculates where the origin is located (@link Board#getPointLoc).
          * Optional a <tt>margin</tt> to the inner of the board is respected.<br>
          *
          * @name Board#getLocationOrigin
          * @param {Array|Number} [margin] Optional margin for the inner of the board: <tt>[top, right, bottom, left]</tt>. A single number <tt>m</tt> is interpreted as <tt>[m, m, m, m]</tt>.
-         * @returns {Array} [u,v] which shows where the origin is located (@link Board#getLocationPoint).
+         * @returns {Array} [u,v] which shows where the origin is located (@link Board#getPointLoc).
          */
         getLocationOrigin: function (margin) {
-            return this.getLocationPoint([0, 0], margin);
+            return this.getPointLoc([0, 0], margin);
         },
 
         /**

@@ -1602,7 +1602,7 @@ JXG.createAxis = function (board, parents, attributes) {
             );
         }
 
-        locationOrg = this.board.getLocationPoint(this._point1UsrCoordsOrg, distUsr);
+        locationOrg = this.board.getPointLoc(this._point1UsrCoordsOrg, distUsr);
 
         // Set position of axis
 
