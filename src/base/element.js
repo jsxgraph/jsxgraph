@@ -2522,6 +2522,58 @@ JXG.extend(
 
         /**
          * @event
+         * @description Whenever the user clicks on an element.
+         * @name JXG.Board#click
+         * @param {Event} e The browser's event object.
+         */
+        __evt__click: function (e) { },
+
+        /**
+         * @event
+         * @description Whenever the user double clicks on an element.
+         * This event works on desktop browser, but is undefined
+         * on mobile browsers.
+         * @name JXG.Board#dblclick
+         * @param {Event} e The browser's event object.
+         */
+        __evt__dblclick: function (e) { },
+
+        /**
+         * @event
+         * @description Whenever the user clicks on an element with a mouse device.
+         * @name JXG.Board#mouseclick
+         * @param {Event} e The browser's event object.
+         */
+        __evt__mouseclick: function (e) { },
+
+        /**
+         * @event
+         * @description Whenever the user double clicks on an element with a mouse device.
+         * @name JXG.Board#mousedblclick
+         * @param {Event} e The browser's event object.
+         */
+        __evt__mousedblclick: function (e) { },
+
+        /**
+         * @event
+         * @description Whenever the user clicks on an element with a pointer device.
+         * @name JXG.Board#pointerclick
+         * @param {Event} e The browser's event object.
+         */
+        __evt__pointerclick: function (e) { },
+
+        /**
+         * @event
+         * @description Whenever the user double clicks on an element with a pointer device.
+         * This event works on desktop browser, but is undefined
+         * on mobile browsers.
+         * @name JXG.Board#pointerdblclick
+         * @param {Event} e The browser's event object.
+         */
+        __evt__pointerdblclick: function (e) { },
+
+        /**
+         * @event
          * @description Whenever the user stops to touch or click an element.
          * @name JXG.GeometryElement#up
          * @param {Event} e The browser's event object.

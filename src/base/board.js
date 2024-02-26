@@ -2619,11 +2619,7 @@ JXG.extend(
                     // However, we set a timer which resets the clicks to zero after 400 ms.
                     // This cancels the dblclick event.
                     this.downObjects.splice(i, 1);
-                    setTimeout((function() {
-                        return function() {
-                            eh.clicks = 0;
-                        }
-                    })(), 400);
+                    setTimeout(function() { eh.clicks = 0; }, 400);
                 }
             } else {
                 // If there is no dblclick event we can (and have to) remove the
@@ -6952,7 +6948,9 @@ JXG.extend(
         /**
          * @event
          * @description Whenever the user double clicks on the board.
-         * @name JXG.Board#click
+         * This event works on desktop browser, but is undefined
+         * on mobile browsers.
+         * @name JXG.Board#dblclick
          * @param {Event} e The browser's event object.
          */
         __evt__dblclick: function (e) { },
@@ -6960,7 +6958,7 @@ JXG.extend(
         /**
          * @event
          * @description Whenever the user clicks on the board with a mouse device.
-         * @name JXG.Board#click
+         * @name JXG.Board#mouseclick
          * @param {Event} e The browser's event object.
          */
         __evt__mouseclick: function (e) { },
@@ -6968,7 +6966,7 @@ JXG.extend(
         /**
          * @event
          * @description Whenever the user double clicks on the board with a mouse device.
-         * @name JXG.Board#click
+         * @name JXG.Board#mousedblclick
          * @param {Event} e The browser's event object.
          */
         __evt__mousedblclick: function (e) { },
@@ -6976,7 +6974,7 @@ JXG.extend(
         /**
          * @event
          * @description Whenever the user clicks on the board with a pointer device.
-         * @name JXG.Board#click
+         * @name JXG.Board#pointerclick
          * @param {Event} e The browser's event object.
          */
         __evt__pointerclick: function (e) { },
@@ -6984,7 +6982,9 @@ JXG.extend(
         /**
          * @event
          * @description Whenever the user double clicks on the board with a pointer device.
-         * @name JXG.Board#click
+         * This event works on desktop browser, but is undefined
+         * on mobile browsers.
+         * @name JXG.Board#pointerdblclick
          * @param {Event} e The browser's event object.
          */
         __evt__pointerdblclick: function (e) { },

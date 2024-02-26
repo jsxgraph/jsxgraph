@@ -98,7 +98,6 @@ JXG.SVGRenderer = function (container, dim) {
     this.svgRoot = this.container.ownerDocument.createElementNS(this.svgNamespace, "svg");
     this.svgRoot.style.overflow = "hidden";
     this.svgRoot.style.display = "block";
-
     this.resize(dim.width, dim.height);
 
     //this.svgRoot.setAttributeNS(null, 'shape-rendering', 'crispEdge'); //'optimizeQuality'); //geometricPrecision');
@@ -843,6 +842,7 @@ JXG.extend(
                 node.setAttributeNS(null, "stroke-linejoin", "round");
                 node.setAttributeNS(null, "fill-rule", "evenodd");
             }
+
             return node;
         },
 
