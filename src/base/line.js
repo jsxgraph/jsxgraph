@@ -1532,8 +1532,7 @@ JXG.registerElement("arrow", JXG.createArrow);
  * </script><pre>
  */
 JXG.createAxis = function (board, parents, attributes) {
-    var axis,
-        attr, attrTicks,
+    var axis, attr,
         ancestor, ticksDist;
 
     // Create line
@@ -1560,15 +1559,47 @@ JXG.createAxis = function (board, parents, attributes) {
     axis._point1UsrCoordsOrg = axis.point1.coords.usrCoords.slice();
     axis._point2UsrCoordsOrg = axis.point2.coords.usrCoords.slice();
 
+    for (ancestor in axis.ancestors) {
+        if (axis.ancestors.hasOwnProperty(ancestor)) {
+            axis.ancestors[ancestor].type = Const.OBJECT_TYPE_AXISPOINT;
+        }
+    }
+
+    // Create ticks
+    // attrTicks = attr.ticks;
+    if (Type.exists(attr.ticks.ticksdistance)) {
+        ticksDist = attr.ticks.ticksdistance;
+    } else if (Type.isArray(attr.ticks.ticks)) {
+        ticksDist = attr.ticks.ticks;
+    } else {
+        ticksDist = 1.0;
+    }
+
+    /**
+     * The ticks attached to the axis.
+     * @memberOf Axis.prototype
+     * @name defaultTicks
+     * @type JXG.Ticks
+     */
+    axis.defaultTicks = board.create("ticks", [axis, ticksDist], attr.ticks);
+    axis.defaultTicks.dump = false;
+    axis.elType = "axis";
+    axis.subs = {
+        ticks: axis.defaultTicks
+    };
+    axis.inherits.push(axis.defaultTicks);
+
+
     axis.update = function () {
         var bbox,
-            position,
+            position, i,
             direction, horizontal, vertical,
-            ticksAutoPos, ticksAutoPosThres, distP1, distP2,
+            ticksAutoPos, ticksAutoPosThres, dist,
             anchor, left, right,
             distUsr,
             newPosP1, newPosP2,
-            locationOrg;
+            locationOrg,
+            visLabel, anchr, off;
 
         bbox = this.board.getBoundingBox();
         position = Type.evaluate(this.visProp.position);
@@ -1577,35 +1608,31 @@ JXG.createAxis = function (board, parents, attributes) {
         vertical = this.isVertical();
         ticksAutoPos = Type.evaluate(this.visProp.ticksautopos);
         ticksAutoPosThres = Type.evaluate(this.visProp.ticksautoposthreshold);
-        ticksAutoPosThres = Type.parseNumber(
-            ticksAutoPosThres,
-            horizontal ? Math.abs(bbox[1] - bbox[3]) :
-                (vertical ? Math.abs(bbox[0] - bbox[2]) : 1),
-            horizontal ? (1 / this.board.unitX) :
-                (vertical ? (1 / this.board.unitY) : 1)
-        );
+
+        if (horizontal) {
+            ticksAutoPosThres = Type.parseNumber(ticksAutoPosThres, Math.abs(bbox[1] - bbox[3]), 1 / this.board.unitX) * this.board.unitX;
+        } else if (vertical) {
+            ticksAutoPosThres = Type.parseNumber(ticksAutoPosThres, Math.abs(bbox[1] - bbox[3]), 1 / this.board.unitY) * this.board.unitY;
+        } else {
+            ticksAutoPosThres = Type.parseNumber(ticksAutoPosThres, 1, 1);
+        }
 
         anchor = Type.evaluate(this.visProp.anchor);
         left = anchor.indexOf('left') > -1;
         right = anchor.indexOf('right') > -1;
 
         distUsr = Type.evaluate(this.visProp.anchordist);
-        if (!horizontal && !vertical) {
-            distUsr = 0;
+        if (horizontal) {
+            distUsr = Type.parseNumber(distUsr, Math.abs(bbox[1] - bbox[3]), 1 / this.board.unitX);
+        } else if (vertical) {
+            distUsr = Type.parseNumber(distUsr, Math.abs(bbox[0] - bbox[2]), 1 / this.board.unitY);
         } else {
-            distUsr = Type.parseNumber(
-                distUsr,
-                horizontal ? Math.abs(bbox[1] - bbox[3]) :
-                    (vertical ? Math.abs(bbox[0] - bbox[2]) : 1),
-                horizontal ? (1 / this.board.unitX) :
-                    (vertical ? (1 / this.board.unitY) : 1)
-            );
+            distUsr = 0;
         }
 
         locationOrg = this.board.getPointLoc(this._point1UsrCoordsOrg, distUsr);
 
         // Set position of axis
-
         newPosP1 = this.point1.coords.usrCoords.slice();
         newPosP2 = this.point2.coords.usrCoords.slice();
 
@@ -1676,98 +1703,128 @@ JXG.createAxis = function (board, parents, attributes) {
         this.point2.setPositionDirectly(JXG.COORDS_BY_USER, newPosP2);
 
         // Set position of tick labels
-
+        visLabel = this.defaultTicks.visProp.label;
         if (ticksAutoPos && (horizontal || vertical)) {
-            this.defaultTicks.visProp.label._anchorx_org = this.defaultTicks.visProp.label._anchorx_org ?? this.defaultTicks.visProp.label.anchorx;
-            this.defaultTicks.visProp.label._anchory_org = this.defaultTicks.visProp.label._anchory_org ?? this.defaultTicks.visProp.label.anchory;
-            this.defaultTicks.visProp.label._offset_org = this.defaultTicks.visProp.label._offset_org ?? this.defaultTicks.visProp.label.offset;
 
-            if (horizontal) {
-                distP1 = axis.point1.coords.scrCoords[2] - (this.board.canvasHeight / 2);
-                distP2 = axis.point2.coords.scrCoords[2] - (this.board.canvasHeight / 2);
-                if (
-                    (distP1 < 0 && distP2 < 0) &&
-                    (Math.abs(distP1) > ticksAutoPosThres && Math.abs(distP2) > ticksAutoPosThres)
-                ) {
-                    // POI Should we use dynamic values here?
-                    this.defaultTicks.visProp.label.anchory = 'bottom';
-                    this.defaultTicks.visProp.label.offset = [0, 20];
-                } else if (
-                    (distP1 > 0 && distP2 > 0) &&
-                    (Math.abs(distP1) > ticksAutoPosThres && Math.abs(distP2) > ticksAutoPosThres)
-                ) {
-                    // POI Should we use dynamic values here?
-                    this.defaultTicks.visProp.label.anchory = 'top';
-                    this.defaultTicks.visProp.label.offset = [0, -20];
-                } else {
-                    this.defaultTicks.visProp.label.anchorx = this.defaultTicks.visProp.label._anchorx_org;
-                    this.defaultTicks.visProp.label.anchory = this.defaultTicks.visProp.label._anchory_org;
-                    this.defaultTicks.visProp.label.offset = this.defaultTicks.visProp.label._offset_org;
-                }
-
-            } else if (vertical) {
-                distP1 = axis.point1.coords.scrCoords[1] - (this.board.canvasWidth / 2);
-                distP2 = axis.point2.coords.scrCoords[1] - (this.board.canvasWidth / 2);
-                if (
-                    (distP1 < 0 && distP2 < 0) &&
-                    (Math.abs(distP1) > ticksAutoPosThres && Math.abs(distP2) > ticksAutoPosThres)
-                ) {
-                    // POI Should we use dynamic values here?
-                    this.defaultTicks.visProp.label.anchorx = 'right';
-                    this.defaultTicks.visProp.label.offset = [-20, 0];
-                } else if (
-                    (distP1 > 0 && distP2 > 0) &&
-                    (Math.abs(distP1) > ticksAutoPosThres && Math.abs(distP2) > ticksAutoPosThres)
-                ) {
-                    // POI Should we use dynamic values here?
-                    this.defaultTicks.visProp.label.anchorx = 'left';
-                    this.defaultTicks.visProp.label.offset = [20, 0];
-                } else {
-                    this.defaultTicks.visProp.label.anchorx = this.defaultTicks.visProp.label._anchorx_org;
-                    this.defaultTicks.visProp.label.anchory = this.defaultTicks.visProp.label._anchory_org;
-                    this.defaultTicks.visProp.label.offset = this.defaultTicks.visProp.label._offset_org;
-                }
+            if (!Type.exists(visLabel._anchorx_org)) {
+                visLabel._anchorx_org = Type.def(visLabel.anchorx, this.board.options.text.anchorX);
+            }
+            if (!Type.exists(visLabel._anchory_org)) {
+                visLabel._anchory_org = Type.def(visLabel.anchory, this.board.options.text.anchorY);
+            }
+            if (!Type.exists(visLabel._offset_org)) {
+                visLabel._offset_org = visLabel.offset.slice();
             }
 
+            off = visLabel.offset;
+            if (horizontal) {
+                dist = axis.point1.coords.scrCoords[2] - (this.board.canvasHeight * 0.5);
+
+                anchr = visLabel.anchory;
+
+                // The last position of the labels is stored in visLabel._side
+                if (dist < 0 && Math.abs(dist) > ticksAutoPosThres) {
+                    // Put labels on top of the line
+                    if (visLabel._side === 'bottom') {
+                        // Switch position
+                        if (visLabel.anchory === 'top') {
+                            anchr = 'bottom';
+                        }
+                        off[1] *= -1;
+                        visLabel._side = 'top';
+                    }
+
+                } else if (dist > 0 && Math.abs(dist) > ticksAutoPosThres) {
+                    // Put labels below the line
+                    if (visLabel._side === 'top') {
+                        // Switch position
+                        if (visLabel.anchory === 'bottom') {
+                            anchr = 'top';
+                        }
+                        off[1] *= -1;
+                        visLabel._side = 'bottom';
+                    }
+
+                } else {
+                    // Put to original position
+                    anchr = visLabel._anchory_org;
+                    off = visLabel._offset_org.slice();
+
+                    if (anchr === 'top') {
+                        visLabel._side = 'bottom';
+                    } else if (anchr === 'bottom') {
+                        visLabel._side = 'top';
+                    } else if (off[1] < 0) {
+                        visLabel._side = 'bottom';
+                    } else {
+                        visLabel._side = 'top';
+                    }
+                }
+
+                for (i = 0; i < axis.defaultTicks.labels.length; i++) {
+                    this.defaultTicks.labels[i].visProp.anchory = anchr;
+                }
+                visLabel.anchory = anchr;
+
+            } else if (vertical) {
+                dist = axis.point1.coords.scrCoords[1] - (this.board.canvasWidth * 0.5);
+
+                if (dist < 0 && Math.abs(dist) > ticksAutoPosThres) {
+                    // Put labels to the left of the line
+                    if (visLabel._side === 'right') {
+                        // Switch position
+                        if (visLabel.anchorx === 'left') {
+                            anchr = 'right';
+                        }
+                        off[0] *= -1;
+                        visLabel._side = 'left';
+                    }
+
+                } else if (dist > 0 && Math.abs(dist) > ticksAutoPosThres) {
+                    // Put labels to the right of the line
+                    if (visLabel._side === 'left') {
+                        // Switch position
+                        if (visLabel.anchorx === 'right') {
+                            anchr = 'left';
+                        }
+                        off[0] *= -1;
+                        visLabel._side = 'right';
+                    }
+
+                } else {
+                    // Put to original position
+                    anchr = visLabel._anchorx_org;
+                    off = visLabel._offset_org.slice();
+
+                    if (anchr === 'left') {
+                        visLabel._side = 'right';
+                    } else if (anchr === 'right') {
+                        visLabel._side = 'left';
+                    } else if (off[0] < 0) {
+                        visLabel._side = 'left';
+                    } else {
+                        visLabel._side = 'right';
+                    }
+                }
+
+                for (i = 0; i < axis.defaultTicks.labels.length; i++) {
+                    this.defaultTicks.labels[i].visProp.anchorx = anchr;
+                }
+                visLabel.anchorx = anchr;
+            }
+            visLabel.offset = off;
+
         } else {
-            delete this.defaultTicks.visProp.label._anchorx_org;
-            delete this.defaultTicks.visProp.label._anchory_org;
-            delete this.defaultTicks.visProp.label._offset_org;
+            delete visLabel._anchorx_org;
+            delete visLabel._anchory_org;
+            delete visLabel._offset_org;
         }
 
         JXG.Line.prototype.update.call(this);
+        this.defaultTicks.needsUpdate = true;
+
         return this;
     };
-
-    for (ancestor in axis.ancestors) {
-        if (axis.ancestors.hasOwnProperty(ancestor)) {
-            axis.ancestors[ancestor].type = Const.OBJECT_TYPE_AXISPOINT;
-        }
-    }
-
-    // Create ticks
-    attrTicks = Type.copyAttributes(attributes, board.options, "axis", "ticks");
-    if (Type.exists(attrTicks.ticksdistance)) {
-        ticksDist = attrTicks.ticksdistance;
-    } else if (Type.isArray(attrTicks.ticks)) {
-        ticksDist = attrTicks.ticks;
-    } else {
-        ticksDist = 1.0;
-    }
-
-    /**
-     * The ticks attached to the axis.
-     * @memberOf Axis.prototype
-     * @name defaultTicks
-     * @type JXG.Ticks
-     */
-    axis.defaultTicks = board.create("ticks", [axis, ticksDist], attrTicks);
-    axis.defaultTicks.dump = false;
-    axis.elType = "axis";
-    axis.subs = {
-        ticks: axis.defaultTicks
-    };
-    axis.inherits.push(axis.defaultTicks);
 
     return axis;
 };

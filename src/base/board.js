@@ -5580,7 +5580,6 @@ JXG.extend(
                 }
             }
             */
-
             for (el = 0; el < this.objectsList.length; el++) {
                 pEl = this.objectsList[el];
                 if (this.needsFullUpdate && pEl.elementClass === Const.OBJECT_CLASS_TEXT) {

@@ -3891,7 +3891,7 @@ JXG.Options = {
          * <script type="text/javascript">
          *     (function() {
          *         var board = JXG.JSXGraph.initBoard('JXG557c9b5d-e1bd-4d3b-8362-ff7a863255f3',
-         *             {boundingbox: [-8, 8, 8,-8], axis: false, showcopyright: false, shownavigation: false};
+         *             {boundingbox: [-8, 8, 8,-8], axis: false, showcopyright: false, shownavigation: false});
          *
          *     board.create('axis', [[0, 0], [1, 0]], {
          *         position: 'sticky',
