@@ -676,26 +676,27 @@ JXG.extend(
                 if (el.visPropOld.top !== ev_ay + v) {
                     el.rendNode.setAttributeNS(null, "y", v + this.vOffsetText * 0.5 + "px");
 
-                    // Not supported by IE, edge
-                    el.rendNode.setAttributeNS(null, "dy", "0");
-                    if (ev_ay === "bottom") {
-                        el.rendNode.setAttributeNS(null, 'dominant-baseline', 'text-after-edge');
-                    } else if (ev_ay === "top") {
-                        el.rendNode.setAttributeNS(null, 'dominant-baseline', 'text-before-edge');
-                    } else if (ev_ay === "middle") {
-                        el.rendNode.setAttributeNS(null, 'dominant-baseline', 'middle');
-                    }
-
-                    // Supported by IE, edge:
+                    // Not supported by IE, edge, but more elegant
+                    // el.rendNode.setAttributeNS(null, "dy", "0");
                     // if (ev_ay === "bottom") {
                     //     el.rendNode.setAttributeNS(null, 'dominant-baseline', 'text-after-edge');
                     // } else if (ev_ay === "top") {
-                    //     el.rendNode.setAttributeNS(null, "dy", "1.6ex");
-                    //     el.rendNode.setAttributeNS(null, 'dominant-baseline', 'text-after-edge');
+                    //     el.rendNode.setAttributeNS(null, 'dominant-baseline', 'text-before-edge');
                     // } else if (ev_ay === "middle") {
-                    //     el.rendNode.setAttributeNS(null, "dy", "0.6ex");
-                    //     el.rendNode.setAttributeNS(null, 'dominant-baseline', 'text-after-edge');
+                    //     el.rendNode.setAttributeNS(null, 'dominant-baseline', 'middle');
                     // }
+
+                    // Supported by IE, edge:
+                    if (ev_ay === "bottom") {
+                        el.rendNode.setAttributeNS(null, "dy", "1.6ex");
+                        el.rendNode.setAttributeNS(null, 'dominant-baseline', 'text-after-edge');
+                    } else if (ev_ay === "top") {
+                        el.rendNode.setAttributeNS(null, "dy", "1.6ex");
+                        el.rendNode.setAttributeNS(null, 'dominant-baseline', 'text-after-edge');
+                    } else if (ev_ay === "middle") {
+                        el.rendNode.setAttributeNS(null, "dy", "0.6ex");
+                        el.rendNode.setAttributeNS(null, 'dominant-baseline', 'text-after-edge');
+                    }
                     el.visPropOld.top = ev_ay + v;
                 }
             }
