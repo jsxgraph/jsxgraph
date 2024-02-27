@@ -725,12 +725,8 @@ JXG.extend(
          * @returns {JXG.Curve} Reference to the curve object.
          */
         updateCurve: function () {
-            var len,
-                mi,
-                ma,
-                x,
-                y,
-                i,
+            var i, len,  mi, ma,
+                x, y,
                 version = this.visProp.plotversion,
                 //t1, t2, l1,
                 suspendUpdate = false;
