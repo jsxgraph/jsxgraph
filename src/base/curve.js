@@ -37,16 +37,19 @@
  */
 
 import JXG from "../jxg";
+import Clip from "./math/clip";
 import Const from "./constants";
 import Coords from "./coords";
+import Geometry from "../math/geometry";
 import GeometryElement from "./element";
+import GeonextParser from "../parser/geonext";
+import ImplicitPlot from "../math/implicitplot";
 import Mat from "../math/math";
+import Metapost from "../math/metapost";
 import Numerics from "../math/numerics";
 import Plot from "../math/plot";
-import Geometry from "../math/geometry";
-import GeonextParser from "../parser/geonext";
-import Type from "../utils/type";
 import QDT from "../math/qdt";
+import Type from "../utils/type";
 
 /**
  * Curves are the common object for function graphs, parametric curves, polar curves, and data plots.
@@ -2220,7 +2223,7 @@ JXG.createMetapostSpline = function (board, parents, attributes) {
             p.push([points[i].X(), points[i].Y()]);
         }
 
-        res = JXG.Math.Metapost.curve(p, controls);
+        res = Metapost.curve(p, controls);
         this.dataX = res[0];
         this.dataY = res[1];
     };
@@ -2720,7 +2723,7 @@ JXG.createCurveIntersection = function (board, parents, attributes) {
      * @ignore
      */
     c.updateDataArray = function () {
-        var a = JXG.Math.Clip.intersection(parents[0], parents[1], this.board);
+        var a = Clip.intersection(parents[0], parents[1], this.board);
         this.dataX = a[0];
         this.dataY = a[1];
     };
@@ -2776,7 +2779,7 @@ JXG.createCurveUnion = function (board, parents, attributes) {
      * @ignore
      */
     c.updateDataArray = function () {
-        var a = JXG.Math.Clip.union(parents[0], parents[1], this.board);
+        var a = Clip.union(parents[0], parents[1], this.board);
         this.dataX = a[0];
         this.dataY = a[1];
     };
@@ -2832,7 +2835,7 @@ JXG.createCurveDifference = function (board, parents, attributes) {
      * @ignore
      */
     c.updateDataArray = function () {
-        var a = JXG.Math.Clip.difference(parents[0], parents[1], this.board);
+        var a = Clip.difference(parents[0], parents[1], this.board);
         this.dataX = a[0];
         this.dataY = a[1];
     };
@@ -2842,6 +2845,45 @@ JXG.createCurveDifference = function (board, parents, attributes) {
 JXG.registerElement("curvedifference", JXG.createCurveDifference);
 JXG.registerElement("curveintersection", JXG.createCurveIntersection);
 JXG.registerElement("curveunion", JXG.createCurveUnion);
+
+/**
+ * @class Concat of two path elements, in general neither is a closed path. The parent elements have to be curves, too.
+ * The resulting element is of type curve. The curve points are simply concatenated.
+ * @pseudo
+ * @name CurveConcat
+ * @param {JXG.Curve} curve1 First curve element.
+ * @param {JXG.Curve} curve2 Second curve element.
+ * @augments JXG.Curve
+ * @constructor
+ * @type JXG.Curve
+ */
+JXG.createCurveConcat = function (board, parents, attributes) {
+    var c;
+
+    if (parents.length !== 2) {
+        throw new Error(
+            "JSXGraph: Can't create curve difference with given parent'" +
+                "\nPossible parent types: [array, array|function]"
+        );
+    }
+
+    c = board.create("curve", [[], []], attributes);
+    /**
+     * @class
+     * @ignore
+     */
+    c.updateCurve = function () {
+        this.points = parents[0].points.concat(
+                [new JXG.Coords(Const.COORDS_BY_USER, [NaN, NaN], this.board)]
+            ).concat(parents[1].points);
+        this.numberPoints = this.points.length;
+        return this;
+    };
+
+    return c;
+};
+
+JXG.registerElement("curveconcat", JXG.createCurveConcat);
 
 /**
  * @class Box plot curve. The direction of the box plot can be either vertical or horizontal which
@@ -3226,7 +3268,7 @@ JXG.createImplicitCurve = function(board, parents, attributes) {
         this.dataY = [];
 
         // console.time("implicit plot");
-        ip = new JXG.Math.ImplicitPlot(bbox, cfg, this.f, this.dfx, this.dfy);
+        ip = new ImplicitPlot(bbox, cfg, this.f, this.dfx, this.dfy);
         this.qdt = ip.qdt;
 
         ret = ip.plot();
