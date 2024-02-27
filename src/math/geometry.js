@@ -1334,15 +1334,9 @@ JXG.extend(
          *
          */
         pnpoly: function (x_in, y_in, path, coord_type) {
-            var i,
-                j,
-                len,
-                x,
-                y,
-                crds,
+            var i, j, vi, vj, len,
+                x, y, crds,
                 v = path,
-                vi,
-                vj,
                 isIn = false;
 
             if (coord_type === Const.COORDS_BY_USER) {
