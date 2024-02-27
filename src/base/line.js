@@ -1589,7 +1589,6 @@ JXG.createAxis = function (board, parents, attributes) {
     };
     axis.inherits.push(axis.defaultTicks);
 
-
     axis.update = function () {
         var bbox,
             position, i,
