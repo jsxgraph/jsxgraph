@@ -37,7 +37,7 @@
  */
 
 import JXG from "../jxg";
-import Clip from "./math/clip";
+import Clip from "../math/clip";
 import Const from "./constants";
 import Coords from "./coords";
 import Geometry from "../math/geometry";
