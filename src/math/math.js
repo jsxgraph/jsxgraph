@@ -1106,11 +1106,11 @@ JXG.Math = {
      *
      * Convert a floating point number to integer + fraction.
      * fraction is given as nominator and denominator.
-     *
+     * <p>
      * Algorithm: approximate the floating point number
      * by a continued fraction and simultaneously keep track
      * of its convergents.
-     *
+     * <p>
      * For negative numbers, the minus sign is contained in the integer part.
      * Inspired by {@link https://kevinboone.me/rationalize.html}.
      *

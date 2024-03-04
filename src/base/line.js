@@ -1523,13 +1523,49 @@ JXG.registerElement("arrow", JXG.createArrow);
  * @param {Number_Number_Number} a,b,c A line can also be created providing three numbers. The line is then described by the set of solutions
  * of the equation <tt>a*x+b*y+c*z = 0</tt>.
  * @example
- * // Create an axis providing two coord pairs.
+ * // Create an axis providing two coords pairs.
  *   var l1 = board.create('axis', [[0.0, 1.0], [1.0, 1.3]]);
  * </pre><div class="jxgbox" id="JXG4f414733-624c-42e4-855c-11f5530383ae" style="width: 300px; height: 300px;"></div>
  * <script type="text/javascript">
  *   var axex1_board = JXG.JSXGraph.initBoard('JXG4f414733-624c-42e4-855c-11f5530383ae', {boundingbox: [-1, 7, 7, -1], axis: true, showcopyright: false, shownavigation: false});
  *   var axex1_l1 = axex1_board.create('axis', [[0.0, 1.0], [1.0, 1.3]]);
  * </script><pre>
+ * @example
+ *  // Create ticks labels as fractions
+ *  board.create('axis', [[0,1], [1,1]], {
+ *      ticks: {
+ *          label: {
+ *              toFraction: true,
+ *              useMathjax: false,
+ *              anchorX: 'middle',
+ *              offset: [0, -10]
+ *          }
+ *      }
+ *  });
+ *
+ *
+ * </pre><div id="JXG34174cc4-0050-4ab4-af69-e91365d0666f" class="jxgbox" style="width: 300px; height: 300px;"></div>
+ * <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" id="MathJax-script"></script>
+ * <script type="text/javascript">
+ *     (function() {
+ *         var board = JXG.JSXGraph.initBoard('JXG34174cc4-0050-4ab4-af69-e91365d0666f',
+ *             {boundingbox: [-1.2, 2.3, 1.2, -2.3], axis: true, showcopyright: false, shownavigation: false});
+ *             board.create('axis', [[0,1], [1,1]], {
+ *                 ticks: {
+ *                     label: {
+ *                         toFraction: true,
+ *                         useMathjax: false,
+ *                         anchorX: 'middle',
+ *                         offset: [0, -10]
+ *                     }
+ *                 }
+ *             });
+ *
+ *
+ *     })();
+ *
+ * </script><pre>
+ *
  */
 JXG.createAxis = function (board, parents, attributes) {
     var axis, attr,

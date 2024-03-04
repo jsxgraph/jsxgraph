@@ -236,6 +236,65 @@ JXG.Options = {
          *
          * </script><pre>
          *
+         * @example
+         *  // Display ticks labels as fractions
+         *  var board = JXG.JSXGraph.initBoard('jxgbox', {
+         *      boundingbox: [-1.2, 2.3, 1.2, -2.3],
+         *      axis: true,
+         *      defaultAxes: {
+         *          x: {
+         *              ticks: {
+         *                  label: {
+         *                      useMathJax: true,
+         *                      display: 'html',
+         *                      toFraction: true
+         *                  }
+         *              }
+         *          },
+         *          y: {
+         *              ticks: {
+         *                  label: {
+         *                      useMathJax: true,
+         *                      display: 'html',
+         *                      toFraction: true
+         *                  }
+         *              }
+         *          }
+         *      }
+         *  });
+         *
+         * </pre><div id="JXG484d2f00-c853-4acb-a8bd-46a9e232d13b" class="jxgbox" style="width: 300px; height: 300px;"></div>
+         * <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" id="MathJax-script"></script>
+         * <script type="text/javascript">
+         *     (function() {
+         *         var board = JXG.JSXGraph.initBoard('JXG484d2f00-c853-4acb-a8bd-46a9e232d13b',
+         *             {boundingbox: [-1.2, 2.3, 1.2, -2.3],
+         *              axis: true, showcopyright: false, shownavigation: true,
+         *                 defaultAxes: {
+         *                     x: {
+         *                         ticks: {
+         *                             label: {
+         *                                 useMathJax: true,
+         *                                 display: 'html',
+         *                                 toFraction: true
+         *                             }
+         *                         }
+         *                     },
+         *                     y: {
+         *                         ticks: {
+         *                             label: {
+         *                                 useMathJax: true,
+         *                                 display: 'html',
+         *                                 toFraction: true
+         *                             }
+         *                         }
+         *                     }
+         *                 }
+         *             });
+         *     })();
+         *
+         * </script><pre>
+         *
          */
         defaultAxes: {
             x: {
@@ -8131,7 +8190,7 @@ JXG.Options = {
          * given by the attribute 'digits' and convert into a fraction if 'toFraction'
          * is true.
          * <p>
-         * Otherwise display the raw number.
+         * Otherwise, display the raw number.
          *
          * @name formatNumber
          * @memberOf Text.prototype
@@ -8768,6 +8827,33 @@ JXG.Options = {
          */
         katexMacros: {},
 
+        /**
+         * Display number as integer + nominator / denominator. Works together
+         * with MathJax, KaTex or as plain text.
+         * @name toFraction
+         * @memberOf Text.prototype
+         * @type Boolean
+         * @default false
+         * @see JXG#toFraction
+         *
+         * @example
+         *  board.create('text', [2, 2, 2 / 7], { anchorY: 'top', toFraction: true, useMathjax: true });
+         *  board.create('text', [2, -2, 2 / 19], { toFraction: true, useMathjax: false });
+         *
+         * </pre><div id="JXGc10fe0b6-15ac-42b6-890f-2593b427d493" class="jxgbox" style="width: 300px; height: 300px;"></div>
+         * <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" id="MathJax-script"></script>
+         * <script type="text/javascript">
+         *     (function() {
+         *         var board = JXG.JSXGraph.initBoard('JXGc10fe0b6-15ac-42b6-890f-2593b427d493',
+         *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
+         *             board.create('text', [2, 2, 2 / 7], { anchorY: 'top', toFraction: true, useMathjax: true });
+         *             board.create('text', [2, -2, 2 / 19], { toFraction: true, useMathjax: false });
+         *
+         *     })();
+         *
+         * </script><pre>
+         *
+         */
         toFraction: false,
 
         /**

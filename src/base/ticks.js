@@ -1705,6 +1705,43 @@ JXG.extend(
  *   var t = board.create('ticks', [l1, 2], {ticksDistance: 2, majorHeight: 40});
  * })();
  * </script><pre>
+ * @example
+ *  // Create ticks labels as fractions
+ * board.create('axis', [[0,1], [1,1]], {
+ *     ticks: {
+ *         label: {
+ *             toFraction: true,
+ *             useMathjax: true,
+ *             display: 'html',
+ *             anchorX: 'middle',
+ *             offset: [0, -10]
+ *         }
+ *     }
+ * });
+ *
+ * </pre><div id="JXG4455acb2-6bf3-4801-8887-d7fcc1e4e1da" class="jxgbox" style="width: 300px; height: 300px;"></div>
+ * <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" id="MathJax-script"></script>
+ * <script type="text/javascript">
+ *     (function() {
+ *         var board = JXG.JSXGraph.initBoard('JXG4455acb2-6bf3-4801-8887-d7fcc1e4e1da',
+ *             {boundingbox: [-1.2, 2.3, 1.2, -2.3], axis: true, showcopyright: false, shownavigation: false});
+ *             board.create('axis', [[0,1], [1,1]], {
+ *                 ticks: {
+ *                     label: {
+ *                         toFraction: true,
+ *             useMathjax: true,
+ *             display: 'html',
+ *             anchorX: 'middle',
+ *             offset: [0, -10]
+ *                     }
+ *                 }
+ *             });
+ *
+ *     })();
+ *
+ * </script><pre>
+ *
+ * @example
  */
 JXG.createTicks = function (board, parents, attributes) {
     var el,
