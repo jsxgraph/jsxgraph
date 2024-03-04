@@ -8125,8 +8125,11 @@ JXG.Options = {
         fontUnit: 'px',
 
         /**
-         * If true (default), format number according to the number of digits
-         * given by the attribute 'digits' or convert into a fraction if 'toFraction:true'.
+         * If the text content is solely a number and
+         * this attribute is true (default) then the number is formatted
+         * according to the number of digits
+         * given by the attribute 'digits' and convert into a fraction if 'toFraction'
+         * is true.
          * <p>
          * Otherwise display the raw number.
          *
