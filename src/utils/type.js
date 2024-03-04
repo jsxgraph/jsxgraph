@@ -42,6 +42,7 @@
 
 import JXG from "../jxg";
 import Const from "../base/constants";
+import Mat from "../math/math";
 
 JXG.extend(
     JXG,
@@ -1626,6 +1627,38 @@ JXG.extend(
             //
             // return str;
             return str.replace(/^[\s\uFEFF\xA0]+|[\s\uFEFF\xA0]+$/g, "");
+        },
+
+        /**
+         * Convert a floating point number to a string integer + fraction.
+         * Returns either a string of the form '3 1/3' (in case of useTeX=false)
+         * or '3 \\frac{1}{3}' (in case of useTeX=true).
+         *
+         * @param {Number} x
+         * @param {Boolean} [useTeX=false]
+         * @param {Number} [order=0.001]
+         * @returns {String}
+         * @see JXG.Math#dec2fraction
+         */
+        toFraction: function (x, useTeX, order) {
+            var arr = Mat.dec2fraction(x, order),
+                str = '';
+
+            if (arr[0] === 0 && arr[1] === 0) {
+                str += '0';
+            } else {
+                if (arr[0] !== 0) {
+                    str += arr[0] + ' ';
+                }
+                if (arr[1] !== 0) {
+                    if (useTeX === true) {
+                        str += '\\frac{' + arr[1] + '}{' + arr[2] + '}';
+                    } else {
+                        str += arr[1] + '/' + arr[2];
+                    }
+                }
+            }
+            return str;
         },
 
         /**

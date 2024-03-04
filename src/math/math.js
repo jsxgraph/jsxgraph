@@ -1102,6 +1102,67 @@ JXG.Math = {
         return (a || b) && !(a && b);
     },
 
+    /**
+     *
+     * Convert a floating point number to integer + fraction.
+     * fraction is given as nominator and denominator.
+     *
+     * Algorithm: approximate the floating point number
+     * by a continued fraction and simultaneously keep track
+     * of its convergents.
+     *
+     * For negative numbers, the minus sign is contained in the integer part.
+     * Inspired by {@link https://kevinboone.me/rationalize.html}.
+     *
+     * @param {Number} x Number which is to be converted
+     * @param {Number} [order=0.001] Small number determining the approximation precision.
+     * @returns {Array} [leading, nominator, denominator]
+     * @see JXG#toFraction
+     *
+     * @example
+     * JXG.Math.dec2fraction(0.33333333);
+     * // Result: [ 0, 1, 3 ]
+     *
+     * JXG.Math.dec2fraction(0);
+     * // Result: [ 0, 0, 1 ]
+     *
+     * JXG.Math.dec2fraction(-10.66666666666667);
+     * // Result: [-10, 2, 3 ]
+    */
+    dec2fraction: function(x, order) {
+        var lead, a,
+            n, n1, n2,
+            d, d1, d2,
+            it = 0,
+            maxit = 20;
+
+        order = Type.def(order, 0.001);
+        // Negative numbers:
+        // The minus sign is handled in lead.
+        lead = ((x < 0) ? -1 : 1) * Math.floor(Math.abs(x));
+        x = Math.abs(x);
+        // From now on we consider x to be nonnegative.
+        x -= Math.floor(x);
+        a = 0.0;
+        n2 = 1.0;
+        n = n1 = a;
+        d2 = 0.0;
+        d = d1 = 1.0;
+
+        while (x - Math.floor(x) > order && it < maxit) {
+            x = 1 / (x - a);
+            a = Math.floor(x);
+            n = n2 + a * n1;
+            d = d2 + a * d1;
+            n2 = n1;
+            d2 = d1;
+            n1 = n;
+            d1 = d;
+            it++;
+        }
+        return [lead, n, d];
+    },
+
     /* *************************** Normalize *************************** */
 
     /**
