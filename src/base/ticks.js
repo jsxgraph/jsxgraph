@@ -1307,27 +1307,36 @@ JXG.extend(
         formatLabelText: function (value) {
             var labelText,
                 digits,
+                ev_um = Type.evaluate(this.visProp.label.usemathjax),
+                ev_uk = Type.evaluate(this.visProp.label.usekatex),
                 ev_s = Type.evaluate(this.visProp.scalesymbol);
 
             if (Type.isNumber(value)) {
-                digits = Type.evaluate(this.visProp.digits);
-
-                if (this.useLocale()) {
-                    labelText = this.formatNumberLocale(value, digits);
+                if (Type.evaluate(this.visProp.label.tofraction)) {
+                    if (ev_um) {
+                        labelText = '\\(' + Type.toFraction(value, true) + '\\)';
+                    } else {
+                        labelText = Type.toFraction(value, ev_uk);
+                    }
                 } else {
-                    labelText = (Math.round(value * 1e11) / 1e11).toString();
-
-                    if (
-                        labelText.length > Type.evaluate(this.visProp.maxlabellength) ||
-                        labelText.indexOf("e") !== -1
-                    ) {
-                        if (Type.evaluate(this.visProp.precision) !== 3 && digits === 3) {
-                            // Use the deprecated attribute "precision"
-                            digits = Type.evaluate(this.visProp.precision);
+                    digits = Type.evaluate(this.visProp.digits);
+                    if (this.useLocale()) {
+                        labelText = this.formatNumberLocale(value, digits);
+                    } else {
+                        labelText = (Math.round(value * 1e11) / 1e11).toString();
+    
+                        if (
+                            labelText.length > Type.evaluate(this.visProp.maxlabellength) ||
+                            labelText.indexOf("e") !== -1
+                        ) {
+                            if (Type.evaluate(this.visProp.precision) !== 3 && digits === 3) {
+                                // Use the deprecated attribute "precision"
+                                digits = Type.evaluate(this.visProp.precision);
+                            }
+    
+                            //labelText = value.toPrecision(digits).toString();
+                            labelText = value.toExponential(digits).toString();
                         }
-
-                        //labelText = value.toPrecision(digits).toString();
-                        labelText = value.toExponential(digits).toString();
                     }
                 }
 

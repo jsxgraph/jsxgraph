@@ -1137,6 +1137,11 @@ JXG.Math = {
             maxit = 20;
 
         order = Type.def(order, 0.001);
+
+        // Round the number. 
+        // Otherwise, 0.999999999 would result in [0, 1, 1].
+        x = Math.round(x * 1.e12) * 1.e-12;
+
         // Negative numbers:
         // The minus sign is handled in lead.
         lead = ((x < 0) ? -1 : 1) * Math.floor(Math.abs(x));

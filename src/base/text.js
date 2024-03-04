@@ -241,11 +241,19 @@ JXG.extend(
                 };
             } else {
                 if (Type.isNumber(text)) {
-                    digits = Type.evaluate(this.visProp.digits);
-                    if (this.useLocale()) {
-                        this.content = this.formatNumberLocale(text, digits);
+                    if (Type.evaluate(this.visProp.tofraction)) {
+                        if (ev_um) {
+                            this.content = '\\(' + Type.toFraction(text, true) + '\\)';
+                        } else {
+                            this.content = Type.toFraction(text, ev_uk);
+                        }
                     } else {
-                        this.content = Type.toFixed(text, digits);
+                        digits = Type.evaluate(this.visProp.digits);
+                        if (this.useLocale()) {
+                            this.content = this.formatNumberLocale(text, digits);
+                        } else {
+                            this.content = Type.toFixed(text, digits);
+                        }
                     }
                 } else if (Type.isString(text) && ev_p) {
                     if (Type.evaluate(this.visProp.useasciimathml)) {

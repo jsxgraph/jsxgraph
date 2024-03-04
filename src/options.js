@@ -8751,6 +8751,8 @@ JXG.Options = {
          */
         katexMacros: {},
 
+        toFraction: false,
+        
         /**
          * Determines the rendering method of the text. Possible values
          * include <tt>'html'</tt> and <tt>'internal</tt>.
