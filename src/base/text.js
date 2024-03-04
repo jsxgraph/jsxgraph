@@ -240,7 +240,7 @@ JXG.extend(
                     }
                 };
             } else {
-                if (Type.isNumber(text)) {
+                if (Type.isNumber(text) && Type.evaluate(this.visProp.formatnumber)) {
                     if (Type.evaluate(this.visProp.tofraction)) {
                         if (ev_um) {
                             this.content = '\\(' + Type.toFraction(text, true) + '\\)';

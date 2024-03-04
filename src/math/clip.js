@@ -38,7 +38,7 @@
  * * Check if input polygons are closed. If not, handle this case.
  */
 
-import JXG from "../jxg";
+// import JXG from "../jxg";
 import Const from "../base/constants";
 import Coords from "../base/coords";
 import Mat from "./math";

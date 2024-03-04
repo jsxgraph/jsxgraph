@@ -1324,7 +1324,7 @@ JXG.extend(
                         labelText = this.formatNumberLocale(value, digits);
                     } else {
                         labelText = (Math.round(value * 1e11) / 1e11).toString();
-    
+
                         if (
                             labelText.length > Type.evaluate(this.visProp.maxlabellength) ||
                             labelText.indexOf("e") !== -1
@@ -1333,7 +1333,7 @@ JXG.extend(
                                 // Use the deprecated attribute "precision"
                                 digits = Type.evaluate(this.visProp.precision);
                             }
-    
+
                             //labelText = value.toPrecision(digits).toString();
                             labelText = value.toExponential(digits).toString();
                         }

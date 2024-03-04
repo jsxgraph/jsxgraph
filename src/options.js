@@ -8125,6 +8125,20 @@ JXG.Options = {
         fontUnit: 'px',
 
         /**
+         * If true (default), format number according to the number of digits
+         * given by the attribute 'digits' or convert into a fraction if 'toFraction:true'.
+         * <p>
+         * Otherwise display the raw number.
+         *
+         * @name formatNumber
+         * @memberOf Text.prototype
+         * @default true
+         * @type Boolean
+         *
+         */
+        formatNumber: true,
+
+        /**
          * Used to round texts given by a number.
          *
          * @name digits
@@ -8752,7 +8766,7 @@ JXG.Options = {
         katexMacros: {},
 
         toFraction: false,
-        
+
         /**
          * Determines the rendering method of the text. Possible values
          * include <tt>'html'</tt> and <tt>'internal</tt>.
