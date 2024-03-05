@@ -2448,10 +2448,14 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
                 deg: Geometry.trueAngle,
                 A: that.area,
                 area: that.area,
+                Area: that.area,
                 perimeter: that.perimeter,
+                Perimeter: that.perimeter,
                 dist: that.dist,
+                Dist: that.dist,
                 R: that.radius,
                 radius: that.radius,
+                Radius: that.radius,
                 erf: Mat.erf,
                 erfc: Mat.erfc,
                 erfi: Mat.erfi,
@@ -2475,8 +2479,12 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
                 sinh: Mat.sinh,
 
                 randint: that.randint,
+                randInt: that.randint,
+                Randint: that.randint,
+                RandInt: that.randint,
 
                 IfThen: that.ifthen,
+                ifthen: that.ifthen,
                 'import': that.importModule,
                 'eval': that.eval,
                 'use': that.use,
@@ -2485,6 +2493,7 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
                 '$value': function(e) {return that.getElementById(e).Value(); },
                 getName: that.getName,
                 name: that.getName,
+                Name: that.getName,
                 '$board': that.board,
                 '$log': that.log
             };
@@ -2516,10 +2525,14 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
         builtIn.erfi.src = 'JXG.Math.erfi';
         builtIn.A.src = '$jc$.area';
         builtIn.area.src = '$jc$.area';
+        builtIn.Area.src = '$jc$.area';
         builtIn.perimeter.src = '$jc$.perimeter';
+        builtIn.Perimeter.src = '$jc$.perimeter';
         builtIn.dist.src = '$jc$.dist';
+        builtIn.Dist.src = '$jc$.dist';
         builtIn.R.src = '$jc$.radius';
         builtIn.radius.src = '$jc$.radius';
+        builtIn.Radius.src = '$jc$.radius';
         builtIn.factorial.src = 'JXG.Math.factorial';
         builtIn.gcd.src = 'JXG.Math.gcd';
         builtIn.lb.src = 'JXG.Math.log2';
@@ -2540,17 +2553,22 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
         builtIn.sinh.src = 'JXG.Math.sinh';
 
         builtIn.randint.src = '$jc$.randint';
+        builtIn.randInt.src = '$jc$.randint';
+        builtIn.Randint.src = '$jc$.randint';
+        builtIn.RandInt.src = '$jc$.randint';
 
         builtIn['import'].src = '$jc$.importModule';
         builtIn.use.src = '$jc$.use';
         builtIn.eval.src = '$jc$.eval';
         builtIn.remove.src = '$jc$.del';
         builtIn.IfThen.src = '$jc$.ifthen';
+        builtIn.ifthen.src = '$jc$.ifthen';
         // usually unused, see node_op > op_execfun
         builtIn.$.src = '(function (n) { return $jc$.board.select(n); })';
         builtIn.$value.src = '(function (n) { return $jc$.board.select(n).Value(); })';
         builtIn.getName.src = '$jc$.getName';
         builtIn.name.src = '$jc$.getName';
+        builtIn.Name.src = '$jc$.getName';
         if (builtIn.$board) {
             builtIn.$board.src = '$jc$.board';
         }
