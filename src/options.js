@@ -236,6 +236,65 @@ JXG.Options = {
          *
          * </script><pre>
          *
+         * @example
+         *  // Display ticks labels as fractions
+         *  var board = JXG.JSXGraph.initBoard('jxgbox', {
+         *      boundingbox: [-1.2, 2.3, 1.2, -2.3],
+         *      axis: true,
+         *      defaultAxes: {
+         *          x: {
+         *              ticks: {
+         *                  label: {
+         *                      useMathJax: true,
+         *                      display: 'html',
+         *                      toFraction: true
+         *                  }
+         *              }
+         *          },
+         *          y: {
+         *              ticks: {
+         *                  label: {
+         *                      useMathJax: true,
+         *                      display: 'html',
+         *                      toFraction: true
+         *                  }
+         *              }
+         *          }
+         *      }
+         *  });
+         *
+         * </pre><div id="JXG484d2f00-c853-4acb-a8bd-46a9e232d13b" class="jxgbox" style="width: 300px; height: 300px;"></div>
+         * <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" id="MathJax-script"></script>
+         * <script type="text/javascript">
+         *     (function() {
+         *         var board = JXG.JSXGraph.initBoard('JXG484d2f00-c853-4acb-a8bd-46a9e232d13b',
+         *             {boundingbox: [-1.2, 2.3, 1.2, -2.3],
+         *              axis: true, showcopyright: false, shownavigation: true,
+         *                 defaultAxes: {
+         *                     x: {
+         *                         ticks: {
+         *                             label: {
+         *                                 useMathJax: true,
+         *                                 display: 'html',
+         *                                 toFraction: true
+         *                             }
+         *                         }
+         *                     },
+         *                     y: {
+         *                         ticks: {
+         *                             label: {
+         *                                 useMathJax: true,
+         *                                 display: 'html',
+         *                                 toFraction: true
+         *                             }
+         *                         }
+         *                     }
+         *                 }
+         *             });
+         *     })();
+         *
+         * </script><pre>
+         *
          */
         defaultAxes: {
             x: {
@@ -3668,6 +3727,268 @@ JXG.Options = {
         highlightStrokeColor: '#888888',
 
         /**
+         * Is used to define the behaviour of the axis.
+         * Settings in this attribute only have an effect if the axis is exactly horizontal or vertical.
+         * Possible values are:
+         * <ul>
+         *     <li><tt>'static'</tt>: Standard behavior of the axes as know in JSXGraph.
+         *     <li><tt>'fixed'</tt>: The axis is placed in a fixed position. Depending on the attribute <tt>anchor</tt>, it is positioned to the right or left of the edge of the board as seen from the axis with a distance defined in <tt>distanceBoarder</tt>. The axis will stay at the given position, when the user navigates through the board.
+         *     <li><tt>'sticky'</tt>: This mixes the two settings <tt>static</tt> and <tt>fixed</tt>. When the user navigates in the board, the axis remains in the visible area (taking into account <tt>anchor</tt> and <tt>anchorDist</tt>). If the axis itself is in the visible area, the axis can be moved by navigation.
+         * </ul>
+         *
+         * @type {String}
+         * @name Axis#position
+         * @default 'static'
+         * @see Axis#anchor
+         * @see Axis#anchorDist
+         *
+         * @example // Use navigation to see effect.
+         *  var axis1, axis2, circle;
+         *
+         *  board.create('axis', [[0,0],[1,0]],{
+         *      position: 'fixed',
+         *      anchor: 'right',
+         *      anchorDist: '0.1fr'
+         *  });
+         *
+         *  board.create('axis', [[0,0],[0,1]], {
+         *      position: 'fixed',
+         *      anchor: 'left',
+         *      anchorDist: '1abs'
+         *  });
+         *
+         * </pre><div id="JXG6dff2f81-65ce-46a3-bea0-8ce25cc1cb4a" class="jxgbox" style="width: 300px; height: 300px;"></div>
+         * <script type="text/javascript">
+         *     (function() {
+         *      var board = JXG.JSXGraph.initBoard('JXG6dff2f81-65ce-46a3-bea0-8ce25cc1cb4a',
+         *             {boundingbox: [-1, 10, 10,-1], axis: false, showcopyright: false, shownavigation: true});
+         *
+         *      board.create('axis', [[0,0],[1,0]],{
+         *          position: 'fixed',
+         *          anchor: 'right',
+         *          anchorDist: '0.1fr'
+         *      });
+         *
+         *      board.create('axis', [[0,0],[0,1]], {
+         *          position: 'fixed',
+         *          anchor: 'left',
+         *          anchorDist: '1abs'
+         *      });
+         *
+         *      board.create('circle', [[5,5], 2.5]);
+         *     })();
+         *
+         * </script><pre>
+         *
+         * @example // Use navigation to see effect.
+         *      board.create('axis', [[0,0],[1,0]],{
+         *          position: 'sticky',
+         *          anchor: 'right',
+         *          anchorDist: '0.2fr'
+         *      });
+         *
+         *      board.create('axis', [[0,0],[0,1]], {
+         *          position: 'sticky',
+         *          anchor: 'right left',
+         *          anchorDist: '75px'
+         *      });
+         *
+         * </pre><div id="JXG42a90935-80aa-4a6b-8adf-279deef84485" class="jxgbox" style="width: 300px; height: 300px;"></div>
+         * <script type="text/javascript">
+         *     (function() {
+         *          var board = JXG.JSXGraph.initBoard('JXG42a90935-80aa-4a6b-8adf-279deef84485',
+         *             {boundingbox: [-8, 8, 8,-8], axis: false, showcopyright: false, shownavigation: true});
+         *          board.create('axis', [[0,0],[1,0]],{
+         *              position: 'sticky',
+         *              anchor: 'right',
+         *              anchorDist: '0.2fr'
+         *          });
+         *
+         *          board.create('axis', [[0,0],[0,1]], {
+         *              position: 'sticky',
+         *              anchor: 'right left',
+         *              anchorDist: '75px'
+         *          });
+         *
+         *          board.create('functiongraph', [function(x){ return 1/(x-5) + 2;}]);
+         *     })();
+         *
+         * </script><pre>
+         *
+         */
+        position: 'static',
+
+        /**
+         * Position is used in cases: <tt>position=='sticky'</tt> or <tt>position=='fixed'</tt>.
+         * Possible values are <tt>'right'</tt>, <tt>'left'</tt>, <tt>'right left'</tt>. Left and right indicate the side as seen from the axis.
+         * It is used in combination with the attribute position to decide on which side of the board the axis should stick or be fixed.
+         *
+         * @type {String}
+         * @name Axis#anchor
+         * @default ''
+         * @example
+         *  board.create('axis', [[0,0],[0,1]],{
+         *      position: 'fixed',
+         *      anchor: 'left',
+         *      anchorDist: '2abs',
+         *      strokeColor : 'green',
+         *      ticks: {
+         *          majorHeight: 7,
+         *          drawZero: true,
+         *      }
+         *  });
+         *
+         *  board.create('axis', [[0,0],[0,1]], {
+         *      position: 'fixed',
+         *      anchor: 'right',
+         *      anchorDist: '2abs',
+         *      strokeColor : 'blue',
+         *      ticks: {
+         *          majorHeight: 7,
+         *          drawZero: true,
+         *      }
+         *  });
+         *
+         *  board.create('axis', [[0,0],[0,-1]], {
+         *      position: 'fixed',
+         *      anchor: 'left',
+         *      anchorDist: '4abs',
+         *      strokeColor : 'red',
+         *      ticks:{
+         *          majorHeight: 7,
+         *          drawZero: true,
+         *      }
+         *  });
+         *
+         * </pre><div id="JXG11448b49-02b4-48d4-b0e0-8f06a94e909c" class="jxgbox" style="width: 300px; height: 300px;"></div>
+         * <script type="text/javascript">
+         *     (function() {
+         *      var board = JXG.JSXGraph.initBoard('JXG11448b49-02b4-48d4-b0e0-8f06a94e909c',
+         *             {boundingbox: [-8, 8, 8,-8], axis: false, showcopyright: false, shownavigation: true});
+         *
+         *      board.create('axis', [[0,0],[0,1]],{
+         *          position: 'fixed',
+         *          anchor: 'left',
+         *          anchorDist: '2abs',
+         *          strokeColor : 'green',
+         *          ticks: {
+         *              majorHeight: 7,
+         *              drawZero: true,
+         *          }
+         *      });
+         *
+         *      board.create('axis', [[0,0],[0,1]], {
+         *          position: 'fixed',
+         *          anchor: 'right',
+         *          anchorDist: '2abs',
+         *          strokeColor : 'blue',
+         *          ticks: {
+         *              majorHeight: 7,
+         *              drawZero: true,
+         *          }
+         *      });
+         *
+         *      board.create('axis', [[0,0],[0,-1]], {
+         *          position: 'fixed',
+         *          anchor: 'left',
+         *          anchorDist: '4abs',
+         *          strokeColor : 'red',
+         *          ticks:{
+         *              majorHeight: 7,
+         *              drawZero: true,
+         *          }
+         *      });
+         *
+         *     })();
+         *
+         * </script><pre>
+         */
+        anchor: '',
+
+        /**
+         * Used to define at which distance to the edge of the board the axis should stick or be fixed.
+         * This only has an effect if <tt>position=='sticky'</tt> or <tt>position=='fixed'</tt>.
+         * There are the following possibilities:
+         * <ul>
+         *     <li>Numbers or strings which are numbers (e.g. '10') are interpreted as usrCoords.
+         *     <li>Strings with the unit 'abs' are interpreted as usrCoords, too.
+         *     <li>Strings with the unit 'px' are interpreted as screen pixels.
+         *     <li>Strings with the unit '%' or 'fr' are interpreted as a ratio to the width/height of the board. (e.g. 50% = 0.5fr)
+         * </ul>
+         *
+         * @type {Number|String}
+         * @name Axis#anchorDist
+         * @default '10%'
+         */
+        anchorDist: '10%',
+
+        /**
+         * If set to true, the tick labels of the axis are automatically positioned in the narrower area between the axis and the side of the board.
+         * Settings in this attribute only have an effect if the axis is exactly horizontal or vertical.
+         * This option overrides <tt>offset</tt>, <tt>anchorX</tt> and <tt>anchorY</tt> of axis tick labels.
+         *
+         * @type {Boolean}
+         * @name Axis#ticksAutoPos
+         * @default false
+         * @example
+         * // Navigate to see an effect.
+         * board.create('axis', [[0, 0], [1, 0]], {
+         *     position: 'sticky',
+         *     anchor: 'left right',
+         *     anchorDist: '0.1',
+         *     ticksAutoPos: true,
+         * });
+         *
+         * board.create('axis', [[0, 0], [0, 1]], {
+         *     position: 'sticky',
+         *     anchor: 'left right',
+         *     anchorDist: '0.1',
+         *     ticksAutoPos: true,
+         * });
+         *
+         * </pre><div id="JXG557c9b5d-e1bd-4d3b-8362-ff7a863255f3" class="jxgbox" style="width: 300px; height: 300px;"></div>
+         * <script type="text/javascript">
+         *     (function() {
+         *         var board = JXG.JSXGraph.initBoard('JXG557c9b5d-e1bd-4d3b-8362-ff7a863255f3',
+         *             {boundingbox: [-8, 8, 8,-8], axis: false, showcopyright: false, shownavigation: false});
+         *
+         *     board.create('axis', [[0, 0], [1, 0]], {
+         *         position: 'sticky',
+         *         anchor: 'left right',
+         *         anchorDist: '0.1',
+         *         ticksAutoPos: true,
+         *     });
+         *
+         *     board.create('axis', [[0, 0], [0, 1]], {
+         *         position: 'sticky',
+         *         anchor: 'left right',
+         *         anchorDist: '0.1',
+         *         ticksAutoPos: true,
+         *     });
+         *
+         *     })();
+         *
+         * </script><pre>
+         */
+        ticksAutoPos: false,
+
+        /**
+         * Defines, when <tt>ticksAutoPos</tt> takes effect.
+         * There are the following possibilities:
+         * <ul>
+         *     <li>Numbers or strings which are numbers (e.g. '10') are interpreted as usrCoords.
+         *     <li>Strings with the unit 'abs' are interpreted as usrCoords, too.
+         *     <li>Strings with the unit 'px' are interpreted as screen pixels.
+         *     <li>Strings with the unit '%' or 'fr' are interpreted as a ratio to the width/height of the board. (e.g. 50% = 0.5fr)
+         * </ul>
+         *
+         * @type {Number|String}
+         * @name Axis#ticksAutoPosThreshold
+         * @default '5%'
+         */
+        ticksAutoPosThreshold: '5%',
+
+        /**
          * Show / hide ticks.
          *
          * Deprecated. Suggested alternative is "ticks: {visible: false}"
@@ -3751,6 +4072,7 @@ JXG.Options = {
             position: 'lft',
             offset: [10, 10]
         }
+
         /**#@-*/
     },
 
@@ -7862,6 +8184,23 @@ JXG.Options = {
         fontUnit: 'px',
 
         /**
+         * If the text content is solely a number and
+         * this attribute is true (default) then the number is formatted
+         * according to the number of digits
+         * given by the attribute 'digits' and convert into a fraction if 'toFraction'
+         * is true.
+         * <p>
+         * Otherwise, display the raw number.
+         *
+         * @name formatNumber
+         * @memberOf Text.prototype
+         * @default true
+         * @type Boolean
+         *
+         */
+        formatNumber: true,
+
+        /**
          * Used to round texts given by a number.
          *
          * @name digits
@@ -8489,6 +8828,35 @@ JXG.Options = {
         katexMacros: {},
 
         /**
+         * Display number as integer + nominator / denominator. Works together
+         * with MathJax, KaTex or as plain text.
+         * @name toFraction
+         * @memberOf Text.prototype
+         * @type Boolean
+         * @default false
+         * @see JXG#toFraction
+         *
+         * @example
+         *  board.create('text', [2, 2, 2 / 7], { anchorY: 'top', toFraction: true, useMathjax: true });
+         *  board.create('text', [2, -2, 2 / 19], { toFraction: true, useMathjax: false });
+         *
+         * </pre><div id="JXGc10fe0b6-15ac-42b6-890f-2593b427d493" class="jxgbox" style="width: 300px; height: 300px;"></div>
+         * <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" id="MathJax-script"></script>
+         * <script type="text/javascript">
+         *     (function() {
+         *         var board = JXG.JSXGraph.initBoard('JXGc10fe0b6-15ac-42b6-890f-2593b427d493',
+         *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
+         *             board.create('text', [2, 2, 2 / 7], { anchorY: 'top', toFraction: true, useMathjax: true });
+         *             board.create('text', [2, -2, 2 / 19], { toFraction: true, useMathjax: false });
+         *
+         *     })();
+         *
+         * </script><pre>
+         *
+         */
+        toFraction: false,
+
+        /**
          * Determines the rendering method of the text. Possible values
          * include <tt>'html'</tt> and <tt>'internal</tt>.
          *
@@ -8513,7 +8881,7 @@ JXG.Options = {
         anchor: null,
 
         /**
-         * The horizontal alignment of the text. Possible values include <tt>'auto</tt>, <tt>'left'</tt>,
+         * The horizontal alignment of the text. Possible values include <tt>'auto'</tt>, <tt>'left'</tt>,
          * <tt>'middle'</tt>, and <tt>'right'</tt>.
          *
          * @name anchorX

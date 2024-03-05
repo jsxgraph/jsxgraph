@@ -1307,27 +1307,36 @@ JXG.extend(
         formatLabelText: function (value) {
             var labelText,
                 digits,
+                ev_um = Type.evaluate(this.visProp.label.usemathjax),
+                ev_uk = Type.evaluate(this.visProp.label.usekatex),
                 ev_s = Type.evaluate(this.visProp.scalesymbol);
 
             if (Type.isNumber(value)) {
-                digits = Type.evaluate(this.visProp.digits);
-
-                if (this.useLocale()) {
-                    labelText = this.formatNumberLocale(value, digits);
+                if (Type.evaluate(this.visProp.label.tofraction)) {
+                    if (ev_um) {
+                        labelText = '\\(' + Type.toFraction(value, true) + '\\)';
+                    } else {
+                        labelText = Type.toFraction(value, ev_uk);
+                    }
                 } else {
-                    labelText = (Math.round(value * 1e11) / 1e11).toString();
+                    digits = Type.evaluate(this.visProp.digits);
+                    if (this.useLocale()) {
+                        labelText = this.formatNumberLocale(value, digits);
+                    } else {
+                        labelText = (Math.round(value * 1e11) / 1e11).toString();
 
-                    if (
-                        labelText.length > Type.evaluate(this.visProp.maxlabellength) ||
-                        labelText.indexOf("e") !== -1
-                    ) {
-                        if (Type.evaluate(this.visProp.precision) !== 3 && digits === 3) {
-                            // Use the deprecated attribute "precision"
-                            digits = Type.evaluate(this.visProp.precision);
+                        if (
+                            labelText.length > Type.evaluate(this.visProp.maxlabellength) ||
+                            labelText.indexOf("e") !== -1
+                        ) {
+                            if (Type.evaluate(this.visProp.precision) !== 3 && digits === 3) {
+                                // Use the deprecated attribute "precision"
+                                digits = Type.evaluate(this.visProp.precision);
+                            }
+
+                            //labelText = value.toPrecision(digits).toString();
+                            labelText = value.toExponential(digits).toString();
                         }
-
-                        //labelText = value.toPrecision(digits).toString();
-                        labelText = value.toExponential(digits).toString();
                     }
                 }
 
@@ -1696,6 +1705,43 @@ JXG.extend(
  *   var t = board.create('ticks', [l1, 2], {ticksDistance: 2, majorHeight: 40});
  * })();
  * </script><pre>
+ * @example
+ *  // Create ticks labels as fractions
+ * board.create('axis', [[0,1], [1,1]], {
+ *     ticks: {
+ *         label: {
+ *             toFraction: true,
+ *             useMathjax: true,
+ *             display: 'html',
+ *             anchorX: 'middle',
+ *             offset: [0, -10]
+ *         }
+ *     }
+ * });
+ *
+ * </pre><div id="JXG4455acb2-6bf3-4801-8887-d7fcc1e4e1da" class="jxgbox" style="width: 300px; height: 300px;"></div>
+ * <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" id="MathJax-script"></script>
+ * <script type="text/javascript">
+ *     (function() {
+ *         var board = JXG.JSXGraph.initBoard('JXG4455acb2-6bf3-4801-8887-d7fcc1e4e1da',
+ *             {boundingbox: [-1.2, 2.3, 1.2, -2.3], axis: true, showcopyright: false, shownavigation: false});
+ *             board.create('axis', [[0,1], [1,1]], {
+ *                 ticks: {
+ *                     label: {
+ *                         toFraction: true,
+ *             useMathjax: true,
+ *             display: 'html',
+ *             anchorX: 'middle',
+ *             offset: [0, -10]
+ *                     }
+ *                 }
+ *             });
+ *
+ *     })();
+ *
+ * </script><pre>
+ *
+ * @example
  */
 JXG.createTicks = function (board, parents, attributes) {
     var el,

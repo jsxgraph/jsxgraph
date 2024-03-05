@@ -1102,6 +1102,72 @@ JXG.Math = {
         return (a || b) && !(a && b);
     },
 
+    /**
+     *
+     * Convert a floating point number to sign + integer + fraction.
+     * fraction is given as nominator and denominator.
+     * <p>
+     * Algorithm: approximate the floating point number
+     * by a continued fraction and simultaneously keep track
+     * of its convergents.
+     * Inspired by {@link https://kevinboone.me/rationalize.html}.
+     *
+     * @param {Number} x Number which is to be converted
+     * @param {Number} [order=0.001] Small number determining the approximation precision.
+     * @returns {Array} [sign, leading, nominator, denominator] where sign is 1 or -1.
+     * @see JXG#toFraction
+     *
+     * @example
+     * JXG.Math.decToFraction(0.33333333);
+     * // Result: [ 1, 0, 1, 3 ]
+     *
+     * JXG.Math.decToFraction(0);
+     * // Result: [ 1, 0, 0, 1 ]
+     *
+     * JXG.Math.decToFraction(-10.66666666666667);
+     * // Result: [-1, 10, 2, 3 ]
+    */
+    decToFraction: function(x, order) {
+        var lead, sign, a,
+            n, n1, n2,
+            d, d1, d2,
+            it = 0,
+            maxit = 20;
+
+        order = Type.def(order, 0.001);
+
+        // Round the number.
+        // Otherwise, 0.999999999 would result in [0, 1, 1].
+        x = Math.round(x * 1.e12) * 1.e-12;
+
+        // Negative numbers:
+        // The minus sign is handled in sign.
+        sign = (x < 0) ? -1 : 1;
+        x = Math.abs(x);
+
+        // From now on we consider x to be nonnegative.
+        lead = Math.floor(x);
+        x -= Math.floor(x);
+        a = 0.0;
+        n2 = 1.0;
+        n = n1 = a;
+        d2 = 0.0;
+        d = d1 = 1.0;
+
+        while (x - Math.floor(x) > order && it < maxit) {
+            x = 1 / (x - a);
+            a = Math.floor(x);
+            n = n2 + a * n1;
+            d = d2 + a * d1;
+            n2 = n1;
+            d2 = d1;
+            n1 = n;
+            d1 = d;
+            it++;
+        }
+        return [sign, lead, n, d];
+    },
+
     /* *************************** Normalize *************************** */
 
     /**

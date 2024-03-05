@@ -98,7 +98,6 @@ JXG.SVGRenderer = function (container, dim) {
     this.svgRoot = this.container.ownerDocument.createElementNS(this.svgNamespace, "svg");
     this.svgRoot.style.overflow = "hidden";
     this.svgRoot.style.display = "block";
-
     this.resize(dim.width, dim.height);
 
     //this.svgRoot.setAttributeNS(null, 'shape-rendering', 'crispEdge'); //'optimizeQuality'); //geometricPrecision');
@@ -677,18 +676,25 @@ JXG.extend(
                 if (el.visPropOld.top !== ev_ay + v) {
                     el.rendNode.setAttributeNS(null, "y", v + this.vOffsetText * 0.5 + "px");
 
+                    // Not supported by IE, edge
+                    // el.rendNode.setAttributeNS(null, "dy", "0");
+                    // if (ev_ay === "bottom") {
+                    //     el.rendNode.setAttributeNS(null, 'dominant-baseline', 'text-after-edge');
+                    // } else if (ev_ay === "top") {
+                    //     el.rendNode.setAttributeNS(null, 'dominant-baseline', 'text-before-edge');
+                    // } else if (ev_ay === "middle") {
+                    //     el.rendNode.setAttributeNS(null, 'dominant-baseline', 'middle');
+                    // }
+
                     if (ev_ay === "bottom") {
-                        el.rendNode.setAttributeNS(
-                            null,
-                            "dominant-baseline",
-                            "text-after-edge"
-                        );
+                        el.rendNode.setAttributeNS(null, "dy", "0");
+                        el.rendNode.setAttributeNS(null, 'dominant-baseline', 'auto');
                     } else if (ev_ay === "top") {
                         el.rendNode.setAttributeNS(null, "dy", "1.6ex");
-                        //el.rendNode.setAttributeNS(null, 'dominant-baseline', 'text-before-edge'); // Not supported by IE, edge
+                        el.rendNode.setAttributeNS(null, 'dominant-baseline', 'auto');
                     } else if (ev_ay === "middle") {
-                        //el.rendNode.setAttributeNS(null, 'dominant-baseline', 'middle');
                         el.rendNode.setAttributeNS(null, "dy", "0.6ex");
+                        el.rendNode.setAttributeNS(null, 'dominant-baseline', 'auto');
                     }
                     el.visPropOld.top = ev_ay + v;
                 }
@@ -843,6 +849,7 @@ JXG.extend(
                 node.setAttributeNS(null, "stroke-linejoin", "round");
                 node.setAttributeNS(null, "fill-rule", "evenodd");
             }
+
             return node;
         },
 

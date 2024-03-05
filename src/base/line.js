@@ -559,7 +559,7 @@ JXG.extend(
         },
 
         /**
-         * Returns the direction vector of the arrow. This is an array of length two
+         * Returns the direction vector of the line. This is an array of length two
          * containing the direction vector as [x, y]. It is defined as
          *  <li> the difference of the x- and y-coordinate of the second and first point, in case both points are finite or both points are infinite.
          *  <li> [x, y] coordinates of point2, in case only point2 is infinite.
@@ -583,6 +583,26 @@ JXG.extend(
                 coords2[1] - coords1[1],
                 coords2[2] - coords1[2]
             ];
+        },
+
+        /**
+         * Returns true, if the line is vertical (if the x coordinate of the direction vector is 0).
+         * @function
+         * @returns {Boolean}
+         */
+        isVertical: function () {
+            var dir = this.Direction();
+            return dir[0] === 0 && dir[1] !== 0;
+        },
+
+        /**
+         * Returns true, if the line is horizontal (if the y coordinate of the direction vector is 0).
+         * @function
+         * @returns {Boolean}
+         */
+        isHorizontal: function () {
+            var dir = this.Direction();
+            return dir[1] === 0 && dir[0] !== 0;
         },
 
         /**
@@ -1503,27 +1523,58 @@ JXG.registerElement("arrow", JXG.createArrow);
  * @param {Number_Number_Number} a,b,c A line can also be created providing three numbers. The line is then described by the set of solutions
  * of the equation <tt>a*x+b*y+c*z = 0</tt>.
  * @example
- * // Create an axis providing two coord pairs.
+ * // Create an axis providing two coords pairs.
  *   var l1 = board.create('axis', [[0.0, 1.0], [1.0, 1.3]]);
  * </pre><div class="jxgbox" id="JXG4f414733-624c-42e4-855c-11f5530383ae" style="width: 300px; height: 300px;"></div>
  * <script type="text/javascript">
  *   var axex1_board = JXG.JSXGraph.initBoard('JXG4f414733-624c-42e4-855c-11f5530383ae', {boundingbox: [-1, 7, 7, -1], axis: true, showcopyright: false, shownavigation: false});
  *   var axex1_l1 = axex1_board.create('axis', [[0.0, 1.0], [1.0, 1.3]]);
  * </script><pre>
+ * @example
+ *  // Create ticks labels as fractions
+ *  board.create('axis', [[0,1], [1,1]], {
+ *      ticks: {
+ *          label: {
+ *              toFraction: true,
+ *              useMathjax: false,
+ *              anchorX: 'middle',
+ *              offset: [0, -10]
+ *          }
+ *      }
+ *  });
+ *
+ *
+ * </pre><div id="JXG34174cc4-0050-4ab4-af69-e91365d0666f" class="jxgbox" style="width: 300px; height: 300px;"></div>
+ * <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" id="MathJax-script"></script>
+ * <script type="text/javascript">
+ *     (function() {
+ *         var board = JXG.JSXGraph.initBoard('JXG34174cc4-0050-4ab4-af69-e91365d0666f',
+ *             {boundingbox: [-1.2, 2.3, 1.2, -2.3], axis: true, showcopyright: false, shownavigation: false});
+ *             board.create('axis', [[0,1], [1,1]], {
+ *                 ticks: {
+ *                     label: {
+ *                         toFraction: true,
+ *                         useMathjax: false,
+ *                         anchorX: 'middle',
+ *                         offset: [0, -10]
+ *                     }
+ *                 }
+ *             });
+ *
+ *
+ *     })();
+ *
+ * </script><pre>
+ *
  */
 JXG.createAxis = function (board, parents, attributes) {
-    var attr, attr_ticks, el, els, dist;
-
-    // Arrays or points, that is all we need.
-    // if (
-    //     (Type.isArray(parents[0]) || Type.isPoint(parents[0])) &&
-    //     (Type.isArray(parents[1]) || Type.isPoint(parents[1]))
-    // ) {
+    var axis, attr,
+        ancestor, ticksDist;
 
     // Create line
     attr = Type.copyAttributes(attributes, board.options, "axis");
     try {
-        el = board.create("line", parents, attr);
+        axis = board.create("line", parents, attr);
     } catch (err) {
         throw new Error(
             "JSXGraph: Can't create axis with parent types '" +
@@ -1535,25 +1586,29 @@ JXG.createAxis = function (board, parents, attributes) {
         );
     }
 
-    el.type = Const.OBJECT_TYPE_AXIS;
-    el.isDraggable = false;
-    el.point1.isDraggable = false;
-    el.point2.isDraggable = false;
+    axis.type = Const.OBJECT_TYPE_AXIS;
+    axis.isDraggable = false;
+    axis.point1.isDraggable = false;
+    axis.point2.isDraggable = false;
 
-    for (els in el.ancestors) {
-        if (el.ancestors.hasOwnProperty(els)) {
-            el.ancestors[els].type = Const.OBJECT_TYPE_AXISPOINT;
+    // Save usrCoords of points
+    axis._point1UsrCoordsOrg = axis.point1.coords.usrCoords.slice();
+    axis._point2UsrCoordsOrg = axis.point2.coords.usrCoords.slice();
+
+    for (ancestor in axis.ancestors) {
+        if (axis.ancestors.hasOwnProperty(ancestor)) {
+            axis.ancestors[ancestor].type = Const.OBJECT_TYPE_AXISPOINT;
         }
     }
 
     // Create ticks
-    attr_ticks = Type.copyAttributes(attributes, board.options, "axis", "ticks");
-    if (Type.exists(attr_ticks.ticksdistance)) {
-        dist = attr_ticks.ticksdistance;
-    } else if (Type.isArray(attr_ticks.ticks)) {
-        dist = attr_ticks.ticks;
+    // attrTicks = attr.ticks;
+    if (Type.exists(attr.ticks.ticksdistance)) {
+        ticksDist = attr.ticks.ticksdistance;
+    } else if (Type.isArray(attr.ticks.ticks)) {
+        ticksDist = attr.ticks.ticks;
     } else {
-        dist = 1.0;
+        ticksDist = 1.0;
     }
 
     /**
@@ -1562,33 +1617,251 @@ JXG.createAxis = function (board, parents, attributes) {
      * @name defaultTicks
      * @type JXG.Ticks
      */
-    el.defaultTicks = board.create("ticks", [el, dist], attr_ticks);
-    el.defaultTicks.dump = false;
-    el.elType = "axis";
-    el.subs = {
-        ticks: el.defaultTicks
+    axis.defaultTicks = board.create("ticks", [axis, ticksDist], attr.ticks);
+    axis.defaultTicks.dump = false;
+    axis.elType = "axis";
+    axis.subs = {
+        ticks: axis.defaultTicks
     };
-    el.inherits.push(el.defaultTicks);
-    // } else {
-    //     throw new Error(
-    //         "JSXGraph: Can't create axis with parent types '" +
-    //             typeof parents[0] +
-    //             "' and '" +
-    //             typeof parents[1] +
-    //             "'." +
-    //             "\nPossible parent types: [point,point], [[x1,y1],[x2,y2]]"
-    //     );
-    // }
+    axis.inherits.push(axis.defaultTicks);
 
-    // el.update = function() {
-    //     JXG.Line.prototype.update.call(this);
+    axis.update = function () {
+        var bbox,
+            position, i,
+            direction, horizontal, vertical,
+            ticksAutoPos, ticksAutoPosThres, dist,
+            anchor, left, right,
+            distUsr,
+            newPosP1, newPosP2,
+            locationOrg,
+            visLabel, anchr, off;
 
-    //     console.log("Additional axis stuff");
+        bbox = this.board.getBoundingBox();
+        position = Type.evaluate(this.visProp.position);
+        direction = this.Direction();
+        horizontal = this.isHorizontal();
+        vertical = this.isVertical();
+        ticksAutoPos = Type.evaluate(this.visProp.ticksautopos);
+        ticksAutoPosThres = Type.evaluate(this.visProp.ticksautoposthreshold);
 
-    //     return this;
-    // };
+        if (horizontal) {
+            ticksAutoPosThres = Type.parseNumber(ticksAutoPosThres, Math.abs(bbox[1] - bbox[3]), 1 / this.board.unitX) * this.board.unitX;
+        } else if (vertical) {
+            ticksAutoPosThres = Type.parseNumber(ticksAutoPosThres, Math.abs(bbox[1] - bbox[3]), 1 / this.board.unitY) * this.board.unitY;
+        } else {
+            ticksAutoPosThres = Type.parseNumber(ticksAutoPosThres, 1, 1);
+        }
 
-    return el;
+        anchor = Type.evaluate(this.visProp.anchor);
+        left = anchor.indexOf('left') > -1;
+        right = anchor.indexOf('right') > -1;
+
+        distUsr = Type.evaluate(this.visProp.anchordist);
+        if (horizontal) {
+            distUsr = Type.parseNumber(distUsr, Math.abs(bbox[1] - bbox[3]), 1 / this.board.unitX);
+        } else if (vertical) {
+            distUsr = Type.parseNumber(distUsr, Math.abs(bbox[0] - bbox[2]), 1 / this.board.unitY);
+        } else {
+            distUsr = 0;
+        }
+
+        locationOrg = this.board.getPointLoc(this._point1UsrCoordsOrg, distUsr);
+
+        // Set position of axis
+        newPosP1 = this.point1.coords.usrCoords.slice();
+        newPosP2 = this.point2.coords.usrCoords.slice();
+
+        if (position === 'static' || (!vertical && !horizontal)) {
+            // Do nothing
+
+        } else if (position === 'fixed') {
+            if (horizontal) { // direction[1] === 0
+                if ((direction[0] > 0 && right) || (direction[0] < 0 && left)) {
+                    newPosP1[2] = bbox[3] + distUsr;
+                    newPosP2[2] = bbox[3] + distUsr;
+                } else if ((direction[0] > 0 && left) || (direction[0] < 0 && right)) {
+                    newPosP1[2] = bbox[1] - distUsr;
+                    newPosP2[2] = bbox[1] - distUsr;
+
+                } else {
+                    newPosP1 = this._point1UsrCoordsOrg.slice();
+                    newPosP2 = this._point2UsrCoordsOrg.slice();
+                }
+            }
+            if (vertical) { // direction[0] === 0
+                if ((direction[1] > 0 && left) || (direction[1] < 0 && right)) {
+                    newPosP1[1] = bbox[0] + distUsr;
+                    newPosP2[1] = bbox[0] + distUsr;
+
+                } else if ((direction[1] > 0 && right) || (direction[1] < 0 && left)) {
+                    newPosP1[1] = bbox[2] - distUsr;
+                    newPosP2[1] = bbox[2] - distUsr;
+
+                } else {
+                    newPosP1 = this._point1UsrCoordsOrg.slice();
+                    newPosP2 = this._point2UsrCoordsOrg.slice();
+                }
+            }
+
+        } else if (position === 'sticky') {
+            if (horizontal) { // direction[1] === 0
+                if (locationOrg[1] < 0 && ((direction[0] > 0 && right) || (direction[0] < 0 && left))) {
+                    newPosP1[2] = bbox[3] + distUsr;
+                    newPosP2[2] = bbox[3] + distUsr;
+
+                } else if (locationOrg[1] > 0 && ((direction[0] > 0 && left) || (direction[0] < 0 && right))) {
+                    newPosP1[2] = bbox[1] - distUsr;
+                    newPosP2[2] = bbox[1] - distUsr;
+
+                } else {
+                    newPosP1 = this._point1UsrCoordsOrg.slice();
+                    newPosP2 = this._point2UsrCoordsOrg.slice();
+                }
+            }
+            if (vertical) { // direction[0] === 0
+                if (locationOrg[0] < 0 && ((direction[1] > 0 && left) || (direction[1] < 0 && right))) {
+                    newPosP1[1] = bbox[0] + distUsr;
+                    newPosP2[1] = bbox[0] + distUsr;
+
+                } else if (locationOrg[0] > 0 && ((direction[1] > 0 && right) || (direction[1] < 0 && left))) {
+                    newPosP1[1] = bbox[2] - distUsr;
+                    newPosP2[1] = bbox[2] - distUsr;
+
+                } else {
+                    newPosP1 = this._point1UsrCoordsOrg.slice();
+                    newPosP2 = this._point2UsrCoordsOrg.slice();
+                }
+            }
+        }
+
+        this.point1.setPositionDirectly(JXG.COORDS_BY_USER, newPosP1);
+        this.point2.setPositionDirectly(JXG.COORDS_BY_USER, newPosP2);
+
+        // Set position of tick labels
+        visLabel = this.defaultTicks.visProp.label;
+        if (ticksAutoPos && (horizontal || vertical)) {
+
+            if (!Type.exists(visLabel._anchorx_org)) {
+                visLabel._anchorx_org = Type.def(visLabel.anchorx, this.board.options.text.anchorX);
+            }
+            if (!Type.exists(visLabel._anchory_org)) {
+                visLabel._anchory_org = Type.def(visLabel.anchory, this.board.options.text.anchorY);
+            }
+            if (!Type.exists(visLabel._offset_org)) {
+                visLabel._offset_org = visLabel.offset.slice();
+            }
+
+            off = visLabel.offset;
+            if (horizontal) {
+                dist = axis.point1.coords.scrCoords[2] - (this.board.canvasHeight * 0.5);
+
+                anchr = visLabel.anchory;
+
+                // The last position of the labels is stored in visLabel._side
+                if (dist < 0 && Math.abs(dist) > ticksAutoPosThres) {
+                    // Put labels on top of the line
+                    if (visLabel._side === 'bottom') {
+                        // Switch position
+                        if (visLabel.anchory === 'top') {
+                            anchr = 'bottom';
+                        }
+                        off[1] *= -1;
+                        visLabel._side = 'top';
+                    }
+
+                } else if (dist > 0 && Math.abs(dist) > ticksAutoPosThres) {
+                    // Put labels below the line
+                    if (visLabel._side === 'top') {
+                        // Switch position
+                        if (visLabel.anchory === 'bottom') {
+                            anchr = 'top';
+                        }
+                        off[1] *= -1;
+                        visLabel._side = 'bottom';
+                    }
+
+                } else {
+                    // Put to original position
+                    anchr = visLabel._anchory_org;
+                    off = visLabel._offset_org.slice();
+
+                    if (anchr === 'top') {
+                        visLabel._side = 'bottom';
+                    } else if (anchr === 'bottom') {
+                        visLabel._side = 'top';
+                    } else if (off[1] < 0) {
+                        visLabel._side = 'bottom';
+                    } else {
+                        visLabel._side = 'top';
+                    }
+                }
+
+                for (i = 0; i < axis.defaultTicks.labels.length; i++) {
+                    this.defaultTicks.labels[i].visProp.anchory = anchr;
+                }
+                visLabel.anchory = anchr;
+
+            } else if (vertical) {
+                dist = axis.point1.coords.scrCoords[1] - (this.board.canvasWidth * 0.5);
+
+                if (dist < 0 && Math.abs(dist) > ticksAutoPosThres) {
+                    // Put labels to the left of the line
+                    if (visLabel._side === 'right') {
+                        // Switch position
+                        if (visLabel.anchorx === 'left') {
+                            anchr = 'right';
+                        }
+                        off[0] *= -1;
+                        visLabel._side = 'left';
+                    }
+
+                } else if (dist > 0 && Math.abs(dist) > ticksAutoPosThres) {
+                    // Put labels to the right of the line
+                    if (visLabel._side === 'left') {
+                        // Switch position
+                        if (visLabel.anchorx === 'right') {
+                            anchr = 'left';
+                        }
+                        off[0] *= -1;
+                        visLabel._side = 'right';
+                    }
+
+                } else {
+                    // Put to original position
+                    anchr = visLabel._anchorx_org;
+                    off = visLabel._offset_org.slice();
+
+                    if (anchr === 'left') {
+                        visLabel._side = 'right';
+                    } else if (anchr === 'right') {
+                        visLabel._side = 'left';
+                    } else if (off[0] < 0) {
+                        visLabel._side = 'left';
+                    } else {
+                        visLabel._side = 'right';
+                    }
+                }
+
+                for (i = 0; i < axis.defaultTicks.labels.length; i++) {
+                    this.defaultTicks.labels[i].visProp.anchorx = anchr;
+                }
+                visLabel.anchorx = anchr;
+            }
+            visLabel.offset = off;
+
+        } else {
+            delete visLabel._anchorx_org;
+            delete visLabel._anchory_org;
+            delete visLabel._offset_org;
+        }
+
+        JXG.Line.prototype.update.call(this);
+        this.defaultTicks.needsUpdate = true;
+
+        return this;
+    };
+
+    return axis;
 };
 
 JXG.registerElement("axis", JXG.createAxis);

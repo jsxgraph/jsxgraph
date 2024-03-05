@@ -752,6 +752,6 @@ Mat.Metapost = {
 
             return [x, y];
         }
-    };
+};
 
-    export default Mat.Metapost;
+export default Mat.Metapost;

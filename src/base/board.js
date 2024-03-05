@@ -1050,6 +1050,198 @@ JXG.extend(
         },
 
         /**
+         * This function divides the board into 9 sections and returns an array <tt>[u,v]</tt> which symbolizes the location of <tt>position</tt>.
+         * Optional a <tt>margin</tt> to the inner of the board is respected.<br>
+         *
+         * @name Board#getPointLoc
+         * @param {Array} position Array of requested position <tt>[x, y]</tt> or <tt>[w, x, y]</tt>.
+         * @param {Array|Number} [margin] Optional margin for the inner of the board: <tt>[top, right, bottom, left]</tt>. A single number <tt>m</tt> is interpreted as <tt>[m, m, m, m]</tt>.
+         * @returns {Array} [u,v] with the following meanings:
+         * <pre>
+         *     v    u > |   -1    |    0   |    1   |
+         * ------------------------------------------
+         *     1        | [-1,1]  |  [0,1] |  [1,1] |
+         * ------------------------------------------
+         *     0        | [-1,0]  |  Board |  [1,0] |
+         * ------------------------------------------
+         *    -1        | [-1,-1] | [0,-1] | [1,-1] |
+         * </pre>
+         * Positions inside the board (minus margin) return the value <tt>[0,0]</tt>.
+         *
+         * @example
+         *      var point1, point2, point3, point4, margin,
+         *             p1Location, p2Location, p3Location, p4Location,
+         *             helppoint1, helppoint2, helppoint3, helppoint4;
+         *
+         *      // margin to make the boundingBox virtually smaller
+         *      margin = [2,2,2,2];
+         *
+         *      // Points which are seen on screen
+         *      point1 = board.create('point', [0,0]);
+         *      point2 = board.create('point', [0,7]);
+         *      point3 = board.create('point', [7,7]);
+         *      point4 = board.create('point', [-7,-5]);
+         *
+         *      p1Location = board.getPointLoc(point1.coords.usrCoords, margin);
+         *      p2Location = board.getPointLoc(point2.coords.usrCoords, margin);
+         *      p3Location = board.getPointLoc(point3.coords.usrCoords, margin);
+         *      p4Location = board.getPointLoc(point4.coords.usrCoords, margin);
+         *
+         *      // Text seen on screen
+         *      board.create('text', [1,-1, "getPointLoc(A): " + "[" + p1Location + "]"])
+         *      board.create('text', [1,-2, "getPointLoc(B): " + "[" + p2Location + "]"])
+         *      board.create('text', [1,-3, "getPointLoc(C): " + "[" + p3Location + "]"])
+         *      board.create('text', [1,-4, "getPointLoc(D): " + "[" + p4Location + "]"])
+         *
+         *
+         *      // Helping points that are used to create the helping lines
+         *      helppoint1 = board.create('point', [(function (){
+         *          var bbx = board.getBoundingBox();
+         *          return [bbx[2] - 2, bbx[1] -2];
+         *      })], {
+         *          visible: false,
+         *      })
+         *
+         *      helppoint2 = board.create('point', [(function (){
+         *          var bbx = board.getBoundingBox();
+         *          return [bbx[0] + 2, bbx[1] -2];
+         *      })], {
+         *          visible: false,
+         *      })
+         *
+         *      helppoint3 = board.create('point', [(function (){
+         *          var bbx = board.getBoundingBox();
+         *          return [bbx[0]+ 2, bbx[3] + 2];
+         *      })],{
+         *          visible: false,
+         *      })
+         *
+         *      helppoint4 = board.create('point', [(function (){
+         *          var bbx = board.getBoundingBox();
+         *          return [bbx[2] -2, bbx[3] + 2];
+         *      })], {
+         *          visible: false,
+         *      })
+         *
+         *      // Helping lines to visualize the 9 sectors and the margin
+         *      board.create('line', [helppoint1, helppoint2]);
+         *      board.create('line', [helppoint2, helppoint3]);
+         *      board.create('line', [helppoint3, helppoint4]);
+         *      board.create('line', [helppoint4, helppoint1]);
+         *
+         * </pre><div id="JXG4b3efef5-839d-4fac-bad1-7a14c0a89c70" class="jxgbox" style="width: 500px; height: 500px;"></div>
+         * <script type="text/javascript">
+         *     (function() {
+         *         var board = JXG.JSXGraph.initBoard('JXG4b3efef5-839d-4fac-bad1-7a14c0a89c70',
+         *             {boundingbox: [-8, 8, 8,-8], maxboundingbox: [-7.5,7.5,7.5,-7.5], axis: true, showcopyright: false, shownavigation: false, showZoom: false});
+         *     var point1, point2, point3, point4, margin,
+         *             p1Location, p2Location, p3Location, p4Location,
+         *             helppoint1, helppoint2, helppoint3, helppoint4;
+         *
+         *      // margin to make the boundingBox virtually smaller
+         *      margin = [2,2,2,2];
+         *
+         *      // Points which are seen on screen
+         *      point1 = board.create('point', [0,0]);
+         *      point2 = board.create('point', [0,7]);
+         *      point3 = board.create('point', [7,7]);
+         *      point4 = board.create('point', [-7,-5]);
+         *
+         *      p1Location = board.getPointLoc(point1.coords.usrCoords, margin);
+         *      p2Location = board.getPointLoc(point2.coords.usrCoords, margin);
+         *      p3Location = board.getPointLoc(point3.coords.usrCoords, margin);
+         *      p4Location = board.getPointLoc(point4.coords.usrCoords, margin);
+         *
+         *      // Text seen on screen
+         *      board.create('text', [1,-1, "getPointLoc(A): " + "[" + p1Location + "]"])
+         *      board.create('text', [1,-2, "getPointLoc(B): " + "[" + p2Location + "]"])
+         *      board.create('text', [1,-3, "getPointLoc(C): " + "[" + p3Location + "]"])
+         *      board.create('text', [1,-4, "getPointLoc(D): " + "[" + p4Location + "]"])
+         *
+         *
+         *      // Helping points that are used to create the helping lines
+         *      helppoint1 = board.create('point', [(function (){
+         *          var bbx = board.getBoundingBox();
+         *          return [bbx[2] - 2, bbx[1] -2];
+         *      })], {
+         *          visible: false,
+         *      })
+         *
+         *      helppoint2 = board.create('point', [(function (){
+         *          var bbx = board.getBoundingBox();
+         *          return [bbx[0] + 2, bbx[1] -2];
+         *      })], {
+         *          visible: false,
+         *      })
+         *
+         *      helppoint3 = board.create('point', [(function (){
+         *          var bbx = board.getBoundingBox();
+         *          return [bbx[0]+ 2, bbx[3] + 2];
+         *      })],{
+         *          visible: false,
+         *      })
+         *
+         *      helppoint4 = board.create('point', [(function (){
+         *          var bbx = board.getBoundingBox();
+         *          return [bbx[2] -2, bbx[3] + 2];
+         *      })], {
+         *          visible: false,
+         *      })
+         *
+         *      // Helping lines to visualize the 9 sectors and the margin
+         *      board.create('line', [helppoint1, helppoint2]);
+         *      board.create('line', [helppoint2, helppoint3]);
+         *      board.create('line', [helppoint3, helppoint4]);
+         *      board.create('line', [helppoint4, helppoint1]);
+         *  })();
+         *
+         * </script><pre>
+         *
+         */
+        getPointLoc: function (position, margin) {
+            var bbox, pos, res, marg;
+
+            bbox = this.getBoundingBox();
+            pos = position;
+            if (pos.length === 2) {
+                pos.unshift(undefined);
+            }
+            res = [0, 0];
+            marg = margin || 0;
+            if (Type.isNumber(marg)) {
+                marg = [marg, marg, marg, marg];
+            }
+
+            if (pos[1] > (bbox[2] - marg[1])) {
+                res[0] = 1;
+            }
+            if (pos[1] < (bbox[0] + marg[3])) {
+                res[0] = -1;
+            }
+
+            if (pos[2] > (bbox[1] - marg[0])) {
+                res[1] = 1;
+            }
+            if (pos[2] < (bbox[3] + marg[2])) {
+                res[1] = -1;
+            }
+
+            return res;
+        },
+
+        /**
+         * This function calculates where the origin is located (@link Board#getPointLoc).
+         * Optional a <tt>margin</tt> to the inner of the board is respected.<br>
+         *
+         * @name Board#getLocationOrigin
+         * @param {Array|Number} [margin] Optional margin for the inner of the board: <tt>[top, right, bottom, left]</tt>. A single number <tt>m</tt> is interpreted as <tt>[m, m, m, m]</tt>.
+         * @returns {Array} [u,v] which shows where the origin is located (@link Board#getPointLoc).
+         */
+        getLocationOrigin: function (margin) {
+            return this.getPointLoc([0, 0], margin);
+        },
+
+        /**
          * Get the position of the pointing device in screen coordinates, relative to the upper left corner
          * of the host tag.
          * @param {Event} e Event object given by the browser.
@@ -1811,9 +2003,9 @@ JXG.extend(
                     Env.addEvent(this.containerObj, 'pointerdown', this.pointerDownListener, this);
                     Env.addEvent(moveTarget, 'pointermove', this.pointerMoveListener, this);
                     Env.addEvent(moveTarget, 'pointerleave', this.pointerLeaveListener, this);
+                    Env.addEvent(moveTarget, 'click', this.pointerClickListener, this);
+                    Env.addEvent(moveTarget, 'dblclick', this.pointerDblClickListener, this);
                 }
-                // Env.addEvent(this.containerObj, 'mousewheel', this.mouseWheelListener, this);
-                // Env.addEvent(this.containerObj, 'DOMMouseScroll', this.mouseWheelListener, this);
 
                 if (this.containerObj !== null) {
                     // This is needed for capturing touch events.
@@ -1834,9 +2026,8 @@ JXG.extend(
 
                 Env.addEvent(this.containerObj, 'mousedown', this.mouseDownListener, this);
                 Env.addEvent(moveTarget, 'mousemove', this.mouseMoveListener, this);
-
-                // Env.addEvent(this.containerObj, 'mousewheel', this.mouseWheelListener, this);
-                // Env.addEvent(this.containerObj, 'DOMMouseScroll', this.mouseWheelListener, this);
+                Env.addEvent(moveTarget, 'click', this.mouseClickListener, this);
+                Env.addEvent(moveTarget, 'dblclick', this.mouseDblClickListener, this);
 
                 this.hasMouseHandlers = true;
             }
@@ -1963,6 +2154,8 @@ JXG.extend(
                     Env.removeEvent(this.containerObj, 'pointerdown', this.pointerDownListener, this);
                     Env.removeEvent(moveTarget, 'pointermove', this.pointerMoveListener, this);
                     Env.removeEvent(moveTarget, 'pointerleave', this.pointerLeaveListener, this);
+                    Env.removeEvent(moveTarget, 'click', this.pointerClickListener, this);
+                    Env.removeEvent(moveTarget, 'dblclick', this.pointerDblClickListener, this);
                 }
 
                 if (this.hasWheelHandlers) {
@@ -1994,6 +2187,8 @@ JXG.extend(
 
                 Env.removeEvent(this.containerObj, 'mousedown', this.mouseDownListener, this);
                 Env.removeEvent(moveTarget, 'mousemove', this.mouseMoveListener, this);
+                Env.removeEvent(moveTarget, 'click', this.mouseClickListener, this);
+                Env.removeEvent(moveTarget, 'dblclick', this.mouseDblClickListener, this);
 
                 if (this.hasMouseUp) {
                     Env.removeEvent(this.document, 'mouseup', this.mouseUpListener, this);
@@ -2553,10 +2748,8 @@ JXG.extend(
                 // this could get us new trouble: input fields, links and drop down boxes placed as text
                 // on the board don't work anymore.
                 if (evt && evt.preventDefault && !allowDefaultEventHandling) {
-                    evt.preventDefault();
                     // All browser supporting pointer events know preventDefault()
-                    // } else if (window.event) {
-                    //     window.event.returnValue = false;
+                    evt.preventDefault();
                 }
             }
 
@@ -2614,6 +2807,107 @@ JXG.extend(
             this.triggerEventHandlers(['touchstart', 'down', 'pointerdown', 'MSPointerDown'], [evt]);
 
             return true;
+        },
+
+        /**
+         * Handle entries of this.downObjects to control click and dblclick events.
+         * @param {Number} i
+         * @private
+         */
+        _waitForDblClick: function(i) {
+            var eh = this.downObjects[i].eventHandlers;
+
+            if ((Type.exists(eh.dblclick) && eh.dblclick.length > 0) ||
+                (Type.exists(eh.mousedblclick) && eh.mousedblclick.length > 0)
+            ) {
+
+                eh.clicks += 1;
+                if (eh.clicks !== 2) {
+                    // If there is dblclick event handler registered,
+                    // we remove the element from downObjects on the first click.
+                    // If there is a second click, it will appear again in
+                    // downObjects and handled in the dblclick listener.
+                    //
+                    // However, we set a timer which resets the clicks to zero after 400 ms.
+                    // This cancels the dblclick event.
+                    this.downObjects.splice(i, 1);
+                    setTimeout(function() { eh.clicks = 0; }, 400);
+                }
+            } else {
+                // If there is no dblclick event we can (and have to) remove the
+                // element from downObjects now.
+                this.downObjects.splice(i, 1);
+            }
+        },
+
+        /**
+         * This method is called by the browser when a pointer device clicks on the screen.
+         * @param {Event} evt The browsers event object.
+         */
+        pointerClickListener: function (evt) {
+            var i;
+
+            this.triggerEventHandlers(['click', 'pointerclick'], [evt]);
+            if (!this.selectingMode) {
+                for (i = this.downObjects.length - 1; i > -1; i--) {
+                    this.downObjects[i].triggerEventHandlers(['click', 'pointerclick'], [evt]);
+                    this._waitForDblClick(i);
+                }
+            }
+            evt.stopPropagation();
+        },
+
+        /**
+         * This method is called by the browser when the mouse device clicks on the screen.
+         * @param {Event} evt The browsers event object.
+         */
+        mouseClickListener: function (evt) {
+            var i;
+            this.triggerEventHandlers(['click', 'mouseclick'], [evt]);
+
+            if (!this.selectingMode) {
+                for (i = this.downObjects.length - 1; i > -1; i--) {
+                    this.downObjects[i].triggerEventHandlers(['click', 'mouseclick'], [evt]);
+                    this._waitForDblClick(i);
+                }
+            }
+
+        },
+
+        /**
+         * This method is called by the browser when a pointer device double clicks on the screen.
+         * @param {Event} evt The browsers event object.
+         */
+        pointerDblClickListener: function (evt) {
+            var i;
+
+            this.triggerEventHandlers(['dblclick', 'pointerdblclick'], [evt]);
+            if (!this.selectingMode) {
+                for (i = this.downObjects.length - 1; i > -1; i--) {
+                    this.downObjects[i].triggerEventHandlers(['dblclick', 'pointerdblclick'], [evt]);
+
+                    this.downObjects[i].eventHandlers.clicks = 0;
+                    this.downObjects.splice(i, 1);
+                }
+            }
+            evt.stopPropagation();
+        },
+
+        /**
+         * This method is called by the browser when the mouse device double clicks on the screen.
+         * @param {Event} evt The browsers event object.
+         */
+        mouseDblClickListener: function (evt) {
+            var i;
+            this.triggerEventHandlers(['dblclick', 'mousedblclick'], [evt]);
+            if (!this.selectingMode) {
+                for (i = this.downObjects.length - 1; i > -1; i--) {
+                    this.downObjects[i].triggerEventHandlers(['dblclick', 'mousedblclick'], [evt]);
+
+                    this.downObjects[i].eventHandlers.clicks = 0;
+                    this.downObjects.splice(i, 1);
+                }
+            }
         },
 
         // /**
@@ -2750,7 +3044,7 @@ JXG.extend(
          * @returns {Boolean}
          */
         pointerUpListener: function (evt) {
-            var i, j, found,
+            var i, j, found, eh,
                 touchTargets,
                 updateNeeded = false;
 
@@ -2804,7 +3098,17 @@ JXG.extend(
                             this.downObjects[i].snapToPoints();
                             updateNeeded = true;
                         }
-                        this.downObjects.splice(i, 1);
+
+                        // Check if we have to keep the element for a click or dblclick event
+                        // Otherwise remove it from downObjects
+                        eh = this.downObjects[i].eventHandlers;
+                        if (!(Type.exists(eh.click) && eh.click.length > 0) &&
+                            !(Type.exists(eh.pointerclick) && eh.pointerclick.length > 0) &&
+                            !(Type.exists(eh.dblclick) && eh.dblclick.length > 0) &&
+                            !(Type.exists(eh.pointerdblclick) && eh.pointerdblclick.length > 0)
+                        ) {
+                            this.downObjects.splice(i, 1);
+                        }
                     }
                 }
             }
@@ -5342,7 +5646,6 @@ JXG.extend(
                 }
             }
             */
-
             for (el = 0; el < this.objectsList.length; el++) {
                 pEl = this.objectsList[el];
                 if (this.needsFullUpdate && pEl.elementClass === Const.OBJECT_CLASS_TEXT) {
@@ -5667,8 +5970,9 @@ JXG.extend(
                         (i === 2 || i === 3)
                     ) &&
                     !(elementType === 'curve' /*&& i > 0*/) && // Allow curve plots with jessiecode, parents[0] is the
-                    // variable name
-                    !(elementType === 'functiongraph') // Prevent problems with function terms like 'x'
+                                                               // variable name
+                    !(elementType === 'functiongraph') && // Prevent problems with function terms like 'x', 'y'
+                    !(elementType === 'implicitcurve')
                 ) {
                     parents[i] = this.select(parents[i]);
                 }
@@ -6889,6 +7193,58 @@ JXG.extend(
          * @param {Event} e The browser's event object.
          */
         __evt__touchend: function (e) { },
+
+        /**
+         * @event
+         * @description Whenever the user clicks on the board.
+         * @name JXG.Board#click
+         * @param {Event} e The browser's event object.
+         */
+        __evt__click: function (e) { },
+
+        /**
+         * @event
+         * @description Whenever the user double clicks on the board.
+         * This event works on desktop browser, but is undefined
+         * on mobile browsers.
+         * @name JXG.Board#dblclick
+         * @param {Event} e The browser's event object.
+         */
+        __evt__dblclick: function (e) { },
+
+        /**
+         * @event
+         * @description Whenever the user clicks on the board with a mouse device.
+         * @name JXG.Board#mouseclick
+         * @param {Event} e The browser's event object.
+         */
+        __evt__mouseclick: function (e) { },
+
+        /**
+         * @event
+         * @description Whenever the user double clicks on the board with a mouse device.
+         * @name JXG.Board#mousedblclick
+         * @param {Event} e The browser's event object.
+         */
+        __evt__mousedblclick: function (e) { },
+
+        /**
+         * @event
+         * @description Whenever the user clicks on the board with a pointer device.
+         * @name JXG.Board#pointerclick
+         * @param {Event} e The browser's event object.
+         */
+        __evt__pointerclick: function (e) { },
+
+        /**
+         * @event
+         * @description Whenever the user double clicks on the board with a pointer device.
+         * This event works on desktop browser, but is undefined
+         * on mobile browsers.
+         * @name JXG.Board#pointerdblclick
+         * @param {Event} e The browser's event object.
+         */
+        __evt__pointerdblclick: function (e) { },
 
         /**
          * @event

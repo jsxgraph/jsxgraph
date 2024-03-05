@@ -652,17 +652,15 @@ JXG.createGrid = function (board, parents, attributes) {
             minorSize = [minorSize[0], minorSize[0]];
         }
 
-        if (Type.isNumber(minorSize[0], true) || minorSize[0].indexOf('abs') > -1) {
-            minorSize[0] = ("" + minorSize[0]).replace(/\s+abs\s+/, '') + "px"; // interpret number as pixels
-        }
-        if (Type.isNumber(minorSize[1], true) || minorSize[1].indexOf('abs') > -1) {
-            minorSize[1] = ("" + minorSize[1]).replace(/\s+abs\s+/, '') + "px"; // interpret number as pixels
-        }
+        // minorRadius = [
+        //     Type.parseNumber(minorSize[0], minorStep[0] * 0.5, 1 / this.board.unitX),
+        //     Type.parseNumber(minorSize[0], minorStep[0] * 0.5, 1 / this.board.unitY)
+        // ];
 
         minorSize[0] = Type.parseNumber(minorSize[0], minorStep[0], 1 / this.board.unitX);
-        minorRadius[0] = minorSize[0] / 2;
         minorSize[1] = Type.parseNumber(minorSize[1], minorStep[1], 1 / this.board.unitY);
-        minorRadius[1] = minorSize[1] / 2;
+        minorRadius[0] = minorSize[0] * 0.5;
+        minorRadius[1] = minorSize[1] * 0.5;
 
         // calculate start position of curve
         startX = Mat.roundToStep(bbox[0], minorStep[0]);

@@ -4,7 +4,6 @@
         Michael Gerhaeuser,
         Carsten Miller,
         Alfred Wassermann
-console.log("P:", P.coords.usrCoords, P.data.type)
 
     This file is part of JSXGraph.
 
@@ -39,7 +38,7 @@ console.log("P:", P.coords.usrCoords, P.data.type)
  * * Check if input polygons are closed. If not, handle this case.
  */
 
-import JXG from "../jxg";
+// import JXG from "../jxg";
 import Const from "../base/constants";
 import Coords from "../base/coords";
 import Mat from "./math";
@@ -53,11 +52,6 @@ import Type from "../utils/type";
  * @exports Mat.Clip as JXG.Math.Clip
  * @namespace
  */
-// Mat.Clip = function () {
-// };
-
-// JXG.extend(Mat.Clip.prototype, /** @lends JXG.Curve.prototype */ {
-
 Mat.Clip = {
     _isSeparator: function (node) {
         return isNaN(node.coords.usrCoords[1]) && isNaN(node.coords.usrCoords[2]);
@@ -2206,8 +2200,8 @@ Mat.Clip = {
     difference: function (path1, path2, board) {
         return this.greinerHormann(path1, path2, "difference", board);
     }
-}; //);
+};
 
-JXG.extend(Mat.Clip, /** @lends JXG.Math.Clip */ {});
+// JXG.extend(Mat.Clip, /** @lends JXG.Math.Clip */ {});
 
 export default Mat.Clip;
