@@ -1644,17 +1644,21 @@ JXG.extend(
             var arr = Mat.dec2fraction(x, order),
                 str = '';
 
-            if (arr[0] === 0 && arr[1] === 0) {
+            if (arr[1] === 0 && arr[2] === 0) {
                 str += '0';
             } else {
-                if (arr[0] !== 0) {
-                    str += arr[0] + ' ';
+                // Sign
+                if (arr[0] < 0) {
+                    str += '-';
                 }
                 if (arr[1] !== 0) {
+                    str += arr[1] + ' ';
+                }
+                if (arr[2] !== 0) {
                     if (useTeX === true) {
-                        str += '\\frac{' + arr[1] + '}{' + arr[2] + '}';
+                        str += '\\frac{' + arr[2] + '}{' + arr[3] + '}';
                     } else {
-                        str += arr[1] + '/' + arr[2];
+                        str += arr[2] + '/' + arr[3];
                     }
                 }
             }

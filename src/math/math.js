@@ -1116,21 +1116,21 @@ JXG.Math = {
      *
      * @param {Number} x Number which is to be converted
      * @param {Number} [order=0.001] Small number determining the approximation precision.
-     * @returns {Array} [leading, nominator, denominator]
+     * @returns {Array} [sign, leading, nominator, denominator] where sign is 1 or -1.
      * @see JXG#toFraction
      *
      * @example
      * JXG.Math.dec2fraction(0.33333333);
-     * // Result: [ 0, 1, 3 ]
+     * // Result: [ 1, 0, 1, 3 ]
      *
      * JXG.Math.dec2fraction(0);
-     * // Result: [ 0, 0, 1 ]
+     * // Result: [ 1, 0, 0, 1 ]
      *
      * JXG.Math.dec2fraction(-10.66666666666667);
-     * // Result: [-10, 2, 3 ]
+     * // Result: [-1, 10, 2, 3 ]
     */
     dec2fraction: function(x, order) {
-        var lead, a,
+        var lead, sign, a,
             n, n1, n2,
             d, d1, d2,
             it = 0,
@@ -1143,9 +1143,10 @@ JXG.Math = {
         x = Math.round(x * 1.e12) * 1.e-12;
 
         // Negative numbers:
-        // The minus sign is handled in lead.
-        lead = ((x < 0) ? -1 : 1) * Math.floor(Math.abs(x));
+        // The minus sign is handled in sign.
+        sign = (x < 0) ? -1 : 1;
         x = Math.abs(x);
+        lead = Math.floor(x);
         // From now on we consider x to be nonnegative.
         x -= Math.floor(x);
         a = 0.0;
@@ -1165,7 +1166,7 @@ JXG.Math = {
             d1 = d;
             it++;
         }
-        return [lead, n, d];
+        return [sign, lead, n, d];
     },
 
     /* *************************** Normalize *************************** */
