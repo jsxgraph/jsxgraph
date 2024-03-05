@@ -1104,14 +1104,12 @@ JXG.Math = {
 
     /**
      *
-     * Convert a floating point number to integer + fraction.
+     * Convert a floating point number to sign + integer + fraction.
      * fraction is given as nominator and denominator.
      * <p>
      * Algorithm: approximate the floating point number
      * by a continued fraction and simultaneously keep track
      * of its convergents.
-     * <p>
-     * For negative numbers, the minus sign is contained in the integer part.
      * Inspired by {@link https://kevinboone.me/rationalize.html}.
      *
      * @param {Number} x Number which is to be converted
@@ -1146,8 +1144,9 @@ JXG.Math = {
         // The minus sign is handled in sign.
         sign = (x < 0) ? -1 : 1;
         x = Math.abs(x);
-        lead = Math.floor(x);
+
         // From now on we consider x to be nonnegative.
+        lead = Math.floor(x);
         x -= Math.floor(x);
         a = 0.0;
         n2 = 1.0;
