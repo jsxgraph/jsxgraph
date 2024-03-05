@@ -1638,10 +1638,10 @@ JXG.extend(
          * @param {Boolean} [useTeX=false]
          * @param {Number} [order=0.001]
          * @returns {String}
-         * @see JXG.Math#dec2fraction
+         * @see JXG.Math#decToFraction
          */
         toFraction: function (x, useTeX, order) {
-            var arr = Mat.dec2fraction(x, order),
+            var arr = Mat.decToFraction(x, order),
                 str = '';
 
             if (arr[1] === 0 && arr[2] === 0) {

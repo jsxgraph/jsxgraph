@@ -1118,16 +1118,16 @@ JXG.Math = {
      * @see JXG#toFraction
      *
      * @example
-     * JXG.Math.dec2fraction(0.33333333);
+     * JXG.Math.decToFraction(0.33333333);
      * // Result: [ 1, 0, 1, 3 ]
      *
-     * JXG.Math.dec2fraction(0);
+     * JXG.Math.decToFraction(0);
      * // Result: [ 1, 0, 0, 1 ]
      *
-     * JXG.Math.dec2fraction(-10.66666666666667);
+     * JXG.Math.decToFraction(-10.66666666666667);
      * // Result: [-1, 10, 2, 3 ]
     */
-    dec2fraction: function(x, order) {
+    decToFraction: function(x, order) {
         var lead, sign, a,
             n, n1, n2,
             d, d1, d2,
