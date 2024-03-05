@@ -2449,7 +2449,9 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
                 X: that.X,
                 Y: that.Y,
                 V: that.V,
+                Value: that.V,
                 L: that.L,
+                Length: that.L,
 
                 acosh: Mat.acosh,
                 acot: Mat.acot,
@@ -2525,7 +2527,9 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
         builtIn.X.src = '$jc$.X';
         builtIn.Y.src = '$jc$.Y';
         builtIn.V.src = '$jc$.V';
+        builtIn.Value.src = '$jc$.V';
         builtIn.L.src = '$jc$.L';
+        builtIn.Length.src = '$jc$.L';
 
         builtIn.acosh.src = 'JXG.Math.acosh';
         builtIn.acot.src = 'JXG.Math.acot';
