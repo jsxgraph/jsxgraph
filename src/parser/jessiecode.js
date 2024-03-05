@@ -2079,6 +2079,19 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
     },
 
     /**
+     * This is used as the global slope() function.
+     * @param {JXG.Line} obj
+     * @returns {Number}
+     */
+    slope: function (obj) {
+        if (!Type.exists(obj) || !Type.exists(obj.Slope)) {
+            this._error('Error: Can\'t calculate slope.');
+        }
+
+        return obj.Slope();
+    },
+
+    /**
      * + operator implementation
      * @param {Number|Array|JXG.Point} a
      * @param {Number|Array|JXG.Point} b
@@ -2477,6 +2490,8 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
                 ratpow: Mat.ratpow,
                 trunc: Type.trunc,
                 sinh: Mat.sinh,
+                slope: that.slope,
+                Slope: that.slope,
 
                 randint: that.randint,
                 randInt: that.randint,
