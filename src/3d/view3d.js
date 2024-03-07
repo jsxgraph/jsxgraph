@@ -337,7 +337,8 @@ JXG.extend(
         // Update 3D-to-2D transformation matrix with the actual
         // elevation and azimuth angles.
 
-        var mat2D, shift, size;
+        var mat2D, shift, size,
+            dx, dy;
 
         if (
             !Type.exists(this.el_slide) ||
@@ -366,12 +367,14 @@ JXG.extend(
                 [-0.5 * (this.bbox3D[2][0] + this.bbox3D[2][1]), 0, 0, 1]
             ];
 
+            dx = this.bbox3D[0][1] - this.bbox3D[0][0];
+            dy = this.bbox3D[1][1] - this.bbox3D[1][0];
             // Add a second transformation to scale and shift the projection
-            // on the board, usually called viewport.
-            mat2D[1][1] = this.size[0] / (this.bbox3D[0][1] - this.bbox3D[0][0]); // w / d_x
-            mat2D[2][2] = this.size[1] / (this.bbox3D[1][1] - this.bbox3D[1][0]); // h / d_y
-            mat2D[1][0] = this.llftCorner[0] + mat2D[1][1] * 0.5 * (this.bbox3D[0][1] - this.bbox3D[0][0]); // llft_x
-            mat2D[2][0] = this.llftCorner[1] + mat2D[2][2] * 0.5 * (this.bbox3D[1][1] - this.bbox3D[1][0]); // llft_y
+            // on the 2D board, usually called viewport.
+            mat2D[1][1] = this.size[0] / dx; // w / d_x
+            mat2D[2][2] = this.size[1] / dy; // h / d_y
+            mat2D[1][0] = this.llftCorner[0] + mat2D[1][1] * 0.5 * dx; // llft_x
+            mat2D[2][0] = this.llftCorner[1] + mat2D[2][2] * 0.5 * dy; // llft_y
 
             // this.matrix3D is a 3x4 matrix
             this.matrix3D = this.updateParallelProjection();
@@ -532,8 +535,15 @@ JXG.extend(
             b = m3D[3],
             rhs = point2d.coords.usrCoords[2]; // y in 2D
 
-        rhs -= m3D[0] * m3D[0] + m3D[1] * coords3D[1] + m3D[2] * coords3D[2];
+        //
+        // Solve row 2 of the matrix / vector equation
+        // coords2D = matrix3D * coords3D
+        // where coords3D[i] stay constant for i= 0, 1, 2
+        //
+        rhs -= m3D[0] * coords3D[0] + m3D[1] * coords3D[1] + m3D[2] * coords3D[2];
         if (Math.abs(b) < Mat.eps) {
+            // Degenerate case:
+            // we are looking in z-direction to the view3D box
             return coords3D; // No changes
         } else {
             return coords3D.slice(0, 3).concat([rhs / b]);
