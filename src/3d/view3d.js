@@ -32,6 +32,7 @@ import JXG from "../jxg";
 import Const from "../base/constants";
 import Type from "../utils/type";
 import Mat from "../math/math";
+import Env from "../utils/env";
 import GeometryElement from "../base/element";
 import Composition from "../base/composition";
 
