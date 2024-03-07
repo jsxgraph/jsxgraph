@@ -3,8 +3,6 @@
 import JXG from "./jxg";
 import Options from "./options";
 
-// @formatter:off
-
 JXG.extend(Options, {
     // infobox: {
     //     strokeColor: 'black'
@@ -358,8 +356,6 @@ JXG.extend(Options, {
         /**#@-*/
     },
 
-    // @formatter:on
-
     view3d: {
         /**#@+
          * @visprop
@@ -578,8 +574,6 @@ JXG.extend(Options, {
 
         /**#@-*/
     }
-
-    // @formatter:off
 });
 
 export default JXG.Options;
