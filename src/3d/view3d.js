@@ -322,12 +322,12 @@ JXG.extend(
                     Math.pow(this.bbox3D[0][0] - this.bbox3D[0][1], 2) +
                     Math.pow(this.bbox3D[1][0] - this.bbox3D[1][1], 2) +
                     Math.pow(this.bbox3D[2][0] - this.bbox3D[2][1], 2)
-                );
+                ) * 1.01;
             }
 
             // create an up vector and an eye vector which are 90 degrees out of phase
-            up = func_sphere(1, e + Math.PI / 2, a);
-            eye = func_sphere(r, e, a);
+            up = func_sphere(a, e + Math.PI / 2, 1);
+            eye = func_sphere(a, e, r);
 
             d = [eye[0] - Pref[0], eye[1] - Pref[1], eye[2] - Pref[2]];
             nrm = Mat.norm(d, 3);
