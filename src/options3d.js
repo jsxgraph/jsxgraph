@@ -3,6 +3,8 @@
 import JXG from "./jxg";
 import Options from "./options";
 
+// @formatter:off
+
 JXG.extend(Options, {
     // infobox: {
     //     strokeColor: 'black'
@@ -356,10 +358,13 @@ JXG.extend(Options, {
         /**#@-*/
     },
 
+    // @formatter:on
+
     view3d: {
         /**#@+
          * @visprop
          */
+
         needsRegularUpdate: true,
 
         projection: 'parallel',
@@ -380,10 +385,202 @@ JXG.extend(Options, {
          */
         verticalDrag: {
             enabled: true,
-            key: 'shift' // ctrl
-        }
+            key: 'shift'
+        },
+
+        /**
+         * Allow the Navigation in az rotation either pointer and Keyboard
+         * Subobjects are
+         * <ul>
+         *  <li>pointer: Subobjects are
+         *  <ul>
+         *      <li> enabled: true
+         *      <li> speed: 1
+         *      <li> outside: true
+         *      <li> button: -1
+         *      <li> key: 'none'
+         *  </ul>
+         *  <li>keyboard: Subobjects are
+         *   <ul>
+         *       <li>enabled: true
+         *       <li> step: 10
+         *       <li> key: 'ctrl'
+         *   </ul>
+         *  <li>continuous: true
+         *  <li>slider: Subobjects are
+         *  <ul>
+         *   <li>visible:true,
+         *    <li>style: 6,
+         *    <li>point1: {frozen: true},
+         *    <li>point2: {frozen: true},
+         *    <li>min: 0,
+         *    <li>max:2*Math.PI,
+         *    <li>start: 1.0
+         *  </ul>
+         * </ul>
+         * <p>
+         * Possible values for attribute <i>button</i>: '-1, '0' or '2'.
+         * Possible values for attribute <i>key</i>: 'none', 'shift' or 'ctrl'.
+         *
+         * @name View3D#az
+         * @type Object
+         * @default { pointer: {enabled: true, speed: 1, outside: true, button: -1, key: 'none'},
+         *         keyboard: {enabled: true, step: 10, key: 'ctrl'},
+         *         continuous: true,
+         *          slider: {
+         *             visible: true,
+         *             style: 6,
+         *             point1: {frozen: true},
+         *             point2: {frozen: true},
+         *             min: 0,
+         *             max: 2 * Math.PI,
+         *             start: 1.0
+         *         },
+         *         }
+         */
+        az: {
+            pointer: {
+                enabled: true,
+                speed: 1,
+                outside: true,
+                button: -1,
+                key: 'none'
+            },
+            keyboard: {
+                enabled: true,
+                step: 10,
+                key: 'ctrl'
+            },
+            continuous: true,
+
+            slider: {
+                visible: true,
+                style: 6,
+                point1: { frozen: true },
+                point2: { frozen: true },
+                min: 0,
+                max: 2 * Math.PI,
+                start: 1.0
+            }
+        },
+
+        /**
+         * Allow the Navigation in el rotation using pointer and Keyboard
+         * Subobjects are
+         * <ul>
+         *  <li>pointer: Subobjects are
+         *  <ul>
+         *      <li> enabled: true
+         *      <li> speed: 1
+         *      <li> outside: true
+         *      <li> button: -1
+         *      <li> key: 'none'
+         *  </ul>
+         *  <li>keyboard: Subobjects are
+         *   <ul>
+         *       <li>enabled: true
+         *       <li> step: 10
+         *       <li> key: 'ctrl'
+         *   </ul>
+         *  <li>continuous: true
+         * <li>slider: Subobjects are
+         *  <ul>
+         *   <li>visible:true,
+         *    <li>style: 6,
+         *    <li>point1: {frozen: true},
+         *    <li>point2: {frozen: true},
+         *    <li>min: 0,
+         *    <li>max:2*Math.PI,
+         *    <li>start: 0.3
+         *  </ul>
+         * </ul>
+         * <p>
+         * Possible values for attribute <i>button</i>: '-1, '0' or '2'.
+         * Possible values for attribute <i>key</i>: 'none', 'shift' or 'ctrl'.
+         *
+         * @name View3D#el
+         * @type Object
+         * @default { pointer: {enabled: true, speed: 1, outside: true, button: -1, key: 'none'},
+         *         keyboard: {enabled: true, step: 10, key: 'ctrl'},
+         *         continuous: true,
+         *         slider: {
+         *             visible: true,
+         *             style: 6,
+         *             point1: {frozen: true},
+         *             point2: {frozen: true},
+         *             min: 0,
+         *             max: Math.PI,
+         *             start: 0.3
+         *         },}
+         */
+        el: {
+            pointer: {
+                enabled: true,
+                speed: 1,
+                outside: true,
+                button: -1,
+                key: 'none'
+            },
+            keyboard: {
+                enabled: true,
+                step: 10,
+                key: 'ctrl'
+            },
+            continuous: true,
+
+            slider: {
+                visible: true,
+                style: 6,
+                point1: { frozen: true },
+                point2: { frozen: true },
+                min: 0,
+                max: Math.PI,
+                start: 0.3
+            }
+        },
+
+        /**
+         * Distance of the view to the origin. In other words, its
+         * the radius of the sphere where the camera sits. If set to
+         * 'auto', r will be calculated automatically.
+         * @type Number
+         * @default 'auto'
+         */
+        r: 'auto',
+
+        /**
+         * foV (Field of View) defines the angle of view of the camera,
+         * determining how much of the scene is captured within the frame.
+         * @type Number
+         * @default 1/5*2*Math.PI
+         */
+        fov: 1 / 5 * 2 * Math.PI,
+
+        /**
+         * Fixed value for the view, which can be changed using picture-up and picture-down, double array
+         * values: [[el0, az0, r0], [el1, az1, r1, ...[eln, azn, rn]]
+         *
+         * @name View3D#values
+         * @type Object
+         * @default {[[0, 1.57], [0.78, 0.62], [0, 0], [5.49, 0.62], [4.71, 0], [3.93, 0.62], [3.14, 0], [2.36, 0.62], [1.57, 1.57]]}
+         */
+        values: [
+            [0, 1.57],
+            [0.78, 0.62],
+            [0, 0],
+            [5.49, 0.62],
+            [4.71, 0],
+            [3.93, 0.62],
+            [3.14, 0],
+            [2.36, 0.62],
+            [1.57, 1.57]
+        ],
+        currentView: -1
+
         /**#@-*/
     }
+
+    // @formatter:off
 });
 
 export default JXG.Options;
