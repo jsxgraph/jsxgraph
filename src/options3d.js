@@ -392,8 +392,8 @@ JXG.extend(Options, {
         },
 
         /**
-         * This attribut controls the azimuth navigation.
-         * The following sub-attributes can be chosen:
+         * This attribute controls the azimuth.
+         * Behaviour can be controlled by the following sub-attributes:
          * <ul>
          *  <li><tt>pointer</tt> with sub-attributes:
          *      <ul>
@@ -461,8 +461,8 @@ JXG.extend(Options, {
         },
 
         /**
-         * This attribut controls the elevation navigation.
-         * The following sub-attributes can be chosen:
+         * This attribute controls the elevation.
+         * Behaviour can be controlled by the following sub-attributes:
          * <ul>
          *  <li><tt>pointer</tt> with sub-attributes:
          *      <ul>
