@@ -2359,7 +2359,7 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
     },
 
     /**
-     * Implementation of the eval() builtin function
+     * Implementation of the eval() builtin function. Calls JXG.evaluate().
      * @param {String|Number|Function} v
      */
     eval: function (v) {
@@ -2449,7 +2449,9 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
                 X: that.X,
                 Y: that.Y,
                 V: that.V,
+                Value: that.V,
                 L: that.L,
+                Length: that.L,
 
                 acosh: Mat.acosh,
                 acot: Mat.acot,
@@ -2494,12 +2496,8 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
                 Slope: that.slope,
 
                 randint: that.randint,
-                randInt: that.randint,
-                Randint: that.randint,
-                RandInt: that.randint,
 
                 IfThen: that.ifthen,
-                ifthen: that.ifthen,
                 'import': that.importModule,
                 'eval': that.eval,
                 'use': that.use,
@@ -2508,7 +2506,6 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
                 '$value': function(e) {return that.getElementById(e).Value(); },
                 getName: that.getName,
                 name: that.getName,
-                Name: that.getName,
                 '$board': that.board,
                 '$log': that.log
             };
@@ -2525,7 +2522,9 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
         builtIn.X.src = '$jc$.X';
         builtIn.Y.src = '$jc$.Y';
         builtIn.V.src = '$jc$.V';
+        builtIn.Value.src = '$jc$.V';
         builtIn.L.src = '$jc$.L';
+        builtIn.Length.src = '$jc$.L';
 
         builtIn.acosh.src = 'JXG.Math.acosh';
         builtIn.acot.src = 'JXG.Math.acot';
@@ -2566,24 +2565,21 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
         builtIn.ratpow.src = 'JXG.Math.ratpow';
         builtIn.trunc.src = 'JXG.trunc';
         builtIn.sinh.src = 'JXG.Math.sinh';
+        builtIn.slope.src = '$jc$.slope';
+        builtIn.Slope.src = '$jc$.slope';
 
         builtIn.randint.src = '$jc$.randint';
-        builtIn.randInt.src = '$jc$.randint';
-        builtIn.Randint.src = '$jc$.randint';
-        builtIn.RandInt.src = '$jc$.randint';
 
         builtIn['import'].src = '$jc$.importModule';
-        builtIn.use.src = '$jc$.use';
         builtIn.eval.src = '$jc$.eval';
+        builtIn.use.src = '$jc$.use';
         builtIn.remove.src = '$jc$.del';
         builtIn.IfThen.src = '$jc$.ifthen';
-        builtIn.ifthen.src = '$jc$.ifthen';
         // usually unused, see node_op > op_execfun
         builtIn.$.src = '(function (n) { return $jc$.board.select(n); })';
         builtIn.$value.src = '(function (n) { return $jc$.board.select(n).Value(); })';
         builtIn.getName.src = '$jc$.getName';
         builtIn.name.src = '$jc$.getName';
-        builtIn.Name.src = '$jc$.getName';
         if (builtIn.$board) {
             builtIn.$board.src = '$jc$.board';
         }
