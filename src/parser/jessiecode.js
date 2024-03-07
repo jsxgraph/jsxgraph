@@ -2359,7 +2359,7 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
     },
 
     /**
-     * Implementation of the eval() builtin function
+     * Implementation of the eval() builtin function. Calls JXG.evaluate().
      * @param {String|Number|Function} v
      */
     eval: function (v) {
@@ -2571,8 +2571,8 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
         builtIn.randint.src = '$jc$.randint';
 
         builtIn['import'].src = '$jc$.importModule';
-        builtIn.use.src = '$jc$.use';
         builtIn.eval.src = '$jc$.eval';
+        builtIn.use.src = '$jc$.use';
         builtIn.remove.src = '$jc$.del';
         builtIn.IfThen.src = '$jc$.ifthen';
         // usually unused, see node_op > op_execfun
