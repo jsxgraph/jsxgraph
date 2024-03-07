@@ -2496,12 +2496,8 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
                 Slope: that.slope,
 
                 randint: that.randint,
-                randInt: that.randint,
-                Randint: that.randint,
-                RandInt: that.randint,
 
                 IfThen: that.ifthen,
-                ifthen: that.ifthen,
                 'import': that.importModule,
                 'eval': that.eval,
                 'use': that.use,
@@ -2510,7 +2506,6 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
                 '$value': function(e) {return that.getElementById(e).Value(); },
                 getName: that.getName,
                 name: that.getName,
-                Name: that.getName,
                 '$board': that.board,
                 '$log': that.log
             };
@@ -2570,24 +2565,21 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
         builtIn.ratpow.src = 'JXG.Math.ratpow';
         builtIn.trunc.src = 'JXG.trunc';
         builtIn.sinh.src = 'JXG.Math.sinh';
+        builtIn.slope.src = '$jc$.slope';
+        builtIn.Slope.src = '$jc$.slope';
 
         builtIn.randint.src = '$jc$.randint';
-        builtIn.randInt.src = '$jc$.randint';
-        builtIn.Randint.src = '$jc$.randint';
-        builtIn.RandInt.src = '$jc$.randint';
 
         builtIn['import'].src = '$jc$.importModule';
         builtIn.use.src = '$jc$.use';
         builtIn.eval.src = '$jc$.eval';
         builtIn.remove.src = '$jc$.del';
         builtIn.IfThen.src = '$jc$.ifthen';
-        builtIn.ifthen.src = '$jc$.ifthen';
         // usually unused, see node_op > op_execfun
         builtIn.$.src = '(function (n) { return $jc$.board.select(n); })';
         builtIn.$value.src = '(function (n) { return $jc$.board.select(n).Value(); })';
         builtIn.getName.src = '$jc$.getName';
         builtIn.name.src = '$jc$.getName';
-        builtIn.Name.src = '$jc$.getName';
         if (builtIn.$board) {
             builtIn.$board.src = '$jc$.board';
         }
