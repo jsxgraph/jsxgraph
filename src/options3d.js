@@ -367,6 +367,13 @@ JXG.extend(Options, {
 
         needsRegularUpdate: true,
 
+        /**
+         * This attribute controls which projection is to be used: `parallel` or `central`.
+         *
+         * @name View3D#projection
+         * @type String
+         * @default 'parallel'
+         */
         projection: 'parallel',
 
         /**
@@ -389,54 +396,48 @@ JXG.extend(Options, {
         },
 
         /**
-         * Allow the Navigation in az rotation either pointer and Keyboard
-         * Subobjects are
+         * This attribut controls the azimuth navigation.
+         * The following sub-attributes can be chosen:
          * <ul>
-         *  <li>pointer: Subobjects are
-         *  <ul>
-         *      <li> enabled: true
-         *      <li> speed: 1
-         *      <li> outside: true
-         *      <li> button: -1
-         *      <li> key: 'none'
-         *  </ul>
-         *  <li>keyboard: Subobjects are
-         *   <ul>
-         *       <li>enabled: true
-         *       <li> step: 10
-         *       <li> key: 'ctrl'
-         *   </ul>
-         *  <li>continuous: true
-         *  <li>slider: Subobjects are
-         *  <ul>
-         *   <li>visible:true,
-         *    <li>style: 6,
-         *    <li>point1: {frozen: true},
-         *    <li>point2: {frozen: true},
-         *    <li>min: 0,
-         *    <li>max:2*Math.PI,
-         *    <li>start: 1.0
-         *  </ul>
+         *  <li><tt>pointer</tt> with sub-attributes:
+         *      <ul>
+         *          <li><tt>enabled</tt>: Boolean that specifies whether pointer navigation is allowed by azimuth.
+         *          <li><tt>speed</tt>: Number indicating how many passes the range of the az_slider makes when the cursor crosses the entire board once in the horizontal direction.
+         *          <li><tt>outside</tt>: Boolean that specifies whether the pointer navigation is continued when the cursor leaves the board.
+         *          <li><tt>button</tt>: Which button of the pointer should be used? (<tt>'-1'</tt>, <tt>'0'</tt> or <tt>'2'</tt>)
+         *          <li><tt>key</tt>: Should an additional key be pressed? (<tt>'none'</tt>, <tt>'shift'</tt> or <tt>'ctrl'</tt>)
+         *      </ul>
+         *  <li><tt>keyboard</tt> with sub-attributes:
+         *      <ul>
+         *          <li><tt>enabled</tt>: Boolean that specifies whether the keyboard (arrow keys) can be used to navigate the board.
+         *          <li><tt>step</tt>: Size of the step per keystroke.
+         *          <li><tt>key</tt>: Should an additional key be pressed? (<tt>'none'</tt>, <tt>'shift'</tt> or <tt>'ctrl'</tt>)
+         *      </ul>
+         *  <li><tt>continuous</tt>: Boolean that specifies whether the az_slider starts again from the beginning when its end is reached.
+         *  <li><tt>slider</tt> attributes of the az_slider ({@link Slider}) with additional
+         *      <ul>
+         *          <li><tt>min</tt>: Minimum value.
+         *          <li><tt>max</tt>: Maximum value.
+         *          <li><tt>start</tt>: Start value.
+         *      </ul>
          * </ul>
-         * <p>
-         * Possible values for attribute <i>button</i>: '-1, '0' or '2'.
-         * Possible values for attribute <i>key</i>: 'none', 'shift' or 'ctrl'.
          *
          * @name View3D#az
          * @type Object
-         * @default { pointer: {enabled: true, speed: 1, outside: true, button: -1, key: 'none'},
-         *         keyboard: {enabled: true, step: 10, key: 'ctrl'},
-         *         continuous: true,
-         *          slider: {
-         *             visible: true,
-         *             style: 6,
-         *             point1: {frozen: true},
-         *             point2: {frozen: true},
-         *             min: 0,
-         *             max: 2 * Math.PI,
-         *             start: 1.0
-         *         },
-         *         }
+         * @default {
+         *      pointer: {enabled: true, speed: 1, outside: true, button: -1, key: 'none'},
+         *      keyboard: {enabled: true, step: 10, key: 'ctrl'},
+         *      continuous: true,
+         *      slider: {
+         *          visible: true,
+         *          style: 6,
+         *          point1: {frozen: true},
+         *          point2: {frozen: true},
+         *          min: 0,
+         *          max: 2 * Math.PI,
+         *          start: 1.0
+         *      },
+         * }
          */
         az: {
             pointer: {
@@ -452,7 +453,6 @@ JXG.extend(Options, {
                 key: 'ctrl'
             },
             continuous: true,
-
             slider: {
                 visible: true,
                 style: 6,
@@ -465,53 +465,48 @@ JXG.extend(Options, {
         },
 
         /**
-         * Allow the Navigation in el rotation using pointer and Keyboard
-         * Subobjects are
+         * This attribut controls the elevation navigation.
+         * The following sub-attributes can be chosen:
          * <ul>
-         *  <li>pointer: Subobjects are
-         *  <ul>
-         *      <li> enabled: true
-         *      <li> speed: 1
-         *      <li> outside: true
-         *      <li> button: -1
-         *      <li> key: 'none'
-         *  </ul>
-         *  <li>keyboard: Subobjects are
-         *   <ul>
-         *       <li>enabled: true
-         *       <li> step: 10
-         *       <li> key: 'ctrl'
-         *   </ul>
-         *  <li>continuous: true
-         * <li>slider: Subobjects are
-         *  <ul>
-         *   <li>visible:true,
-         *    <li>style: 6,
-         *    <li>point1: {frozen: true},
-         *    <li>point2: {frozen: true},
-         *    <li>min: 0,
-         *    <li>max:2*Math.PI,
-         *    <li>start: 0.3
-         *  </ul>
+         *  <li><tt>pointer</tt> with sub-attributes:
+         *      <ul>
+         *          <li><tt>enabled</tt>: Boolean that specifies whether pointer navigation is allowed by elevation.
+         *          <li><tt>speed</tt>: Number indicating how many passes the range of the el_slider makes when the cursor crosses the entire board once in the horizontal direction.
+         *          <li><tt>outside</tt>: Boolean that specifies whether the pointer navigation is continued when the cursor leaves the board.
+         *          <li><tt>button</tt>: Which button of the pointer should be used? (<tt>'-1'</tt>, <tt>'0'</tt> or <tt>'2'</tt>)
+         *          <li><tt>key</tt>: Should an additional key be pressed? (<tt>'none'</tt>, <tt>'shift'</tt> or <tt>'ctrl'</tt>)
+         *      </ul>
+         *  <li><tt>keyboard</tt> with sub-attributes:
+         *      <ul>
+         *          <li><tt>enabled</tt>: Boolean that specifies whether the keyboard (arrow keys) can be used to navigate the board.
+         *          <li><tt>step</tt>: Size of the step per keystroke.
+         *          <li><tt>key</tt>: Should an additional key be pressed? (<tt>'none'</tt>, <tt>'shift'</tt> or <tt>'ctrl'</tt>)
+         *      </ul>
+         *  <li><tt>continuous</tt>: Boolean that specifies whether the el_slider starts again from the beginning when its end is reached.
+         *  <li><tt>slider</tt> attributes of the el_slider ({@link Slider}) with additional
+         *      <ul>
+         *          <li><tt>min</tt>: Minimum value.
+         *          <li><tt>max</tt>: Maximum value.
+         *          <li><tt>start</tt>: Start value.
+         *      </ul>
          * </ul>
-         * <p>
-         * Possible values for attribute <i>button</i>: '-1, '0' or '2'.
-         * Possible values for attribute <i>key</i>: 'none', 'shift' or 'ctrl'.
          *
          * @name View3D#el
          * @type Object
-         * @default { pointer: {enabled: true, speed: 1, outside: true, button: -1, key: 'none'},
-         *         keyboard: {enabled: true, step: 10, key: 'ctrl'},
-         *         continuous: true,
-         *         slider: {
-         *             visible: true,
-         *             style: 6,
-         *             point1: {frozen: true},
-         *             point2: {frozen: true},
-         *             min: 0,
-         *             max: Math.PI,
-         *             start: 0.3
-         *         },}
+         * @default {
+         *      pointer: {enabled: true, speed: 1, outside: true, button: -1, key: 'none'},
+         *      keyboard: {enabled: true, step: 10, key: 'ctrl'},
+         *      continuous: true,
+         *      slider: {
+         *          visible: true,
+         *          style: 6,
+         *          point1: {frozen: true},
+         *          point2: {frozen: true},
+         *          min: 0,
+         *          max: Math.PI,
+         *          start: 0.3
+         *      },
+         * }
          */
         el: {
             pointer: {
@@ -527,7 +522,6 @@ JXG.extend(Options, {
                 key: 'ctrl'
             },
             continuous: true,
-
             slider: {
                 visible: true,
                 style: 6,
@@ -540,28 +534,28 @@ JXG.extend(Options, {
         },
 
         /**
-         * Distance of the view to the origin. In other words, its
-         * the radius of the sphere where the camera sits. If set to
-         * 'auto', r will be calculated automatically.
-         * @type Number
+         * Distance of the camera to the center of the view.
+         * If set to 'auto', r will be calculated automatically.
+         *
+         * @type {Number|String}
          * @default 'auto'
          */
         r: 'auto',
 
         /**
-         * foV (Field of View) defines the angle of view of the camera,
-         * determining how much of the scene is captured within the frame.
+         * Field of View defines the angle of view (in radians) of the camera, determining how much of the scene is captured within the frame.
+         *
          * @type Number
          * @default 1/5*2*Math.PI
          */
         fov: 1 / 5 * 2 * Math.PI,
 
         /**
-         * Fixed value for the view, which can be changed using picture-up and picture-down, double array
-         * values: [[el0, az0, r0], [el1, az1, r1, ...[eln, azn, rn]]
+         * Fixed values for the view, which can be changed using keyboard keys `picture-up` and `picture-down`.
+         * Array of the form: [[el0, az0, r0], [el1, az1, r1, ...[eln, azn, rn]]
          *
          * @name View3D#values
-         * @type Object
+         * @type Array
          * @default {[[0, 1.57], [0.78, 0.62], [0, 0], [5.49, 0.62], [4.71, 0], [3.93, 0.62], [3.14, 0], [2.36, 0.62], [1.57, 1.57]]}
          */
         values: [
@@ -575,7 +569,12 @@ JXG.extend(Options, {
             [2.36, 0.62],
             [1.57, 1.57]
         ],
-        currentView: -1
+
+        /**
+         * @class
+         * @ignore
+         */
+        _currentView: -1
 
         /**#@-*/
     }

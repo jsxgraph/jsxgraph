@@ -802,16 +802,16 @@ JXG.extend(
          * Goes to the next view in the values array
          */
         nextView: function () {
-            this.visProp.currentview = (Type.evaluate(this.visProp.currentview) + 1) % Type.evaluate(this.visProp.values.length);
-            this.setView(Type.evaluate(this.visProp.values[Type.evaluate(this.visProp.currentview)][0]), Type.evaluate(this.visProp.values[Type.evaluate(this.visProp.currentview)][1]), Type.exists(this.visProp.values[Type.evaluate(this.visProp.currentview)][2]) ? Type.evaluate(this.visProp.values[Type.evaluate(this.visProp.currentview)][2]) : this.r);
+            this.visProp._currentview = (Type.evaluate(this.visProp._currentview) + 1) % Type.evaluate(this.visProp.values.length);
+            this.setView(Type.evaluate(this.visProp.values[Type.evaluate(this.visProp._currentview)][0]), Type.evaluate(this.visProp.values[Type.evaluate(this.visProp._currentview)][1]), Type.exists(this.visProp.values[Type.evaluate(this.visProp._currentview)][2]) ? Type.evaluate(this.visProp.values[Type.evaluate(this.visProp._currentview)][2]) : this.r);
         },
 
         /**
          * Goes to the previous view in the view array
          */
         previousView: function () {
-            this.visProp.currentview = (((Type.evaluate(this.visProp.currentview) - 1) % Type.evaluate(this.visProp.values.length)) + Type.evaluate(this.visProp.values.length)) % Type.evaluate(this.visProp.values.length);
-            this.setView(Type.evaluate(this.visProp.values[Type.evaluate(this.visProp.currentview)][0]), Type.evaluate(this.visProp.values[Type.evaluate(this.visProp.currentview)][1]), Type.exists(this.visProp.values[Type.evaluate(this.visProp.currentview)][2]) ? Type.evaluate(this.visProp.values[Type.evaluate(this.visProp.currentview)][2]) : this.r);
+            this.visProp._currentview = (((Type.evaluate(this.visProp._currentview) - 1) % Type.evaluate(this.visProp.values.length)) + Type.evaluate(this.visProp.values.length)) % Type.evaluate(this.visProp.values.length);
+            this.setView(Type.evaluate(this.visProp.values[Type.evaluate(this.visProp._currentview)][0]), Type.evaluate(this.visProp.values[Type.evaluate(this.visProp._currentview)][1]), Type.exists(this.visProp.values[Type.evaluate(this.visProp._currentview)][2]) ? Type.evaluate(this.visProp.values[Type.evaluate(this.visProp._currentview)][2]) : this.r);
         },
 
         /**
@@ -821,7 +821,7 @@ JXG.extend(
         setCurrentView: function (currentView) {
             currentView = (((currentView) % Type.evaluate(this.visProp.values.length)) + Type.evaluate(this.visProp.values.length)) % Type.evaluate(this.visProp.values.length);
             this.setView(Type.evaluate(this.visProp.values[currentView][0]), Type.evaluate(this.visProp.values[currentView][1]), Type.exists(this.visProp.values[currentView][2]) ? Type.evaluate(this.visProp.values[currentView][2]) : this.r);
-            this.visProp.currentview = currentView;
+            this.visProp._currentview = currentView;
         },
 
         /**
