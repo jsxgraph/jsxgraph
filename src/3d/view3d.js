@@ -123,7 +123,7 @@ JXG.View3D = function (board, parents, attributes) {
      * @type String
      */
     // Will be set in update().
-    this.projectionType = '';
+    this.projectionType = 'parallel';
 
     this.timeoutAzimuth = null;
 
@@ -880,7 +880,7 @@ JXG.extend(
          * @param {event} event event from either the keydown or the pointer event listener.
          * @returns view
          */
-        moveAz: function (event) {
+        _azEventHandler: function (event) {
             // Calculate the new az value using pointer movement
             var speedAZ = this.az_slide._smax / this.board.canvasWidth * (Type.evaluate(this.visProp.az.pointer.speed)),
                 deltaX = event.movementX,
@@ -928,7 +928,7 @@ JXG.extend(
          * @param {event} event event from either the keydown or the pointer event listener.
          * @returns view
          */
-        moveEl: function (event) {
+        _elEventHandler: function (event) {
             //Calculate the new el value using pointer movement
             var speedEL = this.el_slide._smax / this.board.canvasHeight * Type.evaluate(this.visProp.el.pointer.speed),
                 deltaY = event.movementY,
@@ -1155,54 +1155,78 @@ JXG.createView3D = function (board, parents, attributes) {
     // Hack needed to enable addEvent for view3D:
     view.BOARD_MODE_NONE = 0x0000;
 
-    //Adds the events for the keyboard navigation
+    // Add events for the keyboard navigation
     Env.addEvent(board.containerObj, 'keydown', function (event) {
-        if (Type.evaluate(view.visProp.el.keyboard.enabled) && ((event.key === 'ArrowUp') || (event.key === 'ArrowDown')) && (Type.evaluate(view.visProp.el.keyboard.key) === 'none' || (Type.evaluate(view.visProp.el.keyboard.key) === 'shift' && event.shiftKey) || (Type.evaluate(view.visProp.el.keyboard.key) === 'ctrl' && event.ctrlKey))) {
-            view.moveEl(event);
-        } else if (Type.evaluate(view.visProp.az.keyboard.enabled) && ((event.key === 'ArrowLeft') || (event.key === 'ArrowRight')) && (Type.evaluate(view.visProp.az.keyboard.key) === 'none' || (Type.evaluate(view.visProp.az.keyboard.key) === 'shift' && event.shiftKey) || (Type.evaluate(view.visProp.az.keyboard.key) === 'ctrl' && event.ctrlKey))) {
-            view.moveAz(event);
+        let neededKey;
+
+        if (Type.evaluate(view.visProp.el.keyboard.enabled) && (event.key === 'ArrowUp' || event.key === 'ArrowDown')) {
+            neededKey = Type.evaluate(view.visProp.el.keyboard.key);
+            if (neededKey === 'none' || (neededKey.indexOf('shift') > -1 && event.shiftKey) || (neededKey.indexOf('ctrl') > -1 && event.ctrlKey)) {
+                view._elEventHandler(event);
+            }
+
         }
-        //Uses nextView and previousView if pageup, or pagedown is pressed to navigate the various views
+        if (Type.evaluate(view.visProp.el.keyboard.enabled) && (event.key === 'ArrowLeft' || event.key === 'ArrowRight')) {
+            neededKey = Type.evaluate(view.visProp.az.keyboard.key);
+            if (neededKey === 'none' || (neededKey.indexOf('shift') > -1 && event.shiftKey) || (neededKey.indexOf('ctrl') > -1 && event.ctrlKey)) {
+                view._azEventHandler(event);
+            }
+        }
         if (event.key === 'PageUp') {
             view.nextView();
         } else if (event.key === 'PageDown') {
             view.previousView();
         }
+
         event.preventDefault();
     }, view);
 
-    //Adds the events for the pointer navigation
+    // Add events for the pointer navigation
     board.containerObj.addEventListener('pointerdown', function (event) {
-        var target;
+        var neededButton, neededKey,
+            target;
 
-        // Events for the az rotation
-        if (Type.evaluate(view.visProp.az.pointer.enabled) && (Type.evaluate(view.visProp.az.pointer.button) === event.button || Type.evaluate(view.visProp.az.pointer.button) === -1) && (Type.evaluate(view.visProp.az.pointer.key) === 'none' || (Type.evaluate(view.visProp.az.pointer.key) === 'shift' && event.shiftKey) || (Type.evaluate(view.visProp.az.pointer.key) === 'ctrl' && event.ctrlKey))) {
-            // If outside is true then the event listener is bound to the document, otherwise to the div
-            if (Type.evaluate(view.visProp.az.pointer.outside)) {
-                target = document;
-            } else {
-                target = board.containerObj;
+        if (Type.evaluate(view.visProp.az.pointer.enabled)) {
+            neededButton = Type.evaluate(view.visProp.az.pointer.button);
+            neededKey = Type.evaluate(view.visProp.az.pointer.key);
+
+            // Events for azimuth
+            if (
+                (neededButton === -1 || neededButton === event.button) &&
+                (neededKey === 'none' || (neededKey.indexOf('shift') > -1 && event.shiftKey) || (neededKey.indexOf('ctrl') > -1 && event.ctrlKey))
+            ) {
+                // If outside is true then the event listener is bound to the document, otherwise to the div
+                if (Type.evaluate(view.visProp.az.pointer.outside)) {
+                    target = document;
+                } else {
+                    target = board.containerObj;
+                }
+                Env.addEvent(target, 'pointermove', view._azEventHandler, view);
+                view._hasMoveAz = true;
             }
-            Env.addEvent(target, 'pointermove', view.moveAz, view);
-            view._hasMoveAz = true;
         }
 
-        // Events for el rotation
-        if (Type.evaluate(view.visProp.el.pointer.enabled) && (Type.evaluate(view.visProp.el.pointer.button) === event.button || Type.evaluate(view.visProp.el.pointer.button) === -1) && (Type.evaluate(view.visProp.el.pointer.key) === 'none' || (Type.evaluate(view.visProp.el.pointer.key) === 'shift' && event.shiftKey) || (Type.evaluate(view.visProp.el.pointer.key) === 'ctrl' && event.ctrlKey))) {
-            // If outside is true then the event listener is bound to the document, otherwise to the div
-            if (Type.evaluate(view.visProp.el.pointer.outside)) {
-                target = document;
-            } else {
-                target = board.containerObj;
-            }
+        if (Type.evaluate(view.visProp.el.pointer.enabled)) {
+            neededButton = Type.evaluate(view.visProp.el.pointer.button);
+            neededKey = Type.evaluate(view.visProp.el.pointer.key);
 
-            Env.addEvent(target, 'pointermove', view.moveEl, view);
-            view._hasMoveEl = true;
+            // Events for elevation
+            if (
+                (neededButton === -1 || neededButton === event.button) &&
+                (neededKey === 'none' || (neededKey.indexOf('shift') > -1 && event.shiftKey) || (neededKey.indexOf('ctrl') > -1 && event.ctrlKey))
+            ) {
+                // If outside is true then the event listener is bound to the document, otherwise to the div
+                if (Type.evaluate(view.visProp.el.pointer.outside)) {
+                    target = document;
+                } else {
+                    target = board.containerObj;
+                }
+                Env.addEvent(target, 'pointermove', view._elEventHandler, view);
+                view._hasMoveEl = true;
+            }
         }
 
-        /**
-         * Removes all the pointer event listener as soon as pointer up is triggered
-         */
+        // Remove pointerMove and pointerUp event listener as soon as pointer up is triggered
         function handlePointerUp() {
             var target;
             if (view._hasMoveAz) {
@@ -1211,23 +1235,20 @@ JXG.createView3D = function (board, parents, attributes) {
                 } else {
                     target = view.board.containerObj;
                 }
-                Env.removeEvent(target, 'pointermove', view.moveAz, view);
+                Env.removeEvent(target, 'pointermove', view._azEventHandler, view);
                 view._hasMoveAz = false;
             }
-
             if (view._hasMoveEl) {
                 if (Type.evaluate(view.visProp.el.pointer.outside)) {
                     target = document;
                 } else {
                     target = view.board.containerObj;
                 }
-                Env.removeEvent(target, 'pointermove', view.moveEl, view);
+                Env.removeEvent(target, 'pointermove', view._elEventHandler, view);
                 view._hasMoveEl = false;
             }
-
             Env.removeEvent(document, 'pointerup', handlePointerUp, view);
         }
-
         Env.addEvent(document, 'pointerup', handlePointerUp, view);
     });
 
