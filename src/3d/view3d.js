@@ -827,7 +827,7 @@ JXG.extend(
          * @returns {Object} Reference to the view.
          */
         nextView: function () {
-            let views = Type.evaluate(this.visProp.values),
+            var views = Type.evaluate(this.visProp.values),
                 n = this.visProp._currentview;
 
             n = (n + 1) % views.length;
@@ -844,7 +844,7 @@ JXG.extend(
          * @returns {Object} Reference to the view.
          */
         previousView: function () {
-            let views = Type.evaluate(this.visProp.values),
+            var views = Type.evaluate(this.visProp.values),
                 n = this.visProp._currentview;
 
             n = (n + views.length - 1) % views.length;
@@ -862,7 +862,7 @@ JXG.extend(
          * @returns {Object} Reference to the view.
          */
         setCurrentView: function (n) {
-            let views = Type.evaluate(this.visProp.values);
+            var views = Type.evaluate(this.visProp.values);
 
             if (n < 0 || n >= views.length) {
                 n = ((n % views.length) + views.length) % views.length;
@@ -875,15 +875,18 @@ JXG.extend(
         },
 
         /**
-         * Controls the navigation in az rotation using either the keyboard or a pointer, parameters are changed using
-         * the az. options
-         * @param {event} event event from either the keydown or the pointer event listener.
+         * Controls the navigation in az direction using either the keyboard or a pointer.
+         *
+         * @private
+         *
+         * @param {event} event either the keydown or the pointer event
          * @returns view
          */
         _azEventHandler: function (event) {
-            // Calculate the new az value using pointer movement
-            var speedAZ = this.az_slide._smax / this.board.canvasWidth * (Type.evaluate(this.visProp.az.pointer.speed)),
-                deltaX = event.movementX,
+            var smax = this.az_slide._smax,
+                smin = this.az_slide._smin,
+                speed = (smax - smin) / this.board.canvasWidth * (Type.evaluate(this.visProp.az.pointer.speed)),
+                delta = event.movementX,
                 az = this.az_slide.Value(),
                 el = this.el_slide.Value();
 
@@ -902,74 +905,76 @@ JXG.extend(
                 }
             }
 
-            if (Type.evaluate(this.visProp.az.pointer.enabled) && (deltaX !== 0) && event.key == null) {
-                az += deltaX * speedAZ;
+            if (Type.evaluate(this.visProp.az.pointer.enabled) && (delta !== 0) && event.key == null) {
+                az += delta * speed;
             }
 
-            // Projects the calculated az value to a usable value in the interval [0,2pi]
-            // Uses modulu if continuous is true
+            // Project the calculated az value to a usable value in the interval [smin,smax]
+            // Use modulo if continuous is true
             if (Type.evaluate(this.visProp.az.continuous)) {
-                az = (((az % (this.az_slide._smax)) + this.az_slide._smax) % this.az_slide._smax);
+                az = (((az % smax) + smax) % smax);
             } else {
                 if (az > 0) {
-                    az = Math.min(this.az_slide._smax, az);
+                    az = Math.min(smax, az);
                 } else if (az < 0) {
-                    az = Math.max(this.az_slide._smin, az);
+                    az = Math.max(smin, az);
                 }
             }
 
-            this.setView(az, el, this.r);
+            this.setView(az, el);
             return this;
         },
 
         /**
-         * Controls the navigation in el rotation using either the keyboard or a pointer, parameters are changed using
-         * the el. options
-         * @param {event} event event from either the keydown or the pointer event listener.
+         * Controls the navigation in el direction using either the keyboard or a pointer.
+         *
+         * @private
+         *
+         * @param {event} event either the keydown or the pointer event
          * @returns view
          */
         _elEventHandler: function (event) {
-            //Calculate the new el value using pointer movement
-            var speedEL = this.el_slide._smax / this.board.canvasHeight * Type.evaluate(this.visProp.el.pointer.speed),
-                deltaY = event.movementY,
+            var smax = this.el_slide._smax,
+                smin = this.el_slide._smin,
+                speed = (smax - smin) / this.board.canvasHeight * Type.evaluate(this.visProp.el.pointer.speed),
+                delta = event.movementY,
                 az = this.az_slide.Value(),
                 el = this.el_slide.Value();
 
-            //Doesn't allow navigation if another moving event is triggered
+            // Doesn't allow navigation if another moving event is triggered
             if (this.board.mode === this.board.BOARD_MODE_DRAG) {
                 return this;
             }
 
-            //Calculate new az value if keyboard events are triggered
-            //Plus if right-button, minus if left-button
+            // Calculate new az value if keyboard events are triggered
+            // Plus if right-button, minus if left-button
             if (Type.evaluate(this.visProp.el.keyboard.enabled)) {
                 if (event.key === 'ArrowUp') {
                     el = el - Type.evaluate(this.visProp.el.keyboard.step) * Math.PI / 180;
-
                 } else if (event.key === 'ArrowDown') {
                     el = el + Type.evaluate(this.visProp.el.keyboard.step) * Math.PI / 180;
                 }
             }
 
-            //Calculate new az value if keyboard events are triggered
-            //Plus if right-button, minus if left-button
-            if (Type.evaluate(this.visProp.el.pointer.enabled) && (deltaY !== 0) && event.key == null) {
-                el += deltaY * speedEL;
+            // Calculate new az value if keyboard events are triggered
+            // Plus if right-button, minus if left-button
+            if (Type.evaluate(this.visProp.el.pointer.enabled) && (delta !== 0) && event.key == null) {
+                el += delta * speed;
             }
 
-            //Projects the calculated az value to a usable value in the interval [0,2pi]
-            //Uses modulu if continuous is true
+            // Project the calculated az value to a usable value in the interval [smin,smax]
+            // Use modulo if continuous is true
             if (Type.evaluate(this.visProp.el.continuous)) {
-                el = (((el % (this.el_slide._smax)) + this.el_slide._smax) % this.el_slide._smax);
+                el = (((el % smax) + smax) % smax);
             } else {
                 if (el > 0) {
-                    el = Math.min(this.el_slide._smax, el);
+                    el = Math.min(smax, el);
                 } else if (el < 0) {
-                    el = Math.max(this.el_slide._smin, el);
+                    el = Math.max(smin, el);
                 }
             }
 
-            this.setView(az, el, this.r);
+            this.setView(az, el);
             return this;
         }
     });
@@ -1157,7 +1162,7 @@ JXG.createView3D = function (board, parents, attributes) {
 
     // Add events for the keyboard navigation
     Env.addEvent(board.containerObj, 'keydown', function (event) {
-        let neededKey;
+        var neededKey;
 
         if (Type.evaluate(view.visProp.el.keyboard.enabled) && (event.key === 'ArrowUp' || event.key === 'ArrowDown')) {
             neededKey = Type.evaluate(view.visProp.el.keyboard.key);
@@ -1249,6 +1254,7 @@ JXG.createView3D = function (board, parents, attributes) {
             }
             Env.removeEvent(document, 'pointerup', handlePointerUp, view);
         }
+
         Env.addEvent(document, 'pointerup', handlePointerUp, view);
     });
 
