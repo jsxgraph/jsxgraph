@@ -84,7 +84,7 @@ JXG.View3D = function (board, parents, attributes) {
      * @type  {Array}
      * @private
      */
-    // 3D-to-2D transformation matrix (3 x 4)
+    // 3D-to-2D transformation matrix
     this.matrix3D = [
         [1, 0, 0, 0],
         [0, 1, 0, 0],
@@ -118,7 +118,12 @@ JXG.View3D = function (board, parents, attributes) {
      */
     this.r = -1;
 
-    this.projectionType = 'parallel';
+    /**
+     * Type of projection.
+     * @type String
+     */
+    // Will be set in update().
+    this.projectionType = '';
 
     this.timeoutAzimuth = null;
 
@@ -262,11 +267,13 @@ JXG.extend(
             return mat;
         },
 
-        updateCentralProjection: function () {
+        /**
+         * @private
+         * @returns {Array}
+         */
+        _updateCentralProjection: function () {
             var r, e, a, up,
                 az, ax, ay, v, nrm,
-                leftdowncorner,
-                rightupcorner,
                 // See https://www.mathematik.uni-marburg.de/~thormae/lectures/graphics1/graphics_6_1_eng_web.html
                 // bbox3D is always at the world origin, i.e. T_obj is the unit matrix.
                 // All vectors contain affine coordinates and have length 3
@@ -282,36 +289,45 @@ JXG.extend(
                     0.5 * (this.bbox3D[0][0] + this.bbox3D[0][1])
                 ],
 
-                // calculates a spherical parametric surface, which depends on r, el and az. It outputs an 3-dimensional vector in cartesian coordinates
-                para = (r, e, a) => [r * Math.cos(a) * Math.cos(e), -r * Math.sin(a) * Math.cos(e), r * Math.sin(e)],
-
                 A = [
                     [0, 0, 0, -1],
                     [0, foc, 0, 0],
                     [0, 0, foc, 0],
                     [2 * zf * zn / (zn - zf), 0, 0, (zf + zn) / (zn - zf)]
+                ],
+
+                func_sphere;
+
+            /**
+             * Calculates a spherical parametric surface, which depends on az, el and r.
+             * @param {Number} a
+             * @param {Number} e
+             * @param {Number} r
+             * @returns {Array} 3-dimensional vector in cartesian coordinates
+             */
+            func_sphere = function (az, el, r) {
+                return [
+                    r * Math.cos(az) * Math.cos(el),
+                    -r * Math.sin(az) * Math.cos(el),
+                    r * Math.sin(el)
                 ];
+            };
 
-            a = this.az_slide.Value();
+            a = this.az_slide.Value() + (3 * Math.PI * 0.5); // Sphere
             e = this.el_slide.Value() * 2;
-
-            function findRadius(leftdown, rightup) {
-                var r;
-                r = 1 * Math.sqrt(Math.pow(leftdown[0] - rightup[0], 2) + Math.pow(leftdown[1] - rightup[1], 2) + Math.pow(leftdown[2] - rightup[2], 2));
-                return r;
-            }
 
             r = Type.evaluate(this.visProp.r);
             if (r === 'auto') {
-                leftdowncorner = [this.bbox3D[0][0], this.bbox3D[1][0], this.bbox3D[2][0]], rightupcorner = [this.bbox3D[0][1], this.bbox3D[1][1], this.bbox3D[2][1]];
-                r = findRadius(leftdowncorner, rightupcorner);
+                r = Math.sqrt(
+                    Math.pow(this.bbox3D[0][0] - this.bbox3D[0][1], 2) +
+                    Math.pow(this.bbox3D[1][0] - this.bbox3D[1][1], 2) +
+                    Math.pow(this.bbox3D[2][0] - this.bbox3D[2][1], 2)
+                );
             }
 
-            a += 3 * Math.PI * 0.5;
-
-            // creates an up vector and an eye vector which are 90° out of phase
-            up = para(1, e + Math.PI / 2, a);
-            eye = para(r, e, a);
+            // create an up vector and an eye vector which are 90 degrees out of phase
+            up = func_sphere(1, e + Math.PI / 2, a);
+            eye = func_sphere(r, e, a);
 
             d = [eye[0] - Pref[0], eye[1] - Pref[1], eye[2] - Pref[2]];
             nrm = Mat.norm(d, 3);
@@ -335,10 +351,9 @@ JXG.extend(
             return A;
         },
 
+        // Update 3D-to-2D transformation matrix with the actual
+        // elevation and azimuth angles.
         update: function () {
-            // Update 3D-to-2D transformation matrix with the actual
-            // elevation and azimuth angles.
-
             var mat2D, shift, size;
 
             if (
@@ -355,46 +370,47 @@ JXG.extend(
                 [0, 0, 1]
             ];
 
-            this.projectionType = Type.evaluate(this.visProp.projection);
+            this.projectionType = Type.evaluate(this.visProp.projection).toLowerCase();
 
-            if (this.projectionType === 'parallel') {
-                // Parallel projection
-                // Rotate the scenery around the center of the box,
-                // not around the origin
-                shift = [
-                    [1, 0, 0, 0],
-                    [-0.5 * (this.bbox3D[0][0] + this.bbox3D[0][1]), 1, 0, 0],
-                    [-0.5 * (this.bbox3D[1][0] + this.bbox3D[1][1]), 0, 1, 0],
-                    [-0.5 * (this.bbox3D[2][0] + this.bbox3D[2][1]), 0, 0, 1]
-                ];
+            switch (this.projectionType) {
+                case  'central': // Central projection
 
-                // Add a second transformation to scale and shift the projection
-                // on the board, usually called viewport.
-                mat2D[1][1] = this.size[0] / (this.bbox3D[0][1] - this.bbox3D[0][0]); // w / d_x
-                mat2D[2][2] = this.size[1] / (this.bbox3D[1][1] - this.bbox3D[1][0]); // h / d_y
-                mat2D[1][0] = this.llftCorner[0] + mat2D[1][1] * 0.5 * (this.bbox3D[0][1] - this.bbox3D[0][0]); // llft_x
-                mat2D[2][0] = this.llftCorner[1] + mat2D[2][2] * 0.5 * (this.bbox3D[1][1] - this.bbox3D[1][0]); // llft_y
+                    this.matrix3D = this._updateCentralProjection();
+                    // this.matrix3D is a 4x4 matrix
 
-                // this.matrix3D is a 3x4 matrix
-                this.matrix3D = this.updateParallelProjection();
-                // Combine the projections
-                this.matrix3D = Mat.matMatMult(mat2D, Mat.matMatMult(this.matrix3D, shift));
+                    size = 0.4;
+                    mat2D[1][1] = this.size[0] / (2 * size); // w / d_x
+                    mat2D[2][2] = this.size[1] / (2 * size); // h / d_y
+                    mat2D[1][0] = this.llftCorner[0] + mat2D[1][1] * 0.5 * (2 * size); // llft_x
+                    mat2D[2][0] = this.llftCorner[1] + mat2D[2][2] * 0.5 * (2 * size); // llft_y
 
-            } else {
-                // Central projection
-                // this.matrix3D is a 4x4 matrix
-                this.matrix3D = this.updateCentralProjection();
+                    // The transformations this.matrix3D and mat2D can not be combined yet, since
+                    // the projected vector has to be normalized in between in
+                    // project3DTo2D
+                    this.viewPortTransform = mat2D;
+                    break;
 
-                size = 0.4;
-                mat2D[1][1] = this.size[0] / (2 * size); // w / d_x
-                mat2D[2][2] = this.size[1] / (2 * size); // h / d_y
-                mat2D[1][0] = this.llftCorner[0] + mat2D[1][1] * 0.5 * (2 * size); // llft_x
-                mat2D[2][0] = this.llftCorner[1] + mat2D[2][2] * 0.5 * (2 * size); // llft_y
+                case 'parallel': // Parallel projection
+                default:
+                    // Rotate the scenery around the center of the box, not around the origin
+                    shift = [
+                        [1, 0, 0, 0],
+                        [-0.5 * (this.bbox3D[0][0] + this.bbox3D[0][1]), 1, 0, 0],
+                        [-0.5 * (this.bbox3D[1][0] + this.bbox3D[1][1]), 0, 1, 0],
+                        [-0.5 * (this.bbox3D[2][0] + this.bbox3D[2][1]), 0, 0, 1]
+                    ];
 
-                // The transformations this.matrix3D and mat2D can not be combined yet, since
-                // the projected vector has to be normalized in between in
-                // project3DTo2D
-                this.viewPortTransform = mat2D;
+                    // Add a second transformation to scale and shift the projection
+                    // on the board, usually called viewport.
+                    mat2D[1][1] = this.size[0] / (this.bbox3D[0][1] - this.bbox3D[0][0]); // w / d_x
+                    mat2D[2][2] = this.size[1] / (this.bbox3D[1][1] - this.bbox3D[1][0]); // h / d_y
+                    mat2D[1][0] = this.llftCorner[0] + mat2D[1][1] * 0.5 * (this.bbox3D[0][1] - this.bbox3D[0][0]); // llft_x
+                    mat2D[2][0] = this.llftCorner[1] + mat2D[2][2] * 0.5 * (this.bbox3D[1][1] - this.bbox3D[1][0]); // llft_y
+
+                    // this.matrix3D is a 3x4 matrix
+                    this.matrix3D = this.updateParallelProjection();
+                    // Combine the projections
+                    this.matrix3D = Mat.matMatMult(mat2D, Mat.matMatMult(this.matrix3D, shift));
             }
 
             return this;
