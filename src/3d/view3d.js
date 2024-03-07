@@ -351,8 +351,7 @@ JXG.extend(
             return A;
         },
 
-        // Update 3D-to-2D transformation matrix with the actual
-        // elevation and azimuth angles.
+        // Update 3D-to-2D transformation matrix with the actual azimuth and elevation angles.
         update: function () {
             var mat2D, shift, size;
 
@@ -373,7 +372,7 @@ JXG.extend(
             this.projectionType = Type.evaluate(this.visProp.projection).toLowerCase();
 
             switch (this.projectionType) {
-                case  'central': // Central projection
+                case 'central': // Central projection
 
                     this.matrix3D = this._updateCentralProjection();
                     // this.matrix3D is a 4x4 matrix
@@ -485,17 +484,18 @@ JXG.extend(
 
             w = Mat.matVecMult(this.matrix3D, vec);
 
-            if (this.projectionType === 'parallel') {
-                return w;
+            switch (this.projectionType) {
+                case 'central':
+                    w[1] /= w[0];
+                    w[2] /= w[0];
+                    w[3] /= w[0];
+                    w[0] /= w[0];
+                    return Mat.matVecMult(this.viewPortTransform, w.slice(0, 3));
+
+                case 'parallel':
+                default:
+                    return w;
             }
-
-            // Central projection
-            w[1] /= w[0];
-            w[2] /= w[0];
-            w[3] /= w[0];
-            w[0] /= w[0];
-
-            return Mat.matVecMult(this.viewPortTransform, w.slice(0, 3));
         },
 
         /**
@@ -800,44 +800,78 @@ JXG.extend(
         },
 
         /**
-         * Sets the value of the view to the given value.
-         * @param {Number} az value of at-rotation to change the view to.
-         * @param {Number} el value of at-rotation to change the view to.
-         * @param {Number} r value of the radius to change the view to.
+         * Sets camera view to the given values.
+         *
+         * @param {Number} az Value of azimuth.
+         * @param {Number} el Value of elevation.
+         * @param {Number} [r] Value of radius.
+         *
+         * @returns {Object} Reference to the view.
          */
         setView: function (az, el, r) {
-            var temp = this.r;
+            r = r || this.r;
+
             this.az_slide.setValue(az);
             this.el_slide.setValue(el);
             this.r = r;
             this.board.update();
-            this.r = temp;
+
+            return this;
         },
 
         /**
-         * Goes to the next view in the values array
+         * Changes view to the next view stored in the attribute `values`.
+         *
+         * @see View3D#values
+         *
+         * @returns {Object} Reference to the view.
          */
         nextView: function () {
-            this.visProp._currentview = (Type.evaluate(this.visProp._currentview) + 1) % Type.evaluate(this.visProp.values.length);
-            this.setView(Type.evaluate(this.visProp.values[Type.evaluate(this.visProp._currentview)][0]), Type.evaluate(this.visProp.values[Type.evaluate(this.visProp._currentview)][1]), Type.exists(this.visProp.values[Type.evaluate(this.visProp._currentview)][2]) ? Type.evaluate(this.visProp.values[Type.evaluate(this.visProp._currentview)][2]) : this.r);
+            let views = Type.evaluate(this.visProp.values),
+                n = this.visProp._currentview;
+
+            n = (n + 1) % views.length;
+            this.setCurrentView(n);
+
+            return this;
         },
 
         /**
-         * Goes to the previous view in the view array
+         * Changes view to the previous view stored in the attribute `values`.
+         *
+         * @see View3D#values
+         *
+         * @returns {Object} Reference to the view.
          */
         previousView: function () {
-            this.visProp._currentview = (((Type.evaluate(this.visProp._currentview) - 1) % Type.evaluate(this.visProp.values.length)) + Type.evaluate(this.visProp.values.length)) % Type.evaluate(this.visProp.values.length);
-            this.setView(Type.evaluate(this.visProp.values[Type.evaluate(this.visProp._currentview)][0]), Type.evaluate(this.visProp.values[Type.evaluate(this.visProp._currentview)][1]), Type.exists(this.visProp.values[Type.evaluate(this.visProp._currentview)][2]) ? Type.evaluate(this.visProp.values[Type.evaluate(this.visProp._currentview)][2]) : this.r);
+            let views = Type.evaluate(this.visProp.values),
+                n = this.visProp._currentview;
+
+            n = (n + views.length - 1) % views.length;
+            this.setCurrentView(n);
+
+            return this;
         },
 
         /**
-         * Sets current view to a chosen number.
-         * @param {number} currentView index to switch view to.
+         * Changes view to the determined view stored in the attribute `values`.
+         *
+         * @see View3D#values
+         *
+         * @param {Number} n Index of view in attribute `values`.
+         * @returns {Object} Reference to the view.
          */
-        setCurrentView: function (currentView) {
-            currentView = (((currentView) % Type.evaluate(this.visProp.values.length)) + Type.evaluate(this.visProp.values.length)) % Type.evaluate(this.visProp.values.length);
-            this.setView(Type.evaluate(this.visProp.values[currentView][0]), Type.evaluate(this.visProp.values[currentView][1]), Type.exists(this.visProp.values[currentView][2]) ? Type.evaluate(this.visProp.values[currentView][2]) : this.r);
-            this.visProp._currentview = currentView;
+        setCurrentView: function (n) {
+            let views = Type.evaluate(this.visProp.values);
+
+            if (n < 0 || n >= views.length) {
+                n = ((n % views.length) + views.length) % views.length;
+            }
+
+            this.setView(views[n][0], views[n][1], views[n][2]);
+            this.visProp._currentview = n;
+
+            return this;
         },
 
         /**
@@ -847,7 +881,7 @@ JXG.extend(
          * @returns view
          */
         moveAz: function (event) {
-            //Calculate the new az value using pointer movement
+            // Calculate the new az value using pointer movement
             var speedAZ = this.az_slide._smax / this.board.canvasWidth * (Type.evaluate(this.visProp.az.pointer.speed)),
                 deltaX = event.movementX,
                 az = this.az_slide.Value(),
