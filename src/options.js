@@ -8124,7 +8124,12 @@ JXG.Options = {
             strokeOpacity: 1,
             strokeWidth: 1,
             strokeColor: '#000000',
-            visible: 'inherit'
+            visible: 'inherit',
+            label: {
+                anchorY: 'top',
+                anchorX: 'middle',
+                offset: [0, -10]
+            }
         },
 
         /**
