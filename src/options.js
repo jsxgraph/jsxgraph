@@ -177,7 +177,7 @@ JXG.Options = {
          *
          * @name JXG.Board#defaultAxes
          * @type Object
-         * @default {x: {name:'x'}, y: {name: 'y'}}
+         * @default <tt>{x: {name:'x'}, y: {name: 'y'}}</tt>
          *
          * @example
          * const board = JXG.JSXGraph.initBoard('id', {
@@ -372,7 +372,7 @@ JXG.Options = {
          *
          * @name JXG.Board#drag
          * @type Object
-         * @default {enabled: true}
+         * @default <tt>{enabled: true}</tt>
          */
         drag: {
             enabled: true
@@ -468,7 +468,7 @@ JXG.Options = {
          *
          * @name JXG.Board#intl
          * @type Object
-         * @default {enabled: false}
+         * @default <tt>{enabled: false}</tt>
          * @see Integral#label
          * @see Slider#intl
          * @see Text#intl
@@ -691,7 +691,7 @@ JXG.Options = {
          *
          * @name JXG.Board#keyboard
          * @type Object
-         * @default {enabled: true, dx: 10, dy:10, panShift: true, panCtrl: false}
+         * @default <tt>{enabled: true, dx: 10, dy:10, panShift: true, panCtrl: false}</tt>
          */
         keyboard: {
             enabled: true,
@@ -706,7 +706,7 @@ JXG.Options = {
          *
          * @name JXG.Board#logging
          * @type Object
-         * @default {enabled: false}
+         * @default <tt>{enabled: false}</tt>
          *
          * @example
          * var board = JXG.JSXGraph.initBoard(BOARDID,
@@ -1046,7 +1046,7 @@ JXG.Options = {
          *
          * @name JXG.Board#resize
          * @type Object
-         * @default {enabled: true, throttle: 10}
+         * @default <tt>{enabled: true, throttle: 10}</tt>
          *
          * @example
          *     var board = JXG.JSXGraph.initBoard('jxgbox', {
@@ -1545,7 +1545,7 @@ JXG.Options = {
          *
          * @name JXG.GeometryElement#draft
          * @type Object
-         * @default {@link JXG.Options.elements.draft#draft}
+         * @default <tt>{@link JXG.Options.elements.draft#draft}</tt>
          */
         draft: {
             draft: false,
@@ -1589,7 +1589,7 @@ JXG.Options = {
          * @see JXG.GeometryElement#highlightFillColor
          * @see JXG.GeometryElement#fillOpacity
          * @see JXG.GeometryElement#highlightFillOpacity
-         * @default {@link JXG.Options.elements.color#fillColor}
+         * @default JXG.palette.red
          */
         fillColor: Color.palette.red,
 
@@ -1600,7 +1600,7 @@ JXG.Options = {
          * @see JXG.GeometryElement#fillColor
          * @see JXG.GeometryElement#highlightFillColor
          * @see JXG.GeometryElement#highlightFillOpacity
-         * @default {@link JXG.Options.elements.color#fillOpacity}
+         * @default 1
          */
         fillOpacity: 1,
 
@@ -1913,7 +1913,7 @@ JXG.Options = {
          * @see JXG.GeometryElement#fillColor
          * @see JXG.GeometryElement#fillOpacity
          * @see JXG.GeometryElement#highlightFillOpacity
-         * @default {@link JXG.Options.elements.color#highlightFillColor}
+         * @default 'none'
          */
         highlightFillColor: 'none',
 
@@ -1924,7 +1924,7 @@ JXG.Options = {
          * @see JXG.GeometryElement#fillColor
          * @see JXG.GeometryElement#highlightFillColor
          * @see JXG.GeometryElement#fillOpacity
-         * @default {@link JXG.Options.elements.color#highlightFillOpacity}
+         * @default 1
          */
         highlightFillOpacity: 1,
 
@@ -1936,7 +1936,7 @@ JXG.Options = {
          * @see JXG.GeometryElement#strokeWidth
          * @see JXG.GeometryElement#strokeOpacity
          * @see JXG.GeometryElement#highlightStrokeOpacity
-         * @default {@link JXG.Options.elements.color#highlightStrokeColor}
+         * @default '#c3d9ff'
          */
         highlightStrokeColor: '#c3d9ff',
 
@@ -1948,7 +1948,7 @@ JXG.Options = {
          * @see JXG.GeometryElement#highlightStrokeColor
          * @see JXG.GeometryElement#strokeWidth
          * @see JXG.GeometryElement#strokeOpacity
-         * @default {@link JXG.Options.elements#highlightStrokeOpacity}
+         * @default 1
          */
         highlightStrokeOpacity: 1,
 
@@ -1961,7 +1961,7 @@ JXG.Options = {
          * @see JXG.GeometryElement#strokeOpacity
          * @see JXG.GeometryElement#highlightStrokeOpacity
          * @see JXG.GeometryElement#highlightFillColor
-         * @default {@link JXG.Options.elements#strokeWidth}
+         * @default 2
          */
         highlightStrokeWidth: 2,
 
@@ -2199,7 +2199,7 @@ JXG.Options = {
          * @see JXG.GeometryElement#strokeWidth
          * @see JXG.GeometryElement#strokeOpacity
          * @see JXG.GeometryElement#highlightStrokeOpacity
-         * @default {@link JXG.Options.elements.color#strokeColor}
+         * @default JXG.palette.blue
          */
         strokeColor: Color.palette.blue,
 
@@ -2211,7 +2211,7 @@ JXG.Options = {
          * @see JXG.GeometryElement#highlightStrokeColor
          * @see JXG.GeometryElement#strokeWidth
          * @see JXG.GeometryElement#highlightStrokeOpacity
-         * @default {@link JXG.Options.elements#strokeOpacity}
+         * @default 1
          */
         strokeOpacity: 1,
 
@@ -2223,7 +2223,7 @@ JXG.Options = {
          * @see JXG.GeometryElement#highlightStrokeColor
          * @see JXG.GeometryElement#strokeOpacity
          * @see JXG.GeometryElement#highlightStrokeOpacity
-         * @default {@link JXG.Options.elements#strokeWidth}
+         * @default 2
          */
         strokeWidth: 2,
 
@@ -2270,7 +2270,7 @@ JXG.Options = {
          * @type Object
          * @see JXG.GeometryElement#trace
          * @name JXG.GeometryElement#traceAttributes
-         * @default {}
+         * @default <tt>{}</tt>
          *
          * @example
          * JXG.Options.elements.traceAttributes = {
@@ -2510,7 +2510,7 @@ JXG.Options = {
          *
          * @name Ticks#label
          * @type Object
-         * @default {}
+         * @default <tt>{}</tt>
          *
          */
         label: {
@@ -3252,10 +3252,10 @@ JXG.Options = {
          * Internationalization support for ticks labels.
          * @name intl
          * @memberOf Ticks.prototype
-         * @default {
+         * @default <pre>{
          *    enabled: 'inherit',
          *    options: {}
-         * }
+         * }</pre>
          * @see JXG.Board#intl
          * @see Text#intl
          *
@@ -3573,7 +3573,7 @@ JXG.Options = {
          * Attributes of the dot point marking right angles.
          * @name Angle#dot
          * @type Object
-         * @default {face: 'o', size: 2}
+         * @default <tt>{face: 'o', size: 2}</tt>
          */
         dot: {
             visible: false,
@@ -5724,10 +5724,10 @@ JXG.Options = {
          *
          * @name JXG.Board.infobox#intl
          * @type object
-                  * @default {
+         * @default <pre>{
          *    enabled: 'inherit',
          *    options: {}
-         * }
+         * }</pre>
          * @visprop
          * @see JXG.Board#intl
          * @see Text#intl
@@ -5837,14 +5837,14 @@ JXG.Options = {
          *
          * @type Label
          * @name Integral#label
-         * @default {
+         * @default <pre>{
          *      fontSize: 20,
          *      digits: 4,
          *      intl: {
          *          enabled: false,
          *          options: {}
          *      }
-         *    }
+         *    }</pre>
          */
         label: {
             fontSize: 20,
@@ -7492,10 +7492,10 @@ JXG.Options = {
          * @name intl
          * @memberOf Slider.prototype
          * @type object
-         * @default {
+         * @default <pre>{
          *    enabled: 'inherit',
          *    options: {}
-         * }
+         * }</pre>
          * @see JXG.Board#intl
          * @see Text#intl
          *
@@ -8280,10 +8280,10 @@ JXG.Options = {
          * @name intl
          * @memberOf Text.prototype
          * @type object
-         * @default {
+         * @default <pre>{
          *    enabled: 'inherit',
          *    options: {}
-         * }
+         * }</pre>
          * @see JXG.Board#intl
          *
          * @example
@@ -8867,7 +8867,7 @@ JXG.Options = {
          *
          * @name katexMacros
          * @memberOf Text.prototype
-         * @default {}
+         * @default <tt>{}</tt>
          * @type Object
          *
          * @example

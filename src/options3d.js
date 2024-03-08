@@ -364,7 +364,7 @@ JXG.extend(Options, {
         needsRegularUpdate: true,
 
         /**
-         * This attribute controls which projection is to be used: `parallel` or `central`.
+         * Choose the projection is to be used: `parallel` or `central`.
          *
          * @name View3D#projection
          * @type String
@@ -384,7 +384,7 @@ JXG.extend(Options, {
          *
          * @name View3D#verticalDrag
          * @type Object
-         * @default {enabled: true, key: 'shift'}
+         * @default <tt>{enabled: true, key: 'shift'}</tt>
          */
         verticalDrag: {
             enabled: true,
@@ -392,10 +392,9 @@ JXG.extend(Options, {
         },
 
         /**
-         * This attribute controls the azimuth.
-         * Behaviour can be controlled by the following sub-attributes:
+         * Specify the user handling of the azimuth.
          * <ul>
-         *  <li><tt>pointer</tt> with sub-attributes:
+         *  <li><tt>pointer</tt> sub-attributes:
          *      <ul>
          *          <li><tt>enabled</tt>: Boolean that specifies whether pointer navigation is allowed by azimuth.
          *          <li><tt>speed</tt>: Number indicating how many passes the range of the az_slider makes when the cursor crosses the entire board once in the horizontal direction.
@@ -403,7 +402,7 @@ JXG.extend(Options, {
          *          <li><tt>button</tt>: Which button of the pointer should be used? (<tt>'-1'</tt>, <tt>'0'</tt> or <tt>'2'</tt>)
          *          <li><tt>key</tt>: Should an additional key be pressed? (<tt>'none'</tt>, <tt>'shift'</tt> or <tt>'ctrl'</tt>)
          *      </ul>
-         *  <li><tt>keyboard</tt> with sub-attributes:
+         *  <li><tt>keyboard</tt> sub-attributes:
          *      <ul>
          *          <li><tt>enabled</tt>: Boolean that specifies whether the keyboard (arrow keys) can be used to navigate the board.
          *          <li><tt>step</tt>: Size of the step per keystroke.
@@ -420,7 +419,7 @@ JXG.extend(Options, {
          *
          * @name View3D#az
          * @type Object
-         * @default {
+         * @default <pre>{
          *      pointer: {enabled: true, speed: 1, outside: true, button: -1, key: 'none'},
          *      keyboard: {enabled: true, step: 10, key: 'ctrl'},
          *      continuous: true,
@@ -433,7 +432,7 @@ JXG.extend(Options, {
          *          max: 2 * Math.PI,
          *          start: 1.0
          *      },
-         * }
+         * }</pre>
          */
         az: {
             pointer: {
@@ -461,10 +460,9 @@ JXG.extend(Options, {
         },
 
         /**
-         * This attribute controls the elevation.
-         * Behaviour can be controlled by the following sub-attributes:
+         * Specify the user handling of the elevation.
          * <ul>
-         *  <li><tt>pointer</tt> with sub-attributes:
+         *  <li><tt>pointer</tt> sub-attributes:
          *      <ul>
          *          <li><tt>enabled</tt>: Boolean that specifies whether pointer navigation is allowed by elevation.
          *          <li><tt>speed</tt>: Number indicating how many passes the range of the el_slider makes when the cursor crosses the entire board once in the horizontal direction.
@@ -472,7 +470,7 @@ JXG.extend(Options, {
          *          <li><tt>button</tt>: Which button of the pointer should be used? (<tt>'-1'</tt>, <tt>'0'</tt> or <tt>'2'</tt>)
          *          <li><tt>key</tt>: Should an additional key be pressed? (<tt>'none'</tt>, <tt>'shift'</tt> or <tt>'ctrl'</tt>)
          *      </ul>
-         *  <li><tt>keyboard</tt> with sub-attributes:
+         *  <li><tt>keyboard</tt> sub-attributes:
          *      <ul>
          *          <li><tt>enabled</tt>: Boolean that specifies whether the keyboard (arrow keys) can be used to navigate the board.
          *          <li><tt>step</tt>: Size of the step per keystroke.
@@ -489,7 +487,7 @@ JXG.extend(Options, {
          *
          * @name View3D#el
          * @type Object
-         * @default {
+         * @default <pre>{
          *      pointer: {enabled: true, speed: 1, outside: true, button: -1, key: 'none'},
          *      keyboard: {enabled: true, step: 10, key: 'ctrl'},
          *      continuous: true,
@@ -502,7 +500,7 @@ JXG.extend(Options, {
          *          max: Math.PI,
          *          start: 0.3
          *      },
-         * }
+         * }<pre>
          */
         el: {
             pointer: {
@@ -542,7 +540,7 @@ JXG.extend(Options, {
          * Field of View defines the angle of view (in radians) of the camera, determining how much of the scene is captured within the frame.
          *
          * @type Number
-         * @default 1/5*2*Math.PI
+         * @default 2/5*Math.PI
          */
         fov: 1 / 5 * 2 * Math.PI,
 
@@ -552,7 +550,7 @@ JXG.extend(Options, {
          *
          * @name View3D#values
          * @type Array
-         * @default {[[0, 1.57], [0.78, 0.62], [0, 0], [5.49, 0.62], [4.71, 0], [3.93, 0.62], [3.14, 0], [2.36, 0.62], [1.57, 1.57]]}
+         * @default <tt>{[[0, 1.57], [0.78, 0.62], [0, 0], [5.49, 0.62], [4.71, 0], [3.93, 0.62], [3.14, 0], [2.36, 0.62], [1.57, 1.57]]}<tt>
          */
         values: [
             [0, 1.57],
