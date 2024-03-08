@@ -497,7 +497,7 @@ JXG.extend(Options, {
          *          point1: {frozen: true},
          *          point2: {frozen: true},
          *          min: 0,
-         *          max: Math.PI,
+         *          max: 2 * Math.PI,
          *          start: 0.3
          *      },
          * }<pre>
@@ -522,7 +522,7 @@ JXG.extend(Options, {
                 point1: { frozen: true },
                 point2: { frozen: true },
                 min: 0,
-                max: Math.PI,
+                max: 2 * Math.PI,
                 start: 0.3
             }
         },
