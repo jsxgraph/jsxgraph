@@ -177,7 +177,7 @@ JXG.Options = {
          *
          * @name JXG.Board#defaultAxes
          * @type Object
-         * @default {x: {name:'x'}, y: {name: 'y'}}
+         * @default <tt>{x: {name:'x'}, y: {name: 'y'}}</tt>
          *
          * @example
          * const board = JXG.JSXGraph.initBoard('id', {
@@ -372,7 +372,7 @@ JXG.Options = {
          *
          * @name JXG.Board#drag
          * @type Object
-         * @default {enabled: true}
+         * @default <tt>{enabled: true}</tt>
          */
         drag: {
             enabled: true
@@ -468,7 +468,7 @@ JXG.Options = {
          *
          * @name JXG.Board#intl
          * @type Object
-         * @default {enabled: false}
+         * @default <tt>{enabled: false}</tt>
          * @see Integral#label
          * @see Slider#intl
          * @see Text#intl
@@ -691,7 +691,7 @@ JXG.Options = {
          *
          * @name JXG.Board#keyboard
          * @type Object
-         * @default {enabled: true, dx: 10, dy:10, panShift: true, panCtrl: false}
+         * @default <tt>{enabled: true, dx: 10, dy:10, panShift: true, panCtrl: false}</tt>
          */
         keyboard: {
             enabled: true,
@@ -706,7 +706,7 @@ JXG.Options = {
          *
          * @name JXG.Board#logging
          * @type Object
-         * @default {enabled: false}
+         * @default <tt>{enabled: false}</tt>
          *
          * @example
          * var board = JXG.JSXGraph.initBoard(BOARDID,
@@ -1046,7 +1046,7 @@ JXG.Options = {
          *
          * @name JXG.Board#resize
          * @type Object
-         * @default {enabled: true, throttle: 10}
+         * @default <tt>{enabled: true, throttle: 10}</tt>
          *
          * @example
          *     var board = JXG.JSXGraph.initBoard('jxgbox', {
@@ -1545,7 +1545,7 @@ JXG.Options = {
          *
          * @name JXG.GeometryElement#draft
          * @type Object
-         * @default {@link JXG.Options.elements.draft#draft}
+         * @default <tt>{@link JXG.Options.elements.draft#draft}</tt>
          */
         draft: {
             draft: false,
@@ -1589,7 +1589,7 @@ JXG.Options = {
          * @see JXG.GeometryElement#highlightFillColor
          * @see JXG.GeometryElement#fillOpacity
          * @see JXG.GeometryElement#highlightFillOpacity
-         * @default {@link JXG.Options.elements.color#fillColor}
+         * @default JXG.palette.red
          */
         fillColor: Color.palette.red,
 
@@ -1600,7 +1600,7 @@ JXG.Options = {
          * @see JXG.GeometryElement#fillColor
          * @see JXG.GeometryElement#highlightFillColor
          * @see JXG.GeometryElement#highlightFillOpacity
-         * @default {@link JXG.Options.elements.color#fillOpacity}
+         * @default 1
          */
         fillOpacity: 1,
 
@@ -1913,7 +1913,7 @@ JXG.Options = {
          * @see JXG.GeometryElement#fillColor
          * @see JXG.GeometryElement#fillOpacity
          * @see JXG.GeometryElement#highlightFillOpacity
-         * @default {@link JXG.Options.elements.color#highlightFillColor}
+         * @default 'none'
          */
         highlightFillColor: 'none',
 
@@ -1924,7 +1924,7 @@ JXG.Options = {
          * @see JXG.GeometryElement#fillColor
          * @see JXG.GeometryElement#highlightFillColor
          * @see JXG.GeometryElement#fillOpacity
-         * @default {@link JXG.Options.elements.color#highlightFillOpacity}
+         * @default 1
          */
         highlightFillOpacity: 1,
 
@@ -1936,7 +1936,7 @@ JXG.Options = {
          * @see JXG.GeometryElement#strokeWidth
          * @see JXG.GeometryElement#strokeOpacity
          * @see JXG.GeometryElement#highlightStrokeOpacity
-         * @default {@link JXG.Options.elements.color#highlightStrokeColor}
+         * @default '#c3d9ff'
          */
         highlightStrokeColor: '#c3d9ff',
 
@@ -1948,7 +1948,7 @@ JXG.Options = {
          * @see JXG.GeometryElement#highlightStrokeColor
          * @see JXG.GeometryElement#strokeWidth
          * @see JXG.GeometryElement#strokeOpacity
-         * @default {@link JXG.Options.elements#highlightStrokeOpacity}
+         * @default 1
          */
         highlightStrokeOpacity: 1,
 
@@ -1961,7 +1961,7 @@ JXG.Options = {
          * @see JXG.GeometryElement#strokeOpacity
          * @see JXG.GeometryElement#highlightStrokeOpacity
          * @see JXG.GeometryElement#highlightFillColor
-         * @default {@link JXG.Options.elements#strokeWidth}
+         * @default 2
          */
         highlightStrokeWidth: 2,
 
@@ -2199,7 +2199,7 @@ JXG.Options = {
          * @see JXG.GeometryElement#strokeWidth
          * @see JXG.GeometryElement#strokeOpacity
          * @see JXG.GeometryElement#highlightStrokeOpacity
-         * @default {@link JXG.Options.elements.color#strokeColor}
+         * @default JXG.palette.blue
          */
         strokeColor: Color.palette.blue,
 
@@ -2211,7 +2211,7 @@ JXG.Options = {
          * @see JXG.GeometryElement#highlightStrokeColor
          * @see JXG.GeometryElement#strokeWidth
          * @see JXG.GeometryElement#highlightStrokeOpacity
-         * @default {@link JXG.Options.elements#strokeOpacity}
+         * @default 1
          */
         strokeOpacity: 1,
 
@@ -2223,7 +2223,7 @@ JXG.Options = {
          * @see JXG.GeometryElement#highlightStrokeColor
          * @see JXG.GeometryElement#strokeOpacity
          * @see JXG.GeometryElement#highlightStrokeOpacity
-         * @default {@link JXG.Options.elements#strokeWidth}
+         * @default 2
          */
         strokeWidth: 2,
 
@@ -2270,7 +2270,7 @@ JXG.Options = {
          * @type Object
          * @see JXG.GeometryElement#trace
          * @name JXG.GeometryElement#traceAttributes
-         * @default {}
+         * @default <tt>{}</tt>
          *
          * @example
          * JXG.Options.elements.traceAttributes = {
@@ -2510,7 +2510,7 @@ JXG.Options = {
          *
          * @name Ticks#label
          * @type Object
-         * @default {}
+         * @default <tt>{}</tt>
          *
          */
         label: {
@@ -3252,10 +3252,10 @@ JXG.Options = {
          * Internationalization support for ticks labels.
          * @name intl
          * @memberOf Ticks.prototype
-         * @default {
+         * @default <pre>{
          *    enabled: 'inherit',
          *    options: {}
-         * }
+         * }</pre>
          * @see JXG.Board#intl
          * @see Text#intl
          *
@@ -3573,7 +3573,7 @@ JXG.Options = {
          * Attributes of the dot point marking right angles.
          * @name Angle#dot
          * @type Object
-         * @default {face: 'o', size: 2}
+         * @default <tt>{face: 'o', size: 2}</tt>
          */
         dot: {
             visible: false,
@@ -4901,19 +4901,19 @@ JXG.Options = {
          */
         includeBoundaries: false,
 
-        // majorGrid options
+        /**
+         * This object contains the attributes for major grid elements.
+         *
+         * @see Grid#major_size
+         * @see Grid#major_face
+         * @see Grid#major_margin
+         * @see Grid#major_drawZero
+         * @see Grid#major_polygonVertices
+         *
+         * @name Grid#major
+         * @type Object
+         */
         major: {
-
-            /**
-             * This number (pixel value) controls where infinite lines end at the canvas border. If zero, the line
-             * ends exactly at the border, if negative there is a margin to the inside, if positive the line
-             * ends outside of the canvas (which is invisible).
-             *
-             * @name Grid#major_margin
-             * @type Number
-             * @default 0
-             */
-            margin: 0,
 
             /**
              * Size of major grid elements. There are the following possibilities:
@@ -4924,6 +4924,8 @@ JXG.Options = {
              * Unused for 'line' and 'point', which will use the value of strokeWidth.
              * Instead of one value you can provide two values as an array <tt>[x, y]</tt> here.
              * These are used as size in x- and y-direction.
+             *
+             * <br><br><b><i>This attribute is a sub-entry of {@link Grid#major}: <tt>major: {size: ...}</tt></i></b><br>
              *
              * @type {Number|String|Array}
              * @name Grid#major_size
@@ -4954,11 +4956,26 @@ JXG.Options = {
              * <tr><td>regularPolygon, regpol</td><td>⬡</td><td>yes</td></tr>
              * </table>
              *
+             * <br><b><i>This attribute is a sub-entry of {@link Grid#major}: <tt>major: {face: ...}</tt></i></b><br>
+             *
              * @type {String}
              * @name Grid#major_face
              * @default 'line'
              */
             face: 'line',
+
+            /**
+             * This number (pixel value) controls where infinite lines end at the canvas border. If zero, the line
+             * ends exactly at the border, if negative there is a margin to the inside, if positive the line
+             * ends outside of the canvas (which is invisible).
+             *
+             * <br><br><b><i>This attribute is a sub-entry of {@link Grid#major}: <tt>major: {margin: ...}</tt></i></b><br>
+             *
+             * @name Grid#major_margin
+             * @type Number
+             * @default 0
+             */
+            margin: 0,
 
             /**
              * This attribute determines whether the grid elements located at <tt>x=0</tt>, <tt>y=0</tt>
@@ -4970,28 +4987,43 @@ JXG.Options = {
              *     <tt>{x: true|false, y: true|false, origin: true|false}</tt>
              * </ul>
              *
+             * <br><b><i>This attribute is a sub-entry of {@link Grid#major}: <tt>major: {drawZero: ...}</tt></i></b><br>
+             *
              * @type {Boolean|Object}
              * @name Grid#major_drawZero
              * @default false
              */
             drawZero: false,
 
-            strokeColor: '#c0c0c0', // same in old grid
-            strokeWidth: 1,         // same in old grid
-            strokeOpacity: 0.5,     // same in old grid
-            highlight: false,
-
             /**
              * Number of vertices for face 'polygon'.
+             *
+             * <br><br><b><i>This attribute is a sub-entry of {@link Grid#major}: <tt>major: {polygonVertices: ...}</tt></i></b><br>
              *
              * @type {Number}
              * @name Grid#major_polygonVertices
              * @default 6
              */
-            polygonVertices: 6
+            polygonVertices: 6,
+
+            strokeColor: '#c0c0c0', // same in old grid
+            strokeWidth: 1,         // same in old grid
+            strokeOpacity: 0.5,     // same in old grid
+            highlight: false
         },
 
-        // minorGrid options
+        /**
+         * This object contains the attributes for minor grid elements.
+         *
+         * @see Grid#minor_size
+         * @see Grid#minor_face
+         * @see Grid#minor_margin
+         * @see Grid#minor_drawZero
+         * @see Grid#minor_polygonVertices
+         *
+         * @name Grid#minor
+         * @type Object
+         */
         minor: {
 
             /**
@@ -4999,17 +5031,6 @@ JXG.Options = {
              * @ignore
              */
             visible: 'inherit',
-
-            /**
-             * This number (pixel value) controls where infinite lines end at the canvas border. If zero, the line
-             * ends exactly at the border, if negative there is a margin to the inside, if positive the line
-             * ends outside of the canvas (which is invisible).
-             *
-             * @name Grid#major_margin
-             * @type Number
-             * @default 0
-             */
-            margin: 0,
 
             /**
              * Size of minor grid elements. There are the following possibilities:
@@ -5021,6 +5042,8 @@ JXG.Options = {
              * Instead of one value you can provide two values as an array <tt>[x, y]</tt> here.
              * These are used as size in x- and y-direction.
              *
+             * <br><br><b><i>This attribute is a sub-entry of {@link Grid#minor}: <tt>minor: {size: ...}</tt></i></b><br>
+             *
              * @type {Number|String|Array}
              * @name Grid#minor_size
              * @default 5
@@ -5030,6 +5053,8 @@ JXG.Options = {
             /**
              * Appearance of minor grid elements. Same options as for major grid elements.
              *
+             * <br><br><b><i>This attribute is a sub-entry of {@link Grid#minor}: <tt>minor: {face: ...}</tt></i></b><br>
+             *
              * @type {String}
              * @name Grid#minor_face
              * @default 'point'
@@ -5037,34 +5062,51 @@ JXG.Options = {
              */
             face: 'point',
 
-             /**
-             * This attribute determines whether the minor grid elements located at <tt>x=0</tt> and <tt>y=0</tt> are displayed.
-             * <ul>
-             *     <li>If <tt>false</tt>, then all these elements are hidden.
-             *     <li>If <tt>true</tt>, all these elements are shown.
-             *     <li>If an object of the following form is given, the three cases can be distinguished individually:<br>
-             *     <tt>{x: true|false, y: true|false}</tt>
-             * </ul>
+            /**
+             * This number (pixel value) controls where infinite lines end at the canvas border. If zero, the line
+             * ends exactly at the border, if negative there is a margin to the inside, if positive the line
+             * ends outside of the canvas (which is invisible).
              *
-             * @type {Boolean|Object}
-             * @name Grid#minor_drawZero
-             * @default false
+             * <br><br><b><i>This attribute is a sub-entry of {@link Grid#minor}: <tt>minor: {margin: ...}</tt></i></b><br>
+             *
+             * @name Grid#minor_margin
+             * @type Number
+             * @default 0
              */
-            drawZero: false,
+            margin: 0,
 
-            strokeColor: '#c0c0c0',
-            strokeWidth: 1,
-            strokeOpacity: 0.25,
-            highlight: false,
+             /**
+              * This attribute determines whether the minor grid elements located at <tt>x=0</tt> and <tt>y=0</tt> are displayed.
+              * <ul>
+              *     <li>If <tt>false</tt>, then all these elements are hidden.
+              *     <li>If <tt>true</tt>, all these elements are shown.
+              *     <li>If an object of the following form is given, the three cases can be distinguished individually:<br>
+              *     <tt>{x: true|false, y: true|false}</tt>
+              * </ul>
+              *
+              * <br><b><i>This attribute is a sub-entry of {@link Grid#minor}: <tt>minor: {drawZero: ...}</tt></i></b><br>
+              *
+              * @type {Boolean|Object}
+              * @name Grid#minor_drawZero
+              * @default false
+              */
+            drawZero: false,
 
             /**
              * Number of vertices for face 'polygon'.
+             *
+             * <br><br><b><i>This attribute is a sub-entry of {@link Grid#minor}: <tt>minor: {polygonVertices: ...}</tt></i></b><br>
              *
              * @type {Number}
              * @name Grid#minor_polygonVertices
              * @default 6
              */
-            polygonVertices: 6
+            polygonVertices: 6,
+
+            strokeColor: '#c0c0c0',
+            strokeWidth: 1,
+            strokeOpacity: 0.25,
+            highlight: false
         },
 
         /**
@@ -5093,8 +5135,10 @@ JXG.Options = {
          * @private
          *
          * @example
-         * </pre>Theme 1 (quadratic grid appearance with distance of major grid elements in x- and y-direction set to the primarily greater one)
-         * <pre>const board = JXG.JSXGraph.initBoard('jxgbox', {
+         * // Theme 1
+         * // quadratic grid appearance with distance of major grid elements set to the primarily greater one
+         *
+         * const board = JXG.JSXGraph.initBoard('jxgbox', {
          *     boundingbox: [-4, 4, 4, -4], axis: true,
          *     defaultAxes: {
          *         x: { ticks: {majorHeight: 10} },
@@ -5117,8 +5161,10 @@ JXG.Options = {
          * </script> <pre>
          *
          * @example
-         * </pre>Theme 2 (lines and subtile points in between)
-         * <pre>const board = JXG.JSXGraph.initBoard('jxgbox', {
+         * // Theme 2
+         * // lines and subtile points in between
+         *
+         * const board = JXG.JSXGraph.initBoard('jxgbox', {
          *     boundingbox: [-4, 4, 4, -4], axis: false,
          *     grid: { theme: 2, minorElements: 4, color: 'grey' },
          * });
@@ -5133,8 +5179,10 @@ JXG.Options = {
          * </script> <pre>
          *
          * @example
-         * </pre>Theme 3 (lines and thinner lines in between)
-         * <pre>const board = JXG.JSXGraph.initBoard('jxgbox', {
+         * // Theme 3
+         * // lines and thinner lines in between
+         *
+         * const board = JXG.JSXGraph.initBoard('jxgbox', {
          *     boundingbox: [-4, 4, 4, -4], axis: false,
          *     grid: { theme: 4, minorElements: 4, color: 'grey' },
          * });
@@ -5149,8 +5197,10 @@ JXG.Options = {
          * </script> <pre>
          *
          * @example
-         * </pre>Theme 4 (lines with more subtle grid of '+'s plotted in between)
-         * <pre>const board = JXG.JSXGraph.initBoard('jxgbox', {
+         * // Theme 4
+         * // lines with more subtle grid of '+'s plotted in between
+         *
+         * const board = JXG.JSXGraph.initBoard('jxgbox', {
          *     boundingbox: [-4, 4, 4, -4], axis: false,
          *     grid: { theme: 5, minorElements: 4, color: 'grey' },
          * });
@@ -5165,13 +5215,15 @@ JXG.Options = {
          * </script> <pre>
          *
          * @example
-         * </pre>Theme 5 (grid of '+'s and more subtile points in between)
-         * <pre>const board = JXG.JSXGraph.initBoard('jxgbox', {
+         * // Theme 5
+         * // grid of '+'s and more subtile points in between
+         *
+         * const board = JXG.JSXGraph.initBoard('jxgbox', {
          *     boundingbox: [-4, 4, 4, -4], axis: false,
          *     grid: { theme: 6, minorElements: 4, color: 'grey' },
          * });
          * </pre> <div id="JXG6a967d83-4179-4827-9e97-63fbf1e872c8" class="jxgbox" style="width: 300px; height: 300px;"></div>
-         * <script type="text/javascript"
+         * <script type="text/javascript">
          *     (function() {
          *         var board = JXG.JSXGraph.initBoard('JXG6a967d83-4179-4827-9e97-63fbf1e872c8',
          *             {boundingbox: [-4, 4, 4, -4], axis: false, showcopyright: false, shownavigation: false,
@@ -5181,8 +5233,10 @@ JXG.Options = {
          * </script> <pre>
          *
          * @example
-         * </pre>Theme 6 (grid of circles with subtile points in between)
-         * <pre>const board = JXG.JSXGraph.initBoard('jxgbox', {
+         * // Theme 6
+         * // grid of circles with subtile points in between
+         *
+         * const board = JXG.JSXGraph.initBoard('jxgbox', {
          *     boundingbox: [-4, 4, 4, -4], axis: false,
          *     grid: { theme: 3, minorElements: 4, strokeColor: 'grey' },
          * });
@@ -5197,8 +5251,10 @@ JXG.Options = {
          * </script> <pre>
          *
          * @example
-         * </pre>Theme 7 (lines and subtile points in between, also plotted on axes)
-         * <pre>const board = JXG.JSXGraph.initBoard('jxgbox', {
+         * // Theme 7
+         * // lines and subtile points in between, also plotted on axes
+         *
+         * const board = JXG.JSXGraph.initBoard('jxgbox', {
          *     boundingbox: [-4, 4, 4, -4], axis: false,
          *     grid: { theme: 7, minorElements: 4, color: 'grey' },
          * });
@@ -5668,10 +5724,10 @@ JXG.Options = {
          *
          * @name JXG.Board.infobox#intl
          * @type object
-                  * @default {
+         * @default <pre>{
          *    enabled: 'inherit',
          *    options: {}
-         * }
+         * }</pre>
          * @visprop
          * @see JXG.Board#intl
          * @see Text#intl
@@ -5781,14 +5837,14 @@ JXG.Options = {
          *
          * @type Label
          * @name Integral#label
-         * @default {
+         * @default <pre>{
          *      fontSize: 20,
          *      digits: 4,
          *      intl: {
          *          enabled: false,
          *          options: {}
          *      }
-         *    }
+         *    }</pre>
          */
         label: {
             fontSize: 20,
@@ -7436,10 +7492,10 @@ JXG.Options = {
          * @name intl
          * @memberOf Slider.prototype
          * @type object
-         * @default {
+         * @default <pre>{
          *    enabled: 'inherit',
          *    options: {}
-         * }
+         * }</pre>
          * @see JXG.Board#intl
          * @see Text#intl
          *
@@ -8229,10 +8285,10 @@ JXG.Options = {
          * @name intl
          * @memberOf Text.prototype
          * @type object
-         * @default {
+         * @default <pre>{
          *    enabled: 'inherit',
          *    options: {}
-         * }
+         * }</pre>
          * @see JXG.Board#intl
          *
          * @example
@@ -8816,7 +8872,7 @@ JXG.Options = {
          *
          * @name katexMacros
          * @memberOf Text.prototype
-         * @default {}
+         * @default <tt>{}</tt>
          * @type Object
          *
          * @example
