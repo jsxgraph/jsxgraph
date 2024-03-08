@@ -18,7 +18,7 @@ Improvements
 - New method `Math.roundToStep`
 - New method '`JXG.parseNumber` to handle various unit numbers in strings
 - New method `JXG.parsePosition` to handle combinations of position options in strings
-- New methods `JXG.Math.dexToFraction` and `JXG.toFraction` to convert float to fraction
+- New methods `JXG.Math.decToFraction` and `JXG.toFraction` to convert float to fraction
 - New text attribute `formatNumber`
 - Various new features in the `measurement` element
 - String positioning in SVG
