@@ -723,4 +723,69 @@ JXG.createPlane3D = function (board, parents, attributes) {
 
     return el;
 };
+
+/**
+ * @class An intersection line is a line which lives on two JSXGraph elements.
+ * The following element types can be (mutually) intersected: plane.
+ *
+ * @pseudo
+ * @name IntersectionLine3D
+ * @augments JXG.Point
+ * @constructor
+ * @type JXG.Point
+ * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
+ * @param {JXG.Plane3D_JXG.Plane3D} el1,el2 The result will be the intersection point of el1 and el2.
+ * @example
+ * // Create the intersection line of two planes
+ * let a = view.create('point3d', [0, 0, 0]);
+ *
+ * let p1 = view.create(
+ *    'plane3d',
+ *     [a, [1, 0, 0], [0, 1, 0]],
+ *     {fillColor: '#00ff80'}
+ * );
+ * let p2 = view.create(
+ *    'plane3d',
+ *     [a, [1, 0, 0], [0, 0, 1]],
+ *     {fillColor: '#ff0000'}
+ * );
+ *
+ * let i = view.create('intersectionline3d', [p1, p2]);
+ */
+JXG.createIntersectionLine3D = function (board, parents, attributes) {
+    let view = parents[0],
+        el1 = parents[1],
+        el2 = parents[2],
+        ixnLine,
+        func,
+        attr = Type.copyAttributes(attributes, board.options, "intersection");
+
+    let pts = []
+    for (let i = 0; i < 2; i++) {
+        let func = Geometry.intersectionFunction3D(view, el1, el2, i);
+        pts[i] = view.create('point3d', func, {visible: false});
+    }
+    ixnLine = view.create('line3d', pts, attr);
+
+    try {
+        el1.addChild(ixnLine);
+        el2.addChild(ixnLine);
+    } catch (e) {
+        throw new Error(
+            "JSXGraph: Can't create 'intersection' with parent types '" +
+                typeof parents[0] +
+                "' and '" +
+                typeof parents[1] +
+                "'."
+        );
+    }
+
+    ixnLine.type = Const.OBJECT_TYPE_INTERSECTION_LINE3D;
+    ixnLine.elType = 'intersectionline';
+    ixnLine.setParents([el1.id, el2.id]);
+
+    return ixnLine;
+};
+
 JXG.registerElement('plane3d', JXG.createPlane3D);
+JXG.registerElement('intersectionline3d', JXG.createIntersectionLine3D);
