@@ -4976,6 +4976,7 @@ JXG.Options = {
             /**
              * This attribute determines whether the grid elements located at <tt>x=0</tt>, <tt>y=0</tt>
              * and especially at <tt>(0, 0)</tt> are displayed.
+             * The main reason to set this attribute to "false", might be in combination with axes.
              * <ul>
              *     <li>If <tt>false</tt>, then all these elements are hidden.
              *     <li>If <tt>true</tt>, all these elements are shown.
@@ -4987,9 +4988,9 @@ JXG.Options = {
              *
              * @type {Boolean|Object}
              * @name Grid#major_drawZero
-             * @default false
+             * @default true
              */
-            drawZero: false,
+            drawZero: true,
 
             /**
              * Number of vertices for face 'polygon'.
