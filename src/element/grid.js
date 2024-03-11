@@ -268,6 +268,7 @@ JXG.createGrid = function (board, parents, attributes) {
             case '.':
             case 'point':
                 grid.visProp.linecap = 'round';
+                grid.visProp.strokewidth = radiusX * grid.board.unitX + radiusY * grid.board.unitY;
                 return [
                     [x, x, NaN],
                     [y, y, NaN]

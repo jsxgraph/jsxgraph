@@ -4904,7 +4904,7 @@ JXG.Options = {
          *     <li>Numbers or strings which are numbers (e.g. '10') are interpreted as size in pixels.
          *     <li>Strings with additional '%' (e.g. '95%') are interpreted as the ratio of used space for one element.
          * </ul>
-         * Unused for 'line' and 'point', which will use the value of strokeWidth.
+         * Unused for 'line' which will use the value of strokeWidth.
          * Instead of one value you can provide two values as an array <tt>[x, y]</tt> here.
          * These are used as size in x- and y-direction.
          *
