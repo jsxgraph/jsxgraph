@@ -1228,14 +1228,16 @@ JXG.extend(
          * @param {Object} attr Object with attributes - usually containing default options
          * @param {Object} special Special option values which overwrite (recursively) the default options
          * @param {Boolean} [toLower=true] If true the keys are converted to lower case.
+         * @param {Boolean} [ignoreUndefinedSpecials=false] If true the values in special that are undefined are not used.
          *
          * @see JXG#merge
          *
          */
-        mergeAttr: function (attr, special, toLower) {
+        mergeAttr: function (attr, special, toLower, ignoreUndefinedSpecials) {
             var e, e2, o;
 
             toLower = toLower || true;
+            ignoreUndefinedSpecials = ignoreUndefinedSpecials || false;
 
             for (e in special) {
                 if (special.hasOwnProperty(e)) {
@@ -1254,7 +1256,7 @@ JXG.extend(
                             attr[e2] = {};
                         }
                         this.mergeAttr(attr[e2], o, toLower);
-                    } else {
+                    } else if(!ignoreUndefinedSpecials || this.exists(o)) {
                         // Flat copy
                         // This is also used in the cases
                         //   attr.shadow = { enabled: true ...}
