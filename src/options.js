@@ -5135,7 +5135,7 @@ JXG.Options = {
 
         strokeColor: '#c0c0c0',
         strokeWidth: 1,
-        strokeOpacity: 0.5,
+        strokeOpacity: 0.7,
         dash: 0,
 
         /**
@@ -5160,42 +5160,42 @@ JXG.Options = {
          * // Theme 1
          * // quadratic grid appearance with distance of major grid elements set to the primarily greater one
          *
-         * const board = JXG.JSXGraph.initBoard('jxgbox', {
+         * JXG.JSXGraph.initBoard('jxgbox', {
          *     boundingbox: [-4, 4, 4, -4], axis: true,
          *     defaultAxes: {
          *         x: { ticks: {majorHeight: 10} },
          *         y: { ticks: {majorHeight: 10} }
          *     },
-         *     grid: { theme: 1, color: 'grey' },
+         *     grid: { theme: 1 },
          * });
          * </pre> <div id="JXGb8d606c4-7c67-4dc0-9941-3b3bd0932898" class="jxgbox" style="width: 300px; height: 200px;"></div>
          * <script type="text/javascript">
          *     (function() {
-         *         var board = JXG.JSXGraph.initBoard('JXGb8d606c4-7c67-4dc0-9941-3b3bd0932898',
+         *         JXG.JSXGraph.initBoard('JXGb8d606c4-7c67-4dc0-9941-3b3bd0932898',
          *             {boundingbox: [-4, 4, 4, -4], axis: true, showcopyright: false, shownavigation: false,
          *                 defaultAxes: {
          *                     x: { ticks: {majorHeight: 10} },
          *                     y: { ticks: {majorHeight: 10} }
          *                 },
-         *                grid: { theme: 1, color: 'grey' },
+         *                grid: { theme: 1 },
          *             });
          *     })();
          * </script> <pre>
          *
          * @example
          * // Theme 2
-         * // lines and subtile points in between
+         * // lines and points in between
          *
-         * const board = JXG.JSXGraph.initBoard('jxgbox', {
+         * JXG.JSXGraph.initBoard('jxgbox', {
          *     boundingbox: [-4, 4, 4, -4], axis: false,
-         *     grid: { theme: 2, minorElements: 4, color: 'grey' },
+         *     grid: { theme: 2 },
          * });
          * </pre> <div id="JXG4e11e6e3-472a-48e0-b7d0-f80d397c769b" class="jxgbox" style="width: 300px; height: 300px;"></div>
          * <script type="text/javascript">
          *     (function() {
-         *         var board = JXG.JSXGraph.initBoard('JXG4e11e6e3-472a-48e0-b7d0-f80d397c769b',
+         *         JXG.JSXGraph.initBoard('JXG4e11e6e3-472a-48e0-b7d0-f80d397c769b',
          *             {boundingbox: [-4, 4, 4, -4], axis: false, showcopyright: false, shownavigation: false,
-         *                 grid: { theme: 2, minorElements: 4, color: 'grey' },
+         *                 grid: { theme: 2 },
          *             })
          *     })();
          * </script> <pre>
@@ -5204,88 +5204,70 @@ JXG.Options = {
          * // Theme 3
          * // lines and thinner lines in between
          *
-         * const board = JXG.JSXGraph.initBoard('jxgbox', {
+         * JXG.JSXGraph.initBoard('jxgbox', {
          *     boundingbox: [-4, 4, 4, -4], axis: false,
-         *     grid: { theme: 4, minorElements: 4, color: 'grey' },
+         *     grid: { theme: 3 },
          * });
          * </pre> <div id="JXG334814a3-03a7-4231-a5a7-a42d3b8dc2de" class="jxgbox" style="width: 300px; height: 300px;"></div>
          * <script type="text/javascript">
          *     (function() {
-         *         var board = JXG.JSXGraph.initBoard('JXG334814a3-03a7-4231-a5a7-a42d3b8dc2de',
+         *         JXG.JSXGraph.initBoard('JXG334814a3-03a7-4231-a5a7-a42d3b8dc2de',
          *             {boundingbox: [-4, 4, 4, -4], axis: false, showcopyright: false, shownavigation: false,
-         *                 grid: { theme: 4, minorElements: 4, color: 'grey' }
+         *                 grid: { theme: 3 }
          *         });
          *     })();
          * </script> <pre>
          *
          * @example
          * // Theme 4
-         * // lines with more subtle grid of '+'s plotted in between
+         * // lines with grid of '+'s plotted in between
          *
-         * const board = JXG.JSXGraph.initBoard('jxgbox', {
+         * JXG.JSXGraph.initBoard('jxgbox', {
          *     boundingbox: [-4, 4, 4, -4], axis: false,
-         *     grid: { theme: 5, minorElements: 4, color: 'grey' },
+         *     grid: { theme: 4 },
          * });
          * </pre> <div id="JXG9e2bb29c-d998-428c-9432-4a7bf6cd9222" class="jxgbox" style="width: 300px; height: 300px;"></div>
          * <script type="text/javascript">
          *     (function() {
-         *         var board = JXG.JSXGraph.initBoard('JXG9e2bb29c-d998-428c-9432-4a7bf6cd9222',
+         *         JXG.JSXGraph.initBoard('JXG9e2bb29c-d998-428c-9432-4a7bf6cd9222',
          *             {boundingbox: [-4, 4, 4, -4], axis: false, showcopyright: false, shownavigation: false,
-         *                 grid: { theme: 5, minorElements: 4, color: 'grey' },
+         *                 grid: { theme: 4 },
          *             });
          *     })();
          * </script> <pre>
          *
          * @example
          * // Theme 5
-         * // grid of '+'s and more subtile points in between
+         * // grid of '+'s and points in between
          *
-         * const board = JXG.JSXGraph.initBoard('jxgbox', {
+         * JXG.JSXGraph.initBoard('jxgbox', {
          *     boundingbox: [-4, 4, 4, -4], axis: false,
-         *     grid: { theme: 6, minorElements: 4, color: 'grey' },
+         *     grid: { theme: 5 },
          * });
          * </pre> <div id="JXG6a967d83-4179-4827-9e97-63fbf1e872c8" class="jxgbox" style="width: 300px; height: 300px;"></div>
          * <script type="text/javascript">
          *     (function() {
-         *         var board = JXG.JSXGraph.initBoard('JXG6a967d83-4179-4827-9e97-63fbf1e872c8',
+         *         JXG.JSXGraph.initBoard('JXG6a967d83-4179-4827-9e97-63fbf1e872c8',
          *             {boundingbox: [-4, 4, 4, -4], axis: false, showcopyright: false, shownavigation: false,
-         *                 grid: { theme: 6, minorElements: 4, color: 'grey' },
+         *                 grid: { theme: 5 },
          *         });
          *     })();
          * </script> <pre>
          *
          * @example
          * // Theme 6
-         * // grid of circles with subtile points in between
+         * // grid of circles with points in between
          *
-         * const board = JXG.JSXGraph.initBoard('jxgbox', {
+         * JXG.JSXGraph.initBoard('jxgbox', {
          *     boundingbox: [-4, 4, 4, -4], axis: false,
-         *     grid: { theme: 3, minorElements: 4, strokeColor: 'grey' },
+         *     grid: { theme: 6 },
          * });
          * </pre> <div id="JXG28bee3da-a7ef-4590-9a18-38d1b99d09ce" class="jxgbox" style="width: 300px; height: 300px;"></div>
          * <script type="text/javascript">
          *     (function() {
-         *         var board = JXG.JSXGraph.initBoard('JXG28bee3da-a7ef-4590-9a18-38d1b99d09ce',
+         *         JXG.JSXGraph.initBoard('JXG28bee3da-a7ef-4590-9a18-38d1b99d09ce',
          *             {boundingbox: [-4, 4, 4, -4], axis: false, showcopyright: false, shownavigation: false,
-         *                 grid: { theme: 3, minorElements: 4, strokeColor: 'grey' },
-         *         });
-         *     })();
-         * </script> <pre>
-         *
-         * @example
-         * // Theme 7
-         * // lines and subtile points in between, also plotted on axes
-         *
-         * const board = JXG.JSXGraph.initBoard('jxgbox', {
-         *     boundingbox: [-4, 4, 4, -4], axis: false,
-         *     grid: { theme: 7, minorElements: 4, color: 'grey' },
-         * });
-         * </pre> <div id="JXG7a787274-7f7e-4e10-b59c-f99f1aff35e7" class="jxgbox" style="width: 300px; height: 300px;"></div>
-         * <script type="text/javascript">
-         *     (function() {
-         *         var board = JXG.JSXGraph.initBoard('JXG7a787274-7f7e-4e10-b59c-f99f1aff35e7',
-         *             {boundingbox: [-4, 4, 4, -4], axis: false, showcopyright: false, shownavigation: false,
-         *                 grid: { theme: 7, minorElements: 4, color: 'grey' },
+         *                 grid: { theme: 6 },
          *         });
          *     })();
          * </script> <pre>
@@ -5296,25 +5278,38 @@ JXG.Options = {
             },
 
             {   // Theme 1: quadratic grid appearance with distance of major grid elements in x- and y-direction set to the primarily smaller one
-                forceSquare: 'min'
+                forceSquare: 'min',
+                major: {
+                    face: 'line'
+                }
             },
 
-            {   // Theme 2: lines and subtile points in between
+            {   // Theme 2: lines and points in between
+                major: {
+                    face: 'line'
+                },
                 minor: {
                     size: 3,
-                    strokeColor: '#101010'
+                    face: 'point'
                 },
                 minorElements: 'auto'
             },
 
             {   // Theme 3: lines and thinner lines in between
+                major: {
+                    face: 'line',
+                },
                 minor: {
-                    face: 'line'
+                    face: 'line',
+                    strokeOpacity: 0.25
                 },
                 minorElements: 'auto'
             },
 
-            {   // Theme 4: lines with more subtle grid of '+'s plotted in between
+            {   // Theme 4: lines with grid of '+'s plotted in between
+                major: {
+                    face: 'line'
+                },
                 minor: {
                     face: '+',
                     size: '95%'
@@ -5322,24 +5317,27 @@ JXG.Options = {
                 minorElements: 'auto'
             },
 
-            {   // Theme 5: grid of '+'s and more subtile points in between
+            {   // Theme 5: grid of '+'s and more points in between
                 major: {
                     face: '+',
                     size: 10,
                     strokeOpacity: 1
                 },
                 minor: {
+                    face: 'point',
                     size: 3
                 },
                 minorElements: 'auto'
             },
 
-            {   // Theme 6: grid of circles with subtile points in between
+            {   // Theme 6: grid of circles with points in between
                 major: {
                     face: 'circle',
-                    size: 5
+                    size: 8,
+                    fillColor: '#c0c0c0'
                 },
                 minor: {
+                    face: 'point',
                     size: 3
                 },
                 minorElements: 'auto'

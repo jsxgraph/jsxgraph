@@ -65,14 +65,14 @@ import Const from "../base/constants";
  * var g = board.create('grid', [], {
  *     major: {
  *         face: 'plus',
- *         size: 10,
- *         strokeColor: '#080050',
+ *         size: 7,
+ *         strokeColor: 'green',
  *         strokeOpacity: 1,
  *     },
  *     minor: {
- *         size: 3
+ *         size: 4
  *     },
- *     minorElements: 4,
+ *     minorElements: 3,
  * });
  * </pre><div id="JXG02374171-b27c-4ccc-a14a-9f5bd1162623" class="jxgbox" style="width: 300px; height: 300px;"></div>
  * <script type="text/javascript">
@@ -82,14 +82,14 @@ import Const from "../base/constants";
  *         var g = board.create('grid', [], {
  *             major: {
  *                 face: 'plus',
- *                 size: 10,
- *                 strokeColor: '#080050',
+ *                 size: 7,
+ *                 strokeColor: 'green',
  *                 strokeOpacity: 1,
  *             },
  *             minor: {
- *                 size: 3
+ *                 size: 4
  *             },
- *             minorElements: 4,
+ *             minorElements: 3,
  *         });
  *     })();
  * </script><pre>
@@ -99,14 +99,14 @@ import Const from "../base/constants";
  * var grid = board.create('grid', [], {
  *     major: {
  *         face: 'regularPolygon',
- *         size: 10,
+ *         size: 8,
  *         strokeColor: 'blue',
  *         fillColor: 'orange',
  *         strokeOpacity: 1,
  *     },
  *     minor: {
  *         face: 'diamond',
- *         size: 3,
+ *         size: 4,
  *         strokeColor: 'green',
  *         fillColor: 'grey',
  *     },
@@ -121,14 +121,14 @@ import Const from "../base/constants";
  *         var grid = board.create('grid', [], {
  *             major: {
  *                 face: 'regularPolygon',
- *                 size: 10,
+ *                 size: 8,
  *                 strokeColor: 'blue',
  *                 fillColor: 'orange',
  *                 strokeOpacity: 1,
  *             },
  *             minor: {
  *                 face: 'diamond',
- *                 size: 3,
+ *                 size: 4,
  *                 strokeColor: 'green',
  *                 fillColor: 'grey',
  *             },
