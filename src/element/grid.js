@@ -27,6 +27,14 @@
     the MIT License along with JSXGraph. If not, see <https://www.gnu.org/licenses/>
     and <https://opensource.org/licenses/MIT/>.
  */
+/*
+    Some functionalities in this file were developed as part of a software project
+    with students. We would like to thank all contributors for their help:
+
+    Winter semester 2023/2024:
+        Nina Koch
+ */
+
 import JXG from "../jxg";
 import Mat from "../math/math";
 import Type from "../utils/type";
