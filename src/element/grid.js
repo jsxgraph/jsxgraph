@@ -437,10 +437,10 @@ JXG.createGrid = function (board, parents, attributes) {
     Type.mergeAttr(attrMinor, attrGrid, true, true);
     Type.mergeAttr(attrMinor, attrGrid.minor, true, true);
     if (attrMinor.id === attrMajor.id) {
-        attrMinor.id = attrMajor.id + '_minor';
+        attrMinor.id = majorGrid.id + '_minor';
     }
     if (attrMinor.name === attrMajor.name) {
-        attrMinor.name = attrMajor.name + '_minor';
+        attrMinor.name = majorGrid.name + '_minor';
     }
     minorGrid = board.create('curve', [[null], [null]], attrMinor);
     minorGrid.elType = 'grid';
