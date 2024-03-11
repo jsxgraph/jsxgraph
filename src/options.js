@@ -5297,7 +5297,7 @@ JXG.Options = {
 
             {   // Theme 3: lines and thinner lines in between
                 major: {
-                    face: 'line',
+                    face: 'line'
                 },
                 minor: {
                     face: 'line',
