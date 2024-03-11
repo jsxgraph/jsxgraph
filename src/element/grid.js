@@ -50,17 +50,13 @@ import Const from "../base/constants";
  *
  * @example
  * // standard grid
- * var g = board.create('grid', [], {
- *     drawZero: true,
- * });
+ * var g = board.create('grid', [], {});
  * </pre><div id="JXGc8dde3f5-22ef-4c43-9505-34b299b5b24d" class="jxgbox" style="width: 300px; height: 300px;"></div>
  * <script type="text/javascript">
  *  (function() {
  *      var board = JXG.JSXGraph.initBoard('JXGc8dde3f5-22ef-4c43-9505-34b299b5b24d',
  *          {boundingbox: [-8, 8, 8,-8], axis: false, showcopyright: false, shownavigation: false});
- *      var g = board.create('grid', [], {
- *          drawZero: true,
- *      });
+ *      var g = board.create('grid', [], {});
  *  })();
  * </script><pre>
  *
@@ -76,7 +72,6 @@ import Const from "../base/constants";
  *     minor: {
  *         size: 3
  *     },
- *     drawZero: true,
  *     minorElements: 4,
  * });
  * </pre><div id="JXG02374171-b27c-4ccc-a14a-9f5bd1162623" class="jxgbox" style="width: 300px; height: 300px;"></div>
@@ -94,7 +89,6 @@ import Const from "../base/constants";
  *             minor: {
  *                 size: 3
  *             },
- *             drawZero: true,
  *             minorElements: 4,
  *         });
  *     })();
@@ -109,14 +103,12 @@ import Const from "../base/constants";
  *         strokeColor: 'blue',
  *         fillColor: 'orange',
  *         strokeOpacity: 1,
- *         drawZero: true,
  *     },
  *     minor: {
  *         face: 'diamond',
  *         size: 3,
  *         strokeColor: 'green',
  *         fillColor: 'grey',
- *         drawZero: true,
  *     },
  *     minorElements: 1,
  *     includeBoundaries: false,
@@ -133,14 +125,12 @@ import Const from "../base/constants";
  *                 strokeColor: 'blue',
  *                 fillColor: 'orange',
  *                 strokeOpacity: 1,
- *                 drawZero: true,
  *             },
  *             minor: {
  *                 face: 'diamond',
  *                 size: 3,
  *                 strokeColor: 'green',
  *                 fillColor: 'grey',
- *                 drawZero: true,
  *             },
  *             minorElements: 1,
  *             includeBoundaries: false,
@@ -170,8 +160,7 @@ import Const from "../base/constants";
  * });
  * var grid = board.create('grid', [axis1, axis2], {
  *     major: {
- *         face: 'line',
- *         drawZero: true
+ *         face: 'line'
  *     },
  *     minor: {
  *         face: 'point',
@@ -206,7 +195,6 @@ import Const from "../base/constants";
  *         var grid = board.create('grid', [axis1, axis2], {
  *             major: {
  *                 face: 'line',
- *                 drawZero: true
  *             },
  *             minor: {
  *                 face: 'point',
@@ -631,7 +619,7 @@ JXG.createGrid = function (board, parents, attributes) {
             minorElements[0] = parseFloat(minorElements[0]);
 
         } else { // minorElements[0]  === 'auto'
-            minorElements[0] = 5; // parentAxes[0] may not be defined
+            minorElements[0] = 3; // parentAxes[0] may not be defined
             if (Type.exists(parentAxes[0])) {
                 minorElements[0] = Type.evaluate(parentAxes[0].getAttribute('ticks').minorticks);
             }
@@ -642,7 +630,7 @@ JXG.createGrid = function (board, parents, attributes) {
             minorElements[1] = parseFloat(minorElements[1]);
 
         } else { // minorElements[1] === 'auto'
-            minorElements[1] = 5; // parentAxes[1] may not be defined
+            minorElements[1] = 3; // parentAxes[1] may not be defined
             if (Type.exists(parentAxes[1])) {
                 minorElements[1] = Type.evaluate(parentAxes[1].getAttribute('ticks').minorticks);
             }
