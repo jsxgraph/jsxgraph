@@ -630,7 +630,7 @@ JXG.createGrid = function (board, parents, attributes) {
             minorElements[0] = parseFloat(minorElements[0]);
 
         } else { // minorElements[0]  === 'auto'
-            minorElements[0] = 0; // parentAxes[0] may not be defined
+            minorElements[0] = 5; // parentAxes[0] may not be defined
             if (Type.exists(parentAxes[0])) {
                 minorElements[0] = Type.evaluate(parentAxes[0].getAttribute('ticks').minorticks);
             }
@@ -641,7 +641,7 @@ JXG.createGrid = function (board, parents, attributes) {
             minorElements[1] = parseFloat(minorElements[1]);
 
         } else { // minorElements[1] === 'auto'
-            minorElements[1] = 0; // parentAxes[1] may not be defined
+            minorElements[1] = 5; // parentAxes[1] may not be defined
             if (Type.exists(parentAxes[1])) {
                 minorElements[1] = Type.evaluate(parentAxes[1].getAttribute('ticks').minorticks);
             }

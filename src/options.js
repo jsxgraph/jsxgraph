@@ -4899,84 +4899,125 @@ JXG.Options = {
         includeBoundaries: false,
 
         /**
-         * Size of grid elements.<br>
-         * This is a shortcut for attributes of major and minor grid elements.
-         * It will be overwritten by defining <tt>major.size</tt> or <tt>minor.size</tt>.
+         * Size of grid elements. There are the following possibilities:
+         * <ul>
+         *     <li>Numbers or strings which are numbers (e.g. '10') are interpreted as size in pixels.
+         *     <li>Strings with additional '%' (e.g. '95%') are interpreted as the ratio of used space for one element.
+         * </ul>
+         * Unused for 'line' and 'point', which will use the value of strokeWidth.
+         * Instead of one value you can provide two values as an array <tt>[x, y]</tt> here.
+         * These are used as size in x- and y-direction.
          *
-         * @see Grid#major_size
-         * @see Grid#minor_size
+         * <p><b><i>This attribute can be set individually for major and minor grid as a sub-entry of {@link Grid#major} or {@link Grid#minor}</i></b>,
+         * e.g. <tt>major: {size: ...}</tt>
+         * For default values have a look there.</p>
          *
          * @type {Number|String|Array}
          * @name Grid#size
          */
         // This attribute only exists for documentation purposes. It has no effect and is overwritten with actual values in major and minor.
-        size: 5,
+        size: undefined,
 
         /**
-         * Appearance of grid elements.<br>
-         * This is a shortcut for attributes of major and minor grid elements.
-         * It will be overwritten by defining <tt>major.face</tt> or <tt>minor.face</tt>.
+         * Appearance of grid elements.
+         * There are different styles which differ in appearance.
+         * Possible values are (comparing to {@link Point#face}):
+         * <table>
+         * <tr><th>Input</th><th>Output</th><th>Fillable by fillColor,...</th></tr>
+         * <tr><td>point, .</td><td>.</td><td>no</td></tr>
+         * <tr><td>line</td><td>&minus;</td><td>no</td></tr>
+         * <tr><td>cross, x</td><td>x</td><td>no</td></tr>
+         * <tr><td>circle, o</td><td>o</td><td>yes</td></tr>
+         * <tr><td>square, []</td><td>[]</td><td>yes</td></tr>
+         * <tr><td>plus, +</td><td>+</td><td>no</td></tr>
+         * <tr><td>minus, -</td><td>-</td><td>no</td></tr>
+         * <tr><td>divide, |</td><td>|</td><td>no</td></tr>
+         * <tr><td>diamond, &lt;&gt;</td><td>&lt;&gt;</td><td>yes</td></tr>
+         * <tr><td>diamond2, &lt;&lt;&gt;&gt;</td><td>&lt;&gt; (bigger)</td><td>yes</td></tr>
+         * <tr><td>triangleup, ^, a, A</td><td>^</td><td>no</td></tr>
+         * <tr><td>triangledown, v</td><td>v</td><td>no</td></tr>
+         * <tr><td>triangleleft, &lt;</td><td> &lt;</td><td>no</td></tr>
+         * <tr><td>triangleright, &gt;</td><td>&gt;</td><td>no</td></tr>
+         * <tr><td>regularPolygon, regpol</td><td>⬡</td><td>yes</td></tr>
+         * </table>
          *
-         * @see Grid#major_face
-         * @see Grid#minor_face
+         * <p><b><i>This attribute can be set individually for major and minor grid as a sub-entry of {@link Grid#major} or {@link Grid#minor}</i></b>,
+         * e.g. <tt>major: {face: ...}</tt>
+         * For default values have a look there.</p>
          *
          * @type {String}
          * @name Grid#face
          */
-        // This attribute only exists for documentation purposes. It has no effect and is overwritten with actual values in major and minor.
-        face: 'line',
+         // This attribute only exists for documentation purposes. It has no effect and is overwritten with actual values in major and minor.
+         face: undefined,
 
         /**
-         * This number (pixel value) controls where infinite lines end at the canvas border.<br>
-         * This is a shortcut for attributes of major and minor grid elements.
-         * It will be overwritten by defining <tt>major.margin</tt> or <tt>minor.margin</tt>.
+         * This number (pixel value) controls where grid elements end at the canvas edge. If zero, the line
+         * ends exactly at the end, if negative there is a margin to the inside, if positive the line
+         * ends outside of the canvas (which is invisible).
          *
-         * @see Grid#major_margin
-         * @see Grid#minor_margin
+         * <p><b><i>This attribute can be set individually for major and minor grid as a sub-entry of {@link Grid#major} or {@link Grid#minor}</i></b>,
+         * e.g. <tt>major: {margin: ...}</tt>
+         * For default values have a look there.</p>
          *
-         * @type {Number}
          * @name Grid#margin
+         * @type {Number}
          */
         // This attribute only exists for documentation purposes. It has no effect and is overwritten with actual values in major and minor.
-        margin: 0,
+        margin: undefined,
 
         /**
          * This attribute determines whether the grid elements located at <tt>x=0</tt>, <tt>y=0</tt>
-         * and (for major grid) at <tt>(0, 0)</tt> are displayed.<br>
-         * This is a shortcut for attributes of major and minor grid elements.
-         * It will be overwritten by defining <tt>major.drawZero</tt> or <tt>minor.drawZero</tt>.
+         * and (for major grid only) at <tt>(0, 0)</tt> are displayed.
+         * The main reason to set this attribute to "false", might be in combination with axes.
+         * <ul>
+         *     <li>If <tt>false</tt>, then all these elements are hidden.
+         *     <li>If <tt>true</tt>, all these elements are shown.
+         *     <li>If an object of the following form is given, the three cases can be distinguished individually:<br>
+         *     <tt>{x: true|false, y: true|false, origin: true|false}</tt>
+         * </ul>
          *
-         * @see Grid#major_drawZero
-         * @see Grid#minor_drawZero
+         * <p><b><i>This attribute can be set individually for major and minor grid as a sub-entry of {@link Grid#major} or {@link Grid#minor}</i></b>,
+         * e.g. <tt>major: {drawZero: ...}</tt>
+         * For default values have a look there.</p>
          *
          * @type {Boolean|Object}
          * @name Grid#drawZero
          */
         // This attribute only exists for documentation purposes. It has no effect and is overwritten with actual values in major and minor.
-        drawZero: false,
+        drawZero: undefined,
 
         /**
-         * Number of vertices for face 'polygon'.<br>
-         * This is a shortcut for attributes of major and minor grid elements.
-         * It will be overwritten by defining <tt>major.polygonVertices</tt> or <tt>minor.polygonVertices</tt>.
+         * Number of vertices for face 'polygon'.
          *
-         * @see Grid#major_polygonVertices
-         * @see Grid#minor_polygonVertices
+         * <p><b><i>This attribute can be set individually for major and minor grid as a sub-entry of {@link Grid#major} or {@link Grid#minor}</i></b>,
+         * e.g. <tt>major: {polygonVertices: ...}</tt>
+         * For default values have a look there.</p>
          *
          * @type {Number}
          * @name Grid#polygonVertices
          */
         // This attribute only exists for documentation purposes. It has no effect and is overwritten with actual values in major and minor.
-        polygonVertices: 6,
+        polygonVertices: undefined,
 
         /**
          * This object contains the attributes for major grid elements.
-         *
-         * @see Grid#major_size
-         * @see Grid#major_face
-         * @see Grid#major_margin
-         * @see Grid#major_drawZero
-         * @see Grid#major_polygonVertices
+         * You can override the following grid attributes individually here:
+         * <ul>
+         *     <li>{@link Grid#size}
+         *     <li>{@link Grid#face}
+         *     <li>{@link Grid#margin}
+         *     <li>{@link Grid#drawZero}
+         *     <li>{@link Grid#polygonVertices}
+         * </ul>
+         * Default values are:
+         * <pre>{
+         *      size: 5,
+         *      face: 'line',
+         *      margin: 0,
+         *      drawZero: true,
+         *      polygonVertices: 6
+         *  }</pre>
          *
          * @name Grid#major
          * @type {Object}
@@ -4984,110 +5025,59 @@ JXG.Options = {
         major: {
 
             /**
-             * Size of major grid elements. There are the following possibilities:
-             * <ul>
-             *     <li>Numbers or strings which are numbers (e.g. '10') are interpreted as size in pixels.
-             *     <li>Strings with additional '%' (e.g. '95%') are interpreted as the ratio of used space for one element.
-             * </ul>
-             * Unused for 'line' and 'point', which will use the value of strokeWidth.
-             * Instead of one value you can provide two values as an array <tt>[x, y]</tt> here.
-             * These are used as size in x- and y-direction.
-             *
-             * <br><br><b><i>This attribute is a sub-entry of {@link Grid#major}: <tt>major: {size: ...}</tt></i></b><br>
-             *
-             * @type {Number|String|Array}
-             * @name Grid#major_size
-             * @default 5
+             * Documented in Grid#size
+             * @class
+             * @ignore
              */
             size: 5,
 
             /**
-             * Appearance of major grid elements.
-             * There are different styles which differ in appearance.
-             * Possible values are (comparing to {@link Point#face})
-             * <table>
-             * <tr><th>Input</th><th>Output</th><th>Fillable by fillColor,...</th></tr>
-             * <tr><td>point, .</td><td>.</td><td>no</td></tr>
-             * <tr><td>line</td><td>&minus;</td><td>no</td></tr>
-             * <tr><td>cross, x</td><td>x</td><td>no</td></tr>
-             * <tr><td>circle, o</td><td>o</td><td>yes</td></tr>
-             * <tr><td>square, []</td><td>[]</td><td>yes</td></tr>
-             * <tr><td>plus, +</td><td>+</td><td>no</td></tr>
-             * <tr><td>minus, -</td><td>-</td><td>no</td></tr>
-             * <tr><td>divide, |</td><td>|</td><td>no</td></tr>
-             * <tr><td>diamond, &lt;&gt;</td><td>&lt;&gt;</td><td>yes</td></tr>
-             * <tr><td>diamond2, &lt;&lt;&gt;&gt;</td><td>&lt;&gt; (bigger)</td><td>yes</td></tr>
-             * <tr><td>triangleup, ^, a, A</td><td>^</td><td>no</td></tr>
-             * <tr><td>triangledown, v</td><td>v</td><td>no</td></tr>
-             * <tr><td>triangleleft, &lt;</td><td> &lt;</td><td>no</td></tr>
-             * <tr><td>triangleright, &gt;</td><td>&gt;</td><td>no</td></tr>
-             * <tr><td>regularPolygon, regpol</td><td>⬡</td><td>yes</td></tr>
-             * </table>
-             *
-             * <br><b><i>This attribute is a sub-entry of {@link Grid#major}: <tt>major: {face: ...}</tt></i></b><br>
-             *
-             * @type {String}
-             * @name Grid#major_face
-             * @default 'line'
+             * Documented in Grid#face
+             * @class
+             * @ignore
              */
             face: 'line',
 
             /**
-             * This number (pixel value) controls where infinite lines end at the canvas border. If zero, the line
-             * ends exactly at the border, if negative there is a margin to the inside, if positive the line
-             * ends outside of the canvas (which is invisible).
-             *
-             * <br><br><b><i>This attribute is a sub-entry of {@link Grid#major}: <tt>major: {margin: ...}</tt></i></b><br>
-             *
-             * @name Grid#major_margin
-             * @type {Number}
-             * @default 0
+             * Documented in Grid#margin
+             * @class
+             * @ignore
              */
             margin: 0,
 
             /**
-             * This attribute determines whether the grid elements located at <tt>x=0</tt>, <tt>y=0</tt>
-             * and especially at <tt>(0, 0)</tt> are displayed.
-             * The main reason to set this attribute to "false", might be in combination with axes.
-             * <ul>
-             *     <li>If <tt>false</tt>, then all these elements are hidden.
-             *     <li>If <tt>true</tt>, all these elements are shown.
-             *     <li>If an object of the following form is given, the three cases can be distinguished individually:<br>
-             *     <tt>{x: true|false, y: true|false, origin: true|false}</tt>
-             * </ul>
-             *
-             * <br><b><i>This attribute is a sub-entry of {@link Grid#major}: <tt>major: {drawZero: ...}</tt></i></b><br>
-             *
-             * @type {Boolean|Object}
-             * @name Grid#major_drawZero
-             * @default true
+             * Documented in Grid#drawZero
+             * @class
+             * @ignore
              */
             drawZero: true,
 
             /**
-             * Number of vertices for face 'polygon'.
-             *
-             * <br><br><b><i>This attribute is a sub-entry of {@link Grid#major}: <tt>major: {polygonVertices: ...}</tt></i></b><br>
-             *
-             * @type {Number}
-             * @name Grid#major_polygonVertices
-             * @default 6
+             * Documented in Grid#polygonVertices
+             * @class
+             * @ignore
              */
-            polygonVertices: 6,
-
-            strokeColor: '#c0c0c0',
-            strokeWidth: 1,
-            strokeOpacity: 0.5
+            polygonVertices: 6
         },
 
         /**
          * This object contains the attributes for minor grid elements.
-         *
-         * @see Grid#minor_size
-         * @see Grid#minor_face
-         * @see Grid#minor_margin
-         * @see Grid#minor_drawZero
-         * @see Grid#minor_polygonVertices
+         * You can override the following grid attributes individually here:
+         * <ul>
+         *     <li>{@link Grid#size}
+         *     <li>{@link Grid#face}
+         *     <li>{@link Grid#margin}
+         *     <li>{@link Grid#drawZero}
+         *     <li>{@link Grid#polygonVertices}
+         * </ul>
+         * Default values are:
+         * <pre>{
+         *      size: 3,
+         *      face: 'point',
+         *      margin: 0,
+         *      drawZero: true,
+         *      polygonVertices: 6
+         *  }</pre>
          *
          * @name Grid#minor
          * @type {Object}
@@ -5101,80 +5091,39 @@ JXG.Options = {
             visible: 'inherit',
 
             /**
-             * Size of minor grid elements. There are the following possibilities:
-             * <ul>
-             *     <li>Numbers or strings which are numbers (e.g. '10') are interpreted as size in pixels.
-             *     <li>Strings with additional '%' (e.g. '95%') are interpreted as the ratio of used space for one element.
-             * </ul>
-             * Unused for 'line' and 'point', which will use the value of strokeWidth.
-             * Instead of one value you can provide two values as an array <tt>[x, y]</tt> here.
-             * These are used as size in x- and y-direction.
-             *
-             * <br><br><b><i>This attribute is a sub-entry of {@link Grid#minor}: <tt>minor: {size: ...}</tt></i></b><br>
-             *
-             * @type {Number|String|Array}
-             * @name Grid#minor_size
-             * @default 5
+             * Documented in Grid#size
+             * @class
+             * @ignore
              */
             size: 3,
 
             /**
-             * Appearance of minor grid elements. Same options as for major grid elements.
-             *
-             * <br><br><b><i>This attribute is a sub-entry of {@link Grid#minor}: <tt>minor: {face: ...}</tt></i></b><br>
-             *
-             * @type {String}
-             * @name Grid#minor_face
-             * @default 'point'
-             * @see Grid#major_face
+             * Documented in Grid#face
+             * @class
+             * @ignore
              */
             face: 'point',
 
             /**
-             * This number (pixel value) controls where infinite lines end at the canvas border. If zero, the line
-             * ends exactly at the border, if negative there is a margin to the inside, if positive the line
-             * ends outside of the canvas (which is invisible).
-             *
-             * <br><br><b><i>This attribute is a sub-entry of {@link Grid#minor}: <tt>minor: {margin: ...}</tt></i></b><br>
-             *
-             * @name Grid#minor_margin
-             * @type {Number}
-             * @default 0
+             * Documented in Grid#margin
+             * @class
+             * @ignore
              */
             margin: 0,
 
             /**
-             * This attribute determines whether the minor grid elements located at <tt>x=0</tt> and <tt>y=0</tt> are displayed.
-             * The main reason to set this attribute to "false", might be in combination with axes.
-             * <ul>
-             *     <li>If <tt>false</tt>, then all these elements are hidden.
-             *     <li>If <tt>true</tt>, all these elements are shown.
-             *     <li>If an object of the following form is given, the three cases can be distinguished individually:<br>
-             *     <tt>{x: true|false, y: true|false}</tt>
-             * </ul>
-             *
-             * <br><b><i>This attribute is a sub-entry of {@link Grid#minor}: <tt>minor: {drawZero: ...}</tt></i></b><br>
-             *
-             * @type {Boolean|Object}
-             * @name Grid#minor_drawZero
-             * @default true
+             * Documented in Grid#drawZero
+             * @class
+             * @ignore
              */
             drawZero: true,
 
             /**
-             * Number of vertices for face 'polygon'.
-             *
-             * <br><br><b><i>This attribute is a sub-entry of {@link Grid#minor}: <tt>minor: {polygonVertices: ...}</tt></i></b><br>
-             *
-             * @type {Number}
-             * @name Grid#minor_polygonVertices
-             * @default 6
+             * Documented in Grid#polygonVertices
+             * @class
+             * @ignore
              */
-            polygonVertices: 6,
-
-            strokeColor: '#c0c0c0',
-            strokeWidth: 1,
-            strokeOpacity: 0.25
+            polygonVertices: 6
         },
 
         /**
@@ -5183,6 +5132,11 @@ JXG.Options = {
          * @deprecated
          */
         snapToGrid: false,
+
+        strokeColor: '#c0c0c0',
+        strokeWidth: 1,
+        strokeOpacity: 0.5,
+        dash: 0,
 
         /**
          * Use a predefined theme for grid.
@@ -5389,17 +5343,6 @@ JXG.Options = {
                     size: 3
                 },
                 minorElements: 'auto'
-            },
-
-            { // Theme 7: lines and subtile points in between, also plotted on axes
-                major: {
-                    drawZero: true
-                },
-                minor: {
-                    size: 3,
-                    drawZero: true
-                },
-                minorElements: 4
             }
         ]
 
