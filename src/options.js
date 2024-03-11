@@ -4823,6 +4823,7 @@ JXG.Options = {
 
         needsRegularUpdate: false,
         hasGrid: false,  // Used in standardoptions
+        highlight: false,
 
         /**
          * Deprecated. Use {@link Grid#majorStep} instead.
@@ -4898,6 +4899,77 @@ JXG.Options = {
         includeBoundaries: false,
 
         /**
+         * Size of grid elements.<br>
+         * This is a shortcut for attributes of major and minor grid elements.
+         * It will be overwritten by defining <tt>major.size</tt> or <tt>minor.size</tt>.
+         *
+         * @see Grid#major_size
+         * @see Grid#minor_size
+         *
+         * @type {Number|String|Array}
+         * @name Grid#size
+         */
+        // This attribute only exists for documentation purposes. It has no effect and is overwritten with actual values in major and minor.
+        size: 5,
+
+        /**
+         * Appearance of grid elements.<br>
+         * This is a shortcut for attributes of major and minor grid elements.
+         * It will be overwritten by defining <tt>major.face</tt> or <tt>minor.face</tt>.
+         *
+         * @see Grid#major_face
+         * @see Grid#minor_face
+         *
+         * @type {String}
+         * @name Grid#face
+         */
+        // This attribute only exists for documentation purposes. It has no effect and is overwritten with actual values in major and minor.
+        face: 'line',
+
+        /**
+         * This number (pixel value) controls where infinite lines end at the canvas border.<br>
+         * This is a shortcut for attributes of major and minor grid elements.
+         * It will be overwritten by defining <tt>major.margin</tt> or <tt>minor.margin</tt>.
+         *
+         * @see Grid#major_margin
+         * @see Grid#minor_margin
+         *
+         * @type {Number}
+         * @name Grid#margin
+         */
+        // This attribute only exists for documentation purposes. It has no effect and is overwritten with actual values in major and minor.
+        margin: 0,
+
+        /**
+         * This attribute determines whether the grid elements located at <tt>x=0</tt>, <tt>y=0</tt>
+         * and (for major grid) at <tt>(0, 0)</tt> are displayed.<br>
+         * This is a shortcut for attributes of major and minor grid elements.
+         * It will be overwritten by defining <tt>major.drawZero</tt> or <tt>minor.drawZero</tt>.
+         *
+         * @see Grid#major_drawZero
+         * @see Grid#minor_drawZero
+         *
+         * @type {Boolean|Object}
+         * @name Grid#drawZero
+         */
+        // This attribute only exists for documentation purposes. It has no effect and is overwritten with actual values in major and minor.
+        drawZero: false,
+
+        /**
+         * Number of vertices for face 'polygon'.<br>
+         * This is a shortcut for attributes of major and minor grid elements.
+         * It will be overwritten by defining <tt>major.polygonVertices</tt> or <tt>minor.polygonVertices</tt>.
+         *
+         * @see Grid#major_polygonVertices
+         * @see Grid#minor_polygonVertices
+         *
+         * @type {Number}
+         * @name Grid#polygonVertices
+         */
+        // This attribute only exists for documentation purposes. It has no effect and is overwritten with actual values in major and minor.
+        polygonVertices: 6,
+
+        /**
          * This object contains the attributes for major grid elements.
          *
          * @see Grid#major_size
@@ -4907,7 +4979,7 @@ JXG.Options = {
          * @see Grid#major_polygonVertices
          *
          * @name Grid#major
-         * @type Object
+         * @type {Object}
          */
         major: {
 
@@ -4930,7 +5002,7 @@ JXG.Options = {
             size: 5,
 
             /**
-             * Appearance of major grid element.
+             * Appearance of major grid elements.
              * There are different styles which differ in appearance.
              * Possible values are (comparing to {@link Point#face})
              * <table>
@@ -4968,7 +5040,7 @@ JXG.Options = {
              * <br><br><b><i>This attribute is a sub-entry of {@link Grid#major}: <tt>major: {margin: ...}</tt></i></b><br>
              *
              * @name Grid#major_margin
-             * @type Number
+             * @type {Number}
              * @default 0
              */
             margin: 0,
@@ -5003,10 +5075,9 @@ JXG.Options = {
              */
             polygonVertices: 6,
 
-            strokeColor: '#c0c0c0', // same in old grid
-            strokeWidth: 1,         // same in old grid
-            strokeOpacity: 0.5,     // same in old grid
-            highlight: false
+            strokeColor: '#c0c0c0',
+            strokeWidth: 1,
+            strokeOpacity: 0.5
         },
 
         /**
@@ -5019,7 +5090,7 @@ JXG.Options = {
          * @see Grid#minor_polygonVertices
          *
          * @name Grid#minor
-         * @type Object
+         * @type {Object}
          */
         minor: {
 
@@ -5067,27 +5138,27 @@ JXG.Options = {
              * <br><br><b><i>This attribute is a sub-entry of {@link Grid#minor}: <tt>minor: {margin: ...}</tt></i></b><br>
              *
              * @name Grid#minor_margin
-             * @type Number
+             * @type {Number}
              * @default 0
              */
             margin: 0,
 
-             /**
-              * This attribute determines whether the minor grid elements located at <tt>x=0</tt> and <tt>y=0</tt> are displayed.
-              * The main reason to set this attribute to "false", might be in combination with axes.
-              * <ul>
-              *     <li>If <tt>false</tt>, then all these elements are hidden.
-              *     <li>If <tt>true</tt>, all these elements are shown.
-              *     <li>If an object of the following form is given, the three cases can be distinguished individually:<br>
-              *     <tt>{x: true|false, y: true|false}</tt>
-              * </ul>
-              *
-              * <br><b><i>This attribute is a sub-entry of {@link Grid#minor}: <tt>minor: {drawZero: ...}</tt></i></b><br>
-              *
-              * @type {Boolean|Object}
-              * @name Grid#minor_drawZero
-              * @default true
-              */
+            /**
+             * This attribute determines whether the minor grid elements located at <tt>x=0</tt> and <tt>y=0</tt> are displayed.
+             * The main reason to set this attribute to "false", might be in combination with axes.
+             * <ul>
+             *     <li>If <tt>false</tt>, then all these elements are hidden.
+             *     <li>If <tt>true</tt>, all these elements are shown.
+             *     <li>If an object of the following form is given, the three cases can be distinguished individually:<br>
+             *     <tt>{x: true|false, y: true|false}</tt>
+             * </ul>
+             *
+             * <br><b><i>This attribute is a sub-entry of {@link Grid#minor}: <tt>minor: {drawZero: ...}</tt></i></b><br>
+             *
+             * @type {Boolean|Object}
+             * @name Grid#minor_drawZero
+             * @default true
+             */
             drawZero: true,
 
             /**
@@ -5103,8 +5174,7 @@ JXG.Options = {
 
             strokeColor: '#c0c0c0',
             strokeWidth: 1,
-            strokeOpacity: 0.25,
-            highlight: false
+            strokeOpacity: 0.25
         },
 
         /**
