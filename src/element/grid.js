@@ -539,15 +539,15 @@ JXG.createGrid = function (board, parents, attributes) {
         // as pixel value. However, usually a number value for size is
         // considered to be in pixel, while parseNumber expects user coords.
         // Therefore, we have to add 'px'.
-        if (Type.isNumber(majorSize[0], true) || majorSize[0].indexOf('abs') > -1) {
-            majorSize[0] = ("" + majorSize[0]).replace(/\s+abs\s+/, '') + "px"; // interpret number as pixels
+        if (Type.isNumber(majorSize[0], true)) {
+            majorSize[0] = majorSize[0] + "px";
         }
-        if (Type.isNumber(majorSize[1], true) || majorSize[1].indexOf('abs') > -1) {
-            majorSize[1] = ("" + majorSize[1]).replace(/\s+abs\s+/, '') + "px"; // interpret number as pixels
+        if (Type.isNumber(majorSize[1], true)) {
+            majorSize[1] = majorSize[1] + "px";
         }
         majorSize[0] = Type.parseNumber(majorSize[0], majorStep[0], 1 / this.board.unitX);
-        majorRadius[0] = majorSize[0] / 2;
         majorSize[1] = Type.parseNumber(majorSize[1], majorStep[1], 1 / this.board.unitY);
+        majorRadius[0] = majorSize[0] / 2;
         majorRadius[1] = majorSize[1] / 2;
 
         // calculate start position of curve
@@ -667,11 +667,11 @@ JXG.createGrid = function (board, parents, attributes) {
         // as pixel value. However, usually a number value for size is
         // considered to be in pixel, while parseNumber expects user coords.
         // Therefore, we have to add 'px'.
-        if (Type.isNumber(minorSize[0], true) || minorSize[0].indexOf('abs') > -1) {
-            minorSize[0] = ("" + minorSize[0]).replace(/\s+abs\s+/, '') + "px"; // interpret number as pixels
+        if (Type.isNumber(minorSize[0], true)) {
+            minorSize[0] = minorSize[0] + "px";
         }
-        if (Type.isNumber(minorSize[1], true) || minorSize[1].indexOf('abs') > -1) {
-            minorSize[1] = ("" + minorSize[1]).replace(/\s+abs\s+/, '') + "px"; // interpret number as pixels
+        if (Type.isNumber(minorSize[1], true)) {
+            minorSize[1] = minorSize[1] + "px";
         }
         minorSize[0] = Type.parseNumber(minorSize[0], minorStep[0], 1 / this.board.unitX);
         minorSize[1] = Type.parseNumber(minorSize[1], minorStep[1], 1 / this.board.unitY);
