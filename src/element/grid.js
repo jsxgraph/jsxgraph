@@ -524,7 +524,7 @@ JXG.createGrid = function (board, parents, attributes) {
         }
 
         // Here comes a hack:
-        // "minorsize" is filled by the attribute "size" which is usually considered
+        // "majorsize" is filled by the attribute "size" which is usually considered
         // as pixel value. However, usually a number value for size is
         // considered to be in pixel, while parseNumber expects user coords.
         // Therefore, we have to add 'px'.
