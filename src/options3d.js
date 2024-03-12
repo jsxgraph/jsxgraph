@@ -293,6 +293,10 @@ JXG.extend(Options, {
         highlightStrokeColor: "#555555"
     },
 
+    sphere3d: {
+        highlight: false
+    },
+
     surface3d: {
         /**#@+
          * @visprop

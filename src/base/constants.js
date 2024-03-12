@@ -117,6 +117,8 @@ constants =
 
     OBJECT_TYPE_MEASUREMENT: 38,
 
+    OBJECT_TYPE_SPHERE3D: 40,
+
     // IMPORTANT:
     // ----------
     // For being able to differentiate between the (sketchometry specific) SPECIAL_OBJECT_TYPEs and

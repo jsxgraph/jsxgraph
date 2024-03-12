@@ -83,6 +83,7 @@ import './3d/box3d';
 import './3d/point3d';
 import './3d/curve3d';
 import './3d/linspace3d';
+import './3d/sphere3d';
 import './3d/surface3d';
 import './themes/mono_thin';
 
@@ -180,6 +181,7 @@ export const isNode = JXG.isNode;
 export const isNumber = JXG.isNumber;
 export const isObject = JXG.isObject;
 export const isPointType = JXG.isPointType;
+export const isPointType3D = JXG.isPointType3D;
 export const isString = JXG.isString;
 export const isTouchDevice = JXG.isTouchDevice;
 export const isTransformationOrArray = JXG.isTransformationOrArray;

@@ -218,6 +218,29 @@ JXG.extend(
             p = board.select(v);
             return this.isPoint(p);
         },
+        
+        /**
+         * Checks if a given variable is a reference of a JSXGraph Point3D element or an array of length three
+         * or a function returning an array of length three.
+         * @param {JXG.Board} board
+         * @param v A variable of any type.
+         * @returns {Boolean} True, if v is of type JXG.Point.
+         */
+        isPointType3D: function (board, v) {
+            var val, p;
+
+            if (this.isArray(v) && v.length === 3) {
+                return true;
+            }
+            if (this.isFunction(v)) {
+                val = v();
+                if (this.isArray(val) && val.length === 3) {
+                    return true;
+                }
+            }
+            p = board.select(v);
+            return this.isPoint3D(p);
+        },
 
         /**
          * Checks if a given variable is a reference of a JSXGraph transformation element or an array
