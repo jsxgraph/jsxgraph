@@ -545,7 +545,8 @@ JXG.extend(
                 isPoint1inBoard, isPoint2inBoard,
                 // We use the distance from zero to P1 and P2 to establish lower and higher points
                 dZeroPoint1, dZeroPoint2,
-                arrowData, angle,
+                arrowData,
+                // angle,
                 a1, a2, m1, m2,
                 eps = Mat.eps * 10,
                 ev_sf = Type.evaluate(this.line.visProp.straightfirst),
@@ -591,25 +592,6 @@ JXG.extend(
                 // This function projects the corners of the board to the line.
                 // This is important for diagonal lines with infinite tick lines.
                 Geometry.calcLineDelimitingPoints(this.line, point1, point2);
-            }
-
-            // If the hosting line points backwards,
-            // the respective coordinates have to be multiplied by -1.
-            // Otherwise the ticks  are created in the wrong direction.
-            angle = Math.atan2(this.line.point2.Y() - this.line.point1.Y(), this.line.point2.X() - this.line.point1.X());
-            angle = (angle + 2 * Math.PI) % (2 * Math.PI);
-
-            if (angle > Math.PI * 0.5 && angle < 3 * Math.PI * 0.5) {
-                point1.usrCoords[1] *= -1;
-                point2.usrCoords[1] *= -1;
-                point1.usr2screen();
-                point2.usr2screen();
-            }
-            if (angle > Math.PI && angle < 2 * Math.PI) {
-                point1.usrCoords[2] *= -1;
-                point2.usrCoords[2] *= -1;
-                point1.usr2screen();
-                point2.usr2screen();
             }
 
             // Shorten ticks bounds such that ticks are not through arrow heads
@@ -659,6 +641,7 @@ JXG.extend(
                 }
             } else if (dZeroPoint2 < dZeroPoint1) {
                 // Line goes P2->P1
+                // Does this happen at all?
                 lowerBound = dZeroPoint2;
                 upperBound = dZeroPoint1;
 
@@ -685,7 +668,7 @@ JXG.extend(
         },
 
         /**
-         * Calculates the distance in user coordinates from zero to a given point including its sign.
+         * Calculates the signed distance in user coordinates from zero to a given point.
          * Sign is positive, if the direction from zero to point is the same as the direction
          * zero to point2 of the line.
          *
@@ -1078,25 +1061,25 @@ JXG.extend(
                 point2UsrCoords,
                 distP1P2 = this.line.point1.Dist(this.line.point2);
 
-            if (this.line.type === Const.OBJECT_TYPE_AXIS) {
-                // When line is an Axis, direction depends on board coordinates system
-                // Assume line.point1 and line.point2 are in correct order
-                point1UsrCoords = this.line.point1.coords.usrCoords;
-                point2UsrCoords = this.line.point2.coords.usrCoords;
-                // Check if direction is incorrect, then swap
-                if (
-                    point1UsrCoords[1] > point2UsrCoords[1] ||
-                    (Math.abs(point1UsrCoords[1] - point2UsrCoords[1]) < Mat.eps &&
-                        point1UsrCoords[2] > point2UsrCoords[2])
-                ) {
-                    point1UsrCoords = this.line.point2.coords.usrCoords;
-                    point2UsrCoords = this.line.point1.coords.usrCoords;
-                }
-            } /* if (this.line.elementClass === Const.OBJECT_CLASS_LINE)*/ else {
+            // if (this.line.type === Const.OBJECT_TYPE_AXIS) {
+            //     // When line is an Axis, direction depends on board coordinates system
+            //     // Assume line.point1 and line.point2 are in correct order
+            //     point1UsrCoords = this.line.point1.coords.usrCoords;
+            //     point2UsrCoords = this.line.point2.coords.usrCoords;
+            //     // Check if direction is incorrect, then swap
+            //     if (
+            //         point1UsrCoords[1] > point2UsrCoords[1] ||
+            //         (Math.abs(point1UsrCoords[1] - point2UsrCoords[1]) < Mat.eps &&
+            //             point1UsrCoords[2] > point2UsrCoords[2])
+            //     ) {
+            //         point1UsrCoords = this.line.point2.coords.usrCoords;
+            //         point2UsrCoords = this.line.point1.coords.usrCoords;
+            //     }
+            // } /* if (this.line.elementClass === Const.OBJECT_CLASS_LINE)*/ else {
                 // Line direction is always from P1 to P2 for non axis types
                 point1UsrCoords = this.line.point1.coords.usrCoords;
                 point2UsrCoords = this.line.point2.coords.usrCoords;
-            }
+            // }
             return {
                 x: (point2UsrCoords[1] - point1UsrCoords[1]) / distP1P2,
                 y: (point2UsrCoords[2] - point1UsrCoords[2]) / distP1P2

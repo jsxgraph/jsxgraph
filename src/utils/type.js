@@ -936,10 +936,10 @@ JXG.extend(
                 str = v.replace(/\s+fr\s+/, '');
                 return parseFloat(str) * percentOfWhat;
             }
-            if (this.isString(v) && v.indexOf('abs') > -1) {
-                str = v.replace(/\s+abs\s+/, '');
-                return parseFloat(str);
-            }
+            // if (this.isString(v) && v.indexOf('abs') > -1) {
+            //     str = v.replace(/\s+abs\s+/, '');
+            //     return parseFloat(str);
+            // }
             if (this.isString(v) && v.indexOf('px') > -1) {
                 str = v.replace(/\s+px\s+/, '');
                 str = parseFloat(str);

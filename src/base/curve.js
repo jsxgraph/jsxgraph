@@ -2846,44 +2846,44 @@ JXG.registerElement("curvedifference", JXG.createCurveDifference);
 JXG.registerElement("curveintersection", JXG.createCurveIntersection);
 JXG.registerElement("curveunion", JXG.createCurveUnion);
 
-/**
- * @class Concat of two path elements, in general neither is a closed path. The parent elements have to be curves, too.
- * The resulting element is of type curve. The curve points are simply concatenated.
- * @pseudo
- * @name CurveConcat
- * @param {JXG.Curve} curve1 First curve element.
- * @param {JXG.Curve} curve2 Second curve element.
- * @augments JXG.Curve
- * @constructor
- * @type JXG.Curve
- */
-JXG.createCurveConcat = function (board, parents, attributes) {
-    var c;
+// /**
+//  * @class Concat of two path elements, in general neither is a closed path. The parent elements have to be curves, too.
+//  * The resulting element is of type curve. The curve points are simply concatenated.
+//  * @pseudo
+//  * @name CurveConcat
+//  * @param {JXG.Curve} curve1 First curve element.
+//  * @param {JXG.Curve} curve2 Second curve element.
+//  * @augments JXG.Curve
+//  * @constructor
+//  * @type JXG.Curve
+//  */
+// JXG.createCurveConcat = function (board, parents, attributes) {
+//     var c;
 
-    if (parents.length !== 2) {
-        throw new Error(
-            "JSXGraph: Can't create curve difference with given parent'" +
-                "\nPossible parent types: [array, array|function]"
-        );
-    }
+//     if (parents.length !== 2) {
+//         throw new Error(
+//             "JSXGraph: Can't create curve difference with given parent'" +
+//                 "\nPossible parent types: [array, array|function]"
+//         );
+//     }
 
-    c = board.create("curve", [[], []], attributes);
-    /**
-     * @class
-     * @ignore
-     */
-    c.updateCurve = function () {
-        this.points = parents[0].points.concat(
-                [new JXG.Coords(Const.COORDS_BY_USER, [NaN, NaN], this.board)]
-            ).concat(parents[1].points);
-        this.numberPoints = this.points.length;
-        return this;
-    };
+//     c = board.create("curve", [[], []], attributes);
+//     /**
+//      * @class
+//      * @ignore
+//      */
+//     c.updateCurve = function () {
+//         this.points = parents[0].points.concat(
+//                 [new JXG.Coords(Const.COORDS_BY_USER, [NaN, NaN], this.board)]
+//             ).concat(parents[1].points);
+//         this.numberPoints = this.points.length;
+//         return this;
+//     };
 
-    return c;
-};
+//     return c;
+// };
 
-JXG.registerElement("curveconcat", JXG.createCurveConcat);
+// JXG.registerElement("curveconcat", JXG.createCurveConcat);
 
 /**
  * @class Box plot curve. The direction of the box plot can be either vertical or horizontal which

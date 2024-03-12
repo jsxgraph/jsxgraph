@@ -1,3 +1,40 @@
+1.8.0
+===
+
+New features
+-----------
+
+- Element `grid` has been completely overhauled with many additional features
+- Element `axis` has been completely overhauled with many additional features
+- Pointer and keyboard control of 3D views.
+- New events `click` and `dblclick` on desktop browsers
+- Tick labels can now be displayed as fractions
+
+Improvements
+------------
+
+- API docs
+- Lines: new method `Direction`
+- New method `Math.roundToStep`
+- New method '`JXG.parseNumber` to handle various unit numbers in strings
+- New method `JXG.parsePosition` to handle combinations of position options in strings
+- New methods `JXG.Math.decToFraction` and `JXG.toFraction` to convert float to fraction
+- New text attribute `formatNumber`
+- Various new features in the `measurement` element
+- String positioning in SVG
+- Add various geometry methods to JessieCode
+- 3D: elevation now runs from 0 to 2pi
+- "arrowparallel": is of type `vector` now
+
+Bug fixes
+---------
+
+- Handling of font size after call of `setAttribute`
+- Slope triangle: handling of label
+- Implicit curve handling of string input
+- Ticks of tape measures
+- dragging of 3D points
+
 1.7.0
 ===
 

@@ -3754,7 +3754,7 @@ JXG.Options = {
          *  board.create('axis', [[0,0],[0,1]], {
          *      position: 'fixed',
          *      anchor: 'left',
-         *      anchorDist: '1abs'
+         *      anchorDist: 1
          *  });
          *
          * </pre><div id="JXG6dff2f81-65ce-46a3-bea0-8ce25cc1cb4a" class="jxgbox" style="width: 300px; height: 300px;"></div>
@@ -3772,7 +3772,7 @@ JXG.Options = {
          *      board.create('axis', [[0,0],[0,1]], {
          *          position: 'fixed',
          *          anchor: 'left',
-         *          anchorDist: '1abs'
+         *          anchorDist: 1
          *      });
          *
          *      board.create('circle', [[5,5], 2.5]);
@@ -3830,7 +3830,7 @@ JXG.Options = {
          *  board.create('axis', [[0,0],[0,1]],{
          *      position: 'fixed',
          *      anchor: 'left',
-         *      anchorDist: '2abs',
+         *      anchorDist: 2,
          *      strokeColor : 'green',
          *      ticks: {
          *          majorHeight: 7,
@@ -3841,7 +3841,7 @@ JXG.Options = {
          *  board.create('axis', [[0,0],[0,1]], {
          *      position: 'fixed',
          *      anchor: 'right',
-         *      anchorDist: '2abs',
+         *      anchorDist: 2,
          *      strokeColor : 'blue',
          *      ticks: {
          *          majorHeight: 7,
@@ -3852,7 +3852,7 @@ JXG.Options = {
          *  board.create('axis', [[0,0],[0,-1]], {
          *      position: 'fixed',
          *      anchor: 'left',
-         *      anchorDist: '4abs',
+         *      anchorDist: 4,
          *      strokeColor : 'red',
          *      ticks:{
          *          majorHeight: 7,
@@ -3869,7 +3869,7 @@ JXG.Options = {
          *      board.create('axis', [[0,0],[0,1]],{
          *          position: 'fixed',
          *          anchor: 'left',
-         *          anchorDist: '2abs',
+         *          anchorDist: 4,
          *          strokeColor : 'green',
          *          ticks: {
          *              majorHeight: 7,
@@ -3880,7 +3880,7 @@ JXG.Options = {
          *      board.create('axis', [[0,0],[0,1]], {
          *          position: 'fixed',
          *          anchor: 'right',
-         *          anchorDist: '2abs',
+         *          anchorDist: 2,
          *          strokeColor : 'blue',
          *          ticks: {
          *              majorHeight: 7,
@@ -3891,7 +3891,7 @@ JXG.Options = {
          *      board.create('axis', [[0,0],[0,-1]], {
          *          position: 'fixed',
          *          anchor: 'left',
-         *          anchorDist: '4abs',
+         *          anchorDist: 4,
          *          strokeColor : 'red',
          *          ticks:{
          *              majorHeight: 7,
@@ -3911,7 +3911,6 @@ JXG.Options = {
          * There are the following possibilities:
          * <ul>
          *     <li>Numbers or strings which are numbers (e.g. '10') are interpreted as usrCoords.
-         *     <li>Strings with the unit 'abs' are interpreted as usrCoords, too.
          *     <li>Strings with the unit 'px' are interpreted as screen pixels.
          *     <li>Strings with the unit '%' or 'fr' are interpreted as a ratio to the width/height of the board. (e.g. 50% = 0.5fr)
          * </ul>
@@ -3977,7 +3976,6 @@ JXG.Options = {
          * There are the following possibilities:
          * <ul>
          *     <li>Numbers or strings which are numbers (e.g. '10') are interpreted as usrCoords.
-         *     <li>Strings with the unit 'abs' are interpreted as usrCoords, too.
          *     <li>Strings with the unit 'px' are interpreted as screen pixels.
          *     <li>Strings with the unit '%' or 'fr' are interpreted as a ratio to the width/height of the board. (e.g. 50% = 0.5fr)
          * </ul>
@@ -4851,7 +4849,6 @@ JXG.Options = {
          * <ul>
          *     <li>If it is set to 'auto' the distance of the major grid equals the distance of majorTicks of the corresponding axis.
          *     <li>Numbers or strings which are numbers (e.g. '10') are interpreted as distance in usrCoords.
-         *     <li>Strings with the unit 'abs' are interpreted as distance in usrCoords, too.
          *     <li>Strings with the unit 'px' are interpreted as distance in screen pixels.
          *     <li>Strings with the unit '%' or 'fr' are interpreted as a ratio to the width/height of the board. (e.g. 50% = 0.5fr)
          * </ul>
@@ -4870,7 +4867,6 @@ JXG.Options = {
          * <ul>
          *     <li>If set to 'auto', the number minor elements is equal to the number of minorTicks of the corresponding axis.
          *     <li>Numbers or strings which are numbers (e.g. '10') are interpreted as quantity.
-         *     <li>Strings with the unit 'abs' are interpreted as quantity, too.
          * </ul>
          * Instead of one value you can provide two values as an array <tt>[x, y]</tt> here.
          * These are used as number in x- and y-direction.
@@ -4980,6 +4976,7 @@ JXG.Options = {
             /**
              * This attribute determines whether the grid elements located at <tt>x=0</tt>, <tt>y=0</tt>
              * and especially at <tt>(0, 0)</tt> are displayed.
+             * The main reason to set this attribute to "false", might be in combination with axes.
              * <ul>
              *     <li>If <tt>false</tt>, then all these elements are hidden.
              *     <li>If <tt>true</tt>, all these elements are shown.
@@ -4991,9 +4988,9 @@ JXG.Options = {
              *
              * @type {Boolean|Object}
              * @name Grid#major_drawZero
-             * @default false
+             * @default true
              */
-            drawZero: false,
+            drawZero: true,
 
             /**
              * Number of vertices for face 'polygon'.
@@ -5077,6 +5074,7 @@ JXG.Options = {
 
              /**
               * This attribute determines whether the minor grid elements located at <tt>x=0</tt> and <tt>y=0</tt> are displayed.
+              * The main reason to set this attribute to "false", might be in combination with axes.
               * <ul>
               *     <li>If <tt>false</tt>, then all these elements are hidden.
               *     <li>If <tt>true</tt>, all these elements are shown.
@@ -5088,9 +5086,9 @@ JXG.Options = {
               *
               * @type {Boolean|Object}
               * @name Grid#minor_drawZero
-              * @default false
+              * @default true
               */
-            drawZero: false,
+            drawZero: true,
 
             /**
              * Number of vertices for face 'polygon'.
@@ -8180,7 +8178,12 @@ JXG.Options = {
             strokeOpacity: 1,
             strokeWidth: 1,
             strokeColor: '#000000',
-            visible: 'inherit'
+            visible: 'inherit',
+            label: {
+                anchorY: 'top',
+                anchorX: 'middle',
+                offset: [0, -10]
+            }
         },
 
         /**

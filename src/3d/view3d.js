@@ -550,7 +550,7 @@ JXG.extend(
                 b = m3D[3],
                 rhs = point2d.coords.usrCoords[2]; // y in 2D
 
-            rhs -= m3D[0] * m3D[0] + m3D[1] * coords3D[1] + m3D[2] * coords3D[2];
+            rhs -= m3D[0] * coords3D[0] + m3D[1] * coords3D[1] + m3D[2] * coords3D[2];
             if (Math.abs(b) < Mat.eps) {
                 return coords3D; // No changes
             } else {
