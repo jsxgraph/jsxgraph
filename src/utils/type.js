@@ -1267,6 +1267,35 @@ JXG.extend(
             }
         },
 
+        keysToLowerCase: function (obj) {
+            var key, val,
+                keys = Object.keys(obj),
+                n = keys.length,
+                newObj = {};
+
+            if (typeof obj !== 'object') {
+                return obj;
+            }
+
+            while (n--) {
+                key = keys[n];
+                if (obj.hasOwnProperty(key)) {
+                    // We recurse into an object only if it is
+                    // neither a DOM node nor an JSXGraph object
+                    val = obj[key];
+                    if (typeof val === 'object' &&
+                        val !== null &&
+                        !this.exists(val.nodeType) &&
+                        !this.exists(val.board)) {
+                        newObj[key.toLowerCase()] = this.keysToLowerCase(val);
+                    } else {
+                        newObj[key.toLowerCase()] = val;
+                    }
+                }
+            }
+            return newObj;
+        },
+
         /**
          * Generates an attributes object that is filled with default values from the Options object
          * and overwritten by the user specified attributes.
@@ -1324,7 +1353,7 @@ JXG.extend(
             // Additionally, we step into a subelement of attribute like line.point1 in case it is supplied as in
             // copyAttribute(attributes, board.options, 'line', 'point1')
             // In this case we would merge attributes.point1 into the global line.point1 attributes.
-            o = (typeof attributes === 'object') ? attributes : {};
+            o = (typeof attributes === 'object') ? this.keysToLowerCase(attributes) : {};
             isAvail = true;
             for (i = 3; i < len; i++) {
                 if (this.exists(o[arguments[i]])) {
