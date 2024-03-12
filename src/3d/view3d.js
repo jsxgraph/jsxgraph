@@ -32,6 +32,7 @@
 
     Winter semester 2023/2024:
         Lars Hofmann
+        Laura Rinas
  */
 
 /*global JXG:true, define: true*/
