@@ -1267,6 +1267,17 @@ JXG.extend(
             }
         },
 
+        /**
+         * Convert a n object to a new object containing only
+         * lower case properties.
+         *
+         * @param {Object} obj
+         * @returns Object
+         * @example
+         * var attr = JXG.keysToLowerCase({radiusPoint: {visible: false}});
+         *
+         * // return {radiuspoint: {visible: false}}
+         */
         keysToLowerCase: function (obj) {
             var key, val,
                 keys = Object.keys(obj),
