@@ -1162,28 +1162,47 @@ JXG.createView3D = function (board, parents, attributes) {
 
     // Add events for the keyboard navigation
     Env.addEvent(board.containerObj, 'keydown', function (event) {
-        var neededKey;
+        var neededKey,
+            catchEvt = false;
 
-        if (Type.evaluate(view.visProp.el.keyboard.enabled) && (event.key === 'ArrowUp' || event.key === 'ArrowDown')) {
+        if (Type.evaluate(view.visProp.el.keyboard.enabled) &&
+            (event.key === 'ArrowUp' || event.key === 'ArrowDown')
+        ) {
             neededKey = Type.evaluate(view.visProp.el.keyboard.key);
-            if (neededKey === 'none' || (neededKey.indexOf('shift') > -1 && event.shiftKey) || (neededKey.indexOf('ctrl') > -1 && event.ctrlKey)) {
+            if (neededKey === 'none' ||
+                (neededKey.indexOf('shift') > -1 && event.shiftKey) ||
+                (neededKey.indexOf('ctrl') > -1 && event.ctrlKey)) {
                 view._elEventHandler(event);
+                catchEvt = true;
             }
 
         }
-        if (Type.evaluate(view.visProp.el.keyboard.enabled) && (event.key === 'ArrowLeft' || event.key === 'ArrowRight')) {
+        if (Type.evaluate(view.visProp.el.keyboard.enabled) &&
+            (event.key === 'ArrowLeft' || event.key === 'ArrowRight')
+        ) {
             neededKey = Type.evaluate(view.visProp.az.keyboard.key);
-            if (neededKey === 'none' || (neededKey.indexOf('shift') > -1 && event.shiftKey) || (neededKey.indexOf('ctrl') > -1 && event.ctrlKey)) {
+            if (neededKey === 'none' ||
+                (neededKey.indexOf('shift') > -1 && event.shiftKey) ||
+                (neededKey.indexOf('ctrl') > -1 && event.ctrlKey)
+            ) {
                 view._azEventHandler(event);
+                catchEvt = true;
             }
         }
         if (event.key === 'PageUp') {
             view.nextView();
+            catchEvt = true;
         } else if (event.key === 'PageDown') {
             view.previousView();
+            catchEvt = true;
         }
 
-        event.preventDefault();
+        if (catchEvt) {
+            // We stop event handling only in the case if the keypress could be
+            // used for the 3D view. If this is not done, input fields et al
+            // can not be used any more.
+            event.preventDefault();
+        }
     }, view);
 
     // Add events for the pointer navigation
