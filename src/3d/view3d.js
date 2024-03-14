@@ -32,6 +32,7 @@
 
     Winter semester 2023/2024:
         Lars Hofmann
+        Vincent Kulicke
         Laura Rinas
  */
 
