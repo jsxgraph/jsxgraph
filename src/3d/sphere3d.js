@@ -42,12 +42,13 @@ import Type from "../utils/type";
  * @augments JXG.GeometryElement3D
  * @augments JXG.GeometryElement
  * @param {JXG.View3D} view The 3D view the sphere is drawn on.
- * @param {String} method Can be
- * <ul><li> <b>'twoPoints'</b> which means the sphere is defined by its center and a point on the sphere.</li></ul>
- * The parameters p1, p2 and radius must be set according to this method parameter.
- * @param {JXG.Point3D} par1 center of the sphere.
- * @param {JXG.Point3D} par2 Can be
- * <ul><li>a point on the circle if method is 'twoPoints'</li>
+ * @param {String} method Can be:
+ * <ul><li> <b><code>'twoPoints'</code></b> &ndash; The sphere is defined by its center and a point on the sphere.</li>
+ * <li><b><code>'pointRadius'</code></b> &ndash; The sphere is defined by its center and its radius in user units.</li></ul>
+ * The parameters <code>p1</code>, <code>p2</code> and <code>radius</code> must be set according to this method parameter.
+ * @param {JXG.Point3D} par1 The center of the sphere.
+ * @param {JXG.Point3D} par2 Can be:
+ * <ul><li>A point on the sphere (if the construction method is <code>'twoPoints'</code>)</li>
  * @param {Object} attributes An object containing visual properties like in {@link JXG.Options#point3d} and
  * {@link JXG.Options#elements}, and optional a name and an id.
  * @see JXG.Board#generateName
@@ -59,9 +60,10 @@ JXG.Sphere3D = function (view, method, par1, par2, attributes) {
     this.board.finalizeAdding(this);
 
     /**
-     * Stores the given method.
-     * Can be
-     * <ul><li><b>'twoPoints'</b> which means the sphere is defined by its center and a point on the sphere.</li></ul>
+     * The construction method.
+     * Can be:
+     * <ul><li><b><code>'twoPoints'</code></b> &ndash; The sphere is defined by its center and a point on the sphere.</li>
+     * <li><b><code>'pointRadius'</code></b> &ndash; The sphere is defined by its center and its radius in user units.</li></ul>
      * @type String
      * @see #center
      * @see #point2
@@ -69,13 +71,13 @@ JXG.Sphere3D = function (view, method, par1, par2, attributes) {
     this.method = method;
 
     /**
-     * The sphere's center. Do not set this parameter directly as it will break JSXGraph's update system.
-     * @type JXG.Point
+     * The sphere's center. Do not set this parameter directly, as that will break JSXGraph's update system.
+     * @type JXG.Point3D
      */
     this.center = this.board.select(par1);
 
-    /** Point on the sphere only set if method equals 'twoPoints'. Do not set this parameter directly as it will break JSXGraph's update system.
-     * @type JXG.Point
+    /** A point on the sphere; only set if the construction method is 'twoPoints'. Do not set this parameter directly, as that will break JSXGraph's update system.
+     * @type JXG.Point3D
      * @see #method
      */
     this.point2 = null;
@@ -182,7 +184,7 @@ JXG.extend(
  * @constructor
  * @type JXG.Sphere3D
  * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
- * @param {JXG.Point_number,JXG.Point} center,radius The center must be given as a {@link JXG.Point3D} (see {@link JXG.providePoints3D}),
+ * @param {JXG.Point3D_number,JXG.Point3D} center,radius The center must be given as a {@link JXG.Point3D} (see {@link JXG.providePoints3D}),
  * but the radius can be given as a number (which will create a sphere with a fixed radius) or another {@link JXG.Point3D}.
  * <p>
  * If the radius is supplied as number or the output of a function, its absolute value is taken.
