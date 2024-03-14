@@ -26,6 +26,16 @@
     the MIT License along with JSXGraph. If not, see <https://www.gnu.org/licenses/>
     and <https://opensource.org/licenses/MIT/>.
  */
+/*
+    Some functionalities in this file were developed as part of a software project
+    with students. We would like to thank all contributors for their help:
+
+    Winter semester 2023/2024:
+        Lars Hofmann
+        Vincent Kulicke
+        Laura Rinas
+ */
+
 /*global JXG:true, define: true*/
 
 import JXG from "../jxg";
