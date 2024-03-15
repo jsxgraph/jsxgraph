@@ -1570,6 +1570,24 @@ JXG.extend(
         },
 
         /**
+         * Generate the function which computes the data of the intersection.
+         */
+        intersectionFunction3D: function (view, el1, el2, i) {
+            let func;
+
+            if (
+                el1.type === Const.OBJECT_TYPE_PLANE3D &&
+                el2.type === Const.OBJECT_TYPE_PLANE3D
+            ) {
+                func = function () {
+                    return view.intersectionPlanePlane(el1, el2)[i];
+                };
+            }
+
+            return func;
+        },
+
+        /**
          * Returns true if the coordinates are on the arc element,
          * false otherwise. Usually, coords is an intersection
          * on the circle line. Now it is decided if coords are on the

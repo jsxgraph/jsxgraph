@@ -238,6 +238,24 @@ JXG.extend(Options, {
         /**#@-*/
     },
 
+    intersectionline3d: {
+        point1: { visible: false, name: "" }, // Used in point/point
+        point2: { visible: false, name: "" }
+    },
+
+    line3d: {
+        strokeWidth: 1,
+        strokeColor: "black",
+        fixed: true,
+        tabindex: null,
+        gradient: "linear",
+        gradientSecondColor: "#ffffff",
+
+        point: { visible: false, name: "" }, // Used in cases of point/direction/range
+        point1: { visible: false, name: "" }, // Used in point/point
+        point2: { visible: false, name: "" }
+    },
+
     mesh3d: {
         /**#@+
          * @visprop
@@ -253,19 +271,6 @@ JXG.extend(Options, {
 
         visible: "inherit"
         /**#@-*/
-    },
-
-    line3d: {
-        strokeWidth: 1,
-        strokeColor: "black",
-        fixed: true,
-        tabindex: null,
-        gradient: "linear",
-        gradientSecondColor: "#ffffff",
-
-        point: { visible: false, name: "" }, // Used in cases of point/direction/range
-        point1: { visible: false, name: "" }, // Used in point/point
-        point2: { visible: false, name: "" }
     },
 
     plane3d: {
