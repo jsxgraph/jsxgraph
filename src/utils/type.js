@@ -40,9 +40,9 @@
  * the type of a variable.
  */
 
-import JXG from "../jxg";
-import Const from "../base/constants";
-import Mat from "../math/math";
+import JXG from "../jxg.js";
+import Const from "../base/constants.js";
+import Mat from "../math/math.js";
 
 JXG.extend(
     JXG,

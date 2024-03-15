@@ -33,11 +33,11 @@
  * Create linear spaces of dimension at least one,
  * i.e. lines and planes.
  */
-import JXG from '../jxg';
-import Const from '../base/constants';
-import Type from '../utils/type';
-import Mat from '../math/math';
-import Geometry from '../math/geometry';
+import JXG from '../jxg.js';
+import Const from '../base/constants.js';
+import Type from '../utils/type.js';
+import Mat from '../math/math.js';
+import Geometry from '../math/geometry.js';
 
 // -----------------------
 //  Lines

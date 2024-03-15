@@ -54,20 +54,20 @@
  *   <li>{@link Reflection}</li></ul>
  */
 
-import JXG from "../jxg";
-import Mat from "../math/math";
-import Geometry from "../math/geometry";
-import Numerics from "../math/numerics";
-import Coords from "../base/coords";
-import Type from "../utils/type";
-import Const from "../base/constants";
-// import Point from "../base/point";
-// import Line from "../base/line";
-// import Circle from "../base/circle";
-// import Transform from "../base/transformation";
-import Composition from "../base/composition";
-// import Curve from "../base/curve";
-// import Polygon from "../base/polygon";
+import JXG from "../jxg.js";
+import Mat from "../math/math.js";
+import Geometry from "../math/geometry.js";
+import Numerics from "../math/numerics.js";
+import Coords from "../base/coords.js";
+import Type from "../utils/type.js";
+import Const from "../base/constants.js";
+// import Point from "../base/point.js";
+// import Line from "../base/line.js";
+// import Circle from "../base/circle.js";
+// import Transform from "../base/transformation.js";
+import Composition from "../base/composition.js";
+// import Curve from "../base/curve.js";
+// import Polygon from "../base/polygon.js";
 
 /**
  * @class This is used to construct a point that is the orthogonal projection of a point to a line.

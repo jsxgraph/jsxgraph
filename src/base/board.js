@@ -38,21 +38,21 @@
  * used to manage a geonext board like managing geometric elements, managing mouse and touch events, etc.
  */
 
-import JXG from '../jxg';
-import Const from './constants';
-import Coords from './coords';
-import Options from '../options';
-import Numerics from '../math/numerics';
-import Mat from '../math/math';
-import Geometry from '../math/geometry';
-import Complex from '../math/complex';
-import Statistics from '../math/statistics';
-import JessieCode from '../parser/jessiecode';
-import Color from '../utils/color';
-import Type from '../utils/type';
-import EventEmitter from '../utils/event';
-import Env from '../utils/env';
-import Composition from './composition';
+import JXG from '../jxg.js';
+import Const from './constants.js';
+import Coords from './coords.js';
+import Options from '../options.js';
+import Numerics from '../math/numerics.js';
+import Mat from '../math/math.js';
+import Geometry from '../math/geometry.js';
+import Complex from '../math/complex.js';
+import Statistics from '../math/statistics.js';
+import JessieCode from '../parser/jessiecode.js';
+import Color from '../utils/color.js';
+import Type from '../utils/type.js';
+import EventEmitter from '../utils/event.js';
+import Env from '../utils/env.js';
+import Composition from './composition.js';
 
 /**
  * Constructs a new Board object.

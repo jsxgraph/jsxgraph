@@ -1,7 +1,7 @@
 /*global JXG:true, define: true*/
 
-import JXG from "./jxg";
-import Options from "./options";
+import JXG from "./jxg.js";
+import Options from "./options.js";
 
 JXG.extend(Options, {
     // infobox: {

@@ -37,13 +37,13 @@
  * style and functional properties that are required to draw an arc on a board.
  */
 
-import JXG from "../jxg";
-import Geometry from "../math/geometry";
-import Mat from "../math/math";
-import Coords from "../base/coords";
-import Circle from "../base/circle";
-import Type from "../utils/type";
-import Const from "../base/constants";
+import JXG from "../jxg.js";
+import Geometry from "../math/geometry.js";
+import Mat from "../math/math.js";
+import Coords from "../base/coords.js";
+import Circle from "../base/circle.js";
+import Type from "../utils/type.js";
+import Const from "../base/constants.js";
 
 /**
  * @class An arc is a segment of the circumference of a circle. It is defined by a center, one point that

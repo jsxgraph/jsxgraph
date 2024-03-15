@@ -36,10 +36,10 @@
         Nina Koch
  */
 
-import JXG from "../jxg";
-import Mat from "../math/math";
-import Type from "../utils/type";
-import Const from "../base/constants";
+import JXG from "../jxg.js";
+import Mat from "../math/math.js";
+import Type from "../utils/type.js";
+import Const from "../base/constants.js";
 
 /**
  * @class Creates a grid to support the user with element placement or to improve determination of position.

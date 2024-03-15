@@ -44,15 +44,15 @@
  * a board.
  */
 
-import JXG from "../jxg";
-import Mat from "../math/math";
-import Geometry from "../math/geometry";
-import Numerics from "../math/numerics";
-import Statistics from "../math/statistics";
-import Const from "./constants";
-import Coords from "./coords";
-import GeometryElement from "./element";
-import Type from "../utils/type";
+import JXG from "../jxg.js";
+import Mat from "../math/math.js";
+import Geometry from "../math/geometry.js";
+import Numerics from "../math/numerics.js";
+import Statistics from "../math/statistics.js";
+import Const from "./constants.js";
+import Coords from "./coords.js";
+import GeometryElement from "./element.js";
+import Type from "../utils/type.js";
 
 /**
  * The Line class is a basic class for all kind of line objects, e.g. line, arrow, and axis. It is usually defined by two points and can

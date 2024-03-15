@@ -32,11 +32,11 @@
 /*global JXG:true, define: true*/
 /*jslint nomen: true, plusplus: true*/
 
-import JXG from "./jxg";
-import Const from "./base/constants";
-import Mat from "./math/math";
-import Color from "./utils/color";
-import Type from "./utils/type";
+import JXG from "./jxg.js";
+import Const from "./base/constants.js";
+import Mat from "./math/math.js";
+import Color from "./utils/color.js";
+import Type from "./utils/type.js";
 
 /**
  * Options Namespace

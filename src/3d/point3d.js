@@ -28,11 +28,11 @@
  */
 /*global JXG:true, define: true*/
 
-import JXG from "../jxg";
-import Const from "../base/constants";
-import Mat from "../math/math";
-import Geometry from "../math/geometry";
-import Type from "../utils/type";
+import JXG from "../jxg.js";
+import Const from "../base/constants.js";
+import Mat from "../math/math.js";
+import Geometry from "../math/geometry.js";
+import Type from "../utils/type.js";
 //, GeometryElement3D) {
 
 /**

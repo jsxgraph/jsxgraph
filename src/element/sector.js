@@ -32,13 +32,13 @@
 /*global JXG: true, define: true*/
 /*jslint nomen: true, plusplus: true*/
 
-import JXG from "../jxg";
-import Geometry from "../math/geometry";
-import Mat from "../math/math";
-import Statistics from "../math/statistics";
-import Coords from "../base/coords";
-import Const from "../base/constants";
-import Type from "../utils/type";
+import JXG from "../jxg.js";
+import Geometry from "../math/geometry.js";
+import Mat from "../math/math.js";
+import Statistics from "../math/statistics.js";
+import Coords from "../base/coords.js";
+import Const from "../base/constants.js";
+import Type from "../utils/type.js";
 
 /**
  * @class A circular sector is a subarea of the area enclosed by a circle. It is enclosed by two radii and an arc.

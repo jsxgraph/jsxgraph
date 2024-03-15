@@ -36,10 +36,10 @@
  * @fileoverview This file contains code for transformations of geometrical objects.
  */
 
-import JXG from "../jxg";
-import Const from "./constants";
-import Mat from "../math/math";
-import Type from "../utils/type";
+import JXG from "../jxg.js";
+import Const from "./constants.js";
+import Mat from "../math/math.js";
+import Type from "../utils/type.js";
 
 /**
  * A transformation consists of a 3x3 matrix, i.e. it is a projective transformation.

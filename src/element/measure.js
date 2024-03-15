@@ -38,10 +38,10 @@
  * a board.
  */
 
-import JXG from "../jxg";
-import Type from "../utils/type";
-import GeometryElement from "../base/element";
-import Prefix from "../parser/prefix";
+import JXG from "../jxg.js";
+import Type from "../utils/type.js";
+import GeometryElement from "../base/element.js";
+import Prefix from "../parser/prefix.js";
 
 /**
  * @class A tape measure can be used to measure distances between points.

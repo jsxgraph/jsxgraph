@@ -39,8 +39,8 @@
  * the browser runs on is a tablet/cell or a desktop computer.
  */
 
-import JXG from "../jxg";
-import Type from "./type";
+import JXG from "../jxg.js";
+import Type from "./type.js";
 
 JXG.extendConstants(
     JXG,
@@ -188,7 +188,7 @@ JXG.extend(
                 //     throw new Error('JXG.createCanvas not available.\n' +
                 //         'Install the npm package `canvas`\n' +
                 //         'and call:\n' +
-                //         '    import { createCanvas } from "canvas";\n' +
+                //         '    import { createCanvas } from "canvas.js";\n' +
                 //         '    JXG.createCanvas = createCanvas;\n');
                 // }
             }

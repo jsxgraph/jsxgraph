@@ -38,12 +38,12 @@
  * @author graphjs
  */
 
-import Const from "../base/constants";
-import Coords from "../base/coords";
-import Mat from "./math";
-import Geometry from "./geometry";
-import Server from "../server/server";
-import Type from "../utils/type";
+import Const from "../base/constants.js";
+import Coords from "../base/coords.js";
+import Mat from "./math.js";
+import Geometry from "./geometry.js";
+import Server from "../server/server.js";
+import Type from "../utils/type.js";
 
 var undef;
 

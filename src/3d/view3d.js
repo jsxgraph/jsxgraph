@@ -38,13 +38,13 @@
 
 /*global JXG:true, define: true*/
 
-import JXG from "../jxg";
-import Const from "../base/constants";
-import Type from "../utils/type";
-import Mat from "../math/math";
-import Env from "../utils/env";
-import GeometryElement from "../base/element";
-import Composition from "../base/composition";
+import JXG from "../jxg.js";
+import Const from "../base/constants.js";
+import Type from "../utils/type.js";
+import Mat from "../math/math.js";
+import Env from "../utils/env.js";
+import GeometryElement from "../base/element.js";
+import Composition from "../base/composition.js";
 
 /**
  * 3D view inside a JXGraph board.

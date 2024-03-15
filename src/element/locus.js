@@ -32,9 +32,9 @@
 /*global JXG: true, define: true*/
 /*jslint nomen: true, plusplus: true*/
 
-import JXG from "../jxg";
-import Symbolic from "../math/symbolic";
-import Type from "../utils/type";
+import JXG from "../jxg.js";
+import Symbolic from "../math/symbolic.js";
+import Type from "../utils/type.js";
 
 /**
  * @class This element is used to visualize the locus of a given dependent point.

@@ -36,20 +36,20 @@
  * @fileoverview In this file the geometry element Curve is defined.
  */
 
-import JXG from "../jxg";
-import Clip from "../math/clip";
-import Const from "./constants";
-import Coords from "./coords";
-import Geometry from "../math/geometry";
-import GeometryElement from "./element";
-import GeonextParser from "../parser/geonext";
-import ImplicitPlot from "../math/implicitplot";
-import Mat from "../math/math";
-import Metapost from "../math/metapost";
-import Numerics from "../math/numerics";
-import Plot from "../math/plot";
-import QDT from "../math/qdt";
-import Type from "../utils/type";
+import JXG from "../jxg.js";
+import Clip from "../math/clip.js";
+import Const from "./constants.js";
+import Coords from "./coords.js";
+import Geometry from "../math/geometry.js";
+import GeometryElement from "./element.js";
+import GeonextParser from "../parser/geonext.js";
+import ImplicitPlot from "../math/implicitplot.js";
+import Mat from "../math/math.js";
+import Metapost from "../math/metapost.js";
+import Numerics from "../math/numerics.js";
+import Plot from "../math/plot.js";
+import QDT from "../math/qdt.js";
+import Type from "../utils/type.js";
 
 /**
  * Curves are the common object for function graphs, parametric curves, polar curves, and data plots.

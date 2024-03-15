@@ -32,11 +32,11 @@
 /*global JXG: true, define: true, AMprocessNode: true, MathJax: true, document: true */
 /*jslint nomen: true, plusplus: true*/
 
-import JXG from "../jxg";
-import Const from "./constants";
-import EventEmitter from "../utils/event";
-import Type from "../utils/type";
-import Mat from "../math/math";
+import JXG from "../jxg.js";
+import Const from "./constants.js";
+import EventEmitter from "../utils/event.js";
+import Type from "../utils/type.js";
+import Mat from "../math/math.js";
 
 /**
  * @fileoverview In this file the Coords object is defined, a class to manage all

@@ -38,11 +38,11 @@
  * @author A.W.
  */
 
-import JXG from "../jxg";
-import Const from "./constants";
-import Mat from "../math/math";
-import GeometryElement from "./element";
-import Type from "../utils/type";
+import JXG from "../jxg.js";
+import Const from "./constants.js";
+import Mat from "../math/math.js";
+import GeometryElement from "./element.js";
+import Type from "../utils/type.js";
 
 /**
  * Constructs a new Turtle object.

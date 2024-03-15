@@ -64,8 +64,8 @@
  * by D.E. Knuth and J.D. Hobby.
  */
 
-import Type from "../utils/type";
-import Mat from "./math";
+import Type from "../utils/type.js";
+import Mat from "./math.js";
 
 /**
  * The JXG.Math.Metapost namespace holds algorithms translated from Metapost

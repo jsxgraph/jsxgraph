@@ -1,6 +1,6 @@
 /* eslint-disable one-var */
-import JXG from "./jxg";
-import Env from "./utils/env"; // Needed below
+import JXG from "./jxg.js";
+import Env from "./utils/env.js"; // Needed below
 
 export * from "./jxg";
 export * from "./utils/env"; // Needed below

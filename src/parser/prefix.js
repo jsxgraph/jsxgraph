@@ -43,10 +43,10 @@
  * @example
  *
  */
-import JXG from "../jxg";
-import Type from "../utils/type";
-import Mat from "../math/math";
-import Const from "../base/constants";
+import JXG from "../jxg.js";
+import Type from "../utils/type.js";
+import Mat from "../math/math.js";
+import Const from "../base/constants.js";
 
 /**
  * Prefix expression parser, i.e. a poor man's parser.
