@@ -404,6 +404,7 @@ declare namespace JXG {
     export function isObject(v: unknown): boolean;
     export function isPoint(v: unknown): v is Point;
     export function isPointType(v: unknown): boolean;
+    export function isPointType3D(v: unknown): boolean;
     export function isString(v: unknown): v is string;
     export function isTouchDevice(): boolean;
     export function isTransformationOrArray(v: unknown): boolean;

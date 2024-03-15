@@ -118,6 +118,7 @@ constants =
     OBJECT_TYPE_MEASUREMENT: 38,
 
     OBJECT_TYPE_INTERSECTION_LINE3D: 39,
+    OBJECT_TYPE_SPHERE3D: 40,
 
     // IMPORTANT:
     // ----------
