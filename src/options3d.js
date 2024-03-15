@@ -299,7 +299,21 @@ JXG.extend(Options, {
     },
 
     sphere3d: {
-        highlight: false
+        /**#@+
+         * @visprop
+         */
+
+        highlight: false,
+
+        strokeColor: '#00ff80',
+        fillColor: 'white',
+        gradient: 'radial',
+        gradientSecondColor: '#00ff80',
+        gradientFX: 0.7,
+        gradientFY: 0.3,
+        fillOpacity: 0.4
+
+        /**#@-*/
     },
 
     surface3d: {

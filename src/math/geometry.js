@@ -1573,7 +1573,7 @@ JXG.extend(
          * Generate the function which computes the data of the intersection.
          */
         intersectionFunction3D: function (view, el1, el2, i) {
-            let func;
+            var func;
 
             if (
                 el1.type === Const.OBJECT_TYPE_PLANE3D &&

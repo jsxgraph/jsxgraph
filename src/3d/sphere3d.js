@@ -1,6 +1,7 @@
 /*
     Copyright 2008-2023
         Matthias Ehmann,
+        Aaron Fenyes,
         Carsten Miller,
         Andreas Walter,
         Alfred Wassermann
@@ -30,7 +31,6 @@
 
 import JXG from "../jxg";
 import Const from "../base/constants";
-import Mat from "../math/math";
 import Type from "../utils/type";
 
 /**
@@ -85,7 +85,7 @@ JXG.Sphere3D = function (view, method, par1, par2, attributes) {
     this.points = [];
 
     if (method === "twoPoints") {
-        this.point2 = board.select(par2);
+        this.point2 = this.board.select(par2);
         this.radius = this.Radius();
     } else if (method === "pointRadius") {
         // Converts JessieCode syntax into JavaScript syntax and generally ensures that the radius is a function
@@ -113,7 +113,8 @@ JXG.Sphere3D = function (view, method, par1, par2, attributes) {
 
     this.methodMap = Type.deepCopy(this.methodMap, {
         center: "center",
-        point2: "point2"
+        point2: "point2",
+        Radius: "Radius"
     });
 };
 JXG.Sphere3D.prototype = new JXG.GeometryElement();
@@ -174,11 +175,14 @@ JXG.extend(
 
 /**
  * @class This element is used to provide a constructor for a sphere.
+ *
  * @pseudo
- * @description A sphere consists of all points with a given distance from a given point.
+ * @description
+ * A sphere consists of all points with a given distance from a given point.
  * The given point is called the center, and the given distance is called the radius.
  * A sphere can be constructed by providing a center and a point on the sphere or a center and a radius (given as a number or function).
  * If the radius is a negative value, its absolute value is taken.
+ *
  * @name Sphere3D
  * @augments JXG.Sphere3D
  * @constructor
@@ -188,27 +192,111 @@ JXG.extend(
  * but the radius can be given as a number (which will create a sphere with a fixed radius) or another {@link JXG.Point3D}.
  * <p>
  * If the radius is supplied as number or the output of a function, its absolute value is taken.
+ *
+ * @example
+ * var view = board.create(
+ *     'view3d',
+ *     [[-6, -3], [8, 8],
+ *     [[0, 3], [0, 3], [0, 3]]],
+ *     {
+ *         xPlaneRear: {fillOpacity: 0.2, gradient: null},
+ *         yPlaneRear: {fillOpacity: 0.2, gradient: null},
+ *         zPlaneRear: {fillOpacity: 0.2, gradient: null}
+ *     }
+ * );
+ *
+ * // Two points
+ * var center = view.create(
+ *     'point3d',
+ *     [1.5, 1.5, 1.5],
+ *     {
+ *         withLabel: false,
+ *         size: 5,
+ *    }
+ * );
+ * var point = view.create(
+ *     'point3d',
+ *     [2, 1.5, 1.5],
+ *     {
+ *         withLabel: false,
+ *         size: 5
+ *    }
+ * );
+ *
+ * // Sphere
+ * var sphere = view.create(
+ *     'sphere3d',
+ *     [center, point],
+ *     {}
+ * );
+ *
+ * </pre><div id="JXG5969b83c-db67-4e62-9702-d0440e5fe2c1" class="jxgbox" style="width: 300px; height: 300px;"></div>
+ * <script type="text/javascript">
+ *     (function() {
+ *         var board = JXG.JSXGraph.initBoard('JXG5969b83c-db67-4e62-9702-d0440e5fe2c1',
+ *             {boundingbox: [-8, 8, 8,-8], axis: false, showcopyright: false, shownavigation: false});
+ *         var view = board.create(
+ *             'view3d',
+ *             [[-6, -3], [8, 8],
+ *             [[0, 3], [0, 3], [0, 3]]],
+ *             {
+ *                 xPlaneRear: {fillOpacity: 0.2, gradient: null},
+ *                 yPlaneRear: {fillOpacity: 0.2, gradient: null},
+ *                 zPlaneRear: {fillOpacity: 0.2, gradient: null}
+ *             }
+ *         );
+ *
+ *         // Two points
+ *         var center = view.create(
+ *             'point3d',
+ *             [1.5, 1.5, 1.5],
+ *             {
+ *                 withLabel: false,
+ *                 size: 5,
+ *            }
+ *         );
+ *         var point = view.create(
+ *             'point3d',
+ *             [2, 1.5, 1.5],
+ *             {
+ *                 withLabel: false,
+ *                 size: 5
+ *            }
+ *         );
+ *
+ *         // Sphere
+ *         var sphere = view.create(
+ *             'sphere3d',
+ *             [center, point],
+ *             {}
+ *         );
+ *
+ *     })();
+ *
+ * </script><pre>
+ *
  */
 JXG.createSphere3D = function (board, parents, attributes) {
     //   parents[0]: view
     //   parents[1]: point,
     //   parents[2]: point or radius
 
-    let view = parents[0],
-        attr, p, center2d, radius2d, el;
+    var view = parents[0],
+        attr, p, point_style, provided,
+        center2d, radius2d,
+        el, i;
 
     attr = Type.copyAttributes(attributes, board.options, 'sphere3d');
 
     p = [];
-    for (let i = 1; i < parents.length; i++) {
+    for (i = 1; i < parents.length; i++) {
         if (Type.isPointType3D(board, parents[i])) {
-            let point_style;
             if (p.length === 0) {
                 point_style = 'center';
             } else {
                 point_style = 'point';
             }
-            let provided = Type.providePoints3D(view, [parents[i]], attributes, 'sphere3d', [point_style])[0];
+            provided = Type.providePoints3D(view, [parents[i]], attributes, 'sphere3d', [point_style])[0];
             if (provided === false) {
                 throw new Error(
                     "JSXGraph: Can't create sphere3d from this type. Please provide a point type."
@@ -250,9 +338,9 @@ JXG.createSphere3D = function (board, parents, attributes) {
     center2d = function () {
         return view.project3DTo2D([1, el.center.X(), el.center.Y(), el.center.Z()]);
     };
+
     radius2d = function () {
-        let scale2d = view.size[0] / (view.bbox3D[0][1] - view.bbox3D[0][0]);
-        return scale2d * el.Radius();
+        return el.Radius() * view.size[0] / (view.bbox3D[0][1] - view.bbox3D[0][0]);
     };
 
     attr = el.setAttr2D(attr);

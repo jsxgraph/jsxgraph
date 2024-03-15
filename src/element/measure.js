@@ -342,7 +342,7 @@ JXG.createMeasurement = function (board, parents, attributes) {
     };
 
     el.Unit = function () {
-        let unit = '',
+        var unit = '',
             units = Type.evaluate(el.visProp.units),
             dim = el.Dimension();
 

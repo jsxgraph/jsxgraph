@@ -1,6 +1,7 @@
 /*
     Copyright 2008-2023
         Matthias Ehmann,
+        Aaron Fenyes,
         Carsten Miller,
         Andreas Walter,
         Alfred Wassermann
@@ -739,16 +740,16 @@ JXG.registerElement('plane3d', JXG.createPlane3D);
  * @param {JXG.Plane3D_JXG.Plane3D} el1,el2 The result will be the intersection point of el1 and el2.
  * @example
  * // Create the intersection line of two planes
- *     let view = board.create(
- *         'view3d',
- *         [[-6, -3], [8, 8],
- *         [[0, 3], [0, 3], [0, 3]]],
- *         {
- *             xPlaneRear: {fillOpacity: 0.2, gradient: null},
- *             yPlaneRear: {fillOpacity: 0.2, gradient: null},
- *             zPlaneRear: {fillOpacity: 0.2, gradient: null}
- *         }
- *     );
+ * var view = board.create(
+ *     'view3d',
+ *     [[-6, -3], [8, 8],
+ *     [[0, 3], [0, 3], [0, 3]]],
+ *     {
+ *         xPlaneRear: {fillOpacity: 0.2, gradient: null},
+ *         yPlaneRear: {fillOpacity: 0.2, gradient: null},
+ *         zPlaneRear: {fillOpacity: 0.2, gradient: null}
+ *     }
+ * );
  * var a = view.create('point3d', [0, 0, 0]);
  *
  * var p1 = view.create(
@@ -758,7 +759,7 @@ JXG.registerElement('plane3d', JXG.createPlane3D);
  * );
  * var p2 = view.create(
  *    'plane3d',
- *     [a, [1, 0, 0], [0, 0, 1]],
+ *     [a, [-2, 1, 1], [1, -2, 1]],
  *     {fillColor: '#ff0000'}
  * );
  *
@@ -768,8 +769,8 @@ JXG.registerElement('plane3d', JXG.createPlane3D);
  * <script type="text/javascript">
  *     (function() {
  *         var board = JXG.JSXGraph.initBoard('JXGdb931076-b29a-4eff-b97e-4251aaf24943',
- *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
- *         let view = board.create(
+ *             {boundingbox: [-8, 8, 8,-8], axis: false, showcopyright: false, shownavigation: false});
+ *         var view = board.create(
  *             'view3d',
  *             [[-6, -3], [8, 8],
  *             [[0, 3], [0, 3], [0, 3]]],
@@ -788,7 +789,7 @@ JXG.registerElement('plane3d', JXG.createPlane3D);
  *     );
  *     var p2 = view.create(
  *        'plane3d',
- *         [a, [1, 0, 0], [0, 0, 1]],
+ *         [a, [-2, 1, 1], [1, -2, 1]],
  *         {fillColor: '#ff0000'}
  *     );
  *

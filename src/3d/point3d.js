@@ -372,7 +372,7 @@ JXG.extend(
          * @returns {Number} The distance
          */
         distance: function (pt) {
-            let eps_sq = Mat.eps * Mat.eps,
+            var eps_sq = Mat.eps * Mat.eps,
                 c_this = this.coords,
                 c_pt = pt.coords;
 

@@ -188,6 +188,11 @@ JXG.extend(
             return false;
         },
 
+        /**
+         * Checks if a given variable is a reference of a JSXGraph Point3D element.
+         * @param v A variable of any type.
+         * @returns {Boolean} True, if v is of type JXG.Point3D.
+         */
         isPoint3D: function (v) {
             if (v !== null && typeof v === "object" && this.exists(v.elType)) {
                 return v.elType === "point3d";
@@ -218,23 +223,24 @@ JXG.extend(
             p = board.select(v);
             return this.isPoint(p);
         },
-        
+
         /**
          * Checks if a given variable is a reference of a JSXGraph Point3D element or an array of length three
          * or a function returning an array of length three.
          * @param {JXG.Board} board
          * @param v A variable of any type.
-         * @returns {Boolean} True, if v is of type JXG.Point.
+         * @returns {Boolean} True, if v is of type JXG.Point3D or an array of length at least 3, or a function returning
+         * such an array.
          */
         isPointType3D: function (board, v) {
             var val, p;
 
-            if (this.isArray(v) && v.length === 3) {
+            if (this.isArray(v) && v.length >= 3) {
                 return true;
             }
             if (this.isFunction(v)) {
                 val = v();
-                if (this.isArray(val) && val.length === 3) {
+                if (this.isArray(val) && val.length >= 3) {
                     return true;
                 }
             }
