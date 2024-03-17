@@ -324,7 +324,7 @@ JXG.extend(
             };
 
             a = this.az_slide.Value() + (3 * Math.PI * 0.5); // Sphere
-            e = this.el_slide.Value() * 2;
+            e = this.el_slide.Value();
 
             r = Type.evaluate(this.visProp.r);
             if (r === 'auto') {
