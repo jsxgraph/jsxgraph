@@ -357,6 +357,7 @@ JXG.extend(
                     R = (this.size[0] * this.board.unitX + this.size[1] * this.board.unitY) * 0.25;
                     x = this._trackball.x;
                     y = this._trackball.y
+                    // dx *= -1;
                     dy *= -1;
 
                     p1 = [x, y, this._projectToSphere(R, x, y)];
@@ -1049,7 +1050,7 @@ JXG.extend(
             // Project the calculated az value to a usable value in the interval [smin,smax]
             // Use modulo if continuous is true
             if (Type.evaluate(this.visProp.az.continuous)) {
-                az = (((az % smax) + smax) % smax);
+                az = (az + smax) % smax;
             } else {
                 if (az > 0) {
                     az = Math.min(smax, az);
@@ -1084,7 +1085,7 @@ JXG.extend(
             }
 
             // Calculate new az value if keyboard events are triggered
-            // Plus if right-button, minus if left-button
+            // Plus if down-button, minus if up-button
             if (Type.evaluate(this.visProp.el.keyboard.enabled)) {
                 if (evt.key === 'ArrowUp') {
                     el = el - Type.evaluate(this.visProp.el.keyboard.step) * Math.PI / 180;
@@ -1093,16 +1094,14 @@ JXG.extend(
                 }
             }
 
-            // Calculate new az value if keyboard events are triggered
-            // Plus if right-button, minus if left-button
             if (Type.evaluate(this.visProp.el.pointer.enabled) && (delta !== 0) && evt.key == null) {
                 el += delta * speed;
             }
 
-            // Project the calculated az value to a usable value in the interval [smin,smax]
+            // Project the calculated el value to a usable value in the interval [smin,smax]
             // Use modulo if continuous is true
             if (Type.evaluate(this.visProp.el.continuous)) {
-                el = (((el % smax) + smax) % smax);
+                el = (el + smax) % smax;
             } else {
                 if (el > 0) {
                     el = Math.min(smax, el);
@@ -1140,9 +1139,19 @@ JXG.extend(
             this._hasMoveTrackball = false;
 
             if (Type.evaluate(this.visProp.trackball.enabled)) {
-                target = (Type.evaluate(this.visProp.az.pointer.outside)) ? document : board.containerObj;
-                Env.addEvent(target, 'pointermove', this._trackballHandler, this);
-                this._hasMoveTrackball = true;
+                neededButton = Type.evaluate(this.visProp.trackball.button);
+                neededKey = Type.evaluate(this.visProp.trackball.key);
+
+                // Move events for virtual trackball
+                if (
+                    (neededButton === -1 || neededButton === evt.button) &&
+                    (neededKey === 'none' || (neededKey.indexOf('shift') > -1 && evt.shiftKey) || (neededKey.indexOf('ctrl') > -1 && evt.ctrlKey))
+                ) {
+                    // If outside is true then the event listener is bound to the document, otherwise to the div
+                    target = (Type.evaluate(this.visProp.trackball.outside)) ? document : board.containerObj;
+                    Env.addEvent(target, 'pointermove', this._trackballHandler, this);
+                    this._hasMoveTrackball = true;
+                }
             } else {
                 if (Type.evaluate(this.visProp.az.pointer.enabled)) {
                     neededButton = Type.evaluate(this.visProp.az.pointer.button);
@@ -1198,8 +1207,6 @@ JXG.extend(
             }
             Env.removeEvent(document, 'pointerup', this.pointerUpHandler, this);
         }
-
-
     });
 
 /**

@@ -551,9 +551,12 @@ JXG.extend(Options, {
         },
 
         trackball: {
-            enabled: true
+            enabled: true,
+            outside: true,
+            button: -1,
+            key: 'none'
         },
-        
+
         /**
          * Distance of the camera to the center of the view.
          * If set to 'auto', r will be calculated automatically.
