@@ -36,13 +36,13 @@
  * @fileoverview In this file the conic sections defined.
  */
 
-import JXG from "../jxg";
-import Const from "../base/constants";
-import Coords from "../base/coords";
-import Mat from "../math/math";
-import Numerics from "../math/numerics";
-import Geometry from "../math/geometry";
-import Type from "../utils/type";
+import JXG from "../jxg.js";
+import Const from "../base/constants.js";
+import Coords from "../base/coords.js";
+import Mat from "../math/math.js";
+import Numerics from "../math/numerics.js";
+import Geometry from "../math/geometry.js";
+import Type from "../utils/type.js";
 
 /**
  * @class This element is used to provide a constructor for an ellipse. An ellipse is given by two points (the foci) and a third point on the ellipse or

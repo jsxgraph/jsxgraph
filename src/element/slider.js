@@ -38,12 +38,12 @@
  * a board.
  */
 
-import JXG from "../jxg";
-import Mat from "../math/math";
-import Const from "../base/constants";
-import Coords from "../base/coords";
-import Type from "../utils/type";
-import Point from "../base/point";
+import JXG from "../jxg.js";
+import Mat from "../math/math.js";
+import Const from "../base/constants.js";
+import Coords from "../base/coords.js";
+import Type from "../utils/type.js";
+import Point from "../base/point.js";
 
 /**
  * @class A slider can be used to choose values from a given range of numbers.

@@ -3676,6 +3676,10 @@ declare namespace JXG {
         Z(): number;
     }
 
+    export interface Sphere3DAttributes extends GeometryElementAttributes {}
+
+    export interface Sphere3D {}
+
     export interface View3DAttributes extends GeometryElementAttributes {
         axesPosition?: "center";
 
@@ -3742,6 +3746,11 @@ declare namespace JXG {
             parents: unknown[],
             attributes?: Point3DAttributes
         ): Point3D;
+        create(
+            elementType: "sphere3d",
+            parents: unknown[],
+            attributes?: Sphere3DAttributes
+        ): Sphere3D;
         add(el: unknown): void;
         update(): this;
         updateRenderer(): this;
@@ -3847,6 +3856,7 @@ declare namespace JXG {
         | 'semicircle'
         | 'slider'
         | 'slopetriangle'
+        | 'sphere3d'
         | 'spline'
         | 'stepfunction'
         | 'tangent'

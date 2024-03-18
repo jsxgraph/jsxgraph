@@ -38,12 +38,12 @@
  * * Check if input polygons are closed. If not, handle this case.
  */
 
-// import JXG from "../jxg";
-import Const from "../base/constants";
-import Coords from "../base/coords";
-import Mat from "./math";
-import Geometry from "./geometry";
-import Type from "../utils/type";
+// import JXG from "../jxg.js";
+import Const from "../base/constants.js";
+import Coords from "../base/coords.js";
+import Mat from "./math.js";
+import Geometry from "./geometry.js";
+import Type from "../utils/type.js";
 
 /**
  * Math.Clip namespace definition. This namespace contains algorithms for Boolean operations on paths, i.e.

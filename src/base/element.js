@@ -32,15 +32,15 @@
 /*global JXG: true, define: true*/
 /*jslint nomen: true, plusplus: true, unparam: true*/
 
-import JXG from "../jxg";
-import Const from "./constants";
-import Coords from "./coords";
-import Mat from "../math/math";
-import Statistics from "../math/statistics";
-import Options from "../options";
-import EventEmitter from "../utils/event";
-import Color from "../utils/color";
-import Type from "../utils/type";
+import JXG from "../jxg.js";
+import Const from "./constants.js";
+import Coords from "./coords.js";
+import Mat from "../math/math.js";
+import Statistics from "../math/statistics.js";
+import Options from "../options.js";
+import EventEmitter from "../utils/event.js";
+import Color from "../utils/color.js";
+import Type from "../utils/type.js";
 
 /**
  * Constructs a new GeometryElement object.

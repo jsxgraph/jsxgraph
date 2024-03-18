@@ -38,13 +38,13 @@
  * stuff like intersection points, angles, midpoint, and so on.
  */
 
-import JXG from "../jxg";
-import Const from "../base/constants";
-import Coords from "../base/coords";
-import Mat from "./math";
-import Numerics from "./numerics";
-import Type from "../utils/type";
-import Expect from "../utils/expect";
+import JXG from "../jxg.js";
+import Const from "../base/constants.js";
+import Coords from "../base/coords.js";
+import Mat from "./math.js";
+import Numerics from "./numerics.js";
+import Type from "../utils/type.js";
+import Expect from "../utils/expect.js";
 
 /**
  * Math.Geometry namespace definition. This namespace holds geometrical algorithms,
@@ -1563,6 +1563,24 @@ JXG.extend(
                         }
                     }
                     return res;
+                };
+            }
+
+            return func;
+        },
+
+        /**
+         * Generate the function which computes the data of the intersection.
+         */
+        intersectionFunction3D: function (view, el1, el2, i) {
+            var func;
+
+            if (
+                el1.type === Const.OBJECT_TYPE_PLANE3D &&
+                el2.type === Const.OBJECT_TYPE_PLANE3D
+            ) {
+                func = function () {
+                    return view.intersectionPlanePlane(el1, el2)[i];
                 };
             }
 

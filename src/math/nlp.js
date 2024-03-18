@@ -78,9 +78,9 @@
 /*global JXG: true, define: true*/
 /*jslint nomen: true, plusplus: true, continue: true*/
 
-import JXG from "../jxg";
-import Mat from "./math";
-// import Type from "../utils/type";
+import JXG from "../jxg.js";
+import Mat from "./math.js";
+// import Type from "../utils/type.js";
 
 /**
  * The JXG.Math.Nlp namespace holds numerical algorithms for non-linear optimization.

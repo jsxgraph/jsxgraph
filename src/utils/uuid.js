@@ -13,7 +13,7 @@
 /*global JXG: true, define: true*/
 /*jslint nomen: true, plusplus: true, bitwise: true*/
 
-import JXG from "../jxg";
+import JXG from "../jxg.js";
 
 // constants
 var uuidCharsStr = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz",

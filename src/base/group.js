@@ -37,11 +37,11 @@
  * managing grouping of points.
  */
 
-import JXG from "../jxg";
-import Const from "./constants";
-import Mat from "../math/math";
-import Geometry from "../math/geometry";
-import Type from "../utils/type";
+import JXG from "../jxg.js";
+import Const from "./constants.js";
+import Mat from "../math/math.js";
+import Geometry from "../math/geometry.js";
+import Type from "../utils/type.js";
 
 /**
  * Creates a new instance of Group.

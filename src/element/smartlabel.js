@@ -33,9 +33,9 @@
  * @fileoverview Implementation of smart labels..
  */
 
-import JXG from "../jxg";
-import Const from "../base/constants";
-import Type from "../utils/type";
+import JXG from "../jxg.js";
+import Const from "../base/constants.js";
+import Type from "../utils/type.js";
 
 /**
  * @class Smart label. These are customized text elements for displaying measurements of JSXGraph elements, like length of a

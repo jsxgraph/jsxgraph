@@ -32,11 +32,11 @@
 /*global JXG:true, define: true*/
 /*jslint nomen: true, plusplus: true*/
 
-import JXG from "./jxg";
-import Const from "./base/constants";
-import Mat from "./math/math";
-import Color from "./utils/color";
-import Type from "./utils/type";
+import JXG from "./jxg.js";
+import Const from "./base/constants.js";
+import Mat from "./math/math.js";
+import Color from "./utils/color.js";
+import Type from "./utils/type.js";
 
 /**
  * Options Namespace
@@ -4823,6 +4823,7 @@ JXG.Options = {
 
         needsRegularUpdate: false,
         hasGrid: false,  // Used in standardoptions
+        highlight: false,
 
         /**
          * Deprecated. Use {@link Grid#majorStep} instead.
@@ -4898,128 +4899,188 @@ JXG.Options = {
         includeBoundaries: false,
 
         /**
-         * This object contains the attributes for major grid elements.
+         * Size of grid elements. There are the following possibilities:
+         * <ul>
+         *     <li>Numbers or strings which are numbers (e.g. '10') are interpreted as size in pixels.
+         *     <li>Strings with additional '%' (e.g. '95%') are interpreted as the ratio of used space for one element.
+         * </ul>
+         * Unused for 'line' which will use the value of strokeWidth.
+         * Instead of one value you can provide two values as an array <tt>[x, y]</tt> here.
+         * These are used as size in x- and y-direction.
          *
-         * @see Grid#major_size
-         * @see Grid#major_face
-         * @see Grid#major_margin
-         * @see Grid#major_drawZero
-         * @see Grid#major_polygonVertices
+         * <p><b><i>This attribute can be set individually for major and minor grid as a sub-entry of {@link Grid#major} or {@link Grid#minor}</i></b>,
+         * e.g. <tt>major: {size: ...}</tt>
+         * For default values have a look there.</p>
+         *
+         * @type {Number|String|Array}
+         * @name Grid#size
+         */
+        // This attribute only exists for documentation purposes. It has no effect and is overwritten with actual values in major and minor.
+        size: undefined,
+
+        /**
+         * Appearance of grid elements.
+         * There are different styles which differ in appearance.
+         * Possible values are (comparing to {@link Point#face}):
+         * <table>
+         * <tr><th>Input</th><th>Output</th><th>Fillable by fillColor,...</th></tr>
+         * <tr><td>point, .</td><td>.</td><td>no</td></tr>
+         * <tr><td>line</td><td>&minus;</td><td>no</td></tr>
+         * <tr><td>cross, x</td><td>x</td><td>no</td></tr>
+         * <tr><td>circle, o</td><td>o</td><td>yes</td></tr>
+         * <tr><td>square, []</td><td>[]</td><td>yes</td></tr>
+         * <tr><td>plus, +</td><td>+</td><td>no</td></tr>
+         * <tr><td>minus, -</td><td>-</td><td>no</td></tr>
+         * <tr><td>divide, |</td><td>|</td><td>no</td></tr>
+         * <tr><td>diamond, &lt;&gt;</td><td>&lt;&gt;</td><td>yes</td></tr>
+         * <tr><td>diamond2, &lt;&lt;&gt;&gt;</td><td>&lt;&gt; (bigger)</td><td>yes</td></tr>
+         * <tr><td>triangleup, ^, a, A</td><td>^</td><td>no</td></tr>
+         * <tr><td>triangledown, v</td><td>v</td><td>no</td></tr>
+         * <tr><td>triangleleft, &lt;</td><td> &lt;</td><td>no</td></tr>
+         * <tr><td>triangleright, &gt;</td><td>&gt;</td><td>no</td></tr>
+         * <tr><td>regularPolygon, regpol</td><td>⬡</td><td>yes</td></tr>
+         * </table>
+         *
+         * <p><b><i>This attribute can be set individually for major and minor grid as a sub-entry of {@link Grid#major} or {@link Grid#minor}</i></b>,
+         * e.g. <tt>major: {face: ...}</tt>
+         * For default values have a look there.</p>
+         *
+         * @type {String}
+         * @name Grid#face
+         */
+         // This attribute only exists for documentation purposes. It has no effect and is overwritten with actual values in major and minor.
+         face: undefined,
+
+        /**
+         * This number (pixel value) controls where grid elements end at the canvas edge. If zero, the line
+         * ends exactly at the end, if negative there is a margin to the inside, if positive the line
+         * ends outside of the canvas (which is invisible).
+         *
+         * <p><b><i>This attribute can be set individually for major and minor grid as a sub-entry of {@link Grid#major} or {@link Grid#minor}</i></b>,
+         * e.g. <tt>major: {margin: ...}</tt>
+         * For default values have a look there.</p>
+         *
+         * @name Grid#margin
+         * @type {Number}
+         */
+        // This attribute only exists for documentation purposes. It has no effect and is overwritten with actual values in major and minor.
+        margin: undefined,
+
+        /**
+         * This attribute determines whether the grid elements located at <tt>x=0</tt>, <tt>y=0</tt>
+         * and (for major grid only) at <tt>(0, 0)</tt> are displayed.
+         * The main reason to set this attribute to "false", might be in combination with axes.
+         * <ul>
+         *     <li>If <tt>false</tt>, then all these elements are hidden.
+         *     <li>If <tt>true</tt>, all these elements are shown.
+         *     <li>If an object of the following form is given, the three cases can be distinguished individually:<br>
+         *     <tt>{x: true|false, y: true|false, origin: true|false}</tt>
+         * </ul>
+         *
+         * <p><b><i>This attribute can be set individually for major and minor grid as a sub-entry of {@link Grid#major} or {@link Grid#minor}</i></b>,
+         * e.g. <tt>major: {drawZero: ...}</tt>
+         * For default values have a look there.</p>
+         *
+         * @type {Boolean|Object}
+         * @name Grid#drawZero
+         */
+        // This attribute only exists for documentation purposes. It has no effect and is overwritten with actual values in major and minor.
+        drawZero: undefined,
+
+        /**
+         * Number of vertices for face 'polygon'.
+         *
+         * <p><b><i>This attribute can be set individually for major and minor grid as a sub-entry of {@link Grid#major} or {@link Grid#minor}</i></b>,
+         * e.g. <tt>major: {polygonVertices: ...}</tt>
+         * For default values have a look there.</p>
+         *
+         * @type {Number}
+         * @name Grid#polygonVertices
+         */
+        // This attribute only exists for documentation purposes. It has no effect and is overwritten with actual values in major and minor.
+        polygonVertices: undefined,
+
+        /**
+         * This object contains the attributes for major grid elements.
+         * You can override the following grid attributes individually here:
+         * <ul>
+         *     <li>{@link Grid#size}
+         *     <li>{@link Grid#face}
+         *     <li>{@link Grid#margin}
+         *     <li>{@link Grid#drawZero}
+         *     <li>{@link Grid#polygonVertices}
+         * </ul>
+         * Default values are:
+         * <pre>{
+         *      size: 5,
+         *      face: 'line',
+         *      margin: 0,
+         *      drawZero: true,
+         *      polygonVertices: 6
+         *  }</pre>
          *
          * @name Grid#major
-         * @type Object
+         * @type {Object}
          */
         major: {
 
             /**
-             * Size of major grid elements. There are the following possibilities:
-             * <ul>
-             *     <li>Numbers or strings which are numbers (e.g. '10') are interpreted as size in pixels.
-             *     <li>Strings with additional '%' (e.g. '95%') are interpreted as the ratio of used space for one element.
-             * </ul>
-             * Unused for 'line' and 'point', which will use the value of strokeWidth.
-             * Instead of one value you can provide two values as an array <tt>[x, y]</tt> here.
-             * These are used as size in x- and y-direction.
-             *
-             * <br><br><b><i>This attribute is a sub-entry of {@link Grid#major}: <tt>major: {size: ...}</tt></i></b><br>
-             *
-             * @type {Number|String|Array}
-             * @name Grid#major_size
-             * @default 5
+             * Documented in Grid#size
+             * @class
+             * @ignore
              */
             size: 5,
 
             /**
-             * Appearance of major grid element.
-             * There are different styles which differ in appearance.
-             * Possible values are (comparing to {@link Point#face})
-             * <table>
-             * <tr><th>Input</th><th>Output</th><th>Fillable by fillColor,...</th></tr>
-             * <tr><td>point, .</td><td>.</td><td>no</td></tr>
-             * <tr><td>line</td><td>&minus;</td><td>no</td></tr>
-             * <tr><td>cross, x</td><td>x</td><td>no</td></tr>
-             * <tr><td>circle, o</td><td>o</td><td>yes</td></tr>
-             * <tr><td>square, []</td><td>[]</td><td>yes</td></tr>
-             * <tr><td>plus, +</td><td>+</td><td>no</td></tr>
-             * <tr><td>minus, -</td><td>-</td><td>no</td></tr>
-             * <tr><td>divide, |</td><td>|</td><td>no</td></tr>
-             * <tr><td>diamond, &lt;&gt;</td><td>&lt;&gt;</td><td>yes</td></tr>
-             * <tr><td>diamond2, &lt;&lt;&gt;&gt;</td><td>&lt;&gt; (bigger)</td><td>yes</td></tr>
-             * <tr><td>triangleup, ^, a, A</td><td>^</td><td>no</td></tr>
-             * <tr><td>triangledown, v</td><td>v</td><td>no</td></tr>
-             * <tr><td>triangleleft, &lt;</td><td> &lt;</td><td>no</td></tr>
-             * <tr><td>triangleright, &gt;</td><td>&gt;</td><td>no</td></tr>
-             * <tr><td>regularPolygon, regpol</td><td>⬡</td><td>yes</td></tr>
-             * </table>
-             *
-             * <br><b><i>This attribute is a sub-entry of {@link Grid#major}: <tt>major: {face: ...}</tt></i></b><br>
-             *
-             * @type {String}
-             * @name Grid#major_face
-             * @default 'line'
+             * Documented in Grid#face
+             * @class
+             * @ignore
              */
             face: 'line',
 
             /**
-             * This number (pixel value) controls where infinite lines end at the canvas border. If zero, the line
-             * ends exactly at the border, if negative there is a margin to the inside, if positive the line
-             * ends outside of the canvas (which is invisible).
-             *
-             * <br><br><b><i>This attribute is a sub-entry of {@link Grid#major}: <tt>major: {margin: ...}</tt></i></b><br>
-             *
-             * @name Grid#major_margin
-             * @type Number
-             * @default 0
+             * Documented in Grid#margin
+             * @class
+             * @ignore
              */
             margin: 0,
 
             /**
-             * This attribute determines whether the grid elements located at <tt>x=0</tt>, <tt>y=0</tt>
-             * and especially at <tt>(0, 0)</tt> are displayed.
-             * The main reason to set this attribute to "false", might be in combination with axes.
-             * <ul>
-             *     <li>If <tt>false</tt>, then all these elements are hidden.
-             *     <li>If <tt>true</tt>, all these elements are shown.
-             *     <li>If an object of the following form is given, the three cases can be distinguished individually:<br>
-             *     <tt>{x: true|false, y: true|false, origin: true|false}</tt>
-             * </ul>
-             *
-             * <br><b><i>This attribute is a sub-entry of {@link Grid#major}: <tt>major: {drawZero: ...}</tt></i></b><br>
-             *
-             * @type {Boolean|Object}
-             * @name Grid#major_drawZero
-             * @default true
+             * Documented in Grid#drawZero
+             * @class
+             * @ignore
              */
             drawZero: true,
 
             /**
-             * Number of vertices for face 'polygon'.
-             *
-             * <br><br><b><i>This attribute is a sub-entry of {@link Grid#major}: <tt>major: {polygonVertices: ...}</tt></i></b><br>
-             *
-             * @type {Number}
-             * @name Grid#major_polygonVertices
-             * @default 6
+             * Documented in Grid#polygonVertices
+             * @class
+             * @ignore
              */
-            polygonVertices: 6,
-
-            strokeColor: '#c0c0c0', // same in old grid
-            strokeWidth: 1,         // same in old grid
-            strokeOpacity: 0.5,     // same in old grid
-            highlight: false
+            polygonVertices: 6
         },
 
         /**
          * This object contains the attributes for minor grid elements.
-         *
-         * @see Grid#minor_size
-         * @see Grid#minor_face
-         * @see Grid#minor_margin
-         * @see Grid#minor_drawZero
-         * @see Grid#minor_polygonVertices
+         * You can override the following grid attributes individually here:
+         * <ul>
+         *     <li>{@link Grid#size}
+         *     <li>{@link Grid#face}
+         *     <li>{@link Grid#margin}
+         *     <li>{@link Grid#drawZero}
+         *     <li>{@link Grid#polygonVertices}
+         * </ul>
+         * Default values are:
+         * <pre>{
+         *      size: 3,
+         *      face: 'point',
+         *      margin: 0,
+         *      drawZero: true,
+         *      polygonVertices: 6
+         *  }</pre>
          *
          * @name Grid#minor
-         * @type Object
+         * @type {Object}
          */
         minor: {
 
@@ -5030,81 +5091,39 @@ JXG.Options = {
             visible: 'inherit',
 
             /**
-             * Size of minor grid elements. There are the following possibilities:
-             * <ul>
-             *     <li>Numbers or strings which are numbers (e.g. '10') are interpreted as size in pixels.
-             *     <li>Strings with additional '%' (e.g. '95%') are interpreted as the ratio of used space for one element.
-             * </ul>
-             * Unused for 'line' and 'point', which will use the value of strokeWidth.
-             * Instead of one value you can provide two values as an array <tt>[x, y]</tt> here.
-             * These are used as size in x- and y-direction.
-             *
-             * <br><br><b><i>This attribute is a sub-entry of {@link Grid#minor}: <tt>minor: {size: ...}</tt></i></b><br>
-             *
-             * @type {Number|String|Array}
-             * @name Grid#minor_size
-             * @default 5
+             * Documented in Grid#size
+             * @class
+             * @ignore
              */
             size: 3,
 
             /**
-             * Appearance of minor grid elements. Same options as for major grid elements.
-             *
-             * <br><br><b><i>This attribute is a sub-entry of {@link Grid#minor}: <tt>minor: {face: ...}</tt></i></b><br>
-             *
-             * @type {String}
-             * @name Grid#minor_face
-             * @default 'point'
-             * @see Grid#major_face
+             * Documented in Grid#face
+             * @class
+             * @ignore
              */
             face: 'point',
 
             /**
-             * This number (pixel value) controls where infinite lines end at the canvas border. If zero, the line
-             * ends exactly at the border, if negative there is a margin to the inside, if positive the line
-             * ends outside of the canvas (which is invisible).
-             *
-             * <br><br><b><i>This attribute is a sub-entry of {@link Grid#minor}: <tt>minor: {margin: ...}</tt></i></b><br>
-             *
-             * @name Grid#minor_margin
-             * @type Number
-             * @default 0
+             * Documented in Grid#margin
+             * @class
+             * @ignore
              */
             margin: 0,
 
-             /**
-              * This attribute determines whether the minor grid elements located at <tt>x=0</tt> and <tt>y=0</tt> are displayed.
-              * The main reason to set this attribute to "false", might be in combination with axes.
-              * <ul>
-              *     <li>If <tt>false</tt>, then all these elements are hidden.
-              *     <li>If <tt>true</tt>, all these elements are shown.
-              *     <li>If an object of the following form is given, the three cases can be distinguished individually:<br>
-              *     <tt>{x: true|false, y: true|false}</tt>
-              * </ul>
-              *
-              * <br><b><i>This attribute is a sub-entry of {@link Grid#minor}: <tt>minor: {drawZero: ...}</tt></i></b><br>
-              *
-              * @type {Boolean|Object}
-              * @name Grid#minor_drawZero
-              * @default true
-              */
+            /**
+             * Documented in Grid#drawZero
+             * @class
+             * @ignore
+             */
             drawZero: true,
 
             /**
-             * Number of vertices for face 'polygon'.
-             *
-             * <br><br><b><i>This attribute is a sub-entry of {@link Grid#minor}: <tt>minor: {polygonVertices: ...}</tt></i></b><br>
-             *
-             * @type {Number}
-             * @name Grid#minor_polygonVertices
-             * @default 6
+             * Documented in Grid#polygonVertices
+             * @class
+             * @ignore
              */
-            polygonVertices: 6,
-
-            strokeColor: '#c0c0c0',
-            strokeWidth: 1,
-            strokeOpacity: 0.25,
-            highlight: false
+            polygonVertices: 6
         },
 
         /**
@@ -5113,6 +5132,11 @@ JXG.Options = {
          * @deprecated
          */
         snapToGrid: false,
+
+        strokeColor: '#c0c0c0',
+        strokeWidth: 1,
+        strokeOpacity: 0.7,
+        dash: 0,
 
         /**
          * Use a predefined theme for grid.
@@ -5136,42 +5160,42 @@ JXG.Options = {
          * // Theme 1
          * // quadratic grid appearance with distance of major grid elements set to the primarily greater one
          *
-         * const board = JXG.JSXGraph.initBoard('jxgbox', {
+         * JXG.JSXGraph.initBoard('jxgbox', {
          *     boundingbox: [-4, 4, 4, -4], axis: true,
          *     defaultAxes: {
          *         x: { ticks: {majorHeight: 10} },
          *         y: { ticks: {majorHeight: 10} }
          *     },
-         *     grid: { theme: 1, color: 'grey' },
+         *     grid: { theme: 1 },
          * });
          * </pre> <div id="JXGb8d606c4-7c67-4dc0-9941-3b3bd0932898" class="jxgbox" style="width: 300px; height: 200px;"></div>
          * <script type="text/javascript">
          *     (function() {
-         *         var board = JXG.JSXGraph.initBoard('JXGb8d606c4-7c67-4dc0-9941-3b3bd0932898',
+         *         JXG.JSXGraph.initBoard('JXGb8d606c4-7c67-4dc0-9941-3b3bd0932898',
          *             {boundingbox: [-4, 4, 4, -4], axis: true, showcopyright: false, shownavigation: false,
          *                 defaultAxes: {
          *                     x: { ticks: {majorHeight: 10} },
          *                     y: { ticks: {majorHeight: 10} }
          *                 },
-         *                grid: { theme: 1, color: 'grey' },
+         *                grid: { theme: 1 },
          *             });
          *     })();
          * </script> <pre>
          *
          * @example
          * // Theme 2
-         * // lines and subtile points in between
+         * // lines and points in between
          *
-         * const board = JXG.JSXGraph.initBoard('jxgbox', {
+         * JXG.JSXGraph.initBoard('jxgbox', {
          *     boundingbox: [-4, 4, 4, -4], axis: false,
-         *     grid: { theme: 2, minorElements: 4, color: 'grey' },
+         *     grid: { theme: 2 },
          * });
          * </pre> <div id="JXG4e11e6e3-472a-48e0-b7d0-f80d397c769b" class="jxgbox" style="width: 300px; height: 300px;"></div>
          * <script type="text/javascript">
          *     (function() {
-         *         var board = JXG.JSXGraph.initBoard('JXG4e11e6e3-472a-48e0-b7d0-f80d397c769b',
+         *         JXG.JSXGraph.initBoard('JXG4e11e6e3-472a-48e0-b7d0-f80d397c769b',
          *             {boundingbox: [-4, 4, 4, -4], axis: false, showcopyright: false, shownavigation: false,
-         *                 grid: { theme: 2, minorElements: 4, color: 'grey' },
+         *                 grid: { theme: 2 },
          *             })
          *     })();
          * </script> <pre>
@@ -5180,88 +5204,70 @@ JXG.Options = {
          * // Theme 3
          * // lines and thinner lines in between
          *
-         * const board = JXG.JSXGraph.initBoard('jxgbox', {
+         * JXG.JSXGraph.initBoard('jxgbox', {
          *     boundingbox: [-4, 4, 4, -4], axis: false,
-         *     grid: { theme: 4, minorElements: 4, color: 'grey' },
+         *     grid: { theme: 3 },
          * });
          * </pre> <div id="JXG334814a3-03a7-4231-a5a7-a42d3b8dc2de" class="jxgbox" style="width: 300px; height: 300px;"></div>
          * <script type="text/javascript">
          *     (function() {
-         *         var board = JXG.JSXGraph.initBoard('JXG334814a3-03a7-4231-a5a7-a42d3b8dc2de',
+         *         JXG.JSXGraph.initBoard('JXG334814a3-03a7-4231-a5a7-a42d3b8dc2de',
          *             {boundingbox: [-4, 4, 4, -4], axis: false, showcopyright: false, shownavigation: false,
-         *                 grid: { theme: 4, minorElements: 4, color: 'grey' }
+         *                 grid: { theme: 3 }
          *         });
          *     })();
          * </script> <pre>
          *
          * @example
          * // Theme 4
-         * // lines with more subtle grid of '+'s plotted in between
+         * // lines with grid of '+'s plotted in between
          *
-         * const board = JXG.JSXGraph.initBoard('jxgbox', {
+         * JXG.JSXGraph.initBoard('jxgbox', {
          *     boundingbox: [-4, 4, 4, -4], axis: false,
-         *     grid: { theme: 5, minorElements: 4, color: 'grey' },
+         *     grid: { theme: 4 },
          * });
          * </pre> <div id="JXG9e2bb29c-d998-428c-9432-4a7bf6cd9222" class="jxgbox" style="width: 300px; height: 300px;"></div>
          * <script type="text/javascript">
          *     (function() {
-         *         var board = JXG.JSXGraph.initBoard('JXG9e2bb29c-d998-428c-9432-4a7bf6cd9222',
+         *         JXG.JSXGraph.initBoard('JXG9e2bb29c-d998-428c-9432-4a7bf6cd9222',
          *             {boundingbox: [-4, 4, 4, -4], axis: false, showcopyright: false, shownavigation: false,
-         *                 grid: { theme: 5, minorElements: 4, color: 'grey' },
+         *                 grid: { theme: 4 },
          *             });
          *     })();
          * </script> <pre>
          *
          * @example
          * // Theme 5
-         * // grid of '+'s and more subtile points in between
+         * // grid of '+'s and points in between
          *
-         * const board = JXG.JSXGraph.initBoard('jxgbox', {
+         * JXG.JSXGraph.initBoard('jxgbox', {
          *     boundingbox: [-4, 4, 4, -4], axis: false,
-         *     grid: { theme: 6, minorElements: 4, color: 'grey' },
+         *     grid: { theme: 5 },
          * });
          * </pre> <div id="JXG6a967d83-4179-4827-9e97-63fbf1e872c8" class="jxgbox" style="width: 300px; height: 300px;"></div>
          * <script type="text/javascript">
          *     (function() {
-         *         var board = JXG.JSXGraph.initBoard('JXG6a967d83-4179-4827-9e97-63fbf1e872c8',
+         *         JXG.JSXGraph.initBoard('JXG6a967d83-4179-4827-9e97-63fbf1e872c8',
          *             {boundingbox: [-4, 4, 4, -4], axis: false, showcopyright: false, shownavigation: false,
-         *                 grid: { theme: 6, minorElements: 4, color: 'grey' },
+         *                 grid: { theme: 5 },
          *         });
          *     })();
          * </script> <pre>
          *
          * @example
          * // Theme 6
-         * // grid of circles with subtile points in between
+         * // grid of circles with points in between
          *
-         * const board = JXG.JSXGraph.initBoard('jxgbox', {
+         * JXG.JSXGraph.initBoard('jxgbox', {
          *     boundingbox: [-4, 4, 4, -4], axis: false,
-         *     grid: { theme: 3, minorElements: 4, strokeColor: 'grey' },
+         *     grid: { theme: 6 },
          * });
          * </pre> <div id="JXG28bee3da-a7ef-4590-9a18-38d1b99d09ce" class="jxgbox" style="width: 300px; height: 300px;"></div>
          * <script type="text/javascript">
          *     (function() {
-         *         var board = JXG.JSXGraph.initBoard('JXG28bee3da-a7ef-4590-9a18-38d1b99d09ce',
+         *         JXG.JSXGraph.initBoard('JXG28bee3da-a7ef-4590-9a18-38d1b99d09ce',
          *             {boundingbox: [-4, 4, 4, -4], axis: false, showcopyright: false, shownavigation: false,
-         *                 grid: { theme: 3, minorElements: 4, strokeColor: 'grey' },
-         *         });
-         *     })();
-         * </script> <pre>
-         *
-         * @example
-         * // Theme 7
-         * // lines and subtile points in between, also plotted on axes
-         *
-         * const board = JXG.JSXGraph.initBoard('jxgbox', {
-         *     boundingbox: [-4, 4, 4, -4], axis: false,
-         *     grid: { theme: 7, minorElements: 4, color: 'grey' },
-         * });
-         * </pre> <div id="JXG7a787274-7f7e-4e10-b59c-f99f1aff35e7" class="jxgbox" style="width: 300px; height: 300px;"></div>
-         * <script type="text/javascript">
-         *     (function() {
-         *         var board = JXG.JSXGraph.initBoard('JXG7a787274-7f7e-4e10-b59c-f99f1aff35e7',
-         *             {boundingbox: [-4, 4, 4, -4], axis: false, showcopyright: false, shownavigation: false,
-         *                 grid: { theme: 7, minorElements: 4, color: 'grey' },
+         *                 grid: { theme: 6 },
          *         });
          *     })();
          * </script> <pre>
@@ -5272,25 +5278,38 @@ JXG.Options = {
             },
 
             {   // Theme 1: quadratic grid appearance with distance of major grid elements in x- and y-direction set to the primarily smaller one
-                forceSquare: 'min'
+                forceSquare: 'min',
+                major: {
+                    face: 'line'
+                }
             },
 
-            {   // Theme 2: lines and subtile points in between
+            {   // Theme 2: lines and points in between
+                major: {
+                    face: 'line'
+                },
                 minor: {
                     size: 3,
-                    strokeColor: '#101010'
+                    face: 'point'
                 },
                 minorElements: 'auto'
             },
 
             {   // Theme 3: lines and thinner lines in between
-                minor: {
+                major: {
                     face: 'line'
+                },
+                minor: {
+                    face: 'line',
+                    strokeOpacity: 0.25
                 },
                 minorElements: 'auto'
             },
 
-            {   // Theme 4: lines with more subtle grid of '+'s plotted in between
+            {   // Theme 4: lines with grid of '+'s plotted in between
+                major: {
+                    face: 'line'
+                },
                 minor: {
                     face: '+',
                     size: '95%'
@@ -5298,38 +5317,30 @@ JXG.Options = {
                 minorElements: 'auto'
             },
 
-            {   // Theme 5: grid of '+'s and more subtile points in between
+            {   // Theme 5: grid of '+'s and more points in between
                 major: {
                     face: '+',
                     size: 10,
                     strokeOpacity: 1
                 },
                 minor: {
+                    face: 'point',
                     size: 3
                 },
                 minorElements: 'auto'
             },
 
-            {   // Theme 6: grid of circles with subtile points in between
+            {   // Theme 6: grid of circles with points in between
                 major: {
                     face: 'circle',
-                    size: 5
+                    size: 8,
+                    fillColor: '#c0c0c0'
                 },
                 minor: {
+                    face: 'point',
                     size: 3
                 },
                 minorElements: 'auto'
-            },
-
-            { // Theme 7: lines and subtile points in between, also plotted on axes
-                major: {
-                    drawZero: true
-                },
-                minor: {
-                    size: 3,
-                    drawZero: true
-                },
-                minorElements: 4
             }
         ]
 

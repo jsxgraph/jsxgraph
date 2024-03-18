@@ -32,8 +32,8 @@
 /*global JXG: true, define: true*/
 /*jslint nomen: true, plusplus: true*/
 
-import JXG from "../jxg";
-import Type from "../utils/type";
+import JXG from "../jxg.js";
+import Type from "../utils/type.js";
 
 /**
  * A composition is a simple container that manages none or more {@link JXG.GeometryElement}s.

@@ -1,7 +1,7 @@
 /*global JXG:true, define: true*/
 
-import JXG from "./jxg";
-import Options from "./options";
+import JXG from "./jxg.js";
+import Options from "./options.js";
 
 JXG.extend(Options, {
     // infobox: {
@@ -238,6 +238,24 @@ JXG.extend(Options, {
         /**#@-*/
     },
 
+    intersectionline3d: {
+        point1: { visible: false, name: "" }, // Used in point/point
+        point2: { visible: false, name: "" }
+    },
+
+    line3d: {
+        strokeWidth: 1,
+        strokeColor: "black",
+        fixed: true,
+        tabindex: null,
+        gradient: "linear",
+        gradientSecondColor: "#ffffff",
+
+        point: { visible: false, name: "" }, // Used in cases of point/direction/range
+        point1: { visible: false, name: "" }, // Used in point/point
+        point2: { visible: false, name: "" }
+    },
+
     mesh3d: {
         /**#@+
          * @visprop
@@ -253,19 +271,6 @@ JXG.extend(Options, {
 
         visible: "inherit"
         /**#@-*/
-    },
-
-    line3d: {
-        strokeWidth: 1,
-        strokeColor: "black",
-        fixed: true,
-        tabindex: null,
-        gradient: "linear",
-        gradientSecondColor: "#ffffff",
-
-        point: { visible: false, name: "" }, // Used in cases of point/direction/range
-        point1: { visible: false, name: "" }, // Used in point/point
-        point2: { visible: false, name: "" }
     },
 
     plane3d: {
@@ -291,6 +296,24 @@ JXG.extend(Options, {
         gradientSecondColor: "#555555",
         fillColor: "yellow",
         highlightStrokeColor: "#555555"
+    },
+
+    sphere3d: {
+        /**#@+
+         * @visprop
+         */
+
+        highlight: false,
+
+        strokeColor: '#00ff80',
+        fillColor: 'white',
+        gradient: 'radial',
+        gradientSecondColor: '#00ff80',
+        gradientFX: 0.7,
+        gradientFY: 0.3,
+        fillOpacity: 0.4
+
+        /**#@-*/
     },
 
     surface3d: {

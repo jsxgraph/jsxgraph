@@ -39,14 +39,14 @@
  * @version 0.1
  */
 
-import JXG from "../jxg";
-import Mat from "../math/math";
-import Geometry from "../math/geometry";
-import Numerics from "../math/numerics";
-import Const from "./constants";
-import GeometryElement from "./element";
-import Coords from "./coords";
-import Type from "../utils/type";
+import JXG from "../jxg.js";
+import Mat from "../math/math.js";
+import Geometry from "../math/geometry.js";
+import Numerics from "../math/numerics.js";
+import Const from "./constants.js";
+import GeometryElement from "./element.js";
+import Coords from "./coords.js";
+import Type from "../utils/type.js";
 
 /**
  * Creates ticks for an axis.

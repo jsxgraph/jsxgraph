@@ -38,14 +38,14 @@
  * a board.
  */
 
-import JXG from "../jxg";
-import Options from "../options";
-import Mat from "../math/math";
-import Geometry from "../math/geometry";
-import Const from "./constants";
-import GeometryElement from "./element";
-import Type from "../utils/type";
-import CoordsElement from "./coordselement";
+import JXG from "../jxg.js";
+import Options from "../options.js";
+import Mat from "../math/math.js";
+import Geometry from "../math/geometry.js";
+import Const from "./constants.js";
+import GeometryElement from "./element.js";
+import Type from "../utils/type.js";
+import CoordsElement from "./coordselement.js";
 
 /**
  * A point is the basic geometric element. Based on points lines and circles can be constructed which can be intersected

@@ -28,10 +28,10 @@
  */
 /*global JXG:true, define: true*/
 
-import JXG from "../jxg";
-import Const from "../base/constants";
-import Type from "../utils/type";
-import Mat from "../math/math";
+import JXG from "../jxg.js";
+import Const from "../base/constants.js";
+import Type from "../utils/type.js";
+import Mat from "../math/math.js";
 
 /**
  * Constructor for 3D curves.

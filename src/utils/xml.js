@@ -32,8 +32,8 @@
 /*global JXG: true, define: true, DOMParser: true, ActiveXObject: true*/
 /*jslint nomen: true, plusplus: true*/
 
-import JXG from "../jxg";
-import Type from "./type";
+import JXG from "../jxg.js";
+import Type from "./type.js";
 
 /**
  * Holds browser independent xml parsing routines. Won't work in environments other than browsers.

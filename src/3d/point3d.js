@@ -28,11 +28,11 @@
  */
 /*global JXG:true, define: true*/
 
-import JXG from "../jxg";
-import Const from "../base/constants";
-import Mat from "../math/math";
-import Geometry from "../math/geometry";
-import Type from "../utils/type";
+import JXG from "../jxg.js";
+import Const from "../base/constants.js";
+import Mat from "../math/math.js";
+import Geometry from "../math/geometry.js";
+import Type from "../utils/type.js";
 //, GeometryElement3D) {
 
 /**
@@ -356,6 +356,35 @@ JXG.extend(
             this.coords = c3d;
             this.element2D.coords.setCoordinates(Const.COORDS_BY_USER, c2d);
             this._c2d = c2d;
+        },
+
+        /**
+         * Check whether a point's homogeneous coordinate vector is zero.
+         * @returns {Boolean} True if the coordinate vector is zero; false otherwise.
+         */
+        isIllDefined: function () {
+            return Type.cmpArrays(this.coords, [0, 0, 0, 0]);
+        },
+
+        /**
+         * Calculate the distance from one point to another. If one of the points is on the plane at infinity, return positive infinity.
+         * @param {JXG.Point3D} pt The point to which the distance is calculated.
+         * @returns {Number} The distance
+         */
+        distance: function (pt) {
+            var eps_sq = Mat.eps * Mat.eps,
+                c_this = this.coords,
+                c_pt = pt.coords;
+
+            if (c_this[0] * c_this[0] > eps_sq && c_pt[0] * c_pt[0] > eps_sq) {
+                return Mat.hypot(
+                    c_pt[1] - c_this[1],
+                    c_pt[2] - c_this[2],
+                    c_pt[3] - c_this[3]
+                );
+            } else {
+                return Number.POSITIVE_INFINITY;
+            }
         },
 
         // Not yet working

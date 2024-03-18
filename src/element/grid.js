@@ -27,10 +27,19 @@
     the MIT License along with JSXGraph. If not, see <https://www.gnu.org/licenses/>
     and <https://opensource.org/licenses/MIT/>.
  */
-import JXG from "../jxg";
-import Mat from "../math/math";
-import Type from "../utils/type";
-import Const from "../base/constants";
+/*
+    Some functionalities in this file were developed as part of a software project
+    with students. We would like to thank all contributors for their help:
+
+    Winter semester 2023/2024:
+        Timm Braun
+        Nina Koch
+ */
+
+import JXG from "../jxg.js";
+import Mat from "../math/math.js";
+import Type from "../utils/type.js";
+import Const from "../base/constants.js";
 
 /**
  * @class Creates a grid to support the user with element placement or to improve determination of position.
@@ -50,17 +59,13 @@ import Const from "../base/constants";
  *
  * @example
  * // standard grid
- * var g = board.create('grid', [], {
- *     drawZero: true,
- * });
+ * var g = board.create('grid', [], {});
  * </pre><div id="JXGc8dde3f5-22ef-4c43-9505-34b299b5b24d" class="jxgbox" style="width: 300px; height: 300px;"></div>
  * <script type="text/javascript">
  *  (function() {
  *      var board = JXG.JSXGraph.initBoard('JXGc8dde3f5-22ef-4c43-9505-34b299b5b24d',
  *          {boundingbox: [-8, 8, 8,-8], axis: false, showcopyright: false, shownavigation: false});
- *      var g = board.create('grid', [], {
- *          drawZero: true,
- *      });
+ *      var g = board.create('grid', [], {});
  *  })();
  * </script><pre>
  *
@@ -69,15 +74,14 @@ import Const from "../base/constants";
  * var g = board.create('grid', [], {
  *     major: {
  *         face: 'plus',
- *         size: 10,
- *         strokeColor: '#080050',
+ *         size: 7,
+ *         strokeColor: 'green',
  *         strokeOpacity: 1,
  *     },
  *     minor: {
- *         size: 3
+ *         size: 4
  *     },
- *     drawZero: true,
- *     minorElements: 4,
+ *     minorElements: 3,
  * });
  * </pre><div id="JXG02374171-b27c-4ccc-a14a-9f5bd1162623" class="jxgbox" style="width: 300px; height: 300px;"></div>
  * <script type="text/javascript">
@@ -87,15 +91,14 @@ import Const from "../base/constants";
  *         var g = board.create('grid', [], {
  *             major: {
  *                 face: 'plus',
- *                 size: 10,
- *                 strokeColor: '#080050',
+ *                 size: 7,
+ *                 strokeColor: 'green',
  *                 strokeOpacity: 1,
  *             },
  *             minor: {
- *                 size: 3
+ *                 size: 4
  *             },
- *             drawZero: true,
- *             minorElements: 4,
+ *             minorElements: 3,
  *         });
  *     })();
  * </script><pre>
@@ -105,18 +108,16 @@ import Const from "../base/constants";
  * var grid = board.create('grid', [], {
  *     major: {
  *         face: 'regularPolygon',
- *         size: 10,
+ *         size: 8,
  *         strokeColor: 'blue',
  *         fillColor: 'orange',
  *         strokeOpacity: 1,
- *         drawZero: true,
  *     },
  *     minor: {
  *         face: 'diamond',
- *         size: 3,
+ *         size: 4,
  *         strokeColor: 'green',
  *         fillColor: 'grey',
- *         drawZero: true,
  *     },
  *     minorElements: 1,
  *     includeBoundaries: false,
@@ -129,18 +130,16 @@ import Const from "../base/constants";
  *         var grid = board.create('grid', [], {
  *             major: {
  *                 face: 'regularPolygon',
- *                 size: 10,
+ *                 size: 8,
  *                 strokeColor: 'blue',
  *                 fillColor: 'orange',
  *                 strokeOpacity: 1,
- *                 drawZero: true,
  *             },
  *             minor: {
  *                 face: 'diamond',
- *                 size: 3,
+ *                 size: 4,
  *                 strokeColor: 'green',
  *                 fillColor: 'grey',
- *                 drawZero: true,
  *             },
  *             minorElements: 1,
  *             includeBoundaries: false,
@@ -170,8 +169,7 @@ import Const from "../base/constants";
  * });
  * var grid = board.create('grid', [axis1, axis2], {
  *     major: {
- *         face: 'line',
- *         drawZero: true
+ *         face: 'line'
  *     },
  *     minor: {
  *         face: 'point',
@@ -206,7 +204,6 @@ import Const from "../base/constants";
  *         var grid = board.create('grid', [axis1, axis2], {
  *             major: {
  *                 face: 'line',
- *                 drawZero: true
  *             },
  *             minor: {
  *                 face: 'point',
@@ -280,6 +277,7 @@ JXG.createGrid = function (board, parents, attributes) {
             case '.':
             case 'point':
                 grid.visProp.linecap = 'round';
+                grid.visProp.strokewidth = radiusX * grid.board.unitX + radiusY * grid.board.unitY;
                 return [
                     [x, x, NaN],
                     [y, y, NaN]
@@ -422,24 +420,25 @@ JXG.createGrid = function (board, parents, attributes) {
 
     // Themes
     attrGrid = Type.copyAttributes(attributes, board.options, 'grid');
-    Type.mergeAttr(board.options.grid, attrGrid.themes[attrGrid.theme], false); // POI: I think there should not be `board.options.grid`
-    attrGrid = Type.copyAttributes(attributes, board.options, 'grid');
+    Type.mergeAttr(attrGrid, attrGrid.themes[attrGrid.theme], false);
 
     // Create majorGrid
-    attrMajor = Type.copyAttributes(attributes, board.options, 'grid', 'major');
-    Type.mergeAttr(attrMajor, attrGrid, true);
+    attrMajor = {};
+    Type.mergeAttr(attrMajor, attrGrid, true, true);
+    Type.mergeAttr(attrMajor, attrGrid.major, true, true);
     majorGrid = board.create('curve', [[null], [null]], attrMajor);
     majorGrid.elType = 'grid';
     majorGrid.type = Const.OBJECT_TYPE_GRID;
 
     // Create minorGrid
-    attrMinor = Type.copyAttributes(attributes, board.options, 'grid', 'minor');
-    Type.mergeAttr(attrMinor, attrGrid, true);
+    attrMinor = {};
+    Type.mergeAttr(attrMinor, attrGrid, true, true);
+    Type.mergeAttr(attrMinor, attrGrid.minor, true, true);
     if (attrMinor.id === attrMajor.id) {
-        attrMinor.id = attrMajor.id + '_minor';
+        attrMinor.id = majorGrid.id + '_minor';
     }
     if (attrMinor.name === attrMajor.name) {
-        attrMinor.name = attrMajor.name + '_minor';
+        attrMinor.name = majorGrid.name + '_minor';
     }
     minorGrid = board.create('curve', [[null], [null]], attrMinor);
     minorGrid.elType = 'grid';
@@ -534,19 +533,19 @@ JXG.createGrid = function (board, parents, attributes) {
         }
 
         // Here comes a hack:
-        // "minorsize" is filled by the attribute "size" which is usually considered
+        // "majorsize" is filled by the attribute "size" which is usually considered
         // as pixel value. However, usually a number value for size is
         // considered to be in pixel, while parseNumber expects user coords.
         // Therefore, we have to add 'px'.
-        if (Type.isNumber(majorSize[0], true) || majorSize[0].indexOf('abs') > -1) {
-            majorSize[0] = ("" + majorSize[0]).replace(/\s+abs\s+/, '') + "px"; // interpret number as pixels
+        if (Type.isNumber(majorSize[0], true)) {
+            majorSize[0] = majorSize[0] + "px";
         }
-        if (Type.isNumber(majorSize[1], true) || majorSize[1].indexOf('abs') > -1) {
-            majorSize[1] = ("" + majorSize[1]).replace(/\s+abs\s+/, '') + "px"; // interpret number as pixels
+        if (Type.isNumber(majorSize[1], true)) {
+            majorSize[1] = majorSize[1] + "px";
         }
         majorSize[0] = Type.parseNumber(majorSize[0], majorStep[0], 1 / this.board.unitX);
-        majorRadius[0] = majorSize[0] / 2;
         majorSize[1] = Type.parseNumber(majorSize[1], majorStep[1], 1 / this.board.unitY);
+        majorRadius[0] = majorSize[0] / 2;
         majorRadius[1] = majorSize[1] / 2;
 
         // calculate start position of curve
@@ -630,7 +629,7 @@ JXG.createGrid = function (board, parents, attributes) {
             minorElements[0] = parseFloat(minorElements[0]);
 
         } else { // minorElements[0]  === 'auto'
-            minorElements[0] = 0; // parentAxes[0] may not be defined
+            minorElements[0] = 3; // parentAxes[0] may not be defined
             if (Type.exists(parentAxes[0])) {
                 minorElements[0] = Type.evaluate(parentAxes[0].getAttribute('ticks').minorticks);
             }
@@ -641,7 +640,7 @@ JXG.createGrid = function (board, parents, attributes) {
             minorElements[1] = parseFloat(minorElements[1]);
 
         } else { // minorElements[1] === 'auto'
-            minorElements[1] = 0; // parentAxes[1] may not be defined
+            minorElements[1] = 3; // parentAxes[1] may not be defined
             if (Type.exists(parentAxes[1])) {
                 minorElements[1] = Type.evaluate(parentAxes[1].getAttribute('ticks').minorticks);
             }
@@ -666,11 +665,11 @@ JXG.createGrid = function (board, parents, attributes) {
         // as pixel value. However, usually a number value for size is
         // considered to be in pixel, while parseNumber expects user coords.
         // Therefore, we have to add 'px'.
-        if (Type.isNumber(minorSize[0], true) || minorSize[0].indexOf('abs') > -1) {
-            minorSize[0] = ("" + minorSize[0]).replace(/\s+abs\s+/, '') + "px"; // interpret number as pixels
+        if (Type.isNumber(minorSize[0], true)) {
+            minorSize[0] = minorSize[0] + "px";
         }
-        if (Type.isNumber(minorSize[1], true) || minorSize[1].indexOf('abs') > -1) {
-            minorSize[1] = ("" + minorSize[1]).replace(/\s+abs\s+/, '') + "px"; // interpret number as pixels
+        if (Type.isNumber(minorSize[1], true)) {
+            minorSize[1] = minorSize[1] + "px";
         }
         minorSize[0] = Type.parseNumber(minorSize[0], minorStep[0], 1 / this.board.unitX);
         minorSize[1] = Type.parseNumber(minorSize[1], minorStep[1], 1 / this.board.unitY);

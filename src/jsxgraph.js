@@ -39,17 +39,17 @@
  *
  */
 
-import JXG from "./jxg";
-import Env from "./utils/env";
-import Type from "./utils/type";
-import Mat from "./math/math";
-import Board from "./base/board";
-import FileReader from "./reader/file";
-import Options from "./options";
-import SVGRenderer from "./renderer/svg";
-import VMLRenderer from "./renderer/vml";
-import CanvasRenderer from "./renderer/canvas";
-import NoRenderer from "./renderer/no";
+import JXG from "./jxg.js";
+import Env from "./utils/env.js";
+import Type from "./utils/type.js";
+import Mat from "./math/math.js";
+import Board from "./base/board.js";
+import FileReader from "./reader/file.js";
+import Options from "./options.js";
+import SVGRenderer from "./renderer/svg.js";
+import VMLRenderer from "./renderer/vml.js";
+import CanvasRenderer from "./renderer/canvas.js";
+import NoRenderer from "./renderer/no.js";
 
 /**
  * Constructs a new JSXGraph singleton object.

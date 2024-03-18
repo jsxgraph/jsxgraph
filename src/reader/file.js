@@ -32,11 +32,11 @@
 /*global JXG:true, define: true, ActiveXObject:true, jxgBinFileReader:true, DOMParser:true, XMLHttpRequest:true, document:true, navigator:true*/
 /*jslint nomen: true, plusplus: true*/
 
-import JXG from "../jxg";
-import Env from "../utils/env";
-import Type from "../utils/type";
-import Encoding from "../utils/encoding";
-import Base64 from "../utils/base64";
+import JXG from "../jxg.js";
+import Env from "../utils/env.js";
+import Type from "../utils/type.js";
+import Encoding from "../utils/encoding.js";
+import Base64 from "../utils/base64.js";
 
 /**
  * The FileReader object bundles the file input capabilities of JSXGraph.

@@ -36,14 +36,14 @@
  * @fileoverview In this file the Text element is defined.
  */
 
-import JXG from "../jxg";
-import Const from "./constants";
-import GeometryElement from "./element";
-import GeonextParser from "../parser/geonext";
-import Env from "../utils/env";
-import Type from "../utils/type";
-import Mat from "../math/math";
-import CoordsElement from "./coordselement";
+import JXG from "../jxg.js";
+import Const from "./constants.js";
+import GeometryElement from "./element.js";
+import GeonextParser from "../parser/geonext.js";
+import Env from "../utils/env.js";
+import Type from "../utils/type.js";
+import Mat from "../math/math.js";
+import CoordsElement from "./coordselement.js";
 
 var priv = {
     /**

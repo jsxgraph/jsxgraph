@@ -33,7 +33,7 @@
 /*global JXG: true, define: true*/
 /*jslint nomen: true, plusplus: true*/
 
-import JXG from "../jxg";
+import JXG from "../jxg.js";
 
 var major = 1,
     minor = 8,
@@ -116,6 +116,9 @@ constants =
     OBJECT_TYPE_SURFACE3D: 37,
 
     OBJECT_TYPE_MEASUREMENT: 38,
+
+    OBJECT_TYPE_INTERSECTION_LINE3D: 39,
+    OBJECT_TYPE_SPHERE3D: 40,
 
     // IMPORTANT:
     // ----------

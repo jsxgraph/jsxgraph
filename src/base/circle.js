@@ -38,13 +38,13 @@
  * a board.
  */
 
-import JXG from "../jxg";
-import GeometryElement from "./element";
-import Coords from "./coords";
-import Const from "./constants";
-import Mat from "../math/math";
-import GeonextParser from "../parser/geonext";
-import Type from "../utils/type";
+import JXG from "../jxg.js";
+import GeometryElement from "./element.js";
+import Coords from "./coords.js";
+import Const from "./constants.js";
+import Mat from "../math/math.js";
+import GeonextParser from "../parser/geonext.js";
+import Type from "../utils/type.js";
 
 /**
  * A circle consists of all points with a given distance from one point. This point is called center, the distance is called radius.

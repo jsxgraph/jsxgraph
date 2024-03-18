@@ -26,15 +26,26 @@
     the MIT License along with JSXGraph. If not, see <https://www.gnu.org/licenses/>
     and <https://opensource.org/licenses/MIT/>.
  */
+/*
+    Some functionalities in this file were developed as part of a software project
+    with students. We would like to thank all contributors for their help:
+
+    Winter semester 2023/2024:
+        Lars Hofmann
+        Leonhard Iser
+        Vincent Kulicke
+        Laura Rinas
+ */
+
 /*global JXG:true, define: true*/
 
-import JXG from "../jxg";
-import Const from "../base/constants";
-import Type from "../utils/type";
-import Mat from "../math/math";
-import Env from "../utils/env";
-import GeometryElement from "../base/element";
-import Composition from "../base/composition";
+import JXG from "../jxg.js";
+import Const from "../base/constants.js";
+import Type from "../utils/type.js";
+import Mat from "../math/math.js";
+import Env from "../utils/env.js";
+import GeometryElement from "../base/element.js";
+import Composition from "../base/composition.js";
 
 /**
  * 3D view inside a JXGraph board.
@@ -314,7 +325,7 @@ JXG.extend(
             };
 
             a = this.az_slide.Value() + (3 * Math.PI * 0.5); // Sphere
-            e = this.el_slide.Value() * 2;
+            e = this.el_slide.Value();
 
             r = Type.evaluate(this.visProp.r);
             if (r === 'auto') {
