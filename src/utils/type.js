@@ -1323,6 +1323,7 @@ JXG.extend(
                     val = obj[key];
                     if (typeof val === 'object' &&
                         val !== null &&
+                        !this.isArray(val) &&
                         !this.exists(val.nodeType) &&
                         !this.exists(val.board)) {
                         newObj[key.toLowerCase()] = this.keysToLowerCase(val);
