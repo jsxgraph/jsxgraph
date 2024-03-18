@@ -288,6 +288,7 @@ JXG.extend(
             var R = 100,
             dx, dy, dr, dr2,
             ctheta, stheta,
+            n,
             mat = [
                 [1, 0, 0, 0],
                 [0, 1, 0, 0],
@@ -295,30 +296,50 @@ JXG.extend(
                 [0, 0, 0, 1]
             ];
 
-            if (!Type.exists(this._trackball)) {
+            if (!Type.exists(this._trackball)) { 
                 return mat;
             }
-
+            
             dx = this._trackball.dx;
             dy = this._trackball.dy;
             dr2 = dx * dx + dy * dy;
             if (dr2 > Mat.eps) {
+
+                // Method by Hanson, "The rolling ball", Graphics Gems III, p.51
+                // Rotation axis:
+                //     n = (-dy/dr, dx/dr, 0)
+                // Rotation angle around n:
+                //     theta = atan(dr / R) approx dr / R
                 dr = Math.sqrt(dr2);
-                ctheta = R / Math.hypot(R, dr);
-                stheta = dr / Math.hypot(R, dr);
+                ctheta = 1 - R / Math.hypot(R, dr);  // 1 - cos(theta)
+                stheta = dr / Math.hypot(R, dr); // sin(theta)
+                n = [-dy / dr, dx / dr, 0];
 
-                mat[1][1] = ctheta + dy * dy * (1 - ctheta) / dr2;
-                mat[1][2] = -dx * dy * (1 - ctheta) / dr2;
-                mat[1][3] = dx / dr * stheta;
+                // mat[1][1] = ctheta + dy * dy * (1 - ctheta) / dr2;
+                // mat[1][2] = -dx * dy * (1 - ctheta) / dr2;
+                // mat[1][3] = dx / dr * stheta;
 
-                mat[2][1] = mat[1][2];
-                mat[2][2] = ctheta + dx * dx * (1 - ctheta) / dr2;
-                mat[2][3] = dy * stheta / dr;
+                // mat[2][1] = mat[1][2];
+                // mat[2][2] = ctheta + dx * dx * (1 - ctheta) / dr2;
+                // mat[2][3] = dy * stheta / dr;
 
-                mat[3][1] = - dx * stheta / dr;
-                mat[3][2] = - dy * stheta / dr;
-                mat[3][3] = ctheta;
-                // console.log("Determinant", Mat.Numerics.det(mat))
+                // mat[3][1] = - dx * stheta / dr;
+                // mat[3][2] = - dy * stheta / dr;
+                // mat[3][3] = ctheta;
+
+                mat[1][1] = 1 - ctheta + n[0] * n[0] * ctheta;
+                mat[1][2] = n[0] * n[1] * ctheta - n[2] * stheta;
+                mat[1][3] = n[0] * n[2] * ctheta + n[1] * stheta;
+
+                mat[2][1] = n[0] * n[1] * ctheta + n[2] * stheta;
+                mat[2][2] = 1 - ctheta + n[1] * n[1] * ctheta;
+                mat[2][3] = n[1] * n[2] * ctheta - n[0] * stheta;
+
+                mat[3][1] = n[2] * n[0] * ctheta - n[1] * stheta;
+                mat[3][2] = n[2] * n[1] * ctheta + n[0] * stheta;
+                mat[3][3] = 1 - ctheta + n[2] * n[2] * ctheta;
+
+                console.log("Determinant", Mat.Numerics.det(mat))
             }
 
             mat = Mat.matMatMult(this.matrix3DRot, mat);
