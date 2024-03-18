@@ -258,7 +258,8 @@ JXG.extend(
                 mat = [
                     [1, 0, 0, 0],
                     [0, 1, 0, 0],
-                    [0, 0, 1, 0]
+                    [0, 0, 1, 0],
+                    [0, 0, 0, 1]
                 ];
 
             // mat projects homogeneous 3D coords in View3D
@@ -270,10 +271,57 @@ JXG.extend(
 
             mat[1][1] = r * Math.cos(a);
             mat[1][2] = -r * Math.sin(a);
+            mat[1][3] = 0;
+
             mat[2][1] = f * Math.sin(a);
             mat[2][2] = f * Math.cos(a);
             mat[2][3] = Math.cos(e);
 
+            mat[3][1] = r * Math.cos(e) * Math.sin(a);
+            mat[3][2] = r * Math.cos(e) * Math.cos(a);
+            mat[3][3] = -Math.sin(e);
+
+            return mat;
+        },
+
+        updateParallelProjectionTrackball: function () {
+            var R = 100,
+            dx, dy, dr, dr2,
+            ctheta, stheta,
+            mat = [
+                [1, 0, 0, 0],
+                [0, 1, 0, 0],
+                [0, 0, 1, 0],
+                [0, 0, 0, 1]
+            ];
+
+            if (!Type.exists(this._trackball)) {
+                return mat;
+            }
+
+            dx = this._trackball.dx;
+            dy = this._trackball.dy;
+            dr2 = dx * dx + dy * dy;
+            if (dr2 > Mat.eps) {
+                dr = Math.sqrt(dr2);
+                ctheta = R / Math.hypot(R, dr);
+                stheta = dr / Math.hypot(R, dr);
+
+                mat[1][1] = ctheta + dy * dy * (1 - ctheta) / dr2;
+                mat[1][2] = -dx * dy * (1 - ctheta) / dr2;
+                mat[1][3] = dx / dr * stheta;
+
+                mat[2][1] = mat[1][2];
+                mat[2][2] = ctheta + dx * dx * (1 - ctheta) / dr2;
+                mat[2][3] = dy * stheta / dr;
+
+                mat[3][1] = - dx * stheta / dr;
+                mat[3][2] = - dy * stheta / dr;
+                mat[3][3] = ctheta;
+                // console.log("Determinant", Mat.Numerics.det(mat))
+            }
+
+            mat = Mat.matMatMult(this.matrix3DRot, mat);
             return mat;
         },
 
@@ -363,7 +411,8 @@ JXG.extend(
 
         // Update 3D-to-2D transformation matrix with the actual azimuth and elevation angles.
         update: function () {
-            var mat2D, shift, size;
+            var mat2D, shift, size,
+                dx, dy;
 
             if (
                 !Type.exists(this.el_slide) ||
@@ -411,15 +460,22 @@ JXG.extend(
 
                     // Add a second transformation to scale and shift the projection
                     // on the board, usually called viewport.
-                    mat2D[1][1] = this.size[0] / (this.bbox3D[0][1] - this.bbox3D[0][0]); // w / d_x
-                    mat2D[2][2] = this.size[1] / (this.bbox3D[1][1] - this.bbox3D[1][0]); // h / d_y
-                    mat2D[1][0] = this.llftCorner[0] + mat2D[1][1] * 0.5 * (this.bbox3D[0][1] - this.bbox3D[0][0]); // llft_x
-                    mat2D[2][0] = this.llftCorner[1] + mat2D[2][2] * 0.5 * (this.bbox3D[1][1] - this.bbox3D[1][0]); // llft_y
+                    dx = this.bbox3D[0][1] - this.bbox3D[0][0];
+                    dy = this.bbox3D[1][1] - this.bbox3D[1][0];
+
+                    mat2D[1][1] = this.size[0] / dx; // w / d_x
+                    mat2D[2][2] = this.size[1] / dy; // h / d_y
+                    mat2D[1][0] = this.llftCorner[0] + mat2D[1][1] * 0.5 * dx; // llft_x
+                    mat2D[2][0] = this.llftCorner[1] + mat2D[2][2] * 0.5 * dy; // llft_y
 
                     // this.matrix3D is a 3x4 matrix
-                    this.matrix3D = this.updateParallelProjection();
+                    if (this._hasMoveTrackball) {
+                        this.matrix3DRot = this.updateParallelProjectionTrackball();
+                    } else {
+                        this.matrix3DRot = this.updateParallelProjection();
+                    }
                     // Combine the projections
-                    this.matrix3D = Mat.matMatMult(mat2D, Mat.matMatMult(this.matrix3D, shift));
+                    this.matrix3D = Mat.matMatMult(mat2D, Mat.matMatMult(this.matrix3DRot, shift).slice(0, 3));
             }
 
             return this;
@@ -889,14 +945,14 @@ JXG.extend(
          *
          * @private
          *
-         * @param {event} event either the keydown or the pointer event
+         * @param {event} evt either the keydown or the pointer event
          * @returns view
          */
-        _azEventHandler: function (event) {
+        _azEventHandler: function (evt) {
             var smax = this.az_slide._smax,
                 smin = this.az_slide._smin,
                 speed = (smax - smin) / this.board.canvasWidth * (Type.evaluate(this.visProp.az.pointer.speed)),
-                delta = event.movementX,
+                delta = evt.movementX,
                 az = this.az_slide.Value(),
                 el = this.el_slide.Value();
 
@@ -908,14 +964,14 @@ JXG.extend(
             // Calculate new az value if keyboard events are triggered
             // Plus if right-button, minus if left-button
             if (Type.evaluate(this.visProp.az.keyboard.enabled)) {
-                if (event.key === 'ArrowRight') {
+                if (evt.key === 'ArrowRight') {
                     az = az + Type.evaluate(this.visProp.az.keyboard.step) * Math.PI / 180;
-                } else if (event.key === 'ArrowLeft') {
+                } else if (evt.key === 'ArrowLeft') {
                     az = az - Type.evaluate(this.visProp.az.keyboard.step) * Math.PI / 180;
                 }
             }
 
-            if (Type.evaluate(this.visProp.az.pointer.enabled) && (delta !== 0) && event.key == null) {
+            if (Type.evaluate(this.visProp.az.pointer.enabled) && (delta !== 0) && evt.key == null) {
                 az += delta * speed;
             }
 
@@ -940,14 +996,14 @@ JXG.extend(
          *
          * @private
          *
-         * @param {event} event either the keydown or the pointer event
+         * @param {event} evt either the keydown or the pointer event
          * @returns view
          */
-        _elEventHandler: function (event) {
+        _elEventHandler: function (evt) {
             var smax = this.el_slide._smax,
                 smin = this.el_slide._smin,
                 speed = (smax - smin) / this.board.canvasHeight * Type.evaluate(this.visProp.el.pointer.speed),
-                delta = event.movementY,
+                delta = evt.movementY,
                 az = this.az_slide.Value(),
                 el = this.el_slide.Value();
 
@@ -959,16 +1015,16 @@ JXG.extend(
             // Calculate new az value if keyboard events are triggered
             // Plus if right-button, minus if left-button
             if (Type.evaluate(this.visProp.el.keyboard.enabled)) {
-                if (event.key === 'ArrowUp') {
+                if (evt.key === 'ArrowUp') {
                     el = el - Type.evaluate(this.visProp.el.keyboard.step) * Math.PI / 180;
-                } else if (event.key === 'ArrowDown') {
+                } else if (evt.key === 'ArrowDown') {
                     el = el + Type.evaluate(this.visProp.el.keyboard.step) * Math.PI / 180;
                 }
             }
 
             // Calculate new az value if keyboard events are triggered
             // Plus if right-button, minus if left-button
-            if (Type.evaluate(this.visProp.el.pointer.enabled) && (delta !== 0) && event.key == null) {
+            if (Type.evaluate(this.visProp.el.pointer.enabled) && (delta !== 0) && evt.key == null) {
                 el += delta * speed;
             }
 
@@ -986,7 +1042,86 @@ JXG.extend(
 
             this.setView(az, el);
             return this;
+        },
+
+        _trackballHandler: function(evt) {
+            this._trackball = {
+                dx: evt.movementX,
+                dy: evt.movementY
+            };
+            this.board.update();
+            return this;
+        },
+
+        pointerDownHandler: function (evt) {
+            var neededButton, neededKey, target;
+
+            this._hasMoveAz = false;
+            this._hasMoveEl = false;
+            this._hasMoveTrackball = false;
+
+            if (Type.evaluate(this.visProp.trackball.enabled)) {
+                console.log("Trackball")
+                target = (Type.evaluate(this.visProp.az.pointer.outside)) ? document : board.containerObj;
+                Env.addEvent(target, 'pointermove', this._trackballHandler, this);
+                this._hasMoveTrackball = true;
+            } else {
+                if (Type.evaluate(this.visProp.az.pointer.enabled)) {
+                    neededButton = Type.evaluate(this.visProp.az.pointer.button);
+                    neededKey = Type.evaluate(this.visProp.az.pointer.key);
+
+                    // Move events for azimuth
+                    if (
+                        (neededButton === -1 || neededButton === evt.button) &&
+                        (neededKey === 'none' || (neededKey.indexOf('shift') > -1 && evt.shiftKey) || (neededKey.indexOf('ctrl') > -1 && evt.ctrlKey))
+                    ) {
+                        // If outside is true then the event listener is bound to the document, otherwise to the div
+                        target = (Type.evaluate(this.visProp.az.pointer.outside)) ? document : board.containerObj;
+                        Env.addEvent(target, 'pointermove', this._azEventHandler, this);
+                        this._hasMoveAz = true;
+                    }
+                }
+
+                if (Type.evaluate(this.visProp.el.pointer.enabled)) {
+                    neededButton = Type.evaluate(this.visProp.el.pointer.button);
+                    neededKey = Type.evaluate(this.visProp.el.pointer.key);
+
+                    // Events for elevation
+                    if (
+                        (neededButton === -1 || neededButton === evt.button) &&
+                        (neededKey === 'none' || (neededKey.indexOf('shift') > -1 && evt.shiftKey) || (neededKey.indexOf('ctrl') > -1 && evt.ctrlKey))
+                    ) {
+                        // If outside is true then the event listener is bound to the document, otherwise to the div
+                        target = (Type.evaluate(this.visProp.el.pointer.outside)) ? document : board.containerObj;
+                        Env.addEvent(target, 'pointermove', this._elEventHandler, this);
+                        this._hasMoveEl = true;
+                    }
+                }
+            }
+            Env.addEvent(document, 'pointerup', this.pointerUpHandler, this);
+        },
+
+        pointerUpHandler: function(evt) {
+            var target;
+            if (this._hasMoveAz) {
+                target = (Type.evaluate(this.visProp.az.pointer.outside)) ? document : board.containerObj;
+                Env.removeEvent(target, 'pointermove', this._azEventHandler, this);
+                this._hasMoveAz = false;
+            }
+            if (this._hasMoveEl) {
+                target = (Type.evaluate(this.visProp.el.pointer.outside)) ? document : board.containerObj;
+                Env.removeEvent(target, 'pointermove', this._elEventHandler, this);
+                this._hasMoveEl = false;
+            }
+            if (this._hasMoveTrackball) {
+                target = (Type.evaluate(this.visProp.az.pointer.outside)) ? document : board.containerObj;
+                Env.removeEvent(target, 'pointermove', this._trackballHandler, this);
+                this._hasMoveTrackball = false;
+            }
+            Env.removeEvent(document, 'pointerup', this.pointerUpHandler, this);
         }
+
+
     });
 
 /**
@@ -1197,76 +1332,7 @@ JXG.createView3D = function (board, parents, attributes) {
     }, view);
 
     // Add events for the pointer navigation
-    board.containerObj.addEventListener('pointerdown', function (event) {
-        var neededButton, neededKey,
-            target;
-
-        if (Type.evaluate(view.visProp.az.pointer.enabled)) {
-            neededButton = Type.evaluate(view.visProp.az.pointer.button);
-            neededKey = Type.evaluate(view.visProp.az.pointer.key);
-
-            // Events for azimuth
-            if (
-                (neededButton === -1 || neededButton === event.button) &&
-                (neededKey === 'none' || (neededKey.indexOf('shift') > -1 && event.shiftKey) || (neededKey.indexOf('ctrl') > -1 && event.ctrlKey))
-            ) {
-                // If outside is true then the event listener is bound to the document, otherwise to the div
-                if (Type.evaluate(view.visProp.az.pointer.outside)) {
-                    target = document;
-                } else {
-                    target = board.containerObj;
-                }
-                Env.addEvent(target, 'pointermove', view._azEventHandler, view);
-                view._hasMoveAz = true;
-            }
-        }
-
-        if (Type.evaluate(view.visProp.el.pointer.enabled)) {
-            neededButton = Type.evaluate(view.visProp.el.pointer.button);
-            neededKey = Type.evaluate(view.visProp.el.pointer.key);
-
-            // Events for elevation
-            if (
-                (neededButton === -1 || neededButton === event.button) &&
-                (neededKey === 'none' || (neededKey.indexOf('shift') > -1 && event.shiftKey) || (neededKey.indexOf('ctrl') > -1 && event.ctrlKey))
-            ) {
-                // If outside is true then the event listener is bound to the document, otherwise to the div
-                if (Type.evaluate(view.visProp.el.pointer.outside)) {
-                    target = document;
-                } else {
-                    target = board.containerObj;
-                }
-                Env.addEvent(target, 'pointermove', view._elEventHandler, view);
-                view._hasMoveEl = true;
-            }
-        }
-
-        // Remove pointerMove and pointerUp event listener as soon as pointer up is triggered
-        function handlePointerUp() {
-            var target;
-            if (view._hasMoveAz) {
-                if (Type.evaluate(view.visProp.az.pointer.outside)) {
-                    target = document;
-                } else {
-                    target = view.board.containerObj;
-                }
-                Env.removeEvent(target, 'pointermove', view._azEventHandler, view);
-                view._hasMoveAz = false;
-            }
-            if (view._hasMoveEl) {
-                if (Type.evaluate(view.visProp.el.pointer.outside)) {
-                    target = document;
-                } else {
-                    target = view.board.containerObj;
-                }
-                Env.removeEvent(target, 'pointermove', view._elEventHandler, view);
-                view._hasMoveEl = false;
-            }
-            Env.removeEvent(document, 'pointerup', handlePointerUp, view);
-        }
-
-        Env.addEvent(document, 'pointerup', handlePointerUp, view);
-    });
+    Env.addEvent(board.containerObj, 'pointerdown', view.pointerDownHandler, view);
 
     view.board.update();
 
