@@ -384,7 +384,7 @@ JXG.extend(
                 mat[1][2] = n[0] * n[1] * ctheta - n[2] * stheta;
                 mat[1][3] = n[0] * n[2] * ctheta + n[1] * stheta;
 
-                mat[2][1] = n[0] * n[1] * ctheta + n[2] * stheta;
+                mat[2][1] = n[1] * n[0] * ctheta + n[2] * stheta;
                 mat[2][2] = 1 - ctheta + n[1] * n[1] * ctheta;
                 mat[2][3] = n[1] * n[2] * ctheta - n[0] * stheta;
 
