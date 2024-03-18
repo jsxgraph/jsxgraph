@@ -40,8 +40,10 @@
 
 import JXG from "../jxg.js";
 import Const from "../base/constants.js";
+import Coords from "../base/coords.js";
 import Type from "../utils/type.js";
 import Mat from "../math/math.js";
+import Geometry from "../math/geometry.js";
 import Env from "../utils/env.js";
 import GeometryElement from "../base/element.js";
 import Composition from "../base/composition.js";
@@ -284,11 +286,41 @@ JXG.extend(
             return mat;
         },
 
+        /**
+         * Project 2D point (x,y) to the virtual trackpad sphere,
+         * see Bell's virtual trackpad, and return z-component of the
+         * number.
+         *
+         * @param {Number} r
+         * @param {Number} x
+         * @param {Number} y
+         * @returns Number
+         * @private
+         */
+        _projectToSphere: function(r, x, y) {
+            var d = Mat.hypot(x, y),
+                t, z;
+
+            if (d < r * 0.70710678118654752440) { // Inside sphere
+                z = Math.sqrt(r * r - d * d);
+            } else {                              // On hyperbola
+                t = r / 1.41421356237309504880;
+                z = t * t / d;
+            }
+            return z;
+        },
+
+        /**
+         * Determine 4x4 rotation matrix with Bell's virtual trackball.
+         *
+         * @returns {Array} 4x4 rotation matrix
+         * @private
+         */
         updateParallelProjectionTrackball: function () {
             var R = 100,
             dx, dy, dr, dr2,
-            ctheta, stheta,
-            n,
+            p1, p2, x, y, theta, t, d,
+            ctheta, stheta, n,
             mat = [
                 [1, 0, 0, 0],
                 [0, 1, 0, 0],
@@ -296,37 +328,56 @@ JXG.extend(
                 [0, 0, 0, 1]
             ];
 
-            if (!Type.exists(this._trackball)) { 
+            if (!Type.exists(this._trackball)) {
                 return mat;
             }
-            
+
             dx = this._trackball.dx;
             dy = this._trackball.dy;
             dr2 = dx * dx + dy * dy;
             if (dr2 > Mat.eps) {
 
-                // Method by Hanson, "The rolling ball", Graphics Gems III, p.51
-                // Rotation axis:
-                //     n = (-dy/dr, dx/dr, 0)
-                // Rotation angle around n:
-                //     theta = atan(dr / R) approx dr / R
-                dr = Math.sqrt(dr2);
-                ctheta = 1 - R / Math.hypot(R, dr);  // 1 - cos(theta)
-                stheta = dr / Math.hypot(R, dr); // sin(theta)
-                n = [-dy / dr, dx / dr, 0];
+                if (false) {
+                    // Method by Hanson, "The rolling ball", Graphics Gems III, p.51
+                    // Rotation axis:
+                    //     n = (-dy/dr, dx/dr, 0)
+                    // Rotation angle around n:
+                    //     theta = atan(dr / R) approx dr / R
+                    dr = Math.sqrt(dr2);
+                    ctheta = 1 - R / Math.hypot(R, dr);  // 1 - cos(theta)
+                    stheta = dr / Math.hypot(R, dr);     // sin(theta)
+                    n = [-dy / dr, dx / dr, 0];
+                } else {
+                    // Bell virtual trackpad, see
+                    // https://opensource.apple.com/source/X11libs/X11libs-60/mesa/Mesa-7.8.2/progs/util/trackball.c.auto.html
+                    // http://scv.bu.edu/documentation/presentations/visualizationworkshop08/materials/opengl/trackball.c.
+                    // See also Henriksen, Sporring, Hornaek, "Virtual Trackballs revisited".
+                    //
+                    R = (this.size[0] * this.board.unitX + this.size[1] * this.board.unitY) * 0.25;
+                    x = this._trackball.x;
+                    y = this._trackball.y
+                    dy *= -1;
 
-                // mat[1][1] = ctheta + dy * dy * (1 - ctheta) / dr2;
-                // mat[1][2] = -dx * dy * (1 - ctheta) / dr2;
-                // mat[1][3] = dx / dr * stheta;
+                    p1 = [x, y, this._projectToSphere(R, x, y)];
+                    x += dx;
+                    y += dy;
+                    p2 = [x, y, this._projectToSphere(R, x, y)];
 
-                // mat[2][1] = mat[1][2];
-                // mat[2][2] = ctheta + dx * dx * (1 - ctheta) / dr2;
-                // mat[2][3] = dy * stheta / dr;
+                    n = Mat.crossProduct(p2, p1);
+                    d = Mat.hypot(n[0], n[1], n[2]);
+                    n[0] /= d;
+                    n[1] /= d;
+                    n[2] /= d;
 
-                // mat[3][1] = - dx * stheta / dr;
-                // mat[3][2] = - dy * stheta / dr;
-                // mat[3][3] = ctheta;
+                    t = Geometry.distance(p2, p1, 3) / (2 * R);
+                    t = (t > 1.0) ? 1.0 : t;
+                    t = (t < -1.0) ? -1.0 : t;
+                    theta = 2.0 * Math.asin(t);
+                    ctheta = 1 - Math.cos(theta);
+                    stheta = Math.sin(theta);
+                }
 
+                // General rotation around axis n with angle theta
                 mat[1][1] = 1 - ctheta + n[0] * n[0] * ctheta;
                 mat[1][2] = n[0] * n[1] * ctheta - n[2] * stheta;
                 mat[1][3] = n[0] * n[2] * ctheta + n[1] * stheta;
@@ -338,8 +389,6 @@ JXG.extend(
                 mat[3][1] = n[2] * n[0] * ctheta - n[1] * stheta;
                 mat[3][2] = n[2] * n[1] * ctheta + n[0] * stheta;
                 mat[3][3] = 1 - ctheta + n[2] * n[2] * ctheta;
-
-                console.log("Determinant", Mat.Numerics.det(mat))
             }
 
             mat = Mat.matMatMult(this.matrix3DRot, mat);
@@ -1066,9 +1115,17 @@ JXG.extend(
         },
 
         _trackballHandler: function(evt) {
+            var pos = this.board.getMousePosition(evt),
+                x, y, center;
+
+            center = new Coords(Const.COORDS_BY_USER, [this.llftCorner[0] + this.size[0] * 0.5, this.llftCorner[1] + this.size[1] * 0.5], this.board);
+            x = pos[0] - center.scrCoords[1];
+            y = pos[1] - center.scrCoords[2];
             this._trackball = {
                 dx: evt.movementX,
-                dy: evt.movementY
+                dy: evt.movementY,
+                x: x,
+                y: y
             };
             this.board.update();
             return this;
@@ -1082,7 +1139,6 @@ JXG.extend(
             this._hasMoveTrackball = false;
 
             if (Type.evaluate(this.visProp.trackball.enabled)) {
-                console.log("Trackball")
                 target = (Type.evaluate(this.visProp.az.pointer.outside)) ? document : board.containerObj;
                 Env.addEvent(target, 'pointermove', this._trackballHandler, this);
                 this._hasMoveTrackball = true;
