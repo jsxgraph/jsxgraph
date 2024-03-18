@@ -33,6 +33,7 @@
     with students. We would like to thank all contributors for their help:
 
     Winter semester 2023/2024:
+        Matti Kirchbach
  */
 
 /*global JXG: true, define: true*/
