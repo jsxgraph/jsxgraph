@@ -542,13 +542,21 @@ JXG.extend(
                     mat2D[1][0] = this.llftCorner[0] + mat2D[1][1] * 0.5 * dx; // llft_x
                     mat2D[2][0] = this.llftCorner[1] + mat2D[2][2] * 0.5 * dy; // llft_y
 
-                    // this.matrix3D is a 3x4 matrix
-                    if (this._hasMoveTrackball) {
-                        this.matrix3DRot = this.updateParallelProjectionTrackball();
+                    if (Type.evaluate(this.visProp.trackball.enabled) && Type.exists(this.matrix3DRot)) {
+                        // If trackball is enabled and this.matrix3DRot has been initialized,
+                        // do trackball navigation 
+                        if (this._hasMoveTrackball) {
+                            // If this._hasMoveTrackball is false, the drag event has been 
+                            // caught by e.g. point dragging
+                            this.matrix3DRot = this.updateParallelProjectionTrackball();
+                        }
                     } else {
+                        // Do elevation / azimuth navigation or at least initialize matrix
+                        // this.matrix3DRot
                         this.matrix3DRot = this.updateParallelProjection();
                     }
-                    // Combine the projections
+                    // Combine all transformations,
+                    // this.matrix3D is a 3x4 matrix
                     this.matrix3D = Mat.matMatMult(mat2D, Mat.matMatMult(this.matrix3DRot, shift).slice(0, 3));
             }
 
