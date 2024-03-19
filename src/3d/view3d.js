@@ -1140,6 +1140,10 @@ JXG.extend(
             this._hasMoveEl = false;
             this._hasMoveTrackball = false;
 
+            if (this.board.mode !== this.board.BOARD_MODE_NONE) {
+                return;
+            }
+         
             if (Type.evaluate(this.visProp.trackball.enabled)) {
                 neededButton = Type.evaluate(this.visProp.trackball.button);
                 neededKey = Type.evaluate(this.visProp.trackball.key);
