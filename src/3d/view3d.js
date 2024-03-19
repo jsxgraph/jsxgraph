@@ -358,12 +358,12 @@ JXG.extend(
                     x = this._trackball.x;
                     y = this._trackball.y
                     // dx *= -1;
-                    dy *= -1;
+                    // dy *= -1;
 
-                    p1 = [x, y, this._projectToSphere(R, x, y)];
-                    x += dx;
-                    y += dy;
                     p2 = [x, y, this._projectToSphere(R, x, y)];
+                    x -= dx;
+                    y -= dy;
+                    p1 = [x, y, this._projectToSphere(R, x, y)];
 
                     n = Mat.crossProduct(p2, p1);
                     d = Mat.hypot(n[0], n[1], n[2]);
