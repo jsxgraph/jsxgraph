@@ -319,78 +319,80 @@ JXG.extend(
          */
         updateParallelProjectionTrackball: function () {
             var R = 100,
-            dx, dy, dr, dr2,
-            p1, p2, x, y, theta, t, d,
-            ctheta, stheta, n,
-            mat = [
-                [1, 0, 0, 0],
-                [0, 1, 0, 0],
-                [0, 0, 1, 0],
-                [0, 0, 0, 1]
-            ];
+                dx, dy, dr, dr2,
+                p1, p2, x, y, theta, t, d,
+                c, s, n,
+                mat = [
+                    [1, 0, 0, 0],
+                    [0, 1, 0, 0],
+                    [0, 0, 1, 0],
+                    [0, 0, 0, 1]
+                ];
 
             if (!Type.exists(this._trackball)) {
-                return mat;
+                return this.matrix3DRot;
             }
 
             dx = this._trackball.dx;
             dy = this._trackball.dy;
             dr2 = dx * dx + dy * dy;
             if (dr2 > Mat.eps) {
+                // // Method by Hanson, "The rolling ball", Graphics Gems III, p.51
+                // // Rotation axis:
+                // //     n = (-dy/dr, dx/dr, 0)
+                // // Rotation angle around n:
+                // //     theta = atan(dr / R) approx dr / R
+                // dr = Math.sqrt(dr2);
+                // c = R / Math.hypot(R, dr);  // cos(theta)
+                // t = 1 - c;                  // 1 - cos(theta)
+                // s = dr / Math.hypot(R, dr); // sin(theta)
+                // n = [-dy / dr, dx / dr, 0];
 
-                if (false) {
-                    // Method by Hanson, "The rolling ball", Graphics Gems III, p.51
-                    // Rotation axis:
-                    //     n = (-dy/dr, dx/dr, 0)
-                    // Rotation angle around n:
-                    //     theta = atan(dr / R) approx dr / R
-                    dr = Math.sqrt(dr2);
-                    ctheta = 1 - R / Math.hypot(R, dr);  // 1 - cos(theta)
-                    stheta = dr / Math.hypot(R, dr);     // sin(theta)
-                    n = [-dy / dr, dx / dr, 0];
-                } else {
-                    // Bell virtual trackpad, see
-                    // https://opensource.apple.com/source/X11libs/X11libs-60/mesa/Mesa-7.8.2/progs/util/trackball.c.auto.html
-                    // http://scv.bu.edu/documentation/presentations/visualizationworkshop08/materials/opengl/trackball.c.
-                    // See also Henriksen, Sporring, Hornaek, "Virtual Trackballs revisited".
-                    //
-                    R = (this.size[0] * this.board.unitX + this.size[1] * this.board.unitY) * 0.25;
-                    x = this._trackball.x;
-                    y = this._trackball.y
-                    // dx *= -1;
-                    // dy *= -1;
+                // Bell virtual trackpad, see
+                // https://opensource.apple.com/source/X11libs/X11libs-60/mesa/Mesa-7.8.2/progs/util/trackball.c.auto.html
+                // http://scv.bu.edu/documentation/presentations/visualizationworkshop08/materials/opengl/trackball.c.
+                // See also Henriksen, Sporring, Hornaek, "Virtual Trackballs revisited".
+                //
+                R = (this.size[0] * this.board.unitX + this.size[1] * this.board.unitY) * 0.25;
+                x = this._trackball.x;
+                y = this._trackball.y
 
-                    p2 = [x, y, this._projectToSphere(R, x, y)];
-                    x -= dx;
-                    y -= dy;
-                    p1 = [x, y, this._projectToSphere(R, x, y)];
+                // p2 = [x, y, this._projectToSphere(R, x, y)];
+                p2 = [this._projectToSphere(R, x, y), x, y];
+                x -= dx;
+                y -= dy;
+                // p1 = [x, y, this._projectToSphere(R, x, y)];
+                p1 = [this._projectToSphere(R, x, y), x, y];
 
-                    n = Mat.crossProduct(p2, p1);
-                    d = Mat.hypot(n[0], n[1], n[2]);
-                    n[0] /= d;
-                    n[1] /= d;
-                    n[2] /= d;
+                n = Mat.crossProduct(p2, p1);
+                d = Mat.hypot(n[0], n[1], n[2]);
+                n[0] /= -d;
+                n[1] /= -d;
+                n[2] /= d;
 
-                    t = Geometry.distance(p2, p1, 3) / (2 * R);
-                    t = (t > 1.0) ? 1.0 : t;
-                    t = (t < -1.0) ? -1.0 : t;
-                    theta = 2.0 * Math.asin(t);
-                    ctheta = 1 - Math.cos(theta);
-                    stheta = Math.sin(theta);
-                }
+                t = Geometry.distance(p2, p1, 3) / (2 * R);
+                t = (t > 1.0) ? 1.0 : t;
+                t = (t < -1.0) ? -1.0 : t;
+                theta = 2.0 * Math.asin(t);
+                c = Math.cos(theta);
+                t = 1 - c;
+                s = Math.sin(theta);
 
                 // General rotation around axis n with angle theta
-                mat[1][1] = 1 - ctheta + n[0] * n[0] * ctheta;
-                mat[1][2] = n[0] * n[1] * ctheta - n[2] * stheta;
-                mat[1][3] = n[0] * n[2] * ctheta + n[1] * stheta;
+                // See Pique, Graphics Gems I, pp. 466
+                // Attention: he multiplies (row vector x matrix),
+                // we multiply (matrix x column vector)
+                mat[1][1] = c + n[0] * n[0] * t;
+                mat[2][1] = n[0] * n[1] * t - n[2] * s;
+                mat[3][1] = n[0] * n[2] * t + n[1] * s;
 
-                mat[2][1] = n[1] * n[0] * ctheta + n[2] * stheta;
-                mat[2][2] = 1 - ctheta + n[1] * n[1] * ctheta;
-                mat[2][3] = n[1] * n[2] * ctheta - n[0] * stheta;
+                mat[1][2] = n[1] * n[0] * t + n[2] * s;
+                mat[2][2] = c + n[1] * n[1] * t;
+                mat[3][2] = n[1] * n[2] * t - n[0] * s;
 
-                mat[3][1] = n[2] * n[0] * ctheta - n[1] * stheta;
-                mat[3][2] = n[2] * n[1] * ctheta + n[0] * stheta;
-                mat[3][3] = 1 - ctheta + n[2] * n[2] * ctheta;
+                mat[1][3] = n[2] * n[0] * t - n[1] * s;
+                mat[2][3] = n[2] * n[1] * t + n[0] * s;
+                mat[3][3] = c + n[2] * n[2] * t;
             }
 
             mat = Mat.matMatMult(this.matrix3DRot, mat);
