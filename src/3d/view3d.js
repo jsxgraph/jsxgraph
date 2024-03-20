@@ -624,7 +624,9 @@ JXG.extend(
             } else {
                 // Argument is an array
                 if (x.length === 3) {
-                    vec = [1].concat(x);
+                    // vec = [1].concat(x);
+                    vec = x.slice();
+                    vec.unshift(1);
                 } else {
                     vec = x;
                 }

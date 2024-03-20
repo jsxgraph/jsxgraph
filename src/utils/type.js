@@ -1699,6 +1699,7 @@ JXG.extend(
          *
          * @param {Array} dest
          * @param {Array} src
+         * @returns Array
          */
         concat: function(dest, src) {
             var i,

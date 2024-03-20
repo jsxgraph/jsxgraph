@@ -172,7 +172,9 @@ JXG.extend(
             var i;
 
             if (Type.isFunction(this.F)) {
-                this.coords = [1].concat(Type.evaluate(this.F));
+                // this.coords = [1].concat(Type.evaluate(this.F));
+                this.coords = Type.evaluate(this.F);
+                this.coords.unshift(1);
             } else {
                 this.coords[0] = 1;
                 for (i = 0; i < 3; i++) {
@@ -196,7 +198,9 @@ JXG.extend(
             var i;
 
             if (Type.isFunction(this.F)) {
-                this.coords = [1].concat(Type.evaluate(this.F));
+                // this.coords = [1].concat(Type.evaluate(this.F));
+                this.coords = Type.evaluate(this.F);
+                this.coords.unshift(1);
             } else {
                 this.coords[0] = 1;
                 for (i = 0; i < 3; i++) {

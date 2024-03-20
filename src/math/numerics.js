@@ -1908,12 +1908,12 @@ Mat.Numerics = {
             t = [];
 
         for (i = deg; i >= 0; i--) {
-            t = t.concat(["(", coeffs[i].toPrecision(prec), ")"]);
+            Type.concat(t, ["(", coeffs[i].toPrecision(prec), ")"]);
 
             if (i > 1) {
-                t = t.concat(["*", varname, "<sup>", i, "<", "/sup> + "]);
+                Type.concat(t, ["*", varname, "<sup>", i, "<", "/sup> + "]);
             } else if (i === 1) {
-                t = t.concat(["*", varname, " + "]);
+                Type.concat(t, ["*", varname, " + "]);
             }
         }
 
