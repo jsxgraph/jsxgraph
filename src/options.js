@@ -1007,7 +1007,7 @@ JXG.Options = {
         //  * {@link JXG.Board#removeEventHandlers()} directly.
         //  * <p>
         //  * This attribute just starts a resizeObserver. If the resizeObserver reacts
-        //  * to size changed is controled wuth {@link JXG.Board#resize}.
+        //  * to size changed is controlled with {@link JXG.Board#resize}.
         //  *
         //  * @name JXG.Board#registerResizeEvent
         //  * @see JXG.Board#resize

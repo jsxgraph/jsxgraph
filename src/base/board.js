@@ -6018,7 +6018,11 @@ JXG.extend(
             w = this.canvasWidth;
             h = this.canvasHeight;
             if (keepaspectratio) {
-                ratio = ux / uy;            // Keep this ratio if aspectratio==true
+                if (this.keepaspectratio) {
+                    ratio = ux / uy; // Keep this ratio if keepaspectratio was true
+                } else {
+                    ratio = 1.0;
+                }
                 if (setZoom === 'keep') {
                     zoom_ratio = this.zoomX / this.zoomY;
                 }
@@ -6243,7 +6247,7 @@ JXG.extend(
          */
         setAttribute: function (attr) {
             var i, arg, pair,
-                key, value, oldvalue, // j, le,
+                key, value, oldvalue,// j, le,
                 node,
                 attributes = {};
 
@@ -6273,6 +6277,9 @@ JXG.extend(
                     : value;
 
                 oldvalue = this.attr[key];
+                if (oldvalue === value) {
+                    continue;
+                }
                 switch (key) {
                     case 'axis':
                         if (value === false) {
@@ -6307,11 +6314,8 @@ JXG.extend(
                         this._set(key, value);
                         break;
                     case 'keepaspectratio':
-                        // Does not work, yet.
                         this._set(key, value);
-                        oldvalue = this.getBoundingBox();
-                        this.setBoundingBox([0, this.canvasHeight, this.canvasWidth, 0], false, 'keep');
-                        this.setBoundingBox(oldvalue, value, 'keep');
+                        this.setBoundingBox(this.getBoundingBox(), value, 'keep');
                         break;
 
                     /* eslint-disable no-fallthrough */

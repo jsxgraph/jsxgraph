@@ -302,10 +302,10 @@ JXG.extend(
             var d = Mat.hypot(x, y),
                 t, z;
 
-            if (d < r * 0.70710678118654752440) { // Inside sphere
+            if (d < r * 0.7071067811865475) { // Inside sphere
                 z = Math.sqrt(r * r - d * d);
-            } else {                              // On hyperbola
-                t = r / 1.41421356237309504880;
+            } else {                          // On hyperbola
+                t = r / 1.414213562373095;
                 z = t * t / d;
             }
             return z;
@@ -319,7 +319,7 @@ JXG.extend(
          */
         updateParallelProjectionTrackball: function () {
             var R = 100,
-                dx, dy, dr, dr2,
+                dx, dy, dr2,
                 p1, p2, x, y, theta, t, d,
                 c, s, n,
                 mat = [
@@ -355,7 +355,7 @@ JXG.extend(
                 //
                 R = (this.size[0] * this.board.unitX + this.size[1] * this.board.unitY) * 0.25;
                 x = this._trackball.x;
-                y = this._trackball.y
+                y = this._trackball.y;
 
                 // p2 = [x, y, this._projectToSphere(R, x, y)];
                 p2 = [this._projectToSphere(R, x, y), x, y];
@@ -544,9 +544,9 @@ JXG.extend(
 
                     if (Type.evaluate(this.visProp.trackball.enabled) && Type.exists(this.matrix3DRot)) {
                         // If trackball is enabled and this.matrix3DRot has been initialized,
-                        // do trackball navigation 
+                        // do trackball navigation
                         if (this._hasMoveTrackball) {
-                            // If this._hasMoveTrackball is false, the drag event has been 
+                            // If this._hasMoveTrackball is false, the drag event has been
                             // caught by e.g. point dragging
                             this.matrix3DRot = this.updateParallelProjectionTrackball();
                         }
@@ -1151,7 +1151,7 @@ JXG.extend(
             if (this.board.mode !== this.board.BOARD_MODE_NONE) {
                 return;
             }
-         
+
             if (Type.evaluate(this.visProp.trackball.enabled)) {
                 neededButton = Type.evaluate(this.visProp.trackball.button);
                 neededKey = Type.evaluate(this.visProp.trackball.key);
@@ -1162,7 +1162,7 @@ JXG.extend(
                     (neededKey === 'none' || (neededKey.indexOf('shift') > -1 && evt.shiftKey) || (neededKey.indexOf('ctrl') > -1 && evt.ctrlKey))
                 ) {
                     // If outside is true then the event listener is bound to the document, otherwise to the div
-                    target = (Type.evaluate(this.visProp.trackball.outside)) ? document : board.containerObj;
+                    target = (Type.evaluate(this.visProp.trackball.outside)) ? document : this.board.containerObj;
                     Env.addEvent(target, 'pointermove', this._trackballHandler, this);
                     this._hasMoveTrackball = true;
                 }
@@ -1177,7 +1177,7 @@ JXG.extend(
                         (neededKey === 'none' || (neededKey.indexOf('shift') > -1 && evt.shiftKey) || (neededKey.indexOf('ctrl') > -1 && evt.ctrlKey))
                     ) {
                         // If outside is true then the event listener is bound to the document, otherwise to the div
-                        target = (Type.evaluate(this.visProp.az.pointer.outside)) ? document : board.containerObj;
+                        target = (Type.evaluate(this.visProp.az.pointer.outside)) ? document : this.board.containerObj;
                         Env.addEvent(target, 'pointermove', this._azEventHandler, this);
                         this._hasMoveAz = true;
                     }
@@ -1193,7 +1193,7 @@ JXG.extend(
                         (neededKey === 'none' || (neededKey.indexOf('shift') > -1 && evt.shiftKey) || (neededKey.indexOf('ctrl') > -1 && evt.ctrlKey))
                     ) {
                         // If outside is true then the event listener is bound to the document, otherwise to the div
-                        target = (Type.evaluate(this.visProp.el.pointer.outside)) ? document : board.containerObj;
+                        target = (Type.evaluate(this.visProp.el.pointer.outside)) ? document : this.board.containerObj;
                         Env.addEvent(target, 'pointermove', this._elEventHandler, this);
                         this._hasMoveEl = true;
                     }
@@ -1205,17 +1205,17 @@ JXG.extend(
         pointerUpHandler: function(evt) {
             var target;
             if (this._hasMoveAz) {
-                target = (Type.evaluate(this.visProp.az.pointer.outside)) ? document : board.containerObj;
+                target = (Type.evaluate(this.visProp.az.pointer.outside)) ? document : this.board.containerObj;
                 Env.removeEvent(target, 'pointermove', this._azEventHandler, this);
                 this._hasMoveAz = false;
             }
             if (this._hasMoveEl) {
-                target = (Type.evaluate(this.visProp.el.pointer.outside)) ? document : board.containerObj;
+                target = (Type.evaluate(this.visProp.el.pointer.outside)) ? document : this.board.containerObj;
                 Env.removeEvent(target, 'pointermove', this._elEventHandler, this);
                 this._hasMoveEl = false;
             }
             if (this._hasMoveTrackball) {
-                target = (Type.evaluate(this.visProp.az.pointer.outside)) ? document : board.containerObj;
+                target = (Type.evaluate(this.visProp.az.pointer.outside)) ? document : this.board.containerObj;
                 Env.removeEvent(target, 'pointermove', this._trackballHandler, this);
                 this._hasMoveTrackball = false;
             }
