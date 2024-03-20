@@ -551,7 +551,7 @@ JXG.extend(Options, {
         },
 
         trackball: {
-            enabled: true,
+            enabled: false,
             outside: true,
             button: -1,
             key: 'none'

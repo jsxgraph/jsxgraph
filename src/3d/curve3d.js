@@ -371,9 +371,9 @@ JXG.createVectorfield3D = function (board, parents, attributes) {
                     v[0] *= scale;
                     v[1] *= scale;
                     v[2] *= scale;
-                    this.dataX = this.dataX.concat([x, x + v[0], NaN]);
-                    this.dataY = this.dataY.concat([y, y + v[1], NaN]);
-                    this.dataZ = this.dataZ.concat([z, z + v[2], NaN]);
+                    Type.concat(this.dataX, [x, x + v[0], NaN]);
+                    Type.concat(this.dataY, [y, y + v[1], NaN]);
+                    Type.concat(this.dataZ, [z, z + v[2], NaN]);
 
                     if (showArrow) {
                         // Arrow head
@@ -382,17 +382,17 @@ JXG.createVectorfield3D = function (board, parents, attributes) {
                         theta = Math.asin(v[2] / nrm);
                         theta1 = theta - alpha;
                         theta2 = theta + alpha;
-                        this.dataX = this.dataX.concat([
+                        Type.concat(this.dataX, [
                             x + v[0] - leg_x * Math.cos(phi) * Math.cos(theta1),
                             x + v[0],
                             x + v[0] - leg_x * Math.cos(phi) * Math.cos(theta2),
                             NaN]);
-                        this.dataY = this.dataY.concat([
+                        Type.concat(this.dataY, [
                             y + v[1] - leg_y * Math.sin(phi) * Math.cos(theta1),
                             y + v[1],
                             y + v[1] - leg_y * Math.sin(phi) * Math.cos(theta2),
                             NaN]);
-                        this.dataZ = this.dataZ.concat([
+                        Type.concat(this.dataZ, [
                             z + v[2] - leg_z * Math.sin(theta2),
                             z + v[2],
                             z + v[2] - leg_z * Math.sin(theta1),

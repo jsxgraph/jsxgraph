@@ -2021,7 +2021,7 @@ JXG.extend(
                     if (node.id !== undefined && node.value !== undefined) {
                         values.push([node.id, node.value]);
                     }
-                    values = values.concat(this._getValuesOfDOMElements(node));
+                    Type.concat(values, this._getValuesOfDOMElements(node));
                     node = node.nextSibling;
                 }
             }
@@ -2137,7 +2137,7 @@ JXG.extend(
                     this.foreignObjLayer.setAttribute("display", "inline");
                     while (svgRoot.nextSibling) {
                         // Copy all value attributes
-                        values = values.concat(this._getValuesOfDOMElements(svgRoot.nextSibling));
+                        Type.concat(values, this._getValuesOfDOMElements(svgRoot.nextSibling));
                         this.foreignObjLayer.appendChild(svgRoot.nextSibling);
                     }
                 }

@@ -131,7 +131,7 @@ JXG.extend(
             } else {
                 func = [this.X, this.Y, this.Z];
             }
-            res = this.view.getMesh(func, r_u.concat([steps_u]), r_v.concat([steps_v]));
+            res = this.view.getMesh(func, Type.concat(r_u, [steps_u]), Type.concat(r_v, [steps_v]));
 
             return { X: res[0], Y: res[1] };
         },

@@ -398,8 +398,8 @@ Type.extend(
                         }
 
                         num_components++;
-                        dataX = dataX.concat(ret[0]);
-                        dataY = dataY.concat(ret[1]);
+                        Type.concat(dataX, ret[0]);
+                        Type.concat(dataY, ret[1]);
                     }
                 }
 

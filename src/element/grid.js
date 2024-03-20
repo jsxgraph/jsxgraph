@@ -455,7 +455,7 @@ JXG.createGrid = function (board, parents, attributes) {
     majorGrid.updateDataArray = function () {
         var bbox = this.board.getBoundingBox(),
             startX, startY,
-            x, y, i,
+            x, y,
             dataArr,
             finite, delta,
 
@@ -588,12 +588,8 @@ JXG.createGrid = function (board, parents, attributes) {
 
                 dataArr = createDataArrayForFace(face, majorGrid, x, y, majorRadius[0], majorRadius[1], bbox);
                 // Push is drastically faster than concat
-                // this.dataX = this.dataX.concat(dataArr[0]);
-                // this.dataY = this.dataY.concat(dataArr[1]);
-                for (i = 0; i < dataArr[0].length; i++) {
-                    this.dataX.push(dataArr[0][i]);
-                    this.dataY.push(dataArr[1][i]);
-                }
+                Type.concat(this.dataX, dataArr[0]);
+                Type.concat(this.dataY, dataArr[1]);
             }
         }
     };
@@ -850,8 +846,8 @@ JXG.createGrid = function (board, parents, attributes) {
                 }
 
                 dataArr = createDataArrayForFace(minorFace, minorGrid, x, y, minorRadius[0], minorRadius[1], bbox);
-                this.dataX = this.dataX.concat(dataArr[0]);
-                this.dataY = this.dataY.concat(dataArr[1]);
+                Type.concat(this.dataX, dataArr[0]);
+                Type.concat(this.dataY, dataArr[1]);
             }
         }
     };
