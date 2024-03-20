@@ -455,7 +455,7 @@ JXG.createGrid = function (board, parents, attributes) {
     majorGrid.updateDataArray = function () {
         var bbox = this.board.getBoundingBox(),
             startX, startY,
-            x, y,
+            x, y, i,
             dataArr,
             finite, delta,
 
@@ -568,8 +568,7 @@ JXG.createGrid = function (board, parents, attributes) {
             Math.abs(bbox[3]) < Math.abs(majorStep[1] * maxLines);
 
         // POI finite = false means that no grid is drawn. Should we change this?
-
-        // draw grid elements
+        // Draw grid elements
         for (y = startY; finite && y >= bbox[3]; y -= majorStep[1]) {
             for (x = startX; finite && x <= bbox[2]; x += majorStep[0]) {
 
@@ -588,8 +587,13 @@ JXG.createGrid = function (board, parents, attributes) {
                 }
 
                 dataArr = createDataArrayForFace(face, majorGrid, x, y, majorRadius[0], majorRadius[1], bbox);
-                this.dataX = this.dataX.concat(dataArr[0]);
-                this.dataY = this.dataY.concat(dataArr[1]);
+                // Push is drastically faster than concat
+                // this.dataX = this.dataX.concat(dataArr[0]);
+                // this.dataY = this.dataY.concat(dataArr[1]);
+                for (i = 0; i < dataArr[0].length; i++) {
+                    this.dataX.push(dataArr[0][i]);
+                    this.dataY.push(dataArr[1][i]);
+                }
             }
         }
     };
