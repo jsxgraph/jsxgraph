@@ -457,7 +457,7 @@ JXG.createGrid = function (board, parents, attributes) {
             startX, startY,
             x, y,
             dataArr,
-            finite,
+            finite, delta,
 
             gridX = Type.evaluate(this.visProp.gridx), // for backwards compatibility
             gridY = Type.evaluate(this.visProp.gridy), // for backwards compatibility
@@ -491,21 +491,30 @@ JXG.createGrid = function (board, parents, attributes) {
         }
 
         if (majorStep[0] === 'auto') {
-            majorStep[0] = 1; // parentAxes[0] may not be defined
+            // majorStep[0] = 1; // parentAxes[0] may not be defined
+            // Prevent too many grid lines if majorstep:'auto'
+            delta = Math.pow(10, Math.floor(Math.log(50 / this.board.unitX) / Math.LN10));
+            majorStep[0] = delta;
+
             if (Type.exists(parentAxes[0])) {
                 majorStep[0] = parentAxes[0].ticks[0].getDistanceMajorTicks();
             }
         } else {
-            // This allows the value to hate unit px, abs, % or fr.
+            // This allows the value to have unit px, abs, % or fr.
             majorStep[0] = Type.parseNumber(majorStep[0], Math.abs(bbox[1] - bbox[3]), 1 / this.board.unitX);
         }
+
         if (majorStep[1] === 'auto') {
-            majorStep[1] = 1; // parentAxes[1] may not be defined
+            // majorStep[1] = 1; // parentAxes[1] may not be defined
+            // Prevent too many grid lines if majorstep:'auto'
+            delta = Math.pow(10, Math.floor(Math.log(50 / this.board.unitY) / Math.LN10));
+            majorStep[1] = delta;
+
             if (Type.exists(parentAxes[1])) {
                 majorStep[1] = parentAxes[1].ticks[0].getDistanceMajorTicks();
             }
         } else {
-            // This allows the value to hate unit px, abs, % or fr.
+            // This allows the value to have unit px, abs, % or fr.
             majorStep[1] = Type.parseNumber(majorStep[1], Math.abs(bbox[0] - bbox[2]), 1 / this.board.unitY);
         }
 
@@ -523,7 +532,7 @@ JXG.createGrid = function (board, parents, attributes) {
             }
         }
 
-        // set global majorSize
+        // Set global majorSize
         majorSize = Type.evaluate(this.visProp.size);
         if (!Type.isArray(majorSize)) {
             majorSize = [majorSize, majorSize];
