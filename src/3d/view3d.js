@@ -510,14 +510,16 @@ JXG.extend(
                     // If this._hasMoveTrackball is false, the drag event has been
                     // caught by e.g. point dragging
                     this.matrix3DRot = this.updateParallelProjectionTrackball();
-                    useTrackball = true;
                 }
+                useTrackball = true;
             }
             this.projectionType = Type.evaluate(this.visProp.projection).toLowerCase();
 
             switch (this.projectionType) {
                 case 'central': // Central projection
 
+                    // Add a final transformation to scale and shift the projection
+                    // on the board, usually called viewport.
                     size = 0.4;
                     mat2D[1][1] = this.size[0] / (2 * size); // w / d_x
                     mat2D[2][2] = this.size[1] / (2 * size); // h / d_y
@@ -547,7 +549,7 @@ JXG.extend(
                         [-0.5 * (this.bbox3D[2][0] + this.bbox3D[2][1]), 0, 0, 1]
                     ];
 
-                    // Add a second transformation to scale and shift the projection
+                    // Add a final transformation to scale and shift the projection
                     // on the board, usually called viewport.
                     dx = this.bbox3D[0][1] - this.bbox3D[0][0];
                     dy = this.bbox3D[1][1] - this.bbox3D[1][0];
