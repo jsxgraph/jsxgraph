@@ -486,7 +486,8 @@ JXG.extend(
         // Update 3D-to-2D transformation matrix with the actual azimuth and elevation angles.
         update: function () {
             var mat2D, shift, size,
-                dx, dy;
+                dx, dy, 
+                useTrackball = false;
 
             if (
                 !Type.exists(this.el_slide) ||
@@ -502,19 +503,34 @@ JXG.extend(
                 [0, 0, 1]
             ];
 
+            if (Type.evaluate(this.visProp.trackball.enabled) && Type.exists(this.matrix3DRot)) {
+                // If trackball is enabled and this.matrix3DRot has been initialized,
+                // do trackball navigation
+                if (this._hasMoveTrackball) {
+                    // If this._hasMoveTrackball is false, the drag event has been
+                    // caught by e.g. point dragging
+                    this.matrix3DRot = this.updateParallelProjectionTrackball();
+                    useTrackball = true;
+                }
+            }
             this.projectionType = Type.evaluate(this.visProp.projection).toLowerCase();
 
             switch (this.projectionType) {
                 case 'central': // Central projection
-
-                    this.matrix3D = this._updateCentralProjection();
-                    // this.matrix3D is a 4x4 matrix
 
                     size = 0.4;
                     mat2D[1][1] = this.size[0] / (2 * size); // w / d_x
                     mat2D[2][2] = this.size[1] / (2 * size); // h / d_y
                     mat2D[1][0] = this.llftCorner[0] + mat2D[1][1] * 0.5 * (2 * size); // llft_x
                     mat2D[2][0] = this.llftCorner[1] + mat2D[2][2] * 0.5 * (2 * size); // llft_y
+
+                    if (!useTrackball) {
+                        // Do elevation / azimuth navigation or at least initialize matrix
+                        // this.matrix3DRot
+                        this.matrix3DRot = this._updateCentralProjection();
+                    }
+                    // this.matrix3D is a 4x4 matrix
+                    this.matrix3D = this.matrix3DRot.slice();
 
                     // The transformations this.matrix3D and mat2D can not be combined at this point,
                     // since the projected vectors have to be normalized in between in project3DTo2D
@@ -541,21 +557,11 @@ JXG.extend(
                     mat2D[1][0] = this.llftCorner[0] + mat2D[1][1] * 0.5 * dx; // llft_x
                     mat2D[2][0] = this.llftCorner[1] + mat2D[2][2] * 0.5 * dy; // llft_y
 
-                    if (Type.evaluate(this.visProp.trackball.enabled) && Type.exists(this.matrix3DRot)) {
-                        // If trackball is enabled and this.matrix3DRot has been initialized,
-                        // do trackball navigation
-                        if (this._hasMoveTrackball) {
-                            // If this._hasMoveTrackball is false, the drag event has been
-                            // caught by e.g. point dragging
-                            this.matrix3DRot = this.updateParallelProjectionTrackball();
-                        }
-                    } else {
-                        // Do elevation / azimuth navigation or at least initialize matrix
-                        // this.matrix3DRot
+                    if (!useTrackball) {
+                        // Do elevation / azimuth navigation or at least initialize matrix this.matrix3DRot
                         this.matrix3DRot = this.updateParallelProjection();
                     }
-                    // Combine all transformations,
-                    // this.matrix3D is a 3x4 matrix
+                    // Combine all transformations, this.matrix3D is a 3x4 matrix
                     this.matrix3D = Mat.matMatMult(mat2D, Mat.matMatMult(this.matrix3DRot, shift).slice(0, 3));
             }
 

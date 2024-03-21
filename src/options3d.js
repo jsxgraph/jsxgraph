@@ -387,7 +387,12 @@ JXG.extend(Options, {
         needsRegularUpdate: true,
 
         /**
-         * Choose the projection is to be used: `parallel` or `central`.
+         * Choose the projection type to be used: `parallel` or `central`.
+         * <ul>
+         * <li> `parallel` is parallel projection, also called orthographic projection
+         * <li> `central` is central projection
+         * </ul>
+         * 
          *
          * @name View3D#projection
          * @type String
