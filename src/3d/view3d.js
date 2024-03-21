@@ -643,6 +643,7 @@ JXG.extend(
 
             switch (this.projectionType) {
                 case 'central':
+                    this._w0 = w[0];
                     w[1] /= w[0];
                     w[2] /= w[0];
                     w[3] /= w[0];
@@ -666,27 +667,60 @@ JXG.extend(
          * point in homogeneous coordinates.
          */
         project2DTo3DPlane: function (point2d, normal, foot) {
-            var mat, rhs, d, le,
+            var mat, rhs, d, le, sol,
                 n = normal.slice(1),
-                sol;
+                v2d;
 
             foot = foot || [1, 0, 0, 0];
             le = Mat.norm(n, 3);
             d = Mat.innerProduct(foot.slice(1), n, 3) / le;
-
-            mat = this.matrix3D.slice(0, 3); // True copy
-            mat.push([0].concat(n));
-
-            // 2D coordinates of point:
-            rhs = point2d.coords.usrCoords.concat([d]);
-            try {
-                // Prevent singularity in case elevation angle is zero
-                if (mat[2][3] === 1.0) {
-                    mat[2][1] = mat[2][2] = Mat.eps * 0.001;
+            
+            if (this.projectionType === 'parallel') {
+                mat = this.matrix3D.slice(0, 3); // True copy
+                mat.push([0, n[0], n[1], n[2]]);
+    
+                // 2D coordinates of point:
+                rhs = point2d.coords.usrCoords.slice();
+                rhs.push(d);
+                try {
+                    // Prevent singularity in case elevation angle is zero
+                    if (mat[2][3] === 1.0) {
+                        mat[2][1] = mat[2][2] = Mat.eps * 0.001;
+                    }
+                    sol = Mat.Numerics.Gauss(mat, rhs);
+                } catch (err) {
+                    sol = [0, NaN, NaN, NaN];
                 }
-                sol = Mat.Numerics.Gauss(mat, rhs);
-            } catch (err) {
-                sol = [0, NaN, NaN, NaN];
+            } else {
+                mat = this.matrix3D.slice(0, 4); // True copy
+                // mat.push([0, n[0], n[1], n[2]]);
+
+                // 2D coordinates of point:
+                rhs = point2d.coords.usrCoords.slice();
+                v2d = Mat.Numerics.Gauss(this.viewPortTransform, rhs);
+                rhs = [
+                    v2d[0] * this._w0,
+                    v2d[1] * this._w0,
+                    v2d[2] * this._w0,
+                    Mat.innerProduct(mat[3], [1, 0, 0, d])
+                ];
+
+                try {
+                    // Prevent singularity in case elevation angle is zero
+                    if (mat[2][3] === 1.0) {
+                        mat[2][1] = mat[2][2] = Mat.eps * 0.001;
+                    }
+
+                    sol = Mat.Numerics.Gauss(mat, rhs);
+                    sol[1] /= sol[0];
+                    sol[2] /= sol[0];
+                    // sol[3] /= sol[0];
+                    sol[3] = d;
+                    sol[0] /= sol[0];
+
+                } catch (err) {
+                    sol = [0, NaN, NaN, NaN];
+                }
             }
 
             return sol;
