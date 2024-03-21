@@ -390,7 +390,7 @@ JXG.extend(Options, {
          * Choose the projection type to be used: `parallel` or `central`.
          * <ul>
          * <li> `parallel` is parallel projection, also called orthographic projection
-         * <li> `central` is central projection
+         * <li> `central` is central projection, also called perspective projection
          * </ul>
          * 
          *
