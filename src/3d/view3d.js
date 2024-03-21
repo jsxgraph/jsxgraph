@@ -516,9 +516,8 @@ JXG.extend(
                     mat2D[1][0] = this.llftCorner[0] + mat2D[1][1] * 0.5 * (2 * size); // llft_x
                     mat2D[2][0] = this.llftCorner[1] + mat2D[2][2] * 0.5 * (2 * size); // llft_y
 
-                    // The transformations this.matrix3D and mat2D can not be combined yet, since
-                    // the projected vector has to be normalized in between in
-                    // project3DTo2D
+                    // The transformations this.matrix3D and mat2D can not be combined at this point,
+                    // since the projected vectors have to be normalized in between in project3DTo2D
                     this.viewPortTransform = mat2D;
                     break;
 
