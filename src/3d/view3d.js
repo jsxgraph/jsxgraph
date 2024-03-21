@@ -643,7 +643,6 @@ JXG.extend(
 
             switch (this.projectionType) {
                 case 'central':
-                    this._w0 = w[0];
                     w[1] /= w[0];
                     w[2] /= w[0];
                     w[3] /= w[0];
@@ -669,7 +668,7 @@ JXG.extend(
         project2DTo3DPlane: function (point2d, normal, foot) {
             var mat, rhs, d, le, sol,
                 n = normal.slice(1),
-                v2d;
+                v2d, w0;
 
             foot = foot || [1, 0, 0, 0];
             le = Mat.norm(n, 3);
@@ -694,15 +693,16 @@ JXG.extend(
             } else {
                 mat = this.matrix3D.slice(0, 4); // True copy
                 // mat.push([0, n[0], n[1], n[2]]);
+                w0 = Mat.innerProduct(mat[0], foot, 4);
 
                 // 2D coordinates of point:
                 rhs = point2d.coords.usrCoords.slice();
                 v2d = Mat.Numerics.Gauss(this.viewPortTransform, rhs);
                 rhs = [
-                    v2d[0] * this._w0,
-                    v2d[1] * this._w0,
-                    v2d[2] * this._w0,
-                    Mat.innerProduct(mat[3], [1, 0, 0, d])
+                    v2d[0] * w0,
+                    v2d[1] * w0,
+                    v2d[2] * w0,
+                    Mat.innerProduct(mat[3], foot)
                 ];
 
                 try {
@@ -714,8 +714,8 @@ JXG.extend(
                     sol = Mat.Numerics.Gauss(mat, rhs);
                     sol[1] /= sol[0];
                     sol[2] /= sol[0];
-                    // sol[3] /= sol[0];
-                    sol[3] = d;
+                    sol[3] /= sol[0];
+                    // sol[3] = d;
                     sol[0] /= sol[0];
 
                 } catch (err) {
@@ -1417,6 +1417,8 @@ JXG.createView3D = function (board, parents, attributes) {
         }
         if (p) {
             foot = [1, 0, 0, p.coords[3]];
+            view._w0 = Mat.innerProduct(view.matrix3D[0], foot, 4);
+
             c3d = view.project2DTo3DPlane(p.element2D, [1, 0, 0, 1], foot);
             if (!view.isInCube(c3d)) {
                 view.board.highlightCustomInfobox('', p);
