@@ -392,7 +392,7 @@ JXG.extend(Options, {
          * <li> `parallel` is parallel projection, also called orthographic projection
          * <li> `central` is central projection, also called perspective projection
          * </ul>
-         * 
+         *
          *
          * @name View3D#projection
          * @type String

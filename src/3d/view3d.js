@@ -486,7 +486,7 @@ JXG.extend(
         // Update 3D-to-2D transformation matrix with the actual azimuth and elevation angles.
         update: function () {
             var mat2D, shift, size,
-                dx, dy, 
+                dx, dy,
                 useTrackball = false;
 
             if (
@@ -673,11 +673,11 @@ JXG.extend(
             foot = foot || [1, 0, 0, 0];
             le = Mat.norm(n, 3);
             d = Mat.innerProduct(foot.slice(1), n, 3) / le;
-            
+
             if (this.projectionType === 'parallel') {
                 mat = this.matrix3D.slice(0, 3); // True copy
                 mat.push([0, n[0], n[1], n[2]]);
-    
+
                 // 2D coordinates of point:
                 rhs = point2d.coords.usrCoords.slice();
                 rhs.push(d);
