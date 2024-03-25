@@ -317,7 +317,7 @@ JXG.extend(
          * @returns {Array} 4x4 rotation matrix
          * @private
          */
-        updateParallelProjectionTrackball: function () {
+        updateProjectionTrackball: function () {
             var R = 100,
                 dx, dy, dr2,
                 p1, p2, x, y, theta, t, d,
@@ -509,7 +509,7 @@ JXG.extend(
                 if (this._hasMoveTrackball) {
                     // If this._hasMoveTrackball is false, the drag event has been
                     // caught by e.g. point dragging
-                    this.matrix3DRot = this.updateParallelProjectionTrackball();
+                    this.matrix3DRot = this.updateProjectionTrackball();
                 }
                 useTrackball = true;
             }
@@ -655,6 +655,17 @@ JXG.extend(
             }
         },
 
+        _getW0: function(mat, v2d, d) {
+            var R = Mat.inverse(mat),
+                R1 = R[0][0] + v2d[1] * R[0][1] + v2d[2] * R[0][2],
+                R2 = R[3][0] + v2d[1] * R[3][1] + v2d[2] * R[3][2],
+                w, h;
+            w = (R2 * R[0][3] - R1 * R[3][3]) / (d * R[0][3] - R[3][3]);
+            h = (R2 - R1 * d) / (d * R[0][3] - R[3][3]);
+            return [1 / w, h];
+            // return Mat.Numerics.Gauss([[1, -R[0][3]], [d, -R[3][3]]], [R1, R2]);
+        },
+
         /**
          * Project a 2D coordinate to the plane defined by point "foot"
          * and the normal vector `normal`.
@@ -668,7 +679,7 @@ JXG.extend(
         project2DTo3DPlane: function (point2d, normal, foot) {
             var mat, rhs, d, le, sol,
                 n = normal.slice(1),
-                v2d, w0;
+                v2d, w0, res;
 
             foot = foot || [1, 0, 0, 0];
             le = Mat.norm(n, 3);
@@ -691,20 +702,20 @@ JXG.extend(
                     sol = [0, NaN, NaN, NaN];
                 }
             } else {
-                mat = this.matrix3D.slice(0, 4); // True copy
-                // mat.push([0, n[0], n[1], n[2]]);
-                w0 = Mat.innerProduct(mat[0], foot, 4);
+                mat = this.matrix3DRot; // True copy
 
                 // 2D coordinates of point:
                 rhs = point2d.coords.usrCoords.slice();
+
                 v2d = Mat.Numerics.Gauss(this.viewPortTransform, rhs);
+                res = this._getW0(mat, v2d, d);
+                w0 = res[0];
                 rhs = [
                     v2d[0] * w0,
                     v2d[1] * w0,
                     v2d[2] * w0,
-                    Mat.innerProduct(mat[3], foot)
+                    res[1] * w0
                 ];
-
                 try {
                     // Prevent singularity in case elevation angle is zero
                     if (mat[2][3] === 1.0) {
@@ -717,7 +728,6 @@ JXG.extend(
                     sol[3] /= sol[0];
                     // sol[3] = d;
                     sol[0] /= sol[0];
-
                 } catch (err) {
                     sol = [0, NaN, NaN, NaN];
                 }
