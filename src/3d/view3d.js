@@ -655,13 +655,27 @@ JXG.extend(
             }
         },
 
+        /**
+         * We know that v2d * w0 = mat * (1, x, y, d)^T where v2d = (1, b, c, h)^T with unknowns w0, h, x, y.
+         * Setting R = mat^(-1) gives
+         *   1/ w0 * (1, x, y, d)^T = R * v2d.
+         * The first and the last row of this equation allows to determine 1/w0 and h.
+         *
+         * @param {Array} mat
+         * @param {Array} v2d
+         * @param {Number} d
+         * @returns Array
+         * @private
+         */
         _getW0: function(mat, v2d, d) {
             var R = Mat.inverse(mat),
                 R1 = R[0][0] + v2d[1] * R[0][1] + v2d[2] * R[0][2],
                 R2 = R[3][0] + v2d[1] * R[3][1] + v2d[2] * R[3][2],
-                w, h;
-            w = (R2 * R[0][3] - R1 * R[3][3]) / (d * R[0][3] - R[3][3]);
-            h = (R2 - R1 * d) / (d * R[0][3] - R[3][3]);
+                w, h, det;
+
+            det = d * R[0][3] - R[3][3];
+            w = (R2 * R[0][3] - R1 * R[3][3]) / det;
+            h = (R2 - R1 * d) / det;
             return [1 / w, h];
             // return Mat.Numerics.Gauss([[1, -R[0][3]], [d, -R[3][3]]], [R1, R2]);
         },
