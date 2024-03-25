@@ -677,7 +677,6 @@ JXG.extend(
             w = (R2 * R[0][3] - R1 * R[3][3]) / det;
             h = (R2 - R1 * d) / det;
             return [1 / w, h];
-            // return Mat.Numerics.Gauss([[1, -R[0][3]], [d, -R[3][3]]], [R1, R2]);
         },
 
         /**

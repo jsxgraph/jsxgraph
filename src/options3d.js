@@ -217,6 +217,7 @@ JXG.extend(Options, {
 
     axis3d: {
         highlight: false,
+        fixed: true,
         strokecolor: "black",
         strokeWidth: 1,
         tabindex: null,
