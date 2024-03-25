@@ -317,7 +317,7 @@ JXG.extend(
          * @returns {Array} 4x4 rotation matrix
          * @private
          */
-        updateProjectionTrackball: function () {
+        updateProjectionTrackball: function (Pref) {
             var R = 100,
                 dx, dy, dr2,
                 p1, p2, x, y, theta, t, d,
@@ -393,6 +393,14 @@ JXG.extend(
                 mat[1][3] = n[2] * n[0] * t - n[1] * s;
                 mat[2][3] = n[2] * n[1] * t + n[0] * s;
                 mat[3][3] = c + n[2] * n[2] * t;
+
+                if (Pref !== null) {
+                    // For central projection we have to rotate around Pref.
+                    // Parallel projection: Pref === null
+                    mat[1][0] = Pref[0] - mat[1][1] * Pref[0] - mat[1][2] * Pref[0] - mat[1][3] * Pref[0];
+                    mat[2][0] = Pref[1] - mat[2][1] * Pref[1] - mat[2][2] * Pref[1] - mat[2][3] * Pref[1];
+                    mat[3][0] = Pref[2] - mat[3][1] * Pref[2] - mat[3][2] * Pref[2] - mat[3][3] * Pref[2];
+                }
             }
 
             mat = Mat.matMatMult(this.matrix3DRot, mat);
@@ -417,8 +425,8 @@ JXG.extend(
                 zn = 8,
                 Pref = [
                     0.5 * (this.bbox3D[0][0] + this.bbox3D[0][1]),
-                    0.5 * (this.bbox3D[0][0] + this.bbox3D[0][1]),
-                    0.5 * (this.bbox3D[0][0] + this.bbox3D[0][1])
+                    0.5 * (this.bbox3D[1][0] + this.bbox3D[1][1]),
+                    0.5 * (this.bbox3D[2][0] + this.bbox3D[2][1])
                 ],
 
                 A = [
@@ -440,7 +448,7 @@ JXG.extend(
             func_sphere = function (az, el, r) {
                 return [
                     r * Math.cos(az) * Math.cos(el),
-                    -r * Math.sin(az) * Math.cos(el),
+                   -r * Math.sin(az) * Math.cos(el),
                     r * Math.sin(el)
                 ];
             };
@@ -450,18 +458,24 @@ JXG.extend(
 
             r = Type.evaluate(this.visProp.r);
             if (r === 'auto') {
-                r = Math.sqrt(
-                    Math.pow(this.bbox3D[0][0] - this.bbox3D[0][1], 2) +
-                    Math.pow(this.bbox3D[1][0] - this.bbox3D[1][1], 2) +
-                    Math.pow(this.bbox3D[2][0] - this.bbox3D[2][1], 2)
+                r = Mat.hypot(
+                    this.bbox3D[0][0] - this.bbox3D[0][1],
+                    this.bbox3D[1][0] - this.bbox3D[1][1],
+                    this.bbox3D[2][0] - this.bbox3D[2][1]
                 ) * 1.01;
+                console.log(r);
             }
 
             // create an up vector and an eye vector which are 90 degrees out of phase
             up = func_sphere(a, e + Math.PI / 2, 1);
             eye = func_sphere(a, e, r);
+            d = [eye[0], eye[1], eye[2]];
 
-            d = [eye[0] - Pref[0], eye[1] - Pref[1], eye[2] - Pref[2]];
+            eye[0] += Pref[0];
+            eye[1] += Pref[1];
+            eye[2] += Pref[2];
+
+            // d = [eye[0] - Pref[0], eye[1] - Pref[1], eye[2] - Pref[2]];
             nrm = Mat.norm(d, 3);
             az = [d[0] / nrm, d[1] / nrm, d[2] / nrm];
 
@@ -487,6 +501,7 @@ JXG.extend(
         update: function () {
             var mat2D, shift, size,
                 dx, dy,
+                Pref = null,
                 useTrackball = false;
 
             if (
@@ -503,28 +518,43 @@ JXG.extend(
                 [0, 0, 1]
             ];
 
+            this.projectionType = Type.evaluate(this.visProp.projection).toLowerCase();
+
             if (Type.evaluate(this.visProp.trackball.enabled) && Type.exists(this.matrix3DRot)) {
                 // If trackball is enabled and this.matrix3DRot has been initialized,
                 // do trackball navigation
                 if (this._hasMoveTrackball) {
                     // If this._hasMoveTrackball is false, the drag event has been
                     // caught by e.g. point dragging
-                    this.matrix3DRot = this.updateProjectionTrackball();
+
+                    if (this.projectionType === 'central') {
+                        // Get center of the trackball.
+                        // In case of parallel projection, this is not necessary,
+                        // since we translate the whole scene with "shift".
+                        Pref = [
+                            0.5 * (this.bbox3D[0][0] + this.bbox3D[0][1]),
+                            0.5 * (this.bbox3D[1][0] + this.bbox3D[1][1]),
+                            0.5 * (this.bbox3D[2][0] + this.bbox3D[2][1])
+                        ];
+                    }
+                    this.matrix3DRot = this.updateProjectionTrackball(Pref);
                 }
                 useTrackball = true;
             }
-            this.projectionType = Type.evaluate(this.visProp.projection).toLowerCase();
 
             switch (this.projectionType) {
                 case 'central': // Central projection
 
                     // Add a final transformation to scale and shift the projection
                     // on the board, usually called viewport.
-                    size = 0.4;
-                    mat2D[1][1] = this.size[0] / (2 * size); // w / d_x
-                    mat2D[2][2] = this.size[1] / (2 * size); // h / d_y
-                    mat2D[1][0] = this.llftCorner[0] + mat2D[1][1] * 0.5 * (2 * size); // llft_x
-                    mat2D[2][0] = this.llftCorner[1] + mat2D[2][2] * 0.5 * (2 * size); // llft_y
+                    size = 2 * 0.4;
+                    mat2D[1][1] = this.size[0] / size; // w / d_x
+                    mat2D[2][2] = this.size[1] / size; // h / d_y
+                    mat2D[1][0] = this.llftCorner[0] + mat2D[1][1] * 0.5 * size; // llft_x
+                    mat2D[2][0] = this.llftCorner[1] + mat2D[2][2] * 0.5 * size; // llft_y
+                    // The transformations this.matrix3D and mat2D can not be combined at this point,
+                    // since the projected vectors have to be normalized in between in project3DTo2D
+                    this.viewPortTransform = mat2D;
 
                     if (!useTrackball) {
                         // Do elevation / azimuth navigation or at least initialize matrix
@@ -533,10 +563,6 @@ JXG.extend(
                     }
                     // this.matrix3D is a 4x4 matrix
                     this.matrix3D = this.matrix3DRot.slice();
-
-                    // The transformations this.matrix3D and mat2D can not be combined at this point,
-                    // since the projected vectors have to be normalized in between in project3DTo2D
-                    this.viewPortTransform = mat2D;
                     break;
 
                 case 'parallel': // Parallel projection
@@ -553,7 +579,6 @@ JXG.extend(
                     // on the board, usually called viewport.
                     dx = this.bbox3D[0][1] - this.bbox3D[0][0];
                     dy = this.bbox3D[1][1] - this.bbox3D[1][0];
-
                     mat2D[1][1] = this.size[0] / dx; // w / d_x
                     mat2D[2][2] = this.size[1] / dy; // h / d_y
                     mat2D[1][0] = this.llftCorner[0] + mat2D[1][1] * 0.5 * dx; // llft_x
