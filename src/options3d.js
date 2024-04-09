@@ -217,6 +217,7 @@ JXG.extend(Options, {
 
     axis3d: {
         highlight: false,
+        fixed: true,
         strokecolor: "black",
         strokeWidth: 1,
         tabindex: null,
@@ -387,7 +388,12 @@ JXG.extend(Options, {
         needsRegularUpdate: true,
 
         /**
-         * Choose the projection is to be used: `parallel` or `central`.
+         * Choose the projection type to be used: `parallel` or `central`.
+         * <ul>
+         * <li> `parallel` is parallel projection, also called orthographic projection
+         * <li> `central` is central projection, also called perspective projection
+         * </ul>
+         *
          *
          * @name View3D#projection
          * @type String
@@ -551,7 +557,7 @@ JXG.extend(Options, {
         },
 
         trackball: {
-            enabled: true,
+            enabled: false,
             outside: true,
             button: -1,
             key: 'none'

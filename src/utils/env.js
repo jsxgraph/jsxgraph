@@ -903,7 +903,7 @@ JXG.extend(
          */
         timedChunk: function (items, process, context, callback) {
             //create a clone of the original
-            var todo = items.concat(),
+            var todo = items.slice(),
                 timerFun = function () {
                     var start = +new Date();
 

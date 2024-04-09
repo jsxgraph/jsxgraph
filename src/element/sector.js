@@ -533,6 +533,8 @@ JXG.createSector = function (board, parents, attributes) {
     attr = Type.copyAttributes(attributes, board.options, "arc");
     attr = Type.copyAttributes(attr, board.options, "sector", "arc");
     attr.withLabel = false;
+    // Minor or major arc:
+    attr.selection = el.visProp.selection;
     attr.name += "_arc";
 
     if (type === "2lines") {

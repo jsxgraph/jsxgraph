@@ -302,7 +302,7 @@ JXG.createSphere3D = function (board, parents, attributes) {
                     "JSXGraph: Can't create sphere3d from this type. Please provide a point type."
                 );
             }
-            p = p.concat(provided);
+            Type.concat(p, provided);
         } else {
             p.push(parents[i]);
         }

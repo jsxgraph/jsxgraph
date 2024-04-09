@@ -1734,6 +1734,24 @@ JXG.extend(
         },
 
         /**
+         * Concat array src to array dest.
+         * Uses push instead of JavaScript concat, which is much
+         * faster.
+         *
+         * @param {Array} dest
+         * @param {Array} src
+         * @returns Array
+         */
+        concat: function(dest, src) {
+            var i,
+                le = src.length;
+            for (i = 0; i < le; i++) {
+                dest.push(src[i]);
+            }
+            return dest;
+        },
+
+        /**
          * Convert HTML tags to entities or use html_sanitize if the google caja html sanitizer is available.
          * @param {String} str
          * @param {Boolean} caja

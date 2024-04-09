@@ -932,11 +932,11 @@ JXG.createCircle = function (board, parents, attributes) {
     for (i = 0; i < parents.length; i++) {
         if (Type.isPointType(board, parents[i])) {
             if (parents.length < 3) {
-                p = p.concat(
+                Type.concat(p,
                     Type.providePoints(board, [parents[i]], attributes, "circle", [point_style[i]])
                 );
             } else {
-                p = p.concat(
+                Type.concat(p,
                     Type.providePoints(board, [parents[i]], attributes, "point")
                 );
                 }

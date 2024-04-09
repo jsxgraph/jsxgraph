@@ -2814,18 +2814,18 @@ JXG.extend(
                 p2 = [1, p1[1] - k * ay, p1[2] + k * ax];
                 p3 = [1, p4[1] + k * by, p4[2] - k * bx];
 
-                dataX = dataX.concat([p2[1], p3[1], p4[1]]);
-                dataY = dataY.concat([p2[2], p3[2], p4[2]]);
+                Type.concat(dataX, [p2[1], p3[1], p4[1]]);
+                Type.concat(dataY, [p2[2], p3[2], p4[2]]);
                 p1 = p4.slice(0);
             }
 
             if (withLegs) {
-                dataX = dataX.concat([
+                Type.concat(dataX, [
                     p4[1] + 0.333 * (x - p4[1]),
                     p4[1] + 0.666 * (x - p4[1]),
                     x
                 ]);
-                dataY = dataY.concat([
+                Type.concat(dataY, [
                     p4[2] + 0.333 * (y - p4[2]),
                     p4[2] + 0.666 * (y - p4[2]),
                     y

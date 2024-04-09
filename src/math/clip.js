@@ -1509,10 +1509,10 @@ Mat.Clip = {
                 // C is inside of S, i.e. C subset of S
 
                 if (clip_type === "union") {
-                    path = path.concat(S);
+                    Type.concat(path, S);
                     path.push(S[0]);
                 } else if (clip_type === "difference") {
-                    path = path.concat(S);
+                    Type.concat(path, S);
                     path.push(S[0]);
                     if (Geometry.signedPolygon(S) * Geometry.signedPolygon(C) > 0) {
                         // Pathes have same orientation, we have to revert one.
@@ -1521,30 +1521,30 @@ Mat.Clip = {
                     path.push([NaN, NaN]);
                 }
                 if (clip_type === "difference" || clip_type === "intersection") {
-                    path = path.concat(C);
+                    Type.concat(path, C);
                     path.push(C[0]);
                     doClose = false;
                 }
             } else {
                 // The curves are disjoint
                 if (clip_type === "difference") {
-                    path = path.concat(S);
+                    Type.concat(path, S);
                     doClose = true;
                 } else if (clip_type === "union") {
-                    path = path.concat(S);
+                    Type.concat(path, S);
                     path.push(S[0]);
                     path.push([NaN, NaN]);
-                    path = path.concat(C);
+                    Type.concat(path, C);
                     path.push(C[0]);
                 }
             }
         } else {
             // S inside of C, i.e. S subset of C
             if (clip_type === "intersection") {
-                path = path.concat(S);
+                Type.concat(path, S);
                 doClose = true;
             } else if (clip_type === "union") {
-                path = path.concat(C);
+                Type.concat(path, C);
                 path.push(C[0]);
             }
 

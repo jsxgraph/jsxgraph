@@ -302,10 +302,10 @@ JXG.extend(
             var d = Mat.hypot(x, y),
                 t, z;
 
-            if (d < r * 0.70710678118654752440) { // Inside sphere
+            if (d < r * 0.7071067811865475) { // Inside sphere
                 z = Math.sqrt(r * r - d * d);
-            } else {                              // On hyperbola
-                t = r / 1.41421356237309504880;
+            } else {                          // On hyperbola
+                t = r / 1.414213562373095;
                 z = t * t / d;
             }
             return z;
@@ -317,9 +317,9 @@ JXG.extend(
          * @returns {Array} 4x4 rotation matrix
          * @private
          */
-        updateParallelProjectionTrackball: function () {
+        updateProjectionTrackball: function (Pref) {
             var R = 100,
-                dx, dy, dr, dr2,
+                dx, dy, dr2,
                 p1, p2, x, y, theta, t, d,
                 c, s, n,
                 mat = [
@@ -355,7 +355,7 @@ JXG.extend(
                 //
                 R = (this.size[0] * this.board.unitX + this.size[1] * this.board.unitY) * 0.25;
                 x = this._trackball.x;
-                y = this._trackball.y
+                y = this._trackball.y;
 
                 // p2 = [x, y, this._projectToSphere(R, x, y)];
                 p2 = [this._projectToSphere(R, x, y), x, y];
@@ -393,6 +393,14 @@ JXG.extend(
                 mat[1][3] = n[2] * n[0] * t - n[1] * s;
                 mat[2][3] = n[2] * n[1] * t + n[0] * s;
                 mat[3][3] = c + n[2] * n[2] * t;
+
+                if (Pref !== null) {
+                    // For central projection we have to rotate around Pref.
+                    // Parallel projection: Pref === null
+                    mat[1][0] = Pref[0] - mat[1][1] * Pref[0] - mat[1][2] * Pref[0] - mat[1][3] * Pref[0];
+                    mat[2][0] = Pref[1] - mat[2][1] * Pref[1] - mat[2][2] * Pref[1] - mat[2][3] * Pref[1];
+                    mat[3][0] = Pref[2] - mat[3][1] * Pref[2] - mat[3][2] * Pref[2] - mat[3][3] * Pref[2];
+                }
             }
 
             mat = Mat.matMatMult(this.matrix3DRot, mat);
@@ -417,8 +425,8 @@ JXG.extend(
                 zn = 8,
                 Pref = [
                     0.5 * (this.bbox3D[0][0] + this.bbox3D[0][1]),
-                    0.5 * (this.bbox3D[0][0] + this.bbox3D[0][1]),
-                    0.5 * (this.bbox3D[0][0] + this.bbox3D[0][1])
+                    0.5 * (this.bbox3D[1][0] + this.bbox3D[1][1]),
+                    0.5 * (this.bbox3D[2][0] + this.bbox3D[2][1])
                 ],
 
                 A = [
@@ -440,7 +448,7 @@ JXG.extend(
             func_sphere = function (az, el, r) {
                 return [
                     r * Math.cos(az) * Math.cos(el),
-                    -r * Math.sin(az) * Math.cos(el),
+                   -r * Math.sin(az) * Math.cos(el),
                     r * Math.sin(el)
                 ];
             };
@@ -450,18 +458,24 @@ JXG.extend(
 
             r = Type.evaluate(this.visProp.r);
             if (r === 'auto') {
-                r = Math.sqrt(
-                    Math.pow(this.bbox3D[0][0] - this.bbox3D[0][1], 2) +
-                    Math.pow(this.bbox3D[1][0] - this.bbox3D[1][1], 2) +
-                    Math.pow(this.bbox3D[2][0] - this.bbox3D[2][1], 2)
+                r = Mat.hypot(
+                    this.bbox3D[0][0] - this.bbox3D[0][1],
+                    this.bbox3D[1][0] - this.bbox3D[1][1],
+                    this.bbox3D[2][0] - this.bbox3D[2][1]
                 ) * 1.01;
+                console.log(r);
             }
 
             // create an up vector and an eye vector which are 90 degrees out of phase
             up = func_sphere(a, e + Math.PI / 2, 1);
             eye = func_sphere(a, e, r);
+            d = [eye[0], eye[1], eye[2]];
 
-            d = [eye[0] - Pref[0], eye[1] - Pref[1], eye[2] - Pref[2]];
+            eye[0] += Pref[0];
+            eye[1] += Pref[1];
+            eye[2] += Pref[2];
+
+            // d = [eye[0] - Pref[0], eye[1] - Pref[1], eye[2] - Pref[2]];
             nrm = Mat.norm(d, 3);
             az = [d[0] / nrm, d[1] / nrm, d[2] / nrm];
 
@@ -486,7 +500,9 @@ JXG.extend(
         // Update 3D-to-2D transformation matrix with the actual azimuth and elevation angles.
         update: function () {
             var mat2D, shift, size,
-                dx, dy;
+                dx, dy,
+                Pref = null,
+                useTrackball = false;
 
             if (
                 !Type.exists(this.el_slide) ||
@@ -504,22 +520,49 @@ JXG.extend(
 
             this.projectionType = Type.evaluate(this.visProp.projection).toLowerCase();
 
+            if (Type.evaluate(this.visProp.trackball.enabled) && Type.exists(this.matrix3DRot)) {
+                // If trackball is enabled and this.matrix3DRot has been initialized,
+                // do trackball navigation
+                if (this._hasMoveTrackball) {
+                    // If this._hasMoveTrackball is false, the drag event has been
+                    // caught by e.g. point dragging
+
+                    if (this.projectionType === 'central') {
+                        // Get center of the trackball.
+                        // In case of parallel projection, this is not necessary,
+                        // since we translate the whole scene with "shift".
+                        Pref = [
+                            0.5 * (this.bbox3D[0][0] + this.bbox3D[0][1]),
+                            0.5 * (this.bbox3D[1][0] + this.bbox3D[1][1]),
+                            0.5 * (this.bbox3D[2][0] + this.bbox3D[2][1])
+                        ];
+                    }
+                    this.matrix3DRot = this.updateProjectionTrackball(Pref);
+                }
+                useTrackball = true;
+            }
+
             switch (this.projectionType) {
                 case 'central': // Central projection
 
-                    this.matrix3D = this._updateCentralProjection();
-                    // this.matrix3D is a 4x4 matrix
-
-                    size = 0.4;
-                    mat2D[1][1] = this.size[0] / (2 * size); // w / d_x
-                    mat2D[2][2] = this.size[1] / (2 * size); // h / d_y
-                    mat2D[1][0] = this.llftCorner[0] + mat2D[1][1] * 0.5 * (2 * size); // llft_x
-                    mat2D[2][0] = this.llftCorner[1] + mat2D[2][2] * 0.5 * (2 * size); // llft_y
-
-                    // The transformations this.matrix3D and mat2D can not be combined yet, since
-                    // the projected vector has to be normalized in between in
-                    // project3DTo2D
+                    // Add a final transformation to scale and shift the projection
+                    // on the board, usually called viewport.
+                    size = 2 * 0.4;
+                    mat2D[1][1] = this.size[0] / size; // w / d_x
+                    mat2D[2][2] = this.size[1] / size; // h / d_y
+                    mat2D[1][0] = this.llftCorner[0] + mat2D[1][1] * 0.5 * size; // llft_x
+                    mat2D[2][0] = this.llftCorner[1] + mat2D[2][2] * 0.5 * size; // llft_y
+                    // The transformations this.matrix3D and mat2D can not be combined at this point,
+                    // since the projected vectors have to be normalized in between in project3DTo2D
                     this.viewPortTransform = mat2D;
+
+                    if (!useTrackball) {
+                        // Do elevation / azimuth navigation or at least initialize matrix
+                        // this.matrix3DRot
+                        this.matrix3DRot = this._updateCentralProjection();
+                    }
+                    // this.matrix3D is a 4x4 matrix
+                    this.matrix3D = this.matrix3DRot.slice();
                     break;
 
                 case 'parallel': // Parallel projection
@@ -532,31 +575,20 @@ JXG.extend(
                         [-0.5 * (this.bbox3D[2][0] + this.bbox3D[2][1]), 0, 0, 1]
                     ];
 
-                    // Add a second transformation to scale and shift the projection
+                    // Add a final transformation to scale and shift the projection
                     // on the board, usually called viewport.
                     dx = this.bbox3D[0][1] - this.bbox3D[0][0];
                     dy = this.bbox3D[1][1] - this.bbox3D[1][0];
-
                     mat2D[1][1] = this.size[0] / dx; // w / d_x
                     mat2D[2][2] = this.size[1] / dy; // h / d_y
                     mat2D[1][0] = this.llftCorner[0] + mat2D[1][1] * 0.5 * dx; // llft_x
                     mat2D[2][0] = this.llftCorner[1] + mat2D[2][2] * 0.5 * dy; // llft_y
 
-                    if (Type.evaluate(this.visProp.trackball.enabled) && Type.exists(this.matrix3DRot)) {
-                        // If trackball is enabled and this.matrix3DRot has been initialized,
-                        // do trackball navigation 
-                        if (this._hasMoveTrackball) {
-                            // If this._hasMoveTrackball is false, the drag event has been 
-                            // caught by e.g. point dragging
-                            this.matrix3DRot = this.updateParallelProjectionTrackball();
-                        }
-                    } else {
-                        // Do elevation / azimuth navigation or at least initialize matrix
-                        // this.matrix3DRot
+                    if (!useTrackball) {
+                        // Do elevation / azimuth navigation or at least initialize matrix this.matrix3DRot
                         this.matrix3DRot = this.updateParallelProjection();
                     }
-                    // Combine all transformations,
-                    // this.matrix3D is a 3x4 matrix
+                    // Combine all transformations, this.matrix3D is a 3x4 matrix
                     this.matrix3D = Mat.matMatMult(mat2D, Mat.matMatMult(this.matrix3DRot, shift).slice(0, 3));
             }
 
@@ -624,7 +656,9 @@ JXG.extend(
             } else {
                 // Argument is an array
                 if (x.length === 3) {
-                    vec = [1].concat(x);
+                    // vec = [1].concat(x);
+                    vec = x.slice();
+                    vec.unshift(1);
                 } else {
                     vec = x;
                 }
@@ -647,6 +681,30 @@ JXG.extend(
         },
 
         /**
+         * We know that v2d * w0 = mat * (1, x, y, d)^T where v2d = (1, b, c, h)^T with unknowns w0, h, x, y.
+         * Setting R = mat^(-1) gives
+         *   1/ w0 * (1, x, y, d)^T = R * v2d.
+         * The first and the last row of this equation allows to determine 1/w0 and h.
+         *
+         * @param {Array} mat
+         * @param {Array} v2d
+         * @param {Number} d
+         * @returns Array
+         * @private
+         */
+        _getW0: function(mat, v2d, d) {
+            var R = Mat.inverse(mat),
+                R1 = R[0][0] + v2d[1] * R[0][1] + v2d[2] * R[0][2],
+                R2 = R[3][0] + v2d[1] * R[3][1] + v2d[2] * R[3][2],
+                w, h, det;
+
+            det = d * R[0][3] - R[3][3];
+            w = (R2 * R[0][3] - R1 * R[3][3]) / det;
+            h = (R2 - R1 * d) / det;
+            return [1 / w, h];
+        },
+
+        /**
          * Project a 2D coordinate to the plane defined by point "foot"
          * and the normal vector `normal`.
          *
@@ -657,27 +715,60 @@ JXG.extend(
          * point in homogeneous coordinates.
          */
         project2DTo3DPlane: function (point2d, normal, foot) {
-            var mat, rhs, d, le,
+            var mat, rhs, d, le, sol,
                 n = normal.slice(1),
-                sol;
+                v2d, w0, res;
 
             foot = foot || [1, 0, 0, 0];
             le = Mat.norm(n, 3);
             d = Mat.innerProduct(foot.slice(1), n, 3) / le;
 
-            mat = this.matrix3D.slice(0, 3); // True copy
-            mat.push([0].concat(n));
+            if (this.projectionType === 'parallel') {
+                mat = this.matrix3D.slice(0, 3); // True copy
+                mat.push([0, n[0], n[1], n[2]]);
 
-            // 2D coordinates of point:
-            rhs = point2d.coords.usrCoords.concat([d]);
-            try {
-                // Prevent singularity in case elevation angle is zero
-                if (mat[2][3] === 1.0) {
-                    mat[2][1] = mat[2][2] = Mat.eps * 0.001;
+                // 2D coordinates of point:
+                rhs = point2d.coords.usrCoords.slice();
+                rhs.push(d);
+                try {
+                    // Prevent singularity in case elevation angle is zero
+                    if (mat[2][3] === 1.0) {
+                        mat[2][1] = mat[2][2] = Mat.eps * 0.001;
+                    }
+                    sol = Mat.Numerics.Gauss(mat, rhs);
+                } catch (err) {
+                    sol = [0, NaN, NaN, NaN];
                 }
-                sol = Mat.Numerics.Gauss(mat, rhs);
-            } catch (err) {
-                sol = [0, NaN, NaN, NaN];
+            } else {
+                mat = this.matrix3DRot; // True copy
+
+                // 2D coordinates of point:
+                rhs = point2d.coords.usrCoords.slice();
+
+                v2d = Mat.Numerics.Gauss(this.viewPortTransform, rhs);
+                res = this._getW0(mat, v2d, d);
+                w0 = res[0];
+                rhs = [
+                    v2d[0] * w0,
+                    v2d[1] * w0,
+                    v2d[2] * w0,
+                    res[1] * w0
+                ];
+                try {
+                    // Prevent singularity in case elevation angle is zero
+                    if (mat[2][3] === 1.0) {
+                        mat[2][1] = mat[2][2] = Mat.eps * 0.001;
+                    }
+
+                    sol = Mat.Numerics.Gauss(mat, rhs);
+                    sol[1] /= sol[0];
+                    sol[2] /= sol[0];
+                    sol[3] /= sol[0];
+                    // sol[3] = d;
+                    sol[0] /= sol[0];
+                } catch (err) {
+                    sol = [0, NaN, NaN, NaN];
+                }
             }
 
             return sol;
@@ -1151,7 +1242,7 @@ JXG.extend(
             if (this.board.mode !== this.board.BOARD_MODE_NONE) {
                 return;
             }
-         
+
             if (Type.evaluate(this.visProp.trackball.enabled)) {
                 neededButton = Type.evaluate(this.visProp.trackball.button);
                 neededKey = Type.evaluate(this.visProp.trackball.key);
@@ -1162,7 +1253,7 @@ JXG.extend(
                     (neededKey === 'none' || (neededKey.indexOf('shift') > -1 && evt.shiftKey) || (neededKey.indexOf('ctrl') > -1 && evt.ctrlKey))
                 ) {
                     // If outside is true then the event listener is bound to the document, otherwise to the div
-                    target = (Type.evaluate(this.visProp.trackball.outside)) ? document : board.containerObj;
+                    target = (Type.evaluate(this.visProp.trackball.outside)) ? document : this.board.containerObj;
                     Env.addEvent(target, 'pointermove', this._trackballHandler, this);
                     this._hasMoveTrackball = true;
                 }
@@ -1177,7 +1268,7 @@ JXG.extend(
                         (neededKey === 'none' || (neededKey.indexOf('shift') > -1 && evt.shiftKey) || (neededKey.indexOf('ctrl') > -1 && evt.ctrlKey))
                     ) {
                         // If outside is true then the event listener is bound to the document, otherwise to the div
-                        target = (Type.evaluate(this.visProp.az.pointer.outside)) ? document : board.containerObj;
+                        target = (Type.evaluate(this.visProp.az.pointer.outside)) ? document : this.board.containerObj;
                         Env.addEvent(target, 'pointermove', this._azEventHandler, this);
                         this._hasMoveAz = true;
                     }
@@ -1193,7 +1284,7 @@ JXG.extend(
                         (neededKey === 'none' || (neededKey.indexOf('shift') > -1 && evt.shiftKey) || (neededKey.indexOf('ctrl') > -1 && evt.ctrlKey))
                     ) {
                         // If outside is true then the event listener is bound to the document, otherwise to the div
-                        target = (Type.evaluate(this.visProp.el.pointer.outside)) ? document : board.containerObj;
+                        target = (Type.evaluate(this.visProp.el.pointer.outside)) ? document : this.board.containerObj;
                         Env.addEvent(target, 'pointermove', this._elEventHandler, this);
                         this._hasMoveEl = true;
                     }
@@ -1205,17 +1296,17 @@ JXG.extend(
         pointerUpHandler: function(evt) {
             var target;
             if (this._hasMoveAz) {
-                target = (Type.evaluate(this.visProp.az.pointer.outside)) ? document : board.containerObj;
+                target = (Type.evaluate(this.visProp.az.pointer.outside)) ? document : this.board.containerObj;
                 Env.removeEvent(target, 'pointermove', this._azEventHandler, this);
                 this._hasMoveAz = false;
             }
             if (this._hasMoveEl) {
-                target = (Type.evaluate(this.visProp.el.pointer.outside)) ? document : board.containerObj;
+                target = (Type.evaluate(this.visProp.el.pointer.outside)) ? document : this.board.containerObj;
                 Env.removeEvent(target, 'pointermove', this._elEventHandler, this);
                 this._hasMoveEl = false;
             }
             if (this._hasMoveTrackball) {
-                target = (Type.evaluate(this.visProp.az.pointer.outside)) ? document : board.containerObj;
+                target = (Type.evaluate(this.visProp.az.pointer.outside)) ? document : this.board.containerObj;
                 Env.removeEvent(target, 'pointermove', this._trackballHandler, this);
                 this._hasMoveTrackball = false;
             }
@@ -1374,6 +1465,8 @@ JXG.createView3D = function (board, parents, attributes) {
         }
         if (p) {
             foot = [1, 0, 0, p.coords[3]];
+            view._w0 = Mat.innerProduct(view.matrix3D[0], foot, 4);
+
             c3d = view.project2DTo3DPlane(p.element2D, [1, 0, 0, 1], foot);
             if (!view.isInCube(c3d)) {
                 view.board.highlightCustomInfobox('', p);
