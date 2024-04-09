@@ -316,6 +316,13 @@ JXG.createSector = function (board, parents, attributes) {
             el.direction2 = parents[3] >= 0 ? 1 : -1;
         }
 
+        el.methodMap = JXG.deepCopy(el.methodMap, {
+            arc: "arc",
+            center: "center",
+            line1: "line1",
+            line2: "line2"
+        });
+
         /**
          * @class
          * @ignore
