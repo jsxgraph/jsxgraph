@@ -235,7 +235,7 @@ JXG.createSlider = function (board, parents, attributes) {
     // attr = Type.copyAttributes(attributes, board.options, "slider");
     // overwrite this in any case; the sliders label is a special text element, not the gliders label.
     // this will be set back to true after the text was created (and only if withlabel was true initially).
-    attr.withLabel = false;
+    attr.withlabel = false;
     // gliders set snapwidth=-1 by default (i.e. deactivate them)
     p3 = board.create("glider", [startx, starty, l1], attr);
     p3.setAttribute({ snapwidth: snapWidth, snapvalues: snapValues, snapvaluedistance: snapValueDistance });
