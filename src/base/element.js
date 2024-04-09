@@ -1446,6 +1446,15 @@ JXG.extend(
                             }
                             this.hasLabel = value;
                             break;
+                        case "straightfirst":
+                        case "straightlast":
+                            this._set(key, value);
+                            for (j in this.childElements) {
+                                if (this.childElements.hasOwnProperty(j) && this.childElements[j].elType === 'glider') {
+                                    this.childElements[j].fullUpdate();
+                                }
+                            }
+                            break;
                         default:
                             if (
                                 Type.exists(this.visProp[key]) &&
