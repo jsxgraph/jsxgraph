@@ -4949,7 +4949,7 @@ JXG.Options = {
          * @name Grid#face
          */
          // This attribute only exists for documentation purposes. It has no effect and is overwritten with actual values in major and minor.
-         face: undefined,
+        face: undefined,
 
         /**
          * This number (pixel value) controls where grid elements end at the canvas edge. If zero, the line
@@ -5135,7 +5135,7 @@ JXG.Options = {
 
         strokeColor: '#c0c0c0',
         strokeWidth: 1,
-        strokeOpacity: 0.7,
+        strokeOpacity: 0.5,
         dash: 0,
 
         /**

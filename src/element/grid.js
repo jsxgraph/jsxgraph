@@ -455,7 +455,7 @@ JXG.createGrid = function (board, parents, attributes) {
     majorGrid.updateDataArray = function () {
         var bbox = this.board.getBoundingBox(),
             startX, startY,
-            x, y,
+            x, y, m,
             dataArr,
             finite, delta,
 
@@ -569,16 +569,13 @@ JXG.createGrid = function (board, parents, attributes) {
 
         // POI finite = false means that no grid is drawn. Should we change this?
         // Draw grid elements
-        for (y = startY; finite && y >= bbox[3]; y -= majorStep[1]) {
-            for (x = startX; finite && x <= bbox[2]; x += majorStep[0]) {
-
+        if (face.toLowerCase() === 'line') {
+            m = Type.evaluate(majorGrid.visProp.margin);
+            for (y = startY; finite && y >= bbox[3]; y -= majorStep[1]) {
                 if (
-                    (!drawZeroOrigin && Math.abs(y) < eps && Math.abs(x) < eps) ||
-                    (!drawZeroX && Math.abs(y) < eps && Math.abs(x) >= eps) ||
-                    (!drawZeroY && Math.abs(x) < eps && Math.abs(y) >= eps) ||
+                    (!drawZeroOrigin && Math.abs(y) < eps) ||
+                    (!drawZeroY && Math.abs(y) < eps) ||
                     (!includeBoundaries && (
-                        x <= bbox[0] + majorRadius[0] ||
-                        x >= bbox[2] - majorRadius[0] ||
                         y <= bbox[3] + majorRadius[1] ||
                         y >= bbox[1] - majorRadius[1]
                     ))
@@ -586,10 +583,57 @@ JXG.createGrid = function (board, parents, attributes) {
                     continue;
                 }
 
-                dataArr = createDataArrayForFace(face, majorGrid, x, y, majorRadius[0], majorRadius[1], bbox);
+                dataArr = [
+                    [bbox[0] - m / majorGrid.board.unitX, bbox[2] + m / majorGrid.board.unitX, NaN],
+                    [y, y, NaN]
+                ];
                 // Push is drastically faster than concat
                 Type.concat(this.dataX, dataArr[0]);
                 Type.concat(this.dataY, dataArr[1]);
+            }
+            for (x = startX; finite && x <= bbox[2]; x += majorStep[0]) {
+                if (
+                    (!drawZeroOrigin && Math.abs(x) < eps) ||
+                    (!drawZeroX && Math.abs(x) < eps) ||
+                    (!includeBoundaries && (
+                        x <= bbox[0] + majorRadius[0] ||
+                        x >= bbox[2] - majorRadius[0]
+                    ))
+                ) {
+                    continue;
+                }
+
+                dataArr = [
+                    [x, x, NaN],
+                    [bbox[1] + m / majorGrid.board.unitY, bbox[3] - m / majorGrid.board.unitY, NaN]
+                ];
+                // Push is drastically faster than concat
+                Type.concat(this.dataX, dataArr[0]);
+                Type.concat(this.dataY, dataArr[1]);
+            }
+        } else {
+            for (y = startY; finite && y >= bbox[3]; y -= majorStep[1]) {
+                for (x = startX; finite && x <= bbox[2]; x += majorStep[0]) {
+
+                    if (
+                        (!drawZeroOrigin && Math.abs(y) < eps && Math.abs(x) < eps) ||
+                        (!drawZeroX && Math.abs(y) < eps && Math.abs(x) >= eps) ||
+                        (!drawZeroY && Math.abs(x) < eps && Math.abs(y) >= eps) ||
+                        (!includeBoundaries && (
+                            x <= bbox[0] + majorRadius[0] ||
+                            x >= bbox[2] - majorRadius[0] ||
+                            y <= bbox[3] + majorRadius[1] ||
+                            y >= bbox[1] - majorRadius[1]
+                        ))
+                    ) {
+                        continue;
+                    }
+
+                    dataArr = createDataArrayForFace(face, majorGrid, x, y, majorRadius[0], majorRadius[1], bbox);
+                    // Push is drastically faster than concat
+                    Type.concat(this.dataX, dataArr[0]);
+                    Type.concat(this.dataY, dataArr[1]);
+                }
             }
         }
     };
