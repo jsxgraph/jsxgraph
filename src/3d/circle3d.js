@@ -123,10 +123,6 @@ JXG.Circle3D = function (view, center, normal, radius, attributes) {
 
     // Converts JessieCode syntax into JavaScript syntax and generally ensures that the radius is a function
     this.updateRadius = Type.createFunction(radius, this.board);
-    // First evaluation of the radius function
-    /* [TO DO] What is this meant to do? In all of the examples I've seen, updateRadius has no
-       side effects, so calling it and throwing away the return value shouldn't do anything */
-    /* this.updateRadius(); */
     this.addParentsFromJCFunctions([this.updateRadius]);
 
     // initialize normal
