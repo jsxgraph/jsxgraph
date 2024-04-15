@@ -2337,6 +2337,10 @@ JXG.createRiemannsum = function (board, parents, attributes) {
         );
     }
 
+    if (typeof parents[2] === 'string') {
+        parents[2] = '\'' + parents[2] + '\'';
+    }
+
     type = Type.createFunction(parents[2], board, "");
     if (!Type.exists(type)) {
         throw new Error(
