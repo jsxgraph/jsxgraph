@@ -145,6 +145,8 @@ JXG.Circle3D = function (view, center, normal, radius, attributes) {
 
     // initialize the second frame vector
     this.frame2 = Mat.crossProduct(this.normal, this.frame1);
+    
+    this.normalizeFrame();
 };
 JXG.Circle3D.prototype = new JXG.GeometryElement();
 Type.copyPrototypeMethods(JXG.Circle3D, JXG.GeometryElement3D, "constructor3D");
@@ -153,6 +155,8 @@ JXG.extend(
     JXG.Circle3D.prototype,
     /** @lends JXG.Circle3D.prototype */ {
         update: function () {
+            this.updateNormal();
+            this.updateFrame();
             return this;
         },
 
@@ -188,9 +192,20 @@ JXG.extend(
             return Math.abs(this.updateRadius());
         },
 
+        normalizeFrame: function() {
+            // normalize frame
+            var len1 = Mat.norm(this.frame1);
+            var len2 = Mat.norm(this.frame2);
+            for (var i = 0; i < 3; i++) {
+                this.frame1[i] /= len1;
+                this.frame2[i] /= len2;
+            }
+        },
+
         updateFrame: function () {
             this.frame1 = Mat.crossProduct(this.frame2, this.normal);
             this.frame2 = Mat.crossProduct(this.normal, this.frame1);
+            this.normalizeFrame();
         }
     }
 );

@@ -30,7 +30,7 @@
         }
     );
 
-    // Point
+    // Center
     let center = view.create(
         'point3d',
         [1.5, 1.5, 1.5],
@@ -47,11 +47,35 @@
             highlightStrokeColor: '#600030'
        }
     );
+    
+    // Normal
+    let normalHandle = view.create(
+        'point3d',
+        [1.5, 2.5, 2.5],
+        {
+            withLabel: false,
+            size: 5,
+            strokeWidth: 1,
+            strokeColor: '#300060',
+            fillColor: 'white',
+            gradient: 'radial',
+            gradientSecondColor: '#5000a0',
+            gradientFX: 0.7,
+            gradientFY: 0.3,
+            highlightStrokeColor: '#300060'
+       }
+    );
+    let normalSeg = view.create('line3d', [center, normalHandle]);
+    normal = [
+        () => normalHandle.X() - center.X(),
+        () => normalHandle.Y() - center.Y(),
+        () => normalHandle.Z() - center.Z()
+    ];
 
     // Circle
     let circle = view.create(
         'circle3d',
-        [center, [0, 1, 1], 1]
+        [center, normal, 1]
     );
 </script>
 </body>
