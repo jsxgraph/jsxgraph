@@ -44,7 +44,7 @@ import Mat from '../math/math.js';
  * @augments JXG.GeometryElement
  * @param {JXG.View3D} view The 3D view the circle is drawn on.
  * @param {JXG.Point} center The center of the circle.
- * @param {Array|Function} normal A normal vector of the plane the circle lies in. Must be either an array of three numbers, an array of three functions returning numbers, or a function returning an array of length three.
+ * @param {Array} normal A normal vector of the plane the circle lies in. Must be either an array of three numbers or an array of three functions returning numbers.
  * @param {Number|Function} radius The radius of the circle.
  * @param {Object} attributes
  * @see JXG.Board#generateName
@@ -216,8 +216,9 @@ JXG.extend(
  * @constructor
  * @type JXG.Circle3D
  * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
- * @param {JXG.Point_number} center,radius The center must be given as a {@link JXG.Point} (see {@link JXG.providePoints}),
- * but the radius can be given as a number (which will create a circle with a fixed radius) or a function.
+ * @param {JXG.Point_Array_number} center,normal,radius The center must be given as a {@link JXG.Point} (see {@link JXG.providePoints}).
+ * The normal vector can be given as an array of three numbers or an array of three functions returning numbers,
+ * and the radius can be given as a number (which will create a circle with a fixed radius) or a function.
  * <p>
  * If the radius is supplied as a number or the output of a function, its absolute value is taken.
  */
