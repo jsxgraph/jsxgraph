@@ -76,23 +76,23 @@ JXG.Circle3D = function (view, center, normal, radius, attributes) {
      * @see updateRadius
      */
     /* [TO DO] this.radius = 0; */
-    
+
     /**
      * The first vector in an orthonormal frame for the plane the circle lies in.
      * Do not set this parameter directly, as that will break JSXGraph's update system.
      * @type Array
      * @private
-     * 
+     *
      * @see updateFrame
      */
     this.frame1;
-    
+
     /**
      * The second vector in an orthonormal frame for the plane the circle lies in.
      * Do not set this parameter directly, as that will break JSXGraph's update system.
      * @type Array
      * @private
-     * 
+     *
      * @see updateFrame
      */
     this.frame2;
@@ -111,7 +111,7 @@ JXG.Circle3D = function (view, center, normal, radius, attributes) {
                 this.normal[i] /= len;
             }
         }
-    }
+    };
 
     // place the circle or its center---whichever is newer---in the scene tree
     if (Type.exists(this.center._is_new)) {
@@ -141,7 +141,7 @@ JXG.Circle3D = function (view, center, normal, radius, attributes) {
 
     // initialize the second frame vector
     this.frame2 = Mat.crossProduct(this.normal, this.frame1);
-    
+
     this.normalizeFrame();
 };
 JXG.Circle3D.prototype = new JXG.GeometryElement();
@@ -190,9 +190,10 @@ JXG.extend(
 
         normalizeFrame: function() {
             // normalize frame
-            var len1 = Mat.norm(this.frame1);
-            var len2 = Mat.norm(this.frame2);
-            for (var i = 0; i < 3; i++) {
+            var len1 = Mat.norm(this.frame1),
+                len2 = Mat.norm(this.frame2),
+                i;
+            for (i = 0; i < 3; i++) {
                 this.frame1[i] /= len1;
                 this.frame2[i] /= len2;
             }
@@ -228,15 +229,13 @@ JXG.createCircle3D = function (board, parents, attributes) {
         center = Type.providePoints3D(view, [parents[1]], attributes, 'line3d', ['point'])[0],
         normal = parents[2],
         radius = parents[3],
-        frame = [],
-        el;
+        el, curve;
 
     // create element
     el = new JXG.Circle3D(view, center, normal, radius, attr);
 
     // create underlying curve
-    var curveParents = []
-    var curve = view.create(
+    curve = view.create(
         'curve3d',
         [
             (t) => el.center.X() + Math.cos(t) * el.frame1[0] + Math.sin(t) * el.frame2[0],
@@ -247,8 +246,9 @@ JXG.createCircle3D = function (board, parents, attributes) {
         attr
     );
 
-    // register as child of center
+    // update scene tree
     el.center.addChild(el);
+    el.addChild(curve);
 
     el.update();
     return el;
