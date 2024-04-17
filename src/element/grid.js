@@ -641,7 +641,7 @@ JXG.createGrid = function (board, parents, attributes) {
     minorGrid.updateDataArray = function () {
         var bbox = this.board.getBoundingBox(),
             startX, startY,
-            x, y,
+            x, y, m,
             dataArr,
             finite,
 
@@ -742,41 +742,162 @@ JXG.createGrid = function (board, parents, attributes) {
         // POI finite = false means that no grid is drawn. Should we change this?
 
         // draw grid elements
-        for (y = startY; finite && y >= bbox[3]; y -= minorStep[1]) {
-            for (x = startX; finite && x <= bbox[2]; x += minorStep[0]) {
+        if (minorFace.toLowerCase() !== 'line') {
+            for (y = startY; finite && y >= bbox[3]; y -= minorStep[1]) {
+                for (x = startX; finite && x <= bbox[2]; x += minorStep[0]) {
 
-                /* explanation:
-                     |<___XdisTo0___><___________XdisFrom0___________>
-                     |                .                .               .
-                 ____|____            .                .           _________
-                |    |    |         ____              ____        |         |
-                |    |    |        |    |            |    |       |         |
-                |    |    |        |____|            |____|       |         |
-                |____|____|           | |              .          |_________|
-                     |    |           . \              .              .
-                     |  \             . minorRadius[0]   .              .
-                     |   majorRadius[0] .                .              .
-                     |                .                .              .
-                     |<----------->   .                .              .
-                     |    \           .                .              .
-                     |     XdisTo0 - minorRadius[0] <= majorRadius[0] ? -> exclude
-                     |                .                .              .
-                     |                .  <--------------------------->
-                     |                             \
-                     |                              XdisFrom0 - minorRadius[0] <= majorRadius[0] ? -> exclude
-                     |
-               -——---|————————-————---|----------------|---------------|-------->
-                     |
-                     |<______________________majorStep[0]_____________________>
-                     |
-                     |<__minorStep[0]____><__minorStep[0]_____><__minorStep[0]_____>
-                     |
-                     |
-                */
-                XdisTo0 = Mat.roundToStep(Math.abs(x), majorStep[0]);
-                XdisTo0 = Math.abs(XdisTo0 - Math.abs(x));
-                XdisFrom0 = majorStep[0] - XdisTo0;
+                    /* explanation:
+                         |<___XdisTo0___><___________XdisFrom0___________>
+                         |                .                .               .
+                     ____|____            .                .           _________
+                    |    |    |         ____              ____        |         |
+                    |    |    |        |    |            |    |       |         |
+                    |    |    |        |____|            |____|       |         |
+                    |____|____|           | |              .          |_________|
+                         |    |           . \              .              .
+                         |  \             . minorRadius[0]   .              .
+                         |   majorRadius[0] .                .              .
+                         |                .                .              .
+                         |<----------->   .                .              .
+                         |    \           .                .              .
+                         |     XdisTo0 - minorRadius[0] <= majorRadius[0] ? -> exclude
+                         |                .                .              .
+                         |                .  <--------------------------->
+                         |                             \
+                         |                              XdisFrom0 - minorRadius[0] <= majorRadius[0] ? -> exclude
+                         |
+                   -——---|————————-————---|----------------|---------------|-------->
+                         |
+                         |<______________________majorStep[0]_____________________>
+                         |
+                         |<__minorStep[0]____><__minorStep[0]_____><__minorStep[0]_____>
+                         |
+                         |
+                    */
+                    XdisTo0 = Mat.roundToStep(Math.abs(x), majorStep[0]);
+                    XdisTo0 = Math.abs(XdisTo0 - Math.abs(x));
+                    XdisFrom0 = majorStep[0] - XdisTo0;
 
+                    YdisTo0 = Mat.roundToStep(Math.abs(y), majorStep[1]);
+                    YdisTo0 = Math.abs(YdisTo0 - Math.abs(y));
+                    YdisFrom0 = majorStep[1] - YdisTo0;
+
+                    if (majorFace === 'line') {
+                        // for majorFace 'line' do not draw minor grid elements on lines
+                        if (
+                            XdisTo0 - minorRadius[0] - majorRadius[0] < eps ||
+                            XdisFrom0 - minorRadius[0] - majorRadius[0] < eps ||
+                            YdisTo0 - minorRadius[1] - majorRadius[1] < eps ||
+                            YdisFrom0 - minorRadius[1] - majorRadius[1] < eps
+                        ) {
+                            continue;
+                        }
+
+                    } else {
+                        if ((
+                            XdisTo0 - minorRadius[0] - majorRadius[0] < eps ||
+                            XdisFrom0 - minorRadius[0] - majorRadius[0] < eps
+                        ) && (
+                                YdisTo0 - minorRadius[1] - majorRadius[1] < eps ||
+                                YdisFrom0 - minorRadius[1] - majorRadius[1] < eps
+                            )) {
+                            // if major grid elements (on 0 or axes) are not existing, minor grid elements have to exist. Otherwise:
+                            if ((
+                                majorDrawZeroOrigin ||
+                                majorRadius[1] - Math.abs(y) + minorRadius[1] < eps ||
+                                majorRadius[0] - Math.abs(x) + minorRadius[0] < eps
+                            ) && (
+                                    majorDrawZeroX ||
+                                    majorRadius[1] - Math.abs(y) + minorRadius[1] < eps ||
+                                    majorRadius[0] + Math.abs(x) - minorRadius[0] < eps
+                                ) && (
+                                    majorDrawZeroY ||
+                                    majorRadius[0] - Math.abs(x) + minorRadius[0] < eps ||
+                                    majorRadius[1] + Math.abs(y) - minorRadius[1] < eps
+                                )) {
+                                continue;
+                            }
+                        }
+                    }
+                    if (
+                        (!minorDrawZeroY && Math.abs(x) < eps) ||
+                        (!minorDrawZeroX && Math.abs(y) < eps)
+                    ) {
+                        continue;
+                    }
+
+                    /* explanation of condition below:
+
+                          |         __dis2To___> _dis2From_      // dis2To bzw. dis2From >= majorRadius[0]
+                          |      __/_          \/         _\__
+                          |     |    |  []     >         |    |
+                          |     |____|         >         |____|
+                          |                    >
+                          |                    >
+                          |    x-minorSize[0]  > bbox[2]
+                          0               .    >/
+                       -——|————————-————.-.——.—>
+                          |             . .  . >
+                          |             . .  . >
+                          |             . .  . > dis2From (<= majorRadius[0])
+                          |             . .  .__/\____
+                          |             . .  | >      |
+                          |             . [] | > \/   |
+                          |             .    | > /\   |
+                          |             .    |_>______|
+                          |             .    . >
+                          |             .    . >
+                          |             .    bbox[2]+dis2From-majorRadius[0]
+                          |             .      >
+                          |             .______>_
+                          |             |      > |
+                          |         []  |   \/ > |
+                          |             |   /\ > |
+                          |             |______>_|
+                          |             .    \_/
+                          |             .     dis2To (<= majorRadius[0])
+                          |             .      >
+                          |             .      >
+                          |             bbox[2]-dis2To-majorRadius[0]
+                     */
+                    dis0To = Math.abs(bbox[0] % majorStep[0]);
+                    dis1To = Math.abs(bbox[1] % majorStep[1]);
+                    dis2To = Math.abs(bbox[2] % majorStep[0]);
+                    dis3To = Math.abs(bbox[3] % majorStep[1]);
+                    dis0From = majorStep[0] - dis0To;
+                    dis1From = majorStep[1] - dis1To;
+                    dis2From = majorStep[0] - dis2To;
+                    dis3From = majorStep[1] - dis3To;
+
+                    if (
+                        !includeBoundaries && (
+                            (x - minorRadius[0] - bbox[0] - majorRadius[0] + dis0From < eps && dis0From - majorRadius[0] < eps) ||
+                            (x - minorRadius[0] - bbox[0] - majorRadius[0] - dis0To < eps && dis0To - majorRadius[0] < eps) ||
+                            (-x - minorRadius[0] + bbox[2] - majorRadius[0] + dis2From < eps && dis2From - majorRadius[0] < eps) ||
+                            (-x - minorRadius[0] + bbox[2] - majorRadius[0] - dis2To < eps && dis2To - majorRadius[0] < eps) ||
+
+                            (-y - minorRadius[1] + bbox[1] - majorRadius[1] + dis1From < eps && dis1From - majorRadius[1] < eps) ||
+                            (-y - minorRadius[1] + bbox[1] - majorRadius[1] - dis1To < eps && dis1To - majorRadius[1] < eps) ||
+                            (y - minorRadius[1] - bbox[3] - majorRadius[1] + dis3From < eps && dis3From - majorRadius[1] < eps) ||
+                            (y - minorRadius[1] - bbox[3] - majorRadius[1] - dis3To < eps && dis3To - majorRadius[1] < eps) ||
+
+                            (-y - minorRadius[1] + bbox[1] < eps) ||
+                            (x - minorRadius[0] - bbox[0] < eps) ||
+                            (y - minorRadius[1] - bbox[3] < eps) ||
+                            (-x - minorRadius[0] + bbox[2] < eps)
+                        )
+                    ) {
+                        continue;
+                    }
+
+                    dataArr = createDataArrayForFace(minorFace, minorGrid, x, y, minorRadius[0], minorRadius[1], bbox);
+                    Type.concat(this.dataX, dataArr[0]);
+                    Type.concat(this.dataY, dataArr[1]);
+                }
+            }
+        } else {
+            m = Type.evaluate(minorGrid.visProp.margin);
+            for (y = startY; finite && y >= bbox[3]; y -= minorStep[1]) {
                 YdisTo0 = Mat.roundToStep(Math.abs(y), majorStep[1]);
                 YdisTo0 = Math.abs(YdisTo0 - Math.abs(y));
                 YdisFrom0 = majorStep[1] - YdisTo0;
@@ -784,8 +905,6 @@ JXG.createGrid = function (board, parents, attributes) {
                 if (majorFace === 'line') {
                     // for majorFace 'line' do not draw minor grid elements on lines
                     if (
-                        XdisTo0 - minorRadius[0] - majorRadius[0] < eps ||
-                        XdisFrom0 - minorRadius[0] - majorRadius[0] < eps ||
                         YdisTo0 - minorRadius[1] - majorRadius[1] < eps ||
                         YdisFrom0 - minorRadius[1] - majorRadius[1] < eps
                     ) {
@@ -794,71 +913,96 @@ JXG.createGrid = function (board, parents, attributes) {
 
                 } else {
                     if ((
-                        XdisTo0 - minorRadius[0] - majorRadius[0] < eps ||
-                        XdisFrom0 - minorRadius[0] - majorRadius[0] < eps
-                    ) && (
-                        YdisTo0 - minorRadius[1] - majorRadius[1] < eps ||
-                        YdisFrom0 - minorRadius[1] - majorRadius[1] < eps
-                    )) {
+                            YdisTo0 - minorRadius[1] - majorRadius[1] < eps ||
+                            YdisFrom0 - minorRadius[1] - majorRadius[1] < eps
+                        )) {
                         // if major grid elements (on 0 or axes) are not existing, minor grid elements have to exist. Otherwise:
                         if ((
                             majorDrawZeroOrigin ||
-                            majorRadius[1] - Math.abs(y) + minorRadius[1] < eps ||
-                            majorRadius[0] - Math.abs(x) + minorRadius[0] < eps
+                            majorRadius[1] - Math.abs(y) + minorRadius[1] < eps
                         ) && (
-                            majorDrawZeroX ||
-                            majorRadius[1] - Math.abs(y) + minorRadius[1] < eps ||
-                            majorRadius[0] + Math.abs(x) - minorRadius[0] < eps
-                        ) && (
-                            majorDrawZeroY ||
-                            majorRadius[0] - Math.abs(x) + minorRadius[0] < eps ||
-                            majorRadius[1] + Math.abs(y) - minorRadius[1] < eps
-                        )) {
+                                majorDrawZeroX ||
+                                majorRadius[1] - Math.abs(y) + minorRadius[1] < eps
+                            ) && (
+                                majorDrawZeroY ||
+                                majorRadius[1] + Math.abs(y) - minorRadius[1] < eps
+                            )) {
                             continue;
                         }
                     }
                 }
+                if (!minorDrawZeroX && Math.abs(y) < eps) {
+                    continue;
+                }
+
+                dis0To = Math.abs(bbox[0] % majorStep[0]);
+                dis1To = Math.abs(bbox[1] % majorStep[1]);
+                dis2To = Math.abs(bbox[2] % majorStep[0]);
+                dis3To = Math.abs(bbox[3] % majorStep[1]);
+                dis0From = majorStep[0] - dis0To;
+                dis1From = majorStep[1] - dis1To;
+                dis2From = majorStep[0] - dis2To;
+                dis3From = majorStep[1] - dis3To;
+
                 if (
-                    (!minorDrawZeroY && Math.abs(x) < eps) ||
-                    (!minorDrawZeroX && Math.abs(y) < eps)
+                    !includeBoundaries && (
+                        (-y - minorRadius[1] + bbox[1] - majorRadius[1] + dis1From < eps && dis1From - majorRadius[1] < eps) ||
+                        (-y - minorRadius[1] + bbox[1] - majorRadius[1] - dis1To < eps && dis1To - majorRadius[1] < eps) ||
+                        (y - minorRadius[1] - bbox[3] - majorRadius[1] + dis3From < eps && dis3From - majorRadius[1] < eps) ||
+                        (y - minorRadius[1] - bbox[3] - majorRadius[1] - dis3To < eps && dis3To - majorRadius[1] < eps) ||
+
+                        (-y - minorRadius[1] + bbox[1] < eps) ||
+                        (y - minorRadius[1] - bbox[3] < eps)
+                    )
                 ) {
                     continue;
                 }
 
-                /* explanation of condition below:
+                dataArr = [
+                    [bbox[0] - m / minorGrid.board.unitX, bbox[2] + m / minorGrid.board.unitX, NaN],
+                    [y, y, NaN]
+                ];
+                Type.concat(this.dataX, dataArr[0]);
+                Type.concat(this.dataY, dataArr[1]);
+            }
+            for (x = startX; finite && x <= bbox[2]; x += minorStep[0]) {
+                XdisTo0 = Mat.roundToStep(Math.abs(x), majorStep[0]);
+                XdisTo0 = Math.abs(XdisTo0 - Math.abs(x));
+                XdisFrom0 = majorStep[0] - XdisTo0;
 
-                      |         __dis2To___> _dis2From_      // dis2To bzw. dis2From >= majorRadius[0]
-                      |      __/_          \/         _\__
-                      |     |    |  []     >         |    |
-                      |     |____|         >         |____|
-                      |                    >
-                      |                    >
-                      |    x-minorSize[0]  > bbox[2]
-                      0               .    >/
-                   -——|————————-————.-.——.—>
-                      |             . .  . >
-                      |             . .  . >
-                      |             . .  . > dis2From (<= majorRadius[0])
-                      |             . .  .__/\____
-                      |             . .  | >      |
-                      |             . [] | > \/   |
-                      |             .    | > /\   |
-                      |             .    |_>______|
-                      |             .    . >
-                      |             .    . >
-                      |             .    bbox[2]+dis2From-majorRadius[0]
-                      |             .      >
-                      |             .______>_
-                      |             |      > |
-                      |         []  |   \/ > |
-                      |             |   /\ > |
-                      |             |______>_|
-                      |             .    \_/
-                      |             .     dis2To (<= majorRadius[0])
-                      |             .      >
-                      |             .      >
-                      |             bbox[2]-dis2To-majorRadius[0]
-                 */
+                if (majorFace === 'line') {
+                    // for majorFace 'line' do not draw minor grid elements on lines
+                    if (
+                        XdisTo0 - minorRadius[0] - majorRadius[0] < eps ||
+                        XdisFrom0 - minorRadius[0] - majorRadius[0] < eps
+                    ) {
+                        continue;
+                    }
+
+                } else {
+                    if ((
+                        XdisTo0 - minorRadius[0] - majorRadius[0] < eps ||
+                        XdisFrom0 - minorRadius[0] - majorRadius[0] < eps
+                    )) {
+                        // if major grid elements (on 0 or axes) are not existing, minor grid elements have to exist. Otherwise:
+                        if ((
+                            majorDrawZeroOrigin ||
+                            majorRadius[0] - Math.abs(x) + minorRadius[0] < eps
+                        ) && (
+                                majorDrawZeroX ||
+                                majorRadius[0] + Math.abs(x) - minorRadius[0] < eps
+                            ) && (
+                                majorDrawZeroY ||
+                                majorRadius[0] - Math.abs(x) + minorRadius[0] < eps
+                            )) {
+                            continue;
+                        }
+                    }
+                }
+                if (!minorDrawZeroY && Math.abs(x) < eps) {
+                    continue;
+                }
+
                 dis0To = Math.abs(bbox[0] % majorStep[0]);
                 dis1To = Math.abs(bbox[1] % majorStep[1]);
                 dis2To = Math.abs(bbox[2] % majorStep[0]);
@@ -875,21 +1019,17 @@ JXG.createGrid = function (board, parents, attributes) {
                         (-x - minorRadius[0] + bbox[2] - majorRadius[0] + dis2From < eps && dis2From - majorRadius[0] < eps) ||
                         (-x - minorRadius[0] + bbox[2] - majorRadius[0] - dis2To < eps && dis2To - majorRadius[0] < eps) ||
 
-                        (-y - minorRadius[1] + bbox[1] - majorRadius[1] + dis1From < eps && dis1From - majorRadius[1] < eps) ||
-                        (-y - minorRadius[1] + bbox[1] - majorRadius[1] - dis1To < eps && dis1To - majorRadius[1] < eps) ||
-                        (y - minorRadius[1] - bbox[3] - majorRadius[1] + dis3From < eps && dis3From - majorRadius[1] < eps) ||
-                        (y - minorRadius[1] - bbox[3] - majorRadius[1] - dis3To < eps && dis3To - majorRadius[1] < eps) ||
-
-                        (-y - minorRadius[1] + bbox[1] < eps) ||
                         (x - minorRadius[0] - bbox[0] < eps) ||
-                        (y - minorRadius[1] - bbox[3] < eps) ||
                         (-x - minorRadius[0] + bbox[2] < eps)
                     )
                 ) {
                     continue;
                 }
 
-                dataArr = createDataArrayForFace(minorFace, minorGrid, x, y, minorRadius[0], minorRadius[1], bbox);
+                dataArr = [
+                    [x, x, NaN],
+                    [bbox[1] + m / minorGrid.board.unitY, bbox[3] - m / minorGrid.board.unitY, NaN]
+                ];
                 Type.concat(this.dataX, dataArr[0]);
                 Type.concat(this.dataY, dataArr[1]);
             }
