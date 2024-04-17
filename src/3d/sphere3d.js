@@ -49,6 +49,7 @@ import Type from "../utils/type.js";
  * @param {JXG.Point3D} par1 The center of the sphere.
  * @param {JXG.Point3D} par2 Can be:
  * <ul><li>A point on the sphere (if the construction method is <code>'twoPoints'</code>)</li>
+ * <ul><li>A number or function (if the construction method is <code>'pointRadius'</code>)</li>
  * @param {Object} attributes An object containing visual properties like in {@link JXG.Options#point3d} and
  * {@link JXG.Options#elements}, and optional a name and an id.
  * @see JXG.Board#generateName
@@ -347,7 +348,7 @@ JXG.createSphere3D = function (board, parents, attributes) {
     el.element2D = view.create('circle', [center2d, radius2d], attr);
     el.addChild(el.element2D);
     el.inherits.push(el.element2D);
-    el.element2D.setParents(el);
+    el.element2D.setParents([el]);
 
     el.element2D.prepareUpdate().update().updateRenderer();
     return el;
