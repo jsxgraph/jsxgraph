@@ -1690,6 +1690,9 @@ Mat.Plot = {
         return s + table[0][idx];
     },
 
+    // Thiele's interpolation formula,
+    // https://en.wikipedia.org/wiki/Thiele%27s_interpolation_formula
+    // unused
     thiele: function (t, recip, t_values, idx, degree) {
         var i,
             v = 0.0;

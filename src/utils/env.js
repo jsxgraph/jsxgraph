@@ -261,6 +261,7 @@ JXG.extend(
         /**
          * Detects if the user is using an Android powered device.
          * @returns {Boolean}
+         * @deprecated
          */
         isAndroid: function () {
             return (
@@ -272,6 +273,7 @@ JXG.extend(
         /**
          * Detects if the user is using the default Webkit browser on an Android powered device.
          * @returns {Boolean}
+         * @deprecated
          */
         isWebkitAndroid: function () {
             return this.isAndroid() && navigator.userAgent.indexOf(" AppleWebKit/") > -1;
@@ -280,6 +282,7 @@ JXG.extend(
         /**
          * Detects if the user is using a Apple iPad / iPhone.
          * @returns {Boolean}
+         * @deprecated
          */
         isApple: function () {
             return (
@@ -292,6 +295,7 @@ JXG.extend(
         /**
          * Detects if the user is using Safari on an Apple device.
          * @returns {Boolean}
+         * @deprecated
          */
         isWebkitApple: function () {
             return (
@@ -302,6 +306,7 @@ JXG.extend(
         /**
          * Returns true if the run inside a Windows 8 "Metro" App.
          * @returns {Boolean}
+         * @deprecated
          */
         isMetroApp: function () {
             return (
@@ -315,6 +320,7 @@ JXG.extend(
         /**
          * Detects if the user is using a Mozilla browser
          * @returns {Boolean}
+         * @deprecated
          */
         isMozilla: function () {
             return (
@@ -327,6 +333,7 @@ JXG.extend(
         /**
          * Detects if the user is using a firefoxOS powered device.
          * @returns {Boolean}
+         * @deprecated
          */
         isFirefoxOS: function () {
             return (
@@ -343,6 +350,7 @@ JXG.extend(
          * @returns {boolean}
          *
          * @see https://stackoverflow.com/a/61073480
+         * @deprecated
          */
         isDesktop: function () {
             return true;
@@ -364,6 +372,8 @@ JXG.extend(
          * @returns {boolean}
          *
          * @see https://stackoverflow.com/questions/25542814/html5-detecting-if-youre-on-mobile-or-pc-with-javascript
+         * @deprecated
+         *
          */
         isMobile: function () {
             return true;
@@ -373,6 +383,7 @@ JXG.extend(
         /**
          * Internet Explorer version. Works only for IE > 4.
          * @type Number
+         * @deprecated
          */
         ieVersion: (function () {
             var div,

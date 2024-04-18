@@ -1758,6 +1758,7 @@ JXG.extend(
          * @type String
          * @private
          * @ignore
+         * @deprecated
          * @returns JSON string containing element's properties.
          */
         toJSON: function () {

@@ -1415,6 +1415,7 @@ JXG.extend(
          * @param {Object} obj A JavaScript object, functions will be ignored.
          * @param {Boolean} [noquote=false] No quotes around the name of a property.
          * @returns {String} The given object stored in a JSON string.
+         * @deprecated
          */
         toJSON: function (obj, noquote) {
             var list, prop, i, s, val;
