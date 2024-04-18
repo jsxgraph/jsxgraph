@@ -1737,6 +1737,8 @@ JXG.extend(
          * Concat array src to array dest.
          * Uses push instead of JavaScript concat, which is much
          * faster.
+         * The array dest is changed in place.
+         * <p><b>Attention:</b> if "dest" is an anonymous array, the correct result is returned from the function.
          *
          * @param {Array} dest
          * @param {Array} src

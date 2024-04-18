@@ -119,6 +119,7 @@ constants =
 
     OBJECT_TYPE_INTERSECTION_LINE3D: 39,
     OBJECT_TYPE_SPHERE3D: 40,
+    OBJECT_TYPE_CIRCLE3D: 41,
 
     // IMPORTANT:
     // ----------

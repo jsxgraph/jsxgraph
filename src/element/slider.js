@@ -517,7 +517,7 @@ JXG.createSlider = function (board, parents, attributes) {
         t.dump = false;
     }
 
-    p3.type = Const.OBJECT_TYPE_SLIDER;
+    // p3.type = Const.OBJECT_TYPE_SLIDER; // No! type has to be Const.OBJECT_TYPE_GLIDER
     p3.elType = "slider";
     p3.parents = parents;
     p3.subs = {

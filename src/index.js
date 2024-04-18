@@ -80,6 +80,7 @@ import './options3d.js';
 import './3d/view3d.js';
 import './3d/element3d.js';
 import './3d/box3d.js';
+import './3d/circle3d.js';
 import './3d/point3d.js';
 import './3d/curve3d.js';
 import './3d/linspace3d.js';

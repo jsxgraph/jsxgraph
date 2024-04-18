@@ -3652,6 +3652,8 @@ declare namespace JXG {
         arrow?: ArrowOptions;
     }
 
+    export interface Circle3DAttributes extends GeometryElementAttributes {}
+
     export interface Curve3DAttributes extends CurveAttributes {}
 
     export interface Curve3D extends Curve {}
@@ -3716,6 +3718,11 @@ declare namespace JXG {
          * @param attributes
          */
         constructor(board: Board, parents: unknown[], attributes: View3DAttributes);
+        create(
+            elementType: "circle3d",
+            parents: unknown[],
+            attributes?: Circle3DAttributes
+        ): Circle3D;
         create(
             elementType: "curve3d",
             parents: unknown[],
@@ -3787,6 +3794,7 @@ declare namespace JXG {
         | 'chart'
         | 'checkbox'
         | 'circle'
+        | 'circle3d'
         | 'circumcenter'
         | 'circumcircle'
         | 'circumcirclearc'

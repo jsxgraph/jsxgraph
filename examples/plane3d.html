@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Sphere</title>
+    <title>Plane</title>
     <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
     <script type="text/javascript" src="../distrib/jsxgraphcore.js"></script>
 </head>
@@ -30,10 +30,10 @@
         }
     );
 
-    // Two points
-    let center = view.create(
+    // Base point
+    let basePt = view.create(
         'point3d',
-        [1.5, 1.5, 1.5],
+        [1, 1, 1],
         {
             withLabel: false,
             size: 5,
@@ -47,35 +47,64 @@
             highlightStrokeColor: '#600030'
        }
     );
-    let point = view.create(
+    
+    // Handles
+    let handle1 = view.create(
         'point3d',
-        [2, 1.5, 1.5],
+        [0.5, 1.25, 1.25],
         {
             withLabel: false,
             size: 5,
             strokeWidth: 1,
-            strokeColor: '#600030',
+            strokeColor: '#300060',
             fillColor: 'white',
             gradient: 'radial',
-            gradientSecondColor: '#a00050',
+            gradientSecondColor: '#5000a0',
             gradientFX: 0.7,
             gradientFY: 0.3,
-            highlightStrokeColor: '#600030'
+            highlightStrokeColor: '#300060'
        }
     );
-
-    // Sphere
-    let sphere = view.create(
-        'sphere3d',
-        [center, point],
+    let handle2 = view.create(
+        'point3d',
+        [1.25, 0.5, 1.25],
         {
+            withLabel: false,
+            size: 5,
+            strokeWidth: 1,
+            strokeColor: '#300060',
+            fillColor: 'white',
+            gradient: 'radial',
+            gradientSecondColor: '#5000a0',
+            gradientFX: 0.7,
+            gradientFY: 0.3,
+            highlightStrokeColor: '#300060'
+       }
+    );
+    let frameSeg1 = view.create('line3d', [basePt, handle1]);
+    let frameSeg2 = view.create('line3d', [basePt, handle2]);
+    let dir1 = [
+        () => handle1.X() - basePt.X(),
+        () => handle1.Y() - basePt.Y(),
+        () => handle1.Z() - basePt.Z()
+    ];
+    let dir2 = [
+        () => handle2.X() - basePt.X(),
+        () => handle2.Y() - basePt.Y(),
+        () => handle2.Z() - basePt.Z()
+    ];
+    
+    // Plane
+    let plane = view.create(
+        'plane3d',
+        [basePt, dir1, dir2],
+        {
+            strokeWidth: 1,
             strokeColor: '#00ff80',
-            fillColor: 'white',
-            gradient: 'radial',
-            gradientSecondColor: '#00ff80',
-            gradientFX: 0.7,
-            gradientFY: 0.3,
-            fillOpacity: 0.4
+            strokeOpacity: 0.5,
+            fillColor: '#00ff80',
+            fillOpacity: 0.1,
+            gradient: null
         }
     );
 </script>

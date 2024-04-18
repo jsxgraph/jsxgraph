@@ -932,14 +932,14 @@ JXG.createCircle = function (board, parents, attributes) {
     for (i = 0; i < parents.length; i++) {
         if (Type.isPointType(board, parents[i])) {
             if (parents.length < 3) {
-                Type.concat(p,
-                    Type.providePoints(board, [parents[i]], attributes, "circle", [point_style[i]])
+                p.push(
+                    Type.providePoints(board, [parents[i]], attributes, "circle", [point_style[i]])[0]
                 );
             } else {
-                Type.concat(p,
-                    Type.providePoints(board, [parents[i]], attributes, "point")
+                p.push(
+                    Type.providePoints(board, [parents[i]], attributes, "point")[0]
                 );
-                }
+            }
             if (p[p.length - 1] === false) {
                 throw new Error(
                     "JSXGraph: Can't create circle from this type. Please provide a point type."
