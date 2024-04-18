@@ -1573,15 +1573,54 @@ JXG.extend(
          * Generate the function which computes the data of the intersection.
          */
         intersectionFunction3D: function (view, el1, el2, i) {
-            var func;
+            var func, skew;
 
             if (
                 el1.type === Const.OBJECT_TYPE_PLANE3D &&
                 el2.type === Const.OBJECT_TYPE_PLANE3D
             ) {
-                func = function () {
-                    return view.intersectionPlanePlane(el1, el2)[i];
+                func = () => view.intersectionPlanePlane(el1, el2)[i];
+            } else if (
+                el1.type === Const.OBJECT_TYPE_SPHERE3D &&
+                el1.type === Const.OBJECT_TYPE_SPHERE3D
+            ) {
+                skew = function () {
+                    let dist = el1.center.distance(el2.center),
+                        r1 = el1.Radius(),
+                        r2 = el2.Radius();
+                    return (r1 - r2)*(r1 + r2) / (dist*dist);
                 };
+                func = [
+                    [
+                        // Center
+                        function () {
+                            let s = skew();
+                            return 0.5*((1-s)*el1.center.X() + (1+s)*el2.center.X());
+                        },
+                        function () {
+                            let s = skew();
+                            return 0.5*((1-s)*el1.center.Y() + (1+s)*el2.center.Y());
+                        },
+                        function () {
+                            let s = skew();
+                            return 0.5*((1-s)*el1.center.Z() + (1+s)*el2.center.Z());
+                        }
+                    ],
+                    [
+                        // Normal
+                        () => el2.center.X() - el1.center.X(),
+                        () => el2.center.Y() - el1.center.Y(),
+                        () => el2.center.Z() - el1.center.Z()
+                    ],
+                    function () {
+                        // Radius
+                        let dist = el1.center.distance(el2.center),
+                            r1 = el1.Radius(),
+                            r2 = el2.Radius(),
+                            s = skew();
+                        return r1*r1 + r2*r2 - 0.25*dist*dist*(1 + s*s);
+                    }
+                ];
             }
 
             return func;

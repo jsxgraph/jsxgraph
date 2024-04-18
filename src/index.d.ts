@@ -3822,6 +3822,7 @@ declare namespace JXG {
         | 'input'
         | 'integral'
         | 'intersection'
+        | 'intersectioncircle3d'
         | 'intersectionline3d'
         | 'label'
         | 'legend'

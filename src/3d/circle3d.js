@@ -33,6 +33,7 @@ import JXG from "../jxg.js";
 import Const from "../base/constants.js";
 import Type from "../utils/type.js";
 import Mat from '../math/math.js';
+import Geometry from '../math/geometry.js';
 
 /**
  * In 3D space, a circle consists of all points on a given plane with a given distance from a given point. The given point is called the center, and the given distance is called the radius.
@@ -238,9 +239,9 @@ JXG.createCircle3D = function (board, parents, attributes) {
     curve = view.create(
         'curve3d',
         [
-            (t) => el.center.X() + Math.cos(t) * el.frame1[0] + Math.sin(t) * el.frame2[0],
-            (t) => el.center.Y() + Math.cos(t) * el.frame1[1] + Math.sin(t) * el.frame2[1],
-            (t) => el.center.Z() + Math.cos(t) * el.frame1[2] + Math.sin(t) * el.frame2[2],
+            (t) => el.center.X() + el.Radius() * (Math.cos(t) * el.frame1[0] + Math.sin(t) * el.frame2[0]),
+            (t) => el.center.Y() + el.Radius() * (Math.cos(t) * el.frame1[1] + Math.sin(t) * el.frame2[1]),
+            (t) => el.center.Z() + el.Radius() * (Math.cos(t) * el.frame1[2] + Math.sin(t) * el.frame2[2]),
             [0, 2*Math.PI] // parameter range
         ],
         attr
@@ -255,3 +256,108 @@ JXG.createCircle3D = function (board, parents, attributes) {
 };
 
 JXG.registerElement("circle3d", JXG.createCircle3D);
+
+/**
+ * @class An intersection circle is a circle which lives on two JSXGraph elements.
+ * The following element types can be (mutually) intersected: sphere, plane.
+ *
+ * @pseudo
+ * @name IntersectionCircle3D
+ * @augments JXG.Circle3D
+ * @constructor
+ * @type JXG.Circle3D
+ * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
+ * @param {JXG.Sphere3D_JXG.Sphere3D|JXG.Plane3D} el1,el2 The result will be the intersection of el1 and el2.
+ * @example
+ * // Create the intersection circle of two spheres
+ * var view = board.create(
+ *     'view3d',
+ *     [[-6, -3], [8, 8],
+ *     [[0, 3], [0, 3], [0, 3]]],
+ *     {
+ *         xPlaneRear: {fillOpacity: 0.2, gradient: null},
+ *         yPlaneRear: {fillOpacity: 0.2, gradient: null},
+ *         zPlaneRear: {fillOpacity: 0.2, gradient: null}
+ *     }
+ * );
+ * var a1 = view.create('point3d', [-1, 0, 0]);
+ * var a2 = view.create('point3d', [1, 0, 0]);
+ *
+ * var s1 = view.create(
+ *    'sphere3d',
+ *     [a1, 2],
+ *     {fillColor: '#00ff80'}
+ * );
+ * var s2 = view.create(
+ *    'sphere3d',
+ *     [a2, 2],
+ *     {fillColor: '#ff0000'}
+ * );
+ *
+ * var i = view.create('intersectioncircle3d', [s1, s2]);
+ *
+ * </pre><div id="JXGdb931076-b29a-4eff-b97e-4251aaf24943" class="jxgbox" style="width: 300px; height: 300px;"></div>
+ * <script type="text/javascript">
+ *     (function() {
+ *         var view = board.create(
+ *            'view3d',
+ *            [[-6, -3], [8, 8],
+ *            [[0, 3], [0, 3], [0, 3]]],
+ *            {
+ *                xPlaneRear: {fillOpacity: 0.2, gradient: null},
+ *                yPlaneRear: {fillOpacity: 0.2, gradient: null},
+ *                zPlaneRear: {fillOpacity: 0.2, gradient: null}
+ *            }
+ *        );
+ *        var a1 = view.create('point3d', [-1, 0, 0]);
+ *        var a2 = view.create('point3d', [1, 0, 0]);
+ *
+ *        var s1 = view.create(
+ *           'sphere3d',
+ *            [a1, 2],
+ *            {fillColor: '#00ff80'}
+ *        );
+ *        var p2 = view.create(
+ *           'sphere3d',
+ *            [a2, 2],
+ *            {fillColor: '#ff0000'}
+ *        );
+ *
+ *     })();
+ *
+ * </script><pre>
+ *
+ */
+JXG.createIntersectionCircle3D = function (board, parents, attributes) {
+    var view = parents[0],
+        el1 = parents[1],
+        el2 = parents[2],
+        ixnCircle, center, func,
+        attr = Type.copyAttributes(attributes, board.options, "intersectioncircle3d"),
+        pts = [];
+
+    func = Geometry.intersectionFunction3D(view, el1, el2);
+    center = view.create('point3d', func[0], {visible: false});
+    ixnCircle = view.create('circle3d', [center, func[1], func[2]], attr);
+
+    try {
+        el1.addChild(ixnCircle);
+        el2.addChild(ixnCircle);
+    } catch (e) {
+        throw new Error(
+            "JSXGraph: Can't create 'intersection' with parent types '" +
+                typeof parents[0] +
+                "' and '" +
+                typeof parents[1] +
+                "'."
+        );
+    }
+
+    ixnCircle.type = Const.OBJECT_TYPE_INTERSECTION_CIRCLE3D;
+    ixnCircle.elType = 'intersectioncircle3d';
+    ixnCircle.setParents([el1.id, el2.id]);
+
+    return ixnCircle;
+};
+
+JXG.registerElement('intersectioncircle3d', JXG.createIntersectionCircle3D);
