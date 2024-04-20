@@ -29,7 +29,18 @@
             zPlaneRear: {fillOpacity: 0.2, gradient: null}
         }
     );
-    
+
+    // Radius balance slider
+    let balance = board.create(
+        'slider',
+        [
+            [-6, 7], [2, 7],
+            [-1, 0, 1]
+        ], {
+            name: 'radius balance'
+        }
+    );
+
     // Two centers
     let center1 = view.create(
         'point3d',
@@ -67,31 +78,33 @@
     // Two spheres
     let sphere1 = view.create(
     'sphere3d',
-        [center1, 1.5],
+        [center1, () => Math.pow(2, 0.5*balance.Value())],
         {
             strokeColor: '#0000ff',
+            strokeOpacity: 0.5,
             fillColor: 'white',
             gradient: 'radial',
             gradientSecondColor: '#0000ff',
             gradientFX: 0.7,
             gradientFY: 0.3,
-            fillOpacity: 0.4
+            fillOpacity: 0.2
         }
     );
     let sphere2 = view.create(
     'sphere3d',
-        [center2, 1],
+        [center2, () => Math.pow(2, -0.5*balance.Value())],
         {
             strokeColor: '#00ff80',
+            strokeOpacity: 0.5,
             fillColor: 'white',
             gradient: 'radial',
             gradientSecondColor: '#00ff80',
             gradientFX: 0.7,
             gradientFY: 0.3,
-            fillOpacity: 0.4
+            fillOpacity: 0.2
         }
     );
-    
+
     // Intersection circle
     let ixnCircle = view.create(
         'intersectioncircle3d',
