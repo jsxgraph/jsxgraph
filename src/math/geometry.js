@@ -1617,8 +1617,9 @@ JXG.extend(
                         let dist = el1.center.distance(el2.center),
                             r1 = el1.Radius(),
                             r2 = el2.Radius(),
-                            s = skew();
-                        return r1*r1 + r2*r2 - 0.25*dist*dist*(1 + s*s);
+                            s = skew(),
+                            rIxnSq = 0.5*(r1*r1 + r2*r2 - 0.5*dist*dist*(1 + s*s));
+                        return Math.sqrt(Math.max(rIxnSq, 0));
                     }
                 ];
             }
