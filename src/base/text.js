@@ -321,7 +321,10 @@ JXG.extend(
                                     }
                                 } else {
                                     t = that.content[i];
-                                    if (t.at(0) === '"' && t.at(-1) === '"') {
+                                    // Instead of 't.at(t.length - 1)' also 't.(-1)' should work.
+                                    // However in Moodle 4.2 't.(-1)' returns an empty string.
+                                    // In plain HTML pages it works.
+                                    if (t.at(0) === '"' && t.at(t.length - 1) === '"') {
                                         t = t.slice(1, -1);
                                     }
                                 }
