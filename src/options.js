@@ -8264,11 +8264,11 @@ JXG.Options = {
          *
          * @name formatNumber
          * @memberOf Text.prototype
-         * @default true
+         * @default false
          * @type Boolean
          *
          */
-        formatNumber: true,
+        formatNumber: false,
 
         /**
          * Used to round texts given by a number.
@@ -8296,7 +8296,10 @@ JXG.Options = {
          * @type object
          * @default <pre>{
          *    enabled: 'inherit',
-         *    options: {}
+         *    options: {
+         *      minimumFractionDigits: 0,
+         *      maximumFractionDigits: 2
+         *    }
          * }</pre>
          * @see JXG.Board#intl
          *
@@ -8401,7 +8404,10 @@ JXG.Options = {
          */
         intl: {
             enabled: 'inherit',
-            options: {}
+            options: {
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 2
+            }
         },
 
         /**
