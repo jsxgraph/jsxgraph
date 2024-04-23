@@ -634,12 +634,8 @@ JXG.createGlider = function (board, parents, attributes) {
  * </script><pre>
  */
 JXG.createIntersectionPoint = function (board, parents, attributes) {
-    var el,
-        el1,
-        el2,
-        func,
-        i,
-        j,
+    var el, el1, el2, func,
+        i, j,
         attr = Type.copyAttributes(attributes, board.options, "intersection");
 
     // make sure we definitely have the indices
