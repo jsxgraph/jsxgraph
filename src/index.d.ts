@@ -403,6 +403,7 @@ declare namespace JXG {
     export function isNumber(v: unknown): v is number;
     export function isObject(v: unknown): boolean;
     export function isPoint(v: unknown): v is Point;
+    export function isPoint3D(v: unknown): boolean;
     export function isPointType(v: unknown): boolean;
     export function isPointType3D(v: unknown): boolean;
     export function isString(v: unknown): v is string;
@@ -6319,8 +6320,6 @@ declare namespace JXG {
          */
         percentile(arr: number[], percentile: number | number[]): number | number[];
     }
-
-    export type touchProperty = string;
 }
 
 /**

@@ -45,13 +45,13 @@ import Type from "./type.js";
 JXG.extendConstants(
     JXG,
     /** @lends JXG */ {
-        /**
-         * Determines the property that stores the relevant information in the event object.
-         * @type String
-         * @default 'touches'
-         * @private
-         */
-        touchProperty: "touches"
+        // /**
+        //  * Determines the property that stores the relevant information in the event object.
+        //  * @type String
+        //  * @default 'touches'
+        //  * @private
+        //  */
+        // touchProperty: "touches"
     }
 );
 
@@ -64,7 +64,7 @@ JXG.extend(
          * @returns {Boolean}
          */
         isTouchEvent: function (evt) {
-            return JXG.exists(evt[JXG.touchProperty]);
+            return JXG.exists(evt['touches']); // Old iOS touch events
         },
 
         /**
@@ -95,7 +95,7 @@ JXG.extend(
             var n = -1;
 
             if (JXG.isTouchEvent(evt)) {
-                n = evt[JXG.touchProperty].length;
+                n = evt['touches'].length;
             }
 
             return n;
@@ -608,7 +608,7 @@ JXG.extend(
             }
 
             doc = doc || document;
-            evtTouches = e[JXG.touchProperty];
+            evtTouches = e['touches']; // iOS touch events
 
             // touchend events have their position in "changedTouches"
             if (Type.exists(evtTouches) && evtTouches.length === 0) {

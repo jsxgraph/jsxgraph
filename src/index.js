@@ -222,7 +222,6 @@ export const timeChunk = JXG.timedChunk;
 export const toFixed = JXG.toFixed;
 export const toFullscreen = JXG.toFullscreen;
 export const toJSON = JXG.toJSON;
-export const touchProperty = JXG.touchProperty; // String
 export const trim = JXG.trim;
 export const trimNumber = JXG.trimNumber;
 export const truncate = JXG.truncate;
