@@ -765,24 +765,17 @@ JXG.createOtherIntersectionPoint = function (board, parents, attributes) {
     el2 = board.select(parents[1]);
     other = board.select(parents[2]);
 
-    el = board.create(
-        "point",
-        [
+    el = board.create("point", [
             function () {
-                var c = Geometry.meet(el1.stdform, el2.stdform, 0, el1.board);
-
-                if (
-                    Math.abs(other.X() - c.usrCoords[1]) > Mat.eps ||
-                    Math.abs(other.Y() - c.usrCoords[2]) > Mat.eps ||
-                    Math.abs(other.Z() - c.usrCoords[0]) > Mat.eps
-                ) {
+                var c = Geometry.meet(el1.stdform, el2.stdform, 0, el1.board),
+                    d = c.distance(JXG.COORDS_BY_USER, other.coords);
+                if (d > Mat.eps) {
                     return c;
                 }
 
                 return Geometry.meet(el1.stdform, el2.stdform, 1, el1.board);
             }
-        ],
-        attributes
+        ], attributes
     );
 
     el.type = Const.OBJECT_TYPE_INTERSECTION;
