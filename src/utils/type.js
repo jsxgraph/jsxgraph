@@ -954,7 +954,20 @@ JXG.extend(
             return str;
         },
 
-        parseNumber: function(v, percentOfWhat, convertPx, toUnit) {
+        /**
+         * Convert value v. If v has the form
+         * <ul>
+         * <li> 'x%': return floating point number x * percentOfWhat * 0.01
+         * <li> 'xfr': return floating point number x * percentOfWhat
+         * <li> 'xpx': return x * convertPx or convertPx(x) or x
+         * <li> x or 'x': return floating point number x
+         * </ul>
+         * @param {String|Number} v
+         * @param {Number} percentOfWhat
+         * @param {Function|Number|*} convertPx
+         * @returns {String|Number}
+         */
+        parseNumber: function(v, percentOfWhat, convertPx) {
             var str;
 
             if (this.isString(v) && v.indexOf('%') > -1) {
@@ -980,6 +993,13 @@ JXG.extend(
             return parseFloat(v);
         },
 
+        /**
+         * Parse a string for label positioning of the form 'left pos' or 'pos right'
+         * and return e.g.
+         * <tt>{ side: 'left', pos: 'pos' }</tt>.
+         * @param {String} str
+         * @returns {Obj}  <tt>{ side, pos }</tt>
+         */
         parsePosition: function(str) {
             var a, i,
                 side = '',

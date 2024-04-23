@@ -182,6 +182,7 @@ export const isNode = JXG.isNode;
 export const isNumber = JXG.isNumber;
 export const isObject = JXG.isObject;
 export const isPoint = JXG.isPoint;
+export const isPoint3D = JXG.isPoint3D;
 export const isPointType = JXG.isPointType;
 export const isPointType3D = JXG.isPointType3D;
 export const isString = JXG.isString;
