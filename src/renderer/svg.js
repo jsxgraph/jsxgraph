@@ -2028,22 +2028,18 @@ JXG.extend(
             return values;
         },
 
-        _getDataUri: function (url, callback) {
-            var image = new Image();
-
-            image.onload = function () {
-                var canvas = document.createElement("canvas");
-                canvas.width = this.naturalWidth; // or 'width' if you want a special/scaled size
-                canvas.height = this.naturalHeight; // or 'height' if you want a special/scaled size
-
-                canvas.getContext("2d").drawImage(this, 0, 0);
-
-                callback(canvas.toDataURL("image/png"));
-                canvas.remove();
-            };
-
-            image.src = url;
-        },
+        // _getDataUri: function (url, callback) {
+        //     var image = new Image();
+        //     image.onload = function () {
+        //         var canvas = document.createElement("canvas");
+        //         canvas.width = this.naturalWidth; // or 'width' if you want a special/scaled size
+        //         canvas.height = this.naturalHeight; // or 'height' if you want a special/scaled size
+        //         canvas.getContext("2d").drawImage(this, 0, 0);
+        //         callback(canvas.toDataURL("image/png"));
+        //         canvas.remove();
+        //     };
+        //     image.src = url;
+        // },
 
         _getImgDataURL: function (svgRoot) {
             var images, len, canvas, ctx, ur, i;
