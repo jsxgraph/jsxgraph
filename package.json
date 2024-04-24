@@ -9,7 +9,6 @@
   },
   "main": "./distrib/jsxgraphcore.js",
   "module": "./src/index.js",
-  "type": "module",
   "types": "./src/index.d.ts",
   "files": [
     "src",

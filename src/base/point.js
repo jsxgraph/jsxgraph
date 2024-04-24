@@ -734,8 +734,12 @@ JXG.createIntersectionPoint = function (board, parents, attributes) {
  * </script><pre>
  */
 JXG.createOtherIntersectionPoint = function (board, parents, attributes) {
-    var el, el1, el2, other;
+    var el, el1, el2, i,
+    others, func, input,
+    isGood = true,
+    attr = Type.copyAttributes(attributes, board.options, 'otherintersection');
 
+/*
     if (
         parents.length !== 3 ||
         !Type.isPoint(parents[2]) ||
@@ -791,6 +795,73 @@ JXG.createOtherIntersectionPoint = function (board, parents, attributes) {
 
         return [poly1[0], poly2[0]];
     };
+*/
+    if (parents.length !== 3) {
+        isGood = false;
+    } else {
+        el1 = board.select(parents[0]);
+        el2 = board.select(parents[1]);
+        if (Type.isArray(parents[2])) {
+            others = parents[2];
+        } else {
+            others = [parents[2]];
+        }
+
+        for (i = 0; i < others.length; i++) {
+            others[i] = board.select(others[i]);
+            if (!Type.isPoint(others[i])) {
+                isGood = false;
+                break;
+            }
+        }
+        if (isGood) {
+            input = [el1, el2];
+            // Sort parent elements in order: curve, circle, line
+            input.sort(function (a, b) { return b.elementClass - a.elementClass; });
+
+            // Two lines are forbidden:
+            if ([Const.OBJECT_CLASS_CIRCLE, Const.OBJECT_CLASS_CURVE].indexOf(input[0].elementClass) < 0) {
+                isGood = false;
+            } else if ([Const.OBJECT_CLASS_CIRCLE, Const.OBJECT_CLASS_CURVE, Const.OBJECT_CLASS_LINE].indexOf(input[1].elementClass) < 0) {
+                isGood = false;
+            }
+        }
+    }
+
+    if (!isGood) {
+        throw new Error(
+            "JSXGraph: Can't create 'other intersection point' with parent types '" +
+                typeof parents[0] + "',  '" + typeof parents[1] + "'and  '" + typeof parents[2] + "'." +
+                "\nPossible parent types: [circle|curve|line,circle|curve|line, point], not two lines"
+        );
+    }
+
+    el = board.create('point', [0, 0, 0], attr);
+    // el.visProp.alwaysintersect is evaluated as late as in the returned function
+    func = Geometry.otherIntersectionFunction(input, others, el.visProp.alwaysintersect, el.visProp.precision);
+    el.addConstraint([func]);
+
+    el.type = Const.OBJECT_TYPE_INTERSECTION;
+    el.elType = "otherintersection";
+    el.setParents([el1.id, el2.id]);
+    el.addParents(others);
+
+    el1.addChild(el);
+    el2.addChild(el);
+
+    if (el1.elementClass === Const.OBJECT_CLASS_CIRCLE) {
+        // circle, circle|line
+        el.generatePolynomial = function () {
+            var poly1 = el1.generatePolynomial(el),
+                poly2 = el2.generatePolynomial(el);
+
+            if (poly1.length === 0 || poly2.length === 0) {
+                return [];
+            }
+
+            return [poly1[0], poly2[0]];
+        };
+    }
 
     return el;
 };

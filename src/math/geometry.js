@@ -1569,6 +1569,59 @@ JXG.extend(
             return func;
         },
 
+        otherIntersectionFunction: function(input, others, alwaysintersect, precision) {
+            var func, board,
+                el1, el2,
+                that = this;
+
+            el1 = input[0];
+            el2 = input[1];
+            board = el1.board;
+            func = function() {
+                var i, k, c, d,
+                    isClose,
+                    le = others.length,
+                    eps = Type.evaluate(precision);
+
+                for (i = le; i >= 0; i--) {
+                    if (el1.elementClass ===  Const.OBJECT_CLASS_CIRCLE &&
+                        [Const.OBJECT_CLASS_CIRCLE, Const.OBJECT_CLASS_LINE].indexOf(el2.elementClass) >= 0) {
+                        // circle, circle|line
+                        c = that.meet(el1.stdform, el2.stdform, i, board);
+                    } else if (el1.elementClass ===  Const.OBJECT_CLASS_CURVE &&
+                        [Const.OBJECT_CLASS_CURVE, Const.OBJECT_CLASS_CIRCLE].indexOf(el2.elementClass) >= 0) {
+                        // curve, circle|curve
+                        c = that.meetCurveCurve(el1, el2, i, 0, board, 'segment');
+                    } else if (el1.elementClass ===  Const.OBJECT_CLASS_CURVE && el2.elementClass === Const.OBJECT_CLASS_LINE) {
+                        // curve, line
+                        if (Type.exists(el1.dataX)) {
+                            c = JXG.Math.Geometry.meetCurveLine(el1, el2, i, el1.board, Type.evaluate(alwaysintersect));
+                        } else {
+                            c = JXG.Math.Geometry.meetCurveLineContinuous(el1, el2, i, el1.board);
+                        }
+                    }
+
+                    // If the intersection is close to one of the points in other
+                    // we have to search for another intersection point.
+                    isClose = false;
+                    for (k = 0; !isClose && k < le; k++) {
+                        d = c.distance(JXG.COORDS_BY_USER, others[k].coords);
+                        if (d < eps) {
+                            isClose = true;
+                       }
+                    }
+                    if (!isClose) {
+                        // We are done, the intersection is away from any other
+                        // intersection point.
+                        return c;
+                    }
+                }
+                // Otherwise we return the last intersection point
+                return c;
+            };
+            return func;
+        },
+
         /**
          * Generate the function which computes the data of the intersection.
          */
@@ -1941,22 +1994,14 @@ JXG.extend(
          * @returns {JXG.Coords} Coords object containing the intersection.
          */
         meetCurveLineContinuous: function (cu, li, nr, board, testSegment) {
-            var t,
-                func0,
-                func1,
-                v,
-                x,
-                y,
-                z,
+            var func0, func1,
+                t, v, x, y, z,
                 eps = Mat.eps,
                 epsLow = Mat.eps,
                 steps,
                 delta,
-                tnew,
-                i,
-                tmin,
-                fmin,
-                ft;
+                tnew, tmin, fmin,
+                i, ft;
 
             v = this.meetCurveLineDiscrete(cu, li, nr, board, testSegment);
             x = v.usrCoords[1];
@@ -1968,9 +2013,10 @@ JXG.extend(
                 if (t > cu.maxX() || t < cu.minX()) {
                     return Infinity;
                 }
-                c1 = x - cu.X(t);
-                c2 = y - cu.Y(t);
+                c1 = cu.X(t) - x;
+                c2 = cu.Y(t) - y;
                 return c1 * c1 + c2 * c2;
+                // return c1 * (cu.X(t + h) - cu.X(t - h)) + c2 * (cu.Y(t + h) - cu.Y(t - h)) / h;
             };
 
             func1 = function (t) {
@@ -1982,7 +2028,6 @@ JXG.extend(
             steps = 50;
             delta = (cu.maxX() - cu.minX()) / steps;
             tnew = cu.minX();
-
             fmin = 0.0001; //eps;
             tmin = NaN;
             for (i = 0; i < steps; i++) {
@@ -2034,17 +2079,13 @@ JXG.extend(
          * the ideal point [0,1,0] is returned.
          */
         meetCurveLineDiscrete: function (cu, li, nr, board, testSegment) {
-            var i,
-                j,
+            var i, j,
                 n = Type.evaluate(nr),
-                p1,
-                p2,
-                p,
-                q,
+                p1, p2,
+                p, q,
                 lip1 = li.point1.coords.usrCoords,
                 lip2 = li.point2.coords.usrCoords,
-                d,
-                res,
+                d, res,
                 cnt = 0,
                 len = cu.numberPoints,
                 ev_sf = Type.evaluate(li.visProp.straightfirst),
@@ -2113,7 +2154,7 @@ JXG.extend(
 
         /**
          * Find the n-th intersection point of two curves named red (first parameter) and blue (second parameter).
-         * We go through each segment of the red curve and search if there is an intersection with a segemnt of the blue curve.
+         * We go through each segment of the red curve and search if there is an intersection with a segment of the blue curve.
          * This double loop, i.e. the outer loop runs along the red curve and the inner loop runs along the blue curve, defines
          * the n-th intersection point. The segments are either line segments or Bezier curves of degree 3. This depends on
          * the property bezierDegree of the curves.

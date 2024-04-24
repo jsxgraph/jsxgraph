@@ -6626,6 +6626,37 @@ JXG.Options = {
         /**#@-*/
     },
 
+    /* special otherintersection point options */
+    otherintersection: {
+        /**#@+
+         * @visprop
+         */
+
+        /**
+         * This flag sets the behavior of other intersection points of e.g.
+         * a circle and a segment. If true, the intersection is treated as intersection with a line. If false
+         * the intersection point exists if the segment intersects setwise.
+         *
+         * @name Otherintersection.alwaysIntersect
+         * @type Boolean
+         * @default true
+         */
+        alwaysIntersect: true,
+
+        /**
+         * Minimum distance (in user coordinates) for points to be defined as different.
+         * For implicit curves and other non approximate curves this number might have to be
+         * increased.
+         *
+         * @name Otherintersection.precision
+         * @type Number
+         * @default 0.001
+         */
+        precision: 0.001
+
+        /**#@-*/
+    },
+
     /* special options for parallel lines */
     parallel: {
         /**#@+
