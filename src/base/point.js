@@ -701,15 +701,19 @@ JXG.createIntersectionPoint = function (board, parents, attributes) {
 /**
  * @class This element is used to provide a constructor for the "other" intersection point.
  * @pseudo
- * @description An intersection point is a point which lives on two Lines or Circles or one Line and one Circle at the same time, i.e.
- * an intersection point of the two elements. Additionally, one intersection point is provided. The function returns the other intersection point.
+ * @description If two elements of type curve, circle or line intersect in more than one point, with this element it is possible
+ * to construct the "other" intersection. This is a an intersection which is different from a supplied point or different from any
+ * point in an array of supplied points. This might be helpful in situtations where one intersection point is already part of the construction
+ * or in situtation where the order of the intersection points changes while interacting with the construction.
+ *
  * @name OtherIntersection
  * @augments JXG.Point
  * @constructor
  * @type JXG.Point
  * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
- * @param {JXG.Line,JXG.Circle_JXG.Line,JXG.Circle_JXG.Point} el1,el2,p The result will be a intersection point on el1 and el2. i determines the
- * intersection point different from p:
+ * @param {JXG.Line,JXG.Circle_JXG.Line,JXG.Circle_JXG.Point,Array} el1,el2,p Two elements which are intersected and a point or an array of points
+ * which have to be different from the new intersection point.
+ *
  * @example
  * // Create an intersection point of circle and line
  * var p1 = board.create('point', [2.0, 2.0]);
@@ -719,8 +723,8 @@ JXG.createIntersectionPoint = function (board, parents, attributes) {
  * var p3 = board.create('point', [2.0, 2.0]);
  * var l1 = board.create('line', [p2, p3]);
  *
- * var i = board.create('intersection', [c1, l1, 0]);
- * var j = board.create('otherintersection', [c1, l1, i]);
+ * var p1 = board.create('intersection', [c1, l1, 0]);
+ * var p2 = board.create('otherintersection', [c1, l1, p1]);
  * </pre><div class="jxgbox" id="JXG45e25f12-a1de-4257-a466-27a2ae73614c" style="width: 300px; height: 300px;"></div>
  * <script type="text/javascript">
  *   var ipex2_board = JXG.JSXGraph.initBoard('JXG45e25f12-a1de-4257-a466-27a2ae73614c', {boundingbox: [-1, 7, 7, -1], axis: true, showcopyright: false, shownavigation: false});
@@ -732,6 +736,72 @@ JXG.createIntersectionPoint = function (board, parents, attributes) {
  *   var ipex2_i = ipex2_board.create('intersection', [ipex2_c1, ipex2_l1, 0], {name:'D'});
  *   var ipex2_j = ipex2_board.create('otherintersection', [ipex2_c1, ipex2_l1, ipex2_i], {name:'E'});
  * </script><pre>
+ *
+ * @example
+ *  // circle / circle
+ *  var c1 = board.create('circle', [[0, 0], 3]);
+ *  var c2 = board.create('circle', [[2, 2], 3]);
+ *
+ *  var p1 = board.create('intersection', [c1, c2, 0]);
+ *  var p2 = board.create('otherintersection', [c1, c2, p1]);
+ *
+ * </pre><div id="JXGdb5c974c-3092-4cdf-b5ef-d0af4a912581" class="jxgbox" style="width: 300px; height: 300px;"></div>
+ * <script type="text/javascript">
+ *     (function() {
+ *         var board = JXG.JSXGraph.initBoard('JXGdb5c974c-3092-4cdf-b5ef-d0af4a912581',
+ *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
+ *           var c1 = board.create('circle', [[0, 0], 3]);
+ *           var c2 = board.create('circle', [[2, 2], 3]);
+ *
+ *           var p1 = board.create('intersection', [c1, c2, 0]);
+ *           var p2 = board.create('otherintersection', [c1, c2, p1]);
+ *     })();
+ * </script><pre>
+ *
+ * @example
+ *  // curve / line
+ *  var curve = board.create('implicitcurve', ['-(y**2) + x**3 - 2 * x + 1'], { strokeWidth: 2 });
+ *  var A = board.create('glider', [-1.5, 1, curve]);
+ *  var B = board.create('glider', [0.5, 0.5, curve]);
+ *  var line = board.create('line', [A, B], { color: 'black', strokeWidth: 1 });
+ *  var C = board.create('otherintersection', [curve, line, [A, B]], {precision: 0.01});
+ *  var D = board.create('point', [() => C.X(), () => -C.Y()], { name: '-C = A + B' });
+ *
+ * </pre><div id="JXG033f15b0-f5f1-4003-ab6a-b7e13e867fbd" class="jxgbox" style="width: 300px; height: 300px;"></div>
+ * <script type="text/javascript">
+ *     (function() {
+ *         var board = JXG.JSXGraph.initBoard('JXG033f15b0-f5f1-4003-ab6a-b7e13e867fbd',
+ *             {boundingbox: [-2, 2, 2, -2], axis: true, showcopyright: false, shownavigation: false});
+ *           var curve = board.create('implicitcurve', ['-(y**2) + x**3 - 2 * x + 1'], { strokeWidth: 2 });
+ *           var A = board.create('glider', [-1.5, 1, curve]);
+ *           var B = board.create('glider', [0.5, 0.5, curve]);
+ *           var line = board.create('line', [A, B], { color: 'black', strokeWidth: 1 });
+ *           var C = board.create('otherintersection', [curve, line, [A, B]], {precision: 0.01});
+ *           var D = board.create('point', [() => C.X(), () => -C.Y()], { name: '-C = A + B' });
+ *     })();
+ * </script><pre>
+ *
+ * @example
+ *  // curve / curve
+ *  var c1 = board.create('functiongraph', ['x**2 - 3'], { strokeWidth: 2 });
+ *  var A = board.create('point', [0, 2]);
+ *  var c2 = board.create('functiongraph', [(x) => -(x**2) + 2 * A.X() * x + A.Y() - A.X()**2], { strokeWidth: 2 });
+ *  var p1 = board.create('intersection', [c1, c2]);
+ *  var p2 = board.create('otherintersection', [c1, c2, [p1]]);
+ *
+ * </pre><div id="JXG29359aa9-3066-4f45-9e5d-d74201b991d3" class="jxgbox" style="width: 300px; height: 300px;"></div>
+ * <script type="text/javascript">
+ *     (function() {
+ *         var board = JXG.JSXGraph.initBoard('JXG29359aa9-3066-4f45-9e5d-d74201b991d3',
+ *             {boundingbox: [-5, 5, 5, -5], axis: true, showcopyright: false, shownavigation: false});
+ *           var c1 = board.create('functiongraph', ['x**2 - 3'], { strokeWidth: 2 });
+ *           var A = board.create('point', [0, 2]);
+ *           var c2 = board.create('functiongraph', [(x) => -(x**2) + 2 * A.X() * x + A.Y() - A.X()**2], { strokeWidth: 2 });
+ *           var p1 = board.create('intersection', [c1, c2]);
+ *           var p2 = board.create('otherintersection', [c1, c2, [p1]]);
+ *     })();
+ * </script><pre>
+ *
  */
 JXG.createOtherIntersectionPoint = function (board, parents, attributes) {
     var el, el1, el2, i,
@@ -739,63 +809,6 @@ JXG.createOtherIntersectionPoint = function (board, parents, attributes) {
     isGood = true,
     attr = Type.copyAttributes(attributes, board.options, 'otherintersection');
 
-/*
-    if (
-        parents.length !== 3 ||
-        !Type.isPoint(parents[2]) ||
-        (parents[0].elementClass !== Const.OBJECT_CLASS_LINE &&
-            parents[0].elementClass !== Const.OBJECT_CLASS_CIRCLE) ||
-        (parents[1].elementClass !== Const.OBJECT_CLASS_LINE &&
-            parents[1].elementClass !== Const.OBJECT_CLASS_CIRCLE)
-    ) {
-        // Failure
-        throw new Error(
-            "JSXGraph: Can't create 'other intersection point' with parent types '" +
-                typeof parents[0] +
-                "',  '" +
-                typeof parents[1] +
-                "'and  '" +
-                typeof parents[2] +
-                "'." +
-                "\nPossible parent types: [circle|line,circle|line,point]"
-        );
-    }
-
-    el1 = board.select(parents[0]);
-    el2 = board.select(parents[1]);
-    other = board.select(parents[2]);
-
-    el = board.create("point", [
-            function () {
-                var c = Geometry.meet(el1.stdform, el2.stdform, 0, el1.board),
-                    d = c.distance(JXG.COORDS_BY_USER, other.coords);
-                if (d > Mat.eps) {
-                    return c;
-                }
-
-                return Geometry.meet(el1.stdform, el2.stdform, 1, el1.board);
-            }
-        ], attributes
-    );
-
-    el.type = Const.OBJECT_TYPE_INTERSECTION;
-    el.elType = "otherintersection";
-    el.setParents([el1.id, el2.id, other]);
-
-    el1.addChild(el);
-    el2.addChild(el);
-
-    el.generatePolynomial = function () {
-        var poly1 = el1.generatePolynomial(el),
-            poly2 = el2.generatePolynomial(el);
-
-        if (poly1.length === 0 || poly2.length === 0) {
-            return [];
-        }
-
-        return [poly1[0], poly2[0]];
-    };
-*/
     if (parents.length !== 3) {
         isGood = false;
     } else {
