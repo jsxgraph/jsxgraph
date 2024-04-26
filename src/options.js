@@ -172,6 +172,31 @@ JXG.Options = {
         browserPan: false,
 
         /**
+         *
+         * Maximum time delay (in msec) between two clicks to be considered
+         * as double click. This is necessary to suppress click events
+         * if there is a double click event,
+         * see {@link https://developer.mozilla.org/en-US/docs/Web/API/Element/dblclick_event}.
+         * <p>
+         * This attribute interferes with the delay time of the OS and browser:
+         * <ul>
+         * <li> If the user clicks two times than the browser triggers two click events.
+         * <li> Additionally, the browser triggers a double click event if the time between two clicks of the user is shorter than a maximum delay
+         * setting of the OS and the browser.
+         * <li> That is: in JavaScript, a double click event is preceded by two click events.
+         * <li> In JSXGraph, any click event fired by the browser is hold back for the time set by the
+         * attribute clickDelay. If in this time span a double click event is triggered by the browser,
+         * the click event is discarded and the double click event is fired.
+         * <li> If there is not double click event in this time span, the click event is fired.
+         * </ul>
+         *
+         * @name JXG.Board#clickDelay
+         * @type Number
+         * @default 500
+         */
+        clickDelay: 500,
+
+        /**
          * Attributes for the default axes in case of the attribute
          * axis:true in {@link JXG.JSXGraph#initBoard}.
          *

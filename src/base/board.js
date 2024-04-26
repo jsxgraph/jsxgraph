@@ -2790,48 +2790,49 @@ JXG.extend(
         },
 
         /**
-         * Handle entries of this.downObjects to control click and dblclick events.
-         * @param {Number} i
-         * @private
-         */
-        _waitForDblClick: function(i) {
-            var eh = this.downObjects[i].eventHandlers;
-
-            if ((Type.exists(eh.dblclick) && eh.dblclick.length > 0) ||
-                (Type.exists(eh.mousedblclick) && eh.mousedblclick.length > 0)
-            ) {
-
-                eh.clicks += 1;
-                if (eh.clicks !== 2) {
-                    // If there is dblclick event handler registered,
-                    // we remove the element from downObjects on the first click.
-                    // If there is a second click, it will appear again in
-                    // downObjects and handled in the dblclick listener.
-                    //
-                    // However, we set a timer which resets the clicks to zero after 400 ms.
-                    // This cancels the dblclick event.
-                    this.downObjects.splice(i, 1);
-                    setTimeout(function() { eh.clicks = 0; }, 400);
-                }
-            } else {
-                // If there is no dblclick event we can (and have to) remove the
-                // element from downObjects now.
-                this.downObjects.splice(i, 1);
-            }
-        },
-
-        /**
          * This method is called by the browser when a pointer device clicks on the screen.
          * @param {Event} evt The browsers event object.
          */
         pointerClickListener: function (evt) {
-            var i;
+            var that = this,
+                delay = Type.evaluate(this.attr.clickdelay);
 
-            this.triggerEventHandlers(['click', 'pointerclick'], [evt]);
+            this._preventSingleClick = false;
+            this._singleClickTimer = setTimeout(function() {
+                var i;
+
+                if (!that._preventSingleClick) {
+                    that.triggerEventHandlers(['click', 'pointerclick'], [evt]);
+                    if (!that.selectingMode) {
+                        for (i = that.downObjects.length - 1; i > -1; i--) {
+                            that.downObjects[i].triggerEventHandlers(['click', 'pointerclick'], [evt]);
+                            that.downObjects.splice(i, 1);
+                        }
+                    }
+                }
+            }, delay);
+            evt.stopPropagation();
+        },
+
+        /**
+         * This method is called by the browser when a pointer device double clicks on the screen.
+         * @param {Event} evt The browsers event object.
+         */
+        pointerDblClickListener: function (evt) {
+            var i,
+                done = {};
+
+            this._preventSingleClick = true;
+            clearTimeout(this._singleClickTimer);
+
+            this.triggerEventHandlers(['dblclick', 'pointerdblclick'], [evt]);
             if (!this.selectingMode) {
                 for (i = this.downObjects.length - 1; i > -1; i--) {
-                    this.downObjects[i].triggerEventHandlers(['click', 'pointerclick'], [evt]);
-                    this._waitForDblClick(i);
+                    if (!(this.downObjects[i].id in done)) {
+                        this.downObjects[i].triggerEventHandlers(['dblclick', 'pointerdblclick'], [evt]);
+                        done[this.downObjects[i].id] = true;
+                    }
+                    this.downObjects.splice(i, 1);
                 }
             }
             evt.stopPropagation();
@@ -2842,35 +2843,23 @@ JXG.extend(
          * @param {Event} evt The browsers event object.
          */
         mouseClickListener: function (evt) {
-            var i;
-            this.triggerEventHandlers(['click', 'mouseclick'], [evt]);
+            var that = this,
+                delay = Type.evaluate(this.attr.clickdelay);
 
-            if (!this.selectingMode) {
-                for (i = this.downObjects.length - 1; i > -1; i--) {
-                    this.downObjects[i].triggerEventHandlers(['click', 'mouseclick'], [evt]);
-                    this._waitForDblClick(i);
+            this._preventSingleClick = false;
+            this._singleClickTimer = setTimeout(function() {
+                var i;
+
+                if (!that._preventSingleClick) {
+                    that.triggerEventHandlers(['click', 'mouseclick'], [evt]);
+                    if (!that.selectingMode) {
+                        for (i = that.downObjects.length - 1; i > -1; i--) {
+                            that.downObjects[i].triggerEventHandlers(['click', 'mouseclick'], [evt]);
+                            that.downObjects.splice(i, 1);
+                        }
+                    }
                 }
-            }
-
-        },
-
-        /**
-         * This method is called by the browser when a pointer device double clicks on the screen.
-         * @param {Event} evt The browsers event object.
-         */
-        pointerDblClickListener: function (evt) {
-            var i;
-
-            this.triggerEventHandlers(['dblclick', 'pointerdblclick'], [evt]);
-            if (!this.selectingMode) {
-                for (i = this.downObjects.length - 1; i > -1; i--) {
-                    this.downObjects[i].triggerEventHandlers(['dblclick', 'pointerdblclick'], [evt]);
-
-                    this.downObjects[i].eventHandlers.clicks = 0;
-                    this.downObjects.splice(i, 1);
-                }
-            }
-            evt.stopPropagation();
+            }, delay);
         },
 
         /**
@@ -2878,13 +2867,19 @@ JXG.extend(
          * @param {Event} evt The browsers event object.
          */
         mouseDblClickListener: function (evt) {
-            var i;
+            var i,
+                done = {};
+
+            this._preventSingleClick = true;
+            clearTimeout(this._singleClickTimer);
+
             this.triggerEventHandlers(['dblclick', 'mousedblclick'], [evt]);
             if (!this.selectingMode) {
                 for (i = this.downObjects.length - 1; i > -1; i--) {
-                    this.downObjects[i].triggerEventHandlers(['dblclick', 'mousedblclick'], [evt]);
-
-                    this.downObjects[i].eventHandlers.clicks = 0;
+                    if (!(this.downObjects[i].id in done)) {
+                        this.downObjects[i].triggerEventHandlers(['dblclick', 'mousedblclick'], [evt]);
+                        done[this.downObjects[i].id] = true;
+                    }
                     this.downObjects.splice(i, 1);
                 }
             }
@@ -7136,6 +7131,7 @@ JXG.extend(
          * @event
          * @description Whenever the user clicks on the board.
          * @name JXG.Board#click
+         * @see JXG.Board#clickDelay
          * @param {Event} e The browser's event object.
          */
         __evt__click: function (e) { },
@@ -7146,6 +7142,7 @@ JXG.extend(
          * This event works on desktop browser, but is undefined
          * on mobile browsers.
          * @name JXG.Board#dblclick
+         * @see JXG.Board#clickDelay
          * @param {Event} e The browser's event object.
          */
         __evt__dblclick: function (e) { },
@@ -7162,6 +7159,7 @@ JXG.extend(
          * @event
          * @description Whenever the user double clicks on the board with a mouse device.
          * @name JXG.Board#mousedblclick
+         * @see JXG.Board#clickDelay
          * @param {Event} e The browser's event object.
          */
         __evt__mousedblclick: function (e) { },
@@ -7180,6 +7178,7 @@ JXG.extend(
          * This event works on desktop browser, but is undefined
          * on mobile browsers.
          * @name JXG.Board#pointerdblclick
+         * @see JXG.Board#clickDelay
          * @param {Event} e The browser's event object.
          */
         __evt__pointerdblclick: function (e) { },
