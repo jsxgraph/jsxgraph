@@ -2791,10 +2791,13 @@ JXG.extend(
         },
 
         /**
-         * This method is called by the browser when a pointer device clicks on the screen.
+         * Internal handling of click events for pointers and mouse.
+         *
          * @param {Event} evt The browsers event object.
+         * @param {Array} evtArray list of event names
+         * @private
          */
-        pointerClickListener: function (evt) {
+        _handleClicks: function(evt, evtArray) {
             var that = this,
                 el, delay, suppress;
 
@@ -2815,10 +2818,10 @@ JXG.extend(
                 this._singleClickTimer = setTimeout(function() {
                     if (!that._preventSingleClick) {
                         // Fire click event and remove element from click list
-                        that.triggerEventHandlers(['click', 'pointerclick'], [evt]);
+                        that.triggerEventHandlers(evtArray, [evt]);
                         for (el in that.clickObjects) {
                             if (that.clickObjects.hasOwnProperty(el)) {
-                                that.clickObjects[el].triggerEventHandlers(['click', 'pointerclick'], [evt]);
+                                that.clickObjects[el].triggerEventHandlers(evtArray, [evt]);
                                 delete that.clickObjects[el];
                             }
                         }
@@ -2828,10 +2831,10 @@ JXG.extend(
                 // dblclick is preceded by two click events
 
                 // Fire click events
-                that.triggerEventHandlers(['click', 'pointerclick'], [evt]);
+                that.triggerEventHandlers(evtArray, [evt]);
                 for (el in that.clickObjects) {
                     if (that.clickObjects.hasOwnProperty(el)) {
-                        that.clickObjects[el].triggerEventHandlers(['click', 'pointerclick'], [evt]);
+                        that.clickObjects[el].triggerEventHandlers(evtArray, [evt]);
                     }
                 }
 
@@ -2845,6 +2848,45 @@ JXG.extend(
                 }, delay);
             }
             evt.stopPropagation();
+        },
+
+        /**
+         * Internal handling of dblclick events for pointers and mouse.
+         *
+         * @param {Event} evt The browsers event object.
+         * @param {Array} evtArray list of event names
+         * @private
+         */
+        _handleDblClicks: function(evt, evtArray) {
+            var el;
+
+            if (this.selectingMode) {
+                evt.stopPropagation();
+                return;
+            }
+
+            // Notify that a dblclick has happened
+            this._preventSingleClick = true;
+            clearTimeout(this._singleClickTimer);
+
+            // Fire dblclick event
+            this.triggerEventHandlers(evtArray, [evt]);
+            for (el in this.clickObjects) {
+                if (this.clickObjects.hasOwnProperty(el)) {
+                    this.clickObjects[el].triggerEventHandlers(evtArray, [evt]);
+                    delete this.clickObjects[el];
+                }
+            }
+
+            evt.stopPropagation();
+        },
+
+        /**
+         * This method is called by the browser when a pointer device clicks on the screen.
+         * @param {Event} evt The browsers event object.
+         */
+        pointerClickListener: function (evt) {
+            this._handleClicks(evt, ['click', 'pointerclick']);
         },
 
         /**
@@ -2852,27 +2894,7 @@ JXG.extend(
          * @param {Event} evt The browsers event object.
          */
         pointerDblClickListener: function (evt) {
-            var el;
-
-            if (this.selectingMode) {
-                evt.stopPropagation();
-                return;
-            }
-
-            // Notify that a dblclick has happened
-            this._preventSingleClick = true;
-            clearTimeout(this._singleClickTimer);
-
-            // Fire dblclick event
-            this.triggerEventHandlers(['dblclick', 'pointerdblclick'], [evt]);
-            for (el in this.clickObjects) {
-                if (this.clickObjects.hasOwnProperty(el)) {
-                    this.clickObjects[el].triggerEventHandlers(['dblclick', 'pointerdblclick'], [evt]);
-                    delete this.clickObjects[el];
-                }
-            }
-
-            evt.stopPropagation();
+            this._handleDblClicks(evt, ['dblclick', 'pointerdblclick']);
         },
 
         /**
@@ -2880,56 +2902,7 @@ JXG.extend(
          * @param {Event} evt The browsers event object.
          */
         mouseClickListener: function (evt) {
-            var that = this,
-                el, delay, suppress;
-
-            if (this.selectingMode) {
-                evt.stopPropagation();
-                return;
-            }
-
-            delay = Type.evaluate(this.attr.clickdelay);
-            suppress = Type.evaluate(this.attr.dblclicksuppressclick);
-
-            if (suppress) {
-                // dblclick suppresses previous click events
-                this._preventSingleClick = false;
-
-                // Wait if there is a dblclick event.
-                // If not fire a click event
-                this._singleClickTimer = setTimeout(function() {
-                    if (!that._preventSingleClick) {
-                        // Fire click event and remove element from click list
-                        that.triggerEventHandlers(['click', 'mouseclick'], [evt]);
-                        for (el in that.clickObjects) {
-                            if (that.clickObjects.hasOwnProperty(el)) {
-                                that.clickObjects[el].triggerEventHandlers(['click', 'mouseclick'], [evt]);
-                                delete that.clickObjects[el];
-                            }
-                        }
-                    }
-                }, delay);
-            } else {
-                // dblclick is preceded by two click events
-
-                // Fire click events
-                that.triggerEventHandlers(['click', 'mouseclick'], [evt]);
-                for (el in that.clickObjects) {
-                    if (that.clickObjects.hasOwnProperty(el)) {
-                        that.clickObjects[el].triggerEventHandlers(['click', 'mouseclick'], [evt]);
-                    }
-                }
-
-                // Clear list of clicked elements with a delay
-                setTimeout(function() {
-                    for (el in that.clickObjects) {
-                        if (that.clickObjects.hasOwnProperty(el)) {
-                            delete that.clickObjects[el];
-                        }
-                    }
-                }, delay);
-            }
-            evt.stopPropagation();
+            this._handleClicks(evt, ['click', 'mouseclick']);
         },
 
         /**
@@ -2937,25 +2910,7 @@ JXG.extend(
          * @param {Event} evt The browsers event object.
          */
         mouseDblClickListener: function (evt) {
-            var el;
-
-            if (this.selectingMode) {
-                evt.stopPropagation();
-                return;
-            }
-
-            // Notify that a dblclick has happened
-            this._preventSingleClick = true;
-            clearTimeout(this._singleClickTimer);
-
-            // Fire dblclick event
-            this.triggerEventHandlers(['dblclick', 'mousedblclick'], [evt]);
-            for (el in this.clickObjects) {
-                if (this.clickObjects.hasOwnProperty(el)) {
-                    this.clickObjects[el].triggerEventHandlers(['dblclick', 'mousedblclick'], [evt]);
-                    delete this.clickObjects[el];
-                }
-            }
+            this._handleDblClicks(evt, ['dblclick', 'mousedblclick']);
         },
 
         // /**
@@ -7217,6 +7172,7 @@ JXG.extend(
          * on mobile browsers.
          * @name JXG.Board#dblclick
          * @see JXG.Board#clickDelay
+         * @see JXG.Board#dblClickSuppressClick
          * @param {Event} e The browser's event object.
          */
         __evt__dblclick: function (e) { },
