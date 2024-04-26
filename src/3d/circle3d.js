@@ -50,7 +50,7 @@ import Geometry from '../math/geometry.js';
  * @param {Object} attributes
  * @see JXG.Board#generateName
  */
-JXG.Circle3D = function (view, center, normal, radius, signed, attributes) {
+JXG.Circle3D = function (view, center, normal, radius, attributes) {
     this.constructor(view.board, attributes, Const.OBJECT_TYPE_CIRCLE3D, Const.OBJECT_CLASS_3D);
     this.constructor3D(view, "circle3d");
 
@@ -69,14 +69,6 @@ JXG.Circle3D = function (view, center, normal, radius, signed, attributes) {
      */
     this.normal = [0, 0, 0];
 
-    /**
-     * If `signed` is false—its default–the absolute value of the radius is used.
-     * If `signed` is true, the circle only displays when its radius is positive.
-     * @type Number
-     * @private
-     */
-    this.signed = signed;
-    
     /**
      * The circle's underlying Curve3D.
      */
@@ -171,9 +163,7 @@ JXG.extend(
         update: function () {
             this.updateNormal();
             this.updateFrame();
-            if (this.signed) {
-                this.curve.visProp.visible = this.Radius() >= 0;
-            }
+            this.curve.visProp.visible = !isNaN(this.Radius());
             return this;
         },
 
@@ -206,11 +196,7 @@ JXG.extend(
                 return this.Radius();
             }
 
-            if (this.signed) {
-                return this.updateRadius();
-            } else {
-                return Math.abs(this.updateRadius());
-            }
+            return Math.abs(this.updateRadius());
         },
 
         normalizeFrame: function() {
@@ -254,11 +240,10 @@ JXG.createCircle3D = function (board, parents, attributes) {
         center = Type.providePoints3D(view, [parents[1]], attributes, 'line3d', ['point'])[0],
         normal = parents[2],
         radius = parents[3],
-        signed = (parents.length > 3) ? parents[4] : false,
         el, curve;
 
     // create element
-    el = new JXG.Circle3D(view, center, normal, radius, signed, attr);
+    el = new JXG.Circle3D(view, center, normal, radius, attr);
 
     // update scene tree
     el.center.addChild(el);
@@ -351,7 +336,7 @@ JXG.createIntersectionCircle3D = function (board, parents, attributes) {
 
     func = Geometry.intersectionFunction3D(view, el1, el2);
     center = view.create('point3d', func[0], {visible: false});
-    ixnCircle = view.create('circle3d', [center, func[1], func[2], true], attr);
+    ixnCircle = view.create('circle3d', [center, func[1], func[2]], attr);
 
     try {
         el1.addChild(ixnCircle);
