@@ -453,6 +453,7 @@ JXG.Board = function (container, renderer, id,
      * @type Array
      */
     this.downObjects = [];
+    this.clickObjects = {};
 
     /**
      * Collects all elements that have keyboard focus. Should be either one or no element.
@@ -2795,22 +2796,54 @@ JXG.extend(
          */
         pointerClickListener: function (evt) {
             var that = this,
-                delay = Type.evaluate(this.attr.clickdelay);
+                el, delay, suppress;
 
-            this._preventSingleClick = false;
-            this._singleClickTimer = setTimeout(function() {
-                var i;
+            if (this.selectingMode) {
+                evt.stopPropagation();
+                return;
+            }
 
-                if (!that._preventSingleClick) {
-                    that.triggerEventHandlers(['click', 'pointerclick'], [evt]);
-                    if (!that.selectingMode) {
-                        for (i = that.downObjects.length - 1; i > -1; i--) {
-                            that.downObjects[i].triggerEventHandlers(['click', 'pointerclick'], [evt]);
-                            that.downObjects.splice(i, 1);
+            delay = Type.evaluate(this.attr.clickdelay);
+            suppress = Type.evaluate(this.attr.dblclicksuppressclick);
+
+            if (suppress) {
+                // dblclick suppresses previous click events
+                this._preventSingleClick = false;
+
+                // Wait if there is a dblclick event.
+                // If not fire a click event
+                this._singleClickTimer = setTimeout(function() {
+                    if (!that._preventSingleClick) {
+                        // Fire click event and remove element from click list
+                        that.triggerEventHandlers(['click', 'pointerclick'], [evt]);
+                        for (el in that.clickObjects) {
+                            if (that.clickObjects.hasOwnProperty(el)) {
+                                that.clickObjects[el].triggerEventHandlers(['click', 'pointerclick'], [evt]);
+                                delete that.clickObjects[el];
+                            }
                         }
                     }
+                }, delay);
+            } else {
+                // dblclick is preceded by two click events
+
+                // Fire click events
+                that.triggerEventHandlers(['click', 'pointerclick'], [evt]);
+                for (el in that.clickObjects) {
+                    if (that.clickObjects.hasOwnProperty(el)) {
+                        that.clickObjects[el].triggerEventHandlers(['click', 'pointerclick'], [evt]);
+                    }
                 }
-            }, delay);
+
+                // Clear list of clicked elements with a delay
+                setTimeout(function() {
+                    for (el in that.clickObjects) {
+                        if (that.clickObjects.hasOwnProperty(el)) {
+                            delete that.clickObjects[el];
+                        }
+                    }
+                }, delay);
+            }
             evt.stopPropagation();
         },
 
@@ -2819,22 +2852,26 @@ JXG.extend(
          * @param {Event} evt The browsers event object.
          */
         pointerDblClickListener: function (evt) {
-            var i,
-                done = {};
+            var el;
 
+            if (this.selectingMode) {
+                evt.stopPropagation();
+                return;
+            }
+
+            // Notify that a dblclick has happened
             this._preventSingleClick = true;
             clearTimeout(this._singleClickTimer);
 
+            // Fire dblclick event
             this.triggerEventHandlers(['dblclick', 'pointerdblclick'], [evt]);
-            if (!this.selectingMode) {
-                for (i = this.downObjects.length - 1; i > -1; i--) {
-                    if (!(this.downObjects[i].id in done)) {
-                        this.downObjects[i].triggerEventHandlers(['dblclick', 'pointerdblclick'], [evt]);
-                        done[this.downObjects[i].id] = true;
-                    }
-                    this.downObjects.splice(i, 1);
+            for (el in this.clickObjects) {
+                if (this.clickObjects.hasOwnProperty(el)) {
+                    this.clickObjects[el].triggerEventHandlers(['dblclick', 'pointerdblclick'], [evt]);
+                    delete this.clickObjects[el];
                 }
             }
+
             evt.stopPropagation();
         },
 
@@ -2844,22 +2881,55 @@ JXG.extend(
          */
         mouseClickListener: function (evt) {
             var that = this,
-                delay = Type.evaluate(this.attr.clickdelay);
+                el, delay, suppress;
 
-            this._preventSingleClick = false;
-            this._singleClickTimer = setTimeout(function() {
-                var i;
+            if (this.selectingMode) {
+                evt.stopPropagation();
+                return;
+            }
 
-                if (!that._preventSingleClick) {
-                    that.triggerEventHandlers(['click', 'mouseclick'], [evt]);
-                    if (!that.selectingMode) {
-                        for (i = that.downObjects.length - 1; i > -1; i--) {
-                            that.downObjects[i].triggerEventHandlers(['click', 'mouseclick'], [evt]);
-                            that.downObjects.splice(i, 1);
+            delay = Type.evaluate(this.attr.clickdelay);
+            suppress = Type.evaluate(this.attr.dblclicksuppressclick);
+
+            if (suppress) {
+                // dblclick suppresses previous click events
+                this._preventSingleClick = false;
+
+                // Wait if there is a dblclick event.
+                // If not fire a click event
+                this._singleClickTimer = setTimeout(function() {
+                    if (!that._preventSingleClick) {
+                        // Fire click event and remove element from click list
+                        that.triggerEventHandlers(['click', 'mouseclick'], [evt]);
+                        for (el in that.clickObjects) {
+                            if (that.clickObjects.hasOwnProperty(el)) {
+                                that.clickObjects[el].triggerEventHandlers(['click', 'mouseclick'], [evt]);
+                                delete that.clickObjects[el];
+                            }
                         }
                     }
+                }, delay);
+            } else {
+                // dblclick is preceded by two click events
+
+                // Fire click events
+                that.triggerEventHandlers(['click', 'mouseclick'], [evt]);
+                for (el in that.clickObjects) {
+                    if (that.clickObjects.hasOwnProperty(el)) {
+                        that.clickObjects[el].triggerEventHandlers(['click', 'mouseclick'], [evt]);
+                    }
                 }
-            }, delay);
+
+                // Clear list of clicked elements with a delay
+                setTimeout(function() {
+                    for (el in that.clickObjects) {
+                        if (that.clickObjects.hasOwnProperty(el)) {
+                            delete that.clickObjects[el];
+                        }
+                    }
+                }, delay);
+            }
+            evt.stopPropagation();
         },
 
         /**
@@ -2867,20 +2937,23 @@ JXG.extend(
          * @param {Event} evt The browsers event object.
          */
         mouseDblClickListener: function (evt) {
-            var i,
-                done = {};
+            var el;
 
+            if (this.selectingMode) {
+                evt.stopPropagation();
+                return;
+            }
+
+            // Notify that a dblclick has happened
             this._preventSingleClick = true;
             clearTimeout(this._singleClickTimer);
 
+            // Fire dblclick event
             this.triggerEventHandlers(['dblclick', 'mousedblclick'], [evt]);
-            if (!this.selectingMode) {
-                for (i = this.downObjects.length - 1; i > -1; i--) {
-                    if (!(this.downObjects[i].id in done)) {
-                        this.downObjects[i].triggerEventHandlers(['dblclick', 'mousedblclick'], [evt]);
-                        done[this.downObjects[i].id] = true;
-                    }
-                    this.downObjects.splice(i, 1);
+            for (el in this.clickObjects) {
+                if (this.clickObjects.hasOwnProperty(el)) {
+                    this.clickObjects[el].triggerEventHandlers(['dblclick', 'mousedblclick'], [evt]);
+                    delete this.clickObjects[el];
                 }
             }
         },
@@ -3077,13 +3150,14 @@ JXG.extend(
                         // Check if we have to keep the element for a click or dblclick event
                         // Otherwise remove it from downObjects
                         eh = this.downObjects[i].eventHandlers;
-                        if (!(Type.exists(eh.click) && eh.click.length > 0) &&
-                            !(Type.exists(eh.pointerclick) && eh.pointerclick.length > 0) &&
-                            !(Type.exists(eh.dblclick) && eh.dblclick.length > 0) &&
-                            !(Type.exists(eh.pointerdblclick) && eh.pointerdblclick.length > 0)
+                        if ((Type.exists(eh.click) && eh.click.length > 0) ||
+                            (Type.exists(eh.pointerclick) && eh.pointerclick.length > 0) ||
+                            (Type.exists(eh.dblclick) && eh.dblclick.length > 0) ||
+                            (Type.exists(eh.pointerdblclick) && eh.pointerdblclick.length > 0)
                         ) {
-                            this.downObjects.splice(i, 1);
+                            this.clickObjects[this.downObjects[i].id] = this.downObjects[i];
                         }
+                        this.downObjects.splice(i, 1);
                     }
                 }
             }

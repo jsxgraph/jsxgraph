@@ -174,27 +174,41 @@ JXG.Options = {
         /**
          *
          * Maximum time delay (in msec) between two clicks to be considered
-         * as double click. This is necessary to suppress click events
-         * if there is a double click event,
+         * as double click. This attribute is used together with {@link JXG.Board#dblClickSuppressClick}.
+         * The JavaScript standard is that
+         * a click event is preceded by two click events,
          * see {@link https://developer.mozilla.org/en-US/docs/Web/API/Element/dblclick_event}.
+         * In case of {@link JXG.Board#dblClickSuppressClick} being true, the JavaScript standard is ignored and
+         * this time delay is used to suppress the two click events if they are followed by a double click event.
          * <p>
-         * This attribute interferes with the delay time of the OS and browser:
-         * <ul>
-         * <li> If the user clicks two times than the browser triggers two click events.
-         * <li> Additionally, the browser triggers a double click event if the time between two clicks of the user is shorter than a maximum delay
-         * setting of the OS and the browser.
-         * <li> That is: in JavaScript, a double click event is preceded by two click events.
-         * <li> In JSXGraph, any click event fired by the browser is hold back for the time set by the
-         * attribute clickDelay. If in this time span a double click event is triggered by the browser,
-         * the click event is discarded and the double click event is fired.
-         * <li> If there is not double click event in this time span, the click event is fired.
-         * </ul>
+         * In case of {@link JXG.Board#dblClickSuppressClick} being false, this attribute is used
+         * to clear the list of clicked elements after the time specified by this attribute.
+         * <p>
+         * Recommendation: if {@link JXG.Board#dblClickSuppressClick} is true, use a value of approx. 300,
+         * otherwise stay with the default 600.
          *
          * @name JXG.Board#clickDelay
          * @type Number
-         * @default 500
+         * @default 600
+         * @see JXG.Board#dblClickSuppressClick
          */
-        clickDelay: 500,
+        clickDelay: 600,
+
+        /**
+         * If false (default), JSXGraph follows the JavaScript standard and fires before a dblclick event two
+         * click events.
+         * <p>
+         * If true, the click events are suppressed if there is a dblclick event.
+         * The consequence is that in this case any click event is fired with a delay specified by
+         * {@link JXG.Board#clickDelay}.
+         *
+         * @name JXG.Board#dblClickSuppressClick
+         * @type Boolean
+         * @default false
+         * @see JXG.Board#clickDelay
+         *
+         */
+        dblClickSuppressClick: false,
 
         /**
          * Attributes for the default axes in case of the attribute
