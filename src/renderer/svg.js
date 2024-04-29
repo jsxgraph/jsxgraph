@@ -902,6 +902,7 @@ JXG.extend(
                 }
             } else if (Type.exists(node2)) {
                 this.remove(node2);
+                el.rendNodeTriangleStart = null;
             }
 
             node2 = el.rendNodeTriangleEnd;
@@ -920,6 +921,7 @@ JXG.extend(
                 }
             } else if (Type.exists(node2)) {
                 this.remove(node2);
+                el.rendNodeTriangleEnd = null;
             }
         },
 
