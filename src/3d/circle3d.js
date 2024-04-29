@@ -222,7 +222,10 @@ JXG.extend(
  * @class This element is used to provide a constructor for a circle.
  * @pseudo
  * @description In 3D space, a circle consists of all points on a given plane with a given distance from a given point. The given point is called the center, and the given distance is called the radius.
- * A circle can be constructed by providing a center, a normal vector, and a radius (given as a number or function). If the radius is a negative value, its absolute values is taken.
+ * A circle can be constructed by providing a center, a normal vector, and a radius (given as a number or function).
+ * <p>
+ * If the radius has a negative value, its absolute value is taken. If the radius evaluates to NaN,
+ * the circle is not displayed. This is convenient for constructing an intersection circle, which is empty when its parents do not intersect.
  * @name Circle3D
  * @augments JXG.Circle3D
  * @constructor
@@ -232,7 +235,7 @@ JXG.extend(
  * The normal vector can be given as an array of three numbers or an array of three functions returning numbers,
  * and the radius can be given as a number (which will create a circle with a fixed radius) or a function.
  * <p>
- * If the radius is supplied as a number or the output of a function, its absolute value is taken.
+ * If the radius is supplied as a number or the output of a function, its absolute value is taken. When the radius evaluates to NaN, the circle does not display.
  */
 JXG.createCircle3D = function (board, parents, attributes) {
     var view = parents[0],
