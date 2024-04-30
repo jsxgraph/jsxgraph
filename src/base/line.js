@@ -661,8 +661,8 @@ JXG.extend(
         getLabelAnchor: function () {
             var x, y, pos,
                 xy, lbda, dx, dy, d,
-                fs = 0,
                 dist = 1.5,
+                fs = 0,
                 c1 = new Coords(Const.COORDS_BY_USER, this.point1.coords.usrCoords, this.board),
                 c2 = new Coords(Const.COORDS_BY_USER, this.point2.coords.usrCoords, this.board),
                 ev_sf = Type.evaluate(this.visProp.straightfirst),
@@ -737,7 +737,7 @@ JXG.extend(
                 x = c1[1] + lbda * dx;
                 y = c1[2] + lbda * dy;
 
-                // // Position left or right
+                // Position left or right
                 if (xy.side === 'left') {
                     dx *= -1;
                 } else {
