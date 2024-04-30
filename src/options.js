@@ -6003,6 +6003,8 @@ JXG.Options = {
          */
         position: 'urt',
 
+        distance: 1.5,
+
         /**
          *  Label offset from label anchor.
          *  The label anchor is determined by {@link Label#position}

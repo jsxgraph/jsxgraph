@@ -1009,7 +1009,7 @@ JXG.extend(
             if (str !== '') {
                 a = str.split(/[ ,]+/);
                 for (i = 0; i < a.length; i++) {
-                    if (a[i] in ['left', 'right']) {
+                    if (a[i] === 'left' || a[i] === 'right') {
                         side = a[i];
                     } else {
                         pos = a[i];
