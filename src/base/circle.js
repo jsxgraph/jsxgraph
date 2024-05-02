@@ -636,10 +636,15 @@ JXG.extend(
             } else {
                 // New positioning
                 c = this.center.coords.scrCoords;
+                // this.label.visProp.anchorx = 'middle';
+                // this.label.visProp.anchory = 'middle';
 
                 xy = Type.parsePosition(pos);
                 lbda = Type.parseNumber(xy.pos, 2 * Math.PI, 1);
-                if (xy.pos.indexOf('px') >= 0) {
+
+                if (xy.pos.indexOf('fr') < 0 &&
+                    xy.pos.indexOf('%') < 0) {
+                    // 'px' or numbers are not supported
                     lbda = 0;
                 }
 
@@ -656,8 +661,6 @@ JXG.extend(
                 x = c[1] + (r * this.board.unitX + this.label.size[0] * dist) * Math.cos(lbda);
                 y = c[2] - (r * this.board.unitY + this.label.size[1] * dist) * Math.sin(lbda);
 
-                this.label.visProp.anchorx = 'middle';
-                this.label.visProp.anchory = 'middle';
                 return new Coords(Const.COORDS_BY_SCREEN, [x, y], this.board);
             }
 

@@ -725,17 +725,30 @@ JXG.extend(
                 // New positioning
                 xy = Type.parsePosition(pos);
                 lbda = Type.parseNumber(xy.pos, 1, 1);
+
                 dx = c2[1] - c1[1];
                 dy = c2[2] - c1[2];
                 d = Mat.hypot(dx, dy);
 
-                if (xy.pos.indexOf('px') >= 0) {
-                    lbda /= d;
-                }
+                if (xy.pos.indexOf('px') >= 0 ||
+                    xy.pos.indexOf('fr') >= 0 ||
+                    xy.pos.indexOf('%') >= 0) {
+                    // lbda is interpreted in screen coords
 
-                // Position along the line
-                x = c1[1] + lbda * dx;
-                y = c1[2] + lbda * dy;
+                    if (xy.pos.indexOf('px') >= 0) {
+                        // Pixel values are supported
+                        lbda /= d;
+                    }
+
+                    // Position along the line
+                    x = c1[1] + lbda * dx;
+                    y = c1[2] + lbda * dy;
+                } else {
+                    // lbda is given as number or as a number string
+                    // Then, lbda is interpreted in user coords
+                    x = c1[1] + lbda * this.board.unitX * dx / d;
+                    y = c1[2] + lbda * this.board.unitY * dy / d;
+                }
 
                 // Position left or right
                 if (xy.side === 'left') {
@@ -744,13 +757,13 @@ JXG.extend(
                     dy *= -1;
                 }
                 if (Type.exists(this.label)) {
-                    dist = Type.evaluate(this.label.visProp.distance);
+                    dist = 0.5 * Type.evaluate(this.label.visProp.distance) / d;
                 }
-                x += dy * this.label.size[0] * 0.5 * dist / d; 
-                y += dx * this.label.size[1] * 0.5 * dist / d; 
+                x += dy * this.label.size[0] * dist;
+                y += dx * this.label.size[1] * dist;
 
-                this.label.visProp.anchorx = 'middle';
-                this.label.visProp.anchory = 'middle';
+                // this.label.visProp.anchorx = 'middle';
+                // this.label.visProp.anchory = 'middle';
             }
 
             // Correct coordinates if the label seems to be outside of canvas.
