@@ -636,16 +636,18 @@ JXG.extend(
             } else {
                 // New positioning
                 c = this.center.coords.scrCoords;
-                // this.label.visProp.anchorx = 'middle';
-                // this.label.visProp.anchory = 'middle';
 
                 xy = Type.parsePosition(pos);
                 lbda = Type.parseNumber(xy.pos, 2 * Math.PI, 1);
-
                 if (xy.pos.indexOf('fr') < 0 &&
                     xy.pos.indexOf('%') < 0) {
-                    // 'px' or numbers are not supported
-                    lbda = 0;
+                    if (xy.pos.indexOf('px') >= 0) {
+                        // 'px' or numbers are not supported
+                        lbda = 0;
+                    } else {
+                        // Pure numbers are interpreted as degrees
+                        lbda *= Math.PI / 180;
+                    }
                 }
 
                 // Position left or right

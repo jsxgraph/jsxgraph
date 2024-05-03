@@ -6007,9 +6007,11 @@ JXG.Options = {
          *   <ul>
          *     <li> xfr, denoting a fraction of the whole. x is expected to be a number between 0 and 1.
          *     <li> x%, a percentage. x is expected to be a number between 0 and 100.
-         *     <li> x, a number: only possible for line elements. The label is positioned x user units from the starting point.
-         *          For non-lines, 0% is taken instead.
-         *     <li> xpx, a pixel value: only possible for line elements. The label is positioned x pixels from the starting point.
+         *     <li> x, a number: only possible for line elements and circles. For lines, the label is positioned x
+         *          user units from the starting point. For circles, the number is interpreted as degree, e.g. 45°.
+         *          For everything else, 0 is taken instead.
+         *     <li> xpx, a pixel value: only possible for line elements.
+         *          The label is positioned x pixels from the starting point.
          *          For non-lines, 0% is taken instead.
          *   </ul>
          * <li> 'side' is either 'left' or 'right'. The label is positioned to the left or right of the path, when moving from the

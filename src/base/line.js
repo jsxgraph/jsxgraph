@@ -761,9 +761,6 @@ JXG.extend(
                 }
                 x += dy * this.label.size[0] * dist;
                 y += dx * this.label.size[1] * dist;
-
-                // this.label.visProp.anchorx = 'middle';
-                // this.label.visProp.anchory = 'middle';
             }
 
             // Correct coordinates if the label seems to be outside of canvas.

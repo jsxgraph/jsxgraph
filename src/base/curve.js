@@ -1161,10 +1161,6 @@ JXG.extend(
                 }
             } else {
                 // New positioning
-
-                // this.label.visProp.anchorx = 'middle';
-                // this.label.visProp.anchory = 'middle';
-
                 xy = Type.parsePosition(pos);
                 lbda = Type.parseNumber(xy.pos, this.maxX() - this.minX(), 1);
 
