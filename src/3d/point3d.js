@@ -283,7 +283,11 @@ JXG.extend(
                 Geometry.distance(this._c2d, this.element2D.coords.usrCoords) !== 0
             ) {
                 if (this.slide) {
-                    this.projectCoords2Surface();
+                    if (this.slide.elType === 'line3d') {
+                        this.projectCoords2Line();
+                    } else if (this.slide.elType === 'parametricsurface3d') {
+                        this.projectCoords2Surface();
+                    }
                 } else {
                     if (this.view.isVerticalDrag()) {
                         // Drag the point in its vertical to the xy plane
@@ -313,6 +317,39 @@ JXG.extend(
         updateRenderer: function () {
             this.needsUpdate = false;
             return this;
+        },
+
+        projectCoords2Line: function () {
+            var line = this.slide,
+                point1_coords = line.point1.coords,
+                point2_coords = line.point2.coords,
+                point1_2d = this.view.project3DTo2D(point1_coords).slice(1, 3),
+                point2_2d = this.view.project3DTo2D(point2_coords).slice(1, 3),
+                dir = [
+                    (point2_coords[1] - point1_coords[1]) / point2_coords[0],
+                    (point2_coords[2] - point1_coords[2]) / point2_coords[0],
+                    (point2_coords[3] - point1_coords[3]) / point2_coords[0]
+                ],
+                dir_2d = [
+                    point2_2d[0] - point1_2d[0],
+                    point2_2d[1] - point1_2d[1]
+                ],
+                con = [
+                    this.element2D.X() - point1_2d[0],
+                    this.element2D.Y() - point1_2d[1]
+                ],
+                t = Mat.innerProduct(con, dir_2d) / Mat.innerProduct(dir_2d, dir_2d),
+                s = point1_coords[0] * t,
+                c3d = [
+                    point1_coords[0],
+                    point1_coords[1] + s*dir[0],
+                    point1_coords[2] + s*dir[1],
+                    point1_coords[3] + s*dir[2]
+                ],
+                c2d = this.view.project3DTo2D(c3d);
+            this.coords = c3d;
+            this.element2D.coords.setCoordinates(Const.COORDS_BY_USER, c2d);
+            this._c2d = c2d;
         },
 
         projectCoords2Surface: function () {
