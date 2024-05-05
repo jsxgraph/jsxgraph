@@ -325,11 +325,6 @@ JXG.extend(
                 p1_coords = line.getPointCoords(1),
                 p0_2d = this.view.project3DTo2D(p0_coords).slice(1, 3),
                 p1_2d = this.view.project3DTo2D(p1_coords).slice(1, 3),
-                dir = [
-                    p1_coords[0] - p0_coords[0],
-                    p1_coords[1] - p0_coords[1],
-                    p1_coords[2] - p0_coords[2]
-                ],
                 dir_2d = [
                     p1_2d[0] - p0_2d[0],
                     p1_2d[1] - p0_2d[1]
@@ -339,14 +334,15 @@ JXG.extend(
                     this.element2D.Y() - p0_2d[1]
                 ],
                 t = Mat.innerProduct(con, dir_2d) / Mat.innerProduct(dir_2d, dir_2d),
-                c3d = [
-                    1,
-                    p0_coords[0] + t*dir[0],
-                    p0_coords[1] + t*dir[1],
-                    p0_coords[2] + t*dir[2]
-                ],
-                c2d = this.view.project3DTo2D(c3d);
-            console.log(p0_coords, p1_coords);
+                c3d,
+                c2d;
+
+            // find projected coordinates
+            c3d = line.getPointCoords(t).slice();
+            c3d.unshift(1)
+            c2d = this.view.project3DTo2D(c3d);
+
+            // set projected coordinates
             this.coords = c3d;
             this.element2D.coords.setCoordinates(Const.COORDS_BY_USER, c2d);
             this._c2d = c2d;
