@@ -285,6 +285,8 @@ JXG.extend(
                 if (this.slide) {
                     if (this.slide.elType === 'line3d') {
                         this.projectCoords2Line();
+                    } else if (this.slide.elType === 'curve3d') {
+                        this.projectCoords2Curve();
                     } else if (this.slide.elType === 'parametricsurface3d') {
                         this.projectCoords2Surface();
                     }
@@ -349,11 +351,54 @@ JXG.extend(
             this._c2d = c2d;
         },
 
+        projectCoords2Curve: function() {
+            var n = 2, // # of variables
+                m = 2, // number of constraints
+                x = [0, 0],
+                // Various Cobyla constants, see Cobyla docs in Cobyla.js
+                rhobeg = 5.0,
+                rhoend = 1.0e-6,
+                iprint = 0,
+                maxfun = 200,
+                curve = this.slide,
+                that = this,
+                r,
+                c3d,
+                c2d,
+                _minFunc;
+
+            _minFunc = function (n, m, x, con) {
+                var c3d = [
+                        1,
+                        curve.X(x[0]),
+                        curve.Y(x[0]),
+                        curve.Z(x[0])
+                    ],
+                    c2d = that.view.project3DTo2D(c3d);
+
+                con[0] = that.element2D.X() - c2d[1];
+                con[1] = that.element2D.Y() - c2d[2];
+
+                return con[0] * con[0] + con[1] * con[1];
+            };
+            if (Type.exists(this._params)) {
+                x = this._params.slice();
+            }
+            r = Mat.Nlp.FindMinimum(_minFunc, n, m, x, rhobeg, rhoend, iprint, maxfun);
+
+            c3d = [1, curve.X(x[0]), curve.Y(x[0]), curve.Z(x[0])];
+            c2d = this.view.project3DTo2D(c3d);
+            this._params = x;
+            this.coords = c3d;
+            this.element2D.coords.setCoordinates(Const.COORDS_BY_USER, c2d);
+            this._c2d = c2d;
+        },
+
         projectCoords2Surface: function () {
             var n = 2, // # of variables
                 m = 2, // number of constraints
                 x = [0, 0],
-                // Various Cobyla constants, see Cobyla docs in Cobyja.js
+                // Various Cobyla constants, see Cobyla docs in Cobyla.js
                 rhobeg = 5.0,
                 rhoend = 1.0e-6,
                 iprint = 0,
