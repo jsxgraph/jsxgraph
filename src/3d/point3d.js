@@ -334,11 +334,12 @@ JXG.extend(
                     this.element2D.Y() - p0_2d[1]
                 ],
                 t = Mat.innerProduct(con, dir_2d) / Mat.innerProduct(dir_2d, dir_2d),
+                t_clamped = Math.min(Math.max(t, line.range[0]), line.range[1]),
                 c3d,
                 c2d;
 
             // find projected coordinates
-            c3d = line.getPointCoords(t).slice();
+            c3d = line.getPointCoords(t_clamped).slice();
             c3d.unshift(1)
             c2d = this.view.project3DTo2D(c3d);
 
