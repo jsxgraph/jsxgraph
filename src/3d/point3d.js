@@ -321,32 +321,32 @@ JXG.extend(
 
         projectCoords2Line: function () {
             var line = this.slide,
-                point1_coords = line.point1.coords,
-                point2_coords = line.point2.coords,
-                point1_2d = this.view.project3DTo2D(point1_coords).slice(1, 3),
-                point2_2d = this.view.project3DTo2D(point2_coords).slice(1, 3),
+                p0_coords = line.getPointCoords(0),
+                p1_coords = line.getPointCoords(1),
+                p0_2d = this.view.project3DTo2D(p0_coords).slice(1, 3),
+                p1_2d = this.view.project3DTo2D(p1_coords).slice(1, 3),
                 dir = [
-                    (point2_coords[1] - point1_coords[1]) / point2_coords[0],
-                    (point2_coords[2] - point1_coords[2]) / point2_coords[0],
-                    (point2_coords[3] - point1_coords[3]) / point2_coords[0]
+                    p1_coords[0] - p0_coords[0],
+                    p1_coords[1] - p0_coords[1],
+                    p1_coords[2] - p0_coords[2]
                 ],
                 dir_2d = [
-                    point2_2d[0] - point1_2d[0],
-                    point2_2d[1] - point1_2d[1]
+                    p1_2d[0] - p0_2d[0],
+                    p1_2d[1] - p0_2d[1]
                 ],
                 con = [
-                    this.element2D.X() - point1_2d[0],
-                    this.element2D.Y() - point1_2d[1]
+                    this.element2D.X() - p0_2d[0],
+                    this.element2D.Y() - p0_2d[1]
                 ],
                 t = Mat.innerProduct(con, dir_2d) / Mat.innerProduct(dir_2d, dir_2d),
-                s = point1_coords[0] * t,
                 c3d = [
-                    point1_coords[0],
-                    point1_coords[1] + s*dir[0],
-                    point1_coords[2] + s*dir[1],
-                    point1_coords[3] + s*dir[2]
+                    1,
+                    p0_coords[0] + t*dir[0],
+                    p0_coords[1] + t*dir[1],
+                    p0_coords[2] + t*dir[2]
                 ],
                 c2d = this.view.project3DTo2D(c3d);
+            console.log(p0_coords, p1_coords);
             this.coords = c3d;
             this.element2D.coords.setCoordinates(Const.COORDS_BY_USER, c2d);
             this._c2d = c2d;
