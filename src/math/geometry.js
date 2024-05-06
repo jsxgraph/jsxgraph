@@ -1626,15 +1626,21 @@ JXG.extend(
          * Generate the function which computes the data of the intersection.
          */
         intersectionFunction3D: function (view, el1, el2, i) {
-            var func;
+            var func,
+                that = this;
 
-            if (
-                el1.type === Const.OBJECT_TYPE_PLANE3D &&
-                el2.type === Const.OBJECT_TYPE_PLANE3D
-            ) {
-                func = function () {
-                    return view.intersectionPlanePlane(el1, el2)[i];
-                };
+            if (el1.type === Const.OBJECT_TYPE_PLANE3D) {
+                if (el2.type === Const.OBJECT_TYPE_PLANE3D) {
+                    func = () => view.intersectionPlanePlane(el1, el2)[i];
+                } else if (el2.type === Const.OBJECT_TYPE_SPHERE3D) {
+                    func = that.meetPlaneSphere(el1, el2);
+                }
+            } else if (el1.type === Const.OBJECT_TYPE_SPHERE3D) {
+                if (el2.type === Const.OBJECT_TYPE_PLANE3D) {
+                    func = that.meetPlaneSphere(el2, el1);
+                } else if (el2.type === Const.OBJECT_TYPE_SPHERE3D) {
+                    func = that.meetSphereSphere(el1, el2);
+                }
             }
 
             return func;
@@ -2364,6 +2370,84 @@ JXG.extend(
                 crds = intersections[n];
             }
             return new Coords(Const.COORDS_BY_USER, crds, board);
+        },
+
+        meetPlaneSphere: function (el1, el2) {
+            var dis = function () {
+                return (
+                      el1.normal[0] * el2.center.X()
+                    + el1.normal[1] * el2.center.Y()
+                    + el1.normal[2] * el2.center.Z()
+                    - el1.d
+                );
+            };
+            return [
+                [
+                    // Center
+                    function () {
+                        return el2.center.X() - dis()*el1.normal[0];
+                    },
+                    function () {
+                        return el2.center.Y() - dis()*el1.normal[1];
+                    },
+                    function () {
+                        return el2.center.Z() - dis()*el1.normal[2];
+                    }
+                ],
+                [
+                    // Normal
+                    () => el1.normal[0],
+                    () => el1.normal[1],
+                    () => el1.normal[2]
+                ],
+                function () {
+                    // Radius (returns NaN if spheres don't touch)
+                    let r = el2.Radius(),
+                        s = dis();
+                    return Math.sqrt(r*r - s*s);
+                }
+            ];
+        },
+
+        meetSphereSphere: function (el1, el2) {
+            var skew = function () {
+                let dist = el1.center.distance(el2.center),
+                    r1 = el1.Radius(),
+                    r2 = el2.Radius();
+                return (r1 - r2)*(r1 + r2) / (dist*dist);
+            };
+            return [
+                [
+                    // Center
+                    function () {
+                        let s = skew();
+                        return 0.5*((1-s)*el1.center.X() + (1+s)*el2.center.X());
+                    },
+                    function () {
+                        let s = skew();
+                        return 0.5*((1-s)*el1.center.Y() + (1+s)*el2.center.Y());
+                    },
+                    function () {
+                        let s = skew();
+                        return 0.5*((1-s)*el1.center.Z() + (1+s)*el2.center.Z());
+                    }
+                ],
+                [
+                    // Normal
+                    () => el2.center.X() - el1.center.X(),
+                    () => el2.center.Y() - el1.center.Y(),
+                    () => el2.center.Z() - el1.center.Z()
+                ],
+                function () {
+                    // Radius (returns NaN if spheres don't touch)
+                    let dist = el1.center.distance(el2.center),
+                        r1 = el1.Radius(),
+                        r2 = el2.Radius(),
+                        s = skew(),
+                        rIxnSq = 0.5*(r1*r1 + r2*r2 - 0.5*dist*dist*(1 + s*s));
+                    return Math.sqrt(rIxnSq);
+                }
+            ];
         },
 
         /****************************************/
