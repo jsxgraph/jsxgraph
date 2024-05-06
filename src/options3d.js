@@ -306,6 +306,7 @@ JXG.extend(Options, {
 
         highlight: false,
 
+        strokeWidth: 1,
         strokeColor: '#00ff80',
         fillColor: 'white',
         gradient: 'radial',
