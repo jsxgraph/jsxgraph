@@ -353,7 +353,7 @@ JXG.extend(
 
         projectCoords2Curve: function() {
             var n = 2, // # of variables
-                m = 2, // number of constraints
+                m = 0, // number of constraints
                 x = [0, 0],
                 // Various Cobyla constants, see Cobyla docs in Cobyla.js
                 rhobeg = 5.0,
@@ -374,12 +374,11 @@ JXG.extend(
                         curve.Y(x[0]),
                         curve.Z(x[0])
                     ],
-                    c2d = that.view.project3DTo2D(c3d);
+                    c2d = that.view.project3DTo2D(c3d),
+                    xDiff = that.element2D.X() - c2d[1],
+                    yDiff = that.element2D.Y() - c2d[2];
 
-                con[0] = that.element2D.X() - c2d[1];
-                con[1] = that.element2D.Y() - c2d[2];
-
-                return con[0] * con[0] + con[1] * con[1];
+                return xDiff*xDiff + yDiff*yDiff;
             };
             if (Type.exists(this._params)) {
                 x = this._params.slice();
