@@ -39,11 +39,11 @@
         [-Math.PI/2, Math.PI/2]
     ],*/
     let surface = view.create('parametricsurface3d', [
-        (u, v) => 1 + Math.cos(twistFn(0.01*v)) * rModHammer(0.01*u, 0.01*v),
-        (u, v) => 1 + Math.sin(twistFn(0.01*v)) * rModHammer(0.01*u, 0.01*v),
-        (u, v) => 1 + zModHammer(0.01*u, 0.01*v),
-        [-100*Math.PI/3, 100*Math.PI/3],
-        [-100*Math.PI/2, 100*Math.PI/2]
+        (u, v) => 1 + Math.cos(twistFn(0.02*v)) * rModHammer(0.02*u, 0.02*v),
+        (u, v) => 1 + Math.sin(twistFn(0.02*v)) * rModHammer(0.02*u, 0.02*v),
+        (u, v) => 1 + zModHammer(0.02*u, 0.02*v),
+        [-50*Math.PI/3, 50*Math.PI/3],
+        [-50*Math.PI/2, 50*Math.PI/2]
     ], {
         strokeColor: '#aa00aa',
         stepsU: 40,

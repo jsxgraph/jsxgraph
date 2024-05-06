@@ -367,7 +367,7 @@ JXG.extend(
                   iprint = 0, // no console output
                   maxfun = 200; // call objective function at most 200 times
 
-            _minFunc = function (n, m, x) {
+            _minFunc = function (n, m, x, con) {
                 var c3d = [
                         1,
                         slide.X(...x),
@@ -378,6 +378,15 @@ JXG.extend(
                     xDiff = that.element2D.X() - c2d[1],
                     yDiff = that.element2D.Y() - c2d[2];
 
+                if (n === 1) {
+                    con[0] =  x[0] - slide.range[0];
+                    con[1] = -x[0] + slide.range[1];
+                } else if (n === 2) {
+                    con[0] =  x[0] - slide.range_u[0];
+                    con[1] = -x[0] + slide.range_u[1];
+                    con[2] =  x[1] - slide.range_v[0];
+                    con[3] = -x[1] + slide.range_v[1];
+                }
                 return xDiff*xDiff + yDiff*yDiff;
             };
             if (Type.exists(this._params)) {
@@ -386,7 +395,7 @@ JXG.extend(
                 x = new Array(dim);
                 x.fill(0);
             }
-            Mat.Nlp.FindMinimum(_minFunc, dim, 0, x, rhobeg, rhoend, iprint, maxfun);
+            Mat.Nlp.FindMinimum(_minFunc, dim, 2*dim, x, rhobeg, rhoend, iprint, maxfun);
 
             c3d = [1, slide.X(...x), slide.Y(...x), slide.Z(...x)];
             c2d = this.view.project3DTo2D(c3d);
