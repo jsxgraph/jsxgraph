@@ -354,19 +354,30 @@ JXG.extend(
         // Project this point to the parametric curve or surface `slide`, whose
         // coordinate functions take `dim` variables
         projectCoordsToParametric: function (slide, dim) {
-            var x, // minimization variable
+            // The variables and parameters for the Cobyla constrained
+            // minimization algorithm are explained in the Cobyla.js comments
+            var x, // minimization variable (Cobyla)
+                rhobeg, // initial size of simplex (Cobyla)
+                rhoend, // finial size of simplex (Cobyla)
+                iprint = 0, // no console output (Cobyla)
+                maxfun = 200, // call objective function at most 200 times (Cobyla)
                 that = this,
                 c3d,
                 c2d,
-                _minFunc; // objective function
+                _minFunc; // objective function (Cobyla)
 
-            // Parameters for Cobyla constrained minimization algorithm. See
-            // comments in Cobyla.js for details
-            const rhobeg = 5.0, // initial size of simplex
-                  rhoend = 1.0e-6, // finial size of simplex
-                  iprint = 0, // no console output
-                  maxfun = 200; // call objective function at most 200 times
+            // adapt simplex size to parameter range
+            if (dim === 1) {
+                rhobeg = 0.1*(slide.range[1] - slide.range[0]);
+            } else if (dim === 2) {
+                rhobeg = 0.1*Math.min(
+                    slide.range_u[1] - slide.range_u[0],
+                    slide.range_v[1] - slide.range_v[0]
+                );
+            }
+            rhoend = rhobeg / 5e6;
 
+            // minimize screen distance to cursor
             _minFunc = function (n, m, x, con) {
                 var c3d = [
                         1,

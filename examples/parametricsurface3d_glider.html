@@ -31,19 +31,12 @@
     let rModHammer = (u, v) => Math.sin(u)*Math.cos(v) / Math.sqrt(1 + 3*Math.cos(u)*Math.cos(v));
     let zModHammer = (u, v) => Math.sin(v) / Math.sqrt(1 + 3*Math.cos(u)*Math.cos(v));
     let twistFn = (u) => twist.Value() * Math.PI/2 * Math.tanh(2*u);
-    /*let surface = view.create('parametricsurface3d', [
+    let surface = view.create('parametricsurface3d', [
         (u, v) => 1 + Math.cos(twistFn(v)) * rModHammer(u, v),
         (u, v) => 1 + Math.sin(twistFn(v)) * rModHammer(u, v),
         (u, v) => 1 + zModHammer(u, v),
         [-Math.PI/3, Math.PI/3],
         [-Math.PI/2, Math.PI/2]
-    ],*/
-    let surface = view.create('parametricsurface3d', [
-        (u, v) => 1 + Math.cos(twistFn(0.02*v)) * rModHammer(0.02*u, 0.02*v),
-        (u, v) => 1 + Math.sin(twistFn(0.02*v)) * rModHammer(0.02*u, 0.02*v),
-        (u, v) => 1 + zModHammer(0.02*u, 0.02*v),
-        [-50*Math.PI/3, 50*Math.PI/3],
-        [-50*Math.PI/2, 50*Math.PI/2]
     ], {
         strokeColor: '#aa00aa',
         stepsU: 40,
