@@ -284,11 +284,11 @@ JXG.extend(
             ) {
                 if (this.slide) {
                     if (this.slide.elType === 'line3d') {
-                        this.projectCoords2Line();
+                        this.projectCoordsToLine();
                     } else if (this.slide.elType === 'curve3d') {
-                        this.projectCoords2Curve();
-                    } else if (this.slide.elType === 'parametricsurface3d') {
-                        this.projectCoords2Surface();
+                        this.projectCoordsToParametric(this.slide, 1);
+                    } else if (this.slide.elType === 'surface3d') {
+                        this.projectCoordsToParametric(this.slide, 2);
                     }
                 } else {
                     if (this.view.isVerticalDrag()) {
@@ -321,7 +321,7 @@ JXG.extend(
             return this;
         },
 
-        projectCoords2Line: function () {
+        projectCoordsToLine: function () {
             var line = this.slide,
                 p0_coords = line.getPointCoords(0),
                 p1_coords = line.getPointCoords(1),
@@ -342,7 +342,7 @@ JXG.extend(
 
             // find projected coordinates
             c3d = line.getPointCoords(t_clamped).slice();
-            c3d.unshift(1)
+            c3d.unshift(1);
             c2d = this.view.project3DTo2D(c3d);
 
             // set projected coordinates
@@ -351,28 +351,28 @@ JXG.extend(
             this._c2d = c2d;
         },
 
-        projectCoords2Curve: function() {
-            var n = 2, // # of variables
-                m = 0, // number of constraints
-                x = [0, 0],
-                // Various Cobyla constants, see Cobyla docs in Cobyla.js
-                rhobeg = 5.0,
-                rhoend = 1.0e-6,
-                iprint = 0,
-                maxfun = 200,
-                curve = this.slide,
+        // Project this point to the parametric curve or surface `slide`, whose
+        // coordinate functions take `dim` variables
+        projectCoordsToParametric: function (slide, dim) {
+            var x, // minimization variable
                 that = this,
-                r,
                 c3d,
                 c2d,
-                _minFunc;
+                _minFunc; // objective function
 
-            _minFunc = function (n, m, x, con) {
+            // Parameters for Cobyla constrained minimization algorithm. See
+            // comments in Cobyla.js for details
+            const rhobeg = 5.0, // initial size of simplex
+                  rhoend = 1.0e-6, // finial size of simplex
+                  iprint = 0, // no console output
+                  maxfun = 200; // call objective function at most 200 times
+
+            _minFunc = function (n, m, x) {
                 var c3d = [
                         1,
-                        curve.X(x[0]),
-                        curve.Y(x[0]),
-                        curve.Z(x[0])
+                        slide.X(...x),
+                        slide.Y(...x),
+                        slide.Z(...x)
                     ],
                     c2d = that.view.project3DTo2D(c3d),
                     xDiff = that.element2D.X() - c2d[1],
@@ -382,57 +382,13 @@ JXG.extend(
             };
             if (Type.exists(this._params)) {
                 x = this._params.slice();
+            } else {
+                x = new Array(dim);
+                x.fill(0);
             }
-            r = Mat.Nlp.FindMinimum(_minFunc, n, m, x, rhobeg, rhoend, iprint, maxfun);
+            Mat.Nlp.FindMinimum(_minFunc, dim, 0, x, rhobeg, rhoend, iprint, maxfun);
 
-            c3d = [1, curve.X(x[0]), curve.Y(x[0]), curve.Z(x[0])];
-            c2d = this.view.project3DTo2D(c3d);
-            this._params = x;
-            this.coords = c3d;
-            this.element2D.coords.setCoordinates(Const.COORDS_BY_USER, c2d);
-            this._c2d = c2d;
-        },
-
-        projectCoords2Surface: function () {
-            var n = 2, // # of variables
-                m = 2, // number of constraints
-                x = [0, 0],
-                // Various Cobyla constants, see Cobyla docs in Cobyla.js
-                rhobeg = 5.0,
-                rhoend = 1.0e-6,
-                iprint = 0,
-                maxfun = 200,
-                surface = this.slide,
-                that = this,
-                r,
-                c3d,
-                c2d,
-                _minFunc;
-
-            if (surface === null) {
-                return;
-            }
-
-            _minFunc = function (n, m, x, con) {
-                var c3d = [
-                        1,
-                        surface.X(x[0], x[1]),
-                        surface.Y(x[0], x[1]),
-                        surface.Z(x[0], x[1])
-                    ],
-                    c2d = that.view.project3DTo2D(c3d);
-
-                con[0] = that.element2D.X() - c2d[1];
-                con[1] = that.element2D.Y() - c2d[2];
-
-                return con[0] * con[0] + con[1] * con[1];
-            };
-            if (Type.exists(this._params)) {
-                x = this._params.slice();
-            }
-            r = Mat.Nlp.FindMinimum(_minFunc, n, m, x, rhobeg, rhoend, iprint, maxfun);
-
-            c3d = [1, surface.X(x[0], x[1]), surface.Y(x[0], x[1]), surface.Z(x[0], x[1])];
+            c3d = [1, slide.X(...x), slide.Y(...x), slide.Z(...x)];
             c2d = this.view.project3DTo2D(c3d);
             this._params = x;
             this.coords = c3d;
