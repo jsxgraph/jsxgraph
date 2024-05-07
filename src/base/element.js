@@ -1758,6 +1758,7 @@ JXG.extend(
          * @type String
          * @private
          * @ignore
+         * @deprecated
          * @returns JSON string containing element's properties.
          */
         toJSON: function () {
@@ -2544,6 +2545,8 @@ JXG.extend(
          * on mobile browsers.
          * @name JXG.Board#dblclick
          * @param {Event} e The browser's event object.
+         * @see JXG.Board#clickDelay
+         * @see JXG.Board#dblClickSuppressClick
          */
         __evt__dblclick: function (e) { },
 

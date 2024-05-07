@@ -1101,8 +1101,8 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
             varnames.indexOf(v) < 0 // v is not contained in the list of variables of that function
         ) {
             e = this.getvar(v);
-            if (e && e.visProp && e.type && e.elementClass && e.id &&
-                e.type === Const.OBJECT_TYPE_SLIDER // Sliders are the only elements which are given by names.
+            if (e && e.visProp && e.elType && e.elementClass && e.id &&
+                e.elType === 'slider' // Sliders are the only elements which are given by names.
             ) {
                 result[e.id] = e;
             }

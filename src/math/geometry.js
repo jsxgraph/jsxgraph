@@ -1569,19 +1569,78 @@ JXG.extend(
             return func;
         },
 
+        otherIntersectionFunction: function(input, others, alwaysintersect, precision) {
+            var func, board,
+                el1, el2,
+                that = this;
+
+            el1 = input[0];
+            el2 = input[1];
+            board = el1.board;
+            func = function() {
+                var i, k, c, d,
+                    isClose,
+                    le = others.length,
+                    eps = Type.evaluate(precision);
+
+                for (i = le; i >= 0; i--) {
+                    if (el1.elementClass ===  Const.OBJECT_CLASS_CIRCLE &&
+                        [Const.OBJECT_CLASS_CIRCLE, Const.OBJECT_CLASS_LINE].indexOf(el2.elementClass) >= 0) {
+                        // circle, circle|line
+                        c = that.meet(el1.stdform, el2.stdform, i, board);
+                    } else if (el1.elementClass ===  Const.OBJECT_CLASS_CURVE &&
+                        [Const.OBJECT_CLASS_CURVE, Const.OBJECT_CLASS_CIRCLE].indexOf(el2.elementClass) >= 0) {
+                        // curve, circle|curve
+                        c = that.meetCurveCurve(el1, el2, i, 0, board, 'segment');
+                    } else if (el1.elementClass ===  Const.OBJECT_CLASS_CURVE && el2.elementClass === Const.OBJECT_CLASS_LINE) {
+                        // curve, line
+                        if (Type.exists(el1.dataX)) {
+                            c = JXG.Math.Geometry.meetCurveLine(el1, el2, i, el1.board, Type.evaluate(alwaysintersect));
+                        } else {
+                            c = JXG.Math.Geometry.meetCurveLineContinuous(el1, el2, i, el1.board);
+                        }
+                    }
+
+                    // If the intersection is close to one of the points in other
+                    // we have to search for another intersection point.
+                    isClose = false;
+                    for (k = 0; !isClose && k < le; k++) {
+                        d = c.distance(JXG.COORDS_BY_USER, others[k].coords);
+                        if (d < eps) {
+                            isClose = true;
+                       }
+                    }
+                    if (!isClose) {
+                        // We are done, the intersection is away from any other
+                        // intersection point.
+                        return c;
+                    }
+                }
+                // Otherwise we return the last intersection point
+                return c;
+            };
+            return func;
+        },
+
         /**
          * Generate the function which computes the data of the intersection.
          */
         intersectionFunction3D: function (view, el1, el2, i) {
-            var func;
+            var func,
+                that = this;
 
-            if (
-                el1.type === Const.OBJECT_TYPE_PLANE3D &&
-                el2.type === Const.OBJECT_TYPE_PLANE3D
-            ) {
-                func = function () {
-                    return view.intersectionPlanePlane(el1, el2)[i];
-                };
+            if (el1.type === Const.OBJECT_TYPE_PLANE3D) {
+                if (el2.type === Const.OBJECT_TYPE_PLANE3D) {
+                    func = () => view.intersectionPlanePlane(el1, el2)[i];
+                } else if (el2.type === Const.OBJECT_TYPE_SPHERE3D) {
+                    func = that.meetPlaneSphere(el1, el2);
+                }
+            } else if (el1.type === Const.OBJECT_TYPE_SPHERE3D) {
+                if (el2.type === Const.OBJECT_TYPE_PLANE3D) {
+                    func = that.meetPlaneSphere(el2, el1);
+                } else if (el2.type === Const.OBJECT_TYPE_SPHERE3D) {
+                    func = that.meetSphereSphere(el1, el2);
+                }
             }
 
             return func;
@@ -1941,22 +2000,14 @@ JXG.extend(
          * @returns {JXG.Coords} Coords object containing the intersection.
          */
         meetCurveLineContinuous: function (cu, li, nr, board, testSegment) {
-            var t,
-                func0,
-                func1,
-                v,
-                x,
-                y,
-                z,
+            var func0, func1,
+                t, v, x, y, z,
                 eps = Mat.eps,
                 epsLow = Mat.eps,
                 steps,
                 delta,
-                tnew,
-                i,
-                tmin,
-                fmin,
-                ft;
+                tnew, tmin, fmin,
+                i, ft;
 
             v = this.meetCurveLineDiscrete(cu, li, nr, board, testSegment);
             x = v.usrCoords[1];
@@ -1968,9 +2019,10 @@ JXG.extend(
                 if (t > cu.maxX() || t < cu.minX()) {
                     return Infinity;
                 }
-                c1 = x - cu.X(t);
-                c2 = y - cu.Y(t);
+                c1 = cu.X(t) - x;
+                c2 = cu.Y(t) - y;
                 return c1 * c1 + c2 * c2;
+                // return c1 * (cu.X(t + h) - cu.X(t - h)) + c2 * (cu.Y(t + h) - cu.Y(t - h)) / h;
             };
 
             func1 = function (t) {
@@ -1982,7 +2034,6 @@ JXG.extend(
             steps = 50;
             delta = (cu.maxX() - cu.minX()) / steps;
             tnew = cu.minX();
-
             fmin = 0.0001; //eps;
             tmin = NaN;
             for (i = 0; i < steps; i++) {
@@ -2034,17 +2085,13 @@ JXG.extend(
          * the ideal point [0,1,0] is returned.
          */
         meetCurveLineDiscrete: function (cu, li, nr, board, testSegment) {
-            var i,
-                j,
+            var i, j,
                 n = Type.evaluate(nr),
-                p1,
-                p2,
-                p,
-                q,
+                p1, p2,
+                p, q,
                 lip1 = li.point1.coords.usrCoords,
                 lip2 = li.point2.coords.usrCoords,
-                d,
-                res,
+                d, res,
                 cnt = 0,
                 len = cu.numberPoints,
                 ev_sf = Type.evaluate(li.visProp.straightfirst),
@@ -2113,7 +2160,7 @@ JXG.extend(
 
         /**
          * Find the n-th intersection point of two curves named red (first parameter) and blue (second parameter).
-         * We go through each segment of the red curve and search if there is an intersection with a segemnt of the blue curve.
+         * We go through each segment of the red curve and search if there is an intersection with a segment of the blue curve.
          * This double loop, i.e. the outer loop runs along the red curve and the inner loop runs along the blue curve, defines
          * the n-th intersection point. The segments are either line segments or Bezier curves of degree 3. This depends on
          * the property bezierDegree of the curves.
@@ -2323,6 +2370,84 @@ JXG.extend(
                 crds = intersections[n];
             }
             return new Coords(Const.COORDS_BY_USER, crds, board);
+        },
+
+        meetPlaneSphere: function (el1, el2) {
+            var dis = function () {
+                return (
+                      el1.normal[0] * el2.center.X()
+                    + el1.normal[1] * el2.center.Y()
+                    + el1.normal[2] * el2.center.Z()
+                    - el1.d
+                );
+            };
+            return [
+                [
+                    // Center
+                    function () {
+                        return el2.center.X() - dis()*el1.normal[0];
+                    },
+                    function () {
+                        return el2.center.Y() - dis()*el1.normal[1];
+                    },
+                    function () {
+                        return el2.center.Z() - dis()*el1.normal[2];
+                    }
+                ],
+                [
+                    // Normal
+                    () => el1.normal[0],
+                    () => el1.normal[1],
+                    () => el1.normal[2]
+                ],
+                function () {
+                    // Radius (returns NaN if spheres don't touch)
+                    let r = el2.Radius(),
+                        s = dis();
+                    return Math.sqrt(r*r - s*s);
+                }
+            ];
+        },
+
+        meetSphereSphere: function (el1, el2) {
+            var skew = function () {
+                let dist = el1.center.distance(el2.center),
+                    r1 = el1.Radius(),
+                    r2 = el2.Radius();
+                return (r1 - r2)*(r1 + r2) / (dist*dist);
+            };
+            return [
+                [
+                    // Center
+                    function () {
+                        let s = skew();
+                        return 0.5*((1-s)*el1.center.X() + (1+s)*el2.center.X());
+                    },
+                    function () {
+                        let s = skew();
+                        return 0.5*((1-s)*el1.center.Y() + (1+s)*el2.center.Y());
+                    },
+                    function () {
+                        let s = skew();
+                        return 0.5*((1-s)*el1.center.Z() + (1+s)*el2.center.Z());
+                    }
+                ],
+                [
+                    // Normal
+                    () => el2.center.X() - el1.center.X(),
+                    () => el2.center.Y() - el1.center.Y(),
+                    () => el2.center.Z() - el1.center.Z()
+                ],
+                function () {
+                    // Radius (returns NaN if spheres don't touch)
+                    let dist = el1.center.distance(el2.center),
+                        r1 = el1.Radius(),
+                        r2 = el2.Radius(),
+                        s = skew(),
+                        rIxnSq = 0.5*(r1*r1 + r2*r2 - 0.5*dist*dist*(1 + s*s));
+                    return Math.sqrt(rIxnSq);
+                }
+            ];
         },
 
         /****************************************/
