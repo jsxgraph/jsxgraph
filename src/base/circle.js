@@ -581,46 +581,89 @@ JXG.extend(
 
         // documented in geometry element
         getLabelAnchor: function () {
-            var x,
-                y,
+            var x, y, pos,
+                xy, lbda, sgn,
+                dist = 1.5,
                 r = this.Radius(),
                 c = this.center.coords.usrCoords,
                 SQRTH = 7.071067811865e-1; // sqrt(2)/2
 
-            switch (Type.evaluate(this.visProp.label.position)) {
-                case "lft":
-                    x = c[1] - r;
-                    y = c[2];
-                    break;
-                case "llft":
-                    x = c[1] - SQRTH * r;
-                    y = c[2] - SQRTH * r;
-                    break;
-                case "rt":
-                    x = c[1] + r;
-                    y = c[2];
-                    break;
-                case "lrt":
-                    x = c[1] + SQRTH * r;
-                    y = c[2] - SQRTH * r;
-                    break;
-                case "urt":
-                    x = c[1] + SQRTH * r;
-                    y = c[2] + SQRTH * r;
-                    break;
-                case "top":
-                    x = c[1];
-                    y = c[2] + r;
-                    break;
-                case "bot":
-                    x = c[1];
-                    y = c[2] - r;
-                    break;
-                default:
-                    // includes case 'ulft'
-                    x = c[1] - SQRTH * r;
-                    y = c[2] + SQRTH * r;
-                    break;
+            if (!Type.exists(this.label)) {
+                return new Coords(Const.COORDS_BY_SCREEN, [NaN, NaN], this.board);
+            }
+
+            pos = Type.evaluate(this.label.visProp.position);
+            if (!Type.isString(pos)) {
+                return new Coords(Const.COORDS_BY_SCREEN, [NaN, NaN], this.board);
+            }
+
+            if (pos.indexOf('right') < 0 && pos.indexOf('left') < 0) {
+                switch (Type.evaluate(this.visProp.label.position)) {
+                    case "lft":
+                        x = c[1] - r;
+                        y = c[2];
+                        break;
+                    case "llft":
+                        x = c[1] - SQRTH * r;
+                        y = c[2] - SQRTH * r;
+                        break;
+                    case "rt":
+                        x = c[1] + r;
+                        y = c[2];
+                        break;
+                    case "lrt":
+                        x = c[1] + SQRTH * r;
+                        y = c[2] - SQRTH * r;
+                        break;
+                    case "urt":
+                        x = c[1] + SQRTH * r;
+                        y = c[2] + SQRTH * r;
+                        break;
+                    case "top":
+                        x = c[1];
+                        y = c[2] + r;
+                        break;
+                    case "bot":
+                        x = c[1];
+                        y = c[2] - r;
+                        break;
+                    default:
+                        // includes case 'ulft'
+                        x = c[1] - SQRTH * r;
+                        y = c[2] + SQRTH * r;
+                        break;
+                }
+            } else {
+                // New positioning
+                c = this.center.coords.scrCoords;
+
+                xy = Type.parsePosition(pos);
+                lbda = Type.parseNumber(xy.pos, 2 * Math.PI, 1);
+                if (xy.pos.indexOf('fr') < 0 &&
+                    xy.pos.indexOf('%') < 0) {
+                    if (xy.pos.indexOf('px') >= 0) {
+                        // 'px' or numbers are not supported
+                        lbda = 0;
+                    } else {
+                        // Pure numbers are interpreted as degrees
+                        lbda *= Math.PI / 180;
+                    }
+                }
+
+                // Position left or right
+                sgn = 1;
+                if (xy.side === 'left') {
+                    sgn = -1;
+                }
+
+                if (Type.exists(this.label)) {
+                    dist = sgn * 0.5 * Type.evaluate(this.label.visProp.distance);
+                }
+
+                x = c[1] + (r * this.board.unitX + this.label.size[0] * dist) * Math.cos(lbda);
+                y = c[2] - (r * this.board.unitY + this.label.size[1] * dist) * Math.sin(lbda);
+
+                return new Coords(Const.COORDS_BY_SCREEN, [x, y], this.board);
             }
 
             return new Coords(Const.COORDS_BY_USER, [x, y], this.board);

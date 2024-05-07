@@ -659,7 +659,9 @@ JXG.extend(
 
         // documented in geometry element
         getLabelAnchor: function () {
-            var x, y,
+            var x, y, pos,
+                xy, lbda, dx, dy, d,
+                dist = 1.5,
                 fs = 0,
                 c1 = new Coords(Const.COORDS_BY_USER, this.point1.coords.usrCoords, this.board),
                 c2 = new Coords(Const.COORDS_BY_USER, this.point2.coords.usrCoords, this.board),
@@ -677,40 +679,88 @@ JXG.extend(
                 return new Coords(Const.COORDS_BY_SCREEN, [NaN, NaN], this.board);
             }
 
-            switch (Type.evaluate(this.label.visProp.position)) {
-                case 'last':
-                    x = c2[1];
-                    y = c2[2];
-                    break;
-                case 'first':
-                    x = c1[1];
-                    y = c1[2];
-                    break;
-                case "lft":
-                case "llft":
-                case "ulft":
-                    if (c1[1] <= c2[1]) {
-                        x = c1[1];
-                        y = c1[2];
-                    } else {
+            pos = Type.evaluate(this.label.visProp.position);
+            if (!Type.isString(pos)) {
+                return new Coords(Const.COORDS_BY_SCREEN, [NaN, NaN], this.board);
+            }
+
+            if (pos.indexOf('right') < 0 && pos.indexOf('left') < 0) {
+                // Old positioning commands
+                switch (pos) {
+                    case 'last':
                         x = c2[1];
                         y = c2[2];
-                    }
-                    break;
-                case "rt":
-                case "lrt":
-                case "urt":
-                    if (c1[1] > c2[1]) {
+                        break;
+                    case 'first':
                         x = c1[1];
                         y = c1[2];
-                    } else {
-                        x = c2[1];
-                        y = c2[2];
+                        break;
+                    case "lft":
+                    case "llft":
+                    case "ulft":
+                        if (c1[1] <= c2[1]) {
+                            x = c1[1];
+                            y = c1[2];
+                        } else {
+                            x = c2[1];
+                            y = c2[2];
+                        }
+                        break;
+                    case "rt":
+                    case "lrt":
+                    case "urt":
+                        if (c1[1] > c2[1]) {
+                            x = c1[1];
+                            y = c1[2];
+                        } else {
+                            x = c2[1];
+                            y = c2[2];
+                        }
+                        break;
+                    default:
+                        x = 0.5 * (c1[1] + c2[1]);
+                        y = 0.5 * (c1[2] + c2[2]);
+                }
+            } else {
+                // New positioning
+                xy = Type.parsePosition(pos);
+                lbda = Type.parseNumber(xy.pos, 1, 1);
+
+                dx = c2[1] - c1[1];
+                dy = c2[2] - c1[2];
+                d = Mat.hypot(dx, dy);
+
+                if (xy.pos.indexOf('px') >= 0 ||
+                    xy.pos.indexOf('fr') >= 0 ||
+                    xy.pos.indexOf('%') >= 0) {
+                    // lbda is interpreted in screen coords
+
+                    if (xy.pos.indexOf('px') >= 0) {
+                        // Pixel values are supported
+                        lbda /= d;
                     }
-                    break;
-                default:
-                    x = 0.5 * (c1[1] + c2[1]);
-                    y = 0.5 * (c1[2] + c2[2]);
+
+                    // Position along the line
+                    x = c1[1] + lbda * dx;
+                    y = c1[2] + lbda * dy;
+                } else {
+                    // lbda is given as number or as a number string
+                    // Then, lbda is interpreted in user coords
+                    x = c1[1] + lbda * this.board.unitX * dx / d;
+                    y = c1[2] + lbda * this.board.unitY * dy / d;
+                }
+
+                // Position left or right
+                if (xy.side === 'left') {
+                    dx *= -1;
+                } else {
+                    dy *= -1;
+                }
+                if (Type.exists(this.label)) {
+                    dist = 0.5 * Type.evaluate(this.label.visProp.distance) / d;
+                }
+                x += dy * this.label.size[0] * dist;
+                y += dx * this.label.size[1] * dist;
             }
 
             // Correct coordinates if the label seems to be outside of canvas.

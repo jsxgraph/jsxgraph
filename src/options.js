@@ -172,6 +172,45 @@ JXG.Options = {
         browserPan: false,
 
         /**
+         *
+         * Maximum time delay (in msec) between two clicks to be considered
+         * as double click. This attribute is used together with {@link JXG.Board#dblClickSuppressClick}.
+         * The JavaScript standard is that
+         * a click event is preceded by two click events,
+         * see {@link https://developer.mozilla.org/en-US/docs/Web/API/Element/dblclick_event}.
+         * In case of {@link JXG.Board#dblClickSuppressClick} being true, the JavaScript standard is ignored and
+         * this time delay is used to suppress the two click events if they are followed by a double click event.
+         * <p>
+         * In case of {@link JXG.Board#dblClickSuppressClick} being false, this attribute is used
+         * to clear the list of clicked elements after the time specified by this attribute.
+         * <p>
+         * Recommendation: if {@link JXG.Board#dblClickSuppressClick} is true, use a value of approx. 300,
+         * otherwise stay with the default 600.
+         *
+         * @name JXG.Board#clickDelay
+         * @type Number
+         * @default 600
+         * @see JXG.Board#dblClickSuppressClick
+         */
+        clickDelay: 600,
+
+        /**
+         * If false (default), JSXGraph follows the JavaScript standard and fires before a dblclick event two
+         * click events.
+         * <p>
+         * If true, the click events are suppressed if there is a dblclick event.
+         * The consequence is that in this case any click event is fired with a delay specified by
+         * {@link JXG.Board#clickDelay}.
+         *
+         * @name JXG.Board#dblClickSuppressClick
+         * @type Boolean
+         * @default false
+         * @see JXG.Board#clickDelay
+         *
+         */
+        dblClickSuppressClick: false,
+
+        /**
          * Attributes for the default axes in case of the attribute
          * axis:true in {@link JXG.JSXGraph#initBoard}.
          *
@@ -1040,6 +1079,10 @@ JXG.Options = {
          * by the user / browser.
          * The attribute "throttle" determines the minimal time in msec between to
          * resize calls.
+         * <p>
+         * <b>Attention:</b> if the JSXGraph container has no CSS property like width or height  nd max-width or max-height set, but
+         * has a property like boxsizing:box-content, then the interplay between CSS and the resize attribute may result in an
+         * infinite loop with ever increasing JSXgraph container.
          *
          * @see JXG.Board#startResizeObserver
          * @see JXG.Board#resizeListener
@@ -5935,6 +5978,12 @@ JXG.Options = {
         fixed: true,
 
         /**
+         * Point labels are positioned by setting {@link Point#anchorX}, {@link Point#anchorY}
+         * and {@link Label#offset}.
+         * For line, circle and curve elements (and their derived objects)
+         * there are two possibilities to position labels.
+         * <p>
+         * The first possibility uses the <a href="https://www.tug.org/metapost.html">MetaPost</a> system:
          * Possible string values for the position of a label for
          * label anchor points are:
          * <ul>
@@ -5949,16 +5998,199 @@ JXG.Options = {
          * <li> 'llft'
          * <li> 'lrt'
          * </ul>
-         * This is relevant for non-points: line, circle, curve.
+         * <p>
+         * Since v1.9.0 there is a second possibility:
+         * With <tt>position: 'len side'</tt> the label can be positioned exactly along the
+         * element's path. Here,
+         * <ul>
+         * <li> 'len' is an expression of the form
+         *   <ul>
+         *     <li> xfr, denoting a fraction of the whole. x is expected to be a number between 0 and 1.
+         *     <li> x%, a percentage. x is expected to be a number between 0 and 100.
+         *     <li> x, a number: only possible for line elements and circles. For lines, the label is positioned x
+         *          user units from the starting point. For circles, the number is interpreted as degree, e.g. 45°.
+         *          For everything else, 0 is taken instead.
+         *     <li> xpx, a pixel value: only possible for line elements.
+         *          The label is positioned x pixels from the starting point.
+         *          For non-lines, 0% is taken instead.
+         *   </ul>
+         * <li> 'side' is either 'left' or 'right'. The label is positioned to the left or right of the path, when moving from the
+         * first point to the last. For circles, 'left' means inside of the circle, 'right' means outside of the circle.
+         * The distance of the label from the path can be controlled by {@link Label#distance}.
+         * </ul>
+         * Recommended for this second possibility is to use anchorX: 'middle' and 'anchorY: 'middle'.
          *
-         * The names have been borrowed from <a href="https://www.tug.org/metapost.html">MetaPost</a>.
+         * @example
+         * var l1 = board.create('segment', [[-3, 2], [3, 2]], {
+         *     name: 'l_1',
+         *     withLabel: true,
+         *     point1: { visible: true, name: 'A', withLabel: true },
+         *     point2: { visible: true, name: 'B', withLabel: true },
+         *     label: {
+         *         anchorX: 'middle',
+         *         anchorY: 'middle',
+         *         offset: [0, 0],
+         *         distance: 1.2,
+         *         position: '0.2fr left'
+         *     }
+         * });
+         *
+         * </pre><div id="JXG66395d34-fd7f-42d9-97dc-14ae8882c11f" class="jxgbox" style="width: 300px; height: 300px;"></div>
+         * <script type="text/javascript">
+         *     (function() {
+         *         var board = JXG.JSXGraph.initBoard('JXG66395d34-fd7f-42d9-97dc-14ae8882c11f',
+         *             {boundingbox: [-5, 5, 5, -5], axis: true, showcopyright: false, shownavigation: false});
+         *     var l1 = board.create('segment', [[-3, 2], [3, 2]], {
+         *         name: 'l_1',
+         *         withLabel: true,
+         *         point1: { visible: true, name: 'A', withLabel: true },
+         *         point2: { visible: true, name: 'B', withLabel: true },
+         *         label: {
+         *             anchorX: 'middle',
+         *             anchorY: 'middle',
+         *             offset: [0, 0],
+         *             distance: 1.2,
+         *             position: '0.2fr left'
+         *         }
+         *     });
+         *
+         *     })();
+         *
+         * </script><pre>
+         *
+         * @example
+         * var c1 = board.create('circle', [[0, 0], 3], {
+         *     name: 'c_1',
+         *     withLabel: true,
+         *     label: {
+         *         anchorX: 'middle',
+         *         anchorY: 'middle',
+         *         offset: [0, 0],
+         *         fontSize: 32,
+         *         distance: 1.5,
+         *         position: '50% right'
+         *     }
+         * });
+         *
+         * </pre><div id="JXG98ee16ab-fc5f-476c-bf57-0107ac69d91e" class="jxgbox" style="width: 300px; height: 300px;"></div>
+         * <script type="text/javascript">
+         *     (function() {
+         *         var board = JXG.JSXGraph.initBoard('JXG98ee16ab-fc5f-476c-bf57-0107ac69d91e',
+         *             {boundingbox: [-5, 5, 5, -5], axis: true, showcopyright: false, shownavigation: false});
+         *     var c1 = board.create('circle', [[0, 0], 3], {
+         *         name: 'c_1',
+         *         withLabel: true,
+         *         label: {
+         *             anchorX: 'middle',
+         *             anchorY: 'middle',
+         *             offset: [0, 0],
+         *             fontSize: 32,
+         *             distance: 1.5,
+         *             position: '50% right'
+         *         }
+         *     });
+         *
+         *     })();
+         *
+         * </script><pre>
+         *
+         * @example
+         * var cu1 = board.create('functiongraph', ['3 * sin(x)', -3, 3], {
+         *     name: 'cu_1',
+         *     withLabel: true,
+         *     label: {
+         *         anchorX: 'middle',
+         *         anchorY: 'middle',
+         *         offset: [0, 0],
+         *         distance: 2,
+         *         position: '0.8fr right'
+         *     }
+         * });
+         *
+         * </pre><div id="JXG65b2edee-12d8-48a1-94b2-d6e79995de8c" class="jxgbox" style="width: 300px; height: 300px;"></div>
+         * <script type="text/javascript">
+         *     (function() {
+         *         var board = JXG.JSXGraph.initBoard('JXG65b2edee-12d8-48a1-94b2-d6e79995de8c',
+         *             {boundingbox: [-5, 5, 5, -5], axis: true, showcopyright: false, shownavigation: false});
+         *     var cu1 = board.create('functiongraph', ['3 * sin(x)', -3, 3], {
+         *         name: 'cu_1',
+         *         withLabel: true,
+         *         label: {
+         *             anchorX: 'middle',
+         *             anchorY: 'middle',
+         *             offset: [0, 0],
+         *             distance: 2,
+         *             position: '0.8fr right'
+         *         }
+         *     });
+         *
+         *     })();
+         *
+         * </script><pre>
+         *
+         * @example
+         * var A = board.create('point', [-1, 4]);
+         * var B = board.create('point', [-1, -4]);
+         * var C = board.create('point', [1, 1]);
+         * var cu2 = board.create('ellipse', [A, B, C], {
+         *     name: 'cu_2',
+         *     withLabel: true,
+         *     label: {
+         *         anchorX: 'middle',
+         *         anchorY: 'middle',
+         *         offset: [0, 0],
+         *         fontSize: 20,
+         *         distance: 1.5,
+         *         position: '75% right'
+         *     }
+         * });
+         *
+         * </pre><div id="JXG9c3b2213-1b5a-4cb8-b547-a8d179b851f2" class="jxgbox" style="width: 300px; height: 300px;"></div>
+         * <script type="text/javascript">
+         *     (function() {
+         *         var board = JXG.JSXGraph.initBoard('JXG9c3b2213-1b5a-4cb8-b547-a8d179b851f2',
+         *             {boundingbox: [-5, 5, 5, -5], axis: true, showcopyright: false, shownavigation: false});
+         *     var A = board.create('point', [-1, 4]);
+         *     var B = board.create('point', [-1, -4]);
+         *     var C = board.create('point', [1, 1]);
+         *     var cu2 = board.create('ellipse', [A, B, C], {
+         *         name: 'cu_2',
+         *         withLabel: true,
+         *         label: {
+         *             anchorX: 'middle',
+         *             anchorY: 'middle',
+         *             offset: [0, 0],
+         *             fontSize: 20,
+         *             distance: 1.5,
+         *             position: '75% right'
+         *         }
+         *     });
+         *
+         *     })();
+         *
+         * </script><pre>
+         *
          *
          * @name Label#position
-         * @see Label#offset
          * @type String
          * @default 'urt'
+         * @see Label#distance
+         * @see Label#offset
          */
         position: 'urt',
+
+        /**
+         * Distance of the label from a path element, like line, circle, curve.
+         * The true distance is this value multiplied by 0.5 times the size of the bounding box of the label text.
+         * That means, with a value of 1 the label will touch the path element.
+         * @name Label#distance
+         * @type Number
+         * @default 1.5
+         *
+         * @see Label#position
+         *
+         */
+        distance: 1.5,
 
         /**
          *  Label offset from label anchor.
@@ -6621,7 +6853,36 @@ JXG.Options = {
         /**#@+
          * @visprop
          */
+        /**#@-*/
+    },
 
+    /* special otherintersection point options */
+    otherintersection: {
+        /**#@+
+         * @visprop
+         */
+
+        /**
+         * This flag sets the behavior of other intersection points of e.g.
+         * a circle and a segment. If true, the intersection is treated as intersection with a line. If false
+         * the intersection point exists if the segment intersects setwise.
+         *
+         * @name Otherintersection.alwaysIntersect
+         * @type Boolean
+         * @default true
+         */
+        alwaysIntersect: true,
+
+        /**
+         * Minimum distance (in user coordinates) for points to be defined as different.
+         * For implicit curves and other non approximate curves this number might have to be
+         * increased.
+         *
+         * @name Otherintersection.precision
+         * @type Number
+         * @default 0.001
+         */
+        precision: 0.001
 
         /**#@-*/
     },
@@ -8264,11 +8525,11 @@ JXG.Options = {
          *
          * @name formatNumber
          * @memberOf Text.prototype
-         * @default true
+         * @default false
          * @type Boolean
          *
          */
-        formatNumber: true,
+        formatNumber: false,
 
         /**
          * Used to round texts given by a number.
@@ -8296,7 +8557,10 @@ JXG.Options = {
          * @type object
          * @default <pre>{
          *    enabled: 'inherit',
-         *    options: {}
+         *    options: {
+         *      minimumFractionDigits: 0,
+         *      maximumFractionDigits: 2
+         *    }
          * }</pre>
          * @see JXG.Board#intl
          *
@@ -8401,7 +8665,10 @@ JXG.Options = {
          */
         intl: {
             enabled: 'inherit',
-            options: {}
+            options: {
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 2
+            }
         },
 
         /**

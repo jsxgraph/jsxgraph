@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Circle in 3D</title>
-    <meta charset="utf-8">
+    <title>Plane–sphere intersection</title>
+    <meta charset="utf-8" />
     <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
     <script type="text/javascript" src="../distrib/jsxgraphcore.js"></script>
 </head>
@@ -31,7 +31,50 @@
         }
     );
 
-    // Center
+    // Control sliders
+    let offset = board.create(
+        'slider',
+        [
+            [-6, 7.5], [2, 7.5],
+            [0, 4/3, 3]
+        ], {
+            name: 'plane offset'
+        }
+    );
+    let radius = board.create(
+        'slider',
+        [
+            [-6, 7], [2, 7],
+            [0, 2/3, 1]
+        ], {
+            name: 'sphere radius'
+        }
+    );
+
+    // Plane
+    let basePt = view.create(
+        'point3d',
+        [
+            () => offset.Value(),
+            () => offset.Value(),
+            () => offset.Value()
+        ],
+        {visible: false}
+    );
+    let plane = view.create(
+        'plane3d',
+        [basePt, [-2, 1, 1], [1, -2, 1]],
+        {
+            strokeWidth: 1,
+            strokeColor: '#00ff80',
+            strokeOpacity: 0.5,
+            fillColor: '#00ff80',
+            fillOpacity: 0.1,
+            gradient: null
+        }
+    );
+
+    // Spheres
     let center = view.create(
         'point3d',
         [1.5, 1.5, 1.5],
@@ -48,46 +91,29 @@
             highlightStrokeColor: '#600030'
        }
     );
-    
-    // Normal
-    let normalHandle = view.create(
-        'point3d',
-        [1.5, 2.5, 2.5],
+    let sphere = view.create(
+    'sphere3d',
+        [center, () => radius.Value()],
         {
-            withLabel: false,
-            size: 5,
-            strokeWidth: 1,
-            strokeColor: '#300060',
+            strokeColor: '#0000ff',
+            strokeOpacity: 0.5,
             fillColor: 'white',
             gradient: 'radial',
-            gradientSecondColor: '#5000a0',
+            gradientSecondColor: '#0000ff',
             gradientFX: 0.7,
             gradientFY: 0.3,
-            highlightStrokeColor: '#300060'
-       }
-    );
-    let normalSeg = view.create('line3d', [center, normalHandle]);
-    normal = [
-        () => normalHandle.X() - center.X(),
-        () => normalHandle.Y() - center.Y(),
-        () => normalHandle.Z() - center.Z()
-    ];
-
-    // Radius slider
-    let radius = board.create(
-        'slider',
-        [
-            [-6, 7], [2, 7],
-            [0, 1, 2]
-        ], {
-            name: 'radius'
+            fillOpacity: 0.2
         }
     );
 
-    // Circle
-    let circle = view.create(
-        'circle3d',
-        [center, normal, () => radius.Value()]
+    // Intersection circle
+    let ixnCircle = view.create(
+        'intersectioncircle3d',
+        [plane, sphere],
+        {
+            strokeColor: 'black',
+            strokeOpacity: 0.5
+        }
     );
 </script>
 </body>

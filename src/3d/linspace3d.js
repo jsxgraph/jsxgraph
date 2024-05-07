@@ -737,7 +737,7 @@ JXG.registerElement('plane3d', JXG.createPlane3D);
  * @constructor
  * @type JXG.Line3D
  * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
- * @param {JXG.Plane3D_JXG.Plane3D} el1,el2 The result will be the intersection point of el1 and el2.
+ * @param {JXG.Plane3D_JXG.Plane3D} el1,el2 The result will be the intersection of el1 and el2.
  * @example
  * // Create the intersection line of two planes
  * var view = board.create(
