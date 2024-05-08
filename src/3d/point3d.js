@@ -322,36 +322,6 @@ JXG.extend(
             return this;
         },
 
-        projectCoordsToLine: function () {
-            var line = this.slide,
-                p0_coords = line.getPointCoords(0),
-                p1_coords = line.getPointCoords(1),
-                p0_2d = this.view.project3DTo2D(p0_coords).slice(1, 3),
-                p1_2d = this.view.project3DTo2D(p1_coords).slice(1, 3),
-                dir_2d = [
-                    p1_2d[0] - p0_2d[0],
-                    p1_2d[1] - p0_2d[1]
-                ],
-                con = [
-                    this.element2D.X() - p0_2d[0],
-                    this.element2D.Y() - p0_2d[1]
-                ],
-                t = Mat.innerProduct(con, dir_2d) / Mat.innerProduct(dir_2d, dir_2d),
-                t_clamped = Math.min(Math.max(t, line.range[0]), line.range[1]),
-                c3d,
-                c2d;
-
-            // find projected coordinates
-            c3d = line.getPointCoords(t_clamped).slice();
-            c3d.unshift(1);
-            c2d = this.view.project3DTo2D(c3d);
-
-            // set projected coordinates
-            this.coords = c3d;
-            this.element2D.coords.setCoordinates(Const.COORDS_BY_USER, c2d);
-            this._c2d = c2d;
-        },
-
         /**
          * Check whether a point's homogeneous coordinate vector is zero.
          * @returns {Boolean} True if the coordinate vector is zero; false otherwise.
