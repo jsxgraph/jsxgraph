@@ -3437,13 +3437,13 @@ JXG.extend(
          * Given a the screen coordinates of a point, finds the point on the
          * given parametric curve or surface which is nearest in screen space,
          * and returns its view-space coordinates.
-         * @param {Array} p Screen coordinates to project.
+         * @param {Array} pScr Screen coordinates to project.
          * @param {JXG.Curve3D|JXG.Surface3D} target Parametric curve or surface to project to.
          * @param {Array} params Parameters of point on the target, initially specifying the starting point of
          * the search. The parameters are modified in place during the seach, ending up at the nearest point.
          * @returns {JXG.Coords} Array containing the coordinates of the nearest point on the curve or surface.
          */
-        projectCoordsToParametric: function (p, target, params) {
+        projectCoordsToParametric: function (pScr, target, params) {
             // The variables and parameters for the Cobyla constrained
             // minimization algorithm are explained in the Cobyla.js comments
             var rhobeg, // initial size of simplex (Cobyla)
@@ -3475,8 +3475,8 @@ JXG.extend(
                         target.Z(...w)
                     ],
                     c2d = target.view.project3DTo2D(c3d),
-                    xDiff = p[0] - c2d[1],
-                    yDiff = p[1] - c2d[2];
+                    xDiff = pScr[0] - c2d[1],
+                    yDiff = pScr[1] - c2d[2];
 
                 if (n === 1) {
                     con[0] =  w[0] - target.range[0];

@@ -143,7 +143,7 @@ JXG.Point3D = function (view, F, slide, attributes) {
      * @type Array
      * @private
      */
-    this._params = null;
+    this._params = [];
 
     this._c2d = null;
 
@@ -283,13 +283,14 @@ JXG.extend(
                 Geometry.distance(this._c2d, this.element2D.coords.usrCoords) !== 0
             ) {
                 if (this.slide) {
-                    if (this.slide.elType === 'line3d') {
-                        this.projectCoordsToLine();
-                    } else if (this.slide.elType === 'curve3d') {
-                        this.projectCoordsToParametric(this.slide, 1);
-                    } else if (this.slide.elType === 'surface3d') {
-                        this.projectCoordsToParametric(this.slide, 2);
-                    }
+                    this.coords = this.slide.projectCoords(
+                        [this.element2D.X(), this.element2D.Y()],
+                        this._params
+                    );
+                    this.element2D.coords.setCoordinates(
+                        Const.COORDS_BY_USER,
+                        this.view.project3DTo2D(this.coords)
+                    );
                 } else {
                     if (this.view.isVerticalDrag()) {
                         // Drag the point in its vertical to the xy plane
@@ -346,78 +347,6 @@ JXG.extend(
             c2d = this.view.project3DTo2D(c3d);
 
             // set projected coordinates
-            this.coords = c3d;
-            this.element2D.coords.setCoordinates(Const.COORDS_BY_USER, c2d);
-            this._c2d = c2d;
-        },
-
-        // Project this point to the parametric curve or surface `slide`, whose
-        // coordinate functions take `dim` variables
-        projectCoordsToParametric: function (slide, dim) {
-            // The variables and parameters for the Cobyla constrained
-            // minimization algorithm are explained in the Cobyla.js comments
-            /*var x, // minimization variable (Cobyla)
-                rhobeg, // initial size of simplex (Cobyla)
-                rhoend, // finial size of simplex (Cobyla)
-                iprint = 0, // no console output (Cobyla)
-                maxfun = 200, // call objective function at most 200 times (Cobyla)
-                that = this,
-                c3d,
-                c2d,
-                _minFunc; // objective function (Cobyla)
-
-            // adapt simplex size to parameter range
-            if (dim === 1) {
-                rhobeg = 0.1*(slide.range[1] - slide.range[0]);
-            } else if (dim === 2) {
-                rhobeg = 0.1*Math.min(
-                    slide.range_u[1] - slide.range_u[0],
-                    slide.range_v[1] - slide.range_v[0]
-                );
-            }
-            rhoend = rhobeg / 5e6;
-
-            // minimize screen distance to cursor
-            _minFunc = function (n, m, x, con) {
-                var c3d = [
-                        1,
-                        slide.X(...x),
-                        slide.Y(...x),
-                        slide.Z(...x)
-                    ],
-                    c2d = that.view.project3DTo2D(c3d),
-                    xDiff = that.element2D.X() - c2d[1],
-                    yDiff = that.element2D.Y() - c2d[2];
-
-                if (n === 1) {
-                    con[0] =  x[0] - slide.range[0];
-                    con[1] = -x[0] + slide.range[1];
-                } else if (n === 2) {
-                    con[0] =  x[0] - slide.range_u[0];
-                    con[1] = -x[0] + slide.range_u[1];
-                    con[2] =  x[1] - slide.range_v[0];
-                    con[3] = -x[1] + slide.range_v[1];
-                }
-                return xDiff*xDiff + yDiff*yDiff;
-            };
-            if (Type.exists(this._params)) {
-                x = this._params.slice();
-            } else {
-                x = new Array(dim);
-                x.fill(0);
-            }
-            Mat.Nlp.FindMinimum(_minFunc, dim, 2*dim, x, rhobeg, rhoend, iprint, maxfun);
-
-            c3d = [1, slide.X(...x), slide.Y(...x), slide.Z(...x)];*/
-            if (!Type.exists(this._params)) {
-                this._params = new Array(dim);
-                this._params.fill(0);
-            }
-            console.log(`before: ${this._params}`);
-            var c3d = Geometry.projectCoordsToParametric([this.element2D.X(), this.element2D.Y()], slide, this._params);
-            console.log(`after:  ${this._params}`);
-            var c2d = this.view.project3DTo2D(c3d);
-            /*this._params = x;*/
             this.coords = c3d;
             this.element2D.coords.setCoordinates(Const.COORDS_BY_USER, c2d);
             this._c2d = c2d;
