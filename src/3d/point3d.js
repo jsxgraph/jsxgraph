@@ -356,7 +356,7 @@ JXG.extend(
         projectCoordsToParametric: function (slide, dim) {
             // The variables and parameters for the Cobyla constrained
             // minimization algorithm are explained in the Cobyla.js comments
-            var x, // minimization variable (Cobyla)
+            /*var x, // minimization variable (Cobyla)
                 rhobeg, // initial size of simplex (Cobyla)
                 rhoend, // finial size of simplex (Cobyla)
                 iprint = 0, // no console output (Cobyla)
@@ -408,9 +408,16 @@ JXG.extend(
             }
             Mat.Nlp.FindMinimum(_minFunc, dim, 2*dim, x, rhobeg, rhoend, iprint, maxfun);
 
-            c3d = [1, slide.X(...x), slide.Y(...x), slide.Z(...x)];
-            c2d = this.view.project3DTo2D(c3d);
-            this._params = x;
+            c3d = [1, slide.X(...x), slide.Y(...x), slide.Z(...x)];*/
+            if (!Type.exists(this._params)) {
+                this._params = new Array(dim);
+                this._params.fill(0);
+            }
+            console.log(`before: ${this._params}`);
+            var c3d = Geometry.projectCoordsToParametric([this.element2D.X(), this.element2D.Y()], slide, this._params);
+            console.log(`after:  ${this._params}`);
+            var c2d = this.view.project3DTo2D(c3d);
+            /*this._params = x;*/
             this.coords = c3d;
             this.element2D.coords.setCoordinates(Const.COORDS_BY_USER, c2d);
             this._c2d = c2d;

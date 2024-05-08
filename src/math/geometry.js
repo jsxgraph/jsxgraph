@@ -3434,6 +3434,66 @@ JXG.extend(
         },
 
         /**
+         * Given a the screen coordinates of a point, finds the point on the
+         * given parametric curve or surface which is nearest in screen space,
+         * and returns its view-space coordinates.
+         * @param {Array} p Screen coordinates to project.
+         * @param {JXG.Curve3D|JXG.Surface3D} target Parametric curve or surface to project to.
+         * @param {Array} params Parameters of point on the target, initially specifying the starting point of
+         * the search. The parameters are modified in place during the seach, ending up at the nearest point.
+         * @returns {JXG.Coords} Array containing the coordinates of the nearest point on the curve or surface.
+         */
+        projectCoordsToParametric: function (p, target, params) {
+            // The variables and parameters for the Cobyla constrained
+            // minimization algorithm are explained in the Cobyla.js comments
+            var rhobeg, // initial size of simplex (Cobyla)
+                rhoend, // finial size of simplex (Cobyla)
+                iprint = 0, // no console output (Cobyla)
+                maxfun = 200, // call objective function at most 200 times (Cobyla)
+                dim = params.length,
+                c3d,
+                c2d,
+                _minFunc; // objective function (Cobyla)
+
+            // adapt simplex size to parameter range
+            if (dim === 1) {
+                rhobeg = 0.1*(target.range[1] - target.range[0]);
+            } else if (dim === 2) {
+                rhobeg = 0.1*Math.min(
+                    target.range_u[1] - target.range_u[0],
+                    target.range_v[1] - target.range_v[0]
+                );
+            }
+            rhoend = rhobeg / 5e6;
+
+            // minimize screen distance to cursor
+            _minFunc = function (n, m, w, con) {
+                var c3d = [
+                        1,
+                        target.X(...w),
+                        target.Y(...w),
+                        target.Z(...w)
+                    ],
+                    c2d = target.view.project3DTo2D(c3d),
+                    xDiff = p[0] - c2d[1],
+                    yDiff = p[1] - c2d[2];
+
+                if (n === 1) {
+                    con[0] =  w[0] - target.range[0];
+                    con[1] = -w[0] + target.range[1];
+                } else if (n === 2) {
+                    con[0] =  w[0] - target.range_u[0];
+                    con[1] = -w[0] + target.range_u[1];
+                    con[2] =  w[1] - target.range_v[0];
+                    con[3] = -w[1] + target.range_v[1];
+                }
+                return xDiff*xDiff + yDiff*yDiff;
+            };
+            Mat.Nlp.FindMinimum(_minFunc, dim, 2*dim, params, rhobeg, rhoend, iprint, maxfun);
+            return [1, target.X(...params), target.Y(...params), target.Z(...params)];
+        },
+
+        /**
          * Calculates the distance of a point to a line. The point and the line are given by homogeneous
          * coordinates. For lines this can be line.stdform.
          * @param {Array} point Homogeneous coordinates of a point.
