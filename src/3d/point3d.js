@@ -283,7 +283,7 @@ JXG.extend(
                 Geometry.distance(this._c2d, this.element2D.coords.usrCoords) !== 0
             ) {
                 if (this.slide) {
-                    this.coords = this.slide.projectCoords(
+                    this.coords = this.slide.projectScreenCoords(
                         [this.element2D.X(), this.element2D.Y()],
                         this._params
                     );
@@ -306,6 +306,12 @@ JXG.extend(
                 }
             } else {
                 this.updateCoords();
+                if (this.slide) {
+                    this.coords = this.slide.projectCoords(
+                        [this.X(), this.Y(), this.Z()],
+                        this._params
+                    );
+                }
                 // Update 2D point from its 3D view
                 this.element2D.coords.setCoordinates(
                     Const.COORDS_BY_USER,
@@ -448,6 +454,12 @@ JXG.createPoint3D = function (board, parents, attributes) {
     el.addChild(el.element2D);
     el.inherits.push(el.element2D);
     el.element2D.setParents(el);
+
+    // if this point is a glider, record that in the update tree
+    if (el.slide) {
+        el.slide.addChild(el);
+        el.setParents(el.slide);
+    }
 
     el._c2d = el.element2D.coords.usrCoords.slice(); // Store a copy of the coordinates to detect dragging
 

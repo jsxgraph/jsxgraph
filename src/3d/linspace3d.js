@@ -151,22 +151,46 @@ JXG.extend(
             return this;
         },
 
-        projectCoords: function (pScr) {
-            var p0_coords = this.getPointCoords(0),
-                p1_coords = this.getPointCoords(1),
-                p0_2d = this.view.project3DTo2D(p0_coords).slice(1, 3),
-                p1_2d = this.view.project3DTo2D(p1_coords).slice(1, 3),
-                dir_2d = [
-                    p1_2d[0] - p0_2d[0],
-                    p1_2d[1] - p0_2d[1]
-                ],
-                diff = [
-                    pScr[0] - p0_2d[0],
-                    pScr[1] - p0_2d[1]
-                ],
-                t = Mat.innerProduct(diff, dir_2d) / Mat.innerProduct(dir_2d, dir_2d),
-                t_clamped = Math.min(Math.max(t, this.range[0]), this.range[1]),
-                c3d;
+        projectCoords: function (p) {
+            const p0_coords = this.getPointCoords(0),
+                  p1_coords = this.getPointCoords(1),
+                  dir = [
+                    p1_coords[0] - p0_coords[0],
+                    p1_coords[1] - p0_coords[1],
+                    p1_coords[2] - p0_coords[2]
+                  ],
+                  diff = [
+                      p[0] - p0_coords[0],
+                      p[1] - p0_coords[1],
+                      p[2] - p0_coords[2]
+                  ],
+                  t = Mat.innerProduct(diff, dir) / Mat.innerProduct(dir, dir),
+                  t_clamped = Math.min(Math.max(t, this.range[0]), this.range[1]);
+
+            var c3d;
+
+            c3d = this.getPointCoords(t_clamped).slice();
+            c3d.unshift(1);
+            return c3d;
+        },
+
+        projectScreenCoords: function (pScr) {
+            const p0_coords = this.getPointCoords(0),
+                  p1_coords = this.getPointCoords(1),
+                  p0_2d = this.view.project3DTo2D(p0_coords).slice(1, 3),
+                  p1_2d = this.view.project3DTo2D(p1_coords).slice(1, 3),
+                  dir_2d = [
+                      p1_2d[0] - p0_2d[0],
+                      p1_2d[1] - p0_2d[1]
+                  ],
+                  diff = [
+                      pScr[0] - p0_2d[0],
+                      pScr[1] - p0_2d[1]
+                  ],
+                  t = Mat.innerProduct(diff, dir_2d) / Mat.innerProduct(dir_2d, dir_2d),
+                  t_clamped = Math.min(Math.max(t, this.range[0]), this.range[1]);
+
+            var c3d;
 
             c3d = this.getPointCoords(t_clamped).slice();
             c3d.unshift(1);

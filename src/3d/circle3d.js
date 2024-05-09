@@ -216,10 +216,18 @@ JXG.extend(
             this.normalizeFrame();
         },
 
-        projectCoords: function (pScr, params) {
+        projectCoords: function (p, params) {
             // we have to call `this.curve.projectCoords` from the curve, rather
-            // the circle, to make `this` refer to the curve within the call
-            return this.curve.projectCoords(pScr, params);
+            // than the circle, to make `this` refer to the curve within the
+            // call
+            return this.curve.projectCoords(p, params);
+        },
+
+        projectScreenCoords: function (pScr, params) {
+            // we have to call `this.curve.projectScreenCoords` from the curve,
+            // rather than the circle, to make `this` refer to the curve within
+            // the call
+            return this.curve.projectScreenCoords(pScr, params);
         }
     }
 );

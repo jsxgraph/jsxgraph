@@ -168,11 +168,20 @@ JXG.extend(
             return this;
         },
 
-        projectCoords: function (pScr, params) {
+        initParamsIfNeeded: function (params) {
             if (params.length === 0) {
                 params.unshift(0.5*(this.range[0] + this.range[1]));
             }
-            return Geometry.projectCoordsToParametric(pScr, this, params);
+        },
+
+        projectCoords: function (p, params) {
+            this.initParamsIfNeeded(params);
+            return Geometry.projectCoordsToParametric(p, this, params);
+        },
+
+        projectScreenCoords: function (pScr, params) {
+            this.initParamsIfNeeded(params);
+            return Geometry.projectScreenCoordsToParametric(pScr, this, params);
         }
     }
 );
