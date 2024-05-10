@@ -494,6 +494,10 @@ JXG.extend(
             ];
             A = Mat.matMatMult(A, Tcam1);
 
+            // expose camera transformation and field of view
+            this._Tcam1 = Tcam1;
+            this._foc = foc;
+
             return A;
         },
 

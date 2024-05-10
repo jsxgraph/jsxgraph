@@ -32,6 +32,7 @@
 import JXG from "../jxg.js";
 import Const from "../base/constants.js";
 import Type from "../utils/type.js";
+import Mat from "../math/math.js";
 
 /**
  * A sphere consists of all points with a given distance from a given point.
@@ -285,6 +286,7 @@ JXG.createSphere3D = function (board, parents, attributes) {
     var view = parents[0],
         attr, p, point_style, provided,
         center2d, radius2d,
+        frontFocus, backFocus,
         el, i;
 
     attr = Type.copyAttributes(attributes, board.options, 'sphere3d');
@@ -335,17 +337,109 @@ JXG.createSphere3D = function (board, parents, attributes) {
         );
     }
 
-    // The center and radius functions of the parallel projection circle
-    center2d = function () {
-        return view.project3DTo2D([1, el.center.X(), el.center.Y(), el.center.Z()]);
-    };
+    if (view.projectionType === 'central') {
+        // The central projection of a sphere is an ellipse, whose foci are the
+        // projections of the front and back points of the sphere---that is, the
+        // points closest to and furthest from the screen
+        let viewFrame = (k) => view._Tcam1[k+1].slice(1, 4);
+        frontFocus = view.create(
+            'point',
+            function () {
+                const out = viewFrame(2);
+                const r = el.Radius();
+                return view.project3DTo2D([
+                    el.center.X() - r*out[0],
+                    el.center.Y() - r*out[1],
+                    el.center.Z() - r*out[2]
+                ]).slice(1, 3)
+            },
+            {size: 1, fillColor: 'purple', strokeColor: 'purple', withLabel: false}
+        );
+        backFocus = view.create(
+            'point',
+            function () {
+                const out = viewFrame(2);
+                const r = el.Radius();
+                return view.project3DTo2D([
+                    el.center.X() + r*out[0],
+                    el.center.Y() + r*out[1],
+                    el.center.Z() + r*out[2]
+                ]).slice(1, 3)
+            },
+            {size: 1, fillColor: 'purple', strokeColor: 'purple', withLabel: false}
+        );
 
-    radius2d = function () {
-        return el.Radius() * view.size[0] / (view.bbox3D[0][1] - view.bbox3D[0][0]);
-    };
+        // show other view-space extremes, for debugging
+        const axisColors = ['orange', 'green'];
+        for (let k = 0; k < 2; k++) {
+            view.create(
+                'point',
+                function () {
+                    const dir = viewFrame(k);
+                    const r = el.Radius();
+                    return view.project3DTo2D([
+                        el.center.X() - r*dir[0],
+                        el.center.Y() - r*dir[1],
+                        el.center.Z() - r*dir[2]
+                    ]).slice(1, 3)
+                },
+                {size: 1, fillColor: axisColors[k], strokeColor: axisColors[k], withLabel: false}
+            );
+            view.create(
+                'point',
+                function () {
+                    const dir = viewFrame(k);
+                    const r = el.Radius();
+                    return view.project3DTo2D([
+                        el.center.X() + r*dir[0],
+                        el.center.Y() + r*dir[1],
+                        el.center.Z() + r*dir[2]
+                    ]).slice(1, 3)
+                },
+                {size: 1, fillColor: axisColors[k], strokeColor: axisColors[k], withLabel: false}
+            );
+        }
+
+        const innerEdge = view.create(
+            'point',
+            function () {
+                const vf = [viewFrame(0), viewFrame(1), viewFrame(2)];
+                const w = Mat.matVecMult(view._Tcam1, el.center.coords);
+                const p = [w[1]/w[0], w[2]/w[0], w[3]/w[0] - view._foc];
+                const offset = Math.sqrt(p[0]*p[0] + p[1]*p[1]);
+                const inward = [
+                    -(p[0]*vf[0][0] + p[1]*vf[1][0]) / offset,
+                    -(p[0]*vf[0][1] + p[1]*vf[1][1]) / offset,
+                    -(p[0]*vf[0][2] + p[1]*vf[1][2]) / offset
+                ];
+                const offAxis = Math.atan(-offset / p[2]);
+                const r = el.Radius();
+                const coneTilt = Math.acos(r / Mat.norm(p));
+                const lean = coneTilt + offAxis,
+                      cos_lean = Math.cos(lean),
+                      sin_lean = Math.sin(lean);
+                console.log(offAxis, coneTilt, lean);
+                return view.project3DTo2D([
+                    el.center.X() + r * (sin_lean*inward[0] + cos_lean*vf[2][0]),
+                    el.center.Y() + r * (sin_lean*inward[1] + cos_lean*vf[2][1]),
+                    el.center.Z() + r * (sin_lean*inward[2] + cos_lean*vf[2][2])
+                ]);
+            },
+            {size: 1, fillColor: 'magenta', strokeColor: 'magenta', withLabel: false}
+        );
+        el.element2D = view.create('ellipse', [frontFocus, backFocus, innerEdge], attr);
+    } else {
+        // The parallel projection of a sphere is a circle
+        center2d = function () {
+            return view.project3DTo2D([1, el.center.X(), el.center.Y(), el.center.Z()]);
+        };
+        radius2d = function () {
+            return el.Radius() * view.size[0] / (view.bbox3D[0][1] - view.bbox3D[0][0]);
+        };
+        el.element2D = view.create('circle', [center2d, radius2d], attr);
+    }
 
     attr = el.setAttr2D(attr);
-    el.element2D = view.create('circle', [center2d, radius2d], attr);
     el.addChild(el.element2D);
     el.inherits.push(el.element2D);
     el.element2D.setParents([el]);
