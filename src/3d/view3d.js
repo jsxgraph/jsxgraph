@@ -105,6 +105,12 @@ JXG.View3D = function (board, parents, attributes) {
     ];
 
     /**
+     * The 4x4 matrix that maps world-space vectors to view-space vectors.
+     * @type {Array}
+     */
+    this.cameraTransform = [];
+
+    /**
      * @type array
      * @private
      */
@@ -125,11 +131,18 @@ JXG.View3D = function (board, parents, attributes) {
     this.bbox3D = parents[2];
 
     /**
-     * Distance of the view to the origin. In other words, its
-     * the radius of the sphere where the camera sits.view.board.update
+     * The distance from the camera to the origin. In other words, the
+     * radius of the sphere where the camera sits.
      * @type Number
      */
     this.r = -1;
+
+    /**
+     * The distance from the camera to the screen. Computed automatically from
+     * the `fov` property.
+     * @type Number
+     */
+    this.focalDist = -1;
 
     /**
      * Type of projection.
@@ -418,24 +431,15 @@ JXG.extend(
                 // bbox3D is always at the world origin, i.e. T_obj is the unit matrix.
                 // All vectors contain affine coordinates and have length 3
                 // The matrices are of size 4x4.
-                Tcam1, // The inverse camera transformation
                 eye, d,
-                foc = 1 / Math.tan(0.5 * Type.evaluate(this.visProp.fov)),
-                zf = 20,
-                zn = 8,
+                zf = 20, // near clip plane
+                zn = 8, // far clip plane
                 Pref = [
                     0.5 * (this.bbox3D[0][0] + this.bbox3D[0][1]),
                     0.5 * (this.bbox3D[1][0] + this.bbox3D[1][1]),
                     0.5 * (this.bbox3D[2][0] + this.bbox3D[2][1])
                 ],
-
-                A = [
-                    [0, 0, 0, -1],
-                    [0, foc, 0, 0],
-                    [0, 0, foc, 0],
-                    [2 * zf * zn / (zn - zf), 0, 0, (zf + zn) / (zn - zf)]
-                ],
-
+                A,
                 func_sphere;
 
             /**
@@ -485,20 +489,25 @@ JXG.extend(
             ax = Mat.crossProduct(v, az);
             ay = Mat.crossProduct(az, ax);
 
+            // compute camera transformation
             v = Mat.matVecMult([ax, ay, az], eye);
-            Tcam1 = [
+            this.cameraTransform = [
                 [1, 0, 0, 0],
                 [-v[0], ax[0], ax[1], ax[2]],
                 [-v[1], ay[0], ay[1], ay[2]],
                 [-v[2], az[0], az[1], az[2]]
             ];
-            A = Mat.matMatMult(A, Tcam1);
 
-            // expose camera transformation and field of view
-            this._Tcam1 = Tcam1;
-            this._foc = foc;
+            // compute focal distance and clip space transformation
+            this.focalDist = 1 / Math.tan(0.5 * Type.evaluate(this.visProp.fov));
+            A = [
+                [0, 0, 0, -1],
+                [0, this.focalDist, 0, 0],
+                [0, 0, this.focalDist, 0],
+                [2 * zf * zn / (zn - zf), 0, 0, (zf + zn) / (zn - zf)]
+            ];
 
-            return A;
+            return Mat.matMatMult(A, this.cameraTransform);
         },
 
         // Update 3D-to-2D transformation matrix with the actual azimuth and elevation angles.

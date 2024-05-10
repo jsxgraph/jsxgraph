@@ -171,6 +171,33 @@ JXG.extend(
             }
 
             return NaN;
+        },
+
+        // The central projection of a sphere is an ellipse. The front and back
+        // points of the sphere---that is, the points closest to and furthest
+        // from the screen---project to the foci of the ellipse.
+        //
+        // To see this, look at the cone tangent to the sphere whose tip is at
+        // the camera. The image of the sphere is the ellipse where this cone
+        // intersects the screen. By acting on the sphere with scalings centered
+        // on the camera, you can send it to either of the Dandelin spheres that
+        // touch the screen at the foci of the image ellipse.
+        //
+        // This factor method produces two functions, `focusFn(-1)` and
+        // `focusFn(1)`, that evaluate to the projections of the front and back
+        // points of the sphere, respectively.
+        focusFn: function (sgn) {
+            const that = this;
+
+            return function () {
+                const camDir = that.view.cameraTransform[3];
+                const r = that.Radius();
+                return view.project3DTo2D([
+                    that.center.X() + sgn*r*camDir[1],
+                    that.center.Y() + sgn*r*camDir[2],
+                    that.center.Z() + sgn*r*camDir[3]
+                ]).slice(1, 3);
+            }
         }
     }
 );
@@ -338,19 +365,36 @@ JXG.createSphere3D = function (board, parents, attributes) {
     }
 
     if (view.projectionType === 'central') {
-        // The central projection of a sphere is an ellipse, whose foci are the
-        // projections of the front and back points of the sphere---that is, the
-        // points closest to and furthest from the screen
-        let viewFrame = (k) => view._Tcam1[k+1].slice(1, 4);
+        let viewFrame = (k) => view.cameraTransform[k+1].slice(1, 4);
         frontFocus = view.create(
             'point',
+            el.focusFn(-1),
+            {
+                size: 1,
+                fillColor: 'purple',
+                strokeColor: 'purple',
+                withLabel: false
+            }
+        );
+        backFocus = view.create(
+            'point',
+            el.focusFn(1),
+            {
+                size: 1,
+                fillColor: 'purple',
+                strokeColor: 'purple',
+                withLabel: false
+            }
+        );
+        /*frontFocus = view.create(
+            'point',
             function () {
-                const out = viewFrame(2);
+                const camDir = view.cameraTransform[2];
                 const r = el.Radius();
                 return view.project3DTo2D([
-                    el.center.X() - r*out[0],
-                    el.center.Y() - r*out[1],
-                    el.center.Z() - r*out[2]
+                    el.center.X() + sgn*r*camDir[1],
+                    el.center.Y() + sgn*r*camDir[2],
+                    el.center.Z() + sgn*r*camDir[3]
                 ]).slice(1, 3)
             },
             {size: 1, fillColor: 'purple', strokeColor: 'purple', withLabel: false}
@@ -367,7 +411,7 @@ JXG.createSphere3D = function (board, parents, attributes) {
                 ]).slice(1, 3)
             },
             {size: 1, fillColor: 'purple', strokeColor: 'purple', withLabel: false}
-        );
+        );*/
 
         // show other view-space extremes, for debugging
         const axisColors = ['orange', 'green'];
@@ -404,8 +448,8 @@ JXG.createSphere3D = function (board, parents, attributes) {
             'point',
             function () {
                 const vf = [viewFrame(0), viewFrame(1), viewFrame(2)];
-                const w = Mat.matVecMult(view._Tcam1, el.center.coords);
-                const p = [w[1]/w[0], w[2]/w[0], w[3]/w[0] - view._foc];
+                const w = Mat.matVecMult(view.cameraTransform, el.center.coords);
+                const p = [w[1]/w[0], w[2]/w[0], w[3]/w[0] - view.focalDist];
                 const offset = Math.sqrt(p[0]*p[0] + p[1]*p[1]);
                 const inward = [
                     -(p[0]*vf[0][0] + p[1]*vf[1][0]) / offset,
@@ -427,7 +471,11 @@ JXG.createSphere3D = function (board, parents, attributes) {
             },
             {size: 1, fillColor: 'magenta', strokeColor: 'magenta', withLabel: false}
         );
-        el.element2D = view.create('ellipse', [frontFocus, backFocus, innerEdge], attr);
+        el.element2D = view.create(
+            'ellipse',
+            [frontFocus, backFocus, innerEdge],
+            attr
+        );
     } else {
         // The parallel projection of a sphere is a circle
         center2d = function () {
