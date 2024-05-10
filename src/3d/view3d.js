@@ -105,7 +105,11 @@ JXG.View3D = function (board, parents, attributes) {
     ];
 
     /**
-     * The 4x4 matrix that maps world-space vectors to view-space vectors.
+     * The 4x4 matrix that maps world-space vectors to zero-focus view-space
+     * vectors---that is, view space vectors for a camera sitting on the screen.
+     * The camera is actually set back from the screen by the focal distance. To
+     * get actual view space vectors, with the focal distance accounted for, use
+     * the `worldToView` method.
      * @type {Array}
      */
     this.cameraTransform = [];
@@ -650,6 +654,26 @@ JXG.extend(
             this.board.removeObject(object, saveMethod);
 
             return this;
+        },
+
+        /**
+         * Map world coordinates to view coordinates.
+         *
+         * @param {Array} pWorld A world space point, in homogeneous coordinates.
+         * @param {Boolean} [homog=true] Whether to return homogeneous coordinates.
+         * If false, projects down to ordinary coordinates.
+         */
+        worldToView: function (pWorld, homog=true) {
+            var pView = Mat.matVecMult(this.cameraTransform, pWorld);
+            pView[3] -= pView[0] * this.focalDist;
+            if (homog) {
+                return pView;
+            } else {
+                for (let k = 1; k < 4; k++) {
+                    pView[k] /= pView[0];
+                }
+                return pView.slice(1, 4);
+            }
         },
 
         /**

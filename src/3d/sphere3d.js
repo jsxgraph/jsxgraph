@@ -193,14 +193,15 @@ JXG.extend(
             const that = this;
 
             return function () {
-                const camDir = that.view.cameraTransform[k+1];
-                const r = that.Radius();
-                return view.project3DTo2D([
+                const camDir = that.view.cameraTransform[k+1],
+                      r = that.Radius();
+
+                return that.view.project3DTo2D([
                     that.center.X() + sgn*r*camDir[1],
                     that.center.Y() + sgn*r*camDir[2],
                     that.center.Z() + sgn*r*camDir[3]
                 ]).slice(1, 3);
-            }
+            };
         }
     }
 );
@@ -368,8 +369,9 @@ JXG.createSphere3D = function (board, parents, attributes) {
     }
 
     if (view.projectionType === 'central') {
-        let debugAxisColors = ['orange', 'green', 'purple']; // [DEBUG]
-        let debugMarkerStyle = function (k) {
+        // [DEBUG]
+        let debugAxisColors = ['orange', 'green', 'purple'],
+            debugMarkerStyle = function (k) {
             return {
                 size: 1,
                 fillColor: debugAxisColors[k],
@@ -377,6 +379,7 @@ JXG.createSphere3D = function (board, parents, attributes) {
                 withLabel: false
             };
         };
+
         frontFocus = view.create('point', el.focusFn(-1), debugMarkerStyle(2));
         backFocus = view.create('point', el.focusFn(1), debugMarkerStyle(2));
 
@@ -386,30 +389,29 @@ JXG.createSphere3D = function (board, parents, attributes) {
             view.create('point', el.focusFn(1, k), debugMarkerStyle(k));
         }
 
-        let viewFrame = (k) => view.cameraTransform[k+1].slice(1, 4);
         const innerEdge = view.create(
             'point',
             function () {
-                const vf = [viewFrame(0), viewFrame(1), viewFrame(2)];
-                const w = Mat.matVecMult(view.cameraTransform, el.center.coords);
-                const p = [w[1]/w[0], w[2]/w[0], w[3]/w[0] - view.focalDist];
-                const offset = Math.sqrt(p[0]*p[0] + p[1]*p[1]);
-                const inward = [
-                    -(p[0]*vf[0][0] + p[1]*vf[1][0]) / offset,
-                    -(p[0]*vf[0][1] + p[1]*vf[1][1]) / offset,
-                    -(p[0]*vf[0][2] + p[1]*vf[1][2]) / offset
-                ];
-                const offAxis = Math.atan(-offset / p[2]);
-                const r = el.Radius();
-                const coneTilt = Math.acos(r / Mat.norm(p));
-                const lean = coneTilt + offAxis,
+                const p = view.worldToView(el.center.coords, false),
+                      distOffAxis = Math.sqrt(p[0]*p[0] + p[1]*p[1]),
+                      cam = view.cameraTransform,
+                      inward = [
+                          -(p[0]*cam[1][1] + p[1]*cam[2][1]) / distOffAxis,
+                          -(p[0]*cam[1][2] + p[1]*cam[2][2]) / distOffAxis,
+                          -(p[0]*cam[1][3] + p[1]*cam[2][3]) / distOffAxis
+                      ],
+                      r = el.Radius(),
+                      angleOffAxis = Math.atan(-distOffAxis / p[2]),
+                      steepness = Math.acos(r / Mat.norm(p)),
+                      lean = angleOffAxis + steepness,
                       cos_lean = Math.cos(lean),
                       sin_lean = Math.sin(lean);
-                console.log(offAxis, coneTilt, lean);
+
+                console.log(angleOffAxis, steepness, lean);
                 return view.project3DTo2D([
-                    el.center.X() + r * (sin_lean*inward[0] + cos_lean*vf[2][0]),
-                    el.center.Y() + r * (sin_lean*inward[1] + cos_lean*vf[2][1]),
-                    el.center.Z() + r * (sin_lean*inward[2] + cos_lean*vf[2][2])
+                    el.center.X() + r * (sin_lean*inward[0] + cos_lean*cam[3][1]),
+                    el.center.Y() + r * (sin_lean*inward[1] + cos_lean*cam[3][2]),
+                    el.center.Z() + r * (sin_lean*inward[2] + cos_lean*cam[3][3])
                 ]);
             },
             {size: 1, fillColor: 'magenta', strokeColor: 'magenta', withLabel: false}
