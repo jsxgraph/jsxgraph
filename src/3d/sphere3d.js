@@ -186,11 +186,14 @@ JXG.extend(
         // This factor method produces two functions, `focusFn(-1)` and
         // `focusFn(1)`, that evaluate to the projections of the front and back
         // points of the sphere, respectively.
-        focusFn: function (sgn) {
+        //
+        // [DEBUG] Using the optional argument, you can construct other extreme
+        // points for debugging.
+        focusFn: function (sgn, k = 2) {
             const that = this;
 
             return function () {
-                const camDir = that.view.cameraTransform[3];
+                const camDir = that.view.cameraTransform[k+1];
                 const r = that.Radius();
                 return view.project3DTo2D([
                     that.center.X() + sgn*r*camDir[1],
@@ -365,85 +368,25 @@ JXG.createSphere3D = function (board, parents, attributes) {
     }
 
     if (view.projectionType === 'central') {
-        let viewFrame = (k) => view.cameraTransform[k+1].slice(1, 4);
-        frontFocus = view.create(
-            'point',
-            el.focusFn(-1),
-            {
+        let debugAxisColors = ['orange', 'green', 'purple']; // [DEBUG]
+        let debugMarkerStyle = function (k) {
+            return {
                 size: 1,
-                fillColor: 'purple',
-                strokeColor: 'purple',
+                fillColor: debugAxisColors[k],
+                strokeColor: debugAxisColors[k],
                 withLabel: false
-            }
-        );
-        backFocus = view.create(
-            'point',
-            el.focusFn(1),
-            {
-                size: 1,
-                fillColor: 'purple',
-                strokeColor: 'purple',
-                withLabel: false
-            }
-        );
-        /*frontFocus = view.create(
-            'point',
-            function () {
-                const camDir = view.cameraTransform[2];
-                const r = el.Radius();
-                return view.project3DTo2D([
-                    el.center.X() + sgn*r*camDir[1],
-                    el.center.Y() + sgn*r*camDir[2],
-                    el.center.Z() + sgn*r*camDir[3]
-                ]).slice(1, 3)
-            },
-            {size: 1, fillColor: 'purple', strokeColor: 'purple', withLabel: false}
-        );
-        backFocus = view.create(
-            'point',
-            function () {
-                const out = viewFrame(2);
-                const r = el.Radius();
-                return view.project3DTo2D([
-                    el.center.X() + r*out[0],
-                    el.center.Y() + r*out[1],
-                    el.center.Z() + r*out[2]
-                ]).slice(1, 3)
-            },
-            {size: 1, fillColor: 'purple', strokeColor: 'purple', withLabel: false}
-        );*/
+            };
+        };
+        frontFocus = view.create('point', el.focusFn(-1), debugMarkerStyle(2));
+        backFocus = view.create('point', el.focusFn(1), debugMarkerStyle(2));
 
-        // show other view-space extremes, for debugging
-        const axisColors = ['orange', 'green'];
+        // [DEBUG] show other view-space extremes, for debugging
         for (let k = 0; k < 2; k++) {
-            view.create(
-                'point',
-                function () {
-                    const dir = viewFrame(k);
-                    const r = el.Radius();
-                    return view.project3DTo2D([
-                        el.center.X() - r*dir[0],
-                        el.center.Y() - r*dir[1],
-                        el.center.Z() - r*dir[2]
-                    ]).slice(1, 3)
-                },
-                {size: 1, fillColor: axisColors[k], strokeColor: axisColors[k], withLabel: false}
-            );
-            view.create(
-                'point',
-                function () {
-                    const dir = viewFrame(k);
-                    const r = el.Radius();
-                    return view.project3DTo2D([
-                        el.center.X() + r*dir[0],
-                        el.center.Y() + r*dir[1],
-                        el.center.Z() + r*dir[2]
-                    ]).slice(1, 3)
-                },
-                {size: 1, fillColor: axisColors[k], strokeColor: axisColors[k], withLabel: false}
-            );
+            view.create('point', el.focusFn(-1, k), debugMarkerStyle(k));
+            view.create('point', el.focusFn(1, k), debugMarkerStyle(k));
         }
 
+        let viewFrame = (k) => view.cameraTransform[k+1].slice(1, 4);
         const innerEdge = view.create(
             'point',
             function () {
