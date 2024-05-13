@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Polygon in 3D</title>
+    <meta charset="utf-8">
+    <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
+    <script type="text/javascript" src="../distrib/jsxgraphcore.js"></script>
+</head>
+<body>
+
+<div id="jxgbox" class="jxgbox" style="width:800px; height:800px; float:left"></div>
+
+<script type="text/javascript">
+    let board = JXG.JSXGraph.initBoard(
+        'jxgbox',
+        {
+            boundingbox: [-8, 8, 8,-8],
+            axis: false,
+            showcopyright: false,
+            shownavigation: false
+        }
+    );
+    let view = board.create(
+        'view3d',
+        [[-6, -3], [8, 8],
+        [[0, 3], [0, 3], [0, 3]]],
+        {
+            xPlaneRear: {fillOpacity: 0.2, gradient: null},
+            yPlaneRear: {fillOpacity: 0.2, gradient: null},
+            zPlaneRear: {fillOpacity: 0.2, gradient: null}
+        }
+    );
+
+    // Vertices
+    let vertices = [];
+    coords = [
+        [2, 1, 1],
+        [2, 2, 1],
+        [1, 2, 1],
+        [1, 2, 2],
+        [1, 1, 2],
+        [1, 1, 1]
+    ];
+    colors = [
+        'orangered',
+        'gold',
+        'mediumseagreen',
+        'darkturquoise',
+        'purple',
+        'deeppink'
+    ];
+    for (let i = 0; i < coords.length; i++) {
+        vertices.push(view.create(
+            'point3d',
+            coords[i],
+            {
+                withLabel: false,
+                size: 5,
+                strokeWidth: 1,
+                strokeColor: colors[i],
+                fillColor: 'white',
+                gradient: 'radial',
+                gradientSecondColor: colors[i],
+                gradientFX: 0.7,
+                gradientFY: 0.3,
+                highlightStrokeColor: '#600030'
+            }
+        ));
+    }
+
+    // Polygon
+    let polygon = view.create('polygon3d', vertices);
+</script>
+</body>
+</html>
