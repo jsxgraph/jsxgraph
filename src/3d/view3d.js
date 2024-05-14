@@ -110,6 +110,9 @@ JXG.View3D = function (board, parents, attributes) {
      * The camera is actually set back from the screen by the focal distance. To
      * get actual view space vectors, with the focal distance accounted for, use
      * the `worldToView` method.
+     * 
+     * This transformation is exposed to help 3D elements manage their 2D
+     * representations in central projection mode.
      * @type {Array}
      */
     this.cameraTransform = [];
