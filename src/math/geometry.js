@@ -3439,8 +3439,8 @@ JXG.extend(
          * @param {Array} pScr Screen coordinates to project.
          * @param {JXG.Curve3D|JXG.Surface3D} target Parametric curve or surface to project to.
          * @param {Array} params Parameters of point on the target, initially specifying the starting point of
-         * the search. The parameters are modified in place during the seach, ending up at the nearest point.
-         * @returns {JXG.Coords} Array containing the coordinates of the nearest point on the curve or surface.
+         * the search. The parameters are modified in place during the search, ending up at the nearest point.
+         * @returns {Array} Array of length 4 containing the coordinates of the nearest point on the curve or surface.
          */
         projectCoordsToParametric: function (p, target, params) {
             // The variables and parameters for the Cobyla constrained
@@ -3491,8 +3491,8 @@ JXG.extend(
          * @param {Array} pScr Screen coordinates to project.
          * @param {JXG.Curve3D|JXG.Surface3D} target Parametric curve or surface to project to.
          * @param {Array} params Parameters of point on the target, initially specifying the starting point of
-         * the search. The parameters are modified in place during the seach, ending up at the nearest point.
-         * @returns {JXG.Coords} Array containing the coordinates of the nearest point on the curve or surface.
+         * the search. The parameters are modified in place during the search, ending up at the nearest point.
+         * @returns {Array} Array of length 4 containing the coordinates of the nearest point on the curve or surface.
          */
         projectScreenCoordsToParametric: function (pScr, target, params) {
             // The variables and parameters for the Cobyla constrained
