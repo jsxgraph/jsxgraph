@@ -3465,9 +3465,12 @@ JXG.extend(
 
             // minimize screen distance to cursor
             _minFunc = function (n, m, w, con) {
-                var xDiff = p[0] - target.X(...w),
-                    yDiff = p[1] - target.Y(...w),
-                    zDiff = p[2] - target.Z(...w);
+                // var xDiff = p[0] - target.X(...w),
+                //     yDiff = p[1] - target.Y(...w),
+                //     zDiff = p[2] - target.Z(...w);
+                var xDiff = p[0] - target.X.apply(null, w),
+                    yDiff = p[1] - target.Y.apply(null, w),
+                    zDiff = p[2] - target.Z.apply(null, w);
 
                 if (n === 1) {
                     con[0] =  w[0] - target.range[0];
@@ -3481,7 +3484,9 @@ JXG.extend(
                 return xDiff*xDiff + yDiff*yDiff + zDiff*zDiff;
             };
             Mat.Nlp.FindMinimum(_minFunc, dim, 2*dim, params, rhobeg, rhoend, iprint, maxfun);
-            return [1, target.X(...params), target.Y(...params), target.Z(...params)];
+
+            // return [1, target.X(...params), target.Y(...params), target.Z(...params)];
+            return [1, target.X.apply(null, params), target.Y.apply(null, params), target.Z.apply(null, params)];
         },
 
         /**
@@ -3517,11 +3522,17 @@ JXG.extend(
 
             // minimize screen distance to cursor
             _minFunc = function (n, m, w, con) {
+                // var c3d = [
+                //         1,
+                //         target.X(...w),
+                //         target.Y(...w),
+                //         target.Z(...w)
+                //     ],
                 var c3d = [
                         1,
-                        target.X(...w),
-                        target.Y(...w),
-                        target.Z(...w)
+                        target.X.apply(null, w),
+                        target.Y.apply(null, w),
+                        target.Z.apply(null, w)
                     ],
                     c2d = target.view.project3DTo2D(c3d),
                     xDiff = pScr[0] - c2d[1],
@@ -3539,7 +3550,9 @@ JXG.extend(
                 return xDiff*xDiff + yDiff*yDiff;
             };
             Mat.Nlp.FindMinimum(_minFunc, dim, 2*dim, params, rhobeg, rhoend, iprint, maxfun);
-            return [1, target.X(...params), target.Y(...params), target.Z(...params)];
+
+            // return [1, target.X(...params), target.Y(...params), target.Z(...params)];
+            return [1, target.X.apply(null, params), target.Y.apply(null, params), target.Z.apply(null, params)];
         },
 
         /**
