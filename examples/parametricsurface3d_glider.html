@@ -42,6 +42,24 @@
         stepsU: 40,
         stepsV: 60
     });
+
+    // Glider
+    let glider = view.create(
+        'point3d',
+        [1, 1, 1, surface],
+        {
+            withLabel: false,
+            size: 5,
+            strokeWidth: 1,
+            strokeColor: '#600030',
+            fillColor: 'white',
+            gradient: 'radial',
+            gradientSecondColor: '#a00050',
+            gradientFX: 0.7,
+            gradientFY: 0.3,
+            highlightStrokeColor: '#600030'
+       }
+    );
 </script>
 </body>
 </html>
