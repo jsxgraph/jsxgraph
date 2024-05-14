@@ -245,8 +245,8 @@ JXG.extend(
          *    p.setPosition([1, 3, 4]);
          */
         setPosition: function (coords, noevent) {
-            var c = this.coords,
-                oc = this.coords.slice(); // Copy of original values
+            var c = this.coords;
+                // oc = this.coords.slice(); // Copy of original values
 
             if (coords.length === 3) {
                 // Euclidean coordinates
@@ -264,7 +264,7 @@ JXG.extend(
             }
 
             // console.log(el.emitter, !noevent, oc[0] !== c[0] || oc[1] !== c[1] || oc[2] !== c[2] || oc[3] !== c[3]);
-            // Not yet working
+            // Not yet working TODO
             // if (el.emitter && !noevent &&
             //     (oc[0] !== c[0] || oc[1] !== c[1] || oc[2] !== c[2] || oc[3] !== c[3])) {
             //     this.triggerEventHandlers(['update3D'], [oc]);
