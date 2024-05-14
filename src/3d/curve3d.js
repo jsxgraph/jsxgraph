@@ -30,6 +30,7 @@
 
 import JXG from "../jxg.js";
 import Const from "../base/constants.js";
+import Geometry from "../math/geometry.js";
 import Type from "../utils/type.js";
 import Mat from "../math/math.js";
 
@@ -165,6 +166,22 @@ JXG.extend(
         updateRenderer: function () {
             this.needsUpdate = false;
             return this;
+        },
+
+        initParamsIfNeeded: function (params) {
+            if (params.length === 0) {
+                params.unshift(0.5*(this.range[0] + this.range[1]));
+            }
+        },
+
+        projectCoords: function (p, params) {
+            this.initParamsIfNeeded(params);
+            return Geometry.projectCoordsToParametric(p, this, params);
+        },
+
+        projectScreenCoords: function (pScr, params) {
+            this.initParamsIfNeeded(params);
+            return Geometry.projectScreenCoordsToParametric(pScr, this, params);
         }
     }
 );

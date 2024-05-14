@@ -214,6 +214,20 @@ JXG.extend(
             this.frame1 = Mat.crossProduct(this.frame2, this.normal);
             this.frame2 = Mat.crossProduct(this.normal, this.frame1);
             this.normalizeFrame();
+        },
+
+        projectCoords: function (p, params) {
+            // we have to call `this.curve.projectCoords` from the curve, rather
+            // than the circle, to make `this` refer to the curve within the
+            // call
+            return this.curve.projectCoords(p, params);
+        },
+
+        projectScreenCoords: function (pScr, params) {
+            // we have to call `this.curve.projectScreenCoords` from the curve,
+            // rather than the circle, to make `this` refer to the curve within
+            // the call
+            return this.curve.projectScreenCoords(pScr, params);
         }
     }
 );

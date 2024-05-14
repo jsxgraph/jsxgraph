@@ -143,7 +143,7 @@ JXG.Point3D = function (view, F, slide, attributes) {
      * @type Array
      * @private
      */
-    this._params = null;
+    this._params = [];
 
     this._c2d = null;
 
@@ -283,7 +283,14 @@ JXG.extend(
                 Geometry.distance(this._c2d, this.element2D.coords.usrCoords) !== 0
             ) {
                 if (this.slide) {
-                    this.projectCoords2Surface();
+                    this.coords = this.slide.projectScreenCoords(
+                        [this.element2D.X(), this.element2D.Y()],
+                        this._params
+                    );
+                    this.element2D.coords.setCoordinates(
+                        Const.COORDS_BY_USER,
+                        this.view.project3DTo2D(this.coords)
+                    );
                 } else {
                     if (this.view.isVerticalDrag()) {
                         // Drag the point in its vertical to the xy plane
@@ -299,6 +306,12 @@ JXG.extend(
                 }
             } else {
                 this.updateCoords();
+                if (this.slide) {
+                    this.coords = this.slide.projectCoords(
+                        [this.X(), this.Y(), this.Z()],
+                        this._params
+                    );
+                }
                 // Update 2D point from its 3D view
                 this.element2D.coords.setCoordinates(
                     Const.COORDS_BY_USER,
@@ -313,53 +326,6 @@ JXG.extend(
         updateRenderer: function () {
             this.needsUpdate = false;
             return this;
-        },
-
-        projectCoords2Surface: function () {
-            var n = 2, // # of variables
-                m = 2, // number of constraints
-                x = [0, 0],
-                // Various Cobyla constants, see Cobyla docs in Cobyja.js
-                rhobeg = 5.0,
-                rhoend = 1.0e-6,
-                iprint = 0,
-                maxfun = 200,
-                surface = this.slide,
-                that = this,
-                r,
-                c3d,
-                c2d,
-                _minFunc;
-
-            if (surface === null) {
-                return;
-            }
-
-            _minFunc = function (n, m, x, con) {
-                var c3d = [
-                        1,
-                        surface.X(x[0], x[1]),
-                        surface.Y(x[0], x[1]),
-                        surface.Z(x[0], x[1])
-                    ],
-                    c2d = that.view.project3DTo2D(c3d);
-
-                con[0] = that.element2D.X() - c2d[1];
-                con[1] = that.element2D.Y() - c2d[2];
-
-                return con[0] * con[0] + con[1] * con[1];
-            };
-            if (Type.exists(this._params)) {
-                x = this._params.slice();
-            }
-            r = Mat.Nlp.FindMinimum(_minFunc, n, m, x, rhobeg, rhoend, iprint, maxfun);
-
-            c3d = [1, surface.X(x[0], x[1]), surface.Y(x[0], x[1]), surface.Z(x[0], x[1])];
-            c2d = this.view.project3DTo2D(c3d);
-            this._params = x;
-            this.coords = c3d;
-            this.element2D.coords.setCoordinates(Const.COORDS_BY_USER, c2d);
-            this._c2d = c2d;
         },
 
         /**
@@ -488,6 +454,12 @@ JXG.createPoint3D = function (board, parents, attributes) {
     el.addChild(el.element2D);
     el.inherits.push(el.element2D);
     el.element2D.setParents(el);
+
+    // if this point is a glider, record that in the update tree
+    if (el.slide) {
+        el.slide.addChild(el);
+        el.setParents(el.slide);
+    }
 
     el._c2d = el.element2D.coords.usrCoords.slice(); // Store a copy of the coordinates to detect dragging
 
