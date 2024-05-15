@@ -248,7 +248,7 @@ JXG.extend(
                     that.center.Y() + r * (sin_lean*inward[1] + cos_lean*cam[3][2]),
                     that.center.Z() + r * (sin_lean*inward[2] + cos_lean*cam[3][3])
                 ]);
-            }
+            };
         },
 
         buildCentralProjection: function () {
@@ -421,8 +421,6 @@ JXG.createSphere3D = function (board, parents, attributes) {
 
     var view = parents[0],
         attr, p, point_style, provided,
-        center2d, radius2d,
-        frontFocus, backFocus,
         el, i;
 
     attr = Type.copyAttributes(attributes, board.options, 'sphere3d');
