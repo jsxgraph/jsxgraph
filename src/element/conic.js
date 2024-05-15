@@ -322,6 +322,7 @@ JXG.createEllipse = function (board, parents, attributes) {
         C.addChild(curve);
     }
     curve.setParents(parents);
+    console.log(`ellipse parents: ${curve.getParents()}`);
 
     return curve;
 };

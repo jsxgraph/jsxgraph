@@ -8,6 +8,13 @@
 </head>
 <body>
 
+<div>
+    <label for="proj">Projection:</label>
+    <select id="proj" oninput="inputProjectionType();">
+        <option value="parallel">Parallel</option>
+        <option value="central">Central</option>
+    </select>
+</div>
 <div id="jxgbox" class="jxgbox" style="width:800px; height:800px; float:left"></div>
 
 <script type="text/javascript">
@@ -78,7 +85,7 @@
     
     // Two spheres
     let sphere1 = view.create(
-    'sphere3d',
+        'sphere3d',
         [center1, () => Math.pow(2, 0.5*balance.Value())],
         {
             strokeColor: '#0000ff',
@@ -92,7 +99,7 @@
         }
     );
     let sphere2 = view.create(
-    'sphere3d',
+        'sphere3d',
         [center2, () => Math.pow(2, -0.5*balance.Value())],
         {
             strokeColor: '#00ff80',
@@ -115,6 +122,13 @@
             strokeOpacity: 0.5
         }
     );
+
+    proj = document.querySelector('#proj');
+    function inputProjectionType() {
+        console.log(`--- ${proj.value} projection ---`);
+        view.setAttribute({'projection': proj.value});
+    }
+    inputProjectionType();
 </script>
 </body>
 </html>

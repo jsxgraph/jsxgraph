@@ -78,13 +78,32 @@ JXG.Sphere3D = function (view, method, par1, par2, attributes) {
      */
     this.center = this.board.select(par1);
 
-    /** A point on the sphere; only set if the construction method is 'twoPoints'. Do not set this parameter directly, as that will break JSXGraph's update system.
+    /**
+     * A point on the sphere; only set if the construction method is 'twoPoints'. Do not set this parameter directly, as that will break JSXGraph's update system.
      * @type JXG.Point3D
      * @see #method
      */
     this.point2 = null;
 
     this.points = [];
+
+    /**
+     * The 2D representation of the element.
+     * @type GeometryElement
+     */
+    this.element2D = null;
+
+    /**
+     * Elements supporting the 2D representation.
+     * @type Array
+     */
+    this.aux2D = [];
+
+    /**
+     * The type of projection (<code>'parallel'</code> or <code>'central'</code>) that the sphere is currently drawn in.
+     * @type String
+     */
+    this.projectionType = view.projectionType;
 
     if (method === "twoPoints") {
         this.point2 = this.board.select(par2);
@@ -126,6 +145,9 @@ JXG.extend(
     JXG.Sphere3D.prototype,
     /** @lends JXG.Sphere3D.prototype */ {
         update: function () {
+            if (this.projectionType !== this.view.projectionType) {
+                this.rebuildProjection();
+            }
             return this;
         },
 
@@ -202,6 +224,137 @@ JXG.extend(
                     that.center.Z() + sgn*r*camDir[3]
                 ]).slice(1, 3);
             };
+        },
+
+        innerVertexFn: function () {
+            const that = this;
+
+            return function() {
+                const view = that.view,
+                      p = view.worldToView(that.center.coords, false),
+                      distOffAxis = Math.sqrt(p[0]*p[0] + p[1]*p[1]),
+                      cam = view.cameraTransform,
+                      inward = [
+                          -(p[0]*cam[1][1] + p[1]*cam[2][1]) / distOffAxis,
+                          -(p[0]*cam[1][2] + p[1]*cam[2][2]) / distOffAxis,
+                          -(p[0]*cam[1][3] + p[1]*cam[2][3]) / distOffAxis
+                      ],
+                      r = that.Radius(),
+                      angleOffAxis = Math.atan(-distOffAxis / p[2]),
+                      steepness = Math.acos(r / Mat.norm(p)),
+                      lean = angleOffAxis + steepness,
+                      cos_lean = Math.cos(lean),
+                      sin_lean = Math.sin(lean);
+
+                return view.project3DTo2D([
+                    that.center.X() + r * (sin_lean*inward[0] + cos_lean*cam[3][1]),
+                    that.center.Y() + r * (sin_lean*inward[1] + cos_lean*cam[3][2]),
+                    that.center.Z() + r * (sin_lean*inward[2] + cos_lean*cam[3][3])
+                ]);
+            }
+        },
+
+        buildCentralProjection: function () {
+            const view = this.view;
+
+            // [DEBUG]
+            let debugAxisColors = ['orange', 'green', 'purple', 'magenta'],
+                debugMarkerStyle = function (k) {
+                return {
+                    size: 1,
+                    fillColor: debugAxisColors[k],
+                    strokeColor: debugAxisColors[k],
+                    withLabel: false
+                };
+            };
+
+            const frontFocus = view.create('point', this.focusFn(-1), debugMarkerStyle(2));
+            const backFocus = view.create('point', this.focusFn(1), debugMarkerStyle(2));
+
+            // [DEBUG] show other view-space extremes, for debugging
+            let sideExtremes = [];
+            for (let k = 0; k < 2; k++) {
+                sideExtremes.push(view.create('point', this.focusFn(-1, k), debugMarkerStyle(k)));
+                sideExtremes.push(view.create('point', this.focusFn(1, k), debugMarkerStyle(k)));
+            }
+
+            const innerVertex = view.create('point', this.innerVertexFn(view), debugMarkerStyle(3));
+            const el = view.create(
+                'ellipse',
+                [frontFocus, backFocus, innerVertex],
+                this.visProp
+            );
+
+            // [DEBUG]
+            for (let i in sideExtremes) {
+                el.addChild(sideExtremes[i]);
+            }
+
+            this.element2D = el;
+            this.aux2D = [frontFocus, backFocus, innerVertex];
+            console.log(`created central projection ${this.element2D.id}`);
+        },
+
+        buildParallelProjection: function () {
+            // The parallel projection of a sphere is a circle
+            const
+                that = this,
+                center2d = function () {
+                    const
+                        view = that.view,
+                        c3d = [
+                            1,
+                            that.center.X(),
+                            that.center.Y(),
+                            that.center.Z()
+                        ];
+
+                    return view.project3DTo2D(c3d);
+                },
+                radius2d = function () {
+                    const
+                        view = that.view,
+                        boxSize = view.bbox3D[0][1] - view.bbox3D[0][0];
+
+                    return that.Radius() * view.size[0] / boxSize;
+                },
+                el = this.view.create(
+                    'circle',
+                    [center2d, radius2d],
+                    this.visProp
+                );
+
+            this.element2D = el;
+            this.aux2D = [];
+            console.log(`created parallel projection ${this.element2D.id}`);
+        },
+
+        // replace our 2D representation with a new one that's consistent with
+        // the view's current projection type
+        rebuildProjection: function () {
+            // remove the old 2D representation from the scene tree
+            if (this.element2D) {
+                console.log(`removing 2D element ${this.element2D.id}`);
+                this.view.board.removeObject(this.element2D);
+                for (let i in this.aux2D) {
+                    console.log(`removing 2D auxiliary ${this.aux2D[i].id}`);
+                    this.view.board.removeObject(this.aux2D[i]);
+                }
+            }
+
+            // build a new 2D representation. the representation is stored in
+            // `this.element2D`, and any auxiliary elements are stored in
+            // `this.aux2D`
+            this.projectionType = this.view.projectionType;
+            if (this.projectionType === 'central') {
+                this.buildCentralProjection();
+            } else {
+                this.buildParallelProjection();
+            }
+
+            // attach the new 2D representation to the scene tree
+            this.addChild(this.element2D);
+            this.inherits.push(this.element2D);
         }
     }
 );
@@ -368,76 +521,11 @@ JXG.createSphere3D = function (board, parents, attributes) {
         );
     }
 
-    if (view.projectionType === 'central') {
-        // [DEBUG]
-        let debugAxisColors = ['orange', 'green', 'purple'],
-            debugMarkerStyle = function (k) {
-            return {
-                size: 1,
-                fillColor: debugAxisColors[k],
-                strokeColor: debugAxisColors[k],
-                withLabel: false
-            };
-        };
-
-        frontFocus = view.create('point', el.focusFn(-1), debugMarkerStyle(2));
-        backFocus = view.create('point', el.focusFn(1), debugMarkerStyle(2));
-
-        // [DEBUG] show other view-space extremes, for debugging
-        for (let k = 0; k < 2; k++) {
-            view.create('point', el.focusFn(-1, k), debugMarkerStyle(k));
-            view.create('point', el.focusFn(1, k), debugMarkerStyle(k));
-        }
-
-        const innerEdge = view.create(
-            'point',
-            function () {
-                const p = view.worldToView(el.center.coords, false),
-                      distOffAxis = Math.sqrt(p[0]*p[0] + p[1]*p[1]),
-                      cam = view.cameraTransform,
-                      inward = [
-                          -(p[0]*cam[1][1] + p[1]*cam[2][1]) / distOffAxis,
-                          -(p[0]*cam[1][2] + p[1]*cam[2][2]) / distOffAxis,
-                          -(p[0]*cam[1][3] + p[1]*cam[2][3]) / distOffAxis
-                      ],
-                      r = el.Radius(),
-                      angleOffAxis = Math.atan(-distOffAxis / p[2]),
-                      steepness = Math.acos(r / Mat.norm(p)),
-                      lean = angleOffAxis + steepness,
-                      cos_lean = Math.cos(lean),
-                      sin_lean = Math.sin(lean);
-
-                console.log(angleOffAxis, steepness, lean);
-                return view.project3DTo2D([
-                    el.center.X() + r * (sin_lean*inward[0] + cos_lean*cam[3][1]),
-                    el.center.Y() + r * (sin_lean*inward[1] + cos_lean*cam[3][2]),
-                    el.center.Z() + r * (sin_lean*inward[2] + cos_lean*cam[3][3])
-                ]);
-            },
-            {size: 1, fillColor: 'magenta', strokeColor: 'magenta', withLabel: false}
-        );
-        el.element2D = view.create(
-            'ellipse',
-            [frontFocus, backFocus, innerEdge],
-            attr
-        );
-    } else {
-        // The parallel projection of a sphere is a circle
-        center2d = function () {
-            return view.project3DTo2D([1, el.center.X(), el.center.Y(), el.center.Z()]);
-        };
-        radius2d = function () {
-            return el.Radius() * view.size[0] / (view.bbox3D[0][1] - view.bbox3D[0][0]);
-        };
-        el.element2D = view.create('circle', [center2d, radius2d], attr);
-    }
-
-    attr = el.setAttr2D(attr);
-    el.addChild(el.element2D);
-    el.inherits.push(el.element2D);
-    el.element2D.setParents([el]);
-
+    // build a 2D representation, and attach it to the scene tree, and update it
+    // to the correct initial state
+    el.rebuildProjection();
     el.element2D.prepareUpdate().update().updateRenderer();
+
     return el;
 };
 
