@@ -205,17 +205,14 @@ JXG.extend(
         // on the camera, you can send it to either of the Dandelin spheres that
         // touch the screen at the foci of the image ellipse.
         //
-        // This factor method produces two functions, `focusFn(-1)` and
+        // This factory method produces two functions, `focusFn(-1)` and
         // `focusFn(1)`, that evaluate to the projections of the front and back
         // points of the sphere, respectively.
-        //
-        // [DEBUG] Using the optional argument, you can construct other extreme
-        // points for debugging.
-        focusFn: function (sgn, k = 2) {
+        focusFn: function (sgn) {
             const that = this;
 
             return function () {
-                const camDir = that.view.cameraTransform[k+1],
+                const camDir = that.view.cameraTransform[3],
                       r = that.Radius();
 
                 return that.view.project3DTo2D([
@@ -255,44 +252,14 @@ JXG.extend(
         },
 
         buildCentralProjection: function () {
-            const view = this.view;
+            const view = this.view,
+                  auxStyle = {visible: false, withLabel: false},
+                  frontFocus = view.create('point', this.focusFn(-1), auxStyle),
+                  backFocus = view.create('point', this.focusFn(1), auxStyle),
+                  innerVertex = view.create('point', this.innerVertexFn(view), auxStyle);
 
-            // [DEBUG]
-            let debugAxisColors = ['orange', 'green', 'purple', 'magenta'],
-                debugMarkerStyle = function (k) {
-                return {
-                    size: 1,
-                    fillColor: debugAxisColors[k],
-                    strokeColor: debugAxisColors[k],
-                    withLabel: false
-                };
-            };
-
-            const frontFocus = view.create('point', this.focusFn(-1), debugMarkerStyle(2));
-            const backFocus = view.create('point', this.focusFn(1), debugMarkerStyle(2));
-
-            // [DEBUG] show other view-space extremes, for debugging
-            let sideExtremes = [];
-            for (let k = 0; k < 2; k++) {
-                sideExtremes.push(view.create('point', this.focusFn(-1, k), debugMarkerStyle(k)));
-                sideExtremes.push(view.create('point', this.focusFn(1, k), debugMarkerStyle(k)));
-            }
-
-            const innerVertex = view.create('point', this.innerVertexFn(view), debugMarkerStyle(3));
-            const el = view.create(
-                'ellipse',
-                [frontFocus, backFocus, innerVertex],
-                this.visProp
-            );
-
-            // [DEBUG]
-            for (let i in sideExtremes) {
-                el.addChild(sideExtremes[i]);
-            }
-
-            this.element2D = el;
             this.aux2D = [frontFocus, backFocus, innerVertex];
-            console.log(`created central projection ${this.element2D.id}`);
+            this.element2D = view.create('ellipse', this.aux2D, this.visProp);
         },
 
         buildParallelProjection: function () {
@@ -300,33 +267,20 @@ JXG.extend(
             const
                 that = this,
                 center2d = function () {
-                    const
-                        view = that.view,
-                        c3d = [
-                            1,
-                            that.center.X(),
-                            that.center.Y(),
-                            that.center.Z()
-                        ];
-
-                    return view.project3DTo2D(c3d);
+                    const c3d = [1, that.center.X(), that.center.Y(), that.center.Z()];
+                    return that.view.project3DTo2D(c3d);
                 },
                 radius2d = function () {
-                    const
-                        view = that.view,
-                        boxSize = view.bbox3D[0][1] - view.bbox3D[0][0];
+                    const boxSize = that.view.bbox3D[0][1] - that.view.bbox3D[0][0];
+                    return that.Radius() * that.view.size[0] / boxSize;
+                };
 
-                    return that.Radius() * view.size[0] / boxSize;
-                },
-                el = this.view.create(
-                    'circle',
-                    [center2d, radius2d],
-                    this.visProp
-                );
-
-            this.element2D = el;
             this.aux2D = [];
-            console.log(`created parallel projection ${this.element2D.id}`);
+            this.element2D = this.view.create(
+                'circle',
+                [center2d, radius2d],
+                this.visProp
+            );
         },
 
         // replace our 2D representation with a new one that's consistent with
@@ -334,10 +288,8 @@ JXG.extend(
         rebuildProjection: function () {
             // remove the old 2D representation from the scene tree
             if (this.element2D) {
-                console.log(`removing 2D element ${this.element2D.id}`);
                 this.view.board.removeObject(this.element2D);
                 for (let i in this.aux2D) {
-                    console.log(`removing 2D auxiliary ${this.aux2D[i].id}`);
                     this.view.board.removeObject(this.aux2D[i]);
                 }
             }
