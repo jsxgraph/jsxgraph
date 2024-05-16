@@ -31,9 +31,9 @@
         }
     );
 
-    // Vertices
-    let vertices = [];
-    coords = [
+    // Vertices of first polygon
+    let vertices1 = [];
+    coords1 = [
         [2, 1, 1],
         [2, 2, 1],
         [1, 2, 1],
@@ -41,7 +41,7 @@
         [1, 1, 2],
         [1, 1, 1]
     ];
-    colors = [
+    colors1 = [
         'orangered',
         'gold',
         'mediumseagreen',
@@ -49,27 +49,66 @@
         'purple',
         'deeppink'
     ];
-    for (let i = 0; i < coords.length; i++) {
-        vertices.push(view.create(
+    for (i in coords1) {
+        vertices1.push(view.create(
             'point3d',
-            coords[i],
+            coords1[i],
             {
                 withLabel: false,
                 size: 5,
-                strokeWidth: 1,
-                strokeColor: colors[i],
+                strokeColor: 'none',
                 fillColor: 'white',
                 gradient: 'radial',
-                gradientSecondColor: colors[i],
+                gradientSecondColor: colors1[i],
                 gradientFX: 0.7,
                 gradientFY: 0.3,
-                highlightStrokeColor: '#600030'
+                highlightStrokeWidth: 1,
+                highlightStrokeColor: '#777'
             }
         ));
     }
 
-    // Polygon
-    let polygon = view.create('polygon3d', vertices);
+    // First polygon
+    let polygon1 = view.create(
+        'polygon3d',
+        vertices1,
+        {
+            borders: {
+                strokeColor: '#777',
+                highlightStrokeColor: '#999'
+            }
+        }
+    );
+
+    // Second polygon
+    let coords2 = [
+        [0.5, 1.5, 1.5],
+        [1.5, 1.5, 1.5],
+        [1.5, 2.5, 1.5],
+        [0.5, 2.5, 1.5]
+    ];
+    let polygon2 = view.create(
+        'polygon3d',
+        coords2,
+        {
+            vertices: {
+                withLabel: false,
+                size: 3,
+                strokeColor: 'none',
+                fillColor: 'white',
+                gradient: 'radial',
+                gradientSecondColor: '#444',
+                gradientFX: 0.7,
+                gradientFY: 0.3,
+                highlightStrokeWidth: 1,
+                highlightStrokeColor: 'black'
+            },
+            borders: {
+                strokeColor: 'black',
+                highlightStrokeColor: 'gray'
+            }
+        }
+    );
 </script>
 </body>
 </html>
