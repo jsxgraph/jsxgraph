@@ -628,7 +628,69 @@ Mat.Statistics = {
         this.spare = v * s;
         this.hasSpare = true;
         return mean + stdDev * u * s;
+    },
+
+    /**
+     * Generate values for a random variable in binomial distribution.
+     * It uses algorithm BG from {@link https://dl.acm.org/doi/pdf/10.1145/42372.42381}.
+     * This algorithm does approx. n*p steps, so be careful.
+     *
+     * @param {Number} n Number of trials
+     * @param {Number} p Propability (0 <= p <= 1)
+     * @returns Number Integer value of a random variable in binomial distribution
+     *
+     * @example
+     * console.log(JXG.Mat.Statistics.generateBinomial(100,0.1));
+     * // Possible output: 18
+     *
+     */
+    generateBinomial: function (n, p) {
+        var x, y, c;
+
+        // Edge cases
+        if (p === 0) {
+            return 0;
+        }
+        if (p === 1) {
+            return n;
+        }
+
+        // Now, we can assume 0 < p < 1.
+
+        // Fast path for common cases
+        if (n === 0) {
+            return 0;
+        }
+        if (n === 1) {
+            return ((Math.random() < p) ? 1 : 0);
+        }
+
+        // Exploit symmetry
+        if (p > 0.5) {
+            return n - this.generate_binomial(n, 1 - p);
+        }
+
+        // General case: n > 1, p <= 0.5
+        // Algorithm BG (Devroye) from:
+        // https://dl.acm.org/doi/pdf/10.1145/42372.42381
+        // Time O(np) so suitable for np small only.
+
+        x = -1;
+        y = 0;
+
+        c = Math.log(1 - p);
+        if (c === 0) {
+            return 0;
+        }
+
+        do {
+            x += 1;
+            y += Math.floor(Math.log(Math.random()) / c) + 1;
+        } while (y < n);
+
+        return x;
     }
+
 };
 
 export default Mat.Statistics;
