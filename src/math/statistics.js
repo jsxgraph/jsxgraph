@@ -700,7 +700,7 @@ Mat.Statistics = {
         }
 
         if (a === 1) {
-            return this.generateExponential(1);
+            return this.randomExponential(1);
         }
 
         if (a < 1) {
@@ -757,8 +757,8 @@ Mat.Statistics = {
             return NaN;
         }
 
-        x1 = this.generateGamma(a);
-        x2 = this.generateGamma(b);
+        x1 = this.randomGamma(a);
+        x2 = this.randomGamma(b);
         x = x1 / (x1 + x2);
         return x;
     },
@@ -778,7 +778,7 @@ Mat.Statistics = {
             return NaN;
         }
 
-        return 2 * this.generateGamma(nu * 0.5);
+        return 2 * this.randomGamma(nu * 0.5);
     },
 
     /**
@@ -797,10 +797,10 @@ Mat.Statistics = {
             return NaN;
         }
 
-        y1 = this.generateChisquare(nu1);
-        y2 = this.generateChisquare(nu2);
+        y1 = this.randomChisquare(nu1);
+        y2 = this.randomChisquare(nu2);
 
-        return (y1 / nu2) / (y2 / nu1);
+        return (y1 * nu2) / (y2 * nu1);
     },
 
     /**
@@ -818,8 +818,8 @@ Mat.Statistics = {
             return NaN;
         }
 
-        y1 = this.generateGaussian(0, 1);
-        y2 = this.generateChisquare(nu);
+        y1 = this.randomNormal(0, 1);
+        y2 = this.randomChisquare(nu);
 
         return y1 / Math.sqrt(y2 / nu);
     },
@@ -867,7 +867,7 @@ Mat.Statistics = {
 
         // Exploit symmetry
         if (p > 0.5) {
-            return n - this.generateBinomial(n, 1 - p);
+            return n - this.randomBinomial(n, 1 - p);
         }
 
         // General case: n > 1, p <= 0.5
@@ -893,12 +893,12 @@ Mat.Statistics = {
             // Knuth, TAOCP 2, p 131
             a = 1 + Math.floor(n * 0.5);
             b = n - a + 1;
-            x = this.generateBeta(a, b);
+            x = this.randomBeta(a, b);
             if (x >= p) {
-                N1 = this.generateBinomial(a - 1, p / x);
+                N1 = this.randomBinomial(a - 1, p / x);
                 x = N1;
             } else {
-                N1 = this.generateBinomial(b - 1, (p - x) / (1 - x));
+                N1 = this.randomBinomial(b - 1, (p - x) / (1 - x));
                 x = a + N1;
             }
         }
