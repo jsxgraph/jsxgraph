@@ -685,13 +685,16 @@ Mat.Statistics = {
 
     /**
      * Generate value of a random variable with gamma distribution of order alpha.
+     * See {@link https://en.wikipedia.org/wiki/Gamma_distribution}.
      * Algorithm: D.E. Knuth, TAOCP 2, p. 129.
 
-     * @param {Number} a <i> &gt; 0</i>
+     * @param {Number} a shape, <i> &gt; 0</i>
+     * @param {Number} [b=1] scale, <i> &gt; 0</i>
+     * @param {Number} [t=0] threshold
      * @returns Number
      * @memberof JXG.Math.Statistics
      */
-    randomGamma: function (a) {
+    randomGamma: function (a, b, t) {
         var u, v, x, y,
             p, q;
 
@@ -699,8 +702,11 @@ Mat.Statistics = {
             return NaN;
         }
 
+        b = b || 1;
+        t = t || 0;
+
         if (a === 1) {
-            return this.randomExponential(1);
+            return b * this.randomExponential(1) + t;
         }
 
         if (a < 1) {
@@ -722,7 +728,7 @@ Mat.Statistics = {
                 }
                 u = Math.random();
             } while (u >= q);
-            return x;
+            return b * x + t;
         }
 
         // a > 1
@@ -737,7 +743,7 @@ Mat.Statistics = {
             }
         } while (x <= 0.0 || v > (1 + y * y) * Math.exp( (a - 1) * Math.log(x / (a-1)) - Math.sqrt(2 * a - 1) * y));
 
-        return x;
+        return b * x + t;
     },
 
     /**
