@@ -39,9 +39,9 @@
  * Stoyan Stefanov <sstoo@gmail.com> (see https://www.phpied.com/rgb-color-parser-in-javascript/)
  */
 
-import JXG from "../jxg";
-import Type from "./type";
-import Mat from "../math/math";
+import JXG from "../jxg.js";
+import Type from "./type.js";
+import Mat from "../math/math.js";
 
 // private constants and helper functions
 

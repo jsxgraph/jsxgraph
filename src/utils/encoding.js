@@ -1,7 +1,7 @@
 /*global JXG: true, define: true, escape: true, unescape: true*/
 /*jslint nomen: true, plusplus: true, bitwise: true*/
 
-import JXG from "../jxg";
+import JXG from "../jxg.js";
 
 // constants
 var UTF8_ACCEPT = 0,

@@ -28,11 +28,11 @@
  */
 /*global JXG:true, define: true*/
 
-import JXG from "../jxg";
-import Const from "../base/constants";
-import Mat from "../math/math";
-import Geometry from "../math/geometry";
-import Type from "../utils/type";
+import JXG from "../jxg.js";
+import Const from "../base/constants.js";
+import Mat from "../math/math.js";
+import Geometry from "../math/geometry.js";
+import Type from "../utils/type.js";
 //, GeometryElement3D) {
 
 /**
@@ -143,7 +143,7 @@ JXG.Point3D = function (view, F, slide, attributes) {
      * @type Array
      * @private
      */
-    this._params = null;
+    this._params = [];
 
     this._c2d = null;
 
@@ -172,7 +172,9 @@ JXG.extend(
             var i;
 
             if (Type.isFunction(this.F)) {
-                this.coords = [1].concat(Type.evaluate(this.F));
+                // this.coords = [1].concat(Type.evaluate(this.F));
+                this.coords = Type.evaluate(this.F);
+                this.coords.unshift(1);
             } else {
                 this.coords[0] = 1;
                 for (i = 0; i < 3; i++) {
@@ -196,7 +198,9 @@ JXG.extend(
             var i;
 
             if (Type.isFunction(this.F)) {
-                this.coords = [1].concat(Type.evaluate(this.F));
+                // this.coords = [1].concat(Type.evaluate(this.F));
+                this.coords = Type.evaluate(this.F);
+                this.coords.unshift(1);
             } else {
                 this.coords[0] = 1;
                 for (i = 0; i < 3; i++) {
@@ -241,8 +245,8 @@ JXG.extend(
          *    p.setPosition([1, 3, 4]);
          */
         setPosition: function (coords, noevent) {
-            var c = this.coords,
-                oc = this.coords.slice(); // Copy of original values
+            var c = this.coords;
+                // oc = this.coords.slice(); // Copy of original values
 
             if (coords.length === 3) {
                 // Euclidean coordinates
@@ -260,7 +264,7 @@ JXG.extend(
             }
 
             // console.log(el.emitter, !noevent, oc[0] !== c[0] || oc[1] !== c[1] || oc[2] !== c[2] || oc[3] !== c[3]);
-            // Not yet working
+            // Not yet working TODO
             // if (el.emitter && !noevent &&
             //     (oc[0] !== c[0] || oc[1] !== c[1] || oc[2] !== c[2] || oc[3] !== c[3])) {
             //     this.triggerEventHandlers(['update3D'], [oc]);
@@ -279,7 +283,14 @@ JXG.extend(
                 Geometry.distance(this._c2d, this.element2D.coords.usrCoords) !== 0
             ) {
                 if (this.slide) {
-                    this.projectCoords2Surface();
+                    this.coords = this.slide.projectScreenCoords(
+                        [this.element2D.X(), this.element2D.Y()],
+                        this._params
+                    );
+                    this.element2D.coords.setCoordinates(
+                        Const.COORDS_BY_USER,
+                        this.view.project3DTo2D(this.coords)
+                    );
                 } else {
                     if (this.view.isVerticalDrag()) {
                         // Drag the point in its vertical to the xy plane
@@ -295,6 +306,12 @@ JXG.extend(
                 }
             } else {
                 this.updateCoords();
+                if (this.slide) {
+                    this.coords = this.slide.projectCoords(
+                        [this.X(), this.Y(), this.Z()],
+                        this._params
+                    );
+                }
                 // Update 2D point from its 3D view
                 this.element2D.coords.setCoordinates(
                     Const.COORDS_BY_USER,
@@ -311,51 +328,33 @@ JXG.extend(
             return this;
         },
 
-        projectCoords2Surface: function () {
-            var n = 2, // # of variables
-                m = 2, // number of constraints
-                x = [0, 0],
-                // Various Cobyla constants, see Cobyla docs in Cobyja.js
-                rhobeg = 5.0,
-                rhoend = 1.0e-6,
-                iprint = 0,
-                maxfun = 200,
-                surface = this.slide,
-                that = this,
-                r,
-                c3d,
-                c2d,
-                _minFunc;
+        /**
+         * Check whether a point's homogeneous coordinate vector is zero.
+         * @returns {Boolean} True if the coordinate vector is zero; false otherwise.
+         */
+        isIllDefined: function () {
+            return Type.cmpArrays(this.coords, [0, 0, 0, 0]);
+        },
 
-            if (surface === null) {
-                return;
+        /**
+         * Calculate the distance from one point to another. If one of the points is on the plane at infinity, return positive infinity.
+         * @param {JXG.Point3D} pt The point to which the distance is calculated.
+         * @returns {Number} The distance
+         */
+        distance: function (pt) {
+            var eps_sq = Mat.eps * Mat.eps,
+                c_this = this.coords,
+                c_pt = pt.coords;
+
+            if (c_this[0] * c_this[0] > eps_sq && c_pt[0] * c_pt[0] > eps_sq) {
+                return Mat.hypot(
+                    c_pt[1] - c_this[1],
+                    c_pt[2] - c_this[2],
+                    c_pt[3] - c_this[3]
+                );
+            } else {
+                return Number.POSITIVE_INFINITY;
             }
-
-            _minFunc = function (n, m, x, con) {
-                var c3d = [
-                        1,
-                        surface.X(x[0], x[1]),
-                        surface.Y(x[0], x[1]),
-                        surface.Z(x[0], x[1])
-                    ],
-                    c2d = that.view.project3DTo2D(c3d);
-
-                con[0] = that.element2D.X() - c2d[1];
-                con[1] = that.element2D.Y() - c2d[2];
-
-                return con[0] * con[0] + con[1] * con[1];
-            };
-            if (Type.exists(this._params)) {
-                x = this._params.slice();
-            }
-            r = Mat.Nlp.FindMinimum(_minFunc, n, m, x, rhobeg, rhoend, iprint, maxfun);
-
-            c3d = [1, surface.X(x[0], x[1]), surface.Y(x[0], x[1]), surface.Z(x[0], x[1])];
-            c2d = this.view.project3DTo2D(c3d);
-            this._params = x;
-            this.coords = c3d;
-            this.element2D.coords.setCoordinates(Const.COORDS_BY_USER, c2d);
-            this._c2d = c2d;
         },
 
         // Not yet working
@@ -455,6 +454,12 @@ JXG.createPoint3D = function (board, parents, attributes) {
     el.addChild(el.element2D);
     el.inherits.push(el.element2D);
     el.element2D.setParents(el);
+
+    // if this point is a glider, record that in the update tree
+    if (el.slide) {
+        el.slide.addChild(el);
+        el.setParents(el.slide);
+    }
 
     el._c2d = el.element2D.coords.usrCoords.slice(); // Store a copy of the coordinates to detect dragging
 

@@ -38,21 +38,21 @@
  * used to manage a geonext board like managing geometric elements, managing mouse and touch events, etc.
  */
 
-import JXG from '../jxg';
-import Const from './constants';
-import Coords from './coords';
-import Options from '../options';
-import Numerics from '../math/numerics';
-import Mat from '../math/math';
-import Geometry from '../math/geometry';
-import Complex from '../math/complex';
-import Statistics from '../math/statistics';
-import JessieCode from '../parser/jessiecode';
-import Color from '../utils/color';
-import Type from '../utils/type';
-import EventEmitter from '../utils/event';
-import Env from '../utils/env';
-import Composition from './composition';
+import JXG from '../jxg.js';
+import Const from './constants.js';
+import Coords from './coords.js';
+import Options from '../options.js';
+import Numerics from '../math/numerics.js';
+import Mat from '../math/math.js';
+import Geometry from '../math/geometry.js';
+import Complex from '../math/complex.js';
+import Statistics from '../math/statistics.js';
+import JessieCode from '../parser/jessiecode.js';
+import Color from '../utils/color.js';
+import Type from '../utils/type.js';
+import EventEmitter from '../utils/event.js';
+import Env from '../utils/env.js';
+import Composition from './composition.js';
 
 /**
  * Constructs a new Board object.
@@ -453,6 +453,7 @@ JXG.Board = function (container, renderer, id,
      * @type Array
      */
     this.downObjects = [];
+    this.clickObjects = {};
 
     /**
      * Collects all elements that have keyboard focus. Should be either one or no element.
@@ -2790,34 +2791,94 @@ JXG.extend(
         },
 
         /**
-         * Handle entries of this.downObjects to control click and dblclick events.
-         * @param {Number} i
+         * Internal handling of click events for pointers and mouse.
+         *
+         * @param {Event} evt The browsers event object.
+         * @param {Array} evtArray list of event names
          * @private
          */
-        _waitForDblClick: function(i) {
-            var eh = this.downObjects[i].eventHandlers;
+        _handleClicks: function(evt, evtArray) {
+            var that = this,
+                el, delay, suppress;
 
-            if ((Type.exists(eh.dblclick) && eh.dblclick.length > 0) ||
-                (Type.exists(eh.mousedblclick) && eh.mousedblclick.length > 0)
-            ) {
-
-                eh.clicks += 1;
-                if (eh.clicks !== 2) {
-                    // If there is dblclick event handler registered,
-                    // we remove the element from downObjects on the first click.
-                    // If there is a second click, it will appear again in
-                    // downObjects and handled in the dblclick listener.
-                    //
-                    // However, we set a timer which resets the clicks to zero after 400 ms.
-                    // This cancels the dblclick event.
-                    this.downObjects.splice(i, 1);
-                    setTimeout(function() { eh.clicks = 0; }, 400);
-                }
-            } else {
-                // If there is no dblclick event we can (and have to) remove the
-                // element from downObjects now.
-                this.downObjects.splice(i, 1);
+            if (this.selectingMode) {
+                evt.stopPropagation();
+                return;
             }
+
+            delay = Type.evaluate(this.attr.clickdelay);
+            suppress = Type.evaluate(this.attr.dblclicksuppressclick);
+
+            if (suppress) {
+                // dblclick suppresses previous click events
+                this._preventSingleClick = false;
+
+                // Wait if there is a dblclick event.
+                // If not fire a click event
+                this._singleClickTimer = setTimeout(function() {
+                    if (!that._preventSingleClick) {
+                        // Fire click event and remove element from click list
+                        that.triggerEventHandlers(evtArray, [evt]);
+                        for (el in that.clickObjects) {
+                            if (that.clickObjects.hasOwnProperty(el)) {
+                                that.clickObjects[el].triggerEventHandlers(evtArray, [evt]);
+                                delete that.clickObjects[el];
+                            }
+                        }
+                    }
+                }, delay);
+            } else {
+                // dblclick is preceded by two click events
+
+                // Fire click events
+                that.triggerEventHandlers(evtArray, [evt]);
+                for (el in that.clickObjects) {
+                    if (that.clickObjects.hasOwnProperty(el)) {
+                        that.clickObjects[el].triggerEventHandlers(evtArray, [evt]);
+                    }
+                }
+
+                // Clear list of clicked elements with a delay
+                setTimeout(function() {
+                    for (el in that.clickObjects) {
+                        if (that.clickObjects.hasOwnProperty(el)) {
+                            delete that.clickObjects[el];
+                        }
+                    }
+                }, delay);
+            }
+            evt.stopPropagation();
+        },
+
+        /**
+         * Internal handling of dblclick events for pointers and mouse.
+         *
+         * @param {Event} evt The browsers event object.
+         * @param {Array} evtArray list of event names
+         * @private
+         */
+        _handleDblClicks: function(evt, evtArray) {
+            var el;
+
+            if (this.selectingMode) {
+                evt.stopPropagation();
+                return;
+            }
+
+            // Notify that a dblclick has happened
+            this._preventSingleClick = true;
+            clearTimeout(this._singleClickTimer);
+
+            // Fire dblclick event
+            this.triggerEventHandlers(evtArray, [evt]);
+            for (el in this.clickObjects) {
+                if (this.clickObjects.hasOwnProperty(el)) {
+                    this.clickObjects[el].triggerEventHandlers(evtArray, [evt]);
+                    delete this.clickObjects[el];
+                }
+            }
+
+            evt.stopPropagation();
         },
 
         /**
@@ -2825,33 +2886,7 @@ JXG.extend(
          * @param {Event} evt The browsers event object.
          */
         pointerClickListener: function (evt) {
-            var i;
-
-            this.triggerEventHandlers(['click', 'pointerclick'], [evt]);
-            if (!this.selectingMode) {
-                for (i = this.downObjects.length - 1; i > -1; i--) {
-                    this.downObjects[i].triggerEventHandlers(['click', 'pointerclick'], [evt]);
-                    this._waitForDblClick(i);
-                }
-            }
-            evt.stopPropagation();
-        },
-
-        /**
-         * This method is called by the browser when the mouse device clicks on the screen.
-         * @param {Event} evt The browsers event object.
-         */
-        mouseClickListener: function (evt) {
-            var i;
-            this.triggerEventHandlers(['click', 'mouseclick'], [evt]);
-
-            if (!this.selectingMode) {
-                for (i = this.downObjects.length - 1; i > -1; i--) {
-                    this.downObjects[i].triggerEventHandlers(['click', 'mouseclick'], [evt]);
-                    this._waitForDblClick(i);
-                }
-            }
-
+            this._handleClicks(evt, ['click', 'pointerclick']);
         },
 
         /**
@@ -2859,18 +2894,15 @@ JXG.extend(
          * @param {Event} evt The browsers event object.
          */
         pointerDblClickListener: function (evt) {
-            var i;
+            this._handleDblClicks(evt, ['dblclick', 'pointerdblclick']);
+        },
 
-            this.triggerEventHandlers(['dblclick', 'pointerdblclick'], [evt]);
-            if (!this.selectingMode) {
-                for (i = this.downObjects.length - 1; i > -1; i--) {
-                    this.downObjects[i].triggerEventHandlers(['dblclick', 'pointerdblclick'], [evt]);
-
-                    this.downObjects[i].eventHandlers.clicks = 0;
-                    this.downObjects.splice(i, 1);
-                }
-            }
-            evt.stopPropagation();
+        /**
+         * This method is called by the browser when the mouse device clicks on the screen.
+         * @param {Event} evt The browsers event object.
+         */
+        mouseClickListener: function (evt) {
+            this._handleClicks(evt, ['click', 'mouseclick']);
         },
 
         /**
@@ -2878,16 +2910,7 @@ JXG.extend(
          * @param {Event} evt The browsers event object.
          */
         mouseDblClickListener: function (evt) {
-            var i;
-            this.triggerEventHandlers(['dblclick', 'mousedblclick'], [evt]);
-            if (!this.selectingMode) {
-                for (i = this.downObjects.length - 1; i > -1; i--) {
-                    this.downObjects[i].triggerEventHandlers(['dblclick', 'mousedblclick'], [evt]);
-
-                    this.downObjects[i].eventHandlers.clicks = 0;
-                    this.downObjects.splice(i, 1);
-                }
-            }
+            this._handleDblClicks(evt, ['dblclick', 'mousedblclick']);
         },
 
         // /**
@@ -3082,13 +3105,14 @@ JXG.extend(
                         // Check if we have to keep the element for a click or dblclick event
                         // Otherwise remove it from downObjects
                         eh = this.downObjects[i].eventHandlers;
-                        if (!(Type.exists(eh.click) && eh.click.length > 0) &&
-                            !(Type.exists(eh.pointerclick) && eh.pointerclick.length > 0) &&
-                            !(Type.exists(eh.dblclick) && eh.dblclick.length > 0) &&
-                            !(Type.exists(eh.pointerdblclick) && eh.pointerdblclick.length > 0)
+                        if ((Type.exists(eh.click) && eh.click.length > 0) ||
+                            (Type.exists(eh.pointerclick) && eh.pointerclick.length > 0) ||
+                            (Type.exists(eh.dblclick) && eh.dblclick.length > 0) ||
+                            (Type.exists(eh.pointerdblclick) && eh.pointerdblclick.length > 0)
                         ) {
-                            this.downObjects.splice(i, 1);
+                            this.clickObjects[this.downObjects[i].id] = this.downObjects[i];
                         }
+                        this.downObjects.splice(i, 1);
                     }
                 }
             }
@@ -6018,7 +6042,11 @@ JXG.extend(
             w = this.canvasWidth;
             h = this.canvasHeight;
             if (keepaspectratio) {
-                ratio = ux / uy;            // Keep this ratio if aspectratio==true
+                if (this.keepaspectratio) {
+                    ratio = ux / uy; // Keep this ratio if keepaspectratio was true
+                } else {
+                    ratio = 1.0;
+                }
                 if (setZoom === 'keep') {
                     zoom_ratio = this.zoomX / this.zoomY;
                 }
@@ -6243,7 +6271,7 @@ JXG.extend(
          */
         setAttribute: function (attr) {
             var i, arg, pair,
-                key, value, oldvalue, // j, le,
+                key, value, oldvalue,// j, le,
                 node,
                 attributes = {};
 
@@ -6273,6 +6301,9 @@ JXG.extend(
                     : value;
 
                 oldvalue = this.attr[key];
+                if (oldvalue === value) {
+                    continue;
+                }
                 switch (key) {
                     case 'axis':
                         if (value === false) {
@@ -6307,11 +6338,8 @@ JXG.extend(
                         this._set(key, value);
                         break;
                     case 'keepaspectratio':
-                        // Does not work, yet.
                         this._set(key, value);
-                        oldvalue = this.getBoundingBox();
-                        this.setBoundingBox([0, this.canvasHeight, this.canvasWidth, 0], false, 'keep');
-                        this.setBoundingBox(oldvalue, value, 'keep');
+                        this.setBoundingBox(this.getBoundingBox(), value, 'keep');
                         break;
 
                     /* eslint-disable no-fallthrough */
@@ -7132,6 +7160,7 @@ JXG.extend(
          * @event
          * @description Whenever the user clicks on the board.
          * @name JXG.Board#click
+         * @see JXG.Board#clickDelay
          * @param {Event} e The browser's event object.
          */
         __evt__click: function (e) { },
@@ -7142,6 +7171,8 @@ JXG.extend(
          * This event works on desktop browser, but is undefined
          * on mobile browsers.
          * @name JXG.Board#dblclick
+         * @see JXG.Board#clickDelay
+         * @see JXG.Board#dblClickSuppressClick
          * @param {Event} e The browser's event object.
          */
         __evt__dblclick: function (e) { },
@@ -7158,6 +7189,7 @@ JXG.extend(
          * @event
          * @description Whenever the user double clicks on the board with a mouse device.
          * @name JXG.Board#mousedblclick
+         * @see JXG.Board#clickDelay
          * @param {Event} e The browser's event object.
          */
         __evt__mousedblclick: function (e) { },
@@ -7176,6 +7208,7 @@ JXG.extend(
          * This event works on desktop browser, but is undefined
          * on mobile browsers.
          * @name JXG.Board#pointerdblclick
+         * @see JXG.Board#clickDelay
          * @param {Event} e The browser's event object.
          */
         __evt__pointerdblclick: function (e) { },

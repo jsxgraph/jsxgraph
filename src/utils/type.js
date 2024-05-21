@@ -40,9 +40,9 @@
  * the type of a variable.
  */
 
-import JXG from "../jxg";
-import Const from "../base/constants";
-import Mat from "../math/math";
+import JXG from "../jxg.js";
+import Const from "../base/constants.js";
+import Mat from "../math/math.js";
 
 JXG.extend(
     JXG,
@@ -188,6 +188,11 @@ JXG.extend(
             return false;
         },
 
+        /**
+         * Checks if a given variable is a reference of a JSXGraph Point3D element.
+         * @param v A variable of any type.
+         * @returns {Boolean} True, if v is of type JXG.Point3D.
+         */
         isPoint3D: function (v) {
             if (v !== null && typeof v === "object" && this.exists(v.elType)) {
                 return v.elType === "point3d";
@@ -217,6 +222,30 @@ JXG.extend(
             }
             p = board.select(v);
             return this.isPoint(p);
+        },
+
+        /**
+         * Checks if a given variable is a reference of a JSXGraph Point3D element or an array of length three
+         * or a function returning an array of length three.
+         * @param {JXG.Board} board
+         * @param v A variable of any type.
+         * @returns {Boolean} True, if v is of type JXG.Point3D or an array of length at least 3, or a function returning
+         * such an array.
+         */
+        isPointType3D: function (board, v) {
+            var val, p;
+
+            if (this.isArray(v) && v.length >= 3) {
+                return true;
+            }
+            if (this.isFunction(v)) {
+                val = v();
+                if (this.isArray(val) && val.length >= 3) {
+                    return true;
+                }
+            }
+            p = board.select(v);
+            return this.isPoint3D(p);
         },
 
         /**
@@ -925,7 +954,20 @@ JXG.extend(
             return str;
         },
 
-        parseNumber: function(v, percentOfWhat, convertPx, toUnit) {
+        /**
+         * Convert value v. If v has the form
+         * <ul>
+         * <li> 'x%': return floating point number x * percentOfWhat * 0.01
+         * <li> 'xfr': return floating point number x * percentOfWhat
+         * <li> 'xpx': return x * convertPx or convertPx(x) or x
+         * <li> x or 'x': return floating point number x
+         * </ul>
+         * @param {String|Number} v
+         * @param {Number} percentOfWhat
+         * @param {Function|Number|*} convertPx
+         * @returns {String|Number}
+         */
+        parseNumber: function(v, percentOfWhat, convertPx) {
             var str;
 
             if (this.isString(v) && v.indexOf('%') > -1) {
@@ -936,10 +978,6 @@ JXG.extend(
                 str = v.replace(/\s+fr\s+/, '');
                 return parseFloat(str) * percentOfWhat;
             }
-            // if (this.isString(v) && v.indexOf('abs') > -1) {
-            //     str = v.replace(/\s+abs\s+/, '');
-            //     return parseFloat(str);
-            // }
             if (this.isString(v) && v.indexOf('px') > -1) {
                 str = v.replace(/\s+px\s+/, '');
                 str = parseFloat(str);
@@ -955,6 +993,13 @@ JXG.extend(
             return parseFloat(v);
         },
 
+        /**
+         * Parse a string for label positioning of the form 'left pos' or 'pos right'
+         * and return e.g.
+         * <tt>{ side: 'left', pos: 'pos' }</tt>.
+         * @param {String} str
+         * @returns {Obj}  <tt>{ side, pos }</tt>
+         */
         parsePosition: function(str) {
             var a, i,
                 side = '',
@@ -964,7 +1009,7 @@ JXG.extend(
             if (str !== '') {
                 a = str.split(/[ ,]+/);
                 for (i = 0; i < a.length; i++) {
-                    if (a[i] in ['left', 'right']) {
+                    if (a[i] === 'left' || a[i] === 'right') {
                         side = a[i];
                     } else {
                         pos = a[i];
@@ -1228,14 +1273,16 @@ JXG.extend(
          * @param {Object} attr Object with attributes - usually containing default options
          * @param {Object} special Special option values which overwrite (recursively) the default options
          * @param {Boolean} [toLower=true] If true the keys are converted to lower case.
+         * @param {Boolean} [ignoreUndefinedSpecials=false] If true the values in special that are undefined are not used.
          *
          * @see JXG#merge
          *
          */
-        mergeAttr: function (attr, special, toLower) {
+        mergeAttr: function (attr, special, toLower, ignoreUndefinedSpecials) {
             var e, e2, o;
 
             toLower = toLower || true;
+            ignoreUndefinedSpecials = ignoreUndefinedSpecials || false;
 
             for (e in special) {
                 if (special.hasOwnProperty(e)) {
@@ -1254,7 +1301,7 @@ JXG.extend(
                             attr[e2] = {};
                         }
                         this.mergeAttr(attr[e2], o, toLower);
-                    } else {
+                    } else if(!ignoreUndefinedSpecials || this.exists(o)) {
                         // Flat copy
                         // This is also used in the cases
                         //   attr.shadow = { enabled: true ...}
@@ -1429,6 +1476,7 @@ JXG.extend(
          * @param {Object} obj A JavaScript object, functions will be ignored.
          * @param {Boolean} [noquote=false] No quotes around the name of a property.
          * @returns {String} The given object stored in a JSON string.
+         * @deprecated
          */
         toJSON: function (obj, noquote) {
             var list, prop, i, s, val;
@@ -1704,6 +1752,26 @@ JXG.extend(
                 }
             }
             return str;
+        },
+
+        /**
+         * Concat array src to array dest.
+         * Uses push instead of JavaScript concat, which is much
+         * faster.
+         * The array dest is changed in place.
+         * <p><b>Attention:</b> if "dest" is an anonymous array, the correct result is returned from the function.
+         *
+         * @param {Array} dest
+         * @param {Array} src
+         * @returns Array
+         */
+        concat: function(dest, src) {
+            var i,
+                le = src.length;
+            for (i = 0; i < le; i++) {
+                dest.push(src[i]);
+            }
+            return dest;
         },
 
         /**

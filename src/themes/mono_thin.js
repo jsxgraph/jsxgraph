@@ -25,7 +25,7 @@
     the MIT License along with JSXGraph. If not, see <https://www.gnu.org/licenses/>
     and <https://opensource.org/licenses/MIT/>.
  */
-import JXG from "../jxg";
+import JXG from "../jxg.js";
 
 // Constants for this theme:
 let size = 0.75,

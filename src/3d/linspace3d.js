@@ -1,6 +1,7 @@
 /*
     Copyright 2008-2023
         Matthias Ehmann,
+        Aaron Fenyes,
         Carsten Miller,
         Andreas Walter,
         Alfred Wassermann
@@ -32,11 +33,11 @@
  * Create linear spaces of dimension at least one,
  * i.e. lines and planes.
  */
-import JXG from '../jxg';
-import Const from '../base/constants';
-import Type from '../utils/type';
-import Mat from '../math/math';
-import Geometry from '../math/geometry';
+import JXG from '../jxg.js';
+import Const from '../base/constants.js';
+import Type from '../utils/type.js';
+import Mat from '../math/math.js';
+import Geometry from '../math/geometry.js';
 
 // -----------------------
 //  Lines
@@ -148,6 +149,79 @@ JXG.extend(
         updateRenderer: function () {
             this.needsUpdate = false;
             return this;
+        },
+
+        projectCoords: function (p) {
+            const p0_coords = this.getPointCoords(0),
+                  p1_coords = this.getPointCoords(1),
+                  dir = [
+                    p1_coords[0] - p0_coords[0],
+                    p1_coords[1] - p0_coords[1],
+                    p1_coords[2] - p0_coords[2]
+                  ],
+                  diff = [
+                      p[0] - p0_coords[0],
+                      p[1] - p0_coords[1],
+                      p[2] - p0_coords[2]
+                  ],
+                  t = Mat.innerProduct(diff, dir) / Mat.innerProduct(dir, dir),
+                  t_clamped = Math.min(Math.max(t, this.range[0]), this.range[1]);
+
+            var c3d;
+
+            c3d = this.getPointCoords(t_clamped).slice();
+            c3d.unshift(1);
+            return c3d;
+        },
+
+        projectScreenCoords: function (pScr) {
+            const p0_coords = this.getPointCoords(0),
+                  p1_coords = this.getPointCoords(1),
+                  p0_2d = this.view.project3DTo2D(p0_coords).slice(1, 3),
+                  p1_2d = this.view.project3DTo2D(p1_coords).slice(1, 3),
+                  dir_2d = [
+                      p1_2d[0] - p0_2d[0],
+                      p1_2d[1] - p0_2d[1]
+                  ],
+                  dir_2d_norm_sq = Mat.innerProduct(dir_2d, dir_2d),
+                  diff = [
+                      pScr[0] - p0_2d[0],
+                      pScr[1] - p0_2d[1]
+                  ],
+                  s = Mat.innerProduct(diff, dir_2d) / dir_2d_norm_sq; // screen-space affine parameter
+
+            var t, // view-space affine parameter
+                t_clamped, // affine parameter clamped to range
+                c3d;
+
+            if (this.view.projectionType === 'central') {
+                const mid_coords = this.getPointCoords(0.5),
+                      mid_2d = this.view.project3DTo2D(mid_coords).slice(1, 3),
+                      mid_diff = [
+                        mid_2d[0] - p0_2d[0],
+                        mid_2d[1] - p0_2d[1]
+                      ],
+                      m = Mat.innerProduct(mid_diff, dir_2d) / dir_2d_norm_sq;
+
+                // the view-space affine parameter s is related to the
+                // screen-space affine parameter t by a Möbius transformation,
+                // which is determined by the following relations:
+                //
+                // s | t
+                // -----
+                // 0 | 0
+                // m | 1/2
+                // 1 | 1
+                //
+                t = (1-m)*s / ((1-2*m)*s + m);
+            } else {
+                t = s;
+            }
+
+            t_clamped = Math.min(Math.max(t, this.range[0]), this.range[1]);
+            c3d = this.getPointCoords(t_clamped).slice();
+            c3d.unshift(1);
+            return c3d;
         }
     }
 );
@@ -723,4 +797,114 @@ JXG.createPlane3D = function (board, parents, attributes) {
 
     return el;
 };
+
 JXG.registerElement('plane3d', JXG.createPlane3D);
+
+/**
+ * @class An intersection line is a line which lives on two JSXGraph elements.
+ * The following element types can be (mutually) intersected: plane.
+ *
+ * @pseudo
+ * @name IntersectionLine3D
+ * @augments JXG.Line3D
+ * @constructor
+ * @type JXG.Line3D
+ * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
+ * @param {JXG.Plane3D_JXG.Plane3D} el1,el2 The result will be the intersection of el1 and el2.
+ * @example
+ * // Create the intersection line of two planes
+ * var view = board.create(
+ *     'view3d',
+ *     [[-6, -3], [8, 8],
+ *     [[0, 3], [0, 3], [0, 3]]],
+ *     {
+ *         xPlaneRear: {fillOpacity: 0.2, gradient: null},
+ *         yPlaneRear: {fillOpacity: 0.2, gradient: null},
+ *         zPlaneRear: {fillOpacity: 0.2, gradient: null}
+ *     }
+ * );
+ * var a = view.create('point3d', [0, 0, 0]);
+ *
+ * var p1 = view.create(
+ *    'plane3d',
+ *     [a, [1, 0, 0], [0, 1, 0]],
+ *     {fillColor: '#00ff80'}
+ * );
+ * var p2 = view.create(
+ *    'plane3d',
+ *     [a, [-2, 1, 1], [1, -2, 1]],
+ *     {fillColor: '#ff0000'}
+ * );
+ *
+ * var i = view.create('intersectionline3d', [p1, p2]);
+ *
+ * </pre><div id="JXGdb931076-b29a-4eff-b97e-4251aaf24943" class="jxgbox" style="width: 300px; height: 300px;"></div>
+ * <script type="text/javascript">
+ *     (function() {
+ *         var board = JXG.JSXGraph.initBoard('JXGdb931076-b29a-4eff-b97e-4251aaf24943',
+ *             {boundingbox: [-8, 8, 8,-8], axis: false, showcopyright: false, shownavigation: false});
+ *         var view = board.create(
+ *             'view3d',
+ *             [[-6, -3], [8, 8],
+ *             [[0, 3], [0, 3], [0, 3]]],
+ *             {
+ *                 xPlaneRear: {fillOpacity: 0.2, gradient: null},
+ *                 yPlaneRear: {fillOpacity: 0.2, gradient: null},
+ *                 zPlaneRear: {fillOpacity: 0.2, gradient: null}
+ *             }
+ *         );
+ *     var a = view.create('point3d', [0, 0, 0]);
+ *
+ *     var p1 = view.create(
+ *        'plane3d',
+ *         [a, [1, 0, 0], [0, 1, 0]],
+ *         {fillColor: '#00ff80'}
+ *     );
+ *     var p2 = view.create(
+ *        'plane3d',
+ *         [a, [-2, 1, 1], [1, -2, 1]],
+ *         {fillColor: '#ff0000'}
+ *     );
+ *
+ *     var i = view.create('intersectionline3d', [p1, p2]);
+ *
+ *     })();
+ *
+ * </script><pre>
+ *
+ */
+JXG.createIntersectionLine3D = function (board, parents, attributes) {
+    var view = parents[0],
+        el1 = parents[1],
+        el2 = parents[2],
+        ixnLine, i, func,
+        attr = Type.copyAttributes(attributes, board.options, "intersectionline3d"),
+        pts = [];
+
+    for (i = 0; i < 2; i++) {
+        func = Geometry.intersectionFunction3D(view, el1, el2, i);
+        pts[i] = view.create('point3d', func, attr['point' + (i + 1)]);
+    }
+    ixnLine = view.create('line3d', pts, attr);
+
+    try {
+        el1.addChild(ixnLine);
+        el2.addChild(ixnLine);
+    } catch (e) {
+        throw new Error(
+            "JSXGraph: Can't create 'intersection' with parent types '" +
+                typeof parents[0] +
+                "' and '" +
+                typeof parents[1] +
+                "'."
+        );
+    }
+
+    ixnLine.type = Const.OBJECT_TYPE_INTERSECTION_LINE3D;
+    ixnLine.elType = 'intersectionline3d';
+    ixnLine.setParents([el1.id, el2.id]);
+
+    return ixnLine;
+};
+
+JXG.registerElement('intersectionline3d', JXG.createIntersectionLine3D);

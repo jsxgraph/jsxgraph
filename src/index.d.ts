@@ -403,7 +403,9 @@ declare namespace JXG {
     export function isNumber(v: unknown): v is number;
     export function isObject(v: unknown): boolean;
     export function isPoint(v: unknown): v is Point;
+    export function isPoint3D(v: unknown): boolean;
     export function isPointType(v: unknown): boolean;
+    export function isPointType3D(v: unknown): boolean;
     export function isString(v: unknown): v is string;
     export function isTouchDevice(): boolean;
     export function isTransformationOrArray(v: unknown): boolean;
@@ -3652,6 +3654,8 @@ declare namespace JXG {
         arrow?: ArrowOptions;
     }
 
+    export interface Circle3DAttributes extends GeometryElementAttributes {}
+
     export interface Curve3DAttributes extends CurveAttributes {}
 
     export interface Curve3D extends Curve {}
@@ -3675,6 +3679,8 @@ declare namespace JXG {
         Y(): number;
         Z(): number;
     }
+
+    export interface Sphere3DAttributes extends GeometryElementAttributes {}
 
     export interface View3DAttributes extends GeometryElementAttributes {
         axesPosition?: "center";
@@ -3713,6 +3719,11 @@ declare namespace JXG {
          */
         constructor(board: Board, parents: unknown[], attributes: View3DAttributes);
         create(
+            elementType: "circle3d",
+            parents: unknown[],
+            attributes?: Circle3DAttributes
+        ): Circle3D;
+        create(
             elementType: "curve3d",
             parents: unknown[],
             attributes?: Curve3DAttributes
@@ -3742,6 +3753,11 @@ declare namespace JXG {
             parents: unknown[],
             attributes?: Point3DAttributes
         ): Point3D;
+        create(
+            elementType: "sphere3d",
+            parents: unknown[],
+            attributes?: Sphere3DAttributes
+        ): Sphere3D;
         add(el: unknown): void;
         update(): this;
         updateRenderer(): this;
@@ -3778,6 +3794,7 @@ declare namespace JXG {
         | 'chart'
         | 'checkbox'
         | 'circle'
+        | 'circle3d'
         | 'circumcenter'
         | 'circumcircle'
         | 'circumcirclearc'
@@ -3806,6 +3823,8 @@ declare namespace JXG {
         | 'input'
         | 'integral'
         | 'intersection'
+        | 'intersectioncircle3d'
+        | 'intersectionline3d'
         | 'label'
         | 'legend'
         | 'line'
@@ -3847,6 +3866,7 @@ declare namespace JXG {
         | 'semicircle'
         | 'slider'
         | 'slopetriangle'
+        | 'sphere3d'
         | 'spline'
         | 'stepfunction'
         | 'tangent'
@@ -6301,8 +6321,6 @@ declare namespace JXG {
          */
         percentile(arr: number[], percentile: number | number[]): number | number[];
     }
-
-    export type touchProperty = string;
 }
 
 /**

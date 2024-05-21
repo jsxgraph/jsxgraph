@@ -33,12 +33,12 @@
 /*global JXG: true, define: true*/
 /*jslint nomen: true, plusplus: true*/
 
-import JXG from "../jxg";
+import JXG from "../jxg.js";
 
 var major = 1,
     minor = 8,
-    patch = 0,
-    add = '', //'dev' 'beta'
+    patch = 1,
+    add = 'dev', //'dev' 'beta'
     version = major + '.' + minor + '.' + patch + (add ? '-' + add : ''),
     constants;
 
@@ -88,7 +88,7 @@ constants =
     OBJECT_TYPE_IMAGE: 10,
     OBJECT_TYPE_LINE: 11,
     OBJECT_TYPE_POINT: 12,
-    OBJECT_TYPE_SLIDER: 13,
+    OBJECT_TYPE_SLIDER: 13,// unused
     OBJECT_TYPE_CAS: 14,
     OBJECT_TYPE_GXTCAS: 15,
     OBJECT_TYPE_POLYGON: 16,
@@ -116,6 +116,11 @@ constants =
     OBJECT_TYPE_SURFACE3D: 37,
 
     OBJECT_TYPE_MEASUREMENT: 38,
+
+    OBJECT_TYPE_INTERSECTION_LINE3D: 39,
+    OBJECT_TYPE_SPHERE3D: 40,
+    OBJECT_TYPE_CIRCLE3D: 41,
+    OBJECT_TYPE_INTERSECTION_CIRCLE3D: 42,
 
     // IMPORTANT:
     // ----------

@@ -28,11 +28,11 @@
 
 "use strict";
 
-import Type from "../utils/type";
-import Mat from "./math";
-import Geometry from "./geometry";
-import Numerics from "./numerics";
-import Quadtree from "./bqdt";
+import Type from "../utils/type.js";
+import Mat from "./math.js";
+import Geometry from "./geometry.js";
+import Numerics from "./numerics.js";
+import Quadtree from "./bqdt.js";
 
 /**
  * Plotting of curves which are given implicitly as the set of points solving an equation
@@ -398,8 +398,8 @@ Type.extend(
                         }
 
                         num_components++;
-                        dataX = dataX.concat(ret[0]);
-                        dataY = dataY.concat(ret[1]);
+                        Type.concat(dataX, ret[0]);
+                        Type.concat(dataY, ret[1]);
                     }
                 }
 

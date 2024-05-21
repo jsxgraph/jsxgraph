@@ -41,8 +41,8 @@
  * renderers is the class AbstractRenderer.
  */
 
-import JXG from "../jxg";
-import AbstractRenderer from "./abstract";
+import JXG from "../jxg.js";
+import AbstractRenderer from "./abstract.js";
 
 /**
  * This renderer draws nothing. It is intended to be used in environments where none of our rendering engines

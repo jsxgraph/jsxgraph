@@ -36,20 +36,20 @@
  * @fileoverview In this file the geometry element Curve is defined.
  */
 
-import JXG from "../jxg";
-import Clip from "../math/clip";
-import Const from "./constants";
-import Coords from "./coords";
-import Geometry from "../math/geometry";
-import GeometryElement from "./element";
-import GeonextParser from "../parser/geonext";
-import ImplicitPlot from "../math/implicitplot";
-import Mat from "../math/math";
-import Metapost from "../math/metapost";
-import Numerics from "../math/numerics";
-import Plot from "../math/plot";
-import QDT from "../math/qdt";
-import Type from "../utils/type";
+import JXG from "../jxg.js";
+import Clip from "../math/clip.js";
+import Const from "./constants.js";
+import Coords from "./coords.js";
+import Geometry from "../math/geometry.js";
+import GeometryElement from "./element.js";
+import GeonextParser from "../parser/geonext.js";
+import ImplicitPlot from "../math/implicitplot.js";
+import Mat from "../math/math.js";
+import Metapost from "../math/metapost.js";
+import Numerics from "../math/numerics.js";
+import Plot from "../math/plot.js";
+import QDT from "../math/qdt.js";
+import Type from "../utils/type.js";
 
 /**
  * Curves are the common object for function graphs, parametric curves, polar curves, and data plots.
@@ -1106,56 +1106,109 @@ JXG.extend(
 
         // documented in geometry element
         getLabelAnchor: function () {
-            var c,
-                x,
-                y,
+            var x, y, pos,
+                xy, lbda, e,
+                t, dx, dy, d,
+                dist = 1.5,
+                c,
                 ax = 0.05 * this.board.canvasWidth,
                 ay = 0.05 * this.board.canvasHeight,
                 bx = 0.95 * this.board.canvasWidth,
                 by = 0.95 * this.board.canvasHeight;
 
-            switch (Type.evaluate(this.visProp.label.position)) {
-                case "ulft":
-                    x = ax;
-                    y = ay;
-                    break;
-                case "llft":
-                    x = ax;
-                    y = by;
-                    break;
-                case "rt":
-                    x = bx;
-                    y = 0.5 * by;
-                    break;
-                case "lrt":
-                    x = bx;
-                    y = by;
-                    break;
-                case "urt":
-                    x = bx;
-                    y = ay;
-                    break;
-                case "top":
-                    x = 0.5 * bx;
-                    y = ay;
-                    break;
-                case "bot":
-                    x = 0.5 * bx;
-                    y = by;
-                    break;
-                default:
-                    // includes case 'lft'
-                    x = ax;
-                    y = 0.5 * by;
+            if (!Type.exists(this.label)) {
+                return new Coords(Const.COORDS_BY_SCREEN, [NaN, NaN], this.board);
+            }
+            pos = Type.evaluate(this.label.visProp.position);
+            if (!Type.isString(pos)) {
+                return new Coords(Const.COORDS_BY_SCREEN, [NaN, NaN], this.board);
             }
 
+            if (pos.indexOf('right') < 0 && pos.indexOf('left') < 0) {
+                switch (Type.evaluate(this.visProp.label.position)) {
+                    case "ulft":
+                        x = ax;
+                        y = ay;
+                        break;
+                    case "llft":
+                        x = ax;
+                        y = by;
+                        break;
+                    case "rt":
+                        x = bx;
+                        y = 0.5 * by;
+                        break;
+                    case "lrt":
+                        x = bx;
+                        y = by;
+                        break;
+                    case "urt":
+                        x = bx;
+                        y = ay;
+                        break;
+                    case "top":
+                        x = 0.5 * bx;
+                        y = ay;
+                        break;
+                    case "bot":
+                        x = 0.5 * bx;
+                        y = by;
+                        break;
+                    default:
+                        // includes case 'lft'
+                        x = ax;
+                        y = 0.5 * by;
+                }
+            } else {
+                // New positioning
+                xy = Type.parsePosition(pos);
+                lbda = Type.parseNumber(xy.pos, this.maxX() - this.minX(), 1);
+
+                if (xy.pos.indexOf('fr') < 0 &&
+                    xy.pos.indexOf('%') < 0) {
+                    // 'px' or numbers are not supported
+                    lbda = 0;
+                }
+
+                t = this.minX() + lbda;
+                x = this.X(t);
+                y = this.Y(t);
+                c = (new Coords(Const.COORDS_BY_USER, [x, y], this.board)).scrCoords;
+
+                e = Mat.eps;
+                if (t < this.minX() + e) {
+                    dx = (this.X(t + e) - this.X(t)) / e;
+                    dy = (this.Y(t + e) - this.Y(t)) / e;
+                } else if (t > this.maxX() - e) {
+                    dx = (this.X(t) - this.X(t - e)) / e;
+                    dy = (this.Y(t) - this.Y(t - e)) / e;
+                } else {
+                    dx = 0.5 * (this.X(t + e) - this.X(t - e)) / e;
+                    dy = 0.5 * (this.Y(t + e) - this.Y(t - e)) / e;
+                }
+                d = Mat.hypot(dx, dy);
+
+                if (xy.side === 'left') {
+                    dy *= -1;
+                } else {
+                    dx *= -1;
+                }
+
+                // Position left or right
+
+                if (Type.exists(this.label)) {
+                    dist = 0.5 * Type.evaluate(this.label.visProp.distance) / d;
+                }
+
+                x = c[1] + dy * this.label.size[0] * dist;
+                y = c[2] - dx * this.label.size[1] * dist;
+
+                return new Coords(Const.COORDS_BY_SCREEN, [x, y], this.board);
+
+            }
             c = new Coords(Const.COORDS_BY_SCREEN, [x, y], this.board, false);
             return Geometry.projectCoordsToCurve(
-                c.usrCoords[1],
-                c.usrCoords[2],
-                0,
-                this,
-                this.board
+                c.usrCoords[1], c.usrCoords[2], 0, this, this.board
             )[0];
         },
 

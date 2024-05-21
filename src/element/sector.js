@@ -32,13 +32,13 @@
 /*global JXG: true, define: true*/
 /*jslint nomen: true, plusplus: true*/
 
-import JXG from "../jxg";
-import Geometry from "../math/geometry";
-import Mat from "../math/math";
-import Statistics from "../math/statistics";
-import Coords from "../base/coords";
-import Const from "../base/constants";
-import Type from "../utils/type";
+import JXG from "../jxg.js";
+import Geometry from "../math/geometry.js";
+import Mat from "../math/math.js";
+import Statistics from "../math/statistics.js";
+import Coords from "../base/coords.js";
+import Const from "../base/constants.js";
+import Type from "../utils/type.js";
 
 /**
  * @class A circular sector is a subarea of the area enclosed by a circle. It is enclosed by two radii and an arc.
@@ -316,6 +316,13 @@ JXG.createSector = function (board, parents, attributes) {
             el.direction2 = parents[3] >= 0 ? 1 : -1;
         }
 
+        el.methodMap = JXG.deepCopy(el.methodMap, {
+            arc: "arc",
+            center: "center",
+            line1: "line1",
+            line2: "line2"
+        });
+
         /**
          * @class
          * @ignore
@@ -533,6 +540,8 @@ JXG.createSector = function (board, parents, attributes) {
     attr = Type.copyAttributes(attributes, board.options, "arc");
     attr = Type.copyAttributes(attr, board.options, "sector", "arc");
     attr.withLabel = false;
+    // Minor or major arc:
+    attr.selection = el.visProp.selection;
     attr.name += "_arc";
 
     if (type === "2lines") {

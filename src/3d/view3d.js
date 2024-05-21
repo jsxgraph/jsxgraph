@@ -26,15 +26,28 @@
     the MIT License along with JSXGraph. If not, see <https://www.gnu.org/licenses/>
     and <https://opensource.org/licenses/MIT/>.
  */
+/*
+    Some functionalities in this file were developed as part of a software project
+    with students. We would like to thank all contributors for their help:
+
+    Winter semester 2023/2024:
+        Lars Hofmann
+        Leonhard Iser
+        Vincent Kulicke
+        Laura Rinas
+ */
+
 /*global JXG:true, define: true*/
 
-import JXG from "../jxg";
-import Const from "../base/constants";
-import Type from "../utils/type";
-import Mat from "../math/math";
-import Env from "../utils/env";
-import GeometryElement from "../base/element";
-import Composition from "../base/composition";
+import JXG from "../jxg.js";
+import Const from "../base/constants.js";
+import Coords from "../base/coords.js";
+import Type from "../utils/type.js";
+import Mat from "../math/math.js";
+import Geometry from "../math/geometry.js";
+import Env from "../utils/env.js";
+import GeometryElement from "../base/element.js";
+import Composition from "../base/composition.js";
 
 /**
  * 3D view inside a JXGraph board.
@@ -248,7 +261,8 @@ JXG.extend(
                 mat = [
                     [1, 0, 0, 0],
                     [0, 1, 0, 0],
-                    [0, 0, 1, 0]
+                    [0, 0, 1, 0],
+                    [0, 0, 0, 1]
                 ];
 
             // mat projects homogeneous 3D coords in View3D
@@ -260,10 +274,136 @@ JXG.extend(
 
             mat[1][1] = r * Math.cos(a);
             mat[1][2] = -r * Math.sin(a);
+            mat[1][3] = 0;
+
             mat[2][1] = f * Math.sin(a);
             mat[2][2] = f * Math.cos(a);
             mat[2][3] = Math.cos(e);
 
+            mat[3][1] = r * Math.cos(e) * Math.sin(a);
+            mat[3][2] = r * Math.cos(e) * Math.cos(a);
+            mat[3][3] = -Math.sin(e);
+
+            return mat;
+        },
+
+        /**
+         * Project 2D point (x,y) to the virtual trackpad sphere,
+         * see Bell's virtual trackpad, and return z-component of the
+         * number.
+         *
+         * @param {Number} r
+         * @param {Number} x
+         * @param {Number} y
+         * @returns Number
+         * @private
+         */
+        _projectToSphere: function(r, x, y) {
+            var d = Mat.hypot(x, y),
+                t, z;
+
+            if (d < r * 0.7071067811865475) { // Inside sphere
+                z = Math.sqrt(r * r - d * d);
+            } else {                          // On hyperbola
+                t = r / 1.414213562373095;
+                z = t * t / d;
+            }
+            return z;
+        },
+
+        /**
+         * Determine 4x4 rotation matrix with Bell's virtual trackball.
+         *
+         * @returns {Array} 4x4 rotation matrix
+         * @private
+         */
+        updateProjectionTrackball: function (Pref) {
+            var R = 100,
+                dx, dy, dr2,
+                p1, p2, x, y, theta, t, d,
+                c, s, n,
+                mat = [
+                    [1, 0, 0, 0],
+                    [0, 1, 0, 0],
+                    [0, 0, 1, 0],
+                    [0, 0, 0, 1]
+                ];
+
+            if (!Type.exists(this._trackball)) {
+                return this.matrix3DRot;
+            }
+
+            dx = this._trackball.dx;
+            dy = this._trackball.dy;
+            dr2 = dx * dx + dy * dy;
+            if (dr2 > Mat.eps) {
+                // // Method by Hanson, "The rolling ball", Graphics Gems III, p.51
+                // // Rotation axis:
+                // //     n = (-dy/dr, dx/dr, 0)
+                // // Rotation angle around n:
+                // //     theta = atan(dr / R) approx dr / R
+                // dr = Math.sqrt(dr2);
+                // c = R / Math.hypot(R, dr);  // cos(theta)
+                // t = 1 - c;                  // 1 - cos(theta)
+                // s = dr / Math.hypot(R, dr); // sin(theta)
+                // n = [-dy / dr, dx / dr, 0];
+
+                // Bell virtual trackpad, see
+                // https://opensource.apple.com/source/X11libs/X11libs-60/mesa/Mesa-7.8.2/progs/util/trackball.c.auto.html
+                // http://scv.bu.edu/documentation/presentations/visualizationworkshop08/materials/opengl/trackball.c.
+                // See also Henriksen, Sporring, Hornaek, "Virtual Trackballs revisited".
+                //
+                R = (this.size[0] * this.board.unitX + this.size[1] * this.board.unitY) * 0.25;
+                x = this._trackball.x;
+                y = this._trackball.y;
+
+                // p2 = [x, y, this._projectToSphere(R, x, y)];
+                p2 = [this._projectToSphere(R, x, y), x, y];
+                x -= dx;
+                y -= dy;
+                // p1 = [x, y, this._projectToSphere(R, x, y)];
+                p1 = [this._projectToSphere(R, x, y), x, y];
+
+                n = Mat.crossProduct(p2, p1);
+                d = Mat.hypot(n[0], n[1], n[2]);
+                n[0] /= -d;
+                n[1] /= -d;
+                n[2] /= d;
+
+                t = Geometry.distance(p2, p1, 3) / (2 * R);
+                t = (t > 1.0) ? 1.0 : t;
+                t = (t < -1.0) ? -1.0 : t;
+                theta = 2.0 * Math.asin(t);
+                c = Math.cos(theta);
+                t = 1 - c;
+                s = Math.sin(theta);
+
+                // General rotation around axis n with angle theta
+                // See Pique, Graphics Gems I, pp. 466
+                // Attention: he multiplies (row vector x matrix),
+                // we multiply (matrix x column vector)
+                mat[1][1] = c + n[0] * n[0] * t;
+                mat[2][1] = n[0] * n[1] * t - n[2] * s;
+                mat[3][1] = n[0] * n[2] * t + n[1] * s;
+
+                mat[1][2] = n[1] * n[0] * t + n[2] * s;
+                mat[2][2] = c + n[1] * n[1] * t;
+                mat[3][2] = n[1] * n[2] * t - n[0] * s;
+
+                mat[1][3] = n[2] * n[0] * t - n[1] * s;
+                mat[2][3] = n[2] * n[1] * t + n[0] * s;
+                mat[3][3] = c + n[2] * n[2] * t;
+
+                if (Pref !== null) {
+                    // For central projection we have to rotate around Pref.
+                    // Parallel projection: Pref === null
+                    mat[1][0] = Pref[0] - mat[1][1] * Pref[0] - mat[1][2] * Pref[0] - mat[1][3] * Pref[0];
+                    mat[2][0] = Pref[1] - mat[2][1] * Pref[1] - mat[2][2] * Pref[1] - mat[2][3] * Pref[1];
+                    mat[3][0] = Pref[2] - mat[3][1] * Pref[2] - mat[3][2] * Pref[2] - mat[3][3] * Pref[2];
+                }
+            }
+
+            mat = Mat.matMatMult(this.matrix3DRot, mat);
             return mat;
         },
 
@@ -285,8 +425,8 @@ JXG.extend(
                 zn = 8,
                 Pref = [
                     0.5 * (this.bbox3D[0][0] + this.bbox3D[0][1]),
-                    0.5 * (this.bbox3D[0][0] + this.bbox3D[0][1]),
-                    0.5 * (this.bbox3D[0][0] + this.bbox3D[0][1])
+                    0.5 * (this.bbox3D[1][0] + this.bbox3D[1][1]),
+                    0.5 * (this.bbox3D[2][0] + this.bbox3D[2][1])
                 ],
 
                 A = [
@@ -308,28 +448,34 @@ JXG.extend(
             func_sphere = function (az, el, r) {
                 return [
                     r * Math.cos(az) * Math.cos(el),
-                    -r * Math.sin(az) * Math.cos(el),
+                   -r * Math.sin(az) * Math.cos(el),
                     r * Math.sin(el)
                 ];
             };
 
             a = this.az_slide.Value() + (3 * Math.PI * 0.5); // Sphere
-            e = this.el_slide.Value() * 2;
+            e = this.el_slide.Value();
 
             r = Type.evaluate(this.visProp.r);
             if (r === 'auto') {
-                r = Math.sqrt(
-                    Math.pow(this.bbox3D[0][0] - this.bbox3D[0][1], 2) +
-                    Math.pow(this.bbox3D[1][0] - this.bbox3D[1][1], 2) +
-                    Math.pow(this.bbox3D[2][0] - this.bbox3D[2][1], 2)
+                r = Mat.hypot(
+                    this.bbox3D[0][0] - this.bbox3D[0][1],
+                    this.bbox3D[1][0] - this.bbox3D[1][1],
+                    this.bbox3D[2][0] - this.bbox3D[2][1]
                 ) * 1.01;
+                console.log(r);
             }
 
             // create an up vector and an eye vector which are 90 degrees out of phase
             up = func_sphere(a, e + Math.PI / 2, 1);
             eye = func_sphere(a, e, r);
+            d = [eye[0], eye[1], eye[2]];
 
-            d = [eye[0] - Pref[0], eye[1] - Pref[1], eye[2] - Pref[2]];
+            eye[0] += Pref[0];
+            eye[1] += Pref[1];
+            eye[2] += Pref[2];
+
+            // d = [eye[0] - Pref[0], eye[1] - Pref[1], eye[2] - Pref[2]];
             nrm = Mat.norm(d, 3);
             az = [d[0] / nrm, d[1] / nrm, d[2] / nrm];
 
@@ -353,7 +499,10 @@ JXG.extend(
 
         // Update 3D-to-2D transformation matrix with the actual azimuth and elevation angles.
         update: function () {
-            var mat2D, shift, size;
+            var mat2D, shift, size,
+                dx, dy,
+                Pref = null,
+                useTrackball = false;
 
             if (
                 !Type.exists(this.el_slide) ||
@@ -371,22 +520,49 @@ JXG.extend(
 
             this.projectionType = Type.evaluate(this.visProp.projection).toLowerCase();
 
+            if (Type.evaluate(this.visProp.trackball.enabled) && Type.exists(this.matrix3DRot)) {
+                // If trackball is enabled and this.matrix3DRot has been initialized,
+                // do trackball navigation
+                if (this._hasMoveTrackball) {
+                    // If this._hasMoveTrackball is false, the drag event has been
+                    // caught by e.g. point dragging
+
+                    if (this.projectionType === 'central') {
+                        // Get center of the trackball.
+                        // In case of parallel projection, this is not necessary,
+                        // since we translate the whole scene with "shift".
+                        Pref = [
+                            0.5 * (this.bbox3D[0][0] + this.bbox3D[0][1]),
+                            0.5 * (this.bbox3D[1][0] + this.bbox3D[1][1]),
+                            0.5 * (this.bbox3D[2][0] + this.bbox3D[2][1])
+                        ];
+                    }
+                    this.matrix3DRot = this.updateProjectionTrackball(Pref);
+                }
+                useTrackball = true;
+            }
+
             switch (this.projectionType) {
                 case 'central': // Central projection
 
-                    this.matrix3D = this._updateCentralProjection();
-                    // this.matrix3D is a 4x4 matrix
-
-                    size = 0.4;
-                    mat2D[1][1] = this.size[0] / (2 * size); // w / d_x
-                    mat2D[2][2] = this.size[1] / (2 * size); // h / d_y
-                    mat2D[1][0] = this.llftCorner[0] + mat2D[1][1] * 0.5 * (2 * size); // llft_x
-                    mat2D[2][0] = this.llftCorner[1] + mat2D[2][2] * 0.5 * (2 * size); // llft_y
-
-                    // The transformations this.matrix3D and mat2D can not be combined yet, since
-                    // the projected vector has to be normalized in between in
-                    // project3DTo2D
+                    // Add a final transformation to scale and shift the projection
+                    // on the board, usually called viewport.
+                    size = 2 * 0.4;
+                    mat2D[1][1] = this.size[0] / size; // w / d_x
+                    mat2D[2][2] = this.size[1] / size; // h / d_y
+                    mat2D[1][0] = this.llftCorner[0] + mat2D[1][1] * 0.5 * size; // llft_x
+                    mat2D[2][0] = this.llftCorner[1] + mat2D[2][2] * 0.5 * size; // llft_y
+                    // The transformations this.matrix3D and mat2D can not be combined at this point,
+                    // since the projected vectors have to be normalized in between in project3DTo2D
                     this.viewPortTransform = mat2D;
+
+                    if (!useTrackball) {
+                        // Do elevation / azimuth navigation or at least initialize matrix
+                        // this.matrix3DRot
+                        this.matrix3DRot = this._updateCentralProjection();
+                    }
+                    // this.matrix3D is a 4x4 matrix
+                    this.matrix3D = this.matrix3DRot.slice();
                     break;
 
                 case 'parallel': // Parallel projection
@@ -399,17 +575,21 @@ JXG.extend(
                         [-0.5 * (this.bbox3D[2][0] + this.bbox3D[2][1]), 0, 0, 1]
                     ];
 
-                    // Add a second transformation to scale and shift the projection
+                    // Add a final transformation to scale and shift the projection
                     // on the board, usually called viewport.
-                    mat2D[1][1] = this.size[0] / (this.bbox3D[0][1] - this.bbox3D[0][0]); // w / d_x
-                    mat2D[2][2] = this.size[1] / (this.bbox3D[1][1] - this.bbox3D[1][0]); // h / d_y
-                    mat2D[1][0] = this.llftCorner[0] + mat2D[1][1] * 0.5 * (this.bbox3D[0][1] - this.bbox3D[0][0]); // llft_x
-                    mat2D[2][0] = this.llftCorner[1] + mat2D[2][2] * 0.5 * (this.bbox3D[1][1] - this.bbox3D[1][0]); // llft_y
+                    dx = this.bbox3D[0][1] - this.bbox3D[0][0];
+                    dy = this.bbox3D[1][1] - this.bbox3D[1][0];
+                    mat2D[1][1] = this.size[0] / dx; // w / d_x
+                    mat2D[2][2] = this.size[1] / dy; // h / d_y
+                    mat2D[1][0] = this.llftCorner[0] + mat2D[1][1] * 0.5 * dx; // llft_x
+                    mat2D[2][0] = this.llftCorner[1] + mat2D[2][2] * 0.5 * dy; // llft_y
 
-                    // this.matrix3D is a 3x4 matrix
-                    this.matrix3D = this.updateParallelProjection();
-                    // Combine the projections
-                    this.matrix3D = Mat.matMatMult(mat2D, Mat.matMatMult(this.matrix3D, shift));
+                    if (!useTrackball) {
+                        // Do elevation / azimuth navigation or at least initialize matrix this.matrix3DRot
+                        this.matrix3DRot = this.updateParallelProjection();
+                    }
+                    // Combine all transformations, this.matrix3D is a 3x4 matrix
+                    this.matrix3D = Mat.matMatMult(mat2D, Mat.matMatMult(this.matrix3DRot, shift).slice(0, 3));
             }
 
             return this;
@@ -476,7 +656,9 @@ JXG.extend(
             } else {
                 // Argument is an array
                 if (x.length === 3) {
-                    vec = [1].concat(x);
+                    // vec = [1].concat(x);
+                    vec = x.slice();
+                    vec.unshift(1);
                 } else {
                     vec = x;
                 }
@@ -499,6 +681,30 @@ JXG.extend(
         },
 
         /**
+         * We know that v2d * w0 = mat * (1, x, y, d)^T where v2d = (1, b, c, h)^T with unknowns w0, h, x, y.
+         * Setting R = mat^(-1) gives
+         *   1/ w0 * (1, x, y, d)^T = R * v2d.
+         * The first and the last row of this equation allows to determine 1/w0 and h.
+         *
+         * @param {Array} mat
+         * @param {Array} v2d
+         * @param {Number} d
+         * @returns Array
+         * @private
+         */
+        _getW0: function(mat, v2d, d) {
+            var R = Mat.inverse(mat),
+                R1 = R[0][0] + v2d[1] * R[0][1] + v2d[2] * R[0][2],
+                R2 = R[3][0] + v2d[1] * R[3][1] + v2d[2] * R[3][2],
+                w, h, det;
+
+            det = d * R[0][3] - R[3][3];
+            w = (R2 * R[0][3] - R1 * R[3][3]) / det;
+            h = (R2 - R1 * d) / det;
+            return [1 / w, h];
+        },
+
+        /**
          * Project a 2D coordinate to the plane defined by point "foot"
          * and the normal vector `normal`.
          *
@@ -509,27 +715,60 @@ JXG.extend(
          * point in homogeneous coordinates.
          */
         project2DTo3DPlane: function (point2d, normal, foot) {
-            var mat, rhs, d, le,
+            var mat, rhs, d, le, sol,
                 n = normal.slice(1),
-                sol;
+                v2d, w0, res;
 
             foot = foot || [1, 0, 0, 0];
             le = Mat.norm(n, 3);
             d = Mat.innerProduct(foot.slice(1), n, 3) / le;
 
-            mat = this.matrix3D.slice(0, 3); // True copy
-            mat.push([0].concat(n));
+            if (this.projectionType === 'parallel') {
+                mat = this.matrix3D.slice(0, 3); // True copy
+                mat.push([0, n[0], n[1], n[2]]);
 
-            // 2D coordinates of point:
-            rhs = point2d.coords.usrCoords.concat([d]);
-            try {
-                // Prevent singularity in case elevation angle is zero
-                if (mat[2][3] === 1.0) {
-                    mat[2][1] = mat[2][2] = Mat.eps * 0.001;
+                // 2D coordinates of point:
+                rhs = point2d.coords.usrCoords.slice();
+                rhs.push(d);
+                try {
+                    // Prevent singularity in case elevation angle is zero
+                    if (mat[2][3] === 1.0) {
+                        mat[2][1] = mat[2][2] = Mat.eps * 0.001;
+                    }
+                    sol = Mat.Numerics.Gauss(mat, rhs);
+                } catch (err) {
+                    sol = [0, NaN, NaN, NaN];
                 }
-                sol = Mat.Numerics.Gauss(mat, rhs);
-            } catch (err) {
-                sol = [0, NaN, NaN, NaN];
+            } else {
+                mat = this.matrix3DRot; // True copy
+
+                // 2D coordinates of point:
+                rhs = point2d.coords.usrCoords.slice();
+
+                v2d = Mat.Numerics.Gauss(this.viewPortTransform, rhs);
+                res = this._getW0(mat, v2d, d);
+                w0 = res[0];
+                rhs = [
+                    v2d[0] * w0,
+                    v2d[1] * w0,
+                    v2d[2] * w0,
+                    res[1] * w0
+                ];
+                try {
+                    // Prevent singularity in case elevation angle is zero
+                    if (mat[2][3] === 1.0) {
+                        mat[2][1] = mat[2][2] = Mat.eps * 0.001;
+                    }
+
+                    sol = Mat.Numerics.Gauss(mat, rhs);
+                    sol[1] /= sol[0];
+                    sol[2] /= sol[0];
+                    sol[3] /= sol[0];
+                    // sol[3] = d;
+                    sol[0] /= sol[0];
+                } catch (err) {
+                    sol = [0, NaN, NaN, NaN];
+                }
             }
 
             return sol;
@@ -879,14 +1118,14 @@ JXG.extend(
          *
          * @private
          *
-         * @param {event} event either the keydown or the pointer event
+         * @param {event} evt either the keydown or the pointer event
          * @returns view
          */
-        _azEventHandler: function (event) {
+        _azEventHandler: function (evt) {
             var smax = this.az_slide._smax,
                 smin = this.az_slide._smin,
                 speed = (smax - smin) / this.board.canvasWidth * (Type.evaluate(this.visProp.az.pointer.speed)),
-                delta = event.movementX,
+                delta = evt.movementX,
                 az = this.az_slide.Value(),
                 el = this.el_slide.Value();
 
@@ -898,21 +1137,21 @@ JXG.extend(
             // Calculate new az value if keyboard events are triggered
             // Plus if right-button, minus if left-button
             if (Type.evaluate(this.visProp.az.keyboard.enabled)) {
-                if (event.key === 'ArrowRight') {
+                if (evt.key === 'ArrowRight') {
                     az = az + Type.evaluate(this.visProp.az.keyboard.step) * Math.PI / 180;
-                } else if (event.key === 'ArrowLeft') {
+                } else if (evt.key === 'ArrowLeft') {
                     az = az - Type.evaluate(this.visProp.az.keyboard.step) * Math.PI / 180;
                 }
             }
 
-            if (Type.evaluate(this.visProp.az.pointer.enabled) && (delta !== 0) && event.key == null) {
+            if (Type.evaluate(this.visProp.az.pointer.enabled) && (delta !== 0) && evt.key == null) {
                 az += delta * speed;
             }
 
             // Project the calculated az value to a usable value in the interval [smin,smax]
             // Use modulo if continuous is true
             if (Type.evaluate(this.visProp.az.continuous)) {
-                az = (((az % smax) + smax) % smax);
+                az = (az + smax) % smax;
             } else {
                 if (az > 0) {
                     az = Math.min(smax, az);
@@ -930,14 +1169,14 @@ JXG.extend(
          *
          * @private
          *
-         * @param {event} event either the keydown or the pointer event
+         * @param {event} evt either the keydown or the pointer event
          * @returns view
          */
-        _elEventHandler: function (event) {
+        _elEventHandler: function (evt) {
             var smax = this.el_slide._smax,
                 smin = this.el_slide._smin,
                 speed = (smax - smin) / this.board.canvasHeight * Type.evaluate(this.visProp.el.pointer.speed),
-                delta = event.movementY,
+                delta = evt.movementY,
                 az = this.az_slide.Value(),
                 el = this.el_slide.Value();
 
@@ -947,25 +1186,23 @@ JXG.extend(
             }
 
             // Calculate new az value if keyboard events are triggered
-            // Plus if right-button, minus if left-button
+            // Plus if down-button, minus if up-button
             if (Type.evaluate(this.visProp.el.keyboard.enabled)) {
-                if (event.key === 'ArrowUp') {
+                if (evt.key === 'ArrowUp') {
                     el = el - Type.evaluate(this.visProp.el.keyboard.step) * Math.PI / 180;
-                } else if (event.key === 'ArrowDown') {
+                } else if (evt.key === 'ArrowDown') {
                     el = el + Type.evaluate(this.visProp.el.keyboard.step) * Math.PI / 180;
                 }
             }
 
-            // Calculate new az value if keyboard events are triggered
-            // Plus if right-button, minus if left-button
-            if (Type.evaluate(this.visProp.el.pointer.enabled) && (delta !== 0) && event.key == null) {
+            if (Type.evaluate(this.visProp.el.pointer.enabled) && (delta !== 0) && evt.key == null) {
                 el += delta * speed;
             }
 
-            // Project the calculated az value to a usable value in the interval [smin,smax]
+            // Project the calculated el value to a usable value in the interval [smin,smax]
             // Use modulo if continuous is true
             if (Type.evaluate(this.visProp.el.continuous)) {
-                el = (((el % smax) + smax) % smax);
+                el = (el + smax) % smax;
             } else {
                 if (el > 0) {
                     el = Math.min(smax, el);
@@ -976,6 +1213,104 @@ JXG.extend(
 
             this.setView(az, el);
             return this;
+        },
+
+        _trackballHandler: function(evt) {
+            var pos = this.board.getMousePosition(evt),
+                x, y, center;
+
+            center = new Coords(Const.COORDS_BY_USER, [this.llftCorner[0] + this.size[0] * 0.5, this.llftCorner[1] + this.size[1] * 0.5], this.board);
+            x = pos[0] - center.scrCoords[1];
+            y = pos[1] - center.scrCoords[2];
+            this._trackball = {
+                dx: evt.movementX,
+                dy: evt.movementY,
+                x: x,
+                y: y
+            };
+            this.board.update();
+            return this;
+        },
+
+        pointerDownHandler: function (evt) {
+            var neededButton, neededKey, target;
+
+            this._hasMoveAz = false;
+            this._hasMoveEl = false;
+            this._hasMoveTrackball = false;
+
+            if (this.board.mode !== this.board.BOARD_MODE_NONE) {
+                return;
+            }
+
+            if (Type.evaluate(this.visProp.trackball.enabled)) {
+                neededButton = Type.evaluate(this.visProp.trackball.button);
+                neededKey = Type.evaluate(this.visProp.trackball.key);
+
+                // Move events for virtual trackball
+                if (
+                    (neededButton === -1 || neededButton === evt.button) &&
+                    (neededKey === 'none' || (neededKey.indexOf('shift') > -1 && evt.shiftKey) || (neededKey.indexOf('ctrl') > -1 && evt.ctrlKey))
+                ) {
+                    // If outside is true then the event listener is bound to the document, otherwise to the div
+                    target = (Type.evaluate(this.visProp.trackball.outside)) ? document : this.board.containerObj;
+                    Env.addEvent(target, 'pointermove', this._trackballHandler, this);
+                    this._hasMoveTrackball = true;
+                }
+            } else {
+                if (Type.evaluate(this.visProp.az.pointer.enabled)) {
+                    neededButton = Type.evaluate(this.visProp.az.pointer.button);
+                    neededKey = Type.evaluate(this.visProp.az.pointer.key);
+
+                    // Move events for azimuth
+                    if (
+                        (neededButton === -1 || neededButton === evt.button) &&
+                        (neededKey === 'none' || (neededKey.indexOf('shift') > -1 && evt.shiftKey) || (neededKey.indexOf('ctrl') > -1 && evt.ctrlKey))
+                    ) {
+                        // If outside is true then the event listener is bound to the document, otherwise to the div
+                        target = (Type.evaluate(this.visProp.az.pointer.outside)) ? document : this.board.containerObj;
+                        Env.addEvent(target, 'pointermove', this._azEventHandler, this);
+                        this._hasMoveAz = true;
+                    }
+                }
+
+                if (Type.evaluate(this.visProp.el.pointer.enabled)) {
+                    neededButton = Type.evaluate(this.visProp.el.pointer.button);
+                    neededKey = Type.evaluate(this.visProp.el.pointer.key);
+
+                    // Events for elevation
+                    if (
+                        (neededButton === -1 || neededButton === evt.button) &&
+                        (neededKey === 'none' || (neededKey.indexOf('shift') > -1 && evt.shiftKey) || (neededKey.indexOf('ctrl') > -1 && evt.ctrlKey))
+                    ) {
+                        // If outside is true then the event listener is bound to the document, otherwise to the div
+                        target = (Type.evaluate(this.visProp.el.pointer.outside)) ? document : this.board.containerObj;
+                        Env.addEvent(target, 'pointermove', this._elEventHandler, this);
+                        this._hasMoveEl = true;
+                    }
+                }
+            }
+            Env.addEvent(document, 'pointerup', this.pointerUpHandler, this);
+        },
+
+        pointerUpHandler: function(evt) {
+            var target;
+            if (this._hasMoveAz) {
+                target = (Type.evaluate(this.visProp.az.pointer.outside)) ? document : this.board.containerObj;
+                Env.removeEvent(target, 'pointermove', this._azEventHandler, this);
+                this._hasMoveAz = false;
+            }
+            if (this._hasMoveEl) {
+                target = (Type.evaluate(this.visProp.el.pointer.outside)) ? document : this.board.containerObj;
+                Env.removeEvent(target, 'pointermove', this._elEventHandler, this);
+                this._hasMoveEl = false;
+            }
+            if (this._hasMoveTrackball) {
+                target = (Type.evaluate(this.visProp.az.pointer.outside)) ? document : this.board.containerObj;
+                Env.removeEvent(target, 'pointermove', this._trackballHandler, this);
+                this._hasMoveTrackball = false;
+            }
+            Env.removeEvent(document, 'pointerup', this.pointerUpHandler, this);
         }
     });
 
@@ -1130,6 +1465,8 @@ JXG.createView3D = function (board, parents, attributes) {
         }
         if (p) {
             foot = [1, 0, 0, p.coords[3]];
+            view._w0 = Mat.innerProduct(view.matrix3D[0], foot, 4);
+
             c3d = view.project2DTo3DPlane(p.element2D, [1, 0, 0, 1], foot);
             if (!view.isInCube(c3d)) {
                 view.board.highlightCustomInfobox('', p);
@@ -1206,76 +1543,7 @@ JXG.createView3D = function (board, parents, attributes) {
     }, view);
 
     // Add events for the pointer navigation
-    board.containerObj.addEventListener('pointerdown', function (event) {
-        var neededButton, neededKey,
-            target;
-
-        if (Type.evaluate(view.visProp.az.pointer.enabled)) {
-            neededButton = Type.evaluate(view.visProp.az.pointer.button);
-            neededKey = Type.evaluate(view.visProp.az.pointer.key);
-
-            // Events for azimuth
-            if (
-                (neededButton === -1 || neededButton === event.button) &&
-                (neededKey === 'none' || (neededKey.indexOf('shift') > -1 && event.shiftKey) || (neededKey.indexOf('ctrl') > -1 && event.ctrlKey))
-            ) {
-                // If outside is true then the event listener is bound to the document, otherwise to the div
-                if (Type.evaluate(view.visProp.az.pointer.outside)) {
-                    target = document;
-                } else {
-                    target = board.containerObj;
-                }
-                Env.addEvent(target, 'pointermove', view._azEventHandler, view);
-                view._hasMoveAz = true;
-            }
-        }
-
-        if (Type.evaluate(view.visProp.el.pointer.enabled)) {
-            neededButton = Type.evaluate(view.visProp.el.pointer.button);
-            neededKey = Type.evaluate(view.visProp.el.pointer.key);
-
-            // Events for elevation
-            if (
-                (neededButton === -1 || neededButton === event.button) &&
-                (neededKey === 'none' || (neededKey.indexOf('shift') > -1 && event.shiftKey) || (neededKey.indexOf('ctrl') > -1 && event.ctrlKey))
-            ) {
-                // If outside is true then the event listener is bound to the document, otherwise to the div
-                if (Type.evaluate(view.visProp.el.pointer.outside)) {
-                    target = document;
-                } else {
-                    target = board.containerObj;
-                }
-                Env.addEvent(target, 'pointermove', view._elEventHandler, view);
-                view._hasMoveEl = true;
-            }
-        }
-
-        // Remove pointerMove and pointerUp event listener as soon as pointer up is triggered
-        function handlePointerUp() {
-            var target;
-            if (view._hasMoveAz) {
-                if (Type.evaluate(view.visProp.az.pointer.outside)) {
-                    target = document;
-                } else {
-                    target = view.board.containerObj;
-                }
-                Env.removeEvent(target, 'pointermove', view._azEventHandler, view);
-                view._hasMoveAz = false;
-            }
-            if (view._hasMoveEl) {
-                if (Type.evaluate(view.visProp.el.pointer.outside)) {
-                    target = document;
-                } else {
-                    target = view.board.containerObj;
-                }
-                Env.removeEvent(target, 'pointermove', view._elEventHandler, view);
-                view._hasMoveEl = false;
-            }
-            Env.removeEvent(document, 'pointerup', handlePointerUp, view);
-        }
-
-        Env.addEvent(document, 'pointerup', handlePointerUp, view);
-    });
+    Env.addEvent(board.containerObj, 'pointerdown', view.pointerDownHandler, view);
 
     view.board.update();
 

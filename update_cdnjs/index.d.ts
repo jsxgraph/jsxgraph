@@ -3652,6 +3652,8 @@ declare namespace JXG {
         arrow?: ArrowOptions;
     }
 
+    export interface Circle3DAttributes extends GeometryElementAttributes {}
+
     export interface Curve3DAttributes extends CurveAttributes {}
 
     export interface Curve3D extends Curve {}
@@ -3675,6 +3677,10 @@ declare namespace JXG {
         Y(): number;
         Z(): number;
     }
+
+    export interface Sphere3DAttributes extends GeometryElementAttributes {}
+
+    export interface Sphere3D {}
 
     export interface View3DAttributes extends GeometryElementAttributes {
         axesPosition?: "center";
@@ -3713,6 +3719,11 @@ declare namespace JXG {
          */
         constructor(board: Board, parents: unknown[], attributes: View3DAttributes);
         create(
+            elementType: "circle3d",
+            parents: unknown[],
+            attributes?: Circle3DAttributes
+        ): Circle3D;
+        create(
             elementType: "curve3d",
             parents: unknown[],
             attributes?: Curve3DAttributes
@@ -3742,6 +3753,11 @@ declare namespace JXG {
             parents: unknown[],
             attributes?: Point3DAttributes
         ): Point3D;
+        create(
+            elementType: "sphere3d",
+            parents: unknown[],
+            attributes?: Sphere3DAttributes
+        ): Sphere3D;
         add(el: unknown): void;
         update(): this;
         updateRenderer(): this;
@@ -3778,6 +3794,7 @@ declare namespace JXG {
         | 'chart'
         | 'checkbox'
         | 'circle'
+        | 'circle3d'
         | 'circumcenter'
         | 'circumcircle'
         | 'circumcirclearc'
@@ -3847,6 +3864,7 @@ declare namespace JXG {
         | 'semicircle'
         | 'slider'
         | 'slopetriangle'
+        | 'sphere3d'
         | 'spline'
         | 'stepfunction'
         | 'tangent'

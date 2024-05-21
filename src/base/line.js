@@ -28,6 +28,13 @@
     the MIT License along with JSXGraph. If not, see <https://www.gnu.org/licenses/>
     and <https://opensource.org/licenses/MIT/>.
  */
+/*
+    Some functionalities in this file were developed as part of a software project
+    with students. We would like to thank all contributors for their help:
+
+    Winter semester 2023/2024:
+        Matti Kirchbach
+ */
 
 /*global JXG: true, define: true*/
 /*jslint nomen: true, plusplus: true*/
@@ -38,15 +45,15 @@
  * a board.
  */
 
-import JXG from "../jxg";
-import Mat from "../math/math";
-import Geometry from "../math/geometry";
-import Numerics from "../math/numerics";
-import Statistics from "../math/statistics";
-import Const from "./constants";
-import Coords from "./coords";
-import GeometryElement from "./element";
-import Type from "../utils/type";
+import JXG from "../jxg.js";
+import Mat from "../math/math.js";
+import Geometry from "../math/geometry.js";
+import Numerics from "../math/numerics.js";
+import Statistics from "../math/statistics.js";
+import Const from "./constants.js";
+import Coords from "./coords.js";
+import GeometryElement from "./element.js";
+import Type from "../utils/type.js";
 
 /**
  * The Line class is a basic class for all kind of line objects, e.g. line, arrow, and axis. It is usually defined by two points and can
@@ -652,7 +659,9 @@ JXG.extend(
 
         // documented in geometry element
         getLabelAnchor: function () {
-            var x, y,
+            var x, y, pos,
+                xy, lbda, dx, dy, d,
+                dist = 1.5,
                 fs = 0,
                 c1 = new Coords(Const.COORDS_BY_USER, this.point1.coords.usrCoords, this.board),
                 c2 = new Coords(Const.COORDS_BY_USER, this.point2.coords.usrCoords, this.board),
@@ -670,40 +679,88 @@ JXG.extend(
                 return new Coords(Const.COORDS_BY_SCREEN, [NaN, NaN], this.board);
             }
 
-            switch (Type.evaluate(this.label.visProp.position)) {
-                case 'last':
-                    x = c2[1];
-                    y = c2[2];
-                    break;
-                case 'first':
-                    x = c1[1];
-                    y = c1[2];
-                    break;
-                case "lft":
-                case "llft":
-                case "ulft":
-                    if (c1[1] <= c2[1]) {
-                        x = c1[1];
-                        y = c1[2];
-                    } else {
+            pos = Type.evaluate(this.label.visProp.position);
+            if (!Type.isString(pos)) {
+                return new Coords(Const.COORDS_BY_SCREEN, [NaN, NaN], this.board);
+            }
+
+            if (pos.indexOf('right') < 0 && pos.indexOf('left') < 0) {
+                // Old positioning commands
+                switch (pos) {
+                    case 'last':
                         x = c2[1];
                         y = c2[2];
-                    }
-                    break;
-                case "rt":
-                case "lrt":
-                case "urt":
-                    if (c1[1] > c2[1]) {
+                        break;
+                    case 'first':
                         x = c1[1];
                         y = c1[2];
-                    } else {
-                        x = c2[1];
-                        y = c2[2];
+                        break;
+                    case "lft":
+                    case "llft":
+                    case "ulft":
+                        if (c1[1] <= c2[1]) {
+                            x = c1[1];
+                            y = c1[2];
+                        } else {
+                            x = c2[1];
+                            y = c2[2];
+                        }
+                        break;
+                    case "rt":
+                    case "lrt":
+                    case "urt":
+                        if (c1[1] > c2[1]) {
+                            x = c1[1];
+                            y = c1[2];
+                        } else {
+                            x = c2[1];
+                            y = c2[2];
+                        }
+                        break;
+                    default:
+                        x = 0.5 * (c1[1] + c2[1]);
+                        y = 0.5 * (c1[2] + c2[2]);
+                }
+            } else {
+                // New positioning
+                xy = Type.parsePosition(pos);
+                lbda = Type.parseNumber(xy.pos, 1, 1);
+
+                dx = c2[1] - c1[1];
+                dy = c2[2] - c1[2];
+                d = Mat.hypot(dx, dy);
+
+                if (xy.pos.indexOf('px') >= 0 ||
+                    xy.pos.indexOf('fr') >= 0 ||
+                    xy.pos.indexOf('%') >= 0) {
+                    // lbda is interpreted in screen coords
+
+                    if (xy.pos.indexOf('px') >= 0) {
+                        // Pixel values are supported
+                        lbda /= d;
                     }
-                    break;
-                default:
-                    x = 0.5 * (c1[1] + c2[1]);
-                    y = 0.5 * (c1[2] + c2[2]);
+
+                    // Position along the line
+                    x = c1[1] + lbda * dx;
+                    y = c1[2] + lbda * dy;
+                } else {
+                    // lbda is given as number or as a number string
+                    // Then, lbda is interpreted in user coords
+                    x = c1[1] + lbda * this.board.unitX * dx / d;
+                    y = c1[2] + lbda * this.board.unitY * dy / d;
+                }
+
+                // Position left or right
+                if (xy.side === 'left') {
+                    dx *= -1;
+                } else {
+                    dy *= -1;
+                }
+                if (Type.exists(this.label)) {
+                    dist = 0.5 * Type.evaluate(this.label.visProp.distance) / d;
+                }
+                x += dy * this.label.size[0] * dist;
+                y += dx * this.label.size[1] * dist;
             }
 
             // Correct coordinates if the label seems to be outside of canvas.

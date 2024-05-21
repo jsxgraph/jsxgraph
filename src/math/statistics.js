@@ -32,9 +32,9 @@
 /*global JXG: true, define: true*/
 /*jslint nomen: true, plusplus: true*/
 
-import JXG from "../jxg";
-import Mat from "./math";
-import Type from "../utils/type";
+import JXG from "../jxg.js";
+import Mat from "./math.js";
+import Type from "../utils/type.js";
 
 /**
  * Functions for mathematical statistics. Most functions are like in the statistics package R.
@@ -603,11 +603,13 @@ Mat.Statistics = {
 
     /**
      * Generate values of a standard normal random variable with the Marsaglia polar method, see
-     * https://en.wikipedia.org/wiki/Marsaglia_polar_method .
+     * {@link https://en.wikipedia.org/wiki/Marsaglia_polar_method}.
+     * See also D. E. Knuth, The art of computer programming, vol 2, p. 117.
      *
      * @param {Number} mean mean value of the normal distribution
      * @param {Number} stdDev standard deviation of the normal distribution
      * @returns {Number} value of a standard normal random variable
+     * @memberof JXG.Math.Statistics
      */
     generateGaussian: function (mean, stdDev) {
         var u, v, s;
@@ -628,7 +630,306 @@ Mat.Statistics = {
         this.spare = v * s;
         this.hasSpare = true;
         return mean + stdDev * u * s;
+    },
+
+    /**
+     * Generate value of a standard normal random variable with given mean and standard deviation.
+     * Alias for {@link JXG.Math.Statistics#generateGaussian}
+     *
+     * @param {Number} mean
+     * @param {Number} stdDev
+     * @returns Number
+     * @memberof JXG.Math.Statistics
+     * @see JXG.Math.Statistics#generateGaussian
+     */
+    randomNormal: function (mean, stdDev) {
+        return this.generateGaussian(mean, stdDev);
+    },
+
+    /**
+     * Generate value of a uniform distributed random variable in the interval [a, b].
+     * @param {Number} a
+     * @param {Number} b
+     * @returns Number
+     * @memberof JXG.Math.Statistics
+     */
+    randomUniform: function (a, b) {
+        return Math.random() * (b - a) + a;
+    },
+
+    /**
+     * Generate value of a random variable with exponential distribution, i.e.
+     * <i>f(x; lambda) = lambda * e^(-lambda x)</i> if <i>x >= 0</i> and <i>f(x; lambda) = 0</i> if <i>x < 0</i>.
+     * See {@link https://en.wikipedia.org/wiki/Exponential_distribution}.
+     * Algorithm: D.E. Knuth, TAOCP 2, p. 128.
+     *
+     * @param {Number} lambda <i>&gt; 0</i>
+     * @returns Number
+     * @memberof JXG.Math.Statistics
+     */
+    randomExponential: function (lbda) {
+        var u;
+
+        // Knuth, TAOCP 2, p 128
+        // See https://en.wikipedia.org/wiki/Exponential_distribution
+        if (lbda <= 0) {
+            return NaN;
+        }
+
+        do {
+            u = Math.random();
+        } while (u === 0);
+
+        return -Math.log(u) / lbda;
+    },
+
+    /**
+     * Generate value of a random variable with gamma distribution of order alpha.
+     * See {@link https://en.wikipedia.org/wiki/Gamma_distribution}.
+     * Algorithm: D.E. Knuth, TAOCP 2, p. 129.
+
+     * @param {Number} a shape, <i> &gt; 0</i>
+     * @param {Number} [b=1] scale, <i> &gt; 0</i>
+     * @param {Number} [t=0] threshold
+     * @returns Number
+     * @memberof JXG.Math.Statistics
+     */
+    randomGamma: function (a, b, t) {
+        var u, v, x, y,
+            p, q;
+
+        if (a <= 0) {
+            return NaN;
+        }
+
+        b = b || 1;
+        t = t || 0;
+
+        if (a === 1) {
+            return b * this.randomExponential(1) + t;
+        }
+
+        if (a < 1) {
+            // Method by Ahrens
+            // Knuth, TAOCP 2, Ex. 16, p 551
+            p = Math.E / (a + Math.E);
+
+            do {
+                u = Math.random();
+                do {
+                    v = Math.random();
+                } while (v === 0);
+                if (u < p) {
+                    x = Math.pow(v, 1 / a);
+                    q = Math.exp(-x);
+                } else {
+                    x = 1 - Math.log(v);
+                    q = Math.pow(x, a - 1);
+                }
+                u = Math.random();
+            } while (u >= q);
+            return b * x + t;
+        }
+
+        // a > 1
+        // Knuth, TAOCP 2, p 129
+        do {
+            y = Math.tan(Math.PI * Math.random());
+            x = Math.sqrt(2 * a - 1) * y + a - 1;
+            if (x > 0) {
+                v = Math.random();
+            } else {
+                continue;
+            }
+        } while (x <= 0.0 || v > (1 + y * y) * Math.exp( (a - 1) * Math.log(x / (a-1)) - Math.sqrt(2 * a - 1) * y));
+
+        return b * x + t;
+    },
+
+    /**
+     * Generate value of a random variable with beta distribution with shape parameters alpha and beta.
+     * See {@link https://en.wikipedia.org/wiki/Beta_distribution}.
+     *
+     * @param {Number} alpha <i>&gt; 0</i>
+     * @param {Number} beta <i>&gt; 0</i>
+     * @returns Number
+     * @memberof JXG.Math.Statistics
+     */
+    randomBeta: function (a, b) {
+        // Knuth, TAOCP 2, p 129
+        var x1, x2, x;
+
+        if (a <= 0 || b <= 0) {
+            return NaN;
+        }
+
+        x1 = this.randomGamma(a);
+        x2 = this.randomGamma(b);
+        x = x1 / (x1 + x2);
+        return x;
+    },
+
+    /**
+     * Generate value of a random variable with chi-square distribution with k degrees of freedom.
+     * See {@link https://en.wikipedia.org/wiki/Chi-squared_distribution}.
+     *
+     * @param {Number} k <i>&gt; 0</i>
+     * @returns Number
+     * @memberof JXG.Math.Statistics
+     */
+    randomChisquare: function (nu) {
+        // Knuth, TAOCP 2, p 130
+
+        if (nu <= 0) {
+            return NaN;
+        }
+
+        return 2 * this.randomGamma(nu * 0.5);
+    },
+
+    /**
+     * Generate value of a random variable with F-distribution with d<sub>1</sub> and d<sub>2</sub> degrees of freedom.
+     * See {@link https://en.wikipedia.org/wiki/F-distribution}.
+     * @param {Number} d1 <i>&gt; 0</i>
+     * @param {Number} d2 <i>&gt; 0</i>
+     * @returns Number
+     * @memberof JXG.Math.Statistics
+     */
+    randomF: function (nu1, nu2) {
+        // Knuth, TAOCP 2, p 130
+        var y1, y2;
+
+        if (nu1 <= 0 || nu2 <= 0) {
+            return NaN;
+        }
+
+        y1 = this.randomChisquare(nu1);
+        y2 = this.randomChisquare(nu2);
+
+        return (y1 * nu2) / (y2 * nu1);
+    },
+
+    /**
+     * Generate value of a random variable with Students-t-distribution with &nu; degrees of freedom.
+     * See {@link https://en.wikipedia.org/wiki/Student%27s_t-distribution}.
+     * @param {Number} nu <i>&gt; 0</i>
+     * @returns Number
+     * @memberof JXG.Math.Statistics
+     */
+    randomStudentsT: function (nu) {
+        // Knuth, TAOCP 2, p 130
+        var y1, y2;
+
+        if (nu <= 0) {
+            return NaN;
+        }
+
+        y1 = this.randomNormal(0, 1);
+        y2 = this.randomChisquare(nu);
+
+        return y1 / Math.sqrt(y2 / nu);
+    },
+
+    /**
+     * Generate values for a random variable in binomial distribution with parameters <i>n</i> and <i>p</i>.
+     * See {@link https://en.wikipedia.org/wiki/Binomial_distribution}.
+     * It uses algorithm BG from {@link https://dl.acm.org/doi/pdf/10.1145/42372.42381}.
+     *
+     * @param {Number} n Number of trials (n >= 0)
+     * @param {Number} p Propability (0 <= p <= 1)
+     * @returns Number Integer value of a random variable in binomial distribution
+     * @memberof JXG.Math.Statistics
+     *
+     * @example
+     * console.log(JXG.Mat.Statistics.generateBinomial(100,0.1));
+     * // Possible output: 18
+     *
+     */
+    randomBinomial: function (n, p) {
+        var x, y, c,
+            a, b, N1;
+
+        if (p < 0 || p > 1 || n < 0) {
+            return NaN;
+        }
+
+        // Edge cases
+        if (p === 0) {
+            return 0;
+        }
+        if (p === 1) {
+            return n;
+        }
+
+        // Now, we can assume 0 < p < 1.
+
+        // Fast path for common cases
+        if (n === 0) {
+            return 0;
+        }
+        if (n === 1) {
+            return ((Math.random() < p) ? 1 : 0);
+        }
+
+        // Exploit symmetry
+        if (p > 0.5) {
+            return n - this.randomBinomial(n, 1 - p);
+        }
+
+        // General case: n > 1, p <= 0.5
+        if (n < 100) {
+            // n small:
+            // Algorithm BG (Devroye) from:
+            // https://dl.acm.org/doi/pdf/10.1145/42372.42381
+            // Time O(np) so suitable for np small only.
+            x = -1;
+            y = 0;
+
+            c = Math.log(1 - p);
+            if (c === 0) {
+                return 0;
+            }
+
+            do {
+                x += 1;
+                y += Math.floor(Math.log(Math.random()) / c) + 1;
+            } while (y < n);
+        } else {
+            // n large:
+            // Knuth, TAOCP 2, p 131
+            a = 1 + Math.floor(n * 0.5);
+            b = n - a + 1;
+            x = this.randomBeta(a, b);
+            if (x >= p) {
+                N1 = this.randomBinomial(a - 1, p / x);
+                x = N1;
+            } else {
+                N1 = this.randomBinomial(b - 1, (p - x) / (1 - x));
+                x = a + N1;
+            }
+        }
+        return x;
+    },
+
+    /**
+     * Generate values for a random variable in geometric distribution with propability <i>p</i>.
+     * See {@link https://en.wikipedia.org/wiki/Geometric_distribution}.
+     *
+     * @param {Number} p (0 <= p <= 1)
+     * @returns Number
+     * @memberof JXG.Math.Statistics
+     */
+    randomGeometric: function(p) {
+        var u;
+
+        if (p < 0 || p > 1) {
+            return NaN;
+        }
+        u = Math.random();
+
+        return Math.ceil(Math.log(u) / Math.log(1 - p));
     }
+
 };
 
 export default Mat.Statistics;

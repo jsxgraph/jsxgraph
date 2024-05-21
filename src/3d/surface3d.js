@@ -28,9 +28,10 @@
  */
 /*global JXG:true, define: true*/
 
-import JXG from "../jxg";
-import Const from "../base/constants";
-import Type from "../utils/type";
+import JXG from "../jxg.js";
+import Const from "../base/constants.js";
+import Geometry from "../math/geometry.js";
+import Type from "../utils/type.js";
 
 /**
  * Constructor for 3D surfaces.
@@ -131,7 +132,9 @@ JXG.extend(
             } else {
                 func = [this.X, this.Y, this.Z];
             }
-            res = this.view.getMesh(func, r_u.concat([steps_u]), r_v.concat([steps_v]));
+            r_u.push(steps_u);
+            r_v.push(steps_v);
+            res = this.view.getMesh(func, r_u, r_v);
 
             return { X: res[0], Y: res[1] };
         },
@@ -143,6 +146,25 @@ JXG.extend(
         updateRenderer: function () {
             this.needsUpdate = false;
             return this;
+        },
+
+        initParamsIfNeeded: function (params) {
+            if (params.length === 0) {
+                params.unshift(
+                    0.5*(this.range_u[0] + this.range_u[1]),
+                    0.5*(this.range_v[0] + this.range_v[1])
+                );
+            }
+        },
+
+        projectCoords: function (p, params) {
+            this.initParamsIfNeeded(params);
+            return Geometry.projectCoordsToParametric(p, this, params);
+        },
+
+        projectScreenCoords: function (pScr, params) {
+            this.initParamsIfNeeded(params);
+            return Geometry.projectScreenCoordsToParametric(pScr, this, params);
         }
     }
 );

@@ -32,13 +32,13 @@
 /*global JXG:true, define: true*/
 /*jslint nomen: true, plusplus: true*/
 
-import JXG from "../jxg";
-import Const from "./constants";
-import Coords from "./coords";
-import Statistics from "../math/statistics";
-import Geometry from "../math/geometry";
-import Type from "../utils/type";
-import GeometryElement from "./element";
+import JXG from "../jxg.js";
+import Const from "./constants.js";
+import Coords from "./coords.js";
+import Statistics from "../math/statistics.js";
+import Geometry from "../math/geometry.js";
+import Type from "../utils/type.js";
+import GeometryElement from "./element.js";
 
 /**
  * Creates a new instance of JXG.Polygon.

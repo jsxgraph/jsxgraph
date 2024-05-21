@@ -32,8 +32,8 @@
  * @fileoverview In this file the Comb element is defined.
  */
 
-import JXG from "../jxg";
-import Type from "../utils/type";
+import JXG from "../jxg.js";
+import Type from "../utils/type.js";
 
 /**
  * @class A comb to display domains of inequalities.

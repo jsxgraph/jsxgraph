@@ -1,6 +1,6 @@
 /* eslint-disable one-var */
-import JXG from "./jxg";
-import Env from "./utils/env"; // Needed below
+import JXG from "./jxg.js";
+import Env from "./utils/env.js"; // Needed below
 
 export * from "./jxg";
 export * from "./utils/env"; // Needed below
@@ -81,6 +81,7 @@ export * from "./3d/box3d";
 export * from "./3d/point3d";
 export * from "./3d/curve3d";
 export * from "./3d/linspace3d";
+export * from "./3d/sphere3d";
 export * from "./3d/surface3d";
 
 // We're in the browser, export JXG to the global JXG symbol for backwards compatibility

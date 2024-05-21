@@ -32,14 +32,14 @@
 /*global JXG: true, define: true, AMprocessNode: true, MathJax: true, document: true */
 /*jslint nomen: true, plusplus: true, newcap:true*/
 
-import JXG from "../jxg";
-import Options from "../options";
-import AbstractRenderer from "./abstract";
-import Const from "../base/constants";
-import Type from "../utils/type";
-import Color from "../utils/color";
-import Base64 from "../utils/base64";
-import Numerics from "../math/numerics";
+import JXG from "../jxg.js";
+import Options from "../options.js";
+import AbstractRenderer from "./abstract.js";
+import Const from "../base/constants.js";
+import Type from "../utils/type.js";
+import Color from "../utils/color.js";
+import Base64 from "../utils/base64.js";
+import Numerics from "../math/numerics.js";
 
 /**
  * Uses SVG to implement the rendering methods defined in {@link JXG.AbstractRenderer}.
@@ -902,6 +902,7 @@ JXG.extend(
                 }
             } else if (Type.exists(node2)) {
                 this.remove(node2);
+                el.rendNodeTriangleStart = null;
             }
 
             node2 = el.rendNodeTriangleEnd;
@@ -920,6 +921,7 @@ JXG.extend(
                 }
             } else if (Type.exists(node2)) {
                 this.remove(node2);
+                el.rendNodeTriangleEnd = null;
             }
         },
 
@@ -2021,29 +2023,25 @@ JXG.extend(
                     if (node.id !== undefined && node.value !== undefined) {
                         values.push([node.id, node.value]);
                     }
-                    values = values.concat(this._getValuesOfDOMElements(node));
+                    Type.concat(values, this._getValuesOfDOMElements(node));
                     node = node.nextSibling;
                 }
             }
             return values;
         },
 
-        _getDataUri: function (url, callback) {
-            var image = new Image();
-
-            image.onload = function () {
-                var canvas = document.createElement("canvas");
-                canvas.width = this.naturalWidth; // or 'width' if you want a special/scaled size
-                canvas.height = this.naturalHeight; // or 'height' if you want a special/scaled size
-
-                canvas.getContext("2d").drawImage(this, 0, 0);
-
-                callback(canvas.toDataURL("image/png"));
-                canvas.remove();
-            };
-
-            image.src = url;
-        },
+        // _getDataUri: function (url, callback) {
+        //     var image = new Image();
+        //     image.onload = function () {
+        //         var canvas = document.createElement("canvas");
+        //         canvas.width = this.naturalWidth; // or 'width' if you want a special/scaled size
+        //         canvas.height = this.naturalHeight; // or 'height' if you want a special/scaled size
+        //         canvas.getContext("2d").drawImage(this, 0, 0);
+        //         callback(canvas.toDataURL("image/png"));
+        //         canvas.remove();
+        //     };
+        //     image.src = url;
+        // },
 
         _getImgDataURL: function (svgRoot) {
             var images, len, canvas, ctx, ur, i;
@@ -2137,7 +2135,7 @@ JXG.extend(
                     this.foreignObjLayer.setAttribute("display", "inline");
                     while (svgRoot.nextSibling) {
                         // Copy all value attributes
-                        values = values.concat(this._getValuesOfDOMElements(svgRoot.nextSibling));
+                        Type.concat(values, this._getValuesOfDOMElements(svgRoot.nextSibling));
                         this.foreignObjLayer.appendChild(svgRoot.nextSibling);
                     }
                 }

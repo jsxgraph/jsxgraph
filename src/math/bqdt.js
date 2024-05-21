@@ -32,8 +32,8 @@
 /*global JXG:true, define: true*/
 /*jslint nomen: true, plusplus: true*/
 
-import Mat from "./math";
-import Type from "../utils/type";
+import Mat from "./math.js";
+import Type from "../utils/type.js";
 
 /**
  * Instantiate a new box quadtree.
@@ -380,16 +380,16 @@ Type.extend(
             }
 
             if (this.northWest !== null && box[0] <= this.cx & box[1] >= this.cy) {
-                hits = hits.concat(this.northWest.find(box));
+                Type.concat(hits, this.northWest.find(box));
             }
             if (this.southWest !== null && box[0] <= this.cx & box[3] <= this.cy) {
-                hits = hits.concat(this.southWest.find(box));
+                Type.concat(hits, this.southWest.find(box));
             }
             if (this.northEast !== null && box[2] >= this.cx & box[1] >= this.cy) {
-                hits = hits.concat(this.northEast.find(box));
+                Type.concat(hits, this.northEast.find(box));
             }
             if (this.southEast !== null && box[2] >= this.cx & box[3] <= this.cy) {
-                hits = hits.concat(this.southEast.find(box));
+                Type.concat(hits, this.southEast.find(box));
             }
 
             return hits;
@@ -463,26 +463,26 @@ Type.extend(
 
             if (this.northWest !== null) {
                 ret = this.northWest.plot();
-                dataX = dataX.concat(ret[0]);
-                dataY = dataY.concat(ret[1]);
+                Type.concat(dataX, ret[0]);
+                Type.concat(dataY, ret[1]);
             }
 
             if (this.northEast !== null) {
                 ret = this.northEast.plot();
-                dataX = dataX.concat(ret[0]);
-                dataY = dataY.concat(ret[1]);
+                Type.concat(dataX, ret[0]);
+                Type.concat(dataY, ret[1]);
             }
 
             if (this.southEast !== null) {
                 ret = this.southEast.plot();
-                dataX = dataX.concat(ret[0]);
-                dataY = dataY.concat(ret[1]);
+                Type.concat(dataX, ret[0]);
+                Type.concat(dataY, ret[1]);
             }
 
             if (this.southWest !== null) {
                 ret = this.southWest.plot();
-                dataX = dataX.concat(ret[0]);
-                dataY = dataY.concat(ret[1]);
+                Type.concat(dataX, ret[0]);
+                Type.concat(dataY, ret[1]);
             }
 
             return [dataX, dataY];

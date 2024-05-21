@@ -32,24 +32,24 @@
 /*global JXG: true, define: true, document: true*/
 /*jslint nomen: true, plusplus: true*/
 
-import JXG from "../jxg";
-import Numerics from "../math/numerics";
-import Statistics from "../math/statistics";
-import Const from "./constants";
-import Coords from "./coords";
-import GeometryElement from "./element";
-import DataSource from "../parser/datasource";
-import Color from "../utils/color";
-import Type from "../utils/type";
-import Env from "../utils/env";
-// import Curve from "./curve";
-// import Point from "./point";
-// import Text from "./text";
-// import Polygon from "./polygon";
-// import Sector from "../element/sector";
-// import Transform from "./transformation";
-// import Line from "./line";
-// import Circle from "./circle";
+import JXG from "../jxg.js";
+import Numerics from "../math/numerics.js";
+import Statistics from "../math/statistics.js";
+import Const from "./constants.js";
+import Coords from "./coords.js";
+import GeometryElement from "./element.js";
+import DataSource from "../parser/datasource.js";
+import Color from "../utils/color.js";
+import Type from "../utils/type.js";
+import Env from "../utils/env.js";
+// import Curve from "./curve.js";
+// import Point from "./point.js";
+// import Text from "./text.js";
+// import Polygon from "./polygon.js";
+// import Sector from "../element/sector.js";
+// import Transform from "./transformation.js";
+// import Line from "./line.js";
+// import Circle from "./circle.js";
 
 /**
  *
