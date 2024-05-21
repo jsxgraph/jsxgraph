@@ -928,8 +928,130 @@ Mat.Statistics = {
         u = Math.random();
 
         return Math.ceil(Math.log(u) / Math.log(1 - p));
-    }
+    },
 
+    /**
+     * Compute the histogram of a dataset.
+     * Optional parameters can be supplied through a JavaScript object
+     * with the following default values:
+     * <pre>
+     * {
+     *   bins: 10,          // Number of bins
+     *   range: false,      // false or array. The lower and upper range of the bins.
+     *                      // If not provided, range is simply [min(x), max(x)].
+     *                      // Values outside the range are ignored.
+     *   density: false,    // If true, normalize the counts by dividing by sum(counts)
+     *   cumulative: false
+     * }
+     * </pre>
+     * The function returns an array containing two arrays. The first array is of length bins+1
+     * containing the start values of the bins. The last entry contains the end values of the last bin.
+     * <p>
+     * The second array contains the counts of each bin.
+     * @param {Array} x
+     * @param {Object} opt Optional parameters
+     * @returns Array [bin, counts] Array bins contains start values of bins, array counts contains
+     * the number of entries of x which are contained in each bin.
+     * @memberof JXG.Math.Statistics
+     *
+     * @example
+     *     var curve = board.create('curve', [[], []]);
+     *     curve.updateDataArray = function () {
+     *       var i, res, x = [];
+     *
+     *       for (i = 0; i < 5000; i++) {
+     *         x.push(JXG.Math.Statistics.randomGamma(2));
+     *       }
+     *       res = JXG.Math.Statistics.histogram(x, { bins: 50, density: true, cumulative: false, range: [-5, 5] });
+     *       this.dataX = res[1];
+     *       this.dataY = res[0];
+     *     };
+     *     board.update();
+     *
+     * </pre><div id="JXGda56df4d-a5a5-4c87-9ffc-9bbc1b512302" class="jxgbox" style="width: 300px; height: 300px;"></div>
+     * <script type="text/javascript">
+     *     (function() {
+     *         var board = JXG.JSXGraph.initBoard('JXGda56df4d-a5a5-4c87-9ffc-9bbc1b512302',
+     *             {boundingbox: [-1, 3, 6, -1], axis: true, showcopyright: false, shownavigation: false});
+     *         var curve = board.create('curve', [[], []]);
+     *         curve.updateDataArray = function () {
+     *           var i, res, x = [];
+     *
+     *           for (i = 0; i < 5000; i++) {
+     *             x.push(JXG.Math.Statistics.randomGamma(2));
+     *           }
+     *           res = JXG.Math.Statistics.histogram(x, { bins: 50, density: true, cumulative: false, range: [-5, 5] });
+     *           this.dataX = res[1];
+     *           this.dataY = res[0];
+     *         };
+     *         board.update();
+     *     })();
+     *
+     * </script><pre>
+     *
+     */
+    histogram: function (x, opt) {
+        var i, le, k,
+            mi, ma, num_bins, delta,
+            range,
+            s,
+            counts = [],
+            bins = [];
+
+        // Evaluate number of bins
+        num_bins = opt.bins || 10;
+
+        // Evaluate range
+        range = opt.range || false;
+        if (range === false) {
+            mi = Math.min.apply(null, x);
+            ma = Math.max.apply(null, x);
+        } else {
+            mi = range[0];
+            ma = range[1];
+        }
+
+        // Set uniform delta
+        if (num_bins > 0) {
+            delta = (ma - mi) / (num_bins - 1);
+        } else {
+            delta = 0;
+        }
+
+        // Set the bins and init the counts array
+        for (i = 0; i < num_bins; i++) {
+            counts.push(0);
+            bins.push(mi + i * delta);
+        }
+        bins.push(ma);
+
+        // Determine the counts
+        le = x.length;
+        for (i = 0; i < le; i++) {
+            k = Math.floor((x[i] - mi) / delta);
+            if (k >= 0 && k < num_bins) {
+                counts[k] += 1;
+            }
+        }
+
+        // Normalize if density===true
+        if (opt.density) {
+            s = JXG.Math.Statistics.sum(counts);
+            for (i = 0; i < num_bins; i++) {
+                counts[i] /= (s * delta);
+                // counts[i] /= s;
+            }
+        }
+
+        // Cumulative counts
+        if (opt.cumulative) {
+            for (i = 1; i < num_bins; i++) {
+                counts[i] += counts[i - 1];
+            }
+        }
+
+        return [counts, bins];
+    }
 };
 
 export default Mat.Statistics;
