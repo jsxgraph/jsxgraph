@@ -925,9 +925,87 @@ Mat.Statistics = {
         if (p < 0 || p > 1) {
             return NaN;
         }
+        // Knuth, TAOCP 2, p 131
         u = Math.random();
 
         return Math.ceil(Math.log(u) / Math.log(1 - p));
+    },
+
+    /**
+     * Generate values for a random variable in Poisson distribution with mean <i>mu</i>.
+     * See {@link https://en.wikipedia.org/wiki/Poisson_distribution}.
+     *
+     * @param {Number} mu (0 < mu)
+     * @returns Number
+     * @memberof JXG.Math.Statistics
+     */
+    randomPoisson: function (mu) {
+        var e = Math.exp(-mu),
+            N,
+            m = 0,
+            u = 1,
+            x,
+            alpha = 7 / 8;
+
+        if (mu <= 0) {
+            return NaN;
+        }
+
+        // Knuth, TAOCP 2, p 132
+        if (mu < 10) {
+            do {
+                u *= Math.random();
+                m += 1;
+            } while (u > e);
+            N = m - 1;
+        } else {
+            m = Math.floor(alpha * mu);
+            x = this.randomGamma(m);
+            if (x < mu) {
+                N = m + this.randomPoisson(mu - x);
+            } else {
+                N = this.randomBinomial(m - 1, mu / x);
+            }
+        }
+        return N;
+    },
+
+    /**
+     * Generate values for a random variable in hypergeometric distribution. 
+     * Samples are drawn from a hypergeometric distribution with specified parameters, <i>good</i> (ways to make a good selection), 
+     * <i>bad</i> (ways to make a bad selection), and <i>samples</i> (number of items sampled, which is less than or equal to <i>good + bad</i>).
+     * <p>
+     * Naive implementation with runtime <i>O(samples)</i>.
+     * 
+     * @param {Number} good ways to make a good selection
+     * @param {Number} bad ways to make a bad selection
+     * @param {Number} samples number of items sampled
+     * @returns 
+     * @memberof JXG.Math.Statistics
+     */
+    randomHypergeometric: function(good, bad, k) {
+        var i, u, kk,
+            x = 0,
+            n = good + bad;
+
+        if (good < 0 || bad < 0 || k > good + bad) {
+            return NaN;
+        }
+
+        // Naive method
+        kk = Math.min(k, n - k);
+        for (i = 0; i < k; i ++) {
+            u = Math.random();
+            if (n * u <= good) {
+                x += 1;
+                if (x === good) {
+                    return x;
+                }
+                good -= 1;
+            }
+            n -= 1;
+        }
+        return x;
     },
 
     /**
@@ -1038,8 +1116,8 @@ Mat.Statistics = {
         if (opt.density) {
             s = JXG.Math.Statistics.sum(counts);
             for (i = 0; i < num_bins; i++) {
-                counts[i] /= (s * delta);
-                // counts[i] /= s;
+                // counts[i] /= (s * delta);
+                counts[i] /= s;
             }
         }
 
