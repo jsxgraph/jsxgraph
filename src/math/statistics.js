@@ -816,7 +816,7 @@ Mat.Statistics = {
      * @returns Number
      * @memberof JXG.Math.Statistics
      */
-    randomStudentsT: function (nu) {
+    randomT: function (nu) {
         // Knuth, TAOCP 2, p 130
         var y1, y2;
 
