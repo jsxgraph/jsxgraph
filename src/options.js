@@ -94,7 +94,7 @@ JXG.Options = {
          * It is an array consisting of four values:
          * [x<sub>1</sub>, y<sub>1</sub>, x<sub>2</sub>, y<sub>2</sub>]
          *
-         * The canvas will be spanned from the upper left corner (<sub>1</sub>, y<sub>1</sub>)
+         * The canvas will be spanned from the upper left corner (x<sub>1</sub>, y<sub>1</sub>)
          * to the lower right corner (x<sub>2</sub>, y<sub>2</sub>).
          *
          * @name JXG.Board#boundingBox
