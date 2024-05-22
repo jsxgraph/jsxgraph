@@ -1,4 +1,4 @@
-import JXG from "./jxg";
-import "./base/curve";
+import JXG from "./jxg.js";
+import "./base/curve.js";
 
 export default JXG;

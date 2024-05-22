@@ -33,14 +33,14 @@
  * @fileoverview Here, the computer algebra algorithms are implemented.
  */
 
-import JXG from "../jxg";
-import Type from "../utils/type";
-// import Const from "../base/constants";
-// import Text from "../base/text";
-// import Mat from "../math/math";
-// import Geometry from "../math/geometry";
-// import Statistics from "../math/statistics";
-// import Env from "../utils/env";
+import JXG from "../jxg.js";
+import Type from "../utils/type.js";
+// import Const from "../base/constants.js";
+// import Text from "../base/text.js";
+// import Mat from "../math/math.js";
+// import Geometry from "../math/geometry.js";
+// import Statistics from "../math/statistics.js";
+// import Env from "../utils/env.js";
 
 /**
  * A JessieCode object provides an interface to the parser and stores all variables and objects used within a JessieCode script.

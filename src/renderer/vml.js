@@ -32,13 +32,13 @@
 /*global JXG: true, define: true, AMprocessNode: true, MathJax: true, document: true */
 /*jslint nomen: true, plusplus: true, newcap:true*/
 
-import JXG from "../jxg";
-import AbstractRenderer from "./abstract";
-import Const from "../base/constants";
-import Type from "../utils/type";
-import Color from "../utils/color";
-import Mat from "../math/math";
-import Numerics from "../math/numerics";
+import JXG from "../jxg.js";
+import AbstractRenderer from "./abstract.js";
+import Const from "../base/constants.js";
+import Type from "../utils/type.js";
+import Color from "../utils/color.js";
+import Mat from "../math/math.js";
+import Numerics from "../math/numerics.js";
 
 /**
  * Uses VML to implement the rendering methods defined in {@link JXG.AbstractRenderer}.

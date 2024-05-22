@@ -28,10 +28,11 @@
  */
 /*global JXG:true, define: true*/
 
-import JXG from "../jxg";
-import Const from "../base/constants";
-import Type from "../utils/type";
-import Mat from "../math/math";
+import JXG from "../jxg.js";
+import Const from "../base/constants.js";
+import Geometry from "../math/geometry.js";
+import Type from "../utils/type.js";
+import Mat from "../math/math.js";
 
 /**
  * Constructor for 3D curves.
@@ -165,6 +166,22 @@ JXG.extend(
         updateRenderer: function () {
             this.needsUpdate = false;
             return this;
+        },
+
+        initParamsIfNeeded: function (params) {
+            if (params.length === 0) {
+                params.unshift(0.5*(this.range[0] + this.range[1]));
+            }
+        },
+
+        projectCoords: function (p, params) {
+            this.initParamsIfNeeded(params);
+            return Geometry.projectCoordsToParametric(p, this, params);
+        },
+
+        projectScreenCoords: function (pScr, params) {
+            this.initParamsIfNeeded(params);
+            return Geometry.projectScreenCoordsToParametric(pScr, this, params);
         }
     }
 );
@@ -371,9 +388,9 @@ JXG.createVectorfield3D = function (board, parents, attributes) {
                     v[0] *= scale;
                     v[1] *= scale;
                     v[2] *= scale;
-                    this.dataX = this.dataX.concat([x, x + v[0], NaN]);
-                    this.dataY = this.dataY.concat([y, y + v[1], NaN]);
-                    this.dataZ = this.dataZ.concat([z, z + v[2], NaN]);
+                    Type.concat(this.dataX, [x, x + v[0], NaN]);
+                    Type.concat(this.dataY, [y, y + v[1], NaN]);
+                    Type.concat(this.dataZ, [z, z + v[2], NaN]);
 
                     if (showArrow) {
                         // Arrow head
@@ -382,17 +399,17 @@ JXG.createVectorfield3D = function (board, parents, attributes) {
                         theta = Math.asin(v[2] / nrm);
                         theta1 = theta - alpha;
                         theta2 = theta + alpha;
-                        this.dataX = this.dataX.concat([
+                        Type.concat(this.dataX, [
                             x + v[0] - leg_x * Math.cos(phi) * Math.cos(theta1),
                             x + v[0],
                             x + v[0] - leg_x * Math.cos(phi) * Math.cos(theta2),
                             NaN]);
-                        this.dataY = this.dataY.concat([
+                        Type.concat(this.dataY, [
                             y + v[1] - leg_y * Math.sin(phi) * Math.cos(theta1),
                             y + v[1],
                             y + v[1] - leg_y * Math.sin(phi) * Math.cos(theta2),
                             NaN]);
-                        this.dataZ = this.dataZ.concat([
+                        Type.concat(this.dataZ, [
                             z + v[2] - leg_z * Math.sin(theta2),
                             z + v[2],
                             z + v[2] - leg_z * Math.sin(theta1),

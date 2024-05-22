@@ -32,9 +32,9 @@
 /*global JXG:true, define: true*/
 /*jslint nomen: true, plusplus: true*/
 
-import Mat from "./math";
-import Geometry from "./geometry";
-import Type from "../utils/type";
+import Mat from "./math.js";
+import Geometry from "./geometry.js";
+import Type from "../utils/type.js";
 
 /**
  * Instantiate a new quadtree.

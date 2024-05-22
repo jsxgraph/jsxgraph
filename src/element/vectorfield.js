@@ -33,8 +33,8 @@
  * @fileoverview Implementation of vector fields and slope fields.
  */
 
-import JXG from "../jxg";
-import Type from "../utils/type";
+import JXG from "../jxg.js";
+import Type from "../utils/type.js";
 
 /**
  * @class Vector field.
@@ -237,16 +237,16 @@ JXG.createVectorField = function (board, parents, attributes) {
                 v[0] *= scale;
                 v[1] *= scale;
 
-                this.dataX = this.dataX.concat([x, x + v[0], NaN]);
-                this.dataY = this.dataY.concat([y, y + v[1], NaN]);
+                Type.concat(this.dataX, [x, x + v[0], NaN]);
+                Type.concat(this.dataY, [y, y + v[1], NaN]);
 
                 if (showArrow && Math.abs(v[0]) + Math.abs(v[1]) > 0.0) {
                     // Arrow head
                     theta = Math.atan2(v[1], v[0]);
                     phi1 = theta + alpha;
                     phi2 = theta - alpha;
-                    this.dataX = this.dataX.concat([x + v[0] - Math.cos(phi1) * leg_x, x + v[0], x + v[0] - Math.cos(phi2) * leg_x, NaN]);
-                    this.dataY = this.dataY.concat([y + v[1] - Math.sin(phi1) * leg_y, y + v[1], y + v[1] - Math.sin(phi2) * leg_y, NaN]);
+                    Type.concat(this.dataX, [x + v[0] - Math.cos(phi1) * leg_x, x + v[0], x + v[0] - Math.cos(phi2) * leg_x, NaN]);
+                    Type.concat(this.dataY, [y + v[1] - Math.sin(phi1) * leg_y, y + v[1], y + v[1] - Math.sin(phi2) * leg_y, NaN]);
                 }
             }
         }

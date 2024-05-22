@@ -36,13 +36,13 @@
  * @fileoverview In this file the ForeignObject element is defined.
  */
 
-import JXG from "../jxg";
-import Const from "./constants";
-import Coords from "./coords";
-import GeometryElement from "./element";
-import Mat from "../math/math";
-import Type from "../utils/type";
-import CoordsElement from "./coordselement";
+import JXG from "../jxg.js";
+import Const from "./constants.js";
+import Coords from "./coords.js";
+import GeometryElement from "./element.js";
+import Mat from "../math/math.js";
+import Type from "../utils/type.js";
+import CoordsElement from "./coordselement.js";
 
 /**
  * Construct and handle SVG foreignObjects.

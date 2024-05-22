@@ -35,14 +35,14 @@
  * This object provides the coordinate handling of points, images and texts.
  */
 
-import JXG from "../jxg";
-import Mat from "../math/math";
-import Geometry from "../math/geometry";
-import Numerics from "../math/numerics";
-import Statistics from "../math/statistics";
-import Coords from "./coords";
-import Const from "./constants";
-import Type from "../utils/type";
+import JXG from "../jxg.js";
+import Mat from "../math/math.js";
+import Geometry from "../math/geometry.js";
+import Numerics from "../math/numerics.js";
+import Statistics from "../math/statistics.js";
+import Coords from "./coords.js";
+import Const from "./constants.js";
+import Type from "../utils/type.js";
 
 /**
  * An element containing coords is the basic geometric element. Based on points lines and circles can be constructed which can be intersected

@@ -38,12 +38,12 @@
  * a board.
  */
 
-import JXG from "../jxg";
-import Mat from "../math/math";
-import Const from "../base/constants";
-import Coords from "../base/coords";
-import Type from "../utils/type";
-import Point from "../base/point";
+import JXG from "../jxg.js";
+import Mat from "../math/math.js";
+import Const from "../base/constants.js";
+import Coords from "../base/coords.js";
+import Type from "../utils/type.js";
+import Point from "../base/point.js";
 
 /**
  * @class A slider can be used to choose values from a given range of numbers.
@@ -235,7 +235,7 @@ JXG.createSlider = function (board, parents, attributes) {
     // attr = Type.copyAttributes(attributes, board.options, "slider");
     // overwrite this in any case; the sliders label is a special text element, not the gliders label.
     // this will be set back to true after the text was created (and only if withlabel was true initially).
-    attr.withLabel = false;
+    attr.withlabel = false;
     // gliders set snapwidth=-1 by default (i.e. deactivate them)
     p3 = board.create("glider", [startx, starty, l1], attr);
     p3.setAttribute({ snapwidth: snapWidth, snapvalues: snapValues, snapvaluedistance: snapValueDistance });
@@ -517,6 +517,7 @@ JXG.createSlider = function (board, parents, attributes) {
         t.dump = false;
     }
 
+    // p3.type = Const.OBJECT_TYPE_SLIDER; // No! type has to be Const.OBJECT_TYPE_GLIDER
     p3.elType = "slider";
     p3.parents = parents;
     p3.subs = {

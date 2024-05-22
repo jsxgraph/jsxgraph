@@ -32,18 +32,18 @@
 /*global JXG: true, define: true, AMprocessNode: true, document: true, Image: true, module: true, require: true */
 /*jslint nomen: true, plusplus: true, newcap:true*/
 
-import JXG from "../jxg";
-import AbstractRenderer from "./abstract";
-import Const from "../base/constants";
-import Env from "../utils/env";
-import Type from "../utils/type";
-import UUID from "../utils/uuid";
-import Color from "../utils/color";
-import Coords from "../base/coords";
-import Mat from "../math/math";
-import Geometry from "../math/geometry";
-import Numerics from "../math/numerics";
-// import $__canvas from "canvas";
+import JXG from "../jxg.js";
+import AbstractRenderer from "./abstract.js";
+import Const from "../base/constants.js";
+import Env from "../utils/env.js";
+import Type from "../utils/type.js";
+import UUID from "../utils/uuid.js";
+import Color from "../utils/color.js";
+import Coords from "../base/coords.js";
+import Mat from "../math/math.js";
+import Geometry from "../math/geometry.js";
+import Numerics from "../math/numerics.js";
+// import $__canvas from "canvas.js";
 
 /**
  * Uses HTML Canvas to implement the rendering methods defined in {@link JXG.AbstractRenderer}.
@@ -89,7 +89,7 @@ JXG.CanvasRenderer = function (container, dim) {
             throw new Error('JXG.createCanvas not available.\n' +
                 'Install the npm package `canvas`\n' +
                 'and call:\n' +
-                '    import { createCanvas } from "canvas";\n' +
+                '    import { createCanvas } from "canvas.js";\n' +
                 '    JXG.createCanvas = createCanvas;\n');
         }
     }

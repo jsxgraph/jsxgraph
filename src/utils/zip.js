@@ -40,7 +40,7 @@
  * @fileoverview Utilities for uncompressing and base64 decoding
  */
 
-import JXG from "../jxg";
+import JXG from "../jxg.js";
 
 // Zip routine constants
 

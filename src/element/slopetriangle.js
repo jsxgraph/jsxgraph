@@ -36,10 +36,10 @@
  * @fileoverview Example file for a triangle implemented as a extension to JSXGraph.
  */
 
-import JXG from "../jxg";
-import Type from "../utils/type";
-import Const from "../base/constants";
-import Polygon from "../base/polygon";
+import JXG from "../jxg.js";
+import Type from "../utils/type.js";
+import Const from "../base/constants.js";
+import Polygon from "../base/polygon.js";
 
 var priv = {
     removeSlopeTriangle: function () {

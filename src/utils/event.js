@@ -36,8 +36,8 @@
  * @fileoverview In this file the EventEmitter interface is defined.
  */
 
-import JXG from "../jxg";
-import Type from "./type";
+import JXG from "../jxg.js";
+import Type from "./type.js";
 
 /**
  * Event namespace

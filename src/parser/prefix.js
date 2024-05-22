@@ -43,10 +43,10 @@
  * @example
  *
  */
-import JXG from "../jxg";
-import Type from "../utils/type";
-import Mat from "../math/math";
-import Const from "../base/constants";
+import JXG from "../jxg.js";
+import Type from "../utils/type.js";
+import Mat from "../math/math.js";
+import Const from "../base/constants.js";
 
 /**
  * Prefix expression parser, i.e. a poor man's parser.
@@ -367,13 +367,13 @@ JXG.PrefixParser = {
 
         for (i = 1; i < le; i++) {
             if (Type.isInArray(['+', '-', '*', '/'], method)) {
-                res = res.concat(this.getParents(term[i]));
+                Type.concat(res, this.getParents(term[i]));
             } else {
                 if (method === 'V' && term[i].type === Type.OBJECT_TYPE_MEASUREMENT) {
-                    res = res.concat(term[i].getParents());
+                    Type.concat(res, term[i].getParents());
                 } else if (method === 'exec') {
                     if (i > 1) {
-                        res = res.concat(this.getParents(term[i]));
+                        Type.concat(res, this.getParents(term[i]));
                     }
                 } else {
                     res.push(term[i]);

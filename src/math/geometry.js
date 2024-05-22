@@ -38,13 +38,13 @@
  * stuff like intersection points, angles, midpoint, and so on.
  */
 
-import JXG from "../jxg";
-import Const from "../base/constants";
-import Coords from "../base/coords";
-import Mat from "./math";
-import Numerics from "./numerics";
-import Type from "../utils/type";
-import Expect from "../utils/expect";
+import JXG from "../jxg.js";
+import Const from "../base/constants.js";
+import Coords from "../base/coords.js";
+import Mat from "./math.js";
+import Numerics from "./numerics.js";
+import Type from "../utils/type.js";
+import Expect from "../utils/expect.js";
 
 /**
  * Math.Geometry namespace definition. This namespace holds geometrical algorithms,
@@ -1569,6 +1569,83 @@ JXG.extend(
             return func;
         },
 
+        otherIntersectionFunction: function(input, others, alwaysintersect, precision) {
+            var func, board,
+                el1, el2,
+                that = this;
+
+            el1 = input[0];
+            el2 = input[1];
+            board = el1.board;
+            func = function() {
+                var i, k, c, d,
+                    isClose,
+                    le = others.length,
+                    eps = Type.evaluate(precision);
+
+                for (i = le; i >= 0; i--) {
+                    if (el1.elementClass ===  Const.OBJECT_CLASS_CIRCLE &&
+                        [Const.OBJECT_CLASS_CIRCLE, Const.OBJECT_CLASS_LINE].indexOf(el2.elementClass) >= 0) {
+                        // circle, circle|line
+                        c = that.meet(el1.stdform, el2.stdform, i, board);
+                    } else if (el1.elementClass ===  Const.OBJECT_CLASS_CURVE &&
+                        [Const.OBJECT_CLASS_CURVE, Const.OBJECT_CLASS_CIRCLE].indexOf(el2.elementClass) >= 0) {
+                        // curve, circle|curve
+                        c = that.meetCurveCurve(el1, el2, i, 0, board, 'segment');
+                    } else if (el1.elementClass ===  Const.OBJECT_CLASS_CURVE && el2.elementClass === Const.OBJECT_CLASS_LINE) {
+                        // curve, line
+                        if (Type.exists(el1.dataX)) {
+                            c = JXG.Math.Geometry.meetCurveLine(el1, el2, i, el1.board, Type.evaluate(alwaysintersect));
+                        } else {
+                            c = JXG.Math.Geometry.meetCurveLineContinuous(el1, el2, i, el1.board);
+                        }
+                    }
+
+                    // If the intersection is close to one of the points in other
+                    // we have to search for another intersection point.
+                    isClose = false;
+                    for (k = 0; !isClose && k < le; k++) {
+                        d = c.distance(JXG.COORDS_BY_USER, others[k].coords);
+                        if (d < eps) {
+                            isClose = true;
+                       }
+                    }
+                    if (!isClose) {
+                        // We are done, the intersection is away from any other
+                        // intersection point.
+                        return c;
+                    }
+                }
+                // Otherwise we return the last intersection point
+                return c;
+            };
+            return func;
+        },
+
+        /**
+         * Generate the function which computes the data of the intersection.
+         */
+        intersectionFunction3D: function (view, el1, el2, i) {
+            var func,
+                that = this;
+
+            if (el1.type === Const.OBJECT_TYPE_PLANE3D) {
+                if (el2.type === Const.OBJECT_TYPE_PLANE3D) {
+                    func = () => view.intersectionPlanePlane(el1, el2)[i];
+                } else if (el2.type === Const.OBJECT_TYPE_SPHERE3D) {
+                    func = that.meetPlaneSphere(el1, el2);
+                }
+            } else if (el1.type === Const.OBJECT_TYPE_SPHERE3D) {
+                if (el2.type === Const.OBJECT_TYPE_PLANE3D) {
+                    func = that.meetPlaneSphere(el2, el1);
+                } else if (el2.type === Const.OBJECT_TYPE_SPHERE3D) {
+                    func = that.meetSphereSphere(el1, el2);
+                }
+            }
+
+            return func;
+        },
+
         /**
          * Returns true if the coordinates are on the arc element,
          * false otherwise. Usually, coords is an intersection
@@ -1923,22 +2000,14 @@ JXG.extend(
          * @returns {JXG.Coords} Coords object containing the intersection.
          */
         meetCurveLineContinuous: function (cu, li, nr, board, testSegment) {
-            var t,
-                func0,
-                func1,
-                v,
-                x,
-                y,
-                z,
+            var func0, func1,
+                t, v, x, y, z,
                 eps = Mat.eps,
                 epsLow = Mat.eps,
                 steps,
                 delta,
-                tnew,
-                i,
-                tmin,
-                fmin,
-                ft;
+                tnew, tmin, fmin,
+                i, ft;
 
             v = this.meetCurveLineDiscrete(cu, li, nr, board, testSegment);
             x = v.usrCoords[1];
@@ -1950,9 +2019,10 @@ JXG.extend(
                 if (t > cu.maxX() || t < cu.minX()) {
                     return Infinity;
                 }
-                c1 = x - cu.X(t);
-                c2 = y - cu.Y(t);
+                c1 = cu.X(t) - x;
+                c2 = cu.Y(t) - y;
                 return c1 * c1 + c2 * c2;
+                // return c1 * (cu.X(t + h) - cu.X(t - h)) + c2 * (cu.Y(t + h) - cu.Y(t - h)) / h;
             };
 
             func1 = function (t) {
@@ -1964,7 +2034,6 @@ JXG.extend(
             steps = 50;
             delta = (cu.maxX() - cu.minX()) / steps;
             tnew = cu.minX();
-
             fmin = 0.0001; //eps;
             tmin = NaN;
             for (i = 0; i < steps; i++) {
@@ -2016,17 +2085,13 @@ JXG.extend(
          * the ideal point [0,1,0] is returned.
          */
         meetCurveLineDiscrete: function (cu, li, nr, board, testSegment) {
-            var i,
-                j,
+            var i, j,
                 n = Type.evaluate(nr),
-                p1,
-                p2,
-                p,
-                q,
+                p1, p2,
+                p, q,
                 lip1 = li.point1.coords.usrCoords,
                 lip2 = li.point2.coords.usrCoords,
-                d,
-                res,
+                d, res,
                 cnt = 0,
                 len = cu.numberPoints,
                 ev_sf = Type.evaluate(li.visProp.straightfirst),
@@ -2095,7 +2160,7 @@ JXG.extend(
 
         /**
          * Find the n-th intersection point of two curves named red (first parameter) and blue (second parameter).
-         * We go through each segment of the red curve and search if there is an intersection with a segemnt of the blue curve.
+         * We go through each segment of the red curve and search if there is an intersection with a segment of the blue curve.
          * This double loop, i.e. the outer loop runs along the red curve and the inner loop runs along the blue curve, defines
          * the n-th intersection point. The segments are either line segments or Bezier curves of degree 3. This depends on
          * the property bezierDegree of the curves.
@@ -2305,6 +2370,84 @@ JXG.extend(
                 crds = intersections[n];
             }
             return new Coords(Const.COORDS_BY_USER, crds, board);
+        },
+
+        meetPlaneSphere: function (el1, el2) {
+            var dis = function () {
+                return (
+                      el1.normal[0] * el2.center.X()
+                    + el1.normal[1] * el2.center.Y()
+                    + el1.normal[2] * el2.center.Z()
+                    - el1.d
+                );
+            };
+            return [
+                [
+                    // Center
+                    function () {
+                        return el2.center.X() - dis()*el1.normal[0];
+                    },
+                    function () {
+                        return el2.center.Y() - dis()*el1.normal[1];
+                    },
+                    function () {
+                        return el2.center.Z() - dis()*el1.normal[2];
+                    }
+                ],
+                [
+                    // Normal
+                    () => el1.normal[0],
+                    () => el1.normal[1],
+                    () => el1.normal[2]
+                ],
+                function () {
+                    // Radius (returns NaN if spheres don't touch)
+                    let r = el2.Radius(),
+                        s = dis();
+                    return Math.sqrt(r*r - s*s);
+                }
+            ];
+        },
+
+        meetSphereSphere: function (el1, el2) {
+            var skew = function () {
+                let dist = el1.center.distance(el2.center),
+                    r1 = el1.Radius(),
+                    r2 = el2.Radius();
+                return (r1 - r2)*(r1 + r2) / (dist*dist);
+            };
+            return [
+                [
+                    // Center
+                    function () {
+                        let s = skew();
+                        return 0.5*((1-s)*el1.center.X() + (1+s)*el2.center.X());
+                    },
+                    function () {
+                        let s = skew();
+                        return 0.5*((1-s)*el1.center.Y() + (1+s)*el2.center.Y());
+                    },
+                    function () {
+                        let s = skew();
+                        return 0.5*((1-s)*el1.center.Z() + (1+s)*el2.center.Z());
+                    }
+                ],
+                [
+                    // Normal
+                    () => el2.center.X() - el1.center.X(),
+                    () => el2.center.Y() - el1.center.Y(),
+                    () => el2.center.Z() - el1.center.Z()
+                ],
+                function () {
+                    // Radius (returns NaN if spheres don't touch)
+                    let dist = el1.center.distance(el2.center),
+                        r1 = el1.Radius(),
+                        r2 = el2.Radius(),
+                        s = skew(),
+                        rIxnSq = 0.5*(r1*r1 + r2*r2 - 0.5*dist*dist*(1 + s*s));
+                    return Math.sqrt(rIxnSq);
+                }
+            ];
         },
 
         /****************************************/
@@ -2796,18 +2939,18 @@ JXG.extend(
                 p2 = [1, p1[1] - k * ay, p1[2] + k * ax];
                 p3 = [1, p4[1] + k * by, p4[2] - k * bx];
 
-                dataX = dataX.concat([p2[1], p3[1], p4[1]]);
-                dataY = dataY.concat([p2[2], p3[2], p4[2]]);
+                Type.concat(dataX, [p2[1], p3[1], p4[1]]);
+                Type.concat(dataY, [p2[2], p3[2], p4[2]]);
                 p1 = p4.slice(0);
             }
 
             if (withLegs) {
-                dataX = dataX.concat([
+                Type.concat(dataX, [
                     p4[1] + 0.333 * (x - p4[1]),
                     p4[1] + 0.666 * (x - p4[1]),
                     x
                 ]);
-                dataY = dataY.concat([
+                Type.concat(dataY, [
                     p4[2] + 0.333 * (y - p4[2]),
                     p4[2] + 0.666 * (y - p4[2]),
                     y
@@ -3288,6 +3431,128 @@ JXG.extend(
             }
 
             return coords;
+        },
+
+        /**
+         * Given a the coordinates of a point, finds the nearest point on the given
+         * parametric curve or surface, and returns its view-space coordinates.
+         * @param {Array} pScr Screen coordinates to project.
+         * @param {JXG.Curve3D|JXG.Surface3D} target Parametric curve or surface to project to.
+         * @param {Array} params Parameters of point on the target, initially specifying the starting point of
+         * the search. The parameters are modified in place during the search, ending up at the nearest point.
+         * @returns {Array} Array of length 4 containing the coordinates of the nearest point on the curve or surface.
+         */
+        projectCoordsToParametric: function (p, target, params) {
+            // The variables and parameters for the Cobyla constrained
+            // minimization algorithm are explained in the Cobyla.js comments
+            var rhobeg, // initial size of simplex (Cobyla)
+                rhoend, // finial size of simplex (Cobyla)
+                iprint = 0, // no console output (Cobyla)
+                maxfun = 200, // call objective function at most 200 times (Cobyla)
+                dim = params.length,
+                _minFunc; // objective function (Cobyla)
+
+            // adapt simplex size to parameter range
+            if (dim === 1) {
+                rhobeg = 0.1*(target.range[1] - target.range[0]);
+            } else if (dim === 2) {
+                rhobeg = 0.1*Math.min(
+                    target.range_u[1] - target.range_u[0],
+                    target.range_v[1] - target.range_v[0]
+                );
+            }
+            rhoend = rhobeg / 5e6;
+
+            // minimize screen distance to cursor
+            _minFunc = function (n, m, w, con) {
+                // var xDiff = p[0] - target.X(...w),
+                //     yDiff = p[1] - target.Y(...w),
+                //     zDiff = p[2] - target.Z(...w);
+                var xDiff = p[0] - target.X.apply(null, w),
+                    yDiff = p[1] - target.Y.apply(null, w),
+                    zDiff = p[2] - target.Z.apply(null, w);
+
+                if (n === 1) {
+                    con[0] =  w[0] - target.range[0];
+                    con[1] = -w[0] + target.range[1];
+                } else if (n === 2) {
+                    con[0] =  w[0] - target.range_u[0];
+                    con[1] = -w[0] + target.range_u[1];
+                    con[2] =  w[1] - target.range_v[0];
+                    con[3] = -w[1] + target.range_v[1];
+                }
+                return xDiff*xDiff + yDiff*yDiff + zDiff*zDiff;
+            };
+            Mat.Nlp.FindMinimum(_minFunc, dim, 2*dim, params, rhobeg, rhoend, iprint, maxfun);
+
+            // return [1, target.X(...params), target.Y(...params), target.Z(...params)];
+            return [1, target.X.apply(null, params), target.Y.apply(null, params), target.Z.apply(null, params)];
+        },
+
+        /**
+         * Given a the screen coordinates of a point, finds the point on the
+         * given parametric curve or surface which is nearest in screen space,
+         * and returns its view-space coordinates.
+         * @param {Array} pScr Screen coordinates to project.
+         * @param {JXG.Curve3D|JXG.Surface3D} target Parametric curve or surface to project to.
+         * @param {Array} params Parameters of point on the target, initially specifying the starting point of
+         * the search. The parameters are modified in place during the search, ending up at the nearest point.
+         * @returns {Array} Array of length 4 containing the coordinates of the nearest point on the curve or surface.
+         */
+        projectScreenCoordsToParametric: function (pScr, target, params) {
+            // The variables and parameters for the Cobyla constrained
+            // minimization algorithm are explained in the Cobyla.js comments
+            var rhobeg, // initial size of simplex (Cobyla)
+                rhoend, // finial size of simplex (Cobyla)
+                iprint = 0, // no console output (Cobyla)
+                maxfun = 200, // call objective function at most 200 times (Cobyla)
+                dim = params.length,
+                _minFunc; // objective function (Cobyla)
+
+            // adapt simplex size to parameter range
+            if (dim === 1) {
+                rhobeg = 0.1*(target.range[1] - target.range[0]);
+            } else if (dim === 2) {
+                rhobeg = 0.1*Math.min(
+                    target.range_u[1] - target.range_u[0],
+                    target.range_v[1] - target.range_v[0]
+                );
+            }
+            rhoend = rhobeg / 5e6;
+
+            // minimize screen distance to cursor
+            _minFunc = function (n, m, w, con) {
+                // var c3d = [
+                //         1,
+                //         target.X(...w),
+                //         target.Y(...w),
+                //         target.Z(...w)
+                //     ],
+                var c3d = [
+                        1,
+                        target.X.apply(null, w),
+                        target.Y.apply(null, w),
+                        target.Z.apply(null, w)
+                    ],
+                    c2d = target.view.project3DTo2D(c3d),
+                    xDiff = pScr[0] - c2d[1],
+                    yDiff = pScr[1] - c2d[2];
+
+                if (n === 1) {
+                    con[0] =  w[0] - target.range[0];
+                    con[1] = -w[0] + target.range[1];
+                } else if (n === 2) {
+                    con[0] =  w[0] - target.range_u[0];
+                    con[1] = -w[0] + target.range_u[1];
+                    con[2] =  w[1] - target.range_v[0];
+                    con[3] = -w[1] + target.range_v[1];
+                }
+                return xDiff*xDiff + yDiff*yDiff;
+            };
+            Mat.Nlp.FindMinimum(_minFunc, dim, 2*dim, params, rhobeg, rhoend, iprint, maxfun);
+
+            // return [1, target.X(...params), target.Y(...params), target.Z(...params)];
+            return [1, target.X.apply(null, params), target.Y.apply(null, params), target.Z.apply(null, params)];
         },
 
         /**

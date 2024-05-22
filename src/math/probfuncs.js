@@ -31,8 +31,8 @@
 /*jslint nomen: true, plusplus: true*/
 /*eslint no-loss-of-precision: off */
 
-import Mat from "./math";
-import Type from "../utils/type";
+import Mat from "./math.js";
+import Type from "../utils/type.js";
 
 /**
  * Probability functions, e.g. error function,

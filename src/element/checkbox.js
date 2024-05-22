@@ -36,9 +36,9 @@
  * @fileoverview In this file the Text element is defined.
  */
 
-import JXG from "../jxg";
-import Env from "../utils/env";
-import Type from "../utils/type";
+import JXG from "../jxg.js";
+import Env from "../utils/env.js";
+import Type from "../utils/type.js";
 
 var priv = {
     /**

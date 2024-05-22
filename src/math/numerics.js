@@ -38,10 +38,10 @@
  * algorithms for solving linear equations etc.
  */
 
-import JXG from "../jxg";
-import Type from "../utils/type";
-import Env from "../utils/env";
-import Mat from "./math";
+import JXG from "../jxg.js";
+import Type from "../utils/type.js";
+import Env from "../utils/env.js";
+import Mat from "./math.js";
 
 // Predefined butcher tableaus for the common Runge-Kutta method (fourth order), Heun method (second order), and Euler method (first order).
 var predefinedButcher = {
@@ -1908,12 +1908,12 @@ Mat.Numerics = {
             t = [];
 
         for (i = deg; i >= 0; i--) {
-            t = t.concat(["(", coeffs[i].toPrecision(prec), ")"]);
+            Type.concat(t, ["(", coeffs[i].toPrecision(prec), ")"]);
 
             if (i > 1) {
-                t = t.concat(["*", varname, "<sup>", i, "<", "/sup> + "]);
+                Type.concat(t, ["*", varname, "<sup>", i, "<", "/sup> + "]);
             } else if (i === 1) {
-                t = t.concat(["*", varname, " + "]);
+                Type.concat(t, ["*", varname, " + "]);
             }
         }
 

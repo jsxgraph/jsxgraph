@@ -32,15 +32,15 @@
 /*global JXG: true, define: true*/
 /*jslint nomen: true, plusplus: true, unparam: true*/
 
-import JXG from "../jxg";
-import Const from "./constants";
-import Coords from "./coords";
-import Mat from "../math/math";
-import Statistics from "../math/statistics";
-import Options from "../options";
-import EventEmitter from "../utils/event";
-import Color from "../utils/color";
-import Type from "../utils/type";
+import JXG from "../jxg.js";
+import Const from "./constants.js";
+import Coords from "./coords.js";
+import Mat from "../math/math.js";
+import Statistics from "../math/statistics.js";
+import Options from "../options.js";
+import EventEmitter from "../utils/event.js";
+import Color from "../utils/color.js";
+import Type from "../utils/type.js";
 
 /**
  * Constructs a new GeometryElement object.
@@ -1446,6 +1446,15 @@ JXG.extend(
                             }
                             this.hasLabel = value;
                             break;
+                        case "straightfirst":
+                        case "straightlast":
+                            this._set(key, value);
+                            for (j in this.childElements) {
+                                if (this.childElements.hasOwnProperty(j) && this.childElements[j].elType === 'glider') {
+                                    this.childElements[j].fullUpdate();
+                                }
+                            }
+                            break;
                         default:
                             if (
                                 Type.exists(this.visProp[key]) &&
@@ -1749,6 +1758,7 @@ JXG.extend(
          * @type String
          * @private
          * @ignore
+         * @deprecated
          * @returns JSON string containing element's properties.
          */
         toJSON: function () {
@@ -2535,6 +2545,8 @@ JXG.extend(
          * on mobile browsers.
          * @name JXG.Board#dblclick
          * @param {Event} e The browser's event object.
+         * @see JXG.Board#clickDelay
+         * @see JXG.Board#dblClickSuppressClick
          */
         __evt__dblclick: function (e) { },
 

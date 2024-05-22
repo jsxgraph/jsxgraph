@@ -39,19 +39,19 @@
  * the browser runs on is a tablet/cell or a desktop computer.
  */
 
-import JXG from "../jxg";
-import Type from "./type";
+import JXG from "../jxg.js";
+import Type from "./type.js";
 
 JXG.extendConstants(
     JXG,
     /** @lends JXG */ {
-        /**
-         * Determines the property that stores the relevant information in the event object.
-         * @type String
-         * @default 'touches'
-         * @private
-         */
-        touchProperty: "touches"
+        // /**
+        //  * Determines the property that stores the relevant information in the event object.
+        //  * @type String
+        //  * @default 'touches'
+        //  * @private
+        //  */
+        // touchProperty: "touches"
     }
 );
 
@@ -64,7 +64,7 @@ JXG.extend(
          * @returns {Boolean}
          */
         isTouchEvent: function (evt) {
-            return JXG.exists(evt[JXG.touchProperty]);
+            return JXG.exists(evt['touches']); // Old iOS touch events
         },
 
         /**
@@ -95,7 +95,7 @@ JXG.extend(
             var n = -1;
 
             if (JXG.isTouchEvent(evt)) {
-                n = evt[JXG.touchProperty].length;
+                n = evt['touches'].length;
             }
 
             return n;
@@ -188,7 +188,7 @@ JXG.extend(
                 //     throw new Error('JXG.createCanvas not available.\n' +
                 //         'Install the npm package `canvas`\n' +
                 //         'and call:\n' +
-                //         '    import { createCanvas } from "canvas";\n' +
+                //         '    import { createCanvas } from "canvas.js";\n' +
                 //         '    JXG.createCanvas = createCanvas;\n');
                 // }
             }
@@ -261,6 +261,7 @@ JXG.extend(
         /**
          * Detects if the user is using an Android powered device.
          * @returns {Boolean}
+         * @deprecated
          */
         isAndroid: function () {
             return (
@@ -272,6 +273,7 @@ JXG.extend(
         /**
          * Detects if the user is using the default Webkit browser on an Android powered device.
          * @returns {Boolean}
+         * @deprecated
          */
         isWebkitAndroid: function () {
             return this.isAndroid() && navigator.userAgent.indexOf(" AppleWebKit/") > -1;
@@ -280,6 +282,7 @@ JXG.extend(
         /**
          * Detects if the user is using a Apple iPad / iPhone.
          * @returns {Boolean}
+         * @deprecated
          */
         isApple: function () {
             return (
@@ -292,6 +295,7 @@ JXG.extend(
         /**
          * Detects if the user is using Safari on an Apple device.
          * @returns {Boolean}
+         * @deprecated
          */
         isWebkitApple: function () {
             return (
@@ -302,6 +306,7 @@ JXG.extend(
         /**
          * Returns true if the run inside a Windows 8 "Metro" App.
          * @returns {Boolean}
+         * @deprecated
          */
         isMetroApp: function () {
             return (
@@ -315,6 +320,7 @@ JXG.extend(
         /**
          * Detects if the user is using a Mozilla browser
          * @returns {Boolean}
+         * @deprecated
          */
         isMozilla: function () {
             return (
@@ -327,6 +333,7 @@ JXG.extend(
         /**
          * Detects if the user is using a firefoxOS powered device.
          * @returns {Boolean}
+         * @deprecated
          */
         isFirefoxOS: function () {
             return (
@@ -343,6 +350,7 @@ JXG.extend(
          * @returns {boolean}
          *
          * @see https://stackoverflow.com/a/61073480
+         * @deprecated
          */
         isDesktop: function () {
             return true;
@@ -364,6 +372,8 @@ JXG.extend(
          * @returns {boolean}
          *
          * @see https://stackoverflow.com/questions/25542814/html5-detecting-if-youre-on-mobile-or-pc-with-javascript
+         * @deprecated
+         *
          */
         isMobile: function () {
             return true;
@@ -373,6 +383,7 @@ JXG.extend(
         /**
          * Internet Explorer version. Works only for IE > 4.
          * @type Number
+         * @deprecated
          */
         ieVersion: (function () {
             var div,
@@ -597,7 +608,7 @@ JXG.extend(
             }
 
             doc = doc || document;
-            evtTouches = e[JXG.touchProperty];
+            evtTouches = e['touches']; // iOS touch events
 
             // touchend events have their position in "changedTouches"
             if (Type.exists(evtTouches) && evtTouches.length === 0) {
@@ -903,7 +914,7 @@ JXG.extend(
          */
         timedChunk: function (items, process, context, callback) {
             //create a clone of the original
-            var todo = items.concat(),
+            var todo = items.slice(),
                 timerFun = function () {
                     var start = +new Date();
 
