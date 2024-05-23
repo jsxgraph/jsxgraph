@@ -323,10 +323,10 @@ JXG.extend(
                 t, z;
 
             if (d < r * 0.7071067811865475) { // Inside sphere
-                z = Math.sqrt(r * r - d * d);
+                z = -Math.sqrt(r * r - d * d);
             } else {                          // On hyperbola
                 t = r / 1.414213562373095;
-                z = t * t / d;
+                z = -t * t / d;
             }
             return z;
         },
@@ -354,7 +354,7 @@ JXG.extend(
             }
 
             dx = this._trackball.dx;
-            dy = this._trackball.dy;
+            dy = -this._trackball.dy;
             dr2 = dx * dx + dy * dy;
             if (dr2 > Mat.eps) {
                 // // Method by Hanson, "The rolling ball", Graphics Gems III, p.51
@@ -375,19 +375,19 @@ JXG.extend(
                 //
                 R = (this.size[0] * this.board.unitX + this.size[1] * this.board.unitY) * 0.25;
                 x = this._trackball.x;
-                y = this._trackball.y;
+                y = -this._trackball.y;
 
-                // p2 = [x, y, this._projectToSphere(R, x, y)];
-                p2 = [this._projectToSphere(R, x, y), x, y];
+                p2 = [x, y, this._projectToSphere(R, x, y)];
+                // [UNUSED] p2 = [this._projectToSphere(R, x, y), x, y];
                 x -= dx;
                 y -= dy;
-                // p1 = [x, y, this._projectToSphere(R, x, y)];
-                p1 = [this._projectToSphere(R, x, y), x, y];
+                p1 = [x, y, this._projectToSphere(R, x, y)];
+                // [UNUSED] p1 = [this._projectToSphere(R, x, y), x, y];
 
-                n = Mat.crossProduct(p2, p1);
+                n = Mat.crossProduct(p1, p2);
                 d = Mat.hypot(n[0], n[1], n[2]);
-                n[0] /= -d;
-                n[1] /= -d;
+                n[0] /= d;
+                n[1] /= d;
                 n[2] /= d;
 
                 t = Geometry.distance(p2, p1, 3) / (2 * R);
@@ -398,21 +398,25 @@ JXG.extend(
                 t = 1 - c;
                 s = Math.sin(theta);
 
-                // General rotation around axis n with angle theta
-                // See Pique, Graphics Gems I, pp. 466
-                // Attention: he multiplies (row vector x matrix),
-                // we multiply (matrix x column vector)
-                mat[1][1] = c + n[0] * n[0] * t;
-                mat[2][1] = n[0] * n[1] * t - n[2] * s;
-                mat[3][1] = n[0] * n[2] * t + n[1] * s;
+                // [DEBUG] log cursor motion and rotation axis
+                console.log([dx, dy], n);
 
-                mat[1][2] = n[1] * n[0] * t + n[2] * s;
-                mat[2][2] = c + n[1] * n[1] * t;
-                mat[3][2] = n[1] * n[2] * t - n[0] * s;
-
-                mat[1][3] = n[2] * n[0] * t - n[1] * s;
-                mat[2][3] = n[2] * n[1] * t + n[0] * s;
+                // Rotation by theta about the axis n. See equation 9.63 of
+                //
+                //   Ian Richard Cole. "Modeling CPV" (thesis). Loughborough
+                //   University. https://hdl.handle.net/2134/18050
+                //
                 mat[3][3] = c + n[2] * n[2] * t;
+                mat[1][3] = n[0] * n[2] * t + n[1] * s;
+                mat[2][3] = n[1] * n[2] * t - n[0] * s;
+
+                mat[3][1] = n[2] * n[0] * t - n[1] * s;
+                mat[1][1] = c + n[0] * n[0] * t;
+                mat[2][1] = n[1] * n[0] * t + n[2] * s;
+
+                mat[3][2] = n[2] * n[1] * t + n[0] * s;
+                mat[1][2] = n[0] * n[1] * t - n[2] * s;
+                mat[2][2] = c + n[1] * n[1] * t;
 
                 if (Pref !== null) {
                     // For central projection we have to rotate around Pref.
@@ -423,7 +427,7 @@ JXG.extend(
                 }
             }
 
-            mat = Mat.matMatMult(this.matrix3DRot, mat);
+            mat = Mat.matMatMult(mat, this.matrix3DRot);
             return mat;
         },
 
