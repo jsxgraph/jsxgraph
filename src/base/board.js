@@ -1844,7 +1844,7 @@ JXG.extend(
          * @return {Boolean}   returns if the origin is moved.
          */
         touchStartMoveOriginOneFinger: function (evt) {
-            var touches = evt[JXG.touchProperty],
+            var touches = evt['touches'],
                 conditions,
                 pos;
 
@@ -3182,7 +3182,7 @@ JXG.extend(
                 obj,
                 found,
                 targets,
-                evtTouches = evt[JXG.touchProperty],
+                evtTouches = evt['touches'],
                 target,
                 touchTargets;
 
@@ -3410,7 +3410,7 @@ JXG.extend(
                 pos1,
                 pos2,
                 touchTargets,
-                evtTouches = evt[JXG.touchProperty];
+                evtTouches = evt['touches'];
 
             if (!this.checkFrameRate(evt)) {
                 return false;
@@ -3551,7 +3551,7 @@ JXG.extend(
                 tmpTouches = [],
                 found,
                 foundNumber,
-                evtTouches = evt && evt[JXG.touchProperty],
+                evtTouches = evt && evt['touches'],
                 touchTargets,
                 updateNeeded = false;
 
