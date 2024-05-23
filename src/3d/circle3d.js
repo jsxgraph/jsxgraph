@@ -214,6 +214,20 @@ JXG.extend(
             this.frame1 = Mat.crossProduct(this.frame2, this.normal);
             this.frame2 = Mat.crossProduct(this.normal, this.frame1);
             this.normalizeFrame();
+        },
+
+        projectCoords: function (p, params) {
+            // we have to call `this.curve.projectCoords` from the curve, rather
+            // than the circle, to make `this` refer to the curve within the
+            // call
+            return this.curve.projectCoords(p, params);
+        },
+
+        projectScreenCoords: function (pScr, params) {
+            // we have to call `this.curve.projectScreenCoords` from the curve,
+            // rather than the circle, to make `this` refer to the curve within
+            // the call
+            return this.curve.projectScreenCoords(pScr, params);
         }
     }
 );
@@ -243,7 +257,7 @@ JXG.createCircle3D = function (board, parents, attributes) {
         center = Type.providePoints3D(view, [parents[1]], attributes, 'line3d', ['point'])[0],
         normal = parents[2],
         radius = parents[3],
-        el, curve;
+        el;
 
     // create element
     el = new JXG.Circle3D(view, center, normal, radius, attr);
@@ -334,8 +348,7 @@ JXG.createIntersectionCircle3D = function (board, parents, attributes) {
         el1 = parents[1],
         el2 = parents[2],
         ixnCircle, center, func,
-        attr = Type.copyAttributes(attributes, board.options, "intersectioncircle3d"),
-        pts = [];
+        attr = Type.copyAttributes(attributes, board.options, "intersectioncircle3d");
 
     func = Geometry.intersectionFunction3D(view, el1, el2);
     center = view.create('point3d', func[0], {visible: false});
