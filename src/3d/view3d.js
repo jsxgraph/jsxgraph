@@ -354,7 +354,7 @@ JXG.extend(
             }
 
             dx = this._trackball.dx;
-            dy = -this._trackball.dy;
+            dy = this._trackball.dy;
             dr2 = dx * dx + dy * dy;
             if (dr2 > Mat.eps) {
                 // // Method by Hanson, "The rolling ball", Graphics Gems III, p.51
@@ -375,7 +375,7 @@ JXG.extend(
                 //
                 R = (this.size[0] * this.board.unitX + this.size[1] * this.board.unitY) * 0.25;
                 x = this._trackball.x;
-                y = -this._trackball.y;
+                y = this._trackball.y;
 
                 p2 = [x, y, this._projectToSphere(R, x, y)];
                 x -= dx;
@@ -1266,9 +1266,9 @@ JXG.extend(
             y = pos[1] - center.scrCoords[2];
             this._trackball = {
                 dx: evt.movementX,
-                dy: evt.movementY,
+                dy: -evt.movementY,
                 x: x,
-                y: y
+                y: -y
             };
             this.board.update();
             return this;
