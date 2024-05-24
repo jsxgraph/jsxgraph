@@ -378,11 +378,9 @@ JXG.extend(
                 y = -this._trackball.y;
 
                 p2 = [x, y, this._projectToSphere(R, x, y)];
-                // [UNUSED] p2 = [this._projectToSphere(R, x, y), x, y];
                 x -= dx;
                 y -= dy;
                 p1 = [x, y, this._projectToSphere(R, x, y)];
-                // [UNUSED] p1 = [this._projectToSphere(R, x, y), x, y];
 
                 n = Mat.crossProduct(p1, p2);
                 d = Mat.hypot(n[0], n[1], n[2]);
@@ -406,17 +404,17 @@ JXG.extend(
                 //   Ian Richard Cole. "Modeling CPV" (thesis). Loughborough
                 //   University. https://hdl.handle.net/2134/18050
                 //
-                mat[3][3] = c + n[2] * n[2] * t;
-                mat[1][3] = n[0] * n[2] * t + n[1] * s;
-                mat[2][3] = n[1] * n[2] * t - n[0] * s;
-
-                mat[3][1] = n[2] * n[0] * t - n[1] * s;
                 mat[1][1] = c + n[0] * n[0] * t;
                 mat[2][1] = n[1] * n[0] * t + n[2] * s;
+                mat[3][1] = n[2] * n[0] * t - n[1] * s;
 
-                mat[3][2] = n[2] * n[1] * t + n[0] * s;
                 mat[1][2] = n[0] * n[1] * t - n[2] * s;
                 mat[2][2] = c + n[1] * n[1] * t;
+                mat[3][2] = n[2] * n[1] * t + n[0] * s;
+
+                mat[1][3] = n[0] * n[2] * t + n[1] * s;
+                mat[2][3] = n[1] * n[2] * t - n[0] * s;
+                mat[3][3] = c + n[2] * n[2] * t;
 
                 if (Pref !== null) {
                     // For central projection we have to rotate around Pref.
