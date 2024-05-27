@@ -13,7 +13,7 @@ New features
 - new 3D control: virtual trackball
 - 3D dragging in central projection
 - new label positioning for lines, circles and curves
-- random numbers for uniform, normal, exponential, beta, gamma, chi-square, F, students-T, binomial, geometric distribution
+- random numbers for uniform, normal, exponential, beta, gamma, chi-square, F, T, binomial, geometric, hypergemoetric, Poisson distribution
 - new math function `JXG.Math.gamma`
 
 Improvements
