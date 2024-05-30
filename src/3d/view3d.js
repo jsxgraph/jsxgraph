@@ -93,6 +93,13 @@ JXG.View3D = function (board, parents, attributes) {
      */
     this.defaultAxes = null;
 
+    this.matrix3DRot = [
+        [1, 0, 0, 0],
+        [0, 1, 0, 0],
+        [0, 0, 1, 0],
+        [0, 0, 0, 1]
+    ];
+
     /**
      * @type  {Array}
      * @private
@@ -323,10 +330,10 @@ JXG.extend(
                 t, z;
 
             if (d < r * 0.7071067811865475) { // Inside sphere
-                z = -Math.sqrt(r * r - d * d);
+                z = Math.sqrt(r * r - d * d);
             } else {                          // On hyperbola
                 t = r / 1.414213562373095;
-                z = -t * t / d;
+                z = t * t / d;
             }
             return z;
         },
@@ -415,14 +422,6 @@ JXG.extend(
                 mat[1][3] = n[0] * n[2] * t + n[1] * s;
                 mat[2][3] = n[1] * n[2] * t - n[0] * s;
                 mat[3][3] = c + n[2] * n[2] * t;
-
-                if (Pref !== null) {
-                    // For central projection we have to rotate around Pref.
-                    // Parallel projection: Pref === null
-                    mat[1][0] = Pref[0] - mat[1][1] * Pref[0] - mat[1][2] * Pref[0] - mat[1][3] * Pref[0];
-                    mat[2][0] = Pref[1] - mat[2][1] * Pref[1] - mat[2][2] * Pref[1] - mat[2][3] * Pref[1];
-                    mat[3][0] = Pref[2] - mat[3][1] * Pref[2] - mat[3][2] * Pref[2] - mat[3][3] * Pref[2];
-                }
             }
 
             mat = Mat.matMatMult(mat, this.matrix3DRot);
@@ -433,7 +432,7 @@ JXG.extend(
          * @private
          * @returns {Array}
          */
-        _updateCentralProjection: function () {
+        _updateCentralProjection: function (useTrackball) {
             var r, e, a, up,
                 az, ax, ay, v, nrm,
                 // See https://www.mathematik.uni-marburg.de/~thormae/lectures/graphics1/graphics_6_1_eng_web.html
@@ -479,33 +478,34 @@ JXG.extend(
                 console.log(r);
             }
 
-            // create an up vector and an eye vector which are 90 degrees out of phase
-            up = func_sphere(a, e + Math.PI / 2, 1);
-            eye = func_sphere(a, e, r);
-            d = [eye[0], eye[1], eye[2]];
+            if (!useTrackball) {
+                // create an up vector and an eye vector which are 90 degrees out of phase
+                up = func_sphere(a, e + Math.PI / 2, 1);
+                eye = func_sphere(a, e, r);
+                d = [eye[0], eye[1], eye[2]];
 
-            eye[0] += Pref[0];
-            eye[1] += Pref[1];
-            eye[2] += Pref[2];
+                eye[0] += Pref[0];
+                eye[1] += Pref[1];
+                eye[2] += Pref[2];
 
-            // d = [eye[0] - Pref[0], eye[1] - Pref[1], eye[2] - Pref[2]];
-            nrm = Mat.norm(d, 3);
-            az = [d[0] / nrm, d[1] / nrm, d[2] / nrm];
+                // d = [eye[0] - Pref[0], eye[1] - Pref[1], eye[2] - Pref[2]];
+                nrm = Mat.norm(d, 3);
+                az = [d[0] / nrm, d[1] / nrm, d[2] / nrm];
 
-            nrm = Mat.norm(up, 3);
-            v = [up[0] / nrm, up[1] / nrm, up[2] / nrm];
+                nrm = Mat.norm(up, 3);
+                v = [up[0] / nrm, up[1] / nrm, up[2] / nrm];
 
-            ax = Mat.crossProduct(v, az);
-            ay = Mat.crossProduct(az, ax);
+                ax = Mat.crossProduct(v, az);
+                ay = Mat.crossProduct(az, ax);
+
+                this.matrix3DRot[1] = [0, ax[0], ax[1], ax[2]];
+                this.matrix3DRot[2] = [0, ay[0], ay[1], ay[2]];
+                this.matrix3DRot[3] = [0, az[0], az[1], az[2]];
+            }
 
             // compute camera transformation
-            v = Mat.matVecMult([ax, ay, az], eye);
-            this.cameraTransform = [
-                [1, 0, 0, 0],
-                [-v[0], ax[0], ax[1], ax[2]],
-                [-v[1], ay[0], ay[1], ay[2]],
-                [-v[2], az[0], az[1], az[2]]
-            ];
+            this.cameraTransform = this.matrix3DRot.map((row) => row.slice());
+            this.cameraTransform[3][0] = -r;
 
             // compute focal distance and clip space transformation
             this.focalDist = 1 / Math.tan(0.5 * Type.evaluate(this.visProp.fov));
@@ -521,7 +521,7 @@ JXG.extend(
 
         // Update 3D-to-2D transformation matrix with the actual azimuth and elevation angles.
         update: function () {
-            var mat2D, shift, size,
+            var mat2D, objectToClip, size,
                 dx, dy,
                 Pref = null,
                 useTrackball = false;
@@ -548,21 +548,20 @@ JXG.extend(
                 if (this._hasMoveTrackball) {
                     // If this._hasMoveTrackball is false, the drag event has been
                     // caught by e.g. point dragging
-
-                    if (this.projectionType === 'central') {
-                        // Get center of the trackball.
-                        // In case of parallel projection, this is not necessary,
-                        // since we translate the whole scene with "shift".
-                        Pref = [
-                            0.5 * (this.bbox3D[0][0] + this.bbox3D[0][1]),
-                            0.5 * (this.bbox3D[1][0] + this.bbox3D[1][1]),
-                            0.5 * (this.bbox3D[2][0] + this.bbox3D[2][1])
-                        ];
-                    }
-                    this.matrix3DRot = this.updateProjectionTrackball(Pref);
+                    this.matrix3DRot = this.updateProjectionTrackball();
                 }
                 useTrackball = true;
             }
+
+            /**
+             * The translation that moves the center of the view box to the origin.
+             */
+            this.shift = [
+                [1, 0, 0, 0],
+                [-0.5 * (this.bbox3D[0][0] + this.bbox3D[0][1]), 1, 0, 0],
+                [-0.5 * (this.bbox3D[1][0] + this.bbox3D[1][1]), 0, 1, 0],
+                [-0.5 * (this.bbox3D[2][0] + this.bbox3D[2][1]), 0, 0, 1]
+            ];
 
             switch (this.projectionType) {
                 case 'central': // Central projection
@@ -578,25 +577,13 @@ JXG.extend(
                     // since the projected vectors have to be normalized in between in project3DTo2D
                     this.viewPortTransform = mat2D;
 
-                    if (!useTrackball) {
-                        // Do elevation / azimuth navigation or at least initialize matrix
-                        // this.matrix3DRot
-                        this.matrix3DRot = this._updateCentralProjection();
-                    }
+                    objectToClip = this._updateCentralProjection(useTrackball);
                     // this.matrix3D is a 4x4 matrix
-                    this.matrix3D = this.matrix3DRot.slice();
+                    this.matrix3D = Mat.matMatMult(objectToClip, this.shift);
                     break;
 
                 case 'parallel': // Parallel projection
                 default:
-                    // Rotate the scenery around the center of the box, not around the origin
-                    shift = [
-                        [1, 0, 0, 0],
-                        [-0.5 * (this.bbox3D[0][0] + this.bbox3D[0][1]), 1, 0, 0],
-                        [-0.5 * (this.bbox3D[1][0] + this.bbox3D[1][1]), 0, 1, 0],
-                        [-0.5 * (this.bbox3D[2][0] + this.bbox3D[2][1]), 0, 0, 1]
-                    ];
-
                     // Add a final transformation to scale and shift the projection
                     // on the board, usually called viewport.
                     dx = this.bbox3D[0][1] - this.bbox3D[0][0];
@@ -611,7 +598,7 @@ JXG.extend(
                         this.matrix3DRot = this.updateParallelProjection();
                     }
                     // Combine all transformations, this.matrix3D is a 3x4 matrix
-                    this.matrix3D = Mat.matMatMult(mat2D, Mat.matMatMult(this.matrix3DRot, shift).slice(0, 3));
+                    this.matrix3D = Mat.matMatMult(mat2D, Mat.matMatMult(this.matrix3DRot, this.shift).slice(0, 3));
             }
 
             return this;
@@ -669,7 +656,7 @@ JXG.extend(
          * If false, projects down to ordinary coordinates.
          */
         worldToView: function (pWorld, homog=true) {
-            var pView = Mat.matVecMult(this.cameraTransform, pWorld);
+            var pView = Mat.matVecMult(this.cameraTransform, Mat.matVecMult(this.shift, pWorld));
             pView[3] -= pView[0] * this.focalDist;
             if (homog) {
                 return pView;
@@ -766,7 +753,7 @@ JXG.extend(
             d = Mat.innerProduct(foot.slice(1), n, 3) / le;
 
             if (this.projectionType === 'parallel') {
-                mat = this.matrix3D.slice(0, 3); // True copy
+                mat = this.matrix3D.slice(0, 3); // Copy each row by reference
                 mat.push([0, n[0], n[1], n[2]]);
 
                 // 2D coordinates of point:
@@ -782,7 +769,7 @@ JXG.extend(
                     sol = [0, NaN, NaN, NaN];
                 }
             } else {
-                mat = this.matrix3DRot; // True copy
+                mat = this.matrix3D;
 
                 // 2D coordinates of point:
                 rhs = point2d.coords.usrCoords.slice();
@@ -822,21 +809,62 @@ JXG.extend(
          * All horizontal moves of the 2D point are ignored.
          *
          * @param {JXG.Point} point2d
-         * @param {Array} coords3D
+         * @param {Array} base_c3d
          * @returns {Array} of length 4 containing the projected
          * point in homogeneous coordinates.
          */
-        project2DTo3DVertical: function (point2d, coords3D) {
-            var m3D = this.matrix3D[2],
-                b = m3D[3],
-                rhs = point2d.coords.usrCoords[2]; // y in 2D
+        project2DTo3DVertical: function (point2d, base_c3d) {
+            const p0_coords = [base_c3d[1], base_c3d[2], this.bbox3D[2][0]],
+                  p1_coords = [base_c3d[1], base_c3d[2], this.bbox3D[2][1]],
+                  p0_2d = this.project3DTo2D(p0_coords).slice(1, 3),
+                  p1_2d = this.project3DTo2D(p1_coords).slice(1, 3),
+                  dir_2d = [
+                      p1_2d[0] - p0_2d[0],
+                      p1_2d[1] - p0_2d[1]
+                  ],
+                  dir_2d_norm_sq = Mat.innerProduct(dir_2d, dir_2d),
+                  pScr = point2d.coords.usrCoords,
+                  diff = [
+                      pScr[1] - p0_2d[0],
+                      pScr[2] - p0_2d[1]
+                  ],
+                  s = Mat.innerProduct(diff, dir_2d) / dir_2d_norm_sq; // screen-space affine parameter
 
-            rhs -= m3D[0] * coords3D[0] + m3D[1] * coords3D[1] + m3D[2] * coords3D[2];
-            if (Math.abs(b) < Mat.eps) {
-                return coords3D; // No changes
+            var t, // view-space affine parameter
+                t_clamped, // affine parameter clamped to [0, 1]
+                c3d;
+
+            if (this.projectionType === 'central') {
+                const mid_coords = [base_c3d[1], base_c3d[2], 0.5*(p0_coords[2] + p1_coords[2])],
+                      mid_2d = this.project3DTo2D(mid_coords).slice(1, 3),
+                      mid_diff = [
+                        mid_2d[0] - p0_2d[0],
+                        mid_2d[1] - p0_2d[1]
+                      ],
+                      m = Mat.innerProduct(mid_diff, dir_2d) / dir_2d_norm_sq;
+
+                // the view-space affine parameter s is related to the
+                // screen-space affine parameter t by a Möbius transformation,
+                // which is determined by the following relations:
+                //
+                // s | t
+                // -----
+                // 0 | 0
+                // m | 1/2
+                // 1 | 1
+                //
+                t = (1-m)*s / ((1-2*m)*s + m);
             } else {
-                return coords3D.slice(0, 3).concat([rhs / b]);
+                t = s;
             }
+
+            t_clamped = Math.min(Math.max(t, 0), 1);
+            return [
+                1,
+                base_c3d[1],
+                base_c3d[2],
+                (1-t_clamped)*p0_coords[2] + t_clamped*p1_coords[2]
+            ];
         },
 
         /**
