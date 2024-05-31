@@ -8396,7 +8396,7 @@ JXG.Options = {
          * @name Tapemeasure#point1
          */
         point1: {
-            visible: 'inherit',
+            visible: true,
             strokeColor: '#000000',
             fillColor: '#ffffff',
             fillOpacity: 0.0,
@@ -8417,7 +8417,7 @@ JXG.Options = {
          * @name Tapemeasure#point2
          */
         point2: {
-            visible: 'inherit',
+            visible: true,
             strokeColor: '#000000',
             fillColor: '#ffffff',
             fillOpacity: 0.0,

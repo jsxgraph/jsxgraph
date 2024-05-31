@@ -472,12 +472,6 @@ JXG.extend(
 
             // Update rendNode display
             this.setDisplayRendNode();
-            // if (this.visPropCalc.visible !== this.visPropOld.visible) {
-            //     this.setDisplayRendNode(this.visPropCalc.visible);
-            //     if (this.hasLabel) {
-            //         this.board.renderer.display(this.label, this.label.visPropCalc.visible);
-            //     }
-            // }
 
             this.needsUpdate = false;
             return this;

@@ -939,7 +939,6 @@ JXG.extend(
             // Check if getBoundingClientRect exists. If so, use this as this covers *everything*
             // even CSS3D transformations etc.
             // Supported by all browsers but IE 6, 7.
-
             if (container.getBoundingClientRect) {
                 crect = container.getBoundingClientRect();
 
@@ -2711,7 +2710,7 @@ JXG.extend(
                     }
                 }
                 if (!found) {
-                    // An new element hae been touched.
+                    // A new element has been touched.
                     k = 0;
                     j =
                         this.touches.push({
