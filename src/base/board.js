@@ -2710,7 +2710,7 @@ JXG.extend(
                     }
                 }
                 if (!found) {
-                    // An new element hae been touched.
+                    // A new element has been touched.
                     k = 0;
                     j =
                         this.touches.push({

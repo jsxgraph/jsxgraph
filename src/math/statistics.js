@@ -971,20 +971,20 @@ Mat.Statistics = {
     },
 
     /**
-     * Generate values for a random variable in hypergeometric distribution. 
-     * Samples are drawn from a hypergeometric distribution with specified parameters, <i>good</i> (ways to make a good selection), 
+     * Generate values for a random variable in hypergeometric distribution.
+     * Samples are drawn from a hypergeometric distribution with specified parameters, <i>good</i> (ways to make a good selection),
      * <i>bad</i> (ways to make a bad selection), and <i>samples</i> (number of items sampled, which is less than or equal to <i>good + bad</i>).
      * <p>
      * Naive implementation with runtime <i>O(samples)</i>.
-     * 
+     *
      * @param {Number} good ways to make a good selection
      * @param {Number} bad ways to make a bad selection
      * @param {Number} samples number of items sampled
-     * @returns 
+     * @returns
      * @memberof JXG.Math.Statistics
      */
     randomHypergeometric: function(good, bad, k) {
-        var i, u, kk,
+        var i, u,
             x = 0,
             n = good + bad;
 
@@ -993,7 +993,6 @@ Mat.Statistics = {
         }
 
         // Naive method
-        kk = Math.min(k, n - k);
         for (i = 0; i < k; i ++) {
             u = Math.random();
             if (n * u <= good) {
