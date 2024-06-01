@@ -1100,7 +1100,7 @@ Mat.Statistics = {
             counts.push(0);
             bins.push(mi + i * delta);
         }
-        bins.push(ma);
+        // bins.push(ma);
 
         // Determine the counts
         le = x.length;
