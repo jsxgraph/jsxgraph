@@ -804,42 +804,45 @@ JXG.extend(
         },
 
         /**
-         * Project a 2D coordinate to a new 3D position by keeping
-         * the 3D x, y coordinates and changing only the z coordinate.
-         * All horizontal moves of the 2D point are ignored.
-         *
-         * @param {JXG.Point} point2d
-         * @param {Array} base_c3d
-         * @returns {Array} of length 4 containing the projected
-         * point in homogeneous coordinates.
+         * Project a point on the screen to the nearest point, in screen
+         * distance, on a line segment in 3d space. The inputs must be in
+         * ordinary coordinates, but the output is in homogeneous coordinates.
+         * 
+         * @param {Array} pScr The screen coordinates of the point to project.
+         * @param {Array} end0 The world space coordinates of one end of the
+         * line segment.
+         * @param {Array} end1 The world space coordinates of the other end of
+         * the line segment.
          */
-        project2DTo3DVertical: function (point2d, base_c3d) {
-            const p0_coords = [base_c3d[1], base_c3d[2], this.bbox3D[2][0]],
-                  p1_coords = [base_c3d[1], base_c3d[2], this.bbox3D[2][1]],
-                  p0_2d = this.project3DTo2D(p0_coords).slice(1, 3),
-                  p1_2d = this.project3DTo2D(p1_coords).slice(1, 3),
+        projectScreenToSegment: function (pScr, end0, end1) {
+            const end0_2d = this.project3DTo2D(end0).slice(1, 3),
+                  end1_2d = this.project3DTo2D(end1).slice(1, 3),
                   dir_2d = [
-                      p1_2d[0] - p0_2d[0],
-                      p1_2d[1] - p0_2d[1]
+                      end1_2d[0] - end0_2d[0],
+                      end1_2d[1] - end0_2d[1]
                   ],
                   dir_2d_norm_sq = Mat.innerProduct(dir_2d, dir_2d),
-                  pScr = point2d.coords.usrCoords,
                   diff = [
-                      pScr[1] - p0_2d[0],
-                      pScr[2] - p0_2d[1]
+                      pScr[0] - end0_2d[0],
+                      pScr[1] - end0_2d[1]
                   ],
                   s = Mat.innerProduct(diff, dir_2d) / dir_2d_norm_sq; // screen-space affine parameter
 
             var t, // view-space affine parameter
-                t_clamped, // affine parameter clamped to [0, 1]
+                t_clamped, // affine parameter clamped to range
+                t_clamped_co,
                 c3d;
 
             if (this.projectionType === 'central') {
-                const mid_coords = [base_c3d[1], base_c3d[2], 0.5*(p0_coords[2] + p1_coords[2])],
-                      mid_2d = this.project3DTo2D(mid_coords).slice(1, 3),
+                const mid = [
+                        0.5 * (end0[0] + end1[0]),
+                        0.5 * (end0[1] + end1[1]),
+                        0.5 * (end0[2] + end1[2])
+                      ],
+                      mid_2d = this.project3DTo2D(mid).slice(1, 3),
                       mid_diff = [
-                        mid_2d[0] - p0_2d[0],
-                        mid_2d[1] - p0_2d[1]
+                          mid_2d[0] - end0_2d[0],
+                          mid_2d[1] - end0_2d[1]
                       ],
                       m = Mat.innerProduct(mid_diff, dir_2d) / dir_2d_norm_sq;
 
@@ -859,12 +862,31 @@ JXG.extend(
             }
 
             t_clamped = Math.min(Math.max(t, 0), 1);
+            t_clamped_co = 1 - t_clamped;
             return [
                 1,
-                base_c3d[1],
-                base_c3d[2],
-                (1-t_clamped)*p0_coords[2] + t_clamped*p1_coords[2]
+                t_clamped_co * end0[0] + t_clamped * end1[0],
+                t_clamped_co * end0[1] + t_clamped * end1[1],
+                t_clamped_co * end0[2] + t_clamped * end1[2]
             ];
+        },
+
+        /**
+         * Project a 2D coordinate to a new 3D position by keeping
+         * the 3D x, y coordinates and changing only the z coordinate.
+         * All horizontal moves of the 2D point are ignored.
+         *
+         * @param {JXG.Point} point2d
+         * @param {Array} base_c3d
+         * @returns {Array} of length 4 containing the projected
+         * point in homogeneous coordinates.
+         */
+        project2DTo3DVertical: function (point2d, base_c3d) {
+            const pScr = point2d.coords.usrCoords.slice(1, 3),
+                  end0 = [base_c3d[1], base_c3d[2], this.bbox3D[2][0]],
+                  end1 = [base_c3d[1], base_c3d[2], this.bbox3D[2][1]]
+
+            return this.projectScreenToSegment(pScr, end0, end1);
         },
 
         /**
