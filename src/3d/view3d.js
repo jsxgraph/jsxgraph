@@ -283,6 +283,73 @@ JXG.extend(
             return s;
         },
 
+        updateTaitBryanAngles: function() {
+            let rem = this.matrix3DRot, // rotation remaining after angle extraction
+                rBank, cosBank, sinBank, bank,
+                el, cosEl, sinEl,
+                az, cosAz, sinAz,
+                lastAngles = {
+                    az: this.az_slide.Value(),
+                    el: this.el_slide.Value(),
+                    bank: this.bank_slide.Value()
+                };
+
+            // extract bank by rotating the view box z axis onto the camera yz plane
+            rBank = Math.sqrt(rem[1][3]*rem[1][3] + rem[2][3]*rem[2][3]);
+            cosBank = rem[2][3] / rBank;
+            sinBank = rem[1][3] / rBank;
+            console.log(`cosBank: ${cosBank}`);
+            console.log(`sinBank: ${sinBank}`);
+            console.log("view box rotation matrix");
+            console.table(rem);
+            rem = Mat.matMatMult([
+                [1,       0,        0, 0],
+                [0, cosBank, -sinBank, 0],
+                [0, sinBank,  cosBank, 0],
+                [0,       0,        0, 1]
+            ], rem);
+            console.log("remainder after bank extraction");
+            console.table(rem);
+            bank = Math.atan2(sinBank, cosBank);
+
+            // extract elevation by rotating the view box z axis onto the camera y axis
+            cosEl = rem[2][3];
+            sinEl = rem[3][3];
+            rem = Mat.matMatMult([
+                [1, 0,      0,     0],
+                [0, 1,      0,     0],
+                [0, 0,  cosEl, sinEl],
+                [0, 0, -sinEl, cosEl]
+            ], rem);
+            console.log("remainder after elevation extraction");
+            console.table(rem);
+            el = Math.atan2(sinEl, cosEl);
+
+            // extract azimuth
+            cosAz = -rem[1][1];
+            sinAz =  rem[3][1];
+            az = Math.atan2(sinAz, cosAz);
+            if (az < 0) az += 2*Math.PI;
+
+            // [TEST] completely reduce the matrix
+            rem = Mat.matMatMult([
+                [1,     0, 0,      0],
+                [0, cosAz, 0, -sinAz],
+                [0,     0, 1,      0],
+                [0, sinAz, 0,  cosAz]
+            ], rem);
+            console.log("remainder after azimuth extraction");
+            console.table(rem);
+
+            // [TEST] log extracted angles
+            console.table({azimuth: az, elevation: el, bank: bank});
+
+            // set sliders
+            this.az_slide.setValue(az);
+            this.el_slide.setValue(el);
+            this.bank_slide.setValue(bank);
+        },
+
         updateParallelProjection: function () {
             var r, a, e, f,
                 mat = [
@@ -549,6 +616,7 @@ JXG.extend(
                     // If this._hasMoveTrackball is false, the drag event has been
                     // caught by e.g. point dragging
                     this.matrix3DRot = this.updateProjectionTrackball();
+                    this.updateTaitBryanAngles();
                 }
                 useTrackball = true;
             }
@@ -1480,7 +1548,7 @@ JXG.extend(
  *
  */
 JXG.createView3D = function (board, parents, attributes) {
-    var view, attr, attr_az, attr_el,
+    var view, attr, attr_az, attr_el, attr_bank,
         x, y, w, h,
         coords = parents[0], // llft corner
         size = parents[1]; // [w, h]
@@ -1499,6 +1567,9 @@ JXG.createView3D = function (board, parents, attributes) {
 
     attr_el = Type.copyAttributes(attributes, board.options, 'view3d', 'el', 'slider');
     attr_el.name = 'el';
+
+    attr_bank = Type.copyAttributes(attributes, board.options, 'view3d', 'bank', 'slider');
+    attr_bank.name = 'bank';
 
     /**
      * Slider to adapt azimuth angle
@@ -1536,6 +1607,26 @@ JXG.createView3D = function (board, parents, attributes) {
                 Type.evaluate(attr_el.max)]
         ],
         attr_el
+    );
+
+    /**
+     * Slider to adjust bank angle
+     * 
+     * @name JXG.View3D#bank_slide
+     * @type {Slider}
+     */
+    view.bank_slide = board.create(
+        'slider',
+        [
+            [x - 1, y + h + 2],
+            [x + w + 1, y + h + 2],
+            [
+                Type.evaluate(attr_bank.min),
+                Type.evaluate(attr_bank.start),
+                Type.evaluate(attr_bank.max)
+            ]
+        ],
+        attr_bank
     );
 
     view.board.highlightInfobox = function (x, y, el) {
