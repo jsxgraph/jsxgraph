@@ -503,34 +503,31 @@ JXG.extend(
             const zf = 20, // near clip plane
                   zn = 8; // far clip plane
 
-            var r, e, a, up,
-                az, ax, ay, v, nrm,
-                // See https://www.mathematik.uni-marburg.de/~thormae/lectures/graphics1/graphics_6_1_eng_web.html
-                // bbox3D is always at the world origin, i.e. T_obj is the unit matrix.
-                // All vectors contain affine coordinates and have length 3
-                // The matrices are of size 4x4.
-                eye, d,
-                A,
-                func_sphere;
-
-            /**
-             * Calculates a unit sphere parameterized by azimuth and elevation.
-             * @param {Number} az
-             * @param {Number} el
-             * @returns {Array} 3-dimensional vector in cartesian coordinates
-             */
-            func_sphere = function (az, el) {
-                return [
-                    Math.cos(az) * Math.cos(el),
-                   -Math.sin(az) * Math.cos(el),
-                    Math.sin(el)
-                ];
-            };
-
-            a = this.az_slide.Value() + (3 * Math.PI * 0.5); // Sphere
-            e = this.el_slide.Value();
+            // See https://www.mathematik.uni-marburg.de/~thormae/lectures/graphics1/graphics_6_1_eng_web.html
+            // bbox3D is always at the world origin, i.e. T_obj is the unit matrix.
+            // All vectors contain affine coordinates and have length 3
+            // The matrices are of size 4x4.
+            var r, A
 
             if (!useTrackball) {
+                var a, e, up,
+                    ax, ay, az, v, nrm,
+                    eye, d,
+                    func_sphere;
+
+                // finds the point on the unit sphere with the given azimuth and
+                // elevation, and returns its affine coordinates
+                func_sphere = function (az, el) {
+                    return [
+                        Math.cos(az) * Math.cos(el),
+                       -Math.sin(az) * Math.cos(el),
+                        Math.sin(el)
+                    ];
+                };
+
+                a = this.az_slide.Value() + (3 * Math.PI * 0.5); // Sphere
+                e = this.el_slide.Value();
+
                 // create an up vector and an eye vector which are 90 degrees out of phase
                 up = func_sphere(a, e + Math.PI / 2);
                 eye = func_sphere(a, e);
