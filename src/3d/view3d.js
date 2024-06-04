@@ -500,6 +500,9 @@ JXG.extend(
          * @returns {Array}
          */
         _updateCentralProjection: function (useTrackball) {
+            const zf = 20, // near clip plane
+                  zn = 8; // far clip plane
+
             var r, e, a, up,
                 az, ax, ay, v, nrm,
                 // See https://www.mathematik.uni-marburg.de/~thormae/lectures/graphics1/graphics_6_1_eng_web.html
@@ -507,55 +510,32 @@ JXG.extend(
                 // All vectors contain affine coordinates and have length 3
                 // The matrices are of size 4x4.
                 eye, d,
-                zf = 20, // near clip plane
-                zn = 8, // far clip plane
-                Pref = [
-                    0.5 * (this.bbox3D[0][0] + this.bbox3D[0][1]),
-                    0.5 * (this.bbox3D[1][0] + this.bbox3D[1][1]),
-                    0.5 * (this.bbox3D[2][0] + this.bbox3D[2][1])
-                ],
                 A,
                 func_sphere;
 
             /**
-             * Calculates a spherical parametric surface, which depends on az, el and r.
-             * @param {Number} a
-             * @param {Number} e
-             * @param {Number} r
+             * Calculates a unit sphere parameterized by azimuth and elevation.
+             * @param {Number} az
+             * @param {Number} el
              * @returns {Array} 3-dimensional vector in cartesian coordinates
              */
-            func_sphere = function (az, el, r) {
+            func_sphere = function (az, el) {
                 return [
-                    r * Math.cos(az) * Math.cos(el),
-                   -r * Math.sin(az) * Math.cos(el),
-                    r * Math.sin(el)
+                    Math.cos(az) * Math.cos(el),
+                   -Math.sin(az) * Math.cos(el),
+                    Math.sin(el)
                 ];
             };
 
             a = this.az_slide.Value() + (3 * Math.PI * 0.5); // Sphere
             e = this.el_slide.Value();
 
-            r = Type.evaluate(this.visProp.r);
-            if (r === 'auto') {
-                r = Mat.hypot(
-                    this.bbox3D[0][0] - this.bbox3D[0][1],
-                    this.bbox3D[1][0] - this.bbox3D[1][1],
-                    this.bbox3D[2][0] - this.bbox3D[2][1]
-                ) * 1.01;
-                console.log(r);
-            }
-
             if (!useTrackball) {
                 // create an up vector and an eye vector which are 90 degrees out of phase
-                up = func_sphere(a, e + Math.PI / 2, 1);
-                eye = func_sphere(a, e, r);
+                up = func_sphere(a, e + Math.PI / 2);
+                eye = func_sphere(a, e);
                 d = [eye[0], eye[1], eye[2]];
 
-                eye[0] += Pref[0];
-                eye[1] += Pref[1];
-                eye[2] += Pref[2];
-
-                // d = [eye[0] - Pref[0], eye[1] - Pref[1], eye[2] - Pref[2]];
                 nrm = Mat.norm(d, 3);
                 az = [d[0] / nrm, d[1] / nrm, d[2] / nrm];
 
@@ -568,6 +548,16 @@ JXG.extend(
                 this.matrix3DRot[1] = [0, ax[0], ax[1], ax[2]];
                 this.matrix3DRot[2] = [0, ay[0], ay[1], ay[2]];
                 this.matrix3DRot[3] = [0, az[0], az[1], az[2]];
+            }
+
+            // set distance from view box center to camera
+            r = Type.evaluate(this.visProp.r);
+            if (r === 'auto') {
+                r = Mat.hypot(
+                    this.bbox3D[0][0] - this.bbox3D[0][1],
+                    this.bbox3D[1][0] - this.bbox3D[1][1],
+                    this.bbox3D[2][0] - this.bbox3D[2][1]
+                ) * 1.01;
             }
 
             // compute camera transformation
