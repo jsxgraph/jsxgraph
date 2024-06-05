@@ -515,7 +515,6 @@ JXG.extend(
                  * this code duplicates the functionality of
                  * `getRotationFromAngles`. in the future, it may be useful to
                  * implement `getRotationFromAngles` this way instead
-                 */
                 var a, e, up,
                     ax, ay, az, v, nrm,
                     eye, d,
@@ -555,7 +554,8 @@ JXG.extend(
                 console.table(this.matrix3DRot);
                 console.log('rotation from angles:');
                 console.table(this.getRotationFromAngles());
-                /* this.matrix3DRot = this.getRotationFromAngles(); */
+                 */
+                this.matrix3DRot = this.getRotationFromAngles();
             }
 
             // set distance from view box center to camera
