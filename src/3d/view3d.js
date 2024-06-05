@@ -365,10 +365,10 @@ JXG.extend(
             // to homogeneous 2D coordinates in the board
             e = this.el_slide.Value();
             a = this.az_slide.Value();
-            f = Math.sin(e);
+            f = -Math.sin(e);
 
-            mat[1][1] = Math.cos(a);
-            mat[1][2] = -Math.sin(a);
+            mat[1][1] = -Math.cos(a);
+            mat[1][2] = Math.sin(a);
             mat[1][3] = 0;
 
             mat[2][1] = f * Math.sin(a);
@@ -377,8 +377,7 @@ JXG.extend(
 
             mat[3][1] = Math.cos(e) * Math.sin(a);
             mat[3][2] = Math.cos(e) * Math.cos(a);
-            mat[3][3] = -Math.sin(e);
-            console.table(mat);
+            mat[3][3] = Math.sin(e);
 
             return mat;
         },
@@ -512,6 +511,11 @@ JXG.extend(
             var r, A
 
             if (!useTrackball) {
+                /* [DRAFT]
+                 * this code duplicates the functionality of
+                 * `getRotationFromAngles`. in the future, it may be useful to
+                 * implement `getRotationFromAngles` this way instead
+                 */
                 var a, e, up,
                     ax, ay, az, v, nrm,
                     eye, d,
@@ -547,6 +551,11 @@ JXG.extend(
                 this.matrix3DRot[1] = [0, ax[0], ax[1], ax[2]];
                 this.matrix3DRot[2] = [0, ay[0], ay[1], ay[2]];
                 this.matrix3DRot[3] = [0, az[0], az[1], az[2]];
+                console.log('rotation from _updateCentralProjection():');
+                console.table(this.matrix3DRot);
+                console.log('rotation from angles:');
+                console.table(this.getRotationFromAngles());
+                /* this.matrix3DRot = this.getRotationFromAngles(); */
             }
 
             // set distance from view box center to camera
@@ -643,10 +652,10 @@ JXG.extend(
                 default:
                     const r = this.r,
                           stretch = [
-                              [1, 0, 0, 0],
-                              [0, r, 0, 0],
-                              [0, 0, r, 0],
-                              [0, 0, 0, 1]
+                              [1,  0,  0, 0],
+                              [0, -r,  0, 0],
+                              [0,  0, -r, 0],
+                              [0,  0,  0, 1]
                           ];
 
                     console.log(r);
