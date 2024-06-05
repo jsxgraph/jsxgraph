@@ -283,7 +283,8 @@ JXG.extend(
             return s;
         },
 
-        updateTaitBryanAngles: function() {
+        // set the Tait-Bryan angles to specify the current view rotation matrix
+        setAnglesFromRotation: function() {
             let rem = this.matrix3DRot, // rotation remaining after angle extraction
                 rBank, cosBank, sinBank, bank,
                 el, cosEl, sinEl,
@@ -350,7 +351,8 @@ JXG.extend(
             this.bank_slide.setValue(bank);
         },
 
-        updateParallelProjection: function () {
+        // return the rotation matrix specified by the current Tait-Bryan angles
+        getRotationFromAngles: function () {
             var r, a, e, f,
                 mat = [
                     [1, 0, 0, 0],
@@ -362,21 +364,21 @@ JXG.extend(
             // mat projects homogeneous 3D coords in View3D
             // to homogeneous 2D coordinates in the board
             e = this.el_slide.Value();
-            r = this.r;
             a = this.az_slide.Value();
-            f = r * Math.sin(e);
+            f = Math.sin(e);
 
-            mat[1][1] = r * Math.cos(a);
-            mat[1][2] = -r * Math.sin(a);
+            mat[1][1] = Math.cos(a);
+            mat[1][2] = -Math.sin(a);
             mat[1][3] = 0;
 
             mat[2][1] = f * Math.sin(a);
             mat[2][2] = f * Math.cos(a);
             mat[2][3] = Math.cos(e);
 
-            mat[3][1] = r * Math.cos(e) * Math.sin(a);
-            mat[3][2] = r * Math.cos(e) * Math.cos(a);
+            mat[3][1] = Math.cos(e) * Math.sin(a);
+            mat[3][2] = Math.cos(e) * Math.cos(a);
             mat[3][3] = -Math.sin(e);
+            console.table(mat);
 
             return mat;
         },
@@ -603,7 +605,7 @@ JXG.extend(
                     // If this._hasMoveTrackball is false, the drag event has been
                     // caught by e.g. point dragging
                     this.matrix3DRot = this.updateProjectionTrackball();
-                    this.updateTaitBryanAngles();
+                    this.setAnglesFromRotation();
                 }
                 useTrackball = true;
             }
@@ -639,6 +641,15 @@ JXG.extend(
 
                 case 'parallel': // Parallel projection
                 default:
+                    const r = this.r,
+                          stretch = [
+                              [1, 0, 0, 0],
+                              [0, r, 0, 0],
+                              [0, 0, r, 0],
+                              [0, 0, 0, 1]
+                          ];
+
+                    console.log(r);
                     // Add a final transformation to scale and shift the projection
                     // on the board, usually called viewport.
                     dx = this.bbox3D[0][1] - this.bbox3D[0][0];
@@ -650,10 +661,13 @@ JXG.extend(
 
                     if (!useTrackball) {
                         // Do elevation / azimuth navigation or at least initialize matrix this.matrix3DRot
-                        this.matrix3DRot = this.updateParallelProjection();
+                        this.matrix3DRot = this.getRotationFromAngles();
                     }
                     // Combine all transformations, this.matrix3D is a 3x4 matrix
-                    this.matrix3D = Mat.matMatMult(mat2D, Mat.matMatMult(this.matrix3DRot, this.shift).slice(0, 3));
+                    this.matrix3D = Mat.matMatMult(
+                        mat2D,
+                        Mat.matMatMult(Mat.matMatMult(this.matrix3DRot, stretch), this.shift).slice(0, 3)
+                    );
             }
 
             return this;
