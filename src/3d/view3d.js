@@ -93,6 +93,10 @@ JXG.View3D = function (board, parents, attributes) {
      */
     this.defaultAxes = null;
 
+    /**
+     * @type {Array}
+     * View box rotation matrix
+     */
     this.matrix3DRot = [
         [1, 0, 0, 0],
         [0, 1, 0, 0],
@@ -288,12 +292,7 @@ JXG.extend(
             let rem = this.matrix3DRot, // rotation remaining after angle extraction
                 rBank, cosBank, sinBank, bank,
                 el, cosEl, sinEl,
-                az, cosAz, sinAz,
-                lastAngles = {
-                    az: this.az_slide.Value(),
-                    el: this.el_slide.Value(),
-                    bank: this.bank_slide.Value()
-                };
+                az, cosAz, sinAz;
 
             // extract bank by rotating the view box z axis onto the camera yz plane
             rBank = Math.sqrt(rem[1][3]*rem[1][3] + rem[2][3]*rem[2][3]);
@@ -353,7 +352,8 @@ JXG.extend(
 
         // return the rotation matrix specified by the current Tait-Bryan angles
         getRotationFromAngles: function () {
-            var r, a, e, f,
+            var r, a, e, b, f,
+                cosBank, sinBank,
                 mat = [
                     [1, 0, 0, 0],
                     [0, 1, 0, 0],
@@ -365,6 +365,7 @@ JXG.extend(
             // to homogeneous 2D coordinates in the board
             e = this.el_slide.Value();
             a = this.az_slide.Value();
+            b = this.bank_slide.Value();
             f = -Math.sin(e);
 
             mat[1][1] = -Math.cos(a);
@@ -379,7 +380,62 @@ JXG.extend(
             mat[3][2] = Math.cos(e) * Math.cos(a);
             mat[3][3] = Math.sin(e);
 
+            cosBank = Math.cos(b);
+            sinBank = Math.sin(b);
+            mat = Mat.matMatMult([
+                [1,        0,       0, 0],
+                [0,  cosBank, sinBank, 0],
+                [0, -sinBank, cosBank, 0],
+                [0,        0,       0, 1]
+            ], mat);
+
             return mat;
+
+            /* [DRAFT]
+             * this code, originally from `_updateCentralProjection`, is an
+             * alternate implementation of the azimuth-elevation matrix
+             * computation above. using this implementation instead of the
+             * current one might lead to simpler code in a future refactoring
+            var a, e, up,
+                ax, ay, az, v, nrm,
+                eye, d,
+                func_sphere;
+
+            // finds the point on the unit sphere with the given azimuth and
+            // elevation, and returns its affine coordinates
+            func_sphere = function (az, el) {
+                return [
+                    Math.cos(az) * Math.cos(el),
+                    -Math.sin(az) * Math.cos(el),
+                    Math.sin(el)
+                ];
+            };
+
+            a = this.az_slide.Value() + (3 * Math.PI * 0.5); // Sphere
+            e = this.el_slide.Value();
+
+            // create an up vector and an eye vector which are 90 degrees out of phase
+            up = func_sphere(a, e + Math.PI / 2);
+            eye = func_sphere(a, e);
+            d = [eye[0], eye[1], eye[2]];
+
+            nrm = Mat.norm(d, 3);
+            az = [d[0] / nrm, d[1] / nrm, d[2] / nrm];
+
+            nrm = Mat.norm(up, 3);
+            v = [up[0] / nrm, up[1] / nrm, up[2] / nrm];
+
+            ax = Mat.crossProduct(v, az);
+            ay = Mat.crossProduct(az, ax);
+
+            this.matrix3DRot[1] = [0, ax[0], ax[1], ax[2]];
+            this.matrix3DRot[2] = [0, ay[0], ay[1], ay[2]];
+            this.matrix3DRot[3] = [0, az[0], az[1], az[2]];
+            console.log('rotation from _updateCentralProjection():');
+            console.table(this.matrix3DRot);
+            console.log('rotation from angles:');
+            console.table(this.getRotationFromAngles());
+             */
         },
 
         /**
@@ -500,7 +556,7 @@ JXG.extend(
          * @private
          * @returns {Array}
          */
-        _updateCentralProjection: function (useTrackball) {
+        _updateCentralProjection: function () {
             const zf = 20, // near clip plane
                   zn = 8; // far clip plane
 
@@ -509,54 +565,6 @@ JXG.extend(
             // All vectors contain affine coordinates and have length 3
             // The matrices are of size 4x4.
             var r, A
-
-            if (!useTrackball) {
-                /* [DRAFT]
-                 * this code duplicates the functionality of
-                 * `getRotationFromAngles`. in the future, it may be useful to
-                 * implement `getRotationFromAngles` this way instead
-                var a, e, up,
-                    ax, ay, az, v, nrm,
-                    eye, d,
-                    func_sphere;
-
-                // finds the point on the unit sphere with the given azimuth and
-                // elevation, and returns its affine coordinates
-                func_sphere = function (az, el) {
-                    return [
-                        Math.cos(az) * Math.cos(el),
-                       -Math.sin(az) * Math.cos(el),
-                        Math.sin(el)
-                    ];
-                };
-
-                a = this.az_slide.Value() + (3 * Math.PI * 0.5); // Sphere
-                e = this.el_slide.Value();
-
-                // create an up vector and an eye vector which are 90 degrees out of phase
-                up = func_sphere(a, e + Math.PI / 2);
-                eye = func_sphere(a, e);
-                d = [eye[0], eye[1], eye[2]];
-
-                nrm = Mat.norm(d, 3);
-                az = [d[0] / nrm, d[1] / nrm, d[2] / nrm];
-
-                nrm = Mat.norm(up, 3);
-                v = [up[0] / nrm, up[1] / nrm, up[2] / nrm];
-
-                ax = Mat.crossProduct(v, az);
-                ay = Mat.crossProduct(az, ax);
-
-                this.matrix3DRot[1] = [0, ax[0], ax[1], ax[2]];
-                this.matrix3DRot[2] = [0, ay[0], ay[1], ay[2]];
-                this.matrix3DRot[3] = [0, az[0], az[1], az[2]];
-                console.log('rotation from _updateCentralProjection():');
-                console.table(this.matrix3DRot);
-                console.log('rotation from angles:');
-                console.table(this.getRotationFromAngles());
-                 */
-                this.matrix3DRot = this.getRotationFromAngles();
-            }
 
             // set distance from view box center to camera
             r = Type.evaluate(this.visProp.r);
@@ -588,12 +596,12 @@ JXG.extend(
         update: function () {
             var mat2D, objectToClip, size,
                 dx, dy,
-                Pref = null,
-                useTrackball = false;
+                Pref = null;
 
             if (
                 !Type.exists(this.el_slide) ||
                 !Type.exists(this.az_slide) ||
+                !Type.exists(this.bank_slide) ||
                 !this.needsUpdate
             ) {
                 return this;
@@ -607,16 +615,20 @@ JXG.extend(
 
             this.projectionType = Type.evaluate(this.visProp.projection).toLowerCase();
 
-            if (Type.evaluate(this.visProp.trackball.enabled) && Type.exists(this.matrix3DRot)) {
-                // If trackball is enabled and this.matrix3DRot has been initialized,
-                // do trackball navigation
-                if (this._hasMoveTrackball) {
-                    // If this._hasMoveTrackball is false, the drag event has been
-                    // caught by e.g. point dragging
-                    this.matrix3DRot = this.updateProjectionTrackball();
-                    this.setAnglesFromRotation();
-                }
-                useTrackball = true;
+            if (this._hasMoveTrackball) {
+                // The trackball has been moved since the last update, so we do
+                // trackball navigation. When the trackball is enabled, a drag
+                // event is interpreted as a trackball movement unless it's
+                // caught by something else, like point dragging. When the
+                // trackball is disabled, the trackball movement flag should
+                // never be set
+                this.matrix3DRot = this.updateProjectionTrackball();
+                this.setAnglesFromRotation();
+            } else {
+                // The trackball hasn't been moved since the last up date, so we
+                // do angle navigation, even if the Tait-Bryan angles haven't
+                // been updated either
+                this.matrix3DRot = this.getRotationFromAngles();
             }
 
             /**
@@ -643,7 +655,7 @@ JXG.extend(
                     // since the projected vectors have to be normalized in between in project3DTo2D
                     this.viewPortTransform = mat2D;
 
-                    objectToClip = this._updateCentralProjection(useTrackball);
+                    objectToClip = this._updateCentralProjection();
                     // this.matrix3D is a 4x4 matrix
                     this.matrix3D = Mat.matMatMult(objectToClip, this.shift);
                     break;
@@ -658,7 +670,6 @@ JXG.extend(
                               [0,  0,  0, 1]
                           ];
 
-                    console.log(r);
                     // Add a final transformation to scale and shift the projection
                     // on the board, usually called viewport.
                     dx = this.bbox3D[0][1] - this.bbox3D[0][0];
@@ -668,10 +679,6 @@ JXG.extend(
                     mat2D[1][0] = this.llftCorner[0] + mat2D[1][1] * 0.5 * dx; // llft_x
                     mat2D[2][0] = this.llftCorner[1] + mat2D[2][2] * 0.5 * dy; // llft_y
 
-                    if (!useTrackball) {
-                        // Do elevation / azimuth navigation or at least initialize matrix this.matrix3DRot
-                        this.matrix3DRot = this.getRotationFromAngles();
-                    }
                     // Combine all transformations, this.matrix3D is a 3x4 matrix
                     this.matrix3D = Mat.matMatMult(
                         mat2D,
@@ -1718,6 +1725,12 @@ JXG.createView3D = function (board, parents, attributes) {
 
     // Add events for the pointer navigation
     Env.addEvent(board.containerObj, 'pointerdown', view.pointerDownHandler, view);
+
+    // Initialize view rotation matrix
+    view.matrix3DRot = view.getRotationFromAngles();
+    console.log(`initial Tait-Bryan angles: azimuth ${view.az_slide.Value()}, elevation ${view.el_slide.Value()}, bank ${view.bank_slide.Value()}`);
+    console.log('initial rotation:');
+    console.table(view.matrix3DRot);
 
     view.board.update();
 
