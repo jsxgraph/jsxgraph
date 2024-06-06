@@ -94,8 +94,17 @@ JXG.View3D = function (board, parents, attributes) {
     this.defaultAxes = null;
 
     /**
+     * The Tait-Bryan angles specifying the view box orientation
+     */
+    this.angles = {
+        az: null,
+        el: null,
+        bank: null
+    };
+
+    /**
      * @type {Array}
-     * View box rotation matrix
+     * View box orientation matrix
      */
     this.matrix3DRot = [
         [1, 0, 0, 0],
@@ -290,9 +299,9 @@ JXG.extend(
         // set the Tait-Bryan angles to specify the current view rotation matrix
         setAnglesFromRotation: function() {
             let rem = this.matrix3DRot, // rotation remaining after angle extraction
-                rBank, cosBank, sinBank, bank,
-                el, cosEl, sinEl,
-                az, cosAz, sinAz;
+                rBank, cosBank, sinBank,
+                cosEl, sinEl,
+                cosAz, sinAz;
 
             // extract bank by rotating the view box z axis onto the camera yz plane
             rBank = Math.sqrt(rem[1][3]*rem[1][3] + rem[2][3]*rem[2][3]);
@@ -310,7 +319,7 @@ JXG.extend(
             ], rem);
             console.log("remainder after bank extraction");
             console.table(rem);
-            bank = Math.atan2(sinBank, cosBank);
+            this.angles.bank = Math.atan2(sinBank, cosBank);
 
             // extract elevation by rotating the view box z axis onto the camera y axis
             cosEl = rem[2][3];
@@ -323,13 +332,13 @@ JXG.extend(
             ], rem);
             console.log("remainder after elevation extraction");
             console.table(rem);
-            el = Math.atan2(sinEl, cosEl);
+            this.angles.el = Math.atan2(sinEl, cosEl);
 
             // extract azimuth
             cosAz = -rem[1][1];
             sinAz =  rem[3][1];
-            az = Math.atan2(sinAz, cosAz);
-            if (az < 0) az += 2*Math.PI;
+            this.angles.az = Math.atan2(sinAz, cosAz);
+            if (this.angles.az < 0) this.angles.az += 2*Math.PI;
 
             // [TEST] completely reduce the matrix
             rem = Mat.matMatMult([
@@ -342,12 +351,36 @@ JXG.extend(
             console.table(rem);
 
             // [TEST] log extracted angles
-            console.table({azimuth: az, elevation: el, bank: bank});
+            console.table({azimuth: this.angles.az, elevation: this.angles.el, bank: this.angles.bank});
 
-            // set sliders
-            this.az_slide.setValue(az);
-            this.el_slide.setValue(el);
-            this.bank_slide.setValue(bank);
+            this.setSlidersFromAngles();
+        },
+
+        anglesHaveMoved: function () {
+            const threshold = 1e-6;
+            if (this._hasMoveAz) console.log('has move azimuth');
+            if (this._hasMoveEl) console.log('has move elevation');
+            if (Math.abs(this.angles.az - this.az_slide.Value()) > threshold) console.log('azimuth slider changed');
+            if (Math.abs(this.angles.el - this.el_slide.Value()) > threshold) console.log('elevation slider changed');
+            if (Math.abs(this.angles.bank - this.bank_slide.Value()) > threshold) console.log('bank slider changed');
+            return (
+                this._hasMoveAz || this._hasMoveEl ||
+                Math.abs(this.angles.az - this.az_slide.Value()) > threshold ||
+                Math.abs(this.angles.el - this.el_slide.Value()) > threshold ||
+                Math.abs(this.angles.bank - this.bank_slide.Value()) > threshold
+            );
+        },
+
+        getAnglesFromSliders: function () {
+            this.angles.az = this.az_slide.Value();
+            this.angles.el = this.el_slide.Value();
+            this.angles.bank = this.bank_slide.Value();
+        },
+
+        setSlidersFromAngles: function () {
+            this.az_slide.setValue(this.angles.az);
+            this.el_slide.setValue(this.angles.el);
+            this.bank_slide.setValue(this.angles.bank);
         },
 
         // return the rotation matrix specified by the current Tait-Bryan angles
@@ -363,9 +396,9 @@ JXG.extend(
 
             // mat projects homogeneous 3D coords in View3D
             // to homogeneous 2D coordinates in the board
-            e = this.el_slide.Value();
-            a = this.az_slide.Value();
-            b = this.bank_slide.Value();
+            a = this.angles.az;
+            e = this.angles.el;
+            b = this.angles.bank;
             f = -Math.sin(e);
 
             mat[1][1] = -Math.cos(a);
@@ -624,10 +657,14 @@ JXG.extend(
                 // never be set
                 this.matrix3DRot = this.updateProjectionTrackball();
                 this.setAnglesFromRotation();
-            } else {
-                // The trackball hasn't been moved since the last up date, so we
-                // do angle navigation, even if the Tait-Bryan angles haven't
-                // been updated either
+                console.log(this.angles.az, this.az_slide.Value());
+                console.log(this.angles.el, this.el_slide.Value());
+                console.log(this.angles.bank, this.bank_slide.Value());
+            } else if (this.anglesHaveMoved()) {
+                // The trackball hasn't been moved since the last up date, but
+                // the Tait-Bryan angles have been, so we do angle navigation
+                console.log('angle navigation');
+                this.getAnglesFromSliders();
                 this.matrix3DRot = this.getRotationFromAngles();
             }
 
@@ -1727,6 +1764,7 @@ JXG.createView3D = function (board, parents, attributes) {
     Env.addEvent(board.containerObj, 'pointerdown', view.pointerDownHandler, view);
 
     // Initialize view rotation matrix
+    view.matrix3DRot = view.getAnglesFromSliders();
     view.matrix3DRot = view.getRotationFromAngles();
     console.log(`initial Tait-Bryan angles: azimuth ${view.az_slide.Value()}, elevation ${view.el_slide.Value()}, bank ${view.bank_slide.Value()}`);
     console.log('initial rotation:');
