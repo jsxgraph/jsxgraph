@@ -305,23 +305,39 @@ JXG.extend(
 
             // extract bank by rotating the view box z axis onto the camera yz plane
             rBank = Math.sqrt(rem[1][3]*rem[1][3] + rem[2][3]*rem[2][3]);
-            cosBank = rem[2][3] / rBank;
-            sinBank = rem[1][3] / rBank;
-            console.log(`cosBank: ${cosBank}`);
-            console.log(`sinBank: ${sinBank}`);
+            console.log(`rBank: ${rBank}`);
+            if (rBank > Mat.eps) {
+                cosBank = rem[2][3] / rBank;
+                sinBank = rem[1][3] / rBank;
+                /* [TEST]
+                console.log(`cosBank: ${cosBank}`);
+                console.log(`sinBank: ${sinBank}`);
+                 */
+            } else {
+                // if the z axis is pointed almost exactly at the screen, we
+                // keep the current bank value
+                cosBank = Math.cos(this.angles.bank);
+                sinBank = Math.sin(this.angles.bank);
+                console.log("keep bank");
+            }
+            /* [TEST]
             console.log("view box rotation matrix");
             console.table(rem);
+             */
             rem = Mat.matMatMult([
                 [1,       0,        0, 0],
                 [0, cosBank, -sinBank, 0],
                 [0, sinBank,  cosBank, 0],
                 [0,       0,        0, 1]
             ], rem);
+            /* [TEST]
             console.log("remainder after bank extraction");
             console.table(rem);
+             */
             this.angles.bank = Math.atan2(sinBank, cosBank);
 
-            // extract elevation by rotating the view box z axis onto the camera y axis
+            // extract elevation by rotating the view box z axis onto the camera
+            // y axis
             cosEl = rem[2][3];
             sinEl = rem[3][3];
             rem = Mat.matMatMult([
@@ -330,8 +346,10 @@ JXG.extend(
                 [0, 0,  cosEl, sinEl],
                 [0, 0, -sinEl, cosEl]
             ], rem);
+            /* [TEST]
             console.log("remainder after elevation extraction");
             console.table(rem);
+             */
             this.angles.el = Math.atan2(sinEl, cosEl);
 
             // extract azimuth
@@ -347,27 +365,30 @@ JXG.extend(
                 [0,     0, 1,      0],
                 [0, sinAz, 0,  cosAz]
             ], rem);
+            /* [TEST]
             console.log("remainder after azimuth extraction");
             console.table(rem);
+             */
 
             // [TEST] log extracted angles
-            console.table({azimuth: this.angles.az, elevation: this.angles.el, bank: this.angles.bank});
+            /* [TEST]
+            console.table(this.angles);
+             */
 
             this.setSlidersFromAngles();
         },
 
         anglesHaveMoved: function () {
-            const threshold = 1e-6;
             if (this._hasMoveAz) console.log('has move azimuth');
             if (this._hasMoveEl) console.log('has move elevation');
-            if (Math.abs(this.angles.az - this.az_slide.Value()) > threshold) console.log('azimuth slider changed');
-            if (Math.abs(this.angles.el - this.el_slide.Value()) > threshold) console.log('elevation slider changed');
-            if (Math.abs(this.angles.bank - this.bank_slide.Value()) > threshold) console.log('bank slider changed');
+            if (Math.abs(this.angles.az - this.az_slide.Value()) > Mat.eps) console.log('azimuth slider changed');
+            if (Math.abs(this.angles.el - this.el_slide.Value()) > Mat.eps) console.log('elevation slider changed');
+            if (Math.abs(this.angles.bank - this.bank_slide.Value()) > Mat.eps) console.log('bank slider changed');
             return (
                 this._hasMoveAz || this._hasMoveEl ||
-                Math.abs(this.angles.az - this.az_slide.Value()) > threshold ||
-                Math.abs(this.angles.el - this.el_slide.Value()) > threshold ||
-                Math.abs(this.angles.bank - this.bank_slide.Value()) > threshold
+                Math.abs(this.angles.az - this.az_slide.Value()) > Mat.eps ||
+                Math.abs(this.angles.el - this.el_slide.Value()) > Mat.eps ||
+                Math.abs(this.angles.bank - this.bank_slide.Value()) > Mat.eps
             );
         },
 
@@ -657,9 +678,11 @@ JXG.extend(
                 // never be set
                 this.matrix3DRot = this.updateProjectionTrackball();
                 this.setAnglesFromRotation();
+                /* [TEST]
                 console.log(this.angles.az, this.az_slide.Value());
                 console.log(this.angles.el, this.el_slide.Value());
                 console.log(this.angles.bank, this.bank_slide.Value());
+                 */
             } else if (this.anglesHaveMoved()) {
                 // The trackball hasn't been moved since the last up date, but
                 // the Tait-Bryan angles have been, so we do angle navigation
