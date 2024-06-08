@@ -1943,6 +1943,8 @@ JXG.extend(
                 // sometimes a header bar is displayed / hidden, which triggers a
                 // resize event.
                 Env.addEvent(window, 'scroll', this.scrollListener, this);
+
+                Env.addEvent(window, 'beforeprint', this.beforeprintListener, this);
             }
         },
 
@@ -4181,6 +4183,7 @@ JXG.extend(
                     h -= height_adjustment;
                 }
             }
+            // console.log(w, h);
 
             // If div is invisible - do nothing
             if (w <= 0 || h <= 0 || isNaN(w) || isNaN(h)) {
@@ -4347,6 +4350,12 @@ JXG.extend(
             if (Type.exists(this.intersectionObserver)) {
                 this.intersectionObserver.unobserve(this.containerObj);
             }
+        },
+
+        beforeprintListener: function(evt) {
+            console.log("beforeprint")
+            // this.updateContainerDims();
+            this.resizeListener();
         },
 
         /**********************************************************
