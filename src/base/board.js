@@ -4353,7 +4353,7 @@ JXG.extend(
         },
 
         beforeprintListener: function(evt) {
-            console.log("beforeprint")
+            // console.log("beforeprint")
             this.updateContainerDims();
             // this.resizeListener();
         },
