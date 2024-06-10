@@ -81,6 +81,7 @@ export * from "./3d/box3d";
 export * from "./3d/point3d";
 export * from "./3d/curve3d";
 export * from "./3d/linspace3d";
+import * from "./3d/polygon3d.js";
 export * from "./3d/sphere3d";
 export * from "./3d/surface3d";
 

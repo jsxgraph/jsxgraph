@@ -45,6 +45,10 @@ import Prefix from "../parser/prefix.js";
 
 /**
  * @class A tape measure can be used to measure distances between points.
+ * <p>
+ * The two defining points of the tape measure (which is a segment) do not inherit by default the attribute "visible" from
+ * the segment. Otherwise the tape meassure would be inaccessible if the two points coincide and the segment is hidden.
+ *
  * @pseudo
  * @name Tapemeasure
  * @augments Segment
@@ -84,8 +88,8 @@ JXG.createTapemeasure = function (board, parents, attributes) {
     attr = Type.copyAttributes(attributes, board.options, "tapemeasure", "point2");
     p2 = board.create("point", pos1, attr);
 
-    p1.setAttribute({ ignoredSnapToPoints: [p2] });
-    p2.setAttribute({ ignoredSnapToPoints: [p1] });
+    p1.setAttribute({ ignoredSnapToPoints: [p2.id] });
+    p2.setAttribute({ ignoredSnapToPoints: [p1.id] });
 
     // tape measure line
     attr = Type.copyAttributes(attributes, board.options, "tapemeasure");
@@ -368,6 +372,14 @@ JXG.createMeasurement = function (board, parents, attributes) {
         return term;
     };
 
+    el.getMethod = function () {
+        var method = term[0];
+        if (method === "V") {
+            method = "Value";
+        }
+        return method;
+    };
+
     el.toPrefix = function () {
         return Prefix.toPrefix(term);
     };
@@ -470,8 +482,8 @@ JXG.createMeasurement = function (board, parents, attributes) {
         Unit: "Unit",
         getTerm: "getTerm",
         Term: "getTerm",
-        getTermPrefix: "getTermPrefix",
-        TermPrefix: "getTermPrefix",
+        getMethod: "getMethod",
+        Method: "getMethod",
         getParents: "getParents",
         Parents: "getParents"
     });

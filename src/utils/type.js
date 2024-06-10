@@ -1740,10 +1740,13 @@ JXG.extend(
                 if (arr[0] < 0) {
                     str += '-';
                 }
-                if (arr[1] !== 0) {
-                    str += arr[1] + ' ';
-                }
-                if (arr[2] !== 0) {
+                if (arr[2] === 0) {
+                    str += arr[1];
+                } else if (!(arr[2] === 1 && arr[3] === 1)) {
+                    // arr[2] !== 0
+                    if (arr[1] !== 0) {
+                        str += ' ';
+                    }
                     if (useTeX === true) {
                         str += '\\frac{' + arr[2] + '}{' + arr[3] + '}';
                     } else {

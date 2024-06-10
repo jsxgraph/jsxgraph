@@ -649,15 +649,6 @@ JXG.Board = function (container, renderer, id,
     this.mathLib = Math;        // Math or JXG.Math.IntervalArithmetic
     this.mathLibJXG = JXG.Math; // JXG.Math or JXG.Math.IntervalArithmetic
 
-    // if (this.attr.registerevents) {
-    //     this.addEventHandlers();
-    // }
-    // if (this.attr.registerresizeevent) {
-    //     this.addResizeEventHandlers();
-    // }
-    // if (this.attr.registerfullscreenevent) {
-    //     this.addFullscreenEventHandlers();
-    // }
     if (this.attr.registerevents === true) {
         this.attr.registerevents = {
             fullscreen: true,
@@ -959,7 +950,6 @@ JXG.extend(
             // Check if getBoundingClientRect exists. If so, use this as this covers *everything*
             // even CSS3D transformations etc.
             // Supported by all browsers but IE 6, 7.
-
             if (container.getBoundingClientRect) {
                 crect = container.getBoundingClientRect();
 
@@ -1938,8 +1928,6 @@ JXG.extend(
                     return false;
                 };
             }
-
-            // this.addKeyboardEventHandlers();
         },
 
         /**
@@ -1964,6 +1952,9 @@ JXG.extend(
                 // sometimes a header bar is displayed / hidden, which triggers a
                 // resize event.
                 Env.addEvent(window, 'scroll', this.scrollListener, this);
+
+                // Env.addEvent(window, 'beforeprint', this.beforeprintListener, this);
+                // window.matchMedia("print").addEventListener(this.beforeprintListener, this);
             }
         },
 
@@ -2731,7 +2722,7 @@ JXG.extend(
                     }
                 }
                 if (!found) {
-                    // An new element hae been touched.
+                    // A new element has been touched.
                     k = 0;
                     j =
                         this.touches.push({
@@ -4368,6 +4359,12 @@ JXG.extend(
             if (Type.exists(this.intersectionObserver)) {
                 this.intersectionObserver.unobserve(this.containerObj);
             }
+        },
+
+        beforeprintListener: function(evt) {
+            // console.log("beforeprint")
+            this.updateContainerDims();
+            // this.resizeListener();
         },
 
         /**********************************************************

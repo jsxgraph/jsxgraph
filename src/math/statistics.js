@@ -983,51 +983,28 @@ Mat.Statistics = {
      * @returns
      * @memberof JXG.Math.Statistics
      */
-    randomHypergeometric: function (good, bad, k) {
+    randomHypergeometric: function(good, bad, k) {
         var i, u,
             x = 0,
-            // kk,
-            // n = good + bad,
-            d1 = good + bad - k,
-            d2 = Math.min(good, bad),
-            y = d2;
+            n = good + bad;
 
-        if (good < 1 || bad < 1 || k > good + bad) {
+        if (good < 0 || bad < 0 || k > good + bad) {
             return NaN;
         }
 
         // Naive method
-        // kk = Math.min(k, n - k);
-        // for (i = 0; i < k; i ++) {
-        //     u = Math.random();
-        //     if (n * u <= good) {
-        //         x += 1;
-        //         if (x === good) {
-        //             return x;
-        //         }
-        //         good -= 1;
-        //     }
-        //     n -= 1;
-        // }
-        // return x;
-
-        // Implementation from
-        // Monte Carlo by George S. Fishman
-        // https://link.springer.com/book/10.1007/978-1-4757-2553-7
-        // page 218
-        //
-        i = k;
-        while (y * i > 0) {
+        for (i = 0; i < k; i ++) {
             u = Math.random();
-            y -= Math.floor(u + y / (d1 + i));
-            i -= 1;
+            if (n * u <= good) {
+                x += 1;
+                if (x === good) {
+                    return x;
+                }
+                good -= 1;
+            }
+            n -= 1;
         }
-        x = d2 - y;
-        if (good <= bad) {
-            return x;
-        } else {
-            return k - x;
-        }
+        return x;
     },
 
     /**
@@ -1123,7 +1100,7 @@ Mat.Statistics = {
             counts.push(0);
             bins.push(mi + i * delta);
         }
-        bins.push(ma);
+        // bins.push(ma);
 
         // Determine the counts
         le = x.length;
