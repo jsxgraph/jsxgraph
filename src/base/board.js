@@ -1944,7 +1944,8 @@ JXG.extend(
                 // resize event.
                 Env.addEvent(window, 'scroll', this.scrollListener, this);
 
-                Env.addEvent(window, 'beforeprint', this.beforeprintListener, this);
+                // Env.addEvent(window, 'beforeprint', this.beforeprintListener, this);
+                // window.matchMedia("print").addEventListener(this.beforeprintListener, this);
             }
         },
 
@@ -4183,7 +4184,6 @@ JXG.extend(
                     h -= height_adjustment;
                 }
             }
-            // console.log(w, h);
 
             // If div is invisible - do nothing
             if (w <= 0 || h <= 0 || isNaN(w) || isNaN(h)) {
@@ -4354,8 +4354,8 @@ JXG.extend(
 
         beforeprintListener: function(evt) {
             console.log("beforeprint")
-            // this.updateContainerDims();
-            this.resizeListener();
+            this.updateContainerDims();
+            // this.resizeListener();
         },
 
         /**********************************************************
