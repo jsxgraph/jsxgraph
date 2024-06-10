@@ -1334,7 +1334,7 @@ JXG.extend(
             // Project the calculated az value to a usable value in the interval [smin,smax]
             // Use modulo if continuous is true
             if (Type.evaluate(this.visProp.az.continuous)) {
-                az = (az + smax) % smax;
+                az = smin + Mat.mod(az - smin, smax - smin);
             } else {
                 if (az > 0) {
                     az = Math.min(smax, az);
@@ -1385,7 +1385,7 @@ JXG.extend(
             // Project the calculated el value to a usable value in the interval [smin,smax]
             // Use modulo if continuous is true
             if (Type.evaluate(this.visProp.el.continuous)) {
-                el = (el + smax) % smax;
+                el = smin + Mat.mod(el - smin, smax - smin);
             } else {
                 if (el > 0) {
                     el = Math.min(smax, el);
