@@ -474,7 +474,7 @@ JXG.extend(
                     this.bbox3D[1][0] - this.bbox3D[1][1],
                     this.bbox3D[2][0] - this.bbox3D[2][1]
                 ) * 1.01;
-                console.log(r);
+                // console.log(r);
             }
 
             // create an up vector and an eye vector which are 90 degrees out of phase
@@ -667,12 +667,14 @@ JXG.extend(
          * If false, projects down to ordinary coordinates.
          */
         worldToView: function (pWorld, homog=true) {
-            var pView = Mat.matVecMult(this.cameraTransform, pWorld);
+            var k,
+                pView = Mat.matVecMult(this.cameraTransform, pWorld);
+
             pView[3] -= pView[0] * this.focalDist;
             if (homog) {
                 return pView;
             } else {
-                for (let k = 1; k < 4; k++) {
+                for (k = 1; k < 4; k++) {
                     pView[k] /= pView[0];
                 }
                 return pView.slice(1, 4);
