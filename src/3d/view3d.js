@@ -584,8 +584,8 @@ JXG.extend(
                 el_cover = Mat.mod(this.angles.el, 2*Math.PI);
                 if (0.5*Math.PI < el_cover && el_cover < 1.5*Math.PI) {
                     this.angles.el = Math.PI - el_cover;
-                    this.angles.az = az_smin + Mat.mod(this.angles.az + Math.PI - az_smin, az_smax - az_smin);
-                    this.angles.bank = bank_smin + Mat.mod(this.angles.bank + Math.PI - bank_smin, bank_smax - bank_smin);
+                    this.angles.az = Mat.wrap(this.angles.az + Math.PI, az_smin, az_smax);
+                    this.angles.bank = Mat.wrap(this.angles.bank + Math.PI, bank_smin, bank_smax);
                 }
             } else {
                 this.el_slide.setMin(this.visProp.el.slider.min);
@@ -595,7 +595,7 @@ JXG.extend(
             // wrap and restore angle values
             el_smax = this.el_slide._smax;
             el_smin = this.el_slide._smin;
-            this.angles.el = el_smin + Mat.mod(this.angles.el - el_smin, el_smax - el_smin);
+            this.angles.el = Mat.wrap(this.angles.el, el_smin, el_smax);
             this.setSlidersFromAngles();
         },
 
@@ -1380,7 +1380,7 @@ JXG.extend(
             // Project the calculated az value to a usable value in the interval [smin,smax]
             // Use modulo if continuous is true
             if (Type.evaluate(this.visProp.az.continuous)) {
-                az = smin + Mat.mod(az - smin, smax - smin);
+                az = Mat.wrap(az, smin, smax);
             } else {
                 if (az > 0) {
                     az = Math.min(smax, az);
@@ -1431,7 +1431,7 @@ JXG.extend(
             // Project the calculated el value to a usable value in the interval [smin,smax]
             // Use modulo if continuous is true
             if (Type.evaluate(this.visProp.el.continuous)) {
-                el = smin + Mat.mod(el - smin, smax - smin);
+                el = Mat.wrap(el, smin, smax);
             } else {
                 if (el > 0) {
                     el = Math.min(smax, el);
@@ -1486,10 +1486,10 @@ JXG.extend(
             // Project the calculated bank value to a usable value in the interval [smin,smax]
             if (Type.evaluate(this.visProp.bank.continuous)) {
                 // in continuous mode, wrap value around slider range
-                bank = smin + Mat.mod(bank - smin, smax - smin);
+                bank = Mat.wrap(bank, smin, smax);
             } else {
                 // in non-continuous mode, clamp value to slider range
-                bank = Math.min(Math.max(bank, smin), smax);
+                bank = Mat.clamp(bank, smin, smax);
             }
 
             this.bank_slide.setValue(bank);

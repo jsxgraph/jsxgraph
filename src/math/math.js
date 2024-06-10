@@ -110,6 +110,26 @@ JXG.Math = {
     },
 
     /**
+     * Translate <code>x</code> into the interval <code>[a, b)</code> by adding
+     * a multiple of <code>b - a</code>.
+     * @param {Number} x
+     * @param {Number} a
+     * @param {Number} b
+     */
+    wrap: function (x, a, b) {
+        return a + this.mod(x - a, b - a);
+    },
+
+    /**
+     * Clamp <code>x</code> within the interval <code>[a, b]</code>—increasing
+     * it to <code>a</code> if it's below <code>a</code> or decreasing it to
+     * <code>b</code> if it's above <code>b</code>.
+     */
+    clamp: function (x, a, b) {
+        return Math.min(Math.max(x, a), b);
+    },
+
+    /**
      * Initializes a vector of size <tt>n</tt> wih coefficients set to the init value (default 0)
      * @param {Number} n Length of the vector
      * @param {Number} [init=0] Initial value for each coefficient
