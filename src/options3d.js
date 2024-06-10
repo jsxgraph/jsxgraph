@@ -551,10 +551,8 @@ JXG.extend(Options, {
                 style: 6,
                 point1: { frozen: true },
                 point2: { frozen: true },
-                /* [DRAFT] min: 0,
-                max: 2 * Math.PI, */
-                min: -0.5*Math.PI,
-                max:  0.5*Math.PI,
+                min: 0,
+                max: 2 * Math.PI,
                 start: 0.3
             }
         },

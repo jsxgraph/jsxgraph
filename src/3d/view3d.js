@@ -178,6 +178,12 @@ JXG.View3D = function (board, parents, attributes) {
     // Will be set in update().
     this.projectionType = 'parallel';
 
+    /**
+     * Whether trackball navigation is currently enabled.
+     * @type String
+     */
+    this.trackballEnabled = false;
+
     this.timeoutAzimuth = null;
 
     this.id = this.board.setId(this, 'V');
@@ -558,6 +564,41 @@ JXG.extend(
             return mat;
         },
 
+        updateAngleSliderBounds: function () {
+            var az_smax = this.az_slide._smax,
+                az_smin = this.az_slide._smin,
+                el_smax, el_smin, el_cover,
+                bank_smax = this.bank_slide._smax,
+                bank_smin = this.bank_slide._smin;
+
+            // update stored trackball toggle
+            this.trackballEnabled = Type.evaluate(this.visProp.trackball.enabled);
+
+            // set slider bounds
+            if (this.trackballEnabled) {
+                this.el_slide.setMin(-0.5*Math.PI);
+                this.el_slide.setMax(0.5*Math.PI);
+
+                // if we're upside-down, flip the bank angle to reach the same
+                // orientation with an elevation between -pi/2 and pi/2
+                el_cover = Mat.mod(this.angles.el, 2*Math.PI);
+                if (0.5*Math.PI < el_cover && el_cover < 1.5*Math.PI) {
+                    this.angles.el = Math.PI - el_cover;
+                    this.angles.az = az_smin + Mat.mod(this.angles.az + Math.PI - az_smin, az_smax - az_smin);
+                    this.angles.bank = bank_smin + Mat.mod(this.angles.bank + Math.PI - bank_smin, bank_smax - bank_smin);
+                }
+            } else {
+                this.el_slide.setMin(this.visProp.el.slider.min);
+                this.el_slide.setMax(this.visProp.el.slider.max);
+            }
+
+            // wrap and restore angle values
+            el_smax = this.el_slide._smax;
+            el_smin = this.el_slide._smin;
+            this.angles.el = el_smin + Mat.mod(this.angles.el - el_smin, el_smax - el_smin);
+            this.setSlidersFromAngles();
+        },
+
         /**
          * @private
          * @returns {Array}
@@ -620,6 +661,11 @@ JXG.extend(
             ];
 
             this.projectionType = Type.evaluate(this.visProp.projection).toLowerCase();
+
+            // override angle slider bounds when trackball navigation is enabled
+            if (this.trackballEnabled !== Type.evaluate(this.visProp.trackball.enabled)) {
+                this.updateAngleSliderBounds();
+            }
 
             if (this._hasMoveTrackball) {
                 // The trackball has been moved since the last update, so we do
@@ -1733,8 +1779,11 @@ JXG.createView3D = function (board, parents, attributes) {
     Env.addEvent(board.containerObj, 'pointerdown', view.pointerDownHandler, view);
 
     // Initialize view rotation matrix
-    view.matrix3DRot = view.getAnglesFromSliders();
+    view.getAnglesFromSliders();
     view.matrix3DRot = view.getRotationFromAngles();
+
+    // override angle slider bounds when trackball navigation is enabled
+    view.updateAngleSliderBounds();
 
     view.board.update();
 
