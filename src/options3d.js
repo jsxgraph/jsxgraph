@@ -603,7 +603,7 @@ JXG.extend(Options, {
         bank: {
             pointer: {
                 enabled: true,
-                speed: 1,
+                speed: 0.08,
                 outside: true,
                 button: -1,
                 key: 'none'

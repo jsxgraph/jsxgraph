@@ -1444,6 +1444,59 @@ JXG.extend(
             return this;
         },
 
+        /**
+         * Controls the navigation in bank direction using either the keyboard or a pointer.
+         *
+         * @private
+         *
+         * @param {event} evt either the keydown or the pointer event
+         * @returns view
+         */
+        _bankEventHandler: function (evt) {
+            var smax = this.bank_slide._smax,
+                smin = this.bank_slide._smin,
+                step, speed,
+                delta = evt.deltaY,
+                bank = this.bank_slide.Value();
+
+            // Doesn't allow navigation if another moving event is triggered
+            if (this.board.mode === this.board.BOARD_MODE_DRAG) {
+                return this;
+            }
+
+            // Calculate new bank value if keyboard events are triggered
+            // Plus if down-button, minus if up-button
+            if (Type.evaluate(this.visProp.bank.keyboard.enabled)) {
+                step = Type.evaluate(this.visProp.bank.keyboard.step) * Math.PI / 180;
+                if (evt.key === '.' || evt.key === '<') {
+                    bank -= step;
+                } else if (evt.key === ',' || evt.key === '>') {
+                    bank += step;
+                }
+            }
+
+            if (Type.evaluate(this.visProp.bank.pointer.enabled) && (delta !== 0) && evt.key == null) {
+                speed = (smax - smin) / this.board.canvasHeight * Type.evaluate(this.visProp.bank.pointer.speed)
+                bank += delta * speed;
+
+                // prevent the pointer wheel from scrolling the page
+                evt.preventDefault();
+            }
+
+            // Project the calculated bank value to a usable value in the interval [smin,smax]
+            if (Type.evaluate(this.visProp.bank.continuous)) {
+                // in continuous mode, wrap value around slider range
+                bank = smin + Mat.mod(bank - smin, smax - smin);
+            } else {
+                // in non-continuous mode, clamp value to slider range
+                bank = Math.min(Math.max(bank, smin), smax);
+            }
+
+            this.bank_slide.setValue(bank);
+            this.board.update();
+            return this;
+        },
+
         _trackballHandler: function(evt) {
             var pos = this.board.getMousePosition(evt),
                 x, y, center;
@@ -1466,6 +1519,7 @@ JXG.extend(
 
             this._hasMoveAz = false;
             this._hasMoveEl = false;
+            this._hasMoveBank = false;
             this._hasMoveTrackball = false;
 
             if (this.board.mode !== this.board.BOARD_MODE_NONE) {
@@ -1518,6 +1572,25 @@ JXG.extend(
                         this._hasMoveEl = true;
                     }
                 }
+
+                if (Type.evaluate(this.visProp.bank.pointer.enabled)) {
+                    neededButton = Type.evaluate(this.visProp.bank.pointer.button);
+                    neededKey = Type.evaluate(this.visProp.bank.pointer.key);
+
+                    // Events for bank
+                    if (
+                        (neededButton === -1 || neededButton === evt.button) &&
+                        (neededKey === 'none' || (neededKey.indexOf('shift') > -1 && evt.shiftKey) || (neededKey.indexOf('ctrl') > -1 && evt.ctrlKey))
+                    ) {
+                        // If `outside` is true, we bind the event listener to
+                        // the document. otherwise, we bind it to the div. we
+                        // register the event listener as active so it can
+                        // prevent the pointer wheel from scrolling the page
+                        target = (Type.evaluate(this.visProp.bank.pointer.outside)) ? document : this.board.containerObj;
+                        Env.addEvent(target, 'wheel', this._bankEventHandler, this, {passive: false});
+                        this._hasMoveBank = true;
+                    }
+                }
             }
             Env.addEvent(document, 'pointerup', this.pointerUpHandler, this);
         },
@@ -1533,6 +1606,11 @@ JXG.extend(
                 target = (Type.evaluate(this.visProp.el.pointer.outside)) ? document : this.board.containerObj;
                 Env.removeEvent(target, 'pointermove', this._elEventHandler, this);
                 this._hasMoveEl = false;
+            }
+            if (this._hasMoveBank) {
+                target = (Type.evaluate(this.visProp.bank.pointer.outside)) ? document : this.board.containerObj;
+                Env.removeEvent(target, 'wheel', this._bankEventHandler, this);
+                this._hasMoveBank = false;
             }
             if (this._hasMoveTrackball) {
                 target = (Type.evaluate(this.visProp.az.pointer.outside)) ? document : this.board.containerObj;
@@ -1764,6 +1842,12 @@ JXG.createView3D = function (board, parents, attributes) {
             neededKey = Type.evaluate(view.visProp.az.keyboard.key);
             if (neededKey === 'none' || (neededKey.indexOf('shift') > -1 && event.shiftKey) || (neededKey.indexOf('ctrl') > -1 && event.ctrlKey)) {
                 view._azEventHandler(event);
+            }
+        }
+        if (Type.evaluate(view.visProp.bank.keyboard.enabled) && (event.key === ',' || event.key === '<' || event.key === '.' || event.key === '>')) {
+            neededKey = Type.evaluate(view.visProp.bank.keyboard.key);
+            if (neededKey === 'none' || (neededKey.indexOf('shift') > -1 && event.shiftKey) || (neededKey.indexOf('ctrl') > -1 && event.ctrlKey)) {
+                view._bankEventHandler(event);
             }
         }
         if (event.key === 'PageUp') {
