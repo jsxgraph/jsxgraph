@@ -631,15 +631,6 @@ JXG.Board = function (container, renderer, id,
     this.mathLib = Math;        // Math or JXG.Math.IntervalArithmetic
     this.mathLibJXG = JXG.Math; // JXG.Math or JXG.Math.IntervalArithmetic
 
-    // if (this.attr.registerevents) {
-    //     this.addEventHandlers();
-    // }
-    // if (this.attr.registerresizeevent) {
-    //     this.addResizeEventHandlers();
-    // }
-    // if (this.attr.registerfullscreenevent) {
-    //     this.addFullscreenEventHandlers();
-    // }
     if (this.attr.registerevents === true) {
         this.attr.registerevents = {
             fullscreen: true,
@@ -1917,8 +1908,6 @@ JXG.extend(
                     return false;
                 };
             }
-
-            // this.addKeyboardEventHandlers();
         },
 
         /**
