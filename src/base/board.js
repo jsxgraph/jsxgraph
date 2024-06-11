@@ -631,15 +631,6 @@ JXG.Board = function (container, renderer, id,
     this.mathLib = Math;        // Math or JXG.Math.IntervalArithmetic
     this.mathLibJXG = JXG.Math; // JXG.Math or JXG.Math.IntervalArithmetic
 
-    // if (this.attr.registerevents) {
-    //     this.addEventHandlers();
-    // }
-    // if (this.attr.registerresizeevent) {
-    //     this.addResizeEventHandlers();
-    // }
-    // if (this.attr.registerfullscreenevent) {
-    //     this.addFullscreenEventHandlers();
-    // }
     if (this.attr.registerevents === true) {
         this.attr.registerevents = {
             fullscreen: true,
@@ -1917,8 +1908,6 @@ JXG.extend(
                     return false;
                 };
             }
-
-            // this.addKeyboardEventHandlers();
         },
 
         /**
@@ -1943,6 +1932,9 @@ JXG.extend(
                 // sometimes a header bar is displayed / hidden, which triggers a
                 // resize event.
                 Env.addEvent(window, 'scroll', this.scrollListener, this);
+
+                // Env.addEvent(window, 'beforeprint', this.beforeprintListener, this);
+                // window.matchMedia("print").addEventListener(this.beforeprintListener, this);
             }
         },
 
@@ -4347,6 +4339,12 @@ JXG.extend(
             if (Type.exists(this.intersectionObserver)) {
                 this.intersectionObserver.unobserve(this.containerObj);
             }
+        },
+
+        beforeprintListener: function(evt) {
+            // console.log("beforeprint")
+            this.updateContainerDims();
+            // this.resizeListener();
         },
 
         /**********************************************************

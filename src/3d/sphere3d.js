@@ -32,6 +32,7 @@
 import JXG from "../jxg.js";
 import Const from "../base/constants.js";
 import Type from "../utils/type.js";
+import Mat from "../math/math.js";
 
 /**
  * A sphere consists of all points with a given distance from a given point.
@@ -77,13 +78,32 @@ JXG.Sphere3D = function (view, method, par1, par2, attributes) {
      */
     this.center = this.board.select(par1);
 
-    /** A point on the sphere; only set if the construction method is 'twoPoints'. Do not set this parameter directly, as that will break JSXGraph's update system.
+    /**
+     * A point on the sphere; only set if the construction method is 'twoPoints'. Do not set this parameter directly, as that will break JSXGraph's update system.
      * @type JXG.Point3D
      * @see #method
      */
     this.point2 = null;
 
     this.points = [];
+
+    /**
+     * The 2D representation of the element.
+     * @type GeometryElement
+     */
+    this.element2D = null;
+
+    /**
+     * Elements supporting the 2D representation.
+     * @type Array
+     */
+    this.aux2D = [];
+
+    /**
+     * The type of projection (<code>'parallel'</code> or <code>'central'</code>) that the sphere is currently drawn in.
+     * @type String
+     */
+    this.projectionType = view.projectionType;
 
     if (method === "twoPoints") {
         this.point2 = this.board.select(par2);
@@ -125,6 +145,9 @@ JXG.extend(
     JXG.Sphere3D.prototype,
     /** @lends JXG.Sphere3D.prototype */ {
         update: function () {
+            if (this.projectionType !== this.view.projectionType) {
+                this.rebuildProjection();
+            }
             return this;
         },
 
@@ -170,6 +193,120 @@ JXG.extend(
             }
 
             return NaN;
+        },
+
+        // The central projection of a sphere is an ellipse. The front and back
+        // points of the sphere---that is, the points closest to and furthest
+        // from the screen---project to the foci of the ellipse.
+        //
+        // To see this, look at the cone tangent to the sphere whose tip is at
+        // the camera. The image of the sphere is the ellipse where this cone
+        // intersects the screen. By acting on the sphere with scalings centered
+        // on the camera, you can send it to either of the Dandelin spheres that
+        // touch the screen at the foci of the image ellipse.
+        //
+        // This factory method produces two functions, `focusFn(-1)` and
+        // `focusFn(1)`, that evaluate to the projections of the front and back
+        // points of the sphere, respectively.
+        focusFn: function (sgn) {
+            const that = this;
+
+            return function () {
+                const camDir = that.view.cameraTransform[3],
+                      r = that.Radius();
+
+                return that.view.project3DTo2D([
+                    that.center.X() + sgn*r*camDir[1],
+                    that.center.Y() + sgn*r*camDir[2],
+                    that.center.Z() + sgn*r*camDir[3]
+                ]).slice(1, 3);
+            };
+        },
+
+        innerVertexFn: function () {
+            const that = this;
+
+            return function() {
+                const view = that.view,
+                      p = view.worldToView(that.center.coords, false),
+                      distOffAxis = Math.sqrt(p[0]*p[0] + p[1]*p[1]),
+                      cam = view.cameraTransform,
+                      inward = [
+                          -(p[0]*cam[1][1] + p[1]*cam[2][1]) / distOffAxis,
+                          -(p[0]*cam[1][2] + p[1]*cam[2][2]) / distOffAxis,
+                          -(p[0]*cam[1][3] + p[1]*cam[2][3]) / distOffAxis
+                      ],
+                      r = that.Radius(),
+                      angleOffAxis = Math.atan(-distOffAxis / p[2]),
+                      steepness = Math.acos(r / Mat.norm(p)),
+                      lean = angleOffAxis + steepness,
+                      cos_lean = Math.cos(lean),
+                      sin_lean = Math.sin(lean);
+
+                return view.project3DTo2D([
+                    that.center.X() + r * (sin_lean*inward[0] + cos_lean*cam[3][1]),
+                    that.center.Y() + r * (sin_lean*inward[1] + cos_lean*cam[3][2]),
+                    that.center.Z() + r * (sin_lean*inward[2] + cos_lean*cam[3][3])
+                ]);
+            };
+        },
+
+        buildCentralProjection: function () {
+            const view = this.view,
+                  auxStyle = {visible: false, withLabel: false},
+                  frontFocus = view.create('point', this.focusFn(-1), auxStyle),
+                  backFocus = view.create('point', this.focusFn(1), auxStyle),
+                  innerVertex = view.create('point', this.innerVertexFn(view), auxStyle);
+
+            this.aux2D = [frontFocus, backFocus, innerVertex];
+            this.element2D = view.create('ellipse', this.aux2D, this.visProp);
+        },
+
+        buildParallelProjection: function () {
+            // The parallel projection of a sphere is a circle
+            const
+                that = this,
+                center2d = function () {
+                    const c3d = [1, that.center.X(), that.center.Y(), that.center.Z()];
+                    return that.view.project3DTo2D(c3d);
+                },
+                radius2d = function () {
+                    const boxSize = that.view.bbox3D[0][1] - that.view.bbox3D[0][0];
+                    return that.Radius() * that.view.size[0] / boxSize;
+                };
+
+            this.aux2D = [];
+            this.element2D = this.view.create(
+                'circle',
+                [center2d, radius2d],
+                this.visProp
+            );
+        },
+
+        // replace our 2D representation with a new one that's consistent with
+        // the view's current projection type
+        rebuildProjection: function () {
+            // remove the old 2D representation from the scene tree
+            if (this.element2D) {
+                this.view.board.removeObject(this.element2D);
+                for (let i in this.aux2D) {
+                    this.view.board.removeObject(this.aux2D[i]);
+                }
+            }
+
+            // build a new 2D representation. the representation is stored in
+            // `this.element2D`, and any auxiliary elements are stored in
+            // `this.aux2D`
+            this.projectionType = this.view.projectionType;
+            if (this.projectionType === 'central') {
+                this.buildCentralProjection();
+            } else {
+                this.buildParallelProjection();
+            }
+
+            // attach the new 2D representation to the scene tree
+            this.addChild(this.element2D);
+            this.inherits.push(this.element2D);
         }
     }
 );
@@ -284,7 +421,6 @@ JXG.createSphere3D = function (board, parents, attributes) {
 
     var view = parents[0],
         attr, p, point_style, provided,
-        center2d, radius2d,
         el, i;
 
     attr = Type.copyAttributes(attributes, board.options, 'sphere3d');
@@ -335,22 +471,11 @@ JXG.createSphere3D = function (board, parents, attributes) {
         );
     }
 
-    // The center and radius functions of the parallel projection circle
-    center2d = function () {
-        return view.project3DTo2D([1, el.center.X(), el.center.Y(), el.center.Z()]);
-    };
-
-    radius2d = function () {
-        return el.Radius() * view.size[0] / (view.bbox3D[0][1] - view.bbox3D[0][0]);
-    };
-
-    attr = el.setAttr2D(attr);
-    el.element2D = view.create('circle', [center2d, radius2d], attr);
-    el.addChild(el.element2D);
-    el.inherits.push(el.element2D);
-    el.element2D.setParents([el]);
-
+    // build a 2D representation, and attach it to the scene tree, and update it
+    // to the correct initial state
+    el.rebuildProjection();
     el.element2D.prepareUpdate().update().updateRenderer();
+
     return el;
 };
 

@@ -372,6 +372,14 @@ JXG.createMeasurement = function (board, parents, attributes) {
         return term;
     };
 
+    el.getMethod = function () {
+        var method = term[0];
+        if (method === "V") {
+            method = "Value";
+        }
+        return method;
+    };
+
     el.toPrefix = function () {
         return Prefix.toPrefix(term);
     };
@@ -474,8 +482,8 @@ JXG.createMeasurement = function (board, parents, attributes) {
         Unit: "Unit",
         getTerm: "getTerm",
         Term: "getTerm",
-        getTermPrefix: "getTermPrefix",
-        TermPrefix: "getTermPrefix",
+        getMethod: "getMethod",
+        Method: "getMethod",
         getParents: "getParents",
         Parents: "getParents"
     });
