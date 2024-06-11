@@ -565,19 +565,29 @@ JXG.extend(
         },
 
         updateAngleSliderBounds: function () {
-            var az_smax = this.az_slide._smax,
-                az_smin = this.az_slide._smin,
+            var az_smax, az_smin,
                 el_smax, el_smin, el_cover,
-                bank_smax = this.bank_slide._smax,
-                bank_smin = this.bank_slide._smin;
+                bank_smax, bank_smin;
 
             // update stored trackball toggle
             this.trackballEnabled = Type.evaluate(this.visProp.trackball.enabled);
 
             // set slider bounds
             if (this.trackballEnabled) {
+                this.az_slide.setMin(0);
+                this.az_slide.setMax(2*Math.PI);
                 this.el_slide.setMin(-0.5*Math.PI);
-                this.el_slide.setMax(0.5*Math.PI);
+                this.el_slide.setMax( 0.5*Math.PI);
+                this.bank_slide.setMin(-Math.PI);
+                this.bank_slide.setMax( Math.PI);
+
+                // get new slider bounds
+                az_smax = this.az_slide._smax;
+                az_smin = this.az_slide._smin;
+                el_smax = this.el_slide._smax;
+                el_smin = this.el_slide._smin;
+                bank_smax = this.bank_slide._smax;
+                bank_smin = this.bank_slide._smin;
 
                 // if we're upside-down, flip the bank angle to reach the same
                 // orientation with an elevation between -pi/2 and pi/2
@@ -588,14 +598,24 @@ JXG.extend(
                     this.angles.bank = Mat.wrap(this.angles.bank + Math.PI, bank_smin, bank_smax);
                 }
             } else {
+                this.az_slide.setMin(this.visProp.az.slider.min);
+                this.az_slide.setMax(this.visProp.az.slider.max);
                 this.el_slide.setMin(this.visProp.el.slider.min);
                 this.el_slide.setMax(this.visProp.el.slider.max);
+                this.bank_slide.setMin(this.visProp.bank.slider.min);
+                this.bank_slide.setMax(this.visProp.bank.slider.max);
             }
 
             // wrap and restore angle values
+            az_smax = this.az_slide._smax;
+            az_smin = this.az_slide._smin;
             el_smax = this.el_slide._smax;
             el_smin = this.el_slide._smin;
+            bank_smax = this.bank_slide._smax;
+            bank_smin = this.bank_slide._smin;
+            this.angles.az = Mat.wrap(this.angles.az, az_smin, az_smax);
             this.angles.el = Mat.wrap(this.angles.el, el_smin, el_smax);
+            this.angles.bank = Mat.wrap(this.angles.bank, bank_smin, bank_smax);
             this.setSlidersFromAngles();
         },
 
@@ -1429,8 +1449,8 @@ JXG.extend(
             }
 
             // Project the calculated el value to a usable value in the interval [smin,smax]
-            // Use modulo if continuous is true
-            if (Type.evaluate(this.visProp.el.continuous)) {
+            // Use modulo if continuous is true and the trackball is disabled
+            if (Type.evaluate(this.visProp.el.continuous) && !this.trackballEnabled) {
                 el = Mat.wrap(el, smin, smax);
             } else {
                 if (el > 0) {
