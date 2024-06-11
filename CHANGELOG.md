@@ -9,11 +9,12 @@ New features
 - new element `circle3d`
 - new element `glider3d`: lines, curves
 - new element `intersectioncircle3d`
+- new element `polygon3d`
 - new version of `otherintersection`
 - new 3D control: virtual trackball
 - 3D dragging in central projection
 - new label positioning for lines, circles and curves
-- random numbers for uniform, normal, exponential, beta, gamma, chi-square, F, T, binomial, geometric, hypergemoetric, Poisson distribution
+- random numbers for uniform, normal, exponential, beta, gamma, chi-square, F, T, binomial, geometric, hypergeometric, Poisson distribution
 - new math function `JXG.Math.gamma`
 
 Improvements
@@ -49,6 +50,8 @@ Bug fixes
 - remove use of `String.at()` (moodle problem)
 - remove const `JXG.touchPoperty`
 - toggling of arrow heads
+- tapemeasure
+- toFraction
 
 1.8.0
 ===
