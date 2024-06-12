@@ -312,8 +312,10 @@ JXG.createLine3D = function (board, parents, attributes) {
         };
         range = [0, 1];
         el = new JXG.Line3D(view, point1, direction, range, attr);
+
     } else {
         // Line defined by point, direction and range
+
         point = Type.providePoints3D(view, [parents[1]], attributes, 'line3d', ['point'])[0];
 
         // Directions are handled as arrays of length 4,
@@ -635,7 +637,7 @@ JXG.extend(
                 }
 
                 // Concatenate the intersection points to a polygon.
-                // If all wents well, each intersection should appear
+                // If all went well, each intersection should appear
                 // twice in the list.
                 first = 0;
                 pos = first;
