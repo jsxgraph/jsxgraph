@@ -580,23 +580,6 @@ JXG.extend(
                 this.el_slide.setMax( 0.5*Math.PI);
                 this.bank_slide.setMin(-Math.PI);
                 this.bank_slide.setMax( Math.PI);
-
-                // get new slider bounds
-                az_smax = this.az_slide._smax;
-                az_smin = this.az_slide._smin;
-                el_smax = this.el_slide._smax;
-                el_smin = this.el_slide._smin;
-                bank_smax = this.bank_slide._smax;
-                bank_smin = this.bank_slide._smin;
-
-                // if we're upside-down, flip the bank angle to reach the same
-                // orientation with an elevation between -pi/2 and pi/2
-                el_cover = Mat.mod(this.angles.el, 2*Math.PI);
-                if (0.5*Math.PI < el_cover && el_cover < 1.5*Math.PI) {
-                    this.angles.el = Math.PI - el_cover;
-                    this.angles.az = Mat.wrap(this.angles.az + Math.PI, az_smin, az_smax);
-                    this.angles.bank = Mat.wrap(this.angles.bank + Math.PI, bank_smin, bank_smax);
-                }
             } else {
                 this.az_slide.setMin(this.visProp.az.slider.min);
                 this.az_slide.setMax(this.visProp.az.slider.max);
@@ -606,16 +589,36 @@ JXG.extend(
                 this.bank_slide.setMax(this.visProp.bank.slider.max);
             }
 
-            // wrap and restore angle values
+            // get new slider bounds
             az_smax = this.az_slide._smax;
             az_smin = this.az_slide._smin;
             el_smax = this.el_slide._smax;
             el_smin = this.el_slide._smin;
             bank_smax = this.bank_slide._smax;
             bank_smin = this.bank_slide._smin;
-            this.angles.az = Mat.wrap(this.angles.az, az_smin, az_smax);
-            this.angles.el = Mat.wrap(this.angles.el, el_smin, el_smax);
-            this.angles.bank = Mat.wrap(this.angles.bank, bank_smin, bank_smax);
+
+            // wrap and restore angle values
+            if (this.trackballEnabled) {
+                // if we're upside-down, flip the bank angle to reach the same
+                // orientation with an elevation between -pi/2 and pi/2
+                el_cover = Mat.mod(this.angles.el, 2*Math.PI);
+                if (0.5*Math.PI < el_cover && el_cover < 1.5*Math.PI) {
+                    this.angles.el = Math.PI - el_cover;
+                    this.angles.az = Mat.wrap(this.angles.az + Math.PI, az_smin, az_smax);
+                    this.angles.bank = Mat.wrap(this.angles.bank + Math.PI, bank_smin, bank_smax);
+                }
+
+                // wrap the azimuth and bank angle
+                this.angles.az = Mat.wrap(this.angles.az, az_smin, az_smax);
+                this.angles.el = Mat.wrap(this.angles.el, el_smin, el_smax);
+                this.angles.bank = Mat.wrap(this.angles.bank, bank_smin, bank_smax);
+            } else {
+                this.angles.az = Mat.wrap(this.angles.az, az_smin, az_smax);
+                this.angles.el = Mat.wrap(this.angles.el, el_smin, el_smax);
+                this.angles.bank = Mat.wrap(this.angles.bank, bank_smin, bank_smax);
+            }
+
+            // restore slider positions
             this.setSlidersFromAngles();
         },
 
