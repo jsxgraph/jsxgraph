@@ -877,21 +877,21 @@ JXG.extend(
          * @returns Affine ratio of the intersection of the line with the cube.
          */
         intersectionLineCube: function (p, d, r) {
-            var rnew, i, r0, r1;
+            var r_n, i, r0, r1;
 
-            rnew = r;
+            r_n = r;
             for (i = 0; i < 3; i++) {
                 if (d[i] !== 0) {
                     r0 = (this.bbox3D[i][0] - p[i]) / d[i];
                     r1 = (this.bbox3D[i][1] - p[i]) / d[i];
                     if (r < 0) {
-                        rnew = Math.max(rnew, Math.min(r0, r1));
+                        r_n = Math.max(r_n, Math.min(r0, r1));
                     } else {
-                        rnew = Math.min(rnew, Math.max(r0, r1));
+                        r_n = Math.min(r_n, Math.max(r0, r1));
                     }
                 }
             }
-            return rnew;
+            return r_n;
         },
 
         /**

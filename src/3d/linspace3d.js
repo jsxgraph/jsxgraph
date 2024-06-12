@@ -133,13 +133,11 @@ JXG.extend(
                 }
             }
 
+            // Intersect the ray - if necessary - with the cube
             r0 = Type.evaluate(r);
-            // TODO: test also in the finite case
-            if (Math.abs(r0) === Infinity) {
-                r = this.view.intersectionLineCube(p, d, r0);
-            }
+            r = this.view.intersectionLineCube(p, d, r0);
 
-            return [p[0] + d[0] * r0, p[1] + d[1] * r0, p[2] + d[2] * r0];
+            return [p[0] + d[0] * r, p[1] + d[1] * r, p[2] + d[2] * r];
         },
 
         update: function () {
@@ -152,22 +150,21 @@ JXG.extend(
         },
 
         projectCoords: function (p) {
-            const p0_coords = this.getPointCoords(0),
-                  p1_coords = this.getPointCoords(1),
-                  dir = [
+            var p0_coords = this.getPointCoords(0),
+                p1_coords = this.getPointCoords(1),
+                dir = [
                     p1_coords[0] - p0_coords[0],
                     p1_coords[1] - p0_coords[1],
                     p1_coords[2] - p0_coords[2]
-                  ],
-                  diff = [
-                      p[0] - p0_coords[0],
-                      p[1] - p0_coords[1],
-                      p[2] - p0_coords[2]
-                  ],
-                  t = Mat.innerProduct(diff, dir) / Mat.innerProduct(dir, dir),
-                  t_clamped = Math.min(Math.max(t, this.range[0]), this.range[1]);
-
-            var c3d;
+                ],
+                diff = [
+                    p[0] - p0_coords[0],
+                    p[1] - p0_coords[1],
+                    p[2] - p0_coords[2]
+                ],
+                t = Mat.innerProduct(diff, dir) / Mat.innerProduct(dir, dir),
+                t_clamped = Math.min(Math.max(t, this.range[0]), this.range[1]),
+                c3d;
 
             c3d = this.getPointCoords(t_clamped).slice();
             c3d.unshift(1);
@@ -175,35 +172,34 @@ JXG.extend(
         },
 
         projectScreenCoords: function (pScr) {
-            const p0_coords = this.getPointCoords(0),
-                  p1_coords = this.getPointCoords(1),
-                  p0_2d = this.view.project3DTo2D(p0_coords).slice(1, 3),
-                  p1_2d = this.view.project3DTo2D(p1_coords).slice(1, 3),
-                  dir_2d = [
-                      p1_2d[0] - p0_2d[0],
-                      p1_2d[1] - p0_2d[1]
-                  ],
-                  dir_2d_norm_sq = Mat.innerProduct(dir_2d, dir_2d),
-                  diff = [
-                      pScr[0] - p0_2d[0],
-                      pScr[1] - p0_2d[1]
-                  ],
-                  s = Mat.innerProduct(diff, dir_2d) / dir_2d_norm_sq; // screen-space affine parameter
-
-            var t, // view-space affine parameter
+            var p0_coords = this.getPointCoords(0),
+                p1_coords = this.getPointCoords(1),
+                p0_2d = this.view.project3DTo2D(p0_coords).slice(1, 3),
+                p1_2d = this.view.project3DTo2D(p1_coords).slice(1, 3),
+                dir_2d = [
+                    p1_2d[0] - p0_2d[0],
+                    p1_2d[1] - p0_2d[1]
+                ],
+                dir_2d_norm_sq = Mat.innerProduct(dir_2d, dir_2d),
+                diff = [
+                    pScr[0] - p0_2d[0],
+                    pScr[1] - p0_2d[1]
+                ],
+                s = Mat.innerProduct(diff, dir_2d) / dir_2d_norm_sq, // Screen-space affine parameter
+                t, // view-space affine parameter
                 t_clamped, // affine parameter clamped to range
                 c3d;
 
             if (this.view.projectionType === 'central') {
                 const mid_coords = this.getPointCoords(0.5),
-                      mid_2d = this.view.project3DTo2D(mid_coords).slice(1, 3),
-                      mid_diff = [
+                    mid_2d = this.view.project3DTo2D(mid_coords).slice(1, 3),
+                    mid_diff = [
                         mid_2d[0] - p0_2d[0],
                         mid_2d[1] - p0_2d[1]
-                      ],
-                      m = Mat.innerProduct(mid_diff, dir_2d) / dir_2d_norm_sq;
+                    ],
+                    m = Mat.innerProduct(mid_diff, dir_2d) / dir_2d_norm_sq;
 
-                // the view-space affine parameter s is related to the
+                // The view-space affine parameter s is related to the
                 // screen-space affine parameter t by a Möbius transformation,
                 // which is determined by the following relations:
                 //
@@ -213,7 +209,7 @@ JXG.extend(
                 // m | 1/2
                 // 1 | 1
                 //
-                t = (1-m)*s / ((1-2*m)*s + m);
+                t = (1 - m) * s / ((1 - 2 * m) * s + m);
             } else {
                 t = s;
             }
@@ -310,7 +306,8 @@ JXG.createLine3D = function (board, parents, attributes) {
         direction = function () {
             return [point2.X() - point1.X(), point2.Y() - point1.Y(), point2.Z() - point1.Z()];
         };
-        range = [0, 1];
+
+        range = [0, 1]; // Segment by default
         el = new JXG.Line3D(view, point1, direction, range, attr);
     } else {
         // Line defined by point, direction and range
