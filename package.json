@@ -72,6 +72,7 @@
     "karma": "^6.4.1",
     "karma-chrome-launcher": "^3.1.0",
     "karma-jasmine": "^4.0.1",
+    "npmignore": "^0.3.1",
     "path-browserify": "^1.0.1",
     "prettier": "^2.7.1",
     "terser": "^5.10.0",
