@@ -58,9 +58,12 @@
     "trailingComma": "none"
   },
   "devDependencies": {
+    "@eslint/eslintrc": "^3.1.0",
+    "@eslint/js": "^9.4.0",
     "eslint": ">=8.14.0",
     "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-prettier": "^4.2.1",
+    "globals": "^15.4.0",
     "http-server": "^14.1.1",
     "jasmine-core": "^3.10.1",
     "jsdoc2": "^2.4.0",
