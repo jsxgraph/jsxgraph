@@ -615,7 +615,7 @@ JXG.extend(Options, {
             },
             continuous: true,
             slider: {
-                visible: true,
+                visible: false,
                 style: 6,
                 point1: { frozen: true },
                 point2: { frozen: true },

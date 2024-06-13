@@ -22,12 +22,13 @@
     );
     let view = board.create(
         'view3d',
-        [[-6, -3], [8, 8],
+        [[-6, -4], [8, 8],
         [[0, 3], [0, 3], [0, 3]]],
         {
             xPlaneRear: {fillOpacity: 0.2, gradient: null},
             yPlaneRear: {fillOpacity: 0.2, gradient: null},
-            zPlaneRear: {fillOpacity: 0.2, gradient: null}
+            zPlaneRear: {fillOpacity: 0.2, gradient: null},
+            bank: {slider: {visible: true}}
         }
     );
 
