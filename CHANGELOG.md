@@ -4,6 +4,7 @@
 New features
 -----------
 
+- 3D: now, beside parallel projection also central projection is supported 
 - new element `sphere3d`
 - new element `intersectionline3d`
 - new element `circle3d`
@@ -12,7 +13,6 @@ New features
 - new element `polygon3d`
 - new version of `otherintersection`
 - new 3D control: virtual trackball
-- 3D dragging in central projection
 - new label positioning for lines, circles and curves
 - random numbers for uniform, normal, exponential, beta, gamma, chi-square, F, T, binomial, geometric, hypergeometric, Poisson distribution
 - new math function `JXG.Math.gamma`
