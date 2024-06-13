@@ -121,21 +121,22 @@ JXG.Math = {
     },
 
     /**
-     * Clamp <code>x</code> within the interval <code>[a, b]</code>—increasing
-     * it to <code>a</code> if it's below <code>a</code> or decreasing it to
-     * <code>b</code> if it's above <code>b</code>.
+     * Clamp <code>x</code> within the interval <code>[a, b]</code>. If
+     * <code>x</code> is below <code>a</code>, increase it to <code>a</code>. If
+     * it's above <code>b</code>, decrease it to <code>b</code>.
      */
     clamp: function (x, a, b) {
         return Math.min(Math.max(x, a), b);
     },
 
     /**
-     * If <code>x</code> is congruent mod <code>period</code> to a point in
-     * <code>[a, b]</code>, return that point. Otherwise, wrap it into
-     * <code>[mid - period/2, mid + period/2]</code>, where <code>mid</code> is
-     * the mean of <code>a</code> and <code>b</code>.
+     * A way of clamping a periodic variable. If <code>x</code> is congruent mod
+     * <code>period</code> to a point in <code>[a, b]</code>, return that point.
+     * Otherwise, wrap it into <code>[mid - period/2, mid + period/2]</code>,
+     * where <code>mid</code> is the mean of <code>a</code> and <code>b</code>,
+     * and then clamp it to <code>[a, b]</code> from there.
      */
-    wrap_and_clamp: function (x, a, b, period) {
+    wrapAndClamp: function (x, a, b, period) {
         const mid = 0.5*(a + b),
               half_period = 0.5*period;
 

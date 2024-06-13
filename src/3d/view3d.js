@@ -649,8 +649,8 @@ JXG.extend(
                 }
 
                 // wrap and clamp the azimuth and bank angle into the slider range
-                this.angles.az = Mat.wrap_and_clamp(this.angles.az, az_smin, az_smax, 2*Math.PI);
-                this.angles.bank = Mat.wrap_and_clamp(this.angles.bank, bank_smin, bank_smax, 2*Math.PI);
+                this.angles.az = Mat.wrapAndClamp(this.angles.az, az_smin, az_smax, 2*Math.PI);
+                this.angles.bank = Mat.wrapAndClamp(this.angles.bank, bank_smin, bank_smax, 2*Math.PI);
 
                 // since we're using `clamp`, angles may have changed
                 this.matrix3DRot = this.getRotationFromAngles();
