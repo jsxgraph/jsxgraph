@@ -9,8 +9,11 @@
 <body>
 
 <div>
-    <input type="checkbox" id="trackball-toggle" oninput="inputTrackballToggle();" checked="true" />
-    <label for="trackball-toggle">Use trackball</label>
+    <label for="ori-ctl">Orientation control:</label>
+    <select id="ori-ctl" oninput="inputOriCtl();">
+        <option value="trackball">Virtual trackball</option>
+        <option value="angles">Tait–Bryan angles</option>
+    </select>
 </div>
 <div id="jxgbox" class="jxgbox" style="width:800px; height:800px; float:left"></div>
 
@@ -65,11 +68,11 @@
         }
     );
 
-    let trackball_toggle = document.querySelector('#trackball-toggle');
-    function inputTrackballToggle() {
-        view.setAttribute({'trackball': {enabled: trackball_toggle.checked}});
+    let ori_ctl = document.querySelector('#ori-ctl');
+    function inputOriCtl() {
+        view.setAttribute({'trackball': {enabled: ori_ctl.value === 'trackball'}});
     }
-    inputTrackballToggle();
+    inputOriCtl();
 </script>
 </body>
 </html>
