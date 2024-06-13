@@ -290,7 +290,7 @@ JXG.createLine3D = function (board, parents, attributes) {
     var view = parents[0],
         attr, points,
         point, direction, range,
-        point1, point2, vpoints,
+        point1, point2, endpoints,
         el;
 
     attr = Type.copyAttributes(attributes, board.options, 'line3d');
@@ -311,10 +311,11 @@ JXG.createLine3D = function (board, parents, attributes) {
         range = [0, 1]; // Segment by default
         el = new JXG.Line3D(view, point1, direction, range, attr);
 
-        // Create two shadow points that determine the visible line.
-        // This is of relevance if the line has straightFirst or straightLast set to true.
-        // In such a case, the shadow points are the intersection of the line with the cube.
-        vpoints = Type.providePoints3D(
+        // Create two shadow points that are the end points of the visible line.
+        // This is of relevance if the line has straightFirst or straightLast set to true, then
+        // endpoints differ from point1, point2.
+        // In such a case, the endpoints are the intersection of the line with the cube.
+        endpoints = Type.providePoints3D(
             view,
             [
                 [0, 0, 0],
@@ -325,41 +326,42 @@ JXG.createLine3D = function (board, parents, attributes) {
             ['point1', 'point2']
         );
 
-        vpoints[0].F = function () {
+        endpoints[0].F = function () {
             var r = 0;
             if (Type.evaluate(el.visProp.straightfirst)) {
                 r = -Infinity;
             }
             return el.getPointCoords(r);
         };
-        vpoints[0].prepareUpdate().update();
-
-        vpoints[1].F = function () {
+        endpoints[1].F = function () {
             var r = 1;
             if (Type.evaluate(el.visProp.straightlast)) {
                 r = Infinity;
             }
             return el.getPointCoords(r);
         };
-        vpoints[1].prepareUpdate().update();
+        endpoints[0].prepareUpdate().update();
+        endpoints[1].prepareUpdate().update();
+
+        // The 2D line is always a segment.
         attr = el.setAttr2D(attr);
         attr.straightfirst = false;
         attr.straightlast = false;
-        el.element2D = view.create('segment', [vpoints[0].element2D, vpoints[1].element2D], attr);
+        el.element2D = view.create('segment', [endpoints[0].element2D, endpoints[1].element2D], attr);
 
         /**
          * Shadow points that determine the visible line.
          * This is of relevance if the line is defined by two points and has straightFirst or straightLast set to true.
          * In such a case, the shadow points are the intersection of the line with the cube.
          *
-         * @name JXG.Point3D.vpoints
+         * @name JXG.Point3D.endpoints
          * @type Array
          * @private
          */
-        el.vpoints = vpoints;
-        el.addChild(vpoints[0]);
-        el.addChild(vpoints[1]);
-        el.setParents(vpoints);
+        el.endpoints = endpoints;
+        el.addChild(endpoints[0]);
+        el.addChild(endpoints[1]);
+        el.setParents(endpoints);
 
     } else {
         // Line defined by point, direction and range
@@ -418,6 +420,8 @@ JXG.createLine3D = function (board, parents, attributes) {
         attr.straightfirst = false;
         attr.straightlast = false;
         el.element2D = view.create('segment', [point1.element2D, point2.element2D], attr);
+
+        el.endpoints = points;
     }
     // TODO Throw error
 
