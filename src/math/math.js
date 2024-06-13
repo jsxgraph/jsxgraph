@@ -130,6 +130,27 @@ JXG.Math = {
     },
 
     /**
+     * If <code>x</code> is congruent mod <code>period</code> to a point in
+     * <code>[a, b]</code>, return that point. Otherwise, wrap it into
+     * <code>[mid - period/2, mid + period/2]</code>, where <code>mid</code> is
+     * the mean of <code>a</code> and <code>b</code>.
+     */
+    wrap_and_clamp: function (x, a, b, period) {
+        const mid = 0.5*(a + b),
+              half_period = 0.5*period;
+
+        return this.clamp(
+            this.wrap(
+                x,
+                mid - half_period,
+                mid + half_period
+            ),
+            a,
+            b
+        );
+    },
+
+    /**
      * Initializes a vector of size <tt>n</tt> wih coefficients set to the init value (default 0)
      * @param {Number} n Length of the vector
      * @param {Number} [init=0] Initial value for each coefficient

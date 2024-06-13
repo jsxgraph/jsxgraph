@@ -567,6 +567,8 @@ JXG.extend(
         updateAngleSliderBounds: function () {
             var az_smax, az_smin,
                 el_smax, el_smin, el_cover,
+                el_smid, el_equiv, el_flip_equiv,
+                el_equiv_loss, el_flip_equiv_loss,
                 bank_smax, bank_smin;
 
             // update stored trackball toggle
@@ -613,9 +615,45 @@ JXG.extend(
                 this.angles.el = Mat.wrap(this.angles.el, el_smin, el_smax);
                 this.angles.bank = Mat.wrap(this.angles.bank, bank_smin, bank_smax);
             } else {
-                this.angles.az = Mat.wrap(this.angles.az, az_smin, az_smax);
-                this.angles.el = Mat.wrap(this.angles.el, el_smin, el_smax);
-                this.angles.bank = Mat.wrap(this.angles.bank, bank_smin, bank_smax);
+                // wrap and clamp the elevation into the slider range. if
+                // flipping the elevation gets us closer to the slider interval,
+                // do that, inverting the azimuth and bank angle to compensate
+                const el_interval_loss = function (t) {
+                    if (t < el_smin) {
+                        return el_smin - t;
+                    } else if (el_smax < t) {
+                        return t - el_smax;
+                    } else {
+                        return 0;
+                    }
+                }
+                el_smid = 0.5*(el_smin + el_smax);
+                el_equiv = Mat.wrap(
+                    this.angles.el,
+                    el_smid - Math.PI,
+                    el_smid + Math.PI
+                );
+                el_flip_equiv = Mat.wrap(
+                    Math.PI - this.angles.el,
+                    el_smid - Math.PI,
+                    el_smid + Math.PI
+                );
+                el_equiv_loss = el_interval_loss(el_equiv);
+                el_flip_equiv_loss = el_interval_loss(el_flip_equiv);
+                if (el_equiv_loss <= el_flip_equiv_loss) {
+                    this.angles.el = Mat.clamp(el_equiv, el_smin, el_smax);
+                } else {
+                    this.angles.el = Mat.clamp(el_flip_equiv, el_smin, el_smax);
+                    this.angles.az = Mat.wrap(this.angles.az + Math.PI, az_smin, az_smax);
+                    this.angles.bank = Mat.wrap(this.angles.bank + Math.PI, bank_smin, bank_smax);
+                }
+
+                // wrap and clamp the azimuth and bank angle into the slider range
+                this.angles.az = Mat.wrap_and_clamp(this.angles.az, az_smin, az_smax, 2*Math.PI);
+                this.angles.bank = Mat.wrap_and_clamp(this.angles.bank, bank_smin, bank_smax, 2*Math.PI);
+
+                // since we're using `clamp`, angles may have changed
+                this.matrix3DRot = this.getRotationFromAngles();
             }
 
             // restore slider positions
