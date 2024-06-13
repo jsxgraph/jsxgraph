@@ -1435,6 +1435,7 @@ JXG.Options = {
          *   needShift: true,  // mouse wheel zooming needs pressing of the shift key
          *   min: 0.001,       // minimal values of {@link JXG.Board#zoomX} and {@link JXG.Board#zoomY}, limits zoomOut
          *   max: 1000.0,      // maximal values of {@link JXG.Board#zoomX} and {@link JXG.Board#zoomY}, limits zoomIn
+         *   center: 'auto',   // the center of zoom is calculated (position of mouse or center of two fingers), with 'board' you can use the boards center
          *
          *   pinch: true,      // pinch-to-zoom gesture for proportional zoom
          *   pinchHorizontal: true, // Horizontal pinch-to-zoom zooms horizontal axis. Only available if keepaspectratio:false
@@ -1460,6 +1461,7 @@ JXG.Options = {
             factorY: 1.25,
             wheel: true,
             needShift: true,
+            center: 'auto',
             min: 0.0001,
             max: 10000.0,
             pinch: true,

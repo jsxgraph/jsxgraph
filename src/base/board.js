@@ -2265,6 +2265,7 @@ JXG.extend(
                 zx = this.attr.zoom.factorx,
                 zy = this.attr.zoom.factory,
                 factor, dist, theta, bound,
+                zoomCenter,
                 doZoom = false,
                 dx, dy, cx, cy;
 
@@ -2337,6 +2338,7 @@ JXG.extend(
 
             } else if (this.attr.zoom.enabled && Math.abs(factor - 1.0) < 0.5) {
                 doZoom = false;
+                zoomCenter = this.attr.zoom.center;
                 // Pinch detected
                 if (this.attr.zoom.pinchhorizontal || this.attr.zoom.pinchvertical) {
                     dx = Math.abs(evt.touches[0].clientX - evt.touches[1].clientX);
@@ -2371,7 +2373,11 @@ JXG.extend(
                 }
 
                 if (doZoom) {
-                    this.zoomIn(cx, cy);
+                    if (zoomCenter === 'board') {
+                        this.zoomIn();
+                    } else { // including zoomCenter === 'auto'
+                        this.zoomIn(cx, cy);
+                    }
 
                     // Restore zoomFactors
                     this.attr.zoom.factorx = zx;
@@ -3879,12 +3885,19 @@ JXG.extend(
 
             evt = evt || window.event;
             var wd = evt.detail ? -evt.detail : evt.wheelDelta / 40,
-                pos = new Coords(Const.COORDS_BY_SCREEN, this.getMousePosition(evt), this);
+                zoomCenter = this.attr.zoom.center,
+                pos;
+
+            if (zoomCenter === 'board') {
+                pos = [];
+            } else { // including zoomCenter === 'auto'
+                pos = new Coords(Const.COORDS_BY_SCREEN, this.getMousePosition(evt), this).usrCoords;
+            }
 
             if (wd > 0) {
-                this.zoomIn(pos.usrCoords[1], pos.usrCoords[2]);
+                this.zoomIn(pos[1], pos[2]);
             } else {
-                this.zoomOut(pos.usrCoords[1], pos.usrCoords[2]);
+                this.zoomOut(pos[1], pos[2]);
             }
 
             this.triggerEventHandlers(['mousewheel'], [evt]);
