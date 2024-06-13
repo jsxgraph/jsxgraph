@@ -15,6 +15,7 @@ New features
 - new 3D control: virtual trackball
 - new label positioning for lines, circles and curves
 - random numbers for uniform, normal, exponential, beta, gamma, chi-square, F, T, binomial, geometric, hypergeometric, Poisson distribution
+- new function `JXG.Math.Statistics.histogram`
 - new math function `JXG.Math.gamma`
 
 Improvements
@@ -31,6 +32,7 @@ Improvements
 - new 3D examples in `examples/`
 - mark ancient browser detection methods as deprecated
 - add more exports to `index.js`
+- board zoom center can be either the mouse pointer position (or midpoint of two finger touches) or the center of the board
 
 Bug fixes
 ---------
@@ -48,7 +50,7 @@ Bug fixes
 - glider handling
 - slider handling in JessieCode
 - remove use of `String.at()` (moodle problem)
-- remove const `JXG.touchPoperty`
+- remove const `JXG.touchProperty`
 - toggling of arrow heads
 - tapemeasure
 - toFraction

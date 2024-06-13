@@ -36,15 +36,15 @@
  * JSXGraph to display interactive math graphics.
  */
 
-import JXG from "../jxg.js";
-import Const from "../base/constants.js";
-import Text from "../base/text.js";
-import Mat from "../math/math.js";
-import Interval from "../math/ia.js";
-import Geometry from "../math/geometry.js";
-import Statistics from "../math/statistics.js";
-import Type from "../utils/type.js";
-import Env from "../utils/env.js";
+import JXG from "../jxg";
+import Const from "../base/constants";
+import Text from "../base/text";
+import Mat from "../math/math";
+import Interval from "../math/ia";
+import Geometry from "../math/geometry";
+import Statistics from "../math/statistics";
+import Type from "../utils/type";
+import Env from "../utils/env";
 
 // IE 6-8 compatibility
 if (!Object.create) {
