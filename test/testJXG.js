@@ -189,6 +189,12 @@ describe("Test JXG util functions", function () {
         expect(copy.subo.foo).toEqual(42);
         expect(copy.name).toEqual("test");
     });
+
+    it("copyAttributes", function () {
+        var s = board.create('slider', [[-1, -3], [1, -3], [0, 1,1]], {label: {strokeColor: 'red'}});
+        expect(s.label.visProp.strokecolor).toEqual('red');
+    });
+
 });
 
 /*
