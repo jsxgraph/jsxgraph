@@ -35,25 +35,25 @@ import Mat from "./math.js";
 import Type from "../utils/type.js";
 
 JXG.Math.DoubleBits = function () {
-    var hasTypedArrays = false,
-        DOUBLE_VIEW = new Float64Array(1),
+    var DOUBLE_VIEW = new Float64Array(1),
         UINT_VIEW = new Uint32Array(DOUBLE_VIEW.buffer),
         doubleBitsLE,
         toDoubleLE,
         lowUintLE,
         highUintLE,
+        // doubleBits,
+        // toDouble,
+        // lowUint,
+        // highUint,
+        // hasTypedArrays = false,
         doubleBitsBE,
         toDoubleBE,
         lowUintBE,
-        highUintBE,
-        doubleBits,
-        toDouble,
-        lowUint,
-        highUint;
+        highUintBE;
 
     if (Float64Array !== undefined) {
         DOUBLE_VIEW[0] = 1.0;
-        hasTypedArrays = true;
+        // hasTypedArrays = true;
         if (UINT_VIEW[1] === 0x3ff00000) {
             // Use little endian
             doubleBitsLE = function (n) {
@@ -81,7 +81,7 @@ JXG.Math.DoubleBits = function () {
             this.lo = lowUintLE;
             this.hi = highUintLE;
         } else if (UINT_VIEW[0] === 0x3ff00000) {
-            //Use big endian
+            // Use big endian
             doubleBitsBE = function (n) {
                 DOUBLE_VIEW[0] = n;
                 return [UINT_VIEW[1], UINT_VIEW[0]];
@@ -107,8 +107,8 @@ JXG.Math.DoubleBits = function () {
             this.pack = toDoubleBE;
             this.lo = lowUintBE;
             this.hi = highUintBE;
-        } else {
-            hasTypedArrays = false;
+        // } else {
+        //     hasTypedArrays = false;
         }
     }
 

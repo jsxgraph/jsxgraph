@@ -9478,9 +9478,9 @@ JXG.Options = {
             validatePositiveInteger = function (v) {
                 return validateInteger(v) && v > 0;
             },
-            validateScreenCoords = function (v) {
-                return v.length >= 2 && validateInteger(v[0]) && validateInteger(v[1]);
-            },
+            // validateScreenCoords = function (v) {
+            //     return v.length >= 2 && validateInteger(v[0]) && validateInteger(v[1]);
+            // },
             validateRenderer = function (v) {
                 return (v === 'vml' || v === 'svg' || v === 'canvas' || v === 'no');
             },

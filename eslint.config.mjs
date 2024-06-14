@@ -26,7 +26,7 @@ export default [...compat.extends("eslint:recommended"), {
 
     rules: {
         "comma-dangle": ["error", "never"],
-        eqeqeq: ["error", "smart"],
+        "eqeqeq": ["error", "smart"],
         "no-constant-binary-expression": "error",
         "no-empty": "off",
         "no-prototype-builtins": "off",
@@ -42,11 +42,12 @@ export default [...compat.extends("eslint:recommended"), {
         }],
 
         "no-unused-vars": ["warn", {
-            vars: "local",
-            args: "none",
+            "vars": "local",
+            "args": "none",
+            "caughtErrors": "none"
         }],
 
         "one-var": ["warn", "always"],
-        semi: ["error", "always"],
+        "semi": ["error", "always"],
     },
 }];

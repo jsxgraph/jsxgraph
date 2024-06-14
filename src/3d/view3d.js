@@ -778,7 +778,7 @@ JXG.extend(
                         mat[2][1] = mat[2][2] = Mat.eps * 0.001;
                     }
                     sol = Mat.Numerics.Gauss(mat, rhs);
-                } catch (err) {
+                } catch (e) {
                     sol = [0, NaN, NaN, NaN];
                 }
             } else {

@@ -2028,7 +2028,9 @@ Mat.Plot = {
     },
 
     getInterval: function (curve, ta, tb) {
-        var t_int, x_int, y_int;
+        var t_int,
+            // x_int,
+            y_int;
 
         //console.log('critical point', ta, tb);
         IntervalArithmetic.disable();
@@ -2036,7 +2038,7 @@ Mat.Plot = {
         t_int = IntervalArithmetic.Interval(ta, tb);
         curve.board.mathLib = IntervalArithmetic;
         curve.board.mathLibJXG = IntervalArithmetic;
-        x_int = curve.X(t_int, true);
+        // x_int = curve.X(t_int, true);
         y_int = curve.Y(t_int, true);
         curve.board.mathLib = Math;
         curve.board.mathLibJXG = JXG.Math;
@@ -2221,16 +2223,16 @@ Mat.Plot = {
             i1,
             i2,
             x,
-            y,
+            // y,
             lo,
             hi,
             d_lft,
             d_rgt,
             d_thresh = 100,
+            // d1,
+            // d2,
             di1 = 5,
-            di2 = 3,
-            d1,
-            d2;
+            di2 = 3;
 
         t = group.t;
         console.log("HandleSingularity at t =", t);
@@ -2366,7 +2368,7 @@ Mat.Plot = {
 
     plot_v4: function (curve, ta, tb, steps) {
         var i,
-            j,
+            // j,
             le,
             components,
             idx,
@@ -2375,17 +2377,14 @@ Mat.Plot = {
             g,
             start,
             ret,
-            x_table,
-            y_table,
-            t,
-            t1,
-            t2,
-            good,
-            bad,
-            x_int,
+            x_table, y_table,
+            t, t1, t2,
+            // good,
+            // bad,
+            // x_int,
             y_int,
-            degree_x,
-            degree_y,
+            // degree_x,
+            // degree_y,
             h = (tb - ta) / steps,
             Ypl = function (x) {
                 return curve.Y(x, true);
@@ -2402,9 +2401,9 @@ Mat.Plot = {
             groups = ret[0];
             x_table = ret[1];
             y_table = ret[2];
-            degree_x = ret[3];
-            degree_y = ret[4];
 
+            // degree_x = ret[3];
+            // degree_y = ret[4];
             // if (degree_x >= 0) {
             //     console.log("x polynomial of degree", degree_x);
             // }
@@ -2439,8 +2438,8 @@ Mat.Plot = {
                     le = groups[g].idx - 1;
                 }
 
-                good = 0;
-                bad = 0;
+                // good = 0;
+                // bad = 0;
                 // Insert all uncritical points until next critical point
                 for (i = start; i < le - 2; i++) {
                     this._insertPoint_v4(
@@ -2448,7 +2447,7 @@ Mat.Plot = {
                         [1, comp.x_values[i], comp.y_values[i]],
                         comp.t_values[i]
                     );
-                    j = Math.max(0, i - 2);
+                    // j = Math.max(0, i - 2);
                     // Add more points in critical intervals
                     if (
                         //degree_y === -1 && // No polynomial
@@ -2497,9 +2496,9 @@ Mat.Plot = {
                                 );
                             }
                         }
-                        bad++;
-                    } else {
-                        good++;
+                        // bad++;
+                    // } else {
+                        // good++;
                     }
                 }
                 // console.log("GOOD", good, "BAD", bad);

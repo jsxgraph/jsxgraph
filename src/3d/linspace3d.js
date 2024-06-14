@@ -947,7 +947,7 @@ JXG.createIntersectionLine3D = function (board, parents, attributes) {
     try {
         el1.addChild(ixnLine);
         el2.addChild(ixnLine);
-    } catch (e) {
+    } catch (_e) {
         throw new Error(
             "JSXGraph: Can't create 'intersection' with parent types '" +
                 typeof parents[0] +

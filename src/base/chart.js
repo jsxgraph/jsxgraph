@@ -34,7 +34,6 @@
 
 import JXG from "../jxg.js";
 import Numerics from "../math/numerics.js";
-import Statistics from "../math/statistics.js";
 import Const from "./constants.js";
 import Coords from "./coords.js";
 import GeometryElement from "./element.js";
@@ -42,6 +41,7 @@ import DataSource from "../parser/datasource.js";
 import Color from "../utils/color.js";
 import Type from "../utils/type.js";
 import Env from "../utils/env.js";
+// import Statistics from "../math/statistics.js";
 // import Curve from "./curve.js";
 // import Point from "./point.js";
 // import Text from "./text.js";
@@ -227,7 +227,6 @@ JXG.extend(
          */
         drawBar: function (board, x, y, attributes) {
             var i,
-                strwidth,
                 text,
                 w,
                 xp0,
@@ -393,7 +392,7 @@ JXG.extend(
                 center,
                 p = [],
                 sector = [],
-                s = Statistics.sum(y),
+                // s = Statistics.sum(y),
                 colorArray = attributes.colors,
                 highlightColorArray = attributes.highlightcolors,
                 labelArray = attributes.labels,
@@ -577,7 +576,7 @@ JXG.extend(
                 ends,
                 labelArray,
                 colorArray,
-                highlightColorArray,
+                // highlightColorArray,
                 radius,
                 myAtts,
                 cent,
@@ -763,7 +762,7 @@ JXG.extend(
             // labels for legend
             labelArray = attributes.labelarray || la;
             colorArray = attributes.colors;
-            highlightColorArray = attributes.highlightcolors;
+            // highlightColorArray = attributes.highlightcolors;
             radius = attributes.radius || 10;
             sw = attributes.strokewidth || 1;
 
