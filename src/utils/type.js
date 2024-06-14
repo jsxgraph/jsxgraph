@@ -1443,9 +1443,9 @@ JXG.extend(
                 }
             }
             if (isAvail && this.exists(o.label)) {
-                a.label = JXG.deepCopy(o.label, a.label);
+                a.label = JXG.deepCopy(o.label, a.label, true);
             }
-            a.label = JXG.deepCopy(options.label, a.label);
+            a.label = JXG.deepCopy(options.label, a.label, true);
 
             return a;
         },
