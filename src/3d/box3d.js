@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2023
+    Copyright 2008-2024
         Matthias Ehmann,
         Carsten Miller,
         Andreas Walter,
@@ -246,7 +246,7 @@ JXG.createMesh3D = function (board, parents, attr) {
             s2 = range2[0],
             e2 = range2[1],
             l1, l2, res, i,
-            sol,
+            // sol,
             v1 = [0, 0, 0],
             v2 = [0, 0, 0],
             step = 1,

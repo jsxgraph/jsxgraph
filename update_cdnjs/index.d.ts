@@ -403,7 +403,9 @@ declare namespace JXG {
     export function isNumber(v: unknown): v is number;
     export function isObject(v: unknown): boolean;
     export function isPoint(v: unknown): v is Point;
+    export function isPoint3D(v: unknown): boolean;
     export function isPointType(v: unknown): boolean;
+    export function isPointType3D(v: unknown): boolean;
     export function isString(v: unknown): v is string;
     export function isTouchDevice(): boolean;
     export function isTransformationOrArray(v: unknown): boolean;
@@ -3680,8 +3682,6 @@ declare namespace JXG {
 
     export interface Sphere3DAttributes extends GeometryElementAttributes {}
 
-    export interface Sphere3D {}
-
     export interface View3DAttributes extends GeometryElementAttributes {
         axesPosition?: "center";
 
@@ -3754,6 +3754,11 @@ declare namespace JXG {
             attributes?: Point3DAttributes
         ): Point3D;
         create(
+            elementType: "polygon3d",
+            parents: unknown[],
+            attributes?: Polygon3DAttributes
+        ): Polygon3D;
+        create(
             elementType: "sphere3d",
             parents: unknown[],
             attributes?: Sphere3DAttributes
@@ -3823,6 +3828,8 @@ declare namespace JXG {
         | 'input'
         | 'integral'
         | 'intersection'
+        | 'intersectioncircle3d'
+        | 'intersectionline3d'
         | 'label'
         | 'legend'
         | 'line'
@@ -3850,6 +3857,7 @@ declare namespace JXG {
         | 'plot'
         | 'point'
         | 'point3d'
+        | 'polygon3d'
         | 'polarline'
         | 'polepoint'
         | 'polygon'
@@ -6319,8 +6327,6 @@ declare namespace JXG {
          */
         percentile(arr: number[], percentile: number | number[]): number | number[];
     }
-
-    export type touchProperty = string;
 }
 
 /**

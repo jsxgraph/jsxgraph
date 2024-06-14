@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2023
+    Copyright 2008-2024
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -3896,6 +3896,8 @@ JXG.extend(
          * @returns {Boolean}
          */
         mouseWheelListener: function (evt) {
+            var wd, zoomCenter, pos;
+
             if (!this.attr.zoom.enabled ||
                 !this.attr.zoom.wheel ||
                 !this._isRequiredKeyPressed(evt, 'zoom')) {
@@ -3904,9 +3906,8 @@ JXG.extend(
             }
 
             evt = evt || window.event;
-            var wd = evt.detail ? -evt.detail : evt.wheelDelta / 40,
-                zoomCenter = this.attr.zoom.center,
-                pos;
+            wd = evt.detail ? -evt.detail : evt.wheelDelta / 40;
+            zoomCenter = this.attr.zoom.center;
 
             if (zoomCenter === 'board') {
                 pos = [];
@@ -3914,6 +3915,7 @@ JXG.extend(
                 pos = new Coords(Const.COORDS_BY_SCREEN, this.getMousePosition(evt), this).usrCoords;
             }
 
+            // pos == [] does not throw an error
             if (wd > 0) {
                 this.zoomIn(pos[1], pos[2]);
             } else {

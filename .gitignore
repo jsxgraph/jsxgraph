@@ -1,10 +1,13 @@
 trunk
 .htaccess
+**/.htaccess
+src/.htaccess
 .c9revisions
 *.sublime-*
 .idea/
 .vscode
 **/.vscode
+**/.vscode/*
 src/.vscode
 *.tgz
 **/*.tgz
