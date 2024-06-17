@@ -1918,6 +1918,34 @@ JXG.extend(
         resize: function (w, h) {
             this.svgRoot.setAttribute("width", parseFloat(w));
             this.svgRoot.setAttribute("height", parseFloat(h));
+            return;
+
+            if (isNaN(w) || isNaN(h)) {
+                return;
+            }
+            // Width and height must be adjusted if there is a CSS scale in effect on the SVG element.
+            // The scale can be determined by comparing the element's bounding rect dimensions with its offsetWidth/Height.
+            // See https://developer.mozilla.org/en-US/docs/Web/API/CSS_Object_Model/Determining_the_dimensions_of_elements
+            var rect = this.svgRoot.getBoundingClientRect();
+            if (rect.width === 0 || rect.height === 0) {
+                return;
+            }
+console.log("rect", rect, w, h)
+console.log(this.svgRoot)
+return; 
+            var scale = {
+                x: this.svgRoot.offsetWidth / rect.width,
+                y: this.svgRoot.offsetHeight / rect.height
+            };
+console.log("scale", scale, this.svgRoot.offsetWidth, this.svgRoot.offsetHeight, this.svgRoot)
+            var adjusted = {
+                w: parseFloat(w) * scale.x,
+                h: parseFloat(h) * scale.y
+            };
+console.log("adjusted", adjusted)
+
+            this.svgRoot.setAttribute("width", adjusted.w);
+            this.svgRoot.setAttribute("height", adjusted.h);
         },
 
         // documented in JXG.AbstractRenderer
