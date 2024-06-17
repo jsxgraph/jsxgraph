@@ -4171,7 +4171,6 @@ JXG.extend(
                 // bb,
                 css,
                 width_adjustment, height_adjustment;
-
             // Get size of the board's container div
             //
             // offsetWidth/Height ignores CSS transforms,
@@ -4212,7 +4211,6 @@ JXG.extend(
             if (Type.exists(this._prevDim) && this._prevDim.w === w && this._prevDim.h === h) {
                 return;
             }
-
             // Set the size of the SVG or canvas element
             this.resizeContainer(w, h, true);
             this._prevDim = {
@@ -6061,7 +6059,10 @@ JXG.extend(
             h = this.canvasHeight;
             if (keepaspectratio) {
                 if (this.keepaspectratio) {
-                    ratio = ux / uy; // Keep this ratio if keepaspectratio was true
+                    ratio = ux / uy;        // Keep this ratio if keepaspectratio was true
+                    if (isNaN(ratio)) {
+                        ratio = 1.0;
+                    }
                 } else {
                     ratio = 1.0;
                 }
@@ -6126,7 +6127,6 @@ JXG.extend(
                     [this.canvasWidth, this.canvasHeight],
                     this
                 ).usrCoords;
-
             return [ul[1], ul[2], lr[1], lr[2]];
         },
 

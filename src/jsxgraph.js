@@ -42,7 +42,7 @@
 import JXG from "./jxg.js";
 import Env from "./utils/env.js";
 import Type from "./utils/type.js";
-import Mat from "./math/math.js";
+// import Mat from "./math/math.js";
 import Board from "./base/board.js";
 import FileReader from "./reader/file.js";
 import Options from "./options.js";
