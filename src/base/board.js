@@ -4168,13 +4168,20 @@ JXG.extend(
          */
         updateContainerDims: function () {
             var w, h,
-                bb, css,
+                // bb, 
+                css,
                 width_adjustment, height_adjustment;
 
             // Get size of the board's container div
-            bb = this.containerObj.getBoundingClientRect();
-            w = bb.width;
-            h = bb.height;
+            // 
+            // offsetWidth/Height ignores CSS transforms, 
+            // getBoundingClientRect includes CSS transforms
+            //
+            // bb = this.containerObj.getBoundingClientRect();
+            // w = bb.width;
+            // h = bb.height;
+            w = this.containerObj.offsetWidth;
+            h = this.containerObj.offsetHeight;
 
             // Subtract the border size
             if (window && window.getComputedStyle) {
@@ -5484,8 +5491,10 @@ JXG.extend(
                 box = this.getBoundingBox();    // This is the actual bounding box.
             }
 
-            this.canvasWidth = Math.max(parseFloat(canvasWidth), Mat.eps);
-            this.canvasHeight = Math.max(parseFloat(canvasHeight), Mat.eps);
+            // this.canvasWidth = Math.max(parseFloat(canvasWidth), Mat.eps);
+            // this.canvasHeight = Math.max(parseFloat(canvasHeight), Mat.eps);
+            this.canvasWidth = parseFloat(canvasWidth);
+            this.canvasHeight = parseFloat(canvasHeight);
 
             if (!dontset) {
                 this.containerObj.style.width = this.canvasWidth + 'px';
