@@ -210,7 +210,6 @@ JXG.JSXGraph = {
     _fillBoard: function (board, attr, dimensions) {
         board.initInfobox(attr.infobox);
         board.maxboundingbox = attr.maxboundingbox;
-        console.log("Fillboard")
         board.resizeContainer(dimensions.width, dimensions.height, true, true);
         board._createSelectionPolygon(attr);
         board.renderer.drawNavigationBar(board, attr.navbar);

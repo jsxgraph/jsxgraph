@@ -4168,13 +4168,13 @@ JXG.extend(
          */
         updateContainerDims: function () {
             var w, h,
-                // bb, 
+                // bb,
                 css,
                 width_adjustment, height_adjustment;
 
             // Get size of the board's container div
-            // 
-            // offsetWidth/Height ignores CSS transforms, 
+            //
+            // offsetWidth/Height ignores CSS transforms,
             // getBoundingClientRect includes CSS transforms
             //
             // bb = this.containerObj.getBoundingClientRect();
