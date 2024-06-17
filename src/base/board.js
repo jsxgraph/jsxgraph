@@ -5180,14 +5180,11 @@ JXG.extend(
          * @returns {JXG.Board} Reference to the board.
          */
         zoomElements: function (elements) {
-            var i,
-                e,
+            var i, e,
                 box,
                 newBBox = [Infinity, -Infinity, -Infinity, Infinity],
-                cx,
-                cy,
-                dx,
-                dy,
+                cx, cy,
+                dx, dy,
                 d;
 
             if (!Type.isArray(elements) || elements.length === 0) {
