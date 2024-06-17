@@ -5496,8 +5496,8 @@ JXG.extend(
             if (!dontSetBoundingBox) {
                 this.setBoundingBox(box, this.keepaspectratio, 'keep');
             } else {
-                oX = (this.canvasWidth - oldWidth) / 2;
-                oY = (this.canvasHeight - oldHeight) / 2;
+                oX = (this.canvasWidth - oldWidth) * 0.5;
+                oY = (this.canvasHeight - oldHeight) * 0.5;
 
                 this.moveOrigin(
                     this.origin.scrCoords[1] + oX,
