@@ -1819,6 +1819,8 @@ JXG.extend(
         /**
          * Convert a string containing a MAXIMA /STACK expression into a JSXGraph / JessieCode string
          * or an array of JSXGraph / JessieCode strings.
+         * <p>
+         * This function is meanwhile superseded by stack_jxg.stack2jsxgraph.
          *
          * @example
          * console.log( JXG.stack2jsxgraph("%e**x") );

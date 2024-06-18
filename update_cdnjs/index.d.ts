@@ -9,7 +9,7 @@
 // Definitions by: David Holmes https://github.com/geometryzen
 // Definitions: https://github.com/DefinitelyTyped/DefinitelyTyped
 //
-// Copyright 2015-2023 David Holmes, https://github.com/geometryzen
+// Copyright 2015-2024 David Holmes, https://github.com/geometryzen
 //
 
 /**

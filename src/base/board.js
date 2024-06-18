@@ -4188,13 +4188,19 @@ JXG.extend(
          */
         updateContainerDims: function () {
             var w, h,
-                bb, css,
+                // bb,
+                css,
                 width_adjustment, height_adjustment;
-
             // Get size of the board's container div
-            bb = this.containerObj.getBoundingClientRect();
-            w = bb.width;
-            h = bb.height;
+            //
+            // offsetWidth/Height ignores CSS transforms,
+            // getBoundingClientRect includes CSS transforms
+            //
+            // bb = this.containerObj.getBoundingClientRect();
+            // w = bb.width;
+            // h = bb.height;
+            w = this.containerObj.offsetWidth;
+            h = this.containerObj.offsetHeight;
 
             // Subtract the border size
             if (window && window.getComputedStyle) {
@@ -4225,7 +4231,6 @@ JXG.extend(
             if (Type.exists(this._prevDim) && this._prevDim.w === w && this._prevDim.h === h) {
                 return;
             }
-
             // Set the size of the SVG or canvas element
             this.resizeContainer(w, h, true);
             this._prevDim = {
@@ -5246,14 +5251,11 @@ JXG.extend(
          * @returns {JXG.Board} Reference to the board.
          */
         zoomElements: function (elements) {
-            var i,
-                e,
+            var i, e,
                 box,
                 newBBox = [Infinity, -Infinity, -Infinity, Infinity],
-                cx,
-                cy,
-                dx,
-                dy,
+                cx, cy,
+                dx, dy,
                 d;
 
             if (!Type.isArray(elements) || elements.length === 0) {
@@ -5553,8 +5555,10 @@ JXG.extend(
                 box = this.getBoundingBox();    // This is the actual bounding box.
             }
 
-            this.canvasWidth = Math.max(parseFloat(canvasWidth), Mat.eps);
-            this.canvasHeight = Math.max(parseFloat(canvasHeight), Mat.eps);
+            // this.canvasWidth = Math.max(parseFloat(canvasWidth), Mat.eps);
+            // this.canvasHeight = Math.max(parseFloat(canvasHeight), Mat.eps);
+            this.canvasWidth = parseFloat(canvasWidth);
+            this.canvasHeight = parseFloat(canvasHeight);
 
             if (!dontset) {
                 this.containerObj.style.width = this.canvasWidth + 'px';
@@ -5565,8 +5569,8 @@ JXG.extend(
             if (!dontSetBoundingBox) {
                 this.setBoundingBox(box, this.keepaspectratio, 'keep');
             } else {
-                oX = (this.canvasWidth - oldWidth) / 2;
-                oY = (this.canvasHeight - oldHeight) / 2;
+                oX = (this.canvasWidth - oldWidth) * 0.5;
+                oY = (this.canvasHeight - oldHeight) * 0.5;
 
                 this.moveOrigin(
                     this.origin.scrCoords[1] + oX,
@@ -6121,7 +6125,10 @@ JXG.extend(
             h = this.canvasHeight;
             if (keepaspectratio) {
                 if (this.keepaspectratio) {
-                    ratio = ux / uy; // Keep this ratio if keepaspectratio was true
+                    ratio = ux / uy;        // Keep this ratio if keepaspectratio was true
+                    if (isNaN(ratio)) {
+                        ratio = 1.0;
+                    }
                 } else {
                     ratio = 1.0;
                 }
@@ -6186,7 +6193,6 @@ JXG.extend(
                     [this.canvasWidth, this.canvasHeight],
                     this
                 ).usrCoords;
-
             return [ul[1], ul[2], lr[1], lr[2]];
         },
 

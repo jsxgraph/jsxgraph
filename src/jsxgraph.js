@@ -42,7 +42,7 @@
 import JXG from "./jxg.js";
 import Env from "./utils/env.js";
 import Type from "./utils/type.js";
-import Mat from "./math/math.js";
+// import Mat from "./math/math.js";
 import Board from "./base/board.js";
 import FileReader from "./reader/file.js";
 import Options from "./options.js";
@@ -350,8 +350,10 @@ JXG.JSXGraph = {
             // Size of HTML div.
             // If zero, the size is set to a small value to avoid
             // division by zero.
-            w = Math.max(parseInt(dimensions.width, 10), Mat.eps);
-            h = Math.max(parseInt(dimensions.height, 10), Mat.eps);
+            // w = Math.max(parseInt(dimensions.width, 10), Mat.eps);
+            // h = Math.max(parseInt(dimensions.height, 10), Mat.eps);
+            w = parseInt(dimensions.width, 10);
+            h = parseInt(dimensions.height, 10);
 
             if (Type.exists(bbox) && attr.keepaspectratio) {
                 /*
