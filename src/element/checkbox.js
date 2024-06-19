@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2023
+    Copyright 2008-2024
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -54,9 +54,13 @@ var priv = {
 /**
  * @class This element is used to provide a constructor for special texts containing a
  * form checkbox element.
- * <p>
  * For this element, the attribute "display" has to have the value 'html' (which is the default).
- * <p>
+ *
+ * <p><b>Setting a CSS class:</b> The attribute <tt>cssClass</tt> affects the HTML div element that contains the checkbox element. To change the CSS properties of the HTML checkbox element a selector of the form
+ * <tt>.mycheck > checkbox { ... }</tt> has to be used. See the analog example for buttons:
+ * {@link Button}.
+ *
+ * <p><b>Access the checkbox element with JavaScript:</b>
  * The underlying HTML checkbox element can be accessed through the sub-object 'rendNodeCheck', e.g. to
  * add event listeners.
  *

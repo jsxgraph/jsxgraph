@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2023
+    Copyright 2008-2024
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -2388,6 +2388,10 @@ JXG.createRiemannsum = function (board, parents, attributes) {
             "JSXGraph: JXG.createRiemannsum: argument '2' n has to be number or function." +
                 "\nPossible parent types: [function,n:number|function,type,start:number|function,end:number|function]"
         );
+    }
+
+    if (typeof parents[2] === 'string') {
+        parents[2] = '\'' + parents[2] + '\'';
     }
 
     type = Type.createFunction(parents[2], board, "");

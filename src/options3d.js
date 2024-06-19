@@ -299,6 +299,19 @@ JXG.extend(Options, {
         highlightStrokeColor: "#555555"
     },
 
+    polygon3d: {
+        /**#@+
+         * @visprop
+         */
+
+        highlight: false,
+        tabindex: -1,
+        strokeWidth: 1,
+        fillColor: 'none'
+
+        /**#@-*/
+    },
+
     sphere3d: {
         /**#@+
          * @visprop

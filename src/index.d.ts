@@ -9,7 +9,7 @@
 // Definitions by: David Holmes https://github.com/geometryzen
 // Definitions: https://github.com/DefinitelyTyped/DefinitelyTyped
 //
-// Copyright 2015-2023 David Holmes, https://github.com/geometryzen
+// Copyright 2015-2024 David Holmes, https://github.com/geometryzen
 //
 
 /**
@@ -3754,6 +3754,11 @@ declare namespace JXG {
             attributes?: Point3DAttributes
         ): Point3D;
         create(
+            elementType: "polygon3d",
+            parents: unknown[],
+            attributes?: Polygon3DAttributes
+        ): Polygon3D;
+        create(
             elementType: "sphere3d",
             parents: unknown[],
             attributes?: Sphere3DAttributes
@@ -3852,6 +3857,7 @@ declare namespace JXG {
         | 'plot'
         | 'point'
         | 'point3d'
+        | 'polygon3d'
         | 'polarline'
         | 'polepoint'
         | 'polygon'

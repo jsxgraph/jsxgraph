@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2023
+    Copyright 2008-2024
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -36,9 +36,9 @@
 import JXG from "../jxg.js";
 
 var major = 1,
-    minor = 8,
-    patch = 1,
-    add = 'dev', //'dev' 'beta'
+    minor = 9,
+    patch = 2,
+    add = 'dev', // 'dev' 'beta'
     version = major + '.' + minor + '.' + patch + (add ? '-' + add : ''),
     constants;
 

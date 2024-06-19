@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2023
+    Copyright 2008-2024
         Matthias Ehmann,
         Carsten Miller,
         Andreas Walter,
@@ -867,12 +867,13 @@ JXG.extend(
          * If false, projects down to ordinary coordinates.
          */
         worldToFocal: function (pWorld, homog=true) {
-            var pView = Mat.matVecMult(this.boxToCam, Mat.matVecMult(this.shift, pWorld));
+            var k,
+                pView = Mat.matVecMult(this.boxToCam, Mat.matVecMult(this.shift, pWorld));
             pView[3] -= pView[0] * this.focalDist;
             if (homog) {
                 return pView;
             } else {
-                for (let k = 1; k < 4; k++) {
+                for (k = 1; k < 4; k++) {
                     pView[k] /= pView[0];
                 }
                 return pView.slice(1, 4);
@@ -976,7 +977,7 @@ JXG.extend(
                         mat[2][1] = mat[2][2] = Mat.eps * 0.001;
                     }
                     sol = Mat.Numerics.Gauss(mat, rhs);
-                } catch (err) {
+                } catch (e) {
                     sol = [0, NaN, NaN, NaN];
                 }
             } else {
@@ -1138,21 +1139,21 @@ JXG.extend(
          * @returns Affine ratio of the intersection of the line with the cube.
          */
         intersectionLineCube: function (p, d, r) {
-            var rnew, i, r0, r1;
+            var r_n, i, r0, r1;
 
-            rnew = r;
+            r_n = r;
             for (i = 0; i < 3; i++) {
                 if (d[i] !== 0) {
                     r0 = (this.bbox3D[i][0] - p[i]) / d[i];
                     r1 = (this.bbox3D[i][1] - p[i]) / d[i];
                     if (r < 0) {
-                        rnew = Math.max(rnew, Math.min(r0, r1));
+                        r_n = Math.max(r_n, Math.min(r0, r1));
                     } else {
-                        rnew = Math.min(rnew, Math.max(r0, r1));
+                        r_n = Math.min(r_n, Math.max(r0, r1));
                     }
                 }
             }
-            return rnew;
+            return r_n;
         },
 
         /**
@@ -1903,34 +1904,54 @@ JXG.createView3D = function (board, parents, attributes) {
 
     // Add events for the keyboard navigation
     Env.addEvent(board.containerObj, 'keydown', function (event) {
-        var neededKey;
+        var neededKey,
+            catchEvt = false;
 
-        if (Type.evaluate(view.visProp.el.keyboard.enabled) && (event.key === 'ArrowUp' || event.key === 'ArrowDown')) {
+        if (Type.evaluate(view.visProp.el.keyboard.enabled) &&
+            (event.key === 'ArrowUp' || event.key === 'ArrowDown')
+        ) {
             neededKey = Type.evaluate(view.visProp.el.keyboard.key);
-            if (neededKey === 'none' || (neededKey.indexOf('shift') > -1 && event.shiftKey) || (neededKey.indexOf('ctrl') > -1 && event.ctrlKey)) {
+            if (neededKey === 'none' ||
+                (neededKey.indexOf('shift') > -1 && event.shiftKey) ||
+                (neededKey.indexOf('ctrl') > -1 && event.ctrlKey)) {
                 view._elEventHandler(event);
+                catchEvt = true;
             }
 
         }
-        if (Type.evaluate(view.visProp.el.keyboard.enabled) && (event.key === 'ArrowLeft' || event.key === 'ArrowRight')) {
+        if (Type.evaluate(view.visProp.el.keyboard.enabled) &&
+            (event.key === 'ArrowLeft' || event.key === 'ArrowRight')
+        ) {
             neededKey = Type.evaluate(view.visProp.az.keyboard.key);
-            if (neededKey === 'none' || (neededKey.indexOf('shift') > -1 && event.shiftKey) || (neededKey.indexOf('ctrl') > -1 && event.ctrlKey)) {
+            if (neededKey === 'none' ||
+                (neededKey.indexOf('shift') > -1 && event.shiftKey) ||
+                (neededKey.indexOf('ctrl') > -1 && event.ctrlKey)
+            ) {
                 view._azEventHandler(event);
+                catchEvt = true;
             }
         }
         if (Type.evaluate(view.visProp.bank.keyboard.enabled) && (event.key === ',' || event.key === '<' || event.key === '.' || event.key === '>')) {
             neededKey = Type.evaluate(view.visProp.bank.keyboard.key);
             if (neededKey === 'none' || (neededKey.indexOf('shift') > -1 && event.shiftKey) || (neededKey.indexOf('ctrl') > -1 && event.ctrlKey)) {
                 view._bankEventHandler(event);
+                catchEvt = true;
             }
         }
         if (event.key === 'PageUp') {
             view.nextView();
+            catchEvt = true;
         } else if (event.key === 'PageDown') {
             view.previousView();
+            catchEvt = true;
         }
 
-        event.preventDefault();
+        if (catchEvt) {
+            // We stop event handling only in the case if the keypress could be
+            // used for the 3D view. If this is not done, input fields et al
+            // can not be used any more.
+            event.preventDefault();
+        }
     }, view);
 
     // Add events for the pointer navigation

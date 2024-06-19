@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2023
+    Copyright 2008-2024
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -1315,6 +1315,47 @@ JXG.extend(
         },
 
         /**
+         * Convert a n object to a new object containing only
+         * lower case properties.
+         *
+         * @param {Object} obj
+         * @returns Object
+         * @example
+         * var attr = JXG.keysToLowerCase({radiusPoint: {visible: false}});
+         *
+         * // return {radiuspoint: {visible: false}}
+         */
+        keysToLowerCase: function (obj) {
+            var key, val,
+                keys = Object.keys(obj),
+                n = keys.length,
+                newObj = {};
+
+            if (typeof obj !== 'object') {
+                return obj;
+            }
+
+            while (n--) {
+                key = keys[n];
+                if (obj.hasOwnProperty(key)) {
+                    // We recurse into an object only if it is
+                    // neither a DOM node nor an JSXGraph object
+                    val = obj[key];
+                    if (typeof val === 'object' &&
+                        val !== null &&
+                        !this.isArray(val) &&
+                        !this.exists(val.nodeType) &&
+                        !this.exists(val.board)) {
+                        newObj[key.toLowerCase()] = this.keysToLowerCase(val);
+                    } else {
+                        newObj[key.toLowerCase()] = val;
+                    }
+                }
+            }
+            return newObj;
+        },
+
+        /**
          * Generates an attributes object that is filled with default values from the Options object
          * and overwritten by the user specified attributes.
          * @param {Object} attributes user specified attributes
@@ -1371,7 +1412,7 @@ JXG.extend(
             // Additionally, we step into a subelement of attribute like line.point1 in case it is supplied as in
             // copyAttribute(attributes, board.options, 'line', 'point1')
             // In this case we would merge attributes.point1 into the global line.point1 attributes.
-            o = (typeof attributes === 'object') ? attributes : {};
+            o = (typeof attributes === 'object') ? this.keysToLowerCase(attributes) : {};
             isAvail = true;
             for (i = 3; i < len; i++) {
                 if (this.exists(o[arguments[i]])) {
@@ -1402,9 +1443,9 @@ JXG.extend(
                 }
             }
             if (isAvail && this.exists(o.label)) {
-                a.label = JXG.deepCopy(o.label, a.label);
+                a.label = JXG.deepCopy(o.label, a.label, true);
             }
-            a.label = JXG.deepCopy(options.label, a.label);
+            a.label = JXG.deepCopy(options.label, a.label, true);
 
             return a;
         },
@@ -1699,10 +1740,13 @@ JXG.extend(
                 if (arr[0] < 0) {
                     str += '-';
                 }
-                if (arr[1] !== 0) {
-                    str += arr[1] + ' ';
-                }
-                if (arr[2] !== 0) {
+                if (arr[2] === 0) {
+                    str += arr[1];
+                } else if (!(arr[2] === 1 && arr[3] === 1)) {
+                    // arr[2] !== 0
+                    if (arr[1] !== 0) {
+                        str += ' ';
+                    }
                     if (useTeX === true) {
                         str += '\\frac{' + arr[2] + '}{' + arr[3] + '}';
                     } else {
@@ -1775,6 +1819,8 @@ JXG.extend(
         /**
          * Convert a string containing a MAXIMA /STACK expression into a JSXGraph / JessieCode string
          * or an array of JSXGraph / JessieCode strings.
+         * <p>
+         * This function is meanwhile superseded by stack_jxg.stack2jsxgraph.
          *
          * @example
          * console.log( JXG.stack2jsxgraph("%e**x") );

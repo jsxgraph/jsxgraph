@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2023
+    Copyright 2008-2024
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -94,7 +94,7 @@ JXG.Options = {
          * It is an array consisting of four values:
          * [x<sub>1</sub>, y<sub>1</sub>, x<sub>2</sub>, y<sub>2</sub>]
          *
-         * The canvas will be spanned from the upper left corner (<sub>1</sub>, y<sub>1</sub>)
+         * The canvas will be spanned from the upper left corner (x<sub>1</sub>, y<sub>1</sub>)
          * to the lower right corner (x<sub>2</sub>, y<sub>2</sub>).
          *
          * @name JXG.Board#boundingBox
@@ -1435,7 +1435,8 @@ JXG.Options = {
          *   needShift: true,  // mouse wheel zooming needs pressing of the shift key
          *   min: 0.001,       // minimal values of {@link JXG.Board#zoomX} and {@link JXG.Board#zoomY}, limits zoomOut
          *   max: 1000.0,      // maximal values of {@link JXG.Board#zoomX} and {@link JXG.Board#zoomY}, limits zoomIn
-         *
+         *   center: 'auto',   // 'auto': the center of zoom is at the position of the mouse or at the midpoint of two fingers
+         *                     // 'board': the center of zoom is at the board's center
          *   pinch: true,      // pinch-to-zoom gesture for proportional zoom
          *   pinchHorizontal: true, // Horizontal pinch-to-zoom zooms horizontal axis. Only available if keepaspectratio:false
          *   pinchVertical: true,   // Vertical pinch-to-zoom zooms vertical axis only. Only available if keepaspectratio:false
@@ -1460,6 +1461,7 @@ JXG.Options = {
             factorY: 1.25,
             wheel: true,
             needShift: true,
+            center: 'auto',
             min: 0.0001,
             max: 10000.0,
             pinch: true,
@@ -8396,7 +8398,7 @@ JXG.Options = {
          * @name Tapemeasure#point1
          */
         point1: {
-            visible: 'inherit',
+            visible: true,
             strokeColor: '#000000',
             fillColor: '#ffffff',
             fillOpacity: 0.0,
@@ -8417,7 +8419,7 @@ JXG.Options = {
          * @name Tapemeasure#point2
          */
         point2: {
-            visible: 'inherit',
+            visible: true,
             strokeColor: '#000000',
             fillColor: '#ffffff',
             fillOpacity: 0.0,
@@ -9476,9 +9478,9 @@ JXG.Options = {
             validatePositiveInteger = function (v) {
                 return validateInteger(v) && v > 0;
             },
-            validateScreenCoords = function (v) {
-                return v.length >= 2 && validateInteger(v[0]) && validateInteger(v[1]);
-            },
+            // validateScreenCoords = function (v) {
+            //     return v.length >= 2 && validateInteger(v[0]) && validateInteger(v[1]);
+            // },
             validateRenderer = function (v) {
                 return (v === 'vml' || v === 'svg' || v === 'canvas' || v === 'no');
             },

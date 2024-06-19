@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2023
+    Copyright 2008-2024
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -1030,6 +1030,44 @@ JXG.Math = {
     hstep: function(x) {
         return (x > 0.0) ? 1 :
             ((x < 0.0) ? 0.0 : 0.5);
+    },
+
+    /**
+     * Gamma function for real parameters by Lanczos approximation.
+     * Implementation straight from {@link https://en.wikipedia.org/wiki/Lanczos_approximation}.
+     *
+     * @param {Number} z
+     * @returns Number
+     */
+    gamma: function(z) {
+        var x, y, t, i, le,
+            g = 7,
+            // n = 9,
+            p = [
+                1.0,
+                676.5203681218851,
+                -1259.1392167224028,
+                771.32342877765313,
+                -176.61502916214059,
+                12.507343278686905,
+                -0.13857109526572012,
+                9.9843695780195716e-6,
+                1.5056327351493116e-7
+            ];
+
+        if (z < 0.5) {
+            y = Math.PI / (Math.sin(Math.PI * z) * this.gamma(1 - z));  // Reflection formula
+        } else {
+            z -= 1;
+            x = p[0];
+            le = p.length;
+            for (i = 1; i < le; i++) {
+                x += p[i] / (z + i);
+            }
+            t = z + g + 0.5;
+            y = Math.sqrt(2 * Math.PI) * Math.pow(t, z + 0.5) * Math.exp(-t) * x;
+        }
+        return y;
     },
 
     /* ********************  Comparisons and logical operators ************** */

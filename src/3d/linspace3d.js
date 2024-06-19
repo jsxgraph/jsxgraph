@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2023
+    Copyright 2008-2024
         Matthias Ehmann,
         Aaron Fenyes,
         Carsten Miller,
@@ -133,13 +133,12 @@ JXG.extend(
                 }
             }
 
+            // Intersect the ray - if necessary - with the cube,
+            // i.e. clamp the line.
             r0 = Type.evaluate(r);
-            // TODO: test also in the finite case
-            if (Math.abs(r0) === Infinity) {
-                r = this.view.intersectionLineCube(p, d, r0);
-            }
+            r = this.view.intersectionLineCube(p, d, r0);
 
-            return [p[0] + d[0] * r0, p[1] + d[1] * r0, p[2] + d[2] * r0];
+            return [p[0] + d[0] * r, p[1] + d[1] * r, p[2] + d[2] * r];
         },
 
         update: function () {
@@ -152,22 +151,21 @@ JXG.extend(
         },
 
         projectCoords: function (p) {
-            const p0_coords = this.getPointCoords(0),
-                  p1_coords = this.getPointCoords(1),
-                  dir = [
+            var p0_coords = this.getPointCoords(0),
+                p1_coords = this.getPointCoords(1),
+                dir = [
                     p1_coords[0] - p0_coords[0],
                     p1_coords[1] - p0_coords[1],
                     p1_coords[2] - p0_coords[2]
-                  ],
-                  diff = [
-                      p[0] - p0_coords[0],
-                      p[1] - p0_coords[1],
-                      p[2] - p0_coords[2]
-                  ],
-                  t = Mat.innerProduct(diff, dir) / Mat.innerProduct(dir, dir),
-                  t_clamped = Math.min(Math.max(t, this.range[0]), this.range[1]);
-
-            var c3d;
+                ],
+                diff = [
+                    p[0] - p0_coords[0],
+                    p[1] - p0_coords[1],
+                    p[2] - p0_coords[2]
+                ],
+                t = Mat.innerProduct(diff, dir) / Mat.innerProduct(dir, dir),
+                t_clamped = Math.min(Math.max(t, this.range[0]), this.range[1]),
+                c3d;
 
             c3d = this.getPointCoords(t_clamped).slice();
             c3d.unshift(1);
@@ -250,7 +248,8 @@ JXG.createLine3D = function (board, parents, attributes) {
     var view = parents[0],
         attr, points,
         point, direction, range,
-        point1, point2, el;
+        point1, point2, endpoints,
+        el;
 
     attr = Type.copyAttributes(attributes, board.options, 'line3d');
 
@@ -267,10 +266,64 @@ JXG.createLine3D = function (board, parents, attributes) {
         direction = function () {
             return [point2.X() - point1.X(), point2.Y() - point1.Y(), point2.Z() - point1.Z()];
         };
-        range = [0, 1];
+        range = [0, 1]; // Segment by default
         el = new JXG.Line3D(view, point1, direction, range, attr);
+
+        // Create two shadow points that are the end points of the visible line.
+        // This is of relevance if the line has straightFirst or straightLast set to true, then
+        // endpoints differ from point1, point2.
+        // In such a case, the endpoints are the intersection of the line with the cube.
+        endpoints = Type.providePoints3D(
+            view,
+            [
+                [0, 0, 0],
+                [0, 0, 0]
+            ],
+            {visible: false},
+            'line3d',
+            ['point1', 'point2']
+        );
+
+        endpoints[0].F = function () {
+            var r = 0;
+            if (Type.evaluate(el.visProp.straightfirst)) {
+                r = -Infinity;
+            }
+            return el.getPointCoords(r);
+        };
+        endpoints[1].F = function () {
+            var r = 1;
+            if (Type.evaluate(el.visProp.straightlast)) {
+                r = Infinity;
+            }
+            return el.getPointCoords(r);
+        };
+        endpoints[0].prepareUpdate().update();
+        endpoints[1].prepareUpdate().update();
+
+        // The 2D line is always a segment.
+        attr = el.setAttr2D(attr);
+        attr.straightfirst = false;
+        attr.straightlast = false;
+        el.element2D = view.create('segment', [endpoints[0].element2D, endpoints[1].element2D], attr);
+
+        /**
+         * Shadow points that determine the visible line.
+         * This is of relevance if the line is defined by two points and has straightFirst or straightLast set to true.
+         * In such a case, the shadow points are the intersection of the line with the cube.
+         *
+         * @name JXG.Point3D.endpoints
+         * @type Array
+         * @private
+         */
+        el.endpoints = endpoints;
+        el.addChild(endpoints[0]);
+        el.addChild(endpoints[1]);
+        el.setParents(endpoints);
+
     } else {
         // Line defined by point, direction and range
+
         point = Type.providePoints3D(view, [parents[1]], attributes, 'line3d', ['point'])[0];
 
         // Directions are handled as arrays of length 4,
@@ -320,11 +373,16 @@ JXG.createLine3D = function (board, parents, attributes) {
         };
         points[1].prepareUpdate().update();
         point2 = points[1];
+
+        attr = el.setAttr2D(attr);
+        attr.straightfirst = false;
+        attr.straightlast = false;
+        el.element2D = view.create('segment', [point1.element2D, point2.element2D], attr);
+
+        el.endpoints = points;
     }
     // TODO Throw error
 
-    attr = el.setAttr2D(attr);
-    el.element2D = view.create('segment', [point1.element2D, point2.element2D], attr);
     el.addChild(el.element2D);
     el.inherits.push(el.element2D);
     el.element2D.setParents(el);
@@ -592,7 +650,7 @@ JXG.extend(
                 }
 
                 // Concatenate the intersection points to a polygon.
-                // If all wents well, each intersection should appear
+                // If all went well, each intersection should appear
                 // twice in the list.
                 first = 0;
                 pos = first;
@@ -847,7 +905,7 @@ JXG.createIntersectionLine3D = function (board, parents, attributes) {
     try {
         el1.addChild(ixnLine);
         el2.addChild(ixnLine);
-    } catch (e) {
+    } catch (_e) {
         throw new Error(
             "JSXGraph: Can't create 'intersection' with parent types '" +
                 typeof parents[0] +

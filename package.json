@@ -2,7 +2,7 @@
   "name": "jsxgraph",
   "description": "Interactive geometry, plotting, visualization",
   "homepage": "https://jsxgraph.org",
-  "version": "1.8.0",
+  "version": "1.9.1",
   "exports": {
     "types": "./src/index.d.ts",
     "default": "./src/index.js"
@@ -58,17 +58,21 @@
     "trailingComma": "none"
   },
   "devDependencies": {
+    "@eslint/eslintrc": "^3.1.0",
+    "@eslint/js": "^9.4.0",
     "eslint": ">=8.14.0",
     "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-prettier": "^4.2.1",
+    "globals": "^15.4.0",
     "http-server": "^14.1.1",
     "jasmine-core": "^3.10.1",
     "jsdoc2": "^2.4.0",
     "jshint": "^2.13.1",
     "jslint": "^0.12.1",
-    "karma": "^6.4.1",
-    "karma-chrome-launcher": "^3.1.0",
-    "karma-jasmine": "^4.0.1",
+    "karma": "^6.4.3",
+    "karma-chrome-launcher": "^3.2.0",
+    "karma-jasmine": "^5.1.0",
+    "npmignore": "^0.3.1",
     "path-browserify": "^1.0.1",
     "prettier": "^2.7.1",
     "terser": "^5.10.0",

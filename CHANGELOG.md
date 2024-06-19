@@ -1,3 +1,60 @@
+1.9.0
+===
+
+New features
+-----------
+
+- 3D: now, beside parallel projection also central projection is supported 
+- new element `sphere3d`
+- new element `intersectionline3d`
+- new element `circle3d`
+- new element `glider3d`: lines, curves
+- new element `intersectioncircle3d`
+- new element `polygon3d`
+- new version of `otherintersection`
+- new 3D control: virtual trackball
+- new label positioning for lines, circles and curves
+- random numbers for uniform, normal, exponential, beta, gamma, chi-square, F, T, binomial, geometric, hypergeometric, Poisson distribution
+- new function `JXG.Math.Statistics.histogram`
+- new math function `JXG.Math.gamma`
+
+Improvements
+------------
+
+- API docs
+- in default mode, `click` and dblclick` events follow JavaScript standard
+- new default for numbers as texts: 'formatNumber:false'
+- grid: new default is `drawZero:true`
+- grid: `size` has unit pixel now
+- grid themes
+- use file name ending `.js` in all import statements
+- speed improvement: reduce `concat` by `Type.concat`
+- new 3D examples in `examples/`
+- mark ancient browser detection methods as deprecated
+- add more exports to `index.js`
+- board zoom center can be either the mouse pointer position (or midpoint of two finger touches) or the center of the board
+
+Bug fixes
+---------
+
+- keyboard control 3D view
+- lower / upper case  problem in `providePoints`
+- setting of Riemann sum type 
+- grid: handling of attributes
+- grid: remove unused unit `abs`
+- 3D elevation speed
+- grid: remove redundant lines
+- sector arc
+- 3D axes were not fixed
+- slider label
+- glider handling
+- slider handling in JessieCode
+- remove use of `String.at()` (moodle problem)
+- remove const `JXG.touchProperty`
+- toggling of arrow heads
+- tapemeasure
+- toFraction
+
 1.8.0
 ===
 

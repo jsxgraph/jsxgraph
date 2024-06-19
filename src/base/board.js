@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2023
+    Copyright 2008-2024
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -631,15 +631,6 @@ JXG.Board = function (container, renderer, id,
     this.mathLib = Math;        // Math or JXG.Math.IntervalArithmetic
     this.mathLibJXG = JXG.Math; // JXG.Math or JXG.Math.IntervalArithmetic
 
-    // if (this.attr.registerevents) {
-    //     this.addEventHandlers();
-    // }
-    // if (this.attr.registerresizeevent) {
-    //     this.addResizeEventHandlers();
-    // }
-    // if (this.attr.registerfullscreenevent) {
-    //     this.addFullscreenEventHandlers();
-    // }
     if (this.attr.registerevents === true) {
         this.attr.registerevents = {
             fullscreen: true,
@@ -939,7 +930,6 @@ JXG.extend(
             // Check if getBoundingClientRect exists. If so, use this as this covers *everything*
             // even CSS3D transformations etc.
             // Supported by all browsers but IE 6, 7.
-
             if (container.getBoundingClientRect) {
                 crect = container.getBoundingClientRect();
 
@@ -1844,7 +1834,7 @@ JXG.extend(
          * @return {Boolean}   returns if the origin is moved.
          */
         touchStartMoveOriginOneFinger: function (evt) {
-            var touches = evt[JXG.touchProperty],
+            var touches = evt['touches'],
                 conditions,
                 pos;
 
@@ -1918,8 +1908,6 @@ JXG.extend(
                     return false;
                 };
             }
-
-            // this.addKeyboardEventHandlers();
         },
 
         /**
@@ -1944,6 +1932,9 @@ JXG.extend(
                 // sometimes a header bar is displayed / hidden, which triggers a
                 // resize event.
                 Env.addEvent(window, 'scroll', this.scrollListener, this);
+
+                // Env.addEvent(window, 'beforeprint', this.beforeprintListener, this);
+                // window.matchMedia("print").addEventListener(this.beforeprintListener, this);
             }
         },
 
@@ -2274,6 +2265,7 @@ JXG.extend(
                 zx = this.attr.zoom.factorx,
                 zy = this.attr.zoom.factory,
                 factor, dist, theta, bound,
+                zoomCenter,
                 doZoom = false,
                 dx, dy, cx, cy;
 
@@ -2346,6 +2338,7 @@ JXG.extend(
 
             } else if (this.attr.zoom.enabled && Math.abs(factor - 1.0) < 0.5) {
                 doZoom = false;
+                zoomCenter = this.attr.zoom.center;
                 // Pinch detected
                 if (this.attr.zoom.pinchhorizontal || this.attr.zoom.pinchvertical) {
                     dx = Math.abs(evt.touches[0].clientX - evt.touches[1].clientX);
@@ -2380,7 +2373,11 @@ JXG.extend(
                 }
 
                 if (doZoom) {
-                    this.zoomIn(cx, cy);
+                    if (zoomCenter === 'board') {
+                        this.zoomIn();
+                    } else { // including zoomCenter === 'auto'
+                        this.zoomIn(cx, cy);
+                    }
 
                     // Restore zoomFactors
                     this.attr.zoom.factorx = zx;
@@ -2711,7 +2708,7 @@ JXG.extend(
                     }
                 }
                 if (!found) {
-                    // An new element hae been touched.
+                    // A new element has been touched.
                     k = 0;
                     j =
                         this.touches.push({
@@ -3182,7 +3179,7 @@ JXG.extend(
                 obj,
                 found,
                 targets,
-                evtTouches = evt[JXG.touchProperty],
+                evtTouches = evt['touches'],
                 target,
                 touchTargets;
 
@@ -3410,7 +3407,7 @@ JXG.extend(
                 pos1,
                 pos2,
                 touchTargets,
-                evtTouches = evt[JXG.touchProperty];
+                evtTouches = evt['touches'];
 
             if (!this.checkFrameRate(evt)) {
                 return false;
@@ -3551,7 +3548,7 @@ JXG.extend(
                 tmpTouches = [],
                 found,
                 foundNumber,
-                evtTouches = evt && evt[JXG.touchProperty],
+                evtTouches = evt && evt['touches'],
                 touchTargets,
                 updateNeeded = false;
 
@@ -3879,6 +3876,8 @@ JXG.extend(
          * @returns {Boolean}
          */
         mouseWheelListener: function (evt) {
+            var wd, zoomCenter, pos;
+
             if (!this.attr.zoom.enabled ||
                 !this.attr.zoom.wheel ||
                 !this._isRequiredKeyPressed(evt, 'zoom')) {
@@ -3887,13 +3886,20 @@ JXG.extend(
             }
 
             evt = evt || window.event;
-            var wd = evt.detail ? -evt.detail : evt.wheelDelta / 40,
-                pos = new Coords(Const.COORDS_BY_SCREEN, this.getMousePosition(evt), this);
+            wd = evt.detail ? -evt.detail : evt.wheelDelta / 40;
+            zoomCenter = this.attr.zoom.center;
 
+            if (zoomCenter === 'board') {
+                pos = [];
+            } else { // including zoomCenter === 'auto'
+                pos = new Coords(Const.COORDS_BY_SCREEN, this.getMousePosition(evt), this).usrCoords;
+            }
+
+            // pos == [] does not throw an error
             if (wd > 0) {
-                this.zoomIn(pos.usrCoords[1], pos.usrCoords[2]);
+                this.zoomIn(pos[1], pos[2]);
             } else {
-                this.zoomOut(pos.usrCoords[1], pos.usrCoords[2]);
+                this.zoomOut(pos[1], pos[2]);
             }
 
             this.triggerEventHandlers(['mousewheel'], [evt]);
@@ -4162,13 +4168,19 @@ JXG.extend(
          */
         updateContainerDims: function () {
             var w, h,
-                bb, css,
+                // bb,
+                css,
                 width_adjustment, height_adjustment;
-
             // Get size of the board's container div
-            bb = this.containerObj.getBoundingClientRect();
-            w = bb.width;
-            h = bb.height;
+            //
+            // offsetWidth/Height ignores CSS transforms,
+            // getBoundingClientRect includes CSS transforms
+            //
+            // bb = this.containerObj.getBoundingClientRect();
+            // w = bb.width;
+            // h = bb.height;
+            w = this.containerObj.offsetWidth;
+            h = this.containerObj.offsetHeight;
 
             // Subtract the border size
             if (window && window.getComputedStyle) {
@@ -4199,7 +4211,6 @@ JXG.extend(
             if (Type.exists(this._prevDim) && this._prevDim.w === w && this._prevDim.h === h) {
                 return;
             }
-
             // Set the size of the SVG or canvas element
             this.resizeContainer(w, h, true);
             this._prevDim = {
@@ -4348,6 +4359,12 @@ JXG.extend(
             if (Type.exists(this.intersectionObserver)) {
                 this.intersectionObserver.unobserve(this.containerObj);
             }
+        },
+
+        beforeprintListener: function(evt) {
+            // console.log("beforeprint")
+            this.updateContainerDims();
+            // this.resizeListener();
         },
 
         /**********************************************************
@@ -5168,14 +5185,11 @@ JXG.extend(
          * @returns {JXG.Board} Reference to the board.
          */
         zoomElements: function (elements) {
-            var i,
-                e,
+            var i, e,
                 box,
                 newBBox = [Infinity, -Infinity, -Infinity, Infinity],
-                cx,
-                cy,
-                dx,
-                dy,
+                cx, cy,
+                dx, dy,
                 d;
 
             if (!Type.isArray(elements) || elements.length === 0) {
@@ -5475,8 +5489,10 @@ JXG.extend(
                 box = this.getBoundingBox();    // This is the actual bounding box.
             }
 
-            this.canvasWidth = Math.max(parseFloat(canvasWidth), Mat.eps);
-            this.canvasHeight = Math.max(parseFloat(canvasHeight), Mat.eps);
+            // this.canvasWidth = Math.max(parseFloat(canvasWidth), Mat.eps);
+            // this.canvasHeight = Math.max(parseFloat(canvasHeight), Mat.eps);
+            this.canvasWidth = parseFloat(canvasWidth);
+            this.canvasHeight = parseFloat(canvasHeight);
 
             if (!dontset) {
                 this.containerObj.style.width = this.canvasWidth + 'px';
@@ -5487,8 +5503,8 @@ JXG.extend(
             if (!dontSetBoundingBox) {
                 this.setBoundingBox(box, this.keepaspectratio, 'keep');
             } else {
-                oX = (this.canvasWidth - oldWidth) / 2;
-                oY = (this.canvasHeight - oldHeight) / 2;
+                oX = (this.canvasWidth - oldWidth) * 0.5;
+                oY = (this.canvasHeight - oldHeight) * 0.5;
 
                 this.moveOrigin(
                     this.origin.scrCoords[1] + oX,
@@ -6043,7 +6059,10 @@ JXG.extend(
             h = this.canvasHeight;
             if (keepaspectratio) {
                 if (this.keepaspectratio) {
-                    ratio = ux / uy; // Keep this ratio if keepaspectratio was true
+                    ratio = ux / uy;        // Keep this ratio if keepaspectratio was true
+                    if (isNaN(ratio)) {
+                        ratio = 1.0;
+                    }
                 } else {
                     ratio = 1.0;
                 }
@@ -6108,7 +6127,6 @@ JXG.extend(
                     [this.canvasWidth, this.canvasHeight],
                     this
                 ).usrCoords;
-
             return [ul[1], ul[2], lr[1], lr[2]];
         },
 
