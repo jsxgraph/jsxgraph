@@ -104,7 +104,7 @@ JXG.View3D = function (board, parents, attributes) {
 
     /**
      * @type {Array}
-     * View box orientation matrix
+     * The view box orientation matrix
      */
     this.matrix3DRot = [
         [1, 0, 0, 0],
@@ -125,17 +125,28 @@ JXG.View3D = function (board, parents, attributes) {
     ];
 
     /**
-     * The 4x4 matrix that maps world-space vectors to zero-focus view-space
-     * vectors---that is, view space vectors for a camera sitting on the screen.
-     * The camera is actually set back from the screen by the focal distance. To
-     * get actual view space vectors, with the focal distance accounted for, use
-     * the `worldToView` method.
-     *
-     * This transformation is exposed to help 3D elements manage their 2D
-     * representations in central projection mode.
+     * The 4×4 matrix that maps box coordinates to camera coordinates. These
+     * coordinate systems fit into the View3D coordinate atlas as follows.
+     * <ul>
+     * <li><b>World coordinates.</b> The coordinates used to specify object
+     * positions in a JSXGraph scene.</li>
+     * <li><b>Box coordinates.</b> The world coordinates translated to put the
+     * center of the view box at the origin.
+     * <li><b>Camera coordinates.</b> The coordinate system where the
+     * <code>x</code>, <code>y</code> plane is the screen, the origin is the
+     * center of the screen, and the <code>z</code> axis points out of the
+     * screen, toward the viewer.
+     * <li><b>Focal coordinates.</b> The camera coordinates translated to put
+     * the origin at the focal point, which is set back from the screen by the
+     * focal distance.</li>
+     * </ul>
+     * The <code>boxToCam</code> transformation is exposed to help 3D elements
+     * manage their 2D representations in central projection mode. To map world
+     * coordinates to focal coordinates, use the
+     * {@link JXG.View3D#worldToFocal} method.
      * @type {Array}
      */
-    this.cameraTransform = [];
+    this.boxToCam = [];
 
     /**
      * @type array
@@ -685,8 +696,8 @@ JXG.extend(
             }
 
             // compute camera transformation
-            this.cameraTransform = this.matrix3DRot.map((row) => row.slice());
-            this.cameraTransform[3][0] = -r;
+            this.boxToCam = this.matrix3DRot.map((row) => row.slice());
+            this.boxToCam[3][0] = -r;
 
             // compute focal distance and clip space transformation
             this.focalDist = 1 / Math.tan(0.5 * Type.evaluate(this.visProp.fov));
@@ -697,7 +708,7 @@ JXG.extend(
                 [2 * zf * zn / (zn - zf), 0, 0, (zf + zn) / (zn - zf)]
             ];
 
-            return Mat.matMatMult(A, this.cameraTransform);
+            return Mat.matMatMult(A, this.boxToCam);
         },
 
         // Update 3D-to-2D transformation matrix with the actual azimuth and elevation angles.
@@ -847,14 +858,16 @@ JXG.extend(
         },
 
         /**
-         * Map world coordinates to view coordinates.
+         * Map world coordinates to focal coordinates. These coordinate systems
+         * are explained in the {@link JXG.View3D#boxToCam} matrix
+         * documentation.
          *
          * @param {Array} pWorld A world space point, in homogeneous coordinates.
          * @param {Boolean} [homog=true] Whether to return homogeneous coordinates.
          * If false, projects down to ordinary coordinates.
          */
-        worldToView: function (pWorld, homog=true) {
-            var pView = Mat.matVecMult(this.cameraTransform, Mat.matVecMult(this.shift, pWorld));
+        worldToFocal: function (pWorld, homog=true) {
+            var pView = Mat.matVecMult(this.boxToCam, Mat.matVecMult(this.shift, pWorld));
             pView[3] -= pView[0] * this.focalDist;
             if (homog) {
                 return pView;
