@@ -889,6 +889,8 @@ JXG.extend(
             node2 = el.rendNodeTriangleStart;
             if (ev_fa) {
                 str = this.toStr(this.container.id, '_', el.id, 'TriangleStart', a.typeFirst);
+
+                // If we try to set the same arrow head as is already set, we can bail out now
                 if (!Type.exists(node2) || node2.id !== str) {
                     node2 = this.container.ownerDocument.getElementById(str);
                     // Check if the marker already exists.
@@ -900,14 +902,19 @@ JXG.extend(
                     el.rendNodeTriangleStart = node2;
                     el.rendNode.setAttributeNS(null, "marker-start", this.toURL(str));
                 }
-            } else if (Type.exists(node2)) {
-                this.remove(node2);
-                el.rendNodeTriangleStart = null;
+            } else {
+                if (Type.exists(node2)) {
+                    this.remove(node2);
+                    el.rendNodeTriangleStart = null;
+                }
+                el.rendNode.setAttributeNS(null, "marker-start", null);
             }
 
             node2 = el.rendNodeTriangleEnd;
             if (ev_la) {
                 str = this.toStr(this.container.id, '_', el.id, 'TriangleEnd', a.typeLast);
+
+                // If we try to set the same arrow head as is already set, we can bail out now
                 if (!Type.exists(node2) || node2.id !== str) {
                     node2 = this.container.ownerDocument.getElementById(str);
                     // Check if the marker already exists.
@@ -919,9 +926,12 @@ JXG.extend(
                     el.rendNodeTriangleEnd = node2;
                     el.rendNode.setAttributeNS(null, "marker-end", this.toURL(str));
                 }
-            } else if (Type.exists(node2)) {
-                this.remove(node2);
-                el.rendNodeTriangleEnd = null;
+            } else {
+                if (Type.exists(node2)) {
+                    this.remove(node2);
+                    el.rendNodeTriangleEnd = null;
+                }
+                el.rendNode.setAttributeNS(null, "marker-end", null);
             }
         },
 
