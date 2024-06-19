@@ -383,7 +383,7 @@ JXG.extend(
 
         // return the rotation matrix specified by the current Tait-Bryan angles
         getRotationFromAngles: function () {
-            var r, a, e, b, f,
+            var a, e, b, f,
                 cosBank, sinBank,
                 mat = [
                     [1, 0, 0, 0],
@@ -637,7 +637,7 @@ JXG.extend(
                     } else {
                         return 0;
                     }
-                }
+                };
                 el_smid = 0.5*(el_smin + el_smax);
                 el_equiv = Mat.wrap(
                     this.angles.el,
@@ -683,7 +683,7 @@ JXG.extend(
             // bbox3D is always at the world origin, i.e. T_obj is the unit matrix.
             // All vectors contain affine coordinates and have length 3
             // The matrices are of size 4x4.
-            var r, A
+            var r, A;
 
             // set distance from view box center to camera
             r = Type.evaluate(this.visProp.r);
@@ -713,9 +713,16 @@ JXG.extend(
 
         // Update 3D-to-2D transformation matrix with the actual azimuth and elevation angles.
         update: function () {
+            const r = this.r,
+                  stretch = [
+                      [1,  0,  0, 0],
+                      [0, -r,  0, 0],
+                      [0,  0, -r, 0],
+                      [0,  0,  0, 1]
+                  ];
+
             var mat2D, objectToClip, size,
-                dx, dy,
-                Pref = null;
+                dx, dy;
 
             if (
                 !Type.exists(this.el_slide) ||
@@ -786,14 +793,6 @@ JXG.extend(
 
                 case 'parallel': // Parallel projection
                 default:
-                    const r = this.r,
-                          stretch = [
-                              [1,  0,  0, 0],
-                              [0, -r,  0, 0],
-                              [0,  0, -r, 0],
-                              [0,  0,  0, 1]
-                          ];
-
                     // Add a final transformation to scale and shift the projection
                     // on the board, usually called viewport.
                     dx = this.bbox3D[0][1] - this.bbox3D[0][0];
@@ -1019,7 +1018,7 @@ JXG.extend(
          * Project a point on the screen to the nearest point, in screen
          * distance, on a line segment in 3d space. The inputs must be in
          * ordinary coordinates, but the output is in homogeneous coordinates.
-         * 
+         *
          * @param {Array} pScr The screen coordinates of the point to project.
          * @param {Array} end0 The world space coordinates of one end of the
          * line segment.
@@ -1042,8 +1041,7 @@ JXG.extend(
 
             var t, // view-space affine parameter
                 t_clamped, // affine parameter clamped to range
-                t_clamped_co,
-                c3d;
+                t_clamped_co;
 
             if (this.projectionType === 'central') {
                 const mid = [
@@ -1096,7 +1094,7 @@ JXG.extend(
         project2DTo3DVertical: function (point2d, base_c3d) {
             const pScr = point2d.coords.usrCoords.slice(1, 3),
                   end0 = [base_c3d[1], base_c3d[2], this.bbox3D[2][0]],
-                  end1 = [base_c3d[1], base_c3d[2], this.bbox3D[2][1]]
+                  end1 = [base_c3d[1], base_c3d[2], this.bbox3D[2][1]];
 
             return this.projectScreenToSegment(pScr, end0, end1);
         },
@@ -1551,7 +1549,7 @@ JXG.extend(
             }
 
             if (Type.evaluate(this.visProp.bank.pointer.enabled) && (delta !== 0) && evt.key == null) {
-                speed = (smax - smin) / this.board.canvasHeight * Type.evaluate(this.visProp.bank.pointer.speed)
+                speed = (smax - smin) / this.board.canvasHeight * Type.evaluate(this.visProp.bank.pointer.speed);
                 bank += delta * speed;
 
                 // prevent the pointer wheel from scrolling the page
@@ -1833,7 +1831,7 @@ JXG.createView3D = function (board, parents, attributes) {
 
     /**
      * Slider to adjust bank angle
-     * 
+     *
      * @name JXG.View3D#bank_slide
      * @type {Slider}
      */
