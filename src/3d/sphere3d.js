@@ -212,7 +212,7 @@ JXG.extend(
             const that = this;
 
             return function () {
-                const camDir = that.view.cameraTransform[3],
+                const camDir = that.view.boxToCam[3],
                       r = that.Radius();
 
                 return that.view.project3DTo2D([
@@ -228,9 +228,9 @@ JXG.extend(
 
             return function() {
                 const view = that.view,
-                      p = view.worldToView(that.center.coords, false),
+                      p = view.worldToFocal(that.center.coords, false),
                       distOffAxis = Math.sqrt(p[0]*p[0] + p[1]*p[1]),
-                      cam = view.cameraTransform,
+                      cam = view.boxToCam,
                       inward = [
                           -(p[0]*cam[1][1] + p[1]*cam[2][1]) / distOffAxis,
                           -(p[0]*cam[1][2] + p[1]*cam[2][2]) / distOffAxis,

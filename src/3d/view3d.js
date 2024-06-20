@@ -94,6 +94,26 @@ JXG.View3D = function (board, parents, attributes) {
     this.defaultAxes = null;
 
     /**
+     * The Tait-Bryan angles specifying the view box orientation
+     */
+    this.angles = {
+        az: null,
+        el: null,
+        bank: null
+    };
+
+    /**
+     * @type {Array}
+     * The view box orientation matrix
+     */
+    this.matrix3DRot = [
+        [1, 0, 0, 0],
+        [0, 1, 0, 0],
+        [0, 0, 1, 0],
+        [0, 0, 0, 1]
+    ];
+
+    /**
      * @type  {Array}
      * @private
      */
@@ -105,17 +125,28 @@ JXG.View3D = function (board, parents, attributes) {
     ];
 
     /**
-     * The 4x4 matrix that maps world-space vectors to zero-focus view-space
-     * vectors---that is, view space vectors for a camera sitting on the screen.
-     * The camera is actually set back from the screen by the focal distance. To
-     * get actual view space vectors, with the focal distance accounted for, use
-     * the `worldToView` method.
-     *
-     * This transformation is exposed to help 3D elements manage their 2D
-     * representations in central projection mode.
+     * The 4×4 matrix that maps box coordinates to camera coordinates. These
+     * coordinate systems fit into the View3D coordinate atlas as follows.
+     * <ul>
+     * <li><b>World coordinates.</b> The coordinates used to specify object
+     * positions in a JSXGraph scene.</li>
+     * <li><b>Box coordinates.</b> The world coordinates translated to put the
+     * center of the view box at the origin.
+     * <li><b>Camera coordinates.</b> The coordinate system where the
+     * <code>x</code>, <code>y</code> plane is the screen, the origin is the
+     * center of the screen, and the <code>z</code> axis points out of the
+     * screen, toward the viewer.
+     * <li><b>Focal coordinates.</b> The camera coordinates translated to put
+     * the origin at the focal point, which is set back from the screen by the
+     * focal distance.</li>
+     * </ul>
+     * The <code>boxToCam</code> transformation is exposed to help 3D elements
+     * manage their 2D representations in central projection mode. To map world
+     * coordinates to focal coordinates, use the
+     * {@link JXG.View3D#worldToFocal} method.
      * @type {Array}
      */
-    this.cameraTransform = [];
+    this.boxToCam = [];
 
     /**
      * @type array
@@ -157,6 +188,12 @@ JXG.View3D = function (board, parents, attributes) {
      */
     // Will be set in update().
     this.projectionType = 'parallel';
+
+    /**
+     * Whether trackball navigation is currently enabled.
+     * @type String
+     */
+    this.trackballEnabled = false;
 
     this.timeoutAzimuth = null;
 
@@ -276,8 +313,78 @@ JXG.extend(
             return s;
         },
 
-        updateParallelProjection: function () {
-            var r, a, e, f,
+        // set the Tait-Bryan angles to specify the current view rotation matrix
+        setAnglesFromRotation: function() {
+            let rem = this.matrix3DRot, // rotation remaining after angle extraction
+                rBank, cosBank, sinBank,
+                cosEl, sinEl,
+                cosAz, sinAz;
+
+            // extract bank by rotating the view box z axis onto the camera yz plane
+            rBank = Math.sqrt(rem[1][3]*rem[1][3] + rem[2][3]*rem[2][3]);
+            if (rBank > Mat.eps) {
+                cosBank = rem[2][3] / rBank;
+                sinBank = rem[1][3] / rBank;
+            } else {
+                // if the z axis is pointed almost exactly at the screen, we
+                // keep the current bank value
+                cosBank = Math.cos(this.angles.bank);
+                sinBank = Math.sin(this.angles.bank);
+            }
+            rem = Mat.matMatMult([
+                [1,       0,        0, 0],
+                [0, cosBank, -sinBank, 0],
+                [0, sinBank,  cosBank, 0],
+                [0,       0,        0, 1]
+            ], rem);
+            this.angles.bank = Math.atan2(sinBank, cosBank);
+
+            // extract elevation by rotating the view box z axis onto the camera
+            // y axis
+            cosEl = rem[2][3];
+            sinEl = rem[3][3];
+            rem = Mat.matMatMult([
+                [1, 0,      0,     0],
+                [0, 1,      0,     0],
+                [0, 0,  cosEl, sinEl],
+                [0, 0, -sinEl, cosEl]
+            ], rem);
+            this.angles.el = Math.atan2(sinEl, cosEl);
+
+            // extract azimuth
+            cosAz = -rem[1][1];
+            sinAz =  rem[3][1];
+            this.angles.az = Math.atan2(sinAz, cosAz);
+            if (this.angles.az < 0) this.angles.az += 2*Math.PI;
+
+            this.setSlidersFromAngles();
+        },
+
+        anglesHaveMoved: function () {
+            return (
+                this._hasMoveAz || this._hasMoveEl ||
+                Math.abs(this.angles.az - this.az_slide.Value()) > Mat.eps ||
+                Math.abs(this.angles.el - this.el_slide.Value()) > Mat.eps ||
+                Math.abs(this.angles.bank - this.bank_slide.Value()) > Mat.eps
+            );
+        },
+
+        getAnglesFromSliders: function () {
+            this.angles.az = this.az_slide.Value();
+            this.angles.el = this.el_slide.Value();
+            this.angles.bank = this.bank_slide.Value();
+        },
+
+        setSlidersFromAngles: function () {
+            this.az_slide.setValue(this.angles.az);
+            this.el_slide.setValue(this.angles.el);
+            this.bank_slide.setValue(this.angles.bank);
+        },
+
+        // return the rotation matrix specified by the current Tait-Bryan angles
+        getRotationFromAngles: function () {
+            var a, e, b, f,
+                cosBank, sinBank,
                 mat = [
                     [1, 0, 0, 0],
                     [0, 1, 0, 0],
@@ -287,24 +394,74 @@ JXG.extend(
 
             // mat projects homogeneous 3D coords in View3D
             // to homogeneous 2D coordinates in the board
-            e = this.el_slide.Value();
-            r = this.r;
-            a = this.az_slide.Value();
-            f = r * Math.sin(e);
+            a = this.angles.az;
+            e = this.angles.el;
+            b = this.angles.bank;
+            f = -Math.sin(e);
 
-            mat[1][1] = r * Math.cos(a);
-            mat[1][2] = -r * Math.sin(a);
+            mat[1][1] = -Math.cos(a);
+            mat[1][2] = Math.sin(a);
             mat[1][3] = 0;
 
             mat[2][1] = f * Math.sin(a);
             mat[2][2] = f * Math.cos(a);
             mat[2][3] = Math.cos(e);
 
-            mat[3][1] = r * Math.cos(e) * Math.sin(a);
-            mat[3][2] = r * Math.cos(e) * Math.cos(a);
-            mat[3][3] = -Math.sin(e);
+            mat[3][1] = Math.cos(e) * Math.sin(a);
+            mat[3][2] = Math.cos(e) * Math.cos(a);
+            mat[3][3] = Math.sin(e);
+
+            cosBank = Math.cos(b);
+            sinBank = Math.sin(b);
+            mat = Mat.matMatMult([
+                [1,        0,       0, 0],
+                [0,  cosBank, sinBank, 0],
+                [0, -sinBank, cosBank, 0],
+                [0,        0,       0, 1]
+            ], mat);
 
             return mat;
+
+            /* this code, originally from `_updateCentralProjection`, is an
+             * alternate implementation of the azimuth-elevation matrix
+             * computation above. using this implementation instead of the
+             * current one might lead to simpler code in a future refactoring
+            var a, e, up,
+                ax, ay, az, v, nrm,
+                eye, d,
+                func_sphere;
+
+            // finds the point on the unit sphere with the given azimuth and
+            // elevation, and returns its affine coordinates
+            func_sphere = function (az, el) {
+                return [
+                    Math.cos(az) * Math.cos(el),
+                    -Math.sin(az) * Math.cos(el),
+                    Math.sin(el)
+                ];
+            };
+
+            a = this.az_slide.Value() + (3 * Math.PI * 0.5); // Sphere
+            e = this.el_slide.Value();
+
+            // create an up vector and an eye vector which are 90 degrees out of phase
+            up = func_sphere(a, e + Math.PI / 2);
+            eye = func_sphere(a, e);
+            d = [eye[0], eye[1], eye[2]];
+
+            nrm = Mat.norm(d, 3);
+            az = [d[0] / nrm, d[1] / nrm, d[2] / nrm];
+
+            nrm = Mat.norm(up, 3);
+            v = [up[0] / nrm, up[1] / nrm, up[2] / nrm];
+
+            ax = Mat.crossProduct(v, az);
+            ay = Mat.crossProduct(az, ax);
+
+            this.matrix3DRot[1] = [0, ax[0], ax[1], ax[2]];
+            this.matrix3DRot[2] = [0, ay[0], ay[1], ay[2]];
+            this.matrix3DRot[3] = [0, az[0], az[1], az[2]];
+             */
         },
 
         /**
@@ -377,17 +534,15 @@ JXG.extend(
                 x = this._trackball.x;
                 y = this._trackball.y;
 
-                // p2 = [x, y, this._projectToSphere(R, x, y)];
-                p2 = [this._projectToSphere(R, x, y), x, y];
+                p2 = [x, y, this._projectToSphere(R, x, y)];
                 x -= dx;
                 y -= dy;
-                // p1 = [x, y, this._projectToSphere(R, x, y)];
-                p1 = [this._projectToSphere(R, x, y), x, y];
+                p1 = [x, y, this._projectToSphere(R, x, y)];
 
-                n = Mat.crossProduct(p2, p1);
+                n = Mat.crossProduct(p1, p2);
                 d = Mat.hypot(n[0], n[1], n[2]);
-                n[0] /= -d;
-                n[1] /= -d;
+                n[0] /= d;
+                n[1] /= d;
                 n[2] /= d;
 
                 t = Geometry.distance(p2, p1, 3) / (2 * R);
@@ -398,33 +553,122 @@ JXG.extend(
                 t = 1 - c;
                 s = Math.sin(theta);
 
-                // General rotation around axis n with angle theta
-                // See Pique, Graphics Gems I, pp. 466
-                // Attention: he multiplies (row vector x matrix),
-                // we multiply (matrix x column vector)
+                // Rotation by theta about the axis n. See equation 9.63 of
+                //
+                //   Ian Richard Cole. "Modeling CPV" (thesis). Loughborough
+                //   University. https://hdl.handle.net/2134/18050
+                //
                 mat[1][1] = c + n[0] * n[0] * t;
-                mat[2][1] = n[0] * n[1] * t - n[2] * s;
-                mat[3][1] = n[0] * n[2] * t + n[1] * s;
+                mat[2][1] = n[1] * n[0] * t + n[2] * s;
+                mat[3][1] = n[2] * n[0] * t - n[1] * s;
 
-                mat[1][2] = n[1] * n[0] * t + n[2] * s;
+                mat[1][2] = n[0] * n[1] * t - n[2] * s;
                 mat[2][2] = c + n[1] * n[1] * t;
-                mat[3][2] = n[1] * n[2] * t - n[0] * s;
+                mat[3][2] = n[2] * n[1] * t + n[0] * s;
 
-                mat[1][3] = n[2] * n[0] * t - n[1] * s;
-                mat[2][3] = n[2] * n[1] * t + n[0] * s;
+                mat[1][3] = n[0] * n[2] * t + n[1] * s;
+                mat[2][3] = n[1] * n[2] * t - n[0] * s;
                 mat[3][3] = c + n[2] * n[2] * t;
-
-                if (Pref !== null) {
-                    // For central projection we have to rotate around Pref.
-                    // Parallel projection: Pref === null
-                    mat[1][0] = Pref[0] - mat[1][1] * Pref[0] - mat[1][2] * Pref[0] - mat[1][3] * Pref[0];
-                    mat[2][0] = Pref[1] - mat[2][1] * Pref[1] - mat[2][2] * Pref[1] - mat[2][3] * Pref[1];
-                    mat[3][0] = Pref[2] - mat[3][1] * Pref[2] - mat[3][2] * Pref[2] - mat[3][3] * Pref[2];
-                }
             }
 
-            mat = Mat.matMatMult(this.matrix3DRot, mat);
+            mat = Mat.matMatMult(mat, this.matrix3DRot);
             return mat;
+        },
+
+        updateAngleSliderBounds: function () {
+            var az_smax, az_smin,
+                el_smax, el_smin, el_cover,
+                el_smid, el_equiv, el_flip_equiv,
+                el_equiv_loss, el_flip_equiv_loss,
+                bank_smax, bank_smin;
+
+            // update stored trackball toggle
+            this.trackballEnabled = Type.evaluate(this.visProp.trackball.enabled);
+
+            // set slider bounds
+            if (this.trackballEnabled) {
+                this.az_slide.setMin(0);
+                this.az_slide.setMax(2*Math.PI);
+                this.el_slide.setMin(-0.5*Math.PI);
+                this.el_slide.setMax( 0.5*Math.PI);
+                this.bank_slide.setMin(-Math.PI);
+                this.bank_slide.setMax( Math.PI);
+            } else {
+                this.az_slide.setMin(this.visProp.az.slider.min);
+                this.az_slide.setMax(this.visProp.az.slider.max);
+                this.el_slide.setMin(this.visProp.el.slider.min);
+                this.el_slide.setMax(this.visProp.el.slider.max);
+                this.bank_slide.setMin(this.visProp.bank.slider.min);
+                this.bank_slide.setMax(this.visProp.bank.slider.max);
+            }
+
+            // get new slider bounds
+            az_smax = this.az_slide._smax;
+            az_smin = this.az_slide._smin;
+            el_smax = this.el_slide._smax;
+            el_smin = this.el_slide._smin;
+            bank_smax = this.bank_slide._smax;
+            bank_smin = this.bank_slide._smin;
+
+            // wrap and restore angle values
+            if (this.trackballEnabled) {
+                // if we're upside-down, flip the bank angle to reach the same
+                // orientation with an elevation between -pi/2 and pi/2
+                el_cover = Mat.mod(this.angles.el, 2*Math.PI);
+                if (0.5*Math.PI < el_cover && el_cover < 1.5*Math.PI) {
+                    this.angles.el = Math.PI - el_cover;
+                    this.angles.az = Mat.wrap(this.angles.az + Math.PI, az_smin, az_smax);
+                    this.angles.bank = Mat.wrap(this.angles.bank + Math.PI, bank_smin, bank_smax);
+                }
+
+                // wrap the azimuth and bank angle
+                this.angles.az = Mat.wrap(this.angles.az, az_smin, az_smax);
+                this.angles.el = Mat.wrap(this.angles.el, el_smin, el_smax);
+                this.angles.bank = Mat.wrap(this.angles.bank, bank_smin, bank_smax);
+            } else {
+                // wrap and clamp the elevation into the slider range. if
+                // flipping the elevation gets us closer to the slider interval,
+                // do that, inverting the azimuth and bank angle to compensate
+                const el_interval_loss = function (t) {
+                    if (t < el_smin) {
+                        return el_smin - t;
+                    } else if (el_smax < t) {
+                        return t - el_smax;
+                    } else {
+                        return 0;
+                    }
+                };
+                el_smid = 0.5*(el_smin + el_smax);
+                el_equiv = Mat.wrap(
+                    this.angles.el,
+                    el_smid - Math.PI,
+                    el_smid + Math.PI
+                );
+                el_flip_equiv = Mat.wrap(
+                    Math.PI - this.angles.el,
+                    el_smid - Math.PI,
+                    el_smid + Math.PI
+                );
+                el_equiv_loss = el_interval_loss(el_equiv);
+                el_flip_equiv_loss = el_interval_loss(el_flip_equiv);
+                if (el_equiv_loss <= el_flip_equiv_loss) {
+                    this.angles.el = Mat.clamp(el_equiv, el_smin, el_smax);
+                } else {
+                    this.angles.el = Mat.clamp(el_flip_equiv, el_smin, el_smax);
+                    this.angles.az = Mat.wrap(this.angles.az + Math.PI, az_smin, az_smax);
+                    this.angles.bank = Mat.wrap(this.angles.bank + Math.PI, bank_smin, bank_smax);
+                }
+
+                // wrap and clamp the azimuth and bank angle into the slider range
+                this.angles.az = Mat.wrapAndClamp(this.angles.az, az_smin, az_smax, 2*Math.PI);
+                this.angles.bank = Mat.wrapAndClamp(this.angles.bank, bank_smin, bank_smax, 2*Math.PI);
+
+                // since we're using `clamp`, angles may have changed
+                this.matrix3DRot = this.getRotationFromAngles();
+            }
+
+            // restore slider positions
+            this.setSlidersFromAngles();
         },
 
         /**
@@ -432,41 +676,16 @@ JXG.extend(
          * @returns {Array}
          */
         _updateCentralProjection: function () {
-            var r, e, a, up,
-                az, ax, ay, v, nrm,
-                // See https://www.mathematik.uni-marburg.de/~thormae/lectures/graphics1/graphics_6_1_eng_web.html
-                // bbox3D is always at the world origin, i.e. T_obj is the unit matrix.
-                // All vectors contain affine coordinates and have length 3
-                // The matrices are of size 4x4.
-                eye, d,
-                zf = 20, // near clip plane
-                zn = 8, // far clip plane
-                Pref = [
-                    0.5 * (this.bbox3D[0][0] + this.bbox3D[0][1]),
-                    0.5 * (this.bbox3D[1][0] + this.bbox3D[1][1]),
-                    0.5 * (this.bbox3D[2][0] + this.bbox3D[2][1])
-                ],
-                A,
-                func_sphere;
+            const zf = 20, // near clip plane
+                  zn = 8; // far clip plane
 
-            /**
-             * Calculates a spherical parametric surface, which depends on az, el and r.
-             * @param {Number} a
-             * @param {Number} e
-             * @param {Number} r
-             * @returns {Array} 3-dimensional vector in cartesian coordinates
-             */
-            func_sphere = function (az, el, r) {
-                return [
-                    r * Math.cos(az) * Math.cos(el),
-                   -r * Math.sin(az) * Math.cos(el),
-                    r * Math.sin(el)
-                ];
-            };
+            // See https://www.mathematik.uni-marburg.de/~thormae/lectures/graphics1/graphics_6_1_eng_web.html
+            // bbox3D is always at the world origin, i.e. T_obj is the unit matrix.
+            // All vectors contain affine coordinates and have length 3
+            // The matrices are of size 4x4.
+            var r, A;
 
-            a = this.az_slide.Value() + (3 * Math.PI * 0.5); // Sphere
-            e = this.el_slide.Value();
-
+            // set distance from view box center to camera
             r = Type.evaluate(this.visProp.r);
             if (r === 'auto') {
                 r = Mat.hypot(
@@ -474,36 +693,11 @@ JXG.extend(
                     this.bbox3D[1][0] - this.bbox3D[1][1],
                     this.bbox3D[2][0] - this.bbox3D[2][1]
                 ) * 1.01;
-                // console.log(r);
             }
 
-            // create an up vector and an eye vector which are 90 degrees out of phase
-            up = func_sphere(a, e + Math.PI / 2, 1);
-            eye = func_sphere(a, e, r);
-            d = [eye[0], eye[1], eye[2]];
-
-            eye[0] += Pref[0];
-            eye[1] += Pref[1];
-            eye[2] += Pref[2];
-
-            // d = [eye[0] - Pref[0], eye[1] - Pref[1], eye[2] - Pref[2]];
-            nrm = Mat.norm(d, 3);
-            az = [d[0] / nrm, d[1] / nrm, d[2] / nrm];
-
-            nrm = Mat.norm(up, 3);
-            v = [up[0] / nrm, up[1] / nrm, up[2] / nrm];
-
-            ax = Mat.crossProduct(v, az);
-            ay = Mat.crossProduct(az, ax);
-
             // compute camera transformation
-            v = Mat.matVecMult([ax, ay, az], eye);
-            this.cameraTransform = [
-                [1, 0, 0, 0],
-                [-v[0], ax[0], ax[1], ax[2]],
-                [-v[1], ay[0], ay[1], ay[2]],
-                [-v[2], az[0], az[1], az[2]]
-            ];
+            this.boxToCam = this.matrix3DRot.map((row) => row.slice());
+            this.boxToCam[3][0] = -r;
 
             // compute focal distance and clip space transformation
             this.focalDist = 1 / Math.tan(0.5 * Type.evaluate(this.visProp.fov));
@@ -514,19 +708,26 @@ JXG.extend(
                 [2 * zf * zn / (zn - zf), 0, 0, (zf + zn) / (zn - zf)]
             ];
 
-            return Mat.matMatMult(A, this.cameraTransform);
+            return Mat.matMatMult(A, this.boxToCam);
         },
 
         // Update 3D-to-2D transformation matrix with the actual azimuth and elevation angles.
         update: function () {
-            var mat2D, shift, size,
-                dx, dy,
-                Pref = null,
-                useTrackball = false;
+            const r = this.r,
+                  stretch = [
+                      [1,  0,  0, 0],
+                      [0, -r,  0, 0],
+                      [0,  0, -r, 0],
+                      [0,  0,  0, 1]
+                  ];
+
+            var mat2D, objectToClip, size,
+                dx, dy;
 
             if (
                 !Type.exists(this.el_slide) ||
                 !Type.exists(this.az_slide) ||
+                !Type.exists(this.bank_slide) ||
                 !this.needsUpdate
             ) {
                 return this;
@@ -540,27 +741,36 @@ JXG.extend(
 
             this.projectionType = Type.evaluate(this.visProp.projection).toLowerCase();
 
-            if (Type.evaluate(this.visProp.trackball.enabled) && Type.exists(this.matrix3DRot)) {
-                // If trackball is enabled and this.matrix3DRot has been initialized,
-                // do trackball navigation
-                if (this._hasMoveTrackball) {
-                    // If this._hasMoveTrackball is false, the drag event has been
-                    // caught by e.g. point dragging
-
-                    if (this.projectionType === 'central') {
-                        // Get center of the trackball.
-                        // In case of parallel projection, this is not necessary,
-                        // since we translate the whole scene with "shift".
-                        Pref = [
-                            0.5 * (this.bbox3D[0][0] + this.bbox3D[0][1]),
-                            0.5 * (this.bbox3D[1][0] + this.bbox3D[1][1]),
-                            0.5 * (this.bbox3D[2][0] + this.bbox3D[2][1])
-                        ];
-                    }
-                    this.matrix3DRot = this.updateProjectionTrackball(Pref);
-                }
-                useTrackball = true;
+            // override angle slider bounds when trackball navigation is enabled
+            if (this.trackballEnabled !== Type.evaluate(this.visProp.trackball.enabled)) {
+                this.updateAngleSliderBounds();
             }
+
+            if (this._hasMoveTrackball) {
+                // The trackball has been moved since the last update, so we do
+                // trackball navigation. When the trackball is enabled, a drag
+                // event is interpreted as a trackball movement unless it's
+                // caught by something else, like point dragging. When the
+                // trackball is disabled, the trackball movement flag should
+                // never be set
+                this.matrix3DRot = this.updateProjectionTrackball();
+                this.setAnglesFromRotation();
+            } else if (this.anglesHaveMoved()) {
+                // The trackball hasn't been moved since the last up date, but
+                // the Tait-Bryan angles have been, so we do angle navigation
+                this.getAnglesFromSliders();
+                this.matrix3DRot = this.getRotationFromAngles();
+            }
+
+            /**
+             * The translation that moves the center of the view box to the origin.
+             */
+            this.shift = [
+                [1, 0, 0, 0],
+                [-0.5 * (this.bbox3D[0][0] + this.bbox3D[0][1]), 1, 0, 0],
+                [-0.5 * (this.bbox3D[1][0] + this.bbox3D[1][1]), 0, 1, 0],
+                [-0.5 * (this.bbox3D[2][0] + this.bbox3D[2][1]), 0, 0, 1]
+            ];
 
             switch (this.projectionType) {
                 case 'central': // Central projection
@@ -576,25 +786,13 @@ JXG.extend(
                     // since the projected vectors have to be normalized in between in project3DTo2D
                     this.viewPortTransform = mat2D;
 
-                    if (!useTrackball) {
-                        // Do elevation / azimuth navigation or at least initialize matrix
-                        // this.matrix3DRot
-                        this.matrix3DRot = this._updateCentralProjection();
-                    }
+                    objectToClip = this._updateCentralProjection();
                     // this.matrix3D is a 4x4 matrix
-                    this.matrix3D = this.matrix3DRot.slice();
+                    this.matrix3D = Mat.matMatMult(objectToClip, this.shift);
                     break;
 
                 case 'parallel': // Parallel projection
                 default:
-                    // Rotate the scenery around the center of the box, not around the origin
-                    shift = [
-                        [1, 0, 0, 0],
-                        [-0.5 * (this.bbox3D[0][0] + this.bbox3D[0][1]), 1, 0, 0],
-                        [-0.5 * (this.bbox3D[1][0] + this.bbox3D[1][1]), 0, 1, 0],
-                        [-0.5 * (this.bbox3D[2][0] + this.bbox3D[2][1]), 0, 0, 1]
-                    ];
-
                     // Add a final transformation to scale and shift the projection
                     // on the board, usually called viewport.
                     dx = this.bbox3D[0][1] - this.bbox3D[0][0];
@@ -604,12 +802,11 @@ JXG.extend(
                     mat2D[1][0] = this.llftCorner[0] + mat2D[1][1] * 0.5 * dx; // llft_x
                     mat2D[2][0] = this.llftCorner[1] + mat2D[2][2] * 0.5 * dy; // llft_y
 
-                    if (!useTrackball) {
-                        // Do elevation / azimuth navigation or at least initialize matrix this.matrix3DRot
-                        this.matrix3DRot = this.updateParallelProjection();
-                    }
                     // Combine all transformations, this.matrix3D is a 3x4 matrix
-                    this.matrix3D = Mat.matMatMult(mat2D, Mat.matMatMult(this.matrix3DRot, shift).slice(0, 3));
+                    this.matrix3D = Mat.matMatMult(
+                        mat2D,
+                        Mat.matMatMult(Mat.matMatMult(this.matrix3DRot, stretch), this.shift).slice(0, 3)
+                    );
             }
 
             return this;
@@ -660,16 +857,17 @@ JXG.extend(
         },
 
         /**
-         * Map world coordinates to view coordinates.
+         * Map world coordinates to focal coordinates. These coordinate systems
+         * are explained in the {@link JXG.View3D#boxToCam} matrix
+         * documentation.
          *
          * @param {Array} pWorld A world space point, in homogeneous coordinates.
          * @param {Boolean} [homog=true] Whether to return homogeneous coordinates.
          * If false, projects down to ordinary coordinates.
          */
-        worldToView: function (pWorld, homog=true) {
+        worldToFocal: function (pWorld, homog=true) {
             var k,
-                pView = Mat.matVecMult(this.cameraTransform, pWorld);
-
+                pView = Mat.matVecMult(this.boxToCam, Mat.matVecMult(this.shift, pWorld));
             pView[3] -= pView[0] * this.focalDist;
             if (homog) {
                 return pView;
@@ -766,7 +964,7 @@ JXG.extend(
             d = Mat.innerProduct(foot.slice(1), n, 3) / le;
 
             if (this.projectionType === 'parallel') {
-                mat = this.matrix3D.slice(0, 3); // True copy
+                mat = this.matrix3D.slice(0, 3); // Copy each row by reference
                 mat.push([0, n[0], n[1], n[2]]);
 
                 // 2D coordinates of point:
@@ -782,7 +980,7 @@ JXG.extend(
                     sol = [0, NaN, NaN, NaN];
                 }
             } else {
-                mat = this.matrix3DRot; // True copy
+                mat = this.matrix3D;
 
                 // 2D coordinates of point:
                 rhs = point2d.coords.usrCoords.slice();
@@ -817,26 +1015,88 @@ JXG.extend(
         },
 
         /**
+         * Project a point on the screen to the nearest point, in screen
+         * distance, on a line segment in 3d space. The inputs must be in
+         * ordinary coordinates, but the output is in homogeneous coordinates.
+         *
+         * @param {Array} pScr The screen coordinates of the point to project.
+         * @param {Array} end0 The world space coordinates of one end of the
+         * line segment.
+         * @param {Array} end1 The world space coordinates of the other end of
+         * the line segment.
+         */
+        projectScreenToSegment: function (pScr, end0, end1) {
+            const end0_2d = this.project3DTo2D(end0).slice(1, 3),
+                  end1_2d = this.project3DTo2D(end1).slice(1, 3),
+                  dir_2d = [
+                      end1_2d[0] - end0_2d[0],
+                      end1_2d[1] - end0_2d[1]
+                  ],
+                  dir_2d_norm_sq = Mat.innerProduct(dir_2d, dir_2d),
+                  diff = [
+                      pScr[0] - end0_2d[0],
+                      pScr[1] - end0_2d[1]
+                  ],
+                  s = Mat.innerProduct(diff, dir_2d) / dir_2d_norm_sq; // screen-space affine parameter
+
+            var t, // view-space affine parameter
+                t_clamped, // affine parameter clamped to range
+                t_clamped_co;
+
+            if (this.projectionType === 'central') {
+                const mid = [
+                        0.5 * (end0[0] + end1[0]),
+                        0.5 * (end0[1] + end1[1]),
+                        0.5 * (end0[2] + end1[2])
+                      ],
+                      mid_2d = this.project3DTo2D(mid).slice(1, 3),
+                      mid_diff = [
+                          mid_2d[0] - end0_2d[0],
+                          mid_2d[1] - end0_2d[1]
+                      ],
+                      m = Mat.innerProduct(mid_diff, dir_2d) / dir_2d_norm_sq;
+
+                // the view-space affine parameter s is related to the
+                // screen-space affine parameter t by a Möbius transformation,
+                // which is determined by the following relations:
+                //
+                // s | t
+                // -----
+                // 0 | 0
+                // m | 1/2
+                // 1 | 1
+                //
+                t = (1-m)*s / ((1-2*m)*s + m);
+            } else {
+                t = s;
+            }
+
+            t_clamped = Math.min(Math.max(t, 0), 1);
+            t_clamped_co = 1 - t_clamped;
+            return [
+                1,
+                t_clamped_co * end0[0] + t_clamped * end1[0],
+                t_clamped_co * end0[1] + t_clamped * end1[1],
+                t_clamped_co * end0[2] + t_clamped * end1[2]
+            ];
+        },
+
+        /**
          * Project a 2D coordinate to a new 3D position by keeping
          * the 3D x, y coordinates and changing only the z coordinate.
          * All horizontal moves of the 2D point are ignored.
          *
          * @param {JXG.Point} point2d
-         * @param {Array} coords3D
+         * @param {Array} base_c3d
          * @returns {Array} of length 4 containing the projected
          * point in homogeneous coordinates.
          */
-        project2DTo3DVertical: function (point2d, coords3D) {
-            var m3D = this.matrix3D[2],
-                b = m3D[3],
-                rhs = point2d.coords.usrCoords[2]; // y in 2D
+        project2DTo3DVertical: function (point2d, base_c3d) {
+            const pScr = point2d.coords.usrCoords.slice(1, 3),
+                  end0 = [base_c3d[1], base_c3d[2], this.bbox3D[2][0]],
+                  end1 = [base_c3d[1], base_c3d[2], this.bbox3D[2][1]];
 
-            rhs -= m3D[0] * coords3D[0] + m3D[1] * coords3D[1] + m3D[2] * coords3D[2];
-            if (Math.abs(b) < Mat.eps) {
-                return coords3D; // No changes
-            } else {
-                return coords3D.slice(0, 3).concat([rhs / b]);
-            }
+            return this.projectScreenToSegment(pScr, end0, end1);
         },
 
         /**
@@ -1193,7 +1453,7 @@ JXG.extend(
             // Project the calculated az value to a usable value in the interval [smin,smax]
             // Use modulo if continuous is true
             if (Type.evaluate(this.visProp.az.continuous)) {
-                az = (az + smax) % smax;
+                az = Mat.wrap(az, smin, smax);
             } else {
                 if (az > 0) {
                     az = Math.min(smax, az);
@@ -1242,9 +1502,9 @@ JXG.extend(
             }
 
             // Project the calculated el value to a usable value in the interval [smin,smax]
-            // Use modulo if continuous is true
-            if (Type.evaluate(this.visProp.el.continuous)) {
-                el = (el + smax) % smax;
+            // Use modulo if continuous is true and the trackball is disabled
+            if (Type.evaluate(this.visProp.el.continuous) && !this.trackballEnabled) {
+                el = Mat.wrap(el, smin, smax);
             } else {
                 if (el > 0) {
                     el = Math.min(smax, el);
@@ -1257,6 +1517,59 @@ JXG.extend(
             return this;
         },
 
+        /**
+         * Controls the navigation in bank direction using either the keyboard or a pointer.
+         *
+         * @private
+         *
+         * @param {event} evt either the keydown or the pointer event
+         * @returns view
+         */
+        _bankEventHandler: function (evt) {
+            var smax = this.bank_slide._smax,
+                smin = this.bank_slide._smin,
+                step, speed,
+                delta = evt.deltaY,
+                bank = this.bank_slide.Value();
+
+            // Doesn't allow navigation if another moving event is triggered
+            if (this.board.mode === this.board.BOARD_MODE_DRAG) {
+                return this;
+            }
+
+            // Calculate new bank value if keyboard events are triggered
+            // Plus if down-button, minus if up-button
+            if (Type.evaluate(this.visProp.bank.keyboard.enabled)) {
+                step = Type.evaluate(this.visProp.bank.keyboard.step) * Math.PI / 180;
+                if (evt.key === '.' || evt.key === '<') {
+                    bank -= step;
+                } else if (evt.key === ',' || evt.key === '>') {
+                    bank += step;
+                }
+            }
+
+            if (Type.evaluate(this.visProp.bank.pointer.enabled) && (delta !== 0) && evt.key == null) {
+                speed = (smax - smin) / this.board.canvasHeight * Type.evaluate(this.visProp.bank.pointer.speed);
+                bank += delta * speed;
+
+                // prevent the pointer wheel from scrolling the page
+                evt.preventDefault();
+            }
+
+            // Project the calculated bank value to a usable value in the interval [smin,smax]
+            if (Type.evaluate(this.visProp.bank.continuous)) {
+                // in continuous mode, wrap value around slider range
+                bank = Mat.wrap(bank, smin, smax);
+            } else {
+                // in non-continuous mode, clamp value to slider range
+                bank = Mat.clamp(bank, smin, smax);
+            }
+
+            this.bank_slide.setValue(bank);
+            this.board.update();
+            return this;
+        },
+
         _trackballHandler: function(evt) {
             var pos = this.board.getMousePosition(evt),
                 x, y, center;
@@ -1266,9 +1579,9 @@ JXG.extend(
             y = pos[1] - center.scrCoords[2];
             this._trackball = {
                 dx: evt.movementX,
-                dy: evt.movementY,
+                dy: -evt.movementY,
                 x: x,
-                y: y
+                y: -y
             };
             this.board.update();
             return this;
@@ -1279,6 +1592,7 @@ JXG.extend(
 
             this._hasMoveAz = false;
             this._hasMoveEl = false;
+            this._hasMoveBank = false;
             this._hasMoveTrackball = false;
 
             if (this.board.mode !== this.board.BOARD_MODE_NONE) {
@@ -1331,6 +1645,25 @@ JXG.extend(
                         this._hasMoveEl = true;
                     }
                 }
+
+                if (Type.evaluate(this.visProp.bank.pointer.enabled)) {
+                    neededButton = Type.evaluate(this.visProp.bank.pointer.button);
+                    neededKey = Type.evaluate(this.visProp.bank.pointer.key);
+
+                    // Events for bank
+                    if (
+                        (neededButton === -1 || neededButton === evt.button) &&
+                        (neededKey === 'none' || (neededKey.indexOf('shift') > -1 && evt.shiftKey) || (neededKey.indexOf('ctrl') > -1 && evt.ctrlKey))
+                    ) {
+                        // If `outside` is true, we bind the event listener to
+                        // the document. otherwise, we bind it to the div. we
+                        // register the event listener as active so it can
+                        // prevent the pointer wheel from scrolling the page
+                        target = (Type.evaluate(this.visProp.bank.pointer.outside)) ? document : this.board.containerObj;
+                        Env.addEvent(target, 'wheel', this._bankEventHandler, this, {passive: false});
+                        this._hasMoveBank = true;
+                    }
+                }
             }
             Env.addEvent(document, 'pointerup', this.pointerUpHandler, this);
         },
@@ -1346,6 +1679,11 @@ JXG.extend(
                 target = (Type.evaluate(this.visProp.el.pointer.outside)) ? document : this.board.containerObj;
                 Env.removeEvent(target, 'pointermove', this._elEventHandler, this);
                 this._hasMoveEl = false;
+            }
+            if (this._hasMoveBank) {
+                target = (Type.evaluate(this.visProp.bank.pointer.outside)) ? document : this.board.containerObj;
+                Env.removeEvent(target, 'wheel', this._bankEventHandler, this);
+                this._hasMoveBank = false;
             }
             if (this._hasMoveTrackball) {
                 target = (Type.evaluate(this.visProp.az.pointer.outside)) ? document : this.board.containerObj;
@@ -1430,7 +1768,7 @@ JXG.extend(
  *
  */
 JXG.createView3D = function (board, parents, attributes) {
-    var view, attr, attr_az, attr_el,
+    var view, attr, attr_az, attr_el, attr_bank,
         x, y, w, h,
         coords = parents[0], // llft corner
         size = parents[1]; // [w, h]
@@ -1449,6 +1787,9 @@ JXG.createView3D = function (board, parents, attributes) {
 
     attr_el = Type.copyAttributes(attributes, board.options, 'view3d', 'el', 'slider');
     attr_el.name = 'el';
+
+    attr_bank = Type.copyAttributes(attributes, board.options, 'view3d', 'bank', 'slider');
+    attr_bank.name = 'bank';
 
     /**
      * Slider to adapt azimuth angle
@@ -1486,6 +1827,26 @@ JXG.createView3D = function (board, parents, attributes) {
                 Type.evaluate(attr_el.max)]
         ],
         attr_el
+    );
+
+    /**
+     * Slider to adjust bank angle
+     *
+     * @name JXG.View3D#bank_slide
+     * @type {Slider}
+     */
+    view.bank_slide = board.create(
+        'slider',
+        [
+            [x - 1, y + h + 2],
+            [x + w + 1, y + h + 2],
+            [
+                Type.evaluate(attr_bank.min),
+                Type.evaluate(attr_bank.start),
+                Type.evaluate(attr_bank.max)
+            ]
+        ],
+        attr_bank
     );
 
     view.board.highlightInfobox = function (x, y, el) {
@@ -1568,6 +1929,13 @@ JXG.createView3D = function (board, parents, attributes) {
                 catchEvt = true;
             }
         }
+        if (Type.evaluate(view.visProp.bank.keyboard.enabled) && (event.key === ',' || event.key === '<' || event.key === '.' || event.key === '>')) {
+            neededKey = Type.evaluate(view.visProp.bank.keyboard.key);
+            if (neededKey === 'none' || (neededKey.indexOf('shift') > -1 && event.shiftKey) || (neededKey.indexOf('ctrl') > -1 && event.ctrlKey)) {
+                view._bankEventHandler(event);
+                catchEvt = true;
+            }
+        }
         if (event.key === 'PageUp') {
             view.nextView();
             catchEvt = true;
@@ -1586,6 +1954,13 @@ JXG.createView3D = function (board, parents, attributes) {
 
     // Add events for the pointer navigation
     Env.addEvent(board.containerObj, 'pointerdown', view.pointerDownHandler, view);
+
+    // Initialize view rotation matrix
+    view.getAnglesFromSliders();
+    view.matrix3DRot = view.getRotationFromAngles();
+
+    // override angle slider bounds when trackball navigation is enabled
+    view.updateAngleSliderBounds();
 
     view.board.update();
 

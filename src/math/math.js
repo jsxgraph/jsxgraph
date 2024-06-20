@@ -110,6 +110,48 @@ JXG.Math = {
     },
 
     /**
+     * Translate <code>x</code> into the interval <code>[a, b)</code> by adding
+     * a multiple of <code>b - a</code>.
+     * @param {Number} x
+     * @param {Number} a
+     * @param {Number} b
+     */
+    wrap: function (x, a, b) {
+        return a + this.mod(x - a, b - a);
+    },
+
+    /**
+     * Clamp <code>x</code> within the interval <code>[a, b]</code>. If
+     * <code>x</code> is below <code>a</code>, increase it to <code>a</code>. If
+     * it's above <code>b</code>, decrease it to <code>b</code>.
+     */
+    clamp: function (x, a, b) {
+        return Math.min(Math.max(x, a), b);
+    },
+
+    /**
+     * A way of clamping a periodic variable. If <code>x</code> is congruent mod
+     * <code>period</code> to a point in <code>[a, b]</code>, return that point.
+     * Otherwise, wrap it into <code>[mid - period/2, mid + period/2]</code>,
+     * where <code>mid</code> is the mean of <code>a</code> and <code>b</code>,
+     * and then clamp it to <code>[a, b]</code> from there.
+     */
+    wrapAndClamp: function (x, a, b, period) {
+        const mid = 0.5*(a + b),
+              half_period = 0.5*period;
+
+        return this.clamp(
+            this.wrap(
+                x,
+                mid - half_period,
+                mid + half_period
+            ),
+            a,
+            b
+        );
+    },
+
+    /**
      * Initializes a vector of size <tt>n</tt> wih coefficients set to the init value (default 0)
      * @param {Number} n Length of the vector
      * @param {Number} [init=0] Initial value for each coefficient

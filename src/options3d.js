@@ -570,6 +570,74 @@ JXG.extend(Options, {
             }
         },
 
+        /**
+         * Specify the user handling of the bank angle.
+         * <ul>
+         *  <li><tt>pointer</tt> sub-attributes:
+         *      <ul>
+         *          <li><tt>enabled</tt>: Boolean that specifies whether pointer navigation is allowed by elevation.
+         *          <li><tt>speed</tt>: Number indicating how many passes the range of the el_slider makes when the cursor crosses the entire board once in the horizontal direction.
+         *          <li><tt>outside</tt>: Boolean that specifies whether the pointer navigation is continued when the cursor leaves the board.
+         *          <li><tt>button</tt>: Which button of the pointer should be used? (<tt>'-1'</tt> (=no button), <tt>'0'</tt> or <tt>'2'</tt>)
+         *          <li><tt>key</tt>: Should an additional key be pressed? (<tt>'none'</tt>, <tt>'shift'</tt> or <tt>'ctrl'</tt>)
+         *      </ul>
+         *  <li><tt>keyboard</tt> sub-attributes:
+         *      <ul>
+         *          <li><tt>enabled</tt>: Boolean that specifies whether the keyboard (arrow keys) can be used to navigate the board.
+         *          <li><tt>step</tt>: Size of the step per keystroke.
+         *          <li><tt>key</tt>: Should an additional key be pressed? (<tt>'none'</tt>, <tt>'shift'</tt> or <tt>'ctrl'</tt>)
+         *      </ul>
+         *  <li><tt>continuous</tt>: Boolean that specifies whether the el_slider starts again from the beginning when its end is reached.
+         *  <li><tt>slider</tt> attributes of the el_slider ({@link Slider}) with additional
+         *      <ul>
+         *          <li><tt>min</tt>: Minimum value.
+         *          <li><tt>max</tt>: Maximum value.
+         *          <li><tt>start</tt>: Start value.
+         *      </ul>
+         * </ul>
+         *
+         * @name View3D#bank
+         * @type Object
+         * @default <pre>{
+         *      pointer: {enabled: true, speed: 1, outside: true, button: -1, key: 'none'},
+         *      keyboard: {enabled: true, step: 10, key: 'ctrl'},
+         *      continuous: true,
+         *      slider: {
+         *          visible: true,
+         *          style: 6,
+         *          point1: {frozen: true},
+         *          point2: {frozen: true},
+         *          min: 0,
+         *          max: 2 * Math.PI,
+         *          start: 0.3
+         *      },
+         * }<pre>
+         */
+        bank: {
+            pointer: {
+                enabled: true,
+                speed: 0.08,
+                outside: true,
+                button: -1,
+                key: 'none'
+            },
+            keyboard: {
+                enabled: true,
+                step: 10,
+                key: 'ctrl'
+            },
+            continuous: true,
+            slider: {
+                visible: false,
+                style: 6,
+                point1: { frozen: true },
+                point2: { frozen: true },
+                min: -Math.PI,
+                max:  Math.PI,
+                start: 0.0
+            }
+        },
+
         trackball: {
             enabled: false,
             outside: true,

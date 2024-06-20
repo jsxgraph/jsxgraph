@@ -173,52 +173,10 @@ JXG.extend(
         },
 
         projectScreenCoords: function (pScr) {
-            var p0_coords = this.getPointCoords(0),
-                p1_coords = this.getPointCoords(1),
-                p0_2d = this.view.project3DTo2D(p0_coords).slice(1, 3),
-                p1_2d = this.view.project3DTo2D(p1_coords).slice(1, 3),
-                dir_2d = [
-                    p1_2d[0] - p0_2d[0],
-                    p1_2d[1] - p0_2d[1]
-                ],
-                dir_2d_norm_sq = Mat.innerProduct(dir_2d, dir_2d),
-                diff = [
-                    pScr[0] - p0_2d[0],
-                    pScr[1] - p0_2d[1]
-                ],
-                s = Mat.innerProduct(diff, dir_2d) / dir_2d_norm_sq, // Screen-space affine parameter
-                t, // view-space affine parameter
-                t_clamped, // affine parameter clamped to range
-                c3d;
+            const end0 = this.getPointCoords(0),
+                  end1 = this.getPointCoords(1);
 
-            if (this.view.projectionType === 'central') {
-                const mid_coords = this.getPointCoords(0.5),
-                    mid_2d = this.view.project3DTo2D(mid_coords).slice(1, 3),
-                    mid_diff = [
-                        mid_2d[0] - p0_2d[0],
-                        mid_2d[1] - p0_2d[1]
-                    ],
-                    m = Mat.innerProduct(mid_diff, dir_2d) / dir_2d_norm_sq;
-
-                // The view-space affine parameter s is related to the
-                // screen-space affine parameter t by a Möbius transformation,
-                // which is determined by the following relations:
-                //
-                // s | t
-                // -----
-                // 0 | 0
-                // m | 1/2
-                // 1 | 1
-                //
-                t = (1 - m) * s / ((1 - 2 * m) * s + m);
-            } else {
-                t = s;
-            }
-
-            t_clamped = Math.min(Math.max(t, this.range[0]), this.range[1]);
-            c3d = this.getPointCoords(t_clamped).slice();
-            c3d.unshift(1);
-            return c3d;
+            return this.view.projectScreenToSegment(pScr, end0, end1);
         }
     }
 );
