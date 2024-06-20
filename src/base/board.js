@@ -1915,6 +1915,8 @@ JXG.extend(
          *
          */
         addResizeEventHandlers: function () {
+            var that = this;
+
             if (Env.isBrowser) {
                 try {
                     // Supported by all new browsers
@@ -1933,8 +1935,24 @@ JXG.extend(
                 // resize event.
                 Env.addEvent(window, 'scroll', this.scrollListener, this);
 
-                // Env.addEvent(window, 'beforeprint', this.beforeprintListener, this);
-                // window.matchMedia("print").addEventListener(this.beforeprintListener, this);
+                // On browser print:
+                // we need to call the listener when having @media: print.
+                if (Type.isFunction(MediaQueryList.prototype.addEventListener)) {
+                    window.matchMedia("print").addEventListener('change', function (mql) {
+                        if (mql.matches) {
+                            that.printListener();
+                        }
+                    });
+                } else if (Type.isFunction(MediaQueryList.prototype.addListener)) { // addListener might be deprecated
+                    window.matchMedia("print").addListener(function (mql, ev) {
+                        if (mql.matches) {
+                            that.printListener(ev);
+                        }
+                    });
+                }
+
+                // When closing the print dialog we again have to resize.
+                Env.addEvent(window, 'afterprint', this.printListener, this);
             }
         },
 
@@ -4361,10 +4379,8 @@ JXG.extend(
             }
         },
 
-        beforeprintListener: function(evt) {
-            // console.log("beforeprint")
+        printListener: function(evt) {
             this.updateContainerDims();
-            // this.resizeListener();
         },
 
         /**********************************************************
