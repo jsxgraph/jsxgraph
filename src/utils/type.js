@@ -1413,6 +1413,7 @@ JXG.extend(
             // copyAttribute(attributes, board.options, 'line', 'point1')
             // In this case we would merge attributes.point1 into the global line.point1 attributes.
             o = (typeof attributes === 'object') ? this.keysToLowerCase(attributes) : {};
+            // o = (typeof attributes === 'object') ? attributes : {};
             isAvail = true;
             for (i = 3; i < len; i++) {
                 if (this.exists(o[arguments[i]])) {
