@@ -1364,7 +1364,7 @@ JXG.extend(
          * @returns {Object} The resulting attributes object
          */
         copyAttributes: function (attributes, options, s) {
-            var a, i, len, o, isAvail,
+            var a, arg, i, len, o, isAvail,
                 primitives = {
                     circle: 1,
                     curve: 1,
@@ -1392,12 +1392,15 @@ JXG.extend(
             }
 
             // Default options from the specific element like 'line' in
-            // copyAttribute(attributes, board.options, 'line')
+            //     copyAttribute(attributes, board.options, 'line')
+            // but also like in
+            //     Type.copyAttributes(attributes, board.options, 'view3d', 'az', 'slider');
             o = options;
             isAvail = true;
             for (i = 2; i < len; i++) {
-                if (this.exists(o[arguments[i]])) {
-                    o = o[arguments[i]];
+                arg = arguments[i];
+                if (this.exists(o[arg])) {
+                    o = o[arg];
                 } else {
                     isAvail = false;
                     break;
@@ -1409,15 +1412,16 @@ JXG.extend(
 
             // Merge the specific options given in the parameter 'attributes'
             // into the default options.
-            // Additionally, we step into a subelement of attribute like line.point1 in case it is supplied as in
-            // copyAttribute(attributes, board.options, 'line', 'point1')
+            // Additionally, we step into a sub-element of attribute like line.point1 -
+            // in case it is supplied as in
+            //     copyAttribute(attributes, board.options, 'line', 'point1')
             // In this case we would merge attributes.point1 into the global line.point1 attributes.
             o = (typeof attributes === 'object') ? this.keysToLowerCase(attributes) : {};
-            // o = (typeof attributes === 'object') ? attributes : {};
             isAvail = true;
             for (i = 3; i < len; i++) {
-                if (this.exists(o[arguments[i]])) {
-                    o = o[arguments[i]];
+                arg = arguments[i].toLowerCase();
+                if (this.exists(o[arg])) {
+                    o = o[arg];
                 } else {
                     isAvail = false;
                     break;
@@ -1436,8 +1440,9 @@ JXG.extend(
             o = options;
             isAvail = true;
             for (i = 2; i < len; i++) {
-                if (this.exists(o[arguments[i]])) {
-                    o = o[arguments[i]];
+                arg = arguments[i];
+                if (this.exists(o[arg])) {
+                    o = o[arg];
                 } else {
                     isAvail = false;
                     break;
