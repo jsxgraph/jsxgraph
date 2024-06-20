@@ -209,54 +209,54 @@ JXG.extend(
         // `focusFn(1)`, that evaluate to the projections of the front and back
         // points of the sphere, respectively.
         focusFn: function (sgn) {
-            const that = this;
+            var that = this;
 
             return function () {
-                const camDir = that.view.cameraTransform[3],
-                      r = that.Radius();
+                var camDir = that.view.boxToCam[3],
+                    r = that.Radius();
 
                 return that.view.project3DTo2D([
-                    that.center.X() + sgn*r*camDir[1],
-                    that.center.Y() + sgn*r*camDir[2],
-                    that.center.Z() + sgn*r*camDir[3]
+                    that.center.X() + sgn * r * camDir[1],
+                    that.center.Y() + sgn * r * camDir[2],
+                    that.center.Z() + sgn * r * camDir[3]
                 ]).slice(1, 3);
             };
         },
 
         innerVertexFn: function () {
-            const that = this;
+            var that = this;
 
-            return function() {
-                const view = that.view,
-                      p = view.worldToView(that.center.coords, false),
-                      distOffAxis = Math.sqrt(p[0]*p[0] + p[1]*p[1]),
-                      cam = view.cameraTransform,
-                      inward = [
-                          -(p[0]*cam[1][1] + p[1]*cam[2][1]) / distOffAxis,
-                          -(p[0]*cam[1][2] + p[1]*cam[2][2]) / distOffAxis,
-                          -(p[0]*cam[1][3] + p[1]*cam[2][3]) / distOffAxis
-                      ],
-                      r = that.Radius(),
-                      angleOffAxis = Math.atan(-distOffAxis / p[2]),
-                      steepness = Math.acos(r / Mat.norm(p)),
-                      lean = angleOffAxis + steepness,
-                      cos_lean = Math.cos(lean),
-                      sin_lean = Math.sin(lean);
+            return function () {
+                var view = that.view,
+                    p = view.worldToFocal(that.center.coords, false),
+                    distOffAxis = Mat.hypot(p[0], p[1]),
+                    cam = view.boxToCam,
+                    inward = [
+                        -(p[0] * cam[1][1] + p[1] * cam[2][1]) / distOffAxis,
+                        -(p[0] * cam[1][2] + p[1] * cam[2][2]) / distOffAxis,
+                        -(p[0] * cam[1][3] + p[1] * cam[2][3]) / distOffAxis
+                    ],
+                    r = that.Radius(),
+                    angleOffAxis = Math.atan(-distOffAxis / p[2]),
+                    steepness = Math.acos(r / Mat.norm(p)),
+                    lean = angleOffAxis + steepness,
+                    cos_lean = Math.cos(lean),
+                    sin_lean = Math.sin(lean);
 
                 return view.project3DTo2D([
-                    that.center.X() + r * (sin_lean*inward[0] + cos_lean*cam[3][1]),
-                    that.center.Y() + r * (sin_lean*inward[1] + cos_lean*cam[3][2]),
-                    that.center.Z() + r * (sin_lean*inward[2] + cos_lean*cam[3][3])
+                    that.center.X() + r * (sin_lean * inward[0] + cos_lean * cam[3][1]),
+                    that.center.Y() + r * (sin_lean * inward[1] + cos_lean * cam[3][2]),
+                    that.center.Z() + r * (sin_lean * inward[2] + cos_lean * cam[3][3])
                 ]);
             };
         },
 
         buildCentralProjection: function () {
-            const view = this.view,
-                  auxStyle = {visible: false, withLabel: false},
-                  frontFocus = view.create('point', this.focusFn(-1), auxStyle),
-                  backFocus = view.create('point', this.focusFn(1), auxStyle),
-                  innerVertex = view.create('point', this.innerVertexFn(view), auxStyle);
+            var view = this.view,
+                auxStyle = { visible: false, withLabel: false },
+                frontFocus = view.create('point', this.focusFn(-1), auxStyle),
+                backFocus = view.create('point', this.focusFn(1), auxStyle),
+                innerVertex = view.create('point', this.innerVertexFn(view), auxStyle);
 
             this.aux2D = [frontFocus, backFocus, innerVertex];
             this.element2D = view.create('ellipse', this.aux2D, this.visProp);
@@ -264,14 +264,13 @@ JXG.extend(
 
         buildParallelProjection: function () {
             // The parallel projection of a sphere is a circle
-            const
-                that = this,
+            var that = this,
                 center2d = function () {
-                    const c3d = [1, that.center.X(), that.center.Y(), that.center.Z()];
+                    var c3d = [1, that.center.X(), that.center.Y(), that.center.Z()];
                     return that.view.project3DTo2D(c3d);
                 },
                 radius2d = function () {
-                    const boxSize = that.view.bbox3D[0][1] - that.view.bbox3D[0][0];
+                    var boxSize = that.view.bbox3D[0][1] - that.view.bbox3D[0][0];
                     return that.Radius() * that.view.size[0] / boxSize;
                 };
 
@@ -286,11 +285,15 @@ JXG.extend(
         // replace our 2D representation with a new one that's consistent with
         // the view's current projection type
         rebuildProjection: function () {
+            var i;
+
             // remove the old 2D representation from the scene tree
             if (this.element2D) {
                 this.view.board.removeObject(this.element2D);
-                for (let i in this.aux2D) {
-                    this.view.board.removeObject(this.aux2D[i]);
+                for (i in this.aux2D) {
+                    if (this.aux2D.hasOwnProperty(i)) {
+                        this.view.board.removeObject(this.aux2D[i]);
+                    }
                 }
             }
 
@@ -463,11 +466,11 @@ JXG.createSphere3D = function (board, parents, attributes) {
     } else {
         throw new Error(
             "JSXGraph: Can't create sphere3d with parent types '" +
-                typeof parents[1] +
-                "' and '" +
-                typeof parents[2] +
-                "'." +
-                "\nPossible parent types: [point,point], [point,number], [point,function]"
+            typeof parents[1] +
+            "' and '" +
+            typeof parents[2] +
+            "'." +
+            "\nPossible parent types: [point,point], [point,number], [point,function]"
         );
     }
 
