@@ -150,7 +150,7 @@ JXG.Circle3D = function (view, center, normal, radius, attributes) {
             (t) => this.center.X() + this.Radius() * (Math.cos(t) * this.frame1[0] + Math.sin(t) * this.frame2[0]),
             (t) => this.center.Y() + this.Radius() * (Math.cos(t) * this.frame1[1] + Math.sin(t) * this.frame2[1]),
             (t) => this.center.Z() + this.Radius() * (Math.cos(t) * this.frame1[2] + Math.sin(t) * this.frame2[2]),
-            [0, 2*Math.PI] // parameter range
+            [0, 2 * Math.PI] // parameter range
         ],
         attributes
     );
@@ -200,7 +200,7 @@ JXG.extend(
             return Math.abs(this.updateRadius());
         },
 
-        normalizeFrame: function() {
+        normalizeFrame: function () {
             // normalize frame
             var len1 = Mat.norm(this.frame1),
                 len2 = Mat.norm(this.frame2),
@@ -352,7 +352,7 @@ JXG.createIntersectionCircle3D = function (board, parents, attributes) {
         attr = Type.copyAttributes(attributes, board.options, "intersectioncircle3d");
 
     func = Geometry.intersectionFunction3D(view, el1, el2);
-    center = view.create('point3d', func[0], {visible: false});
+    center = view.create('point3d', func[0], { visible: false });
     ixnCircle = view.create('circle3d', [center, func[1], func[2]], attr);
 
     try {
@@ -361,10 +361,10 @@ JXG.createIntersectionCircle3D = function (board, parents, attributes) {
     } catch (e) {
         throw new Error(
             "JSXGraph: Can't create 'intersection' with parent types '" +
-                typeof parents[0] +
-                "' and '" +
-                typeof parents[1] +
-                "'."
+            typeof parents[0] +
+            "' and '" +
+            typeof parents[1] +
+            "'."
         );
     }
 

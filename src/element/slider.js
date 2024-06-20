@@ -254,7 +254,7 @@ JXG.createSlider = function (board, parents, attributes) {
     p3.Value = function () {
         var d = this._smax - this._smin,
             ev_sw = Type.evaluate(this.visProp.snapwidth);
-            // snapValues, i, v;
+        // snapValues, i, v;
 
         // snapValues = Type.evaluate(this.visProp.snapvalues);
         // if (Type.isArray(snapValues)) {
@@ -354,48 +354,48 @@ JXG.createSlider = function (board, parents, attributes) {
     if (withText) {
         // attr = Type.copyAttributes(attributes, board.options, 'slider', 'label');
         t = board.create('text', [
-                function () {
-                    return (p2.X() - p1.X()) * 0.05 + p2.X();
-                },
-                function () {
-                    return (p2.Y() - p1.Y()) * 0.05 + p2.Y();
-                },
-                function () {
-                    var n,
-                        d = Type.evaluate(p3.visProp.digits),
-                        sl = Type.evaluate(p3.visProp.suffixlabel),
-                        ul = Type.evaluate(p3.visProp.unitlabel),
-                        pl = Type.evaluate(p3.visProp.postlabel);
+            function () {
+                return (p2.X() - p1.X()) * 0.05 + p2.X();
+            },
+            function () {
+                return (p2.Y() - p1.Y()) * 0.05 + p2.Y();
+            },
+            function () {
+                var n,
+                    d = Type.evaluate(p3.visProp.digits),
+                    sl = Type.evaluate(p3.visProp.suffixlabel),
+                    ul = Type.evaluate(p3.visProp.unitlabel),
+                    pl = Type.evaluate(p3.visProp.postlabel);
 
-                    if (d === 2 && Type.evaluate(p3.visProp.precision) !== 2) {
-                        // Backwards compatibility
-                        d = Type.evaluate(p3.visProp.precision);
-                    }
-
-                    if (sl !== null) {
-                        n = sl;
-                    } else if (p3.name && p3.name !== "") {
-                        n = p3.name + " = ";
-                    } else {
-                        n = "";
-                    }
-
-                    if (p3.useLocale()) {
-                        n += p3.formatNumberLocale(p3.Value(), d);
-                    } else {
-                        n += Type.toFixed(p3.Value(), d);
-                    }
-
-                    if (ul !== null) {
-                        n += ul;
-                    }
-                    if (pl !== null) {
-                        n += pl;
-                    }
-
-                    return n;
+                if (d === 2 && Type.evaluate(p3.visProp.precision) !== 2) {
+                    // Backwards compatibility
+                    d = Type.evaluate(p3.visProp.precision);
                 }
-            ],
+
+                if (sl !== null) {
+                    n = sl;
+                } else if (p3.name && p3.name !== "") {
+                    n = p3.name + " = ";
+                } else {
+                    n = "";
+                }
+
+                if (p3.useLocale()) {
+                    n += p3.formatNumberLocale(p3.Value(), d);
+                } else {
+                    n += Type.toFixed(p3.Value(), d);
+                }
+
+                if (ul !== null) {
+                    n += ul;
+                }
+                if (pl !== null) {
+                    n += pl;
+                }
+
+                return n;
+            }
+        ],
             attr.label
         );
 

@@ -174,7 +174,7 @@ JXG.extend(
 
         projectScreenCoords: function (pScr) {
             var end0 = this.getPointCoords(0),
-                  end1 = this.getPointCoords(1);
+                end1 = this.getPointCoords(1);
 
             return this.view.projectScreenToSegment(pScr, end0, end1);
         }
@@ -279,7 +279,7 @@ JXG.createLine3D = function (board, parents, attributes) {
                 [0, 0, 0],
                 [0, 0, 0]
             ],
-            {visible: false},
+            { visible: false },
             'line3d',
             ['point1', 'point2']
         );
@@ -793,11 +793,11 @@ JXG.createPlane3D = function (board, parents, attributes) {
         Math.abs(el.range2[1]) !== Infinity
     ) {
         grid = view.create('mesh3d', [
-                function () {
-                    return point.coords;
-                },
-                dir1, range1, dir2, range2
-            ], attr
+            function () {
+                return point.coords;
+            },
+            dir1, range1, dir2, range2
+        ], attr
         );
         el.grid = grid;
         el.addChild(grid);
@@ -908,10 +908,10 @@ JXG.createIntersectionLine3D = function (board, parents, attributes) {
     } catch (_e) {
         throw new Error(
             "JSXGraph: Can't create 'intersection' with parent types '" +
-                typeof parents[0] +
-                "' and '" +
-                typeof parents[1] +
-                "'."
+            typeof parents[0] +
+            "' and '" +
+            typeof parents[1] +
+            "'."
         );
     }
 

@@ -213,7 +213,7 @@ JXG.extend(
 
             return function () {
                 var camDir = that.view.boxToCam[3],
-                      r = that.Radius();
+                    r = that.Radius();
 
                 return that.view.project3DTo2D([
                     that.center.X() + sgn * r * camDir[1],
@@ -226,22 +226,22 @@ JXG.extend(
         innerVertexFn: function () {
             var that = this;
 
-            return function() {
+            return function () {
                 var view = that.view,
-                      p = view.worldToFocal(that.center.coords, false),
-                      distOffAxis = Mat.hypot(p[0], p[1]),
-                      cam = view.boxToCam,
-                      inward = [
-                          -(p[0] * cam[1][1] + p[1] * cam[2][1]) / distOffAxis,
-                          -(p[0] * cam[1][2] + p[1] * cam[2][2]) / distOffAxis,
-                          -(p[0] * cam[1][3] + p[1] * cam[2][3]) / distOffAxis
-                      ],
-                      r = that.Radius(),
-                      angleOffAxis = Math.atan(-distOffAxis / p[2]),
-                      steepness = Math.acos(r / Mat.norm(p)),
-                      lean = angleOffAxis + steepness,
-                      cos_lean = Math.cos(lean),
-                      sin_lean = Math.sin(lean);
+                    p = view.worldToFocal(that.center.coords, false),
+                    distOffAxis = Mat.hypot(p[0], p[1]),
+                    cam = view.boxToCam,
+                    inward = [
+                        -(p[0] * cam[1][1] + p[1] * cam[2][1]) / distOffAxis,
+                        -(p[0] * cam[1][2] + p[1] * cam[2][2]) / distOffAxis,
+                        -(p[0] * cam[1][3] + p[1] * cam[2][3]) / distOffAxis
+                    ],
+                    r = that.Radius(),
+                    angleOffAxis = Math.atan(-distOffAxis / p[2]),
+                    steepness = Math.acos(r / Mat.norm(p)),
+                    lean = angleOffAxis + steepness,
+                    cos_lean = Math.cos(lean),
+                    sin_lean = Math.sin(lean);
 
                 return view.project3DTo2D([
                     that.center.X() + r * (sin_lean * inward[0] + cos_lean * cam[3][1]),
@@ -253,10 +253,10 @@ JXG.extend(
 
         buildCentralProjection: function () {
             var view = this.view,
-                  auxStyle = {visible: false, withLabel: false},
-                  frontFocus = view.create('point', this.focusFn(-1), auxStyle),
-                  backFocus = view.create('point', this.focusFn(1), auxStyle),
-                  innerVertex = view.create('point', this.innerVertexFn(view), auxStyle);
+                auxStyle = { visible: false, withLabel: false },
+                frontFocus = view.create('point', this.focusFn(-1), auxStyle),
+                backFocus = view.create('point', this.focusFn(1), auxStyle),
+                innerVertex = view.create('point', this.innerVertexFn(view), auxStyle);
 
             this.aux2D = [frontFocus, backFocus, innerVertex];
             this.element2D = view.create('ellipse', this.aux2D, this.visProp);
@@ -466,11 +466,11 @@ JXG.createSphere3D = function (board, parents, attributes) {
     } else {
         throw new Error(
             "JSXGraph: Can't create sphere3d with parent types '" +
-                typeof parents[1] +
-                "' and '" +
-                typeof parents[2] +
-                "'." +
-                "\nPossible parent types: [point,point], [point,number], [point,function]"
+            typeof parents[1] +
+            "' and '" +
+            typeof parents[2] +
+            "'." +
+            "\nPossible parent types: [point,point], [point,number], [point,function]"
         );
     }
 

@@ -913,9 +913,9 @@ JXG.createGrid = function (board, parents, attributes) {
 
                 } else {
                     if ((
-                            YdisTo0 - minorRadius[1] - majorRadius[1] < eps ||
-                            YdisFrom0 - minorRadius[1] - majorRadius[1] < eps
-                        )) {
+                        YdisTo0 - minorRadius[1] - majorRadius[1] < eps ||
+                        YdisFrom0 - minorRadius[1] - majorRadius[1] < eps
+                    )) {
                         // if major grid elements (on 0 or axes) are not existing, minor grid elements have to exist. Otherwise:
                         if ((
                             majorDrawZeroOrigin ||

@@ -137,8 +137,8 @@ JXG.Math = {
      * and then clamp it to <code>[a, b]</code> from there.
      */
     wrapAndClamp: function (x, a, b, period) {
-        var mid = 0.5*(a + b),
-              half_period = 0.5*period;
+        var mid = 0.5 * (a + b),
+            half_period = 0.5 * period;
 
         return this.clamp(
             this.wrap(
@@ -924,7 +924,7 @@ JXG.Math = {
 
         minOr0 = min || 0;
 
-        if ( JXG.exists(step)) {
+        if (JXG.exists(step)) {
             tmp = (n - minOr0) / step;
             if (Number.isInteger(tmp)) {
                 return n;
@@ -1010,7 +1010,7 @@ JXG.Math = {
      * @param {Number} a Variable number of arguments.
      * @returns Number
      */
-    hypot: function() {
+    hypot: function () {
         var i, le, a, sum;
 
         le = arguments.length;
@@ -1027,7 +1027,7 @@ JXG.Math = {
      * @param {Number} x
      * @returns Number
      */
-    hstep: function(x) {
+    hstep: function (x) {
         return (x > 0.0) ? 1 :
             ((x < 0.0) ? 0.0 : 0.5);
     },
@@ -1039,7 +1039,7 @@ JXG.Math = {
      * @param {Number} z
      * @returns Number
      */
-    gamma: function(z) {
+    gamma: function (z) {
         var x, y, t, i, le,
             g = 7,
             // n = 9,
@@ -1206,7 +1206,7 @@ JXG.Math = {
      * JXG.Math.decToFraction(-10.66666666666667);
      * // Result: [-1, 10, 2, 3 ]
     */
-    decToFraction: function(x, order) {
+    decToFraction: function (x, order) {
         var lead, sign, a,
             n, n1, n2,
             d, d1, d2,
