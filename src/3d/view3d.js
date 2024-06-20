@@ -72,6 +72,13 @@ JXG.View3D = function (board, parents, attributes) {
     this.objects = {};
 
     /**
+     * An array containing all the points in the view.
+     * @Type Array
+     * @private
+     */
+    this.points = [];
+
+    /**
      * An array containing all geometric objects in this view in the order of construction.
      * @type Array
      * @private
@@ -720,7 +727,6 @@ JXG.extend(
                 [0, 0, -r, 0],
                 [0, 0, 0, 1]
             ],
-
             mat2D, objectToClip, size,
             dx, dy;
 
@@ -807,6 +813,31 @@ JXG.extend(
                     mat2D,
                     Mat.matMatMult(Mat.matMatMult(this.matrix3DRot, stretch), this.shift).slice(0, 3)
                 );
+        }
+
+        // depth-order visible points. the `setLayer` method is used here to
+        // re-order the points within each layer: it has the side effect of
+        // moving the target element to the end of the layer's child list
+        if (/* [PROTOTYPE] condition on whether depth ordering is turned on */ true && this.board.renderer && this.board.renderer.type === 'svg') {
+            var that = this,
+                compareDepth = function (a, b) {
+                var worldDiff = [0, a.coords[1] - b.coords[1], a.coords[2] - b.coords[2], a.coords[3] - b.coords[3]];
+                var oriBoxDiff = Mat.matVecMult(that.matrix3DRot, Mat.matVecMult(that.shift, worldDiff));
+                return oriBoxDiff[3];
+            };
+            this.points
+                .filter((pt) => pt.element2D.visProp.visible)
+                .sort(compareDepth)
+                .forEach((pt) => this.board.renderer.setLayer(pt.element2D, pt.element2D.visProp.layer));
+
+            /* [DEBUG] list oriented box coordinates in depth order */
+            console.log('depth-ordered points in oriented box coordinates');
+            this.points
+                .filter((pt) => pt.element2D.visProp.visible)
+                .sort(compareDepth)
+                .forEach(function (pt) {
+                    console.log(Mat.matVecMult(that.matrix3DRot, Mat.matVecMult(that.shift, pt.coords)));
+                });
         }
 
         return this;
