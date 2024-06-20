@@ -31,7 +31,7 @@ JXG.extend(Options, {
          * @type Line3D
          * @name View3D#xAxis
          */
-        xAxis: { visible: true, point2: { name: "x" } },
+        xAxis: { visible: true, point2: { name: "x" }, strokeColor: JXG.palette.red },
 
         /**
          * Attributes of the 3D y-axis.
@@ -39,7 +39,7 @@ JXG.extend(Options, {
          * @type Line3D
          * @name View3D#yAxis
          */
-        yAxis: { visible: true, point2: { name: "y" } },
+        yAxis: { visible: true, point2: { name: "y" }, strokeColor: JXG.palette.green },
 
         /**
          * Attributes of the 3D z-axis.
@@ -47,7 +47,7 @@ JXG.extend(Options, {
          * @type Line3D
          * @name View3D#zAxis
          */
-        zAxis: { visible: true, point2: { name: "z" } },
+        zAxis: { visible: true, point2: { name: "z" }, strokeColor: JXG.palette.blue },
 
         // Planes
         /**
