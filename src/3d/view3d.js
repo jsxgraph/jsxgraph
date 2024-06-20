@@ -315,7 +315,7 @@ JXG.extend(
 
         // set the Tait-Bryan angles to specify the current view rotation matrix
         setAnglesFromRotation: function() {
-            let rem = this.matrix3DRot, // rotation remaining after angle extraction
+            var rem = this.matrix3DRot, // rotation remaining after angle extraction
                 rBank, cosBank, sinBank,
                 cosEl, sinEl,
                 cosAz, sinAz;
@@ -579,7 +579,7 @@ JXG.extend(
             var az_smax, az_smin,
                 el_smax, el_smin, el_cover,
                 el_smid, el_equiv, el_flip_equiv,
-                el_equiv_loss, el_flip_equiv_loss,
+                el_equiv_loss, el_flip_equiv_loss, el_interval_loss,
                 bank_smax, bank_smin;
 
             // update stored trackball toggle
@@ -629,7 +629,7 @@ JXG.extend(
                 // wrap and clamp the elevation into the slider range. if
                 // flipping the elevation gets us closer to the slider interval,
                 // do that, inverting the azimuth and bank angle to compensate
-                const el_interval_loss = function (t) {
+                el_interval_loss = function (t) {
                     if (t < el_smin) {
                         return el_smin - t;
                     } else if (el_smax < t) {
@@ -676,14 +676,14 @@ JXG.extend(
          * @returns {Array}
          */
         _updateCentralProjection: function () {
-            const zf = 20, // near clip plane
-                  zn = 8; // far clip plane
+            var zf = 20, // near clip plane
+                  zn = 8, // far clip plane
 
             // See https://www.mathematik.uni-marburg.de/~thormae/lectures/graphics1/graphics_6_1_eng_web.html
             // bbox3D is always at the world origin, i.e. T_obj is the unit matrix.
             // All vectors contain affine coordinates and have length 3
             // The matrices are of size 4x4.
-            var r, A;
+                r, A;
 
             // set distance from view box center to camera
             r = Type.evaluate(this.visProp.r);
@@ -713,15 +713,15 @@ JXG.extend(
 
         // Update 3D-to-2D transformation matrix with the actual azimuth and elevation angles.
         update: function () {
-            const r = this.r,
-                  stretch = [
+            var r = this.r,
+                stretch = [
                       [1,  0,  0, 0],
                       [0, -r,  0, 0],
                       [0,  0, -r, 0],
                       [0,  0,  0, 1]
-                  ];
+                ],
 
-            var mat2D, objectToClip, size,
+                mat2D, objectToClip, size,
                 dx, dy;
 
             if (
@@ -1026,7 +1026,7 @@ JXG.extend(
          * the line segment.
          */
         projectScreenToSegment: function (pScr, end0, end1) {
-            const end0_2d = this.project3DTo2D(end0).slice(1, 3),
+            var end0_2d = this.project3DTo2D(end0).slice(1, 3),
                   end1_2d = this.project3DTo2D(end1).slice(1, 3),
                   dir_2d = [
                       end1_2d[0] - end0_2d[0],
@@ -1037,23 +1037,24 @@ JXG.extend(
                       pScr[0] - end0_2d[0],
                       pScr[1] - end0_2d[1]
                   ],
-                  s = Mat.innerProduct(diff, dir_2d) / dir_2d_norm_sq; // screen-space affine parameter
+                  s = Mat.innerProduct(diff, dir_2d) / dir_2d_norm_sq, // screen-space affine parameter
+                  mid, mid_2d, mid_diff, m,
 
-            var t, // view-space affine parameter
+                t, // view-space affine parameter
                 t_clamped, // affine parameter clamped to range
                 t_clamped_co;
 
             if (this.projectionType === 'central') {
-                const mid = [
+                 mid = [
                         0.5 * (end0[0] + end1[0]),
                         0.5 * (end0[1] + end1[1]),
                         0.5 * (end0[2] + end1[2])
-                      ],
-                      mid_2d = this.project3DTo2D(mid).slice(1, 3),
+                      ];
+                      mid_2d = this.project3DTo2D(mid).slice(1, 3);
                       mid_diff = [
                           mid_2d[0] - end0_2d[0],
                           mid_2d[1] - end0_2d[1]
-                      ],
+                      ];
                       m = Mat.innerProduct(mid_diff, dir_2d) / dir_2d_norm_sq;
 
                 // the view-space affine parameter s is related to the
@@ -1092,7 +1093,7 @@ JXG.extend(
          * point in homogeneous coordinates.
          */
         project2DTo3DVertical: function (point2d, base_c3d) {
-            const pScr = point2d.coords.usrCoords.slice(1, 3),
+            var pScr = point2d.coords.usrCoords.slice(1, 3),
                   end0 = [base_c3d[1], base_c3d[2], this.bbox3D[2][0]],
                   end1 = [base_c3d[1], base_c3d[2], this.bbox3D[2][1]];
 

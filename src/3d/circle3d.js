@@ -51,6 +51,8 @@ import Geometry from '../math/geometry.js';
  * @see JXG.Board#generateName
  */
 JXG.Circle3D = function (view, center, normal, radius, attributes) {
+    var altFrame1;
+
     this.constructor(view.board, attributes, Const.OBJECT_TYPE_CIRCLE3D, Const.OBJECT_CLASS_3D);
     this.constructor3D(view, "circle3d");
 
@@ -129,9 +131,8 @@ JXG.Circle3D = function (view, center, normal, radius, attributes) {
     // [1, 0, 0] or [-0.5, sqrt(3)/2, 0]---whichever is further away on the unit
     // sphere. every vector is at least 60 degrees from one of these, which
     // should be good enough to make the frame vector numerically accurate
-    const sqrt3_2 = 0.8660254037844386;
     this.frame1 = Mat.crossProduct(this.normal, [1, 0, 0]);
-    var altFrame1 = Mat.crossProduct(this.normal, [-0.5, sqrt3_2, 0]);
+    altFrame1 = Mat.crossProduct(this.normal, [-0.5, 0.8660254037844386, 0]); // [1/2, sqrt(3)/2, 0]
     if (Mat.norm(altFrame1) > Mat.norm(this.frame1)) {
         this.frame1 = altFrame1;
     }

@@ -137,7 +137,7 @@ JXG.Math = {
      * and then clamp it to <code>[a, b]</code> from there.
      */
     wrapAndClamp: function (x, a, b, period) {
-        const mid = 0.5*(a + b),
+        var mid = 0.5*(a + b),
               half_period = 0.5*period;
 
         return this.clamp(

@@ -173,7 +173,7 @@ JXG.extend(
         },
 
         projectScreenCoords: function (pScr) {
-            const end0 = this.getPointCoords(0),
+            var end0 = this.getPointCoords(0),
                   end1 = this.getPointCoords(1);
 
             return this.view.projectScreenToSegment(pScr, end0, end1);

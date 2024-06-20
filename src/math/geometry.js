@@ -2402,33 +2402,33 @@ JXG.extend(
                 ],
                 function () {
                     // Radius (returns NaN if spheres don't touch)
-                    let r = el2.Radius(),
+                    var r = el2.Radius(),
                         s = dis();
-                    return Math.sqrt(r*r - s*s);
+                    return Math.sqrt(r * r - s * s);
                 }
             ];
         },
 
         meetSphereSphere: function (el1, el2) {
             var skew = function () {
-                let dist = el1.center.distance(el2.center),
+                var dist = el1.center.distance(el2.center),
                     r1 = el1.Radius(),
                     r2 = el2.Radius();
-                return (r1 - r2)*(r1 + r2) / (dist*dist);
+                return (r1 - r2) * (r1 + r2) / (dist * dist);
             };
             return [
                 [
                     // Center
                     function () {
-                        let s = skew();
+                        var s = skew();
                         return 0.5*((1-s)*el1.center.X() + (1+s)*el2.center.X());
                     },
                     function () {
-                        let s = skew();
+                        var s = skew();
                         return 0.5*((1-s)*el1.center.Y() + (1+s)*el2.center.Y());
                     },
                     function () {
-                        let s = skew();
+                        var s = skew();
                         return 0.5*((1-s)*el1.center.Z() + (1+s)*el2.center.Z());
                     }
                 ],
@@ -2440,7 +2440,7 @@ JXG.extend(
                 ],
                 function () {
                     // Radius (returns NaN if spheres don't touch)
-                    let dist = el1.center.distance(el2.center),
+                    var dist = el1.center.distance(el2.center),
                         r1 = el1.Radius(),
                         r2 = el2.Radius(),
                         s = skew(),

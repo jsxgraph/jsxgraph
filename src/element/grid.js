@@ -216,10 +216,10 @@ import Const from "../base/constants.js";
  * </script><pre>
  */
 JXG.createGrid = function (board, parents, attributes) {
-    const eps = Mat.eps,       // to avoid rounding errors
-        maxLines = 5000;    // maximum number of vertical or horizontal grid elements (abort criterion for performance reasons)
+    var eps = Mat.eps,       // to avoid rounding errors
+        maxLines = 5000,    // maximum number of vertical or horizontal grid elements (abort criterion for performance reasons)
 
-    var majorGrid,      // main object which will be returned as grid
+        majorGrid,      // main object which will be returned as grid
         minorGrid,      // sub-object
         parentAxes,     // {Array} array of user defined axes (allowed length 0, 1 or 2)
 
