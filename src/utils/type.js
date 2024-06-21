@@ -194,8 +194,8 @@ JXG.extend(
          * @returns {Boolean} True, if v is of type JXG.Point3D.
          */
         isPoint3D: function (v) {
-            if (v !== null && typeof v === "object" && this.exists(v.elType)) {
-                return v.elType === "point3d";
+            if (v !== null && typeof v === "object" && this.exists(v.type)) {
+                return v.type === Const.OBJECT_TYPE_POINT3D;
             }
 
             return false;

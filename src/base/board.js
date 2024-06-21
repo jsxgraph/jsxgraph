@@ -749,6 +749,7 @@ JXG.extend(
 
             if (
                 !Type.isPoint(object) &&
+                !Type.isPoint3D(object) &&
                 object.elementClass !== Const.OBJECT_CLASS_LINE &&
                 object.type !== Const.OBJECT_TYPE_ANGLE
             ) {
