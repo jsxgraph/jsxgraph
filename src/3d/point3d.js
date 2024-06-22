@@ -55,7 +55,7 @@ JXG.Point3D = function (view, F, slide, attributes) {
     this.board.finalizeAdding(this);
 
     // add the new point to its view's point list
-    if (/* [PROTOTYPE] condition on whether depth ordering is turned on */ true) {
+    if (view.visProp.depthorderpoints) {
         view.points.push(this);
     }
 

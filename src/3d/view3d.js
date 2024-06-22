@@ -818,7 +818,7 @@ JXG.extend(
         // depth-order visible points. the `setLayer` method is used here to
         // re-order the points within each layer: it has the side effect of
         // moving the target element to the end of the layer's child list
-        if (/* [PROTOTYPE] condition on whether depth ordering is turned on */ true && this.board.renderer && this.board.renderer.type === 'svg') {
+        if (this.visProp.depthorderpoints && this.board.renderer && this.board.renderer.type === 'svg') {
             var that = this,
                 compareDepth = function (a, b) {
                 var worldDiff = [0, a.coords[1] - b.coords[1], a.coords[2] - b.coords[2], a.coords[3] - b.coords[3]];
@@ -1995,6 +1995,7 @@ JXG.createView3D = function (board, parents, attributes) {
     view.updateAngleSliderBounds();
 
     view.board.update();
+    console.log(view.visProp);
 
     return view;
 };
