@@ -1740,6 +1740,7 @@ JXG.extend(
                 str = '';
 
             if (arr[1] === 0 && arr[2] === 0) {
+                // 0
                 str += '0';
             } else {
                 // Sign
@@ -1747,12 +1748,15 @@ JXG.extend(
                     str += '-';
                 }
                 if (arr[2] === 0) {
+                    // Integer
                     str += arr[1];
                 } else if (!(arr[2] === 1 && arr[3] === 1)) {
-                    // arr[2] !== 0
+                    // Proper fraction
                     if (arr[1] !== 0) {
-                        str += ' ';
+                        // Absolute value larger than 1
+                        str += arr[1] + ' ';
                     }
+                    // Add fractional part
                     if (useTeX === true) {
                         str += '\\frac{' + arr[2] + '}{' + arr[3] + '}';
                     } else {
