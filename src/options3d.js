@@ -663,6 +663,15 @@ JXG.extend(Options, {
         fov: 1 / 5 * 2 * Math.PI,
 
         /**
+         * When this option is enabled, points closer to the screen are drawn
+         * over points further from the screen within each layer.
+         *
+         * @name View3D#depthOrderPoints
+         * @default false
+         */
+        depthOrderPoints: false,
+
+        /**
          * Fixed values for the view, which can be changed using keyboard keys `picture-up` and `picture-down`.
          * Array of the form: [[el0, az0, r0], [el1, az1, r1, ...[eln, azn, rn]]
          *
