@@ -1353,6 +1353,7 @@ JXG.extend(
                     delta = [where[0] - p.usrCoords[1], where[1] - p.usrCoords[2]];
                 }
                 this.setPosition(Const.COORDS_BY_USER, delta);
+                return this.board.update(this);
             }
             return this;
         },
