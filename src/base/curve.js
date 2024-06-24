@@ -144,7 +144,6 @@ JXG.Curve = function (board, parents, attributes) {
         setTerm: "generateTerm",
         move: "moveTo",
         moveTo: "moveTo",
-        moveFromTo: "moveFromTo",
         MinX: "minX",
         MaxX: "maxX"
     });
@@ -1340,37 +1339,18 @@ JXG.extend(
          */
         moveTo: function (where) {
             // TODO add animation
-            if (this.points.length > 0) {
-                return this.moveFromTo(this.points[0].usrCoords, where);
-            }
-            return this;
-        },
-
-        /**
-         * Shift the curve by the vector 'to - from'.
-         *
-         * @param {Array} from Array containing the x and y coordinate of the previous location.
-         * @param {Array} to Array containing the x and y coordinate of the target location.
-         * @returns {JXG.Curve} Reference to itself.
-         */
-        moveFromTo: function (from, to) {
-            // TODO add animation
             var delta = [],
-                oldPos;
-            if (!Type.evaluate(this.visProp.fixed)) {
-                if (from.length === 3) {
-                    oldPos = from;
-                } else {
-                    oldPos = [1, from[0], from[1]];
-                }
-                if (to.length === 3) {
+                p;
+            if (this.points.length > 0 && !Type.evaluate(this.visProp.fixed)) {
+                p = this.points[0];
+                if (where.length === 3) {
                     delta = [
-                        to[0] - oldPos[0],
-                        to[1] - oldPos[1],
-                        to[2] - oldPos[2]
+                        where[0] - p.usrCoords[0],
+                        where[1] - p.usrCoords[1],
+                        where[2] - p.usrCoords[2]
                     ];
                 } else {
-                    delta = [to[0] - oldPos[1], to[1] - oldPos[2]];
+                    delta = [where[0] - p.usrCoords[1], where[1] - p.usrCoords[2]];
                 }
                 this.setPosition(Const.COORDS_BY_USER, delta);
             }
