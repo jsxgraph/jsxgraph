@@ -1373,6 +1373,7 @@ JXG.extend(
                     delta = [to[0] - oldPos[1], to[1] - oldPos[2]];
                 }
                 this.setPosition(Const.COORDS_BY_USER, delta);
+                return this.board.update(this);
             }
             return this;
         },
