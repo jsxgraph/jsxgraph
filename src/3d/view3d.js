@@ -76,7 +76,7 @@ JXG.View3D = function (board, parents, attributes) {
      * @Type Array
      * @private
      */
-    this.points = [];
+    this.points = this.visProp.depthorderpoints ? [] : null;
 
     /**
      * An array containing all geometric objects in this view in the order of construction.
@@ -728,7 +728,8 @@ JXG.extend(
                 [0, 0, 0, 1]
             ],
             mat2D, objectToClip, size,
-            dx, dy;
+            dx, dy,
+            objectsList;
 
         if (
             !Type.exists(this.el_slide) ||
@@ -813,6 +814,21 @@ JXG.extend(
                     mat2D,
                     Mat.matMatMult(Mat.matMatMult(this.matrix3DRot, stretch), this.shift).slice(0, 3)
                 );
+        }
+
+        // if depth-ordering for points was just switched on, initialize the
+        // list of points
+        if (this.visProp.depthorderpoints && this.points === null) {
+            objectsList = Object.values(this.objects);
+            this.points = objectsList.filter(
+                el => el.type === Const.OBJECT_TYPE_POINT3D
+            );
+        }
+
+        // if depth-ordering for points was just switched off, throw away the
+        // list of points
+        if (!this.visProp.depthorderpoints && this.points !== null) {
+            this.points = null;
         }
 
         // depth-order visible points. the `setLayer` method is used here to
@@ -1995,7 +2011,6 @@ JXG.createView3D = function (board, parents, attributes) {
     view.updateAngleSliderBounds();
 
     view.board.update();
-    console.log(view.visProp);
 
     return view;
 };
