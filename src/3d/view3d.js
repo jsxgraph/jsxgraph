@@ -1887,6 +1887,7 @@ JXG.createView3D = function (board, parents, attributes) {
         ],
         attr_el
     );
+    view.inherits.push(view.el_slide);
 
     /**
      * Slider to adjust bank angle
@@ -1907,6 +1908,7 @@ JXG.createView3D = function (board, parents, attributes) {
         ],
         attr_bank
     );
+    view.inherits.push(view.bank_slide);
 
     view.board.highlightInfobox = function (x, y, el) {
         var d, i, c3d, foot,

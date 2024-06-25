@@ -492,7 +492,7 @@ JXG.extend(Options, {
             },
             continuous: true,
             slider: {
-                visible: true,
+                visible: 'inherit',
                 style: 6,
                 point1: { frozen: true },
                 point2: { frozen: true },
@@ -560,7 +560,7 @@ JXG.extend(Options, {
             },
             continuous: true,
             slider: {
-                visible: true,
+                visible: 'inherit',
                 style: 6,
                 point1: { frozen: true },
                 point2: { frozen: true },
@@ -628,7 +628,7 @@ JXG.extend(Options, {
             },
             continuous: true,
             slider: {
-                visible: false,
+                visible: 'inherit',
                 style: 6,
                 point1: { frozen: true },
                 point2: { frozen: true },

@@ -1014,6 +1014,7 @@ JXG.extend(
 
             if (this.needsUpdate) {
                 if (Type.exists(this.view) && Type.evaluate(this.view.visProp.visible) === false) {
+                    // Handle hiding of view3d
                     this.visPropCalc.visible = false;
 
                 } else {
