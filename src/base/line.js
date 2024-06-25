@@ -2104,21 +2104,28 @@ JXG.createTangent = function (board, parents, attributes) {
                         return p2[2] - p1[2];
                     case 2:
                         return p1[1] - p2[1];
+                    default:
+                        return [
+                            p1[2] * p2[1] - p1[1] * p2[2],
+                            p2[2] - p1[2],
+                            p1[1] - p2[1]
+                        ];
                 }
-                return 0;
             };
 
             tangent = board.create(
                 "line",
                 [
                     function () {
-                        return getCurveTangentDir(p.position, c, 0);
-                    },
-                    function () {
-                        return getCurveTangentDir(p.position, c, 1);
-                    },
-                    function () {
-                        return getCurveTangentDir(p.position, c, 2);
+                        var t;
+
+                        if (p.type === Const.OBJECT_TYPE_GLIDER) {
+                            t = p.position;
+                        } else {
+                            t = Geometry.projectPointToCurve(p, c, board)[1];
+                        }
+
+                        return getCurveTangentDir(t, c);
                     }
                 ],
                 attr
