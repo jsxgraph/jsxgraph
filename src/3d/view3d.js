@@ -1866,6 +1866,8 @@ JXG.createView3D = function (board, parents, attributes) {
         ],
         attr_az
     );
+    // view.az_slide.inherits.push(view);
+    view.inherits.push(view.az_slide);
 
     /**
      * Slider to adapt elevation angle
@@ -1953,6 +1955,7 @@ JXG.createView3D = function (board, parents, attributes) {
             view.board.highlightCustomInfobox('(' + x + ', ' + y + ')', el);
         }
     };
+
 
     // Hack needed to enable addEvent for view3D:
     view.BOARD_MODE_NONE = 0x0000;
