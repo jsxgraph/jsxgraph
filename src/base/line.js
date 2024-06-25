@@ -1927,6 +1927,7 @@ JXG.registerElement("axis", JXG.createAxis);
  * @type JXG.Line
  * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
  * @param {Glider} g A glider on a line, circle, or curve.
+ * @param {JXG.GeometryElement} [c] Optional element for which the tangent is constructed
  * @example
  * // Create a tangent providing a glider on a function graph
  *   var c1 = board.create('curve', [function(t){return t},function(t){return t*t*t;}]);
@@ -1944,12 +1945,13 @@ JXG.createTangent = function (board, parents, attributes) {
     var p, c, j, el, tangent, attr,
         getCurveTangentDir;
 
-    // One argument: glider on line, circle or curve
     if (parents.length === 1) {
+        // One argument: glider on line, circle or curve
         p = parents[0];
         c = p.slideObject;
-        // Two arguments: (point,F"|conic) or (line|curve|circle|conic,point). // Not yet: curve!
+
     } else if (parents.length === 2) {
+        // Two arguments: (point,line|curve|circle|conic) or (line|curve|circle|conic,point).
         // In fact, for circles and conics it is the polar
         if (Type.isPoint(parents[0])) {
             p = parents[0];
@@ -1964,7 +1966,7 @@ JXG.createTangent = function (board, parents, attributes) {
                     "' and '" +
                     typeof parents[1] +
                     "'." +
-                    "\nPossible parent types: [glider], [point,line|curve|circle|conic]"
+                    "\nPossible parent types: [glider|point], [point,line|curve|circle|conic]"
             );
         }
     } else {
@@ -1974,7 +1976,7 @@ JXG.createTangent = function (board, parents, attributes) {
                 "' and '" +
                 typeof parents[1] +
                 "'." +
-                "\nPossible parent types: [glider], [point,line|curve|circle|conic]"
+                "\nPossible parent types: [glider|point], [point,line|curve|circle|conic]"
         );
     }
 
@@ -1992,17 +1994,22 @@ JXG.createTangent = function (board, parents, attributes) {
                 [
                     function () {
                         var g = c.X,
-                            f = c.Y;
-                        return (
-                            -p.X() * Numerics.D(f)(p.position) +
-                            p.Y() * Numerics.D(g)(p.position)
-                        );
-                    },
-                    function () {
-                        return Numerics.D(c.Y)(p.position);
-                    },
-                    function () {
-                        return -Numerics.D(c.X)(p.position);
+                            f = c.Y,
+                            t;
+
+                        if (p.type === Const.OBJECT_TYPE_GLIDER) {
+                            t = p.position;
+                        } else if (Type.evaluate(c.visProp.curvetype) === 'functiongraph') {
+                            t = p.X();
+                        } else {
+                            t = Geometry.projectPointToCurve(p, c, board)[1];
+                        }
+
+                        return [
+                            -p.X() * Numerics.D(f)(t) + p.Y() * Numerics.D(g)(t),
+                            Numerics.D(c.Y)(t),
+                            -Numerics.D(c.X)(t)
+                        ];
                     }
                 ],
                 attr
