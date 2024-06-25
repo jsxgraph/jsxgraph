@@ -1142,7 +1142,8 @@ JXG.extend(
         getNumberOfConflicts: function (x, y, w, h) {
             var count = 0,
                 i, obj, le,
-                savePointPrecision;
+                savePointPrecision,
+                saveHasInnerPoints;
 
             // Set the precision of hasPoint to half the max if label isn't too long
             savePointPrecision = this.board.options.precision.hasPoint;
@@ -1152,6 +1153,8 @@ JXG.extend(
             // Make it compatible with the objects' visProp.precision attribute
             for (i = 0, le = this.board.objectsList.length; i < le; i++) {
                 obj = this.board.objectsList[i];
+                saveHasInnerPoints = obj.visProp.hasinnerpoints;
+                obj.visProp.hasinnerpoints = false;
                 if (
                     obj.visPropCalc.visible &&
                     obj.elType !== "axis" &&
@@ -1162,6 +1165,7 @@ JXG.extend(
                 ) {
                     count++;
                 }
+                obj.visProp.hasinnerpoints = saveHasInnerPoints;
             }
             this.board.options.precision.hasPoint = savePointPrecision;
 
