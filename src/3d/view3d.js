@@ -718,6 +718,21 @@ JXG.extend(
         return Mat.matMatMult(A, this.boxToCam);
     },
 
+    /**
+     * Comparison function for 3D points. It is used to sort points according to their z-index.
+     * @param {Point3D} a
+     * @param {Point3D} b
+     * @returns Integer
+     */
+    compareDepth: function (a, b) {
+        var worldDiff = [0,
+                         a.coords[1] - b.coords[1],
+                         a.coords[2] - b.coords[2],
+                         a.coords[3] - b.coords[3]],
+            oriBoxDiff = Mat.matVecMult(this.matrix3DRot, Mat.matVecMult(this.shift, worldDiff));
+        return oriBoxDiff[3];
+    },
+
     // Update 3D-to-2D transformation matrix with the actual azimuth and elevation angles.
     update: function () {
         var r = this.r,
@@ -835,25 +850,19 @@ JXG.extend(
         // re-order the points within each layer: it has the side effect of
         // moving the target element to the end of the layer's child list
         if (this.visProp.depthorderpoints && this.board.renderer && this.board.renderer.type === 'svg') {
-            var that = this,
-                compareDepth = function (a, b) {
-                var worldDiff = [0, a.coords[1] - b.coords[1], a.coords[2] - b.coords[2], a.coords[3] - b.coords[3]];
-                var oriBoxDiff = Mat.matVecMult(that.matrix3DRot, Mat.matVecMult(that.shift, worldDiff));
-                return oriBoxDiff[3];
-            };
             this.points
-                .filter((pt) => pt.element2D.visProp.visible)
-                .sort(compareDepth)
+                .filter((pt) => Type.evaluate(pt.element2D.visProp.visible))
+                .sort(this.compareDepth.bind(this))
                 .forEach((pt) => this.board.renderer.setLayer(pt.element2D, pt.element2D.visProp.layer));
 
             /* [DEBUG] list oriented box coordinates in depth order */
-            console.log('depth-ordered points in oriented box coordinates');
-            this.points
-                .filter((pt) => pt.element2D.visProp.visible)
-                .sort(compareDepth)
-                .forEach(function (pt) {
-                    console.log(Mat.matVecMult(that.matrix3DRot, Mat.matVecMult(that.shift, pt.coords)));
-                });
+            // console.log('depth-ordered points in oriented box coordinates');
+            // this.points
+            //     .filter((pt) => pt.element2D.visProp.visible)
+            //     .sort(compareDepth)
+            //     .forEach(function (pt) {
+            //         console.log(Mat.matVecMult(that.matrix3DRot, Mat.matVecMult(that.shift, pt.coords)));
+            //     });
         }
 
         return this;
@@ -1857,6 +1866,8 @@ JXG.createView3D = function (board, parents, attributes) {
         ],
         attr_az
     );
+    // view.az_slide.inherits.push(view);
+    view.inherits.push(view.az_slide);
 
     /**
      * Slider to adapt elevation angle
@@ -1876,6 +1887,7 @@ JXG.createView3D = function (board, parents, attributes) {
         ],
         attr_el
     );
+    view.inherits.push(view.el_slide);
 
     /**
      * Slider to adjust bank angle
@@ -1896,6 +1908,7 @@ JXG.createView3D = function (board, parents, attributes) {
         ],
         attr_bank
     );
+    view.inherits.push(view.bank_slide);
 
     view.board.highlightInfobox = function (x, y, el) {
         var d, i, c3d, foot,
@@ -1944,6 +1957,7 @@ JXG.createView3D = function (board, parents, attributes) {
             view.board.highlightCustomInfobox('(' + x + ', ' + y + ')', el);
         }
     };
+
 
     // Hack needed to enable addEvent for view3D:
     view.BOARD_MODE_NONE = 0x0000;

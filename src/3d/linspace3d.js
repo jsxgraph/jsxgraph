@@ -306,6 +306,7 @@ JXG.createLine3D = function (board, parents, attributes) {
         attr.straightfirst = false;
         attr.straightlast = false;
         el.element2D = view.create('segment', [endpoints[0].element2D, endpoints[1].element2D], attr);
+        el.element2D.view = view;
 
         /**
          * Shadow points that determine the visible line.
@@ -378,6 +379,7 @@ JXG.createLine3D = function (board, parents, attributes) {
         attr.straightfirst = false;
         attr.straightlast = false;
         el.element2D = view.create('segment', [point1.element2D, point2.element2D], attr);
+        el.element2D.view = view;
 
         el.endpoints = points;
     }
@@ -771,6 +773,7 @@ JXG.createPlane3D = function (board, parents, attributes) {
 
     attr = el.setAttr2D(attr);
     el.element2D = view.create('curve', [[], []], attr);
+    el.element2D.view = view;
 
     /**
      * @class
@@ -803,6 +806,8 @@ JXG.createPlane3D = function (board, parents, attributes) {
         el.addChild(grid);
         el.inherits.push(grid);
         grid.setParents(el);
+        el.grid.view = view;
+
     }
 
     el.element2D.prepareUpdate().update();

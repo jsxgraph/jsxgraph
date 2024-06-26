@@ -310,6 +310,7 @@ JXG.extend(
             // attach the new 2D representation to the scene tree
             this.addChild(this.element2D);
             this.inherits.push(this.element2D);
+            this.element2D.view = this.view;
         }
     }
 );
