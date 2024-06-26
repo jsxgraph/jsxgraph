@@ -41,6 +41,7 @@ describe("Test board events", function () {
         axis: false,
         grid: false,
         boundingbox: [0, 5, 5, 0],
+        resize: {enabled: false},
         keyboard: {
             enabled: true,
             dy: 20,

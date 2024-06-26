@@ -38,6 +38,7 @@ describe("Test ticks", function () {
     board = JXG.JSXGraph.initBoard("jxgbox", {
         boundingbox: [-4, 4, 4, -4],
         axis: true,
+        resize: {enabled: false},
         defaultAxes: {
             x: {
                 ticks: {

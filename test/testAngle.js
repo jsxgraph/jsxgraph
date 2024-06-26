@@ -40,6 +40,7 @@ describe("Test angles", function () {
         axis: false,
         grid: false,
         boundingbox: [-5, 5, 5, -5],
+        resize: {enabled: false},
         keyboard: {
             enabled: true,
             dy: 20,
