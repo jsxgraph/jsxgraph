@@ -4194,10 +4194,13 @@ JXG.extend(
 
         /**
          * Update the width and height of the JSXGraph container div element.
-         * Read actual values with getBoundingClientRect(),
+         * If width and height are not supplied, read actual values with offsetWidth/Height,
          * and call board.resizeContainer() with this values.
          * <p>
          * If necessary, also call setBoundingBox().
+         * @param {Number} [width=this.containerObj.offsetWidth] Width of the container element
+         * @param {Numer} [height=this.containerObj.offsetHeight] Height of the container element
+         * @returns
          *
          * @see JXG.Board#startResizeObserver
          * @see JXG.Board#resizeListener
@@ -4205,24 +4208,26 @@ JXG.extend(
          * @see JXG.Board#setBoundingBox
          *
          */
-        updateContainerDims: function () {
-            var w, h,
+        updateContainerDims: function (width, height) {
+            var w = width,
+                h = height,
                 // bb,
                 css,
                 width_adjustment, height_adjustment;
-            // Get size of the board's container div
-            //
-            // offsetWidth/Height ignores CSS transforms,
-            // getBoundingClientRect includes CSS transforms
-            //
-            // bb = this.containerObj.getBoundingClientRect();
-            // w = bb.width;
-            // h = bb.height;
-            w = this.containerObj.offsetWidth;
-            h = this.containerObj.offsetHeight;
 
-            // Subtract the border size
-            if (window && window.getComputedStyle) {
+            if (width === undefined && window && window.getComputedStyle) {
+                // Get size of the board's container div
+                //
+                // offsetWidth/Height ignores CSS transforms,
+                // getBoundingClientRect includes CSS transforms
+                //
+                // bb = this.containerObj.getBoundingClientRect();
+                // w = bb.width;
+                // h = bb.height;
+                w = this.containerObj.offsetWidth;
+                h = this.containerObj.offsetHeight;
+
+                // Subtract the border size
                 css = window.getComputedStyle(this.containerObj, null);
                 width_adjustment = parseFloat(css.getPropertyValue('border-left-width')) + parseFloat(css.getPropertyValue('border-right-width'));
                 if (!isNaN(width_adjustment)) {
@@ -4281,11 +4286,13 @@ JXG.extend(
             }
 
             this.resizeObserver = new ResizeObserver(function (entries) {
+                var bb;
                 if (!that._isResizing) {
                     that._isResizing = true;
+                    bb = entries[0].contentRect;
                     window.setTimeout(function () {
                         try {
-                            that.updateContainerDims();
+                            that.updateContainerDims(bb.width, bb.height);
                         } catch (err) {
                             that.stopResizeObserver();
                         } finally {

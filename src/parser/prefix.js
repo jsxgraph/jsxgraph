@@ -156,10 +156,17 @@ JXG.PrefixParser = {
                     throw new Error("PrefixParser.parse: " + fun + " is not allowed");
                 }
             } else {
-                // Allow shortcut 'V' for 'Value'
                 fun = term[0];
+
+                // Allow shortcut 'V' for 'Value'
                 if (fun === 'V') {
                     fun = 'Value';
+                }
+
+                // get coords always with z
+                // (its visibility is controlled by the attribute function formatCoords)
+                if (fun === 'Coords') {
+                    term[2] = 'true';
                 }
 
                 if (!Type.exists(term[1][fun])) {
