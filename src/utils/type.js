@@ -194,8 +194,8 @@ JXG.extend(
          * @returns {Boolean} True, if v is of type JXG.Point3D.
          */
         isPoint3D: function (v) {
-            if (v !== null && typeof v === "object" && this.exists(v.elType)) {
-                return v.elType === "point3d";
+            if (v !== null && typeof v === "object" && this.exists(v.type)) {
+                return v.type === Const.OBJECT_TYPE_POINT3D;
             }
 
             return false;
@@ -1364,7 +1364,7 @@ JXG.extend(
          * @returns {Object} The resulting attributes object
          */
         copyAttributes: function (attributes, options, s) {
-            var a, i, len, o, isAvail,
+            var a, arg, i, len, o, isAvail,
                 primitives = {
                     circle: 1,
                     curve: 1,
@@ -1392,12 +1392,15 @@ JXG.extend(
             }
 
             // Default options from the specific element like 'line' in
-            // copyAttribute(attributes, board.options, 'line')
+            //     copyAttribute(attributes, board.options, 'line')
+            // but also like in
+            //     Type.copyAttributes(attributes, board.options, 'view3d', 'az', 'slider');
             o = options;
             isAvail = true;
             for (i = 2; i < len; i++) {
-                if (this.exists(o[arguments[i]])) {
-                    o = o[arguments[i]];
+                arg = arguments[i];
+                if (this.exists(o[arg])) {
+                    o = o[arg];
                 } else {
                     isAvail = false;
                     break;
@@ -1409,14 +1412,16 @@ JXG.extend(
 
             // Merge the specific options given in the parameter 'attributes'
             // into the default options.
-            // Additionally, we step into a subelement of attribute like line.point1 in case it is supplied as in
-            // copyAttribute(attributes, board.options, 'line', 'point1')
+            // Additionally, we step into a sub-element of attribute like line.point1 -
+            // in case it is supplied as in
+            //     copyAttribute(attributes, board.options, 'line', 'point1')
             // In this case we would merge attributes.point1 into the global line.point1 attributes.
             o = (typeof attributes === 'object') ? this.keysToLowerCase(attributes) : {};
             isAvail = true;
             for (i = 3; i < len; i++) {
-                if (this.exists(o[arguments[i]])) {
-                    o = o[arguments[i]];
+                arg = arguments[i].toLowerCase();
+                if (this.exists(o[arg])) {
+                    o = o[arg];
                 } else {
                     isAvail = false;
                     break;
@@ -1435,8 +1440,9 @@ JXG.extend(
             o = options;
             isAvail = true;
             for (i = 2; i < len; i++) {
-                if (this.exists(o[arguments[i]])) {
-                    o = o[arguments[i]];
+                arg = arguments[i];
+                if (this.exists(o[arg])) {
+                    o = o[arg];
                 } else {
                     isAvail = false;
                     break;
@@ -1734,6 +1740,7 @@ JXG.extend(
                 str = '';
 
             if (arr[1] === 0 && arr[2] === 0) {
+                // 0
                 str += '0';
             } else {
                 // Sign
@@ -1741,12 +1748,15 @@ JXG.extend(
                     str += '-';
                 }
                 if (arr[2] === 0) {
+                    // Integer
                     str += arr[1];
                 } else if (!(arr[2] === 1 && arr[3] === 1)) {
-                    // arr[2] !== 0
+                    // Proper fraction
                     if (arr[1] !== 0) {
-                        str += ' ';
+                        // Absolute value larger than 1
+                        str += arr[1] + ' ';
                     }
+                    // Add fractional part
                     if (useTeX === true) {
                         str += '\\frac{' + arr[2] + '}{' + arr[3] + '}';
                     } else {
@@ -1819,6 +1829,8 @@ JXG.extend(
         /**
          * Convert a string containing a MAXIMA /STACK expression into a JSXGraph / JessieCode string
          * or an array of JSXGraph / JessieCode strings.
+         * <p>
+         * This function is meanwhile superseded by stack_jxg.stack2jsxgraph.
          *
          * @example
          * console.log( JXG.stack2jsxgraph("%e**x") );

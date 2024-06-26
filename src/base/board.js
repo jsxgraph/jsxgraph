@@ -749,6 +749,7 @@ JXG.extend(
 
             if (
                 !Type.isPoint(object) &&
+                !Type.isPoint3D(object) &&
                 object.elementClass !== Const.OBJECT_CLASS_LINE &&
                 object.type !== Const.OBJECT_TYPE_ANGLE
             ) {
@@ -1915,6 +1916,8 @@ JXG.extend(
          *
          */
         addResizeEventHandlers: function () {
+            var that = this;
+
             if (Env.isBrowser) {
                 try {
                     // Supported by all new browsers
@@ -1933,8 +1936,24 @@ JXG.extend(
                 // resize event.
                 Env.addEvent(window, 'scroll', this.scrollListener, this);
 
-                // Env.addEvent(window, 'beforeprint', this.beforeprintListener, this);
-                // window.matchMedia("print").addEventListener(this.beforeprintListener, this);
+                // On browser print:
+                // we need to call the listener when having @media: print.
+                if (Type.isFunction(MediaQueryList.prototype.addEventListener)) {
+                    window.matchMedia("print").addEventListener('change', function (mql) {
+                        if (mql.matches) {
+                            that.printListener();
+                        }
+                    });
+                } else if (Type.isFunction(MediaQueryList.prototype.addListener)) { // addListener might be deprecated
+                    window.matchMedia("print").addListener(function (mql, ev) {
+                        if (mql.matches) {
+                            that.printListener(ev);
+                        }
+                    });
+                }
+
+                // When closing the print dialog we again have to resize.
+                Env.addEvent(window, 'afterprint', this.printListener, this);
             }
         },
 
@@ -4155,10 +4174,13 @@ JXG.extend(
 
         /**
          * Update the width and height of the JSXGraph container div element.
-         * Read actual values with getBoundingClientRect(),
+         * If width and height are not supplied, read actual values with offsetWidth/Height,
          * and call board.resizeContainer() with this values.
          * <p>
          * If necessary, also call setBoundingBox().
+         * @param {Number} [width=this.containerObj.offsetWidth] Width of the container element
+         * @param {Numer} [height=this.containerObj.offsetHeight] Height of the container element
+         * @returns
          *
          * @see JXG.Board#startResizeObserver
          * @see JXG.Board#resizeListener
@@ -4166,18 +4188,26 @@ JXG.extend(
          * @see JXG.Board#setBoundingBox
          *
          */
-        updateContainerDims: function () {
-            var w, h,
-                bb, css,
+        updateContainerDims: function (width, height) {
+            var w = width,
+                h = height,
+                // bb,
+                css,
                 width_adjustment, height_adjustment;
 
-            // Get size of the board's container div
-            bb = this.containerObj.getBoundingClientRect();
-            w = bb.width;
-            h = bb.height;
+            if (width === undefined && window && window.getComputedStyle) {
+                // Get size of the board's container div
+                //
+                // offsetWidth/Height ignores CSS transforms,
+                // getBoundingClientRect includes CSS transforms
+                //
+                // bb = this.containerObj.getBoundingClientRect();
+                // w = bb.width;
+                // h = bb.height;
+                w = this.containerObj.offsetWidth;
+                h = this.containerObj.offsetHeight;
 
-            // Subtract the border size
-            if (window && window.getComputedStyle) {
+                // Subtract the border size
                 css = window.getComputedStyle(this.containerObj, null);
                 width_adjustment = parseFloat(css.getPropertyValue('border-left-width')) + parseFloat(css.getPropertyValue('border-right-width'));
                 if (!isNaN(width_adjustment)) {
@@ -4205,7 +4235,6 @@ JXG.extend(
             if (Type.exists(this._prevDim) && this._prevDim.w === w && this._prevDim.h === h) {
                 return;
             }
-
             // Set the size of the SVG or canvas element
             this.resizeContainer(w, h, true);
             this._prevDim = {
@@ -4237,11 +4266,13 @@ JXG.extend(
             }
 
             this.resizeObserver = new ResizeObserver(function (entries) {
+                var bb;
                 if (!that._isResizing) {
                     that._isResizing = true;
+                    bb = entries[0].contentRect;
                     window.setTimeout(function () {
                         try {
-                            that.updateContainerDims();
+                            that.updateContainerDims(bb.width, bb.height);
                         } catch (err) {
                             that.stopResizeObserver();
                         } finally {
@@ -4356,10 +4387,8 @@ JXG.extend(
             }
         },
 
-        beforeprintListener: function(evt) {
-            // console.log("beforeprint")
+        printListener: function(evt) {
             this.updateContainerDims();
-            // this.resizeListener();
         },
 
         /**********************************************************
@@ -5180,14 +5209,11 @@ JXG.extend(
          * @returns {JXG.Board} Reference to the board.
          */
         zoomElements: function (elements) {
-            var i,
-                e,
+            var i, e,
                 box,
                 newBBox = [Infinity, -Infinity, -Infinity, Infinity],
-                cx,
-                cy,
-                dx,
-                dy,
+                cx, cy,
+                dx, dy,
                 d;
 
             if (!Type.isArray(elements) || elements.length === 0) {
@@ -5487,8 +5513,10 @@ JXG.extend(
                 box = this.getBoundingBox();    // This is the actual bounding box.
             }
 
-            this.canvasWidth = Math.max(parseFloat(canvasWidth), Mat.eps);
-            this.canvasHeight = Math.max(parseFloat(canvasHeight), Mat.eps);
+            // this.canvasWidth = Math.max(parseFloat(canvasWidth), Mat.eps);
+            // this.canvasHeight = Math.max(parseFloat(canvasHeight), Mat.eps);
+            this.canvasWidth = parseFloat(canvasWidth);
+            this.canvasHeight = parseFloat(canvasHeight);
 
             if (!dontset) {
                 this.containerObj.style.width = this.canvasWidth + 'px';
@@ -5499,8 +5527,8 @@ JXG.extend(
             if (!dontSetBoundingBox) {
                 this.setBoundingBox(box, this.keepaspectratio, 'keep');
             } else {
-                oX = (this.canvasWidth - oldWidth) / 2;
-                oY = (this.canvasHeight - oldHeight) / 2;
+                oX = (this.canvasWidth - oldWidth) * 0.5;
+                oY = (this.canvasHeight - oldHeight) * 0.5;
 
                 this.moveOrigin(
                     this.origin.scrCoords[1] + oX,
@@ -6055,7 +6083,10 @@ JXG.extend(
             h = this.canvasHeight;
             if (keepaspectratio) {
                 if (this.keepaspectratio) {
-                    ratio = ux / uy; // Keep this ratio if keepaspectratio was true
+                    ratio = ux / uy;        // Keep this ratio if keepaspectratio was true
+                    if (isNaN(ratio)) {
+                        ratio = 1.0;
+                    }
                 } else {
                     ratio = 1.0;
                 }
@@ -6120,7 +6151,6 @@ JXG.extend(
                     [this.canvasWidth, this.canvasHeight],
                     this
                 ).usrCoords;
-
             return [ul[1], ul[2], lr[1], lr[2]];
         },
 

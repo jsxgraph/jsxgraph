@@ -78,6 +78,7 @@ JXG.createAxes3D = function (board, parents, attributes) {
             to = [0, 0, 0];
             to[i] = front[i];
             axes[na] = view.create("axis3d", [from, to], attr[na.toLowerCase()]);
+            axes[na].view = view;
         } else {
             na += "Border"; // Axes bordered
             from = rear.slice();
@@ -104,6 +105,7 @@ JXG.createAxes3D = function (board, parents, attributes) {
                 ticks_attr.tickEndings = [1, 0];
             }
             axes[na + "Ticks"] = view.create("ticks", [axes[na], 1], ticks_attr);
+            axes[na + "Ticks"].view = view;
         }
     }
 
@@ -117,6 +119,7 @@ JXG.createAxes3D = function (board, parents, attributes) {
             withLabel: false
         }
     );
+    axes.O.view = view;
 
     // Front and rear planes
     for (i = 0; i < directions.length; i++) {
@@ -137,7 +140,6 @@ JXG.createAxes3D = function (board, parents, attributes) {
             range1 = [rear[i1], front[i1]];
             range2 = [rear[i2], front[i2]];
             na = dir + "Plane" + sides[j];
-
             attr = Type.copyAttributes(attributes, board.options, "axes3d", na);
             axes[na] = view.create("plane3d", [from, vec1, vec2, range1, range2], attr);
             axes[na].elType = "axisplane3d";
@@ -164,6 +166,7 @@ JXG.createAxes3D = function (board, parents, attributes) {
 
                 attr = Type.copyAttributes(attributes, board.options, "axes3d", na);
                 axes[na] = view.create("axis3d", [from, to], attr);
+                axes[na].view = view;
                 axes[na_parent].addChild(axes[na]);
                 axes[na_parent].element2D.inherits.push(axes[na]); // TODO: Access of element2D is not nice
             }

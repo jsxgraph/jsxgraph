@@ -157,6 +157,7 @@ JXG.createPolygon3D = function (board, parents, attributes) {
         points2d.push(points[i].element2D);
     }
     el.element2D = board.create('polygon', points2d, attr);
+    el.element2D.view = view;
     el.addChild(el.element2D);
     el.inherits.push(el.element2D);
     el.element2D.setParents(el);

@@ -329,6 +329,8 @@ JXG.GeometryElement = function (board, attributes, type, oclass) {
      */
     this.lastDragTime = new Date();
 
+    this.view = null;
+
     if (arguments.length > 0) {
         /**
          * Reference to the board associated with the element.
@@ -1011,43 +1013,49 @@ JXG.extend(
             var i, len, s, len_s, obj, val;
 
             if (this.needsUpdate) {
-                // Handle the element
-                if (parent_val !== undefined) {
-                    this.visPropCalc.visible = parent_val;
+                if (Type.exists(this.view) && Type.evaluate(this.view.visProp.visible) === false) {
+                    // Handle hiding of view3d
+                    this.visPropCalc.visible = false;
+
                 } else {
-                    val = Type.evaluate(this.visProp.visible);
-
-                    // infobox uses hiddenByParent
-                    if (Type.exists(this.hiddenByParent) && this.hiddenByParent) {
-                        val = false;
-                    }
-                    if (val !== "inherit") {
-                        this.visPropCalc.visible = val;
-                    }
-                }
-
-                // Handle elements which inherit the visibility
-                len = this.inherits.length;
-                for (s = 0; s < len; s++) {
-                    obj = this.inherits[s];
-                    if (Type.isArray(obj)) {
-                        len_s = obj.length;
-                        for (i = 0; i < len_s; i++) {
-                            if (
-                                Type.exists(obj[i]) /*&& Type.exists(obj[i].rendNode)*/ &&
-                                Type.evaluate(obj[i].visProp.visible) === "inherit"
-                            ) {
-                                obj[i]
-                                    .prepareUpdate()
-                                    .updateVisibility(this.visPropCalc.visible);
-                            }
-                        }
+                    // Handle the element
+                    if (parent_val !== undefined) {
+                        this.visPropCalc.visible = parent_val;
                     } else {
-                        if (
-                            Type.exists(obj) /*&& Type.exists(obj.rendNode)*/ &&
-                            Type.evaluate(obj.visProp.visible) === "inherit"
-                        ) {
-                            obj.prepareUpdate().updateVisibility(this.visPropCalc.visible);
+                        val = Type.evaluate(this.visProp.visible);
+
+                        // infobox uses hiddenByParent
+                        if (Type.exists(this.hiddenByParent) && this.hiddenByParent) {
+                            val = false;
+                        }
+                        if (val !== "inherit") {
+                            this.visPropCalc.visible = val;
+                        }
+                    }
+
+                    // Handle elements which inherit the visibility
+                    len = this.inherits.length;
+                    for (s = 0; s < len; s++) {
+                        obj = this.inherits[s];
+                        if (Type.isArray(obj)) {
+                            len_s = obj.length;
+                            for (i = 0; i < len_s; i++) {
+                                if (
+                                    Type.exists(obj[i]) /*&& Type.exists(obj[i].rendNode)*/ &&
+                                    Type.evaluate(obj[i].visProp.visible) === "inherit"
+                                ) {
+                                    obj[i]
+                                        .prepareUpdate()
+                                        .updateVisibility(this.visPropCalc.visible);
+                                }
+                            }
+                        } else {
+                            if (
+                                Type.exists(obj) /*&& Type.exists(obj.rendNode)*/ &&
+                                Type.evaluate(obj.visProp.visible) === "inherit"
+                            ) {
+                                obj.prepareUpdate().updateVisibility(this.visPropCalc.visible);
+                            }
                         }
                     }
                 }

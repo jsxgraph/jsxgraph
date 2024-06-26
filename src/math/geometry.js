@@ -1569,7 +1569,7 @@ JXG.extend(
             return func;
         },
 
-        otherIntersectionFunction: function(input, others, alwaysintersect, precision) {
+        otherIntersectionFunction: function (input, others, alwaysintersect, precision) {
             var func, board,
                 el1, el2,
                 that = this;
@@ -1577,22 +1577,22 @@ JXG.extend(
             el1 = input[0];
             el2 = input[1];
             board = el1.board;
-            func = function() {
+            func = function () {
                 var i, k, c, d,
                     isClose,
                     le = others.length,
                     eps = Type.evaluate(precision);
 
                 for (i = le; i >= 0; i--) {
-                    if (el1.elementClass ===  Const.OBJECT_CLASS_CIRCLE &&
+                    if (el1.elementClass === Const.OBJECT_CLASS_CIRCLE &&
                         [Const.OBJECT_CLASS_CIRCLE, Const.OBJECT_CLASS_LINE].indexOf(el2.elementClass) >= 0) {
                         // circle, circle|line
                         c = that.meet(el1.stdform, el2.stdform, i, board);
-                    } else if (el1.elementClass ===  Const.OBJECT_CLASS_CURVE &&
+                    } else if (el1.elementClass === Const.OBJECT_CLASS_CURVE &&
                         [Const.OBJECT_CLASS_CURVE, Const.OBJECT_CLASS_CIRCLE].indexOf(el2.elementClass) >= 0) {
                         // curve, circle|curve
                         c = that.meetCurveCurve(el1, el2, i, 0, board, 'segment');
-                    } else if (el1.elementClass ===  Const.OBJECT_CLASS_CURVE && el2.elementClass === Const.OBJECT_CLASS_LINE) {
+                    } else if (el1.elementClass === Const.OBJECT_CLASS_CURVE && el2.elementClass === Const.OBJECT_CLASS_LINE) {
                         // curve, line
                         if (Type.exists(el1.dataX)) {
                             c = JXG.Math.Geometry.meetCurveLine(el1, el2, i, el1.board, Type.evaluate(alwaysintersect));
@@ -1608,7 +1608,7 @@ JXG.extend(
                         d = c.distance(JXG.COORDS_BY_USER, others[k].coords);
                         if (d < eps) {
                             isClose = true;
-                       }
+                        }
                     }
                     if (!isClose) {
                         // We are done, the intersection is away from any other
@@ -2375,7 +2375,7 @@ JXG.extend(
         meetPlaneSphere: function (el1, el2) {
             var dis = function () {
                 return (
-                      el1.normal[0] * el2.center.X()
+                    el1.normal[0] * el2.center.X()
                     + el1.normal[1] * el2.center.Y()
                     + el1.normal[2] * el2.center.Z()
                     - el1.d
@@ -2385,13 +2385,13 @@ JXG.extend(
                 [
                     // Center
                     function () {
-                        return el2.center.X() - dis()*el1.normal[0];
+                        return el2.center.X() - dis() * el1.normal[0];
                     },
                     function () {
-                        return el2.center.Y() - dis()*el1.normal[1];
+                        return el2.center.Y() - dis() * el1.normal[1];
                     },
                     function () {
-                        return el2.center.Z() - dis()*el1.normal[2];
+                        return el2.center.Z() - dis() * el1.normal[2];
                     }
                 ],
                 [
@@ -2402,34 +2402,34 @@ JXG.extend(
                 ],
                 function () {
                     // Radius (returns NaN if spheres don't touch)
-                    let r = el2.Radius(),
+                    var r = el2.Radius(),
                         s = dis();
-                    return Math.sqrt(r*r - s*s);
+                    return Math.sqrt(r * r - s * s);
                 }
             ];
         },
 
         meetSphereSphere: function (el1, el2) {
             var skew = function () {
-                let dist = el1.center.distance(el2.center),
+                var dist = el1.center.distance(el2.center),
                     r1 = el1.Radius(),
                     r2 = el2.Radius();
-                return (r1 - r2)*(r1 + r2) / (dist*dist);
+                return (r1 - r2) * (r1 + r2) / (dist * dist);
             };
             return [
                 [
                     // Center
                     function () {
-                        let s = skew();
-                        return 0.5*((1-s)*el1.center.X() + (1+s)*el2.center.X());
+                        var s = skew();
+                        return 0.5 * ((1 - s) * el1.center.X() + (1 + s) * el2.center.X());
                     },
                     function () {
-                        let s = skew();
-                        return 0.5*((1-s)*el1.center.Y() + (1+s)*el2.center.Y());
+                        var s = skew();
+                        return 0.5 * ((1 - s) * el1.center.Y() + (1 + s) * el2.center.Y());
                     },
                     function () {
-                        let s = skew();
-                        return 0.5*((1-s)*el1.center.Z() + (1+s)*el2.center.Z());
+                        var s = skew();
+                        return 0.5 * ((1 - s) * el1.center.Z() + (1 + s) * el2.center.Z());
                     }
                 ],
                 [
@@ -2440,11 +2440,11 @@ JXG.extend(
                 ],
                 function () {
                     // Radius (returns NaN if spheres don't touch)
-                    let dist = el1.center.distance(el2.center),
+                    var dist = el1.center.distance(el2.center),
                         r1 = el1.Radius(),
                         r2 = el2.Radius(),
                         s = skew(),
-                        rIxnSq = 0.5*(r1*r1 + r2*r2 - 0.5*dist*dist*(1 + s*s));
+                        rIxnSq = 0.5 * (r1 * r1 + r2 * r2 - 0.5 * dist * dist * (1 + s * s));
                     return Math.sqrt(rIxnSq);
                 }
             ];
@@ -3472,9 +3472,9 @@ JXG.extend(
 
             // adapt simplex size to parameter range
             if (dim === 1) {
-                rhobeg = 0.1*(target.range[1] - target.range[0]);
+                rhobeg = 0.1 * (target.range[1] - target.range[0]);
             } else if (dim === 2) {
-                rhobeg = 0.1*Math.min(
+                rhobeg = 0.1 * Math.min(
                     target.range_u[1] - target.range_u[0],
                     target.range_v[1] - target.range_v[0]
                 );
@@ -3491,17 +3491,17 @@ JXG.extend(
                     zDiff = p[2] - target.Z.apply(null, w);
 
                 if (n === 1) {
-                    con[0] =  w[0] - target.range[0];
+                    con[0] = w[0] - target.range[0];
                     con[1] = -w[0] + target.range[1];
                 } else if (n === 2) {
-                    con[0] =  w[0] - target.range_u[0];
+                    con[0] = w[0] - target.range_u[0];
                     con[1] = -w[0] + target.range_u[1];
-                    con[2] =  w[1] - target.range_v[0];
+                    con[2] = w[1] - target.range_v[0];
                     con[3] = -w[1] + target.range_v[1];
                 }
-                return xDiff*xDiff + yDiff*yDiff + zDiff*zDiff;
+                return xDiff * xDiff + yDiff * yDiff + zDiff * zDiff;
             };
-            Mat.Nlp.FindMinimum(_minFunc, dim, 2*dim, params, rhobeg, rhoend, iprint, maxfun);
+            Mat.Nlp.FindMinimum(_minFunc, dim, 2 * dim, params, rhobeg, rhoend, iprint, maxfun);
 
             // return [1, target.X(...params), target.Y(...params), target.Z(...params)];
             return [1, target.X.apply(null, params), target.Y.apply(null, params), target.Z.apply(null, params)];
@@ -3529,9 +3529,9 @@ JXG.extend(
 
             // adapt simplex size to parameter range
             if (dim === 1) {
-                rhobeg = 0.1*(target.range[1] - target.range[0]);
+                rhobeg = 0.1 * (target.range[1] - target.range[0]);
             } else if (dim === 2) {
-                rhobeg = 0.1*Math.min(
+                rhobeg = 0.1 * Math.min(
                     target.range_u[1] - target.range_u[0],
                     target.range_v[1] - target.range_v[0]
                 );
@@ -3547,27 +3547,27 @@ JXG.extend(
                 //         target.Z(...w)
                 //     ],
                 var c3d = [
-                        1,
-                        target.X.apply(null, w),
-                        target.Y.apply(null, w),
-                        target.Z.apply(null, w)
-                    ],
+                    1,
+                    target.X.apply(null, w),
+                    target.Y.apply(null, w),
+                    target.Z.apply(null, w)
+                ],
                     c2d = target.view.project3DTo2D(c3d),
                     xDiff = pScr[0] - c2d[1],
                     yDiff = pScr[1] - c2d[2];
 
                 if (n === 1) {
-                    con[0] =  w[0] - target.range[0];
+                    con[0] = w[0] - target.range[0];
                     con[1] = -w[0] + target.range[1];
                 } else if (n === 2) {
-                    con[0] =  w[0] - target.range_u[0];
+                    con[0] = w[0] - target.range_u[0];
                     con[1] = -w[0] + target.range_u[1];
-                    con[2] =  w[1] - target.range_v[0];
+                    con[2] = w[1] - target.range_v[0];
                     con[3] = -w[1] + target.range_v[1];
                 }
-                return xDiff*xDiff + yDiff*yDiff;
+                return xDiff * xDiff + yDiff * yDiff;
             };
-            Mat.Nlp.FindMinimum(_minFunc, dim, 2*dim, params, rhobeg, rhoend, iprint, maxfun);
+            Mat.Nlp.FindMinimum(_minFunc, dim, 2 * dim, params, rhobeg, rhoend, iprint, maxfun);
 
             // return [1, target.X(...params), target.Y(...params), target.Z(...params)];
             return [1, target.X.apply(null, params), target.Y.apply(null, params), target.Z.apply(null, params)];

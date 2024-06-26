@@ -59,13 +59,16 @@ var priv = {
 /**
  * @class This element is used to provide a constructor for special texts containing a
  * HTML form input element.
- * <p>
- * If the width of element is set with the attribute "cssStyle", the width of the
- * label must be added.
- * <p>
  * For this element, the attribute "display" has to have the value 'html' (which is the default).
- * <p>
- * The underlying HTML input field can be accessed through the sub-object 'rendNodeInput', e.g. to
+ * If the width of element is set with the attribute "cssStyle", the width of the
+ * label must be added because cssStyle affects the surrounding div element.
+ *
+ * <p><b>Setting a CSS class:</b> The attribute <tt>cssClass</tt> affects the HTML div element that contains the input element. To change the CSS properties of the HTML input element a selector of the form
+ * <tt>.myinput > input { ... }</tt> has to be used. See the analog example for buttons:
+ * {@link Button}.
+ *
+ * <p><b>Access the input element with JavaScript:</b>
+ * The underlying HTML button element can be accessed through the sub-object 'rendNodeInput', e.g. to
  * add event listeners.
  *
  * @pseudo

@@ -51,6 +51,8 @@ import Geometry from '../math/geometry.js';
  * @see JXG.Board#generateName
  */
 JXG.Circle3D = function (view, center, normal, radius, attributes) {
+    var altFrame1;
+
     this.constructor(view.board, attributes, Const.OBJECT_TYPE_CIRCLE3D, Const.OBJECT_CLASS_3D);
     this.constructor3D(view, "circle3d");
 
@@ -129,9 +131,8 @@ JXG.Circle3D = function (view, center, normal, radius, attributes) {
     // [1, 0, 0] or [-0.5, sqrt(3)/2, 0]---whichever is further away on the unit
     // sphere. every vector is at least 60 degrees from one of these, which
     // should be good enough to make the frame vector numerically accurate
-    const sqrt3_2 = 0.8660254037844386;
     this.frame1 = Mat.crossProduct(this.normal, [1, 0, 0]);
-    var altFrame1 = Mat.crossProduct(this.normal, [-0.5, sqrt3_2, 0]);
+    altFrame1 = Mat.crossProduct(this.normal, [-0.5, 0.8660254037844386, 0]); // [1/2, sqrt(3)/2, 0]
     if (Mat.norm(altFrame1) > Mat.norm(this.frame1)) {
         this.frame1 = altFrame1;
     }
@@ -149,7 +150,7 @@ JXG.Circle3D = function (view, center, normal, radius, attributes) {
             (t) => this.center.X() + this.Radius() * (Math.cos(t) * this.frame1[0] + Math.sin(t) * this.frame2[0]),
             (t) => this.center.Y() + this.Radius() * (Math.cos(t) * this.frame1[1] + Math.sin(t) * this.frame2[1]),
             (t) => this.center.Z() + this.Radius() * (Math.cos(t) * this.frame1[2] + Math.sin(t) * this.frame2[2]),
-            [0, 2*Math.PI] // parameter range
+            [0, 2 * Math.PI] // parameter range
         ],
         attributes
     );
@@ -199,7 +200,7 @@ JXG.extend(
             return Math.abs(this.updateRadius());
         },
 
-        normalizeFrame: function() {
+        normalizeFrame: function () {
             // normalize frame
             var len1 = Mat.norm(this.frame1),
                 len2 = Mat.norm(this.frame2),
@@ -351,7 +352,7 @@ JXG.createIntersectionCircle3D = function (board, parents, attributes) {
         attr = Type.copyAttributes(attributes, board.options, "intersectioncircle3d");
 
     func = Geometry.intersectionFunction3D(view, el1, el2);
-    center = view.create('point3d', func[0], {visible: false});
+    center = view.create('point3d', func[0], { visible: false });
     ixnCircle = view.create('circle3d', [center, func[1], func[2]], attr);
 
     try {
@@ -360,10 +361,10 @@ JXG.createIntersectionCircle3D = function (board, parents, attributes) {
     } catch (e) {
         throw new Error(
             "JSXGraph: Can't create 'intersection' with parent types '" +
-                typeof parents[0] +
-                "' and '" +
-                typeof parents[1] +
-                "'."
+            typeof parents[0] +
+            "' and '" +
+            typeof parents[1] +
+            "'."
         );
     }
 
