@@ -2193,13 +2193,7 @@ JXG.createTangent = function (board, parents, attributes) {
             "line",
             [
                 function () {
-                    return Mat.matVecMult(c.quadraticform, p.coords.usrCoords)[0];
-                },
-                function () {
-                    return Mat.matVecMult(c.quadraticform, p.coords.usrCoords)[1];
-                },
-                function () {
-                    return Mat.matVecMult(c.quadraticform, p.coords.usrCoords)[2];
+                    return Mat.matVecMult(c.quadraticform, p.coords.usrCoords);
                 }
             ],
             attr
