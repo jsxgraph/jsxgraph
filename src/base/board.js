@@ -4195,7 +4195,7 @@ JXG.extend(
                 css,
                 width_adjustment, height_adjustment;
 
-            if (width === undefined && window && window.getComputedStyle) {
+            if (width === undefined) {
                 // Get size of the board's container div
                 //
                 // offsetWidth/Height ignores CSS transforms,
@@ -4206,7 +4206,9 @@ JXG.extend(
                 // h = bb.height;
                 w = this.containerObj.offsetWidth;
                 h = this.containerObj.offsetHeight;
+            }
 
+            if (width === undefined && window && window.getComputedStyle) {
                 // Subtract the border size
                 css = window.getComputedStyle(this.containerObj, null);
                 width_adjustment = parseFloat(css.getPropertyValue('border-left-width')) + parseFloat(css.getPropertyValue('border-right-width'));
