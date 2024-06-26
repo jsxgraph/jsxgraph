@@ -527,6 +527,9 @@ JXG.createSlider = function (board, parents, attributes) {
         highLine: l2
     };
     p3.inherits.push(p1, p2, l1, l2);
+    // Remove inherits to avoid circular inherits.
+    l1.inherits = [];
+    l2.inherits = [];
 
     if (withTicks) {
         ti.dump = false;

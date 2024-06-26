@@ -1918,8 +1918,13 @@ JXG.createAxis = function (board, parents, attributes) {
 JXG.registerElement("axis", JXG.createAxis);
 
 /**
- * @class With the element tangent the slope of a line, circle, or curve in a certain point can be visualized. A tangent is always constructed
- * by a glider on a line, circle, or curve and describes the tangent in the glider point on that line, circle, or curve.
+ * @class With the element tangent the slope of a line, circle, conic, turtle, or curve in a certain point can be visualized. A tangent is always constructed
+ * by a point on a line, circle, or curve and describes the tangent in the point on that line, circle, or curve.
+ * <p>
+ * If the point is not on the object (line, circle, conic, curve, turtle) the output depends on the type of the object.
+ * For conics and circles, the polar line will be constructed. For function graphs,
+ * the tangent of the vertical projection of the point to the function graph is constructed. For all other objects, the tangent
+ * in the orthogonal projection of the point to the object will be constructed.
  * @pseudo
  * @name Tangent
  * @augments JXG.Line
@@ -1927,6 +1932,7 @@ JXG.registerElement("axis", JXG.createAxis);
  * @type JXG.Line
  * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
  * @param {Glider} g A glider on a line, circle, or curve.
+ * @param {JXG.GeometryElement} [c] Optional element for which the tangent is constructed
  * @example
  * // Create a tangent providing a glider on a function graph
  *   var c1 = board.create('curve', [function(t){return t},function(t){return t*t*t;}]);
@@ -1944,12 +1950,13 @@ JXG.createTangent = function (board, parents, attributes) {
     var p, c, j, el, tangent, attr,
         getCurveTangentDir;
 
-    // One argument: glider on line, circle or curve
     if (parents.length === 1) {
+        // One argument: glider on line, circle or curve
         p = parents[0];
         c = p.slideObject;
-        // Two arguments: (point,F"|conic) or (line|curve|circle|conic,point). // Not yet: curve!
+
     } else if (parents.length === 2) {
+        // Two arguments: (point,line|curve|circle|conic) or (line|curve|circle|conic,point).
         // In fact, for circles and conics it is the polar
         if (Type.isPoint(parents[0])) {
             p = parents[0];
@@ -1964,7 +1971,7 @@ JXG.createTangent = function (board, parents, attributes) {
                     "' and '" +
                     typeof parents[1] +
                     "'." +
-                    "\nPossible parent types: [glider], [point,line|curve|circle|conic]"
+                    "\nPossible parent types: [glider|point], [point,line|curve|circle|conic]"
             );
         }
     } else {
@@ -1974,7 +1981,7 @@ JXG.createTangent = function (board, parents, attributes) {
                 "' and '" +
                 typeof parents[1] +
                 "'." +
-                "\nPossible parent types: [glider], [point,line|curve|circle|conic]"
+                "\nPossible parent types: [glider|point], [point,line|curve|circle|conic]"
         );
     }
 
@@ -1992,17 +1999,22 @@ JXG.createTangent = function (board, parents, attributes) {
                 [
                     function () {
                         var g = c.X,
-                            f = c.Y;
-                        return (
-                            -p.X() * Numerics.D(f)(p.position) +
-                            p.Y() * Numerics.D(g)(p.position)
-                        );
-                    },
-                    function () {
-                        return Numerics.D(c.Y)(p.position);
-                    },
-                    function () {
-                        return -Numerics.D(c.X)(p.position);
+                            f = c.Y,
+                            t;
+
+                        if (p.type === Const.OBJECT_TYPE_GLIDER) {
+                            t = p.position;
+                        } else if (Type.evaluate(c.visProp.curvetype) === 'functiongraph') {
+                            t = p.X();
+                        } else {
+                            t = Geometry.projectPointToCurve(p, c, board)[1];
+                        }
+
+                        return [
+                            -p.X() * Numerics.D(f)(t) + p.Y() * Numerics.D(g)(t),
+                            Numerics.D(c.Y)(t),
+                            -Numerics.D(c.X)(t)
+                        ];
                     }
                 ],
                 attr
@@ -2092,21 +2104,28 @@ JXG.createTangent = function (board, parents, attributes) {
                         return p2[2] - p1[2];
                     case 2:
                         return p1[1] - p2[1];
+                    default:
+                        return [
+                            p1[2] * p2[1] - p1[1] * p2[2],
+                            p2[2] - p1[2],
+                            p1[1] - p2[1]
+                        ];
                 }
-                return 0;
             };
 
             tangent = board.create(
                 "line",
                 [
                     function () {
-                        return getCurveTangentDir(p.position, c, 0);
-                    },
-                    function () {
-                        return getCurveTangentDir(p.position, c, 1);
-                    },
-                    function () {
-                        return getCurveTangentDir(p.position, c, 2);
+                        var t;
+
+                        if (p.type === Const.OBJECT_TYPE_GLIDER) {
+                            t = p.position;
+                        } else {
+                            t = Geometry.projectPointToCurve(p, c, board)[1];
+                        }
+
+                        return getCurveTangentDir(t, c);
                     }
                 ],
                 attr
@@ -2121,7 +2140,14 @@ JXG.createTangent = function (board, parents, attributes) {
             "line",
             [
                 function () {
-                    var i = Math.floor(p.position);
+                    var i, t;
+                    if (p.type === Const.OBJECT_TYPE_GLIDER) {
+                        t = p.position;
+                    } else {
+                        t = Geometry.projectPointToTurtle(p, c, board)[1];
+                    }
+
+                    i = Math.floor(t);
 
                     // run through all curves of this turtle
                     for (j = 0; j < c.objects.length; j++) {
@@ -2141,58 +2167,14 @@ JXG.createTangent = function (board, parents, attributes) {
                     }
 
                     if (i < 0) {
-                        return 1;
+                        return [1, 0, 0];
                     }
 
-                    return el.Y(i) * el.X(i + 1) - el.X(i) * el.Y(i + 1);
-                },
-                function () {
-                    var i = Math.floor(p.position);
-
-                    // run through all curves of this turtle
-                    for (j = 0; j < c.objects.length; j++) {
-                        el = c.objects[j];
-
-                        if (el.type === Const.OBJECT_TYPE_CURVE) {
-                            if (i < el.numberPoints) {
-                                break;
-                            }
-
-                            i -= el.numberPoints;
-                        }
-                    }
-
-                    if (i === el.numberPoints - 1) {
-                        i--;
-                    }
-                    if (i < 0) {
-                        return 0;
-                    }
-
-                    return el.Y(i + 1) - el.Y(i);
-                },
-                function () {
-                    var i = Math.floor(p.position);
-
-                    // run through all curves of this turtle
-                    for (j = 0; j < c.objects.length; j++) {
-                        el = c.objects[j];
-                        if (el.type === Const.OBJECT_TYPE_CURVE) {
-                            if (i < el.numberPoints) {
-                                break;
-                            }
-                            i -= el.numberPoints;
-                        }
-                    }
-                    if (i === el.numberPoints - 1) {
-                        i--;
-                    }
-
-                    if (i < 0) {
-                        return 0;
-                    }
-
-                    return el.X(i) - el.X(i + 1);
+                    return [
+                        el.Y(i) * el.X(i + 1) - el.X(i) * el.Y(i + 1),
+                        el.Y(i + 1) - el.Y(i),
+                        el.X(i) - el.X(i + 1)
+                    ];
                 }
             ],
             attr
