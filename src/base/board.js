@@ -1989,9 +1989,12 @@ JXG.extend(
                 // On browser print:
                 // we need to call the listener when having @media: print.
                 try {
-                    window.matchMedia("print").addEventListener('change', this.printListenerMatch.apply(this, arguments));
+                    // window.matchMedia("print").addEventListener('change', this.printListenerMatch.apply(this, arguments));
+                    window.matchMedia("print").addEventListener('change', this.printListenerMatch);
                     this.resizeHandlers.push('print');
-                } catch (err) {}
+                } catch (err) {
+                    JXG.debug("Error adding printListener", err);
+                }
                 // if (Type.isFunction(MediaQueryList.prototype.addEventListener)) {
                 //     window.matchMedia("print").addEventListener('change', function (mql) {
                 //         if (mql.matches) {
