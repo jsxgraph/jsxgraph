@@ -4179,7 +4179,7 @@ JXG.extend(
          * <p>
          * If necessary, also call setBoundingBox().
          * @param {Number} [width=this.containerObj.offsetWidth] Width of the container element
-         * @param {Numer} [height=this.containerObj.offsetHeight] Height of the container element
+         * @param {Number} [height=this.containerObj.offsetHeight] Height of the container element
          * @returns
          *
          * @see JXG.Board#startResizeObserver
