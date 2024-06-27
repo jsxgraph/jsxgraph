@@ -2854,28 +2854,19 @@ JXG.extend(
          * @param {Number} sgn Wither 1 or -1. Needed for minor and major arcs. In case of doubt, use 1.
          */
         bezierArc: function (A, B, C, withLegs, sgn) {
-            var p1,
-                p2,
-                p3,
-                p4,
+            var p1, p2, p3, p4,
                 r,
-                phi,
-                beta,
+                phi, beta,
                 PI2 = Math.PI * 0.5,
                 x = B[1],
                 y = B[2],
                 z = B[0],
                 dataX = [],
                 dataY = [],
-                co,
-                si,
-                ax,
-                ay,
-                bx,
-                by,
-                k,
-                v,
-                d,
+                co, si,
+                ax, ay,
+                bx, by,
+                k, v, d,
                 matrix;
 
             r = this.distance(B, A);
