@@ -18,11 +18,15 @@ Improvements
 - Printing from browser
 - Tangents on curves
 - API docs
+- measurements prefix parser
+- Refactor resize events
 
 Bug fixes
 ---------
 
-- Infinite resize of board
+- Prevent infinite growing of a board by resizeObserver
+- JessieCode: using slider by name only
+- Fix regression in parallelogram
 - SVG resize
 - set arrow head
 - Merge of attributes
@@ -30,6 +34,7 @@ Bug fixes
 - `JXG.toFraction()`
 - `curve.moveTo()`
 - automatic label placement
+- disable resizeObserver in unit tests
 
 1.9.1
 ===
