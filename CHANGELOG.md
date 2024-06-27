@@ -7,6 +7,7 @@ New features
 - New view3d attribute `depthOrderPoints` to adapt z-ordering of 3D points
 - 3D: Add third view3d slider `bank`
 - Allow hiding of view3d
+- New GeometryElement attribute `nonnegativeOnly`
 
 Improvements
 ------------
@@ -18,7 +19,7 @@ Improvements
 - Printing from browser
 - Tangents on curves
 - API docs
-- measurements prefix parser
+- Prefix parser for measurements
 - Refactor resize events
 
 Bug fixes
@@ -28,12 +29,12 @@ Bug fixes
 - JessieCode: using slider by name only
 - Fix regression in parallelogram
 - SVG resize
-- set arrow head
+- Set arrow head
 - Merge of attributes
 - isPoint3D
 - `JXG.toFraction()`
 - `curve.moveTo()`
-- automatic label placement
+- Automatic label placement
 - disable resizeObserver in unit tests
 
 1.9.1
