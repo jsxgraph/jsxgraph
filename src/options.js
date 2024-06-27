@@ -6701,7 +6701,10 @@ JXG.Options = {
         formatSuffix: function (txt) { return txt; },
 
         formatCoords: function (x, y, z) {
-            return '(' + x + ', ' + y + ')';
+            if (parseFloat(z) !== 1)
+                return '(NaN | NaN)';
+            else
+                return '(' + x + ', ' + y + ')';
         },
         formatDirection: function (x, y) {
             return '(' + x + ', ' + y + ')';
