@@ -551,7 +551,9 @@ JXG.extend(
             }
 
             if (this.method === "pointRadius") {
-                return Math.abs(this.updateRadius());
+                return (Type.evaluate(this.visProp.nonnegativeonly)) ?
+                    Math.max(0.0, this.updateRadius()) :
+                    Math.abs(this.updateRadius());
             }
 
             return NaN;

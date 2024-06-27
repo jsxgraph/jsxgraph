@@ -330,7 +330,9 @@ JXG.extend(
             // Compute the actual length of the segment
             d = this.point1.Dist(this.point2);
             // Determine the length the segment ought to have
-            d_new = Math.abs(this.fixedLength());
+            d_new =  (Type.evaluate(this.visProp.nonnegativeonly)) ?
+                Math.max(0.0, this.fixedLength()) :
+                Math.abs(this.fixedLength());
 
             // Distances between the two points and their respective
             // position before the update

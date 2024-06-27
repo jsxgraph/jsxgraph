@@ -2055,6 +2055,50 @@ JXG.Options = {
         needsRegularUpdate: true,
 
         /**
+         * If some size of an element is controlled by a function, like the circle radius
+         * or segments of fixed length, this attribute controls what happens if the value
+         * is negative. By default, the absolute value is taken. If true, the maximum
+         * of 0 and the value is used.
+         *
+         * @type Boolean
+         * @default false
+         * @name JXG.GeometryElement#nonnegativeOnly
+         * @example
+         * var slider = board.create('slider', [[4, -3], [4, 3], [-4, 1, 4]], { name: 'a'});
+         * var circle = board.create('circle', [[-1, 0], 1], {
+         *     nonnegativeOnly: true
+         * });
+         * circle.setRadius('a');         // Use JessieCode
+         * var seg = board.create('segment', [[-4, 3], [0, 3], () => slider.Value()], {
+         *     point1: {visible: true},
+         *     point2: {visible: true},
+         *     nonnegativeOnly: true
+         * });
+         *
+         * </pre><div id="JXG9cb76224-1f78-4488-b20f-800788768bc9" class="jxgbox" style="width: 300px; height: 300px;"></div>
+         * <script type="text/javascript">
+         *     (function() {
+         *         var board = JXG.JSXGraph.initBoard('JXG9cb76224-1f78-4488-b20f-800788768bc9',
+         *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
+         *     var slider = board.create('slider', [[4, -3], [4, 3], [-4, 1, 4]], { name: 'a'});
+         *     var circle = board.create('circle', [[-1, 0], 1], {
+         *         nonnegativeOnly: true
+         *     });
+         *     circle.setRadius('a');         // Use JessieCode
+         *     var seg = board.create('segment', [[-4, 3], [0, 3], () => slider.Value()], {
+         *         point1: {visible: true},
+         *         point2: {visible: true},
+         *         nonnegativeOnly: true
+         *     });
+         *
+         *     })();
+         *
+         * </script><pre>
+         *
+         */
+        nonnegativeOnly: false,
+
+        /**
          * Precision options for JSXGraph elements.
          * This attributes takes either the value 'inherit' or an object of the form:
          * <pre>
@@ -4410,6 +4454,7 @@ JXG.Options = {
         label: {
             position: 'urt'
         }
+
         /**#@-*/
     },
 
