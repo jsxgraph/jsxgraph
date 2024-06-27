@@ -437,7 +437,7 @@ JXG.extend(
                 f = board.jc.snippet(term, true, variableName, false);
             } else if (this.isFunction(term)) {
                 f = term;
-                f.deps = {};
+                f.deps = (this.isObject(term.deps)) ? term.deps : {};
             } else if (this.isNumber(term)) {
                 /** @ignore */
                 f = function () { return term; };

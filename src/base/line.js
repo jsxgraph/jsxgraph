@@ -1012,6 +1012,7 @@ JXG.extend(
             }
 
             this.fixedLength = Type.createFunction(l, this.board);
+            this.addParentsFromJCFunctions([this.fixedLength]);
             this.board.update();
 
             return this;
