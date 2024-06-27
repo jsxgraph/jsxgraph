@@ -86,8 +86,8 @@ describe("Test intersection functions", function () {
             ]),
             ip = [],
             i,
-            x = [-2.8286194188088936, 2.8286194188088922],
-            y = [1.0000000000000016, 0.9999999999999984];
+            x = [-2.8282973369226823, 2.828297336922682],
+            y = [0.9999999999999877, 0.9999999999999984];
 
         ip[0] = board.create("intersection", [a1, a2, 0], {
             alwaysIntersect: false
@@ -112,8 +112,8 @@ describe("Test intersection functions", function () {
             ]),
             ip = [],
             i,
-            x = [-2.8286194188088936, 2.8286194188088922],
-            y = [1.0000000000000016, 0.9999999999999984];
+            x = [-2.8282973369226823, 2.828297336922682],
+            y = [0.9999999999999877, 0.9999999999999984];
 
         ip[0] = board.create("intersection", [a1, a2, 0], {
             alwaysIntersect: false
