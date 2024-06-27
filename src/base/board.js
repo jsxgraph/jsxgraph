@@ -1990,7 +1990,8 @@ JXG.extend(
                 // we need to call the listener when having @media: print.
                 try {
                     // window.matchMedia("print").addEventListener('change', this.printListenerMatch.apply(this, arguments));
-                    window.matchMedia("print").addEventListener('change', this.printListenerMatch);
+                    window.matchMedia("print").addEventListener('change', this.printListenerMatch.bind(this));
+                    window.matchMedia("screen").addEventListener('change', this.printListenerMatch.bind(this));
                     this.resizeHandlers.push('print');
                 } catch (err) {
                     JXG.debug("Error adding printListener", err);
@@ -2010,8 +2011,8 @@ JXG.extend(
                 // }
 
                 // When closing the print dialog we again have to resize.
-                Env.addEvent(window, 'afterprint', this.printListener, this);
-                this.resizeHandlers.push('afterprint');
+                // Env.addEvent(window, 'afterprint', this.printListener, this);
+                // this.resizeHandlers.push('afterprint');
             }
         },
 
@@ -2032,17 +2033,20 @@ JXG.extend(
                             break;
                         case 'resize':
                             Env.removeEvent(window, 'resize', this.resizeListener, this);
-                            this.stopIntersectionObserver();
+                            if (Type.exists(this.intersectionObserver)) {
+                                this.stopIntersectionObserver();
+                            }
                             break;
                         case 'scroll':
                             Env.removeEvent(window, 'scroll', this.scrollListener, this);
                             break;
                         case 'print':
-                            window.matchMedia("print").removeEventListener('change', this.printListenerMatch, false);
+                            window.matchMedia("print").removeEventListener('change', this.printListenerMatch.bind(this), false);
+                            window.matchMedia("screen").removeEventListener('change', this.printListenerMatch.bind(this), false);
                             break;
-                        case 'afterprint':
-                            Env.removeEvent(window, 'afterprint', this.printListener, this);
-                            break;
+                        // case 'afterprint':
+                        //     Env.removeEvent(window, 'afterprint', this.printListener, this);
+                        //     break;
                     }
                 }
                 this.resizeHandlers = [];
