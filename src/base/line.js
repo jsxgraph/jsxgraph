@@ -2080,13 +2080,10 @@ JXG.createTangent = function (board, parents, attributes) {
                     p1 = curve.points[i].usrCoords;
                     p2 = curve.points[i + 1].usrCoords;
                 } else {
-                    // console.log(position, i, t)
-
                     A = points[i].usrCoords;
                     B = points[i + 1].usrCoords;
                     C = points[i + 2].usrCoords;
                     D = points[i + 3].usrCoords;
-
                     dx = (1 - t) * (1 - t) * (B[1] - A[1]) +
                         2 * (1 - t) * t * (C[1] - B[1]) +
                         t * t * (D[1] - C[1]);
