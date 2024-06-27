@@ -572,6 +572,13 @@ JXG.Board = function (container, renderer, id,
     this.hasPointerUp = false;
 
     /**
+     * Array containing the events related to resizing that have event listeners.
+     * @type Array
+     * @default []
+     */
+    this.resizeHandlers = [];
+
+    /**
      * Offset for large coords elements like images
      * @type Array
      * @private
@@ -1905,8 +1912,22 @@ JXG.extend(
          **********************************************************/
 
         /**
+         * Suppresses the default event handling.
+         * Used for context menu.
+         *
+         * @param {Event} e
+         * @returns {Boolean} false
+         */
+        suppressDefault: function (e) {
+            if (Type.exists(e)) {
+                e.preventDefault();
+            }
+            return false;
+        },
+
+        /**
          * Add all possible event handlers to the board object
-         * which move objects, i.e. mouse, pointer and touch events.
+         * that move objects, i.e. mouse, pointer and touch events.
          */
         addEventHandlers: function () {
             if (Env.supportsPointerEvents()) {
@@ -1916,33 +1937,60 @@ JXG.extend(
                 this.addTouchEventHandlers();
             }
 
+            if (this.containerObj !== null) {
+                // this.containerObj.oncontextmenu = this.suppressDefault;
+                Env.addEvent(this.containerObj, 'contextmenu', this.suppressDefault, this);
+            }
+
             // This one produces errors on IE
             // // Env.addEvent(this.containerObj, 'contextmenu', function (e) { e.preventDefault(); return false;}, this);
-
             // This one works on IE, Firefox and Chromium with default configurations. On some Safari
             // or Opera versions the user must explicitly allow the deactivation of the context menu.
-            if (this.containerObj !== null) {
-                this.containerObj.oncontextmenu = function (e) {
-                    if (Type.exists(e)) {
-                        e.preventDefault();
-                    }
-                    return false;
-                };
-            }
         },
 
         /**
-         * Add resize event handlers
+         * Remove all event handlers from the board object
+         */
+        removeEventHandlers: function () {
+            if ((this.hasPointerHandlers || this.hasMouseHandlers || this.hasTouchHandlers) &&
+                this.containerObj !== null
+            ) {
+                Env.removeEvent(this.containerObj, 'contextmenu', this.suppressDefault, this);
+            }
+
+            this.removeMouseEventHandlers();
+            this.removeTouchEventHandlers();
+            this.removePointerEventHandlers();
+
+            this.removeFullscreenEventHandlers();
+            this.removeKeyboardEventHandlers();
+            this.removeResizeEventHandlers();
+
+            // if (Env.isBrowser) {
+            //     if (Type.exists(this.resizeObserver)) {
+            //         this.stopResizeObserver();
+            //     } else {
+            //         Env.removeEvent(window, 'resize', this.resizeListener, this);
+            //         this.stopIntersectionObserver();
+            //     }
+            //     Env.removeEvent(window, 'scroll', this.scrollListener, this);
+            // }
+        },
+
+        /**
+         * Add resize related event handlers
          *
          */
         addResizeEventHandlers: function () {
-            var that = this;
+            // var that = this;
 
+            this.resizeHandlers = [];
             if (Env.isBrowser) {
                 try {
                     // Supported by all new browsers
                     // resizeObserver: triggered if size of the JSXGraph div changes.
                     this.startResizeObserver();
+                    this.resizeHandlers.push('resizeobserver');
                 } catch (err) {
                     // Certain Safari and edge version do not support
                     // resizeObserver, but intersectionObserver.
@@ -1950,54 +1998,74 @@ JXG.extend(
                     Env.addEvent(window, 'resize', this.resizeListener, this);
                     // intersectionObserver: triggered if JSXGraph becomes visible.
                     this.startIntersectionObserver();
+                    this.resizeHandlers.push('resize');
                 }
                 // Scroll event: needs to be captured since on mobile devices
                 // sometimes a header bar is displayed / hidden, which triggers a
                 // resize event.
                 Env.addEvent(window, 'scroll', this.scrollListener, this);
+                this.resizeHandlers.push('scroll');
 
                 // On browser print:
                 // we need to call the listener when having @media: print.
-                if (Type.isFunction(MediaQueryList.prototype.addEventListener)) {
-                    window.matchMedia("print").addEventListener('change', function (mql) {
-                        if (mql.matches) {
-                            that.printListener();
-                        }
-                    });
-                } else if (Type.isFunction(MediaQueryList.prototype.addListener)) { // addListener might be deprecated
-                    window.matchMedia("print").addListener(function (mql, ev) {
-                        if (mql.matches) {
-                            that.printListener(ev);
-                        }
-                    });
-                }
+                try {
+                    window.matchMedia("print").addEventListener('change', this.printListenerMatch.apply(this, arguments));
+                    this.resizeHandlers.push('print');
+                } catch (err) {}
+                // if (Type.isFunction(MediaQueryList.prototype.addEventListener)) {
+                //     window.matchMedia("print").addEventListener('change', function (mql) {
+                //         if (mql.matches) {
+                //             that.printListener();
+                //         }
+                //     });
+                // } else if (Type.isFunction(MediaQueryList.prototype.addListener)) { // addListener might be deprecated
+                //     window.matchMedia("print").addListener(function (mql, ev) {
+                //         if (mql.matches) {
+                //             that.printListener(ev);
+                //         }
+                //     });
+                // }
 
                 // When closing the print dialog we again have to resize.
                 Env.addEvent(window, 'afterprint', this.printListener, this);
+                this.resizeHandlers.push('afterprint');
             }
         },
 
         /**
-         * Remove all event handlers from the board object
+         * Remove resize related event handlers
+         *
          */
-        removeEventHandlers: function () {
-            this.removeMouseEventHandlers();
-            this.removeTouchEventHandlers();
-            this.removePointerEventHandlers();
-
-            this.removeFullscreenEventHandlers();
-            this.removeKeyboardEventHandlers();
-
-            if (Env.isBrowser) {
-                if (Type.exists(this.resizeObserver)) {
-                    this.stopResizeObserver();
-                } else {
-                    Env.removeEvent(window, 'resize', this.resizeListener, this);
-                    this.stopIntersectionObserver();
+        removeResizeEventHandlers: function () {
+            var i, e;
+            if (this.resizeHandlers.length > 0 && Env.isBrowser) {
+                for (i = 0; i < this.resizeHandlers.length; i++) {
+                    e = this.resizeHandlers[i];
+                    switch (e) {
+                        case 'resizeobserver':
+                            if (Type.exists(this.resizeObserver)) {
+                                this.stopResizeObserver();
+                            }
+                            break;
+                        case 'resize':
+                            Env.removeEvent(window, 'resize', this.resizeListener, this);
+                            this.stopIntersectionObserver();
+                            break;
+                        case 'scroll':
+                            Env.removeEvent(window, 'scroll', this.scrollListener, this);
+                            break;
+                        case 'print':
+                            window.matchMedia("print").removeEventListener('change', this.printListenerMatch, false);
+                            break;
+                        case 'afterprint':
+                            Env.removeEvent(window, 'afterprint', this.printListener, this);
+                            break;
+                    }
                 }
-                Env.removeEvent(window, 'scroll', this.scrollListener, this);
+                this.resizeHandlers = [];
             }
         },
+
 
         /**
          * Registers pointer event handlers.
@@ -4199,7 +4267,7 @@ JXG.extend(
          * <p>
          * If necessary, also call setBoundingBox().
          * @param {Number} [width=this.containerObj.offsetWidth] Width of the container element
-         * @param {Numer} [height=this.containerObj.offsetHeight] Height of the container element
+         * @param {Number} [height=this.containerObj.offsetHeight] Height of the container element
          * @returns
          *
          * @see JXG.Board#startResizeObserver
@@ -4215,7 +4283,7 @@ JXG.extend(
                 css,
                 width_adjustment, height_adjustment;
 
-            if (width === undefined && window && window.getComputedStyle) {
+            if (width === undefined) {
                 // Get size of the board's container div
                 //
                 // offsetWidth/Height ignores CSS transforms,
@@ -4226,7 +4294,9 @@ JXG.extend(
                 // h = bb.height;
                 w = this.containerObj.offsetWidth;
                 h = this.containerObj.offsetHeight;
+            }
 
+            if (width === undefined && window && window.getComputedStyle) {
                 // Subtract the border size
                 css = window.getComputedStyle(this.containerObj, null);
                 width_adjustment = parseFloat(css.getPropertyValue('border-left-width')) + parseFloat(css.getPropertyValue('border-right-width'));
@@ -4407,8 +4477,22 @@ JXG.extend(
             }
         },
 
+        /**
+         * Update the container before and after printing.
+         * @param {Event} [evt]
+         */
         printListener: function(evt) {
             this.updateContainerDims();
+        },
+
+        /**
+         * Wrapper for printListener to be used in mediaQuery matches.
+         * @param {MediaQueryList} mql
+         */
+        printListenerMatch: function (mql) {
+            if (mql.matches) {
+                this.printListener();
+            }
         },
 
         /**********************************************************

@@ -39,6 +39,7 @@ describe("Test slider", function () {
         axis: false,
         grid: false,
         boundingbox: [-5, 5, 5, -5],
+        resize: {enabled: false},
         showCopyright: false,
         showNavigation: false
     });

@@ -36,6 +36,7 @@ describe("Test otherintersection functions", function () {
         axis: false,
         grid: false,
         boundingbox: [-8, 8, 8, -8],
+        resize: {enabled: false},
         showCopyright: false,
         showNavigation: false
     });

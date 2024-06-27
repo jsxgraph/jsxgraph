@@ -1533,7 +1533,7 @@ JXG.createParallelogram = function (board, parents, attributes) {
         );
     }
 
-    attr_pp = Type.copyAttributes(attributes, board.options, "parallelogram", ["parallelpoint"]);
+    attr_pp = Type.copyAttributes(attributes, board.options, "parallelogram", "parallelpoint");
     pp = board.create('parallelpoint', points, attr_pp);
     attr = Type.copyAttributes(attributes, board.options, "parallelogram");
     el = board.create('polygon', [points[0], points[1], pp, points[2]], attr);

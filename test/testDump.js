@@ -37,6 +37,7 @@ describe("Test JXG.Dump", function () {
         axis: false,
         grid: false,
         boundingbox: [-5, 5, 5, -5],
+        resize: {enabled: false},
         showCopyright: false,
         showNavigation: false
     });

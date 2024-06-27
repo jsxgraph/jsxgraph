@@ -169,5 +169,6 @@ lint:
 eslint:
 	$(ESLINT) $(ESLINTFLAGS) $(LINTLIST)
 
+# test:
 test: core
 	$(KARMA) start karma/karma.conf.js

@@ -3112,8 +3112,13 @@ JXG.extend(
 
             var x = point.X(),
                 y = point.Y(),
-                t = point.position || 0.0,
-                result = this.projectCoordsToCurve(x, y, t, curve, board);
+                t = point.position,
+                result;
+
+            if (!Type.exists(t)) {
+                t = Type.evaluate(curve.visProp.curvetype) === 'functiongraph' ? x : 0.0;
+            }
+            result = this.projectCoordsToCurve(x, y, t, curve, board);
 
             // point.position = result[1];
 
@@ -3202,6 +3207,21 @@ JXG.extend(
                 newCoordsObj = new Coords(Const.COORDS_BY_USER, newCoords, board);
             } else {
                 // 'parameter', 'polar', 'functiongraph'
+
+                if (Type.evaluate(curve.visProp.curvetype) === 'functiongraph') {
+                    let dy = Math.abs(y - curve.Y(x));
+                    if (!isNaN(dy)) {
+                        minX = x - dy;
+                        maxX = x + dy;
+                    } else {
+                        minX = curve.minX();
+                        maxX = curve.maxX();
+                    }
+                } else {
+                    minX = curve.minX();
+                    maxX = curve.maxX();
+                }
+
                 /** @ignore */
                 minfunc = function (t) {
                     var dx, dy;
@@ -3215,8 +3235,6 @@ JXG.extend(
 
                 f_old = minfunc(t);
                 steps = 50;
-                minX = curve.minX();
-                maxX = curve.maxX();
 
                 delta = (maxX - minX) / steps;
                 t_new = minX;

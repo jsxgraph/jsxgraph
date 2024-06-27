@@ -1110,7 +1110,8 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
 
         // The $()-function-calls are special because their parameter is given as a string, not as a node_var.
         if (node.type === 'node_op' && node.value === 'op_execfun' &&
-            node.children.length > 1 && node.children[0].value === '$' &&
+            node.children.length > 1 &&
+            (node.children[0].value === '$' || node.children[0].value === '$value') &&
             node.children[1].length > 0) {
 
             e = node.children[1][0].value;

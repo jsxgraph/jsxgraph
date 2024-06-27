@@ -1,3 +1,50 @@
+1.9.2
+===
+
+New features
+-----------
+
+- New view3d attribute `depthOrderPoints` to adapt z-ordering of 3D points
+- 3D: Add third view3d slider `bank`
+- Allow hiding of view3d
+
+Improvements
+------------
+
+- Improve coords projection to function graph
+- 3D: Trackball navigation
+- 3D: Change default color of axes
+- Resizing of the container
+- Printing from browser
+- Tangents on curves
+- API docs
+- measurements prefix parser
+- Refactor resize events
+
+Bug fixes
+---------
+
+- Prevent infinite growing of a board by resizeObserver
+- JessieCode: using slider by name only
+- Fix regression in parallelogram
+- SVG resize
+- set arrow head
+- Merge of attributes
+- isPoint3D
+- `JXG.toFraction()`
+- `curve.moveTo()`
+- automatic label placement
+- disable resizeObserver in unit tests
+
+1.9.1
+===
+
+Bug fixes
+---------
+
+- `import` of JessieCode
+- Handling of label attributes
+
 1.9.0
 ===
 
