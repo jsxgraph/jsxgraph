@@ -36,6 +36,7 @@ Bug fixes
 - `curve.moveTo()`
 - Automatic label placement
 - disable resizeObserver in unit tests
+- Glider and tangents on arcs and sectors
 
 1.9.1
 ===

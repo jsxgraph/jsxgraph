@@ -2856,8 +2856,8 @@ JXG.extend(
         bezierArc: function (A, B, C, withLegs, sgn) {
             var p1, p2, p3, p4,
                 r,
-                phi, beta,
-                PI2 = Math.PI * 0.5,
+                phi, beta, delta,
+                // PI2 = Math.PI * 0.5,
                 x = B[1],
                 y = B[2],
                 z = B[0],
@@ -2880,6 +2880,12 @@ JXG.extend(
                 phi = 2 * Math.PI - phi;
             }
 
+            // Always divide the arc into four Bezier arcs.
+            // Otherwise, the position of gliders on this arc
+            // will be wrong.
+            delta = phi / 4;
+
+
             p1 = A;
             p1[1] /= p1[0];
             p1[2] /= p1[0];
@@ -2896,9 +2902,16 @@ JXG.extend(
             }
 
             while (phi > Mat.eps) {
-                if (phi > PI2) {
-                    beta = PI2;
-                    phi -= PI2;
+                // if (phi > PI2) {
+                //     beta = PI2;
+                //     phi -= PI2;
+                // } else {
+                //     beta = phi;
+                //     phi = 0;
+                // }
+                if (phi > delta) {
+                    beta = delta;
+                    phi -= delta;
                 } else {
                     beta = phi;
                     phi = 0;

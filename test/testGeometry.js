@@ -216,4 +216,12 @@ describe("Test geometry functions", function () {
         expect(d).toEqual(0.0);
     });
 
+    it("Glider on arc", function () {
+        var sector, glider;
+        sector = board.create('arc', [[-1, -1], [3, 0], [-4, 0]]);
+        glider = board.create('glider', [-2, 3, sector]);
+
+        expect(glider.position).toBeCloseTo(0.6100503447261109, 10);
+    });
+
 });

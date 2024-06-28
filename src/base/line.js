@@ -1012,6 +1012,7 @@ JXG.extend(
             }
 
             this.fixedLength = Type.createFunction(l, this.board);
+            this.hasFixedLength = true;
             this.addParentsFromJCFunctions([this.fixedLength]);
             this.board.update();
 
@@ -1478,15 +1479,22 @@ JXG.createSegment = function (board, parents, attributes) {
     el = board.create("line", parents.slice(0, 2), attr);
 
     if (parents.length === 3) {
-        el.hasFixedLength = true;
+        try {
+            el.hasFixedLength = true;
+            el.fixedLengthOldCoords = [];
+            el.fixedLengthOldCoords[0] = new Coords(
+                Const.COORDS_BY_USER,
+                el.point1.coords.usrCoords.slice(1, 3),
+                board
+            );
+            el.fixedLengthOldCoords[1] = new Coords(
+                Const.COORDS_BY_USER,
+                el.point2.coords.usrCoords.slice(1, 3),
+                board
+            );
 
-        if (Type.isNumber(parents[2])) {
-            el.fixedLength = function () {
-                return parents[2];
-            };
-        } else if (Type.isFunction(parents[2])) {
-            el.fixedLength = Type.createFunction(parents[2], this.board);
-        } else {
+            el.setFixedLength(parents[2]);
+        } catch (err) {
             throw new Error(
                 "JSXGraph: Can't create segment with third parent type '" +
                     typeof parents[2] +
@@ -1494,22 +1502,25 @@ JXG.createSegment = function (board, parents, attributes) {
                     "\nPossible third parent types: number or function"
             );
         }
+        // if (Type.isNumber(parents[2])) {
+        //     el.fixedLength = function () {
+        //         return parents[2];
+        //     };
+        // } else if (Type.isFunction(parents[2])) {
+        //     el.fixedLength = Type.createFunction(parents[2], this.board);
+        // } else {
+        //     throw new Error(
+        //         "JSXGraph: Can't create segment with third parent type '" +
+        //             typeof parents[2] +
+        //             "'." +
+        //             "\nPossible third parent types: number or function"
+        //     );
+        // }
 
         el.getParents = function () {
             return this.parents.concat(this.fixedLength());
         };
 
-        el.fixedLengthOldCoords = [];
-        el.fixedLengthOldCoords[0] = new Coords(
-            Const.COORDS_BY_USER,
-            el.point1.coords.usrCoords.slice(1, 3),
-            board
-        );
-        el.fixedLengthOldCoords[1] = new Coords(
-            Const.COORDS_BY_USER,
-            el.point2.coords.usrCoords.slice(1, 3),
-            board
-        );
     }
 
     el.elType = "segment";
