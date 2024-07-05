@@ -1137,9 +1137,11 @@ JXG.extend(
          * @param  {Number} y y-coordinate of the center (screen coordinates)
          * @param  {Number} w width of the box in pixel
          * @param  {Number} h width of the box in pixel
+         * @param  {Array} [whiteList] array of ids which should be ignored
          * @return {Number}   Number of overlapping elements
          */
-        getNumberOfConflicts: function (x, y, w, h) {
+        getNumberOfConflicts: function (x, y, w, h, whiteList) {
+            whiteList = whiteList || [];
             var count = 0,
                 i, obj, le,
                 savePointPrecision,
@@ -1161,7 +1163,8 @@ JXG.extend(
                     obj.elType !== "ticks" &&
                     obj !== this.board.infobox &&
                     obj !== this &&
-                    obj.hasPoint(x, y)
+                    obj.hasPoint(x, y) &&
+                    whiteList.indexOf(obj.id) === -1
                 ) {
                     count++;
                 }
@@ -1218,7 +1221,7 @@ JXG.extend(
             dx = offset[0];
             dy = offset[1];
 
-            conflicts = this.getNumberOfConflicts(cx + dx, cy - dy, w, h);
+            conflicts = this.getNumberOfConflicts(cx + dx, cy - dy, w, h, Type.evaluate(this.visProp.autopositionwhitelist));
             if (conflicts === 0) {
                 return this;
             }
@@ -1247,7 +1250,7 @@ JXG.extend(
                     x = cx + r * co;
                     y = cy - r * si;
 
-                    conflicts = this.getNumberOfConflicts(x, y, w, h);
+                    conflicts = this.getNumberOfConflicts(x, y, w, h, Type.evaluate(this.visProp.autopositionwhitelist));
                     if (conflicts < optimum.conflicts) {
                         optimum.conflicts = conflicts;
                         optimum.angle = angle;
