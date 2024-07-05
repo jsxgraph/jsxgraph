@@ -40,6 +40,7 @@ describe("Test regular polygons", function () {
         axis: false,
         grid: false,
         boundingbox: [-10, 10, 10, -10],
+        resize: {enabled: false},
         keyboard: {
             enabled: true,
             dy: 20,

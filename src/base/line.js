@@ -330,7 +330,9 @@ JXG.extend(
             // Compute the actual length of the segment
             d = this.point1.Dist(this.point2);
             // Determine the length the segment ought to have
-            d_new = Math.abs(this.fixedLength());
+            d_new =  (Type.evaluate(this.visProp.nonnegativeonly)) ?
+                Math.max(0.0, this.fixedLength()) :
+                Math.abs(this.fixedLength());
 
             // Distances between the two points and their respective
             // position before the update
@@ -1010,6 +1012,8 @@ JXG.extend(
             }
 
             this.fixedLength = Type.createFunction(l, this.board);
+            this.hasFixedLength = true;
+            this.addParentsFromJCFunctions([this.fixedLength]);
             this.board.update();
 
             return this;
@@ -1475,15 +1479,22 @@ JXG.createSegment = function (board, parents, attributes) {
     el = board.create("line", parents.slice(0, 2), attr);
 
     if (parents.length === 3) {
-        el.hasFixedLength = true;
+        try {
+            el.hasFixedLength = true;
+            el.fixedLengthOldCoords = [];
+            el.fixedLengthOldCoords[0] = new Coords(
+                Const.COORDS_BY_USER,
+                el.point1.coords.usrCoords.slice(1, 3),
+                board
+            );
+            el.fixedLengthOldCoords[1] = new Coords(
+                Const.COORDS_BY_USER,
+                el.point2.coords.usrCoords.slice(1, 3),
+                board
+            );
 
-        if (Type.isNumber(parents[2])) {
-            el.fixedLength = function () {
-                return parents[2];
-            };
-        } else if (Type.isFunction(parents[2])) {
-            el.fixedLength = Type.createFunction(parents[2], this.board);
-        } else {
+            el.setFixedLength(parents[2]);
+        } catch (err) {
             throw new Error(
                 "JSXGraph: Can't create segment with third parent type '" +
                     typeof parents[2] +
@@ -1491,22 +1502,25 @@ JXG.createSegment = function (board, parents, attributes) {
                     "\nPossible third parent types: number or function"
             );
         }
+        // if (Type.isNumber(parents[2])) {
+        //     el.fixedLength = function () {
+        //         return parents[2];
+        //     };
+        // } else if (Type.isFunction(parents[2])) {
+        //     el.fixedLength = Type.createFunction(parents[2], this.board);
+        // } else {
+        //     throw new Error(
+        //         "JSXGraph: Can't create segment with third parent type '" +
+        //             typeof parents[2] +
+        //             "'." +
+        //             "\nPossible third parent types: number or function"
+        //     );
+        // }
 
         el.getParents = function () {
             return this.parents.concat(this.fixedLength());
         };
 
-        el.fixedLengthOldCoords = [];
-        el.fixedLengthOldCoords[0] = new Coords(
-            Const.COORDS_BY_USER,
-            el.point1.coords.usrCoords.slice(1, 3),
-            board
-        );
-        el.fixedLengthOldCoords[1] = new Coords(
-            Const.COORDS_BY_USER,
-            el.point2.coords.usrCoords.slice(1, 3),
-            board
-        );
     }
 
     el.elType = "segment";
@@ -2082,12 +2096,10 @@ JXG.createTangent = function (board, parents, attributes) {
                     B = points[i + 1].usrCoords;
                     C = points[i + 2].usrCoords;
                     D = points[i + 3].usrCoords;
-                    dx =
-                        (1 - t) * (1 - t) * (B[1] - A[1]) +
+                    dx = (1 - t) * (1 - t) * (B[1] - A[1]) +
                         2 * (1 - t) * t * (C[1] - B[1]) +
                         t * t * (D[1] - C[1]);
-                    dy =
-                        (1 - t) * (1 - t) * (B[2] - A[2]) +
+                    dy = (1 - t) * (1 - t) * (B[2] - A[2]) +
                         2 * (1 - t) * t * (C[2] - B[2]) +
                         t * t * (D[2] - C[2]);
                     d = Mat.hypot(dx, dy);

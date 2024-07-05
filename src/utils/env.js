@@ -532,7 +532,7 @@ JXG.extend(
             }
 
             if (!Type.exists(owner["x_internal" + type])) {
-                JXG.debug("no such type: " + type);
+                JXG.debug("removeEvent: no such type: " + type);
                 return;
             }
 
@@ -559,7 +559,7 @@ JXG.extend(
                     obj.detachEvent("on" + type, owner["x_internal" + type][i]);
                 }
             } catch (e) {
-                JXG.debug("event not registered in browser: (" + type + " -- " + fn + ")");
+                JXG.debug("removeEvent: event not registered in browser: (" + type + " -- " + fn + ")");
             }
 
             owner["x_internal" + type].splice(i, 1);

@@ -36,6 +36,7 @@ describe("Test geometry functions", function () {
         axis: false,
         grid: false,
         boundingbox: [-8, 8, 8, -8],
+        resize: {enabled: false},
         showCopyright: false,
         showNavigation: false
     });
@@ -164,5 +165,63 @@ describe("Test geometry functions", function () {
 
     });
 
+    it("Circle radius by slider", function () {
+        var d, slider, circle;
+
+        slider = board.create('slider', [[4, -3], [4, 3], [-4, -1, 4]], { name: 'a'});
+        circle = board.create('circle', [[-1, 0], 1], {});
+        circle.setRadius('a');
+
+        d = circle.Radius();
+        expect(d).toEqual(1.0);
+    });
+
+    it("Circle radius by slider, nonnegative", function () {
+        var d, slider, circle;
+
+        slider = board.create('slider', [[4, -3], [4, 3], [-4, -1, 4]], { name: 'a'});
+        circle = board.create('circle', [[-1, 0], 1], {
+            nonnegativeOnly: true
+        });
+        circle.setRadius('a');
+
+        d = circle.Radius();
+        expect(d).toEqual(0.0);
+    });
+
+    it("Segment radius by slider", function () {
+        var d, slider, seg;
+
+        slider = board.create('slider', [[4, -3], [4, 3], [-4, -1, 4]]);
+        var seg = board.create('segment', [[-4, 3], [0, 3], () => slider.Value()], {
+            point1: {visible: true},
+            point2: {visible: true}
+        });
+
+        d = seg.L();
+        expect(d).toEqual(1.0);
+    });
+
+    it("Segment radius by slider, nonnegative", function () {
+        var d, slider, seg;
+
+        slider = board.create('slider', [[4, -3], [4, 3], [-4, -1, 4]]);
+        var seg = board.create('segment', [[-4, 3], [0, 3], () => slider.Value()], {
+            point1: {visible: true},
+            point2: {visible: true},
+            nonnegativeOnly: true
+        });
+
+        d = seg.L();
+        expect(d).toEqual(0.0);
+    });
+
+    it("Glider on arc", function () {
+        var sector, glider;
+        sector = board.create('arc', [[-1, -1], [3, 0], [-4, 0]]);
+        glider = board.create('glider', [-2, 3, sector]);
+
+        expect(glider.position).toBeCloseTo(0.6100503447261109, 10);
+    });
 
 });

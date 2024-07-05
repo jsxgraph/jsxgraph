@@ -57,9 +57,9 @@ Usage
 
 Include
 
-* `jsxgraphcore.js` and
-* `jsxgraph.css` and,
-* if required, one or more file readers
+- `jsxgraphcore.js` and
+- `jsxgraph.css` and,
+- if required, one or more file readers
 
 from a CDN or a local version in your HTML file.
 
