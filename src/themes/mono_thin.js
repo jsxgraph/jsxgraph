@@ -209,6 +209,25 @@ JXG.themes['mono_thin'] = {
             fillOpacity: 0.2
         },
 
+        integral: {
+            fillColor: '#aaaaaa55',
+            highlightFillColor: '#aaaaa33',
+            fillOpacity: 0.3,
+            highlightFillOpacity: 0.3,
+            curveLeft: {
+                color: color
+            },
+            baseLeft: {
+                color: color
+            },
+            curveRight: {
+                color: color
+            },
+            baseRight: {
+                color: color
+            }
+        },
+
         label: {
             strokeColor: color
         },
