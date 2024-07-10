@@ -6320,7 +6320,17 @@ JXG.Options = {
          * @default 28
          *
          */
-        autoPositionMaxDistance: 28
+        autoPositionMaxDistance: 28,
+
+        /**
+         * List of object ids which should be ignored on setting automatic position of label text.
+         *
+         * @name Label#autoPositionWhitelist
+         * @see Label#autoPosition
+         * @type Array
+         * @default []
+         */
+        autoPositionWhitelist: []
 
         /**#@-*/
     },
