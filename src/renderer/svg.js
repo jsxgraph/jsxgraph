@@ -2175,8 +2175,12 @@ JXG.extend(
             // }
 
             // In IE we have to remove the namespace again.
-            if ((svg.match(/xmlns="http:\/\/www.w3.org\/2000\/svg"/g) || []).length > 1) {
-                svg = svg.replace(/xmlns="http:\/\/www.w3.org\/2000\/svg"/g, "");
+            // Since 2024 we have to check if the namespace attribute appears twice in one tag, because
+            // there might by a svg inside of the svg, e.g. the screenshot icon.
+            if (this.isIE &&
+                (svg.match(/xmlns="http:\/\/www.w3.org\/2000\/svg"\s+xmlns="http:\/\/www.w3.org\/2000\/svg"/g) || []).length > 1
+            ) {
+                svg = svg.replace(/xmlns="http:\/\/www.w3.org\/2000\/svg"\s+xmlns="http:\/\/www.w3.org\/2000\/svg"/g, "");
             }
 
             // Safari fails if the svg string contains a "&nbsp;"
@@ -2374,7 +2378,6 @@ JXG.extend(
             } else {
                 // Debug: use canvas element 'jxgbox_canvas' from jsxdev/dump.html
                 id = "jxgbox_canvas";
-                // canvas = document.getElementById(id);
                 canvas = doc.getElementById(id);
             }
 
