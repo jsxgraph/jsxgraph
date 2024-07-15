@@ -2146,8 +2146,7 @@ JXG.extend(
                 }
                 while (svgRoot.nextSibling) {
                     // Copy all value attributes
-                    // Type.concat(values, this._getValuesOfDOMElements(svgRoot.nextSibling));
-                    values = values.concat(this._getValuesOfDOMElements(svgRoot.nextSibling));
+                    Type.concat(values, this._getValuesOfDOMElements(svgRoot.nextSibling));
                     this.foreignObjLayer.appendChild(svgRoot.nextSibling);
                 }
             }
