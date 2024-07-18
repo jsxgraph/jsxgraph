@@ -694,7 +694,7 @@ JXG.extend(
                     case "lft":
                     case "llft":
                     case "ulft":
-                        if (c1[1] <= c2[1]) {
+                        if (c1[1] < c2[1] + Mat.eps) {
                             x = c1[1];
                             y = c1[2];
                         } else {
@@ -705,7 +705,7 @@ JXG.extend(
                     case "rt":
                     case "lrt":
                     case "urt":
-                        if (c1[1] > c2[1]) {
+                        if (c1[1] > c2[1] + Mat.eps) {
                             x = c1[1];
                             y = c1[2];
                         } else {
