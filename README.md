@@ -9,7 +9,7 @@ About
 *JSXGraph* is a cross-browser library for interactive geometry, function plotting,
 charting, and data visualization in a web browser. It is implemented completely
 in JavaScript, does not rely on any other library, and uses SVG, canvas, or even the venerable VML.
-*JSXGraph* is easy to embed and has a small footprint: approx. 160 KByte if
+*JSXGraph* is easy to embed and has a small footprint: approx. 200 KByte if
 embedded in a web page. No plug-ins are required! Special care has been taken
 to optimize the performance.
 
@@ -63,7 +63,7 @@ Include
 
 from a CDN or a local version in your HTML file.
 
-**HTML template:**
+__HTML template:__
 
 ```html
 <!doctype html>
@@ -113,6 +113,14 @@ and the minified version `jsxgraphcore.js` into the folder `distrib`.
   - Run `$ npm run check-format` to check the formatting of the source code
   - Submit a pull request
 
+Plug-ins
+--------
+
+- [JSXGraph filter for moodle and formulas](https://moodle.org/plugins/filter_jsxgraph)
+- [JSXGraph is in included in STACK](https://stack-assessment.org/)
+- Mediawiki plug-in is available in the folder `plugins`
+- [JSXGraph in Jupyter](https://pypi.org/project/jsxgraph-magic/)
+- ...
 
 License
 -------
