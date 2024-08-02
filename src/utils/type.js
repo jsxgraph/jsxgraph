@@ -1270,7 +1270,7 @@ JXG.extend(
          * In contrast to method JXG.merge, mergeAttr does not recurse into DOM objects and JSXGraph objects. Instead
          * handles (pointers) to these objects are used.
          *
-         * @param {Object} attr Object with attributes - usually containing default options
+         * @param {Object} attr Object with attributes - usually containing default options - that will be changed in-place.
          * @param {Object} special Special option values which overwrite (recursively) the default options
          * @param {Boolean} [toLower=true] If true the keys are converted to lower case.
          * @param {Boolean} [ignoreUndefinedSpecials=false] If true the values in special that are undefined are not used.
@@ -1287,6 +1287,19 @@ JXG.extend(
             for (e in special) {
                 if (special.hasOwnProperty(e)) {
                     e2 = (toLower) ? e.toLowerCase(): e;
+
+                    // Key already exists, but not in lower case
+                    if (e2 !== e && attr.hasOwnProperty(e)) {
+                        if (attr.hasOwnProperty(e2)) {
+                            // Lower case key already exists - this should not happen
+                            // We have to unify the two key-value pairs
+                            // It is not clear which has precedence.
+                            this.mergeAttr(attr[e2], attr[e], toLower);
+                        } else {
+                            attr[e2] = attr[e];
+                        }
+                        delete attr[e];
+                    }
 
                     o = special[e];
                     if (this.isObject(o) && o !== null &&
@@ -1360,7 +1373,7 @@ JXG.extend(
          * and overwritten by the user specified attributes.
          * @param {Object} attributes user specified attributes
          * @param {Object} options defaults options
-         * @param {String} s variable number of strings, e.g. 'slider', subtype 'point1'.
+         * @param {String} s variable number of strings, e.g. 'slider', subtype 'point1'. Must be provided in lower case!
          * @returns {Object} The resulting attributes object
          */
         copyAttributes: function (attributes, options, s) {
