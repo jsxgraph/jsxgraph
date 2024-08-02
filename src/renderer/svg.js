@@ -2143,11 +2143,11 @@ JXG.extend(
             if (this.container.hasChildNodes() && Type.exists(this.foreignObjLayer)) {
                 if (!ignoreTexts) {
                     this.foreignObjLayer.setAttribute("display", "inline");
-                    while (svgRoot.nextSibling) {
-                        // Copy all value attributes
-                        Type.concat(values, this._getValuesOfDOMElements(svgRoot.nextSibling));
-                        this.foreignObjLayer.appendChild(svgRoot.nextSibling);
-                    }
+                }
+                while (svgRoot.nextSibling) {
+                    // Copy all value attributes
+                    Type.concat(values, this._getValuesOfDOMElements(svgRoot.nextSibling));
+                    this.foreignObjLayer.appendChild(svgRoot.nextSibling);
                 }
             }
 
