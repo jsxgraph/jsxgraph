@@ -264,7 +264,6 @@ JXG.createCircle3D = function (board, parents, attributes) {
     el = new JXG.Circle3D(view, center, normal, radius, attr);
 
     // update scene tree
-    el.center.addChild(el);
     el.addChild(el.curve);
 
     el.update();
