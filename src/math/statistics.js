@@ -1372,7 +1372,7 @@ Mat.Statistics = {
         if (opt.cumulative) {
             if (opt.density) {
                 for (i = 0; i < num_bins; i++) {
-                    counts[i] *= delta  // normalize
+                    counts[i] *= delta;  // normalize
                 }
             } for (i = 1; i < num_bins; i++) {
                 counts[i] += counts[i - 1];
