@@ -2766,13 +2766,13 @@ JXG.createIntegral = function (board, parents, attributes) {
         endy = curve.Y(end);
     }
 
-    attr = Type.copyAttributes(attributes, board.options, "integral", "curveLeft");
+    attr = Type.copyAttributes(attributes, board.options, "integral", "curveleft");
     pa_on_curve = board.create("glider", [startx, starty, curve], attr);
     if (Type.isFunction(startx)) {
         pa_on_curve.hideElement();
     }
 
-    attr = Type.copyAttributes(attributes, board.options, 'integral', 'baseLeft');
+    attr = Type.copyAttributes(attributes, board.options, 'integral', 'baseleft');
     pa_on_axis = board.create('point', [
             function () {
                 if (Type.evaluate(p.visProp.axis) === "y") {
@@ -2788,13 +2788,13 @@ JXG.createIntegral = function (board, parents, attributes) {
             }
         ], attr);
 
-    attr = Type.copyAttributes(attributes, board.options, "integral", "curveRight");
+    attr = Type.copyAttributes(attributes, board.options, "integral", "curveright");
     pb_on_curve = board.create("glider", [endx, endy, curve], attr);
     if (Type.isFunction(endx)) {
         pb_on_curve.hideElement();
     }
 
-    attr = Type.copyAttributes(attributes, board.options, "integral", "baseRight");
+    attr = Type.copyAttributes(attributes, board.options, "integral", "baseright");
     pb_on_axis = board.create('point', [
             function () {
                 if (Type.evaluate(p.visProp.axis) === "y") {
