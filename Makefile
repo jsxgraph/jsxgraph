@@ -51,6 +51,7 @@ VERSION=$(shell grep -o '"version": "[^"]*' package.json | grep -o '[^"]*$$')
 # Single quotes: before endings .js have been added:
 # FILELIST=$(shell cat src/index.js | awk '/import/ {if (match($$0,/\x27\.(.+)\x27/,m)) print "src"m[1]".js" }')
 # Single quotes: after endings .js have been added:
+# Requires gawk!!!
 FILELIST=$(shell cat src/index.js | awk '/import/ {if (match($$0,/\x27\.(.+)\x27/,m)) print "src"m[1] }')
 
 # Lintlist - jessiecode.js is developed externally (github:jsxgraph/jessiecode) and won't be linted in here
