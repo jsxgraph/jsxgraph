@@ -982,7 +982,7 @@ Mat.Statistics = {
      * It uses algorithm BG from {@link https://dl.acm.org/doi/pdf/10.1145/42372.42381}.
      *
      * @param {Number} n Number of trials (n >= 0)
-     * @param {Number} p Propability (0 <= p <= 1)
+     * @param {Number} p Probability (0 <= p <= 1)
      * @returns Number Integer value of a random variable in binomial distribution
      * @memberof JXG.Math.Statistics
      *
@@ -1100,7 +1100,7 @@ Mat.Statistics = {
     },
 
     /**
-     * Generate values for a random variable in geometric distribution with propability <i>p</i>.
+     * Generate values for a random variable in geometric distribution with probability <i>p</i>.
      * See {@link https://en.wikipedia.org/wiki/Geometric_distribution}.
      *
      * @param {Number} p (0 <= p <= 1)
@@ -1156,6 +1156,26 @@ Mat.Statistics = {
             }
         }
         return N;
+    },
+
+    /**
+     * Generate values for a random variable in Pareto distribution with
+     * shape <i>gamma</i> and scale <i>k</i>.
+     * See {@link https://en.wikipedia.org/wiki/Pareto_distribution}.
+     * Method: use inverse transformation sampling.
+     *
+     * @param {Number} gamma shape (0 < gamma)
+     * @param {Number} k scale (0 < k < x)
+     * @returns Number
+     * @memberof JXG.Math.Statistics
+     */
+    randomPareto: function (gamma, k) {
+        var u = Math.random();
+
+        if (gamma <= 0 || k <= 0) {
+            return NaN;
+        }
+        return k * Math.pow(1 - u, -1 / gamma);
     },
 
     /**
