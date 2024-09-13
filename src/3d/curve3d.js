@@ -203,7 +203,29 @@ JXG.extend(
  * @param {Function_Array,Function} F,range Alternatively: F<sub>[X,Y,Z]</sub>(u) a function returning an array [x,y,z] of
  * numbers, range as above.
  * @param {Array_Array_Array} X,Y,Z Three arrays containing the coordinate points which define the curve.
- */
+ * @example
+ * // create a simple curve in 3d
+ * var bound = [-1.5, 1.5];
+ * var view=board.create('view3d',
+ *     [[-4, -4],[8, 8],
+ *     [bound, bound, bound]],
+ *     {});
+ * var curve = view.create('curve3d', [(u)=>Math.cos(u), (u)=>Math.sin(u), (u)=>(u/Math.PI)-1,[0,2*Math.PI] ]);
+ * </pre><div id="JXG0f35a50e-e99d-11e8-a1ca-04d3b0c2aad3" class="jxgbox" style="width: 300px; height: 300px;"></div>
+ * <script type="text/javascript">
+ *     (function() {
+ *         var board = JXG.JSXGraph.initBoard('JXG0f35a50e-e99d-11e8-a1ca-04d3b0c2aad3',
+ *             {boundingbox: [-8, 8, 8,-8], axis: false, showcopyright: false, shownavigation: false});
+ *         // create a simple curve in 3d
+ *         var bound = [-1.5, 1.5];
+ *         var view=board.create('view3d',
+ *             [[-4, -4],[8, 8],
+ *             [bound, bound, bound]],
+ *             {});
+ *         var curve = view.create('curve3d', [(u)=>Math.cos(u), (u)=>Math.sin(u), (u)=>(u/Math.PI)-1,[0,2*Math.PI] ]);
+ *     })();
+ * </script><pre>
+  */
 JXG.createCurve3D = function (board, parents, attributes) {
     var view = parents[0],
         F, X, Y, Z, range, attr, el;
