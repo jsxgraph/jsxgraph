@@ -694,7 +694,7 @@ JXG.extend(
                     case "lft":
                     case "llft":
                     case "ulft":
-                        if (c1[1] <= c2[1]) {
+                        if (c1[1] < c2[1] + Mat.eps) {
                             x = c1[1];
                             y = c1[2];
                         } else {
@@ -705,7 +705,7 @@ JXG.extend(
                     case "rt":
                     case "lrt":
                     case "urt":
-                        if (c1[1] > c2[1]) {
+                        if (c1[1] > c2[1] + Mat.eps) {
                             x = c1[1];
                             y = c1[2];
                         } else {
@@ -1803,125 +1803,127 @@ JXG.createAxis = function (board, parents, attributes) {
         this.point2.setPositionDirectly(JXG.COORDS_BY_USER, newPosP2);
 
         // Set position of tick labels
-        visLabel = this.defaultTicks.visProp.label;
-        if (ticksAutoPos && (horizontal || vertical)) {
+        if (Type.exists(this.defaultTicks)) {
+            visLabel = this.defaultTicks.visProp.label;
+            if (ticksAutoPos && (horizontal || vertical)) {
 
-            if (!Type.exists(visLabel._anchorx_org)) {
-                visLabel._anchorx_org = Type.def(visLabel.anchorx, this.board.options.text.anchorX);
-            }
-            if (!Type.exists(visLabel._anchory_org)) {
-                visLabel._anchory_org = Type.def(visLabel.anchory, this.board.options.text.anchorY);
-            }
-            if (!Type.exists(visLabel._offset_org)) {
-                visLabel._offset_org = visLabel.offset.slice();
-            }
+                if (!Type.exists(visLabel._anchorx_org)) {
+                    visLabel._anchorx_org = Type.def(visLabel.anchorx, this.board.options.text.anchorX);
+                }
+                if (!Type.exists(visLabel._anchory_org)) {
+                    visLabel._anchory_org = Type.def(visLabel.anchory, this.board.options.text.anchorY);
+                }
+                if (!Type.exists(visLabel._offset_org)) {
+                    visLabel._offset_org = visLabel.offset.slice();
+                }
 
-            off = visLabel.offset;
-            if (horizontal) {
-                dist = axis.point1.coords.scrCoords[2] - (this.board.canvasHeight * 0.5);
+                off = visLabel.offset;
+                if (horizontal) {
+                    dist = axis.point1.coords.scrCoords[2] - (this.board.canvasHeight * 0.5);
 
-                anchr = visLabel.anchory;
+                    anchr = visLabel.anchory;
 
-                // The last position of the labels is stored in visLabel._side
-                if (dist < 0 && Math.abs(dist) > ticksAutoPosThres) {
-                    // Put labels on top of the line
-                    if (visLabel._side === 'bottom') {
-                        // Switch position
-                        if (visLabel.anchory === 'top') {
-                            anchr = 'bottom';
+                    // The last position of the labels is stored in visLabel._side
+                    if (dist < 0 && Math.abs(dist) > ticksAutoPosThres) {
+                        // Put labels on top of the line
+                        if (visLabel._side === 'bottom') {
+                            // Switch position
+                            if (visLabel.anchory === 'top') {
+                                anchr = 'bottom';
+                            }
+                            off[1] *= -1;
+                            visLabel._side = 'top';
                         }
-                        off[1] *= -1;
-                        visLabel._side = 'top';
-                    }
 
-                } else if (dist > 0 && Math.abs(dist) > ticksAutoPosThres) {
-                    // Put labels below the line
-                    if (visLabel._side === 'top') {
-                        // Switch position
-                        if (visLabel.anchory === 'bottom') {
-                            anchr = 'top';
+                    } else if (dist > 0 && Math.abs(dist) > ticksAutoPosThres) {
+                        // Put labels below the line
+                        if (visLabel._side === 'top') {
+                            // Switch position
+                            if (visLabel.anchory === 'bottom') {
+                                anchr = 'top';
+                            }
+                            off[1] *= -1;
+                            visLabel._side = 'bottom';
                         }
-                        off[1] *= -1;
-                        visLabel._side = 'bottom';
-                    }
 
-                } else {
-                    // Put to original position
-                    anchr = visLabel._anchory_org;
-                    off = visLabel._offset_org.slice();
-
-                    if (anchr === 'top') {
-                        visLabel._side = 'bottom';
-                    } else if (anchr === 'bottom') {
-                        visLabel._side = 'top';
-                    } else if (off[1] < 0) {
-                        visLabel._side = 'bottom';
                     } else {
-                        visLabel._side = 'top';
-                    }
-                }
+                        // Put to original position
+                        anchr = visLabel._anchory_org;
+                        off = visLabel._offset_org.slice();
 
-                for (i = 0; i < axis.defaultTicks.labels.length; i++) {
-                    this.defaultTicks.labels[i].visProp.anchory = anchr;
-                }
-                visLabel.anchory = anchr;
-
-            } else if (vertical) {
-                dist = axis.point1.coords.scrCoords[1] - (this.board.canvasWidth * 0.5);
-
-                if (dist < 0 && Math.abs(dist) > ticksAutoPosThres) {
-                    // Put labels to the left of the line
-                    if (visLabel._side === 'right') {
-                        // Switch position
-                        if (visLabel.anchorx === 'left') {
-                            anchr = 'right';
+                        if (anchr === 'top') {
+                            visLabel._side = 'bottom';
+                        } else if (anchr === 'bottom') {
+                            visLabel._side = 'top';
+                        } else if (off[1] < 0) {
+                            visLabel._side = 'bottom';
+                        } else {
+                            visLabel._side = 'top';
                         }
-                        off[0] *= -1;
-                        visLabel._side = 'left';
                     }
 
-                } else if (dist > 0 && Math.abs(dist) > ticksAutoPosThres) {
-                    // Put labels to the right of the line
-                    if (visLabel._side === 'left') {
-                        // Switch position
-                        if (visLabel.anchorx === 'right') {
-                            anchr = 'left';
+                    for (i = 0; i < axis.defaultTicks.labels.length; i++) {
+                        this.defaultTicks.labels[i].visProp.anchory = anchr;
+                    }
+                    visLabel.anchory = anchr;
+
+                } else if (vertical) {
+                    dist = axis.point1.coords.scrCoords[1] - (this.board.canvasWidth * 0.5);
+
+                    if (dist < 0 && Math.abs(dist) > ticksAutoPosThres) {
+                        // Put labels to the left of the line
+                        if (visLabel._side === 'right') {
+                            // Switch position
+                            if (visLabel.anchorx === 'left') {
+                                anchr = 'right';
+                            }
+                            off[0] *= -1;
+                            visLabel._side = 'left';
                         }
-                        off[0] *= -1;
-                        visLabel._side = 'right';
-                    }
 
-                } else {
-                    // Put to original position
-                    anchr = visLabel._anchorx_org;
-                    off = visLabel._offset_org.slice();
+                    } else if (dist > 0 && Math.abs(dist) > ticksAutoPosThres) {
+                        // Put labels to the right of the line
+                        if (visLabel._side === 'left') {
+                            // Switch position
+                            if (visLabel.anchorx === 'right') {
+                                anchr = 'left';
+                            }
+                            off[0] *= -1;
+                            visLabel._side = 'right';
+                        }
 
-                    if (anchr === 'left') {
-                        visLabel._side = 'right';
-                    } else if (anchr === 'right') {
-                        visLabel._side = 'left';
-                    } else if (off[0] < 0) {
-                        visLabel._side = 'left';
                     } else {
-                        visLabel._side = 'right';
+                        // Put to original position
+                        anchr = visLabel._anchorx_org;
+                        off = visLabel._offset_org.slice();
+
+                        if (anchr === 'left') {
+                            visLabel._side = 'right';
+                        } else if (anchr === 'right') {
+                            visLabel._side = 'left';
+                        } else if (off[0] < 0) {
+                            visLabel._side = 'left';
+                        } else {
+                            visLabel._side = 'right';
+                        }
                     }
-                }
 
-                for (i = 0; i < axis.defaultTicks.labels.length; i++) {
-                    this.defaultTicks.labels[i].visProp.anchorx = anchr;
+                    for (i = 0; i < axis.defaultTicks.labels.length; i++) {
+                        this.defaultTicks.labels[i].visProp.anchorx = anchr;
+                    }
+                    visLabel.anchorx = anchr;
                 }
-                visLabel.anchorx = anchr;
+                visLabel.offset = off;
+
+            } else {
+                delete visLabel._anchorx_org;
+                delete visLabel._anchory_org;
+                delete visLabel._offset_org;
             }
-            visLabel.offset = off;
-
-        } else {
-            delete visLabel._anchorx_org;
-            delete visLabel._anchory_org;
-            delete visLabel._offset_org;
+            this.defaultTicks.needsUpdate = true;
         }
 
         JXG.Line.prototype.update.call(this);
-        this.defaultTicks.needsUpdate = true;
 
         return this;
     };

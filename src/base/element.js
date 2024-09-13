@@ -1125,9 +1125,7 @@ JXG.extend(
          * @private
          */
         resolveShortcuts: function (attributes) {
-            var key,
-                i,
-                j,
+            var key, i, j,
                 subattr = ["traceattributes", "traceAttributes"];
 
             for (key in Options.shortcuts) {

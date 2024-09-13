@@ -1832,20 +1832,20 @@ JXG.createView3D = function (board, parents, attributes) {
 
     attr = Type.copyAttributes(attributes, board.options, 'view3d');
     view = new JXG.View3D(board, parents, attr);
-    view.defaultAxes = view.create('axes3d', parents, attributes);
+    view.defaultAxes = view.create('axes3d', parents, attr);
 
     x = coords[0];
     y = coords[1];
     w = size[0];
     h = size[1];
 
-    attr_az = Type.copyAttributes(attributes, board.options, 'view3d', 'az', 'slider');
+    attr_az = Type.copyAttributes(attr, board.options, 'view3d', 'az', 'slider');
     attr_az.name = 'az';
 
-    attr_el = Type.copyAttributes(attributes, board.options, 'view3d', 'el', 'slider');
+    attr_el = Type.copyAttributes(attr, board.options, 'view3d', 'el', 'slider');
     attr_el.name = 'el';
 
-    attr_bank = Type.copyAttributes(attributes, board.options, 'view3d', 'bank', 'slider');
+    attr_bank = Type.copyAttributes(attr, board.options, 'view3d', 'bank', 'slider');
     attr_bank.name = 'bank';
 
     /**

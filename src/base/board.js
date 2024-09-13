@@ -186,10 +186,10 @@ JXG.Board = function (container, renderer, id,
     this.grids = [];
 
     /**
-     * Some standard options
+     * Copy of the default options
      * @type JXG.Options
      */
-    this.options = Type.deepCopy(Options);
+    this.options = Type.deepCopy(Options);  // A possible theme is not yet merged in
 
     /**
      * Board attributes
