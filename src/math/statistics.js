@@ -1290,7 +1290,7 @@ Mat.Statistics = {
      *
      *       // cumulative density
      *       res = JXG.Math.Statistics.histogram(x, { bins: 50, density: true, cumulative: true, range: [0, 20] });
-     *       res[0].unshift(0)  // add zero to front so comulative starts at zero
+     *       res[0].unshift(0)  // add zero to front so cumulative starts at zero
      *       res[1].unshift(0)
      *       board2.create('curve', [res[1], res[0]], { strokeColor: run[2], strokeWidth:2 });
      *   })
@@ -1327,7 +1327,7 @@ Mat.Statistics = {
      *
      *       // cumulative density
      *       res = JXG.Math.Statistics.histogram(x, { bins: 50, density: true, cumulative: true, range: [0, 20] });
-     *       res[0].unshift(0)  // add zero to front so comulative starts at zero
+     *       res[0].unshift(0)  // add zero to front so cumulative starts at zero
      *       res[1].unshift(0)
      *       board2.create('curve', [res[1], res[0]], { strokeColor: run[2], strokeWidth:2 });
      *   })
