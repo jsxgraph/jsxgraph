@@ -43,7 +43,8 @@ describe("Test JXG.Dump", function () {
     });
 
     it("toJessie", function () {
-        var s, p, txt;
+        var s, p, txt,
+        id, re;
 
         p = board.create("point", [2, 1]);
         s = board.create("line", [2, 1, 2]);
@@ -53,11 +54,18 @@ describe("Test JXG.Dump", function () {
         txt = JXG.Dump.toJessie(board);
 
         expect(txt.indexOf("point(2, 1) <<")).toBeGreaterThan(-1);
-        expect(txt.match(/line\("jxgBoard\d+P3", "jxgBoard\d+P4"\) <</).length).toBeGreaterThan(
-            0
-        );
         expect(txt.indexOf('text(1, 3, 2, "test") <<')).not.toBeNull();
+
+        expect(txt.match(/line\("jxgBoard\d+P3", "jxgBoard\d+P4"\) <</).length).toBeGreaterThan(0);
         expect(txt.match(/circle\("jxgBoard\d+P1", 5\) <</).length).not.toBeNull();
         expect(txt.match(/circle\("jxgBoard\d+P8", 5\) <</)).not.toBeNull();
+
+        // id = board.id;
+        // re = new RegExp(String.raw`line\("${id}P3", "${id}P4"\) <<`, "g");
+        // expect(txt.match(re)).not.toBeNull();
+        // re = new RegExp(String.raw`circle\("${id}P1", 5\) <<`, "g");
+        // expect(txt.match(re)).not.toBeNull();
+        // re = new RegExp(String.raw`circle\("${id}P8", 5\) <<`, "g");
+        // expect(txt.match(re)).not.toBeNull();
     });
 });
