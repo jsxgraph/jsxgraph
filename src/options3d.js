@@ -296,7 +296,9 @@ JXG.extend(Options, {
         gradient: "radial",
         gradientSecondColor: "#555555",
         fillColor: "yellow",
-        highlightStrokeColor: "#555555"
+        highlightStrokeColor: "#555555",
+        gradientFX: 0.7,
+        gradientFY: 0.3
     },
 
     polygon3d: {
