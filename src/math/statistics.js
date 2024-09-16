@@ -125,14 +125,15 @@ Mat.Statistics = {
     },
 
     /**
-     * The P-th percentile ( 0 < P ≤ 100 ) of a list of N ordered values (sorted from least to greatest)
-     * is the smallest value in the list such that no more than P percent of the data is strictly less
-     * than the value and at least P percent of the data is less than or equal to that value. See {@link https://en.wikipedia.org/wiki/Percentile}.
+     * The P-th percentile ( <i>0 < P ≤ 100</i> ) of a list of <i>N</i> ordered values (sorted from least to greatest)
+     * is the smallest value in the list such that no more than <i>P</i> percent of the data is strictly less
+     * than the value and at least <i>P</i> percent of the data is less than or equal to that value.
+     * See <a href="https://en.wikipedia.org/wiki/Percentile">https://en.wikipedia.org/wiki/Percentile</a>.
      *
      * Here, the <i>linear interpolation between closest ranks</i> method is used.
      * @param {Array} arr The set of values, need not be ordered.
      * @param {Number|Array} percentile One or several percentiles
-     * @returns {Number|Array} Depending if a number or an array is the input for percentile, a number or an array containing the percentils
+     * @returns {Number|Array} Depending if a number or an array is the input for percentile, a number or an array containing the percentiles
      * is returned.
      */
     percentile: function (arr, percentile) {
@@ -603,7 +604,7 @@ Mat.Statistics = {
 
     /**
      * Generate values of a standard normal random variable with the Marsaglia polar method, see
-     * {@link https://en.wikipedia.org/wiki/Marsaglia_polar_method}.
+     * <a href="https://en.wikipedia.org/wiki/Marsaglia_polar_method">https://en.wikipedia.org/wiki/Marsaglia_polar_method</a>.
      * See also D. E. Knuth, The art of computer programming, vol 2, p. 117.
      *
      * @param {Number} mean mean value of the normal distribution
@@ -706,7 +707,7 @@ Mat.Statistics = {
     /**
      * Generate value of a random variable with exponential distribution, i.e.
      * <i>f(x; lambda) = lambda * e^(-lambda x)</i> if <i>x >= 0</i> and <i>f(x; lambda) = 0</i> if <i>x < 0</i>.
-     * See {@link https://en.wikipedia.org/wiki/Exponential_distribution}.
+     * See <a href="https://en.wikipedia.org/wiki/Exponential_distribution">https://en.wikipedia.org/wiki/Exponential_distribution</a>.
      * Algorithm: D.E. Knuth, TAOCP 2, p. 128.
      *
      * @param {Number} lambda <i>&gt; 0</i>
@@ -775,7 +776,7 @@ Mat.Statistics = {
 
     /**
      * Generate value of a random variable with gamma distribution of order alpha.
-     * See {@link https://en.wikipedia.org/wiki/Gamma_distribution}.
+     * See <a href="https://en.wikipedia.org/wiki/Gamma_distribution">https://en.wikipedia.org/wiki/Gamma_distribution</a>.
      * Algorithm: D.E. Knuth, TAOCP 2, p. 129.
 
      * @param {Number} a shape, <i> &gt; 0</i>
@@ -894,7 +895,7 @@ Mat.Statistics = {
 
     /**
      * Generate value of a random variable with beta distribution with shape parameters alpha and beta.
-     * See {@link https://en.wikipedia.org/wiki/Beta_distribution}.
+     * See <a href="https://en.wikipedia.org/wiki/Beta_distribution">https://en.wikipedia.org/wiki/Beta_distribution</a>.
      *
      * @param {Number} alpha <i>&gt; 0</i>
      * @param {Number} beta <i>&gt; 0</i>
@@ -917,7 +918,7 @@ Mat.Statistics = {
 
     /**
      * Generate value of a random variable with chi-square distribution with k degrees of freedom.
-     * See {@link https://en.wikipedia.org/wiki/Chi-squared_distribution}.
+     * See <a href="https://en.wikipedia.org/wiki/Chi-squared_distribution">https://en.wikipedia.org/wiki/Chi-squared_distribution</a>.
      *
      * @param {Number} k <i>&gt; 0</i>
      * @returns Number
@@ -935,7 +936,7 @@ Mat.Statistics = {
 
     /**
      * Generate value of a random variable with F-distribution with d<sub>1</sub> and d<sub>2</sub> degrees of freedom.
-     * See {@link https://en.wikipedia.org/wiki/F-distribution}.
+     * See <a href="https://en.wikipedia.org/wiki/F-distribution">https://en.wikipedia.org/wiki/F-distribution</a>.
      * @param {Number} d1 <i>&gt; 0</i>
      * @param {Number} d2 <i>&gt; 0</i>
      * @returns Number
@@ -957,7 +958,7 @@ Mat.Statistics = {
 
     /**
      * Generate value of a random variable with Students-t-distribution with &nu; degrees of freedom.
-     * See {@link https://en.wikipedia.org/wiki/Student%27s_t-distribution}.
+     * See <a href="https://en.wikipedia.org/wiki/Student%27s_t-distribution">https://en.wikipedia.org/wiki/Student%27s_t-distribution</a>.
      * @param {Number} nu <i>&gt; 0</i>
      * @returns Number
      * @memberof JXG.Math.Statistics
@@ -978,8 +979,8 @@ Mat.Statistics = {
 
     /**
      * Generate values for a random variable in binomial distribution with parameters <i>n</i> and <i>p</i>.
-     * See {@link https://en.wikipedia.org/wiki/Binomial_distribution}.
-     * It uses algorithm BG from {@link https://dl.acm.org/doi/pdf/10.1145/42372.42381}.
+     * See <a href="https://en.wikipedia.org/wiki/Binomial_distribution">https://en.wikipedia.org/wiki/Binomial_distribution</a>.
+     * It uses algorithm BG from <a href="https://dl.acm.org/doi/pdf/10.1145/42372.42381">https://dl.acm.org/doi/pdf/10.1145/42372.42381</a>.
      *
      * @param {Number} n Number of trials (n >= 0)
      * @param {Number} p Probability (0 <= p <= 1)
@@ -1101,7 +1102,7 @@ Mat.Statistics = {
 
     /**
      * Generate values for a random variable in geometric distribution with probability <i>p</i>.
-     * See {@link https://en.wikipedia.org/wiki/Geometric_distribution}.
+     * See <a href="https://en.wikipedia.org/wiki/Geometric_distribution">https://en.wikipedia.org/wiki/Geometric_distribution</a>.
      *
      * @param {Number} p (0 <= p <= 1)
      * @returns Number
@@ -1121,7 +1122,7 @@ Mat.Statistics = {
 
     /**
      * Generate values for a random variable in Poisson distribution with mean <i>mu</i>.
-     * See {@link https://en.wikipedia.org/wiki/Poisson_distribution}.
+     * See <a href="https://en.wikipedia.org/wiki/Poisson_distribution">https://en.wikipedia.org/wiki/Poisson_distribution</a>.
      *
      * @param {Number} mu (0 < mu)
      * @returns Number
@@ -1161,7 +1162,7 @@ Mat.Statistics = {
     /**
      * Generate values for a random variable in Pareto distribution with
      * shape <i>gamma</i> and scale <i>k</i>.
-     * See {@link https://en.wikipedia.org/wiki/Pareto_distribution}.
+     * See <a href="https://en.wikipedia.org/wiki/Pareto_distribution">https://en.wikipedia.org/wiki/Pareto_distribution</a>.
      * Method: use inverse transformation sampling.
      *
      * @param {Number} gamma shape (0 < gamma)
