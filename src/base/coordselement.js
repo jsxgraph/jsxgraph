@@ -293,7 +293,7 @@ JXG.extend(
                             if (slide === poly.borders[i]) {
                                 slide =
                                     poly.borders[
-                                        (i - 1 + poly.borders.length) % poly.borders.length
+                                    (i - 1 + poly.borders.length) % poly.borders.length
                                     ];
                                 break;
                             }
@@ -303,7 +303,7 @@ JXG.extend(
                             if (slide === poly.borders[i]) {
                                 slide =
                                     poly.borders[
-                                        (i + 1 + poly.borders.length) % poly.borders.length
+                                    (i + 1 + poly.borders.length) % poly.borders.length
                                     ];
                                 break;
                             }
@@ -380,7 +380,7 @@ JXG.extend(
 
                 // Snap the glider to snap values.
                 snappedTo = this.findClosestSnapValue(newPos);
-                if(snappedTo !== null) {
+                if (snappedTo !== null) {
                     snapValues = Type.evaluate(this.visProp.snapvalues);
                     newPos = (snapValues[snappedTo] - this._smin) / (this._smax - this._smin);
                     this.update(true);
@@ -553,7 +553,7 @@ JXG.extend(
          * @returns {Number} Index of the value to snap to, or null.
          * @private
          */
-        findClosestSnapValue: function(pos) {
+        findClosestSnapValue: function (pos) {
             var i, d,
                 snapValues, snapValueDistance,
                 snappedTo = null;
@@ -860,7 +860,7 @@ JXG.extend(
          * @param {Boolean} [withZ=false] If set to true the return value will be <tt>(x | y | z)</tt> instead of <tt>(x, y)</tt>.
          * @returns {String} User coordinates of point.
          */
-        Coords: function(withZ) {
+        Coords: function (withZ) {
             if (withZ) {
                 return this.coords.usrCoords.slice();
             }
@@ -2068,9 +2068,9 @@ JXG.extend(
                 ]);
             } else if (this.slideObject.elementClass === Const.OBJECT_CLASS_CURVE) {
                 if (direction > 0) {
-                    newX = (this.slideObject.maxX()-this.slideObject.minX())*this.intervalCount/stepCount + this.slideObject.minX();
+                    newX = (this.slideObject.maxX() - this.slideObject.minX()) * this.intervalCount / stepCount + this.slideObject.minX();
                 } else {
-                    newX = -(this.slideObject.maxX()-this.slideObject.minX())*this.intervalCount/stepCount + this.slideObject.maxX();
+                    newX = -(this.slideObject.maxX() - this.slideObject.minX()) * this.intervalCount / stepCount + this.slideObject.maxX();
                 }
                 this.coords.setCoordinates(Const.COORDS_BY_USER, [this.slideObject.X(newX), this.slideObject.Y(newX)]);
 
