@@ -676,10 +676,8 @@ JXG.extend(
          */
         setPosition: function (method, coords) {
             var parents = [],
-                el,
-                i,
-                len,
-                t;
+                el, el2,
+                i, j, len, t;
 
             if (!Type.exists(this.parents)) {
                 return this;
@@ -712,6 +710,24 @@ JXG.extend(
             len = parents.length;
             if (len > 0) {
                 t.applyOnce(parents);
+
+                // Dragging of a 3D line element
+                if (Type.exists(this.view) && this.view.elType === 'view3d') {
+                    for (i = 0; i < this.parents.length; ++i) {
+                        // Search for the parent 3D line
+                        el = this.view.select(this.parents[i]);
+                        if (el.elType === 'line3d') {
+                            for (j = 0; j < el.parents.length; j++) {
+                                // Run through defining 3D points
+                                el2 = this.view.select(el.parents[j]);
+                                if (el2.elType === 'point3d' && el2.element2D.draggable()) {
+                                    t.applyOnce(el2.element2D);
+                                }
+                            }
+                        }
+                    }
+                }
+
             } else {
                 if (
                     this.transformations.length > 0 &&

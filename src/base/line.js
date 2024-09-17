@@ -846,6 +846,12 @@ JXG.extend(
                 this.point2.transformations.push(list[i]);
             }
 
+            // Why not like this?
+            // The difference is in setting baseElement
+            // var list = Type.isArray(transform) ? transform : [transform];
+            // this.point1.addTransform(this, list);
+            // this.point2.addTransform(this, list);
+
             return this;
         },
 

@@ -110,6 +110,7 @@ Type.copyPrototypeMethods(JXG.Line3D, JXG.GeometryElement3D, 'constructor3D');
 JXG.extend(
     JXG.Line3D.prototype,
     /** @lends JXG.Line3D.prototype */ {
+
         /**
          * Determine one end point of a 3D line from point, direction and range.
          *
@@ -320,7 +321,8 @@ JXG.createLine3D = function (board, parents, attributes) {
         el.endpoints = endpoints;
         el.addChild(endpoints[0]);
         el.addChild(endpoints[1]);
-        el.setParents(endpoints);
+        // el.setParents(endpoints);
+        el.addParents([point1, point2]);
 
     } else {
         // Line defined by point, direction and range
@@ -382,13 +384,14 @@ JXG.createLine3D = function (board, parents, attributes) {
         el.element2D.view = view;
 
         el.endpoints = points;
+        el.addParents(point);
     }
+
     // TODO Throw error
 
     el.addChild(el.element2D);
     el.inherits.push(el.element2D);
-    el.element2D.setParents(el);
-    // el.setParents([point1.id, point2.id]);
+    el.element2D.addParents(el);
 
     el.point1 = point1;
     el.point2 = point2;

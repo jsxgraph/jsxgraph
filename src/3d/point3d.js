@@ -280,9 +280,7 @@ JXG.extend(
         update: function (drag) {
             var c3d, foot;
 
-            // Update is called from two methods:
-            // Once in setToPosition and
-            // once in the subsequent board.update
+            // Update is called from board.updateElements
             if (
                 this.element2D.draggable() &&
                 Geometry.distance(this._c2d, this.element2D.coords.usrCoords) !== 0
