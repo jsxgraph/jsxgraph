@@ -49,6 +49,17 @@ JXG.extend(Options, {
          */
         zAxis: { visible: true, point2: { name: "z" }, strokeColor: JXG.palette.blue },
 
+
+        xAxisBorder: {
+            strokeWidth: 5
+        },
+        yAxisBorder: {
+            strokeWidth: 5
+        },
+        zAxisBorder: {
+            strokeWidth: 5
+        },
+
         // Planes
         /**
          * Attributes of the 3D plane orthogonal to the x-axis at the "rear" of the cube.

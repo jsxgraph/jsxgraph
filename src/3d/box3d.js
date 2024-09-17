@@ -109,17 +109,21 @@ JXG.createAxes3D = function (board, parents, attributes) {
         }
     }
 
+    if (pos === 'center') {
     // Origin (2D point)
-    axes.O = view.create(
-        "intersection",
-        [axes[directions[0] + suffixAxis], axes[directions[1] + suffixAxis]],
-        {
-            name: "",
-            visible: false,
-            withLabel: false
-        }
-    );
-    axes.O.view = view;
+        axes.O = view.create(
+            "intersection",
+            [axes[directions[0] + suffixAxis], axes[directions[1] + suffixAxis]],
+            {
+                name: "",
+                visible: false,
+                withLabel: false
+            }
+        );
+        axes.O.view = view;
+    } else {
+        axes.O = null;
+    }
 
     // Front and rear planes
     for (i = 0; i < directions.length; i++) {
