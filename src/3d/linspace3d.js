@@ -556,9 +556,20 @@ JXG.extend(
          */
         updateNormal: function () {
             var i, len;
-            for (i = 0; i < 3; i++) {
-                this.vec1[i] = Type.evaluate(this.direction1[i]);
-                this.vec2[i] = Type.evaluate(this.direction2[i]);
+
+            if (Type.isFunction(this.direction1)) {
+                this.vec1 = Type.evaluate(this.direction1);
+            } else {
+                for (i = 0; i < 3; i++) {
+                    this.vec1[i] = Type.evaluate(this.direction1[i]);
+                }
+            }
+            if (Type.isFunction(this.direction2)) {
+                this.vec2 = Type.evaluate(this.direction2);
+            } else {
+                for (i = 0; i < 3; i++) {
+                    this.vec2[i] = Type.evaluate(this.direction2[i]);
+                }
             }
 
             this.normal = Mat.crossProduct(this.vec1, this.vec2);
