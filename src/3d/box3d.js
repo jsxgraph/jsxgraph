@@ -34,16 +34,14 @@
  */
 import JXG from "../jxg.js";
 import Type from "../utils/type.js";
-// import Mat from "../math/math.js";
-// import Geometry from "../math/geometry.js";
 
 JXG.createAxes3D = function (board, parents, attributes) {
     var view = parents[0],
     directions = ["x", "y", "z"],
     suffixAxis = "Axis",
     sides = ["Rear", "Front"],
-    rear = [0, 0, 0], // x, y, z
-    front = [0, 0, 0], // x, y, z
+    rear = [0, 0, 0],           // x, y, z
+    front = [0, 0, 0],          // x, y, z
     i, j, k, i1, i2, attr, pos,
     dir, dir1,
     from, to, vec1, vec2,
@@ -80,7 +78,8 @@ JXG.createAxes3D = function (board, parents, attributes) {
             axes[na] = view.create("axis3d", [from, to], attr[na.toLowerCase()]);
             axes[na].view = view;
         } else {
-            na += "Border"; // Axes bordered
+            // Axes bordered
+            na += "Border";
             from = rear.slice();
             to = front.slice();
             if (i === 2) {
@@ -91,26 +90,22 @@ JXG.createAxes3D = function (board, parents, attributes) {
                 to[2] = rear[2];
             }
             to[i] = front[i];
-            attr[na.toLowerCase()].lastArrow = false;
+            // attr[na.toLowerCase()].lastArrow = false;
             axes[na] = view.create("axis3d", [from, to], attr[na.toLowerCase()]);
 
-            // TODO
-            ticks_attr = {
-                visible: true, // Für z-Ticks wird path nicht berechnet
-                minorTicks: 0,
-                tickEndings: [0, 1],
-                drawLabels: false
-            };
-            if (i === 2) {
-                ticks_attr.tickEndings = [1, 0];
+            ticks_attr = attr[na.toLowerCase()].ticks3d;
+            if (dir === 'x') {
+                axes[na + "Ticks"] = view.create("ticks3d", [from, [0, 1, 0], [0, 10], [1, 0, 0]], ticks_attr);
+            } else if (dir === 'y') {
+                axes[na + "Ticks"] = view.create("ticks3d", [from, [1, 0, 0], [0, 10], [0, 1, 0]], ticks_attr);
+            } else {
+                axes[na + "Ticks"] = view.create("ticks3d", [from, [0, 0, 1], [0, 10], [0, 1, 0]], ticks_attr);
             }
-            axes[na + "Ticks"] = view.create("ticks", [axes[na], 1], ticks_attr);
-            axes[na + "Ticks"].view = view;
         }
     }
 
     if (pos === 'center') {
-    // Origin (2D point)
+        // Origin (2D point)
         axes.O = view.create(
             "intersection",
             [axes[directions[0] + suffixAxis], axes[directions[1] + suffixAxis]],
@@ -308,4 +303,5 @@ JXG.createMesh3D = function (board, parents, attr) {
     };
     return el;
 };
+
 JXG.registerElement("mesh3d", JXG.createMesh3D);

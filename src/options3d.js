@@ -49,15 +49,20 @@ JXG.extend(Options, {
          */
         zAxis: { visible: true, point2: { name: "z" }, strokeColor: JXG.palette.blue },
 
-
         xAxisBorder: {
-            strokeWidth: 5
+            strokeWidth: 2,
+            lastArrow: false,
+            ticks3d: {}
         },
         yAxisBorder: {
-            strokeWidth: 5
+            strokeWidth: 2,
+            lastArrow: false,
+            ticks3d: {}
         },
         zAxisBorder: {
-            strokeWidth: 5
+            strokeWidth: 2,
+            lastArrow: false,
+            ticks3d: {}
         },
 
         // Planes
@@ -368,6 +373,16 @@ JXG.extend(Options, {
         stepsV: 30
 
         /**#@-*/
+    },
+
+    ticks3d: {
+        visible: true,
+
+        ticksDistance: 1,
+        majorHeight: 10,
+        minorTicks: 0,
+        tickEndings: [0, 1],
+        drawLabels: false
     },
 
     vectorfield3d: {
