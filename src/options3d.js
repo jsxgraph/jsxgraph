@@ -375,6 +375,10 @@ JXG.extend(Options, {
         /**#@-*/
     },
 
+    text3d: {
+
+    },
+
     ticks3d: {
         visible: true,
 

@@ -84,6 +84,7 @@ import './3d/circle3d.js';
 import './3d/point3d.js';
 import './3d/curve3d.js';
 import './3d/linspace3d.js';
+import './3d/text3d.js';
 import './3d/ticks3d.js';
 import './3d/polygon3d.js';
 import './3d/sphere3d.js';
