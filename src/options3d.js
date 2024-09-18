@@ -50,19 +50,55 @@ JXG.extend(Options, {
         zAxis: { visible: true, point2: { name: "z" }, strokeColor: JXG.palette.blue },
 
         xAxisBorder: {
-            strokeWidth: 2,
+            name: 'x',
+            withLabel: true,
+            label: {
+                position: '50% left',
+                offset: [30, 0],
+                fontsize: 15
+            },
+            strokeWidth: 1,
             lastArrow: false,
-            ticks3d: {}
+            ticks3d: {
+                label: {
+                    anchorX: 'middle',
+                    anchorY: 'middle'
+                }
+
+            }
         },
         yAxisBorder: {
-            strokeWidth: 2,
+            name: 'y',
+            withLabel: true,
+            label: {
+                position: '50% right',
+                offset: [0, -30],
+                fontsize: 15
+            },
+            strokeWidth: 1,
             lastArrow: false,
-            ticks3d: {}
+            ticks3d: {
+                label: {
+                    anchorX: 'middle'
+                }
+            }
         },
         zAxisBorder: {
-            strokeWidth: 2,
+            name: 'z',
+            withLabel: true,
+            label: {
+                position: '50% right',
+                offset: [30, 0],
+                fontsize: 15
+            },
+            strokeWidth: 1,
             lastArrow: false,
-            ticks3d: {}
+            ticks3d: {
+                label: {
+                    anchorX: 'middle',
+                    anchorY: 'middle'
+                }
+            }
         },
 
         // Planes
@@ -71,38 +107,80 @@ JXG.extend(Options, {
          * @type Plane3D
          * @name View3D#xPlaneRear
          */
-        xPlaneRear: { visible: true, layer: 0, mesh3d: { layer: 1 } },
+        xPlaneRear: {
+            visible: true,
+            layer: 0,
+            strokeWidth: 1,
+            strokeColor: '#dddddd',
+            fillColor: '#dddddd',
+            mesh3d: { layer: 1 }
+        },
         /**
          * Attributes of the 3D plane orthogonal to the y-axis at the "rear" of the cube.
          * @type Plane3D
          * @name View3D#yPlaneRear
          */
-        yPlaneRear: { visible: true, layer: 0, mesh3d: { layer: 1 } },
+        yPlaneRear: {
+            visible: true,
+            strokeWidth: 1,
+            strokeColor: '#dddddd',
+            fillColor: '#dddddd',
+            layer: 0,
+            mesh3d: { layer: 1 }
+        },
         /**
          * Attributes of the 3D plane orthogonal to the z-axis at the "rear" of the cube.
          * @type Plane3D
          * @name View3D#zPlaneRear
          */
-        zPlaneRear: { visible: true, layer: 0, mesh3d: { layer: 1 } },
+        zPlaneRear: {
+            visible: true,
+            strokeWidth: 1,
+            strokeColor: '#dddddd',
+            fillColor: '#dddddd',
+            layer: 0,
+            mesh3d: { layer: 1 }
+        },
 
         /**
          * Attributes of the 3D plane orthogonal to the x-axis at the "front" of the cube.
          * @type Plane3D
          * @name View3D#xPlaneFront
          */
-        xPlaneFront: { visible: false, layer: 0, mesh3d: { layer: 1 } },
+        xPlaneFront: {
+            visible: false,
+            strokeWidth: 1,
+            strokeColor: '#dddddd',
+            fillColor: '#dddddd',
+            layer: 0,
+            mesh3d: { layer: 1 }
+        },
         /**
          * Attributes of the 3D plane orthogonal to the y-axis at the "front" of the cube.
          * @type Plane3D
          * @name View3D#yPlaneFront
          */
-        yPlaneFront: { visible: false, layer: 0, mesh3d: { layer: 1 } },
+        yPlaneFront: {
+            visible: false,
+            strokeWidth: 1,
+            strokeColor: '#dddddd',
+            fillColor: '#dddddd',
+            layer: 0,
+            mesh3d: { layer: 1 }
+        },
         /**
          * Attributes of the 3D plane orthogonal to the z-axis at the "front" of the cube.
          * @type Plane3D
          * @name View3D#zPlaneFront
          */
-        zPlaneFront: { visible: false, layer: 0, mesh3d: { layer: 1 } },
+        zPlaneFront: {
+            visible: false,
+            strokeWidth: 1,
+            strokeColor: '#dddddd',
+            fillColor: '#dddddd',
+            layer: 0,
+            mesh3d: { layer: 1 }
+        },
 
         // Axes on the planes
         /**
@@ -386,7 +464,11 @@ JXG.extend(Options, {
         majorHeight: 10,
         minorTicks: 0,
         tickEndings: [0, 1],
-        drawLabels: false
+        drawLabels: true,
+
+        label: {
+            visible: true
+        }
     },
 
     vectorfield3d: {

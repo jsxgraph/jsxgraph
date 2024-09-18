@@ -82,12 +82,15 @@ JXG.createAxes3D = function (board, parents, attributes) {
             na += "Border";
             from = rear.slice();
             to = front.slice();
-            if (i === 2) {
+            if (dir === 'z') {
                 from[1] = front[1];
                 to[0] = rear[0];
+            } else if (dir === 'x') {
+                from = [rear[0], front[1], rear[2]];
+                to = [front[0], front[1], rear[2]];
             } else {
-                from[i] = front[i];
-                to[2] = rear[2];
+                from = [front[0], rear[1], rear[2]];
+                to = [front[0], front[1], rear[2]];
             }
             to[i] = front[i];
             // attr[na.toLowerCase()].lastArrow = false;
@@ -95,9 +98,9 @@ JXG.createAxes3D = function (board, parents, attributes) {
 
             ticks_attr = attr[na.toLowerCase()].ticks3d;
             if (dir === 'x') {
-                axes[na + "Ticks"] = view.create("ticks3d", [from, [0, 1, 0], [0, 10], [1, 0, 0]], ticks_attr);
-            } else if (dir === 'y') {
                 axes[na + "Ticks"] = view.create("ticks3d", [from, [1, 0, 0], [0, 10], [0, 1, 0]], ticks_attr);
+            } else if (dir === 'y') {
+                axes[na + "Ticks"] = view.create("ticks3d", [from, [0, 1, 0], [0, 10], [1, 0, 0]], ticks_attr);
             } else {
                 axes[na + "Ticks"] = view.create("ticks3d", [from, [0, 0, 1], [0, 10], [0, 1, 0]], ticks_attr);
             }

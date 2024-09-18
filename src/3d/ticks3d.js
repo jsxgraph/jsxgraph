@@ -47,6 +47,70 @@ JXG.createTicks3D = function (board, parents, attributes) {
     attr = Type.copyAttributes(attributes, board.options, 'ticks3d');
     el = view.create("curve", [[], []], attr);
 
+    el.drawLabels = function(attr) {
+        var s1 = range1[0],
+            e1 = range1[1],
+            step = Type.evaluate(this.visProp.ticksdistance),
+            range2 = Type.evaluate(this.visProp.tickendings),
+            mh =  Type.evaluate(this.visProp.majorheight),
+            e2,
+            l1, l2,
+            i,
+            u, val, p,
+            v1 = [0, 0, 0],
+            v2 = [0, 0, 0],
+            q = [0, 0, 0],
+            labels = [];
+
+        mh /= Math.sqrt(board.unitX * board.unitY); // Very crude estimation of tick length
+        e2 = mh * range2[1] * 2;
+
+        this.dataX = [];
+        this.dataY = [];
+
+        if (Type.isFunction(point)) {
+            q = point().slice(1);
+        } else {
+            for (i = 0; i < 3; i++) {
+                q[i] = Type.evaluate(point[i]);
+            }
+        }
+        for (i = 0; i < 3; i++) {
+            v1[i] = Type.evaluate(dir1[i]);
+            v2[i] = Type.evaluate(dir2[i]);
+        }
+
+        l1 = JXG.Math.norm(v1, 3);
+        l2 = JXG.Math.norm(v2, 3);
+        for (i = 0; i < 3; i++) {
+            v1[i] /= l1;
+            v2[i] /= l2;
+        }
+
+        if (Math.abs(step) < Mat.eps) {
+            return;
+        }
+        for (u = s1; u <= e1; u += step) {
+            // Label
+            p = [
+                q[0] + u * v1[0] + e2 * v2[0],
+                q[1] + u * v1[1] + e2 * v2[1],
+                q[2] + u * v1[2] + e2 * v2[2]
+            ];
+            for (i = 0; i < 3; i++) {
+                if (v1[i] !== 0) {
+                    val = q[i] + u * v1[i];
+                }
+            }
+            labels.push(view.create('text3d', [p, val], attr));
+        }
+        return labels;
+    };
+
+    if (Type.evaluate(el.visProp.drawlabels)) {
+        el.labels = el.drawLabels(attr.label);
+    }
+
     /**
      * @ignore
      */
@@ -112,14 +176,6 @@ JXG.createTicks3D = function (board, parents, attributes) {
             this.dataY.push(c2d[2]);
             this.dataX.push(NaN);
             this.dataY.push(NaN);
-
-            // Label
-            p = [
-                q[0] + u * v1[0] + e2 * v2[0] + 0.5,
-                q[1] + u * v1[1] + e2 * v2[1] + 0.5,
-                q[2] + u * v1[2] + e2 * v2[2] + 0.5
-            ];
-
         }
     };
 
