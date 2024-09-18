@@ -180,6 +180,17 @@ JXG.extend(JXG.GeometryElement3D.prototype, {
         return attr;
     },
 
+    /**
+     * Set position of the 2D element. This is a
+     * callback function, executed in {@link JXG.GeometryElement#setPosition}.
+     * @param {JXG.Transform} t transformation
+     * @private
+     * @see JXG.GeometryElement#setPosition
+     */
+    setPosition2D: function(t) {
+        /* stub */
+    },
+
     remove: function() {}
 
 });

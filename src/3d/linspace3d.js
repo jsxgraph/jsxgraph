@@ -146,6 +146,18 @@ JXG.extend(
             return this;
         },
 
+        setPosition2D: function (t) {
+            var j, el;
+
+            for (j = 0; j < this.parents.length; j++) {
+                // Run through defining 3D points
+                el = this.view.select(this.parents[j]);
+                if (el.elType === 'point3d' && el.element2D.draggable()) {
+                    t.applyOnce(el.element2D);
+                }
+            }
+        },
+
         updateRenderer: function () {
             this.needsUpdate = false;
             return this;

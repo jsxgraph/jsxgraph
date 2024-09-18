@@ -673,11 +673,13 @@ JXG.extend(
          * Possible values are {@link JXG.COORDS_BY_USER} and {@link JXG.COORDS_BY_SCREEN}.
          * @param {Array} coords array of translation vector.
          * @returns {JXG.GeometryElement} Reference to the element object.
+         *
+         * @see JXG.GeometryElement3D#setPosition2D
          */
         setPosition: function (method, coords) {
             var parents = [],
-                el, el2,
-                i, j, len, t;
+                el,
+                i, len, t;
 
             if (!Type.exists(this.parents)) {
                 return this;
@@ -711,19 +713,13 @@ JXG.extend(
             if (len > 0) {
                 t.applyOnce(parents);
 
-                // Dragging of a 3D line element
+                // Handle dragging of a 3D element
                 if (Type.exists(this.view) && this.view.elType === 'view3d') {
                     for (i = 0; i < this.parents.length; ++i) {
-                        // Search for the parent 3D line
+                        // Search for the parent 3D element
                         el = this.view.select(this.parents[i]);
-                        if (el.elType === 'line3d') {
-                            for (j = 0; j < el.parents.length; j++) {
-                                // Run through defining 3D points
-                                el2 = this.view.select(el.parents[j]);
-                                if (el2.elType === 'point3d' && el2.element2D.draggable()) {
-                                    t.applyOnce(el2.element2D);
-                                }
-                            }
+                        if (Type.exists(el.setPosition2D)) {
+                            el.setPosition2D(t);
                         }
                     }
                 }
