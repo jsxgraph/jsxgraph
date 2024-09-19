@@ -3662,6 +3662,7 @@ Mat.Numerics = {
         var a, b, c, fc,
             x,
             gr = 1 - 1 / 1.61803398875,
+            eps = 0.001,
             cnt,
             max_cnt = 20;
 
@@ -3676,8 +3677,10 @@ Mat.Numerics = {
         b = x[1];
         fc = f.call(context, a);
         if (isNaN(fc)) {
+            // Divide the interval with the golden ratio
+            // and keep a such that f(a) = NaN
             cnt = 0;
-            while (b - a > 0.001 && cnt < max_cnt) {
+            while (b - a > eps && cnt < max_cnt) {
                 c = (b - a) * gr + a;
                 fc = f.call(context, c);
                 if (isNaN(fc)) {
@@ -3694,8 +3697,10 @@ Mat.Numerics = {
         b = x[1];
         fc = f.call(context, b);
         if (isNaN(fc)) {
+            // Divide the interval with the golden ratio
+            // and keep b such that f(b) = NaN
             cnt = 0;
-            while (b - a > 0.001 && cnt < max_cnt) {
+            while (b - a > eps && cnt < max_cnt) {
                 c = b - (b - a) * gr;
                 fc = f.call(context, c);
                 if (isNaN(fc)) {
