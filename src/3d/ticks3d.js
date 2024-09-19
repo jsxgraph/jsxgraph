@@ -40,7 +40,7 @@ JXG.createTicks3D = function (board, parents, attributes) {
     var view = parents[0],
         point = parents[1],
         dir1 = parents[2],
-        range1 = parents[3],
+        length = parents[3],
         dir2 = parents[4],
         el, attr;
 
@@ -48,8 +48,8 @@ JXG.createTicks3D = function (board, parents, attributes) {
     el = view.create("curve", [[], []], attr);
 
     el.drawLabels = function(attr) {
-        var s1 = range1[0],
-            e1 = range1[1],
+        var s1 = 0,
+            e1 = length,
             step = Type.evaluate(this.visProp.ticksdistance),
             range2 = Type.evaluate(this.visProp.tickendings),
             mh =  Type.evaluate(this.visProp.majorheight),
@@ -115,8 +115,8 @@ JXG.createTicks3D = function (board, parents, attributes) {
      * @ignore
      */
     el.updateDataArray = function () {
-        var s1 = range1[0],
-            e1 = range1[1],
+        var s1 = 0,
+            e1 = length,
             step = Type.evaluate(this.visProp.ticksdistance),
             range2 = Type.evaluate(this.visProp.tickendings),
             mh =  Type.evaluate(this.visProp.majorheight),

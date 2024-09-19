@@ -15,43 +15,70 @@ JXG.extend(Options, {
 
         /**
          * Position of the main axes in a View3D element. Possible values are
-         * 'center' and 'border'.
+         * 'center', 'border' or 'none'.
          *
          * @type String
          * @name View3D#axesPosition
          * @default 'center'
          */
-        axesPosition: "center", // Possible values: 'center', otherwise: border
+        axesPosition: "center", // Possible values: 'center', 'border', 'none'
 
         // Main axes
-
         /**
-         * Attributes of the 3D x-axis.
+         * Attributes of the centered 3D x-axis.
          *
          * @type Line3D
          * @name View3D#xAxis
+         * @see View3D#axesPosition
          */
         xAxis: { visible: true, point2: { name: "x" }, strokeColor: JXG.palette.red },
 
         /**
-         * Attributes of the 3D y-axis.
+         * Attributes of the centered 3D y-axis.
          *
          * @type Line3D
          * @name View3D#yAxis
+         * @see View3D#axesPosition
          */
         yAxis: { visible: true, point2: { name: "y" }, strokeColor: JXG.palette.green },
 
         /**
-         * Attributes of the 3D z-axis.
+         * Attributes of the centered 3D z-axis.
          *
          * @type Line3D
          * @name View3D#zAxis
+         * @see View3D#axesPosition
          */
         zAxis: { visible: true, point2: { name: "z" }, strokeColor: JXG.palette.blue },
 
+        /**
+         * Attributes of the 3D x-axis at the border.
+         *
+         * @type Line3D
+         * @name View3D#xAxisBorder
+         * @see View3D#axesPosition
+         * @default <pre>{
+         *   name: 'x',
+         *   withLabel: false,
+         *   label: {
+         *       position: '50% left',
+         *       offset: [30, 0],
+         *       fontsize: 15
+         *   },
+         *   strokeWidth: 1,
+         *   lastArrow: false,
+         *   ticks3d: {
+         *       label: {
+         *           anchorX: 'middle',
+         *           anchorY: 'middle'
+         *       }
+         *   }
+         *}
+         *</pre>
+         */
         xAxisBorder: {
             name: 'x',
-            withLabel: true,
+            withLabel: false,
             label: {
                 position: '50% left',
                 offset: [30, 0],
@@ -67,9 +94,34 @@ JXG.extend(Options, {
 
             }
         },
+
+        /**
+         * Attributes of the 3D y-axis at the border.
+         *
+         * @type Line3D
+         * @name View3D#yAxisBorder
+         * @see View3D#axesPosition
+         * @default <pre>{
+         *   name: 'x',
+         *   withLabel: false,
+         *   label: {
+         *       position: '50% right',
+         *       offset: [0, -30],
+         *       fontsize: 15
+         *   },
+         *   strokeWidth: 1,
+         *   lastArrow: false,
+         *   ticks3d: {
+         *       label: {
+         *           anchorX: 'middle',
+         *       }
+         *   }
+         *}
+         *</pre>
+         */
         yAxisBorder: {
             name: 'y',
-            withLabel: true,
+            withLabel: false,
             label: {
                 position: '50% right',
                 offset: [0, -30],
@@ -83,9 +135,35 @@ JXG.extend(Options, {
                 }
             }
         },
+
+        /**
+         * Attributes of the 3D z-axis at the border.
+         *
+         * @type Line3D
+         * @name View3D#zAxisBorder
+         * @see View3D#axesPosition
+         * @default <pre>{
+         *   name: 'z',
+         *   withLabel: false,
+         *   label: {
+         *       position: '50% right',
+         *       offset: [30, 0],
+         *       fontsize: 15
+         *   },
+         *   strokeWidth: 1,
+         *   lastArrow: false,
+         *   ticks3d: {
+         *       label: {
+         *           anchorX: 'middle',
+         *           anchorY: 'middle'
+         *       }
+         *   }
+         *}
+         *</pre>
+         */
         zAxisBorder: {
             name: 'z',
-            withLabel: true,
+            withLabel: false,
             label: {
                 position: '50% right',
                 offset: [30, 0],
@@ -115,6 +193,7 @@ JXG.extend(Options, {
             fillColor: '#dddddd',
             mesh3d: { layer: 1 }
         },
+
         /**
          * Attributes of the 3D plane orthogonal to the y-axis at the "rear" of the cube.
          * @type Plane3D
@@ -128,6 +207,7 @@ JXG.extend(Options, {
             layer: 0,
             mesh3d: { layer: 1 }
         },
+
         /**
          * Attributes of the 3D plane orthogonal to the z-axis at the "rear" of the cube.
          * @type Plane3D
@@ -454,10 +534,18 @@ JXG.extend(Options, {
     },
 
     text3d: {
+        /**#@+
+         * @visprop
+         */
 
+        /**#@-*/
     },
 
     ticks3d: {
+        /**#@+
+         * @visprop
+         */
+
         visible: true,
 
         ticksDistance: 1,
@@ -469,6 +557,8 @@ JXG.extend(Options, {
         label: {
             visible: true
         }
+
+        /**#@-*/
     },
 
     vectorfield3d: {
@@ -590,6 +680,38 @@ JXG.extend(Options, {
          *          start: 1.0
          *      },
          * }</pre>
+         * @example
+         *     var bound = [-4, 6];
+         *     var view = board.create('view3d',
+         *         [[-4, -3], [8, 8],
+         *         [bound, bound, bound]],
+         *         {
+         *             projection: 'parallel',
+         *             az: {
+         *                 slider: {visible: true}
+         *             }
+         *         });
+         *
+         * </pre><div id="JXG4c381f21-f043-4419-941d-75f384c026d0" class="jxgbox" style="width: 300px; height: 300px;"></div>
+         * <script type="text/javascript">
+         *     (function() {
+         *         var board = JXG.JSXGraph.initBoard('JXG4c381f21-f043-4419-941d-75f384c026d0',
+         *             {boundingbox: [-8, 8, 8,-8], axis: false, showcopyright: false, shownavigation: false});
+         *         var bound = [-4, 6];
+         *         var view = board.create('view3d',
+         *             [[-4, -3], [8, 8],
+         *             [bound, bound, bound]],
+         *             {
+         *                 projection: 'parallel',
+         *                 az: {
+         *                     slider: {visible: true}
+         *                 }
+         *             });
+         *
+         *     })();
+         *
+         * </script><pre>
+         *
          */
         az: {
             pointer: {
@@ -658,6 +780,38 @@ JXG.extend(Options, {
          *          start: 0.3
          *      },
          * }<pre>
+         * @example
+         *     var bound = [-4, 6];
+         *     var view = board.create('view3d',
+         *         [[-4, -3], [8, 8],
+         *         [bound, bound, bound]],
+         *         {
+         *             projection: 'parallel',
+         *             el: {
+         *                 slider: {visible: true}
+         *             }
+         *         });
+         *
+         * </pre><div id="JXG8926f733-c42e-466b-853c-74feb795e879" class="jxgbox" style="width: 300px; height: 300px;"></div>
+         * <script type="text/javascript">
+         *     (function() {
+         *         var board = JXG.JSXGraph.initBoard('JXG8926f733-c42e-466b-853c-74feb795e879',
+         *             {boundingbox: [-8, 8, 8,-8], axis: false, showcopyright: false, shownavigation: false});
+         *         var bound = [-4, 6];
+         *         var view = board.create('view3d',
+         *             [[-4, -3], [8, 8],
+         *             [bound, bound, bound]],
+         *             {
+         *                 projection: 'parallel',
+         *                 el: {
+         *                     slider: {visible: true}
+         *                 }
+         *             });
+         *
+         *     })();
+         *
+         * </script><pre>
+         *
          */
         el: {
             pointer: {
@@ -726,6 +880,38 @@ JXG.extend(Options, {
          *          start: 0.3
          *      },
          * }<pre>
+         * @example
+         *     var bound = [-4, 6];
+         *     var view = board.create('view3d',
+         *         [[-4, -3], [8, 8],
+         *         [bound, bound, bound]],
+         *         {
+         *             projection: 'parallel',
+         *             bank: {
+         *                 slider: {visible: true}
+         *             }
+         *         });
+         *
+         * </pre><div id="JXGb67811ea-c1e3-4d1e-b13c-3537b3436f6c" class="jxgbox" style="width: 300px; height: 300px;"></div>
+         * <script type="text/javascript">
+         *     (function() {
+         *         var board = JXG.JSXGraph.initBoard('JXGb67811ea-c1e3-4d1e-b13c-3537b3436f6c',
+         *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
+         *         var bound = [-4, 6];
+         *         var view = board.create('view3d',
+         *             [[-4, -3], [8, 8],
+         *             [bound, bound, bound]],
+         *             {
+         *                 projection: 'parallel',
+         *                 bank: {
+         *                     slider: {visible: true}
+         *                 }
+         *             });
+         *
+         *     })();
+         *
+         * </script><pre>
+         *
          */
         bank: {
             pointer: {
@@ -752,6 +938,26 @@ JXG.extend(Options, {
             }
         },
 
+        /**
+         * Enable user handling by a virtual trackball.
+         * Sub-attributes:
+         *      <ul>
+         *          <li><tt>enabled</tt>: Boolean that specifies whether pointer navigation is allowed by elevation.
+         *          <li><tt>outside</tt>: Boolean that specifies whether the pointer navigation is continued when the cursor leaves the board.
+         *          <li><tt>button</tt>: Which button of the pointer should be used? (<tt>'-1'</tt> (=no button), <tt>'0'</tt> or <tt>'2'</tt>)
+         *          <li><tt>key</tt>: Should an additional key be pressed? (<tt>'none'</tt>, <tt>'shift'</tt> or <tt>'ctrl'</tt>)
+         *      </ul>
+         *
+         * @name View3D#trackball
+         * @type Object
+         * @default <pre>{
+         *   enabled: false,
+         *   outside: true,
+         *   button: -1,
+         *   key: 'none'
+         * }
+         * </pre>
+         */
         trackball: {
             enabled: false,
             outside: true,

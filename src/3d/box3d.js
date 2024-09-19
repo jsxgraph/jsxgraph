@@ -43,7 +43,7 @@ JXG.createAxes3D = function (board, parents, attributes) {
     rear = [0, 0, 0],           // x, y, z
     front = [0, 0, 0],          // x, y, z
     i, j, k, i1, i2, attr, pos,
-    dir, dir1,
+    dir, dir1, len,
     from, to, vec1, vec2,
     range1, range2,
     na, na_parent,
@@ -65,6 +65,7 @@ JXG.createAxes3D = function (board, parents, attributes) {
     // Main 3D axes
     attr = Type.copyAttributes(attributes, board.options, "axes3d");
     pos = attr.axesposition;
+
     for (i = 0; i < directions.length; i++) {
         // Run through ['x', 'y', 'z']
         dir = directions[i];
@@ -77,7 +78,7 @@ JXG.createAxes3D = function (board, parents, attributes) {
             to[i] = front[i];
             axes[na] = view.create("axis3d", [from, to], attr[na.toLowerCase()]);
             axes[na].view = view;
-        } else {
+        } else if (pos === 'border') {
             // Axes bordered
             na += "Border";
             from = rear.slice();
@@ -97,12 +98,13 @@ JXG.createAxes3D = function (board, parents, attributes) {
             axes[na] = view.create("axis3d", [from, to], attr[na.toLowerCase()]);
 
             ticks_attr = attr[na.toLowerCase()].ticks3d;
+            len = front[i] - rear[i];
             if (dir === 'x') {
-                axes[na + "Ticks"] = view.create("ticks3d", [from, [1, 0, 0], [0, 10], [0, 1, 0]], ticks_attr);
+                axes[na + "Ticks"] = view.create("ticks3d", [from, [1, 0, 0], len, [0, 1, 0]], ticks_attr);
             } else if (dir === 'y') {
-                axes[na + "Ticks"] = view.create("ticks3d", [from, [0, 1, 0], [0, 10], [1, 0, 0]], ticks_attr);
+                axes[na + "Ticks"] = view.create("ticks3d", [from, [0, 1, 0], len, [1, 0, 0]], ticks_attr);
             } else {
-                axes[na + "Ticks"] = view.create("ticks3d", [from, [0, 0, 1], [0, 10], [0, 1, 0]], ticks_attr);
+                axes[na + "Ticks"] = view.create("ticks3d", [from, [0, 0, 1], len, [0, 1, 0]], ticks_attr);
             }
         }
     }

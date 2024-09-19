@@ -1770,6 +1770,361 @@ JXG.extend(
  * which determines the coordinate ranges of the 3D cube.
  *
  * @example
+ *     var bound = [-4, 6];
+ *     var view = board.create('view3d',
+ *         [[-4, -3], [8, 8],
+ *         [bound, bound, bound]],
+ *         {
+ *             projection: 'parallel',
+ *             trackball: {enabled:true},
+ *         });
+ *
+ *     var curve = view.create('curve3d', [
+ *         (t) => (2 + Math.cos(3 * t)) * Math.cos(2 * t),
+ *         (t) => (2 + Math.cos(3 * t)) * Math.sin(2 * t),
+ *         (t) => Math.sin(3 * t),
+ *         [-Math.PI, Math.PI]
+ *     ], { strokeWidth: 4 });
+ *
+ * </pre><div id="JXG9b327a6c-1bd6-4e40-a502-59d024dbfd1b" class="jxgbox" style="width: 300px; height: 300px;"></div>
+ * <script type="text/javascript">
+ *     (function() {
+ *         var board = JXG.JSXGraph.initBoard('JXG9b327a6c-1bd6-4e40-a502-59d024dbfd1b',
+ *             {boundingbox: [-8, 8, 8,-8], axis: false, showcopyright: false, shownavigation: false});
+ *         var bound = [-4, 6];
+ *         var view = board.create('view3d',
+ *             [[-4, -3], [8, 8],
+ *             [bound, bound, bound]],
+ *             {
+ *                 projection: 'parallel',
+ *                 trackball: {enabled:true},
+ *             });
+ *
+ *         var curve = view.create('curve3d', [
+ *             (t) => (2 + Math.cos(3 * t)) * Math.cos(2 * t),
+ *             (t) => (2 + Math.cos(3 * t)) * Math.sin(2 * t),
+ *             (t) => Math.sin(3 * t),
+ *             [-Math.PI, Math.PI]
+ *         ], { strokeWidth: 4 });
+ *
+ *     })();
+ *
+ * </script><pre>
+ *
+ * @example
+ *     var bound = [-4, 6];
+ *     var view = board.create('view3d',
+ *         [[-4, -3], [8, 8],
+ *         [bound, bound, bound]],
+ *         {
+ *             projection: 'central',
+ *             trackball: {enabled:true},
+ *
+ *             xPlaneRear: { visible: false },
+ *             yPlaneRear: { visible: false }
+ *
+ *         });
+ *
+ *     var curve = view.create('curve3d', [
+ *         (t) => (2 + Math.cos(3 * t)) * Math.cos(2 * t),
+ *         (t) => (2 + Math.cos(3 * t)) * Math.sin(2 * t),
+ *         (t) => Math.sin(3 * t),
+ *         [-Math.PI, Math.PI]
+ *     ], { strokeWidth: 4 });
+ *
+ * </pre><div id="JXG0dc2493d-fb2f-40d5-bdb8-762ba0ad2007" class="jxgbox" style="width: 300px; height: 300px;"></div>
+ * <script type="text/javascript">
+ *     (function() {
+ *         var board = JXG.JSXGraph.initBoard('JXG0dc2493d-fb2f-40d5-bdb8-762ba0ad2007',
+ *             {boundingbox: [-8, 8, 8,-8], axis: false, showcopyright: false, shownavigation: false});
+ *         var bound = [-4, 6];
+ *         var view = board.create('view3d',
+ *             [[-4, -3], [8, 8],
+ *             [bound, bound, bound]],
+ *             {
+ *                 projection: 'central',
+ *                 trackball: {enabled:true},
+ *
+ *                 xPlaneRear: { visible: false },
+ *                 yPlaneRear: { visible: false }
+ *
+ *             });
+ *
+ *         var curve = view.create('curve3d', [
+ *             (t) => (2 + Math.cos(3 * t)) * Math.cos(2 * t),
+ *             (t) => (2 + Math.cos(3 * t)) * Math.sin(2 * t),
+ *             (t) => Math.sin(3 * t),
+ *             [-Math.PI, Math.PI]
+ *         ], { strokeWidth: 4 });
+ *
+ *     })();
+ *
+ * </script><pre>
+ *
+* @example
+ *     var bound = [-4, 6];
+ *     var view = board.create('view3d',
+ *         [[-4, -3], [8, 8],
+ *         [bound, bound, bound]],
+ *         {
+ *             projection: 'central',
+ *             trackball: {enabled:true},
+ *
+ *             // Main axes
+ *             axesPosition: 'border',
+ *
+ *             // Axes at the border
+ *             xAxisBorder: { ticks3d: { ticksDistance: 2} },
+ *             yAxisBorder: { ticks3d: { ticksDistance: 2} },
+ *             zAxisBorder: { ticks3d: { ticksDistance: 2} },
+ *
+ *             // No axes on planes
+ *             xPlaneRearYAxis: {visible: false},
+ *             xPlaneRearZAxis: {visible: false},
+ *             yPlaneRearXAxis: {visible: false},
+ *             yPlaneRearZAxis: {visible: false},
+ *             zPlaneRearXAxis: {visible: false},
+ *             zPlaneRearYAxis: {visible: false}
+ *         });
+ *
+ *     var curve = view.create('curve3d', [
+ *         (t) => (2 + Math.cos(3 * t)) * Math.cos(2 * t),
+ *         (t) => (2 + Math.cos(3 * t)) * Math.sin(2 * t),
+ *         (t) => Math.sin(3 * t),
+ *         [-Math.PI, Math.PI]
+ *     ], { strokeWidth: 4 });
+ *
+ * </pre><div id="JXG586f3551-335c-47e9-8d72-835409f6a103" class="jxgbox" style="width: 300px; height: 300px;"></div>
+ * <script type="text/javascript">
+ *     (function() {
+ *         var board = JXG.JSXGraph.initBoard('JXG586f3551-335c-47e9-8d72-835409f6a103',
+ *             {boundingbox: [-8, 8, 8,-8], axis: false, showcopyright: false, shownavigation: false});
+ *         var bound = [-4, 6];
+ *         var view = board.create('view3d',
+ *             [[-4, -3], [8, 8],
+ *             [bound, bound, bound]],
+ *             {
+ *                 projection: 'central',
+ *                 trackball: {enabled:true},
+ *
+ *                 // Main axes
+ *                 axesPosition: 'border',
+ *
+ *                 // Axes at the border
+ *                 xAxisBorder: { ticks3d: { ticksDistance: 2} },
+ *                 yAxisBorder: { ticks3d: { ticksDistance: 2} },
+ *                 zAxisBorder: { ticks3d: { ticksDistance: 2} },
+ *
+ *                 // No axes on planes
+ *                 xPlaneRearYAxis: {visible: false},
+ *                 xPlaneRearZAxis: {visible: false},
+ *                 yPlaneRearXAxis: {visible: false},
+ *                 yPlaneRearZAxis: {visible: false},
+ *                 zPlaneRearXAxis: {visible: false},
+ *                 zPlaneRearYAxis: {visible: false}
+ *             });
+ *
+ *         var curve = view.create('curve3d', [
+ *             (t) => (2 + Math.cos(3 * t)) * Math.cos(2 * t),
+ *             (t) => (2 + Math.cos(3 * t)) * Math.sin(2 * t),
+ *             (t) => Math.sin(3 * t),
+ *             [-Math.PI, Math.PI]
+ *         ], { strokeWidth: 4 });
+ *
+ *     })();
+ *
+ * </script><pre>
+ *
+ * @example
+ *     var bound = [-4, 6];
+ *     var view = board.create('view3d',
+ *         [[-4, -3], [8, 8],
+ *         [bound, bound, bound]],
+ *         {
+ *             projection: 'central',
+ *             trackball: {enabled:true},
+ *
+ *             axesPosition: 'none'
+ *         });
+ *
+ *     var curve = view.create('curve3d', [
+ *         (t) => (2 + Math.cos(3 * t)) * Math.cos(2 * t),
+ *         (t) => (2 + Math.cos(3 * t)) * Math.sin(2 * t),
+ *         (t) => Math.sin(3 * t),
+ *         [-Math.PI, Math.PI]
+ *     ], { strokeWidth: 4 });
+ *
+ * </pre><div id="JXG9a9467e1-f189-4c8c-adb2-d4f49bc7fa26" class="jxgbox" style="width: 300px; height: 300px;"></div>
+ * <script type="text/javascript">
+ *     (function() {
+ *         var board = JXG.JSXGraph.initBoard('JXG9a9467e1-f189-4c8c-adb2-d4f49bc7fa26',
+ *             {boundingbox: [-8, 8, 8,-8], axis: false, showcopyright: false, shownavigation: false});
+ *         var bound = [-4, 6];
+ *         var view = board.create('view3d',
+ *             [[-4, -3], [8, 8],
+ *             [bound, bound, bound]],
+ *             {
+ *                 projection: 'central',
+ *                 trackball: {enabled:true},
+ *
+ *                 axesPosition: 'none'
+ *             });
+ *
+ *         var curve = view.create('curve3d', [
+ *             (t) => (2 + Math.cos(3 * t)) * Math.cos(2 * t),
+ *             (t) => (2 + Math.cos(3 * t)) * Math.sin(2 * t),
+ *             (t) => Math.sin(3 * t),
+ *             [-Math.PI, Math.PI]
+ *         ], { strokeWidth: 4 });
+ *
+ *     })();
+ *
+ * </script><pre>
+ *
+ * @example
+ *     var bound = [-4, 6];
+ *     var view = board.create('view3d',
+ *         [[-4, -3], [8, 8],
+ *         [bound, bound, bound]],
+ *         {
+ *             projection: 'central',
+ *             trackball: {enabled:true},
+ *
+ *             // Main axes
+ *             axesPosition: 'border',
+ *
+ *             // Axes at the border
+ *             xAxisBorder: { ticks3d: { ticksDistance: 2} },
+ *             yAxisBorder: { ticks3d: { ticksDistance: 2} },
+ *             zAxisBorder: { ticks3d: { ticksDistance: 2} },
+ *
+ *             xPlaneRear: {
+ *                 fillColor: '#fff',
+ *                 mesh3d: {visible: false}
+ *             },
+ *             yPlaneRear: {
+ *                 fillColor: '#fff',
+ *                 mesh3d: {visible: false}
+ *             },
+ *             zPlaneRear: {
+ *                 fillColor: '#fff',
+ *                 mesh3d: {visible: false}
+ *             },
+ *             xPlaneFront: {
+ *                 visible: true,
+ *                 fillColor: '#fff',
+ *                 mesh3d: {visible: false}
+ *             },
+ *             yPlaneFront: {
+ *                 visible: true,
+ *                 fillColor: '#fff',
+ *                 mesh3d: {visible: false}
+ *             },
+ *             zPlaneFront: {
+ *                 visible: true,
+ *                 fillColor: '#fff',
+ *                 mesh3d: {visible: false}
+ *             },
+ *
+ *             // No axes on planes
+ *             xPlaneRearYAxis: {visible: false},
+ *             xPlaneRearZAxis: {visible: false},
+ *             yPlaneRearXAxis: {visible: false},
+ *             yPlaneRearZAxis: {visible: false},
+ *             zPlaneRearXAxis: {visible: false},
+ *             zPlaneRearYAxis: {visible: false},
+ *             xPlaneFrontYAxis: {visible: false},
+ *             xPlaneFrontZAxis: {visible: false},
+ *             yPlaneFrontXAxis: {visible: false},
+ *             yPlaneFrontZAxis: {visible: false},
+ *             zPlaneFrontXAxis: {visible: false},
+ *             zPlaneFrontYAxis: {visible: false}
+ *
+ *         });
+ *
+ *     var curve = view.create('curve3d', [
+ *         (t) => (2 + Math.cos(3 * t)) * Math.cos(2 * t),
+ *         (t) => (2 + Math.cos(3 * t)) * Math.sin(2 * t),
+ *         (t) => Math.sin(3 * t),
+ *         [-Math.PI, Math.PI]
+ *     ], { strokeWidth: 4 });
+ *
+ * </pre><div id="JXGbd41a4e3-1bf7-4764-b675-98b01667103b" class="jxgbox" style="width: 300px; height: 300px;"></div>
+ * <script type="text/javascript">
+ *     (function() {
+ *         var board = JXG.JSXGraph.initBoard('JXGbd41a4e3-1bf7-4764-b675-98b01667103b',
+ *             {boundingbox: [-8, 8, 8,-8], axis: false, showcopyright: false, shownavigation: false});
+ *         var bound = [-4, 6];
+ *         var view = board.create('view3d',
+ *             [[-4, -3], [8, 8],
+ *             [bound, bound, bound]],
+ *             {
+ *                 projection: 'central',
+ *                 trackball: {enabled:true},
+ *
+ *                 // Main axes
+ *                 axesPosition: 'border',
+ *
+ *                 // Axes at the border
+ *                 xAxisBorder: { ticks3d: { ticksDistance: 2} },
+ *                 yAxisBorder: { ticks3d: { ticksDistance: 2} },
+ *                 zAxisBorder: { ticks3d: { ticksDistance: 2} },
+ *
+ *                 xPlaneRear: {
+ *                     fillColor: '#fff',
+ *                     mesh3d: {visible: false}
+ *                 },
+ *                 yPlaneRear: {
+ *                     fillColor: '#fff',
+ *                     mesh3d: {visible: false}
+ *                 },
+ *                 zPlaneRear: {
+ *                     fillColor: '#fff',
+ *                     mesh3d: {visible: false}
+ *                 },
+ *                 xPlaneFront: {
+ *                     visible: true,
+ *                     fillColor: '#fff',
+ *                     mesh3d: {visible: false}
+ *                 },
+ *                 yPlaneFront: {
+ *                     visible: true,
+ *                     fillColor: '#fff',
+ *                     mesh3d: {visible: false}
+ *                 },
+ *                 zPlaneFront: {
+ *                     visible: true,
+ *                     fillColor: '#fff',
+ *                     mesh3d: {visible: false}
+ *                 },
+ *
+ *                 // No axes on planes
+ *                 xPlaneRearYAxis: {visible: false},
+ *                 xPlaneRearZAxis: {visible: false},
+ *                 yPlaneRearXAxis: {visible: false},
+ *                 yPlaneRearZAxis: {visible: false},
+ *                 zPlaneRearXAxis: {visible: false},
+ *                 zPlaneRearYAxis: {visible: false},
+ *                 xPlaneFrontYAxis: {visible: false},
+ *                 xPlaneFrontZAxis: {visible: false},
+ *                 yPlaneFrontXAxis: {visible: false},
+ *                 yPlaneFrontZAxis: {visible: false},
+ *                 zPlaneFrontXAxis: {visible: false},
+ *                 zPlaneFrontYAxis: {visible: false}
+ *
+ *             });
+ *
+ *         var curve = view.create('curve3d', [
+ *             (t) => (2 + Math.cos(3 * t)) * Math.cos(2 * t),
+ *             (t) => (2 + Math.cos(3 * t)) * Math.sin(2 * t),
+ *             (t) => Math.sin(3 * t),
+ *             [-Math.PI, Math.PI]
+ *         ], { strokeWidth: 4 });
+ *     })();
+ *
+ * </script><pre>
+ *
+ * @example
  *  var bound = [-5, 5];
  *  var view = board.create('view3d',
  *      [[-6, -3],
