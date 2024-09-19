@@ -373,8 +373,8 @@ JXG.extend(
                         res[1] >= 0 &&
                         res[1] <= 1 &&
                         (x - res[0][1]) * (x - res[0][1]) * ux2 +
-                            (y - res[0][2]) * (y - res[0][2]) * uy2 <=
-                            prec
+                        (y - res[0][2]) * (y - res[0][2]) * uy2 <=
+                        prec
                     ) {
                         return true;
                     }
@@ -728,7 +728,7 @@ JXG.extend(
          * @returns {JXG.Curve} Reference to the curve object.
          */
         updateCurve: function () {
-            var i, len,  mi, ma,
+            var i, len, mi, ma,
                 x, y,
                 version = this.visProp.plotversion,
                 //t1, t2, l1,
@@ -1688,7 +1688,7 @@ JXG.registerElement("curve", JXG.createCurve);
 JXG.createFunctiongraph = function (board, parents, attributes) {
     var attr,
         par = ["x", "x"].concat(parents); // variable name and identity function for x-coordinate
-        // par = ["x", function(x) { return x; }].concat(parents);
+    // par = ["x", function(x) { return x; }].concat(parents);
 
     attr = Type.copyAttributes(attributes, board.options, "functiongraph");
     attr = Type.copyAttributes(attr, board.options, "curve");
@@ -1920,7 +1920,7 @@ JXG.createCardinalSpline = function (board, parents, attributes) {
     if (!Type.exists(parents[0]) || !Type.isArray(parents[0])) {
         throw new Error(
             "JSXGraph: JXG.createCardinalSpline: argument 1 'points' has to be array of points or coordinate pairs" +
-                errStr
+            errStr
         );
     }
     if (
@@ -1929,13 +1929,13 @@ JXG.createCardinalSpline = function (board, parents, attributes) {
     ) {
         throw new Error(
             "JSXGraph: JXG.createCardinalSpline: argument 2 'tau' has to be number between [0,1] or function'" +
-                errStr
+            errStr
         );
     }
     if (!Type.exists(parents[2]) || !Type.isString(parents[2])) {
         throw new Error(
             "JSXGraph: JXG.createCardinalSpline: argument 3 'type' has to be string 'uniform' or 'centripetal'" +
-                errStr
+            errStr
         );
     }
 
@@ -2166,13 +2166,13 @@ JXG.createMetapostSpline = function (board, parents, attributes) {
     if (!Type.exists(parents[0]) || !Type.isArray(parents[0])) {
         throw new Error(
             "JSXGraph: JXG.createMetapostSpline: argument 1 'points' has to be array of points or coordinate pairs" +
-                errStr
+            errStr
         );
     }
     if (!Type.exists(parents[1]) || !Type.isObject(parents[1])) {
         throw new Error(
             "JSXGraph: JXG.createMetapostSpline: argument 2 'controls' has to be a JavaScript object'" +
-                errStr
+            errStr
         );
     }
 
@@ -2387,7 +2387,7 @@ JXG.createRiemannsum = function (board, parents, attributes) {
     if (!Type.exists(n)) {
         throw new Error(
             "JSXGraph: JXG.createRiemannsum: argument '2' n has to be number or function." +
-                "\nPossible parent types: [function,n:number|function,type,start:number|function,end:number|function]"
+            "\nPossible parent types: [function,n:number|function,type,start:number|function,end:number|function]"
         );
     }
 
@@ -2399,7 +2399,7 @@ JXG.createRiemannsum = function (board, parents, attributes) {
     if (!Type.exists(type)) {
         throw new Error(
             "JSXGraph: JXG.createRiemannsum: argument 3 'type' has to be string or function." +
-                "\nPossible parent types: [function,n:number|function,type,start:number|function,end:number|function]"
+            "\nPossible parent types: [function,n:number|function,type,start:number|function,end:number|function]"
         );
     }
 
@@ -2477,7 +2477,7 @@ JXG.createTracecurve = function (board, parents, attributes) {
     if (parents.length !== 2) {
         throw new Error(
             "JSXGraph: Can't create trace curve with given parent'" +
-                "\nPossible parent types: [glider, point]"
+            "\nPossible parent types: [glider, point]"
         );
     }
 
@@ -2487,11 +2487,11 @@ JXG.createTracecurve = function (board, parents, attributes) {
     if (glider.type !== Const.OBJECT_TYPE_GLIDER || !Type.isPoint(tracepoint)) {
         throw new Error(
             "JSXGraph: Can't create trace curve with parent types '" +
-                typeof parents[0] +
-                "' and '" +
-                typeof parents[1] +
-                "'." +
-                "\nPossible parent types: [glider, point]"
+            typeof parents[0] +
+            "' and '" +
+            typeof parents[1] +
+            "'." +
+            "\nPossible parent types: [glider, point]"
         );
     }
 
@@ -2625,7 +2625,7 @@ JXG.createStepfunction = function (board, parents, attributes) {
     if (parents.length !== 2) {
         throw new Error(
             "JSXGraph: Can't create step function with given parent'" +
-                "\nPossible parent types: [array, array|function]"
+            "\nPossible parent types: [array, array|function]"
         );
     }
 
@@ -2700,7 +2700,7 @@ JXG.createDerivative = function (board, parents, attributes) {
     if (parents.length !== 1 && parents[0].class !== Const.OBJECT_CLASS_CURVE) {
         throw new Error(
             "JSXGraph: Can't create derivative curve with given parent'" +
-                "\nPossible parent types: [curve]"
+            "\nPossible parent types: [curve]"
         );
     }
 
@@ -2771,7 +2771,7 @@ JXG.createCurveIntersection = function (board, parents, attributes) {
     if (parents.length !== 2) {
         throw new Error(
             "JSXGraph: Can't create curve intersection with given parent'" +
-                "\nPossible parent types: [array, array|function]"
+            "\nPossible parent types: [array, array|function]"
         );
     }
 
@@ -2827,7 +2827,7 @@ JXG.createCurveUnion = function (board, parents, attributes) {
     if (parents.length !== 2) {
         throw new Error(
             "JSXGraph: Can't create curve union with given parent'" +
-                "\nPossible parent types: [array, array|function]"
+            "\nPossible parent types: [array, array|function]"
         );
     }
 
@@ -2883,7 +2883,7 @@ JXG.createCurveDifference = function (board, parents, attributes) {
     if (parents.length !== 2) {
         throw new Error(
             "JSXGraph: Can't create curve difference with given parent'" +
-                "\nPossible parent types: [array, array|function]"
+            "\nPossible parent types: [array, array|function]"
         );
     }
 
@@ -3047,13 +3047,13 @@ JXG.createBoxPlot = function (board, parents, attributes) {
     if (parents.length !== 3) {
         throw new Error(
             "JSXGraph: Can't create box plot with given parent'" +
-                "\nPossible parent types: [array, number|function, number|function] containing quantiles, axis, width"
+            "\nPossible parent types: [array, number|function, number|function] containing quantiles, axis, width"
         );
     }
     if (parents[0].length < 5) {
         throw new Error(
             "JSXGraph: Can't create box plot with given parent[0]'" +
-                "\nparent[0] has to contain at least 5 quantiles."
+            "\nparent[0] has to contain at least 5 quantiles."
         );
     }
     box = board.create("curve", [[], []], attr);
@@ -3239,14 +3239,33 @@ JXG.registerElement("boxplot", JXG.createBoxPlot);
  * </script><pre>
  *
  */
-JXG.createImplicitCurve = function(board, parents, attributes) {
+JXG.createImplicitCurve = function (board, parents, attributes) {
     var c, attr;
-    if (parents.length !== 1 && parents.length !== 3) {
+    if (parents.length === 2) {
+        if (!Type.isArray(parents[1])) {
+            throw new Error(
+                "JSXGraph: Can't create curve implicitCurve with given parent'" +
+                "\nPossible parent types: [f], [f,domain], [f, dfx, dfy] or [f, dfx, dfy, domain]" +
+                "\nwith functions f, dfx, dfy and array of length 4 domain."
+            );
+        }
+    }
+    if (parents.length === 4) {
+        if (!Type.isArray(parents[3])) {
+            throw new Error(
+                "JSXGraph: Can't create curve implicitCurve with given parent'" +
+                "\nPossible parent types: [f], [f,domain], [f, dfx, dfy] or [f, dfx, dfy, domain]" +
+                "\nwith functions f, dfx, dfy and array of length 4 domain."
+            );
+        }
+    }
+
+    if (parents.length > 4) {
         throw new Error(
             "JSXGraph: Can't create curve implicitCurve with given parent'" +
-                "\nPossible parent types: [f] or [f, dfx, dfy]" +
-                "\nwith functions f, dfx, dfy"
-        );
+            "\nPossible parent types: [f], [f,domain], [f, dfx, dfy] or [f, dfx, dfy, domain]" +
+            "\nwith functions f, dfx, dfy and array of length 4 domain."
+    );
     }
 
     attr = Type.copyAttributes(attributes, board.options, "implicitcurve");
@@ -3287,11 +3306,25 @@ JXG.createImplicitCurve = function(board, parents, attributes) {
     c.dfy = Type.createFunction(parents[2], board, 'x, y');
 
     /**
+     * Defines a domain for searching f(x,y)=0. Default is the bounding box of the board.
+     * Using domain, visProp.margin is set to 0
+     * @name domain
+     * @memberOf ImplicitCurve.prototype
+     * @param {Array} of length 4 defining the domain used to compute the implict curve.
+     * Syntax: [x_min, y_max, x_max, y_min]
+     */
+    c.domain = board.getBoundingBox();
+    if (parents.length === 4) {
+        c.domain = parents[3];
+        c.visProp.margin = 0;
+    }
+
+    /**
      * @class
      * @ignore
      */
     c.updateDataArray = function () {
-        var bbox = this.board.getBoundingBox(),
+        var bbox = this.domain,
             ip, cfg,
             ret = [],
             mgn = Type.evaluate(this.visProp.margin);
