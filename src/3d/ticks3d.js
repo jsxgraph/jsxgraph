@@ -36,6 +36,28 @@ import JXG from "../jxg.js";
 import Type from "../utils/type.js";
 import Mat from "../math/math.js";
 
+/**
+ * @class This element creates 3D ticks.
+ * @pseudo
+ * @description Create a 3D ticks.
+ * <p>
+ * At the time being, the ticks are not connected to the line or axis. The connecting element is simply the
+ * parameter point.
+ *
+ * @name Ticks3D
+ * @augments Curve
+ * @constructor
+ * @type Object
+ * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
+ * @param {Array_Array_Number_Array} point,direction1,length,direction2 point is an array of length 3
+ * determining the starting point of the grid. direction1 and direction2 are arrays of length 3. Here, direction1 is the direction
+ * of the 3D line, direction2 is the direction of the ticks.
+ * "length" is the length of the line.
+ * All parameters can be supplied as functions returning an appropriate data type.
+ * <p>
+ * The step width of the ticks is determined by the attribute "ticksDistance".
+ *
+ */
 JXG.createTicks3D = function (board, parents, attributes) {
     var view = parents[0],
         point = parents[1],
@@ -47,9 +69,14 @@ JXG.createTicks3D = function (board, parents, attributes) {
     attr = Type.copyAttributes(attributes, board.options, 'ticks3d');
     el = view.create("curve", [[], []], attr);
 
+    el.point = point;
+    el.direction1 = dir1;
+    el.len = length;
+    el.direction2 = dir2;
+
     el.drawLabels = function(attr) {
         var s1 = 0,
-            e1 = length,
+            e1 = this.len,
             step = Type.evaluate(this.visProp.ticksdistance),
             range2 = Type.evaluate(this.visProp.tickendings),
             mh =  Type.evaluate(this.visProp.majorheight),
@@ -68,16 +95,16 @@ JXG.createTicks3D = function (board, parents, attributes) {
         this.dataX = [];
         this.dataY = [];
 
-        if (Type.isFunction(point)) {
-            q = point().slice(1);
+        if (Type.isFunction(this.point)) {
+            q = this.point().slice(1);
         } else {
             for (i = 0; i < 3; i++) {
-                q[i] = Type.evaluate(point[i]);
+                q[i] = Type.evaluate(this.point[i]);
             }
         }
         for (i = 0; i < 3; i++) {
-            v1[i] = Type.evaluate(dir1[i]);
-            v2[i] = Type.evaluate(dir2[i]);
+            v1[i] = Type.evaluate(this.direction1[i]);
+            v2[i] = Type.evaluate(this.direction2[i]);
         }
 
         l1 = JXG.Math.norm(v1, 3);
@@ -116,7 +143,7 @@ JXG.createTicks3D = function (board, parents, attributes) {
      */
     el.updateDataArray = function () {
         var s1 = 0,
-            e1 = length,
+            e1 = this.len,
             step = Type.evaluate(this.visProp.ticksdistance),
             range2 = Type.evaluate(this.visProp.tickendings),
             mh =  Type.evaluate(this.visProp.majorheight),
@@ -135,16 +162,16 @@ JXG.createTicks3D = function (board, parents, attributes) {
         this.dataX = [];
         this.dataY = [];
 
-        if (Type.isFunction(point)) {
-            q = point().slice(1);
+        if (Type.isFunction(this.point)) {
+            q = this.point().slice(1);
         } else {
             for (i = 0; i < 3; i++) {
-                q[i] = Type.evaluate(point[i]);
+                q[i] = Type.evaluate(this.point[i]);
             }
         }
         for (i = 0; i < 3; i++) {
-            v1[i] = Type.evaluate(dir1[i]);
-            v2[i] = Type.evaluate(dir2[i]);
+            v1[i] = Type.evaluate(this.direction1[i]);
+            v2[i] = Type.evaluate(this.direction2[i]);
         }
 
         l1 = JXG.Math.norm(v1, 3);

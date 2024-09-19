@@ -35,6 +35,23 @@
 import JXG from "../jxg.js";
 import Type from "../utils/type.js";
 
+/**
+ * @class This element creates the axis and plane elements of a 3D view.
+ * @pseudo
+ * @description This element "axes3d" is used to create
+ *  <ul>
+ *   <li> 3D coordinate axes (either "axesPosition:'border'" or "axesPosition:'center'")
+ *   <li> A point3d "O" (origin) if "axesPosition:'center'"
+ *   <li> Rear and front planes in all three directions of the view3d element.
+ *   <li> Coordinate axes on the rear and front planes
+ *  </ul>
+ *
+ * @name Axes3D
+ * @constructor
+ * @type Object
+ * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
+ *
+ */
 JXG.createAxes3D = function (board, parents, attributes) {
     var view = parents[0],
     directions = ["x", "y", "z"],
@@ -181,6 +198,21 @@ JXG.createAxes3D = function (board, parents, attributes) {
 };
 JXG.registerElement("axes3d", JXG.createAxes3D);
 
+/**
+ * @class This element creates a 3D axis.
+ * @pseudo
+ * @description Simple element 3d axis as used with "axesPosition:center". No ticks and no label (yet).
+ * <p>
+ * At the time being, the input arrays are NOT dynamic, i.e. can not be given as functions.
+ *
+ * @name Axis3D
+ * @augments Arrow
+ * @constructor
+ * @type Object
+ * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
+ * @param {Array_Array} start,end Two arrays of length 3 for the start point and the end point of the axis.
+ *
+ */
 JXG.createAxis3D = function (board, parents, attributes) {
     var view = parents[0],
         attr,
@@ -238,6 +270,9 @@ JXG.registerElement("axis3d", JXG.createAxis3D);
  * @class This element creates a 3D (rectangular) mesh.
  * @pseudo
  * @description Create a (rectangular) mesh - i.e. grid lines - on a plane3D element.
+ * <p>
+ * At the time being, the mesh is not connected to the plane. The connecting element is simply the
+ * parameter point.
  *
  * @name Mesh3D
  * @augments Curve
@@ -288,16 +323,16 @@ JXG.createMesh3D = function (board, parents, attr) {
         this.dataX = [];
         this.dataY = [];
 
-        if (Type.isFunction(point)) {
-            q = point().slice(1);
+        if (Type.isFunction(this.point)) {
+            q = this.point().slice(1);
         } else {
             for (i = 0; i < 3; i++) {
-                q[i] = Type.evaluate(point[i]);
+                q[i] = Type.evaluate(this.point[i]);
             }
         }
         for (i = 0; i < 3; i++) {
-            v1[i] = Type.evaluate(dir1[i]);
-            v2[i] = Type.evaluate(dir2[i]);
+            v1[i] = Type.evaluate(this.direction1[i]);
+            v2[i] = Type.evaluate(this.direction2[i]);
         }
         l1 = JXG.Math.norm(v1, 3);
         l2 = JXG.Math.norm(v2, 3);

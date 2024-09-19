@@ -1572,25 +1572,33 @@ Mat.Numerics = {
      * with a generalized Newton method.
      * We want to find values t1, t2 such that
      * c1(t1) = c2(t2), i.e.
+     * <br>
      * (c1_x(t1)-c2_x(t2),c1_y(t1)-c2_y(t2)) = (0,0).
+     * <p>
      * We set
      * (e,f) := (c1_x(t1)-c2_x(t2),c1_y(t1)-c2_y(t2))
-     *
+     * <p>
      * The Jacobian J is defined by
+     * <pre>
      * J = (a, b)
      *     (c, d)
+     * </pre>
      * where
-     * a = c1_x'(t1)
-     * b = -c2_x'(t2)
-     * c = c1_y'(t1)
-     * d = -c2_y'(t2)
-     *
+     * <ul>
+     * <li> a = c1_x'(t1)
+     * <li> b = -c2_x'(t2)
+     * <li> c = c1_y'(t1)
+     * <li> d = -c2_y'(t2)
+     * </ul>
      * The inverse J^(-1) of J is equal to
-     *  (d, -b)/
+     * <pre>
+     *  (d, -b)/ (ad-bc)
      *  (-c, a) / (ad-bc)
+     * </pre>
      *
      * Then, (t1new, t2new) := (t1,t2) - J^(-1)*(e,f).
-     * If the function meetCurveCurve possesses the properties
+     * <p>
+     * If the function meetCurveCurve has the properties
      * t1memo and t2memo then these are taken as start values
      * for the Newton algorithm.
      * After stopping of the Newton algorithm the values of t1 and t2 are stored in
@@ -1604,20 +1612,11 @@ Mat.Numerics = {
      * @memberof JXG.Math.Numerics
      */
     generalizedNewton: function (c1, c2, t1ini, t2ini) {
-        var t1,
-            t2,
-            a,
-            b,
-            c,
-            d,
+        var t1, t2,
+            a, b, c, d, e, f,
             disc,
-            e,
-            f,
             F,
-            D00,
-            D01,
-            D10,
-            D11,
+            D00, D01, D10, D11,
             count = 0;
 
         if (this.generalizedNewton.t1memo) {
@@ -3652,6 +3651,12 @@ Mat.Numerics = {
      * @param {Array} x0 Start interval
      * @param {Object} context Parent object in case f is method of it
      * @returns Array
+     *
+     * @example
+     * var f = (x) => Math.sqrt(x);
+     * console.log(JXG.Math.Numerics.findDomain(f, [-5, 5]));
+     *
+     * // Output: [ -0.00020428174445492973, 5 ]
      */
     findDomain: function (f, x0, context) {
         var a, b, c, fc,

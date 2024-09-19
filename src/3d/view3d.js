@@ -2209,7 +2209,7 @@ JXG.createView3D = function (board, parents, attributes) {
 
     attr = Type.copyAttributes(attributes, board.options, 'view3d');
     view = new JXG.View3D(board, parents, attr);
-    view.defaultAxes = view.create('axes3d', parents, attr);
+    view.defaultAxes = view.create('axes3d', [], attr);
 
     x = coords[0];
     y = coords[1];
