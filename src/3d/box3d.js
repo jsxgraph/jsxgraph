@@ -234,6 +234,22 @@ JXG.createAxis3D = function (board, parents, attributes) {
 };
 JXG.registerElement("axis3d", JXG.createAxis3D);
 
+/**
+ * @class This element creates a 3D (rectangular) mesh.
+ * @pseudo
+ * @description Create a (rectangular) mesh - i.e. grid lines - on a plane3D element.
+ *
+ * @name Mesh3D
+ * @augments Curve
+ * @constructor
+ * @type Object
+ * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
+ * @param {Array_Array_Array_Array_Array_Number} point,direction1,range1,direction2,range2,[stepWidth=1] point is an array of length 3
+ * determining the starting point of the grid. direction1 and direction2 are arrays of length 3 for the directions of the grid.
+ * range1 and range2 (arrays of length 2) give the respective ranges. stepWidth is the increment of the grid lines.
+ * All parameters can be supplied as functions returning an appropriate data type.
+ *
+ */
 JXG.createMesh3D = function (board, parents, attr) {
     var view = parents[0],
         point = parents[1],
@@ -241,22 +257,32 @@ JXG.createMesh3D = function (board, parents, attr) {
         range1 = parents[3],
         dir2 = parents[4],
         range2 = parents[5],
+        step = parents[6] || 1,
         el;
 
     el = view.create("curve", [[], []], attr);
+
+    el.point = point;
+    el.direction1 = dir1;
+    el.range1 = range1;
+    el.direction2 = dir2;
+    el.range2 = range2;
+    el.step = step;
+
     /**
      * @ignore
      */
     el.updateDataArray = function () {
-        var s1 = range1[0],
+        var range1 = Type.evaluate(this.range1),
+            range2 = Type.evaluate(this.range2),
+            s1 = range1[0],
             e1 = range1[1],
             s2 = range2[0],
             e2 = range2[1],
             l1, l2, res, i,
-            // sol,
             v1 = [0, 0, 0],
             v2 = [0, 0, 0],
-            step = 1,
+            step = Type.evaluate(this.step),
             q = [0, 0, 0];
 
         this.dataX = [];
@@ -306,6 +332,7 @@ JXG.createMesh3D = function (board, parents, attr) {
         this.dataX = res[0];
         this.dataY = res[1];
     };
+
     return el;
 };
 

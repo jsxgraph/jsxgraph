@@ -43,7 +43,7 @@ import Type from "../utils/type.js";
  * @augments JXG.GeometryElement
  * @param {JXG.View3D} view The 3D view the point is drawn on.
  * @param {Function|Array} F Array of numbers, array of functions or function returning an array with defines the user coordinates of the point.
- * @parame {JXG.GeometryElement3D} slide Object the 3D point should be bound to. If null, the point is a free point.
+ * @param {JXG.GeometryElement3D} slide Object the 3D point should be bound to. If null, the point is a free point.
  * @param {Object} attributes An object containing visual properties like in {@link JXG.Options#point3d} and
  * {@link JXG.Options#elements}, and optional a name and an id.
  * @see JXG.Board#generateName
@@ -348,23 +348,55 @@ JXG.extend(
 /**
  * @class This element is used to provide a constructor for a 3D Text.
  * @pseudo
- * @description A Text3D object is defined by 3 coordinates [x, y, z, text].
+ * @description A Text3D object is defined by 3 coordinates [x, y, z, text] or an array / function for the position of the text
+ * and a string or function defining the text.
  * <p>
- * All numbers can also be provided as functions returning a number.
+ * That is, all numbers can also be provided as functions returning a number.
+ * <p>
+ * At the time being, text display is independent from the camera view.
  *
  * @name Text3D
  * @augments JXG.Text3D
+ * @augments Text
  * @constructor
  * @throws {Exception} If the element cannot be constructed with the given parent
  * objects an exception is thrown.
- * @param {number,function_number,function_number,function} x,y,z The coordinates are given as x, y, z consisting of numbers of functions.
- * @param {array,function} F Alternatively, the coordinates can be supplied as
- * TODO
- *  <ul>
- *   <li>array arr=[x,y,z] of length 3 consisting of numbers or
- *   <li>function returning an array [x,y,z] of length 3 of numbers.
- * </ul>
+ * @param {number,function_number,function_number,function_String,function} x,y,z,txt The coordinates are given as x, y, z consisting of numbers of functions and the text.
+ * @param {array,function_string} F,txt Alternatively, the coordinates can be supplied as array or function returning an array.
  *
+ * @example
+ *     var bound = [-4, 6];
+ *     var view = board.create('view3d',
+ *         [[-4, -3], [8, 8],
+ *         [bound, bound, bound]],
+ *         {
+ *             projection: 'central'
+ *         });
+ *
+ *     var txt1 = view.create('text3d', [[1, 2, 1], 'hello'], {
+ *         fontSize: 20,
+ *     });
+ *
+ * </pre><div id="JXGb61d7c50-617a-4bed-9a45-13c949f90e94" class="jxgbox" style="width: 300px; height: 300px;"></div>
+ * <script type="text/javascript">
+ *     (function() {
+ *         var board = JXG.JSXGraph.initBoard('JXGb61d7c50-617a-4bed-9a45-13c949f90e94',
+ *             {boundingbox: [-8, 8, 8,-8], axis: false, showcopyright: false, shownavigation: false});
+ *         var bound = [-4, 6];
+ *         var view = board.create('view3d',
+ *             [[-4, -3], [8, 8],
+ *             [bound, bound, bound]],
+ *             {
+ *                 projection: 'central'
+ *             });
+ *
+ *         var txt1 = view.create('text3d', [[1, 2, 1], 'hello'], {
+ *             fontSize: 20,
+ *         });
+ *
+ *     })();
+ *
+ * </script><pre>
  *
  */
 JXG.createText3D = function (board, parents, attributes) {

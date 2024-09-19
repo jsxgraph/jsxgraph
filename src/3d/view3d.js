@@ -1627,6 +1627,14 @@ JXG.extend(
         return this;
     },
 
+    /**
+     * Controls the navigation using either virtual trackball.
+     *
+     * @private
+     *
+     * @param {event} evt either the keydown or the pointer event
+     * @returns view
+     */
     _trackballHandler: function (evt) {
         var pos = this.board.getMousePosition(evt),
             x, y, center;
@@ -1644,6 +1652,13 @@ JXG.extend(
         return this;
     },
 
+    /**
+     * Event handler for pointer down event. Triggers handling of all 3D navigation.
+     *
+     * @private
+     * @param {event} evt
+     * @returns view
+     */
     pointerDownHandler: function (evt) {
         var neededButton, neededKey, target;
 
@@ -1725,6 +1740,13 @@ JXG.extend(
         Env.addEvent(document, 'pointerup', this.pointerUpHandler, this);
     },
 
+    /**
+     * Event handler for pointer up event. Triggers handling of all 3D navigation.
+     *
+     * @private
+     * @param {event} evt
+     * @returns view
+     */
     pointerUpHandler: function (evt) {
         var target;
         if (this._hasMoveAz) {

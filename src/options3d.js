@@ -440,11 +440,10 @@ JXG.extend(Options, {
         strokeColor: "#9a9a9a",
         strokeOpacity: 0.6,
         highlight: false,
-        fillColor: "#9a9a9a",
-        fillOpacity: 0.1,
         tabindex: null,
 
         visible: "inherit"
+
         /**#@-*/
     },
 
