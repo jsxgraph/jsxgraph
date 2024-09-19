@@ -3268,13 +3268,13 @@ Mat.Numerics = {
     maxIterationsMinimize: 500,
 
     /**
-     * Given a value x_0, this function tries to find a second value x_1 such that
+     * Given a number x_0, this function tries to find a second number x_1 such that
      * the function f has opposite signs at x_0 and x_1.
      * The return values have to be tested if the method succeeded.
      *
      * @param {Function} f Function, whose root is to be found
      * @param {Number} x0 Start value
-     * @param {Object} object Parent object in case f is method of it
+     * @param {Object} [context] Parent object in case f is method of it
      * @returns {Array} [x_0, f(x_0), x_1, f(x_1)] in case that x_0 <= x_1
      *   or [x_1, f(x_1), x_0, f(x_0)] in case that x_1 < x_0.
      *
@@ -3283,7 +3283,7 @@ Mat.Numerics = {
      *
      * @memberof JXG.Math.Numerics
      */
-    findBracket: function (f, x0, object) {
+    findBracket: function (f, x0, context) {
         var a, aa, fa, blist, b, fb, u, fu, i, len;
 
         if (Type.isArray(x0)) {
@@ -3291,7 +3291,7 @@ Mat.Numerics = {
         }
 
         a = x0;
-        fa = f.call(object, a);
+        fa = f.call(context, a);
         // nfev += 1;
 
         // Try to get b, by trying several values related to a
@@ -3322,7 +3322,7 @@ Mat.Numerics = {
 
         for (i = 0; i < len; i++) {
             b = blist[i];
-            fb = f.call(object, b);
+            fb = f.call(context, b);
             // nfev += 1;
 
             if (fa * fb <= 0) {
@@ -3346,7 +3346,7 @@ Mat.Numerics = {
      * Find zero of an univariate function f.
      * @param {function} f Function, whose root is to be found
      * @param {Array|Number} x0  Start value or start interval enclosing the root
-     * @param {Object} object Parent object in case f is method of it
+     * @param {Object} [context] Parent object in case f is method of it
      * @returns {Number} the approximation of the root
      * Algorithm:
      *  Brent's root finder from
@@ -3363,10 +3363,10 @@ Mat.Numerics = {
      * @see JXG.Math.Numerics.root
      * @memberof JXG.Math.Numerics
      */
-    fzero: function (f, x0, object) {
+    fzero: function (f, x0, context) {
         var a, b, c,
             fa, fb, fc,
-            res,
+            res, x00,
             prev_step,
             t1, t2,
             cb,
@@ -3386,14 +3386,18 @@ Mat.Numerics = {
                 );
             }
 
-            a = x0[0];
-            fa = f.call(object, a);
+            x00 = this.findDomain(f, x0, context);
+            a = x00[0];
+            b = x00[1];
+            // a = x0[0];
+            // b = x0[1];
+
+            fa = f.call(context, a);
             // nfev += 1;
-            b = x0[1];
-            fb = f.call(object, b);
+            fb = f.call(context, b);
             // nfev += 1;
         } else {
-            res = this.findBracket(f, x0, object);
+            res = this.findBracket(f, x0, context);
             a = res[0];
             fa = res[1];
             b = res[2];
@@ -3410,10 +3414,10 @@ Mat.Numerics = {
         if (fa * fb > 0) {
             // Bracketing not successful, fall back to Newton's method or to fminbr
             if (Type.isArray(x0)) {
-                return this.fminbr(f, [a, b], object);
+                return this.fminbr(f, [a, b], context);
             }
 
-            return this.Newton(f, a, object);
+            return this.Newton(f, a, context);
         }
 
         // OK, we have enclosed a zero of f.
@@ -3491,7 +3495,7 @@ Mat.Numerics = {
             a = b;
             fa = fb;
             b += new_step;
-            fb = f.call(object, b);
+            fb = f.call(context, b);
             // Do step to a new approxim.
             // nfev += 1;
 
@@ -3510,7 +3514,7 @@ Mat.Numerics = {
      * Find zero of an univariate function f.
      * @param {function} f Function, whose root is to be found
      * @param {Array|Number} x0  Start value or start interval enclosing the root
-     * @param {Object} object Parent object in case f is method of it
+     * @param {Object} [context] Parent object in case f is method of it
      * @returns {Number} the approximation of the root
      * Algorithm:
      * Chandrupatla's method, see
@@ -3527,7 +3531,7 @@ Mat.Numerics = {
      * @see JXG.Math.Numerics.fzero
      * @memberof JXG.Math.Numerics
      */
-    chandrupatla: function (f, x0, object) {
+    chandrupatla: function (f, x0, context) {
         var a, b, fa, fb,
             res,
             niter = 0,
@@ -3538,14 +3542,9 @@ Mat.Numerics = {
             dlt = 0.00001,
             x1, x2, x3, x,
             f1, f2, f3, y,
-            xm,
-            fm,
-            tol,
-            tl,
-            xi,
-            ph,
-            fl,
-            fh,
+            xm, fm,
+            tol, tl,
+            xi, ph, fl, fh,
             AL, A, B, C, D;
 
         if (Type.isArray(x0)) {
@@ -3556,13 +3555,13 @@ Mat.Numerics = {
             }
 
             a = x0[0];
-            fa = f.call(object, a);
+            fa = f.call(context, a);
             // nfev += 1;
             b = x0[1];
-            fb = f.call(object, b);
+            fb = f.call(context, b);
             // nfev += 1;
         } else {
-            res = this.findBracket(f, x0, object);
+            res = this.findBracket(f, x0, context);
             a = res[0];
             fa = res[1];
             b = res[2];
@@ -3572,10 +3571,10 @@ Mat.Numerics = {
         if (fa * fb > 0) {
             // Bracketing not successful, fall back to Newton's method or to fminbr
             if (Type.isArray(x0)) {
-                return this.fminbr(f, [a, b], object);
+                return this.fminbr(f, [a, b], context);
             }
 
-            return this.Newton(f, a, object);
+            return this.Newton(f, a, context);
         }
 
         x1 = a;
@@ -3584,7 +3583,7 @@ Mat.Numerics = {
         f2 = fb;
         do {
             x = x1 + t * (x2 - x1);
-            y = f.call(object, x);
+            y = f.call(context, x);
 
             // Arrange 2-1-3: 2-1 interval, 1 middle, 3 discarded point
             if (Math.sign(y) === Math.sign(f1)) {
@@ -3642,6 +3641,71 @@ Mat.Numerics = {
     },
 
     /**
+     * Find a small enclosing interval of the domain of a function by
+     * tightening the input interval x0.
+     * <p>
+     * This is a helper function which is used in {@link JXG.Math.Numerics.fminbr}
+     * and {@link JXG.Math.Numerics.fzero}
+     * to avoid search in an interval where the function is mostly undefined.
+     *
+     * @param {function} f
+     * @param {Array} x0 Start interval
+     * @param {Object} context Parent object in case f is method of it
+     * @returns Array
+     */
+    findDomain: function (f, x0, context) {
+        var a, b, c, fc,
+            x,
+            gr = 1 - 1 / 1.61803398875,
+            cnt,
+            max_cnt = 20;
+
+        if (!Type.isArray(x0) || x0.length < 2) {
+            throw new Error(
+                "JXG.Math.Numerics.findDomain: length of array x0 has to be at least two."
+            );
+        }
+
+        x = x0.slice();
+        a = x[0];
+        b = x[1];
+        fc = f.call(context, a);
+        if (isNaN(fc)) {
+            cnt = 0;
+            while (b - a > 0.001 && cnt < max_cnt) {
+                c = (b - a) * gr + a;
+                fc = f.call(context, c);
+                if (isNaN(fc)) {
+                    a = c;
+                } else {
+                    b = c;
+                }
+                cnt++;
+            }
+            x[0] = a;
+        }
+
+        a = x[0];
+        b = x[1];
+        fc = f.call(context, b);
+        if (isNaN(fc)) {
+            cnt = 0;
+            while (b - a > 0.001 && cnt < max_cnt) {
+                c = b - (b - a) * gr;
+                fc = f.call(context, c);
+                if (isNaN(fc)) {
+                    b = c;
+                } else {
+                    a = c;
+                }
+                cnt++;
+            }
+            x[0] = b;
+        }
+        return x;
+    },
+
+    /**
      *
      * Find minimum of an univariate function f.
      * <p>
@@ -3651,13 +3715,14 @@ Mat.Numerics = {
      *
      * @param {function} f Function, whose minimum is to be found
      * @param {Array} x0  Start interval enclosing the minimum
-     * @param {Object} context Parent object in case f is method of it
+     * @param {Object} [context] Parent object in case f is method of it
      * @returns {Number} the approximation of the minimum value position
      * @memberof JXG.Math.Numerics
      **/
     fminbr: function (f, x0, context) {
         var a, b, x, v, w,
             fx, fv, fw,
+            x00,
             range, middle_range, tol_act, new_step,
             p, q, t, ft,
             r = (3.0 - Math.sqrt(5.0)) * 0.5,      // Golden section ratio
@@ -3673,8 +3738,9 @@ Mat.Numerics = {
             );
         }
 
-        a = x0[0];
-        b = x0[1];
+        x00 = this.findDomain(f, x0, context);
+        a = x00[0];
+        b = x00[1];
         v = a + r * (b - a);
         fv = f.call(context, v);
 
@@ -3789,14 +3855,14 @@ Mat.Numerics = {
     },
 
     /**
-     *
+     * <pre>
      *   Purpose:
      *
      *   GLOMIN seeks a global minimum of a function F(X) in an interval [A,B].
      *
      * Discussion:
      *
-     *  This function assumes that F(X) is twice continuously differentiable over [A,B]
+     * This function assumes that F(X) is twice continuously differentiable over [A,B]
      * and that F''(X) <= M for all X in [A,B].
      *
      * Licensing:
@@ -3845,6 +3911,7 @@ Mat.Numerics = {
      *  for which F attains its global minimum value in [A,B].
      *
      *   Output, double GLOMIN, the value F(X).
+     * </pre>
      */
     glomin: function (f, x0) {
         var a0, a2, a3, d0, d1, d2, h,
