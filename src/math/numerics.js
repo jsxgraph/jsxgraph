@@ -3860,10 +3860,8 @@ Mat.Numerics = {
     },
 
     /**
+     *  GLOMIN seeks a global minimum of a function F(X) in an interval [A,B].
      * <pre>
-     *   Purpose:
-     *
-     *   GLOMIN seeks a global minimum of a function F(X) in an interval [A,B].
      *
      * Discussion:
      *
