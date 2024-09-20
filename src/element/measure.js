@@ -459,10 +459,7 @@ JXG.createMeasurement = function (board, parents, attributes) {
         }
 
         if (dim === 'direction' && Type.isArray(val)) {
-            if (val.length === 2) {
-                val.unshift(undefined);
-            }
-            val = el.visProp.formatdirection.apply(el, [val[1], val[2]]);
+            val = el.visProp.formatdirection.apply(el, [val[0], val[1]]);
         }
 
         if (Type.isString(dim)) {

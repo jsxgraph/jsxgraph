@@ -1576,63 +1576,69 @@ JXG.extend(
 
         // documented in JXG.AbstractRenderer
         setObjectViewport: function(el, isHtml) {
-            var val = Type.evaluate(el.visProp.viewport),
-                vp, i,
-                len = 0,
-                bb, bbc, l, t, r, b,
-                nodes = ['rendNode']; //, "rendNodeTriangleStart", "rendNodeTriangleEnd"];
+            // var val = Type.evaluate(el.visProp.viewport),
+            //     vp, i,
+            //     len = 0,
+            //     bb, bbc, l, t, r, b,
+            //     nodes = ['rendNode']; //, "rendNodeTriangleStart", "rendNodeTriangleEnd"];
 
-            // Check viewport attribute of the board
-            if (val === 'inherit') {
-                val = Type.evaluate(el.board.attr.viewport);
-            }
+            // TODO
+            // viewport is still screwed.
+            // Example: if an image is cropped by the viewport,
+            // so will be any transformed copies.
+            // See #695.
 
-            // Required order: top, right, bottom, left
-            if (isHtml) {
-                bb = el.rendNode.getBoundingClientRect();
-                bbc = this.container.getBoundingClientRect();
-                t = parseFloat(val[1]);
-                r = parseFloat(val[2]);
-                b = parseFloat(val[3]);
-                l = parseFloat(val[0]);
+            // // Check viewport attribute of the board
+            // if (val === 'inherit') {
+            //     val = Type.evaluate(el.board.attr.viewport);
+            // }
 
-                if (Type.isString(val[1]) && val[1].indexOf('%') > 0) {
-                    t = (bbc.height) * t / 100;
-                }
-                if (Type.isString(val[2]) && val[2].indexOf('%') > 0) {
-                    r = (bbc.width) * r / 100;
-                }
-                if (Type.isString(val[3]) && val[3].indexOf('%') > 0) {
-                    b = (bbc.height) * b / 100;
-                }
-                if (Type.isString(val[0]) && val[0].indexOf('%') > 0) {
-                    l = (bbc.width) * l / 100;
-                }
+            // // Required order: top, right, bottom, left
+            // if (isHtml) {
+            //     bb = el.rendNode.getBoundingClientRect();
+            //     bbc = this.container.getBoundingClientRect();
+            //     t = parseFloat(val[1]);
+            //     r = parseFloat(val[2]);
+            //     b = parseFloat(val[3]);
+            //     l = parseFloat(val[0]);
 
-                t = parseFloat(bbc.top) - parseFloat(bb.top) + t;
-                r = parseFloat(bb.right) - parseFloat(bbc.right) + r;
-                b = parseFloat(bb.bottom) - parseFloat(bbc.bottom) + b;
-                l = parseFloat(bbc.left) - parseFloat(bb.left) + l;
-                val = [l, t, r, b];
-            }
+            //     if (Type.isString(val[1]) && val[1].indexOf('%') > 0) {
+            //         t = (bbc.height) * t / 100;
+            //     }
+            //     if (Type.isString(val[2]) && val[2].indexOf('%') > 0) {
+            //         r = (bbc.width) * r / 100;
+            //     }
+            //     if (Type.isString(val[3]) && val[3].indexOf('%') > 0) {
+            //         b = (bbc.height) * b / 100;
+            //     }
+            //     if (Type.isString(val[0]) && val[0].indexOf('%') > 0) {
+            //         l = (bbc.width) * l / 100;
+            //     }
 
-            vp = [
-                (typeof val[1] === 'number') ? val[1] + 'px' : val[1],
-                (typeof val[2] === 'number') ? val[2] + 'px' : val[2],
-                (typeof val[3] === 'number') ? val[3] + 'px' : val[3],
-                (typeof val[0] === 'number') ? val[0] + 'px' : val[0]
-            ].join(' ');
+            //     t = parseFloat(bbc.top) - parseFloat(bb.top) + t;
+            //     r = parseFloat(bb.right) - parseFloat(bbc.right) + r;
+            //     b = parseFloat(bb.bottom) - parseFloat(bbc.bottom) + b;
+            //     l = parseFloat(bbc.left) - parseFloat(bb.left) + l;
+            //     val = [l, t, r, b];
+            // }
 
-            len = nodes.length;
-            for (i = 0; i < len; ++i) {
-                if (el[nodes[i]]) {
-                    if (isHtml) {
-                        el[nodes[i]].style.clipPath = 'inset(' + vp + ')';
-                    } else {
-                        el[nodes[i]].setAttributeNS(null, "clip-path", 'view-box inset(' + vp + ')');
-                    }
-                }
-            }
+            // vp = [
+            //     (typeof val[1] === 'number') ? val[1] + 'px' : val[1],
+            //     (typeof val[2] === 'number') ? val[2] + 'px' : val[2],
+            //     (typeof val[3] === 'number') ? val[3] + 'px' : val[3],
+            //     (typeof val[0] === 'number') ? val[0] + 'px' : val[0]
+            // ].join(' ');
+
+            // len = nodes.length;
+            // for (i = 0; i < len; ++i) {
+            //     if (el[nodes[i]]) {
+            //         if (isHtml) {
+            //             el[nodes[i]].style.clipPath = 'inset(' + vp + ')';
+            //         } else {
+            //             el[nodes[i]].setAttributeNS(null, "clip-path", 'view-box inset(' + vp + ')');
+            //         }
+            //     }
+            // }
         },
 
         /**
@@ -2143,11 +2149,11 @@ JXG.extend(
             if (this.container.hasChildNodes() && Type.exists(this.foreignObjLayer)) {
                 if (!ignoreTexts) {
                     this.foreignObjLayer.setAttribute("display", "inline");
-                    while (svgRoot.nextSibling) {
-                        // Copy all value attributes
-                        Type.concat(values, this._getValuesOfDOMElements(svgRoot.nextSibling));
-                        this.foreignObjLayer.appendChild(svgRoot.nextSibling);
-                    }
+                }
+                while (svgRoot.nextSibling) {
+                    // Copy all value attributes
+                    Type.concat(values, this._getValuesOfDOMElements(svgRoot.nextSibling));
+                    this.foreignObjLayer.appendChild(svgRoot.nextSibling);
                 }
             }
 
@@ -2175,8 +2181,12 @@ JXG.extend(
             // }
 
             // In IE we have to remove the namespace again.
-            if ((svg.match(/xmlns="http:\/\/www.w3.org\/2000\/svg"/g) || []).length > 1) {
-                svg = svg.replace(/xmlns="http:\/\/www.w3.org\/2000\/svg"/g, "");
+            // Since 2024 we have to check if the namespace attribute appears twice in one tag, because
+            // there might by a svg inside of the svg, e.g. the screenshot icon.
+            if (this.isIE &&
+                (svg.match(/xmlns="http:\/\/www.w3.org\/2000\/svg"\s+xmlns="http:\/\/www.w3.org\/2000\/svg"/g) || []).length > 1
+            ) {
+                svg = svg.replace(/xmlns="http:\/\/www.w3.org\/2000\/svg"\s+xmlns="http:\/\/www.w3.org\/2000\/svg"/g, "");
             }
 
             // Safari fails if the svg string contains a "&nbsp;"
@@ -2374,7 +2384,6 @@ JXG.extend(
             } else {
                 // Debug: use canvas element 'jxgbox_canvas' from jsxdev/dump.html
                 id = "jxgbox_canvas";
-                // canvas = document.getElementById(id);
                 canvas = doc.getElementById(id);
             }
 

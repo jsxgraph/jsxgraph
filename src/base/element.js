@@ -673,13 +673,13 @@ JXG.extend(
          * Possible values are {@link JXG.COORDS_BY_USER} and {@link JXG.COORDS_BY_SCREEN}.
          * @param {Array} coords array of translation vector.
          * @returns {JXG.GeometryElement} Reference to the element object.
+         *
+         * @see JXG.GeometryElement3D#setPosition2D
          */
         setPosition: function (method, coords) {
             var parents = [],
                 el,
-                i,
-                len,
-                t;
+                i, len, t;
 
             if (!Type.exists(this.parents)) {
                 return this;
@@ -712,6 +712,18 @@ JXG.extend(
             len = parents.length;
             if (len > 0) {
                 t.applyOnce(parents);
+
+                // Handle dragging of a 3D element
+                if (Type.exists(this.view) && this.view.elType === 'view3d') {
+                    for (i = 0; i < this.parents.length; ++i) {
+                        // Search for the parent 3D element
+                        el = this.view.select(this.parents[i]);
+                        if (Type.exists(el.setPosition2D)) {
+                            el.setPosition2D(t);
+                        }
+                    }
+                }
+
             } else {
                 if (
                     this.transformations.length > 0 &&

@@ -6320,7 +6320,17 @@ JXG.Options = {
          * @default 28
          *
          */
-        autoPositionMaxDistance: 28
+        autoPositionMaxDistance: 28,
+
+        /**
+         * List of object ids which should be ignored on setting automatic position of label text.
+         *
+         * @name Label#autoPositionWhitelist
+         * @see Label#autoPosition
+         * @type Array
+         * @default []
+         */
+        autoPositionWhitelist: []
 
         /**#@-*/
     },
@@ -6746,7 +6756,10 @@ JXG.Options = {
         formatSuffix: function (txt) { return txt; },
 
         formatCoords: function (x, y, z) {
-            return '(' + x + ', ' + y + ')';
+            if (parseFloat(z) !== 1)
+                return '(NaN | NaN)';
+            else
+                return '(' + x + ', ' + y + ')';
         },
         formatDirection: function (x, y) {
             return '(' + x + ', ' + y + ')';
@@ -8375,6 +8388,39 @@ JXG.Options = {
 
     /* special tangent options */
     tangent: {
+    },
+
+    /* special tangent options */
+    tangentto: {
+        /**#@+
+         * @visprop
+         */
+
+        /**
+         * Attributes for the polar line of the tangentto construction.
+         *
+         * @name polar
+         * @memberOf TangentTo.prototype
+         * @type JXG.Line
+         */
+        polar: {
+            visible: false,
+            strokeWidth: 1,
+            dash: 3
+        },
+
+        /**
+         * Attributes for the intersection point of the conic/circle with the polar line of the tangentto construction.
+         *
+         * @name point
+         * @memberOf TangentTo.prototype
+         * @type JXG.Point
+         */
+        point: {
+            visible: false
+        }
+
+        /**#@-*/
     },
 
     /* special tape measure options */

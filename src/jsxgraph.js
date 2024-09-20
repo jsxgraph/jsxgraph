@@ -179,7 +179,7 @@ JXG.JSXGraph = {
                 'drag', 'fullscreen',
                 'intl',
                 'keyboard', 'logging',
-                'navbar', 'pan', 'resize',
+                'pan', 'resize',
                 'screenshot', 'selection',
                 'zoom'
             ],
@@ -189,6 +189,7 @@ JXG.JSXGraph = {
             key = list[i];
             attr[key] = Type.copyAttributes(attr, options, 'board', key);
         }
+        attr.navbar = Type.copyAttributes(attr.navbar, options, "navbar");
 
         // Treat moveTarget separately, because deepCopy will not work here.
         // Reason: moveTarget will be an HTML node and it is prevented that Type.deepCopy will copy it.

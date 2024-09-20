@@ -34,18 +34,33 @@
  */
 import JXG from "../jxg.js";
 import Type from "../utils/type.js";
-// import Mat from "../math/math.js";
-// import Geometry from "../math/geometry.js";
 
+/**
+ * @class This element creates the axis and plane elements of a 3D view.
+ * @pseudo
+ * @description This element "axes3d" is used to create
+ *  <ul>
+ *   <li> 3D coordinate axes (either "axesPosition:'border'" or "axesPosition:'center'")
+ *   <li> A point3d "O" (origin) if "axesPosition:'center'"
+ *   <li> Rear and front planes in all three directions of the view3d element.
+ *   <li> Coordinate axes on the rear and front planes
+ *  </ul>
+ *
+ * @name Axes3D
+ * @constructor
+ * @type Object
+ * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
+ *
+ */
 JXG.createAxes3D = function (board, parents, attributes) {
     var view = parents[0],
     directions = ["x", "y", "z"],
     suffixAxis = "Axis",
     sides = ["Rear", "Front"],
-    rear = [0, 0, 0], // x, y, z
-    front = [0, 0, 0], // x, y, z
+    rear = [0, 0, 0],           // x, y, z
+    front = [0, 0, 0],          // x, y, z
     i, j, k, i1, i2, attr, pos,
-    dir, dir1,
+    dir, dir1, len,
     from, to, vec1, vec2,
     range1, range2,
     na, na_parent,
@@ -67,6 +82,7 @@ JXG.createAxes3D = function (board, parents, attributes) {
     // Main 3D axes
     attr = Type.copyAttributes(attributes, board.options, "axes3d");
     pos = attr.axesposition;
+
     for (i = 0; i < directions.length; i++) {
         // Run through ['x', 'y', 'z']
         dir = directions[i];
@@ -79,47 +95,52 @@ JXG.createAxes3D = function (board, parents, attributes) {
             to[i] = front[i];
             axes[na] = view.create("axis3d", [from, to], attr[na.toLowerCase()]);
             axes[na].view = view;
-        } else {
-            na += "Border"; // Axes bordered
+        } else if (pos === 'border') {
+            // Axes bordered
+            na += "Border";
             from = rear.slice();
             to = front.slice();
-            if (i === 2) {
+            if (dir === 'z') {
                 from[1] = front[1];
                 to[0] = rear[0];
+            } else if (dir === 'x') {
+                from = [rear[0], front[1], rear[2]];
+                to = [front[0], front[1], rear[2]];
             } else {
-                from[i] = front[i];
-                to[2] = rear[2];
+                from = [front[0], rear[1], rear[2]];
+                to = [front[0], front[1], rear[2]];
             }
             to[i] = front[i];
-            attr[na.toLowerCase()].lastArrow = false;
+            // attr[na.toLowerCase()].lastArrow = false;
             axes[na] = view.create("axis3d", [from, to], attr[na.toLowerCase()]);
 
-            // TODO
-            ticks_attr = {
-                visible: true, // Für z-Ticks wird path nicht berechnet
-                minorTicks: 0,
-                tickEndings: [0, 1],
-                drawLabels: false
-            };
-            if (i === 2) {
-                ticks_attr.tickEndings = [1, 0];
+            ticks_attr = attr[na.toLowerCase()].ticks3d;
+            len = front[i] - rear[i];
+            if (dir === 'x') {
+                axes[na + "Ticks"] = view.create("ticks3d", [from, [1, 0, 0], len, [0, 1, 0]], ticks_attr);
+            } else if (dir === 'y') {
+                axes[na + "Ticks"] = view.create("ticks3d", [from, [0, 1, 0], len, [1, 0, 0]], ticks_attr);
+            } else {
+                axes[na + "Ticks"] = view.create("ticks3d", [from, [0, 0, 1], len, [0, 1, 0]], ticks_attr);
             }
-            axes[na + "Ticks"] = view.create("ticks", [axes[na], 1], ticks_attr);
-            axes[na + "Ticks"].view = view;
         }
     }
 
-    // Origin (2D point)
-    axes.O = view.create(
-        "intersection",
-        [axes[directions[0] + suffixAxis], axes[directions[1] + suffixAxis]],
-        {
-            name: "",
-            visible: false,
-            withLabel: false
-        }
-    );
-    axes.O.view = view;
+    if (pos === 'center') {
+        // Origin (2D point)
+        axes.O = view.create(
+            "intersection",
+            [axes[directions[0] + suffixAxis], axes[directions[1] + suffixAxis]],
+            {
+                name: "",
+                visible: false,
+                withLabel: false
+            }
+        );
+        axes.O.view = view;
+    } else {
+        axes.O = null;
+    }
 
     // Front and rear planes
     for (i = 0; i < directions.length; i++) {
@@ -177,6 +198,21 @@ JXG.createAxes3D = function (board, parents, attributes) {
 };
 JXG.registerElement("axes3d", JXG.createAxes3D);
 
+/**
+ * @class This element creates a 3D axis.
+ * @pseudo
+ * @description Simple element 3d axis as used with "axesPosition:center". No ticks and no label (yet).
+ * <p>
+ * At the time being, the input arrays are NOT dynamic, i.e. can not be given as functions.
+ *
+ * @name Axis3D
+ * @augments Arrow
+ * @constructor
+ * @type Object
+ * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
+ * @param {Array_Array} start,end Two arrays of length 3 for the start point and the end point of the axis.
+ *
+ */
 JXG.createAxis3D = function (board, parents, attributes) {
     var view = parents[0],
         attr,
@@ -230,6 +266,25 @@ JXG.createAxis3D = function (board, parents, attributes) {
 };
 JXG.registerElement("axis3d", JXG.createAxis3D);
 
+/**
+ * @class This element creates a 3D (rectangular) mesh.
+ * @pseudo
+ * @description Create a (rectangular) mesh - i.e. grid lines - on a plane3D element.
+ * <p>
+ * At the time being, the mesh is not connected to the plane. The connecting element is simply the
+ * parameter point.
+ *
+ * @name Mesh3D
+ * @augments Curve
+ * @constructor
+ * @type Object
+ * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
+ * @param {Array_Array_Array_Array_Array_Number} point,direction1,range1,direction2,range2,[stepWidth=1] point is an array of length 3
+ * determining the starting point of the grid. direction1 and direction2 are arrays of length 3 for the directions of the grid.
+ * range1 and range2 (arrays of length 2) give the respective ranges. stepWidth is the increment of the grid lines.
+ * All parameters can be supplied as functions returning an appropriate data type.
+ *
+ */
 JXG.createMesh3D = function (board, parents, attr) {
     var view = parents[0],
         point = parents[1],
@@ -237,37 +292,47 @@ JXG.createMesh3D = function (board, parents, attr) {
         range1 = parents[3],
         dir2 = parents[4],
         range2 = parents[5],
+        step = parents[6] || 1,
         el;
 
     el = view.create("curve", [[], []], attr);
+
+    el.point = point;
+    el.direction1 = dir1;
+    el.range1 = range1;
+    el.direction2 = dir2;
+    el.range2 = range2;
+    el.step = step;
+
     /**
      * @ignore
      */
     el.updateDataArray = function () {
-        var s1 = range1[0],
+        var range1 = Type.evaluate(this.range1),
+            range2 = Type.evaluate(this.range2),
+            s1 = range1[0],
             e1 = range1[1],
             s2 = range2[0],
             e2 = range2[1],
             l1, l2, res, i,
-            // sol,
             v1 = [0, 0, 0],
             v2 = [0, 0, 0],
-            step = 1,
+            step = Type.evaluate(this.step),
             q = [0, 0, 0];
 
         this.dataX = [];
         this.dataY = [];
 
-        if (Type.isFunction(point)) {
-            q = point().slice(1);
+        if (Type.isFunction(this.point)) {
+            q = this.point().slice(1);
         } else {
             for (i = 0; i < 3; i++) {
-                q[i] = Type.evaluate(point[i]);
+                q[i] = Type.evaluate(this.point[i]);
             }
         }
         for (i = 0; i < 3; i++) {
-            v1[i] = Type.evaluate(dir1[i]);
-            v2[i] = Type.evaluate(dir2[i]);
+            v1[i] = Type.evaluate(this.direction1[i]);
+            v2[i] = Type.evaluate(this.direction2[i]);
         }
         l1 = JXG.Math.norm(v1, 3);
         l2 = JXG.Math.norm(v2, 3);
@@ -302,6 +367,8 @@ JXG.createMesh3D = function (board, parents, attr) {
         this.dataX = res[0];
         this.dataY = res[1];
     };
+
     return el;
 };
+
 JXG.registerElement("mesh3d", JXG.createMesh3D);

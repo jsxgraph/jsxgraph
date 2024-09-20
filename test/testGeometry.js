@@ -224,4 +224,16 @@ describe("Test geometry functions", function () {
         expect(glider.position).toBeCloseTo(0.6100503447261109, 10);
     });
 
+    it("TangentTo", function () {
+        var c, p, t0;
+        c = board.create('circle', [[3, 0], [3, 4]]);
+        p = board.create('point', [0, 6]);
+        t0 = board.create('tangentto', [c, p, 0]);
+
+        expect(t0.stdform[0]).toBeCloseTo(1.0459340771461982, 10);
+        expect(t0.stdform[1]).toBeCloseTo(0.9846886409512672, 10);
+        expect(t0.stdform[2]).toBeCloseTo(-0.1743223461910328, 10);
+    });
+
+
 });

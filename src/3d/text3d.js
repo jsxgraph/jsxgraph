@@ -36,21 +36,21 @@ import Type from "../utils/type.js";
 //, GeometryElement3D) {
 
 /**
- * A 3D point is the basic geometric element.
+ * A 3D text is a basic geometric element.
  * @class Creates a new 3D point object. Do not use this constructor to create a 3D point. Use {@link JXG.View3D#create} with
  * type {@link Point3D} instead.
  * @augments JXG.GeometryElement3D
  * @augments JXG.GeometryElement
  * @param {JXG.View3D} view The 3D view the point is drawn on.
  * @param {Function|Array} F Array of numbers, array of functions or function returning an array with defines the user coordinates of the point.
- * @parame {JXG.GeometryElement3D} slide Object the 3D point should be bound to. If null, the point is a free point.
+ * @param {JXG.GeometryElement3D} slide Object the 3D point should be bound to. If null, the point is a free point.
  * @param {Object} attributes An object containing visual properties like in {@link JXG.Options#point3d} and
  * {@link JXG.Options#elements}, and optional a name and an id.
  * @see JXG.Board#generateName
  */
-JXG.Point3D = function (view, F, slide, attributes) {
-    this.constructor(view.board, attributes, Const.OBJECT_TYPE_POINT3D, Const.OBJECT_CLASS_3D);
-    this.constructor3D(view, "point3d");
+JXG.Text3D = function (view, F, text, slide, attributes) {
+    this.constructor(view.board, attributes, Const.OBJECT_TYPE_TEXT3D, Const.OBJECT_CLASS_3D);
+    this.constructor3D(view, "text3d");
 
     this.board.finalizeAdding(this);
 
@@ -156,19 +156,19 @@ JXG.Point3D = function (view, F, slide, attributes) {
         // TODO
     });
 };
-JXG.Point3D.prototype = new JXG.GeometryElement();
-Type.copyPrototypeMethods(JXG.Point3D, JXG.GeometryElement3D, "constructor3D");
+JXG.Text3D.prototype = new JXG.GeometryElement();
+Type.copyPrototypeMethods(JXG.Text3D, JXG.GeometryElement3D, "constructor3D");
 
 JXG.extend(
-    JXG.Point3D.prototype,
-    /** @lends JXG.Point3D.prototype */ {
+    JXG.Text3D.prototype,
+    /** @lends JXG.Text3D.prototype */ {
         /**
          * Update the homogeneous coords array.
          *
          * @name updateCoords
-         * @memberOf Point3D
+         * @memberOf Text3D
          * @function
-         * @returns {Object} Reference to the Point3D object
+         * @returns {Object} Reference to the Text3D object
          * @private
          * @example
          *    p.updateCoords();
@@ -197,7 +197,7 @@ JXG.extend(
          * Initialize the coords array.
          *
          * @private
-         * @returns {Object} Reference to the Point3D object
+         * @returns {Object} Reference to the Text3D object
          */
         initCoords: function () {
             var i;
@@ -219,9 +219,9 @@ JXG.extend(
          * Normalize homogeneous coordinates such the the first coordinate (the w-coordinate is equal to 1 or 0)-
          *
          * @name normalizeCoords
-         * @memberOf Point3D
+         * @memberOf Text3D
          * @function
-         * @returns {Object} Reference to the Point3D object
+         * @returns {Object} Reference to the Text3D object
          * @private
          * @example
          *    p.normalizeCoords();
@@ -240,11 +240,11 @@ JXG.extend(
          * Set the position of a 3D point.
          *
          * @name setPosition
-         * @memberOf Point3D
+         * @memberOf Text3D
          * @function
          * @param {Array} coords 3D coordinates. Either of the form [x,y,z] (Euclidean) or [w,x,y,z] (homogeneous).
          * @param {Boolean} [noevent] If true, no events are triggered.
-         * @returns {Object} Reference to the Point3D object
+         * @returns {Object} Reference to the Text3D object
          *
          * @example
          *    p.setPosition([1, 3, 4]);
@@ -318,8 +318,9 @@ JXG.extend(
                 // Update 2D point from its 3D view
                 this.element2D.coords.setCoordinates(
                     Const.COORDS_BY_USER,
-                    this.view.project3DTo2D([1, this.X(), this.Y(), this.Z()])
+                    this.view.project3DTo2D([1, this.X(), this.Y(), this.Z()].slice(1))
                 );
+                this.element2D.prepareUpdate().update();
             }
             this._c2d = this.element2D.coords.usrCoords.slice();
 
@@ -339,104 +340,90 @@ JXG.extend(
             return Type.cmpArrays(this.coords, [0, 0, 0, 0]);
         },
 
-        /**
-         * Calculate the distance from one point to another. If one of the points is on the plane at infinity, return positive infinity.
-         * @param {JXG.Point3D} pt The point to which the distance is calculated.
-         * @returns {Number} The distance
-         */
-        distance: function (pt) {
-            var eps_sq = Mat.eps * Mat.eps,
-                c_this = this.coords,
-                c_pt = pt.coords;
-
-            if (c_this[0] * c_this[0] > eps_sq && c_pt[0] * c_pt[0] > eps_sq) {
-                return Mat.hypot(
-                    c_pt[1] - c_this[1],
-                    c_pt[2] - c_this[2],
-                    c_pt[3] - c_this[3]
-                );
-            } else {
-                return Number.POSITIVE_INFINITY;
-            }
-        },
-
         // Not yet working
         __evt__update3D: function (oc) {}
     }
 );
 
 /**
- * @class This element is used to provide a constructor for a 3D Point.
+ * @class This element is used to provide a constructor for a 3D Text.
  * @pseudo
- * @description A Point3D object is defined by 3 coordinates [x,y,z].
+ * @description A Text3D object is defined by 3 coordinates [x, y, z, text] or an array / function for the position of the text
+ * and a string or function defining the text.
  * <p>
- * All numbers can also be provided as functions returning a number.
+ * That is, all numbers can also be provided as functions returning a number.
+ * <p>
+ * At the time being, text display is independent from the camera view.
  *
- * @name Point3D
- * @augments JXG.Point3D
+ * @name Text3D
+ * @augments JXG.Text3D
+ * @augments Text
  * @constructor
  * @throws {Exception} If the element cannot be constructed with the given parent
  * objects an exception is thrown.
- * @param {number,function_number,function_number,function} x,y,z The coordinates are given as x, y, z consisting of numbers of functions.
- * @param {array,function} F Alternatively, the coordinates can be supplied as
- *  <ul>
- *   <li>array arr=[x,y,z] of length 3 consisting of numbers or
- *   <li>function returning an array [x,y,z] of length 3 of numbers.
- * </ul>
+ * @param {number,function_number,function_number,function_String,function} x,y,z,txt The coordinates are given as x, y, z consisting of numbers of functions and the text.
+ * @param {array,function_string} F,txt Alternatively, the coordinates can be supplied as array or function returning an array.
  *
  * @example
- *    var bound = [-5, 5];
- *    var view = board.create('view3d',
- *        [[-6, -3], [8, 8],
- *        [bound, bound, bound]],
- *        {});
- *    var p = view.create('point3d', [1, 2, 2], { name:'A', size: 5 });
- *    var q = view.create('point3d', function() { return [p.X(), p.Y(), p.Z() - 3]; }, { name:'B', size: 5, fixed: true });
+ *     var bound = [-4, 6];
+ *     var view = board.create('view3d',
+ *         [[-4, -3], [8, 8],
+ *         [bound, bound, bound]],
+ *         {
+ *             projection: 'central'
+ *         });
  *
- * </pre><div id="JXGb9ee8f9f-3d2b-4f73-8221-4f82c09933f1" class="jxgbox" style="width: 300px; height: 300px;"></div>
+ *     var txt1 = view.create('text3d', [[1, 2, 1], 'hello'], {
+ *         fontSize: 20,
+ *     });
+ *
+ * </pre><div id="JXGb61d7c50-617a-4bed-9a45-13c949f90e94" class="jxgbox" style="width: 300px; height: 300px;"></div>
  * <script type="text/javascript">
  *     (function() {
- *         var board = JXG.JSXGraph.initBoard('JXGb9ee8f9f-3d2b-4f73-8221-4f82c09933f1',
+ *         var board = JXG.JSXGraph.initBoard('JXGb61d7c50-617a-4bed-9a45-13c949f90e94',
  *             {boundingbox: [-8, 8, 8,-8], axis: false, showcopyright: false, shownavigation: false});
- *         var bound = [-5, 5];
+ *         var bound = [-4, 6];
  *         var view = board.create('view3d',
- *             [[-6, -3], [8, 8],
+ *             [[-4, -3], [8, 8],
  *             [bound, bound, bound]],
- *             {});
- *         var p = view.create('point3d', [1, 2, 2], { name:'A', size: 5 });
- *         var q = view.create('point3d', function() { return [p.X(), p.Y(), p.Z() - 3]; }, { name:'B', size: 5 });
+ *             {
+ *                 projection: 'central'
+ *             });
+ *
+ *         var txt1 = view.create('text3d', [[1, 2, 1], 'hello'], {
+ *             fontSize: 20,
+ *         });
+ *
  *     })();
  *
  * </script><pre>
  *
  */
-JXG.createPoint3D = function (board, parents, attributes) {
-    //   parents[0]: view
-    // followed by
-    //   parents[1]: function or array
-    // or
-    //   parents[1..3]: coordinates
-
+JXG.createText3D = function (board, parents, attributes) {
     var view = parents[0],
-        attr, F, slide, c2d, el;
+        attr, F, slide,
+        text,
+        c2d, el;
 
     // If the last element of parents is a 3D object,
     // the point is a glider on that element.
-    if (parents.length > 2 && Type.exists(parents[parents.length - 1].is3D)) {
+    if (parents.length > 3 && Type.exists(parents[parents.length - 1].is3D)) {
         slide = parents.pop();
     } else {
         slide = null;
     }
 
-    if (parents.length === 2) {
-        // [view, array|fun] (Array [x, y, z] | function) returning [x, y, z]
+    if (parents.length === 3) {
+        // [view, array|fun, text] (Array [x, y, z] | function) returning [x, y, z]
         F = parents[1];
-    } else if (parents.length === 4) {
-        // [view, x, y, z], (3 numbers | functions)
-        F = parents.slice(1);
+        text = parents[2];
+    } else if (parents.length === 5) {
+        // [view, x, y, z, text], (3 numbers | functions)
+        F = parents.slice(1, 4);
+        text = parents[4];
     } else {
         throw new Error(
-            "JSXGraph: Can't create point3d with parent types '" +
+            "JSXGraph: Can't create text3d with parent types '" +
                 typeof parents[0] +
                 "' and '" +
                 typeof parents[1] +
@@ -446,18 +433,20 @@ JXG.createPoint3D = function (board, parents, attributes) {
         //  "\nPossible parent types: [[x,y,z]], [x,y,z], [element,transformation]"); // TODO
     }
 
-    attr = Type.copyAttributes(attributes, board.options, 'point3d');
-    el = new JXG.Point3D(view, F, slide, attr);
+    attr = Type.copyAttributes(attributes, board.options, 'text3d');
+    el = new JXG.Text3D(view, F, text, slide, attr);
     el.initCoords();
 
     c2d = view.project3DTo2D(el.coords);
 
     attr = el.setAttr2D(attr);
-    el.element2D = view.create('point', c2d, attr);
+    el.element2D = view.create('text', [c2d[1], c2d[2], text], attr);
+
     el.element2D.view = view;
     el.addChild(el.element2D);
     el.inherits.push(el.element2D);
     el.element2D.setParents(el);
+
 
     // if this point is a glider, record that in the update tree
     if (el.slide) {
@@ -470,4 +459,4 @@ JXG.createPoint3D = function (board, parents, attributes) {
     return el;
 };
 
-JXG.registerElement("point3d", JXG.createPoint3D);
+JXG.registerElement("text3d", JXG.createText3D);
