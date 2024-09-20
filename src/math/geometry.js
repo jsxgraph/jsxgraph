@@ -3146,7 +3146,7 @@ JXG.extend(
             var newCoords, newCoordsObj,
                 i, j, mindist, dist, lbda,
                 v, coords, d, p1, p2, res, minfunc,
-                t_new, f_new, f_old,
+                t_new, f_new, f_old, dy,
                 delta, delta1, delta2, steps, minX, maxX,
                 infty = Number.POSITIVE_INFINITY;
 
@@ -3213,7 +3213,7 @@ JXG.extend(
                 // 'parameter', 'polar', 'functiongraph'
 
                 if (Type.evaluate(curve.visProp.curvetype) === 'functiongraph') {
-                    let dy = Math.abs(y - curve.Y(x));
+                    dy = Math.abs(y - curve.Y(x));
                     if (!isNaN(dy)) {
                         minX = x - dy;
                         maxX = x + dy;
