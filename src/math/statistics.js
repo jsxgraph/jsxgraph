@@ -125,14 +125,15 @@ Mat.Statistics = {
     },
 
     /**
-     * The P-th percentile ( 0 < P ≤ 100 ) of a list of N ordered values (sorted from least to greatest)
-     * is the smallest value in the list such that no more than P percent of the data is strictly less
-     * than the value and at least P percent of the data is less than or equal to that value. See {@link https://en.wikipedia.org/wiki/Percentile}.
+     * The P-th percentile ( <i>0 < P ≤ 100</i> ) of a list of <i>N</i> ordered values (sorted from least to greatest)
+     * is the smallest value in the list such that no more than <i>P</i> percent of the data is strictly less
+     * than the value and at least <i>P</i> percent of the data is less than or equal to that value.
+     * See <a href="https://en.wikipedia.org/wiki/Percentile">https://en.wikipedia.org/wiki/Percentile</a>.
      *
      * Here, the <i>linear interpolation between closest ranks</i> method is used.
      * @param {Array} arr The set of values, need not be ordered.
      * @param {Number|Array} percentile One or several percentiles
-     * @returns {Number|Array} Depending if a number or an array is the input for percentile, a number or an array containing the percentils
+     * @returns {Number|Array} Depending if a number or an array is the input for percentile, a number or an array containing the percentiles
      * is returned.
      */
     percentile: function (arr, percentile) {
@@ -603,7 +604,7 @@ Mat.Statistics = {
 
     /**
      * Generate values of a standard normal random variable with the Marsaglia polar method, see
-     * {@link https://en.wikipedia.org/wiki/Marsaglia_polar_method}.
+     * <a href="https://en.wikipedia.org/wiki/Marsaglia_polar_method">https://en.wikipedia.org/wiki/Marsaglia_polar_method</a>.
      * See also D. E. Knuth, The art of computer programming, vol 2, p. 117.
      *
      * @param {Number} mean mean value of the normal distribution
@@ -641,6 +642,52 @@ Mat.Statistics = {
      * @returns Number
      * @memberof JXG.Math.Statistics
      * @see JXG.Math.Statistics#generateGaussian
+     * @example
+     *  let board = JXG.JSXGraph.initBoard('JXGbox',
+     *       { boundingbox: [-5, 1.5, 5, -.03], axis: true});
+     *
+     *   let runs = [
+     *       [0, 0.2, 'blue'],
+     *       [0, 1.0, 'red'],
+     *       [0, 5.0, 'orange'],
+     *       [-2,0.5, 'green'],
+     *   ]
+     *
+     *   let labelY = 1.2
+     *   runs.forEach((run,i) => {
+     *       board.create('segment',[[1.0,labelY-(i/20)],[2.0,labelY-(i/20)]],{strokeColor:run[2]})
+     *       board.create('text',[2.5,labelY-(i/20),`&mu;=${run[0]}, &#963;<sup>2</sup>=${run[1]}`])
+     *
+     *       let x = Array(50000).fill(0).map(() => JXG.Math.Statistics.randomNormal(run[0],Math.sqrt(run[1])))  // sqrt so Std Dev, not Variance
+     *       let res = JXG.Math.Statistics.histogram(x, { bins: 40, density: true, cumulative: false, range: false });
+     *       board.create('curve', [res[1], res[0]], { strokeColor: run[2], strokeWidth:2});
+     *   })
+     *
+     * </pre><div id="JXGda56df4d-a5a5-4c87-9ffc-9bbc1b512302-4" class="jxgbox" style="width: 300px; height: 300px;"></div>
+     * <script type="text/javascript">
+     * {
+     *  let board = JXG.JSXGraph.initBoard('JXGda56df4d-a5a5-4c87-9ffc-9bbc1b512302-4',
+     *       { boundingbox: [-5, 1.5, 5, -.03], axis: true});
+     *
+     *   let runs = [
+     *       [0, 0.2, 'blue'],
+     *       [0, 1.0, 'red'],
+     *       [0, 5.0, 'orange'],
+     *       [-2,0.5, 'green'],
+     *   ]
+     *
+     *   let labelY = 1.2
+     *   runs.forEach((run,i) => {
+     *       board.create('segment',[[1.0,labelY-(i/20)],[2.0,labelY-(i/20)]],{strokeColor:run[2]})
+     *       board.create('text',[2.5,labelY-(i/20),`&mu;=${run[0]}, &#963;<sup>2</sup>=${run[1]}`])
+     *
+     *       let x = Array(50000).fill(0).map(() => JXG.Math.Statistics.randomNormal(run[0],Math.sqrt(run[1])))  // sqrt so Std Dev, not Variance
+     *       let res = JXG.Math.Statistics.histogram(x, { bins: 40, density: true, cumulative: false, range: false });
+     *       board.create('curve', [res[1], res[0]], { strokeColor: run[2], strokeWidth:2});
+     *   })
+     * }
+     * </script><pre>
+
      */
     randomNormal: function (mean, stdDev) {
         return this.generateGaussian(mean, stdDev);
@@ -660,13 +707,57 @@ Mat.Statistics = {
     /**
      * Generate value of a random variable with exponential distribution, i.e.
      * <i>f(x; lambda) = lambda * e^(-lambda x)</i> if <i>x >= 0</i> and <i>f(x; lambda) = 0</i> if <i>x < 0</i>.
-     * See {@link https://en.wikipedia.org/wiki/Exponential_distribution}.
+     * See <a href="https://en.wikipedia.org/wiki/Exponential_distribution">https://en.wikipedia.org/wiki/Exponential_distribution</a>.
      * Algorithm: D.E. Knuth, TAOCP 2, p. 128.
      *
      * @param {Number} lambda <i>&gt; 0</i>
      * @returns Number
      * @memberof JXG.Math.Statistics
-     */
+     * @example
+     *  let board = JXG.JSXGraph.initBoard('JXGbox',
+     *       { boundingbox: [-.5, 1.5, 5, -.1], axis: true});
+     *
+     *   let runs = [
+     *       [0.5, 'red'],
+     *       [1.0, 'green'],
+     *       [1.5, 'blue'],
+     *   ]
+     *
+     *   let labelY = 1
+     *   runs.forEach((run,i) => {
+     *       board.create('segment',[[1.8,labelY-(i/20)],[2.3,labelY-(i/20)]],{strokeColor:run[1]})
+     *       board.create('text',[2.5,labelY-(i/20),`&lambda;=${run[0]}`])
+     *
+     *       let x = Array(50000).fill(0).map(() => JXG.Math.Statistics.randomExponential(run[0]))
+     *       let res = JXG.Math.Statistics.histogram(x, { bins: 40, density: true, cumulative: false, range: false });
+     *       board.create('curve', [res[1], res[0]], { strokeColor: run[1], strokeWidth:2});
+     *   })
+     *
+     * </pre><div id="JXGda56df4d-a5a5-4c87-9ffc-9bbc1b512302-5" class="jxgbox" style="width: 300px; height: 300px;"></div>
+     * <script type="text/javascript">
+     * {
+     *  let board = JXG.JSXGraph.initBoard('JXGda56df4d-a5a5-4c87-9ffc-9bbc1b512302-5',
+     *       { boundingbox: [-.5, 1.5, 5, -.1], axis: true});
+     *
+     *   let runs = [
+     *       [0.5, 'red'],
+     *       [1.0, 'green'],
+     *       [1.5, 'blue'],
+     *   ]
+     *
+     *   let labelY = 1
+     *   runs.forEach((run,i) => {
+     *       board.create('segment',[[1.8,labelY-(i/20)],[2.3,labelY-(i/20)]],{strokeColor:run[1]})
+     *       board.create('text',[2.5,labelY-(i/20),`&lambda;=${run[0]}`])
+     *
+     *       let x = Array(50000).fill(0).map(() => JXG.Math.Statistics.randomExponential(run[0]))
+     *       let res = JXG.Math.Statistics.histogram(x, { bins: 40, density: true, cumulative: false, range: false });
+     *       board.create('curve', [res[1], res[0]], { strokeColor: run[1], strokeWidth:2});
+     *   })
+     * }
+     * </script><pre>
+
+    */
     randomExponential: function (lbda) {
         var u;
 
@@ -685,7 +776,7 @@ Mat.Statistics = {
 
     /**
      * Generate value of a random variable with gamma distribution of order alpha.
-     * See {@link https://en.wikipedia.org/wiki/Gamma_distribution}.
+     * See <a href="https://en.wikipedia.org/wiki/Gamma_distribution">https://en.wikipedia.org/wiki/Gamma_distribution</a>.
      * Algorithm: D.E. Knuth, TAOCP 2, p. 129.
 
      * @param {Number} a shape, <i> &gt; 0</i>
@@ -693,6 +784,62 @@ Mat.Statistics = {
      * @param {Number} [t=0] threshold
      * @returns Number
      * @memberof JXG.Math.Statistics
+     * @example
+     *  let board = JXG.JSXGraph.initBoard('jxgbox',
+     *       { boundingbox: [-1.7, .5, 20, -.03], axis: true});
+     *
+     *   let runs = [
+     *       [0.5, 1.0, 'brown'],
+     *       [1.0, 2.0, 'red'],
+     *       [2.0, 2.0, 'orange'],
+     *       [3.0, 2.0, 'yellow'],
+     *       [5.0, 1.0, 'green'],
+     *       [9.0, 0.5, 'black'],
+     *       [7.5, 1.0, 'purple'],
+     *   ]
+     *
+     *   let labelY = .4
+     *   runs.forEach((run,i) => {
+     *       board.create('segment',[[7,labelY-(i/50)],[9,labelY-(i/50)]],{strokeColor:run[2]})
+     *       board.create('text',[10,labelY-(i/50),`k=${run[0]}, &theta;=${run[1]}`])
+     *
+     *       // density
+     *       let x = Array(50000).fill(0).map(() => JXG.Math.Statistics.randomGamma(run[0],run[1]))
+     *       let res = JXG.Math.Statistics.histogram(x, { bins: 50, density: true, cumulative: false, range: [0, 20] });
+     *       board.create('curve', [res[1], res[0]], { strokeColor: run[2]});
+     *
+     *   })
+     *
+     *
+     * </pre>
+     * <div id="JXGda56df4d-a5a5-4c87-9ffc-9bbc1b512302-6" class="jxgbox" style="width: 300px; height: 300px;"></div>
+     * <script type="text/javascript">
+     * {
+     *  let board = JXG.JSXGraph.initBoard('JXGda56df4d-a5a5-4c87-9ffc-9bbc1b512302-6',
+     *       { boundingbox: [-1.7, .5, 20, -.03], axis: true});
+     *
+     *   let runs = [
+     *       [0.5, 1.0, 'brown'],
+     *       [1.0, 2.0, 'red'],
+     *       [2.0, 2.0, 'orange'],
+     *       [3.0, 2.0, 'yellow'],
+     *       [5.0, 1.0, 'green'],
+     *       [9.0, 0.5, 'black'],
+     *       [7.5, 1.0, 'purple'],
+     *   ]
+     *
+     *   let labelY = .4
+     *   runs.forEach((run,i) => {
+     *       board.create('segment',[[7,labelY-(i/50)],[9,labelY-(i/50)]],{strokeColor:run[2]})
+     *       board.create('text',[10,labelY-(i/50),`k=${run[0]}, &theta;=${run[1]}`])
+     *
+     *       let x = Array(50000).fill(0).map(() => JXG.Math.Statistics.randomGamma(run[0],run[1]))
+     *       let res = JXG.Math.Statistics.histogram(x, { bins: 50, density: true, cumulative: false, range: [0, 20] });
+     *       board.create('curve', [res[1], res[0]], { strokeColor: run[2]});
+     *   })
+     * }
+     * </script><pre>
+     *
      */
     randomGamma: function (a, b, t) {
         var u, v, x, y,
@@ -741,14 +888,14 @@ Mat.Statistics = {
             } else {
                 continue;
             }
-        } while (x <= 0.0 || v > (1 + y * y) * Math.exp( (a - 1) * Math.log(x / (a-1)) - Math.sqrt(2 * a - 1) * y));
+        } while (x <= 0.0 || v > (1 + y * y) * Math.exp((a - 1) * Math.log(x / (a - 1)) - Math.sqrt(2 * a - 1) * y));
 
         return b * x + t;
     },
 
     /**
      * Generate value of a random variable with beta distribution with shape parameters alpha and beta.
-     * See {@link https://en.wikipedia.org/wiki/Beta_distribution}.
+     * See <a href="https://en.wikipedia.org/wiki/Beta_distribution">https://en.wikipedia.org/wiki/Beta_distribution</a>.
      *
      * @param {Number} alpha <i>&gt; 0</i>
      * @param {Number} beta <i>&gt; 0</i>
@@ -771,7 +918,7 @@ Mat.Statistics = {
 
     /**
      * Generate value of a random variable with chi-square distribution with k degrees of freedom.
-     * See {@link https://en.wikipedia.org/wiki/Chi-squared_distribution}.
+     * See <a href="https://en.wikipedia.org/wiki/Chi-squared_distribution">https://en.wikipedia.org/wiki/Chi-squared_distribution</a>.
      *
      * @param {Number} k <i>&gt; 0</i>
      * @returns Number
@@ -789,7 +936,7 @@ Mat.Statistics = {
 
     /**
      * Generate value of a random variable with F-distribution with d<sub>1</sub> and d<sub>2</sub> degrees of freedom.
-     * See {@link https://en.wikipedia.org/wiki/F-distribution}.
+     * See <a href="https://en.wikipedia.org/wiki/F-distribution">https://en.wikipedia.org/wiki/F-distribution</a>.
      * @param {Number} d1 <i>&gt; 0</i>
      * @param {Number} d2 <i>&gt; 0</i>
      * @returns Number
@@ -811,7 +958,7 @@ Mat.Statistics = {
 
     /**
      * Generate value of a random variable with Students-t-distribution with &nu; degrees of freedom.
-     * See {@link https://en.wikipedia.org/wiki/Student%27s_t-distribution}.
+     * See <a href="https://en.wikipedia.org/wiki/Student%27s_t-distribution">https://en.wikipedia.org/wiki/Student%27s_t-distribution</a>.
      * @param {Number} nu <i>&gt; 0</i>
      * @returns Number
      * @memberof JXG.Math.Statistics
@@ -832,17 +979,59 @@ Mat.Statistics = {
 
     /**
      * Generate values for a random variable in binomial distribution with parameters <i>n</i> and <i>p</i>.
-     * See {@link https://en.wikipedia.org/wiki/Binomial_distribution}.
-     * It uses algorithm BG from {@link https://dl.acm.org/doi/pdf/10.1145/42372.42381}.
+     * See <a href="https://en.wikipedia.org/wiki/Binomial_distribution">https://en.wikipedia.org/wiki/Binomial_distribution</a>.
+     * It uses algorithm BG from <a href="https://dl.acm.org/doi/pdf/10.1145/42372.42381">https://dl.acm.org/doi/pdf/10.1145/42372.42381</a>.
      *
      * @param {Number} n Number of trials (n >= 0)
-     * @param {Number} p Propability (0 <= p <= 1)
+     * @param {Number} p Probability (0 <= p <= 1)
      * @returns Number Integer value of a random variable in binomial distribution
      * @memberof JXG.Math.Statistics
      *
      * @example
-     * console.log(JXG.Mat.Statistics.generateBinomial(100,0.1));
-     * // Possible output: 18
+     *  let board = JXG.JSXGraph.initBoard('JXGbox',
+     *       { boundingbox: [-1.7, .5, 30, -.03], axis: true});
+     *
+     *   let runs = [
+     *       [0.5, 20, 'blue'],
+     *       [0.7, 20, 'green'],
+     *       [0.5, 40, 'red'],
+     *   ]
+     *
+     *   let labelY = .4
+     *   runs.forEach((run,i) => {
+     *       board.create('segment',[[7,labelY-(i/50)],[9,labelY-(i/50)]],{strokeColor:run[2]})
+     *       board.create('text',[10,labelY-(i/50),`p=${run[0]}, n=${run[1]}`])
+     *
+     *       let x = Array(50000).fill(0).map(() => JXG.Math.Statistics.randomBinomial(run[1],run[0]))
+     *       let res = JXG.Math.Statistics.histogram(x, { bins: 40, density: true, cumulative: false, range: [0, 40] });
+     *       board.create('curve', [res[1], res[0]], { strokeColor: run[2]});
+     *   })
+     * }
+     *
+     *
+     * </pre><div id="JXGda56df4d-a5a5-4c87-9ffc-9bbc1b512302-3" class="jxgbox" style="width: 300px; height: 300px;"></div>
+     * <script type="text/javascript">
+     * {
+     *  let board = JXG.JSXGraph.initBoard('JXGda56df4d-a5a5-4c87-9ffc-9bbc1b512302-3',
+     *       { boundingbox: [-1.7, .5, 30, -.03], axis: true});
+     *
+     *   let runs = [
+     *       [0.5, 20, 'blue'],
+     *       [0.7, 20, 'green'],
+     *       [0.5, 40, 'red'],
+     *   ]
+     *
+     *   let labelY = .4
+     *   runs.forEach((run,i) => {
+     *       board.create('segment',[[7,labelY-(i/50)],[9,labelY-(i/50)]],{strokeColor:run[2]})
+     *       board.create('text',[10,labelY-(i/50),`p=${run[0]}, n=${run[1]}`])
+     *
+     *       let x = Array(50000).fill(0).map(() => JXG.Math.Statistics.randomBinomial(run[1],run[0]))
+     *       let res = JXG.Math.Statistics.histogram(x, { bins: 40, density: true, cumulative: false, range: [0, 40] });
+     *       board.create('curve', [res[1], res[0]], { strokeColor: run[2]});
+     *   })
+     * }
+     * </script><pre>
      *
      */
     randomBinomial: function (n, p) {
@@ -912,14 +1101,14 @@ Mat.Statistics = {
     },
 
     /**
-     * Generate values for a random variable in geometric distribution with propability <i>p</i>.
-     * See {@link https://en.wikipedia.org/wiki/Geometric_distribution}.
+     * Generate values for a random variable in geometric distribution with probability <i>p</i>.
+     * See <a href="https://en.wikipedia.org/wiki/Geometric_distribution">https://en.wikipedia.org/wiki/Geometric_distribution</a>.
      *
      * @param {Number} p (0 <= p <= 1)
      * @returns Number
      * @memberof JXG.Math.Statistics
      */
-    randomGeometric: function(p) {
+    randomGeometric: function (p) {
         var u;
 
         if (p < 0 || p > 1) {
@@ -933,7 +1122,7 @@ Mat.Statistics = {
 
     /**
      * Generate values for a random variable in Poisson distribution with mean <i>mu</i>.
-     * See {@link https://en.wikipedia.org/wiki/Poisson_distribution}.
+     * See <a href="https://en.wikipedia.org/wiki/Poisson_distribution">https://en.wikipedia.org/wiki/Poisson_distribution</a>.
      *
      * @param {Number} mu (0 < mu)
      * @returns Number
@@ -968,6 +1157,26 @@ Mat.Statistics = {
             }
         }
         return N;
+    },
+
+    /**
+     * Generate values for a random variable in Pareto distribution with
+     * shape <i>gamma</i> and scale <i>k</i>.
+     * See <a href="https://en.wikipedia.org/wiki/Pareto_distribution">https://en.wikipedia.org/wiki/Pareto_distribution</a>.
+     * Method: use inverse transformation sampling.
+     *
+     * @param {Number} gamma shape (0 < gamma)
+     * @param {Number} k scale (0 < k < x)
+     * @returns Number
+     * @memberof JXG.Math.Statistics
+     */
+    randomPareto: function (gamma, k) {
+        var u = Math.random();
+
+        if (gamma <= 0 || k <= 0) {
+            return NaN;
+        }
+        return k * Math.pow(1 - u, -1 / gamma);
     },
 
     /**
@@ -1055,38 +1264,75 @@ Mat.Statistics = {
      * @memberof JXG.Math.Statistics
      *
      * @example
-     *     var curve = board.create('curve', [[], []]);
-     *     curve.updateDataArray = function () {
-     *       var i, res, x = [];
+     *  let board = JXG.JSXGraph.initBoard('jxgbox',
+     *       { boundingbox: [-1.7, .5, 20, -.03], axis: true});
+     *  let board2 = JXG.JSXGraph.initBoard('jxgbox2',
+     *       { boundingbox: [-1.6, 1.1, 20, -.06], axis: true});
      *
-     *       for (i = 0; i < 5000; i++) {
-     *         x.push(JXG.Math.Statistics.randomGamma(2));
-     *       }
-     *       res = JXG.Math.Statistics.histogram(x, { bins: 50, density: true, cumulative: false, range: [-5, 5] });
-     *       this.dataX = res[1];
-     *       this.dataY = res[0];
-     *     };
-     *     board.update();
+     *   let runs = [
+     *       [0.5, 1.0, 'brown'],
+     *       [1.0, 2.0, 'red'],
+     *       [2.0, 2.0, 'orange'],
+     *       [3.0, 2.0, 'yellow'],
+     *       [5.0, 1.0, 'green'],
+     *       [9.0, 0.5, 'black'],
+     *       [7.5, 1.0, 'purple'],
+     *   ]
      *
-     * </pre><div id="JXGda56df4d-a5a5-4c87-9ffc-9bbc1b512302" class="jxgbox" style="width: 300px; height: 300px;"></div>
+     *   let labelY = .4
+     *   runs.forEach((run,i) => {
+     *       board.create('segment',[[7,labelY-(i/50)],[9,labelY-(i/50)]],{strokeColor:run[2]})
+     *       board.create('text',[10,labelY-(i/50),`k=${run[0]}, &theta;=${run[1]}`])
+     *
+     *       // density
+     *       let x = Array(50000).fill(0).map(() => JXG.Math.Statistics.randomGamma(run[0],run[1]))
+     *       let res = JXG.Math.Statistics.histogram(x, { bins: 50, density: true, cumulative: false, range: [0, 20] });
+     *       board.create('curve', [res[1], res[0]], { strokeColor: run[2], strokeWidth:2});
+     *
+     *       // cumulative density
+     *       res = JXG.Math.Statistics.histogram(x, { bins: 50, density: true, cumulative: true, range: [0, 20] });
+     *       res[0].unshift(0)  // add zero to front so cumulative starts at zero
+     *       res[1].unshift(0)
+     *       board2.create('curve', [res[1], res[0]], { strokeColor: run[2], strokeWidth:2 });
+     *   })
+     *
+     *
+     * </pre><div id="JXGda56df4d-a5a5-4c87-9ffc-9bbc1b512302" class="jxgbox" style="width: 300px; height: 300px; float:left;"></div>
+     * <div style='float:left;'>&nbsp;&nbsp;</div>
+     * <div id="JXGda56df4d-a5a5-4c87-9ffc-9bbc1b512302-2" class="jxgbox" style="width: 300px; height: 300px;"></div>
      * <script type="text/javascript">
-     *     (function() {
-     *         var board = JXG.JSXGraph.initBoard('JXGda56df4d-a5a5-4c87-9ffc-9bbc1b512302',
-     *             {boundingbox: [-1, 3, 6, -1], axis: true, showcopyright: false, shownavigation: false});
-     *         var curve = board.create('curve', [[], []]);
-     *         curve.updateDataArray = function () {
-     *           var i, res, x = [];
+     * {
+     *  let board = JXG.JSXGraph.initBoard('JXGda56df4d-a5a5-4c87-9ffc-9bbc1b512302',
+     *       { boundingbox: [-1.7, .5, 20, -.03], axis: true});
+     *  let board2 = JXG.JSXGraph.initBoard('JXGda56df4d-a5a5-4c87-9ffc-9bbc1b512302-2',
+     *       { boundingbox: [-1.6, 1.1, 20, -.06], axis: true});
      *
-     *           for (i = 0; i < 5000; i++) {
-     *             x.push(JXG.Math.Statistics.randomGamma(2));
-     *           }
-     *           res = JXG.Math.Statistics.histogram(x, { bins: 50, density: true, cumulative: false, range: [-5, 5] });
-     *           this.dataX = res[1];
-     *           this.dataY = res[0];
-     *         };
-     *         board.update();
-     *     })();
+     *   let runs = [
+     *       [0.5, 1.0, 'brown'],
+     *       [1.0, 2.0, 'red'],
+     *       [2.0, 2.0, 'orange'],
+     *       [3.0, 2.0, 'yellow'],
+     *       [5.0, 1.0, 'green'],
+     *       [9.0, 0.5, 'black'],
+     *       [7.5, 1.0, 'purple'],
+     *   ]
      *
+     *   let labelY = .4
+     *   runs.forEach((run,i) => {
+     *       board.create('segment',[[7,labelY-(i/50)],[9,labelY-(i/50)]],{strokeColor:run[2]})
+     *       board.create('text',[10,labelY-(i/50),`k=${run[0]}, &theta;=${run[1]}`])
+     *
+     *       let x = Array(50000).fill(0).map(() => JXG.Math.Statistics.randomGamma(run[0],run[1]))
+     *       let res = JXG.Math.Statistics.histogram(x, { bins: 50, density: true, cumulative: false, range: [0, 20] });
+     *       board.create('curve', [res[1], res[0]], { strokeColor: run[2], strokeWidth:2});
+     *
+     *       // cumulative density
+     *       res = JXG.Math.Statistics.histogram(x, { bins: 50, density: true, cumulative: true, range: [0, 20] });
+     *       res[0].unshift(0)  // add zero to front so cumulative starts at zero
+     *       res[1].unshift(0)
+     *       board2.create('curve', [res[1], res[0]], { strokeColor: run[2], strokeWidth:2 });
+     *   })
+     * }
      * </script><pre>
      *
      */
@@ -1138,14 +1384,18 @@ Mat.Statistics = {
         if (opt.density) {
             s = JXG.Math.Statistics.sum(counts);
             for (i = 0; i < num_bins; i++) {
-                // counts[i] /= (s * delta);
-                counts[i] /= s;
+                counts[i] /= (s * delta);
+                // counts[i] /= s;
             }
         }
 
         // Cumulative counts
         if (opt.cumulative) {
-            for (i = 1; i < num_bins; i++) {
+            if (opt.density) {
+                for (i = 0; i < num_bins; i++) {
+                    counts[i] *= delta;  // normalize
+                }
+            } for (i = 1; i < num_bins; i++) {
                 counts[i] += counts[i - 1];
             }
         }

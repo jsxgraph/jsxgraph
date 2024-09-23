@@ -1786,7 +1786,7 @@ Mat.Plot = {
 
             // Store point location which may be centered around
             // critical points.
-            // If the lebvel is suitable, step out of the loop.
+            // If the level is suitable, step out of the loop.
             groups = this._criticalPoints(y_diffs, le, level);
             if (groups === false) {
                 // Its seems, the degree of the polynomial is equal to level

@@ -61,7 +61,8 @@ import Composition from './composition.js';
  * Please use {@link JXG.JSXGraph.initBoard} to initialize a board.
  * @constructor
  * @param {String|Object} container The id of or reference to the HTML DOM element
- * the board is drawn in. This is usually a HTML div.
+ * the board is drawn in. This is usually a HTML div. If it is the reference to an HTML element and this element does not have an attribute "id",
+ * this attribute "id" is set to a random value.
  * @param {JXG.AbstractRenderer} renderer The reference of a renderer.
  * @param {String} id Unique identifier for the board, may be an empty string or null or even undefined.
  * @param {JXG.Coords} origin The coordinates where the origin is placed, in user coordinates.
@@ -144,6 +145,12 @@ JXG.Board = function (container, renderer, id,
     this.container = ''; // container
 
     /**
+     * ID of the board
+     * @type String
+     */
+    this.id = '';
+
+    /**
      * Pointer to the html element containing the board.
      * @type Object
      */
@@ -154,19 +161,32 @@ JXG.Board = function (container, renderer, id,
         // Hosting div is given as string
         this.container = container; // container
         this.containerObj = (Env.isBrowser ? this.document.getElementById(this.container) : null);
+
     } else if (Env.isBrowser) {
+
         // Hosting div is given as object pointer
         this.containerObj = container;
         this.container = this.containerObj.getAttribute('id');
         if (this.container === null) {
-            // Set random id to this.container,
-            // but not to the DOM element
-            this.container = 'null' + parseInt(Math.random() * 100000000).toString();
+            // Set random ID to this.container, but not to the DOM element
+
+            this.container = 'null' + parseInt(Math.random() * 16777216).toString();
         }
     }
 
     if (Env.isBrowser && renderer.type !== 'no' && this.containerObj === null) {
         throw new Error('\nJSXGraph: HTML container element "' + container + '" not found.');
+    }
+
+    // TODO
+    // Why do we need this.id AND this.container?
+    // There was never a board attribute "id".
+    // The origin seems to be that in the geonext renderer we use a separate id, extracted from the GEONExT file.
+    if (Type.exists(id) && id !== '' && Env.isBrowser && !Type.exists(this.document.getElementById(id))) {
+        // If the given id is not valid, generate an unique id
+        this.id = id;
+    } else {
+        this.id = this.generateId();
     }
 
     /**
@@ -207,7 +227,6 @@ JXG.Board = function (container, renderer, id,
      * @type Number
      */
     this.dimension = 2;
-
     this.jc = new JessieCode();
     this.jc.use(this);
 
@@ -295,13 +314,6 @@ JXG.Board = function (container, renderer, id,
      * @private
      */
     this.canvasHeight = canvasHeight;
-
-    // If the given id is not valid, generate an unique id
-    if (Type.exists(id) && id !== '' && Env.isBrowser && !Type.exists(this.document.getElementById(id))) {
-        this.id = id;
-    } else {
-        this.id = this.generateId();
-    }
 
     EventEmitter.eventify(this);
 
@@ -830,7 +842,7 @@ JXG.extend(
 
             // as long as we don't have a unique id generate a new one
             while (Type.exists(JXG.boards['jxgBoard' + r])) {
-                r = Math.round(Math.random() * 65535);
+                r = Math.round(Math.random() * 16777216);
             }
 
             return 'jxgBoard' + r;
@@ -6213,7 +6225,7 @@ JXG.extend(
                 offY = 0,
                 zoom_ratio = 1,
                 ratio, dx, dy, prev_w, prev_h,
-                dim = Env.getDimensions(this.container, this.document);
+                dim = Env.getDimensions(this.containerObj, this.document);
 
             if (!Type.isArray(bbox)) {
                 return this;

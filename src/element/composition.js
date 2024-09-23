@@ -1113,7 +1113,7 @@ JXG.createArrowParallel = function (board, parents, attributes) {
 /**
  * @class Constructs a normal.
  * @pseudo
- * @description A normal is a line through a given point on a element of type line, circle, curve, or turtle and orthogonal to that object.
+ * @description A normal is a line through a given point on an element of type line, circle, curve, or turtle and orthogonal to that object.
  * @constructor
  * @name Normal
  * @type JXG.Line

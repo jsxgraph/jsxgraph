@@ -1152,16 +1152,36 @@ JXG.extend(
          * Determinant of three points in the Euclidean plane.
          * Zero, if the points are collinear. Used to determine of a point q is left or
          * right to a segment defined by points p1 and p2.
+         * <p>
+         * Non-homogeneous version.
          *
-         * @param  {Array} p1 Coordinates of the first point of the segment. Array of length 3. First coordinate is equal to 1.
-         * @param  {Array} p2 Coordinates of the second point of the segment. Array of length 3. First coordinate is equal to 1.
-         * @param  {Array} q Coordinates of the point. Array of length 3. First coordinate is equal to 1.
+         * @param  {Array|JXG.Point} p1 First point or its coordinates of the segment. Point object or array of length 3. First (homogeneous) coordinate is equal to 1.
+         * @param  {Array|JXG.Point} p2 Second point or its coordinates of the segment. Point object or array of length 3. First (homogeneous) coordinate is equal to 1.
+         * @param  {Array|JXG.Point} q Point or its coordinates. Point object or array of length 3. First (homogeneous) coordinate is equal to 1.
          * @return {Number} Signed area of the triangle formed by these three points.
          *
          * @see #windingNumber
          */
         det3p: function (p1, p2, q) {
-            return (p1[1] - q[1]) * (p2[2] - q[2]) - (p2[1] - q[1]) * (p1[2] - q[2]);
+            var pp1, pp2, qq;
+
+            if (Type.isPoint(p1)) {
+                pp1 = p1.Coords(true);
+            } else {
+                pp1 = p1;
+            }
+            if (Type.isPoint(p2)) {
+                pp2 = p2.Coords(true);
+            } else {
+                pp2 = p2;
+            }
+            if (Type.isPoint(q)) {
+                qq = q.Coords(true);
+            } else {
+                qq = q;
+            }
+
+            return (pp1[1] - qq[1]) * (pp2[2] - qq[2]) - (pp2[1] - qq[1]) * (pp1[2] - qq[2]);
         },
 
         /**
@@ -3146,7 +3166,7 @@ JXG.extend(
             var newCoords, newCoordsObj,
                 i, j, mindist, dist, lbda,
                 v, coords, d, p1, p2, res, minfunc,
-                t_new, f_new, f_old,
+                t_new, f_new, f_old, dy,
                 delta, delta1, delta2, steps, minX, maxX,
                 infty = Number.POSITIVE_INFINITY;
 
@@ -3213,7 +3233,7 @@ JXG.extend(
                 // 'parameter', 'polar', 'functiongraph'
 
                 if (Type.evaluate(curve.visProp.curvetype) === 'functiongraph') {
-                    let dy = Math.abs(y - curve.Y(x));
+                    dy = Math.abs(y - curve.Y(x));
                     if (!isNaN(dy)) {
                         minX = x - dy;
                         maxX = x + dy;

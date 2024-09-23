@@ -110,6 +110,7 @@ Type.copyPrototypeMethods(JXG.Line3D, JXG.GeometryElement3D, 'constructor3D');
 JXG.extend(
     JXG.Line3D.prototype,
     /** @lends JXG.Line3D.prototype */ {
+
         /**
          * Determine one end point of a 3D line from point, direction and range.
          *
@@ -143,6 +144,18 @@ JXG.extend(
 
         update: function () {
             return this;
+        },
+
+        setPosition2D: function (t) {
+            var j, el;
+
+            for (j = 0; j < this.parents.length; j++) {
+                // Run through defining 3D points
+                el = this.view.select(this.parents[j]);
+                if (el.elType === 'point3d' && el.element2D.draggable()) {
+                    t.applyOnce(el.element2D);
+                }
+            }
         },
 
         updateRenderer: function () {
@@ -320,7 +333,8 @@ JXG.createLine3D = function (board, parents, attributes) {
         el.endpoints = endpoints;
         el.addChild(endpoints[0]);
         el.addChild(endpoints[1]);
-        el.setParents(endpoints);
+        // el.setParents(endpoints);
+        el.addParents([point1, point2]);
 
     } else {
         // Line defined by point, direction and range
@@ -382,13 +396,14 @@ JXG.createLine3D = function (board, parents, attributes) {
         el.element2D.view = view;
 
         el.endpoints = points;
+        el.addParents(point);
     }
+
     // TODO Throw error
 
     el.addChild(el.element2D);
     el.inherits.push(el.element2D);
-    el.element2D.setParents(el);
-    // el.setParents([point1.id, point2.id]);
+    el.element2D.addParents(el);
 
     el.point1 = point1;
     el.point2 = point2;
@@ -556,9 +571,20 @@ JXG.extend(
          */
         updateNormal: function () {
             var i, len;
-            for (i = 0; i < 3; i++) {
-                this.vec1[i] = Type.evaluate(this.direction1[i]);
-                this.vec2[i] = Type.evaluate(this.direction2[i]);
+
+            if (Type.isFunction(this.direction1)) {
+                this.vec1 = Type.evaluate(this.direction1);
+            } else {
+                for (i = 0; i < 3; i++) {
+                    this.vec1[i] = Type.evaluate(this.direction1[i]);
+                }
+            }
+            if (Type.isFunction(this.direction2)) {
+                this.vec2 = Type.evaluate(this.direction2);
+            } else {
+                for (i = 0; i < 3; i++) {
+                    this.vec2[i] = Type.evaluate(this.direction2[i]);
+                }
             }
 
             this.normal = Mat.crossProduct(this.vec1, this.vec2);
@@ -862,7 +888,7 @@ JXG.registerElement('plane3d', JXG.createPlane3D);
  * <script type="text/javascript">
  *     (function() {
  *         var board = JXG.JSXGraph.initBoard('JXGdb931076-b29a-4eff-b97e-4251aaf24943',
- *             {boundingbox: [-8, 8, 8,-8], axis: false, showcopyright: false, shownavigation: false});
+ *             {boundingbox: [-8, 8, 8,-8], axis: false, pan: {enabled: false}, showcopyright: false, shownavigation: false});
  *         var view = board.create(
  *             'view3d',
  *             [[-6, -3], [8, 8],

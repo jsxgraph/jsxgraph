@@ -846,6 +846,12 @@ JXG.extend(
                 this.point2.transformations.push(list[i]);
             }
 
+            // Why not like this?
+            // The difference is in setting baseElement
+            // var list = Type.isArray(transform) ? transform : [transform];
+            // this.point1.addTransform(this, list);
+            // this.point2.addTransform(this, list);
+
             return this;
         },
 
@@ -1803,125 +1809,127 @@ JXG.createAxis = function (board, parents, attributes) {
         this.point2.setPositionDirectly(JXG.COORDS_BY_USER, newPosP2);
 
         // Set position of tick labels
-        visLabel = this.defaultTicks.visProp.label;
-        if (ticksAutoPos && (horizontal || vertical)) {
+        if (Type.exists(this.defaultTicks)) {
+            visLabel = this.defaultTicks.visProp.label;
+            if (ticksAutoPos && (horizontal || vertical)) {
 
-            if (!Type.exists(visLabel._anchorx_org)) {
-                visLabel._anchorx_org = Type.def(visLabel.anchorx, this.board.options.text.anchorX);
-            }
-            if (!Type.exists(visLabel._anchory_org)) {
-                visLabel._anchory_org = Type.def(visLabel.anchory, this.board.options.text.anchorY);
-            }
-            if (!Type.exists(visLabel._offset_org)) {
-                visLabel._offset_org = visLabel.offset.slice();
-            }
+                if (!Type.exists(visLabel._anchorx_org)) {
+                    visLabel._anchorx_org = Type.def(visLabel.anchorx, this.board.options.text.anchorX);
+                }
+                if (!Type.exists(visLabel._anchory_org)) {
+                    visLabel._anchory_org = Type.def(visLabel.anchory, this.board.options.text.anchorY);
+                }
+                if (!Type.exists(visLabel._offset_org)) {
+                    visLabel._offset_org = visLabel.offset.slice();
+                }
 
-            off = visLabel.offset;
-            if (horizontal) {
-                dist = axis.point1.coords.scrCoords[2] - (this.board.canvasHeight * 0.5);
+                off = visLabel.offset;
+                if (horizontal) {
+                    dist = axis.point1.coords.scrCoords[2] - (this.board.canvasHeight * 0.5);
 
-                anchr = visLabel.anchory;
+                    anchr = visLabel.anchory;
 
-                // The last position of the labels is stored in visLabel._side
-                if (dist < 0 && Math.abs(dist) > ticksAutoPosThres) {
-                    // Put labels on top of the line
-                    if (visLabel._side === 'bottom') {
-                        // Switch position
-                        if (visLabel.anchory === 'top') {
-                            anchr = 'bottom';
+                    // The last position of the labels is stored in visLabel._side
+                    if (dist < 0 && Math.abs(dist) > ticksAutoPosThres) {
+                        // Put labels on top of the line
+                        if (visLabel._side === 'bottom') {
+                            // Switch position
+                            if (visLabel.anchory === 'top') {
+                                anchr = 'bottom';
+                            }
+                            off[1] *= -1;
+                            visLabel._side = 'top';
                         }
-                        off[1] *= -1;
-                        visLabel._side = 'top';
-                    }
 
-                } else if (dist > 0 && Math.abs(dist) > ticksAutoPosThres) {
-                    // Put labels below the line
-                    if (visLabel._side === 'top') {
-                        // Switch position
-                        if (visLabel.anchory === 'bottom') {
-                            anchr = 'top';
+                    } else if (dist > 0 && Math.abs(dist) > ticksAutoPosThres) {
+                        // Put labels below the line
+                        if (visLabel._side === 'top') {
+                            // Switch position
+                            if (visLabel.anchory === 'bottom') {
+                                anchr = 'top';
+                            }
+                            off[1] *= -1;
+                            visLabel._side = 'bottom';
                         }
-                        off[1] *= -1;
-                        visLabel._side = 'bottom';
-                    }
 
-                } else {
-                    // Put to original position
-                    anchr = visLabel._anchory_org;
-                    off = visLabel._offset_org.slice();
-
-                    if (anchr === 'top') {
-                        visLabel._side = 'bottom';
-                    } else if (anchr === 'bottom') {
-                        visLabel._side = 'top';
-                    } else if (off[1] < 0) {
-                        visLabel._side = 'bottom';
                     } else {
-                        visLabel._side = 'top';
-                    }
-                }
+                        // Put to original position
+                        anchr = visLabel._anchory_org;
+                        off = visLabel._offset_org.slice();
 
-                for (i = 0; i < axis.defaultTicks.labels.length; i++) {
-                    this.defaultTicks.labels[i].visProp.anchory = anchr;
-                }
-                visLabel.anchory = anchr;
-
-            } else if (vertical) {
-                dist = axis.point1.coords.scrCoords[1] - (this.board.canvasWidth * 0.5);
-
-                if (dist < 0 && Math.abs(dist) > ticksAutoPosThres) {
-                    // Put labels to the left of the line
-                    if (visLabel._side === 'right') {
-                        // Switch position
-                        if (visLabel.anchorx === 'left') {
-                            anchr = 'right';
+                        if (anchr === 'top') {
+                            visLabel._side = 'bottom';
+                        } else if (anchr === 'bottom') {
+                            visLabel._side = 'top';
+                        } else if (off[1] < 0) {
+                            visLabel._side = 'bottom';
+                        } else {
+                            visLabel._side = 'top';
                         }
-                        off[0] *= -1;
-                        visLabel._side = 'left';
                     }
 
-                } else if (dist > 0 && Math.abs(dist) > ticksAutoPosThres) {
-                    // Put labels to the right of the line
-                    if (visLabel._side === 'left') {
-                        // Switch position
-                        if (visLabel.anchorx === 'right') {
-                            anchr = 'left';
+                    for (i = 0; i < axis.defaultTicks.labels.length; i++) {
+                        this.defaultTicks.labels[i].visProp.anchory = anchr;
+                    }
+                    visLabel.anchory = anchr;
+
+                } else if (vertical) {
+                    dist = axis.point1.coords.scrCoords[1] - (this.board.canvasWidth * 0.5);
+
+                    if (dist < 0 && Math.abs(dist) > ticksAutoPosThres) {
+                        // Put labels to the left of the line
+                        if (visLabel._side === 'right') {
+                            // Switch position
+                            if (visLabel.anchorx === 'left') {
+                                anchr = 'right';
+                            }
+                            off[0] *= -1;
+                            visLabel._side = 'left';
                         }
-                        off[0] *= -1;
-                        visLabel._side = 'right';
-                    }
 
-                } else {
-                    // Put to original position
-                    anchr = visLabel._anchorx_org;
-                    off = visLabel._offset_org.slice();
+                    } else if (dist > 0 && Math.abs(dist) > ticksAutoPosThres) {
+                        // Put labels to the right of the line
+                        if (visLabel._side === 'left') {
+                            // Switch position
+                            if (visLabel.anchorx === 'right') {
+                                anchr = 'left';
+                            }
+                            off[0] *= -1;
+                            visLabel._side = 'right';
+                        }
 
-                    if (anchr === 'left') {
-                        visLabel._side = 'right';
-                    } else if (anchr === 'right') {
-                        visLabel._side = 'left';
-                    } else if (off[0] < 0) {
-                        visLabel._side = 'left';
                     } else {
-                        visLabel._side = 'right';
+                        // Put to original position
+                        anchr = visLabel._anchorx_org;
+                        off = visLabel._offset_org.slice();
+
+                        if (anchr === 'left') {
+                            visLabel._side = 'right';
+                        } else if (anchr === 'right') {
+                            visLabel._side = 'left';
+                        } else if (off[0] < 0) {
+                            visLabel._side = 'left';
+                        } else {
+                            visLabel._side = 'right';
+                        }
                     }
-                }
 
-                for (i = 0; i < axis.defaultTicks.labels.length; i++) {
-                    this.defaultTicks.labels[i].visProp.anchorx = anchr;
+                    for (i = 0; i < axis.defaultTicks.labels.length; i++) {
+                        this.defaultTicks.labels[i].visProp.anchorx = anchr;
+                    }
+                    visLabel.anchorx = anchr;
                 }
-                visLabel.anchorx = anchr;
+                visLabel.offset = off;
+
+            } else {
+                delete visLabel._anchorx_org;
+                delete visLabel._anchory_org;
+                delete visLabel._offset_org;
             }
-            visLabel.offset = off;
-
-        } else {
-            delete visLabel._anchorx_org;
-            delete visLabel._anchory_org;
-            delete visLabel._offset_org;
+            this.defaultTicks.needsUpdate = true;
         }
 
         JXG.Line.prototype.update.call(this);
-        this.defaultTicks.needsUpdate = true;
 
         return this;
     };
@@ -2417,10 +2425,125 @@ JXG.createPolarLine = function (board, parents, attributes) {
 };
 
 /**
+ *
+ * @class This element is used to provide a constructor for the tangent through a point to a conic or a circle.
+ * @pseudo
+ * @description Construct the tangent line through a point to a conic or a circle. There will be either two, one or no
+ * such tangent, depending if the point is outside of the conic, on the conic, or inside of the conic.
+ * Similar to the intersection of a line with a circle, the specific tangent can be chosen with a third (optional) parameter
+ * <i>number</i>.
+ * <p>
+ * Attention: from a technical point of view, the point from which the tangent to the conic/circle is constructed is not an element of
+ * the tangent line.
+ * @name TangentTo
+ * @augments JXG.Line
+ * @constructor
+ * @type JXG.Line
+ * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
+ * @param {JXG.Conic,JXG.Circle_JXG.Point_Number} conic,point,[number=0] The result will be the tangent line through
+ * the point with respect to the conic or circle.
+ *
+ * @example
+ *  var c = board.create('circle', [[3, 0], [3, 4]]);
+ *  var p = board.create('point', [0, 6]);
+ *  var t0 = board.create('tangentto', [c, p, 0], { color: 'black', polar: {visible: true}, point: {visible: true} });
+ *  var t1 = board.create('tangentto', [c, p, 1], { color: 'black' });
+ *
+ * </pre><div id="JXGd4b359c7-3a29-44c3-a19d-d51b42a00c8b" class="jxgbox" style="width: 300px; height: 300px;"></div>
+ * <script type="text/javascript">
+ *     (function() {
+ *         var board = JXG.JSXGraph.initBoard('JXGd4b359c7-3a29-44c3-a19d-d51b42a00c8b',
+ *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
+ *             var c = board.create('circle', [[3, 0], [3, 4]]);
+ *             var p = board.create('point', [0, 6]);
+ *             var t0 = board.create('tangentto', [c, p, 0], { color: 'black', polar: {visible: true}, point: {visible: true} });
+ *             var t1 = board.create('tangentto', [c, p, 1], { color: 'black' });
+ *
+ *     })();
+ *
+ * </script><pre>
+ *
+ * @example
+ *  var p = board.create('point', [0, 6]);
+ *  var ell = board.create('ellipse', [[-5, 1], [-2, -1], [-3, 2]]);
+ *  var t0 = board.create('tangentto', [ell, p, 0]);
+ *  var t1 = board.create('tangentto', [ell, p, 1]);
+ *
+ * </pre><div id="JXG6e625663-1c3e-4e08-a9df-574972a374e8" class="jxgbox" style="width: 300px; height: 300px;"></div>
+ * <script type="text/javascript">
+ *     (function() {
+ *         var board = JXG.JSXGraph.initBoard('JXG6e625663-1c3e-4e08-a9df-574972a374e8',
+ *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
+ *             var p = board.create('point', [0, 6]);
+ *             var ell = board.create('ellipse', [[-5, 1], [-2, -1], [-3, 2]]);
+ *             var t0 = board.create('tangentto', [ell, p, 0]);
+ *             var t1 = board.create('tangentto', [ell, p, 1]);
+ *
+ *     })();
+ *
+ * </script><pre>
+ *
+ */
+JXG.createTangentTo = function (board, parents, attributes) {
+    var el, attr,
+        conic, pointFrom, num,
+        intersect, polar;
+
+    conic = board.select(parents[0]);
+    pointFrom = Type.providePoints(board, parents[1], attributes, 'point')[0];
+    num = Type.def(parents[2], 0);
+
+    if (
+        (conic.type !== Const.OBJECT_TYPE_CIRCLE && conic.type !== Const.OBJECT_TYPE_CONIC) ||
+        (pointFrom.elementClass !== Const.OBJECT_CLASS_POINT)
+    ) {
+        throw new Error(
+            "JSXGraph: Can't create tangentto with parent types '" +
+            typeof parents[0] +
+            "' and '" +
+            typeof parents[1] +
+            "' and '" +
+            typeof parents[2] +
+            "'." +
+            "\nPossible parent types: [circle|conic,point,number]"
+        );
+    }
+
+    attr = Type.copyAttributes(attributes, board.options, 'tangentto');
+    // A direct analytic geometry approach would be in
+    // Richter-Gebert: Perspectives on projective geometry, 11.3
+    polar = board.create('polar', [conic, pointFrom], attr.polar);
+    intersect = board.create('intersection', [polar, conic, num], attr.point);
+
+    el = board.create('tangent', [conic, intersect], attr);
+
+    /**
+     * The intersection point of the conic/circle with the polar line of the tangentto construction.
+     * @memberOf TangentTo.prototype
+     * @name point
+     * @type JXG.Point
+     */
+    el.point = intersect;
+
+    /**
+     * The polar line of the tangentto construction.
+     * @memberOf TangentTo.prototype
+     * @name polar
+     * @type JXG.Line
+     */
+    el.polar = polar;
+
+    el.elType = 'tangentto';
+
+    return el;
+};
+
+/**
  * Register the element type tangent at JSXGraph
  * @private
  */
 JXG.registerElement("tangent", JXG.createTangent);
+JXG.registerElement('tangentto', JXG.createTangentTo);
 JXG.registerElement("polar", JXG.createTangent);
 JXG.registerElement("radicalaxis", JXG.createRadicalAxis);
 JXG.registerElement("polarline", JXG.createPolarLine);

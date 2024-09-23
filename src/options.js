@@ -8390,6 +8390,39 @@ JXG.Options = {
     tangent: {
     },
 
+    /* special tangent options */
+    tangentto: {
+        /**#@+
+         * @visprop
+         */
+
+        /**
+         * Attributes for the polar line of the tangentto construction.
+         *
+         * @name polar
+         * @memberOf TangentTo.prototype
+         * @type JXG.Line
+         */
+        polar: {
+            visible: false,
+            strokeWidth: 1,
+            dash: 3
+        },
+
+        /**
+         * Attributes for the intersection point of the conic/circle with the polar line of the tangentto construction.
+         *
+         * @name point
+         * @memberOf TangentTo.prototype
+         * @type JXG.Point
+         */
+        point: {
+            visible: false
+        }
+
+        /**#@-*/
+    },
+
     /* special tape measure options */
     tapemeasure: {
         /**#@+
