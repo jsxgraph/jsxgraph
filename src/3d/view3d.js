@@ -1778,6 +1778,13 @@ JXG.extend(
  * @pseudo
  * @description  A View3D element provides the container and the methods to create and display 3D elements.
  * It is contained in a JSXGraph board.
+ * <p>
+ * It is advisable to disable panning of the board by setting the board attribute "pan":
+ * <pre>
+ *   pan: {anabled: fasle}
+ * </pre>
+ * Otherwise users will not be able to rotate the scene with their fingers on a touch device.
+ *
  * @name View3D
  * @augments JXG.View3D
  * @constructor
@@ -1812,7 +1819,7 @@ JXG.extend(
  * <script type="text/javascript">
  *     (function() {
  *         var board = JXG.JSXGraph.initBoard('JXG9b327a6c-1bd6-4e40-a502-59d024dbfd1b',
- *             {boundingbox: [-8, 8, 8,-8], axis: false, showcopyright: false, shownavigation: false});
+ *             {boundingbox: [-8, 8, 8,-8], pan: {enabled: false}, axis: false, showcopyright: false, shownavigation: false});
  *         var bound = [-4, 6];
  *         var view = board.create('view3d',
  *             [[-4, -3], [8, 8],
@@ -1858,7 +1865,7 @@ JXG.extend(
  * <script type="text/javascript">
  *     (function() {
  *         var board = JXG.JSXGraph.initBoard('JXG0dc2493d-fb2f-40d5-bdb8-762ba0ad2007',
- *             {boundingbox: [-8, 8, 8,-8], axis: false, showcopyright: false, shownavigation: false});
+ *             {boundingbox: [-8, 8, 8,-8], axis: false, pan: {enabled: false}, showcopyright: false, shownavigation: false});
  *         var bound = [-4, 6];
  *         var view = board.create('view3d',
  *             [[-4, -3], [8, 8],
@@ -1920,7 +1927,7 @@ JXG.extend(
  * <script type="text/javascript">
  *     (function() {
  *         var board = JXG.JSXGraph.initBoard('JXG586f3551-335c-47e9-8d72-835409f6a103',
- *             {boundingbox: [-8, 8, 8,-8], axis: false, showcopyright: false, shownavigation: false});
+ *             {boundingbox: [-8, 8, 8,-8], axis: false, pan: {enabled: false}, showcopyright: false, shownavigation: false});
  *         var bound = [-4, 6];
  *         var view = board.create('view3d',
  *             [[-4, -3], [8, 8],
@@ -1980,7 +1987,7 @@ JXG.extend(
  * <script type="text/javascript">
  *     (function() {
  *         var board = JXG.JSXGraph.initBoard('JXG9a9467e1-f189-4c8c-adb2-d4f49bc7fa26',
- *             {boundingbox: [-8, 8, 8,-8], axis: false, showcopyright: false, shownavigation: false});
+ *             {boundingbox: [-8, 8, 8,-8], axis: false, pan: {enabled: false}, showcopyright: false, shownavigation: false});
  *         var bound = [-4, 6];
  *         var view = board.create('view3d',
  *             [[-4, -3], [8, 8],
@@ -2075,7 +2082,7 @@ JXG.extend(
  * <script type="text/javascript">
  *     (function() {
  *         var board = JXG.JSXGraph.initBoard('JXGbd41a4e3-1bf7-4764-b675-98b01667103b',
- *             {boundingbox: [-8, 8, 8,-8], axis: false, showcopyright: false, shownavigation: false});
+ *             {boundingbox: [-8, 8, 8,-8], axis: false, pan: {enabled: false}, showcopyright: false, shownavigation: false});
  *         var bound = [-4, 6];
  *         var view = board.create('view3d',
  *             [[-4, -3], [8, 8],
@@ -2176,7 +2183,7 @@ JXG.extend(
  * <script type="text/javascript">
  *     (function() {
  *         var board = JXG.JSXGraph.initBoard('JXGdd06d90e-be5d-4531-8f0b-65fc30b1a7c7',
- *             {boundingbox: [-8, 8, 8,-8], axis: false, showcopyright: false, shownavigation: false});
+ *             {boundingbox: [-8, 8, 8,-8], axis: false, pan: {enabled: false}, showcopyright: false, shownavigation: false});
  *         var bound = [-5, 5];
  *         var view = board.create('view3d',
  *             [[-6, -3], [8, 8],

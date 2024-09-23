@@ -209,7 +209,7 @@ JXG.extend(
  * <script type="text/javascript">
  *     (function() {
  *         var board = JXG.JSXGraph.initBoard('JXG52da0ecc-1ba9-4d41-850c-36e5120025a5',
- *             {boundingbox: [-8, 8, 8,-8], axis: false, showcopyright: false, shownavigation: false});
+ *             {boundingbox: [-8, 8, 8,-8], axis: false, pan: {enabled: false}, showcopyright: false, shownavigation: false});
  *     var view = board.create('view3d',
  *            [[-6, -3], [8, 8],
  *            [[-5, 5], [-5, 5], [-5, 5]]]);
@@ -325,7 +325,7 @@ JXG.registerElement("parametricsurface3d", JXG.createParametricSurface3D);
  * <script type="text/javascript">
  *     (function() {
  *         var board = JXG.JSXGraph.initBoard('JXG87646dd4-9fe5-4c21-8734-089abc612515',
- *             {boundingbox: [-8, 8, 8,-8], axis: false, showcopyright: false, shownavigation: false});
+ *             {boundingbox: [-8, 8, 8,-8], axis: false, pan: {enabled: false}, showcopyright: false, shownavigation: false});
  *     var box = [-5, 5];
  *     var view = board.create('view3d',
  *         [

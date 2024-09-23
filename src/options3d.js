@@ -400,6 +400,11 @@ JXG.extend(Options, {
         point2: { visible: false, name: "", label: { visible: true } }
     },
 
+    circle3d: {
+
+        point: { visible: false, name: "" }
+    },
+
     curve3d: {
         /**#@+
          * @visprop

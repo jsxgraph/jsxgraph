@@ -41,7 +41,7 @@ import Geometry from '../math/geometry.js';
  * @class Creates a new 3D circle object. Do not use this constructor to create a 3D circle. Use {@link JXG.View3D#create} with
  * type {@link Circle3D} instead.
  * @constructor
- * @augments JXG.GeometryElement3D
+ * @augments JXG.Curve3D
  * @augments JXG.GeometryElement
  * @param {JXG.View3D} view The 3D view the circle is drawn on.
  * @param {JXG.Point} center The center of the circle.
@@ -255,15 +255,15 @@ JXG.extend(
 JXG.createCircle3D = function (board, parents, attributes) {
     var view = parents[0],
         attr = Type.copyAttributes(attributes, board.options, 'circle3d'),
-        center = Type.providePoints3D(view, [parents[1]], attributes, 'line3d', ['point'])[0],
+        center = Type.providePoints3D(view, [parents[1]], attributes, 'circle3d', ['point'])[0],
         normal = parents[2],
         radius = parents[3],
         el;
 
-    // create element
+    // Create element
     el = new JXG.Circle3D(view, center, normal, radius, attr);
 
-    // update scene tree
+    // Update scene tree
     el.curve.addParents([el]);
     el.addChild(el.curve);
 
@@ -312,9 +312,11 @@ JXG.registerElement("circle3d", JXG.createCircle3D);
  *
  * var i = view.create('intersectioncircle3d', [s1, s2]);
  *
- * </pre><div id="JXGdb931076-b29a-4eff-b97e-4251aaf24943" class="jxgbox" style="width: 300px; height: 300px;"></div>
+ * </pre><div id="JXG64ede949-8dd6-44d0-b2a9-248a479d3a5d" class="jxgbox" style="width: 300px; height: 300px;"></div>
  * <script type="text/javascript">
  *     (function() {
+ *         var board = JXG.JSXGraph.initBoard('JXG64ede949-8dd6-44d0-b2a9-248a479d3a5d',
+ *             {boundingbox: [-8, 8, 8,-8], axis: false, pan: {enabled: false}, showcopyright: false, shownavigation: false});
  *         var view = board.create(
  *            'view3d',
  *            [[-6, -3], [8, 8],

@@ -43,7 +43,7 @@ import Type from "../utils/type.js";
  * @augments JXG.GeometryElement
  * @param {JXG.View3D} view The 3D view the point is drawn on.
  * @param {Function|Array} F Array of numbers, array of functions or function returning an array with defines the user coordinates of the point.
- * @parame {JXG.GeometryElement3D} slide Object the 3D point should be bound to. If null, the point is a free point.
+ * @param {JXG.GeometryElement3D} slide Object the 3D point should be bound to. If null, the point is a free point.
  * @param {Object} attributes An object containing visual properties like in {@link JXG.Options#point3d} and
  * {@link JXG.Options#elements}, and optional a name and an id.
  * @see JXG.Board#generateName
@@ -397,7 +397,7 @@ JXG.extend(
  * <script type="text/javascript">
  *     (function() {
  *         var board = JXG.JSXGraph.initBoard('JXGb9ee8f9f-3d2b-4f73-8221-4f82c09933f1',
- *             {boundingbox: [-8, 8, 8,-8], axis: false, showcopyright: false, shownavigation: false});
+ *             {boundingbox: [-8, 8, 8,-8], axis: false, pan: {enabled: false}, showcopyright: false, shownavigation: false});
  *         var bound = [-5, 5];
  *         var view = board.create('view3d',
  *             [[-6, -3], [8, 8],

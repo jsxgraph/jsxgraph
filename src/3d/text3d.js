@@ -381,7 +381,7 @@ JXG.extend(
  * <script type="text/javascript">
  *     (function() {
  *         var board = JXG.JSXGraph.initBoard('JXGb61d7c50-617a-4bed-9a45-13c949f90e94',
- *             {boundingbox: [-8, 8, 8,-8], axis: false, showcopyright: false, shownavigation: false});
+ *             {boundingbox: [-8, 8, 8,-8], axis: false, pan: {enabled: false}, showcopyright: false, shownavigation: false});
  *         var bound = [-4, 6];
  *         var view = board.create('view3d',
  *             [[-4, -3], [8, 8],
@@ -414,11 +414,11 @@ JXG.createText3D = function (board, parents, attributes) {
     }
 
     if (parents.length === 3) {
-        // [view, array|fun, text] (Array [x, y, z] | function) returning [x, y, z]
+        // [view, array|fun, text] (Array [x, y, z] | function) returning [x, y, z] and string | function
         F = parents[1];
         text = parents[2];
     } else if (parents.length === 5) {
-        // [view, x, y, z, text], (3 numbers | functions)
+        // [view, x, y, z, text], (3 numbers | functions) sand string | function
         F = parents.slice(1, 4);
         text = parents[4];
     } else {
@@ -428,7 +428,7 @@ JXG.createText3D = function (board, parents, attributes) {
                 "' and '" +
                 typeof parents[1] +
                 "'." +
-                "\nPossible parent types: [[x,y,z]], [x,y,z]"
+                "\nPossible parent types: [[x,y,z], text], [x,y,z, text]"
         );
         //  "\nPossible parent types: [[x,y,z]], [x,y,z], [element,transformation]"); // TODO
     }

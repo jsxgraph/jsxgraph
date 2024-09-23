@@ -187,7 +187,7 @@ JXG.extend(
 );
 
 /**
- * @class This element creates a 3D parametric curves.
+ * @class This element creates a 3D parametric curve.
  * @pseudo
  * @description A 3D parametric curve is defined by a function
  *    <i>F: R<sup>1</sup> &rarr; R<sup>3</sup></i>.
