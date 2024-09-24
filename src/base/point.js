@@ -771,7 +771,7 @@ JXG.createIntersectionPoint = function (board, parents, attributes) {
  * <script type="text/javascript">
  *     (function() {
  *         var board = JXG.JSXGraph.initBoard('JXG033f15b0-f5f1-4003-ab6a-b7e13e867fbd',
- *             {boundingbox: [-2, 2, 2, -2], axis: true, showcopyright: false, shownavigation: false});
+ *             {boundingbox: [-2, 2, 2, -2], axis: false, showcopyright: false, shownavigation: false});
  *           var curve = board.create('implicitcurve', ['-(y**2) + x**3 - 2 * x + 1'], { strokeWidth: 2 });
  *           var A = board.create('glider', [-1.5, 1, curve]);
  *           var B = board.create('glider', [0.5, 0.5, curve]);
