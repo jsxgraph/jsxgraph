@@ -1970,7 +1970,8 @@ JXG.registerElement("axis", JXG.createAxis);
  */
 JXG.createTangent = function (board, parents, attributes) {
     var p, c, j, el, tangent, attr,
-        getCurveTangentDir;
+        getCurveTangentDir,
+        res, isTransformed, slides= [];
 
     if (parents.length === 1) {
         // One argument: glider on line, circle or curve
@@ -2015,13 +2016,27 @@ JXG.createTangent = function (board, parents, attributes) {
         c.elementClass === Const.OBJECT_CLASS_CURVE &&
         c.type !== Const.OBJECT_TYPE_CONIC
     ) {
-        if (Type.evaluate(c.visProp.curvetype) !== "plot") {
+        res = c.getTransformationSource();
+        isTransformed = res[0];
+        if (isTransformed) {
+            // Curve is result of a transformation
+            slides.push(c);
+            while (res[0] && Type.exists(res[1]._transformationSource)) {
+                slides.push(res[1]);
+                res = res[1].getTransformationSource();
+            }
+        }
+
+        if (Type.evaluate(c.visProp.curvetype) !== "plot" || isTransformed) {
+            // Functiongraph or parametric curve or
+            // transformed curve thereof.
             tangent = board.create(
                 "line",
                 [
                     function () {
                         var g = c.X,
                             f = c.Y,
+                            li, i, c_org, invMat, po,
                             t;
 
                         if (p.type === Const.OBJECT_TYPE_GLIDER) {
@@ -2032,11 +2047,31 @@ JXG.createTangent = function (board, parents, attributes) {
                             t = Geometry.projectPointToCurve(p, c, board)[1];
                         }
 
-                        return [
-                            -p.X() * Numerics.D(f)(t) + p.Y() * Numerics.D(g)(t),
-                            Numerics.D(c.Y)(t),
-                            -Numerics.D(c.X)(t)
+                        po = p.Coords(true);
+
+                        if (isTransformed) {
+                            c_org = slides[0]._transformationSource;
+                            g = c_org.X;
+                            f = c_org.Y;
+                            for (i = 0; i < slides.length; i ++) {
+                                po = Mat.matVecMult(slides[i].transformMat, po);
+                            }
+                        }
+
+                        li = [
+                            -po[1] * Numerics.D(f)(t) + po[2] * Numerics.D(g)(t),
+                             po[0] * Numerics.D(f)(t),
+                            -po[0] * Numerics.D(g)(t)
                         ];
+
+                        if (isTransformed) {
+                            for (i = 0; i < slides.length; i ++) {
+                                invMat = Mat.transpose(Mat.inverse(slides[i].transformMat));
+                                li = Mat.matVecMult(invMat, li);
+                            }
+                        }
+
+                        return li;
                     }
                 ],
                 attr
@@ -2046,7 +2081,7 @@ JXG.createTangent = function (board, parents, attributes) {
             // this is required for the geogebra reader to display a slope
             tangent.glider = p;
         } else {
-            // curveType 'plot'
+            // curveType 'plot': discrete data
             /**
              * @ignore
              *
@@ -2061,23 +2096,23 @@ JXG.createTangent = function (board, parents, attributes) {
              * the glider p and [1, p.X() + dx, p.Y() + dy]
              *
              */
-            getCurveTangentDir = function (position, curve, num) {
+            getCurveTangentDir = function (position, c, num) {
                 var i = Math.floor(position),
                     p1, p2, t, A, B, C, D, dx, dy, d,
                     points, le;
 
-                if (curve.bezierDegree === 1) {
-                    if (i === curve.numberPoints - 1) {
+                if (c.bezierDegree === 1) {
+                    if (i === c.numberPoints - 1) {
                         i--;
                     }
-                } else if (curve.bezierDegree === 3) {
+                } else if (c.bezierDegree === 3) {
                     // i is start of the Bezier segment
                     // t is the position in the Bezier segment
-                    if (curve.elType === 'sector') {
-                        points = curve.points.slice(3, curve.numberPoints - 3);
+                    if (c.elType === 'sector') {
+                        points = c.points.slice(3, c.numberPoints - 3);
                         le = points.length;
                     } else {
-                        points = curve.points;
+                        points = c.points;
                         le = points.length;
                     }
                     i = Math.floor((position * (le - 1)) / 3) * 3;
@@ -2096,9 +2131,9 @@ JXG.createTangent = function (board, parents, attributes) {
 
                 // The curve points are transformed (if there is a transformation)
                 // c.X(i) is not transformed.
-                if (curve.bezierDegree === 1) {
-                    p1 = curve.points[i].usrCoords;
-                    p2 = curve.points[i + 1].usrCoords;
+                if (c.bezierDegree === 1) {
+                    p1 = c.points[i].usrCoords;
+                    p2 = c.points[i + 1].usrCoords;
                 } else {
                     A = points[i].usrCoords;
                     B = points[i + 1].usrCoords;

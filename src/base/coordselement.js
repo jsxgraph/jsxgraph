@@ -479,6 +479,8 @@ JXG.extend(
                     // Handle the case if the curve comes from a transformation of a continuous curve.
                     if (slide.transformations.length > 0) {
                         isTransformed = false;
+                        // TODO this might buggy, see the recursion
+                        // in line.js getCurveTangentDir
                         res = slide.getTransformationSource();
                         if (res[0]) {
                             isTransformed = res[0];
