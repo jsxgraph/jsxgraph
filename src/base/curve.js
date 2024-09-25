@@ -3243,19 +3243,19 @@ JXG.registerElement("boxplot", JXG.createBoxPlot);
  * </script><pre>
  *
  * @example
- *     var niveauline = [];
- *     niveauline = [0.5, 1, 1.5, 2];
- *     for (let i = 0; i < niveauline.length; i++) {
- *         board.create("implicitcurve", [
- *             (x, y) => x ** .5 * y ** .5 - niveauline[i],
- *             [0.25, 4, 3, 0.5]     // Domain
- *         ], {
- *             strokeWidth: 2,
- *             strokeColor: JXG.palette.red,
- *             strokeOpacity: (1 + i) / niveauline.length,
- *             needsRegularUpdate: false
- *         });
- *     }
+ * var niveauline = [];
+ * niveauline = [0.5, 1, 1.5, 2];
+ * for (let i = 0; i < niveauline.length; i++) {
+ *     board.create("implicitcurve", [
+ *         (x, y) => x ** .5 * y ** .5 - niveauline[i],
+ *         [0.25, 4, 3, 0.5]     // Domain
+ *     ], {
+ *         strokeWidth: 2,
+ *         strokeColor: JXG.palette.red,
+ *         strokeOpacity: (1 + i) / niveauline.length,
+ *         needsRegularUpdate: false
+ *     });
+ * }
  *
  * </pre><div id="JXGccee9aab-6dd9-4a79-827d-3164f70cc6a1" class="jxgbox" style="width: 300px; height: 300px;"></div>
  * <script type="text/javascript">
