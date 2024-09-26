@@ -727,7 +727,7 @@ JXG.createIntersectionPoint = function (board, parents, attributes) {
  * var p2 = board.create('otherintersection', [c1, l1, p1]);
  * </pre><div class="jxgbox" id="JXG45e25f12-a1de-4257-a466-27a2ae73614c" style="width: 300px; height: 300px;"></div>
  * <script type="text/javascript">
- *   var ipex2_board = JXG.JSXGraph.initBoard('JXG45e25f12-a1de-4257-a466-27a2ae73614c', {boundingbox: [-1, 7, 7, -1], axis: true, showcopyright: false, shownavigation: false});
+ *   var ipex2_board = JXG.JSXGraph.initBoard('JXG45e25f12-a1de-4257-a466-27a2ae73614c', {boundingbox: [-1, 7, 7, -1], axis: false, showcopyright: false, shownavigation: false});
  *   var ipex2_p1 = ipex2_board.create('point', [4.0, 4.0]);
  *   var ipex2_c1 = ipex2_board.create('circle', [ipex2_p1, 2.0]);
  *   var ipex2_p2 = ipex2_board.create('point', [1.0, 1.0]);
@@ -749,7 +749,7 @@ JXG.createIntersectionPoint = function (board, parents, attributes) {
  * <script type="text/javascript">
  *     (function() {
  *         var board = JXG.JSXGraph.initBoard('JXGdb5c974c-3092-4cdf-b5ef-d0af4a912581',
- *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
+ *             {boundingbox: [-8, 8, 8,-8], axis: false, showcopyright: false, shownavigation: false});
  *           var c1 = board.create('circle', [[0, 0], 3]);
  *           var c2 = board.create('circle', [[2, 2], 3]);
  *
@@ -771,7 +771,7 @@ JXG.createIntersectionPoint = function (board, parents, attributes) {
  * <script type="text/javascript">
  *     (function() {
  *         var board = JXG.JSXGraph.initBoard('JXG033f15b0-f5f1-4003-ab6a-b7e13e867fbd',
- *             {boundingbox: [-2, 2, 2, -2], axis: true, showcopyright: false, shownavigation: false});
+ *             {boundingbox: [-2, 2, 2, -2], axis: false, showcopyright: false, shownavigation: false});
  *           var curve = board.create('implicitcurve', ['-(y**2) + x**3 - 2 * x + 1'], { strokeWidth: 2 });
  *           var A = board.create('glider', [-1.5, 1, curve]);
  *           var B = board.create('glider', [0.5, 0.5, curve]);
