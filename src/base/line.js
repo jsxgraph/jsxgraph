@@ -2551,7 +2551,7 @@ JXG.createNormal = function (board, parents, attributes) {
                         p1[2] * p2[1] - p1[1] * p2[2],
                         p2[2] - p1[2],
                         p1[1] - p2[1]
-                    ]
+                    ];
                 }
 
                 switch (num) {
@@ -2578,8 +2578,7 @@ JXG.createNormal = function (board, parents, attributes) {
                             t = Geometry.projectPointToCurve(p, c, board)[1];
                         }
 
-                        var li = getCurveNormalDir(t, c);
-                        return li;
+                        return getCurveNormalDir(t, c);
                     }
                 ],
                 attr
