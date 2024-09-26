@@ -1241,16 +1241,9 @@ JXG.createNormal = function (board, parents, attributes) {
                     function () {
                         var i = Math.floor(p.position),
                             lbda = p.position - i,
-                            p1,
-                            p2,
-                            t,
-                            A,
-                            B,
-                            C,
-                            D,
-                            dx,
-                            dy,
-                            d;
+                            p1, p2, t,
+                            A, B, C, D,
+                            dx, dy, d;
 
                         if (c.bezierdegree === 1) {
                             if (i === c.numberPoints - 1) {
@@ -1303,16 +1296,9 @@ JXG.createNormal = function (board, parents, attributes) {
                     },
                     function () {
                         var i = Math.floor(p.position),
-                            p1,
-                            p2,
-                            t,
-                            A,
-                            B,
-                            C,
-                            D,
-                            dx,
-                            dy,
-                            d;
+                            p1, p2, t,
+                            A, B, C, D,
+                            dx, dy, d;
 
                         if (c.bezierdegree === 1) {
                             if (i === c.numberPoints - 1) {
@@ -1359,16 +1345,9 @@ JXG.createNormal = function (board, parents, attributes) {
                     },
                     function () {
                         var i = Math.floor(p.position),
-                            p1,
-                            p2,
-                            t,
-                            A,
-                            B,
-                            C,
-                            D,
-                            dx,
-                            dy,
-                            d;
+                            p1, p2, t,
+                            A, B, C, D,
+                            dx, dy, d;
 
                         if (c.bezierdegree === 1) {
                             if (i === c.numberPoints - 1) {

@@ -153,7 +153,8 @@ New features
 - New element `vectorfield3d`
 - Add board attribute `theme`
 - Add theme `mono_thin`
-- New function `JXG.stack2jsxgraph`New method JXG.Math.Numerics.polzeros
+- New function `JXG.stack2jsxgraph`
+- New method JXG.Math.Numerics.polzeros
 - Extend method `Value` for angle, arc and sector.
 - New method `Coords` for point, image and text
 

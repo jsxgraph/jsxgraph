@@ -2020,6 +2020,8 @@ JXG.createTangent = function (board, parents, attributes) {
         isTransformed = res[0];
         if (isTransformed) {
             // Curve is result of a transformation
+            // We recursively collect all curves from which
+            // the curve is transformed.
             slides.push(c);
             while (res[0] && Type.exists(res[1]._transformationSource)) {
                 slides.push(res[1]);
@@ -2047,17 +2049,31 @@ JXG.createTangent = function (board, parents, attributes) {
                             t = Geometry.projectPointToCurve(p, c, board)[1];
                         }
 
+                        // po are the coordinates of the point
+                        // on the "original" curve. That is the curve or
+                        // the original curve which is transformed (maybe multiple times)
+                        // to this curve.
+                        // t is the position of the point on the "original" curve
                         po = p.Coords(true);
-
                         if (isTransformed) {
-                            c_org = slides[0]._transformationSource;
+                            c_org = slides[slides.length - 1]._transformationSource;
                             g = c_org.X;
                             f = c_org.Y;
-                            for (i = 0; i < slides.length; i ++) {
-                                po = Mat.matVecMult(slides[i].transformMat, po);
+                            for (i = 0; i < slides.length; i++) {
+                                slides[i].updateTransformMatrix();
+                                invMat = Mat.inverse(slides[i].transformMat);
+                                po = Mat.matVecMult(invMat, po);
+                            }
+
+                            if (p.type !== Const.OBJECT_TYPE_GLIDER) {
+                                po[1] /= po[0];
+                                po[2] /= po[0];
+                                po[0] /= po[0];
+                                t = Geometry.projectCoordsToCurve(po[1], po[2], 0, c_org, board)[1];
                             }
                         }
 
+                        // li are the coordinates of the line on the "original" curve
                         li = [
                             -po[1] * Numerics.D(f)(t) + po[2] * Numerics.D(g)(t),
                              po[0] * Numerics.D(f)(t),
@@ -2065,7 +2081,8 @@ JXG.createTangent = function (board, parents, attributes) {
                         ];
 
                         if (isTransformed) {
-                            for (i = 0; i < slides.length; i ++) {
+                            // Transform the line to the transformed curve
+                            for (i = slides.length - 1; i >= 0; i--) {
                                 invMat = Mat.transpose(Mat.inverse(slides[i].transformMat));
                                 li = Mat.matVecMult(invMat, li);
                             }
