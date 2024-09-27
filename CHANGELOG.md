@@ -1,3 +1,41 @@
+1.10.0
+===
+
+New features
+-----------
+
+- new element `tangentTo`
+- Support 3d axes position `'border'`
+- New element `text3d`
+- New element `ticks3d`
+- random numbers with Pareto distribution
+
+Improvements
+------------
+
+- add attribute `autoPositionMaxDistance` to labels
+- API docs
+- `JXG.Math.Numerics.histogram`
+- Makefile: use of gawk
+- Gradual improvement of 3D functionality
+- Enable dragging of 3D lines
+- Improve stability of JXG.Math.Numerics.fzero, JXG.Math.Numerics.fminbr
+- Stability of implicit curves
+- implicit curves: add parameter "domain"
+- Enable input of points for JXG.Math.Geometry.det3p
+
+Bug fixes
+---------
+
+- glider on parametrized curves
+- line label
+- 3D view attributes
+- `removeAllTicks()`
+- `SVG.dumpToCanvas`, `SVG.dumpToDataURI`
+- transformation of images. Disable viewport attempt
+- Zooming with ID in JSXGraph div
+- tangents and normals on transformed curves
+
 1.9.2
 ===
 
@@ -53,7 +91,7 @@ Bug fixes
 New features
 -----------
 
-- 3D: now, beside parallel projection also central projection is supported 
+- 3D: now, beside parallel projection also central projection is supported
 - new element `sphere3d`
 - new element `intersectionline3d`
 - new element `circle3d`
@@ -88,7 +126,7 @@ Bug fixes
 
 - keyboard control 3D view
 - lower / upper case  problem in `providePoints`
-- setting of Riemann sum type 
+- setting of Riemann sum type
 - grid: handling of attributes
 - grid: remove unused unit `abs`
 - 3D elevation speed
