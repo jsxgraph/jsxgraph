@@ -330,7 +330,7 @@ JXG.extend(
             // Compute the actual length of the segment
             d = this.point1.Dist(this.point2);
             // Determine the length the segment ought to have
-            d_new =  (Type.evaluate(this.visProp.nonnegativeonly)) ?
+            d_new = (Type.evaluate(this.visProp.nonnegativeonly)) ?
                 Math.max(0.0, this.fixedLength()) :
                 Math.abs(this.fixedLength());
 
@@ -443,9 +443,9 @@ JXG.extend(
                 this.isReal =
                     !isNaN(
                         this.point1.coords.usrCoords[1] +
-                            this.point1.coords.usrCoords[2] +
-                            this.point2.coords.usrCoords[1] +
-                            this.point2.coords.usrCoords[2]
+                        this.point1.coords.usrCoords[2] +
+                        this.point2.coords.usrCoords[1] +
+                        this.point2.coords.usrCoords[2]
                     ) && Mat.innerProduct(this.stdform, this.stdform, 3) >= Mat.eps * Mat.eps;
 
                 if (
@@ -1210,11 +1210,11 @@ JXG.createLine = function (board, parents, attributes) {
         } else {
             throw new Error(
                 "JSXGraph: Can't create line with parent types '" +
-                    typeof parents[0] +
-                    "' and '" +
-                    typeof parents[1] +
-                    "'." +
-                    "\nPossible parent types: [point,point], [[x1,y1],[x2,y2]], [a,b,c]"
+                typeof parents[0] +
+                "' and '" +
+                typeof parents[1] +
+                "'." +
+                "\nPossible parent types: [point,point], [[x1,y1],[x2,y2]], [a,b,c]"
             );
         }
 
@@ -1239,11 +1239,11 @@ JXG.createLine = function (board, parents, attributes) {
         } else {
             throw new Error(
                 "JSXGraph: Can't create line with parent types '" +
-                    typeof parents[0] +
-                    "' and '" +
-                    typeof parents[1] +
-                    "'." +
-                    "\nPossible parent types: [point,point], [[x1,y1],[x2,y2]], [a,b,c]"
+                typeof parents[0] +
+                "' and '" +
+                typeof parents[1] +
+                "'." +
+                "\nPossible parent types: [point,point], [[x1,y1],[x2,y2]], [a,b,c]"
             );
         }
 
@@ -1278,13 +1278,13 @@ JXG.createLine = function (board, parents, attributes) {
             } else {
                 throw new Error(
                     "JSXGraph: Can't create line with parent types '" +
-                        typeof parents[0] +
-                        "' and '" +
-                        typeof parents[1] +
-                        "' and '" +
-                        typeof parents[2] +
-                        "'." +
-                        "\nPossible parent types: [point,point], [[x1,y1],[x2,y2]], [a,b,c]"
+                    typeof parents[0] +
+                    "' and '" +
+                    typeof parents[1] +
+                    "' and '" +
+                    typeof parents[2] +
+                    "'." +
+                    "\nPossible parent types: [point,point], [[x1,y1],[x2,y2]], [a,b,c]"
                 );
             }
         }
@@ -1293,44 +1293,44 @@ JXG.createLine = function (board, parents, attributes) {
         attr = Type.copyAttributes(attributes, board.options, "line", "point1");
         if (isDraggable) {
             p1 = board.create("point", [
-                    c[2]() * c[2]() + c[1]() * c[1](),
-                    c[2]() - c[1]() * c[0]() + c[2](),
-                    -c[1]() - c[2]() * c[0]() - c[1]()
-                ], attr);
+                c[2]() * c[2]() + c[1]() * c[1](),
+                c[2]() - c[1]() * c[0]() + c[2](),
+                -c[1]() - c[2]() * c[0]() - c[1]()
+            ], attr);
         } else {
             p1 = board.create("point", [
-                    function () {
-                        return (c[2]() * c[2]() + c[1]() * c[1]()) * 0.5;
-                    },
-                    function () {
-                        return (c[2]() - c[1]() * c[0]() + c[2]()) * 0.5;
-                    },
-                    function () {
-                        return (-c[1]() - c[2]() * c[0]() - c[1]()) * 0.5;
-                    }
-                ], attr);
+                function () {
+                    return (c[2]() * c[2]() + c[1]() * c[1]()) * 0.5;
+                },
+                function () {
+                    return (c[2]() - c[1]() * c[0]() + c[2]()) * 0.5;
+                },
+                function () {
+                    return (-c[1]() - c[2]() * c[0]() - c[1]()) * 0.5;
+                }
+            ], attr);
         }
 
         // point 2: (b^2+c^2,-ba+c,-ca-b)
         attr = Type.copyAttributes(attributes, board.options, "line", "point2");
         if (isDraggable) {
             p2 = board.create("point", [
-                    c[2]() * c[2]() + c[1]() * c[1](),
-                    -c[1]() * c[0]() + c[2](),
-                    -c[2]() * c[0]() - c[1]()
-                ], attr);
+                c[2]() * c[2]() + c[1]() * c[1](),
+                -c[1]() * c[0]() + c[2](),
+                -c[2]() * c[0]() - c[1]()
+            ], attr);
         } else {
             p2 = board.create("point", [
-                    function () {
-                        return c[2]() * c[2]() + c[1]() * c[1]();
-                    },
-                    function () {
-                        return -c[1]() * c[0]() + c[2]();
-                    },
-                    function () {
-                        return -c[2]() * c[0]() - c[1]();
-                    }
-                ], attr);
+                function () {
+                    return c[2]() * c[2]() + c[1]() * c[1]();
+                },
+                function () {
+                    return -c[1]() * c[0]() + c[2]();
+                },
+                function () {
+                    return -c[2]() * c[0]() - c[1]();
+                }
+            ], attr);
         }
 
         // If the line will have a glider and board.suspendUpdate() has been called, we
@@ -1369,29 +1369,29 @@ JXG.createLine = function (board, parents, attributes) {
 
         attr = Type.copyAttributes(attributes, board.options, "line", "point1");
         p1 = board.create("point", [
-                function () {
-                    var c = ps();
+            function () {
+                var c = ps();
 
-                    return [
-                        (c[2] * c[2] + c[1] * c[1]) * 0.5,
-                        (c[2] - c[1] * c[0] + c[2]) * 0.5,
-                        (-c[1] - c[2] * c[0] - c[1]) * 0.5
-                    ];
-                }
-            ], attr);
+                return [
+                    (c[2] * c[2] + c[1] * c[1]) * 0.5,
+                    (c[2] - c[1] * c[0] + c[2]) * 0.5,
+                    (-c[1] - c[2] * c[0] - c[1]) * 0.5
+                ];
+            }
+        ], attr);
 
         attr = Type.copyAttributes(attributes, board.options, "line", "point2");
         p2 = board.create("point", [
-                function () {
-                    var c = ps();
+            function () {
+                var c = ps();
 
-                    return [
-                        c[2] * c[2] + c[1] * c[1],
-                        -c[1] * c[0] + c[2],
-                        -c[2] * c[0] - c[1]
-                    ];
-                }
-            ], attr);
+                return [
+                    c[2] * c[2] + c[1] * c[1],
+                    -c[1] * c[0] + c[2],
+                    -c[2] * c[0] - c[1]
+                ];
+            }
+        ], attr);
 
         attr = Type.copyAttributes(attributes, board.options, "line");
         el = new JXG.Line(board, p1, p2, attr);
@@ -1402,11 +1402,11 @@ JXG.createLine = function (board, parents, attributes) {
     } else {
         throw new Error(
             "JSXGraph: Can't create line with parent types '" +
-                typeof parents[0] +
-                "' and '" +
-                typeof parents[1] +
-                "'." +
-                "\nPossible parent types: [point,point], [[x1,y1],[x2,y2]], [a,b,c]"
+            typeof parents[0] +
+            "' and '" +
+            typeof parents[1] +
+            "'." +
+            "\nPossible parent types: [point,point], [[x1,y1],[x2,y2]], [a,b,c]"
         );
     }
 
@@ -1503,9 +1503,9 @@ JXG.createSegment = function (board, parents, attributes) {
         } catch (err) {
             throw new Error(
                 "JSXGraph: Can't create segment with third parent type '" +
-                    typeof parents[2] +
-                    "'." +
-                    "\nPossible third parent types: number or function"
+                typeof parents[2] +
+                "'." +
+                "\nPossible third parent types: number or function"
             );
         }
         // if (Type.isNumber(parents[2])) {
@@ -1971,7 +1971,8 @@ JXG.registerElement("axis", JXG.createAxis);
 JXG.createTangent = function (board, parents, attributes) {
     var p, c, j, el, tangent, attr,
         getCurveTangentDir,
-        res, isTransformed, slides= [];
+        res, isTransformed,
+        slides = [];
 
     if (parents.length === 1) {
         // One argument: glider on line, circle or curve
@@ -1990,21 +1991,21 @@ JXG.createTangent = function (board, parents, attributes) {
         } else {
             throw new Error(
                 "JSXGraph: Can't create tangent with parent types '" +
-                    typeof parents[0] +
-                    "' and '" +
-                    typeof parents[1] +
-                    "'." +
-                    "\nPossible parent types: [glider|point], [point,line|curve|circle|conic]"
-            );
-        }
-    } else {
-        throw new Error(
-            "JSXGraph: Can't create tangent with parent types '" +
                 typeof parents[0] +
                 "' and '" +
                 typeof parents[1] +
                 "'." +
                 "\nPossible parent types: [glider|point], [point,line|curve|circle|conic]"
+            );
+        }
+    } else {
+        throw new Error(
+            "JSXGraph: Can't create tangent with parent types '" +
+            typeof parents[0] +
+            "' and '" +
+            typeof parents[1] +
+            "'." +
+            "\nPossible parent types: [glider|point], [point,line|curve|circle|conic]"
         );
     }
 
@@ -2038,6 +2039,7 @@ JXG.createTangent = function (board, parents, attributes) {
                     function () {
                         var g = c.X,
                             f = c.Y,
+                            df, dg,
                             li, i, c_org, invMat, po,
                             t;
 
@@ -2074,10 +2076,12 @@ JXG.createTangent = function (board, parents, attributes) {
                         }
 
                         // li are the coordinates of the line on the "original" curve
+                        df = Numerics.D(f)(t);
+                        dg = Numerics.D(g)(t);
                         li = [
-                            -po[1] * Numerics.D(f)(t) + po[2] * Numerics.D(g)(t),
-                             po[0] * Numerics.D(f)(t),
-                            -po[0] * Numerics.D(g)(t)
+                            -po[1] * df + po[2] * dg,
+                            po[0] * df,
+                            -po[0] * dg
                         ];
 
                         if (isTransformed) {
@@ -2288,6 +2292,420 @@ JXG.createTangent = function (board, parents, attributes) {
 };
 
 /**
+ * @class Constructs a normal.
+ * @pseudo
+ * @description A normal is a line through a given point on an element of type line, circle, curve, or turtle and orthogonal to that object.
+ * @constructor
+ * @name Normal
+ * @type JXG.Line
+ * @augments JXG.Line
+ * @throws {Error} If the element cannot be constructed with the given parent objects an exception is thrown.
+ * @param {JXG.Line,JXG.Circle,JXG.Curve,JXG.Turtle_JXG.Point} o,p The constructed line contains p which lies on the object and is orthogonal
+ * to the tangent to the object in the given point.
+ * @param {Glider} p Works like above, however the object is given by {@link JXG.CoordsElement#slideObject}.
+ * @example
+ * // Create a normal to a circle.
+ * var p1 = board.create('point', [2.0, 2.0]);
+ * var p2 = board.create('point', [3.0, 2.0]);
+ * var c1 = board.create('circle', [p1, p2]);
+ *
+ * var norm1 = board.create('normal', [c1, p2]);
+ * </pre><div class="jxgbox" id="JXG4154753d-3d29-40fb-a860-0b08aa4f3743" style="width: 400px; height: 400px;"></div>
+ * <script type="text/javascript">
+ *   var nlex1_board = JXG.JSXGraph.initBoard('JXG4154753d-3d29-40fb-a860-0b08aa4f3743', {boundingbox: [-1, 9, 9, -1], axis: true, showcopyright: false, shownavigation: false});
+ *   var nlex1_p1 = nlex1_board.create('point', [2.0, 2.0]);
+ *   var nlex1_p2 = nlex1_board.create('point', [3.0, 2.0]);
+ *   var nlex1_c1 = nlex1_board.create('circle', [nlex1_p1, nlex1_p2]);
+ *
+ *   // var nlex1_p3 = nlex1_board.create('point', [1.0, 2.0]);
+ *   var nlex1_norm1 = nlex1_board.create('normal', [nlex1_c1, nlex1_p2]);
+ * </script><pre>
+ */
+JXG.createNormal = function (board, parents, attributes) {
+    var p, c, l, i, attr, pp, attrp,
+        getCurveNormalDir,
+        res, isTransformed,
+        slides = [];
+
+    for (i = 0; i < parents.length; ++i) {
+        parents[i] = board.select(parents[i]);
+    }
+    // One arguments: glider on line, circle or curve
+    if (parents.length === 1) {
+        p = parents[0];
+        c = p.slideObject;
+        // Two arguments: (point,line), (point,circle), (line,point) or (circle,point)
+    } else if (parents.length === 2) {
+        if (Type.isPointType(board, parents[0])) {
+            p = Type.providePoints(board, [parents[0]], attributes, "point")[0];
+            c = parents[1];
+        } else if (Type.isPointType(board, parents[1])) {
+            c = parents[0];
+            p = Type.providePoints(board, [parents[1]], attributes, "point")[0];
+        } else {
+            throw new Error(
+                "JSXGraph: Can't create normal with parent types '" +
+                typeof parents[0] +
+                "' and '" +
+                typeof parents[1] +
+                "'." +
+                "\nPossible parent types: [point,line], [point,circle], [glider]"
+            );
+        }
+    } else {
+        throw new Error(
+            "JSXGraph: Can't create normal with parent types '" +
+            typeof parents[0] +
+            "' and '" +
+            typeof parents[1] +
+            "'." +
+            "\nPossible parent types: [point,line], [point,circle], [glider]"
+        );
+    }
+
+    attr = Type.copyAttributes(attributes, board.options, "normal");
+    if (c.elementClass === Const.OBJECT_CLASS_LINE) {
+        // Private point
+        attrp = Type.copyAttributes(attributes, board.options, "normal", "point");
+        pp = board.create(
+            "point",
+            [
+                function () {
+                    var p = Mat.crossProduct([1, 0, 0], c.stdform);
+                    return [p[0], -p[2], p[1]];
+                }
+            ],
+            attrp
+        );
+        pp.isDraggable = true;
+
+        l = board.create("line", [p, pp], attr);
+
+        /**
+         * A helper point used to create a normal to a {@link JXG.Line} object. For normals to circles or curves this
+         * element is <tt>undefined</tt>.
+         * @type JXG.Point
+         * @name point
+         * @memberOf Normal.prototype
+         */
+        l.point = pp;
+        l.subs = {
+            point: pp
+        };
+        l.inherits.push(pp);
+    } else if (c.elementClass === Const.OBJECT_CLASS_CIRCLE) {
+        l = board.create("line", [c.midpoint, p], attr);
+    } else if (c.elementClass === Const.OBJECT_CLASS_CURVE) {
+        res = c.getTransformationSource();
+        isTransformed = res[0];
+        if (isTransformed) {
+            // Curve is result of a transformation
+            // We recursively collect all curves from which
+            // the curve is transformed.
+            slides.push(c);
+            while (res[0] && Type.exists(res[1]._transformationSource)) {
+                slides.push(res[1]);
+                res = res[1].getTransformationSource();
+            }
+        }
+
+        if (Type.evaluate(c.visProp.curvetype) !== "plot" || isTransformed) {
+            // Functiongraph or parametric curve or
+            // transformed curve thereof.
+            l = board.create(
+                "line",
+                [
+                    function () {
+                        var g = c.X,
+                            f = c.Y,
+                            df, dg,
+                            li, i, c_org, invMat, po,
+                            t;
+
+                        if (p.type === Const.OBJECT_TYPE_GLIDER) {
+                            t = p.position;
+                        } else if (Type.evaluate(c.visProp.curvetype) === 'functiongraph') {
+                            t = p.X();
+                        } else {
+                            t = Geometry.projectPointToCurve(p, c, board)[1];
+                        }
+
+                        // po are the coordinates of the point
+                        // on the "original" curve. That is the curve or
+                        // the original curve which is transformed (maybe multiple times)
+                        // to this curve.
+                        // t is the position of the point on the "original" curve
+                        po = p.Coords(true);
+                        if (isTransformed) {
+                            c_org = slides[slides.length - 1]._transformationSource;
+                            g = c_org.X;
+                            f = c_org.Y;
+                            for (i = 0; i < slides.length; i++) {
+                                slides[i].updateTransformMatrix();
+                                invMat = Mat.inverse(slides[i].transformMat);
+                                po = Mat.matVecMult(invMat, po);
+                            }
+
+                            if (p.type !== Const.OBJECT_TYPE_GLIDER) {
+                                po[1] /= po[0];
+                                po[2] /= po[0];
+                                po[0] /= po[0];
+                                t = Geometry.projectCoordsToCurve(po[1], po[2], 0, c_org, board)[1];
+                            }
+                        }
+
+                        df = Numerics.D(f)(t);
+                        dg = Numerics.D(g)(t);
+                        li = [
+                            -po[1] * dg - po[2] * df,
+                            po[0] * dg,
+                            po[0] * df
+                        ];
+
+                        if (isTransformed) {
+                            // Transform the line to the transformed curve
+                            for (i = slides.length - 1; i >= 0; i--) {
+                                invMat = Mat.transpose(Mat.inverse(slides[i].transformMat));
+                                li = Mat.matVecMult(invMat, li);
+                            }
+                        }
+
+                        return li;
+                    }
+                ],
+                attr
+            );
+        } else {
+            // curveType 'plot': discrete data
+            getCurveNormalDir = function (position, c, num) {
+                var i = Math.floor(position),
+                    lbda,
+                    p1, p2, t, A, B, C, D, dx, dy, d,
+                    li, p_org, pp,
+                    points, le;
+
+
+                if (c.bezierDegree === 1) {
+                    if (i === c.numberPoints - 1) {
+                        i--;
+                    }
+                    t = position;
+                } else if (c.bezierDegree === 3) {
+                    // i is start of the Bezier segment
+                    // t is the position in the Bezier segment
+                    if (c.elType === 'sector') {
+                        points = c.points.slice(3, c.numberPoints - 3);
+                        le = points.length;
+                    } else {
+                        points = c.points;
+                        le = points.length;
+                    }
+                    i = Math.floor((position * (le - 1)) / 3) * 3;
+                    t = (position * (le - 1) - i) / 3;
+                    if (i >= le - 1) {
+                        i = le - 4;
+                        t = 1;
+                    }
+                } else {
+                    return 0;
+                }
+
+                if (i < 0) {
+                    return 1;
+                }
+
+                lbda = t - i;
+                if (c.bezierDegree === 1) {
+                    p1 = c.points[i].usrCoords;
+                    p2 = c.points[i + 1].usrCoords;
+                    p_org = [
+                        p1[0] + lbda * (p2[0] - p1[0]),
+                        p1[1] + lbda * (p2[1] - p1[1]),
+                        p1[2] + lbda * (p2[2] - p1[2])
+                    ];
+                    li = Mat.crossProduct(p1, p2);
+                    pp = Mat.crossProduct([1, 0, 0], li);
+                    pp = [pp[0], -pp[2], pp[1]];
+                    li = Mat.crossProduct(p_org, pp);
+
+                } else {
+                    A = points[i].usrCoords;
+                    B = points[i + 1].usrCoords;
+                    C = points[i + 2].usrCoords;
+                    D = points[i + 3].usrCoords;
+                    dx =
+                        (1 - t) * (1 - t) * (B[1] - A[1]) +
+                        2 * (1 - t) * t * (C[1] - B[1]) +
+                        t * t * (D[1] - C[1]);
+                    dy =
+                        (1 - t) * (1 - t) * (B[2] - A[2]) +
+                        2 * (1 - t) * t * (C[2] - B[2]) +
+                        t * t * (D[2] - C[2]);
+                    d = Mat.hypot(dx, dy);
+                    dx /= d;
+                    dy /= d;
+                    p1 = p.coords.usrCoords;
+                    p2 = [1, p1[1] - dy, p1[2] + dx];
+
+                    li = [
+                        p1[2] * p2[1] - p1[1] * p2[2],
+                        p2[2] - p1[2],
+                        p1[1] - p2[1]
+                    ];
+                }
+
+                switch (num) {
+                    case 0:
+                        return li[0];
+                    case 1:
+                        return li[1];
+                    case 2:
+                        return li[2];
+                    default:
+                        return li;
+                }
+            };
+
+            l = board.create(
+                "line",
+                [
+                    function () {
+                        var t;
+
+                        if (p.type === Const.OBJECT_TYPE_GLIDER) {
+                            t = p.position;
+                        } else {
+                            t = Geometry.projectPointToCurve(p, c, board)[1];
+                        }
+
+                        return getCurveNormalDir(t, c);
+                    }
+                ],
+                attr
+            );
+            p.addChild(l);
+            l.glider = p;
+        }
+    } else if (c.type === Const.OBJECT_TYPE_TURTLE) {
+        l = board.create(
+            "line",
+            [
+                function () {
+                    var el,
+                        j,
+                        i = Math.floor(p.position),
+                        lbda = p.position - i;
+
+                    // run through all curves of this turtle
+                    for (j = 0; j < c.objects.length; j++) {
+                        el = c.objects[j];
+
+                        if (el.type === Const.OBJECT_TYPE_CURVE) {
+                            if (i < el.numberPoints) {
+                                break;
+                            }
+
+                            i -= el.numberPoints;
+                        }
+                    }
+
+                    if (i === el.numberPoints - 1) {
+                        i -= 1;
+                        lbda = 1;
+                    }
+
+                    if (i < 0) {
+                        return 1;
+                    }
+
+                    return (
+                        (el.Y(i) + lbda * (el.Y(i + 1) - el.Y(i))) * (el.Y(i) - el.Y(i + 1)) -
+                        (el.X(i) + lbda * (el.X(i + 1) - el.X(i))) * (el.X(i + 1) - el.X(i))
+                    );
+                },
+                function () {
+                    var el,
+                        j,
+                        i = Math.floor(p.position);
+
+                    // run through all curves of this turtle
+                    for (j = 0; j < c.objects.length; j++) {
+                        el = c.objects[j];
+                        if (el.type === Const.OBJECT_TYPE_CURVE) {
+                            if (i < el.numberPoints) {
+                                break;
+                            }
+
+                            i -= el.numberPoints;
+                        }
+                    }
+
+                    if (i === el.numberPoints - 1) {
+                        i -= 1;
+                    }
+
+                    if (i < 0) {
+                        return 0;
+                    }
+
+                    return el.X(i + 1) - el.X(i);
+                },
+                function () {
+                    var el,
+                        j,
+                        i = Math.floor(p.position);
+
+                    // run through all curves of this turtle
+                    for (j = 0; j < c.objects.length; j++) {
+                        el = c.objects[j];
+                        if (el.type === Const.OBJECT_TYPE_CURVE) {
+                            if (i < el.numberPoints) {
+                                break;
+                            }
+
+                            i -= el.numberPoints;
+                        }
+                    }
+
+                    if (i === el.numberPoints - 1) {
+                        i -= 1;
+                    }
+
+                    if (i < 0) {
+                        return 0;
+                    }
+
+                    return el.Y(i + 1) - el.Y(i);
+                }
+            ],
+            attr
+        );
+    } else {
+        throw new Error(
+            "JSXGraph: Can't create normal with parent types '" +
+            typeof parents[0] +
+            "' and '" +
+            typeof parents[1] +
+            "'." +
+            "\nPossible parent types: [point,line], [point,circle], [glider]"
+        );
+    }
+
+    l.elType = "normal";
+    l.setParents(parents);
+
+    if (Type.exists(p._is_new)) {
+        l.addChild(p);
+        delete p._is_new;
+    } else {
+        p.addChild(l);
+    }
+    c.addChild(l);
+
+    return l;
+};
+
+/**
  * @class This element is used to provide a constructor for the radical axis with respect to two circles with distinct centers.
  * The angular bisector of the polar lines of the circle centers with respect to the other circle is always the radical axis.
  * The radical axis passes through the intersection points when the circles intersect.
@@ -2333,11 +2751,11 @@ JXG.createRadicalAxis = function (board, parents, attributes) {
         // Failure
         throw new Error(
             "JSXGraph: Can't create 'radical axis' with parent types '" +
-                typeof parents[0] +
-                "' and '" +
-                typeof parents[1] +
-                "'." +
-                "\nPossible parent type: [circle,circle]"
+            typeof parents[0] +
+            "' and '" +
+            typeof parents[1] +
+            "'." +
+            "\nPossible parent type: [circle,circle]"
         );
     }
 
@@ -2453,11 +2871,11 @@ JXG.createPolarLine = function (board, parents, attributes) {
         // Failure
         throw new Error(
             "JSXGraph: Can't create 'polar line' with parent types '" +
-                typeof parents[0] +
-                "' and '" +
-                typeof parents[1] +
-                "'." +
-                "\nPossible parent type: [conic|circle,point], [point,conic|circle]"
+            typeof parents[0] +
+            "' and '" +
+            typeof parents[1] +
+            "'." +
+            "\nPossible parent type: [conic|circle,point], [point,conic|circle]"
         );
     }
 
@@ -2595,6 +3013,7 @@ JXG.createTangentTo = function (board, parents, attributes) {
  * @private
  */
 JXG.registerElement("tangent", JXG.createTangent);
+JXG.registerElement("normal", JXG.createNormal);
 JXG.registerElement('tangentto', JXG.createTangentTo);
 JXG.registerElement("polar", JXG.createTangent);
 JXG.registerElement("radicalaxis", JXG.createRadicalAxis);
