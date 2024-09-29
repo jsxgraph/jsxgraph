@@ -292,7 +292,7 @@ JXG.registerElement("parametricsurface3d", JXG.createParametricSurface3D);
  * @constructor
  * @type Object
  * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
- * @param {Function_Array_Array} F,rangeX,rangeY  F(x,y) is a function returning a number, rangeX is the array containing
+ * @param {Function,String_Array_Array} F,rangeX,rangeY  F(x,y) is a function returning a number (or a JessieCode string), rangeX is the array containing
  * lower and upper bound for the range of x, rangeY is the array containing
  * lower and upper bound for the range of y.
  * @example
@@ -363,7 +363,7 @@ JXG.createFunctiongraph3D = function (board, parents, attributes) {
         Y = function (u, v) {
             return v;
         },
-        Z = parents[1],
+        Z = Type.createFunction(parents[1], board, 'x, y'),
         range_u = parents[2],
         range_v = parents[3];
 
