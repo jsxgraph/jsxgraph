@@ -1018,6 +1018,7 @@ JXG.extend(Options, {
         ],
 
         infobox: {
+            strokeColor: '#888888',
             useKatex: false,
             useMathjax: false
         },
