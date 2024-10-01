@@ -2294,6 +2294,9 @@ JXG.createView3D = function (board, parents, attributes) {
     );
     view.inherits.push(view.bank_slide);
 
+    // Set special infobox attributes of view3d.infobox
+    view.board.infobox.setAttribute(attr.infobox);
+
     view.board.highlightInfobox = function (x, y, el) {
         var d, i, c3d, foot,
             pre = '<span style="color:black; font-size:200%">\u21C4 &nbsp;</span>',
