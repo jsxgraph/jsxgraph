@@ -2297,6 +2297,7 @@ JXG.createView3D = function (board, parents, attributes) {
     // Set special infobox attributes of view3d.infobox
     view.board.infobox.setAttribute(attr.infobox);
 
+    // 3d infobox: drag direction and coordinates
     view.board.highlightInfobox = function (x, y, el) {
         var d, i, c3d, foot,
             pre = '<span style="color:black; font-size:200%">\u21C4 &nbsp;</span>',
