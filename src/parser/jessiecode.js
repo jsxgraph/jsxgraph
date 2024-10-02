@@ -1,7 +1,7 @@
 /*
  JessieCode Interpreter and Compiler
 
-    Copyright 2011-2024
+    Copyright 2011-2023
         Michael Gerhaeuser,
         Alfred Wassermann
 
