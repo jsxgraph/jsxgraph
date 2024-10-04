@@ -1342,7 +1342,8 @@ Mat.Statistics = {
             range,
             s,
             counts = [],
-            bins = [];
+            bins = [],
+            no_bin = 0;        // Count of long tail elements not in histogram range
 
         // Evaluate number of bins
         num_bins = opt.bins || 10;
@@ -1377,12 +1378,14 @@ Mat.Statistics = {
             k = Math.floor((x[i] - mi) / delta);
             if (k >= 0 && k < num_bins) {
                 counts[k] += 1;
+            } else {
+                no_bin += 1;
             }
         }
 
         // Normalize if density===true
         if (opt.density) {
-            s = JXG.Math.Statistics.sum(counts);
+            s = JXG.Math.Statistics.sum(counts) + no_bin; // Normalize including long tail
             for (i = 0; i < num_bins; i++) {
                 counts[i] /= (s * delta);
                 // counts[i] /= s;
@@ -1393,7 +1396,7 @@ Mat.Statistics = {
         if (opt.cumulative) {
             if (opt.density) {
                 for (i = 0; i < num_bins; i++) {
-                    counts[i] *= delta;  // normalize
+                    counts[i] *= delta;  // Normalize
                 }
             } for (i = 1; i < num_bins; i++) {
                 counts[i] += counts[i - 1];
