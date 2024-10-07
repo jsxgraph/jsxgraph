@@ -4,37 +4,39 @@
 New features
 -----------
 
-- new element `tangentTo`
-- Support 3d axes position `'border'`
+- New element `tangentTo`
 - New element `text3d`
 - New element `ticks3d`
-- random numbers with Pareto distribution
+- Support 3d axes position `'border'`
+- New random numbers with Pareto distribution
 
 Improvements
 ------------
 
-- add attribute `autoPositionMaxDistance` to labels
-- API docs
-- `JXG.Math.Numerics.histogram`
-- Makefile: use of gawk
+- `JXG.Math.Numerics.histogram`: cumulative version
 - Gradual improvement of 3D functionality
 - Enable dragging of 3D lines
-- Improve stability of JXG.Math.Numerics.fzero, JXG.Math.Numerics.fminbr
+- Stability of `JXG.Math.Numerics.fzero`, `JXG.Math.Numerics.fminbr`
 - Stability of implicit curves
-- implicit curves: add parameter "domain"
-- Enable input of points for JXG.Math.Geometry.det3p
+- Implicit curves: add parameters `rangex` and `rangey`
+- Enable input of points for `JXG.Math.Geometry.det3p`
+- Add attribute `autoPositionMaxDistance` to labels
+- Unit tests for tangents and normals
+- API docs
+- Makefile: force use of gawk
 
 Bug fixes
 ---------
 
-- glider on parametrized curves
-- line label
+- Glider on parametrized curves
+- Line label
 - 3D view attributes
+- 3D infobox and drag icons with katex and mathjax
 - `removeAllTicks()`
 - `SVG.dumpToCanvas`, `SVG.dumpToDataURI`
-- transformation of images. Disable viewport attempt
+- Transformation of images. Disable viewport attempt
 - Zooming with ID in JSXGraph div
-- tangents and normals on transformed curves
+- Tangents and normals on transformed curves
 
 1.9.2
 ===

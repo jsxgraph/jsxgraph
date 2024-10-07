@@ -3150,8 +3150,12 @@ JXG.registerElement("boxplot", JXG.createBoxPlot);
  * If dfx is supplied as string, it has to use the variables 'x' and 'y'.
  * @param {Function|String} [dfy=null] Optional partial derivative in respect to the second variable
  * If dfy is supplied as string, it has to use the variables 'x' and 'y'.
- * @param {Array|Function} [domain=board.boundingbox] Optional array of length 4 (like boundingbox
- * [x_left, y_left, x_right, y_right]) setting the domain of the implicit curve.
+ * @param {Array|Function} [rangex=boundingbox] Optional array of length 2
+ * of the form [x_min, x_max] setting the domain of the x coordinate of the implicit curve.
+ * If not supplied, the board's boundingbox (+ the attribute "margin") is taken.
+ * For algorithmic reasons, the plotted curve mighty slightly overflow the given domain.
+ * @param {Array|Function} [rangey=boundingbox] Optional array of length 2
+ * of the form [y_min, y_max] setting the domain of the y coordinate of the implicit curve.
  * If not supplied, the board's boundingbox (+ the attribute "margin") is taken.
  * For algorithmic reasons, the plotted curve mighty slightly overflow the given domain.
  * @augments JXG.Curve
@@ -3248,7 +3252,7 @@ JXG.registerElement("boxplot", JXG.createBoxPlot);
  * for (let i = 0; i < niveauline.length; i++) {
  *     board.create("implicitcurve", [
  *         (x, y) => x ** .5 * y ** .5 - niveauline[i],
- *         [0.25, 4, 3, 0.5]     // Domain
+           [0.25, 3], [0.5, 4] // Domain
  *     ], {
  *         strokeWidth: 2,
  *         strokeColor: JXG.palette.red,
@@ -3267,7 +3271,7 @@ JXG.registerElement("boxplot", JXG.createBoxPlot);
  *         for (let i = 0; i < niveauline.length; i++) {
  *             board.create("implicitcurve", [
  *                 (x, y) => x ** .5 * y ** .5 - niveauline[i],
- *                 [0.25, 4, 3, 0.5]
+ *                 [0.25, 3], [0.5, 4]
  *             ], {
  *                 strokeWidth: 2,
  *                 strokeColor: JXG.palette.red,
@@ -3283,32 +3287,33 @@ JXG.registerElement("boxplot", JXG.createBoxPlot);
  */
 JXG.createImplicitCurve = function (board, parents, attributes) {
     var c, attr;
-    if (parents.length === 2) {
-        if (!Type.isArray(parents[1])) {
-            throw new Error(
-                "JSXGraph: Can't create curve implicitCurve with given parent'" +
-                "\nPossible parent types: [f], [f, domain], [f, dfx, dfy] or [f, dfx, dfy, domain]" +
-                "\nwith functions f, dfx, dfy and array of length 4 domain."
-            );
-        }
-    }
-    if (parents.length === 4) {
-        if (!Type.isArray(parents[3])) {
-            throw new Error(
-                "JSXGraph: Can't create curve implicitCurve with given parent'" +
-                "\nPossible parent types: [f], [f, domain], [f, dfx, dfy] or [f, dfx, dfy, domain]" +
-                "\nwith functions f, dfx, dfy and array of length 4 domain."
-            );
-        }
-    }
 
-    if (parents.length > 4) {
+    if ([1, 3, 5].indexOf(parents.length) < 0) {
         throw new Error(
             "JSXGraph: Can't create curve implicitCurve with given parent'" +
-            "\nPossible parent types: [f], [f, domain], [f, dfx, dfy] or [f, dfx, dfy, domain]" +
-            "\nwith functions f, dfx, dfy and array of length 4 domain."
-    );
+            "\nPossible parent types: [f], [f, rangex, rangey], [f, dfx, dfy] or [f, dfx, dfy, rangex, rangey]" +
+            "\nwith functions f, dfx, dfy and arrays of length 2 rangex, rangey."
+        );
     }
+
+    // if (parents.length === 3) {
+    //     if (!Type.isArray(parents[1]) && !Type.isArray(parents[2])) {
+    //         throw new Error(
+    //             "JSXGraph: Can't create curve implicitCurve with given parent'" +
+    //             "\nPossible parent types: [f], [f, rangex, rangey], [f, dfx, dfy] or [f, dfx, dfy, rangex, rangey]" +
+    //             "\nwith functions f, dfx, dfy and arrays of length 2 rangex, rangey."
+    //         );
+    //     }
+    // }
+    // if (parents.length === 5) {
+    //     if (!Type.isArray(parents[3]) && !Type.isArray(parents[4])) {
+    //         throw new Error(
+    //             "JSXGraph: Can't create curve implicitCurve with given parent'" +
+    //             "\nPossible parent types: [f], [f, rangex, rangey], [f, dfx, dfy] or [f, dfx, dfy, rangex, rangey]" +
+    //             "\nwith functions f, dfx, dfy and arrays of length 2 rangex, rangey."
+    //         );
+    //     }
+    // }
 
     attr = Type.copyAttributes(attributes, board.options, "implicitcurve");
     c = board.create("curve", [[], []], attr);
@@ -3358,11 +3363,11 @@ JXG.createImplicitCurve = function (board, parents, attributes) {
      */
     // c.domain = board.getBoundingBox();
     c.domain = null;
-    if (parents.length === 4) {
-        c.domain = parents[3];
+    if (parents.length === 5) {
+        c.domain = [parents[3], parents[4]];
         // c.visProp.margin = 0;
-    } else if (parents.length === 2) {
-        c.domain = parents[1];
+    } else if (parents.length === 3) {
+        c.domain = [parents[1], parents[2]];
         // c.visProp.margin = 0;
     }
 
@@ -3371,7 +3376,7 @@ JXG.createImplicitCurve = function (board, parents, attributes) {
      * @ignore
      */
     c.updateDataArray = function () {
-        var bbox,
+        var bbox, rx, ry,
             ip, cfg,
             ret = [],
             mgn;
@@ -3384,7 +3389,9 @@ JXG.createImplicitCurve = function (board, parents, attributes) {
             bbox[2] += mgn;
             bbox[3] -= mgn;
         } else {
-            bbox = Type.evaluate(this.domain);
+            rx = Type.evaluate(this.domain[0]);
+            ry = Type.evaluate(this.domain[1]);
+            bbox = [rx[0], ry[1], rx[1], ry[0]];
         }
 
         cfg = {

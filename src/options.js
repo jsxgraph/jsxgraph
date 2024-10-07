@@ -1080,8 +1080,8 @@ JXG.Options = {
          * The attribute "throttle" determines the minimal time in msec between to
          * resize calls.
          * <p>
-         * <b>Attention:</b> if the JSXGraph container has no CSS property like width or height  nd max-width or max-height set, but
-         * has a property like boxsizing:box-content, then the interplay between CSS and the resize attribute may result in an
+         * <b>Attention:</b> if the JSXGraph container has no CSS property like width or height and max-width or max-height set, but
+         * has a property like box-sizing:box-content, then the interplay between CSS and the resize attribute may result in an
          * infinite loop with ever increasing JSXgraph container.
          *
          * @see JXG.Board#startResizeObserver

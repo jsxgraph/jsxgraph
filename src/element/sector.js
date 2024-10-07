@@ -1071,7 +1071,10 @@ JXG.registerElement("majorsector", JXG.createMajorSector);
  * Sector is displayed if type=="sector".
  * If type=="square", instead of a sector a parallelogram is displayed.
  * In case of type=="auto", a square is displayed if the angle is near orthogonal.
- * If no name is provided the angle label is automatically set to a lower greek letter.
+ * <p>
+ * If no name is provided the angle label is automatically set to a lower greek letter. If no label should be displayed use
+ * the attribute <tt>withLabel:false</tt>.
+ *
  * @pseudo
  * @name Angle
  * @augments Sector
@@ -1230,7 +1233,7 @@ JXG.createAngle = function (board, parents, attributes) {
     attr = Type.copyAttributes(attributes, board.options, "angle");
 
     //  If empty, create a new name
-    if (!Type.exists(attr.name) || attr.name === "") {
+    if (!Type.exists(attr.name) /*|| attr.name === ""*/) {
         attr.name = board.generateName({ type: Const.OBJECT_TYPE_ANGLE });
     }
 

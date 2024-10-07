@@ -2294,16 +2294,26 @@ JXG.createView3D = function (board, parents, attributes) {
     );
     view.inherits.push(view.bank_slide);
 
+    // Set special infobox attributes of view3d.infobox
+    view.board.infobox.setAttribute(attr.infobox);
+
+    // 3d infobox: drag direction and coordinates
     view.board.highlightInfobox = function (x, y, el) {
         var d, i, c3d, foot,
-            pre = '<span style="color:black; font-size:200%">\u21C4 &nbsp;</span>',
+            pre = '',
             brd = el.board,
             arr, infobox,
             p = null;
 
-        if (view.isVerticalDrag()) {
-            pre = '<span style="color:black; font-size:200%">\u21C5 &nbsp;</span>';
+        if (this.mode === this.BOARD_MODE_DRAG) {
+            // Drag direction is only shown during dragging
+            if (view.isVerticalDrag()) {
+                pre = '<span style="color:black; font-size:200%">\u21C5 &nbsp;</span>';
+            } else {
+                pre = '<span style="color:black; font-size:200%">\u21C4 &nbsp;</span>';
+            }
         }
+
         // Search 3D parent
         for (i = 0; i < el.parents.length; i++) {
             p = brd.objects[el.parents[i]];

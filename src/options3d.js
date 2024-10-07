@@ -5,7 +5,9 @@ import Options from "./options.js";
 
 JXG.extend(Options, {
     // infobox: {
-    //     strokeColor: 'black'
+    //     // strokeColor: 'black',
+    //     // useKatex: false,
+    //     // useMathjax: false
     // },
 
     axes3d: {
@@ -1014,6 +1016,12 @@ JXG.extend(Options, {
             [2.36, 0.62],
             [1.57, 1.57]
         ],
+
+        infobox: {
+            strokeColor: '#888888',
+            useKatex: false,
+            useMathjax: false
+        },
 
         /**
          * @class
