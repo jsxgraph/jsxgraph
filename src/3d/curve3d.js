@@ -322,7 +322,7 @@ JXG.registerElement("curve3d", JXG.createCurve3D);
  *         var board = JXG.JSXGraph.initBoard('JXG8e41c67b-3338-4428-bd0f-c69d8f6fb348',
  *             {boundingbox: [-8, 8, 8,-8], axis: false, showcopyright: false, shownavigation: false,
  *          pan: {
- *                needsTwoFingers: true
+ *                needTwoFingers: true
  *           }
  *          });
  *     const view = board.create('view3d',
