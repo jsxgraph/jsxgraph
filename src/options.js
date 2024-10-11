@@ -9334,7 +9334,8 @@ JXG.Options = {
         anchorY: 'middle',
 
         /**
-         * CSS class of the text in non-highlighted view.
+         * Apply CSS classes to the text in non-highlighted view. It is possible to supply one or more
+         * CSS classes separated by blanks.
          *
          * @name cssClass
          * @memberOf Text.prototype
@@ -9344,7 +9345,8 @@ JXG.Options = {
         cssClass: 'JXGtext',
 
         /**
-         * CSS class of the text in highlighted view.
+         * Apply CSS classes to the text in highlighted view. It is possible to supply one or more
+         * CSS classes separated by blanks.
          *
          * @name highlightCssClass
          * @memberOf Text.prototype
