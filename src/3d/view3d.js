@@ -2352,7 +2352,6 @@ JXG.createView3D = function (board, parents, attributes) {
         }
     };
 
-
     // Hack needed to enable addEvent for view3D:
     view.BOARD_MODE_NONE = 0x0000;
 
