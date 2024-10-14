@@ -447,8 +447,7 @@ JXG.createText3D = function (board, parents, attributes) {
     el.inherits.push(el.element2D);
     el.element2D.setParents(el);
 
-
-    // if this point is a glider, record that in the update tree
+    // If this point is a glider, record that in the update tree
     if (el.slide) {
         el.slide.addChild(el);
         el.setParents(el.slide);
