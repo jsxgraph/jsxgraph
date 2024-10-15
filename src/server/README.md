@@ -23,14 +23,14 @@ javascript in your page after loading JSXGraph.
 
 ## jxggroebner.py
 
--   **Required software**
+- __Required software__
 
-    -   CoCoA (https://cocoa.dima.unige.it/)
-    -   Python (https://python.org/)
-    -   numpy (https://numpy.scipy.org/)
-    -   matplotlib (https://matplotlib.sourceforge.net/)
+    - CoCoA (https://cocoa.dima.unige.it/)
+    - Python (https://python.org/)
+    - numpy (https://numpy.scipy.org/)
+    - matplotlib (https://matplotlib.sourceforge.net/)
 
--   **Setup**
+- __Setup__
 
 Install CoCoA so it can be started by just typing cocoa in a terminal or adjust
 the configuration in `jsxgroebner.py`. Install all of the python packages.
@@ -38,8 +38,8 @@ the configuration in `jsxgroebner.py`. Install all of the python packages.
 Your webserver has to be configured to execute python .py scripts as cgi, e.g.
 for Apache you have to configure
 
-         Options +ExecCGI
-         AddHandler cgi-script .py
+        Options +ExecCGI
+        AddHandler cgi-script .py
 
 for the directory JSXGraph server scripts are in.
 
