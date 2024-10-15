@@ -602,7 +602,7 @@ JXG.extend(
 
         updateDataArray: function () {
             var s1, e1, s2, e2, c2d, l1, l2,
-                planes = ['xPlaneRear', 'yPlaneRear', 'zPlaneRear'],
+                planes = ['xPlaneRear', 'yPlaneRear', 'zPlaneRear'], // Must be ordered x, y, z
                 points = [],
                 v1 = [0, 0, 0],
                 v2 = [0, 0, 0],
@@ -625,17 +625,20 @@ JXG.extend(
                 Type.evaluate(this.range2[0]) === -Infinity &&
                 Type.evaluate(this.range2[1]) === Infinity
             ) {
+                // Determine the intersections of the new plane with
+                // the view bbox3d.
+                //
                 // Start with the rear plane.
-                // Determine the intersections with the view bbox3d
                 // For each face of the bbox3d we determine two points
-                // which are the ends of the intersection line.
-                // We start with the three rear planes.
+                // which are the end points of the intersecting line
+                // between the plane and a face of bbox3d.
+                // We start with the three rear planes (set in planes[] above)
                 for (j = 0; j < planes.length; j++) {
                     p = view.intersectionPlanePlane(this, view.defaultAxes[planes[j]]);
-
                     if (p[0].length === 3 && p[1].length === 3) {
                         // This test is necessary to filter out intersection lines which are
-                        // identical to intersections of axis planes (they would occur twice).
+                        // identical to intersections of axis planes (they would occur twice),
+                        // i.e. edges of bbox3d.
                         for (i = 0; i < points.length; i++) {
                             if (
                                 (Geometry.distance(p[0], points[i][0], 3) < Mat.eps &&
@@ -651,10 +654,11 @@ JXG.extend(
                         }
                     }
 
-                    // Point on the front plane of the bbox3d
+                    // Take a point on the corresponding front plane of bbox3d.
                     p = [0, 0, 0];
                     p[j] = view.bbox3D[j][1];
 
+                    // Use the Hesse normal form of front plane to intersect it with the plane
                     // d is the rhs of the Hesse normal form of the front plane.
                     d = Mat.innerProduct(p, view.defaultAxes[planes[j]].normal, 3);
                     p = view.intersectionPlanePlane(this, view.defaultAxes[planes[j]], d);
@@ -662,6 +666,7 @@ JXG.extend(
                     if (p[0].length === 3 && p[1].length === 3) {
                         // Do the same test as above
                         for (i = 0; i < points.length; i++) {
+                            // Same test for edges of bbox3d as above
                             if (
                                 (Geometry.distance(p[0], points[i][0], 3) < Mat.eps &&
                                     Geometry.distance(p[1], points[i][1], 3) < Mat.eps) ||
@@ -675,6 +680,11 @@ JXG.extend(
                             points.push(p.slice());
                         }
                     }
+                }
+
+                // Handle the case that the plane does not intersect bbox3d at all.
+                if (points.length === 0) {
+                    return { X: this.dataX, Y: this.dataY };
                 }
 
                 // Concatenate the intersection points to a polygon.
