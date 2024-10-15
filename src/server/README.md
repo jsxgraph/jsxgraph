@@ -11,15 +11,15 @@ plot that points in JSXGraph.
 
 Scripts available:
 
--   jxggroebner.py
+- `jxggroebner.py`
 
 ## General configuration
 
-By default server scripts are stored in the server subdirectory of the JavaScript
+By default server scripts are stored in the subdirectory `server` of the JavaScript
 files. If you want the scripts in another place you'll have to adjust
-JXG.serverBase
-either directly in JSX source (loadjsxgraph[InOneFile].js) or by setting it in a
-javascript in your page after loading jsxgraph.
+`JXG.serverBase`
+either directly in JSX source (loadjsxgraph[InOneFile].js) or by setting it with
+javascript in your page after loading JSXGraph.
 
 ## jxggroebner.py
 
@@ -33,7 +33,7 @@ javascript in your page after loading jsxgraph.
 -   **Setup**
 
 Install CoCoA so it can be started by just typing cocoa in a terminal or adjust
-the configuration in jsxgroebner.py. Install all of the python packages.
+the configuration in `jsxgroebner.py`. Install all of the python packages.
 
 Your webserver has to be configured to execute python .py scripts as cgi, e.g.
 for Apache you have to configure

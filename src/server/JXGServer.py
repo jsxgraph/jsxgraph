@@ -6,8 +6,6 @@ import zlib
 import base64
 # CGI variables handling
 import cgi
-#import cgitb
-#cgitb.enable()
 
 import JXG
 import inspect
@@ -17,9 +15,9 @@ import inspect
 from JXGServerModule import JXGServerModule
 
 def print_httpheader():
-    print """\
+    print("""\
 Content-Type: text/plain\n
-"""
+""")
 
 
 def default_action(req, resp):
@@ -75,7 +73,7 @@ def exec_module(req, resp):
         else:
             params += (req.getValue(args.args[i]), )
 
-    apply(method, params)
+    method(*params)
 
     return resp.dump()
 
@@ -95,5 +93,5 @@ ret = actions_map.get(action, default_action)(JXG.Request(action, id, data), JXG
 
 print_httpheader()
 
-print base64.b64encode(zlib.compress(ret, 9))
+print(base64.b64encode(zlib.compress(ret, 9)))
 

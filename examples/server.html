@@ -8,7 +8,9 @@
 <body>
 <h1>test</h1>
 
-<script type="text/javascript">
+<script type="module">
+    import JXG from '../src/index.js';
+
     JXG.serverBase = '../src/server/'
     JXG.Server.loadModule('jxgtestplugin');
     JXG.Server.modules.jxgtestplugin.calcTest(10);
