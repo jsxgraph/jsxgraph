@@ -1160,30 +1160,39 @@ JXG.extend(
      * Limit 3D coordinates to the bounding cube.
      *
      * @param {Array} c3d 3D coordinates [x,y,z]
-     * @returns Array with updated 3D coordinates.
+     * @returns Array [Array, Boolean] containing [coords, corrected]. coords contains the updated 3D coordinates,
+     * correct is true if the coords have been changed.
      */
     project3DToCube: function (c3d) {
-        var cube = this.bbox3D;
+        var cube = this.bbox3D,
+            isOut = false;
+
         if (c3d[1] < cube[0][0]) {
             c3d[1] = cube[0][0];
+            isOut = true;
         }
         if (c3d[1] > cube[0][1]) {
             c3d[1] = cube[0][1];
+            isOut = true;
         }
         if (c3d[2] < cube[1][0]) {
             c3d[2] = cube[1][0];
+            isOut = true;
         }
         if (c3d[2] > cube[1][1]) {
             c3d[2] = cube[1][1];
+            isOut = true;
         }
-        if (c3d[3] < cube[2][0]) {
+        if (c3d[3] <= cube[2][0]) {
             c3d[3] = cube[2][0];
+            isOut = true;
         }
-        if (c3d[3] > cube[2][1]) {
+        if (c3d[3] >= cube[2][1]) {
             c3d[3] = cube[2][1];
+            isOut = true;
         }
 
-        return c3d;
+        return [c3d, isOut];
     },
 
     /**
