@@ -58,7 +58,6 @@ import './utils/zip.js';
 import './utils/base64.js';
 import './utils/uuid.js';
 import './utils/encoding.js';
-import './server/server.js';
 import './parser/datasource.js';
 import './parser/jessiecode.js';
 import './parser/prefix.js';

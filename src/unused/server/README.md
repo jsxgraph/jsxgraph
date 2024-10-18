@@ -1,5 +1,16 @@
 # JSXGraph server scripts
 
+__Update 18.10.2024__
+
+Since v1.10.1 this module is retired !
+
+The server module needs a complete rewrite. The installation is error prone,
+since python 3.13 the module `cgi` is not longer supported.
+A modern implementation would use a different approach with nodejs or
+a comparable system for python.
+
+## Description
+
 JSXGraph is a cross-browser library for interactive geometry, function plotting,
 graphs, and data visualization in a web browser. It is implemented completely in
 JavaScript and uses SVG and VML.
