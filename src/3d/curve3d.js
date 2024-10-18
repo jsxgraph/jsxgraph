@@ -297,23 +297,72 @@ JXG.registerElement("curve3d", JXG.createCurve3D);
  * end value of y. The vector field will contain (number of steps) + 1 vectors in direction of y.
  * @param {Array} zData Array of length 3 containing start value for z, number of steps,
  * end value of z. The vector field will contain (number of steps) + 1 vectors in direction of z.
+ *
+ * @example
+ * const view = board.create('view3d',
+ *     [
+ *         [-6, -3],
+ *         [8, 8],
+ *         [[-3, 3], [-3, 3], [-3, 3]]
+ *     ], {});
+ *
+ * var vf = view.create('vectorfield3d', [
+ *     [(x, y, z) => Math.cos(y), (x, y, z) => Math.sin(x), (x, y, z) => z],
+ *     [-2, 5, 2], // x from -2 to 2 in 5 steps
+ *     [-2, 5, 2], // y
+ *     [-2, 5, 2] // z
+ * ], {
+ *     strokeColor: 'red',
+ *     scale: 0.5
+ * });
+ *
+ * </pre><div id="JXG8e41c67b-3338-4428-bd0f-c69d8f6fb348" class="jxgbox" style="width: 300px; height: 300px;"></div>
+ * <script type="text/javascript">
+ *     (function() {
+ *         var board = JXG.JSXGraph.initBoard('JXG8e41c67b-3338-4428-bd0f-c69d8f6fb348',
+ *             {boundingbox: [-8, 8, 8,-8], axis: false, showcopyright: false, shownavigation: false,
+ *          pan: {
+ *                needTwoFingers: true
+ *           }
+ *          });
+ *     const view = board.create('view3d',
+ *         [
+ *             [-6, -3],
+ *             [8, 8],
+ *             [[-3, 3], [-3, 3], [-3, 3]]
+ *         ], {});
+ *     var vf = view.create('vectorfield3d', [
+ *         [(x, y, z) => Math.cos(y), (x, y, z) => Math.sin(x), (x, y, z) => z],
+ *         [-2, 5, 2], // x from -2 to 2 in 5 steps
+ *         [-2, 5, 2], // y
+ *         [-2, 5, 2] // z
+ *     ], {
+ *         strokeColor: 'red',
+ *         scale: 0.5
+ *     });
+ *
+ *
+ *     })();
+ *
+ * </script><pre>
+ *
  */
 JXG.createVectorfield3D = function (board, parents, attributes) {
     var view = parents[0],
         el, attr;
 
     if (!(parents.length >= 5 &&
-        (Type.isArray(parents[1]) || Type.isFunction(parents[0]) || Type.isString(parents[0])) &&
+        (Type.isArray(parents[1]) || Type.isFunction(parents[1]) || Type.isString(parents[1])) &&
         (Type.isArray(parents[2]) && parents[1].length === 3) &&
         (Type.isArray(parents[3]) && parents[2].length === 3) &&
         (Type.isArray(parents[4]) && parents[3].length === 3)
     )) {
         throw new Error(
             "JSXGraph: Can't create vector field 3D with parent types " +
-            "'" + typeof parents[0] + "', " +
             "'" + typeof parents[1] + "', " +
-            "'" + typeof parents[2] + "'."  +
-            "'" + typeof parents[1] + "', "
+            "'" + typeof parents[2] + "', " +
+            "'" + typeof parents[3] + "'."  +
+            "'" + typeof parents[4] + "', "
         );
     }
 

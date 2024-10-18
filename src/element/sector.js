@@ -1233,7 +1233,7 @@ JXG.createAngle = function (board, parents, attributes) {
     attr = Type.copyAttributes(attributes, board.options, "angle");
 
     //  If empty, create a new name
-    if (!Type.exists(attr.name) || attr.name === "") {
+    if (!Type.exists(attr.name) /*|| attr.name === ""*/) {
         attr.name = board.generateName({ type: Const.OBJECT_TYPE_ANGLE });
     }
 

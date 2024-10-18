@@ -36,14 +36,14 @@ import signal
 import re
 import zlib
 import base64
-import cStringIO
+import io
 import cgi
 
-debugOutput = cStringIO.StringIO()
+debugOutput = io.StringIO()
 
-print "Content-Type: text/plain\n\n"
-print
-print
+print("Content-Type: text/plain\n\n")
+print()
+print()
 
 # Data required by this script:
 #
@@ -102,8 +102,8 @@ cinput += "EndFor;\n"
 cinput += "Print \"resultsend\", NewLine;"
 
 if debug:
-    print >>debugOutput, "Starting CoCoA with input<br />"
-    print >>debugOutput, cinput + '<br />'
+    print("Starting CoCoA with input<br />", file=debugOutput)
+    print(cinput + '<br />', file=debugOutput)
 
 #cocoa = subprocess.Popen([cmd_cocoa], stdout=subprocess.PIPE, stdin=subprocess.PIPE)
 
@@ -117,7 +117,7 @@ class TimeoutException(Exception): pass
 
 def time_limit(seconds):
     def signal_handler(signum, frame):
-        raise TimeoutException, "Timed out!"
+        raise TimeoutException("Timed out!")
     signal.signal(signal.SIGALRM, signal_handler)
     signal.alarm(seconds)
 
@@ -136,7 +136,7 @@ def callCoCoA():
 try:
     time_limit(time_left)
     callCoCoA()
-except TimeoutException, msg:
+except TimeoutException as msg:
     # This is only tested with linux/unix
     # and works ONLY if the cocoa script cd-ing
     # to the cocoa dir and starting cocoa executes
@@ -150,7 +150,7 @@ except TimeoutException, msg:
     #subprocess.Popen(["killall", "cocoa_text"])
     #os.system('killall -9 cocoa_text')
     if debug:
-        print >>debugOutput, "Timed out!"
+        print("Timed out!", file=debugOutput)
     exit()
 
 #cocoa = os.popen("echo \"" + input + "\" | " + cmd_cocoa)
@@ -158,8 +158,8 @@ except TimeoutException, msg:
 #output = cocoa.read()
 
 if debug:
-    print >>debugOutput, "Reading and Parsing CoCoA output" + '<br />'
-    print >>debugOutput, output + '<br />'
+    print("Reading and Parsing CoCoA output" + '<br />', file=debugOutput)
+    print(output + '<br />', file=debugOutput)
 
 # Extract results
 result = re.split('resultsend', re.split('resultsbegin', output)[1])[0]
@@ -169,11 +169,11 @@ result = result.replace("\r", "")
 polynomials = re.split('\n', result)
 
 if debug:
-    print >>debugOutput, "Found the following polynomials:" + '<br />'
+    print("Found the following polynomials:" + '<br />', file=debugOutput)
     for i in range(0,len(polynomials)):
-        print >>debugOutput, "Polynomial ", i+1, ": " + polynomials[i] + '<br />'
+        print("Polynomial ", i+1, ": " + polynomials[i] + '<br />', file=debugOutput)
 
-data = cStringIO.StringIO()
+data = io.StringIO()
 polynomialsReturn = ""
 
 for i in range(0,len(polynomials)):
@@ -195,12 +195,12 @@ for i in range(0,len(polynomials)):
         pa = C.collections[0].get_paths()[i].to_polygons()[0]
 
         for i in range(0,len(pa)):
-            print >>data, pa[i,0], ",", pa[i,1], ";"
+            print(pa[i,0], ",", pa[i,1], ";", file=data)
 
-        print >>data, ";"
+        print(";", file=data)
 
-print >>data, "-----"
-print >>data, polynomialsReturn,";"
+print("-----", file=data)
+print(polynomialsReturn,";", file=data)
 
 enc_data = base64.b64encode(zlib.compress(data.getvalue(), 9))
 
@@ -210,10 +210,10 @@ if debug:
     fd.close()
 
 if debug:
-    print >>debugOutput, data.getvalue() + '<br />'
-    print debugOutput.getvalue()
+    print(data.getvalue() + '<br />', file=debugOutput)
+    print(debugOutput.getvalue())
 
-print enc_data
+print(enc_data)
 
 data.close()
 debugOutput.close()

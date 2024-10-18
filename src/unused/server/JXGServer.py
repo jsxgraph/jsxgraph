@@ -6,8 +6,6 @@ import zlib
 import base64
 # CGI variables handling
 import cgi
-#import cgitb
-#cgitb.enable()
 
 import JXG
 import inspect
@@ -17,9 +15,9 @@ import inspect
 from JXGServerModule import JXGServerModule
 
 def print_httpheader():
-    print """\
+    print("""\
 Content-Type: text/plain\n
-"""
+""")
 
 
 def default_action(req, resp):
@@ -27,7 +25,6 @@ def default_action(req, resp):
     resp.error("action \"" + action + "\" is undefined")
     return resp.dump()
     
-
 def import_module(plugin, resp):
     try:
         __import__(plugin, None, None, [''])
@@ -55,7 +52,6 @@ def load_module(req, resp):
         tp.init(resp)
     return resp.dump()
 
-
 def exec_module(req, resp):
     handler = req.getValue('handler', 'none')
     module = req.getValue('module', 'none')
@@ -75,10 +71,9 @@ def exec_module(req, resp):
         else:
             params += (req.getValue(args.args[i]), )
 
-    apply(method, params)
+    method(*params)
 
     return resp.dump()
-
 
 # Get Data from post/get parameters
 form = cgi.FieldStorage();
@@ -95,5 +90,5 @@ ret = actions_map.get(action, default_action)(JXG.Request(action, id, data), JXG
 
 print_httpheader()
 
-print base64.b64encode(zlib.compress(ret, 9))
+print(base64.b64encode(zlib.compress(ret, 9)))
 

@@ -3143,7 +3143,6 @@ JXG.extend(
                 t = Type.evaluate(curve.visProp.curvetype) === 'functiongraph' ? x : 0.0;
             }
             result = this.projectCoordsToCurve(x, y, t, curve, board);
-
             // point.position = result[1];
 
             return result;
@@ -3167,7 +3166,8 @@ JXG.extend(
                 i, j, mindist, dist, lbda,
                 v, coords, d, p1, p2, res, minfunc,
                 t_new, f_new, f_old, dy,
-                delta, delta1, delta2, steps, minX, maxX,
+                delta, delta1, delta2, steps,
+                minX, maxX, minX_glob, maxX_glob,
                 infty = Number.POSITIVE_INFINITY;
 
             if (!Type.exists(board)) {
@@ -3232,24 +3232,31 @@ JXG.extend(
             } else {
                 // 'parameter', 'polar', 'functiongraph'
 
+                minX_glob = curve.minX();
+                maxX_glob = curve.maxX();
+                minX = minX_glob;
+                maxX = maxX_glob;
+
                 if (Type.evaluate(curve.visProp.curvetype) === 'functiongraph') {
+                    // Restrict the possible position of t
+                    // to the projection of a circle to the x-axis (= t-axis)
                     dy = Math.abs(y - curve.Y(x));
                     if (!isNaN(dy)) {
                         minX = x - dy;
                         maxX = x + dy;
-                    } else {
-                        minX = curve.minX();
-                        maxX = curve.maxX();
                     }
-                } else {
-                    minX = curve.minX();
-                    maxX = curve.maxX();
                 }
 
-                /** @ignore */
+                /**
+                 * @ignore
+                 * Find t such that the Euclidean distance between
+                 * [x, y] and [curve.X(t), curve.Y(t)]
+                 * is minimized.
+                 */
                 minfunc = function (t) {
                     var dx, dy;
-                    if (t < curve.minX() || t > curve.maxX()) {
+
+                    if (t < minX_glob || t > curve.maxX_glob) {
                         return Infinity;
                     }
                     dx = x - curve.X(t);
@@ -3257,12 +3264,12 @@ JXG.extend(
                     return dx * dx + dy * dy;
                 };
 
+                // Search t which minimizes minfunc(t)
+                // in discrete steps
                 f_old = minfunc(t);
                 steps = 50;
-
                 delta = (maxX - minX) / steps;
                 t_new = minX;
-
                 for (i = 0; i < steps; i++) {
                     f_new = minfunc(t_new);
 
@@ -3275,24 +3282,21 @@ JXG.extend(
                 }
 
                 // t = Numerics.root(Numerics.D(minfunc), t);
-                // Ensure that minfunc is defined on the
-                // enclsoing interval [t-delta1, t+delta2]
-                delta1 = delta;
-                for (i = 0;
-                    i < 20 && isNaN(minfunc(t - delta1));
-                    i++, delta1 *= 0.5);
 
+                // Ensure that minfunc is defined on the
+                // enclosing interval [t-delta1, t+delta2]
+                delta1 = delta;
+                for (i = 0; i < 20 && isNaN(minfunc(t - delta1)); i++, delta1 *= 0.5);
                 if (isNaN(minfunc(t - delta1))) {
                     delta1 = 0.0;
                 }
                 delta2 = delta;
-                for (i = 0;
-                    i < 20 && isNaN(minfunc(t + delta2));
-                    i++, delta2 *= 0.5);
+                for (i = 0; i < 20 && isNaN(minfunc(t + delta2)); i++, delta2 *= 0.5);
                 if (isNaN(minfunc(t + delta2))) {
                     delta2 = 0.0;
                 }
 
+                // Finally, apply mathemetical optimization in the determined interval
                 t = Numerics.fminbr(minfunc, [
                     Math.max(t - delta1, minX),
                     Math.min(t + delta2, maxX)
@@ -3310,8 +3314,9 @@ JXG.extend(
                 //         t = minX + t - maxX;
                 //     }
                 // } else {
-                t = t < minX ? minX : t;
-                t = t > maxX ? maxX : t;
+
+                t = t < minX_glob ? minX_glob : t;
+                t = t > maxX_glob ? maxX_glob : t;
                 // }
 
                 newCoordsObj = new Coords(
