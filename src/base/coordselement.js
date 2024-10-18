@@ -1970,7 +1970,7 @@ JXG.extend(
                 dY = where.usrCoords[2] - Y,
                 /** @ignore */
                 stepFun = function (i) {
-                    let x = i / steps  // absolute progress of the animatin
+                    let x = i / steps;  // absolute progress of the animatin
 
                     if (options.effect) {
                         if (options.effect === "<>") {
