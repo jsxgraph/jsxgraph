@@ -38,8 +38,8 @@ the configuration in `jsxgroebner.py`. Install all of the python packages.
 Your webserver has to be configured to execute python .py scripts as cgi, e.g.
 for Apache you have to configure
 
-        Options +ExecCGI
-        AddHandler cgi-script .py
+    Options +ExecCGI
+    AddHandler cgi-script .py
 
 for the directory JSXGraph server scripts are in.
 

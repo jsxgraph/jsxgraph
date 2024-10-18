@@ -25,7 +25,6 @@ def default_action(req, resp):
     resp.error("action \"" + action + "\" is undefined")
     return resp.dump()
     
-
 def import_module(plugin, resp):
     try:
         __import__(plugin, None, None, [''])
@@ -53,7 +52,6 @@ def load_module(req, resp):
         tp.init(resp)
     return resp.dump()
 
-
 def exec_module(req, resp):
     handler = req.getValue('handler', 'none')
     module = req.getValue('module', 'none')
@@ -76,7 +74,6 @@ def exec_module(req, resp):
     method(*params)
 
     return resp.dump()
-
 
 # Get Data from post/get parameters
 form = cgi.FieldStorage();
