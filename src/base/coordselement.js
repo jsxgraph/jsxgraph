@@ -1985,7 +1985,7 @@ JXG.extend(
                         if (options.effect === "==") {
                             return i / steps;       // linear
                         }
-                        throw new Error("valid effects are '==', '<>', '>', and '<'.")
+                        throw new Error("valid effects are '==', '<>', '>', and '<'.");
                     }
                     return i / steps;  // default
                 };
@@ -2107,7 +2107,7 @@ JXG.extend(
                         if (options.effect === "==") {
                             return x;       // linear
                         }
-                        throw new Error("valid effects are '==', '<>', '>', and '<'.")
+                        throw new Error("valid effects are '==', '<>', '>', and '<'.");
 
                     }
                     return x;
