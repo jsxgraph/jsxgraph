@@ -590,7 +590,7 @@ JXG.extend(
             bank_smax, bank_smin;
 
         // update stored trackball toggle
-        this.trackballEnabled = Type.evaluate(this.visProp.trackball.enabled);
+        this.trackballEnabled = this.evalVisProp('trackball.enabled');
 
         // set slider bounds
         if (this.trackballEnabled) {
@@ -764,7 +764,7 @@ JXG.extend(
         this.projectionType = this.evalVisProp('projection').toLowerCase();
 
         // override angle slider bounds when trackball navigation is enabled
-        if (this.trackballEnabled !== Type.evaluate(this.visProp.trackball.enabled)) {
+        if (this.trackballEnabled !== this.evalVisProp('trackball.enabled')) {
             this.updateAngleSliderBounds();
         }
 
@@ -1399,10 +1399,10 @@ JXG.extend(
     isVerticalDrag: function () {
         var b = this.board,
             key;
-        if (!Type.evaluate(this.visProp.verticaldrag.enabled)) {
+        if (!this.evalVisProp('verticaldrag.enabled')) {
             return false;
         }
-        key = '_' + Type.evaluate(this.visProp.verticaldrag.key) + 'Key';
+        key = '_' + this.evalVisProp('verticaldrag.key') + 'Key';
         return b[key];
     },
 
@@ -1492,7 +1492,7 @@ JXG.extend(
     _azEventHandler: function (evt) {
         var smax = this.az_slide._smax,
             smin = this.az_slide._smin,
-            speed = (smax - smin) / this.board.canvasWidth * (Type.evaluate(this.visProp.az.pointer.speed)),
+            speed = (smax - smin) / this.board.canvasWidth * (this.evalVisProp('az.pointer.speed')),
             delta = evt.movementX,
             az = this.az_slide.Value(),
             el = this.el_slide.Value();
@@ -1504,21 +1504,21 @@ JXG.extend(
 
         // Calculate new az value if keyboard events are triggered
         // Plus if right-button, minus if left-button
-        if (Type.evaluate(this.visProp.az.keyboard.enabled)) {
+        if (this.evalVisProp('az.keyboard.enabled')) {
             if (evt.key === 'ArrowRight') {
-                az = az + Type.evaluate(this.visProp.az.keyboard.step) * Math.PI / 180;
+                az = az + this.evalVisProp('az.keyboard.step') * Math.PI / 180;
             } else if (evt.key === 'ArrowLeft') {
-                az = az - Type.evaluate(this.visProp.az.keyboard.step) * Math.PI / 180;
+                az = az - this.evalVisProp('az.keyboard.step') * Math.PI / 180;
             }
         }
 
-        if (Type.evaluate(this.visProp.az.pointer.enabled) && (delta !== 0) && evt.key == null) {
+        if (this.evalVisProp('az.pointer.enabled') && (delta !== 0) && evt.key == null) {
             az += delta * speed;
         }
 
         // Project the calculated az value to a usable value in the interval [smin,smax]
         // Use modulo if continuous is true
-        if (Type.evaluate(this.visProp.az.continuous)) {
+        if (this.evalVisProp('az.continuous')) {
             az = Mat.wrap(az, smin, smax);
         } else {
             if (az > 0) {
@@ -1543,7 +1543,7 @@ JXG.extend(
     _elEventHandler: function (evt) {
         var smax = this.el_slide._smax,
             smin = this.el_slide._smin,
-            speed = (smax - smin) / this.board.canvasHeight * Type.evaluate(this.visProp.el.pointer.speed),
+            speed = (smax - smin) / this.board.canvasHeight * this.evalVisProp('el.pointer.speed'),
             delta = evt.movementY,
             az = this.az_slide.Value(),
             el = this.el_slide.Value();
@@ -1555,21 +1555,21 @@ JXG.extend(
 
         // Calculate new az value if keyboard events are triggered
         // Plus if down-button, minus if up-button
-        if (Type.evaluate(this.visProp.el.keyboard.enabled)) {
+        if (this.evalVisProp('el.keyboard.enabled')) {
             if (evt.key === 'ArrowUp') {
-                el = el - Type.evaluate(this.visProp.el.keyboard.step) * Math.PI / 180;
+                el = el - this.evalVisProp('el.keyboard.step') * Math.PI / 180;
             } else if (evt.key === 'ArrowDown') {
-                el = el + Type.evaluate(this.visProp.el.keyboard.step) * Math.PI / 180;
+                el = el + this.evalVisProp('el.keyboard.step') * Math.PI / 180;
             }
         }
 
-        if (Type.evaluate(this.visProp.el.pointer.enabled) && (delta !== 0) && evt.key == null) {
+        if (this.evalVisProp('el.pointer.enabled') && (delta !== 0) && evt.key == null) {
             el += delta * speed;
         }
 
         // Project the calculated el value to a usable value in the interval [smin,smax]
         // Use modulo if continuous is true and the trackball is disabled
-        if (Type.evaluate(this.visProp.el.continuous) && !this.trackballEnabled) {
+        if (this.evalVisProp('el.continuous') && !this.trackballEnabled) {
             el = Mat.wrap(el, smin, smax);
         } else {
             if (el > 0) {
@@ -1605,8 +1605,8 @@ JXG.extend(
 
         // Calculate new bank value if keyboard events are triggered
         // Plus if down-button, minus if up-button
-        if (Type.evaluate(this.visProp.bank.keyboard.enabled)) {
-            step = Type.evaluate(this.visProp.bank.keyboard.step) * Math.PI / 180;
+        if (this.evalVisProp('bank.keyboard.enabled')) {
+            step = this.evalVisProp('bank.keyboard.step') * Math.PI / 180;
             if (evt.key === '.' || evt.key === '<') {
                 bank -= step;
             } else if (evt.key === ',' || evt.key === '>') {
@@ -1614,8 +1614,8 @@ JXG.extend(
             }
         }
 
-        if (Type.evaluate(this.visProp.bank.pointer.enabled) && (delta !== 0) && evt.key == null) {
-            speed = (smax - smin) / this.board.canvasHeight * Type.evaluate(this.visProp.bank.pointer.speed);
+        if (this.evalVisProp('bank.pointer.enabled') && (delta !== 0) && evt.key == null) {
+            speed = (smax - smin) / this.board.canvasHeight * this.evalVisProp('bank.pointer.speed');
             bank += delta * speed;
 
             // prevent the pointer wheel from scrolling the page
@@ -1623,7 +1623,7 @@ JXG.extend(
         }
 
         // Project the calculated bank value to a usable value in the interval [smin,smax]
-        if (Type.evaluate(this.visProp.bank.continuous)) {
+        if (this.evalVisProp('bank.continuous')) {
             // in continuous mode, wrap value around slider range
             bank = Mat.wrap(bank, smin, smax);
         } else {
@@ -1680,9 +1680,9 @@ JXG.extend(
             return;
         }
 
-        if (Type.evaluate(this.visProp.trackball.enabled)) {
-            neededButton = Type.evaluate(this.visProp.trackball.button);
-            neededKey = Type.evaluate(this.visProp.trackball.key);
+        if (this.evalVisProp('trackball.enabled')) {
+            neededButton = this.evalVisProp('trackball.button');
+            neededKey = this.evalVisProp('trackball.key');
 
             // Move events for virtual trackball
             if (
@@ -1690,14 +1690,14 @@ JXG.extend(
                 (neededKey === 'none' || (neededKey.indexOf('shift') > -1 && evt.shiftKey) || (neededKey.indexOf('ctrl') > -1 && evt.ctrlKey))
             ) {
                 // If outside is true then the event listener is bound to the document, otherwise to the div
-                target = (Type.evaluate(this.visProp.trackball.outside)) ? document : this.board.containerObj;
+                target = (this.evalVisProp('trackball.outside')) ? document : this.board.containerObj;
                 Env.addEvent(target, 'pointermove', this._trackballHandler, this);
                 this._hasMoveTrackball = true;
             }
         } else {
-            if (Type.evaluate(this.visProp.az.pointer.enabled)) {
-                neededButton = Type.evaluate(this.visProp.az.pointer.button);
-                neededKey = Type.evaluate(this.visProp.az.pointer.key);
+            if (this.evalVisProp('az.pointer.enabled')) {
+                neededButton = this.evalVisProp('az.pointer.button');
+                neededKey = this.evalVisProp('az.pointer.key');
 
                 // Move events for azimuth
                 if (
@@ -1705,15 +1705,15 @@ JXG.extend(
                     (neededKey === 'none' || (neededKey.indexOf('shift') > -1 && evt.shiftKey) || (neededKey.indexOf('ctrl') > -1 && evt.ctrlKey))
                 ) {
                     // If outside is true then the event listener is bound to the document, otherwise to the div
-                    target = (Type.evaluate(this.visProp.az.pointer.outside)) ? document : this.board.containerObj;
+                    target = (this.evalVisProp('az.pointer.outside')) ? document : this.board.containerObj;
                     Env.addEvent(target, 'pointermove', this._azEventHandler, this);
                     this._hasMoveAz = true;
                 }
             }
 
-            if (Type.evaluate(this.visProp.el.pointer.enabled)) {
-                neededButton = Type.evaluate(this.visProp.el.pointer.button);
-                neededKey = Type.evaluate(this.visProp.el.pointer.key);
+            if (this.evalVisProp('el.pointer.enabled')) {
+                neededButton = this.evalVisProp('el.pointer.button');
+                neededKey = this.evalVisProp('el.pointer.key');
 
                 // Events for elevation
                 if (
@@ -1721,15 +1721,15 @@ JXG.extend(
                     (neededKey === 'none' || (neededKey.indexOf('shift') > -1 && evt.shiftKey) || (neededKey.indexOf('ctrl') > -1 && evt.ctrlKey))
                 ) {
                     // If outside is true then the event listener is bound to the document, otherwise to the div
-                    target = (Type.evaluate(this.visProp.el.pointer.outside)) ? document : this.board.containerObj;
+                    target = (this.evalVisProp('el.pointer.outside')) ? document : this.board.containerObj;
                     Env.addEvent(target, 'pointermove', this._elEventHandler, this);
                     this._hasMoveEl = true;
                 }
             }
 
-            if (Type.evaluate(this.visProp.bank.pointer.enabled)) {
-                neededButton = Type.evaluate(this.visProp.bank.pointer.button);
-                neededKey = Type.evaluate(this.visProp.bank.pointer.key);
+            if (this.evalVisProp('bank.pointer.enabled')) {
+                neededButton = this.evalVisProp('bank.pointer.button');
+                neededKey = this.evalVisProp('bank.pointer.key');
 
                 // Events for bank
                 if (
@@ -1740,7 +1740,7 @@ JXG.extend(
                     // the document. otherwise, we bind it to the div. we
                     // register the event listener as active so it can
                     // prevent the pointer wheel from scrolling the page
-                    target = (Type.evaluate(this.visProp.bank.pointer.outside)) ? document : this.board.containerObj;
+                    target = (this.evalVisProp('bank.pointer.outside')) ? document : this.board.containerObj;
                     Env.addEvent(target, 'wheel', this._bankEventHandler, this, { passive: false });
                     this._hasMoveBank = true;
                 }
@@ -1759,22 +1759,22 @@ JXG.extend(
     pointerUpHandler: function (evt) {
         var target;
         if (this._hasMoveAz) {
-            target = (Type.evaluate(this.visProp.az.pointer.outside)) ? document : this.board.containerObj;
+            target = (this.evalVisProp('az.pointer.outside')) ? document : this.board.containerObj;
             Env.removeEvent(target, 'pointermove', this._azEventHandler, this);
             this._hasMoveAz = false;
         }
         if (this._hasMoveEl) {
-            target = (Type.evaluate(this.visProp.el.pointer.outside)) ? document : this.board.containerObj;
+            target = (this.evalVisProp('el.pointer.outside')) ? document : this.board.containerObj;
             Env.removeEvent(target, 'pointermove', this._elEventHandler, this);
             this._hasMoveEl = false;
         }
         if (this._hasMoveBank) {
-            target = (Type.evaluate(this.visProp.bank.pointer.outside)) ? document : this.board.containerObj;
+            target = (this.evalVisProp('bank.pointer.outside')) ? document : this.board.containerObj;
             Env.removeEvent(target, 'wheel', this._bankEventHandler, this);
             this._hasMoveBank = false;
         }
         if (this._hasMoveTrackball) {
-            target = (Type.evaluate(this.visProp.az.pointer.outside)) ? document : this.board.containerObj;
+            target = (this.evalVisProp('az.pointer.outside')) ? document : this.board.containerObj;
             Env.removeEvent(target, 'pointermove', this._trackballHandler, this);
             this._hasMoveTrackball = false;
         }
@@ -2369,10 +2369,10 @@ JXG.createView3D = function (board, parents, attributes) {
         var neededKey,
             catchEvt = false;
 
-        if (Type.evaluate(view.visProp.el.keyboard.enabled) &&
+        if (view.evalVisProp('el.keyboard.enabled') &&
             (event.key === 'ArrowUp' || event.key === 'ArrowDown')
         ) {
-            neededKey = Type.evaluate(view.visProp.el.keyboard.key);
+            neededKey = view.evalVisProp('el.keyboard.key');
             if (neededKey === 'none' ||
                 (neededKey.indexOf('shift') > -1 && event.shiftKey) ||
                 (neededKey.indexOf('ctrl') > -1 && event.ctrlKey)) {
@@ -2381,10 +2381,10 @@ JXG.createView3D = function (board, parents, attributes) {
             }
 
         }
-        if (Type.evaluate(view.visProp.el.keyboard.enabled) &&
+        if (view.evalVisProp('el.keyboard.enabled') &&
             (event.key === 'ArrowLeft' || event.key === 'ArrowRight')
         ) {
-            neededKey = Type.evaluate(view.visProp.az.keyboard.key);
+            neededKey = view.evalVisProp('az.keyboard.key');
             if (neededKey === 'none' ||
                 (neededKey.indexOf('shift') > -1 && event.shiftKey) ||
                 (neededKey.indexOf('ctrl') > -1 && event.ctrlKey)
@@ -2393,8 +2393,8 @@ JXG.createView3D = function (board, parents, attributes) {
                 catchEvt = true;
             }
         }
-        if (Type.evaluate(view.visProp.bank.keyboard.enabled) && (event.key === ',' || event.key === '<' || event.key === '.' || event.key === '>')) {
-            neededKey = Type.evaluate(view.visProp.bank.keyboard.key);
+        if (view.evalVisProp('bank.keyboard.enabled') && (event.key === ',' || event.key === '<' || event.key === '.' || event.key === '>')) {
+            neededKey = view.evalVisProp('bank.keyboard.key');
             if (neededKey === 'none' || (neededKey.indexOf('shift') > -1 && event.shiftKey) || (neededKey.indexOf('ctrl') > -1 && event.ctrlKey)) {
                 view._bankEventHandler(event);
                 catchEvt = true;

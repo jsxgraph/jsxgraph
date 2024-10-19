@@ -600,7 +600,7 @@ JXG.extend(
             }
 
             if (pos.indexOf('right') < 0 && pos.indexOf('left') < 0) {
-                switch (Type.evaluate(this.visProp.label.position)) {
+                switch (this.evalVisProp('label.position')) {
                     case "lft":
                         x = c[1] - r;
                         y = c[2];

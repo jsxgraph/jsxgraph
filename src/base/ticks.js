@@ -1290,12 +1290,12 @@ JXG.extend(
         formatLabelText: function (value) {
             var labelText,
                 digits,
-                ev_um = Type.evaluate(this.visProp.label.usemathjax),
-                ev_uk = Type.evaluate(this.visProp.label.usekatex),
+                ev_um = this.evalVisProp('label.usemathjax'),
+                ev_uk = this.evalVisProp('label.usekatex'),
                 ev_s = this.evalVisProp('scalesymbol');
 
             if (Type.isNumber(value)) {
-                if (Type.evaluate(this.visProp.label.tofraction)) {
+                if (this.evalVisProp('label.tofraction')) {
                     if (ev_um) {
                         labelText = '\\(' + Type.toFraction(value, true) + '\\)';
                     } else {
@@ -1439,7 +1439,7 @@ JXG.extend(
             // Test if large portions of the label are inside of the canvas
             // This is the last chance to abandon the creation of the label if it is mostly
             // outside of the canvas.
-            fs = Type.evaluate(this.visProp.label.fontsize);
+            fs = this.evalVisProp('label.fontsize');
             xa = [tick.scrCoords[1], tick.scrCoords[1]];
             ya = [tick.scrCoords[2], tick.scrCoords[2]];
             m = fs === undefined ? 12 : fs;
@@ -1562,7 +1562,7 @@ JXG.extend(
 
                 // Look-ahead if the label inherits visibility.
                 // If yes, update label.
-                visible = Type.evaluate(this.visProp.label.visible);
+                visible = this.evalVisProp('label.visible');
                 if (visible === 'inherit') {
                     visible = this.visPropCalc.visible;
                 }

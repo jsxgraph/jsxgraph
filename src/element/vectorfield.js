@@ -216,16 +216,16 @@ JXG.createVectorField = function (board, parents, attributes) {
             delta_y = (end_y - start_y) / steps_y,
             v, theta, phi1, phi2,
 
-            showArrow = Type.evaluate(this.visProp.arrowhead.enabled),
+            showArrow = this.evalVisProp('arrowhead.enabled'),
             leg, leg_x, leg_y, alpha;
 
 
         if (showArrow) {
             // Arrow head style
-            leg = Type.evaluate(this.visProp.arrowhead.size);
+            leg = this.evalVisProp('arrowhead.size');
             leg_x = leg / board.unitX;
             leg_y = leg / board.unitY;
-            alpha = Type.evaluate(this.visProp.arrowhead.angle);
+            alpha = this.evalVisProp('arrowhead.angle');
         }
 
         this.dataX = [];

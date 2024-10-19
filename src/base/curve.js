@@ -1125,7 +1125,7 @@ JXG.extend(
             }
 
             if (pos.indexOf('right') < 0 && pos.indexOf('left') < 0) {
-                switch (Type.evaluate(this.visProp.label.position)) {
+                switch (this.evalVisProp('label.position')) {
                     case "ulft":
                         x = ax;
                         y = ay;
@@ -3395,23 +3395,23 @@ JXG.createImplicitCurve = function (board, parents, attributes) {
         }
 
         cfg = {
-            resolution_out: Math.max(0.01, Type.evaluate(this.visProp.resolution_outer)),
-            resolution_in: Math.max(0.01, Type.evaluate(this.visProp.resolution_inner)),
-            max_steps: Type.evaluate(this.visProp.max_steps),
-            alpha_0: Type.evaluate(this.visProp.alpha_0),
-            tol_u0: Type.evaluate(this.visProp.tol_u0),
-            tol_newton: Type.evaluate(this.visProp.tol_newton),
-            tol_cusp: Type.evaluate(this.visProp.tol_cusp),
-            tol_progress: Type.evaluate(this.visProp.tol_progress),
-            qdt_box: Type.evaluate(this.visProp.qdt_box),
-            kappa_0: Type.evaluate(this.visProp.kappa_0),
-            delta_0: Type.evaluate(this.visProp.delta_0),
-            h_initial: Type.evaluate(this.visProp.h_initial),
-            h_critical: Type.evaluate(this.visProp.h_critical),
-            h_max: Type.evaluate(this.visProp.h_max),
-            loop_dist: Type.evaluate(this.visProp.loop_dist),
-            loop_dir: Type.evaluate(this.visProp.loop_dir),
-            loop_detection: Type.evaluate(this.visProp.loop_detection),
+            resolution_out: Math.max(0.01, this.evalVisProp('resolution_outer')),
+            resolution_in: Math.max(0.01, this.evalVisProp('resolution_inner')),
+            max_steps: this.evalVisProp('max_steps'),
+            alpha_0: this.evalVisProp('alpha_0'),
+            tol_u0: this.evalVisProp('tol_u0'),
+            tol_newton: this.evalVisProp('tol_newton'),
+            tol_cusp: this.evalVisProp('tol_cusp'),
+            tol_progress: this.evalVisProp('tol_progress'),
+            qdt_box: this.evalVisProp('qdt_box'),
+            kappa_0: this.evalVisProp('kappa_0'),
+            delta_0: this.evalVisProp('delta_0'),
+            h_initial: this.evalVisProp('h_initial'),
+            h_critical: this.evalVisProp('h_critical'),
+            h_max: this.evalVisProp('h_max'),
+            loop_dist: this.evalVisProp('loop_dist'),
+            loop_dir: this.evalVisProp('loop_dir'),
+            loop_detection: this.evalVisProp('loop_detection'),
             unitX: this.board.unitX,
             unitY: this.board.unitY
         };

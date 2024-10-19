@@ -432,15 +432,15 @@ JXG.createVectorfield3D = function (board, parents, attributes) {
                 (end[2] - start[2]) / steps[2]
             ],
             phi, theta1, theta2, theta,
-            showArrow = Type.evaluate(this.visProp.arrowhead.enabled),
+            showArrow = this.evalVisProp('arrowhead.enabled'),
             leg, leg_x, leg_y, leg_z, alpha;
 
         if (showArrow) {
             // Arrow head style
             // leg = 8;
             // alpha = Math.PI * 0.125;
-            leg = Type.evaluate(this.visProp.arrowhead.size);
-            alpha = Type.evaluate(this.visProp.arrowhead.angle);
+            leg = this.evalVisProp('arrowhead.size');
+            alpha = this.evalVisProp('arrowhead.angle');
             leg_x = leg / board.unitX;
             leg_y = leg / board.unitY;
             leg_z = leg / Math.sqrt(board.unitX * board.unitY);

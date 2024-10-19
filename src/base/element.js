@@ -1554,7 +1554,20 @@ JXG.extend(
          * @returns {String|Number|Boolean} value of attribute "key" (evaluated in case of a function)
          */
         evalVisProp: function (key) {
-            var val = this.visProp[key];
+            var val, arr, i, le;
+
+            if (key.indexOf('.') === -1) {
+                // e.g. 'visible'
+                val = this.visProp[key];
+            } else {
+                // e.g. label.visible
+                arr = key.split('.');
+                le = arr.length;
+                val = this.visProp;
+                for (i = 0; i < le; i++) {
+                    val = val[arr[i]];
+                }
+            }
 
             if (JXG.isFunction(val)) {
                 return val(this);
@@ -2369,9 +2382,9 @@ JXG.extend(
             if (Type.exists(Intl) &&
                 this.useLocale()) {
 
-                loc = Type.evaluate(this.visProp.intl.locale) ||
+                loc = this.evalVisProp('intl.locale') ||
                     Type.evaluate(this.board.attr.intl.locale);
-                opt = Type.evaluate(this.visProp.intl.options) || {};
+                opt = this.evalVisProp('intl.options') || {};
 
                 // Transfer back to camel case if necessary
                 // and evaluate
@@ -2420,7 +2433,7 @@ JXG.extend(
             }
 
             // Check if intl is supported explicitly enabled for this element
-            val = Type.evaluate(this.visProp.intl.enabled);
+            val = this.evalVisProp('intl.enabled');
 
             if (val === true) {
                 return true;
