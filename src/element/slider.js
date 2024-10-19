@@ -253,10 +253,10 @@ JXG.createSlider = function (board, parents, attributes) {
      */
     p3.Value = function () {
         var d = this._smax - this._smin,
-            ev_sw = Type.evaluate(this.visProp.snapwidth);
+            ev_sw = this.evalVisProp('snapwidth');
         // snapValues, i, v;
 
-        // snapValues = Type.evaluate(this.visProp.snapvalues);
+        // snapValues = this.evalVisProp('snapvalues');
         // if (Type.isArray(snapValues)) {
         //     for (i = 0; i < snapValues.length; i++) {
         //         v = (snapValues[i] - this._smin) / (this._smax - this._smin);
@@ -362,14 +362,14 @@ JXG.createSlider = function (board, parents, attributes) {
             },
             function () {
                 var n,
-                    d = Type.evaluate(p3.visProp.digits),
-                    sl = Type.evaluate(p3.visProp.suffixlabel),
-                    ul = Type.evaluate(p3.visProp.unitlabel),
-                    pl = Type.evaluate(p3.visProp.postlabel);
+                    d = p3.evalVisProp('digits'),
+                    sl = p3.evalVisProp('suffixlabel'),
+                    ul = p3.evalVisProp('unitlabel'),
+                    pl = p3.evalVisProp('postlabel');
 
-                if (d === 2 && Type.evaluate(p3.visProp.precision) !== 2) {
+                if (d === 2 && p3.evalVisProp('precision') !== 2) {
                     // Backwards compatibility
-                    d = Type.evaluate(p3.visProp.precision);
+                    d = p3.evalVisProp('precision');
                 }
 
                 if (sl !== null) {
@@ -548,7 +548,7 @@ JXG.createSlider = function (board, parents, attributes) {
     p3.baseline.on("up", function (evt) {
         var pos, c;
 
-        if (Type.evaluate(p3.visProp.moveonup) && !Type.evaluate(p3.visProp.fixed)) {
+        if (p3.evalVisProp('moveonup') && !p3.evalVisProp('fixed')) {
             pos = l1.board.getMousePosition(evt, 0);
             c = new Coords(Const.COORDS_BY_SCREEN, pos, this.board);
             p3.moveTo([c.usrCoords[1], c.usrCoords[2]]);

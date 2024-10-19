@@ -240,7 +240,7 @@ JXG.PrefixParser = {
                 res = term[2].Dimension();
                 // If attribute "dim" is set, this overrules anything else.
                 if (Type.exists(term[2].visProp.dim)) {
-                    d = Type.evaluate(term[2].visProp.dim);
+                    d = term[2].evalVisProp('dim');
                     if (d !== null) {
                         res = d;
                     }
@@ -269,7 +269,7 @@ JXG.PrefixParser = {
                         res = term[1].Dimension();
                         // If attribute "dim" is set, this overrules anything else.
                         if (Type.exists(term[1].visProp.dim)) {
-                            d = Type.evaluate(term[1].visProp.dim);
+                            d = term[1].evalVisProp('dim');
                             if (d !== null) {
                                 res = d;
                             }

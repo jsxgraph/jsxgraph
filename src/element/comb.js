@@ -202,10 +202,10 @@ JXG.createComb = function (board, parents, attributes) {
             p2_inner = p2,
             ds, angle, width;
 
-        ds = Type.evaluate(c.visProp.frequency);
-        angle = -Type.evaluate(c.visProp.angle);
-        width = Type.evaluate(c.visProp.width);
-        if (Type.evaluate(c.visProp.reverse)) {
+        ds = c.evalVisProp('frequency');
+        angle = -c.evalVisProp('angle');
+        width = c.evalVisProp('width');
+        if (c.evalVisProp('reverse')) {
             p1_inner = p2;
             p2_inner = p1;
             angle = -angle;

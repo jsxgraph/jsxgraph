@@ -198,7 +198,7 @@ JXG.extend(
                 fromParent = false;
             }
 
-            if (!Type.evaluate(this.visProp.frozen)) {
+            if (!this.evalVisProp('frozen')) {
                 this.updateConstraint();
             }
 
@@ -257,7 +257,7 @@ JXG.extend(
 
             this.needsUpdateFromParent = false;
             if (slide.elementClass === Const.OBJECT_CLASS_CIRCLE) {
-                if (Type.evaluate(this.visProp.isgeonext)) {
+                if (this.evalVisProp('isgeonext')) {
                     delta = 1.0;
                 }
                 newCoords = Geometry.projectPointToCircle(this, slide, this.board);
@@ -381,14 +381,14 @@ JXG.extend(
                 // Snap the glider to snap values.
                 snappedTo = this.findClosestSnapValue(newPos);
                 if (snappedTo !== null) {
-                    snapValues = Type.evaluate(this.visProp.snapvalues);
+                    snapValues = this.evalVisProp('snapvalues');
                     newPos = (snapValues[snappedTo] - this._smin) / (this._smax - this._smin);
                     this.update(true);
                 } else {
                     // Snap the glider point of the slider into its appropiate position
                     // First, recalculate the new value of this.position
                     // Second, call update(fromParent==true) to make the positioning snappier.
-                    ev_sw = Type.evaluate(this.visProp.snapwidth);
+                    ev_sw = this.evalVisProp('snapwidth');
                     if (
                         Type.evaluate(ev_sw) > 0.0 &&
                         Math.abs(this._smax - this._smin) >= Mat.eps
@@ -404,7 +404,7 @@ JXG.extend(
 
                 p1c = slide.point1.coords;
                 if (
-                    !Type.evaluate(slide.visProp.straightfirst) &&
+                    !slide.evalVisProp('straightfirst') &&
                     Math.abs(p1c.usrCoords[0]) > Mat.eps &&
                     newPos < 0
                 ) {
@@ -415,7 +415,7 @@ JXG.extend(
 
                 p2c = slide.point2.coords;
                 if (
-                    !Type.evaluate(slide.visProp.straightlast) &&
+                    !slide.evalVisProp('straightlast') &&
                     Math.abs(p2c.usrCoords[0]) > Mat.eps &&
                     newPos > 1
                 ) {
@@ -441,7 +441,7 @@ JXG.extend(
                     beta = Geometry.rad(slide.radiuspoint, slide.center, slide.anglepoint);
                     newPos = angle;
 
-                    ev_sw = Type.evaluate(slide.visProp.selection);
+                    ev_sw = slide.evalVisProp('selection');
                     if (
                         (ev_sw === "minor" && beta > Math.PI) ||
                         (ev_sw === "major" && beta < Math.PI)
@@ -561,8 +561,8 @@ JXG.extend(
                 snappedTo = null;
 
             // Snap the glider to snap values.
-            snapValues = Type.evaluate(this.visProp.snapvalues);
-            snapValueDistance = Type.evaluate(this.visProp.snapvaluedistance);
+            snapValues = this.evalVisProp('snapvalues');
+            snapValueDistance = this.evalVisProp('snapvaluedistance');
 
             if (Type.isArray(snapValues) &&
                 Math.abs(this._smax - this._smin) >= Mat.eps &&
@@ -599,7 +599,7 @@ JXG.extend(
 
             if (slide.elementClass === Const.OBJECT_CLASS_CIRCLE) {
                 r = slide.Radius();
-                if (Type.evaluate(this.visProp.isgeonext)) {
+                if (this.evalVisProp('isgeonext')) {
                     delta = 1.0;
                 }
                 c = [
@@ -714,7 +714,7 @@ JXG.extend(
                     }
 
                     delta = beta - alpha;
-                    if (Type.evaluate(this.visProp.isgeonext)) {
+                    if (this.evalVisProp('isgeonext')) {
                         delta = 1.0;
                     }
                     angle = this.position * delta;
@@ -991,7 +991,7 @@ JXG.extend(
                 c = null,
                 ev_au,
                 ev_ad,
-                ev_is2p = Type.evaluate(this.visProp.ignoredsnaptopoints),
+                ev_is2p = this.evalVisProp('ignoredsnaptopoints'),
                 len2,
                 j,
                 ignore = false;
@@ -1002,9 +1002,9 @@ JXG.extend(
                 len2 = ev_is2p.length;
             }
 
-            if (Type.evaluate(this.visProp.snaptopoints) || force) {
-                ev_au = Type.evaluate(this.visProp.attractorunit);
-                ev_ad = Type.evaluate(this.visProp.attractordistance);
+            if (this.evalVisProp('snaptopoints') || force) {
+                ev_au = this.evalVisProp('attractorunit');
+                ev_ad = this.evalVisProp('attractordistance');
 
                 for (i = 0; i < len; i++) {
                     pEl = this.board.objectsList[i];
@@ -1071,10 +1071,10 @@ JXG.extend(
                 projCoords,
                 d = 0.0,
                 projection,
-                ev_au = Type.evaluate(this.visProp.attractorunit),
-                ev_ad = Type.evaluate(this.visProp.attractordistance),
-                ev_sd = Type.evaluate(this.visProp.snatchdistance),
-                ev_a = Type.evaluate(this.visProp.attractors),
+                ev_au = this.evalVisProp('attractorunit'),
+                ev_ad = this.evalVisProp('attractordistance'),
+                ev_sd = this.evalVisProp('snatchdistance'),
+                ev_a = this.evalVisProp('attractors'),
                 len = ev_a.length;
 
             if (ev_ad === 0.0) {
@@ -1093,10 +1093,10 @@ JXG.extend(
                             el.point1.coords.usrCoords,
                             el.point2.coords.usrCoords
                         );
-                        if (!Type.evaluate(el.visProp.straightfirst) && projection[1] < 0.0) {
+                        if (!el.evalVisProp('straightfirst') && projection[1] < 0.0) {
                             projCoords = el.point1.coords;
                         } else if (
-                            !Type.evaluate(el.visProp.straightlast) &&
+                            !el.evalVisProp('straightlast') &&
                             projection[1] > 1.0
                         ) {
                             projCoords = el.point2.coords;
@@ -1172,7 +1172,7 @@ JXG.extend(
 
             if (this.relativeCoords) {
                 c = new Coords(method, coords, this.board);
-                if (Type.evaluate(this.visProp.islabel)) {
+                if (this.evalVisProp('islabel')) {
                     dc = Statistics.subtract(c.scrCoords, oldCoords.scrCoords);
                     this.relativeCoords.scrCoords[1] += dc[1];
                     this.relativeCoords.scrCoords[2] += dc[2];
@@ -1598,8 +1598,8 @@ JXG.extend(
             this.XEval = function () {
                 var sx, coords, anchor, ev_o;
 
-                if (Type.evaluate(this.visProp.islabel)) {
-                    ev_o = Type.evaluate(this.visProp.offset);
+                if (this.evalVisProp('islabel')) {
+                    ev_o = this.evalVisProp('offset');
                     sx = parseFloat(ev_o[0]);
                     anchor = this.element.getLabelAnchor();
                     coords = new Coords(
@@ -1618,8 +1618,8 @@ JXG.extend(
             this.YEval = function () {
                 var sy, coords, anchor, ev_o;
 
-                if (Type.evaluate(this.visProp.islabel)) {
-                    ev_o = Type.evaluate(this.visProp.offset);
+                if (this.evalVisProp('islabel')) {
+                    ev_o = this.evalVisProp('offset');
                     sy = -parseFloat(ev_o[1]);
                     anchor = this.element.getLabelAnchor();
                     coords = new Coords(

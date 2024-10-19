@@ -98,21 +98,21 @@ JXG.extend(
                 r,
                 prec,
                 type,
-                unit = Type.evaluate(this.visProp.sizeunit);
+                unit = this.evalVisProp('sizeunit');
 
-            if (Type.isObject(Type.evaluate(this.visProp.precision))) {
+            if (Type.isObject(this.evalVisProp('precision'))) {
                 type = this.board._inputDevice;
                 prec = Type.evaluate(this.visProp.precision[type]);
             } else {
                 // 'inherit'
                 prec = this.board.options.precision.hasPoint;
             }
-            r = parseFloat(Type.evaluate(this.visProp.size));
+            r = parseFloat(this.evalVisProp('size'));
             if (unit === "user") {
                 r *= Math.sqrt(Math.abs(this.board.unitX * this.board.unitY));
             }
 
-            r += parseFloat(Type.evaluate(this.visProp.strokewidth)) * 0.5;
+            r += parseFloat(this.evalVisProp('strokewidth')) * 0.5;
             if (r < prec) {
                 r = prec;
             }
@@ -130,7 +130,7 @@ JXG.extend(
 
             this.updateCoords(fromParent);
 
-            if (Type.evaluate(this.visProp.trace)) {
+            if (this.evalVisProp('trace')) {
                 this.cloneToBackground(true);
             }
 
@@ -381,7 +381,7 @@ JXG.extend(
             if (Type.isPoint(el)) {
                 return this.Dist(el) < tol;
             } else if (el.elementClass === Const.OBJECT_CLASS_LINE) {
-                if (el.elType === "segment" && !Type.evaluate(this.visProp.alwaysintersect)) {
+                if (el.elType === "segment" && !this.evalVisProp('alwaysintersect')) {
                     arr = JXG.Math.Geometry.projectCoordsToSegment(
                         this.coords.usrCoords,
                         el.point1.coords.usrCoords,
@@ -400,7 +400,7 @@ JXG.extend(
                     return Geometry.distPointLine(this.coords.usrCoords, el.stdform) < tol;
                 }
             } else if (el.elementClass === Const.OBJECT_CLASS_CIRCLE) {
-                if (Type.evaluate(el.visProp.hasinnerpoints)) {
+                if (el.evalVisProp('hasinnerpoints')) {
                     return this.Dist(el.center) < el.Radius() + tol;
                 }
                 return Math.abs(this.Dist(el.center) - el.Radius()) < tol;
@@ -408,7 +408,7 @@ JXG.extend(
                 crds = Geometry.projectPointToCurve(this, el, this.board)[0];
                 return Geometry.distance(this.coords.usrCoords, crds.usrCoords, 3) < tol;
             } else if (el.type === Const.OBJECT_TYPE_POLYGON) {
-                if (Type.evaluate(el.visProp.hasinnerpoints)) {
+                if (el.evalVisProp('hasinnerpoints')) {
                     if (
                         el.pnpoly(
                             this.coords.usrCoords[1],
@@ -445,7 +445,7 @@ JXG.extend(
             Type.clearVisPropOld(copy);
 
             copy.visPropCalc = {
-                visible: Type.evaluate(copy.visProp.visible)
+                visible: copy.evalVisProp('visible')
             };
 
             this.board.renderer.drawPoint(copy);

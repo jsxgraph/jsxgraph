@@ -307,7 +307,7 @@ JXG.createGrid = function (board, parents, attributes) {
             case 'regpol':
             case 'regularpolygon':
                 grid.visProp.linecap = 'round';
-                n = Type.evaluate(grid.visProp.polygonvertices);
+                n = grid.evalVisProp('polygonvertices');
                 array = [[], []];
                 // approximation of circle with variable n
                 for (t = 0; t <= 2 * Math.PI; t += (2 * Math.PI) / n) {
@@ -406,7 +406,7 @@ JXG.createGrid = function (board, parents, attributes) {
                 ];
 
             case 'line':
-                m = Type.evaluate(grid.visProp.margin);
+                m = grid.evalVisProp('margin');
                 return [
                     // [x, x, NaN, bbox[0] + (4 / grid.board.unitX), bbox[2] - (4 / grid.board.unitX), NaN],
                     [x, x, NaN, bbox[0] - m / grid.board.unitX, bbox[2] + m / grid.board.unitX, NaN],
@@ -459,22 +459,22 @@ JXG.createGrid = function (board, parents, attributes) {
             dataArr,
             finite, delta,
 
-            gridX = Type.evaluate(this.visProp.gridx), // for backwards compatibility
-            gridY = Type.evaluate(this.visProp.gridy), // for backwards compatibility
-            face = Type.evaluate(this.visProp.face),
-            drawZero = Type.evaluate(this.visProp.drawzero),
+            gridX = this.evalVisProp('gridx'), // for backwards compatibility
+            gridY = this.evalVisProp('gridy'), // for backwards compatibility
+            face = this.evalVisProp('face'),
+            drawZero = this.evalVisProp('drawzero'),
             drawZeroOrigin = drawZero === true || (Type.isObject(drawZero) && Type.evaluate(drawZero.origin) === true),
             drawZeroX = drawZero === true || (Type.isObject(drawZero) && Type.evaluate(drawZero.x) === true),
             drawZeroY = drawZero === true || (Type.isObject(drawZero) && Type.evaluate(drawZero.y) === true),
 
-            includeBoundaries = Type.evaluate(this.visProp.includeboundaries),
-            forceSquare = Type.evaluate(this.visProp.forcesquare);
+            includeBoundaries = this.evalVisProp('includeboundaries'),
+            forceSquare = this.evalVisProp('forcesquare');
 
         this.dataX = [];
         this.dataY = [];
 
         // set global majorStep
-        majorStep = Type.evaluate(this.visProp.majorstep);
+        majorStep = this.evalVisProp('majorstep');
         if (!Type.isArray(majorStep)) {
             majorStep = [majorStep, majorStep];
         }
@@ -533,7 +533,7 @@ JXG.createGrid = function (board, parents, attributes) {
         }
 
         // Set global majorSize
-        majorSize = Type.evaluate(this.visProp.size);
+        majorSize = this.evalVisProp('size');
         if (!Type.isArray(majorSize)) {
             majorSize = [majorSize, majorSize];
         }
@@ -570,7 +570,7 @@ JXG.createGrid = function (board, parents, attributes) {
         // POI finite = false means that no grid is drawn. Should we change this?
         // Draw grid elements
         if (face.toLowerCase() === 'line') {
-            m = Type.evaluate(majorGrid.visProp.margin);
+            m = majorGrid.evalVisProp('margin');
             for (y = startY; finite && y >= bbox[3]; y -= majorStep[1]) {
                 if (
                     (!drawZeroOrigin && Math.abs(y) < eps) ||
@@ -651,20 +651,20 @@ JXG.createGrid = function (board, parents, attributes) {
             dis0To, dis1To, dis2To, dis3To,         // {Number} absolute distances of borders of the boundingBox to the next major grid element.
             dis0From, dis1From, dis2From, dis3From,
 
-            minorElements = Type.evaluate(this.visProp.minorelements),
-            minorSize = Type.evaluate(this.visProp.size),
-            minorFace = Type.evaluate(this.visProp.face),
-            minorDrawZero = Type.evaluate(this.visProp.drawzero),
+            minorElements = this.evalVisProp('minorelements'),
+            minorSize = this.evalVisProp('size'),
+            minorFace = this.evalVisProp('face'),
+            minorDrawZero = this.evalVisProp('drawzero'),
             minorDrawZeroX = minorDrawZero === true || (Type.isObject(minorDrawZero) && Type.evaluate(minorDrawZero.x) === true),
             minorDrawZeroY = minorDrawZero === true || (Type.isObject(minorDrawZero) && Type.evaluate(minorDrawZero.y) === true),
 
-            majorFace = Type.evaluate(this.majorGrid.visProp.face),
-            majorDrawZero = Type.evaluate(this.majorGrid.visProp.drawzero),
+            majorFace = this.majorGrid.evalVisProp('face'),
+            majorDrawZero = this.majorGrid.evalVisProp('drawzero'),
             majorDrawZeroOrigin = majorDrawZero === true || (Type.isObject(majorDrawZero) && Type.evaluate(majorDrawZero.origin) === true),
             majorDrawZeroX = majorDrawZero === true || (Type.isObject(majorDrawZero) && Type.evaluate(majorDrawZero.x) === true),
             majorDrawZeroY = majorDrawZero === true || (Type.isObject(majorDrawZero) && Type.evaluate(majorDrawZero.y) === true),
 
-            includeBoundaries = Type.evaluate(this.visProp.includeboundaries);
+            includeBoundaries = this.evalVisProp('includeboundaries');
 
         this.dataX = [];
         this.dataY = [];
@@ -896,7 +896,7 @@ JXG.createGrid = function (board, parents, attributes) {
                 }
             }
         } else {
-            m = Type.evaluate(minorGrid.visProp.margin);
+            m = minorGrid.evalVisProp('margin');
             for (y = startY; finite && y >= bbox[3]; y -= minorStep[1]) {
                 YdisTo0 = Mat.roundToStep(Math.abs(y), majorStep[1]);
                 YdisTo0 = Math.abs(YdisTo0 - Math.abs(y));

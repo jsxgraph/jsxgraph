@@ -220,7 +220,7 @@ JXG.extend(
                 r = this.Radius(),
                 dx, dy, dist;
 
-            if (Type.isObject(Type.evaluate(this.visProp.precision))) {
+            if (Type.isObject(this.evalVisProp('precision'))) {
                 type = this.board._inputDevice;
                 prec = Type.evaluate(this.visProp.precision[type]);
             } else {
@@ -232,10 +232,10 @@ JXG.extend(
             dist = Mat.hypot(dx, dy);
 
             // We have to use usrCoords, since Radius is available in usrCoords only.
-            prec += Type.evaluate(this.visProp.strokewidth) * 0.5;
+            prec += this.evalVisProp('strokewidth') * 0.5;
             prec /= Math.sqrt(Math.abs(this.board.unitX * this.board.unitY));
 
-            if (Type.evaluate(this.visProp.hasinnerpoints)) {
+            if (this.evalVisProp('hasinnerpoints')) {
                 return dist < r + prec;
             }
 
@@ -353,7 +353,7 @@ JXG.extend(
             var x, y, z, r, c, i;
 
             if (this.needsUpdate) {
-                if (Type.evaluate(this.visProp.trace)) {
+                if (this.evalVisProp('trace')) {
                     this.cloneToBackground(true);
                 }
 
@@ -551,7 +551,7 @@ JXG.extend(
             }
 
             if (this.method === "pointRadius") {
-                return (Type.evaluate(this.visProp.nonnegativeonly)) ?
+                return (this.evalVisProp('nonnegativeonly')) ?
                     Math.max(0.0, this.updateRadius()) :
                     Math.abs(this.updateRadius());
             }
@@ -594,7 +594,7 @@ JXG.extend(
                 return new Coords(Const.COORDS_BY_SCREEN, [NaN, NaN], this.board);
             }
 
-            pos = Type.evaluate(this.label.visProp.position);
+            pos = this.label.evalVisProp('position');
             if (!Type.isString(pos)) {
                 return new Coords(Const.COORDS_BY_SCREEN, [NaN, NaN], this.board);
             }
@@ -659,7 +659,7 @@ JXG.extend(
                 }
 
                 if (Type.exists(this.label)) {
-                    dist = sgn * 0.5 * Type.evaluate(this.label.visProp.distance);
+                    dist = sgn * 0.5 * this.label.evalVisProp('distance');
                 }
 
                 x = c[1] + (r * this.board.unitX + this.label.size[0] * dist) * Math.cos(lbda);
@@ -696,7 +696,7 @@ JXG.extend(
             this.numTraces++;
             Type.clearVisPropOld(copy);
             copy.visPropCalc = {
-                visible: Type.evaluate(copy.visProp.visible)
+                visible: copy.evalVisProp('visible')
             };
 
             er = this.board.renderer.enhancedRendering;
@@ -731,7 +731,7 @@ JXG.extend(
 
         // see element.js
         snapToGrid: function () {
-            var forceIt = Type.evaluate(this.visProp.snaptogrid);
+            var forceIt = this.evalVisProp('snaptogrid');
 
             this.center.handleSnapToGrid(forceIt, true);
             if (this.method === "twoPoints") {
@@ -743,7 +743,7 @@ JXG.extend(
 
         // see element.js
         snapToPoints: function () {
-            var forceIt = Type.evaluate(this.visProp.snaptopoints);
+            var forceIt = this.evalVisProp('snaptopoints');
 
             this.center.handleSnapToPoints(forceIt);
             if (this.method === "twoPoints") {

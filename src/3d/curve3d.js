@@ -111,7 +111,7 @@ JXG.extend(
     JXG.Curve3D.prototype,
     /** @lends JXG.Curve3D.prototype */ {
         updateDataArray2D: function () {
-            var steps = Type.evaluate(this.visProp.numberpointshigh),
+            var steps = this.evalVisProp('numberpointshigh'),
                 r, s, e, delta, c2d, u, dataX, dataY,
                 i,
                 p = [0, 0, 0];
@@ -410,7 +410,7 @@ JXG.createVectorfield3D = function (board, parents, attributes) {
         var k, i, j,
             v, nrm,
             x, y, z,
-            scale = Type.evaluate(this.visProp.scale),
+            scale = this.evalVisProp('scale'),
             start = [
                 Type.evaluate(this.xData[0]),
                 Type.evaluate(this.yData[0]),

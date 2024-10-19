@@ -481,7 +481,7 @@ JXG.createSector = function (board, parents, attributes) {
                 C = this.point3,
                 phi,
                 sgn = 1,
-                vp_s = Type.evaluate(this.visProp.selection);
+                vp_s = this.evalVisProp('selection');
 
             if (!A.isReal || !B.isReal || !C.isReal) {
                 this.dataX = [NaN];
@@ -595,9 +595,9 @@ JXG.createSector = function (board, parents, attributes) {
             r = this.Radius(),
             dist = this.center.coords.distance(Const.COORDS_BY_USER, checkPoint),
             has,
-            vp_s = Type.evaluate(this.visProp.selection);
+            vp_s = this.evalVisProp('selection');
 
-        if (Type.isObject(Type.evaluate(this.visProp.precision))) {
+        if (Type.isObject(this.evalVisProp('precision'))) {
             type = this.board._inputDevice;
             prec = Type.evaluate(this.visProp.precision[type]);
         } else {
@@ -641,7 +641,7 @@ JXG.createSector = function (board, parents, attributes) {
             alpha,
             beta,
             has = dist < r,
-            vp_s = Type.evaluate(this.visProp.selection);
+            vp_s = this.evalVisProp('selection');
 
         if (has) {
             angle = Geometry.rad(this.radiuspoint, this.center, checkPoint.usrCoords.slice(1));
@@ -662,8 +662,8 @@ JXG.createSector = function (board, parents, attributes) {
 
     el.hasPoint = function (x, y) {
         if (
-            Type.evaluate(this.visProp.highlightonsector) ||
-            Type.evaluate(this.visProp.hasinnerpoints)
+            this.evalVisProp('highlightonsector') ||
+            this.evalVisProp('hasinnerpoints')
         ) {
             return this.hasPointSector(x, y);
         }
@@ -697,7 +697,7 @@ JXG.createSector = function (board, parents, attributes) {
             pmc = this.point1.coords.usrCoords,
             bxminusax = p2c[1] - pmc[1],
             byminusay = p2c[2] - pmc[2],
-            vp_s = Type.evaluate(this.visProp.selection),
+            vp_s = this.evalVisProp('selection'),
             l_vp = this.label ? this.label.visProp : this.visProp.label;
 
         // If this is uncommented, the angle label can not be dragged
@@ -1311,7 +1311,7 @@ JXG.createAngle = function (board, parents, attributes) {
                 ar,
                 phi,
                 sgn = 1,
-                vp_s = Type.evaluate(this.visProp.selection);
+                vp_s = this.evalVisProp('selection');
 
             phi = Geometry.rad(A, B, C);
             if ((vp_s === "minor" && phi > Math.PI) || (vp_s === "major" && phi < Math.PI)) {
@@ -1512,7 +1512,7 @@ JXG.createAngle = function (board, parents, attributes) {
 
     // GEONExT compatible labels.
     if (Type.exists(el.visProp.text)) {
-        el.label.setText(Type.evaluate(el.visProp.text));
+        el.label.setText(el.evalVisProp('text'));
     }
 
     el.elType = "angle";
@@ -1578,16 +1578,16 @@ JXG.createAngle = function (board, parents, attributes) {
      * @ignore
      */
     el.updateDataArray = function () {
-        var type = Type.evaluate(this.visProp.type),
+        var type = this.evalVisProp('type'),
             deg = Geometry.trueAngle(this.point2, this.point1, this.point3),
-            vp_s = Type.evaluate(this.visProp.selection);
+            vp_s = this.evalVisProp('selection');
 
         if ((vp_s === "minor" && deg > 180.0) || (vp_s === "major" && deg < 180.0)) {
             deg = 360.0 - deg;
         }
 
-        if (Math.abs(deg - 90.0) < Type.evaluate(this.visProp.orthosensitivity) + Mat.eps) {
-            type = Type.evaluate(this.visProp.orthotype);
+        if (Math.abs(deg - 90.0) < this.evalVisProp('orthosensitivity') + Mat.eps) {
+            type = this.evalVisProp('orthotype');
         }
 
         if (type === "none") {
@@ -1633,7 +1633,7 @@ JXG.createAngle = function (board, parents, attributes) {
                 d = Geometry.distance(A, B, 3);
                 a2 = Geometry.rad(el.point2, el.point1, el.point3);
 
-                vp_s = Type.evaluate(el.visProp.selection);
+                vp_s = el.evalVisProp('selection');
                 if ((vp_s === "minor" && a2 > Math.PI) || (vp_s === "major" && a2 < Math.PI)) {
                     a2 = -(2 * Math.PI - a2);
                 }
@@ -1733,7 +1733,7 @@ JXG.createAngle = function (board, parents, attributes) {
         var vec,
             dx = 12,
             A, B, r, d, a2, co, si, mat,
-            vp_s = Type.evaluate(el.visProp.selection),
+            vp_s = el.evalVisProp('selection'),
             l_vp = this.label ? this.label.visProp : this.visProp.label;
 
         // If this is uncommented, the angle label can not be dragged
@@ -1742,7 +1742,7 @@ JXG.createAngle = function (board, parents, attributes) {
         //}
 
         if (Type.exists(this.label) && Type.exists(this.label.visProp.fontsize)) {
-            dx = Type.evaluate(this.label.visProp.fontsize);
+            dx = this.label.evalVisProp('fontsize');
         }
         dx /= this.board.unitX;
 

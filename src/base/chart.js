@@ -427,7 +427,7 @@ JXG.extend(
 
                     if (Type.exists(this.label)) {
                         this.label.rendNode.style.fontSize =
-                            s * Type.evaluate(this.label.visProp.fontsize) + "px";
+                            s * this.label.evalVisProp('fontsize') + "px";
                         this.label.fullUpdate();
                     }
 
@@ -1421,7 +1421,7 @@ JXG.Legend.prototype.drawVerticalLegend = function (board, attributes) {
         this.lines[i]
             .prepareUpdate()
             .update()
-            .updateVisibility(Type.evaluate(this.lines[i].visProp.visible))
+            .updateVisibility(this.lines[i].evalVisProp('visible'))
             .updateRenderer();
     }
 };

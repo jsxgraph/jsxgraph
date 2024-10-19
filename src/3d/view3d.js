@@ -693,7 +693,7 @@ JXG.extend(
             r, A;
 
         // set distance from view box center to camera
-        r = Type.evaluate(this.visProp.r);
+        r = this.evalVisProp('r');
         if (r === 'auto') {
             r = Mat.hypot(
                 this.bbox3D[0][0] - this.bbox3D[0][1],
@@ -707,7 +707,7 @@ JXG.extend(
         this.boxToCam[3][0] = -r;
 
         // compute focal distance and clip space transformation
-        this.focalDist = 1 / Math.tan(0.5 * Type.evaluate(this.visProp.fov));
+        this.focalDist = 1 / Math.tan(0.5 * this.evalVisProp('fov'));
         A = [
             [0, 0, 0, -1],
             [0, this.focalDist, 0, 0],
@@ -761,7 +761,7 @@ JXG.extend(
             [0, 0, 1]
         ];
 
-        this.projectionType = Type.evaluate(this.visProp.projection).toLowerCase();
+        this.projectionType = this.evalVisProp('projection').toLowerCase();
 
         // override angle slider bounds when trackball navigation is enabled
         if (this.trackballEnabled !== Type.evaluate(this.visProp.trackball.enabled)) {
@@ -851,7 +851,7 @@ JXG.extend(
         // moving the target element to the end of the layer's child list
         if (this.visProp.depthorderpoints && this.board.renderer && this.board.renderer.type === 'svg') {
             this.points
-                .filter((pt) => Type.evaluate(pt.element2D.visProp.visible))
+                .filter((pt) => pt.element2D.evalVisProp('visible'))
                 .sort(this.compareDepth.bind(this))
                 .forEach((pt) => this.board.renderer.setLayer(pt.element2D, pt.element2D.visProp.layer));
 
@@ -1292,8 +1292,8 @@ JXG.extend(
      * @example
      *  var el = view.create('curve', [[], []]);
      *  el.updateDataArray = function () {
-     *      var steps_u = Type.evaluate(this.visProp.stepsu),
-     *           steps_v = Type.evaluate(this.visProp.stepsv),
+     *      var steps_u = this.evalVisProp('stepsu'),
+     *           steps_v = this.evalVisProp('stepsv'),
      *           r_u = Type.evaluate(this.range_u),
      *           r_v = Type.evaluate(this.range_v),
      *           func, ret;
@@ -1434,7 +1434,7 @@ JXG.extend(
      * @returns {Object} Reference to the view.
      */
     nextView: function () {
-        var views = Type.evaluate(this.visProp.values),
+        var views = this.evalVisProp('values'),
             n = this.visProp._currentview;
 
         n = (n + 1) % views.length;
@@ -1451,7 +1451,7 @@ JXG.extend(
      * @returns {Object} Reference to the view.
      */
     previousView: function () {
-        var views = Type.evaluate(this.visProp.values),
+        var views = this.evalVisProp('values'),
             n = this.visProp._currentview;
 
         n = (n + views.length - 1) % views.length;
@@ -1469,7 +1469,7 @@ JXG.extend(
      * @returns {Object} Reference to the view.
      */
     setCurrentView: function (n) {
-        var views = Type.evaluate(this.visProp.values);
+        var views = this.evalVisProp('values');
 
         if (n < 0 || n >= views.length) {
             n = ((n % views.length) + views.length) % views.length;
@@ -2339,7 +2339,7 @@ JXG.createView3D = function (board, parents, attributes) {
                 view.board.highlightCustomInfobox('', p);
                 return;
             }
-            d = Type.evaluate(p.visProp.infoboxdigits);
+            d = p.evalVisProp('infoboxdigits');
             infobox = view.board.infobox;
             if (d === 'auto') {
                 if (infobox.useLocale()) {

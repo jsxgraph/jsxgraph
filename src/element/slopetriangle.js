@@ -238,7 +238,7 @@ JXG.createSlopeTriangle = function (board, parents, attributes) {
     el.borders[1].visProp.withlabel = true;
 
     label._setText(function () {
-        var digits = Type.evaluate(label.visProp.digits);
+        var digits = label.evalVisProp('digits');
 
         if (label.useLocale()) {
             return label.formatNumberLocale(el.Value(), digits);

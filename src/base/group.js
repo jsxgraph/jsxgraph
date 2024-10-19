@@ -110,7 +110,7 @@ JXG.Group = function (board, id, name, objects, attributes) {
     for (i = 0; i < objArray.length; i++) {
         obj = this.board.select(objArray[i]);
 
-        if (!Type.evaluate(obj.visProp.fixed) && Type.exists(obj.coords)) {
+        if (!obj.evalVisProp('fixed') && Type.exists(obj.coords)) {
             this.addPoint(obj);
         }
     }

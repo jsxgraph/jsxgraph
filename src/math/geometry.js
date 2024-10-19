@@ -733,8 +733,8 @@ JXG.extend(
                 margin = 10;
             }
 
-            straightFirst = Type.evaluate(el.visProp.straightfirst);
-            straightLast = Type.evaluate(el.visProp.straightlast);
+            straightFirst = el.evalVisProp('straightfirst');
+            straightLast = el.evalVisProp('straightlast');
 
             // If one of the point is an ideal point in homogeneous coordinates
             // drawing of line segments or rays are not possible.
@@ -899,8 +899,8 @@ JXG.extend(
                 takePoint1 = false,
                 takePoint2 = false;
 
-            straightFirst = Type.evaluate(el.visProp.straightfirst);
-            straightLast = Type.evaluate(el.visProp.straightlast);
+            straightFirst = el.evalVisProp('straightfirst');
+            straightLast = el.evalVisProp('straightlast');
 
             // If one of the point is an ideal point in homogeneous coordinates
             // drawing of line segments or rays are not possible.
@@ -1463,10 +1463,10 @@ JXG.extend(
                     // line - path
                     /** @ignore */
                     func = function () {
-                        var first1 = Type.evaluate(el1.visProp.straightfirst),
-                            last1 = Type.evaluate(el1.visProp.straightlast),
-                            first2 = Type.evaluate(el2.visProp.straightfirst),
-                            last2 = Type.evaluate(el2.visProp.straightlast),
+                        var first1 = el1.evalVisProp('straightfirst'),
+                            last1 = el1.evalVisProp('straightlast'),
+                            first2 = el2.evalVisProp('straightfirst'),
+                            last2 = el2.evalVisProp('straightlast'),
                             a_not;
 
                         a_not = (!Type.evaluate(alwaysintersect) && (!first1 || !last1 || !first2 || !last2));
@@ -1475,10 +1475,10 @@ JXG.extend(
                 } else if (el2.elementClass === Const.OBJECT_CLASS_LINE) {
                     // path - line
                     func = function () {
-                        var first1 = Type.evaluate(el1.visProp.straightfirst),
-                            last1 = Type.evaluate(el1.visProp.straightlast),
-                            first2 = Type.evaluate(el2.visProp.straightfirst),
-                            last2 = Type.evaluate(el2.visProp.straightlast),
+                        var first1 = el1.evalVisProp('straightfirst'),
+                            last1 = el1.evalVisProp('straightlast'),
+                            first2 = el2.evalVisProp('straightfirst'),
+                            last2 = el2.evalVisProp('straightlast'),
                             a_not;
 
                         a_not = (!Type.evaluate(alwaysintersect) && (!first1 || !last1 || !first2 || !last2));
@@ -1500,10 +1500,10 @@ JXG.extend(
                 func = function () {
                     var res,
                         c,
-                        first1 = Type.evaluate(el1.visProp.straightfirst),
-                        last1 = Type.evaluate(el1.visProp.straightlast),
-                        first2 = Type.evaluate(el2.visProp.straightfirst),
-                        last2 = Type.evaluate(el2.visProp.straightlast);
+                        first1 = el1.evalVisProp('straightfirst'),
+                        last1 = el1.evalVisProp('straightlast'),
+                        first2 = el2.evalVisProp('straightfirst'),
+                        last2 = el2.evalVisProp('straightlast');
 
                     /**
                      * If one of the lines is a segment or ray and
@@ -1554,8 +1554,8 @@ JXG.extend(
                         return res;
                     }
                     if (el1.elementClass === Const.OBJECT_CLASS_LINE) {
-                        first = Type.evaluate(el1.visProp.straightfirst);
-                        last = Type.evaluate(el1.visProp.straightlast);
+                        first = el1.evalVisProp('straightfirst');
+                        last = el1.evalVisProp('straightlast');
                         if (!first || !last) {
                             r = that.affineRatio(el1.point1.coords, el1.point2.coords, res);
                             if ((!last && r > 1 + Mat.eps) || (!first && r < 0 - Mat.eps)) {
@@ -1564,8 +1564,8 @@ JXG.extend(
                         }
                     }
                     if (el2.elementClass === Const.OBJECT_CLASS_LINE) {
-                        first = Type.evaluate(el2.visProp.straightfirst);
-                        last = Type.evaluate(el2.visProp.straightlast);
+                        first = el2.evalVisProp('straightfirst');
+                        last = el2.evalVisProp('straightlast');
                         if (!first || !last) {
                             r = that.affineRatio(el2.point1.coords, el2.point2.coords, res);
                             if ((!last && r > 1 + Mat.eps) || (!first && r < 0 - Mat.eps)) {
@@ -1680,7 +1680,7 @@ JXG.extend(
             var angle = this.rad(arc.radiuspoint, arc.center, coords.usrCoords.slice(1)),
                 alpha = 0.0,
                 beta = this.rad(arc.radiuspoint, arc.center, arc.anglepoint),
-                ev_s = Type.evaluate(arc.visProp.selection);
+                ev_s = arc.evalVisProp('selection');
 
             if ((ev_s === "minor" && beta > Math.PI) || (ev_s === "major" && beta < Math.PI)) {
                 alpha = beta;
@@ -2114,8 +2114,8 @@ JXG.extend(
                 d, res,
                 cnt = 0,
                 len = cu.numberPoints,
-                ev_sf = Type.evaluate(li.visProp.straightfirst),
-                ev_sl = Type.evaluate(li.visProp.straightlast);
+                ev_sf = li.evalVisProp('straightfirst'),
+                ev_sl = li.evalVisProp('straightlast');
 
             // In case, no intersection will be found we will take this
             q = new Coords(Const.COORDS_BY_USER, [0, NaN, NaN], board);
@@ -3140,7 +3140,7 @@ JXG.extend(
                 result;
 
             if (!Type.exists(t)) {
-                t = Type.evaluate(curve.visProp.curvetype) === 'functiongraph' ? x : 0.0;
+                t = curve.evalVisProp('curvetype') === 'functiongraph' ? x : 0.0;
             }
             result = this.projectCoordsToCurve(x, y, t, curve, board);
             // point.position = result[1];
@@ -3174,7 +3174,7 @@ JXG.extend(
                 board = curve.board;
             }
 
-            if (Type.evaluate(curve.visProp.curvetype) === "plot") {
+            if (curve.evalVisProp('curvetype') === "plot") {
                 t = 0;
                 mindist = infty;
                 if (curve.numberPoints === 0) {
@@ -3237,7 +3237,7 @@ JXG.extend(
                 minX = minX_glob;
                 maxX = maxX_glob;
 
-                if (Type.evaluate(curve.visProp.curvetype) === 'functiongraph') {
+                if (curve.evalVisProp('curvetype') === 'functiongraph') {
                     // Restrict the possible position of t
                     // to the projection of a circle to the x-axis (= t-axis)
                     dy = Math.abs(y - curve.Y(x));

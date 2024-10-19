@@ -77,9 +77,9 @@ JXG.createTicks3D = function (board, parents, attributes) {
     el.drawLabels = function(attr) {
         var s1 = 0,
             e1 = this.len,
-            step = Type.evaluate(this.visProp.ticksdistance),
-            range2 = Type.evaluate(this.visProp.tickendings),
-            mh =  Type.evaluate(this.visProp.majorheight),
+            step = this.evalVisProp('ticksdistance'),
+            range2 = this.evalVisProp('tickendings'),
+            mh =  this.evalVisProp('majorheight'),
             e2,
             l1, l2,
             i,
@@ -134,7 +134,7 @@ JXG.createTicks3D = function (board, parents, attributes) {
         return labels;
     };
 
-    if (Type.evaluate(el.visProp.drawlabels)) {
+    if (el.evalVisProp('drawlabels')) {
         el.labels = el.drawLabels(attr.label);
     }
 
@@ -144,9 +144,9 @@ JXG.createTicks3D = function (board, parents, attributes) {
     el.updateDataArray = function () {
         var s1 = 0,
             e1 = this.len,
-            step = Type.evaluate(this.visProp.ticksdistance),
-            range2 = Type.evaluate(this.visProp.tickendings),
-            mh =  Type.evaluate(this.visProp.majorheight),
+            step = this.evalVisProp('ticksdistance'),
+            range2 = this.evalVisProp('tickendings'),
+            mh =  this.evalVisProp('majorheight'),
             s2, e2,
             l1, l2,
             i,

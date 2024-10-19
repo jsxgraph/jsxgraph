@@ -204,7 +204,7 @@ JXG.createVectorField = function (board, parents, attributes) {
 
     el.updateDataArray = function () {
         var x, y, i, j,
-            scale = Type.evaluate(this.visProp.scale),
+            scale = this.evalVisProp('scale'),
             start_x = Type.evaluate(this.xData[0]),
             steps_x = Type.evaluate(this.xData[1]),
             end_x = Type.evaluate(this.xData[2]),

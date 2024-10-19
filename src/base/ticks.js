@@ -179,7 +179,7 @@ JXG.extend(
         //                     var delta, b, dist,
         //                     number_major_tick_intervals = 5;
 
-        //                 if (Type.evaluate(this.visProp.insertticks)) {
+        //                 if (this.evalVisProp('insertticks')) {
         //                     b = this.getLowerAndUpperBounds(this.getZeroCoordinates(), 'ticksdistance');
         //                     dist = b.upper - b.lower;
 
@@ -202,7 +202,7 @@ JXG.extend(
         //                 }
 
         //                 // In case of insertTicks==false
-        //                 return Type.evaluate(this.visProp.ticksdistance);
+        //                 return this.evalVisProp('ticksdistance');
         //                 // return ticks;
         //             // };
         //         },
@@ -218,16 +218,16 @@ JXG.extend(
             var i, t, r, type,
                 len = (this.ticks && this.ticks.length) || 0;
 
-            if (Type.isObject(Type.evaluate(this.visProp.precision))) {
+            if (Type.isObject(this.evalVisProp('precision'))) {
                 type = this.board._inputDevice;
                 r = Type.evaluate(this.visProp.precision[type]);
             } else {
                 // 'inherit'
                 r = this.board.options.precision.hasPoint;
             }
-            r += Type.evaluate(this.visProp.strokewidth) * 0.5;
+            r += this.evalVisProp('strokewidth') * 0.5;
             if (
-                !Type.evaluate(this.line.visProp.scalable) ||
+                !this.line.evalVisProp('scalable') ||
                 this.line.elementClass === Const.OBJECT_CLASS_CURVE
             ) {
                 return false;
@@ -302,7 +302,7 @@ JXG.extend(
 
             if (
                 this.line.type !== Const.OBJECT_TYPE_AXIS ||
-                !Type.evaluate(this.line.visProp.scalable)
+                !this.line.evalVisProp('scalable')
             ) {
                 return this;
             }
@@ -365,7 +365,7 @@ JXG.extend(
                 };
             }
 
-            if (Type.evaluate(this.visProp.type) === "polar") {
+            if (this.evalVisProp('type') === "polar") {
                 bb = this.board.getBoundingBox();
                 r_max = Math.max(
                     Mat.hypot(bb[0], bb[1]),
@@ -397,8 +397,8 @@ JXG.extend(
                 mi,
                 ma,
                 len,
-                distMaj = Type.evaluate(this.visProp.majorheight) * 0.5,
-                distMin = Type.evaluate(this.visProp.minorheight) * 0.5;
+                distMaj = this.evalVisProp('majorheight') * 0.5,
+                distMin = this.evalVisProp('minorheight') * 0.5;
 
             // For curves:
             if (Type.exists(pos)) {
@@ -444,8 +444,8 @@ JXG.extend(
             this.dyMin *= (distMin / d) * this.board.unitY;
 
             // Grid-like ticks?
-            this.minStyle = Type.evaluate(this.visProp.minorheight) < 0 ? "infinite" : "finite";
-            this.majStyle = Type.evaluate(this.visProp.majorheight) < 0 ? "infinite" : "finite";
+            this.minStyle = this.evalVisProp('minorheight') < 0 ? "infinite" : "finite";
+            this.majStyle = this.evalVisProp('majorheight') < 0 ? "infinite" : "finite";
         },
 
         /**
@@ -462,7 +462,7 @@ JXG.extend(
         getZeroCoordinates: function () {
             var c1x, c1y, c1z, c2x, c2y, c2z,
                 t, mi, ma,
-                ev_a = Type.evaluate(this.visProp.anchor);
+                ev_a = this.evalVisProp('anchor');
 
             if (this.line.elementClass === Const.OBJECT_CLASS_LINE) {
                 if (this.line.type === Const.OBJECT_TYPE_AXIS) {
@@ -549,9 +549,9 @@ JXG.extend(
                 // angle,
                 a1, a2, m1, m2,
                 eps = Mat.eps * 10,
-                ev_sf = Type.evaluate(this.line.visProp.straightfirst),
-                ev_sl = Type.evaluate(this.line.visProp.straightlast),
-                ev_i = Type.evaluate(this.visProp.includeboundaries);
+                ev_sf = this.line.evalVisProp('straightfirst'),
+                ev_sl = this.line.evalVisProp('straightlast'),
+                ev_i = this.evalVisProp('includeboundaries');
 
             // The line's defining points that will be adjusted to be within the board limits
             if (this.line.elementClass === Const.OBJECT_CLASS_CURVE) {
@@ -585,7 +585,7 @@ JXG.extend(
                 Geometry.calcStraight(this.line, point1, point2, 0);
                 m1 = this.getDistanceFromZero(coordsZero, point1);
                 m2 = this.getDistanceFromZero(coordsZero, point2);
-                Geometry.calcStraight(this.line, point1, point2, Type.evaluate(this.line.visProp.margin));
+                Geometry.calcStraight(this.line, point1, point2, this.line.evalVisProp('margin'));
                 m1 = this.getDistanceFromZero(coordsZero, point1) - m1;
                 m2 = this.getDistanceFromZero(coordsZero, point2).m2;
             } else {
@@ -595,8 +595,8 @@ JXG.extend(
             }
 
             // Shorten ticks bounds such that ticks are not through arrow heads
-            fA = Type.evaluate(this.line.visProp.firstarrow);
-            lA = Type.evaluate(this.line.visProp.lastarrow);
+            fA = this.line.evalVisProp('firstarrow');
+            lA = this.line.evalVisProp('lastarrow');
 
             a1 = this.getDistanceFromZero(coordsZero, point1);
             a2 = this.getDistanceFromZero(coordsZero, point2);
@@ -606,7 +606,7 @@ JXG.extend(
                 // Ticks would appear to be too nervous.
                 arrowData = this.board.renderer.getArrowHeadData(
                     this.line,
-                    Type.evaluate(this.line.visProp.strokewidth),
+                    this.line.evalVisProp('strokewidth'),
                     ''
                 );
 
@@ -715,10 +715,10 @@ JXG.extend(
             var tickPosition,
                 eps = Mat.eps,
                 deltas, ticksDelta,
-                // ev_mia = Type.evaluate(this.visProp.minorticksinarrow),
-                // ev_maa = Type.evaluate(this.visProp.minorticksinarrow),
-                // ev_mla = Type.evaluate(this.visProp.minorticksinarrow),
-                ev_mt = Type.evaluate(this.visProp.minorticks);
+                // ev_mia = this.evalVisProp('minorticksinarrow'),
+                // ev_maa = this.evalVisProp('minorticksinarrow'),
+                // ev_mla = this.evalVisProp('minorticksinarrow'),
+                ev_mt = this.evalVisProp('minorticks');
 
             // Determine a proposed distance between major ticks in user units
             ticksDelta = this.getDistanceMajorTicks();
@@ -732,7 +732,7 @@ JXG.extend(
                 deltas = this.getXandYdeltas();
             }
 
-            ticksDelta *= Type.evaluate(this.visProp.scale);
+            ticksDelta *= this.evalVisProp('scale');
 
             // In case of insertTicks, adjust ticks distance to satisfy the minTicksDistance restriction.
             // if (ev_it) { // } && this.minTicksDistance > Mat.eps) {
@@ -749,7 +749,7 @@ JXG.extend(
 
             // Position ticks from zero to the positive side while not reaching the upper boundary
             tickPosition = 0;
-            if (!Type.evaluate(this.visProp.drawzero)) {
+            if (!this.evalVisProp('drawzero')) {
                 tickPosition = ticksDelta;
             }
             while (tickPosition <= bounds.upper + eps) {
@@ -803,17 +803,17 @@ JXG.extend(
                 numberMajorTicks = 5,
                 maxDist, minDist, ev_minti;
 
-            if (Type.evaluate(this.visProp.insertticks)) {
+            if (this.evalVisProp('insertticks')) {
                 // Case of insertTicks==true:
                 // Here, we ignore the attribute 'margin'
                 b = this.getLowerAndUpperBounds(this.getZeroCoordinates(), '');
 
                 dist = (b.upper - b.lower);
-                scale = Type.evaluate(this.visProp.scale);
+                scale = this.evalVisProp('scale');
 
                 maxDist = dist / (numberMajorTicks + 1) / scale;
-                minDist = Type.evaluate(this.visProp.minticksdistance) / scale;
-                ev_minti = Type.evaluate(this.visProp.minorticks);
+                minDist = this.evalVisProp('minticksdistance') / scale;
+                ev_minti = this.evalVisProp('minorticks');
 
                 d = this.getXandYdeltas();
                 d.x *= this.board.unitX;
@@ -849,7 +849,7 @@ JXG.extend(
             }
 
             // Case of insertTicks==false
-            return Type.evaluate(this.visProp.ticksdistance);
+            return this.evalVisProp('ticksdistance');
         },
 
         //         /**
@@ -868,8 +868,8 @@ JXG.extend(
         //                 // bounds,
         //                 distScr,
         //                 sgn = 1,
-        //                 ev_mintd = Type.evaluate(this.visProp.minticksdistance),
-        //                 ev_minti = Type.evaluate(this.visProp.minorticks);
+        //                 ev_mintd = this.evalVisProp('minticksdistance'),
+        //                 ev_minti = this.evalVisProp('minorticks');
 
         //             if (this.line.elementClass === Const.OBJECT_CLASS_CURVE) {
         //                 return ticksDelta;
@@ -926,7 +926,7 @@ JXG.extend(
                 tickCoords,
                 ti,
                 isLabelPosition,
-                ticksPerLabel = Type.evaluate(this.visProp.ticksperlabel),
+                ticksPerLabel = this.evalVisProp('ticksperlabel'),
                 labelVal = null;
 
             // Calculates tick coordinates
@@ -948,12 +948,12 @@ JXG.extend(
             // a multiple of the number of minorticks+1
             tickCoords.major =
                 Math.round(tickPosition / ticksDelta) %
-                (Type.evaluate(this.visProp.minorticks) + 1) ===
+                (this.evalVisProp('minorticks') + 1) ===
                 0;
 
             if (!ticksPerLabel) {
                 // In case of null, 0 or false, majorTicks are labelled
-                ticksPerLabel = Type.evaluate(this.visProp.minorticks) + 1;
+                ticksPerLabel = this.evalVisProp('minorticks') + 1;
             }
             isLabelPosition = Math.round(tickPosition / ticksDelta) % ticksPerLabel === 0;
 
@@ -962,7 +962,7 @@ JXG.extend(
             ti = this.createTickPath(tickCoords, tickCoords.major);
             if (ti.length === 3) {
                 this.ticks.push(ti);
-                if (isLabelPosition && Type.evaluate(this.visProp.drawlabels)) {
+                if (isLabelPosition && this.evalVisProp('drawlabels')) {
                     // Create a label at this position
                     this.labelsData.push(
                         this.generateLabelData(
@@ -996,7 +996,7 @@ JXG.extend(
                 fixedTick,
                 hasLabelOverrides = Type.isArray(this.visProp.labels),
                 deltas,
-                ev_dl = Type.evaluate(this.visProp.drawlabels);
+                ev_dl = this.evalVisProp('drawlabels');
 
             if (this.line.elementClass === Const.OBJECT_CLASS_LINE) {
                 // Calculate x and y distances between two points on the line which are 1 unit apart
@@ -1150,7 +1150,7 @@ JXG.extend(
             // For all ticks regardless if of finite or infinite
             // tick length the intersection with the canvas border is
             // computed.
-            if (major && Type.evaluate(this.visProp.type) === "polar") {
+            if (major && this.evalVisProp('type') === "polar") {
                 // polar style
                 bb = this.board.getBoundingBox();
                 full = 2.0 * Math.PI;
@@ -1184,7 +1184,7 @@ JXG.extend(
                 if (style === 'infinite') {
                     // Problematic are infinite ticks which have set tickendings:[0,1].
                     // For example, this is the default setting for minor ticks
-                    if (Type.evaluate(this.visProp.ignoreinfinitetickendings)) {
+                    if (this.evalVisProp('ignoreinfinitetickendings')) {
                         te0 = te1 = true;
                     }
                     intersection = Geometry.meetLineBoard(lineStdForm, this.board);
@@ -1248,9 +1248,9 @@ JXG.extend(
                         }
                     }
                 } else {
-                    if (Type.evaluate(this.visProp.face) === ">") {
+                    if (this.evalVisProp('face') === ">") {
                         alpha = Math.PI / 4;
-                    } else if (Type.evaluate(this.visProp.face) === "<") {
+                    } else if (this.evalVisProp('face') === "<") {
                         alpha = -Math.PI / 4;
                     } else {
                         alpha = 0;
@@ -1292,7 +1292,7 @@ JXG.extend(
                 digits,
                 ev_um = Type.evaluate(this.visProp.label.usemathjax),
                 ev_uk = Type.evaluate(this.visProp.label.usekatex),
-                ev_s = Type.evaluate(this.visProp.scalesymbol);
+                ev_s = this.evalVisProp('scalesymbol');
 
             if (Type.isNumber(value)) {
                 if (Type.evaluate(this.visProp.label.tofraction)) {
@@ -1302,19 +1302,19 @@ JXG.extend(
                         labelText = Type.toFraction(value, ev_uk);
                     }
                 } else {
-                    digits = Type.evaluate(this.visProp.digits);
+                    digits = this.evalVisProp('digits');
                     if (this.useLocale()) {
                         labelText = this.formatNumberLocale(value, digits);
                     } else {
                         labelText = (Math.round(value * 1e11) / 1e11).toString();
 
                         if (
-                            labelText.length > Type.evaluate(this.visProp.maxlabellength) ||
+                            labelText.length > this.evalVisProp('maxlabellength') ||
                             labelText.indexOf("e") !== -1
                         ) {
-                            if (Type.evaluate(this.visProp.precision) !== 3 && digits === 3) {
+                            if (this.evalVisProp('precision') !== 3 && digits === 3) {
                                 // Use the deprecated attribute "precision"
-                                digits = Type.evaluate(this.visProp.precision);
+                                digits = this.evalVisProp('precision');
                             }
 
                             //labelText = value.toPrecision(digits).toString();
@@ -1323,7 +1323,7 @@ JXG.extend(
                     }
                 }
 
-                if (Type.evaluate(this.visProp.beautifulscientificticklabels)) {
+                if (this.evalVisProp('beautifulscientificticklabels')) {
                     labelText = this.beautifyScientificNotationLabel(labelText);
                 }
 
@@ -1347,7 +1347,7 @@ JXG.extend(
                 }
             }
 
-            if (Type.evaluate(this.visProp.useunicodeminus)) {
+            if (this.evalVisProp('useunicodeminus')) {
                 labelText = labelText.replace(/-/g, "\u2212");
             }
             return labelText;
@@ -1418,7 +1418,7 @@ JXG.extend(
                     // Point is zero
                     return "0";
                 }
-                value = distance / Type.evaluate(this.visProp.scale);
+                value = distance / this.evalVisProp('scale');
             }
             labelText = this.formatLabelText(value);
 
@@ -1465,7 +1465,7 @@ JXG.extend(
          */
         update: function () {
             if (this.needsUpdate) {
-                //this.visPropCalc.visible = Type.evaluate(this.visProp.visible);
+                //this.visPropCalc.visible = this.evalVisProp('visible');
                 // A canvas with no width or height will create an endless loop, so ignore it
                 if (this.board.canvasWidth !== 0 && this.board.canvasHeight !== 0) {
                     this.calculateTicksCoordinates();

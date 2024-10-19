@@ -120,8 +120,8 @@ JXG.extend(
          * @ignore
          */
         updateDataArray: function () {
-            var steps_u = Type.evaluate(this.visProp.stepsu),
-                steps_v = Type.evaluate(this.visProp.stepsv),
+            var steps_u = this.evalVisProp('stepsu'),
+                steps_v = this.evalVisProp('stepsv'),
                 r_u = Type.evaluate(this.range_u),
                 r_v = Type.evaluate(this.range_v),
                 func,

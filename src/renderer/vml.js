@@ -172,25 +172,25 @@ JXG.extend(
 
             if (!Type.exists(ticks.rendNode)) {
                 ticks.rendNode = this.createPrim("path", ticks.id);
-                this.appendChildPrim(ticks.rendNode, Type.evaluate(ticks.visProp.layer));
+                this.appendChildPrim(ticks.rendNode, ticks.evalVisProp('layer'));
             }
 
             this._setAttr(ticks.rendNode, "stroked", "true");
             this._setAttr(
                 ticks.rendNode,
                 "strokecolor",
-                Type.evaluate(ticks.visProp.strokecolor),
+                ticks.evalVisProp('strokecolor'),
                 1
             );
             this._setAttr(
                 ticks.rendNode,
                 "strokeweight",
-                Type.evaluate(ticks.visProp.strokewidth)
+                ticks.evalVisProp('strokewidth')
             );
             this._setAttr(
                 ticks.rendNodeStroke,
                 "opacity",
-                Type.evaluate(ticks.visProp.strokeopacity) * 100 + "%"
+                ticks.evalVisProp('strokeopacity') * 100 + "%"
             );
             this.updatePathPrim(ticks.rendNode, tickArr, ticks.board);
         },
@@ -367,7 +367,7 @@ JXG.extend(
             this._setAttr(node, "id", this.container.id + "_" + el.id);
 
             this.container.appendChild(node);
-            this.appendChildPrim(node, Type.evaluate(el.visProp.layer));
+            this.appendChildPrim(node, el.evalVisProp('layer'));
 
             // Adding the rotation filter. This is always filter item 0:
             // node.filters.item(0), see transformImage
@@ -537,8 +537,8 @@ JXG.extend(
         // Already documented in JXG.AbstractRenderer
         makeArrows: function (el) {
             var nodeStroke,
-                ev_fa = Type.evaluate(el.visProp.firstarrow),
-                ev_la = Type.evaluate(el.visProp.lastarrow);
+                ev_fa = el.evalVisProp('firstarrow'),
+                ev_la = el.evalVisProp('lastarrow');
 
             if (el.visPropOld.firstarrow === ev_fa && el.visPropOld.lastarrow === ev_la) {
                 return;
@@ -862,13 +862,13 @@ JXG.extend(
                 lx,
                 ly,
                 pStr = [],
-                f = Type.evaluate(el.visProp.strokewidth),
+                f = el.evalVisProp('strokewidth'),
                 r = this.resolution,
                 mround = Math.round,
                 symbm = " m ",
                 symbl = " c ",
                 nextSymb = symbm,
-                isNoPlot = Type.evaluate(el.visProp.curvetype) !== "plot",
+                isNoPlot = el.evalVisProp('curvetype') !== "plot",
                 len = Math.min(el.numberPoints, 8192); // otherwise IE 7 crashes in hilbert.html
 
             if (el.numberPoints <= 0) {
@@ -1076,39 +1076,39 @@ JXG.extend(
         // Already documented in JXG.AbstractRenderer
         setGradient: function (el) {
             var nodeFill = el.rendNodeFill,
-                ev_g = Type.evaluate(el.visProp.gradient);
+                ev_g = el.evalVisProp('gradient');
 
             if (ev_g === "linear") {
                 this._setAttr(nodeFill, "type", "gradient");
                 this._setAttr(
                     nodeFill,
                     "color2",
-                    Type.evaluate(el.visProp.gradientsecondcolor)
+                    el.evalVisProp('gradientsecondcolor')
                 );
                 this._setAttr(
                     nodeFill,
                     "opacity2",
-                    Type.evaluate(el.visProp.gradientsecondopacity)
+                    el.evalVisProp('gradientsecondopacity')
                 );
-                this._setAttr(nodeFill, "angle", Type.evaluate(el.visProp.gradientangle));
+                this._setAttr(nodeFill, "angle", el.evalVisProp('gradientangle'));
             } else if (ev_g === "radial") {
                 this._setAttr(nodeFill, "type", "gradientradial");
                 this._setAttr(
                     nodeFill,
                     "color2",
-                    Type.evaluate(el.visProp.gradientsecondcolor)
+                    el.evalVisProp('gradientsecondcolor')
                 );
                 this._setAttr(
                     nodeFill,
                     "opacity2",
-                    Type.evaluate(el.visProp.gradientsecondopacity)
+                    el.evalVisProp('gradientsecondopacity')
                 );
                 this._setAttr(
                     nodeFill,
                     "focusposition",
-                    Type.evaluate(el.visProp.gradientpositionx) * 100 +
+                    el.evalVisProp('gradientpositionx') * 100 +
                         "%," +
-                        Type.evaluate(el.visProp.gradientpositiony) * 100 +
+                        el.evalVisProp('gradientpositiony') * 100 +
                         "%"
                 );
                 this._setAttr(nodeFill, "focussize", "0,0");
@@ -1263,7 +1263,7 @@ JXG.extend(
         // Already documented in JXG.AbstractRenderer
         setShadow: function (el) {
             var nodeShadow = el.rendNodeShadow,
-                ev_s = Type.evaluate(el.visProp.shadow);
+                ev_s = el.evalVisProp('shadow');
 
             if (!nodeShadow || el.visPropOld.shadow === ev_s) {
                 return;

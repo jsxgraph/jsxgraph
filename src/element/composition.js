@@ -1974,7 +1974,7 @@ JXG.createReflection = function (board, parents, attributes) {
             r_c = JXG.createPoint(board, [org.center, t], attr2);
             r_c.prepareUpdate()
                 .update()
-                .updateVisibility(Type.evaluate(r_c.visProp.visible))
+                .updateVisibility(r_c.evalVisProp('visible'))
                 .updateRenderer();
             r = JXG.createCircle(
                 board,
@@ -2011,7 +2011,7 @@ JXG.createReflection = function (board, parents, attributes) {
 
     r.elType = "reflection";
     r.addParents(l);
-    r.prepareUpdate().update(); //.updateVisibility(Type.evaluate(r.visProp.visible)).updateRenderer();
+    r.prepareUpdate().update(); //.updateVisibility(r.evalVisProp('visible')).updateRenderer();
 
     if (Type.isPoint(r)) {
         r.generatePolynomial = function () {
@@ -2186,7 +2186,7 @@ JXG.createMirrorElement = function (board, parents, attributes) {
             r_c = JXG.createPoint(board, [org.center, t], attr2);
             r_c.prepareUpdate()
                 .update()
-                .updateVisibility(Type.evaluate(r_c.visProp.visible))
+                .updateVisibility(r_c.evalVisProp('visible'))
                 .updateRenderer();
             r = JXG.createCircle(
                 board,
@@ -2348,13 +2348,13 @@ JXG.createIntegral = function (board, parents, attributes) {
     attr = Type.copyAttributes(attributes, board.options, 'integral', 'baseleft');
     pa_on_axis = board.create('point', [
             function () {
-                if (Type.evaluate(p.visProp.axis) === "y") {
+                if (p.evalVisProp('axis') === "y") {
                     return 0;
                 }
                 return pa_on_curve.X();
             },
             function () {
-                if (Type.evaluate(p.visProp.axis) === "y") {
+                if (p.evalVisProp('axis') === "y") {
                     return pa_on_curve.Y();
                 }
                 return 0;
@@ -2370,13 +2370,13 @@ JXG.createIntegral = function (board, parents, attributes) {
     attr = Type.copyAttributes(attributes, board.options, "integral", "baseright");
     pb_on_axis = board.create('point', [
             function () {
-                if (Type.evaluate(p.visProp.axis) === "y") {
+                if (p.evalVisProp('axis') === "y") {
                     return 0;
                 }
                 return pb_on_curve.X();
             },
             function () {
-                if (Type.evaluate(p.visProp.axis) === "y") {
+                if (p.evalVisProp('axis') === "y") {
                     return pb_on_curve.Y();
                 }
 
@@ -2441,7 +2441,7 @@ JXG.createIntegral = function (board, parents, attributes) {
 
         txt_fun = function () {
             var Int = Numerics.NewtonCotes([pa_on_axis.X(), pb_on_axis.X()], curve.Y),
-                digits = Type.evaluate(t.visProp.digits),
+                digits = t.evalVisProp('digits'),
                 val;
 
             if (t.useLocale()) {
@@ -2499,7 +2499,7 @@ JXG.createIntegral = function (board, parents, attributes) {
     p.updateDataArray = function () {
         var x, y, i, left, right, lowx, upx, lowy, upy;
 
-        if (Type.evaluate(this.visProp.axis) === "y") {
+        if (this.evalVisProp('axis') === "y") {
             if (pa_on_curve.Y() < pb_on_curve.Y()) {
                 lowx = pa_on_curve.X();
                 lowy = pa_on_curve.Y();
@@ -2726,7 +2726,7 @@ JXG.createInequality = function (board, parents, attributes) {
                 // such that the line is not visible anymore, the borders of the area will get visible in some cases.
                 h,
                 bb = board.getBoundingBox(),
-                inverse = Type.evaluate(this.visProp.inverse),
+                inverse = this.evalVisProp('inverse'),
                 factor = inverse ? -1 : 1,
                 expansion = 1.5,
                 w = expansion * Math.max(bb[2] - bb[0], bb[1] - bb[3]),
@@ -2805,7 +2805,7 @@ JXG.createInequality = function (board, parents, attributes) {
                 firstx,
                 lastx,
                 enlarge = (bbox[1] - bbox[3]) * 0.3, // enlarge the bbox vertically by this amount
-                inverse = Type.evaluate(this.visProp.inverse);
+                inverse = this.evalVisProp('inverse');
 
             // inverse == true <=> Fill area with y >= f(x)
             infty = inverse ? 1 : 3; // we will use either bbox[1] or bbox[3] below

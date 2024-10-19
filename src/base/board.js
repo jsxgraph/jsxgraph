@@ -866,7 +866,7 @@ JXG.extend(
          * @param {Object} obj The object to add.
          */
         finalizeAdding: function (obj) {
-            if (Type.evaluate(obj.visProp.visible) === false) {
+            if (obj.evalVisProp('visible') === false) {
                 this.renderer.display(obj, false);
             }
         },
@@ -874,8 +874,8 @@ JXG.extend(
         finalizeLabel: function (obj) {
             if (
                 obj.hasLabel &&
-                !Type.evaluate(obj.label.visProp.islabel) &&
-                Type.evaluate(obj.label.visProp.visible) === false
+                !obj.label.evalVisProp('islabel') &&
+                obj.label.evalVisProp('visible') === false
             ) {
                 this.renderer.display(obj.label, false);
             }
@@ -1325,7 +1325,7 @@ JXG.extend(
                     ((this.geonextCompatibilityMode &&
                         (Type.isPoint(pEl) || pEl.elementClass === Const.OBJECT_CLASS_TEXT)) ||
                         !this.geonextCompatibilityMode) &&
-                    !Type.evaluate(pEl.visProp.fixed)
+                    !pEl.evalVisProp('fixed')
                     /*(!pEl.visProp.frozen) &&*/
                 ) {
                     // Elements in the highest layer get priority.
@@ -1387,7 +1387,7 @@ JXG.extend(
             // Move drag element to the top of the layer
             if (this.renderer.type === 'svg' &&
                 Type.exists(collect[0]) &&
-                Type.evaluate(collect[0].visProp.dragtotopoflayer) &&
+                collect[0].evalVisProp('dragtotopoflayer') &&
                 collect.length === 1 &&
                 Type.exists(collect[0].rendNode)
             ) {
@@ -1602,8 +1602,8 @@ JXG.extend(
 
                 T = this.getTwoFingerTransform(
                     tar[0], tar[1],
-                    Type.evaluate(drag.visProp.scalable),
-                    Type.evaluate(drag.visProp.rotatable));
+                    drag.evalVisProp('scalable'),
+                    drag.evalVisProp('rotatable'));
                 t = this.create('transform', T, { type: 'generic' });
                 t.update();
 
@@ -1683,7 +1683,7 @@ JXG.extend(
                 });
                 t2 = this.create('transform', [alpha], { type: 'rotate' });
                 t1.melt(t2);
-                if (Type.evaluate(drag.visProp.scalable)) {
+                if (drag.evalVisProp('scalable')) {
                     d = Geometry.distance(fix, np) / Geometry.distance(fix, op);
                     t3 = this.create('transform', [d, d], { type: 'scale' });
                     t1.melt(t3);
@@ -4118,8 +4118,8 @@ JXG.extend(
                     if (
                         Type.exists(el.visProp.snaptogrid) &&
                         el.visProp.snaptogrid &&
-                        Type.evaluate(el.visProp.snapsizex) &&
-                        Type.evaluate(el.visProp.snapsizey)
+                        el.evalVisProp('snapsizex') &&
+                        el.evalVisProp('snapsizey')
                     ) {
                         // Adapt dx, dy such that snapToGrid is possible
                         res = el.getSnapSizes();
@@ -4132,14 +4132,14 @@ JXG.extend(
                     } else if (
                         Type.exists(el.visProp.attracttogrid) &&
                         el.visProp.attracttogrid &&
-                        Type.evaluate(el.visProp.attractordistance) &&
-                        Type.evaluate(el.visProp.attractorunit)
+                        el.evalVisProp('attractordistance') &&
+                        el.evalVisProp('attractorunit')
                     ) {
                         // Adapt dx, dy such that attractToGrid is possible
-                        sX = 1.1 * Type.evaluate(el.visProp.attractordistance);
+                        sX = 1.1 * el.evalVisProp('attractordistance');
                         sY = sX;
 
-                        if (Type.evaluate(el.visProp.attractorunit) === 'screen') {
+                        if (el.evalVisProp('attractorunit') === 'screen') {
                             sX /= this.unitX;
                             sY /= this.unitX;
                         }
@@ -4170,7 +4170,7 @@ JXG.extend(
                         (Type.isPoint(el) ||
                             el.elementClass === Const.OBJECT_CLASS_TEXT)
                     ) || !this.geonextCompatibilityMode) &&
-                    !Type.evaluate(el.visProp.fixed)
+                    !el.evalVisProp('fixed')
                 ) {
 
 
@@ -4590,7 +4590,7 @@ JXG.extend(
             var x, y, xc, yc,
                 vpinfoboxdigits,
                 distX, distY,
-                vpsi = Type.evaluate(el.visProp.showinfobox);
+                vpsi = el.evalVisProp('showinfobox');
 
             if ((!Type.evaluate(this.attr.showinfobox) && vpsi === 'inherit') || !vpsi) {
                 return this;
@@ -4599,15 +4599,15 @@ JXG.extend(
             if (Type.isPoint(el)) {
                 xc = el.coords.usrCoords[1];
                 yc = el.coords.usrCoords[2];
-                distX = Type.evaluate(this.infobox.visProp.distancex);
-                distY = Type.evaluate(this.infobox.visProp.distancey);
+                distX = this.infobox.evalVisProp('distancex');
+                distY = this.infobox.evalVisProp('distancey');
 
                 this.infobox.setCoords(
                     xc + distX / this.unitX,
                     yc + distY / this.unitY
                 );
 
-                vpinfoboxdigits = Type.evaluate(el.visProp.infoboxdigits);
+                vpinfoboxdigits = el.evalVisProp('infoboxdigits');
                 if (typeof el.infoboxText !== 'string') {
                     if (vpinfoboxdigits === 'auto') {
                         if (this.infobox.useLocale()) {
@@ -4851,7 +4851,7 @@ JXG.extend(
                 el = this.objectsList[ob];
 
                 if (Type.exists(el.coords)) {
-                    if (Type.evaluate(el.visProp.frozen)) {
+                    if (el.evalVisProp('frozen')) {
                         if (el.is3D) {
                             el.element2D.coords.screen2usr();
                         } else {
@@ -5475,7 +5475,7 @@ JXG.extend(
                 delete this.objects[object.id];
                 delete this.elementsByName[object.name];
 
-                if (object.visProp && Type.evaluate(object.visProp.trace)) {
+                if (object.visProp && object.evalVisProp('trace')) {
                     object.clearTrace();
                 }
 

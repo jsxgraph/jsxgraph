@@ -218,7 +218,7 @@ JXG.extend(
         hasPoint: function (x, y) {
             var i, len;
 
-            if (Type.evaluate(this.visProp.hasinnerpoints)) {
+            if (this.evalVisProp('hasinnerpoints')) {
                 // All points of the polygon trigger hasPoint: inner and boundary points
                 if (this.pnpoly(x, y)) {
                     return true;
@@ -345,7 +345,7 @@ JXG.extend(
             Type.clearVisPropOld(copy);
 
             copy.visPropCalc = {
-                visible: Type.evaluate(copy.visProp.visible)
+                visible: copy.evalVisProp('visible')
             };
 
             er = this.board.renderer.enhancedRendering;
@@ -889,7 +889,7 @@ JXG.extend(
         snapToGrid: function () {
             var i, force;
 
-            if (Type.evaluate(this.visProp.snaptogrid)) {
+            if (this.evalVisProp('snaptogrid')) {
                 force = true;
             } else {
                 force = false;

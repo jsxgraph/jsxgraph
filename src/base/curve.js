@@ -71,7 +71,7 @@ JXG.Curve = function (board, parents, attributes) {
      * between numberPointsLow and numberPointsHigh.
      * It is set in {@link JXG.Curve#updateCurve}.
      */
-    this.numberPoints = Type.evaluate(this.visProp.numberpointshigh);
+    this.numberPoints = this.evalVisProp('numberpointshigh');
 
     this.bezierDegree = 1;
 
@@ -162,7 +162,7 @@ JXG.extend(
         minX: function () {
             var leftCoords;
 
-            if (Type.evaluate(this.visProp.curvetype) === "polar") {
+            if (this.evalVisProp('curvetype') === "polar") {
                 return 0;
             }
 
@@ -183,7 +183,7 @@ JXG.extend(
         maxX: function () {
             var rightCoords;
 
-            if (Type.evaluate(this.visProp.curvetype) === "polar") {
+            if (this.evalVisProp('curvetype') === "polar") {
                 return 2 * Math.PI;
             }
             rightCoords = new Coords(
@@ -244,7 +244,7 @@ JXG.extend(
                 res = [],
                 points,
                 qdt,
-                steps = Type.evaluate(this.visProp.numberpointslow),
+                steps = this.evalVisProp('numberpointslow'),
                 d = (this.maxX() - this.minX()) / steps,
                 prec, type,
                 dist = Infinity,
@@ -253,7 +253,7 @@ JXG.extend(
                 mi, ma,
                 suspendUpdate = true;
 
-            if (Type.isObject(Type.evaluate(this.visProp.precision))) {
+            if (Type.isObject(this.evalVisProp('precision'))) {
                 type = this.board._inputDevice;
                 prec = Type.evaluate(this.visProp.precision[type]);
             } else {
@@ -267,7 +267,7 @@ JXG.extend(
             y = checkPoint.usrCoords[2];
 
             // Handle inner points of the curve
-            if (this.bezierDegree === 1 && Type.evaluate(this.visProp.hasinnerpoints)) {
+            if (this.bezierDegree === 1 && this.evalVisProp('hasinnerpoints')) {
                 isIn = Geometry.windingNumber([1, x, y], this.points, true);
                 if (isIn !== 0) {
                     return true;
@@ -276,7 +276,7 @@ JXG.extend(
 
             // We use usrCoords. Only in the final distance calculation
             // screen coords are used
-            prec += Type.evaluate(this.visProp.strokewidth) * 0.5;
+            prec += this.evalVisProp('strokewidth') * 0.5;
             prec *= prec; // We do not want to take sqrt
             ux2 = this.board.unitX * this.board.unitX;
             uy2 = this.board.unitY * this.board.unitY;
@@ -289,7 +289,7 @@ JXG.extend(
                 d = (ma - mi) / steps;
             }
 
-            ev_ct = Type.evaluate(this.visProp.curvetype);
+            ev_ct = this.evalVisProp('curvetype');
             if (ev_ct === "parameter" || ev_ct === "polar") {
                 // Transform the mouse/touch coordinates
                 // back to the original position of the curve.
@@ -325,7 +325,7 @@ JXG.extend(
 
                 if (
                     Type.exists(this.qdt) &&
-                    Type.evaluate(this.visProp.useqdt) &&
+                    this.evalVisProp('useqdt') &&
                     this.bezierDegree !== 3
                 ) {
                     qdt = this.qdt.query(new Coords(Const.COORDS_BY_USER, [x, y], this.board));
@@ -411,7 +411,7 @@ JXG.extend(
          */
         update: function () {
             if (this.needsUpdate) {
-                if (Type.evaluate(this.visProp.trace)) {
+                if (this.evalVisProp('trace')) {
                     this.cloneToBackground(true);
                 }
                 this.updateCurve();
@@ -777,10 +777,10 @@ JXG.extend(
                 }
                 // continuous x data
             } else {
-                if (Type.evaluate(this.visProp.doadvancedplot)) {
+                if (this.evalVisProp('doadvancedplot')) {
                     // console.time("plot");
 
-                    if (version === 1 || Type.evaluate(this.visProp.doadvancedplotold)) {
+                    if (version === 1 || this.evalVisProp('doadvancedplotold')) {
                         Plot.updateParametricCurveOld(this, mi, ma);
                     } else if (version === 2) {
                         Plot.updateParametricCurve_v2(this, mi, ma);
@@ -794,9 +794,9 @@ JXG.extend(
                     // console.timeEnd("plot");
                 } else {
                     if (this.board.updateQuality === this.board.BOARD_QUALITY_HIGH) {
-                        this.numberPoints = Type.evaluate(this.visProp.numberpointshigh);
+                        this.numberPoints = this.evalVisProp('numberpointshigh');
                     } else {
-                        this.numberPoints = Type.evaluate(this.visProp.numberpointslow);
+                        this.numberPoints = this.evalVisProp('numberpointslow');
                     }
 
                     // It is possible, that the array length has increased.
@@ -806,7 +806,7 @@ JXG.extend(
                 len = this.numberPoints;
 
                 if (
-                    Type.evaluate(this.visProp.useqdt) &&
+                    this.evalVisProp('useqdt') &&
                     this.board.updateQuality === this.board.BOARD_QUALITY_HIGH
                 ) {
                     this.qdt = new QDT(this.board.getBoundingBox());
@@ -829,8 +829,8 @@ JXG.extend(
             }
 
             if (
-                Type.evaluate(this.visProp.curvetype) !== "plot" &&
-                Type.evaluate(this.visProp.rdpsmoothing)
+                this.evalVisProp('curvetype') !== "plot" &&
+                this.evalVisProp('rdpsmoothing')
             ) {
                 // console.time("rdp");
                 this.points = Numerics.RamerDouglasPeucker(this.points, 0.2);
@@ -1119,7 +1119,7 @@ JXG.extend(
             if (!Type.exists(this.label)) {
                 return new Coords(Const.COORDS_BY_SCREEN, [NaN, NaN], this.board);
             }
-            pos = Type.evaluate(this.label.visProp.position);
+            pos = this.label.evalVisProp('position');
             if (!Type.isString(pos)) {
                 return new Coords(Const.COORDS_BY_SCREEN, [NaN, NaN], this.board);
             }
@@ -1197,7 +1197,7 @@ JXG.extend(
                 // Position left or right
 
                 if (Type.exists(this.label)) {
-                    dist = 0.5 * Type.evaluate(this.label.visProp.distance) / d;
+                    dist = 0.5 * this.label.evalVisProp('distance') / d;
                 }
 
                 x = c[1] + dy * this.label.size[0] * dist;
@@ -1232,7 +1232,7 @@ JXG.extend(
 
             Type.clearVisPropOld(copy);
             copy.visPropCalc = {
-                visible: Type.evaluate(copy.visProp.visible)
+                visible: copy.evalVisProp('visible')
             };
             er = this.board.renderer.enhancedRendering;
             this.board.renderer.enhancedRendering = true;
@@ -1341,7 +1341,7 @@ JXG.extend(
             // TODO add animation
             var delta = [],
                 p;
-            if (this.points.length > 0 && !Type.evaluate(this.visProp.fixed)) {
+            if (this.points.length > 0 && !this.evalVisProp('fixed')) {
                 p = this.points[0];
                 if (where.length === 3) {
                     delta = [
@@ -1375,7 +1375,7 @@ JXG.extend(
                 curve_org = this._transformationSource;
                 if (
                     curve_org.elementClass === Const.OBJECT_CLASS_CURVE //&&
-                    //Type.evaluate(curve_org.visProp.curvetype) !== 'plot'
+                    //curve_org.evalVisProp('curvetype') !== 'plot'
                 ) {
                     isTransformed = true;
                 }
@@ -3073,8 +3073,8 @@ JXG.createBoxPlot = function (board, parents, attributes) {
     box.updateDataArray = function () {
         var v1, v2, l1, l2, r1, r2, w2, dir, x;
 
-        w2 = Type.evaluate(this.visProp.smallwidth);
-        dir = Type.evaluate(this.visProp.dir);
+        w2 = this.evalVisProp('smallwidth');
+        dir = this.evalVisProp('dir');
         x = this.x();
         l1 = x - this.w() * 0.5;
         l2 = x - this.w() * 0.5 * w2;
@@ -3382,7 +3382,7 @@ JXG.createImplicitCurve = function (board, parents, attributes) {
             mgn;
 
         if (this.domain === null) {
-            mgn = Type.evaluate(this.visProp.margin);
+            mgn = this.evalVisProp('margin');
             bbox = this.board.getBoundingBox();
             bbox[0] -= mgn;
             bbox[1] += mgn;

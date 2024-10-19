@@ -299,7 +299,7 @@ JXG.createEllipse = function (board, parents, attributes) {
     curve.hasPoint = function (x, y) {
         var ac, bc, r, p, dist;
 
-        if (Type.evaluate(this.visProp.hasinnerpoints)) {
+        if (this.evalVisProp('hasinnerpoints')) {
             ac = F[0].coords;
             bc = F[1].coords;
             r = this.majorAxis();

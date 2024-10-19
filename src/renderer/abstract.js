@@ -215,7 +215,7 @@ JXG.extend(
 
                 this.setObjectViewport(el);
                 this.setObjectTransition(el);
-                if (!Type.evaluate(el.visProp.draft)) {
+                if (!el.evalVisProp('draft')) {
                     if (!not.stroke) {
                         if (el.highlighted) {
                             this.setObjectStrokeColor(
@@ -312,7 +312,7 @@ JXG.extend(
             var prim,
                 // sometimes el is not a real point and lacks the methods of a JXG.Point instance,
                 // in these cases to not use el directly.
-                face = Options.normalizePointFace(Type.evaluate(el.visProp.face));
+                face = Options.normalizePointFace(el.evalVisProp('face'));
 
             // determine how the point looks like
             if (face === "o") {
@@ -327,7 +327,7 @@ JXG.extend(
 
             el.rendNode = this.appendChildPrim(
                 this.createPrim(prim, el.id),
-                Type.evaluate(el.visProp.layer)
+                el.evalVisProp('layer')
             );
             this.appendNodesToElement(el, prim);
 
@@ -348,12 +348,12 @@ JXG.extend(
          * @see JXG.AbstractRenderer#changePointStyle
          */
         updatePoint: function (el) {
-            var size = Type.evaluate(el.visProp.size),
+            var size = el.evalVisProp('size'),
                 // sometimes el is not a real point and lacks the methods of a JXG.Point instance,
                 // in these cases to not use el directly.
-                face = Options.normalizePointFace(Type.evaluate(el.visProp.face)),
-                unit = Type.evaluate(el.visProp.sizeunit),
-                zoom = Type.evaluate(el.visProp.zoom),
+                face = Options.normalizePointFace(el.evalVisProp('face')),
+                unit = el.evalVisProp('sizeunit'),
+                zoom = el.evalVisProp('zoom'),
                 s1;
 
             if (!isNaN(el.coords.scrCoords[2] + el.coords.scrCoords[1])) {
@@ -421,7 +421,7 @@ JXG.extend(
                 this.display(el, false);
             }
 
-            if (Type.evaluate(el.visProp.draft)) {
+            if (el.evalVisProp('draft')) {
                 this.setDraft(el);
             }
         },
@@ -440,7 +440,7 @@ JXG.extend(
         drawLine: function (el) {
             el.rendNode = this.appendChildPrim(
                 this.createPrim("line", el.id),
-                Type.evaluate(el.visProp.layer)
+                el.evalVisProp('layer')
             );
             this.appendNodesToElement(el, "lines");
             this.updateLine(el);
@@ -473,7 +473,7 @@ JXG.extend(
         drawCurve: function (el) {
             el.rendNode = this.appendChildPrim(
                 this.createPrim("path", el.id),
-                Type.evaluate(el.visProp.layer)
+                el.evalVisProp('layer')
             );
             this.appendNodesToElement(el, "path");
             this.updateCurve(el);
@@ -565,8 +565,8 @@ JXG.extend(
                 offLast = 0,
                 sizeFirst = 0,
                 sizeLast = 0,
-                ev_fa = Type.evaluate(el.visProp.firstarrow),
-                ev_la = Type.evaluate(el.visProp.lastarrow),
+                ev_fa = el.evalVisProp('firstarrow'),
+                ev_la = el.evalVisProp('lastarrow'),
                 off,
                 size;
 
@@ -699,7 +699,7 @@ JXG.extend(
 
             c1 = new Coords(Const.COORDS_BY_USER, el.point1.coords.usrCoords, el.board);
             c2 = new Coords(Const.COORDS_BY_USER, el.point2.coords.usrCoords, el.board);
-            margin = Type.evaluate(el.visProp.margin);
+            margin = el.evalVisProp('margin');
             Geometry.calcStraight(el, c1, c2, margin);
 
             this.handleTouchpoints(el, c1, c2, arrowData);
@@ -731,7 +731,7 @@ JXG.extend(
          *
          */
         updatePath: function (el) {
-            if (Type.evaluate(el.visProp.handdrawing)) {
+            if (el.evalVisProp('handdrawing')) {
                 this.updatePathPrim(el.rendNode, this.updatePathStringBezierPrim(el), el.board);
             } else {
                 this.updatePathPrim(el.rendNode, this.updatePathStringPrim(el), el.board);
@@ -816,23 +816,23 @@ JXG.extend(
             if (a.evFirst || a.evLast) {
                 d = d1x = d1y = d2x = d2y = 0.0;
 
-                s1 = Type.evaluate(el.point1.visProp.size) +
-                    Type.evaluate(el.point1.visProp.strokewidth);
+                s1 = el.point1.evalVisProp('size') +
+                    el.point1.evalVisProp('strokewidth');
 
-                s2 = Type.evaluate(el.point2.visProp.size) +
-                    Type.evaluate(el.point2.visProp.strokewidth);
+                s2 = el.point2.evalVisProp('size') +
+                    el.point2.evalVisProp('strokewidth');
 
                 // Handle touchlastpoint /touchfirstpoint
-                if (a.evFirst && Type.evaluate(el.visProp.touchfirstpoint) &&
-                        Type.evaluate(el.point1.visProp.visible)) {
+                if (a.evFirst && el.evalVisProp('touchfirstpoint') &&
+                        el.point1.evalVisProp('visible')) {
                     d = c1.distance(Const.COORDS_BY_SCREEN, c2);
                     //if (d > s) {
                     d1x = ((c2.scrCoords[1] - c1.scrCoords[1]) * s1) / d;
                     d1y = ((c2.scrCoords[2] - c1.scrCoords[2]) * s1) / d;
                     //}
                 }
-                if (a.evLast && Type.evaluate(el.visProp.touchlastpoint) &&
-                        Type.evaluate(el.point2.visProp.visible)) {
+                if (a.evLast && el.evalVisProp('touchlastpoint') &&
+                        el.point2.evalVisProp('visible')) {
                     d = c1.distance(Const.COORDS_BY_SCREEN, c2);
                     //if (d > s) {
                     d2x = ((c2.scrCoords[1] - c1.scrCoords[1]) * s2) / d;
@@ -922,7 +922,7 @@ JXG.extend(
         drawTicks: function (el) {
             el.rendNode = this.appendChildPrim(
                 this.createPrim("path", el.id),
-                Type.evaluate(el.visProp.layer)
+                el.evalVisProp('layer')
             );
             this.appendNodesToElement(el, "path");
         },
@@ -955,7 +955,7 @@ JXG.extend(
         drawEllipse: function (el) {
             el.rendNode = this.appendChildPrim(
                 this.createPrim("ellipse", el.id),
-                Type.evaluate(el.visProp.layer)
+                el.evalVisProp('layer')
             );
             this.appendNodesToElement(el, "ellipse");
             this.updateEllipse(el);
@@ -1004,7 +1004,7 @@ JXG.extend(
         drawPolygon: function (el) {
             el.rendNode = this.appendChildPrim(
                 this.createPrim("polygon", el.id),
-                Type.evaluate(el.visProp.layer)
+                el.evalVisProp('layer')
             );
             this.appendNodesToElement(el, "polygon");
             this.updatePolygon(el);
@@ -1081,16 +1081,16 @@ JXG.extend(
             var node, z, level, ev_visible;
 
             if (
-                Type.evaluate(el.visProp.display) === "html" &&
+                el.evalVisProp('display') === "html" &&
                 Env.isBrowser &&
                 this.type !== "no"
             ) {
                 node = this.container.ownerDocument.createElement("div");
                 //node = this.container.ownerDocument.createElementNS('http://www.w3.org/1999/xhtml', 'div'); //
                 node.style.position = "absolute";
-                node.className = Type.evaluate(el.visProp.cssclass);
+                node.className = el.evalVisProp('cssclass');
 
-                level = Type.evaluate(el.visProp.layer);
+                level = el.evalVisProp('layer');
                 if (!Type.exists(level)) {
                     // trace nodes have level not set
                     level = 0;
@@ -1115,7 +1115,7 @@ JXG.extend(
 
             // Set el.visPropCalc.visible
             if (el.visProp.islabel && Type.exists(el.visProp.anchor)) {
-                ev_visible = Type.evaluate(el.visProp.anchor.visProp.visible);
+                ev_visible = el.visProp.anchor.evalVisProp('visible');
                 el.prepareUpdate().updateVisibility(ev_visible);
             } else {
                 el.prepareUpdate().updateVisibility();
@@ -1145,7 +1145,7 @@ JXG.extend(
             if (el.visPropCalc.visible) {
                 this.updateTextStyle(el, false);
 
-                if (Type.evaluate(el.visProp.display) === "html" && this.type !== "no") {
+                if (el.evalVisProp('display') === "html" && this.type !== "no") {
                     // Set the position
                     if (!isNaN(el.coords.scrCoords[1] + el.coords.scrCoords[2])) {
                         // Horizontal
@@ -1247,7 +1247,7 @@ JXG.extend(
                         }
                         el.htmlStr = content;
 
-                        if (Type.evaluate(el.visProp.usemathjax)) {
+                        if (el.evalVisProp('usemathjax')) {
                             // Typesetting directly might not work because mathjax was not loaded completely
                             try {
                                 if (MathJax.typeset) {
@@ -1276,7 +1276,7 @@ JXG.extend(
                             } catch (e) {
                                 JXG.debug("MathJax (not yet) loaded");
                             }
-                        } else if (Type.evaluate(el.visProp.usekatex)) {
+                        } else if (el.evalVisProp('usekatex')) {
                             try {
                                 // Checkboxes et. al. do not possess rendNodeLabel during the first update.
                                 // In this case node will be undefined and not rendered by KaTeX.
@@ -1297,7 +1297,7 @@ JXG.extend(
                                 if (node) {
                                     /* eslint-disable no-undef */
                                     katex.render(content, node, {
-                                        macros: Type.evaluate(el.visProp.katexmacros),
+                                        macros: el.evalVisProp('katexmacros'),
                                         throwOnError: false
                                     });
                                     /* eslint-enable no-undef */
@@ -1305,7 +1305,7 @@ JXG.extend(
                             } catch (e) {
                                 JXG.debug("KaTeX not loaded (yet)");
                             }
-                        } else if (Type.evaluate(el.visProp.useasciimathml)) {
+                        } else if (el.evalVisProp('useasciimathml')) {
                             // This is not a constructor.
                             // See http://asciimath.org/ for more information
                             // about AsciiMathML and the project's source code.
@@ -1317,7 +1317,7 @@ JXG.extend(
                         }
                     }
 
-                    angle = Type.evaluate(el.visProp.rotate);
+                    angle = el.evalVisProp('rotate');
                     if (angle !== 0) {
                         // Don't forget to convert to rad
                         angle *= (Math.PI / 180);
@@ -1827,8 +1827,8 @@ JXG.extend(
         setTabindex: function (element) {
             var val;
             if (element.board.attr.keyboard.enabled && Type.exists(element.rendNode)) {
-                val = Type.evaluate(element.visProp.tabindex);
-                if (!element.visPropCalc.visible || Type.evaluate(element.visProp.fixed)) {
+                val = element.evalVisProp('tabindex');
+                if (!element.visPropCalc.visible || element.evalVisProp('fixed')) {
                     val = null;
                 }
                 if (val !== element.visPropOld.tabindex) {
@@ -1899,7 +1899,7 @@ JXG.extend(
          * @param {JXG.GeometryElement} el Reference of the object that is in draft mode.
          */
         setDraft: function (el) {
-            if (!Type.evaluate(el.visProp.draft)) {
+            if (!el.evalVisProp('draft')) {
                 return;
             }
             var draftColor = el.board.options.elements.draft.color,
@@ -2108,7 +2108,7 @@ JXG.extend(
 
             this.setObjectViewport(el);
             this.setObjectTransition(el);
-            if (!Type.evaluate(el.visProp.draft)) {
+            if (!el.evalVisProp('draft')) {
                 if (el.type === Const.OBJECT_TYPE_POLYGON) {
                     this.setObjectFillColor(el, ev.fillcolor, ev.fillopacity);
                     for (i = 0; i < el.borders.length; i++) {
