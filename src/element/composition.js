@@ -2394,7 +2394,7 @@ JXG.createIntegral = function (board, parents, attributes) {
                     var off = new Coords(
                             Const.COORDS_BY_SCREEN,
                             [
-                                Type.evaluate(this.visProp.offset[0]) +
+                                this.evalVisProp('offset.0') +
                                     this.board.origin.scrCoords[1],
                                 0
                             ],
@@ -2418,7 +2418,7 @@ JXG.createIntegral = function (board, parents, attributes) {
                             Const.COORDS_BY_SCREEN,
                             [
                                 0,
-                                Type.evaluate(this.visProp.offset[1]) +
+                                this.evalVisProp('offset.1') +
                                     this.board.origin.scrCoords[2]
                             ],
                             this.board,

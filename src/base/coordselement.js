@@ -390,8 +390,7 @@ JXG.extend(
                     // Second, call update(fromParent==true) to make the positioning snappier.
                     ev_sw = this.evalVisProp('snapwidth');
                     if (
-                        Type.evaluate(ev_sw) > 0.0 &&
-                        Math.abs(this._smax - this._smin) >= Mat.eps
+                        ev_sw > 0.0 && Math.abs(this._smax - this._smin) >= Mat.eps
                     ) {
                         newPos = Math.max(Math.min(newPos, 1), 0);
 

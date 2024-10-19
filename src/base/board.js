@@ -1591,7 +1591,7 @@ JXG.extend(
          */
         twoFingerTouchObject: function (tar, drag, id) {
             var t, T,
-                ar, i, len, vp,
+                ar, i, len,
                 snap = false;
 
             if (
@@ -1618,11 +1618,9 @@ JXG.extend(
                     t.applyOnce(ar);
                 } else if (drag.type === Const.OBJECT_TYPE_POLYGON) {
                     len = drag.vertices.length - 1;
-                    vp = drag.visProp;
-                    snap = Type.evaluate(vp.snaptogrid) || Type.evaluate(vp.snaptopoints);
+                    snap = drag.evalVisProp('snaptogrid') || drag.evalVisProp('snaptopoints');
                     for (i = 0; i < len && !snap; ++i) {
-                        vp = drag.vertices[i].visProp;
-                        snap = snap || Type.evaluate(vp.snaptogrid) || Type.evaluate(vp.snaptopoints);
+                        snap = snap || drag.vertices[i]('snaptogrid') || drag.vertices[i]('snaptopoints');
                         snap = snap || (!drag.vertices[i].draggable());
                     }
                     if (!snap) {

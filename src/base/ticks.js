@@ -1031,7 +1031,7 @@ JXG.extend(
 
                     if (ev_dl && (hasLabelOverrides || Type.exists(this.visProp.labels[i]))) {
                         labelText = hasLabelOverrides
-                            ? Type.evaluate(this.visProp.labels[i])
+                            ? this.evalVisProp('labels.' + i)
                             : fixedTick;
                         this.labelsData.push(
                             this.generateLabelData(
@@ -1136,14 +1136,14 @@ JXG.extend(
                 dxs = this.dxMaj;
                 dys = this.dyMaj;
                 style = this.majStyle;
-                te0 = Type.evaluate(this.visProp.majortickendings[0]) > 0;
-                te1 = Type.evaluate(this.visProp.majortickendings[1]) > 0;
+                te0 = this.evalVisProp('majortickendings.0') > 0;
+                te1 = this.evalVisProp('majortickendings.1') > 0;
             } else {
                 dxs = this.dxMin;
                 dys = this.dyMin;
                 style = this.minStyle;
-                te0 = Type.evaluate(this.visProp.tickendings[0]) > 0;
-                te1 = Type.evaluate(this.visProp.tickendings[1]) > 0;
+                te0 = this.evalVisProp('tickendings.0') > 0;
+                te1 = this.evalVisProp('tickendings.1') > 0;
             }
             lineStdForm = [-dys * c[1] - dxs * c[2], dys, dxs];
 
@@ -1258,8 +1258,8 @@ JXG.extend(
                     dxr = Math.cos(alpha) * dxs - Math.sin(alpha) * dys;
                     dyr = Math.sin(alpha) * dxs + Math.cos(alpha) * dys;
 
-                    x[0] = c[1] + dxr * te0; // Type.evaluate(this.visProp.tickendings[0]);
-                    y[0] = c[2] - dyr * te0; // Type.evaluate(this.visProp.tickendings[0]);
+                    x[0] = c[1] + dxr * te0;
+                    y[0] = c[2] - dyr * te0;
                     x[1] = c[1];
                     y[1] = c[2];
 
@@ -1267,8 +1267,8 @@ JXG.extend(
                     dxr = Math.cos(alpha) * dxs - Math.sin(alpha) * dys;
                     dyr = Math.sin(alpha) * dxs + Math.cos(alpha) * dys;
 
-                    x[2] = c[1] - dxr * te1; // Type.evaluate(this.visProp.tickendings[1]);
-                    y[2] = c[2] + dyr * te1; // Type.evaluate(this.visProp.tickendings[1]);
+                    x[2] = c[1] - dxr * te1;
+                    y[2] = c[2] + dyr * te1;
                 }
 
                 // Check if (parts of) the tick is inside the canvas.
@@ -1448,8 +1448,8 @@ JXG.extend(
                 return null;
             }
 
-            xa = Type.evaluate(this.visProp.label.offset[0]);
-            ya = Type.evaluate(this.visProp.label.offset[1]);
+            xa = this.evalVisProp('label.offset')[0];
+            ya = this.evalVisProp('label.offset')[1];
 
             return {
                 x: tick.usrCoords[1] + xa / this.board.unitX,
@@ -1569,8 +1569,8 @@ JXG.extend(
 
                 label.prepareUpdate().updateVisibility(visible).updateRenderer();
 
-                label.distanceX = Type.evaluate(this.visProp.label.offset[0]);
-                label.distanceY = Type.evaluate(this.visProp.label.offset[1]);
+                label.distanceX = this.evalVisProp('label.offset')[0];
+                label.distanceY = this.evalVisProp('label.offset')[1];
             }
 
             // Hide unused labels

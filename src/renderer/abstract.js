@@ -513,18 +513,17 @@ JXG.extend(
          * @see JXG.AbstractRenderer#getArrowHeadData
          */
         updatePathWithArrowHeads: function (el, doHighlight) {
-            var ev = el.visProp,
-                hl = doHighlight ? 'highlight' : '',
+            var hl = doHighlight ? 'highlight' : '',
                 w,
                 arrowData;
 
-            if (doHighlight && ev.highlightstrokewidth) {
+            if (doHighlight && el.evalVisProp('highlightstrokewidth')) {
                 w = Math.max(
-                    Type.evaluate(ev.highlightstrokewidth),
-                    Type.evaluate(ev.strokewidth)
+                    el.evalVisProp('highlightstrokewidth'),
+                    el.evalVisProp('strokewidth')
                 );
             } else {
-                w = Type.evaluate(ev.strokewidth);
+                w = el.evalVisProp('strokewidth');
             }
 
             // Get information if there are arrow heads and how large they are.
@@ -1395,7 +1394,7 @@ JXG.extend(
                 display = Env.isBrowser ? ev.display : "internal",
                 nodeList = ["rendNode", "rendNodeTag", "rendNodeLabel"],
                 lenN = nodeList.length,
-                fontUnit = Type.evaluate(ev.fontunit),
+                fontUnit = el.evalVisProp('fontunit'),
                 cssList,
                 prop,
                 style,
@@ -1426,8 +1425,8 @@ JXG.extend(
                     // ev.cssdefaultstyle of ev.highlightcssdefaultstyle,
                     // then to
                     // ev.cssstyle of ev.highlightcssstyle
-                    cssString = Type.evaluate(
-                        ev[(doHighlight ? "highlight" : "") + styleList[style]]
+                    cssString = el.evalVisProp(
+                        (doHighlight ? 'highlight' : '') + styleList[style]
                     );
                     if (cssString !== "" && el.visPropOld[styleList[style]] !== cssString) {
                         cssList = this._css2js(cssString);
@@ -1445,7 +1444,7 @@ JXG.extend(
                     }
                 }
 
-                fs = Type.evaluate(ev.fontsize);
+                fs = el.evalVisProp('fontsize');
                 if (el.visPropOld.fontsize !== fs) {
                     el.needsSizeUpdate = true;
                     try {
@@ -1636,8 +1635,8 @@ JXG.extend(
          * @see JXG.AbstractRenderer#noHighlight
          */
         updateImageStyle: function (el, doHighlight) {
-            el.rendNode.className = Type.evaluate(
-                doHighlight ? el.visProp.highlightcssclass : el.visProp.cssclass
+            el.rendNode.className = el.evalVisProp(
+                doHighlight ? 'highlightcssclass' : 'cssclass'
             );
         },
 
@@ -2036,19 +2035,10 @@ JXG.extend(
             if (!ev.draft) {
                 if (el.type === Const.OBJECT_TYPE_POLYGON) {
                     this.setObjectFillColor(el, ev.highlightfillcolor, ev.highlightfillopacity);
-                    do_hl = Type.evaluate(ev.highlightbystrokewidth);
+                    do_hl = el.evalVisProp('highlightbystrokewidth');
                     for (i = 0; i < el.borders.length; i++) {
                         this.highlight(el.borders[i], !do_hl);
                     }
-                    /*
-                    for (i = 0; i < el.borders.length; i++) {
-                        this.setObjectStrokeColor(
-                            el.borders[i],
-                            el.borders[i].visProp.highlightstrokecolor,
-                            el.borders[i].visProp.highlightstrokeopacity
-                        );
-                    }
-                    */
                 } else {
                     if (el.elementClass === Const.OBJECT_CLASS_TEXT) {
                         this.updateTextStyle(el, true);
@@ -2079,8 +2069,8 @@ JXG.extend(
                 // highlightbystrokewidth is true.
                 if (ev.highlightstrokewidth && !suppressHighlightStrokeWidth) {
                     sw = Math.max(
-                        Type.evaluate(ev.highlightstrokewidth),
-                        Type.evaluate(ev.strokewidth)
+                        el.evalVisProp('highlightstrokewidth'),
+                        el.evalVisProp('strokewidth')
                     );
                     this.setObjectStrokeWidth(el, sw);
                     if (
@@ -2133,7 +2123,7 @@ JXG.extend(
                     }
                 }
 
-                sw = Type.evaluate(ev.strokewidth);
+                sw = el.evalVisProp('strokewidth');
                 this.setObjectStrokeWidth(el, sw);
                 if (
                     el.elementClass === Const.OBJECT_CLASS_LINE ||

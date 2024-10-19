@@ -374,9 +374,9 @@ JXG.extend(
             }
 
             // type is equal to 'fill' or 'stroke'
-            rgba = Type.evaluate(ev[hl + type + "color"]);
+            rgba = el.evalVisProp(hl + type + 'color');
             if (rgba !== "none" && rgba !== false) {
-                o = Type.evaluate(ev[hl + type + "opacity"]);
+                o = el.evalVisProp(hl + type + "opacity");
                 o = o > 0 ? o : 0;
 
                 // RGB, not RGBA
@@ -396,7 +396,7 @@ JXG.extend(
                 hasColor = false;
             }
 
-            sw = parseFloat(Type.evaluate(ev[hl + "strokewidth"]));
+            sw = parseFloat(el.evalVisProp(hl + 'strokewidth'));
             if (type === "stroke" && !isNaN(sw)) {
                 if (sw === 0) {
                     this.context.globalAlpha = 0;
@@ -703,7 +703,7 @@ JXG.extend(
                     }
                 }
 
-                w0 = Type.evaluate(el.visProp[hl + "strokewidth"]);
+                w0 = el.evalVisProp(hl + 'strokewidth');
 
                 if (ev_fa) {
                     size = a.sizeFirst;
@@ -1001,7 +1001,7 @@ JXG.extend(
             }
 
             hl = this._getHighlighted(el);
-            w = Type.evaluate(el.visProp[hl + "strokewidth"]);
+            w = el.evalVisProp(hl + 'strokewidth');
             arrowData = this.getArrowHeadData(el, w, hl);
 
             if (arrowData.evFirst || arrowData.evLast) {
@@ -1094,7 +1094,7 @@ JXG.extend(
             }
             if (el.numberPoints > 1) {
                 hl = this._getHighlighted(el);
-                w = Type.evaluate(el.visProp[hl + "strokewidth"]);
+                w = el.evalVisProp(hl + 'strokewidth');
                 arrowData = this.getArrowHeadData(el, w, hl);
                 if (
                     arrowData.evFirst /* && obj.sFirst > 0*/ ||

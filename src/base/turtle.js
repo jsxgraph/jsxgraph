@@ -517,7 +517,7 @@ JXG.extend(
             } else {
                 pos = le - 1;
             }
-            return Type.evaluate(this.objects[pos].visProp[key]);
+            return this.objects[pos].evalVisProp(key);
         },
 
         /**
