@@ -220,7 +220,7 @@ JXG.extend(
 
             if (Type.isObject(this.evalVisProp('precision'))) {
                 type = this.board._inputDevice;
-                r = Type.evaluate(this.visProp.precision[type]);
+                r = this.evalVisProp('precision.' + type);
             } else {
                 // 'inherit'
                 r = this.board.options.precision.hasPoint;
