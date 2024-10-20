@@ -53,7 +53,7 @@ import Point from "../base/point.js";
  * @constructor
  * @type JXG.Point
  * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
- * @param {Array_Array_Array} start,end,data The first two arrays give the start and the end where the slider is drawn
+ * @param {Array_Array_Array} start,end,range The first two arrays give the start and the end where the slider is drawn
  * on the board. The third array gives the start and the end of the range the slider operates as the first resp. the
  * third component of the array. The second component of the third array gives its start value.
  *

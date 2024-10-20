@@ -1899,7 +1899,7 @@ Mat.Numerics = {
      * @param {Number} deg Degree of the polynomial
      * @param {String} varname Name of the variable (usually 'x')
      * @param {Number} prec Precision
-     * @returns {String} A string containg the function term of the polynomial.
+     * @returns {String} A string containing the function term of the polynomial.
      * @memberof JXG.Math.Numerics
      */
     generatePolynomialTerm: function (coeffs, deg, varname, prec) {
