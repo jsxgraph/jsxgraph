@@ -346,11 +346,6 @@ JXG.extend(
             h = 5;
             if (idAppendix === "Start") {
                 // First arrow
-                //type = a.typeFirst;
-                // if (JXG.exists(ev_fa.type)) {
-                //     type = Type.evaluate(ev_fa.type);
-                // }
-
                 v = 0;
                 if (type === 2) {
                     node3.setAttributeNS(null, "d", "M 10,0 L 0,5 L 10,10 L 5,5 z");
@@ -410,11 +405,6 @@ JXG.extend(
                 }
             } else {
                 // Last arrow
-                // if (JXG.exists(ev_la.type)) {
-                //     type = Type.evaluate(ev_la.type);
-                // }
-                //type = a.typeLast;
-
                 v = 10.0;
                 if (type === 2) {
                     node3.setAttributeNS(null, "d", "M 0,0 L 10,5 L 0,10 L 5,5 z");
@@ -783,8 +773,8 @@ JXG.extend(
 
         // Already documented in JXG.AbstractRenderer
         updateImageStyle: function (el, doHighlight) {
-            var css = Type.evaluate(
-                doHighlight ? el.visProp.highlightcssclass : el.visProp.cssclass
+            var css = el.evalVisProp(
+                doHighlight ? 'highlightcssclass' : 'cssclass'
             );
 
             el.rendNode.setAttributeNS(null, "class", css);
@@ -1671,8 +1661,8 @@ JXG.extend(
         // documented in JXG.AbstractRenderer
         setObjectFillColor: function (el, color, opacity, rendNode) {
             var node, c, rgbo, oo,
-                rgba = Type.evaluate(color),
-                o = Type.evaluate(opacity),
+                rgba = color,
+                o = opacity,
                 grad = el.evalVisProp('gradient');
 
             o = o > 0 ? o : 0;
@@ -1741,9 +1731,9 @@ JXG.extend(
 
         // documented in JXG.AbstractRenderer
         setObjectStrokeColor: function (el, color, opacity) {
-            var rgba = Type.evaluate(color),
+            var rgba = color,
                 c, rgbo,
-                o = Type.evaluate(opacity),
+                o = opacity,
                 oo, node;
 
             o = o > 0 ? o : 0;
@@ -1814,7 +1804,7 @@ JXG.extend(
         // documented in JXG.AbstractRenderer
         setObjectStrokeWidth: function (el, width) {
             var node,
-                w = Type.evaluate(width);
+                w = width;
 
             if (isNaN(w) || el.visPropOld.strokewidth === w) {
                 return;
@@ -1877,14 +1867,14 @@ JXG.extend(
                 o = [5, 5];
                 op = 1;
             } else {
-                if (Type.evaluate(ev_s.enabled)) {
+                if (el.evalVisProp('shadow.enabled')) {
                     use_board_filter = false;
                     show = true;
-                    c = JXG.rgbParser(Type.evaluate(ev_s.color));
-                    b = Type.evaluate(ev_s.blur);
-                    bl = Type.evaluate(ev_s.blend);
-                    o = Type.evaluate(ev_s.offset);
-                    op = Type.evaluate(ev_s.opacity);
+                    c = JXG.rgbParser(el.evalVisProp('shadow.color'));
+                    b = el.evalVisProp('shadow.blur');
+                    bl = el.evalVisProp('shadow.blend');
+                    o = el.evalVisProp('shadow.offset');
+                    op = el.evalVisProp('shadow.opacity');
                 } else {
                     show = false;
                 }

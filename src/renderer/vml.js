@@ -1119,10 +1119,10 @@ JXG.extend(
 
         // Already documented in JXG.AbstractRenderer
         setObjectFillColor: function (el, color, opacity) {
-            var rgba = Type.evaluate(color),
+            var rgba = color,
                 c,
                 rgbo,
-                o = Type.evaluate(opacity),
+                o = opacity,
                 oo,
                 node = el.rendNode;
 
@@ -1176,10 +1176,10 @@ JXG.extend(
 
         // Already documented in JXG.AbstractRenderer
         setObjectStrokeColor: function (el, color, opacity) {
-            var rgba = Type.evaluate(color),
+            var rgba = color,
                 c,
                 rgbo,
-                o = Type.evaluate(opacity),
+                o = opacity,
                 oo,
                 node = el.rendNode,
                 nodeStroke;

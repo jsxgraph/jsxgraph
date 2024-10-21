@@ -220,17 +220,17 @@ JXG.extend(
                         if (el.highlighted) {
                             this.setObjectStrokeColor(
                                 el,
-                                el.visProp.highlightstrokecolor,
-                                el.visProp.highlightstrokeopacity
+                                el.evalVisProp('highlightstrokecolor'),
+                                el.evalVisProp('highlightstrokeopacity')
                             );
-                            this.setObjectStrokeWidth(el, el.visProp.highlightstrokewidth);
+                            this.setObjectStrokeWidth(el, el.evalVisProp('highlightstrokewidth'));
                         } else {
                             this.setObjectStrokeColor(
                                 el,
-                                el.visProp.strokecolor,
-                                el.visProp.strokeopacity
+                                el.evalVisProp('strokecolor'),
+                                el.evalVisProp('strokeopacity')
                             );
-                            this.setObjectStrokeWidth(el, el.visProp.strokewidth);
+                            this.setObjectStrokeWidth(el, el.evalVisProp('strokewidth'));
                         }
                     }
 
@@ -238,14 +238,14 @@ JXG.extend(
                         if (el.highlighted) {
                             this.setObjectFillColor(
                                 el,
-                                el.visProp.highlightfillcolor,
-                                el.visProp.highlightfillopacity
+                                el.evalVisProp('highlightfillcolor'),
+                                el.evalVisProp('highlightfillopacity')
                             );
                         } else {
                             this.setObjectFillColor(
                                 el,
-                                el.visProp.fillcolor,
-                                el.visProp.fillopacity
+                                el.evalVisProp('fillcolor'),
+                                el.evalVisProp('fillopacity')
                             );
                         }
                     }
@@ -1927,13 +1927,13 @@ JXG.extend(
             this.setObjectViewport(el);
             this.setObjectTransition(el);
             if (el.type === Const.OBJECT_TYPE_POLYGON) {
-                this.setObjectFillColor(el, el.visProp.fillcolor, el.visProp.fillopacity);
+                this.setObjectFillColor(el, el.evalVisProp('fillcolor'), el.evalVisProp('fillopacity'));
             } else {
                 if (el.type === Const.OBJECT_CLASS_POINT) {
-                    this.setObjectFillColor(el, el.visProp.fillcolor, el.visProp.fillopacity);
+                    this.setObjectFillColor(el, el.evalVisProp('fillcolor'), el.evalVisProp('fillopacity'));
                 }
-                this.setObjectStrokeColor(el, el.visProp.strokecolor, el.visProp.strokeopacity);
-                this.setObjectStrokeWidth(el, el.visProp.strokewidth);
+                this.setObjectStrokeColor(el, el.evalVisProp('strokecolor'), el.evalVisProp('strokeopacity'));
+                this.setObjectStrokeWidth(el, el.evalVisProp('strokewidth'));
             }
         },
 
@@ -2034,7 +2034,7 @@ JXG.extend(
             this.setObjectTransition(el);
             if (!ev.draft) {
                 if (el.type === Const.OBJECT_TYPE_POLYGON) {
-                    this.setObjectFillColor(el, ev.highlightfillcolor, ev.highlightfillopacity);
+                    this.setObjectFillColor(el, el.evalVisProp('highlightfillcolor'), el.evalVisProp('highlightfillopacity'));
                     do_hl = el.evalVisProp('highlightbystrokewidth');
                     for (i = 0; i < el.borders.length; i++) {
                         this.highlight(el.borders[i], !do_hl);
@@ -2046,19 +2046,19 @@ JXG.extend(
                         this.updateImageStyle(el, true);
                         this.setObjectFillColor(
                             el,
-                            ev.highlightfillcolor,
-                            ev.highlightfillopacity
+                            el.evalVisProp('highlightfillcolor'),
+                            el.evalVisProp('highlightfillopacity')
                         );
                     } else {
                         this.setObjectStrokeColor(
                             el,
-                            ev.highlightstrokecolor,
-                            ev.highlightstrokeopacity
+                            el.evalVisProp('highlightstrokecolor'),
+                            el.evalVisProp('highlightstrokeopacity')
                         );
                         this.setObjectFillColor(
                             el,
-                            ev.highlightfillcolor,
-                            ev.highlightfillopacity
+                            el.evalVisProp('highlightfillcolor'),
+                            el.evalVisProp('highlightfillopacity')
                         );
                     }
                 }
@@ -2067,7 +2067,7 @@ JXG.extend(
                 // parameter suppressHighlightStrokeWidth is false or undefined.
                 // suppressHighlightStrokeWidth is false if polygon attribute
                 // highlightbystrokewidth is true.
-                if (ev.highlightstrokewidth && !suppressHighlightStrokeWidth) {
+                if (!suppressHighlightStrokeWidth && el.evalVisProp('highlightstrokewidth')) {
                     sw = Math.max(
                         el.evalVisProp('highlightstrokewidth'),
                         el.evalVisProp('strokewidth')
@@ -2100,7 +2100,7 @@ JXG.extend(
             this.setObjectTransition(el);
             if (!el.evalVisProp('draft')) {
                 if (el.type === Const.OBJECT_TYPE_POLYGON) {
-                    this.setObjectFillColor(el, ev.fillcolor, ev.fillopacity);
+                    this.setObjectFillColor(el, el.evalVisProp('fillcolor'), el.evalVisProp('fillopacity'));
                     for (i = 0; i < el.borders.length; i++) {
                         this.noHighlight(el.borders[i]);
                     }
@@ -2116,10 +2116,10 @@ JXG.extend(
                         this.updateTextStyle(el, false);
                     } else if (el.type === Const.OBJECT_TYPE_IMAGE) {
                         this.updateImageStyle(el, false);
-                        this.setObjectFillColor(el, ev.fillcolor, ev.fillopacity);
+                        this.setObjectFillColor(el, el.evalVisProp('fillcolor'), el.evalVisProp('fillopacity'));
                     } else {
-                        this.setObjectStrokeColor(el, ev.strokecolor, ev.strokeopacity);
-                        this.setObjectFillColor(el, ev.fillcolor, ev.fillopacity);
+                        this.setObjectStrokeColor(el, el.evalVisProp('strokecolor'), el.evalVisProp('strokeopacity'));
+                        this.setObjectFillColor(el, el.evalVisProp('fillcolor'), el.evalVisProp('fillopacity'));
                     }
                 }
 
