@@ -1029,7 +1029,7 @@ JXG.extend(
             }
 
             if (keyVml !== "") {
-                v = Type.evaluate(val);
+                v = val;
                 this._setAttr(node, keyVml, v);
             }
         },

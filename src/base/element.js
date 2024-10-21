@@ -1449,7 +1449,7 @@ JXG.extend(
                             break;
                         case "withlabel":
                             this.visProp.withlabel = value;
-                            if (!Type.evaluate(value)) {
+                            if (!this.evalVisProp('withlabel')) {
                                 if (this.label && this.hasLabel) {
                                     //this.label.hideElement();
                                     this.label.setAttribute({ visible: false });

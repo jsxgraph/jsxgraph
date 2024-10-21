@@ -1219,10 +1219,10 @@ JXG.extend(
         // documented in JXG.AbstractRenderer
         // Only necessary for texts
         setObjectStrokeColor: function (el, color, opacity) {
-            var rgba = Type.evaluate(color),
+            var rgba = color,
                 c,
                 rgbo,
-                o = Type.evaluate(opacity),
+                o = opacity,
                 oo,
                 node;
 
