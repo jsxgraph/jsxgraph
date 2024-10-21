@@ -1081,8 +1081,8 @@ JXG.Options = {
          * resize calls.
          * <p>
          * <b>Attention:</b> if the JSXGraph container has no CSS property like width or height and max-width or max-height set, but
-         * has a property like box-sizing:box-content, then the interplay between CSS and the resize attribute may result in an
-         * infinite loop with ever increasing JSXgraph container.
+         * has a property like box-sizing:content-box, then the interplay between CSS and the resize attribute may result in an
+         * infinite loop with ever increasing JSXGraph container.
          *
          * @see JXG.Board#startResizeObserver
          * @see JXG.Board#resizeListener
@@ -8609,9 +8609,9 @@ JXG.Options = {
 
         /**
          * If the text content is solely a number and
-         * this attribute is true (default) then the number is formatted
+         * this attribute is true (default) then the number is either formatted
          * according to the number of digits
-         * given by the attribute 'digits' and convert into a fraction if 'toFraction'
+         * given by the attribute 'digits' or converted into a fraction if 'toFraction'
          * is true.
          * <p>
          * Otherwise, display the raw number.
@@ -9334,7 +9334,8 @@ JXG.Options = {
         anchorY: 'middle',
 
         /**
-         * CSS class of the text in non-highlighted view.
+         * Apply CSS classes to the text in non-highlighted view. It is possible to supply one or more
+         * CSS classes separated by blanks.
          *
          * @name cssClass
          * @memberOf Text.prototype
@@ -9344,7 +9345,8 @@ JXG.Options = {
         cssClass: 'JXGtext',
 
         /**
-         * CSS class of the text in highlighted view.
+         * Apply CSS classes to the text in highlighted view. It is possible to supply one or more
+         * CSS classes separated by blanks.
          *
          * @name highlightCssClass
          * @memberOf Text.prototype

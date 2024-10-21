@@ -80,6 +80,7 @@ JXG.extend(Options, {
          */
         xAxisBorder: {
             name: 'x',
+            visible: 'ìnherit',
             withLabel: false,
             label: {
                 position: '50% left',
@@ -89,6 +90,7 @@ JXG.extend(Options, {
             strokeWidth: 1,
             lastArrow: false,
             ticks3d: {
+                visible: 'ìnherit',
                 label: {
                     anchorX: 'middle',
                     anchorY: 'middle'
@@ -123,6 +125,7 @@ JXG.extend(Options, {
          */
         yAxisBorder: {
             name: 'y',
+            visible: 'ìnherit',
             withLabel: false,
             label: {
                 position: '50% right',
@@ -132,6 +135,7 @@ JXG.extend(Options, {
             strokeWidth: 1,
             lastArrow: false,
             ticks3d: {
+                visible: 'ìnherit',
                 label: {
                     anchorX: 'middle'
                 }
@@ -165,6 +169,7 @@ JXG.extend(Options, {
          */
         zAxisBorder: {
             name: 'z',
+            visible: 'ìnherit',
             withLabel: false,
             label: {
                 position: '50% right',
@@ -174,6 +179,7 @@ JXG.extend(Options, {
             strokeWidth: 1,
             lastArrow: false,
             ticks3d: {
+                visible: 'ìnherit',
                 label: {
                     anchorX: 'middle',
                     anchorY: 'middle'
@@ -394,7 +400,7 @@ JXG.extend(Options, {
     axis3d: {
         highlight: false,
         fixed: true,
-        strokecolor: "black",
+        strokeColor: "black",
         strokeWidth: 1,
         tabindex: null,
 
@@ -1018,7 +1024,9 @@ JXG.extend(Options, {
         ],
 
         infobox: {
-            strokeColor: '#888888',
+            // strokeColor: '#888888',
+            strokeColor: '#000000',
+            fontSize: 24,
             useKatex: false,
             useMathjax: false
         },

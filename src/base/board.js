@@ -6130,6 +6130,7 @@ JXG.extend(
                     Type.isString(parents[i]) &&
                     !(elementType === 'text' && i === 2) &&
                     !(elementType === 'solidofrevolution3d' && i === 2) &&
+                    !(elementType === 'text3d' && (i === 2 || i === 4)) &&
                     !(
                         (elementType === 'input' ||
                             elementType === 'checkbox' ||

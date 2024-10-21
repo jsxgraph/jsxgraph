@@ -1,7 +1,7 @@
 from JXGServerModule import JXGServerModule
 from rpy import r
 import JXG
-import StringIO, gzip
+import io, gzip
 import datetime, math, random
 
 class RStats(JXGServerModule):

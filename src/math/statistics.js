@@ -988,25 +988,29 @@ Mat.Statistics = {
      * @memberof JXG.Math.Statistics
      *
      * @example
-     *  let board = JXG.JSXGraph.initBoard('JXGbox',
-     *       { boundingbox: [-1.7, .5, 30, -.03], axis: true});
+     * let board = JXG.JSXGraph.initBoard('jxgbox',
+     *     { boundingbox: [-1.7, .5, 30, -.03], axis: true });
      *
-     *   let runs = [
-     *       [0.5, 20, 'blue'],
-     *       [0.7, 20, 'green'],
-     *       [0.5, 40, 'red'],
-     *   ]
+     * let runs = [
+     *     [0.5, 20, 'blue'],
+     *     [0.7, 20, 'green'],
+     *     [0.5, 40, 'red'],
+     * ];
      *
-     *   let labelY = .4
-     *   runs.forEach((run,i) => {
-     *       board.create('segment',[[7,labelY-(i/50)],[9,labelY-(i/50)]],{strokeColor:run[2]})
-     *       board.create('text',[10,labelY-(i/50),`p=${run[0]}, n=${run[1]}`])
+     * let labelY = .4;
+     * runs.forEach((run, i) => {
+     *     board.create('segment', [[7, labelY - (i / 50)], [9, labelY - (i / 50)]], { strokeColor: run[2] });
+     *     board.create('text', [10, labelY - (i / 50), `p=${run[0]}, n=${run[1]}`]);
      *
-     *       let x = Array(50000).fill(0).map(() => JXG.Math.Statistics.randomBinomial(run[1],run[0]))
-     *       let res = JXG.Math.Statistics.histogram(x, { bins: 40, density: true, cumulative: false, range: [0, 40] });
-     *       board.create('curve', [res[1], res[0]], { strokeColor: run[2]});
-     *   })
-     * }
+     *     let x = Array(50000).fill(0).map(() => JXG.Math.Statistics.randomBinomial(run[1], run[0]));
+     *     let res = JXG.Math.Statistics.histogram(x, {
+     *         bins: 40,
+     *         density: true,
+     *         cumulative: false,
+     *         range: [0, 40]
+     *     });
+     *     board.create('curve', [res[1], res[0]], { strokeColor: run[2] });
+     * });
      *
      *
      * </pre><div id="JXGda56df4d-a5a5-4c87-9ffc-9bbc1b512302-3" class="jxgbox" style="width: 300px; height: 300px;"></div>

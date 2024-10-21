@@ -278,13 +278,15 @@ JXG.extend(
         },
 
         update: function (drag) {
-            var c3d, foot;
+            var c3d, foot, res;
 
             // Update is called from board.updateElements
             if (
                 this.element2D.draggable() &&
                 Geometry.distance(this._c2d, this.element2D.coords.usrCoords) !== 0
             ) {
+
+                //
                 if (this.slide) {
                     this.coords = this.slide.projectScreenCoords(
                         [this.element2D.X(), this.element2D.Y()],
@@ -297,17 +299,33 @@ JXG.extend(
                 } else {
                     if (this.view.isVerticalDrag()) {
                         // Drag the point in its vertical to the xy plane
+                        // If the point is outside of bbox3d,
+                        // c3d is already corrected.
                         c3d = this.view.project2DTo3DVertical(this.element2D, this.coords);
                     } else {
                         // Drag the point in its xy plane
                         foot = [1, 0, 0, this.coords[3]];
                         c3d = this.view.project2DTo3DPlane(this.element2D, [1, 0, 0, 1], foot);
                     }
+
                     if (c3d[0] !== 0) {
-                        this.coords = this.view.project3DToCube(c3d);
+                        // Check if c3d is inside of view.bbox3d
+                        // Otherwise, the coords have to be corrected below.
+                        res = this.view.project3DToCube(c3d);
+                        this.coords = res[0];
+
+                        if (res[1]) {
+                            // The 3D coordinates have been corrected, now
+                            // also correct the 2D element.
+                            this.element2D.coords.setCoordinates(
+                                Const.COORDS_BY_USER,
+                                this.view.project3DTo2D(this.coords)
+                            );
+                        }
                     }
                 }
             } else {
+                // Update 2D point from its 3D view
                 this.updateCoords();
                 if (this.slide) {
                     this.coords = this.slide.projectCoords(
@@ -315,7 +333,6 @@ JXG.extend(
                         this._params
                     );
                 }
-                // Update 2D point from its 3D view
                 this.element2D.coords.setCoordinates(
                     Const.COORDS_BY_USER,
                     this.view.project3DTo2D([1, this.X(), this.Y(), this.Z()])

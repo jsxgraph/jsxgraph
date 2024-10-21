@@ -1160,30 +1160,39 @@ JXG.extend(
      * Limit 3D coordinates to the bounding cube.
      *
      * @param {Array} c3d 3D coordinates [x,y,z]
-     * @returns Array with updated 3D coordinates.
+     * @returns Array [Array, Boolean] containing [coords, corrected]. coords contains the updated 3D coordinates,
+     * correct is true if the coords have been changed.
      */
     project3DToCube: function (c3d) {
-        var cube = this.bbox3D;
+        var cube = this.bbox3D,
+            isOut = false;
+
         if (c3d[1] < cube[0][0]) {
             c3d[1] = cube[0][0];
+            isOut = true;
         }
         if (c3d[1] > cube[0][1]) {
             c3d[1] = cube[0][1];
+            isOut = true;
         }
         if (c3d[2] < cube[1][0]) {
             c3d[2] = cube[1][0];
+            isOut = true;
         }
         if (c3d[2] > cube[1][1]) {
             c3d[2] = cube[1][1];
+            isOut = true;
         }
-        if (c3d[3] < cube[2][0]) {
+        if (c3d[3] <= cube[2][0]) {
             c3d[3] = cube[2][0];
+            isOut = true;
         }
-        if (c3d[3] > cube[2][1]) {
+        if (c3d[3] >= cube[2][1]) {
             c3d[3] = cube[2][1];
+            isOut = true;
         }
 
-        return c3d;
+        return [c3d, isOut];
     },
 
     /**
@@ -2295,7 +2304,9 @@ JXG.createView3D = function (board, parents, attributes) {
     view.inherits.push(view.bank_slide);
 
     // Set special infobox attributes of view3d.infobox
-    view.board.infobox.setAttribute(attr.infobox);
+    // Using setAttribute() is not possible here, since we have to
+    // avoid a call of board.update().
+    view.board.infobox.visProp = Type.merge(view.board.infobox.visProp, attr.infobox);
 
     // 3d infobox: drag direction and coordinates
     view.board.highlightInfobox = function (x, y, el) {
@@ -2351,7 +2362,6 @@ JXG.createView3D = function (board, parents, attributes) {
             view.board.highlightCustomInfobox('(' + x + ', ' + y + ')', el);
         }
     };
-
 
     // Hack needed to enable addEvent for view3D:
     view.BOARD_MODE_NONE = 0x0000;

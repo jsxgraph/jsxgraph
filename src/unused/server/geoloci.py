@@ -21,7 +21,7 @@ import time
 import re
 import zlib
 import base64
-import cStringIO
+import io
 import cgi
 import math
 
@@ -45,7 +45,7 @@ class JXGGeoLociModule(JXGServerModule):
 
         ############################
 
-        self.debugOutput = cStringIO.StringIO()
+        self.debugOutput = io.StringIO()
 
         JXGServerModule.__init__(self)
         return
@@ -96,8 +96,8 @@ class JXGGeoLociModule(JXGServerModule):
         #cinput =  "Ciao;"
 
         if self.debug:
-            print >>self.debugOutput, "Starting CoCoA with input<br />"
-            print >>self.debugOutput, cinput + '<br />'
+            print("Starting CoCoA with input<br />", file=self.debugOutput)
+            print(cinput + '<br />', file=self.debugOutput)
 
         # The suicide pill for the CoCoA process:
         # If not done within the following amount
@@ -109,7 +109,7 @@ class JXGGeoLociModule(JXGServerModule):
 
         def time_limit(seconds):
             def signal_handler(signum, frame):
-                raise TimeoutException, "Timed out!"
+                raise TimeoutException("Timed out!")
             signal.signal(signal.SIGALRM, signal_handler)
             signal.alarm(seconds)
 
@@ -126,7 +126,7 @@ class JXGGeoLociModule(JXGServerModule):
         try:
             time_limit(time_left)
             callCoCoA()
-        except TimeoutException, msg:
+        except TimeoutException as msg:
             # This is only tested with linux/unix
             # and works ONLY if the cocoa script cd-ing
             # to the cocoa dir and starting cocoa executes
@@ -136,7 +136,7 @@ class JXGGeoLociModule(JXGServerModule):
             # sharing tests would be nice).
             self.cocoa_process.kill()
             if self.debug:
-                print >>self.debugOutput, "Timed out!"
+                print("Timed out!", file=self.debugOutput)
             resp.error("Timeout, maybe the system of polynomial is too big or there's an error in it.")
             return
 
@@ -144,8 +144,8 @@ class JXGGeoLociModule(JXGServerModule):
         resp.addData('exectime', calc_time)
 
         if self.debug:
-            print >>self.debugOutput, "Reading and Parsing CoCoA output" + '<br />'
-            print >>self.debugOutput, self.output + '<br />'
+            print("Reading and Parsing CoCoA output" + '<br />', file=self.debugOutput)
+            print(self.output + '<br />', file=self.debugOutput)
 
         # Extract results
         if re.search('resultsbegin', self.output) is None:
@@ -157,9 +157,9 @@ class JXGGeoLociModule(JXGServerModule):
         polynomials = re.split('\n', result)
 
         if self.debug:
-            print >>self.debugOutput, "Found the following polynomials:" + '<br />'
+            print("Found the following polynomials:" + '<br />', file=self.debugOutput)
             for i in range(0,len(polynomials)):
-                print >>self.debugOutput, "Polynomial ", i+1, ": " + polynomials[i] + '<br />'
+                print("Polynomial ", i+1, ": " + polynomials[i] + '<br />', file=self.debugOutput)
 
         datax = []
         datay = []
@@ -198,12 +198,12 @@ class JXGGeoLociModule(JXGServerModule):
         resp.addData('polynomial', polynomialsReturn)
 
         if self.debug:
-            print >>self.debugOutput, ", ".join(map(str, datax)) + '<br />'
-            print >>self.debugOutput, ", ".join(map(str, datay)) + '<br />'
-            print "Content-Type: text/plain\n\n"
-            print
-            print
-            print self.debugOutput.getvalue()
+            print(", ".join(map(str, datax)) + '<br />', file=self.debugOutput)
+            print(", ".join(map(str, datay)) + '<br />', file=self.debugOutput)
+            print("Content-Type: text/plain\n\n")
+            print()
+            print()
+            print(self.debugOutput.getvalue())
 
         self.debugOutput.close()
 

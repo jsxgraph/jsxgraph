@@ -3,7 +3,7 @@ import numpy
 import numpy.fft
 import wave, struct, uuid
 import os, subprocess
-import StringIO, gzip, base64
+import io, gzip, base64
 import datetime, math, random
 
 # Should be changed to something more persistent but must be writable by
@@ -31,7 +31,7 @@ class FFT(JXGServerModule):
 
     def fft(self, resp, x):
         y = numpy.fft.rfft(x)
-        y = map(abs, y);
+        y = list(map(abs, y));
         resp.addData('y', y)
         return
 
@@ -40,7 +40,7 @@ class FFT(JXGServerModule):
 
     def ifft(self, resp, x):
         y = numpy.fft.irfft(x)
-        y = map(self._real, y);
+        y = list(map(self._real, y));
         resp.addData('y', y)
         return
 
@@ -54,7 +54,7 @@ class FFT(JXGServerModule):
         w = wave.open(fname, 'r')
         (nchannels, sampwidth, framerate, nframes, comptype, compname) = w.getparams()
         frames = w.readframes(nframes*nchannels)
-        out = map(lambda value: value/8192., struct.unpack_from("%dh" % nframes * nchannels, frames))
+        out = [value/8192. for value in struct.unpack_from("%dh" % nframes * nchannels, frames)]
         w.close()
         # apply fft
         x = numpy.fft.rfft(out)
@@ -66,7 +66,7 @@ class FFT(JXGServerModule):
             x[i] = x[i] * factor
         #ifft
         y = numpy.fft.irfft(x)
-        y = map(self._real, y);
+        y = list(map(self._real, y));
         resp.addData('y', y)
         self.makeAudio(resp, 'ogg', framerate, y)
         return
@@ -95,7 +95,7 @@ class FFT(JXGServerModule):
         w = wave.open(fname, 'r')
         (nchannels, sampwidth, framerate, nframes, comptype, compname) = w.getparams()
         frames = w.readframes(nframes*nchannels)
-        out = map(lambda value: value/8192., struct.unpack_from("%dh" % nframes * nchannels, frames))
+        out = [value/8192. for value in struct.unpack_from("%dh" % nframes * nchannels, frames)]
         w.close()
         step = math.floor(len(out)/7500);
         #resp.addData('audioData',  [out[i] for i in range(len(out)) if i % step == 0]);

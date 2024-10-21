@@ -278,9 +278,10 @@ JXG.extend(
         },
 
         update: function (drag) {
-            var c3d, foot;
+            var c3d, foot, res;
 
-            // Update is called from board.updateElements
+            // Update is called from board.updateElements.
+            // See Point3D.update() for the logic.
             if (
                 this.element2D.draggable() &&
                 Geometry.distance(this._c2d, this.element2D.coords.usrCoords) !== 0
@@ -296,15 +297,27 @@ JXG.extend(
                     );
                 } else {
                     if (this.view.isVerticalDrag()) {
-                        // Drag the point in its vertical to the xy plane
+                        // Drag the text in its vertical to the xy plane
                         c3d = this.view.project2DTo3DVertical(this.element2D, this.coords);
                     } else {
-                        // Drag the point in its xy plane
+                        // Drag the text in its xy plane
                         foot = [1, 0, 0, this.coords[3]];
                         c3d = this.view.project2DTo3DPlane(this.element2D, [1, 0, 0, 1], foot);
                     }
                     if (c3d[0] !== 0) {
-                        this.coords = this.view.project3DToCube(c3d);
+                        // Check if c3d is inside of view.bbox3d
+                        // Otherwise, the coords have to be corrected below.
+                        res = this.view.project3DToCube(c3d);
+                        this.coords = res[0];
+
+                        if (res[1]) {
+                            // The 3D coordinates have been corrected, now
+                            // also correct the 2D element.
+                            this.element2D.coords.setCoordinates(
+                                Const.COORDS_BY_USER,
+                                this.view.project3DTo2D(this.coords)
+                            );
+                        }
                     }
                 }
             } else {
@@ -315,7 +328,7 @@ JXG.extend(
                         this._params
                     );
                 }
-                // Update 2D point from its 3D view
+                // Update 2D text from its 3D view
                 this.element2D.coords.setCoordinates(
                     Const.COORDS_BY_USER,
                     this.view.project3DTo2D([1, this.X(), this.Y(), this.Z()].slice(1))
@@ -447,8 +460,7 @@ JXG.createText3D = function (board, parents, attributes) {
     el.inherits.push(el.element2D);
     el.element2D.setParents(el);
 
-
-    // if this point is a glider, record that in the update tree
+    // If this point is a glider, record that in the update tree
     if (el.slide) {
         el.slide.addChild(el);
         el.setParents(el.slide);
