@@ -6761,26 +6761,109 @@ JXG.Options = {
          * @visprop
          */
 
+        /**
+         * @name Measurement#baseUnit
+         * @type String
+         * @default ''
+         *
+         */
         baseUnit: '',
+
+        /**
+         * @name Measurement#units
+         * @type Object
+         * @default {}
+         *
+         */
         units: {},
+
+        /**
+         * Dimension of the measured data.
+         * This measurement can only be combined with a measurement of
+         * a suitable dimension.
+         *
+         * @name Measurement#dim
+         * @type Number
+         * @default null
+         *
+         */
         dim: null,
 
+        /**
+         *
+         * @name Measurement#showPrefix
+         * @type Boolean
+         * @default true
+         */
         showPrefix: true,
+
+        /**
+         *
+         * @name Measurement#showSuffix
+         * @type Boolean
+         * @default true
+         */
         showSuffix: true,
 
+        /**
+         *
+         * @name Measurement#prefix
+         * @type String
+         * @default ''
+         */
         prefix: '',
+
+        /**
+         *
+         * @name Measurement#suffix
+         * @type String
+         * @default '''
+         */
         suffix: '',
 
-        formatPrefix: function (txt) { return txt; },
-        formatSuffix: function (txt) { return txt; },
+        /**
+         * Function to format the prefix.
+         * @name Measurement#formatPrefix
+         * @param {Measurement} self Pointer to the measurement object itself
+         * @param {String} txt Prefix string
+         * @returns String
+         */
+        formatPrefix: function (self, txt) { return txt; },
 
-        formatCoords: function (x, y, z) {
+        /**
+         * Function to format the suffix.
+         * @name Measurement#formatSuffix
+         * @param {Measurement} self Pointer to the measurement object itself
+         * @param {String} txt Suffix string
+         * @returns String
+         */
+        formatSuffix: function (self, txt) { return txt; },
+
+        /**
+         * Function to format coordinates.
+         * @name Measurement#formatCoords
+         * @param {Measurement} self Pointer to the measurement object itself
+         * @param {Number} x c-coordinate
+         * @param {Number} y c-coordinate
+         * @param {Number} z c-coordinate
+         * @returns String
+         */
+        formatCoords: function (self, x, y, z) {
             if (parseFloat(z) !== 1)
                 return '(NaN | NaN)';
             else
                 return '(' + x + ', ' + y + ')';
         },
-        formatDirection: function (x, y) {
+
+        /**
+         * Function to format direction.
+         * @name Measurement#formatDirection
+         * @param {Measurement} self Pointer to the measurement object itself
+         * @param {Number} x c-coordinate
+         * @param {Number} y c-coordinate
+         * @returns String
+         */
+        formatDirection: function (self, x, y) {
             return '(' + x + ', ' + y + ')';
         }
 

@@ -406,14 +406,10 @@ JXG.createMeasurement = function (board, parents, attributes) {
             i;
 
         if (el.evalVisProp('showprefix')) {
-            prefix = el.visProp.formatprefix.apply(el, [el.evalVisProp('prefix')]);
-            // Alternative with parameter self
-            // prefix = el.visProp.formatprefix.apply(el, [el, el.evalVisProp('prefix')]);
+            prefix = el.visProp.formatprefix(el, el.evalVisProp('prefix'));
         }
         if (el.evalVisProp('showsuffix')) {
-            suffix = el.visProp.formatsuffix.apply(el, [el.evalVisProp('suffix')]);
-            // Alternative with parameter self
-            // suffix = el.visProp.formatsuffix.apply(el, [el, el.evalVisProp('suffix')]);
+            suffix = el.visProp.formatsuffix(el, el.evalVisProp('suffix'));
         }
 
         if (Type.isNumber(val)) {
@@ -459,15 +455,11 @@ JXG.createMeasurement = function (board, parents, attributes) {
             if (val.length === 2) {
                 val.unshift(undefined);
             }
-            val = el.visProp.formatcoords.apply(el, [val[1], val[2], val[0]]);
-            // Alternative with parameter self
-            // val = el.visProp.formatcoords.apply(el, [el, val[1], val[2], val[0]]);
+            val = el.visProp.formatcoords(el, val[1], val[2], val[0]);
         }
 
         if (dim === 'direction' && Type.isArray(val)) {
-            val = el.visProp.formatdirection.apply(el, [val[0], val[1]]);
-            // Alternative with parameter self
-            // val = el.visProp.formatdirection.apply(el, [el, val[0], val[1]]);
+            val = el.visProp.formatdirection(el, val[0], val[1]);
         }
 
         if (Type.isString(dim)) {
