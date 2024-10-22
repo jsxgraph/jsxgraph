@@ -178,8 +178,8 @@ JXG.createArc = function (board, parents, attributes) {
         el.anglepoint.addChild(el);
     }
 
-    // should be documented in options
-    el.useDirection = attr.usedirection;
+    // This attribute is necessary for circumCircleArcs
+    el.useDirection = attr.usedirection; // This makes the attribute immutable
 
     // documented in JXG.Curve
     /**
@@ -187,12 +187,8 @@ JXG.createArc = function (board, parents, attributes) {
      * @ignore
      */
     el.updateDataArray = function () {
-        var ar,
-            phi,
-            det,
-            p0c,
-            p1c,
-            p2c,
+        var ar, phi, det,
+            p0c, p1c, p2c,
             sgn = 1,
             A = this.radiuspoint,
             B = this.center,

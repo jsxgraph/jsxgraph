@@ -445,7 +445,7 @@ JXG.createSector = function (board, parents, attributes) {
         }
 
         // useDirection is necessary for circumCircleSectors
-        el.useDirection = attributes.usedirection;
+        el.useDirection = attributes.usedirection; // this makes the attribute immutable
         el.setParents(points);
 
         /**
@@ -471,11 +471,8 @@ JXG.createSector = function (board, parents, attributes) {
          * @ignore
          */
         el.updateDataArray = function () {
-            var ar,
-                det,
-                p0c,
-                p1c,
-                p2c,
+            var ar, det,
+                p0c, p1c, p2c,
                 A = this.point2,
                 B = this.point1,
                 C = this.point3,

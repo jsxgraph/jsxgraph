@@ -3737,6 +3737,9 @@ JXG.Options = {
          * p1 is still the radius point, p2 the angle point. The arc will be that part of the
          * the circle with center 'center' which starts at p1, ends at the ray between center
          * and p2, and passes p3.
+         * <p>
+         * This attribute is immutable (by purpose).
+         * This attribute is necessary for circumCircleArcs
          *
          * @type Boolean
          * @name Arc#useDirection
@@ -4512,6 +4515,7 @@ JXG.Options = {
         highlightFillColor: 'none',
         strokeColor: Color.palette.blue,
         highlightStrokeColor: '#c3d9ff',
+        useDirection: true,
 
         /**
          * Attributes for center point.
@@ -7601,6 +7605,22 @@ JXG.Options = {
         highlightFillOpacity: 0.3,
         highlightOnSector: false,
         highlightStrokeWidth: 0,
+
+        /**
+         * If true, there is a fourth parent point, i.e. the parents are [center, p1, p2, p3].
+         * p1 is still the radius point, p2 the angle point. The sector will be that part of the
+         * the circle with center 'center' which starts at p1, ends at the ray between center
+         * and p2, and passes p3.
+         * <p>
+         * This attribute is immutable (by purpose).
+         * This attribute is necessary for circumCircleSectors
+         *
+         * @type Boolean
+         * @name Arc#useDirection
+         * @default false
+         * @private
+         */
+        useDirection: false,
 
         /**
          * Type of sector. Possible values are 'minor', 'major', and 'auto'.
