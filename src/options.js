@@ -6762,10 +6762,46 @@ JXG.Options = {
          */
 
         /**
+         * This specifies the unit of measurement in dimension 1 (e.g. length).
+         * A power is automatically added to the string.
+         * If you want to use different units for each dimension, see {@link Measurement#units}.
+         *
+         * @example
+         * var p1 = board.create("point", [0,1]),
+         *     p2 = board.create("point", [3,1]),
+         *     c = board.create("circle", [p1, p2]);
+         *
+         * board.create("measurement", [-2, -3, ["Perimeter", c]], {
+         *     baseUnit: " m"
+         * });
+         * board.create("measurement", [1, -3, ["Area", c]], {
+         *     baseUnit: " m"
+         * });
+         *
+         * </pre><div id="JXG6cb6a7e7-553b-4f2a-af99-ddd78b7ba118" class="jxgbox" style="width: 300px; height: 300px;"></div>
+         * <script type="text/javascript">
+         *     (function() {
+         *         var board = JXG.JSXGraph.initBoard('JXG6cb6a7e7-553b-4f2a-af99-ddd78b7ba118',
+         *             {boundingbox: [-8, 8, 8,-8], axis: false, grid: false, showcopyright: false, shownavigation: false});
+         *
+         *     var p1 = board.create("point", [0,1]),
+         *         p2 = board.create("point", [3,1]),
+         *         c = board.create("circle", [p1, p2]);
+         *
+         *     board.create("measurement", [-2, -3, ["Perimeter", c]], {
+         *         baseUnit: " m"
+         *     });
+         *     board.create("measurement", [1, -3, ["Area", c]], {
+         *         baseUnit: " m"
+         *     });
+         *
+         *     })();
+         * </script><pre>
+         *
+         * @see Measurement#units
          * @name Measurement#baseUnit
          * @type String
          * @default ''
-         *
          */
         baseUnit: '',
 
