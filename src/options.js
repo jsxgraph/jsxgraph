@@ -6806,10 +6806,61 @@ JXG.Options = {
         baseUnit: '',
 
         /**
+         * This attribute expects an object that has the dimension numbers as keys (as integer or in the form of "dimxx")
+         * and assigns a string to each dimension.
+         * If a dimension has no specification, {@link Measurement#baseUnit} is used.
+         *
+         * @example
+         * var p1 = board.create("point", [0,1]),
+         *     p2 = board.create("point", [3,1]),
+         *     c = board.create("circle", [p1, p2]);
+         *
+         * board.create("measurement", [-3, -3, ["Perimeter", c]], {
+         *     baseUnit: " m",
+         *     units: {
+         *          1: " length unit",
+         *       2: " area unit"
+         *     },
+         * });
+         * board.create("measurement", [1, -3, ["Area", c]], {
+         *     baseUnit: " m",
+         *     units: {
+         *          dim1: " length unit",
+         *       dim2: " area unit"
+         *     },
+         * });
+         *
+         * </pre><div id="JXGe06456d5-255e-459b-8c8e-4d7d2af7efb8" class="jxgbox" style="width: 300px; height: 300px;"></div>
+         * <script type="text/javascript">
+         *     (function() {
+         *         var board = JXG.JSXGraph.initBoard('JXGe06456d5-255e-459b-8c8e-4d7d2af7efb8',
+         *             {boundingbox: [-8, 8, 8,-8], axis: false, grid: false, showcopyright: false, shownavigation: false});
+         *     var p1 = board.create("point", [0,1]),
+         *         p2 = board.create("point", [3,1]),
+         *         c = board.create("circle", [p1, p2]);
+         *
+         *     board.create("measurement", [-3, -3, ["Perimeter", c]], {
+         *         baseUnit: " m",
+         *         units: {
+         *          1: " length unit",
+         *           2: " area unit"
+         *         },
+         *     });
+         *     board.create("measurement", [1, -3, ["Area", c]], {
+         *         baseUnit: " m",
+         *         units: {
+         *          dim1: " length unit",
+         *           dim2: " area unit"
+         *         },
+         *     });
+         *
+         *     })();
+         * </script><pre>
+         *
+         * @see Measurement#baseUnit
          * @name Measurement#units
          * @type Object
          * @default {}
-         *
          */
         units: {},
 
