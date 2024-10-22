@@ -6865,18 +6865,6 @@ JXG.Options = {
         units: {},
 
         /**
-         * Dimension of the measured data.
-         * This measurement can only be combined with a measurement of
-         * a suitable dimension.
-         *
-         * @name Measurement#dim
-         * @type Number
-         * @default null
-         *
-         */
-        dim: null,
-
-        /**
          *
          * @name Measurement#showPrefix
          * @type Boolean
@@ -6925,6 +6913,18 @@ JXG.Options = {
          * @returns String
          */
         formatSuffix: function (self, txt) { return txt; },
+
+        /**
+         * Dimension of the measured data.
+         * This measurement can only be combined with a measurement of
+         * a suitable dimension.
+         *
+         * @name Measurement#dim
+         * @type Number
+         * @default null
+         *
+         */
+        dim: null,
 
         /**
          * Function to format coordinates.
