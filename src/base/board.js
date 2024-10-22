@@ -2087,6 +2087,7 @@ JXG.extend(
                     // This is needed for capturing touch events.
                     // It is in jsxgraph.css, for ms-touch-action...
                     this.containerObj.style.touchAction = 'none';
+                    // this.containerObj.style.touchAction = 'auto';
                 }
 
                 this.hasPointerHandlers = true;
@@ -2877,12 +2878,14 @@ JXG.extend(
 
             // Allow browser scrolling
             // For this: pan by one finger has to be disabled
-            ta = 'none';             // JSXGraph catches all user touch events
+
+            ta = 'none';   // JSXGraph catches all user touch events
             if (this.mode === this.BOARD_MODE_NONE &&
                 Type.evaluate(this.attr.browserpan) &&
                 !(Type.evaluate(this.attr.pan.enabled) && !Type.evaluate(this.attr.pan.needtwofingers))
             ) {
-                ta = 'pan-x pan-y';  // JSXGraph allows browser scrolling
+                // ta = 'pan-x pan-y';  // JSXGraph allows browser scrolling
+                ta = 'auto';  // JSXGraph allows browser scrolling
             }
             this.containerObj.style.touchAction = ta;
 
@@ -3274,17 +3277,12 @@ JXG.extend(
          * @returns {Boolean} ...
          */
         touchStartListener: function (evt) {
-            var i,
-                pos,
-                elements,
-                j,
-                k,
+            var i, j, k,
+                pos, elements, obj,
                 eps = this.options.precision.touch,
-                obj,
-                found,
-                targets,
                 evtTouches = evt['touches'],
-                target,
+                found,
+                targets, target,
                 touchTargets;
 
             if (!this.hasTouchEnd) {
