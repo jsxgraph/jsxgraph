@@ -6915,14 +6915,17 @@ JXG.Options = {
         formatSuffix: function (self, txt) { return txt; },
 
         /**
-         * Dimension of the measured data.
-         * This measurement can only be combined with a measurement of
-         * a suitable dimension.
+         * Dimension of the measured data. This measurement can only be combined with a measurement of a suitable dimension.
+         * Overwrites the dimension returned by the Dimension() method.
+         * Normally, the default value null is used here to automatically determine the dimension.
+         *
+         * However, if the coordinates or a direction vector are measured, the value is usually returned as an array.
+         * To tell the measurement that the function {@link Measurement#formatCoords} or {@link Measurement#formatDirection} should be used
+         * to display the array properly, 'coords' or 'direction' must be specified here.
          *
          * @name Measurement#dim
-         * @type Number
+         * @type Number|'coords'|'direction'
          * @default null
-         *
          */
         dim: null,
 
