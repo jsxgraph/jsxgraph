@@ -6740,32 +6740,107 @@ JXG.Options = {
          */
 
         /**
+         * This specifies the unit of measurement in dimension 1 (e.g. length).
+         * A power is automatically added to the string.
+         * If you want to use different units for each dimension, see {@link Measurement#units}.
+         *
+         * @example
+         * var p1 = board.create("point", [0,1]),
+         *     p2 = board.create("point", [3,1]),
+         *     c = board.create("circle", [p1, p2]);
+         *
+         * board.create("measurement", [-2, -3, ["Perimeter", c]], {
+         *     baseUnit: " m"
+         * });
+         * board.create("measurement", [1, -3, ["Area", c]], {
+         *     baseUnit: " m"
+         * });
+         *
+         * </pre><div id="JXG6cb6a7e7-553b-4f2a-af99-ddd78b7ba118" class="jxgbox" style="width: 300px; height: 300px;"></div>
+         * <script type="text/javascript">
+         *     (function() {
+         *         var board = JXG.JSXGraph.initBoard('JXG6cb6a7e7-553b-4f2a-af99-ddd78b7ba118',
+         *             {boundingbox: [-8, 8, 8,-8], axis: false, grid: false, showcopyright: false, shownavigation: false});
+         *
+         *     var p1 = board.create("point", [0,1]),
+         *         p2 = board.create("point", [3,1]),
+         *         c = board.create("circle", [p1, p2]);
+         *
+         *     board.create("measurement", [-2, -3, ["Perimeter", c]], {
+         *         baseUnit: " m"
+         *     });
+         *     board.create("measurement", [1, -3, ["Area", c]], {
+         *         baseUnit: " m"
+         *     });
+         *
+         *     })();
+         * </script><pre>
+         *
+         * @see Measurement#units
          * @name Measurement#baseUnit
          * @type String
          * @default ''
-         *
          */
         baseUnit: '',
 
         /**
+         * This attribute expects an object that has the dimension numbers as keys (as integer or in the form of "dimxx")
+         * and assigns a string to each dimension.
+         * If a dimension has no specification, {@link Measurement#baseUnit} is used.
+         *
+         * @example
+         * var p1 = board.create("point", [0,1]),
+         *     p2 = board.create("point", [3,1]),
+         *     c = board.create("circle", [p1, p2]);
+         *
+         * board.create("measurement", [-3, -3, ["Perimeter", c]], {
+         *     baseUnit: " m",
+         *     units: {
+         *          1: " length unit",
+         *       2: " area unit"
+         *     },
+         * });
+         * board.create("measurement", [1, -3, ["Area", c]], {
+         *     baseUnit: " m",
+         *     units: {
+         *          dim1: " length unit",
+         *       dim2: " area unit"
+         *     },
+         * });
+         *
+         * </pre><div id="JXGe06456d5-255e-459b-8c8e-4d7d2af7efb8" class="jxgbox" style="width: 300px; height: 300px;"></div>
+         * <script type="text/javascript">
+         *     (function() {
+         *         var board = JXG.JSXGraph.initBoard('JXGe06456d5-255e-459b-8c8e-4d7d2af7efb8',
+         *             {boundingbox: [-8, 8, 8,-8], axis: false, grid: false, showcopyright: false, shownavigation: false});
+         *     var p1 = board.create("point", [0,1]),
+         *         p2 = board.create("point", [3,1]),
+         *         c = board.create("circle", [p1, p2]);
+         *
+         *     board.create("measurement", [-3, -3, ["Perimeter", c]], {
+         *         baseUnit: " m",
+         *         units: {
+         *          1: " length unit",
+         *           2: " area unit"
+         *         },
+         *     });
+         *     board.create("measurement", [1, -3, ["Area", c]], {
+         *         baseUnit: " m",
+         *         units: {
+         *          dim1: " length unit",
+         *           dim2: " area unit"
+         *         },
+         *     });
+         *
+         *     })();
+         * </script><pre>
+         *
+         * @see Measurement#baseUnit
          * @name Measurement#units
          * @type Object
          * @default {}
-         *
          */
         units: {},
-
-        /**
-         * Dimension of the measured data.
-         * This measurement can only be combined with a measurement of
-         * a suitable dimension.
-         *
-         * @name Measurement#dim
-         * @type Number
-         * @default null
-         *
-         */
-        dim: null,
 
         /**
          *
@@ -6818,8 +6893,60 @@ JXG.Options = {
         formatSuffix: function (self, txt) { return txt; },
 
         /**
-         * Function to format coordinates.
+         * Dimension of the measured data. This measurement can only be combined with a measurement of a suitable dimension.
+         * Overwrites the dimension returned by the Dimension() method.
+         * Normally, the default value null is used here to automatically determine the dimension.
+         *
+         * However, if the coordinates or a direction vector are measured, the value is usually returned as an array.
+         * To tell the measurement that the function {@link Measurement#formatCoords} or {@link Measurement#formatDirection} should be used
+         * to display the array properly, 'coords' or 'direction' must be specified here.
+         *
+         * @see Measurement#formatCoords
+         * @see Measurement#formatDirection
+         * @name Measurement#dim
+         * @type Number|'coords'|'direction'
+         * @default null
+         */
+        dim: null,
+
+        /**
+         * Function to format coordinates. Does only have an effect, if {@link Measurement#dim} is set to 'coords'.
+         *
+         * @example
+         * var p = board.create("point", [-2, 0]);
+         *
+         * board.create("measurement", [0, -3, ["Coords", p]], {
+         *     dim: 'coords',
+         *     formatCoords: function (_,x,y,z) {
+         *         if (parseFloat(z) !== 1)
+         *             return 'Infinit coords';
+         *         else
+         *             return '(' + x + ' | ' + y + ')';
+         *     }
+         * });
+         *
+         * </pre><div id="JXGa0606ad6-971b-47d4-9a72-ca7df65890f5" class="jxgbox" style="width: 300px; height: 300px;"></div>
+         * <script type="text/javascript">
+         *     (function() {
+         *         var board = JXG.JSXGraph.initBoard('JXGa0606ad6-971b-47d4-9a72-ca7df65890f5',
+         *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
+         *     var p = board.create("point", [-2, 0]);
+         *
+         *     board.create("measurement", [0, -3, ["Coords", p]], {
+         *         dim: 'coords',
+         *         formatCoords: function (_,x,y,z) {
+         *             if (parseFloat(z) !== 1)
+         *                 return 'Infinit coords';
+         *             else
+         *                 return '(' + x + ' | ' + y + ')';
+         *         }
+         *     });
+         *     })();
+         * </script><pre>
+         *
+         * @see Measurement#dim
          * @name Measurement#formatCoords
+         * @type Function
          * @param {Measurement} self Pointer to the measurement object itself
          * @param {Number} x c-coordinate
          * @param {Number} y c-coordinate
@@ -6828,14 +6955,54 @@ JXG.Options = {
          */
         formatCoords: function (self, x, y, z) {
             if (parseFloat(z) !== 1)
-                return '(NaN | NaN)';
+                return 'Infinit coords';
             else
                 return '(' + x + ', ' + y + ')';
         },
 
         /**
-         * Function to format direction.
+         * Function to format direction vector. Does only have an effect, if {@link Measurement#dim} is set to 'direction'.
+         *
+         * @example
+         * var p1 = board.create("point", [0,1]),
+         *     p2 = board.create("point", [3,1]),
+         *     s = board.create("segment", [p1, p2]);
+         *
+         * board.create("measurement", [0, -2, ["Direction", s]], {
+         *     dim: 'direction',
+         *     formatDirection: function (self,x,y) {
+         *        return '\\[\\frac{' + x + '}{' + y + '} = ' +
+         *            (!isFinite(x/y) ? '\\infty' : JXG.toFixed(x/y, self.visProp.digits)) +
+         *            '\\]';
+         *     },
+         *     useMathJax: true
+         * });
+         *
+         * </pre><div id="JXG57435de0-16f2-42be-94d8-3d2b31caefcd" class="jxgbox" style="width: 300px; height: 300px;"></div>
+         * <script type="text/javascript">
+         *     (function() {
+         *         var board = JXG.JSXGraph.initBoard('JXG57435de0-16f2-42be-94d8-3d2b31caefcd',
+         *             {boundingbox: [-8, 8, 8,-8], axis: false, grid: false, showcopyright: false, shownavigation: false});
+         *     var p1 = board.create("point", [0,1]),
+         *         p2 = board.create("point", [3,1]),
+         *         s = board.create("segment", [p1, p2]);
+         *
+         *     board.create("measurement", [0, -2, ["Direction", s]], {
+         *         dim: 'direction',
+         *         formatDirection: function (self,x,y) {
+         *            return '\\[\\frac{' + x + '}{' + y + '} = ' +
+         *                (!isFinite(x/y) ? '\\infty' : JXG.toFixed(x/y, self.visProp.digits)) +
+         *                '\\]';
+         *         },
+         *         useMathJax: true
+         *     });
+         *
+         *     })();
+         *
+         * </script><pre>
+         *
          * @name Measurement#formatDirection
+         * @type Function
          * @param {Measurement} self Pointer to the measurement object itself
          * @param {Number} x c-coordinate
          * @param {Number} y c-coordinate
