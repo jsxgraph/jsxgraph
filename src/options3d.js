@@ -17,7 +17,8 @@ JXG.extend(Options, {
 
         /**
          * Position of the main axes in a View3D element. Possible values are
-         * 'center', 'border' or 'none'.
+         * 'center', 'border' or 'none'. This attribute is immutable, i.e.
+         * can not be changed during the lifetime of the construction.
          *
          * @type String
          * @name View3D#axesPosition

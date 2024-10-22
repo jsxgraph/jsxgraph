@@ -1367,7 +1367,7 @@ JXG.createText = function (board, parents, attributes) {
         coords = parents.slice(0, -1),
         content = parents[parents.length - 1];
 
-    // downwards compatibility
+    // Backwards compatibility
     attr.anchor = attr.parent || attr.anchor;
     t = CoordsElement.create(JXG.Text, board, coords, attr, content);
 
@@ -1423,7 +1423,7 @@ JXG.createHTMLSlider = function (board, parents, attributes) {
         );
     }
 
-    // backwards compatibility
+    // Backwards compatibility
     attr.anchor = attr.parent || attr.anchor;
     attr.fixed = attr.fixed || true;
 

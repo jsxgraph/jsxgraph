@@ -81,6 +81,7 @@ JXG.createAxes3D = function (board, parents, attributes) {
 
     // Main 3D axes
     attr = Type.copyAttributes(attributes, board.options, "axes3d");
+    // Position of the main axes can not be changed during run time
     pos = attr.axesposition;
 
     for (i = 0; i < directions.length; i++) {

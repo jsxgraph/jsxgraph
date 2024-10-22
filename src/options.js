@@ -3731,6 +3731,18 @@ JXG.Options = {
         highlightFillColor: 'none',
         strokeColor: Color.palette.blue,
         highlightStrokeColor: '#c3d9ff',
+
+        /**
+         * If true, there is a fourth parent point, i.e. the parents are [center, p1, p2, p3].
+         * p1 is still the radius point, p2 the angle point. The arc will be that part of the
+         * the circle with center 'center' which starts at p1, ends at the ray between center
+         * and p2, and passes p3.
+         *
+         * @type Boolean
+         * @name Arc#useDirection
+         * @default false
+         * @private
+         */
         useDirection: false,
 
         /**
@@ -3738,6 +3750,7 @@ JXG.Options = {
          *
          * @type Point
          * @name Arc#center
+         * @default {}
          */
         center: {
         },
@@ -3747,6 +3760,7 @@ JXG.Options = {
          *
          * @type Point
          * @name Arc#radiusPoint
+         * @default {}
          */
         radiusPoint: {
         },
@@ -3756,6 +3770,7 @@ JXG.Options = {
          *
          * @type Point
          * @name Arc#anglePoint
+         * @default {}
          */
         anglePoint: {
         }

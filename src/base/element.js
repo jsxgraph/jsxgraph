@@ -1553,8 +1553,8 @@ JXG.extend(
          *
          * @param {String} key Attribute key
          * @returns {String|Number|Boolean} value of attribute "key" (evaluated in case of a function)
-         * 
-         * @see JXG.GeometryElement#eval
+         *
+         * @see GeometryElement#eval
          * @see JXG#evaluate
          */
         evalVisProp: function (key) {
@@ -1582,12 +1582,12 @@ JXG.extend(
         /**
          * Get value of a parameter. If the parameter is a function, call the function and return its value.
          * In that case, the function is called with the GeometryElement as (only) parameter.
-         * 
-         * @param {String|Number|Function|Object} val If not a function it will be returned as is. If function it will be evaluated, where the GeometryElement is 
+         *
+         * @param {String|Number|Function|Object} val If not a function it will be returned as is. If function it will be evaluated, where the GeometryElement is
          * supplied as the (only) parameter of that function.
          * @returns {String|Number|Object}
-         * 
-         * @see JXG.GeometryElement#evalVisProp
+         *
+         * @see GeometryElement#evalVisProp
          * @see JXG#evaluate
          */
         eval: function(val) {

@@ -2506,7 +2506,7 @@ JXG.createTracecurve = function (board, parents, attributes) {
     c.updateDataArray = function () {
         var i, step, t, el, pEl, x, y, from,
             savetrace,
-            le = attr.numberpoints,
+            le = this.visProp.numberpoints,
             savePos = glider.position,
             slideObj = glider.slideObject,
             mi = slideObj.minX(),
