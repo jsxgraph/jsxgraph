@@ -6923,6 +6923,8 @@ JXG.Options = {
          * To tell the measurement that the function {@link Measurement#formatCoords} or {@link Measurement#formatDirection} should be used
          * to display the array properly, 'coords' or 'direction' must be specified here.
          *
+         * @see Measurement#formatCoords
+         * @see Measurement#formatDirection
          * @name Measurement#dim
          * @type Number|'coords'|'direction'
          * @default null
@@ -6930,8 +6932,43 @@ JXG.Options = {
         dim: null,
 
         /**
-         * Function to format coordinates.
+         * Function to format coordinates. Does only have an effect, if {@link Measurement#dim} is set to 'coords'.
+         *
+         * @example
+         * var p = board.create("point", [-2, 0]);
+         *
+         * board.create("measurement", [0, -3, ["Coords", p]], {
+         *     dim: 'coords',
+         *     formatCoords: function (_,x,y,z) {
+         *         if (parseFloat(z) !== 1)
+         *             return 'Infinit coords';
+         *         else
+         *             return '(' + x + ' | ' + y + ')';
+         *     }
+         * });
+         *
+         * </pre><div id="JXGa0606ad6-971b-47d4-9a72-ca7df65890f5" class="jxgbox" style="width: 300px; height: 300px;"></div>
+         * <script type="text/javascript">
+         *     (function() {
+         *         var board = JXG.JSXGraph.initBoard('JXGa0606ad6-971b-47d4-9a72-ca7df65890f5',
+         *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
+         *     var p = board.create("point", [-2, 0]);
+         *
+         *     board.create("measurement", [0, -3, ["Coords", p]], {
+         *         dim: 'coords',
+         *         formatCoords: function (_,x,y,z) {
+         *             if (parseFloat(z) !== 1)
+         *                 return 'Infinit coords';
+         *             else
+         *                 return '(' + x + ' | ' + y + ')';
+         *         }
+         *     });
+         *     })();
+         * </script><pre>
+         *
+         * @see Measurement#dim
          * @name Measurement#formatCoords
+         * @type Function
          * @param {Measurement} self Pointer to the measurement object itself
          * @param {Number} x c-coordinate
          * @param {Number} y c-coordinate
@@ -6940,14 +6977,54 @@ JXG.Options = {
          */
         formatCoords: function (self, x, y, z) {
             if (parseFloat(z) !== 1)
-                return '(NaN | NaN)';
+                return 'Infinit coords';
             else
                 return '(' + x + ', ' + y + ')';
         },
 
         /**
-         * Function to format direction.
+         * Function to format direction vector. Does only have an effect, if {@link Measurement#dim} is set to 'direction'.
+         *
+         * @example
+         * var p1 = board.create("point", [0,1]),
+         *     p2 = board.create("point", [3,1]),
+         *     s = board.create("segment", [p1, p2]);
+         *
+         * board.create("measurement", [0, -2, ["Direction", s]], {
+         *     dim: 'direction',
+         *     formatDirection: function (self,x,y) {
+         *        return '\\[\\frac{' + x + '}{' + y + '} = ' +
+         *            (!isFinite(x/y) ? '\\infty' : JXG.toFixed(x/y, self.visProp.digits)) +
+         *            '\\]';
+         *     },
+         *     useMathJax: true
+         * });
+         *
+         * </pre><div id="JXG57435de0-16f2-42be-94d8-3d2b31caefcd" class="jxgbox" style="width: 300px; height: 300px;"></div>
+         * <script type="text/javascript">
+         *     (function() {
+         *         var board = JXG.JSXGraph.initBoard('JXG57435de0-16f2-42be-94d8-3d2b31caefcd',
+         *             {boundingbox: [-8, 8, 8,-8], axis: false, grid: false, showcopyright: false, shownavigation: false});
+         *     var p1 = board.create("point", [0,1]),
+         *         p2 = board.create("point", [3,1]),
+         *         s = board.create("segment", [p1, p2]);
+         *
+         *     board.create("measurement", [0, -2, ["Direction", s]], {
+         *         dim: 'direction',
+         *         formatDirection: function (self,x,y) {
+         *            return '\\[\\frac{' + x + '}{' + y + '} = ' +
+         *                (!isFinite(x/y) ? '\\infty' : JXG.toFixed(x/y, self.visProp.digits)) +
+         *                '\\]';
+         *         },
+         *         useMathJax: true
+         *     });
+         *
+         *     })();
+         *
+         * </script><pre>
+         *
          * @name Measurement#formatDirection
+         * @type Function
          * @param {Measurement} self Pointer to the measurement object itself
          * @param {Number} x c-coordinate
          * @param {Number} y c-coordinate
