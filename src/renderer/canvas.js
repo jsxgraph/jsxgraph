@@ -351,14 +351,9 @@ JXG.extend(
          */
         _setColor: function (el, type, targetType) {
             var hasColor = true,
-                ev = el.visProp,
-                hl,
-                sw,
-                rgba,
-                rgbo,
-                c,
-                o,
-                oo,
+                lc, hl, sw,
+                rgba, rgbo,
+                c, o, oo,
                 grad;
 
             type = type || "stroke";
@@ -405,8 +400,9 @@ JXG.extend(
                 }
             }
 
-            if (type === "stroke" && ev.linecap !== undefined && ev.linecap !== "") {
-                this.context.lineCap = ev.linecap;
+            lc = el.evalVisProp('linecap');
+            if (type === "stroke" && lc !== undefined && lc !== "") {
+                this.context.lineCap = lc;
             }
 
             return hasColor;

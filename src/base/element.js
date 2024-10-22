@@ -1550,9 +1550,10 @@ JXG.extend(
         /**
          * Get value of an attribute. If the value that attribute is a function, call the function and return its value.
          * In that case, the function is called with the GeometryElement as (only) parameter.
+         * If the attribute does not exist, undefined will be returned.
          *
          * @param {String} key Attribute key
-         * @returns {String|Number|Boolean} value of attribute "key" (evaluated in case of a function)
+         * @returns {String|Number|Boolean} value of attribute "key" (evaluated in case of a function) or undefined
          *
          * @see GeometryElement#eval
          * @see JXG#evaluate

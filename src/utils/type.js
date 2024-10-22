@@ -1845,6 +1845,8 @@ JXG.extend(
          * <p>
          * This function is meanwhile superseded by stack_jxg.stack2jsxgraph.
          *
+         * @deprecated
+         *
          * @example
          * console.log( JXG.stack2jsxgraph("%e**x") );
          * // Output:

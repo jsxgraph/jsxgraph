@@ -929,7 +929,6 @@ JXG.extend(
                 docElement = ownerDoc.documentElement || this.document.body.parentNode,
                 docBody = ownerDoc.body,
                 container = this.containerObj,
-                // viewport, content,
                 zoom,
                 o;
 
