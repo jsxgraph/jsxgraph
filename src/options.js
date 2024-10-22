@@ -1409,20 +1409,6 @@ JXG.Options = {
         title: '',
 
         /**
-         *
-         * Set a viewport of the board. viewport is determined by an array of the form '[left, top, right, bottom]'.
-         * whose entries determine an inner margin (i.e. a padding) of the board. The entries of the array have to be given
-         * as numbers or strings. In the latter case the units 'px' or '%' are supported.
-         * The viewport can be individually controlled for each element, too.
-         *
-         * @type {Array|String}
-         * @name JXG.Board#viewport
-         * @default [0, 0, 0, 0]
-         * @see JXG.GeometryElement#viewport
-         */
-        viewport: [0, 0, 0, 0],
-
-        /**
          * Control the possibilities for zoom interaction.
          *
          * Possible sub-attributes with default values are:
@@ -2472,17 +2458,6 @@ JXG.Options = {
          * @default true
          */
         visible: true,
-
-        /**
-         * Set individual viewport for an element. If not set to 'inherit', to
-         * use the board-wide viewport, an array of the form '[left, top, right, bottom]' has to be given.
-         *
-         * @type {Array|String}
-         * @name JXG.GeometryElement#viewport
-         * @default 'inherit'
-         * @see JXG.Board#viewport
-         */
-        viewport: 'inherit',
 
         /**
          * If true a label will display the element's name.

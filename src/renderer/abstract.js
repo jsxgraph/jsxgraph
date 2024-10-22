@@ -213,7 +213,6 @@ JXG.extend(
             if (enhanced || this.enhancedRendering) {
                 not = not || {};
 
-                this.setObjectViewport(el);
                 this.setObjectTransition(el);
                 if (!el.evalVisProp('draft')) {
                     if (!not.stroke) {
@@ -1386,12 +1385,10 @@ JXG.extend(
          */
         updateTextStyle: function (el, doHighlight) {
             var fs,
-                so,
-                sc,
+                so, sc,
                 css,
                 node,
-                ev = el.visProp,
-                display = Env.isBrowser ? ev.display : "internal",
+                display = Env.isBrowser ? el.visProp.display : "internal",
                 nodeList = ["rendNode", "rendNodeTag", "rendNodeLabel"],
                 lenN = nodeList.length,
                 fontUnit = el.evalVisProp('fontunit'),
@@ -1403,13 +1400,13 @@ JXG.extend(
                 lenS = styleList.length;
 
             if (doHighlight) {
-                sc = ev.highlightstrokecolor;
-                so = ev.highlightstrokeopacity;
-                css = ev.highlightcssclass;
+                sc = el.evalVisProp('highlightstrokecolor');
+                so = el.evalVisProp('highlightstrokeopacity');
+                css = el.evalVisProp('highlightcssclass');
             } else {
-                sc = ev.strokecolor;
-                so = ev.strokeopacity;
-                css = ev.cssclass;
+                sc = el.evalVisProp('strokecolor');
+                so = el.evalVisProp('strokeopacity');
+                css = el.evalVisProp('cssclass');
             }
 
             // This part is executed for all text elements except internal texts in canvas.
@@ -1428,6 +1425,7 @@ JXG.extend(
                     cssString = el.evalVisProp(
                         (doHighlight ? 'highlight' : '') + styleList[style]
                     );
+                    // Set the CSS style properties - without deleting other properties
                     if (cssString !== "" && el.visPropOld[styleList[style]] !== cssString) {
                         cssList = this._css2js(cssString);
                         for (node = 0; node < lenN; node++) {
@@ -1469,7 +1467,6 @@ JXG.extend(
 
             this.setObjectTransition(el);
             if (display === "html" && this.type !== "no") {
-                this.setObjectViewport(el, true);
                 // Set new CSS class
                 if (el.visPropOld.cssclass !== css) {
                     el.rendNode.className = css;
@@ -1904,7 +1901,6 @@ JXG.extend(
             var draftColor = el.board.options.elements.draft.color,
                 draftOpacity = el.board.options.elements.draft.opacity;
 
-                this.setObjectViewport(el);
                 this.setObjectTransition(el);
             if (el.type === Const.OBJECT_TYPE_POLYGON) {
                 this.setObjectFillColor(el, draftColor, draftOpacity);
@@ -1924,7 +1920,6 @@ JXG.extend(
          * @param {JXG.GeometryElement} el Reference of the object that no longer is in draft mode.
          */
         removeDraft: function (el) {
-            this.setObjectViewport(el);
             this.setObjectTransition(el);
             if (el.type === Const.OBJECT_TYPE_POLYGON) {
                 this.setObjectFillColor(el, el.evalVisProp('fillcolor'), el.evalVisProp('fillopacity'));
@@ -1962,15 +1957,6 @@ JXG.extend(
          *        element.visProp.transitionDuration is taken. This is the default.
          */
         setObjectTransition: function (element, duration) {
-            /* stub */
-        },
-
-        /**
-         *
-         * @param {*} element
-         * @param {*} isHTML
-         */
-        setObjectViewport: function (element, isHTML) {
             /* stub */
         },
 
@@ -2030,7 +2016,6 @@ JXG.extend(
                 ev = el.visProp,
                 sw;
 
-            this.setObjectViewport(el);
             this.setObjectTransition(el);
             if (!ev.draft) {
                 if (el.type === Const.OBJECT_TYPE_POLYGON) {
@@ -2096,7 +2081,6 @@ JXG.extend(
                 ev = el.visProp,
                 sw;
 
-            this.setObjectViewport(el);
             this.setObjectTransition(el);
             if (!el.evalVisProp('draft')) {
                 if (el.type === Const.OBJECT_TYPE_POLYGON) {
