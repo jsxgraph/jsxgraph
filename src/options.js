@@ -6840,7 +6840,9 @@ JXG.Options = {
         units: {},
 
         /**
+         * Determines whether a prefix is displayed before the measurement value and unit.
          *
+         * @see Measurement#prefix
          * @name Measurement#showPrefix
          * @type Boolean
          * @default true
@@ -6848,7 +6850,9 @@ JXG.Options = {
         showPrefix: true,
 
         /**
+         * Determines whether a suffix is displayed after the measurement value and unit.
          *
+         * @see Measurement#suffix
          * @name Measurement#showSuffix
          * @type Boolean
          * @default true
@@ -6856,7 +6860,9 @@ JXG.Options = {
         showSuffix: true,
 
         /**
+         * String that is displayed before the measurement and its unit.
          *
+         * @see Measurement#showPrefix
          * @name Measurement#prefix
          * @type String
          * @default ''
@@ -6864,15 +6870,18 @@ JXG.Options = {
         prefix: '',
 
         /**
+         * String that is displayed after the measurement and its unit.
          *
+         * @see Measurement#showSuffix
          * @name Measurement#suffix
          * @type String
-         * @default '''
+         * @default ''
          */
         suffix: '',
 
         /**
          * Function to format the prefix.
+         *
          * @name Measurement#formatPrefix
          * @param {Measurement} self Pointer to the measurement object itself
          * @param {String} txt Prefix string
@@ -6882,6 +6891,7 @@ JXG.Options = {
 
         /**
          * Function to format the suffix.
+         *
          * @name Measurement#formatSuffix
          * @param {Measurement} self Pointer to the measurement object itself
          * @param {String} txt Suffix string
