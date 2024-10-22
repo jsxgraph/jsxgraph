@@ -577,7 +577,7 @@ JXG.extend(
             */
             if (ev_fa || ev_la) {
                 if (Type.exists(ev_fa.type)) {
-                    typeFirst = Type.evaluate(ev_fa.type);
+                    typeFirst = el.eval(ev_fa.type);
                 } else {
                     if (el.elementClass === Const.OBJECT_CLASS_LINE) {
                         typeFirst = 1;
@@ -586,7 +586,7 @@ JXG.extend(
                     }
                 }
                 if (Type.exists(ev_la.type)) {
-                    typeLast = Type.evaluate(ev_la.type);
+                    typeLast = el.eval(ev_la.type);
                 } else {
                     if (el.elementClass === Const.OBJECT_CLASS_LINE) {
                         typeLast = 1;
@@ -598,10 +598,10 @@ JXG.extend(
                 if (ev_fa) {
                     size = 6;
                     if (Type.exists(ev_fa.size)) {
-                        size = Type.evaluate(ev_fa.size);
+                        size = el.eval(ev_fa.size);
                     }
                     if (hl !== "" && Type.exists(ev_fa[hl + "size"])) {
-                        size = Type.evaluate(ev_fa[hl + "size"]);
+                        size = el.eval(ev_fa[hl + "size"]);
                     }
 
                     off = strokewidth * size;
@@ -628,10 +628,10 @@ JXG.extend(
                 if (ev_la) {
                     size = 6;
                     if (Type.exists(ev_la.size)) {
-                        size = Type.evaluate(ev_la.size);
+                        size = el.eval(ev_la.size);
                     }
                     if (hl !== "" && Type.exists(ev_la[hl + "size"])) {
-                        size = Type.evaluate(ev_la[hl + "size"]);
+                        size = el.eval(ev_la[hl + "size"]);
                     }
                     off = strokewidth * size;
                     if (typeLast === 2) {

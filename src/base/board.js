@@ -6812,19 +6812,19 @@ JXG.extend(
                         }
                         o.setAttribute({
                             strokecolor: Color.rgb2cb(
-                                Type.evaluate(o.visPropOriginal.strokecolor),
+                                o.eval(o.visPropOriginal.strokecolor),
                                 deficiency
                             ),
                             fillcolor: Color.rgb2cb(
-                                Type.evaluate(o.visPropOriginal.fillcolor),
+                                o.eval(o.visPropOriginal.fillcolor),
                                 deficiency
                             ),
                             highlightstrokecolor: Color.rgb2cb(
-                                Type.evaluate(o.visPropOriginal.highlightstrokecolor),
+                                o.eval(o.visPropOriginal.highlightstrokecolor),
                                 deficiency
                             ),
                             highlightfillcolor: Color.rgb2cb(
-                                Type.evaluate(o.visPropOriginal.highlightfillcolor),
+                                o.eval(o.visPropOriginal.highlightfillcolor),
                                 deficiency
                             )
                         });

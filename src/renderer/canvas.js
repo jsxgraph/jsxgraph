@@ -1345,7 +1345,7 @@ JXG.extend(
         updateImageURL: function (el) {
             var url;
 
-            url = Type.evaluate(el.url);
+            url = el.eval(el.url);
             if (el._src !== url) {
                 el.imgIsLoaded = false;
                 el.rendNode.src = url;

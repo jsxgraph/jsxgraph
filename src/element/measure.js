@@ -351,10 +351,10 @@ JXG.createMeasurement = function (board, parents, attributes) {
             dim = el.Dimension();
 
         if (Type.isObject(units) && Type.exists(units[dim]) && units[dim] !== false) {
-            unit = Type.evaluate(units[dim]);
+            unit = el.eval(units[dim]);
         } else if (Type.isObject(units) && Type.exists(units['dim' + dim]) && units['dim' + dim] !== false) {
             // In some cases, object keys must not be numbers. This allows key 'dim1' instead of '1'.
-            unit = Type.evaluate(units['dim' + dim]);
+            unit = el.eval(units['dim' + dim]);
         } else {
             unit = el.evalVisProp('baseunit');
 
@@ -407,9 +407,13 @@ JXG.createMeasurement = function (board, parents, attributes) {
 
         if (el.evalVisProp('showprefix')) {
             prefix = el.visProp.formatprefix.apply(el, [el.evalVisProp('prefix')]);
+            // Alternative with parameter self
+            // prefix = el.visProp.formatprefix.apply(el, [el, el.evalVisProp('prefix')]);
         }
         if (el.evalVisProp('showsuffix')) {
             suffix = el.visProp.formatsuffix.apply(el, [el.evalVisProp('suffix')]);
+            // Alternative with parameter self
+            // suffix = el.visProp.formatsuffix.apply(el, [el, el.evalVisProp('suffix')]);
         }
 
         if (Type.isNumber(val)) {
@@ -456,10 +460,14 @@ JXG.createMeasurement = function (board, parents, attributes) {
                 val.unshift(undefined);
             }
             val = el.visProp.formatcoords.apply(el, [val[1], val[2], val[0]]);
+            // Alternative with parameter self
+            // val = el.visProp.formatcoords.apply(el, [el, val[1], val[2], val[0]]);
         }
 
         if (dim === 'direction' && Type.isArray(val)) {
             val = el.visProp.formatdirection.apply(el, [val[0], val[1]]);
+            // Alternative with parameter self
+            // val = el.visProp.formatdirection.apply(el, [el, val[0], val[1]]);
         }
 
         if (Type.isString(dim)) {

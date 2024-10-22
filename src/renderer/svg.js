@@ -758,7 +758,7 @@ JXG.extend(
 
         // Already documented in JXG.AbstractRenderer
         updateImageURL: function (el) {
-            var url = Type.evaluate(el.url);
+            var url = el.eval(el.url);
 
             if (el._src !== url) {
                 el.imgIsLoaded = false;

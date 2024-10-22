@@ -449,7 +449,7 @@ JXG.extend(
 
         // Already documented in JXG.AbstractRenderer
         updateImageURL: function (el) {
-            var url = Type.evaluate(el.url);
+            var url = el.eval(el.url);
 
             this._setAttr(el.rendNode, "src", url);
         },

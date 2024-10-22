@@ -463,9 +463,9 @@ JXG.createGrid = function (board, parents, attributes) {
             gridY = this.evalVisProp('gridy'), // for backwards compatibility
             face = this.evalVisProp('face'),
             drawZero = this.evalVisProp('drawzero'),
-            drawZeroOrigin = drawZero === true || (Type.isObject(drawZero) && Type.evaluate(drawZero.origin) === true),
-            drawZeroX = drawZero === true || (Type.isObject(drawZero) && Type.evaluate(drawZero.x) === true),
-            drawZeroY = drawZero === true || (Type.isObject(drawZero) && Type.evaluate(drawZero.y) === true),
+            drawZeroOrigin = drawZero === true || (Type.isObject(drawZero) && this.eval(drawZero.origin) === true),
+            drawZeroX = drawZero === true || (Type.isObject(drawZero) && this.eval(drawZero.x) === true),
+            drawZeroY = drawZero === true || (Type.isObject(drawZero) && this.eval(drawZero.y) === true),
 
             includeBoundaries = this.evalVisProp('includeboundaries'),
             forceSquare = this.evalVisProp('forcesquare');
@@ -655,14 +655,14 @@ JXG.createGrid = function (board, parents, attributes) {
             minorSize = this.evalVisProp('size'),
             minorFace = this.evalVisProp('face'),
             minorDrawZero = this.evalVisProp('drawzero'),
-            minorDrawZeroX = minorDrawZero === true || (Type.isObject(minorDrawZero) && Type.evaluate(minorDrawZero.x) === true),
-            minorDrawZeroY = minorDrawZero === true || (Type.isObject(minorDrawZero) && Type.evaluate(minorDrawZero.y) === true),
+            minorDrawZeroX = minorDrawZero === true || (Type.isObject(minorDrawZero) && this.eval(minorDrawZero.x) === true),
+            minorDrawZeroY = minorDrawZero === true || (Type.isObject(minorDrawZero) && this.eval(minorDrawZero.y) === true),
 
             majorFace = this.majorGrid.evalVisProp('face'),
             majorDrawZero = this.majorGrid.evalVisProp('drawzero'),
-            majorDrawZeroOrigin = majorDrawZero === true || (Type.isObject(majorDrawZero) && Type.evaluate(majorDrawZero.origin) === true),
-            majorDrawZeroX = majorDrawZero === true || (Type.isObject(majorDrawZero) && Type.evaluate(majorDrawZero.x) === true),
-            majorDrawZeroY = majorDrawZero === true || (Type.isObject(majorDrawZero) && Type.evaluate(majorDrawZero.y) === true),
+            majorDrawZeroOrigin = majorDrawZero === true || (Type.isObject(majorDrawZero) && this.eval(majorDrawZero.origin) === true),
+            majorDrawZeroX = majorDrawZero === true || (Type.isObject(majorDrawZero) && this.eval(majorDrawZero.x) === true),
+            majorDrawZeroY = majorDrawZero === true || (Type.isObject(majorDrawZero) && this.eval(majorDrawZero.y) === true),
 
             includeBoundaries = this.evalVisProp('includeboundaries');
 
@@ -684,7 +684,7 @@ JXG.createGrid = function (board, parents, attributes) {
         } else { // minorElements[0]  === 'auto'
             minorElements[0] = 3; // parentAxes[0] may not be defined
             if (Type.exists(parentAxes[0])) {
-                minorElements[0] = Type.evaluate(parentAxes[0].getAttribute('ticks').minorticks);
+                minorElements[0] = parentAxes[0].eval(parentAxes[0].getAttribute('ticks').minorticks);
             }
         }
         minorStep[0] = majorStep[0] / (minorElements[0] + 1);
@@ -695,7 +695,7 @@ JXG.createGrid = function (board, parents, attributes) {
         } else { // minorElements[1] === 'auto'
             minorElements[1] = 3; // parentAxes[1] may not be defined
             if (Type.exists(parentAxes[1])) {
-                minorElements[1] = Type.evaluate(parentAxes[1].getAttribute('ticks').minorticks);
+                minorElements[1] = parentAxes[1].eval(parentAxes[1].getAttribute('ticks').minorticks);
             }
         }
         minorStep[1] = majorStep[1] / (minorElements[1] + 1);
