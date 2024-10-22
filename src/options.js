@@ -1536,6 +1536,9 @@ JXG.Options = {
          */
         // This is a meta tag: http://code.google.com/p/jsdoc-toolkit/wiki/MetaTags
 
+        cssClass: '',
+        highlightCssClass: '',
+
         /**
          * Determines the elements border-style.
          * Possible values are:
