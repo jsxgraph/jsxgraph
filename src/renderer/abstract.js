@@ -268,6 +268,12 @@ JXG.extend(
                 } else {
                     this.setDraft(el);
                 }
+
+                if (el.highlighted) {
+                    this.setCssClass(el, el.evalVisProp('highlightcssclass'));
+                } else {
+                    this.setCssClass(el, el.evalVisProp('cssclass'));
+                }
             }
         },
 
@@ -1945,6 +1951,10 @@ JXG.extend(
          * @param {JXG.GeometryElement} element An JSXGraph element with an area that can be filled.
          */
         updateGradient: function (element) {
+            /* stub */
+        },
+
+        setCssClass: function (element, cssClass) {
             /* stub */
         },
 

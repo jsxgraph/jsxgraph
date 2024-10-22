@@ -635,12 +635,13 @@ JXG.extend(
         // Already documented in JXG.AbstractRenderer
         updateInternalText: function (el) {
             var content = el.plaintext,
-                v,
+                v, css,
                 ev_ax = el.getAnchorX(),
                 ev_ay = el.getAnchorY();
 
-            if (el.rendNode.getAttributeNS(null, "class") !== el.visProp.cssclass) {
-                el.rendNode.setAttributeNS(null, "class", el.evalVisProp('cssclass'));
+            css = el.evalVisProp('cssclass');
+            if (el.rendNode.getAttributeNS(null, "class") !== css) {
+                el.rendNode.setAttributeNS(null, "class", css);
                 el.needsSizeUpdate = true;
             }
 
@@ -1180,12 +1181,9 @@ JXG.extend(
 
         // Already documented in JXG.AbstractRenderer
         updatePathStringBezierPrim: function (el) {
-            var i,
-                j,
-                k,
+            var i, j, k,
                 scr,
-                lx,
-                ly,
+                lx, ly,
                 len,
                 symbm = " M ",
                 symbl = " C ",
@@ -1587,6 +1585,10 @@ JXG.extend(
             } else {
                 window.setTimeout(setFunc, 1);
             }
+        },
+
+        setCssClass(el, cssClass) {
+            this.setPropertyPrim(el.rendNode, 'class', cssClass);
         },
 
         // documented in JXG.AbstractRenderer
