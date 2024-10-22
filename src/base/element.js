@@ -1364,7 +1364,7 @@ JXG.extend(
                             }
                             break;
                         case "layer":
-                            this.board.renderer.setLayer(this, Type.evaluate(value));
+                            this.board.renderer.setLayer(this, this.eval(value));
                             this._set(key, value);
                             break;
                         case "maxlength":
@@ -1480,7 +1480,7 @@ JXG.extend(
                                     (JXG.Validator[key] && JXG.Validator[key](value)) ||
                                     (JXG.Validator[key] &&
                                         Type.isFunction(value) &&
-                                        JXG.Validator[key](value())))
+                                        JXG.Validator[key](value(this))))
                             ) {
                                 value =
                                     (value.toLowerCase && value.toLowerCase() === "false")
@@ -1924,7 +1924,7 @@ JXG.extend(
                     "transform",
                     [
                         function () {
-                            return (Type.evaluate(angle) * Math.PI) / 180;
+                            return (this.eval(angle) * Math.PI) / 180;
                         }
                     ],
                     { type: "rotate" }
@@ -2405,17 +2405,16 @@ JXG.extend(
                 this.useLocale()) {
 
                 loc = this.evalVisProp('intl.locale') ||
-                    Type.evaluate(this.board.attr.intl.locale);
+                    this.eval(this.board.attr.intl.locale);
                 opt = this.evalVisProp('intl.options') || {};
 
-                // Transfer back to camel case if necessary
-                // and evaluate
+                // Transfer back to camel case if necessary and evaluate
                 for (key in opt) {
                     if (opt.hasOwnProperty(key)) {
                         if (translate.hasOwnProperty(key)) {
-                            optCalc[translate[key]] = Type.evaluate(opt[key]);
+                            optCalc[translate[key]] = this.eval(opt[key]);
                         } else {
-                            optCalc[key] = Type.evaluate(opt[key]);
+                            optCalc[key] = this.eval(opt[key]);
                         }
                     }
                 }
@@ -2427,7 +2426,7 @@ JXG.extend(
                     optCalc[translate[key]] = digits;
 
                     // key = 'minimumfractiondigits';
-                    // if (!Type.exists(opt[key]) || Type.evaluate(opt[key]) > digits) {
+                    // if (!this.eval(opt[key]) || this.eval(opt[key]) > digits) {
                     //     optCalc[translate[key]] = digits;
                     // }
                 }
@@ -2463,7 +2462,7 @@ JXG.extend(
 
             // Check intl attribute of the board
             if (val === 'inherit') {
-                if (Type.evaluate(this.board.attr.intl.enabled) === true) {
+                if (this.eval(this.board.attr.intl.enabled) === true) {
                     return true;
                 }
             }
