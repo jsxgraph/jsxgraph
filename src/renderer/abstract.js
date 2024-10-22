@@ -2012,12 +2012,10 @@ JXG.extend(
          * @see JXG.AbstractRenderer#updateTextStyle
          */
         highlight: function (el, suppressHighlightStrokeWidth) {
-            var i, do_hl,
-                ev = el.visProp,
-                sw;
+            var i, do_hl, sw;
 
             this.setObjectTransition(el);
-            if (!ev.draft) {
+            if (!el.visProp.draft) {
                 if (el.type === Const.OBJECT_TYPE_POLYGON) {
                     this.setObjectFillColor(el, el.evalVisProp('highlightfillcolor'), el.evalVisProp('highlightfillopacity'));
                     do_hl = el.evalVisProp('highlightbystrokewidth');
@@ -2077,9 +2075,7 @@ JXG.extend(
          * @see JXG.AbstractRenderer#updateTextStyle
          */
         noHighlight: function (el) {
-            var i,
-                ev = el.visProp,
-                sw;
+            var i, sw;
 
             this.setObjectTransition(el);
             if (!el.evalVisProp('draft')) {
