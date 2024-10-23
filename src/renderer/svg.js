@@ -1587,6 +1587,13 @@ JXG.extend(
             }
         },
 
+        setAria: function(el) {
+            // This method is only called in abstractRenderer._updateVisual() if aria.enabled == true.
+
+            this.setPropertyPrim(el.rendNode, 'aria-label', el.evalVisProp('aria.label'));
+            this.setPropertyPrim(el.rendNode, 'aria-live', el.evalVisProp('aria.live'));
+        },
+
         setCssClass(el, cssClass) {
             this.setPropertyPrim(el.rendNode, 'class', cssClass);
         },

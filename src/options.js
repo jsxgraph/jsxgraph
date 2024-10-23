@@ -1536,6 +1536,12 @@ JXG.Options = {
          */
         // This is a meta tag: http://code.google.com/p/jsdoc-toolkit/wiki/MetaTags
 
+        aria: {
+            enabled: false,
+            label: '',
+            live: 'assertive' // 'assertive', 'polite', 'none'
+        },
+
         /**
          * Apply CSS classes to an element in non-highlighted view. It is possible to supply one or more
          * CSS classes separated by blanks.
@@ -1546,7 +1552,7 @@ JXG.Options = {
          * {@link Text#cssDefaultStyle}
          * For other elements, however, the specificity of a CSS class is higher than the corresponding JSXGraph attribute, see the example below.
          * The fill-properties of a CSS class will be set only if the corresponding JSXGraph attributes are set (to a dummy value).
-         *  
+         *
          * @example
          * // CSS class
          * .line {
@@ -1554,7 +1560,7 @@ JXG.Options = {
          *     stroke-width: 10px;
          *     fill: yellow;
          * }
-         * 
+         *
          * // JavaScript
          * var line = board.create('line', [[0, 0], [3, 3]], {
          *   cssClass: 'line',
@@ -1562,9 +1568,9 @@ JXG.Options = {
          *   strokeWidth: 2,
          *   fillColor: '' // Necessary to enable the yellow fill color of the CSS class
          * });
-         * 
+         *
          * // The line is blue and has stroke-width 10px;
-         * 
+         *
          *
          * @name cssClass
          * @memberOf JXG.GeometryElement.prototype

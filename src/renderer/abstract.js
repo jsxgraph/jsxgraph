@@ -274,6 +274,10 @@ JXG.extend(
                 } else {
                     this.setCssClass(el, el.evalVisProp('cssclass'));
                 }
+
+                if (el.evalVisProp('aria.enabled')) {
+                    this.setAria(el);
+                }
             }
         },
 
@@ -1954,6 +1958,23 @@ JXG.extend(
             /* stub */
         },
 
+        /**
+         * Set ARIA related properties of an element.
+         *
+         * @param {JXG.GeometryElement} element Reference of the object that wants new
+         *        ARIA attributes.
+         */
+        setAria: function(element) {
+            /* stub */
+        },
+
+        /**
+         * Sets CSS classes for elements (relevant for SVG only).
+         *
+         * @param {JXG.GeometryElement} element Reference of the object that wants a
+         *         new set of CSS classes.
+         * @param {String} cssClass String containing a space separated list of CSS classes.
+         */
         setCssClass: function (element, cssClass) {
             /* stub */
         },
