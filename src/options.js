@@ -1536,7 +1536,58 @@ JXG.Options = {
          */
         // This is a meta tag: http://code.google.com/p/jsdoc-toolkit/wiki/MetaTags
 
-        cssClass: '',
+        /**
+         * Apply CSS classes to an element in non-highlighted view. It is possible to supply one or more
+         * CSS classes separated by blanks.
+         * <p>
+         * For non-text and non-image elements, this feature is available for the SVG renderer, only.
+         * <p>
+         * For text and image elements the specificity (priority) of JSXGraph attributes is higher than the CSS class properties, see
+         * {@link Text#cssDefaultStyle}
+         * For other elements, however, the specificity of a CSS class is higher than the corresponding JSXGraph attribute, see the example below.
+         * The fill-properties of a CSS class will be set only if the corresponding JSXGraph attributes are set (to a dummy value).
+         *  
+         * @example
+         * // CSS class
+         * .line {
+         *     stroke: blue;
+         *     stroke-width: 10px;
+         *     fill: yellow;
+         * }
+         * 
+         * // JavaScript
+         * var line = board.create('line', [[0, 0], [3, 3]], {
+         *   cssClass: 'line',
+         *   strokeColor: 'black',
+         *   strokeWidth: 2,
+         *   fillColor: '' // Necessary to enable the yellow fill color of the CSS class
+         * });
+         * 
+         * // The line is blue and has stroke-width 10px;
+         * 
+         *
+         * @name cssClass
+         * @memberOf JXG.GeometryElement.prototype
+         * @type String
+         * @default ''
+         * @see Text#cssClass
+         * @see JXG.GeometryElement#highlightCssClass
+         */
+        cssClass: 'JXGtext',
+
+        /**
+         * Apply CSS classes to an element in highlighted view. It is possible to supply one or more
+         * CSS classes separated by blanks.
+         * <p>
+         * For non-text and non-image elements, this feature is available for the SVG renderer, only.
+         *
+         * @name highlightCssClass
+         * @memberOf JXG.GeometryElement.prototype
+         * @type String
+         * @default ''
+         * @see Text#highlightCssClass
+         * @see JXG.GeometryElement#cssClass
+         */
         highlightCssClass: '',
 
         /**
@@ -5486,6 +5537,9 @@ JXG.Options = {
          * @see Image#highlightCssClass
          * @type String
          * @default 'JXGimage'
+         * @see Image#highlightCssClass
+         * @see Text#cssClass
+         * @see JXG.GeometryElement#cssClass
          */
         cssClass: 'JXGimage',
 
@@ -5500,6 +5554,9 @@ JXG.Options = {
          * @see Image#cssClass
          * @type String
          * @default 'JXGimageHighlight'
+         * @see Image#cssClass
+         * @see Image#highlightCssClass
+         * @see JXG.GeometryElement#highlightCssClass
          */
         highlightCssClass: 'JXGimageHighlight',
 
@@ -9080,7 +9137,7 @@ JXG.Options = {
          * will ignore the font-family if it is set in a CSS class.
          * It has to be set explicitly as style attribute.
          * <p>
-         * In summary, the order of priorities from high to low is
+         * In summary, the order of priorities (specificity) from high to low is
          * <ol>
          *  <li> JXG.Options.text.cssStyle
          *  <li> JXG.Options.text.cssDefaultStyle
@@ -9134,7 +9191,7 @@ JXG.Options = {
          * CSS properties of the HTML text element.
          * <p>
          * The CSS properties which are set here, are handed over to the style property
-         * of the HTML text element. That means, they have higher property than any
+         * of the HTML text element. That means, they have higher property (specificity) han any
          * CSS class.
          *
          * @name cssStyle
@@ -9151,7 +9208,7 @@ JXG.Options = {
          * CSS properties of the HTML text element in case of highlighting.
          * <p>
          * The CSS properties which are set here, are handed over to the style property
-         * of the HTML text element. That means, they have higher property than any
+         * of the HTML text element. That means, they have higher property (specificity) than any
          * CSS class.
          *
          * @name highlightCssStyle
@@ -9604,6 +9661,9 @@ JXG.Options = {
          * @memberOf Text.prototype
          * @type String
          * @default 'JXGtext'
+         * @see Text#highlightCssClass
+         * @see Image#cssClass
+         * @see JXG.GeometryElement#cssClass
          */
         cssClass: 'JXGtext',
 
@@ -9615,6 +9675,9 @@ JXG.Options = {
          * @memberOf Text.prototype
          * @type String
          * @default 'JXGtext'
+         * @see Text#cssClass
+         * @see Image#highlightCssClass
+         * @see JXG.GeometryElement#highlightCssClass
          */
         highlightCssClass: 'JXGtext',
 

@@ -2074,6 +2074,7 @@ JXG.extend(
                     }
                 }
             }
+            this.setCssClass(el, el.evalVisProp('highlightcssclass'));
 
             return this;
         },
@@ -2122,6 +2123,7 @@ JXG.extend(
                     this.updatePathWithArrowHeads(el, false);
                 }
             }
+            this.setCssClass(el, el.evalVisProp('cssclass'));
 
             return this;
         },
