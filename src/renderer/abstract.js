@@ -1959,7 +1959,13 @@ JXG.extend(
         },
 
         /**
-         * Set ARIA related properties of an element.
+         * Set ARIA related properties of an element. The attribute "aria" of an element contains at least the
+         * properties "enabled", "label", and "live". Additionally, all available properties from
+         * {@link https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA} may be set.
+         * <p>
+         * In JSXGraph, the available properties are used without the leading 'aria-'.
+         * For example, the value of the JSXGraph attribute 'aria.label' will be set to the
+         * HTML attribute 'aria-label'.
          *
          * @param {JXG.GeometryElement} element Reference of the object that wants new
          *        ARIA attributes.

@@ -1587,13 +1587,21 @@ JXG.extend(
             }
         },
 
+        // documented in JXG.AbstractRenderer
         setAria: function(el) {
             // This method is only called in abstractRenderer._updateVisual() if aria.enabled == true.
+            var key; 
 
-            this.setPropertyPrim(el.rendNode, 'aria-label', el.evalVisProp('aria.label'));
-            this.setPropertyPrim(el.rendNode, 'aria-live', el.evalVisProp('aria.live'));
+            // this.setPropertyPrim(el.rendNode, 'aria-label', el.evalVisProp('aria.label'));
+            // this.setPropertyPrim(el.rendNode, 'aria-live', el.evalVisProp('aria.live'));
+            for (key in el.visProp.aria) {
+                if (el.visProp.aria.hasOwnProperty(key) && key !== 'enabled') {
+                    this.setPropertyPrim(el.rendNode, 'aria-' + key, el.evalVisProp('aria.' + key));
+                }
+            }
         },
 
+        // documented in JXG.AbstractRenderer
         setCssClass(el, cssClass) {
             this.setPropertyPrim(el.rendNode, 'class', cssClass);
         },

@@ -1536,6 +1536,23 @@ JXG.Options = {
          */
         // This is a meta tag: http://code.google.com/p/jsdoc-toolkit/wiki/MetaTags
 
+        /**
+         * ARIA settings for JSXGraph elements.
+         * Besides 'label' and 'live', all available properties from
+         * {@link https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA} may be set.
+         * In JSXGraph, the available properties are used without the leading 'aria-'.
+         * For example, the value of the JSXGraph attribute 'aria.label' will be set to the
+         * HTML attribute 'aria-label' (ignoring 'aria.enabled').
+         *
+         * @name aria
+         * @memberOf JXG.GeometryElement.prototype
+         * @type Object
+         * @default {
+         *   enabled: false,
+         *   label: '',
+         *   live: 'assertive'
+         *  },
+         */
         aria: {
             enabled: false,
             label: '',
