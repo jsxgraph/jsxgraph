@@ -2304,7 +2304,9 @@ JXG.createView3D = function (board, parents, attributes) {
     view.inherits.push(view.bank_slide);
 
     // Set special infobox attributes of view3d.infobox
-    view.board.infobox.setAttribute(attr.infobox);
+    // Using setAttribute() is not possible here, since we have to
+    // avoid a call of board.update().
+    view.board.infobox.visProp = Type.merge(view.board.infobox.visProp, attr.infobox);
 
     // 3d infobox: drag direction and coordinates
     view.board.highlightInfobox = function (x, y, el) {

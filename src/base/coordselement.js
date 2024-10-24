@@ -1902,13 +1902,58 @@ JXG.extend(
          * @param {Number} [time] Number of milliseconds the animation should last.
          * @param {Object} [options] Optional settings for the animation
          * @param {function} [options.callback] A function that is called as soon as the animation is finished.
-         * @param {String} [options.effect='<>'] animation effects like speed fade in and out. possible values are
-         * '<>' for speed increase on start and slow down at the end (default) and '--' for constant speed during
+         * @param {String} [options.effect='<>'|'>'|'<'] animation effects like speed fade in and out. possible values are
+         * '<>' for speed increase on start and slow down at the end (default), '<' for speed up, '>' for slow down, and '--' for constant speed during
          * the whole animation.
          * @returns {JXG.CoordsElement} Reference to itself.
          * @see JXG.CoordsElement#moveAlong
          * @see JXG.CoordsElement#visit
          * @see JXG.GeometryElement#animate
+         * @example
+         * // moveTo() with different easing options and callback options
+         * let yInit = 3
+         * let [A, B, C, D] = ['==', '<>', '<', '>'].map((s) => board.create('point', [4, yInit--], { name: s, label: { fontSize: 24 } }))
+         * let seg = board.create('segment', [A, [() => A.X(), 0]])  // shows linear
+         *
+         *let isLeftRight = true;
+         *let buttonMove = board.create('button', [-2, 4, 'left',
+         *() => {
+         *    isLeftRight = !isLeftRight;
+         *    buttonMove.rendNodeButton.innerHTML = isLeftRight ? 'left' : 'right'
+         *    let x = isLeftRight ? 4 : -4
+         *    let sym = isLeftRight ? 'triangleleft' : 'triangleright'
+         *
+         *    A.moveTo([x, 3], 1000, { callback: () => A.setAttribute({ face: sym, size: 5 }) })
+         *    B.moveTo([x, 2], 1000, { callback: () => B.setAttribute({ face: sym, size: 5 }), effect: "<>" })
+         *    C.moveTo([x, 1], 1000, { callback: () => C.setAttribute({ face: sym, size: 5 }), effect: "<" })
+         *    D.moveTo([x, 0], 1000, { callback: () => D.setAttribute({ face: sym, size: 5 }), effect: ">" })
+         *
+         *}])
+         *
+          </pre><div id="JXG0f35a50e-e99d-11e8-a1ca-04d3b0c2aad4" class="jxgbox" style="width: 300px; height: 300px;"></div>
+          <script type="text/javascript">
+          {
+*          let board = JXG.JSXGraph.initBoard('JXG0f35a50e-e99d-11e8-a1ca-04d3b0c2aad4')
+          let yInit = 3
+          let [A, B, C, D] = ['==', '<>', '<', '>'].map((s) => board.create('point', [4, yInit--], { name: s, label: { fontSize: 24 } }))
+          let seg = board.create('segment', [A, [() => A.X(), 0]])  // shows linear
+
+         let isLeftRight = true;
+         let buttonMove = board.create('button', [-2, 4, 'left',
+         () => {
+             isLeftRight = !isLeftRight;
+             buttonMove.rendNodeButton.innerHTML = isLeftRight ? 'left' : 'right'
+             let x = isLeftRight ? 4 : -4
+             let sym = isLeftRight ? 'triangleleft' : 'triangleright'
+
+             A.moveTo([x, 3], 1000, { callback: () => A.setAttribute({ face: sym, size: 5 }) })
+             B.moveTo([x, 2], 1000, { callback: () => B.setAttribute({ face: sym, size: 5 }), effect: "<>" })
+             C.moveTo([x, 1], 1000, { callback: () => C.setAttribute({ face: sym, size: 5 }), effect: "<" })
+             D.moveTo([x, 0], 1000, { callback: () => D.setAttribute({ face: sym, size: 5 }), effect: ">" })
+
+         }])
+        }
+        </script><pre>
          */
         moveTo: function (where, time, options) {
             options = options || {};
@@ -1924,10 +1969,24 @@ JXG.extend(
                 dY = where.usrCoords[2] - Y,
                 /** @ignore */
                 stepFun = function (i) {
-                    if (options.effect && options.effect === "<>") {
-                        return Math.pow(Math.sin(((i / steps) * Math.PI) / 2), 2);
+                    let x = i / steps;  // absolute progress of the animatin
+
+                    if (options.effect) {
+                        if (options.effect === "<>") {
+                            return Math.pow(Math.sin((x * Math.PI) / 2), 2);
+                        }
+                        if (options.effect === "<") {   // cubic ease in
+                            return x * x * x;
+                        }
+                        if (options.effect === ">") {   // cubic ease out
+                            return 1 - Math.pow(1 - x, 3);
+                        }
+                        if (options.effect === "==") {
+                            return i / steps;       // linear
+                        }
+                        throw new Error("valid effects are '==', '<>', '>', and '<'.");
                     }
-                    return i / steps;
+                    return i / steps;  // default
                 };
 
             if (
@@ -1971,14 +2030,52 @@ JXG.extend(
          * @param {Number} time Number of milliseconds the animation should last.
          * @param {Object} [options] Optional settings for the animation
          * @param {function} [options.callback] A function that is called as soon as the animation is finished.
-         * @param {String} [options.effect='<>'] animation effects like speed fade in and out. possible values are
-         * '<>' for speed increase on start and slow down at the end (default) and '--' for constant speed during
+         * @param {String} [options.effect='<>'|'>'|'<'] animation effects like speed fade in and out. possible values are
+         * '<>' for speed increase on start and slow down at the end (default), '<' for speed up, '>' for slow down, and '--' for constant speed during
          * the whole animation.
          * @param {Number} [options.repeat=1] How often this animation should be repeated.
          * @returns {JXG.CoordsElement} Reference to itself.
          * @see JXG.CoordsElement#moveAlong
          * @see JXG.CoordsElement#moveTo
          * @see JXG.GeometryElement#animate
+         * @example
+         * // visit() with different easing options
+         * let yInit = 3
+         * let [A, B, C, D] = ['==', '<>', '<', '>'].map((s) => board.create('point', [4, yInit--], { name: s, label: { fontSize: 24 } }))
+         * let seg = board.create('segment', [A, [() => A.X(), 0]])  // shows linear
+         *
+         *let isLeftRight = true;
+         *let buttonVisit = board.create('button', [0, 4, 'visit',
+         *    () => {
+         *        let x = isLeftRight ? 4 : -4
+         *
+         *        A.visit([-x, 3], 4000, { effect: "==", repeat: 2 })  // linear
+         *        B.visit([-x, 2], 4000, { effect: "<>", repeat: 2 })
+         *        C.visit([-x, 1], 4000, { effect: "<", repeat: 2 })
+         *        D.visit([-x, 0], 4000, { effect: ">", repeat: 2 })
+         *    }])
+         *
+          </pre><div id="JXG0f35a50e-e99d-11e8-a1ca-04d3b0c2aad5" class="jxgbox" style="width: 300px; height: 300px;"></div>
+          <script type="text/javascript">
+          {
+*          let board = JXG.JSXGraph.initBoard('JXG0f35a50e-e99d-11e8-a1ca-04d3b0c2aad5')
+          let yInit = 3
+          let [A, B, C, D] = ['==', '<>', '<', '>'].map((s) => board.create('point', [4, yInit--], { name: s, label: { fontSize: 24 } }))
+          let seg = board.create('segment', [A, [() => A.X(), 0]])  // shows linear
+
+         let isLeftRight = true;
+         let buttonVisit = board.create('button', [0, 4, 'visit',
+             () => {
+                 let x = isLeftRight ? 4 : -4
+
+                 A.visit([-x, 3], 4000, { effect: "==", repeat: 2 })  // linear
+                 B.visit([-x, 2], 4000, { effect: "<>", repeat: 2 })
+                 C.visit([-x, 1], 4000, { effect: "<", repeat: 2 })
+                 D.visit([-x, 0], 4000, { effect: ">", repeat: 2 })
+             }])
+            }
+        </script><pre>
+
          */
         visit: function (where, time, options) {
             where = new Coords(Const.COORDS_BY_USER, where, this.board);
@@ -1996,10 +2093,22 @@ JXG.extend(
                 stepFun = function (i) {
                     var x = i < steps / 2 ? (2 * i) / steps : (2 * (steps - i)) / steps;
 
-                    if (options.effect && options.effect === "<>") {
-                        return Math.pow(Math.sin((x * Math.PI) / 2), 2);
-                    }
+                    if (options.effect) {
+                        if (options.effect === "<>") {        // slow at beginning and end
+                            return Math.pow(Math.sin((x * Math.PI) / 2), 2);
+                        }
+                        if (options.effect === "<") {   // cubic ease in
+                            return x * x * x;
+                        }
+                        if (options.effect === ">") {   // cubic ease out
+                            return 1 - Math.pow(1 - x, 3);
+                        }
+                        if (options.effect === "==") {
+                            return x;       // linear
+                        }
+                        throw new Error("valid effects are '==', '<>', '>', and '<'.");
 
+                    }
                     return x;
                 };
 

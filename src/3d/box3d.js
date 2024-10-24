@@ -114,6 +114,7 @@ JXG.createAxes3D = function (board, parents, attributes) {
             to[i] = front[i];
             // attr[na.toLowerCase()].lastArrow = false;
             axes[na] = view.create("axis3d", [from, to], attr[na.toLowerCase()]);
+            axes[na].view = view;
 
             ticks_attr = attr[na.toLowerCase()].ticks3d;
             len = front[i] - rear[i];
@@ -124,9 +125,7 @@ JXG.createAxes3D = function (board, parents, attributes) {
             } else {
                 axes[na + "Ticks"] = view.create("ticks3d", [from, [0, 0, 1], len, [0, 1, 0]], ticks_attr);
             }
-            // axes[na].addChild(axes[na + "Ticks"]);
-            // axes[na].inherits.push(axes[na + "Ticks"]); // TODO: Access of element2D is not nice
-            // axes[na + "Ticks"].addParents(axes[na]);
+            axes[na + "Ticks"].view = view;
         }
     }
 
