@@ -1596,7 +1596,7 @@ JXG.Options = {
          * @see Text#cssClass
          * @see JXG.GeometryElement#highlightCssClass
          */
-        cssClass: 'JXGtext',
+        cssClass: '',
 
         /**
          * Apply CSS classes to an element in highlighted view. It is possible to supply one or more
