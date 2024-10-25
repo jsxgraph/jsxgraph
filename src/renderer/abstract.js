@@ -276,7 +276,7 @@ JXG.extend(
                 }
 
                 if (el.evalVisProp('aria.enabled')) {
-                    this.setAria(el);
+                    this.setARIA(el);
                 }
             }
         },
@@ -1970,7 +1970,7 @@ JXG.extend(
          * @param {JXG.GeometryElement} element Reference of the object that wants new
          *        ARIA attributes.
          */
-        setAria: function(element) {
+        setARIA: function(element) {
             /* stub */
         },
 

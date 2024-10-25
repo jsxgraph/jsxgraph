@@ -1588,15 +1588,20 @@ JXG.extend(
         },
 
         // documented in JXG.AbstractRenderer
-        setAria: function(el) {
+        setARIA: function(el) {
             // This method is only called in abstractRenderer._updateVisual() if aria.enabled == true.
-            var key;
+            var key, k, v;
 
             // this.setPropertyPrim(el.rendNode, 'aria-label', el.evalVisProp('aria.label'));
             // this.setPropertyPrim(el.rendNode, 'aria-live', el.evalVisProp('aria.live'));
             for (key in el.visProp.aria) {
                 if (el.visProp.aria.hasOwnProperty(key) && key !== 'enabled') {
-                    this.setPropertyPrim(el.rendNode, 'aria-' + key, el.evalVisProp('aria.' + key));
+                    k = 'aria.' + key;
+                    v = el.evalVisProp('aria.' + key);
+                    if (el.visPropOld[k] !== v) {
+                        this.setPropertyPrim(el.rendNode, 'aria-' + key, v);
+                        el.visPropOld[k] = v;
+                    }
                 }
             }
         },
