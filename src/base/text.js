@@ -598,15 +598,6 @@ JXG.extend(
 
                 this.relativeCoords.setCoordinates(Const.COORDS_BY_SCREEN, [dx, dy]);
             } else {
-                /*
-                this.X = function () {
-                    return x;
-                };
-
-                this.Y = function () {
-                    return y;
-                };
-                */
                 this.coords.setCoordinates(Const.COORDS_BY_USER, [x, y]);
             }
 
