@@ -1711,7 +1711,7 @@ JXG.extend(
                             0,
                             function () {
                                 if (Type.isFunction(that.name)) {
-                                    return that.name();
+                                    return that.name(that);
                                 }
                                 return that.name;
                             }
