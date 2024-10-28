@@ -1549,7 +1549,9 @@ JXG.extend(
 
         /**
          * Get value of an attribute. If the value that attribute is a function, call the function and return its value.
-         * In that case, the function is called with the GeometryElement as (only) parameter.
+         * In that case, the function is called with the GeometryElement as (only) parameter. For label elements (i.e.
+         * if the attribute "islabel" is true), the anchor element is supplied. The label element can be accessed as
+         * sub-object "label".
          * If the attribute does not exist, undefined will be returned.
          *
          * @param {String} key Attribute key
@@ -1575,6 +1577,10 @@ JXG.extend(
             }
 
             if (JXG.isFunction(val)) {
+                // For labels supply the anchor element as parameter.
+                if (this.visProp.islabel === true && this.visProp.anchor.id !== undefined) {
+                    return val(this.visProp.anchor);
+                }
                 return val(this);
             }
             return val;
@@ -1582,9 +1588,11 @@ JXG.extend(
 
         /**
          * Get value of a parameter. If the parameter is a function, call the function and return its value.
-         * In that case, the function is called with the GeometryElement as (only) parameter.
+         * In that case, the function is called with the GeometryElement as (only) parameter. For label elements (i.e.
+         * if the attribute "islabel" is true), the anchor element is supplied. The label element can be accessed as
+         * sub-object "label".
          *
-         * @param {String|Number|Function|Object} val If not a function it will be returned as is. If function it will be evaluated, where the GeometryElement is
+         * @param {String|Number|Function|Object} val If not a function, it will be returned as is. If function it will be evaluated, where the GeometryElement is
          * supplied as the (only) parameter of that function.
          * @returns {String|Number|Object}
          *
@@ -1593,6 +1601,9 @@ JXG.extend(
          */
         eval: function(val) {
             if (JXG.isFunction(val)) {
+                if (this.visProp.islabel === true && this.visProp.anchor.id !== undefined) {
+                    return val(this.visProp.anchor);
+                }
                 return val(this);
             }
             return val;
