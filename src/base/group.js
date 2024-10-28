@@ -282,6 +282,13 @@ JXG.extend(
                     t = this.board.create("transform", [alpha, center[0], center[1]], {
                         type: "rotate"
                     });
+
+                    // bind any images
+                    for (el in this.objects) {
+                        if (this.objects[el].point.elType === 'image')
+                            t.bindTo(this.objects[el].point);
+                    }
+
                     t.update(); // This initializes t.matrix, which is needed if the action element is the first group element.
                 } else if (drag.action === "scaling") {
                     s = Geometry.distance(this.coords[drag.id].usrCoords.slice(1), center);
@@ -298,6 +305,13 @@ JXG.extend(
                         [1, 0, 0, center[0] * (1 - sx), sx, 0, center[1] * (1 - sy), 0, sy],
                         { type: "generic" }
                     );
+
+                    // bind any images
+                    for (el in this.objects) {
+                        if (this.objects[el].point.elType === 'image')
+                            t.bindTo(this.objects[el].point);
+                    }
+
                     t.update(); // This initializes t.matrix, which is needed if the action element is the first group element.
                 } else {
                     return this;
@@ -961,7 +975,58 @@ JXG.extend(
  *  })();
  * </script><pre>
  *
+ *  @example
  *
+ *        // Add an image and use the group tools to manipulate it
+ *       let urlImg = "https://jsxgraph.org/distrib/images/uccellino.jpg";
+ *       let lowleft = [-2, -1]
+ *
+ *       let col = 'blue';
+ *       let p = [];
+ *       p.push(board.create('point', lowleft, { size: 5, strokeColor: col, fillColor: col }));
+ *       p.push(board.create('point', [2, -1], { size: 5, strokeColor: 'yellow', fillColor: 'yellow', name: 'scale' }));
+ *       p.push(board.create('point', [2, 1], { size: 5, strokeColor: 'red', fillColor: 'red', name: 'rotate' }));
+ *       p.push(board.create('point', [-2, 1], { size: 5, strokeColor: col, fillColor: col, name: 'translate' }));
+ *
+ *       let im = board.create('image', [urlImg, lowleft, [2, 2]]);
+ *       let pol = board.create('polygon', p, { hasInnerPoints: true });
+ *
+ *       let g = board.create('group', p.concat(im))
+ *       // g.addPoint(im)   // image, but adds as a point
+ *
+ *       g.setRotationCenter(lowleft)
+ *       g.setRotationPoints([p[2]]);
+ *
+ *       g.setScaleCenter(p[0]).setScalePoints(p[1]);
+ *
+ * </pre><div class="jxgbox" id="JXGd19b800a-57a9-4303-b49a-8f5b7a5489f1" style="width: 400px; height: 300px;"></div>
+ * <script type="text/javascript">
+ *  (function () {
+ *       let board = JXG.JSXGraph.initBoard('JXGd19b800a-57a9-4303-b49a-8f5b7a5489f1')
+ *
+ *       // Add an image and use the group tools to manipulate it
+ *       let urlImg = "https://jsxgraph.org/distrib/images/uccellino.jpg";
+ *       let lowleft = [-2, -1]
+ *
+ *       let col = 'blue';
+ *       let p = [];
+ *       p.push(board.create('point', lowleft, { size: 5, strokeColor: col, fillColor: col }));
+ *       p.push(board.create('point', [2, -1], { size: 5, strokeColor: 'yellow', fillColor: 'yellow', name: 'scale' }));
+ *       p.push(board.create('point', [2, 1], { size: 5, strokeColor: 'red', fillColor: 'red', name: 'rotate' }));
+ *       p.push(board.create('point', [-2, 1], { size: 5, strokeColor: col, fillColor: col, name: 'translate' }));
+ *
+ *       let im = board.create('image', [urlImg, lowleft, [2, 2]]);
+ *       let pol = board.create('polygon', p, { hasInnerPoints: true });
+ *
+ *       let g = board.create('group', p.concat(im))
+ *       // g.addPoint(im)   // image, but adds as a point
+ *
+ *       g.setRotationCenter(lowleft)
+ *       g.setRotationPoints([p[2]]);
+ *
+ *       g.setScaleCenter(p[0]).setScalePoints(p[1]);
+ *  })();
+ * </script><pre>
  */
 JXG.createGroup = function (board, parents, attributes) {
     var attr = Type.copyAttributes(attributes, board.options, "group"),
