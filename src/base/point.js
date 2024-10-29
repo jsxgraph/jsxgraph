@@ -155,7 +155,7 @@ JXG.extend(
             if (this === this.baseElement) {
                 // Case of bindTo
                 c = this.transformations[0].apply(this.baseElement, "self");
-                this.coords.setCoordinates(Const.COORDS_BY_USER, c);
+                // this.coords.setCoordinates(Const.COORDS_BY_USER, c); // redundant
             } else {
                 c = this.transformations[0].apply(this.baseElement);
             }
