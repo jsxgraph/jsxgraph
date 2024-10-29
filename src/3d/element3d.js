@@ -82,6 +82,7 @@ JXG.extend(JXG.GeometryElement3D.prototype, {
         var attr2D = attr3D;
 
         attr2D.name = this.name;
+        attr2D.element3d = this;
 
         return attr2D;
     },

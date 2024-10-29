@@ -1578,19 +1578,30 @@ JXG.extend(
 
             if (JXG.isFunction(val)) {
                 // For labels supply the anchor element as parameter.
-                if (this.visProp.islabel === true && this.visProp.anchor.id !== undefined) {
+                if (this.visProp.islabel === true && Type.exists(this.visProp.anchor)) {
+                    // 3D: supply the 3D element
+                    if (this.visProp.anchor.visProp.element3d !== null) {
+                        return val(this.visProp.anchor.visProp.element3d);
+                    }
+                    // 2D: supply the 2D element
                     return val(this.visProp.anchor);
                 }
+                // For 2D elements representing 3D elements, return the 3D element.
+                if (this.visProp.element3d !== null) {
+                    return val(this.visProp.element3d);
+                }
+                // In all other cases, return the element itself
                 return val(this);
             }
+            // val is not of type function
             return val;
         },
 
         /**
          * Get value of a parameter. If the parameter is a function, call the function and return its value.
          * In that case, the function is called with the GeometryElement as (only) parameter. For label elements (i.e.
-         * if the attribute "islabel" is true), the anchor element is supplied. The label element can be accessed as
-         * sub-object "label".
+         * if the attribute "islabel" is true), the anchor element is supplied. The label of an element can be accessed as
+         * sub-object "label" then.
          *
          * @param {String|Number|Function|Object} val If not a function, it will be returned as is. If function it will be evaluated, where the GeometryElement is
          * supplied as the (only) parameter of that function.
@@ -1601,11 +1612,23 @@ JXG.extend(
          */
         eval: function(val) {
             if (JXG.isFunction(val)) {
-                if (this.visProp.islabel === true && this.visProp.anchor.id !== undefined) {
+                // For labels supply the anchor element as parameter.
+                if (this.visProp.islabel === true && Type.exists(this.visProp.anchor)) {
+                    // 3D: supply the 3D element
+                    if (this.visProp.anchor.visProp.element3d !== null) {
+                        return val(this.visProp.anchor.visProp.element3d);
+                    }
+                    // 2D: supply the 2D element
                     return val(this.visProp.anchor);
                 }
+                // For 2D elements representing 3D elements, return the 3D element.
+                if (this.visProp.element3d !== null) {
+                    return val(this.visProp.element3d);
+                }
+                // In all other cases, return the element itself
                 return val(this);
             }
+            // val is not of type function
             return val;
         },
 

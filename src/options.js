@@ -1691,6 +1691,15 @@ JXG.Options = {
         dragToTopOfLayer: false,
 
         /**
+         * Links to the defining 3D element of a 2D element. Otherwise it is null.
+         *
+         * @name JXG.GeometryElement#element3D
+         * @default null
+         * @private
+         */
+        element3D: null,
+
+        /**
          * The fill color of this geometry element.
          * @type String
          * @name JXG.GeometryElement#fillColor
