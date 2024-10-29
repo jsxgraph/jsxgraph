@@ -1189,9 +1189,10 @@ JXG.extend(
             this.handleSnapToPoints();
             this.handleAttractors();
 
-            // Update the initial coordinates. This is needed for free points
-            // that have a transformation bound to it.
-            for (i = this.transformations.length - 1; i >= 0; i--) {
+            // The element is set to the new position `coords`.
+            // Now, determine the preimage of `coords`, prior to all transformations.
+            // This is needed for free points that have a transformation bound to it.
+            if (this.transformations.length > 0) {
                 if (method === Const.COORDS_BY_SCREEN) {
                     newCoords = new Coords(method, coords, this.board).usrCoords;
                 } else {
@@ -1200,10 +1201,10 @@ JXG.extend(
                     }
                     newCoords = coords;
                 }
-                this.initialCoords.setCoordinates(
-                    Const.COORDS_BY_USER,
-                    Mat.matVecMult(Mat.inverse(this.transformations[i].matrix), newCoords)
-                );
+                for (i = this.transformations.length - 1; i >= 0; i--) {
+                    newCoords = Mat.matVecMult(Mat.inverse(this.transformations[i].matrix), newCoords);
+                }
+                this.initialCoords.setCoordinates(Const.COORDS_BY_USER, newCoords);
             }
             this.prepareUpdate().update();
 

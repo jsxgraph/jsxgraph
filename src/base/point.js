@@ -152,21 +152,19 @@ JXG.extend(
                 return this;
             }
 
+            this.transformations[0].update();
             if (this === this.baseElement) {
                 // Case of bindTo
                 c = this.transformations[0].apply(this.baseElement, "self");
-                // this.coords.setCoordinates(Const.COORDS_BY_USER, c); // redundant
             } else {
                 c = this.transformations[0].apply(this.baseElement);
             }
+            for (i = 1; i < this.transformations.length; i++) {
+                this.transformations[i].update();
+                c = Mat.matVecMult(this.transformations[i].matrix, c);
+            }
             this.coords.setCoordinates(Const.COORDS_BY_USER, c);
 
-            for (i = 1; i < this.transformations.length; i++) {
-                this.coords.setCoordinates(
-                    Const.COORDS_BY_USER,
-                    this.transformations[i].apply(this)
-                );
-            }
             return this;
         },
 

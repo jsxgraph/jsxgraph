@@ -1557,25 +1557,7 @@ JXG.extend(
                 oy = el.board.origin.scrCoords[2],
                 ux = el.board.unitX,
                 uy = el.board.unitY,
-                // Translate to 0,0 in screen coords
-                /*
-                m = [[1, 0, 0], [0, 1, 0], [0, 0, 1]],
-                mpre1 =  [[1,   0, 0],
-                    [-ox, 1, 0],
-                    [-oy, 0, 1]],
-                // Scale
-                mpre2 =  [[1, 0,     0],
-                    [0, 1 / ux,  0],
-                    [0, 0, -1 / uy]],
-                // Scale back
-                mpost2 = [[1, 0,   0],
-                    [0, ux,  0],
-                    [0, 0, -uy]],
-                // Translate back
-                mpost1 = [[1,  0, 0],
-                    [ox, 1, 0],
-                    [oy, 0, 1]],
-                */
+
                 len = transformations.length,
                 // Translate to 0,0 in screen coords and then scale
                 m = [
@@ -1585,11 +1567,7 @@ JXG.extend(
                 ];
 
             for (i = 0; i < len; i++) {
-                //m = Mat.matMatMult(mpre1, m);
-                //m = Mat.matMatMult(mpre2, m);
                 m = Mat.matMatMult(transformations[i].matrix, m);
-                //m = Mat.matMatMult(mpost2, m);
-                //m = Mat.matMatMult(mpost1, m);
             }
             // Scale back and then translate back
             m = Mat.matMatMult(
