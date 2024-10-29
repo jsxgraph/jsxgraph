@@ -224,15 +224,12 @@ JXG.extend(
          * @returns {JXG.Group} returns this group
          */
         update: function () {
-            var drag,
-                el,
+            var drag, el,
                 actionCenter,
                 desc,
-                s,
-                sx,
-                sy,
+                s, sx, sy,
                 alpha,
-                t,
+                t, T, Tinv,
                 center,
                 obj = null;
 
@@ -248,12 +245,20 @@ JXG.extend(
 
             obj = this.objects[drag.id].point;
 
-            // Prepare translation, scaling or rotation
+            // Prepare translation, scaling or rotation.
+            // Scaling and rotation is handled by transformations for all elements.
+            // Translation is handled by direct coordinate manipulation for points.
+            // For images and texts, all translation, scaling and rotation is 
+            // done by binding a transformation to the element.
             if (drag.action === "translation") {
                 t = [
                     obj.coords.usrCoords[1] - this.coords[drag.id].usrCoords[1],
                     obj.coords.usrCoords[2] - this.coords[drag.id].usrCoords[2]
                 ];
+
+                // For images and texts
+                T = this.board.create("transform", t, { type: "translate" });
+                T.update();
             } else if (drag.action === "rotation" || drag.action === "scaling") {
                 if (drag.action === "rotation") {
                     actionCenter = "rotationCenter";
@@ -261,7 +266,8 @@ JXG.extend(
                     actionCenter = "scaleCenter";
                 }
 
-                if (Type.isPoint(this[actionCenter])) {
+                // if (Type.isPoint(this.board, this[actionCenter])) {
+                if (Type.exists(this[actionCenter].coords)) {
                     center = this[actionCenter].coords.usrCoords.slice(1);
                 } else if (this[actionCenter] === "centroid") {
                     center = this._update_centroid_center();
@@ -282,13 +288,6 @@ JXG.extend(
                     t = this.board.create("transform", [alpha, center[0], center[1]], {
                         type: "rotate"
                     });
-
-                    // bind any images
-                    for (el in this.objects) {
-                        if (this.objects[el].point.elType === 'image')
-                            t.bindTo(this.objects[el].point);
-                    }
-
                     t.update(); // This initializes t.matrix, which is needed if the action element is the first group element.
                 } else if (drag.action === "scaling") {
                     s = Geometry.distance(this.coords[drag.id].usrCoords.slice(1), center);
@@ -305,16 +304,31 @@ JXG.extend(
                         [1, 0, 0, center[0] * (1 - sx), sx, 0, center[1] * (1 - sy), 0, sy],
                         { type: "generic" }
                     );
-
-                    // bind any images
-                    for (el in this.objects) {
-                        if (this.objects[el].point.elType === 'image')
-                            t.bindTo(this.objects[el].point);
-                    }
-
                     t.update(); // This initializes t.matrix, which is needed if the action element is the first group element.
                 } else {
+                    // This should not be reached
                     return this;
+                }
+            }
+
+            // Bind the transformation to any images and texts
+            for (el in this.objects) {
+                obj = this.objects[el].point;
+                if (obj.elType !== 'point') {
+                    if (Type.exists(t.board)) {
+                        t.bindTo(obj);
+                    } else {
+                        if (drag.id !== obj.id) {
+                            T.bindTo(obj);
+                        } else {
+                            obj.coords.setCoordinates(Const.COORDS_BY_USER, [
+                                this.coords[drag.id].usrCoords[1],
+                                this.coords[drag.id].usrCoords[2]
+                            ]);
+                            obj.addTransform(T);
+                            // T.bindTo(obj);
+                        }
+                    }
                 }
             }
 
@@ -457,16 +471,20 @@ JXG.extend(
                         if (obj.id !== drag.id) {
                             if (drag.action === "translation") {
                                 if (!Type.isInArray(drag.changed, obj.id)) {
-                                    obj.coords.setCoordinates(Const.COORDS_BY_USER, [
-                                        this.coords[el].usrCoords[1] + t[0],
-                                        this.coords[el].usrCoords[2] + t[1]
-                                    ]);
+                                    if (obj.elType === 'point') {
+                                        obj.coords.setCoordinates(Const.COORDS_BY_USER, [
+                                            this.coords[el].usrCoords[1] + t[0],
+                                            this.coords[el].usrCoords[2] + t[1]
+                                        ]);
+                                    }
                                 }
                             } else if (
                                 drag.action === "rotation" ||
                                 drag.action === "scaling"
                             ) {
-                                t.applyOnce([obj]);
+                                if (obj.elType === 'point') {
+                                    t.applyOnce([obj]);
+                                }
                             }
                         } else {
                             if (drag.action === "rotation" || drag.action === "scaling") {
