@@ -224,15 +224,12 @@ JXG.extend(
          * @returns {JXG.Group} returns this group
          */
         update: function () {
-            var drag,
-                el,
+            var drag, el,
                 actionCenter,
                 desc,
-                s,
-                sx,
-                sy,
+                s, sx, sy,
                 alpha,
-                t,
+                t, T, Tinv,
                 center,
                 obj = null;
 
@@ -248,12 +245,20 @@ JXG.extend(
 
             obj = this.objects[drag.id].point;
 
-            // Prepare translation, scaling or rotation
+            // Prepare translation, scaling or rotation.
+            // Scaling and rotation is handled by transformations for all elements.
+            // Translation is handled by direct coordinate manipulation for points.
+            // For images and texts, all translation, scaling and rotation is 
+            // done by binding a transformation to the element.
             if (drag.action === "translation") {
                 t = [
                     obj.coords.usrCoords[1] - this.coords[drag.id].usrCoords[1],
                     obj.coords.usrCoords[2] - this.coords[drag.id].usrCoords[2]
                 ];
+
+                // For images and texts
+                T = this.board.create("transform", t, { type: "translate" });
+                T.update();
             } else if (drag.action === "rotation" || drag.action === "scaling") {
                 if (drag.action === "rotation") {
                     actionCenter = "rotationCenter";
@@ -261,7 +266,8 @@ JXG.extend(
                     actionCenter = "scaleCenter";
                 }
 
-                if (Type.isPoint(this[actionCenter])) {
+                // if (Type.isPoint(this.board, this[actionCenter])) {
+                if (Type.exists(this[actionCenter].coords)) {
                     center = this[actionCenter].coords.usrCoords.slice(1);
                 } else if (this[actionCenter] === "centroid") {
                     center = this._update_centroid_center();
@@ -300,7 +306,29 @@ JXG.extend(
                     );
                     t.update(); // This initializes t.matrix, which is needed if the action element is the first group element.
                 } else {
+                    // This should not be reached
                     return this;
+                }
+            }
+
+            // Bind the transformation to any images and texts
+            for (el in this.objects) {
+                obj = this.objects[el].point;
+                if (obj.elType !== 'point') {
+                    if (Type.exists(t.board)) {
+                        t.bindTo(obj);
+                    } else {
+                        if (drag.id !== obj.id) {
+                            T.bindTo(obj);
+                        } else {
+                            // obj.coords.setCoordinates(Const.COORDS_BY_USER, [
+                            //     this.coords[drag.id].usrCoords[1],
+                            //     this.coords[drag.id].usrCoords[2]
+                            // ]);
+                            // obj.addTransform(T);
+                            // T.bindTo(obj);
+                        }
+                    }
                 }
             }
 
@@ -443,16 +471,20 @@ JXG.extend(
                         if (obj.id !== drag.id) {
                             if (drag.action === "translation") {
                                 if (!Type.isInArray(drag.changed, obj.id)) {
-                                    obj.coords.setCoordinates(Const.COORDS_BY_USER, [
-                                        this.coords[el].usrCoords[1] + t[0],
-                                        this.coords[el].usrCoords[2] + t[1]
-                                    ]);
+                                    if (obj.elType === 'point') {
+                                        obj.coords.setCoordinates(Const.COORDS_BY_USER, [
+                                            this.coords[el].usrCoords[1] + t[0],
+                                            this.coords[el].usrCoords[2] + t[1]
+                                        ]);
+                                    }
                                 }
                             } else if (
                                 drag.action === "rotation" ||
                                 drag.action === "scaling"
                             ) {
-                                t.applyOnce([obj]);
+                                if (obj.elType === 'point') {
+                                    t.applyOnce([obj]);
+                                }
                             }
                         } else {
                             if (drag.action === "rotation" || drag.action === "scaling") {
@@ -961,7 +993,58 @@ JXG.extend(
  *  })();
  * </script><pre>
  *
+ *  @example
  *
+ *        // Add an image and use the group tools to manipulate it
+ *       let urlImg = "https://jsxgraph.org/distrib/images/uccellino.jpg";
+ *       let lowleft = [-2, -1]
+ *
+ *       let col = 'blue';
+ *       let p = [];
+ *       p.push(board.create('point', lowleft, { size: 5, strokeColor: col, fillColor: col }));
+ *       p.push(board.create('point', [2, -1], { size: 5, strokeColor: 'yellow', fillColor: 'yellow', name: 'scale' }));
+ *       p.push(board.create('point', [2, 1], { size: 5, strokeColor: 'red', fillColor: 'red', name: 'rotate' }));
+ *       p.push(board.create('point', [-2, 1], { size: 5, strokeColor: col, fillColor: col, name: 'translate' }));
+ *
+ *       let im = board.create('image', [urlImg, lowleft, [2, 2]]);
+ *       let pol = board.create('polygon', p, { hasInnerPoints: true });
+ *
+ *       let g = board.create('group', p.concat(im))
+ *       // g.addPoint(im)   // image, but adds as a point
+ *
+ *       g.setRotationCenter(lowleft)
+ *       g.setRotationPoints([p[2]]);
+ *
+ *       g.setScaleCenter(p[0]).setScalePoints(p[1]);
+ *
+ * </pre><div class="jxgbox" id="JXGd19b800a-57a9-4303-b49a-8f5b7a5489f1" style="width: 400px; height: 300px;"></div>
+ * <script type="text/javascript">
+ *  (function () {
+ *       let board = JXG.JSXGraph.initBoard('JXGd19b800a-57a9-4303-b49a-8f5b7a5489f1')
+ *
+ *       // Add an image and use the group tools to manipulate it
+ *       let urlImg = "https://jsxgraph.org/distrib/images/uccellino.jpg";
+ *       let lowleft = [-2, -1]
+ *
+ *       let col = 'blue';
+ *       let p = [];
+ *       p.push(board.create('point', lowleft, { size: 5, strokeColor: col, fillColor: col }));
+ *       p.push(board.create('point', [2, -1], { size: 5, strokeColor: 'yellow', fillColor: 'yellow', name: 'scale' }));
+ *       p.push(board.create('point', [2, 1], { size: 5, strokeColor: 'red', fillColor: 'red', name: 'rotate' }));
+ *       p.push(board.create('point', [-2, 1], { size: 5, strokeColor: col, fillColor: col, name: 'translate' }));
+ *
+ *       let im = board.create('image', [urlImg, lowleft, [2, 2]]);
+ *       let pol = board.create('polygon', p, { hasInnerPoints: true });
+ *
+ *       let g = board.create('group', p.concat(im))
+ *       // g.addPoint(im)   // image, but adds as a point
+ *
+ *       g.setRotationCenter(lowleft)
+ *       g.setRotationPoints([p[2]]);
+ *
+ *       g.setScaleCenter(p[0]).setScalePoints(p[1]);
+ *  })();
+ * </script><pre>
  */
 JXG.createGroup = function (board, parents, attributes) {
     var attr = Type.copyAttributes(attributes, board.options, "group"),

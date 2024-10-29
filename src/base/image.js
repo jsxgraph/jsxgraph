@@ -224,8 +224,7 @@ JXG.extend(
          *
          */
         updateSpan: function () {
-            var i,
-                j,
+            var i, j,
                 len = this.transformations.length,
                 v = [];
 
@@ -240,7 +239,6 @@ JXG.extend(
                 v[0] = [this.Z(), this.X(), this.Y()];
                 v[1] = [this.Z(), this.X() + this.W(), this.Y()];
                 v[2] = [this.Z(), this.X(), this.Y() + this.H()];
-
                 // Transform the three corners
                 for (i = 0; i < len; i++) {
                     for (j = 0; j < 3; j++) {
