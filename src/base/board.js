@@ -1347,12 +1347,7 @@ JXG.extend(
                             collect.push(dragEl);
                             // Save offset for large coords elements.
                             if (Type.exists(dragEl.coords)) {
-                                offset.push(
-                                    Statistics.subtract(dragEl.coords.scrCoords.slice(1), [
-                                        x,
-                                        y
-                                    ])
-                                );
+                                offset.push(Statistics.subtract(dragEl.coords.scrCoords.slice(1), [x, y]));
                             } else {
                                 offset.push([0, 0]);
                             }
