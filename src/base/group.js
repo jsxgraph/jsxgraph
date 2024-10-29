@@ -321,11 +321,11 @@ JXG.extend(
                         if (drag.id !== obj.id) {
                             T.bindTo(obj);
                         } else {
-                            obj.coords.setCoordinates(Const.COORDS_BY_USER, [
-                                this.coords[drag.id].usrCoords[1],
-                                this.coords[drag.id].usrCoords[2]
-                            ]);
-                            obj.addTransform(T);
+                            // obj.coords.setCoordinates(Const.COORDS_BY_USER, [
+                            //     this.coords[drag.id].usrCoords[1],
+                            //     this.coords[drag.id].usrCoords[2]
+                            // ]);
+                            // obj.addTransform(T);
                             // T.bindTo(obj);
                         }
                     }
