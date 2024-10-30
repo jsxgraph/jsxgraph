@@ -50,6 +50,7 @@ import Expect from "../utils/expect.js";
  * Math.Geometry namespace definition. This namespace holds geometrical algorithms,
  * especially intersection algorithms.
  * @name JXG.Math.Geometry
+ * @exports Mat.Geometry as JXG.Math.Geometry
  * @namespace
  */
 Mat.Geometry = {};
@@ -69,8 +70,8 @@ JXG.extend(
          * @param {JXG.Point|Array} B Another point or [x,y] array.
          * @param {JXG.Point|Array} C A circle - no, of course the third point or [x,y] array.
          * @deprecated Use {@link JXG.Math.Geometry.rad} instead.
-         * @see #rad
-         * @see #trueAngle
+         * @see JXG.Math.Geometry#rad
+         * @see JXG.Math.Geometry#trueAngle
          * @returns {Number} The angle in radian measure.
          */
         angle: function (A, B, C) {
@@ -120,7 +121,7 @@ JXG.extend(
          * @param {JXG.Point|Array} A Point or [x,y] array
          * @param {JXG.Point|Array} B Point or [x,y] array
          * @param {JXG.Point|Array} C Point or [x,y] array
-         * @see #rad
+         * @see JXG.Math.Geometry#rad
          * @returns {Number} The angle in degrees.
          */
         trueAngle: function (A, B, C) {
@@ -132,7 +133,7 @@ JXG.extend(
          * @param {JXG.Point|Array} A Point or [x,y] array
          * @param {JXG.Point|Array} B Point or [x,y] array
          * @param {JXG.Point|Array} C Point or [x,y] array
-         * @see #trueAngle
+         * @see JXG.Math.Geometry#trueAngle
          * @returns {Number} Angle in radians.
          */
         rad: function (A, B, C) {
@@ -1160,7 +1161,7 @@ JXG.extend(
          * @param  {Array|JXG.Point} q Point or its coordinates. Point object or array of length 3. First (homogeneous) coordinate is equal to 1.
          * @return {Number} Signed area of the triangle formed by these three points.
          *
-         * @see #windingNumber
+         * @see JXG.Math.Geometry#windingNumber
          */
         det3p: function (p1, p2, q) {
             var pp1, pp2, qq;
@@ -1328,7 +1329,7 @@ JXG.extend(
          * @returns {Boolean} if (x_in, y_in) is inside of the polygon.
          * @see JXG.Polygon#hasPoint
          * @see JXG.Polygon#pnpoly
-         * @see #windingNumber
+         * @see JXG.Math.Geometry#windingNumber
          *
          * @example
          * var pol = board.create('polygon', [[-1,2], [2,2], [-1,4]]);
@@ -1400,11 +1401,12 @@ JXG.extend(
          * i determines the intersection point if two points are available: <ul>
          *   <li>i==0: use the positive square root,</li>
          *   <li>i==1: use the negative square root.</li></ul>
-         * See further {@link JXG.Point#createIntersectionPoint}.
          * @param {Boolean} alwaysintersect. Flag that determines if segments and arc can have an outer intersection point
          * on their defining line or circle.
          * @returns {Function} Function returning a {@link JXG.Coords} object that determines
          * the intersection point.
+         * 
+         * @see JXG.Point#createIntersectionPoint
          */
         intersectionFunction: function (board, el1, el2, i, j, alwaysintersect) {
             var func,
@@ -3126,7 +3128,7 @@ JXG.extend(
          * @param {JXG.Point} point Point to project.
          * @param {JXG.Curve} curve Curve on that the point is projected.
          * @param {JXG.Board} [board=point.board] Reference to a board.
-         * @see #projectCoordsToCurve
+         * @see JXG.Math.Geometry#projectCoordsToCurve
          * @returns {Array} [JXG.Coords, position] The coordinates of the projection of the given
          * point on the given graph and the relative position on the curve (real number).
          */
@@ -3158,7 +3160,7 @@ JXG.extend(
          * @param {Number} t start value for newtons method
          * @param {JXG.Curve} curve Curve on that the point is projected.
          * @param {JXG.Board} [board=curve.board] Reference to a board.
-         * @see #projectPointToCurve
+         * @see JXG.Math.Geometry#projectPointToCurve
          * @returns {JXG.Coords} Array containing the coordinates of the projection of the given point on the given curve and
          * the position on the curve.
          */
