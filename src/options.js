@@ -339,6 +339,7 @@ JXG.Options = {
             x: {
                 name: 'x',
                 fixed: true,
+                needsRegularUpdate: false,
                 ticks: {
                     label: {
                         visible: 'inherit',
@@ -350,13 +351,13 @@ JXG.Options = {
                     tickEndings: [0, 1],
                     majorTickEndings: [1, 1],
                     drawZero: false,
-                    needsRegularUpdate: false,
                     visible: 'inherit'
                 }
             },
             y: {
                 name: 'y',
                 fixed: true,
+                needsRegularUpdate: false,
                 ticks: {
                     label: {
                         visible: 'inherit',
@@ -368,7 +369,6 @@ JXG.Options = {
                     tickEndings: [1, 0],
                     majorTickEndings: [1, 1],
                     drawZero: false,
-                    needsRegularUpdate: false,
                     visible: 'inherit'
                 }
             }

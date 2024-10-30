@@ -1707,6 +1707,10 @@ JXG.createAxis = function (board, parents, attributes) {
             locationOrg,
             visLabel, anchr, off;
 
+        if (!this.needsUpdate) {
+            return this;
+        }
+
         bbox = this.board.getBoundingBox();
         position = this.evalVisProp('position');
         direction = this.Direction();
