@@ -1477,7 +1477,7 @@ JXG.extend(
                 dragScrCoords[2] !== newDragScrCoords[2]
             ) {
                 drag.triggerEventHandlers([type + 'drag', 'drag'], [evt]);
-
+                // Update all elements of the board
                 this.update();
             }
             drag.highlight(true);

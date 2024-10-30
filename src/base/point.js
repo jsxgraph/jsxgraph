@@ -155,7 +155,7 @@ JXG.extend(
             this.transformations[0].update();
             if (this === this.baseElement) {
                 // Case of bindTo
-                c = this.transformations[0].apply(this.baseElement, "self");
+                c = this.transformations[0].apply(this, "self");
             } else {
                 c = this.transformations[0].apply(this.baseElement);
             }

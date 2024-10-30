@@ -221,7 +221,6 @@ JXG.extend(
                     this.updateGlider();
                 }
             }
-
             this.updateTransform(fromParent);
 
             return this;
