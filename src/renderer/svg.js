@@ -723,13 +723,13 @@ JXG.extend(
 
         // Already documented in JXG.AbstractRenderer
         transformImage: function (el, t) {
-            var s, m,
-                node = el.rendNode,
+            var s, m, node,
                 str = "",
                 cx, cy,
                 len = t.length;
 
             if (len > 0) {
+                node = el.rendNode;
                 m = this.joinTransforms(el, t);
                 s = [m[1][1], m[2][1], m[1][2], m[2][2], m[1][0], m[2][0]].join(",");
                 if (s.indexOf('NaN') === -1) {

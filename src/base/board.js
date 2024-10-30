@@ -1345,14 +1345,20 @@ JXG.extend(
                         ) {
                             dragEl = pEl;
                             collect.push(dragEl);
+
                             // Save offset for large coords elements.
                             if (Type.exists(dragEl.coords)) {
-                                offset.push(Statistics.subtract(dragEl.coords.scrCoords.slice(1), [x, y]));
+                                if (dragEl.elementClass === Const.OBJECT_CLASS_POINT) {
+                                    offset.push(Statistics.subtract(dragEl.coords.scrCoords.slice(1), [x, y]));
+                                } else {
+                                    // Images and texts
+                                    offset.push(Statistics.subtract(dragEl.actualCoords.scrCoords.slice(1), [x, y]));
+                                }
                             } else {
                                 offset.push([0, 0]);
                             }
 
-                            // we can't drop out of this loop because of the event handling system
+                            // We can't drop out of this loop because of the event handling system
                             //if (this.attr.takefirst) {
                             //    return collect;
                             //}
@@ -1430,7 +1436,8 @@ JXG.extend(
 
             this.addLogEntry('drag', drag, newPos.usrCoords.slice(1));
 
-            // Store the position.
+            // Store the position and add the correctionvector from the mouse
+            // position to the object's coords.
             this.drag_position = [newPos.scrCoords[1], newPos.scrCoords[2]];
             this.drag_position = Statistics.add(this.drag_position, this._drag_offset);
 
@@ -1442,7 +1449,7 @@ JXG.extend(
             // We have to distinguish between CoordsElements and other elements like lines.
             // The latter need the difference between two move events.
             if (Type.exists(drag.coords)) {
-                drag.setPositionDirectly(Const.COORDS_BY_SCREEN, this.drag_position);
+                drag.setPositionDirectly(Const.COORDS_BY_SCREEN, this.drag_position, [x, y]);
             } else {
                 this.displayInfobox(false);
                 // Hide infobox in case the user has touched an intersection point

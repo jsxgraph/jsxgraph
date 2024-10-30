@@ -72,7 +72,13 @@ JXG.CoordsElement = function (coordinates, isLabel) {
      * @private
      */
     this.coords = new Coords(Const.COORDS_BY_USER, coordinates, this.board);
+
+    // initialCoords and actualCoords are needed to handle transformations
+    // and dragging of objects simultaneously.
+    // actualCoords are needed for non-points since the visible objects
+    // is transformed in the renderer.
     this.initialCoords = new Coords(Const.COORDS_BY_USER, coordinates, this.board);
+    this.actualCoords = new Coords(Const.COORDS_BY_USER, coordinates, this.board);
 
     /**
      * Relative position on a slide element (line, circle, curve) if element is a glider on this element.
@@ -1163,8 +1169,7 @@ JXG.extend(
          */
         setPositionDirectly: function (method, coords) {
             var i,
-                c,
-                dc,
+                c, dc, m,
                 oldCoords = this.coords,
                 newCoords;
 
@@ -1200,10 +1205,17 @@ JXG.extend(
                     }
                     newCoords = coords;
                 }
-                for (i = this.transformations.length - 1; i >= 0; i--) {
-                    newCoords = Mat.matVecMult(Mat.inverse(this.transformations[i].matrix), newCoords);
+                m = [[1, 0, 0], [0, 1, 0], [0, 0, 1]];
+                for (i = 0; i < this.transformations.length; i++) {
+                    m = Mat.matMatMult(this.transformations[i].matrix, m);
                 }
+                newCoords = Mat.matVecMult(Mat.inverse(m), newCoords);
+
                 this.initialCoords.setCoordinates(Const.COORDS_BY_USER, newCoords);
+                if (this.elementClass !== Const.OBJECT_CLASS_POINT) {
+                    // This is necessary for images and texts.
+                    this.coords.setCoordinates(Const.COORDS_BY_USER, newCoords);
+                }
             }
             this.prepareUpdate().update();
 
@@ -1655,15 +1667,29 @@ JXG.extend(
          * @returns {JXG.CoordsElement} Reference to itself.
          */
         updateTransform: function (fromParent) {
-            var i;
+            var c, i;
 
-            if (this.transformations.length === 0) {
+            if (this.transformations.length === 0 || this.baseElement === null) {
                 return this;
             }
 
-            for (i = 0; i < this.transformations.length; i++) {
-                this.transformations[i].update();
+            // This method is called for non-points only.
+            // Here, we set the object's "actualCoords", because
+            // coords and initialCoords coincide since transformations
+            // for this elements are handled in the renderers.
+
+            this.transformations[0].update();
+            if (this === this.baseElement) {
+                // Case of bindTo
+                c = this.transformations[0].apply(this, "self");
+            } else {
+                c = this.transformations[0].apply(this.baseElement);
             }
+            for (i = 1; i < this.transformations.length; i++) {
+                this.transformations[i].update();
+                c = Mat.matVecMult(this.transformations[i].matrix, c);
+            }
+            this.actualCoords.setCoordinates(Const.COORDS_BY_USER, c);
 
             return this;
         },
