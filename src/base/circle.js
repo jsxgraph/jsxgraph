@@ -696,7 +696,7 @@ JXG.extend(
             this.numTraces++;
             Type.clearVisPropOld(copy);
             copy.visPropCalc = {
-                visible: copy.evalVisProp('visible')
+                visible: this.evalVisProp('visible')
             };
 
             er = this.board.renderer.enhancedRendering;

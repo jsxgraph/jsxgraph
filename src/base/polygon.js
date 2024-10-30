@@ -206,7 +206,7 @@ JXG.extend(
          *
          */
         pnpoly: function (x_in, y_in, coord_type) {
-            return Geometry.pnpoly(x_in, y_in, this.vertices, coord_type);
+            return Geometry.pnpoly(x_in, y_in, this.vertices, coord_type, this.board);
         },
 
         /**
@@ -345,7 +345,7 @@ JXG.extend(
             Type.clearVisPropOld(copy);
 
             copy.visPropCalc = {
-                visible: copy.evalVisProp('visible')
+                visible: this.evalVisProp('visible')
             };
 
             er = this.board.renderer.enhancedRendering;
