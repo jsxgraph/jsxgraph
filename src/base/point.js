@@ -450,7 +450,7 @@ JXG.extend(
                 }
             }
             copy.evalVisProp = function(val) {
-                return this.visProp.val;
+                return copy.visProp[val];
             };
             copy.eval = function(val) {
                 return val;
@@ -465,7 +465,6 @@ JXG.extend(
                 visible: this.evalVisProp('visible')
             };
 
-console.log(copy.visProp)            
             this.board.renderer.drawPoint(copy);
             this.traces[copy.id] = copy.rendNode;
 
