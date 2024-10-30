@@ -675,28 +675,16 @@ JXG.extend(
         cloneToBackground: function () {
             var er,
                 r = this.Radius(),
-                copy = {
-                    id: this.id + "T" + this.numTraces,
-                    elementClass: Const.OBJECT_CLASS_CIRCLE,
-                    center: {
-                        coords: this.center.coords
-                    },
-                    Radius: function () {
-                        return r;
-                    },
-                    getRadius: function () {
-                        return r;
-                    },
-                    board: this.board,
-                    visProp: Type.deepCopy(this.visProp, this.visProp.traceattributes, true)
-                };
+                copy = Type.getCloneObject(this);
 
-            copy.visProp.layer = this.board.options.layer.trace;
-
-            this.numTraces++;
-            Type.clearVisPropOld(copy);
-            copy.visPropCalc = {
-                visible: this.evalVisProp('visible')
+            copy.center = {
+                coords: this.center.coords
+            };
+            copy.Radius = function () {
+                return r;
+            };
+            copy.getRadius = function () {
+                return r;
             };
 
             er = this.board.renderer.enhancedRendering;

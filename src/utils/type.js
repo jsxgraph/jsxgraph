@@ -1491,6 +1491,49 @@ JXG.extend(
         },
 
         /**
+         * Create a stripped down version of a JSXGraph element for cloning to the background.
+         * Used in {JXG.GeometryElement#cloneToBackground} for creating traces.
+         *
+         * @param {JXG.GeometryElement} el Element to be cloned
+         * @returns Object Cloned element
+         * @private
+         */
+        getCloneObject: function(el) {
+            var obj, key,
+                copy = {};
+
+            copy.id = el.id + "T" + el.numTraces;
+            el.numTraces += 1;
+
+            copy.coords = el.coords;
+            obj = this.deepCopy(el.visProp, el.visProp.traceattributes, true);
+            copy.visProp = {};
+            for (key in obj) {
+                if (obj.hasOwnProperty(key)) {
+                    copy.visProp[key] = el.eval(obj[key]);
+                }
+            }
+            copy.evalVisProp = function(val) {
+                return copy.visProp[val];
+            };
+            copy.eval = function(val) {
+                return val;
+            };
+
+            copy.visProp.layer = el.board.options.layer.trace;
+            copy.visProp.tabindex = null;
+            copy.board = el.board;
+            copy.elementClass = el.elementClass;
+
+            this.clearVisPropOld(copy);
+            copy.visPropCalc = {
+                visible: el.evalVisProp('visible')
+            };
+
+            return copy;
+        },
+
+        /**
          * Converts a JavaScript object into a JSON string.
          * @param {Object} obj A JavaScript object, functions will be ignored.
          * @param {Boolean} [noquote=false] No quotes around the name of a property.

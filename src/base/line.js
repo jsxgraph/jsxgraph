@@ -790,27 +790,13 @@ JXG.extend(
 
         // documented in geometry element
         cloneToBackground: function () {
-            var copy = {},
-                r,
-                s,
+            var copy = Type.getCloneObject(this),
+                r, s,
                 er;
 
-            copy.id = this.id + "T" + this.numTraces;
-            copy.elementClass = Const.OBJECT_CLASS_LINE;
-            this.numTraces++;
             copy.point1 = this.point1;
             copy.point2 = this.point2;
-
             copy.stdform = this.stdform;
-
-            copy.board = this.board;
-
-            copy.visProp = Type.deepCopy(this.visProp, this.visProp.traceattributes, true);
-            copy.visProp.layer = this.board.options.layer.trace;
-            Type.clearVisPropOld(copy);
-            copy.visPropCalc = {
-                visible: this.evalVisProp('visible')
-            };
 
             s = this.getSlope();
             r = this.getRise();

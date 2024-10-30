@@ -1215,25 +1215,12 @@ JXG.extend(
         // documented in geometry element
         cloneToBackground: function () {
             var er,
-                copy = {
-                    id: this.id + "T" + this.numTraces,
-                    elementClass: Const.OBJECT_CLASS_CURVE,
+                copy = Type.getCloneObject(this);
 
-                    points: this.points.slice(0),
-                    bezierDegree: this.bezierDegree,
-                    numberPoints: this.numberPoints,
-                    board: this.board,
-                    visProp: Type.deepCopy(this.visProp, this.visProp.traceattributes, true)
-                };
+            copy.points = this.points.slice(0);
+            copy.bezierDegree = this.bezierDegree;
+            copy.numberPoints = this.numberPoints;
 
-            copy.visProp.layer = this.board.options.layer.trace;
-            copy.visProp.curvetype = this.visProp.curvetype;
-            this.numTraces++;
-
-            Type.clearVisPropOld(copy);
-            copy.visPropCalc = {
-                visible: this.evalVisProp('visible')
-            };
             er = this.board.renderer.enhancedRendering;
             this.board.renderer.enhancedRendering = true;
             this.board.renderer.drawCurve(copy);

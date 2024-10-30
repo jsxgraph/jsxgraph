@@ -1405,7 +1405,7 @@ JXG.extend(
          * on their defining line or circle.
          * @returns {Function} Function returning a {@link JXG.Coords} object that determines
          * the intersection point.
-         * 
+         *
          * @see JXG.Point#createIntersectionPoint
          */
         intersectionFunction: function (board, el1, el2, i, j, alwaysintersect) {
