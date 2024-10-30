@@ -1959,7 +1959,7 @@ JXG.extend(
                     "transform",
                     [
                         function () {
-                            return (this.eval(angle) * Math.PI) / 180;
+                            return (that.eval(angle) * Math.PI) / 180;
                         }
                     ],
                     { type: "rotate" }

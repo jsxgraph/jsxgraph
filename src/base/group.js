@@ -229,7 +229,7 @@ JXG.extend(
                 desc,
                 s, sx, sy,
                 alpha,
-                t, T, Tinv,
+                t, T,
                 center,
                 obj = null;
 
@@ -248,7 +248,7 @@ JXG.extend(
             // Prepare translation, scaling or rotation.
             // Scaling and rotation is handled by transformations for all elements.
             // Translation is handled by direct coordinate manipulation for points.
-            // For images and texts, all translation, scaling and rotation is 
+            // For images and texts, all translation, scaling and rotation is
             // done by binding a transformation to the element.
             if (drag.action === "translation") {
                 t = [
@@ -319,14 +319,8 @@ JXG.extend(
                         t.bindTo(obj);
                     } else {
                         if (drag.id !== obj.id) {
+                            // At the time being (30.10.2024), non-points in a group can not be dragged
                             T.bindTo(obj);
-                        } else {
-                            // obj.coords.setCoordinates(Const.COORDS_BY_USER, [
-                            //     this.coords[drag.id].usrCoords[1],
-                            //     this.coords[drag.id].usrCoords[2]
-                            // ]);
-                            // obj.addTransform(T);
-                            // T.bindTo(obj);
                         }
                     }
                 }
