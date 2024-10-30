@@ -319,7 +319,7 @@ JXG.extend(
                         t.bindTo(obj);
                     } else {
                         if (drag.id !== obj.id) {
-                            // At the time being (30.10.2024), non-points in a group can not be dragged
+                            // At the time being (30.10.2024), non-points in a group can not be dragged.
                             T.bindTo(obj);
                         }
                     }
@@ -503,7 +503,6 @@ JXG.extend(
         addPoint: function (object) {
             this.objects[object.id] = { point: this.board.select(object) };
             this._updateCoordsCache(object.id);
-            //this.coords[object.id] = {usrCoords: object.coords.usrCoords.slice(0) };
             this.translationPoints.push(object);
 
             object.groups.push(this.id);
@@ -989,56 +988,54 @@ JXG.extend(
  *
  *  @example
  *
- *   // Add an image and use the group tools to manipulate it
- *     let urlImg = "https://jsxgraph.org/distrib/images/uccellino.jpg";
+ *        // Add an image and use the group tools to manipulate it
+ *       let urlImg = "https://jsxgraph.org/distrib/images/uccellino.jpg";
+ *       let lowleft = [-2, -1]
  *
- *     let col = 'blue';
- *     let p = [];
- *     p.push(board.create('point', [-2, -1], { size: 5, strokeColor: col, fillColor: col }));
- *     p.push(board.create('point', [2, -1], { size: 5, strokeColor: 'yellow', fillColor: 'yellow', name: 'scale' }));
- *     p.push(board.create('point', [2, 1], { size: 5, strokeColor: 'red', fillColor: 'red', name: 'rotate' }));
- *     p.push(board.create('point', [-2, 1], { size: 5, strokeColor: col, fillColor: col, name: 'translate' }));
+ *       let col = 'blue';
+ *       let p = [];
+ *       p.push(board.create('point', lowleft, { size: 5, strokeColor: col, fillColor: col }));
+ *       p.push(board.create('point', [2, -1], { size: 5, strokeColor: 'yellow', fillColor: 'yellow', name: 'scale' }));
+ *       p.push(board.create('point', [2, 1], { size: 5, strokeColor: 'red', fillColor: 'red', name: 'rotate' }));
+ *       p.push(board.create('point', [-2, 1], { size: 5, strokeColor: col, fillColor: col, name: 'translate' }));
  *
- *     let pivot = board.create('point',[-1, 0], {size: 5, strokeColor:col, fillColor:col,name: 'pivot'});
+ *       let im = board.create('image', [urlImg, lowleft, [2, 2]]);
+ *       let pol = board.create('polygon', p, { hasInnerPoints: true });
  *
- *     let im = board.create('image', [urlImg, [-2, -1], [2, 2]]);
- *     let pol = board.create('polygon', p, { hasInnerPoints: true });
+ *       let g = board.create('group', p.concat(im))
+ *       // g.addPoint(im)   // image, but adds as a point
  *
- *     let g = board.create('group', p.concat(im).concat(pivot))
- *     // g.addPoint(im)   // image, but adds as a point
+ *       g.setRotationCenter(lowleft)
+ *       g.setRotationPoints([p[2]]);
  *
- *     g.setRotationCenter(pivot)   // pivot on center of image for rotations
- *     g.setRotationPoints([p[2]]);
+ *       g.setScaleCenter(p[0]).setScalePoints(p[1]);
  *
- *     g.setScaleCenter(p[0]).setScalePoints(p[1]);
  * </pre><div class="jxgbox" id="JXGd19b800a-57a9-4303-b49a-8f5b7a5489f1" style="width: 400px; height: 300px;"></div>
  * <script type="text/javascript">
  *  (function () {
  *       let board = JXG.JSXGraph.initBoard('JXGd19b800a-57a9-4303-b49a-8f5b7a5489f1')
  *
- *    // Add an image and use the group tools to manipulate it
- *     let urlImg = "https://jsxgraph.org/distrib/images/uccellino.jpg";
+ *       // Add an image and use the group tools to manipulate it
+ *       let urlImg = "https://jsxgraph.org/distrib/images/uccellino.jpg";
+ *       let lowleft = [-2, -1]
  *
- *     let col = 'blue';
- *     let p = [];
- *     p.push(board.create('point', [-2, -1], { size: 5, strokeColor: col, fillColor: col }));
- *     p.push(board.create('point', [2, -1], { size: 5, strokeColor: 'yellow', fillColor: 'yellow', name: 'scale' }));
- *     p.push(board.create('point', [2, 1], { size: 5, strokeColor: 'red', fillColor: 'red', name: 'rotate' }));
- *     p.push(board.create('point', [-2, 1], { size: 5, strokeColor: col, fillColor: col, name: 'translate' }));
+ *       let col = 'blue';
+ *       let p = [];
+ *       p.push(board.create('point', lowleft, { size: 5, strokeColor: col, fillColor: col }));
+ *       p.push(board.create('point', [2, -1], { size: 5, strokeColor: 'yellow', fillColor: 'yellow', name: 'scale' }));
+ *       p.push(board.create('point', [2, 1], { size: 5, strokeColor: 'red', fillColor: 'red', name: 'rotate' }));
+ *       p.push(board.create('point', [-2, 1], { size: 5, strokeColor: col, fillColor: col, name: 'translate' }));
  *
- *     let pivot = board.create('point',[-1, 0], {size: 5, strokeColor:col, fillColor:col,name: 'pivot'});
+ *       let im = board.create('image', [urlImg, lowleft, [2, 2]]);
+ *       let pol = board.create('polygon', p, { hasInnerPoints: true });
  *
- *     let im = board.create('image', [urlImg, [-2, -1], [2, 2]]);
- *     let pol = board.create('polygon', p, { hasInnerPoints: true });
+ *       let g = board.create('group', p.concat(im))
+ *       // g.addPoint(im)   // image, but adds as a point
  *
- *     let g = board.create('group', p.concat(im).concat(pivot))
- *     // g.addPoint(im)   // image, but adds as a point
+ *       g.setRotationCenter(lowleft)
+ *       g.setRotationPoints([p[2]]);
  *
- *     g.setRotationCenter(pivot)   // pivot on center of image for rotations
- *     g.setRotationPoints([p[2]]);
- *
- *     g.setScaleCenter(p[0]).setScalePoints(p[1]);
- *
+ *       g.setScaleCenter(p[0]).setScalePoints(p[1]);
  *  })();
  * </script><pre>
  */
