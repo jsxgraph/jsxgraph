@@ -423,12 +423,9 @@ JXG.extend(
          */
         melt: function (t) {
             var res = [],
-                i,
+                i, j, k, s,
                 len,
-                len0,
-                k,
-                s,
-                j;
+                len0;
 
             len = t.matrix.length;
             len0 = this.matrix[0].length;

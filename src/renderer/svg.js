@@ -822,7 +822,6 @@ JXG.extend(
             } else if (level >= Options.layer.numlayers) {
                 level = Options.layer.numlayers - 1;
             }
-
             this.layer[level].appendChild(node);
 
             return node;

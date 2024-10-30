@@ -323,7 +323,7 @@ JXG.extend(
                 // in these cases to not use el directly.
                 face = Options.normalizePointFace(el.evalVisProp('face'));
 
-            // determine how the point looks like
+            // Determine how the point looks like
             if (face === "o") {
                 prim = "ellipse";
             } else if (face === "[]") {
@@ -340,7 +340,7 @@ JXG.extend(
             );
             this.appendNodesToElement(el, prim);
 
-            // adjust visual propertiess
+            // adjust visual properties
             this._updateVisual(el, { dash: true, shadow: true }, true);
 
             // By now we only created the xml nodes and set some styles, in updatePoint

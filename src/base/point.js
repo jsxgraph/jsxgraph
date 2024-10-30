@@ -430,22 +430,42 @@ JXG.extend(
 
         // Already documented in GeometryElement
         cloneToBackground: function () {
-            var copy = {};
+            var copy = {}, obj, key, val;
 
             copy.id = this.id + "T" + this.numTraces;
             this.numTraces += 1;
 
             copy.coords = this.coords;
-            copy.visProp = Type.deepCopy(this.visProp, this.visProp.traceattributes, true);
-            copy.visProp.layer = this.board.options.layer.trace;
+            // copy.visProp = Type.deepCopy(this.visProp, this.visProp.traceattributes, true);
+            // ---------
+            obj = Type.deepCopy(this.visProp, this.visProp.traceattributes, true);
+            copy.visProp = {};
+            for (key in obj) {
+                if (obj.hasOwnProperty(key)) {
+                    val = this.eval(obj[key]);
+                    // console.log(key, val, typeof val);
+                    // if (typeof val !== 'object') {
+                        copy.visProp[key] = this.eval(obj[key]);
+                    // }
+                }
+            }
+            copy.evalVisProp = function(val) {
+                return this.visProp.val;
+            };
+            copy.eval = function(val) {
+                return val;
+            };
+            // ---------
+
+            copy.visProp.layer = this.eval(this.board.options.layer.trace);
             copy.elementClass = Const.OBJECT_CLASS_POINT;
             copy.board = this.board;
             Type.clearVisPropOld(copy);
-
             copy.visPropCalc = {
                 visible: this.evalVisProp('visible')
             };
 
+console.log(copy.visProp)            
             this.board.renderer.drawPoint(copy);
             this.traces[copy.id] = copy.rendNode;
 
