@@ -340,7 +340,7 @@ JXG.extend(
             );
             this.appendNodesToElement(el, prim);
 
-            // adjust visual propertys
+            // adjust visual propertiess
             this._updateVisual(el, { dash: true, shadow: true }, true);
 
             // By now we only created the xml nodes and set some styles, in updatePoint

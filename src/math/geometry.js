@@ -1323,10 +1323,11 @@ JXG.extend(
          * @param {Number} [coord_type=JXG.COORDS_BY_SCREEN] Type of coordinates used here.
          *   Possible values are <b>JXG.COORDS_BY_USER</b> and <b>JXG.COORDS_BY_SCREEN</b>.
          *   Default value is JXG.COORDS_BY_SCREEN.
+         * @param {JXG.Board} board Board object
          *
          * @returns {Boolean} if (x_in, y_in) is inside of the polygon.
-         * @see JXG.Polygon.hasPoint
-         * @see JXG.Polygon.pnpoly
+         * @see JXG.Polygon#hasPoint
+         * @see JXG.Polygon#pnpoly
          * @see #windingNumber
          *
          * @example
@@ -1334,7 +1335,7 @@ JXG.extend(
          * var p = board.create('point', [4, 3]);
          * var txt = board.create('text', [-1, 0.5, function() {
          *   return 'Point A is inside of the polygon = ' +
-         *     JXG.Math.Geometry.pnpoly(p.X(), p.Y(), JXG.COORDS_BY_USER, pol.vertices);
+         *     JXG.Math.Geometry.pnpoly(p.X(), p.Y(), pol.vertices, JXG.COORDS_BY_USER, board);
          * }]);
          *
          * </pre><div id="JXG4656ed42-f965-4e35-bb66-c334a4529683" class="jxgbox" style="width: 300px; height: 300px;"></div>
@@ -1345,7 +1346,7 @@ JXG.extend(
          *     var pol = board.create('polygon', [[-1,2], [2,2], [-1,4]]);
          *     var p = board.create('point', [4, 3]);
          *     var txt = board.create('text', [-1, 0.5, function() {
-         *     		return 'Point A is inside of the polygon = ' + JXG.Math.Geometry.pnpoly(p.X(), p.Y(), JXG.COORDS_BY_USER, pol.vertices);
+         *     		return 'Point A is inside of the polygon = ' + JXG.Math.Geometry.pnpoly(p.X(), p.Y(), pol.vertices, JXG.COORDS_BY_USER, board);
          *     }]);
          *
          *     })();
@@ -1353,14 +1354,14 @@ JXG.extend(
          * </script><pre>
          *
          */
-        pnpoly: function (x_in, y_in, path, coord_type) {
+        pnpoly: function (x_in, y_in, path, coord_type, board) {
             var i, j, vi, vj, len,
                 x, y, crds,
                 v = path,
                 isIn = false;
 
             if (coord_type === Const.COORDS_BY_USER) {
-                crds = new Coords(Const.COORDS_BY_USER, [x_in, y_in], this.board);
+                crds = new Coords(Const.COORDS_BY_USER, [x_in, y_in], board);
                 x = crds.scrCoords[1];
                 y = crds.scrCoords[2];
             } else {

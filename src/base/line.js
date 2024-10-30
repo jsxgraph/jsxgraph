@@ -809,7 +809,7 @@ JXG.extend(
             copy.visProp.layer = this.board.options.layer.trace;
             Type.clearVisPropOld(copy);
             copy.visPropCalc = {
-                visible: copy.evalVisProp('visible')
+                visible: this.evalVisProp('visible')
             };
 
             s = this.getSlope();

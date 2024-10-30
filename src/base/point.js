@@ -443,7 +443,7 @@ JXG.extend(
             Type.clearVisPropOld(copy);
 
             copy.visPropCalc = {
-                visible: copy.evalVisProp('visible')
+                visible: this.evalVisProp('visible')
             };
 
             this.board.renderer.drawPoint(copy);
