@@ -224,7 +224,7 @@ JXG.extend(
          * @returns {JXG.Group} returns this group
          */
         update: function () {
-            var drag, el,
+            var i, drag, el,
                 actionCenter,
                 desc,
                 s, sx, sy,
@@ -255,6 +255,17 @@ JXG.extend(
                     obj.coords.usrCoords[1] - this.coords[drag.id].usrCoords[1],
                     obj.coords.usrCoords[2] - this.coords[drag.id].usrCoords[2]
                 ];
+
+                if (obj.elementClass !== Const.OBJECT_CLASS_POINT) {
+                    // For images and texts we have to update the drag direction
+                    // by reapplying all transformations.
+
+                    t.unshift(0);
+                    for (i = 0; i < obj.transformations.length; i++) {
+                        t = Mat.matVecMult(obj.transformations[i].matrix, t);
+                    }
+                    t.shift();
+                }
 
                 // For images and texts
                 T = this.board.create("transform", t, { type: "translate" });
@@ -314,13 +325,15 @@ JXG.extend(
             // Bind the transformation to any images and texts
             for (el in this.objects) {
                 obj = this.objects[el].point;
-                if (obj.elType !== 'point') {
+                if (obj.elementClass !== Const.OBJECT_CLASS_POINT) {
                     if (Type.exists(t.board)) {
-                        t.bindTo(obj);
+                        // t itself is a transformation
+                        t.meltTo(obj);
                     } else {
+                        // Drag element is a point , therefore
+                        // t is an array and we have to use the transformation T.
                         if (drag.id !== obj.id) {
-                            // At the time being (30.10.2024), non-points in a group can not be dragged.
-                            T.bindTo(obj);
+                            T.meltTo(obj);
                         }
                     }
                 }
@@ -465,7 +478,7 @@ JXG.extend(
                         if (obj.id !== drag.id) {
                             if (drag.action === "translation") {
                                 if (!Type.isInArray(drag.changed, obj.id)) {
-                                    if (obj.elType === 'point') {
+                                    if (obj.elementClass === Const.OBJECT_CLASS_POINT) {
                                         obj.coords.setCoordinates(Const.COORDS_BY_USER, [
                                             this.coords[el].usrCoords[1] + t[0],
                                             this.coords[el].usrCoords[2] + t[1]
@@ -476,7 +489,7 @@ JXG.extend(
                                 drag.action === "rotation" ||
                                 drag.action === "scaling"
                             ) {
-                                if (obj.elType === 'point') {
+                                if (obj.elementClass === Const.OBJECT_CLASS_POINT) {
                                     t.applyOnce([obj]);
                                 }
                             }
