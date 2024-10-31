@@ -1510,7 +1510,16 @@ JXG.extend(
             copy.visProp = {};
             for (key in obj) {
                 if (obj.hasOwnProperty(key)) {
-                    copy.visProp[key] = el.eval(obj[key]);
+                    if (
+                        key.indexOf('aria') !== 0 &&
+                        key.indexOf('highlight') !== 0 &&
+                        key.indexOf('attractor') !== 0 &&
+                        key !== 'label' &&
+                        key !== 'needsregularupdate' &&
+                        key !== 'infoboxdigits'
+                    ) {
+                        copy.visProp[key] = el.eval(obj[key]);
+                    }
                 }
             }
             copy.evalVisProp = function(val) {
@@ -1522,6 +1531,7 @@ JXG.extend(
 
             copy.visProp.layer = el.board.options.layer.trace;
             copy.visProp.tabindex = null;
+            copy.visProp.highlight = false;
             copy.board = el.board;
             copy.elementClass = el.elementClass;
 
