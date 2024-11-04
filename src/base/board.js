@@ -628,6 +628,17 @@ JXG.Board = function (container, renderer, id,
     this._isResizing = false;
 
     /**
+     * A flag which tells us if the update is triggered by a change of the
+     * 3D view. In that case we only have to update the projection of
+     * the 3D elements and can avoid a full board update.
+     *
+     * @type Boolean
+     * @private
+     * @default false
+     */
+    this._change3DView = false;
+
+    /**
      * A bounding box for the selection
      * @type Array
      * @default [ [0,0], [0,0] ]
@@ -5696,7 +5707,7 @@ JXG.extend(
          * Sets for all objects the needsUpdate flag to 'true'.
          * @returns {JXG.Board} Reference to the board
          */
-        prepareUpdate: function (change3DView) {
+        prepareUpdate: function () {
             var el,
                 pEl,
                 len = this.objectsList.length;
@@ -5709,7 +5720,7 @@ JXG.extend(
 
             for (el = 0; el < len; el++) {
                 pEl = this.objectsList[el];
-                if (change3DView) {
+                if (this._change3DView) {
                     pEl.needsUpdate = pEl.visProp.element3d !== null && (pEl.needsRegularUpdate || this.needsFullUpdate);
                 } else {
                     pEl.needsUpdate = pEl.needsRegularUpdate || this.needsFullUpdate;
@@ -5943,7 +5954,7 @@ JXG.extend(
          * @param {JXG.GeometryElement} [drag] Element that caused the update.
          * @returns {JXG.Board} Reference to the board
          */
-        update: function (drag, change3DView) {
+        update: function (drag) {
             var i, len, b, insert, storeActiveEl;
 
             if (this.inUpdate || this.isSuspendedUpdate) {
@@ -5965,7 +5976,7 @@ JXG.extend(
                 insert = this.renderer.removeToInsertLater(this.renderer.svgRoot);
             }
 
-            this.prepareUpdate(change3DView).updateElements(drag).updateConditions();
+            this.prepareUpdate().updateElements(drag).updateConditions();
 
             this.renderer.suspendRedraw(this);
             this.updateRenderer();
@@ -5984,7 +5995,7 @@ JXG.extend(
                 b = this.dependentBoards[i];
                 if (Type.exists(b) && b !== this) {
                     b.updateQuality = this.updateQuality;
-                    b.prepareUpdate(change3DView).updateElements().updateConditions();
+                    b.prepareUpdate().updateElements().updateConditions();
                     b.renderer.suspendRedraw(this);
                     b.updateRenderer();
                     b.renderer.unsuspendRedraw();

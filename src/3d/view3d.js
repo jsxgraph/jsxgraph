@@ -1384,7 +1384,9 @@ JXG.extend(
         if (this.az_slide.position > 1) {
             this.az_slide.position = 0.0;
         }
-        this.board.update(null, true);
+        this.board._change3DView = true;
+        this.board.update();
+        this.board._change3DView = false;
 
         this.timeoutAzimuth = setTimeout(function () {
             this.animateAzimuth();
@@ -1431,7 +1433,7 @@ JXG.extend(
         this.az_slide.setValue(az);
         this.el_slide.setValue(el);
         this.r = r;
-        this.board.update(null, true);
+        this.board.update();
 
         return this;
     },
@@ -1590,6 +1592,7 @@ JXG.extend(
         }
 
         this.setView(az, el);
+
         return this;
     },
 
@@ -1642,7 +1645,7 @@ JXG.extend(
         }
 
         this.bank_slide.setValue(bank);
-        this.board.update(null, true);
+        this.board.update();
         return this;
     },
 
@@ -1667,7 +1670,7 @@ JXG.extend(
             x: x,
             y: -y
         };
-        this.board.update(null, true);
+        this.board.update();
         return this;
     },
 
@@ -1689,6 +1692,8 @@ JXG.extend(
         if (this.board.mode !== this.board.BOARD_MODE_NONE) {
             return;
         }
+
+        this.board._change3DView = true;
 
         if (this.evalVisProp('trackball.enabled')) {
             neededButton = this.evalVisProp('trackball.button');
@@ -1789,6 +1794,8 @@ JXG.extend(
             this._hasMoveTrackball = false;
         }
         Env.removeEvent(document, 'pointerup', this.pointerUpHandler, this);
+        this.board._change3DView = false;
+
     }
 });
 
@@ -2381,6 +2388,7 @@ JXG.createView3D = function (board, parents, attributes) {
         var neededKey,
             catchEvt = false;
 
+        // this.board._change3DView = true;
         if (view.evalVisProp('el.keyboard.enabled') &&
             (event.key === 'ArrowUp' || event.key === 'ArrowDown')
         ) {
@@ -2426,6 +2434,8 @@ JXG.createView3D = function (board, parents, attributes) {
             // can not be used any more.
             event.preventDefault();
         }
+        // this.board._change3DView = false;
+
     }, view);
 
     // Add events for the pointer navigation
