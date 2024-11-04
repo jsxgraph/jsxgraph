@@ -405,8 +405,8 @@ JXG.extend(Options, {
         strokeWidth: 1,
         tabindex: null,
 
-        point1: { visible: false, name: "" },
-        point2: { visible: false, name: "", label: { visible: true } }
+        point1: { visible: false, name: "", withLabel: false },
+        point2: { visible: false, name: "", withLabel: false, label: { visible: true } }
     },
 
     circle3d: {
@@ -551,6 +551,8 @@ JXG.extend(Options, {
          * @visprop
          */
 
+        withLabel: false
+
         /**#@-*/
     },
 
@@ -568,7 +570,8 @@ JXG.extend(Options, {
         drawLabels: true,
 
         label: {
-            visible: true
+            visible: true,
+            withLabel: false
         }
 
         /**#@-*/
