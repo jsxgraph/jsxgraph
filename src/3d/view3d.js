@@ -72,7 +72,7 @@ JXG.View3D = function (board, parents, attributes) {
     this.objects = {};
 
     /**
-     * An array containing all the points in the view.
+     * An array containing all the elements in the view that are sorted due to their depth order.
      * @Type Array
      * @private
      */
@@ -744,7 +744,8 @@ JXG.extend(
             ],
             mat2D, objectToClip, size,
             dx, dy,
-            objectsList;
+            id, el;
+            // objectsList;
 
         if (
             !Type.exists(this.el_slide) ||
@@ -834,10 +835,19 @@ JXG.extend(
         // if depth-ordering for points was just switched on, initialize the
         // list of points
         if (this.visProp.depthorderpoints && this.points === null) {
-            objectsList = Object.values(this.objects);
-            this.points = objectsList.filter(
-                el => el.type === Const.OBJECT_TYPE_POINT3D
-            );
+            // objectsList = Object.values(this.objects);
+            // this.points = objectsList.filter(
+            //     el => el.type === Const.OBJECT_TYPE_POINT3D
+            // );
+            this.points = [];
+            for (id in this.objects) {
+                if (this.objects.hasOwnProperty(id)) {
+                    el = this.objects[id];
+                    if (el.type === Const.OBJECT_TYPE_POINT3D) {
+                        this.points.push(el);
+                    }
+                }
+            }
         }
 
         // if depth-ordering for points was just switched off, throw away the

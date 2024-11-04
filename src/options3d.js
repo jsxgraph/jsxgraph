@@ -619,6 +619,15 @@ JXG.extend(Options, {
         needsRegularUpdate: true,
 
         /**
+         * When this option is enabled, points closer to the screen are drawn
+         * over points further from the screen within each layer.
+         *
+         * @name View3D#depthOrderPoints
+         * @default false
+         */
+        depthOrderPoints: false,
+
+        /**
          * Choose the projection type to be used: `parallel` or `central`.
          * <ul>
          * <li> `parallel` is parallel projection, also called orthographic projection
@@ -994,15 +1003,6 @@ JXG.extend(Options, {
          * @default 2/5*Math.PI
          */
         fov: 1 / 5 * 2 * Math.PI,
-
-        /**
-         * When this option is enabled, points closer to the screen are drawn
-         * over points further from the screen within each layer.
-         *
-         * @name View3D#depthOrderPoints
-         * @default false
-         */
-        depthOrderPoints: false,
 
         /**
          * Fixed values for the view, which can be changed using keyboard keys `picture-up` and `picture-down`.

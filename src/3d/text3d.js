@@ -54,10 +54,10 @@ JXG.Text3D = function (view, F, text, slide, attributes) {
 
     this.board.finalizeAdding(this);
 
-    // add the new point to its view's point list
-    if (view.visProp.depthorderpoints) {
-        view.points.push(this);
-    }
+    // add the new text to its view's point list
+    // if (view.visProp.depthorderpoints) {
+    //     view.points.push(this);
+    // }
 
     /**
      * Homogeneous coordinates of a Point3D, i.e. array of length 4: [w, x, y, z]. Usually, w=1 for finite points and w=0 for points
