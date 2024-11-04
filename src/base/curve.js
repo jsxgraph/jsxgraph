@@ -3412,6 +3412,7 @@ JXG.createImplicitCurve = function (board, parents, attributes) {
         ret = ip.plot();
         // console.timeEnd("implicit plot");
 
+        console.log("Plot implicit curve")
         this.dataX = ret[0];
         this.dataY = ret[1];
     };

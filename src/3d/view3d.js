@@ -1384,7 +1384,7 @@ JXG.extend(
         if (this.az_slide.position > 1) {
             this.az_slide.position = 0.0;
         }
-        this.board.update();
+        this.board.update(null, true);
 
         this.timeoutAzimuth = setTimeout(function () {
             this.animateAzimuth();
@@ -1431,7 +1431,7 @@ JXG.extend(
         this.az_slide.setValue(az);
         this.el_slide.setValue(el);
         this.r = r;
-        this.board.update();
+        this.board.update(null, true);
 
         return this;
     },
@@ -1642,7 +1642,7 @@ JXG.extend(
         }
 
         this.bank_slide.setValue(bank);
-        this.board.update();
+        this.board.update(null, true);
         return this;
     },
 
@@ -1667,7 +1667,7 @@ JXG.extend(
             x: x,
             y: -y
         };
-        this.board.update();
+        this.board.update(null, true);
         return this;
     },
 

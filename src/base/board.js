@@ -5696,7 +5696,7 @@ JXG.extend(
          * Sets for all objects the needsUpdate flag to 'true'.
          * @returns {JXG.Board} Reference to the board
          */
-        prepareUpdate: function () {
+        prepareUpdate: function (change3DView) {
             var el,
                 pEl,
                 len = this.objectsList.length;
@@ -5709,7 +5709,11 @@ JXG.extend(
 
             for (el = 0; el < len; el++) {
                 pEl = this.objectsList[el];
-                pEl.needsUpdate = pEl.needsRegularUpdate || this.needsFullUpdate;
+                if (change3DView) {
+                    pEl.needsUpdate = pEl.visProp.element3d !== null && (pEl.needsRegularUpdate || this.needsFullUpdate);
+                } else {
+                    pEl.needsUpdate = pEl.needsRegularUpdate || this.needsFullUpdate;
+                }
             }
 
             for (el in this.groups) {
@@ -5939,7 +5943,7 @@ JXG.extend(
          * @param {JXG.GeometryElement} [drag] Element that caused the update.
          * @returns {JXG.Board} Reference to the board
          */
-        update: function (drag) {
+        update: function (drag, change3DView) {
             var i, len, b, insert, storeActiveEl;
 
             if (this.inUpdate || this.isSuspendedUpdate) {
@@ -5961,7 +5965,7 @@ JXG.extend(
                 insert = this.renderer.removeToInsertLater(this.renderer.svgRoot);
             }
 
-            this.prepareUpdate().updateElements(drag).updateConditions();
+            this.prepareUpdate(change3DView).updateElements(drag).updateConditions();
 
             this.renderer.suspendRedraw(this);
             this.updateRenderer();
@@ -5980,7 +5984,7 @@ JXG.extend(
                 b = this.dependentBoards[i];
                 if (Type.exists(b) && b !== this) {
                     b.updateQuality = this.updateQuality;
-                    b.prepareUpdate().updateElements().updateConditions();
+                    b.prepareUpdate(change3DView).updateElements().updateConditions();
                     b.renderer.suspendRedraw(this);
                     b.updateRenderer();
                     b.renderer.unsuspendRedraw();
