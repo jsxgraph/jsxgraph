@@ -2440,7 +2440,8 @@ JXG.createIntegral = function (board, parents, attributes) {
             ], attr);
 
         txt_fun = function () {
-            var Int = Numerics.NewtonCotes([pa_on_axis.X(), pb_on_axis.X()], curve.Y),
+            var intSymbol = '&int;',
+                Int = Numerics.NewtonCotes([pa_on_axis.X(), pb_on_axis.X()], curve.Y),
                 digits = t.evalVisProp('digits'),
                 val;
 
@@ -2449,7 +2450,10 @@ JXG.createIntegral = function (board, parents, attributes) {
             } else {
                 val = Type.toFixed(Int, digits);
             }
-            return '&int; = ' + val;
+            if (t.evalVisProp('usemathjax') || t.evalVisProp('usekatex')) {
+                intSymbol = '\\int';
+            }
+            return intSymbol + ' = ' + val;
         };
         t.setText(txt_fun);
         t.dump = false;
