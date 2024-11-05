@@ -703,7 +703,8 @@ JXG.extend(
         }
 
         // compute camera transformation
-        this.boxToCam = this.matrix3DRot.map((row) => row.slice());
+        // this.boxToCam = this.matrix3DRot.map((row) => row.slice());
+        this.boxToCam = this.matrix3DRot.map(function (row) { return row.slice(); });
         this.boxToCam[3][0] = -r;
 
         // compute focal distance and clip space transformation
@@ -861,9 +862,12 @@ JXG.extend(
         // moving the target element to the end of the layer's child list
         if (this.visProp.depthorderpoints && this.board.renderer && this.board.renderer.type === 'svg') {
             this.points
-                .filter((pt) => pt.element2D.evalVisProp('visible'))
+                // .filter((pt) => pt.element2D.evalVisProp('visible'))
+                // .sort(this.compareDepth.bind(this))
+                // .forEach((pt) => this.board.renderer.setLayer(pt.element2D, pt.element2D.visProp.layer));
+                .filter(function (pt) { return pt.element2D.evalVisProp('visible'); })
                 .sort(this.compareDepth.bind(this))
-                .forEach((pt) => this.board.renderer.setLayer(pt.element2D, pt.element2D.visProp.layer));
+                .forEach(function (pt) { return this.board.renderer.setLayer(pt.element2D, pt.element2D.visProp.layer); });
 
             /* [DEBUG] list oriented box coordinates in depth order */
             // console.log('depth-ordered points in oriented box coordinates');
