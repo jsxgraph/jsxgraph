@@ -2280,8 +2280,8 @@ JXG.createView3D = function (board, parents, attributes) {
         ],
         attr_az
     );
-    // view.az_slide.inherits.push(view);
     view.inherits.push(view.az_slide);
+    view.az_slide.elType = 'view3d_slider'; // Used in board.prepareUpdate()
 
     /**
      * Slider to adapt elevation angle
@@ -2302,6 +2302,7 @@ JXG.createView3D = function (board, parents, attributes) {
         attr_el
     );
     view.inherits.push(view.el_slide);
+    view.el_slide.elType = 'view3d_slider'; // Used in board.prepareUpdate()
 
     /**
      * Slider to adjust bank angle
@@ -2323,6 +2324,7 @@ JXG.createView3D = function (board, parents, attributes) {
         attr_bank
     );
     view.inherits.push(view.bank_slide);
+    view.bank_slide.elType = 'view3d_slider'; // Used in board.prepareUpdate()
 
     // Set special infobox attributes of view3d.infobox
     // Using setAttribute() is not possible here, since we have to
