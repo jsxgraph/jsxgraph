@@ -348,7 +348,7 @@ JXG.extend(
         /**
          * Detects if the user is using a desktop device, see <a href="https://stackoverflow.com/a/61073480">https://stackoverflow.com/a/61073480</a>.
          * @returns {boolean}
-         * 
+         *
          * @deprecated
          */
         isDesktop: function () {

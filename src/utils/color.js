@@ -490,7 +490,7 @@ JXG.hsv2rgb = function (H, S, V) {
  * @param {Number} ag
  * @param {Number} ab
  * @returns {Array} Contains the h, s, and v value in this order.
- * 
+ *
  */
 JXG.rgb2hsv = function (color, ag, ab) {
     var r, g, b, fr, fg, fb, fmax, fmin, h, s, v, max, min;
