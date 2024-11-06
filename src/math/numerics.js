@@ -1553,13 +1553,14 @@ Mat.Numerics = {
      * Abstract method to find roots of univariate functions, which - for the time being -
      * is an alias for {@link JXG.Math.Numerics.chandrupatla}.
      * @param {function} f We search for a solution of f(x)=0.
-     * @param {Number|Array} x initial guess for the root, i.e. starting value, or start interval enclosing the root.
+     * @param {Number|Array} x initial guess for the root, i.e. starting value, or start interval enclosing the root. If x is an interval [a,b], it is required that f(a)f(b) <= 0, otherwise the minimum fo f in [a, b] will be returned.
      * @param {Object} context optional object that is treated as "this" in the function body. This is useful if
      * the function is a method of an object and contains a reference to its parent object via "this".
      * @returns {Number} A root of the function f.
      *
      * @see JXG.Math.Numerics.chandrupatla
      * @see JXG.Math.Numerics.fzero
+     * @see JXG.Math.Numerics.polzeros
      * @memberof JXG.Math.Numerics
      */
     root: function (f, x, context) {
@@ -3344,7 +3345,7 @@ Mat.Numerics = {
      *
      * Find zero of an univariate function f.
      * @param {function} f Function, whose root is to be found
-     * @param {Array|Number} x0  Start value or start interval enclosing the root
+     * @param {Array|Number} x0  Start value or start interval enclosing the root. If x0 is an interval [a,b], it is required that f(a)f(b) <= 0, otherwise the minimum fo f in [a, b] will be returned.
      * @param {Object} [context] Parent object in case f is method of it
      * @returns {Number} the approximation of the root
      * Algorithm:
@@ -3512,7 +3513,7 @@ Mat.Numerics = {
     /**
      * Find zero of an univariate function f.
      * @param {function} f Function, whose root is to be found
-     * @param {Array|Number} x0  Start value or start interval enclosing the root
+     * @param {Array|Number} x0  Start value or start interval enclosing the root. If x0 is an interval [a,b], it is required that f(a)f(b) <= 0, otherwise the minimum fo f in [a, b] will be returned.
      * @param {Object} [context] Parent object in case f is method of it
      * @returns {Number} the approximation of the root
      * Algorithm:
