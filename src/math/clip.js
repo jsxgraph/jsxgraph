@@ -347,7 +347,7 @@ Mat.Clip = {
      * user coordinates and screen coordinates.
      * @return {Array}  Array containing two arrays. The first array contains the intersection vertices
      * of the subject path and the second array contains the intersection vertices of the clip path.
-     * @see JXG.Clip#Vertex
+     * @see JXG.Math.Clip.Vertex
      */
     findIntersections: function (S, C, board) {
         var res = [], eps = Mat.eps * 100,
@@ -601,8 +601,8 @@ Mat.Clip = {
      *
      * @param {JXG.Math.Clip.Vertex} P Start of path
      * @private
-     * @see JXG.Math.Clip#markEntryExit
-     * @see JXG.Math.Clip#_handleIntersectionChains
+     * @see JXG.Math.Clip.markEntryExit
+     * @see JXG.Math.Clip._handleIntersectionChains
      */
     _classifyDegenerateIntersections: function (P) {
         var Pp, Pm, Qp, Qm,  Q,
@@ -799,8 +799,8 @@ Mat.Clip = {
      *
      * @param {JXG.Math.Clip.Vertex} P Start of path
      *
-     * @see JXG.Math.Clip#markEntryExit
-     * @see JXG.Math.Clip#_classifyDegenerateIntersections
+     * @see JXG.Math.Clip.markEntryExit
+     * @see JXG.Math.Clip._classifyDegenerateIntersections
      * @private
      */
     _handleIntersectionChains: function (P) {
@@ -1583,7 +1583,7 @@ Mat.Clip = {
      * @param  {JXG.Board} board   JSXGraph board object. It is needed to convert between
      * user coordinates and screen coordinates.
      * @returns {Array} Array of JXG.Coords elements containing a path.
-     * @see JXG.Math.Clip#greinerHormann
+     * @see JXG.Math.Clip.greinerHormann
      */
     _getPath: function (obj, board) {
         var i, len, r,
@@ -1707,9 +1707,9 @@ Mat.Clip = {
      * @return {Array}          Array consisting of two arrays containing the x-coordinates and the y-coordinates of
      *      the resulting path.
      *
-     * @see JXG.Math.Clip#intersection
-     * @see JXG.Math.Clip#union
-     * @see JXG.Math.Clip#difference
+     * @see JXG.Math.Clip.intersection
+     * @see JXG.Math.Clip.union
+     * @see JXG.Math.Clip.difference
      *
      * @example
      *     var curve1 = board.create('curve', [
@@ -1999,9 +1999,9 @@ Mat.Clip = {
      * @return {Array}          Array consisting of two arrays containing the x-coordinates and the y-coordinates of
      *      the resulting path.
      *
-     * @see JXG.Math.Clip#greinerHormann
-     * @see JXG.Math.Clip#intersection
-     * @see JXG.Math.Clip#difference
+     * @see JXG.Math.Clip.greinerHormann
+     * @see JXG.Math.Clip.intersection
+     * @see JXG.Math.Clip.difference
      *
      * @example
      *     var curve1 = board.create('curve', [
@@ -2066,9 +2066,9 @@ Mat.Clip = {
      * @return {Array}          Array consisting of two arrays containing the x-coordinates and the y-coordinates of
      *      the resulting path.
      *
-     * @see JXG.Math.Clip#greinerHormann
-     * @see JXG.Math.Clip#union
-     * @see JXG.Math.Clip#difference
+     * @see JXG.Math.Clip.greinerHormann
+     * @see JXG.Math.Clip.union
+     * @see JXG.Math.Clip.difference
      *
      * @example
      * var p = [];
@@ -2145,9 +2145,9 @@ Mat.Clip = {
      * @return {Array}          Array consisting of two arrays containing the x-coordinates and the y-coordinates of
      *      the resulting path.
      *
-     * @see JXG.Math.Clip#greinerHormann
-     * @see JXG.Math.Clip#intersection
-     * @see JXG.Math.Clip#union
+     * @see JXG.Math.Clip.greinerHormann
+     * @see JXG.Math.Clip.intersection
+     * @see JXG.Math.Clip.union
      *
      * @example
      *     var curve1 = board.create('polygon', [[-4, 4], [4, 4], [0, -1]],

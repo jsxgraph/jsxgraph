@@ -1553,7 +1553,7 @@ Mat.Numerics = {
      * Abstract method to find roots of univariate functions, which - for the time being -
      * is an alias for {@link JXG.Math.Numerics.chandrupatla}.
      * @param {function} f We search for a solution of f(x)=0.
-     * @param {Number|Array} x initial guess for the root, i.e. starting value, or start interval enclosing the root. If x is an interval [a,b], it is required that f(a)f(b) <= 0, otherwise the minimum fo f in [a, b] will be returned.
+     * @param {Number|Array} x initial guess for the root, i.e. starting value, or start interval enclosing the root. If x is an interval [a,b], it is required that f(a)f(b) <= 0, otherwise the minimum of f in [a, b] will be returned.
      * @param {Object} context optional object that is treated as "this" in the function body. This is useful if
      * the function is a method of an object and contains a reference to its parent object via "this".
      * @returns {Number} A root of the function f.
@@ -1759,7 +1759,7 @@ Mat.Numerics = {
      * @param {Array} x x values of knots
      * @param {Array} y y values of knots
      * @returns {Array} Second derivatives of the interpolated function at the knots.
-     * @see #splineEval
+     * @see JXG.Math.Numerics.splineEval
      * @memberof JXG.Math.Numerics
      */
     splineDef: function (x, y) {
@@ -1833,7 +1833,7 @@ Mat.Numerics = {
      * @param {Array} x x values of knots
      * @param {Array} y y values of knots
      * @param {Array} F Second derivatives at knots, calculated by {@link JXG.Math.Numerics.splineDef}
-     * @see #splineDef
+     * @see JXG.Math.Numerics.splineDef
      * @returns {Number|Array} A single value or an array, depending on what is given as x0.
      * @memberof JXG.Math.Numerics
      */
@@ -1926,7 +1926,8 @@ Mat.Numerics = {
      * Jean-Paul Berrut, Lloyd N. Trefethen: Barycentric Lagrange Interpolation,
      * SIAM Review, Vol 46, No 3, (2004) 501-517.
      * <p>
-     * It possesses the method getTerm() which returns the string containing the function term of the polynomial.
+     * It possesses the method getTerm() which returns the string containing the function term of the polynomial and
+     * the method getCoefficients() which returns an array containing the coefficients of the polynomial.
      * @param {Array} p Array of JXG.Points
      * @returns {function} A function of one parameter which returns the value of the polynomial, whose graph runs through the given points.
      * @memberof JXG.Math.Numerics
@@ -2045,7 +2046,7 @@ Mat.Numerics = {
          * @param {String} param Variable name
          * @param {String} dot Dot symbol
          * @returns {String} containing the term of Lagrange polynomial as string.
-         * @see JXG.Math.Numerics#lagrangePolynomialTerm
+         * @see JXG.Math.Numerics.lagrangePolynomialTerm
          * @example
          * var points = [];
          * points[0] = board.create('point', [-1,2], {size:4});
@@ -2086,9 +2087,9 @@ Mat.Numerics = {
          *
          * @name JXG.Math.Numerics.lagrangePolynomial#getCoefficients
          * @returns {Array} containing the coefficients of the Lagrange polynomial.
-         * @see JXG.Math.Numerics.lagrangePolynomial#getTerm
-         * @see JXG.Math.Numerics#lagrangePolynomialTerm
-         * @see JXG.Math.Numerics#lagrangePolynomialCoefficients
+         * @see JXG.Math.Numerics.lagrangePolynomial.getTerm
+         * @see JXG.Math.Numerics.lagrangePolynomialTerm
+         * @see JXG.Math.Numerics.lagrangePolynomialCoefficients
          * @example
          * var points = [];
          * points[0] = board.create('point', [-1,2], {size:4});
@@ -3345,7 +3346,7 @@ Mat.Numerics = {
      *
      * Find zero of an univariate function f.
      * @param {function} f Function, whose root is to be found
-     * @param {Array|Number} x0  Start value or start interval enclosing the root. If x0 is an interval [a,b], it is required that f(a)f(b) <= 0, otherwise the minimum fo f in [a, b] will be returned.
+     * @param {Array|Number} x0  Start value or start interval enclosing the root. If x0 is an interval [a,b], it is required that f(a)f(b) <= 0, otherwise the minimum of f in [a, b] will be returned.
      * @param {Object} [context] Parent object in case f is method of it
      * @returns {Number} the approximation of the root
      * Algorithm:
@@ -3513,7 +3514,7 @@ Mat.Numerics = {
     /**
      * Find zero of an univariate function f.
      * @param {function} f Function, whose root is to be found
-     * @param {Array|Number} x0  Start value or start interval enclosing the root. If x0 is an interval [a,b], it is required that f(a)f(b) <= 0, otherwise the minimum fo f in [a, b] will be returned.
+     * @param {Array|Number} x0  Start value or start interval enclosing the root. If x0 is an interval [a,b], it is required that f(a)f(b) <= 0, otherwise the minimum of f in [a, b] will be returned.
      * @param {Object} [context] Parent object in case f is method of it
      * @returns {Number} the approximation of the root
      * Algorithm:

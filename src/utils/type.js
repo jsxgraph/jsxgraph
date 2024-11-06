@@ -1103,7 +1103,7 @@ JXG.extend(
          * @param {Object} obj1
          * @param {Object} obj2
          * @returns {Object}
-         * @see JXG#mergeAttr
+         * @see JXG.mergeAttr
          *
          * @example
          * JXG.Options = JXG.merge(JXG.Options, {
@@ -1275,7 +1275,7 @@ JXG.extend(
          * @param {Boolean} [toLower=true] If true the keys are converted to lower case.
          * @param {Boolean} [ignoreUndefinedSpecials=false] If true the values in special that are undefined are not used.
          *
-         * @see JXG#merge
+         * @see JXG.merge
          *
          */
         mergeAttr: function (attr, special, toLower, ignoreUndefinedSpecials) {
@@ -1799,7 +1799,7 @@ JXG.extend(
          * @param {Boolean} [useTeX=false]
          * @param {Number} [order=0.001]
          * @returns {String}
-         * @see JXG.Math#decToFraction
+         * @see JXG.Math.decToFraction
          */
         toFraction: function (x, useTeX, order) {
             var arr = Mat.decToFraction(x, order),

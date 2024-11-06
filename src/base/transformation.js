@@ -387,7 +387,7 @@ JXG.extend(
          *
          * @param  {Array|JXG.Object} el JXG.Object or array of JXG.Object to
          *                            which the transformation is bound to.
-         * @see JXG.Transformation#meltTo
+         * @see JXG.Transformation.meltTo
          */
         bindTo: function (el) {
             var i, len;

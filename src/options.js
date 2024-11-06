@@ -1013,10 +1013,10 @@ JXG.Options = {
          * {@link JXG.Board#addEventHandlers()} and
          * {@link JXG.Board#removeEventHandlers()} directly.
          *
-         * @name JXG.Board#registerEvents
+         * @name JXG.Board.registerEvents
          * @see JXG.Board#keyboard
-         * @see JXG.Board#registerResizeEvent
-         * @see JXG.Board#registerFullscreenEvent
+         * @see JXG.Board.registerResizeEvent
+         * @see JXG.Board.registerFullscreenEvent
          * @type Boolean
          * @default true
          */
@@ -10162,7 +10162,7 @@ JXG.Options = {
     /**
      * Converts all color values to greyscale and calls useStandardOption to put them onto the board.
      * @param {JXG.Board} board The board to which objects the options will be applied.
-     * @see #useStandardOptions
+     * @see JXG.useStandardOptions
      */
     JXG.useBlackWhiteOptions = function (board) {
         var o = JXG.Options;
