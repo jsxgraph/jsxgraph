@@ -1482,6 +1482,13 @@ Mat.Plot = {
     // Plot algorithm v4
     //----------------------------------------------------------------------
 
+    /**
+     * TODO
+     * @param {*} vec 
+     * @param {*} le 
+     * @param {*} level 
+     * @returns 
+     */
     _criticalInterval: function (vec, le, level) {
         var i,
             j,
@@ -2362,7 +2369,7 @@ Mat.Plot = {
     /**
      * If the absolute maximum of the set of differences is larger than
      * criticalThreshold * median of these values, it is regarded as critical point.
-     * @see JXG.Math.Plot#_criticalInterval
+     * @see JXG.Math.Plot._criticalInterval
      */
     criticalThreshold: 1000,
 
