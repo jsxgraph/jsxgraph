@@ -1,3 +1,21 @@
+1.11.0
+===
+
+New features
+-----------
+
+- Attribute functions receive the geometry element as parameter
+- ARIA attributes for every element (SVG only)
+- CSS classes for every element (SVG only). Enables the use of SVG filters.
+
+Improvements
+------------
+
+- Speed improvements when changing the 3D view
+
+Bug fixes
+---------
+
 1.10.1
 ===
 

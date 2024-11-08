@@ -1,5 +1,5 @@
 /*
-    JSXGraph 1.10.0
+    JSXGraph 1.10.1
 
     Copyright 2008-2024
         Matthias Ehmann,
