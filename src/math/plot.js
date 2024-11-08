@@ -649,13 +649,13 @@ Mat.Plot = {
 
         //console.time("plot");
         if (curve.board.updateQuality === curve.board.BOARD_QUALITY_LOW) {
-            depth = Type.evaluate(curve.visProp.recursiondepthlow) || 13;
+            depth = curve.evalVisProp('recursiondepthlow') || 13;
             delta = 2;
             // this.smoothLevel = 5; //depth - 7;
             this.smoothLevel = depth - 6;
             this.jumpLevel = 3;
         } else {
-            depth = Type.evaluate(curve.visProp.recursiondepthhigh) || 17;
+            depth = curve.evalVisProp('recursiondepthhigh') || 17;
             delta = 2;
             // smoothLevel has to be small for graphs in a huge interval.
             // this.smoothLevel = 3; //depth - 7; // 9
@@ -1401,9 +1401,9 @@ Mat.Plot = {
         // console.log("-----------------------------------------------------------");
         // console.time("plot");
         if (curve.board.updateQuality === curve.board.BOARD_QUALITY_LOW) {
-            depth = Type.evaluate(curve.visProp.recursiondepthlow) || 14;
+            depth = curve.evalVisProp('recursiondepthlow') || 14;
         } else {
-            depth = Type.evaluate(curve.visProp.recursiondepthhigh) || 17;
+            depth = curve.evalVisProp('recursiondepthhigh') || 17;
         }
 
         // smoothLevel has to be small for graphs in a huge interval.
@@ -1482,6 +1482,13 @@ Mat.Plot = {
     // Plot algorithm v4
     //----------------------------------------------------------------------
 
+    /**
+     * TODO
+     * @param {*} vec 
+     * @param {*} le 
+     * @param {*} level 
+     * @returns 
+     */
     _criticalInterval: function (vec, le, level) {
         var i,
             j,
@@ -2362,7 +2369,7 @@ Mat.Plot = {
     /**
      * If the absolute maximum of the set of differences is larger than
      * criticalThreshold * median of these values, it is regarded as critical point.
-     * @see JXG.Math.Plot#_criticalInterval
+     * @see JXG.Math.Plot._criticalInterval
      */
     criticalThreshold: 1000,
 

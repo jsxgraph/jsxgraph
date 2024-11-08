@@ -308,33 +308,33 @@ JXG.extend(
         updateGradient: function (el) {
             var col,
                 // op,
-                ev_g = Type.evaluate(el.visProp.gradient),
+                ev_g = el.evalVisProp('gradient'),
                 gradient;
 
-            // op = Type.evaluate(el.visProp.fillopacity);
+            // op = el.evalVisProp('fillopacity');
             // op = op > 0 ? op : 0;
-            col = Type.evaluate(el.visProp.fillcolor);
+            col = el.evalVisProp('fillcolor');
 
             if (ev_g === "linear") {
                 gradient = this.updateGradientAngle(
                     el,
-                    Type.evaluate(el.visProp.gradientangle)
+                    el.evalVisProp('gradientangle')
                 );
             } else if (ev_g === "radial") {
                 gradient = this.updateGradientCircle(
                     el,
-                    Type.evaluate(el.visProp.gradientcx),
-                    Type.evaluate(el.visProp.gradientcy),
-                    Type.evaluate(el.visProp.gradientr),
-                    Type.evaluate(el.visProp.gradientfx),
-                    Type.evaluate(el.visProp.gradientfy),
-                    Type.evaluate(el.visProp.gradientfr)
+                    el.evalVisProp('gradientcx'),
+                    el.evalVisProp('gradientcy'),
+                    el.evalVisProp('gradientr'),
+                    el.evalVisProp('gradientfx'),
+                    el.evalVisProp('gradientfy'),
+                    el.evalVisProp('gradientfr')
                 );
             }
-            gradient.addColorStop(Type.evaluate(el.visProp.gradientstartoffset), col);
+            gradient.addColorStop(el.evalVisProp('gradientstartoffset'), col);
             gradient.addColorStop(
-                Type.evaluate(el.visProp.gradientendoffset),
-                Type.evaluate(el.visProp.gradientsecondcolor)
+                el.evalVisProp('gradientendoffset'),
+                el.evalVisProp('gradientsecondcolor')
             );
             return gradient;
         },
@@ -351,14 +351,9 @@ JXG.extend(
          */
         _setColor: function (el, type, targetType) {
             var hasColor = true,
-                ev = el.visProp,
-                hl,
-                sw,
-                rgba,
-                rgbo,
-                c,
-                o,
-                oo,
+                lc, hl, sw,
+                rgba, rgbo,
+                c, o, oo,
                 grad;
 
             type = type || "stroke";
@@ -366,7 +361,7 @@ JXG.extend(
 
             hl = this._getHighlighted(el);
 
-            grad = Type.evaluate(el.visProp.gradient);
+            grad = el.evalVisProp('gradient');
             if (grad === "linear" || grad === "radial") {
                 // TODO: opacity
                 this.context[targetType + "Style"] = this.updateGradient(el);
@@ -374,9 +369,9 @@ JXG.extend(
             }
 
             // type is equal to 'fill' or 'stroke'
-            rgba = Type.evaluate(ev[hl + type + "color"]);
+            rgba = el.evalVisProp(hl + type + 'color');
             if (rgba !== "none" && rgba !== false) {
-                o = Type.evaluate(ev[hl + type + "opacity"]);
+                o = el.evalVisProp(hl + type + "opacity");
                 o = o > 0 ? o : 0;
 
                 // RGB, not RGBA
@@ -396,7 +391,7 @@ JXG.extend(
                 hasColor = false;
             }
 
-            sw = parseFloat(Type.evaluate(ev[hl + "strokewidth"]));
+            sw = parseFloat(el.evalVisProp(hl + 'strokewidth'));
             if (type === "stroke" && !isNaN(sw)) {
                 if (sw === 0) {
                     this.context.globalAlpha = 0;
@@ -405,8 +400,9 @@ JXG.extend(
                 }
             }
 
-            if (type === "stroke" && ev.linecap !== undefined && ev.linecap !== "") {
-                this.context.lineCap = ev.linecap;
+            lc = el.evalVisProp('linecap');
+            if (type === "stroke" && lc !== undefined && lc !== "") {
+                this.context.lineCap = lc;
             }
 
             return hasColor;
@@ -419,9 +415,9 @@ JXG.extend(
          */
         _stroke: function (el) {
             var context = this.context,
-                ev_dash = Type.evaluate(el.visProp.dash),
-                ds = Type.evaluate(el.visProp.dashscale),
-                sw = ds ? 0.5 * Type.evaluate(el.visProp.strokewidth) : 1;
+                ev_dash = el.evalVisProp('dash'),
+                ds = el.evalVisProp('dashscale'),
+                sw = ds ? 0.5 * el.evalVisProp('strokewidth') : 1;
 
             context.save();
 
@@ -474,12 +470,12 @@ JXG.extend(
 
         // documented in AbstractRenderer
         drawPoint: function (el) {
-            var f = Type.evaluate(el.visProp.face),
-                size = Type.evaluate(el.visProp.size),
+            var f = el.evalVisProp('face'),
+                size = el.evalVisProp('size'),
                 scr = el.coords.scrCoords,
                 sqrt32 = size * Math.sqrt(3) * 0.5,
                 s05 = size * 0.5,
-                stroke05 = parseFloat(Type.evaluate(el.visProp.strokewidth)) / 2.0,
+                stroke05 = parseFloat(el.evalVisProp('strokewidth')) / 2.0,
                 context = this.context;
 
             if (!el.visPropCalc.visible) {
@@ -672,7 +668,7 @@ JXG.extend(
                 ev_fa = a.evFirst,
                 ev_la = a.evLast;
 
-            if (Type.evaluate(el.visProp.strokecolor) !== "none" && (ev_fa || ev_la)) {
+            if (el.evalVisProp('strokecolor') !== "none" && (ev_fa || ev_la)) {
                 if (el.elementClass === Const.OBJECT_CLASS_LINE) {
                     x1 = scr1.scrCoords[1];
                     y1 = scr1.scrCoords[2];
@@ -703,7 +699,7 @@ JXG.extend(
                     }
                 }
 
-                w0 = Type.evaluate(el.visProp[hl + "strokewidth"]);
+                w0 = el.evalVisProp(hl + 'strokewidth');
 
                 if (ev_fa) {
                     size = a.sizeFirst;
@@ -1001,7 +997,7 @@ JXG.extend(
             }
 
             hl = this._getHighlighted(el);
-            w = Type.evaluate(el.visProp[hl + "strokewidth"]);
+            w = el.evalVisProp(hl + 'strokewidth');
             arrowData = this.getArrowHeadData(el, w, hl);
 
             if (arrowData.evFirst || arrowData.evLast) {
@@ -1087,14 +1083,14 @@ JXG.extend(
         drawCurve: function (el) {
             var hl, w, arrowData;
 
-            if (Type.evaluate(el.visProp.handdrawing)) {
+            if (el.evalVisProp('handdrawing')) {
                 this.updatePathStringBezierPrim(el);
             } else {
                 this.updatePathStringPrim(el);
             }
             if (el.numberPoints > 1) {
                 hl = this._getHighlighted(el);
-                w = Type.evaluate(el.visProp[hl + "strokewidth"]);
+                w = el.evalVisProp(hl + 'strokewidth');
                 arrowData = this.getArrowHeadData(el, w, hl);
                 if (
                     arrowData.evFirst /* && obj.sFirst > 0*/ ||
@@ -1177,8 +1173,8 @@ JXG.extend(
 
         // Already documented in JXG.AbstractRenderer
         drawInternalText: function (el) {
-            var ev_fs = Type.evaluate(el.visProp.fontsize),
-                fontUnit = Type.evaluate(el.visProp.fontunit),
+            var ev_fs = el.evalVisProp('fontsize'),
+                fontUnit = el.evalVisProp('fontunit'),
                 ev_ax = el.getAnchorX(),
                 ev_ay = el.getAnchorY(),
                 context = this.context;
@@ -1219,10 +1215,10 @@ JXG.extend(
         // documented in JXG.AbstractRenderer
         // Only necessary for texts
         setObjectStrokeColor: function (el, color, opacity) {
-            var rgba = Type.evaluate(color),
+            var rgba = color,
                 c,
                 rgbo,
-                o = Type.evaluate(opacity),
+                o = opacity,
                 oo,
                 node;
 
@@ -1248,7 +1244,7 @@ JXG.extend(
                 node = el.rendNode;
                 if (
                     el.elementClass === Const.OBJECT_CLASS_TEXT &&
-                    Type.evaluate(el.visProp.display) === "html"
+                    el.evalVisProp('display') === "html"
                 ) {
                     node.style.color = c;
                     node.style.opacity = oo;
@@ -1278,7 +1274,7 @@ JXG.extend(
         // Already documented in JXG.AbstractRenderer
         updateImage: function (el) {
             var context = this.context,
-                o = Type.evaluate(el.visProp.fillopacity),
+                o = el.evalVisProp('fillopacity'),
                 paintImg = Type.bind(function () {
                     el.imgIsLoaded = true;
                     if (el.size[0] <= 0 || el.size[1] <= 0) {
@@ -1323,11 +1319,11 @@ JXG.extend(
                         node.style.transform = s;
                         cx = -el.coords.scrCoords[1];
                         cy = -el.coords.scrCoords[2];
-                        switch (Type.evaluate(el.visProp.anchorx)) {
+                        switch (el.evalVisProp('anchorx')) {
                             case 'right': cx += el.size[0]; break;
                             case 'middle': cx += el.size[0] * 0.5; break;
                         }
-                        switch (Type.evaluate(el.visProp.anchory)) {
+                        switch (el.evalVisProp('anchory')) {
                             case 'bottom': cy += el.size[1]; break;
                             case 'middle': cy += el.size[1] * 0.5; break;
                         }
@@ -1345,7 +1341,7 @@ JXG.extend(
         updateImageURL: function (el) {
             var url;
 
-            url = Type.evaluate(el.url);
+            url = el.eval(el.url);
             if (el._src !== url) {
                 el.imgIsLoaded = false;
                 el.rendNode.src = url;
@@ -1471,8 +1467,8 @@ JXG.extend(
                 symbl = "C",
                 nextSymb = symbm,
                 maxSize = 5000.0,
-                f = Type.evaluate(el.visProp.strokewidth),
-                isNoPlot = Type.evaluate(el.visProp.curvetype) !== "plot",
+                f = el.evalVisProp('strokewidth'),
+                isNoPlot = el.evalVisProp('curvetype') !== "plot",
                 context = this.context;
 
             if (el.numberPoints <= 0) {
@@ -1608,10 +1604,10 @@ JXG.extend(
             // var // col,
             //     op;
 
-            // op = Type.evaluate(el.visProp.fillopacity);
+            // op = el.evalVisProp('fillopacity');
             // op = op > 0 ? op : 0;
 
-            // col = Type.evaluate(el.visProp.fillcolor);
+            // col = el.evalVisProp('fillcolor');
         },
 
         // documented in AbstractRenderer
@@ -1631,7 +1627,7 @@ JXG.extend(
         highlight: function (obj) {
             if (
                 obj.elementClass === Const.OBJECT_CLASS_TEXT &&
-                Type.evaluate(obj.visProp.display) === "html"
+                obj.evalVisProp('display') === "html"
             ) {
                 this.updateTextStyle(obj, true);
             } else {
@@ -1647,7 +1643,7 @@ JXG.extend(
         noHighlight: function (obj) {
             if (
                 obj.elementClass === Const.OBJECT_CLASS_TEXT &&
-                Type.evaluate(obj.visProp.display) === "html"
+                obj.evalVisProp('display') === "html"
             ) {
                 this.updateTextStyle(obj, false);
             } else {

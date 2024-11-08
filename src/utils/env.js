@@ -346,10 +346,9 @@ JXG.extend(
         },
 
         /**
-         * Detects if the user is using a desktop device.
+         * Detects if the user is using a desktop device, see <a href="https://stackoverflow.com/a/61073480">https://stackoverflow.com/a/61073480</a>.
          * @returns {boolean}
          *
-         * @see https://stackoverflow.com/a/61073480
          * @deprecated
          */
         isDesktop: function () {
@@ -368,10 +367,9 @@ JXG.extend(
         },
 
         /**
-         * Detects if the user is using a mobile device.
+         * Detects if the user is using a mobile device, see <a href="https://stackoverflow.com/questions/25542814/html5-detecting-if-youre-on-mobile-or-pc-with-javascript">https://stackoverflow.com/questions/25542814/html5-detecting-if-youre-on-mobile-or-pc-with-javascript</a>.
          * @returns {boolean}
          *
-         * @see https://stackoverflow.com/questions/25542814/html5-detecting-if-youre-on-mobile-or-pc-with-javascript
          * @deprecated
          *
          */

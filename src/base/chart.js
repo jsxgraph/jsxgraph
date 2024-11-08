@@ -226,13 +226,8 @@ JXG.extend(
          * @returns {Array}    Array of JXG polygons defining the bars
          */
         drawBar: function (board, x, y, attributes) {
-            var i,
-                text,
-                w,
-                xp0,
-                xp1,
-                xp2,
-                yp,
+            var i, text, w,
+                xp0, xp1, xp2, yp,
                 colors,
                 pols = [],
                 p = [],
@@ -296,13 +291,11 @@ JXG.extend(
                     p[3] = board.create("point", [0, xp2], hiddenPoint);
 
                     if (Type.exists(attr.labels) && Type.exists(attr.labels[i])) {
+                        attrSub.anchorX = function (self) {
+                            return self.X() >= 0 ? "left" : "right";
+                        };
                         attrSub.anchorY = "middle";
                         text = board.create("text", [yp, xp1, attr.labels[i]], attrSub);
-                        text.visProp.anchorx = (function (txt) {
-                            return function () {
-                                return txt.X() >= 0 ? "left" : "right";
-                            };
-                        })(text);
                     }
                 } else {
                     // vertical bars
@@ -313,14 +306,10 @@ JXG.extend(
 
                     if (Type.exists(attr.labels) && Type.exists(attr.labels[i])) {
                         attrSub.anchorX = "middle";
-
+                        attrSub.anchorY = function (self) {
+                            return self.Y() >= 0 ? "bottom" : "top";
+                        };
                         text = board.create("text", [xp1, yp, attr.labels[i]], attrSub);
-
-                        text.visProp.anchory = (function (txt) {
-                            return function () {
-                                return txt.Y() >= 0 ? "bottom" : "top";
-                            };
-                        })(text);
                     }
                 }
 
@@ -427,7 +416,7 @@ JXG.extend(
 
                     if (Type.exists(this.label)) {
                         this.label.rendNode.style.fontSize =
-                            s * Type.evaluate(this.label.visProp.fontsize) + "px";
+                            s * this.label.evalVisProp('fontsize') + "px";
                         this.label.fullUpdate();
                     }
 
@@ -605,11 +594,8 @@ JXG.extend(
                 data,
                 len = parents.length,
                 get_anchor = function () {
-                    var x1,
-                        x2,
-                        y1,
-                        y2,
-                        relCoords = Type.evaluate(this.visProp.label.offset).slice(0);
+                    var x1, x2, y1, y2,
+                        relCoords = this.evalVisProp('label.offset).slice(0');
 
                     x1 = this.point1.X();
                     x2 = this.point2.X();
@@ -1421,7 +1407,7 @@ JXG.Legend.prototype.drawVerticalLegend = function (board, attributes) {
         this.lines[i]
             .prepareUpdate()
             .update()
-            .updateVisibility(Type.evaluate(this.lines[i].visProp.visible))
+            .updateVisibility(this.lines[i].evalVisProp('visible'))
             .updateRenderer();
     }
 };

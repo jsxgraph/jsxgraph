@@ -53,7 +53,7 @@ import Point from "../base/point.js";
  * @constructor
  * @type JXG.Point
  * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
- * @param {Array_Array_Array} start,end,data The first two arrays give the start and the end where the slider is drawn
+ * @param {Array_Array_Array} start,end,range The first two arrays give the start and the end where the slider is drawn
  * on the board. The third array gives the start and the end of the range the slider operates as the first resp. the
  * third component of the array. The second component of the third array gives its start value.
  *
@@ -203,17 +203,14 @@ JXG.createSlider = function (board, parents, attributes) {
     snapValues = attr.snapvalues;
     snapValueDistance = attr.snapvaluedistance;
 
-    // start point
-    // attr = Type.copyAttributes(attributes, board.options, "slider", "point1");
+    // Start point
     p1 = board.create("point", parents[0], attr.point1);
 
-    // end point
-    // attr = Type.copyAttributes(attributes, board.options, "slider", "point2");
+    // End point
     p2 = board.create("point", parents[1], attr.point2);
     //g = board.create('group', [p1, p2]);
 
     // Base line
-    // attr = Type.copyAttributes(attributes, board.options, "slider", "baseline");
     l1 = board.create("segment", [p1, p2], attr.baseline);
 
     // This is required for a correct projection of the glider onto the segment below
@@ -253,18 +250,7 @@ JXG.createSlider = function (board, parents, attributes) {
      */
     p3.Value = function () {
         var d = this._smax - this._smin,
-            ev_sw = Type.evaluate(this.visProp.snapwidth);
-        // snapValues, i, v;
-
-        // snapValues = Type.evaluate(this.visProp.snapvalues);
-        // if (Type.isArray(snapValues)) {
-        //     for (i = 0; i < snapValues.length; i++) {
-        //         v = (snapValues[i] - this._smin) / (this._smax - this._smin);
-        //         if (this.position === v) {
-        //             return snapValues[i];
-        //         }
-        //     }
-        // }
+            ev_sw = this.evalVisProp('snapwidth');
 
         return ev_sw === -1
             ? this.position * d + this._smin
@@ -362,14 +348,14 @@ JXG.createSlider = function (board, parents, attributes) {
             },
             function () {
                 var n,
-                    d = Type.evaluate(p3.visProp.digits),
-                    sl = Type.evaluate(p3.visProp.suffixlabel),
-                    ul = Type.evaluate(p3.visProp.unitlabel),
-                    pl = Type.evaluate(p3.visProp.postlabel);
+                    d = p3.evalVisProp('digits'),
+                    sl = p3.evalVisProp('suffixlabel'),
+                    ul = p3.evalVisProp('unitlabel'),
+                    pl = p3.evalVisProp('postlabel');
 
-                if (d === 2 && Type.evaluate(p3.visProp.precision) !== 2) {
+                if (d === 2 && p3.evalVisProp('precision') !== 2) {
                     // Backwards compatibility
-                    d = Type.evaluate(p3.visProp.precision);
+                    d = p3.evalVisProp('precision');
                 }
 
                 if (sl !== null) {
@@ -548,41 +534,13 @@ JXG.createSlider = function (board, parents, attributes) {
     p3.baseline.on("up", function (evt) {
         var pos, c;
 
-        if (Type.evaluate(p3.visProp.moveonup) && !Type.evaluate(p3.visProp.fixed)) {
+        if (p3.evalVisProp('moveonup') && !p3.evalVisProp('fixed')) {
             pos = l1.board.getMousePosition(evt, 0);
             c = new Coords(Const.COORDS_BY_SCREEN, pos, this.board);
             p3.moveTo([c.usrCoords[1], c.usrCoords[2]]);
             p3.triggerEventHandlers(['drag'], [evt]);
         }
     });
-
-    // Save the visibility attribute of the sub-elements
-    // for (el in p3.subs) {
-    //     p3.subs[el].status = {
-    //         visible: p3.subs[el].visProp.visible
-    //     };
-    // }
-
-    // p3.hideElement = function () {
-    //     var el;
-    //     GeometryElement.prototype.hideElement.call(this);
-    //
-    //     for (el in this.subs) {
-    //         // this.subs[el].status.visible = this.subs[el].visProp.visible;
-    //         this.subs[el].hideElement();
-    //     }
-    // };
-
-    //         p3.showElement = function () {
-    //             var el;
-    //             GeometryElement.prototype.showElement.call(this);
-    //
-    //             for (el in this.subs) {
-    // //                if (this.subs[el].status.visible) {
-    //                 this.subs[el].showElement();
-    // //                }
-    //             }
-    //         };
 
     // This is necessary to show baseline, highline and ticks
     // when opening the board in case the visible attributes are set

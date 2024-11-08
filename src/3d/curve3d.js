@@ -111,7 +111,7 @@ JXG.extend(
     JXG.Curve3D.prototype,
     /** @lends JXG.Curve3D.prototype */ {
         updateDataArray2D: function () {
-            var steps = Type.evaluate(this.visProp.numberpointshigh),
+            var steps = this.evalVisProp('numberpointshigh'),
                 r, s, e, delta, c2d, u, dataX, dataY,
                 i,
                 p = [0, 0, 0];
@@ -410,7 +410,7 @@ JXG.createVectorfield3D = function (board, parents, attributes) {
         var k, i, j,
             v, nrm,
             x, y, z,
-            scale = Type.evaluate(this.visProp.scale),
+            scale = this.evalVisProp('scale'),
             start = [
                 Type.evaluate(this.xData[0]),
                 Type.evaluate(this.yData[0]),
@@ -432,15 +432,15 @@ JXG.createVectorfield3D = function (board, parents, attributes) {
                 (end[2] - start[2]) / steps[2]
             ],
             phi, theta1, theta2, theta,
-            showArrow = Type.evaluate(this.visProp.arrowhead.enabled),
+            showArrow = this.evalVisProp('arrowhead.enabled'),
             leg, leg_x, leg_y, leg_z, alpha;
 
         if (showArrow) {
             // Arrow head style
             // leg = 8;
             // alpha = Math.PI * 0.125;
-            leg = Type.evaluate(this.visProp.arrowhead.size);
-            alpha = Type.evaluate(this.visProp.arrowhead.angle);
+            leg = this.evalVisProp('arrowhead.size');
+            alpha = this.evalVisProp('arrowhead.angle');
             leg_x = leg / board.unitX;
             leg_y = leg / board.unitY;
             leg_z = leg / Math.sqrt(board.unitX * board.unitY);

@@ -1103,7 +1103,7 @@ JXG.extend(
          * @param {Object} obj1
          * @param {Object} obj2
          * @returns {Object}
-         * @see JXG#mergeAttr
+         * @see JXG.mergeAttr
          *
          * @example
          * JXG.Options = JXG.merge(JXG.Options, {
@@ -1275,7 +1275,7 @@ JXG.extend(
          * @param {Boolean} [toLower=true] If true the keys are converted to lower case.
          * @param {Boolean} [ignoreUndefinedSpecials=false] If true the values in special that are undefined are not used.
          *
-         * @see JXG#merge
+         * @see JXG.merge
          *
          */
         mergeAttr: function (attr, special, toLower, ignoreUndefinedSpecials) {
@@ -1488,6 +1488,59 @@ JXG.extend(
                     subObject.prototype[key] = superObject.prototype[key];
                 }
             }
+        },
+
+        /**
+         * Create a stripped down version of a JSXGraph element for cloning to the background.
+         * Used in {JXG.GeometryElement#cloneToBackground} for creating traces.
+         *
+         * @param {JXG.GeometryElement} el Element to be cloned
+         * @returns Object Cloned element
+         * @private
+         */
+        getCloneObject: function(el) {
+            var obj, key,
+                copy = {};
+
+            copy.id = el.id + "T" + el.numTraces;
+            el.numTraces += 1;
+
+            copy.coords = el.coords;
+            obj = this.deepCopy(el.visProp, el.visProp.traceattributes, true);
+            copy.visProp = {};
+            for (key in obj) {
+                if (obj.hasOwnProperty(key)) {
+                    if (
+                        key.indexOf('aria') !== 0 &&
+                        key.indexOf('highlight') !== 0 &&
+                        key.indexOf('attractor') !== 0 &&
+                        key !== 'label' &&
+                        key !== 'needsregularupdate' &&
+                        key !== 'infoboxdigits'
+                    ) {
+                        copy.visProp[key] = el.eval(obj[key]);
+                    }
+                }
+            }
+            copy.evalVisProp = function(val) {
+                return copy.visProp[val];
+            };
+            copy.eval = function(val) {
+                return val;
+            };
+
+            copy.visProp.layer = el.board.options.layer.trace;
+            copy.visProp.tabindex = null;
+            copy.visProp.highlight = false;
+            copy.board = el.board;
+            copy.elementClass = el.elementClass;
+
+            this.clearVisPropOld(copy);
+            copy.visPropCalc = {
+                visible: el.evalVisProp('visible')
+            };
+
+            return copy;
         },
 
         /**
@@ -1746,7 +1799,7 @@ JXG.extend(
          * @param {Boolean} [useTeX=false]
          * @param {Number} [order=0.001]
          * @returns {String}
-         * @see JXG.Math#decToFraction
+         * @see JXG.Math.decToFraction
          */
         toFraction: function (x, useTeX, order) {
             var arr = Mat.decToFraction(x, order),
@@ -1844,6 +1897,8 @@ JXG.extend(
          * or an array of JSXGraph / JessieCode strings.
          * <p>
          * This function is meanwhile superseded by stack_jxg.stack2jsxgraph.
+         *
+         * @deprecated
          *
          * @example
          * console.log( JXG.stack2jsxgraph("%e**x") );

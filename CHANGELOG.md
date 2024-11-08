@@ -1,3 +1,28 @@
+1.10.1
+===
+
+Improvements
+------------
+
+- Angle element: allow empty string as name
+- Better control on animation speed with `<` and `>`
+- `JXG.Math.Statistics.histogram`: count of long tail elements not in histogram range
+- Prevent dragging of 3D points out of the `view3d` box.
+- API docs
+- Retire python2 server module
+- Remove unused file `src/index2.js`
+
+Bug fixes
+---------
+
+- 'Glider' on function graph did not respect domain
+- Visibility issues in 3D with `axesPosition: 'border'`
+- Initial camera position in `view3d`
+- Crash if 3D plane does not intersect 3D view
+- `vectorfield3d`: allow function returning three values as parameter
+- Inheritance of 3D axis options
+- `text3d`: string from function call
+
 1.10.0
 ===
 

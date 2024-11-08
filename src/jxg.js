@@ -284,7 +284,7 @@ jxg.extend(
          * Add something to the debug log. If available a JavaScript debug console is used. Otherwise
          * we're looking for a HTML div with id "debug". If this doesn't exist, too, the output is omitted.
          * @param s An arbitrary number of parameters.
-         * @see JXG#debugWST
+         * @see JXG.debugWST
          */
         debugInt: function (s) {
             var i, p;
@@ -304,7 +304,7 @@ jxg.extend(
          * we're looking for a HTML div with id "debug". If this doesn't exist, too, the output is omitted.
          * This method adds a stack trace (if available).
          * @param s An arbitrary number of parameters.
-         * @see JXG#debug
+         * @see JXG.debug
          */
         debugWST: function (s) {
             var e = new Error();
@@ -323,7 +323,7 @@ jxg.extend(
          * This method adds a line of the stack trace (if available).
          *
          * @param s An arbitrary number of parameters.
-         * @see JXG#debug
+         * @see JXG.debug
          */
         debugLine: function (s) {
             var e = new Error();
@@ -339,9 +339,9 @@ jxg.extend(
          * Add something to the debug log. If available a JavaScript debug console is used. Otherwise
          * we're looking for a HTML div with id "debug". If this doesn't exist, too, the output is omitted.
          * @param s An arbitrary number of parameters.
-         * @see JXG#debugWST
-         * @see JXG#debugLine
-         * @see JXG#debugInt
+         * @see JXG.debugWST
+         * @see JXG.debugLine
+         * @see JXG.debugInt
          */
         debug: function (s) {
             jxg.debugInt.apply(this, arguments);

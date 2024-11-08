@@ -220,9 +220,9 @@ JXG.extend(
                 r = this.Radius(),
                 dx, dy, dist;
 
-            if (Type.isObject(Type.evaluate(this.visProp.precision))) {
+            if (Type.isObject(this.evalVisProp('precision'))) {
                 type = this.board._inputDevice;
-                prec = Type.evaluate(this.visProp.precision[type]);
+                prec = this.evalVisProp('precision.' + type);
             } else {
                 // 'inherit'
                 prec = this.board.options.precision.hasPoint;
@@ -232,10 +232,10 @@ JXG.extend(
             dist = Mat.hypot(dx, dy);
 
             // We have to use usrCoords, since Radius is available in usrCoords only.
-            prec += Type.evaluate(this.visProp.strokewidth) * 0.5;
+            prec += this.evalVisProp('strokewidth') * 0.5;
             prec /= Math.sqrt(Math.abs(this.board.unitX * this.board.unitY));
 
-            if (Type.evaluate(this.visProp.hasinnerpoints)) {
+            if (this.evalVisProp('hasinnerpoints')) {
                 return dist < r + prec;
             }
 
@@ -353,7 +353,7 @@ JXG.extend(
             var x, y, z, r, c, i;
 
             if (this.needsUpdate) {
-                if (Type.evaluate(this.visProp.trace)) {
+                if (this.evalVisProp('trace')) {
                     this.cloneToBackground(true);
                 }
 
@@ -551,7 +551,7 @@ JXG.extend(
             }
 
             if (this.method === "pointRadius") {
-                return (Type.evaluate(this.visProp.nonnegativeonly)) ?
+                return (this.evalVisProp('nonnegativeonly')) ?
                     Math.max(0.0, this.updateRadius()) :
                     Math.abs(this.updateRadius());
             }
@@ -594,13 +594,13 @@ JXG.extend(
                 return new Coords(Const.COORDS_BY_SCREEN, [NaN, NaN], this.board);
             }
 
-            pos = Type.evaluate(this.label.visProp.position);
+            pos = this.label.evalVisProp('position');
             if (!Type.isString(pos)) {
                 return new Coords(Const.COORDS_BY_SCREEN, [NaN, NaN], this.board);
             }
 
             if (pos.indexOf('right') < 0 && pos.indexOf('left') < 0) {
-                switch (Type.evaluate(this.visProp.label.position)) {
+                switch (this.evalVisProp('label.position')) {
                     case "lft":
                         x = c[1] - r;
                         y = c[2];
@@ -659,7 +659,7 @@ JXG.extend(
                 }
 
                 if (Type.exists(this.label)) {
-                    dist = sgn * 0.5 * Type.evaluate(this.label.visProp.distance);
+                    dist = sgn * 0.5 * this.label.evalVisProp('distance');
                 }
 
                 x = c[1] + (r * this.board.unitX + this.label.size[0] * dist) * Math.cos(lbda);
@@ -675,28 +675,16 @@ JXG.extend(
         cloneToBackground: function () {
             var er,
                 r = this.Radius(),
-                copy = {
-                    id: this.id + "T" + this.numTraces,
-                    elementClass: Const.OBJECT_CLASS_CIRCLE,
-                    center: {
-                        coords: this.center.coords
-                    },
-                    Radius: function () {
-                        return r;
-                    },
-                    getRadius: function () {
-                        return r;
-                    },
-                    board: this.board,
-                    visProp: Type.deepCopy(this.visProp, this.visProp.traceattributes, true)
-                };
+                copy = Type.getCloneObject(this);
 
-            copy.visProp.layer = this.board.options.layer.trace;
-
-            this.numTraces++;
-            Type.clearVisPropOld(copy);
-            copy.visPropCalc = {
-                visible: Type.evaluate(copy.visProp.visible)
+            copy.center = {
+                coords: this.center.coords
+            };
+            copy.Radius = function () {
+                return r;
+            };
+            copy.getRadius = function () {
+                return r;
             };
 
             er = this.board.renderer.enhancedRendering;
@@ -731,7 +719,7 @@ JXG.extend(
 
         // see element.js
         snapToGrid: function () {
-            var forceIt = Type.evaluate(this.visProp.snaptogrid);
+            var forceIt = this.evalVisProp('snaptogrid');
 
             this.center.handleSnapToGrid(forceIt, true);
             if (this.method === "twoPoints") {
@@ -743,7 +731,7 @@ JXG.extend(
 
         // see element.js
         snapToPoints: function () {
-            var forceIt = Type.evaluate(this.visProp.snaptopoints);
+            var forceIt = this.evalVisProp('snaptopoints');
 
             this.center.handleSnapToPoints(forceIt);
             if (this.method === "twoPoints") {

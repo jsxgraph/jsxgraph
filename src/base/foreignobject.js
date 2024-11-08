@@ -135,9 +135,9 @@ JXG.extend(
             var dx, dy, r, type, prec, c, v, p, dot,
                 len = this.transformations.length;
 
-            if (Type.isObject(Type.evaluate(this.visProp.precision))) {
+            if (Type.isObject(this.evalVisProp('precision'))) {
                 type = this.board._inputDevice;
-                prec = Type.evaluate(this.visProp.precision[type]);
+                prec = this.evalVisProp('precision.' + type);
             } else {
                 // 'inherit'
                 prec = this.board.options.precision.hasPoint;

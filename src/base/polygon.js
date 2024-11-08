@@ -206,7 +206,7 @@ JXG.extend(
          *
          */
         pnpoly: function (x_in, y_in, coord_type) {
-            return Geometry.pnpoly(x_in, y_in, this.vertices, coord_type);
+            return Geometry.pnpoly(x_in, y_in, this.vertices, coord_type, this.board);
         },
 
         /**
@@ -218,7 +218,7 @@ JXG.extend(
         hasPoint: function (x, y) {
             var i, len;
 
-            if (Type.evaluate(this.visProp.hasinnerpoints)) {
+            if (this.evalVisProp('hasinnerpoints')) {
                 // All points of the polygon trigger hasPoint: inner and boundary points
                 if (this.pnpoly(x, y)) {
                     return true;
@@ -333,21 +333,10 @@ JXG.extend(
 
         // documented in geometry element
         cloneToBackground: function () {
-            var copy = {},
-                er;
+            var er,
+                copy = Type.getCloneObject(this);
 
-            copy.id = this.id + "T" + this.numTraces;
-            this.numTraces++;
             copy.vertices = this.vertices;
-            copy.visProp = Type.deepCopy(this.visProp, this.visProp.traceattributes, true);
-            copy.visProp.layer = this.board.options.layer.trace;
-            copy.board = this.board;
-            Type.clearVisPropOld(copy);
-
-            copy.visPropCalc = {
-                visible: Type.evaluate(copy.visProp.visible)
-            };
-
             er = this.board.renderer.enhancedRendering;
             this.board.renderer.enhancedRendering = true;
             this.board.renderer.drawPolygon(copy);
@@ -889,7 +878,7 @@ JXG.extend(
         snapToGrid: function () {
             var i, force;
 
-            if (Type.evaluate(this.visProp.snaptogrid)) {
+            if (this.evalVisProp('snaptogrid')) {
                 force = true;
             } else {
                 force = false;

@@ -521,10 +521,10 @@ JXG.Board = function (container, renderer, id,
     /**
      * If GEONExT constructions are displayed, then this property should be set to true.
      * At the moment there should be no difference. But this may change.
-     * This is set in {@link JXG.GeonextReader#readGeonext}.
+     * This is set in {@link JXG.GeonextReader.readGeonext}.
      * @type Boolean
      * @default false
-     * @see JXG.GeonextReader#readGeonext
+     * @see JXG.GeonextReader.readGeonext
      */
     this.geonextCompatibilityMode = false;
 
@@ -644,6 +644,17 @@ JXG.Board = function (container, renderer, id,
      * @see JXG.Board#resizeListener
      */
     this._isResizing = false;
+
+    /**
+     * A flag which tells us if the update is triggered by a change of the
+     * 3D view. In that case we only have to update the projection of
+     * the 3D elements and can avoid a full board update.
+     *
+     * @type Boolean
+     * @private
+     * @default false
+     */
+    this._change3DView = false;
 
     /**
      * A bounding box for the selection
@@ -886,7 +897,7 @@ JXG.extend(
          * @param {Object} obj The object to add.
          */
         finalizeAdding: function (obj) {
-            if (Type.evaluate(obj.visProp.visible) === false) {
+            if (obj.evalVisProp('visible') === false) {
                 this.renderer.display(obj, false);
             }
         },
@@ -894,8 +905,8 @@ JXG.extend(
         finalizeLabel: function (obj) {
             if (
                 obj.hasLabel &&
-                !Type.evaluate(obj.label.visProp.islabel) &&
-                Type.evaluate(obj.label.visProp.visible) === false
+                !obj.label.evalVisProp('islabel') &&
+                obj.label.evalVisProp('visible') === false
             ) {
                 this.renderer.display(obj.label, false);
             }
@@ -949,7 +960,6 @@ JXG.extend(
                 docElement = ownerDoc.documentElement || this.document.body.parentNode,
                 docBody = ownerDoc.body,
                 container = this.containerObj,
-                // viewport, content,
                 zoom,
                 o;
 
@@ -1345,7 +1355,7 @@ JXG.extend(
                     ((this.geonextCompatibilityMode &&
                         (Type.isPoint(pEl) || pEl.elementClass === Const.OBJECT_CLASS_TEXT)) ||
                         !this.geonextCompatibilityMode) &&
-                    !Type.evaluate(pEl.visProp.fixed)
+                    !pEl.evalVisProp('fixed')
                     /*(!pEl.visProp.frozen) &&*/
                 ) {
                     // Elements in the highest layer get priority.
@@ -1366,19 +1376,20 @@ JXG.extend(
                         ) {
                             dragEl = pEl;
                             collect.push(dragEl);
+
                             // Save offset for large coords elements.
                             if (Type.exists(dragEl.coords)) {
-                                offset.push(
-                                    Statistics.subtract(dragEl.coords.scrCoords.slice(1), [
-                                        x,
-                                        y
-                                    ])
-                                );
+                                if (dragEl.elementClass === Const.OBJECT_CLASS_POINT) {
+                                    offset.push(Statistics.subtract(dragEl.coords.scrCoords.slice(1), [x, y]));
+                                } else {
+                                    // Images and texts
+                                    offset.push(Statistics.subtract(dragEl.actualCoords.scrCoords.slice(1), [x, y]));
+                                }
                             } else {
                                 offset.push([0, 0]);
                             }
 
-                            // we can't drop out of this loop because of the event handling system
+                            // We can't drop out of this loop because of the event handling system
                             //if (this.attr.takefirst) {
                             //    return collect;
                             //}
@@ -1407,7 +1418,7 @@ JXG.extend(
             // Move drag element to the top of the layer
             if (this.renderer.type === 'svg' &&
                 Type.exists(collect[0]) &&
-                Type.evaluate(collect[0].visProp.dragtotopoflayer) &&
+                collect[0].evalVisProp('dragtotopoflayer') &&
                 collect.length === 1 &&
                 Type.exists(collect[0].rendNode)
             ) {
@@ -1456,7 +1467,8 @@ JXG.extend(
 
             this.addLogEntry('drag', drag, newPos.usrCoords.slice(1));
 
-            // Store the position.
+            // Store the position and add the correctionvector from the mouse
+            // position to the object's coords.
             this.drag_position = [newPos.scrCoords[1], newPos.scrCoords[2]];
             this.drag_position = Statistics.add(this.drag_position, this._drag_offset);
 
@@ -1468,7 +1480,7 @@ JXG.extend(
             // We have to distinguish between CoordsElements and other elements like lines.
             // The latter need the difference between two move events.
             if (Type.exists(drag.coords)) {
-                drag.setPositionDirectly(Const.COORDS_BY_SCREEN, this.drag_position);
+                drag.setPositionDirectly(Const.COORDS_BY_SCREEN, this.drag_position, [x, y]);
             } else {
                 this.displayInfobox(false);
                 // Hide infobox in case the user has touched an intersection point
@@ -1503,7 +1515,7 @@ JXG.extend(
                 dragScrCoords[2] !== newDragScrCoords[2]
             ) {
                 drag.triggerEventHandlers([type + 'drag', 'drag'], [evt]);
-
+                // Update all elements of the board
                 this.update();
             }
             drag.highlight(true);
@@ -1611,7 +1623,7 @@ JXG.extend(
          */
         twoFingerTouchObject: function (tar, drag, id) {
             var t, T,
-                ar, i, len, vp,
+                ar, i, len,
                 snap = false;
 
             if (
@@ -1622,8 +1634,8 @@ JXG.extend(
 
                 T = this.getTwoFingerTransform(
                     tar[0], tar[1],
-                    Type.evaluate(drag.visProp.scalable),
-                    Type.evaluate(drag.visProp.rotatable));
+                    drag.evalVisProp('scalable'),
+                    drag.evalVisProp('rotatable'));
                 t = this.create('transform', T, { type: 'generic' });
                 t.update();
 
@@ -1638,11 +1650,9 @@ JXG.extend(
                     t.applyOnce(ar);
                 } else if (drag.type === Const.OBJECT_TYPE_POLYGON) {
                     len = drag.vertices.length - 1;
-                    vp = drag.visProp;
-                    snap = Type.evaluate(vp.snaptogrid) || Type.evaluate(vp.snaptopoints);
+                    snap = drag.evalVisProp('snaptogrid') || drag.evalVisProp('snaptopoints');
                     for (i = 0; i < len && !snap; ++i) {
-                        vp = drag.vertices[i].visProp;
-                        snap = snap || Type.evaluate(vp.snaptogrid) || Type.evaluate(vp.snaptopoints);
+                        snap = snap || drag.vertices[i]('snaptogrid') || drag.vertices[i]('snaptopoints');
                         snap = snap || (!drag.vertices[i].draggable());
                     }
                     if (!snap) {
@@ -1703,7 +1713,7 @@ JXG.extend(
                 });
                 t2 = this.create('transform', [alpha], { type: 'rotate' });
                 t1.melt(t2);
-                if (Type.evaluate(drag.visProp.scalable)) {
+                if (drag.evalVisProp('scalable')) {
                     d = Geometry.distance(fix, np) / Geometry.distance(fix, op);
                     t3 = this.create('transform', [d, d], { type: 'scale' });
                     t1.melt(t3);
@@ -2109,6 +2119,7 @@ JXG.extend(
                     // This is needed for capturing touch events.
                     // It is in jsxgraph.css, for ms-touch-action...
                     this.containerObj.style.touchAction = 'none';
+                    // this.containerObj.style.touchAction = 'auto';
                 }
 
                 this.hasPointerHandlers = true;
@@ -2899,12 +2910,14 @@ JXG.extend(
 
             // Allow browser scrolling
             // For this: pan by one finger has to be disabled
-            ta = 'none';             // JSXGraph catches all user touch events
+
+            ta = 'none';   // JSXGraph catches all user touch events
             if (this.mode === this.BOARD_MODE_NONE &&
                 Type.evaluate(this.attr.browserpan) &&
                 !(Type.evaluate(this.attr.pan.enabled) && !Type.evaluate(this.attr.pan.needtwofingers))
             ) {
-                ta = 'pan-x pan-y';  // JSXGraph allows browser scrolling
+                // ta = 'pan-x pan-y';  // JSXGraph allows browser scrolling
+                ta = 'auto';  // JSXGraph allows browser scrolling
             }
             this.containerObj.style.touchAction = ta;
 
@@ -3296,17 +3309,12 @@ JXG.extend(
          * @returns {Boolean} ...
          */
         touchStartListener: function (evt) {
-            var i,
-                pos,
-                elements,
-                j,
-                k,
+            var i, j, k,
+                pos, elements, obj,
                 eps = this.options.precision.touch,
-                obj,
-                found,
-                targets,
                 evtTouches = evt['touches'],
-                target,
+                found,
+                targets, target,
                 touchTargets;
 
             if (!this.hasTouchEnd) {
@@ -4138,8 +4146,8 @@ JXG.extend(
                     if (
                         Type.exists(el.visProp.snaptogrid) &&
                         el.visProp.snaptogrid &&
-                        Type.evaluate(el.visProp.snapsizex) &&
-                        Type.evaluate(el.visProp.snapsizey)
+                        el.evalVisProp('snapsizex') &&
+                        el.evalVisProp('snapsizey')
                     ) {
                         // Adapt dx, dy such that snapToGrid is possible
                         res = el.getSnapSizes();
@@ -4152,14 +4160,14 @@ JXG.extend(
                     } else if (
                         Type.exists(el.visProp.attracttogrid) &&
                         el.visProp.attracttogrid &&
-                        Type.evaluate(el.visProp.attractordistance) &&
-                        Type.evaluate(el.visProp.attractorunit)
+                        el.evalVisProp('attractordistance') &&
+                        el.evalVisProp('attractorunit')
                     ) {
                         // Adapt dx, dy such that attractToGrid is possible
-                        sX = 1.1 * Type.evaluate(el.visProp.attractordistance);
+                        sX = 1.1 * el.evalVisProp('attractordistance');
                         sY = sX;
 
-                        if (Type.evaluate(el.visProp.attractorunit) === 'screen') {
+                        if (el.evalVisProp('attractorunit') === 'screen') {
                             sX /= this.unitX;
                             sY /= this.unitX;
                         }
@@ -4190,7 +4198,7 @@ JXG.extend(
                         (Type.isPoint(el) ||
                             el.elementClass === Const.OBJECT_CLASS_TEXT)
                     ) || !this.geonextCompatibilityMode) &&
-                    !Type.evaluate(el.visProp.fixed)
+                    !el.evalVisProp('fixed')
                 ) {
 
 
@@ -4610,7 +4618,7 @@ JXG.extend(
             var x, y, xc, yc,
                 vpinfoboxdigits,
                 distX, distY,
-                vpsi = Type.evaluate(el.visProp.showinfobox);
+                vpsi = el.evalVisProp('showinfobox');
 
             if ((!Type.evaluate(this.attr.showinfobox) && vpsi === 'inherit') || !vpsi) {
                 return this;
@@ -4619,15 +4627,15 @@ JXG.extend(
             if (Type.isPoint(el)) {
                 xc = el.coords.usrCoords[1];
                 yc = el.coords.usrCoords[2];
-                distX = Type.evaluate(this.infobox.visProp.distancex);
-                distY = Type.evaluate(this.infobox.visProp.distancey);
+                distX = this.infobox.evalVisProp('distancex');
+                distY = this.infobox.evalVisProp('distancey');
 
                 this.infobox.setCoords(
                     xc + distX / this.unitX,
                     yc + distY / this.unitY
                 );
 
-                vpinfoboxdigits = Type.evaluate(el.visProp.infoboxdigits);
+                vpinfoboxdigits = el.evalVisProp('infoboxdigits');
                 if (typeof el.infoboxText !== 'string') {
                     if (vpinfoboxdigits === 'auto') {
                         if (this.infobox.useLocale()) {
@@ -4871,7 +4879,7 @@ JXG.extend(
                 el = this.objectsList[ob];
 
                 if (Type.exists(el.coords)) {
-                    if (Type.evaluate(el.visProp.frozen)) {
+                    if (el.evalVisProp('frozen')) {
                         if (el.is3D) {
                             el.element2D.coords.screen2usr();
                         } else {
@@ -5541,7 +5549,7 @@ JXG.extend(
                 delete this.objects[object.id];
                 delete this.elementsByName[object.name];
 
-                if (object.visProp && Type.evaluate(object.visProp.trace)) {
+                if (object.visProp && object.evalVisProp('trace')) {
                     object.clearTrace();
                 }
 
@@ -5778,7 +5786,13 @@ JXG.extend(
 
             for (el = 0; el < len; el++) {
                 pEl = this.objectsList[el];
-                pEl.needsUpdate = pEl.needsRegularUpdate || this.needsFullUpdate;
+                if (this._change3DView) {
+                    // The 3 view has changed. Elements are not recomputed,
+                    // only 3D elements are projected to the new view.
+                    pEl.needsUpdate = pEl.visProp.element3d !== null || pEl.elType === 'view3d' || pEl.elType === 'view3d_slider' || this.needsFullUpdate;
+                } else {
+                    pEl.needsUpdate = pEl.needsRegularUpdate || this.needsFullUpdate;
+                }
             }
 
             for (el in this.groups) {
@@ -6880,19 +6894,19 @@ JXG.extend(
                         }
                         o.setAttribute({
                             strokecolor: Color.rgb2cb(
-                                Type.evaluate(o.visPropOriginal.strokecolor),
+                                o.eval(o.visPropOriginal.strokecolor),
                                 deficiency
                             ),
                             fillcolor: Color.rgb2cb(
-                                Type.evaluate(o.visPropOriginal.fillcolor),
+                                o.eval(o.visPropOriginal.fillcolor),
                                 deficiency
                             ),
                             highlightstrokecolor: Color.rgb2cb(
-                                Type.evaluate(o.visPropOriginal.highlightstrokecolor),
+                                o.eval(o.visPropOriginal.highlightstrokecolor),
                                 deficiency
                             ),
                             highlightfillcolor: Color.rgb2cb(
-                                Type.evaluate(o.visPropOriginal.highlightfillcolor),
+                                o.eval(o.visPropOriginal.highlightfillcolor),
                                 deficiency
                             )
                         });

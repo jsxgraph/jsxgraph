@@ -494,7 +494,7 @@ JXG.GeonextParser = {
             if (elements.hasOwnProperty(el)) {
                 if (el !== me.name) {
                     if (elements[el].elementClass === Const.OBJECT_CLASS_TEXT) {
-                        if (!Type.evaluate(elements[el].visProp.islabel)) {
+                        if (!elements[el].evalVisProp('islabel')) {
                             elmask = el.replace(/\[/g, "\\[");
                             elmask = elmask.replace(/\]/g, "\\]");
 

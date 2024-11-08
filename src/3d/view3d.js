@@ -72,7 +72,7 @@ JXG.View3D = function (board, parents, attributes) {
     this.objects = {};
 
     /**
-     * An array containing all the points in the view.
+     * An array containing all the elements in the view that are sorted due to their depth order.
      * @Type Array
      * @private
      */
@@ -590,7 +590,7 @@ JXG.extend(
             bank_smax, bank_smin;
 
         // update stored trackball toggle
-        this.trackballEnabled = Type.evaluate(this.visProp.trackball.enabled);
+        this.trackballEnabled = this.evalVisProp('trackball.enabled');
 
         // set slider bounds
         if (this.trackballEnabled) {
@@ -693,7 +693,7 @@ JXG.extend(
             r, A;
 
         // set distance from view box center to camera
-        r = Type.evaluate(this.visProp.r);
+        r = this.evalVisProp('r');
         if (r === 'auto') {
             r = Mat.hypot(
                 this.bbox3D[0][0] - this.bbox3D[0][1],
@@ -703,11 +703,12 @@ JXG.extend(
         }
 
         // compute camera transformation
-        this.boxToCam = this.matrix3DRot.map((row) => row.slice());
+        // this.boxToCam = this.matrix3DRot.map((row) => row.slice());
+        this.boxToCam = this.matrix3DRot.map(function (row) { return row.slice(); });
         this.boxToCam[3][0] = -r;
 
         // compute focal distance and clip space transformation
-        this.focalDist = 1 / Math.tan(0.5 * Type.evaluate(this.visProp.fov));
+        this.focalDist = 1 / Math.tan(0.5 * this.evalVisProp('fov'));
         A = [
             [0, 0, 0, -1],
             [0, this.focalDist, 0, 0],
@@ -744,7 +745,8 @@ JXG.extend(
             ],
             mat2D, objectToClip, size,
             dx, dy,
-            objectsList;
+            id, el;
+            // objectsList;
 
         if (
             !Type.exists(this.el_slide) ||
@@ -761,10 +763,10 @@ JXG.extend(
             [0, 0, 1]
         ];
 
-        this.projectionType = Type.evaluate(this.visProp.projection).toLowerCase();
+        this.projectionType = this.evalVisProp('projection').toLowerCase();
 
         // override angle slider bounds when trackball navigation is enabled
-        if (this.trackballEnabled !== Type.evaluate(this.visProp.trackball.enabled)) {
+        if (this.trackballEnabled !== this.evalVisProp('trackball.enabled')) {
             this.updateAngleSliderBounds();
         }
 
@@ -834,10 +836,19 @@ JXG.extend(
         // if depth-ordering for points was just switched on, initialize the
         // list of points
         if (this.visProp.depthorderpoints && this.points === null) {
-            objectsList = Object.values(this.objects);
-            this.points = objectsList.filter(
-                el => el.type === Const.OBJECT_TYPE_POINT3D
-            );
+            // objectsList = Object.values(this.objects);
+            // this.points = objectsList.filter(
+            //     el => el.type === Const.OBJECT_TYPE_POINT3D
+            // );
+            this.points = [];
+            for (id in this.objects) {
+                if (this.objects.hasOwnProperty(id)) {
+                    el = this.objects[id];
+                    if (el.type === Const.OBJECT_TYPE_POINT3D) {
+                        this.points.push(el);
+                    }
+                }
+            }
         }
 
         // if depth-ordering for points was just switched off, throw away the
@@ -851,9 +862,12 @@ JXG.extend(
         // moving the target element to the end of the layer's child list
         if (this.visProp.depthorderpoints && this.board.renderer && this.board.renderer.type === 'svg') {
             this.points
-                .filter((pt) => Type.evaluate(pt.element2D.visProp.visible))
+                // .filter((pt) => pt.element2D.evalVisProp('visible'))
+                // .sort(this.compareDepth.bind(this))
+                // .forEach((pt) => this.board.renderer.setLayer(pt.element2D, pt.element2D.visProp.layer));
+                .filter(function (pt) { return pt.element2D.evalVisProp('visible'); })
                 .sort(this.compareDepth.bind(this))
-                .forEach((pt) => this.board.renderer.setLayer(pt.element2D, pt.element2D.visProp.layer));
+                .forEach(function (pt) { return this.board.renderer.setLayer(pt.element2D, pt.element2D.visProp.layer); });
 
             /* [DEBUG] list oriented box coordinates in depth order */
             // console.log('depth-ordered points in oriented box coordinates');
@@ -1292,8 +1306,8 @@ JXG.extend(
      * @example
      *  var el = view.create('curve', [[], []]);
      *  el.updateDataArray = function () {
-     *      var steps_u = Type.evaluate(this.visProp.stepsu),
-     *           steps_v = Type.evaluate(this.visProp.stepsv),
+     *      var steps_u = this.evalVisProp('stepsu'),
+     *           steps_v = this.evalVisProp('stepsv'),
      *           r_u = Type.evaluate(this.range_u),
      *           r_v = Type.evaluate(this.range_v),
      *           func, ret;
@@ -1374,7 +1388,9 @@ JXG.extend(
         if (this.az_slide.position > 1) {
             this.az_slide.position = 0.0;
         }
+        this.board._change3DView = true;
         this.board.update();
+        this.board._change3DView = false;
 
         this.timeoutAzimuth = setTimeout(function () {
             this.animateAzimuth();
@@ -1399,10 +1415,10 @@ JXG.extend(
     isVerticalDrag: function () {
         var b = this.board,
             key;
-        if (!Type.evaluate(this.visProp.verticaldrag.enabled)) {
+        if (!this.evalVisProp('verticaldrag.enabled')) {
             return false;
         }
-        key = '_' + Type.evaluate(this.visProp.verticaldrag.key) + 'Key';
+        key = '_' + this.evalVisProp('verticaldrag.key') + 'Key';
         return b[key];
     },
 
@@ -1434,7 +1450,7 @@ JXG.extend(
      * @returns {Object} Reference to the view.
      */
     nextView: function () {
-        var views = Type.evaluate(this.visProp.values),
+        var views = this.evalVisProp('values'),
             n = this.visProp._currentview;
 
         n = (n + 1) % views.length;
@@ -1451,7 +1467,7 @@ JXG.extend(
      * @returns {Object} Reference to the view.
      */
     previousView: function () {
-        var views = Type.evaluate(this.visProp.values),
+        var views = this.evalVisProp('values'),
             n = this.visProp._currentview;
 
         n = (n + views.length - 1) % views.length;
@@ -1469,7 +1485,7 @@ JXG.extend(
      * @returns {Object} Reference to the view.
      */
     setCurrentView: function (n) {
-        var views = Type.evaluate(this.visProp.values);
+        var views = this.evalVisProp('values');
 
         if (n < 0 || n >= views.length) {
             n = ((n % views.length) + views.length) % views.length;
@@ -1492,7 +1508,7 @@ JXG.extend(
     _azEventHandler: function (evt) {
         var smax = this.az_slide._smax,
             smin = this.az_slide._smin,
-            speed = (smax - smin) / this.board.canvasWidth * (Type.evaluate(this.visProp.az.pointer.speed)),
+            speed = (smax - smin) / this.board.canvasWidth * (this.evalVisProp('az.pointer.speed')),
             delta = evt.movementX,
             az = this.az_slide.Value(),
             el = this.el_slide.Value();
@@ -1504,21 +1520,21 @@ JXG.extend(
 
         // Calculate new az value if keyboard events are triggered
         // Plus if right-button, minus if left-button
-        if (Type.evaluate(this.visProp.az.keyboard.enabled)) {
+        if (this.evalVisProp('az.keyboard.enabled')) {
             if (evt.key === 'ArrowRight') {
-                az = az + Type.evaluate(this.visProp.az.keyboard.step) * Math.PI / 180;
+                az = az + this.evalVisProp('az.keyboard.step') * Math.PI / 180;
             } else if (evt.key === 'ArrowLeft') {
-                az = az - Type.evaluate(this.visProp.az.keyboard.step) * Math.PI / 180;
+                az = az - this.evalVisProp('az.keyboard.step') * Math.PI / 180;
             }
         }
 
-        if (Type.evaluate(this.visProp.az.pointer.enabled) && (delta !== 0) && evt.key == null) {
+        if (this.evalVisProp('az.pointer.enabled') && (delta !== 0) && evt.key == null) {
             az += delta * speed;
         }
 
         // Project the calculated az value to a usable value in the interval [smin,smax]
         // Use modulo if continuous is true
-        if (Type.evaluate(this.visProp.az.continuous)) {
+        if (this.evalVisProp('az.continuous')) {
             az = Mat.wrap(az, smin, smax);
         } else {
             if (az > 0) {
@@ -1543,7 +1559,7 @@ JXG.extend(
     _elEventHandler: function (evt) {
         var smax = this.el_slide._smax,
             smin = this.el_slide._smin,
-            speed = (smax - smin) / this.board.canvasHeight * Type.evaluate(this.visProp.el.pointer.speed),
+            speed = (smax - smin) / this.board.canvasHeight * this.evalVisProp('el.pointer.speed'),
             delta = evt.movementY,
             az = this.az_slide.Value(),
             el = this.el_slide.Value();
@@ -1555,21 +1571,21 @@ JXG.extend(
 
         // Calculate new az value if keyboard events are triggered
         // Plus if down-button, minus if up-button
-        if (Type.evaluate(this.visProp.el.keyboard.enabled)) {
+        if (this.evalVisProp('el.keyboard.enabled')) {
             if (evt.key === 'ArrowUp') {
-                el = el - Type.evaluate(this.visProp.el.keyboard.step) * Math.PI / 180;
+                el = el - this.evalVisProp('el.keyboard.step') * Math.PI / 180;
             } else if (evt.key === 'ArrowDown') {
-                el = el + Type.evaluate(this.visProp.el.keyboard.step) * Math.PI / 180;
+                el = el + this.evalVisProp('el.keyboard.step') * Math.PI / 180;
             }
         }
 
-        if (Type.evaluate(this.visProp.el.pointer.enabled) && (delta !== 0) && evt.key == null) {
+        if (this.evalVisProp('el.pointer.enabled') && (delta !== 0) && evt.key == null) {
             el += delta * speed;
         }
 
         // Project the calculated el value to a usable value in the interval [smin,smax]
         // Use modulo if continuous is true and the trackball is disabled
-        if (Type.evaluate(this.visProp.el.continuous) && !this.trackballEnabled) {
+        if (this.evalVisProp('el.continuous') && !this.trackballEnabled) {
             el = Mat.wrap(el, smin, smax);
         } else {
             if (el > 0) {
@@ -1580,6 +1596,7 @@ JXG.extend(
         }
 
         this.setView(az, el);
+
         return this;
     },
 
@@ -1605,8 +1622,8 @@ JXG.extend(
 
         // Calculate new bank value if keyboard events are triggered
         // Plus if down-button, minus if up-button
-        if (Type.evaluate(this.visProp.bank.keyboard.enabled)) {
-            step = Type.evaluate(this.visProp.bank.keyboard.step) * Math.PI / 180;
+        if (this.evalVisProp('bank.keyboard.enabled')) {
+            step = this.evalVisProp('bank.keyboard.step') * Math.PI / 180;
             if (evt.key === '.' || evt.key === '<') {
                 bank -= step;
             } else if (evt.key === ',' || evt.key === '>') {
@@ -1614,8 +1631,8 @@ JXG.extend(
             }
         }
 
-        if (Type.evaluate(this.visProp.bank.pointer.enabled) && (delta !== 0) && evt.key == null) {
-            speed = (smax - smin) / this.board.canvasHeight * Type.evaluate(this.visProp.bank.pointer.speed);
+        if (this.evalVisProp('bank.pointer.enabled') && (delta !== 0) && evt.key == null) {
+            speed = (smax - smin) / this.board.canvasHeight * this.evalVisProp('bank.pointer.speed');
             bank += delta * speed;
 
             // prevent the pointer wheel from scrolling the page
@@ -1623,7 +1640,7 @@ JXG.extend(
         }
 
         // Project the calculated bank value to a usable value in the interval [smin,smax]
-        if (Type.evaluate(this.visProp.bank.continuous)) {
+        if (this.evalVisProp('bank.continuous')) {
             // in continuous mode, wrap value around slider range
             bank = Mat.wrap(bank, smin, smax);
         } else {
@@ -1680,9 +1697,11 @@ JXG.extend(
             return;
         }
 
-        if (Type.evaluate(this.visProp.trackball.enabled)) {
-            neededButton = Type.evaluate(this.visProp.trackball.button);
-            neededKey = Type.evaluate(this.visProp.trackball.key);
+        this.board._change3DView = true;
+
+        if (this.evalVisProp('trackball.enabled')) {
+            neededButton = this.evalVisProp('trackball.button');
+            neededKey = this.evalVisProp('trackball.key');
 
             // Move events for virtual trackball
             if (
@@ -1690,14 +1709,14 @@ JXG.extend(
                 (neededKey === 'none' || (neededKey.indexOf('shift') > -1 && evt.shiftKey) || (neededKey.indexOf('ctrl') > -1 && evt.ctrlKey))
             ) {
                 // If outside is true then the event listener is bound to the document, otherwise to the div
-                target = (Type.evaluate(this.visProp.trackball.outside)) ? document : this.board.containerObj;
+                target = (this.evalVisProp('trackball.outside')) ? document : this.board.containerObj;
                 Env.addEvent(target, 'pointermove', this._trackballHandler, this);
                 this._hasMoveTrackball = true;
             }
         } else {
-            if (Type.evaluate(this.visProp.az.pointer.enabled)) {
-                neededButton = Type.evaluate(this.visProp.az.pointer.button);
-                neededKey = Type.evaluate(this.visProp.az.pointer.key);
+            if (this.evalVisProp('az.pointer.enabled')) {
+                neededButton = this.evalVisProp('az.pointer.button');
+                neededKey = this.evalVisProp('az.pointer.key');
 
                 // Move events for azimuth
                 if (
@@ -1705,15 +1724,15 @@ JXG.extend(
                     (neededKey === 'none' || (neededKey.indexOf('shift') > -1 && evt.shiftKey) || (neededKey.indexOf('ctrl') > -1 && evt.ctrlKey))
                 ) {
                     // If outside is true then the event listener is bound to the document, otherwise to the div
-                    target = (Type.evaluate(this.visProp.az.pointer.outside)) ? document : this.board.containerObj;
+                    target = (this.evalVisProp('az.pointer.outside')) ? document : this.board.containerObj;
                     Env.addEvent(target, 'pointermove', this._azEventHandler, this);
                     this._hasMoveAz = true;
                 }
             }
 
-            if (Type.evaluate(this.visProp.el.pointer.enabled)) {
-                neededButton = Type.evaluate(this.visProp.el.pointer.button);
-                neededKey = Type.evaluate(this.visProp.el.pointer.key);
+            if (this.evalVisProp('el.pointer.enabled')) {
+                neededButton = this.evalVisProp('el.pointer.button');
+                neededKey = this.evalVisProp('el.pointer.key');
 
                 // Events for elevation
                 if (
@@ -1721,15 +1740,15 @@ JXG.extend(
                     (neededKey === 'none' || (neededKey.indexOf('shift') > -1 && evt.shiftKey) || (neededKey.indexOf('ctrl') > -1 && evt.ctrlKey))
                 ) {
                     // If outside is true then the event listener is bound to the document, otherwise to the div
-                    target = (Type.evaluate(this.visProp.el.pointer.outside)) ? document : this.board.containerObj;
+                    target = (this.evalVisProp('el.pointer.outside')) ? document : this.board.containerObj;
                     Env.addEvent(target, 'pointermove', this._elEventHandler, this);
                     this._hasMoveEl = true;
                 }
             }
 
-            if (Type.evaluate(this.visProp.bank.pointer.enabled)) {
-                neededButton = Type.evaluate(this.visProp.bank.pointer.button);
-                neededKey = Type.evaluate(this.visProp.bank.pointer.key);
+            if (this.evalVisProp('bank.pointer.enabled')) {
+                neededButton = this.evalVisProp('bank.pointer.button');
+                neededKey = this.evalVisProp('bank.pointer.key');
 
                 // Events for bank
                 if (
@@ -1740,7 +1759,7 @@ JXG.extend(
                     // the document. otherwise, we bind it to the div. we
                     // register the event listener as active so it can
                     // prevent the pointer wheel from scrolling the page
-                    target = (Type.evaluate(this.visProp.bank.pointer.outside)) ? document : this.board.containerObj;
+                    target = (this.evalVisProp('bank.pointer.outside')) ? document : this.board.containerObj;
                     Env.addEvent(target, 'wheel', this._bankEventHandler, this, { passive: false });
                     this._hasMoveBank = true;
                 }
@@ -1759,26 +1778,28 @@ JXG.extend(
     pointerUpHandler: function (evt) {
         var target;
         if (this._hasMoveAz) {
-            target = (Type.evaluate(this.visProp.az.pointer.outside)) ? document : this.board.containerObj;
+            target = (this.evalVisProp('az.pointer.outside')) ? document : this.board.containerObj;
             Env.removeEvent(target, 'pointermove', this._azEventHandler, this);
             this._hasMoveAz = false;
         }
         if (this._hasMoveEl) {
-            target = (Type.evaluate(this.visProp.el.pointer.outside)) ? document : this.board.containerObj;
+            target = (this.evalVisProp('el.pointer.outside')) ? document : this.board.containerObj;
             Env.removeEvent(target, 'pointermove', this._elEventHandler, this);
             this._hasMoveEl = false;
         }
         if (this._hasMoveBank) {
-            target = (Type.evaluate(this.visProp.bank.pointer.outside)) ? document : this.board.containerObj;
+            target = (this.evalVisProp('bank.pointer.outside')) ? document : this.board.containerObj;
             Env.removeEvent(target, 'wheel', this._bankEventHandler, this);
             this._hasMoveBank = false;
         }
         if (this._hasMoveTrackball) {
-            target = (Type.evaluate(this.visProp.az.pointer.outside)) ? document : this.board.containerObj;
+            target = (this.evalVisProp('az.pointer.outside')) ? document : this.board.containerObj;
             Env.removeEvent(target, 'pointermove', this._trackballHandler, this);
             this._hasMoveTrackball = false;
         }
         Env.removeEvent(document, 'pointerup', this.pointerUpHandler, this);
+        this.board._change3DView = false;
+
     }
 });
 
@@ -2259,8 +2280,8 @@ JXG.createView3D = function (board, parents, attributes) {
         ],
         attr_az
     );
-    // view.az_slide.inherits.push(view);
     view.inherits.push(view.az_slide);
+    view.az_slide.elType = 'view3d_slider'; // Used in board.prepareUpdate()
 
     /**
      * Slider to adapt elevation angle
@@ -2281,6 +2302,7 @@ JXG.createView3D = function (board, parents, attributes) {
         attr_el
     );
     view.inherits.push(view.el_slide);
+    view.el_slide.elType = 'view3d_slider'; // Used in board.prepareUpdate()
 
     /**
      * Slider to adjust bank angle
@@ -2302,6 +2324,7 @@ JXG.createView3D = function (board, parents, attributes) {
         attr_bank
     );
     view.inherits.push(view.bank_slide);
+    view.bank_slide.elType = 'view3d_slider'; // Used in board.prepareUpdate()
 
     // Set special infobox attributes of view3d.infobox
     // Using setAttribute() is not possible here, since we have to
@@ -2341,7 +2364,7 @@ JXG.createView3D = function (board, parents, attributes) {
                 view.board.highlightCustomInfobox('', p);
                 return;
             }
-            d = Type.evaluate(p.visProp.infoboxdigits);
+            d = p.evalVisProp('infoboxdigits');
             infobox = view.board.infobox;
             if (d === 'auto') {
                 if (infobox.useLocale()) {
@@ -2368,23 +2391,36 @@ JXG.createView3D = function (board, parents, attributes) {
 
     // Add events for the keyboard navigation
     Env.addEvent(board.containerObj, 'keydown', function (event) {
-        var neededKey;
+        var neededKey,
+            catchEvt = false;
 
-        if (Type.evaluate(view.visProp.el.keyboard.enabled) && (event.key === 'ArrowUp' || event.key === 'ArrowDown')) {
-            neededKey = Type.evaluate(view.visProp.el.keyboard.key);
-            if (neededKey === 'none' || (neededKey.indexOf('shift') > -1 && event.shiftKey) || (neededKey.indexOf('ctrl') > -1 && event.ctrlKey)) {
+        // this.board._change3DView = true;
+        if (view.evalVisProp('el.keyboard.enabled') &&
+            (event.key === 'ArrowUp' || event.key === 'ArrowDown')
+        ) {
+            neededKey = view.evalVisProp('el.keyboard.key');
+            if (neededKey === 'none' ||
+                (neededKey.indexOf('shift') > -1 && event.shiftKey) ||
+                (neededKey.indexOf('ctrl') > -1 && event.ctrlKey)) {
                 view._elEventHandler(event);
+                catchEvt = true;
             }
 
         }
-        if (Type.evaluate(view.visProp.el.keyboard.enabled) && (event.key === 'ArrowLeft' || event.key === 'ArrowRight')) {
-            neededKey = Type.evaluate(view.visProp.az.keyboard.key);
-            if (neededKey === 'none' || (neededKey.indexOf('shift') > -1 && event.shiftKey) || (neededKey.indexOf('ctrl') > -1 && event.ctrlKey)) {
+        if (view.evalVisProp('el.keyboard.enabled') &&
+            (event.key === 'ArrowLeft' || event.key === 'ArrowRight')
+        ) {
+            neededKey = view.evalVisProp('az.keyboard.key');
+            if (neededKey === 'none' ||
+                (neededKey.indexOf('shift') > -1 && event.shiftKey) ||
+                (neededKey.indexOf('ctrl') > -1 && event.ctrlKey)
+            ) {
                 view._azEventHandler(event);
+                catchEvt = true;
             }
         }
-        if (Type.evaluate(view.visProp.bank.keyboard.enabled) && (event.key === ',' || event.key === '<' || event.key === '.' || event.key === '>')) {
-            neededKey = Type.evaluate(view.visProp.bank.keyboard.key);
+        if (view.evalVisProp('bank.keyboard.enabled') && (event.key === ',' || event.key === '<' || event.key === '.' || event.key === '>')) {
+            neededKey = view.evalVisProp('bank.keyboard.key');
             if (neededKey === 'none' || (neededKey.indexOf('shift') > -1 && event.shiftKey) || (neededKey.indexOf('ctrl') > -1 && event.ctrlKey)) {
                 view._bankEventHandler(event);
                 catchEvt = true;
@@ -2392,11 +2428,20 @@ JXG.createView3D = function (board, parents, attributes) {
         }
         if (event.key === 'PageUp') {
             view.nextView();
+            catchEvt = true;
         } else if (event.key === 'PageDown') {
             view.previousView();
+            catchEvt = true;
         }
 
-        event.preventDefault();
+        if (catchEvt) {
+            // We stop event handling only in the case if the keypress could be
+            // used for the 3D view. If this is not done, input fields et al
+            // can not be used any more.
+            event.preventDefault();
+        }
+        // this.board._change3DView = false;
+
     }, view);
 
     // Add events for the pointer navigation

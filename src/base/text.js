@@ -80,7 +80,7 @@ JXG.Text = function (board, coords, attributes, content) {
     this.constructor(board, attributes, Const.OBJECT_TYPE_TEXT, Const.OBJECT_CLASS_TEXT);
 
     this.element = this.board.select(attributes.anchor);
-    this.coordsConstructor(coords, Type.evaluate(this.visProp.islabel));
+    this.coordsConstructor(coords, this.evalVisProp('islabel'));
 
     this.content = "";
     this.plaintext = "";
@@ -149,9 +149,9 @@ JXG.extend(
         hasPoint: function (x, y) {
             var lft, rt, top, bot, ax, ay, type, r;
 
-            if (Type.isObject(Type.evaluate(this.visProp.precision))) {
+            if (Type.isObject(this.evalVisProp('precision'))) {
                 type = this.board._inputDevice;
-                r = Type.evaluate(this.visProp.precision[type]);
+                r = this.evalVisProp('precision.' + type);
             } else {
                 // 'inherit'
                 r = this.board.options.precision.hasPoint;
@@ -187,7 +187,7 @@ JXG.extend(
             }
             top = bot - this.size[1];
 
-            if (Type.evaluate(this.visProp.dragarea) === "all") {
+            if (this.evalVisProp('dragarea') === "all") {
                 return x >= lft - r && x < rt + r && y >= top - r && y <= bot + r;
             }
             // e.g. 'small'
@@ -209,9 +209,9 @@ JXG.extend(
             var updateText, e, digits,
                 resolvedText,
                 i, that,
-                ev_p = Type.evaluate(this.visProp.parse),
-                ev_um = Type.evaluate(this.visProp.usemathjax),
-                ev_uk = Type.evaluate(this.visProp.usekatex),
+                ev_p = this.evalVisProp('parse'),
+                ev_um = this.evalVisProp('usemathjax'),
+                ev_uk = this.evalVisProp('usekatex'),
                 convertJessieCode = false;
 
             this.orgText = text;
@@ -240,15 +240,15 @@ JXG.extend(
                     }
                 };
             } else {
-                if (Type.isNumber(text) && Type.evaluate(this.visProp.formatnumber)) {
-                    if (Type.evaluate(this.visProp.tofraction)) {
+                if (Type.isNumber(text) && this.evalVisProp('formatnumber')) {
+                    if (this.evalVisProp('tofraction')) {
                         if (ev_um) {
                             this.content = '\\(' + Type.toFraction(text, true) + '\\)';
                         } else {
                             this.content = Type.toFraction(text, ev_uk);
                         }
                     } else {
-                        digits = Type.evaluate(this.visProp.digits);
+                        digits = this.evalVisProp('digits');
                         if (this.useLocale()) {
                             this.content = this.formatNumberLocale(text, digits);
                         } else {
@@ -256,7 +256,7 @@ JXG.extend(
                         }
                     }
                 } else if (Type.isString(text) && ev_p) {
-                    if (Type.evaluate(this.visProp.useasciimathml)) {
+                    if (this.evalVisProp('useasciimathml')) {
                         // ASCIIMathML
                         // value-tags are not supported
                         this.content = "'`" + text + "`'";
@@ -308,7 +308,7 @@ JXG.extend(
 
                         updateText = function() {
                             var i, t,
-                                digits = Type.evaluate(that.visProp.digits),
+                                digits = that.evalVisProp('digits'),
                                 txt = '';
 
                             for (i = 0; i < that.content.length; i++) {
@@ -429,7 +429,7 @@ JXG.extend(
             var tmp,
                 that,
                 node,
-                ev_d = Type.evaluate(this.visProp.display);
+                ev_d = this.evalVisProp('display');
 
             if (!Env.isBrowser || this.board.renderer.type === "no") {
                 return this;
@@ -487,7 +487,7 @@ JXG.extend(
          * @returns {Array}
          */
         crudeSizeEstimate: function () {
-            var ev_fs = parseFloat(Type.evaluate(this.visProp.fontsize));
+            var ev_fs = parseFloat(this.evalVisProp('fontsize'));
             return [ev_fs * this.plaintext.length * 0.45, ev_fs * 0.9];
         },
 
@@ -591,22 +591,13 @@ JXG.extend(
                 x = x[0];
             }
 
-            if (Type.evaluate(this.visProp.islabel) && Type.exists(this.element)) {
+            if (this.evalVisProp('islabel') && Type.exists(this.element)) {
                 coordsAnchor = this.element.getLabelAnchor();
                 dx = (x - coordsAnchor.usrCoords[1]) * this.board.unitX;
                 dy = -(y - coordsAnchor.usrCoords[2]) * this.board.unitY;
 
                 this.relativeCoords.setCoordinates(Const.COORDS_BY_SCREEN, [dx, dy]);
             } else {
-                /*
-                this.X = function () {
-                    return x;
-                };
-
-                this.Y = function () {
-                    return y;
-                };
-                */
                 this.coords.setCoordinates(Const.COORDS_BY_USER, [x, y]);
             }
 
@@ -630,7 +621,7 @@ JXG.extend(
             this.updateCoords(fromParent);
             this.updateText();
 
-            if (Type.evaluate(this.visProp.display) === "internal") {
+            if (this.evalVisProp('display') === "internal") {
                 if (Type.isString(this.plaintext)) {
                     this.plaintext = this.utf8_decode(this.plaintext);
                 }
@@ -676,7 +667,7 @@ JXG.extend(
         updateRenderer: function () {
             if (
                 //this.board.updateQuality === this.board.BOARD_QUALITY_HIGH &&
-                Type.evaluate(this.visProp.autoposition)
+                this.evalVisProp('autoposition')
             ) {
                 this.setAutoPosition().updateConstraint();
             }
@@ -775,7 +766,7 @@ JXG.extend(
                             )
                         ) {
                             // may also be a string
-                            plaintext += '+(' + res + ').toFixed(' + Type.evaluate(this.visProp.digits) + ')';
+                            plaintext += '+(' + res + ').toFixed(' + this.evalVisProp('digits') + ')';
                         } else {
                             plaintext += '+(' + res + ')';
                         }
@@ -849,7 +840,7 @@ JXG.extend(
                     //     ) {
                     //         // Output is number
                     //         // textComps.push(
-                    //         //     '(' + res + ').toFixed(' + Type.evaluate(this.visProp.digits) + ')'
+                    //         //     '(' + res + ').toFixed(' + this.evalVisProp('digits') + ')'
                     //         // );
                     //         textComps.push('(' + res + ')');
                     //     } else {
@@ -1060,7 +1051,7 @@ JXG.extend(
             var c = this.coords.usrCoords;
 
             if (
-                Type.evaluate(this.visProp.islabel) ||
+                this.evalVisProp('islabel') ||
                 this.board.unitY === 0 ||
                 this.board.unitX === 0
             ) {
@@ -1081,7 +1072,7 @@ JXG.extend(
          * @returns String
          */
         getAnchorX: function () {
-            var a = Type.evaluate(this.visProp.anchorx);
+            var a = this.evalVisProp('anchorx');
             if (a === "auto") {
                 switch (this.visProp.position) {
                     case "top":
@@ -1108,7 +1099,7 @@ JXG.extend(
          * @returns String
          */
         getAnchorY: function () {
-            var a = Type.evaluate(this.visProp.anchory);
+            var a = this.evalVisProp('anchory');
             if (a === "auto") {
                 switch (this.visProp.position) {
                     case "top":
@@ -1203,15 +1194,15 @@ JXG.extend(
             if (
                 this === this.board.infobox ||
                 !this.visPropCalc.visible ||
-                !Type.evaluate(this.visProp.islabel) ||
+                !this.evalVisProp('islabel') ||
                 !this.element
             ) {
                 return this;
             }
 
-            // anchorX = Type.evaluate(this.visProp.anchorx);
-            // anchorY = Type.evaluate(this.visProp.anchory);
-            offset = Type.evaluate(this.visProp.offset);
+            // anchorX = this.evalVisProp('anchorx');
+            // anchorY = this.evalVisProp('anchory');
+            offset = this.evalVisProp('offset');
             anchorCoords = this.element.getLabelAnchor();
             cx = anchorCoords.scrCoords[1];
             cy = anchorCoords.scrCoords[2];
@@ -1221,15 +1212,15 @@ JXG.extend(
             dx = offset[0];
             dy = offset[1];
 
-            conflicts = this.getNumberOfConflicts(cx + dx, cy - dy, w, h, Type.evaluate(this.visProp.autopositionwhitelist));
+            conflicts = this.getNumberOfConflicts(cx + dx, cy - dy, w, h, this.evalVisProp('autopositionwhitelist'));
             if (conflicts === 0) {
                 return this;
             }
             // console.log(this.id, conflicts, w, h);
             // r = Geometry.distance([0, 0], offset, 2);
 
-            r = Type.evaluate(this.visProp.autopositionmindistance);
-            max_r = Type.evaluate(this.visProp.autopositionmaxdistance);
+            r = this.evalVisProp('autopositionmindistance');
+            max_r = this.evalVisProp('autopositionmaxdistance');
             delta_r = 0.2 * r;
 
             start_angle = Math.atan2(dy, dx);
@@ -1250,7 +1241,7 @@ JXG.extend(
                     x = cx + r * co;
                     y = cy - r * si;
 
-                    conflicts = this.getNumberOfConflicts(x, y, w, h, Type.evaluate(this.visProp.autopositionwhitelist));
+                    conflicts = this.getNumberOfConflicts(x, y, w, h, this.evalVisProp('autopositionwhitelist'));
                     if (conflicts < optimum.conflicts) {
                         optimum.conflicts = conflicts;
                         optimum.angle = angle;
@@ -1367,7 +1358,7 @@ JXG.createText = function (board, parents, attributes) {
         coords = parents.slice(0, -1),
         content = parents[parents.length - 1];
 
-    // downwards compatibility
+    // Backwards compatibility
     attr.anchor = attr.parent || attr.anchor;
     t = CoordsElement.create(JXG.Text, board, coords, attr, content);
 
@@ -1423,7 +1414,7 @@ JXG.createHTMLSlider = function (board, parents, attributes) {
         );
     }
 
-    // backwards compatibility
+    // Backwards compatibility
     attr.anchor = attr.parent || attr.anchor;
     attr.fixed = attr.fixed || true;
 

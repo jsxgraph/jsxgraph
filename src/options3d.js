@@ -17,7 +17,8 @@ JXG.extend(Options, {
 
         /**
          * Position of the main axes in a View3D element. Possible values are
-         * 'center', 'border' or 'none'.
+         * 'center', 'border' or 'none'. This attribute is immutable, i.e.
+         * can not be changed during the lifetime of the construction.
          *
          * @type String
          * @name View3D#axesPosition
@@ -404,8 +405,8 @@ JXG.extend(Options, {
         strokeWidth: 1,
         tabindex: null,
 
-        point1: { visible: false, name: "" },
-        point2: { visible: false, name: "", label: { visible: true } }
+        point1: { visible: false, name: "", withLabel: false },
+        point2: { visible: false, name: "", withLabel: false, label: { visible: true } }
     },
 
     circle3d: {
@@ -550,6 +551,8 @@ JXG.extend(Options, {
          * @visprop
          */
 
+        withLabel: false
+
         /**#@-*/
     },
 
@@ -567,7 +570,8 @@ JXG.extend(Options, {
         drawLabels: true,
 
         label: {
-            visible: true
+            visible: true,
+            withLabel: false
         }
 
         /**#@-*/
@@ -616,6 +620,15 @@ JXG.extend(Options, {
          */
 
         needsRegularUpdate: true,
+
+        /**
+         * When this option is enabled, points closer to the screen are drawn
+         * over points further from the screen within each layer.
+         *
+         * @name View3D#depthOrderPoints
+         * @default false
+         */
+        depthOrderPoints: false,
 
         /**
          * Choose the projection type to be used: `parallel` or `central`.
@@ -993,15 +1006,6 @@ JXG.extend(Options, {
          * @default 2/5*Math.PI
          */
         fov: 1 / 5 * 2 * Math.PI,
-
-        /**
-         * When this option is enabled, points closer to the screen are drawn
-         * over points further from the screen within each layer.
-         *
-         * @name View3D#depthOrderPoints
-         * @default false
-         */
-        depthOrderPoints: false,
 
         /**
          * Fixed values for the view, which can be changed using keyboard keys `picture-up` and `picture-down`.

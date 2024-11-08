@@ -841,7 +841,7 @@ JXG.Math = {
 
     /**
      * Greatest common divisor (gcd) of two numbers.
-     * @see <a href="https://rosettacode.org/wiki/Greatest_common_divisor#JavaScript">rosettacode.org</a>
+     * See {@link <a href="https://rosettacode.org/wiki/Greatest_common_divisor#JavaScript">rosettacode.org</a>}.
      *
      * @param  {Number} a First number
      * @param  {Number} b Second number
@@ -947,7 +947,7 @@ JXG.Math = {
     /**
      *  Error function, see {@link https://en.wikipedia.org/wiki/Error_function}.
      *
-     * @see JXG.Math.PropFunc.erf
+     * @see JXG.Math.ProbFuncs.erf
      * @param  {Number} x
      * @returns {Number}
      */
@@ -959,7 +959,7 @@ JXG.Math = {
      * Complementary error function, i.e. 1 - erf(x).
      *
      * @see JXG.Math.erf
-     * @see JXG.Math.PropFunc.erfc
+     * @see JXG.Math.ProbFuncs.erfc
      * @param  {Number} x
      * @returns {Number}
      */
@@ -971,7 +971,7 @@ JXG.Math = {
      * Inverse of error function
      *
      * @see JXG.Math.erf
-     * @see JXG.Math.PropFunc.erfi
+     * @see JXG.Math.ProbFuncs.erfi
      * @param  {Number} x
      * @returns {Number}
      */
@@ -982,7 +982,7 @@ JXG.Math = {
     /**
      * Normal distribution function
      *
-     * @see JXG.Math.PropFunc.ndtr
+     * @see JXG.Math.ProbFuncs.ndtr
      * @param  {Number} x
      * @returns {Number}
      */
@@ -994,7 +994,7 @@ JXG.Math = {
      * Inverse of normal distribution function
      *
      * @see JXG.Math.ndtr
-     * @see JXG.Math.PropFunc.ndtri
+     * @see JXG.Math.ProbFuncs.ndtri
      * @param  {Number} x
      * @returns {Number}
      */
@@ -1194,7 +1194,7 @@ JXG.Math = {
      * @param {Number} x Number which is to be converted
      * @param {Number} [order=0.001] Small number determining the approximation precision.
      * @returns {Array} [sign, leading, nominator, denominator] where sign is 1 or -1.
-     * @see JXG#toFraction
+     * @see JXG.toFraction
      *
      * @example
      * JXG.Math.decToFraction(0.33333333);

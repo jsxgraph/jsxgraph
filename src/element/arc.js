@@ -178,8 +178,8 @@ JXG.createArc = function (board, parents, attributes) {
         el.anglepoint.addChild(el);
     }
 
-    // should be documented in options
-    el.useDirection = attr.usedirection;
+    // This attribute is necessary for circumCircleArcs
+    el.useDirection = attr.usedirection; // This makes the attribute immutable
 
     // documented in JXG.Curve
     /**
@@ -187,17 +187,13 @@ JXG.createArc = function (board, parents, attributes) {
      * @ignore
      */
     el.updateDataArray = function () {
-        var ar,
-            phi,
-            det,
-            p0c,
-            p1c,
-            p2c,
+        var ar, phi, det,
+            p0c, p1c, p2c,
             sgn = 1,
             A = this.radiuspoint,
             B = this.center,
             C = this.anglepoint,
-            ev_s = Type.evaluate(this.visProp.selection);
+            ev_s = this.evalVisProp('selection');
 
         phi = Geometry.rad(A, B, C);
         if ((ev_s === "minor" && phi > Math.PI) || (ev_s === "major" && phi < Math.PI)) {
@@ -320,13 +316,13 @@ JXG.createArc = function (board, parents, attributes) {
             type,
             r = this.Radius();
 
-        if (Type.evaluate(this.visProp.hasinnerpoints)) {
+        if (this.evalVisProp('hasinnerpoints')) {
             return this.hasPointSector(x, y);
         }
 
-        if (Type.isObject(Type.evaluate(this.visProp.precision))) {
+        if (Type.isObject(this.evalVisProp('precision'))) {
             type = this.board._inputDevice;
-            prec = Type.evaluate(this.visProp.precision[type]);
+            prec = this.evalVisProp('precision.' + type);
         } else {
             // 'inherit'
             prec = this.board.options.precision.hasPoint;
@@ -400,7 +396,7 @@ JXG.createArc = function (board, parents, attributes) {
             pmc = this.center.coords.usrCoords,
             bxminusax = p2c[1] - pmc[1],
             byminusay = p2c[2] - pmc[2],
-            ev_s = Type.evaluate(this.visProp.selection),
+            ev_s = this.evalVisProp('selection'),
             l_vp = this.label ? this.label.visProp : this.visProp.label;
 
         // If this is uncommented, the angle label can not be dragged

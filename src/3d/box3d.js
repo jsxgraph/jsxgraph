@@ -81,6 +81,7 @@ JXG.createAxes3D = function (board, parents, attributes) {
 
     // Main 3D axes
     attr = Type.copyAttributes(attributes, board.options, "axes3d");
+    // Position of the main axes can not be changed during run time
     pos = attr.axesposition;
 
     for (i = 0; i < directions.length; i++) {
@@ -116,6 +117,7 @@ JXG.createAxes3D = function (board, parents, attributes) {
             axes[na].view = view;
 
             ticks_attr = attr[na.toLowerCase()].ticks3d;
+            ticks_attr.element3D = true;  // Needed to avoid update during change of view
             len = front[i] - rear[i];
             if (dir === 'x') {
                 axes[na + "Ticks"] = view.create("ticks3d", [from, [1, 0, 0], len, [0, 1, 0]], ticks_attr);
@@ -226,6 +228,7 @@ JXG.createAxis3D = function (board, parents, attributes) {
 
     // Use 2D points to create axis
     attr = Type.copyAttributes(attributes.point1, board.options, "axis3d", "point1");
+    attr.element3D = true;  // Needed to avoid update during change of view
     el_start = view.create(
         "point",
         [
@@ -244,6 +247,7 @@ JXG.createAxis3D = function (board, parents, attributes) {
     );
 
     attr = Type.copyAttributes(attributes.point2, board.options, "axis3d", "point2");
+    attr.element3D = true;  // Needed to avoid update during change of view
     el_end = view.create(
         "point",
         [
@@ -262,6 +266,7 @@ JXG.createAxis3D = function (board, parents, attributes) {
     );
 
     attr = Type.copyAttributes(attributes, board.options, "axis3d");
+    attr.element3D = true;  // Needed to avoid update during change of view
     el = view.create("arrow", [el_start, el_end], attr);
 
     return el;
@@ -297,6 +302,7 @@ JXG.createMesh3D = function (board, parents, attr) {
         step = parents[6] || 1,
         el;
 
+    attr.element3D = true;  // Needed to avoid update during change of view
     el = view.create("curve", [[], []], attr);
 
     el.point = point;

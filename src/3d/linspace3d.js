@@ -299,14 +299,14 @@ JXG.createLine3D = function (board, parents, attributes) {
 
         endpoints[0].F = function () {
             var r = 0;
-            if (Type.evaluate(el.visProp.straightfirst)) {
+            if (el.evalVisProp('straightfirst')) {
                 r = -Infinity;
             }
             return el.getPointCoords(r);
         };
         endpoints[1].F = function () {
             var r = 1;
-            if (Type.evaluate(el.visProp.straightlast)) {
+            if (el.evalVisProp('straightlast')) {
                 r = Infinity;
             }
             return el.getPointCoords(r);

@@ -173,11 +173,11 @@ JXG.extend(
             var c = [],
                 v = [1, x, y],
                 s, vnew, p1c, p2c, d, pos, i, prec, type,
-                sw = Type.evaluate(this.visProp.strokewidth);
+                sw = this.evalVisProp('strokewidth');
 
-            if (Type.isObject(Type.evaluate(this.visProp.precision))) {
+            if (Type.isObject(this.evalVisProp('precision'))) {
                 type = this.board._inputDevice;
-                prec = Type.evaluate(this.visProp.precision[type]);
+                prec = this.evalVisProp('precision.' + type);
             } else {
                 // 'inherit'
                 prec = this.board.options.precision.hasPoint;
@@ -197,8 +197,8 @@ JXG.extend(
             }
 
             if (
-                Type.evaluate(this.visProp.straightfirst) &&
-                Type.evaluate(this.visProp.straightlast)
+                this.evalVisProp('straightfirst') &&
+                this.evalVisProp('straightlast')
             ) {
                 return true;
             }
@@ -263,11 +263,11 @@ JXG.extend(
                 pos = (vnew[i] - p1c[i]) / d;
             }
 
-            if (!Type.evaluate(this.visProp.straightfirst) && pos < 0) {
+            if (!this.evalVisProp('straightfirst') && pos < 0) {
                 return false;
             }
 
-            return !(!Type.evaluate(this.visProp.straightlast) && pos > 1);
+            return !(!this.evalVisProp('straightlast') && pos > 1);
         },
 
         // documented in base/element
@@ -309,7 +309,7 @@ JXG.extend(
             this.updateSegmentFixedLength();
             this.updateStdform();
 
-            if (Type.evaluate(this.visProp.trace)) {
+            if (this.evalVisProp('trace')) {
                 this.cloneToBackground(true);
             }
 
@@ -330,7 +330,7 @@ JXG.extend(
             // Compute the actual length of the segment
             d = this.point1.Dist(this.point2);
             // Determine the length the segment ought to have
-            d_new = (Type.evaluate(this.visProp.nonnegativeonly)) ?
+            d_new = (this.evalVisProp('nonnegativeonly')) ?
                 Math.max(0.0, this.fixedLength()) :
                 Math.abs(this.fixedLength());
 
@@ -350,11 +350,11 @@ JXG.extend(
                 drag1 =
                     this.point1.isDraggable &&
                     this.point1.type !== Const.OBJECT_TYPE_GLIDER &&
-                    !Type.evaluate(this.point1.visProp.fixed);
+                    !this.point1.evalVisProp('fixed');
                 drag2 =
                     this.point2.isDraggable &&
                     this.point2.type !== Const.OBJECT_TYPE_GLIDER &&
-                    !Type.evaluate(this.point2.visProp.fixed);
+                    !this.point2.evalVisProp('fixed');
 
                 // First case: the two points are different
                 // Then we try to adapt the point that was not dragged
@@ -661,8 +661,8 @@ JXG.extend(
                 fs = 0,
                 c1 = new Coords(Const.COORDS_BY_USER, this.point1.coords.usrCoords, this.board),
                 c2 = new Coords(Const.COORDS_BY_USER, this.point2.coords.usrCoords, this.board),
-                ev_sf = Type.evaluate(this.visProp.straightfirst),
-                ev_sl = Type.evaluate(this.visProp.straightlast);
+                ev_sf = this.evalVisProp('straightfirst'),
+                ev_sl = this.evalVisProp('straightlast');
 
             if (ev_sf || ev_sl) {
                 Geometry.calcStraight(this, c1, c2, 0);
@@ -675,7 +675,7 @@ JXG.extend(
                 return new Coords(Const.COORDS_BY_SCREEN, [NaN, NaN], this.board);
             }
 
-            pos = Type.evaluate(this.label.visProp.position);
+            pos = this.label.evalVisProp('position');
             if (!Type.isString(pos)) {
                 return new Coords(Const.COORDS_BY_SCREEN, [NaN, NaN], this.board);
             }
@@ -753,7 +753,7 @@ JXG.extend(
                     dy *= -1;
                 }
                 if (Type.exists(this.label)) {
-                    dist = 0.5 * Type.evaluate(this.label.visProp.distance) / d;
+                    dist = 0.5 * this.label.evalVisProp('distance') / d;
                 }
                 x += dy * this.label.size[0] * dist;
                 y += dx * this.label.size[1] * dist;
@@ -763,7 +763,7 @@ JXG.extend(
             if (ev_sf || ev_sl) {
                 if (Type.exists(this.label)) {
                     // Does not exist during createLabel
-                    fs = Type.evaluate(this.label.visProp.fontsize);
+                    fs = this.label.evalVisProp('fontsize');
                 }
 
                 if (Math.abs(x) < Mat.eps) {
@@ -790,27 +790,13 @@ JXG.extend(
 
         // documented in geometry element
         cloneToBackground: function () {
-            var copy = {},
-                r,
-                s,
+            var copy = Type.getCloneObject(this),
+                r, s,
                 er;
 
-            copy.id = this.id + "T" + this.numTraces;
-            copy.elementClass = Const.OBJECT_CLASS_LINE;
-            this.numTraces++;
             copy.point1 = this.point1;
             copy.point2 = this.point2;
-
             copy.stdform = this.stdform;
-
-            copy.board = this.board;
-
-            copy.visProp = Type.deepCopy(this.visProp, this.visProp.traceattributes, true);
-            copy.visProp.layer = this.board.options.layer.trace;
-            Type.clearVisPropOld(copy);
-            copy.visPropCalc = {
-                visible: Type.evaluate(copy.visProp.visible)
-            };
 
             s = this.getSlope();
             r = this.getRise();
@@ -859,15 +845,15 @@ JXG.extend(
         snapToGrid: function (pos) {
             var c1, c2, dc, t, ticks, x, y, sX, sY;
 
-            if (Type.evaluate(this.visProp.snaptogrid)) {
+            if (this.evalVisProp('snaptogrid')) {
                 if (this.parents.length < 3) {
                     // Line through two points
                     this.point1.handleSnapToGrid(true, true);
                     this.point2.handleSnapToGrid(true, true);
                 } else if (Type.exists(pos)) {
                     // Free line
-                    sX = Type.evaluate(this.visProp.snapsizex);
-                    sY = Type.evaluate(this.visProp.snapsizey);
+                    sX = this.evalVisProp('snapsizex');
+                    sY = this.evalVisProp('snapsizey');
 
                     c1 = new Coords(Const.COORDS_BY_SCREEN, [pos.Xprev, pos.Yprev], this.board);
 
@@ -880,7 +866,7 @@ JXG.extend(
                         this.board.defaultAxes.x.defaultTicks
                     ) {
                         ticks = this.board.defaultAxes.x.defaultTicks;
-                        sX = ticks.ticksDelta * (Type.evaluate(ticks.visProp.minorticks) + 1);
+                        sX = ticks.ticksDelta * (ticks.evalVisProp('minorticks') + 1);
                     }
                     if (
                         sY <= 0 &&
@@ -888,7 +874,7 @@ JXG.extend(
                         this.board.defaultAxes.y.defaultTicks
                     ) {
                         ticks = this.board.defaultAxes.y.defaultTicks;
-                        sY = ticks.ticksDelta * (Type.evaluate(ticks.visProp.minorticks) + 1);
+                        sY = ticks.ticksDelta * (ticks.evalVisProp('minorticks') + 1);
                     }
 
                     // if no valid snap sizes are available, don't change the coords.
@@ -921,7 +907,7 @@ JXG.extend(
 
         // see element.js
         snapToPoints: function () {
-            var forceIt = Type.evaluate(this.visProp.snaptopoints);
+            var forceIt = this.evalVisProp('snaptopoints');
 
             if (this.parents.length < 3) {
                 // Line through two points
@@ -1707,13 +1693,17 @@ JXG.createAxis = function (board, parents, attributes) {
             locationOrg,
             visLabel, anchr, off;
 
+        if (!this.needsUpdate) {
+            return this;
+        }
+
         bbox = this.board.getBoundingBox();
-        position = Type.evaluate(this.visProp.position);
+        position = this.evalVisProp('position');
         direction = this.Direction();
         horizontal = this.isHorizontal();
         vertical = this.isVertical();
-        ticksAutoPos = Type.evaluate(this.visProp.ticksautopos);
-        ticksAutoPosThres = Type.evaluate(this.visProp.ticksautoposthreshold);
+        ticksAutoPos = this.evalVisProp('ticksautopos');
+        ticksAutoPosThres = this.evalVisProp('ticksautoposthreshold');
 
         if (horizontal) {
             ticksAutoPosThres = Type.parseNumber(ticksAutoPosThres, Math.abs(bbox[1] - bbox[3]), 1 / this.board.unitX) * this.board.unitX;
@@ -1723,11 +1713,11 @@ JXG.createAxis = function (board, parents, attributes) {
             ticksAutoPosThres = Type.parseNumber(ticksAutoPosThres, 1, 1);
         }
 
-        anchor = Type.evaluate(this.visProp.anchor);
+        anchor = this.evalVisProp('anchor');
         left = anchor.indexOf('left') > -1;
         right = anchor.indexOf('right') > -1;
 
-        distUsr = Type.evaluate(this.visProp.anchordist);
+        distUsr = this.evalVisProp('anchordist');
         if (horizontal) {
             distUsr = Type.parseNumber(distUsr, Math.abs(bbox[1] - bbox[3]), 1 / this.board.unitX);
         } else if (vertical) {
@@ -2030,7 +2020,7 @@ JXG.createTangent = function (board, parents, attributes) {
             }
         }
 
-        if (Type.evaluate(c.visProp.curvetype) !== "plot" || isTransformed) {
+        if (c.evalVisProp('curvetype') !== "plot" || isTransformed) {
             // Functiongraph or parametric curve or
             // transformed curve thereof.
             tangent = board.create(
@@ -2045,7 +2035,7 @@ JXG.createTangent = function (board, parents, attributes) {
 
                         if (p.type === Const.OBJECT_TYPE_GLIDER) {
                             t = p.position;
-                        } else if (Type.evaluate(c.visProp.curvetype) === 'functiongraph') {
+                        } else if (c.evalVisProp('curvetype') === 'functiongraph') {
                             t = p.X();
                         } else {
                             t = Geometry.projectPointToCurve(p, c, board)[1];
@@ -2409,7 +2399,7 @@ JXG.createNormal = function (board, parents, attributes) {
             }
         }
 
-        if (Type.evaluate(c.visProp.curvetype) !== "plot" || isTransformed) {
+        if (c.evalVisProp('curvetype') !== "plot" || isTransformed) {
             // Functiongraph or parametric curve or
             // transformed curve thereof.
             l = board.create(
@@ -2424,7 +2414,7 @@ JXG.createNormal = function (board, parents, attributes) {
 
                         if (p.type === Const.OBJECT_TYPE_GLIDER) {
                             t = p.position;
-                        } else if (Type.evaluate(c.visProp.curvetype) === 'functiongraph') {
+                        } else if (c.evalVisProp('curvetype') === 'functiongraph') {
                             t = p.X();
                         } else {
                             t = Geometry.projectPointToCurve(p, c, board)[1];

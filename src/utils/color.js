@@ -486,11 +486,11 @@ JXG.hsv2rgb = function (H, S, V) {
  * @param {String|Array|Number} color A valid HTML or CSS styled color value, e.g. '#12ab21', '#abc', 'black'
  * or 'rgb(12, 132, 233)'. This can also be an array containing three color values either from 0.0 to 1.0 or
  * from 0 to 255. They will be interpreted as red, green, and blue values. In case this is a number this method
- * expects the parameters ag and ab.
+ * expects the parameters ag and ab. See <a href="https://www.had2know.org/technology/hsv-rgb-conversion-formula-calculator.html">https://www.had2know.org/technology/hsv-rgb-conversion-formula-calculator.html</a>.
  * @param {Number} ag
  * @param {Number} ab
  * @returns {Array} Contains the h, s, and v value in this order.
- * @see https://www.had2know.org/technology/hsv-rgb-conversion-formula-calculator.html
+ *
  */
 JXG.rgb2hsv = function (color, ag, ab) {
     var r, g, b, fr, fg, fb, fmax, fmin, h, s, v, max, min;

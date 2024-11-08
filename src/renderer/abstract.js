@@ -213,24 +213,23 @@ JXG.extend(
             if (enhanced || this.enhancedRendering) {
                 not = not || {};
 
-                this.setObjectViewport(el);
                 this.setObjectTransition(el);
-                if (!Type.evaluate(el.visProp.draft)) {
+                if (!el.evalVisProp('draft')) {
                     if (!not.stroke) {
                         if (el.highlighted) {
                             this.setObjectStrokeColor(
                                 el,
-                                el.visProp.highlightstrokecolor,
-                                el.visProp.highlightstrokeopacity
+                                el.evalVisProp('highlightstrokecolor'),
+                                el.evalVisProp('highlightstrokeopacity')
                             );
-                            this.setObjectStrokeWidth(el, el.visProp.highlightstrokewidth);
+                            this.setObjectStrokeWidth(el, el.evalVisProp('highlightstrokewidth'));
                         } else {
                             this.setObjectStrokeColor(
                                 el,
-                                el.visProp.strokecolor,
-                                el.visProp.strokeopacity
+                                el.evalVisProp('strokecolor'),
+                                el.evalVisProp('strokeopacity')
                             );
-                            this.setObjectStrokeWidth(el, el.visProp.strokewidth);
+                            this.setObjectStrokeWidth(el, el.evalVisProp('strokewidth'));
                         }
                     }
 
@@ -238,14 +237,14 @@ JXG.extend(
                         if (el.highlighted) {
                             this.setObjectFillColor(
                                 el,
-                                el.visProp.highlightfillcolor,
-                                el.visProp.highlightfillopacity
+                                el.evalVisProp('highlightfillcolor'),
+                                el.evalVisProp('highlightfillopacity')
                             );
                         } else {
                             this.setObjectFillColor(
                                 el,
-                                el.visProp.fillcolor,
-                                el.visProp.fillopacity
+                                el.evalVisProp('fillcolor'),
+                                el.evalVisProp('fillopacity')
                             );
                         }
                     }
@@ -268,6 +267,16 @@ JXG.extend(
                     }
                 } else {
                     this.setDraft(el);
+                }
+
+                if (el.highlighted) {
+                    this.setCssClass(el, el.evalVisProp('highlightcssclass'));
+                } else {
+                    this.setCssClass(el, el.evalVisProp('cssclass'));
+                }
+
+                if (el.evalVisProp('aria.enabled')) {
+                    this.setARIA(el);
                 }
             }
         },
@@ -312,9 +321,9 @@ JXG.extend(
             var prim,
                 // sometimes el is not a real point and lacks the methods of a JXG.Point instance,
                 // in these cases to not use el directly.
-                face = Options.normalizePointFace(Type.evaluate(el.visProp.face));
+                face = Options.normalizePointFace(el.evalVisProp('face'));
 
-            // determine how the point looks like
+            // Determine how the point looks like
             if (face === "o") {
                 prim = "ellipse";
             } else if (face === "[]") {
@@ -327,11 +336,11 @@ JXG.extend(
 
             el.rendNode = this.appendChildPrim(
                 this.createPrim(prim, el.id),
-                Type.evaluate(el.visProp.layer)
+                el.evalVisProp('layer')
             );
             this.appendNodesToElement(el, prim);
 
-            // adjust visual propertys
+            // adjust visual properties
             this._updateVisual(el, { dash: true, shadow: true }, true);
 
             // By now we only created the xml nodes and set some styles, in updatePoint
@@ -348,12 +357,12 @@ JXG.extend(
          * @see JXG.AbstractRenderer#changePointStyle
          */
         updatePoint: function (el) {
-            var size = Type.evaluate(el.visProp.size),
+            var size = el.evalVisProp('size'),
                 // sometimes el is not a real point and lacks the methods of a JXG.Point instance,
                 // in these cases to not use el directly.
-                face = Options.normalizePointFace(Type.evaluate(el.visProp.face)),
-                unit = Type.evaluate(el.visProp.sizeunit),
-                zoom = Type.evaluate(el.visProp.zoom),
+                face = Options.normalizePointFace(el.evalVisProp('face')),
+                unit = el.evalVisProp('sizeunit'),
+                zoom = el.evalVisProp('zoom'),
                 s1;
 
             if (!isNaN(el.coords.scrCoords[2] + el.coords.scrCoords[1])) {
@@ -421,7 +430,7 @@ JXG.extend(
                 this.display(el, false);
             }
 
-            if (Type.evaluate(el.visProp.draft)) {
+            if (el.evalVisProp('draft')) {
                 this.setDraft(el);
             }
         },
@@ -440,7 +449,7 @@ JXG.extend(
         drawLine: function (el) {
             el.rendNode = this.appendChildPrim(
                 this.createPrim("line", el.id),
-                Type.evaluate(el.visProp.layer)
+                el.evalVisProp('layer')
             );
             this.appendNodesToElement(el, "lines");
             this.updateLine(el);
@@ -473,7 +482,7 @@ JXG.extend(
         drawCurve: function (el) {
             el.rendNode = this.appendChildPrim(
                 this.createPrim("path", el.id),
-                Type.evaluate(el.visProp.layer)
+                el.evalVisProp('layer')
             );
             this.appendNodesToElement(el, "path");
             this.updateCurve(el);
@@ -513,18 +522,17 @@ JXG.extend(
          * @see JXG.AbstractRenderer#getArrowHeadData
          */
         updatePathWithArrowHeads: function (el, doHighlight) {
-            var ev = el.visProp,
-                hl = doHighlight ? 'highlight' : '',
+            var hl = doHighlight ? 'highlight' : '',
                 w,
                 arrowData;
 
-            if (doHighlight && ev.highlightstrokewidth) {
+            if (doHighlight && el.evalVisProp('highlightstrokewidth')) {
                 w = Math.max(
-                    Type.evaluate(ev.highlightstrokewidth),
-                    Type.evaluate(ev.strokewidth)
+                    el.evalVisProp('highlightstrokewidth'),
+                    el.evalVisProp('strokewidth')
                 );
             } else {
-                w = Type.evaluate(ev.strokewidth);
+                w = el.evalVisProp('strokewidth');
             }
 
             // Get information if there are arrow heads and how large they are.
@@ -565,8 +573,8 @@ JXG.extend(
                 offLast = 0,
                 sizeFirst = 0,
                 sizeLast = 0,
-                ev_fa = Type.evaluate(el.visProp.firstarrow),
-                ev_la = Type.evaluate(el.visProp.lastarrow),
+                ev_fa = el.evalVisProp('firstarrow'),
+                ev_la = el.evalVisProp('lastarrow'),
                 off,
                 size;
 
@@ -578,7 +586,7 @@ JXG.extend(
             */
             if (ev_fa || ev_la) {
                 if (Type.exists(ev_fa.type)) {
-                    typeFirst = Type.evaluate(ev_fa.type);
+                    typeFirst = el.eval(ev_fa.type);
                 } else {
                     if (el.elementClass === Const.OBJECT_CLASS_LINE) {
                         typeFirst = 1;
@@ -587,7 +595,7 @@ JXG.extend(
                     }
                 }
                 if (Type.exists(ev_la.type)) {
-                    typeLast = Type.evaluate(ev_la.type);
+                    typeLast = el.eval(ev_la.type);
                 } else {
                     if (el.elementClass === Const.OBJECT_CLASS_LINE) {
                         typeLast = 1;
@@ -599,10 +607,10 @@ JXG.extend(
                 if (ev_fa) {
                     size = 6;
                     if (Type.exists(ev_fa.size)) {
-                        size = Type.evaluate(ev_fa.size);
+                        size = el.eval(ev_fa.size);
                     }
                     if (hl !== "" && Type.exists(ev_fa[hl + "size"])) {
-                        size = Type.evaluate(ev_fa[hl + "size"]);
+                        size = el.eval(ev_fa[hl + "size"]);
                     }
 
                     off = strokewidth * size;
@@ -629,10 +637,10 @@ JXG.extend(
                 if (ev_la) {
                     size = 6;
                     if (Type.exists(ev_la.size)) {
-                        size = Type.evaluate(ev_la.size);
+                        size = el.eval(ev_la.size);
                     }
                     if (hl !== "" && Type.exists(ev_la[hl + "size"])) {
-                        size = Type.evaluate(ev_la[hl + "size"]);
+                        size = el.eval(ev_la[hl + "size"]);
                     }
                     off = strokewidth * size;
                     if (typeLast === 2) {
@@ -699,7 +707,7 @@ JXG.extend(
 
             c1 = new Coords(Const.COORDS_BY_USER, el.point1.coords.usrCoords, el.board);
             c2 = new Coords(Const.COORDS_BY_USER, el.point2.coords.usrCoords, el.board);
-            margin = Type.evaluate(el.visProp.margin);
+            margin = el.evalVisProp('margin');
             Geometry.calcStraight(el, c1, c2, margin);
 
             this.handleTouchpoints(el, c1, c2, arrowData);
@@ -731,7 +739,7 @@ JXG.extend(
          *
          */
         updatePath: function (el) {
-            if (Type.evaluate(el.visProp.handdrawing)) {
+            if (el.evalVisProp('handdrawing')) {
                 this.updatePathPrim(el.rendNode, this.updatePathStringBezierPrim(el), el.board);
             } else {
                 this.updatePathPrim(el.rendNode, this.updatePathStringPrim(el), el.board);
@@ -816,23 +824,23 @@ JXG.extend(
             if (a.evFirst || a.evLast) {
                 d = d1x = d1y = d2x = d2y = 0.0;
 
-                s1 = Type.evaluate(el.point1.visProp.size) +
-                    Type.evaluate(el.point1.visProp.strokewidth);
+                s1 = el.point1.evalVisProp('size') +
+                    el.point1.evalVisProp('strokewidth');
 
-                s2 = Type.evaluate(el.point2.visProp.size) +
-                    Type.evaluate(el.point2.visProp.strokewidth);
+                s2 = el.point2.evalVisProp('size') +
+                    el.point2.evalVisProp('strokewidth');
 
                 // Handle touchlastpoint /touchfirstpoint
-                if (a.evFirst && Type.evaluate(el.visProp.touchfirstpoint) &&
-                        Type.evaluate(el.point1.visProp.visible)) {
+                if (a.evFirst && el.evalVisProp('touchfirstpoint') &&
+                        el.point1.evalVisProp('visible')) {
                     d = c1.distance(Const.COORDS_BY_SCREEN, c2);
                     //if (d > s) {
                     d1x = ((c2.scrCoords[1] - c1.scrCoords[1]) * s1) / d;
                     d1y = ((c2.scrCoords[2] - c1.scrCoords[2]) * s1) / d;
                     //}
                 }
-                if (a.evLast && Type.evaluate(el.visProp.touchlastpoint) &&
-                        Type.evaluate(el.point2.visProp.visible)) {
+                if (a.evLast && el.evalVisProp('touchlastpoint') &&
+                        el.point2.evalVisProp('visible')) {
                     d = c1.distance(Const.COORDS_BY_SCREEN, c2);
                     //if (d > s) {
                     d2x = ((c2.scrCoords[1] - c1.scrCoords[1]) * s2) / d;
@@ -922,7 +930,7 @@ JXG.extend(
         drawTicks: function (el) {
             el.rendNode = this.appendChildPrim(
                 this.createPrim("path", el.id),
-                Type.evaluate(el.visProp.layer)
+                el.evalVisProp('layer')
             );
             this.appendNodesToElement(el, "path");
         },
@@ -955,7 +963,7 @@ JXG.extend(
         drawEllipse: function (el) {
             el.rendNode = this.appendChildPrim(
                 this.createPrim("ellipse", el.id),
-                Type.evaluate(el.visProp.layer)
+                el.evalVisProp('layer')
             );
             this.appendNodesToElement(el, "ellipse");
             this.updateEllipse(el);
@@ -1004,7 +1012,7 @@ JXG.extend(
         drawPolygon: function (el) {
             el.rendNode = this.appendChildPrim(
                 this.createPrim("polygon", el.id),
-                Type.evaluate(el.visProp.layer)
+                el.evalVisProp('layer')
             );
             this.appendNodesToElement(el, "polygon");
             this.updatePolygon(el);
@@ -1081,16 +1089,16 @@ JXG.extend(
             var node, z, level, ev_visible;
 
             if (
-                Type.evaluate(el.visProp.display) === "html" &&
+                el.evalVisProp('display') === "html" &&
                 Env.isBrowser &&
                 this.type !== "no"
             ) {
                 node = this.container.ownerDocument.createElement("div");
                 //node = this.container.ownerDocument.createElementNS('http://www.w3.org/1999/xhtml', 'div'); //
                 node.style.position = "absolute";
-                node.className = Type.evaluate(el.visProp.cssclass);
+                node.className = el.evalVisProp('cssclass');
 
-                level = Type.evaluate(el.visProp.layer);
+                level = el.evalVisProp('layer');
                 if (!Type.exists(level)) {
                     // trace nodes have level not set
                     level = 0;
@@ -1115,7 +1123,7 @@ JXG.extend(
 
             // Set el.visPropCalc.visible
             if (el.visProp.islabel && Type.exists(el.visProp.anchor)) {
-                ev_visible = Type.evaluate(el.visProp.anchor.visProp.visible);
+                ev_visible = el.visProp.anchor.evalVisProp('visible');
                 el.prepareUpdate().updateVisibility(ev_visible);
             } else {
                 el.prepareUpdate().updateVisibility();
@@ -1145,7 +1153,7 @@ JXG.extend(
             if (el.visPropCalc.visible) {
                 this.updateTextStyle(el, false);
 
-                if (Type.evaluate(el.visProp.display) === "html" && this.type !== "no") {
+                if (el.evalVisProp('display') === "html" && this.type !== "no") {
                     // Set the position
                     if (!isNaN(el.coords.scrCoords[1] + el.coords.scrCoords[2])) {
                         // Horizontal
@@ -1247,7 +1255,7 @@ JXG.extend(
                         }
                         el.htmlStr = content;
 
-                        if (Type.evaluate(el.visProp.usemathjax)) {
+                        if (el.evalVisProp('usemathjax')) {
                             // Typesetting directly might not work because mathjax was not loaded completely
                             try {
                                 if (MathJax.typeset) {
@@ -1276,7 +1284,7 @@ JXG.extend(
                             } catch (e) {
                                 JXG.debug("MathJax (not yet) loaded");
                             }
-                        } else if (Type.evaluate(el.visProp.usekatex)) {
+                        } else if (el.evalVisProp('usekatex')) {
                             try {
                                 // Checkboxes et. al. do not possess rendNodeLabel during the first update.
                                 // In this case node will be undefined and not rendered by KaTeX.
@@ -1297,7 +1305,7 @@ JXG.extend(
                                 if (node) {
                                     /* eslint-disable no-undef */
                                     katex.render(content, node, {
-                                        macros: Type.evaluate(el.visProp.katexmacros),
+                                        macros: el.evalVisProp('katexmacros'),
                                         throwOnError: false
                                     });
                                     /* eslint-enable no-undef */
@@ -1305,7 +1313,7 @@ JXG.extend(
                             } catch (e) {
                                 JXG.debug("KaTeX not loaded (yet)");
                             }
-                        } else if (Type.evaluate(el.visProp.useasciimathml)) {
+                        } else if (el.evalVisProp('useasciimathml')) {
                             // This is not a constructor.
                             // See http://asciimath.org/ for more information
                             // about AsciiMathML and the project's source code.
@@ -1317,7 +1325,7 @@ JXG.extend(
                         }
                     }
 
-                    angle = Type.evaluate(el.visProp.rotate);
+                    angle = el.evalVisProp('rotate');
                     if (angle !== 0) {
                         // Don't forget to convert to rad
                         angle *= (Math.PI / 180);
@@ -1387,15 +1395,13 @@ JXG.extend(
          */
         updateTextStyle: function (el, doHighlight) {
             var fs,
-                so,
-                sc,
+                so, sc,
                 css,
                 node,
-                ev = el.visProp,
-                display = Env.isBrowser ? ev.display : "internal",
+                display = Env.isBrowser ? el.visProp.display : "internal",
                 nodeList = ["rendNode", "rendNodeTag", "rendNodeLabel"],
                 lenN = nodeList.length,
-                fontUnit = Type.evaluate(ev.fontunit),
+                fontUnit = el.evalVisProp('fontunit'),
                 cssList,
                 prop,
                 style,
@@ -1404,13 +1410,13 @@ JXG.extend(
                 lenS = styleList.length;
 
             if (doHighlight) {
-                sc = ev.highlightstrokecolor;
-                so = ev.highlightstrokeopacity;
-                css = ev.highlightcssclass;
+                sc = el.evalVisProp('highlightstrokecolor');
+                so = el.evalVisProp('highlightstrokeopacity');
+                css = el.evalVisProp('highlightcssclass');
             } else {
-                sc = ev.strokecolor;
-                so = ev.strokeopacity;
-                css = ev.cssclass;
+                sc = el.evalVisProp('strokecolor');
+                so = el.evalVisProp('strokeopacity');
+                css = el.evalVisProp('cssclass');
             }
 
             // This part is executed for all text elements except internal texts in canvas.
@@ -1426,9 +1432,10 @@ JXG.extend(
                     // ev.cssdefaultstyle of ev.highlightcssdefaultstyle,
                     // then to
                     // ev.cssstyle of ev.highlightcssstyle
-                    cssString = Type.evaluate(
-                        ev[(doHighlight ? "highlight" : "") + styleList[style]]
+                    cssString = el.evalVisProp(
+                        (doHighlight ? 'highlight' : '') + styleList[style]
                     );
+                    // Set the CSS style properties - without deleting other properties
                     if (cssString !== "" && el.visPropOld[styleList[style]] !== cssString) {
                         cssList = this._css2js(cssString);
                         for (node = 0; node < lenN; node++) {
@@ -1445,7 +1452,7 @@ JXG.extend(
                     }
                 }
 
-                fs = Type.evaluate(ev.fontsize);
+                fs = el.evalVisProp('fontsize');
                 if (el.visPropOld.fontsize !== fs) {
                     el.needsSizeUpdate = true;
                     try {
@@ -1470,7 +1477,6 @@ JXG.extend(
 
             this.setObjectTransition(el);
             if (display === "html" && this.type !== "no") {
-                this.setObjectViewport(el, true);
                 // Set new CSS class
                 if (el.visPropOld.cssclass !== css) {
                     el.rendNode.className = css;
@@ -1551,25 +1557,7 @@ JXG.extend(
                 oy = el.board.origin.scrCoords[2],
                 ux = el.board.unitX,
                 uy = el.board.unitY,
-                // Translate to 0,0 in screen coords
-                /*
-                m = [[1, 0, 0], [0, 1, 0], [0, 0, 1]],
-                mpre1 =  [[1,   0, 0],
-                    [-ox, 1, 0],
-                    [-oy, 0, 1]],
-                // Scale
-                mpre2 =  [[1, 0,     0],
-                    [0, 1 / ux,  0],
-                    [0, 0, -1 / uy]],
-                // Scale back
-                mpost2 = [[1, 0,   0],
-                    [0, ux,  0],
-                    [0, 0, -uy]],
-                // Translate back
-                mpost1 = [[1,  0, 0],
-                    [ox, 1, 0],
-                    [oy, 0, 1]],
-                */
+
                 len = transformations.length,
                 // Translate to 0,0 in screen coords and then scale
                 m = [
@@ -1579,11 +1567,7 @@ JXG.extend(
                 ];
 
             for (i = 0; i < len; i++) {
-                //m = Mat.matMatMult(mpre1, m);
-                //m = Mat.matMatMult(mpre2, m);
                 m = Mat.matMatMult(transformations[i].matrix, m);
-                //m = Mat.matMatMult(mpost2, m);
-                //m = Mat.matMatMult(mpost1, m);
             }
             // Scale back and then translate back
             m = Mat.matMatMult(
@@ -1636,8 +1620,8 @@ JXG.extend(
          * @see JXG.AbstractRenderer#noHighlight
          */
         updateImageStyle: function (el, doHighlight) {
-            el.rendNode.className = Type.evaluate(
-                doHighlight ? el.visProp.highlightcssclass : el.visProp.cssclass
+            el.rendNode.className = el.evalVisProp(
+                doHighlight ? 'highlightcssclass' : 'cssclass'
             );
         },
 
@@ -1827,8 +1811,8 @@ JXG.extend(
         setTabindex: function (element) {
             var val;
             if (element.board.attr.keyboard.enabled && Type.exists(element.rendNode)) {
-                val = Type.evaluate(element.visProp.tabindex);
-                if (!element.visPropCalc.visible || Type.evaluate(element.visProp.fixed)) {
+                val = element.evalVisProp('tabindex');
+                if (!element.visPropCalc.visible || element.evalVisProp('fixed')) {
                     val = null;
                 }
                 if (val !== element.visPropOld.tabindex) {
@@ -1899,13 +1883,12 @@ JXG.extend(
          * @param {JXG.GeometryElement} el Reference of the object that is in draft mode.
          */
         setDraft: function (el) {
-            if (!Type.evaluate(el.visProp.draft)) {
+            if (!el.evalVisProp('draft')) {
                 return;
             }
             var draftColor = el.board.options.elements.draft.color,
                 draftOpacity = el.board.options.elements.draft.opacity;
 
-                this.setObjectViewport(el);
                 this.setObjectTransition(el);
             if (el.type === Const.OBJECT_TYPE_POLYGON) {
                 this.setObjectFillColor(el, draftColor, draftOpacity);
@@ -1925,16 +1908,15 @@ JXG.extend(
          * @param {JXG.GeometryElement} el Reference of the object that no longer is in draft mode.
          */
         removeDraft: function (el) {
-            this.setObjectViewport(el);
             this.setObjectTransition(el);
             if (el.type === Const.OBJECT_TYPE_POLYGON) {
-                this.setObjectFillColor(el, el.visProp.fillcolor, el.visProp.fillopacity);
+                this.setObjectFillColor(el, el.evalVisProp('fillcolor'), el.evalVisProp('fillopacity'));
             } else {
                 if (el.type === Const.OBJECT_CLASS_POINT) {
-                    this.setObjectFillColor(el, el.visProp.fillcolor, el.visProp.fillopacity);
+                    this.setObjectFillColor(el, el.evalVisProp('fillcolor'), el.evalVisProp('fillopacity'));
                 }
-                this.setObjectStrokeColor(el, el.visProp.strokecolor, el.visProp.strokeopacity);
-                this.setObjectStrokeWidth(el, el.visProp.strokewidth);
+                this.setObjectStrokeColor(el, el.evalVisProp('strokecolor'), el.evalVisProp('strokeopacity'));
+                this.setObjectStrokeWidth(el, el.evalVisProp('strokewidth'));
             }
         },
 
@@ -1955,6 +1937,33 @@ JXG.extend(
         },
 
         /**
+         * Set ARIA related properties of an element. The attribute "aria" of an element contains at least the
+         * properties "enabled", "label", and "live". Additionally, all available properties from
+         * {@link https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA} may be set.
+         * <p>
+         * In JSXGraph, the available properties are used without the leading 'aria-'.
+         * For example, the value of the JSXGraph attribute 'aria.label' will be set to the
+         * HTML attribute 'aria-label'.
+         *
+         * @param {JXG.GeometryElement} element Reference of the object that wants new
+         *        ARIA attributes.
+         */
+        setARIA: function(element) {
+            /* stub */
+        },
+
+        /**
+         * Sets CSS classes for elements (relevant for SVG only).
+         *
+         * @param {JXG.GeometryElement} element Reference of the object that wants a
+         *         new set of CSS classes.
+         * @param {String} cssClass String containing a space separated list of CSS classes.
+         */
+        setCssClass: function (element, cssClass) {
+            /* stub */
+        },
+
+        /**
          * Sets the transition duration (in milliseconds) for fill color and stroke
          * color and opacity.
          * @param {JXG.GeometryElement} element Reference of the object that wants a
@@ -1963,15 +1972,6 @@ JXG.extend(
          *        element.visProp.transitionDuration is taken. This is the default.
          */
         setObjectTransition: function (element, duration) {
-            /* stub */
-        },
-
-        /**
-         *
-         * @param {*} element
-         * @param {*} isHTML
-         */
-        setObjectViewport: function (element, isHTML) {
             /* stub */
         },
 
@@ -2027,28 +2027,16 @@ JXG.extend(
          * @see JXG.AbstractRenderer#updateTextStyle
          */
         highlight: function (el, suppressHighlightStrokeWidth) {
-            var i, do_hl,
-                ev = el.visProp,
-                sw;
+            var i, do_hl, sw;
 
-            this.setObjectViewport(el);
             this.setObjectTransition(el);
-            if (!ev.draft) {
+            if (!el.visProp.draft) {
                 if (el.type === Const.OBJECT_TYPE_POLYGON) {
-                    this.setObjectFillColor(el, ev.highlightfillcolor, ev.highlightfillopacity);
-                    do_hl = Type.evaluate(ev.highlightbystrokewidth);
+                    this.setObjectFillColor(el, el.evalVisProp('highlightfillcolor'), el.evalVisProp('highlightfillopacity'));
+                    do_hl = el.evalVisProp('highlightbystrokewidth');
                     for (i = 0; i < el.borders.length; i++) {
                         this.highlight(el.borders[i], !do_hl);
                     }
-                    /*
-                    for (i = 0; i < el.borders.length; i++) {
-                        this.setObjectStrokeColor(
-                            el.borders[i],
-                            el.borders[i].visProp.highlightstrokecolor,
-                            el.borders[i].visProp.highlightstrokeopacity
-                        );
-                    }
-                    */
                 } else {
                     if (el.elementClass === Const.OBJECT_CLASS_TEXT) {
                         this.updateTextStyle(el, true);
@@ -2056,19 +2044,19 @@ JXG.extend(
                         this.updateImageStyle(el, true);
                         this.setObjectFillColor(
                             el,
-                            ev.highlightfillcolor,
-                            ev.highlightfillopacity
+                            el.evalVisProp('highlightfillcolor'),
+                            el.evalVisProp('highlightfillopacity')
                         );
                     } else {
                         this.setObjectStrokeColor(
                             el,
-                            ev.highlightstrokecolor,
-                            ev.highlightstrokeopacity
+                            el.evalVisProp('highlightstrokecolor'),
+                            el.evalVisProp('highlightstrokeopacity')
                         );
                         this.setObjectFillColor(
                             el,
-                            ev.highlightfillcolor,
-                            ev.highlightfillopacity
+                            el.evalVisProp('highlightfillcolor'),
+                            el.evalVisProp('highlightfillopacity')
                         );
                     }
                 }
@@ -2077,10 +2065,10 @@ JXG.extend(
                 // parameter suppressHighlightStrokeWidth is false or undefined.
                 // suppressHighlightStrokeWidth is false if polygon attribute
                 // highlightbystrokewidth is true.
-                if (ev.highlightstrokewidth && !suppressHighlightStrokeWidth) {
+                if (!suppressHighlightStrokeWidth && el.evalVisProp('highlightstrokewidth')) {
                     sw = Math.max(
-                        Type.evaluate(ev.highlightstrokewidth),
-                        Type.evaluate(ev.strokewidth)
+                        el.evalVisProp('highlightstrokewidth'),
+                        el.evalVisProp('strokewidth')
                     );
                     this.setObjectStrokeWidth(el, sw);
                     if (
@@ -2091,6 +2079,7 @@ JXG.extend(
                     }
                 }
             }
+            this.setCssClass(el, el.evalVisProp('highlightcssclass'));
 
             return this;
         },
@@ -2102,15 +2091,12 @@ JXG.extend(
          * @see JXG.AbstractRenderer#updateTextStyle
          */
         noHighlight: function (el) {
-            var i,
-                ev = el.visProp,
-                sw;
+            var i, sw;
 
-            this.setObjectViewport(el);
             this.setObjectTransition(el);
-            if (!Type.evaluate(el.visProp.draft)) {
+            if (!el.evalVisProp('draft')) {
                 if (el.type === Const.OBJECT_TYPE_POLYGON) {
-                    this.setObjectFillColor(el, ev.fillcolor, ev.fillopacity);
+                    this.setObjectFillColor(el, el.evalVisProp('fillcolor'), el.evalVisProp('fillopacity'));
                     for (i = 0; i < el.borders.length; i++) {
                         this.noHighlight(el.borders[i]);
                     }
@@ -2126,14 +2112,14 @@ JXG.extend(
                         this.updateTextStyle(el, false);
                     } else if (el.type === Const.OBJECT_TYPE_IMAGE) {
                         this.updateImageStyle(el, false);
-                        this.setObjectFillColor(el, ev.fillcolor, ev.fillopacity);
+                        this.setObjectFillColor(el, el.evalVisProp('fillcolor'), el.evalVisProp('fillopacity'));
                     } else {
-                        this.setObjectStrokeColor(el, ev.strokecolor, ev.strokeopacity);
-                        this.setObjectFillColor(el, ev.fillcolor, ev.fillopacity);
+                        this.setObjectStrokeColor(el, el.evalVisProp('strokecolor'), el.evalVisProp('strokeopacity'));
+                        this.setObjectFillColor(el, el.evalVisProp('fillcolor'), el.evalVisProp('fillopacity'));
                     }
                 }
 
-                sw = Type.evaluate(ev.strokewidth);
+                sw = el.evalVisProp('strokewidth');
                 this.setObjectStrokeWidth(el, sw);
                 if (
                     el.elementClass === Const.OBJECT_CLASS_LINE ||
@@ -2142,6 +2128,7 @@ JXG.extend(
                     this.updatePathWithArrowHeads(el, false);
                 }
             }
+            this.setCssClass(el, el.evalVisProp('cssclass'));
 
             return this;
         },

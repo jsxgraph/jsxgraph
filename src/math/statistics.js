@@ -641,7 +641,7 @@ Mat.Statistics = {
      * @param {Number} stdDev
      * @returns Number
      * @memberof JXG.Math.Statistics
-     * @see JXG.Math.Statistics#generateGaussian
+     * @see JXG.Math.Statistics.generateGaussian
      * @example
      *  let board = JXG.JSXGraph.initBoard('JXGbox',
      *       { boundingbox: [-5, 1.5, 5, -.03], axis: true});

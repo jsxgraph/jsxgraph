@@ -50,6 +50,7 @@ import Expect from "../utils/expect.js";
  * Math.Geometry namespace definition. This namespace holds geometrical algorithms,
  * especially intersection algorithms.
  * @name JXG.Math.Geometry
+ * @exports Mat.Geometry as JXG.Math.Geometry
  * @namespace
  */
 Mat.Geometry = {};
@@ -69,8 +70,8 @@ JXG.extend(
          * @param {JXG.Point|Array} B Another point or [x,y] array.
          * @param {JXG.Point|Array} C A circle - no, of course the third point or [x,y] array.
          * @deprecated Use {@link JXG.Math.Geometry.rad} instead.
-         * @see #rad
-         * @see #trueAngle
+         * @see JXG.Math.Geometry.rad
+         * @see JXG.Math.Geometry.trueAngle
          * @returns {Number} The angle in radian measure.
          */
         angle: function (A, B, C) {
@@ -120,7 +121,7 @@ JXG.extend(
          * @param {JXG.Point|Array} A Point or [x,y] array
          * @param {JXG.Point|Array} B Point or [x,y] array
          * @param {JXG.Point|Array} C Point or [x,y] array
-         * @see #rad
+         * @see JXG.Math.Geometry.rad
          * @returns {Number} The angle in degrees.
          */
         trueAngle: function (A, B, C) {
@@ -132,7 +133,7 @@ JXG.extend(
          * @param {JXG.Point|Array} A Point or [x,y] array
          * @param {JXG.Point|Array} B Point or [x,y] array
          * @param {JXG.Point|Array} C Point or [x,y] array
-         * @see #trueAngle
+         * @see JXG.Math.Geometry.trueAngle
          * @returns {Number} Angle in radians.
          */
         rad: function (A, B, C) {
@@ -733,8 +734,8 @@ JXG.extend(
                 margin = 10;
             }
 
-            straightFirst = Type.evaluate(el.visProp.straightfirst);
-            straightLast = Type.evaluate(el.visProp.straightlast);
+            straightFirst = el.evalVisProp('straightfirst');
+            straightLast = el.evalVisProp('straightlast');
 
             // If one of the point is an ideal point in homogeneous coordinates
             // drawing of line segments or rays are not possible.
@@ -899,8 +900,8 @@ JXG.extend(
                 takePoint1 = false,
                 takePoint2 = false;
 
-            straightFirst = Type.evaluate(el.visProp.straightfirst);
-            straightLast = Type.evaluate(el.visProp.straightlast);
+            straightFirst = el.evalVisProp('straightfirst');
+            straightLast = el.evalVisProp('straightlast');
 
             // If one of the point is an ideal point in homogeneous coordinates
             // drawing of line segments or rays are not possible.
@@ -1160,7 +1161,7 @@ JXG.extend(
          * @param  {Array|JXG.Point} q Point or its coordinates. Point object or array of length 3. First (homogeneous) coordinate is equal to 1.
          * @return {Number} Signed area of the triangle formed by these three points.
          *
-         * @see #windingNumber
+         * @see JXG.Math.Geometry.windingNumber
          */
         det3p: function (p1, p2, q) {
             var pp1, pp2, qq;
@@ -1323,18 +1324,19 @@ JXG.extend(
          * @param {Number} [coord_type=JXG.COORDS_BY_SCREEN] Type of coordinates used here.
          *   Possible values are <b>JXG.COORDS_BY_USER</b> and <b>JXG.COORDS_BY_SCREEN</b>.
          *   Default value is JXG.COORDS_BY_SCREEN.
+         * @param {JXG.Board} board Board object
          *
          * @returns {Boolean} if (x_in, y_in) is inside of the polygon.
-         * @see JXG.Polygon.hasPoint
-         * @see JXG.Polygon.pnpoly
-         * @see #windingNumber
+         * @see JXG.Polygon#hasPoint
+         * @see JXG.Polygon#pnpoly
+         * @see JXG.Math.Geometry.windingNumber
          *
          * @example
          * var pol = board.create('polygon', [[-1,2], [2,2], [-1,4]]);
          * var p = board.create('point', [4, 3]);
          * var txt = board.create('text', [-1, 0.5, function() {
          *   return 'Point A is inside of the polygon = ' +
-         *     JXG.Math.Geometry.pnpoly(p.X(), p.Y(), JXG.COORDS_BY_USER, pol.vertices);
+         *     JXG.Math.Geometry.pnpoly(p.X(), p.Y(), pol.vertices, JXG.COORDS_BY_USER, board);
          * }]);
          *
          * </pre><div id="JXG4656ed42-f965-4e35-bb66-c334a4529683" class="jxgbox" style="width: 300px; height: 300px;"></div>
@@ -1345,7 +1347,7 @@ JXG.extend(
          *     var pol = board.create('polygon', [[-1,2], [2,2], [-1,4]]);
          *     var p = board.create('point', [4, 3]);
          *     var txt = board.create('text', [-1, 0.5, function() {
-         *     		return 'Point A is inside of the polygon = ' + JXG.Math.Geometry.pnpoly(p.X(), p.Y(), JXG.COORDS_BY_USER, pol.vertices);
+         *     		return 'Point A is inside of the polygon = ' + JXG.Math.Geometry.pnpoly(p.X(), p.Y(), pol.vertices, JXG.COORDS_BY_USER, board);
          *     }]);
          *
          *     })();
@@ -1353,14 +1355,14 @@ JXG.extend(
          * </script><pre>
          *
          */
-        pnpoly: function (x_in, y_in, path, coord_type) {
+        pnpoly: function (x_in, y_in, path, coord_type, board) {
             var i, j, vi, vj, len,
                 x, y, crds,
                 v = path,
                 isIn = false;
 
             if (coord_type === Const.COORDS_BY_USER) {
-                crds = new Coords(Const.COORDS_BY_USER, [x_in, y_in], this.board);
+                crds = new Coords(Const.COORDS_BY_USER, [x_in, y_in], board);
                 x = crds.scrCoords[1];
                 y = crds.scrCoords[2];
             } else {
@@ -1393,17 +1395,18 @@ JXG.extend(
 
         /**
          * Generate the function which computes the coordinates of the intersection point.
-         * Primarily used in {@link JXG.Point#createIntersectionPoint}.
+         * Primarily used in {@link JXG.Point.createIntersectionPoint}.
          * @param {JXG.Board} board object
          * @param {JXG.Line,JXG.Circle_JXG.Line,JXG.Circle_Number|Function} el1,el2,i The result will be a intersection point on el1 and el2.
          * i determines the intersection point if two points are available: <ul>
          *   <li>i==0: use the positive square root,</li>
          *   <li>i==1: use the negative square root.</li></ul>
-         * See further {@link JXG.Point#createIntersectionPoint}.
          * @param {Boolean} alwaysintersect. Flag that determines if segments and arc can have an outer intersection point
          * on their defining line or circle.
          * @returns {Function} Function returning a {@link JXG.Coords} object that determines
          * the intersection point.
+         *
+         * @see JXG.Point.createIntersectionPoint
          */
         intersectionFunction: function (board, el1, el2, i, j, alwaysintersect) {
             var func,
@@ -1463,10 +1466,10 @@ JXG.extend(
                     // line - path
                     /** @ignore */
                     func = function () {
-                        var first1 = Type.evaluate(el1.visProp.straightfirst),
-                            last1 = Type.evaluate(el1.visProp.straightlast),
-                            first2 = Type.evaluate(el2.visProp.straightfirst),
-                            last2 = Type.evaluate(el2.visProp.straightlast),
+                        var first1 = el1.evalVisProp('straightfirst'),
+                            last1 = el1.evalVisProp('straightlast'),
+                            first2 = el2.evalVisProp('straightfirst'),
+                            last2 = el2.evalVisProp('straightlast'),
                             a_not;
 
                         a_not = (!Type.evaluate(alwaysintersect) && (!first1 || !last1 || !first2 || !last2));
@@ -1475,10 +1478,10 @@ JXG.extend(
                 } else if (el2.elementClass === Const.OBJECT_CLASS_LINE) {
                     // path - line
                     func = function () {
-                        var first1 = Type.evaluate(el1.visProp.straightfirst),
-                            last1 = Type.evaluate(el1.visProp.straightlast),
-                            first2 = Type.evaluate(el2.visProp.straightfirst),
-                            last2 = Type.evaluate(el2.visProp.straightlast),
+                        var first1 = el1.evalVisProp('straightfirst'),
+                            last1 = el1.evalVisProp('straightlast'),
+                            first2 = el2.evalVisProp('straightfirst'),
+                            last2 = el2.evalVisProp('straightlast'),
                             a_not;
 
                         a_not = (!Type.evaluate(alwaysintersect) && (!first1 || !last1 || !first2 || !last2));
@@ -1500,10 +1503,10 @@ JXG.extend(
                 func = function () {
                     var res,
                         c,
-                        first1 = Type.evaluate(el1.visProp.straightfirst),
-                        last1 = Type.evaluate(el1.visProp.straightlast),
-                        first2 = Type.evaluate(el2.visProp.straightfirst),
-                        last2 = Type.evaluate(el2.visProp.straightlast);
+                        first1 = el1.evalVisProp('straightfirst'),
+                        last1 = el1.evalVisProp('straightlast'),
+                        first2 = el2.evalVisProp('straightfirst'),
+                        last2 = el2.evalVisProp('straightlast');
 
                     /**
                      * If one of the lines is a segment or ray and
@@ -1554,8 +1557,8 @@ JXG.extend(
                         return res;
                     }
                     if (el1.elementClass === Const.OBJECT_CLASS_LINE) {
-                        first = Type.evaluate(el1.visProp.straightfirst);
-                        last = Type.evaluate(el1.visProp.straightlast);
+                        first = el1.evalVisProp('straightfirst');
+                        last = el1.evalVisProp('straightlast');
                         if (!first || !last) {
                             r = that.affineRatio(el1.point1.coords, el1.point2.coords, res);
                             if ((!last && r > 1 + Mat.eps) || (!first && r < 0 - Mat.eps)) {
@@ -1564,8 +1567,8 @@ JXG.extend(
                         }
                     }
                     if (el2.elementClass === Const.OBJECT_CLASS_LINE) {
-                        first = Type.evaluate(el2.visProp.straightfirst);
-                        last = Type.evaluate(el2.visProp.straightlast);
+                        first = el2.evalVisProp('straightfirst');
+                        last = el2.evalVisProp('straightlast');
                         if (!first || !last) {
                             r = that.affineRatio(el2.point1.coords, el2.point2.coords, res);
                             if ((!last && r > 1 + Mat.eps) || (!first && r < 0 - Mat.eps)) {
@@ -1680,7 +1683,7 @@ JXG.extend(
             var angle = this.rad(arc.radiuspoint, arc.center, coords.usrCoords.slice(1)),
                 alpha = 0.0,
                 beta = this.rad(arc.radiuspoint, arc.center, arc.anglepoint),
-                ev_s = Type.evaluate(arc.visProp.selection);
+                ev_s = arc.evalVisProp('selection');
 
             if ((ev_s === "minor" && beta > Math.PI) || (ev_s === "major" && beta < Math.PI)) {
                 alpha = beta;
@@ -2114,8 +2117,8 @@ JXG.extend(
                 d, res,
                 cnt = 0,
                 len = cu.numberPoints,
-                ev_sf = Type.evaluate(li.visProp.straightfirst),
-                ev_sl = Type.evaluate(li.visProp.straightlast);
+                ev_sf = li.evalVisProp('straightfirst'),
+                ev_sl = li.evalVisProp('straightlast');
 
             // In case, no intersection will be found we will take this
             q = new Coords(Const.COORDS_BY_USER, [0, NaN, NaN], board);
@@ -3125,7 +3128,7 @@ JXG.extend(
          * @param {JXG.Point} point Point to project.
          * @param {JXG.Curve} curve Curve on that the point is projected.
          * @param {JXG.Board} [board=point.board] Reference to a board.
-         * @see #projectCoordsToCurve
+         * @see JXG.Math.Geometry.projectCoordsToCurve
          * @returns {Array} [JXG.Coords, position] The coordinates of the projection of the given
          * point on the given graph and the relative position on the curve (real number).
          */
@@ -3140,7 +3143,7 @@ JXG.extend(
                 result;
 
             if (!Type.exists(t)) {
-                t = Type.evaluate(curve.visProp.curvetype) === 'functiongraph' ? x : 0.0;
+                t = curve.evalVisProp('curvetype') === 'functiongraph' ? x : 0.0;
             }
             result = this.projectCoordsToCurve(x, y, t, curve, board);
             // point.position = result[1];
@@ -3157,7 +3160,7 @@ JXG.extend(
          * @param {Number} t start value for newtons method
          * @param {JXG.Curve} curve Curve on that the point is projected.
          * @param {JXG.Board} [board=curve.board] Reference to a board.
-         * @see #projectPointToCurve
+         * @see JXG.Math.Geometry.projectPointToCurve
          * @returns {JXG.Coords} Array containing the coordinates of the projection of the given point on the given curve and
          * the position on the curve.
          */
@@ -3174,7 +3177,7 @@ JXG.extend(
                 board = curve.board;
             }
 
-            if (Type.evaluate(curve.visProp.curvetype) === "plot") {
+            if (curve.evalVisProp('curvetype') === "plot") {
                 t = 0;
                 mindist = infty;
                 if (curve.numberPoints === 0) {
@@ -3237,7 +3240,7 @@ JXG.extend(
                 minX = minX_glob;
                 maxX = maxX_glob;
 
-                if (Type.evaluate(curve.visProp.curvetype) === 'functiongraph') {
+                if (curve.evalVisProp('curvetype') === 'functiongraph') {
                     // Restrict the possible position of t
                     // to the projection of a circle to the x-axis (= t-axis)
                     dy = Math.abs(y - curve.Y(x));

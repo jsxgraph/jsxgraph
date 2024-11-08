@@ -397,7 +397,7 @@ JXG.GeometryElement = function (board, attributes, type, oclass) {
 
         this.visProp.draft = attr.draft && attr.draft.draft;
         //this.visProp.gradientangle = '270';
-        // this.visProp.gradientsecondopacity = Type.evaluate(this.visProp.fillopacity);
+        // this.visProp.gradientsecondopacity = this.evalVisProp('fillopacity');
         //this.visProp.gradientpositionx = 0.5;
         //this.visProp.gradientpositiony = 0.5;
     }
@@ -660,7 +660,7 @@ JXG.extend(
         draggable: function () {
             return (
                 this.isDraggable &&
-                !Type.evaluate(this.visProp.fixed) &&
+                !this.evalVisProp('fixed') &&
                 // !this.visProp.frozen &&
                 this.type !== Const.OBJECT_TYPE_GLIDER
             );
@@ -871,7 +871,7 @@ JXG.extend(
          * @return {JXG.GeometryElement} Reference to the element
          */
         update: function () {
-            if (Type.evaluate(this.visProp.trace)) {
+            if (this.evalVisProp('trace')) {
                 this.cloneToBackground();
             }
             return this;
@@ -932,7 +932,7 @@ JXG.extend(
                         if (
                             Type.exists(obj[i]) &&
                             Type.exists(obj[i].rendNode) &&
-                            Type.evaluate(obj[i].visProp.visible) === 'inherit'
+                            obj[i].evalVisProp('visible') === 'inherit'
                         ) {
                             obj[i].setDisplayRendNode(val);
                         }
@@ -941,7 +941,7 @@ JXG.extend(
                     if (
                         Type.exists(obj) &&
                         Type.exists(obj.rendNode) &&
-                        Type.evaluate(obj.visProp.visible) === 'inherit'
+                        obj.evalVisProp('visible') === 'inherit'
                     ) {
                         obj.setDisplayRendNode(val);
                     }
@@ -950,7 +950,7 @@ JXG.extend(
 
             // Set the visibility of the label if it inherits the attribute 'visible'
             if (this.hasLabel && Type.exists(this.label) && Type.exists(this.label.rendNode)) {
-                if (Type.evaluate(this.label.visProp.visible) === "inherit") {
+                if (this.label.evalVisProp('visible') === "inherit") {
                     this.label.setDisplayRendNode(val);
                 }
             }
@@ -1025,7 +1025,7 @@ JXG.extend(
             var i, len, s, len_s, obj, val;
 
             if (this.needsUpdate) {
-                if (Type.exists(this.view) && Type.evaluate(this.view.visProp.visible) === false) {
+                if (Type.exists(this.view) && this.view.evalVisProp('visible') === false) {
                     // Handle hiding of view3d
                     this.visPropCalc.visible = false;
 
@@ -1034,7 +1034,7 @@ JXG.extend(
                     if (parent_val !== undefined) {
                         this.visPropCalc.visible = parent_val;
                     } else {
-                        val = Type.evaluate(this.visProp.visible);
+                        val = this.evalVisProp('visible');
 
                         // infobox uses hiddenByParent
                         if (Type.exists(this.hiddenByParent) && this.hiddenByParent) {
@@ -1054,7 +1054,7 @@ JXG.extend(
                             for (i = 0; i < len_s; i++) {
                                 if (
                                     Type.exists(obj[i]) /*&& Type.exists(obj[i].rendNode)*/ &&
-                                    Type.evaluate(obj[i].visProp.visible) === "inherit"
+                                    obj[i].evalVisProp('visible') === "inherit"
                                 ) {
                                     obj[i]
                                         .prepareUpdate()
@@ -1064,7 +1064,7 @@ JXG.extend(
                         } else {
                             if (
                                 Type.exists(obj) /*&& Type.exists(obj.rendNode)*/ &&
-                                Type.evaluate(obj.visProp.visible) === "inherit"
+                                obj.evalVisProp('visible') === "inherit"
                             ) {
                                 obj.prepareUpdate().updateVisibility(this.visPropCalc.visible);
                             }
@@ -1076,7 +1076,7 @@ JXG.extend(
                 if (
                     Type.exists(this.label) &&
                     Type.exists(this.label.visProp) &&
-                    Type.evaluate(this.label.visProp.visible)
+                    this.label.evalVisProp('visible')
                 ) {
                     this.label.prepareUpdate().updateVisibility(this.visPropCalc.visible);
                 }
@@ -1364,7 +1364,7 @@ JXG.extend(
                             }
                             break;
                         case "layer":
-                            this.board.renderer.setLayer(this, Type.evaluate(value));
+                            this.board.renderer.setLayer(this, this.eval(value));
                             this._set(key, value);
                             break;
                         case "maxlength":
@@ -1402,7 +1402,7 @@ JXG.extend(
                         case "rotate":
                             if (
                                 (this.elementClass === Const.OBJECT_CLASS_TEXT &&
-                                    Type.evaluate(this.visProp.display) === "internal") ||
+                                    this.evalVisProp('display') === "internal") ||
                                 this.type === Const.OBJECT_TYPE_IMAGE
                             ) {
                                 this.addRotation(value);
@@ -1438,9 +1438,9 @@ JXG.extend(
                                 this.visProp.visible = value;
                             }
 
-                            this.setDisplayRendNode(Type.evaluate(this.visProp.visible));
+                            this.setDisplayRendNode(this.evalVisProp('visible'));
                             if (
-                                Type.evaluate(this.visProp.visible) &&
+                                this.evalVisProp('visible') &&
                                 Type.exists(this.updateSize)
                             ) {
                                 this.updateSize();
@@ -1449,7 +1449,7 @@ JXG.extend(
                             break;
                         case "withlabel":
                             this.visProp.withlabel = value;
-                            if (!Type.evaluate(value)) {
+                            if (!this.evalVisProp('withlabel')) {
                                 if (this.label && this.hasLabel) {
                                     //this.label.hideElement();
                                     this.label.setAttribute({ visible: false });
@@ -1460,7 +1460,7 @@ JXG.extend(
                                 }
                                 //this.label.showElement();
                                 this.label.setAttribute({ visible: "inherit" });
-                                //this.label.setDisplayRendNode(Type.evaluate(this.visProp.visible));
+                                //this.label.setDisplayRendNode(this.evalVisProp('visible'));
                             }
                             this.hasLabel = value;
                             break;
@@ -1480,7 +1480,7 @@ JXG.extend(
                                     (JXG.Validator[key] && JXG.Validator[key](value)) ||
                                     (JXG.Validator[key] &&
                                         Type.isFunction(value) &&
-                                        JXG.Validator[key](value())))
+                                        JXG.Validator[key](value(this))))
                             ) {
                                 value =
                                     (value.toLowerCase && value.toLowerCase() === "false")
@@ -1496,7 +1496,7 @@ JXG.extend(
 
             this.triggerEventHandlers(["attribute"], [attributes, this]);
 
-            if (!Type.evaluate(this.visProp.needsregularupdate)) {
+            if (!this.evalVisProp('needsregularupdate')) {
                 this.board.fullUpdate();
             } else {
                 this.board.update(this);
@@ -1545,6 +1545,91 @@ JXG.extend(
             }
 
             return result;
+        },
+
+        /**
+         * Get value of an attribute. If the value that attribute is a function, call the function and return its value.
+         * In that case, the function is called with the GeometryElement as (only) parameter. For label elements (i.e.
+         * if the attribute "islabel" is true), the anchor element is supplied. The label element can be accessed as
+         * sub-object "label".
+         * If the attribute does not exist, undefined will be returned.
+         *
+         * @param {String} key Attribute key
+         * @returns {String|Number|Boolean} value of attribute "key" (evaluated in case of a function) or undefined
+         *
+         * @see GeometryElement#eval
+         * @see JXG#evaluate
+         */
+        evalVisProp: function (key) {
+            var val, arr, i, le;
+
+            if (key.indexOf('.') === -1) {
+                // e.g. 'visible'
+                val = this.visProp[key];
+            } else {
+                // e.g. label.visible
+                arr = key.split('.');
+                le = arr.length;
+                val = this.visProp;
+                for (i = 0; i < le; i++) {
+                    val = val[arr[i]];
+                }
+            }
+
+            if (JXG.isFunction(val)) {
+                // For labels supply the anchor element as parameter.
+                if (this.visProp.islabel === true && Type.exists(this.visProp.anchor)) {
+                    // 3D: supply the 3D element
+                    if (this.visProp.anchor.visProp.element3d !== null) {
+                        return val(this.visProp.anchor.visProp.element3d);
+                    }
+                    // 2D: supply the 2D element
+                    return val(this.visProp.anchor);
+                }
+                // For 2D elements representing 3D elements, return the 3D element.
+                if (this.visProp.element3d !== null) {
+                    return val(this.visProp.element3d);
+                }
+                // In all other cases, return the element itself
+                return val(this);
+            }
+            // val is not of type function
+            return val;
+        },
+
+        /**
+         * Get value of a parameter. If the parameter is a function, call the function and return its value.
+         * In that case, the function is called with the GeometryElement as (only) parameter. For label elements (i.e.
+         * if the attribute "islabel" is true), the anchor element is supplied. The label of an element can be accessed as
+         * sub-object "label" then.
+         *
+         * @param {String|Number|Function|Object} val If not a function, it will be returned as is. If function it will be evaluated, where the GeometryElement is
+         * supplied as the (only) parameter of that function.
+         * @returns {String|Number|Object}
+         *
+         * @see GeometryElement#evalVisProp
+         * @see JXG#evaluate
+         */
+        eval: function(val) {
+            if (JXG.isFunction(val)) {
+                // For labels supply the anchor element as parameter.
+                if (this.visProp.islabel === true && Type.exists(this.visProp.anchor)) {
+                    // 3D: supply the 3D element
+                    if (this.visProp.anchor.visProp.element3d !== null) {
+                        return val(this.visProp.anchor.visProp.element3d);
+                    }
+                    // 2D: supply the 2D element
+                    return val(this.visProp.anchor);
+                }
+                // For 2D elements representing 3D elements, return the 3D element.
+                if (this.visProp.element3d !== null) {
+                    return val(this.visProp.element3d);
+                }
+                // In all other cases, return the element itself
+                return val(this);
+            }
+            // val is not of type function
+            return val;
         },
 
         /**
@@ -1628,7 +1713,7 @@ JXG.extend(
          * @private
          */
         createGradient: function () {
-            var ev_g = Type.evaluate(this.visProp.gradient);
+            var ev_g = this.evalVisProp('gradient');
             if (ev_g === "linear" || ev_g === "radial") {
                 this.board.renderer.setGradient(this);
             }
@@ -1660,7 +1745,7 @@ JXG.extend(
                             0,
                             function () {
                                 if (Type.isFunction(that.name)) {
-                                    return that.name();
+                                    return that.name(that);
                                 }
                                 return that.name;
                             }
@@ -1703,7 +1788,7 @@ JXG.extend(
             //    through dehighlightAll.
 
             // highlight only if not highlighted
-            if (Type.evaluate(this.visProp.highlight) && (!this.highlighted || force)) {
+            if (this.evalVisProp('highlight') && (!this.highlighted || force)) {
                 this.highlighted = true;
                 this.board.highlightedObjects[this.id] = this;
                 this.board.renderer.highlight(this);
@@ -1874,7 +1959,7 @@ JXG.extend(
                     "transform",
                     [
                         function () {
-                            return (Type.evaluate(angle) * Math.PI) / 180;
+                            return (that.eval(angle) * Math.PI) / 180;
                         }
                     ],
                     { type: "rotate" }
@@ -2162,17 +2247,17 @@ JXG.extend(
         getSnapSizes: function () {
             var sX, sY, ticks;
 
-            sX = Type.evaluate(this.visProp.snapsizex);
-            sY = Type.evaluate(this.visProp.snapsizey);
+            sX = this.evalVisProp('snapsizex');
+            sY = this.evalVisProp('snapsizey');
 
             if (sX <= 0 && this.board.defaultAxes && this.board.defaultAxes.x.defaultTicks) {
                 ticks = this.board.defaultAxes.x.defaultTicks;
-                sX = ticks.ticksDelta * (Type.evaluate(ticks.visProp.minorticks) + 1);
+                sX = ticks.ticksDelta * (ticks.evalVisProp('minorticks') + 1);
             }
 
             if (sY <= 0 && this.board.defaultAxes && this.board.defaultAxes.y.defaultTicks) {
                 ticks = this.board.defaultAxes.y.defaultTicks;
-                sY = ticks.ticksDelta * (Type.evaluate(ticks.visProp.minorticks) + 1);
+                sY = ticks.ticksDelta * (ticks.evalVisProp('minorticks') + 1);
             }
 
             return [sX, sY];
@@ -2193,16 +2278,16 @@ JXG.extend(
                 mi, ma,
                 boardBB, res, sX, sY,
                 needsSnapToGrid = false,
-                attractToGrid = Type.evaluate(this.visProp.attracttogrid),
-                ev_au = Type.evaluate(this.visProp.attractorunit),
-                ev_ad = Type.evaluate(this.visProp.attractordistance);
+                attractToGrid = this.evalVisProp('attracttogrid'),
+                ev_au = this.evalVisProp('attractorunit'),
+                ev_ad = this.evalVisProp('attractordistance');
 
-            if (!Type.exists(this.coords) || Type.evaluate(this.visProp.fixed)) {
+            if (!Type.exists(this.coords) || this.evalVisProp('fixed')) {
                 return this;
             }
 
             needsSnapToGrid =
-                Type.evaluate(this.visProp.snaptogrid) || attractToGrid || force === true;
+                this.evalVisProp('snaptogrid') || attractToGrid || force === true;
 
             if (needsSnapToGrid) {
                 x = this.coords.usrCoords[1];
@@ -2354,18 +2439,17 @@ JXG.extend(
             if (Type.exists(Intl) &&
                 this.useLocale()) {
 
-                loc = Type.evaluate(this.visProp.intl.locale) ||
-                    Type.evaluate(this.board.attr.intl.locale);
-                opt = Type.evaluate(this.visProp.intl.options) || {};
+                loc = this.evalVisProp('intl.locale') ||
+                    this.eval(this.board.attr.intl.locale);
+                opt = this.evalVisProp('intl.options') || {};
 
-                // Transfer back to camel case if necessary
-                // and evaluate
+                // Transfer back to camel case if necessary and evaluate
                 for (key in opt) {
                     if (opt.hasOwnProperty(key)) {
                         if (translate.hasOwnProperty(key)) {
-                            optCalc[translate[key]] = Type.evaluate(opt[key]);
+                            optCalc[translate[key]] = this.eval(opt[key]);
                         } else {
-                            optCalc[key] = Type.evaluate(opt[key]);
+                            optCalc[key] = this.eval(opt[key]);
                         }
                     }
                 }
@@ -2377,7 +2461,7 @@ JXG.extend(
                     optCalc[translate[key]] = digits;
 
                     // key = 'minimumfractiondigits';
-                    // if (!Type.exists(opt[key]) || Type.evaluate(opt[key]) > digits) {
+                    // if (!this.eval(opt[key]) || this.eval(opt[key]) > digits) {
                     //     optCalc[translate[key]] = digits;
                     // }
                 }
@@ -2405,7 +2489,7 @@ JXG.extend(
             }
 
             // Check if intl is supported explicitly enabled for this element
-            val = Type.evaluate(this.visProp.intl.enabled);
+            val = this.evalVisProp('intl.enabled');
 
             if (val === true) {
                 return true;
@@ -2413,7 +2497,7 @@ JXG.extend(
 
             // Check intl attribute of the board
             if (val === 'inherit') {
-                if (Type.evaluate(this.board.attr.intl.enabled) === true) {
+                if (this.eval(this.board.attr.intl.enabled) === true) {
                     return true;
                 }
             }

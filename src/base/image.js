@@ -139,9 +139,9 @@ JXG.extend(
                 dot,
                 len = this.transformations.length;
 
-            if (Type.isObject(Type.evaluate(this.visProp.precision))) {
+            if (Type.isObject(this.evalVisProp('precision'))) {
                 type = this.board._inputDevice;
-                prec = Type.evaluate(this.visProp.precision[type]);
+                prec = this.evalVisProp('precision.' + type);
             } else {
                 // 'inherit'
                 prec = this.board.options.precision.hasPoint;
@@ -224,8 +224,7 @@ JXG.extend(
          *
          */
         updateSpan: function () {
-            var i,
-                j,
+            var i, j,
                 len = this.transformations.length,
                 v = [];
 
@@ -240,7 +239,6 @@ JXG.extend(
                 v[0] = [this.Z(), this.X(), this.Y()];
                 v[1] = [this.Z(), this.X() + this.W(), this.Y()];
                 v[2] = [this.Z(), this.X(), this.Y() + this.H()];
-
                 // Transform the three corners
                 for (i = 0; i < len; i++) {
                     for (j = 0; j < 3; j++) {

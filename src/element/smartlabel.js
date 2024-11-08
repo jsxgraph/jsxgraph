@@ -311,11 +311,11 @@ JXG.createSmartLabel = function (board, parents, attributes) {
             var str = '',
                 val,
                 txt = Type.evaluate(user_supplied_text),
-                digits = Type.evaluate(el.visProp.digits),
-                u = Type.evaluate(el.visProp.unit),
-                pre = Type.evaluate(el.visProp.prefix),
-                suf = Type.evaluate(el.visProp.suffix),
-                mj = Type.evaluate(el.visProp.usemathjax) || Type.evaluate(el.visProp.usekatex);
+                digits = el.evalVisProp('digits'),
+                u = el.evalVisProp('unit'),
+                pre = el.evalVisProp('prefix'),
+                suf = el.evalVisProp('suffix'),
+                mj = el.evalVisProp('usemathjax') || el.evalVisProp('usekatex');
 
             if (txt === '') {
                 if (el.useLocale()) {
@@ -345,12 +345,12 @@ JXG.createSmartLabel = function (board, parents, attributes) {
         txt_fun = function () {
             var str = '',
                 txt = Type.evaluate(user_supplied_text),
-                digits = Type.evaluate(el.visProp.digits),
-                u = Type.evaluate(el.visProp.unit),
-                pre = Type.evaluate(el.visProp.prefix),
-                suf = Type.evaluate(el.visProp.suffix),
-                dir = Type.evaluate(el.visProp.dir),
-                mj = Type.evaluate(el.visProp.usemathjax) || Type.evaluate(el.visProp.usekatex),
+                digits = el.evalVisProp('digits'),
+                u = el.evalVisProp('unit'),
+                pre = el.evalVisProp('prefix'),
+                suf = el.evalVisProp('suffix'),
+                dir = el.evalVisProp('dir'),
+                mj = el.evalVisProp('usemathjax') || el.evalVisProp('usekatex'),
                 x, y;
 
             if (el.useLocale()) {

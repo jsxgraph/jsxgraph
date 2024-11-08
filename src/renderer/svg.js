@@ -305,14 +305,14 @@ JXG.extend(
             }
             node2 = this.createPrim("marker", id);
 
-            node2.setAttributeNS(null, "stroke", Type.evaluate(el.visProp.strokecolor));
+            node2.setAttributeNS(null, "stroke", el.evalVisProp('strokecolor'));
             node2.setAttributeNS(
                 null,
                 "stroke-opacity",
-                Type.evaluate(el.visProp.strokeopacity)
+                el.evalVisProp('strokeopacity')
             );
-            node2.setAttributeNS(null, "fill", Type.evaluate(el.visProp.strokecolor));
-            node2.setAttributeNS(null, "fill-opacity", Type.evaluate(el.visProp.strokeopacity));
+            node2.setAttributeNS(null, "fill", el.evalVisProp('strokecolor'));
+            node2.setAttributeNS(null, "fill-opacity", el.evalVisProp('strokeopacity'));
             node2.setAttributeNS(null, "stroke-width", 0); // this is the stroke-width of the arrow head.
             // Should be zero to simplify the calculations
 
@@ -346,11 +346,6 @@ JXG.extend(
             h = 5;
             if (idAppendix === "Start") {
                 // First arrow
-                //type = a.typeFirst;
-                // if (JXG.exists(ev_fa.type)) {
-                //     type = Type.evaluate(ev_fa.type);
-                // }
-
                 v = 0;
                 if (type === 2) {
                     node3.setAttributeNS(null, "d", "M 10,0 L 0,5 L 10,10 L 5,5 z");
@@ -410,11 +405,6 @@ JXG.extend(
                 }
             } else {
                 // Last arrow
-                // if (JXG.exists(ev_la.type)) {
-                //     type = Type.evaluate(ev_la.type);
-                // }
-                //type = a.typeLast;
-
                 v = 10.0;
                 if (type === 2) {
                     node3.setAttributeNS(null, "d", "M 0,0 L 10,5 L 0,10 L 5,5 z");
@@ -592,22 +582,21 @@ JXG.extend(
 
             if (!Type.exists(node)) {
                 node = this.createPrim("path", ticks.id);
-                this.appendChildPrim(node, Type.evaluate(ticks.visProp.layer));
+                this.appendChildPrim(node, ticks.evalVisProp('layer'));
                 ticks.rendNode = node;
             }
 
-            node.setAttributeNS(null, "stroke", Type.evaluate(ticks.visProp.strokecolor));
+            node.setAttributeNS(null, "stroke", ticks.evalVisProp('strokecolor'));
             node.setAttributeNS(null, "fill", "none");
-            // node.setAttributeNS(null, 'fill', Type.evaluate(ticks.visProp.fillcolor));
-            // node.setAttributeNS(null, 'fill-opacity', Type.evaluate(ticks.visProp.fillopacity));
+            // node.setAttributeNS(null, 'fill', ticks.evalVisProp('fillcolor'));
+            // node.setAttributeNS(null, 'fill-opacity', ticks.evalVisProp('fillopacity'));
             node.setAttributeNS(
                 null,
                 "stroke-opacity",
-                Type.evaluate(ticks.visProp.strokeopacity)
+                ticks.evalVisProp('strokeopacity')
             );
-            node.setAttributeNS(null, "stroke-width", Type.evaluate(ticks.visProp.strokewidth));
+            node.setAttributeNS(null, "stroke-width", ticks.evalVisProp('strokewidth'));
             this.updatePathPrim(node, tickStr, ticks.board);
-            this.setObjectViewport(ticks);
         },
 
         /* **************************
@@ -638,7 +627,7 @@ JXG.extend(
 
             el.rendNodeText = this.container.ownerDocument.createTextNode("");
             node.appendChild(el.rendNodeText);
-            this.appendChildPrim(node, Type.evaluate(el.visProp.layer));
+            this.appendChildPrim(node, el.evalVisProp('layer'));
 
             return node;
         },
@@ -646,12 +635,13 @@ JXG.extend(
         // Already documented in JXG.AbstractRenderer
         updateInternalText: function (el) {
             var content = el.plaintext,
-                v,
+                v, css,
                 ev_ax = el.getAnchorX(),
                 ev_ay = el.getAnchorY();
 
-            if (el.rendNode.getAttributeNS(null, "class") !== el.visProp.cssclass) {
-                el.rendNode.setAttributeNS(null, "class", Type.evaluate(el.visProp.cssclass));
+            css = el.evalVisProp('cssclass');
+            if (el.rendNode.getAttributeNS(null, "class") !== css) {
+                el.rendNode.setAttributeNS(null, "class", css);
                 el.needsSizeUpdate = true;
             }
 
@@ -713,7 +703,6 @@ JXG.extend(
          * @see JXG.AbstractRenderer#updateInternalTextStyle
          */
         updateInternalTextStyle: function (el, strokeColor, strokeOpacity, duration) {
-            this.setObjectViewport(el);
             this.setObjectFillColor(el, strokeColor, strokeOpacity);
         },
 
@@ -726,7 +715,7 @@ JXG.extend(
             var node = this.createPrim("image", el.id);
 
             node.setAttributeNS(null, "preserveAspectRatio", "none");
-            this.appendChildPrim(node, Type.evaluate(el.visProp.layer));
+            this.appendChildPrim(node, el.evalVisProp('layer'));
             el.rendNode = node;
 
             this.updateImage(el);
@@ -734,13 +723,13 @@ JXG.extend(
 
         // Already documented in JXG.AbstractRenderer
         transformImage: function (el, t) {
-            var s, m,
-                node = el.rendNode,
+            var s, m, node,
                 str = "",
                 cx, cy,
                 len = t.length;
 
             if (len > 0) {
+                node = el.rendNode;
                 m = this.joinTransforms(el, t);
                 s = [m[1][1], m[2][1], m[1][2], m[2][2], m[1][0], m[2][0]].join(",");
                 if (s.indexOf('NaN') === -1) {
@@ -749,11 +738,11 @@ JXG.extend(
                         node.style.transform = str;
                         cx = -el.coords.scrCoords[1];
                         cy = -el.coords.scrCoords[2];
-                        switch (Type.evaluate(el.visProp.anchorx)) {
+                        switch (el.evalVisProp('anchorx')) {
                             case 'right': cx += el.size[0]; break;
                             case 'middle': cx += el.size[0] * 0.5; break;
                         }
-                        switch (Type.evaluate(el.visProp.anchory)) {
+                        switch (el.evalVisProp('anchory')) {
                             case 'bottom': cy += el.size[1]; break;
                             case 'middle': cy += el.size[1] * 0.5; break;
                         }
@@ -768,7 +757,7 @@ JXG.extend(
 
         // Already documented in JXG.AbstractRenderer
         updateImageURL: function (el) {
-            var url = Type.evaluate(el.url);
+            var url = el.eval(el.url);
 
             if (el._src !== url) {
                 el.imgIsLoaded = false;
@@ -783,8 +772,8 @@ JXG.extend(
 
         // Already documented in JXG.AbstractRenderer
         updateImageStyle: function (el, doHighlight) {
-            var css = Type.evaluate(
-                doHighlight ? el.visProp.highlightcssclass : el.visProp.cssclass
+            var css = el.evalVisProp(
+                doHighlight ? 'highlightcssclass' : 'cssclass'
             );
 
             el.rendNode.setAttributeNS(null, "class", css);
@@ -794,7 +783,7 @@ JXG.extend(
         drawForeignObject: function (el) {
             el.rendNode = this.appendChildPrim(
                 this.createPrim("foreignObject", el.id),
-                Type.evaluate(el.visProp.layer)
+                el.evalVisProp('layer')
             );
 
             this.appendNodesToElement(el, "foreignObject");
@@ -833,7 +822,6 @@ JXG.extend(
             } else if (level >= Options.layer.numlayers) {
                 level = Options.layer.numlayers - 1;
             }
-
             this.layer[level].appendChild(node);
 
             return node;
@@ -1192,20 +1180,17 @@ JXG.extend(
 
         // Already documented in JXG.AbstractRenderer
         updatePathStringBezierPrim: function (el) {
-            var i,
-                j,
-                k,
+            var i, j, k,
                 scr,
-                lx,
-                ly,
+                lx, ly,
                 len,
                 symbm = " M ",
                 symbl = " C ",
                 nextSymb = symbm,
                 maxSize = 5000.0,
                 pStr = "",
-                f = Type.evaluate(el.visProp.strokewidth),
-                isNoPlot = Type.evaluate(el.visProp.curvetype) !== "plot";
+                f = el.evalVisProp('strokewidth'),
+                isNoPlot = el.evalVisProp('curvetype') !== "plot";
 
             if (el.numberPoints <= 0) {
                 return "";
@@ -1360,9 +1345,9 @@ JXG.extend(
 
         // documented in JXG.AbstractRenderer
         setDashStyle: function (el) {
-            var dashStyle = Type.evaluate(el.visProp.dash),
-                ds = Type.evaluate(el.visProp.dashscale),
-                sw = ds ? 0.5 * Type.evaluate(el.visProp.strokewidth) : 1,
+            var dashStyle = el.evalVisProp('dash'),
+                ds = el.evalVisProp('dashscale'),
+                sw = ds ? 0.5 * el.evalVisProp('strokewidth') : 1,
                 node = el.rendNode;
 
             if (dashStyle > 0) {
@@ -1382,7 +1367,7 @@ JXG.extend(
         setGradient: function (el) {
             var fillNode = el.rendNode,
                 node, node2, node3,
-                ev_g = Type.evaluate(el.visProp.gradient);
+                ev_g = el.evalVisProp('gradient');
 
             if (ev_g === "linear" || ev_g === "radial") {
                 node = this.createPrim(ev_g + "Gradient", el.id + "_gradient");
@@ -1471,46 +1456,46 @@ JXG.extend(
                 op,
                 node2 = el.gradNode1,
                 node3 = el.gradNode2,
-                ev_g = Type.evaluate(el.visProp.gradient);
+                ev_g = el.evalVisProp('gradient');
 
             if (!Type.exists(node2) || !Type.exists(node3)) {
                 return;
             }
 
-            op = Type.evaluate(el.visProp.fillopacity);
+            op = el.evalVisProp('fillopacity');
             op = op > 0 ? op : 0;
-            col = Type.evaluate(el.visProp.fillcolor);
+            col = el.evalVisProp('fillcolor');
 
             node2.setAttributeNS(null, "style", "stop-color:" + col + ";stop-opacity:" + op);
             node3.setAttributeNS(
                 null,
                 "style",
                 "stop-color:" +
-                Type.evaluate(el.visProp.gradientsecondcolor) +
+                el.evalVisProp('gradientsecondcolor') +
                 ";stop-opacity:" +
-                Type.evaluate(el.visProp.gradientsecondopacity)
+                el.evalVisProp('gradientsecondopacity')
             );
             node2.setAttributeNS(
                 null,
                 "offset",
-                Type.evaluate(el.visProp.gradientstartoffset) * 100 + "%"
+                el.evalVisProp('gradientstartoffset') * 100 + "%"
             );
             node3.setAttributeNS(
                 null,
                 "offset",
-                Type.evaluate(el.visProp.gradientendoffset) * 100 + "%"
+                el.evalVisProp('gradientendoffset') * 100 + "%"
             );
             if (ev_g === "linear") {
-                this.updateGradientAngle(el.gradNode, Type.evaluate(el.visProp.gradientangle));
+                this.updateGradientAngle(el.gradNode, el.evalVisProp('gradientangle'));
             } else if (ev_g === "radial") {
                 this.updateGradientCircle(
                     el.gradNode,
-                    Type.evaluate(el.visProp.gradientcx),
-                    Type.evaluate(el.visProp.gradientcy),
-                    Type.evaluate(el.visProp.gradientr),
-                    Type.evaluate(el.visProp.gradientfx),
-                    Type.evaluate(el.visProp.gradientfy),
-                    Type.evaluate(el.visProp.gradientfr)
+                    el.evalVisProp('gradientcx'),
+                    el.evalVisProp('gradientcy'),
+                    el.evalVisProp('gradientr'),
+                    el.evalVisProp('gradientfx'),
+                    el.evalVisProp('gradientfy'),
+                    el.evalVisProp('gradientfr')
                 );
             }
         },
@@ -1525,10 +1510,10 @@ JXG.extend(
                 nodes = ["rendNode", "rendNodeTriangleStart", "rendNodeTriangleEnd"];
 
             if (duration === undefined) {
-                duration = Type.evaluate(el.visProp.transitionduration);
+                duration = el.evalVisProp('transitionduration');
             }
 
-            props = Type.evaluate(el.visProp.transitionproperties);
+            props = el.evalVisProp('transitionproperties');
             if (duration === el.visPropOld.transitionduration &&
                 props === el.visPropOld.transitionproperties) {
                 return;
@@ -1536,7 +1521,7 @@ JXG.extend(
 
             // if (
             //     el.elementClass === Const.OBJECT_CLASS_TEXT &&
-            //     Type.evaluate(el.visProp.display) === "html"
+            //     el.evalVisProp('display') === "html"
             // ) {
             //     // transitionStr = " color " + duration + "ms," +
             //     //     " opacity " + duration + "ms";
@@ -1574,73 +1559,6 @@ JXG.extend(
             el.visPropOld.transitionproperties = props;
         },
 
-        // documented in JXG.AbstractRenderer
-        setObjectViewport: function(el, isHtml) {
-            // var val = Type.evaluate(el.visProp.viewport),
-            //     vp, i,
-            //     len = 0,
-            //     bb, bbc, l, t, r, b,
-            //     nodes = ['rendNode']; //, "rendNodeTriangleStart", "rendNodeTriangleEnd"];
-
-            // TODO
-            // viewport is still screwed.
-            // Example: if an image is cropped by the viewport,
-            // so will be any transformed copies.
-            // See #695.
-
-            // // Check viewport attribute of the board
-            // if (val === 'inherit') {
-            //     val = Type.evaluate(el.board.attr.viewport);
-            // }
-
-            // // Required order: top, right, bottom, left
-            // if (isHtml) {
-            //     bb = el.rendNode.getBoundingClientRect();
-            //     bbc = this.container.getBoundingClientRect();
-            //     t = parseFloat(val[1]);
-            //     r = parseFloat(val[2]);
-            //     b = parseFloat(val[3]);
-            //     l = parseFloat(val[0]);
-
-            //     if (Type.isString(val[1]) && val[1].indexOf('%') > 0) {
-            //         t = (bbc.height) * t / 100;
-            //     }
-            //     if (Type.isString(val[2]) && val[2].indexOf('%') > 0) {
-            //         r = (bbc.width) * r / 100;
-            //     }
-            //     if (Type.isString(val[3]) && val[3].indexOf('%') > 0) {
-            //         b = (bbc.height) * b / 100;
-            //     }
-            //     if (Type.isString(val[0]) && val[0].indexOf('%') > 0) {
-            //         l = (bbc.width) * l / 100;
-            //     }
-
-            //     t = parseFloat(bbc.top) - parseFloat(bb.top) + t;
-            //     r = parseFloat(bb.right) - parseFloat(bbc.right) + r;
-            //     b = parseFloat(bb.bottom) - parseFloat(bbc.bottom) + b;
-            //     l = parseFloat(bbc.left) - parseFloat(bb.left) + l;
-            //     val = [l, t, r, b];
-            // }
-
-            // vp = [
-            //     (typeof val[1] === 'number') ? val[1] + 'px' : val[1],
-            //     (typeof val[2] === 'number') ? val[2] + 'px' : val[2],
-            //     (typeof val[3] === 'number') ? val[3] + 'px' : val[3],
-            //     (typeof val[0] === 'number') ? val[0] + 'px' : val[0]
-            // ].join(' ');
-
-            // len = nodes.length;
-            // for (i = 0; i < len; ++i) {
-            //     if (el[nodes[i]]) {
-            //         if (isHtml) {
-            //             el[nodes[i]].style.clipPath = 'inset(' + vp + ')';
-            //         } else {
-            //             el[nodes[i]].setAttributeNS(null, "clip-path", 'view-box inset(' + vp + ')');
-            //         }
-            //     }
-            // }
-        },
-
         /**
          * Call user-defined function to set visual attributes.
          * If "testAttribute" is the empty string, the function
@@ -1669,11 +1587,38 @@ JXG.extend(
         },
 
         // documented in JXG.AbstractRenderer
+        setARIA: function(el) {
+            // This method is only called in abstractRenderer._updateVisual() if aria.enabled == true.
+            var key, k, v;
+
+            // this.setPropertyPrim(el.rendNode, 'aria-label', el.evalVisProp('aria.label'));
+            // this.setPropertyPrim(el.rendNode, 'aria-live', el.evalVisProp('aria.live'));
+            for (key in el.visProp.aria) {
+                if (el.visProp.aria.hasOwnProperty(key) && key !== 'enabled') {
+                    k = 'aria.' + key;
+                    v = el.evalVisProp('aria.' + key);
+                    if (el.visPropOld[k] !== v) {
+                        this.setPropertyPrim(el.rendNode, 'aria-' + key, v);
+                        el.visPropOld[k] = v;
+                    }
+                }
+            }
+        },
+
+        // documented in JXG.AbstractRenderer
+        setCssClass(el, cssClass) {
+            if (el.visPropOld.cssclass !== cssClass) {
+                this.setPropertyPrim(el.rendNode, 'class', cssClass);
+                el.visPropOld.cssclass = cssClass;
+            }
+        },
+
+        // documented in JXG.AbstractRenderer
         setObjectFillColor: function (el, color, opacity, rendNode) {
             var node, c, rgbo, oo,
-                rgba = Type.evaluate(color),
-                o = Type.evaluate(opacity),
-                grad = Type.evaluate(el.visProp.gradient);
+                rgba = color,
+                o = opacity,
+                grad = el.evalVisProp('gradient');
 
             o = o > 0 ? o : 0;
 
@@ -1741,9 +1686,9 @@ JXG.extend(
 
         // documented in JXG.AbstractRenderer
         setObjectStrokeColor: function (el, color, opacity) {
-            var rgba = Type.evaluate(color),
+            var rgba = color,
                 c, rgbo,
-                o = Type.evaluate(opacity),
+                o = opacity,
                 oo, node;
 
             o = o > 0 ? o : 0;
@@ -1767,7 +1712,7 @@ JXG.extend(
                 node = el.rendNode;
 
                 if (el.elementClass === Const.OBJECT_CLASS_TEXT) {
-                    if (Type.evaluate(el.visProp.display) === "html") {
+                    if (el.evalVisProp('display') === "html") {
                         this._setAttribute(function () {
                             node.style.color = c;
                             node.style.opacity = oo;
@@ -1789,7 +1734,7 @@ JXG.extend(
                     el.elementClass === Const.OBJECT_CLASS_CURVE ||
                     el.elementClass === Const.OBJECT_CLASS_LINE
                 ) {
-                    if (Type.evaluate(el.visProp.firstarrow)) {
+                    if (el.evalVisProp('firstarrow')) {
                         this._setArrowColor(
                             el.rendNodeTriangleStart,
                             c, oo, el,
@@ -1797,7 +1742,7 @@ JXG.extend(
                         );
                     }
 
-                    if (Type.evaluate(el.visProp.lastarrow)) {
+                    if (el.evalVisProp('lastarrow')) {
                         this._setArrowColor(
                             el.rendNodeTriangleEnd,
                             c, oo, el,
@@ -1814,7 +1759,7 @@ JXG.extend(
         // documented in JXG.AbstractRenderer
         setObjectStrokeWidth: function (el, width) {
             var node,
-                w = Type.evaluate(width);
+                w = width;
 
             if (isNaN(w) || el.visPropOld.strokewidth === w) {
                 return;
@@ -1827,11 +1772,11 @@ JXG.extend(
 
                 // if (el.elementClass === Const.OBJECT_CLASS_CURVE ||
                 // el.elementClass === Const.OBJECT_CLASS_LINE) {
-                //     if (Type.evaluate(el.visProp.firstarrow)) {
+                //     if (el.evalVisProp('firstarrow')) {
                 //         this._setArrowWidth(el.rendNodeTriangleStart, w, el.rendNode);
                 //     }
                 //
-                //     if (Type.evaluate(el.visProp.lastarrow)) {
+                //     if (el.evalVisProp('lastarrow')) {
                 //         this._setArrowWidth(el.rendNodeTriangleEnd, w, el.rendNode);
                 //     }
                 // }
@@ -1841,7 +1786,7 @@ JXG.extend(
 
         // documented in JXG.AbstractRenderer
         setLineCap: function (el) {
-            var capStyle = Type.evaluate(el.visProp.linecap);
+            var capStyle = el.evalVisProp('linecap');
 
             if (
                 capStyle === undefined ||
@@ -1858,7 +1803,7 @@ JXG.extend(
 
         // documented in JXG.AbstractRenderer
         setShadow: function (el) {
-            var ev_s = Type.evaluate(el.visProp.shadow),
+            var ev_s = el.evalVisProp('shadow'),
                 ev_s_json, c, b, bl, o, op, id, node,
                 use_board_filter = true,
                 show = false;
@@ -1877,14 +1822,14 @@ JXG.extend(
                 o = [5, 5];
                 op = 1;
             } else {
-                if (Type.evaluate(ev_s.enabled)) {
+                if (el.evalVisProp('shadow.enabled')) {
                     use_board_filter = false;
                     show = true;
-                    c = JXG.rgbParser(Type.evaluate(ev_s.color));
-                    b = Type.evaluate(ev_s.blur);
-                    bl = Type.evaluate(ev_s.blend);
-                    o = Type.evaluate(ev_s.offset);
-                    op = Type.evaluate(ev_s.opacity);
+                    c = JXG.rgbParser(el.evalVisProp('shadow.color'));
+                    b = el.evalVisProp('shadow.blur');
+                    bl = el.evalVisProp('shadow.blend');
+                    o = el.evalVisProp('shadow.offset');
+                    op = el.evalVisProp('shadow.opacity');
                 } else {
                     show = false;
                 }

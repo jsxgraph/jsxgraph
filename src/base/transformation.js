@@ -115,7 +115,8 @@ JXG.Transformation = function (board, type, params) {
         applyOnce: "applyOnce",
         bindTo: "bindTo",
         bind: "bindTo",
-        melt: "melt"
+        melt: "melt",
+        meltTo: "meltTo"
     };
 };
 
@@ -379,21 +380,86 @@ JXG.extend(
         /**
          * Binds a transformation to a GeometryElement or an array of elements. In every update of the
          * GeometryElement(s), the transformation is executed. That means, in order to immediately
-         * apply the transformation, a call of board.update() has to follow.
-         * @param  {Array|JXG.Object} p JXG.Object or array of JXG.Object to
+         * apply the transformation after calling bindTo, a call of board.update() has to follow.
+         * <p>
+         * The transformation is simply appended to the existing list of transformations of the object.
+         * It is not fused (melt) with an existing transformation.
+         *
+         * @param  {Array|JXG.Object} el JXG.Object or array of JXG.Object to
          *                            which the transformation is bound to.
+         * @see JXG.Transformation.meltTo
          */
-        bindTo: function (p) {
+        bindTo: function (el) {
             var i, len;
-            if (Type.isArray(p)) {
-                len = p.length;
+            if (Type.isArray(el)) {
+                len = el.length;
 
                 for (i = 0; i < len; i++) {
-                    p[i].transformations.push(this);
+                    el[i].transformations.push(this);
                 }
             } else {
-                p.transformations.push(this);
+                el.transformations.push(this);
             }
+        },
+
+        /**
+         * Binds a transformation to a GeometryElement or an array of elements. In every update of the
+         * GeometryElement(s), the transformation is executed. That means, in order to immediately
+         * apply the transformation after calling meltTo, a call of board.update() has to follow.
+         * <p>
+         * In case the last transformation of the element and this transformation are static,
+         * i.e. the transformation matrices do not depend on other elements,
+         * the transformation will be fused into (multiplied with) the last transformation of
+         * the element. Thus, the list of transformations is kept small.
+         * If the transformation will be the first transformation ot the element, it will be cloned
+         * to prevent side effects.
+         *
+         * @param  {Array|JXG.Object} el JXG.Object or array of JXG.Object to
+         *                            which the transformation is bound to.
+         *
+         * @see JXG.Transformation#bindTo
+         */
+        meltTo: function (el) {
+            var i, elt, t;
+
+            if (Type.isArray(el)) {
+                for (i = 0; i < el.length; i++) {
+                    this.meltTo(el[i]);
+                }
+            } else {
+                elt = el.transformations;
+                if (elt.length > 0 &&
+                    elt[elt.length - 1].isNumericMatrix &&
+                    this.isNumericMatrix
+                ) {
+                    elt[elt.length - 1].melt(this);
+                } else {
+                    // Use a clone of the transformation.
+                    // Otherwise, if the transformation is meltTo twice
+                    // the transformation will be changed.
+                    t = this.clone();
+                    elt.push(t);
+                }
+            }
+        },
+
+        /**
+         * Create a copy of the transformation in case it is static, i.e.
+         * if the transformation matrix does not depend on other elements.
+         * <p>
+         * If the transformation matrix is not static, null will be returned.
+         *
+         * @returns {JXG.Transformation}
+         */
+        clone: function() {
+            var t = null;
+
+            if (this.isNumericMatrix) {
+                t = new JXG.Transformation(this.board, 'none', []);
+                t.matrix = this.matrix.slice();
+            }
+
+            return t;
         },
 
         /**
@@ -413,7 +479,7 @@ JXG.extend(
 
         /**
          * Combine two transformations to one transformation. This only works if
-         * both of transformation matrices consist solely of numbers, and do not
+         * both of transformation matrices consist of numbers solely, and do not
          * contain functions.
          *
          * Multiplies the transformation with a transformation t from the left.
@@ -422,48 +488,21 @@ JXG.extend(
          * @returns {JXG.Transform} the transformation object.
          */
         melt: function (t) {
-            var res = [],
-                i,
-                len,
-                len0,
-                k,
-                s,
-                j;
-
-            len = t.matrix.length;
-            len0 = this.matrix[0].length;
-
-            for (i = 0; i < len; i++) {
-                res[i] = [];
-            }
+            var res = [];
 
             this.update();
             t.update();
 
-            for (i = 0; i < len; i++) {
-                for (j = 0; j < len0; j++) {
-                    s = 0;
-                    for (k = 0; k < len; k++) {
-                        s += t.matrix[i][k] * this.matrix[k][j];
-                    }
-                    res[i][j] = s;
-                }
-            }
+            res = Mat.matMatMult(t.matrix, this.matrix);
 
             this.update = function () {
-                var len = this.matrix.length,
-                    len0 = this.matrix[0].length;
-
-                for (i = 0; i < len; i++) {
-                    for (j = 0; j < len0; j++) {
-                        this.matrix[i][j] = res[i][j];
-                    }
-                }
+                this.matrix = res;
             };
+
             return this;
         },
 
-        // documented in element.js
+        // Documented in element.js
         // Not yet, since transformations are not listed in board.objects.
         getParents: function () {
             var p = [[].concat.apply([], this.matrix)];

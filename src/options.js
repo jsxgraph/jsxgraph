@@ -339,6 +339,7 @@ JXG.Options = {
             x: {
                 name: 'x',
                 fixed: true,
+                needsRegularUpdate: false,
                 ticks: {
                     label: {
                         visible: 'inherit',
@@ -350,13 +351,13 @@ JXG.Options = {
                     tickEndings: [0, 1],
                     majorTickEndings: [1, 1],
                     drawZero: false,
-                    needsRegularUpdate: false,
                     visible: 'inherit'
                 }
             },
             y: {
                 name: 'y',
                 fixed: true,
+                needsRegularUpdate: false,
                 ticks: {
                     label: {
                         visible: 'inherit',
@@ -368,7 +369,6 @@ JXG.Options = {
                     tickEndings: [1, 0],
                     majorTickEndings: [1, 1],
                     drawZero: false,
-                    needsRegularUpdate: false,
                     visible: 'inherit'
                 }
             }
@@ -1013,10 +1013,10 @@ JXG.Options = {
          * {@link JXG.Board#addEventHandlers()} and
          * {@link JXG.Board#removeEventHandlers()} directly.
          *
-         * @name JXG.Board#registerEvents
+         * @name JXG.Board.registerEvents
          * @see JXG.Board#keyboard
-         * @see JXG.Board#registerResizeEvent
-         * @see JXG.Board#registerFullscreenEvent
+         * @see JXG.Board.registerResizeEvent
+         * @see JXG.Board.registerFullscreenEvent
          * @type Boolean
          * @default true
          */
@@ -1409,20 +1409,6 @@ JXG.Options = {
         title: '',
 
         /**
-         *
-         * Set a viewport of the board. viewport is determined by an array of the form '[left, top, right, bottom]'.
-         * whose entries determine an inner margin (i.e. a padding) of the board. The entries of the array have to be given
-         * as numbers or strings. In the latter case the units 'px' or '%' are supported.
-         * The viewport can be individually controlled for each element, too.
-         *
-         * @type {Array|String}
-         * @name JXG.Board#viewport
-         * @default [0, 0, 0, 0]
-         * @see JXG.GeometryElement#viewport
-         */
-        viewport: [0, 0, 0, 0],
-
-        /**
          * Control the possibilities for zoom interaction.
          *
          * Possible sub-attributes with default values are:
@@ -1551,6 +1537,83 @@ JXG.Options = {
         // This is a meta tag: http://code.google.com/p/jsdoc-toolkit/wiki/MetaTags
 
         /**
+         * ARIA settings for JSXGraph elements.
+         * Besides 'label' and 'live', all available properties from
+         * {@link https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA} may be set.
+         * In JSXGraph, the available properties are used without the leading 'aria-'.
+         * For example, the value of the JSXGraph attribute 'aria.label' will be set to the
+         * HTML attribute 'aria-label' (ignoring 'aria.enabled').
+         *
+         * @name aria
+         * @memberOf JXG.GeometryElement.prototype
+         * @type Object
+         * @default {
+         *   enabled: false,
+         *   label: '',
+         *   live: 'assertive'
+         *  },
+         */
+        aria: {
+            enabled: false,
+            label: '',
+            live: 'assertive' // 'assertive', 'polite', 'none'
+        },
+
+        /**
+         * Apply CSS classes to an element in non-highlighted view. It is possible to supply one or more
+         * CSS classes separated by blanks.
+         * <p>
+         * For non-text and non-image elements, this feature is available for the SVG renderer, only.
+         * <p>
+         * For text and image elements the specificity (priority) of JSXGraph attributes is higher than the CSS class properties, see
+         * {@link Text#cssDefaultStyle}
+         * For other elements, however, the specificity of a CSS class is higher than the corresponding JSXGraph attribute, see the example below.
+         * The fill-properties of a CSS class will be set only if the corresponding JSXGraph attributes are set (to a dummy value).
+         *
+         * @example
+         * // CSS class
+         * .line {
+         *     stroke: blue;
+         *     stroke-width: 10px;
+         *     fill: yellow;
+         * }
+         *
+         * // JavaScript
+         * var line = board.create('line', [[0, 0], [3, 3]], {
+         *   cssClass: 'line',
+         *   strokeColor: 'black',
+         *   strokeWidth: 2,
+         *   fillColor: '' // Necessary to enable the yellow fill color of the CSS class
+         * });
+         *
+         * // The line is blue and has stroke-width 10px;
+         *
+         *
+         * @name cssClass
+         * @memberOf JXG.GeometryElement.prototype
+         * @type String
+         * @default ''
+         * @see Text#cssClass
+         * @see JXG.GeometryElement#highlightCssClass
+         */
+        cssClass: '',
+
+        /**
+         * Apply CSS classes to an element in highlighted view. It is possible to supply one or more
+         * CSS classes separated by blanks.
+         * <p>
+         * For non-text and non-image elements, this feature is available for the SVG renderer, only.
+         *
+         * @name highlightCssClass
+         * @memberOf JXG.GeometryElement.prototype
+         * @type String
+         * @default ''
+         * @see Text#highlightCssClass
+         * @see JXG.GeometryElement#cssClass
+         */
+        highlightCssClass: '',
+
+        /**
          * Determines the elements border-style.
          * Possible values are:
          * <ul><li>0 for a solid line</li>
@@ -1626,6 +1689,15 @@ JXG.Options = {
          * @name JXG.GeometryElement#dragToTopOfLayer
          */
         dragToTopOfLayer: false,
+
+        /**
+         * Links to the defining 3D element of a 2D element. Otherwise it is null.
+         *
+         * @name JXG.GeometryElement#element3D
+         * @default null
+         * @private
+         */
+        element3D: null,
 
         /**
          * The fill color of this geometry element.
@@ -2472,17 +2544,6 @@ JXG.Options = {
          * @default true
          */
         visible: true,
-
-        /**
-         * Set individual viewport for an element. If not set to 'inherit', to
-         * use the board-wide viewport, an array of the form '[left, top, right, bottom]' has to be given.
-         *
-         * @type {Array|String}
-         * @name JXG.GeometryElement#viewport
-         * @default 'inherit'
-         * @see JXG.Board#viewport
-         */
-        viewport: 'inherit',
 
         /**
          * If true a label will display the element's name.
@@ -3731,6 +3792,21 @@ JXG.Options = {
         highlightFillColor: 'none',
         strokeColor: Color.palette.blue,
         highlightStrokeColor: '#c3d9ff',
+
+        /**
+         * If true, there is a fourth parent point, i.e. the parents are [center, p1, p2, p3].
+         * p1 is still the radius point, p2 the angle point. The arc will be that part of the
+         * the circle with center 'center' which starts at p1, ends at the ray between center
+         * and p2, and passes p3.
+         * <p>
+         * This attribute is immutable (by purpose).
+         * This attribute is necessary for circumCircleArcs
+         *
+         * @type Boolean
+         * @name Arc#useDirection
+         * @default false
+         * @private
+         */
         useDirection: false,
 
         /**
@@ -3738,6 +3814,7 @@ JXG.Options = {
          *
          * @type Point
          * @name Arc#center
+         * @default {}
          */
         center: {
         },
@@ -3747,6 +3824,7 @@ JXG.Options = {
          *
          * @type Point
          * @name Arc#radiusPoint
+         * @default {}
          */
         radiusPoint: {
         },
@@ -3756,6 +3834,7 @@ JXG.Options = {
          *
          * @type Point
          * @name Arc#anglePoint
+         * @default {}
          */
         anglePoint: {
         }
@@ -4497,6 +4576,7 @@ JXG.Options = {
         highlightFillColor: 'none',
         strokeColor: Color.palette.blue,
         highlightStrokeColor: '#c3d9ff',
+        useDirection: true,
 
         /**
          * Attributes for center point.
@@ -5489,6 +5569,9 @@ JXG.Options = {
          * @see Image#highlightCssClass
          * @type String
          * @default 'JXGimage'
+         * @see Image#highlightCssClass
+         * @see Text#cssClass
+         * @see JXG.GeometryElement#cssClass
          */
         cssClass: 'JXGimage',
 
@@ -5503,6 +5586,9 @@ JXG.Options = {
          * @see Image#cssClass
          * @type String
          * @default 'JXGimageHighlight'
+         * @see Image#cssClass
+         * @see Image#highlightCssClass
+         * @see JXG.GeometryElement#highlightCssClass
          */
         highlightCssClass: 'JXGimageHighlight',
 
@@ -6742,26 +6828,286 @@ JXG.Options = {
          * @visprop
          */
 
+        /**
+         * This specifies the unit of measurement in dimension 1 (e.g. length).
+         * A power is automatically added to the string.
+         * If you want to use different units for each dimension, see {@link Measurement#units}.
+         *
+         * @example
+         * var p1 = board.create("point", [0,1]),
+         *     p2 = board.create("point", [3,1]),
+         *     c = board.create("circle", [p1, p2]);
+         *
+         * board.create("measurement", [-2, -3, ["Perimeter", c]], {
+         *     baseUnit: " m"
+         * });
+         * board.create("measurement", [1, -3, ["Area", c]], {
+         *     baseUnit: " m"
+         * });
+         *
+         * </pre><div id="JXG6cb6a7e7-553b-4f2a-af99-ddd78b7ba118" class="jxgbox" style="width: 300px; height: 300px;"></div>
+         * <script type="text/javascript">
+         *     (function() {
+         *         var board = JXG.JSXGraph.initBoard('JXG6cb6a7e7-553b-4f2a-af99-ddd78b7ba118',
+         *             {boundingbox: [-8, 8, 8,-8], axis: false, grid: false, showcopyright: false, shownavigation: false});
+         *
+         *     var p1 = board.create("point", [0,1]),
+         *         p2 = board.create("point", [3,1]),
+         *         c = board.create("circle", [p1, p2]);
+         *
+         *     board.create("measurement", [-2, -3, ["Perimeter", c]], {
+         *         baseUnit: " m"
+         *     });
+         *     board.create("measurement", [1, -3, ["Area", c]], {
+         *         baseUnit: " m"
+         *     });
+         *
+         *     })();
+         * </script><pre>
+         *
+         * @see Measurement#units
+         * @name Measurement#baseUnit
+         * @type String
+         * @default ''
+         */
         baseUnit: '',
-        units: {},
-        dim: null,
 
+        /**
+         * This attribute expects an object that has the dimension numbers as keys (as integer or in the form of "dimxx")
+         * and assigns a string to each dimension.
+         * If a dimension has no specification, {@link Measurement#baseUnit} is used.
+         *
+         * @example
+         * var p1 = board.create("point", [0,1]),
+         *     p2 = board.create("point", [3,1]),
+         *     c = board.create("circle", [p1, p2]);
+         *
+         * board.create("measurement", [-3, -3, ["Perimeter", c]], {
+         *     baseUnit: " m",
+         *     units: {
+         *          1: " length unit",
+         *       2: " area unit"
+         *     },
+         * });
+         * board.create("measurement", [1, -3, ["Area", c]], {
+         *     baseUnit: " m",
+         *     units: {
+         *          dim1: " length unit",
+         *       dim2: " area unit"
+         *     },
+         * });
+         *
+         * </pre><div id="JXGe06456d5-255e-459b-8c8e-4d7d2af7efb8" class="jxgbox" style="width: 300px; height: 300px;"></div>
+         * <script type="text/javascript">
+         *     (function() {
+         *         var board = JXG.JSXGraph.initBoard('JXGe06456d5-255e-459b-8c8e-4d7d2af7efb8',
+         *             {boundingbox: [-8, 8, 8,-8], axis: false, grid: false, showcopyright: false, shownavigation: false});
+         *     var p1 = board.create("point", [0,1]),
+         *         p2 = board.create("point", [3,1]),
+         *         c = board.create("circle", [p1, p2]);
+         *
+         *     board.create("measurement", [-3, -3, ["Perimeter", c]], {
+         *         baseUnit: " m",
+         *         units: {
+         *          1: " length unit",
+         *           2: " area unit"
+         *         },
+         *     });
+         *     board.create("measurement", [1, -3, ["Area", c]], {
+         *         baseUnit: " m",
+         *         units: {
+         *          dim1: " length unit",
+         *           dim2: " area unit"
+         *         },
+         *     });
+         *
+         *     })();
+         * </script><pre>
+         *
+         * @see Measurement#baseUnit
+         * @name Measurement#units
+         * @type Object
+         * @default {}
+         */
+        units: {},
+
+        /**
+         * Determines whether a prefix is displayed before the measurement value and unit.
+         *
+         * @see Measurement#prefix
+         * @name Measurement#showPrefix
+         * @type Boolean
+         * @default true
+         */
         showPrefix: true,
+
+        /**
+         * Determines whether a suffix is displayed after the measurement value and unit.
+         *
+         * @see Measurement#suffix
+         * @name Measurement#showSuffix
+         * @type Boolean
+         * @default true
+         */
         showSuffix: true,
 
+        /**
+         * String that is displayed before the measurement and its unit.
+         *
+         * @see Measurement#showPrefix
+         * @name Measurement#prefix
+         * @type String
+         * @default ''
+         */
         prefix: '',
+
+        /**
+         * String that is displayed after the measurement and its unit.
+         *
+         * @see Measurement#showSuffix
+         * @name Measurement#suffix
+         * @type String
+         * @default ''
+         */
         suffix: '',
 
-        formatPrefix: function (txt) { return txt; },
-        formatSuffix: function (txt) { return txt; },
+        /**
+         * Function to format the prefix.
+         *
+         * @name Measurement#formatPrefix
+         * @param {Measurement} self Pointer to the measurement object itself
+         * @param {String} txt Prefix string
+         * @returns String
+         */
+        formatPrefix: function (self, txt) { return txt; },
 
-        formatCoords: function (x, y, z) {
+        /**
+         * Function to format the suffix.
+         *
+         * @name Measurement#formatSuffix
+         * @param {Measurement} self Pointer to the measurement object itself
+         * @param {String} txt Suffix string
+         * @returns String
+         */
+        formatSuffix: function (self, txt) { return txt; },
+
+        /**
+         * Dimension of the measured data. This measurement can only be combined with a measurement of a suitable dimension.
+         * Overwrites the dimension returned by the Dimension() method.
+         * Normally, the default value null is used here to automatically determine the dimension.
+         *
+         * However, if the coordinates or a direction vector are measured, the value is usually returned as an array.
+         * To tell the measurement that the function {@link Measurement#formatCoords} or {@link Measurement#formatDirection} should be used
+         * to display the array properly, 'coords' or 'direction' must be specified here.
+         *
+         * @see Measurement#formatCoords
+         * @see Measurement#formatDirection
+         * @name Measurement#dim
+         * @type Number|'coords'|'direction'
+         * @default null
+         */
+        dim: null,
+
+        /**
+         * Function to format coordinates. Does only have an effect, if {@link Measurement#dim} is set to 'coords'.
+         *
+         * @example
+         * var p = board.create("point", [-2, 0]);
+         *
+         * board.create("measurement", [0, -3, ["Coords", p]], {
+         *     dim: 'coords',
+         *     formatCoords: function (_,x,y,z) {
+         *         if (parseFloat(z) !== 1)
+         *             return 'Infinit coords';
+         *         else
+         *             return '(' + x + ' | ' + y + ')';
+         *     }
+         * });
+         *
+         * </pre><div id="JXGa0606ad6-971b-47d4-9a72-ca7df65890f5" class="jxgbox" style="width: 300px; height: 300px;"></div>
+         * <script type="text/javascript">
+         *     (function() {
+         *         var board = JXG.JSXGraph.initBoard('JXGa0606ad6-971b-47d4-9a72-ca7df65890f5',
+         *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
+         *     var p = board.create("point", [-2, 0]);
+         *
+         *     board.create("measurement", [0, -3, ["Coords", p]], {
+         *         dim: 'coords',
+         *         formatCoords: function (_,x,y,z) {
+         *             if (parseFloat(z) !== 1)
+         *                 return 'Infinit coords';
+         *             else
+         *                 return '(' + x + ' | ' + y + ')';
+         *         }
+         *     });
+         *     })();
+         * </script><pre>
+         *
+         * @see Measurement#dim
+         * @name Measurement#formatCoords
+         * @type Function
+         * @param {Measurement} self Pointer to the measurement object itself
+         * @param {Number} x c-coordinate
+         * @param {Number} y c-coordinate
+         * @param {Number} z c-coordinate
+         * @returns String
+         */
+        formatCoords: function (self, x, y, z) {
             if (parseFloat(z) !== 1)
-                return '(NaN | NaN)';
+                return 'Infinit coords';
             else
                 return '(' + x + ', ' + y + ')';
         },
-        formatDirection: function (x, y) {
+
+        /**
+         * Function to format direction vector. Does only have an effect, if {@link Measurement#dim} is set to 'direction'.
+         *
+         * @example
+         * var p1 = board.create("point", [0,1]),
+         *     p2 = board.create("point", [3,1]),
+         *     s = board.create("segment", [p1, p2]);
+         *
+         * board.create("measurement", [0, -2, ["Direction", s]], {
+         *     dim: 'direction',
+         *     formatDirection: function (self,x,y) {
+         *        return '\\[\\frac{' + x + '}{' + y + '} = ' +
+         *            (!isFinite(x/y) ? '\\infty' : JXG.toFixed(x/y, self.visProp.digits)) +
+         *            '\\]';
+         *     },
+         *     useMathJax: true
+         * });
+         *
+         * </pre><div id="JXG57435de0-16f2-42be-94d8-3d2b31caefcd" class="jxgbox" style="width: 300px; height: 300px;"></div>
+         * <script type="text/javascript">
+         *     (function() {
+         *         var board = JXG.JSXGraph.initBoard('JXG57435de0-16f2-42be-94d8-3d2b31caefcd',
+         *             {boundingbox: [-8, 8, 8,-8], axis: false, grid: false, showcopyright: false, shownavigation: false});
+         *     var p1 = board.create("point", [0,1]),
+         *         p2 = board.create("point", [3,1]),
+         *         s = board.create("segment", [p1, p2]);
+         *
+         *     board.create("measurement", [0, -2, ["Direction", s]], {
+         *         dim: 'direction',
+         *         formatDirection: function (self,x,y) {
+         *            return '\\[\\frac{' + x + '}{' + y + '} = ' +
+         *                (!isFinite(x/y) ? '\\infty' : JXG.toFixed(x/y, self.visProp.digits)) +
+         *                '\\]';
+         *         },
+         *         useMathJax: true
+         *     });
+         *
+         *     })();
+         *
+         * </script><pre>
+         *
+         * @name Measurement#formatDirection
+         * @type Function
+         * @param {Measurement} self Pointer to the measurement object itself
+         * @param {Number} x c-coordinate
+         * @param {Number} y c-coordinate
+         * @returns String
+         */
+        formatDirection: function (self, x, y) {
             return '(' + x + ', ' + y + ')';
         }
 
@@ -7586,6 +7932,22 @@ JXG.Options = {
         highlightFillOpacity: 0.3,
         highlightOnSector: false,
         highlightStrokeWidth: 0,
+
+        /**
+         * If true, there is a fourth parent point, i.e. the parents are [center, p1, p2, p3].
+         * p1 is still the radius point, p2 the angle point. The sector will be that part of the
+         * the circle with center 'center' which starts at p1, ends at the ray between center
+         * and p2, and passes p3.
+         * <p>
+         * This attribute is immutable (by purpose).
+         * This attribute is necessary for circumCircleSectors
+         *
+         * @type Boolean
+         * @name Arc#useDirection
+         * @default false
+         * @private
+         */
+        useDirection: false,
 
         /**
          * Type of sector. Possible values are 'minor', 'major', and 'auto'.
@@ -8817,7 +9179,7 @@ JXG.Options = {
          * will ignore the font-family if it is set in a CSS class.
          * It has to be set explicitly as style attribute.
          * <p>
-         * In summary, the order of priorities from high to low is
+         * In summary, the order of priorities (specificity) from high to low is
          * <ol>
          *  <li> JXG.Options.text.cssStyle
          *  <li> JXG.Options.text.cssDefaultStyle
@@ -8871,7 +9233,7 @@ JXG.Options = {
          * CSS properties of the HTML text element.
          * <p>
          * The CSS properties which are set here, are handed over to the style property
-         * of the HTML text element. That means, they have higher property than any
+         * of the HTML text element. That means, they have higher property (specificity) han any
          * CSS class.
          *
          * @name cssStyle
@@ -8888,7 +9250,7 @@ JXG.Options = {
          * CSS properties of the HTML text element in case of highlighting.
          * <p>
          * The CSS properties which are set here, are handed over to the style property
-         * of the HTML text element. That means, they have higher property than any
+         * of the HTML text element. That means, they have higher property (specificity) than any
          * CSS class.
          *
          * @name highlightCssStyle
@@ -9341,6 +9703,9 @@ JXG.Options = {
          * @memberOf Text.prototype
          * @type String
          * @default 'JXGtext'
+         * @see Text#highlightCssClass
+         * @see Image#cssClass
+         * @see JXG.GeometryElement#cssClass
          */
         cssClass: 'JXGtext',
 
@@ -9352,6 +9717,9 @@ JXG.Options = {
          * @memberOf Text.prototype
          * @type String
          * @default 'JXGtext'
+         * @see Text#cssClass
+         * @see Image#highlightCssClass
+         * @see JXG.GeometryElement#highlightCssClass
          */
         highlightCssClass: 'JXGtext',
 
@@ -9794,7 +10162,7 @@ JXG.Options = {
     /**
      * Converts all color values to greyscale and calls useStandardOption to put them onto the board.
      * @param {JXG.Board} board The board to which objects the options will be applied.
-     * @see #useStandardOptions
+     * @see JXG.useStandardOptions
      */
     JXG.useBlackWhiteOptions = function (board) {
         var o = JXG.Options;

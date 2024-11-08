@@ -116,7 +116,7 @@ JXG.createTapemeasure = function (board, parents, attributes) {
             n = "";
         }
         li.label.setText(function () {
-            var digits = Type.evaluate(li.label.visProp.digits);
+            var digits = li.label.evalVisProp('digits');
 
             if (li.label.useLocale()) {
                 return n + li.label.formatNumberLocale(p1.Dist(p2), digits);
@@ -337,7 +337,7 @@ JXG.createMeasurement = function (board, parents, attributes) {
     };
 
     el.Dimension = function () {
-        var d = Type.evaluate(el.visProp.dim);
+        var d = el.evalVisProp('dim');
 
         if (d !== null) {
             return d;
@@ -347,16 +347,16 @@ JXG.createMeasurement = function (board, parents, attributes) {
 
     el.Unit = function () {
         var unit = '',
-            units = Type.evaluate(el.visProp.units),
+            units = el.evalVisProp('units'),
             dim = el.Dimension();
 
         if (Type.isObject(units) && Type.exists(units[dim]) && units[dim] !== false) {
-            unit = Type.evaluate(units[dim]);
+            unit = el.eval(units[dim]);
         } else if (Type.isObject(units) && Type.exists(units['dim' + dim]) && units['dim' + dim] !== false) {
             // In some cases, object keys must not be numbers. This allows key 'dim1' instead of '1'.
-            unit = Type.evaluate(units['dim' + dim]);
+            unit = el.eval(units['dim' + dim]);
         } else {
-            unit = Type.evaluate(el.visProp.baseunit);
+            unit = el.evalVisProp('baseunit');
 
             if (dim === 0) {
                 unit = '';
@@ -400,16 +400,16 @@ JXG.createMeasurement = function (board, parents, attributes) {
         var prefix = '',
             suffix = '',
             dim = el.Dimension(),
-            digits = Type.evaluate(el.visProp.digits),
+            digits = el.evalVisProp('digits'),
             unit = el.Unit(),
             val = el.Value(),
             i;
 
-        if (Type.evaluate(el.visProp.showprefix)) {
-            prefix = el.visProp.formatprefix.apply(el, [Type.evaluate(el.visProp.prefix)]);
+        if (el.evalVisProp('showprefix')) {
+            prefix = el.visProp.formatprefix(el, el.evalVisProp('prefix'));
         }
-        if (Type.evaluate(el.visProp.showsuffix)) {
-            suffix = el.visProp.formatsuffix.apply(el, [Type.evaluate(el.visProp.suffix)]);
+        if (el.evalVisProp('showsuffix')) {
+            suffix = el.visProp.formatsuffix(el, el.evalVisProp('suffix'));
         }
 
         if (Type.isNumber(val)) {
@@ -455,11 +455,11 @@ JXG.createMeasurement = function (board, parents, attributes) {
             if (val.length === 2) {
                 val.unshift(undefined);
             }
-            val = el.visProp.formatcoords.apply(el, [val[1], val[2], val[0]]);
+            val = el.visProp.formatcoords(el, val[1], val[2], val[0]);
         }
 
         if (dim === 'direction' && Type.isArray(val)) {
-            val = el.visProp.formatdirection.apply(el, [val[0], val[1]]);
+            val = el.visProp.formatdirection(el, val[0], val[1]);
         }
 
         if (Type.isString(dim)) {
