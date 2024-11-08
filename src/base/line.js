@@ -547,7 +547,7 @@ JXG.extend(
          * Alias for line.Slope
          * @returns {Number} The slope of the line or Infinity if the line is parallel to the y-axis.
          * @deprecated
-         * @see #Slope
+         * @see Line#Slope
          */
         getSlope: function () {
             return this.Slope();
@@ -615,8 +615,8 @@ JXG.extend(
          * {@link JXG.Line#point1}, false otherwise.
          * @param {Boolean} straightLast True if the Line shall be drawn beyond
          * {@link JXG.Line#point2}, false otherwise.
-         * @see #straightFirst
-         * @see #straightLast
+         * @see Line#straightFirst
+         * @see Line#straightLast
          * @private
          */
         setStraight: function (straightFirst, straightLast) {

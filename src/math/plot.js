@@ -1484,10 +1484,11 @@ Mat.Plot = {
 
     /**
      * TODO
-     * @param {*} vec 
-     * @param {*} le 
-     * @param {*} level 
-     * @returns 
+     * @param {Array} vec
+     * @param {Number} le
+     * @param {Number} level
+     * @returns Object
+     * @private
      */
     _criticalInterval: function (vec, le, level) {
         var i,

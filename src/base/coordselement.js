@@ -45,10 +45,13 @@ import Const from "./constants.js";
 import Type from "../utils/type.js";
 
 /**
- * An element containing coords is the basic geometric element. Based on points lines and circles can be constructed which can be intersected
- * which in turn are points again which can be used to construct new lines, circles, polygons, etc. This class holds methods for
+ * An element containing coords is a basic geometric element.
+ * This is a parent class for points, images and texts.
+ * It holds common methods for
  * all kind of coordinate elements like points, texts and images.
- * @class Creates a new coords element object. Do not use this constructor to create an element.
+ * It can not be used directly.
+ * @class Creates a new coords element object. It is a parent class for points, images and texts.
+ * Do not use this constructor to create an element.
  *
  * @private
  * @augments JXG.GeometryElement
@@ -1922,7 +1925,8 @@ JXG.extend(
         /**
          * Starts an animated point movement towards the given coordinates <tt>where</tt>.
          * The animation is done after <tt>time</tt> milliseconds.
-         * If the second parameter is not given or is equal to 0, setPosition() is called, see #setPosition,
+         * If the second parameter is not given or is equal to 0, setPosition() is called, see
+         * {@link JXG.CoordsElement#setPosition},
          * i.e. the coordinates are changed without animation.
          * @param {Array} where Array containing the x and y coordinate of the target location.
          * @param {Number} [time] Number of milliseconds the animation should last.
@@ -1932,6 +1936,7 @@ JXG.extend(
          * '<>' for speed increase on start and slow down at the end (default), '<' for speed up, '>' for slow down, and '--' for constant speed during
          * the whole animation.
          * @returns {JXG.CoordsElement} Reference to itself.
+         * @see JXG.CoordsElement#setPosition
          * @see JXG.CoordsElement#moveAlong
          * @see JXG.CoordsElement#visit
          * @see JXG.GeometryElement#animate
@@ -2171,8 +2176,8 @@ JXG.extend(
          * @param {Number} direction The direction the glider is animated.
          * @param {Number} stepCount The number of steps in which the parent element is divided.
          * Must be at least 1.
-         * @see #startAnimation
-         * @see #stopAnimation
+         * @see JXG.CoordsElement#startAnimation
+         * @see JXG.CoordsElement#stopAnimation
          * @private
          * @returns {JXG.CoordsElement} Reference to itself.
          */

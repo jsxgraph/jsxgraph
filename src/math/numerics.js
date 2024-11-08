@@ -2882,14 +2882,15 @@ Mat.Numerics = {
     },
 
     /**
-     * Evaluate the function term for {@see #riemann}.
+     * Evaluate the function term for {@link JXG.Math.Numerics.riemann}.
      * @private
      * @param {Number} x function argument
      * @param {function} f JavaScript function returning a number
-     * @param {String} type Name of the Riemann sum type, e.g. 'lower', see {@see #riemann}.
+     * @param {String} type Name of the Riemann sum type, e.g. 'lower'.
      * @param {Number} delta Width of the bars in user coordinates
      * @returns {Number} Upper (delta > 0) or lower (delta < 0) value of the bar containing x of the Riemann sum.
-     *
+     * @see JXG.Math.Numerics.riemann
+     * @private
      * @memberof JXG.Math.Numerics
      */
     _riemannValue: function (x, f, type, delta) {

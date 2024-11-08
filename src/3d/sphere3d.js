@@ -67,8 +67,8 @@ JXG.Sphere3D = function (view, method, par1, par2, attributes) {
      * <ul><li><b><code>'twoPoints'</code></b> &ndash; The sphere is defined by its center and a point on the sphere.</li>
      * <li><b><code>'pointRadius'</code></b> &ndash; The sphere is defined by its center and its radius in user units.</li></ul>
      * @type String
-     * @see #center
-     * @see #point2
+     * @see JXG.Sphere3D#center
+     * @see JXG.Sphere3D#point2
      */
     this.method = method;
 
@@ -81,7 +81,7 @@ JXG.Sphere3D = function (view, method, par1, par2, attributes) {
     /**
      * A point on the sphere; only set if the construction method is 'twoPoints'. Do not set this parameter directly, as that will break JSXGraph's update system.
      * @type JXG.Point3D
-     * @see #method
+     * @see JXG.Sphere3D#method
      */
     this.point2 = null;
 
@@ -96,6 +96,7 @@ JXG.Sphere3D = function (view, method, par1, par2, attributes) {
     /**
      * Elements supporting the 2D representation.
      * @type Array
+     * @private
      */
     this.aux2D = [];
 
