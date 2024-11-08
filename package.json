@@ -90,5 +90,8 @@
     "//No! format": "//prettier --write src test extensions",
     "serve": "http-server -c-1",
     "test": "make test"
+  },
+  "dependencies": {
+    "jsxgraph": "^1.11.0-beta1"
   }
 }

@@ -1547,11 +1547,11 @@ JXG.Options = {
          * @name aria
          * @memberOf JXG.GeometryElement.prototype
          * @type Object
-         * @default {
+         * @default <pre>{
          *   enabled: false,
          *   label: '',
          *   live: 'assertive'
-         *  },
+         *  }</pre>
          */
         aria: {
             enabled: false,
