@@ -1553,7 +1553,11 @@ Mat.Numerics = {
      * Abstract method to find roots of univariate functions, which - for the time being -
      * is an alias for {@link JXG.Math.Numerics.chandrupatla}.
      * @param {function} f We search for a solution of f(x)=0.
-     * @param {Number|Array} x initial guess for the root, i.e. starting value, or start interval enclosing the root. If x is an interval [a,b], it is required that f(a)f(b) <= 0, otherwise the minimum of f in [a, b] will be returned.
+     * @param {Number|Array} x initial guess for the root, i.e. starting value, or start interval enclosing the root.
+     * If x is an interval [a,b], it is required that f(a)f(b) <= 0, otherwise the minimum of f in [a, b] will be returned.
+     * If x is a number, the algorithms tries to enclose the root by an interval [a, b] containing x and the root and
+     * f(a)f(b) <= 0. If this fails, the algorithm falls back to Newton's method.
+     *
      * @param {Object} context optional object that is treated as "this" in the function body. This is useful if
      * the function is a method of an object and contains a reference to its parent object via "this".
      * @returns {Number} A root of the function f.
@@ -1561,6 +1565,7 @@ Mat.Numerics = {
      * @see JXG.Math.Numerics.chandrupatla
      * @see JXG.Math.Numerics.fzero
      * @see JXG.Math.Numerics.polzeros
+     * @see JXG.Math.Numerics.Newton
      * @memberof JXG.Math.Numerics
      */
     root: function (f, x, context) {
@@ -3347,7 +3352,10 @@ Mat.Numerics = {
      *
      * Find zero of an univariate function f.
      * @param {function} f Function, whose root is to be found
-     * @param {Array|Number} x0  Start value or start interval enclosing the root. If x0 is an interval [a,b], it is required that f(a)f(b) <= 0, otherwise the minimum of f in [a, b] will be returned.
+     * @param {Array|Number} x0  Start value or start interval enclosing the root.
+     * If x0 is an interval [a,b], it is required that f(a)f(b) <= 0, otherwise the minimum of f in [a, b] will be returned.
+     * If x0 is a number, the algorithms tries to enclose the root by an interval [a, b] containing x0 and the root and
+     * f(a)f(b) <= 0. If this fails, the algorithm falls back to Newton's method.
      * @param {Object} [context] Parent object in case f is method of it
      * @returns {Number} the approximation of the root
      * Algorithm:
@@ -3363,6 +3371,9 @@ Mat.Numerics = {
      *
      * @see JXG.Math.Numerics.chandrupatla
      * @see JXG.Math.Numerics.root
+     * @see JXG.Math.Numerics.findBracket
+     * @see JXG.Math.Numerics.Newton
+     * @see JXG.Math.Numerics.fminbr
      * @memberof JXG.Math.Numerics
      */
     fzero: function (f, x0, context) {
@@ -3515,7 +3526,10 @@ Mat.Numerics = {
     /**
      * Find zero of an univariate function f.
      * @param {function} f Function, whose root is to be found
-     * @param {Array|Number} x0  Start value or start interval enclosing the root. If x0 is an interval [a,b], it is required that f(a)f(b) <= 0, otherwise the minimum of f in [a, b] will be returned.
+     * @param {Array|Number} x0  Start value or start interval enclosing the root.
+     * If x0 is an interval [a,b], it is required that f(a)f(b) <= 0, otherwise the minimum of f in [a, b] will be returned.
+     * If x0 is a number, the algorithms tries to enclose the root by an interval [a, b] containing x0 and the root and
+     * f(a)f(b) <= 0. If this fails, the algorithm falls back to Newton's method.
      * @param {Object} [context] Parent object in case f is method of it
      * @returns {Number} the approximation of the root
      * Algorithm:
@@ -3531,6 +3545,9 @@ Mat.Numerics = {
      *
      * @see JXG.Math.Numerics.root
      * @see JXG.Math.Numerics.fzero
+     * @see JXG.Math.Numerics.findBracket
+     * @see JXG.Math.Numerics.Newton
+     * @see JXG.Math.Numerics.fminbr
      * @memberof JXG.Math.Numerics
      */
     chandrupatla: function (f, x0, context) {
@@ -3868,7 +3885,10 @@ Mat.Numerics = {
     },
 
     /**
-     *  GLOMIN seeks a global minimum of a function F(X) in an interval [A,B].
+     * GLOMIN seeks a global minimum of a function F(X) in an interval [A,B]
+     * and is the adaption of the algorithm GLOMIN by Richard Brent.
+     *
+     * Here is the original documentation:
      * <pre>
      *
      * Discussion:
@@ -3923,6 +3943,18 @@ Mat.Numerics = {
      *
      *   Output, double GLOMIN, the value F(X).
      * </pre>
+     *
+     * In JSXGraph, some parameters of the original algorithm are set to fixed values:
+     * <ul>
+     *  <li> M = 10000000.0
+     *  <li> C = A or B, depending if f(A) <= f(B)
+     *  <li> T = JXG.Math.eps
+     *  <li> E = JXG.Math.eps * JXG.Math.eps
+     *  <li> MACHEP = JXG.Math.eps * JXG.Math.eps * JXG.Math.eps
+     * </ul>
+     * @param {function} f Function, whose global minimum is to be found
+     * @param {Array} x0 Array of length 2 determining the interval [A, B] for which the global minimum is to be found
+     * @returns {Array} [x, y] x is the position of the global minimum and y = f(x).
      */
     glomin: function (f, x0) {
         var a0, a2, a3, d0, d1, d2, h,
