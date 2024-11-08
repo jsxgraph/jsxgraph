@@ -3894,7 +3894,7 @@ Mat.Numerics = {
      * Discussion:
      *
      * This function assumes that F(X) is twice continuously differentiable over [A,B]
-     * and that F''(X) <= M for all X in [A,B].
+     * and that |F''(X)| <= M for all X in [A,B].
      *
      * Licensing:
      *   This code is distributed under the GNU LGPL license.
