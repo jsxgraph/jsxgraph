@@ -406,10 +406,10 @@ JXG.createMeasurement = function (board, parents, attributes) {
             i;
 
         if (el.evalVisProp('showprefix')) {
-            prefix = el.visProp.formatprefix(el, el.evalVisProp('prefix'));
+            prefix = el.evalVisProp('prefix');
         }
         if (el.evalVisProp('showsuffix')) {
-            suffix = el.visProp.formatsuffix(el, el.evalVisProp('suffix'));
+            suffix = el.evalVisProp('suffix');
         }
 
         if (Type.isNumber(val)) {
