@@ -6974,26 +6974,6 @@ JXG.Options = {
         suffix: '',
 
         /**
-         * Function to format the prefix.
-         *
-         * @name Measurement#formatPrefix
-         * @param {Measurement} self Pointer to the measurement object itself
-         * @param {String} txt Prefix string
-         * @returns String
-         */
-        formatPrefix: function (self, txt) { return txt; },
-
-        /**
-         * Function to format the suffix.
-         *
-         * @name Measurement#formatSuffix
-         * @param {Measurement} self Pointer to the measurement object itself
-         * @param {String} txt Suffix string
-         * @returns String
-         */
-        formatSuffix: function (self, txt) { return txt; },
-
-        /**
          * Dimension of the measured data. This measurement can only be combined with a measurement of a suitable dimension.
          * Overwrites the dimension returned by the Dimension() method.
          * Normally, the default value null is used here to automatically determine the dimension.
