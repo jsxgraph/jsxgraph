@@ -1808,16 +1808,16 @@ JXG.extend(
             /* stub */
         },
 
-        setTabindex: function (element) {
+        setTabindex: function (el) {
             var val;
-            if (element.board.attr.keyboard.enabled && Type.exists(element.rendNode)) {
-                val = element.evalVisProp('tabindex');
-                if (!element.visPropCalc.visible || element.evalVisProp('fixed')) {
+            if (el.board.attr.keyboard.enabled && Type.exists(el.rendNode)) {
+                val = el.evalVisProp('tabindex');
+                if (!el.visPropCalc.visible /* || el.evalVisProp('fixed') */) {
                     val = null;
                 }
-                if (val !== element.visPropOld.tabindex) {
-                    element.rendNode.setAttribute("tabindex", val);
-                    element.visPropOld.tabindex = val;
+                if (val !== el.visPropOld.tabindex) {
+                    el.rendNode.setAttribute("tabindex", val);
+                    el.visPropOld.tabindex = val;
                 }
             }
         },

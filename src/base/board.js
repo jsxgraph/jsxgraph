@@ -4046,7 +4046,7 @@ JXG.extend(
          * Allow moving of JSXGraph elements with arrow keys.
          * The selection of the element is done with the tab key. For this,
          * the attribute 'tabindex' of the element has to be set to some number (default=0).
-         * tabindex corresponds to the HTML attribute of the same name.
+         * tabindex corresponds to the HTML and SVG attribute of the same name.
          * <p>
          * Panning of the construction is done with arrow keys
          * if the pan key (shift or ctrl - depending on the board attributes) is pressed.
@@ -4085,7 +4085,7 @@ JXG.extend(
             // dx = Math.round(dx * u) / u;
             // dy = Math.round(dy * u) / u;
 
-            // An element of type input or textarea has foxus, get out of here.
+            // An element of type input or textarea has focus, get out of here.
             doc = this.containerObj.shadowRoot || document;
             if (doc.activeElement) {
                 el = doc.activeElement;
@@ -4200,8 +4200,6 @@ JXG.extend(
                     ) || !this.geonextCompatibilityMode) &&
                     !el.evalVisProp('fixed')
                 ) {
-
-
                     this.mode = this.BOARD_MODE_DRAG;
                     if (Type.exists(el.coords)) {
                         dir[0] += actPos[0];
@@ -4255,6 +4253,7 @@ JXG.extend(
                 return false;
             }
 
+            // Get JSXGraph id from node id
             id = id_node.replace(this.containerObj.id + '_', '');
             el = this.select(id);
             if (Type.exists(el.highlight)) {

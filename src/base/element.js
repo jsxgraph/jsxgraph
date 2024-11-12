@@ -44,7 +44,7 @@ import Type from "../utils/type.js";
 
 /**
  * Constructs a new GeometryElement object.
- * @class This is the basic class for geometry elements like points, circles and lines.
+ * @class This is the parent class for all geometry elements like points, circles, lines, curves...
  * @constructor
  * @param {JXG.Board} board Reference to the board the element is constructed on.
  * @param {Object} attributes Hash of attributes and their values.
@@ -1721,7 +1721,7 @@ JXG.extend(
 
         /**
          * Creates a label element for this geometry element.
-         * @see #addLabelToElement
+         * @see JXG.GeometryElement#addLabelToElement
          */
         createLabel: function () {
             var attr,

@@ -81,11 +81,11 @@ JXG.Circle = function (board, method, par1, par2, attributes) {
      * <li><b>'pointLine'</b> which means the circle is defined by its center and its radius given by the distance from the startpoint and the endpoint of the line.</li>
      * <li><b>'pointCircle'</b> which means the circle is defined by its center and its radius given by the radius of another circle.</li></ul>
      * @type String
-     * @see #center
-     * @see #point2
-     * @see #radius
-     * @see #line
-     * @see #circle
+     * @see JXG.Circle#center
+     * @see JXG.Circle#point2
+     * @see JXG.Circle#radius
+     * @see JXG.Circle#line
+     * @see JXG.Circle#circle
      */
     this.method = method;
 
@@ -100,7 +100,7 @@ JXG.Circle = function (board, method, par1, par2, attributes) {
 
     /** Point on the circle only set if method equals 'twoPoints'. Do not set this parameter directly as it will break JSXGraph's update system.
      * @type JXG.Point
-     * @see #method
+     * @see JXG.Circle#method
      */
     this.point2 = null;
 
@@ -108,7 +108,7 @@ JXG.Circle = function (board, method, par1, par2, attributes) {
      * only set if method equals 'pointRadius'
      * @type Number
      * @default null
-     * @see #method
+     * @see JXG.Circle#method
      */
     this.radius = 0;
 
@@ -116,7 +116,7 @@ JXG.Circle = function (board, method, par1, par2, attributes) {
      * only set if method equals 'pointLine'. Do not set this parameter directly as it will break JSXGraph's update system.
      * @type JXG.Line
      * @default null
-     * @see #method
+     * @see JXG.Circle#method
      */
     this.line = null;
 
@@ -124,7 +124,7 @@ JXG.Circle = function (board, method, par1, par2, attributes) {
      * only set if method equals 'pointLine'. Do not set this parameter directly as it will break JSXGraph's update system.
      * @type JXG.Circle
      * @default null
-     * @see #method
+     * @see JXG.Circle#method
      */
     this.circle = null;
 
