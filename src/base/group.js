@@ -330,7 +330,7 @@ JXG.extend(
                         // t itself is a transformation
                         t.meltTo(obj);
                     } else {
-                        // Drag element is a point , therefore
+                        // Drag element is a point, therefore
                         // t is an array and we have to use the transformation T.
                         if (drag.id !== obj.id) {
                             T.meltTo(obj);

@@ -1196,9 +1196,14 @@ JXG.extend(
             this.handleSnapToPoints();
             this.handleAttractors();
 
-            // The element is set to the new position `coords`.
+            // Here, we set the object's "actualCoords", because
+            // coords and initialCoords coincide since transformations
+            // for these elements are handled in the renderers.
+            this.actualCoords.setCoordinates(Const.COORDS_BY_USER, this.coords.usrCoords);
+
+            // The element's coords have been set above to the new position `coords`.
             // Now, determine the preimage of `coords`, prior to all transformations.
-            // This is needed for free points that have a transformation bound to it.
+            // This is needed for free elements that have a transformation bound to it.
             if (this.transformations.length > 0) {
                 if (method === Const.COORDS_BY_SCREEN) {
                     newCoords = new Coords(method, coords, this.board).usrCoords;
@@ -1679,7 +1684,7 @@ JXG.extend(
             // This method is called for non-points only.
             // Here, we set the object's "actualCoords", because
             // coords and initialCoords coincide since transformations
-            // for this elements are handled in the renderers.
+            // for these elements are handled in the renderers.
 
             this.transformations[0].update();
             if (this === this.baseElement) {
