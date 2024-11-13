@@ -2394,7 +2394,7 @@ JXG.Options = {
          * See <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/tabindex">description at MDN</a>.
          * The additional value "null" completely disables focus of an element.
          * The value will be ignored if keyboard control of the board is not enabled or
-         * the element is fixed or not visible.
+         * if the element is not visible.
          *
          * @name JXG.GeometryElement#tabindex
          * @type Number
@@ -2664,6 +2664,7 @@ JXG.Options = {
          *
          */
         label: {
+            tabindex: null
         },
 
         /**
@@ -6109,6 +6110,7 @@ JXG.Options = {
         highlightStrokeColor: '#000000',
 
         fixed: true,
+        tabindex: null,
 
         /**
          * Point labels are positioned by setting {@link Point#anchorX}, {@link Point#anchorY}
@@ -6970,26 +6972,6 @@ JXG.Options = {
          * @default ''
          */
         suffix: '',
-
-        /**
-         * Function to format the prefix.
-         *
-         * @name Measurement#formatPrefix
-         * @param {Measurement} self Pointer to the measurement object itself
-         * @param {String} txt Prefix string
-         * @returns String
-         */
-        formatPrefix: function (self, txt) { return txt; },
-
-        /**
-         * Function to format the suffix.
-         *
-         * @name Measurement#formatSuffix
-         * @param {Measurement} self Pointer to the measurement object itself
-         * @param {String} txt Suffix string
-         * @returns String
-         */
-        formatSuffix: function (self, txt) { return txt; },
 
         /**
          * Dimension of the measured data. This measurement can only be combined with a measurement of a suitable dimension.
