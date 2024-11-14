@@ -1774,26 +1774,6 @@ JXG.extend(
         /* ********* Set attributes *********** */
 
         /**
-         * Sets a node's attribute.
-         * @param {Node} node The node that is to be updated.
-         * @param {String} key Name of the attribute.
-         * @param {String} val New value for the attribute.
-         */
-        setPropertyPrim: function (node, key, val) {
-            /* stub */
-        },
-
-        /**
-         * Set the attribute `tabindex` to the attribute `tabindex` of an element.
-         * This is only relevant for the SVG renderer.
-         *
-         * @param {JXG.GeometryElement} el
-         */
-        setTabindex: function (el) {
-            /* stub */
-        },
-
-        /**
          * Shows or hides an element on the canvas; Only a stub, requires implementation in the derived renderer.
          * @param {JXG.GeometryElement} element Reference to the object that has to appear.
          * @param {Boolean} value true to show the element, false to hide the element.
@@ -1805,18 +1785,6 @@ JXG.extend(
         },
 
         /**
-         * Shows a hidden element on the canvas; Only a stub, requires implementation in the derived renderer.
-         *
-         * Please use JXG.AbstractRenderer#display instead
-         * @param {JXG.GeometryElement} element Reference to the object that has to appear.
-         * @see JXG.AbstractRenderer#hide
-         * @deprecated
-         */
-        show: function (element) {
-            /* stub */
-        },
-
-        /**
          * Hides an element on the canvas; Only a stub, requires implementation in the derived renderer.
          *
          * Please use JXG.AbstractRenderer#display instead
@@ -1825,165 +1793,6 @@ JXG.extend(
          * @deprecated
          */
         hide: function (element) {
-            /* stub */
-        },
-
-        /**
-         * Sets the buffering as recommended by SVGWG. Until now only Opera supports this and will be ignored by other
-         * browsers. Although this feature is only supported by SVG we have this method in {@link JXG.AbstractRenderer}
-         * because it is called from outside the renderer.
-         * @param {Node} node The SVG DOM Node which buffering type to update.
-         * @param {String} type Either 'auto', 'dynamic', or 'static'. For an explanation see
-         *   {@link https://www.w3.org/TR/SVGTiny12/painting.html#BufferedRenderingProperty}.
-         */
-        setBuffering: function (node, type) {
-            /* stub */
-        },
-
-        /**
-         * Sets an element's dash style.
-         * @param {JXG.GeometryElement} element An JSXGraph element.
-         */
-        setDashStyle: function (element) {
-            /* stub */
-        },
-
-        /**
-         * Puts an object into draft mode, i.e. it's visual appearance will be changed. For GEONE<sub>x</sub>T backwards
-         * compatibility.
-         * @param {JXG.GeometryElement} el Reference of the object that is in draft mode.
-         */
-        setDraft: function (el) {
-            if (!el.evalVisProp('draft')) {
-                return;
-            }
-            var draftColor = el.board.options.elements.draft.color,
-                draftOpacity = el.board.options.elements.draft.opacity;
-
-                this.setObjectTransition(el);
-            if (el.type === Const.OBJECT_TYPE_POLYGON) {
-                this.setObjectFillColor(el, draftColor, draftOpacity);
-            } else {
-                if (el.elementClass === Const.OBJECT_CLASS_POINT) {
-                    this.setObjectFillColor(el, draftColor, draftOpacity);
-                } else {
-                    this.setObjectFillColor(el, "none", 0);
-                }
-                this.setObjectStrokeColor(el, draftColor, draftOpacity);
-                this.setObjectStrokeWidth(el, el.board.options.elements.draft.strokeWidth);
-            }
-        },
-
-        /**
-         * Puts an object from draft mode back into normal mode.
-         * @param {JXG.GeometryElement} el Reference of the object that no longer is in draft mode.
-         */
-        removeDraft: function (el) {
-            this.setObjectTransition(el);
-            if (el.type === Const.OBJECT_TYPE_POLYGON) {
-                this.setObjectFillColor(el, el.evalVisProp('fillcolor'), el.evalVisProp('fillopacity'));
-            } else {
-                if (el.type === Const.OBJECT_CLASS_POINT) {
-                    this.setObjectFillColor(el, el.evalVisProp('fillcolor'), el.evalVisProp('fillopacity'));
-                }
-                this.setObjectStrokeColor(el, el.evalVisProp('strokecolor'), el.evalVisProp('strokeopacity'));
-                this.setObjectStrokeWidth(el, el.evalVisProp('strokewidth'));
-            }
-        },
-
-        /**
-         * Sets up nodes for rendering a gradient fill.
-         * @param element
-         */
-        setGradient: function (element) {
-            /* stub */
-        },
-
-        /**
-         * Updates the gradient fill.
-         * @param {JXG.GeometryElement} element An JSXGraph element with an area that can be filled.
-         */
-        updateGradient: function (element) {
-            /* stub */
-        },
-
-        /**
-         * Set ARIA related properties of an element. The attribute "aria" of an element contains at least the
-         * properties "enabled", "label", and "live". Additionally, all available properties from
-         * {@link https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA} may be set.
-         * <p>
-         * In JSXGraph, the available properties are used without the leading 'aria-'.
-         * For example, the value of the JSXGraph attribute 'aria.label' will be set to the
-         * HTML attribute 'aria-label'.
-         *
-         * @param {JXG.GeometryElement} element Reference of the object that wants new
-         *        ARIA attributes.
-         */
-        setARIA: function(element) {
-            /* stub */
-        },
-
-        /**
-         * Sets CSS classes for elements (relevant for SVG only).
-         *
-         * @param {JXG.GeometryElement} element Reference of the object that wants a
-         *         new set of CSS classes.
-         * @param {String} cssClass String containing a space separated list of CSS classes.
-         */
-        setCssClass: function (element, cssClass) {
-            /* stub */
-        },
-
-        /**
-         * Sets the transition duration (in milliseconds) for fill color and stroke
-         * color and opacity.
-         * @param {JXG.GeometryElement} element Reference of the object that wants a
-         *         new transition duration.
-         * @param {Number} duration (Optional) duration in milliseconds. If not given,
-         *        element.visProp.transitionDuration is taken. This is the default.
-         */
-        setObjectTransition: function (element, duration) {
-            /* stub */
-        },
-
-        /**
-         * Sets an objects fill color.
-         * @param {JXG.GeometryElement} element Reference of the object that wants a new fill color.
-         * @param {String} color Color in a HTML/CSS compatible format. If you don't want any fill color at all, choose
-         * 'none'.
-         * @param {Number} opacity Opacity of the fill color. Must be between 0 and 1.
-         */
-        setObjectFillColor: function (element, color, opacity) {
-            /* stub */
-        },
-
-        /**
-         * Changes an objects stroke color to the given color.
-         * @param {JXG.GeometryElement} element Reference of the {@link JXG.GeometryElement} that gets a new stroke
-         * color.
-         * @param {String} color Color value in a HTML compatible format, e.g. <strong>#00ff00</strong> or
-         * <strong>green</strong> for green.
-         * @param {Number} opacity Opacity of the fill color. Must be between 0 and 1.
-         */
-        setObjectStrokeColor: function (element, color, opacity) {
-            /* stub */
-        },
-
-        /**
-         * Sets an element's stroke width.
-         * @param {JXG.GeometryElement} element Reference to the geometry element.
-         * @param {Number} width The new stroke width to be assigned to the element.
-         */
-        setObjectStrokeWidth: function (element, width) {
-            /* stub */
-        },
-
-        /**
-         * Sets the shadow properties to a geometry element. This method is only a stub, it is implemented in the actual
-         * renderers.
-         * @param {JXG.GeometryElement} element Reference to a geometry object, that should get a shadow
-         */
-        setShadow: function (element) {
             /* stub */
         },
 
@@ -2071,13 +1880,6 @@ JXG.extend(
                     for (i = 0; i < el.borders.length; i++) {
                         this.noHighlight(el.borders[i]);
                     }
-                    // for (i = 0; i < el.borders.length; i++) {
-                    //     this.setObjectStrokeColor(
-                    //         el.borders[i],
-                    //         el.borders[i].visProp.strokecolor,
-                    //         el.borders[i].visProp.strokeopacity
-                    //     );
-                    // }
                 } else {
                     if (el.elementClass === Const.OBJECT_CLASS_TEXT) {
                         this.updateTextStyle(el, false);
@@ -2105,6 +1907,104 @@ JXG.extend(
         },
 
         /**
+         * Puts an object from draft mode back into normal mode.
+         * @param {JXG.GeometryElement} el Reference of the object that no longer is in draft mode.
+         */
+        removeDraft: function (el) {
+            this.setObjectTransition(el);
+            if (el.type === Const.OBJECT_TYPE_POLYGON) {
+                this.setObjectFillColor(el, el.evalVisProp('fillcolor'), el.evalVisProp('fillopacity'));
+            } else {
+                if (el.type === Const.OBJECT_CLASS_POINT) {
+                    this.setObjectFillColor(el, el.evalVisProp('fillcolor'), el.evalVisProp('fillopacity'));
+                }
+                this.setObjectStrokeColor(el, el.evalVisProp('strokecolor'), el.evalVisProp('strokeopacity'));
+                this.setObjectStrokeWidth(el, el.evalVisProp('strokewidth'));
+            }
+        },
+
+        /**
+         * Set ARIA related properties of an element. The attribute "aria" of an element contains at least the
+         * properties "enabled", "label", and "live". Additionally, all available properties from
+         * {@link https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA} may be set.
+         * <p>
+         * In JSXGraph, the available properties are used without the leading 'aria-'.
+         * For example, the value of the JSXGraph attribute 'aria.label' will be set to the
+         * HTML attribute 'aria-label'.
+         *
+         * @param {JXG.GeometryElement} element Reference of the object that wants new
+         *        ARIA attributes.
+         */
+        setARIA: function(element) {
+            /* stub */
+        },
+
+        /**
+         * Sets the buffering as recommended by SVGWG. Until now only Opera supports this and will be ignored by other
+         * browsers. Although this feature is only supported by SVG we have this method in {@link JXG.AbstractRenderer}
+         * because it is called from outside the renderer.
+         * @param {Node} node The SVG DOM Node which buffering type to update.
+         * @param {String} type Either 'auto', 'dynamic', or 'static'. For an explanation see
+         *   {@link https://www.w3.org/TR/SVGTiny12/painting.html#BufferedRenderingProperty}.
+         */
+        setBuffering: function (node, type) {
+            /* stub */
+        },
+
+        /**
+         * Sets CSS classes for elements (relevant for SVG only).
+         *
+         * @param {JXG.GeometryElement} element Reference of the object that wants a
+         *         new set of CSS classes.
+         * @param {String} cssClass String containing a space separated list of CSS classes.
+         */
+        setCssClass: function (element, cssClass) {
+            /* stub */
+        },
+
+        /**
+         * Sets an element's dash style.
+         * @param {JXG.GeometryElement} element An JSXGraph element.
+         */
+        setDashStyle: function (element) {
+            /* stub */
+        },
+
+        /**
+         * Puts an object into draft mode, i.e. it's visual appearance will be changed. For GEONE<sub>x</sub>T backwards
+         * compatibility.
+         * @param {JXG.GeometryElement} el Reference of the object that is in draft mode.
+         */
+        setDraft: function (el) {
+            if (!el.evalVisProp('draft')) {
+                return;
+            }
+            var draftColor = el.board.options.elements.draft.color,
+                draftOpacity = el.board.options.elements.draft.opacity;
+
+                this.setObjectTransition(el);
+            if (el.type === Const.OBJECT_TYPE_POLYGON) {
+                this.setObjectFillColor(el, draftColor, draftOpacity);
+            } else {
+                if (el.elementClass === Const.OBJECT_CLASS_POINT) {
+                    this.setObjectFillColor(el, draftColor, draftOpacity);
+                } else {
+                    this.setObjectFillColor(el, "none", 0);
+                }
+                this.setObjectStrokeColor(el, draftColor, draftOpacity);
+                this.setObjectStrokeWidth(el, el.board.options.elements.draft.strokeWidth);
+            }
+        },
+
+        /**
+         * Sets up nodes for rendering a gradient fill.
+         * @param element
+         */
+        setGradient: function (element) {
+            /* stub */
+        },
+
+        /**
          * Move element into new layer. This is trivial for canvas, but needs more effort in SVG.
          * Does not work dynamically, i.e. if level is a function.
          *
@@ -2113,6 +2013,100 @@ JXG.extend(
          * @private
          */
         setLayer: function (el, level) {},
+
+        /**
+         * Sets an objects fill color.
+         * @param {JXG.GeometryElement} element Reference of the object that wants a new fill color.
+         * @param {String} color Color in a HTML/CSS compatible format. If you don't want any fill color at all, choose
+         * 'none'.
+         * @param {Number} opacity Opacity of the fill color. Must be between 0 and 1.
+         */
+        setObjectFillColor: function (element, color, opacity) {
+            /* stub */
+        },
+
+        /**
+         * Changes an objects stroke color to the given color.
+         * @param {JXG.GeometryElement} element Reference of the {@link JXG.GeometryElement} that gets a new stroke
+         * color.
+         * @param {String} color Color value in a HTML compatible format, e.g. <strong>#00ff00</strong> or
+         * <strong>green</strong> for green.
+         * @param {Number} opacity Opacity of the fill color. Must be between 0 and 1.
+         */
+        setObjectStrokeColor: function (element, color, opacity) {
+            /* stub */
+        },
+
+        /**
+         * Sets an element's stroke width.
+         * @param {JXG.GeometryElement} element Reference to the geometry element.
+         * @param {Number} width The new stroke width to be assigned to the element.
+         */
+        setObjectStrokeWidth: function (element, width) {
+            /* stub */
+        },
+
+        /**
+         * Sets the transition duration (in milliseconds) for fill color and stroke
+         * color and opacity.
+         * @param {JXG.GeometryElement} element Reference of the object that wants a
+         *         new transition duration.
+         * @param {Number} duration (Optional) duration in milliseconds. If not given,
+         *        element.visProp.transitionDuration is taken. This is the default.
+         */
+        setObjectTransition: function (element, duration) {
+            /* stub */
+        },
+
+        /**
+         * Sets a node's attribute.
+         * @param {Node} node The node that is to be updated.
+         * @param {String} key Name of the attribute.
+         * @param {String} val New value for the attribute.
+         */
+        setPropertyPrim: function (node, key, val) {
+            /* stub */
+        },
+
+        /**
+         * Sets the shadow properties to a geometry element. This method is only a stub, it is implemented in the actual
+         * renderers.
+         * @param {JXG.GeometryElement} element Reference to a geometry object, that should get a shadow
+         */
+        setShadow: function (element) {
+            /* stub */
+        },
+
+        /**
+         * Set the attribute `tabindex` to the attribute `tabindex` of an element.
+         * This is only relevant for the SVG renderer.
+         *
+         * @param {JXG.GeometryElement} el
+         */
+        setTabindex: function (el) {
+            /* stub */
+        },
+
+        /**
+         * Shows a hidden element on the canvas; Only a stub, requires implementation in the derived renderer.
+         *
+         * Please use JXG.AbstractRenderer#display instead
+         * @param {JXG.GeometryElement} element Reference to the object that has to appear.
+         * @see JXG.AbstractRenderer#hide
+         * @deprecated
+         */
+        show: function (element) {
+            /* stub */
+        },
+
+        /**
+         * Updates the gradient fill.
+         * @param {JXG.GeometryElement} element An JSXGraph element with an area that can be filled.
+         */
+        updateGradient: function (element) {
+            /* stub */
+        },
+
 
         /* ********* Renderer control *********** */
 

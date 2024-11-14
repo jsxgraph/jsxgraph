@@ -1280,12 +1280,31 @@ JXG.extend(
 
         /* ********* Set attributes *********** */
 
-        // documented in JXG.AbstractRenderer
-        setPropertyPrim: function (node, key, val) {
-            if (key === "stroked") {
-                return;
+        /**
+         * Call user-defined function to set visual attributes.
+         * If "testAttribute" is the empty string, the function
+         * is called immediately, otherwise it is called in a timeOut.
+         *
+         * This is necessary to realize smooth transitions but avoid transitions
+         * when first creating the objects.
+         *
+         * Usually, the string in testAttribute is the visPropOld attribute
+         * of the values which are set.
+         *
+         * @param {Function} setFunc       Some function which usually sets some attributes
+         * @param {String} testAttribute If this string is the empty string  the function is called immediately,
+         *                               otherwise it is called in a setImeout.
+         * @see JXG.SVGRenderer#setObjectFillColor
+         * @see JXG.SVGRenderer#setObjectStrokeColor
+         * @see JXG.SVGRenderer#_setArrowColor
+         * @private
+         */
+        _setAttribute: function (setFunc, testAttribute) {
+            if (testAttribute === "") {
+                setFunc();
+            } else {
+                window.setTimeout(setFunc, 1);
             }
-            node.setAttributeNS(null, key, val);
         },
 
         display: function (el, val) {
@@ -1305,34 +1324,41 @@ JXG.extend(
         },
 
         // documented in JXG.AbstractRenderer
-        show: function (el) {
-            JXG.deprecated("Board.renderer.show()", "Board.renderer.display()");
-            this.display(el, true);
-            // var node;
-            //
-            // if (el && el.rendNode) {
-            //     node = el.rendNode;
-            //     node.setAttributeNS(null, 'display', 'inline');
-            //     node.style.visibility = "inherit";
-            // }
-        },
-
-        // documented in JXG.AbstractRenderer
         hide: function (el) {
             JXG.deprecated("Board.renderer.hide()", "Board.renderer.display()");
             this.display(el, false);
-            // var node;
-            //
-            // if (el && el.rendNode) {
-            //     node = el.rendNode;
-            //     node.setAttributeNS(null, 'display', 'none');
-            //     node.style.visibility = "hidden";
-            // }
+        },
+
+        // documented in JXG.AbstractRenderer
+        setARIA: function(el) {
+            // This method is only called in abstractRenderer._updateVisual() if aria.enabled == true.
+            var key, k, v;
+
+            // this.setPropertyPrim(el.rendNode, 'aria-label', el.evalVisProp('aria.label'));
+            // this.setPropertyPrim(el.rendNode, 'aria-live', el.evalVisProp('aria.live'));
+            for (key in el.visProp.aria) {
+                if (el.visProp.aria.hasOwnProperty(key) && key !== 'enabled') {
+                    k = 'aria.' + key;
+                    v = el.evalVisProp('aria.' + key);
+                    if (el.visPropOld[k] !== v) {
+                        this.setPropertyPrim(el.rendNode, 'aria-' + key, v);
+                        el.visPropOld[k] = v;
+                    }
+                }
+            }
         },
 
         // documented in JXG.AbstractRenderer
         setBuffering: function (el, type) {
             el.rendNode.setAttribute("buffered-rendering", type);
+        },
+
+        // documented in JXG.AbstractRenderer
+        setCssClass(el, cssClass) {
+            if (el.visPropOld.cssclass !== cssClass) {
+                this.setPropertyPrim(el.rendNode, 'class', cssClass);
+                el.visPropOld.cssclass = cssClass;
+            }
         },
 
         // documented in JXG.AbstractRenderer
@@ -1382,227 +1408,21 @@ JXG.extend(
             }
         },
 
-        /**
-         * Set the gradient angle for linear color gradients.
-         *
-         * @private
-         * @param {SVGnode} node SVG gradient node of an arbitrary JSXGraph element.
-         * @param {Number} radians angle value in radians. 0 is horizontal from left to right, Pi/4 is vertical from top to bottom.
-         */
-        updateGradientAngle: function (node, radians) {
-            // Angles:
-            // 0: ->
-            // 90: down
-            // 180: <-
-            // 90: up
-            var f = 1.0,
-                co = Math.cos(radians),
-                si = Math.sin(radians);
-
-            if (Math.abs(co) > Math.abs(si)) {
-                f /= Math.abs(co);
-            } else {
-                f /= Math.abs(si);
-            }
-
-            if (co >= 0) {
-                node.setAttributeNS(null, "x1", 0);
-                node.setAttributeNS(null, "x2", co * f);
-            } else {
-                node.setAttributeNS(null, "x1", -co * f);
-                node.setAttributeNS(null, "x2", 0);
-            }
-            if (si >= 0) {
-                node.setAttributeNS(null, "y1", 0);
-                node.setAttributeNS(null, "y2", si * f);
-            } else {
-                node.setAttributeNS(null, "y1", -si * f);
-                node.setAttributeNS(null, "y2", 0);
-            }
-        },
-
-        /**
-         * Set circles for radial color gradients.
-         *
-         * @private
-         * @param {SVGnode} node SVG gradient node
-         * @param {Number} cx SVG value cx (value between 0 and 1)
-         * @param {Number} cy  SVG value cy (value between 0 and 1)
-         * @param {Number} r  SVG value r (value between 0 and 1)
-         * @param {Number} fx  SVG value fx (value between 0 and 1)
-         * @param {Number} fy  SVG value fy (value between 0 and 1)
-         * @param {Number} fr  SVG value fr (value between 0 and 1)
-         */
-        updateGradientCircle: function (node, cx, cy, r, fx, fy, fr) {
-            node.setAttributeNS(null, "cx", cx * 100 + "%"); // Center first color
-            node.setAttributeNS(null, "cy", cy * 100 + "%");
-            node.setAttributeNS(null, "r", r * 100 + "%");
-            node.setAttributeNS(null, "fx", fx * 100 + "%"); // Center second color / focal point
-            node.setAttributeNS(null, "fy", fy * 100 + "%");
-            node.setAttributeNS(null, "fr", fr * 100 + "%");
-        },
-
         // documented in JXG.AbstractRenderer
-        updateGradient: function (el) {
-            var col,
-                op,
-                node2 = el.gradNode1,
-                node3 = el.gradNode2,
-                ev_g = el.evalVisProp('gradient');
+        setLineCap: function (el) {
+            var capStyle = el.evalVisProp('linecap');
 
-            if (!Type.exists(node2) || !Type.exists(node3)) {
+            if (
+                capStyle === undefined ||
+                capStyle === "" ||
+                el.visPropOld.linecap === capStyle ||
+                !Type.exists(el.rendNode)
+            ) {
                 return;
             }
 
-            op = el.evalVisProp('fillopacity');
-            op = op > 0 ? op : 0;
-            col = el.evalVisProp('fillcolor');
-
-            node2.setAttributeNS(null, "style", "stop-color:" + col + ";stop-opacity:" + op);
-            node3.setAttributeNS(
-                null,
-                "style",
-                "stop-color:" +
-                el.evalVisProp('gradientsecondcolor') +
-                ";stop-opacity:" +
-                el.evalVisProp('gradientsecondopacity')
-            );
-            node2.setAttributeNS(
-                null,
-                "offset",
-                el.evalVisProp('gradientstartoffset') * 100 + "%"
-            );
-            node3.setAttributeNS(
-                null,
-                "offset",
-                el.evalVisProp('gradientendoffset') * 100 + "%"
-            );
-            if (ev_g === "linear") {
-                this.updateGradientAngle(el.gradNode, el.evalVisProp('gradientangle'));
-            } else if (ev_g === "radial") {
-                this.updateGradientCircle(
-                    el.gradNode,
-                    el.evalVisProp('gradientcx'),
-                    el.evalVisProp('gradientcy'),
-                    el.evalVisProp('gradientr'),
-                    el.evalVisProp('gradientfx'),
-                    el.evalVisProp('gradientfy'),
-                    el.evalVisProp('gradientfr')
-                );
-            }
-        },
-
-        // documented in JXG.AbstractRenderer
-        setObjectTransition: function (el, duration) {
-            var node, props,
-                transitionArr = [],
-                transitionStr,
-                i,
-                len = 0,
-                nodes = ["rendNode", "rendNodeTriangleStart", "rendNodeTriangleEnd"];
-
-            if (duration === undefined) {
-                duration = el.evalVisProp('transitionduration');
-            }
-
-            props = el.evalVisProp('transitionproperties');
-            if (duration === el.visPropOld.transitionduration &&
-                props === el.visPropOld.transitionproperties) {
-                return;
-            }
-
-            // if (
-            //     el.elementClass === Const.OBJECT_CLASS_TEXT &&
-            //     el.evalVisProp('display') === "html"
-            // ) {
-            //     // transitionStr = " color " + duration + "ms," +
-            //     //     " opacity " + duration + "ms";
-            //     transitionStr = " all " + duration + "ms ease";
-            // } else {
-            //     transitionStr =
-            //         " fill " + duration + "ms," +
-            //         " fill-opacity " + duration + "ms," +
-            //         " stroke " + duration + "ms," +
-            //         " stroke-opacity " + duration + "ms," +
-            //         " stroke-width " + duration + "ms," +
-            //         " width " + duration + "ms," +
-            //         " height " + duration + "ms," +
-            //         " rx " + duration + "ms," +
-            //         " ry " + duration + "ms";
-            // }
-
-            if (Type.exists(props)) {
-                len = props.length;
-            }
-            for (i = 0; i < len; i++) {
-                transitionArr.push(props[i] + ' ' + duration + 'ms');
-            }
-            transitionStr = transitionArr.join(', ');
-
-            len = nodes.length;
-            for (i = 0; i < len; ++i) {
-                if (el[nodes[i]]) {
-                    node = el[nodes[i]];
-                    node.style.transition = transitionStr;
-                }
-            }
-
-            el.visPropOld.transitionduration = duration;
-            el.visPropOld.transitionproperties = props;
-        },
-
-        /**
-         * Call user-defined function to set visual attributes.
-         * If "testAttribute" is the empty string, the function
-         * is called immediately, otherwise it is called in a timeOut.
-         *
-         * This is necessary to realize smooth transitions but avoid transitions
-         * when first creating the objects.
-         *
-         * Usually, the string in testAttribute is the visPropOld attribute
-         * of the values which are set.
-         *
-         * @param {Function} setFunc       Some function which usually sets some attributes
-         * @param {String} testAttribute If this string is the empty string  the function is called immediately,
-         *                               otherwise it is called in a setImeout.
-         * @see JXG.SVGRenderer#setObjectFillColor
-         * @see JXG.SVGRenderer#setObjectStrokeColor
-         * @see JXG.SVGRenderer#_setArrowColor
-         * @private
-         */
-        _setAttribute: function (setFunc, testAttribute) {
-            if (testAttribute === "") {
-                setFunc();
-            } else {
-                window.setTimeout(setFunc, 1);
-            }
-        },
-
-        // documented in JXG.AbstractRenderer
-        setARIA: function(el) {
-            // This method is only called in abstractRenderer._updateVisual() if aria.enabled == true.
-            var key, k, v;
-
-            // this.setPropertyPrim(el.rendNode, 'aria-label', el.evalVisProp('aria.label'));
-            // this.setPropertyPrim(el.rendNode, 'aria-live', el.evalVisProp('aria.live'));
-            for (key in el.visProp.aria) {
-                if (el.visProp.aria.hasOwnProperty(key) && key !== 'enabled') {
-                    k = 'aria.' + key;
-                    v = el.evalVisProp('aria.' + key);
-                    if (el.visPropOld[k] !== v) {
-                        this.setPropertyPrim(el.rendNode, 'aria-' + key, v);
-                        el.visPropOld[k] = v;
-                    }
-                }
-            }
-        },
-
-        // documented in JXG.AbstractRenderer
-        setCssClass(el, cssClass) {
-            if (el.visPropOld.cssclass !== cssClass) {
-                this.setPropertyPrim(el.rendNode, 'class', cssClass);
-                el.visPropOld.cssclass = cssClass;
-            }
+            this.setPropertyPrim(el.rendNode, "stroke-linecap", capStyle);
+            el.visPropOld.linecap = capStyle;
         },
 
         // documented in JXG.AbstractRenderer
@@ -1777,20 +1597,62 @@ JXG.extend(
         },
 
         // documented in JXG.AbstractRenderer
-        setLineCap: function (el) {
-            var capStyle = el.evalVisProp('linecap');
+        setObjectTransition: function (el, duration) {
+            var node, props,
+                transitionArr = [],
+                transitionStr,
+                i,
+                len = 0,
+                nodes = ["rendNode", "rendNodeTriangleStart", "rendNodeTriangleEnd"];
 
-            if (
-                capStyle === undefined ||
-                capStyle === "" ||
-                el.visPropOld.linecap === capStyle ||
-                !Type.exists(el.rendNode)
-            ) {
+            if (duration === undefined) {
+                duration = el.evalVisProp('transitionduration');
+            }
+
+            props = el.evalVisProp('transitionproperties');
+            if (duration === el.visPropOld.transitionduration &&
+                props === el.visPropOld.transitionproperties) {
                 return;
             }
 
-            this.setPropertyPrim(el.rendNode, "stroke-linecap", capStyle);
-            el.visPropOld.linecap = capStyle;
+            // if (
+            //     el.elementClass === Const.OBJECT_CLASS_TEXT &&
+            //     el.evalVisProp('display') === "html"
+            // ) {
+            //     // transitionStr = " color " + duration + "ms," +
+            //     //     " opacity " + duration + "ms";
+            //     transitionStr = " all " + duration + "ms ease";
+            // } else {
+            //     transitionStr =
+            //         " fill " + duration + "ms," +
+            //         " fill-opacity " + duration + "ms," +
+            //         " stroke " + duration + "ms," +
+            //         " stroke-opacity " + duration + "ms," +
+            //         " stroke-width " + duration + "ms," +
+            //         " width " + duration + "ms," +
+            //         " height " + duration + "ms," +
+            //         " rx " + duration + "ms," +
+            //         " ry " + duration + "ms";
+            // }
+
+            if (Type.exists(props)) {
+                len = props.length;
+            }
+            for (i = 0; i < len; i++) {
+                transitionArr.push(props[i] + ' ' + duration + 'ms');
+            }
+            transitionStr = transitionArr.join(', ');
+
+            len = nodes.length;
+            for (i = 0; i < len; ++i) {
+                if (el[nodes[i]]) {
+                    node = el[nodes[i]];
+                    node.style.transition = transitionStr;
+                }
+            }
+
+            el.visPropOld.transitionduration = duration;
+            el.visPropOld.transitionproperties = props;
         },
 
         // documented in JXG.AbstractRenderer
@@ -1863,6 +1725,137 @@ JXG.extend(
                     el.visPropOld.tabindex = val;
                 }
             }
+        },
+
+        // documented in JXG.AbstractRenderer
+        setPropertyPrim: function (node, key, val) {
+            if (key === "stroked") {
+                return;
+            }
+            node.setAttributeNS(null, key, val);
+        },
+
+        // documented in JXG.AbstractRenderer
+        show: function (el) {
+            JXG.deprecated("Board.renderer.show()", "Board.renderer.display()");
+            this.display(el, true);
+            // var node;
+            //
+            // if (el && el.rendNode) {
+            //     node = el.rendNode;
+            //     node.setAttributeNS(null, 'display', 'inline');
+            //     node.style.visibility = "inherit";
+            // }
+        },
+
+        // documented in JXG.AbstractRenderer
+        updateGradient: function (el) {
+            var col,
+                op,
+                node2 = el.gradNode1,
+                node3 = el.gradNode2,
+                ev_g = el.evalVisProp('gradient');
+
+            if (!Type.exists(node2) || !Type.exists(node3)) {
+                return;
+            }
+
+            op = el.evalVisProp('fillopacity');
+            op = op > 0 ? op : 0;
+            col = el.evalVisProp('fillcolor');
+
+            node2.setAttributeNS(null, "style", "stop-color:" + col + ";stop-opacity:" + op);
+            node3.setAttributeNS(
+                null,
+                "style",
+                "stop-color:" +
+                el.evalVisProp('gradientsecondcolor') +
+                ";stop-opacity:" +
+                el.evalVisProp('gradientsecondopacity')
+            );
+            node2.setAttributeNS(
+                null,
+                "offset",
+                el.evalVisProp('gradientstartoffset') * 100 + "%"
+            );
+            node3.setAttributeNS(
+                null,
+                "offset",
+                el.evalVisProp('gradientendoffset') * 100 + "%"
+            );
+            if (ev_g === "linear") {
+                this.updateGradientAngle(el.gradNode, el.evalVisProp('gradientangle'));
+            } else if (ev_g === "radial") {
+                this.updateGradientCircle(
+                    el.gradNode,
+                    el.evalVisProp('gradientcx'),
+                    el.evalVisProp('gradientcy'),
+                    el.evalVisProp('gradientr'),
+                    el.evalVisProp('gradientfx'),
+                    el.evalVisProp('gradientfy'),
+                    el.evalVisProp('gradientfr')
+                );
+            }
+        },
+
+        /**
+         * Set the gradient angle for linear color gradients.
+         *
+         * @private
+         * @param {SVGnode} node SVG gradient node of an arbitrary JSXGraph element.
+         * @param {Number} radians angle value in radians. 0 is horizontal from left to right, Pi/4 is vertical from top to bottom.
+         */
+        updateGradientAngle: function (node, radians) {
+            // Angles:
+            // 0: ->
+            // 90: down
+            // 180: <-
+            // 90: up
+            var f = 1.0,
+                co = Math.cos(radians),
+                si = Math.sin(radians);
+
+            if (Math.abs(co) > Math.abs(si)) {
+                f /= Math.abs(co);
+            } else {
+                f /= Math.abs(si);
+            }
+
+            if (co >= 0) {
+                node.setAttributeNS(null, "x1", 0);
+                node.setAttributeNS(null, "x2", co * f);
+            } else {
+                node.setAttributeNS(null, "x1", -co * f);
+                node.setAttributeNS(null, "x2", 0);
+            }
+            if (si >= 0) {
+                node.setAttributeNS(null, "y1", 0);
+                node.setAttributeNS(null, "y2", si * f);
+            } else {
+                node.setAttributeNS(null, "y1", -si * f);
+                node.setAttributeNS(null, "y2", 0);
+            }
+        },
+
+        /**
+         * Set circles for radial color gradients.
+         *
+         * @private
+         * @param {SVGnode} node SVG gradient node
+         * @param {Number} cx SVG value cx (value between 0 and 1)
+         * @param {Number} cy  SVG value cy (value between 0 and 1)
+         * @param {Number} r  SVG value r (value between 0 and 1)
+         * @param {Number} fx  SVG value fx (value between 0 and 1)
+         * @param {Number} fy  SVG value fy (value between 0 and 1)
+         * @param {Number} fr  SVG value fr (value between 0 and 1)
+         */
+        updateGradientCircle: function (node, cx, cy, r, fx, fy, fr) {
+            node.setAttributeNS(null, "cx", cx * 100 + "%"); // Center first color
+            node.setAttributeNS(null, "cy", cy * 100 + "%");
+            node.setAttributeNS(null, "r", r * 100 + "%");
+            node.setAttributeNS(null, "fx", fx * 100 + "%"); // Center second color / focal point
+            node.setAttributeNS(null, "fy", fy * 100 + "%");
+            node.setAttributeNS(null, "fr", fr * 100 + "%");
         },
 
         /* ********* Renderer control *********** */
