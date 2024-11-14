@@ -1280,6 +1280,8 @@ JXG.extend(
                                 this.labels[j].setAttribute(value);
                             }
                         } else if (Type.exists(this[key])) {
+                            // Attribute looks like: point1: {...}
+                            // Handle this in the sub-element: this.point1.setAttribute({...})
                             if (Type.isArray(this[key])) {
                                 for (j = 0; j < this[key].length; j++) {
                                     this[key][j].setAttribute(value);
@@ -1287,6 +1289,10 @@ JXG.extend(
                             } else {
                                 this[key].setAttribute(value);
                             }
+                        } else {
+                            // Cases like firstarrow: {...}
+                            oldvalue = null;
+                            this.triggerEventHandlers(["attribute:" + key], [oldvalue, value, this]);
                         }
                         continue;
                     }
