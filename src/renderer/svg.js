@@ -511,9 +511,10 @@ JXG.extend(
                     }
                 }
 
-                if (this.isIE) {
+                // if (this.isIE) {
+                    // Necessary, since Safari is the new IE (11.2024)
                     el.rendNode.parentNode.insertBefore(el.rendNode, el.rendNode);
-                }
+                // }
             }
         },
 
@@ -534,9 +535,10 @@ JXG.extend(
                 node.setAttributeNS(null, "display", "inherit");
                 // }
 
-                if (this.isIE) {
+                // if (this.isIE) {
+                    // Necessary, since Safari is the new IE (11.2024)
                     parentNode.parentNode.insertBefore(parentNode, parentNode);
-                }
+                // }
             }
         },
 
@@ -859,7 +861,8 @@ JXG.extend(
                 ev_fa = a.evFirst,
                 ev_la = a.evLast;
 
-            if (this.isIE && el.visPropCalc.visible && (ev_fa || ev_la)) {
+            if (/*this.isIE &&*/ el.visPropCalc.visible && (ev_fa || ev_la)) {
+                // Necessary, since Safari is the new IE (11.2024)
                 el.rendNode.parentNode.insertBefore(el.rendNode, el.rendNode);
                 return;
             }
