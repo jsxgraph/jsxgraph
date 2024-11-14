@@ -195,11 +195,8 @@ JXG.AbstractRenderer = function () {
 JXG.extend(
     JXG.AbstractRenderer.prototype,
     /** @lends JXG.AbstractRenderer.prototype */ {
-        /* ******************************** *
-         *    private methods               *
-         *    should not be called from     *
-         *    outside AbstractRenderer      *
-         * ******************************** */
+
+        /* ********* Private methods *********** */
 
         /**
          * Update visual properties, but only if {@link JXG.AbstractRenderer#enhancedRendering} or <tt>enhanced</tt> is set to true.
@@ -305,9 +302,7 @@ JXG.extend(
             return hl;
         },
 
-        /* ******************************** *
-         *    Point drawing and updating    *
-         * ******************************** */
+        /* ********* Point related stuff *********** */
 
         /**
          * Draws a point on the {@link JXG.Board}.
@@ -435,9 +430,7 @@ JXG.extend(
             }
         },
 
-        /* ******************************** *
-         *           Lines                  *
-         * ******************************** */
+        /* ********* Line related stuff *********** */
 
         /**
          * Draws a line on the {@link JXG.Board}.
@@ -468,9 +461,7 @@ JXG.extend(
             this.setLineCap(el);
         },
 
-        /* **************************
-         *    Curves
-         * **************************/
+        /* ********* Curve related stuff *********** */
 
         /**
          * Draws a {@link JXG.Curve} on the {@link JXG.Board}.
@@ -501,9 +492,7 @@ JXG.extend(
             this.setLineCap(el);
         },
 
-        /* **************************
-         *    Arrow heads and related stuff
-         * **************************/
+        /* ********* Arrow heads and related stuff *********** */
 
         /**
          * Handles arrow heads of a line or curve element and calls the renderer primitive.
@@ -914,9 +903,7 @@ JXG.extend(
             /* stub */
         },
 
-        /* **************************
-         *    Ticks related stuff
-         * **************************/
+        /* ********* Ticks related stuff *********** */
 
         /**
          * Creates a rendering node for ticks added to a line.
@@ -949,9 +936,7 @@ JXG.extend(
             /* stub */
         },
 
-        /* **************************
-         *    Circle related stuff
-         * **************************/
+        /* ********* Circle related stuff *********** */
 
         /**
          * Draws a {@link JXG.Circle}
@@ -998,9 +983,7 @@ JXG.extend(
             this.setLineCap(el);
         },
 
-        /* **************************
-         *   Polygon related stuff
-         * **************************/
+        /* ********* Polygon related stuff *********** */
 
         /**
          * Draws a {@link JXG.Polygon} on the {@link JXG.Board}.
@@ -1032,9 +1015,7 @@ JXG.extend(
             this.updatePolygonPrim(el.rendNode, el);
         },
 
-        /* **************************
-         *    Text related stuff
-         * **************************/
+        /* ********* Text related stuff *********** */
 
         /**
          * Shows a small copyright notice in the top left corner of the board.
@@ -1503,9 +1484,7 @@ JXG.extend(
             this.setObjectStrokeColor(el, strokeColor, strokeOpacity);
         },
 
-        /* **************************
-         *    Image related stuff
-         * **************************/
+        /* ********* Image related stuff *********** */
 
         /**
          * Draws an {@link JXG.Image} on a board; This is just a template that has to be implemented by special
@@ -1633,9 +1612,7 @@ JXG.extend(
             /* stub */
         },
 
-        /* **************************
-         * Render primitive objects
-         * **************************/
+        /* ********* Render primitive objects *********** */
 
         /**
          * Appends a node to a specific layer level. This is just an abstract method and has to be implemented
@@ -1756,9 +1733,9 @@ JXG.extend(
          * Builds a path data string from a {@link JXG.Curve} element. Since the path data strings heavily depend on the
          * underlying rendering technique this method is just a stub. Although such a path string is of no use for the
          * CanvasRenderer, this method is used there to draw a path directly.
-         * @param element
+         * @param {JXG.GeometryElement} el
          */
-        updatePathStringPrim: function (element) {
+        updatePathStringPrim: function (el) {
             /* stub */
         },
 
@@ -1767,18 +1744,18 @@ JXG.extend(
          * the path data strings heavily depend on the underlying rendering technique this method is just a stub.
          * Although such a path string is of no use for the CanvasRenderer, this method is used there to draw a path
          * directly.
-         * @param element
+         * @param  {JXG.GeometryElement} el
          */
-        updatePathStringBezierPrim: function (element) {
+        updatePathStringBezierPrim: function (el) {
             /* stub */
         },
 
         /**
          * Update a polygon primitive.
          * @param {Node} node
-         * @param {JXG.Polygon} element A JSXGraph element of type {@link JXG.Polygon}
+         * @param {JXG.Polygon} el A JSXGraph element of type {@link JXG.Polygon}
          */
-        updatePolygonPrim: function (node, element) {
+        updatePolygonPrim: function (node, el) {
             /* stub */
         },
 
@@ -1794,9 +1771,7 @@ JXG.extend(
             /* stub */
         },
 
-        /* **************************
-         *  Set Attributes
-         * **************************/
+        /* ********* Set attributes *********** */
 
         /**
          * Sets a node's attribute.
@@ -1808,18 +1783,14 @@ JXG.extend(
             /* stub */
         },
 
+        /**
+         * Set the attribute `tabindex` to the attribute `tabindex` of an element.
+         * This is only relevant for the SVG renderer.
+         *
+         * @param {JXG.GeometryElement} el
+         */
         setTabindex: function (el) {
-            var val;
-            if (el.board.attr.keyboard.enabled && Type.exists(el.rendNode)) {
-                val = el.evalVisProp('tabindex');
-                if (!el.visPropCalc.visible /* || el.evalVisProp('fixed') */) {
-                    val = null;
-                }
-                if (val !== el.visPropOld.tabindex) {
-                    el.rendNode.setAttribute("tabindex", val);
-                    el.visPropOld.tabindex = val;
-                }
-            }
+            /* stub */
         },
 
         /**
@@ -2133,9 +2104,17 @@ JXG.extend(
             return this;
         },
 
-        /* **************************
-         * renderer control
-         * **************************/
+        /**
+         * Move element into new layer. This is trivial for canvas, but needs more effort in SVG.
+         * Does not work dynamically, i.e. if level is a function.
+         *
+         * @param {JXG.GeometryElement} el Element which is put into different layer
+         * @param {Number} value Layer number
+         * @private
+         */
+        setLayer: function (el, level) {},
+
+        /* ********* Renderer control *********** */
 
         /**
          * Stop redraw. This method is called before every update, so a non-vector-graphics based renderer can use this
@@ -2387,6 +2366,8 @@ JXG.extend(
          */
         updateTouchpoint: function (i, pos) {},
 
+        /* ********* Dump related stuff *********** */
+
         /**
          * Convert SVG construction to base64 encoded SVG data URL.
          * Only available on SVGRenderer.
@@ -2409,17 +2390,8 @@ JXG.extend(
          *
          * See JXG.SVGRenderer#screenshot
          */
-        screenshot: function (board) {},
+        screenshot: function (board) {}
 
-        /**
-         * Move element into new layer. This is trivial for canvas, but needs more effort in SVG.
-         * Does not work dynamically, i.e. if level is a function.
-         *
-         * @param {JXG.GeometryElement} el Element which is put into different layer
-         * @param {Number} value Layer number
-         * @private
-         */
-        setLayer: function (el, level) {}
     }
 );
 

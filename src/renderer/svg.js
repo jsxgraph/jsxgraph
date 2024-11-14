@@ -282,6 +282,16 @@ JXG.SVGRenderer.prototype = new AbstractRenderer();
 JXG.extend(
     JXG.SVGRenderer.prototype,
     /** @lends JXG.SVGRenderer.prototype */ {
+        /* ******************************** *
+         *  This renderer does not need to
+         *  override draw/update* methods
+         *  since it provides draw/update*Prim
+         *  methods except for some cases like
+         *  internal texts or images.
+         * ******************************** */
+
+        /* ********* Arrow head related stuff *********** */
+
         /**
          * Creates an arrow DOM node. Arrows are displayed in SVG with a <em>marker</em> tag.
          * @private
@@ -530,17 +540,7 @@ JXG.extend(
             }
         },
 
-        /* ******************************** *
-         *  This renderer does not need to
-         *  override draw/update* methods
-         *  since it provides draw/update*Prim
-         *  methods except for some cases like
-         *  internal texts or images.
-         * ******************************** */
-
-        /* **************************
-         *    Lines
-         * **************************/
+        /* ********* Line related stuff *********** */
 
         // documented in AbstractRenderer
         updateTicks: function (ticks) {
@@ -599,9 +599,7 @@ JXG.extend(
             this.updatePathPrim(node, tickStr, ticks.board);
         },
 
-        /* **************************
-         *    Text related stuff
-         * **************************/
+        /* ********* Text related stuff *********** */
 
         // Already documented in JXG.AbstractRenderer
         displayCopyright: function (str, fontsize) {
@@ -706,9 +704,7 @@ JXG.extend(
             this.setObjectFillColor(el, strokeColor, strokeOpacity);
         },
 
-        /* **************************
-         *    Image related stuff
-         * **************************/
+        /* ********* Image related stuff *********** */
 
         // Already documented in JXG.AbstractRenderer
         drawImage: function (el) {
@@ -810,9 +806,7 @@ JXG.extend(
             this._updateVisual(el, { stroke: true, dash: true }, true);
         },
 
-        /* **************************
-         * Render primitive objects
-         * **************************/
+        /* ********* Render primitive objects *********** */
 
         // Already documented in JXG.AbstractRenderer
         appendChildPrim: function (node, level) {
@@ -1284,9 +1278,7 @@ JXG.extend(
             node.setAttributeNS(null, "height", h);
         },
 
-        /* **************************
-         *  Set Attributes
-         * **************************/
+        /* ********* Set attributes *********** */
 
         // documented in JXG.AbstractRenderer
         setPropertyPrim: function (node, key, val) {
@@ -1858,9 +1850,22 @@ JXG.extend(
             el.visPropOld.shadow = ev_s_json;
         },
 
-        /* **************************
-         * renderer control
-         * **************************/
+        // documented in JXG.AbstractRenderer
+        setTabindex: function (el) {
+            var val;
+            if (el.board.attr.keyboard.enabled && Type.exists(el.rendNode)) {
+                val = el.evalVisProp('tabindex');
+                if (!el.visPropCalc.visible /* || el.evalVisProp('fixed') */) {
+                    val = null;
+                }
+                if (val !== el.visPropOld.tabindex) {
+                    el.rendNode.setAttribute("tabindex", val);
+                    el.visPropOld.tabindex = val;
+                }
+            }
+        },
+
+        /* ********* Renderer control *********** */
 
         // documented in JXG.AbstractRenderer
         suspendRedraw: function () {
@@ -1967,6 +1972,8 @@ JXG.extend(
                 this.updateEllipsePrim(this.touchpoints[2 * i + 1], pos[0], pos[1], 25, 25);
             }
         },
+
+        /* ********* Dump related stuff *********** */
 
         /**
          * Walk recursively through the DOM subtree of a node and collect all
