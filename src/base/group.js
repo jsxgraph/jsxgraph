@@ -287,6 +287,8 @@ JXG.extend(
                 } else if (Type.isFunction(this[actionCenter])) {
                     center = this[actionCenter]();
                 } else {
+                    // No valid center for this transformation, get out of here.
+                    JXG.debug('Group.update: No valid center for this transformation, get out of here.');
                     return this;
                 }
 
@@ -299,7 +301,7 @@ JXG.extend(
                     t = this.board.create("transform", [alpha, center[0], center[1]], {
                         type: "rotate"
                     });
-                    t.update(); // This initializes t.matrix, which is needed if the action element is the first group element.
+                    t.update(); // t.update initializes t.matrix, which is needed if the action element is the first group element.
                 } else if (drag.action === "scaling") {
                     s = Geometry.distance(this.coords[drag.id].usrCoords.slice(1), center);
                     if (Math.abs(s) < Mat.eps) {
@@ -434,10 +436,10 @@ JXG.extend(
         },
 
         /**
+         * Determine the Euclidean (affine) coordinates of the centroid of the group.
          * @private
          * @returns {Array} array of length two,
         */
-        // Determine the Euclidean coordinates of the centroid of the group.
         _update_centroid_center: function () {
             var center, len, el;
 
@@ -569,7 +571,7 @@ JXG.extend(
 
         /**
          * Sets the center of rotation for the group. This is either a point or the centroid of the group.
-         * @param {JXG.Point|String} object A point which will be the center of rotation, the string "centroid", or
+         * @param {JXG.Point|String|Array|Function} object A point which will be the center of rotation, the string "centroid", or
          * an array of length two, or a function returning an array of length two.
          * @default 'centroid'
          * @returns {JXG.Group} returns this group
