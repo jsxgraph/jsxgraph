@@ -341,17 +341,6 @@ JXG.extend(
         updateImage: function (element) {},
 
         /**
-         * Applies transformations on images and text elements. This method is just a stub and has to be implemented in all
-         * descendant classes where text and image transformations are to be supported.
-         * @param {JXG.Image|JXG.Text} element A {@link JXG.Image} or {@link JXG.Text} object.
-         * @param {Array} transformations An array of {@link JXG.Transformation} objects. This is usually the transformations property
-         * of the given element <tt>el</tt>.
-         */
-        transformImage: function (element, transformations) {
-            /* stub */
-        },
-
-        /**
          * If the URL of the image is provided by a function the URL has to be updated during updateImage()
          * @param {JXG.Image} element Reference to an image object.
          * @see JXG.AbstractRenderer#updateImage

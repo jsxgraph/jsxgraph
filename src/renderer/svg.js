@@ -691,7 +691,7 @@ JXG.extend(
                 el.rendNodeText.data = content;
                 el.htmlStr = content;
             }
-            this.transformImage(el, el.transformations);
+            this.transformRect(el, el.transformations);
         },
 
         /**
@@ -718,7 +718,7 @@ JXG.extend(
         },
 
         // Already documented in JXG.AbstractRenderer
-        transformImage: function (el, t) {
+        transformRect: function (el, t) {
             var s, m, node,
                 str = "",
                 cx, cy,

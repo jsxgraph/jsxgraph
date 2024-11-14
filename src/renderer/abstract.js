@@ -1318,7 +1318,7 @@ JXG.extend(
                             ')';
                         el.rendNode.style['transform-origin'] = to_h + ' ' + to_v;
                     }
-                    this.transformImage(el, el.transformations);
+                    this.transformRect(el, el.transformations);
                 } else {
                     this.updateInternalText(el);
                 }
@@ -1515,7 +1515,7 @@ JXG.extend(
             );
 
             this.updateImageURL(el);
-            this.transformImage(el, el.transformations);
+            this.transformRect(el, el.transformations);
             this._updateVisual(el, { stroke: true, dash: true }, true);
         },
 
@@ -1528,7 +1528,7 @@ JXG.extend(
          * @param {JXG.GeometryElement} el A JSXGraph element. We only need its board property.
          * @param {Array} transformations An array of JXG.Transformations.
          * @returns {Array} A matrix represented by a two dimensional array of numbers.
-         * @see JXG.AbstractRenderer#transformImage
+         * @see JXG.AbstractRenderer#transformRect
          */
         joinTransforms: function (el, transformations) {
             var i,
@@ -1571,7 +1571,7 @@ JXG.extend(
          * @param {Array} transformations An array of {@link JXG.Transformation} objects. This is usually the
          * transformations property of the given element <tt>el</tt>.
          */
-        transformImage: function (element, transformations) {
+        transformRect: function (element, transformations) {
             /* stub */
         },
 
