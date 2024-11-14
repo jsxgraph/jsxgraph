@@ -464,9 +464,7 @@ JXG.extend(
             return rv;
         },
 
-        /* ******************************** *
-         *    Point drawing and updating    *
-         * ******************************** */
+        /* ********* Point related stuff *********** */
 
         // documented in AbstractRenderer
         drawPoint: function (el) {
@@ -627,9 +625,7 @@ JXG.extend(
             this.drawPoint(el);
         },
 
-        /* ******************************** *
-         *           Lines                  *
-         * ******************************** */
+        /* ********* Line related stuff *********** */
 
         /**
          * Draws arrows of an element (usually a line) in canvas renderer.
@@ -1075,9 +1071,7 @@ JXG.extend(
             this._stroke(ticks);
         },
 
-        /* **************************
-         *    Curves
-         * **************************/
+        /* ********* Curve related stuff *********** */
 
         // documented in AbstractRenderer
         drawCurve: function (el) {
@@ -1106,9 +1100,7 @@ JXG.extend(
             this.drawCurve(el);
         },
 
-        /* **************************
-         *    Circle related stuff
-         * **************************/
+        /* ********* Circle related stuff *********** */
 
         // documented in AbstractRenderer
         drawEllipse: function (el) {
@@ -1148,15 +1140,11 @@ JXG.extend(
             return this.drawEllipse(el);
         },
 
-        /* **************************
-         *    Polygon
-         * **************************/
+        /* ********* Polygon related stuff *********** */
 
         // nothing here, using AbstractRenderer implementations
 
-        /* **************************
-         *    Text related stuff
-         * **************************/
+        /* ********* Text related stuff *********** */
 
         // Already documented in JXG.AbstractRenderer
         displayCopyright: function (str, fontSize) {
@@ -1186,7 +1174,7 @@ JXG.extend(
             ) {
                 context.font = (ev_fs > 0 ? ev_fs : 0) + fontUnit + " Arial";
 
-                this.transformImage(el, el.transformations);
+                this.transformRect(el, el.transformations);
                 if (ev_ax === "left") {
                     context.textAlign = "left";
                 } else if (ev_ax === "right") {
@@ -1255,9 +1243,7 @@ JXG.extend(
             el.visPropOld.strokeopacity = o;
         },
 
-        /* **************************
-         *    Image related stuff
-         * **************************/
+        /* ********* Image related stuff *********** */
 
         // Already documented in JXG.AbstractRenderer
         drawImage: function (el) {
@@ -1283,8 +1269,8 @@ JXG.extend(
                     context.save();
                     context.globalAlpha = o;
                     // If det(el.transformations)=0, FireFox 3.6. breaks down.
-                    // This is tested in transformImage
-                    this.transformImage(el, el.transformations);
+                    // This is tested in transformRect
+                    this.transformRect(el, el.transformations);
                     context.drawImage(
                         el.rendNode,
                         el.coords.scrCoords[1],
@@ -1305,7 +1291,7 @@ JXG.extend(
         },
 
         // Already documented in JXG.AbstractRenderer
-        transformImage: function (el, t) {
+        transformRect: function (el, t) {
             var m, s, cx, cy, node,
                 len = t.length,
                 ctx = this.context;
@@ -1352,9 +1338,7 @@ JXG.extend(
             return false;
         },
 
-        /* **************************
-         * Render primitive objects
-         * **************************/
+        /* ********* Render primitive objects *********** */
 
         // documented in AbstractRenderer
         remove: function (shape) {
@@ -1567,7 +1551,7 @@ JXG.extend(
             }
         },
 
-        // **************************  Set Attributes *************************
+        /* ********* Set attributes *********** */
 
         // Already documented in JXG.AbstractRenderer
         display: function (el, val) {
@@ -1655,9 +1639,7 @@ JXG.extend(
             return this;
         },
 
-        /* **************************
-         * renderer control
-         * **************************/
+        /* ********* Renderer control *********** */
 
         // documented in AbstractRenderer
         suspendRedraw: function (board) {

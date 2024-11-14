@@ -986,7 +986,7 @@ JXG.extend(
          * The function uses the coords object of the point as
          * its actual position.
          * @param {Boolean} force force snapping independent of what the snaptogrid attribute says
-         * @returns {JXG.Point} Reference to this element
+         * @returns {JXG.CoordsElement} Reference to this element
          */
         handleSnapToPoints: function (force) {
             var i,
@@ -1056,7 +1056,7 @@ JXG.extend(
          * Alias for {@link JXG.CoordsElement#handleSnapToPoints}.
          *
          * @param {Boolean} force force snapping independent of what the snaptogrid attribute says
-         * @returns {JXG.Point} Reference to this element
+         * @returns {JXG.CoordsElement} Reference to this element
          */
         snapToPoints: function (force) {
             return this.handleSnapToPoints(force);
@@ -1070,7 +1070,7 @@ JXG.extend(
          * apart from one of its attractor elements.
          * If attractorDistance is equal to zero, the point stays in its
          * current form.
-         * @returns {JXG.Point} Reference to this element
+         * @returns {JXG.CoordsElement} Reference to this element
          */
         handleAttractors: function () {
             var i,
@@ -1164,11 +1164,11 @@ JXG.extend(
         },
 
         /**
-         * Sets coordinates and calls the point's update() method.
+         * Sets coordinates and calls the elements's update() method.
          * @param {Number} method The type of coordinates used here.
          * Possible values are {@link JXG.COORDS_BY_USER} and {@link JXG.COORDS_BY_SCREEN}.
          * @param {Array} coords coordinates <tt>([z], x, y)</tt> in screen/user units
-         * @returns {JXG.Point} this element
+         * @returns {JXG.CoordsElement} this element
          */
         setPositionDirectly: function (method, coords) {
             var i,
@@ -1196,9 +1196,14 @@ JXG.extend(
             this.handleSnapToPoints();
             this.handleAttractors();
 
-            // The element is set to the new position `coords`.
+            // Here, we set the object's "actualCoords", because
+            // coords and initialCoords coincide since transformations
+            // for these elements are handled in the renderers.
+            this.actualCoords.setCoordinates(Const.COORDS_BY_USER, this.coords.usrCoords);
+
+            // The element's coords have been set above to the new position `coords`.
             // Now, determine the preimage of `coords`, prior to all transformations.
-            // This is needed for free points that have a transformation bound to it.
+            // This is needed for free elements that have a transformation bound to it.
             if (this.transformations.length > 0) {
                 if (method === Const.COORDS_BY_SCREEN) {
                     newCoords = new Coords(method, coords, this.board).usrCoords;
@@ -1237,7 +1242,7 @@ JXG.extend(
          * @param {Number} method The type of coordinates used here.
          * Possible values are {@link JXG.COORDS_BY_USER} and {@link JXG.COORDS_BY_SCREEN}.
          * @param {Array} tv (x, y)
-         * @returns {JXG.Point}
+         * @returns {JXG.CoordsElement}
          */
         setPositionByTransform: function (method, tv) {
             var t;
@@ -1262,11 +1267,11 @@ JXG.extend(
         },
 
         /**
-         * Sets coordinates and calls the point's update() method.
+         * Sets coordinates and calls the element's update() method.
          * @param {Number} method The type of coordinates used here.
          * Possible values are {@link JXG.COORDS_BY_USER} and {@link JXG.COORDS_BY_SCREEN}.
          * @param {Array} coords coordinates in screen/user units
-         * @returns {JXG.Point}
+         * @returns {JXG.CoordsElement}
          */
         setPosition: function (method, coords) {
             return this.setPositionDirectly(method, coords);
@@ -1679,7 +1684,7 @@ JXG.extend(
             // This method is called for non-points only.
             // Here, we set the object's "actualCoords", because
             // coords and initialCoords coincide since transformations
-            // for this elements are handled in the renderers.
+            // for these elements are handled in the renderers.
 
             this.transformations[0].update();
             if (this === this.baseElement) {

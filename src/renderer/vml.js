@@ -345,7 +345,7 @@ JXG.extend(
                 el.htmlStr = content;
             }
 
-            //this.transformImage(el, el.transformations);
+            //this.transformRect(el, el.transformations);
             node.filters.item(0).M11 = m[1][1];
             node.filters.item(0).M12 = m[1][2];
             node.filters.item(0).M21 = m[2][1];
@@ -370,7 +370,7 @@ JXG.extend(
             this.appendChildPrim(node, el.evalVisProp('layer'));
 
             // Adding the rotation filter. This is always filter item 0:
-            // node.filters.item(0), see transformImage
+            // node.filters.item(0), see transformRect
             // Also add the alpha filter. This is always filter item 1
             // node.filters.item(1), see setObjectFillColor and setObjectSTrokeColor
             //node.style.filter = node.style['-ms-filter'] = "progid:DXImageTransform.Microsoft.Matrix(M11='1.0', sizingMethod='auto expand')";
@@ -381,7 +381,7 @@ JXG.extend(
         },
 
         // Already documented in JXG.AbstractRenderer
-        transformImage: function (el, t) {
+        transformRect: function (el, t) {
             var m,
                 maxX,
                 maxY,
