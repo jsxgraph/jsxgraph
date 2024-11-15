@@ -66,7 +66,7 @@ JXG.Line3D = function (view, point, direction, range, attributes) {
      * 3D point which - together with a direction - defines the line.
      * @type JXG.Point3D
      *
-     * @see JXG.Line3D#direction
+     * @see JXG.Line3D.direction
      */
     this.point = point;
 
@@ -75,7 +75,7 @@ JXG.Line3D = function (view, point, direction, range, attributes) {
      * returning array of length 3.
      *
      * @type Array|Function
-     * @see JXG.Line3D#point
+     * @see JXG.Line3D.point
      */
     this.direction = direction;
 
@@ -464,8 +464,8 @@ JXG.Plane3D = function (view, point, dir1, range1, dir2, range2, attributes) {
      *
      * @type JXG.Point3D
      *
-     * @see JXG.3D#direction1
-     * @see JXG.3D#direction2
+     * @see JXG.3D.direction1
+     * @see JXG.3D.direction2
      */
     this.point = point;
 
@@ -475,8 +475,8 @@ JXG.Plane3D = function (view, point, dir1, range1, dir2, range2, attributes) {
      *
      * @type Array|Function
      *
-     * @see JXG.Plane3D#point
-     * @see JXG.Plane3D#direction2
+     * @see JXG.Plane3D.point
+     * @see JXG.Plane3D.direction2
      */
     this.direction1 = dir1;
 
@@ -485,8 +485,8 @@ JXG.Plane3D = function (view, point, dir1, range1, dir2, range2, attributes) {
      * array of numbers or functions (of length 3) or function returning array of length 3.
      *
      * @type Array|Function
-     * @see JXG.Plane3D#point
-     * @see JXG.Plane3D#direction1
+     * @see JXG.Plane3D.point
+     * @see JXG.Plane3D.direction1
      */
     this.direction2 = dir2;
 
@@ -507,7 +507,7 @@ JXG.Plane3D = function (view, point, dir1, range1, dir2, range2, attributes) {
      * @type Array
      * @private
      *
-     * @see updateNormal
+     * @see JXG.Plane3D.updateNormal
      */
     this.vec1 = [0, 0, 0];
 
@@ -517,7 +517,7 @@ JXG.Plane3D = function (view, point, dir1, range1, dir2, range2, attributes) {
      * @type Array
      * @private
      *
-     * @see updateNormal
+     * @see JXG.Plane3D.updateNormal
      */
     this.vec2 = [0, 0, 0];
 
@@ -529,7 +529,7 @@ JXG.Plane3D = function (view, point, dir1, range1, dir2, range2, attributes) {
         * @type Array
          * @private
          *
-         * @see updateNormal
+         * @see JXG.Plane3D.updateNormal
          *
          */
     this.normal = [0, 0, 0];
@@ -540,7 +540,7 @@ JXG.Plane3D = function (view, point, dir1, range1, dir2, range2, attributes) {
         * @type Array
          * @private
          *
-         * @see updateNormal
+         * @see JXG.Plane3D.updateNormal
          *
          */
     this.d = 0;
@@ -786,7 +786,21 @@ JXG.extend(
     }
 );
 
-// TODO docs
+/**
+ * @class This element is used to provide a constructor for a 3D plane.
+ * @pseudo
+ * @description There are two possibilities to create a Plane3D object.
+ * <p>
+ * TODO
+ * </p>
+ *
+ * @name  Plane3D
+ * @augments JXG.GeometryElement3D
+ * @constructor
+ * @type JXG.Plane3D
+ * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
+ *
+ */
 JXG.createPlane3D = function (board, parents, attributes) {
     var view = parents[0],
         attr,

@@ -1569,6 +1569,7 @@ JXG.extend(
         evalVisProp: function (key) {
             var val, arr, i, le;
 
+            key = key.toLowerCase();
             if (key.indexOf('.') === -1) {
                 // e.g. 'visible'
                 val = this.visProp[key];
