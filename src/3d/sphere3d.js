@@ -252,7 +252,7 @@ JXG.extend(
             };
         },
 
-        buildCentralProjection: function () {
+        buildCentralProjection: function (attr) {
             var view = this.view,
                 auxStyle = { visible: false, withLabel: false },
                 frontFocus = view.create('point', this.focusFn(-1), auxStyle),
@@ -260,16 +260,16 @@ JXG.extend(
                 innerVertex = view.create('point', this.innerVertexFn(view), auxStyle);
 
             this.aux2D = [frontFocus, backFocus, innerVertex];
-            this.element2D = view.create('ellipse', this.aux2D, this.visProp);
+            this.element2D = view.create('ellipse', this.aux2D, attr === undefined ? this.visProp : attr);
         },
 
-        buildParallelProjection: function () {
+        buildParallelProjection: function (attr) {
             // The parallel projection of a sphere is a circle
             var that = this,
-                center2d = function () {
-                    var c3d = [1, that.center.X(), that.center.Y(), that.center.Z()];
-                    return that.view.project3DTo2D(c3d);
-                },
+                // center2d = function () {
+                //     var c3d = [1, that.center.X(), that.center.Y(), that.center.Z()];
+                //     return that.view.project3DTo2D(c3d);
+                // },
                 radius2d = function () {
                     var boxSize = that.view.bbox3D[0][1] - that.view.bbox3D[0][0];
                     return that.Radius() * that.view.size[0] / boxSize;
@@ -278,14 +278,15 @@ JXG.extend(
             this.aux2D = [];
             this.element2D = this.view.create(
                 'circle',
-                [center2d, radius2d],
-                this.visProp
+                // [center2d, radius2d],
+                [that.center.element2D, radius2d],
+                attr === undefined ? this.visProp : attr
             );
         },
 
         // replace our 2D representation with a new one that's consistent with
         // the view's current projection type
-        rebuildProjection: function () {
+        rebuildProjection: function (attr) {
             var i;
 
             // remove the old 2D representation from the scene tree
@@ -303,9 +304,9 @@ JXG.extend(
             // `this.aux2D`
             this.projectionType = this.view.projectionType;
             if (this.projectionType === 'central') {
-                this.buildCentralProjection();
+                this.buildCentralProjection(attr);
             } else {
-                this.buildParallelProjection();
+                this.buildParallelProjection(attr);
             }
 
             // attach the new 2D representation to the scene tree
@@ -476,9 +477,12 @@ JXG.createSphere3D = function (board, parents, attributes) {
         );
     }
 
-    // build a 2D representation, and attach it to the scene tree, and update it
+    // Build a 2D representation, and attach it to the scene tree, and update it
     // to the correct initial state
-    el.rebuildProjection();
+    // Here, element2D is created.
+    attr = el.setAttr2D(attr);
+    el.rebuildProjection(attr);
+
     el.element2D.prepareUpdate().update().updateRenderer();
 
     return el;

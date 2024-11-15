@@ -151,8 +151,8 @@ JXG.extend(
         initParamsIfNeeded: function (params) {
             if (params.length === 0) {
                 params.unshift(
-                    0.5*(this.range_u[0] + this.range_u[1]),
-                    0.5*(this.range_v[0] + this.range_v[1])
+                    0.5 * (this.range_u[0] + this.range_u[1]),
+                    0.5 * (this.range_v[0] + this.range_v[1])
                 );
             }
         },
