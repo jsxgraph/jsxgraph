@@ -430,7 +430,6 @@ JXG.createSphere3D = function (board, parents, attributes) {
         el, i;
 
     attr = Type.copyAttributes(attributes, board.options, 'sphere3d');
-
     p = [];
     for (i = 1; i < parents.length; i++) {
         if (Type.isPointType3D(board, parents[i])) {
