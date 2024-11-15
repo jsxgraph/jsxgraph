@@ -5722,7 +5722,11 @@ JXG.extend(
                 if (this._change3DView) {
                     // The 3 view has changed. Elements are not recomputed,
                     // only 3D elements are projected to the new view.
-                    pEl.needsUpdate = pEl.visProp.element3d !== null || pEl.elType === 'view3d' || pEl.elType === 'view3d_slider' || this.needsFullUpdate;
+                    pEl.needsUpdate =
+                        pEl.visProp.element3d !== null ||
+                        pEl.elType === 'view3d' ||
+                        pEl.elType === 'view3d_slider' ||
+                        this.needsFullUpdate;
                 } else {
                     pEl.needsUpdate = pEl.needsRegularUpdate || this.needsFullUpdate;
                 }
