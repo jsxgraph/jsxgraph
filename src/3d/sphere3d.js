@@ -483,7 +483,10 @@ JXG.createSphere3D = function (board, parents, attributes) {
     attr = el.setAttr2D(attr);
     el.rebuildProjection(attr);
 
-    el.element2D.prepareUpdate().update().updateRenderer();
+    el.element2D.prepareUpdate().update();
+    if (!board.isSuspendedUpdate) {
+        el.element2D.updateVisibility().updateRenderer();
+    }
 
     return el;
 };
