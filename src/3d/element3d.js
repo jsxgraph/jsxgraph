@@ -35,6 +35,8 @@ import Type from "../utils/type.js";
  * Constructs a new GeometryElement3D object.
  * @class This is the basic class for 3D geometry elements like Point3D and Line3D.
  * @constructor
+ * @augments JXG.GeometryElement
+ *
  * @param {string} elType
  */
 JXG.GeometryElement3D = function (view, elType) {
