@@ -338,6 +338,27 @@ JXG.Math = {
     },
 
     /**
+     * Multiply a matrix mat by a scalar alpha: mat * scalar
+     *
+     * @param {Array} mat Two-dimensional array of numbers
+     * @param {Number} alpha Scalar
+     * @returns {Array} Two-dimensional Array of numbers containing result
+     */
+    matNumberMult: function (mat, alpha) {
+        var i, j,
+            m = mat.length,
+            n = m > 0 ? mat[0].length : 0,
+            res = this.matrix(m, n);
+
+        for (i = 0; i < m; i++) {
+            for (j = 0; j < n; j++) {
+                res[i][j] = mat[i][j] * alpha;
+            }
+        }
+        return res;
+    },
+
+    /**
      * Compute the sum of two matrices: mat1 + mat2.
      * Returns a new matrix object.
      *
@@ -348,7 +369,7 @@ JXG.Math = {
     matMatAdd: function (mat1, mat2) {
         var i, j,
             m = mat1.length,
-            n = m > 0 ? mat2[0].length : 0,
+            n = m > 0 ? mat1[0].length : 0,
             res = this.matrix(m, n);
 
         for (i = 0; i < m; i++) {
