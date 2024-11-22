@@ -867,7 +867,7 @@ Mat.Numerics = {
      *
      * @param {Array} interval The integration interval, e.g. [0, 3].
      * @param {function} f A function which takes one argument of type number and returns a number.
-     * @param {Number} n order
+     * @param {Number} n order of approximation. Actually, n is the length of the array xgk. For example, for the 15-point Kronrod rule, n is equal to 8.
      * @param {Array} xgk Kronrod quadrature abscissae
      * @param {Array} wg Weights of the Gauss rule
      * @param {Array} wgk Weights of the Kronrod rule
@@ -893,13 +893,9 @@ Mat.Numerics = {
             result_asc = 0.0,
             mean = 0.0,
             err = 0.0,
-            j,
-            jtw,
+            j, jtw, jtwm1,
             abscissa,
-            fval1,
-            fval2,
-            fsum,
-            jtwm1,
+            fval1, fval2, fsum,
             fv1 = [],
             fv2 = [];
 
@@ -956,7 +952,7 @@ Mat.Numerics = {
     },
 
     /**
-     * 15 point Gauss-Kronrod quadrature algorithm, see the library QUADPACK
+     * 15-point Gauss-Kronrod quadrature algorithm, see the library QUADPACK
      * @param {Array} interval The integration interval, e.g. [0, 3].
      * @param {function} f A function which takes one argument of type number and returns a number.
      * @param {Object} resultObj Object returning resultObj.abserr, resultObj.resabs, resultObj.resasc. See the library

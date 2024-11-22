@@ -1043,7 +1043,7 @@ JXG.extend(
          * of the text element el, i.e. the attributes anchorX, anchorY are ignored.
          *
          * <p>
-         * or labels, [0, 0, 0, 0] is returned.
+         * <strong>Attention:</strong> for labels, [0, 0, 0, 0] is returned.
          *
          * @returns Array
          */

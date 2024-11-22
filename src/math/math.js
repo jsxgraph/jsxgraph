@@ -272,9 +272,10 @@ JXG.Math = {
     },
 
     /**
-     * Multiplies a vector vec to a matrix mat: mat * vec. The matrix is interpreted by this function as an array of rows. Please note: This
+     * Multiplies a vector vec to a matrix mat: mat * vec. The matrix is interpreted by this function as an array of rows.
+     * Please note: This
      * function does not check if the dimensions match.
-     * @param {Array} mat Two dimensional array of numbers. The inner arrays describe the columns, the outer ones the matrix' rows.
+     * @param {Array} mat Two-dimensional array of numbers. The inner arrays describe the columns, the outer ones the matrix' rows.
      * @param {Array} vec Array of numbers
      * @returns {Array} Array of numbers containing the result
      * @example
@@ -310,16 +311,15 @@ JXG.Math = {
     },
 
     /**
-     * Computes the product of the two matrices mat1*mat2.
-     * @param {Array} mat1 Two dimensional array of numbers
-     * @param {Array} mat2 Two dimensional array of numbers
-     * @returns {Array} Two dimensional Array of numbers containing result
+     * Computes the product of the two matrices: mat1 * mat2.
+     * Returns a new matrix array.
+     *
+     * @param {Array} mat1 Two-dimensional array of numbers
+     * @param {Array} mat2 Two-dimensional array of numbers
+     * @returns {Array} Two-dimensional Array of numbers containing result
      */
     matMatMult: function (mat1, mat2) {
-        var i,
-            j,
-            s,
-            k,
+        var i, j, s, k,
             m = mat1.length,
             n = m > 0 ? mat2[0].length : 0,
             m2 = mat2.length,
@@ -338,7 +338,50 @@ JXG.Math = {
     },
 
     /**
-     * Transposes a matrix given as a two dimensional array.
+     * Multiply a matrix mat by a scalar alpha: mat * scalar
+     *
+     * @param {Array} mat Two-dimensional array of numbers
+     * @param {Number} alpha Scalar
+     * @returns {Array} Two-dimensional Array of numbers containing result
+     */
+    matNumberMult: function (mat, alpha) {
+        var i, j,
+            m = mat.length,
+            n = m > 0 ? mat[0].length : 0,
+            res = this.matrix(m, n);
+
+        for (i = 0; i < m; i++) {
+            for (j = 0; j < n; j++) {
+                res[i][j] = mat[i][j] * alpha;
+            }
+        }
+        return res;
+    },
+
+    /**
+     * Compute the sum of two matrices: mat1 + mat2.
+     * Returns a new matrix object.
+     *
+     * @param {Array} mat1 Two-dimensional array of numbers
+     * @param {Array} mat2 Two-dimensional array of numbers
+     * @returns {Array} Two-dimensional Array of numbers containing result
+     */
+    matMatAdd: function (mat1, mat2) {
+        var i, j,
+            m = mat1.length,
+            n = m > 0 ? mat1[0].length : 0,
+            res = this.matrix(m, n);
+
+        for (i = 0; i < m; i++) {
+            for (j = 0; j < n; j++) {
+                res[i][j] = mat1[i][j] + mat2[i][j];
+            }
+        }
+        return res;
+    },
+
+    /**
+     * Transposes a matrix given as a two-dimensional array.
      * @param {Array} M The matrix to be transposed
      * @returns {Array} The transpose of M
      */
@@ -1293,9 +1336,9 @@ JXG.Math = {
     },
 
     /**
-     * Converts a two dimensional array to a one dimensional Float32Array that can be processed by WebGL.
-     * @param {Array} m A matrix in a two dimensional array.
-     * @returns {Float32Array} A one dimensional array containing the matrix in column wise notation. Provides a fall
+     * Converts a two-dimensional array to a one-dimensional Float32Array that can be processed by WebGL.
+     * @param {Array} m A matrix in a two-dimensional array.
+     * @returns {Float32Array} A one-dimensional array containing the matrix in column wise notation. Provides a fall
      * back to the default JavaScript Array if Float32Array is not available.
      */
     toGL: function (m) {
