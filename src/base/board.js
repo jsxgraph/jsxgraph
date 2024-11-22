@@ -5186,7 +5186,7 @@ JXG.extend(
          * @returns {JXG.Board} Reference to the board
          */
         scaleX: function (factor) {
-            if (factor === 0) {
+            if (factor === 0 || !Type.isNumber(factor)) {
                 return this;
             }
             this.unitX = this.unitX / Type.evaluate(this.scaleFactorX);
@@ -5209,13 +5209,39 @@ JXG.extend(
          * @returns {JXG.Board} Reference to the board
          */
         scaleY: function (factor) {
-            if (factor === 0) {
+            if (factor === 0 || !Type.isNumber(factor)) {
                 return this;
             }
             this.unitY = this.unitY / Type.evaluate(this.scaleFactorY);
             this.scaleFactorY = Type.createFunction(factor, this.board, null, true);
             this.unitY = this.unitY * Type.evaluate(this.scaleFactorY);
             this.applyZoom();
+
+            return this;
+        },
+
+        /**
+         * Sets the scaling in vertical and horizontal direction to the given factor if only one param is given.
+         * If there are two params given, vertical and horizontal scalen is set separately.
+         * <ul>
+         *     <li>If factor > 1, the board is stretched.
+         *     <li>If 0 < factor < 1, the board is compressed.
+         *     <li>If factor < 0, the board is mirrored.
+         *     <li>If factor == 0, nothing is done.
+         * </ul>
+         * @see scaleX
+         * @see scaleY
+         * @param {Number} factorX if only one param is given, this is used for x and y direction.
+         * @param {Number} [factorY]
+         * @returns {JXG.Board} Reference to the board
+         */
+        scale: function (factorX, factorY) {
+            if (!Type.isNumber(factorY)) {
+                factorY = factorX;
+            }
+
+            this.scaleX(factorX);
+            this.scaleY(factorY);
 
             return this;
         },
