@@ -561,7 +561,7 @@ JXG.extend(
          *
          * @param {Array} p An array containing {@link JXG.Point}, {@link JXG.Coords}, and/or arrays.
          *
-         * @returns {Array}
+         * @returns {Array} Array containing coords arrays.
          */
         sortVertices: function (p) {
             var ll,
@@ -624,30 +624,32 @@ JXG.extend(
          *
          * Bubble sort.
          *
-         * The given parameter is manipulated
+         * The given parameter is manipulated.
          *
-         * @param {[JXG.Coords]} coordsArr
-         * @returns {[JXG.Coords]}
+         * @param {Array} p An array containing {@link JXG.Point}, {@link JXG.Coords}, and/or arrays.
+         *
+         * @returns {Array} Array containing coords arrays.
          */
-        sortXY: function (coordsArr) {
-            let tmp, i, j;
+        sortXY: function (p) {
+            var ps = Expect.each(p, Expect.coordsArray),
+                tmp, i, j;
 
-            for (i = 0; i < coordsArr.length; i++) {
-                for (j = i + 1; j < coordsArr.length; j++) {
+            for (i = 0; i < ps.length; i++) {
+                for (j = i + 1; j < ps.length; j++) {
 
                     if (
-                        coordsArr[j].usrCoords[1] < coordsArr[i].usrCoords[1] ||
-                        (coordsArr[j].usrCoords[1] === coordsArr[i].usrCoords[1] && coordsArr[j].usrCoords[2] < coordsArr[i].usrCoords[2])
+                        ps[j][1] < ps[i][1] ||
+                        (ps[j][1] === ps[i][1] && ps[j][2] < ps[i][2])
                     ) {
-                        tmp = coordsArr[j];
-                        coordsArr[j] = coordsArr[i];
-                        coordsArr[i] = tmp;
+                        tmp = ps[j];
+                        ps[j] = ps[i];
+                        ps[i] = tmp;
                     }
 
                 }
             }
 
-            return coordsArr;
+            return ps;
         },
 
         /**
@@ -704,11 +706,12 @@ JXG.extend(
         },
 
         /**
-         * Calculate the complex hull of a point cloud.
+         * Computes and returns the coords, which define the convex hull of a given coords array.
+         * Reference: https://en.wikipedia.org/wiki/Graham_scan
          *
          * @param {Array} points An array containing {@link JXG.Point}, {@link JXG.Coords}, and/or arrays.
          *
-         * @returns {Array}
+         * @returns {Array} Array containing coords arrays.
          */
         GrahamScan: function (points) {
             var i,
@@ -740,32 +743,83 @@ JXG.extend(
          * Computes and returns the coords, which define the convex hull of a given coords array.
          * Reference: http://en.wikibooks.org/wiki/Algorithm_Implementation/Geometry/Convex_hull/Monotone_chain
          *
-         * @param {Array} points An array containing {@link JXG.Coords}.
+         * @param {Array} points An array containing {@link JXG.Point}, {@link JXG.Coords}, and/or arrays.
          *
-         * @returns {Array}
+         * @returns {Array} Array containing coords arrays.
          */
-        convexHull: function (points) {
-            let hull = [],
+        MonotoneChain: function (points) {
+            var ps = Expect.each(points, Expect.coordsArray),
+                hull = [],
                 i, k = 0, j,
                 cross = function (O, A, B) {
-                    return ((A.usrCoords[1] - O.usrCoords[1]) * (B.usrCoords[2] - O.usrCoords[2]) -
-                        (A.usrCoords[2] - O.usrCoords[2]) * (B.usrCoords[1] - O.usrCoords[1]));
+                    return ((A[1] - O[1]) * (B[2] - O[2]) -
+                        (A[2] - O[2]) * (B[1] - O[1]));
                 };
 
-            this.sortXY(points);
+            this.sortXY(ps);
 
-            for (i = 0; i < points.length; i++) {
-                while (k >= 2 && cross(hull[k - 2], hull[k - 1], points[i]) <= 0) k--;
-                hull[k++] = points[i];
+            for (i = 0; i < ps.length; i++) {
+                while (k >= 2 && cross(hull[k - 2], hull[k - 1], ps[i]) <= 0) k--;
+                hull[k++] = ps[i];
             }
-            for (i = points.length - 2, j = k + 1; i >= 0; i--) {
-                while (k >= j && cross(hull[k - 2], hull[k - 1], points[i]) <= 0) k--;
-                hull[k++] = points[i];
+            for (i = ps.length - 2, j = k + 1; i >= 0; i--) {
+                while (k >= j && cross(hull[k - 2], hull[k - 1], ps[i]) <= 0) k--;
+                hull[k++] = ps[i];
             }
 
             hull.length = k;
 
             return hull;
+        },
+
+        /**
+         * Calculate the complex hull of a point cloud.
+         *
+         * @param {Array} points An array containing {@link JXG.Point}, {@link JXG.Coords}, and/or arrays.
+         * @param {String} [method] 'GrahamScan' or 'MonotoneChain'.
+         *
+         * @returns {Array} Array containing {@link JXG.Point}, {@link JXG.Coords}, and/or arrays.
+         */
+        convexHull: function (points, method) {
+            var ps = Expect.each(points, Expect.coordsArray),
+                res, i, j;
+
+            switch (method) {
+                case 'MonotoneChain':
+                    ps = this.MonotoneChain(ps);
+                    break;
+
+                case 'GrahamScan':
+                default:
+                    ps = this.GrahamScan(ps);
+            }
+
+            if (points[0].elementClass === Const.OBJECT_CLASS_POINT) {
+                // result has to be points
+                res = [];
+                for (i = 0; i < ps.length; i++) {
+                    for (j = 0; j < points.length; j++) {
+                        if (
+                            ps[i][0] === points[j].coords.usrCoords[0] &&
+                            ps[i][1] === points[j].coords.usrCoords[1] &&
+                            ps[i][2] === points[j].coords.usrCoords[2]
+                        ) {
+                            res.push(points[j]);
+                            break;
+                        }
+                    }
+                }
+            } else if (points[0].usrCoords && points[0].scrCoords && points[0].usr2screen) {
+                // result has to be coords
+                res = Expect.each(ps, function (c) {
+                    return new Coords(Const.COORDS_BY_USER, c, points[0].board);
+                });
+            } else {
+                // result has to be an array
+                res = ps;
+            }
+
+            return res;
         },
 
         /**
