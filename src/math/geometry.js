@@ -737,6 +737,38 @@ JXG.extend(
         },
 
         /**
+         * Computes and returns the coords, which define the convex hull of a given coords array.
+         * Reference: http://en.wikibooks.org/wiki/Algorithm_Implementation/Geometry/Convex_hull/Monotone_chain
+         *
+         * @param {Array} points An array containing {@link JXG.Coords}.
+         *
+         * @returns {Array}
+         */
+        convexHull: function (points) {
+            let hull = [],
+                i, k = 0, j,
+                cross = function (O, A, B) {
+                    return ((A.usrCoords[1] - O.usrCoords[1]) * (B.usrCoords[2] - O.usrCoords[2]) -
+                        (A.usrCoords[2] - O.usrCoords[2]) * (B.usrCoords[1] - O.usrCoords[1]));
+                };
+
+            this.sortXY(points);
+
+            for (i = 0; i < points.length; i++) {
+                while (k >= 2 && cross(hull[k - 2], hull[k - 1], points[i]) <= 0) k--;
+                hull[k++] = points[i];
+            }
+            for (i = points.length - 2, j = k + 1; i >= 0; i--) {
+                while (k >= j && cross(hull[k - 2], hull[k - 1], points[i]) <= 0) k--;
+                hull[k++] = points[i];
+            }
+
+            hull.length = k;
+
+            return hull;
+        },
+
+        /**
          * A line can be a segment, a straight, or a ray. So it is not always delimited by point1 and point2
          * calcStraight determines the visual start point and end point of the line. A segment is only drawn
          * from start to end point, a straight line is drawn until it meets the boards boundaries.
@@ -3763,37 +3795,6 @@ JXG.extend(
                 };
 
             return [makeFct("X", "cos"), makeFct("Y", "sin"), 0, pi2];
-        },
-
-        /**
-         * Computes and returns the coords, which define the convex hull of a given coords array.
-         * Reference: http://en.wikibooks.org/wiki/Algorithm_Implementation/Geometry/Convex_hull/Monotone_chain
-         *
-         * @param {[JXG.Coords]} coordsArr Array of {@link JXG.Coords}.
-         * @returns {Array} convex hull as an array of {@link JXG.Coords}
-         */
-        convexHull: function (coordsArr) {
-            let hull = [],
-                i, k = 0, j,
-                cross = function (O, A, B) {
-                    return ((A.usrCoords[1] - O.usrCoords[1]) * (B.usrCoords[2] - O.usrCoords[2]) -
-                        (A.usrCoords[2] - O.usrCoords[2]) * (B.usrCoords[1] - O.usrCoords[1]));
-                };
-
-            this.sortXY(coordsArr);
-
-            for (i = 0; i < coordsArr.length; i++) {
-                while (k >= 2 && cross(hull[k - 2], hull[k - 1], coordsArr[i]) <= 0) k--;
-                hull[k++] = coordsArr[i];
-            }
-            for (i = coordsArr.length - 2, j = k + 1; i >= 0; i--) {
-                while (k >= j && cross(hull[k - 2], hull[k - 1], coordsArr[i]) <= 0) k--;
-                hull[k++] = coordsArr[i];
-            }
-
-            hull.length = k;
-
-            return hull;
         },
 
         meet3Planes: function (n1, d1, n2, d2, n3, d3) {
