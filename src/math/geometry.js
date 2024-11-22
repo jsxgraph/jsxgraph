@@ -665,7 +665,8 @@ JXG.extend(
          *
          * @param {Array} points An array containing {@link JXG.Point}, {@link JXG.Coords}, and/or arrays.
          *
-         * @returns {Array}
+         * @returns {Array} List of objects <pre>{i: index, c: coords}</pre> containing the convex hull points
+         *  in form of the index in the original input array and a coords array.
          */
         GrahamScan: function (points) {
             var i, M, o,
