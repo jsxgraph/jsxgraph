@@ -122,7 +122,7 @@ New features
 - new element `sphere3d`
 - new element `intersectionline3d`
 - new element `circle3d`
-- new element `glider3d`: lines, curves
+- new gliders: point3d can glide on lines and curves
 - new element `intersectioncircle3d`
 - new element `polygon3d`
 - new version of `otherintersection`
