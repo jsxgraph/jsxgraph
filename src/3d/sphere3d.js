@@ -231,18 +231,30 @@ JXG.extend(
                     p = view.worldToFocal(that.center.coords, false),
                     distOffAxis = Mat.hypot(p[0], p[1]),
                     cam = view.boxToCam,
-                    inward = [
-                        -(p[0] * cam[1][1] + p[1] * cam[2][1]) / distOffAxis,
-                        -(p[0] * cam[1][2] + p[1] * cam[2][2]) / distOffAxis,
-                        -(p[0] * cam[1][3] + p[1] * cam[2][3]) / distOffAxis
-                    ],
                     r = that.Radius(),
                     angleOffAxis = Math.atan(-distOffAxis / p[2]),
                     steepness = Math.acos(r / Mat.norm(p)),
                     lean = angleOffAxis + steepness,
                     cos_lean = Math.cos(lean),
-                    sin_lean = Math.sin(lean);
+                    sin_lean = Math.sin(lean),
+                    inward;
 
+                if (distOffAxis > 1e-8) {
+                    // if the center of the sphere isn't too close to the camera
+                    // axis, find the direction in plane of the screen that
+                    // points from the center of the sphere toward the camera
+                    // axis
+                    inward = [
+                        -(p[0] * cam[1][1] + p[1] * cam[2][1]) / distOffAxis,
+                        -(p[0] * cam[1][2] + p[1] * cam[2][2]) / distOffAxis,
+                        -(p[0] * cam[1][3] + p[1] * cam[2][3]) / distOffAxis
+                    ];
+                } else {
+                    // if the center of the sphere is very close to the camera
+                    // axis, choose an arbitrary unit vector in the plane of the
+                    // screen
+                    inward = [cam[1][1], cam[1][2], cam[1][3]];
+                }
                 return view.project3DTo2D([
                     that.center.X() + r * (sin_lean * inward[0] + cos_lean * cam[3][1]),
                     that.center.Y() + r * (sin_lean * inward[1] + cos_lean * cam[3][2]),
