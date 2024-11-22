@@ -561,7 +561,7 @@ JXG.extend(
          *
          * @param {Array} p An array containing {@link JXG.Point}, {@link JXG.Coords}, and/or arrays.
          *
-         * @returns {Array}
+         * @returns {Array} Array containing coords arrays.
          */
         sortVertices: function (p) {
             var ll,
@@ -613,6 +613,40 @@ JXG.extend(
             // If the last point has been taken out of the array, we put it in again.
             if (lastPoint !== null) {
                 ps.push(lastPoint);
+            }
+
+            return ps;
+        },
+
+        /**
+         * Sorts coords such that coords with lower x-values come first.
+         * If the x values are equal, sort the coords such that those with smaller y values come first.
+         *
+         * Bubble sort.
+         *
+         * The given parameter is manipulated.
+         *
+         * @param {Array} p An array containing {@link JXG.Point}, {@link JXG.Coords}, and/or arrays.
+         *
+         * @returns {Array} Array containing coords arrays.
+         */
+        sortXY: function (p) {
+            var ps = Expect.each(p, Expect.coordsArray),
+                tmp, i, j;
+
+            for (i = 0; i < ps.length; i++) {
+                for (j = i + 1; j < ps.length; j++) {
+
+                    if (
+                        ps[j][1] < ps[i][1] ||
+                        (ps[j][1] === ps[i][1] && ps[j][2] < ps[i][2])
+                    ) {
+                        tmp = ps[j];
+                        ps[j] = ps[i];
+                        ps[i] = tmp;
+                    }
+
+                }
             }
 
             return ps;
@@ -672,11 +706,12 @@ JXG.extend(
         },
 
         /**
-         * Calculate the complex hull of a point cloud.
+         * Computes and returns the coords, which define the convex hull of a given coords array.
+         * Reference: https://en.wikipedia.org/wiki/Graham_scan
          *
          * @param {Array} points An array containing {@link JXG.Point}, {@link JXG.Coords}, and/or arrays.
          *
-         * @returns {Array}
+         * @returns {Array} Array containing coords arrays.
          */
         GrahamScan: function (points) {
             var i,
@@ -702,6 +737,89 @@ JXG.extend(
             }
 
             return ps.slice(0, M);
+        },
+
+        /**
+         * Computes and returns the coords, which define the convex hull of a given coords array.
+         * Reference: http://en.wikibooks.org/wiki/Algorithm_Implementation/Geometry/Convex_hull/Monotone_chain
+         *
+         * @param {Array} points An array containing {@link JXG.Point}, {@link JXG.Coords}, and/or arrays.
+         *
+         * @returns {Array} Array containing coords arrays.
+         */
+        MonotoneChain: function (points) {
+            var ps = Expect.each(points, Expect.coordsArray),
+                hull = [],
+                i, k = 0, j,
+                cross = function (O, A, B) {
+                    return ((A[1] - O[1]) * (B[2] - O[2]) -
+                        (A[2] - O[2]) * (B[1] - O[1]));
+                };
+
+            this.sortXY(ps);
+
+            for (i = 0; i < ps.length; i++) {
+                while (k >= 2 && cross(hull[k - 2], hull[k - 1], ps[i]) <= 0) k--;
+                hull[k++] = ps[i];
+            }
+            for (i = ps.length - 2, j = k + 1; i >= 0; i--) {
+                while (k >= j && cross(hull[k - 2], hull[k - 1], ps[i]) <= 0) k--;
+                hull[k++] = ps[i];
+            }
+
+            hull.length = k;
+
+            return hull;
+        },
+
+        /**
+         * Calculate the complex hull of a point cloud.
+         *
+         * @param {Array} points An array containing {@link JXG.Point}, {@link JXG.Coords}, and/or arrays.
+         * @param {String} [method] 'GrahamScan' or 'MonotoneChain'.
+         *
+         * @returns {Array} Array containing {@link JXG.Point}, {@link JXG.Coords}, and/or arrays.
+         */
+        convexHull: function (points, method) {
+            var ps = Expect.each(points, Expect.coordsArray),
+                res, i, j;
+
+            switch (method) {
+                case 'MonotoneChain':
+                    ps = this.MonotoneChain(ps);
+                    break;
+
+                case 'GrahamScan':
+                default:
+                    ps = this.GrahamScan(ps);
+            }
+
+            if (points[0].elementClass === Const.OBJECT_CLASS_POINT) {
+                // result has to be points
+                res = [];
+                for (i = 0; i < ps.length; i++) {
+                    for (j = 0; j < points.length; j++) {
+                        if (
+                            ps[i][0] === points[j].coords.usrCoords[0] &&
+                            ps[i][1] === points[j].coords.usrCoords[1] &&
+                            ps[i][2] === points[j].coords.usrCoords[2]
+                        ) {
+                            res.push(points[j]);
+                            break;
+                        }
+                    }
+                }
+            } else if (points[0].usrCoords && points[0].scrCoords && points[0].usr2screen) {
+                // result has to be coords
+                res = Expect.each(ps, function (c) {
+                    return new Coords(Const.COORDS_BY_USER, c, points[0].board);
+                });
+            } else {
+                // result has to be an array
+                res = ps;
+            }
+
+            return res;
         },
 
         /**
