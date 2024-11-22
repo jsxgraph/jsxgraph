@@ -667,6 +667,57 @@ JXG.extend(
          *
          * @returns {Array} List of objects <pre>{i: index, c: coords}</pre> containing the convex hull points
          *  in form of the index in the original input array and a coords array.
+         *
+         * @example
+         *     // Static example
+         *
+         *     var i, hull,
+         *       p = [],
+         *       q = [];
+         *
+         *     p.push( board.create('point', [4, 0], {withLabel:false }) );
+         *     p.push( board.create('point', [0, 4], {withLabel:false }) );
+         *     p.push( board.create('point', [0, 0], {withLabel:false }) );
+         *     p.push([-1, 0]);
+         *     p.push([-3, -3]);
+         *
+         *     hull = JXG.Math.Geometry.GrahamScan(p);
+         *     for (i = 0; i < hull.length; i++) {
+         *       console.log(hull[i]);
+         *       q.push(hull[i].c);
+         *     }
+         *     board.create('polygon', q);
+         *     // Output:
+         *     // { i: 4, c: [1, -3, 3]}
+         *     // { i: 0, c: [1, 4, 0]}
+         *     // { i: 1, c: [1, 0, 4]}
+         *
+         * </pre><div id="JXGb310b874-595e-4020-b0c2-566482797836" class="jxgbox" style="width: 300px; height: 300px;"></div>
+         * <script type="text/javascript">
+         *     (function() {
+         *         var board = JXG.JSXGraph.initBoard('JXGb310b874-595e-4020-b0c2-566482797836',
+         *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
+         *         var i, hull,
+         *           p = [],
+         *           q = [];
+         *
+         *         p.push( board.create('point', [4, 0], {withLabel:false }) );
+         *         p.push( board.create('point', [0, 4], {withLabel:false }) );
+         *         p.push( board.create('point', [0, 0], {withLabel:false }) );
+         *         p.push([-1, 0]);
+         *         p.push([-3, -3]);
+         *
+         *         hull = JXG.Math.Geometry.GrahamScan(p);
+         *         for (i = 0; i < hull.length; i++) {
+         *           console.log(hull[i]);
+         *           q.push(hull[i].c);
+         *         }
+         *         board.create('polygon', q);
+         *
+         *     })();
+         *
+         * </script><pre>
+         *
          */
         GrahamScan: function (points) {
             var i, M, o,
@@ -765,6 +816,102 @@ JXG.extend(
          * will contain the points that form the convex hull.
          * @returns {Array} List containing the convex hull. Format depends on returnCoords.
          * @see JXG.Math.Geometry.GrahamScan
+         *
+         * @example
+         *     // Static example
+         *     var i, hull,
+         *         p = [];
+         *
+         *     p.push( board.create('point', [4, 0], {withLabel:false }) );
+         *     p.push( board.create('point', [0, 4], {withLabel:false }) );
+         *     p.push( board.create('point', [0, 0], {withLabel:false }) );
+         *     p.push( board.create('point', [1, 1], {withLabel:false }) );
+         *     hull = JXG.Math.Geometry.convexHull(p);
+         *     for (i = 0; i < hull.length; i++) {
+         *       hull[i].setAttribute({color: 'blue'});
+         *     }
+         *
+         * </pre><div id="JXGdfc76123-81b8-4250-96f9-419253bd95dd" class="jxgbox" style="width: 300px; height: 300px;"></div>
+         * <script type="text/javascript">
+         *     (function() {
+         *         var board = JXG.JSXGraph.initBoard('JXGdfc76123-81b8-4250-96f9-419253bd95dd',
+         *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
+         *         var i, hull,
+         *             p = [];
+         *
+         *         p.push( board.create('point', [4, 0], {withLabel:false }) );
+         *         p.push( board.create('point', [0, 4], {withLabel:false }) );
+         *         p.push( board.create('point', [0, 0], {withLabel:false }) );
+         *         p.push( board.create('point', [1, 1], {withLabel:false }) );
+         *         hull = JXG.Math.Geometry.convexHull(p);
+         *         for (i = 0; i < hull.length; i++) {
+         *           hull[i].setAttribute({color: 'blue'});
+         *         }
+         *
+         *     })();
+         *
+         * </script><pre>
+         *
+         * @example
+         *     // Dynamic version using returnCoords==true: drag the points
+         *     var p = [];
+         *
+         *     p.push( board.create('point', [4, 0], {withLabel:false }) );
+         *     p.push( board.create('point', [0, 4], {withLabel:false }) );
+         *     p.push( board.create('point', [0, 0], {withLabel:false }) );
+         *     p.push( board.create('point', [1, 1], {withLabel:false }) );
+         *
+         *     var c = board.create('curve', [[], []], {fillColor: 'yellow', fillOpacity: 0.3});
+         *     c.updateDataArray = function() {
+         *       var i,
+         *         hull = JXG.Math.Geometry.convexHull(p, true);
+         *
+         *       this.dataX = [];
+         *       this.dataY = [];
+         *
+         *       for (i = 0; i < hull.length; i ++) {
+         *         this.dataX.push(hull[i][1]);
+         *         this.dataY.push(hull[i][2]);
+         *       }
+         *       this.dataX.push(hull[0][1]);
+         *       this.dataY.push(hull[0][2]);
+         *     };
+         *     board.update();
+         *
+         * </pre><div id="JXG61e51909-da0b-432f-9aa7-9fb0c8bb01c9" class="jxgbox" style="width: 300px; height: 300px;"></div>
+         * <script type="text/javascript">
+         *     (function() {
+         *         var board = JXG.JSXGraph.initBoard('JXG61e51909-da0b-432f-9aa7-9fb0c8bb01c9',
+         *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
+         *         var p = [];
+         *
+         *         p.push( board.create('point', [4, 0], {withLabel:false }) );
+         *         p.push( board.create('point', [0, 4], {withLabel:false }) );
+         *         p.push( board.create('point', [0, 0], {withLabel:false }) );
+         *         p.push( board.create('point', [1, 1], {withLabel:false }) );
+         *
+         *         var c = board.create('curve', [[], []], {fillColor: 'yellow', fillOpacity: 0.3});
+         *         c.updateDataArray = function() {
+         *           var i,
+         *             hull = JXG.Math.Geometry.convexHull(p, true);
+         *
+         *           this.dataX = [];
+         *           this.dataY = [];
+         *
+         *           for (i = 0; i < hull.length; i ++) {
+         *             this.dataX.push(hull[i][1]);
+         *             this.dataY.push(hull[i][2]);
+         *           }
+         *           this.dataX.push(hull[0][1]);
+         *           this.dataY.push(hull[0][2]);
+         *         };
+         *         board.update();
+         *
+         *
+         *     })();
+         *
+         * </script><pre>
+         *
          */
         convexHull: function(points, returnCoords) {
             var i, hull,
