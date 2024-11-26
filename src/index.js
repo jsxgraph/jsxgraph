@@ -84,6 +84,7 @@ import './3d/linspace3d.js';
 import './3d/text3d.js';
 import './3d/ticks3d.js';
 import './3d/polygon3d.js';
+import './3d/polytope3d.js';
 import './3d/sphere3d.js';
 import './3d/surface3d.js';
 import './themes/mono_thin.js';
