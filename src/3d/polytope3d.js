@@ -125,7 +125,6 @@ JXG.createPolytope3D = function (board, parents, attributes) {
                 s_z = 0,
                 le = this.dataX.length - 1;
 
-            console.log(le)
             if (le === 0) {
                 return [NaN, NaN, NaN];
             }
