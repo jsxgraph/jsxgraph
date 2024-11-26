@@ -36,7 +36,7 @@ import Mat from "../math/math.js";
 
 /**
  * Constructor for 3D curves.
- * @class Creates a new 3D curve object. Do not use this constructor to create a 3D curve. Use {@link JXG.View3D#create} with type {@link Curve3D} instead.
+ * @class Creates a new 3D curve object. Do not use this constructor to create a 3D curve. Use {@link JXG.View3D#create} with type {@link Face3D} instead.
  *
  * @augments JXG.GeometryElement3D
  * @augments JXG.GeometryElement
@@ -49,84 +49,86 @@ import Mat from "../math/math.js";
  * @param {Object} attributes
  * @see JXG.Board#generateName
  */
-JXG.Facet3D = function (view, F, X, Y, Z, range, attributes) {
-    this.constructor(view.board, attributes, Const.OBJECT_TYPE_CURVE3D, Const.OBJECT_CLASS_3D);
-    this.constructor3D(view, "curve3d");
+JXG.Face3D = function (view, polytope, faceNumber, attributes) {
+    this.constructor(view.board, attributes, Const.OBJECT_TYPE_FACE3D, Const.OBJECT_CLASS_3D);
+    this.constructor3D(view, "face3d");
 
     this.board.finalizeAdding(this);
 
+    /**
+     * @function
+     * @ignore
+     */
+    this.polytope = polytope;
 
     /**
      * Function which maps u to x; i.e. it defines the x-coordinate of the curve
      * @function
      * @returns Number
      */
-    this.X = X;
+    this.faceNumber = faceNumber;
 
-    /**
-     * Function which maps u to y; i.e. it defines the y-coordinate of the curve
-     * @function
-     * @returns Number
-     */
-    this.Y = Y;
-
-    /**
-     * Function which maps u to z; i.e. it defines the x-coordinate of the curve
-     * @function
-     * @returns Number
-     */
-    this.Z = Z;
-
-    this.dataX = null;
-    this.dataY = null;
-    this.dataZ = null;
-
-    if (this.F !== null) {
-        this.X = function (u) {
-            return this.F(u)[0];
-        };
-        this.Y = function (u) {
-            return this.F(u)[1];
-        };
-        this.Z = function (u) {
-            return this.F(u)[2];
-        };
-    }
-
-    this.range = range;
+    this.dataX = [];
+    this.dataY = [];
+    this.dataZ = [];
 
     this.methodMap = Type.deepCopy(this.methodMap, {
         // TODO
     });
 };
-JXG.Facet3D.prototype = new JXG.Curve3D();
+JXG.Face3D.prototype = new JXG.GeometryElement();
+Type.copyPrototypeMethods(JXG.Face3D, JXG.GeometryElement3D, "constructor3D");
 
 JXG.extend(
-    JXG.Curve3D.prototype,
-    /** @lends JXG.Curve3D.prototype */ {
+    JXG.Face3D.prototype,
+    /** @lends JXG.Face3D.prototype */ {
+        updateDataArray2D: function () {
+        },
+
+        updateDataArray: function() { /* stub */ },
+
+        update: function () {
+            if (this.needsUpdate) {
+                this.updateDataArray();
+            }
+            return this;
+        },
+
+        updateRenderer: function () {
+            this.needsUpdate = false;
+            return this;
+        }
+
+    }
 );
 
-JXG.createFacet3D = function (board, parents, attributes) {
+/**
+ * @class This element creates a 3D parametric curve.
+ * @pseudo
+ * @description A 3D parametric curve is defined by a function
+ *    <i>F: R<sup>1</sup> &rarr; R<sup>3</sup></i>.
+ *
+ * @name Face3D
+ * @augments Curve
+ * @constructor
+ * @type Object
+ * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
+ * @param {Function_Function_Function_Array,Function} F<sub>X</sub>,F<sub>Y</sub>,F<sub>Z</sub>,range
+ * F<sub>X</sub>(u), F<sub>Y</sub>(u), F<sub>Z</sub>(u) are functions returning a number, range is the array containing
+ * lower and upper bound for the range of the parameter u. range may also be a function returning an array of length two.
+ * @param {Function_Array,Function} F,range Alternatively: F<sub>[X,Y,Z]</sub>(u) a function returning an array [x,y,z] of
+ * numbers, range as above.
+ * @param {Array_Array_Array} X,Y,Z Three arrays containing the coordinate points which define the curve.
+  */
+JXG.createFace3D = function (board, parents, attributes) {
     var view = parents[0],
-        F, X, Y, Z, range, attr, el;
+        polytope, faceNumber,
+        attr, el;
 
-    if (parents.length === 3) {
-        F = parents[1];
-        range = parents[2];
-        X = null;
-        Y = null;
-        Z = null;
-    } else {
-        X = parents[1];
-        Y = parents[2];
-        Z = parents[3];
-        range = parents[4];
-        F = null;
-    }
     // TODO Throw error
 
     attr = Type.copyAttributes(attributes, board.options, "curve3d");
-    el = new JXG.Curve3D(view, F, X, Y, Z, range, attr);
+    el = new JXG.Face3D(view, polytope, faceNumber, attr);
 
     attr = el.setAttr2D(attr);
     el.element2D = view.create("curve", [[], []], attr);
@@ -153,5 +155,5 @@ JXG.createFacet3D = function (board, parents, attributes) {
     return el;
 };
 
-JXG.registerElement("facet3d", JXG.createCurve3D);
+JXG.registerElement("face3d", JXG.createFace3D);
 
