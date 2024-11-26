@@ -409,13 +409,8 @@ JXG.Math = {
      * @returns {Array} Inverse matrix of Ain
      */
     inverse: function (Ain) {
-        var i,
-            j,
-            k,
-            s,
-            ma,
-            r,
-            swp,
+        var i, j, k, r, s,
+            ma, swp,
             n = Ain.length,
             A = [],
             p = [],
@@ -430,7 +425,7 @@ JXG.Math = {
         }
 
         for (j = 0; j < n; j++) {
-            // pivot search:
+            // Pivot search
             ma = Math.abs(A[j][j]);
             r = j;
 
@@ -442,7 +437,8 @@ JXG.Math = {
             }
 
             // Singular matrix
-            if (ma <= this.eps) {
+            if (ma <= this.eps * this.eps) {
+                console.log("singular matrix", j, ma);
                 return [];
             }
 
