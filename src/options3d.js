@@ -507,6 +507,7 @@ JXG.extend(Options, {
          */
 
         fillColorArray: ['white', 'black']
+        // fillOpacityArray: [1]
 
         /**#@-*/
     },

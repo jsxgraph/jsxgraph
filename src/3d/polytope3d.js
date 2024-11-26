@@ -60,36 +60,37 @@ import Mat from "../math/math.js";
  */
 JXG.createPolytope3D = function (board, parents, attributes) {
     var view = parents[0],
-        i, j, le,
+        i, le,
         face,
-        c,
-        el,
-        attr,
+        c, el,
+        attr, attr_polytope,
         faceList = [],
         surface = {
             points: parents[1],
             coords: [],
-            facets: parents[2]
+            faces: parents[2]
         };
 
-    attr = JXG.copyAttributes(attributes, board.options, "polytope3d");
-    le = surface.facets.length;
+    attr_polytope = JXG.copyAttributes(attributes, board.options, "polytope3d");
+    le = surface.faces.length;
 
     for (i = 0; i < le; i++) {
-        face = view.create('curve3d', [[], [], []], {
-            fillColor: attr.fillcolorarray[i % attr.fillcolorarray.length],
-            fillOpacity: 0.6
-        });
-        face.elType = 'facet3d';
+        attr = JXG.copyAttributes(attributes, board.options, "curve3d");
+        attr.fillcolor = attr_polytope.fillcolorarray[i % attr_polytope.fillcolorarray.length];
+        // attr.fillopacity = attr_polytope.fillopacityarray[i % attr_polytope.fillopacityarray.length];
+
+        face = view.create('curve3d', [[], [], []], attr);
+        face.elType = 'face3d';
+
         face.updateDataArray = (function (ii) {
             return function () {
                 var j, le,
                     x, y, z,
-                    facet = surface.facets[ii];
+                    face = surface.faces[ii];
 
                 if (ii === 0) {
                     // Evaluate each point only once.
-                    // For this, facet[0] has to be accessed first.
+                    // For this, face[0] has to be accessed first.
                     // During updates this should be the case automatically. 
                     le = surface.points.length;
                     for (j = 0; j < le; j++) {
@@ -100,8 +101,8 @@ JXG.createPolytope3D = function (board, parents, attributes) {
                 x = [];
                 y = [];
                 z = [];
-                for (j = 0; j < facet.length; j++) {
-                    c = surface.coords[facet[j]];
+                for (j = 0; j < face.length; j++) {
+                    c = surface.coords[face[j]];
                     x.push(c[0]);
                     y.push(c[1]);
                     z.push(c[2]);
@@ -116,10 +117,32 @@ JXG.createPolytope3D = function (board, parents, attributes) {
                 this.dataZ = z;
             };
         })(i);
+
+        face.getCentroid = function() {
+            var i, 
+                s_x = 0, 
+                s_y = 0, 
+                s_z = 0,
+                le = this.dataX.length - 1;
+
+            console.log(le)
+            if (le === 0) {
+                return [NaN, NaN, NaN];
+            }
+
+            for (i = 0; i < le; i++) {
+                s_x += this.dataX[i];
+                s_y += this.dataY[i];
+                s_z += this.dataZ[i];
+            }
+
+            return [s_x / le, s_y / le, s_z / le];
+        };
+
         faceList.push(face);
     }
     el = new JXG.Composition(faceList);
-    el.numberFacets = le;
+    el.numberFaces = le;
     el.surface = surface;
 
     return el;
