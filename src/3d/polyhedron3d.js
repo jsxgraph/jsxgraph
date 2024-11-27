@@ -57,28 +57,28 @@ import Type from "../utils/type.js";
  * The step width of the ticks is determined by the attribute "ticksDistance".
  *
  */
-JXG.createPolytope3D = function (board, parents, attributes) {
+JXG.createpolyhedron3D = function (board, parents, attributes) {
     var view = parents[0],
         i, le,
         face,
         el,
-        attr, attr_polytope,
+        attr, attr_polyhedron,
         faceList = [],
-        polytope = {
+        polyhedron = {
             view: view,
-            points: {},
+            vertices: {},
             coords: {},
             // edges: [],
             faces: parents[2],
             updateCoords: function() {
                 var i, p;
-                for (i in this.points) {
-                    if (this.points.hasOwnProperty(i)) {
-                        p = this.view.select(this.points[i]);
+                for (i in this.vertices) {
+                    if (this.vertices.hasOwnProperty(i)) {
+                        p = this.view.select(this.vertices[i]);
                         if (Type.isPoint3D(p)) {
                             this.coords[i] = p.coords.slice(1);
                         } else {
-                            this.coords[i] = JXG.evaluate(this.points[i]);
+                            this.coords[i] = JXG.evaluate(this.vertices[i]);
                         }
                     }
                 }
@@ -86,43 +86,43 @@ JXG.createPolytope3D = function (board, parents, attributes) {
         };
 
 
-    // Copy points into a dict
+    // Copy vertices into a dict
     if (Type.isArray(parents[1])) {
         le = parents[1].length;
         for (i = 0; i < le; i++) {
-            polytope.points[i] = parents[1][i];
+            polyhedron.vertices[i] = parents[1][i];
         }
     } else if (Type.isObject(parents[1])) {
         for (i in parents[1]) {
             if (parents[1].hasOwnProperty(i)) {
-                polytope.points[i] = parents[1][i];
+                polyhedron.vertices[i] = parents[1][i];
             }
         }
     }
 
-    attr_polytope = JXG.copyAttributes(attributes, board.options, "polytope3d");
+    attr_polyhedron = JXG.copyAttributes(attributes, board.options, "polyhedron3d");
 
     // Create edge elements
     // if (parents[3]) {
-    //     polytope.faces = parents[3].slice();
+    //     polyhedron.faces = parents[3].slice();
     // }
 
     // Create face3d elements
-    le = polytope.faces.length;
+    le = polyhedron.faces.length;
     for (i = 0; i < le; i++) {
         attr = JXG.copyAttributes(attributes, board.options, "curve3d");
-        attr.fillcolor = attr_polytope.fillcolorarray[i % attr_polytope.fillcolorarray.length];
+        attr.fillcolor = attr_polyhedron.fillcolorarray[i % attr_polyhedron.fillcolorarray.length];
 
-        // attr.fillopacity = attr_polytope.fillopacityarray[i % attr_polytope.fillopacityarray.length];
+        // attr.fillopacity = attr_polyhedron.fillopacityarray[i % attr_polyhedron.fillopacityarray.length];
 
-        face = view.create('face3d', [polytope, i], attr);
+        face = view.create('face3d', [polyhedron, i], attr);
         faceList.push(face);
     }
     el = new JXG.Composition(faceList);
     el.numberFaces = le;
-    el.polytope = polytope;
+    el.polyhedron = polyhedron;
 
     return el;
 };
 
-JXG.registerElement("polytope3d", JXG.createPolytope3D);
+JXG.registerElement("polyhedron3d", JXG.createpolyhedron3D);

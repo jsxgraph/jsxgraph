@@ -47,13 +47,13 @@ import Type from "../utils/type.js";
  * @param {Object} attributes
  * @see JXG.Board#generateName
  */
-JXG.Face3D = function (view, polytope, faceNumber, attributes) {
+JXG.Face3D = function (view, polyhedron, faceNumber, attributes) {
     this.constructor(view.board, attributes, Const.OBJECT_TYPE_FACE3D, Const.OBJECT_CLASS_3D);
     this.constructor3D(view, "face3d");
 
     this.board.finalizeAdding(this);
 
-    this.polytope = polytope;
+    this.polyhedron = polyhedron;
     this.faceNumber = faceNumber;
     this.dataX = [];
     this.dataY = [];
@@ -74,12 +74,12 @@ JXG.extend(
                 c3d, c2d,
                 x = [],
                 y = [],
-                p = this.polytope,
+                p = this.polyhedron,
                 i = this.faceNumber,
                 face = p.faces[i];
 
             if (i === 0 && !this.view.board._change3DView) {
-                // Evaluate each point only once.
+                // Evaluate each vertex only once.
                 // For this, face[0] has to be accessed first.
                 // During updates this should be the case automatically.
                 p.updateCoords();
@@ -158,18 +158,18 @@ JXG.extend(
  * lower and upper bound for the range of the parameter u. range may also be a function returning an array of length two.
  * @param {Function_Array,Function} F,range Alternatively: F<sub>[X,Y,Z]</sub>(u) a function returning an array [x,y,z] of
  * numbers, range as above.
- * @param {Array_Array_Array} X,Y,Z Three arrays containing the coordinate points which define the curve.
+ * @param {Array_Array_Array} X,Y,Z Three arrays containing the coordinate vertexs which define the curve.
   */
 JXG.createFace3D = function (board, parents, attributes) {
     var view = parents[0],
-        polytope = parents[1],
+        polyhedron = parents[1],
         faceNumber = parents[2],
         attr, el;
 
     // TODO Throw error
 
     attr = Type.copyAttributes(attributes, board.options, "curve3d");
-    el = new JXG.Face3D(view, polytope, faceNumber, attr);
+    el = new JXG.Face3D(view, polyhedron, faceNumber, attr);
 
     attr = el.setAttr2D(attr);
     el.element2D = view.create("curve", [[], []], attr);

@@ -501,7 +501,7 @@ JXG.extend(Options, {
         /**#@-*/
     },
 
-    polytope3d: {
+    polyhedron3d: {
         /**#@+
          * @visprop
          */
