@@ -30,9 +30,7 @@
 
 import JXG from "../jxg.js";
 import Const from "../base/constants.js";
-import Geometry from "../math/geometry.js";
 import Type from "../utils/type.js";
-import Mat from "../math/math.js";
 
 /**
  * Constructor for 3D curves.
@@ -55,19 +53,8 @@ JXG.Face3D = function (view, polytope, faceNumber, attributes) {
 
     this.board.finalizeAdding(this);
 
-    /**
-     * @function
-     * @ignore
-     */
     this.polytope = polytope;
-
-    /**
-     * Function which maps u to x; i.e. it defines the x-coordinate of the curve
-     * @function
-     * @returns Number
-     */
     this.faceNumber = faceNumber;
-
     this.dataX = [];
     this.dataY = [];
     this.dataZ = [];
@@ -83,9 +70,42 @@ JXG.extend(
     JXG.Face3D.prototype,
     /** @lends JXG.Face3D.prototype */ {
         updateDataArray2D: function () {
+            var j, le,
+                c3d, c2d,
+                x = [],
+                y = [],
+                p = this.polytope,
+                i = this.faceNumber,
+                face = p.faces[i];
+
+            if (i === 0 && !this.view.board._change3DView) {
+                // Evaluate each point only once.
+                // For this, face[0] has to be accessed first.
+                // During updates this should be the case automatically.
+                p.updateCoords();
+            }
+
+            le = face.length;
+            for (j = 0; j < le; j++) {
+                c3d = p.coords[face[j]];
+                this.dataX.push(c3d[0]);
+                this.dataY.push(c3d[1]);
+                this.dataZ.push(c3d[2]);
+
+                c2d = this.view.project3DTo2D(c3d);
+                x.push(c2d[1]);
+                y.push(c2d[2]);
+            }
+            if (le > 2) {
+                // Non-edges
+                x.push(x[0]);
+                y.push(y[0]);
+            }
+
+            return { X: x, Y: y };
         },
 
-        updateDataArray: function() { /* stub */ },
+        updateDataArray: function () { /* stub */ },
 
         update: function () {
             if (this.needsUpdate) {
@@ -97,13 +117,33 @@ JXG.extend(
         updateRenderer: function () {
             this.needsUpdate = false;
             return this;
+        },
+
+        getCentroid: function() {
+            var i,
+                s_x = 0,
+                s_y = 0,
+                s_z = 0,
+                le = this.dataX.length;
+
+            if (le === 0) {
+                return [NaN, NaN, NaN];
+            }
+
+            for (i = 0; i < le; i++) {
+                s_x += this.dataX[i];
+                s_y += this.dataY[i];
+                s_z += this.dataZ[i];
+            }
+
+            return [s_x / le, s_y / le, s_z / le];
         }
 
     }
 );
 
 /**
- * @class This element creates a 3D parametric curve.
+ * @class This element creates a 3D face.
  * @pseudo
  * @description A 3D parametric curve is defined by a function
  *    <i>F: R<sup>1</sup> &rarr; R<sup>3</sup></i>.
@@ -122,7 +162,8 @@ JXG.extend(
   */
 JXG.createFace3D = function (board, parents, attributes) {
     var view = parents[0],
-        polytope, faceNumber,
+        polytope = parents[1],
+        faceNumber = parents[2],
         attr, el;
 
     // TODO Throw error

@@ -507,7 +507,17 @@ JXG.extend(Options, {
          */
 
         fillColorArray: ['white', 'black']
-        // fillOpacityArray: [1]
+
+        // edges: {
+        //     strokeWith: 2,
+        //     strokeColor: 'red'
+        // },
+
+        // face: {
+        //     fillColorArray: ['white', 'black'],
+        //     // fillOpacityArray: [1]
+        //     strokeWidth: 0
+        // }
 
         /**#@-*/
     },
