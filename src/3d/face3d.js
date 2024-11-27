@@ -96,11 +96,11 @@ JXG.extend(
                 x.push(c2d[1]);
                 y.push(c2d[2]);
             }
-            if (le > 2) {
-                // Non-edges
+            if (le !== 2) {
+                // 2D faces and points are a closed loop
                 x.push(x[0]);
                 y.push(y[0]);
-            }
+            } 
 
             return { X: x, Y: y };
         },
