@@ -153,8 +153,7 @@ JXG.extend(
             return { X: dataX, Y: dataY };
         },
 
-        updateDataArray: function() {
-        },
+        updateDataArray: function() { /* stub */ },
 
         update: function () {
             // if (this.needsUpdate) {

@@ -404,18 +404,15 @@ JXG.Math = {
     },
 
     /**
-     * Compute the inverse of an nxn matrix with Gauss elimination.
-     * @param {Array} Ain
-     * @returns {Array} Inverse matrix of Ain
+     * Compute the inverse of an <i>(n x n)</i>-matrix by Gauss elimination.
+     *
+     * @param {Array} A matrix
+     * @returns {Array} Inverse matrix of A or empty array (i.e. []) in case A is singular.
      */
     inverse: function (Ain) {
-        var i,
-            j,
-            k,
-            s,
-            ma,
-            r,
-            swp,
+        var i, j, k, r, s,
+            eps = this.eps * this.eps,
+            ma, swp,
             n = Ain.length,
             A = [],
             p = [],
@@ -430,7 +427,7 @@ JXG.Math = {
         }
 
         for (j = 0; j < n; j++) {
-            // pivot search:
+            // Pivot search
             ma = Math.abs(A[j][j]);
             r = j;
 
@@ -442,7 +439,8 @@ JXG.Math = {
             }
 
             // Singular matrix
-            if (ma <= this.eps) {
+            if (ma <= eps) {
+                JXG.warn('JXG.Math.inverse: singular matrix');
                 return [];
             }
 

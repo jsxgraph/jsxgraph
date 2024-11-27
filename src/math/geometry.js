@@ -558,6 +558,7 @@ JXG.extend(
 
         /**
          * Sort vertices counter clockwise starting with the first point.
+         * Used in Polygon.sutherlandHodgman, Geometry.signedPolygon.
          *
          * @param {Array} p An array containing {@link JXG.Point}, {@link JXG.Coords}, and/or arrays.
          *
@@ -572,7 +573,7 @@ JXG.extend(
             // If the last point equals the first point, we take the last point out of the array.
             // It may be that the several points at the end of the array are equal to the first point.
             // The polygonal chain is been closed by JSXGraph, but this may also have been done by the user.
-            // Therefore, we use a while lopp to pop the last points.
+            // Therefore, we use a while loop to pop the last points.
             while (
                 ps[0][0] === ps[N - 1][0] &&
                 ps[0][1] === ps[N - 1][1] &&
@@ -581,16 +582,6 @@ JXG.extend(
                 lastPoint = ps.pop();
                 N--;
             }
-            // Find the point with the lowest y value
-            // for (i = 1; i < N; i++) {
-            //     if ((ps[i][2] < ps[0][2]) ||
-            //         // if the current and the lowest point have the same y value, pick the one with
-            //         // the lowest x value.
-            //         (Math.abs(ps[i][2] - ps[0][2]) < Mat.eps && ps[i][1] < ps[0][1])) {
-            //         console.log(i, 0);
-            //         ps = Type.swap(ps, i, 0);
-            //     }
-            // }
 
             ll = ps[0];
             // Sort ps in increasing order of the angle between a point and the first point ll.
@@ -599,14 +590,13 @@ JXG.extend(
             // on the same horizontal line.
             ps.sort(function (a, b) {
                 var rad1 =
-                    a[2] === ll[2] && a[1] === ll[1]
-                        ? -Infinity
-                        : Math.atan2(a[2] - ll[2], a[1] - ll[1]),
+                        (a[2] === ll[2] && a[1] === ll[1])
+                            ? -Infinity
+                            : Math.atan2(a[2] - ll[2], a[1] - ll[1]),
                     rad2 =
-                        b[2] === ll[2] && b[1] === ll[1]
+                        (b[2] === ll[2] && b[1] === ll[1])
                             ? -Infinity
                             : Math.atan2(b[2] - ll[2], b[1] - ll[1]);
-
                 return rad1 - rad2;
             });
 
@@ -663,7 +653,6 @@ JXG.extend(
             var A = Expect.coordsArray(p1),
                 B = Expect.coordsArray(p2),
                 C = Expect.coordsArray(p3);
-
             return 0.5 * ((B[1] - A[1]) * (C[2] - A[2]) - (B[2] - A[2]) * (C[1] - A[1]));
         },
 
@@ -704,36 +693,271 @@ JXG.extend(
         },
 
         /**
-         * Calculate the complex hull of a point cloud.
+         * Calculate the complex hull of a point cloud by the Graham scan algorithm.
          *
          * @param {Array} points An array containing {@link JXG.Point}, {@link JXG.Coords}, and/or arrays.
          *
-         * @returns {Array}
+         * @returns {Array} List of objects <pre>{i: index, c: coords}</pre> containing the convex hull points
+         *  in form of the index in the original input array and a coords array.
+         *
+         * @example
+         *     // Static example
+         *
+         *     var i, hull,
+         *       p = [],
+         *       q = [];
+         *
+         *     p.push( board.create('point', [4, 0], {withLabel:false }) );
+         *     p.push( board.create('point', [0, 4], {withLabel:false }) );
+         *     p.push( board.create('point', [0, 0], {withLabel:false }) );
+         *     p.push([-1, 0]);
+         *     p.push([-3, -3]);
+         *
+         *     hull = JXG.Math.Geometry.GrahamScan(p);
+         *     for (i = 0; i < hull.length; i++) {
+         *       console.log(hull[i]);
+         *       q.push(hull[i].c);
+         *     }
+         *     board.create('polygon', q);
+         *     // Output:
+         *     // { i: 4, c: [1, -3, 3]}
+         *     // { i: 0, c: [1, 4, 0]}
+         *     // { i: 1, c: [1, 0, 4]}
+         *
+         * </pre><div id="JXGb310b874-595e-4020-b0c2-566482797836" class="jxgbox" style="width: 300px; height: 300px;"></div>
+         * <script type="text/javascript">
+         *     (function() {
+         *         var board = JXG.JSXGraph.initBoard('JXGb310b874-595e-4020-b0c2-566482797836',
+         *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
+         *         var i, hull,
+         *           p = [],
+         *           q = [];
+         *
+         *         p.push( board.create('point', [4, 0], {withLabel:false }) );
+         *         p.push( board.create('point', [0, 4], {withLabel:false }) );
+         *         p.push( board.create('point', [0, 0], {withLabel:false }) );
+         *         p.push([-1, 0]);
+         *         p.push([-3, -3]);
+         *
+         *         hull = JXG.Math.Geometry.GrahamScan(p);
+         *         for (i = 0; i < hull.length; i++) {
+         *           console.log(hull[i]);
+         *           q.push(hull[i].c);
+         *         }
+         *         board.create('polygon', q);
+         *
+         *     })();
+         *
+         * </script><pre>
+         *
          */
         GrahamScan: function (points) {
-            var i,
-                M = 1,
-                ps = Expect.each(points, Expect.coordsArray),
+            var i, M, o,
+                min_y, min_x, min_idx,
+                ps = Expect.each(points, Expect.coordsArray), // New array
+                that = this,
+                ps_idx = [],
+                stack = [],
                 N = ps.length;
 
-            ps = this.sortVertices(ps);
-            N = ps.length;
-
-            for (i = 2; i < N; i++) {
-                while (this.signedTriangle(ps[M - 1], ps[M], ps[i]) <= 0) {
-                    if (M > 1) {
-                        M -= 1;
-                    } else if (i === N - 1) {
-                        break;
-                    }
-                    i += 1;
-                }
-
-                M += 1;
-                ps = Type.swap(ps, M, i);
+            // Keep track of the indices of the input points.
+            for (i = 0; i < N; i++) {
+                ps_idx.push({
+                    i: i,
+                    c: ps[i]
+                });
             }
 
-            return ps.slice(0, M);
+            // Find the point with the lowest y value
+            min_idx = 0;
+            min_x = ps_idx[0].c[1];
+            min_y = ps_idx[0].c[2];
+            for (i = 1; i < N; i++) {
+                if ((ps_idx[i].c[2] < min_y) || (ps_idx[i].c[2] === min_y && ps_idx[i].c[1] < min_x)) {
+                    min_x = ps_idx[i].c[1];
+                    min_y = ps_idx[i].c[2];
+                    min_idx = i;
+                }
+            }
+            ps_idx = Type.swap(ps_idx, min_idx, 0);
+
+            // Our origin o, i.e. the first point.
+            o = ps_idx[0].c;
+
+            // Sort according to the angle around o.
+            ps_idx.sort(function(a_obj, b_obj) {
+                var a = a_obj.c,
+                    b = b_obj.c,
+                    v = that.signedTriangle(o, a, b);
+
+                if (v === 0) {
+                    // if o, a, b are collinear, the point which is further away
+                    // from o is considered greater.
+                    return Mat.hypot(a[1] - o[1], a[2] - o[2]) - Mat.hypot(b[1] - o[1], b[2] - o[2]);
+                }
+
+                // if v < 0, a is to the left of [o, b], i.e. angle(a) > angle(b)
+                return -v;
+            });
+
+            // Do the Graham scan.
+            M = 0;
+            for (i = 0; i < N; i++) {
+                while (M > 1 && this.signedTriangle(stack[M - 2].c, stack[M - 1].c, ps_idx[i].c) <= 0) {
+                    // stack[M - 1] is to the left of stack[M - 1], ps[i]: discard it
+                    stack.pop();
+                    M--;
+                }
+                stack.push(ps_idx[i]);
+                M++;
+            }
+
+            return stack;
+        },
+
+        // Original method
+        // GrahamScan: function (points, indices) {
+        //     var i,
+        //         M = 1,
+        //         ps = Expect.each(points, Expect.coordsArray),
+        //         N = ps.length;
+        //     ps = this.sortVertices(ps);
+        //     N = ps.length;
+        //     for (i = 2; i < N; i++) {
+        //         while (this.signedTriangle(ps[M - 1], ps[M], ps[i]) <= 0) {
+        //             if (M > 1) {
+        //                 M -= 1;
+        //             } else if (i === N - 1) {
+        //                 break;
+        //             }
+        //             i += 1;
+        //         }
+        //         M += 1;
+        //         ps = Type.swap(ps, M, i);
+        //         indices = Type.swap(indices, M, i);
+        //     }
+        //     return ps.slice(0, M);
+        // },
+
+        /**
+         * Calculate the complex hull of a point cloud by the Graham scan algorithm.
+         *
+         * @param {Array} points An array containing {@link JXG.Point}, {@link JXG.Coords}, and/or arrays.
+         * @param {Boolean} [returnCoords=false] If true, return an array of coords. Otherwise return a list of pointers
+         * to the input list elements. That is, if the input is a list of {@link JXG.Point} elements, the returned list
+         * will contain the points that form the convex hull.
+         * @returns {Array} List containing the convex hull. Format depends on returnCoords.
+         * @see JXG.Math.Geometry.GrahamScan
+         *
+         * @example
+         *     // Static example
+         *     var i, hull,
+         *         p = [];
+         *
+         *     p.push( board.create('point', [4, 0], {withLabel:false }) );
+         *     p.push( board.create('point', [0, 4], {withLabel:false }) );
+         *     p.push( board.create('point', [0, 0], {withLabel:false }) );
+         *     p.push( board.create('point', [1, 1], {withLabel:false }) );
+         *     hull = JXG.Math.Geometry.convexHull(p);
+         *     for (i = 0; i < hull.length; i++) {
+         *       hull[i].setAttribute({color: 'blue'});
+         *     }
+         *
+         * </pre><div id="JXGdfc76123-81b8-4250-96f9-419253bd95dd" class="jxgbox" style="width: 300px; height: 300px;"></div>
+         * <script type="text/javascript">
+         *     (function() {
+         *         var board = JXG.JSXGraph.initBoard('JXGdfc76123-81b8-4250-96f9-419253bd95dd',
+         *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
+         *         var i, hull,
+         *             p = [];
+         *
+         *         p.push( board.create('point', [4, 0], {withLabel:false }) );
+         *         p.push( board.create('point', [0, 4], {withLabel:false }) );
+         *         p.push( board.create('point', [0, 0], {withLabel:false }) );
+         *         p.push( board.create('point', [1, 1], {withLabel:false }) );
+         *         hull = JXG.Math.Geometry.convexHull(p);
+         *         for (i = 0; i < hull.length; i++) {
+         *           hull[i].setAttribute({color: 'blue'});
+         *         }
+         *
+         *     })();
+         *
+         * </script><pre>
+         *
+         * @example
+         *     // Dynamic version using returnCoords==true: drag the points
+         *     var p = [];
+         *
+         *     p.push( board.create('point', [4, 0], {withLabel:false }) );
+         *     p.push( board.create('point', [0, 4], {withLabel:false }) );
+         *     p.push( board.create('point', [0, 0], {withLabel:false }) );
+         *     p.push( board.create('point', [1, 1], {withLabel:false }) );
+         *
+         *     var c = board.create('curve', [[], []], {fillColor: 'yellow', fillOpacity: 0.3});
+         *     c.updateDataArray = function() {
+         *       var i,
+         *         hull = JXG.Math.Geometry.convexHull(p, true);
+         *
+         *       this.dataX = [];
+         *       this.dataY = [];
+         *
+         *       for (i = 0; i < hull.length; i ++) {
+         *         this.dataX.push(hull[i][1]);
+         *         this.dataY.push(hull[i][2]);
+         *       }
+         *       this.dataX.push(hull[0][1]);
+         *       this.dataY.push(hull[0][2]);
+         *     };
+         *     board.update();
+         *
+         * </pre><div id="JXG61e51909-da0b-432f-9aa7-9fb0c8bb01c9" class="jxgbox" style="width: 300px; height: 300px;"></div>
+         * <script type="text/javascript">
+         *     (function() {
+         *         var board = JXG.JSXGraph.initBoard('JXG61e51909-da0b-432f-9aa7-9fb0c8bb01c9',
+         *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
+         *         var p = [];
+         *
+         *         p.push( board.create('point', [4, 0], {withLabel:false }) );
+         *         p.push( board.create('point', [0, 4], {withLabel:false }) );
+         *         p.push( board.create('point', [0, 0], {withLabel:false }) );
+         *         p.push( board.create('point', [1, 1], {withLabel:false }) );
+         *
+         *         var c = board.create('curve', [[], []], {fillColor: 'yellow', fillOpacity: 0.3});
+         *         c.updateDataArray = function() {
+         *           var i,
+         *             hull = JXG.Math.Geometry.convexHull(p, true);
+         *
+         *           this.dataX = [];
+         *           this.dataY = [];
+         *
+         *           for (i = 0; i < hull.length; i ++) {
+         *             this.dataX.push(hull[i][1]);
+         *             this.dataY.push(hull[i][2]);
+         *           }
+         *           this.dataX.push(hull[0][1]);
+         *           this.dataY.push(hull[0][2]);
+         *         };
+         *         board.update();
+         *
+         *
+         *     })();
+         *
+         * </script><pre>
+         *
+         */
+        convexHull: function(points, returnCoords) {
+            var i, hull,
+                res = [];
+
+            hull = this.GrahamScan(points);
+            for (i = 0; i < hull.length; i++) {
+                if (returnCoords) {
+                    res.push(hull[i].c);
+                } else {
+                    res.push(points[hull[i].i]);
+                }
+            }
+            return res;
         },
 
         /**

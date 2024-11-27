@@ -5801,7 +5801,7 @@ JXG.extend(
          * @returns {JXG.Board} Reference to the board
          */
         prepareUpdate: function () {
-            var el,
+            var el, i,
                 pEl,
                 len = this.objectsList.length;
 
@@ -5814,13 +5814,23 @@ JXG.extend(
             for (el = 0; el < len; el++) {
                 pEl = this.objectsList[el];
                 if (this._change3DView) {
-                    // The 3 view has changed. Elements are not recomputed,
+                    // The 3D view has changed. Elements are not recomputed,
                     // only 3D elements are projected to the new view.
                     pEl.needsUpdate =
-                        pEl.visProp.element3d !== null ||
+                        pEl.visProp.element3d ||
                         pEl.elType === 'view3d' ||
                         pEl.elType === 'view3d_slider' ||
                         this.needsFullUpdate;
+
+                    // Special case sphere3d in central projection:
+                    // We have to update the defining points of the ellipse
+                    if (pEl.visProp.element3d &&
+                        pEl.visProp.element3d.type === Const.OBJECT_TYPE_SPHERE3D
+                        ) {
+                        for (i = 0; i < pEl.parents.length; i++) {
+                            this.objects[pEl.parents[i]].needsUpdate = true;
+                        }
+                    }
                 } else {
                     pEl.needsUpdate = pEl.needsRegularUpdate || this.needsFullUpdate;
                 }
