@@ -1300,11 +1300,11 @@ JXG.extend(
 
     intersectionPlaneFace: function (plane, face) {
         var ret = [],
-            i, j, d, t,
+            j, t,
             p, crds,
             p1, p2, c,
             f, le, x1, y1, x2, y2,
-            dir, vec, 
+            dir, vec,
             mat = [], b = [], sol;
 
         // Get one point of the intersection of the two planes
@@ -1342,8 +1342,8 @@ JXG.extend(
                 [x2 * dir[1] + y2 * dir[2], x2 * (-vec[1]) + y2 * (-vec[2])]
             ];
             b = [
-                x1 * (p1[0] - p[0]) + y1 * (p1[2] - p[2]), 
-                x2 * (p1[1] - p[1]) + y2 * (p1[2] - p[2]), 
+                x1 * (p1[0] - p[0]) + y1 * (p1[2] - p[2]),
+                x2 * (p1[1] - p[1]) + y2 * (p1[2] - p[2])
             ];
 
             sol = Numerics.Gauss(mat, b);
