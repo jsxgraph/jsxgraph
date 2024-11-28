@@ -118,36 +118,33 @@ JXG.extend(
                 phdr, nrm,
                 p1, p2,
                 face;
+
             // if (this.needsUpdate) {
+                phdr = this.polyhedron;
+                face = phdr.faces[this.faceNumber];
 
-            // console.log("Update face", this.faceNumber)
-
-            phdr = this.polyhedron;
-            face = phdr.faces[this.faceNumber];
-
-            le = face.length;
-            if (le < 3) {
-                // Get out of here if face is point or segment
-                return this;
-            }
-            p1 = phdr.coords[face[0]];
-            p2 = phdr.coords[face[1]];
-            this.vec1 = [p2[0] - p1[0], p2[1] - p1[1], p2[2] - p1[2]];
-            p2 = phdr.coords[face[2]];
-            this.vec2 = [p2[0] - p1[0], p2[1] - p1[1], p2[2] - p1[2]];
-
-            this.normal = Mat.crossProduct(this.vec1, this.vec2);
-            nrm = Mat.norm(this.normal);
-            if (Math.abs(nrm) > Mat.eps * Mat.eps) {
-                for (i = 0; i < 3; i++) {
-                    this.normal[i] /= nrm;
+                le = face.length;
+                if (le < 3) {
+                    // Get out of here if face is point or segment
+                    return this;
                 }
-            }
-            this.d = Mat.innerProduct(p1, this.normal, 3);
+                p1 = phdr.coords[face[0]];
+                p2 = phdr.coords[face[1]];
+                this.vec1 = [p2[0] - p1[0], p2[1] - p1[1], p2[2] - p1[2]];
+                p2 = phdr.coords[face[2]];
+                this.vec2 = [p2[0] - p1[0], p2[1] - p1[1], p2[2] - p1[2]];
 
+                this.normal = Mat.crossProduct(this.vec1, this.vec2);
+                nrm = Mat.norm(this.normal);
+                if (Math.abs(nrm) > Mat.eps * Mat.eps) {
+                    for (i = 0; i < 3; i++) {
+                        this.normal[i] /= nrm;
+                    }
+                }
+                this.d = Mat.innerProduct(p1, this.normal, 3);
 
-            // this.updateDataArray();
-            //}
+                // this.updateDataArray();
+            // }
             return this;
         },
 
@@ -156,7 +153,7 @@ JXG.extend(
             return this;
         },
 
-        getCentroid: function() {
+        getCentroid: function () {
             var i,
                 s_x = 0,
                 s_y = 0,

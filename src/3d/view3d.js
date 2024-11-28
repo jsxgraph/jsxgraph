@@ -1409,6 +1409,8 @@ JXG.extend(
         // Concatenate the intersection points to a polygon.
         // If all went well, each intersection should appear
         // twice in the list.
+        // __Attention:__ each face has to be planar!!!
+        // Otherwise the algorithm will fail.
         first = 0;
         pos = first;
         i = 0;
