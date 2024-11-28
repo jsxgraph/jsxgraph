@@ -1239,7 +1239,7 @@ JXG.extend(
      * @param {array} q 3D coordinates [x,y,z] of a point.
      * @returns Boolean
      */
-    isInCube: function (q) {
+    isInCube: function (q, polyhedron) {
         return (
             q[0] > this.bbox3D[0][0] - Mat.eps &&
             q[0] < this.bbox3D[0][1] + Mat.eps &&
@@ -1254,19 +1254,18 @@ JXG.extend(
      *
      * @param {JXG.Plane3D} plane1
      * @param {JXG.Plane3D} plane2
-     * @param {JXG.Plane3D} d
+     * @param {Number} d Right hand side of Hesse normal for plane2 (it can be adjusted)
      * @returns {Array} of length 2 containing the coordinates of the defining points of
      * of the intersection segment.
      */
     intersectionPlanePlane: function (plane1, plane2, d) {
         var ret = [[], []],
-            p,
-            dir,
-            r,
-            q;
+            p, q, r,
+            dir;
 
         d = d || plane2.d;
 
+        // Get one point of the intersection of the two planes
         p = Mat.Geometry.meet3Planes(
             plane1.normal,
             plane1.d,
@@ -1275,12 +1274,16 @@ JXG.extend(
             Mat.crossProduct(plane1.normal, plane2.normal),
             0
         );
+
+        // Get the direction the intersecting line of the two planes
         dir = Mat.Geometry.meetPlanePlane(
             plane1.vec1,
             plane1.vec2,
             plane2.vec1,
             plane2.vec2
         );
+
+        // Get the bounding points of the intersecting segment
         r = this.intersectionLineCube(p, dir, Infinity);
         q = Mat.axpy(r, dir, p);
         if (this.isInCube(q)) {
@@ -1292,6 +1295,157 @@ JXG.extend(
             ret[1] = q;
         }
         return ret;
+    },
+
+    intersectionPlaneFace: function (plane, face) {
+        var ret = [],
+            i, j, d, t,
+            p, crds,
+            p1, p2, c,
+            f, le,
+            dir, vec;
+
+        // Get one point of the intersection of the two planes
+        p = Geometry.meet3Planes(
+            plane.normal,
+            plane.d,
+            face.normal,
+            face.d,
+            Mat.crossProduct(plane.normal, face.normal),
+            0
+        );
+
+        // Get the direction the intersecting line of the two planes
+        dir = Geometry.meetPlanePlane(
+            plane.vec1,
+            plane.vec2,
+            face.vec1,
+            face.vec2
+        );
+
+        f = face.polyhedron.faces[face.faceNumber];
+        crds = face.polyhedron.coords;
+        le = f.length;
+        for (j = 1; j <= le; j++) {
+            p1 = crds[f[j - 1]];
+            p2 = crds[f[j % le]];
+
+            vec = [p2[0] - p1[0], p2[1] - p1[1], p2[2] - p1[2]];
+
+            c = Mat.crossProduct(dir, vec);
+            if (Math.abs(c[0]) < Mat.eps) {
+                // TODO
+                continue;
+            }
+
+            // Normalize the intersection coordinates
+            c[1] /= c[0];
+            c[2] /= c[0];
+            c[0] /= c[0];
+
+            i = Math.abs(p2[1] - p2[0] * p1[1]) < Mat.eps ? 2 : 1;
+            d = p1[i] / p1[0];
+            t = (c[i] - d) / (p2[0] !== 0 ? p2[i] / p2[0] - d : p2[i]);
+            if (t > -Mat.eps && t < 1 + Mat.eps) {
+// console.log(c, t)
+                ret.push(c);
+            }
+        }
+
+        return ret;
+    },
+
+    intersectionPlanePolyhedron: function(plane, phdr) {
+        var i, j, seg,
+            p, first, pos, pos_akt,
+            c2d,
+            points = [],
+            x = [],
+            y = [];
+
+        for (i = 0; i < phdr.numberFaces; i++) {
+            if (phdr.hasOwnProperty(i) ) {
+                if (phdr.def.faces[i].length < 3) {
+                    // We skip intersection with points or lines
+                    continue;
+                }
+
+                // seg will be an array consisting of two points
+                // that span the intersecting segment of the plane
+                // and the face.
+    // console.log("FACE", i)
+                seg = this.intersectionPlaneFace(plane, phdr[i]);
+                if (seg.length < 2) {
+                    continue;
+                }
+
+                if (seg[0].length === 3 && seg[1].length === 3) {
+                    // This test is necessary to filter out intersection lines which are
+                    // identical to intersections of axis planes (they would occur twice),
+                    // i.e. edges of bbox3d.
+                    for (j = 0; j < points.length; j++) {
+                        if (
+                            (Geometry.distance(seg[0], points[j][0], 3) < Mat.eps &&
+                                Geometry.distance(seg[1], points[j][1], 3) < Mat.eps) ||
+                            (Geometry.distance(seg[0], points[j][1], 3) < Mat.eps &&
+                                Geometry.distance(seg[1], points[j][0], 3) < Mat.eps)
+                        ) {
+                            break;
+                        }
+                    }
+                    if (j === points.length) {
+                        points.push(seg.slice());
+                    }
+                }
+            }
+        }
+//        console.log("POINTS DONE", points)
+
+        // Handle the case that the intersection is the empty set.
+        if (points.length === 0) {
+            return { X: x, Y: y };
+        }
+
+        // Concatenate the intersection points to a polygon.
+        // If all went well, each intersection should appear
+        // twice in the list.
+        first = 0;
+        pos = first;
+        i = 0;
+        do {
+            p = points[pos][i];
+            if (p.length === 3) {
+                c2d = this.project3DTo2D(p);
+                x.push(c2d[1]);
+                x.push(c2d[2]);
+            }
+            i = (i + 1) % 2;
+            p = points[pos][i];
+
+            pos_akt = pos;
+            for (j = 0; j < points.length; j++) {
+                if (j !== pos && Geometry.distance(p, points[j][0]) < Mat.eps) {
+                    pos = j;
+                    i = 0;
+                    break;
+                }
+                if (j !== pos && Geometry.distance(p, points[j][1]) < Mat.eps) {
+                    pos = j;
+                    i = 1;
+                    break;
+                }
+            }
+            if (pos === pos_akt) {
+                console.log('Error face3d intersection update: did not find next', pos, i);
+                break;
+            }
+        } while (pos !== first);
+
+        x.push(x[0]);
+        y.push(y[0]);
+        if (points.length === 0) {
+            return { X: x, Y: y };
+        }
     },
 
     /**

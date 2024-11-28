@@ -65,6 +65,15 @@ JXG.Composition = function (elements) {
             "setAttribute",
 
             /**
+             * Invokes getAttribute for every stored element with a setAttribute method and hands over the given arguments.
+             * See {@link JXG.GeometryElement#getAttribute} for further description, valid parameters and return values.
+             * @name setAttribute
+             * @memberOf JXG.Composition.prototype
+             * @function
+             */
+            "getAttribute",
+
+            /**
              * Invokes setParents for every stored element with a setParents method and hands over the given arguments.
              * See {@link JXG.GeometryElement#setParents} for further description, valid parameters and return values.
              * @name setParents
@@ -158,6 +167,7 @@ JXG.Composition = function (elements) {
     this.methodMap = {
         setAttribute: "setAttribute",
         setProperty: "setAttribute",
+        getAttribute: "getAttribute",
         setParents: "setParents",
         add: "add",
         remove: "remove",

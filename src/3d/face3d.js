@@ -31,6 +31,7 @@
 import JXG from "../jxg.js";
 import Const from "../base/constants.js";
 import Type from "../utils/type.js";
+import Mat from "../math/math.js";
 
 /**
  * Constructor for 3D curves.
@@ -58,6 +59,11 @@ JXG.Face3D = function (view, polyhedron, faceNumber, attributes) {
     this.dataX = [];
     this.dataY = [];
     this.dataZ = [];
+    this.normal = [0, 0, 0];
+    this.d = 0;
+    this.vec1 = [0, 0, 0];
+    this.vec2 = [0, 0, 0];
+
 
     this.methodMap = Type.deepCopy(this.methodMap, {
         // TODO
@@ -100,7 +106,7 @@ JXG.extend(
                 // 2D faces and points are a closed loop
                 x.push(x[0]);
                 y.push(y[0]);
-            } 
+            }
 
             return { X: x, Y: y };
         },
@@ -108,9 +114,40 @@ JXG.extend(
         updateDataArray: function () { /* stub */ },
 
         update: function () {
-            if (this.needsUpdate) {
-                this.updateDataArray();
+            var i, le,
+                phdr, nrm,
+                p1, p2,
+                face;
+            // if (this.needsUpdate) {
+
+            // console.log("Update face", this.faceNumber)
+
+            phdr = this.polyhedron;
+            face = phdr.faces[this.faceNumber];
+
+            le = face.length;
+            if (le < 3) {
+                // Get out of here if face is point or segment
+                return this;
             }
+            p1 = phdr.coords[face[0]];
+            p2 = phdr.coords[face[1]];
+            this.vec1 = [p2[0] - p1[0], p2[1] - p1[1], p2[2] - p1[2]];
+            p2 = phdr.coords[face[2]];
+            this.vec2 = [p2[0] - p1[0], p2[1] - p1[1], p2[2] - p1[2]];
+
+            this.normal = Mat.crossProduct(this.vec1, this.vec2);
+            nrm = Mat.norm(this.normal);
+            if (Math.abs(nrm) > Mat.eps * Mat.eps) {
+                for (i = 0; i < 3; i++) {
+                    this.normal[i] /= nrm;
+                }
+            }
+            this.d = Mat.innerProduct(p1, this.normal, 3);
+
+
+            // this.updateDataArray();
+            //}
             return this;
         },
 

@@ -120,7 +120,9 @@ JXG.createpolyhedron3D = function (board, parents, attributes) {
     }
     el = new JXG.Composition(faceList);
     el.numberFaces = le;
-    el.polyhedron = polyhedron;
+
+    // el.def contains the defining data of the polyhedron
+    el.def = polyhedron;
 
     return el;
 };

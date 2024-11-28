@@ -590,7 +590,7 @@ JXG.extend(
             this.normal = Mat.crossProduct(this.vec1, this.vec2);
 
             len = Mat.norm(this.normal);
-            if (Math.abs(len) > Mat.eps) {
+            if (Math.abs(len) > Mat.eps * Mat.eps) {
                 for (i = 0; i < 3; i++) {
                     this.normal[i] /= len;
                 }
@@ -717,7 +717,7 @@ JXG.extend(
                         }
                     }
                     if (pos === pos_akt) {
-                        console.log('Error: update plane3d: did not find next', pos);
+                        console.log('Error plane3d update: did not find next', pos);
                         break;
                     }
                 } while (pos !== first);

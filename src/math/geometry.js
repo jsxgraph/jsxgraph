@@ -3957,6 +3957,18 @@ JXG.extend(
             return [makeFct("X", "cos"), makeFct("Y", "sin"), 0, pi2];
         },
 
+        /**
+         * Intersecting point of three planes in 3D. The planes
+         * are given in Hesse normal form.
+         *
+         * @param {Array} n1 Hesse normal form vector of plane 1
+         * @param {Number} d1 Hesse normal form right hand side of plane 1
+         * @param {Array} n2 Hesse normal form vector of plane 2
+         * @param {Number} d2 Hesse normal form right hand side of plane 2
+         * @param {Array} n3 Hesse normal form vector of plane 1
+         * @param {Number} d3 Hesse normal form right hand side of plane 3
+         * @returns {Array} Coordinates array of length 3 of the intersecting point
+         */
         meet3Planes: function (n1, d1, n2, d2, n3, d3) {
             var p = [0, 0, 0],
                 n31,
@@ -3968,13 +3980,24 @@ JXG.extend(
             n31 = Mat.crossProduct(n3, n1);
             n12 = Mat.crossProduct(n1, n2);
             n23 = Mat.crossProduct(n2, n3);
+
             denom = Mat.innerProduct(n1, n23, 3);
             for (i = 0; i < 3; i++) {
                 p[i] = (d1 * n23[i] + d2 * n31[i] + d3 * n12[i]) / denom;
             }
+
             return p;
         },
 
+        /**
+         * Direction of intersecting line of two planes in 3D.
+         *
+         * @param {Array} v11 First vector spanning plane 1
+         * @param {Array} v12 Second vector spanning plane 1
+         * @param {Array} v21 First vector spanning plane 2
+         * @param {Array} v22 Second vector spanning plane 2
+         * @returns {Array} Coordinates array of length 3 of the direction
+         */
         meetPlanePlane: function (v11, v12, v21, v22) {
             var i,
                 no1,
