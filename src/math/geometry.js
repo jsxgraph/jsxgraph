@@ -641,7 +641,13 @@ JXG.extend(
         },
 
         /**
-         * Signed triangle area of the three points given.
+         * Signed triangle area of the three points given. It can also be used
+         * to test the orientation of the triangle.
+         * <ul>
+         * <li> If the return value is < 0, then the point p2 is left of the line [p1, p3] (i.e p3 is right from [p1, p2]).
+         * <li> If the return value is > 0, then the point p2 is right of the line [p1, p3] (i.e p3 is left from [p1, p2]).
+         * <li> If the return value is = 0, then the points p1, p2, p3 are collinear.
+         * </ul>
          *
          * @param {JXG.Point|JXG.Coords|Array} p1
          * @param {JXG.Point|JXG.Coords|Array} p2
@@ -657,7 +663,7 @@ JXG.extend(
         },
 
         /**
-         * Determine the signed area of a non-selfintersecting polygon.
+         * Determine the signed area of a non-self-intersecting polygon.
          * Surveyor's Formula
          *
          * @param {Array} p An array containing {@link JXG.Point}, {@link JXG.Coords}, and/or arrays.
@@ -753,33 +759,123 @@ JXG.extend(
          */
         GrahamScan: function (points) {
             var i, M, o,
-                min_y, min_x, min_idx,
-                ps = Expect.each(points, Expect.coordsArray), // New array
+                mi_idx,
+                mi_x, mi_y, ma_x, ma_y,
+                mi_xpy, mi_xmy, ma_xpy, ma_xmy,
+                mi_x_i, ma_x_i, mi_y_i, ma_y_i,
+                mi_xpy_i, mi_xmy_i, ma_xpy_i, ma_xmy_i,
+                v, c,
+                eps = Mat.eps * Mat.eps,
                 that = this,
                 ps_idx = [],
                 stack = [],
-                N = ps.length;
+                ps = Expect.each(points, Expect.coordsArray), // New array object, i.e. a copy of the input array.
+                N,
+                AklToussaint = 1024;  // This is a rough threshold where the heuristic pays off.
+
+            N = ps.length;
+            if (N === 0) {
+                return [];
+            }
+
+            if (N > AklToussaint) {
+                //
+                // Akl-Toussaint heuristic
+                // Determine an irregular convex octagon whose inside can be discarded.
+                //
+                mi_x = ps[0][1];
+                ma_x = mi_x;
+                mi_y = ps[0][2];
+                ma_y = mi_y;
+
+                mi_xmy = ps[0][1] - ps[0][2];
+                ma_xmy = mi_xmy;
+                mi_xpy = ps[0][1] + ps[0][2];
+                ma_xpy = mi_xpy;
+
+                mi_x_i = 0;
+                ma_x_i = 0;
+                mi_y_i = 0;
+                ma_y_i = 0;
+
+                mi_xmy_i = 0;
+                ma_xmy_i = 0;
+                mi_xpy_i = 0;
+                ma_xpy_i = 0;
+                for (i = 1; i < N; i++) {
+                    v = ps[i][1];
+                    if (v < mi_x) {
+                        mi_x = v;
+                        mi_x_i = i;
+                    } else if (v > ma_x) {
+                        ma_x = v;
+                        ma_x_i = i;
+                    }
+
+                    v = ps[i][2];
+                    if (v < mi_y) {
+                        mi_y = v;
+                        mi_y_i = i;
+                    } else if (v > ma_y) {
+                        ma_y = v;
+                        ma_y_i = i;
+                    }
+
+                    v = ps[i][1] - ps[i][2];
+                    if (v < mi_xmy) {
+                        mi_xmy = v;
+                        mi_xmy_i = i;
+                    } else if (v > ma_xmy) {
+                        ma_xmy = v;
+                        ma_xmy_i = i;
+                    }
+
+                    v = ps[i][1] + ps[i][2];
+                    if (v < mi_xpy) {
+                        mi_xpy = v;
+                        mi_xpy_i = i;
+                    } else if (v > ma_xpy) {
+                        ma_xpy = v;
+                        ma_xpy_i = i;
+                    }
+                }
+            }
 
             // Keep track of the indices of the input points.
             for (i = 0; i < N; i++) {
-                ps_idx.push({
-                    i: i,
-                    c: ps[i]
-                });
-            }
-
-            // Find the point with the lowest y value
-            min_idx = 0;
-            min_x = ps_idx[0].c[1];
-            min_y = ps_idx[0].c[2];
-            for (i = 1; i < N; i++) {
-                if ((ps_idx[i].c[2] < min_y) || (ps_idx[i].c[2] === min_y && ps_idx[i].c[1] < min_x)) {
-                    min_x = ps_idx[i].c[1];
-                    min_y = ps_idx[i].c[2];
-                    min_idx = i;
+                c = ps[i];
+                if (N <= AklToussaint ||
+                    // Discard inside of the octagon according to the Akl-Toussaint heuristic
+                    i in [mi_x_i, ma_x_i, mi_y_i, ma_y_i, mi_xpy_i, mi_xmy_i, ma_xpy_i, ma_xmy_i] ||
+                    (mi_x_i !== mi_xmy_i && this.signedTriangle(ps[mi_x_i], ps[mi_xmy_i], c) >= -eps) ||
+                    (mi_xmy_i !== ma_y_i && this.signedTriangle(ps[mi_xmy_i], ps[ma_y_i], c) >= -eps) ||
+                    (ma_y_i !== ma_xpy_i && this.signedTriangle(ps[ma_y_i], ps[ma_xpy_i], c) >= -eps) ||
+                    (ma_xpy_i !== ma_x_i && this.signedTriangle(ps[ma_xpy_i], ps[ma_x_i], c) >= -eps) ||
+                    (ma_x_i !== ma_xmy_i && this.signedTriangle(ps[ma_x_i], ps[ma_xmy_i], c) >= -eps) ||
+                    (ma_xmy_i !== mi_y_i && this.signedTriangle(ps[ma_xmy_i], ps[mi_y_i], c) >= -eps) ||
+                    (mi_y_i !== mi_xpy_i && this.signedTriangle(ps[mi_y_i], ps[mi_xpy_i], c) >= -eps) ||
+                    (mi_xpy_i !== mi_x_i && this.signedTriangle(ps[mi_xpy_i], ps[mi_x_i], c) >= -eps)
+                ) {
+                    ps_idx.push({
+                        i: i,
+                        c: c
+                    });
                 }
             }
-            ps_idx = Type.swap(ps_idx, min_idx, 0);
+            N = ps_idx.length;
+
+            // Find the point with the lowest y value
+            mi_idx = 0;
+            mi_x = ps_idx[0].c[1];
+            mi_y = ps_idx[0].c[2];
+            for (i = 1; i < N; i++) {
+                if ((ps_idx[i].c[2] < mi_y) || (ps_idx[i].c[2] === mi_y && ps_idx[i].c[1] < mi_x)) {
+                    mi_x = ps_idx[i].c[1];
+                    mi_y = ps_idx[i].c[2];
+                    mi_idx = i;
+                }
+            }
+            ps_idx = Type.swap(ps_idx, mi_idx, 0);
 
             // Our origin o, i.e. the first point.
             o = ps_idx[0].c;
