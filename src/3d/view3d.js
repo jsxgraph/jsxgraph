@@ -45,6 +45,7 @@ import Coords from "../base/coords.js";
 import Type from "../utils/type.js";
 import Mat from "../math/math.js";
 import Geometry from "../math/geometry.js";
+import Numerics from "../math/numerics.js";
 import Env from "../utils/env.js";
 import GeometryElement from "../base/element.js";
 import Composition from "../base/composition.js";
@@ -1302,8 +1303,9 @@ JXG.extend(
             i, j, d, t,
             p, crds,
             p1, p2, c,
-            f, le,
-            dir, vec;
+            f, le, x1, y1, x2, y2,
+            dir, vec, 
+            mat = [], b = [], sol;
 
         // Get one point of the intersection of the two planes
         p = Geometry.meet3Planes(
@@ -1329,25 +1331,25 @@ JXG.extend(
         for (j = 1; j <= le; j++) {
             p1 = crds[f[j - 1]];
             p2 = crds[f[j % le]];
-
             vec = [p2[0] - p1[0], p2[1] - p1[1], p2[2] - p1[2]];
 
-            c = Mat.crossProduct(dir, vec);
-            if (Math.abs(c[0]) < Mat.eps) {
-                // TODO
-                continue;
-            }
+            x1 = Math.random();
+            y1 = Math.random();
+            x2 = Math.random();
+            y2 = Math.random();
+            mat = [
+                [x1 * dir[0] + y1 * dir[2], x1 * (-vec[0]) + y1 * (-vec[2])],
+                [x2 * dir[1] + y2 * dir[2], x2 * (-vec[1]) + y2 * (-vec[2])]
+            ];
+            b = [
+                x1 * (p1[0] - p[0]) + y1 * (p1[2] - p[2]), 
+                x2 * (p1[1] - p[1]) + y2 * (p1[2] - p[2]), 
+            ];
 
-            // Normalize the intersection coordinates
-            c[1] /= c[0];
-            c[2] /= c[0];
-            c[0] /= c[0];
-
-            i = Math.abs(p2[1] - p2[0] * p1[1]) < Mat.eps ? 2 : 1;
-            d = p1[i] / p1[0];
-            t = (c[i] - d) / (p2[0] !== 0 ? p2[i] / p2[0] - d : p2[i]);
+            sol = Numerics.Gauss(mat, b);
+            t = sol[1];
             if (t > -Mat.eps && t < 1 + Mat.eps) {
-// console.log(c, t)
+                c = [p1[0] + t * vec[0], p1[1] + t * vec[1], p1[2] + t * vec[2]];
                 ret.push(c);
             }
         }
@@ -1358,10 +1360,10 @@ JXG.extend(
     intersectionPlanePolyhedron: function(plane, phdr) {
         var i, j, seg,
             p, first, pos, pos_akt,
-            c2d,
             points = [],
             x = [],
-            y = [];
+            y = [],
+            z = [];
 
         for (i = 0; i < phdr.numberFaces; i++) {
             if (phdr.hasOwnProperty(i) ) {
@@ -1373,7 +1375,6 @@ JXG.extend(
                 // seg will be an array consisting of two points
                 // that span the intersecting segment of the plane
                 // and the face.
-    // console.log("FACE", i)
                 seg = this.intersectionPlaneFace(plane, phdr[i]);
                 if (seg.length < 2) {
                     continue;
@@ -1399,11 +1400,10 @@ JXG.extend(
                 }
             }
         }
-//        console.log("POINTS DONE", points)
 
         // Handle the case that the intersection is the empty set.
         if (points.length === 0) {
-            return { X: x, Y: y };
+            return { X: x, Y: y, Z: z };
         }
 
         // Concatenate the intersection points to a polygon.
@@ -1415,9 +1415,9 @@ JXG.extend(
         do {
             p = points[pos][i];
             if (p.length === 3) {
-                c2d = this.project3DTo2D(p);
-                x.push(c2d[1]);
-                x.push(c2d[2]);
+                x.push(p[0]);
+                y.push(p[1]);
+                z.push(p[2]);
             }
             i = (i + 1) % 2;
             p = points[pos][i];
@@ -1440,12 +1440,11 @@ JXG.extend(
                 break;
             }
         } while (pos !== first);
-
         x.push(x[0]);
         y.push(y[0]);
-        if (points.length === 0) {
-            return { X: x, Y: y };
-        }
+        z.push(z[0]);
+
+        return { X: x, Y: y, Z: z };
     },
 
     /**
