@@ -729,7 +729,6 @@ JXG.Board = function (container, renderer, id,
         off: 'off',
         trigger: 'trigger',
         setAttribute: 'setAttribute',
-        setFrame: 'setFrame',
         setBoundingBox: 'setBoundingBox',
         setView: 'setBoundingBox',
         getBoundingBox: 'getBoundingBox',
@@ -6378,19 +6377,6 @@ JXG.extend(
                 ).usrCoords;
             return [ul[1], ul[2], lr[1], lr[2]];
         },
-
-        /**
-         * Set the current frame for adding elements to the board (SVG only).
-         * For example board.setFrame('spaceship')  or board.setFrame('spaceship',[-5,5])
-         * @param string Name of the frame.  If it doesn't exist, it will be added.
-         * @param number[] Translated origin of the frame.
-         *
-         */
-        setFrame: function (name, translation) {
-            translation = translation ?? [0, 0];  // defaults
-            this.renderer.setFrame(this, name, translation);  // add board so SVG has visibility
-        },
-
 
         /**
          * Sets the value of attribute <tt>key</tt> to <tt>value</tt>.

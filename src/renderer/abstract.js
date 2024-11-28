@@ -189,40 +189,6 @@ JXG.AbstractRenderer = function () {
         [20, 5, 10, 5],
         [0, 5]
     ];
-
-     /**
-     * SVG uses a layer system within 'frames'.  Each frame has its own set of layers.
-     * Setting the frame allows elements to be created above or below other elements in a natural way, particularly in groups.
-     * @type String
-     * @default 'Default'
-     * @private
-     */
-        this.currentFrame = 'Default';
-
-     /**
-     * The frame system does its bookeeping with an array of FrameObjects.  If this were TypeScript, it
-     * might be defined as below.  The first element added during setup is 'Default'.
-     *
-     *  export interface Frame {
-     *     name: string            // the name of this frame, eg; 'Default'
-     *     containerID: string       // the DIV we blong to (might have several boards)
-     *     parent: Element         // a 'g' node that holds the 20 layers, defs, and foreignObjects
-     *     defs: Element           // the defs node for this frame
-     *     foreign: Element|null   // the foreignObject node for this frame (if supported)
-     *     zIndex: number          // the current zIndex for this frame, frames are resorted when this is changed
-     *     layers: Element[]       // array of the twenty layers for this frame
-     *     translate: number[]     // [xTranslate, yTranslate]
-     *     rotate: number[]        // [angle, xCenter, yCenter]
-     *     scale: number[]         // [xScale, yScale]
-     *  }
-     *
-     * @type Object[]
-     * @private
-     * @default []
-     */
-     this.frameArray = [];
-
-
 };
 
 JXG.extend(
