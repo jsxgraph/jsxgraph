@@ -1409,8 +1409,8 @@ JXG.extend(
 );
 
 /**
- * @class  This element is used to provide a constructor for curve, which is just a wrapper for element {@link Curve}.
- * A curve is a mapping from R to R^2. t mapsto (x(t),y(t)). The graph is drawn for t in the interval [a,b].
+ * @class  Curves can be defined by mappings or by discrete data sets.
+ * In general, a curve is a mapping from R to R^2, where t maps to (x(t),y(t)). The graph is drawn for t in the interval [a,b].
  * <p>
  * The following types of curves can be plotted:
  * <ul>
@@ -1632,9 +1632,8 @@ JXG.createCurve = function (board, parents, attributes) {
 JXG.registerElement("curve", JXG.createCurve);
 
 /**
- * @class This element is used to provide a constructor for functiongraph,
- * which is just a wrapper for element {@link Curve} with {@link JXG.Curve#X}()
- * set to x. The graph is drawn for x in the interval [a,b].
+ * @class A functiongraph visualizes a map x &rarr; f(x).
+ * The graph is displayed for x in the interval [a,b] and is a {@link Curve} element.
  * @pseudo
  * @name Functiongraph
  * @augments JXG.Curve
@@ -1836,7 +1835,7 @@ JXG.createSpline = function (board, parents, attributes) {
 JXG.registerElement("spline", JXG.createSpline);
 
 /**
- * @class This element is used to provide a constructor for cardinal spline curves.
+ * @class Cardinal spline curve through a given data set.
  * Create a dynamic cardinal spline interpolated curve given by sample points p_1 to p_n.
  * @pseudo
  * @name Cardinalspline
@@ -2047,7 +2046,7 @@ JXG.createCardinalSpline = function (board, parents, attributes) {
 JXG.registerElement("cardinalspline", JXG.createCardinalSpline);
 
 /**
- * @class This element is used to provide a constructor for metapost spline curves.
+ * @class Interpolate data points by the spline curve from Metapost (by Donald Knuth and John Hobby).
  * Create a dynamic metapost spline interpolated curve given by sample points p_1 to p_n.
  * @pseudo
  * @name Metapostspline
@@ -2654,8 +2653,7 @@ JXG.createStepfunction = function (board, parents, attributes) {
 JXG.registerElement("stepfunction", JXG.createStepfunction);
 
 /**
- * @class This element is used to provide a constructor for the graph showing
- * the (numerical) derivative of a given curve.
+ * @class A curve visualizing the function graph of the (numerical) derivative of a given curve.
  *
  * @pseudo
  * @name Derivative
@@ -2720,7 +2718,8 @@ JXG.createDerivative = function (board, parents, attributes) {
 JXG.registerElement("derivative", JXG.createDerivative);
 
 /**
- * @class Intersection of two closed path elements. The elements may be of type curve, circle, polygon, inequality.
+ * @class The path forming the intersection of two closed path elements.
+ * The elements may be of type curve, circle, polygon, inequality.
  * If one element is a curve, it has to be closed.
  * The resulting element is of type curve.
  * @pseudo
@@ -2776,7 +2775,8 @@ JXG.createCurveIntersection = function (board, parents, attributes) {
 };
 
 /**
- * @class Union of two closed path elements. The elements may be of type curve, circle, polygon, inequality.
+ * @class The path forming the union of two closed path elements.
+ * The elements may be of type curve, circle, polygon, inequality.
  * If one element is a curve, it has to be closed.
  * The resulting element is of type curve.
  * @pseudo
@@ -2832,7 +2832,8 @@ JXG.createCurveUnion = function (board, parents, attributes) {
 };
 
 /**
- * @class Difference of two closed path elements. The elements may be of type curve, circle, polygon, inequality.
+ * @class The path forming the difference of two closed path elements.
+ * The elements may be of type curve, circle, polygon, inequality.
  * If one element is a curve, it has to be closed.
  * The resulting element is of type curve.
  * @pseudo
@@ -2931,8 +2932,8 @@ JXG.registerElement("curveunion", JXG.createCurveUnion);
 // JXG.registerElement("curveconcat", JXG.createCurveConcat);
 
 /**
- * @class Box plot curve. The direction of the box plot can be either vertical or horizontal which
- * is controlled by the attribute "dir".
+ * @class Vertical or horizontal box plot curve to present numerical data through their quartiles.
+ * The direction of the box plot is controlled by the attribute "dir".
  * @pseudo
  * @name Boxplot
  * @param {Array} quantiles Array containing at least five quantiles. The elements can be of type number, function or string.
@@ -3106,16 +3107,13 @@ JXG.createBoxPlot = function (board, parents, attributes) {
 JXG.registerElement("boxplot", JXG.createBoxPlot);
 
 /**
- *
- * @class
- * From <a href="https://en.wikipedia.org/wiki/Implicit_curve">Wikipedia</a>:
- * "An implicit curve is a plane curve defined by an implicit equation
+ * @class An implicit curve is a plane curve defined by an implicit equation
  * relating two coordinate variables, commonly <i>x</i> and <i>y</i>.
  * For example, the unit circle is defined by the implicit equation
  * x<sup>2</sup> + y<sup>2</sup> = 1.
  * In general, every implicit curve is defined by an equation of the form
  * <i>f(x, y) = 0</i>
- * for some function <i>f</i> of two variables."
+ * for some function <i>f</i> of two variables. (<a href="https://en.wikipedia.org/wiki/Implicit_curve">Wikipedia</a>)
  * <p>
  * The partial derivatives for <i>f</i> are optional. If not given, numerical
  * derivatives are used instead. This is good enough for most practical use cases.

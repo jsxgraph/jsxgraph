@@ -869,8 +869,10 @@ JXG.createSector = function (board, parents, attributes) {
 JXG.registerElement("sector", JXG.createSector);
 
 /**
- * @class A circumcircle sector is different from a {@link Sector} mostly in the way the parent elements are interpreted.
- * At first, the circum center is determined from the three given points. Then the sector is drawn from <tt>p1</tt> through
+ * @class A sector whose arc is a circum circle arc through three points.
+ * A circumcircle sector is different from a {@link Sector} mostly in the way the parent elements are interpreted.
+ * At first, the circum center is determined from the three given points.
+ * Then the sector is drawn from <tt>p1</tt> through
  * <tt>p2</tt> to <tt>p3</tt>.
  * @pseudo
  * @name CircumcircleSector
@@ -941,7 +943,7 @@ JXG.createCircumcircleSector = function (board, parents, attributes) {
 JXG.registerElement("circumcirclesector", JXG.createCircumcircleSector);
 
 /**
- * @class A minor sector is a sector of a circle having measure less than or equal to
+ * @class A minor sector is a sector of a circle having measure at most
  * 180 degrees (pi radians). It is defined by a center, one point that
  * defines the radius, and a third point that defines the angle of the sector.
  * @pseudo
@@ -1024,7 +1026,7 @@ JXG.createMinorSector = function (board, parents, attributes) {
 JXG.registerElement("minorsector", JXG.createMinorSector);
 
 /**
- * @class A major sector is a sector of a circle having measure greater than or equal to
+ * @class A major sector is a sector of a circle having measure at least
  * 180 degrees (pi radians). It is defined by a center, one point that
  * defines the radius, and a third point that defines the angle of the sector.
  * @pseudo
@@ -1062,7 +1064,8 @@ JXG.createMajorSector = function (board, parents, attributes) {
 JXG.registerElement("majorsector", JXG.createMajorSector);
 
 /**
- * @class The angle element is used to denote an angle defined by three points. Visually it is just a {@link Sector}
+ * @class Angle sector defined by three points or two lines.
+ * Visually it is just a {@link Sector}
  * element with a radius not defined by the parent elements but by an attribute <tt>radius</tt>. As opposed to the sector,
  * an angle has two angle points and no radius point.
  * Sector is displayed if type=="sector".

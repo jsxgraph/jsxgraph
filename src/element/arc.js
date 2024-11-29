@@ -46,7 +46,8 @@ import Type from "../utils/type.js";
 import Const from "../base/constants.js";
 
 /**
- * @class An arc is a segment of the circumference of a circle. It is defined by a center, one point that
+ * @class An arc is a partial circumference line of a circle.
+ * It is defined by a center, one point that
  * defines the radius, and a third point that defines the angle of the arc.
  *
  * @pseudo
@@ -523,7 +524,7 @@ JXG.createSemicircle = function (board, parents, attributes) {
 JXG.registerElement("semicircle", JXG.createSemicircle);
 
 /**
- * @class A circumcircle arc is an {@link Arc} defined by three points. All three points lie on the arc.
+ * @class A partial circum circle through three points.
  * @pseudo
  * @name CircumcircleArc
  * @augments Arc
@@ -599,8 +600,8 @@ JXG.createCircumcircleArc = function (board, parents, attributes) {
 JXG.registerElement("circumcirclearc", JXG.createCircumcircleArc);
 
 /**
- * @class A minor arc is a segment of the circumference of a circle having measure less than or equal to
- * 180 degrees (pi radians). It is defined by a center, one point that
+ * @class A minor arc given by three points is that part of the circumference of a circle having
+ * measure at most 180 degrees (pi radians). It is defined by a center, one point that
  * defines the radius, and a third point that defines the angle of the arc.
  * @pseudo
  * @name MinorArc
@@ -638,8 +639,8 @@ JXG.createMinorArc = function (board, parents, attributes) {
 JXG.registerElement("minorarc", JXG.createMinorArc);
 
 /**
- * @class A major arc is a segment of the circumference of a circle having measure greater than or equal to
- * 180 degrees (pi radians). It is defined by a center, one point that
+ * @class A major arc given by three points is that part of the circumference of a circle having
+ * measure at least 180 degrees (pi radians). It is defined by a center, one point that
  * defines the radius, and a third point that defines the angle of the arc.
  * @pseudo
  * @name MajorArc

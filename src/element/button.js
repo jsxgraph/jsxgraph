@@ -50,8 +50,7 @@ var priv = {
 };
 
 /**
- * @class This element is used to provide a constructor for special texts containing a
- * form button element.
+ * @class A text element that contains an HTML button tag.
  * For this element, the attribute "display" has to have the value 'html' (which is the default).
  *
  * <p><b>Setting a CSS class:</b> The attribute <tt>cssClass</tt> affects the HTML div element that contains the button element. To change the CSS properties of the HTML button element a selector of the form

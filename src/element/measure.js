@@ -194,7 +194,8 @@ JXG.createTapemeasure = function (board, parents, attributes) {
 JXG.registerElement("tapemeasure", JXG.createTapemeasure);
 
 /**
- * @class Measurement element. Under the hood this is a text element which has a method Value. The text to be displayed
+ * @class Display measurements of geometric elements and the arithmetic operations of measurements.
+ * Under the hood this is a text element which has a method Value. The text to be displayed
  * is the result of the evaluation of a prefix expression, see {@link JXG.PrefixParser}.
  * <p>
  * The purpose of this element is to display values of measurements of geometric objects, like the radius of a circle,

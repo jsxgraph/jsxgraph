@@ -186,7 +186,9 @@ JXG.extend(
 );
 
 /**
- * @class This element creates a 3D parametric curve.
+ * @class 3D Curves can be defined by mappings or by discrete data sets.
+ * In general, a 3D curve is a mapping from R to R^3, where t maps to (x(t),y(t),z(t)).
+ * The graph is drawn for t in the interval [a,b].
  * @pseudo
  * @description A 3D parametric curve is defined by a function
  *    <i>F: R<sup>1</sup> &rarr; R<sup>3</sup></i>.

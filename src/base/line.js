@@ -1069,8 +1069,8 @@ JXG.extend(
 );
 
 /**
- * @class This element is used to provide a constructor for a general line. A general line is given by two points. By setting additional properties
- * a line can be used as an arrow and/or axis.
+ * @class A general line is given by two points or three coordinates.
+ * By setting additional properties a line can be used as an arrow and/or axis.
  * @pseudo
  * @name Line
  * @augments JXG.Line
@@ -1523,7 +1523,8 @@ JXG.createSegment = function (board, parents, attributes) {
 JXG.registerElement("segment", JXG.createSegment);
 
 /**
- * @class This element is used to provide a constructor for arrow, which is just a wrapper for element
+ * @class A segment with an arrow head.
+ * This element is just a wrapper for element
  * {@link Line} with {@link Line#straightFirst}
  * and {@link Line#straightLast} properties set to false and {@link Line#lastArrow} set to true.
  * @pseudo
@@ -1567,7 +1568,8 @@ JXG.createArrow = function (board, parents, attributes) {
 JXG.registerElement("arrow", JXG.createArrow);
 
 /**
- * @class This element is used to provide a constructor for an axis. It's strictly spoken just a wrapper for element {@link Line} with {@link Line#straightFirst}
+ * @class Axis is a line with optional ticks and labels.
+ * It's strictly spoken just a wrapper for element {@link Line} with {@link Line#straightFirst}
  * and {@link Line#straightLast} properties set to true. Additionally {@link Line#lastArrow} is set to true and default {@link Ticks} will be created.
  * @pseudo
  * @name Axis

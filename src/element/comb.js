@@ -36,7 +36,8 @@ import JXG from "../jxg.js";
 import Type from "../utils/type.js";
 
 /**
- * @class A comb to display domains of inequalities.
+ * @class A marker to display domains of inequalities.
+ * The comb element is defined by two points.
  * @pseudo
  * @name Comb
  * @augments JXG.Curve
