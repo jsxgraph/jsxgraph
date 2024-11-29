@@ -33,8 +33,6 @@
  * view3d bounding box bbox3D.
  */
 import JXG from "../jxg.js";
-import Type from "../utils/type.js";
-import Mat from "../math/math.js";
 
 /**
  * @class This element creates 3D ticks.
@@ -91,7 +89,7 @@ JXG.createPolytope3D = function (board, parents, attributes) {
                 if (ii === 0) {
                     // Evaluate each point only once.
                     // For this, face[0] has to be accessed first.
-                    // During updates this should be the case automatically. 
+                    // During updates this should be the case automatically.
                     le = surface.points.length;
                     for (j = 0; j < le; j++) {
                         surface.coords[j] = JXG.evaluate(surface.points[j]);
@@ -119,9 +117,9 @@ JXG.createPolytope3D = function (board, parents, attributes) {
         })(i);
 
         face.getCentroid = function() {
-            var i, 
-                s_x = 0, 
-                s_y = 0, 
+            var i,
+                s_x = 0,
+                s_y = 0,
                 s_z = 0,
                 le = this.dataX.length - 1;
 
