@@ -80,6 +80,8 @@ JXG.CoordsElement = function (coordinates, isLabel) {
     // and dragging of objects simultaneously.
     // actualCoords are needed for non-points since the visible objects
     // is transformed in the renderer.
+    // For labels and other relative texts, actualCoords is ignored, see
+    // board.initMoveObject
     this.initialCoords = new Coords(Const.COORDS_BY_USER, coordinates, this.board);
     this.actualCoords = new Coords(Const.COORDS_BY_USER, coordinates, this.board);
 

@@ -1359,10 +1359,12 @@ JXG.extend(
 
                             // Save offset for large coords elements.
                             if (Type.exists(dragEl.coords)) {
-                                if (dragEl.elementClass === Const.OBJECT_CLASS_POINT) {
+                                if (dragEl.elementClass === Const.OBJECT_CLASS_POINT ||
+                                    dragEl.relativeCoords    // Relative texts like labels
+                                ) {
                                     offset.push(Statistics.subtract(dragEl.coords.scrCoords.slice(1), [x, y]));
                                 } else {
-                                    // Images and texts
+                                   // Images and texts
                                     offset.push(Statistics.subtract(dragEl.actualCoords.scrCoords.slice(1), [x, y]));
                                 }
                             } else {
