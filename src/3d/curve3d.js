@@ -277,7 +277,7 @@ JXG.createCurve3D = function (board, parents, attributes) {
 JXG.registerElement("curve3d", JXG.createCurve3D);
 
 /**
- * @class 3D vector field.
+ * @class A vector field is an assignment of a vector to each point in 3D space.
  * <p>
  * Plot a vector field either given by three functions
  * f1(x, y, z), f2(x, y, z), and f3(x, y, z) or by a function f(x, y, z)

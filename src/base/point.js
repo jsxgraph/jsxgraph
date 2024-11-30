@@ -684,7 +684,7 @@ JXG.createIntersectionPoint = function (board, parents, attributes) {
 };
 
 /**
- * @class This element is used to provide a constructor for the "other" intersection point.
+ * @class Given a set of intersection points, this is another ("other") intersection point,
  * @pseudo
  * @description If two elements of type curve, circle or line intersect in more than one point, with this element it is possible
  * to construct the "other" intersection. This is a an intersection which is different from a supplied point or different from any

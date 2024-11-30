@@ -38,8 +38,10 @@ import Const from "../base/constants.js";
 import Type from "../utils/type.js";
 
 /**
- * @class Smart label. These are customized text elements for displaying measurements of JSXGraph elements, like length of a
- * segment, perimeter or area of a circle or polygon (including polygonal chain), slope of a line, value of an angle, and coordinates of a point.
+ * @class Customized text elements for displaying measurements of JSXGraph elements,
+ * Examples are length of a
+ * segment, perimeter or area of a circle or polygon (including polygonal chain),
+ * slope of a line, value of an angle, and coordinates of a point.
  * <p>
  * If additionally a text, or a function is supplied and the content is not the empty string,
  * that text is displayed instead of the measurement.

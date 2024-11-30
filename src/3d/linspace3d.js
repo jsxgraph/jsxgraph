@@ -787,7 +787,7 @@ JXG.extend(
 );
 
 /**
- * @class This element is used to provide a constructor for a 3D plane.
+ * @class 3D plane defined by a point and to linearly independent vectors.
  * @pseudo
  * @description There are two possibilities to create a Plane3D object.
  * <p>

@@ -37,7 +37,8 @@ import JXG from "../jxg.js";
 import Type from "../utils/type.js";
 
 /**
- * @class Vector field.
+ * @class  A vector field on a plane can be visualized as a collection of arrows
+ * with given magnitudes and directions, each attached to a point on the plane.
  * <p>
  * Plot a vector field either given by two functions f1(x, y) and f2(x,y) or by a function f(x, y) returning an array of size 2.
  *
@@ -262,7 +263,8 @@ JXG.createVectorField = function (board, parents, attributes) {
 JXG.registerElement("vectorfield", JXG.createVectorField);
 
 /**
- * @class Slope field.
+ * @class A slope field is a graphical representation of the solutions
+ * to a first-order differential equation of a scalar function.
  * <p>
  * Plot a slope field given by a function f(x, y) returning a number.
  *

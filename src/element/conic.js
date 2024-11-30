@@ -327,7 +327,7 @@ JXG.createEllipse = function (board, parents, attributes) {
 };
 
 /**
- * @class An hyperbola is a special conic section given by two points (the foci) and a third point on the hyperbola or
+ * @class A hyperbola is a special conic section given by two points (the foci) and a third point on the hyperbola or
  * the length of the major axis.
  * @pseudo
  * @name Hyperbola
@@ -550,7 +550,7 @@ JXG.createHyperbola = function (board, parents, attributes) {
 };
 
 /**
- * @class This element is used to provide a constructor for a parabola. A parabola is given by one point (the focus) and a line (the directrix).
+ * @class A parabola is a special conic section given by one point (the focus) and a line (the directrix).
  * @pseudo
  * @name Parabola
  * @augments Conic

@@ -70,7 +70,7 @@ import Composition from "../base/composition.js";
 // import Polygon from "../base/polygon.js";
 
 /**
- * @class This is used to construct a point that is the orthogonal projection of a point to a line.
+ * @class A point that is the orthogonal projection of a point onto a line.
  * @pseudo
  * @description An orthogonal projection is given by a point and a line. It is determined by projecting the given point
  * orthogonal onto the given line.
@@ -220,7 +220,7 @@ JXG.createOrthogonalProjection = function (board, parents, attributes) {
 
 /**
 
-     * @class This element is used to provide a constructor for a perpendicular.
+     * @class A perpendicular is a line orthogonal to a given line, through a given point not on the line,
      * @pseudo
      * @description  A perpendicular is a composition of two elements: a line and a point. The line is orthogonal
      * to a given line and contains a given point.
@@ -311,7 +311,7 @@ JXG.createPerpendicular = function (board, parents, attributes) {
 };
 
 /**
- * @class This is used to construct a perpendicular point.
+ * @class Orthogonal projection of a point onto a line.
  * @pseudo
  * @description A perpendicular point is given by a point and a line. It is determined by projecting the given point
  * orthogonal onto the given line. This element should be used in GEONExTReader only. All other applications should
@@ -457,7 +457,7 @@ JXG.createPerpendicularPoint = function (board, parents, attributes) {
 };
 
 /**
- * @class This element is used to provide a constructor for a perpendicular segment.
+ * @class A line segment orthogonal to a given line, through a given point not on the line,
  * @pseudo
  * @description  A perpendicular is a composition of two elements: a line segment and a point. The line segment is orthogonal
  * to a given line and contains a given point and meets the given line in the perpendicular point.
@@ -722,7 +722,7 @@ JXG.createMidpoint = function (board, parents, attributes) {
 };
 
 /**
- * @class This element is used to construct a parallel point.
+ * @class Given three point, a parallel point is the point such that the four points form a parallelogram.
  * @pseudo
  * @description A parallel point is given by three points. Taking the Euclidean vector from the first to the
  * second point, the parallel point is determined by adding that vector to the third point.
@@ -897,8 +897,7 @@ JXG.createParallelPoint = function (board, parents, attributes) {
 };
 
 /**
- * @class A parallel is a line through a given point with the same slope as a given line or
- * the line through two given point.
+ * @class A parallel is a line through a given point, parallel to a given line.
  * <p>
  * If original line is given as a JSXGraph line object, the resulting parallel line will be defined by the given point and an
  * infinitely far away point (an ideal point). That means, the line can not be shortened to a segment.
@@ -1815,7 +1814,7 @@ JXG.createIncircle = function (board, parents, attributes) {
 };
 
 /**
- * @class This element is used to construct reflected elements (points, lines, circles, curves, polygons).
+ * @class  Reflect a point, line, circle, curve, polygon across a given line.
  * @pseudo
  * @description A reflected element (point, polygon, line or curve) is given by a given
  * object of the same type and a line of reflection.

@@ -1686,7 +1686,7 @@ JXG.registerElement("functiongraph", JXG.createFunctiongraph);
 JXG.registerElement("plot", JXG.createFunctiongraph);
 
 /**
- * @class This element is used to provide a constructor for (natural) cubic spline curves.
+ * @class The (natural) cubic spline curves (function graph) interpolating a set of points.
  * Create a dynamic spline interpolated curve given by sample points p_1 to p_n.
  * @pseudo
  * @name Spline
@@ -2284,7 +2284,8 @@ JXG.createMetapostSpline = function (board, parents, attributes) {
 JXG.registerElement("metapostspline", JXG.createMetapostSpline);
 
 /**
- * @class This element is used to provide a constructor for Riemann sums, which is realized as a special curve.
+ * @class Visualize the Riemann sum which is an approximation of an integral by a finite sum.
+ * It is realized as a special curve.
  * The returned element has the method Value() which returns the sum of the areas of the bars.
  * <p>
  * In case of type "simpson" and "trapezoidal", the horizontal line approximating the function value
@@ -2426,7 +2427,7 @@ JXG.createRiemannsum = function (board, parents, attributes) {
 JXG.registerElement("riemannsum", JXG.createRiemannsum);
 
 /**
- * @class This element is used to provide a constructor for trace curve (simple locus curve), which is realized as a special curve.
+ * @class A trace curve is simple locus curve showing the orbit of a point that depends on a glider point.
  * @pseudo
  * @name Tracecurve
  * @augments JXG.Curve
@@ -2584,9 +2585,10 @@ JXG.createTracecurve = function (board, parents, attributes) {
 JXG.registerElement("tracecurve", JXG.createTracecurve);
 
 /**
-     * @class This element is used to provide a constructor for step function, which is realized as a special curve.
+     * @class A step function is a function graph that is piecewise constant.
      *
-     * In case the data points should be updated after creation time, they can be accessed by curve.xterm and curve.yterm.
+     * In case the data points should be updated after creation time,
+     * they can be accessed by curve.xterm and curve.yterm.
      * @pseudo
      * @name Stepfunction
      * @augments JXG.Curve

@@ -66,7 +66,7 @@ var priv = {
 };
 
 /**
- * @class Slope triangle for a point on a line.
+ * @class Slope triangle to visualize the slope of a tangent to a curve, circle or line.
  * @pseudo
  * @name Slopetriangle
  * @augments JXG.Line

@@ -1794,7 +1794,7 @@ JXG.createAngle = function (board, parents, attributes) {
 JXG.registerElement("angle", JXG.createAngle);
 
 /**
- * @class A non-reflex angle is the acute or obtuse instance of an angle.
+ * @class A non-reflex angle is the instance of an angle that is at most 180°.
  * It is defined by a center, one point that
  * defines the radius, and a third point that defines the angle of the sector.
  * @pseudo
@@ -1850,7 +1850,7 @@ JXG.createNonreflexAngle = function (board, parents, attributes) {
 JXG.registerElement("nonreflexangle", JXG.createNonreflexAngle);
 
 /**
- * @class A reflex angle is the neither acute nor obtuse instance of an angle.
+ * @class A reflex angle is the instance of an angle that is larger than 180°.
  * It is defined by a center, one point that
  * defines the radius, and a third point that defines the angle of the sector.
  * @pseudo

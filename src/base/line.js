@@ -1402,7 +1402,7 @@ JXG.createLine = function (board, parents, attributes) {
 JXG.registerElement("line", JXG.createLine);
 
 /**
- * @class This element is used to provide a constructor for a segment.
+ * @class A (line) segment defined by two points.
  * It's strictly spoken just a wrapper for element {@link Line} with {@link Line#straightFirst}
  * and {@link Line#straightLast} properties set to false. If there is a third variable then the
  * segment has a fixed length (which may be a function, too) determined by the absolute value of
@@ -1932,7 +1932,8 @@ JXG.createAxis = function (board, parents, attributes) {
 JXG.registerElement("axis", JXG.createAxis);
 
 /**
- * @class With the element tangent the slope of a line, circle, conic, turtle, or curve in a certain point can be visualized. A tangent is always constructed
+ * @class The tangent line at a point on a line, circle, conic, turtle, or curve.
+ * A tangent line is always constructed
  * by a point on a line, circle, or curve and describes the tangent in the point on that line, circle, or curve.
  * <p>
  * If the point is not on the object (line, circle, conic, curve, turtle) the output depends on the type of the object.
@@ -2284,7 +2285,7 @@ JXG.createTangent = function (board, parents, attributes) {
 };
 
 /**
- * @class Constructs a normal.
+ * @class A normal is the line perpendicular to a line or to a tangent of a circle or curve.
  * @pseudo
  * @description A normal is a line through a given point on an element of type line, circle, curve, or turtle and orthogonal to that object.
  * @constructor
@@ -2698,7 +2699,7 @@ JXG.createNormal = function (board, parents, attributes) {
 };
 
 /**
- * @class This element is used to provide a constructor for the radical axis with respect to two circles with distinct centers.
+ * @class The radical axis is the line connecting the two interstion points of two circles with distinct centers.
  * The angular bisector of the polar lines of the circle centers with respect to the other circle is always the radical axis.
  * The radical axis passes through the intersection points when the circles intersect.
  * When a circle about the midpoint of circle centers, passing through the circle centers, intersects the circles, the polar lines pass through those intersection points.
@@ -2708,8 +2709,8 @@ JXG.createNormal = function (board, parents, attributes) {
  * @constructor
  * @type JXG.Line
  * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
- * @param {JXG.Circle} circle Circle one of the two respective circles.
- * @param {JXG.Circle} circle Circle the other of the two respective circles.
+ * @param {JXG.Circle} circle one of the two respective circles.
+ * @param {JXG.Circle} circle the other of the two respective circles.
  * @example
  * // Create the radical axis line with respect to two circles
  *   var board = JXG.JSXGraph.initBoard('7b7233a0-f363-47dd-9df5-5018d0d17a98', {boundingbox: [-1, 9, 9, -1], axis: true, showcopyright: false, shownavigation: false});
@@ -2780,11 +2781,13 @@ JXG.createRadicalAxis = function (board, parents, attributes) {
 };
 
 /**
- * @class This element is used to provide a constructor for the polar line of a point with respect to a conic or a circle.
+ * @class The polar line of a point with respect to a conic or a circle.
  * @pseudo
  * @description The polar line is the unique reciprocal relationship of a point with respect to a conic.
- * The lines through the intersections of a conic and the polar line of a point with respect to that conic and through that point are tangent to the conic.
- * A point on a conic has the polar line of that point with respect to that conic as the tangent line to that conic at that point.
+ * The lines through the intersections of a conic and the polar line of a point
+ * with respect to that conic and through that point are tangent to the conic.
+ * A point on a conic has the polar line of that point with respect to that
+ * conic as the tangent line to that conic at that point.
  * See {@link https://en.wikipedia.org/wiki/Pole_and_polar} for more information on pole and polar.
  * @name PolarLine
  * @augments JXG.Line
@@ -2888,7 +2891,7 @@ JXG.createPolarLine = function (board, parents, attributes) {
 
 /**
  *
- * @class This element is used to provide a constructor for the tangent through a point to a conic or a circle.
+ * @class One of the two tangent lines to a conic or a circle through an external point.
  * @pseudo
  * @description Construct the tangent line through a point to a conic or a circle. There will be either two, one or no
  * such tangent, depending if the point is outside of the conic, on the conic, or inside of the conic.

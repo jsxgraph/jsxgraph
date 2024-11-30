@@ -1112,7 +1112,9 @@ JXG.extend(
 );
 
 /**
- * @class A polygon is an area enclosed by a set of border lines which are determined by
+ * @class A polygon is a plane figure made up of line segments (the borders) connected
+ * to form a closed polygonal chain.
+ * It is determined by
  * <ul>
  *    <li> a list of points or
  *    <li> a list of coordinate arrays or
@@ -1263,7 +1265,9 @@ JXG.createPolygon = function (board, parents, attributes) {
 };
 
 /**
- * @class Constructs a regular polygon. It needs two points which define the base line and the number of vertices.
+ * @class A regular polygon is a polygon that is
+ * direct equiangular (all angles are equal in measure) and equilateral (all sides have the same length).
+ * It needs two points which define the base line and the number of vertices.
  * @pseudo
  * @description Constructs a regular polygon. It needs two points which define the base line and the number of vertices, or a set of points.
  * @constructor
@@ -1390,7 +1394,8 @@ JXG.createRegularPolygon = function (board, parents, attributes) {
 };
 
 /**
- * @class  A polygonal chain is a connected series of line segments determined by
+ * @class  A polygonal chain is a connected series of line segments (borders).
+ * It is determined by
  * <ul>
  *    <li> a list of points or
  *    <li> a list of coordinate arrays or
@@ -1464,7 +1469,7 @@ JXG.createPolygonalChain = function (board, parents, attributes) {
 };
 
 /**
- * @class Parallelogram element. This is a quadrilateral with parallel opposite sides.
+ * @class A quadrilateral polygon with parallel opposite sides.
  * @pseudo
  * @description Constructs a parallelogram. As input, three points or coordinate arrays are expected.
  * @constructor
