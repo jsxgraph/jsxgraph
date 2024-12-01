@@ -33,7 +33,30 @@
  * view3d bounding box bbox3D.
  */
 import JXG from "../jxg.js";
+import Const from "../base/constants.js";
 import Type from "../utils/type.js";
+
+JXG.Polyhedron3D = function (view, polyhedron, faces, attributes) {
+    this.constructor(view.board, attributes, Const.OBJECT_TYPE_POLYHEDRON3D, Const.OBJECT_CLASS_3D);
+    this.constructor3D(view, "polyhedron3d");
+
+    this.board.finalizeAdding(this);
+
+    this.elType = 'polyhedron3d';
+
+    this.faces = faces;
+
+    this.numberFaces = faces.length;
+
+    this.def = polyhedron;
+
+    this.methodMap = Type.deepCopy(this.methodMap, {
+        // TODO
+    });
+};
+JXG.Polyhedron3D.prototype = new JXG.GeometryElement();
+Type.copyPrototypeMethods(JXG.Polyhedron3D, JXG.GeometryElement3D, "constructor3D");
+
 
 /**
  * @class This element creates 3D ticks.
@@ -118,8 +141,7 @@ JXG.createpolyhedron3D = function (board, parents, attributes) {
         face = view.create('face3d', [polyhedron, i], attr);
         faceList.push(face);
     }
-    el = new JXG.Composition(faceList);
-    el.numberFaces = le;
+    el = new JXG.Polyhedron3D(view, polyhedron, faceList, attributes);
 
     // el.def contains the defining data of the polyhedron
     el.def = polyhedron;

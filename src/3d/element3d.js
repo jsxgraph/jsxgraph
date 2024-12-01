@@ -41,7 +41,6 @@ import Type from "../utils/type.js";
  */
 JXG.GeometryElement3D = function (view, elType) {
     this.elType = elType;
-    this.id = this.board.setId(this, elType);
 
     /**
      * Pointer to the view3D in which the element is constructed
@@ -49,6 +48,8 @@ JXG.GeometryElement3D = function (view, elType) {
      * @private
      */
     this.view = view;
+
+    this.id = this.view.board.setId(this, elType);
 
     /**
      * Link to the 2D element(s) used to visualize the 3D element

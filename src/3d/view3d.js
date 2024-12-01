@@ -1366,37 +1366,35 @@ JXG.extend(
             z = [];
 
         for (i = 0; i < phdr.numberFaces; i++) {
-            if (phdr.hasOwnProperty(i) ) {
-                if (phdr.def.faces[i].length < 3) {
-                    // We skip intersection with points or lines
-                    continue;
-                }
+            if (phdr.def.faces[i].length < 3) {
+                // We skip intersection with points or lines
+                continue;
+            }
 
-                // seg will be an array consisting of two points
-                // that span the intersecting segment of the plane
-                // and the face.
-                seg = this.intersectionPlaneFace(plane, phdr[i]);
-                if (seg.length < 2) {
-                    continue;
-                }
+            // seg will be an array consisting of two points
+            // that span the intersecting segment of the plane
+            // and the face.
+            seg = this.intersectionPlaneFace(plane, phdr.faces[i]);
+            if (seg.length < 2) {
+                continue;
+            }
 
-                if (seg[0].length === 3 && seg[1].length === 3) {
-                    // This test is necessary to filter out intersection lines which are
-                    // identical to intersections of axis planes (they would occur twice),
-                    // i.e. edges of bbox3d.
-                    for (j = 0; j < points.length; j++) {
-                        if (
-                            (Geometry.distance(seg[0], points[j][0], 3) < Mat.eps &&
-                                Geometry.distance(seg[1], points[j][1], 3) < Mat.eps) ||
-                            (Geometry.distance(seg[0], points[j][1], 3) < Mat.eps &&
-                                Geometry.distance(seg[1], points[j][0], 3) < Mat.eps)
-                        ) {
-                            break;
-                        }
+            if (seg[0].length === 3 && seg[1].length === 3) {
+                // This test is necessary to filter out intersection lines which are
+                // identical to intersections of axis planes (they would occur twice),
+                // i.e. edges of bbox3d.
+                for (j = 0; j < points.length; j++) {
+                    if (
+                        (Geometry.distance(seg[0], points[j][0], 3) < Mat.eps &&
+                            Geometry.distance(seg[1], points[j][1], 3) < Mat.eps) ||
+                        (Geometry.distance(seg[0], points[j][1], 3) < Mat.eps &&
+                            Geometry.distance(seg[1], points[j][0], 3) < Mat.eps)
+                    ) {
+                        break;
                     }
-                    if (j === points.length) {
-                        points.push(seg.slice());
-                    }
+                }
+                if (j === points.length) {
+                    points.push(seg.slice());
                 }
             }
         }
