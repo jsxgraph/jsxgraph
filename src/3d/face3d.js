@@ -34,8 +34,8 @@ import Type from "../utils/type.js";
 import Mat from "../math/math.js";
 
 /**
- * Constructor for 3D curves.
- * @class Creates a new 3D curve object. Do not use this constructor to create a 3D curve. Use {@link JXG.View3D#create} with type {@link Face3D} instead.
+ * 3D faces
+ * @class Creates a new 3D face object. Do not use this constructor to create a 3D curve. Use {@link JXG.View3D#create} with type {@link Face3D} instead.
  *
  * @augments JXG.GeometryElement3D
  * @augments JXG.GeometryElement
@@ -179,8 +179,7 @@ JXG.extend(
 /**
  * @class This element creates a 3D face.
  * @pseudo
- * @description A 3D parametric curve is defined by a function
- *    <i>F: R<sup>1</sup> &rarr; R<sup>3</sup></i>.
+ * @description A 3D faces is TODO
  *
  * @name Face3D
  * @augments Curve
@@ -201,8 +200,7 @@ JXG.createFace3D = function (board, parents, attributes) {
         attr, el;
 
     // TODO Throw error
-
-    attr = Type.copyAttributes(attributes, board.options, "curve3d");
+    attr = Type.copyAttributes(attributes, board.options, "face3d");
     el = new JXG.Face3D(view, polyhedron, faceNumber, attr);
 
     attr = el.setAttr2D(attr);

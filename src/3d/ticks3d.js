@@ -39,7 +39,7 @@ import Mat from "../math/math.js";
 /**
  * @class This element creates 3D ticks.
  * @pseudo
- * @description Create a 3D ticks.
+ * @description Create 3D ticks.
  * <p>
  * At the time being, the ticks are not connected to the line or axis. The connecting element is simply the
  * parameter point.

@@ -427,6 +427,20 @@ JXG.extend(Options, {
         /**#@-*/
     },
 
+    face3d: {
+        /**#@+
+         * @visprop
+         */
+
+        highlight: false,
+        tabindex: -1,
+        strokeWidth: 1,
+        fillColor: JXG.palette.yellow,
+        fillOpacity: 0.4
+
+        /**#@-*/
+    },
+
     intersectionline3d: {
         point1: { visible: false, name: "" }, // Used in point/point
         point2: { visible: false, name: "" }

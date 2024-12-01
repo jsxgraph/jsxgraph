@@ -57,27 +57,18 @@ JXG.Polyhedron3D = function (view, polyhedron, faces, attributes) {
 JXG.Polyhedron3D.prototype = new JXG.GeometryElement();
 Type.copyPrototypeMethods(JXG.Polyhedron3D, JXG.GeometryElement3D, "constructor3D");
 
-
 /**
- * @class This element creates 3D ticks.
+ * @class A polyhedron in a 3D view consists of faces.
  * @pseudo
- * @description Create a 3D ticks.
- * <p>
- * At the time being, the ticks are not connected to the line or axis. The connecting element is simply the
- * parameter point.
+ * @description Create a polyhedron in a 3D view consisting of faces. Faces can
+ * be 0-, 1- or 2-dimensional.
  *
- * @name Ticks3D
- * @augments Curve
+ * @name Polyhedron3D
+ * @augments JXG.GeometryElement3D
  * @constructor
  * @type Object
  * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
- * @param {Array_Array_Number_Array} point,direction1,length,direction2 point is an array of length 3
- * determining the starting point of the grid. direction1 and direction2 are arrays of length 3. Here, direction1 is the direction
- * of the 3D line, direction2 is the direction of the ticks.
- * "length" is the length of the line.
- * All parameters can be supplied as functions returning an appropriate data type.
- * <p>
- * The step width of the ticks is determined by the attribute "ticksDistance".
+ * @param {} TODO
  *
  */
 JXG.createpolyhedron3D = function (board, parents, attributes) {
