@@ -517,7 +517,7 @@ JXG.extend(
 );
 
 /**
- * @class This element is used to provide projective transformations.
+ * @class Define a projective transformation like translation, rotation, reflection.
  * @pseudo
  * @description A transformation consists of a 3x3 matrix, i.e. it is a projective transformation.
  * <p>

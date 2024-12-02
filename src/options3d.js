@@ -501,6 +501,17 @@ JXG.extend(Options, {
         /**#@-*/
     },
 
+    polytope3d: {
+        /**#@+
+         * @visprop
+         */
+
+        fillColorArray: ['white', 'black']
+        // fillOpacityArray: [1]
+
+        /**#@-*/
+    },
+
     sphere3d: {
         /**#@+
          * @visprop

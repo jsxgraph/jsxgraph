@@ -1764,7 +1764,7 @@ JXG.createTicks = function (board, parents, attributes) {
 };
 
 /**
- * @class Hatches can be used to mark congruent lines or curves.
+ * @class Hatches are collections of short line segments used to mark congruent lines or curves.
  * @pseudo
  * @name Hatch
  * @augments JXG.Ticks

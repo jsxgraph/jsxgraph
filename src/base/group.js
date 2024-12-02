@@ -770,10 +770,9 @@ JXG.extend(
 );
 
 /**
- * @class This element combines a given set of {@link JXG.Point} elements to a
- *  group. The elements of the group and dependent elements can be translated, rotated and scaled by
- *  dragging one of the group elements.
- *
+ * @class A container element to control the movement of given set of point, image or text elements simultaneously.
+ * The elements of the group and dependent elements can be translated, rotated and scaled by
+ * dragging one of the group elements.
  *
  * @pseudo
  * @name Group

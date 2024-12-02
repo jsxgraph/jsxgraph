@@ -234,7 +234,7 @@ JXG.extend(
 );
 
 /**
- * @class This element is used to provide a constructor for a circle.
+ * @class A circle in 3D can be defined by various combinations of points and numbers.
  * @pseudo
  * @description In 3D space, a circle consists of all points on a given plane with a given distance from a given point. The given point is called the center, and the given distance is called the radius.
  * A circle can be constructed by providing a center, a normal vector, and a radius (given as a number or function).
@@ -274,8 +274,7 @@ JXG.createCircle3D = function (board, parents, attributes) {
 JXG.registerElement("circle3d", JXG.createCircle3D);
 
 /**
- * @class An intersection circle is a circle which lives on two JSXGraph elements.
- * The following element types can be (mutually) intersected: sphere, plane.
+ * @class The circle that is the intersection of two elements (plane3d or sphere3d) in 3D.
  *
  * @pseudo
  * @name IntersectionCircle3D

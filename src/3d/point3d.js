@@ -383,7 +383,7 @@ JXG.extend(
 );
 
 /**
- * @class This element is used to provide a constructor for a 3D Point.
+ * @class A point in a 3D view.
  * @pseudo
  * @description A Point3D object is defined by 3 coordinates [x,y,z].
  * <p>

@@ -37,7 +37,7 @@ import Type from "../utils/type.js";
 import Mat from "../math/math.js";
 
 /**
- * @class This element creates 3D ticks.
+ * @class Ticks are used as distance markers on a line in a 3D view.
  * @pseudo
  * @description Create a 3D ticks.
  * <p>

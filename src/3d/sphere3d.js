@@ -330,7 +330,7 @@ JXG.extend(
 );
 
 /**
- * @class This element is used to provide a constructor for a sphere.
+ * @class A sphere in a 3D view.
  *
  * @pseudo
  * @description

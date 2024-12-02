@@ -951,7 +951,7 @@ JXG.extend(
 );
 
 /**
- * @class Constructor for a chart.
+ * @class Various types of charts for data visualization.
  * @pseudo
  * @name Chart
  * @augments JXG.Chart
@@ -1413,7 +1413,7 @@ JXG.Legend.prototype.drawVerticalLegend = function (board, attributes) {
 };
 
 /**
- * @class This element is used to provide a constructor for a chart legend.
+ * @class Creates a legend for a chart element.
  * Parameter is a pair of coordinates. The label names and  the label colors are
  * supplied in the attributes:
  * <ul>

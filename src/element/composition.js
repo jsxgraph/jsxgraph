@@ -70,7 +70,7 @@ import Composition from "../base/composition.js";
 // import Polygon from "../base/polygon.js";
 
 /**
- * @class This is used to construct a point that is the orthogonal projection of a point to a line.
+ * @class A point that is the orthogonal projection of a point onto a line.
  * @pseudo
  * @description An orthogonal projection is given by a point and a line. It is determined by projecting the given point
  * orthogonal onto the given line.
@@ -220,7 +220,7 @@ JXG.createOrthogonalProjection = function (board, parents, attributes) {
 
 /**
 
-     * @class This element is used to provide a constructor for a perpendicular.
+     * @class A perpendicular is a line orthogonal to a given line, through a given point not on the line,
      * @pseudo
      * @description  A perpendicular is a composition of two elements: a line and a point. The line is orthogonal
      * to a given line and contains a given point.
@@ -311,7 +311,7 @@ JXG.createPerpendicular = function (board, parents, attributes) {
 };
 
 /**
- * @class This is used to construct a perpendicular point.
+ * @class Orthogonal projection of a point onto a line.
  * @pseudo
  * @description A perpendicular point is given by a point and a line. It is determined by projecting the given point
  * orthogonal onto the given line. This element should be used in GEONExTReader only. All other applications should
@@ -457,7 +457,7 @@ JXG.createPerpendicularPoint = function (board, parents, attributes) {
 };
 
 /**
- * @class This element is used to provide a constructor for a perpendicular segment.
+ * @class A line segment orthogonal to a given line, through a given point not on the line,
  * @pseudo
  * @description  A perpendicular is a composition of two elements: a line segment and a point. The line segment is orthogonal
  * to a given line and contains a given point and meets the given line in the perpendicular point.
@@ -562,7 +562,7 @@ JXG.createPerpendicularSegment = function (board, parents, attributes) {
 };
 
 /**
- * @class The midpoint element constructs a point in the middle of two given points.
+ * @class Midpoint of two points.
  * @pseudo
  * @description A midpoint is given by two points. It is collinear to the given points and the distance
  * is the same to each of the given points, i.e. it is in the middle of the given points.
@@ -722,7 +722,7 @@ JXG.createMidpoint = function (board, parents, attributes) {
 };
 
 /**
- * @class This element is used to construct a parallel point.
+ * @class Given three point, a parallel point is the point such that the four points form a parallelogram.
  * @pseudo
  * @description A parallel point is given by three points. Taking the Euclidean vector from the first to the
  * second point, the parallel point is determined by adding that vector to the third point.
@@ -897,8 +897,7 @@ JXG.createParallelPoint = function (board, parents, attributes) {
 };
 
 /**
- * @class A parallel is a line through a given point with the same slope as a given line or
- * the line through two given point.
+ * @class A parallel is a line through a given point, parallel to a given line.
  * <p>
  * If original line is given as a JSXGraph line object, the resulting parallel line will be defined by the given point and an
  * infinitely far away point (an ideal point). That means, the line can not be shortened to a segment.
@@ -1047,8 +1046,8 @@ JXG.createParallel = function (board, parents, attributes) {
 };
 
 /**
- * @class An arrow parallel is a segment with an arrow attached which is parallel through a given segment, given by its defining two points,
- * through a given point.
+ * @class A segment with an arrow head attached thath is parallel to a given segment.
+ * The segment is given by its defining two points, the arrow starts at a given point.
  * <p>
  * @pseudo
  * @constructor
@@ -1432,8 +1431,8 @@ JXG.createAngularBisectorsOfTwoLines = function (board, parents, attributes) {
 // };
 
 /**
- * @class Constructs the midpoint of a {@link Circumcircle}. Like the circumcircle the circumcenter
- * is constructed by providing three points.
+ * @class Constructs the center of a {@link Circumcircle} without creating the circle.
+ * Like the circumcircle the circumcenter is constructed by providing three points.
  * @pseudo
  * @description A circumcenter is given by three points which are all lying on the circle with the
  * constructed circumcenter as the midpoint.
@@ -1531,7 +1530,8 @@ JXG.createCircumcenter = function (board, parents, attributes) {
 };
 
 /**
- * @class Constructs the incenter of the triangle described by the three given points.
+ * @class The center of the incircle of the triangle described by the three given points (without
+ * constructing the circle).
  * {@link https://mathworld.wolfram.com/Incenter.html}
  * @pseudo
  * @constructor
@@ -1621,7 +1621,7 @@ JXG.createIncenter = function (board, parents, attributes) {
 };
 
 /**
- * @class A circumcircle is given by three points which are all lying on the circle.
+ * @class A circumcircle is the unique circle through three points.
  * @pseudo
  * @constructor
  * @name Circumcircle
@@ -1706,7 +1706,7 @@ JXG.createCircumcircle = function (board, parents, attributes) {
 };
 
 /**
- * @class An incircle is given by three points.
+ * @class The circle which touches the three sides of a triangle given by three points.
  * @pseudo
  * @constructor
  * @name Incircle
@@ -1814,7 +1814,7 @@ JXG.createIncircle = function (board, parents, attributes) {
 };
 
 /**
- * @class This element is used to construct reflected elements (points, lines, circles, curves, polygons).
+ * @class  Reflect a point, line, circle, curve, polygon across a given line.
  * @pseudo
  * @description A reflected element (point, polygon, line or curve) is given by a given
  * object of the same type and a line of reflection.
@@ -2044,11 +2044,13 @@ JXG.createReflection = function (board, parents, attributes) {
 };
 
 /**
- * @class A mirror element of a point, line, circle, curve, polygon will be constructed.
+ * @class Reflect a point, line, circle, curve, polygon across a given point.
  * @pseudo
- * @description A mirror element is determined by the reflection of a given point, line, circle, curve, polygon across another given point.
+ * @description A mirror element is determined by the reflection of a
+ * given point, line, circle, curve, polygon across another given point.
+ * In contrast to generic transformations, mirror elements of circles are again circles.
  * @constructor
- * @name mirrorelement
+ * @name MirrorElement
  * @type JXG.GeometryElement
  * @augments JXG.GeometryElement
  * @throws {Error} If the element cannot be constructed with the given parent objects an exception is thrown.
@@ -2229,11 +2231,11 @@ JXG.createMirrorElement = function (board, parents, attributes) {
 };
 
 /**
- * @class A mirror point will be constructed.
+ * @class A MirrorPoint is a special case of a {@link MirrorElement}.
  * @pseudo
  * @description A mirror point is determined by the reflection of a given point against another given point.
  * @constructor
- * @name Mirrorpoint
+ * @name MirrorPoint
  * @type JXG.Point
  * @augments JXG.Point
  * @throws {Error} If the element cannot be constructed with the given parent objects an exception is thrown.
@@ -2260,7 +2262,7 @@ JXG.createMirrorPoint = function (board, parents, attributes) {
 };
 
 /**
- * @class This element is used to visualize the integral of a given curve over a given interval.
+ * @class The graph of the integral function of a given function in a given interval.
  * @pseudo
  * @description The Integral element is used to visualize the area under a given curve over a given interval
  * and to calculate the area's value. For that a polygon and gliders are used. The polygon displays the area,
@@ -2634,8 +2636,9 @@ JXG.createIntegral = function (board, parents, attributes) {
 };
 
 /**
- * @class Creates an area indicating the solution of a linear inequality or an inequality
- * of a function graph, i.e. an inequality of type y <= f(x).
+ * @class The area which is the set of solutions of a linear inequality or an inequality
+ * of a function graph.
+ * For example, an inequality of type y <= f(x).
  * @pseudo
  * @description Display the solution set of a linear inequality (less than or equal to).
  * To be precise, the solution set of the inequality <i>y <= b/a * x + c/a</i> is shown.
@@ -2952,6 +2955,5 @@ JXG.registerElement("inequality", JXG.createInequality);
 //     createPerpendicularPoint: JXG.createPerpendicularPoint,
 //     createPerpendicularSegmen: JXG.createPerpendicularSegment,
 //     createReflection: JXG.createReflection,
-//     createGrid: JXG.createGrid,
 //     createInequality: JXG.createInequality
 // };

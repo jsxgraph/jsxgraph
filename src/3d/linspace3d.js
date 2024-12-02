@@ -195,7 +195,7 @@ JXG.extend(
 );
 
 /**
- * @class This element is used to provide a constructor for a 3D line.
+ * @class A general line in 3D is given by two points or one point and a direction vector.
  * @pseudo
  * @description There are two possibilities to create a Line3D object.
  * <p>
@@ -787,7 +787,7 @@ JXG.extend(
 );
 
 /**
- * @class This element is used to provide a constructor for a 3D plane.
+ * @class 3D plane defined by a point and to linearly independent vectors.
  * @pseudo
  * @description There are two possibilities to create a Plane3D object.
  * <p>
@@ -871,8 +871,7 @@ JXG.createPlane3D = function (board, parents, attributes) {
 JXG.registerElement('plane3d', JXG.createPlane3D);
 
 /**
- * @class An intersection line is a line which lives on two JSXGraph elements.
- * The following element types can be (mutually) intersected: plane.
+ * @class The line that is the intersection of two plane elements in 3D.
  *
  * @pseudo
  * @name IntersectionLine3D

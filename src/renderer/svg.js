@@ -2140,7 +2140,9 @@ JXG.extend(
             // Safari fails if the svg string contains a "&nbsp;"
             // Obsolete with Safari 12+
             svg = svg.replace(/&nbsp;/g, " ");
-            svg = svg.replace(/url\(&quot;(.*)&quot;\)/g, "url($1)");
+            // Replacing &quot;s might be necessary for older Safari versions
+            // svg = svg.replace(/url\(&quot;(.*)&quot;\)/g, "url($1)"); // Bug: does not replace matching &quot;s
+            // svg = svg.replace(/&quot;/g, "");
 
             // Move all HTML tags back from
             // the foreignObject element to the container
