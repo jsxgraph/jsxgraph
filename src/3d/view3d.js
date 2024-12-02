@@ -1357,6 +1357,9 @@ JXG.extend(
         return ret;
     },
 
+    // TODO:
+    // - handle non-closed polyhedra
+    // - handle intersections in vertex, edge, plane
     intersectionPlanePolyhedron: function(plane, phdr) {
         var i, j, seg,
             p, first, pos, pos_akt,
