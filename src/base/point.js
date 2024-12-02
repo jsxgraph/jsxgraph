@@ -510,7 +510,7 @@ JXG.createPoint = function (board, parents, attributes) {
 };
 
 /**
- * @class This element is used to provide a constructor for a glider point.
+ * @class A glider is a point bound to a line, circle or curve or even another point.
  * @pseudo
  * @description A glider is a point which lives on another geometric element like a line, circle, curve, turtle.
  * @name Glider
@@ -582,8 +582,9 @@ JXG.createGlider = function (board, parents, attributes) {
 };
 
 /**
- * @class An intersection point is a point which lives on two JSXGraph elements, i.e. it is one point of the set
- * consisting of the intersection points of the two elements. The following element types can be (mutually) intersected: line, circle,
+ * @class A point intersecting two 1-dimensional elements.
+ * It is one point of the set  * consisting of the intersection points of the two elements.
+ * The following element types can be (mutually) intersected: line, circle,
  * curve, polygon, polygonal chain.
  *
  * @pseudo
@@ -683,7 +684,7 @@ JXG.createIntersectionPoint = function (board, parents, attributes) {
 };
 
 /**
- * @class This element is used to provide a constructor for the "other" intersection point.
+ * @class Given a set of intersection points, this is another ("other") intersection point,
  * @pseudo
  * @description If two elements of type curve, circle or line intersect in more than one point, with this element it is possible
  * to construct the "other" intersection. This is a an intersection which is different from a supplied point or different from any

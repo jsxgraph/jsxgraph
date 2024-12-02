@@ -42,7 +42,7 @@ import Type from "../utils/type.js";
 import Const from "../base/constants.js";
 
 /**
- * @class Creates a grid to support the user with element placement or to improve determination of position.
+ * @class A grid is a mesh consisting of vertical and horizontal lines or other geometrical objects.
  * @pseudo
  * @description A grid is a set of vertical and horizontal lines or other geometrical objects (faces)
  * to support the user with element placement or to improve determination of position.

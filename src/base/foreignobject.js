@@ -329,8 +329,7 @@ JXG.extend(
 );
 
 /**
- * @class This element is used to provide a constructor for arbitrary content in
- * an SVG foreignObject container.
+ * @class Display any HTML content in an SVG foreignObject container - even below other elements.
  * <p>
  * Instead of board.create('foreignobject') the shortcut board.create('fo') may be used.
  *

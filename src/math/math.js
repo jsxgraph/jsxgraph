@@ -280,16 +280,14 @@ JXG.Math = {
      * @returns {Array} Array of numbers containing the result
      * @example
      * var A = [[2, 1],
-     *          [1, 3]],
+     *          [2, 3]],
      *     b = [4, 5],
      *     c;
-     * c = JXG.Math.matVecMult(A, b)
-     * // c === [13, 19];
+     * c = JXG.Math.matVecMult(A, b);
+     * // c === [13, 23];
      */
     matVecMult: function (mat, vec) {
-        var i,
-            s,
-            k,
+        var i, k, s,
             m = mat.length,
             n = vec.length,
             res = [];
@@ -303,6 +301,44 @@ JXG.Math = {
                 s = 0;
                 for (k = 0; k < n; k++) {
                     s += mat[i][k] * vec[k];
+                }
+                res[i] = s;
+            }
+        }
+        return res;
+    },
+
+    /**
+     * Multiplies a vector vec to a matrix mat from the left: vec * mat.
+     * The matrix is interpreted by this function as an array of rows.
+     * Please note: This function does not check if the dimensions match.
+     * @param {Array} vec Array of numbers
+     * @param {Array} mat Two-dimensional array of numbers. The inner arrays describe the columns,
+     *  the outer ones the matrix' rows.
+     * @returns {Array} Array of numbers containing the result
+     * @example
+     * var A = [[2, 1],
+     *          [2, 3]],
+     *     b = [4, 5],
+     *     c;
+     * c = JXG.Math.vecMatMult(b, A);
+     * // c === [18, 16];
+     */
+    vecMatMult: function (vec, mat) {
+        var i, k, s,
+            m = mat.length,
+            n = vec.length,
+            res = [];
+
+        if (n === 3) {
+            for (i = 0; i < m; i++) {
+                res[i] = vec[0] * mat[0][i] + vec[1] * mat[1][i] + vec[2] * mat[2][i];
+            }
+        } else {
+            for (i = 0; i < n; i++) {
+                s = 0;
+                for (k = 0; k < m; k++) {
+                    s += vec[k] * mat[k][i];
                 }
                 res[i] = s;
             }

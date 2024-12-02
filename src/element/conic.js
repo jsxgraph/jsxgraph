@@ -45,7 +45,7 @@ import Geometry from "../math/geometry.js";
 import Type from "../utils/type.js";
 
 /**
- * @class This element is used to provide a constructor for an ellipse. An ellipse is given by two points (the foci) and a third point on the ellipse or
+ * @class An ellipse is a special conic section given by two points (the foci) and a third point on the ellipse or
  * the length of the major axis.
  * @pseudo
  * @name Ellipse
@@ -327,7 +327,7 @@ JXG.createEllipse = function (board, parents, attributes) {
 };
 
 /**
- * @class This element is used to provide a constructor for an hyperbola. An hyperbola is given by two points (the foci) and a third point on the hyperbola or
+ * @class A hyperbola is a special conic section given by two points (the foci) and a third point on the hyperbola or
  * the length of the major axis.
  * @pseudo
  * @name Hyperbola
@@ -550,7 +550,7 @@ JXG.createHyperbola = function (board, parents, attributes) {
 };
 
 /**
- * @class This element is used to provide a constructor for a parabola. A parabola is given by one point (the focus) and a line (the directrix).
+ * @class A parabola is a special conic section given by one point (the focus) and a line (the directrix).
  * @pseudo
  * @name Parabola
  * @augments Conic
@@ -770,10 +770,10 @@ JXG.createParabola = function (board, parents, attributes) {
 
 /**
  *
- * @class This element is used to provide a constructor for a generic conic section uniquely defined by five points or
- * a conic defined by the coefficients of the equation
- * <p><i>Ax<sup>2</sup>+ Bxy+Cy<sup>2</sup> + Dx + Ey + F = 0</i></p>.
- * Then the parameters are as follows:
+ * @class Create a generic conic section either by five points or the coefficients of the general conic's equation.
+ * If the conic section is defined by the coefficients of the equation
+ * <p><i>Ax<sup>2</sup>+ Bxy+Cy<sup>2</sup> + Dx + Ey + F = 0</i></p>
+ * then the parameters are as follows:
  * <pre>
  *     board.create('conic', [A, C, F, B/2, D/2, E/2]);
  * </pre>

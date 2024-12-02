@@ -829,7 +829,7 @@ JXG.extend(
 );
 
 /**
- * @class This element is used to provide a constructor for a circle.
+ * @class A circle can be defined by various combinations of points and numbers.
  * @pseudo
  * @description  A circle consists of all points with a given distance from one point. This point is called center, the distance is called radius.
  * A circle can be constructed by providing a center and a point on the circle or a center and a radius (given as a number, function,

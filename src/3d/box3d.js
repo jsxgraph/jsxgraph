@@ -36,7 +36,7 @@ import JXG from "../jxg.js";
 import Type from "../utils/type.js";
 
 /**
- * @class This element creates the axis and plane elements of a 3D view.
+ * @class A container element that creates the axes and rear and front planes of a 3D view.
  * @pseudo
  * @description This element "axes3d" is used to create
  *  <ul>
@@ -203,7 +203,7 @@ JXG.createAxes3D = function (board, parents, attributes) {
 JXG.registerElement("axes3d", JXG.createAxes3D);
 
 /**
- * @class This element creates a 3D axis.
+ * @class A 3D axis element is a line together with optional ticks and labels.
  * @pseudo
  * @description Simple element 3d axis as used with "axesPosition:center". No ticks and no label (yet).
  * <p>
@@ -274,7 +274,7 @@ JXG.createAxis3D = function (board, parents, attributes) {
 JXG.registerElement("axis3d", JXG.createAxis3D);
 
 /**
- * @class This element creates a 3D (rectangular) mesh.
+ * @class Display a rectangular mesh on a 3D plane element.
  * @pseudo
  * @description Create a (rectangular) mesh - i.e. grid lines - on a plane3D element.
  * <p>

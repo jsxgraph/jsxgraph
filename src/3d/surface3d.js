@@ -170,7 +170,7 @@ JXG.extend(
 );
 
 /**
- * @class This element creates a 3D parametric surface.
+ * @class A 3D parametric surface visualizes a map (u, v) &rarr; [X(u, v), Y(u, v), Z(u, v)].
  * @pseudo
  * @description A 3D parametric surface is defined by a function
  *    <i>F: R<sup>2</sup> &rarr; R<sup>3</sup></i>.
@@ -282,7 +282,8 @@ JXG.createParametricSurface3D = function (board, parents, attributes) {
 JXG.registerElement("parametricsurface3d", JXG.createParametricSurface3D);
 
 /**
- * @class This element creates a 3D function graph.
+ * @class A 3D functiongraph  visualizes a map (x, y) &rarr; f(x, y).
+ * The graph is a {@link Curve3D} element.
  * @pseudo
  * @description A 3D function graph is defined by a function
  *    <i>F: R<sup>2</sup> &rarr; R</i>.

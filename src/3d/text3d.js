@@ -359,7 +359,7 @@ JXG.extend(
 );
 
 /**
- * @class This element is used to provide a constructor for a 3D Text.
+ * @class Construct a text element in a 3D view.
  * @pseudo
  * @description A Text3D object is defined by 3 coordinates [x, y, z, text] or an array / function for the position of the text
  * and a string or function defining the text.

@@ -52,6 +52,7 @@ import Numerics from "../math/numerics.js";
  * @see JXG.AbstractRenderer
  */
 JXG.SVGRenderer = function (container, dim) {
+    var i;
 
     // docstring in AbstractRenderer
     this.type = "svg";
@@ -97,60 +98,19 @@ JXG.SVGRenderer = function (container, dim) {
     this.svgRoot = this.container.ownerDocument.createElementNS(this.svgNamespace, "svg");
     this.svgRoot.style.overflow = "hidden";
     this.svgRoot.style.display = "block";
-    this.svgRoot.style.position = "absolute";
-
     this.resize(dim.width, dim.height);
 
-    /***
-     * The SVG driver uses appendChild() as a decorator for .appendChild()
-     *
-     */
-    this.appendChildInCurrentFrame = function (parent, aChild) {
-
-        // there is an error creating the axis in the case where there are TWO calls to initboard
-        // with the same divName (which is a different kind of error).  Someone trys to appendChild to an undefined parent.
-        // only real problem is that the error message is wrong.
-        // I ignore it here, it should be handled in a separate pull request.
-        if (!parent) {
-            // console.error(parent, 'appendChildInCurrentFrame called with undefined parent');  // shows where it happens
-            return;
-        }
-
-        // handle cases where the node has no useful parents
-        if (!parent.hasOwnProperty('tagName') || parent.tagName === 'DIV') {
-            return parent.appendChild(aChild);  // pass it through to appendChild
-        }
-
-        let frame = this.frameArray.find((element) => element.containerID === this.container.id && element.name === this.currentFrame);
-        if (frame == null) {  // frame doesn't exist yet
-            frame = this.addFrame(this.currentFrame);
-        }
-
-        if (parent.tagName === 'g' && (aChild.tagName === 'defs' || aChild.tagName === 'foreignObject')) {
-            // we are adding a <g>
-            let child = this.frameArray.parent.appendChild(aChild);    // append to a specific frame
-
-            if (aChild.tagName === 'defs') {
-                frame.defs = child;
-                this.defs = child;
-            }
-            if (aChild.tagName === 'foreignObject') {
-                frame.foreign = child;
-                this.foreignObjLayer = child;
-            }
-            return child;
-        } else if (parent.tagName === 'defs') {
-            return frame.defs.appendChild(aChild);    // append to a specific frame
-        } else if (parent.tagName === 'g' && aChild.tagName === 'g') {
-            return this.frameArray.parent.appendChild(aChild);    // defs usually attached to the SVG element, should be in each frame
-        } else {
-            return parent.appendChild(aChild);               // either not in SVG area, or 'marker', 'filter', 'linearGradient',  etc at lower level of SVG
-        }
-
-    };
-
-
     //this.svgRoot.setAttributeNS(null, 'shape-rendering', 'crispEdge'); //'optimizeQuality'); //geometricPrecision');
+
+    this.container.appendChild(this.svgRoot);
+
+    /**
+     * The <tt>defs</tt> element is a container element to reference reusable SVG elements.
+     * @type Node
+     * @see https://www.w3.org/TR/SVG2/struct.html#DefsElement
+     */
+    this.defs = this.container.ownerDocument.createElementNS(this.svgNamespace, "defs");
+    this.svgRoot.appendChild(this.defs);
 
     /**
      * Filters are used to apply shadows.
@@ -188,7 +148,7 @@ JXG.SVGRenderer = function (container, dim) {
         feOffset.setAttributeNS(null, 'result', 'offOut');
         feOffset.setAttributeNS(null, 'dx', offset[0]);
         feOffset.setAttributeNS(null, 'dy', offset[1]);
-        this.appendChildInCurrentFrame(filter, feOffset);
+        filter.appendChild(feOffset);
 
         feColor = this.container.ownerDocument.createElementNS(this.svgNamespace, 'feColorMatrix');
         feColor.setAttributeNS(null, 'in', 'offOut');
@@ -207,19 +167,19 @@ JXG.SVGRenderer = function (container, dim) {
                 '  0 0 0 ' + opacity + ' 0';
             feColor.setAttributeNS(null, 'values', mat);
         }
-        this.appendChildInCurrentFrame(filter, feColor);
+        filter.appendChild(feColor);
 
         feGaussianBlur = this.container.ownerDocument.createElementNS(this.svgNamespace, 'feGaussianBlur');
         feGaussianBlur.setAttributeNS(null, 'in', 'colorOut');
         feGaussianBlur.setAttributeNS(null, 'result', 'blurOut');
         feGaussianBlur.setAttributeNS(null, 'stdDeviation', blur);
-        this.appendChildInCurrentFrame(filter, feGaussianBlur);
+        filter.appendChild(feGaussianBlur);
 
         feBlend = this.container.ownerDocument.createElementNS(this.svgNamespace, 'feBlend');
         feBlend.setAttributeNS(null, 'in', 'SourceGraphic');
         feBlend.setAttributeNS(null, 'in2', 'blurOut');
         feBlend.setAttributeNS(null, 'mode', 'normal');
-        this.appendChildInCurrentFrame(filter, feBlend);
+        filter.appendChild(feBlend);
 
         return filter;
     };
@@ -254,7 +214,7 @@ JXG.SVGRenderer = function (container, dim) {
      * // Output:
      * // xxx_bbbTriangleEnd
      */
-    this.toStr = function () {
+    this.toStr = function() {
         // ES6 would be [...arguments].join()
         var str = Array.prototype.slice.call(arguments).join('');
         // Mask special symbols like '/' and '\' in id
@@ -284,123 +244,37 @@ JXG.SVGRenderer = function (container, dim) {
             ')';
     };
 
-    /**
-  * JSXGraph uses a layer system to sort the elements on the board. This puts certain types of elements in front
-  * of other types of elements. For the order used see {@link JXG.Options.layer}. The number of layers is documented
-  * there, too. The higher the number, the "more on top" are the elements on this layer.
-  * @type Array
-  */
-    this.addFrame = function (frameName) {
-        let aLayer = [],
-            activeFrame,    // current element of frameArray
-            frameEl;        // <g> node that contains a frame (usually equivalent to activeFrame.node)
-
-
-        this.currentFrame = frameName;
-
-        // see if the frame already exists
-        activeFrame = this.frameArray.find((element) => element.containerID === this.container.id && element.name === frameName);
-        if (activeFrame) {   // frame exists
-            this.layer = activeFrame.layers;
-            this.defs = activeFrame.defs;
-            return activeFrame; // return the frame object (node is in frame.node)
-        }
-
-        // Every frame has the standard 20 layers, plus filters, foreignobjects, etcr */
-        frameEl = this.container.ownerDocument.createElementNS(this.svgNamespace, 'svg');
-        frameEl.id = frameName;
-        frameEl.style.position = "absolute";
-
-        this.svgRoot.appendChild(frameEl);
-
-        // create the frameArray element immediately, because subsequent inserts will use it
-        // do some bookeeping
-        this.frameArray.push({
-            name: frameName,
-            containerID: this.container.id,
-            node: frameEl,
-            defs: null,
-            foreign: null,
-            zIndex: 0,
-            layers: null,  // this is the old 20 layers, now inside a <g id='name'> </g>
-            translate: [0, 0],
-            rotate: [0, 0, 0],   // angle, xAround, yAround
-            scale: [1, 1]
-        });
-
-        // have pushed the empty frame, now find it again and add children
-        activeFrame = this.frameArray[this.frameArray.length - 1];   // fix up the bookkeeping
-
-        /**
-         * The <tt>defs</tt> element is a container element to reference reusable SVG elements.
-         * @type Node
-         * @see https://www.w3.org/TR/SVG2/struct.html#DefsElement
-        */
-        this.defs = this.container.ownerDocument.createElementNS(this.svgNamespace, "defs");
-        this.appendChildInCurrentFrame(activeFrame.node, this.defs);
-        activeFrame.defs = this.defs;              // fix up the bookkeeping
-
-        /* Default shadow filter */
-        this.appendChildInCurrentFrame(this.defs, this.createShadowFilter(this.uniqName('f1'), 'none', 1, 0.1, 3, [5, 5]));
-
-        // add 20 layers to the frame
-        aLayer = [];
-        for (let i = 0; i < Options.layer.numlayers; i++) {
-            aLayer[i] = this.container.ownerDocument.createElementNS(this.svgNamespace, 'g');
-            activeFrame.node.appendChild(aLayer[i]);
-        }
-        activeFrame.layers = aLayer;
-        this.layer = aLayer;
-
-        activeFrame.foEl = null;
-        try {
-            this.foreignObjLayer = this.container.ownerDocument.createElementNS(
-                this.svgNamespace,
-                "foreignObject"
-            );
-            this.foreignObjLayer.setAttribute("display", "none");
-            this.foreignObjLayer.setAttribute("x", 0);
-            this.foreignObjLayer.setAttribute("y", 0);
-            this.foreignObjLayer.setAttribute("width", "100%");
-            this.foreignObjLayer.setAttribute("height", "100%");
-            this.foreignObjLayer.setAttribute("id", this.uniqName('foreignObj'));
-            activeFrame.foreign = activeFrame.node.appendChild(this.foreignObjLayer);   // this.svgRoot.appendChild(this.foreignObjLayer);
-            this.supportsForeignObject = true;
-        } catch (e) {
-            this.supportsForeignObject = false;
-        }
-
-        return activeFrame;
-    };
+    /* Default shadow filter */
+    this.defs.appendChild(this.createShadowFilter(this.uniqName('f1'), 'none', 1, 0.1, 3, [5, 5]));
 
     /**
-     * Sets the offset of a frame.  If the frame does not exist, it will be added.  This is the public face that SVG exposes to the frame system.
-     * @type Object
-     * @type string
-     * @type number[]
+     * JSXGraph uses a layer system to sort the elements on the board. This puts certain types of elements in front
+     * of other types of elements. For the order used see {@link JXG.Options.layer}. The number of layers is documented
+     * there, too. The higher the number, the "more on top" are the elements on this layer.
+     * @type Array
      */
-    this.setFrame = function (board, frameName, location) {
+    this.layer = [];
+    for (i = 0; i < Options.layer.numlayers; i++) {
+        this.layer[i] = this.container.ownerDocument.createElementNS(this.svgNamespace, 'g');
+        this.svgRoot.appendChild(this.layer[i]);
+    }
 
-        let activeFrame = this.frameArray.find((element) => element.containerID === this.container.id && element.name === this.currentFrame);
-        if (activeFrame) {
-            activeFrame = this.addFrame(frameName);
-            activeFrame.translate = location;
-        }
-
-        activeFrame.translate = location;   // set the new offset
-
-        activeFrame.node.setAttribute('x', + (activeFrame.translate[0] * board.unitX));
-        activeFrame.node.setAttribute('y', -(activeFrame.translate[1] * board.unitY));
-    };
-
-
-    // finally create the frame
-    // warning, we don't have the board object here, unlike the standard call from board.js.
-    // there must be a better place to initialize
-    // it only works because frame starts at [0,0]
-    // this.setFrame('missing board', 'default');
-
-    this.appendChildInCurrentFrame(this.container, this.svgRoot);
+    try {
+        this.foreignObjLayer = this.container.ownerDocument.createElementNS(
+            this.svgNamespace,
+            "foreignObject"
+        );
+        this.foreignObjLayer.setAttribute("display", "none");
+        this.foreignObjLayer.setAttribute("x", 0);
+        this.foreignObjLayer.setAttribute("y", 0);
+        this.foreignObjLayer.setAttribute("width", "100%");
+        this.foreignObjLayer.setAttribute("height", "100%");
+        this.foreignObjLayer.setAttribute("id", this.uniqName('foreignObj'));
+        this.svgRoot.appendChild(this.foreignObjLayer);
+        this.supportsForeignObject = true;
+    } catch (e) {
+        this.supportsForeignObject = false;
+    }
 };
 
 JXG.SVGRenderer.prototype = new AbstractRenderer();
@@ -607,7 +481,7 @@ JXG.extend(
             node2.setAttributeNS(null, "refY", h);
             node2.setAttributeNS(null, "refX", v);
 
-            this.appendChildInCurrentFrame(node2, node3);
+            node2.appendChild(node3);
             return node2;
         },
 
@@ -752,7 +626,7 @@ JXG.extend(
             node.style.whiteSpace = "nowrap";
 
             el.rendNodeText = this.container.ownerDocument.createTextNode("");
-            this.appendChildInCurrentFrame(node, el.rendNodeText);
+            node.appendChild(el.rendNodeText);
             this.appendChildPrim(node, el.evalVisProp('layer'));
 
             return node;
@@ -944,13 +818,7 @@ JXG.extend(
             } else if (level >= Options.layer.numlayers) {
                 level = Options.layer.numlayers - 1;
             }
-            // every frame has a set of layers
-            let activeFrame = this.frameArray.find((element) => element.containerID === this.container.id && element.name === this.currentFrame);
-            if (!activeFrame) {
-                activeFrame = this.addFrame(this.currentFrame);
-                // throw new Error(`Internal Error: Did not find a frame for current frame '${this.currentFrame}' in container '${this.container.id}'`);
-            }
-            this.appendChildInCurrentFrame(activeFrame.layers[level], node);
+            this.layer[level].appendChild(node);
 
             return node;
         },
@@ -984,7 +852,7 @@ JXG.extend(
                 level = Options.layer.numlayers - 1;
             }
 
-            this.appendChildInCurrentFrame(this.layer[level], el.rendNode);
+            this.layer[level].appendChild(el.rendNode);
         },
 
         // Already documented in JXG.AbstractRenderer
@@ -1014,7 +882,7 @@ JXG.extend(
                     // If not, create a new marker
                     if (node2 === null) {
                         node2 = this._createArrowHead(el, "Start", a.typeFirst);
-                        this.appendChildInCurrentFrame(this.defs, node2);
+                        this.defs.appendChild(node2);
                     }
                     el.rendNodeTriangleStart = node2;
                     el.rendNode.setAttributeNS(null, "marker-start", this.toURL(str));
@@ -1038,7 +906,7 @@ JXG.extend(
                     // If not, create a new marker
                     if (node2 === null) {
                         node2 = this._createArrowHead(el, "End", a.typeLast);
-                        this.appendChildInCurrentFrame(this.defs, node2);
+                        this.defs.appendChild(node2);
                     }
                     el.rendNodeTriangleEnd = node2;
                     el.rendNode.setAttributeNS(null, "marker-end", this.toURL(str));
@@ -1526,9 +1394,9 @@ JXG.extend(
                 node = this.createPrim(ev_g + "Gradient", el.id + "_gradient");
                 node2 = this.createPrim("stop", el.id + "_gradient1");
                 node3 = this.createPrim("stop", el.id + "_gradient2");
-                this.appendChildInCurrentFrame(node, node2);
-                this.appendChildInCurrentFrame(node, node3);
-                this.appendChildInCurrentFrame(this.defs, node);
+                node.appendChild(node2);
+                node.appendChild(node3);
+                this.defs.appendChild(node);
                 fillNode.setAttributeNS(
                     null,
                     'style',
@@ -1835,7 +1703,7 @@ JXG.extend(
                             this.defs.removeChild(node);
                         }
                         id = el.rendNode.id + '_' + 'f1';
-                        this.appendChildInCurrentFrame(this.defs, this.createShadowFilter(id, c, op, bl, b, o));
+                        this.defs.appendChild(this.createShadowFilter(id, c, op, bl, b, o));
                         el.rendNode.setAttributeNS(null, 'filter', this.toURL(id));
                         // 'url(#' + id + ')');
                     }
@@ -2233,7 +2101,7 @@ JXG.extend(
                 while (svgRoot.nextSibling) {
                     // Copy all value attributes
                     Type.concat(values, this._getValuesOfDOMElements(svgRoot.nextSibling));
-                    this.appendChildInCurrentFrame(this.foreignObjLayer, svgRoot.nextSibling);
+                    this.foreignObjLayer.appendChild(svgRoot.nextSibling);
                 }
             }
 
@@ -2272,7 +2140,9 @@ JXG.extend(
             // Safari fails if the svg string contains a "&nbsp;"
             // Obsolete with Safari 12+
             svg = svg.replace(/&nbsp;/g, " ");
-            svg = svg.replace(/url\(&quot;(.*)&quot;\)/g, "url($1)");
+            // Replacing &quot;s might be necessary for older Safari versions
+            // svg = svg.replace(/url\(&quot;(.*)&quot;\)/g, "url($1)"); // Bug: does not replace matching &quot;s
+            // svg = svg.replace(/&quot;/g, "");
 
             // Move all HTML tags back from
             // the foreignObject element to the container

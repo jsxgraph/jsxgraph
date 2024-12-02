@@ -917,7 +917,7 @@ JXG.extend(
 );
 
 /**
- * @class This element is used to provide a constructor for a turtle.
+ * @class A turtle is a graphic paradigm similar to the programming languages Logo or PostScript.
  * @pseudo
  * @description  Creates a new turtle
  * @name Turtle

@@ -371,7 +371,7 @@ JXG.extend(
 );
 
 /**
- * @class Displays an image.
+ * @class Display of an external image.
  * @pseudo
  * @name Image
  * @type JXG.Image

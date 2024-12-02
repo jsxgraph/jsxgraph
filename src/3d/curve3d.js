@@ -156,9 +156,9 @@ JXG.extend(
         updateDataArray: function() { /* stub */ },
 
         update: function () {
-            // if (this.needsUpdate) {
+            if (this.needsUpdate) {
                 this.updateDataArray();
-            // }
+            }
             return this;
         },
 
@@ -186,7 +186,9 @@ JXG.extend(
 );
 
 /**
- * @class This element creates a 3D parametric curve.
+ * @class 3D Curves can be defined by mappings or by discrete data sets.
+ * In general, a 3D curve is a mapping from R to R^3, where t maps to (x(t),y(t),z(t)).
+ * The graph is drawn for t in the interval [a,b].
  * @pseudo
  * @description A 3D parametric curve is defined by a function
  *    <i>F: R<sup>1</sup> &rarr; R<sup>3</sup></i>.
@@ -275,7 +277,7 @@ JXG.createCurve3D = function (board, parents, attributes) {
 JXG.registerElement("curve3d", JXG.createCurve3D);
 
 /**
- * @class 3D vector field.
+ * @class A vector field is an assignment of a vector to each point in 3D space.
  * <p>
  * Plot a vector field either given by three functions
  * f1(x, y, z), f2(x, y, z), and f3(x, y, z) or by a function f(x, y, z)
