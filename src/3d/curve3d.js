@@ -156,9 +156,9 @@ JXG.extend(
         updateDataArray: function() { /* stub */ },
 
         update: function () {
-            if (this.needsUpdate) {
+            // if (this.needsUpdate) {
                 this.updateDataArray();
-            }
+            // }
             return this;
         },
 
