@@ -88,7 +88,6 @@ JXG.extend(
                 // Evaluate each vertex only once.
                 // For this, face[0] has to be accessed first.
                 // During updates this should be the case automatically.
-                console.log(p)
                 p.updateCoords();
             }
 

@@ -87,12 +87,15 @@ JXG.createpolyhedron3D = function (board, parents, attributes) {
             updateCoords: function() {
                 var i, p;
                 for (i in this.vertices) {
-                    if (this.vertices.hasOwnProperty(i)) {
-                        p = this.view.select(this.vertices[i]);
+                    p = this.vertices[i];
+                    if (Type.isArray(p) || Type.isFunction(p)) {
+                        this.coords[i] = JXG.evaluate(this.vertices[i]);
+                    } else {
+                        p = this.view.select(p);
                         if (Type.isPoint3D(p)) {
                             this.coords[i] = p.coords.slice(1);
                         } else {
-                            this.coords[i] = JXG.evaluate(this.vertices[i]);
+                            throw Error('Polyhedron3D.updateCoords: unknown vertices type!');
                         }
                     }
                 }
