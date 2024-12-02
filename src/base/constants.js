@@ -124,6 +124,7 @@ constants =
     OBJECT_TYPE_TEXT3D: 43,
     OBJECT_TYPE_FACE3D: 44,
     OBJECT_TYPE_POLYHEDRON3D: 45,
+    OBJECT_TYPE_POLYGON3D: 46,
 
     // IMPORTANT:
     // ----------
