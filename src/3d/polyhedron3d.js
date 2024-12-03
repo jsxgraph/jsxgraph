@@ -74,7 +74,7 @@ Type.copyPrototypeMethods(JXG.Polyhedron3D, JXG.GeometryElement3D, "constructor3
 JXG.createpolyhedron3D = function (board, parents, attributes) {
     var view = parents[0],
         i, le,
-        face,
+        face, f,
         el,
         attr, attr_polyhedron,
         faceList = [],
@@ -89,7 +89,7 @@ JXG.createpolyhedron3D = function (board, parents, attributes) {
                 for (i in this.vertices) {
                     p = this.vertices[i];
                     if (Type.isArray(p) || Type.isFunction(p)) {
-                        this.coords[i] = JXG.evaluate(this.vertices[i]);
+                        this.coords[i] = Type.evaluate(this.vertices[i]);
                     } else {
                         p = this.view.select(p);
                         if (Type.isPoint3D(p)) {
@@ -101,7 +101,6 @@ JXG.createpolyhedron3D = function (board, parents, attributes) {
                 }
             }
         };
-
 
     // Copy vertices into a dict
     if (Type.isArray(parents[1])) {
@@ -117,21 +116,20 @@ JXG.createpolyhedron3D = function (board, parents, attributes) {
         }
     }
 
-    attr_polyhedron = JXG.copyAttributes(attributes, board.options, "polyhedron3d");
-
-    // Create edge elements
-    // if (parents[3]) {
-    //     polyhedron.faces = parents[3].slice();
-    // }
+    attr_polyhedron = Type.copyAttributes(attributes, board.options, "polyhedron3d");
 
     // Create face3d elements
     le = polyhedron.faces.length;
     for (i = 0; i < le; i++) {
-        attr = JXG.copyAttributes(attributes, board.options, "curve3d");
+        attr = Type.copyAttributes(attributes, board.options, "face3d");
         attr.fillcolor = attr_polyhedron.fillcolorarray[i % attr_polyhedron.fillcolorarray.length];
-
-        // attr.fillopacity = attr_polyhedron.fillopacityarray[i % attr_polyhedron.fillopacityarray.length];
-
+        f = polyhedron.faces[i];
+        if (Type.isArray(f) && f.length === 2 && Type.isObject(f[1]) && Type.isArray(f[0])) {
+            // Handle case that face is of type [[points], {attr}]
+            Type.mergeAttr(attr, f[1]);
+            // Normalize face array, i.e. don't store attributes of that face in polyhedron
+            polyhedron.faces[i] = f[0];
+        }
         face = view.create('face3d', [polyhedron, i], attr);
         faceList.push(face);
     }
