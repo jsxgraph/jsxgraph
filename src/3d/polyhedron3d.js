@@ -71,7 +71,7 @@ Type.copyPrototypeMethods(JXG.Polyhedron3D, JXG.GeometryElement3D, "constructor3
  * @param {} TODO
  *
  */
-JXG.createpolyhedron3D = function (board, parents, attributes) {
+JXG.createPolyhedron3D = function (board, parents, attributes) {
     var view = parents[0],
         i, le,
         face, f,
@@ -82,7 +82,7 @@ JXG.createpolyhedron3D = function (board, parents, attributes) {
             view: view,
             vertices: {},
             coords: {},
-            // edges: [],
+            coords2D: {},
             faces: parents[2],
             updateCoords: function() {
                 var i, p;
@@ -141,4 +141,4 @@ JXG.createpolyhedron3D = function (board, parents, attributes) {
     return el;
 };
 
-JXG.registerElement("polyhedron3d", JXG.createpolyhedron3D);
+JXG.registerElement("polyhedron3d", JXG.createPolyhedron3D);

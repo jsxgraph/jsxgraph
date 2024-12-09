@@ -84,21 +84,29 @@ JXG.extend(
                 i = this.faceNumber,
                 face = p.faces[i];
 
-            if (i === 0 && !this.view.board._change3DView) {
-                // Evaluate each vertex only once.
-                // For this, face[0] has to be accessed first.
-                // During updates this should be the case automatically.
-                p.updateCoords();
+            if (i === 0) {
+                if (!this.view.board._change3DView) {
+                    // Evaluate each vertex only once.
+                    // For this, face[0] has to be accessed first.
+                    // During updates this should be the case automatically.
+                    p.updateCoords();
+                }
+                // coords2D equal to [] need projection down below.
+                for (j in p.vertices) {
+                    p.coords2D[j] = [];
+                }
             }
 
             le = face.length;
             for (j = 0; j < le; j++) {
-                c3d = p.coords[face[j]];
-                this.dataX.push(c3d[0]);
-                this.dataY.push(c3d[1]);
-                this.dataZ.push(c3d[2]);
-
-                c2d = this.view.project3DTo2D(c3d);
+                c2d = p.coords2D[face[j]];
+                if (c2d.length === 0) {
+                    // if coords2D.length > 0, it has already be projected
+                    // in another face3d.
+                    c3d = p.coords[face[j]];
+                    c2d = this.view.project3DTo2D(c3d);
+                    p.coords2D[face[j]] = c2d;
+                }
                 x.push(c2d[1]);
                 y.push(c2d[2]);
             }
@@ -119,7 +127,7 @@ JXG.extend(
                 p1, p2,
                 face;
 
-            // if (this.needsUpdate) {
+            if (this.needsUpdate) {
                 phdr = this.polyhedron;
                 face = phdr.faces[this.faceNumber];
 
@@ -143,8 +151,8 @@ JXG.extend(
                 }
                 this.d = Mat.innerProduct(p1, this.normal, 3);
 
-                // this.updateDataArray();
-            // }
+                this.updateDataArray();
+            }
             return this;
         },
 

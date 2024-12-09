@@ -411,7 +411,9 @@ JXG.extend(Options, {
 
     circle3d: {
 
-        point: { visible: false, name: "" }
+        point: { visible: false, name: "" },
+        needsRegularUpdate: true
+
     },
 
     curve3d: {
@@ -422,7 +424,8 @@ JXG.extend(Options, {
         highlight: false,
         tabindex: -1,
         strokeWidth: 1,
-        numberPointsHigh: 200
+        numberPointsHigh: 200,
+        needsRegularUpdate: true
 
         /**#@-*/
     },
@@ -436,7 +439,8 @@ JXG.extend(Options, {
         tabindex: -1,
         strokeWidth: 1,
         fillColor: JXG.palette.yellow,
-        fillOpacity: 0.4
+        fillOpacity: 0.4,
+        needsRegularUpdate: true
 
         /**#@-*/
     },
@@ -453,6 +457,7 @@ JXG.extend(Options, {
         tabindex: null,
         gradient: "linear",
         gradientSecondColor: "#ffffff",
+        needsRegularUpdate: true,
 
         point: { visible: false, name: "" }, // Used in cases of point/direction/range
         point1: { visible: false, name: "" }, // Used in point/point
@@ -469,6 +474,7 @@ JXG.extend(Options, {
         strokeOpacity: 0.6,
         highlight: false,
         tabindex: null,
+        needsRegularUpdate: true,
 
         visible: "inherit"
 
@@ -481,6 +487,7 @@ JXG.extend(Options, {
         strokeOpacity: 1,
         highlight: false,
         tabindex: null,
+        needsRegularUpdate: true,
 
         gradient: "linear",
         gradientSecondColor: "#ffffff",
@@ -499,7 +506,8 @@ JXG.extend(Options, {
         fillColor: "yellow",
         highlightStrokeColor: "#555555",
         gradientFX: 0.7,
-        gradientFY: 0.3
+        gradientFY: 0.3,
+        needsRegularUpdate: true
     },
 
     polygon3d: {
@@ -510,7 +518,8 @@ JXG.extend(Options, {
         highlight: false,
         tabindex: -1,
         strokeWidth: 1,
-        fillColor: 'none'
+        fillColor: 'none',
+        needsRegularUpdate: true
 
         /**#@-*/
     },
@@ -520,18 +529,8 @@ JXG.extend(Options, {
          * @visprop
          */
 
-        fillColorArray: ['white', 'black']
-
-        // edges: {
-        //     strokeWith: 2,
-        //     strokeColor: 'red'
-        // },
-
-        // face: {
-        //     fillColorArray: ['white', 'black'],
-        //     // fillOpacityArray: [1]
-        //     strokeWidth: 0
-        // }
+        fillColorArray: ['white', 'black'],
+        needsRegularUpdate: true
 
         /**#@-*/
     },
@@ -550,7 +549,8 @@ JXG.extend(Options, {
         gradientSecondColor: '#00ff80',
         gradientFX: 0.7,
         gradientFY: 0.3,
-        fillOpacity: 0.4
+        fillOpacity: 0.4,
+        needsRegularUpdate: true
 
         /**#@-*/
     },
@@ -576,7 +576,9 @@ JXG.extend(Options, {
          * @type Number
          * @name ParametricSurface3D#stepsV
          */
-        stepsV: 30
+        stepsV: 30,
+
+        needsRegularUpdate: true
 
         /**#@-*/
     },
@@ -586,7 +588,8 @@ JXG.extend(Options, {
          * @visprop
          */
 
-        withLabel: false
+        withLabel: false,
+        needsRegularUpdate: true
 
         /**#@-*/
     },
@@ -603,6 +606,7 @@ JXG.extend(Options, {
         minorTicks: 0,
         tickEndings: [0, 1],
         drawLabels: true,
+        needsRegularUpdate: true,
 
         label: {
             visible: true,
@@ -644,7 +648,8 @@ JXG.extend(Options, {
             enabled: true,
             size: 5,
             angle: Math.PI * 0.125
-        }
+        },
+        needsRegularUpdate: true
 
         /**#@-*/
     },
