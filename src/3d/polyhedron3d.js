@@ -37,6 +37,11 @@ import Const from "../base/constants.js";
 import Type from "../utils/type.js";
 
 JXG.Polyhedron3D = function (view, polyhedron, faces, attributes) {
+    var e,
+        genericMethods,
+        generateMethod,
+        that = this;
+
     this.constructor(view.board, attributes, Const.OBJECT_TYPE_POLYHEDRON3D, Const.OBJECT_CLASS_3D);
     this.constructor3D(view, "polyhedron3d");
 
@@ -48,10 +53,107 @@ JXG.Polyhedron3D = function (view, polyhedron, faces, attributes) {
 
     this.numberFaces = faces.length;
 
+    // this.def contains the defining data of the polyhedron:
+    // vertices and a list of vertices for each face.
     this.def = polyhedron;
 
+    // Simultaneous methods for all faces
+    genericMethods = [
+        /**
+         * Invokes setAttribute for every stored element with a setAttribute method and hands over the given arguments.
+         * See {@link JXG.GeometryElement#setAttribute} for further description, valid parameters and return values.
+         * @name setAttribute
+         * @memberOf JXG.Composition.prototype
+         * @function
+         */
+        "setAttribute",
+
+        /**
+         * Invokes setParents for every stored element with a setParents method and hands over the given arguments.
+         * See {@link JXG.GeometryElement#setParents} for further description, valid parameters and return values.
+         * @name setParents
+         * @memberOf JXG.Composition.prototype
+         * @function
+         */
+        "setParents",
+
+        /**
+         * Invokes prepareUpdate for every stored element with a prepareUpdate method and hands over the given arguments.
+         * See {@link JXG.GeometryElement#prepareUpdate} for further description, valid parameters and return values.
+         * @name prepareUpdate
+         * @memberOf JXG.Composition.prototype
+         * @function
+         */
+        "prepareUpdate",
+
+        /**
+         * Invokes updateRenderer for every stored element with a updateRenderer method and hands over the given arguments.
+         * See {@link JXG.GeometryElement#updateRenderer} for further description, valid parameters and return values.
+         * @name updateRenderer
+         * @memberOf JXG.Composition.prototype
+         * @function
+         */
+        "updateRenderer",
+
+        /**
+         * Invokes update for every stored element with a update method and hands over the given arguments.
+         * See {@link JXG.GeometryElement#update} for further description, valid parameters and return values.
+         * @name update
+         * @memberOf JXG.Composition.prototype
+         * @function
+         */
+        "update",
+
+        /**
+         * Invokes fullUpdate for every stored element with a fullUpdate method and hands over the given arguments.
+         * See {@link JXG.GeometryElement#fullUpdate} for further description, valid parameters and return values.
+         * @name fullUpdate
+         * @memberOf JXG.Composition.prototype
+         * @function
+         */
+        "fullUpdate",
+
+        /**
+         * Invokes highlight for every stored element with a highlight method and hands over the given arguments.
+         * See {@link JXG.GeometryElement#highlight} for further description, valid parameters and return values.
+         * @name highlight
+         * @memberOf JXG.Composition.prototype
+         * @function
+         */
+        "highlight",
+
+        /**
+         * Invokes noHighlight for every stored element with a noHighlight method and hands over the given arguments.
+         * See {@link JXG.GeometryElement#noHighlight} for further description, valid parameters and return values.
+         * @name noHighlight
+         * @memberOf JXG.Composition.prototype
+         * @function
+         */
+        "noHighlight"
+    ];
+
+    generateMethod = function (what) {
+        return function () {
+            var i;
+
+            for (i in that.faces) {
+                if (that.faces.hasOwnProperty(i)) {
+                    if (Type.exists(that.faces[i][what])) {
+                        that.faces[i][what].apply(that.faces[i], arguments);
+                    }
+                }
+            }
+            return that;
+        };
+    };
+
+    for (e = 0; e < genericMethods.length; e++) {
+        this[genericMethods[e]] = generateMethod(genericMethods[e]);
+    }
+
     this.methodMap = Type.deepCopy(this.methodMap, {
-        // TODO
+        setAttribute: "setAttribute",
+        setParents: "setParents"
     });
 };
 JXG.Polyhedron3D.prototype = new JXG.GeometryElement();
@@ -134,9 +236,11 @@ JXG.createPolyhedron3D = function (board, parents, attributes) {
         faceList.push(face);
     }
     el = new JXG.Polyhedron3D(view, polyhedron, faceList, attributes);
-
-    // el.def contains the defining data of the polyhedron
-    el.def = polyhedron;
+    el.setParents(el); // Sets el as parent to all faces.
+    for (i = 0; i < le; i++) {
+        el.inherits.push(el.faces[i]);
+        el.addChild(el.faces[i]);
+    }
 
     return el;
 };
