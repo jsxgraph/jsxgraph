@@ -6117,8 +6117,8 @@ JXG.Options = {
          * and {@link Label#offset}.
          * For line, circle and curve elements (and their derived objects)
          * there are two possibilities to position labels.
-         * <p>
-         * The first possibility uses the <a href="https://www.tug.org/metapost.html">MetaPost</a> system:
+         * <ul>
+         * <li> The first (old) possibility uses the <a href="https://www.tug.org/metapost.html">MetaPost</a> system:
          * Possible string values for the position of a label for
          * label anchor points are:
          * <ul>
@@ -6133,9 +6133,8 @@ JXG.Options = {
          * <li> 'llft'
          * <li> 'lrt'
          * </ul>
-         * <p>
-         * Since v1.9.0 there is a second possibility:
-         * With <tt>position: 'len side'</tt> the label can be positioned exactly along the
+         * <li> the second (preferred) possibility (since v1.9.0) is:
+         * with <tt>position: 'len side'</tt> the label can be positioned exactly along the
          * element's path. Here,
          * <ul>
          * <li> 'len' is an expression of the form
@@ -6154,6 +6153,7 @@ JXG.Options = {
          * The distance of the label from the path can be controlled by {@link Label#distance}.
          * </ul>
          * Recommended for this second possibility is to use anchorX: 'middle' and 'anchorY: 'middle'.
+         * </ul>
          *
          * @example
          * var l1 = board.create('segment', [[-3, 2], [3, 2]], {
