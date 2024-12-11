@@ -1387,6 +1387,19 @@ JXG.registerElement("text", JXG.createText);
  * @class Labels are text objects tied to other elements like points, lines and curves.
  * Labels are handled internally by JSXGraph, only. There is NO constructor "board.create('label', ...)".
  *
+ * @description
+ * Labels for points are positioned with the attributes {@link Text#anchorX}, {@link Text#anchorX} and {@link Label#offset}.
+ * <p>
+ * Labels for lines, segments, curves and circles can be controlled additionally by the attributes {@link Label#position} and
+ * {@link Label#distance}, i.e. for a segment [A, B] one could use the follwoing attributes:
+ * <ul>
+ * <li> "position": determines, where in the direction of the segment from A to B the label is placed
+ * <li> "distance": determines the (orthogonal) distance of the label from the line segment. It is a factor which is multiplied by the font-size.
+ * <li> "offset: [h, v]": a final correction in pixel (horizontally: h, vertically: v)
+ * <li> "anchorX" ('left', 'middle', 'right') and "anchorY" ('bottom', 'middle', 'top'): determines which part of the
+ * label string is the anchor position that is positioned to the coordinates determined by "position", "distance" and "offset".
+ * </ul>
+ *
  * @pseudo
  * @name Label
  * @augments JXG.Text
