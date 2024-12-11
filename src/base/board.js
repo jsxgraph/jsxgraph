@@ -1634,7 +1634,7 @@ JXG.extend(
                     len = drag.vertices.length - 1;
                     snap = drag.evalVisProp('snaptogrid') || drag.evalVisProp('snaptopoints');
                     for (i = 0; i < len && !snap; ++i) {
-                        snap = snap || drag.vertices[i]('snaptogrid') || drag.vertices[i]('snaptopoints');
+                        snap = snap || drag.vertices[i].evalVisProp('snaptogrid') || drag.vertices[i].evalVisProp('snaptopoints');
                         snap = snap || (!drag.vertices[i].draggable());
                     }
                     if (!snap) {
