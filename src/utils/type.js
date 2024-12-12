@@ -1287,7 +1287,6 @@ JXG.extend(
             for (e in special) {
                 if (special.hasOwnProperty(e)) {
                     e2 = (toLower) ? e.toLowerCase(): e;
-
                     // Key already exists, but not in lower case
                     if (e2 !== e && attr.hasOwnProperty(e)) {
                         if (attr.hasOwnProperty(e2)) {

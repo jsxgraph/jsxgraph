@@ -1271,6 +1271,12 @@ JXG.extend(
                     // Otherwise, the value of label would be {visible:false} only.
                     if (Type.isObject(value) && Type.exists(this.visProp[key])) {
                         // this.visProp[key] = Type.merge(this.visProp[key], value);
+                        if (!Type.isObject(this.visProp[key]) && Type.isObject(value)) {
+                            // Handle cases like key=firstarrow and
+                            // firstarrow==false and value = { type:1 }.
+                            // That is a primitive type is replaced by an object.
+                            this.visProp[key] = {};
+                        }
                         Type.mergeAttr(this.visProp[key], value);
 
                         // First, handle the special case
