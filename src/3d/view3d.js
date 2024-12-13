@@ -767,15 +767,6 @@ JXG.extend(
             oriBoxDiff = Mat.matVecMult(this.matrix3DRotShift, worldDiff);
         return oriBoxDiff[3];
     },
-    compareDepthIntern: function (a, b) {
-        var worldDiff = [0,
-            a[0] - b[0],
-            a[1] - b[1],
-            a[2] - b[2]],
-            oriBoxDiff = Mat.matVecMult(this.matrix3DRotShift, worldDiff);
-        return oriBoxDiff[3];
-    },
-
 
     /**
      * Check the type of elements and compares them according to their z-Index.
@@ -785,19 +776,19 @@ JXG.extend(
      */
     compareDepthElements: function (el_a, el_b) {
         //Determine the relevant point depending on the instance
-        var c1, c2,
-            getRelevantPoint = function (el) {
-            switch (el.type) {
-                case Const.OBJECT_TYPE_POINT3D: // Point
-                    return el.getCoordsAsArray();
-                case Const.OBJECT_TYPE_POLYGON3D: // Polygon
-                case Const.OBJECT_TYPE_LINE3D:  // Line
-                case Const.OBJECT_TYPE_FACE3D: //Face
-                    return el.getCentroid(); // Get the Centroid of the Polygon/Line/Face
-                default:
-                    throw new Error(`Undefined Type: ${el.type}`);
-            }
-        };
+        // var c1, c2,
+        //     getRelevantPoint = function (el) {
+        //     switch (el.type) {
+        //         case Const.OBJECT_TYPE_POINT3D: // Point
+        //             return el.getCoordsAsArray();
+        //         case Const.OBJECT_TYPE_POLYGON3D: // Polygon
+        //         case Const.OBJECT_TYPE_LINE3D:  // Line
+        //         case Const.OBJECT_TYPE_FACE3D: //Face
+        //             return el.getCentroid(); // Get the Centroid of the Polygon/Line/Face
+        //         default:
+        //             throw new Error(`Undefined Type: ${el.type}`);
+        //     }
+        // };
 
         //Gets the relevant Points of el_a and el_b
         // c1 = getRelevantPoint(el_a);
@@ -923,15 +914,15 @@ JXG.extend(
         //         }
         //     }
         // }
-        if (this.visProp.depthorderelements && (this.elements.length === 0 || this.elements === null)) {
+        if (this.visProp.depthorderelements /*&& (this.elements.length === 0 || this.elements === null)*/) {
             this.elements = [];
             for (id in this.objects) {
                 if (this.objects.hasOwnProperty(id)) {
                     el = this.objects[id];
-                    if (// el.visProp.layer === 12 &&
+                    if (Type.exists(el.element2D) && el.element2D.visProp.layer === 12 &&
                         (
-                            el.type === Const.OBJECT_TYPE_FACE3D
-                            // || el.type === Const.OBJECT_TYPE_POINT3D
+                            el.type === Const.OBJECT_TYPE_FACE3D ||
+                            el.type === Const.OBJECT_TYPE_POINT3D
                         )
                         // ||
                         // el.type === Const.OBJECT_TYPE_POLYGON3D

@@ -330,13 +330,12 @@ JXG.extend(
                 if (this.slide) {
                     this.coords = this.slide.projectCoords([this.X(), this.Y(), this.Z()], this._params);
                 }
+                c3d = [1, this.X(), this.Y(), this.Z()];
                 this.element2D.coords.setCoordinates(
                     Const.COORDS_BY_USER,
-                    this.view.project3DTo2D([1, this.X(), this.Y(), this.Z()])
-                    // this.view.project3DTo2D(c3d)
+                    this.view.project3DTo2D(c3d)
                 );
-                // c3d = [1, this.X(), this.Y(), this.Z()];
-                // this.zIndex = Mat.matVecMult(this.view.matrix3DRotShift, 1, this.X(), this.Y(), this.Z()])[3];
+                this.zIndex = Mat.matVecMult(this.view.matrix3DRotShift, c3d)[3];
             }
             this._c2d = this.element2D.coords.usrCoords.slice();
 
