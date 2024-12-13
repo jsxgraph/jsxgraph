@@ -435,6 +435,7 @@ JXG.extend(Options, {
          * @visprop
          */
 
+        // layer: 12,
         highlight: false,
         tabindex: -1,
         strokeWidth: 1,
@@ -451,6 +452,7 @@ JXG.extend(Options, {
     },
 
     line3d: {
+        // layer: 12,
         strokeWidth: 1,
         strokeColor: "black",
         fixed: true,
@@ -499,6 +501,7 @@ JXG.extend(Options, {
     },
 
     point3d: {
+        // layer: 12,
         infoboxDigits: "auto",
         strokeWidth: 0,
         gradient: "radial",
@@ -515,11 +518,13 @@ JXG.extend(Options, {
          * @visprop
          */
 
+        // layer: 12,
         highlight: false,
         tabindex: -1,
         strokeWidth: 1,
         fillColor: 'none',
         needsRegularUpdate: true
+
 
         /**#@-*/
     },
@@ -1046,6 +1051,15 @@ JXG.extend(Options, {
          * @default 2/5*Math.PI
          */
         fov: 1 / 5 * 2 * Math.PI,
+
+        /**
+         * When this option is enabled, elements closer to the screen are drawn
+         * over elements further from the screen within the 3D layer.
+         *
+         * @name View3D#depthOrderElements
+         * @default false
+         */
+        depthOrderElements: false,
 
         /**
          * Fixed values for the view, which can be changed using keyboard keys `picture-up` and `picture-down`.

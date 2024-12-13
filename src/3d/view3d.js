@@ -80,6 +80,13 @@ JXG.View3D = function (board, parents, attributes) {
     this.points = this.visProp.depthorderpoints ? [] : null;
 
     /**
+     * An array containing all the elements in the view.
+     * @Type Array
+     * @private
+     */
+    this.elements = this.visProp.depthorderelements ? [] : null;
+
+    /**
      * An array containing all geometric objects in this view in the order of construction.
      * @type Array
      * @private
@@ -735,6 +742,52 @@ JXG.extend(
         return oriBoxDiff[3];
     },
 
+    /**
+     * Comparison function for 3D elements. It is used to sort points according to their z-index.
+     * Compares the Depth of points and centroids.
+     * @param {Array} a
+     * @param {Array} b
+     * @returns Number z-Index
+     *
+     * @private
+     */
+    compareDepthIntern: function (a, b) {
+        var worldDiff = [0,
+            a[0] - b[0],
+            a[1] - b[1],
+            a[2] - b[2]],
+            oriBoxDiff = Mat.matVecMult(this.matrix3DRot, Mat.matVecMult(this.shift, worldDiff));
+        return oriBoxDiff[3];
+    },
+
+    /**
+     * Check the type of elements and compares them according to their z-Index.
+     * @param {Element} elm_a
+     * @param {Element} elm_b
+     * @returns Number
+     */
+    compareDepthElements: function (el_a, el_b) {
+        //Determine the relevant point depending on the instance
+        var c1, c2,
+            getRelevantPoint = function (el) {
+            switch (el.type) {
+                case Const.OBJECT_TYPE_POINT3D: // Point
+                    return el.getCoordsAsArray();
+                case Const.OBJECT_TYPE_POLYGON3D: // Polygon
+                case Const.OBJECT_TYPE_LINE3D:  // Line
+                case Const.OBJECT_TYPE_FACE3D: //Face
+                    return el.getCentroid(); // Get the Centroid of the Polygon/Line/Face
+                default:
+                    throw new Error(`Undefined Type: ${el.type}`);
+            }
+        };
+
+        //Gets the relevant Points of elm_a and elm_b
+        c1 = getRelevantPoint(el_a);
+        c2 = getRelevantPoint(el_b);
+        return this.compareDepthIntern(c1, c2);
+    },
+
     // Update 3D-to-2D transformation matrix with the actual azimuth and elevation angles.
     update: function () {
         var r = this.r,
@@ -836,48 +889,73 @@ JXG.extend(
 
         // if depth-ordering for points was just switched on, initialize the
         // list of points
-        if (this.visProp.depthorderpoints && this.points === null) {
-            // objectsList = Object.values(this.objects);
-            // this.points = objectsList.filter(
-            //     el => el.type === Const.OBJECT_TYPE_POINT3D
-            // );
-            this.points = [];
+        // if (this.visProp.depthorderpoints && this.points === null) {
+        //     this.points = [];
+        //     for (id in this.objects) {
+        //         if (this.objects.hasOwnProperty(id)) {
+        //             el = this.objects[id];
+        //             if (el.type === Const.OBJECT_TYPE_POINT3D) {
+        //                 this.points.push(el);
+        //             }
+        //         }
+        //     }
+        // }
+        if (this.visProp.depthorderelements && (this.elements.length === 0 || this.elements === null)) {
+            this.elements = [];
             for (id in this.objects) {
                 if (this.objects.hasOwnProperty(id)) {
                     el = this.objects[id];
-                    if (el.type === Const.OBJECT_TYPE_POINT3D) {
-                        this.points.push(el);
+                    if (el.type === Const.OBJECT_TYPE_FACE3D
+                        // el.type === Const.OBJECT_TYPE_POINT3D ||
+                        // el.type === Const.OBJECT_TYPE_POLYGON3D
+                    ) {
+                        this.elements.push(el);
                     }
                 }
             }
+
         }
 
         // if depth-ordering for points was just switched off, throw away the
         // list of points
-        if (!this.visProp.depthorderpoints && this.points !== null) {
-            this.points = null;
+        // if (!this.visProp.depthorderpoints && this.points !== null) {
+        //     this.points = null;
+        // }
+        // if depth-ordering for Elements was just switched off, throw away the
+        // list of Elemts
+        if (!this.visProp.depthorderelements && this.elements !== null) {
+            this.elements = null;
         }
 
         // depth-order visible points. the `setLayer` method is used here to
         // re-order the points within each layer: it has the side effect of
         // moving the target element to the end of the layer's child list
-        if (this.visProp.depthorderpoints && this.board.renderer && this.board.renderer.type === 'svg') {
-            this.points
-                // .filter((pt) => pt.element2D.evalVisProp('visible'))
-                // .sort(this.compareDepth.bind(this))
-                // .forEach((pt) => this.board.renderer.setLayer(pt.element2D, pt.element2D.visProp.layer));
-                .filter(function (pt) { return pt.element2D.evalVisProp('visible'); })
-                .sort(this.compareDepth.bind(this))
-                .forEach(function (pt) { return this.board.renderer.setLayer(pt.element2D, pt.element2D.visProp.layer); });
+        // if (this.visProp.depthorderpoints && this.board.renderer && this.board.renderer.type === 'svg') {
+        //     this.points
+        //         // .filter((pt) => pt.element2D.evalVisProp('visible'))
+        //         // .sort(this.compareDepth.bind(this))
+        //         // .forEach((pt) => this.board.renderer.setLayer(pt.element2D, pt.element2D.visProp.layer));
+        //         .filter(function (pt) { return pt.element2D.evalVisProp('visible'); })
+        //         .sort(this.compareDepth.bind(this))
+        //         .forEach(function (pt) { return this.board.renderer.setLayer(pt.element2D, pt.element2D.visProp.layer); });
 
-            /* [DEBUG] list oriented box coordinates in depth order */
-            // console.log('depth-ordered points in oriented box coordinates');
-            // this.points
-            //     .filter((pt) => pt.element2D.visProp.visible)
-            //     .sort(compareDepth)
-            //     .forEach(function (pt) {
-            //         console.log(Mat.matVecMult(that.matrix3DRot, Mat.matVecMult(that.shift, pt.coords)));
-            //     });
+        //     /* [DEBUG] list oriented box coordinates in depth order */
+        //     // console.log('depth-ordered points in oriented box coordinates');
+        //     // this.points
+        //     //     .filter((pt) => pt.element2D.visProp.visible)
+        //     //     .sort(compareDepth)
+        //     //     .forEach(function (pt) {
+        //     //         console.log(Mat.matVecMult(that.matrix3DRot, Mat.matVecMult(that.shift, pt.coords)));
+        //     //     });
+        // }
+        // depth-order visible Elements. the `setLayer` method is used here to
+        // re-order the Elements within each layer: it has the side effect of
+        // moving the target element to the end of the layer's child list
+        if (this.visProp.depthorderelements && this.board.renderer && this.board.renderer.type === 'svg') {
+            this.elements
+                .filter((elem) => Type.evaluate(elem.element2D.visProp.visible))
+                .sort(this.compareDepthElements.bind(this))
+                .forEach((elem) => this.board.renderer.setLayer(elem.element2D, elem.element2D.visProp.layer));
         }
 
         return this;

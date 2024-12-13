@@ -98,6 +98,9 @@ JXG.extend(
             }
 
             le = face.length;
+            this.dataX = [];
+            this.dataY = [];
+            this.dataZ = [];
             for (j = 0; j < le; j++) {
                 c2d = p.coords2D[face[j]];
                 if (c2d.length === 0) {
@@ -109,6 +112,12 @@ JXG.extend(
                 }
                 x.push(c2d[1]);
                 y.push(c2d[2]);
+
+                // Necessary for centroid
+                c3d = p.coords[face[j]];
+                this.dataX.push(c3d[0]);
+                this.dataY.push(c3d[1]);
+                this.dataZ.push(c3d[2]);
             }
             if (le !== 2) {
                 // 2D faces and points are a closed loop
