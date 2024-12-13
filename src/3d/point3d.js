@@ -328,15 +328,15 @@ JXG.extend(
                 // Update 2D point from its 3D view
                 this.updateCoords();
                 if (this.slide) {
-                    this.coords = this.slide.projectCoords(
-                        [this.X(), this.Y(), this.Z()],
-                        this._params
-                    );
+                    this.coords = this.slide.projectCoords([this.X(), this.Y(), this.Z()], this._params);
                 }
                 this.element2D.coords.setCoordinates(
                     Const.COORDS_BY_USER,
                     this.view.project3DTo2D([1, this.X(), this.Y(), this.Z()])
+                    // this.view.project3DTo2D(c3d)
                 );
+                // c3d = [1, this.X(), this.Y(), this.Z()];
+                // this.zIndex = Mat.matVecMult(this.view.matrix3DRotShift, 1, this.X(), this.Y(), this.Z()])[3];
             }
             this._c2d = this.element2D.coords.usrCoords.slice();
 

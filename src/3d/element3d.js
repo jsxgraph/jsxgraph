@@ -72,6 +72,8 @@ JXG.GeometryElement3D = function (view, elType) {
      */
     this.is3D = true;
 
+    this.zIndex = 0.0;
+
     this.view.objects[this.id] = this;
 
     if (this.name !== "") {

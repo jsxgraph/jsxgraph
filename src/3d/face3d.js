@@ -59,6 +59,7 @@ JXG.Face3D = function (view, polyhedron, faceNumber, attributes) {
     this.dataX = [];
     this.dataY = [];
     this.dataZ = [];
+
     this.normal = [0, 0, 0];
     this.d = 0;
     this.vec1 = [0, 0, 0];
@@ -98,9 +99,10 @@ JXG.extend(
             }
 
             le = face.length;
-            this.dataX = [];
-            this.dataY = [];
-            this.dataZ = [];
+            // this.dataX = [];
+            // this.dataY = [];
+            // this.dataZ = [];
+            this.zIndex = 0.0;
             for (j = 0; j < le; j++) {
                 c2d = p.coords2D[face[j]];
                 if (c2d.length === 0) {
@@ -109,15 +111,21 @@ JXG.extend(
                     c3d = p.coords[face[j]];
                     c2d = this.view.project3DTo2D(c3d);
                     p.coords2D[face[j]] = c2d;
+                    p.zIndex[face[j]] = Mat.matVecMult(this.view.matrix3DRotShift, [1, c3d[0], c3d[1], c3d[2]])[3];
                 }
                 x.push(c2d[1]);
                 y.push(c2d[2]);
 
                 // Necessary for centroid
-                c3d = p.coords[face[j]];
-                this.dataX.push(c3d[0]);
-                this.dataY.push(c3d[1]);
-                this.dataZ.push(c3d[2]);
+                // c3d = p.coords[face[j]];
+                // this.dataX.push(c3d[0]);
+                // this.dataY.push(c3d[1]);
+                // this.dataZ.push(c3d[2]);
+
+                this.zIndex += p.zIndex[face[j]];
+            }
+            if (le > 0) {
+                this.zIndex /= le;
             }
             if (le !== 2) {
                 // 2D faces and points are a closed loop

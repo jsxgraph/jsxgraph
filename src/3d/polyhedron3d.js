@@ -185,6 +185,7 @@ JXG.createPolyhedron3D = function (board, parents, attributes) {
             vertices: {},
             coords: {},
             coords2D: {},
+            zIndex: {},
             faces: parents[2],
             updateCoords: function() {
                 var i, p;

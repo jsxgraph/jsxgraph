@@ -767,6 +767,15 @@ JXG.extend(
             oriBoxDiff = Mat.matVecMult(this.matrix3DRotShift, worldDiff);
         return oriBoxDiff[3];
     },
+    compareDepthIntern: function (a, b) {
+        var worldDiff = [0,
+            a[0] - b[0],
+            a[1] - b[1],
+            a[2] - b[2]],
+            oriBoxDiff = Mat.matVecMult(this.matrix3DRotShift, worldDiff);
+        return oriBoxDiff[3];
+    },
+
 
     /**
      * Check the type of elements and compares them according to their z-Index.
@@ -790,14 +799,17 @@ JXG.extend(
             }
         };
 
-        //Gets the relevant Points of elm_a and elm_b
-        c1 = getRelevantPoint(el_a);
-        c2 = getRelevantPoint(el_b);
-        return this.compareDepthIntern(c1, c2);
+        //Gets the relevant Points of el_a and el_b
+        // c1 = getRelevantPoint(el_a);
+        // c2 = getRelevantPoint(el_b);
+        // return this.compareDepthIntern(c1, c2);
+        // console.log(el_a.zIndex, el_b.zIndex)
+        return el_a.zIndex - el_b.zIndex;
     },
 
     // Update 3D-to-2D transformation matrix with the actual azimuth and elevation angles.
     update: function () {
+        // console.time("update")
         var r = this.r,
             stretch = [
                 [1, 0, 0, 0],
@@ -897,6 +909,7 @@ JXG.extend(
 
         // Used for the z-index
         this.matrix3DRotShift = Mat.matMatMult(this.matrix3DRot, this.shift);
+
         // if depth-ordering for points was just switched on, initialize the
         // list of points
         // if (this.visProp.depthorderpoints && this.points === null) {
@@ -915,15 +928,18 @@ JXG.extend(
             for (id in this.objects) {
                 if (this.objects.hasOwnProperty(id)) {
                     el = this.objects[id];
-                    if (el.type === Const.OBJECT_TYPE_FACE3D
-                        // el.type === Const.OBJECT_TYPE_POINT3D ||
+                    if (// el.visProp.layer === 12 &&
+                        (
+                            el.type === Const.OBJECT_TYPE_FACE3D
+                            // || el.type === Const.OBJECT_TYPE_POINT3D
+                        )
+                        // ||
                         // el.type === Const.OBJECT_TYPE_POLYGON3D
                     ) {
                         this.elements.push(el);
                     }
                 }
             }
-
         }
 
         // if depth-ordering for points was just switched off, throw away the
@@ -962,11 +978,14 @@ JXG.extend(
         // re-order the Elements within each layer: it has the side effect of
         // moving the target element to the end of the layer's child list
         if (this.visProp.depthorderelements && this.board.renderer && this.board.renderer.type === 'svg') {
+            // this.elements.forEach((el) => el.updateDataArray2D());
+            // this.elements.forEach((el) => { if (el.type=== Const.OBJECT_TYPE_POINT3D) console.log(el.id, el)});
             this.elements
-                .filter((elem) => Type.evaluate(elem.element2D.visProp.visible))
+                .filter((el) => Type.evaluate(el.element2D.visProp.visible))
                 .sort(this.compareDepthElements.bind(this))
-                .forEach((elem) => this.board.renderer.setLayer(elem.element2D, elem.element2D.visProp.layer));
+                .forEach((el) => this.board.renderer.setLayer(el.element2D, el.element2D.visProp.layer));
         }
+        // console.timeEnd("update")
 
         return this;
     },
