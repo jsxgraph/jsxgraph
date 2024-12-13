@@ -437,7 +437,7 @@ JXG.extend(Options, {
 
         // layer: 12,
         highlight: false,
-        tabindex: -1,
+        tabindex: null,
         strokeWidth: 1,
         fillColor: JXG.palette.yellow,
         fillOpacity: 0.4,
