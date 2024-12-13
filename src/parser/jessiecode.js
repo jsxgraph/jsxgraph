@@ -1101,8 +1101,10 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
             varnames.indexOf(v) < 0 // v is not contained in the list of variables of that function
         ) {
             e = this.getvar(v);
-            if (e && e.visProp && e.elType && e.elementClass && e.id &&
-                e.elType === 'slider' // Sliders are the only elements which are given by names.
+            if (e && e.visProp && e.elType && e.elementClass && e.id
+                // Sliders are the only elements which are given by names.
+                // Wrong, a counter example is: circle(c, function() { return p1.Dist(p2); })
+                // && e.elType === 'slider'
             ) {
                 result[e.id] = e;
             }
