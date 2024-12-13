@@ -88,6 +88,7 @@ JXG.extend(JXG.GeometryElement3D.prototype, {
 
         attr2D.name = this.name;
         attr2D.element3d = this;
+        attr2D.id = null; // The 2D element's id may not be controlled by the user.
 
         return attr2D;
     },
