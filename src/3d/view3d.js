@@ -128,6 +128,14 @@ JXG.View3D = function (board, parents, attributes) {
         [0, 0, 0, 1]
     ];
 
+    // Used for z-index computation
+    this.matrix3DRotShift = [
+        [1, 0, 0, 0],
+        [0, 1, 0, 0],
+        [0, 0, 1, 0],
+        [0, 0, 0, 1]
+    ];
+
     /**
      * @type  {Array}
      * @private
@@ -738,7 +746,7 @@ JXG.extend(
                          a.coords[1] - b.coords[1],
                          a.coords[2] - b.coords[2],
                          a.coords[3] - b.coords[3]],
-            oriBoxDiff = Mat.matVecMult(this.matrix3DRot, Mat.matVecMult(this.shift, worldDiff));
+            oriBoxDiff = Mat.matVecMult(this.matrix3DRotShift, worldDiff);
         return oriBoxDiff[3];
     },
 
@@ -756,7 +764,7 @@ JXG.extend(
             a[0] - b[0],
             a[1] - b[1],
             a[2] - b[2]],
-            oriBoxDiff = Mat.matVecMult(this.matrix3DRot, Mat.matVecMult(this.shift, worldDiff));
+            oriBoxDiff = Mat.matVecMult(this.matrix3DRotShift, worldDiff);
         return oriBoxDiff[3];
     },
 
@@ -887,6 +895,8 @@ JXG.extend(
                 );
         }
 
+        // Used for the z-index
+        this.matrix3DRotShift = Mat.matMatMult(this.matrix3DRot, this.shift);
         // if depth-ordering for points was just switched on, initialize the
         // list of points
         // if (this.visProp.depthorderpoints && this.points === null) {

@@ -220,6 +220,9 @@ JXG.createPolyhedron3D = function (board, parents, attributes) {
 
     attr_polyhedron = Type.copyAttributes(attributes, board.options, "polyhedron3d");
 
+    console.time('polyhedron');
+
+    view.board.suspendUpdate();
     // Create face3d elements
     le = polyhedron.faces.length;
     for (i = 0; i < le; i++) {
@@ -241,6 +244,9 @@ JXG.createPolyhedron3D = function (board, parents, attributes) {
         el.inherits.push(el.faces[i]);
         el.addChild(el.faces[i]);
     }
+    view.board.unsuspendUpdate();
+
+    console.timeEnd('polyhedron');
 
     return el;
 };
