@@ -143,6 +143,7 @@ JXG.extend(
         },
 
         update: function () {
+            if (this.needsUpdate) {}
             return this;
         },
 
@@ -190,6 +191,19 @@ JXG.extend(
                 end1 = this.getPointCoords(1);
 
             return this.view.projectScreenToSegment(pScr, end0, end1);
+        },
+
+        updateZIndex: function() {
+            var p1 = this.endpoints[0],
+                p2 = this.endpoints[1],
+                c3d = [1, p1.X() + p2.X(), p1.Y() + p2.Y(), p1.Z() + p2.Z()];
+
+            c3d[1] *= 0.5;
+            c3d[2] *= 0.5;
+            c3d[3] *= 0.5;
+            this.zIndex = Mat.matVecMult(this.view.matrix3DRotShift, c3d)[3];
+
+            return this;
         }
     }
 );

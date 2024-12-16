@@ -32,6 +32,7 @@
 import JXG from '../jxg.js';
 import Const from '../base/constants.js';
 import Type from '../utils/type.js';
+import Mat from '../math/math.js';
 
 // -----------------------
 //  Lines
@@ -87,6 +88,27 @@ JXG.extend(
 
         updateRenderer: function () {
             this.needsUpdate = false;
+            return this;
+        },
+
+        updateZIndex: function() {
+            var i,
+                le = this.vertices.length - 1,
+                c3d = [1, 0, 0, 0];
+
+            if (le <= 0) {
+                return [NaN, NaN, NaN, NaN];
+            }
+            for (i = 0; i < le; i++) {
+                c3d[1] += this.vertices[i].X();
+                c3d[2] += this.vertices[i].Y();
+                c3d[3] += this.vertices[i].Z();
+            }
+            c3d[1] /= le;
+            c3d[2] /= le;
+            c3d[3] /= le;
+            this.zIndex = Mat.matVecMult(this.view.matrix3DRotShift, c3d)[3];
+
             return this;
         }
     }

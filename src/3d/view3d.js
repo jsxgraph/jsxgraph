@@ -922,7 +922,9 @@ JXG.extend(
                     if (Type.exists(el.element2D) && el.element2D.visProp.layer === 12 &&
                         (
                             el.type === Const.OBJECT_TYPE_FACE3D ||
-                            el.type === Const.OBJECT_TYPE_POINT3D
+                            el.type === Const.OBJECT_TYPE_LINE3D ||
+                            el.type === Const.OBJECT_TYPE_POINT3D ||
+                            el.type === Const.OBJECT_TYPE_POLYGON3D
                         )
                         // ||
                         // el.type === Const.OBJECT_TYPE_POLYGON3D
@@ -969,8 +971,16 @@ JXG.extend(
         // re-order the Elements within each layer: it has the side effect of
         // moving the target element to the end of the layer's child list
         if (this.visProp.depthorderelements && this.board.renderer && this.board.renderer.type === 'svg') {
-            // this.elements.forEach((el) => el.updateDataArray2D());
-            // this.elements.forEach((el) => { if (el.type=== Const.OBJECT_TYPE_POINT3D) console.log(el.id, el)});
+
+            // Update the less frequent objects
+            this.elements.forEach((el) => {
+                if (el.type === Const.OBJECT_TYPE_LINE3D ||
+                    el.type === Const.OBJECT_TYPE_POLYGON3D
+                ) {
+                    el.updateZIndex();
+                }
+            });
+
             this.elements
                 .filter((el) => Type.evaluate(el.element2D.visProp.visible))
                 .sort(this.compareDepthElements.bind(this))
@@ -2609,7 +2619,7 @@ JXG.createView3D = function (board, parents, attributes) {
                 break;
             }
         }
-        
+
         if (p) {
             foot = [1, 0, 0, p.coords[3]];
             view._w0 = Mat.innerProduct(view.matrix3D[0], foot, 4);
