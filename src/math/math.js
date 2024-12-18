@@ -1147,58 +1147,6 @@ JXG.Math = {
         return y;
     },
 
-    // _mittleff_beta1: function(z, alpha) {
-    //     if (z === 0) { return 1; }
-    //     if (alpha === 0.5 && Math.abs(z) < 10) {
-    //         return Math.exp(z * z) * this.erfc(-z);
-    //     }
-    //     if (alpha === 0) { return 1 / (1 - z); }
-    //     if (alpha === 2) {
-    //         return this.cosh(Math.sqrt(z));
-    //     }
-
-    // },
-
-    // _mittleff_sum: function(z, alpha) {
-    //     return 0;
-    // },
-    
-    // _mittleff_eps: function(z, alpha, beta, eps) {
-    //     return 0;
-    // },
-
-    // mittleff: function(z, alpha, beta) {
-    //     var res;
-
-    //     if (alpha === undefined || alpha <= 0) {
-    //         return NaN;
-    //     }
-    //     if (beta === undefined) {
-    //         beta = 1;
-    //     }
-        
-    //     if (alpha === 1 && beta === 1) {
-    //         return Math.exp(z);
-    //     }
-
-    //     if (beta === 1) {
-    //         res = this._mittleff_beta1(z, alpha);
-    //         if (res !== NaN) {
-    //             return res;
-    //         }
-    //     }
-
-    //     if (z === 0) {
-    //         return 1 / this.gamma(beta);
-    //     }
-
-    //     if (1 < alpha) {
-    //         return this._mittleff_sum(z, alpha, beta);
-    //     }
-
-    //     return this._mittleff_eps(z, alpha, beta, this.eps);
-    // },
-
     /* ********************  Comparisons and logical operators ************** */
 
     /**
