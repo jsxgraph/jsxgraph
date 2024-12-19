@@ -680,7 +680,7 @@ JXG.extend(Options, {
          * @default false
          */
         depthOrder: {
-            enabled: true,
+            enabled: false,
             layers: [12, 13]
         },
 
