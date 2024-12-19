@@ -411,6 +411,7 @@ JXG.extend(Options, {
 
     circle3d: {
 
+        layer: 12,
         point: { visible: false, name: "" },
         needsRegularUpdate: true
 
@@ -421,6 +422,7 @@ JXG.extend(Options, {
          * @visprop
          */
 
+        layer: 12,
         highlight: false,
         tabindex: -1,
         strokeWidth: 1,
@@ -435,7 +437,7 @@ JXG.extend(Options, {
          * @visprop
          */
 
-        // layer: 12,
+        layer: 12,
         highlight: false,
         tabindex: null,
         strokeWidth: 1,
@@ -452,7 +454,7 @@ JXG.extend(Options, {
     },
 
     line3d: {
-        // layer: 12,
+        layer: 12,
         strokeWidth: 1,
         strokeColor: "black",
         fixed: true,
@@ -471,6 +473,7 @@ JXG.extend(Options, {
          * @visprop
          */
 
+        layer: 12,
         strokeWidth: 1,
         strokeColor: "#9a9a9a",
         strokeOpacity: 0.6,
@@ -484,6 +487,7 @@ JXG.extend(Options, {
     },
 
     plane3d: {
+        layer: 12,
         strokeWidth: 0,
         strokeColor: "black",
         strokeOpacity: 1,
@@ -501,7 +505,7 @@ JXG.extend(Options, {
     },
 
     point3d: {
-        // layer: 12,
+        layer: 13,
         infoboxDigits: "auto",
         strokeWidth: 0,
         gradient: "radial",
@@ -518,7 +522,7 @@ JXG.extend(Options, {
          * @visprop
          */
 
-        // layer: 12,
+        layer: 12,
         highlight: false,
         tabindex: -1,
         strokeWidth: 1,
@@ -545,6 +549,7 @@ JXG.extend(Options, {
          * @visprop
          */
 
+        layer: 12,
         highlight: false,
 
         strokeWidth: 1,
@@ -565,6 +570,7 @@ JXG.extend(Options, {
          * @visprop
          */
 
+        layer: 12,
         highlight: false,
         tabindex: -1,
         strokeWidth: 1,
@@ -667,13 +673,16 @@ JXG.extend(Options, {
         needsRegularUpdate: true,
 
         /**
-         * When this option is enabled, points closer to the screen are drawn
-         * over points further from the screen within each layer.
+         * When this option is enabled, elements closer to the screen are drawn
+         * over elements further from the screen within the 3D layer.
          *
-         * @name View3D#depthOrderPoints
+         * @name View3D#depthOrder
          * @default false
          */
-        depthOrderPoints: false,
+        depthOrder: {
+            enabled: true,
+            layers: [12, 13]
+        },
 
         /**
          * Choose the projection type to be used: `parallel` or `central`.
@@ -1051,15 +1060,6 @@ JXG.extend(Options, {
          * @default 2/5*Math.PI
          */
         fov: 1 / 5 * 2 * Math.PI,
-
-        /**
-         * When this option is enabled, elements closer to the screen are drawn
-         * over elements further from the screen within the 3D layer.
-         *
-         * @name View3D#depthOrderElements
-         * @default false
-         */
-        depthOrderElements: false,
 
         /**
          * Fixed values for the view, which can be changed using keyboard keys `picture-up` and `picture-down`.
