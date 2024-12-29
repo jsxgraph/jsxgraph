@@ -1434,19 +1434,15 @@ JXG.extend(
                 }
             }
             context.lineCap = "round";
+            context.lineJoin = "round";
             this._fill(el);
             this._stroke(el);
         },
 
         // Already documented in JXG.AbstractRenderer
         updatePathStringBezierPrim: function (el) {
-            var i,
-                j,
-                k,
-                scr,
-                lx,
-                ly,
-                len,
+            var i, j, k,
+                scr, lx, ly, len,
                 symbm = "M",
                 symbl = "C",
                 nextSymb = symbm,
@@ -1508,6 +1504,7 @@ JXG.extend(
                 }
             }
             context.lineCap = "round";
+            context.lineJoin = "round";
             this._fill(el);
             this._stroke(el);
         },

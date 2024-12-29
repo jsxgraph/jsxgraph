@@ -2355,7 +2355,7 @@ JXG.createView3D = function (board, parents, attributes) {
                 break;
             }
         }
-console.log(p)        
+
         if (p) {
             foot = [1, 0, 0, p.coords[3]];
             view._w0 = Mat.innerProduct(view.matrix3D[0], foot, 4);
