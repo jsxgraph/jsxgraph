@@ -843,6 +843,10 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
                 ast = this.CA.expandDerivatives(ast, null, ast);
                 ast = this.CA.removeTrivialNodes(ast);
             }
+            if (this.CAS) {
+                ast = this.CAS.expandDerivatives(ast, null, ast);
+                // ast = this.CAS.removeTrivialNodes(ast);
+            }
             switch (cmd) {
                 case 'parse':
                     result = this.execute(ast);
