@@ -198,7 +198,7 @@ describe("Test testing", function () {
         var function_string, expected_outcome, ast, outcome_ast;
 
         function_string = 'x*(log(3) + 3) + x^4 * 7;' // our input function
-        expected_outcome = '(log(3) + 3)*x + x^4 * 7;' // what the result should be
+        expected_outcome = '7 * x^4  + (log(3) + 3)*x;' // what the result should be
         // convert the strings into trees
         ast = board.jc.getAST(function_string);
         ast = CAS.to_work_tree(ast);
@@ -207,9 +207,6 @@ describe("Test testing", function () {
         outcome_ast = CAS.to_work_tree(outcome_ast);
         // functions that are supposed to be executed on the ast:
         ast = CAS.collect_tree(ast);
-        outcome_ast = CAS.collect_tree(outcome_ast);
-
-
         // print both ast, for debugging purposes
         console.log("--------------")
         console.log("input: " + CAS.compile(ast));
