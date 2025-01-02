@@ -184,7 +184,7 @@ var simpleColors = {
         thistle: "d8bfd8",
         tomato: "ff6347",
         turquoise: "40e0d0",
-        ventianred: "ae181e",
+        venetianred: "ae181e",
         violet: "ee82ee",
         violetred: "d02090",
         wheat: "f5deb3",
