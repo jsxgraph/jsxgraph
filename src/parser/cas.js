@@ -74,7 +74,7 @@ JXG.extend(
      * @returns {String} InOrder-representation
      */
     compile: function (node, prev_op, position = -1) {
-        var compiled, my_priority;
+        var i, compiled, my_priority;
 
         if (node === undefined) {
             console.error("compile: undefined node");
@@ -89,9 +89,9 @@ JXG.extend(
                 switch (String(node.value)) {
                     case "op_none":
                         compiled = "";
-                        node.children.forEach(child => {
-                            compiled += this.compile(child, "op_none") + "\n";
-                        });
+                        for (i = 0; i < node.children.length; i++) {
+                            compiled += this.compile(node.children[i], "op_none") + "\n";
+                        }
                         return compiled.trim();
                     case "op_execfun":
                         if (node.children.length !== 2) return "<execfun?>";
@@ -269,19 +269,20 @@ JXG.extend(
      * @returns
      */
     factorize_tree: function (ast) {
+        var i;
         if (JXG.isString(ast)) {
             return ast;
         }
         else if (JXG.isArray(ast)) {
-            ast.forEach((elem, i, arr) => {
-                elem = this.factorize_node(elem);
-                elem = this.merge_tree(elem);
-                arr[i] = this.basic_transforms_int(elem);
-            });
+            for (i = 0; i < ast.length; i++) {
+                ast[i] = this.factorize_node(ast[i]);
+                ast[i] = this.merge_tree(ast[i]);
+                ast[i] = this.basic_transforms_int(ast[i]);
+            }
             return ast;
-        }
-        else if (ast === undefined) return undefined;
-        else {
+        } else if (ast === undefined) {
+            return undefined;
+        } else {
             // first we fully factorize the children
             if (ast.children !== undefined) {
                 ast.for_each_child((child, i, children) => {
@@ -305,6 +306,8 @@ JXG.extend(
      */
     factorize_node: function (ast) {
         var i, j, k,
+            child, 
+            that = this,
             numerator,
             denominator,
             numerator_arr = [],
@@ -331,38 +334,67 @@ JXG.extend(
             children_copy = [...ast.children];
 
             // cancel the gdc in every individual child
-            children_copy.forEach((child, i, arr) => { arr[i] = this.cancel_gcd(child); });
+            // children_copy.foreach((child, i, arr) => { arr[i] = this.cancel_gcd(child); });
+            for (i = 0; i < children_copy.length; i++) {
+                children_copy[i] = this.cancel_gcd(children_copy[i]);
+            }
             // convert the non mul nodes into mul nodes
-            children_copy.forEach((child, i, arr) => {
+            // children_copy.foreach((child, i, arr) => {
+            //     if (!(child.type === "node_op" && child.value === "op_mul")) {
+            //         node = this.create_node("node_op", "op_mul");
+            //         node.push(this.create_node("node_const", 1));
+            //         node.children.push(arr[i]);
+            //         arr[i] = node;
+            //     }
+            // });
+            for (i = 0; i < children_copy.length; i++) {
+                child = children_copy[i];
                 if (!(child.type === "node_op" && child.value === "op_mul")) {
                     node = this.create_node("node_op", "op_mul");
                     node.push(this.create_node("node_const", 1));
-                    node.children.push(arr[i]);
-                    arr[i] = node;
+                    node.children.push(children_copy[i]);
+                    children_copy[i] = node;
                 }
-            });
+            }
+
             // we use a for loop, so we can break
             for (i = 0; i < children_copy.length; i++) {
                 current_child = children_copy[i];
                 numerator = undefined;
                 denominator = undefined;
-                current_child.children.forEach((sub_child, i) => {
-                    if (sub_child.type === "node_const" && sub_child.is_int() && sub_child.value !== 1) {
-                        //node = children_copy.splice(i, 1)[0];
-                        numerator = sub_child.value;
+                // current_child.children.foreach((sub_child, i) => {
+                //     if (sub_child.type === "node_const" && sub_child.is_int() && sub_child.value !== 1) {
+                //         //node = children_copy.splice(i, 1)[0];
+                //         numerator = sub_child.value;
+                //         numerator_index = i;
+                //     }
+                //     // if it is an exp ^(-1) and the base is an integer, we add it to the denominator
+                //     else if (sub_child.value === "op_exp" && sub_child.type === "node_op") {
+                //         if (sub_child.children[1].type === "node_const" && sub_child.children[1].value === -1) {
+                //             if (sub_child.children[0].type === "node_const" && sub_child.children[0].is_int() && sub_child.children[0].value !== 1) {
+                //                 //denominator_arr.push(node.value);
+                //                 denominator = sub_child.children[0].value;
+                //                 denominator_index = i;
+                //             }
+                //         }
+                //     }
+                // });
+                for (i = 0; i < current_child.children.length; i++) {
+                    child = current_child[i];
+                    if (child.type === "node_const" && child.is_int() && child.value !== 1) {
+                        numerator = child.value;
                         numerator_index = i;
-                    }
-                    // if it is an exp ^(-1) and the base is an integer, we add it to the denominator
-                    else if (sub_child.value === "op_exp" && sub_child.type === "node_op") {
-                        if (sub_child.children[1].type === "node_const" && sub_child.children[1].value === -1) {
-                            if (sub_child.children[0].type === "node_const" && sub_child.children[0].is_int() && sub_child.children[0].value !== 1) {
-                                //denominator_arr.push(node.value);
-                                denominator = sub_child.children[0].value;
+                    } else if (child.value === "op_exp" && child.type === "node_op") {
+                        // if it is an exp ^(-1) and the base is an integer, we add it to the denominator
+                        if (child.children[1].type === "node_const" && child.children[1].value === -1) {
+                            if (child.children[0].type === "node_const" && child.children[0].is_int() && child.children[0].value !== 1) {
+                                denominator = child.children[0].value;
                                 denominator_index = i;
                             }
                         }
                     }
-                });
+                }
+
                 // we test if we can push the int, or set the gcd if we haven't found any
                 if (numerator) {
                     numerator_arr.push(numerator);
@@ -382,18 +414,27 @@ JXG.extend(
             // if a gcd is not 1, we can factorize it
             if (gcd_numerator !== 1) {
                 gcd_numerator = this.gcd(...numerator_arr);
-                numerator_arr.forEach((number, i) => {
-                    //children_copy[i].set(numerator_index_arr[i], this.create_node("node_const", (number/gcd_numerator).));
-                    children_copy[i].children[numerator_index_arr[i]] = this.create_node("node_const", number / gcd_numerator);
-                });
+                // numerator_arr.foreach((number, i) => {
+                //     //children_copy[i].set(numerator_index_arr[i], this.create_node("node_const", (number/gcd_numerator).));
+                //     children_copy[i].children[numerator_index_arr[i]] = this.create_node("node_const", number / gcd_numerator);
+                // });
+                for (i = 0; i < numerator_arr; i++) {
+                    children_copy[i].children[numerator_index_arr[i]] = 
+                        this.create_node("node_const", numerator_arr[i] / gcd_numerator);
+                }
                 new_ast.push(this.create_node("node_const", gcd_numerator));
             }
             if (gcd_denominator !== 1) {
                 gcd_denominator = this.gcd(...denominator_arr);
-                denominator_arr.forEach((number, i) => {
-                    //children_copy[i].set(denominator_index_arr[i], this.create_node("node_const", (number/gcd_denominator)));
-                    children_copy[i].children[denominator_index_arr[i]].children[0] = this.create_node("node_const", (number / gcd_denominator));
-                });
+                // denominator_arr.foreach((number, i) => {
+                //     //children_copy[i].set(denominator_index_arr[i], this.create_node("node_const", (number/gcd_denominator)));
+                //     children_copy[i].children[denominator_index_arr[i]].children[0] = this.create_node("node_const", (number / gcd_denominator));
+                // });
+                for (i = 0; i < denominator_arr.length; i++) {
+                    children_copy[i].children[denominator_index_arr[i]].children[0] = 
+                        this.create_node("node_const", (denominator_arr[i] / gcd_denominator));
+                }
+
                 node = this.create_node("node_op", "op_exp");
                 node.push(this.create_node("node_const", gcd_denominator));
                 node.push(this.create_node("node_const", -1));
@@ -404,13 +445,14 @@ JXG.extend(
             children_copy.forEach((child) => {
                 child.for_each_child((sub_child, i, arr) => {
                     if (!((sub_child.type === "node_op" && sub_child.value === "op_exp"))) {
-                        node = this.create_node("node_op", "op_exp");
+                        node = that.create_node("node_op", "op_exp");
                         node.push(sub_child);
-                        node.children.push(this.create_node("node_const", 1));
+                        node.children.push(that.create_node("node_const", 1));
                         arr[i] = node;
                     }
                 });
             });
+
             // we go through the first child, and check if one of the children is part of every child
             first_child = children_copy[0];
             // iterate over every factor of the first child
@@ -459,7 +501,7 @@ JXG.extend(
                 // then, we have to extract the same part of every child by substracting the max_exponent from the old exponent
                 children_copy.forEach((child, i) => {
                     current_child = child.children[index_arr[i]];
-                    current_child.set(1, this.create_node("node_const", current_child.children[1].value - max_exponent));
+                    current_child.set(1, that.create_node("node_const", current_child.children[1].value - max_exponent));
                 });
             }
 
@@ -485,16 +527,15 @@ JXG.extend(
     collect_tree: function (ast) {
         if (JXG.isString(ast)) {
             return ast;
-        }
-        else if (JXG.isArray(ast)) {
+        } else if (JXG.isArray(ast)) {
             ast.forEach((elem, i, arr) => {
                 elem = this.collect_tree(elem);
                 arr[i] = this.basic_transforms_int(elem);
             });
             return ast;
-        }
-        else if (ast === undefined) return undefined;
-        else {
+        } else if (ast === undefined) {
+            return undefined;
+        } else {
             // first we fully collect the children
             if (ast.children !== undefined) {
                 ast.for_each_child((child, i, children) => {
@@ -598,7 +639,6 @@ JXG.extend(
         console.log(this.compile(ast));
         this.walk(ast);
     },
-
 
     /**
      * Logs the the tree on the console, starting with the parameter ast.
@@ -1322,21 +1362,25 @@ JXG.extend(
             return ast;
         }
         ast.sorted = true;
-        if (ast.type !== "node_op") return ast;
-
+        if (ast.type !== "node_op") {
+            return ast;
+        }
         if (ast.value === "op_map") {
             this.sort(ast.children[1]);
         } else if (ast.value === "op_execfun") {
-            // ast.children[1].forEach(this.sort);
+            // ast.children[1].foreach(this.sort);
             for (i = 0; i < ast.children[1].length; i++) {
                 this.sort(ast.children[1][i]);
             }
         } else {
-            for (i in ast.children) {
-                // ast.children.forEach(this.sort);
-                if (ast.children.hasOwnProperty(i)) {
-                    this.sort(ast.children[i]);
-                }
+            // ast.children.foreach(this.sort);
+            // for (i in ast.children) {
+            //     if (ast.children.hasOwnProperty(i)) {
+            //         this.sort(ast.children[i]);
+            //     }
+            // }
+            for (i = 0; i < ast.children.length; i++) {
+                this.sort(ast.children[i]);
             }
         }
 
@@ -1356,9 +1400,10 @@ JXG.extend(
      * @returns
      */
     user_sort: function (ast, var_names = undefined) {
-        if (ast.type !== "node_op") return ast;
-
-
+        if (ast.type !== "node_op") {
+            return ast;
+        }
+        
         if (ast.value === "op_map") {
             this.user_sort(ast.children[1], var_names);
         } else if (ast.value === "op_execfun") {
@@ -2041,7 +2086,6 @@ JXG.extend(
 
         return ast;
     },
-
 
     /**
      * Helper for collect_coeff, which splits an AST into constant and non_constant.
@@ -3581,38 +3625,54 @@ JXG.extend(
         var i, comp,
             type_comp = this._node_type_rank(ast_1) - this._node_type_rank(ast_2);
 
-        if (type_comp !== 0) return type_comp;
-        if (ast_1.type === "node_const")
+        if (type_comp !== 0) {
+            return type_comp;
+        }
+        if (ast_1.type === "node_const") {
             return Number(ast_1.value) - Number(ast_2.value);
-        if (ast_1.type === "node_var")
+        }
+        if (ast_1.type === "node_var") {
             return ast_1.value.localeCompare(ast_2.value);
+        }
         if (ast_1.type === "node_op") {
             if (ast_1.value === "op_execfun") {
                 type_comp = this._op_compare(ast_1.children[0], ast_2.children[0]);
-                if (type_comp !== 0) return type_comp;
-
+                if (type_comp !== 0) {
+                    return type_comp;
+                }
                 for (i = 0; i < ast_1.children[1].length; i++) {
                     if (ast_2.children[1][i] === undefined) return 1;
                     type_comp = this._op_compare(ast_1.children[1][i], ast_2.children[1][i]);
-                    if (type_comp !== 0) return type_comp;
+                    if (type_comp !== 0) {
+                        return type_comp;
+                    }
                 }
                 return type_comp;
 
-            } if (ast_1.value === "op_exp") {
+            } 
+            if (ast_1.value === "op_exp") {
                 return this._compare_factor(ast_1, ast_2);
-            } if (ast_1.value === "op_mul") {
+            } 
+            if (ast_1.value === "op_mul") {
                 return this._compare_summand(ast_1, ast_2);
-            } if (ast_1.value === "op_add") {
+            } 
+            if (ast_1.value === "op_add") {
                 for (i = 0; i < ast_1.children.length && i < ast_2.children.length; i++) {
                     comp = this._compare_summand(ast_1.children[i], ast_2.children[i]);
-                    if (comp !== 0) return comp;
+                    if (comp !== 0) {
+                        return comp;
+                    }
                 }
                 return ast_1.children.length - ast_2.children.length;
             } else {
                 for (i = 0; i < ast_1.children.length; i++) {
-                    if (ast_2.children[i] === undefined) return 1;
+                    if (ast_2.children[i] === undefined) {
+                        return 1;
+                    }
                     type_comp = this._op_compare(ast_1.children[i], ast_2.children[i]);
-                    if (type_comp !== 0) return type_comp;
+                    if (type_comp !== 0) {
+                        return type_comp;
+                    }
                 }
                 return type_comp;
             }
@@ -3706,12 +3766,16 @@ JXG.extend(
         if (variable_nodes_1.length !== variable_nodes_2.length) return variable_nodes_1.length - variable_nodes_2.length;
         for (i = 0; i < variable_nodes_1.length; i++) {
             comp_temp = this._compare_factor(variable_nodes_1[i], variable_nodes_2[i]);
-            if (comp_temp !== 0) return comp_temp;
+            if (comp_temp !== 0) {
+                return comp_temp;
+            }
         }
         if (parameter_nodes_1.length !== parameter_nodes_2.length) return parameter_nodes_2.length - parameter_nodes_1.length;
         for (i = 0; i < parameter_nodes_1.length; i++) {
             comp_temp = this._compare_factor(parameter_nodes_1[i], parameter_nodes_2[i]);
-            if (comp_temp !== 0) return comp_temp;
+            if (comp_temp !== 0) {
+                return comp_temp;
+            }
         }
         for (i = 0; i < rest_1.length && i < rest_2.length; i++) {
             comp = this._op_compare(rest_1[i], rest_2[i]);
@@ -3753,7 +3817,7 @@ JXG.extend(
                     if (ast_2.type === "node_op") return -1;
                     if (ast_2.type === "node_var" || ast_2.type === "node_const") {
                         comp = this._compare_factor(ast_1.children[0], ast_2, var_names);
-                        return comp !== 0 ? comp : 1;//this._compare_factor(ast_1.children[1], this.create_node("node_const", 1));
+                        return comp !== 0 ? comp : 1; //this._compare_factor(ast_1.children[1], this.create_node("node_const", 1));
                     }
                     return 1;
                 }
