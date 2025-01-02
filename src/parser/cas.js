@@ -525,22 +525,30 @@ JXG.extend(
      * @param {*} ast
      */
     collect_tree: function (ast) {
+        var i;
+
         if (JXG.isString(ast)) {
             return ast;
         } else if (JXG.isArray(ast)) {
-            ast.forEach((elem, i, arr) => {
-                elem = this.collect_tree(elem);
-                arr[i] = this.basic_transforms_int(elem);
-            });
+            // ast.forEach((elem, i, arr) => {
+            //     elem = this.collect_tree(elem);
+            //     arr[i] = this.basic_transforms_int(elem);
+            // });
+            for (i = 0; i < ast.length; i++) {
+                ast[i] = this.basic_transforms_int(this.collect_tree(ast[i]));
+            }
             return ast;
         } else if (ast === undefined) {
             return undefined;
         } else {
             // first we fully collect the children
             if (ast.children !== undefined) {
-                ast.for_each_child((child, i, children) => {
-                    children[i] = this.collect_tree(child);
-                });
+                // ast.for_each_child((child, i, children) => {
+                //     children[i] = this.collect_tree(child);
+                // });
+                for (i = 0; i < ast.children.length; i++) {
+                    ast.children[i] = this.collect_tree(ast.children[i]);
+                }
             }
             // if we have an op_mul, we have to collect the exponents
             if (ast.type === "node_op" && ast.value === "op_mul") {
@@ -552,6 +560,7 @@ JXG.extend(
             }
         }
         // then we can return the node
+        
         return this.basic_transforms_int(ast);
     },
 
@@ -1357,7 +1366,8 @@ JXG.extend(
      * @returns the passed ast itself
      */
     sort: function (ast) {
-        var i;
+        var i,
+        that = this;
         if (ast.sorted) {
             return ast;
         }
@@ -1385,7 +1395,8 @@ JXG.extend(
         }
 
         if (ast.value === "op_add" || ast.value === "op_mul") {
-            ast.children.sort.apply(this, [this._op_compare]);
+            var comp = this._op_compare.bind(this);
+            ast.children.sort(comp);
         }
         return ast;
     },
@@ -1403,7 +1414,7 @@ JXG.extend(
         if (ast.type !== "node_op") {
             return ast;
         }
-        
+
         if (ast.value === "op_map") {
             this.user_sort(ast.children[1], var_names);
         } else if (ast.value === "op_execfun") {
@@ -1674,6 +1685,7 @@ JXG.extend(
         return ast;
 
     },
+
     /**
      * Searches the ast for multplications with a denominator which has the form (term)^-1 and expands the denominator node.
      *
@@ -1997,8 +2009,11 @@ JXG.extend(
                 new_node.push(base, this.merge_node(exp));
                 ast.set(i, new_node);
             }
-            if (ast.children.length === 1) return ast.children[0];
-            else return ast;
+            if (ast.children.length === 1) {
+                return ast.children[0];
+            } else {
+                return ast;
+            }
         }
         return ast;
     },
@@ -2012,11 +2027,11 @@ JXG.extend(
      */
     collect_coeff_node: function (ast) {
         var i, j,
-            new_children = [], // where the collected children are being added
+            new_children = [],  // where the collected children are being added
             children_copy = [], // where the comparable children are being stored for later use
-            non_constant, // this is where we store the product, without its coefficients
-            constant, // this is where we store the constant coefficients
-            new_child = []; // mul node for constant and non_constant
+            non_constant,       // this is where we store the product, without its coefficients
+            constant,           // this is where we store the constant coefficients
+            new_child = [];     // mul node for constant and non_constant
 
         // only do something, if we have a sum
         if (ast.type === "node_op" && ast.value === "op_add") {
@@ -2027,9 +2042,12 @@ JXG.extend(
                 return ast;
             }
 
-            // for each element in the children, we seperate the constant and non_constant values
+            // for each element in the children, we separate the constant and non_constant values
             //console.log("add_node",ast)
-            ast.children.forEach((child) => { children_copy.push(this._collect_coeff_node_prepare(child)); });
+            // ast.children.foreach((child) => { children_copy.push(this._collect_coeff_node_prepare(child)); });
+            for (i = 0; i < ast.children.length; i++) {
+                children_copy.push(this._collect_coeff_node_prepare(ast.children[i]));
+            }
 
             // for each element in the children, search elements with the same non_constant
             for (i = children_copy.length - 1; i >= 0; i--) {
@@ -2038,12 +2056,11 @@ JXG.extend(
                 constant.push(children_copy[i][0]);
                 // save the non_constant part
                 non_constant = children_copy[i][1];
-                // if it is already a mul node, we dont need a new mul node
                 if (non_constant.type === "op_mul") {
+                    // if it is already a mul node, we don't need a new mul node
                     new_child = non_constant;
-                }
-                // if it isn't, we do need one
-                else {
+                } else {
+                    // if it isn't, we do need one
                     new_child = this.create_node("node_op", "op_mul");
                     new_child.push(non_constant);
                 }
@@ -2064,7 +2081,7 @@ JXG.extend(
                         i--;
                     }
                 }
-                // if there is only one constant, we dont need the sum
+                // if there is only one constant, we don't need the sum
                 if (constant.children.length === 1) {
                     constant = constant.children[0];
                 }
@@ -2073,7 +2090,7 @@ JXG.extend(
                 // then adds the combined product back to the sum
                 new_children.push(new_child);
             }
-            // if there is only one node left, we dont need the add anymore
+            // if there is only one node left, we don't need the add anymore
             if (new_children.length === 1) {
                 ast = new_children[0];
                 // replaces the children with the new children
@@ -3047,7 +3064,6 @@ JXG.extend(
         }
     },
 
-
     /**
      * maximum function
      * @param {*} ast
@@ -3065,7 +3081,6 @@ JXG.extend(
         return max;
 
     },
-
 
     /**
      * minimum Function
@@ -3275,7 +3290,6 @@ JXG.extend(
         }
         return new_ast;
     },
-
 
     /**
      * builds a new tree with the normalized fraction
@@ -4128,6 +4142,7 @@ JXG.extend(
             }
         }
     },
+
     /**
      * tests the ast for passed variables
      *
