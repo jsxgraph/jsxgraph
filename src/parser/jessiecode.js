@@ -196,6 +196,9 @@ JXG.JessieCode = function (code, geonext) {
     if (JXG.CA) {
         this.CA = new JXG.CA(this.node, this.createNode, this);
     }
+    if (JXG.CAS) {
+        this.CAS = new JXG.CAS(this.node, this.createNode, this);
+    }
 
     this.code = '';
 

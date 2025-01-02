@@ -3,7 +3,16 @@
 import JXG from "../jxg.js";
 import Type from "../utils/type.js";
 
-JXG.CAS = {
+JXG.CAS = function (node, createNode, parser) {
+    this.node = node;
+    this.createNode = createNode;
+    this.parser = parser;
+};
+
+JXG.extend(
+    JXG.CAS.prototype,
+    /** @lends JXG.CA.prototype */ {
+
     /**
      * Simplifies: a given AST, an Array of ASTs(component wise) or an arithmetic string(after converting it to a tree)
      * Options:
@@ -19,7 +28,7 @@ JXG.CAS = {
      *          This attribute is only relevant, if the method is set to "interactive"
      *          Steps may contain an array of specific keword-strings, which then give the order of execution of the simplify functions
      *          Keywords: "expand", "collect", "factorize", "cancel"
-     * -iterations:
+     * - iterations:
      *          Default: 1000
      *          This attribute indicates the number of Iterations of the strong version of the algorithm.
      *          Hence, if the number of iterations is 100, the algorithm stops after it executed its loop a maximum of 100 times, even if the tree still changed in the last iteration.
@@ -4926,7 +4935,10 @@ JXG.CAS = {
                             if (order >= 1) {
                                 while (order >= 1) {
                                     newNode = this.derivative(newNode, varname);
-                                    newNode = this.removeTrivialNodes(newNode);
+                                    // newNode = this.removeTrivialNodes(newNode);
+                                    newNode = this.simplify(newNode, {
+                                        method: 'medium'
+                                    });
                                     order--;
                                 }
                             }
@@ -4967,6 +4979,6 @@ JXG.CAS = {
 
         return node;
     }
-};
+});
 
 export default JXG.CAS;
