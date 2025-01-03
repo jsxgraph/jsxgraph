@@ -56,8 +56,8 @@ JXG.extend(
             console.log("The function simplify does not support the type of the first parameter and can thus not simplify it");
             return ast;
         }
-        //This code only gets reached by ASTs
-        //First set the standard configurations
+        // This code only gets reached by ASTs
+        // First set the default configurations
         options.method = options.method || "strong";
         options.form = options.form || "fractions";
         options.steps = options.steps || [];
@@ -306,7 +306,7 @@ JXG.extend(
      */
     factorize_node: function (ast) {
         var i, j, k,
-            child, 
+            child,
             that = this,
             numerator,
             denominator,
@@ -419,7 +419,7 @@ JXG.extend(
                 //     children_copy[i].children[numerator_index_arr[i]] = this.create_node("node_const", number / gcd_numerator);
                 // });
                 for (i = 0; i < numerator_arr.length; i++) {
-                    children_copy[i].children[numerator_index_arr[i]] = 
+                    children_copy[i].children[numerator_index_arr[i]] =
                         this.create_node("node_const", numerator_arr[i] / gcd_numerator);
                 }
                 new_ast.push(this.create_node("node_const", gcd_numerator));
@@ -431,7 +431,7 @@ JXG.extend(
                 //     children_copy[i].children[denominator_index_arr[i]].children[0] = this.create_node("node_const", (number / gcd_denominator));
                 // });
                 for (i = 0; i < denominator_arr.length; i++) {
-                    children_copy[i].children[denominator_index_arr[i]].children[0] = 
+                    children_copy[i].children[denominator_index_arr[i]].children[0] =
                         this.create_node("node_const", (denominator_arr[i] / gcd_denominator));
                 }
 
@@ -560,7 +560,7 @@ JXG.extend(
             }
         }
         // then we can return the node
-        
+
         return this.basic_transforms_int(ast);
     },
 
@@ -1232,6 +1232,7 @@ JXG.extend(
         }
         return ast;
     },
+
     /**
      * Gets called on execfun with log as the function(var)
      * Functons:
@@ -1252,9 +1253,12 @@ JXG.extend(
                 expanded = this.create_node("node_op", "op_add"); //creates the sum, to which each new log gets appended
                 //create the summand log for each factor in the multiplication in a for loop
                 for (i = 0; i < ast.children[1][0].children.length; i++) {
+                    log_arg = [];
                     execfun = this.create_node("node_op", "op_execfun");
                     log_arg.push(ast.children[1][0].children[i]);
-                    if (ast.children[0].value === "log" && ast.children[1].length > 1) log_arg.push(this.deep_copy(ast.children[1][1])); //non trivial base (deepcopy, because every new log gets it)
+                    if (ast.children[0].value === "log" && ast.children[1].length > 1) {
+                        log_arg.push(this.deep_copy(ast.children[1][1]));    // non-standard base (deepcopy, because every new log gets it)
+                    }
                     execfun.push(this.create_node("node_var", "log"));
                     execfun.push(log_arg);
                     expanded.push(execfun);
@@ -1269,7 +1273,9 @@ JXG.extend(
                 execfun.push(this.create_node("node_var", "log"));
                 execfun.push(log_arg);
                 log_arg.push(ast.children[1][0].children[0]);
-                if (ast.children[0].value === "log" && ast.children[1].length > 1) log_arg.push(ast.children[1][1]);
+                if (ast.children[0].value === "log" && ast.children[1].length > 1) {
+                    log_arg.push(ast.children[1][1]);
+                }
                 break;
             }
         }
@@ -1366,8 +1372,8 @@ JXG.extend(
      * @returns the passed ast itself
      */
     sort: function (ast) {
-        var i,
-        that = this;
+        var i, comp;
+
         if (ast.sorted) {
             return ast;
         }
@@ -1395,7 +1401,7 @@ JXG.extend(
         }
 
         if (ast.value === "op_add" || ast.value === "op_mul") {
-            var comp = this._op_compare.bind(this);
+            comp = this._op_compare.bind(this);
             ast.children.sort(comp);
         }
         return ast;
@@ -1468,14 +1474,16 @@ JXG.extend(
     cancel_gcd_polynom: function (ast, var_name = "x", options = {}) {
         var dividend, divisor, polynomial_a, polynomial_b,
             temp, first_factor,
-            simplify_func = options.simplify || function (sub_ast) {
+            simplify_func_unbound = options.simplify || function (sub_ast) {
                 sub_ast = this.collect_tree(sub_ast);
                 sub_ast = this.expand_tree(sub_ast);
                 sub_ast = this.collect_tree(sub_ast);
                 sub_ast = this.simplify_trivial(sub_ast);
                 sub_ast = this.basic_transforms_int(sub_ast);
                 return sub_ast;
-            };
+            },
+            simplify_func = simplify_func_unbound.bind(this);
+
         if (ast.children.length !== 2 || ast.type !== "node_op" || ast.value !== "op_mul") return ast;
         if (ast.children[0].type === "node_op" && ast.children[0].value === "op_exp") {
             ast.children.reverse();
@@ -1666,7 +1674,7 @@ JXG.extend(
      */
     execute_on_tree: function (ast, func) {
         var f;
-    
+
         if (JXG.isString(ast)) {
             return ast;
         } else if (JXG.isArray(ast)) {
@@ -3666,13 +3674,13 @@ JXG.extend(
                 }
                 return type_comp;
 
-            } 
+            }
             if (ast_1.value === "op_exp") {
                 return this._compare_factor(ast_1, ast_2);
-            } 
+            }
             if (ast_1.value === "op_mul") {
                 return this._compare_summand(ast_1, ast_2);
-            } 
+            }
             if (ast_1.value === "op_add") {
                 for (i = 0; i < ast_1.children.length && i < ast_2.children.length; i++) {
                     comp = this._compare_summand(ast_1.children[i], ast_2.children[i]);
