@@ -3709,7 +3709,8 @@ JXG.extend(
             variable_nodes = [],
             parameter_nodes = [],
             rest = [],
-            constant = 1;
+            constant = 1,
+            comp;
 
         if (ast.type === "node_op" && ast.value === "op_mul") {
             ast.children.forEach(factor => {
@@ -3754,7 +3755,8 @@ JXG.extend(
         } else {
             rest.push(ast);
         }
-        rest.sort(this._op_compare);
+        comp = this._op_compare.bind(this);
+        rest.sort(comp);
         return [degree, variable_nodes, parameter_nodes, rest, constant];
     },
 
