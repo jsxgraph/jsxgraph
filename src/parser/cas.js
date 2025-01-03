@@ -379,17 +379,17 @@ JXG.extend(
                 //         }
                 //     }
                 // });
-                for (i = 0; i < current_child.children.length; i++) {
-                    child = current_child[i];
+                for (j = 0; j < current_child.children.length; j++) {
+                    child = current_child.children[j];
                     if (child.type === "node_const" && child.is_int() && child.value !== 1) {
                         numerator = child.value;
-                        numerator_index = i;
+                        numerator_index = j;
                     } else if (child.value === "op_exp" && child.type === "node_op") {
                         // if it is an exp ^(-1) and the base is an integer, we add it to the denominator
                         if (child.children[1].type === "node_const" && child.children[1].value === -1) {
                             if (child.children[0].type === "node_const" && child.children[0].is_int() && child.children[0].value !== 1) {
                                 denominator = child.children[0].value;
-                                denominator_index = i;
+                                denominator_index = j;
                             }
                         }
                     }
@@ -418,7 +418,7 @@ JXG.extend(
                 //     //children_copy[i].set(numerator_index_arr[i], this.create_node("node_const", (number/gcd_numerator).));
                 //     children_copy[i].children[numerator_index_arr[i]] = this.create_node("node_const", number / gcd_numerator);
                 // });
-                for (i = 0; i < numerator_arr; i++) {
+                for (i = 0; i < numerator_arr.length; i++) {
                     children_copy[i].children[numerator_index_arr[i]] = 
                         this.create_node("node_const", numerator_arr[i] / gcd_numerator);
                 }
