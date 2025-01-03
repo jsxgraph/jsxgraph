@@ -380,23 +380,23 @@ describe("Test testing", function () {
         expect(CAS.equals(ast, outcome_ast)).toEqual(true);
     });
 
-    // it("factorize_1", function() {
-    //     var function_string, expected_outcome, ast, outcome_ast;
+    it("factorize_1", function() {
+        var function_string, expected_outcome, ast, outcome_ast;
         
-    //     function_string = '3*x+9*x^2;' // our input function
-    //     expected_outcome = '3*x*(1+3*x);' // what the result should be
-    //     // convert the strings into trees
-    //     ast = board.jc.getAST(function_string);
-    //     ast = CAS.to_work_tree(ast);
-    //     outcome_ast = board.jc.getAST(expected_outcome);
-    //     outcome_ast = CAS.to_work_tree(outcome_ast);
-    //     // functions that are supposed to be executed on the ast:
-    //     ast = CAS.factorize_tree(ast);
-    //     // print both ast, for debugging purposes
-    //     console.log("input: " + CAS.compile(ast));
-    //     console.log("expected: " + CAS.compile(outcome_ast));
-    //     // test if these are actually equal to each other
-    //     expect(CAS.equals(ast, outcome_ast)).toEqual(true);
-    // });
+        function_string = '3*x+9*x^2;' // our input function
+        expected_outcome = '3*x*(1+3*x);' // what the result should be
+        // convert the strings into trees
+        ast = board.jc.getAST(function_string);
+        ast = CAS.to_work_tree(ast);
+        outcome_ast = board.jc.getAST(expected_outcome);
+        outcome_ast = CAS.to_work_tree(outcome_ast);
+        // functions that are supposed to be executed on the ast:
+        ast = CAS.factorize_tree(ast);
+        // print both ast, for debugging purposes
+        console.log("input: " + CAS.compile(ast));
+        console.log("expected: " + CAS.compile(outcome_ast));
+        // test if these are actually equal to each other
+        expect(CAS.equals(ast, outcome_ast)).toEqual(true);
+    });
 
 });

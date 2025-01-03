@@ -169,7 +169,7 @@ JXG.extend(
     simplify_function_strong: function (ast, variables, options) {
         ast = this.to_work_tree(ast);
         var memory = [],
-            ast_string = this.compile(this.sort.apply(this, [ast])),
+            ast_string = this.compile(this.sort(ast)),
             contained_var;
 
         contained_var = this._get_contained_variables(ast);
@@ -1665,6 +1665,8 @@ JXG.extend(
      * @returns
      */
     execute_on_tree: function (ast, func) {
+        var f;
+    
         if (JXG.isString(ast)) {
             return ast;
         } else if (JXG.isArray(ast)) {
@@ -1680,10 +1682,11 @@ JXG.extend(
                     ast.set(i, this.execute_on_tree(child, func));
                 });
             }
-            ast = func.apply(this, [ast]);
+
+            f = func.bind(this);
+            ast = f(ast);
         }
         return ast;
-
     },
 
     /**
