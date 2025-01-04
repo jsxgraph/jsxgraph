@@ -847,6 +847,8 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
                 ast = this.CA.removeTrivialNodes(ast);
             }
             if (this.CAS) {
+                // Search for expression of form `D(f, x)` and determine the 
+                // the derivative symbolically.
                 ast = this.CAS.expandDerivatives(ast, null, ast);
                 // ast = this.CAS.removeTrivialNodes(ast);
             }

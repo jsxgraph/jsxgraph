@@ -94,7 +94,9 @@ JXG.extend(
                         }
                         return compiled.trim();
                     case "op_execfun":
-                        if (node.children.length !== 2) return "<execfun?>";
+                        if (node.children.length !== 2) {
+                            return "<execfun?>";
+                        }
                         return this.compile(node.children[0]) + "(" + node.children[1].map(param => this.compile(param, "op_execfun")).join() + ")";
                     case "op_neg":
                         if (this._get_priority(node) >= this._get_priority(node.children[0])) {
@@ -175,7 +177,9 @@ JXG.extend(
         contained_var = this._get_contained_variables(ast);
         while (!memory.includes(ast_string)) {
             options.iterations--;
-            if (options.iterations <= 0) break;
+            if (options.iterations <= 0) {
+                break;
+            }
             memory.push(ast_string);
             ast = this.collect_tree(ast);
             ast = this.expand_tree(ast);
@@ -243,7 +247,9 @@ JXG.extend(
         var vars;
         if (ast.type === "node_op" && ast.value === "op_mul") {
             vars = this._get_contained_variables(ast);
-            if (vars.length === 1) ast = this.cancel_gcd_polynom(ast, vars[0]);
+            if (vars.length === 1) {
+                ast = this.cancel_gcd_polynom(ast, vars[0]);
+            }
         }
         return ast;
     },
@@ -408,7 +414,9 @@ JXG.extend(
                 else gcd_denominator = 1;
                 // if both are already 1, we can stop
 
-                if (gcd_numerator === 1 && gcd_denominator === 1) break;
+                if (gcd_numerator === 1 && gcd_denominator === 1) {
+                    break;
+                }
             }
 
             // if a gcd is not 1, we can factorize it
@@ -458,11 +466,15 @@ JXG.extend(
             // iterate over every factor of the first child
             for (i = 0; i < first_child.children.length; i++) {
                 // ints can be skipped
-                if (first_child.children[i].is_int()) continue;
+                if (first_child.children[i].is_int()) {
+                    continue;
+                }
                 searched_base = first_child.children[i].children[0];
                 max_exponent = first_child.children[i].children[1];
                 // if the exponent is not an int, or the base is 1, we dont need to factorize
-                if (!max_exponent.is_int() || (searched_base.value === 1 && searched_base.type === "node_const")) continue;
+                if (!max_exponent.is_int() || (searched_base.value === 1 && searched_base.type === "node_const")) {
+                    continue;
+                }
                 max_exponent = max_exponent.value;
                 index_arr = [];
                 index_arr.push(i);
@@ -477,9 +489,11 @@ JXG.extend(
                         if (sub_child.children[1].is_int() && this.equals(searched_base, sub_child.children[0])) {
                             index = k;
                             current_exponent = sub_child.children[1].value;
-                            if (max_exponent > 0 && current_exponent > 0) max_exponent = Math.min(max_exponent, current_exponent);
-                            else if (max_exponent < 0 && current_exponent < 0) max_exponent = Math.max(max_exponent, current_exponent);
-                            else {
+                            if (max_exponent > 0 && current_exponent > 0) {
+                                max_exponent = Math.min(max_exponent, current_exponent);
+                            } else if (max_exponent < 0 && current_exponent < 0) {
+                                max_exponent = Math.max(max_exponent, current_exponent);
+                            } else {
                                 max_exponent = 0;
                                 break;
                             }
@@ -492,7 +506,9 @@ JXG.extend(
                     else index_arr.push(index);
                 }
                 // if the max_exponent is 0, we can continue with the next child
-                if (max_exponent === 0) continue;
+                if (max_exponent === 0) {
+                    continue;
+                }
                 // else, we push the extracted node to the outer mul node
                 node = this.create_node("node_op", "op_exp");
                 node.push(first_child.children[i].children[0]);
@@ -631,7 +647,9 @@ JXG.extend(
                 new_children.push(new_child);
             }
             // if there is only one node left, we dont need the add anymore
-            if (new_children.length === 1) ast = new_children[0];
+            if (new_children.length === 1) {
+                ast = new_children[0];
+            }
             // replaces the children with the new children
             else ast.set_children(new_children);
 
@@ -931,10 +949,16 @@ JXG.extend(
 
                 //log_b(1) = 0
                 if (ast.children[0].value === "log" || ast.children[0].value === "ln") {
-                    if (ast.children[1][0].value === 1) return this.create_node("node_const", 0);
+                    if (ast.children[1][0].value === 1) {
+                        return this.create_node("node_const", 0);
+                    }
                 }
                 //log(e) = 1 && ln(e) = 1 && log_b(b) = 1
-                if (((ast.children[0].value === "ln" || (ast.children[0].value === "log" && ast.children[1].length === 1)) && ast.children[1][0].value === "EULER") || (ast.children[0].value === "log" && ast.children[1].length > 1 && this.equals(ast.children[1][0], ast.children[1][1]))) return this.create_node("node_const", 1);
+                if (((ast.children[0].value === "ln" ||
+                    (ast.children[0].value === "log" && ast.children[1].length === 1)) && ast.children[1][0].value === "EULER") ||
+                    (ast.children[0].value === "log" && ast.children[1].length > 1 && this.equals(ast.children[1][0], ast.children[1][1]))) {
+                    return this.create_node("node_const", 1);
+                }
                 break;
             }
             case "op_assign": {
@@ -962,8 +986,12 @@ JXG.extend(
                         i--;
                     }
                 }
-                if (current_sum !== 0 || ast.children.length === 0) ast.push(this.create_node("node_const", current_sum)); //+0 does not have to be pushed into a sum
-                if (ast.children.length === 1) return ast.children[0]; //only one child -> just return it without the parent op
+                if (current_sum !== 0 || ast.children.length === 0) {
+                    ast.push(this.create_node("node_const", current_sum)); //+0 does not have to be pushed into a sum
+                }
+                if (ast.children.length === 1) {
+                    return ast.children[0]; //only one child -> just return it without the parent op
+                }
                 break;
             }
             case "op_mul": {
@@ -973,7 +1001,9 @@ JXG.extend(
                 }
                 //Simplify Divisions:
                 ast = this.cancel_gcd(ast);
-                if (ast.value !== "op_mul") return this.basic_transforms_int(ast); //if we are no longer in the mul case, then we should reevaluate the following operations
+                if (ast.value !== "op_mul") {
+                    return this.basic_transforms_int(ast); //if we are no longer in the mul case, then we should reevaluate the following operations
+                }
 
                 //Here the simple new children get summarized according to the operation node, which we are currently inspecting
                 current_product = 1; //Stores the current product, of the integer children of the add node, to push their total value into one node
@@ -984,17 +1014,29 @@ JXG.extend(
                         i--;
                     }
                 }
-                if (current_product === 0) return this.create_node("node_const", 0); //if there is a 0 in the multiplication the entire product is 0
-                if (current_product !== 1 || ast.children.length === 0) ast.push(this.create_node("node_const", current_product)); //*1 does not have to be pushed into a multiplication
-                if (ast.children.length === 1) return ast.children[0]; //only one child -> just return it without the parent operation
+                if (current_product === 0) {
+                    return this.create_node("node_const", 0); //if there is a 0 in the multiplication the entire product is 0
+                }
+                if (current_product !== 1 || ast.children.length === 0) {
+                    ast.push(this.create_node("node_const", current_product)); //*1 does not have to be pushed into a multiplication
+                }
+                if (ast.children.length === 1) {
+                    return ast.children[0]; //only one child -> just return it without the parent operation
+                }
                 break;
             }
             case "op_exp": {
                 ast.set(0, this.basic_transforms_int(ast.children[0]));
                 ast.set(1, this.basic_transforms_int(ast.children[1]));
-                if (ast.children[1].value === 1) return ast.children[0]; //^1 gets canceled
-                if (ast.children[1].value === 0) return this.create_node("node_const", 1);  //x^0 = 1
-                if (ast.children[0].value === -1 && ast.children[1].value === -1) return this.create_node("node_const", -1); //-1^-1 = -1
+                if (ast.children[1].value === 1) {
+                    return ast.children[0]; //^1 gets canceled
+                }
+                if (ast.children[1].value === 0) {
+                    return this.create_node("node_const", 1);  //x^0 = 1
+                }
+                if (ast.children[0].value === -1 && ast.children[1].value === -1) {
+                    return this.create_node("node_const", -1); //-1^-1 = -1
+                }
                 //Only compute if it's an integer in its entirety
                 if (this.is_integer(ast.children[0].value) && this.is_integer(ast.children[1].value) && ast.children[1].value >= 0) {
                     return this.create_node("node_const", Number(ast.children[0].value) ** Number(ast.children[1].value));
@@ -1044,10 +1086,15 @@ JXG.extend(
                 ast.set(1, new_args);
                 //log_b(1) = 0
                 if (ast.children[0].value === "log" || ast.children[0].value === "ln") {
-                    if (ast.children[1][0].value === 1) return this.create_node("node_const", 0);
+                    if (ast.children[1][0].value === 1) {
+                        return this.create_node("node_const", 0);
+                    }
                 }
                 //log(e) = 1 && ln(e) = 1 && log_b(b) = 1
-                if (((ast.children[0].value === "ln" || (ast.children[0].value === "log" && ast.children[1].length === 1)) && ast.children[1][0].value === "EULER") || (ast.children[0].value === "log" && ast.children[1].length > 1 && this.equals(ast.children[1][0], ast.children[1][1]))) return this.create_node("node_const", 1);
+                if (((ast.children[0].value === "ln" || (ast.children[0].value === "log" && ast.children[1].length === 1)) && ast.children[1][0].value === "EULER") ||
+                    (ast.children[0].value === "log" && ast.children[1].length > 1 && this.equals(ast.children[1][0], ast.children[1][1]))) {
+                    return this.create_node("node_const", 1);
+                }
                 break;
             }
             case "op_assign": {
@@ -1074,8 +1121,12 @@ JXG.extend(
                         i--;
                     }
                 }
-                if (current_sum !== 0 || ast.children.length === 0) ast.push(this.create_node("node_const", current_sum)); //+0 does not have to be pushed into a sum
-                if (ast.children.length === 1) return ast.children[0]; //only one child -> just return it without the operation
+                if (current_sum !== 0 || ast.children.length === 0) {
+                    ast.push(this.create_node("node_const", current_sum)); //+0 does not have to be pushed into a sum
+                }
+                if (ast.children.length === 1) {
+                    return ast.children[0]; //only one child -> just return it without the operation
+                }
                 break;
             }
             case "op_mul": {
@@ -1085,7 +1136,9 @@ JXG.extend(
                 }
                 //simplify Divisions:
                 ast = this.cancel_gcd(ast);
-                if (ast.value !== "op_mul") return this.basic_transforms_float(ast, options); //if we are no longer in the mul case, then we should reevaluate the following operations
+                if (ast.value !== "op_mul") {
+                    return this.basic_transforms_float(ast, options); //if we are no longer in the mul case, then we should reevaluate the following operations
+                }
 
                 //here the simple new children get summarized according to the operation node, which we are currently inspecting
                 current_product = 1; //Stores the current sum, of the natural children of the add node, to push their total value in one node
@@ -1096,19 +1149,32 @@ JXG.extend(
                         i--;
                     }
                 }
-                if (current_product === 0) return this.create_node("node_const", 0); //if there is a 0 in the multiplication the entire product is 0
-                if (current_product !== 1 || ast.children.length === 0) ast.push(this.create_node("node_const", current_product)); //*1 does not have to be pushed into a multiplication
-                if (ast.children.length === 1) return ast.children[0]; //only one child -> just return it without the operation
+                if (current_product === 0) {
+                    return this.create_node("node_const", 0); //if there is a 0 in the multiplication the entire product is 0
+                }
+                if (current_product !== 1 || ast.children.length === 0) {
+                    ast.push(this.create_node("node_const", current_product)); //*1 does not have to be pushed into a multiplication
+                }
+                if (ast.children.length === 1) {
+                    return ast.children[0]; //only one child -> just return it without the operation
+                }
                 break;
             }
             case "op_exp": {
                 ast.set(0, this.basic_transforms_float(ast.children[0], options));
                 ast.set(1, this.basic_transforms_float(ast.children[1], options));
-                if (ast.children[1].value === 1) return ast.children[0]; //^1 gets canceled
-                if (ast.children[1].value === 0) return this.create_node("node_const", 1);  //x^0 = 1
-                if (ast.children[0].value === -1 && ast.children[1].value === -1) return this.create_node("node_const", -1); //-1^-1 = -1
+                if (ast.children[1].value === 1) {
+                    return ast.children[0]; //^1 gets canceled
+                }
+                if (ast.children[1].value === 0) {
+                    return this.create_node("node_const", 1);  //x^0 = 1
+                }
+                if (ast.children[0].value === -1 && ast.children[1].value === -1) {
+                    return this.create_node("node_const", -1); //-1^-1 = -1
+                }
                 //Only compute if the base is a float and (the exponent is natural or the chosen form is "decimals")
-                if (this.is_float(ast.children[0].value) && this.is_integer(ast.children[1].value) && (ast.children[1].value > 0 || options.form === "decimals")) {
+                if (this.is_float(ast.children[0].value) && this.is_integer(ast.children[1].value) &&
+                    (ast.children[1].value > 0 || options.form === "decimals")) {
                     return this.create_node("node_const", Number(ast.children[0].value) ** Number(ast.children[1].value));
                 }
                 break;
@@ -1154,13 +1220,17 @@ JXG.extend(
 
                 //log_b(1) = 0
                 if (ast.children[0].value === "log" || ast.children[0].value === "ln") {
-                    if (ast.children[1][0].value === 1) return this.create_node("node_const", 0);
+                    if (ast.children[1][0].value === 1) {
+                        return this.create_node("node_const", 0);
+                    }
                 }
                 //log(e) = 1 && ln(e) = 1 && log_b(b) = 1
-                if (((ast.children[0].value === "ln" || (ast.children[0].value === "log" && ast.children[1].length === 1)) && ast.children[1][0].value === "EULER") || (ast.children[0].value === "log" && ast.children[1].length > 1 && this.equals(ast.children[1][0], ast.children[1][1]))) return this.create_node("node_const", 1);
+                if (((ast.children[0].value === "ln" || (ast.children[0].value === "log" && ast.children[1].length === 1)) && ast.children[1][0].value === "EULER") ||
+                    (ast.children[0].value === "log" && ast.children[1].length > 1 && this.equals(ast.children[1][0], ast.children[1][1]))) {
+                    return this.create_node("node_const", 1);
+                }
 
                 ast = this.remove_execfun(ast); //Here most of the execfuns get deleted
-
                 break;
             }
             case "op_assign": {
@@ -1188,8 +1258,12 @@ JXG.extend(
                         i--;
                     }
                 }
-                if (current_sum !== 0 || ast.children.length === 0) ast.push(this.create_node("node_const", current_sum)); //+0 does not have to be pushed into a sum
-                if (ast.children.length === 1) return ast.children[0]; //only one child -> just return it without the parent op
+                if (current_sum !== 0 || ast.children.length === 0) {
+                    ast.push(this.create_node("node_const", current_sum)); //+0 does not have to be pushed into a sum
+                }
+                if (ast.children.length === 1) {
+                    return ast.children[0]; //only one child -> just return it without the parent op
+                }
                 break;
             }
             case "op_mul": {
@@ -1199,7 +1273,9 @@ JXG.extend(
                 }
                 //Simplify Divisions:
                 ast = this.cancel_gcd(ast);
-                if (ast.value !== "op_mul") return this.remove_execfun_tree(ast); //if we are no longer in the mul case, then we should reevaluate the following operations
+                if (ast.value !== "op_mul") {
+                    return this.remove_execfun_tree(ast); //if we are no longer in the mul case, then we should reevaluate the following operations
+                }
 
                 //Here the simple new children get summarized according to the operation node, which we are currently inspecting
                 current_product = 1; //Stores the current product, of the integer children of the add node, to push their total value into one node
@@ -1210,17 +1286,29 @@ JXG.extend(
                         i--;
                     }
                 }
-                if (current_product === 0) return this.create_node("node_const", 0); //if there is a 0 in the multiplication the entire product is 0
-                if (current_product !== 1 || ast.children.length === 0) ast.push(this.create_node("node_const", current_product)); //*1 does not have to be pushed into a multiplication
-                if (ast.children.length === 1) return ast.children[0]; //only one child -> just return it without the parent operation
+                if (current_product === 0) {
+                    return this.create_node("node_const", 0); //if there is a 0 in the multiplication the entire product is 0
+                }
+                if (current_product !== 1 || ast.children.length === 0) {
+                    ast.push(this.create_node("node_const", current_product)); //*1 does not have to be pushed into a multiplication
+                }
+                if (ast.children.length === 1) {
+                    return ast.children[0]; //only one child -> just return it without the parent operation
+                }
                 break;
             }
             case "op_exp": {
                 ast.set(0, this.remove_execfun_tree(ast.children[0]));
                 ast.set(1, this.remove_execfun_tree(ast.children[1]));
-                if (ast.children[1].value === 1) return ast.children[0]; //^1 gets canceled
-                if (ast.children[1].value === 0) return this.create_node("node_const", 1);  //x^0 = 1
-                if (ast.children[0].value === -1 && ast.children[1].value === -1) return this.create_node("node_const", -1); //-1^-1 = -1
+                if (ast.children[1].value === 1) {
+                    return ast.children[0]; //^1 gets canceled
+                }
+                if (ast.children[1].value === 0) {
+                    return this.create_node("node_const", 1);  //x^0 = 1
+                }
+                if (ast.children[0].value === -1 && ast.children[1].value === -1) {
+                    return this.create_node("node_const", -1); //-1^-1 = -1
+                }
                 //Only compute if it's an integer in its entirety
                 if (this.is_integer(ast.children[0].value) && this.is_integer(ast.children[1].value) && ast.children[1].value >= 0) {
                     return this.create_node("node_const", Number(ast.children[0].value) ** Number(ast.children[1].value));
@@ -1446,7 +1534,9 @@ JXG.extend(
      */
     cancel_var_node: function (ast, variable_names = undefined) {
         var old, var_name;
-        if (ast.children.length !== 2 || ast.type !== "node_op" || ast.value !== "op_mul") return ast;
+        if (ast.children.length !== 2 || ast.type !== "node_op" || ast.value !== "op_mul") {
+            return ast;
+        }
         if (ast.children[0].type === "node_op" && ast.children[0].value === "op_exp") {
             ast.children.reverse();
         }
@@ -1454,7 +1544,9 @@ JXG.extend(
         for (var_name of variable_names) {
             old = ast;
             ast = this.cancel_gcd_polynom(ast, var_name);
-            if (old !== ast) break;
+            if (old !== ast) {
+                break;
+            }
         }
         return ast;
     },
@@ -1484,18 +1576,23 @@ JXG.extend(
             },
             simplify_func = simplify_func_unbound.bind(this);
 
-        if (ast.children.length !== 2 || ast.type !== "node_op" || ast.value !== "op_mul") return ast;
+        if (ast.children.length !== 2 || ast.type !== "node_op" || ast.value !== "op_mul") {
+            return ast;
+        }
         if (ast.children[0].type === "node_op" && ast.children[0].value === "op_exp") {
             ast.children.reverse();
         }
-        if (ast.children[1].type !== "node_op" || ast.children[1].value !== "op_exp"
-            || ast.children[1].children[1].type !== "node_const" || Number(ast.children[1].children[1].value) !== -1)
+        if (ast.children[1].type !== "node_op" || ast.children[1].value !== "op_exp" ||
+            ast.children[1].children[1].type !== "node_const" || Number(ast.children[1].children[1].value) !== -1) {
             return ast;
+        }
 
         dividend = this._make_mononom_array(ast.children[0], var_name);
         divisor = this._make_mononom_array(ast.children[1].children[0], var_name);
 
-        if (dividend[0] !== undefined || divisor[0] !== undefined) return ast;
+        if (dividend[0] !== undefined || divisor[0] !== undefined) {
+            return ast;
+        }
 
         dividend.shift();
         divisor.shift();
@@ -1611,8 +1708,9 @@ JXG.extend(
      * @param {*} ast
      */
     is_constant: function (ast) {
-        if (ast === undefined) return false;
-
+        if (ast === undefined) {
+            return false;
+        }
         return ast.const_flag;
     },
 
@@ -1733,7 +1831,9 @@ JXG.extend(
      *
      */
     equals: function (ast_1, ast_2) {
-        if (ast_1 === undefined || ast_2 === undefined) return false;
+        if (ast_1 === undefined || ast_2 === undefined) {
+            return false;
+        }
         this.sort(ast_1);
         this.sort(ast_2);
         return this._equals_unsorted(ast_1, ast_2);
@@ -1779,7 +1879,9 @@ JXG.extend(
                 if (ast_1.length === ast_2.length) {
                     // if an element is different, return false
                     for (i = 0; i < ast_1.length; i++) {
-                        if (!this.equals(ast_1[i], ast_2[i])) return false;
+                        if (!this.equals(ast_1[i], ast_2[i])) {
+                            return false;
+                        }
                     }
                     // in case all children are identical, we can return true
                     return true;
@@ -1793,13 +1895,14 @@ JXG.extend(
             if (ast_1.type === ast_2.type && ast_1.value === ast_2.value && ast_1.children.length === ast_2.children.length) {
                 // if a single child is different, we return false
                 for (i = 0; i < ast_1.children.length; i++) {
-                    if (!this.equals(ast_1.children[i], ast_2.children[i])) return false;
+                    if (!this.equals(ast_1.children[i], ast_2.children[i])) {
+                        return false;
+                    }
                 }
                 // in case are children are identical, we can return true
                 return true;
-            }
-            // if type or value are not the same, this is false
-            else {
+            } else {
+                // if type or value are not the same, this is false
                 return false;
             }
         }
@@ -1813,26 +1916,38 @@ JXG.extend(
      */
     gcd: function (...numbers) {
         var gcd, negative_flag = true;
-        if (numbers.length === 0) return 1;
-        if (numbers.length === 1) return numbers[0];
+        if (numbers.length === 0) {
+            return 1;
+        }
+        if (numbers.length === 1) {
+            return numbers[0];
+        }
         gcd = numbers[0];
         numbers.forEach((number) => {
             gcd = this._gcd(gcd, number);
-            if (number > 0) negative_flag = false;
+            if (number > 0) {
+                negative_flag = false;
+            }
         });
         return negative_flag ? -gcd : gcd;
     },
 
     _gcd: function (a, b) {
         var condition = true, temp;
-        if (!(this.is_integer(a) && this.is_integer(b))) return 1;
+        if (!(this.is_integer(a) && this.is_integer(b))) {
+            return 1;
+        }
         a = Math.abs(a);
         b = Math.abs(b);
         if (b > a) { temp = a; a = b; b = temp; }
         while (condition) {
-            if (b === 0) return a;
+            if (b === 0) {
+                return a;
+            }
             a %= b;
-            if (a === 0) return b;
+            if (a === 0) {
+                return b;
+            }
             b %= a;
         }
     },
@@ -1892,7 +2007,9 @@ JXG.extend(
 
             gcd = this.gcd(numerator, denominator);
             // if it is 1, we can stop right away
-            if (gcd === 1) return ast;
+            if (gcd === 1) {
+                return ast;
+            }
 
             numerator /= gcd;
             denominator /= gcd;
@@ -1950,7 +2067,9 @@ JXG.extend(
                         denominator = ast.children[i];
                         ast.splice(i);
                         // if only 1 child left in numerator
-                        if (ast.children.length === 1) ast = ast.children[0];
+                        if (ast.children.length === 1) {
+                            ast = ast.children[0];
+                        }
                         break;
                     }
                 }
@@ -1992,7 +2111,9 @@ JXG.extend(
                 }
 
                 ast.children = ast.children.filter((elem, index) => {
-                    if (index <= i) return true;
+                    if (index <= i) {
+                        return true;
+                    }
                     if (elem.type === "node_op" && elem.value === "op_exp") {
                         if (this.equals(elem.children[0], base)) {
                             if (exp.type === "op_add") {
@@ -2013,7 +2134,9 @@ JXG.extend(
                             exp = node;
                         }
                         return false;
-                    } else return true;
+                    } else {
+                        return true;
+                    }
                 });
                 exp = this.basic_transforms_int(exp);
                 new_node = this.create_node("node_op", "op_exp");
@@ -2270,17 +2393,20 @@ JXG.extend(
                 // if there were negative exponents, we add a division
                 if (divisor_arr.length > 0) {
                     division = this.create_node("node_op", "op_div");
-                    // if our multiplikation has only 1 child remaining, it es the numerator
-                    if (ast.children.length === 1) division.children.push(ast.children[0]);
-                    // if no child is left, the numerator is 1
-                    else if (ast.children.length === 0) division.children.push(this.create_node("node_const", 1));
-                    // else, we just push the mult
-                    else division.children.push(ast);
+                    if (ast.children.length === 1) {
+                        // if our multiplikation has only 1 child remaining, it is the numerator
+                        division.children.push(ast.children[0]);
+                    } else if (ast.children.length === 0) {
+                        // if no child is left, the numerator is 1
+                        division.children.push(this.create_node("node_const", 1));
+                    } else {
+                        // else, we just push the mult
+                        division.children.push(ast);
+                    }
 
                     if (divisor_arr.length === 1) {
                         division.children.push(divisor_arr[0]);
-                    }
-                    else {
+                    } else {
                         divisor = this.create_node("node_op", "op_mul");
                         divisor.children = divisor_arr;
                         division.children.push(divisor);
@@ -2319,8 +2445,11 @@ JXG.extend(
      */
     _un_negate_node: function (node) {
         if (node.type === "node_op") {
-            if (node.value === "op_neg") node = node.children[0];
-            else if (node.value === "op_div") node.children[0] = this._un_negate_node(node.children[0]);
+            if (node.value === "op_neg") {
+                node = node.children[0];
+            } else if (node.value === "op_div") {
+                node.children[0] = this._un_negate_node(node.children[0]);
+            }
         }
         return node;
     },
@@ -2887,17 +3016,25 @@ JXG.extend(
             // we save the values, so we can see if anything changed
             var old_const = node.const_flag, old_sorted = node.sorted_flag;
             node.sorted_flag = false;
-            if (reset) this.reset_flags(node);
+            if (reset) {
+                this.reset_flags(node);
+            }
             // when we have an execfun, the children are located elsewhere
             if (children !== undefined) {
                 if (node.value === "op_execfun") {
-                    if (JXG.isArray(children[0])) children = children[0];
-                    else if (JXG.isArray(children[1])) children = children[1];
-                    else return;
+                    if (JXG.isArray(children[0])) {
+                        children = children[0];
+                    } else if (JXG.isArray(children[1])) {
+                        children = children[1];
+                    } else {
+                        return;
+                    }
                 }
                 children.forEach((child) => {
                     child.parent = node;
-                    if (!child.const_flag) node.const_flag = false;
+                    if (!child.const_flag) {
+                        node.const_flag = false;
+                    }
                     //console.log(child);
                     //if(!child.int_flag) node.int_flag = false;
                 });
@@ -2955,7 +3092,9 @@ JXG.extend(
      * @returns {string}
      */
     _flag_string: function (node) {
-        if (node === undefined) return "??";
+        if (node === undefined) {
+            return "??";
+        }
         return (node.const_flag ? "c" : "-") + (node.int_flag ? "i" : "-") + (node.sorted ? "s" : "-") + "|";
     },
 
@@ -3523,33 +3662,41 @@ JXG.extend(
             rep_count,
             child, temp, current_index;
 
-        if (ast.type !== "node_op") return ast;
+        if (ast.type !== "node_op") {
+            return ast;
+        }
         //Preparation fill the factors array
         if (ast.value === "op_exp") {
-            if (ast.children[0].type !== "node_op" || ast.children[0].value === "op_execfun")
+            if (ast.children[0].type !== "node_op" || ast.children[0].value === "op_execfun") {
                 return ast;
-            if (ast.children[0].value === "op_mul")
+            }
+            if (ast.children[0].value === "op_mul") {
                 return this._expand_exp_mul(ast);
-            if (ast.children[1].type !== "node_const" || !this.is_natural(ast.children[1].value))
+            }
+            if (ast.children[1].type !== "node_const" || !this.is_natural(ast.children[1].value)) {
                 return ast;
-            if (ast.children[0].value === "op_add" && ast.children[0].children.length === 2)
+            }
+            if (ast.children[0].value === "op_add" && ast.children[0].children.length === 2) {
                 return this.binomial_theorem(ast, limit); //binomial_theorem applicable
+            }
             for (i = 0; i < ast.children[1].value; i++) {
                 factors.push(ast.children[0]);
             }
         } else if (ast.value === "op_mul") {
             ast.children.forEach(factor => {
                 if (factor.type !== "node_op" || factor.value !== "op_exp"
-                    || factor.children[0].type !== "node_op" || factor.children[0].value === "op_execfun")
+                    || factor.children[0].type !== "node_op" || factor.children[0].value === "op_execfun") {
                     factors.push(factor);
-                else if (factor.children[0].value === "op_mul")
+                } else if (factor.children[0].value === "op_mul") {
                     factors.push(this._expand_exp_mul(factor));
-                else if (factor.children[1].type !== "node_const" || !this.is_natural(factor.children[1].value))
+                } else if (factor.children[1].type !== "node_const" || !this.is_natural(factor.children[1].value)) {
                     factors.push(factor);
-                else if (factor.children[0].value === "op_add" && factor.children[0].children.length === 2)
+                } else if (factor.children[0].value === "op_add" && factor.children[0].children.length === 2) {
                     factors.push(this.binomial_theorem(factor, limit)); //partial expansion by binomial theorem possible
-                else for (i = 0; i < factor.children[1].value; i++) {
-                    factors.push(factor.children[0]);
+                } else {
+                    for (i = 0; i < factor.children[1].value; i++) {
+                        factors.push(factor.children[0]);
+                    }
                 }
             });
         } else {
@@ -3557,7 +3704,9 @@ JXG.extend(
         }
         //Factors array filled
 
-        if (factors.length > limit) return ast;
+        if (factors.length > limit) {
+            return ast;
+        }
 
         expanded = this.create_node("node_op", "op_add");
 
@@ -3586,16 +3735,20 @@ JXG.extend(
                 current_index = 0;
                 for (j = 0; j < expanded.children.length; j++) {
                     expanded.children[j].push(this.deep_copy(factors[i].children[current_index]));
-                    if (j % rep_count === 0) current_index = (current_index + 1) % summand_count[i];
+                    if (j % rep_count === 0) {
+                        current_index = (current_index + 1) % summand_count[i];
+                    }
                 }
             }
             rep_count *= summand_count[i];
         }
         //reduce node
-        if (expanded.children.length === 0)
+        if (expanded.children.length === 0) {
             return this.create_node("node_const", 1);
-        if (expanded.children.length === 1)
+        }
+        if (expanded.children.length === 1) {
             return this.merge_tree(expanded.children[0]);
+        }
         return this.merge_tree(expanded);
     },
 
@@ -3616,8 +3769,12 @@ JXG.extend(
      * @returns {Number} rank
      */
     _node_type_rank: function (node) {
-        if (node.type === "node_const") return 0;
-        if (node.type === "node_var") return 1;
+        if (node.type === "node_const") {
+            return 0;
+        }
+        if (node.type === "node_var") {
+            return 1;
+        }
         if (node.type === "node_op") {
             switch (String(node.value)) {
                 case "op_neg": return 2;
@@ -3666,7 +3823,9 @@ JXG.extend(
                     return type_comp;
                 }
                 for (i = 0; i < ast_1.children[1].length; i++) {
-                    if (ast_2.children[1][i] === undefined) return 1;
+                    if (ast_2.children[1][i] === undefined) {
+                        return 1;
+                    }
                     type_comp = this._op_compare(ast_1.children[1][i], ast_2.children[1][i]);
                     if (type_comp !== 0) {
                         return type_comp;
@@ -3789,15 +3948,21 @@ JXG.extend(
             [degree_2, variable_nodes_2, parameter_nodes_2, rest_2, constant_2] = this._compare_summand_op_aux(ast_2, var_names),
             ret;
 
-        if (degree_1 - degree_2 !== 0) return degree_2 - degree_1;
-        if (variable_nodes_1.length !== variable_nodes_2.length) return variable_nodes_1.length - variable_nodes_2.length;
+        if (degree_1 - degree_2 !== 0) {
+            return degree_2 - degree_1;
+        }
+        if (variable_nodes_1.length !== variable_nodes_2.length) {
+            return variable_nodes_1.length - variable_nodes_2.length;
+        }
         for (i = 0; i < variable_nodes_1.length; i++) {
             comp_temp = this._compare_factor(variable_nodes_1[i], variable_nodes_2[i]);
             if (comp_temp !== 0) {
                 return comp_temp;
             }
         }
-        if (parameter_nodes_1.length !== parameter_nodes_2.length) return parameter_nodes_2.length - parameter_nodes_1.length;
+        if (parameter_nodes_1.length !== parameter_nodes_2.length) {
+            return parameter_nodes_2.length - parameter_nodes_1.length;
+        }
         for (i = 0; i < parameter_nodes_1.length; i++) {
             comp_temp = this._compare_factor(parameter_nodes_1[i], parameter_nodes_2[i]);
             if (comp_temp !== 0) {
@@ -3841,7 +4006,9 @@ JXG.extend(
                         comp = this._compare_factor(ast_1.children[0], ast_2.children[0], var_names);
                         return comp !== 0 ? comp : this._compare_factor(ast_1.children[1], ast_2.children[1], var_names);
                     }
-                    if (ast_2.type === "node_op") return -1;
+                    if (ast_2.type === "node_op") {
+                        return -1;
+                    }
                     if (ast_2.type === "node_var" || ast_2.type === "node_const") {
                         comp = this._compare_factor(ast_1.children[0], ast_2, var_names);
                         return comp !== 0 ? comp : 1; //this._compare_factor(ast_1.children[1], this.create_node("node_const", 1));
@@ -3849,7 +4016,9 @@ JXG.extend(
                     return 1;
                 }
                 if (ast_2.type === "node_op") {
-                    if (ast_2.value === "op_exp") return 1;
+                    if (ast_2.value === "op_exp") {
+                        return 1;
+                    }
                     return this._op_compare(ast_1, ast_2, var_names);
                 }
                 if (ast_2.type === "node_var") {
@@ -3953,7 +4122,9 @@ JXG.extend(
             summand, new_summand,
             result = [];
 
-        if (divisor.degree === 0) return result;
+        if (divisor.degree === 0) {
+            return result;
+        }
         while (dividend.length > 0 && dividend[0].degree >= divisor[0].degree) {
             degree_diff = dividend[0].degree - divisor[0].degree;
             factor_numerator = dividend[0].const_factor;
@@ -4101,8 +4272,9 @@ JXG.extend(
     _copy_mononom_array: function (mononom_array) {
         var copy = [];
         mononom_array.forEach(mononom => {
-            if (mononom.type !== undefined) copy.push(this.deep_copy(mononom));
-            else {
+            if (mononom.type !== undefined) {
+                copy.push(this.deep_copy(mononom));
+            } else {
                 copy.push({ const_factor: this.deep_copy(mononom.const_factor), degree: mononom.degree });
             }
         });
@@ -4164,15 +4336,20 @@ JXG.extend(
      * @returns {boolean}
      */
     _contains_var: function (ast, var_names = ["x"]) {
-        if (ast.type === "node_const") return false;
-        if (ast.type === "node_var") return var_names.some((var_name) => ast.value === var_name);
+        if (ast.type === "node_const") {
+            return false;
+        }
+        if (ast.type === "node_var") {
+            return var_names.some((var_name) => ast.value === var_name);
+        }
         if (ast.type === "node_op") {
-            if (ast.value === "op_map" || ast.value === "op_assign")
+            if (ast.value === "op_map" || ast.value === "op_assign") {
                 return this._contains_var(ast.children[1], var_names);
-            else if (ast.value === "op_execfun")
+            } else if (ast.value === "op_execfun") {
                 return ast.children[1].some(child => this._contains_var(child, var_names));
-            else
+            } else {
                 return ast.children.some(child => this._contains_var(child, var_names));
+            }
         }
     },
 
@@ -4187,12 +4364,13 @@ JXG.extend(
         if (ast.type === "node_var" && !contained.includes(ast.value)) {
             contained.push(ast.value);
         } else if (ast.type === "node_op") {
-            if (ast.value === "op_map" || ast.value === "op_assign")
+            if (ast.value === "op_map" || ast.value === "op_assign") {
                 this._get_contained_variables(ast.children[1], contained);
-            else if (ast.value === "op_execfun")
+            } else if (ast.value === "op_execfun") {
                 ast.children[1].forEach(child => this._get_contained_variables(child, contained));
-            else
+            } else {
                 ast.children.forEach(child => this._get_contained_variables(child, contained));
+            }
         }
         return contained;
     },
@@ -4926,6 +5104,8 @@ JXG.extend(
      *   h = map (x) -> D(f, x);
      * or
      *   D(x^2, x);
+     * or
+     *   D(x^2, x, 2);
      */
     expandDerivatives: function (node, parent, ast) {
         var len, i, j, mapNode, codeNode,
