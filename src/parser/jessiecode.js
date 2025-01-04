@@ -817,6 +817,7 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
     _genericParse: function (code, cmd, geonext, dontstore) {
         var i, setTextBackup, ast, result,
             ccode = code.replace(/\r\n/g, '\n').split('\n'),
+            options = {},
             cleaned = [];
 
         if (!dontstore) {
@@ -842,6 +843,7 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
 
             code = cleaned.join('\n');
             ast = parser.parse(code);
+
             if (this.CA) {
                 ast = this.CA.expandDerivatives(ast, null, ast);
                 ast = this.CA.removeTrivialNodes(ast);
@@ -850,7 +852,13 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
                 // Search for expression of form `D(f, x)` and determine the 
                 // the derivative symbolically.
                 ast = this.CAS.expandDerivatives(ast, null, ast);
-                // ast = this.CAS.removeTrivialNodes(ast);
+                // this.CAS.debug_print(ast);
+
+                options.method = options.method || "strong";
+                options.form = options.form || "fractions";
+                options.steps = options.steps || [];
+                options.iterations = options.iterations || 1000;
+                // ast = this.CAS._simplify_aux(ast, options);
             }
             switch (cmd) {
                 case 'parse':

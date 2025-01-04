@@ -2,6 +2,7 @@
 
 import JXG from "../jxg.js";
 import Type from "../utils/type.js";
+import Mat from "../math/math.js"
 
 JXG.CAS = function (node, createNode, parser) {
     this.node = node;
@@ -50,7 +51,6 @@ JXG.extend(
             // If ast is a (syntactically correct) string, then convert it into an AST
             jc = new JXG.JessieCode();
             ast = jc.getAST(ast);
-            // this.createNode = jc.createNode;
         } else if (!this.is_ast(ast)) {
             //If this step gets reached by a non tree, then abort the simplification
             console.log("The function simplify does not support the type of the first parameter and can thus not simplify it");
@@ -62,7 +62,6 @@ JXG.extend(
         options.form = options.form || "fractions";
         options.steps = options.steps || [];
         options.iterations = options.iterations || 1000;
-
         //Call the recursive function for simplification
         ast = this._simplify_aux(ast, options);
         return ast;
@@ -108,7 +107,11 @@ JXG.extend(
                     case "op_assign":
                         return this.compile(node.children[0], "op_assign") + " = " + this.compile(node.children[1], "op_assign");
                     case "op_map":
-                        return "(" + node.children[0].join() + ") -> " + this.compile(node.children[1], "op_map");
+                        return "map (" + node.children[0].join() + ") -> " + this.compile(node.children[1], "op_map");
+                    case "op_function":
+                        return "function (" + node.children[0].join() + ") { " + this.compile(node.children[1]) + " }";
+                    case "op_return":
+                        return "return " + this.compile(node.children[0]) + ";";
                     case "op_mul":
                     case "op_add":
                     case "op_sub":
@@ -693,7 +696,7 @@ JXG.extend(
         buffer = this._flag_string(ast) + buffer;
 
         // special case op_map: first child is an array!
-        if (ast.type === "node_op" && ast.value === "op_map") {
+        if (ast.type === "node_op" && (ast.value === "op_map" || ast.value === "op_function")) {
             console.log(buffer + ast.type + ": " + ast.value + " -> " + ast.children[0].join(", "));
             this.walk(ast.children[1], level + 1);
         }
@@ -849,6 +852,12 @@ JXG.extend(
 
         if (ast.type !== undefined) {
             node = this.create_node(ast.type, ast.value);
+            if (ast.needsBrackets !== undefined) {
+                node.needsBrackets = ast.needsBrackets;
+            }
+            if (ast.needsAngleBrackets !== undefined) {
+                node.needsAngleBrackets = ast.needsAngleBrackets;
+            }
             if (ast.children !== undefined) {
                 node.children = [];
                 for (i = 0; i < ast.children.length; i++) {
@@ -1658,8 +1667,9 @@ JXG.extend(
                 ast.children[1] = this._simplify_aux(ast.children[1], options);
                 return ast;
             case "op_map":
+            case "op_function":
                 //If map gets found, the function, which we want so simplify, is the right child of the current node
-                //Here we want to start the simlification, with respect to the chosen options of the user
+                //Here we want to start the simplification, with respect to the chosen options of the user
                 switch (options.method) {
                     case "strong":
                         ast.children[1] = this.simplify_function_strong(ast.children[1], ast.children[0], options);
@@ -1679,9 +1689,9 @@ JXG.extend(
                 return ast;
             default:
                 switch (options.method) {
-                    //Here we have the case, that there is an expression woithout a surounding function defintion
-                    //We now have to simplify the esxpression without having expecially significant variables
-                    //Here we want to start the simlification, with respect to the chosen options of the user
+                    //Here we have the case, that there is an expression without a surrounding function definition
+                    //We now have to simplify the expression without having especially significant variables
+                    //Here we want to start the simplification, with respect to the chosen options of the user
                     case "strong":
                         ast = this.simplify_function_strong(ast, [], options);
                         break;
@@ -1808,6 +1818,7 @@ JXG.extend(
         ast = this.collect_tree(ast);
         return ast;
     },
+
     /**
      * If the ast is a denominator with the form (term)^-1 and expands the denominator node.
      *
@@ -1924,7 +1935,9 @@ JXG.extend(
         }
         gcd = numbers[0];
         numbers.forEach((number) => {
-            gcd = this._gcd(gcd, number);
+            // gcd = this._gcd(gcd, number);
+            gcd = Mat.gcd(gcd, number);
+
             if (number > 0) {
                 negative_flag = false;
             }
@@ -1932,25 +1945,25 @@ JXG.extend(
         return negative_flag ? -gcd : gcd;
     },
 
-    _gcd: function (a, b) {
-        var condition = true, temp;
-        if (!(this.is_integer(a) && this.is_integer(b))) {
-            return 1;
-        }
-        a = Math.abs(a);
-        b = Math.abs(b);
-        if (b > a) { temp = a; a = b; b = temp; }
-        while (condition) {
-            if (b === 0) {
-                return a;
-            }
-            a %= b;
-            if (a === 0) {
-                return b;
-            }
-            b %= a;
-        }
-    },
+    // _gcd: function (a, b) {
+    //     var condition = true, temp;
+    //     if (!(this.is_integer(a) && this.is_integer(b))) {
+    //         return 1;
+    //     }
+    //     a = Math.abs(a);
+    //     b = Math.abs(b);
+    //     if (b > a) { temp = a; a = b; b = temp; }
+    //     while (condition) {
+    //         if (b === 0) {
+    //             return a;
+    //         }
+    //         a %= b;
+    //         if (a === 0) {
+    //             return b;
+    //         }
+    //         b %= a;
+    //     }
+    // },
 
     /**
      * Simplifies fractions by dividing the integer factors through the greatest common divisor.
@@ -2353,7 +2366,7 @@ JXG.extend(
                         ast.children[i] = elem;
                     }
 
-                    // test for exponentials
+                    // test for exponent nodes
                     if (elem.type === "node_op" && elem.value === "op_exp") {
                         base = elem.children[0];
                         exponent = elem.children[1];
@@ -2467,31 +2480,27 @@ JXG.extend(
 
         if (JXG.isString(ast)) {
             return ast;
-        }
-        else if (JXG.isArray(ast)) {
+        } else if (JXG.isArray(ast)) {
             ast.forEach((elem, i, arr) => {
                 arr[i] = this._generate_jxg_tree(elem, jc);
             });
             return ast;
-        }
-        else if (ast === undefined) {
+        } else if (ast === undefined) {
             return ast;
-        }
-        else {
+        } else {
             children = [];
             ast.children.forEach((elem) => {
                 children.push(this._generate_jxg_tree(elem, jc));
             });
 
             if (ast.type === "node_op" && ast.value === "op_add") {
-                // if the second summand is negated, we generate a substration instead
+                // if the second summand is negated, we generate a subtraction instead
                 if (this.is_negative(children[1])) {
                     ast.value = "op_sub";
                     children[1] = this._un_negate_node(children[1]);
                 }
-            }
-            // if it is an exp^-1, we transform it into a division
-            else if (ast.type === "node_op" && ast.value === "op_exp") {
+            } else if (ast.type === "node_op" && ast.value === "op_exp") {
+                // if it is an exp^-1, we transform it into a division
                 base = children[0];
                 exponent = children[1];
                 // test if the exponent is negative
@@ -2510,9 +2519,12 @@ JXG.extend(
                     }
                 }
             }
+
             ast = jc.createNode(ast.type, ast.value, ...children);
+
             // we set isMath to true, so that the compile doesn't give an error for map
-            ast.isMath = true;
+            // ast.isMath = true;
+            this.setMath(ast);
             return ast;
         }
     },
@@ -2542,6 +2554,7 @@ JXG.extend(
                 // special case: Children of execfun and assign have arrays as children
                 // therefore normal recursion doesn't work
                 case "op_map":
+                case "op_function":
                     node = this.create_node(ast.type, ast.value);
                     node.push([...ast.children[0]]);
                     node.push(this.remove_op(ast.children[1]));
@@ -3525,6 +3538,7 @@ JXG.extend(
             return ast;
         }
     },
+
     /**
      * The evaluation order is
      *
@@ -3545,6 +3559,8 @@ JXG.extend(
                     case "op_assign":
                         return 1;
                     case "op_map":
+                    case "op_function":
+                    case "op_return":
                         return 2;
                     case "op_add":
                     case "op_sub":
@@ -4343,7 +4359,7 @@ JXG.extend(
             return var_names.some((var_name) => ast.value === var_name);
         }
         if (ast.type === "node_op") {
-            if (ast.value === "op_map" || ast.value === "op_assign") {
+            if (ast.value === "op_map" || ast.value === "op_function" || ast.value === "op_assign") {
                 return this._contains_var(ast.children[1], var_names);
             } else if (ast.value === "op_execfun") {
                 return ast.children[1].some(child => this._contains_var(child, var_names));
@@ -4364,7 +4380,7 @@ JXG.extend(
         if (ast.type === "node_var" && !contained.includes(ast.value)) {
             contained.push(ast.value);
         } else if (ast.type === "node_op") {
-            if (ast.value === "op_map" || ast.value === "op_assign") {
+            if (ast.value === "op_map" || ast.value === "op_function" || ast.value === "op_assign") {
                 this._get_contained_variables(ast.children[1], contained);
             } else if (ast.value === "op_execfun") {
                 ast.children[1].forEach(child => this._get_contained_variables(child, contained));
