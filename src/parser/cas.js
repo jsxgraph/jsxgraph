@@ -4,7 +4,7 @@ import JXG from "../jxg.js";
 import Type from "../utils/type.js";
 import Mat from "../math/math.js";
 
-JXG.CAS = function (node, createNode, parser) {
+JXG.CAS = function (node, createNode, parser, jc) {
     this.node = node;
     this.createNode = createNode;
     this.parser = parser;
@@ -49,7 +49,8 @@ JXG.extend(
             return ast;
         } else if (JXG.isString(ast)) {
             // If ast is a (syntactically correct) string, then convert it into an AST
-            jc = new JXG.JessieCode();
+            // jc = new JXG.JessieCode();
+            jc = this.parser;
             ast = jc.getAST(ast);
         } else if (!this.is_ast(ast)) {
             //If this step gets reached by a non tree, then abort the simplification
@@ -62,7 +63,7 @@ JXG.extend(
         options.form = options.form || "fractions";
         options.steps = options.steps || [];
         options.iterations = options.iterations || 1000;
-        //Call the recursive function for simplification
+        // Call the recursive function for simplification
         ast = this._simplify_aux(ast, options);
         return ast;
     },
@@ -770,7 +771,8 @@ JXG.extend(
         // makes the tree binary
         ast = this.unmerge_tree(ast);
         // generates jc tree
-        jc = new JXG.JessieCode();
+        // jc = new JXG.JessieCode();
+        jc = this.parser;
         ast = this._generate_jxg_tree(ast, jc);
         //this.debug_print(ast)
         //console.log(jc.compile(ast))
@@ -1652,8 +1654,10 @@ JXG.extend(
     },
 
     /**
-     * This function works itsself through to the functions of the AST, if there are any inside, to then calll the apropriate fucntions according to the options
-     * If there are functions, the arguments of it are given to the appropriate functions(if they specifically handle them), so that they know which are the main variables
+     * This function works itself through to the functions of the AST. 
+     * If there are any inside, to then call the appropriate functions according to the options
+     * If there are functions, the arguments of it are given to the appropriate functions
+     * (if they specifically handle them), so that they know which are the main variables
      * The function notices the lack of functions, if it finds a node, which would be inside a function, before finding actual function definition nodes
      * @param {*} ast
      * @param {*} options
@@ -1747,7 +1751,8 @@ JXG.extend(
      * @returns
      */
     is_ast: function (ast) {
-        var jc = new JXG.JessieCode(); //Creates a JessieCode object, to create a tree for comparison
+        // var jc = new JXG.JessieCode(); //Creates a JessieCode object, to create a tree for comparison
+        var jc = this.parser;
         return typeof ast === typeof jc.getAST("42;"); //Tests wheter the type of the ast, is the same as the type of the comparsion tree
     },
 
