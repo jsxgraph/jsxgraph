@@ -853,7 +853,7 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
                 // Search for expression of form `D(f, x)` and determine the
                 // the derivative symbolically.
                 ast = this.CAS.expandDerivatives(ast, null, ast);
-
+console.log(ast)
                 options.method = options.method || "strong";
                 options.form = options.form || "fractions";
                 options.steps = options.steps || [];

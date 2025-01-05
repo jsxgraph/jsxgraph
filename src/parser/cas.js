@@ -73,7 +73,7 @@ JXG.extend(
      * @returns {String} InOrder-representation
      */
     compile: function (node, prev_op, position = -1) {
-        var i, compiled, my_priority;
+        var i, compiled, list, my_priority;
 
         if (node === undefined) {
             console.error("compile: undefined node");
@@ -118,6 +118,12 @@ JXG.extend(
                         return "function (" + node.children[0].join() + ") " + this.compile(node.children[1]);
                     case "op_return":
                         return "return " + this.compile(node.children[0]) + ";";
+                    case "op_array":
+                        list = [];
+                        for (i = 0; i < node.children[0].length; i++) {
+                            list.push(this.compile(node.children[0][i]));
+                        }
+                        return '[' + list.join(', ') + ']';
                     case "op_mul":
                     case "op_add":
                     case "op_sub":
@@ -858,12 +864,6 @@ JXG.extend(
 
         if (ast.type !== undefined) {
             node = this.create_node(ast.type, ast.value);
-            if (ast.needsBrackets !== undefined) {
-                node.needsBrackets = ast.needsBrackets;
-            }
-            if (ast.needsAngleBrackets !== undefined) {
-                node.needsAngleBrackets = ast.needsAngleBrackets;
-            }
             if (ast.children !== undefined) {
                 node.children = [];
                 for (i = 0; i < ast.children.length; i++) {
@@ -873,7 +873,7 @@ JXG.extend(
             return node;
         }
 
-        if (Array.isArray(ast)) {
+        if (Type.isArray(ast)) {
             copy = [];
             for (i = 0; i < ast.length; i++) {
                 copy.push(this.deep_copy(ast[i]));
@@ -2547,7 +2547,7 @@ JXG.extend(
      * @param {*} ast
      */
     remove_op: function (ast) {
-        var child, node;
+        var i, child, node;
         if (ast.type === "node_op") {
             switch (String(ast.value)) {
                 // special case: neg, sub and div should be deleted
@@ -2575,8 +2575,14 @@ JXG.extend(
         if (ast.type === "node_var" && (ast.value === "EULER" || ast.value === "PI")) {
             node.const_flag = true;
         }
-        for (child of ast.children) {
-            node.push(this.remove_op(child));
+        if (Type.isArray(ast)) {
+            for (i = 0; i < ast.length; i++) {
+                node.push(this.remove_op(ast[i]));
+            }
+        } else {
+            for (child of ast.children) {
+                node.push(this.remove_op(child));
+            }
         }
         return node;
     },
