@@ -2,7 +2,7 @@
 
 import JXG from "../jxg.js";
 import Type from "../utils/type.js";
-import Mat from "../math/math.js"
+import Mat from "../math/math.js";
 
 JXG.CAS = function (node, createNode, parser) {
     this.node = node;
@@ -81,9 +81,12 @@ JXG.extend(
         }
         switch (String(node.type)) {
             case "node_var":
-                return node.value;
+            case "node_const_bool":
+                    return node.value;
             case "node_const":
                 return Number(node.value) < 0 && prev_op !== "op_execfun" && position !== 0 ? "(" + node.value + ")" : node.value;
+            case "node_str":
+                return '\'' + node.value + '\'';
             case "node_op":
                 switch (String(node.value)) {
                     case "op_none":
@@ -91,6 +94,9 @@ JXG.extend(
                         for (i = 0; i < node.children.length; i++) {
                             compiled += this.compile(node.children[i], "op_none") + "\n";
                         }
+                        return compiled.trim();
+                    case "op_block":
+                        compiled = '{ ' + this.compile(node.children[0], "op_none") + " }\n";
                         return compiled.trim();
                     case "op_execfun":
                         if (node.children.length !== 2) {
@@ -109,7 +115,7 @@ JXG.extend(
                     case "op_map":
                         return "map (" + node.children[0].join() + ") -> " + this.compile(node.children[1], "op_map");
                     case "op_function":
-                        return "function (" + node.children[0].join() + ") { " + this.compile(node.children[1]) + " }";
+                        return "function (" + node.children[0].join() + ") " + this.compile(node.children[1]);
                     case "op_return":
                         return "return " + this.compile(node.children[0]) + ";";
                     case "op_mul":
@@ -3550,6 +3556,8 @@ JXG.extend(
     _get_priority: function (node) {
         switch (String(node.type)) {
             case "node_const":
+            case "node_const_bool":
+            case "node_str":
             case "node_var":
                 return 10;
             case "node_op":

@@ -194,9 +194,11 @@ JXG.JessieCode = function (code, geonext) {
     this.col = 1;
 
     if (JXG.CA) {
+        // Old simplifier
         this.CA = new JXG.CA(this.node, this.createNode, this);
     }
     if (JXG.CAS) {
+        // New simplifier
         this.CAS = new JXG.CAS(this.node, this.createNode, this);
     }
 
@@ -843,22 +845,20 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
 
             code = cleaned.join('\n');
             ast = parser.parse(code);
-
             if (this.CA) {
                 ast = this.CA.expandDerivatives(ast, null, ast);
                 ast = this.CA.removeTrivialNodes(ast);
             }
             if (this.CAS) {
-                // Search for expression of form `D(f, x)` and determine the 
+                // Search for expression of form `D(f, x)` and determine the
                 // the derivative symbolically.
                 ast = this.CAS.expandDerivatives(ast, null, ast);
-                // this.CAS.debug_print(ast);
 
                 options.method = options.method || "strong";
                 options.form = options.form || "fractions";
                 options.steps = options.steps || [];
                 options.iterations = options.iterations || 1000;
-                // ast = this.CAS._simplify_aux(ast, options);
+                ast = this.CAS._simplify_aux(ast, options);
             }
             switch (cmd) {
                 case 'parse':
@@ -1696,6 +1696,9 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
                             ret += this.compile(node.children[1], js);
                         }
                         break;
+                    case 'op_block':
+                        ret = '{\n' + this.compile(node.children[0], js) + ' }\n';
+                        break;
                     case 'op_assign':
                         //e = this.compile(node.children[0], js);
                         if (js) {
@@ -1974,9 +1977,6 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
                 break;
         }
 
-        if (node.needsBrackets) {
-            ret = '{\n' + ret + ' }\n';
-        }
         if (node.needsAngleBrackets) {
             if (js) {
                 ret = '{\n' + ret + ' }\n';
@@ -2906,7 +2906,7 @@ case 11: case 14:
  this.$ = AST.createNode(lc(_$[$0]), 'node_op', 'op_none');
 break;
 case 12:
- this.$ = $$[$0-1]; this.$.needsBrackets = true;
+ this.$ = AST.createNode(lc(_$[$0-2]), 'node_op', 'op_block', $$[$0-1]);
 break;
 case 13:
  this.$ = AST.createNode(lc(_$[$0-1]), 'node_op', 'op_none', $$[$0-1], $$[$0]);

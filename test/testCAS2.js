@@ -535,7 +535,7 @@ describe("Test testing", function () {
         // functions that are supposed to be executed on the ast:
         ast.children[1] = CAS._expand_exp_mul(ast.children[1]);
         // print both ast, for debugging purposes
-        // console.log("\nTest_Name:\nexpand_exponent_mul2" + "\n" + "input: " + CAS.compile(ast) + "expected: " + CAS.compile(outcome_ast));
+        console.log("\nTest_Name:\nexpand_exponent_mul2" + "\n" + "input: " + CAS.compile(ast) + "expected: " + CAS.compile(outcome_ast));
         // test if these are actually equal to each other
         expect(CAS.equals(ast, outcome_ast)).toEqual(true);
     });
