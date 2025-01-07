@@ -789,8 +789,6 @@ JXG.extend(
 
     // Update 3D-to-2D transformation matrix with the actual azimuth and elevation angles.
     update: function () {
-        // console.time("update")
-
         var r = this.r,
             stretch = [
                 [1, 0, 0, 0],
@@ -808,6 +806,7 @@ JXG.extend(
             !Type.exists(this.bank_slide) ||
             !this.needsUpdate
         ) {
+            this.needsUpdate = false;
             return this;
         }
 
@@ -887,9 +886,18 @@ JXG.extend(
                 );
         }
 
-        // Used for zIndex in dept ordering
+        return this;
+    },
+
+    updateRenderer: function () {
+        if (!this.needsUpdate) {
+            return this;
+        }
+
+        // Used for zIndex in dept ordering in updateRenderer
         this.matrix3DRotShift = Mat.matMatMult(this.matrix3DRot, this.shift);
 
+        // console.time("update")
         // Handle depth ordering
         if (this.board.renderer &&
             this.board.renderer.type === 'svg' &&
@@ -899,13 +907,8 @@ JXG.extend(
         } else {
             this.depthOrdered = {};
         }
-
         // console.timeEnd("update")
 
-        return this;
-    },
-
-    updateRenderer: function () {
         this.needsUpdate = false;
         return this;
     },
