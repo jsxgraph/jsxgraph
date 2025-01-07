@@ -278,16 +278,10 @@ JXG.extend(
          */
         updateGradientCircle: function (el, cx, cy, r, fx, fy, fr) {
             var bb = el.getBoundingBox(),
-                c1,
-                c2,
-                cxs,
-                cys,
-                rs,
-                fxs,
-                fys,
-                frs,
-                dx,
-                dy;
+                c1, c2,
+                cxs, cys, rs,
+                fxs, fys, frs,
+                dx, dy;
 
             c1 = new Coords(Const.COORDS_BY_USER, [bb[0], bb[1]], el.board);
             c2 = new Coords(Const.COORDS_BY_USER, [bb[2], bb[3]], el.board);
@@ -636,14 +630,9 @@ JXG.extend(
          * @private
          */
         drawArrows: function (el, scr1, scr2, hl, a) {
-            var x1,
-                y1,
-                x2,
-                y2,
-                w0,
-                w,
-                arrowHead,
-                arrowTail,
+            var x1, y1, x2, y2,
+                w, w0,
+                arrowHead, arrowTail,
                 context = this.context,
                 size = 6,
                 type = 1,
@@ -652,15 +641,11 @@ JXG.extend(
                 degree_fa = 1,
                 degree_la = 1,
                 doFill,
-                i,
-                len,
-                d1x,
-                d1y,
-                d2x,
-                d2y,
+                i, len,
+                d1x, d1y,
+                d2x, d2y,
                 last,
-                ang1,
-                ang2,
+                ang1, ang2,
                 ev_fa = a.evFirst,
                 ev_la = a.evLast;
 
