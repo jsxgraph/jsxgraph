@@ -219,18 +219,11 @@ JXG.extend(
                 co = Math.cos(-radians),
                 si = Math.sin(-radians),
                 bb = el.getBoundingBox(),
-                c1,
-                c2,
-                x1,
-                x2,
-                y1,
-                y2,
-                x1s,
-                x2s,
-                y1s,
-                y2s,
-                dx,
-                dy;
+                c1, c2,
+                x1, x2,
+                y1, y2,
+                x1s, x2s, y1s, y2s,
+                dx, dy;
 
             if (Math.abs(co) > Math.abs(si)) {
                 f /= Math.abs(co);
