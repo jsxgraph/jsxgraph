@@ -185,11 +185,12 @@ JXG.extend(
      * @returns
      */
     simplify_function_strong: function (ast, variables, options) {
-        ast = this.to_work_tree(ast);
         var memory = [],
-            ast_string = this.compile(this.sort(ast)),
+            ast_string,
             contained_var;
 
+        ast = this.to_work_tree(ast);
+        ast_string = this.compile(this.sort(ast));
         contained_var = this._get_contained_variables(ast);
         while (!memory.includes(ast_string)) {
             options.iterations--;
@@ -677,10 +678,11 @@ JXG.extend(
     },
 
     debug_print: function (ast) {
-        console.log("-----debug_print-----");
-        console.log(ast);
-        console.log(this.compile(ast));
+        console.log("-----Begin debug_print-----");
+        console.log("AST", ast);
+        console.log("COMPILE", this.compile(ast));
         this.walk(ast);
+        console.log("-----End debug_print-----");
     },
 
     /**
@@ -696,7 +698,7 @@ JXG.extend(
      *
      * */
     walk: function (ast, level = 0) {
-        var i,
+        var i, j,
             buffer = "|\t".repeat(level), // creates white space according to the depth level
             child;
 
@@ -708,13 +710,13 @@ JXG.extend(
         }
         buffer = this._flag_string(ast) + buffer;
 
-        // special case op_map: first child is an array!
         if (ast.type === "node_op" && (ast.value === "op_map" || ast.value === "op_function")) {
+            // special cases op_map, op_function: first child is an array!
             console.log(buffer + ast.type + ": " + ast.value + " -> " + ast.children[0].join(", "));
             this.walk(ast.children[1], level + 1);
-        }
-        // special case op_execfun: second child is an array!
-        else if (ast.type === "node_op" && ast.value === "op_execfun") {
+
+        } else if (ast.type === "node_op" && ast.value === "op_execfun") {
+            // special case op_execfun: second child is an array!
             console.log(buffer + ast.type + ": " + ast.value);
             this.walk(ast.children[0], level + 1);
 
@@ -723,14 +725,19 @@ JXG.extend(
                 this.walk(child, level + 1);
             }
             return;
-        }
-        // default: just print type and value, and continue with the children
-        else {
+        } else {
+            // default: just print type and value, and continue with the children
             console.log(buffer + ast.type + ": " + ast.value);
 
             for (i = 0; i < ast.children.length; i++) {
                 child = ast.children[i];
-                this.walk(child, level + 1);
+                if (Type.isArray(child)) {
+                    for (j = 0; j < child.length; j++) {
+                        this.walk(child[j], level + 1);
+                    }
+                } else {
+                    this.walk(child, level + 1);
+                }
             }
         }
     },
@@ -2570,13 +2577,24 @@ JXG.extend(
                     node.push([...ast.children[0]]);
                     node.push(this.remove_op(ast.children[1]));
                     return node;
+                case "op_array":
+                    // node.children looks like: [ [entry_0, entry_1, ... ] ]
+                    node = this.create_node(ast.type, ast.value);
+                    child = [];
+                    for (i = 0; i < ast.children[0].length; i++) {
+                        child.push(this.remove_op(ast.children[0][i]))
+                    }
+                    node.push(child);
+                    return node;
                 case "op_execfun":
                     return this.remove_execfun(ast);
             }
         }
-        //default case: create new node without unnecessary information
+        
+        // Default case: create new node without unnecessary information
         node = ast.type === "node_const" ? this.create_node(ast.type, Number(ast.value)) : this.create_node(ast.type, ast.value);
-        // if it is a certain constant, we set the
+        
+        // If it is a certain constant, we set the const_flag
         if (ast.type === "node_var" && (ast.value === "EULER" || ast.value === "PI")) {
             node.const_flag = true;
         }
@@ -3592,6 +3610,7 @@ JXG.extend(
                         return 4;
                     case "op_exp":
                         return 6;
+                    case "op_array":
                     case "op_execfun":
                         return 7;
                     default:
@@ -4501,7 +4520,6 @@ JXG.extend(
     findMapNode: function (mapname, node) {
         var i, len, ret;
 
-        //console.log("FINDMAP", node);
         if (node.value === "op_assign" && node.children[0].value === mapname) {
             return node.children[1];
         } else if (node.children) {
@@ -5239,15 +5257,16 @@ JXG.extend(
                             // Create node which contains the derivative
                             newNode = codeNode;
                             //newNode = this.removeTrivialNodes(newNode);
-                            if (order >= 1) {
-                                while (order >= 1) {
-                                    newNode = this.derivative(newNode, varname);
-                                    // newNode = this.removeTrivialNodes(newNode);
-                                    newNode = this.simplify(newNode, {
-                                        method: 'medium'
-                                    });
-                                    order--;
-                                }
+                            newNode = this.simplify(newNode, {
+                                method: 'strong'
+                            });                            
+                            while (order >= 1) {
+                                newNode = this.derivative(newNode, varname);
+                                // newNode = this.removeTrivialNodes(newNode);
+                                newNode = this.simplify(newNode, {
+                                    method: 'strong'
+                                });
+                                order--;
                             }
 
                             // Replace the node containing e.g. D(f,x) by the derivative.

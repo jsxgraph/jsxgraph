@@ -819,7 +819,7 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
     _genericParse: function (code, cmd, geonext, dontstore) {
         var i, setTextBackup, ast, result,
             ccode = code.replace(/\r\n/g, '\n').split('\n'),
-            options = {},
+            // options = {},
             cleaned = [];
 
         if (!dontstore) {
@@ -854,10 +854,10 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
                 // the derivative symbolically.
                 ast = this.CAS.expandDerivatives(ast, null, ast);
 
-                options.method = options.method || "strong";
-                options.form = options.form || "fractions";
-                options.steps = options.steps || [];
-                options.iterations = options.iterations || 1000;
+                // options.method = options.method || "strong";
+                // options.form = options.form || "fractions";
+                // options.steps = options.steps || [];
+                // options.iterations = options.iterations || 1000;
                 // ast = this.CAS._simplify_aux(ast, options);
             }
             switch (cmd) {

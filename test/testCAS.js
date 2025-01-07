@@ -231,8 +231,8 @@ describe("Test testing", function () {
         ast = CAS.collect_tree(ast);
      
         // print both ast, for debugging purposes
-        console.log("input: " + CAS.compile(ast));
-        console.log("expected: " + CAS.compile(outcome_ast));
+        // console.log("input: " + CAS.compile(ast));
+        // console.log("expected: " + CAS.compile(outcome_ast));
         // test if these are actually equal to each other
         expect(CAS.equals(ast, outcome_ast)).toEqual(true);
     });
@@ -294,8 +294,8 @@ describe("Test testing", function () {
         ast = CAS.collect_tree(ast);
 
         // print both ast, for debugging purposes
-        console.log("input: " + CAS.compile(ast));
-        console.log("expected: " + CAS.compile(outcome_ast));
+        // console.log("input: " + CAS.compile(ast));
+        // console.log("expected: " + CAS.compile(outcome_ast));
         // test if these are actually equal to each other
         expect(CAS.equals(ast, outcome_ast)).toEqual(true);
     });

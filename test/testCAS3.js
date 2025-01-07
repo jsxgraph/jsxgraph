@@ -89,7 +89,7 @@ describe("Test testing", function () {
         string += CAS.compile(ast) + " = ";
         ast = CAS.cancel_gcd_polynom(ast);
         string += CAS.compile(ast);
-        console.log(string);
+        // console.log(string);
         expect(CAS.equals(ast, CAS.to_work_tree(board.jc.getAST("(x^2+2*x+1)*(x+3)^-1;").children[1]))).toEqual(true);
     });
 
