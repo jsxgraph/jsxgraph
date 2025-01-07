@@ -1842,10 +1842,7 @@ JXG.registerElement("spline", JXG.createSpline);
  * @augments JXG.Curve
  * @constructor
  * @type JXG.Curve
- * @param {JXG.Board} board Reference to the board the cardinal spline is drawn on.
- * @param {Array} parents Array with three entries.
- * <p>
- *   First entry: Array of points the spline interpolates. This can be
+ * @param {Array} points Points array defining the cardinal spline. This can be
  *   <ul>
  *   <li> an array of JSXGraph points</li>
  *   <li> an array of coordinate pairs</li>
@@ -1853,42 +1850,47 @@ JXG.registerElement("spline", JXG.createSpline);
  *   <li> an array consisting of an array with x-coordinates and an array of y-coordinates</li>
  *   </ul>
  *   All individual entries of coordinates arrays may be numbers or functions returning numbers.
- *   <p>
- *   Second entry: tau number or function
- *   <p>
- *   Third entry: type string containing 'uniform' (default) or 'centripetal'.
- * @param {Object} attributes Define color, width, ... of the cardinal spline
- * @returns {JXG.Curve} Returns reference to an object of type JXG.Curve.
+ * @param {function,Number} tau Tension parameter
+ * @param {String} [type='uniform'] Type of the cardinal spline, may be 'uniform' (default) or 'centripetal'
  * @see JXG.Curve
  * @example
- * //create a cardinal spline out of an array of JXG points with adjustable tension
- * //create array of points
- * var p1 = board.create('point',[0,0])
- * var p2 = board.create('point',[1,4])
- * var p3 = board.create('point',[4,5])
- * var p4 = board.create('point',[2,3])
- * var p5 = board.create('point',[3,0])
- * var p = [p1,p2,p3,p4,p5]
+ * //Create a cardinal spline out of an array of JXG points with adjustable tension
+ *
+ * //Create array of points
+ * var p = [];
+ * p.push(board.create('point',[0,0]));
+ * p.push(board.create('point',[1,4]));
+ * p.push(board.create('point',[4,5]));
+ * p.push(board.create('point',[2,3]));
+ * p.push(board.create('point',[3,0]));
  *
  * // tension
- * tau = board.create('slider', [[4,3],[9,3],[0.001,0.5,1]], {name:'tau'});
- * c = board.create('curve', JXG.Math.Numerics.CardinalSpline(p, function(){ return tau.Value();}), {strokeWidth:3});
- * </pre><div id="JXG6c197afc-e482-11e5-b2af-901b0e1b8723" style="width: 300px; height: 300px;"></div>
+ * var tau = board.create('slider', [[-4,-5],[2,-5],[0.001,0.5,1]], {name:'tau'});
+ * var c = board.create('cardinalspline', [p, function(){ return tau.Value();}], {strokeWidth:3});
+ *
+ * </pre><div id="JXG1537cb69-4d45-43aa-8fc3-c6d4f98b4cdd" class="jxgbox" style="width: 300px; height: 300px;"></div>
  * <script type="text/javascript">
  *     (function() {
- *         var board = JXG.JSXGraph.initBoard('JXG6c197afc-e482-11e5-b2af-901b0e1b8723',
+ *         var board = JXG.JSXGraph.initBoard('JXG1537cb69-4d45-43aa-8fc3-c6d4f98b4cdd',
  *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
+ *     //Create a cardinal spline out of an array of JXG points with adjustable tension
  *
+ *     //Create array of points
  *     var p = [];
- *     p[0] = board.create('point', [-2,2], {size: 4, face: 'o'});
- *     p[1] = board.create('point', [0,-1], {size: 4, face: 'o'});
- *     p[2] = board.create('point', [2,0], {size: 4, face: 'o'});
- *     p[3] = board.create('point', [4,1], {size: 4, face: 'o'});
+ *     p.push(board.create('point',[0,0]));
+ *     p.push(board.create('point',[1,4]));
+ *     p.push(board.create('point',[4,5]));
+ *     p.push(board.create('point',[2,3]));
+ *     p.push(board.create('point',[3,0]));
  *
- *     var c = board.create('spline', p, {strokeWidth:3});
+ *     // tension
+ *     var tau = board.create('slider', [[-4,-5],[2,-5],[0.001,0.5,1]], {name:'tau'});
+ *     var c = board.create('cardinalspline', [p, function(){ return tau.Value();}], {strokeWidth:3});
+ *
  *     })();
  *
  * </script><pre>
+ *
  */
 JXG.createCardinalSpline = function (board, parents, attributes) {
     var el,
@@ -1919,10 +1921,13 @@ JXG.createCardinalSpline = function (board, parents, attributes) {
         );
     }
     if (!Type.exists(parents[2]) || !Type.isString(parents[2])) {
-        throw new Error(
-            "JSXGraph: JXG.createCardinalSpline: argument 3 'type' has to be string 'uniform' or 'centripetal'" +
-            errStr
-        );
+        type = 'uniform';
+        // throw new Error(
+        //     "JSXGraph: JXG.createCardinalSpline: argument 3 'type' has to be string 'uniform' or 'centripetal'" +
+        //     errStr
+        // );
+    } else {
+        type = parents[2];
     }
 
     attributes = Type.copyAttributes(attributes, board.options, "curve");
@@ -2016,7 +2021,7 @@ JXG.createCardinalSpline = function (board, parents, attributes) {
     }
 
     tau = parents[1];
-    type = parents[2];
+    // type = parents[2];
 
     splineArr = ["x"].concat(Numerics.CardinalSpline(points, tau, type));
 
