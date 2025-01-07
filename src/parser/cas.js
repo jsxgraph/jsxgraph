@@ -1661,7 +1661,7 @@ JXG.extend(
     },
 
     /**
-     * This function works itself through to the functions of the AST. 
+     * This function works itself through to the functions of the AST.
      * If there are any inside, to then call the appropriate functions according to the options
      * If there are functions, the arguments of it are given to the appropriate functions
      * (if they specifically handle them), so that they know which are the main variables
@@ -2582,7 +2582,7 @@ JXG.extend(
                     node = this.create_node(ast.type, ast.value);
                     child = [];
                     for (i = 0; i < ast.children[0].length; i++) {
-                        child.push(this.remove_op(ast.children[0][i]))
+                        child.push(this.remove_op(ast.children[0][i]));
                     }
                     node.push(child);
                     return node;
@@ -2590,10 +2590,10 @@ JXG.extend(
                     return this.remove_execfun(ast);
             }
         }
-        
+
         // Default case: create new node without unnecessary information
         node = ast.type === "node_const" ? this.create_node(ast.type, Number(ast.value)) : this.create_node(ast.type, ast.value);
-        
+
         // If it is a certain constant, we set the const_flag
         if (ast.type === "node_var" && (ast.value === "EULER" || ast.value === "PI")) {
             node.const_flag = true;
@@ -5259,7 +5259,7 @@ JXG.extend(
                             //newNode = this.removeTrivialNodes(newNode);
                             newNode = this.simplify(newNode, {
                                 method: 'strong'
-                            });                            
+                            });
                             while (order >= 1) {
                                 newNode = this.derivative(newNode, varname);
                                 // newNode = this.removeTrivialNodes(newNode);

@@ -819,7 +819,7 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
     _genericParse: function (code, cmd, geonext, dontstore) {
         var i, setTextBackup, ast, result,
             ccode = code.replace(/\r\n/g, '\n').split('\n'),
-            // options = {},
+            options = {},
             cleaned = [];
 
         if (!dontstore) {
@@ -866,6 +866,18 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
                     break;
                 case 'manipulate':
                     result = this.compile(ast);
+                    break;
+                case 'simplify':
+                    if (Type.exists(this.CAS)) {
+                        options.method = options.method || "strong";
+                        options.form = options.form || "fractions";
+                        options.steps = options.steps || [];
+                        options.iterations = options.iterations || 1000;
+                        ast = this.CAS.simplify(ast, options);
+                        result = this.CAS.compile(ast);
+                    } else {
+                        result = this.compile(ast);
+                    }
                     break;
                 case 'getAst':
                     result = ast;
@@ -915,6 +927,21 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
      */
     manipulate: function (code, geonext, dontstore) {
         return this._genericParse(code, 'manipulate', geonext, dontstore);
+    },
+
+    /**
+     * Manipulate JessieCode.
+     * This consists of generating an AST with parser.parse,
+     * apply simplifying rules from CAS
+     * and compile the AST back to JessieCode with minimal number of parentheses.
+     *
+     * @param {String} code             JessieCode code to be parsed
+     * @param {Boolean} [geonext=false] Geonext compatibility mode.
+     * @param {Boolean} [dontstore=false] If false, the code string is stored in this.code.
+     * @return {String}                 Simplified JessieCode code
+     */
+    simplify: function (code) {
+        return this._genericParse(code, 'simplify');
     },
 
     /**
