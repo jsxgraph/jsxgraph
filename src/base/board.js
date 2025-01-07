@@ -5840,8 +5840,7 @@ JXG.extend(
          * @returns {JXG.Board} Reference to the board
          */
         updateRendererCanvas: function () {
-            var el,
-                pEl,
+            var el, pEl,
                 i,
                 mini,
                 la,
@@ -5861,15 +5860,13 @@ JXG.extend(
                     }
                 }
 
-                last = mini;
-
                 for (el = 0; el < olen; el++) {
                     pEl = this.objectsList[el];
-
                     if (pEl.visProp.layer === mini) {
                         pEl.prepareUpdate().updateRenderer();
                     }
                 }
+                last = mini;
             }
             return this;
         },

@@ -779,9 +779,10 @@ JXG.extend(
 
         for (i = 0; i < layers.length; i++) {
             lay = layers[i];
-            this.depthOrdered[lay]
-                .sort(this.compareDepth.bind(this))
-                .forEach((el) => this.board.renderer.setLayer(el.element2D, lay));
+            this.depthOrdered[lay].sort(this.compareDepth.bind(this));
+            if (this.board.renderer && this.board.renderer.type === 'svg') {
+                this.depthOrdered[lay].forEach((el) => this.board.renderer.setLayer(el.element2D, lay));
+            }
         }
 
         return this;
