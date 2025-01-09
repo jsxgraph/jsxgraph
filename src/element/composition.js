@@ -2315,6 +2315,12 @@ JXG.createIntegral = function (board, parents, attributes) {
     attr.withLabel = false; // There is a custom 'label' below.
     p = board.create("curve", [[0], [0]], attr);
 
+    // Dirty hack: the integral curve is removed from board.objectsList
+    // and inserted below again after the pa_/pb_on_axis elements.
+    // Otherwise, the filled area lags is updated before the
+    // update of the bounds.
+    board.objectsList.pop();
+
     // Correct the interval if necessary - NOT ANYMORE, GGB's fault
     start = interval[0];
     end = interval[1];
@@ -2385,6 +2391,9 @@ JXG.createIntegral = function (board, parents, attributes) {
                 return 0;
             }
         ], attr);
+
+    // Resinsert the filled integral curve element
+    board.objectsList.push(p);
 
     attr = Type.copyAttributes(attributes, board.options, "integral");
     if (attr.withlabel !== false && attr.axis !== "y") {
