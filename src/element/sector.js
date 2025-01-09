@@ -382,7 +382,7 @@ JXG.createSector = function (board, parents, attributes) {
         //
         // attr = Type.copyAttributes(attributes, board.options, "arc");
         // attr = Type.copyAttributes(attr, board.options, "sector", "arc");
-        // attr.withLabel = false;
+        // attr.withlabel = false;
         // attr.name += "_arc";
         // // el.arc = board.create("arc", [el.point1, el.point2, el.point3], attr);
         // // The arc's radius is always the radius of sector.
@@ -536,7 +536,7 @@ JXG.createSector = function (board, parents, attributes) {
 
     attr = Type.copyAttributes(attributes, board.options, "arc");
     attr = Type.copyAttributes(attr, board.options, "sector", "arc");
-    attr.withLabel = false;
+    attr.withlabel = false;
     // Minor or major arc:
     attr.selection = el.visProp.selection;
     attr.name += "_arc";

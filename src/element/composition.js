@@ -2312,7 +2312,7 @@ JXG.createIntegral = function (board, parents, attributes) {
     }
 
     attr = Type.copyAttributes(attributes, board.options, "integral");
-    attr.withLabel = false; // There is a custom 'label' below.
+    attr.withlabel = false; // There is a custom 'label' below.
     p = board.create("curve", [[0], [0]], attr);
 
     // Dirty hack: the integral curve is removed from board.objectsList
@@ -2392,7 +2392,8 @@ JXG.createIntegral = function (board, parents, attributes) {
             }
         ], attr);
 
-    // Resinsert the filled integral curve element
+    // Re-insert the filled integral curve element
+    p._pos = board.objectsList.length;
     board.objectsList.push(p);
 
     attr = Type.copyAttributes(attributes, board.options, "integral");
@@ -2490,7 +2491,7 @@ JXG.createIntegral = function (board, parents, attributes) {
     };
     p.inherits.push(pa_on_curve, pa_on_axis, pb_on_curve, pb_on_axis);
 
-    if (attr.withLabel) {
+    if (attr.withlabel) {
         p.subs.label = t;
         p.inherits.push(t);
     }
