@@ -5841,33 +5841,81 @@ JXG.extend(
          */
         updateRendererCanvas: function () {
             var el, pEl,
-                i,
-                mini,
-                la,
                 olen = this.objectsList.length,
-                layers = this.options.layer,
-                len = this.options.layer.numlayers,
-                last = Number.NEGATIVE_INFINITY;
-
-            for (i = 0; i < len; i++) {
-                mini = Number.POSITIVE_INFINITY;
-
-                for (la in layers) {
-                    if (layers.hasOwnProperty(la)) {
-                        if (layers[la] > last && layers[la] < mini) {
-                            mini = layers[la];
-                        }
+                // i, minim, lay,
+                // layers = this.options.layer,
+                // len = this.options.layer.numlayers,
+                // last = Number.NEGATIVE_INFINITY.toExponential,
+                depth_order_layers = [],
+                objects_sorted,
+                // Sort the elements for the canvas rendering according to
+                // their layer, _pos, depthOrder (with this priority)
+                // @private
+                _compareFn = function(a, b) {
+                    if (a.visProp.layer !== b.visProp.layer) {
+                        return a.visProp.layer - b.visProp.layer;
                     }
-                }
 
-                for (el = 0; el < olen; el++) {
-                    pEl = this.objectsList[el];
-                    if (pEl.visProp.layer === mini) {
-                        pEl.prepareUpdate().updateRenderer();
+                    // The objects are in the same layer, but the layer is not depth ordered
+                    if (depth_order_layers.indexOf(a.visProp.layer) === -1) {
+                        return a._pos - b._pos;
                     }
+
+                    // The objects are in the same layer and the layer is depth ordered
+                    // We have to sort 2D elements according to the zIndices of
+                    // their 3D parents.
+                    if (!a.visProp.element3d && !b.visProp.element3d) {
+                        return a._pos - b._pos;
+                    }
+
+                    if (a.visProp.element3d && !b.visProp.element3d) {
+                        return -1;
+                    }
+
+                    if (b.visProp.element3d && !a.visProp.element3d) {
+                        return 1;
+                    }
+
+                    return a.visProp.element3d.zIndex - b.visProp.element3d.zIndex;
+                };
+
+            // Only one view3d element is supported. Get the depth orderer layers and
+            // update the zIndices of the 3D elements.
+            for (el = 0; el < olen; el++) {
+                pEl = this.objectsList[el];
+                if (pEl.elType === 'view3d' && pEl.evalVisProp('depthorder.enabled')) {
+                    depth_order_layers = pEl.evalVisProp('depthorder.layers');
+                    pEl.updateRenderer();
+                    break;
                 }
-                last = mini;
             }
+
+            objects_sorted = this.objectsList.toSorted(_compareFn);
+            olen = objects_sorted.length;
+            for (el = 0; el < olen; el++) {
+                objects_sorted[el].prepareUpdate().updateRenderer();
+            }
+
+            // for (i = 0; i < len; i++) {
+            //     minim = Number.POSITIVE_INFINITY;
+
+            //     for (lay in layers) {
+            //         if (layers.hasOwnProperty(lay)) {
+            //             if (layers[lay] > last && layers[lay] < minim) {
+            //                 minim = layers[lay];
+            //             }
+            //         }
+            //     }
+
+            //     for (el = 0; el < olen; el++) {
+            //         pEl = this.objectsList[el];
+            //         if (pEl.visProp.layer === minim) {
+            //             pEl.prepareUpdate().updateRenderer();
+            //         }
+            //     }
+            //     last = minim;
+            // }
+
             return this;
         },
 

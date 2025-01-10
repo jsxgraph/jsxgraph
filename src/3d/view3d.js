@@ -729,65 +729,6 @@ JXG.extend(
         return Mat.matMatMult(A, this.boxToCam);
     },
 
-    /**
-     * Check the type of elements and compares them according to their z-Index.
-     * @param {Element} elm_a
-     * @param {Element} elm_b
-     * @returns Number
-     */
-    compareDepth: function (el_a, el_b) {
-        return el_a.zIndex - el_b.zIndex;
-    },
-
-    updateDepthOrdering: function () {
-        var id, el,
-            i, layers, lay;
-
-        // Collect elements for depth ordering layer-wise
-        layers = this.evalVisProp('depthorder.layers');
-        for (i = 0; i < layers.length; i++) {
-            this.depthOrdered[layers[i]] = [];
-        }
-
-        for (id in this.objects) {
-            if (this.objects.hasOwnProperty(id)) {
-                el = this.objects[id];
-                if ((el.type === Const.OBJECT_TYPE_FACE3D ||
-                    el.type === Const.OBJECT_TYPE_LINE3D ||
-                    el.type === Const.OBJECT_TYPE_POINT3D ||
-                    el.type === Const.OBJECT_TYPE_POLYGON3D
-                ) &&
-                Type.exists(el.element2D) &&
-                    el.element2D.evalVisProp('visible')
-                ) {
-
-                    lay = el.element2D.evalVisProp('layer');
-                    if (layers.indexOf(lay) >= 0) {
-                        this.depthOrdered[lay].push(el);
-
-                        // Update zIndex of less frequent objects line3d and polygon3d
-                        // The other elements (point3d, face3d) do this in their update method.
-                        if (el.type === Const.OBJECT_TYPE_LINE3D ||
-                            el.type === Const.OBJECT_TYPE_POLYGON3D
-                        ) {
-                            el.updateZIndex();
-                        }
-                    }
-                }
-            }
-        }
-
-        for (i = 0; i < layers.length; i++) {
-            lay = layers[i];
-            this.depthOrdered[lay].sort(this.compareDepth.bind(this));
-            if (this.board.renderer && this.board.renderer.type === 'svg') {
-                this.depthOrdered[lay].forEach((el) => this.board.renderer.setLayer(el.element2D, lay));
-            }
-        }
-
-        return this;
-    },
-
     // Update 3D-to-2D transformation matrix with the actual azimuth and elevation angles.
     update: function () {
         var r = this.r,
@@ -887,6 +828,79 @@ JXG.extend(
                 );
         }
 
+        // Used for zIndex in dept ordering in subsequent update methods of the
+        // 3D elements and in view3d.updateRenderer
+        this.matrix3DRotShift = Mat.matMatMult(this.matrix3DRot, this.shift);
+
+        return this;
+    },
+
+    /**
+     * Compares 3D elements according to their z-Index.
+     * @param {JXG.GeometryElement3D} a
+     * @param {JXG.GeometryElement3D} b
+     * @returns Number
+     */
+    compareDepth: function (a, b) {
+        return a.zIndex - b.zIndex;
+    },
+
+    updateZIndices: function() {
+        var id, el;
+        for (id in this.objects) {
+            if (this.objects.hasOwnProperty(id)) {
+                el = this.objects[id];
+                // Update zIndex of less frequent objects line3d and polygon3d
+                // The other elements (point3d, face3d) do this in their update method.
+                if ((el.type === Const.OBJECT_TYPE_LINE3D ||
+                    el.type === Const.OBJECT_TYPE_POLYGON3D
+                    ) &&
+                    Type.exists(el.element2D) &&
+                    el.element2D.evalVisProp('visible')
+                ) {
+                    el.updateZIndex();
+                }
+            }
+        }
+    },
+
+    updateDepthOrdering: function () {
+        var id, el,
+            i, layers, lay;
+
+        // Collect elements for depth ordering layer-wise
+        layers = this.evalVisProp('depthorder.layers');
+        for (i = 0; i < layers.length; i++) {
+            this.depthOrdered[layers[i]] = [];
+        }
+
+        for (id in this.objects) {
+            if (this.objects.hasOwnProperty(id)) {
+                el = this.objects[id];
+                if ((el.type === Const.OBJECT_TYPE_FACE3D ||
+                    el.type === Const.OBJECT_TYPE_LINE3D ||
+                    el.type === Const.OBJECT_TYPE_POINT3D ||
+                    el.type === Const.OBJECT_TYPE_POLYGON3D
+                    ) &&
+                    Type.exists(el.element2D) &&
+                    el.element2D.evalVisProp('visible')
+                ) {
+                    lay = el.element2D.evalVisProp('layer');
+                    if (layers.indexOf(lay) >= 0) {
+                        this.depthOrdered[lay].push(el);
+                    }
+                }
+            }
+        }
+
+        if (this.board.renderer && this.board.renderer.type === 'svg') {
+            for (i = 0; i < layers.length; i++) {
+                lay = layers[i];
+                this.depthOrdered[lay].sort(this.compareDepth.bind(this));
+                this.depthOrdered[lay].forEach((el) => this.board.renderer.setLayer(el.element2D, lay));
+            }
+        }
+
         return this;
     },
 
@@ -895,18 +909,21 @@ JXG.extend(
             return this;
         }
 
-        // Used for zIndex in dept ordering in updateRenderer
-        this.matrix3DRotShift = Mat.matMatMult(this.matrix3DRot, this.shift);
-
         // console.time("update")
         // Handle depth ordering
-        if (this.board.renderer &&
-            this.board.renderer.type === 'svg' &&
-            this.evalVisProp('depthorder.enabled')) {
+        this.depthOrdered = {};
 
-            this.updateDepthOrdering();
-        } else {
-            this.depthOrdered = {};
+        if (this.shift !== undefined && this.evalVisProp('depthorder.enabled')) {
+            // Update the zIndices of certain element types.
+            // We do it here in updateRenderer, because the the elements' positions
+            // are meanwhile updated.
+            this.updateZIndices();
+
+            if (this.board.renderer && this.board.renderer.type === 'svg') {
+                // For SVG we update the DOM order
+                // In canvas we sort the elements in board.updateRendererCanvas
+                this.updateDepthOrdering();
+            }
         }
         // console.timeEnd("update")
 
