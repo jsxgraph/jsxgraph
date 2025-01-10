@@ -33,6 +33,8 @@ import JXG from "../jxg.js";
 import Const from "../base/constants.js";
 import Type from "../utils/type.js";
 import Mat from "../math/math.js";
+import Stat from "../math/statistics.js";
+import Geometry from "../math/geometry.js";
 
 /**
  * A sphere consists of all points with a given distance from a given point.
@@ -145,6 +147,25 @@ Type.copyPrototypeMethods(JXG.Sphere3D, JXG.GeometryElement3D, "constructor3D");
 JXG.extend(
     JXG.Sphere3D.prototype,
     /** @lends JXG.Sphere3D.prototype */ {
+
+        X: function(u, v) {
+            var r = this.Radius();
+            return r * Math.sin(u) * Math.cos(v);
+        },
+
+        Y: function(u, v) {
+            var r = this.Radius();
+            return r * Math.sin(u) * Math.sin(v);
+        },
+
+        Z: function(u, v) {
+            var r = this.Radius();
+            return r * Math.cos(u);
+        },
+
+        range_u: [0, 2 * Math.PI],
+        range_v: [0, Math.PI],
+
         update: function () {
             if (this.projectionType !== this.view.projectionType) {
                 this.rebuildProjection();
@@ -325,6 +346,34 @@ JXG.extend(
             this.addChild(this.element2D);
             this.inherits.push(this.element2D);
             this.element2D.view = this.view;
+        },
+
+        projectCoords: function(p) {
+            var r = this.Radius(),
+                pp = [1].concat(p),
+                c = this.center.coords,
+                d = Geometry.distance(c, pp, 4),
+                v = Stat.subtract(pp, c);
+
+            if (d === 0) {
+                // p is at the center, take an arbitrary point on sphere
+                return [1, r, 0, 0, 0];
+            }
+            if (r === 0) {
+                return this.center.coords;
+            }
+            d = r / d;
+            return [1, v[1] * d, v[2] * d, v[3] * d];
+        },
+
+        projectScreenCoords: function (pScr, params) {
+            if (params.length === 0) {
+                params.unshift(
+                    0.5 * (this.range_u[0] + this.range_u[1]),
+                    0.5 * (this.range_v[0] + this.range_v[1])
+                );
+            }
+            return Geometry.projectScreenCoordsToParametric(pScr, this, params);
         }
     }
 );
@@ -426,6 +475,69 @@ JXG.extend(
  *             [center, point],
  *             {}
  *         );
+ *
+ *     })();
+ *
+ * </script><pre>
+ *
+ * @example
+ *     // Glider on sphere
+ *     var view = board.create(
+ *         'view3d',
+ *         [[-6, -3], [8, 8],
+ *         [[-3, 3], [-3, 3], [-3, 3]]],
+ *         {
+ *             depthOrder: {
+ *                 enabled: true
+ *             },
+ *             projection: 'central',
+ *             xPlaneRear: {fillOpacity: 0.2, gradient: null},
+ *             yPlaneRear: {fillOpacity: 0.2, gradient: null},
+ *             zPlaneRear: {fillOpacity: 0.2, gradient: null}
+ *         }
+ *     );
+ *
+ *     // Two points
+ *     var center = view.create('point3d', [0, 0, 0], {withLabel: false, size: 2});
+ *     var point = view.create('point3d', [2, 0, 0], {withLabel: false, size: 2});
+ *
+ *     // Sphere
+ *     var sphere = view.create('sphere3d', [center, point], {fillOpacity: 0.8});
+ *
+ *     // Glider on sphere
+ *     var glide = view.create('point3d', [2, 2, 0, sphere], {withLabel: false, color: 'red', size: 4});
+ *     var l1 = view.create('line3d', [glide, center], { strokeWidth: 2, dash: 2 });
+ *
+ * </pre><div id="JXG672fe3c7-e6fd-48e0-9a24-22f51f2dfa71" class="jxgbox" style="width: 300px; height: 300px;"></div>
+ * <script type="text/javascript">
+ *     (function() {
+ *         var board = JXG.JSXGraph.initBoard('JXG672fe3c7-e6fd-48e0-9a24-22f51f2dfa71',
+ *             {boundingbox: [-8, 8, 8,-8], axis: false, showcopyright: false, shownavigation: false});
+ *         var view = board.create(
+ *             'view3d',
+ *             [[-6, -3], [8, 8],
+ *             [[-3, 3], [-3, 3], [-3, 3]]],
+ *             {
+ *                 depthOrder: {
+ *                     enabled: true
+ *                 },
+ *                 projection: 'central',
+ *                 xPlaneRear: {fillOpacity: 0.2, gradient: null},
+ *                 yPlaneRear: {fillOpacity: 0.2, gradient: null},
+ *                 zPlaneRear: {fillOpacity: 0.2, gradient: null}
+ *             }
+ *         );
+ *
+ *         // Two points
+ *         var center = view.create('point3d', [0, 0, 0], {withLabel: false, size: 2});
+ *         var point = view.create('point3d', [2, 0, 0], {withLabel: false, size: 2});
+ *
+ *         // Sphere
+ *         var sphere = view.create('sphere3d', [center, point], {fillOpacity: 0.8});
+ *
+ *         // Glider on sphere
+ *         var glide = view.create('point3d', [2, 2, 0, sphere], {withLabel: false, color: 'red', size: 4});
+ *         var l1 = view.create('line3d', [glide, center], { strokeWidth: 2, dash: 2 });
  *
  *     })();
  *

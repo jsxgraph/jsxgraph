@@ -3900,11 +3900,12 @@ JXG.extend(
                 //     ],
                 var c3d = [
                     1,
-                    target.X.apply(null, w),
-                    target.Y.apply(null, w),
-                    target.Z.apply(null, w)
+                    target.X.apply(target, w),
+                    target.Y.apply(target, w),
+                    target.Z.apply(target, w)
                 ],
                     c2d = target.view.project3DTo2D(c3d),
+                    // c2d = this.view.project3DTo2D(c3d),
                     xDiff = pScr[0] - c2d[1],
                     yDiff = pScr[1] - c2d[2];
 
@@ -3917,12 +3918,14 @@ JXG.extend(
                     con[2] = w[1] - target.range_v[0];
                     con[3] = -w[1] + target.range_v[1];
                 }
+
                 return xDiff * xDiff + yDiff * yDiff;
             };
+
             Mat.Nlp.FindMinimum(_minFunc, dim, 2 * dim, params, rhobeg, rhoend, iprint, maxfun);
 
             // return [1, target.X(...params), target.Y(...params), target.Z(...params)];
-            return [1, target.X.apply(null, params), target.Y.apply(null, params), target.Z.apply(null, params)];
+            return [1, target.X.apply(target, params), target.Y.apply(target, params), target.Z.apply(target, params)];
         },
 
         /**

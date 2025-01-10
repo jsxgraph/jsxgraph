@@ -386,7 +386,7 @@ JXG.extend(
 /**
  * @class A point in a 3D view.
  * @pseudo
- * @description A Point3D object is defined by three coordinates [x,y,z], or a function returning an array with three numbers. 
+ * @description A Point3D object is defined by three coordinates [x,y,z], or a function returning an array with three numbers.
  * Alternatively, all numbers can also be provided as functions returning a number.
  *
  * @name Point3D
@@ -425,6 +425,69 @@ JXG.extend(
  *         var p = view.create('point3d', [1, 2, 2], { name:'A', size: 5 });
  *         var q = view.create('point3d', function() { return [p.X(), p.Y(), p.Z() - 3]; }, { name:'B', size: 3 });
  *         var w = view.create('point3d', [ () => p.X() + 3, () => p.Y(), () => p.Z() - 2], { name:'C', size: 3, fixed: true });
+ *     })();
+ *
+ * </script><pre>
+ *
+ * @example
+ *     // Glider on sphere
+ *     var view = board.create(
+ *         'view3d',
+ *         [[-6, -3], [8, 8],
+ *         [[-3, 3], [-3, 3], [-3, 3]]],
+ *         {
+ *             depthOrder: {
+ *                 enabled: true
+ *             },
+ *             projection: 'central',
+ *             xPlaneRear: {fillOpacity: 0.2, gradient: null},
+ *             yPlaneRear: {fillOpacity: 0.2, gradient: null},
+ *             zPlaneRear: {fillOpacity: 0.2, gradient: null}
+ *         }
+ *     );
+ *
+ *     // Two points
+ *     var center = view.create('point3d', [0, 0, 0], {withLabel: false, size: 2});
+ *     var point = view.create('point3d', [2, 0, 0], {withLabel: false, size: 2});
+ *
+ *     // Sphere
+ *     var sphere = view.create('sphere3d', [center, point], {fillOpacity: 0.8});
+ *
+ *     // Glider on sphere
+ *     var glide = view.create('point3d', [2, 2, 0, sphere], {withLabel: false, color: 'red', size: 4});
+ *     var l1 = view.create('line3d', [glide, center], { strokeWidth: 2, dash: 2 });
+ *
+ * </pre><div id="JXG672fe3c7-e6fd-48e0-9a24-22f51f2dfa71" class="jxgbox" style="width: 300px; height: 300px;"></div>
+ * <script type="text/javascript">
+ *     (function() {
+ *         var board = JXG.JSXGraph.initBoard('JXG672fe3c7-e6fd-48e0-9a24-22f51f2dfa71',
+ *             {boundingbox: [-8, 8, 8,-8], axis: false, showcopyright: false, shownavigation: false});
+ *         var view = board.create(
+ *             'view3d',
+ *             [[-6, -3], [8, 8],
+ *             [[-3, 3], [-3, 3], [-3, 3]]],
+ *             {
+ *                 depthOrder: {
+ *                     enabled: true
+ *                 },
+ *                 projection: 'central',
+ *                 xPlaneRear: {fillOpacity: 0.2, gradient: null},
+ *                 yPlaneRear: {fillOpacity: 0.2, gradient: null},
+ *                 zPlaneRear: {fillOpacity: 0.2, gradient: null}
+ *             }
+ *         );
+ *
+ *         // Two points
+ *         var center = view.create('point3d', [0, 0, 0], {withLabel: false, size: 2});
+ *         var point = view.create('point3d', [2, 0, 0], {withLabel: false, size: 2});
+ *
+ *         // Sphere
+ *         var sphere = view.create('sphere3d', [center, point], {fillOpacity: 0.8});
+ *
+ *         // Glider on sphere
+ *         var glide = view.create('point3d', [2, 2, 0, sphere], {withLabel: false, color: 'red', size: 4});
+ *         var l1 = view.create('line3d', [glide, center], { strokeWidth: 2, dash: 2 });
+ *
  *     })();
  *
  * </script><pre>
