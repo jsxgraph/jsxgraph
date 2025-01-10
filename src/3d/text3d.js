@@ -344,7 +344,7 @@ JXG.extend(
          * Check whether a text's position is finite, i.e. the first entry is not zero.
          * @returns {Boolean} True if the first entry of the coordinate vector is not zero; false otherwise.
          */
-        isReal: function () {
+        testIfFinite: function () {
             return Math.abs(this.coords[0]) > Mat.eps ? true : false;
             // return Type.cmpArrays(this.coords, [0, 0, 0, 0]);
         },
