@@ -2376,15 +2376,15 @@ JXG.extend(
                 y = this.center.Y();
                 bb = [x - this.radius, y + this.radius, x + this.radius, y - this.radius];
             } else if (this.elementClass === Const.OBJECT_CLASS_CURVE) {
-                le = this.vertices.length;
+                le = this.points.length;
                 if (le === 0) {
                     return bb;
                 }
                 for (i = 0; i < le; i++) {
-                    v = this.points[i].coords.usrCoords[1];
+                    v = this.points[i].usrCoords[1];
                     bb[0] = v < bb[0] ? v : bb[0];
                     bb[2] = v > bb[2] ? v : bb[2];
-                    v = this.points[i].coords.usrCoords[1];
+                    v = this.points[i].usrCoords[1];
                     bb[1] = v < bb[1] ? v : bb[1];
                     bb[3] = v > bb[3] ? v : bb[3];
                 }
