@@ -182,7 +182,6 @@ JXG.extend(
             }
 
             if (this.method === "twoPoints") {
-                console.log(this.center, this.point2)
                 if (!this.center.testIfFinite() || !this.point2.testIfFinite()) {
                     return NaN;
                 }
