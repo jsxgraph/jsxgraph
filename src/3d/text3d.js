@@ -341,11 +341,12 @@ JXG.extend(
         },
 
         /**
-         * Check whether a point's homogeneous coordinate vector is zero.
-         * @returns {Boolean} True if the coordinate vector is zero; false otherwise.
+         * Check whether a text's position is finite, i.e. the first entry is not zero.
+         * @returns {Boolean} True if the first entry of the coordinate vector is not zero; false otherwise.
          */
-        isIllDefined: function () {
-            return Type.cmpArrays(this.coords, [0, 0, 0, 0]);
+        isReal: function () {
+            return Math.abs(this.coords[0]) > Mat.eps ? true : false;
+            // return Type.cmpArrays(this.coords, [0, 0, 0, 0]);
         },
 
         // Not yet working

@@ -182,7 +182,7 @@ JXG.extend(
             }
 
             if (this.method === "twoPoints") {
-                if (this.center.isIllDefined() || this.point2.isIllDefined()) {
+                if (!this.center.isReal() || !this.point2.isReal()) {
                     return NaN;
                 }
 

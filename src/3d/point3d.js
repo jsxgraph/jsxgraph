@@ -156,6 +156,7 @@ JXG.Point3D = function (view, F, slide, attributes) {
         // TODO
     });
 };
+
 JXG.Point3D.prototype = new JXG.GeometryElement();
 Type.copyPrototypeMethods(JXG.Point3D, JXG.GeometryElement3D, "constructor3D");
 
@@ -348,11 +349,12 @@ JXG.extend(
         },
 
         /**
-         * Check whether a point's homogeneous coordinate vector is zero.
-         * @returns {Boolean} True if the coordinate vector is zero; false otherwise.
+         * Check whether a points's position is finite, i.e. the first entry is not zero.
+         * @returns {Boolean} True if the first entry of the coordinate vector is not zero; false otherwise.
          */
-        isIllDefined: function () {
-            return Type.cmpArrays(this.coords, [0, 0, 0, 0]);
+        isReal: function () {
+            return Math.abs(this.coords[0]) > Mat.eps ? true : false;
+            // return Type.cmpArrays(this.coords, [0, 0, 0, 0]);
         },
 
         /**
@@ -384,21 +386,21 @@ JXG.extend(
 /**
  * @class A point in a 3D view.
  * @pseudo
- * @description A Point3D object is defined by 3 coordinates [x,y,z].
- * <p>
- * All numbers can also be provided as functions returning a number.
+ * @description A Point3D object is defined by three coordinates [x,y,z], or a function returning an array with three numbers. 
+ * Alternatively, all numbers can also be provided as functions returning a number.
  *
  * @name Point3D
  * @augments JXG.Point3D
  * @constructor
  * @throws {Exception} If the element cannot be constructed with the given parent
  * objects an exception is thrown.
- * @param {number,function_number,function_number,function} x,y,z The coordinates are given as x, y, z consisting of numbers of functions.
- * @param {array,function} F Alternatively, the coordinates can be supplied as
+ * @param {number,function_number,function_number,function_JXG.GeometryElement3D} x,y,z,[slide=undefined] The coordinates are given as x, y, z consisting of numbers or functions. If an optional 3D element "slide" is supplied, the point is a glider on that element.
+ * @param {array,function_JXG.GeometryElement3D} F,[slide=null] Alternatively, the coordinates can be supplied as
  *  <ul>
- *   <li>array arr=[x,y,z] of length 3 consisting of numbers or
- *   <li>function returning an array [x,y,z] of length 3 of numbers.
+ *   <li>function returning an array [x,y,z] of length 3 of numbers or
+ *   <li>array arr=[x,y,z] of length 3 consisting of numbers
  * </ul>
+ * If an optional 3D element "slide" is supplied, the point is a glider on that element.
  *
  * @example
  *    var bound = [-5, 5];
@@ -407,7 +409,8 @@ JXG.extend(
  *        [bound, bound, bound]],
  *        {});
  *    var p = view.create('point3d', [1, 2, 2], { name:'A', size: 5 });
- *    var q = view.create('point3d', function() { return [p.X(), p.Y(), p.Z() - 3]; }, { name:'B', size: 5, fixed: true });
+ *    var q = view.create('point3d', function() { return [p.X(), p.Y(), p.Z() - 3]; }, { name:'B', size: 3, fixed: true });
+ *    var w = view.create('point3d', [ () => p.X() + 3, () => p.Y(), () => p.Z() - 2], { name:'C', size: 3, fixed: true });
  *
  * </pre><div id="JXGb9ee8f9f-3d2b-4f73-8221-4f82c09933f1" class="jxgbox" style="width: 300px; height: 300px;"></div>
  * <script type="text/javascript">
@@ -420,7 +423,8 @@ JXG.extend(
  *             [bound, bound, bound]],
  *             {});
  *         var p = view.create('point3d', [1, 2, 2], { name:'A', size: 5 });
- *         var q = view.create('point3d', function() { return [p.X(), p.Y(), p.Z() - 3]; }, { name:'B', size: 5 });
+ *         var q = view.create('point3d', function() { return [p.X(), p.Y(), p.Z() - 3]; }, { name:'B', size: 3 });
+ *         var w = view.create('point3d', [ () => p.X() + 3, () => p.Y(), () => p.Z() - 2], { name:'C', size: 3, fixed: true });
  *     })();
  *
  * </script><pre>
@@ -436,7 +440,7 @@ JXG.createPoint3D = function (board, parents, attributes) {
     var view = parents[0],
         attr, F, slide, c2d, el;
 
-    // If the last element of parents is a 3D object,
+    // If the last element of `parents` is a 3D object,
     // the point is a glider on that element.
     if (parents.length > 2 && Type.exists(parents[parents.length - 1].is3D)) {
         slide = parents.pop();
@@ -457,7 +461,7 @@ JXG.createPoint3D = function (board, parents, attributes) {
                 "' and '" +
                 typeof parents[1] +
                 "'." +
-                "\nPossible parent types: [[x,y,z]], [x,y,z]"
+                "\nPossible parent types: [[x,y,z]], [x,y,z], or [[x,y,z], slide], () => [x, y, z]"
         );
         //  "\nPossible parent types: [[x,y,z]], [x,y,z], [element,transformation]"); // TODO
     }
@@ -475,7 +479,7 @@ JXG.createPoint3D = function (board, parents, attributes) {
     el.inherits.push(el.element2D);
     el.element2D.setParents(el);
 
-    // if this point is a glider, record that in the update tree
+    // If this point is a glider, record that in the update tree
     if (el.slide) {
         el.slide.addChild(el);
         el.setParents(el.slide);
