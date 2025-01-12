@@ -454,6 +454,10 @@ JXG.extend(Options, {
     },
 
     line3d: {
+        /**#@+
+         * @visprop
+         */
+
         layer: 12,
         strokeWidth: 1,
         strokeColor: "black",
@@ -463,9 +467,31 @@ JXG.extend(Options, {
         gradientSecondColor: "#ffffff",
         needsRegularUpdate: true,
 
+        /**
+         * Attributes of the defining point in case the line is defined by [point, vector, [range]]
+         * @type Point3D
+         * @name Line3D#point
+         * @default <pre>visible: false, name: ""</pre>
+         */
         point: { visible: false, name: "" }, // Used in cases of point/direction/range
+
+        /**
+         * Attributes of the first point in case the line is defined by [point, point].
+         * @type Point3D
+         * @name Line3D#point1
+         * @default <pre>visible: false, name: ""</pre>
+         */
         point1: { visible: false, name: "" }, // Used in point/point
+
+        /**
+         * Attributes of the second point in case the line is defined by [point, point].
+         * @type Point3D
+         * @name Line3D#point2
+         * @default <pre>visible: false, name: ""</pre>
+         */
         point2: { visible: false, name: "" }
+
+        /**#@-*/
     },
 
     mesh3d: {
@@ -487,6 +513,12 @@ JXG.extend(Options, {
     },
 
     plane3d: {
+        /**#@+
+         * @visprop
+         */
+
+        threePoints: false,
+
         layer: 12,
         strokeWidth: 0,
         strokeColor: "black",
@@ -501,7 +533,30 @@ JXG.extend(Options, {
         fillColor: "#a7a7a7",
         fillOpacity: 0.6,
 
-        point: { visible: false, name: "", fixed: true }
+        /**
+         * Attributes of the defining point in case the plane is defined by [point, direction1, direction2, [range1, [range2]]] or
+         * of the first point in case the plane is defined by [point, point, point]
+         * @type Point3D
+         * @name Line3D#point
+         * @default <pre>visible: false, name: ""</pre>
+         */
+        point: { visible: false, name: "", fixed: true },
+        /**
+         * Attributes of the second point in case the plane is defined by [point, point, point].
+         * @type Point3D
+         * @name Plane3D#point2
+         * @default <pre>visible: false, name: ""</pre>
+         */
+        point2: { visible: false, name: "" }, // Used in point/point/point
+        /**
+         * Attributes of the second point in case the plane is defined by [point, point, point].
+         * @type Point3D
+         * @name Plane3D#point3
+         * @default <pre>visible: false, name: ""</pre>
+         */
+        point3: { visible: false, name: "" } // Used in point/point/point
+
+        /**#@-*/
     },
 
     point3d: {

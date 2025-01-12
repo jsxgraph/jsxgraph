@@ -30,10 +30,9 @@
 
 import JXG from "../jxg.js";
 import Const from "../base/constants.js";
+import Type from "../utils/type.js";
 import Mat from "../math/math.js";
 import Geometry from "../math/geometry.js";
-import Type from "../utils/type.js";
-//, GeometryElement3D) {
 
 /**
  * A 3D point is the basic geometric element.
@@ -384,11 +383,10 @@ JXG.extend(
 );
 
 /**
- * @class A point in a 3D view.
- * @pseudo
- * @description A Point3D object is defined by three coordinates [x,y,z], or a function returning an array with three numbers.
+ * @class A Point3D object is defined by three coordinates [x,y,z], or a function returning an array with three numbers.
  * Alternatively, all numbers can also be provided as functions returning a number.
  *
+ * @pseudo
  * @name Point3D
  * @augments JXG.Point3D
  * @constructor

@@ -142,11 +142,18 @@ JXG.extend(
             return [p[0] + d[0] * r, p[1] + d[1] * r, p[2] + d[2] * r];
         },
 
+        // Already documented in JXG.GeometryElement
         update: function () {
             if (this.needsUpdate) {}
             return this;
         },
 
+        /**
+         * Set the 2D position of the defining points.
+         *
+         * @param {JXG.Transformation} t projective 2D transformation
+         * @private
+         */
         setPosition2D: function (t) {
             var j, el;
 
@@ -159,11 +166,17 @@ JXG.extend(
             }
         },
 
+        // Already documented in JXG.GeometryElement
         updateRenderer: function () {
             this.needsUpdate = false;
             return this;
         },
 
+        /**
+         * Project a point (given by a coordinate array) orthogonal onto the line.
+         * @param {Array} p
+         * @returns {Array} 3D coordinates of the projected point
+         */
         projectCoords: function (p) {
             var p0_coords = this.getPointCoords(0),
                 p1_coords = this.getPointCoords(1),
@@ -209,19 +222,21 @@ JXG.extend(
 );
 
 /**
- * @class A general line in 3D is given by two points or one point and a direction vector.
- * @pseudo
- * @description There are two possibilities to create a Line3D object.
- * <p>
- * First: the line in 3D is defined by two points in 3D (Point3D).
+ * @class A line in 3D is given by two points, or one point and a direction vector.
+ * That is, there are the following two possibilities to create a Line3D object:
+ * <ol>
+ * <li> The 3D line is defined by two 3D points (Point3D):
  * The points can be either existing points or coordinate arrays of
  * the form [x, y, z].
- * <p>Second: the line in 3D is defined by a point (or coordinate array [x, y, z])
+ * <p> The 3D line is defined by a point (or coordinate array [x, y, z])
  * a direction given as array [x, y, z] and an optional range
  * given as array [s, e]. The default value for the range is [-Infinity, Infinity].
- * <p>
+ * </ol>
  * All numbers can also be provided as functions returning a number.
+ * <p>
+ * In the first case, the sub-objects point' and 'point1' coincide.
  *
+ * @pseudo
  * @name Line3D
  * @augments JXG.GeometryElement3D
  * @constructor
@@ -801,13 +816,13 @@ JXG.extend(
 );
 
 /**
- * @class 3D plane defined by a point and to linearly independent vectors.
- * @pseudo
- * @description There are two possibilities to create a Plane3D object.
- * <p>
- * TODO
- * </p>
+ * @class A 3D plane defined either by a point and two linearly independent vectors, or by three points.
+ * In the first case, the parameters are a 3D point (or a coordinate array) and two vectors.
+ * In the second case, the parameters consist of three 3D points (given as points or coordinate arrays).
+ * In order to distinguish the two cases, in the latter case, the additional attribute 'threePoints:true' has to be supplied.
+ * All coordinate arrays can be supplied as functions returning a coordinate array.
  *
+ * @pseudo
  * @name  Plane3D
  * @augments JXG.GeometryElement3D
  * @constructor
@@ -819,17 +834,18 @@ JXG.createPlane3D = function (board, parents, attributes) {
     var view = parents[0],
         attr,
         point,
-        dir1 = parents[2],
-        dir2 = parents[3],
-        range1 = parents[4] || [-Infinity, Infinity],
-        range2 = parents[5] || [-Infinity, Infinity],
-        el,
-        grid;
+        dir1, dir2, range1, range2,
+        el, grid;
 
     point = Type.providePoints3D(view, [parents[1]], attributes, 'plane3d', ['point'])[0];
     if (point === false) {
         // TODO Throw error
     }
+
+    dir1 = parents[2];
+    dir2 = parents[3];
+    range1 = parents[4] || [-Infinity, Infinity];
+    range2 = parents[5] || [-Infinity, Infinity];
 
     attr = Type.copyAttributes(attributes, board.options, 'plane3d');
     el = new JXG.Plane3D(view, point, dir1, range1, dir2, range2, attr);

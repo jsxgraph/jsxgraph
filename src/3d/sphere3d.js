@@ -380,14 +380,12 @@ JXG.extend(
 
 /**
  * @class A sphere in a 3D view.
- *
- * @pseudo
- * @description
  * A sphere consists of all points with a given distance from a given point.
  * The given point is called the center, and the given distance is called the radius.
  * A sphere can be constructed by providing a center and a point on the sphere or a center and a radius (given as a number or function).
  * If the radius is a negative value, its absolute value is taken.
  *
+ * @pseudo
  * @name Sphere3D
  * @augments JXG.Sphere3D
  * @constructor
