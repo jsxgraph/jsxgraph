@@ -173,7 +173,7 @@ JXG.extend(
         },
 
         /**
-         * Project a point (given by a coordinate array) orthogonal onto the line.
+         * Orthogonal projection of a point (given by a coordinate array) onto the line.
          * @param {Array} p
          * @returns {Array} 3D coordinates of the projected point
          */

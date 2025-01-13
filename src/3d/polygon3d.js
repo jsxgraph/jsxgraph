@@ -93,7 +93,7 @@ JXG.extend(
 
         updateZIndex: function() {
             var i,
-                le = this.vertices.length - 1,
+                le = this.vertices.length, // - 1,
                 c3d = [1, 0, 0, 0];
 
             if (le <= 0) {
@@ -107,6 +107,7 @@ JXG.extend(
             c3d[1] /= le;
             c3d[2] /= le;
             c3d[3] /= le;
+
             this.zIndex = Mat.matVecMult(this.view.matrix3DRotShift, c3d)[3];
 
             return this;
@@ -147,6 +148,7 @@ JXG.createPolygon3D = function (board, parents, attributes) {
         // This is necessary if the original polygon is defined in another board.
         obj = parents[1];
     }
+    // TODO: Number of points? Is the last point equal to the first point?
     if (
         Type.isObject(obj) &&
         obj.type === Const.OBJECT_TYPE_POLYGON3D &&
