@@ -58,7 +58,9 @@ import Type from "../utils/type.js";
  * <p>
  * Second possibility of input parameters are:
  * @param {JXG.Line_JXG.Line_array,number_array,number_number,function} line, line2, coords1 or direction1, coords2 or direction2, radius The sector is defined by two lines.
- * The two legs which define the sector are given by two coordinates arrays which are project initially two the two lines or by two directions (+/- 1).
+ * The two legs which define the sector are given by two coordinates arrays which are projected initially to the two lines or by
+ * two directions (+/- 1). If the two lines are parallel, two of the defining points on different lines have to coincide.
+ * This will be the center of the sector.
  * The last parameter is the radius of the sector.
  * <p>In this case, the sector will <b>not</b> have an arc as sub-object.
  *
@@ -181,9 +183,9 @@ JXG.createSector = function (board, parents, attributes) {
     var el,
         attr,
         i,
+        eps = 1.0e-14,
         type = "invalid",
-        s,
-        v,
+        s, v,
         attrPoints = ["center", "radiusPoint", "anglePoint"],
         points;
 
@@ -265,8 +267,26 @@ JXG.createSector = function (board, parents, attributes) {
         el.point2 = { visProp: {} };
         el.point3 = { visProp: {} };
 
-        /* Intersection point */
+        // Intersection point, just used locally for direction1 and  direction2
         s = Geometry.meetLineLine(el.line1.stdform, el.line2.stdform, 0, board);
+        if (Geometry.distance(s.usrCoords, [0, 0, 0], 3) < eps) {
+            // Parallel lines
+            if (
+                el.line1.point1.Dist(el.line2.point1) < eps ||
+                el.line1.point1.Dist(el.line2.point2) < eps
+            ) {
+                s = el.line1.point1.coords;
+            } else if (
+                el.line1.point2.Dist(el.line2.point1) < eps ||
+                el.line1.point2.Dist(el.line2.point1) < eps
+            ) {
+                s = el.line1.point2.coords;
+            } else {
+                console.log(
+                    "JSXGraph warning: Can't create Sector from parallel lines with no common defining point."
+                );
+            }
+        }
 
         if (Type.isArray(parents[2])) {
             /* project p1 to l1 */
@@ -329,8 +349,8 @@ JXG.createSector = function (board, parents, attributes) {
          */
         el.updateDataArray = function () {
             var r,
-                l1,
-                l2,
+                l1, l2,
+                eps = 1.0e-14,
                 A = [0, 0, 0],
                 B = [0, 0, 0],
                 C = [0, 0, 0],
@@ -341,8 +361,23 @@ JXG.createSector = function (board, parents, attributes) {
 
             // Intersection point of the lines
             B = Mat.crossProduct(l1.stdform, l2.stdform);
+            if (Geometry.distance(B, [0, 0, 0], 3) < eps) {
+                // Parallel lines
+                if (
+                    l1.point1.Dist(l2.point1) < eps ||
+                    l1.point1.Dist(l2.point2) < eps
+                ) {
+                    B = l1.point1.coords.usrCoords;
+                } else if (
+                    l1.point2.Dist(l2.point1) < eps ||
+                    l1.point2.Dist(l2.point1) < eps
+                ) {
+                    B = l1.point2.coords.usrCoords;
+                } else {
+                }
+            }
 
-            if (Math.abs(B[0]) > Mat.eps * Mat.eps) {
+            if (Math.abs(B[0]) > eps) {
                 B[1] /= B[0];
                 B[2] /= B[0];
                 B[0] /= B[0];
@@ -1070,10 +1105,12 @@ JXG.registerElement("majorsector", JXG.createMajorSector);
  * an angle has two angle points and no radius point.
  * Sector is displayed if type=="sector".
  * If type=="square", instead of a sector a parallelogram is displayed.
- * In case of type=="auto", a square is displayed if the angle is near orthogonal.
+ * In case of type=="auto", a square is displayed if the angle is near orthogonal. The precision
+ * to decide if an angle is orthogonal is determined by the attribute
+ * {@link Angle#orthoSensitivity}.
  * <p>
  * If no name is provided the angle label is automatically set to a lower greek letter. If no label should be displayed use
- * the attribute <tt>withLabel:false</tt>.
+ * the attribute <tt>withLabel:false</tt> or set the name attribute to the empty string.
  *
  * @pseudo
  * @name Angle
@@ -1245,6 +1282,7 @@ JXG.createAngle = function (board, parents, attributes) {
 
     board.suspendUpdate(); // Necessary for immediate availability of radius.
     if (type === "2lines") {
+        // Angle defined by two lines
         parents.push(radius);
         el = board.create("sector", parents, attr);
         /**
@@ -1265,6 +1303,7 @@ JXG.createAngle = function (board, parents, attributes) {
          */
         el.free = function (val) {};
     } else {
+        // Angle defined by three points
         el = board.create("sector", [points[1], points[0], points[2]], attr);
         el.arc.visProp.priv = true;
 
