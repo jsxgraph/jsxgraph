@@ -526,6 +526,29 @@ JXG.Math = {
     },
 
     /**
+     * Trace of a square matrix, given as a two-dimensional array.
+     * @param {Array} M Square matrix
+     * @returns {Number} The trace of M, NaN if M is not square.
+     */
+    trace: function (M) {
+        var i, m, n,
+            t = 0.0;
+
+        // number of rows of M
+        m = M.length;
+        // number of columns of M
+        n = M.length > 0 ? M[0].length : 0;
+        if (m !== n) {
+            return NaN;
+        }
+        for (i = 0; i < n; i++) {
+            t += M[i][i];
+        }
+
+        return t;
+    },
+
+    /**
      * Inner product of two vectors a and b. n is the length of the vectors.
      * @param {Array} a Vector
      * @param {Array} b Vector

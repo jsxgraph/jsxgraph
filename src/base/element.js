@@ -2354,11 +2354,8 @@ JXG.extend(
         },
 
         getBoundingBox: function () {
-            var i,
-                le,
-                v,
-                x,
-                y,
+            var i, le, v,
+                x, y, r,
                 bb = [Infinity, Infinity, -Infinity, -Infinity];
 
             if (this.type === Const.OBJECT_TYPE_POLYGON) {
@@ -2391,6 +2388,11 @@ JXG.extend(
                     bb[1] = v < bb[1] ? v : bb[1];
                     bb[3] = v > bb[3] ? v : bb[3];
                 }
+            } else if (this.elementClass === Const.OBJECT_CLASS_POINT) {
+                x = this.X();
+                y = this.Y();
+                r = this.evalVisProp('size');
+                bb = [x - r / this.board.unitX, y - r / this.board.unitY, x + r / this.board.unitX, y + r / this.board.unitY];
             }
 
             return bb;

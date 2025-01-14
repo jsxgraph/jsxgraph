@@ -219,18 +219,11 @@ JXG.extend(
                 co = Math.cos(-radians),
                 si = Math.sin(-radians),
                 bb = el.getBoundingBox(),
-                c1,
-                c2,
-                x1,
-                x2,
-                y1,
-                y2,
-                x1s,
-                x2s,
-                y1s,
-                y2s,
-                dx,
-                dy;
+                c1, c2,
+                x1, x2,
+                y1, y2,
+                x1s, x2s, y1s, y2s,
+                dx, dy;
 
             if (Math.abs(co) > Math.abs(si)) {
                 f /= Math.abs(co);
@@ -278,16 +271,10 @@ JXG.extend(
          */
         updateGradientCircle: function (el, cx, cy, r, fx, fy, fr) {
             var bb = el.getBoundingBox(),
-                c1,
-                c2,
-                cxs,
-                cys,
-                rs,
-                fxs,
-                fys,
-                frs,
-                dx,
-                dy;
+                c1, c2,
+                cxs, cys, rs,
+                fxs, fys, frs,
+                dx, dy;
 
             c1 = new Coords(Const.COORDS_BY_USER, [bb[0], bb[1]], el.board);
             c2 = new Coords(Const.COORDS_BY_USER, [bb[2], bb[3]], el.board);
@@ -636,14 +623,9 @@ JXG.extend(
          * @private
          */
         drawArrows: function (el, scr1, scr2, hl, a) {
-            var x1,
-                y1,
-                x2,
-                y2,
-                w0,
-                w,
-                arrowHead,
-                arrowTail,
+            var x1, y1, x2, y2,
+                w, w0,
+                arrowHead, arrowTail,
                 context = this.context,
                 size = 6,
                 type = 1,
@@ -652,15 +634,11 @@ JXG.extend(
                 degree_fa = 1,
                 degree_la = 1,
                 doFill,
-                i,
-                len,
-                d1x,
-                d1y,
-                d2x,
-                d2y,
+                i, len,
+                d1x, d1y,
+                d2x, d2y,
                 last,
-                ang1,
-                ang2,
+                ang1, ang2,
                 ev_fa = a.evFirst,
                 ev_la = a.evLast;
 
@@ -1434,19 +1412,15 @@ JXG.extend(
                 }
             }
             context.lineCap = "round";
+            context.lineJoin = "round";
             this._fill(el);
             this._stroke(el);
         },
 
         // Already documented in JXG.AbstractRenderer
         updatePathStringBezierPrim: function (el) {
-            var i,
-                j,
-                k,
-                scr,
-                lx,
-                ly,
-                len,
+            var i, j, k,
+                scr, lx, ly, len,
                 symbm = "M",
                 symbl = "C",
                 nextSymb = symbm,
@@ -1508,6 +1482,7 @@ JXG.extend(
                 }
             }
             context.lineCap = "round";
+            context.lineJoin = "round";
             this._fill(el);
             this._stroke(el);
         },
