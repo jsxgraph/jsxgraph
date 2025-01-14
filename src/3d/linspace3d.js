@@ -461,6 +461,7 @@ JXG.createLine3D = function (board, parents, attributes) {
     el.element2D.prepareUpdate().update().updateRenderer();
     return el;
 };
+
 JXG.registerElement('line3d', JXG.createLine3D);
 
 // -----------------------
