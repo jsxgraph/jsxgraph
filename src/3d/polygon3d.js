@@ -60,7 +60,10 @@ JXG.Polygon3D = function (view, vertices, attributes) {
     this.board.finalizeAdding(this);
 
     /**
-     * References to the points defining the polygon. The last vertex is the same as the first vertex.
+     * References to the points defining the polygon.
+     * Compared to the 2D {@link JXG.Polygon#vertices}, it contains one point less, i.e. for a quadrangle
+     * 'vertices' contains four points. In a 2D quadrangle, 'vertices' will contain five points, the last one being
+     * a copy of the first one.
      * @type Array
      */
     this.vertices = [];
@@ -124,14 +127,16 @@ JXG.extend(
  *    <li> a function returning a list of coordinate arrays.
  * </ul>
  * Each two consecutive points of the list define a line.
+ * <p>
+ * JSXGraph does not require and does not check planarity of the polygon.
+ *
  * @pseudo
  * @constructor
- * @name Polygon
- * @type JXG.Polygon
- * @augments JXG.Polygon
+ * @name Polygon3D
+ * @type JXG.Polygon3D
+ * @augments JXG.Polygon3D
  * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
- * @param {Array} vertices The polygon's vertices. If the first and the last vertex don't match the first one will be
- * added to the array by the creator. Here, two points match if they have the same 'id' attribute.
+ * @param {Array} vertices The polygon's vertices.
  */
 JXG.createPolygon3D = function (board, parents, attributes) {
     var view = parents[0],
