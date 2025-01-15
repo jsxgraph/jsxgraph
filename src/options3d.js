@@ -559,9 +559,9 @@ JXG.extend(Options, {
         fillOpacity: 0.6,
 
         /**
-         * Optional 3D mesh of a finite plane. 
+         * Optional 3D mesh of a finite plane.
          * It is not available if the plane is infinite (at initialization time) in any direction.
-         * 
+         *
          * @type Mesh3D
          * @name Plane3D#mesh3d
          * @default see {@link Mesh3D}
@@ -570,11 +570,21 @@ JXG.extend(Options, {
         },
 
         /**
-         * Attributes of the defining point in case the plane is defined by [point, direction1, direction2, [range1, [range2]]] or
-         * of the first point in case the plane is defined by [point, point, point]
+         * If the second parameter and the third parameter are given as arrays or functions and threePoints:true
+         * then the second and third parameter are interpreted as point coordinates and not as directions, i.e.
+         * the plane is defined by three points.
+         *
+         * @name Plane3D#threePoints
+         * @type Boolean
+         * @default false
+         */
+        threePoints: false,
+
+        /**
+         * Attributes of the defining point in case the plane is defined by [point, direction1, direction2, [range1, [range2]]].
          * @type Point3D
          * @name Plane3D#point
-         * @default <pre>visible: false, name: ""</pre>
+         * @default <pre>visible: false, name: "", fixed: true</pre>
          */
         point: { visible: false, name: "", fixed: true },
 

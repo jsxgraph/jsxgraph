@@ -914,8 +914,12 @@ JXG.extend(
  * @class A 3D plane is defined either by a point and two linearly independent vectors, or by three points.
  * In the first case, the parameters are a 3D point (or a coordinate array) and two vectors (arrays).
  * In the second case, the parameters consist of three 3D points (given as points or coordinate arrays).
- * In order to distinguish the two cases, in the latter case, the additional attribute 'threePoints:true' has to be supplied.
+ * In order to distinguish the two cases, in the latter case (three points), the additional attribute {@link Plane3D#threePoints}
+ * has to be supplied if both, the second point and the third point, are given as arrays or functions. Otherwise, it would not be
+ * clear if the input arrays have to be interpreted as points or directions.
+ * <p>
  * All coordinate arrays can be supplied as functions returning a coordinate array.
+ * Planes defined by three points are always infinite.
  *
  * @pseudo
  * @name  Plane3D
@@ -924,7 +928,7 @@ JXG.extend(
  * @throws {Exception} If the element cannot be constructed with the given parent
  * objects an exception is thrown.
  *
- * @param {JXG.Point3D,array,function_array,function_array,function_array,function_array,function} point,direction1,direction2,range1,range2 The plane is defined by point, direction1, direction2, range1, and range2.
+ * @param {JXG.Point3D,array,function_array,function_array,function_array,function_array,function} point,direction1,direction2,[range1],[range2] The plane is defined by point, direction1, direction2, range1, and range2.
  * <ul>
  * <li> point: Point3D or array of length 3
  * <li> direction1: array of length 3 or function returning an array of numbers or function returning an array
@@ -935,6 +939,245 @@ JXG.extend(
  * @param {JXG.Point3D,array,function_JXG.Point3D,array,function_JXG.Point3D,array,function} point1,point2,point3 The plane is defined by three points.
  * @type JXG.Plane3D
  *
+ * @example
+ *     var view = board.create(
+ *         'view3d',
+ *         [[-6, -3], [8, 8],
+ *         [[-3, 3], [-3, 3], [-3, 3]]],
+ *         {
+ *             depthOrder: {
+ *                 enabled: true
+ *             },
+ *             projection: 'central',
+ *             xPlaneRear: {fillOpacity: 0.2},
+ *             yPlaneRear: {fillOpacity: 0.2},
+ *             zPlaneRear: {fillOpacity: 0.2}
+ *         }
+ *     );
+ *
+ *     var A = view.create('point3d', [-2, 0, 1], {size: 2});
+ *
+ *     // Infinite Plane by point and two directions
+ *     var plane = view.create('plane3d', [A, [1, 0, 0], [0, 1, 0], [-Infinity, Infinity], [-Infinity, Infinity]]);
+ *
+ * </pre><div id="JXG69f491ef-d7c7-4105-a962-86a588fbd23b" class="jxgbox" style="width: 300px; height: 300px;"></div>
+ * <script type="text/javascript">
+ *     (function() {
+ *         var board = JXG.JSXGraph.initBoard('JXG69f491ef-d7c7-4105-a962-86a588fbd23b',
+ *             {boundingbox: [-8, 8, 8,-8], axis: false, showcopyright: false, shownavigation: false});
+ *         var view = board.create(
+ *             'view3d',
+ *             [[-6, -3], [8, 8],
+ *             [[-3, 3], [-3, 3], [-3, 3]]],
+ *             {
+ *                 depthOrder: {
+ *                     enabled: true
+ *                 },
+ *                 projection: 'central',
+ *                 xPlaneRear: {fillOpacity: 0.2},
+ *                 yPlaneRear: {fillOpacity: 0.2},
+ *                 zPlaneRear: {fillOpacity: 0.2}
+ *             }
+ *         );
+ *
+ *         var A = view.create('point3d', [-2, 0, 1], {size: 2});
+ *
+ *         // Infinite Plane by point and two directions
+ *         var plane = view.create('plane3d', [A, [1, 0, 0], [0, 1, 0], [-Infinity, Infinity], [-Infinity, Infinity]]);
+ *
+ *     })();
+ *
+ * </script><pre>
+ *
+ * @example
+ *     var view = board.create(
+ *         'view3d',
+ *         [[-6, -3], [8, 8],
+ *         [[-3, 3], [-3, 3], [-3, 3]]],
+ *         {
+ *             depthOrder: {
+ *                 enabled: true
+ *             },
+ *             projection: 'central',
+ *             xPlaneRear: {fillOpacity: 0.2},
+ *             yPlaneRear: {fillOpacity: 0.2},
+ *             zPlaneRear: {fillOpacity: 0.2}
+ *         }
+ *     );
+ *
+ *     var A = view.create('point3d', [-2, 0, 1], {size: 2});
+ *
+ *     // Finite Plane by point and two directions
+ *     var plane1 = view.create('plane3d', [A, [1, 0, 0], [0, 1, 0], [-2, 2], [-2, 2]]);
+ *     var plane2 = view.create('plane3d', [[0, 0, -1], [1, 0, 0], [0, 1, 0], [-2, 2], [-2, 2]], {
+ *         mesh3d: { visible: true },
+ *         point: {visible: true, name: "B", fixed: false}
+ *     });
+ *
+ * </pre><div id="JXGea9dda1b-748b-4ed3-b4b3-57e310bd8141" class="jxgbox" style="width: 300px; height: 300px;"></div>
+ * <script type="text/javascript">
+ *     (function() {
+ *         var board = JXG.JSXGraph.initBoard('JXGea9dda1b-748b-4ed3-b4b3-57e310bd8141',
+ *             {boundingbox: [-8, 8, 8,-8], axis: false, showcopyright: false, shownavigation: false});
+ *         var view = board.create(
+ *             'view3d',
+ *             [[-6, -3], [8, 8],
+ *             [[-3, 3], [-3, 3], [-3, 3]]],
+ *             {
+ *                 depthOrder: {
+ *                     enabled: true
+ *                 },
+ *                 projection: 'central',
+ *                 xPlaneRear: {fillOpacity: 0.2},
+ *                 yPlaneRear: {fillOpacity: 0.2},
+ *                 zPlaneRear: {fillOpacity: 0.2}
+ *             }
+ *         );
+ *
+ *         var A = view.create('point3d', [-2, 0, 1], {size: 2});
+ *
+ *         // Finite Plane by point and two directions
+ *         var plane1 = view.create('plane3d', [A, [1, 0, 0], [0, 1, 0], [-2, 2], [-2, 2]]);
+ *         var plane2 = view.create('plane3d', [[0, 0, -1], [1, 0, 0], [0, 1, 0], [-2, 2], [-2, 2]], {
+ *             mesh3d: { visible: true },
+ *             point: {visible: true, name: "B", fixed: false}
+ *         });
+ *
+ *     })();
+ *
+ * </script><pre>
+ *
+ *
+ * @example
+ *     var view = board.create(
+ *         'view3d',
+ *         [[-6, -3], [8, 8],
+ *         [[-3, 3], [-3, 3], [-3, 3]]],
+ *         {
+ *             depthOrder: {
+ *                 enabled: true
+ *             },
+ *             projection: 'central',
+ *             xPlaneRear: {fillOpacity: 0.2},
+ *             yPlaneRear: {fillOpacity: 0.2},
+ *             zPlaneRear: {fillOpacity: 0.2}
+ *         }
+ *     );
+ *
+ *     var A = view.create('point3d', [0, 0, 1], {size: 2});
+ *     var B = view.create('point3d', [2, 2, 1], {size: 2});
+ *     var C = view.create('point3d', [-2, 0, 1], {size: 2});
+ *
+ *     // Plane by three points
+ *     var plane = view.create('plane3d', [A, B, C], {
+ *         fillColor: 'blue'
+ *     });
+ *
+ * </pre><div id="JXG139100df-3ece-4cd1-b34f-28b5b3105106" class="jxgbox" style="width: 300px; height: 300px;"></div>
+ * <script type="text/javascript">
+ *     (function() {
+ *         var board = JXG.JSXGraph.initBoard('JXG139100df-3ece-4cd1-b34f-28b5b3105106',
+ *             {boundingbox: [-8, 8, 8,-8], axis: false, showcopyright: false, shownavigation: false});
+ *         var view = board.create(
+ *             'view3d',
+ *             [[-6, -3], [8, 8],
+ *             [[-3, 3], [-3, 3], [-3, 3]]],
+ *             {
+ *                 depthOrder: {
+ *                     enabled: true
+ *                 },
+ *                 projection: 'central',
+ *                 xPlaneRear: {fillOpacity: 0.2},
+ *                 yPlaneRear: {fillOpacity: 0.2},
+ *                 zPlaneRear: {fillOpacity: 0.2}
+ *             }
+ *         );
+ *
+ *         var A = view.create('point3d', [0, 0, 1], {size: 2});
+ *         var B = view.create('point3d', [2, 2, 1], {size: 2});
+ *         var C = view.create('point3d', [-2, 0, 1], {size: 2});
+ *
+ *         // Plane by three points
+ *         var plane = view.create('plane3d', [A, B, C], {
+ *             fillColor: 'blue'
+ *         });
+ *
+ *     })();
+ *
+ * </script><pre>
+ *
+ * @example
+ *     var view = board.create(
+ *         'view3d',
+ *         [[-6, -3], [8, 8],
+ *         [[-3, 3], [-3, 3], [-3, 3]]],
+ *         {
+ *             depthOrder: {
+ *                 enabled: true
+ *             },
+ *             projection: 'central',
+ *             xPlaneRear: {fillOpacity: 0.2},
+ *             yPlaneRear: {fillOpacity: 0.2},
+ *             zPlaneRear: {fillOpacity: 0.2}
+ *         }
+ *     );
+ *
+ *     var A = view.create('point3d', [-2, 0, 1], {size: 2});
+ *
+ *     // Infinite Plane by two directions,
+ *     // range1 = range2 = [-Infinity, Infinity]
+ *     var plane1 = view.create('plane3d', [A, [1, 0, 0], [0, 1, 0]], {
+ *         fillColor: 'blue',
+ *     });
+ *
+ *     // Infinite Plane by three points,
+ *     var plane2 = view.create('plane3d', [A, [1, 0, 0], [0, 1, 0]], {
+ *         threePoints: true,
+ *         fillColor: 'red',
+ *         point2: {visible: true},
+ *         point3: {visible: true}
+ *     });
+ *
+ * </pre><div id="JXGf31b9666-0c2e-45e7-a186-ae2c07b6bdb8" class="jxgbox" style="width: 300px; height: 300px;"></div>
+ * <script type="text/javascript">
+ *     (function() {
+ *         var board = JXG.JSXGraph.initBoard('JXGf31b9666-0c2e-45e7-a186-ae2c07b6bdb8',
+ *             {boundingbox: [-8, 8, 8,-8], axis: false, showcopyright: false, shownavigation: false});
+ *         var view = board.create(
+ *             'view3d',
+ *             [[-6, -3], [8, 8],
+ *             [[-3, 3], [-3, 3], [-3, 3]]],
+ *             {
+ *                 depthOrder: {
+ *                     enabled: true
+ *                 },
+ *                 projection: 'central',
+ *                 xPlaneRear: {fillOpacity: 0.2},
+ *                 yPlaneRear: {fillOpacity: 0.2},
+ *                 zPlaneRear: {fillOpacity: 0.2}
+ *             }
+ *         );
+ *
+ *         var A = view.create('point3d', [-2, 0, 1], {size: 2});
+ *
+ *         // Infinite Plane by two directions,
+ *         // range1 = range2 = [-Infinity, Infinity]
+ *         var plane1 = view.create('plane3d', [A, [1, 0, 0], [0, 1, 0]], {
+ *             fillColor: 'blue',
+ *         });
+ *
+ *         // Infinite Plane by three points,
+ *         var plane2 = view.create('plane3d', [A, [1, 0, 0], [0, 1, 0]], {
+ *             threePoints: true,
+ *             fillColor: 'red',
+ *             point2: {visible: true},
+ *             point3: {visible: true}
+ *         });
+ *
+ *     })();
+ *
+ * </script><pre>
+ *
  */
 JXG.createPlane3D = function (board, parents, attributes) {
     var view = parents[0],
@@ -943,7 +1186,10 @@ JXG.createPlane3D = function (board, parents, attributes) {
         dir1, dir2, range1, range2,
         el, grid;
 
-    if (parents.length === 4) {
+    attr = Type.copyAttributes(attributes, board.options, 'plane3d');
+    if (parents.length === 4 &&
+        (attr.threepoints || Type.isPoint3D(parents[2]) || Type.isPoint3D(parents[3]))
+    ) {
         // Three points
         point = Type.providePoints3D(view, [parents[1]], attributes, 'plane3d', ['point1'])[0];
         point2 = Type.providePoints3D(view, [parents[2]], attributes, 'plane3d', ['point2'])[0];
@@ -972,7 +1218,6 @@ JXG.createPlane3D = function (board, parents, attributes) {
         range2 = parents[5] || [-Infinity, Infinity];
     }
 
-    attr = Type.copyAttributes(attributes, board.options, 'plane3d');
     el = new JXG.Plane3D(view, point, dir1, range1, dir2, range2, attr);
     point.addChild(el);
 
