@@ -362,9 +362,9 @@ JXG.createIntersectionCircle3D = function (board, parents, attributes) {
     } catch (e) {
         throw new Error(
             "JSXGraph: Can't create 'intersection' with parent types '" +
-            typeof parents[0] +
-            "' and '" +
             typeof parents[1] +
+            "' and '" +
+            typeof parents[2] +
             "'."
         );
     }

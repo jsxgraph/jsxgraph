@@ -433,9 +433,9 @@ JXG.createText3D = function (board, parents, attributes) {
     } else {
         throw new Error(
             "JSXGraph: Can't create text3d with parent types '" +
-                typeof parents[0] +
-                "' and '" +
                 typeof parents[1] +
+                "' and '" +
+                typeof parents[2] +
                 "'." +
                 "\nPossible parent types: [[x,y,z], text], [x,y,z, text]"
         );

@@ -911,8 +911,8 @@ JXG.extend(
 );
 
 /**
- * @class A 3D plane defined either by a point and two linearly independent vectors, or by three points.
- * In the first case, the parameters are a 3D point (or a coordinate array) and two vectors.
+ * @class A 3D plane is defined either by a point and two linearly independent vectors, or by three points.
+ * In the first case, the parameters are a 3D point (or a coordinate array) and two vectors (arrays).
  * In the second case, the parameters consist of three 3D points (given as points or coordinate arrays).
  * In order to distinguish the two cases, in the latter case, the additional attribute 'threePoints:true' has to be supplied.
  * All coordinate arrays can be supplied as functions returning a coordinate array.
@@ -921,26 +921,56 @@ JXG.extend(
  * @name  Plane3D
  * @augments JXG.GeometryElement3D
  * @constructor
+ * @throws {Exception} If the element cannot be constructed with the given parent
+ * objects an exception is thrown.
+ *
+ * @param {JXG.Point3D,array,function_array,function_array,function_array,function_array,function} point,direction1,direction2,range1,range2 The plane is defined by point, direction1, direction2, range1, and range2.
+ * <ul>
+ * <li> point: Point3D or array of length 3
+ * <li> direction1: array of length 3 or function returning an array of numbers or function returning an array
+ * <li> direction2: array of length 3 or function returning an array of numbers or function returning an array
+ * <li> range1: array of length 2, elements can also be functions. Use [-Infinity, Infinity] for infinite lines.
+ * <li> range2: array of length 2, elements can also be functions. Use [-Infinity, Infinity] for infinite lines.
+ * </ul>
+ * @param {JXG.Point3D,array,function_JXG.Point3D,array,function_JXG.Point3D,array,function} point1,point2,point3 The plane is defined by three points.
  * @type JXG.Plane3D
- * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
  *
  */
 JXG.createPlane3D = function (board, parents, attributes) {
     var view = parents[0],
         attr,
-        point,
+        point, point2, point3,
         dir1, dir2, range1, range2,
         el, grid;
 
-    point = Type.providePoints3D(view, [parents[1]], attributes, 'plane3d', ['point'])[0];
-    if (point === false) {
-        // TODO Throw error
-    }
+    if (parents.length === 4) {
+        // Three points
+        point = Type.providePoints3D(view, [parents[1]], attributes, 'plane3d', ['point1'])[0];
+        point2 = Type.providePoints3D(view, [parents[2]], attributes, 'plane3d', ['point2'])[0];
+        point3 = Type.providePoints3D(view, [parents[3]], attributes, 'plane3d', ['point3'])[0];
+        dir1 = function() {
+            return [point2.X() - point.X(), point2.Y() - point.Y(), point2.Z() - point.Z()];
+        };
+        dir2 = function() {
+            return [point3.X() - point.X(), point3.Y() - point.Y(), point3.Z() - point.Z()];
+        };
+        range1 = [-Infinity, Infinity];
+        range2 = [-Infinity, Infinity];
+    } else {
+        point = Type.providePoints3D(view, [parents[1]], attributes, 'plane3d', ['point'])[0];
+        if (point === false) {
+            throw new Error(
+                "JSXGraph: Can't create plane3d with first parent of type '" + typeof parents[1] +
+                    "'." +
+                    "\nPossible first parent types are: point3d, array of length 3, function returning an array of length 3."
+            );
+        }
 
-    dir1 = parents[2];
-    dir2 = parents[3];
-    range1 = parents[4] || [-Infinity, Infinity];
-    range2 = parents[5] || [-Infinity, Infinity];
+        dir1 = parents[2];
+        dir2 = parents[3];
+        range1 = parents[4] || [-Infinity, Infinity];
+        range2 = parents[5] || [-Infinity, Infinity];
+    }
 
     attr = Type.copyAttributes(attributes, board.options, 'plane3d');
     el = new JXG.Plane3D(view, point, dir1, range1, dir2, range2, attr);
@@ -982,7 +1012,6 @@ JXG.createPlane3D = function (board, parents, attributes) {
         el.inherits.push(grid);
         grid.setParents(el);
         el.grid.view = view;
-
     }
 
     el.element2D.prepareUpdate().update();
@@ -1087,9 +1116,9 @@ JXG.createIntersectionLine3D = function (board, parents, attributes) {
     } catch (_e) {
         throw new Error(
             "JSXGraph: Can't create 'intersection' with parent types '" +
-            typeof parents[0] +
-            "' and '" +
             typeof parents[1] +
+            "' and '" +
+            typeof parents[2] +
             "'."
         );
     }

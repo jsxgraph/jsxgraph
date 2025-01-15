@@ -518,9 +518,9 @@ JXG.createPoint3D = function (board, parents, attributes) {
     } else {
         throw new Error(
             "JSXGraph: Can't create point3d with parent types '" +
-                typeof parents[0] +
-                "' and '" +
                 typeof parents[1] +
+                "' and '" +
+                typeof parents[2] +
                 "'." +
                 "\nPossible parent types: [[x,y,z]], [x,y,z], or [[x,y,z], slide], () => [x, y, z]"
         );
