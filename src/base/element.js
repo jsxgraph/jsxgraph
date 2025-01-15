@@ -1601,7 +1601,7 @@ JXG.extend(
                     return val(this.visProp.anchor);
                 }
                 // For 2D elements representing 3D elements, return the 3D element.
-                if (this.visProp.element3d !== null) {
+                if (JXG.exists(this.visProp.element3d)) {
                     return val(this.visProp.element3d);
                 }
                 // In all other cases, return the element itself
