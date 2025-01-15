@@ -542,8 +542,6 @@ JXG.extend(Options, {
          * @visprop
          */
 
-        threePoints: false,
-
         layer: 12,
         strokeWidth: 0,
         strokeColor: "black",

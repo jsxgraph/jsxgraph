@@ -928,11 +928,11 @@ JXG.extend(
  * @throws {Exception} If the element cannot be constructed with the given parent
  * objects an exception is thrown.
  *
- * @param {JXG.Point3D,array,function_array,function_array,function_array,function_array,function} point,direction1,direction2,[range1],[range2] The plane is defined by point, direction1, direction2, range1, and range2.
+ * @param {JXG.Point3D,array,function_JXG.Line3D,array,function_JXG.Line3D,array,function_array,function_array,function} point,direction1,direction2,[range1],[range2] The plane is defined by point, direction1, direction2, range1, and range2.
  * <ul>
  * <li> point: Point3D or array of length 3
- * <li> direction1: array of length 3 or function returning an array of numbers or function returning an array
- * <li> direction2: array of length 3 or function returning an array of numbers or function returning an array
+ * <li> direction1: line3d element or array of length 3 or function returning an array of numbers or function returning an array
+ * <li> direction2: line3d element or array of length 3 or function returning an array of numbers or function returning an array
  * <li> range1: array of length 2, elements can also be functions. Use [-Infinity, Infinity] for infinite lines.
  * <li> range2: array of length 2, elements can also be functions. Use [-Infinity, Infinity] for infinite lines.
  * </ul>
@@ -1046,7 +1046,65 @@ JXG.extend(
  *     })();
  *
  * </script><pre>
+ * @example
+ *             var view = board.create(
+ *                 'view3d',
+ *                 [[-6, -3], [8, 8],
+ *                 [[-3, 3], [-3, 3], [-3, 3]]],
+ *                 {
+ *                     depthOrder: {
+ *                         enabled: true
+ *                     },
+ *                     projection: 'central',
+ *                     xPlaneRear: { visible: false, fillOpacity: 0.2 },
+ *                     yPlaneRear: { visible: false, fillOpacity: 0.2 },
+ *                     zPlaneRear: { fillOpacity: 0.2 }
+ *                 }
+ *             );
  *
+ *             var A = view.create('point3d', [-2, 0, 1], { size: 2 });
+ *
+ *             var line1 = view.create('line3d', [A, [0, 0, 1], [-Infinity, Infinity]], { strokeColor: 'blue' });
+ *             var line2 = view.create('line3d', [A, [1, 1, 0], [-Infinity, Infinity]], { strokeColor: 'blue' });
+ *
+ *             // Plane by point and two lines
+ *             var plane2 = view.create('plane3d', [A, line1, line2], {
+ *                 fillColor: 'blue'
+ *             });
+ *
+ * </pre><div id="JXG8bc6e266-e27c-4ffa-86a2-8076f4069573" class="jxgbox" style="width: 300px; height: 300px;"></div>
+ * <script type="text/javascript">
+ *     (function() {
+ *         var board = JXG.JSXGraph.initBoard('JXG8bc6e266-e27c-4ffa-86a2-8076f4069573',
+ *             {boundingbox: [-8, 8, 8,-8], axis: false, showcopyright: false, shownavigation: false});
+ *                 var view = board.create(
+ *                     'view3d',
+ *                     [[-6, -3], [8, 8],
+ *                     [[-3, 3], [-3, 3], [-3, 3]]],
+ *                     {
+ *                         depthOrder: {
+ *                             enabled: true
+ *                         },
+ *                         projection: 'central',
+ *                         xPlaneRear: { visible: false, fillOpacity: 0.2 },
+ *                         yPlaneRear: { visible: false, fillOpacity: 0.2 },
+ *                         zPlaneRear: { fillOpacity: 0.2 }
+ *                     }
+ *                 );
+ *
+ *                 var A = view.create('point3d', [-2, 0, 1], { size: 2 });
+ *
+ *                 var line1 = view.create('line3d', [A, [0, 0, 1], [-Infinity, Infinity]], { strokeColor: 'blue' });
+ *                 var line2 = view.create('line3d', [A, [1, 1, 0], [-Infinity, Infinity]], { strokeColor: 'blue' });
+ *
+ *                 // Plane by point and two lines
+ *                 var plane2 = view.create('plane3d', [A, line1, line2], {
+ *                     fillColor: 'blue'
+ *                 });
+ *
+ *     })();
+ *
+ * </script><pre>
  *
  * @example
  *     var view = board.create(
@@ -1212,8 +1270,18 @@ JXG.createPlane3D = function (board, parents, attributes) {
             );
         }
 
-        dir1 = parents[2];
-        dir2 = parents[3];
+        if (Type.exists(parents[2].view) && parents[2].type === Const.OBJECT_TYPE_LINE3D) {
+            dir1 = function() {
+                return Type.evaluate(parents[2].direction).slice(1);
+            };
+        } else {
+            dir1 = parents[2];
+        }
+        if (Type.exists(parents[3].view) && parents[3].type === Const.OBJECT_TYPE_LINE3D) {
+            dir2 = function() { return Type.evaluate(parents[3].direction).slice(1); };
+        } else {
+            dir2 = parents[3];
+        }
         range1 = parents[4] || [-Infinity, Infinity];
         range2 = parents[5] || [-Infinity, Infinity];
     }
