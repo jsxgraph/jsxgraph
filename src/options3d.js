@@ -692,6 +692,7 @@ JXG.extend(Options, {
          *          start: 1.0
          *      },
          * }</pre>
+         *
          * @example
          *     var bound = [-4, 6];
          *     var view = board.create('view3d',
