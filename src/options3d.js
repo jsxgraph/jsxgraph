@@ -489,7 +489,32 @@ JXG.extend(Options, {
          * @name Line3D#point2
          * @default <pre>visible: false, name: ""</pre>
          */
-        point2: { visible: false, name: "" }
+        point2: { visible: false, name: "" },
+
+        /**
+         * If the 3D line is defined by two points and if this attribute is true,
+         * the 3D line stretches infinitely in direction of its first point.
+         * Otherwise it ends at point1.
+         *
+         * @name Line3D#straightFirst
+         * @see Line3D#straightLast
+         * @type Boolean
+         * @default false
+         */
+        straightFirst: false,
+
+
+        /**
+         * If the 3D line is defined by two points and if this attribute is true,
+         * the 3D line stretches infinitely in direction of its second point.
+         * Otherwise it ends at point2.
+         *
+         * @name Line3D#straightLast
+         * @see Line3D#straightFirst
+         * @type Boolean
+         * @default false
+         */
+        straightLast: false
 
         /**#@-*/
     },
