@@ -3804,9 +3804,9 @@ JXG.extend(
         },
 
         /**
-         * Given a the coordinates of a point, finds the nearest point on the given
+         * Given the 2D screen coordinates of a point, finds the nearest point on the given
          * parametric curve or surface, and returns its view-space coordinates.
-         * @param {Array} pScr Screen coordinates to project.
+         * @param {Array} p 3D coordinates for which the closest point on the curve point is searched.
          * @param {JXG.Curve3D|JXG.Surface3D} target Parametric curve or surface to project to.
          * @param {Array} params Parameters of point on the target, initially specifying the starting point of
          * the search. The parameters are modified in place during the search, ending up at the nearest point.
@@ -3815,12 +3815,12 @@ JXG.extend(
         projectCoordsToParametric: function (p, target, params) {
             // The variables and parameters for the Cobyla constrained
             // minimization algorithm are explained in the Cobyla.js comments
-            var rhobeg, // initial size of simplex (Cobyla)
-                rhoend, // finial size of simplex (Cobyla)
-                iprint = 0, // no console output (Cobyla)
-                maxfun = 200, // call objective function at most 200 times (Cobyla)
-                dim = params.length,
-                _minFunc; // objective function (Cobyla)
+            var rhobeg,                // initial size of simplex (Cobyla)
+                rhoend,                // finial size of simplex (Cobyla)
+                iprint = 0,            // no console output (Cobyla)
+                maxfun = 200,          // call objective function at most 200 times (Cobyla)
+                dim = params.length,   // Distinguish curves and surfaces
+                _minFunc;              // Objective function for Cobyla
 
             // adapt simplex size to parameter range
             if (dim === 1) {
@@ -3835,28 +3835,26 @@ JXG.extend(
 
             // minimize screen distance to cursor
             _minFunc = function (n, m, w, con) {
-                // var xDiff = p[0] - target.X(...w),
-                //     yDiff = p[1] - target.Y(...w),
-                //     zDiff = p[2] - target.Z(...w);
-                var xDiff = p[0] - target.X.apply(null, w),
-                    yDiff = p[1] - target.Y.apply(null, w),
-                    zDiff = p[2] - target.Z.apply(null, w);
+                var xDiff = p[0] - target.X.apply(target, w),
+                    yDiff = p[1] - target.Y.apply(target, w),
+                    zDiff = p[2] - target.Z.apply(target, w);
 
                 if (n === 1) {
                     con[0] = w[0] - target.range[0];
                     con[1] = -w[0] + target.range[1];
+                    // con[0] = con[1] = 0;
                 } else if (n === 2) {
                     con[0] = w[0] - target.range_u[0];
                     con[1] = -w[0] + target.range_u[1];
                     con[2] = w[1] - target.range_v[0];
                     con[3] = -w[1] + target.range_v[1];
+                    // con[0] = con[1] = con[2] = con[3] = 0;
                 }
                 return xDiff * xDiff + yDiff * yDiff + zDiff * zDiff;
             };
             Mat.Nlp.FindMinimum(_minFunc, dim, 2 * dim, params, rhobeg, rhoend, iprint, maxfun);
 
-            // return [1, target.X(...params), target.Y(...params), target.Z(...params)];
-            return [1, target.X.apply(null, params), target.Y.apply(null, params), target.Z.apply(null, params)];
+            return [1, target.X.apply(target, params), target.Y.apply(target, params), target.Z.apply(target, params)];
         },
 
         /**
@@ -3892,22 +3890,15 @@ JXG.extend(
 
             // minimize screen distance to cursor
             _minFunc = function (n, m, w, con) {
-                // var c3d = [
-                //         1,
-                //         target.X(...w),
-                //         target.Y(...w),
-                //         target.Z(...w)
-                //     ],
                 var c3d = [
                     1,
                     target.X.apply(target, w),
                     target.Y.apply(target, w),
                     target.Z.apply(target, w)
                 ],
-                    c2d = target.view.project3DTo2D(c3d),
-                    // c2d = this.view.project3DTo2D(c3d),
-                    xDiff = pScr[0] - c2d[1],
-                    yDiff = pScr[1] - c2d[2];
+                c2d = target.view.project3DTo2D(c3d),
+                xDiff = pScr[0] - c2d[1],
+                yDiff = pScr[1] - c2d[2];
 
                 if (n === 1) {
                     con[0] = w[0] - target.range[0];
@@ -3924,7 +3915,6 @@ JXG.extend(
 
             Mat.Nlp.FindMinimum(_minFunc, dim, 2 * dim, params, rhobeg, rhoend, iprint, maxfun);
 
-            // return [1, target.X(...params), target.Y(...params), target.Z(...params)];
             return [1, target.X.apply(target, params), target.Y.apply(target, params), target.Z.apply(target, params)];
         },
 

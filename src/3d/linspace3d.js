@@ -651,13 +651,13 @@ JXG.registerElement('line3d', JXG.createLine3D);
  * @param {View3D} view
  * @param {Point3D|Array} point
  * @param {Array} direction1
- * @param {Array} range1
+ * @param {Array} range_u
  * @param {Array} direction2
- * @param {Array} range2
+ * @param {Array} range_v
  * @param {Object} attributes
  * @see JXG.Board#generateName
  */
-JXG.Plane3D = function (view, point, dir1, range1, dir2, range2, attributes) {
+JXG.Plane3D = function (view, point, dir1, range_u, dir2, range_v, attributes) {
     this.constructor(view.board, attributes, Const.OBJECT_TYPE_PLANE3D, Const.OBJECT_CLASS_3D);
     this.constructor3D(view, 'plane3d');
 
@@ -698,13 +698,13 @@ JXG.Plane3D = function (view, point, dir1, range1, dir2, range2, attributes) {
      * Range [r1, r2] of {@link direction1}. The 3D line goes from (point + r1 * direction1) to (point + r2 * direction1)
      * @type {Array}
      */
-    this.range1 = range1 || [-Infinity, Infinity];
+    this.range_u = range_u || [-Infinity, Infinity];
 
     /**
      * Range [r1, r2] of {@link direction2}. The 3D line goes from (point + r1 * direction2) to (point + r2 * direction2)
      * @type {Array}
      */
-    this.range2 = range2 || [-Infinity, Infinity];
+    this.range_v = range_v || [-Infinity, Infinity];
 
     /**
      * Spanning vector 1 of the 3D plane. Contains the evaluated coordinates from {@link direction1} and {@link range1}.
@@ -761,6 +761,38 @@ Type.copyPrototypeMethods(JXG.Plane3D, JXG.GeometryElement3D, 'constructor3D');
 JXG.extend(
     JXG.Plane3D.prototype,
     /** @lends JXG.Plane3D.prototype */ {
+
+        F: function (u, v) {
+            var i, v1, v2, l1, l2;
+
+            v1 = this.vec1.slice();
+            v2 = this.vec2.slice();
+            l1 = Mat.norm(v1, 3);
+            l2 = Mat.norm(v2, 3);
+            for (i = 0; i < 3; i++) {
+                v1[i] /= l1;
+                v2[i] /= l2;
+            }
+
+            return [
+                this.point.X() + u * v1[0] + v * v2[0],
+                this.point.Y() + u * v1[1] + v * v2[1],
+                this.point.Z() + u * v1[2] + v * v2[2]
+            ];
+        },
+
+        X: function(u, v) {
+            return this.F(u, v)[0];
+        },
+
+        Y: function(u, v) {
+            return this.F(u, v)[1];
+        },
+
+        Z: function(u, v) {
+            return this.F(u, v)[2];
+        },
+
         /**
          * Update the Hesse normal form of the plane, i.e. update normal vector and right hand side.
          * Updates also {@link vec1} and {@link vec2}.
@@ -824,10 +856,10 @@ JXG.extend(
             if (
                 this.elType !== 'axisplane3d' &&
                 view.defaultAxes &&
-                Type.evaluate(this.range1[0]) === -Infinity &&
-                Type.evaluate(this.range1[1]) === Infinity &&
-                Type.evaluate(this.range2[0]) === -Infinity &&
-                Type.evaluate(this.range2[1]) === Infinity
+                Type.evaluate(this.range_u[0]) === -Infinity &&
+                Type.evaluate(this.range_u[1]) === Infinity &&
+                Type.evaluate(this.range_v[0]) === -Infinity &&
+                Type.evaluate(this.range_v[1]) === Infinity
             ) {
                 // Determine the intersections of the new plane with
                 // the view bbox3d.
@@ -931,10 +963,10 @@ JXG.extend(
                 this.dataY.push(c2d[2]);
             } else {
                 // 3D bounded flat
-                s1 = Type.evaluate(this.range1[0]);
-                e1 = Type.evaluate(this.range1[1]);
-                s2 = Type.evaluate(this.range2[0]);
-                e2 = Type.evaluate(this.range2[1]);
+                s1 = Type.evaluate(this.range_u[0]);
+                e1 = Type.evaluate(this.range_u[1]);
+                s2 = Type.evaluate(this.range_v[0]);
+                e2 = Type.evaluate(this.range_v[1]);
 
                 q = this.point.coords.slice(1);
 
@@ -986,7 +1018,22 @@ JXG.extend(
         updateRenderer: function () {
             this.needsUpdate = false;
             return this;
+        },
+
+        initParamsIfNeeded: function (params) {
+            if (params.length === 0) {
+                params.unshift(
+                    0.5 * (this.range_u[0] + this.range_u[1]),
+                    0.5 * (this.range_v[0] + this.range_v[1])
+                );
+            }
+        },
+
+        projectCoords: function (p, params) {
+            this.initParamsIfNeeded(params);
+            return Geometry.projectCoordsToParametric(p, this, params);
         }
+
     }
 );
 
@@ -1324,7 +1371,7 @@ JXG.createPlane3D = function (board, parents, attributes) {
     var view = parents[0],
         attr,
         point, point2, point3,
-        dir1, dir2, range1, range2,
+        dir1, dir2, range_u, range_v,
         el, grid;
 
     attr = Type.copyAttributes(attributes, board.options, 'plane3d');
@@ -1341,8 +1388,8 @@ JXG.createPlane3D = function (board, parents, attributes) {
         dir2 = function() {
             return [point3.X() - point.X(), point3.Y() - point.Y(), point3.Z() - point.Z()];
         };
-        range1 = [-Infinity, Infinity];
-        range2 = [-Infinity, Infinity];
+        range_u = [-Infinity, Infinity];
+        range_v = [-Infinity, Infinity];
     } else {
         point = Type.providePoints3D(view, [parents[1]], attributes, 'plane3d', ['point'])[0];
         if (point === false) {
@@ -1365,8 +1412,8 @@ JXG.createPlane3D = function (board, parents, attributes) {
         } else {
             dir2 = parents[3];
         }
-        range1 = parents[4] || [-Infinity, Infinity];
-        range2 = parents[5] || [-Infinity, Infinity];
+        range_u = parents[4] || [-Infinity, Infinity];
+        range_v = parents[5] || [-Infinity, Infinity];
 
         if (parents.length < 6) {
             throw new Error(
@@ -1380,7 +1427,7 @@ JXG.createPlane3D = function (board, parents, attributes) {
         }
     }
 
-    el = new JXG.Plane3D(view, point, dir1, range1, dir2, range2, attr);
+    el = new JXG.Plane3D(view, point, dir1, range_u, dir2, range_v, attr);
     point.addChild(el);
 
     attr = el.setAttr2D(attr);
@@ -1402,16 +1449,16 @@ JXG.createPlane3D = function (board, parents, attributes) {
 
     attr = Type.copyAttributes(attributes.mesh3d, board.options, 'mesh3d');
     if (
-        Math.abs(el.range1[0]) !== Infinity &&
-        Math.abs(el.range1[1]) !== Infinity &&
-        Math.abs(el.range2[0]) !== Infinity &&
-        Math.abs(el.range2[1]) !== Infinity
+        Math.abs(el.range_u[0]) !== Infinity &&
+        Math.abs(el.range_u[1]) !== Infinity &&
+        Math.abs(el.range_v[0]) !== Infinity &&
+        Math.abs(el.range_v[1]) !== Infinity
     ) {
         grid = view.create('mesh3d', [
             function () {
                 return point.coords;
             },
-            dir1, range1, dir2, range2
+            dir1, range_u, dir2, range_v
         ], attr
         );
         el.grid = grid;
