@@ -221,7 +221,7 @@ JXG.extend(
             // we have to call `this.curve.projectCoords`, i.e. the curve's projectCoords rather
             // than the circle's, to make `this` refer to the curve within the
             // call.
-            return this.curve.projectCoords(p, params);
+            return this.curve.projectCoords(p, params, true);
         },
 
         projectScreenCoords: function (pScr, params) {

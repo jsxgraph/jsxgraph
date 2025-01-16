@@ -151,15 +151,15 @@ JXG.extend(
         initParamsIfNeeded: function (params) {
             if (params.length === 0) {
                 params.unshift(
-                    0.5 * (this.range_u[0] + this.range_u[1]),
-                    0.5 * (this.range_v[0] + this.range_v[1])
+                    0.5 * (Type.evaluate(this.range_u[0]) + Type.evaluate(this.range_u[1])),
+                    0.5 * (Type.evaluate(this.range_v[0]) + Type.evaluate(this.range_v[1]))
                 );
             }
         },
 
         projectCoords: function (p, params) {
             this.initParamsIfNeeded(params);
-            return Geometry.projectCoordsToParametric(p, this, params);
+            return Geometry.projectCoordsToParametric(p, this, params, true);
         },
 
         projectScreenCoords: function (pScr, params) {

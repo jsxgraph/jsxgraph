@@ -173,9 +173,9 @@ JXG.extend(
             }
         },
 
-        projectCoords: function (p, params) {
+        projectCoords: function (p, params, isCyclic) {
             this.initParamsIfNeeded(params);
-            return Geometry.projectCoordsToParametric(p, this, params);
+            return Geometry.projectCoordsToParametric(p, this, params, isCyclic);
         },
 
         projectScreenCoords: function (pScr, params) {
