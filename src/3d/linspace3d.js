@@ -397,6 +397,7 @@ JXG.extend(
  * var A = view.create('point3d', [-2, 0, 1], { size: 2 });
  * var B = view.create('point3d', [-2, 0, 2], { size: 2 });
  * var line1 = view.create('line3d', [A, B], {
+ *     fixed: false,
  *     strokeColor: 'blue',
  *     straightFirst: true,
  *     straightLast: true
@@ -429,6 +430,7 @@ JXG.extend(
  *                 var A = view.create('point3d', [-2, 0, 1], { size: 2 });
  *                 var B = view.create('point3d', [-2, 0, 2], { size: 2 });
  *                 var line1 = view.create('line3d', [A, B], {
+ *                     fixed: false,
  *                     strokeColor: 'blue',
  *                     straightFirst: true,
  *                     straightLast: true
