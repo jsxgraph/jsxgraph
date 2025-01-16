@@ -348,7 +348,7 @@ JXG.extend(
             this.element2D.view = this.view;
         },
 
-        projectCoords: function(p) {
+        projectCoords: function(p, params) {
             var r = this.Radius(),
                 pp = [1].concat(p),
                 c = this.center.coords,
@@ -357,24 +357,29 @@ JXG.extend(
 
             if (d === 0) {
                 // p is at the center, take an arbitrary point on sphere
-                return [1, r, 0, 0, 0];
+                params[0] = 0;
+                params[1] = 0;
+                return [1, r, 0, 0];
             }
             if (r === 0) {
+                params[0] = 0;
+                params[1] = 0;
                 return this.center.coords;
             }
+
             d = r / d;
             return [1, v[1] * d, v[2] * d, v[3] * d];
-        },
-
-        projectScreenCoords: function (pScr, params) {
-            if (params.length === 0) {
-                params.unshift(
-                    0.5 * (this.range_u[0] + this.range_u[1]),
-                    0.5 * (this.range_v[0] + this.range_v[1])
-                );
-            }
-            return Geometry.projectScreenCoordsToParametric(pScr, this, params);
         }
+
+        // projectScreenCoords: function (pScr, params) {
+        //     if (params.length === 0) {
+        //         params.unshift(
+        //             0.5 * (this.range_u[0] + this.range_u[1]),
+        //             0.5 * (this.range_v[0] + this.range_v[1])
+        //         );
+        //     }
+        //     return Geometry.projectScreenCoordsToParametric(pScr, this, params);
+        // }
     }
 );
 

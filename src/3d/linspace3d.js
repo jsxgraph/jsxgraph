@@ -177,7 +177,7 @@ JXG.extend(
          * @param {Array} p
          * @returns {Array} 3D coordinates of the projected point
          */
-        projectCoords: function (p) {
+        projectCoords: function (p, params) {
             var p0_coords = this.getPointCoords(0),
                 p1_coords = this.getPointCoords(1),
                 dir = [
@@ -196,15 +196,17 @@ JXG.extend(
 
             c3d = this.getPointCoords(t_clamped).slice();
             c3d.unshift(1);
+            params[0] = t_clamped;
+
             return c3d;
         },
 
-        projectScreenCoords: function (pScr) {
-            var end0 = this.getPointCoords(0),
-                end1 = this.getPointCoords(1);
+        // projectScreenCoords: function (pScr) {
+        //     var end0 = this.getPointCoords(0),
+        //         end1 = this.getPointCoords(1);
 
-            return this.view.projectScreenToSegment(pScr, end0, end1);
-        },
+        //     return this.view.projectScreenToSegment(pScr, end0, end1);
+        // },
 
         updateZIndex: function() {
             var p1 = this.endpoints[0],
@@ -1020,18 +1022,8 @@ JXG.extend(
             return this;
         },
 
-        initParamsIfNeeded: function (params) {
-            if (params.length === 0) {
-                params.unshift(
-                    0.5 * (this.range_u[0] + this.range_u[1]),
-                    0.5 * (this.range_v[0] + this.range_v[1])
-                );
-            }
-        },
-
         projectCoords: function (p, params) {
-            this.initParamsIfNeeded(params);
-            return Geometry.projectCoordsToParametric(p, this, params);
+            return Geometry.projectCoordsToParametric(p, this, 2, params);
         }
 
     }

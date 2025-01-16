@@ -3803,39 +3803,39 @@ JXG.extend(
             return coords;
         },
 
+        _paramsOutOfRange: function(params, r_u, r_v) {
+            return params[0] < r_u[0] || params[0] > r_u[1] ||
+                (params.length > 1 && (params[1] < r_v[0] || params[1] > r_v[1]));
+        },
+
         /**
          * Given the 2D screen coordinates of a point, finds the nearest point on the given
          * parametric curve or surface, and returns its view-space coordinates.
          * @param {Array} p 3D coordinates for which the closest point on the curve point is searched.
          * @param {JXG.Curve3D|JXG.Surface3D} target Parametric curve or surface to project to.
-         * @param {Array} params Parameters of point on the target, initially specifying the starting point of
-         * the search. The parameters are modified in place during the search, ending up at the nearest point.
+         * @param {Array} params Parameters of point on the target, The parameters are modified in place during the search,
+         * ending up at the nearest point. Usually, this should be the point.position object.
          * @returns {Array} Array of length 4 containing the coordinates of the nearest point on the curve or surface.
          */
-        projectCoordsToParametric: function (p, target, params, isCyclic) {
+        projectCoordsToParametric: function (p, target, n, params) {
             // The variables and parameters for the Cobyla constrained
             // minimization algorithm are explained in the Cobyla.js comments
             var rhobeg,                // initial size of simplex (Cobyla)
                 rhoend,                // finial size of simplex (Cobyla)
                 iprint = 0,            // no console output (Cobyla)
                 maxfun = 200,          // call objective function at most 200 times (Cobyla)
-                dim = params.length,   // Distinguish curves and surfaces
                 _minFunc,              // Objective function for Cobyla
-                r_u, r_v, // d_u, d_v,
-                n = dim,
-                m = (isCyclic) ?  0 :  2 * dim;
+                r_u, r_v,
+                m = 2 * n;
 
             // adapt simplex size to parameter range
-            if (dim === 1) {
+            if (n === 1) {
                 r_u = [Type.evaluate(target.range[0]), Type.evaluate(target.range[1])];
-                // d_u = r_u[1] - r_u[0];
 
                 rhobeg = 0.1 * (r_u[1] - r_u[0]);
-            } else if (dim === 2) {
+            } else if (n === 2) {
                 r_u = [Type.evaluate(target.range_u[0]), Type.evaluate(target.range_u[1])];
                 r_v = [Type.evaluate(target.range_v[0]), Type.evaluate(target.range_v[1])];
-                // d_u = r_u[1] - r_u[0];
-                // d_v = r_v[1] - r_v[0];
 
                 rhobeg = 0.1 * Math.min(
                     r_u[1] - r_u[0],
@@ -3850,84 +3850,96 @@ JXG.extend(
                     yDiff = p[1] - target.Y.apply(target, w),
                     zDiff = p[2] - target.Z.apply(target, w);
 
-                if (n === 1) {
+                if (m === 2) {
                     con[0] =  w[0] - r_u[0];
                     con[1] = -w[0] + r_u[1];
-                    // con[0] = con[1] = 0;
-                } else if (n === 2) {
+                } else if (m === 4) {
                     con[0] =  w[0] - r_u[0];
                     con[1] = -w[0] + r_u[1];
                     con[2] =  w[1] - r_v[0];
                     con[3] = -w[1] + r_v[1];
-                    // con[0] = con[1] = con[2] = con[3] = 0;
                 }
                 return xDiff * xDiff + yDiff * yDiff + zDiff * zDiff;
             };
-            Mat.Nlp.FindMinimum(_minFunc, n, m, params, rhobeg, rhoend, iprint, maxfun);
 
-            return [1, target.X.apply(target, params), target.Y.apply(target, params), target.Z.apply(target, params)];
-        },
-
-        /**
-         * Given a the screen coordinates of a point, finds the point on the
-         * given parametric curve or surface which is nearest in screen space,
-         * and returns its view-space coordinates.
-         * @param {Array} pScr Screen coordinates to project.
-         * @param {JXG.Curve3D|JXG.Surface3D} target Parametric curve or surface to project to.
-         * @param {Array} params Parameters of point on the target, initially specifying the starting point of
-         * the search. The parameters are modified in place during the search, ending up at the nearest point.
-         * @returns {Array} Array of length 4 containing the coordinates of the nearest point on the curve or surface.
-         */
-        projectScreenCoordsToParametric: function (pScr, target, params) {
-            // The variables and parameters for the Cobyla constrained
-            // minimization algorithm are explained in the Cobyla.js comments
-            var rhobeg, // initial size of simplex (Cobyla)
-                rhoend, // finial size of simplex (Cobyla)
-                iprint = 0, // no console output (Cobyla)
-                maxfun = 200, // call objective function at most 200 times (Cobyla)
-                dim = params.length,
-                _minFunc; // objective function (Cobyla)
-
-            // adapt simplex size to parameter range
-            if (dim === 1) {
-                rhobeg = 0.1 * (target.range[1] - target.range[0]);
-            } else if (dim === 2) {
-                rhobeg = 0.1 * Math.min(
-                    target.range_u[1] - target.range_u[0],
-                    target.range_v[1] - target.range_v[0]
-                );
+            // Set the start values
+            params[0] = 0.5 * (r_u[0] + r_u[1]);
+            if (n === 2) {
+                params[1] = 0.5 * (r_v[0] + r_v[1]);
             }
-            rhoend = rhobeg / 5e6;
-
-            // minimize screen distance to cursor
-            _minFunc = function (n, m, w, con) {
-                var c3d = [
-                    1,
-                    target.X.apply(target, w),
-                    target.Y.apply(target, w),
-                    target.Z.apply(target, w)
-                ],
-                c2d = target.view.project3DTo2D(c3d),
-                xDiff = pScr[0] - c2d[1],
-                yDiff = pScr[1] - c2d[2];
-
-                if (n === 1) {
-                    con[0] = w[0] - target.range[0];
-                    con[1] = -w[0] + target.range[1];
-                } else if (n === 2) {
-                    con[0] = w[0] - target.range_u[0];
-                    con[1] = -w[0] + target.range_u[1];
-                    con[2] = w[1] - target.range_v[0];
-                    con[3] = -w[1] + target.range_v[1];
+            Mat.Nlp.FindMinimum(_minFunc, n, 0, params, rhobeg, rhoend, iprint, maxfun);
+            if (this._paramsOutOfRange(params, r_u, r_v)) {
+                // Set the start values again
+                params[0] = 0.5 * (r_u[0] + r_u[1]);
+                if (n === 2) {
+                    params[1] = 0.5 * (r_v[0] + r_v[1]);
                 }
-
-                return xDiff * xDiff + yDiff * yDiff;
-            };
-
-            Mat.Nlp.FindMinimum(_minFunc, dim, 2 * dim, params, rhobeg, rhoend, iprint, maxfun);
+                Mat.Nlp.FindMinimum(_minFunc, n, m, params, rhobeg, rhoend, iprint, maxfun);
+            }
 
             return [1, target.X.apply(target, params), target.Y.apply(target, params), target.Z.apply(target, params)];
         },
+
+        // /**
+        //  * Given a the screen coordinates of a point, finds the point on the
+        //  * given parametric curve or surface which is nearest in screen space,
+        //  * and returns its view-space coordinates.
+        //  * @param {Array} pScr Screen coordinates to project.
+        //  * @param {JXG.Curve3D|JXG.Surface3D} target Parametric curve or surface to project to.
+        //  * @param {Array} params Parameters of point on the target, initially specifying the starting point of
+        //  * the search. The parameters are modified in place during the search, ending up at the nearest point.
+        //  * @returns {Array} Array of length 4 containing the coordinates of the nearest point on the curve or surface.
+        //  */
+        // projectScreenCoordsToParametric: function (pScr, target, params) {
+        //     // The variables and parameters for the Cobyla constrained
+        //     // minimization algorithm are explained in the Cobyla.js comments
+        //     var rhobeg, // initial size of simplex (Cobyla)
+        //         rhoend, // finial size of simplex (Cobyla)
+        //         iprint = 0, // no console output (Cobyla)
+        //         maxfun = 200, // call objective function at most 200 times (Cobyla)
+        //         dim = params.length,
+        //         _minFunc; // objective function (Cobyla)
+
+        //     // adapt simplex size to parameter range
+        //     if (dim === 1) {
+        //         rhobeg = 0.1 * (target.range[1] - target.range[0]);
+        //     } else if (dim === 2) {
+        //         rhobeg = 0.1 * Math.min(
+        //             target.range_u[1] - target.range_u[0],
+        //             target.range_v[1] - target.range_v[0]
+        //         );
+        //     }
+        //     rhoend = rhobeg / 5e6;
+
+        //     // minimize screen distance to cursor
+        //     _minFunc = function (n, m, w, con) {
+        //         var c3d = [
+        //             1,
+        //             target.X.apply(target, w),
+        //             target.Y.apply(target, w),
+        //             target.Z.apply(target, w)
+        //         ],
+        //         c2d = target.view.project3DTo2D(c3d),
+        //         xDiff = pScr[0] - c2d[1],
+        //         yDiff = pScr[1] - c2d[2];
+
+        //         if (n === 1) {
+        //             con[0] = w[0] - target.range[0];
+        //             con[1] = -w[0] + target.range[1];
+        //         } else if (n === 2) {
+        //             con[0] = w[0] - target.range_u[0];
+        //             con[1] = -w[0] + target.range_u[1];
+        //             con[2] = w[1] - target.range_v[0];
+        //             con[3] = -w[1] + target.range_v[1];
+        //         }
+
+        //         return xDiff * xDiff + yDiff * yDiff;
+        //     };
+
+        //     Mat.Nlp.FindMinimum(_minFunc, dim, 2 * dim, params, rhobeg, rhoend, iprint, maxfun);
+
+        //     return [1, target.X.apply(target, params), target.Y.apply(target, params), target.Z.apply(target, params)];
+        // },
 
         /**
          * Calculates the distance of a point to a line. The point and the line are given by homogeneous

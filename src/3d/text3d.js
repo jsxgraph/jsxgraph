@@ -281,48 +281,48 @@ JXG.extend(
                 this.element2D.draggable() &&
                 Geometry.distance(this._c2d, this.element2D.coords.usrCoords) !== 0
             ) {
+                if (this.view.isVerticalDrag()) {
+                    // Drag the text in its vertical to the xy plane
+                    // If the text is outside of bbox3d,
+                    // c3d is already corrected.
+                    c3d = this.view.project2DTo3DVertical(this.element2D, this.coords);
+                } else {
+                    // Drag the text in its xy plane
+                    foot = [1, 0, 0, this.coords[3]];
+                    c3d = this.view.project2DTo3DPlane(this.element2D, [1, 0, 0, 1], foot);
+                }
+
+                if (c3d[0] !== 0) {
+                    // Check if c3d is inside of view.bbox3d
+                    // Otherwise, the coords are now corrected.
+                    res = this.view.project3DToCube(c3d);
+                    this.coords = res[0];
+
+                    if (res[1]) {
+                        // The 3D coordinates have been corrected, now
+                        // also correct the 2D element.
+                        this.element2D.coords.setCoordinates(
+                            Const.COORDS_BY_USER,
+                            this.view.project3DTo2D(this.coords)
+                        );
+                    }
+                }
+
                 if (this.slide) {
-                    this.coords = this.slide.projectScreenCoords(
-                        [this.element2D.X(), this.element2D.Y()],
-                        this._params
-                    );
+                    this.coords = this.slide.projectCoords([this.X(), this.Y(), this.Z()], this.position);
                     this.element2D.coords.setCoordinates(
                         Const.COORDS_BY_USER,
                         this.view.project3DTo2D(this.coords)
                     );
-                } else {
-                    if (this.view.isVerticalDrag()) {
-                        // Drag the text in its vertical to the xy plane
-                        c3d = this.view.project2DTo3DVertical(this.element2D, this.coords);
-                    } else {
-                        // Drag the text in its xy plane
-                        foot = [1, 0, 0, this.coords[3]];
-                        c3d = this.view.project2DTo3DPlane(this.element2D, [1, 0, 0, 1], foot);
-                    }
-                    if (c3d[0] !== 0) {
-                        // Check if c3d is inside of view.bbox3d
-                        // Otherwise, the coords have to be corrected below.
-                        res = this.view.project3DToCube(c3d);
-                        this.coords = res[0];
-
-                        if (res[1]) {
-                            // The 3D coordinates have been corrected, now
-                            // also correct the 2D element.
-                            this.element2D.coords.setCoordinates(
-                                Const.COORDS_BY_USER,
-                                this.view.project3DTo2D(this.coords)
-                            );
-                        }
-                    }
                 }
             } else {
                 this.updateCoords();
-                if (this.slide) {
-                    this.coords = this.slide.projectCoords(
-                        [this.X(), this.Y(), this.Z()],
-                        this._params
-                    );
-                }
+                // if (this.slide) {
+                //     this.coords = this.slide.projectCoords(
+                //         [this.X(), this.Y(), this.Z()],
+                //         this._params
+                //     );
+                // }
                 // Update 2D text from its 3D view
                 this.element2D.coords.setCoordinates(
                     Const.COORDS_BY_USER,

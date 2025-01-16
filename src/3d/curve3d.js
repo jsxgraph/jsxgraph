@@ -167,21 +167,14 @@ JXG.extend(
             return this;
         },
 
-        initParamsIfNeeded: function (params) {
-            if (params.length === 0) {
-                params.unshift(0.5*(this.range[0] + this.range[1]));
-            }
-        },
-
-        projectCoords: function (p, params, isCyclic) {
-            this.initParamsIfNeeded(params);
-            return Geometry.projectCoordsToParametric(p, this, params, isCyclic);
-        },
-
-        projectScreenCoords: function (pScr, params) {
-            this.initParamsIfNeeded(params);
-            return Geometry.projectScreenCoordsToParametric(pScr, this, params);
+        projectCoords: function (p, params) {
+            return Geometry.projectCoordsToParametric(p, this, 1, params);
         }
+
+        // projectScreenCoords: function (pScr, params) {
+        //     this.initParamsIfNeeded(params);
+        //     return Geometry.projectScreenCoordsToParametric(pScr, this, params);
+        // }
     }
 );
 
