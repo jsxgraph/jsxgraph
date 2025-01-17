@@ -3844,11 +3844,17 @@ JXG.extend(
             }
             rhoend = rhobeg / 5e6;
 
-            // minimize screen distance to cursor
+            // Minimize distance of the new position to the original position
             _minFunc = function (n, m, w, con) {
-                var xDiff = p[0] - target.X.apply(target, w),
-                    yDiff = p[1] - target.Y.apply(target, w),
-                    zDiff = p[2] - target.Z.apply(target, w);
+                var p_new = [
+                        target.X.apply(target, w),
+                        target.Y.apply(target, w),
+                        target.Z.apply(target, w)
+                    ],
+                    xDiff = p[0] - p_new[0],
+                    yDiff = p[1] - p_new[1],
+                    zDiff = p[2] - p_new[2],
+                    zIndex = Mat.matVecMult(target.view.matrix3DRotShift, p_new)[3];
 
                 if (m === 2) {
                     con[0] =  w[0] - r_u[0];
@@ -3859,25 +3865,39 @@ JXG.extend(
                     con[2] =  w[1] - r_v[0];
                     con[3] = -w[1] + r_v[1];
                 }
-                return xDiff * xDiff + yDiff * yDiff + zDiff * zDiff;
+                return xDiff * xDiff + yDiff * yDiff + zDiff * zDiff - zIndex;
             };
+
+            // First optimization without range constraints to give a smooth draag experience on
+            // cyclic structures.
 
             // Set the start values
             params[0] = 0.5 * (r_u[0] + r_u[1]);
-            if (n === 2) {
-                params[1] = 0.5 * (r_v[0] + r_v[1]);
-            }
+            if (n === 2) { params[1] = 0.5 * (r_v[0] + r_v[1]); }
+
             Mat.Nlp.FindMinimum(_minFunc, n, 0, params, rhobeg, rhoend, iprint, maxfun);
+            // Update p which is used in _minFunc
+            p = [target.X.apply(target, params),
+                target.Y.apply(target, params),
+                target.Z.apply(target, params)
+            ];
+
+            // If the optimal params are outside of the rang
+            // Second optimization to obey the range constraints
+
             if (this._paramsOutOfRange(params, r_u, r_v)) {
                 // Set the start values again
                 params[0] = 0.5 * (r_u[0] + r_u[1]);
-                if (n === 2) {
-                    params[1] = 0.5 * (r_v[0] + r_v[1]);
-                }
+                if (n === 2) { params[1] = 0.5 * (r_v[0] + r_v[1]); }
+
                 Mat.Nlp.FindMinimum(_minFunc, n, m, params, rhobeg, rhoend, iprint, maxfun);
             }
 
-            return [1, target.X.apply(target, params), target.Y.apply(target, params), target.Z.apply(target, params)];
+            return [1,
+                target.X.apply(target, params),
+                target.Y.apply(target, params),
+                target.Z.apply(target, params)
+            ];
         },
 
         // /**
