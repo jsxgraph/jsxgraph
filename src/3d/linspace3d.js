@@ -1403,7 +1403,7 @@ JXG.createPlane3D = function (board, parents, attributes) {
         range_u = parents[4] || [-Infinity, Infinity];
         range_v = parents[5] || [-Infinity, Infinity];
 
-        if (parents.length < 6) {
+        if (parents.length < 4) {
             throw new Error(
                 "JSXGraph: Can't create plane3d with parents of type '" +
                     typeof parents[1] + ", "  +
@@ -1467,7 +1467,7 @@ JXG.createPlane3D = function (board, parents, attributes) {
 JXG.registerElement('plane3d', JXG.createPlane3D);
 
 /**
- * @class The line that is the intersection of two plane elements in 3D.
+ * @class The line that is the intersection of two (infinite) plane elements in 3D.
  *
  * @pseudo
  * @name IntersectionLine3D
@@ -1481,14 +1481,14 @@ JXG.registerElement('plane3d', JXG.createPlane3D);
  * var view = board.create(
  *     'view3d',
  *     [[-6, -3], [8, 8],
- *     [[0, 3], [0, 3], [0, 3]]],
+ *     [[-1, 3], [-1, 3], [-1, 3]]],
  *     {
- *         xPlaneRear: {fillOpacity: 0.2, gradient: null},
- *         yPlaneRear: {fillOpacity: 0.2, gradient: null},
+ *         xPlaneRear: {visible:false},
+ *         yPlaneRear: {visible:false},
  *         zPlaneRear: {fillOpacity: 0.2, gradient: null}
  *     }
  * );
- * var a = view.create('point3d', [0, 0, 0]);
+ * var a = view.create('point3d', [2, 2, 0]);
  *
  * var p1 = view.create(
  *    'plane3d',
@@ -1511,14 +1511,14 @@ JXG.registerElement('plane3d', JXG.createPlane3D);
  *         var view = board.create(
  *             'view3d',
  *             [[-6, -3], [8, 8],
- *             [[0, 3], [0, 3], [0, 3]]],
+ *             [[-1, 3], [-1, 3], [-1, 3]]],
  *             {
- *                 xPlaneRear: {fillOpacity: 0.2, gradient: null},
- *                 yPlaneRear: {fillOpacity: 0.2, gradient: null},
+ *                 xPlaneRear: {visible:false},
+ *                 yPlaneRear: {visible:false},
  *                 zPlaneRear: {fillOpacity: 0.2, gradient: null}
  *             }
  *         );
- *     var a = view.create('point3d', [0, 0, 0]);
+ *     var a = view.create('point3d', [2, 2, 0]);
  *
  *     var p1 = view.create(
  *        'plane3d',
