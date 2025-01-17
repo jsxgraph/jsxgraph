@@ -3858,15 +3858,15 @@ JXG.extend(
                     yDiff = p[1] - p_new[1],
                     zDiff = p[2] - p_new[2];
 
-                if (m === 2) {
+                if (m >= 2) {
                     con[0] =  w[0] - r_u[0];
                     con[1] = -w[0] + r_u[1];
-                } else if (m === 4) {
-                    con[0] =  w[0] - r_u[0];
-                    con[1] = -w[0] + r_u[1];
+                }
+                if (m >= 4) {
                     con[2] =  w[1] - r_v[0];
                     con[3] = -w[1] + r_v[1];
                 }
+
                 return xDiff * xDiff + yDiff * yDiff + zDiff * zDiff;
             };
 
@@ -3874,11 +3874,13 @@ JXG.extend(
             // cyclic structures.
 
             // Set the start values
-            params[0] = f * (r_u[0] + r_u[1]);
-            if (n === 2) { params[1] = f * (r_v[0] + r_v[1]); }
-
+            if (params.length === 0) {
+                // If length > 0: take the previous position as start values for the optimization
+                params[0] = f * (r_u[0] + r_u[1]);
+                if (n === 2) { params[1] = f * (r_v[0] + r_v[1]); }
+            }
             Mat.Nlp.FindMinimum(_minFunc, n, 0, params, rhobeg, rhoend, iprint, maxfun);
-            // Update p which is used in _minFunc
+            // Update p which is used subsequently in _minFunc
             p = [target.X.apply(target, params),
                 target.Y.apply(target, params),
                 target.Z.apply(target, params)

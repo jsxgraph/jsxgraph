@@ -1063,25 +1063,25 @@ JXG.extend(
      * and the normal vector `normal`.
      *
      * @param  {JXG.Point} point2d
-     * @param  {Array} normal
-     * @param  {Array} foot
+     * @param  {Array} normal Normal of plane
+     * @param  {Array} foot Foot point of plane
      * @returns {Array} of length 4 containing the projected
      * point in homogeneous coordinates.
      */
     project2DTo3DPlane: function (point2d, normal, foot) {
         var mat, rhs, d, le, sol,
+            f = foot.slice(1) || [0, 0, 0],
             n = normal.slice(1),
             v2d, w0, res;
 
-        foot = foot || [1, 0, 0, 0];
         le = Mat.norm(n, 3);
-        d = Mat.innerProduct(foot.slice(1), n, 3) / le;
+        d = Mat.innerProduct(f, n, 3) / le;
 
         if (this.projectionType === 'parallel') {
-            mat = this.matrix3D.slice(0, 3); // Copy each row by reference
+            mat = this.matrix3D.slice(0, 3);     // Copy each row by reference
             mat.push([0, n[0], n[1], n[2]]);
 
-            // 2D coordinates of point:
+            // 2D coordinates of point
             rhs = point2d.coords.usrCoords.slice();
             rhs.push(d);
             try {

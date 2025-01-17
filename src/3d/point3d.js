@@ -328,15 +328,15 @@ JXG.extend(
                             this.view.project3DTo2D(this.coords)
                         );
                     }
+                    if (this.slide) {
+                        this.coords = this.slide.projectCoords([this.X(), this.Y(), this.Z()], this.position);
+                        this.element2D.coords.setCoordinates(
+                            Const.COORDS_BY_USER,
+                            this.view.project3DTo2D(this.coords)
+                        );
+                    }
                 }
 
-                if (this.slide) {
-                    this.coords = this.slide.projectCoords([this.X(), this.Y(), this.Z()], this.position);
-                    this.element2D.coords.setCoordinates(
-                        Const.COORDS_BY_USER,
-                        this.view.project3DTo2D(this.coords)
-                    );
-                }
 
             } else {
                 // Update 2D point from its 3D view, e.g. when rotating the view
