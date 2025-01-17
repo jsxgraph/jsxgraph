@@ -143,7 +143,7 @@ JXG.Text3D = function (view, F, text, slide, attributes) {
      * @type Array
      * @private
      */
-    this._params = [];
+    this.position = [];
 
     this._c2d = null;
 
@@ -367,8 +367,11 @@ JXG.extend(
  * @constructor
  * @throws {Exception} If the element cannot be constructed with the given parent
  * objects an exception is thrown.
- * @param {number,function_number,function_number,function_String,function} x,y,z,txt The coordinates are given as x, y, z consisting of numbers of functions and the text.
- * @param {array,function_string} F,txt Alternatively, the coordinates can be supplied as array or function returning an array.
+ * @param {number,function_number,function_number,function_String,function_JXG.GeometryElement3D} x,y,z,txt,[slide=undefined]
+ * The coordinates are given as x, y, z consisting of numbers of functions and the text.
+ * If an optional 3D element "slide" is supplied, the point is a glider on that element.
+ * @param {array,function_string_JXG.GeometryElement3D}} F,txt,[slide=undefined] Alternatively, the coordinates can be supplied as array or function returning an array.
+ * If an optional 3D element "slide" is supplied, the point is a glider on that element.
  *
  * @example
  *     var bound = [-4, 6];
@@ -413,7 +416,7 @@ JXG.createText3D = function (board, parents, attributes) {
 
     // If the last element of parents is a 3D object,
     // the point is a glider on that element.
-    if (parents.length > 3 && Type.exists(parents[parents.length - 1].is3D)) {
+    if (parents.length > 2 && Type.exists(parents[parents.length - 1].is3D)) {
         slide = parents.pop();
     } else {
         slide = null;

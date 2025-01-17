@@ -383,7 +383,6 @@ JXG.extend(
             }
             params[0] += (params[0] < 0) ? 2 * Math.PI : 0;
 
-            return [1, v[1], v[2], v[3]];
         }
 
         // projectScreenCoords: function (pScr, params) {

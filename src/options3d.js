@@ -1193,9 +1193,16 @@ JXG.extend(Options, {
         infobox: {
             // strokeColor: '#888888',
             strokeColor: '#000000',
-            fontSize: 24,
+            fontSize: 16,
             useKatex: false,
-            useMathjax: false
+            useMathjax: false,
+            intl: {
+                enabled: true,
+                options: {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 3
+                }
+            }
         },
 
         /**

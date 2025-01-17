@@ -3827,6 +3827,7 @@ JXG.extend(
                 iprint = 0,            // no console output (Cobyla)
                 maxfun = 200,          // call objective function at most 200 times (Cobyla)
                 _minFunc,              // Objective function for Cobyla
+                f = Math.random() * 0.01 + 0.5,
                 r_u, r_v,
                 m = 2 * n;
 
@@ -3855,8 +3856,7 @@ JXG.extend(
                     ],
                     xDiff = p[0] - p_new[0],
                     yDiff = p[1] - p_new[1],
-                    zDiff = p[2] - p_new[2],
-                    zIndex = Mat.matVecMult(target.view.matrix3DRotShift, p_new)[3];
+                    zDiff = p[2] - p_new[2];
 
                 if (m === 2) {
                     con[0] =  w[0] - r_u[0];
@@ -3867,15 +3867,15 @@ JXG.extend(
                     con[2] =  w[1] - r_v[0];
                     con[3] = -w[1] + r_v[1];
                 }
-                return xDiff * xDiff + yDiff * yDiff + zDiff * zDiff - zIndex;
+                return xDiff * xDiff + yDiff * yDiff + zDiff * zDiff;
             };
 
             // First optimization without range constraints to give a smooth draag experience on
             // cyclic structures.
 
             // Set the start values
-            params[0] = 0.5 * (r_u[0] + r_u[1]);
-            if (n === 2) { params[1] = 0.5 * (r_v[0] + r_v[1]); }
+            params[0] = f * (r_u[0] + r_u[1]);
+            if (n === 2) { params[1] = f * (r_v[0] + r_v[1]); }
 
             Mat.Nlp.FindMinimum(_minFunc, n, 0, params, rhobeg, rhoend, iprint, maxfun);
             // Update p which is used in _minFunc
@@ -3889,12 +3889,12 @@ JXG.extend(
 
             if (this._paramsOutOfRange(params, r_u, r_v)) {
                 // Set the start values again
-                params[0] = 0.5 * (r_u[0] + r_u[1]);
-                if (n === 2) { params[1] = 0.5 * (r_v[0] + r_v[1]); }
+                params[0] = f * (r_u[0] + r_u[1]);
+                if (n === 2) { params[1] = f * (r_v[0] + r_v[1]); }
 
                 Mat.Nlp.FindMinimum(_minFunc, n, m, params, rhobeg, rhoend, iprint, maxfun);
             }
-// console.log(params)
+
             return [1,
                 target.X.apply(target, params),
                 target.Y.apply(target, params),
