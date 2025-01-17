@@ -3813,8 +3813,10 @@ JXG.extend(
          * parametric curve or surface, and returns its view-space coordinates.
          * @param {Array} p 3D coordinates for which the closest point on the curve point is searched.
          * @param {JXG.Curve3D|JXG.Surface3D} target Parametric curve or surface to project to.
-         * @param {Array} params Parameters of point on the target, The parameters are modified in place during the search,
-         * ending up at the nearest point. Usually, this should be the point.position object.
+         * @param {Array} params New position of point on the target (i.e. it is a return value),
+         * modified in place during the search, ending up at the nearest point.
+         * Usually, point.position is supplied for params.
+         *
          * @returns {Array} Array of length 4 containing the coordinates of the nearest point on the curve or surface.
          */
         projectCoordsToParametric: function (p, target, n, params) {
@@ -3892,7 +3894,7 @@ JXG.extend(
 
                 Mat.Nlp.FindMinimum(_minFunc, n, m, params, rhobeg, rhoend, iprint, maxfun);
             }
-
+// console.log(params)
             return [1,
                 target.X.apply(target, params),
                 target.Y.apply(target, params),

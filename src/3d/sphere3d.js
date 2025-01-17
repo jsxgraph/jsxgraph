@@ -348,6 +348,7 @@ JXG.extend(
             this.element2D.view = this.view;
         },
 
+        // Already documented in element3d.js
         projectCoords: function(p, params) {
             var r = this.Radius(),
                 pp = [1].concat(p),
@@ -368,7 +369,21 @@ JXG.extend(
             }
 
             d = r / d;
-            return [1, v[1] * d, v[2] * d, v[3] * d];
+            v[1] *= d;
+            v[2] *= d;
+            v[3] *= d;
+
+            // Preimage of the new position
+            params[1] = Math.atan2(v[2], v[1]);
+            params[1] += (params[1] < 0) ? Math.PI : 0;
+            if (params[1] !== 0) {
+                params[0] = Math.atan2(v[2], v[3] * Math.sin(params[1]));
+            } else {
+                params[0] = Math.atan2(v[1], v[3] * Math.cos(params[1]));
+            }
+            params[0] += (params[0] < 0) ? 2 * Math.PI : 0;
+
+            return [1, v[1], v[2], v[3]];
         }
 
         // projectScreenCoords: function (pScr, params) {

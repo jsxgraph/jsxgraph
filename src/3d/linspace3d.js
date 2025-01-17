@@ -172,11 +172,7 @@ JXG.extend(
             return this;
         },
 
-        /**
-         * Orthogonal projection of a point (given by a coordinate array) onto the line.
-         * @param {Array} p
-         * @returns {Array} 3D coordinates of the projected point
-         */
+        // Already documented in element3d.js
         projectCoords: function (p, params) {
             var p0_coords = this.getPointCoords(0),
                 p1_coords = this.getPointCoords(1),
@@ -191,7 +187,7 @@ JXG.extend(
                     p[2] - p0_coords[2]
                 ],
                 t = Mat.innerProduct(diff, dir) / Mat.innerProduct(dir, dir),
-                t_clamped = Math.min(Math.max(t, this.range[0]), this.range[1]),
+                t_clamped = Math.min(Math.max(t, Type.evaluate(this.range[0])), Type.evaluate(this.range[1])),
                 c3d;
 
             c3d = this.getPointCoords(t_clamped).slice();
@@ -1022,10 +1018,10 @@ JXG.extend(
             return this;
         },
 
+        // Already documented in element3d.js
         projectCoords: function (p, params) {
             return Geometry.projectCoordsToParametric(p, this, 2, params);
         }
-
     }
 );
 

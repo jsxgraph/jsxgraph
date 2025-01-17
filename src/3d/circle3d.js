@@ -217,6 +217,7 @@ JXG.extend(
             this.normalizeFrame();
         },
 
+        // Already documented in element3d.js
         projectCoords: function (p, params) {
             // we have to call `this.curve.projectCoords`, i.e. the curve's projectCoords rather
             // than the circle's, to make `this` refer to the curve within the

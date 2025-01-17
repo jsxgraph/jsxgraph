@@ -167,6 +167,7 @@ JXG.extend(
             return this;
         },
 
+        // Already documented in element3d.js
         projectCoords: function (p, params) {
             return Geometry.projectCoordsToParametric(p, this, 1, params);
         }

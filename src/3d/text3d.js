@@ -317,12 +317,9 @@ JXG.extend(
                 }
             } else {
                 this.updateCoords();
-                // if (this.slide) {
-                //     this.coords = this.slide.projectCoords(
-                //         [this.X(), this.Y(), this.Z()],
-                //         this._params
-                //     );
-                // }
+                if (this.slide) {
+                    this.coords = this.slide.projectCoords([this.X(), this.Y(), this.Z()], this.position);
+                }
                 // Update 2D text from its 3D view
                 this.element2D.coords.setCoordinates(
                     Const.COORDS_BY_USER,

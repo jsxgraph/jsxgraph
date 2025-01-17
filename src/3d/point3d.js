@@ -342,9 +342,9 @@ JXG.extend(
                 // Update 2D point from its 3D view, e.g. when rotating the view
 
                 this.updateCoords();
-                // if (this.slide) {
-                //     this.coords = this.slide.projectCoords([this.X(), this.Y(), this.Z()]);
-                // }
+                if (this.slide) {
+                    this.coords = this.slide.projectCoords([this.X(), this.Y(), this.Z()], this.position);
+                }
                 c3d = [1, this.X(), this.Y(), this.Z()];
                 this.element2D.coords.setCoordinates(
                     Const.COORDS_BY_USER,
