@@ -59,8 +59,9 @@ JXG.Point3D = function (view, F, slide, attributes) {
     // }
 
     /**
-     * Homogeneous coordinates of a Point3D, i.e. array of length 4: [w, x, y, z]. Usually, w=1 for finite points and w=0 for points
-     * which are infinitely far.
+     * Homogeneous coordinates of a Point3D, i.e. array of length 4 containing numbers: [w, x, y, z].
+     * Usually, w=1 for finite points and w=0 for points which are infinitely far.
+     * If coordinates of the point are supplied as functions, they are resolved in {@link Point3D#updateCoords} into numbers.
      *
      * @example
      *   p.coords;
@@ -142,7 +143,24 @@ JXG.Point3D = function (view, F, slide, attributes) {
     };
 
     /**
-     * Store the last position of the 2D point for the optimizer.
+     * Get w-coordinate of a 3D point.
+     *
+     * @name W
+     * @memberOf Point3D
+     * @function
+     * @returns Number
+     *
+     * @example
+     *   p.W();
+     */
+    this.W = function () {
+        return this.coords[0];
+    };
+
+    /**
+     * In case, the point is a glider, store the preimage of the coordinates in terms of the parametric definition of the host element.
+     * That is, if the host element `slide` is a curve, and the coordinates of the point are equal to `p` and `u = this.position[0]`, then
+     * `p = [slide.X(u), slide.Y(u), slide.Z(u)]`.
      *
      * @type Array
      * @private
@@ -163,7 +181,7 @@ JXG.extend(
     JXG.Point3D.prototype,
     /** @lends JXG.Point3D.prototype */ {
         /**
-         * Update the homogeneous coords array.
+         * Update the array {@link JXG.Point3D#coords} containing the homogeneous coords
          *
          * @name updateCoords
          * @memberOf Point3D
@@ -177,13 +195,12 @@ JXG.extend(
             var i;
 
             if (Type.isFunction(this.F)) {
-                // this.coords = [1].concat(Type.evaluate(this.F));
                 this.coords = Type.evaluate(this.F);
                 this.coords.unshift(1);
             } else {
                 this.coords[0] = 1;
                 for (i = 0; i < 3; i++) {
-                    // Attention: if F is array of numbers, coords are not updated.
+                    // Attention: if F is array of numbers, coords may not be updated.
                     // Otherwise, dragging will not work anymore.
                     if (Type.isFunction(this.F[i])) {
                         this.coords[i + 1] = Type.evaluate(this.F[i]);
@@ -203,7 +220,6 @@ JXG.extend(
             var i;
 
             if (Type.isFunction(this.F)) {
-                // this.coords = [1].concat(Type.evaluate(this.F));
                 this.coords = Type.evaluate(this.F);
                 this.coords.unshift(1);
             } else {
@@ -227,7 +243,7 @@ JXG.extend(
          *    p.normalizeCoords();
          */
         normalizeCoords: function () {
-            if (Math.abs(this.coords[0]) > Mat.eps) {
+            if (Math.abs(this.coords[0]) > 1.e-14) {
                 this.coords[1] /= this.coords[0];
                 this.coords[2] /= this.coords[0];
                 this.coords[3] /= this.coords[0];
@@ -243,7 +259,7 @@ JXG.extend(
          * @memberOf Point3D
          * @function
          * @param {Array} coords 3D coordinates. Either of the form [x,y,z] (Euclidean) or [w,x,y,z] (homogeneous).
-         * @param {Boolean} [noevent] If true, no events are triggered.
+         * @param {Boolean} [noevent] If true, no events are triggered (TODO)
          * @returns {Object} Reference to the Point3D object
          *
          * @example
@@ -277,8 +293,10 @@ JXG.extend(
             return this;
         },
 
+        // Already documented in JXG.GeometryElement
         update: function (drag) {
-            var c3d, foot, res;
+            var c3d,         // Homogeneous 3D coordinates
+                foot, res;
 
             if (
                 this.element2D.draggable() &&
@@ -287,21 +305,6 @@ JXG.extend(
                 // Update is called from board.updateElements, e.g. after manipulating a
                 // a slider or dragging a point.
                 // Usually this followed by an update call using the other branch below.
-
-                // if (this.slide) {
-                //     // The 3D point is a glider
-
-                //     this.coords = this.slide.projectScreenCoords(
-                //             [this.element2D.X(), this.element2D.Y()],
-                //             this._params
-                //         );
-                //     this.element2D.coords.setCoordinates(
-                //         Const.COORDS_BY_USER,
-                //         this.view.project3DTo2D(this.coords)
-                //     );
-                // } else {
-                // Free 3D point
-                // }
 
                 if (this.view.isVerticalDrag()) {
                     // Drag the point in its vertical to the xy plane
@@ -337,7 +340,6 @@ JXG.extend(
                     }
                 }
 
-
             } else {
                 // Update 2D point from its 3D view, e.g. when rotating the view
 
@@ -357,17 +359,18 @@ JXG.extend(
             return this;
         },
 
+        // Already documented in JXG.GeometryElement
         updateRenderer: function () {
             this.needsUpdate = false;
             return this;
         },
 
         /**
-         * Check whether a points's position is finite, i.e. the first entry is not zero.
+         * Check whether a point's position is finite, i.e. the first entry is not zero.
          * @returns {Boolean} True if the first entry of the coordinate vector is not zero; false otherwise.
          */
         testIfFinite: function () {
-            return Math.abs(this.coords[0]) > Mat.eps ? true : false;
+            return Math.abs(this.coords[0]) > 1.e-12 ? true : false;
             // return Type.cmpArrays(this.coords, [0, 0, 0, 0]);
         },
 
@@ -377,7 +380,7 @@ JXG.extend(
          * @returns {Number} The distance
          */
         distance: function (pt) {
-            var eps_sq = Mat.eps * Mat.eps,
+            var eps_sq = 1e-12,
                 c_this = this.coords,
                 c_pt = pt.coords;
 

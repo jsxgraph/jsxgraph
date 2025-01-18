@@ -1138,6 +1138,8 @@ JXG.extend(
      * line segment.
      * @param {Array} end1 The world space coordinates of the other end of
      * the line segment.
+     *
+     * @returns Homogeneous coordinates of the projection
      */
     projectScreenToSegment: function (pScr, end0, end1) {
         var end0_2d = this.project3DTo2D(end0).slice(1, 3),
