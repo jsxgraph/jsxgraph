@@ -196,14 +196,12 @@ JXG.extend(
 
             if (Type.isFunction(this.F)) {
                 this.coords = Type.evaluate(this.F);
-                this.coords.unshift(1);
             } else {
-                this.coords[0] = 1;
-                for (i = 0; i < 3; i++) {
+                for (i = 0; i < this.F.length; i++) {
                     // Attention: if F is array of numbers, coords may not be updated.
                     // Otherwise, dragging will not work anymore.
                     if (Type.isFunction(this.F[i])) {
-                        this.coords[i + 1] = Type.evaluate(this.F[i]);
+                        this.coords[i] = Type.evaluate(this.F[i]);
                     }
                 }
             }
@@ -221,12 +219,13 @@ JXG.extend(
 
             if (Type.isFunction(this.F)) {
                 this.coords = Type.evaluate(this.F);
-                this.coords.unshift(1);
             } else {
-                this.coords[0] = 1;
-                for (i = 0; i < 3; i++) {
-                    this.coords[i + 1] = Type.evaluate(this.F[i]);
+                for (i = 0; i < this.F.length; i++) {
+                    this.coords[i] = Type.evaluate(this.F[i]);
                 }
+            }
+            if (this.coords.length === 3) {
+                this.coords.unshift(1);
             }
             return this;
         },

@@ -80,6 +80,15 @@ JXG.Line3D = function (view, point, direction, range, attributes) {
     this.direction = direction;
 
     /**
+     * Spanning vector of the 3D line. Contains the evaluated coordinates from {@link direction}
+     * and {@link range}.
+     * The array has length 4, the first entry being 0.
+     *
+     * @type {Array}
+     */
+    this.vec = [0, 0, 0, 0],
+
+    /**
      * Range [r1, r2] of the line. r1, r2 can be numbers or functions.
      * The 3D line goes from (point + r1 * direction) to (point + r2 * direction)
      * @type Array
@@ -112,11 +121,36 @@ JXG.extend(
     /** @lends JXG.Line3D.prototype */ {
 
         /**
-         * Determine one end point of a 3D line from point, direction and range.
+         * Update the array {@link JXG.Line3D#vec} containing the homogeneous coords of the spanning vector.
          *
-         * @param {Number|function} r
+         * @name updateCoords
+         * @memberOf Line3D
+         * @function
+         * @returns {Object} Reference to Line3D object
          * @private
-         * @returns Array
+         */
+        updateVec: function() {
+            var i;
+            if (Type.isFunction(this.direction)) {
+                this.vec = Type.evaluate(this.direction);
+            } else {
+                for (i = 0; i < this.direction.length; i++) {
+                    this.vec[i] = Type.evaluate(this.direction[i]);
+                }
+            }
+            if (this.vec.length === 3) {
+                this.vec.unshift(0);
+            }
+
+            return this;
+        },
+
+        /**
+         * Determine one end point of a 3D line from point, direction and range).
+         *
+         * @param {Number|function} r Usually, one of the range borders.
+         * @private
+         * @returns {Array} Coordinates of length 3.
          */
         getPointCoords: function (r) {
             var p = [],
@@ -124,15 +158,17 @@ JXG.extend(
                 i,
                 r0;
 
-            p = [this.point.X(), this.point.Y(), this.point.Z()];
+            // p = [this.point.X(), this.point.Y(), this.point.Z()];
+            // if (Type.isFunction(this.direction)) {
+            //     d = this.direction();
+            // } else {
+            //     for (i = 1; i < 4; i++) {
+            //         d.push(Type.evaluate(this.direction[i]));
+            //     }
+            // }
 
-            if (Type.isFunction(this.direction)) {
-                d = this.direction();
-            } else {
-                for (i = 1; i < 4; i++) {
-                    d.push(Type.evaluate(this.direction[i]));
-                }
-            }
+            p = this.point.coords.slice(1);
+            d = this.vec.slice(1);
 
             // Intersect the ray - if necessary - with the cube,
             // i.e. clamp the line.
@@ -145,6 +181,7 @@ JXG.extend(
         // Already documented in JXG.GeometryElement
         update: function () {
             if (this.needsUpdate) {}
+            this.updateVec();
             return this;
         },
 
@@ -462,10 +499,11 @@ JXG.createLine3D = function (board, parents, attributes) {
         point1 = Type.providePoints3D(view, [parents[1]], attributes, 'line3d', ['point1'])[0];
         point2 = Type.providePoints3D(view, [parents[2]], attributes, 'line3d', ['point2'])[0];
         direction = function () {
-            return [point2.X() - point1.X(), point2.Y() - point1.Y(), point2.Z() - point1.Z()];
+            return [0, point2.X() - point1.X(), point2.Y() - point1.Y(), point2.Z() - point1.Z()];
         };
         range = [0, 1]; // Segment by default
         el = new JXG.Line3D(view, point1, direction, range, attr);
+        el.prepareUpdate().update();
 
         // Create two shadow points that are the end points of the visible line.
         // This is of relevance if the line has straightFirst or straightLast set to true, then
@@ -474,8 +512,8 @@ JXG.createLine3D = function (board, parents, attributes) {
         endpoints = Type.providePoints3D(
             view,
             [
-                [0, 0, 0],
-                [0, 0, 0]
+                [1, 0, 0, 0],
+                [1, 0, 0, 0]
             ],
             { visible: false },
             'line3d',
@@ -489,6 +527,7 @@ JXG.createLine3D = function (board, parents, attributes) {
             }
             return el.getPointCoords(r);
         };
+
         endpoints[1].F = function () {
             var r = 1;
             if (el.evalVisProp('straightlast')) {
@@ -528,15 +567,11 @@ JXG.createLine3D = function (board, parents, attributes) {
 
         // Directions are handled as arrays of length 4,
         // i.e. with homogeneous coordinates.
-        if (Type.exists(parents[2].view) && parents[2].type === Const.OBJECT_TYPE_LINE3D) {
-            direction = function() {
-                return Type.evaluate(parents[2].direction); // .slice(1);
-            };
-        } else if (Type.isFunction(parents[2])) {
-            direction = parents[2];
-        } else if (parents[2].length === 3) {
-            direction = [1].concat(parents[2]);
-        } else if (parents[2].length === 4) {
+        if ((Type.exists(parents[2].view) && parents[2].type === Const.OBJECT_TYPE_LINE3D) ||
+            Type.isFunction(parents[2]) ||
+            (parents[2].length === 3) ||
+            (parents[2].length === 4)
+        ) {
             direction = parents[2];
         } else {
             throw new Error(
@@ -551,8 +586,8 @@ JXG.createLine3D = function (board, parents, attributes) {
         points = Type.providePoints3D(
             view,
             [
-                [0, 0, 0],
-                [0, 0, 0]
+                [1, 0, 0, 0],
+                [1, 0, 0, 0]
             ],
             attributes,
             'line3d',
@@ -561,6 +596,7 @@ JXG.createLine3D = function (board, parents, attributes) {
 
         // Create a line3d with two dummy points
         el = new JXG.Line3D(view, point, direction, range, attr);
+        el.prepareUpdate().update();
 
         // Now set the real points which define the line
         /**
@@ -673,7 +709,8 @@ JXG.Plane3D = function (view, point, dir1, range_u, dir2, range_v, attributes) {
 
     /**
      * Two linearly independent vectors - together with a point - define the plane. Each of these direction vectors is an
-     * array of numbers or functions (of length 3) or function returning array of length 3.
+     * array of numbers or functions (either of length 3 or 4) or function returning array of length 3 or 4.
+     * Homogeneous coordinates of directions have the form [0, x, y, z].
      *
      * @type Array|Function
      *
@@ -684,7 +721,8 @@ JXG.Plane3D = function (view, point, dir1, range_u, dir2, range_v, attributes) {
 
     /**
      * Two linearly independent vectors - together with a point - define the plane. Each of these direction vectors is an
-     * array of numbers or functions (of length 3) or function returning array of length 3.
+     * array of numbers or functions (either of length 3 or 4) or function returning array of length 3 or 4.
+     * Homogeneous coordinates of directions have the form [0, x, y, z].
      *
      * @type Array|Function
      * @see JXG.Plane3D.point
@@ -694,34 +732,39 @@ JXG.Plane3D = function (view, point, dir1, range_u, dir2, range_v, attributes) {
 
     /**
      * Range [r1, r2] of {@link direction1}. The 3D line goes from (point + r1 * direction1) to (point + r2 * direction1)
-     * @type {Array}
+     * @type {Array} [-Infinity, Infinity]
+     * @default 
      */
     this.range_u = range_u || [-Infinity, Infinity];
 
     /**
      * Range [r1, r2] of {@link direction2}. The 3D line goes from (point + r1 * direction2) to (point + r2 * direction2)
      * @type {Array}
+     * @type {Array} [-Infinity, Infinity]
      */
     this.range_v = range_v || [-Infinity, Infinity];
 
     /**
      * Spanning vector 1 of the 3D plane. Contains the evaluated coordinates from {@link direction1} and {@link range1}.
+     * and is of length 4, the first entry being 0, i.e. homogenous coordinates.
+     *
      * @type Array
      * @private
      *
      * @see JXG.Plane3D.updateNormal
      */
-    this.vec1 = [0, 0, 0];
+    this.vec1 = [0, 0, 0, 0];
 
     /**
-     * Spanning vector 2 of the 3D plane. Contains the evaluated coordinates from {@link direction2} and {@link range2}.
+     * Spanning vector 2 of the 3D plane. Contains the evaluated coordinates from {@link direction2} and {@link range2}
+     * and is of length 4, the first entry being 0, i.e. homogenous coordinates.
      *
      * @type Array
      * @private
      *
      * @see JXG.Plane3D.updateNormal
      */
-    this.vec2 = [0, 0, 0];
+    this.vec2 = [0, 0, 0, 0];
 
     this.grid = null;
 
@@ -734,7 +777,7 @@ JXG.Plane3D = function (view, point, dir1, range_u, dir2, range_v, attributes) {
          * @see JXG.Plane3D.updateNormal
          *
          */
-    this.normal = [0, 0, 0];
+    this.normal = [0, 0, 0, 0];
 
     /**
          * Right hand side of the Hesse normal form.
@@ -760,6 +803,13 @@ JXG.extend(
     JXG.Plane3D.prototype,
     /** @lends JXG.Plane3D.prototype */ {
 
+        /**
+         * Get coordinate array [x, y, z] of a point on the plane for parameters (u, v).
+         * 
+         * @param {Number} u 
+         * @param {Number} v 
+         * @returns Array of length 3.
+         */
         F: function (u, v) {
             var i, v1, v2, l1, l2;
 
@@ -779,14 +829,35 @@ JXG.extend(
             ];
         },
 
+        /**
+         * Get x-coordinate of a point on the plane for parameters (u, v).
+         * 
+         * @param {Number} u 
+         * @param {Number} v 
+         * @returns Number
+         */
         X: function(u, v) {
             return this.F(u, v)[0];
         },
 
+        /**
+         * Get y-coordinate of a point on the plane for parameters (u, v).
+         * 
+         * @param {Number} u 
+         * @param {Number} v 
+         * @returns Number
+         */
         Y: function(u, v) {
             return this.F(u, v)[1];
         },
 
+        /**
+         * Get z-coordinate of a point on the plane for parameters (u, v).
+         * 
+         * @param {Number} u 
+         * @param {Number} v 
+         * @returns Number
+         */
         Z: function(u, v) {
             return this.F(u, v)[2];
         },
