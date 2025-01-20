@@ -129,7 +129,7 @@ JXG.extend(
          * @returns {Object} Reference to Line3D object
          * @private
          */
-        updateVec: function() {
+        updateCoords: function() {
             var i;
             if (Type.isFunction(this.direction)) {
                 this.vec = Type.evaluate(this.direction);
@@ -180,8 +180,9 @@ JXG.extend(
 
         // Already documented in JXG.GeometryElement
         update: function () {
-            if (this.needsUpdate) {}
-            this.updateVec();
+            if (this.needsUpdate) {
+                this.updateCoords();
+            }
             return this;
         },
 
@@ -863,6 +864,42 @@ JXG.extend(
         },
 
         /**
+         * Update the arrays {@link JXG.Plane3D#vec1} and {@link JXG.Plane3D#vec1} containing the homogeneous coords of the spanning vectors.
+         *
+         * @name updateCoords
+         * @memberOf Plane3D
+         * @function
+         * @returns {Object} Reference to Plane3D object
+         * @private
+         */
+        updateCoords: function() {
+            var i;
+            if (Type.isFunction(this.direction1)) {
+                this.vec1 = Type.evaluate(this.direction1);
+            } else {
+                for (i = 0; i < this.direction1.length; i++) {
+                    this.vec1[i] = Type.evaluate(this.direction1[i]);
+                }
+            }
+            if (this.vec1.length === 3) {
+                this.vec1.unshift(0);
+            }
+
+            if (Type.isFunction(this.direction2)) {
+                this.vec2 = Type.evaluate(this.direction2);
+            } else {
+                for (i = 0; i < this.direction2.length; i++) {
+                    this.vec2[i] = Type.evaluate(this.direction2[i]);
+                }
+            }
+            if (this.vec2.length === 3) {
+                this.vec2.unshift(0);
+            }
+
+            return this;
+        },
+
+        /**
          * Update the Hesse normal form of the plane, i.e. update normal vector and right hand side.
          * Updates also {@link vec1} and {@link vec2}.
          *
@@ -877,19 +914,23 @@ JXG.extend(
         updateNormal: function () {
             var i, len;
 
-            if (Type.isFunction(this.direction1)) {
-                this.vec1 = Type.evaluate(this.direction1);
-            } else {
-                for (i = 0; i < 3; i++) {
-                    this.vec1[i] = Type.evaluate(this.direction1[i]);
-                }
-            }
-            if (Type.isFunction(this.direction2)) {
-                this.vec2 = Type.evaluate(this.direction2);
-            } else {
-                for (i = 0; i < 3; i++) {
-                    this.vec2[i] = Type.evaluate(this.direction2[i]);
-                }
+            // if (Type.isFunction(this.direction1)) {
+            //     this.vec1 = Type.evaluate(this.direction1);
+            // } else {
+            //     for (i = 0; i < 3; i++) {
+            //         this.vec1[i] = Type.evaluate(this.direction1[i]);
+            //     }
+            // }
+            // if (Type.isFunction(this.direction2)) {
+            //     this.vec2 = Type.evaluate(this.direction2);
+            // } else {
+            //     for (i = 0; i < 3; i++) {
+            //         this.vec2[i] = Type.evaluate(this.direction2[i]);
+            //     }
+            // }
+            if (!this.needsUpdate) {
+                // Extraordinary update
+                this.updateCoords();
             }
 
             this.normal = Mat.crossProduct(this.vec1, this.vec2);
@@ -940,7 +981,7 @@ JXG.extend(
                 // We start with the three rear planes (set in planes[] above)
                 for (j = 0; j < planes.length; j++) {
                     p = view.intersectionPlanePlane(this, view.defaultAxes[planes[j]]);
-                    if (p[0].length === 3 && p[1].length === 3) {
+                    if (p[0] !== false && p[1] !== false) {
                         // This test is necessary to filter out intersection lines which are
                         // identical to intersections of axis planes (they would occur twice),
                         // i.e. edges of bbox3d.
@@ -968,7 +1009,7 @@ JXG.extend(
                     d = Mat.innerProduct(p, view.defaultAxes[planes[j]].normal, 3);
                     p = view.intersectionPlanePlane(this, view.defaultAxes[planes[j]], d);
 
-                    if (p[0].length === 3 && p[1].length === 3) {
+                    if (p[0] !== false && p[1] !== false) {
                         // Do the same test as above
                         for (i = 0; i < points.length; i++) {
                             // Same test for edges of bbox3d as above
@@ -1081,6 +1122,9 @@ JXG.extend(
         },
 
         update: function () {
+            if (this.needsUpdate) {
+                this.updateCoords();
+            }
             return this;
         },
 

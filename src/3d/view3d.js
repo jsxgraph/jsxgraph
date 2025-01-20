@@ -1258,13 +1258,14 @@ JXG.extend(
     /**
      * Intersect a ray with the bounding cube of the 3D view.
      * @param {Array} p 3D coordinates [x,y,z]
-     * @param {Array} d 3D direction vector of the line (array of length 3)
+     * @param {Array} dir 3D direction vector of the line (array of length 3 or 4)
      * @param {Number} r direction of the ray (positive if r > 0, negative if r < 0).
      * @returns Affine ratio of the intersection of the line with the cube.
      */
-    intersectionLineCube: function (p, d, r) {
-        var r_n, i, r0, r1;
+    intersectionLineCube: function (p, dir, r) {
+        var r_n, i, r0, r1, d;
 
+        d = (dir.length === 3) ? dir : dir.slice(1);
         r_n = r;
         for (i = 0; i < 3; i++) {
             if (d[i] !== 0) {
@@ -1302,10 +1303,10 @@ JXG.extend(
      * @param {JXG.Plane3D} plane2
      * @param {Number} d Right hand side of Hesse normal for plane2 (it can be adjusted)
      * @returns {Array} of length 2 containing the coordinates of the defining points of
-     * of the intersection segment.
+     * of the intersection segment, or false if there is no intersection
      */
     intersectionPlanePlane: function (plane1, plane2, d) {
-        var ret = [[], []],
+        var ret = [false, false],
             p, q, r,
             dir;
 
@@ -1321,7 +1322,7 @@ JXG.extend(
             0
         );
 
-        // Get the direction the intersecting line of the two planes
+        // Get the direction of the intersecting line of the two planes
         dir = Mat.Geometry.meetPlanePlane(
             plane1.vec1,
             plane1.vec2,

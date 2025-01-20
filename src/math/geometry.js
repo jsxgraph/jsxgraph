@@ -4128,32 +4128,27 @@ JXG.extend(
         /**
          * Direction of intersecting line of two planes in 3D.
          *
-         * @param {Array} v11 First vector spanning plane 1
-         * @param {Array} v12 Second vector spanning plane 1
-         * @param {Array} v21 First vector spanning plane 2
-         * @param {Array} v22 Second vector spanning plane 2
-         * @returns {Array} Coordinates array of length 3 of the direction
+         * @param {Array} v11 First vector spanning plane 1 (homogeneous coordinates)
+         * @param {Array} v12 Second vector spanning plane 1 (homogeneous coordinates)
+         * @param {Array} v21 First vector spanning plane 2 (homogeneous coordinates)
+         * @param {Array} v22 Second vector spanning plane 2 (homogeneous coordinates)
+         * @returns {Array} Coordinates array of length 4 of the direction  (homogeneous coordinates)
          */
         meetPlanePlane: function (v11, v12, v21, v22) {
             var i,
                 no1,
                 no2,
-                v = [0, 0, 0],
-                w = [0, 0, 0];
+                v, w;
 
-            for (i = 0; i < 3; i++) {
-                v[i] = Type.evaluate(v11[i]);
-                w[i] = Type.evaluate(v12[i]);
-            }
+            v = v11.slice(1);
+            w = v12.slice(1);
             no1 = Mat.crossProduct(v, w);
 
-            for (i = 0; i < 3; i++) {
-                v[i] = Type.evaluate(v21[i]);
-                w[i] = Type.evaluate(v22[i]);
-            }
+            v = v21.slice(1);
+            w = v22.slice(1);
             no2 = Mat.crossProduct(v, w);
 
-            return Mat.crossProduct(no1, no2);
+            return Mat.crossProduct(no1, no2).unshift(0);
         },
 
         project3DTo3DPlane: function (point, normal, foot) {

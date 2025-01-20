@@ -532,7 +532,11 @@ JXG.createPoint3D = function (board, parents, attributes) {
     } else if (parents.length === 4) {
         // [view, x, y, z], (3 numbers | functions)
         F = parents.slice(1);
+    } else if (parents.length === 5) {
+        // [view, w, x, y, z], (4 numbers | functions)
+        F = parents.slice(1);
     } else {
+        console.log(parents)
         throw new Error(
             "JSXGraph: Can't create point3d with parent types '" +
                 typeof parents[1] +
