@@ -60,10 +60,10 @@ JXG.Face3D = function (view, polyhedron, faceNumber, attributes) {
     this.dataY = [];
     this.dataZ = [];
 
-    this.normal = [0, 0, 0];
+    this.normal = [0, 0, 0, 0];
     this.d = 0;
-    this.vec1 = [0, 0, 0];
-    this.vec2 = [0, 0, 0];
+    this.vec1 = [0, 0, 0, 0];
+    this.vec2 = [0, 0, 0, 0];
 
 
     this.methodMap = Type.deepCopy(this.methodMap, {
@@ -108,7 +108,7 @@ JXG.extend(
                 if (c2d.length === 0) {
                     // if coords2D.length > 0, it has already be projected
                     // in another face3d.
-                    c3d = p.coords[face[j]];
+                    c3d = p.coords[face[j]].slice(1);
                     c2d = this.view.project3DTo2D(c3d);
                     p.coords2D[face[j]] = c2d;
                     p.zIndex[face[j]] = Mat.matVecMult(this.view.matrix3DRotShift, [1, c3d[0], c3d[1], c3d[2]])[3];
@@ -155,18 +155,21 @@ JXG.extend(
                 }
                 p1 = phdr.coords[face[0]];
                 p2 = phdr.coords[face[1]];
-                this.vec1 = [p2[0] - p1[0], p2[1] - p1[1], p2[2] - p1[2]];
-                p2 = phdr.coords[face[2]];
-                this.vec2 = [p2[0] - p1[0], p2[1] - p1[1], p2[2] - p1[2]];
+                this.vec1 = [p2[0] - p1[0], p2[1] - p1[1], p2[2] - p1[2], p2[3] - p1[3]];
 
-                this.normal = Mat.crossProduct(this.vec1, this.vec2);
+                p2 = phdr.coords[face[2]];
+                this.vec2 = [p2[0] - p1[0], p2[1] - p1[1], p2[2] - p1[2], p2[3] - p1[3]];
+
+                this.normal = Mat.crossProduct(this.vec1.slice(1), this.vec2.slice(1));
                 nrm = Mat.norm(this.normal);
-                if (Math.abs(nrm) > Mat.eps * Mat.eps) {
-                    for (i = 0; i < 3; i++) {
+                this.normal.unshift(0);
+
+                if (Math.abs(nrm) > 1.e-12) {
+                    for (i = 1; i < 4; i++) {
                         this.normal[i] /= nrm;
                     }
                 }
-                this.d = Mat.innerProduct(p1, this.normal, 3);
+                this.d = Mat.innerProduct(p1, this.normal, 4);
 
                 this.updateDataArray();
             }

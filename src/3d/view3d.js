@@ -1392,25 +1392,25 @@ JXG.extend(
         for (j = 1; j <= le; j++) {
             p1 = crds[f[j - 1]];
             p2 = crds[f[j % le]];
-            vec = [p2[0] - p1[0], p2[1] - p1[1], p2[2] - p1[2]];
+            vec = [0, p2[1] - p1[1], p2[2] - p1[2], p2[3] - p1[3]];
 
             x1 = Math.random();
             y1 = Math.random();
             x2 = Math.random();
             y2 = Math.random();
             mat = [
-                [x1 * dir[0] + y1 * dir[2], x1 * (-vec[0]) + y1 * (-vec[2])],
-                [x2 * dir[1] + y2 * dir[2], x2 * (-vec[1]) + y2 * (-vec[2])]
+                [x1 * dir[1] + y1 * dir[3], x1 * (-vec[1]) + y1 * (-vec[3])],
+                [x2 * dir[2] + y2 * dir[3], x2 * (-vec[2]) + y2 * (-vec[3])]
             ];
             b = [
-                x1 * (p1[0] - p[0]) + y1 * (p1[2] - p[2]),
-                x2 * (p1[1] - p[1]) + y2 * (p1[2] - p[2])
+                x1 * (p1[1] - p[1]) + y1 * (p1[3] - p[3]),
+                x2 * (p1[2] - p[2]) + y2 * (p1[3] - p[3])
             ];
 
             sol = Numerics.Gauss(mat, b);
             t = sol[1];
             if (t > -Mat.eps && t < 1 + Mat.eps) {
-                c = [p1[0] + t * vec[0], p1[1] + t * vec[1], p1[2] + t * vec[2]];
+                c = [1, p1[1] + t * vec[1], p1[2] + t * vec[2], p1[3] + t * vec[3]];
                 ret.push(c);
             }
         }
@@ -1424,6 +1424,7 @@ JXG.extend(
     intersectionPlanePolyhedron: function(plane, phdr) {
         var i, j, seg,
             p, first, pos, pos_akt,
+            eps = 1e-12,
             points = [],
             x = [],
             y = [],
@@ -1439,20 +1440,22 @@ JXG.extend(
             // that span the intersecting segment of the plane
             // and the face.
             seg = this.intersectionPlaneFace(plane, phdr.faces[i]);
+
+            // Plane intersects the face in less than 2 points
             if (seg.length < 2) {
                 continue;
             }
 
-            if (seg[0].length === 3 && seg[1].length === 3) {
+            if (seg[0].length === 4 && seg[1].length === 4) {
                 // This test is necessary to filter out intersection lines which are
                 // identical to intersections of axis planes (they would occur twice),
                 // i.e. edges of bbox3d.
                 for (j = 0; j < points.length; j++) {
                     if (
-                        (Geometry.distance(seg[0], points[j][0], 4) < Mat.eps &&
-                            Geometry.distance(seg[1], points[j][1], 4) < Mat.eps) ||
-                        (Geometry.distance(seg[0], points[j][1], 4) < Mat.eps &&
-                            Geometry.distance(seg[1], points[j][0], 4) < Mat.eps)
+                        (Geometry.distance(seg[0], points[j][0], 4) < eps &&
+                            Geometry.distance(seg[1], points[j][1], 4) < eps) ||
+                        (Geometry.distance(seg[0], points[j][1], 4) < eps &&
+                            Geometry.distance(seg[1], points[j][0], 4) < eps)
                     ) {
                         break;
                     }
@@ -1488,12 +1491,12 @@ JXG.extend(
 
             pos_akt = pos;
             for (j = 0; j < points.length; j++) {
-                if (j !== pos && Geometry.distance(p, points[j][0]) < Mat.eps) {
+                if (j !== pos && Geometry.distance(p, points[j][0]) < eps) {
                     pos = j;
                     i = 0;
                     break;
                 }
-                if (j !== pos && Geometry.distance(p, points[j][1]) < Mat.eps) {
+                if (j !== pos && Geometry.distance(p, points[j][1]) < eps) {
                     pos = j;
                     i = 1;
                     break;
