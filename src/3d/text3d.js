@@ -321,10 +321,12 @@ JXG.extend(
                     this.coords = this.slide.projectCoords([this.X(), this.Y(), this.Z()], this.position);
                 }
                 // Update 2D text from its 3D view
+                c3d = this.coords;
                 this.element2D.coords.setCoordinates(
                     Const.COORDS_BY_USER,
-                    this.view.project3DTo2D([1, this.X(), this.Y(), this.Z()].slice(1))
+                    this.view.project3DTo2D(c3d)
                 );
+                this.zIndex = Mat.matVecMult(this.view.matrix3DRotShift, c3d)[3];
                 this.element2D.prepareUpdate().update();
             }
             this._c2d = this.element2D.coords.usrCoords.slice();
