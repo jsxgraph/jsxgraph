@@ -875,27 +875,42 @@ JXG.extend(
          * @private
          */
         updateCoords: function() {
-            var i;
-            if (Type.isFunction(this.direction1)) {
+            var i, s;
+
+            if (Type.exists(this.direction1.view) && this.direction1.type === Const.OBJECT_TYPE_LINE3D) {
+                this.vec1 = this.direction1.vec.slice();
+            } else if (Type.isFunction(this.direction1)) {
                 this.vec1 = Type.evaluate(this.direction1);
-            } else {
-                for (i = 0; i < this.direction1.length; i++) {
-                    this.vec1[i] = Type.evaluate(this.direction1[i]);
+                if (this.vec1.length === 3) {
+                    this.vec1.unshift(1);
                 }
-            }
-            if (this.vec1.length === 3) {
-                this.vec1.unshift(0);
+            } else {
+                s = 0;
+                if (this.direction1.length === 3) {
+                    this.vec1[0] = 0;
+                    s = 1;
+                }
+                for (i = 0; i < this.direction1.length; i++) {
+                    this.vec1[s + i] = Type.evaluate(this.direction1[i]);
+                }
             }
 
-            if (Type.isFunction(this.direction2)) {
+            if (Type.exists(this.direction2.view) && this.direction2.type === Const.OBJECT_TYPE_LINE3D) {
+                this.vec2 = this.direction2.vec.slice();
+            } else if (Type.isFunction(this.direction2)) {
                 this.vec2 = Type.evaluate(this.direction2);
-            } else {
-                for (i = 0; i < this.direction2.length; i++) {
-                    this.vec2[i] = Type.evaluate(this.direction2[i]);
+                if (this.vec2.length === 3) {
+                    this.vec2.unshift(1);
                 }
-            }
-            if (this.vec2.length === 3) {
-                this.vec2.unshift(0);
+            } else {
+                s = 0;
+                if (this.direction2.length === 3) {
+                    this.vec2[0] = 0;
+                    s = 1;
+                }
+                for (i = 0; i < this.direction2.length; i++) {
+                    this.vec2[s + i] = Type.evaluate(this.direction2[i]);
+                }
             }
 
             return this;
@@ -943,7 +958,7 @@ JXG.extend(
                     this.normal[i] /= len;
                 }
             }
-            this.normal = this.normal.unshift(0);
+            this.normal.unshift(0);
             this.d = Mat.innerProduct(this.point.coords, this.normal, 4);
 
             return this;
@@ -963,6 +978,7 @@ JXG.extend(
             this.dataX = [];
             this.dataY = [];
 
+            this.updateCoords();
             this.updateNormal();
 
             // Infinite plane
@@ -990,10 +1006,10 @@ JXG.extend(
                         // i.e. edges of bbox3d.
                         for (i = 0; i < points.length; i++) {
                             if (
-                                (Geometry.distance(p[0], points[i][0], 3) < Mat.eps &&
-                                    Geometry.distance(p[1], points[i][1], 3) < Mat.eps) ||
-                                (Geometry.distance(p[0], points[i][1], 3) < Mat.eps &&
-                                    Geometry.distance(p[1], points[i][0], 3) < Mat.eps)
+                                (Geometry.distance(p[0], points[i][0], 4) < Mat.eps &&
+                                    Geometry.distance(p[1], points[i][1], 4) < Mat.eps) ||
+                                (Geometry.distance(p[0], points[i][1], 4) < Mat.eps &&
+                                    Geometry.distance(p[1], points[i][0], 4) < Mat.eps)
                             ) {
                                 break;
                             }
@@ -1004,12 +1020,12 @@ JXG.extend(
                     }
 
                     // Take a point on the corresponding front plane of bbox3d.
-                    p = [0, 0, 0];
-                    p[j] = view.bbox3D[j][1];
+                    p = [1, 0, 0, 0];
+                    p[j + 1] = view.bbox3D[j][1];
 
                     // Use the Hesse normal form of front plane to intersect it with the plane
                     // d is the rhs of the Hesse normal form of the front plane.
-                    d = Mat.innerProduct(p, view.defaultAxes[planes[j]].normal, 3);
+                    d = Mat.innerProduct(p, view.defaultAxes[planes[j]].normal, 4);
                     p = view.intersectionPlanePlane(this, view.defaultAxes[planes[j]], d);
 
                     if (p[0] !== false && p[1] !== false) {
@@ -1017,10 +1033,10 @@ JXG.extend(
                         for (i = 0; i < points.length; i++) {
                             // Same test for edges of bbox3d as above
                             if (
-                                (Geometry.distance(p[0], points[i][0], 3) < Mat.eps &&
-                                    Geometry.distance(p[1], points[i][1], 3) < Mat.eps) ||
-                                (Geometry.distance(p[0], points[i][1], 3) < Mat.eps &&
-                                    Geometry.distance(p[1], points[i][0], 3) < Mat.eps)
+                                (Geometry.distance(p[0], points[i][0], 4) < Mat.eps &&
+                                    Geometry.distance(p[1], points[i][1], 4) < Mat.eps) ||
+                                (Geometry.distance(p[0], points[i][1], 4) < Mat.eps &&
+                                    Geometry.distance(p[1], points[i][0], 4) < Mat.eps)
                             ) {
                                 break;
                             }
@@ -1044,7 +1060,7 @@ JXG.extend(
                 i = 0;
                 do {
                     p = points[pos][i];
-                    if (p.length === 3) {
+                    if (p.length === 4) {
                         c2d = view.project3DTo2D(p);
                         this.dataX.push(c2d[1]);
                         this.dataY.push(c2d[2]);
@@ -1081,13 +1097,12 @@ JXG.extend(
                 s2 = Type.evaluate(this.range_v[0]);
                 e2 = Type.evaluate(this.range_v[1]);
 
-                q = this.point.coords.slice(1);
-
+                q = this.point.coords;
                 v1 = this.vec1.slice();
                 v2 = this.vec2.slice();
-                l1 = Mat.norm(v1, 3);
-                l2 = Mat.norm(v2, 3);
-                for (i = 0; i < 3; i++) {
+                l1 = Mat.norm(v1, 4);
+                l2 = Mat.norm(v2, 4);
+                for (i = 1; i < 4; i++) {
                     v1[i] /= l1;
                     v2[i] /= l2;
                 }
@@ -1110,7 +1125,7 @@ JXG.extend(
                             a = s1;
                             b = e2;
                     }
-                    for (i = 0; i < 3; i++) {
+                    for (i = 0; i < 4; i++) {
                         p[i] = q[i] + a * v1[i] + b * v2[i];
                     }
                     c2d = view.project3DTo2D(p);
@@ -1506,18 +1521,18 @@ JXG.createPlane3D = function (board, parents, attributes) {
             );
         }
 
-        if (Type.exists(parents[2].view) && parents[2].type === Const.OBJECT_TYPE_LINE3D) {
-            dir1 = function() {
-                return Type.evaluate(parents[2].direction).slice(1);
-            };
-        } else {
+        // if (Type.exists(parents[2].view) && parents[2].type === Const.OBJECT_TYPE_LINE3D) {
+        //     dir1 = function() {
+        //         return Type.evaluate(parents[2].direction).slice(1);
+        //     };
+        // } else {
             dir1 = parents[2];
-        }
-        if (Type.exists(parents[3].view) && parents[3].type === Const.OBJECT_TYPE_LINE3D) {
-            dir2 = function() { return Type.evaluate(parents[3].direction).slice(1); };
-        } else {
+        // }
+        // if (Type.exists(parents[3].view) && parents[3].type === Const.OBJECT_TYPE_LINE3D) {
+        //     dir2 = function() { return Type.evaluate(parents[3].direction).slice(1); };
+        // } else {
             dir2 = parents[3];
-        }
+        // }
         range_u = parents[4] || [-Infinity, Infinity];
         range_v = parents[5] || [-Infinity, Infinity];
 

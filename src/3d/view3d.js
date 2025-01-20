@@ -1315,18 +1315,21 @@ JXG.extend(
      */
     intersectionPlanePlane: function (plane1, plane2, d) {
         var ret = [false, false],
-            p, q, r,
+            p, q, r, w,
             dir;
 
         d = d || plane2.d;
 
         // Get one point of the intersection of the two planes
+        w = Mat.crossProduct(plane1.normal.slice(1), plane2.normal.slice(1));
+        w.unshift(0);
+
         p = Mat.Geometry.meet3Planes(
             plane1.normal,
             plane1.d,
             plane2.normal,
             d,
-            Mat.crossProduct(plane1.normal, plane2.normal),
+            w,
             0
         );
 
@@ -1349,6 +1352,7 @@ JXG.extend(
         if (this.isInCube(q)) {
             ret[1] = q;
         }
+
         return ret;
     },
 

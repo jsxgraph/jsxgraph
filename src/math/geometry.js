@@ -4107,17 +4107,15 @@ JXG.extend(
          */
         meet3Planes: function (n1, d1, n2, d2, n3, d3) {
             var p = [1, 0, 0, 0],
-                n31,
-                n12,
-                n23,
+                n31, n12, n23,
                 denom,
                 i;
 
-            n31 = Mat.crossProduct(n3, n1);
-            n12 = Mat.crossProduct(n1, n2);
-            n23 = Mat.crossProduct(n2, n3);
+            n31 = Mat.crossProduct(n3.slice(1), n1.slice(1));
+            n12 = Mat.crossProduct(n1.slice(1), n2.slice(1));
+            n23 = Mat.crossProduct(n2.slice(1), n3.slice(1));
 
-            denom = Mat.innerProduct(n1, n23, 3);
+            denom = Mat.innerProduct(n1.slice(1), n23, 3);
             for (i = 0; i < 3; i++) {
                 p[i + 1] = (d1 * n23[i] + d2 * n31[i] + d3 * n12[i]) / denom;
             }
@@ -4147,7 +4145,9 @@ JXG.extend(
             w = v22.slice(1);
             no2 = Mat.crossProduct(v, w);
 
-            return Mat.crossProduct(no1, no2).unshift(0);
+            w = Mat.crossProduct(no1, no2);
+            w.unshift(0);
+            return w;
         },
 
         project3DTo3DPlane: function (point, normal, foot) {
