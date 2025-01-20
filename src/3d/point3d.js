@@ -192,7 +192,7 @@ JXG.extend(
          *    p.updateCoords();
          */
         updateCoords: function () {
-            var i, 
+            var i,
                 s = 0;
 
             if (Type.isFunction(this.F)) {
@@ -204,7 +204,7 @@ JXG.extend(
                 if (this.F.length === 3) {
                     this.coords[0] = 1;
                     s = 1;
-                } 
+                }
                 for (i = 0; i < this.F.length; i++) {
                     // Attention: if F is array of numbers, coords may not be updated.
                     // Otherwise, dragging will not work anymore.
@@ -551,7 +551,6 @@ JXG.createPoint3D = function (board, parents, attributes) {
         // [view, w, x, y, z], (4 numbers | functions)
         F = parents.slice(1);
     } else {
-        console.log(parents)
         throw new Error(
             "JSXGraph: Can't create point3d with parent types '" +
                 typeof parents[1] +

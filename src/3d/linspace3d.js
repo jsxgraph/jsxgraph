@@ -86,7 +86,7 @@ JXG.Line3D = function (view, point, direction, range, attributes) {
      *
      * @type {Array}
      */
-    this.vec = [0, 0, 0, 0],
+    this.vec = [0, 0, 0, 0];
 
     /**
      * Range [r1, r2] of the line. r1, r2 can be numbers or functions.
@@ -172,9 +172,9 @@ JXG.extend(
             r = this.view.intersectionLineCube(p, d, r0);
 
             return [
-                p[0] + d[0] * r, 
-                p[1] + d[1] * r, 
-                p[2] + d[2] * r, 
+                p[0] + d[0] * r,
+                p[1] + d[1] * r,
+                p[2] + d[2] * r,
                 p[3] + d[3] * r
             ];
         },
