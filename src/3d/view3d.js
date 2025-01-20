@@ -1362,8 +1362,11 @@ JXG.extend(
             p, crds,
             p1, p2, c,
             f, le, x1, y1, x2, y2,
-            dir, vec,
+            dir, vec, w,
             mat = [], b = [], sol;
+
+        w = Mat.crossProduct(plane.normal.slice(1), face.normal.slice(1));
+        w.unshift(0);
 
         // Get one point of the intersection of the two planes
         p = Geometry.meet3Planes(
@@ -1371,7 +1374,7 @@ JXG.extend(
             plane.d,
             face.normal,
             face.d,
-            Mat.crossProduct(plane.normal, face.normal),
+            w,
             0
         );
 
@@ -1446,10 +1449,10 @@ JXG.extend(
                 // i.e. edges of bbox3d.
                 for (j = 0; j < points.length; j++) {
                     if (
-                        (Geometry.distance(seg[0], points[j][0], 3) < Mat.eps &&
-                            Geometry.distance(seg[1], points[j][1], 3) < Mat.eps) ||
-                        (Geometry.distance(seg[0], points[j][1], 3) < Mat.eps &&
-                            Geometry.distance(seg[1], points[j][0], 3) < Mat.eps)
+                        (Geometry.distance(seg[0], points[j][0], 4) < Mat.eps &&
+                            Geometry.distance(seg[1], points[j][1], 4) < Mat.eps) ||
+                        (Geometry.distance(seg[0], points[j][1], 4) < Mat.eps &&
+                            Geometry.distance(seg[1], points[j][0], 4) < Mat.eps)
                     ) {
                         break;
                     }
@@ -1475,10 +1478,10 @@ JXG.extend(
         i = 0;
         do {
             p = points[pos][i];
-            if (p.length === 3) {
-                x.push(p[0]);
-                y.push(p[1]);
-                z.push(p[2]);
+            if (p.length === 4) {
+                x.push(p[1]);
+                y.push(p[2]);
+                z.push(p[3]);
             }
             i = (i + 1) % 2;
             p = points[pos][i];
