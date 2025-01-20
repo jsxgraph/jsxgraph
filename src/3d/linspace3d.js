@@ -133,7 +133,10 @@ JXG.extend(
             var i,
                 s = 0;
 
-            if (Type.isFunction(this.direction)) {
+            if ((Type.exists(this.direction.view) && this.direction.type === Const.OBJECT_TYPE_LINE3D)) {
+                // direction is another line3D object
+                this.vec = this.direction.vec.slice();
+            } else if (Type.isFunction(this.direction)) {
                 this.vec = Type.evaluate(this.direction);
                 if (this.vec.length === 3) {
                     this.vec.unshift(1);
@@ -568,8 +571,7 @@ JXG.createLine3D = function (board, parents, attributes) {
 
         point = Type.providePoints3D(view, [parents[1]], attributes, 'line3d', ['point'])[0];
 
-        // Directions are handled as arrays of length 4,
-        // i.e. with homogeneous coordinates.
+        // Directions are handled as arrays of length 4, i.e. with homogeneous coordinates.
         if ((Type.exists(parents[2].view) && parents[2].type === Const.OBJECT_TYPE_LINE3D) ||
             Type.isFunction(parents[2]) ||
             (parents[2].length === 3) ||
@@ -638,8 +640,6 @@ JXG.createLine3D = function (board, parents, attributes) {
 
         el.addParents(point);
     }
-
-    // TODO Throw error
 
     el.addChild(el.element2D);
     el.inherits.push(el.element2D);
