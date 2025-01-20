@@ -108,10 +108,10 @@ JXG.extend(
                 if (c2d.length === 0) {
                     // if coords2D.length > 0, it has already be projected
                     // in another face3d.
-                    c3d = p.coords[face[j]].slice(1);
+                    c3d = p.coords[face[j]];
                     c2d = this.view.project3DTo2D(c3d);
                     p.coords2D[face[j]] = c2d;
-                    p.zIndex[face[j]] = Mat.matVecMult(this.view.matrix3DRotShift, [1, c3d[0], c3d[1], c3d[2]])[3];
+                    p.zIndex[face[j]] = Mat.matVecMult(this.view.matrix3DRotShift, c3d)[3];
                 }
                 x.push(c2d[1]);
                 y.push(c2d[2]);

@@ -972,6 +972,7 @@ JXG.extend(
                 v2 = [0, 0, 0],
                 q = [0, 0, 0],
                 p = [0, 0, 0],
+                eps = 1.e-12,
                 d, i, j, a, b, first, pos, pos_akt,
                 view = this.view;
 
@@ -1006,10 +1007,10 @@ JXG.extend(
                         // i.e. edges of bbox3d.
                         for (i = 0; i < points.length; i++) {
                             if (
-                                (Geometry.distance(p[0], points[i][0], 4) < Mat.eps &&
-                                    Geometry.distance(p[1], points[i][1], 4) < Mat.eps) ||
-                                (Geometry.distance(p[0], points[i][1], 4) < Mat.eps &&
-                                    Geometry.distance(p[1], points[i][0], 4) < Mat.eps)
+                                (Geometry.distance(p[0], points[i][0], 4) < eps &&
+                                    Geometry.distance(p[1], points[i][1], 4) < eps) ||
+                                (Geometry.distance(p[0], points[i][1], 4) < eps &&
+                                    Geometry.distance(p[1], points[i][0], 4) < eps)
                             ) {
                                 break;
                             }
@@ -1033,10 +1034,10 @@ JXG.extend(
                         for (i = 0; i < points.length; i++) {
                             // Same test for edges of bbox3d as above
                             if (
-                                (Geometry.distance(p[0], points[i][0], 4) < Mat.eps &&
-                                    Geometry.distance(p[1], points[i][1], 4) < Mat.eps) ||
-                                (Geometry.distance(p[0], points[i][1], 4) < Mat.eps &&
-                                    Geometry.distance(p[1], points[i][0], 4) < Mat.eps)
+                                (Geometry.distance(p[0], points[i][0], 4) < eps &&
+                                    Geometry.distance(p[1], points[i][1], 4) < eps) ||
+                                (Geometry.distance(p[0], points[i][1], 4) < eps &&
+                                    Geometry.distance(p[1], points[i][0], 4) < eps)
                             ) {
                                 break;
                             }
@@ -1070,12 +1071,12 @@ JXG.extend(
 
                     pos_akt = pos;
                     for (j = 0; j < points.length; j++) {
-                        if (j !== pos && Geometry.distance(p, points[j][0]) < Mat.eps) {
+                        if (j !== pos && Geometry.distance(p, points[j][0]) < eps) {
                             pos = j;
                             i = 0;
                             break;
                         }
-                        if (j !== pos && Geometry.distance(p, points[j][1]) < Mat.eps) {
+                        if (j !== pos && Geometry.distance(p, points[j][1]) < eps) {
                             pos = j;
                             i = 1;
                             break;

@@ -361,7 +361,7 @@ JXG.extend(
                 if (this.slide) {
                     this.coords = this.slide.projectCoords([this.X(), this.Y(), this.Z()], this.position);
                 }
-                c3d = [1, this.X(), this.Y(), this.Z()];
+                c3d = this.coords;
                 this.element2D.coords.setCoordinates(
                     Const.COORDS_BY_USER,
                     this.view.project3DTo2D(c3d)

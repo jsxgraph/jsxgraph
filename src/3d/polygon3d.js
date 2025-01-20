@@ -103,9 +103,9 @@ JXG.extend(
                 return [NaN, NaN, NaN, NaN];
             }
             for (i = 0; i < le; i++) {
-                c3d[1] += this.vertices[i].X();
-                c3d[2] += this.vertices[i].Y();
-                c3d[3] += this.vertices[i].Z();
+                c3d[1] += this.vertices[i].coords[1];
+                c3d[2] += this.vertices[i].coords[2];
+                c3d[3] += this.vertices[i].coords[3];
             }
             c3d[1] /= le;
             c3d[2] /= le;
