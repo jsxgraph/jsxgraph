@@ -978,7 +978,7 @@ JXG.extend(
             this.dataX = [];
             this.dataY = [];
 
-            this.updateCoords();
+            // this.updateCoords();
             this.updateNormal();
 
             // Infinite plane
