@@ -130,16 +130,22 @@ JXG.extend(
          * @private
          */
         updateCoords: function() {
-            var i;
+            var i,
+                s = 0;
+
             if (Type.isFunction(this.direction)) {
                 this.vec = Type.evaluate(this.direction);
-            } else {
-                for (i = 0; i < this.direction.length; i++) {
-                    this.vec[i] = Type.evaluate(this.direction[i]);
+                if (this.vec.length === 3) {
+                    this.vec.unshift(1);
                 }
-            }
-            if (this.vec.length === 3) {
-                this.vec.unshift(0);
+            } else {
+                if (this.direction.length === 3) {
+                    this.vec[0] = 0;
+                    s = 1;
+                }
+                for (i = 0; i < this.direction.length; i++) {
+                    this.vec[s + i] = Type.evaluate(this.direction[i]);
+                }
             }
 
             return this;
@@ -150,32 +156,27 @@ JXG.extend(
          *
          * @param {Number|function} r Usually, one of the range borders.
          * @private
-         * @returns {Array} Coordinates of length 3.
+         * @returns {Array} Coordinates of length 4.
          */
         getPointCoords: function (r) {
             var p = [],
                 d = [],
-                i,
                 r0;
 
-            // p = [this.point.X(), this.point.Y(), this.point.Z()];
-            // if (Type.isFunction(this.direction)) {
-            //     d = this.direction();
-            // } else {
-            //     for (i = 1; i < 4; i++) {
-            //         d.push(Type.evaluate(this.direction[i]));
-            //     }
-            // }
-
-            p = this.point.coords.slice(1);
-            d = this.vec.slice(1);
+            p = this.point.coords;
+            d = this.vec;
 
             // Intersect the ray - if necessary - with the cube,
             // i.e. clamp the line.
             r0 = Type.evaluate(r);
             r = this.view.intersectionLineCube(p, d, r0);
 
-            return [p[0] + d[0] * r, p[1] + d[1] * r, p[2] + d[2] * r];
+            return [
+                p[0] + d[0] * r, 
+                p[1] + d[1] * r, 
+                p[2] + d[2] * r, 
+                p[3] + d[3] * r
+            ];
         },
 
         // Already documented in JXG.GeometryElement
@@ -202,6 +203,8 @@ JXG.extend(
                     t.applyOnce(el.element2D);
                 }
             }
+            this.endpoints[0].update();
+            this.endpoints[1].update();
         },
 
         // Already documented in JXG.GeometryElement
@@ -229,7 +232,6 @@ JXG.extend(
                 c3d;
 
             c3d = this.getPointCoords(t_clamped).slice();
-            c3d.unshift(1);
             params[0] = t_clamped;
 
             return c3d;
@@ -516,7 +518,7 @@ JXG.createLine3D = function (board, parents, attributes) {
                 [1, 0, 0, 0],
                 [1, 0, 0, 0]
             ],
-            { visible: false },
+            { visible: true },
             'line3d',
             ['point1', 'point2']
         );
@@ -734,7 +736,7 @@ JXG.Plane3D = function (view, point, dir1, range_u, dir2, range_v, attributes) {
     /**
      * Range [r1, r2] of {@link direction1}. The 3D line goes from (point + r1 * direction1) to (point + r2 * direction1)
      * @type {Array} [-Infinity, Infinity]
-     * @default 
+     * @default
      */
     this.range_u = range_u || [-Infinity, Infinity];
 
@@ -806,9 +808,9 @@ JXG.extend(
 
         /**
          * Get coordinate array [x, y, z] of a point on the plane for parameters (u, v).
-         * 
-         * @param {Number} u 
-         * @param {Number} v 
+         *
+         * @param {Number} u
+         * @param {Number} v
          * @returns Array of length 3.
          */
         F: function (u, v) {
@@ -832,9 +834,9 @@ JXG.extend(
 
         /**
          * Get x-coordinate of a point on the plane for parameters (u, v).
-         * 
-         * @param {Number} u 
-         * @param {Number} v 
+         *
+         * @param {Number} u
+         * @param {Number} v
          * @returns Number
          */
         X: function(u, v) {
@@ -843,9 +845,9 @@ JXG.extend(
 
         /**
          * Get y-coordinate of a point on the plane for parameters (u, v).
-         * 
-         * @param {Number} u 
-         * @param {Number} v 
+         *
+         * @param {Number} u
+         * @param {Number} v
          * @returns Number
          */
         Y: function(u, v) {
@@ -854,9 +856,9 @@ JXG.extend(
 
         /**
          * Get z-coordinate of a point on the plane for parameters (u, v).
-         * 
-         * @param {Number} u 
-         * @param {Number} v 
+         *
+         * @param {Number} u
+         * @param {Number} v
          * @returns Number
          */
         Z: function(u, v) {
@@ -933,7 +935,7 @@ JXG.extend(
                 this.updateCoords();
             }
 
-            this.normal = Mat.crossProduct(this.vec1, this.vec2);
+            this.normal = Mat.crossProduct(this.vec1.slice(1), this.vec2.slice(1));
 
             len = Mat.norm(this.normal);
             if (Math.abs(len) > Mat.eps * Mat.eps) {
@@ -941,7 +943,8 @@ JXG.extend(
                     this.normal[i] /= len;
                 }
             }
-            this.d = Mat.innerProduct(this.point.coords.slice(1), this.normal, 3);
+            this.normal = this.normal.unshift(0);
+            this.d = Mat.innerProduct(this.point.coords, this.normal, 4);
 
             return this;
         },

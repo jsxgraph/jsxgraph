@@ -1257,7 +1257,7 @@ JXG.extend(
 
     /**
      * Intersect a ray with the bounding cube of the 3D view.
-     * @param {Array} p 3D coordinates [x,y,z]
+     * @param {Array} p 3D coordinates [w,x,y,z]
      * @param {Array} dir 3D direction vector of the line (array of length 3 or 4)
      * @param {Number} r direction of the ray (positive if r > 0, negative if r < 0).
      * @returns Affine ratio of the intersection of the line with the cube.
@@ -1266,11 +1266,12 @@ JXG.extend(
         var r_n, i, r0, r1, d;
 
         d = (dir.length === 3) ? dir : dir.slice(1);
+
         r_n = r;
         for (i = 0; i < 3; i++) {
             if (d[i] !== 0) {
-                r0 = (this.bbox3D[i][0] - p[i]) / d[i];
-                r1 = (this.bbox3D[i][1] - p[i]) / d[i];
+                r0 = (this.bbox3D[i][0] - p[i + 1]) / d[i];
+                r1 = (this.bbox3D[i][1] - p[i + 1]) / d[i];
                 if (r < 0) {
                     r_n = Math.max(r_n, Math.min(r0, r1));
                 } else {
@@ -1283,10 +1284,17 @@ JXG.extend(
 
     /**
      * Test if coordinates are inside of the bounding cube.
-     * @param {array} q 3D coordinates [x,y,z] of a point.
+     * @param {array} p 3D coordinates [[w],x,y,z] of a point.
      * @returns Boolean
      */
-    isInCube: function (q, polyhedron) {
+    isInCube: function (p, polyhedron) {
+        var q;
+        if (p.length === 4) {
+            if (p[0] === 0) {
+                return false;
+            }
+            q = p.slice(1);
+        }
         return (
             q[0] > this.bbox3D[0][0] - Mat.eps &&
             q[0] < this.bbox3D[0][1] + Mat.eps &&

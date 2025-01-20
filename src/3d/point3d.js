@@ -192,19 +192,28 @@ JXG.extend(
          *    p.updateCoords();
          */
         updateCoords: function () {
-            var i;
+            var i, 
+                s = 0;
 
             if (Type.isFunction(this.F)) {
                 this.coords = Type.evaluate(this.F);
+                if (this.coords.length === 3) {
+                    this.coords.unshift(1);
+                }
             } else {
+                if (this.F.length === 3) {
+                    this.coords[0] = 1;
+                    s = 1;
+                } 
                 for (i = 0; i < this.F.length; i++) {
                     // Attention: if F is array of numbers, coords may not be updated.
                     // Otherwise, dragging will not work anymore.
                     if (Type.isFunction(this.F[i])) {
-                        this.coords[i] = Type.evaluate(this.F[i]);
+                        this.coords[s + i] = Type.evaluate(this.F[i]);
                     }
                 }
             }
+
             return this;
         },
 
@@ -215,18 +224,25 @@ JXG.extend(
          * @returns {Object} Reference to the Point3D object
          */
         initCoords: function () {
-            var i;
+            var i,
+                s = 0;
+
 
             if (Type.isFunction(this.F)) {
                 this.coords = Type.evaluate(this.F);
+                if (this.coords.length === 3) {
+                    this.coords.unshift(1);
+                }
             } else {
+                if (this.F.length === 3) {
+                    this.coords[0] = 1;
+                    s = 1;
+                }
                 for (i = 0; i < this.F.length; i++) {
-                    this.coords[i] = Type.evaluate(this.F[i]);
+                    this.coords[s + i] = Type.evaluate(this.F[i]);
                 }
             }
-            if (this.coords.length === 3) {
-                this.coords.unshift(1);
-            }
+
             return this;
         },
 
@@ -304,7 +320,6 @@ JXG.extend(
                 // Update is called from board.updateElements, e.g. after manipulating a
                 // a slider or dragging a point.
                 // Usually this followed by an update call using the other branch below.
-
                 if (this.view.isVerticalDrag()) {
                     // Drag the point in its vertical to the xy plane
                     // If the point is outside of bbox3d,

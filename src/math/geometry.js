@@ -4103,10 +4103,10 @@ JXG.extend(
          * @param {Number} d2 Hesse normal form right hand side of plane 2
          * @param {Array} n3 Hesse normal form vector of plane 1
          * @param {Number} d3 Hesse normal form right hand side of plane 3
-         * @returns {Array} Coordinates array of length 3 of the intersecting point
+         * @returns {Array} Coordinates array of length 4 of the intersecting point
          */
         meet3Planes: function (n1, d1, n2, d2, n3, d3) {
-            var p = [0, 0, 0],
+            var p = [1, 0, 0, 0],
                 n31,
                 n12,
                 n23,
@@ -4119,7 +4119,7 @@ JXG.extend(
 
             denom = Mat.innerProduct(n1, n23, 3);
             for (i = 0; i < 3; i++) {
-                p[i] = (d1 * n23[i] + d2 * n31[i] + d3 * n12[i]) / denom;
+                p[i + 1] = (d1 * n23[i] + d2 * n31[i] + d3 * n12[i]) / denom;
             }
 
             return p;
@@ -4135,8 +4135,7 @@ JXG.extend(
          * @returns {Array} Coordinates array of length 4 of the direction  (homogeneous coordinates)
          */
         meetPlanePlane: function (v11, v12, v21, v22) {
-            var i,
-                no1,
+            var no1,
                 no2,
                 v, w;
 
