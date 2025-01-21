@@ -2716,63 +2716,6 @@ JXG.extend(
             return new Coords(Const.COORDS_BY_USER, crds, board);
         },
 
-        meetPlaneSphere: function (el1, el2) {
-            var dis = function () {
-                    return Mat.innerProduct(el1.normal, el2.center.coords, 4) - el1.d;
-                };
-
-            return [
-                // Center
-                function() {
-                    return Mat.axpy(-dis(), el1.normal, el2.center.coords);
-                },
-                // Normal
-                el1.normal,
-                // Radius
-                function () {
-                    // Radius (returns NaN if spheres don't touch)
-                    var r = el2.Radius(),
-                        s = dis();
-                    return Math.sqrt(r * r - s * s);
-                }
-            ];
-        },
-
-        meetSphereSphere: function (el1, el2) {
-            var skew = function () {
-                    var dist = el1.center.distance(el2.center),
-                        r1 = el1.Radius(),
-                        r2 = el2.Radius();
-                    return (r1 - r2) * (r1 + r2) / (dist * dist);
-                };
-            return [
-                // Center
-                function () {
-                    var s = skew();
-                    return [
-                        1,
-                        0.5 * ((1 - s) * el1.center.coords[1] + (1 + s) * el2.center.coords[1]),
-                        0.5 * ((1 - s) * el1.center.coords[2] + (1 + s) * el2.center.coords[2]),
-                        0.5 * ((1 - s) * el1.center.coords[3] + (1 + s) * el2.center.coords[3])
-                    ];
-                },
-                // Normal
-                function() {
-                    return Stat.subtract(el2.center.coords, el1.center.coords);
-                },
-                // Radius
-                function () {
-                    // Radius (returns NaN if spheres don't touch)
-                    var dist = el1.center.distance(el2.center),
-                        r1 = el1.Radius(),
-                        r2 = el2.Radius(),
-                        s = skew(),
-                        rIxnSq = 0.5 * (r1 * r1 + r2 * r2 - 0.5 * dist * dist * (1 + s * s));
-                    return Math.sqrt(rIxnSq);
-                }
-            ];
-        },
-
         /****************************************/
         /****   BEZIER CURVE ALGORITHMS      ****/
         /****************************************/
@@ -3783,6 +3726,88 @@ JXG.extend(
             return coords;
         },
 
+        /**
+         * Calculates the distance of a point to a line. The point and the line are given by homogeneous
+         * coordinates. For lines this can be line.stdform.
+         * @param {Array} point Homogeneous coordinates of a point.
+         * @param {Array} line Homogeneous coordinates of a line ([C,A,B] where A*x+B*y+C*z=0).
+         * @returns {Number} Distance of the point to the line.
+         */
+        distPointLine: function (point, line) {
+            var a = line[1],
+                b = line[2],
+                c = line[0],
+                nom;
+
+            if (Math.abs(a) + Math.abs(b) < Mat.eps) {
+                return Number.POSITIVE_INFINITY;
+            }
+
+            nom = a * point[1] + b * point[2] + c;
+            a *= a;
+            b *= b;
+
+            return Math.abs(nom) / Math.sqrt(a + b);
+        },
+
+        /**
+         * Determine the (Euclidean) distance between a point q and a line segment
+         * defined by two points p1 and p2. In case p1 equals p2, the distance to this
+         * point is returned.
+         *
+         * @param {Array} q Homogeneous coordinates of q
+         * @param {Array} p1 Homogeneous coordinates of p1
+         * @param {Array} p2 Homogeneous coordinates of p2
+         * @returns {Number} Distance of q to line segment [p1, p2]
+         */
+        distPointSegment: function (q, p1, p2) {
+            var x, y, dx, dy,
+                den, lbda,
+                eps = Mat.eps * Mat.eps,
+                huge = 1000000;
+
+            // Difference q - p1
+            x = q[1] - p1[1];
+            y = q[2] - p1[2];
+            x = (x === Infinity) ? huge : (x === -Infinity) ? -huge : x;
+            y = (y === Infinity) ? huge : (y === -Infinity) ? -huge : y;
+
+            // Difference p2 - p1
+            dx = p2[1] - p1[1];
+            dy = p2[2] - p1[2];
+            dx = (dx === Infinity) ? huge : (dx === -Infinity) ? -huge : dx;
+            dy = (dy === Infinity) ? huge : (dy === -Infinity) ? -huge : dy;
+
+            // If den==0 then p1 and p2 are identical
+            // In this case the distance to p1 is returned
+            den = dx * dx + dy * dy;
+            if (den > eps) {
+                lbda = (x * dx + y * dy) / den;
+                if (lbda < 0.0) {
+                    lbda = 0.0;
+                } else if (lbda > 1.0) {
+                    lbda = 1.0;
+                }
+                x -= lbda * dx;
+                y -= lbda * dy;
+            }
+
+            return Mat.hypot(x, y);
+        },
+
+        /* ***************************************/
+        /* *** 3D CALCULATIONS ****/
+        /* ***************************************/
+
+        /**
+         * Test if parameters are inside of allowed ranges
+         * 
+         * @param {Array} params Array of length 1 or 2
+         * @param {Array} r_u First range
+         * @param {Array} [r_v] Second range
+         * @returns Boolean
+         * @private
+         */
         _paramsOutOfRange: function(params, r_u, r_v) {
             return params[0] < r_u[0] || params[0] > r_u[1] ||
                 (params.length > 1 && (params[1] < r_v[0] || params[1] > r_v[1]));
@@ -3946,73 +3971,166 @@ JXG.extend(
         // },
 
         /**
-         * Calculates the distance of a point to a line. The point and the line are given by homogeneous
-         * coordinates. For lines this can be line.stdform.
-         * @param {Array} point Homogeneous coordinates of a point.
-         * @param {Array} line Homogeneous coordinates of a line ([C,A,B] where A*x+B*y+C*z=0).
-         * @returns {Number} Distance of the point to the line.
+         * Intersecting point of three planes in 3D. The planes
+         * are given in Hesse normal form.
+         *
+         * @param {Array} n1 Hesse normal form vector of plane 1
+         * @param {Number} d1 Hesse normal form right hand side of plane 1
+         * @param {Array} n2 Hesse normal form vector of plane 2
+         * @param {Number} d2 Hesse normal form right hand side of plane 2
+         * @param {Array} n3 Hesse normal form vector of plane 1
+         * @param {Number} d3 Hesse normal form right hand side of plane 3
+         * @returns {Array} Coordinates array of length 4 of the intersecting point
          */
-        distPointLine: function (point, line) {
-            var a = line[1],
-                b = line[2],
-                c = line[0],
-                nom;
+        meet3Planes: function (n1, d1, n2, d2, n3, d3) {
+            var p = [1, 0, 0, 0],
+                n31, n12, n23,
+                denom,
+                i;
 
-            if (Math.abs(a) + Math.abs(b) < Mat.eps) {
-                return Number.POSITIVE_INFINITY;
+            n31 = Mat.crossProduct(n3.slice(1), n1.slice(1));
+            n12 = Mat.crossProduct(n1.slice(1), n2.slice(1));
+            n23 = Mat.crossProduct(n2.slice(1), n3.slice(1));
+
+            denom = Mat.innerProduct(n1.slice(1), n23, 3);
+            for (i = 0; i < 3; i++) {
+                p[i + 1] = (d1 * n23[i] + d2 * n31[i] + d3 * n12[i]) / denom;
             }
 
-            nom = a * point[1] + b * point[2] + c;
-            a *= a;
-            b *= b;
-
-            return Math.abs(nom) / Math.sqrt(a + b);
+            return p;
         },
 
         /**
-         * Determine the (Euclidean) distance between a point q and a line segment
-         * defined by two points p1 and p2. In case p1 equals p2, the distance to this
-         * point is returned.
+         * Direction of intersecting line of two planes in 3D.
          *
-         * @param {Array} q Homogeneous coordinates of q
-         * @param {Array} p1 Homogeneous coordinates of p1
-         * @param {Array} p2 Homogeneous coordinates of p2
-         * @returns {Number} Distance of q to line segment [p1, p2]
+         * @param {Array} v11 First vector spanning plane 1 (homogeneous coordinates)
+         * @param {Array} v12 Second vector spanning plane 1 (homogeneous coordinates)
+         * @param {Array} v21 First vector spanning plane 2 (homogeneous coordinates)
+         * @param {Array} v22 Second vector spanning plane 2 (homogeneous coordinates)
+         * @returns {Array} Coordinates array of length 4 of the direction  (homogeneous coordinates)
          */
-        distPointSegment: function (q, p1, p2) {
-            var x, y, dx, dy,
-                den, lbda,
-                eps = Mat.eps * Mat.eps,
-                huge = 1000000;
+        meetPlanePlane: function (v11, v12, v21, v22) {
+            var no1,
+                no2,
+                v, w;
 
-            // Difference q - p1
-            x = q[1] - p1[1];
-            y = q[2] - p1[2];
-            x = (x === Infinity) ? huge : (x === -Infinity) ? -huge : x;
-            y = (y === Infinity) ? huge : (y === -Infinity) ? -huge : y;
+            v = v11.slice(1);
+            w = v12.slice(1);
+            no1 = Mat.crossProduct(v, w);
 
-            // Difference p2 - p1
-            dx = p2[1] - p1[1];
-            dy = p2[2] - p1[2];
-            dx = (dx === Infinity) ? huge : (dx === -Infinity) ? -huge : dx;
-            dy = (dy === Infinity) ? huge : (dy === -Infinity) ? -huge : dy;
+            v = v21.slice(1);
+            w = v22.slice(1);
+            no2 = Mat.crossProduct(v, w);
 
-            // If den==0 then p1 and p2 are identical
-            // In this case the distance to p1 is returned
-            den = dx * dx + dy * dy;
-            if (den > eps) {
-                lbda = (x * dx + y * dy) / den;
-                if (lbda < 0.0) {
-                    lbda = 0.0;
-                } else if (lbda > 1.0) {
-                    lbda = 1.0;
-                }
-                x -= lbda * dx;
-                y -= lbda * dy;
-            }
-
-            return Mat.hypot(x, y);
+            w = Mat.crossProduct(no1, no2);
+            w.unshift(0);
+            return w;
         },
+
+        meetPlaneSphere: function (el1, el2) {
+            var dis = function () {
+                    return Mat.innerProduct(el1.normal, el2.center.coords, 4) - el1.d;
+                };
+
+            return [
+                // Center
+                function() {
+                    return Mat.axpy(-dis(), el1.normal, el2.center.coords);
+                },
+                // Normal
+                el1.normal,
+                // Radius
+                function () {
+                    // Radius (returns NaN if spheres don't touch)
+                    var r = el2.Radius(),
+                        s = dis();
+                    return Math.sqrt(r * r - s * s);
+                }
+            ];
+        },
+
+        meetSphereSphere: function (el1, el2) {
+            var skew = function () {
+                    var dist = el1.center.distance(el2.center),
+                        r1 = el1.Radius(),
+                        r2 = el2.Radius();
+                    return (r1 - r2) * (r1 + r2) / (dist * dist);
+                };
+            return [
+                // Center
+                function () {
+                    var s = skew();
+                    return [
+                        1,
+                        0.5 * ((1 - s) * el1.center.coords[1] + (1 + s) * el2.center.coords[1]),
+                        0.5 * ((1 - s) * el1.center.coords[2] + (1 + s) * el2.center.coords[2]),
+                        0.5 * ((1 - s) * el1.center.coords[3] + (1 + s) * el2.center.coords[3])
+                    ];
+                },
+                // Normal
+                function() {
+                    return Stat.subtract(el2.center.coords, el1.center.coords);
+                },
+                // Radius
+                function () {
+                    // Radius (returns NaN if spheres don't touch)
+                    var dist = el1.center.distance(el2.center),
+                        r1 = el1.Radius(),
+                        r2 = el2.Radius(),
+                        s = skew(),
+                        rIxnSq = 0.5 * (r1 * r1 + r2 * r2 - 0.5 * dist * dist * (1 + s * s));
+                    return Math.sqrt(rIxnSq);
+                }
+            ];
+        },
+
+        project3DTo3DPlane: function (point, normal, foot) {
+            // TODO: homogeneous 3D coordinates
+            var sol = [0, 0, 0],
+                le,
+                d1,
+                d2,
+                lbda;
+
+            foot = foot || [0, 0, 0];
+
+            le = Mat.norm(normal);
+            d1 = Mat.innerProduct(point, normal, 3);
+            d2 = Mat.innerProduct(foot, normal, 3);
+            // (point - lbda * normal / le) * normal / le == foot * normal / le
+            // => (point * normal - foot * normal) ==  lbda * le
+            lbda = (d1 - d2) / le;
+            sol = Mat.axpy(-lbda, normal, point);
+
+            return sol;
+        },
+
+        getPlaneBounds: function (v1, v2, q, s, e) {
+            var s1, s2, e1, e2, mat, rhs, sol;
+
+            if (v1[2] + v2[0] !== 0) {
+                mat = [
+                    [v1[0], v2[0]],
+                    [v1[1], v2[1]]
+                ];
+                rhs = [s - q[0], s - q[1]];
+
+                sol = Numerics.Gauss(mat, rhs);
+                s1 = sol[0];
+                s2 = sol[1];
+
+                rhs = [e - q[0], e - q[1]];
+                sol = Numerics.Gauss(mat, rhs);
+                e1 = sol[0];
+                e2 = sol[1];
+                return [s1, e1, s2, e2];
+            }
+            return null;
+        },
+
+        /* ***************************************/
+        /* *** Various ****/
+        /* ***************************************/
 
         /**
          * Helper function to create curve which displays a Reuleaux polygons.
@@ -4071,108 +4189,8 @@ JXG.extend(
                 };
 
             return [makeFct("X", "cos"), makeFct("Y", "sin"), 0, pi2];
-        },
-
-        /**
-         * Intersecting point of three planes in 3D. The planes
-         * are given in Hesse normal form.
-         *
-         * @param {Array} n1 Hesse normal form vector of plane 1
-         * @param {Number} d1 Hesse normal form right hand side of plane 1
-         * @param {Array} n2 Hesse normal form vector of plane 2
-         * @param {Number} d2 Hesse normal form right hand side of plane 2
-         * @param {Array} n3 Hesse normal form vector of plane 1
-         * @param {Number} d3 Hesse normal form right hand side of plane 3
-         * @returns {Array} Coordinates array of length 4 of the intersecting point
-         */
-        meet3Planes: function (n1, d1, n2, d2, n3, d3) {
-            var p = [1, 0, 0, 0],
-                n31, n12, n23,
-                denom,
-                i;
-
-            n31 = Mat.crossProduct(n3.slice(1), n1.slice(1));
-            n12 = Mat.crossProduct(n1.slice(1), n2.slice(1));
-            n23 = Mat.crossProduct(n2.slice(1), n3.slice(1));
-
-            denom = Mat.innerProduct(n1.slice(1), n23, 3);
-            for (i = 0; i < 3; i++) {
-                p[i + 1] = (d1 * n23[i] + d2 * n31[i] + d3 * n12[i]) / denom;
-            }
-
-            return p;
-        },
-
-        /**
-         * Direction of intersecting line of two planes in 3D.
-         *
-         * @param {Array} v11 First vector spanning plane 1 (homogeneous coordinates)
-         * @param {Array} v12 Second vector spanning plane 1 (homogeneous coordinates)
-         * @param {Array} v21 First vector spanning plane 2 (homogeneous coordinates)
-         * @param {Array} v22 Second vector spanning plane 2 (homogeneous coordinates)
-         * @returns {Array} Coordinates array of length 4 of the direction  (homogeneous coordinates)
-         */
-        meetPlanePlane: function (v11, v12, v21, v22) {
-            var no1,
-                no2,
-                v, w;
-
-            v = v11.slice(1);
-            w = v12.slice(1);
-            no1 = Mat.crossProduct(v, w);
-
-            v = v21.slice(1);
-            w = v22.slice(1);
-            no2 = Mat.crossProduct(v, w);
-
-            w = Mat.crossProduct(no1, no2);
-            w.unshift(0);
-            return w;
-        },
-
-        project3DTo3DPlane: function (point, normal, foot) {
-            // TODO: homogeneous 3D coordinates
-            var sol = [0, 0, 0],
-                le,
-                d1,
-                d2,
-                lbda;
-
-            foot = foot || [0, 0, 0];
-
-            le = Mat.norm(normal);
-            d1 = Mat.innerProduct(point, normal, 3);
-            d2 = Mat.innerProduct(foot, normal, 3);
-            // (point - lbda * normal / le) * normal / le == foot * normal / le
-            // => (point * normal - foot * normal) ==  lbda * le
-            lbda = (d1 - d2) / le;
-            sol = Mat.axpy(-lbda, normal, point);
-
-            return sol;
-        },
-
-        getPlaneBounds: function (v1, v2, q, s, e) {
-            var s1, s2, e1, e2, mat, rhs, sol;
-
-            if (v1[2] + v2[0] !== 0) {
-                mat = [
-                    [v1[0], v2[0]],
-                    [v1[1], v2[1]]
-                ];
-                rhs = [s - q[0], s - q[1]];
-
-                sol = Numerics.Gauss(mat, rhs);
-                s1 = sol[0];
-                s2 = sol[1];
-
-                rhs = [e - q[0], e - q[1]];
-                sol = Numerics.Gauss(mat, rhs);
-                e1 = sol[0];
-                e2 = sol[1];
-                return [s1, e1, s2, e2];
-            }
-            return null;
         }
+
     }
 );
 
