@@ -754,7 +754,7 @@ JXG.Plane3D = function (view, point, dir1, range_u, dir2, range_v, attributes) {
      * @type Array
      * @private
      *
-     * @see JXG.Plane3D.updateNormal
+     * @see JXG.Plane3D.updateCoords
      */
     this.vec1 = [0, 0, 0, 0];
 
@@ -765,7 +765,7 @@ JXG.Plane3D = function (view, point, dir1, range_u, dir2, range_v, attributes) {
      * @type Array
      * @private
      *
-     * @see JXG.Plane3D.updateNormal
+     * @see JXG.Plane3D.updateCoords
      */
     this.vec2 = [0, 0, 0, 0];
 
@@ -793,6 +793,7 @@ JXG.Plane3D = function (view, point, dir1, range_u, dir2, range_v, attributes) {
          */
     this.d = 0;
 
+    this.updateCoords();
     this.updateNormal();
 
     this.methodMap = Type.deepCopy(this.methodMap, {
@@ -931,20 +932,6 @@ JXG.extend(
         updateNormal: function () {
             var i, len;
 
-            // if (Type.isFunction(this.direction1)) {
-            //     this.vec1 = Type.evaluate(this.direction1);
-            // } else {
-            //     for (i = 0; i < 3; i++) {
-            //         this.vec1[i] = Type.evaluate(this.direction1[i]);
-            //     }
-            // }
-            // if (Type.isFunction(this.direction2)) {
-            //     this.vec2 = Type.evaluate(this.direction2);
-            // } else {
-            //     for (i = 0; i < 3; i++) {
-            //         this.vec2[i] = Type.evaluate(this.direction2[i]);
-            //     }
-            // }
             if (!this.needsUpdate) {
                 // Extraordinary update
                 this.updateCoords();
@@ -979,7 +966,6 @@ JXG.extend(
             this.dataX = [];
             this.dataY = [];
 
-            // this.updateCoords();
             this.updateNormal();
 
             // Infinite plane

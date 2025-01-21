@@ -42,6 +42,7 @@ import JXG from "../jxg.js";
 import Const from "../base/constants.js";
 import Coords from "../base/coords.js";
 import Mat from "./math.js";
+import Stat from "../math/statistics.js";
 import Numerics from "./numerics.js";
 import Type from "../utils/type.js";
 import Expect from "../utils/expect.js";
@@ -2717,32 +2718,17 @@ JXG.extend(
 
         meetPlaneSphere: function (el1, el2) {
             var dis = function () {
-                    return (
-                        el1.normal[1] * el2.center.X()
-                        + el1.normal[2] * el2.center.Y()
-                        + el1.normal[3] * el2.center.Z()
-                        - el1.d
-                );
-            };
+                    return Mat.innerProduct(el1.normal, el2.center.coords, 4) - el1.d;
+                };
+
             return [
-                [
-                    // Center
-                    function () {
-                        return el2.center.X() - dis() * el1.normal[1];
-                    },
-                    function () {
-                        return el2.center.Y() - dis() * el1.normal[2];
-                    },
-                    function () {
-                        return el2.center.Z() - dis() * el1.normal[3];
-                    }
-                ],
-                [
-                    // Normal
-                    () => el1.normal[1],
-                    () => el1.normal[2],
-                    () => el1.normal[3]
-                ],
+                // Center
+                function() {
+                    return Mat.axpy(-dis(), el1.normal, el2.center.coords);
+                },
+                // Normal
+                el1.normal,
+                // Radius
                 function () {
                     // Radius (returns NaN if spheres don't touch)
                     var r = el2.Radius(),
@@ -2754,33 +2740,27 @@ JXG.extend(
 
         meetSphereSphere: function (el1, el2) {
             var skew = function () {
-                var dist = el1.center.distance(el2.center),
-                    r1 = el1.Radius(),
-                    r2 = el2.Radius();
-                return (r1 - r2) * (r1 + r2) / (dist * dist);
-            };
+                    var dist = el1.center.distance(el2.center),
+                        r1 = el1.Radius(),
+                        r2 = el2.Radius();
+                    return (r1 - r2) * (r1 + r2) / (dist * dist);
+                };
             return [
-                [
-                    // Center
-                    function () {
-                        var s = skew();
-                        return 0.5 * ((1 - s) * el1.center.X() + (1 + s) * el2.center.X());
-                    },
-                    function () {
-                        var s = skew();
-                        return 0.5 * ((1 - s) * el1.center.Y() + (1 + s) * el2.center.Y());
-                    },
-                    function () {
-                        var s = skew();
-                        return 0.5 * ((1 - s) * el1.center.Z() + (1 + s) * el2.center.Z());
-                    }
-                ],
-                [
-                    // Normal
-                    () => el2.center.X() - el1.center.X(),
-                    () => el2.center.Y() - el1.center.Y(),
-                    () => el2.center.Z() - el1.center.Z()
-                ],
+                // Center
+                function () {
+                    var s = skew();
+                    return [
+                        1,
+                        0.5 * ((1 - s) * el1.center.coords[1] + (1 + s) * el2.center.coords[1]),
+                        0.5 * ((1 - s) * el1.center.coords[2] + (1 + s) * el2.center.coords[2]),
+                        0.5 * ((1 - s) * el1.center.coords[3] + (1 + s) * el2.center.coords[3])
+                    ];
+                },
+                // Normal
+                function() {
+                    return Stat.subtract(el2.center.coords, el1.center.coords);
+                },
+                // Radius
                 function () {
                     // Radius (returns NaN if spheres don't touch)
                     var dist = el1.center.distance(el2.center),
