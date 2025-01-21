@@ -2717,31 +2717,31 @@ JXG.extend(
 
         meetPlaneSphere: function (el1, el2) {
             var dis = function () {
-                return (
-                    el1.normal[0] * el2.center.X()
-                    + el1.normal[1] * el2.center.Y()
-                    + el1.normal[2] * el2.center.Z()
-                    - el1.d
+                    return (
+                        el1.normal[1] * el2.center.X()
+                        + el1.normal[2] * el2.center.Y()
+                        + el1.normal[3] * el2.center.Z()
+                        - el1.d
                 );
             };
             return [
                 [
                     // Center
                     function () {
-                        return el2.center.X() - dis() * el1.normal[0];
+                        return el2.center.X() - dis() * el1.normal[1];
                     },
                     function () {
-                        return el2.center.Y() - dis() * el1.normal[1];
+                        return el2.center.Y() - dis() * el1.normal[2];
                     },
                     function () {
-                        return el2.center.Z() - dis() * el1.normal[2];
+                        return el2.center.Z() - dis() * el1.normal[3];
                     }
                 ],
                 [
                     // Normal
-                    () => el1.normal[0],
                     () => el1.normal[1],
-                    () => el1.normal[2]
+                    () => el1.normal[2],
+                    () => el1.normal[3]
                 ],
                 function () {
                     // Radius (returns NaN if spheres don't touch)

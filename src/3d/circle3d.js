@@ -96,16 +96,22 @@ JXG.Circle3D = function (view, center, normal, radius, attributes) {
      */
     this.frame2;
 
+    for (let i = 0; i < 3; i++) {
+        console.log(Type.evaluate(normal[i]));
+    }
+
+
     this.updateNormal = function () {
         // evaluate normal direction
-        var i, len;
+        var i, len,
+            eps = 1.e-12;
         for (i = 0; i < 3; i++) {
             this.normal[i] = Type.evaluate(normal[i]);
         }
 
         // scale normal to unit length
         len = Mat.norm(this.normal);
-        if (Math.abs(len) > Mat.eps) {
+        if (Math.abs(len) > eps) {
             for (i = 0; i < 3; i++) {
                 this.normal[i] /= len;
             }
@@ -127,6 +133,8 @@ JXG.Circle3D = function (view, center, normal, radius, attributes) {
     // initialize normal
     this.updateNormal();
 
+console.log(this.normal)    
+console.log('------------------------')    
     // initialize the first frame vector by taking the cross product with
     // [1, 0, 0] or [-0.5, sqrt(3)/2, 0]---whichever is further away on the unit
     // sphere. every vector is at least 60 degrees from one of these, which
@@ -136,20 +144,32 @@ JXG.Circle3D = function (view, center, normal, radius, attributes) {
     if (Mat.norm(altFrame1) > Mat.norm(this.frame1)) {
         this.frame1 = altFrame1;
     }
+console.log('------------------------')    
 
     // initialize the second frame vector
     this.frame2 = Mat.crossProduct(this.normal, this.frame1);
 
+console.log('normal', this.normal, 'frame1', this.frame1, 'frame2', this.frame2)    
+
     // scale both frame vectors to unit length
     this.normalizeFrame();
 
+    var that = this;
     // create the underlying curve
     this.curve = view.create(
         'curve3d',
         [
-            (t) => this.center.X() + this.Radius() * (Math.cos(t) * this.frame1[0] + Math.sin(t) * this.frame2[0]),
-            (t) => this.center.Y() + this.Radius() * (Math.cos(t) * this.frame1[1] + Math.sin(t) * this.frame2[1]),
-            (t) => this.center.Z() + this.Radius() * (Math.cos(t) * this.frame1[2] + Math.sin(t) * this.frame2[2]),
+            (t) => { 
+console.log(
+    that.center.X(),
+    that.Radius(),
+    that.frame1[0],
+    that.frame2[0]
+)                
+                return this.center.X() + this.Radius() * (Math.cos(t) * this.frame1[0] + Math.sin(t) * this.frame2[0]); 
+            },
+            (t) => { return this.center.Y() + this.Radius() * (Math.cos(t) * this.frame1[1] + Math.sin(t) * this.frame2[1]); },
+            (t) => { return this.center.Z() + this.Radius() * (Math.cos(t) * this.frame1[2] + Math.sin(t) * this.frame2[2]); },
             [0, 2 * Math.PI] // parameter range
         ],
         attributes
@@ -165,6 +185,7 @@ JXG.extend(
             this.updateNormal();
             this.updateFrame();
             this.curve.visProp.visible = !isNaN(this.Radius());
+
             return this;
         },
 
@@ -212,6 +233,7 @@ JXG.extend(
         },
 
         updateFrame: function () {
+            console.log("UpdateFrame", 'f1', this.frame1, 'f2', this.frame2, 'n', this.normal)
             this.frame1 = Mat.crossProduct(this.frame2, this.normal);
             this.frame2 = Mat.crossProduct(this.normal, this.frame1);
             this.normalizeFrame();
