@@ -1666,9 +1666,9 @@ JXG.createIntersectionLine3D = function (board, parents, attributes) {
         attr = Type.copyAttributes(attributes, board.options, "intersectionline3d"),
         pts = [];
 
+    func = Geometry.intersectionFunction3D(view, el1, el2);
     for (i = 0; i < 2; i++) {
-        func = Geometry.intersectionFunction3D(view, el1, el2, i);
-        pts[i] = view.create('point3d', func, attr['point' + (i + 1)]);
+        pts[i] = view.create('point3d', func[i], attr['point' + (i + 1)]);
     }
     ixnLine = view.create('line3d', pts, attr);
 

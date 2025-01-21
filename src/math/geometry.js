@@ -1967,30 +1967,6 @@ JXG.extend(
         },
 
         /**
-         * Generate the function which computes the data of the intersection.
-         */
-        intersectionFunction3D: function (view, el1, el2, i) {
-            var func,
-                that = this;
-
-            if (el1.type === Const.OBJECT_TYPE_PLANE3D) {
-                if (el2.type === Const.OBJECT_TYPE_PLANE3D) {
-                    func = () => view.intersectionPlanePlane(el1, el2)[i];
-                } else if (el2.type === Const.OBJECT_TYPE_SPHERE3D) {
-                    func = that.meetPlaneSphere(el1, el2);
-                }
-            } else if (el1.type === Const.OBJECT_TYPE_SPHERE3D) {
-                if (el2.type === Const.OBJECT_TYPE_PLANE3D) {
-                    func = that.meetPlaneSphere(el2, el1);
-                } else if (el2.type === Const.OBJECT_TYPE_SPHERE3D) {
-                    func = that.meetSphereSphere(el1, el2);
-                }
-            }
-
-            return func;
-        },
-
-        /**
          * Returns true if the coordinates are on the arc element,
          * false otherwise. Usually, coords is an intersection
          * on the circle line. Now it is decided if coords are on the
@@ -3800,8 +3776,158 @@ JXG.extend(
         /* ***************************************/
 
         /**
+         * Generate the function which computes the data of the intersection between
+         * <ul>
+         * <li> plane3d, plane3d,
+         * <li> plane3d, sphere3d,
+         * <li> sphere3d, plane3d,
+         * <li> sphere3d, sphere3d
+         * </ul>
+         *
+         * @param {JXG.GeometryElement3D} el1 Plane or sphere element
+         * @param {JXG.GeometryElement3D} el2 Plane or sphere element
+         * @returns {Array} of functions needed as input to create the intersecting line or circle.
+         *
+         */
+        intersectionFunction3D: function (view, el1, el2) {
+            var func,
+                that = this;
+
+            if (el1.type === Const.OBJECT_TYPE_PLANE3D) {
+                if (el2.type === Const.OBJECT_TYPE_PLANE3D) {
+                    // func = () => view.intersectionPlanePlane(el1, el2)[i];
+                    func = view.intersectionPlanePlane(el1, el2);
+                } else if (el2.type === Const.OBJECT_TYPE_SPHERE3D) {
+                    func = that.meetPlaneSphere(el1, el2);
+                }
+            } else if (el1.type === Const.OBJECT_TYPE_SPHERE3D) {
+                if (el2.type === Const.OBJECT_TYPE_PLANE3D) {
+                    func = that.meetPlaneSphere(el2, el1);
+                } else if (el2.type === Const.OBJECT_TYPE_SPHERE3D) {
+                    func = that.meetSphereSphere(el1, el2);
+                }
+            }
+
+            return func;
+        },
+
+        /**
+         * Intersecting point of three planes in 3D. The planes
+         * are given in Hesse normal form.
+         *
+         * @param {Array} n1 Hesse normal form vector of plane 1
+         * @param {Number} d1 Hesse normal form right hand side of plane 1
+         * @param {Array} n2 Hesse normal form vector of plane 2
+         * @param {Number} d2 Hesse normal form right hand side of plane 2
+         * @param {Array} n3 Hesse normal form vector of plane 1
+         * @param {Number} d3 Hesse normal form right hand side of plane 3
+         * @returns {Array} Coordinates array of length 4 of the intersecting point
+         */
+        meet3Planes: function (n1, d1, n2, d2, n3, d3) {
+            var p = [1, 0, 0, 0],
+                n31, n12, n23,
+                denom,
+                i;
+
+            n31 = Mat.crossProduct(n3.slice(1), n1.slice(1));
+            n12 = Mat.crossProduct(n1.slice(1), n2.slice(1));
+            n23 = Mat.crossProduct(n2.slice(1), n3.slice(1));
+
+            denom = Mat.innerProduct(n1.slice(1), n23, 3);
+            for (i = 0; i < 3; i++) {
+                p[i + 1] = (d1 * n23[i] + d2 * n31[i] + d3 * n12[i]) / denom;
+            }
+
+            return p;
+        },
+
+        /**
+         * Direction of intersecting line of two planes in 3D.
+         *
+         * @param {Array} v11 First vector spanning plane 1 (homogeneous coordinates)
+         * @param {Array} v12 Second vector spanning plane 1 (homogeneous coordinates)
+         * @param {Array} v21 First vector spanning plane 2 (homogeneous coordinates)
+         * @param {Array} v22 Second vector spanning plane 2 (homogeneous coordinates)
+         * @returns {Array} Coordinates array of length 4 of the direction  (homogeneous coordinates)
+         */
+        meetPlanePlane: function (v11, v12, v21, v22) {
+            var no1,
+                no2,
+                v, w;
+
+            v = v11.slice(1);
+            w = v12.slice(1);
+            no1 = Mat.crossProduct(v, w);
+
+            v = v21.slice(1);
+            w = v22.slice(1);
+            no2 = Mat.crossProduct(v, w);
+
+            w = Mat.crossProduct(no1, no2);
+            w.unshift(0);
+            return w;
+        },
+
+        meetPlaneSphere: function (el1, el2) {
+            var dis = function () {
+                    return Mat.innerProduct(el1.normal, el2.center.coords, 4) - el1.d;
+                };
+
+            return [
+                // Center
+                function() {
+                    return Mat.axpy(-dis(), el1.normal, el2.center.coords);
+                },
+                // Normal
+                el1.normal,
+                // Radius
+                function () {
+                    // Radius (returns NaN if spheres don't touch)
+                    var r = el2.Radius(),
+                        s = dis();
+                    return Math.sqrt(r * r - s * s);
+                }
+            ];
+        },
+
+        meetSphereSphere: function (el1, el2) {
+            var skew = function () {
+                    var dist = el1.center.distance(el2.center),
+                        r1 = el1.Radius(),
+                        r2 = el2.Radius();
+                    return (r1 - r2) * (r1 + r2) / (dist * dist);
+                };
+            return [
+                // Center
+                function () {
+                    var s = skew();
+                    return [
+                        1,
+                        0.5 * ((1 - s) * el1.center.coords[1] + (1 + s) * el2.center.coords[1]),
+                        0.5 * ((1 - s) * el1.center.coords[2] + (1 + s) * el2.center.coords[2]),
+                        0.5 * ((1 - s) * el1.center.coords[3] + (1 + s) * el2.center.coords[3])
+                    ];
+                },
+                // Normal
+                function() {
+                    return Stat.subtract(el2.center.coords, el1.center.coords);
+                },
+                // Radius
+                function () {
+                    // Radius (returns NaN if spheres don't touch)
+                    var dist = el1.center.distance(el2.center),
+                        r1 = el1.Radius(),
+                        r2 = el2.Radius(),
+                        s = skew(),
+                        rIxnSq = 0.5 * (r1 * r1 + r2 * r2 - 0.5 * dist * dist * (1 + s * s));
+                    return Math.sqrt(rIxnSq);
+                }
+            ];
+        },
+
+        /**
          * Test if parameters are inside of allowed ranges
-         * 
+         *
          * @param {Array} params Array of length 1 or 2
          * @param {Array} r_u First range
          * @param {Array} [r_v] Second range
@@ -3969,120 +4095,6 @@ JXG.extend(
 
         //     return [1, target.X.apply(target, params), target.Y.apply(target, params), target.Z.apply(target, params)];
         // },
-
-        /**
-         * Intersecting point of three planes in 3D. The planes
-         * are given in Hesse normal form.
-         *
-         * @param {Array} n1 Hesse normal form vector of plane 1
-         * @param {Number} d1 Hesse normal form right hand side of plane 1
-         * @param {Array} n2 Hesse normal form vector of plane 2
-         * @param {Number} d2 Hesse normal form right hand side of plane 2
-         * @param {Array} n3 Hesse normal form vector of plane 1
-         * @param {Number} d3 Hesse normal form right hand side of plane 3
-         * @returns {Array} Coordinates array of length 4 of the intersecting point
-         */
-        meet3Planes: function (n1, d1, n2, d2, n3, d3) {
-            var p = [1, 0, 0, 0],
-                n31, n12, n23,
-                denom,
-                i;
-
-            n31 = Mat.crossProduct(n3.slice(1), n1.slice(1));
-            n12 = Mat.crossProduct(n1.slice(1), n2.slice(1));
-            n23 = Mat.crossProduct(n2.slice(1), n3.slice(1));
-
-            denom = Mat.innerProduct(n1.slice(1), n23, 3);
-            for (i = 0; i < 3; i++) {
-                p[i + 1] = (d1 * n23[i] + d2 * n31[i] + d3 * n12[i]) / denom;
-            }
-
-            return p;
-        },
-
-        /**
-         * Direction of intersecting line of two planes in 3D.
-         *
-         * @param {Array} v11 First vector spanning plane 1 (homogeneous coordinates)
-         * @param {Array} v12 Second vector spanning plane 1 (homogeneous coordinates)
-         * @param {Array} v21 First vector spanning plane 2 (homogeneous coordinates)
-         * @param {Array} v22 Second vector spanning plane 2 (homogeneous coordinates)
-         * @returns {Array} Coordinates array of length 4 of the direction  (homogeneous coordinates)
-         */
-        meetPlanePlane: function (v11, v12, v21, v22) {
-            var no1,
-                no2,
-                v, w;
-
-            v = v11.slice(1);
-            w = v12.slice(1);
-            no1 = Mat.crossProduct(v, w);
-
-            v = v21.slice(1);
-            w = v22.slice(1);
-            no2 = Mat.crossProduct(v, w);
-
-            w = Mat.crossProduct(no1, no2);
-            w.unshift(0);
-            return w;
-        },
-
-        meetPlaneSphere: function (el1, el2) {
-            var dis = function () {
-                    return Mat.innerProduct(el1.normal, el2.center.coords, 4) - el1.d;
-                };
-
-            return [
-                // Center
-                function() {
-                    return Mat.axpy(-dis(), el1.normal, el2.center.coords);
-                },
-                // Normal
-                el1.normal,
-                // Radius
-                function () {
-                    // Radius (returns NaN if spheres don't touch)
-                    var r = el2.Radius(),
-                        s = dis();
-                    return Math.sqrt(r * r - s * s);
-                }
-            ];
-        },
-
-        meetSphereSphere: function (el1, el2) {
-            var skew = function () {
-                    var dist = el1.center.distance(el2.center),
-                        r1 = el1.Radius(),
-                        r2 = el2.Radius();
-                    return (r1 - r2) * (r1 + r2) / (dist * dist);
-                };
-            return [
-                // Center
-                function () {
-                    var s = skew();
-                    return [
-                        1,
-                        0.5 * ((1 - s) * el1.center.coords[1] + (1 + s) * el2.center.coords[1]),
-                        0.5 * ((1 - s) * el1.center.coords[2] + (1 + s) * el2.center.coords[2]),
-                        0.5 * ((1 - s) * el1.center.coords[3] + (1 + s) * el2.center.coords[3])
-                    ];
-                },
-                // Normal
-                function() {
-                    return Stat.subtract(el2.center.coords, el1.center.coords);
-                },
-                // Radius
-                function () {
-                    // Radius (returns NaN if spheres don't touch)
-                    var dist = el1.center.distance(el2.center),
-                        r1 = el1.Radius(),
-                        r2 = el2.Radius(),
-                        s = skew(),
-                        rIxnSq = 0.5 * (r1 * r1 + r2 * r2 - 0.5 * dist * dist * (1 + s * s));
-                    return Math.sqrt(rIxnSq);
-                }
-            ];
-        },
 
         project3DTo3DPlane: function (point, normal, foot) {
             // TODO: homogeneous 3D coordinates

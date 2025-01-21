@@ -5706,9 +5706,10 @@ JXG.extend(
 
         /**
          * Sets for all objects the needsUpdate flag to 'true'.
+         * @param{JXG.GeometryElement} [drag=undefined] Optional element that is dragged.
          * @returns {JXG.Board} Reference to the board
          */
-        prepareUpdate: function () {
+        prepareUpdate: function (drag) {
             var el, i,
                 pEl,
                 len = this.objectsList.length;
@@ -5721,7 +5722,9 @@ JXG.extend(
 
             for (el = 0; el < len; el++) {
                 pEl = this.objectsList[el];
-                if (this._change3DView) {
+                if (this._change3DView ||
+                    (Type.exists(drag) && drag.elType === 'view3d_slider')
+                ) {
                     // The 3D view has changed. No elements are recomputed,
                     // only 3D elements are projected to the new view.
                     pEl.needsUpdate =
@@ -6038,7 +6041,7 @@ JXG.extend(
                 insert = this.renderer.removeToInsertLater(this.renderer.svgRoot);
             }
 
-            this.prepareUpdate().updateElements(drag).updateConditions();
+            this.prepareUpdate(drag).updateElements(drag).updateConditions();
 
             this.renderer.suspendRedraw(this);
             this.updateRenderer();
