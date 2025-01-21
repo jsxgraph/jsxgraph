@@ -101,6 +101,7 @@ import Type from "../utils/type.js";
 JXG.Transformation = function (board, type, params, is3D) {
     this.elementClass = Const.OBJECT_CLASS_OTHER;
     this.type = Const.OBJECT_TYPE_TRANSFORMATION;
+
     if (is3D) {
         this.is3D = true;
         this.matrix = [
@@ -120,7 +121,11 @@ JXG.Transformation = function (board, type, params, is3D) {
 
     this.board = board;
     this.isNumericMatrix = false;
-    this.setMatrix(board, type, params);
+    if (this.is3D) {
+        this.setMatrix3D(params[0] /* view3d */, type, params.slice(1));
+    } else {
+        this.setMatrix(board, type, params);
+    }
 
     this.methodMap = {
         apply: "apply",
@@ -179,7 +184,6 @@ JXG.extend(
                 // e, obj; // Handle dependencies
 
             this.isNumericMatrix = true;
-
             for (i = 0; i < params.length; i++) {
                 if (typeof params[i] !== "number") {
                     this.isNumericMatrix = false;
@@ -350,6 +354,117 @@ JXG.extend(
             // }
         },
 
+        setMatrix3D: function(view, type, params) {
+            var i,
+                board = view.board;
+
+            this.isNumericMatrix = true;
+            for (i = 0; i < params.length; i++) {
+                if (typeof params[i] !== "number") {
+                    this.isNumericMatrix = false;
+                    break;
+                }
+            }
+
+            if (type === "translate") {
+                if (params.length !== 3) {
+                    throw new Error("JSXGraph: 3D translate transformation needs 3 parameters.");
+                }
+                this.evalParam = Type.createEvalFunction(board, params, 3);
+                this.update = function () {
+                    this.matrix[1][0] = this.evalParam(0);
+                    this.matrix[2][0] = this.evalParam(1);
+                    this.matrix[3][0] = this.evalParam(2);
+                };
+            } else if (type === 'scale') {
+                if (params.length !== 3) {
+                    throw new Error("JSXGraph: 3D scale transformation needs 3 parameters.");
+                }
+                this.evalParam = Type.createEvalFunction(board, params, 3);
+                this.update = function () {
+                    var x = this.evalParam(0),
+                        y = this.evalParam(1),
+                        z = this.evalParam(2);
+
+                    this.matrix[1][1] = x;
+                    this.matrix[2][2] = y;
+                    this.matrix[3][3] = z;
+                };
+            } else if (type === 'rotateX') {
+                if (params.length > 0 && params.length <= 2) {
+                    this.evalParam = Type.createEvalFunction(board, params, 1);
+                }
+                this.update = function () {
+                    var a = this.evalParam(0),
+                        co = Math.cos(a),
+                        si = Math.sin(a);
+
+                    this.matrix[2][2] = co;
+                    this.matrix[2][3] = -si;
+                    this.matrix[3][2] = si;
+                    this.matrix[3][3] = co;
+                };
+            } else if (type === 'rotateY') {
+                if (params.length > 0 && params.length <= 2) {
+                    this.evalParam = Type.createEvalFunction(board, params, 1);
+                }
+                this.update = function () {
+                    var a = this.evalParam(0),
+                        co = Math.cos(a),
+                        si = Math.sin(a);
+
+                    this.matrix[1][1] = co;
+                    this.matrix[1][3] = si;
+                    this.matrix[3][1] = -si;
+                    this.matrix[3][3] = co;
+                };
+            } else if (type === 'rotateZ') {
+                if (params.length > 0 && params.length <= 2) {
+                    this.evalParam = Type.createEvalFunction(board, params, 1);
+                }
+                this.update = function () {
+                    var a = this.evalParam(0),
+                        co = Math.cos(a),
+                        si = Math.sin(a);
+
+                    this.matrix[1][1] = co;
+                    this.matrix[1][2] = -si;
+                    this.matrix[2][1] = si;
+                    this.matrix[2][2] = co;
+                };
+            } else if (type === 'rotate') {
+                if (params.length === 2) {
+                    this.evalParam = Type.createEvalFunction(board, params, 2);
+                }
+                this.update = function () {
+                    var a = this.evalParam(0),
+                        n = this.evalParam(1), // length 3
+                        co = Math.cos(a),
+                        si = Math.sin(a),
+                        n1, n2, n3,
+                        nrm = Mat.norm(n);
+
+
+                    if (n.length === 3) {
+                        n1 = n[0] / nrm;
+                        n2 = n[1] / nrm;
+                        n3 = n[2] / nrm;
+                    } else {
+                        n1 = n[1] / nrm;
+                        n2 = n[2] / nrm;
+                        n3 = n[3] / nrm;
+                    }
+
+                    this.matrix = [
+                        [1, 0, 0, 0],
+                        [0, n1 * n1 * (1 - co) +      co, n1 * n2 * (1 - co) - n3 * si, n1 * n3 * (1 - co) + n2 * si],
+                        [0, n2 * n1 * (1 - co) + n3 * si, n2 * n2 * (1 - co) +      co, n2 * n3 * (1 - co) - n1 * si],
+                        [0, n3 * n1 * (1 - co) - n2 * si, n3 * n2 * (1 - co) + n1 * si, n3 * n3 * (1 - co) +      co]
+                    ];
+                };
+            }
+        },
+
         /**
          * Transform a GeometryElement:
          * First, the transformation matrix is updated, then do the matrix-vector-multiplication.
@@ -435,7 +550,7 @@ JXG.extend(
          * If the transformation will be the first transformation ot the element, it will be cloned
          * to prevent side effects.
          *
-         * @param  {Array|JXG.Object} el JXG.Object or array of JXG.Object to
+         * @param  {Array|JXG.Object} el JXG.Object or array of JXG.Objects to
          *                            which the transformation is bound to.
          *
          * @see JXG.Transformation#bindTo

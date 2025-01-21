@@ -308,6 +308,53 @@ JXG.extend(
             return this;
         },
 
+        /**
+         * Add transformations to this element.
+         * @param {JXG.GeometryElement} el
+         * @param {JXG.Transformation|Array} transform Either one {@link JXG.Transformation}
+         * or an array of {@link JXG.Transformation}s.
+         * @returns {JXG.CoordsElement} Reference to itself.
+         */
+        addTransform: function (el, transform) {
+            var i,
+                list = Type.isArray(transform) ? transform : [transform],
+                len = list.length;
+
+            // There is only one baseElement possible
+            if (this.transformations.length === 0) {
+                this.baseElement = el;
+            }
+
+            for (i = 0; i < len; i++) {
+                this.transformations.push(list[i]);
+            }
+
+            return this;
+        },
+
+        updateTransform: function () {
+            var c, i;
+
+            if (this.transformations.length === 0 || this.baseElement === null) {
+                return this;
+            }
+
+            this.transformations[0].update();
+            if (this === this.baseElement) {
+                // Case of bindTo
+                c = this.transformations[0].apply(this, "self");
+            } else {
+                c = this.transformations[0].apply(this.baseElement);
+            }
+            for (i = 1; i < this.transformations.length; i++) {
+                this.transformations[i].update();
+                c = Mat.matVecMult(this.transformations[i].matrix, c);
+            }
+            this.coords = c;
+
+            return this;
+        },
+
         // Already documented in JXG.GeometryElement
         update: function (drag) {
             var c3d,         // Homogeneous 3D coordinates
@@ -356,8 +403,8 @@ JXG.extend(
 
             } else {
                 // Update 2D point from its 3D view, e.g. when rotating the view
-
                 this.updateCoords();
+                this.updateTransform();
                 if (this.slide) {
                     this.coords = this.slide.projectCoords([this.X(), this.Y(), this.Z()], this.position);
                 }
