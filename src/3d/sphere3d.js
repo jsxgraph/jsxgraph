@@ -369,6 +369,7 @@ JXG.extend(
             }
 
             d = r / d;
+            v[0] = 1;
             v[1] *= d;
             v[2] *= d;
             v[3] *= d;
@@ -382,7 +383,8 @@ JXG.extend(
                 params[0] = Math.atan2(v[1], v[3] * Math.cos(params[1]));
             }
             params[0] += (params[0] < 0) ? 2 * Math.PI : 0;
-
+        
+            return v;
         }
 
         // projectScreenCoords: function (pScr, params) {

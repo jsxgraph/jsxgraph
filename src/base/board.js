@@ -5723,7 +5723,7 @@ JXG.extend(
             for (el = 0; el < len; el++) {
                 pEl = this.objectsList[el];
                 if (this._change3DView ||
-                    (Type.exists(drag) && drag.elType === 'view3d_slider')
+                    (Type.exists(drag) && drag.elType === 'view3d_slider') // Not yet working
                 ) {
                     // The 3D view has changed. No elements are recomputed,
                     // only 3D elements are projected to the new view.
