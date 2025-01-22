@@ -1456,7 +1456,7 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
                         ret = this.execute(node.children[0]);
                         i = this.execute(node.children[1]);
 
-                        if (typeof i === 'number' && Math.abs(Math.round(i) - i) < Mat.eps) {
+                        if (typeof i === 'number' && Math.abs(Math.round(i) - i) < 1.e-12) {
                             ret = ret[i];
                         } else {
                             ret = undef;
