@@ -2014,7 +2014,7 @@ JXG.extend(
             this._hasMoveBank = false;
         }
         if (this._hasMoveTrackball) {
-            target = (this.evalVisProp('trackball.pointer.outside')) ? document : this.board.containerObj;
+            target = (this.evalVisProp('trackball.outside')) ? document : this.board.containerObj;
             Env.removeEvent(target, 'pointermove', this._trackballHandler, this);
             this._hasMoveTrackball = false;
         }
