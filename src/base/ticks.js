@@ -1541,15 +1541,9 @@ JXG.extend(
                     // A new text element is needed
                     this.labelCounter += 1;
 
-                    attr = {
-                        isLabel: true,
-                        layer: this.board.options.layer.line,
-                        highlightStrokeColor: this.board.options.text.strokeColor,
-                        highlightStrokeWidth: this.board.options.text.strokeWidth,
-                        highlightStrokeOpacity: this.board.options.text.strokeOpacity,
-                        priv: this.visProp.priv
-                    };
-                    attr = Type.deepCopy(attr, this.visProp.label);
+                    attr = Type.deepCopy(this.visProp.label);
+                    attr.isLabel = true;
+                    attr.priv = this.visProp.priv;
                     attr.id = this.id + ld.i + "Label" + this.labelCounter;
 
                     label = JXG.createText(this.board, [ld.x, ld.y, ld.t], attr);
