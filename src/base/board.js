@@ -1498,7 +1498,7 @@ JXG.extend(
             ) {
                 drag.triggerEventHandlers([type + 'drag', 'drag'], [evt]);
                 // Update all elements of the board
-                this.update();
+                this.update(drag);
             }
             drag.highlight(true);
             this.triggerEventHandlers(['mousehit', 'hit'], [evt, drag]);
