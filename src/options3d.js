@@ -850,6 +850,7 @@ JXG.extend(Options, {
          *          <li><tt>max</tt>: Maximum value.
          *          <li><tt>start</tt>: Start value.
          *      </ul>
+         *      'min' and 'max' are used only if trackball is not enabled.
          * </ul>
          *
          * @name View3D#az
@@ -950,6 +951,7 @@ JXG.extend(Options, {
          *          <li><tt>max</tt>: Maximum value.
          *          <li><tt>start</tt>: Start value.
          *      </ul>
+         *      'min' and 'max' are used only if trackball is not enabled.
          * </ul>
          *
          * @name View3D#el
@@ -1050,6 +1052,7 @@ JXG.extend(Options, {
          *          <li><tt>max</tt>: Maximum value.
          *          <li><tt>start</tt>: Start value.
          *      </ul>
+         *      'min' and 'max' are used only if trackball is not enabled.
          * </ul>
          *
          * @name View3D#bank
@@ -1084,7 +1087,7 @@ JXG.extend(Options, {
          * <script type="text/javascript">
          *     (function() {
          *         var board = JXG.JSXGraph.initBoard('JXGb67811ea-c1e3-4d1e-b13c-3537b3436f6c',
-         *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
+         *             {boundingbox: [-8, 8, 8,-8], axis: false, showcopyright: false, shownavigation: false});
          *         var bound = [-4, 6];
          *         var view = board.create('view3d',
          *             [[-4, -3], [8, 8],
