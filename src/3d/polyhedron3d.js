@@ -242,7 +242,7 @@ JXG.createPolyhedron3D = function (board, parents, attributes) {
         face = view.create('face3d', [polyhedron, i], attr);
         faceList.push(face);
     }
-    el = new JXG.Polyhedron3D(view, polyhedron, faceList, attributes);
+    el = new JXG.Polyhedron3D(view, polyhedron, faceList, attr_polyhedron);
     el.setParents(el); // Sets el as parent to all faces.
     for (i = 0; i < le; i++) {
         el.inherits.push(el.faces[i]);
