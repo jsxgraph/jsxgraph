@@ -4121,7 +4121,7 @@ JXG.extend(
                 } else {
                     done = false;
                 }
-            } else {
+            } else if (!evt.shiftKey && !evt.ctrlKey) {         // Move an element if neither shift or ctrl are pressed
                 // Adapt dx, dy to snapToGrid and attractToGrid.
                 // snapToGrid has priority.
                 if (Type.exists(el.visProp)) {

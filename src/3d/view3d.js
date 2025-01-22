@@ -2628,7 +2628,8 @@ JXG.createView3D = function (board, parents, attributes) {
             }
 
         }
-        if (view.evalVisProp('el.keyboard.enabled') &&
+
+        if (view.evalVisProp('az.keyboard.enabled') &&
             (event.key === 'ArrowLeft' || event.key === 'ArrowRight')
         ) {
             neededKey = view.evalVisProp('az.keyboard.key');
@@ -2640,6 +2641,7 @@ JXG.createView3D = function (board, parents, attributes) {
                 catchEvt = true;
             }
         }
+
         if (view.evalVisProp('bank.keyboard.enabled') && (event.key === ',' || event.key === '<' || event.key === '.' || event.key === '>')) {
             neededKey = view.evalVisProp('bank.keyboard.key');
             if (neededKey === 'none' || (neededKey.indexOf('shift') > -1 && event.shiftKey) || (neededKey.indexOf('ctrl') > -1 && event.ctrlKey)) {
@@ -2647,6 +2649,7 @@ JXG.createView3D = function (board, parents, attributes) {
                 catchEvt = true;
             }
         }
+
         if (event.key === 'PageUp') {
             view.nextView();
             catchEvt = true;
