@@ -1997,6 +1997,7 @@ JXG.extend(
      */
     pointerUpHandler: function (evt) {
         var target;
+
         if (this._hasMoveAz) {
             target = (this.evalVisProp('az.pointer.outside')) ? document : this.board.containerObj;
             Env.removeEvent(target, 'pointermove', this._azEventHandler, this);
@@ -2013,7 +2014,7 @@ JXG.extend(
             this._hasMoveBank = false;
         }
         if (this._hasMoveTrackball) {
-            target = (this.evalVisProp('az.pointer.outside')) ? document : this.board.containerObj;
+            target = (this.evalVisProp('trackball.pointer.outside')) ? document : this.board.containerObj;
             Env.removeEvent(target, 'pointermove', this._trackballHandler, this);
             this._hasMoveTrackball = false;
         }
