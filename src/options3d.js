@@ -782,11 +782,24 @@ JXG.extend(Options, {
         needsRegularUpdate: true,
 
         /**
-         * When this option is enabled, elements closer to the screen are drawn
-         * over elements further from the screen within the 3D layer.
+         * When this attribute is enabled, elements closer to the screen are drawn
+         * over elements further from the screen within the 3D layer. This affects
+         * all elements which are in one of the layer specified in the sub-attribute 'layers'.
+         * <p>
+         * For each layer this depth ordering is done independently.
+         * Sub-attributes:
+         *      <ul>
+         *          <li><tt>enabled</tt>: false/true
+         *          <li><tt>layers</tt>: [12, 13]
+         *      </ul>
          *
          * @name View3D#depthOrder
-         * @default false
+         * @type Object
+         * @default <pre>{
+         *   enabled: false,
+         *   layers: [12, 13]
+         * }
+         * </pre>
          */
         depthOrder: {
             enabled: false,
@@ -804,6 +817,57 @@ JXG.extend(Options, {
          * @name View3D#projection
          * @type String
          * @default 'parallel'
+         * @example
+         *         var bound = [-5, 5];
+         *         var view = board.create('view3d',
+         *             [[-6, -3], [8, 8],
+         *             [bound, bound, bound]],
+         *             {
+         *                 projection: 'parallel'
+         *             });
+         *
+         * </pre><div id="JXG80d81b13-c604-4841-bdf6-62996440088a" class="jxgbox" style="width: 300px; height: 300px;"></div>
+         * <script type="text/javascript">
+         *     (function() {
+         *         var board = JXG.JSXGraph.initBoard('JXG80d81b13-c604-4841-bdf6-62996440088a',
+         *             {boundingbox: [-8, 8, 8,-8], axis: false, showcopyright: false, shownavigation: false});
+         *             var bound = [-5, 5];
+         *             var view = board.create('view3d',
+         *                 [[-6, -3], [8, 8],
+         *                 [bound, bound, bound]],
+         *                 {
+         *                     projection: 'parallel'
+         *                 });
+         *
+         *     })();
+         *
+         * </script><pre>
+         *
+         * @example
+         *         var bound = [-5, 5];
+         *         var view = board.create('view3d',
+         *             [[-6, -3], [8, 8],
+         *             [bound, bound, bound]],
+         *             {
+         *                 projection: 'central'
+         *             });
+         *
+         * </pre><div id="JXGdb7b7c99-631c-41d0-99bf-c0a8d0138218" class="jxgbox" style="width: 300px; height: 300px;"></div>
+         * <script type="text/javascript">
+         *     (function() {
+         *         var board = JXG.JSXGraph.initBoard('JXGdb7b7c99-631c-41d0-99bf-c0a8d0138218',
+         *             {boundingbox: [-8, 8, 8,-8], axis: false, showcopyright: false, shownavigation: false});
+         *             var bound = [-5, 5];
+         *             var view = board.create('view3d',
+         *                 [[-6, -3], [8, 8],
+         *                 [bound, bound, bound]],
+         *                 {
+         *                     projection: 'central'
+         *                 });
+         *     })();
+         *
+         * </script><pre>
+         *
          */
         projection: 'parallel',
 
@@ -877,7 +941,7 @@ JXG.extend(Options, {
          *         {
          *             projection: 'parallel',
          *             az: {
-         *                 slider: {visible: true}
+         *                 slider: {visible: true, start: 0.75 * Math.PI}
          *             }
          *         });
          *
@@ -893,7 +957,7 @@ JXG.extend(Options, {
          *             {
          *                 projection: 'parallel',
          *                 az: {
-         *                     slider: {visible: true}
+         *                     slider: {visible: true, start: 0.75 * Math.PI}
          *                 }
          *             });
          *
@@ -1130,7 +1194,10 @@ JXG.extend(Options, {
         },
 
         /**
-         * Enable user handling by a virtual trackball.
+         * Enable user handling by a virtual trackball that allows to move the 3D scene
+         * with 3 degrees of freedom. If not enabled, direct user dragging (i.e. in the JSXGraph board, not manipulating the sliders) will only have
+         * two degrees of freedom. This means, the z-axis will always be projected to a vertical 2D line.
+         * <p>
          * Sub-attributes:
          *      <ul>
          *          <li><tt>enabled</tt>: Boolean that specifies whether pointer navigation is allowed by elevation.

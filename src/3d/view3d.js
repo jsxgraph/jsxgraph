@@ -2035,6 +2035,8 @@ JXG.extend(
  *   pan: {anabled: fasle}
  * </pre>
  * Otherwise users will not be able to rotate the scene with their fingers on a touch device.
+ * <p>
+ * The start position of the camera can be adjusted by the attributes {@link View3D#az}, {@link View3D#el}, and {@link View3D#bank}.
  *
  * @name View3D
  * @augments JXG.View3D
