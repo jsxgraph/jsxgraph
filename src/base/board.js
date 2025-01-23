@@ -4372,7 +4372,7 @@ JXG.extend(
                         try {
                             that.updateContainerDims(bb.width, bb.height);
                         } catch (e) {
-                            JXG.debug(e);
+                            JXG.debug(e);   // Used to log errors during board.update()
                             that.stopResizeObserver();
                         } finally {
                             that._isResizing = false;
