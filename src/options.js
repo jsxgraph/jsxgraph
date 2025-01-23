@@ -2656,11 +2656,15 @@ JXG.Options = {
         drawLabels: false,
 
         /**
-         * Attributes for the ticks labels
+         * Attributes for the ticks labels.
          *
          * @name Ticks#label
          * @type Object
-         * @default <tt>{}</tt>
+         * @default <pre>{
+         *   tabindex: null,
+         *   layer: 7, // line
+         *   highlight: false
+         *   }</pre>
          *
          */
         label: {
