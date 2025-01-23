@@ -218,6 +218,13 @@ JXG.extend(
             var i, t, r, type,
                 len = (this.ticks && this.ticks.length) || 0;
 
+            if (
+                !this.line.evalVisProp('scalable') ||
+                this.line.elementClass === Const.OBJECT_CLASS_CURVE
+            ) {
+                return false;
+            }
+
             if (Type.isObject(this.evalVisProp('precision'))) {
                 type = this.board._inputDevice;
                 r = this.evalVisProp('precision.' + type);
@@ -226,12 +233,6 @@ JXG.extend(
                 r = this.board.options.precision.hasPoint;
             }
             r += this.evalVisProp('strokewidth') * 0.5;
-            if (
-                !this.line.evalVisProp('scalable') ||
-                this.line.elementClass === Const.OBJECT_CLASS_CURVE
-            ) {
-                return false;
-            }
 
             // Ignore non-axes and axes that are not horizontal or vertical
             if (
@@ -263,8 +264,8 @@ JXG.extend(
                             Math.abs(t[0][0] - t[0][1]) >= 1 ||
                             Math.abs(t[1][0] - t[1][1]) >= 1
                         ) {
+                            // Allow dragging near axes only.
                             if (this.line.stdform[1] === 0) {
-                                // Allow dragging near axes only.
                                 if (
                                     Math.abs(y - this.line.point1.coords.scrCoords[2]) < 2 * r &&
                                     t[0][0] - r < x && x < t[0][1] + r

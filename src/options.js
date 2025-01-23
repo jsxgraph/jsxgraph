@@ -2656,19 +2656,21 @@ JXG.Options = {
         drawLabels: false,
 
         /**
-         * Attributes for the ticks labels
+         * Attributes for the ticks labels.
          *
          * @name Ticks#label
          * @type Object
-         * @default <tt>{}</tt>
+         * @default <pre>{
+         *   tabindex: null,
+         *   layer: 7, // line
+         *   highlight: false
+         *   }</pre>
          *
          */
         label: {
             tabindex: null,
             layer: 7, // line
-            highlightStrokeColor:'#000000',
-            highlightStrokeWidth: undefined,
-            highlightStrokeOpacity: undefined
+            highlight: false
         },
 
         /**
@@ -3234,9 +3236,8 @@ JXG.Options = {
         digits: 3,
 
         /**
-         * The default distance (in user coordinates, not  pixels) between two ticks. Please be aware that this value is overruled
-         * if {@link Ticks#insertTicks} is set to true. In case, {@link Ticks#insertTicks} is false, the maximum number of ticks
-         * is hard coded to be less than 2048.
+         * The default distance (in user coordinates, not  pixels) between two ticks. Please be aware that this value does not have
+         * to be used if {@link Ticks#insertTicks} is set to true.
          *
          * @type Number
          * @name Ticks#ticksDistance
