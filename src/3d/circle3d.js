@@ -162,10 +162,12 @@ JXG.extend(
 
         // Already documented in element3d.js
         update: function () {
-            this.updateNormal();
-            this.updateFrame();
-            this.curve.visProp.visible = !isNaN(this.Radius());
+            if (this.needsUpdate) {
+                this.updateNormal()
+                    .updateFrame();
 
+                this.curve.visProp.visible = !isNaN(this.Radius()); // TODO
+            }
             return this;
         },
 
@@ -212,6 +214,8 @@ JXG.extend(
                 this.frame1[i] /= len1;
                 this.frame2[i] /= len2;
             }
+
+            return this;
         },
 
         updateNormal: function () {
@@ -228,6 +232,8 @@ JXG.extend(
                     this.normal[i] /= len;
                 }
             }
+
+            return this;
         },
 
         updateFrame: function () {
@@ -236,6 +242,8 @@ JXG.extend(
             this.frame2 = Mat.crossProduct(this.normal.slice(1), this.frame1.slice(1));
             this.frame2.unshift(0);
             this.normalizeFrame();
+
+            return this;
         },
 
         // Already documented in element3d.js
