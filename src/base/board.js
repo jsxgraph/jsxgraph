@@ -4388,8 +4388,9 @@ JXG.extend(
                 var bb;
                 if (!that._isResizing) {
                     that._isResizing = true;
-                    bb = entries[0].contentRect;
+                    // bb = entries[0].contentRect; // not working, dimensions have to be evaluated in timeout
                     window.setTimeout(function () {
+                        bb = entries[0].target.getBoundingClientRect();
                         try {
                             that.updateContainerDims(bb.width, bb.height);
                         } catch (err) {
