@@ -60,8 +60,6 @@ JXG.Line3D = function (view, point, direction, range, attributes) {
     this.constructor(view.board, attributes, Const.OBJECT_TYPE_LINE3D, Const.OBJECT_CLASS_3D);
     this.constructor3D(view, 'line3d');
 
-    this.board.finalizeAdding(this);
-
     /**
      * 3D point which - together with a direction - defines the line.
      * @type JXG.Point3D
@@ -108,6 +106,8 @@ JXG.Line3D = function (view, point, direction, range, attributes) {
      * @private
      */
     this.point2 = null;
+
+    this.board.finalizeAdding(this);
 
     this.methodMap = Type.deepCopy(this.methodMap, {
         // TODO
@@ -182,10 +182,54 @@ JXG.extend(
             ];
         },
 
+        addTransform: function (el, transform) {
+            var i,
+                list = Type.isArray(transform) ? transform : [transform],
+                len = list.length;
+
+            this.point.addTransform(el.point, transform);
+
+            // There is only one baseElement possible
+            if (this.transformations.length === 0) {
+                this.baseElement = el;
+            }
+
+            for (i = 0; i < len; i++) {
+                this.transformations.push(list[i]);
+            }
+
+            return this;
+        },
+
+        updateTransform: function () {
+            var c, i;
+
+            if (this.transformations.length === 0 || this.baseElement === null) {
+                return this;
+            }
+
+            this.transformations[0].update();
+            if (this === this.baseElement) {
+                // Case of bindTo
+                // TODO
+                c = this.transformations[0].apply(this.vec, "self");
+            } else {
+                c = Mat.matVecMult(this.transformations[0].matrix, this.baseElement.vec);
+            }
+            for (i = 1; i < this.transformations.length; i++) {
+                this.transformations[i].update();
+                c = Mat.matVecMult(this.transformations[i].matrix, c);
+            }
+            this.vec = c;
+
+            return this;
+        },
+
         // Already documented in JXG.GeometryElement
         update: function () {
             if (this.needsUpdate) {
                 this.updateCoords();
+                this.updateTransform();
             }
             return this;
         },

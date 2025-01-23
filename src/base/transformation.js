@@ -437,6 +437,7 @@ JXG.extend(
                 if (params.length > 0 && params.length <= 2) {
                     this.evalParam = Type.createEvalFunction(board, params, 1);
                 }
+
                 this.update = function () {
                     var a = this.evalParam(0),
                         co = Math.cos(a),
@@ -511,6 +512,9 @@ JXG.extend(
         /**
          * Transform a GeometryElement:
          * First, the transformation matrix is updated, then do the matrix-vector-multiplication.
+         * <p>
+         * Restricted to 2D transformations.
+         *
          * @private
          * @param {JXG.GeometryElement} p element which is transformed
          * @param {String} 'self' Apply the transformation to the initialCoords instead of the coords if this is set.
@@ -520,9 +524,7 @@ JXG.extend(
             var c;
 
             this.update();
-            if (this.is3D) {
-                c = p.coords;
-            } else if (Type.exists(self)) {
+            if (Type.exists(self)) {
                 c = p.initialCoords.usrCoords;
             } else {
                 c = p.coords.usrCoords;
@@ -718,9 +720,10 @@ JXG.extend(
  * @constructor
  * @type JXG.Transformation
  * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
- * @param {number|function} parameters The parameters depend on the transformation type, supplied as attribute 'type'.
+ * @param {number|function|JXG.GeometryElement} parameters The parameters depend on the transformation type, supplied as attribute 'type'.
  * Possible transformation types are
- * <ul><li> 'translate'
+ * <ul>
+ * <li> 'translate'
  * <li> 'scale'
  * <li> 'reflect'
  * <li> 'rotate'
@@ -1104,7 +1107,7 @@ JXG.registerElement('transform', JXG.createTransform);
  * @constructor
  * @type JXG.Transformation
  * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
- * @param {number|function} parameters The parameters depend on the transformation type, supplied as attribute 'type'.
+ * @param {number|function|JXG.GeometryElement3D} parameters The parameters depend on the transformation type, supplied as attribute 'type'.
  */
 JXG.createTransform3D = function (board, parents, attributes) {
     return new JXG.Transformation(board, attributes.type, parents, true);
@@ -1113,7 +1116,4 @@ JXG.createTransform3D = function (board, parents, attributes) {
 JXG.registerElement('transform3d', JXG.createTransform3D);
 
 export default JXG.Transformation;
-// export default {
-//     Transformation: JXG.Transformation,
-//     createTransform: JXG.createTransform
-// };
+

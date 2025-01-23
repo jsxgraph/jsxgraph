@@ -2667,7 +2667,7 @@ JXG.createView3D = function (board, parents, attributes) {
             // can not be used any more.
             event.preventDefault();
         }
-        // this.board._change3DView = false;
+        this.board._change3DView = false;
 
     }, view);
 

@@ -4371,7 +4371,8 @@ JXG.extend(
                     window.setTimeout(function () {
                         try {
                             that.updateContainerDims(bb.width, bb.height);
-                        } catch (err) {
+                        } catch (e) {
+                            JXG.debug(e);
                             that.stopResizeObserver();
                         } finally {
                             that._isResizing = false;

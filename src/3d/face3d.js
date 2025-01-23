@@ -227,7 +227,7 @@ JXG.createFace3D = function (board, parents, attributes) {
         faceNumber = parents[2],
         attr, el;
 
-    // TODO Throw error
+    // TODO Throw new Error
     attr = Type.copyAttributes(attributes, board.options, "face3d");
     el = new JXG.Face3D(view, polyhedron, faceNumber, attr);
 

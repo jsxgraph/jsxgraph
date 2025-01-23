@@ -238,7 +238,7 @@ JXG.createCurve3D = function (board, parents, attributes) {
         range = parents[4];
         F = null;
     }
-    // TODO Throw error
+    // TODO Throw new Error
 
     attr = Type.copyAttributes(attributes, board.options, "curve3d");
     el = new JXG.Curve3D(view, F, X, Y, Z, range, attr);

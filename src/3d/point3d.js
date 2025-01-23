@@ -308,13 +308,13 @@ JXG.extend(
             return this;
         },
 
-        /**
-         * Add transformations to this element.
-         * @param {JXG.GeometryElement} el
-         * @param {JXG.Transformation|Array} transform Either one {@link JXG.Transformation}
-         * or an array of {@link JXG.Transformation}s.
-         * @returns {JXG.CoordsElement} Reference to itself.
-         */
+        // /**
+        //  * Add transformations to this element.
+        //  * @param {JXG.GeometryElement} el
+        //  * @param {JXG.Transformation|Array} transform Either one {@link JXG.Transformation}
+        //  * or an array of {@link JXG.Transformation}s.
+        //  * @returns {JXG.CoordsElement} Reference to itself.
+        //  */
         addTransform: function (el, transform) {
             var i,
                 list = Type.isArray(transform) ? transform : [transform],
@@ -342,9 +342,10 @@ JXG.extend(
             this.transformations[0].update();
             if (this === this.baseElement) {
                 // Case of bindTo
+                // TODO
                 c = this.transformations[0].apply(this, "self");
             } else {
-                c = this.transformations[0].apply(this.baseElement);
+                c = Mat.matVecMult(this.transformations[0].matrix, this.baseElement.coords);
             }
             for (i = 1; i < this.transformations.length; i++) {
                 this.transformations[i].update();
