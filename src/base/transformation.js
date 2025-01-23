@@ -166,7 +166,6 @@ JXG.extend(
          * ( g  h  i )   ( y )
          * </pre>
          *
-         *
          * The transformation matrix then looks like:
          * <p>
          * Translation matrix:
@@ -275,7 +274,7 @@ JXG.extend(
                         );
                     }
 
-                    // Project origin to the line.  This gives a finite point p
+                    // Project origin to the line. This gives a finite point p
                     x = v[1];
                     y = v[2];
                     z = v[0];
@@ -733,8 +732,40 @@ JXG.extend(
  * </ul>
  * <p>Valid parameters for these types are:
  * <dl>
- * <dt><b><tt>type:"translate"</tt></b></dt><dd><b>x, y</b> Translation vector (two numbers or functions)</dd>
- * <dt><b><tt>type:"scale"</tt></b></dt><dd><b>scale_x, scale_y</b> Scale vector (two numbers or functions)</dd>
+ * <dt><b><tt>type:"translate"</tt></b></dt><dd><b>x, y</b> Translation vector (two numbers or functions).
+ * The transformation matrix for x = a and y = b has the form:
+ * <pre>
+ * ( 1  0  0)   ( z )
+ * ( a  1  0) * ( x )
+ * ( b  0  1)   ( y )
+ * </pre>
+ * </dd>
+ * <dt><b><tt>type:"scale"</tt></b></dt><dd><b>scale_x, scale_y</b> Scale vector (two numbers or functions).
+ * The transformation matrix for scale_x = a and scale_y = b has the form:
+ * <pre>
+ * ( 1  0  0)   ( z )
+ * ( 0  a  0) * ( x )
+ * ( 0  0  b)   ( y )
+ * </pre>
+ * </dd>
+ * <dt><b><tt>type:"rotate"</tt></b></dt><dd> <b>alpha, [point | x, y]</b> The parameters are the angle value in Radians
+ *     (a number or function), and optionally a coordinate pair (two numbers or functions) or a point element defining the
+ *                rotation center. If the rotation center is not given, the transformation rotates around (0,0).
+ * The transformation matrix for angle a and rotating around (0, 0) has the form:
+ * <pre>
+ * ( 1    0        0      )   ( z )
+ * ( 0    cos(a)   -sin(a)) * ( x )
+ * ( 0    sin(a)   cos(a) )   ( y )
+ * </pre>
+ * </dd>
+ * <dt><b><tt>type:"shear"</tt></b></dt><dd><b>shear_x, shear_y</b> Shear vector (two numbers or functions).
+ * The transformation matrix for shear_x = a and shear_y = b has the form:
+ * <pre>
+ * ( 1  0  0)   ( z )
+ * ( 0  1  a) * ( x )
+ * ( 0  b  1)   ( y )
+ * </pre>
+ * </dd>
  * <dt><b><tt>type:"reflect"</tt></b></dt><dd>The parameters can either be:
  *    <ul>
  *      <li> <b>line</b> a line element,
@@ -742,11 +773,6 @@ JXG.extend(
  *      <li> <b>p_x, p_y, q_x, q_y</b> four numbers or functions  determining a line through points (p_x, p_y) and (q_x, q_y).
  *    </ul>
  * </dd>
- * <dt><b><tt>type:"rotate"</tt></b></dt><dd> <b>alpha, [point | x, y]</b> The parameters are the angle value in Radians
- *     (a number or function), and optionally a coordinate pair (two numbers or functions) or a point element defining the
- *                rotation center. If the rotation center is not given, the transformation rotates around (0,0).
- * </dd>
- * <dt><b><tt>type:"shear"</tt></b></dt><dd><b>shear_x, shear_y</b> Shear vector (two numbers or functions)</dd>
  * <dt><b><tt>type:"generic"</tt></b></dt><dd><b>a, b, c, d, e, f, g, h, i</b> Nine matrix entries (numbers or functions)
  *  for a generic projective transformation.
  * The matrix has the form
