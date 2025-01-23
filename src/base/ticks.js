@@ -264,8 +264,8 @@ JXG.extend(
                             Math.abs(t[0][0] - t[0][1]) >= 1 ||
                             Math.abs(t[1][0] - t[1][1]) >= 1
                         ) {
+                            // Allow dragging near axes only.
                             if (this.line.stdform[1] === 0) {
-                                // Allow dragging near axes only.
                                 if (
                                     Math.abs(y - this.line.point1.coords.scrCoords[2]) < 2 * r &&
                                     t[0][0] - r < x && x < t[0][1] + r
