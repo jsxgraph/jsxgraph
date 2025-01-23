@@ -2666,9 +2666,7 @@ JXG.Options = {
         label: {
             tabindex: null,
             layer: 7, // line
-            highlightStrokeColor:'#000000',
-            highlightStrokeWidth: undefined,
-            highlightStrokeOpacity: undefined
+            highlight: false
         },
 
         /**
