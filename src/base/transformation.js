@@ -158,20 +158,48 @@ JXG.extend(
          *                        'shear', 'generic'.
          * @param {Array} params Parameters for the various transformation types.
          *
-         * <p>These are
-         * @param {Array} x,y Shift vector (number or function) in case of 'translate'.
-         * @param {Array} scale_x,scale_y Scale vector (number or function) in case of 'scale'.
-         * @param {Array} line|point_pair|"four coordinates" In case of 'reflect' the parameters could
-         *                be a line, a pair of points or four number (or functions) p_x, p_y, q_x, q_y,
-         *                determining a line through points (p_x, p_y) and (q_x, q_y).
-         * @param {Array} angle,x,y|angle,[x,y] In case of 'rotate' the parameters are an angle or angle function,
-         *                returning the angle in Radians and - optionally - a coordinate pair or a point defining the
-         *                rotation center. If the rotation center is not given, the transformation rotates around (0,0).
-         * @param {Array} shear_x,shear_y Shear vector (number or function) in case of 'shear'.
-         * @param {Array} a,b,c,d,e,f,g,h,i Nine matrix entries (numbers or functions) for a generic
-         *                projective transformation  in case of 'generic'.
-         *
          * <p>A transformation with a generic matrix looks like:
+         * <pre>
+         * ( a  b  c )   ( z )
+         * ( d  e  f ) * ( x )
+         * ( g  h  i )   ( y )
+         * </pre>
+         *
+         *
+         * The transformation matrix then looks like:
+         * <p>
+         * Translation matrix:
+         * <pre>
+         * ( 1  0  0)   ( z )
+         * ( a  1  0) * ( x )
+         * ( b  0  1)   ( y )
+         * </pre>
+         *
+         * <p>
+         * Scale matrix:
+         * <pre>
+         * ( 1  0  0)   ( z )
+         * ( 0  a  0) * ( x )
+         * ( 0  0  b)   ( y )
+         * </pre>
+         *
+         * <p>
+         * A rotation matrix with angle a (in Radians)
+         * <pre>
+         * ( 1    0        0      )   ( z )
+         * ( 0    cos(a)   -sin(a)) * ( x )
+         * ( 0    sin(a)   cos(a) )   ( y )
+         * </pre>
+         *
+         * <p>
+         * Shear matrix:
+         * <pre>
+         * ( 1  0  0)   ( z )
+         * ( 0  1  a) * ( x )
+         * ( 0  b  1)   ( y )
+         * </pre>
+         *
+         * <p>Generic transformation:
          * <pre>
          * ( a  b  c )   ( z )
          * ( d  e  f ) * ( x )
@@ -271,11 +299,11 @@ JXG.extend(
                         yoff * (1 - this.matrix[2][2]) - xoff * this.matrix[2][1];
                 };
             } else if (type === "rotate") {
-                // angle, x, y
                 if (params.length === 3) {
+                    // angle, x, y
                     this.evalParam = Type.createEvalFunction(board, params, 3);
-                    // angle, p or angle
                 } else if (params.length > 0 && params.length <= 2) {
+                    // angle, p or angle
                     this.evalParam = Type.createEvalFunction(board, params, 1);
 
                     if (params.length === 2 && !Type.isArray(params[1])) {
@@ -684,45 +712,33 @@ JXG.extend(
  * <li> 'shear'
  * <li> 'generic'
  * </ul>
- * The transformation matrix then looks like:
- * <p>
- * Translation matrix:
- * <pre>
- * ( 1  0  0)   ( z )
- * ( a  1  0) * ( x )
- * ( b  0  1)   ( y )
- * </pre>
- *
- * <p>
- * Scale matrix:
- * <pre>
- * ( 1  0  0)   ( z )
- * ( 0  a  0) * ( x )
- * ( 0  0  b)   ( y )
- * </pre>
- *
- * <p>
- * A rotation matrix with angle a (in Radians)
- * <pre>
- * ( 1    0        0      )   ( z )
- * ( 0    cos(a)   -sin(a)) * ( x )
- * ( 0    sin(a)   cos(a) )   ( y )
- * </pre>
- *
- * <p>
- * Shear matrix:
- * <pre>
- * ( 1  0  0)   ( z )
- * ( 0  1  a) * ( x )
- * ( 0  b  1)   ( y )
- * </pre>
- *
- * <p>Generic transformation:
+ * <p>Valid parameters for these types are:
+ * <dl>
+ * <dt><b><tt>type:"translate"</tt></b></dt><dd><b>x, y</b> Translation vector (two numbers or functions)</dd>
+ * <dt><b><tt>type:"scale"</tt></b></dt><dd><b>scale_x, scale_y</b> Scale vector (two numbers or functions)</dd>
+ * <dt><b><tt>type:"reflect"</tt></b></dt><dd>The parameters can either be:
+ *    <ul>
+ *      <li> <b>line</b> a line element,
+ *      <li> <b>p, q</b> two point elements,
+ *      <li> <b>p_x, p_y, q_x, q_y</b> four numbers or functions  determining a line through points (p_x, p_y) and (q_x, q_y).
+ *    </ul>
+ * </dd>
+ * <dt><b><tt>type:"rotate"</tt></b></dt><dd> <b>alpha, [point | x, y]</b> The parameters are the angle value in Radians
+ *     (a number or function), and optionally a coordinate pair (two numbers or functions) or a point element defining the
+ *                rotation center. If the rotation center is not given, the transformation rotates around (0,0).
+ * </dd>
+ * <dt><b><tt>type:"shear"</tt></b></dt><dd><b>shear_x, shear_y</b> Shear vector (two numbers or functions)</dd>
+ * <dt><b><tt>type:"generic"</tt></b></dt><dd><b>a, b, c, d, e, f, g, h, i</b> Nine matrix entries (numbers or functions)
+ *  for a generic projective transformation.
+ * The matrix has the form
  * <pre>
  * ( a  b  c )   ( z )
  * ( d  e  f ) * ( x )
  * ( g  h  i )   ( y )
  * </pre>
+ * </dd>
+ * </dl>
+ *
  *
  * @see JXG.Transformation#setMatrix
  *
