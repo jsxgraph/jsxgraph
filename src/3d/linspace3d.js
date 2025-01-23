@@ -977,8 +977,8 @@ JXG.extend(
             var i, len;
 
             if (!this.needsUpdate) {
-                // Extraordinary update
-                this.updateCoords();
+                // Extraordinary update, conflicts with rotating of box and plane transformations
+                // this.updateCoords();
             }
 
             this.normal = Mat.crossProduct(this.vec1.slice(1), this.vec2.slice(1));
@@ -1170,9 +1170,57 @@ JXG.extend(
             return { X: this.dataX, Y: this.dataY };
         },
 
+        addTransform: function (el, transform) {
+            var i,
+                list = Type.isArray(transform) ? transform : [transform],
+                len = list.length;
+
+            this.point.addTransform(el.point, transform);
+
+            // There is only one baseElement possible
+            if (this.transformations.length === 0) {
+                this.baseElement = el;
+            }
+
+            for (i = 0; i < len; i++) {
+                this.transformations.push(list[i]);
+            }
+
+            return this;
+        },
+
+        updateTransform: function () {
+            var c1, c2, i;
+
+            if (this.transformations.length === 0 || this.baseElement === null) {
+                return this;
+            }
+
+            this.transformations[0].update();
+            if (this === this.baseElement) {
+                // Case of bindTo
+                // TODO
+                c1 = this.transformations[0].apply(this.vec1, "self");
+                c2 = this.transformations[0].apply(this.vec2, "self");
+            } else {
+                c1 = Mat.matVecMult(this.transformations[0].matrix, this.baseElement.vec1);
+                c2 = Mat.matVecMult(this.transformations[0].matrix, this.baseElement.vec2);
+            }
+            for (i = 1; i < this.transformations.length; i++) {
+                this.transformations[i].update();
+                c1 = Mat.matVecMult(this.transformations[i].matrix, c1);
+                c2 = Mat.matVecMult(this.transformations[i].matrix, c2);
+            }
+            this.vec1 = c1;
+            this.vec2 = c2;
+
+            return this;
+        },
+
         update: function () {
             if (this.needsUpdate) {
                 this.updateCoords();
+                this.updateTransform();
             }
             return this;
         },
