@@ -316,19 +316,7 @@ JXG.extend(
         //  * @returns {JXG.CoordsElement} Reference to itself.
         //  */
         addTransform: function (el, transform) {
-            var i,
-                list = Type.isArray(transform) ? transform : [transform],
-                len = list.length;
-
-            // There is only one baseElement possible
-            if (this.transformations.length === 0) {
-                this.baseElement = el;
-            }
-
-            for (i = 0; i < len; i++) {
-                this.transformations.push(list[i]);
-            }
-
+            this.addTransformGeneric(el, transform);
             return this;
         },
 

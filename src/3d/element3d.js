@@ -187,6 +187,30 @@ JXG.extend(JXG.GeometryElement3D.prototype, {
         return attr;
     },
 
+    // /**
+    //  * Add transformations to this element.
+    //  * @param {JXG.GeometryElement} el
+    //  * @param {JXG.Transformation|Array} transform Either one {@link JXG.Transformation}
+    //  * or an array of {@link JXG.Transformation}s.
+    //  * @returns {JXG.CoordsElement} Reference to itself.
+    //  */
+    addTransformGeneric: function (el, transform) {
+        var i,
+            list = Type.isArray(transform) ? transform : [transform],
+            len = list.length;
+
+        // There is only one baseElement possible
+        if (this.transformations.length === 0) {
+            this.baseElement = el;
+        }
+
+        for (i = 0; i < len; i++) {
+            this.transformations.push(list[i]);
+        }
+
+        return this;
+    },
+
     /**
      * Set position of the 2D element. This is a
      * callback function, executed in {@link JXG.GeometryElement#setPosition}.

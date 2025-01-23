@@ -183,20 +183,8 @@ JXG.extend(
         },
 
         addTransform: function (el, transform) {
-            var i,
-                list = Type.isArray(transform) ? transform : [transform],
-                len = list.length;
-
             this.point.addTransform(el.point, transform);
-
-            // There is only one baseElement possible
-            if (this.transformations.length === 0) {
-                this.baseElement = el;
-            }
-
-            for (i = 0; i < len; i++) {
-                this.transformations.push(list[i]);
-            }
+            this.addTransformGeneric(el, transform);
 
             return this;
         },
@@ -1171,21 +1159,8 @@ JXG.extend(
         },
 
         addTransform: function (el, transform) {
-            var i,
-                list = Type.isArray(transform) ? transform : [transform],
-                len = list.length;
-
+            this.addTransformGeneric(el, transform);
             this.point.addTransform(el.point, transform);
-
-            // There is only one baseElement possible
-            if (this.transformations.length === 0) {
-                this.baseElement = el;
-            }
-
-            for (i = 0; i < len; i++) {
-                this.transformations.push(list[i]);
-            }
-
             return this;
         },
 

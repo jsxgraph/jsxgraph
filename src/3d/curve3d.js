@@ -168,12 +168,48 @@ JXG.extend(
             return { X: dataX, Y: dataY };
         },
 
+        addTransform: function (el, transform) {
+            this.addTransformGeneric(el, transform);
+            return this;
+        },
+
+        updateTransform: function () {
+            var t, c, i, j, len;
+
+            if (this.transformations.length === 0 || this.baseElement === null) {
+                return this;
+            }
+
+            t = this.transformations;
+            for (i = 0; i < t.length; i++) {
+                t[i].update();
+            }
+            len = this.baseElement.numberPoints;
+            for (i = 0; i < len; i++) {
+                if (this === this.baseElement) {
+                    // Case of bindTo
+                    // TODO
+                    c = t[0].apply(this.points[i], "self");
+                } else {
+                    c = Mat.matVecMult(t[0].matrix, this.baseElement.points[i]);
+                }
+                for (j = 1; j < t.length; j++) {
+                    c = Mat.matVecMult(t[j].matrix, c);
+                }
+                this.points[i] = c;
+            }
+            this.numberPoints = len;
+
+            return this;
+        },
+
         updateDataArray: function() { /* stub */ },
 
         update: function () {
             if (this.needsUpdate) {
                 this.updateDataArray();
-                this.updateCoords();
+                this.updateCoords()
+                    .updateTransform();
             }
             return this;
         },
