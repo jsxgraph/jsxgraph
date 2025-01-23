@@ -1804,14 +1804,14 @@ JXG.extend(
 });
 
 /**
- * @class This element creates a 3D view.
+ * @class A View3D element provides the container and the methods to create and display 3D elements.
  * @pseudo
  * @description  A View3D element provides the container and the methods to create and display 3D elements.
  * It is contained in a JSXGraph board.
  * <p>
  * It is advisable to disable panning of the board by setting the board attribute "pan":
  * <pre>
- *   pan: {anabled: fasle}
+ *   pan: {enabled: false}
  * </pre>
  * Otherwise users will not be able to rotate the scene with their fingers on a touch device.
  *
