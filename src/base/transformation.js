@@ -47,7 +47,7 @@ import Type from "../utils/type.js";
  * Use {@link JXG.Board#create} with
  * type {@link Transformation} instead.
  * @constructor
- * @param {JXG.Board} board The board the new circle is drawn on.
+ * @param {JXG.Board} board The board the transformation is part of.
  * @param {String} type Can be
  * <ul><li> 'translate'
  * <li> 'scale'
@@ -55,6 +55,7 @@ import Type from "../utils/type.js";
  * <li> 'rotate'
  * <li> 'shear'
  * <li> 'generic'
+ * <li> 'matrix'
  * </ul>
  * @param {Object} params The parameters depend on the transformation type
  *
@@ -368,6 +369,20 @@ JXG.extend(
                     this.matrix[2][0] = this.evalParam(6);
                     this.matrix[2][1] = this.evalParam(7);
                     this.matrix[2][2] = this.evalParam(8);
+                };
+            } else if (type === "matrix") {
+                if (params.length !== 1) {
+                    throw new Error("JSXGraph: transformation of type 'matrix' needs 1 parameter.");
+                }
+
+                this.evalParam = params[0].slice();
+                this.update = function () {
+                    var i, j;
+                    for (i = 0; i < 3; i++) {
+                        for (j = 0; j < 3; j++) {
+                            this.matrix[i][j] = Type.evaluate(this.evalParam[i][j]);
+                        }
+                    }
                 };
             }
 
@@ -711,6 +726,7 @@ JXG.extend(
  * <li> 'rotate'
  * <li> 'shear'
  * <li> 'generic'
+ * <li> 'matrix'
  * </ul>
  * <p>Valid parameters for these types are:
  * <dl>
@@ -737,6 +753,7 @@ JXG.extend(
  * ( g  h  i )   ( y )
  * </pre>
  * </dd>
+ * <dt><b><tt>type:"matrix"</tt></b></dt><dd><b>M</b> 3x3 transformation matrix containing numbers or functions</dd>
  * </dl>
  *
  *
@@ -855,6 +872,41 @@ JXG.extend(
  *         l = board.create('line', [p2, p3]),
  *         t = board.create('transform', [l], {type:'reflect'}),  // Possible are l, l.id, l.name
  *         p4 = board.create('point', [p1, t], {color: 'blue'});
+ *
+ *     })();
+ *
+ * </script><pre>
+ *
+ * @example
+ * // Type: 'matrix'
+ *         var y = board.create('slider', [[-3, 1], [-3, 4], [0, 1, 6]]);
+ *         var t1 = board.create('transform', [
+ *             [
+ *                 [1, 0, 0],
+ *                 [0, 1, 0],
+ *                 [() => y.Value(), 0, 1]
+ *             ]
+ *         ], {type: 'matrix'});
+ *
+ *         var A = board.create('point', [2, -3]);
+ *         var B = board.create('point', [A, t1]);
+ *
+ * </pre><div id="JXGd2bfd46c-3c0c-45c5-a92b-583fad0eb3ec" class="jxgbox" style="width: 300px; height: 300px;"></div>
+ * <script type="text/javascript">
+ *     (function() {
+ *         var board = JXG.JSXGraph.initBoard('JXGd2bfd46c-3c0c-45c5-a92b-583fad0eb3ec',
+ *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
+ *             var y = board.create('slider', [[-3, 1], [-3, 4], [0, 1, 6]]);
+ *             var t1 = board.create('transform', [
+ *                 [
+ *                     [1, 0, 0],
+ *                     [0, 1, 0],
+ *                     [() => y.Value(), 0, 1]
+ *                 ]
+ *             ], {type: 'matrix'});
+ *
+ *             var A = board.create('point', [2, -3]);
+ *             var B = board.create('point', [A, t1]);
  *
  *     })();
  *
