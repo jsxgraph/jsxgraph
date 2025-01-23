@@ -228,8 +228,8 @@ JXG.extend(
         // Already documented in JXG.GeometryElement
         update: function () {
             if (this.needsUpdate) {
-                this.updateCoords();
-                this.updateTransform();
+                this.updateCoords()
+                    .updateTransform();
             }
             return this;
         },
@@ -1219,8 +1219,8 @@ JXG.extend(
 
         update: function () {
             if (this.needsUpdate) {
-                this.updateCoords();
-                this.updateTransform();
+                this.updateCoords()
+                    .updateTransform();
             }
             return this;
         },

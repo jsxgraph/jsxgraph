@@ -82,6 +82,10 @@ JXG.Curve3D = function (view, F, X, Y, Z, range, attributes) {
      */
     this.Z = Z;
 
+    this.points = [];
+
+    this.numberPoints = 0;
+
     this.dataX = null;
     this.dataY = null;
     this.dataZ = null;
@@ -110,29 +114,24 @@ Type.copyPrototypeMethods(JXG.Curve3D, JXG.GeometryElement3D, "constructor3D");
 JXG.extend(
     JXG.Curve3D.prototype,
     /** @lends JXG.Curve3D.prototype */ {
-        updateDataArray2D: function () {
-            var steps = this.evalVisProp('numberpointshigh'),
-                r, s, e, delta, c2d, u, dataX, dataY,
-                i,
-                p = [0, 0, 0];
 
-            dataX = [];
-            dataY = [];
+        updateCoords: function() {
+            var steps = this.evalVisProp('numberpointshigh'),
+                r, s, e, delta,
+                u, i,
+                c3d = [1, 0, 0, 0];
+
+            this.points = [];
+
             if (Type.exists(this.dataX)) {
                 steps = this.dataX.length;
                 for (u = 0; u < steps; u++) {
-                    p = [this.dataX[u], this.dataY[u], this.dataZ[u]];
-                    c2d = this.view.project3DTo2D(p);
-                    dataX.push(c2d[1]);
-                    dataY.push(c2d[2]);
+                    this.points.push([1, this.dataX[u], this.dataY[u], this.dataZ[u]]);
                 }
             } else if (Type.isArray(this.X)) {
                 steps = this.X.length;
                 for (u = 0; u < steps; u++) {
-                    p = [this.X[u], this.Y[u], this.Z[u]];
-                    c2d = this.view.project3DTo2D(p);
-                    dataX.push(c2d[1]);
-                    dataY.push(c2d[2]);
+                    this.points.push([1, this.X[u], this.Y[u], this.Z[u]]);
                 }
             } else {
                 r = Type.evaluate(this.range);
@@ -141,15 +140,31 @@ JXG.extend(
                 delta = (e - s) / (steps - 1);
                 for (i = 0, u = s; i < steps && u <= e; i++, u += delta) {
                     if (this.F !== null) {
-                        p = this.F(u);
+                        c3d = this.F(u);
                     } else {
-                        p = [this.X(u), this.Y(u), this.Z(u)];
+                        c3d = [this.X(u), this.Y(u), this.Z(u)];
                     }
-                    c2d = this.view.project3DTo2D(p);
-                    dataX.push(c2d[1]);
-                    dataY.push(c2d[2]);
+                    c3d.unshift(1);
+                    this.points.push(c3d);
                 }
             }
+            this.numberPoints = this.points.length;
+
+            return this;
+        },
+
+        updateDataArray2D: function () {
+            var i, c2d,
+                dataX = [],
+                dataY = [],
+                len = this.points.length;
+
+            for (i = 0; i < len; i++) {
+                c2d = this.view.project3DTo2D(this.points[i]);
+                dataX.push(c2d[1]);
+                dataY.push(c2d[2]);
+            }
+
             return { X: dataX, Y: dataY };
         },
 
@@ -158,6 +173,7 @@ JXG.extend(
         update: function () {
             if (this.needsUpdate) {
                 this.updateDataArray();
+                this.updateCoords();
             }
             return this;
         },

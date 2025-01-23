@@ -404,8 +404,9 @@ JXG.extend(
 
             } else {
                 // Update 2D point from its 3D view, e.g. when rotating the view
-                this.updateCoords();
-                this.updateTransform();
+                this.updateCoords()
+                    .updateTransform();
+
                 if (this.slide) {
                     this.coords = this.slide.projectCoords([this.X(), this.Y(), this.Z()], this.position);
                 }
