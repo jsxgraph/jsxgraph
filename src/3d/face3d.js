@@ -65,6 +65,9 @@ JXG.Face3D = function (view, polyhedron, faceNumber, attributes) {
     this.vec1 = [0, 0, 0, 0];
     this.vec2 = [0, 0, 0, 0];
 
+    if (this.faceNumber === 0) {
+        this.updateCoords();
+    }
 
     this.methodMap = Type.deepCopy(this.methodMap, {
         // TODO
@@ -76,28 +79,53 @@ Type.copyPrototypeMethods(JXG.Face3D, JXG.GeometryElement3D, "constructor3D");
 JXG.extend(
     JXG.Face3D.prototype,
     /** @lends JXG.Face3D.prototype */ {
+
+        /**
+         * Update the coordinates of all vertices of the polyhedron
+         */
+        updateCoords: function() {
+            var i, p,
+                def = this.polyhedron;
+
+            for (i in def.vertices) {
+                p = def.vertices[i];
+                if (Type.isArray(p) || Type.isFunction(p)) {
+                    def.coords[i] = Type.evaluate(p);
+                } else {
+                    p = def.view.select(p);
+                    if (Type.isPoint3D(p)) {
+                        def.coords[i] = p.coords;
+                    } else {
+                        throw new Error('Polyhedron3D.updateCoords: unknown vertices type!');
+                    }
+                }
+                if (def.coords[i].length === 3) {
+                    def.coords[i].unshift(1);
+                }
+            }
+
+            return this;
+        },
+
         updateDataArray2D: function () {
             var j, le,
                 c3d, c2d,
                 x = [],
                 y = [],
                 p = this.polyhedron,
-                i = this.faceNumber,
-                face = p.faces[i];
+                face = p.faces[this.faceNumber];
 
-            if (i === 0) {
-                if (!this.view.board._change3DView) {
-                    // Evaluate each vertex only once.
-                    // For this, face[0] has to be accessed first.
-                    // During updates this should be the case automatically.
-                    p.updateCoords();
-                }
-                // coords2D equal to [] need projection down below.
+            if (this.faceNumber === 0) {
+                // coords2D equal to [] means, projection is needed down below.
+                // Thus, every vertex is projected only once.
                 for (j in p.vertices) {
                     p.coords2D[j] = [];
                 }
             }
 
+            // Add the projected coordinates of the vertices of this face
+            // to the 2D curve.
+            // If not done yet, project the 3D vertices of this face to 2D.
             le = face.length;
             // this.dataX = [];
             // this.dataY = [];
@@ -136,7 +164,48 @@ JXG.extend(
             return { X: x, Y: y };
         },
 
-        updateDataArray: function () { /* stub */ },
+        addTransform: function (el, transform) {
+            if (this.faceNumber === 0) {
+                this.addTransformGeneric(el, transform);
+            }
+            return this;
+        },
+
+        updateTransform: function () {
+            var t, c, i, j, b;
+
+            if (this.faceNumber !== 0) {
+                return this;
+            }
+
+            if (this.transformations.length === 0 || this.baseElement === null) {
+                return this;
+            }
+
+            t = this.transformations;
+            for (i = 0; i < t.length; i++) {
+                t[i].update();
+            }
+
+            b = this.baseElement.polyhedron;
+            for (i in b.coords) {
+                if (b.coords.hasOwnProperty(i)) {
+                    if (this === this.baseElement) {
+                        // Case of bindTo
+                        // TODO
+                        c = t[0].apply(b.coords[i], "self");
+                    } else {
+                        c = Mat.matVecMult(t[0].matrix, b.coords[i]);
+                    }
+                    for (j = 1; j < t.length; j++) {
+                        c = Mat.matVecMult(t[j].matrix, c);
+                    }
+                    this.polyhedron.coords[i] = c;
+                }
+            }
+
+            return this;
+        },
 
         update: function () {
             var i, le,
@@ -144,15 +213,23 @@ JXG.extend(
                 p1, p2,
                 face;
 
-            if (this.needsUpdate) {
+            if (this.needsUpdate && !this.view.board._change3DView) {
                 phdr = this.polyhedron;
-                face = phdr.faces[this.faceNumber];
 
+                if (this.faceNumber === 0) {
+                    // Update coordinates of all vertices
+                    this.updateCoords()
+                        .updateTransform();
+                }
+
+                face = phdr.faces[this.faceNumber];
                 le = face.length;
                 if (le < 3) {
                     // Get out of here if face is point or segment
                     return this;
                 }
+
+                // Update spanning vectors
                 p1 = phdr.coords[face[0]];
                 p2 = phdr.coords[face[1]];
                 this.vec1 = [p2[0] - p1[0], p2[1] - p1[1], p2[2] - p1[2], p2[3] - p1[3]];
@@ -160,6 +237,7 @@ JXG.extend(
                 p2 = phdr.coords[face[2]];
                 this.vec2 = [p2[0] - p1[0], p2[1] - p1[1], p2[2] - p1[2], p2[3] - p1[3]];
 
+                // Update Hesse form, i.e. normal and d
                 this.normal = Mat.crossProduct(this.vec1.slice(1), this.vec2.slice(1));
                 nrm = Mat.norm(this.normal);
                 this.normal.unshift(0);
@@ -170,8 +248,6 @@ JXG.extend(
                     }
                 }
                 this.d = Mat.innerProduct(p1, this.normal, 4);
-
-                this.updateDataArray();
             }
             return this;
         },
@@ -200,7 +276,6 @@ JXG.extend(
 
             return [s_x / le, s_y / le, s_z / le];
         }
-
     }
 );
 
@@ -214,12 +289,6 @@ JXG.extend(
  * @constructor
  * @type Object
  * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
- * @param {Function_Function_Function_Array,Function} F<sub>X</sub>,F<sub>Y</sub>,F<sub>Z</sub>,range
- * F<sub>X</sub>(u), F<sub>Y</sub>(u), F<sub>Z</sub>(u) are functions returning a number, range is the array containing
- * lower and upper bound for the range of the parameter u. range may also be a function returning an array of length two.
- * @param {Function_Array,Function} F,range Alternatively: F<sub>[X,Y,Z]</sub>(u) a function returning an array [x,y,z] of
- * numbers, range as above.
- * @param {Array_Array_Array} X,Y,Z Three arrays containing the coordinate vertexs which define the curve.
   */
 JXG.createFace3D = function (board, parents, attributes) {
     var view = parents[0],

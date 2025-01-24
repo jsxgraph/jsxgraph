@@ -30,6 +30,7 @@
 
 import JXG from "../jxg.js";
 import Const from "../base/constants.js";
+import Mat from "../math/math.js";
 import Geometry from "../math/geometry.js";
 import Type from "../utils/type.js";
 
@@ -104,6 +105,11 @@ JXG.Surface3D = function (view, F, X, Y, Z, range_u, range_v, attributes) {
     this.range_u = range_u;
     this.range_v = range_v;
 
+    this.dataX = null;
+    this.dataY = null;
+    this.dataZ = null;
+    this.points = [];
+
     this.methodMap = Type.deepCopy(this.methodMap, {
         // TODO
     });
@@ -115,11 +121,63 @@ JXG.extend(
     JXG.Surface3D.prototype,
     /** @lends JXG.Surface3D.prototype */ {
 
+        updateCoords: function() {
+            var steps,
+                steps_u, steps_v,
+                i_u, i_v,
+                r_u, r_v,
+                s_u, s_v,
+                e_u, e_v,
+                delta_u, delta_v,
+                u, v,
+                c3d = [1, 0, 0, 0];
+
+            this.points = [];
+
+            if (Type.exists(this.dataX)) {
+                steps = this.dataX.length;
+                for (u = 0; u < steps; u++) {
+                    this.points.push([1, this.dataX[u], this.dataY[u], this.dataZ[u]]);
+                }
+            } else if (Type.isArray(this.X)) {
+                steps = this.X.length;
+                for (u = 0; u < steps; u++) {
+                    this.points.push([1, this.X[u], this.Y[u], this.Z[u]]);
+                }
+            } else {
+                steps_u = this.evalVisProp('stepsu');
+                steps_v = this.evalVisProp('stepsv');
+                r_u = Type.evaluate(this.range_u);
+                r_v = Type.evaluate(this.range_v);
+                s_u = Type.evaluate(r_u[0]);
+                s_v = Type.evaluate(r_v[0]);
+                e_u = Type.evaluate(r_u[1]);
+                e_v = Type.evaluate(r_v[1]);
+                delta_u = (e_u - s_u) / (steps_u - 1);
+                delta_v = (e_v - s_v) / (steps_v - 1);
+
+                for (i_u = 0, u = s_u; i_u < steps_u && u <= e_u; i_u++, u += delta_u) {
+                    for (i_v = 0, v = s_v; i_v < steps_v && v <= e_v; i_v++, v += delta_v) {
+                        if (this.F !== null) {
+                            c3d = this.F(u, v);
+                        } else {
+                            c3d = [this.X(u, v), this.Y(u, v), this.Z(u, v)];
+                        }
+                        c3d.unshift(1);
+                        this.points.push(c3d);
+                    }
+                }
+            }
+            this.numberPoints = this.points.length;
+
+            return this;
+        },
+
         /**
          * @class
          * @ignore
          */
-        updateDataArray: function () {
+        updateDataArray2D: function () {
             var steps_u = this.evalVisProp('stepsu'),
                 steps_v = this.evalVisProp('stepsv'),
                 r_u = Type.evaluate(this.range_u),
@@ -139,7 +197,49 @@ JXG.extend(
             return { X: res[0], Y: res[1] };
         },
 
+        addTransform: function (el, transform) {
+            this.addTransformGeneric(el, transform);
+            return this;
+        },
+
+        updateTransform: function () {
+            var t, c, i, j, len;
+
+            if (this.transformations.length === 0 || this.baseElement === null) {
+                return this;
+            }
+
+            t = this.transformations;
+            for (i = 0; i < t.length; i++) {
+                t[i].update();
+            }
+            len = this.baseElement.numberPoints;
+            for (i = 0; i < len; i++) {
+                if (this === this.baseElement) {
+                    // Case of bindTo
+                    // TODO
+                    c = t[0].apply(this.points[i], "self");
+                } else {
+                    c = Mat.matVecMult(t[0].matrix, this.baseElement.points[i]);
+                }
+                for (j = 1; j < t.length; j++) {
+                    c = Mat.matVecMult(t[j].matrix, c);
+                }
+                this.points[i] = c;
+            }
+            this.numberPoints = len;
+
+            return this;
+        },
+
+        updateDataArray: function() { /* stub */ },
+
         update: function () {
+            if (this.needsUpdate) {
+                this.updateDataArray();
+                this.updateCoords()
+                    .updateTransform();
+            }
             return this;
         },
 
@@ -254,7 +354,7 @@ JXG.createParametricSurface3D = function (board, parents, attributes) {
      * @ignore
      */
     el.element2D.updateDataArray = function () {
-        var ret = el.updateDataArray();
+        var ret = el.updateDataArray2D();
         this.dataX = ret.X;
         this.dataY = ret.Y;
     };

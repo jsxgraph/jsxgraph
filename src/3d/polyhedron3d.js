@@ -159,6 +159,22 @@ JXG.Polyhedron3D = function (view, polyhedron, faces, attributes) {
 JXG.Polyhedron3D.prototype = new JXG.GeometryElement();
 Type.copyPrototypeMethods(JXG.Polyhedron3D, JXG.GeometryElement3D, "constructor3D");
 
+JXG.extend(
+    JXG.Polyhedron3D.prototype,
+    /** @lends JXG.Polyhedron3D.prototype */ {
+
+        addTransform: function (el, transform) {
+            if (this.faces.length > 0 && el.faces.length > 0) {
+                this.faces[0].addTransform(el.faces[0], transform);
+            } else {
+                throw new Error("Adding transformation failed. At least one of the two polyhedra has no faces.");
+            }
+            return this;
+        }
+
+    }
+);
+
 /**
  * @class A polyhedron in a 3D view consists of faces.
  * @pseudo
@@ -180,32 +196,14 @@ JXG.createPolyhedron3D = function (board, parents, attributes) {
         el,
         attr, attr_polyhedron,
         faceList = [],
+
         polyhedron = {
             view: view,
             vertices: {},
             coords: {},
             coords2D: {},
             zIndex: {},
-            faces: parents[2],
-            updateCoords: function() {
-                var i, p;
-                for (i in this.vertices) {
-                    p = this.vertices[i];
-                    if (Type.isArray(p) || Type.isFunction(p)) {
-                        this.coords[i] = Type.evaluate(p);
-                    } else {
-                        p = this.view.select(p);
-                        if (Type.isPoint3D(p)) {
-                            this.coords[i] = p.coords;
-                        } else {
-                            throw new Error('Polyhedron3D.updateCoords: unknown vertices type!');
-                        }
-                    }
-                    if (this.coords[i].length === 3) {
-                        this.coords[i].unshift(1);
-                    }
-                }
-            }
+            faces: parents[2]
         };
 
     // Copy vertices into a dict
