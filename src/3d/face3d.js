@@ -84,13 +84,20 @@ JXG.extend(
          * Update the coordinates of all vertices of the polyhedron
          */
         updateCoords: function() {
-            var i, p,
+            var i, j, le, p,
                 def = this.polyhedron;
 
             for (i in def.vertices) {
                 p = def.vertices[i];
-                if (Type.isArray(p) || Type.isFunction(p)) {
+                if (Type.isFunction(p)) {
                     def.coords[i] = Type.evaluate(p);
+                } else if (Type.isArray(p)) {
+                    def.coords[i] = [];
+                    le = p.length;
+                    for (j = 0; j < le; j++) {
+                        def.coords[i][j] = Type.evaluate(p[j]);    
+                    }
+                    // def.coords[i] = Type.evaluate(p);
                 } else {
                     p = def.view.select(p);
                     if (Type.isPoint3D(p)) {

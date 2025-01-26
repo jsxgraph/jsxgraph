@@ -1393,6 +1393,7 @@ JXG.extend(
             p1 = crds[f[j - 1]];
             p2 = crds[f[j % le]];
             vec = [0, p2[1] - p1[1], p2[2] - p1[2], p2[3] - p1[3]];
+// console.log(vec)
 
             x1 = Math.random();
             y1 = Math.random();
