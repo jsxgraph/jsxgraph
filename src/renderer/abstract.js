@@ -1458,6 +1458,10 @@ JXG.extend(
                 this.updateInternalTextStyle(el, sc, so);
             }
 
+            if (el.evalVisProp('aria.enabled')) {
+                this.setARIA(el);
+            }
+
             return this;
         },
 
