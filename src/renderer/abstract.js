@@ -2093,6 +2093,8 @@ JXG.extend(
                     // button.setAttribute('tabindex', 0);
 
                     button.setAttribute("id", board_id + '_navigation_' + type);
+                    button.setAttribute("aria-hidden", 'true');   // navigation buttons should never appear in screen reader
+
                     node.appendChild(button);
 
                     Env.addEvent(

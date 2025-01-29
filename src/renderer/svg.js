@@ -612,6 +612,7 @@ JXG.extend(
             node.setAttributeNS(null, 'style', 'font-family:Arial,Helvetica,sans-serif; font-size:' +
                 fontsize + 'px; fill:#356AA0;  opacity:0.3;');
             t = this.container.ownerDocument.createTextNode(str);
+            node.setAttributeNS(null, 'aria-hidden', 'true');  // should NEVER be in screen reader
             node.appendChild(t);
             this.appendChildPrim(node, 0);
         },
@@ -1358,6 +1359,7 @@ JXG.extend(
 
         // documented in JXG.AbstractRenderer
         setCssClass(el, cssClass) {
+
             if (el.visPropOld.cssclass !== cssClass) {
                 this.setPropertyPrim(el.rendNode, 'class', cssClass);
                 el.visPropOld.cssclass = cssClass;

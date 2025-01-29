@@ -6551,11 +6551,6 @@ JXG.extend(
                             this.defaultAxes.y.setAttribute(value.y);
                         }
                         break;
-                    case 'description':
-                        this.document.getElementById(this.container + '_ARIAdescription')
-                            .innerHTML = value;
-                        this._set(key, value);
-                        break;
                     case 'title':
                         this.document.getElementById(this.container + '_ARIAlabel')
                             .innerHTML = value;

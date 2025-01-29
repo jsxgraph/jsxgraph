@@ -244,23 +244,8 @@ JXG.JSXGraph = {
         doc_glob = node_jsx.ownerDocument; // This is the window.document element, needed below.
         parent = node_jsx.parentNode;
 
-        id_label = container + "_ARIAlabel";
-        id_description = container + "_ARIAdescription";
-
-        newNode = doc_glob.createElement("div");
-        newNode.innerHTML = attr.title;
-        newNode.setAttribute("id", id_label);
-        newNode.style.display = "none";
-        parent.insertBefore(newNode, node_jsx);
-
-        newNode = doc_glob.createElement("div");
-        newNode.innerHTML = attr.description;
-        newNode.setAttribute("id", id_description);
-        newNode.style.display = "none";
-        parent.insertBefore(newNode, node_jsx);
-
-        node_jsx.setAttribute("aria-labelledby", id_label);
-        node_jsx.setAttribute("aria-describedby", id_description);
+        node_jsx.setAttribute("role", "region");
+        node_jsx.setAttribute("aria-label", attr.title);              // set by initBoard( {title:})
     },
 
     /**
