@@ -95,7 +95,7 @@ JXG.extend(
                     def.coords[i] = [];
                     le = p.length;
                     for (j = 0; j < le; j++) {
-                        def.coords[i][j] = Type.evaluate(p[j]);    
+                        def.coords[i][j] = Type.evaluate(p[j]);
                     }
                     // def.coords[i] = Type.evaluate(p);
                 } else {
