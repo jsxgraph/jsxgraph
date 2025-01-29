@@ -224,7 +224,10 @@ JXG.createSlider = function (board, parents, attributes) {
     diff = smax - smin;
 
     sw = Type.evaluate(snapWidth);
-    s = sw === -1 ? start : Math.round(start / sw) * sw;
+    s = sw === -1 ?
+        start :
+        Math.round((start - smin)/ sw) * sw + smin;
+        // Math.round(start / sw) * sw;
     startx = pos0[0] + ((pos1[0] - pos0[0]) * (s - smin)) / (smax - smin);
     starty = pos0[1] + ((pos1[1] - pos0[1]) * (s - smin)) / (smax - smin);
 
@@ -254,7 +257,7 @@ JXG.createSlider = function (board, parents, attributes) {
 
         return ev_sw === -1
             ? this.position * d + this._smin
-            : Math.round((this.position * d + this._smin) / ev_sw) * ev_sw;
+            : Math.round((this.position * d) / ev_sw) * ev_sw  + this._smin;
     };
 
     p3.methodMap = Type.deepCopy(p3.methodMap, {
