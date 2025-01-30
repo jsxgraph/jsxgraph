@@ -395,7 +395,7 @@ JXG.extend(
                     newPos = (snapValues[snappedTo] - this._smin) / (this._smax - this._smin);
                     this.update(true);
                 } else {
-                    // Snap the glider point of the slider into its appropiate position
+                    // Snap the glider point of the slider into its appropriate position
                     // First, recalculate the new value of this.position
                     // Second, call update(fromParent==true) to make the positioning snappier.
                     ev_sw = this.evalVisProp('snapwidth');
@@ -403,9 +403,10 @@ JXG.extend(
                         ev_sw > 0.0 && Math.abs(this._smax - this._smin) >= Mat.eps
                     ) {
                         newPos = Math.max(Math.min(newPos, 1), 0);
-
-                        v = newPos * (this._smax - this._smin) + this._smin;
-                        v = Math.round(v / ev_sw) * ev_sw;
+                        // v = newPos * (this._smax - this._smin) + this._smin;
+                        // v = Math.round(v / ev_sw) * ev_sw;
+                        v = newPos * (this._smax - this._smin);
+                        v = Math.round(v / ev_sw) * ev_sw + this._smin;
                         newPos = (v - this._smin) / (this._smax - this._smin);
                         this.update(true);
                     }
