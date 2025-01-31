@@ -4871,6 +4871,10 @@ JXG.extend(
                             el.element2D.coords.usr2screen();
                         } else {
                             el.coords.usr2screen();
+                            if (Type.exists(el.actualCoords)) {
+                                el.actualCoords.usr2screen();
+
+                            }
                         }
                     }
                 }
