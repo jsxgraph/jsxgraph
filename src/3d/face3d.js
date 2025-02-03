@@ -282,6 +282,25 @@ JXG.extend(
             }
 
             return [s_x / le, s_y / le, s_z / le];
+        },
+
+        shader: function() {
+            var hue, sat, light,
+                minFace = -3,
+                maxFace = 3,
+                minLight = 5,
+                maxLight = 90;
+
+            if (this.evalVisProp('shader.enabled')) {
+                hue = this.evalVisProp('shader.hue'),
+                sat = this.evalVisProp('shader.saturation');
+
+                light = minLight + (maxLight - minLight) * ((this.zIndex - minFace) / (maxFace - minFace));
+                // return `hsl(${hue}, ${sat}%, ${light}%)`;
+                return 'hsl(' + hue + ',' + sat +'%,' + light + '%)';
+            // } else {
+            //     return this.evalVisProp('fillcolor');
+            }
         }
     }
 );

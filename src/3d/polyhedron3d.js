@@ -229,7 +229,7 @@ JXG.createPolyhedron3D = function (board, parents, attributes) {
     le = polyhedron.faces.length;
     for (i = 0; i < le; i++) {
         attr = Type.copyAttributes(attributes, board.options, "face3d");
-        attr.fillcolor = attr_polyhedron.fillcolorarray[i % attr_polyhedron.fillcolorarray.length];
+        // attr.fillcolor = attr_polyhedron.fillcolorarray[i % attr_polyhedron.fillcolorarray.length];
         f = polyhedron.faces[i];
         if (Type.isArray(f) && f.length === 2 && Type.isObject(f[1]) && Type.isArray(f[0])) {
             // Handle case that face is of type [[points], {attr}]

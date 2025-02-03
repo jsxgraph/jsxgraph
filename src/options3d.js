@@ -443,7 +443,17 @@ JXG.extend(Options, {
         strokeWidth: 1,
         fillColor: JXG.palette.yellow,
         fillOpacity: 0.4,
-        needsRegularUpdate: true
+        needsRegularUpdate: true,
+
+        fillColor: function(self) {
+            return self.shader();
+        },
+
+        shader: {
+            enabled: true,
+            hue: 20,
+            saturation: 60
+        }
 
         /**#@-*/
     },
@@ -648,6 +658,7 @@ JXG.extend(Options, {
          */
 
         fillColorArray: ['white', 'black'],
+
         needsRegularUpdate: true
 
         /**#@-*/
