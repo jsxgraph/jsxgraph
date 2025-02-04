@@ -214,6 +214,9 @@ JXG.View3D = function (board, parents, attributes) {
 
     this.timeoutAzimuth = null;
 
+    this.zIndexMin = Infinity;
+    this.zIndexMax = -Infinity;
+
     this.id = this.board.setId(this, 'V');
     this.board.finalizeAdding(this);
     this.elType = 'view3d';
@@ -865,12 +868,17 @@ JXG.extend(
     },
 
     updateShaders: function() {
-        var id, el;
+        var id, el, v;
         for (id in this.objects) {
             if (this.objects.hasOwnProperty(id)) {
                 el = this.objects[id];
                 if (Type.exists(el.shader)) {
-                    el.shader();
+                    v = el.shader();
+                    if (v < this.zIndexMin) {
+                        this.zIndexMin = v;
+                    } else if (v > this.zIndexMax) {
+                        this.zIndexMax = v;
+                    }
                 }
             }
         }
