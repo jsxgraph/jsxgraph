@@ -446,6 +446,143 @@ JXG.extend(Options, {
         fillOpacity: 0.4,
         needsRegularUpdate: true,
 
+        /**
+         * Lightning of faces
+         *
+         * @type Face3D
+         * @name Face3D#shader
+         * @see View3D#depthOrder
+         *
+         * @example
+         *         var view = board.create(
+         *             'view3d',
+         *             [[-5, -3], [8, 8],
+         *             [[-3, 3], [-3, 3], [-3, 3]]],
+         *             {
+         *                 projection: 'central',
+         *                 trackball: { enabled: true },
+         *                 depthOrder: {
+         *                     enabled: true
+         *                 },
+         *                 xPlaneRear: { visible: false },
+         *                 yPlaneRear: { visible: false },
+         *                 zPlaneRear: { fillOpacity: 0.2, visible: true }
+         *             }
+         *         );
+         *
+         *         let rho = 1.6180339887;
+         *         let vertexList = [
+         *             [0, -1, -rho], [0, +1, -rho], [0, -1, rho], [0, +1, rho],
+         *             [1, rho, 0], [-1, rho, 0], [1, -rho, 0], [-1, -rho, 0],
+         *             [-rho, 0, 1], [-rho, 0, -1], [rho, 0, 1], [rho, 0, -1]
+         *         ];
+         *         let faceArray = [
+         *             [4, 1, 11],
+         *             [11, 1, 0],
+         *             [6, 11, 0],
+         *             [0, 1, 9],
+         *             [11, 10, 4],
+         *             [9, 1, 5],
+         *             [8, 9, 5],
+         *             [5, 3, 8],
+         *             [6, 10, 11],
+         *             [2, 3, 10],
+         *             [2, 10, 6],
+         *             [8, 3, 2],
+         *             [3, 4, 10],
+         *             [7, 8, 2],
+         *             [9, 8, 7],
+         *             [0, 9, 7],
+         *             [4, 3, 5],
+         *             [5, 1, 4],
+         *             [0, 7, 6],
+         *             [7, 2, 6]
+         *         ];
+         *         var ico = view.create('polyhedron3d', [vertexList, faceArray], {
+         *             fillColorArray: [],
+         *             fillOpacity: 1,
+         *             strokeWidth: 0.1,
+         *             layer: 12,
+         *             shader: {
+         *                 enabled: true,
+         *                 type: 'angle',
+         *                 hue: 0,
+         *                 saturation: 90,
+         *                 minlightness: 60,
+         *                 maxLightness: 80
+         *             }
+         *         });
+         *
+         * </pre><div id="JXGbf32b040-affb-4e03-a05b-abfe953f614d" class="jxgbox" style="width: 300px; height: 300px;"></div>
+         * <script type="text/javascript">
+         *     (function() {
+         *         var board = JXG.JSXGraph.initBoard('JXGbf32b040-affb-4e03-a05b-abfe953f614d',
+         *             {boundingbox: [-8, 8, 8,-8], axis: false, showcopyright: false, shownavigation: false
+         *                pan: {enabled: false}, zoom: {enabled: false}});
+         *             var view = board.create(
+         *                 'view3d',
+         *                 [[-5, -3], [8, 8],
+         *                 [[-3, 3], [-3, 3], [-3, 3]]],
+         *                 {
+         *                     projection: 'central',
+         *                     trackball: { enabled: true },
+         *                     depthOrder: {
+         *                         enabled: true
+         *                     },
+         *                     xPlaneRear: { visible: false },
+         *                     yPlaneRear: { visible: false },
+         *                     zPlaneRear: { fillOpacity: 0.2, visible: true }
+         *                 }
+         *             );
+         *
+         *             let rho = 1.6180339887;
+         *             let vertexList = [
+         *                 [0, -1, -rho], [0, +1, -rho], [0, -1, rho], [0, +1, rho],
+         *                 [1, rho, 0], [-1, rho, 0], [1, -rho, 0], [-1, -rho, 0],
+         *                 [-rho, 0, 1], [-rho, 0, -1], [rho, 0, 1], [rho, 0, -1]
+         *             ];
+         *             let faceArray = [
+         *                 [4, 1, 11],
+         *                 [11, 1, 0],
+         *                 [6, 11, 0],
+         *                 [0, 1, 9],
+         *                 [11, 10, 4],
+         *                 [9, 1, 5],
+         *                 [8, 9, 5],
+         *                 [5, 3, 8],
+         *                 [6, 10, 11],
+         *                 [2, 3, 10],
+         *                 [2, 10, 6],
+         *                 [8, 3, 2],
+         *                 [3, 4, 10],
+         *                 [7, 8, 2],
+         *                 [9, 8, 7],
+         *                 [0, 9, 7],
+         *                 [4, 3, 5],
+         *                 [5, 1, 4],
+         *                 [0, 7, 6],
+         *                 [7, 2, 6]
+         *             ];
+         *             var ico = view.create('polyhedron3d', [vertexList, faceArray], {
+         *                 fillColorArray: [],
+         *                 fillOpacity: 1,
+         *                 strokeWidth: 0.1,
+         *                 layer: 12,
+         *                 shader: {
+         *                     enabled: true,
+         *                     type: 'angle',
+         *                     hue: 0,
+         *                     saturation: 90,
+         *                     minlightness: 60,
+         *                     maxLightness: 80
+         *                 }
+         *             });
+         *
+         *     })();
+         *
+         * </script><pre>
+         *
+         */
         shader: {
             enabled: true,
             type: 'angle',   // 'angle', otherwise zIndex
