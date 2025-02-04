@@ -271,13 +271,14 @@ JXG.extend(
             var hue, sat, light, hsl,
                 bb = this.view.bbox3D,
                 minFace, maxFace,
-                minLight = 5,
-                maxLight = 90;
+                minLight, maxLight;
 
-            
+
             if (this.evalVisProp('shader.enabled')) {
                 hue = this.evalVisProp('shader.hue'),
                 sat = this.evalVisProp('shader.saturation');
+                minLight = this.evalVisProp('shader.minlightness'),
+                maxLight = this.evalVisProp('shader.maxlightness');
 
                 maxFace = Math.max(bb[0][1], bb[1][1], bb[2][1]) * 0.75;
                 minFace = Math.max(bb[0][0], bb[1][0], bb[2][0]) * 0.75;

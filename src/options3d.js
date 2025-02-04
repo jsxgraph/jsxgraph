@@ -447,8 +447,10 @@ JXG.extend(Options, {
 
         shader: {
             enabled: true,
-            hue: 0,
-            saturation: 60
+            hue: 60,  // yellow
+            saturation: 90,
+            minLightness: 5,
+            maxLightness: 90
         }
 
         /**#@-*/
