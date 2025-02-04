@@ -584,7 +584,7 @@ JXG.extend(Options, {
          *
          */
         shader: {
-            enabled: true,
+            enabled: false,
             type: 'angle',   // 'angle', otherwise zIndex
             hue: 60,         // yellow
             saturation: 90,
