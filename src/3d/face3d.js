@@ -268,24 +268,30 @@ JXG.extend(
         },
 
         shader: function() {
-            var hue, sat, light, hsl,
+            var hue, sat, light, angle, hsl,
                 // bb = this.view.bbox3D,
                 minFace, maxFace,
                 minLight, maxLight;
 
 
             if (this.evalVisProp('shader.enabled')) {
-                hue = this.evalVisProp('shader.hue'),
+                hue = this.evalVisProp('shader.hue');
                 sat = this.evalVisProp('shader.saturation');
-                minLight = this.evalVisProp('shader.minlightness'),
+                minLight = this.evalVisProp('shader.minlightness');
                 maxLight = this.evalVisProp('shader.maxlightness');
 
-                // maxFace = Math.max(bb[0][1], bb[1][1], bb[2][1]) * 0.75;
-                // minFace = Math.max(bb[0][0], bb[1][0], bb[2][0]) * 0.75;
-                maxFace = this.view.zIndexMax;
-                minFace = this.view.zIndexMin;
+                if (this.evalVisProp('shader.type').toLowerCase() === 'angle') {
+                    // Angle normal / eye
+                    angle = Mat.innerProduct(this.view.matrix3DRotShift[3], this.normal);
+                    angle = Math.abs(angle);
+                    light = minLight + (maxLight - minLight) * angle;
+                } else {
+                    // zIndex
+                    maxFace = this.view.zIndexMax;
+                    minFace = this.view.zIndexMin;
+                    light = minLight + (maxLight - minLight) * ((this.zIndex - minFace) / (maxFace - minFace));
+                }
 
-                light = minLight + (maxLight - minLight) * ((this.zIndex - minFace) / (maxFace - minFace));
                 // hsl = `hsl(${hue}, ${sat}%, ${light}%)`;
                 hsl = 'hsl(' + hue + ',' + sat +'%,' + light + '%)';
 

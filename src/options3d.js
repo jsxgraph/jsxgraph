@@ -437,6 +437,7 @@ JXG.extend(Options, {
          * @visprop
          */
 
+        transitionProperties: [],
         layer: 12,
         highlight: false,
         tabindex: null,
@@ -447,9 +448,10 @@ JXG.extend(Options, {
 
         shader: {
             enabled: true,
-            hue: 60,  // yellow
+            type: 'angle',   // 'angle', otherwise zIndex
+            hue: 60,         // yellow
             saturation: 90,
-            minLightness: 5,
+            minLightness: 30,
             maxLightness: 90
         }
 
