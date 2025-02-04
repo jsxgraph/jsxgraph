@@ -864,6 +864,18 @@ JXG.extend(
         }
     },
 
+    updateShaders: function() {
+        var id, el;
+        for (id in this.objects) {
+            if (this.objects.hasOwnProperty(id)) {
+                el = this.objects[id];
+                if (Type.exists(el.shader)) {
+                    el.shader();
+                }
+            }
+        }
+    },
+
     updateDepthOrdering: function () {
         var id, el,
             i, layers, lay;
@@ -919,6 +931,8 @@ JXG.extend(
             // We do it here in updateRenderer, because the the elements' positions
             // are meanwhile updated.
             this.updateZIndices();
+
+            this.updateShaders();
 
             if (this.board.renderer && this.board.renderer.type === 'svg') {
                 // For SVG we update the DOM order

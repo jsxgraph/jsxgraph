@@ -260,8 +260,34 @@ JXG.extend(
         },
 
         updateRenderer: function () {
-            this.needsUpdate = false;
+            if (this.needsUpdate) {
+                this.needsUpdate = false;
+                this.shader();
+            }
             return this;
+        },
+
+        shader: function() {
+            var hue, sat, light, hsl,
+                bb = this.view.bbox3D,
+                minFace, maxFace,
+                minLight = 5,
+                maxLight = 90;
+
+            
+            if (this.evalVisProp('shader.enabled')) {
+                hue = this.evalVisProp('shader.hue'),
+                sat = this.evalVisProp('shader.saturation');
+
+                maxFace = Math.max(bb[0][1], bb[1][1], bb[2][1]) * 0.75;
+                minFace = Math.max(bb[0][0], bb[1][0], bb[2][0]) * 0.75;
+
+                light = minLight + (maxLight - minLight) * ((this.zIndex - minFace) / (maxFace - minFace));
+                // hsl = `hsl(${hue}, ${sat}%, ${light}%)`;
+                hsl = 'hsl(' + hue + ',' + sat +'%,' + light + '%)';
+
+                this.element2D.visProp.fillcolor = hsl;
+            }
         },
 
         getCentroid: function () {
@@ -282,25 +308,6 @@ JXG.extend(
             }
 
             return [s_x / le, s_y / le, s_z / le];
-        },
-
-        shader: function() {
-            var hue, sat, light,
-                minFace = -3,
-                maxFace = 3,
-                minLight = 5,
-                maxLight = 90;
-
-            if (this.evalVisProp('shader.enabled')) {
-                hue = this.evalVisProp('shader.hue'),
-                sat = this.evalVisProp('shader.saturation');
-
-                light = minLight + (maxLight - minLight) * ((this.zIndex - minFace) / (maxFace - minFace));
-                // return `hsl(${hue}, ${sat}%, ${light}%)`;
-                return 'hsl(' + hue + ',' + sat +'%,' + light + '%)';
-            // } else {
-            //     return this.evalVisProp('fillcolor');
-            }
         }
     }
 );

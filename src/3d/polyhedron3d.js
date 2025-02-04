@@ -229,14 +229,18 @@ JXG.createPolyhedron3D = function (board, parents, attributes) {
     le = polyhedron.faces.length;
     for (i = 0; i < le; i++) {
         attr = Type.copyAttributes(attributes, board.options, "face3d");
-        // attr.fillcolor = attr_polyhedron.fillcolorarray[i % attr_polyhedron.fillcolorarray.length];
+        if (attr_polyhedron.fillcolorarray.length > 0) {
+            attr.fillcolor = attr_polyhedron.fillcolorarray[i % attr_polyhedron.fillcolorarray.length];
+        }
         f = polyhedron.faces[i];
+
         if (Type.isArray(f) && f.length === 2 && Type.isObject(f[1]) && Type.isArray(f[0])) {
             // Handle case that face is of type [[points], {attr}]
             Type.mergeAttr(attr, f[1]);
             // Normalize face array, i.e. don't store attributes of that face in polyhedron
             polyhedron.faces[i] = f[0];
         }
+
         face = view.create('face3d', [polyhedron, i], attr);
         faceList.push(face);
     }

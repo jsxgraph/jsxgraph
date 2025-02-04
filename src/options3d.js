@@ -445,13 +445,9 @@ JXG.extend(Options, {
         fillOpacity: 0.4,
         needsRegularUpdate: true,
 
-        fillColor: function(self) {
-            return self.shader();
-        },
-
         shader: {
             enabled: true,
-            hue: 20,
+            hue: 0,
             saturation: 60
         }
 

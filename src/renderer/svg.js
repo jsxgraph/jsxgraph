@@ -1447,7 +1447,6 @@ JXG.extend(
             ) {
                 return;
             }
-
             if (Type.exists(rgba) && rgba !== false) {
                 if (rgba.length !== 9) {
                     // RGB, not RGBA
