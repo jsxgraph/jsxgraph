@@ -1043,7 +1043,7 @@ JXG.createGrid = function (board, parents, attributes) {
 
     majorGrid.getParents = minorGrid.getParents = function() {
         return parentAxes.slice();
-    }
+    };
 
     return majorGrid;
 };
