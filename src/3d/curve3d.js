@@ -56,31 +56,37 @@ JXG.Curve3D = function (view, F, X, Y, Z, range, attributes) {
     this.board.finalizeAdding(this);
 
     /**
+     * Internal function defining the surface without applying any transformations.
+     * Does only exist if it or X are supplied as a function. Otherwise it is null.
+     *
      * @function
-     * @ignore
+     * @private
      */
-    this.F = F;
+    this._F = F;
 
     /**
-     * Function which maps u to x; i.e. it defines the x-coordinate of the curve
+     * Function or array which maps u to x; i.e. it defines the x-coordinate of the curve
      * @function
      * @returns Number
+     * @private
      */
-    this.X = X;
+    this._X = X;
 
     /**
-     * Function which maps u to y; i.e. it defines the y-coordinate of the curve
+     * Function or array  which maps u to y; i.e. it defines the y-coordinate of the curve
      * @function
      * @returns Number
+     * @private
      */
-    this.Y = Y;
+    this._Y = Y;
 
     /**
-     * Function which maps u to z; i.e. it defines the x-coordinate of the curve
+     * Function or array  which maps u to z; i.e. it defines the z-coordinate of the curve
      * @function
      * @returns Number
+     * @private
      */
-    this.Z = Z;
+    this._Z = Z;
 
     this.points = [];
 
@@ -90,16 +96,24 @@ JXG.Curve3D = function (view, F, X, Y, Z, range, attributes) {
     this.dataY = null;
     this.dataZ = null;
 
-    if (this.F !== null) {
-        this.X = function (u) {
-            return this.F(u)[0];
+    if (this._F !== null) {
+        this._X = function (u) {
+            return this._F(u)[0];
         };
-        this.Y = function (u) {
-            return this.F(u)[1];
+        this._Y = function (u) {
+            return this._F(u)[1];
         };
-        this.Z = function (u) {
-            return this.F(u)[2];
+        this._Z = function (u) {
+            return this._F(u)[2];
         };
+    } else {
+        if (Type.isFunction(this._X)) {
+            this._F = function(u) {
+                return [this._X(u), this._Y(u), this._Z(u)];
+            };
+        } else {
+            this._F = null;
+        }
     }
 
     this.range = range;
@@ -115,6 +129,11 @@ JXG.extend(
     JXG.Curve3D.prototype,
     /** @lends JXG.Curve3D.prototype */ {
 
+        /**
+         * Simple curve plotting algorithm.
+         *
+         * @returns {JXG.Curve3D} Reference to itself
+         */
         updateCoords: function() {
             var steps = this.evalVisProp('numberpointshigh'),
                 r, s, e, delta,
@@ -128,10 +147,10 @@ JXG.extend(
                 for (u = 0; u < steps; u++) {
                     this.points.push([1, this.dataX[u], this.dataY[u], this.dataZ[u]]);
                 }
-            } else if (Type.isArray(this.X)) {
-                steps = this.X.length;
+            } else if (Type.isArray(this._X)) {
+                steps = this._X.length;
                 for (u = 0; u < steps; u++) {
-                    this.points.push([1, this.X[u], this.Y[u], this.Z[u]]);
+                    this.points.push([1, this._X[u], this._Y[u], this._Z[u]]);
                 }
             } else {
                 r = Type.evaluate(this.range);
@@ -139,11 +158,7 @@ JXG.extend(
                 e = Type.evaluate(r[1]);
                 delta = (e - s) / (steps - 1);
                 for (i = 0, u = s; i < steps && u <= e; i++, u += delta) {
-                    if (this.F !== null) {
-                        c3d = this.F(u);
-                    } else {
-                        c3d = [this.X(u), this.Y(u), this.Z(u)];
-                    }
+                    c3d = this.F(u);
                     c3d.unshift(1);
                     this.points.push(c3d);
                 }
@@ -151,6 +166,90 @@ JXG.extend(
             this.numberPoints = this.points.length;
 
             return this;
+        },
+
+        /**
+         * Generic function which evaluates the function term of the curve
+         * and applies its transformations.
+         * @param {Number} u
+         * @returns
+         */
+        evalF: function(u) {
+            var t, i,
+                c3d = [0, 0, 0, 0];
+
+            if (this.transformations.length === 0 || this.baseElement === null) {
+                if (Type.exists(this._F)) {
+                    c3d = this._F(u);
+                } else {
+                    c3d = [this._X[u], this._Y[u], this._Z[u]];
+                }
+                return c3d;
+            }
+
+            t = this.transformations;
+            for (i = 0; i < t.length; i++) {
+                t[i].update();
+            }
+            if (c3d.length === 3) {
+                c3d.unshift(1);
+            }
+
+            if (this === this.baseElement) {
+                if (Type.exists(this._F)) {
+                    c3d = this._F(u);
+                } else {
+                    c3d = [this._X[u], this._Y[u], this._Z[u]];
+                }
+            } else {
+                c3d = this.baseElement.evalF(u);
+            }
+            c3d.unshift(1);
+            c3d = Mat.matVecMult(t[0].matrix, c3d);
+            for (i = 1; i < t.length; i++) {
+                c3d = Mat.matVecMult(t[i].matrix, c3d);
+            }
+
+            return c3d.slice(1);
+        },
+
+        /**
+         * Function defining the curve plus applying transformations.
+         * @param {Number} u
+         * @returns Array [x, y, z] of length 3
+         */
+        F: function(u) {
+            return this.evalF(u);
+        },
+
+        /**
+        * Function which maps (u) to z; i.e. it defines the x-coordinate of the curve
+        * plus applying transformations.
+        * @param {Number} u
+        * @returns Number
+        */
+        X: function(u) {
+            return this.evalF(u)[0];
+        },
+
+        /**
+        * Function which maps (u) to y; i.e. it defines the y-coordinate of the curve
+        * plus applying transformations.
+        * @param {Number} u
+        * @returns Number
+        */
+        Y: function(u) {
+            return this.evalF(u)[1];
+        },
+
+        /**
+        * Function which maps (u) to z; i.e. it defines the z-coordinate of the curve
+        * plus applying transformations.
+        * @param {Number} u
+        * @returns Number
+        */
+        Z: function(u) {
+            return this.evalF(u)[2];
         },
 
         updateDataArray2D: function () {
@@ -168,15 +267,23 @@ JXG.extend(
             return { X: dataX, Y: dataY };
         },
 
+        // Already documented in GeometryElement
         addTransform: function (el, transform) {
             this.addTransformGeneric(el, transform);
             return this;
         },
 
+        /**
+         *
+         * @returns {JXG.Curve3D} Reference to itself
+         */
         updateTransform: function () {
             var t, c, i, j, len;
 
-            if (this.transformations.length === 0 || this.baseElement === null) {
+            if (this.transformations.length === 0 || this.baseElement === null ||
+                Type.exists(this._F) // Transformations have only to be applied here
+                                     // if the curve is defined by arrays
+            ) {
                 return this;
             }
 
@@ -187,9 +294,7 @@ JXG.extend(
             len = this.baseElement.numberPoints;
             for (i = 0; i < len; i++) {
                 if (this === this.baseElement) {
-                    // Case of bindTo
-                    // TODO
-                    c = t[0].apply(this.points[i], "self");
+                    c = Mat.matVecMult(t[0].matrix, this.points[i]);
                 } else {
                     c = Mat.matVecMult(t[0].matrix, this.baseElement.points[i]);
                 }
@@ -203,8 +308,10 @@ JXG.extend(
             return this;
         },
 
+        // Already documented in GeometryElement
         updateDataArray: function() { /* stub */ },
 
+        // Already documented in GeometryElement
         update: function () {
             if (this.needsUpdate) {
                 this.updateDataArray();
@@ -214,6 +321,7 @@ JXG.extend(
             return this;
         },
 
+        // Already documented in GeometryElement
         updateRenderer: function () {
             this.needsUpdate = false;
             return this;

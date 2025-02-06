@@ -196,8 +196,8 @@ JXG.extend(
         /**
          * Generic function which evaluates the function term of the surface
          * and applies its transformations.
-         * @param {*} u
-         * @param {*} v
+         * @param {Number} u
+         * @param {Number} v
          * @returns
          */
         evalF: function(u, v) {
