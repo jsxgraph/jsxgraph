@@ -62,43 +62,63 @@ JXG.Surface3D = function (view, F, X, Y, Z, range_u, range_v, attributes) {
     this.board.finalizeAdding(this);
 
     /**
-     * Function defining the surface
+     * Internal function defining the surface
+     * without applying any transformations.
      *
      * @function
+     * @param {Number} u
+     * @param {Number} v
+     * @returns Array [x, y, z] of length 3
      * @private
      */
-    this.F = F;
+    this._F = F;
 
     /**
-     * Function which maps (u, v) to x; i.e. it defines the x-coordinate of the surface
+     * Internal function which maps (u, v) to x; i.e. it defines the x-coordinate of the surface
+     * without applying any transformations.
      * @function
+     * @param {Number} u
+     * @param {Number} v
      * @returns Number
+     * @private
      */
-    this.X = X;
+    this._X = X;
 
     /**
-     * Function which maps (u, v) to y; i.e. it defines the y-coordinate of the surface
+     * Internal function which maps (u, v) to y; i.e. it defines the y-coordinate of the surface
+     * without applying any transformations.
      * @function
+     * @param {Number} u
+     * @param {Number} v
      * @returns Number
+     * @private
      */
-    this.Y = Y;
+    this._Y = Y;
 
     /**
-     * Function which maps (u, v) to z; i.e. it defines the x-coordinate of the surface
+     * Internal function which maps (u, v) to z; i.e. it defines the z-coordinate of the surface
+     * without applying any transformations.
      * @function
+     * @param {Number} u
+     * @param {Number} v
      * @returns Number
+     * @private
      */
-    this.Z = Z;
+    this._Z = Z;
 
-    if (this.F !== null) {
+    if (this._F !== null) {
         this.X = function (u, v) {
-            return this.F(u, v)[0];
+            return this._F(u, v)[0];
         };
         this.Y = function (u, v) {
-            return this.F(u, v)[1];
+            return this._F(u, v)[1];
         };
         this.Z = function (u, v) {
-            return this.F(u, v)[2];
+            return this._F(u, v)[2];
+        };
+    } else {
+        this._F = function(u, v) {
+            return [this._X(u, v), this._Y(u, v), this._Z(u, v)];
         };
     }
 
@@ -121,56 +141,138 @@ JXG.extend(
     JXG.Surface3D.prototype,
     /** @lends JXG.Surface3D.prototype */ {
 
-        updateCoords: function() {
-            var steps,
-                steps_u, steps_v,
-                i_u, i_v,
-                r_u, r_v,
-                s_u, s_v,
-                e_u, e_v,
-                delta_u, delta_v,
-                u, v,
-                c3d = [1, 0, 0, 0];
+        // updateCoords: function() {
+        //     var steps,
+        //         steps_u, steps_v,
+        //         i_u, i_v,
+        //         r_u, r_v,
+        //         s_u, s_v,
+        //         e_u, e_v,
+        //         delta_u, delta_v,
+        //         u, v,
+        //         c3d = [1, 0, 0, 0];
 
-            this.points = [];
+        //     this.points = [];
 
-            if (Type.exists(this.dataX)) {
-                steps = this.dataX.length;
-                for (u = 0; u < steps; u++) {
-                    this.points.push([1, this.dataX[u], this.dataY[u], this.dataZ[u]]);
-                }
-            } else if (Type.isArray(this.X)) {
-                steps = this.X.length;
-                for (u = 0; u < steps; u++) {
-                    this.points.push([1, this.X[u], this.Y[u], this.Z[u]]);
-                }
-            } else {
-                steps_u = this.evalVisProp('stepsu');
-                steps_v = this.evalVisProp('stepsv');
-                r_u = Type.evaluate(this.range_u);
-                r_v = Type.evaluate(this.range_v);
-                s_u = Type.evaluate(r_u[0]);
-                s_v = Type.evaluate(r_v[0]);
-                e_u = Type.evaluate(r_u[1]);
-                e_v = Type.evaluate(r_v[1]);
-                delta_u = (e_u - s_u) / (steps_u - 1);
-                delta_v = (e_v - s_v) / (steps_v - 1);
+        //     if (Type.exists(this.dataX)) {
+        //         steps = this.dataX.length;
+        //         for (u = 0; u < steps; u++) {
+        //             this.points.push([1, this.dataX[u], this.dataY[u], this.dataZ[u]]);
+        //         }
+        //     } else if (Type.isArray(this.X)) {
+        //         steps = this.X.length;
+        //         for (u = 0; u < steps; u++) {
+        //             this.points.push([1, this.X[u], this.Y[u], this.Z[u]]);
+        //         }
+        //     } else {
+        //         steps_u = this.evalVisProp('stepsu');
+        //         steps_v = this.evalVisProp('stepsv');
+        //         r_u = Type.evaluate(this.range_u);
+        //         r_v = Type.evaluate(this.range_v);
+        //         s_u = Type.evaluate(r_u[0]);
+        //         s_v = Type.evaluate(r_v[0]);
+        //         e_u = Type.evaluate(r_u[1]);
+        //         e_v = Type.evaluate(r_v[1]);
+        //         delta_u = (e_u - s_u) / (steps_u - 1);
+        //         delta_v = (e_v - s_v) / (steps_v - 1);
 
-                for (i_u = 0, u = s_u; i_u < steps_u && u <= e_u; i_u++, u += delta_u) {
-                    for (i_v = 0, v = s_v; i_v < steps_v && v <= e_v; i_v++, v += delta_v) {
-                        if (this.F !== null) {
-                            c3d = this.F(u, v);
-                        } else {
-                            c3d = [this.X(u, v), this.Y(u, v), this.Z(u, v)];
-                        }
-                        c3d.unshift(1);
-                        this.points.push(c3d);
-                    }
-                }
+        //         for (i_u = 0, u = s_u; i_u < steps_u && u <= e_u; i_u++, u += delta_u) {
+        //             for (i_v = 0, v = s_v; i_v < steps_v && v <= e_v; i_v++, v += delta_v) {
+        //                 if (this.F !== null) {
+        //                     c3d = this.F(u, v);
+        //                 } else {
+        //                     c3d = [this.X(u, v), this.Y(u, v), this.Z(u, v)];
+        //                 }
+        //                 c3d.unshift(1);
+        //                 this.points.push(c3d);
+        //             }
+        //         }
+        //     }
+        //     this.numberPoints = this.points.length;
+
+        //     return this;
+        // },
+
+        /**
+         * Generic function which evaluates the function term of the surface
+         * and applies its transformations.
+         * @param {*} u
+         * @param {*} v
+         * @returns
+         */
+        evalF: function(u, v) {
+            var t, i,
+                c3d = [0, 0, 0, 0];
+
+
+            if (this.transformations.length === 0 || this.baseElement === null) {
+                c3d = this._F(u, v);
+                return c3d;
             }
-            this.numberPoints = this.points.length;
 
-            return this;
+            t = this.transformations;
+            for (i = 0; i < t.length; i++) {
+                t[i].update();
+            }
+            if (c3d.length === 3) {
+                c3d.unshift(1);
+            }
+
+            if (this === this.baseElement) {
+                c3d = this._F(u, v);
+            } else {
+                c3d = this.baseElement.evalF(u, v);
+            }
+            c3d.unshift(1);
+            c3d = Mat.matVecMult(t[0].matrix, c3d);
+            for (i = 1; i < t.length; i++) {
+                c3d = Mat.matVecMult(t[i].matrix, c3d);
+            }
+
+            return c3d.slice(1);
+        },
+
+        /**
+         * Function defining the surface plus applying transformations.
+         * @param {Number} u
+         * @param {Number} v
+        * @returns Array [x, y, z] of length 3
+         */
+        F: function(u, v) {
+            return this.evalF(u, v);
+        },
+
+        /**
+        * Function which maps (u, v) to z; i.e. it defines the x-coordinate of the surface
+        * plus applying transformations.
+        * @param {Number} u
+        * @param {Number} v
+        * @returns Number
+        */
+        X: function(u, v) {
+            return this.evalF(u, v)[0];
+        },
+
+        /**
+        * Function which maps (u, v) to y; i.e. it defines the y-coordinate of the surface
+        * plus applying transformations.
+        * @param {Number} u
+        * @param {Number} v
+        * @returns Number
+        */
+        Y: function(u, v) {
+            return this.evalF(u, v)[1];
+        },
+
+        /**
+        * Function which maps (u, v) to z; i.e. it defines the z-coordinate of the surface
+        * plus applying transformations.
+        * @param {Number} u
+        * @param {Number} v
+        * @returns Number
+        */
+        Z: function(u, v) {
+            return this.evalF(u, v)[2];
         },
 
         /**
@@ -185,13 +287,11 @@ JXG.extend(
                 func,
                 res;
 
-            if (this.F !== null) {
-                func = this.F;
-            } else {
-                func = [this.X, this.Y, this.Z];
-            }
+            // func = this.evalFunc();
+            func = this.evalF.bind(this);
             r_u.push(steps_u);
             r_v.push(steps_v);
+            // res = this.view.getMesh(this.evalF, r_u, r_v);
             res = this.view.getMesh(func, r_u, r_v);
 
             return { X: res[0], Y: res[1] };
@@ -202,43 +302,11 @@ JXG.extend(
             return this;
         },
 
-        updateTransform: function () {
-            var t, c, i, j, len;
-
-            if (this.transformations.length === 0 || this.baseElement === null) {
-                return this;
-            }
-
-            t = this.transformations;
-            for (i = 0; i < t.length; i++) {
-                t[i].update();
-            }
-            len = this.baseElement.numberPoints;
-            for (i = 0; i < len; i++) {
-                if (this === this.baseElement) {
-                    // Case of bindTo
-                    // TODO
-                    c = t[0].apply(this.points[i], "self");
-                } else {
-                    c = Mat.matVecMult(t[0].matrix, this.baseElement.points[i]);
-                }
-                for (j = 1; j < t.length; j++) {
-                    c = Mat.matVecMult(t[j].matrix, c);
-                }
-                this.points[i] = c;
-            }
-            this.numberPoints = len;
-
-            return this;
-        },
-
         updateDataArray: function() { /* stub */ },
 
         update: function () {
             if (this.needsUpdate) {
                 this.updateDataArray();
-                this.updateCoords()
-                    .updateTransform();
             }
             return this;
         },
