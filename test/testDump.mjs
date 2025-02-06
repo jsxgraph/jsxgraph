@@ -3,9 +3,7 @@
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
-        Bianca Valentin,
-        Alfred Wassermann,
-        Peter Wilfahrt
+        Alfred Wassermann
 
     This file is part of JSXGraph.
 
@@ -28,9 +26,9 @@
     the MIT License along with JSXGraph. If not, see <https://www.gnu.org/licenses/>
     and <https://opensource.org/licenses/MIT/>.
  */
-
-describe("Test slider", function () {
-    var board, slider;
+    import JXG from '../../src/index.js';
+describe("Test JXG.Dump", function () {
+    var board;
 
     document.getElementsByTagName("body")[0].innerHTML =
         '<div id="jxgbox" style="width: 100px; height: 100px;"></div>';
@@ -43,51 +41,31 @@ describe("Test slider", function () {
         showCopyright: false,
         showNavigation: false
     });
-    slider = board.create(
-        "slider",
-        [
-            [0, 0],
-            [1, 0],
-            [0, 5, 10]
-        ],
-        {
-            id: "_glider",
-            withLabel: true,
-            name: "S",
-            point1: {
-                id: "_point1"
-            },
-            point2: {
-                id: "_point2"
-            },
-            baseline: {
-                id: "_baseline"
-            },
-            highline: {
-                id: "_highline"
-            },
-            label: {
-                id: "_label"
-            }
-        }
-    );
 
-    it("Create slider", function () {
-        expect(slider.type).toEqual(JXG.OBJECT_TYPE_GLIDER);
-        expect(slider).toBeInstanceOf(JXG.Point);
-        expect(slider.elementClass).toEqual(JXG.OBJECT_CLASS_POINT);
-    });
+    it("toJessie", function () {
+        var s, p, txt,
+        id, re;
 
-    it("Slider value", function () {
-        expect(slider.Value()).toEqual(5);
-    });
+        p = board.create("point", [2, 1]);
+        s = board.create("line", [2, 1, 2]);
+        s = board.create("text", [3, 2, "test"]);
+        s = board.create("circle", [p, 5]);
+        s = board.create("circle", [[1, 1], 5]);
+        txt = JXG.Dump.toJessie(board);
 
-    it("Slider ids", function () {
-        expect(slider.id).toEqual("_glider");
-        expect(slider.point1.id).toEqual("_point1");
-        expect(slider.point2.id).toEqual("_point2");
-        expect(slider.baseline.id).toEqual("_baseline");
-        expect(slider.highline.id).toEqual("_highline");
-        expect(slider.label.id).toEqual("_label");
+        expect(txt.indexOf("point(2, 1) <<")).toBeGreaterThan(-1);
+        expect(txt.indexOf('text(1, 3, 2, "test") <<')).not.toBeNull();
+
+        expect(txt.match(/line\("jxgBoard\d+P3", "jxgBoard\d+P4"\) <</).length).toBeGreaterThan(0);
+        expect(txt.match(/circle\("jxgBoard\d+P1", 5\) <</).length).not.toBeNull();
+        expect(txt.match(/circle\("jxgBoard\d+P8", 5\) <</)).not.toBeNull();
+
+        // id = board.id;
+        // re = new RegExp(String.raw`line\("${id}P3", "${id}P4"\) <<`, "g");
+        // expect(txt.match(re)).not.toBeNull();
+        // re = new RegExp(String.raw`circle\("${id}P1", 5\) <<`, "g");
+        // expect(txt.match(re)).not.toBeNull();
+        // re = new RegExp(String.raw`circle\("${id}P8", 5\) <<`, "g");
+        // expect(txt.match(re)).not.toBeNull();
     });
 });

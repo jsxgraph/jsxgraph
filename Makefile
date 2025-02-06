@@ -171,5 +171,5 @@ eslint:
 	$(ESLINT) $(ESLINTFLAGS) $(LINTLIST)
 
 # test:
-test: core
+test: 
 	$(KARMA) start karma/karma.conf.js

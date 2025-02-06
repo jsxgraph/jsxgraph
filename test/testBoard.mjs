@@ -28,14 +28,39 @@
     the MIT License along with JSXGraph. If not, see <https://www.gnu.org/licenses/>
     and <https://opensource.org/licenses/MIT/>.
  */
+import JXG from '../../src/index.js';
 
-describe("Test JXG.Math.Poly", function () {
-    var r = new JXG.Math.Poly.Ring(["x", "y", "z"]),
-        m = new JXG.Math.Poly.Monomial(r, 4, [1, 2, 3]),
-        p = new JXG.Math.Poly.Polynomial(r);
+describe("Test board handling", function() {
+    var board;
 
-    it("Ring", function () {
-        expect(JXG.exists(r.vars)).toBeTrue();
-        expect(r.vars.length).toEqual(3);
+    // jasmine.clock().install();
+    beforeEach(function() {
+      jasmine.clock().install();
     });
+
+    afterEach(function() {
+      jasmine.clock().uninstall();
+    });
+
+    document.getElementsByTagName('body')[0].innerHTML = '<div id="jxgbox" style="width: 100px; height: 100px;"></div>';
+    board = JXG.JSXGraph.initBoard('jxgbox', {
+        renderer: 'svg',
+        axis: false,
+        grid: false,
+        boundingbox: [-5, 5, 5, -5],
+        resize: {enabled: false},
+        showCopyright: false,
+        showNavigation: false
+    });
+
+    it("suspendUpdate interruption", function() {
+        var el = board.create('text', [0, 10, 'test']);
+
+        board.suspendUpdate();
+        // Unfortunately, this test does not throw an error in test environment
+        JXG.JSXGraph.freeBoard(board);
+    });
+
+
 });
+

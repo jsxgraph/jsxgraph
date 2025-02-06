@@ -28,9 +28,19 @@
     the MIT License along with JSXGraph. If not, see <https://www.gnu.org/licenses/>
     and <https://opensource.org/licenses/MIT/>.
  */
+    import JXG from '../../src/index.js';
 
-describe("Test JXG.Group", function () {
-    var board, A, B, C;
+describe("Further tests", function () {
+    // These tests have to run after all other tests
+    var board;
+
+    beforeEach(function () {
+        jasmine.clock().install();
+    });
+
+    afterEach(function () {
+        jasmine.clock().uninstall();
+    });
 
     document.getElementsByTagName("body")[0].innerHTML =
         '<div id="jxgbox" style="width: 100px; height: 100px;"></div>';
@@ -43,12 +53,11 @@ describe("Test JXG.Group", function () {
         showCopyright: false,
         showNavigation: false
     });
-    A = board.create("point", [1, 1]);
-    B = board.create("point", [1, 1]);
-    C = board.create("point", [1, 1]);
 
-    it("Create group", function () {
-        var g = board.create("group", [A, B, C]);
-        expect(g).toBeInstanceOf(JXG.Group);
+    it("size", function () {
+        var el = board.create("text", [0, 10, "test"]);
+
+        jasmine.clock().tick(100);
+        expect(el.size).toEqual([19, 14]);
     });
 });

@@ -1,9 +1,11 @@
 /*
     Copyright 2008-2024
         Matthias Ehmann,
+        Michael Gerhaeuser,
         Carsten Miller,
-        Andreas Walter,
-        Alfred Wassermann
+        Bianca Valentin,
+        Alfred Wassermann,
+        Peter Wilfahrt
 
     This file is part of JSXGraph.
 
@@ -26,48 +28,27 @@
     the MIT License along with JSXGraph. If not, see <https://www.gnu.org/licenses/>
     and <https://opensource.org/licenses/MIT/>.
  */
-describe("Test dependencies", function () {
-    var board,
-        target,
-        pointerId = 0;
+    import JXG from '../../src/index.js';
+describe("Test JXG.Group", function () {
+    var board, A, B, C;
 
     document.getElementsByTagName("body")[0].innerHTML =
-        '<div id="jxgbox" style="width: 500px; height: 500px;"></div>';
-    target = document.getElementById("jxgbox");
-
+        '<div id="jxgbox" style="width: 100px; height: 100px;"></div>';
     board = JXG.JSXGraph.initBoard("jxgbox", {
         renderer: "svg",
         axis: false,
         grid: false,
-        boundingbox: [-10, 10, 10, -10],
+        boundingbox: [-5, 5, 5, -5],
         resize: {enabled: false},
-        keyboard: {
-            enabled: true,
-            dy: 20,
-            dx: 20,
-            panShift: true,
-            panCtrl: false
-        },
         showCopyright: false,
         showNavigation: false
     });
+    A = board.create("point", [1, 1]);
+    B = board.create("point", [1, 1]);
+    C = board.create("point", [1, 1]);
 
-    it("point depends on X(A)", function () {
-        var p1 = board.create("point", [0, 0], { face: "+", name: "A" });
-        var p2 = board.create("point", ['X(A)', 2], { face: "o", name: "B" });
-        board.removeObject(p1);
+    it("Create group", function () {
+        var g = board.create("group", [A, B, C]);
+        expect(g).toBeInstanceOf(JXG.Group);
     });
-
-    it("circle depends on X(A)", function () {
-        var p1 = board.create("point", [0, 0], { name: "A" });
-        var c = board.create("circle", [[0, 2], 'X(A)'], { name: "B" });
-        board.removeObject(p1);
-    });
-
-    it("curve depends on X(A)", function () {
-        var p1 = board.create("point", [0, 0], { name: "A" });
-        var e = board.create("functiongraph", ['X(A)*sin(x)'], {});
-        board.removeObject(p1);
-    });
-
 });

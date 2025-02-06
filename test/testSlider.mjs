@@ -28,23 +28,14 @@
     the MIT License along with JSXGraph. If not, see <https://www.gnu.org/licenses/>
     and <https://opensource.org/licenses/MIT/>.
  */
-
-describe("Further tests", function () {
-    // These tests have to run after all other tests
-    var board;
-
-    beforeEach(function () {
-        jasmine.clock().install();
-    });
-
-    afterEach(function () {
-        jasmine.clock().uninstall();
-    });
+    import JXG from '../../src/index.js';
+describe("Test slider", function () {
+    var board, slider;
 
     document.getElementsByTagName("body")[0].innerHTML =
         '<div id="jxgbox" style="width: 100px; height: 100px;"></div>';
     board = JXG.JSXGraph.initBoard("jxgbox", {
-        renderer: "svg",
+        renderer: "no",
         axis: false,
         grid: false,
         boundingbox: [-5, 5, 5, -5],
@@ -52,11 +43,51 @@ describe("Further tests", function () {
         showCopyright: false,
         showNavigation: false
     });
+    slider = board.create(
+        "slider",
+        [
+            [0, 0],
+            [1, 0],
+            [0, 5, 10]
+        ],
+        {
+            id: "_glider",
+            withLabel: true,
+            name: "S",
+            point1: {
+                id: "_point1"
+            },
+            point2: {
+                id: "_point2"
+            },
+            baseline: {
+                id: "_baseline"
+            },
+            highline: {
+                id: "_highline"
+            },
+            label: {
+                id: "_label"
+            }
+        }
+    );
 
-    it("size", function () {
-        var el = board.create("text", [0, 10, "test"]);
+    it("Create slider", function () {
+        expect(slider.type).toEqual(JXG.OBJECT_TYPE_GLIDER);
+        expect(slider).toBeInstanceOf(JXG.Point);
+        expect(slider.elementClass).toEqual(JXG.OBJECT_CLASS_POINT);
+    });
 
-        jasmine.clock().tick(100);
-        expect(el.size).toEqual([19, 14]);
+    it("Slider value", function () {
+        expect(slider.Value()).toEqual(5);
+    });
+
+    it("Slider ids", function () {
+        expect(slider.id).toEqual("_glider");
+        expect(slider.point1.id).toEqual("_point1");
+        expect(slider.point2.id).toEqual("_point2");
+        expect(slider.baseline.id).toEqual("_baseline");
+        expect(slider.highline.id).toEqual("_highline");
+        expect(slider.label.id).toEqual("_label");
     });
 });

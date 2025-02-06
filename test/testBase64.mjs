@@ -26,6 +26,8 @@
     the MIT License along with JSXGraph. If not, see <https://www.gnu.org/licenses/>
     and <https://opensource.org/licenses/MIT/>.
  */
+import JXG from '../../src/index.js';
+
 describe("Test JXG.Base64", function () {
     it("encode", function () {
         expect(JXG.Util.Base64.encode("JXG")).toEqual("SlhH");

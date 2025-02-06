@@ -28,7 +28,8 @@
     the MIT License along with JSXGraph. If not, see <https://www.gnu.org/licenses/>
     and <https://opensource.org/licenses/MIT/>.
  */
-
+    import JXG from '../../src/index.js';
+    
 describe("Test JXG.Composition", function () {
     var board;
 

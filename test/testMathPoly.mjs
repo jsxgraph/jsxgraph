@@ -28,19 +28,14 @@
     the MIT License along with JSXGraph. If not, see <https://www.gnu.org/licenses/>
     and <https://opensource.org/licenses/MIT/>.
  */
+    import JXG from '../../src/index.js';
+describe("Test JXG.Math.Poly", function () {
+    var r = new JXG.Math.Poly.Ring(["x", "y", "z"]),
+        m = new JXG.Math.Poly.Monomial(r, 4, [1, 2, 3]),
+        p = new JXG.Math.Poly.Polynomial(r);
 
-describe("Test GeonextParser", function () {
-    it("Geonext2JS", function () {
-        var ob = {
-            Val: function () {
-                return 2.0;
-            }
-        };
-
-        expect(JXG.GeonextParser.geonext2JS("x^2", null)).toEqual("pow(x,2)");
-        expect(JXG.GeonextParser.geonext2JS("sin(x)", null)).toEqual("sin(x)");
-        expect(JXG.GeonextParser.geonext2JS("asin(x)", null)).toEqual("asin(x)");
-        expect(JXG.GeonextParser.geonext2JS("sin(x^2)", null)).toEqual("sin(pow(x,2))");
-        expect(JXG.GeonextParser.geonext2JS("ob.Val()^x", null)).toEqual("pow(ob.Val(),x)");
+    it("Ring", function () {
+        expect(JXG.exists(r.vars)).toBeTrue();
+        expect(r.vars.length).toEqual(3);
     });
 });

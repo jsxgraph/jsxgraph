@@ -1,11 +1,9 @@
 /*
     Copyright 2008-2024
         Matthias Ehmann,
-        Michael Gerhaeuser,
         Carsten Miller,
-        Bianca Valentin,
-        Alfred Wassermann,
-        Peter Wilfahrt
+        Andreas Walter,
+        Alfred Wassermann
 
     This file is part of JSXGraph.
 
@@ -28,38 +26,15 @@
     the MIT License along with JSXGraph. If not, see <https://www.gnu.org/licenses/>
     and <https://opensource.org/licenses/MIT/>.
  */
-
-describe("Test board handling", function() {
-    var board;
-
-    // jasmine.clock().install();
-    beforeEach(function() {
-      jasmine.clock().install();
+    import JXG from '../../src/index.js';
+describe("Test JXG.Mat.Statistics", function () {
+    it("Percentiles", function () {
+        var data = [
+            57, 57, 57, 58, 63, 66, 66, 67, 67, 68, 69, 70, 70, 70, 70, 72, 73, 75, 75, 76, 76,
+            78, 79, 81
+        ];
+        expect(JXG.Math.Statistics.min(data)).toEqual(57);
+        expect(JXG.Math.Statistics.max(data)).toEqual(81);
+        expect(JXG.Math.Statistics.percentile(data, [25, 50, 75])).toEqual([66, 70, 75]);
     });
-
-    afterEach(function() {
-      jasmine.clock().uninstall();
-    });
-
-    document.getElementsByTagName('body')[0].innerHTML = '<div id="jxgbox" style="width: 100px; height: 100px;"></div>';
-    board = JXG.JSXGraph.initBoard('jxgbox', {
-        renderer: 'svg',
-        axis: false,
-        grid: false,
-        boundingbox: [-5, 5, 5, -5],
-        resize: {enabled: false},
-        showCopyright: false,
-        showNavigation: false
-    });
-
-    it("suspendUpdate interruption", function() {
-        var el = board.create('text', [0, 10, 'test']);
-
-        board.suspendUpdate();
-        // Unfortunately, this test does not throw an error in test environment
-        JXG.JSXGraph.freeBoard(board);
-    });
-
-
 });
-

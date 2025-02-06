@@ -1,9 +1,11 @@
 /*
     Copyright 2008-2024
         Matthias Ehmann,
+        Michael Gerhaeuser,
         Carsten Miller,
-        Andreas Walter,
-        Alfred Wassermann
+        Bianca Valentin,
+        Alfred Wassermann,
+        Peter Wilfahrt
 
     This file is part of JSXGraph.
 
@@ -26,14 +28,19 @@
     the MIT License along with JSXGraph. If not, see <https://www.gnu.org/licenses/>
     and <https://opensource.org/licenses/MIT/>.
  */
-describe("Test JXG.Mat.Statistics", function () {
-    it("Percentiles", function () {
-        var data = [
-            57, 57, 57, 58, 63, 66, 66, 67, 67, 68, 69, 70, 70, 70, 70, 72, 73, 75, 75, 76, 76,
-            78, 79, 81
-        ];
-        expect(JXG.Math.Statistics.min(data)).toEqual(57);
-        expect(JXG.Math.Statistics.max(data)).toEqual(81);
-        expect(JXG.Math.Statistics.percentile(data, [25, 50, 75])).toEqual([66, 70, 75]);
+    import JXG from '../../src/index.js';
+describe("Test GeonextParser", function () {
+    it("Geonext2JS", function () {
+        var ob = {
+            Val: function () {
+                return 2.0;
+            }
+        };
+
+        expect(JXG.GeonextParser.geonext2JS("x^2", null)).toEqual("pow(x,2)");
+        expect(JXG.GeonextParser.geonext2JS("sin(x)", null)).toEqual("sin(x)");
+        expect(JXG.GeonextParser.geonext2JS("asin(x)", null)).toEqual("asin(x)");
+        expect(JXG.GeonextParser.geonext2JS("sin(x^2)", null)).toEqual("sin(pow(x,2))");
+        expect(JXG.GeonextParser.geonext2JS("ob.Val()^x", null)).toEqual("pow(ob.Val(),x)");
     });
 });
