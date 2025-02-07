@@ -1490,13 +1490,13 @@ JXG.extend(
                             }
                             break;
                         default:
-                            if (
-                                Type.exists(this.visProp[key]) &&
+                            if (Type.exists(this.visProp[key]) &&
                                 (!JXG.Validator[key] ||                                   // No validator for this key => OK
                                     (JXG.Validator[key] && JXG.Validator[key](value)) ||  // Value passes the validator => OK
                                     (JXG.Validator[key] &&                                // Value is function, function value passes the validator => OK
-                                        Type.isFunction(value) &&
-                                        JXG.Validator[key](value(this))))
+                                        Type.isFunction(value) && JXG.Validator[key](value(this))
+                                    )
+                                )
                             ) {
                                 value = (value.toLowerCase && value.toLowerCase() === "false")
                                             ? false

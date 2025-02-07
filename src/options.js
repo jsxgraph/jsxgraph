@@ -9918,6 +9918,9 @@ JXG.Options = {
             validatePointFace = function (v) {
                 return Type.exists(JXG.normalizePointFace(v));
             },
+            validateNumber = function (v) {
+                return Type.isNumber(v, true, false);
+            },
             validateInteger = function (v) {
                 return (Math.abs(v - Math.round(v)) < Mat.eps);
             },
@@ -9943,27 +9946,27 @@ JXG.Options = {
             validators = {
                 attractorDistance: validateNotNegative,
                 color: validateColor,
-                // defaultDistance: Type.isNumber,
+                // defaultDistance: validateNumber,
                 display: validateDisplay,
                 doAdvancedPlot: false,
                 draft: false,
                 drawLabels: false,
                 drawZero: false,
                 face: validatePointFace,
-                factor: Type.isNumber,
+                factor: validateNumber,
                 fillColor: validateColor,
-                fillOpacity: Type.isNumber,
+                fillOpacity: validateNumber,
                 firstArrow: false,
                 fontSize: validateInteger,
                 dash: validateInteger,
-                gridX: Type.isNumber,
-                gridY: Type.isNumber,
+                gridX: validateNumber,
+                gridY: validateNumber,
                 // POI: Do we have to add something here?
                 hasGrid: false,
                 highlightFillColor: validateColor,
-                highlightFillOpacity: Type.isNumber,
+                highlightFillOpacity: validateNumber,
                 highlightStrokeColor: validateColor,
-                highlightStrokeOpacity: Type.isNumber,
+                highlightStrokeOpacity: validateNumber,
                 insertTicks: false,
                 //: validateScreenCoords,
                 lastArrow: false,
@@ -9974,8 +9977,8 @@ JXG.Options = {
                 minTicksDistance: validatePositiveInteger,
                 numberPointsHigh: validatePositiveInteger,
                 numberPointsLow: validatePositiveInteger,
-                opacity: Type.isNumber,
-                radius: Type.isNumber,
+                opacity: validateNumber,
+                radius: validateNumber,
                 RDPsmoothing: false,
                 renderer: validateRenderer,
                 right: validatePixel,
@@ -9985,14 +9988,14 @@ JXG.Options = {
                 size: validateNotNegative, //validateInteger,
                 snapSizeX: validatePositive,
                 snapSizeY: validatePositive,
-                snapWidth: Type.isNumber,
+                snapWidth: validateNumber,
                 snapToGrid: false,
                 snatchDistance: validateNotNegative,
                 straightFirst: false,
                 straightLast: false,
                 stretch: false,
                 strokeColor: validateColor,
-                strokeOpacity: Type.isNumber,
+                strokeOpacity: validateNumber,
                 strokeWidth: validateNotNegative, //validateInteger,
                 takeFirst: false,
                 takeSizeFromFile: false,
@@ -10074,7 +10077,6 @@ JXG.Options = {
 
         return map[s];
     };
-
 
     /**
      * Apply the options stored in this object to all objects on the given board.
