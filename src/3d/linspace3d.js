@@ -196,15 +196,12 @@ JXG.extend(
                 return this;
             }
 
-            this.transformations[0].update();
             if (this === this.baseElement) {
-                // Case of bindTo
-                // TODO
-                c = this.transformations[0].apply(this.vec, "self");
+                c = this.vec;
             } else {
-                c = Mat.matVecMult(this.transformations[0].matrix, this.baseElement.vec);
+                c = this.baseElement.vec;
             }
-            for (i = 1; i < this.transformations.length; i++) {
+            for (i = 0; i < this.transformations.length; i++) {
                 this.transformations[i].update();
                 c = Mat.matVecMult(this.transformations[i].matrix, c);
             }

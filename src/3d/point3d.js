@@ -76,13 +76,13 @@ JXG.Point3D = function (view, F, slide, attributes) {
     /**
      * Function or array of functions or array of numbers defining the coordinates of the point, used in {@link updateCoords}.
      *
-     * @name Point3D#F
+     * @name Point3D#_F
      * @function
      * @private
      *
      * @see updateCoords
      */
-    this.F = F;
+    this._F = F;
 
     /**
      * Optional slide element, i.e. element the Point3D lives on.
@@ -97,66 +97,6 @@ JXG.Point3D = function (view, F, slide, attributes) {
      *
      */
     this.slide = slide;
-
-    /**
-     * Get x-coordinate of a 3D point.
-     *
-     * @name X
-     * @memberOf Point3D
-     * @function
-     * @returns {Number}
-     *
-     * @example
-     *   p.X();
-     */
-    this.X = function () {
-        return this.coords[1];
-    };
-
-    /**
-     * Get y-coordinate of a 3D point.
-     *
-     * @name Y
-     * @memberOf Point3D
-     * @function
-     * @returns Number
-     *
-     * @example
-     *   p.Y();
-     */
-    this.Y = function () {
-        return this.coords[2];
-    };
-
-    /**
-     * Get z-coordinate of a 3D point.
-     *
-     * @name Z
-     * @memberOf Point3D
-     * @function
-     * @returns Number
-     *
-     * @example
-     *   p.Z();
-     */
-    this.Z = function () {
-        return this.coords[3];
-    };
-
-    /**
-     * Get w-coordinate of a 3D point.
-     *
-     * @name W
-     * @memberOf Point3D
-     * @function
-     * @returns Number
-     *
-     * @example
-     *   p.W();
-     */
-    this.W = function () {
-        return this.coords[0];
-    };
 
     /**
      * In case, the point is a glider, store the preimage of the coordinates in terms of the parametric definition of the host element.
@@ -183,6 +123,77 @@ JXG.extend(
     /** @lends JXG.Point3D.prototype */ {
 
         /**
+         * Get x-coordinate of a 3D point.
+         *
+         * @name X
+         * @memberOf Point3D
+         * @function
+         * @returns {Number}
+         *
+         * @example
+         *   p.X();
+         */
+        X: function () {
+            return this.coords[1];
+        },
+
+        /**
+         * Get y-coordinate of a 3D point.
+         *
+         * @name Y
+         * @memberOf Point3D
+         * @function
+         * @returns Number
+         *
+         * @example
+         *   p.Y();
+         */
+        Y: function () {
+            return this.coords[2];
+        },
+
+        /**
+         * Get z-coordinate of a 3D point.
+         *
+         * @name Z
+         * @memberOf Point3D
+         * @function
+         * @returns Number
+         *
+         * @example
+         *   p.Z();
+         */
+        Z: function () {
+            return this.coords[3];
+        },
+
+        /**
+         * Get w-coordinate of a 3D point.
+         *
+         * @name W
+         * @memberOf Point3D
+         * @function
+         * @returns Number
+         *
+         * @example
+         *   p.W();
+         */
+        W: function () {
+            return this.coords[0];
+        },
+
+        /**
+         * Get the coords [x, y, z] of a point as array.
+         *
+         * @name Point3D#F
+         * @function
+         * @returns Array
+         */
+        F: function() {
+            return this.coords.slice(1);
+        },
+
+        /**
          * Update the array {@link JXG.Point3D#coords} containing the homogeneous coords.
          *
          * @name updateCoords
@@ -198,21 +209,21 @@ JXG.extend(
             var i,
                 s = 0;
 
-            if (Type.isFunction(this.F)) {
-                this.coords = Type.evaluate(this.F);
+            if (Type.isFunction(this._F)) {
+                this.coords = Type.evaluate(this._F);
                 if (this.coords.length === 3) {
                     this.coords.unshift(1);
                 }
             } else {
-                if (this.F.length === 3) {
+                if (this._F.length === 3) {
                     this.coords[0] = 1;
                     s = 1;
                 }
-                for (i = 0; i < this.F.length; i++) {
+                for (i = 0; i < this._F.length; i++) {
                     // Attention: if F is array of numbers, coords may not be updated.
                     // Otherwise, dragging will not work anymore.
-                    if (Type.isFunction(this.F[i])) {
-                        this.coords[s + i] = Type.evaluate(this.F[i]);
+                    if (Type.isFunction(this._F[i])) {
+                        this.coords[s + i] = Type.evaluate(this._F[i]);
                     }
                 }
             }
@@ -231,18 +242,18 @@ JXG.extend(
                 s = 0;
 
 
-            if (Type.isFunction(this.F)) {
-                this.coords = Type.evaluate(this.F);
+            if (Type.isFunction(this._F)) {
+                this.coords = Type.evaluate(this._F);
                 if (this.coords.length === 3) {
                     this.coords.unshift(1);
                 }
             } else {
-                if (this.F.length === 3) {
+                if (this._F.length === 3) {
                     this.coords[0] = 1;
                     s = 1;
                 }
-                for (i = 0; i < this.F.length; i++) {
-                    this.coords[s + i] = Type.evaluate(this.F[i]);
+                for (i = 0; i < this._F.length; i++) {
+                    this.coords[s + i] = Type.evaluate(this._F[i]);
                 }
             }
             this.initialCoords = this.coords.slice();
