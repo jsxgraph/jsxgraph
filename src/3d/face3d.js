@@ -194,17 +194,15 @@ JXG.extend(
                 t[i].update();
             }
 
-            b = this.baseElement.polyhedron;
+            if (this === this.baseElement) {
+                b = this.polyhedron;
+            } else {
+                b = this.baseElement.polyhedron;
+            }
             for (i in b.coords) {
                 if (b.coords.hasOwnProperty(i)) {
-                    if (this === this.baseElement) {
-                        // Case of bindTo
-                        // TODO
-                        c = t[0].apply(b.coords[i], "self");
-                    } else {
-                        c = Mat.matVecMult(t[0].matrix, b.coords[i]);
-                    }
-                    for (j = 1; j < t.length; j++) {
+                    c = b.coords[i];
+                    for (j = 0; j < t.length; j++) {
                         c = Mat.matVecMult(t[j].matrix, c);
                     }
                     this.polyhedron.coords[i] = c;
