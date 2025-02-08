@@ -98,17 +98,5 @@ describe("Test 3D transforms", function () {
         expect(B.Z()).toEqual(4);
     });
 
-    it("Test point3d transform 2", function () {
-        var A = view.create('point3d', [-1, 2, 0]);
-        var t1 = view.create('transform3d', [0, 0, 4], { type: 'translate' });
-        var B = view.create('point3d', [-1, 2, 0], {});
-        B.addTransform(A, [t1]);
-        board.update();
-
-        var v = B.F();
-        expect(v[0]).toEqual(-1);
-        expect(v[1]).toEqual(2);
-        expect(v[2]).toEqual(4);
-    });
 
 });

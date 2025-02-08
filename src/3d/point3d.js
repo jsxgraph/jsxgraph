@@ -76,13 +76,13 @@ JXG.Point3D = function (view, F, slide, attributes) {
     /**
      * Function or array of functions or array of numbers defining the coordinates of the point, used in {@link updateCoords}.
      *
-     * @name Point3D#_F
+     * @name Point3D#F
      * @function
      * @private
      *
      * @see updateCoords
      */
-    this._F = F;
+    this.F = F;
 
     /**
      * Optional slide element, i.e. element the Point3D lives on.
@@ -183,17 +183,6 @@ JXG.extend(
         },
 
         /**
-         * Get the coords [x, y, z] of a point as array.
-         *
-         * @name Point3D#F
-         * @function
-         * @returns Array
-         */
-        F: function() {
-            return this.coords.slice(1);
-        },
-
-        /**
          * Update the array {@link JXG.Point3D#coords} containing the homogeneous coords.
          *
          * @name updateCoords
@@ -209,21 +198,21 @@ JXG.extend(
             var i,
                 s = 0;
 
-            if (Type.isFunction(this._F)) {
-                this.coords = Type.evaluate(this._F);
+            if (Type.isFunction(this.F)) {
+                this.coords = Type.evaluate(this.F);
                 if (this.coords.length === 3) {
                     this.coords.unshift(1);
                 }
             } else {
-                if (this._F.length === 3) {
+                if (this.F.length === 3) {
                     this.coords[0] = 1;
                     s = 1;
                 }
-                for (i = 0; i < this._F.length; i++) {
+                for (i = 0; i < this.F.length; i++) {
                     // Attention: if F is array of numbers, coords may not be updated.
                     // Otherwise, dragging will not work anymore.
-                    if (Type.isFunction(this._F[i])) {
-                        this.coords[s + i] = Type.evaluate(this._F[i]);
+                    if (Type.isFunction(this.F[i])) {
+                        this.coords[s + i] = Type.evaluate(this.F[i]);
                     }
                 }
             }
@@ -242,18 +231,18 @@ JXG.extend(
                 s = 0;
 
 
-            if (Type.isFunction(this._F)) {
-                this.coords = Type.evaluate(this._F);
+            if (Type.isFunction(this.F)) {
+                this.coords = Type.evaluate(this.F);
                 if (this.coords.length === 3) {
                     this.coords.unshift(1);
                 }
             } else {
-                if (this._F.length === 3) {
+                if (this.F.length === 3) {
                     this.coords[0] = 1;
                     s = 1;
                 }
-                for (i = 0; i < this._F.length; i++) {
-                    this.coords[s + i] = Type.evaluate(this._F[i]);
+                for (i = 0; i < this.F.length; i++) {
+                    this.coords[s + i] = Type.evaluate(this.F[i]);
                 }
             }
             this.initialCoords = this.coords.slice();
