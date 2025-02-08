@@ -523,7 +523,9 @@ JXG.extend(
             var c;
 
             this.update();
-            if (Type.exists(self)) {
+            if (this.is3D) {
+                c = p.coords;
+            } else if (Type.exists(self)) {
                 c = p.initialCoords.usrCoords;
             } else {
                 c = p.coords.usrCoords;

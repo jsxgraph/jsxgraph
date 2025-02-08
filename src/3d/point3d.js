@@ -71,6 +71,7 @@ JXG.Point3D = function (view, F, slide, attributes) {
      * @private
      */
     this.coords = [0, 0, 0, 0];
+    this.initialCoords = [0, 0, 0, 0];
 
     /**
      * Function or array of functions or array of numbers defining the coordinates of the point, used in {@link updateCoords}.
@@ -180,14 +181,16 @@ Type.copyPrototypeMethods(JXG.Point3D, JXG.GeometryElement3D, "constructor3D");
 JXG.extend(
     JXG.Point3D.prototype,
     /** @lends JXG.Point3D.prototype */ {
+
         /**
-         * Update the array {@link JXG.Point3D#coords} containing the homogeneous coords
+         * Update the array {@link JXG.Point3D#coords} containing the homogeneous coords.
          *
          * @name updateCoords
          * @memberOf Point3D
          * @function
          * @returns {Object} Reference to the Point3D object
          * @private
+         * @see GeometryElement3D#update()
          * @example
          *    p.updateCoords();
          */
@@ -242,6 +245,7 @@ JXG.extend(
                     this.coords[s + i] = Type.evaluate(this.F[i]);
                 }
             }
+            this.initialCoords = this.coords.slice();
 
             return this;
         },
@@ -327,15 +331,12 @@ JXG.extend(
                 return this;
             }
 
-            this.transformations[0].update();
             if (this === this.baseElement) {
-                // Case of bindTo
-                // TODO
-                c = this.transformations[0].apply(this, "self");
+                c = this.initialCoords;
             } else {
-                c = Mat.matVecMult(this.transformations[0].matrix, this.baseElement.coords);
+                c = this.baseElement.coords;
             }
-            for (i = 1; i < this.transformations.length; i++) {
+            for (i = 0; i < this.transformations.length; i++) {
                 this.transformations[i].update();
                 c = Mat.matVecMult(this.transformations[i].matrix, c);
             }
