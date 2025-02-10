@@ -6154,7 +6154,12 @@ JXG.extend(
                     !(elementType === 'functiongraph') && // Prevent problems with function terms like 'x', 'y'
                     !(elementType === 'implicitcurve')
                 ) {
-                    parents[i] = this.select(parents[i]);
+                    if (i > 0 && parents[0].elType === 'view3d') {
+                        // 3D elements are based on 3D elements, only
+                        parents[i] = parents[0].select(parents[i]);
+                    } else {
+                        parents[i] = this.select(parents[i]);
+                    }
                 }
             }
 

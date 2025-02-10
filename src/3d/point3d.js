@@ -570,28 +570,30 @@ JXG.createPoint3D = function (board, parents, attributes) {
 
     var view = parents[0],
         attr, F, slide, c2d, el,
+        base = null,
         transform = null;
 
     // If the last element of `parents` is a 3D object,
     // the point is a glider on that element.
-    if (parents.length > 2 && Type.exists(parents[parents.length - 1].is3D)) {
+    if (parents.length > 2 &&
+        Type.exists(parents[parents.length - 1].is3D) &&
+        !Type.isTransformationOrArray(parents[parents.length - 1])
+    ) {
         slide = parents.pop();
     } else {
         slide = null;
     }
 
-console.log(parents.length)    
     if (parents.length === 2) {
-        if (Type.isPoint3D(parents[0]) && 
-            Type.isTransformationOrArray(parents[1])
-        ) {
-            F = [0, 0, 0];
-            transform = parents[2];
-            slide = null;
-        } else {
-            // [view, array|fun] (Array [x, y, z] | function) returning [x, y, z]
-            F = parents[1];
-        }
+        // [view, array|fun] (Array [x, y, z] | function) returning [x, y, z]
+        F = parents[1];
+    } else if (parents.length === 3 &&
+        Type.isPoint3D(parents[1]) &&
+        Type.isTransformationOrArray(parents[2])
+    ) {
+        F = [0, 0, 0];
+        base = parents[1];
+        transform = parents[2];
     } else if (parents.length === 4) {
         // [view, x, y, z], (3 numbers | functions)
         F = parents.slice(1);
@@ -605,7 +607,7 @@ console.log(parents.length)
                 "' and '" +
                 typeof parents[2] +
                 "'." +
-                "\nPossible parent types: [[x,y,z]], [x,y,z], or [[x,y,z], slide], () => [x, y, z]"
+                "\nPossible parent types: [[x,y,z]], [x,y,z], or [[x,y,z], slide], () => [x, y, z], or [point, transformation(s)]"
         );
         //  "\nPossible parent types: [[x,y,z]], [x,y,z], [element,transformation]"); // TODO
     }
@@ -614,7 +616,7 @@ console.log(parents.length)
     el = new JXG.Point3D(view, F, slide, attr);
     el.initCoords();
     if (transform !== null) {
-        el.addTransform(transform);
+        el.addTransform(base, transform);
     }
 
     c2d = view.project3DTo2D(el.coords);
@@ -630,6 +632,9 @@ console.log(parents.length)
     if (el.slide) {
         el.slide.addChild(el);
         el.setParents(el.slide);
+    }
+    if (base) {
+        el.setParents(base);
     }
 
     el._c2d = el.element2D.coords.usrCoords.slice(); // Store a copy of the coordinates to detect dragging
