@@ -692,7 +692,7 @@ JXG.createLine3D = function (board, parents, attributes) {
 
         el.addParents(point);
 
-        if (base !== null) {
+        if (base !== null && transform !== null) {
             el.addTransform(base, transform);
             el.addParents(base);
         }
@@ -1570,7 +1570,9 @@ JXG.createPlane3D = function (board, parents, attributes) {
         attr,
         point, point2, point3,
         dir1, dir2, range_u, range_v,
-        el, grid;
+        el, grid,
+        base = null,
+        transform = null;
 
     attr = Type.copyAttributes(attributes, board.options, 'plane3d');
     if (parents.length === 4 &&
@@ -1589,7 +1591,24 @@ JXG.createPlane3D = function (board, parents, attributes) {
         range_u = [-Infinity, Infinity];
         range_v = [-Infinity, Infinity];
     } else {
-        point = Type.providePoints3D(view, [parents[1]], attributes, 'plane3d', ['point'])[0];
+        if (parents[1].type === Const.OBJECT_TYPE_PLANE3D &&
+            Type.isTransformationOrArray(parents[2])
+        ) {
+            base = parents[1];
+            transform = parents[2];
+
+            point = Type.providePoints3D(view, [[0, 0, 0, 0]],  attributes,  'plane3d', ['point'])[0];
+            dir1 = [0, 0.0001, 0, 0];
+            dir2 = [0, 0, 0.0001, 0];
+            range_u = parents[3] || [-Infinity, Infinity];
+            range_v = parents[4] || [-Infinity, Infinity];
+        } else {
+            point = Type.providePoints3D(view, [parents[1]], attributes, 'plane3d', ['point'])[0];
+            dir1 = parents[2];
+            dir2 = parents[3];
+            range_u = parents[4] || [-Infinity, Infinity];
+            range_v = parents[5] || [-Infinity, Infinity];
+        }
         if (point === false) {
             throw new Error(
                 "JSXGraph: Can't create plane3d with first parent of type '" + typeof parents[1] +
@@ -1597,23 +1616,7 @@ JXG.createPlane3D = function (board, parents, attributes) {
                     "\nPossible first parent types are: point3d, array of length 3, function returning an array of length 3."
             );
         }
-
-        // if (Type.exists(parents[2].view) && parents[2].type === Const.OBJECT_TYPE_LINE3D) {
-        //     dir1 = function() {
-        //         return Type.evaluate(parents[2].direction).slice(1);
-        //     };
-        // } else {
-            dir1 = parents[2];
-        // }
-        // if (Type.exists(parents[3].view) && parents[3].type === Const.OBJECT_TYPE_LINE3D) {
-        //     dir2 = function() { return Type.evaluate(parents[3].direction).slice(1); };
-        // } else {
-            dir2 = parents[3];
-        // }
-        range_u = parents[4] || [-Infinity, Infinity];
-        range_v = parents[5] || [-Infinity, Infinity];
-
-        if (parents.length < 4) {
+        if ((base !== null && parents < 3) || (base === null && parents.length < 4)) {
             throw new Error(
                 "JSXGraph: Can't create plane3d with parents of type '" +
                     typeof parents[1] + ", "  +
@@ -1631,6 +1634,11 @@ JXG.createPlane3D = function (board, parents, attributes) {
     attr = el.setAttr2D(attr);
     el.element2D = view.create('curve', [[], []], attr);
     el.element2D.view = view;
+
+    if (base !== null && transform !== null) {
+        el.addTransform(base, transform);
+        el.addParents(base);
+    }
 
     /**
      * @class

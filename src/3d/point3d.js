@@ -615,7 +615,7 @@ JXG.createPoint3D = function (board, parents, attributes) {
     attr = Type.copyAttributes(attributes, board.options, 'point3d');
     el = new JXG.Point3D(view, F, slide, attr);
     el.initCoords();
-    if (transform !== null) {
+    if (base !== null && transform !== null) {
         el.addTransform(base, transform);
     }
 
