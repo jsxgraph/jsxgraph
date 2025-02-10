@@ -519,18 +519,38 @@ JXG.createLine3D = function (board, parents, attributes) {
         attr, points,
         point, direction, range,
         point1, point2, endpoints,
-        el;
+        el,
+        base = null,
+        transform = null;
 
     attr = Type.copyAttributes(attributes, board.options, 'line3d');
 
     // In any case, parents[1] contains a point or point coordinates
 
-    if (
-        Type.isPoint3D(parents[2]) ||
-        (parents.length === 3 && (Type.isArray(parents[2]) || Type.isFunction(parents[2])))
+    if (parents[1].type === Const.OBJECT_TYPE_LINE3D &&
+        Type.isTransformationOrArray(parents[2])
+    ) {
+        base = parents[1];
+        transform = parents[2];
+
+        points = Type.providePoints3D(
+            view,
+            [
+                [0, 0, 0, 0],
+                [0, 0, 0, 0]
+            ],
+            attributes,
+            'line3d',
+            ['point1', 'point2']
+        );
+    }
+
+    if (base === null &&   // No transformation
+        (Type.isPoint3D(parents[2]) ||
+            ( parents.length === 3 && (Type.isArray(parents[2]) || Type.isFunction(parents[2])) )
+        )
     ) {
         // Line defined by two points; [view, point1, point2]
-
         point1 = Type.providePoints3D(view, [parents[1]], attributes, 'line3d', ['point1'])[0];
         point2 = Type.providePoints3D(view, [parents[2]], attributes, 'line3d', ['point2'])[0];
         direction = function () {
@@ -598,15 +618,19 @@ JXG.createLine3D = function (board, parents, attributes) {
     } else {
         // Line defined by point, direction and range
 
-        point = Type.providePoints3D(view, [parents[1]], attributes, 'line3d', ['point'])[0];
 
         // Directions are handled as arrays of length 4, i.e. with homogeneous coordinates.
-        if ((Type.exists(parents[2].view) && parents[2].type === Const.OBJECT_TYPE_LINE3D) ||
-            Type.isFunction(parents[2]) ||
-            (parents[2].length === 3) ||
-            (parents[2].length === 4)
+        if (base !== null) {
+            point = Type.providePoints3D(view, [[0, 0, 0]], attributes, 'line3d', ['point'])[0];
+            direction = [0, 0, 0, 0.0001];
+            range = parents[3] || [-Infinity, Infinity];
+        } else if (
+            (Type.exists(parents[2].view) && parents[2].type === Const.OBJECT_TYPE_LINE3D) || // direction given by another line
+            Type.isFunction(parents[2]) || (parents[2].length === 3) || (parents[2].length === 4) // direction given as function or array
         ) {
+            point = Type.providePoints3D(view, [parents[1]], attributes, 'line3d', ['point'])[0];
             direction = parents[2];
+            range = parents[3];
         } else {
             throw new Error(
                 "JSXGraph: Can't create line3d with parents of type '" +
@@ -615,7 +639,6 @@ JXG.createLine3D = function (board, parents, attributes) {
                     typeof parents[3] + "'."
             );
         }
-        range = parents[3];
 
         points = Type.providePoints3D(
             view,
@@ -668,6 +691,11 @@ JXG.createLine3D = function (board, parents, attributes) {
         el.endpoints = points;
 
         el.addParents(point);
+
+        if (base !== null) {
+            el.addTransform(base, transform);
+            el.addParents(base);
+        }
     }
 
     el.addChild(el.element2D);
