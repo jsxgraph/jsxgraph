@@ -294,11 +294,11 @@ JXG.extend(
             len = this.baseElement.numberPoints;
             for (i = 0; i < len; i++) {
                 if (this === this.baseElement) {
-                    c = Mat.matVecMult(t[0].matrix, this.points[i]);
+                    c = this.points[i];
                 } else {
-                    c = Mat.matVecMult(t[0].matrix, this.baseElement.points[i]);
+                    c = this.baseElement.points[i];
                 }
-                for (j = 1; j < t.length; j++) {
+                for (j = 0; j < t.length; j++) {
                     c = Mat.matVecMult(t[j].matrix, c);
                 }
                 this.points[i] = c;
@@ -383,15 +383,30 @@ JXG.extend(
   */
 JXG.createCurve3D = function (board, parents, attributes) {
     var view = parents[0],
-        F, X, Y, Z, range, attr, el;
+        F, X, Y, Z, range, attr, el,
+        base = null,
+        transform = null;
 
     if (parents.length === 3) {
-        F = parents[1];
-        range = parents[2];
-        X = null;
-        Y = null;
-        Z = null;
+        if (Type.isTransformationOrArray(parents[2]) && parents[1].type === Const.OBJECT_TYPE_CURVE3D) {
+            // [curve, transformation(s)]
+            // This might be adopted to the type of the base element (data plot or function)
+            base = parents[1];
+            transform = parents[2];
+            F = null;
+            X = [];
+            Y = [];
+            Z = [];
+        } else {
+            // [F, range]
+            F = parents[1];
+            range = parents[2];
+            X = null;
+            Y = null;
+            Z = null;
+        }
     } else {
+        // [X, Y, Z, range]
         X = parents[1];
         Y = parents[2];
         Z = parents[3];
@@ -406,6 +421,11 @@ JXG.createCurve3D = function (board, parents, attributes) {
     attr = el.setAttr2D(attr);
     el.element2D = view.create("curve", [[], []], attr);
     el.element2D.view = view;
+    if (base !== null) {
+        el.addTransform(base, transform);
+        el.addParents(base);
+        //console.log(el._F.toString())
+    }
 
     /**
      * @class
