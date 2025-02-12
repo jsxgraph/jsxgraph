@@ -366,12 +366,9 @@ JXG.Math = {
      * @returns {Array} Inverse matrix of Ain
      */
     inverse: function (Ain) {
-        var i,
-            j,
-            k,
-            s,
+        var i, j, k,
+            r, s, 
             ma,
-            r,
             swp,
             n = Ain.length,
             A = [],
@@ -399,7 +396,7 @@ JXG.Math = {
             }
 
             // Singular matrix
-            if (ma <= this.eps) {
+            if (ma <= this.eps * this.eps) {
                 return [];
             }
 
