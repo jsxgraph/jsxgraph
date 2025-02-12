@@ -1192,15 +1192,15 @@ JXG.extend(
 
             // Update the initial coordinates. This is needed for free points
             // that have a transformation bound to it.
-            for (i = this.transformations.length - 1; i >= 0; i--) {
-                if (method === Const.COORDS_BY_SCREEN) {
-                    newCoords = new Coords(method, coords, this.board).usrCoords;
-                } else {
-                    if (coords.length === 2) {
-                        coords = [1].concat(coords);
-                    }
-                    newCoords = coords;
+            if (method === Const.COORDS_BY_SCREEN) {
+                newCoords = new Coords(method, coords, this.board).usrCoords;
+            } else {
+                if (coords.length === 2) {
+                    coords.unshift(1);
                 }
+                newCoords = coords;
+            }
+            for (i = this.transformations.length - 1; i >= 0; i--) {
                 this.initialCoords.setCoordinates(
                     Const.COORDS_BY_USER,
                     Mat.matVecMult(Mat.inverse(this.transformations[i].matrix), newCoords)
