@@ -1472,7 +1472,8 @@ JXG.createAngle = function (board, parents, attributes) {
                 });
                 p.coords.on("update", function () {
                     t2.update();
-                    q.moveTo(Mat.matVecMult(t2.matrix, p.coords.usrCoords));
+                    // q.moveTo(Mat.matVecMult(t2.matrix, p.coords.usrCoords));
+                    q.setPositionDirectly(Const.COORDS_BY_USER, Mat.matVecMult(t2.matrix, p.coords.usrCoords));
                 });
 
                 p.setParents(q);
