@@ -1086,6 +1086,9 @@ JXG.extend(
 
         /**
          * Sets the value of attribute <tt>key</tt> to <tt>value</tt>.
+         * Here, mainly hex strings for rga(a) colors are parsed and values of type object get a special treatment.
+         * Other values are just set to the key.
+         *
          * @param {String} key The attribute's name.
          * @param value The new value
          * @private
@@ -1487,19 +1490,20 @@ JXG.extend(
                             }
                             break;
                         default:
-                            if (
-                                Type.exists(this.visProp[key]) &&
-                                (!JXG.Validator[key] ||
-                                    (JXG.Validator[key] && JXG.Validator[key](value)) ||
-                                    (JXG.Validator[key] &&
-                                        Type.isFunction(value) &&
-                                        JXG.Validator[key](value(this))))
+                            if (Type.exists(this.visProp[key]) &&
+                                (!JXG.Validator[key] ||                                   // No validator for this key => OK
+                                    (JXG.Validator[key] && JXG.Validator[key](value)) ||  // Value passes the validator => OK
+                                    (JXG.Validator[key] &&                                // Value is function, function value passes the validator => OK
+                                        Type.isFunction(value) && JXG.Validator[key](value(this))
+                                    )
+                                )
                             ) {
-                                value =
-                                    (value.toLowerCase && value.toLowerCase() === "false")
-                                        ? false
-                                        : value;
+                                value = (value.toLowerCase && value.toLowerCase() === "false")
+                                            ? false
+                                            : value;
                                 this._set(key, value);
+                            } else {
+                                JXG.warn("attribute '" + key + "' does not accept type '" + (typeof value) + "' of value " + value + ".");
                             }
                             break;
                     }
