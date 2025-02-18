@@ -4910,10 +4910,10 @@ JXG.extend(
                     this
                 ).usrCoords;
                 if (
-                    ul[1] < this.maxboundingbox[0] ||
-                    ul[2] > this.maxboundingbox[1] ||
-                    lr[1] > this.maxboundingbox[2] ||
-                    lr[2] < this.maxboundingbox[3]
+                    ul[1] < this.maxboundingbox[0] - Mat.eps ||
+                    ul[2] > this.maxboundingbox[1] + Mat.eps ||
+                    lr[1] > this.maxboundingbox[2] + Mat.eps ||
+                    lr[2] < this.maxboundingbox[3] - Mat.eps
                 ) {
                     this.origin.scrCoords[1] = ox;
                     this.origin.scrCoords[2] = oy;
@@ -6200,10 +6200,10 @@ JXG.extend(
             }
 
             if (
-                bbox[0] < this.maxboundingbox[0] ||
-                bbox[1] > this.maxboundingbox[1] ||
-                bbox[2] > this.maxboundingbox[2] ||
-                bbox[3] < this.maxboundingbox[3]
+                bbox[0] < this.maxboundingbox[0] - Mat.eps ||
+                bbox[1] > this.maxboundingbox[1] + Mat.eps ||
+                bbox[2] > this.maxboundingbox[2] + Mat.eps ||
+                bbox[3] < this.maxboundingbox[3] - Mat.eps
             ) {
                 return this;
             }
