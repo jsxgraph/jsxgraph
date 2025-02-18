@@ -346,10 +346,10 @@ JXG.createMeasurement = function (board, parents, attributes) {
         return Prefix.dimension(term);
     };
 
-    el.Unit = function () {
+    el.Unit = function (dimension) {
         var unit = '',
             units = el.evalVisProp('units'),
-            dim = el.Dimension();
+            dim = dimension ?? el.Dimension();
 
         if (Type.isObject(units) && Type.exists(units[dim]) && units[dim] !== false) {
             unit = el.eval(units[dim]);
