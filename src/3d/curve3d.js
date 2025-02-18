@@ -178,7 +178,7 @@ JXG.extend(
             var t, i,
                 c3d = [0, 0, 0, 0];
 
-            if (this.transformations.length === 0 || this.baseElement === null) {
+            if (this.transformations.length === 0 || !Type.exists(this.baseElement)) {
                 if (Type.exists(this._F)) {
                     c3d = this._F(u);
                 } else {
@@ -424,7 +424,6 @@ JXG.createCurve3D = function (board, parents, attributes) {
     if (base !== null) {
         el.addTransform(base, transform);
         el.addParents(base);
-        //console.log(el._F.toString())
     }
 
     /**
