@@ -179,7 +179,6 @@ JXG.extend(
         },
 
         updateCoords: function () {
-// console.log(this.id, this._F.toString())
             if (this._F !== null) {
                 this.updateWireframe();
             } else {
@@ -207,9 +206,6 @@ JXG.extend(
             t = this.transformations;
             for (i = 0; i < t.length; i++) {
                 t[i].update();
-            }
-            if (c3d.length === 3) {
-                c3d.unshift(1);
             }
 
             if (this === this.baseElement) {
@@ -452,7 +448,8 @@ JXG.createParametricSurface3D = function (board, parents, attributes) {
     var view = parents[0],
         F, X, Y, Z,
         range_u, range_v, attr,
-        base, transform,
+        base = null,
+        transform = null,
         el;
 
     if (parents.length === 3) {
