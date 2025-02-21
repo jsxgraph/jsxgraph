@@ -196,6 +196,8 @@ JXG.createPolyhedron3D = function (board, parents, attributes) {
         el,
         attr, attr_polyhedron,
         faceList = [],
+        base = null,
+        transform = null,
 
         polyhedron = {
             view: view,
@@ -203,21 +205,30 @@ JXG.createPolyhedron3D = function (board, parents, attributes) {
             coords: {},
             coords2D: {},
             zIndex: {},
-            faces: parents[2]
+            faces: []
         };
 
-    // Copy vertices into a dict
-    if (Type.isArray(parents[1])) {
-        le = parents[1].length;
-        for (i = 0; i < le; i++) {
-            polyhedron.vertices[i] = parents[1][i];
-        }
-    } else if (Type.isObject(parents[1])) {
-        for (i in parents[1]) {
-            if (parents[1].hasOwnProperty(i)) {
+    if (Type.exists(parents[1].type) && parents[1].type === Const.OBJECT_TYPE_POLYHEDRON3D) {
+        // Polyhedron from baseElement and transformations
+        base = parents[1];
+        transform = parents[2];
+        polyhedron.vertices = base.def.vertices;
+        polyhedron.faces = base.def.faces;
+    } else {
+        // Copy vertices into a dict
+        if (Type.isArray(parents[1])) {
+            le = parents[1].length;
+            for (i = 0; i < le; i++) {
                 polyhedron.vertices[i] = parents[1][i];
             }
+        } else if (Type.isObject(parents[1])) {
+            for (i in parents[1]) {
+                if (parents[1].hasOwnProperty(i)) {
+                    polyhedron.vertices[i] = parents[1][i];
+                }
+            }
         }
+        polyhedron.faces = parents[2];
     }
 
     attr_polyhedron = Type.copyAttributes(attributes, board.options, "polyhedron3d");
@@ -249,6 +260,10 @@ JXG.createPolyhedron3D = function (board, parents, attributes) {
     for (i = 0; i < le; i++) {
         el.inherits.push(el.faces[i]);
         el.addChild(el.faces[i]);
+    }
+    if (base !== null) {
+        el.addTransform(base, transform);
+        el.addParents(base);
     }
     view.board.unsuspendUpdate();
 
