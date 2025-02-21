@@ -419,8 +419,8 @@ JXG.extend(
                     this.matrix[3][0] = this.evalParam(2);
                 };
             } else if (type === 'scale') {
-                if (params.length !== 3) {
-                    throw new Error("JSXGraph: 3D scale transformation needs 3 parameters.");
+                if (params.length !== 3 && params.length !== 4) {
+                    throw new Error("JSXGraph: 3D scale transformation needs either 3 or 4 parameters.");
                 }
                 this.evalParam = Type.createEvalFunction(board, params, 3);
                 this.update = function () {
@@ -480,13 +480,12 @@ JXG.extend(
                     this.evalParam = Type.createEvalFunction(board, params, 2);
                 }
                 this.update = function () {
-                    var a = this.evalParam(0),
-                        n = this.evalParam(1), // length 3
+                    var a = this.evalParam(0), // angle
+                        n = this.evalParam(1), // normal
                         co = Math.cos(a),
                         si = Math.sin(a),
                         n1, n2, n3,
                         nrm = Mat.norm(n);
-
 
                     if (n.length === 3) {
                         n1 = n[0] / nrm;
