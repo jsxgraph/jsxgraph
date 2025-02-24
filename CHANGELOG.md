@@ -9,8 +9,8 @@ New features
 - ARIA attributes for every element (SVG only)
 - CSS classes for every element (SVG only). This allows the application of SVG filters
 - Depth ordering of 3D elements: Generalize font/back detection of 3D points to other elements
-- 3D transformations for point3d, line3d, plane3d, curve3d, surface3d, polyhedron3d. Missing are: circle3d, polygon3d, text3d, - `plane3d`: enable construction by three points
-ticks3d
+- 3D transformations for point3d, line3d, plane3d, curve3d, surface3d, polyhedron3d. Still missing are: circle3d, polygon3d, text3d, ticks3d
+- `plane3d`: enable construction by three points
 - Shader for polyhedron3d
 - 2D transformations: new type `matrix`
 
