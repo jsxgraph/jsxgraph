@@ -7,7 +7,7 @@ New features
 - Attribute functions support the targeted geometry element as parameter
 - New element `polyhedron3d`
 - ARIA attributes for every element (SVG only)
-- CSS classes for every element (SVG only). Enables the use of SVG filters
+- CSS classes for every element (SVG only). This allows the application of SVG filters
 - Depth ordering of 3D elements: Generalize font/back detection of 3D points to other elements
 - 3D transformations for point3d, line3d, plane3d, curve3d, surface3d, polyhedron3d. Missing are: circle3d, polygon3d, text3d, - `plane3d`: enable construction by three points
 ticks3d
@@ -20,14 +20,14 @@ Improvements
 - API docs
 - Massive speed improvements when changing the 3D view
 - Refactor 3D elements. Among other things: use of homogeneous coordinates internally everywhere.
-- Groups: allow texts and images as members
-- Keyboard navigation, also for 3D views
-- JessieCode: enable numbers in scientific notation
 - new math methods: `matMatAdd`, `matNumberMult`, `vecMatMult`, `trace` of a matrix
+- Keyboard navigation, also for 3D views
 - Improved convex hull algorithm
+- Groups: allow texts and images as members
+- JessieCode: enable numbers in scientific notation
 - Enable glider on `sphere3d` elements
 - `plane3d`: allow `line3d` as defining element
-- Improve: dragging of 3D points
+- Improved dragging of 3D points
 - Adapt 3D info box style
 
 Bug fixes
@@ -38,10 +38,10 @@ Bug fixes
 - Remove singularity in sphere central projection
 - Dragging of labels
 - Screenshot of elements with gradient colors
-- User defined id's of 3D elements
-- Canvas: use linejoin:round for curves
+- User defined ids of 3D elements
+- Canvas: use `linejoin:round` for curves
 - Radial gradient of points in canvas
-- Update of integral element
+- Update problems of integral elements
 - Angle for parallel lines
 - Slider handling of snapWidth
 - Handling of maxBoundingBox
