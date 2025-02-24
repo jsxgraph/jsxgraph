@@ -199,13 +199,19 @@ JXG.extend(
          * ( 0  b  1)   ( y )
          * </pre>
          *
-         * <p>Generic transformation:
+         * <p>Generic transformation (9 parameters):
          * <pre>
          * ( a  b  c )   ( z )
          * ( d  e  f ) * ( x )
          * ( g  h  i )   ( y )
          * </pre>
          *
+         * <p>Matrix:
+         * <pre>
+         * (         )   ( z )
+         * (    M    ) * ( x )
+         * (         )   ( y )
+         * </pre>
          */
         setMatrix: function (board, type, params) {
             var i;
@@ -396,6 +402,74 @@ JXG.extend(
             // }
         },
 
+        /**
+         * Set the 3D transformation matrix for different types of standard transforms.
+         * @param {JXG.Board} board
+         * @param {String} type   Transformation type, possible values are
+         *                        'translate', 'scale', 'rotate',
+         *                        'rotateX', 'rotateY', 'rotateZ',
+         *                        'shear', 'generic'.
+         * @param {Array} params Parameters for the various transformation types.
+         *
+         * <p>A transformation with a generic matrix looks like:
+         * <pre>
+         * ( a  b  c  d)   ( w )
+         * ( e  f  g  h) * ( x )
+         * ( i  j  k  l)   ( y )
+         * ( m  n  o  p)   ( z )
+         * </pre>
+         *
+         * The transformation matrix then looks like:
+         * <p>
+         * Translation matrix:
+         * <pre>
+         * ( 1  0  0  0)   ( w )
+         * ( a  1  0  0) * ( x )
+         * ( b  0  1  0)   ( y )
+         * ( c  0  0  1)   ( z )
+         * </pre>
+         *
+         * <p>
+         * Scale matrix:
+         * <pre>
+         * ( 1  0  0  0)   ( w )
+         * ( 0  a  0  0) * ( x )
+         * ( 0  0  b  0)   ( y )
+         * ( 0  0  0  c)   ( z )
+         * </pre>
+         *
+         * <p>
+         * rotateX: a rotation matrix with angle a (in Radians)
+         * <pre>
+         * ( 1    0        0             )   ( z )
+         * ( 0    1        0         0   ) * ( x )
+         * ( 0    0      cos(a)   -sin(a)) * ( x )
+         * ( 0    0      sin(a)   cos(a) )   ( y )
+         * </pre>
+         *
+         * <p>
+         * rotateY: a rotation matrix with angle a (in Radians)
+         * <pre>
+         * ( 1      0       0           )   ( z )
+         * ( 0    cos(a)    0    -sin(a)) * ( x )
+         * ( 0      0       1       0   ) * ( x )
+         * ( 0    sin(a)    0    cos(a) )   ( y )
+         * </pre>
+         *
+         * <p>
+         * rotateZ: a rotation matrix with angle a (in Radians)
+         * <pre>
+         * ( 1      0                0  )   ( z )
+         * ( 0    cos(a)   -sin(a)   0  ) * ( x )
+         * ( 0    sin(a)   cos(a)    0  )   ( y )
+         * ( 0      0         0      1  ) * ( x )
+         * </pre>
+         *
+         * <p>
+         * rotate: a rotation matrix with angle a (in Radians)
+         * and normal <i>n</i>.
+         *
+         */
         setMatrix3D: function(view, type, params) {
             var i,
                 board = view.board;
@@ -1135,7 +1209,49 @@ JXG.registerElement('transform', JXG.createTransform);
  * @type JXG.Transformation
  * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
  * @param {number|function|JXG.GeometryElement3D} parameters The parameters depend on the transformation type, supplied as attribute 'type'.
- */
+ *  Possible transformation types are
+ * <ul>
+ * <li> 'translate'
+ * <li> 'scale'
+ * <li> 'rotate'
+ * <li> 'rotateX'
+ * <li> 'rotateY'
+ * <li> 'rotateZ'
+ * </ul>
+ * <p>Valid parameters for these types are:
+ * <dl>
+ * <dt><b><tt>type:"translate"</tt></b></dt><dd><b>x, y, z</b> Translation vector (three numbers or functions).
+ * The transformation matrix for x = a, y = b, and z = c has the form:
+ * <pre>
+ * ( 1  0  0  0)   ( w )
+ * ( a  1  0  0) * ( x )
+ * ( b  0  1  0)   ( y )
+ * ( c  0  0  c)   ( z )
+ * </pre>
+ * </dd>
+ * <dt><b><tt>type:"scale"</tt></b></dt><dd><b>scale_x, scale_y, scale_z</b> Scale vector (three numbers or functions).
+ * The transformation matrix for scale_x = a, scale_y = b, scale_z = c has the form:
+ * <pre>
+ * ( 1  0  0  0)   ( w )
+ * ( 0  a  0  0) * ( x )
+ * ( 0  0  b  0)   ( y )
+ * ( 0  0  0  c)   ( z )
+ * </pre>
+ * </dd>
+ * <dt><b><tt>type:"rotate"</tt></b></dt><dd><b>a, n</b> angle (in radians), normal.
+ * Rotate with angle a around the normal vector n.
+ * </dd>
+ * <dt><b><tt>type:"rotateX"</tt></b></dt><dd><b>a</b> angle (in radians).
+ * Rotate with angle a around the normal vector (1, 0, 0).
+ * </dd>
+ * <dt><b><tt>type:"rotateY"</tt></b></dt><dd><b>a</b> angle (in radians).
+ * Rotate with angle a around the normal vector (0, 1, 0).
+ * </dd>
+ * <dt><b><tt>type:"rotateZ"</tt></b></dt><dd><b>a</b> angle (in radians).
+ * Rotate with angle a around the normal vector (0, 0, 1).
+ * </dd>
+ * </dl>
+*/
 JXG.createTransform3D = function (board, parents, attributes) {
     return new JXG.Transformation(board, attributes.type, parents, true);
 };
