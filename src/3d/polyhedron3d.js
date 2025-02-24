@@ -49,86 +49,47 @@ JXG.Polyhedron3D = function (view, polyhedron, faces, attributes) {
 
     this.elType = 'polyhedron3d';
 
+    /**
+     * List of Face3D objects.
+     * @name Polyhedron3D#faces
+     * @type Array
+     */
     this.faces = faces;
 
+    /**
+     * Number of faces
+     * @name Polyhedron3D#numberFaces
+     * @type Number
+     */
     this.numberFaces = faces.length;
 
-    // this.def contains the defining data of the polyhedron:
-    // vertices and a list of vertices for each face.
+    /**
+     * Contains the defining data of the polyhedron:
+     * Definitions of vertices and a list of vertices for each face. This is pretty much the input given
+     * in the construction of the polyhedron plus internal data.
+     * @name Polyhedron3D#def
+     * @type Object
+     * @example
+     *  polyhedron = {
+     *      view: view,
+     *      vertices: {},
+     *      coords: {},
+     *      coords2D: {},
+     *      zIndex: {},
+     *      faces: []
+     *  };
+     */
     this.def = polyhedron;
 
     // Simultaneous methods for all faces
     genericMethods = [
-        /**
-         * Invokes setAttribute for every stored element with a setAttribute method and hands over the given arguments.
-         * See {@link JXG.GeometryElement#setAttribute} for further description, valid parameters and return values.
-         * @name setAttribute
-         * @memberOf JXG.Composition.prototype
-         * @function
-         */
         "setAttribute",
-
-        /**
-         * Invokes setParents for every stored element with a setParents method and hands over the given arguments.
-         * See {@link JXG.GeometryElement#setParents} for further description, valid parameters and return values.
-         * @name setParents
-         * @memberOf JXG.Composition.prototype
-         * @function
-         */
         "setParents",
-
-        /**
-         * Invokes prepareUpdate for every stored element with a prepareUpdate method and hands over the given arguments.
-         * See {@link JXG.GeometryElement#prepareUpdate} for further description, valid parameters and return values.
-         * @name prepareUpdate
-         * @memberOf JXG.Composition.prototype
-         * @function
-         */
         "prepareUpdate",
-
-        /**
-         * Invokes updateRenderer for every stored element with a updateRenderer method and hands over the given arguments.
-         * See {@link JXG.GeometryElement#updateRenderer} for further description, valid parameters and return values.
-         * @name updateRenderer
-         * @memberOf JXG.Composition.prototype
-         * @function
-         */
         "updateRenderer",
-
-        /**
-         * Invokes update for every stored element with a update method and hands over the given arguments.
-         * See {@link JXG.GeometryElement#update} for further description, valid parameters and return values.
-         * @name update
-         * @memberOf JXG.Composition.prototype
-         * @function
-         */
         "update",
-
-        /**
-         * Invokes fullUpdate for every stored element with a fullUpdate method and hands over the given arguments.
-         * See {@link JXG.GeometryElement#fullUpdate} for further description, valid parameters and return values.
-         * @name fullUpdate
-         * @memberOf JXG.Composition.prototype
-         * @function
-         */
         "fullUpdate",
-
-        /**
-         * Invokes highlight for every stored element with a highlight method and hands over the given arguments.
-         * See {@link JXG.GeometryElement#highlight} for further description, valid parameters and return values.
-         * @name highlight
-         * @memberOf JXG.Composition.prototype
-         * @function
-         */
         "highlight",
-
-        /**
-         * Invokes noHighlight for every stored element with a noHighlight method and hands over the given arguments.
-         * See {@link JXG.GeometryElement#noHighlight} for further description, valid parameters and return values.
-         * @name noHighlight
-         * @memberOf JXG.Composition.prototype
-         * @function
-         */
         "noHighlight"
     ];
 
@@ -187,6 +148,436 @@ JXG.extend(
  * @type Object
  * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
  * @param {} TODO
+ *
+ * @example
+ * var box = [-4, 4];
+ * var view = board.create(
+ *     'view3d',
+ *     [[-5, -3], [8, 8],
+ *     [box, box, box]],
+ *     {
+ *         projection: 'parallel',
+ *         trackball: { enabled: false },
+ *         depthOrder: {
+ *             enabled: true
+ *         },
+ *         xPlaneRear: { visible: false },
+ *         yPlaneRear: { visible: false },
+ *         zPlaneRear: { fillOpacity: 0.2 }
+ *     }
+ * );
+ * var cube = view.create('polyhedron3d', [
+ * [
+ *     [-3, -3, -3],
+ *     [3, -3, -3],
+ *     [3, 3, -3],
+ *     [-3, 3, -3],
+ *
+ *     [-3, -3, 3],
+ *     [3, -3, 3],
+ *     [3, 3, 3],
+ *     [-3, 3, 3]
+ * ],
+ * [
+ *     [0, 1, 2, 3],
+ *     [0, 1, 5, 4],
+ *     [[1, 2, 6, 5], { fillColor: 'black', fillOpacity: 0.5, strokeWidth: 5 }],
+ *     [2, 3, 7, 6],
+ *     [3, 0, 4, 7],
+ *     [4, 5, 6, 7]
+ * ]
+ * ], {
+ * fillColorArray: ['blue', 'red', 'yellow']
+ * });
+ *
+ * </pre><div id="JXG2ab3325b-4171-4a00-9896-a1b886969e18" class="jxgbox" style="width: 300px; height: 300px;"></div>
+ * <script type="text/javascript">
+ *     (function() {
+ *         var board = JXG.JSXGraph.initBoard('JXG2ab3325b-4171-4a00-9896-a1b886969e18',
+ *             {boundingbox: [-8, 8, 8,-8], axis: false, showcopyright: false, shownavigation: false});
+ *     var box = [-4, 4];
+ *     var view = board.create(
+ *         'view3d',
+ *         [[-5, -3], [8, 8],
+ *         [box, box, box]],
+ *         {
+ *             projection: 'parallel',
+ *             trackball: { enabled: false },
+ *             depthOrder: {
+ *                 enabled: true
+ *             },
+ *             xPlaneRear: { visible: false },
+ *             yPlaneRear: { visible: false },
+ *             zPlaneRear: { fillOpacity: 0.2 }
+ *         }
+ *     );
+ *     var cube = view.create('polyhedron3d', [
+ *     [
+ *         [-3, -3, -3],
+ *         [3, -3, -3],
+ *         [3, 3, -3],
+ *         [-3, 3, -3],
+ *
+ *         [-3, -3, 3],
+ *         [3, -3, 3],
+ *         [3, 3, 3],
+ *         [-3, 3, 3]
+ *     ],
+ *     [
+ *         [0, 1, 2, 3],
+ *         [0, 1, 5, 4],
+ *         [[1, 2, 6, 5], { fillColor: 'black', fillOpacity: 0.5, strokeWidth: 5 }],
+ *         [2, 3, 7, 6],
+ *         [3, 0, 4, 7],
+ *         [4, 5, 6, 7]
+ *     ]
+ *     ], {
+ *     fillColorArray: ['blue', 'red', 'yellow']
+ *     });
+ *
+ *     })();
+ *
+ * </script><pre>
+ *
+ * @example
+ * var box = [-4, 4];
+ * var view = board.create(
+ *     'view3d',
+ *     [[-5, -3], [8, 8],
+ *     [box, box, box]],
+ *     {
+ *         projection: 'parallel',
+ *         trackball: { enabled: false },
+ *         depthOrder: {
+ *             enabled: true
+ *         },
+ *         xPlaneRear: { visible: false },
+ *         yPlaneRear: { visible: false },
+ *         zPlaneRear: { fillOpacity: 0.2 }
+ *     }
+ * );
+ * var aa = view.create('point3d', [-3, -3, -3], { name: 'A', layer: 12});
+ * var bb = view.create('point3d', [() => aa.X(), () => aa.Y(), 3], { name: 'B', fixed: true, layer: 12});
+ * var cube = view.create('polyhedron3d', [
+ *     {
+ *         a: 'A',
+ *         b: [3, -3, -3],
+ *         c: [3, 3, -3],
+ *         d: [-3, 3, -3],
+ *
+ *         e: bb,
+ *         f: [3, -3, 3],
+ *         g: [3, 3, 3],
+ *         h: [-3, 3, 3]
+ *     },
+ *     [
+ *         ['a', 'b', 'c', 'd'],
+ *         ['a', 'b', 'f', 'e'],
+ *         ['b', 'c', 'g', 'f'],
+ *         ['c', 'd', 'h', 'g'],
+ *         ['d', 'a', 'e', 'h'],
+ *         ['e', 'f', 'g', 'h'],
+ *
+ *         ['a', 'g'], // Edge
+ *         ['f']       // Vertex
+ *     ]
+ * ], {
+ *     fillColorArray: ['blue', 'red', 'yellow'],
+ *     fillOpacity: 0.4,
+ *     layer: 12
+ * });
+ * cube.faces[6].setAttribute({ strokeWidth: 5 });
+ * cube.faces[7].setAttribute({ strokeWidth: 10 });
+ *
+ * </pre><div id="JXG1e862f44-3e38-424b-98d5-f972338a8b7f" class="jxgbox" style="width: 300px; height: 300px;"></div>
+ * <script type="text/javascript">
+ *     (function() {
+ *         var board = JXG.JSXGraph.initBoard('JXG1e862f44-3e38-424b-98d5-f972338a8b7f',
+ *             {boundingbox: [-8, 8, 8,-8], axis: false, showcopyright: false, shownavigation: false});
+ *     var box = [-4, 4];
+ *     var view = board.create(
+ *         'view3d',
+ *         [[-5, -3], [8, 8],
+ *         [box, box, box]],
+ *         {
+ *             projection: 'parallel',
+ *             trackball: { enabled: false },
+ *             depthOrder: {
+ *                 enabled: true
+ *             },
+ *             xPlaneRear: { visible: false },
+ *             yPlaneRear: { visible: false },
+ *             zPlaneRear: { fillOpacity: 0.2 }
+ *         }
+ *     );
+ *     var aa = view.create('point3d', [-3, -3, -3], { name: 'A', layer: 12});
+ *     var bb = view.create('point3d', [() => aa.X(), () => aa.Y(), 3], { name: 'B', fixed: true, layer: 12});
+ *     var cube = view.create('polyhedron3d', [
+ *         {
+ *             a: 'A',
+ *             b: [3, -3, -3],
+ *             c: [3, 3, -3],
+ *             d: [-3, 3, -3],
+ *
+ *             e: bb,
+ *             f: [3, -3, 3],
+ *             g: [3, 3, 3],
+ *             h: [-3, 3, 3]
+ *         },
+ *         [
+ *             ['a', 'b', 'c', 'd'],
+ *             ['a', 'b', 'f', 'e'],
+ *             ['b', 'c', 'g', 'f'],
+ *             ['c', 'd', 'h', 'g'],
+ *             ['d', 'a', 'e', 'h'],
+ *             ['e', 'f', 'g', 'h'],
+ *
+ *             ['a', 'g'], // Edge
+ *             ['f']       // Vertex
+ *         ]
+ *     ], {
+ *         fillColorArray: ['blue', 'red', 'yellow'],
+ *         fillOpacity: 0.4,
+ *         layer: 12
+ *     });
+ *     cube.faces[6].setAttribute({ strokeWidth: 5 });
+ *     cube.faces[7].setAttribute({ strokeWidth: 10 });
+ *
+ *     })();
+ *
+ * </script><pre>
+ *
+ * @example
+ * var box = [-4, 4];
+ * var view = board.create(
+ *     'view3d',
+ *     [[-5, -3], [8, 8],
+ *     [box, box, box]],
+ *     {
+ *         projection: 'parallel',
+ *         trackball: { enabled: false },
+ *         depthOrder: {
+ *             enabled: true
+ *         },
+ *         xPlaneRear: { visible: false },
+ *         yPlaneRear: { visible: false },
+ *         zPlaneRear: { fillOpacity: 0.2 }
+ *     }
+ * );
+ * var s = board.create('slider', [[-4, -6], [4, -6], [0, 2, 4]], { name: 's' });
+ * var cube = view.create('polyhedron3d', [
+ *     [
+ *         () => { let f = s.Value(); return [-f, -f, -f]; },
+ *         () => { let f = s.Value(); return [f, -f, -f]; },
+ *         () => { let f = s.Value(); return [f, f, -f]; },
+ *         () => { let f = s.Value(); return [-f, f, -f]; },
+ *
+ *         () => { let f = s.Value(); return [-f, -f, f]; },
+ *         () => { let f = s.Value(); return [f, -f, f]; },
+ *         () => { let f = s.Value(); return [f, f, f]; },
+ *         // () => { let f = s.Value(); return [-f, f, f]; }
+ *         [ () => -s.Value(),  () => s.Value(), () => s.Value() ]
+ *     ],
+ *     [
+ *         [0, 1, 2, 3],
+ *         [0, 1, 5, 4],
+ *         [1, 2, 6, 5],
+ *         [2, 3, 7, 6],
+ *         [3, 0, 4, 7],
+ *         [4, 5, 6, 7],
+ *     ]
+ * ], {
+ *     strokeWidth: 3,
+ *     fillOpacity: 0.6,
+ *     fillColorArray: ['blue', 'red', 'yellow'],
+ *     shader: {
+ *         enabled:false
+ *     }
+ * });
+ *
+ * </pre><div id="JXG6f27584b-b648-4743-a864-a6c559ead00e" class="jxgbox" style="width: 300px; height: 300px;"></div>
+ * <script type="text/javascript">
+ *     (function() {
+ *         var board = JXG.JSXGraph.initBoard('JXG6f27584b-b648-4743-a864-a6c559ead00e',
+ *             {boundingbox: [-8, 8, 8,-8], axis: false, showcopyright: false, shownavigation: false});
+ *     var box = [-4, 4];
+ *     var view = board.create(
+ *         'view3d',
+ *         [[-5, -3], [8, 8],
+ *         [box, box, box]],
+ *         {
+ *             projection: 'parallel',
+ *             trackball: { enabled: false },
+ *             depthOrder: {
+ *                 enabled: true
+ *             },
+ *             xPlaneRear: { visible: false },
+ *             yPlaneRear: { visible: false },
+ *             zPlaneRear: { fillOpacity: 0.2 }
+ *         }
+ *     );
+ *     var s = board.create('slider', [[-4, -6], [4, -6], [0, 2, 4]], { name: 's' });
+ *     var cube = view.create('polyhedron3d', [
+ *         [
+ *             () => { let f = s.Value(); return [-f, -f, -f]; },
+ *             () => { let f = s.Value(); return [f, -f, -f]; },
+ *             () => { let f = s.Value(); return [f, f, -f]; },
+ *             () => { let f = s.Value(); return [-f, f, -f]; },
+ *
+ *             () => { let f = s.Value(); return [-f, -f, f]; },
+ *             () => { let f = s.Value(); return [f, -f, f]; },
+ *             () => { let f = s.Value(); return [f, f, f]; },
+ *             // () => { let f = s.Value(); return [-f, f, f]; }
+ *             [ () => -s.Value(),  () => s.Value(), () => s.Value() ]
+ *         ],
+ *         [
+ *             [0, 1, 2, 3],
+ *             [0, 1, 5, 4],
+ *             [1, 2, 6, 5],
+ *             [2, 3, 7, 6],
+ *             [3, 0, 4, 7],
+ *             [4, 5, 6, 7],
+ *         ]
+ *     ], {
+ *         strokeWidth: 3,
+ *         fillOpacity: 0.6,
+ *         fillColorArray: ['blue', 'red', 'yellow'],
+ *         shader: {
+ *             enabled:false
+ *         }
+ *     });
+ *
+ *     })();
+ *
+ * </script><pre>
+ *
+ * @example
+ * var box = [-4, 4];
+ * var view = board.create(
+ *     'view3d',
+ *     [[-5, -3], [8, 8],
+ *     [box, box, box]],
+ *     {
+ *         projection: 'parallel',
+ *         trackball: { enabled: false },
+ *         depthOrder: {
+ *             enabled: true
+ *         },
+ *         xPlaneRear: { visible: false },
+ *         yPlaneRear: { visible: false },
+ *         zPlaneRear: { fillOpacity: 0.2 }
+ *     }
+ * );
+ * let rho = 1.6180339887;
+ * let vertexList = [
+ * [0, -1, -rho], [0, +1, -rho], [0, -1, rho], [0, +1, rho],
+ * [1, rho, 0], [-1, rho, 0], [1, -rho, 0], [-1, -rho, 0],
+ * [-rho, 0, 1], [-rho, 0, -1], [rho, 0, 1], [rho, 0, -1]
+ * ];
+ * let faceArray = [
+ * [4, 1, 11],
+ * [11, 1, 0],
+ * [6, 11, 0],
+ * [0, 1, 9],
+ * [11, 10, 4],
+ * [9, 1, 5],
+ * [8, 9, 5],
+ * [5, 3, 8],
+ * [6, 10, 11],
+ * [2, 3, 10],
+ * [2, 10, 6],
+ * [8, 3, 2],
+ * [3, 4, 10],
+ * [7, 8, 2],
+ * [9, 8, 7],
+ * [0, 9, 7],
+ * [4, 3, 5],
+ * [5, 1, 4],
+ * [0, 7, 6],
+ * [7, 2, 6]
+ * ];
+ * var ico = view.create('polyhedron3d', [vertexList, faceArray], {
+ * fillColorArray: [],
+ * fillOpacity: 1,
+ * strokeWidth: 0.1,
+ * layer: 12,
+ * shader: {
+ *     enabled: true,
+ *     type: 'angle',
+ *     hue: 60,
+ *     saturation: 90,
+ *     minlightness: 60,
+ *     maxLightness: 80
+ * }
+ * });
+ *
+ * </pre><div id="JXGfea93484-96e9-4eb5-9e45-bb53d612aead" class="jxgbox" style="width: 300px; height: 300px;"></div>
+ * <script type="text/javascript">
+ *     (function() {
+ *         var board = JXG.JSXGraph.initBoard('JXGfea93484-96e9-4eb5-9e45-bb53d612aead',
+ *             {boundingbox: [-8, 8, 8,-8], axis: false, showcopyright: false, shownavigation: false});
+ *     var box = [-4, 4];
+ *     var view = board.create(
+ *         'view3d',
+ *         [[-5, -3], [8, 8],
+ *         [box, box, box]],
+ *         {
+ *             projection: 'parallel',
+ *             trackball: { enabled: false },
+ *             depthOrder: {
+ *                 enabled: true
+ *             },
+ *             xPlaneRear: { visible: false },
+ *             yPlaneRear: { visible: false },
+ *             zPlaneRear: { fillOpacity: 0.2 }
+ *         }
+ *     );
+ *     let rho = 1.6180339887;
+ *     let vertexList = [
+ *     [0, -1, -rho], [0, +1, -rho], [0, -1, rho], [0, +1, rho],
+ *     [1, rho, 0], [-1, rho, 0], [1, -rho, 0], [-1, -rho, 0],
+ *     [-rho, 0, 1], [-rho, 0, -1], [rho, 0, 1], [rho, 0, -1]
+ *     ];
+ *     let faceArray = [
+ *     [4, 1, 11],
+ *     [11, 1, 0],
+ *     [6, 11, 0],
+ *     [0, 1, 9],
+ *     [11, 10, 4],
+ *     [9, 1, 5],
+ *     [8, 9, 5],
+ *     [5, 3, 8],
+ *     [6, 10, 11],
+ *     [2, 3, 10],
+ *     [2, 10, 6],
+ *     [8, 3, 2],
+ *     [3, 4, 10],
+ *     [7, 8, 2],
+ *     [9, 8, 7],
+ *     [0, 9, 7],
+ *     [4, 3, 5],
+ *     [5, 1, 4],
+ *     [0, 7, 6],
+ *     [7, 2, 6]
+ *     ];
+ *     var ico = view.create('polyhedron3d', [vertexList, faceArray], {
+ *     fillColorArray: [],
+ *     fillOpacity: 1,
+ *     strokeWidth: 0.1,
+ *     layer: 12,
+ *     shader: {
+ *         enabled: true,
+ *         type: 'angle',
+ *         hue: 60,
+ *         saturation: 90,
+ *         minlightness: 60,
+ *         maxLightness: 80
+ *     }
+ *     });
+ *
+ *     })();
+ *
+ * </script><pre>
  *
  */
 JXG.createPolyhedron3D = function (board, parents, attributes) {

@@ -447,11 +447,23 @@ JXG.extend(Options, {
         needsRegularUpdate: true,
 
         /**
-         * Lightning of faces
+         * Shading of faces. For this, the HSL color scheme is used.
+         * Two types are possible: either by 'angle' or by 'zIndex'.
+         * By default (i.e. type:'angle'), the angle between the camera axis and the normal of the
+         * face determines the lightness value of the HSL color. Otherwise, the
+         * zIndex of the face determines the lightness value of the HSL color.
          *
-         * @type Face3D
+         * @type Object
          * @name Face3D#shader
          * @see View3D#depthOrder
+         * @default <pre>{
+         *  enabled: false,
+         *  type: 'angle',   // 'angle', otherwise zIndex
+         *  hue: 60,         // yellow
+         *  saturation: 90,
+         *  minLightness: 30,
+         *  maxLightness: 90
+         * }</pre>
          *
          * @example
          *         var view = board.create(
@@ -517,7 +529,7 @@ JXG.extend(Options, {
          * <script type="text/javascript">
          *     (function() {
          *         var board = JXG.JSXGraph.initBoard('JXGbf32b040-affb-4e03-a05b-abfe953f614d',
-         *             {boundingbox: [-8, 8, 8,-8], axis: false, showcopyright: false, shownavigation: false
+         *             {boundingbox: [-8, 8, 8,-8], axis: false, showcopyright: false, shownavigation: false,
          *                pan: {enabled: false}, zoom: {enabled: false}});
          *             var view = board.create(
          *                 'view3d',
@@ -794,6 +806,14 @@ JXG.extend(Options, {
          * @visprop
          */
 
+        /**
+         * Color array to define fill colors of faces cyclically.
+         * Alternatively, the fill color can be defined for each face individually.
+         *
+         * @type Array
+         * @name Polyhedron3D#fillColorArray
+         * @default ['white', 'black']
+         */
         fillColorArray: ['white', 'black'],
 
         needsRegularUpdate: true

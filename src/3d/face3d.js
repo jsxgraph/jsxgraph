@@ -54,15 +54,47 @@ JXG.Face3D = function (view, polyhedron, faceNumber, attributes) {
 
     this.board.finalizeAdding(this);
 
+    /**
+     * Link to the defining data of the parent polyhedron3d.
+     * @name Face3D#polyhedron
+     * @type Object
+     * @see Polyhedron3D#def
+     */
     this.polyhedron = polyhedron;
-    this.faceNumber = faceNumber;
-    this.dataX = [];
-    this.dataY = [];
-    this.dataZ = [];
 
+    /**
+     * Index of the face in the list of faces of the polyhedron
+     * @name Face3D#faceNumber
+     * @type Number
+     */
+    this.faceNumber = faceNumber;
+
+    /**
+     * Normal vector for the face. Array of length 4.
+     * @name Face3D#normal
+     * @type array
+     */
     this.normal = [0, 0, 0, 0];
+
+    /**
+     * Hesse right hand side of the plane that contains the face.
+     * @name Face3D#d
+     * @type Number
+     */
     this.d = 0;
+
+    /**
+     * First basis vector of the face. Vector of length 4.
+     * @name Face3D#vec1
+     * @type Array
+     */
     this.vec1 = [0, 0, 0, 0];
+
+    /**
+     * Second basis vector of the face. Vector of length 4.
+     * @name Face3D#vec2
+     * @type Array
+     */
     this.vec2 = [0, 0, 0, 0];
 
     if (this.faceNumber === 0) {
@@ -82,6 +114,9 @@ JXG.extend(
 
         /**
          * Update the coordinates of all vertices of the polyhedron
+         * @function
+         * @name Face3D#updateCoords
+         * @returns {Face3D} reference to itself
          */
         updateCoords: function() {
             var i, j, le, p,
@@ -97,7 +132,6 @@ JXG.extend(
                     for (j = 0; j < le; j++) {
                         def.coords[i][j] = Type.evaluate(p[j]);
                     }
-                    // def.coords[i] = Type.evaluate(p);
                 } else {
                     p = def.view.select(p);
                     if (Type.isPoint3D(p)) {
@@ -114,6 +148,12 @@ JXG.extend(
             return this;
         },
 
+        /**
+         * Update the 2d coordinates of the face
+         * @function
+         * @name Face3D#updateDataArray2D
+         * @returns {Object} {X:[], Y:[]}
+         */
         updateDataArray2D: function () {
             var j, le,
                 c3d, c2d,
@@ -134,9 +174,6 @@ JXG.extend(
             // to the 2D curve.
             // If not done yet, project the 3D vertices of this face to 2D.
             le = face.length;
-            // this.dataX = [];
-            // this.dataY = [];
-            // this.dataZ = [];
             this.zIndex = 0.0;
             for (j = 0; j < le; j++) {
                 c2d = p.coords2D[face[j]];
@@ -150,12 +187,6 @@ JXG.extend(
                 }
                 x.push(c2d[1]);
                 y.push(c2d[2]);
-
-                // Necessary for centroid
-                // c3d = p.coords[face[j]];
-                // this.dataX.push(c3d[0]);
-                // this.dataY.push(c3d[1]);
-                // this.dataZ.push(c3d[2]);
 
                 this.zIndex += p.zIndex[face[j]];
             }
@@ -265,6 +296,15 @@ JXG.extend(
             return this;
         },
 
+        /**
+         * Determines the lightness of the face (in the HSL color scheme).
+         * <p>
+         * Sets the fillColor of the adjoint 2D curve.
+         * @name shader
+         * @memberOf Face3D
+         * @function
+         * @returns {Number} zIndex of the face
+         */
         shader: function() {
             var hue, sat, light, angle, hsl,
                 // bb = this.view.bbox3D,
@@ -296,26 +336,6 @@ JXG.extend(
                 this.element2D.visProp.fillcolor = hsl;
                 return this.zIndex;
             }
-        },
-
-        getCentroid: function () {
-            var i,
-                s_x = 0,
-                s_y = 0,
-                s_z = 0,
-                le = this.dataX.length;
-
-            if (le === 0) {
-                return [NaN, NaN, NaN];
-            }
-
-            for (i = 0; i < le; i++) {
-                s_x += this.dataX[i];
-                s_y += this.dataY[i];
-                s_z += this.dataZ[i];
-            }
-
-            return [s_x / le, s_y / le, s_z / le];
         }
     }
 );

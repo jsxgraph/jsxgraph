@@ -1798,6 +1798,7 @@ JXG.extend(
                     };
                 } else if (el2.elementClass === Const.OBJECT_CLASS_LINE) {
                     // path - line
+                    /** @ignore */
                     func = function () {
                         var first1 = el1.evalVisProp('straightfirst'),
                             last1 = el1.evalVisProp('straightlast'),
@@ -1921,6 +1922,7 @@ JXG.extend(
             el1 = input[0];
             el2 = input[1];
             board = el1.board;
+            /** @ignore */
             func = function () {
                 var i, k, c, d,
                     isClose,

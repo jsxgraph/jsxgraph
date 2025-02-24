@@ -34,10 +34,6 @@ import Const from '../base/constants.js';
 import Type from '../utils/type.js';
 import Mat from '../math/math.js';
 
-// -----------------------
-//  Lines
-// -----------------------
-
 /**
  * Constructor for 3D polygons.
  * @class Creates a new 3D polygon object. Do not use this constructor to create a 3D polygon. Use {@link JXG.View3D#create} with type {@link Polygon3D} instead.

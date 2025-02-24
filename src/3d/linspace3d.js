@@ -62,9 +62,11 @@ JXG.Line3D = function (view, point, direction, range, attributes) {
 
     /**
      * 3D point which - together with a direction - defines the line.
-     * @type JXG.Point3D
+     * @name point
+     * @memberOf Line3D
+     * @type Point3D
      *
-     * @see JXG.Line3D.direction
+     * @see Line3D#direction
      */
     this.point = point;
 
@@ -72,8 +74,9 @@ JXG.Line3D = function (view, point, direction, range, attributes) {
      * Direction which - together with a point - defines the line. Array of numbers or functions (of length 3) or function
      * returning array of length 3.
      *
+     * @name Line3D#direction
      * @type Array|Function
-     * @see JXG.Line3D.point
+     * @see Line3D.point
      */
     this.direction = direction;
 
@@ -82,6 +85,7 @@ JXG.Line3D = function (view, point, direction, range, attributes) {
      * and {@link range}.
      * The array has length 4, the first entry being 0.
      *
+     * @name Line3D#vec
      * @type {Array}
      */
     this.vec = [0, 0, 0, 0];
@@ -89,12 +93,15 @@ JXG.Line3D = function (view, point, direction, range, attributes) {
     /**
      * Range [r1, r2] of the line. r1, r2 can be numbers or functions.
      * The 3D line goes from (point + r1 * direction) to (point + r2 * direction)
+     * @name Line3D#range
      * @type Array
+     * @default [-Infinity, Infinity]
      */
     this.range = range || [-Infinity, Infinity];
 
     /**
      * Starting point of the 3D line
+     * @name Line3D#point1
      * @type JXG.Point3D
      * @private
      */
@@ -102,6 +109,7 @@ JXG.Line3D = function (view, point, direction, range, attributes) {
 
     /**
      * End point of the 3D line
+     * @name Line3D#point2
      * @type JXG.Point3D
      * @private
      */
@@ -121,10 +129,9 @@ JXG.extend(
     /** @lends JXG.Line3D.prototype */ {
 
         /**
-         * Update the array {@link JXG.Line3D#vec} containing the homogeneous coords of the spanning vector.
+         * Update the array {@link Line3D#vec} containing the homogeneous coords of the spanning vector.
          *
-         * @name updateCoords
-         * @memberOf Line3D
+         * @name Line3D#updateCoords
          * @function
          * @returns {Object} Reference to Line3D object
          * @private
@@ -157,6 +164,7 @@ JXG.extend(
         /**
          * Determine one end point of a 3D line from point, direction and range).
          *
+         * @name Line3D#getPointCoords
          * @param {Number|function} r Usually, one of the range borders.
          * @private
          * @returns {Array} Coordinates of length 4.
@@ -222,6 +230,8 @@ JXG.extend(
         /**
          * Set the 2D position of the defining points.
          *
+         * @name Line3D#setPosition2D
+         * @function
          * @param {JXG.Transformation} t projective 2D transformation
          * @private
          */
@@ -276,6 +286,12 @@ JXG.extend(
         //     return this.view.projectScreenToSegment(pScr, end0, end1);
         // },
 
+        /**
+         * Update the z-index of the line, i.e. the z-index of its midpoint.
+         * @name Line3D#updateZIndex
+         * @function
+         * @returns {Object} Reference to Line3D object
+         */
         updateZIndex: function() {
             var p1 = this.endpoints[0],
                 p2 = this.endpoints[1],
@@ -575,6 +591,10 @@ JXG.createLine3D = function (board, parents, attributes) {
             ['point1', 'point2']
         );
 
+        /**
+         * @class
+         * @ignore
+         */
         endpoints[0].F = function () {
             var r = 0;
             if (el.evalVisProp('straightfirst')) {
@@ -583,6 +603,10 @@ JXG.createLine3D = function (board, parents, attributes) {
             return el.getPointCoords(r);
         };
 
+        /**
+         * @class
+         * @ignore
+         */
         endpoints[1].F = function () {
             var r = 1;
             if (el.evalVisProp('straightlast')) {
@@ -760,10 +784,12 @@ JXG.Plane3D = function (view, point, dir1, range_u, dir2, range_v, attributes) {
     /**
      * 3D point which - together with two direction vectors - defines the plane.
      *
+     * @name point
+     * @memberOf Plane3D
      * @type JXG.Point3D
      *
-     * @see JXG.3D.direction1
-     * @see JXG.3D.direction2
+     * @see Plane3D#direction1
+     * @see Plane3D#direction2
      */
     this.point = point;
 
@@ -772,10 +798,11 @@ JXG.Plane3D = function (view, point, dir1, range_u, dir2, range_v, attributes) {
      * array of numbers or functions (either of length 3 or 4) or function returning array of length 3 or 4.
      * Homogeneous coordinates of directions have the form [0, x, y, z].
      *
+     * @name Plane3D#direction1
      * @type Array|Function
      *
-     * @see JXG.Plane3D.point
-     * @see JXG.Plane3D.direction2
+     * @see Plane3D.point
+     * @see Plane3D#direction2
      */
     this.direction1 = dir1;
 
@@ -785,22 +812,27 @@ JXG.Plane3D = function (view, point, dir1, range_u, dir2, range_v, attributes) {
      * Homogeneous coordinates of directions have the form [0, x, y, z].
      *
      * @type Array|Function
-     * @see JXG.Plane3D.point
-     * @see JXG.Plane3D.direction1
+     * @name Plane3D#direction2
+     * @see Plane3D.point
+     * @see Plane3D#direction1
      */
     this.direction2 = dir2;
 
     /**
      * Range [r1, r2] of {@link direction1}. The 3D line goes from (point + r1 * direction1) to (point + r2 * direction1)
-     * @type {Array} [-Infinity, Infinity]
+     * @name Plane3D#range_u
+     * @type {Array}
+     * @default [-Infinity, Infinity]
      * @default
      */
     this.range_u = range_u || [-Infinity, Infinity];
 
     /**
      * Range [r1, r2] of {@link direction2}. The 3D line goes from (point + r1 * direction2) to (point + r2 * direction2)
+     * @name Plane3D#range_v
      * @type {Array}
-     * @type {Array} [-Infinity, Infinity]
+     * @type {Array}
+     * @default [-Infinity, Infinity]
      */
     this.range_v = range_v || [-Infinity, Infinity];
 
@@ -808,46 +840,48 @@ JXG.Plane3D = function (view, point, dir1, range_u, dir2, range_v, attributes) {
      * Spanning vector 1 of the 3D plane. Contains the evaluated coordinates from {@link direction1} and {@link range1}.
      * and is of length 4, the first entry being 0, i.e. homogenous coordinates.
      *
+     * @name Plane3D#vec1
      * @type Array
      * @private
      *
-     * @see JXG.Plane3D.updateCoords
+     * @see Plane3D#updateCoords
      */
     this.vec1 = [0, 0, 0, 0];
 
     /**
-     * Spanning vector 2 of the 3D plane. Contains the evaluated coordinates from {@link direction2} and {@link range2}
+     * Spanning vector 2 of the 3D plane. Contains the evaluated coordinates from {@link Plane3D#direction2} and {@link Plane3D#range2}
      * and is of length 4, the first entry being 0, i.e. homogenous coordinates.
      *
+     * @name Plane3D#vec2
      * @type Array
      * @private
      *
-     * @see JXG.Plane3D.updateCoords
+     * @see Plane3D#updateCoords
      */
     this.vec2 = [0, 0, 0, 0];
 
     this.grid = null;
 
     /**
-         * Normal vector of the plane. Left hand side of the Hesse normal form.
-
-        * @type Array
-         * @private
-         *
-         * @see JXG.Plane3D.updateNormal
-         *
-         */
+     * Normal vector of the plane. Left hand side of the Hesse normal form.
+     * @name Plane3D#normal
+     * @type Array
+     * @private
+     *
+     * @see Plane3D.updateNormal
+     *
+     */
     this.normal = [0, 0, 0, 0];
 
     /**
-         * Right hand side of the Hesse normal form.
-
-        * @type Array
-         * @private
-         *
-         * @see JXG.Plane3D.updateNormal
-         *
-         */
+     * Right hand side of the Hesse normal form.
+     * @name Plane3D#d
+     * @type Array
+     * @private
+     *
+     * @see Plane3D.updateNormal
+     *
+     */
     this.d = 0;
 
     this.updateCoords();
@@ -867,6 +901,8 @@ JXG.extend(
         /**
          * Get coordinate array [x, y, z] of a point on the plane for parameters (u, v).
          *
+         * @name Plane3D#F
+         * @function
          * @param {Number} u
          * @param {Number} v
          * @returns Array of length 3.
@@ -893,6 +929,8 @@ JXG.extend(
         /**
          * Get x-coordinate of a point on the plane for parameters (u, v).
          *
+         * @name Plane3D#X
+         * @function
          * @param {Number} u
          * @param {Number} v
          * @returns Number
@@ -904,6 +942,8 @@ JXG.extend(
         /**
          * Get y-coordinate of a point on the plane for parameters (u, v).
          *
+         * @name Plane3D#Y
+         * @function
          * @param {Number} u
          * @param {Number} v
          * @returns Number
@@ -915,6 +955,8 @@ JXG.extend(
         /**
          * Get z-coordinate of a point on the plane for parameters (u, v).
          *
+         * @name Plane3D#Z
+         * @function
          * @param {Number} u
          * @param {Number} v
          * @returns Number
@@ -926,8 +968,7 @@ JXG.extend(
         /**
          * Update the arrays {@link JXG.Plane3D#vec1} and {@link JXG.Plane3D#vec1} containing the homogeneous coords of the spanning vectors.
          *
-         * @name updateCoords
-         * @memberOf Plane3D
+         * @name Plane3D#updateCoords
          * @function
          * @returns {Object} Reference to Plane3D object
          * @private
@@ -978,7 +1019,7 @@ JXG.extend(
          * Update the Hesse normal form of the plane, i.e. update normal vector and right hand side.
          * Updates also {@link vec1} and {@link vec2}.
          *
-         * @name JXG.Plane3D#updateNormal
+         * @name Plane3D#updateNormal
          * @function
          * @returns {Object} Reference to the Plane3D object
          * @private
@@ -1008,6 +1049,7 @@ JXG.extend(
             return this;
         },
 
+        // Already documented in element3d.js
         updateDataArray: function () {
             var s1, e1, s2, e2, c2d, l1, l2,
                 planes = ['xPlaneRear', 'yPlaneRear', 'zPlaneRear'], // Must be ordered x, y, z
@@ -1183,12 +1225,14 @@ JXG.extend(
             return { X: this.dataX, Y: this.dataY };
         },
 
+        // Already documented in element3d.js
         addTransform: function (el, transform) {
             this.addTransformGeneric(el, transform);
             this.point.addTransform(el.point, transform);
             return this;
         },
 
+        // Already documented in element3d.js
         updateTransform: function () {
             var c1, c2, i;
 
@@ -1215,6 +1259,7 @@ JXG.extend(
             return this;
         },
 
+        // Already documented in element3d.js
         update: function () {
             if (this.needsUpdate) {
                 this.updateCoords()
@@ -1223,6 +1268,7 @@ JXG.extend(
             return this;
         },
 
+        // Already documented in element3d.js
         updateRenderer: function () {
             this.needsUpdate = false;
             return this;

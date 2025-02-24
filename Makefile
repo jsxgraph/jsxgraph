@@ -111,7 +111,7 @@ beta: docs
 	cat COPYRIGHT $(BETA)/jsxgraphcore.js >$(BETA)/tmp.file; mv $(BETA)/tmp.file $(BETA)/jsxgraphcore.js
 	cat COPYRIGHT $(BETA)/jsxgraphcore.mjs >$(BETA)/tmp.file; mv $(BETA)/tmp.file $(BETA)/jsxgraphcore.mjs
 
-docs: core
+docs:
 	# Set up tmp dir
 	$(MKDIR) $(MKDIRFLAGS) $(TMP)
 	$(MKDIR) $(MKDIRFLAGS) $(OUTPUT)
@@ -134,12 +134,12 @@ docs: core
 	$(JSDOC2) $(JSDOC2FLAGS) $(FILELIST)
 
 	# Compress the result: zip -r tmp/docs.zip tmp/docs/
-	$(CD) $(TMP) && $(ZIP) $(ZIPFLAGS) docs.zip docs/
-	$(CP) $(TMP)/docs.zip $(OUTPUT)/docs.zip
-	$(RM) $(RMFLAGS) tmp
+	# $(CD) $(TMP) && $(ZIP) $(ZIPFLAGS) docs.zip docs/
+	# $(CP) $(TMP)/docs.zip $(OUTPUT)/docs.zip
+	# $(RM) $(RMFLAGS) tmp
 
 	# Test
-	$(CD) $(OUTPUT) && $(UNZIP) -o docs.zip
+	# $(CD) $(OUTPUT) && $(UNZIP) -o docs.zip
 
 # prettier:
 # 	$(PRETTIER) $(PRETTIERFLAGS) src
