@@ -411,7 +411,10 @@ JXG.extend(Options, {
 
     circle3d: {
 
-        point: { visible: false, name: "" }
+        layer: 12,
+        point: { visible: false, name: "" },
+        needsRegularUpdate: true
+
     },
 
     curve3d: {
@@ -419,10 +422,187 @@ JXG.extend(Options, {
          * @visprop
          */
 
+        layer: 12,
         highlight: false,
         tabindex: -1,
         strokeWidth: 1,
-        numberPointsHigh: 200
+        numberPointsHigh: 200,
+        needsRegularUpdate: true
+
+        /**#@-*/
+    },
+
+    face3d: {
+        /**#@+
+         * @visprop
+         */
+
+        transitionProperties: [],
+        layer: 12,
+        highlight: false,
+        tabindex: null,
+        strokeWidth: 1,
+        fillColor: JXG.palette.yellow,
+        fillOpacity: 0.4,
+        needsRegularUpdate: true,
+
+        /**
+         * Shading of faces. For this, the HSL color scheme is used.
+         * Two types are possible: either by 'angle' or by 'zIndex'.
+         * By default (i.e. type:'angle'), the angle between the camera axis and the normal of the
+         * face determines the lightness value of the HSL color. Otherwise, the
+         * zIndex of the face determines the lightness value of the HSL color.
+         *
+         * @type Object
+         * @name Face3D#shader
+         * @see View3D#depthOrder
+         * @default <pre>{
+         *  enabled: false,
+         *  type: 'angle',   // 'angle', otherwise zIndex
+         *  hue: 60,         // yellow
+         *  saturation: 90,
+         *  minLightness: 30,
+         *  maxLightness: 90
+         * }</pre>
+         *
+         * @example
+         *         var view = board.create(
+         *             'view3d',
+         *             [[-5, -3], [8, 8],
+         *             [[-3, 3], [-3, 3], [-3, 3]]],
+         *             {
+         *                 projection: 'central',
+         *                 trackball: { enabled: true },
+         *                 depthOrder: {
+         *                     enabled: true
+         *                 },
+         *                 xPlaneRear: { visible: false },
+         *                 yPlaneRear: { visible: false },
+         *                 zPlaneRear: { fillOpacity: 0.2, visible: true }
+         *             }
+         *         );
+         *
+         *         let rho = 1.6180339887;
+         *         let vertexList = [
+         *             [0, -1, -rho], [0, +1, -rho], [0, -1, rho], [0, +1, rho],
+         *             [1, rho, 0], [-1, rho, 0], [1, -rho, 0], [-1, -rho, 0],
+         *             [-rho, 0, 1], [-rho, 0, -1], [rho, 0, 1], [rho, 0, -1]
+         *         ];
+         *         let faceArray = [
+         *             [4, 1, 11],
+         *             [11, 1, 0],
+         *             [6, 11, 0],
+         *             [0, 1, 9],
+         *             [11, 10, 4],
+         *             [9, 1, 5],
+         *             [8, 9, 5],
+         *             [5, 3, 8],
+         *             [6, 10, 11],
+         *             [2, 3, 10],
+         *             [2, 10, 6],
+         *             [8, 3, 2],
+         *             [3, 4, 10],
+         *             [7, 8, 2],
+         *             [9, 8, 7],
+         *             [0, 9, 7],
+         *             [4, 3, 5],
+         *             [5, 1, 4],
+         *             [0, 7, 6],
+         *             [7, 2, 6]
+         *         ];
+         *         var ico = view.create('polyhedron3d', [vertexList, faceArray], {
+         *             fillColorArray: [],
+         *             fillOpacity: 1,
+         *             strokeWidth: 0.1,
+         *             layer: 12,
+         *             shader: {
+         *                 enabled: true,
+         *                 type: 'angle',
+         *                 hue: 0,
+         *                 saturation: 90,
+         *                 minlightness: 60,
+         *                 maxLightness: 80
+         *             }
+         *         });
+         *
+         * </pre><div id="JXGbf32b040-affb-4e03-a05b-abfe953f614d" class="jxgbox" style="width: 300px; height: 300px;"></div>
+         * <script type="text/javascript">
+         *     (function() {
+         *         var board = JXG.JSXGraph.initBoard('JXGbf32b040-affb-4e03-a05b-abfe953f614d',
+         *             {boundingbox: [-8, 8, 8,-8], axis: false, showcopyright: false, shownavigation: false,
+         *                pan: {enabled: false}, zoom: {enabled: false}});
+         *             var view = board.create(
+         *                 'view3d',
+         *                 [[-5, -3], [8, 8],
+         *                 [[-3, 3], [-3, 3], [-3, 3]]],
+         *                 {
+         *                     projection: 'central',
+         *                     trackball: { enabled: true },
+         *                     depthOrder: {
+         *                         enabled: true
+         *                     },
+         *                     xPlaneRear: { visible: false },
+         *                     yPlaneRear: { visible: false },
+         *                     zPlaneRear: { fillOpacity: 0.2, visible: true }
+         *                 }
+         *             );
+         *
+         *             let rho = 1.6180339887;
+         *             let vertexList = [
+         *                 [0, -1, -rho], [0, +1, -rho], [0, -1, rho], [0, +1, rho],
+         *                 [1, rho, 0], [-1, rho, 0], [1, -rho, 0], [-1, -rho, 0],
+         *                 [-rho, 0, 1], [-rho, 0, -1], [rho, 0, 1], [rho, 0, -1]
+         *             ];
+         *             let faceArray = [
+         *                 [4, 1, 11],
+         *                 [11, 1, 0],
+         *                 [6, 11, 0],
+         *                 [0, 1, 9],
+         *                 [11, 10, 4],
+         *                 [9, 1, 5],
+         *                 [8, 9, 5],
+         *                 [5, 3, 8],
+         *                 [6, 10, 11],
+         *                 [2, 3, 10],
+         *                 [2, 10, 6],
+         *                 [8, 3, 2],
+         *                 [3, 4, 10],
+         *                 [7, 8, 2],
+         *                 [9, 8, 7],
+         *                 [0, 9, 7],
+         *                 [4, 3, 5],
+         *                 [5, 1, 4],
+         *                 [0, 7, 6],
+         *                 [7, 2, 6]
+         *             ];
+         *             var ico = view.create('polyhedron3d', [vertexList, faceArray], {
+         *                 fillColorArray: [],
+         *                 fillOpacity: 1,
+         *                 strokeWidth: 0.1,
+         *                 layer: 12,
+         *                 shader: {
+         *                     enabled: true,
+         *                     type: 'angle',
+         *                     hue: 0,
+         *                     saturation: 90,
+         *                     minlightness: 60,
+         *                     maxLightness: 80
+         *                 }
+         *             });
+         *
+         *     })();
+         *
+         * </script><pre>
+         *
+         */
+        shader: {
+            enabled: false,
+            type: 'angle',   // 'angle', otherwise zIndex
+            hue: 60,         // yellow
+            saturation: 90,
+            minLightness: 30,
+            maxLightness: 90
+        }
 
         /**#@-*/
     },
@@ -433,16 +613,69 @@ JXG.extend(Options, {
     },
 
     line3d: {
+        /**#@+
+         * @visprop
+         */
+
+        layer: 12,
         strokeWidth: 1,
         strokeColor: "black",
         fixed: true,
         tabindex: null,
         gradient: "linear",
         gradientSecondColor: "#ffffff",
+        needsRegularUpdate: true,
 
+        /**
+         * Attributes of the defining point in case the line is defined by [point, vector, [range]]
+         * @type Point3D
+         * @name Line3D#point
+         * @default <pre>visible: false, name: ""</pre>
+         */
         point: { visible: false, name: "" }, // Used in cases of point/direction/range
+
+        /**
+         * Attributes of the first point in case the line is defined by [point, point].
+         * @type Point3D
+         * @name Line3D#point1
+         * @default <pre>visible: false, name: ""</pre>
+         */
         point1: { visible: false, name: "" }, // Used in point/point
-        point2: { visible: false, name: "" }
+
+        /**
+         * Attributes of the second point in case the line is defined by [point, point].
+         * @type Point3D
+         * @name Line3D#point2
+         * @default <pre>visible: false, name: ""</pre>
+         */
+        point2: { visible: false, name: "" },
+
+        /**
+         * If the 3D line is defined by two points and if this attribute is true,
+         * the 3D line stretches infinitely in direction of its first point.
+         * Otherwise it ends at point1.
+         *
+         * @name Line3D#straightFirst
+         * @see Line3D#straightLast
+         * @type Boolean
+         * @default false
+         */
+        straightFirst: false,
+
+
+        /**
+         * If the 3D line is defined by two points and if this attribute is true,
+         * the 3D line stretches infinitely in direction of its second point.
+         * Otherwise it ends at point2.
+         *
+         * @name Line3D#straightLast
+         * @see Line3D#straightFirst
+         * @type Boolean
+         * @default false
+         */
+        straightLast: false
+
+        /**#@-*/
     },
 
     mesh3d: {
@@ -450,11 +683,13 @@ JXG.extend(Options, {
          * @visprop
          */
 
+        layer: 12,
         strokeWidth: 1,
         strokeColor: "#9a9a9a",
         strokeOpacity: 0.6,
         highlight: false,
         tabindex: null,
+        needsRegularUpdate: true,
 
         visible: "inherit"
 
@@ -462,11 +697,17 @@ JXG.extend(Options, {
     },
 
     plane3d: {
+        /**#@+
+         * @visprop
+         */
+
+        layer: 12,
         strokeWidth: 0,
         strokeColor: "black",
         strokeOpacity: 1,
         highlight: false,
         tabindex: null,
+        needsRegularUpdate: true,
 
         gradient: "linear",
         gradientSecondColor: "#ffffff",
@@ -474,10 +715,65 @@ JXG.extend(Options, {
         fillColor: "#a7a7a7",
         fillOpacity: 0.6,
 
-        point: { visible: false, name: "", fixed: true }
+        /**
+         * Optional 3D mesh of a finite plane.
+         * It is not available if the plane is infinite (at initialization time) in any direction.
+         *
+         * @type Mesh3D
+         * @name Plane3D#mesh3d
+         * @default see {@link Mesh3D}
+         */
+        mesh3d: {
+        },
+
+        /**
+         * If the second parameter and the third parameter are given as arrays or functions and threePoints:true
+         * then the second and third parameter are interpreted as point coordinates and not as directions, i.e.
+         * the plane is defined by three points.
+         *
+         * @name Plane3D#threePoints
+         * @type Boolean
+         * @default false
+         */
+        threePoints: false,
+
+        /**
+         * Attributes of the defining point in case the plane is defined by [point, direction1, direction2, [range1, [range2]]].
+         * @type Point3D
+         * @name Plane3D#point
+         * @default <pre>visible: false, name: "", fixed: true</pre>
+         */
+        point: { visible: false, name: "", fixed: true },
+
+        /**
+         * Attributes of the first point in case the plane is defined by [point, point, point].
+         * @type Point3D
+         * @name Plane3D#point1
+         * @default <pre>visible: false, name: ""</pre>
+         */
+        point1: { visible: false, name: "" }, // Used in point/point/point
+
+        /**
+         * Attributes of the second point in case the plane is defined by [point, point, point].
+         * @type Point3D
+         * @name Plane3D#point2
+         * @default <pre>visible: false, name: ""</pre>
+         */
+        point2: { visible: false, name: "" }, // Used in point/point/point
+
+        /**
+         * Attributes of the third point in case the plane is defined by [point, point, point].
+         * @type Point3D
+         * @name Plane3D#point3
+         * @default <pre>visible: false, name: ""</pre>
+         */
+        point3: { visible: false, name: "" } // Used in point/point/point
+
+        /**#@-*/
     },
 
     point3d: {
+        layer: 13,
         infoboxDigits: "auto",
         strokeWidth: 0,
         gradient: "radial",
@@ -485,7 +781,8 @@ JXG.extend(Options, {
         fillColor: "yellow",
         highlightStrokeColor: "#555555",
         gradientFX: 0.7,
-        gradientFY: 0.3
+        gradientFY: 0.3,
+        needsRegularUpdate: true
     },
 
     polygon3d: {
@@ -493,21 +790,33 @@ JXG.extend(Options, {
          * @visprop
          */
 
+        layer: 12,
         highlight: false,
         tabindex: -1,
         strokeWidth: 1,
-        fillColor: 'none'
+        fillColor: 'none',
+        needsRegularUpdate: true
+
 
         /**#@-*/
     },
 
-    polytope3d: {
+    polyhedron3d: {
         /**#@+
          * @visprop
          */
 
-        fillColorArray: ['white', 'black']
-        // fillOpacityArray: [1]
+        /**
+         * Color array to define fill colors of faces cyclically.
+         * Alternatively, the fill color can be defined for each face individually.
+         *
+         * @type Array
+         * @name Polyhedron3D#fillColorArray
+         * @default ['white', 'black']
+         */
+        fillColorArray: ['white', 'black'],
+
+        needsRegularUpdate: true
 
         /**#@-*/
     },
@@ -517,6 +826,7 @@ JXG.extend(Options, {
          * @visprop
          */
 
+        layer: 12,
         highlight: false,
 
         strokeWidth: 1,
@@ -526,7 +836,8 @@ JXG.extend(Options, {
         gradientSecondColor: '#00ff80',
         gradientFX: 0.7,
         gradientFY: 0.3,
-        fillOpacity: 0.4
+        fillOpacity: 0.4,
+        needsRegularUpdate: true
 
         /**#@-*/
     },
@@ -536,6 +847,7 @@ JXG.extend(Options, {
          * @visprop
          */
 
+        layer: 12,
         highlight: false,
         tabindex: -1,
         strokeWidth: 1,
@@ -552,7 +864,9 @@ JXG.extend(Options, {
          * @type Number
          * @name ParametricSurface3D#stepsV
          */
-        stepsV: 30
+        stepsV: 30,
+
+        needsRegularUpdate: true
 
         /**#@-*/
     },
@@ -562,7 +876,8 @@ JXG.extend(Options, {
          * @visprop
          */
 
-        withLabel: false
+        withLabel: false,
+        needsRegularUpdate: true
 
         /**#@-*/
     },
@@ -579,6 +894,7 @@ JXG.extend(Options, {
         minorTicks: 0,
         tickEndings: [0, 1],
         drawLabels: true,
+        needsRegularUpdate: true,
 
         label: {
             visible: true,
@@ -620,7 +936,8 @@ JXG.extend(Options, {
             enabled: true,
             size: 5,
             angle: Math.PI * 0.125
-        }
+        },
+        needsRegularUpdate: true
 
         /**#@-*/
     },
@@ -633,13 +950,29 @@ JXG.extend(Options, {
         needsRegularUpdate: true,
 
         /**
-         * When this option is enabled, points closer to the screen are drawn
-         * over points further from the screen within each layer.
+         * When this attribute is enabled, elements closer to the screen are drawn
+         * over elements further from the screen within the 3D layer. This affects
+         * all elements which are in one of the layer specified in the sub-attribute 'layers'.
+         * <p>
+         * For each layer this depth ordering is done independently.
+         * Sub-attributes:
+         *      <ul>
+         *          <li><tt>enabled</tt>: false/true
+         *          <li><tt>layers</tt>: [12, 13]
+         *      </ul>
          *
-         * @name View3D#depthOrderPoints
-         * @default false
+         * @name View3D#depthOrder
+         * @type Object
+         * @default <pre>{
+         *   enabled: false,
+         *   layers: [12, 13]
+         * }
+         * </pre>
          */
-        depthOrderPoints: false,
+        depthOrder: {
+            enabled: false,
+            layers: [12, 13]
+        },
 
         /**
          * Choose the projection type to be used: `parallel` or `central`.
@@ -652,6 +985,57 @@ JXG.extend(Options, {
          * @name View3D#projection
          * @type String
          * @default 'parallel'
+         * @example
+         *         var bound = [-5, 5];
+         *         var view = board.create('view3d',
+         *             [[-6, -3], [8, 8],
+         *             [bound, bound, bound]],
+         *             {
+         *                 projection: 'parallel'
+         *             });
+         *
+         * </pre><div id="JXG80d81b13-c604-4841-bdf6-62996440088a" class="jxgbox" style="width: 300px; height: 300px;"></div>
+         * <script type="text/javascript">
+         *     (function() {
+         *         var board = JXG.JSXGraph.initBoard('JXG80d81b13-c604-4841-bdf6-62996440088a',
+         *             {boundingbox: [-8, 8, 8,-8], axis: false, showcopyright: false, shownavigation: false});
+         *             var bound = [-5, 5];
+         *             var view = board.create('view3d',
+         *                 [[-6, -3], [8, 8],
+         *                 [bound, bound, bound]],
+         *                 {
+         *                     projection: 'parallel'
+         *                 });
+         *
+         *     })();
+         *
+         * </script><pre>
+         *
+         * @example
+         *         var bound = [-5, 5];
+         *         var view = board.create('view3d',
+         *             [[-6, -3], [8, 8],
+         *             [bound, bound, bound]],
+         *             {
+         *                 projection: 'central'
+         *             });
+         *
+         * </pre><div id="JXGdb7b7c99-631c-41d0-99bf-c0a8d0138218" class="jxgbox" style="width: 300px; height: 300px;"></div>
+         * <script type="text/javascript">
+         *     (function() {
+         *         var board = JXG.JSXGraph.initBoard('JXGdb7b7c99-631c-41d0-99bf-c0a8d0138218',
+         *             {boundingbox: [-8, 8, 8,-8], axis: false, showcopyright: false, shownavigation: false});
+         *             var bound = [-5, 5];
+         *             var view = board.create('view3d',
+         *                 [[-6, -3], [8, 8],
+         *                 [bound, bound, bound]],
+         *                 {
+         *                     projection: 'central'
+         *                 });
+         *     })();
+         *
+         * </script><pre>
+         *
          */
         projection: 'parallel',
 
@@ -698,6 +1082,7 @@ JXG.extend(Options, {
          *          <li><tt>max</tt>: Maximum value.
          *          <li><tt>start</tt>: Start value.
          *      </ul>
+         *      'min' and 'max' are used only if trackball is not enabled.
          * </ul>
          *
          * @name View3D#az
@@ -724,7 +1109,7 @@ JXG.extend(Options, {
          *         {
          *             projection: 'parallel',
          *             az: {
-         *                 slider: {visible: true}
+         *                 slider: {visible: true, start: 0.75 * Math.PI}
          *             }
          *         });
          *
@@ -740,7 +1125,7 @@ JXG.extend(Options, {
          *             {
          *                 projection: 'parallel',
          *                 az: {
-         *                     slider: {visible: true}
+         *                     slider: {visible: true, start: 0.75 * Math.PI}
          *                 }
          *             });
          *
@@ -798,6 +1183,7 @@ JXG.extend(Options, {
          *          <li><tt>max</tt>: Maximum value.
          *          <li><tt>start</tt>: Start value.
          *      </ul>
+         *      'min' and 'max' are used only if trackball is not enabled.
          * </ul>
          *
          * @name View3D#el
@@ -898,6 +1284,7 @@ JXG.extend(Options, {
          *          <li><tt>max</tt>: Maximum value.
          *          <li><tt>start</tt>: Start value.
          *      </ul>
+         *      'min' and 'max' are used only if trackball is not enabled.
          * </ul>
          *
          * @name View3D#bank
@@ -932,7 +1319,7 @@ JXG.extend(Options, {
          * <script type="text/javascript">
          *     (function() {
          *         var board = JXG.JSXGraph.initBoard('JXGb67811ea-c1e3-4d1e-b13c-3537b3436f6c',
-         *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
+         *             {boundingbox: [-8, 8, 8,-8], axis: false, showcopyright: false, shownavigation: false});
          *         var bound = [-4, 6];
          *         var view = board.create('view3d',
          *             [[-4, -3], [8, 8],
@@ -975,7 +1362,10 @@ JXG.extend(Options, {
         },
 
         /**
-         * Enable user handling by a virtual trackball.
+         * Enable user handling by a virtual trackball that allows to move the 3D scene
+         * with 3 degrees of freedom. If not enabled, direct user dragging (i.e. in the JSXGraph board, not manipulating the sliders) will only have
+         * two degrees of freedom. This means, the z-axis will always be projected to a vertical 2D line.
+         * <p>
          * Sub-attributes:
          *      <ul>
          *          <li><tt>enabled</tt>: Boolean that specifies whether pointer navigation is allowed by elevation.
@@ -1041,9 +1431,16 @@ JXG.extend(Options, {
         infobox: {
             // strokeColor: '#888888',
             strokeColor: '#000000',
-            fontSize: 24,
+            fontSize: 16,
             useKatex: false,
-            useMathjax: false
+            useMathjax: false,
+            intl: {
+                enabled: true,
+                options: {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 3
+                }
+            }
         },
 
         /**

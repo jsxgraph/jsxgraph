@@ -348,25 +348,19 @@ JXG.extend(
 
             hl = this._getHighlighted(el);
 
-            grad = el.evalVisProp('gradient');
-            if (grad === "linear" || grad === "radial") {
-                // TODO: opacity
-                this.context[targetType + "Style"] = this.updateGradient(el);
-                return hasColor;
-            }
-
             // type is equal to 'fill' or 'stroke'
             rgba = el.evalVisProp(hl + type + 'color');
             if (rgba !== "none" && rgba !== false) {
                 o = el.evalVisProp(hl + type + "opacity");
                 o = o > 0 ? o : 0;
 
-                // RGB, not RGBA
                 if (rgba.length !== 9) {
+                    // RGB
                     c = rgba;
                     oo = o;
                     // True RGBA, not RGB
                 } else {
+                    // RGBA
                     rgbo = Color.rgba2rgbo(rgba);
                     c = rgbo[0];
                     oo = o * rgbo[1];
@@ -376,6 +370,13 @@ JXG.extend(
                 this.context[targetType + "Style"] = c;
             } else {
                 hasColor = false;
+            }
+
+            grad = el.evalVisProp('gradient');
+            if (grad === "linear" || grad === "radial") {
+                this.context.globalAlpha = oo;
+                this.context[targetType + "Style"] = this.updateGradient(el);
+                return hasColor;
             }
 
             sw = parseFloat(el.evalVisProp(hl + 'strokewidth'));

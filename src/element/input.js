@@ -45,10 +45,10 @@ import Type from "../utils/type.js";
  * @ignore
  */
 var priv = {
-     /**
-     * @class
-     * @ignore
-     */
+    /**
+    * @class
+    * @ignore
+    */
 
     InputInputEventHandler: function (evt) {
         this._value = this.rendNodeInput.value;
@@ -252,10 +252,10 @@ JXG.createInput = function (board, parents, attributes) {
         parents[0],
         parents[1],
         '<span style="display:inline; white-space:nowrap; padding:0px;">' +
-            '<span></span><input type="text" maxlength="' +
-            attr.maxlength +
-            '" style="width:100%"/>' +
-            "</span>"
+        '<label></label><input type="text" maxlength="' +
+        attr.maxlength +
+        '" style="width:100%"/>' +
+        "</span>"
     ];
 
     // 1. Create input element with empty label
@@ -270,6 +270,7 @@ JXG.createInput = function (board, parents, attributes) {
     t.rendNodeTag.disabled = !!attr.disabled;
     t.rendNodeLabel.id = t.rendNode.id + "_label";
     t.rendNodeInput.id = t.rendNode.id + "_input";
+    t.rendNodeInput.setAttribute("aria-labelledby",t.rendNodeLabel.id);
 
     // 2. Set parents[3] (string|function) as label of the input element.
     // abstract.js selects the correct DOM element for the update
@@ -277,10 +278,10 @@ JXG.createInput = function (board, parents, attributes) {
 
     t._value = parents[2];
 
-     /**
-     * @class
-     * @ignore
-     */
+    /**
+    * @class
+    * @ignore
+    */
     t.update = function () {
         if (this.needsUpdate) {
             JXG.Text.prototype.update.call(this);
@@ -341,10 +342,10 @@ JXG.createInput = function (board, parents, attributes) {
      *
      */
 
-     /**
-     * @class
-     * @ignore
-     */
+    /**
+    * @class
+    * @ignore
+    */
 
     t.set = function (val) {
         this._value = val;

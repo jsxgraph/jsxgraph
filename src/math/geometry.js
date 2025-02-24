@@ -42,6 +42,7 @@ import JXG from "../jxg.js";
 import Const from "../base/constants.js";
 import Coords from "../base/coords.js";
 import Mat from "./math.js";
+import Stat from "../math/statistics.js";
 import Numerics from "./numerics.js";
 import Type from "../utils/type.js";
 import Expect from "../utils/expect.js";
@@ -1797,6 +1798,7 @@ JXG.extend(
                     };
                 } else if (el2.elementClass === Const.OBJECT_CLASS_LINE) {
                     // path - line
+                    /** @ignore */
                     func = function () {
                         var first1 = el1.evalVisProp('straightfirst'),
                             last1 = el1.evalVisProp('straightlast'),
@@ -1920,6 +1922,7 @@ JXG.extend(
             el1 = input[0];
             el2 = input[1];
             board = el1.board;
+            /** @ignore */
             func = function () {
                 var i, k, c, d,
                     isClose,
@@ -1962,30 +1965,6 @@ JXG.extend(
                 // Otherwise we return the last intersection point
                 return c;
             };
-            return func;
-        },
-
-        /**
-         * Generate the function which computes the data of the intersection.
-         */
-        intersectionFunction3D: function (view, el1, el2, i) {
-            var func,
-                that = this;
-
-            if (el1.type === Const.OBJECT_TYPE_PLANE3D) {
-                if (el2.type === Const.OBJECT_TYPE_PLANE3D) {
-                    func = () => view.intersectionPlanePlane(el1, el2)[i];
-                } else if (el2.type === Const.OBJECT_TYPE_SPHERE3D) {
-                    func = that.meetPlaneSphere(el1, el2);
-                }
-            } else if (el1.type === Const.OBJECT_TYPE_SPHERE3D) {
-                if (el2.type === Const.OBJECT_TYPE_PLANE3D) {
-                    func = that.meetPlaneSphere(el2, el1);
-                } else if (el2.type === Const.OBJECT_TYPE_SPHERE3D) {
-                    func = that.meetSphereSphere(el1, el2);
-                }
-            }
-
             return func;
         },
 
@@ -2713,84 +2692,6 @@ JXG.extend(
                 crds = intersections[n];
             }
             return new Coords(Const.COORDS_BY_USER, crds, board);
-        },
-
-        meetPlaneSphere: function (el1, el2) {
-            var dis = function () {
-                return (
-                    el1.normal[0] * el2.center.X()
-                    + el1.normal[1] * el2.center.Y()
-                    + el1.normal[2] * el2.center.Z()
-                    - el1.d
-                );
-            };
-            return [
-                [
-                    // Center
-                    function () {
-                        return el2.center.X() - dis() * el1.normal[0];
-                    },
-                    function () {
-                        return el2.center.Y() - dis() * el1.normal[1];
-                    },
-                    function () {
-                        return el2.center.Z() - dis() * el1.normal[2];
-                    }
-                ],
-                [
-                    // Normal
-                    () => el1.normal[0],
-                    () => el1.normal[1],
-                    () => el1.normal[2]
-                ],
-                function () {
-                    // Radius (returns NaN if spheres don't touch)
-                    var r = el2.Radius(),
-                        s = dis();
-                    return Math.sqrt(r * r - s * s);
-                }
-            ];
-        },
-
-        meetSphereSphere: function (el1, el2) {
-            var skew = function () {
-                var dist = el1.center.distance(el2.center),
-                    r1 = el1.Radius(),
-                    r2 = el2.Radius();
-                return (r1 - r2) * (r1 + r2) / (dist * dist);
-            };
-            return [
-                [
-                    // Center
-                    function () {
-                        var s = skew();
-                        return 0.5 * ((1 - s) * el1.center.X() + (1 + s) * el2.center.X());
-                    },
-                    function () {
-                        var s = skew();
-                        return 0.5 * ((1 - s) * el1.center.Y() + (1 + s) * el2.center.Y());
-                    },
-                    function () {
-                        var s = skew();
-                        return 0.5 * ((1 - s) * el1.center.Z() + (1 + s) * el2.center.Z());
-                    }
-                ],
-                [
-                    // Normal
-                    () => el2.center.X() - el1.center.X(),
-                    () => el2.center.Y() - el1.center.Y(),
-                    () => el2.center.Z() - el1.center.Z()
-                ],
-                function () {
-                    // Radius (returns NaN if spheres don't touch)
-                    var dist = el1.center.distance(el2.center),
-                        r1 = el1.Radius(),
-                        r2 = el2.Radius(),
-                        s = skew(),
-                        rIxnSq = 0.5 * (r1 * r1 + r2 * r2 - 0.5 * dist * dist * (1 + s * s));
-                    return Math.sqrt(rIxnSq);
-                }
-            ];
         },
 
         /****************************************/
@@ -3804,128 +3705,6 @@ JXG.extend(
         },
 
         /**
-         * Given a the coordinates of a point, finds the nearest point on the given
-         * parametric curve or surface, and returns its view-space coordinates.
-         * @param {Array} pScr Screen coordinates to project.
-         * @param {JXG.Curve3D|JXG.Surface3D} target Parametric curve or surface to project to.
-         * @param {Array} params Parameters of point on the target, initially specifying the starting point of
-         * the search. The parameters are modified in place during the search, ending up at the nearest point.
-         * @returns {Array} Array of length 4 containing the coordinates of the nearest point on the curve or surface.
-         */
-        projectCoordsToParametric: function (p, target, params) {
-            // The variables and parameters for the Cobyla constrained
-            // minimization algorithm are explained in the Cobyla.js comments
-            var rhobeg, // initial size of simplex (Cobyla)
-                rhoend, // finial size of simplex (Cobyla)
-                iprint = 0, // no console output (Cobyla)
-                maxfun = 200, // call objective function at most 200 times (Cobyla)
-                dim = params.length,
-                _minFunc; // objective function (Cobyla)
-
-            // adapt simplex size to parameter range
-            if (dim === 1) {
-                rhobeg = 0.1 * (target.range[1] - target.range[0]);
-            } else if (dim === 2) {
-                rhobeg = 0.1 * Math.min(
-                    target.range_u[1] - target.range_u[0],
-                    target.range_v[1] - target.range_v[0]
-                );
-            }
-            rhoend = rhobeg / 5e6;
-
-            // minimize screen distance to cursor
-            _minFunc = function (n, m, w, con) {
-                // var xDiff = p[0] - target.X(...w),
-                //     yDiff = p[1] - target.Y(...w),
-                //     zDiff = p[2] - target.Z(...w);
-                var xDiff = p[0] - target.X.apply(null, w),
-                    yDiff = p[1] - target.Y.apply(null, w),
-                    zDiff = p[2] - target.Z.apply(null, w);
-
-                if (n === 1) {
-                    con[0] = w[0] - target.range[0];
-                    con[1] = -w[0] + target.range[1];
-                } else if (n === 2) {
-                    con[0] = w[0] - target.range_u[0];
-                    con[1] = -w[0] + target.range_u[1];
-                    con[2] = w[1] - target.range_v[0];
-                    con[3] = -w[1] + target.range_v[1];
-                }
-                return xDiff * xDiff + yDiff * yDiff + zDiff * zDiff;
-            };
-            Mat.Nlp.FindMinimum(_minFunc, dim, 2 * dim, params, rhobeg, rhoend, iprint, maxfun);
-
-            // return [1, target.X(...params), target.Y(...params), target.Z(...params)];
-            return [1, target.X.apply(null, params), target.Y.apply(null, params), target.Z.apply(null, params)];
-        },
-
-        /**
-         * Given a the screen coordinates of a point, finds the point on the
-         * given parametric curve or surface which is nearest in screen space,
-         * and returns its view-space coordinates.
-         * @param {Array} pScr Screen coordinates to project.
-         * @param {JXG.Curve3D|JXG.Surface3D} target Parametric curve or surface to project to.
-         * @param {Array} params Parameters of point on the target, initially specifying the starting point of
-         * the search. The parameters are modified in place during the search, ending up at the nearest point.
-         * @returns {Array} Array of length 4 containing the coordinates of the nearest point on the curve or surface.
-         */
-        projectScreenCoordsToParametric: function (pScr, target, params) {
-            // The variables and parameters for the Cobyla constrained
-            // minimization algorithm are explained in the Cobyla.js comments
-            var rhobeg, // initial size of simplex (Cobyla)
-                rhoend, // finial size of simplex (Cobyla)
-                iprint = 0, // no console output (Cobyla)
-                maxfun = 200, // call objective function at most 200 times (Cobyla)
-                dim = params.length,
-                _minFunc; // objective function (Cobyla)
-
-            // adapt simplex size to parameter range
-            if (dim === 1) {
-                rhobeg = 0.1 * (target.range[1] - target.range[0]);
-            } else if (dim === 2) {
-                rhobeg = 0.1 * Math.min(
-                    target.range_u[1] - target.range_u[0],
-                    target.range_v[1] - target.range_v[0]
-                );
-            }
-            rhoend = rhobeg / 5e6;
-
-            // minimize screen distance to cursor
-            _minFunc = function (n, m, w, con) {
-                // var c3d = [
-                //         1,
-                //         target.X(...w),
-                //         target.Y(...w),
-                //         target.Z(...w)
-                //     ],
-                var c3d = [
-                    1,
-                    target.X.apply(null, w),
-                    target.Y.apply(null, w),
-                    target.Z.apply(null, w)
-                ],
-                    c2d = target.view.project3DTo2D(c3d),
-                    xDiff = pScr[0] - c2d[1],
-                    yDiff = pScr[1] - c2d[2];
-
-                if (n === 1) {
-                    con[0] = w[0] - target.range[0];
-                    con[1] = -w[0] + target.range[1];
-                } else if (n === 2) {
-                    con[0] = w[0] - target.range_u[0];
-                    con[1] = -w[0] + target.range_u[1];
-                    con[2] = w[1] - target.range_v[0];
-                    con[3] = -w[1] + target.range_v[1];
-                }
-                return xDiff * xDiff + yDiff * yDiff;
-            };
-            Mat.Nlp.FindMinimum(_minFunc, dim, 2 * dim, params, rhobeg, rhoend, iprint, maxfun);
-
-            // return [1, target.X(...params), target.Y(...params), target.Z(...params)];
-            return [1, target.X.apply(null, params), target.Y.apply(null, params), target.Z.apply(null, params)];
-        },
-
-        /**
          * Calculates the distance of a point to a line. The point and the line are given by homogeneous
          * coordinates. For lines this can be line.stdform.
          * @param {Array} point Homogeneous coordinates of a point.
@@ -3994,6 +3773,379 @@ JXG.extend(
             return Mat.hypot(x, y);
         },
 
+        /* ***************************************/
+        /* *** 3D CALCULATIONS ****/
+        /* ***************************************/
+
+        /**
+         * Generate the function which computes the data of the intersection between
+         * <ul>
+         * <li> plane3d, plane3d,
+         * <li> plane3d, sphere3d,
+         * <li> sphere3d, plane3d,
+         * <li> sphere3d, sphere3d
+         * </ul>
+         *
+         * @param {JXG.GeometryElement3D} el1 Plane or sphere element
+         * @param {JXG.GeometryElement3D} el2 Plane or sphere element
+         * @returns {Array} of functions needed as input to create the intersecting line or circle.
+         *
+         */
+        intersectionFunction3D: function (view, el1, el2) {
+            var func,
+                that = this;
+
+            if (el1.type === Const.OBJECT_TYPE_PLANE3D) {
+                if (el2.type === Const.OBJECT_TYPE_PLANE3D) {
+                    // func = () => view.intersectionPlanePlane(el1, el2)[i];
+                    func = view.intersectionPlanePlane(el1, el2);
+                } else if (el2.type === Const.OBJECT_TYPE_SPHERE3D) {
+                    func = that.meetPlaneSphere(el1, el2);
+                }
+            } else if (el1.type === Const.OBJECT_TYPE_SPHERE3D) {
+                if (el2.type === Const.OBJECT_TYPE_PLANE3D) {
+                    func = that.meetPlaneSphere(el2, el1);
+                } else if (el2.type === Const.OBJECT_TYPE_SPHERE3D) {
+                    func = that.meetSphereSphere(el1, el2);
+                }
+            }
+
+            return func;
+        },
+
+        /**
+         * Intersecting point of three planes in 3D. The planes
+         * are given in Hesse normal form.
+         *
+         * @param {Array} n1 Hesse normal form vector of plane 1
+         * @param {Number} d1 Hesse normal form right hand side of plane 1
+         * @param {Array} n2 Hesse normal form vector of plane 2
+         * @param {Number} d2 Hesse normal form right hand side of plane 2
+         * @param {Array} n3 Hesse normal form vector of plane 1
+         * @param {Number} d3 Hesse normal form right hand side of plane 3
+         * @returns {Array} Coordinates array of length 4 of the intersecting point
+         */
+        meet3Planes: function (n1, d1, n2, d2, n3, d3) {
+            var p = [1, 0, 0, 0],
+                n31, n12, n23,
+                denom,
+                i;
+
+            n31 = Mat.crossProduct(n3.slice(1), n1.slice(1));
+            n12 = Mat.crossProduct(n1.slice(1), n2.slice(1));
+            n23 = Mat.crossProduct(n2.slice(1), n3.slice(1));
+
+            denom = Mat.innerProduct(n1.slice(1), n23, 3);
+            for (i = 0; i < 3; i++) {
+                p[i + 1] = (d1 * n23[i] + d2 * n31[i] + d3 * n12[i]) / denom;
+            }
+
+            return p;
+        },
+
+        /**
+         * Direction of intersecting line of two planes in 3D.
+         *
+         * @param {Array} v11 First vector spanning plane 1 (homogeneous coordinates)
+         * @param {Array} v12 Second vector spanning plane 1 (homogeneous coordinates)
+         * @param {Array} v21 First vector spanning plane 2 (homogeneous coordinates)
+         * @param {Array} v22 Second vector spanning plane 2 (homogeneous coordinates)
+         * @returns {Array} Coordinates array of length 4 of the direction  (homogeneous coordinates)
+         */
+        meetPlanePlane: function (v11, v12, v21, v22) {
+            var no1,
+                no2,
+                v, w;
+
+            v = v11.slice(1);
+            w = v12.slice(1);
+            no1 = Mat.crossProduct(v, w);
+
+            v = v21.slice(1);
+            w = v22.slice(1);
+            no2 = Mat.crossProduct(v, w);
+
+            w = Mat.crossProduct(no1, no2);
+            w.unshift(0);
+            return w;
+        },
+
+        meetPlaneSphere: function (el1, el2) {
+            var dis = function () {
+                    return Mat.innerProduct(el1.normal, el2.center.coords, 4) - el1.d;
+                };
+
+            return [
+                // Center
+                function() {
+                    return Mat.axpy(-dis(), el1.normal, el2.center.coords);
+                },
+                // Normal
+                el1.normal,
+                // Radius
+                function () {
+                    // Radius (returns NaN if spheres don't touch)
+                    var r = el2.Radius(),
+                        s = dis();
+                    return Math.sqrt(r * r - s * s);
+                }
+            ];
+        },
+
+        meetSphereSphere: function (el1, el2) {
+            var skew = function () {
+                    var dist = el1.center.distance(el2.center),
+                        r1 = el1.Radius(),
+                        r2 = el2.Radius();
+                    return (r1 - r2) * (r1 + r2) / (dist * dist);
+                };
+            return [
+                // Center
+                function () {
+                    var s = skew();
+                    return [
+                        1,
+                        0.5 * ((1 - s) * el1.center.coords[1] + (1 + s) * el2.center.coords[1]),
+                        0.5 * ((1 - s) * el1.center.coords[2] + (1 + s) * el2.center.coords[2]),
+                        0.5 * ((1 - s) * el1.center.coords[3] + (1 + s) * el2.center.coords[3])
+                    ];
+                },
+                // Normal
+                function() {
+                    return Stat.subtract(el2.center.coords, el1.center.coords);
+                },
+                // Radius
+                function () {
+                    // Radius (returns NaN if spheres don't touch)
+                    var dist = el1.center.distance(el2.center),
+                        r1 = el1.Radius(),
+                        r2 = el2.Radius(),
+                        s = skew(),
+                        rIxnSq = 0.5 * (r1 * r1 + r2 * r2 - 0.5 * dist * dist * (1 + s * s));
+                    return Math.sqrt(rIxnSq);
+                }
+            ];
+        },
+
+        /**
+         * Test if parameters are inside of allowed ranges
+         *
+         * @param {Array} params Array of length 1 or 2
+         * @param {Array} r_u First range
+         * @param {Array} [r_v] Second range
+         * @returns Boolean
+         * @private
+         */
+        _paramsOutOfRange: function(params, r_u, r_v) {
+            return params[0] < r_u[0] || params[0] > r_u[1] ||
+                (params.length > 1 && (params[1] < r_v[0] || params[1] > r_v[1]));
+        },
+
+        /**
+         * Given the 2D screen coordinates of a point, finds the nearest point on the given
+         * parametric curve or surface, and returns its view-space coordinates.
+         * @param {Array} p 3D coordinates for which the closest point on the curve point is searched.
+         * @param {JXG.Curve3D|JXG.Surface3D} target Parametric curve or surface to project to.
+         * @param {Array} params New position of point on the target (i.e. it is a return value),
+         * modified in place during the search, ending up at the nearest point.
+         * Usually, point.position is supplied for params.
+         *
+         * @returns {Array} Array of length 4 containing the coordinates of the nearest point on the curve or surface.
+         */
+        projectCoordsToParametric: function (p, target, n, params) {
+            // The variables and parameters for the Cobyla constrained
+            // minimization algorithm are explained in the Cobyla.js comments
+            var rhobeg,                // initial size of simplex (Cobyla)
+                rhoend,                // finial size of simplex (Cobyla)
+                iprint = 0,            // no console output (Cobyla)
+                maxfun = 200,          // call objective function at most 200 times (Cobyla)
+                _minFunc,              // Objective function for Cobyla
+                f = Math.random() * 0.01 + 0.5,
+                r_u, r_v,
+                m = 2 * n;
+
+            // adapt simplex size to parameter range
+            if (n === 1) {
+                r_u = [Type.evaluate(target.range[0]), Type.evaluate(target.range[1])];
+
+                rhobeg = 0.1 * (r_u[1] - r_u[0]);
+            } else if (n === 2) {
+                r_u = [Type.evaluate(target.range_u[0]), Type.evaluate(target.range_u[1])];
+                r_v = [Type.evaluate(target.range_v[0]), Type.evaluate(target.range_v[1])];
+
+                rhobeg = 0.1 * Math.min(
+                    r_u[1] - r_u[0],
+                    r_v[1] - r_v[0]
+                );
+            }
+            rhoend = rhobeg / 5e6;
+
+            // Minimize distance of the new position to the original position
+            _minFunc = function (n, m, w, con) {
+                var p_new = [
+                        target.X.apply(target, w),
+                        target.Y.apply(target, w),
+                        target.Z.apply(target, w)
+                    ],
+                    xDiff = p[0] - p_new[0],
+                    yDiff = p[1] - p_new[1],
+                    zDiff = p[2] - p_new[2];
+
+                if (m >= 2) {
+                    con[0] =  w[0] - r_u[0];
+                    con[1] = -w[0] + r_u[1];
+                }
+                if (m >= 4) {
+                    con[2] =  w[1] - r_v[0];
+                    con[3] = -w[1] + r_v[1];
+                }
+
+                return xDiff * xDiff + yDiff * yDiff + zDiff * zDiff;
+            };
+
+            // First optimization without range constraints to give a smooth draag experience on
+            // cyclic structures.
+
+            // Set the start values
+            if (params.length === 0) {
+                // If length > 0: take the previous position as start values for the optimization
+                params[0] = f * (r_u[0] + r_u[1]);
+                if (n === 2) { params[1] = f * (r_v[0] + r_v[1]); }
+            }
+            Mat.Nlp.FindMinimum(_minFunc, n, 0, params, rhobeg, rhoend, iprint, maxfun);
+            // Update p which is used subsequently in _minFunc
+            p = [target.X.apply(target, params),
+                target.Y.apply(target, params),
+                target.Z.apply(target, params)
+            ];
+
+            // If the optimal params are outside of the rang
+            // Second optimization to obey the range constraints
+
+            if (this._paramsOutOfRange(params, r_u, r_v)) {
+                // Set the start values again
+                params[0] = f * (r_u[0] + r_u[1]);
+                if (n === 2) { params[1] = f * (r_v[0] + r_v[1]); }
+
+                Mat.Nlp.FindMinimum(_minFunc, n, m, params, rhobeg, rhoend, iprint, maxfun);
+            }
+
+            return [1,
+                target.X.apply(target, params),
+                target.Y.apply(target, params),
+                target.Z.apply(target, params)
+            ];
+        },
+
+        // /**
+        //  * Given a the screen coordinates of a point, finds the point on the
+        //  * given parametric curve or surface which is nearest in screen space,
+        //  * and returns its view-space coordinates.
+        //  * @param {Array} pScr Screen coordinates to project.
+        //  * @param {JXG.Curve3D|JXG.Surface3D} target Parametric curve or surface to project to.
+        //  * @param {Array} params Parameters of point on the target, initially specifying the starting point of
+        //  * the search. The parameters are modified in place during the search, ending up at the nearest point.
+        //  * @returns {Array} Array of length 4 containing the coordinates of the nearest point on the curve or surface.
+        //  */
+        // projectScreenCoordsToParametric: function (pScr, target, params) {
+        //     // The variables and parameters for the Cobyla constrained
+        //     // minimization algorithm are explained in the Cobyla.js comments
+        //     var rhobeg, // initial size of simplex (Cobyla)
+        //         rhoend, // finial size of simplex (Cobyla)
+        //         iprint = 0, // no console output (Cobyla)
+        //         maxfun = 200, // call objective function at most 200 times (Cobyla)
+        //         dim = params.length,
+        //         _minFunc; // objective function (Cobyla)
+
+        //     // adapt simplex size to parameter range
+        //     if (dim === 1) {
+        //         rhobeg = 0.1 * (target.range[1] - target.range[0]);
+        //     } else if (dim === 2) {
+        //         rhobeg = 0.1 * Math.min(
+        //             target.range_u[1] - target.range_u[0],
+        //             target.range_v[1] - target.range_v[0]
+        //         );
+        //     }
+        //     rhoend = rhobeg / 5e6;
+
+        //     // minimize screen distance to cursor
+        //     _minFunc = function (n, m, w, con) {
+        //         var c3d = [
+        //             1,
+        //             target.X.apply(target, w),
+        //             target.Y.apply(target, w),
+        //             target.Z.apply(target, w)
+        //         ],
+        //         c2d = target.view.project3DTo2D(c3d),
+        //         xDiff = pScr[0] - c2d[1],
+        //         yDiff = pScr[1] - c2d[2];
+
+        //         if (n === 1) {
+        //             con[0] = w[0] - target.range[0];
+        //             con[1] = -w[0] + target.range[1];
+        //         } else if (n === 2) {
+        //             con[0] = w[0] - target.range_u[0];
+        //             con[1] = -w[0] + target.range_u[1];
+        //             con[2] = w[1] - target.range_v[0];
+        //             con[3] = -w[1] + target.range_v[1];
+        //         }
+
+        //         return xDiff * xDiff + yDiff * yDiff;
+        //     };
+
+        //     Mat.Nlp.FindMinimum(_minFunc, dim, 2 * dim, params, rhobeg, rhoend, iprint, maxfun);
+
+        //     return [1, target.X.apply(target, params), target.Y.apply(target, params), target.Z.apply(target, params)];
+        // },
+
+        project3DTo3DPlane: function (point, normal, foot) {
+            // TODO: homogeneous 3D coordinates
+            var sol = [0, 0, 0],
+                le,
+                d1,
+                d2,
+                lbda;
+
+            foot = foot || [0, 0, 0];
+
+            le = Mat.norm(normal);
+            d1 = Mat.innerProduct(point, normal, 3);
+            d2 = Mat.innerProduct(foot, normal, 3);
+            // (point - lbda * normal / le) * normal / le == foot * normal / le
+            // => (point * normal - foot * normal) ==  lbda * le
+            lbda = (d1 - d2) / le;
+            sol = Mat.axpy(-lbda, normal, point);
+
+            return sol;
+        },
+
+        getPlaneBounds: function (v1, v2, q, s, e) {
+            var s1, s2, e1, e2, mat, rhs, sol;
+
+            if (v1[2] + v2[0] !== 0) {
+                mat = [
+                    [v1[0], v2[0]],
+                    [v1[1], v2[1]]
+                ];
+                rhs = [s - q[0], s - q[1]];
+
+                sol = Numerics.Gauss(mat, rhs);
+                s1 = sol[0];
+                s2 = sol[1];
+
+                rhs = [e - q[0], e - q[1]];
+                sol = Numerics.Gauss(mat, rhs);
+                e1 = sol[0];
+                e2 = sol[1];
+                return [s1, e1, s2, e2];
+            }
+            return null;
+        },
+
+        /* ***************************************/
+        /* *** Various ****/
+        /* ***************************************/
+
         /**
          * Helper function to create curve which displays a Reuleaux polygons.
          * @param {Array} points Array of points which should be the vertices of the Reuleaux polygon. Typically,
@@ -4051,91 +4203,8 @@ JXG.extend(
                 };
 
             return [makeFct("X", "cos"), makeFct("Y", "sin"), 0, pi2];
-        },
-
-        meet3Planes: function (n1, d1, n2, d2, n3, d3) {
-            var p = [0, 0, 0],
-                n31,
-                n12,
-                n23,
-                denom,
-                i;
-
-            n31 = Mat.crossProduct(n3, n1);
-            n12 = Mat.crossProduct(n1, n2);
-            n23 = Mat.crossProduct(n2, n3);
-            denom = Mat.innerProduct(n1, n23, 3);
-            for (i = 0; i < 3; i++) {
-                p[i] = (d1 * n23[i] + d2 * n31[i] + d3 * n12[i]) / denom;
-            }
-            return p;
-        },
-
-        meetPlanePlane: function (v11, v12, v21, v22) {
-            var i,
-                no1,
-                no2,
-                v = [0, 0, 0],
-                w = [0, 0, 0];
-
-            for (i = 0; i < 3; i++) {
-                v[i] = Type.evaluate(v11[i]);
-                w[i] = Type.evaluate(v12[i]);
-            }
-            no1 = Mat.crossProduct(v, w);
-
-            for (i = 0; i < 3; i++) {
-                v[i] = Type.evaluate(v21[i]);
-                w[i] = Type.evaluate(v22[i]);
-            }
-            no2 = Mat.crossProduct(v, w);
-
-            return Mat.crossProduct(no1, no2);
-        },
-
-        project3DTo3DPlane: function (point, normal, foot) {
-            // TODO: homogeneous 3D coordinates
-            var sol = [0, 0, 0],
-                le,
-                d1,
-                d2,
-                lbda;
-
-            foot = foot || [0, 0, 0];
-
-            le = Mat.norm(normal);
-            d1 = Mat.innerProduct(point, normal, 3);
-            d2 = Mat.innerProduct(foot, normal, 3);
-            // (point - lbda * normal / le) * normal / le == foot * normal / le
-            // => (point * normal - foot * normal) ==  lbda * le
-            lbda = (d1 - d2) / le;
-            sol = Mat.axpy(-lbda, normal, point);
-
-            return sol;
-        },
-
-        getPlaneBounds: function (v1, v2, q, s, e) {
-            var s1, s2, e1, e2, mat, rhs, sol;
-
-            if (v1[2] + v2[0] !== 0) {
-                mat = [
-                    [v1[0], v2[0]],
-                    [v1[1], v2[1]]
-                ];
-                rhs = [s - q[0], s - q[1]];
-
-                sol = Numerics.Gauss(mat, rhs);
-                s1 = sol[0];
-                s2 = sol[1];
-
-                rhs = [e - q[0], e - q[1]];
-                sol = Numerics.Gauss(mat, rhs);
-                e1 = sol[0];
-                e2 = sol[1];
-                return [s1, e1, s2, e2];
-            }
-            return null;
         }
+
     }
 );
 

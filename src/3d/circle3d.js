@@ -51,7 +51,7 @@ import Geometry from '../math/geometry.js';
  * @see JXG.Board#generateName
  */
 JXG.Circle3D = function (view, center, normal, radius, attributes) {
-    var altFrame1;
+    var altFrame1, that;
 
     this.constructor(view.board, attributes, Const.OBJECT_TYPE_CIRCLE3D, Const.OBJECT_CLASS_3D);
     this.constructor3D(view, "circle3d");
@@ -62,6 +62,8 @@ JXG.Circle3D = function (view, center, normal, radius, attributes) {
      */
     this.center = this.board.select(center);
 
+    this.normalFunc = normal;
+
     /**
      * A normal vector of the plane the circle lies in. Do not set this parameter directly, as that will break JSXGraph's update system.
      * @type Array
@@ -69,7 +71,7 @@ JXG.Circle3D = function (view, center, normal, radius, attributes) {
      *
      * @see updateNormal
      */
-    this.normal = [0, 0, 0];
+    this.normal = [0, 0, 0, 0];
 
     /**
      * The circle's underlying Curve3D.
@@ -96,22 +98,6 @@ JXG.Circle3D = function (view, center, normal, radius, attributes) {
      */
     this.frame2;
 
-    this.updateNormal = function () {
-        // evaluate normal direction
-        var i, len;
-        for (i = 0; i < 3; i++) {
-            this.normal[i] = Type.evaluate(normal[i]);
-        }
-
-        // scale normal to unit length
-        len = Mat.norm(this.normal);
-        if (Math.abs(len) > Mat.eps) {
-            for (i = 0; i < 3; i++) {
-                this.normal[i] /= len;
-            }
-        }
-    };
-
     // place the circle or its center---whichever is newer---in the scene tree
     if (Type.exists(this.center._is_new)) {
         this.addChild(this.center);
@@ -131,25 +117,37 @@ JXG.Circle3D = function (view, center, normal, radius, attributes) {
     // [1, 0, 0] or [-0.5, sqrt(3)/2, 0]---whichever is further away on the unit
     // sphere. every vector is at least 60 degrees from one of these, which
     // should be good enough to make the frame vector numerically accurate
-    this.frame1 = Mat.crossProduct(this.normal, [1, 0, 0]);
-    altFrame1 = Mat.crossProduct(this.normal, [-0.5, 0.8660254037844386, 0]); // [1/2, sqrt(3)/2, 0]
+    this.frame1 = Mat.crossProduct(this.normal.slice(1), [1, 0, 0]);
+    this.frame1.unshift(0);
+    altFrame1 = Mat.crossProduct(this.normal.slice(1), [-0.5, 0.8660254037844386, 0]); // [1/2, sqrt(3)/2, 0]
+    altFrame1.unshift(0);
     if (Mat.norm(altFrame1) > Mat.norm(this.frame1)) {
         this.frame1 = altFrame1;
     }
 
     // initialize the second frame vector
-    this.frame2 = Mat.crossProduct(this.normal, this.frame1);
+    this.frame2 = Mat.crossProduct(this.normal.slice(1), this.frame1.slice(1));
+    this.frame2.unshift(0);
 
     // scale both frame vectors to unit length
     this.normalizeFrame();
 
     // create the underlying curve
+    that = this;
     this.curve = view.create(
         'curve3d',
         [
-            (t) => this.center.X() + this.Radius() * (Math.cos(t) * this.frame1[0] + Math.sin(t) * this.frame2[0]),
-            (t) => this.center.Y() + this.Radius() * (Math.cos(t) * this.frame1[1] + Math.sin(t) * this.frame2[1]),
-            (t) => this.center.Z() + this.Radius() * (Math.cos(t) * this.frame1[2] + Math.sin(t) * this.frame2[2]),
+            function(t) {
+                var r = that.Radius(),
+                    s = Math.sin(t),
+                    c = Math.cos(t);
+
+                return [
+                    that.center.coords[1] + r * (c * that.frame1[1] + s * that.frame2[1]),
+                    that.center.coords[2] + r * (c * that.frame1[2] + s * that.frame2[2]),
+                    that.center.coords[3] + r * (c * that.frame1[3] + s * that.frame2[3])
+                ];
+            },
             [0, 2 * Math.PI] // parameter range
         ],
         attributes
@@ -161,13 +159,19 @@ Type.copyPrototypeMethods(JXG.Circle3D, JXG.GeometryElement3D, "constructor3D");
 JXG.extend(
     JXG.Circle3D.prototype,
     /** @lends JXG.Circle3D.prototype */ {
+
+        // Already documented in element3d.js
         update: function () {
-            this.updateNormal();
-            this.updateFrame();
-            this.curve.visProp.visible = !isNaN(this.Radius());
+            if (this.needsUpdate) {
+                this.updateNormal()
+                    .updateFrame();
+
+                this.curve.visProp.visible = !isNaN(this.Radius()); // TODO
+            }
             return this;
         },
 
+        // Already documented in element3d.js
         updateRenderer: function () {
             this.needsUpdate = false;
             return this;
@@ -205,31 +209,57 @@ JXG.extend(
             var len1 = Mat.norm(this.frame1),
                 len2 = Mat.norm(this.frame2),
                 i;
-            for (i = 0; i < 3; i++) {
+
+            for (i = 0; i < 4; i++) {
                 this.frame1[i] /= len1;
                 this.frame2[i] /= len2;
             }
+
+            return this;
+        },
+
+        updateNormal: function () {
+            // evaluate normal direction
+            var i, len,
+                eps = 1.e-12;
+
+            this.normal = Type.evaluate(this.normalFunc);
+
+            // scale normal to unit length
+            len = Mat.norm(this.normal);
+            if (Math.abs(len) > eps) {
+                for (i = 0; i < 4; i++) {
+                    this.normal[i] /= len;
+                }
+            }
+
+            return this;
         },
 
         updateFrame: function () {
-            this.frame1 = Mat.crossProduct(this.frame2, this.normal);
-            this.frame2 = Mat.crossProduct(this.normal, this.frame1);
+            this.frame1 = Mat.crossProduct(this.frame2.slice(1), this.normal.slice(1));
+            this.frame1.unshift(0);
+            this.frame2 = Mat.crossProduct(this.normal.slice(1), this.frame1.slice(1));
+            this.frame2.unshift(0);
             this.normalizeFrame();
+
+            return this;
         },
 
+        // Already documented in element3d.js
         projectCoords: function (p, params) {
-            // we have to call `this.curve.projectCoords` from the curve, rather
-            // than the circle, to make `this` refer to the curve within the
-            // call
+            // we have to call `this.curve.projectCoords`, i.e. the curve's projectCoords rather
+            // than the circle's, to make `this` refer to the curve within the
+            // call.
             return this.curve.projectCoords(p, params);
-        },
-
-        projectScreenCoords: function (pScr, params) {
-            // we have to call `this.curve.projectScreenCoords` from the curve,
-            // rather than the circle, to make `this` refer to the curve within
-            // the call
-            return this.curve.projectScreenCoords(pScr, params);
         }
+
+        // projectScreenCoords: function (pScr, params) {
+        //     // we have to call `this.curve.projectScreenCoords` from the curve,
+        //     // rather than the circle, to make `this` refer to the curve within
+        //     // the call
+        //     return this.curve.projectScreenCoords(pScr, params);
+        // }
     }
 );
 
@@ -246,8 +276,8 @@ JXG.extend(
  * @constructor
  * @type JXG.Circle3D
  * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
- * @param {JXG.Point_Array_number} center,normal,radius The center must be given as a {@link JXG.Point} (see {@link JXG.providePoints}).
- * The normal vector can be given as an array of three numbers or an array of three functions returning numbers,
+ * @param {JXG.Point,Array,Function_Array,Function_Number,Function} center,normal,radius The center must be given as a {@link JXG.Point}, array or function (see {@link JXG.providePoints}).
+ * The normal vector can be given as an array of four numbers (i.e. homogeneous coordinates [0, x, y, z]) or a function returning an array of length 4
  * and the radius can be given as a number (which will create a circle with a fixed radius) or a function.
  * <p>
  * If the radius is supplied as a number or the output of a function, its absolute value is taken. When the radius evaluates to NaN, the circle does not display.
@@ -362,9 +392,9 @@ JXG.createIntersectionCircle3D = function (board, parents, attributes) {
     } catch (e) {
         throw new Error(
             "JSXGraph: Can't create 'intersection' with parent types '" +
-            typeof parents[0] +
-            "' and '" +
             typeof parents[1] +
+            "' and '" +
+            typeof parents[2] +
             "'."
         );
     }

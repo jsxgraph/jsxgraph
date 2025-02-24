@@ -30,10 +30,9 @@
 
 import JXG from "../jxg.js";
 import Const from "../base/constants.js";
+import Type from "../utils/type.js";
 import Mat from "../math/math.js";
 import Geometry from "../math/geometry.js";
-import Type from "../utils/type.js";
-//, GeometryElement3D) {
 
 /**
  * A 3D point is the basic geometric element.
@@ -55,13 +54,14 @@ JXG.Point3D = function (view, F, slide, attributes) {
     this.board.finalizeAdding(this);
 
     // add the new point to its view's point list
-    if (view.visProp.depthorderpoints) {
-        view.points.push(this);
-    }
+    // if (view.visProp.depthorderpoints) {
+    //     view.points.push(this);
+    // }
 
     /**
-     * Homogeneous coordinates of a Point3D, i.e. array of length 4: [w, x, y, z]. Usually, w=1 for finite points and w=0 for points
-     * which are infinitely far.
+     * Homogeneous coordinates of a Point3D, i.e. array of length 4 containing numbers: [w, x, y, z].
+     * Usually, w=1 for finite points and w=0 for points which are infinitely far.
+     * If coordinates of the point are supplied as functions, they are resolved in {@link Point3D#updateCoords} into numbers.
      *
      * @example
      *   p.coords;
@@ -71,6 +71,7 @@ JXG.Point3D = function (view, F, slide, attributes) {
      * @private
      */
     this.coords = [0, 0, 0, 0];
+    this.initialCoords = [0, 0, 0, 0];
 
     /**
      * Function or array of functions or array of numbers defining the coordinates of the point, used in {@link updateCoords}.
@@ -98,57 +99,14 @@ JXG.Point3D = function (view, F, slide, attributes) {
     this.slide = slide;
 
     /**
-     * Get x-coordinate of a 3D point.
-     *
-     * @name X
-     * @memberOf Point3D
-     * @function
-     * @returns {Number}
-     *
-     * @example
-     *   p.X();
-     */
-    this.X = function () {
-        return this.coords[1];
-    };
-
-    /**
-     * Get y-coordinate of a 3D point.
-     *
-     * @name Y
-     * @memberOf Point3D
-     * @function
-     * @returns Number
-     *
-     * @example
-     *   p.Y();
-     */
-    this.Y = function () {
-        return this.coords[2];
-    };
-
-    /**
-     * Get z-coordinate of a 3D point.
-     *
-     * @name Z
-     * @memberOf Point3D
-     * @function
-     * @returns Number
-     *
-     * @example
-     *   p.Z();
-     */
-    this.Z = function () {
-        return this.coords[3];
-    };
-
-    /**
-     * Store the last position of the 2D point for the optimizer.
+     * In case, the point is a glider, store the preimage of the coordinates in terms of the parametric definition of the host element.
+     * That is, if the host element `slide` is a curve, and the coordinates of the point are equal to `p` and `u = this.position[0]`, then
+     * `p = [slide.X(u), slide.Y(u), slide.Z(u)]`.
      *
      * @type Array
      * @private
      */
-    this._params = [];
+    this.position = [];
 
     this._c2d = null;
 
@@ -156,40 +114,109 @@ JXG.Point3D = function (view, F, slide, attributes) {
         // TODO
     });
 };
+
 JXG.Point3D.prototype = new JXG.GeometryElement();
 Type.copyPrototypeMethods(JXG.Point3D, JXG.GeometryElement3D, "constructor3D");
 
 JXG.extend(
     JXG.Point3D.prototype,
     /** @lends JXG.Point3D.prototype */ {
+
         /**
-         * Update the homogeneous coords array.
+         * Get x-coordinate of a 3D point.
+         *
+         * @name X
+         * @memberOf Point3D
+         * @function
+         * @returns {Number}
+         *
+         * @example
+         *   p.X();
+         */
+        X: function () {
+            return this.coords[1];
+        },
+
+        /**
+         * Get y-coordinate of a 3D point.
+         *
+         * @name Y
+         * @memberOf Point3D
+         * @function
+         * @returns Number
+         *
+         * @example
+         *   p.Y();
+         */
+        Y: function () {
+            return this.coords[2];
+        },
+
+        /**
+         * Get z-coordinate of a 3D point.
+         *
+         * @name Z
+         * @memberOf Point3D
+         * @function
+         * @returns Number
+         *
+         * @example
+         *   p.Z();
+         */
+        Z: function () {
+            return this.coords[3];
+        },
+
+        /**
+         * Get w-coordinate of a 3D point.
+         *
+         * @name W
+         * @memberOf Point3D
+         * @function
+         * @returns Number
+         *
+         * @example
+         *   p.W();
+         */
+        W: function () {
+            return this.coords[0];
+        },
+
+        /**
+         * Update the array {@link JXG.Point3D#coords} containing the homogeneous coords.
          *
          * @name updateCoords
          * @memberOf Point3D
          * @function
          * @returns {Object} Reference to the Point3D object
          * @private
+         * @see GeometryElement3D#update()
          * @example
          *    p.updateCoords();
          */
         updateCoords: function () {
-            var i;
+            var i,
+                s = 0;
 
             if (Type.isFunction(this.F)) {
-                // this.coords = [1].concat(Type.evaluate(this.F));
                 this.coords = Type.evaluate(this.F);
-                this.coords.unshift(1);
+                if (this.coords.length === 3) {
+                    this.coords.unshift(1);
+                }
             } else {
-                this.coords[0] = 1;
-                for (i = 0; i < 3; i++) {
-                    // Attention: if F is array of numbers, coords are not updated.
+                if (this.F.length === 3) {
+                    this.coords[0] = 1;
+                    s = 1;
+                }
+                for (i = 0; i < this.F.length; i++) {
+                    // Attention: if F is array of numbers, coords may not be updated.
                     // Otherwise, dragging will not work anymore.
                     if (Type.isFunction(this.F[i])) {
-                        this.coords[i + 1] = Type.evaluate(this.F[i]);
+                        this.coords[s + i] = Type.evaluate(this.F[i]);
                     }
                 }
             }
+
             return this;
         },
 
@@ -200,18 +227,26 @@ JXG.extend(
          * @returns {Object} Reference to the Point3D object
          */
         initCoords: function () {
-            var i;
+            var i,
+                s = 0;
+
 
             if (Type.isFunction(this.F)) {
-                // this.coords = [1].concat(Type.evaluate(this.F));
                 this.coords = Type.evaluate(this.F);
-                this.coords.unshift(1);
+                if (this.coords.length === 3) {
+                    this.coords.unshift(1);
+                }
             } else {
-                this.coords[0] = 1;
-                for (i = 0; i < 3; i++) {
-                    this.coords[i + 1] = Type.evaluate(this.F[i]);
+                if (this.F.length === 3) {
+                    this.coords[0] = 1;
+                    s = 1;
+                }
+                for (i = 0; i < this.F.length; i++) {
+                    this.coords[s + i] = Type.evaluate(this.F[i]);
                 }
             }
+            this.initialCoords = this.coords.slice();
+
             return this;
         },
 
@@ -227,7 +262,7 @@ JXG.extend(
          *    p.normalizeCoords();
          */
         normalizeCoords: function () {
-            if (Math.abs(this.coords[0]) > Mat.eps) {
+            if (Math.abs(this.coords[0]) > 1.e-14) {
                 this.coords[1] /= this.coords[0];
                 this.coords[2] /= this.coords[0];
                 this.coords[3] /= this.coords[0];
@@ -243,7 +278,7 @@ JXG.extend(
          * @memberOf Point3D
          * @function
          * @param {Array} coords 3D coordinates. Either of the form [x,y,z] (Euclidean) or [w,x,y,z] (homogeneous).
-         * @param {Boolean} [noevent] If true, no events are triggered.
+         * @param {Boolean} [noevent] If true, no events are triggered (TODO)
          * @returns {Object} Reference to the Point3D object
          *
          * @example
@@ -277,83 +312,118 @@ JXG.extend(
             return this;
         },
 
-        update: function (drag) {
-            var c3d, foot, res;
+        // /**
+        //  * Add transformations to this element.
+        //  * @param {JXG.GeometryElement} el
+        //  * @param {JXG.Transformation|Array} transform Either one {@link JXG.Transformation}
+        //  * or an array of {@link JXG.Transformation}s.
+        //  * @returns {JXG.CoordsElement} Reference to itself.
+        //  */
+        addTransform: function (el, transform) {
+            this.addTransformGeneric(el, transform);
+            return this;
+        },
 
-            // Update is called from board.updateElements
+        updateTransform: function () {
+            var c, i;
+
+            if (this.transformations.length === 0 || this.baseElement === null) {
+                return this;
+            }
+
+            if (this === this.baseElement) {
+                c = this.initialCoords;
+            } else {
+                c = this.baseElement.coords;
+            }
+            for (i = 0; i < this.transformations.length; i++) {
+                this.transformations[i].update();
+                c = Mat.matVecMult(this.transformations[i].matrix, c);
+            }
+            this.coords = c;
+
+            return this;
+        },
+
+        // Already documented in JXG.GeometryElement
+        update: function (drag) {
+            var c3d,         // Homogeneous 3D coordinates
+                foot, res;
+
             if (
                 this.element2D.draggable() &&
                 Geometry.distance(this._c2d, this.element2D.coords.usrCoords) !== 0
             ) {
-
-                //
-                if (this.slide) {
-                    this.coords = this.slide.projectScreenCoords(
-                        [this.element2D.X(), this.element2D.Y()],
-                        this._params
-                    );
-                    this.element2D.coords.setCoordinates(
-                        Const.COORDS_BY_USER,
-                        this.view.project3DTo2D(this.coords)
-                    );
+                // Update is called from board.updateElements, e.g. after manipulating a
+                // a slider or dragging a point.
+                // Usually this followed by an update call using the other branch below.
+                if (this.view.isVerticalDrag()) {
+                    // Drag the point in its vertical to the xy plane
+                    // If the point is outside of bbox3d,
+                    // c3d is already corrected.
+                    c3d = this.view.project2DTo3DVertical(this.element2D, this.coords);
                 } else {
-                    if (this.view.isVerticalDrag()) {
-                        // Drag the point in its vertical to the xy plane
-                        // If the point is outside of bbox3d,
-                        // c3d is already corrected.
-                        c3d = this.view.project2DTo3DVertical(this.element2D, this.coords);
-                    } else {
-                        // Drag the point in its xy plane
-                        foot = [1, 0, 0, this.coords[3]];
-                        c3d = this.view.project2DTo3DPlane(this.element2D, [1, 0, 0, 1], foot);
+                    // Drag the point in its xy plane
+                    foot = [1, 0, 0, this.coords[3]];
+                    c3d = this.view.project2DTo3DPlane(this.element2D, [1, 0, 0, 1], foot);
+                }
+
+                if (c3d[0] !== 0) {
+                    // Check if c3d is inside of view.bbox3d
+                    // Otherwise, the coords are now corrected.
+                    res = this.view.project3DToCube(c3d);
+                    this.coords = res[0];
+
+                    if (res[1]) {
+                        // The 3D coordinates have been corrected, now
+                        // also correct the 2D element.
+                        this.element2D.coords.setCoordinates(
+                            Const.COORDS_BY_USER,
+                            this.view.project3DTo2D(this.coords)
+                        );
                     }
-
-                    if (c3d[0] !== 0) {
-                        // Check if c3d is inside of view.bbox3d
-                        // Otherwise, the coords have to be corrected below.
-                        res = this.view.project3DToCube(c3d);
-                        this.coords = res[0];
-
-                        if (res[1]) {
-                            // The 3D coordinates have been corrected, now
-                            // also correct the 2D element.
-                            this.element2D.coords.setCoordinates(
-                                Const.COORDS_BY_USER,
-                                this.view.project3DTo2D(this.coords)
-                            );
-                        }
+                    if (this.slide) {
+                        this.coords = this.slide.projectCoords([this.X(), this.Y(), this.Z()], this.position);
+                        this.element2D.coords.setCoordinates(
+                            Const.COORDS_BY_USER,
+                            this.view.project3DTo2D(this.coords)
+                        );
                     }
                 }
+
             } else {
-                // Update 2D point from its 3D view
-                this.updateCoords();
+                // Update 2D point from its 3D view, e.g. when rotating the view
+                this.updateCoords()
+                    .updateTransform();
+
                 if (this.slide) {
-                    this.coords = this.slide.projectCoords(
-                        [this.X(), this.Y(), this.Z()],
-                        this._params
-                    );
+                    this.coords = this.slide.projectCoords([this.X(), this.Y(), this.Z()], this.position);
                 }
+                c3d = this.coords;
                 this.element2D.coords.setCoordinates(
                     Const.COORDS_BY_USER,
-                    this.view.project3DTo2D([1, this.X(), this.Y(), this.Z()])
+                    this.view.project3DTo2D(c3d)
                 );
+                this.zIndex = Mat.matVecMult(this.view.matrix3DRotShift, c3d)[3];
             }
             this._c2d = this.element2D.coords.usrCoords.slice();
 
             return this;
         },
 
+        // Already documented in JXG.GeometryElement
         updateRenderer: function () {
             this.needsUpdate = false;
             return this;
         },
 
         /**
-         * Check whether a point's homogeneous coordinate vector is zero.
-         * @returns {Boolean} True if the coordinate vector is zero; false otherwise.
+         * Check whether a point's position is finite, i.e. the first entry is not zero.
+         * @returns {Boolean} True if the first entry of the coordinate vector is not zero; false otherwise.
          */
-        isIllDefined: function () {
-            return Type.cmpArrays(this.coords, [0, 0, 0, 0]);
+        testIfFinite: function () {
+            return Math.abs(this.coords[0]) > 1.e-12 ? true : false;
+            // return Type.cmpArrays(this.coords, [0, 0, 0, 0]);
         },
 
         /**
@@ -362,7 +432,7 @@ JXG.extend(
          * @returns {Number} The distance
          */
         distance: function (pt) {
-            var eps_sq = Mat.eps * Mat.eps,
+            var eps_sq = 1e-12,
                 c_this = this.coords,
                 c_pt = pt.coords;
 
@@ -383,23 +453,22 @@ JXG.extend(
 );
 
 /**
- * @class A point in a 3D view.
- * @pseudo
- * @description A Point3D object is defined by 3 coordinates [x,y,z].
- * <p>
- * All numbers can also be provided as functions returning a number.
+ * @class A Point3D object is defined by three coordinates [x,y,z], or a function returning an array with three numbers.
+ * Alternatively, all numbers can also be provided as functions returning a number.
  *
+ * @pseudo
  * @name Point3D
  * @augments JXG.Point3D
  * @constructor
  * @throws {Exception} If the element cannot be constructed with the given parent
  * objects an exception is thrown.
- * @param {number,function_number,function_number,function} x,y,z The coordinates are given as x, y, z consisting of numbers of functions.
- * @param {array,function} F Alternatively, the coordinates can be supplied as
+ * @param {number,function_number,function_number,function_JXG.GeometryElement3D} x,y,z,[slide=undefined] The coordinates are given as x, y, z consisting of numbers or functions. If an optional 3D element "slide" is supplied, the point is a glider on that element.
+ * @param {array,function_JXG.GeometryElement3D} F,[slide=null] Alternatively, the coordinates can be supplied as
  *  <ul>
- *   <li>array arr=[x,y,z] of length 3 consisting of numbers or
- *   <li>function returning an array [x,y,z] of length 3 of numbers.
+ *   <li>function returning an array [x,y,z] of length 3 of numbers or
+ *   <li>array arr=[x,y,z] of length 3 consisting of numbers
  * </ul>
+ * If an optional 3D element "slide" is supplied, the point is a glider on that element.
  *
  * @example
  *    var bound = [-5, 5];
@@ -408,7 +477,8 @@ JXG.extend(
  *        [bound, bound, bound]],
  *        {});
  *    var p = view.create('point3d', [1, 2, 2], { name:'A', size: 5 });
- *    var q = view.create('point3d', function() { return [p.X(), p.Y(), p.Z() - 3]; }, { name:'B', size: 5, fixed: true });
+ *    var q = view.create('point3d', function() { return [p.X(), p.Y(), p.Z() - 3]; }, { name:'B', size: 3, fixed: true });
+ *    var w = view.create('point3d', [ () => p.X() + 3, () => p.Y(), () => p.Z() - 2], { name:'C', size: 3, fixed: true });
  *
  * </pre><div id="JXGb9ee8f9f-3d2b-4f73-8221-4f82c09933f1" class="jxgbox" style="width: 300px; height: 300px;"></div>
  * <script type="text/javascript">
@@ -421,7 +491,71 @@ JXG.extend(
  *             [bound, bound, bound]],
  *             {});
  *         var p = view.create('point3d', [1, 2, 2], { name:'A', size: 5 });
- *         var q = view.create('point3d', function() { return [p.X(), p.Y(), p.Z() - 3]; }, { name:'B', size: 5 });
+ *         var q = view.create('point3d', function() { return [p.X(), p.Y(), p.Z() - 3]; }, { name:'B', size: 3 });
+ *         var w = view.create('point3d', [ () => p.X() + 3, () => p.Y(), () => p.Z() - 2], { name:'C', size: 3, fixed: true });
+ *     })();
+ *
+ * </script><pre>
+ *
+ * @example
+ *     // Glider on sphere
+ *     var view = board.create(
+ *         'view3d',
+ *         [[-6, -3], [8, 8],
+ *         [[-3, 3], [-3, 3], [-3, 3]]],
+ *         {
+ *             depthOrder: {
+ *                 enabled: true
+ *             },
+ *             projection: 'central',
+ *             xPlaneRear: {fillOpacity: 0.2, gradient: null},
+ *             yPlaneRear: {fillOpacity: 0.2, gradient: null},
+ *             zPlaneRear: {fillOpacity: 0.2, gradient: null}
+ *         }
+ *     );
+ *
+ *     // Two points
+ *     var center = view.create('point3d', [0, 0, 0], {withLabel: false, size: 2});
+ *     var point = view.create('point3d', [2, 0, 0], {withLabel: false, size: 2});
+ *
+ *     // Sphere
+ *     var sphere = view.create('sphere3d', [center, point], {fillOpacity: 0.8});
+ *
+ *     // Glider on sphere
+ *     var glide = view.create('point3d', [2, 2, 0, sphere], {withLabel: false, color: 'red', size: 4});
+ *     var l1 = view.create('line3d', [glide, center], { strokeWidth: 2, dash: 2 });
+ *
+ * </pre><div id="JXG672fe3c7-e6fd-48e0-9a24-22f51f2dfa71" class="jxgbox" style="width: 300px; height: 300px;"></div>
+ * <script type="text/javascript">
+ *     (function() {
+ *         var board = JXG.JSXGraph.initBoard('JXG672fe3c7-e6fd-48e0-9a24-22f51f2dfa71',
+ *             {boundingbox: [-8, 8, 8,-8], axis: false, showcopyright: false, shownavigation: false});
+ *         var view = board.create(
+ *             'view3d',
+ *             [[-6, -3], [8, 8],
+ *             [[-3, 3], [-3, 3], [-3, 3]]],
+ *             {
+ *                 depthOrder: {
+ *                     enabled: true
+ *                 },
+ *                 projection: 'central',
+ *                 xPlaneRear: {fillOpacity: 0.2, gradient: null},
+ *                 yPlaneRear: {fillOpacity: 0.2, gradient: null},
+ *                 zPlaneRear: {fillOpacity: 0.2, gradient: null}
+ *             }
+ *         );
+ *
+ *         // Two points
+ *         var center = view.create('point3d', [0, 0, 0], {withLabel: false, size: 2});
+ *         var point = view.create('point3d', [2, 0, 0], {withLabel: false, size: 2});
+ *
+ *         // Sphere
+ *         var sphere = view.create('sphere3d', [center, point], {fillOpacity: 0.8});
+ *
+ *         // Glider on sphere
+ *         var glide = view.create('point3d', [2, 2, 0, sphere], {withLabel: false, color: 'red', size: 4});
+ *         var l1 = view.create('line3d', [glide, center], { strokeWidth: 2, dash: 2 });
+ *
  *     })();
  *
  * </script><pre>
@@ -435,11 +569,16 @@ JXG.createPoint3D = function (board, parents, attributes) {
     //   parents[1..3]: coordinates
 
     var view = parents[0],
-        attr, F, slide, c2d, el;
+        attr, F, slide, c2d, el,
+        base = null,
+        transform = null;
 
-    // If the last element of parents is a 3D object,
+    // If the last element of `parents` is a 3D object,
     // the point is a glider on that element.
-    if (parents.length > 2 && Type.exists(parents[parents.length - 1].is3D)) {
+    if (parents.length > 2 &&
+        Type.exists(parents[parents.length - 1].is3D) &&
+        !Type.isTransformationOrArray(parents[parents.length - 1])
+    ) {
         slide = parents.pop();
     } else {
         slide = null;
@@ -448,17 +587,27 @@ JXG.createPoint3D = function (board, parents, attributes) {
     if (parents.length === 2) {
         // [view, array|fun] (Array [x, y, z] | function) returning [x, y, z]
         F = parents[1];
+    } else if (parents.length === 3 &&
+        Type.isPoint3D(parents[1]) &&
+        Type.isTransformationOrArray(parents[2])
+    ) {
+        F = [0, 0, 0];
+        base = parents[1];
+        transform = parents[2];
     } else if (parents.length === 4) {
         // [view, x, y, z], (3 numbers | functions)
+        F = parents.slice(1);
+    } else if (parents.length === 5) {
+        // [view, w, x, y, z], (4 numbers | functions)
         F = parents.slice(1);
     } else {
         throw new Error(
             "JSXGraph: Can't create point3d with parent types '" +
-                typeof parents[0] +
-                "' and '" +
                 typeof parents[1] +
+                "' and '" +
+                typeof parents[2] +
                 "'." +
-                "\nPossible parent types: [[x,y,z]], [x,y,z]"
+                "\nPossible parent types: [[x,y,z]], [x,y,z], or [[x,y,z], slide], () => [x, y, z], or [point, transformation(s)]"
         );
         //  "\nPossible parent types: [[x,y,z]], [x,y,z], [element,transformation]"); // TODO
     }
@@ -466,6 +615,9 @@ JXG.createPoint3D = function (board, parents, attributes) {
     attr = Type.copyAttributes(attributes, board.options, 'point3d');
     el = new JXG.Point3D(view, F, slide, attr);
     el.initCoords();
+    if (base !== null && transform !== null) {
+        el.addTransform(base, transform);
+    }
 
     c2d = view.project3DTo2D(el.coords);
 
@@ -476,10 +628,13 @@ JXG.createPoint3D = function (board, parents, attributes) {
     el.inherits.push(el.element2D);
     el.element2D.setParents(el);
 
-    // if this point is a glider, record that in the update tree
+    // If this point is a glider, record that in the update tree
     if (el.slide) {
         el.slide.addChild(el);
         el.setParents(el.slide);
+    }
+    if (base) {
+        el.setParents(base);
     }
 
     el._c2d = el.element2D.coords.usrCoords.slice(); // Store a copy of the coordinates to detect dragging

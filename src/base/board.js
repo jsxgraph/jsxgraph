@@ -1498,7 +1498,7 @@ JXG.extend(
             ) {
                 drag.triggerEventHandlers([type + 'drag', 'drag'], [evt]);
                 // Update all elements of the board
-                this.update();
+                this.update(drag);
             }
             drag.highlight(true);
             this.triggerEventHandlers(['mousehit', 'hit'], [evt, drag]);
@@ -4371,7 +4371,8 @@ JXG.extend(
                     window.setTimeout(function () {
                         try {
                             that.updateContainerDims(bb.width, bb.height);
-                        } catch (err) {
+                        } catch (e) {
+                            JXG.debug(e);   // Used to log errors during board.update()
                             that.stopResizeObserver();
                         } finally {
                             that._isResizing = false;
@@ -5710,9 +5711,10 @@ JXG.extend(
 
         /**
          * Sets for all objects the needsUpdate flag to 'true'.
+         * @param{JXG.GeometryElement} [drag=undefined] Optional element that is dragged.
          * @returns {JXG.Board} Reference to the board
          */
-        prepareUpdate: function () {
+        prepareUpdate: function (drag) {
             var el, i,
                 pEl,
                 len = this.objectsList.length;
@@ -5725,7 +5727,9 @@ JXG.extend(
 
             for (el = 0; el < len; el++) {
                 pEl = this.objectsList[el];
-                if (this._change3DView) {
+                if (this._change3DView ||
+                    (Type.exists(drag) && drag.elType === 'view3d_slider')
+                ) {
                     // The 3D view has changed. No elements are recomputed,
                     // only 3D elements are projected to the new view.
                     pEl.needsUpdate =
@@ -5844,37 +5848,82 @@ JXG.extend(
          * @returns {JXG.Board} Reference to the board
          */
         updateRendererCanvas: function () {
-            var el,
-                pEl,
-                i,
-                mini,
-                la,
+            var el, pEl,
                 olen = this.objectsList.length,
-                layers = this.options.layer,
-                len = this.options.layer.numlayers,
-                last = Number.NEGATIVE_INFINITY;
-
-            for (i = 0; i < len; i++) {
-                mini = Number.POSITIVE_INFINITY;
-
-                for (la in layers) {
-                    if (layers.hasOwnProperty(la)) {
-                        if (layers[la] > last && layers[la] < mini) {
-                            mini = layers[la];
-                        }
+                // i, minim, lay,
+                // layers = this.options.layer,
+                // len = this.options.layer.numlayers,
+                // last = Number.NEGATIVE_INFINITY.toExponential,
+                depth_order_layers = [],
+                objects_sorted,
+                // Sort the elements for the canvas rendering according to
+                // their layer, _pos, depthOrder (with this priority)
+                // @private
+                _compareFn = function(a, b) {
+                    if (a.visProp.layer !== b.visProp.layer) {
+                        return a.visProp.layer - b.visProp.layer;
                     }
-                }
 
-                last = mini;
-
-                for (el = 0; el < olen; el++) {
-                    pEl = this.objectsList[el];
-
-                    if (pEl.visProp.layer === mini) {
-                        pEl.prepareUpdate().updateRenderer();
+                    // The objects are in the same layer, but the layer is not depth ordered
+                    if (depth_order_layers.indexOf(a.visProp.layer) === -1) {
+                        return a._pos - b._pos;
                     }
+
+                    // The objects are in the same layer and the layer is depth ordered
+                    // We have to sort 2D elements according to the zIndices of
+                    // their 3D parents.
+                    if (!a.visProp.element3d && !b.visProp.element3d) {
+                        return a._pos - b._pos;
+                    }
+
+                    if (a.visProp.element3d && !b.visProp.element3d) {
+                        return -1;
+                    }
+
+                    if (b.visProp.element3d && !a.visProp.element3d) {
+                        return 1;
+                    }
+
+                    return a.visProp.element3d.zIndex - b.visProp.element3d.zIndex;
+                };
+
+            // Only one view3d element is supported. Get the depth orderer layers and
+            // update the zIndices of the 3D elements.
+            for (el = 0; el < olen; el++) {
+                pEl = this.objectsList[el];
+                if (pEl.elType === 'view3d' && pEl.evalVisProp('depthorder.enabled')) {
+                    depth_order_layers = pEl.evalVisProp('depthorder.layers');
+                    pEl.updateRenderer();
+                    break;
                 }
             }
+
+            objects_sorted = this.objectsList.toSorted(_compareFn);
+            olen = objects_sorted.length;
+            for (el = 0; el < olen; el++) {
+                objects_sorted[el].prepareUpdate().updateRenderer();
+            }
+
+            // for (i = 0; i < len; i++) {
+            //     minim = Number.POSITIVE_INFINITY;
+
+            //     for (lay in layers) {
+            //         if (layers.hasOwnProperty(lay)) {
+            //             if (layers[lay] > last && layers[lay] < minim) {
+            //                 minim = layers[lay];
+            //             }
+            //         }
+            //     }
+
+            //     for (el = 0; el < olen; el++) {
+            //         pEl = this.objectsList[el];
+            //         if (pEl.visProp.layer === minim) {
+            //             pEl.prepareUpdate().updateRenderer();
+            //         }
+            //     }
+            //     last = minim;
+            // }
+
             return this;
         },
 
@@ -5997,7 +6046,7 @@ JXG.extend(
                 insert = this.renderer.removeToInsertLater(this.renderer.svgRoot);
             }
 
-            this.prepareUpdate().updateElements(drag).updateConditions();
+            this.prepareUpdate(drag).updateElements(drag).updateConditions();
 
             this.renderer.suspendRedraw(this);
             this.updateRenderer();
@@ -6109,7 +6158,12 @@ JXG.extend(
                     !(elementType === 'functiongraph') && // Prevent problems with function terms like 'x', 'y'
                     !(elementType === 'implicitcurve')
                 ) {
-                    parents[i] = this.select(parents[i]);
+                    if (i > 0 && parents[0].elType === 'view3d') {
+                        // 3D elements are based on 3D elements, only
+                        parents[i] = parents[0].select(parents[i]);
+                    } else {
+                        parents[i] = this.select(parents[i]);
+                    }
                 }
             }
 
@@ -6505,11 +6559,6 @@ JXG.extend(
                         if (Type.exists(this.defaultAxes.y) && Type.exists(value.y)) {
                             this.defaultAxes.y.setAttribute(value.y);
                         }
-                        break;
-                    case 'description':
-                        this.document.getElementById(this.container + '_ARIAdescription')
-                            .innerHTML = value;
-                        this._set(key, value);
                         break;
                     case 'title':
                         this.document.getElementById(this.container + '_ARIAlabel')

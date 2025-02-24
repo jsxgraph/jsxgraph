@@ -313,7 +313,7 @@ JXG.extend(
          */
         drawPoint: function (el) {
             var prim,
-                // sometimes el is not a real point and lacks the methods of a JXG.Point instance,
+                // Sometimes el is not a real point and lacks the methods of a JXG.Point instance,
                 // in these cases to not use el directly.
                 face = Options.normalizePointFace(el.evalVisProp('face'));
 
@@ -334,7 +334,7 @@ JXG.extend(
             );
             this.appendNodesToElement(el, prim);
 
-            // adjust visual properties
+            // Adjust visual properties
             this._updateVisual(el, { dash: true, shadow: true }, true);
 
             // By now we only created the xml nodes and set some styles, in updatePoint
@@ -2097,6 +2097,8 @@ JXG.extend(
                     // button.setAttribute('tabindex', 0);
 
                     button.setAttribute("id", board_id + '_navigation_' + type);
+                    button.setAttribute("aria-hidden", 'true');   // navigation buttons should never appear in screen reader
+
                     node.appendChild(button);
 
                     Env.addEvent(

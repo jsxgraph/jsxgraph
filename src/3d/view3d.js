@@ -45,6 +45,7 @@ import Coords from "../base/coords.js";
 import Type from "../utils/type.js";
 import Mat from "../math/math.js";
 import Geometry from "../math/geometry.js";
+import Numerics from "../math/numerics.js";
 import Env from "../utils/env.js";
 import GeometryElement from "../base/element.js";
 import Composition from "../base/composition.js";
@@ -73,12 +74,13 @@ JXG.View3D = function (board, parents, attributes) {
 
     /**
      * An array containing all the elements in the view that are sorted due to their depth order.
-     * @Type Array
+     * @Type Object
      * @private
      */
-    this.points = this.visProp.depthorderpoints ? [] : null;
+    this.depthOrdered = {};
 
     /**
+     * TODO: why deleted?
      * An array containing all geometric objects in this view in the order of construction.
      * @type Array
      * @private
@@ -114,6 +116,14 @@ JXG.View3D = function (board, parents, attributes) {
      * The view box orientation matrix
      */
     this.matrix3DRot = [
+        [1, 0, 0, 0],
+        [0, 1, 0, 0],
+        [0, 0, 1, 0],
+        [0, 0, 0, 1]
+    ];
+
+    // Used for z-index computation
+    this.matrix3DRotShift = [
         [1, 0, 0, 0],
         [0, 1, 0, 0],
         [0, 0, 1, 0],
@@ -204,6 +214,9 @@ JXG.View3D = function (board, parents, attributes) {
 
     this.timeoutAzimuth = null;
 
+    this.zIndexMin = Infinity;
+    this.zIndexMax = -Infinity;
+
     this.id = this.board.setId(this, 'V');
     this.board.finalizeAdding(this);
     this.elType = 'view3d';
@@ -281,8 +294,8 @@ JXG.extend(
             return s;
         }
 
-        // It's a string, most likely an id or a name.
         if (Type.isString(s) && s !== '') {
+            // It's a string, most likely an id or a name.
             // Search by ID
             if (Type.exists(this.objects[s])) {
                 s = this.objects[s];
@@ -294,11 +307,11 @@ JXG.extend(
                 //     s = this.groups[s];
             }
 
-            // It's a function or an object, but not an element
         } else if (
             !onlyByIdOrName &&
             (Type.isFunction(s) || (Type.isObject(s) && !Type.isFunction(s.setAttribute)))
         ) {
+            // It's a function or an object, but not an element
             flist = Type.filterElements(this.objectsList, s);
 
             olist = {};
@@ -308,12 +321,12 @@ JXG.extend(
             }
             s = new Composition(olist);
 
-            // It's an element which has been deleted (and still hangs around, e.g. in an attractor list
         } else if (
             Type.isObject(s) &&
             Type.exists(s.id) &&
             !Type.exists(this.objects[s.id])
         ) {
+            // It's an element which has been deleted (and still hangs around, e.g. in an attractor list)
             s = null;
         }
 
@@ -719,21 +732,6 @@ JXG.extend(
         return Mat.matMatMult(A, this.boxToCam);
     },
 
-    /**
-     * Comparison function for 3D points. It is used to sort points according to their z-index.
-     * @param {Point3D} a
-     * @param {Point3D} b
-     * @returns Integer
-     */
-    compareDepth: function (a, b) {
-        var worldDiff = [0,
-                         a.coords[1] - b.coords[1],
-                         a.coords[2] - b.coords[2],
-                         a.coords[3] - b.coords[3]],
-            oriBoxDiff = Mat.matVecMult(this.matrix3DRot, Mat.matVecMult(this.shift, worldDiff));
-        return oriBoxDiff[3];
-    },
-
     // Update 3D-to-2D transformation matrix with the actual azimuth and elevation angles.
     update: function () {
         var r = this.r,
@@ -744,8 +742,7 @@ JXG.extend(
                 [0, 0, 0, 1]
             ],
             mat2D, objectToClip, size,
-            dx, dy,
-            id, el;
+            dx, dy;
             // objectsList;
 
         if (
@@ -754,6 +751,7 @@ JXG.extend(
             !Type.exists(this.bank_slide) ||
             !this.needsUpdate
         ) {
+            this.needsUpdate = false;
             return this;
         }
 
@@ -833,56 +831,125 @@ JXG.extend(
                 );
         }
 
-        // if depth-ordering for points was just switched on, initialize the
-        // list of points
-        if (this.visProp.depthorderpoints && this.points === null) {
-            // objectsList = Object.values(this.objects);
-            // this.points = objectsList.filter(
-            //     el => el.type === Const.OBJECT_TYPE_POINT3D
-            // );
-            this.points = [];
-            for (id in this.objects) {
-                if (this.objects.hasOwnProperty(id)) {
-                    el = this.objects[id];
-                    if (el.type === Const.OBJECT_TYPE_POINT3D) {
-                        this.points.push(el);
+        // Used for zIndex in dept ordering in subsequent update methods of the
+        // 3D elements and in view3d.updateRenderer
+        this.matrix3DRotShift = Mat.matMatMult(this.matrix3DRot, this.shift);
+
+        return this;
+    },
+
+    /**
+     * Compares 3D elements according to their z-Index.
+     * @param {JXG.GeometryElement3D} a
+     * @param {JXG.GeometryElement3D} b
+     * @returns Number
+     */
+    compareDepth: function (a, b) {
+        return a.zIndex - b.zIndex;
+    },
+
+    updateZIndices: function() {
+        var id, el;
+        for (id in this.objects) {
+            if (this.objects.hasOwnProperty(id)) {
+                el = this.objects[id];
+                // Update zIndex of less frequent objects line3d and polygon3d
+                // The other elements (point3d, face3d) do this in their update method.
+                if ((el.type === Const.OBJECT_TYPE_LINE3D ||
+                    el.type === Const.OBJECT_TYPE_POLYGON3D
+                    ) &&
+                    Type.exists(el.element2D) &&
+                    el.element2D.evalVisProp('visible')
+                ) {
+                    el.updateZIndex();
+                }
+            }
+        }
+    },
+
+    updateShaders: function() {
+        var id, el, v;
+        for (id in this.objects) {
+            if (this.objects.hasOwnProperty(id)) {
+                el = this.objects[id];
+                if (Type.exists(el.shader)) {
+                    v = el.shader();
+                    if (v < this.zIndexMin) {
+                        this.zIndexMin = v;
+                    } else if (v > this.zIndexMax) {
+                        this.zIndexMax = v;
+                    }
+                }
+            }
+        }
+    },
+
+    updateDepthOrdering: function () {
+        var id, el,
+            i, layers, lay;
+
+        // Collect elements for depth ordering layer-wise
+        layers = this.evalVisProp('depthorder.layers');
+        for (i = 0; i < layers.length; i++) {
+            this.depthOrdered[layers[i]] = [];
+        }
+
+        for (id in this.objects) {
+            if (this.objects.hasOwnProperty(id)) {
+                el = this.objects[id];
+                if ((el.type === Const.OBJECT_TYPE_FACE3D ||
+                    el.type === Const.OBJECT_TYPE_LINE3D ||
+                    el.type === Const.OBJECT_TYPE_POINT3D ||
+                    el.type === Const.OBJECT_TYPE_POLYGON3D
+                    ) &&
+                    Type.exists(el.element2D) &&
+                    el.element2D.evalVisProp('visible')
+                ) {
+                    lay = el.element2D.evalVisProp('layer');
+                    if (layers.indexOf(lay) >= 0) {
+                        this.depthOrdered[lay].push(el);
                     }
                 }
             }
         }
 
-        // if depth-ordering for points was just switched off, throw away the
-        // list of points
-        if (!this.visProp.depthorderpoints && this.points !== null) {
-            this.points = null;
-        }
-
-        // depth-order visible points. the `setLayer` method is used here to
-        // re-order the points within each layer: it has the side effect of
-        // moving the target element to the end of the layer's child list
-        if (this.visProp.depthorderpoints && this.board.renderer && this.board.renderer.type === 'svg') {
-            this.points
-                // .filter((pt) => pt.element2D.evalVisProp('visible'))
-                // .sort(this.compareDepth.bind(this))
-                // .forEach((pt) => this.board.renderer.setLayer(pt.element2D, pt.element2D.visProp.layer));
-                .filter(function (pt) { return pt.element2D.evalVisProp('visible'); })
-                .sort(this.compareDepth.bind(this))
-                .forEach(function (pt) { return this.board.renderer.setLayer(pt.element2D, pt.element2D.visProp.layer); });
-
-            /* [DEBUG] list oriented box coordinates in depth order */
-            // console.log('depth-ordered points in oriented box coordinates');
-            // this.points
-            //     .filter((pt) => pt.element2D.visProp.visible)
-            //     .sort(compareDepth)
-            //     .forEach(function (pt) {
-            //         console.log(Mat.matVecMult(that.matrix3DRot, Mat.matVecMult(that.shift, pt.coords)));
-            //     });
+        if (this.board.renderer && this.board.renderer.type === 'svg') {
+            for (i = 0; i < layers.length; i++) {
+                lay = layers[i];
+                this.depthOrdered[lay].sort(this.compareDepth.bind(this));
+                this.depthOrdered[lay].forEach((el) => this.board.renderer.setLayer(el.element2D, lay));
+                // this.depthOrdered[lay].forEach((el) => console.log(el.zIndex));
+            }
         }
 
         return this;
     },
 
     updateRenderer: function () {
+        if (!this.needsUpdate) {
+            return this;
+        }
+
+        // console.time("update")
+        // Handle depth ordering
+        this.depthOrdered = {};
+
+        if (this.shift !== undefined && this.evalVisProp('depthorder.enabled')) {
+            // Update the zIndices of certain element types.
+            // We do it here in updateRenderer, because the the elements' positions
+            // are meanwhile updated.
+            this.updateZIndices();
+
+            this.updateShaders();
+
+            if (this.board.renderer && this.board.renderer.type === 'svg') {
+                // For SVG we update the DOM order
+                // In canvas we sort the elements in board.updateRendererCanvas
+                this.updateDepthOrdering();
+            }
+        }
+        // console.timeEnd("update")
+
         this.needsUpdate = false;
         return this;
     },
@@ -1019,25 +1086,25 @@ JXG.extend(
      * and the normal vector `normal`.
      *
      * @param  {JXG.Point} point2d
-     * @param  {Array} normal
-     * @param  {Array} foot
+     * @param  {Array} normal Normal of plane
+     * @param  {Array} foot Foot point of plane
      * @returns {Array} of length 4 containing the projected
      * point in homogeneous coordinates.
      */
     project2DTo3DPlane: function (point2d, normal, foot) {
         var mat, rhs, d, le, sol,
+            f = foot.slice(1) || [0, 0, 0],
             n = normal.slice(1),
             v2d, w0, res;
 
-        foot = foot || [1, 0, 0, 0];
         le = Mat.norm(n, 3);
-        d = Mat.innerProduct(foot.slice(1), n, 3) / le;
+        d = Mat.innerProduct(f, n, 3) / le;
 
         if (this.projectionType === 'parallel') {
-            mat = this.matrix3D.slice(0, 3); // Copy each row by reference
+            mat = this.matrix3D.slice(0, 3);     // Copy each row by reference
             mat.push([0, n[0], n[1], n[2]]);
 
-            // 2D coordinates of point:
+            // 2D coordinates of point
             rhs = point2d.coords.usrCoords.slice();
             rhs.push(d);
             try {
@@ -1094,6 +1161,8 @@ JXG.extend(
      * line segment.
      * @param {Array} end1 The world space coordinates of the other end of
      * the line segment.
+     *
+     * @returns Homogeneous coordinates of the projection
      */
     projectScreenToSegment: function (pScr, end0, end1) {
         var end0_2d = this.project3DTo2D(end0).slice(1, 3),
@@ -1211,19 +1280,21 @@ JXG.extend(
 
     /**
      * Intersect a ray with the bounding cube of the 3D view.
-     * @param {Array} p 3D coordinates [x,y,z]
-     * @param {Array} d 3D direction vector of the line (array of length 3)
+     * @param {Array} p 3D coordinates [w,x,y,z]
+     * @param {Array} dir 3D direction vector of the line (array of length 3 or 4)
      * @param {Number} r direction of the ray (positive if r > 0, negative if r < 0).
      * @returns Affine ratio of the intersection of the line with the cube.
      */
-    intersectionLineCube: function (p, d, r) {
-        var r_n, i, r0, r1;
+    intersectionLineCube: function (p, dir, r) {
+        var r_n, i, r0, r1, d;
+
+        d = (dir.length === 3) ? dir : dir.slice(1);
 
         r_n = r;
         for (i = 0; i < 3; i++) {
             if (d[i] !== 0) {
-                r0 = (this.bbox3D[i][0] - p[i]) / d[i];
-                r1 = (this.bbox3D[i][1] - p[i]) / d[i];
+                r0 = (this.bbox3D[i][0] - p[i + 1]) / d[i];
+                r1 = (this.bbox3D[i][1] - p[i + 1]) / d[i];
                 if (r < 0) {
                     r_n = Math.max(r_n, Math.min(r0, r1));
                 } else {
@@ -1236,10 +1307,17 @@ JXG.extend(
 
     /**
      * Test if coordinates are inside of the bounding cube.
-     * @param {array} q 3D coordinates [x,y,z] of a point.
+     * @param {array} p 3D coordinates [[w],x,y,z] of a point.
      * @returns Boolean
      */
-    isInCube: function (q) {
+    isInCube: function (p, polyhedron) {
+        var q;
+        if (p.length === 4) {
+            if (p[0] === 0) {
+                return false;
+            }
+            q = p.slice(1);
+        }
         return (
             q[0] > this.bbox3D[0][0] - Mat.eps &&
             q[0] < this.bbox3D[0][1] + Mat.eps &&
@@ -1254,33 +1332,39 @@ JXG.extend(
      *
      * @param {JXG.Plane3D} plane1
      * @param {JXG.Plane3D} plane2
-     * @param {JXG.Plane3D} d
+     * @param {Number} d Right hand side of Hesse normal for plane2 (it can be adjusted)
      * @returns {Array} of length 2 containing the coordinates of the defining points of
-     * of the intersection segment.
+     * of the intersection segment, or false if there is no intersection
      */
     intersectionPlanePlane: function (plane1, plane2, d) {
-        var ret = [[], []],
-            p,
-            dir,
-            r,
-            q;
+        var ret = [false, false],
+            p, q, r, w,
+            dir;
 
         d = d || plane2.d;
+
+        // Get one point of the intersection of the two planes
+        w = Mat.crossProduct(plane1.normal.slice(1), plane2.normal.slice(1));
+        w.unshift(0);
 
         p = Mat.Geometry.meet3Planes(
             plane1.normal,
             plane1.d,
             plane2.normal,
             d,
-            Mat.crossProduct(plane1.normal, plane2.normal),
+            w,
             0
         );
+
+        // Get the direction of the intersecting line of the two planes
         dir = Mat.Geometry.meetPlanePlane(
             plane1.vec1,
             plane1.vec2,
             plane2.vec1,
             plane2.vec2
         );
+
+        // Get the bounding points of the intersecting segment
         r = this.intersectionLineCube(p, dir, Infinity);
         q = Mat.axpy(r, dir, p);
         if (this.isInCube(q)) {
@@ -1291,7 +1375,166 @@ JXG.extend(
         if (this.isInCube(q)) {
             ret[1] = q;
         }
+
         return ret;
+    },
+
+    intersectionPlaneFace: function (plane, face) {
+        var ret = [],
+            j, t,
+            p, crds,
+            p1, p2, c,
+            f, le, x1, y1, x2, y2,
+            dir, vec, w,
+            mat = [], b = [], sol;
+
+        w = Mat.crossProduct(plane.normal.slice(1), face.normal.slice(1));
+        w.unshift(0);
+
+        // Get one point of the intersection of the two planes
+        p = Geometry.meet3Planes(
+            plane.normal,
+            plane.d,
+            face.normal,
+            face.d,
+            w,
+            0
+        );
+
+        // Get the direction the intersecting line of the two planes
+        dir = Geometry.meetPlanePlane(
+            plane.vec1,
+            plane.vec2,
+            face.vec1,
+            face.vec2
+        );
+
+        f = face.polyhedron.faces[face.faceNumber];
+        crds = face.polyhedron.coords;
+        le = f.length;
+        for (j = 1; j <= le; j++) {
+            p1 = crds[f[j - 1]];
+            p2 = crds[f[j % le]];
+            vec = [0, p2[1] - p1[1], p2[2] - p1[2], p2[3] - p1[3]];
+
+            x1 = Math.random();
+            y1 = Math.random();
+            x2 = Math.random();
+            y2 = Math.random();
+            mat = [
+                [x1 * dir[1] + y1 * dir[3], x1 * (-vec[1]) + y1 * (-vec[3])],
+                [x2 * dir[2] + y2 * dir[3], x2 * (-vec[2]) + y2 * (-vec[3])]
+            ];
+            b = [
+                x1 * (p1[1] - p[1]) + y1 * (p1[3] - p[3]),
+                x2 * (p1[2] - p[2]) + y2 * (p1[3] - p[3])
+            ];
+
+            sol = Numerics.Gauss(mat, b);
+            t = sol[1];
+            if (t > -Mat.eps && t < 1 + Mat.eps) {
+                c = [1, p1[1] + t * vec[1], p1[2] + t * vec[2], p1[3] + t * vec[3]];
+                ret.push(c);
+            }
+        }
+
+        return ret;
+    },
+
+    // TODO:
+    // - handle non-closed polyhedra
+    // - handle intersections in vertex, edge, plane
+    intersectionPlanePolyhedron: function(plane, phdr) {
+        var i, j, seg,
+            p, first, pos, pos_akt,
+            eps = 1e-12,
+            points = [],
+            x = [],
+            y = [],
+            z = [];
+
+        for (i = 0; i < phdr.numberFaces; i++) {
+            if (phdr.def.faces[i].length < 3) {
+                // We skip intersection with points or lines
+                continue;
+            }
+
+            // seg will be an array consisting of two points
+            // that span the intersecting segment of the plane
+            // and the face.
+            seg = this.intersectionPlaneFace(plane, phdr.faces[i]);
+
+            // Plane intersects the face in less than 2 points
+            if (seg.length < 2) {
+                continue;
+            }
+
+            if (seg[0].length === 4 && seg[1].length === 4) {
+                // This test is necessary to filter out intersection lines which are
+                // identical to intersections of axis planes (they would occur twice),
+                // i.e. edges of bbox3d.
+                for (j = 0; j < points.length; j++) {
+                    if (
+                        (Geometry.distance(seg[0], points[j][0], 4) < eps &&
+                            Geometry.distance(seg[1], points[j][1], 4) < eps) ||
+                        (Geometry.distance(seg[0], points[j][1], 4) < eps &&
+                            Geometry.distance(seg[1], points[j][0], 4) < eps)
+                    ) {
+                        break;
+                    }
+                }
+                if (j === points.length) {
+                    points.push(seg.slice());
+                }
+            }
+        }
+
+        // Handle the case that the intersection is the empty set.
+        if (points.length === 0) {
+            return { X: x, Y: y, Z: z };
+        }
+
+        // Concatenate the intersection points to a polygon.
+        // If all went well, each intersection should appear
+        // twice in the list.
+        // __Attention:__ each face has to be planar!!!
+        // Otherwise the algorithm will fail.
+        first = 0;
+        pos = first;
+        i = 0;
+        do {
+            p = points[pos][i];
+            if (p.length === 4) {
+                x.push(p[1]);
+                y.push(p[2]);
+                z.push(p[3]);
+            }
+            i = (i + 1) % 2;
+            p = points[pos][i];
+
+            pos_akt = pos;
+            for (j = 0; j < points.length; j++) {
+                if (j !== pos && Geometry.distance(p, points[j][0]) < eps) {
+                    pos = j;
+                    i = 0;
+                    break;
+                }
+                if (j !== pos && Geometry.distance(p, points[j][1]) < eps) {
+                    pos = j;
+                    i = 1;
+                    break;
+                }
+            }
+            if (pos === pos_akt) {
+                console.log('Error face3d intersection update: did not find next', pos, i);
+                break;
+            }
+        } while (pos !== first);
+        x.push(x[0]);
+        y.push(y[0]);
+        z.push(z[0]);
+
+        return { X: x, Y: y, Z: z };
     },
 
     /**
@@ -1777,6 +2020,7 @@ JXG.extend(
      */
     pointerUpHandler: function (evt) {
         var target;
+
         if (this._hasMoveAz) {
             target = (this.evalVisProp('az.pointer.outside')) ? document : this.board.containerObj;
             Env.removeEvent(target, 'pointermove', this._azEventHandler, this);
@@ -1793,7 +2037,7 @@ JXG.extend(
             this._hasMoveBank = false;
         }
         if (this._hasMoveTrackball) {
-            target = (this.evalVisProp('az.pointer.outside')) ? document : this.board.containerObj;
+            target = (this.evalVisProp('trackball.outside')) ? document : this.board.containerObj;
             Env.removeEvent(target, 'pointermove', this._trackballHandler, this);
             this._hasMoveTrackball = false;
         }
@@ -1814,6 +2058,8 @@ JXG.extend(
  *   pan: {anabled: fasle}
  * </pre>
  * Otherwise users will not be able to rotate the scene with their fingers on a touch device.
+ * <p>
+ * The start position of the camera can be adjusted by the attributes {@link View3D#az}, {@link View3D#el}, and {@link View3D#bank}.
  *
  * @name View3D
  * @augments JXG.View3D
@@ -2444,7 +2690,7 @@ JXG.createView3D = function (board, parents, attributes) {
             // can not be used any more.
             event.preventDefault();
         }
-        // this.board._change3DView = false;
+        this.board._change3DView = false;
 
     }, view);
 

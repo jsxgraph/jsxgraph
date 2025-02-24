@@ -226,12 +226,13 @@ JXG.JSXGraph = {
      */
     _setARIA: function (container, attr) {
         var doc = attr.document,
-            doc_glob,
-            node_jsx,
-            newNode,
-            parent,
-            id_label,
-            id_description;
+            node_jsx;
+            // Unused variables, made obsolete in db3e50f4dfa8b86b1ff619b578e243a97b41151c
+            // doc_glob,
+            // newNode,
+            // parent,
+            // id_label,
+            // id_description;
 
             if (typeof doc !== 'object') {
                 if (!Env.isBrowser) {
@@ -241,26 +242,12 @@ JXG.JSXGraph = {
             }
 
         node_jsx = (Type.isString(container)) ? doc.getElementById(container) : container;
-        doc_glob = node_jsx.ownerDocument; // This is the window.document element, needed below.
-        parent = node_jsx.parentNode;
+        node_jsx.setAttribute("role", "region");
+        node_jsx.setAttribute("aria-label", attr.title);              // set by initBoard( {title:})
 
-        id_label = container + "_ARIAlabel";
-        id_description = container + "_ARIAdescription";
+        // doc_glob = node_jsx.ownerDocument; // This is the window.document element, needed below.
+        // parent = node_jsx.parentNode;
 
-        newNode = doc_glob.createElement("div");
-        newNode.innerHTML = attr.title;
-        newNode.setAttribute("id", id_label);
-        newNode.style.display = "none";
-        parent.insertBefore(newNode, node_jsx);
-
-        newNode = doc_glob.createElement("div");
-        newNode.innerHTML = attr.description;
-        newNode.setAttribute("id", id_description);
-        newNode.style.display = "none";
-        parent.insertBefore(newNode, node_jsx);
-
-        node_jsx.setAttribute("aria-labelledby", id_label);
-        node_jsx.setAttribute("aria-describedby", id_description);
     },
 
     /**
