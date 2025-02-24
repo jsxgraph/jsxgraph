@@ -29,6 +29,7 @@ Improvements
 - `plane3d`: allow `line3d` as defining element
 - Improved dragging of 3D points
 - Adapt 3D info box style
+- Enhance element `measure`
 
 Bug fixes
 ---------
@@ -43,6 +44,7 @@ Bug fixes
 - Radial gradient of points in canvas
 - Update problems of integral elements
 - Angle for parallel lines
+- toLowerCase in `setAttribute()`
 - Slider handling of snapWidth
 - Handling of maxBoundingBox
 

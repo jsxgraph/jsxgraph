@@ -3222,8 +3222,9 @@ JXG.Options = {
         digits: 3,
 
         /**
-         * The default distance (in user coordinates, not  pixels) between two ticks. Please be aware that this value does not have
-         * to be used if {@link Ticks#insertTicks} is set to true.
+         * The default distance (in user coordinates, not  pixels) between two ticks. Please be aware that this value is overruled
+         * if {@link Ticks#insertTicks} is set to true. In case, {@link Ticks#insertTicks} is false, the maximum number of ticks
+         * is hard coded to be less than 2048.
          *
          * @type Number
          * @name Ticks#ticksDistance

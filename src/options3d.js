@@ -1071,7 +1071,7 @@ JXG.extend(Options, {
          *      </ul>
          *  <li><tt>keyboard</tt> sub-attributes:
          *      <ul>
-         *          <li><tt>enabled</tt>: Boolean that specifies whether the keyboard (arrow keys) can be used to navigate the board.
+         *          <li><tt>enabled</tt>: Boolean that specifies whether the keyboard (left/right arrow keys) can be used to navigate the board.
          *          <li><tt>step</tt>: Size of the step per keystroke.
          *          <li><tt>key</tt>: Should an additional key be pressed? (<tt>'none'</tt>, <tt>'shift'</tt> or <tt>'ctrl'</tt>)
          *      </ul>
@@ -1101,6 +1101,7 @@ JXG.extend(Options, {
          *          start: 1.0
          *      },
          * }</pre>
+         *
          * @example
          *     var bound = [-4, 6];
          *     var view = board.create('view3d',
@@ -1172,7 +1173,7 @@ JXG.extend(Options, {
          *      </ul>
          *  <li><tt>keyboard</tt> sub-attributes:
          *      <ul>
-         *          <li><tt>enabled</tt>: Boolean that specifies whether the keyboard (arrow keys) can be used to navigate the board.
+         *          <li><tt>enabled</tt>: Boolean that specifies whether the keyboard (up/down arrow keys) can be used to navigate the board.
          *          <li><tt>step</tt>: Size of the step per keystroke.
          *          <li><tt>key</tt>: Should an additional key be pressed? (<tt>'none'</tt>, <tt>'shift'</tt> or <tt>'ctrl'</tt>)
          *      </ul>
@@ -1273,7 +1274,7 @@ JXG.extend(Options, {
          *      </ul>
          *  <li><tt>keyboard</tt> sub-attributes:
          *      <ul>
-         *          <li><tt>enabled</tt>: Boolean that specifies whether the keyboard (arrow keys) can be used to navigate the board.
+         *          <li><tt>enabled</tt>: Boolean that specifies whether the keyboard ('<', '>' keys) can be used to navigate the board.
          *          <li><tt>step</tt>: Size of the step per keystroke.
          *          <li><tt>key</tt>: Should an additional key be pressed? (<tt>'none'</tt>, <tt>'shift'</tt> or <tt>'ctrl'</tt>)
          *      </ul>

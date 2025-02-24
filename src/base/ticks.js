@@ -747,11 +747,19 @@ JXG.extend(
             if (ticksDelta < Mat.eps) {
                 return;
             }
+            if (Math.abs(bounds.upper - bounds.lower) > ticksDelta * 2048) {
+                JXG.warn("JSXGraph ticks: too many ticks (>2048). Please increase ticksDistance.");
+                return;
+            }
 
             // Position ticks from zero to the positive side while not reaching the upper boundary
             tickPosition = 0;
             if (!this.evalVisProp('drawzero')) {
                 tickPosition = ticksDelta;
+            }
+            if (tickPosition < bounds.lower) {
+                // Jump from 0 to bounds.lower
+                tickPosition = Math.floor((bounds.lower - eps) / ticksDelta) * ticksDelta;
             }
             while (tickPosition <= bounds.upper + eps) {
                 // Only draw ticks when we are within bounds, ignore case where tickPosition < lower < upper
@@ -760,7 +768,7 @@ JXG.extend(
                 }
                 tickPosition += ticksDelta;
 
-                // Emergency out
+                // Emergency out (probably obsolete)
                 if (bounds.upper - tickPosition > ticksDelta * 10000) {
                     break;
                 }
@@ -768,6 +776,10 @@ JXG.extend(
 
             // Position ticks from zero (not inclusive) to the negative side while not reaching the lower boundary
             tickPosition = -ticksDelta;
+            if (tickPosition > bounds.upper) {
+                // Jump from -ticksDelta to bounds.upper
+                tickPosition = Math.ceil((bounds.upper + eps) / (-ticksDelta)) * (-ticksDelta);
+            }
             while (tickPosition >= bounds.lower - eps) {
                 // Only draw ticks when we are within bounds, ignore case where lower < upper < tickPosition
                 if (tickPosition <= bounds.upper + eps) {
@@ -775,7 +787,7 @@ JXG.extend(
                 }
                 tickPosition -= ticksDelta;
 
-                // Emergency out
+                // Emergency out (probably obsolete)
                 if (tickPosition - bounds.lower > ticksDelta * 10000) {
                     break;
                 }
