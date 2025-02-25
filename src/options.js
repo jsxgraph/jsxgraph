@@ -1525,7 +1525,7 @@ JXG.Options = {
         /**
          * ARIA settings for JSXGraph elements.
          * Besides 'label' and 'live', all available properties from
-         * {@link https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA} may be set.
+         * <a href="https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA">https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA</a> may be set.
          * In JSXGraph, the available properties are used without the leading 'aria-'.
          * For example, the value of the JSXGraph attribute 'aria.label' will be set to the
          * HTML attribute 'aria-label' (ignoring 'aria.enabled').
