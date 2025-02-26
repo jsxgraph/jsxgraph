@@ -1002,7 +1002,7 @@ JXG.extend(
          * @see JXG.GeonextParser.geonext2JS
          */
         generateTerm: function (varname, xterm, yterm, mi, ma) {
-            var fx, fy;
+            var fx, fy, mat;
 
             // Generate the methods X() and Y()
             if (Type.isArray(xterm)) {
@@ -1027,6 +1027,14 @@ JXG.extend(
 
             if (Type.isArray(yterm)) {
                 this.dataY = yterm;
+                this.Y = this.interpolationFunctionFromArray.apply(this, ["Y"]);
+            } else if (!Type.exists(yterm)) {
+                // Discrete data as an array of coordinate pairs,
+                // i.e. transposed input
+                mat = Mat.transpose(xterm);
+                this.dataX = mat[0];
+                this.dataY = mat[1];
+                this.numberPoints = this.dataX.length;
                 this.Y = this.interpolationFunctionFromArray.apply(this, ["Y"]);
             } else {
                 this.Y = Type.createFunction(yterm, this.board, varname);
