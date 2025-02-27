@@ -384,6 +384,7 @@ JXG.extend(
 JXG.createCurve3D = function (board, parents, attributes) {
     var view = parents[0],
         F, X, Y, Z, range, attr, el,
+        mat,
         base = null,
         transform = null;
 
@@ -405,6 +406,12 @@ JXG.createCurve3D = function (board, parents, attributes) {
             Y = null;
             Z = null;
         }
+    } else if (parents.length === 2 && Type.isArray(parents[1])) {
+        mat = Mat.transpose(parents[1]);
+        X = mat[0];
+        Y = mat[1];
+        Z = mat[2];
+        F = null;
     } else {
         // [X, Y, Z, range]
         X = parents[1];
