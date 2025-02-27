@@ -5169,17 +5169,18 @@ JXG.extend(
          */
         zoomIn: function (x, y) {
             var bb = this.getBoundingBox(),
-                zX = this.attr.zoom.factorx,
-                zY = this.attr.zoom.factory,
+                zX = Type.evaluate(this.attr.zoom.factorx),
+                zY =  Type.evaluate(this.attr.zoom.factory),
                 dX = (bb[2] - bb[0]) * (1.0 - 1.0 / zX),
                 dY = (bb[1] - bb[3]) * (1.0 - 1.0 / zY),
                 lr = 0.5,
                 tr = 0.5,
-                mi = this.attr.zoom.eps || this.attr.zoom.min || 0.001; // this.attr.zoom.eps is deprecated
+                ma = Type.evaluate(this.attr.zoom.max),
+                mi =  Type.evaluate(this.attr.zoom.eps) || Type.evaluate(this.attr.zoom.min) || 0.001; // this.attr.zoom.eps is deprecated
 
             if (
-                (this.zoomX > this.attr.zoom.max && zX > 1.0) ||
-                (this.zoomY > this.attr.zoom.max && zY > 1.0) ||
+                (this.zoomX > ma && zX > 1.0) ||
+                (this.zoomY > ma && zY > 1.0) ||
                 (this.zoomX < mi && zX < 1.0) || // zoomIn is used for all zooms on touch devices
                 (this.zoomY < mi && zY < 1.0)
             ) {
@@ -5214,13 +5215,13 @@ JXG.extend(
          */
         zoomOut: function (x, y) {
             var bb = this.getBoundingBox(),
-                zX = this.attr.zoom.factorx,
-                zY = this.attr.zoom.factory,
+                zX = Type.evaluate(this.attr.zoom.factorx),
+                zY = Type.evaluate(this.attr.zoom.factory),
                 dX = (bb[2] - bb[0]) * (1.0 - zX),
                 dY = (bb[1] - bb[3]) * (1.0 - zY),
                 lr = 0.5,
                 tr = 0.5,
-                mi = this.attr.zoom.eps || this.attr.zoom.min || 0.001; // this.attr.zoom.eps is deprecated
+                mi = Type.evaluate(this.attr.zoom.eps) || Type.evaluate(this.attr.zoom.min) || 0.001; // this.attr.zoom.eps is deprecated
 
             if (this.zoomX < mi || this.zoomY < mi) {
                 return this;
