@@ -805,7 +805,10 @@ JXG.extend(
                 el.size[1]
             );
 
-            el.rendNode.innerHTML = el.content;
+            if (el.evalVisProp('evaluateOnlyOnce') !== true || !el.renderedOnce) {
+                el.rendNode.innerHTML = el.content;
+                el.renderedOnce = true;
+            }
             this._updateVisual(el, { stroke: true, dash: true }, true);
         },
 

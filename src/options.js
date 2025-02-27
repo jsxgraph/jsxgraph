@@ -4954,7 +4954,18 @@ JXG.Options = {
          * @type Array
          * @default empty
          */
-        attractors: []
+        attractors: [],
+
+        /**
+         * If set to true, this object is only evaluated once and not re-evaluated on update.
+         * This is necessary if you want to have a bord within a foreignObject of another board.
+         *
+         * @name ForeignObject#evaluateOnlyOnce
+         *
+         * @type Boolean
+         * @default false
+         */
+        evaluateOnlyOnce: false
 
         /**#@-*/
     },
