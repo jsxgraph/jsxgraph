@@ -349,7 +349,15 @@ JXG.createMeasurement = function (board, parents, attributes) {
     el.Unit = function (dimension) {
         var unit = '',
             units = el.evalVisProp('units'),
-            dim = dimension ?? el.Dimension();
+            dim = dimension ?? el.Dimension(),
+            dims = {}, i;
+
+        if (Type.isArray(dimension)) {
+            for (i = 0; i < dimension.length; i++) {
+                dims['dim' + dimension[i]] = el.Unit(dimension[i]);
+            }
+            return dims;
+        }
 
         if (Type.isObject(units) && Type.exists(units[dim]) && units[dim] !== false) {
             unit = el.eval(units[dim]);
