@@ -596,8 +596,11 @@ JXG.createFunctiongraph3D = function (board, parents, attributes) {
         },
         Z = Type.createFunction(parents[1], board, 'x, y'),
         range_u = parents[2],
-        range_v = parents[3];
+        range_v = parents[3],
+        el;
 
-    return view.create("parametricsurface3d", [X, Y, Z, range_u, range_v], attributes);
+    el = view.create("parametricsurface3d", [X, Y, Z, range_u, range_v], attributes);
+    el.elType = 'functiongraph3d';
+    return el;
 };
 JXG.registerElement("functiongraph3d", JXG.createFunctiongraph3D);
