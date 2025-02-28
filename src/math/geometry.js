@@ -1025,6 +1025,97 @@ JXG.extend(
             return res;
         },
 
+        // /**
+        //  * Determine if a polygon or a path element is convex, non-convex or complex which are defined like this:
+        //  * <ul>
+        //  * <li> A polygon is convex if for every pair of points, the line segment connecting them does not intersect
+        //  * an edge of the polygon in one point.
+        //  * A single line segment or a a single point is considered as convex. A necessary condition for a polygon
+        //  * to be convex that the angle sum of its interior angles equals &plusmn; 2 &pi;.
+        //  * <li> A polygon is non-convex, if it does not self-intersect, but is not convex.
+        //  * <li> A polygon is complex if its the angle sum is not equal to &plusmn; 2 &pi;.
+        //  * That is, there must be self-intersection (contiguous coincident points in the path are not treated as self-intersection).
+        //  * </ul>
+        //  * A path  element might be specified as an array of coordinate arrays or {@link JXG.Coords}.
+        //  *
+        //  * @param {Array|Polygon|PolygonalChain} points Polygon or list of coordinates
+        //  * @returns {Number} -1: if complex, 0: if non-convex, 1: if convex
+        //  */
+        /**
+         * Determine if a polygon or a path element is convex:
+         * <p>
+         * A polygon is convex if for every pair of points, the line segment connecting them does not intersect
+         * an edge of the polygon in one point.
+         * A single line segment or a a single point is considered as convex. A necessary condition for a polygon
+         * to be convex that the angle sum of its interior angles equals &plusmn; 2 &pi;.
+         * <p>
+         * A path  element might be specified as an array of coordinate arrays or {@link JXG.Coords}.
+         *
+         * @param {Array|Polygon|PolygonalChain} points Polygon or list of coordinates
+         * @returns {Boolean} true if convex
+         */
+        isConvex: function(points) {
+            var ps, le, i,
+                eps = Mat.eps * Mat.eps,
+                old_x, old_y, old_dir,
+                new_x, new_y, new_dir,
+                angle,
+                orient,
+                // is_convex = true,
+                angle_sum = 0.0;
+
+            if (Type.isArray(points)) {
+                ps = Expect.each(points, Expect.coordsArray);
+            } else if (Type.exists(points.type) && points.type === Const.OBJECT_TYPE_POLYGON) {
+                ps = Expect.each(points.vertices, Expect.coordsArray);
+            }
+            le = ps.length - 1;
+            if (le < 3) {
+                return 1;
+            }
+
+            orient = null;
+            old_x = ps[le - 2][1];
+            old_y = ps[le - 2][2];
+            new_x = ps[le - 1][1];
+            new_y = ps[le - 1][2];
+            new_dir = Math.atan2(new_y - old_y, new_x - old_x);
+            for (i = 0; i < le; i++) {
+                old_x = new_x;
+                old_y = new_y;
+                old_dir = new_dir;
+                new_x = ps[i][1];
+                new_y = ps[i][2];
+                if (old_x === new_x && old_y === new_y) {
+                    // Repeated consecutive points are ignored
+                    continue;
+                }
+                new_dir = Math.atan2(new_y - old_y, new_x - old_x);
+                angle = new_dir - old_dir;
+                if (angle <= -Math.PI) {
+                    angle += 2 * Math.PI;
+                } else if (angle > Math.PI) {
+                    angle -= 2 * Math.PI;
+                }
+                if (orient === null) {
+                    if (angle === 0.0) {
+                        continue;
+                    }
+                    orient = (angle > 0) ? 1 : -1;
+                } else {
+                    if (orient * angle < -eps) {
+                        return false;
+                    }
+                }
+                angle_sum += angle;
+            }
+
+            if ((Math.abs(angle_sum / (2 * Math.PI)) - 1) < eps) {
+                return true;
+            }
+            return false;
+        },
+
         /**
          * A line can be a segment, a straight, or a ray. So it is not always delimited by point1 and point2
          * calcStraight determines the visual start point and end point of the line. A segment is only drawn
