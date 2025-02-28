@@ -2179,6 +2179,45 @@ JXG.extend(
             return this;
         },
 
+        moveAlongES6: function (path, time, options) {
+            return new Promise((resolve, reject) => {
+                if (Type.exists(options) && Type.exists(options.callback)) {
+                    options.callback = resolve;
+                } else {
+                    options = {
+                        callback: resolve
+                    };
+                }
+                this.moveAlong(path, time, options);
+            });
+        },
+
+        moveToES6: function (where, time, options) {
+            return new Promise((resolve, reject) => {
+                if (Type.exists(options) && Type.exists(options.callback)) {
+                    options.callback = resolve;
+                } else {
+                    options = {
+                        callback: resolve
+                    };
+                }
+                this.moveTo(where, time, options);
+            });
+        },
+
+        visitES6: function (where, time, options) {
+            return new Promise((resolve, reject) => {
+                if (Type.exists(options) && Type.exists(options.callback)) {
+                    options.callback = resolve;
+                } else {
+                    options = {
+                        callback: resolve
+                    };
+                }
+                this.visit(where, time, options);
+            });
+        },
+
         /**
          * Animates a glider. Is called by the browser after startAnimation is called.
          * @param {Number} direction The direction the glider is animated.
