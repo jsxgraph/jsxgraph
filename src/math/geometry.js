@@ -1046,13 +1046,62 @@ JXG.extend(
          * <p>
          * A polygon is convex if for every pair of points, the line segment connecting them does not intersect
          * an edge of the polygon in one point.
-         * A single line segment or a a single point is considered as convex. A necessary condition for a polygon
+         * A single line segment, a single point, or the empty set is considered as convex. A necessary condition for a polygon
          * to be convex that the angle sum of its interior angles equals &plusmn; 2 &pi;.
          * <p>
          * A path  element might be specified as an array of coordinate arrays or {@link JXG.Coords}.
+         * See the discussion at <a href="https://stackoverflow.com/questions/471962/how-do-i-efficiently-determine-if-a-polygon-is-convex-non-convex-or-complex">stackoverflow</a>.
          *
          * @param {Array|Polygon|PolygonalChain} points Polygon or list of coordinates
          * @returns {Boolean} true if convex
+         *
+         * @example
+         * var pol = board.create('polygon', [
+         *     [-1, -1],
+         *     [3, -1],
+         *     [4, 2],
+         *     [3, 3],
+         *     [0, 4],
+         *     [-3, 1]
+         * ], {
+         *     vertices: {
+         *         color: 'blue',
+         *         snapToGrid: true
+         *     }
+         * });
+         *
+         * console.log(JXG.Math.Geometry.isConvex(pol));
+         * // > true
+         *
+         *
+         *
+         * </pre><div id="JXG9b43cc53-15b4-49be-92cc-2a1dfc06665b" class="jxgbox" style="width: 300px; height: 300px;"></div>
+         * <script type="text/javascript">
+         *     (function() {
+         *         var board = JXG.JSXGraph.initBoard('JXG9b43cc53-15b4-49be-92cc-2a1dfc06665b',
+         *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
+         *     var pol = board.create('polygon', [
+         *         [-1, -1],
+         *         [3, -1],
+         *         [4, 2],
+         *         [3, 3],
+         *         [0, 4],
+         *         [-3, 1]
+         *     ], {
+         *         vertices: {
+         *             color: 'blue',
+         *             snapToGrid: true
+         *         }
+         *     });
+         *
+         *     console.log(JXG.Math.Geometry.isConvex(pol));
+         *
+         *
+         *
+         *     })();
+         *
+         * </script><pre>
+         *
          */
         isConvex: function(points) {
             var ps, le, i,
@@ -1061,7 +1110,6 @@ JXG.extend(
                 new_x, new_y, new_dir,
                 angle,
                 orient,
-                // is_convex = true,
                 angle_sum = 0.0;
 
             if (Type.isArray(points)) {
@@ -1069,9 +1117,14 @@ JXG.extend(
             } else if (Type.exists(points.type) && points.type === Const.OBJECT_TYPE_POLYGON) {
                 ps = Expect.each(points.vertices, Expect.coordsArray);
             }
-            le = ps.length - 1;
+            le = ps.length;
+            if (le === 0) {
+                // Empty set is convex
+                return true;
+            }
             if (le < 3) {
-                return 1;
+                // Segments and points are convex
+                return true;
             }
 
             orient = null;
