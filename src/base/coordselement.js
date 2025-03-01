@@ -1969,30 +1969,30 @@ JXG.extend(
          *
          *}])
          *
-          </pre><div id="JXG0f35a50e-e99d-11e8-a1ca-04d3b0c2aad4" class="jxgbox" style="width: 300px; height: 300px;"></div>
-          <script type="text/javascript">
-          {
-*          let board = JXG.JSXGraph.initBoard('JXG0f35a50e-e99d-11e8-a1ca-04d3b0c2aad4')
-          let yInit = 3
-          let [A, B, C, D] = ['==', '<>', '<', '>'].map((s) => board.create('point', [4, yInit--], { name: s, label: { fontSize: 24 } }))
-          let seg = board.create('segment', [A, [() => A.X(), 0]])  // shows linear
-
-         let isLeftRight = true;
-         let buttonMove = board.create('button', [-2, 4, 'left',
-         () => {
-             isLeftRight = !isLeftRight;
-             buttonMove.rendNodeButton.innerHTML = isLeftRight ? 'left' : 'right'
-             let x = isLeftRight ? 4 : -4
-             let sym = isLeftRight ? 'triangleleft' : 'triangleright'
-
-             A.moveTo([x, 3], 1000, { callback: () => A.setAttribute({ face: sym, size: 5 }) })
-             B.moveTo([x, 2], 1000, { callback: () => B.setAttribute({ face: sym, size: 5 }), effect: "<>" })
-             C.moveTo([x, 1], 1000, { callback: () => C.setAttribute({ face: sym, size: 5 }), effect: "<" })
-             D.moveTo([x, 0], 1000, { callback: () => D.setAttribute({ face: sym, size: 5 }), effect: ">" })
-
-         }])
-        }
-        </script><pre>
+         * </pre><div id="JXG0f35a50e-e99d-11e8-a1ca-04d3b0c2aad4" class="jxgbox" style="width: 300px; height: 300px;"></div>
+         * <script type="text/javascript">
+         * {
+         * let board = JXG.JSXGraph.initBoard('JXG0f35a50e-e99d-11e8-a1ca-04d3b0c2aad4')
+         * let yInit = 3
+         * let [A, B, C, D] = ['==', '<>', '<', '>'].map((s) => board.create('point', [4, yInit--], { name: s, label: { fontSize: 24 } }))
+         * let seg = board.create('segment', [A, [() => A.X(), 0]])  // shows linear
+         *
+         *let isLeftRight = true;
+         *let buttonMove = board.create('button', [-2, 4, 'left',
+         *() => {
+         *    isLeftRight = !isLeftRight;
+         *    buttonMove.rendNodeButton.innerHTML = isLeftRight ? 'left' : 'right'
+         *    let x = isLeftRight ? 4 : -4
+         *    let sym = isLeftRight ? 'triangleleft' : 'triangleright'
+         *
+         *    A.moveTo([x, 3], 1000, { callback: () => A.setAttribute({ face: sym, size: 5 }) })
+         *    B.moveTo([x, 2], 1000, { callback: () => B.setAttribute({ face: sym, size: 5 }), effect: "<>" })
+         *    C.moveTo([x, 1], 1000, { callback: () => C.setAttribute({ face: sym, size: 5 }), effect: "<" })
+         *    D.moveTo([x, 0], 1000, { callback: () => D.setAttribute({ face: sym, size: 5 }), effect: ">" })
+         *
+         *}])
+         *}
+         *</script><pre>
          */
         moveTo: function (where, time, options) {
             options = options || {};
@@ -2094,27 +2094,27 @@ JXG.extend(
          *        D.visit([-x, 0], 4000, { effect: ">", repeat: 2 })
          *    }])
          *
-          </pre><div id="JXG0f35a50e-e99d-11e8-a1ca-04d3b0c2aad5" class="jxgbox" style="width: 300px; height: 300px;"></div>
-          <script type="text/javascript">
-          {
-*          let board = JXG.JSXGraph.initBoard('JXG0f35a50e-e99d-11e8-a1ca-04d3b0c2aad5')
-          let yInit = 3
-          let [A, B, C, D] = ['==', '<>', '<', '>'].map((s) => board.create('point', [4, yInit--], { name: s, label: { fontSize: 24 } }))
-          let seg = board.create('segment', [A, [() => A.X(), 0]])  // shows linear
-
-         let isLeftRight = true;
-         let buttonVisit = board.create('button', [0, 4, 'visit',
-             () => {
-                 let x = isLeftRight ? 4 : -4
-
-                 A.visit([-x, 3], 4000, { effect: "==", repeat: 2 })  // linear
-                 B.visit([-x, 2], 4000, { effect: "<>", repeat: 2 })
-                 C.visit([-x, 1], 4000, { effect: "<", repeat: 2 })
-                 D.visit([-x, 0], 4000, { effect: ">", repeat: 2 })
-             }])
-            }
-        </script><pre>
-
+         * </pre><div id="JXG0f35a50e-e99d-11e8-a1ca-04d3b0c2aad5" class="jxgbox" style="width: 300px; height: 300px;"></div>
+         * <script type="text/javascript">
+         * {
+         *  let board = JXG.JSXGraph.initBoard('JXG0f35a50e-e99d-11e8-a1ca-04d3b0c2aad5')
+         * let yInit = 3
+         * let [A, B, C, D] = ['==', '<>', '<', '>'].map((s) => board.create('point', [4, yInit--], { name: s, label: { fontSize: 24 } }))
+         * let seg = board.create('segment', [A, [() => A.X(), 0]])  // shows linear
+         *
+         * let isLeftRight = true;
+         * let buttonVisit = board.create('button', [0, 4, 'visit',
+         *    () => {
+         *        let x = isLeftRight ? 4 : -4
+         *
+         *        A.visit([-x, 3], 4000, { effect: "==", repeat: 2 })  // linear
+         *        B.visit([-x, 2], 4000, { effect: "<>", repeat: 2 })
+         *        C.visit([-x, 1], 4000, { effect: "<", repeat: 2 })
+         *        D.visit([-x, 0], 4000, { effect: ">", repeat: 2 })
+         *    }])
+         *   }
+         * </script><pre>
+         *
          */
         visit: function (where, time, options) {
             where = new Coords(Const.COORDS_BY_USER, where, this.board);
