@@ -1845,8 +1845,9 @@ JXG.extend(
          * will interpolate the path
          * using {@link JXG.Math.Numerics.Neville}. Set this flag to false if you don't want to use interpolation.
          * @returns {JXG.CoordsElement} Reference to itself.
-         * @see JXG.CoordsElement#moveAlong
          * @see JXG.CoordsElement#moveTo
+         * @see JXG.CoordsElement#visit
+         * @see JXG.CoordsElement#moveAlongES6
          * @see JXG.GeometryElement#animate
          */
         moveAlong: function (path, time, options) {
@@ -1947,6 +1948,7 @@ JXG.extend(
          * @see JXG.CoordsElement#setPosition
          * @see JXG.CoordsElement#moveAlong
          * @see JXG.CoordsElement#visit
+         * @see JXG.CoordsElement#moveToES6
          * @see JXG.GeometryElement#animate
          * @example
          * // moveTo() with different easing options and callback options
@@ -2076,6 +2078,7 @@ JXG.extend(
          * @returns {JXG.CoordsElement} Reference to itself.
          * @see JXG.CoordsElement#moveAlong
          * @see JXG.CoordsElement#moveTo
+         * @see JXG.CoordsElement#visitES6
          * @see JXG.GeometryElement#animate
          * @example
          * // visit() with different easing options
@@ -2179,6 +2182,15 @@ JXG.extend(
             return this;
         },
 
+        /**
+         * ES6 version of {@link JXG.CoordsElement#moveAlong} using a promise.
+         *
+         * @param {Array} where Array containing the x and y coordinate of the target location.
+         * @param {Number} [time] Number of milliseconds the animation should last.
+         * @param {Object} [options] Optional settings for the animation
+         * @returns Promise
+         * @see JXG.CoordsElement#moveAlong
+         */
         moveAlongES6: function (path, time, options) {
             return new Promise((resolve, reject) => {
                 if (Type.exists(options) && Type.exists(options.callback)) {
@@ -2192,6 +2204,15 @@ JXG.extend(
             });
         },
 
+        /**
+         * ES6 version of {@link JXG.CoordsElement#moveTo} using a promise.
+         *
+         * @param {Array} where Array containing the x and y coordinate of the target location.
+         * @param {Number} [time] Number of milliseconds the animation should last.
+         * @param {Object} [options] Optional settings for the animation
+         * @returns Promise
+         * @see JXG.CoordsElement#moveTo
+         */
         moveToES6: function (where, time, options) {
             return new Promise((resolve, reject) => {
                 if (Type.exists(options) && Type.exists(options.callback)) {
@@ -2205,6 +2226,15 @@ JXG.extend(
             });
         },
 
+        /**
+         * ES6 version of {@link JXG.CoordsElement#moveVisit} using a promise.
+         *
+         * @param {Array} where Array containing the x and y coordinate of the target location.
+         * @param {Number} [time] Number of milliseconds the animation should last.
+         * @param {Object} [options] Optional settings for the animation
+         * @returns Promise
+         * @see JXG.CoordsElement#visit
+         */
         visitES6: function (where, time, options) {
             return new Promise((resolve, reject) => {
                 if (Type.exists(options) && Type.exists(options.callback)) {
