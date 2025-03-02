@@ -66,6 +66,7 @@
     "globals": "^15.4.0",
     "http-server": "^14.1.1",
     "jasmine-core": "^3.10.1",
+    "jsdoc": "^4.0.4",
     "jsdoc2": "^2.4.0",
     "jshint": "^2.13.1",
     "jslint": "^0.12.1",

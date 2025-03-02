@@ -37,6 +37,9 @@ JSDOC2TPL=doc/jsdoc-tk/template
 JSDOC2TPLSTAT=$(JSDOC2TPL)/static
 JSDOC2FLAGS=-v -p -t=$(JSDOC2TPL) -d=$(TMP)/docs
 
+JSDOC3=node ./node_modules/.bin/jsdoc
+JSDOC2FLAGS=-v -p -d=$(TMP)/docs
+
 # Flags
 MKDIRFLAGS=-p
 RMFLAGS=-rf
@@ -140,6 +143,36 @@ docs: core
 
 	# Test
 	$(CD) $(OUTPUT) && $(UNZIP) -o docs.zip
+
+docs3:
+	# Set up tmp dir
+	$(MKDIR) $(MKDIRFLAGS) $(TMP)
+	# $(MKDIR) $(MKDIRFLAGS) $(OUTPUT)
+
+	# Update template related files
+	# $(CP) $(THIRDPARTY)/jquery.min.js $(JSDOC2TPLSTAT)/jquery.min.js
+	# $(CP) $(OUTPUT)/jsxgraphcore.js   $(JSDOC2TPLSTAT)/jsxgraphcore.js
+	# $(CP) $(OUTPUT)/jsxgraph.css      $(JSDOC2TPLSTAT)/jsxgraph.css
+
+	# Update version number in line 2 of file doc/jsdoc-tk/template/static/header.html
+	# sed -i '2s/.*/<h1>JSXGraph $(VERSION) Reference<\/h1>/' doc/jsdoc-tk/template/static/header.html
+
+	# Patch run.js
+	# $(CP) $(JSDOC2PTCH)/*.js ./node_modules/jsdoc2/app
+
+	# Update the plugin
+	# $(CP) $(JSDOC2PLG)/*.js ./node_modules/jsdoc2/app/plugins/
+
+	# Run node-jsdoc2
+	$(JSDOC3) $(JSDOC3FLAGS) $(FILELIST)
+
+	# Compress the result: zip -r tmp/docs.zip tmp/docs/
+	# $(CD) $(TMP) && $(ZIP) $(ZIPFLAGS) docs.zip docs/
+	# $(CP) $(TMP)/docs.zip $(OUTPUT)/docs.zip
+	# $(RM) $(RMFLAGS) tmp
+
+	# Test
+	# $(CD) $(OUTPUT) && $(UNZIP) -o docs.zip
 
 # prettier:
 # 	$(PRETTIER) $(PRETTIERFLAGS) src

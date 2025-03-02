@@ -4276,7 +4276,7 @@ JXG.extend(
          * If necessary, also call setBoundingBox().
          * @param {Number} [width=this.containerObj.offsetWidth] Width of the container element
          * @param {Number} [height=this.containerObj.offsetHeight] Height of the container element
-         * @returns
+         * @returns {JXG.Board} Reference to the board
          *
          * @see JXG.Board#startResizeObserver
          * @see JXG.Board#resizeListener
@@ -4319,7 +4319,7 @@ JXG.extend(
 
             // If div is invisible - do nothing
             if (w <= 0 || h <= 0 || isNaN(w) || isNaN(h)) {
-                return;
+                return this;
             }
 
             // If bounding box is not yet initialized, do it now.
@@ -4339,6 +4339,7 @@ JXG.extend(
                 w: w,
                 h: h
             };
+            return this;
         },
 
         /**
