@@ -352,7 +352,7 @@ JXG.createMeasurement = function (board, parents, attributes) {
             dim = dimension,
             dims = {}, i;
 
-        if (!Type.exist(dim)) {
+        if (!Type.exists(dim)) {
             dim = el.Dimension();
         }
 
