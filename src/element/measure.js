@@ -88,8 +88,8 @@ JXG.createTapemeasure = function (board, parents, attributes) {
     attr = Type.copyAttributes(attributes, board.options, "tapemeasure", "point2");
     p2 = board.create("point", pos1, attr);
 
-    p1.setAttribute({ ignoredSnapToPoints: [p2.id] });
-    p2.setAttribute({ ignoredSnapToPoints: [p1.id] });
+    p1.setAttribute({ignoredSnapToPoints: [p2.id]});
+    p2.setAttribute({ignoredSnapToPoints: [p1.id]});
 
     // tape measure line
     attr = Type.copyAttributes(attributes, board.options, "tapemeasure");
@@ -349,8 +349,12 @@ JXG.createMeasurement = function (board, parents, attributes) {
     el.Unit = function (dimension) {
         var unit = '',
             units = el.evalVisProp('units'),
-            dim = dimension ?? el.Dimension(),
+            dim = dimension,
             dims = {}, i;
+
+        if (!Type.exist(dim)) {
+            dim = el.Dimension();
+        }
 
         if (Type.isArray(dimension)) {
             for (i = 0; i < dimension.length; i++) {
