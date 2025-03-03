@@ -38,7 +38,7 @@ import JXG from "../jxg.js";
 var major = 1,
     minor = 11,
     patch = 0,
-    add = 'beta1', // 'dev' 'beta'
+    add = 'beta2', // 'dev' 'beta'
     version = major + '.' + minor + '.' + patch + (add ? '-' + add : ''),
     constants;
 
@@ -122,6 +122,8 @@ constants =
     OBJECT_TYPE_CIRCLE3D: 41,
     OBJECT_TYPE_INTERSECTION_CIRCLE3D: 42,
     OBJECT_TYPE_TEXT3D: 43,
+    OBJECT_TYPE_FACE3D: 44,
+    OBJECT_TYPE_POLYHEDRON3D: 45,
     OBJECT_TYPE_POLYGON3D: 46,
 
     // IMPORTANT:

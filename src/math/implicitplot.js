@@ -270,7 +270,7 @@ Type.extend(
                     ret = this.searchLine(
                         fmi_x, fma_x, x,
                         [mi_y, ma_y], 'vertical',
-                        num_components, dataX, dataY);
+                        num_components, dataX, dataY, 20);
 
                     if (ret !== false) {
                         dataX = ret[0];
@@ -289,7 +289,7 @@ Type.extend(
                     ret = this.searchLine(
                         fmi_y, fma_y, y,
                         [mi_x, ma_x], 'horizontal',
-                        num_components, dataX, dataY);
+                        num_components, dataX, dataY, 20);
 
                     if (ret !== false) {
                         dataX = ret[0];
@@ -314,11 +314,12 @@ Type.extend(
          * @param {Number} num_components Number of components before search
          * @param {Array} dataX x-coordinates of points so far
          * @param {Array} dataY y-coordinates of points so far
+         * @param {Number} level Recursion level
          * @returns {Array} consisting of [dataX, dataY, number_of_components]-
          * @private
          */
         searchLine: function (fmi, fma, fix, interval, dir,
-            num_components, dataX, dataY) {
+            num_components, dataX, dataY, level) {
             var t_mi, t_ma, t,
                 ft,
                 mi, ma, tmp, m,
@@ -376,7 +377,7 @@ Type.extend(
                         console.log("Not in quadtree", u0, dataX.length);
                     }
                     ret = this.traceComponent(u0, 1);
-                    if (ret.length > 0) {
+                    if (ret[0].length > 0) {
                         // Add jump in curve
                         if (num_components > 0) {
                             dataX.push(NaN);
@@ -404,10 +405,10 @@ Type.extend(
                 }
 
                 m = t - delta * 0.01;
-                if (m - b > delta) {
+                if (m - b > delta && level > 0) {
                     ret = this.searchLine(
                         fmi, fma, fix, [b, m], dir,
-                        num_components, dataX, dataY);
+                        num_components, dataX, dataY, level - 1);
                     if (ret !== false) {
                         dataX = ret[0];
                         dataY = ret[1];
@@ -415,10 +416,10 @@ Type.extend(
                     }
                 }
                 m = t + delta * 0.01;
-                if (e - m > delta) {
+                if (e - m > delta  && level > 0) {
                     ret = this.searchLine(
                         fmi, fma, fix, [m, e], dir,
-                        num_components, dataX, dataY);
+                        num_components, dataX, dataY, level - 1);
                     if (ret !== false) {
                         dataX = ret[0];
                         dataY = ret[1];
@@ -488,7 +489,7 @@ Type.extend(
                 // console.log("Could not start tracing due to singularity")
             } else {
                 // console.log("Trace from", [arr[0][0], arr[1][0]], "to", [arr[0][arr[0].length - 1], arr[1][arr[1].length - 1]],
-                //     "num points:", arr[0].length);
+                //    "num points:", arr[0].length);
                 dataX = arr[0];
                 dataY = arr[1];
             }
@@ -511,7 +512,7 @@ Type.extend(
                 }
             }
 
-            if (dataX.length < 6) {
+            if (dataX.length > 0 && dataX.length < 6) {
                 // Solitary point
                 dataX.push(dataX[dataX.length - 1]);
                 dataY.push(dataY[dataY.length - 1]);

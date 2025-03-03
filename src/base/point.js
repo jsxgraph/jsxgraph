@@ -441,7 +441,7 @@ JXG.extend(
 );
 
 /**
- * @class This element is used to provide a constructor for a general point. A free point is created if the given parent elements are all numbers
+ * @class Construct a free or a fixed point. A free point is created if the given parent elements are all numbers
  * and the property fixed is not set or set to false. If one or more parent elements is not a number but a string containing a GEONE<sub>x</sub>T
  * constraint or a function the point will be considered as constrained). That means that the user won't be able to change the point's
  * position directly.

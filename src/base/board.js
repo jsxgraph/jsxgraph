@@ -1519,7 +1519,7 @@ JXG.extend(
             ) {
                 drag.triggerEventHandlers([type + 'drag', 'drag'], [evt]);
                 // Update all elements of the board
-                this.update();
+                this.update(drag);
             }
             drag.highlight(true);
             this.triggerEventHandlers(['mousehit', 'hit'], [evt, drag]);
@@ -4392,7 +4392,8 @@ JXG.extend(
                     window.setTimeout(function () {
                         try {
                             that.updateContainerDims(bb.width, bb.height);
-                        } catch (err) {
+                        } catch (e) {
+                            JXG.debug(e);   // Used to log errors during board.update()
                             that.stopResizeObserver();
                         } finally {
                             that._isResizing = false;
@@ -4931,10 +4932,10 @@ JXG.extend(
                     this
                 ).usrCoords;
                 if (
-                    ul[1] < this.maxboundingbox[0] ||
-                    ul[2] > this.maxboundingbox[1] ||
-                    lr[1] > this.maxboundingbox[2] ||
-                    lr[2] < this.maxboundingbox[3]
+                    ul[1] < this.maxboundingbox[0] - Mat.eps ||
+                    ul[2] > this.maxboundingbox[1] + Mat.eps ||
+                    lr[1] > this.maxboundingbox[2] + Mat.eps ||
+                    lr[2] < this.maxboundingbox[3] - Mat.eps
                 ) {
                     this.origin.scrCoords[1] = ox;
                     this.origin.scrCoords[2] = oy;
@@ -5261,17 +5262,18 @@ JXG.extend(
          */
         zoomIn: function (x, y) {
             var bb = this.getBoundingBox(),
-                zX = this.attr.zoom.factorx,
-                zY = this.attr.zoom.factory,
+                zX = Type.evaluate(this.attr.zoom.factorx),
+                zY =  Type.evaluate(this.attr.zoom.factory),
                 dX = (bb[2] - bb[0]) * (1.0 - 1.0 / zX),
                 dY = (bb[1] - bb[3]) * (1.0 - 1.0 / zY),
                 lr = 0.5,
                 tr = 0.5,
-                mi = this.attr.zoom.eps || this.attr.zoom.min || 0.001; // this.attr.zoom.eps is deprecated
+                ma = Type.evaluate(this.attr.zoom.max),
+                mi =  Type.evaluate(this.attr.zoom.eps) || Type.evaluate(this.attr.zoom.min) || 0.001; // this.attr.zoom.eps is deprecated
 
             if (
-                (this.zoomX > this.attr.zoom.max && zX > 1.0) ||
-                (this.zoomY > this.attr.zoom.max && zY > 1.0) ||
+                (this.zoomX > ma && zX > 1.0) ||
+                (this.zoomY > ma && zY > 1.0) ||
                 (this.zoomX < mi && zX < 1.0) || // zoomIn is used for all zooms on touch devices
                 (this.zoomY < mi && zY < 1.0)
             ) {
@@ -5306,13 +5308,13 @@ JXG.extend(
          */
         zoomOut: function (x, y) {
             var bb = this.getBoundingBox(),
-                zX = this.attr.zoom.factorx,
-                zY = this.attr.zoom.factory,
+                zX = Type.evaluate(this.attr.zoom.factorx),
+                zY = Type.evaluate(this.attr.zoom.factory),
                 dX = (bb[2] - bb[0]) * (1.0 - zX),
                 dY = (bb[1] - bb[3]) * (1.0 - zY),
                 lr = 0.5,
                 tr = 0.5,
-                mi = this.attr.zoom.eps || this.attr.zoom.min || 0.001; // this.attr.zoom.eps is deprecated
+                mi = Type.evaluate(this.attr.zoom.eps) || Type.evaluate(this.attr.zoom.min) || 0.001; // this.attr.zoom.eps is deprecated
 
             if (this.zoomX < mi || this.zoomY < mi) {
                 return this;
@@ -5803,9 +5805,10 @@ JXG.extend(
 
         /**
          * Sets for all objects the needsUpdate flag to 'true'.
+         * @param{JXG.GeometryElement} [drag=undefined] Optional element that is dragged.
          * @returns {JXG.Board} Reference to the board
          */
-        prepareUpdate: function () {
+        prepareUpdate: function (drag) {
             var el, i,
                 pEl,
                 len = this.objectsList.length;
@@ -5818,7 +5821,9 @@ JXG.extend(
 
             for (el = 0; el < len; el++) {
                 pEl = this.objectsList[el];
-                if (this._change3DView) {
+                if (this._change3DView ||
+                    (Type.exists(drag) && drag.elType === 'view3d_slider')
+                ) {
                     // The 3D view has changed. No elements are recomputed,
                     // only 3D elements are projected to the new view.
                     pEl.needsUpdate =
@@ -5937,37 +5942,82 @@ JXG.extend(
          * @returns {JXG.Board} Reference to the board
          */
         updateRendererCanvas: function () {
-            var el,
-                pEl,
-                i,
-                mini,
-                la,
+            var el, pEl,
                 olen = this.objectsList.length,
-                layers = this.options.layer,
-                len = this.options.layer.numlayers,
-                last = Number.NEGATIVE_INFINITY;
-
-            for (i = 0; i < len; i++) {
-                mini = Number.POSITIVE_INFINITY;
-
-                for (la in layers) {
-                    if (layers.hasOwnProperty(la)) {
-                        if (layers[la] > last && layers[la] < mini) {
-                            mini = layers[la];
-                        }
+                // i, minim, lay,
+                // layers = this.options.layer,
+                // len = this.options.layer.numlayers,
+                // last = Number.NEGATIVE_INFINITY.toExponential,
+                depth_order_layers = [],
+                objects_sorted,
+                // Sort the elements for the canvas rendering according to
+                // their layer, _pos, depthOrder (with this priority)
+                // @private
+                _compareFn = function(a, b) {
+                    if (a.visProp.layer !== b.visProp.layer) {
+                        return a.visProp.layer - b.visProp.layer;
                     }
-                }
 
-                last = mini;
-
-                for (el = 0; el < olen; el++) {
-                    pEl = this.objectsList[el];
-
-                    if (pEl.visProp.layer === mini) {
-                        pEl.prepareUpdate().updateRenderer();
+                    // The objects are in the same layer, but the layer is not depth ordered
+                    if (depth_order_layers.indexOf(a.visProp.layer) === -1) {
+                        return a._pos - b._pos;
                     }
+
+                    // The objects are in the same layer and the layer is depth ordered
+                    // We have to sort 2D elements according to the zIndices of
+                    // their 3D parents.
+                    if (!a.visProp.element3d && !b.visProp.element3d) {
+                        return a._pos - b._pos;
+                    }
+
+                    if (a.visProp.element3d && !b.visProp.element3d) {
+                        return -1;
+                    }
+
+                    if (b.visProp.element3d && !a.visProp.element3d) {
+                        return 1;
+                    }
+
+                    return a.visProp.element3d.zIndex - b.visProp.element3d.zIndex;
+                };
+
+            // Only one view3d element is supported. Get the depth orderer layers and
+            // update the zIndices of the 3D elements.
+            for (el = 0; el < olen; el++) {
+                pEl = this.objectsList[el];
+                if (pEl.elType === 'view3d' && pEl.evalVisProp('depthorder.enabled')) {
+                    depth_order_layers = pEl.evalVisProp('depthorder.layers');
+                    pEl.updateRenderer();
+                    break;
                 }
             }
+
+            objects_sorted = this.objectsList.toSorted(_compareFn);
+            olen = objects_sorted.length;
+            for (el = 0; el < olen; el++) {
+                objects_sorted[el].prepareUpdate().updateRenderer();
+            }
+
+            // for (i = 0; i < len; i++) {
+            //     minim = Number.POSITIVE_INFINITY;
+
+            //     for (lay in layers) {
+            //         if (layers.hasOwnProperty(lay)) {
+            //             if (layers[lay] > last && layers[lay] < minim) {
+            //                 minim = layers[lay];
+            //             }
+            //         }
+            //     }
+
+            //     for (el = 0; el < olen; el++) {
+            //         pEl = this.objectsList[el];
+            //         if (pEl.visProp.layer === minim) {
+            //             pEl.prepareUpdate().updateRenderer();
+            //         }
+            //     }
+            //     last = minim;
+            // }
+
             return this;
         },
 
@@ -6090,7 +6140,7 @@ JXG.extend(
                 insert = this.renderer.removeToInsertLater(this.renderer.svgRoot);
             }
 
-            this.prepareUpdate().updateElements(drag).updateConditions();
+            this.prepareUpdate(drag).updateElements(drag).updateConditions();
 
             this.renderer.suspendRedraw(this);
             this.updateRenderer();
@@ -6202,7 +6252,12 @@ JXG.extend(
                     !(elementType === 'functiongraph') && // Prevent problems with function terms like 'x', 'y'
                     !(elementType === 'implicitcurve')
                 ) {
-                    parents[i] = this.select(parents[i]);
+                    if (i > 0 && parents[0].elType === 'view3d') {
+                        // 3D elements are based on 3D elements, only
+                        parents[i] = parents[0].select(parents[i]);
+                    } else {
+                        parents[i] = this.select(parents[i]);
+                    }
                 }
             }
 
@@ -6293,10 +6348,10 @@ JXG.extend(
             }
 
             if (
-                bbox[0] < this.maxboundingbox[0] ||
-                bbox[1] > this.maxboundingbox[1] ||
-                bbox[2] > this.maxboundingbox[2] ||
-                bbox[3] < this.maxboundingbox[3]
+                bbox[0] < this.maxboundingbox[0] - Mat.eps ||
+                bbox[1] > this.maxboundingbox[1] + Mat.eps ||
+                bbox[2] > this.maxboundingbox[2] + Mat.eps ||
+                bbox[3] < this.maxboundingbox[3] - Mat.eps
             ) {
                 return this;
             }
@@ -6598,11 +6653,6 @@ JXG.extend(
                         if (Type.exists(this.defaultAxes.y) && Type.exists(value.y)) {
                             this.defaultAxes.y.setAttribute(value.y);
                         }
-                        break;
-                    case 'description':
-                        this.document.getElementById(this.container + '_ARIAdescription')
-                            .innerHTML = value;
-                        this._set(key, value);
                         break;
                     case 'title':
                         this.document.getElementById(this.container + '_ARIAlabel')

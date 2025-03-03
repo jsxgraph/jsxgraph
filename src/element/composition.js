@@ -593,7 +593,7 @@ JXG.createPerpendicularSegment = function (board, parents, attributes) {
  * </script><pre>
  */
 JXG.createMidpoint = function (board, parents, attributes) {
-    var a, b, t, i, attr;
+    var a, b, el, i, attr;
 
     for (i = 0; i < parents.length; ++i) {
         parents[i] = board.select(parents[i]);
@@ -621,7 +621,7 @@ JXG.createMidpoint = function (board, parents, attributes) {
      * @type JXG.Element
      * @ignore
      */
-    t = board.create(
+    el = board.create(
         "point",
         [
             function () {
@@ -652,22 +652,22 @@ JXG.createMidpoint = function (board, parents, attributes) {
         attr
     );
     if (Type.exists(a._is_new)) {
-        t.addChild(a);
+        el.addChild(a);
         delete a._is_new;
     } else {
-        a.addChild(t);
+        a.addChild(el);
     }
     if (Type.exists(b._is_new)) {
-        t.addChild(b);
+        el.addChild(b);
         delete b._is_new;
     } else {
-        b.addChild(t);
+        b.addChild(el);
     }
 
-    t.elType = "midpoint";
-    t.setParents([a.id, b.id]);
+    el.elType = "midpoint";
+    el.setParents([a.id, b.id]);
 
-    t.prepareUpdate().update();
+    el.prepareUpdate().update();
 
     /**
      * Used to generate a polynomial for the midpoint.
@@ -677,7 +677,7 @@ JXG.createMidpoint = function (board, parents, attributes) {
      * @function
      * @ignore
      */
-    t.generatePolynomial = function () {
+    el.generatePolynomial = function () {
         /*
          *  Midpoint takes two point A and B or line L (with points P and Q) and creates point T:
          *
@@ -708,8 +708,8 @@ JXG.createMidpoint = function (board, parents, attributes) {
             a2 = a.symbolic.y,
             b1 = b.symbolic.x,
             b2 = b.symbolic.y,
-            t1 = t.symbolic.x,
-            t2 = t.symbolic.y,
+            t1 = el.symbolic.x,
+            t2 = el.symbolic.y,
             poly1 = "(" + a2 + ")*(" + t1 + ")-(" + a2 + ")*(" + b1 + ")+(" + t2 + ")*(" + b1 + ")-(" + a1 + ")*(" + t2 + ")+(" + a1 + ")*(" + b2 +
                 ")-(" + t1 + ")*(" + b2 + ")",
             poly2 = "(" + a1 + ")^2 - 2*(" + a1 + ")*(" + t1 + ")+(" + a2 + ")^2-2*(" + a2 + ")*(" + t2 + ")-(" + b1 + ")^2+2*(" + b1 + ")*(" + t1 +
@@ -718,7 +718,7 @@ JXG.createMidpoint = function (board, parents, attributes) {
         return [poly1, poly2];
     };
 
-    return t;
+    return el;
 };
 
 /**

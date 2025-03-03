@@ -1845,8 +1845,9 @@ JXG.extend(
          * will interpolate the path
          * using {@link JXG.Math.Numerics.Neville}. Set this flag to false if you don't want to use interpolation.
          * @returns {JXG.CoordsElement} Reference to itself.
-         * @see JXG.CoordsElement#moveAlong
          * @see JXG.CoordsElement#moveTo
+         * @see JXG.CoordsElement#visit
+         * @see JXG.CoordsElement#moveAlongES6
          * @see JXG.GeometryElement#animate
          */
         moveAlong: function (path, time, options) {
@@ -1947,6 +1948,7 @@ JXG.extend(
          * @see JXG.CoordsElement#setPosition
          * @see JXG.CoordsElement#moveAlong
          * @see JXG.CoordsElement#visit
+         * @see JXG.CoordsElement#moveToES6
          * @see JXG.GeometryElement#animate
          * @example
          * // moveTo() with different easing options and callback options
@@ -1969,30 +1971,30 @@ JXG.extend(
          *
          *}])
          *
-          </pre><div id="JXG0f35a50e-e99d-11e8-a1ca-04d3b0c2aad4" class="jxgbox" style="width: 300px; height: 300px;"></div>
-          <script type="text/javascript">
-          {
-*          let board = JXG.JSXGraph.initBoard('JXG0f35a50e-e99d-11e8-a1ca-04d3b0c2aad4')
-          let yInit = 3
-          let [A, B, C, D] = ['==', '<>', '<', '>'].map((s) => board.create('point', [4, yInit--], { name: s, label: { fontSize: 24 } }))
-          let seg = board.create('segment', [A, [() => A.X(), 0]])  // shows linear
-
-         let isLeftRight = true;
-         let buttonMove = board.create('button', [-2, 4, 'left',
-         () => {
-             isLeftRight = !isLeftRight;
-             buttonMove.rendNodeButton.innerHTML = isLeftRight ? 'left' : 'right'
-             let x = isLeftRight ? 4 : -4
-             let sym = isLeftRight ? 'triangleleft' : 'triangleright'
-
-             A.moveTo([x, 3], 1000, { callback: () => A.setAttribute({ face: sym, size: 5 }) })
-             B.moveTo([x, 2], 1000, { callback: () => B.setAttribute({ face: sym, size: 5 }), effect: "<>" })
-             C.moveTo([x, 1], 1000, { callback: () => C.setAttribute({ face: sym, size: 5 }), effect: "<" })
-             D.moveTo([x, 0], 1000, { callback: () => D.setAttribute({ face: sym, size: 5 }), effect: ">" })
-
-         }])
-        }
-        </script><pre>
+         * </pre><div id="JXG0f35a50e-e99d-11e8-a1ca-04d3b0c2aad4" class="jxgbox" style="width: 300px; height: 300px;"></div>
+         * <script type="text/javascript">
+         * {
+         * let board = JXG.JSXGraph.initBoard('JXG0f35a50e-e99d-11e8-a1ca-04d3b0c2aad4')
+         * let yInit = 3
+         * let [A, B, C, D] = ['==', '<>', '<', '>'].map((s) => board.create('point', [4, yInit--], { name: s, label: { fontSize: 24 } }))
+         * let seg = board.create('segment', [A, [() => A.X(), 0]])  // shows linear
+         *
+         *let isLeftRight = true;
+         *let buttonMove = board.create('button', [-2, 4, 'left',
+         *() => {
+         *    isLeftRight = !isLeftRight;
+         *    buttonMove.rendNodeButton.innerHTML = isLeftRight ? 'left' : 'right'
+         *    let x = isLeftRight ? 4 : -4
+         *    let sym = isLeftRight ? 'triangleleft' : 'triangleright'
+         *
+         *    A.moveTo([x, 3], 1000, { callback: () => A.setAttribute({ face: sym, size: 5 }) })
+         *    B.moveTo([x, 2], 1000, { callback: () => B.setAttribute({ face: sym, size: 5 }), effect: "<>" })
+         *    C.moveTo([x, 1], 1000, { callback: () => C.setAttribute({ face: sym, size: 5 }), effect: "<" })
+         *    D.moveTo([x, 0], 1000, { callback: () => D.setAttribute({ face: sym, size: 5 }), effect: ">" })
+         *
+         *}])
+         *}
+         *</script><pre>
          */
         moveTo: function (where, time, options) {
             options = options || {};
@@ -2076,6 +2078,7 @@ JXG.extend(
          * @returns {JXG.CoordsElement} Reference to itself.
          * @see JXG.CoordsElement#moveAlong
          * @see JXG.CoordsElement#moveTo
+         * @see JXG.CoordsElement#visitES6
          * @see JXG.GeometryElement#animate
          * @example
          * // visit() with different easing options
@@ -2094,27 +2097,27 @@ JXG.extend(
          *        D.visit([-x, 0], 4000, { effect: ">", repeat: 2 })
          *    }])
          *
-          </pre><div id="JXG0f35a50e-e99d-11e8-a1ca-04d3b0c2aad5" class="jxgbox" style="width: 300px; height: 300px;"></div>
-          <script type="text/javascript">
-          {
-*          let board = JXG.JSXGraph.initBoard('JXG0f35a50e-e99d-11e8-a1ca-04d3b0c2aad5')
-          let yInit = 3
-          let [A, B, C, D] = ['==', '<>', '<', '>'].map((s) => board.create('point', [4, yInit--], { name: s, label: { fontSize: 24 } }))
-          let seg = board.create('segment', [A, [() => A.X(), 0]])  // shows linear
-
-         let isLeftRight = true;
-         let buttonVisit = board.create('button', [0, 4, 'visit',
-             () => {
-                 let x = isLeftRight ? 4 : -4
-
-                 A.visit([-x, 3], 4000, { effect: "==", repeat: 2 })  // linear
-                 B.visit([-x, 2], 4000, { effect: "<>", repeat: 2 })
-                 C.visit([-x, 1], 4000, { effect: "<", repeat: 2 })
-                 D.visit([-x, 0], 4000, { effect: ">", repeat: 2 })
-             }])
-            }
-        </script><pre>
-
+         * </pre><div id="JXG0f35a50e-e99d-11e8-a1ca-04d3b0c2aad5" class="jxgbox" style="width: 300px; height: 300px;"></div>
+         * <script type="text/javascript">
+         * {
+         *  let board = JXG.JSXGraph.initBoard('JXG0f35a50e-e99d-11e8-a1ca-04d3b0c2aad5')
+         * let yInit = 3
+         * let [A, B, C, D] = ['==', '<>', '<', '>'].map((s) => board.create('point', [4, yInit--], { name: s, label: { fontSize: 24 } }))
+         * let seg = board.create('segment', [A, [() => A.X(), 0]])  // shows linear
+         *
+         * let isLeftRight = true;
+         * let buttonVisit = board.create('button', [0, 4, 'visit',
+         *    () => {
+         *        let x = isLeftRight ? 4 : -4
+         *
+         *        A.visit([-x, 3], 4000, { effect: "==", repeat: 2 })  // linear
+         *        B.visit([-x, 2], 4000, { effect: "<>", repeat: 2 })
+         *        C.visit([-x, 1], 4000, { effect: "<", repeat: 2 })
+         *        D.visit([-x, 0], 4000, { effect: ">", repeat: 2 })
+         *    }])
+         *   }
+         * </script><pre>
+         *
          */
         visit: function (where, time, options) {
             where = new Coords(Const.COORDS_BY_USER, where, this.board);
@@ -2177,6 +2180,72 @@ JXG.extend(
             this.board.addAnimation(this);
 
             return this;
+        },
+
+        /**
+         * ES6 version of {@link JXG.CoordsElement#moveAlong} using a promise.
+         *
+         * @param {Array} where Array containing the x and y coordinate of the target location.
+         * @param {Number} [time] Number of milliseconds the animation should last.
+         * @param {Object} [options] Optional settings for the animation
+         * @returns Promise
+         * @see JXG.CoordsElement#moveAlong
+         */
+        moveAlongES6: function (path, time, options) {
+            return new Promise((resolve, reject) => {
+                if (Type.exists(options) && Type.exists(options.callback)) {
+                    options.callback = resolve;
+                } else {
+                    options = {
+                        callback: resolve
+                    };
+                }
+                this.moveAlong(path, time, options);
+            });
+        },
+
+        /**
+         * ES6 version of {@link JXG.CoordsElement#moveTo} using a promise.
+         *
+         * @param {Array} where Array containing the x and y coordinate of the target location.
+         * @param {Number} [time] Number of milliseconds the animation should last.
+         * @param {Object} [options] Optional settings for the animation
+         * @returns Promise
+         * @see JXG.CoordsElement#moveTo
+         */
+        moveToES6: function (where, time, options) {
+            return new Promise((resolve, reject) => {
+                if (Type.exists(options) && Type.exists(options.callback)) {
+                    options.callback = resolve;
+                } else {
+                    options = {
+                        callback: resolve
+                    };
+                }
+                this.moveTo(where, time, options);
+            });
+        },
+
+        /**
+         * ES6 version of {@link JXG.CoordsElement#moveVisit} using a promise.
+         *
+         * @param {Array} where Array containing the x and y coordinate of the target location.
+         * @param {Number} [time] Number of milliseconds the animation should last.
+         * @param {Object} [options] Optional settings for the animation
+         * @returns Promise
+         * @see JXG.CoordsElement#visit
+         */
+        visitES6: function (where, time, options) {
+            return new Promise((resolve, reject) => {
+                if (Type.exists(options) && Type.exists(options.callback)) {
+                    options.callback = resolve;
+                } else {
+                    options = {
+                        callback: resolve
+                    };
+                }
+                this.visit(where, time, options);
+            });
         },
 
         /**

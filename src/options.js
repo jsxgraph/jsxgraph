@@ -375,21 +375,6 @@ JXG.Options = {
         },
 
         /**
-         * Description string for the board.
-         * Primarily used in an invisible text element which is adressed by
-         * the attribute 'aria-describedby' from the JSXGraph container.
-         * JSXGraph creates a new div-element with id "{containerid}_ARIAdescription"
-         * containing this string.
-         *
-         * @name JXG.Board#description
-         * @see JXG.Board#title
-         * @type String
-         * @default ''
-         *
-         */
-        description: '',
-
-        /**
          * Supply the document object. Defaults to window.document
          *
          * @name JXG.Board#document
@@ -1395,13 +1380,14 @@ JXG.Options = {
 
         /**
          * Title string for the board.
-         * Primarily used in an invisible text element which is adressed by
-         * the attribute 'aria-labelledby' from the JSXGraph container.
-         * JSXGraph creates a new div-element with id "{containerid}_ARIAlabel"
-         * containing this string.
+         * Primarily used in an invisible text element for assistive technologies.
+         * The title is implemented with the attribute 'aria-label' in the JSXGraph container.
+         *
+         * Content should be accessible to all users, not just to those with
+         * screen readers.  Consider instead adding a text element with the title and add the attribute
+         * <b>aria:{enable:true,label:"Your Title"}</b>
          *
          * @name JXG.Board#title
-         * @see JXG.Board#description
          * @type String
          * @default ''
          *
@@ -1539,7 +1525,7 @@ JXG.Options = {
         /**
          * ARIA settings for JSXGraph elements.
          * Besides 'label' and 'live', all available properties from
-         * {@link https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA} may be set.
+         * <a href="https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA">https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA</a> may be set.
          * In JSXGraph, the available properties are used without the leading 'aria-'.
          * For example, the value of the JSXGraph attribute 'aria.label' will be set to the
          * HTML attribute 'aria-label' (ignoring 'aria.enabled').
@@ -2403,7 +2389,7 @@ JXG.Options = {
          * @see JXG.GeometryElement#fixed
          * @see JXG.GeometryElement#visible
          */
-        tabindex: 0,
+        tabindex: -1,
 
         /**
          * If true the element will be traced, i.e. on every movement the element will be copied
@@ -4967,7 +4953,18 @@ JXG.Options = {
          * @type Array
          * @default empty
          */
-        attractors: []
+        attractors: [],
+
+        /**
+         * If set to true, this object is only evaluated once and not re-evaluated on update.
+         * This is necessary if you want to have a bord within a foreignObject of another board.
+         *
+         * @name ForeignObject#evaluateOnlyOnce
+         *
+         * @type Boolean
+         * @default false
+         */
+        evaluateOnlyOnce: false
 
         /**#@-*/
     },

@@ -612,6 +612,7 @@ JXG.extend(
             node.setAttributeNS(null, 'style', 'font-family:Arial,Helvetica,sans-serif; font-size:' +
                 fontsize + 'px; fill:#356AA0;  opacity:0.3;');
             t = this.container.ownerDocument.createTextNode(str);
+            node.setAttributeNS(null, 'aria-hidden', 'true');  // should NEVER be in screen reader
             node.appendChild(t);
             this.appendChildPrim(node, 0);
         },
@@ -804,7 +805,10 @@ JXG.extend(
                 el.size[1]
             );
 
-            el.rendNode.innerHTML = el.content;
+            if (el.evalVisProp('evaluateOnlyOnce') !== true || !el.renderedOnce) {
+                el.rendNode.innerHTML = el.content;
+                el.renderedOnce = true;
+            }
             this._updateVisual(el, { stroke: true, dash: true }, true);
         },
 
@@ -1358,6 +1362,7 @@ JXG.extend(
 
         // documented in JXG.AbstractRenderer
         setCssClass(el, cssClass) {
+
             if (el.visPropOld.cssclass !== cssClass) {
                 this.setPropertyPrim(el.rendNode, 'class', cssClass);
                 el.visPropOld.cssclass = cssClass;
@@ -1445,7 +1450,6 @@ JXG.extend(
             ) {
                 return;
             }
-
             if (Type.exists(rgba) && rgba !== false) {
                 if (rgba.length !== 9) {
                     // RGB, not RGBA

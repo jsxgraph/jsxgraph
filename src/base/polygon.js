@@ -63,6 +63,9 @@ JXG.Polygon = function (board, vertices, attributes) {
 
     /**
      * References to the points defining the polygon. The last vertex is the same as the first vertex.
+     * Compared to the 3D {@link JXG.Polygon3D#vertices}, it contains one point more, i.e. for a quadrangle
+     * 'vertices' contains five points, the last one being
+     * a copy of the first one. In a 3D quadrangle, 'vertices' will contain four points.
      * @type Array
      */
     this.vertices = [];
@@ -87,7 +90,7 @@ JXG.Polygon = function (board, vertices, attributes) {
     }
 
     /**
-     * References to the border lines of the polygon.
+     * References to the border lines (edges) of the polygon.
      * @type Array
      */
     this.borders = [];

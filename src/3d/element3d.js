@@ -41,7 +41,6 @@ import Type from "../utils/type.js";
  */
 JXG.GeometryElement3D = function (view, elType) {
     this.elType = elType;
-    this.id = this.board.setId(this, elType);
 
     /**
      * Pointer to the view3D in which the element is constructed
@@ -49,6 +48,8 @@ JXG.GeometryElement3D = function (view, elType) {
      * @private
      */
     this.view = view;
+
+    this.id = this.view.board.setId(this, elType);
 
     /**
      * Link to the 2D element(s) used to visualize the 3D element
@@ -70,6 +71,8 @@ JXG.GeometryElement3D = function (view, elType) {
      * @private
      */
     this.is3D = true;
+
+    this.zIndex = 0.0;
 
     this.view.objects[this.id] = this;
 
@@ -184,6 +187,30 @@ JXG.extend(JXG.GeometryElement3D.prototype, {
         return attr;
     },
 
+    // /**
+    //  * Add transformations to this element.
+    //  * @param {JXG.GeometryElement} el
+    //  * @param {JXG.Transformation|Array} transform Either one {@link JXG.Transformation}
+    //  * or an array of {@link JXG.Transformation}s.
+    //  * @returns {JXG.CoordsElement} Reference to itself.
+    //  */
+    addTransformGeneric: function (el, transform) {
+        var i,
+            list = Type.isArray(transform) ? transform : [transform],
+            len = list.length;
+
+        // There is only one baseElement possible
+        if (this.transformations.length === 0) {
+            this.baseElement = el;
+        }
+
+        for (i = 0; i < len; i++) {
+            this.transformations.push(list[i]);
+        }
+
+        return this;
+    },
+
     /**
      * Set position of the 2D element. This is a
      * callback function, executed in {@link JXG.GeometryElement#setPosition}.
@@ -195,6 +222,19 @@ JXG.extend(JXG.GeometryElement3D.prototype, {
         /* stub */
     },
 
+    /**
+     * Project a 3D point to this element and update point.position.
+     * @param {Array} p 3D position of the point (array of length 3)
+     * @param {Array} params Changed in place to the new of the point in terms of the elements functions X, Y, Z.
+     * For example for a surface, params will contain values (u,v) such that the new 3D position
+     * p = [X(u, v), Z(u, v), Z(u, v)].
+     * @returns {Array} 3D coordinates of the projected point with homogeneous coordinates of the form [1, x, y, z].
+     */
+    projectCoords: function(p, params) {
+        /* stub */
+    },
+
+    // Documented in element.js
     remove: function() {}
 
 });
