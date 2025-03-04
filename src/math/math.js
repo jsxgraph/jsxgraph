@@ -617,7 +617,7 @@ JXG.Math = {
      * @param {Number} a
      * @param {Array} x
      * @param {Array} y
-     * @returns
+     * @returns {Array}
      */
     axpy: function (a, x, y) {
         var i,
@@ -707,7 +707,7 @@ JXG.Math = {
 
     /**
      * Hyperbolic arc-cosine of a number.
-     *
+     * @function
      * @param {Number} x
      * @returns {Number}
      */
@@ -719,6 +719,7 @@ JXG.Math = {
 
     /**
      * Hyperbolic arcsine of a number
+     * @function
      * @param {Number} x
      * @returns {Number}
      */
