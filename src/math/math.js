@@ -617,7 +617,7 @@ JXG.Math = {
      * @param {Number} a
      * @param {Array} x
      * @param {Array} y
-     * @returns
+     * @returns {Array}
      */
     axpy: function (a, x, y) {
         var i,
