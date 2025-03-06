@@ -396,7 +396,7 @@ JXG.extend(
                 deps = {};
 
             for (i = 0; i < n; i++) {
-                f[i] = JXG.createFunction(param[i], board);
+                f[i] = this.createFunction(param[i], board);
                 for (e in f[i].deps) {
                     deps[e] = f[i].deps;
                 }
@@ -438,7 +438,7 @@ JXG.extend(
             } else if (this.isFunction(term)) {
                 f = term;
                 f.deps = (this.isObject(term.deps)) ? term.deps : {};
-            } else if (this.isNumber(term)) {
+            } else if (this.isNumber(term) || this.isArray(term)) {
                 /** @ignore */
                 f = function () { return term; };
                 f.deps = {};
