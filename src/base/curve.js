@@ -3338,7 +3338,11 @@ JXG.createImplicitCurve = function (board, parents, attributes) {
      * @function
      * @returns {Number}
      */
-    c.dfx = Type.createFunction(parents[1], board, 'x, y');
+    if (parents.length === 5 || Type.isString(parents[1]) || Type.isFunction(parents[1])) {
+        c.dfx = Type.createFunction(parents[1], board, 'x, y');
+    } else {
+        c.dfx = null;
+    }
 
     /**
      * Partial derivative in the second variable of
@@ -3350,7 +3354,11 @@ JXG.createImplicitCurve = function (board, parents, attributes) {
      * @function
      * @returns {Number}
      */
-    c.dfy = Type.createFunction(parents[2], board, 'x, y');
+    if (parents.length === 5 || Type.isString(parents[2]) || Type.isFunction(parents[2])) {
+        c.dfy = Type.createFunction(parents[2], board, 'x, y');
+    } else {
+        c.dfy = null;
+    }
 
     /**
      * Defines a domain for searching f(x,y)=0. Default is null, meaning
