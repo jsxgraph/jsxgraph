@@ -3436,6 +3436,75 @@ JXG.createImplicitCurve = function (board, parents, attributes) {
 
 JXG.registerElement("implicitcurve", JXG.createImplicitCurve);
 
+/**
+ * @class This element is used to visualize the locus of a given dependent point.
+ * @pseudo
+ * @description The locus element is used to visualize the curve a given point describes.
+ * @constructor
+ * @name Locus
+ * @type JXG.Curve
+ * @augments JXG.Curve
+ * @throws {Error} If the element cannot be constructed with the given parent objects an exception is thrown.
+ * @param {JXG.Point} p The constructed curve is the geometric locus of the given point.
+ * @example
+ *       board.create('line', [[-1, -1], [1, -1]])
+ *       let cntr = board.create('point', [-9, 0], { opacity: 0 });
+ *       board.create('circle', [cntr, 1]);
+ *       let P = board.create('point', [() => cntr.X() + Math.cos(cntr.X()), () => 0 - Math.sin(cntr.X())])
+ *       board.create('locus', [P], { strokeWidth: 3 })
+ *       board.create('button', [-4, 4, 'Start', () => cntr.moveTo([9, 0], 5000)])
+ * </pre><div class="jxgbox" id="JXGd45d7188-6624-4d6e-bebb-1efa2a305c8a" style="width: 400px; height: 400px;"></div>
+ * <script type="text/javascript">
+ *  let board = JXG.JSXGraph.initBoard('JXGd45d7188-6624-4d6e-bebb-1efa2a305c8a', {boundingbox:[-10, 10, 10, -10]});
+ *  board.create('line', [[-1, -1], [1, -1]])
+ *  let cntr = board.create('point', [-9, 0], { opacity: 0 });
+ *  board.create('circle', [cntr, 1]);
+ *  let P = board.create('point', [() => cntr.X() + Math.cos(cntr.X()), () => 0 - Math.sin(cntr.X())])
+ *  board.create('locus', [P], { strokeWidth: 3 })
+ *  board.create('button', [-4, 4, 'Start', () => cntr.moveTo([9, 0], 5000)])
+
+ * </script><pre>
+ */
+
+JXG.createLocus = function (board, parents, attributes) {
+    var c, p;
+
+    if (Type.isArray(parents) && parents.length === 1 && Type.isPoint(parents[0])) {
+        p = parents[0];
+    } else {
+        throw new Error(
+            "JSXGraph: Can't create locus with parent of type other than point." +
+            "\nPossible parent types: [point]"
+        );
+    }
+
+    c = board.create("curve", [[null], [null]], attributes);
+    c.elType = "locus";
+
+    c.update = function () {
+        let x = p.X().toFixed(2),   // position of point at lower resolution
+            y = p.Y().toFixed(2),
+            found = false;
+
+        for (let i = 0; i < this.dataX.length - 3; i += 3) {
+            if (this.dataX[i] === x && this.dataY.i === y) {
+                found = true;
+                break;
+            }
+        }
+        if (!found) {
+            this.dataX.push(NaN, x, x);
+            this.dataY.push(NaN, y, y);
+        }
+
+        this.updateCurve();
+        return this;
+    };
+
+    return c;
+};
+JXG.registerElement("locus", JXG.createLocus);
+
 
 export default JXG.Curve;
 
