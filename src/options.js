@@ -6458,6 +6458,24 @@ JXG.Options = {
         colors: ['#B02B2C', '#3F4C6B', '#C79810', '#D15600', '#FFFF88', '#c3d9ff', '#4096EE', '#008C00'],
 
         /**
+         * Length of line in one legend entry
+         * @name Legend#lineLength
+         * @type Number
+         * @default 1
+         *
+         */
+        lineLength: 1,
+
+        /**
+         * (Circular) array of opacity for legend line stroke color for one legend entry.
+         * @name Legend#strokeOpacity
+         * @type Array
+         * @default [1]
+         *
+         */
+        strokeopacity: [1],
+
+        /**
          * Height (in px) of one legend entry
          * @name Legend#rowHeight
          * @type Number
@@ -6466,7 +6484,25 @@ JXG.Options = {
          */
         rowHeight: 20,
 
-        strokeWidth: 5
+        /**
+         * Height (in px) of one legend entry
+         * @name Legend#strokeWidth
+         * @type Number
+         * @default 5
+         *
+         */
+        strokeWidth: 5,
+
+        /**
+         * The element is fixed and can not be dragged around. The legend will even stay at its position on zoom and
+         * moveOrigin events.
+         * @name Legend#frozen
+         * @type Boolean
+         * @default false
+         * @see JXG.GeometryElement#frozen
+         *
+         */
+        frozen: false
 
         /**#@-*/
     },

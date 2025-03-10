@@ -1347,12 +1347,14 @@ JXG.Legend = function (board, coords, attributes) {
     this.myAtts = {};
     this.label_array = attr.labelarray || attr.labels;
     this.color_array = attr.colorarray || attr.colors;
+    this.opacy_array = attr.strokeopacity || [1];
     this.lines = [];
     this.myAtts.strokewidth = attr.strokewidth || 5;
     this.myAtts.straightfirst = false;
     this.myAtts.straightlast = false;
     this.myAtts.withlabel = true;
     this.myAtts.fixed = true;
+    this.myAtts.frozen = attr.frozen || false ;
     this.style = attr.legendstyle || attr.style;
 
     if (this.style === "vertical") {
@@ -1388,6 +1390,8 @@ JXG.Legend.prototype.drawVerticalLegend = function (board, attributes) {
         this.myAtts.name = this.label_array[i];
         this.myAtts.strokecolor = this.color_array[i % this.color_array.length];
         this.myAtts.highlightstrokecolor = this.color_array[i % this.color_array.length];
+        this.myAtts.strokeopacity = this.opacy_array[i % this.opacy_array.length];
+        this.myAtts.highlightstrokeopacity = this.opacy_array[i % this.opacy_array.length];
         this.myAtts.label = {
             offset: [10, 0],
             strokeColor: this.color_array[i % this.color_array.length],
@@ -1402,6 +1406,10 @@ JXG.Legend.prototype.drawVerticalLegend = function (board, attributes) {
             ],
             this.myAtts
         );
+
+        if (this.myAtts.frozen){
+            this.lines[i].setAttribute({ point1: { frozen: true }, point2: { frozen: true } });
+        }
 
         this.lines[i].getLabelAnchor = getLabelAnchor;
         this.lines[i]
@@ -1421,8 +1429,11 @@ JXG.Legend.prototype.drawVerticalLegend = function (board, attributes) {
  * <li> labelArray (Array): alternative array for label names (has precedence over 'labels')
  * <li> colors (Array): array of color values
  * <li> colorArray (Array): alternative array for color values (has precedence over 'colors')
+ * <li> opacities (Array): opacity of a line in the legend
  * <li> legendStyle or style: at the time being only 'vertical' is supported.
- * <li> rowHeight.
+ * <li> rowHeight: height of an entry in the legend (in px)
+ * <li> linelenght: length of a line in the legend (measured in the coordinate system)
+ * <li> frozen (Boolean, false):
  * </ul>
  *
  * @pseudo
@@ -1458,6 +1469,78 @@ JXG.Legend.prototype.drawVerticalLegend = function (board, attributes) {
  *     })();
  *
  * </script><pre>
+ *
+ * @example
+ *   var F, inputFun, cf = [], cf2 = [], niveaunum,
+ *     niveauline = [], niveauopac = [],legend;
+ *
+ *   F = board.jc.snippet(inputFun, true, "x,y", true);
+ *   inputFun = "x^2/2-2*x*y+y^2/2";
+ *   niveauline = [-3,-2,-1,-0.5, 0, 1,2,3];
+ *   niveaunum = niveauline.length;
+ *   for (let i = 0; JXG.Math.lt(i, niveaunum); i++) {
+ *     let niveaui = niveauline[i];
+ *     niveauopac.push(((i + 1) / (niveaunum + 1)));
+ *     cf.push(board.create("implicitcurve", [
+ *       inputFun + "-(" + niveaui.toFixed(2) + ")", [-2, 2], [-2, 2]], {
+ *       strokeWidth: 2,
+ *       strokeColor: JXG.palette.red,
+ *       strokeOpacity: niveauopac[i],
+ *       needsRegularUpdate: false,
+ *       name: "niveau",
+ *       visible: true
+ *     }));
+ *   }
+ *   legend = board.create('legend', [-1.75, 1.75], {
+ *     labels: niveauline,
+ *     colors: [cf[0].visProp.strokecolor],
+ *     highlightStrokeColor: cf[0].visProp.strokecolor,
+ *     strokeOpacity: niveauopac,
+ *     linelength: 0.2,
+ *     frozen:true
+ *   }
+ *   );
+ *
+ *
+ * </pre><div id="JXG079fce93-07b9-426f-a267-ab9c1253e435" class="jxgbox" style="width: 300px; height: 300px;"></div>
+ * <script type="text/javascript">
+ *     (function() {
+ *         var board = JXG.JSXGraph.initBoard('JXG079fce93-07b9-426f-a267-ab9c1253e435',
+ *             {boundingbox: [-2, 2, 2, -2], axis: true, showcopyright: false, shownavigation: false});
+ *       var F, board, inputFun, cf = [], cf2 = [], niveaunum,
+ *         niveauline = [], niveauopac = [],legend;
+ *
+ *       F = board.jc.snippet(inputFun, true, "x,y", true);
+ *       inputFun = "x^2/2-2*x*y+y^2/2";
+ *       niveauline = [-3,-2,-1,-0.5, 0, 1,2,3];
+ *       niveaunum = niveauline.length;
+ *       for (let i = 0; JXG.Math.lt(i, niveaunum); i++) {
+ *         let niveaui = niveauline[i];
+ *         niveauopac.push(((i + 1) / (niveaunum + 1)));
+ *         cf.push(board.create("implicitcurve", [
+ *           inputFun + "-(" + niveaui.toFixed(2) + ")", [-2, 2], [-2, 2]], {
+ *           strokeWidth: 2,
+ *           strokeColor: JXG.palette.red,
+ *           strokeOpacity: niveauopac[i],
+ *           needsRegularUpdate: false,
+ *           name: "niveau",
+ *           visible: true
+ *         }));
+ *       }
+ *       legend = board.create('legend', [-1.75, 1.75], {
+ *         labels: niveauline,
+ *         colors: [cf[0].visProp.strokecolor],
+ *         highlightStrokeColor: cf[0].visProp.strokecolor,
+ *         strokeOpacity: niveauopac,
+ *         linelength: 0.2,
+ *         frozen:true
+ *       }
+ *       );
+ *
+ *
+ *     })();
+ *
+ * </script>
  *
  *
  */
