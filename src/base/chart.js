@@ -321,6 +321,7 @@ JXG.extend(
                 pols[i] = board.create("polygon", p, attr);
                 if (Type.exists(attr.labels) && Type.exists(attr.labels[i])) {
                     pols[i].text = text;
+                    pols[i].addChild(text);
                 }
             }
 
@@ -1361,6 +1362,9 @@ JXG.Legend = function (board, coords, attributes) {
     } else {
         throw new Error("JSXGraph: Unknown legend style: " + this.style);
     }
+
+    this.id = this.board.setId(this, "Leg");
+
 };
 
 JXG.Legend.prototype = new GeometryElement();
@@ -1416,6 +1420,8 @@ JXG.Legend.prototype.drawVerticalLegend = function (board, attributes) {
             .update()
             .updateVisibility(this.lines[i].evalVisProp('visible'))
             .updateRenderer();
+
+        this.addChild(this.lines[i]);
     }
 };
 
