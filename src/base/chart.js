@@ -1471,10 +1471,9 @@ JXG.Legend.prototype.drawVerticalLegend = function (board, attributes) {
  * </script><pre>
  *
  * @example
- *   var F, inputFun, cf = [], cf2 = [], niveaunum,
+ *   var inputFun, cf = [], cf2 = [], niveaunum,
  *     niveauline = [], niveauopac = [],legend;
  *
- *   F = board.jc.snippet(inputFun, true, "x,y", true);
  *   inputFun = "x^2/2-2*x*y+y^2/2";
  *   niveauline = [-3,-2,-1,-0.5, 0, 1,2,3];
  *   niveaunum = niveauline.length;
@@ -1487,14 +1486,13 @@ JXG.Legend.prototype.drawVerticalLegend = function (board, attributes) {
  *       strokeColor: JXG.palette.red,
  *       strokeOpacity: niveauopac[i],
  *       needsRegularUpdate: false,
- *       name: "niveau",
+ *       name: "niveau"+i,
  *       visible: true
  *     }));
  *   }
  *   legend = board.create('legend', [-1.75, 1.75], {
  *     labels: niveauline,
  *     colors: [cf[0].visProp.strokecolor],
- *     highlightStrokeColor: cf[0].visProp.strokecolor,
  *     strokeOpacity: niveauopac,
  *     linelength: 0.2,
  *     frozen:true
@@ -1507,10 +1505,9 @@ JXG.Legend.prototype.drawVerticalLegend = function (board, attributes) {
  *     (function() {
  *         var board = JXG.JSXGraph.initBoard('JXG079fce93-07b9-426f-a267-ab9c1253e435',
  *             {boundingbox: [-2, 2, 2, -2], axis: true, showcopyright: false, shownavigation: false});
- *       var F, board, inputFun, cf = [], cf2 = [], niveaunum,
+ *       var board, inputFun, cf = [], cf2 = [], niveaunum,
  *         niveauline = [], niveauopac = [],legend;
  *
- *       F = board.jc.snippet(inputFun, true, "x,y", true);
  *       inputFun = "x^2/2-2*x*y+y^2/2";
  *       niveauline = [-3,-2,-1,-0.5, 0, 1,2,3];
  *       niveaunum = niveauline.length;
@@ -1523,14 +1520,13 @@ JXG.Legend.prototype.drawVerticalLegend = function (board, attributes) {
  *           strokeColor: JXG.palette.red,
  *           strokeOpacity: niveauopac[i],
  *           needsRegularUpdate: false,
- *           name: "niveau",
+ *           name: "niveau"+i,
  *           visible: true
  *         }));
  *       }
  *       legend = board.create('legend', [-1.75, 1.75], {
  *         labels: niveauline,
  *         colors: [cf[0].visProp.strokecolor],
- *         highlightStrokeColor: cf[0].visProp.strokecolor,
  *         strokeOpacity: niveauopac,
  *         linelength: 0.2,
  *         frozen:true
