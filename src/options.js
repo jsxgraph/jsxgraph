@@ -6429,7 +6429,7 @@ JXG.Options = {
 
     /* special legend options */
     legend: {
-        /**
+        /**#@+
          * @visprop
          */
 
@@ -6473,7 +6473,7 @@ JXG.Options = {
          * @default [1]
          *
          */
-        strokeopacity: [1],
+        strokeOpacity: [1],
 
         /**
          * Height (in px) of one legend entry
