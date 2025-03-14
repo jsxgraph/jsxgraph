@@ -111,7 +111,9 @@ beta: docs
 	cat COPYRIGHT $(BETA)/jsxgraphcore.js >$(BETA)/tmp.file; mv $(BETA)/tmp.file $(BETA)/jsxgraphcore.js
 	cat COPYRIGHT $(BETA)/jsxgraphcore.mjs >$(BETA)/tmp.file; mv $(BETA)/tmp.file $(BETA)/jsxgraphcore.mjs
 
-docs: core
+docs: core docsonly
+
+docsonly: 
 	# Set up tmp dir
 	$(MKDIR) $(MKDIRFLAGS) $(TMP)
 	$(MKDIR) $(MKDIRFLAGS) $(OUTPUT)
