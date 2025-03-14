@@ -321,6 +321,7 @@ JXG.extend(
                 pols[i] = board.create("polygon", p, attr);
                 if (Type.exists(attr.labels) && Type.exists(attr.labels[i])) {
                     pols[i].text = text;
+                    pols[i].addChild(text);
                 }
             }
 
@@ -1320,14 +1321,13 @@ JXG.registerElement("chart", JXG.createChart);
 
 /**
  * Legend for chart
- * TODO
  *
  * The Legend class is a basic class for legends.
- * @class Creates a new Lgend object. Do not use this constructor to create a legend.
+ * @class Creates a new Legend object. Do not use this constructor to create a legend.
  * Use {@link JXG.Board#create} with type {@link Legend} instead.
  * <p>
  * The legend object consists of segements with labels. These lines can be
- * access with the property "lines" of the element.
+ * accessed with the property "lines" of the element.
  * @constructor
  * @augments JXG.GeometryElement
  * @param {String|JXG.Board} board The board the new legend is drawn on.
@@ -1362,6 +1362,9 @@ JXG.Legend = function (board, coords, attributes) {
     } else {
         throw new Error("JSXGraph: Unknown legend style: " + this.style);
     }
+
+    this.id = this.board.setId(this, "Leg");
+
 };
 
 JXG.Legend.prototype = new GeometryElement();
@@ -1417,6 +1420,8 @@ JXG.Legend.prototype.drawVerticalLegend = function (board, attributes) {
             .update()
             .updateVisibility(this.lines[i].evalVisProp('visible'))
             .updateRenderer();
+
+        this.addChild(this.lines[i]);
     }
 };
 
