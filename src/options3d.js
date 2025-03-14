@@ -1094,8 +1094,8 @@ JXG.extend(Options, {
          *      slider: {
          *          visible: true,
          *          style: 6,
-         *          point1: {frozen: true},
-         *          point2: {frozen: true},
+         *          point1: {frozen: false},
+         *          point2: {frozen: false},
          *          min: 0,
          *          max: 2 * Math.PI,
          *          start: 1.0
@@ -1196,8 +1196,8 @@ JXG.extend(Options, {
          *      slider: {
          *          visible: true,
          *          style: 6,
-         *          point1: {frozen: true},
-         *          point2: {frozen: true},
+         *          point1: {frozen: false},
+         *          point2: {frozen: false},
          *          min: 0,
          *          max: 2 * Math.PI,
          *          start: 0.3
@@ -1297,8 +1297,8 @@ JXG.extend(Options, {
          *      slider: {
          *          visible: true,
          *          style: 6,
-         *          point1: {frozen: true},
-         *          point2: {frozen: true},
+         *          point1: {frozen: false},
+         *          point2: {frozen: false},
          *          min: 0,
          *          max: 2 * Math.PI,
          *          start: 0.3
