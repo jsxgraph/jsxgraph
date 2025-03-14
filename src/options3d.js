@@ -1277,11 +1277,11 @@ JXG.extend(Options, {
                 style: 6,
                 point1: {
                     frozen: false,
-                    pos: 'auto',
+                    pos: 'auto'
                 },
                 point2: {
                     frozen: false,
-                    pos: 'auto',
+                    pos: 'auto'
                 },
                 min: 0,
                 max: 2 * Math.PI,
@@ -1392,11 +1392,11 @@ JXG.extend(Options, {
                 style: 6,
                 point1: {
                     frozen: false,
-                    pos: 'auto',
+                    pos: 'auto'
                 },
                 point2: {
                     frozen: false,
-                    pos: 'auto',
+                    pos: 'auto'
                 },
                 min: -Math.PI,
                 max:  Math.PI,
