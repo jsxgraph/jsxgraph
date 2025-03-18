@@ -1640,6 +1640,7 @@ JXG.createPlane3D = function (board, parents, attributes) {
         if (parents[1].type === Const.OBJECT_TYPE_PLANE3D &&
             Type.isTransformationOrArray(parents[2])
         ) {
+            // Plane + transformation
             base = parents[1];
             transform = parents[2];
 
@@ -1649,6 +1650,7 @@ JXG.createPlane3D = function (board, parents, attributes) {
             range_u = parents[3] || [-Infinity, Infinity];
             range_v = parents[4] || [-Infinity, Infinity];
         } else {
+            // Point, direction and ranges
             point = Type.providePoints3D(view, [parents[1]], attributes, 'plane3d', ['point'])[0];
             dir1 = parents[2];
             dir2 = parents[3];
