@@ -981,7 +981,7 @@ JXG.extend(
             } else if (Type.isFunction(this.direction1)) {
                 this.vec1 = Type.evaluate(this.direction1);
                 if (this.vec1.length === 3) {
-                    this.vec1.unshift(1);
+                    this.vec1.unshift(0);
                 }
             } else {
                 s = 0;
@@ -999,7 +999,7 @@ JXG.extend(
             } else if (Type.isFunction(this.direction2)) {
                 this.vec2 = Type.evaluate(this.direction2);
                 if (this.vec2.length === 3) {
-                    this.vec2.unshift(1);
+                    this.vec2.unshift(0);
                 }
             } else {
                 s = 0;
