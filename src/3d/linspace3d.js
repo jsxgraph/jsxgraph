@@ -146,7 +146,7 @@ JXG.extend(
             } else if (Type.isFunction(this.direction)) {
                 this.vec = Type.evaluate(this.direction);
                 if (this.vec.length === 3) {
-                    this.vec.unshift(1);
+                    this.vec.unshift(0);
                 }
             } else {
                 if (this.direction.length === 3) {
