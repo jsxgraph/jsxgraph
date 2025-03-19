@@ -1293,7 +1293,6 @@ JXG.extend(
  * clear if the input arrays have to be interpreted as points or directions.
  * <p>
  * All coordinate arrays can be supplied as functions returning a coordinate array.
- * Planes defined by three points are always infinite.
  *
  * @pseudo
  * @name  Plane3D
@@ -1621,8 +1620,9 @@ JXG.createPlane3D = function (board, parents, attributes) {
         transform = null;
 
     attr = Type.copyAttributes(attributes, board.options, 'plane3d');
-    if (parents.length === 4 &&
-        (attr.threepoints || Type.isPoint3D(parents[2]) || Type.isPoint3D(parents[3]))
+    if (//parents.length === 4 &&
+        // ()
+        attr.threepoints || Type.isPoint3D(parents[2]) || Type.isPoint3D(parents[3])
     ) {
         // Three points
         point = Type.providePoints3D(view, [parents[1]], attributes, 'plane3d', ['point1'])[0];
@@ -1634,8 +1634,8 @@ JXG.createPlane3D = function (board, parents, attributes) {
         dir2 = function() {
             return [point3.X() - point.X(), point3.Y() - point.Y(), point3.Z() - point.Z()];
         };
-        range_u = [-Infinity, Infinity];
-        range_v = [-Infinity, Infinity];
+        range_u = parents[4] || [-Infinity, Infinity];
+        range_v = parents[5] || [-Infinity, Infinity];
     } else {
         if (parents[1].type === Const.OBJECT_TYPE_PLANE3D &&
             Type.isTransformationOrArray(parents[2])
