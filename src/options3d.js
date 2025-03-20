@@ -690,6 +690,8 @@ JXG.extend(Options, {
         highlight: false,
         tabindex: null,
         needsRegularUpdate: true,
+        stepWidthU: 1,
+        stepWidthV: 1,
 
         visible: "inherit"
 

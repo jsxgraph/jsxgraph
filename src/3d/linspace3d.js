@@ -1701,20 +1701,23 @@ JXG.createPlane3D = function (board, parents, attributes) {
     el.inherits.push(el.element2D);
     el.element2D.setParents(el);
 
-    attr = Type.copyAttributes(attributes.mesh3d, board.options, 'mesh3d');
     if (
         Math.abs(el.range_u[0]) !== Infinity &&
         Math.abs(el.range_u[1]) !== Infinity &&
         Math.abs(el.range_v[0]) !== Infinity &&
         Math.abs(el.range_v[1]) !== Infinity
     ) {
+        attr = Type.copyAttributes(attributes.mesh3d, board.options, 'mesh3d');
         grid = view.create('mesh3d', [
             function () {
                 return point.coords;
             },
-            dir1, range_u, dir2, range_v
-        ], attr
-        );
+            // dir1, dir2, range_u, range_v
+            function() { return el.vec1; },
+            function() { return el.vec2; },
+            el.range_u,
+            el.range_v
+        ], attr);
         el.grid = grid;
         el.addChild(grid);
         el.inherits.push(grid);
