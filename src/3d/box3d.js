@@ -292,10 +292,11 @@ JXG.registerElement("axis3d", JXG.createAxis3D);
  * All parameters can be supplied as functions returning an appropriate data type.
  *
  */
-JXG.createMesh3D = function (board, parents, attr) {
+JXG.createMesh3D = function (board, parents, attributes) {
     var view = parents[0],
-        el;
+        attr, el;
 
+    attr = Type.copyAttributes(attributes, board.options, 'mesh3d');
     attr.element3d = true;  // Needed to avoid update during change of view
     el = view.create("curve", [[], []], attr);
 
@@ -328,8 +329,12 @@ JXG.createMesh3D = function (board, parents, attr) {
         if (Type.isFunction(this.point)) {
             q = this.point();
         } else {
-            for (i = 0; i < this.point.length; i++) {
-                q[i] = Type.evaluate(this.point[i]);
+            if (Type.isPoint3D(this.point)) {
+                q = this.point.coords;
+            } else {
+                for (i = 0; i < this.point.length; i++) {
+                    q[i] = Type.evaluate(this.point[i]);
+                }
             }
         }
         if (Type.isFunction(this.direction1)) {
