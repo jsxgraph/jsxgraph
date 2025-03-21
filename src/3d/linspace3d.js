@@ -1707,7 +1707,7 @@ JXG.createPlane3D = function (board, parents, attributes) {
         Math.abs(el.range_v[0]) !== Infinity &&
         Math.abs(el.range_v[1]) !== Infinity
     ) {
-        attr = Type.copyAttributes(attributes.mesh3d, board.options, 'mesh3d');
+        attr = Type.copyAttributes(attr.mesh3d, board.options, 'mesh3d');
         grid = view.create('mesh3d', [
             function () {
                 return point.coords;

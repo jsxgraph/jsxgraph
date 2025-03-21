@@ -690,10 +690,25 @@ JXG.extend(Options, {
         highlight: false,
         tabindex: null,
         needsRegularUpdate: true,
-        stepWidthU: 1,
-        stepWidthV: 1,
 
-        visible: "inherit"
+        /**
+         * Step width of the mesh in the direction of the first spanning vector.
+         * @type {Number}
+         * @name Mesh3D#stepWidthU
+         * @default 1
+         *
+         */
+        stepWidthU: 1,
+
+        /**
+         * Step width of the mesh in the direction of the second spanning vector.
+         *
+         * @type {Number}
+         * @name Mesh3D#stepWidthV
+         * @default 1
+         *
+         */
+        stepWidthV: 1,
 
         /**#@-*/
     },
@@ -710,6 +725,7 @@ JXG.extend(Options, {
         highlight: false,
         tabindex: null,
         needsRegularUpdate: true,
+        visible: true,
 
         gradient: "linear",
         gradientSecondColor: "#ffffff",
@@ -726,6 +742,7 @@ JXG.extend(Options, {
          * @default see {@link Mesh3D}
          */
         mesh3d: {
+            visible: "inherit"
         },
 
         /**

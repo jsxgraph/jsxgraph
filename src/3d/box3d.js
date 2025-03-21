@@ -155,6 +155,9 @@ JXG.createAxes3D = function (board, parents, attributes) {
         dir = directions[i];
         for (j = 0; j < sides.length; j++) {
             // Run through ['Rear', 'Front']
+            // attr = Type.copyAttributes(attributes, board.options, "axes3d");
+
+            na = dir + "Plane" + sides[j];
 
             from = [0, 0, 0];
             from[i] = j === 0 ? rear[i] : front[i];
@@ -164,7 +167,7 @@ JXG.createAxes3D = function (board, parents, attributes) {
             vec2[i2] = 1;
             range1 = [rear[i1], front[i1]];
             range2 = [rear[i2], front[i2]];
-            na = dir + "Plane" + sides[j];
+
             attr = Type.copyAttributes(attributes, board.options, "axes3d", na);
             axes[na] = view.create("plane3d", [from, vec1, vec2, range1, range2], attr);
             axes[na].elType = "axisplane3d";
