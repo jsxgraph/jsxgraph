@@ -163,12 +163,12 @@ JXG.extend(
             s_v = Type.evaluate(r_v[0]);
             e_u = Type.evaluate(r_u[1]);
             e_v = Type.evaluate(r_v[1]);
-            delta_u = (e_u - s_u) / (steps_u - 1);
-            delta_v = (e_v - s_v) / (steps_v - 1);
+            delta_u = (e_u - s_u) / (steps_u);
+            delta_v = (e_v - s_v) / (steps_v);
 
-            for (i_u = 0, u = s_u; i_u < steps_u && u <= e_u; i_u++, u += delta_u) {
+            for (i_u = 0, u = s_u; i_u <= steps_u && u <= e_u; i_u++, u += delta_u) {
                 this.points.push([]);
-                for (i_v = 0, v = s_v; i_v < steps_v && v <= e_v; i_v++, v += delta_v) {
+                for (i_v = 0, v = s_v; i_v <= steps_v && v <= e_v; i_v++, v += delta_v) {
                     c3d = this.F(u, v);
                     c3d.unshift(1);
                     this.points[i_u].push(c3d);

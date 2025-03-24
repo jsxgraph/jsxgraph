@@ -708,7 +708,7 @@ JXG.extend(Options, {
          * @default 1
          *
          */
-        stepWidthV: 1,
+        stepWidthV: 1
 
         /**#@-*/
     },

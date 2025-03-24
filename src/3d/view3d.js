@@ -1573,8 +1573,8 @@ JXG.extend(
         var i_u, i_v, u, v,
             c2d, delta_u, delta_v,
             p = [0, 0, 0],
-            steps_u = interval_u[2],
-            steps_v = interval_v[2],
+            steps_u = Type.evaluate(interval_u[2]),
+            steps_v = Type.evaluate(interval_v[2]),
             dataX = [],
             dataY = [];
 
