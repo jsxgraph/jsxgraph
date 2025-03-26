@@ -580,14 +580,15 @@ JXG.extend(
                     );
                 }
 
-                // testing for array-of-arrays-of-numbers, like [[1,2,3],[2,3,4]]
                 if (this.isArray(parents[i]) && parents[i].length > 0 && parents[i].every((x)=>this.isArray(x) && this.isNumber(x[0]))) {
+                    // Testing for array-of-arrays-of-numbers, like [[1,2,3],[2,3,4]]
                     for (j = 0; j < parents[i].length; j++) {
                         points.push(view.create("point3d", parents[i][j], attr));;
                         points[points.length - 1]._is_new = true;
                     }
-                } else if (this.isArray(parents[i]) &&  parents[i].every((x)=>this.isNumber(x))) {
-                    points.push(view.create("point3d", parents[i], attr));   // single array [1,2,3]
+                } else if (this.isArray(parents[i]) &&  parents[i].every((x)=> this.isNumber(x) || this.isFunction(x))) {
+                    // Single array [1,2,3]
+                    points.push(view.create("point3d", parents[i], attr));
                     points[points.length - 1]._is_new = true;
 
                 } else if (this.isPoint3D(parents[i])) {
