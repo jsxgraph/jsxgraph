@@ -414,7 +414,7 @@ JXG.extend(
             var el, el2;
 
             this.childElements[obj.id] = obj;
-            this.addDescendants(obj);
+            // this.addDescendants(obj);
             obj.ancestors[this.id] = this;
 
             for (el in this.descendants) {

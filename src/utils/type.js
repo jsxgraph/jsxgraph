@@ -442,11 +442,11 @@ JXG.extend(
                 /** @ignore */
                 f = function () { return term; };
                 f.deps = {};
-            // } else if (this.isString(term)) {
-            //     // In case of string function like fontsize
-            //     /** @ignore */
-            //     f = function () { return term; };
-            //     f.deps = {};
+                // } else if (this.isString(term)) {
+                //     // In case of string function like fontsize
+                //     /** @ignore */
+                //     f = function () { return term; };
+                //     f.deps = {};
             }
 
             if (f !== null) {
@@ -580,9 +580,18 @@ JXG.extend(
                     );
                 }
 
-                if (this.isArray(parents[i]) && parents[i].length > 1) {
-                    points.push(view.create("point3d", parents[i], attr));
+                // testing for array-of-arrays-of-numbers, like [[1,2,3],[2,3,4]]
+                if (this.isArray(parents[i]) && parents[i].length > 0 && parents[i].every((x)=>this.isArray(x) && this.isNumber(x[0]))) {
+                    for (j = 0; j < parents[i].length; j++) {
+                        points.push(view.create("point3d", parents[i][j], attr));;
+                        points[points.length - 1]._is_new = true;
+                    }
+                } else if (this.isArray(parents[i]) &&  parents[i].every((x)=>this.isNumber(x))) {
+                    points.push(view.create("point3d", parents[i], attr));   // single array [1,2,3]
                     points[points.length - 1]._is_new = true;
+
+                } else if (this.isPoint3D(parents[i])) {
+                    points.push(parents[i]);
                 } else if (this.isFunction(parents[i])) {
                     val = parents[i]();
                     if (this.isArray(val) && val.length > 1) {

@@ -596,15 +596,18 @@ JXG.createSphere3D = function (board, parents, attributes) {
     if (Type.isPoint3D(p[0]) && Type.isPoint3D(p[1])) {
         // Point/Point
         el = new JXG.Sphere3D(view, "twoPoints", p[0], p[1], attr);
+
+        /////////////// nothing in docs suggest you can use [number, pointType]
+        // } else if (
+        //     (Type.isNumber(p[0]) || Type.isFunction(p[0]) || Type.isString(p[0])) &&
+        //     Type.isPoint3D(p[1])
+        // ) {
+        //     // Number/Point
+        //     el = new JXG.Sphere3D(view, "pointRadius", p[1], p[0], attr);
+
     } else if (
-        (Type.isNumber(p[0]) || Type.isFunction(p[0]) || Type.isString(p[0])) &&
-        Type.isPoint3D(p[1])
-    ) {
-        // Number/Point
-        el = new JXG.Sphere3D(view, "pointRadius", p[1], p[0], attr);
-    } else if (
-        (Type.isNumber(p[1]) || Type.isFunction(p[1]) || Type.isString(p[1])) &&
-        Type.isPoint3D(p[0])
+        Type.isPoint3D(p[0]) &&
+        (Type.isNumber(p[1]) || Type.isFunction(p[1]) || Type.isString(p[1]))
     ) {
         // Point/Number
         el = new JXG.Sphere3D(view, "pointRadius", p[0], p[1], attr);
