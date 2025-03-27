@@ -383,7 +383,7 @@ JXG.extend(
                         );
                     }
                     if (this.slide) {
-                        this.coords = this.slide.projectCoords([this.X(), this.Y(), this.Z()], this.position);
+                        this.coords = this.slide.projectCoords([1, this.X(), this.Y(), this.Z()], this.position);
                         this.element2D.coords.setCoordinates(
                             Const.COORDS_BY_USER,
                             this.view.project3DTo2D(this.coords)
@@ -397,7 +397,7 @@ JXG.extend(
                     .updateTransform();
 
                 if (this.slide) {
-                    this.coords = this.slide.projectCoords([this.X(), this.Y(), this.Z()], this.position);
+                    this.coords = this.slide.projectCoords([1, this.X(), this.Y(), this.Z()], this.position);
                 }
                 c3d = this.coords;
                 this.element2D.coords.setCoordinates(
