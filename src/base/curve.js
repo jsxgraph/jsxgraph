@@ -1112,6 +1112,14 @@ JXG.extend(
             }
         },
 
+        /**
+         * Position a curve label according to the attributes "position" and distance.
+         * This function is also used for angle, arc and sector.
+         * 
+         * @param {String} pos 
+         * @param {Number} distance 
+         * @returns {JXG.Coords}
+         */
         getLabelPosition: function(pos, distance) {
             var x, y, xy,
                 c, d, e,
