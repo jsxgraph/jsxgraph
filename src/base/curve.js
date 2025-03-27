@@ -1112,12 +1112,64 @@ JXG.extend(
             }
         },
 
+        getLabelPosition: function(pos, distance) {
+            var x, y, xy,
+                c, d, e,
+                lbda,
+                t, dx, dy,
+                dist = 1.5;
+
+            xy = Type.parsePosition(pos);
+            lbda = Type.parseNumber(xy.pos, this.maxX() - this.minX(), 1);
+
+            if (xy.pos.indexOf('fr') < 0 &&
+                xy.pos.indexOf('%') < 0) {
+                // 'px' or numbers are not supported
+                lbda = 0;
+            }
+
+            t = this.minX() + lbda;
+            x = this.X(t);
+            y = this.Y(t);
+            c = (new Coords(Const.COORDS_BY_USER, [x, y], this.board)).scrCoords;
+
+            e = Mat.eps;
+            if (t < this.minX() + e) {
+                dx = (this.X(t + e) - this.X(t)) / e;
+                dy = (this.Y(t + e) - this.Y(t)) / e;
+            } else if (t > this.maxX() - e) {
+                dx = (this.X(t) - this.X(t - e)) / e;
+                dy = (this.Y(t) - this.Y(t - e)) / e;
+            } else {
+                dx = 0.5 * (this.X(t + e) - this.X(t - e)) / e;
+                dy = 0.5 * (this.Y(t + e) - this.Y(t - e)) / e;
+            }
+            d = Mat.hypot(dx, dy);
+
+            if (xy.side === 'left') {
+                dy *= -1;
+            } else {
+                dx *= -1;
+            }
+
+            // Position left or right
+
+            if (Type.exists(this.label)) {
+                dist = 0.5 * distance / d;
+            }
+
+            x = c[1] + dy * this.label.size[0] * dist;
+            y = c[2] - dx * this.label.size[1] * dist;
+
+            return new Coords(Const.COORDS_BY_SCREEN, [x, y], this.board);
+        },
+
         // documented in geometry element
         getLabelAnchor: function () {
             var x, y, pos,
-                xy, lbda, e,
-                t, dx, dy, d,
-                dist = 1.5,
+                // xy, lbda, e,
+                // t, dx, dy, d,
+                // dist = 1.5,
                 c,
                 ax = 0.05 * this.board.canvasWidth,
                 ay = 0.05 * this.board.canvasHeight,
@@ -1169,49 +1221,50 @@ JXG.extend(
                 }
             } else {
                 // New positioning
-                xy = Type.parsePosition(pos);
-                lbda = Type.parseNumber(xy.pos, this.maxX() - this.minX(), 1);
+                return this.getLabelPosition(pos, this.label.evalVisProp('distance'));
+                // xy = Type.parsePosition(pos);
+                // lbda = Type.parseNumber(xy.pos, this.maxX() - this.minX(), 1);
 
-                if (xy.pos.indexOf('fr') < 0 &&
-                    xy.pos.indexOf('%') < 0) {
-                    // 'px' or numbers are not supported
-                    lbda = 0;
-                }
+                // if (xy.pos.indexOf('fr') < 0 &&
+                //     xy.pos.indexOf('%') < 0) {
+                //     // 'px' or numbers are not supported
+                //     lbda = 0;
+                // }
 
-                t = this.minX() + lbda;
-                x = this.X(t);
-                y = this.Y(t);
-                c = (new Coords(Const.COORDS_BY_USER, [x, y], this.board)).scrCoords;
+                // t = this.minX() + lbda;
+                // x = this.X(t);
+                // y = this.Y(t);
+                // c = (new Coords(Const.COORDS_BY_USER, [x, y], this.board)).scrCoords;
 
-                e = Mat.eps;
-                if (t < this.minX() + e) {
-                    dx = (this.X(t + e) - this.X(t)) / e;
-                    dy = (this.Y(t + e) - this.Y(t)) / e;
-                } else if (t > this.maxX() - e) {
-                    dx = (this.X(t) - this.X(t - e)) / e;
-                    dy = (this.Y(t) - this.Y(t - e)) / e;
-                } else {
-                    dx = 0.5 * (this.X(t + e) - this.X(t - e)) / e;
-                    dy = 0.5 * (this.Y(t + e) - this.Y(t - e)) / e;
-                }
-                d = Mat.hypot(dx, dy);
+                // e = Mat.eps;
+                // if (t < this.minX() + e) {
+                //     dx = (this.X(t + e) - this.X(t)) / e;
+                //     dy = (this.Y(t + e) - this.Y(t)) / e;
+                // } else if (t > this.maxX() - e) {
+                //     dx = (this.X(t) - this.X(t - e)) / e;
+                //     dy = (this.Y(t) - this.Y(t - e)) / e;
+                // } else {
+                //     dx = 0.5 * (this.X(t + e) - this.X(t - e)) / e;
+                //     dy = 0.5 * (this.Y(t + e) - this.Y(t - e)) / e;
+                // }
+                // d = Mat.hypot(dx, dy);
 
-                if (xy.side === 'left') {
-                    dy *= -1;
-                } else {
-                    dx *= -1;
-                }
+                // if (xy.side === 'left') {
+                //     dy *= -1;
+                // } else {
+                //     dx *= -1;
+                // }
 
-                // Position left or right
+                // // Position left or right
 
-                if (Type.exists(this.label)) {
-                    dist = 0.5 * this.label.evalVisProp('distance') / d;
-                }
+                // if (Type.exists(this.label)) {
+                //     dist = 0.5 * this.label.evalVisProp('distance') / d;
+                // }
 
-                x = c[1] + dy * this.label.size[0] * dist;
-                y = c[2] - dx * this.label.size[1] * dist;
+                // x = c[1] + dy * this.label.size[0] * dist;
+                // y = c[2] - dx * this.label.size[1] * dist;
 
-                return new Coords(Const.COORDS_BY_SCREEN, [x, y], this.board);
+                // return new Coords(Const.COORDS_BY_SCREEN, [x, y], this.board);
 
             }
             c = new Coords(Const.COORDS_BY_SCREEN, [x, y], this.board, false);

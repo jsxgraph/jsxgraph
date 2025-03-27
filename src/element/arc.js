@@ -49,7 +49,8 @@ import Const from "../base/constants.js";
  * @class An arc is a partial circumference line of a circle.
  * It is defined by a center, one point that
  * defines the radius, and a third point that defines the angle of the arc.
- *
+ * <p>
+ * As a curve the arc has curve length 6.
  * @pseudo
  * @name Arc
  * @augments Curve
@@ -121,7 +122,7 @@ JXG.createArc = function (board, parents, attributes) {
     }
 
     attr = Type.copyAttributes(attributes, board.options, "arc");
-    el = board.create("curve", [[0], [0]], attr);
+    el = board.create("curve", [[0], [0], 0, 4], attr);
 
     el.elType = "arc";
     el.setParents(points);
@@ -386,10 +387,9 @@ JXG.createArc = function (board, parents, attributes) {
      */
     el.getLabelAnchor = function () {
         var coords,
-            vec,
-            vecx,
-            vecy,
+            vec, vecx, vecy,
             len,
+            pos = this.label.evalVisProp('position'),
             angle = Geometry.rad(this.radiuspoint, this.center, this.anglepoint),
             dx = 10 / this.board.unitX,
             dy = 10 / this.board.unitY,
@@ -405,30 +405,39 @@ JXG.createArc = function (board, parents, attributes) {
         //    this.label.relativeCoords = new Coords(Const.COORDS_BY_SCREEN, [0, 0], this.board);
         //}
 
-        if ((ev_s === "minor" && angle > Math.PI) || (ev_s === "major" && angle < Math.PI)) {
-            angle = -(2 * Math.PI - angle);
+        if (
+            !Type.isString(pos) ||
+            (pos.indexOf('right') < 0 && pos.indexOf('left') < 0)
+        ) {
+
+            if ((ev_s === "minor" && angle > Math.PI) || (ev_s === "major" && angle < Math.PI)) {
+                angle = -(2 * Math.PI - angle);
+            }
+
+            coords = new Coords(
+                Const.COORDS_BY_USER,
+                [
+                    pmc[1] + Math.cos(angle * 0.5) * bxminusax - Math.sin(angle * 0.5) * byminusay,
+                    pmc[2] + Math.sin(angle * 0.5) * bxminusax + Math.cos(angle * 0.5) * byminusay
+                ],
+                this.board
+            );
+
+            vecx = coords.usrCoords[1] - pmc[1];
+            vecy = coords.usrCoords[2] - pmc[2];
+
+            len = Mat.hypot(vecx, vecy);
+            vecx = (vecx * (len + dx)) / len;
+            vecy = (vecy * (len + dy)) / len;
+            vec = [pmc[1] + vecx, pmc[2] + vecy];
+
+            l_vp.position = Geometry.calcLabelQuadrant(Geometry.rad([1, 0], [0, 0], vec));
+
+            return new Coords(Const.COORDS_BY_USER, vec, this.board);
+        } else {
+            return this.getLabelPosition(pos, this.label.evalVisProp('distance'));
         }
 
-        coords = new Coords(
-            Const.COORDS_BY_USER,
-            [
-                pmc[1] + Math.cos(angle * 0.5) * bxminusax - Math.sin(angle * 0.5) * byminusay,
-                pmc[2] + Math.sin(angle * 0.5) * bxminusax + Math.cos(angle * 0.5) * byminusay
-            ],
-            this.board
-        );
-
-        vecx = coords.usrCoords[1] - pmc[1];
-        vecy = coords.usrCoords[2] - pmc[2];
-
-        len = Mat.hypot(vecx, vecy);
-        vecx = (vecx * (len + dx)) / len;
-        vecy = (vecy * (len + dy)) / len;
-        vec = [pmc[1] + vecx, pmc[2] + vecy];
-
-        l_vp.position = Geometry.calcLabelQuadrant(Geometry.rad([1, 0], [0, 0], vec));
-
-        return new Coords(Const.COORDS_BY_USER, vec, this.board);
     };
 
     // documentation in jxg.circle
