@@ -5798,9 +5798,9 @@ JXG.Options = {
          *
          * @name ImplicitCurve#h_max
          * @type {Number|Function}
-         * @default 1
+         * @default 0.5
          */
-        h_max: 1,
+        h_max: 0.5,
 
         /**
          * Allowed distance (in user units multiplied by actual step width) to detect loop.
