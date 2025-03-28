@@ -1956,9 +1956,9 @@ JXG.extend(
          * let [A, B, C, D] = ['==', '<>', '<', '>'].map((s) => board.create('point', [4, yInit--], { name: s, label: { fontSize: 24 } }))
          * let seg = board.create('segment', [A, [() => A.X(), 0]])  // shows linear
          *
-         *let isLeftRight = true;
-         *let buttonMove = board.create('button', [-2, 4, 'left',
-         *() => {
+         * let isLeftRight = true;
+         * let buttonMove = board.create('button', [-2, 4, 'left',
+         * () => {
          *    isLeftRight = !isLeftRight;
          *    buttonMove.rendNodeButton.innerHTML = isLeftRight ? 'left' : 'right'
          *    let x = isLeftRight ? 4 : -4
@@ -1969,7 +1969,7 @@ JXG.extend(
          *    C.moveTo([x, 1], 1000, { callback: () => C.setAttribute({ face: sym, size: 5 }), effect: "<" })
          *    D.moveTo([x, 0], 1000, { callback: () => D.setAttribute({ face: sym, size: 5 }), effect: ">" })
          *
-         *}])
+         * }]);
          *
          * </pre><div id="JXG0f35a50e-e99d-11e8-a1ca-04d3b0c2aad4" class="jxgbox" style="width: 300px; height: 300px;"></div>
          * <script type="text/javascript">
@@ -1979,9 +1979,9 @@ JXG.extend(
          * let [A, B, C, D] = ['==', '<>', '<', '>'].map((s) => board.create('point', [4, yInit--], { name: s, label: { fontSize: 24 } }))
          * let seg = board.create('segment', [A, [() => A.X(), 0]])  // shows linear
          *
-         *let isLeftRight = true;
-         *let buttonMove = board.create('button', [-2, 4, 'left',
-         *() => {
+         * let isLeftRight = true;
+         * let buttonMove = board.create('button', [-2, 4, 'left',
+         * () => {
          *    isLeftRight = !isLeftRight;
          *    buttonMove.rendNodeButton.innerHTML = isLeftRight ? 'left' : 'right'
          *    let x = isLeftRight ? 4 : -4
@@ -1992,7 +1992,7 @@ JXG.extend(
          *    C.moveTo([x, 1], 1000, { callback: () => C.setAttribute({ face: sym, size: 5 }), effect: "<" })
          *    D.moveTo([x, 0], 1000, { callback: () => D.setAttribute({ face: sym, size: 5 }), effect: ">" })
          *
-         *}])
+         * }]);
          *}
          *</script><pre>
          */
@@ -2010,7 +2010,7 @@ JXG.extend(
                 dY = where.usrCoords[2] - Y,
                 /** @ignore */
                 stepFun = function (i) {
-                    let x = i / steps;  // absolute progress of the animatin
+                    var x = i / steps;  // absolute progress of the animatin
 
                     if (options.effect) {
                         if (options.effect === "<>") {
