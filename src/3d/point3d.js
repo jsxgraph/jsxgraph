@@ -108,6 +108,17 @@ JXG.Point3D = function (view, F, slide, attributes) {
      */
     this.position = [];
 
+    /**
+     * An array of coordinates for moveTo().  An in-progress move can be updated or cancelled by updating or clearing this array.  Use moveTo() instead of
+     * accessing this array directly.
+     * @type Array
+     * @private
+     */
+    this.movePath = [];
+    this.moveCallback = null;
+    this.moveInterval = null;
+
+
     this._c2d = null;
 
     this.methodMap = Type.deepCopy(this.methodMap, {
@@ -470,17 +481,26 @@ JXG.extend(
         *     [[-6, -3], [8, 8],
         *     [[-3, 3], [-3, 3], [-3, 3]]]);
         *
-        * let A = view.create('point3d', [0, 0, 0]);
-        * board.create('button', [-4, 4.3, 'start', () => {
-        * A.moveTo([3, 3, 3], 3000,
-        *     {
-        *         callback: () => A.moveTo([-3, -3, -3], 3000, { effect: '<' }),
-        *         effect: '>'
-        *     }
-        * )
-        * }])
+        *  let A = view.create('point3d', [0, 0, 0]);
         *
-        * </pre><div id="JXG0f35a50e-e99d-11e8-a1ca-cba3b0c2aad4" class="jxgbox" style="width: 300px; height: 300px;"></div>
+        *  // move A with callbacks
+        *  board.create('button', [-4, 4.3, 'callbacks', () => {
+        *    A.moveTo([3, 3, 3], 3000,
+        *       {
+        *          callback: () => A.moveTo([-3, -3, -3], 3000, {
+        *              callback: () => A.moveTo([0, 0, 0],1000), effect: '<'
+        *          }),
+        *          effect: '>'
+        *       })
+        *     }])
+        *
+        *   // move A with async/await
+        *   board.create('button', [-3, 4.3, 'async/await', async () => {
+        *       await A.moveTo([3, 3, 3], 3000, { effect: '>' });
+        *       await A.moveTo([-3, -3, -3], 3000, { effect: '<' });
+        *       A.moveTo([0, 0, 0],1000)
+        *   }])
+        *  </pre><div id="JXG0f35a50e-e99d-11e8-a1ca-cba3b0c2aad4" class="jxgbox" style="width: 300px; height: 300px;"></div>
         * <script type="text/javascript">
         * {
         * const board = JXG.JSXGraph.initBoard('JXG0f35a50e-e99d-11e8-a1ca-cba3b0c2aad4')
@@ -490,30 +510,38 @@ JXG.extend(
         *     [[-3, 3], [-3, 3], [-3, 3]]]);
         *
         * let A = view.create('point3d', [0, 0, 0]);
-        * board.create('button', [-4, 4.3, 'start', () => {
-        * A.moveTo([3, 3, 3], 3000,
-        *     {
-        *         callback: () => A.moveTo([-3, -3, -3], 3000, { effect: '<' }),
-        *         effect: '>'
-        *     }
-        * )
-        * }])
-        *}
-        *</script><pre>
+        *  // move A with callbacks
+        *  board.create('button', [-4, 4.3, 'callbacks', () => {
+        *    A.moveTo([3, 3, 3], 3000,
+        *       {
+        *          callback: () => A.moveTo([-3, -3, -3], 3000, {
+        *              callback: () => A.moveTo([0, 0, 0],1000), effect: '<'
+        *          }),
+        *          effect: '>'
+        *       })
+        *     }])
+        *
+        *   // move A with async/await
+        *   board.create('button', [-1, 4.3, 'async/await', async () => {
+        *       await A.moveTo([3, 3, 3], 3000, { effect: '>' });
+        *       await A.moveTo([-3, -3, -3], 3000, { effect: '<' });
+        *       A.moveTo([0, 0, 0],1000)
+        *   }])
+        * }
+        * </script><pre>
         */
         moveTo: function (where, time, options) {
             options = options || {};
 
             var i,
-                delay = this.board.attr.animationdelay,
-                steps = Math.ceil(time / delay),
+                steps = Math.ceil(time / this.board.attr.animationdelay),
                 X = where[0],
                 Y = where[1],
                 Z = where[2],
                 dX = this.coords[1] - X,
                 dY = this.coords[2] - Y,
                 dZ = this.coords[3] - Z,
-                doneCallback = ()=>{},
+                doneCallback = () => { },
                 stepFun;
 
             if (options.callback)
@@ -572,10 +600,9 @@ JXG.extend(
                 ];
             }
 
-            this.moveAlong(this.animationPath, time,
+            return this.moveAlong(this.animationPath, time,
                 { callback: doneCallback });
 
-            return this;
         },
 
         /**
@@ -610,51 +637,55 @@ JXG.extend(
          *      A.moveAlong([[3, 3, 3], [-2, -1, -2], [-1, -1, -1], [-1, -2, 1]], 3000,
          *       { callback: () => board.create('text', [-4, 4, 'done!']) })
          * }])
+         *
          * })();
          *
          * </script><pre>
          *
          */
         moveAlong: function (traversePath, time, options) {
-            let doneCallback = null,
-                // function generates promise & timeout at each step
-                traversePathWithPromise = (path, subPeriod, callback) => {
-                    return path.reduce((promiseChain, element) => {
-                        return promiseChain.then(() =>
-                            new Promise(resolve => {
-                                setTimeout(() => { callback(element); resolve(); }, subPeriod);
-                            })
-                        );
-                    }, Promise.resolve());
-                };
+            let stepTime = time/traversePath.length;   // will be same as this.board.attr.animationdelay if called by MoveTo
 
 
             // unload the options
             if (Type.isObject(options)) {
-                if ('callback' in options) doneCallback = options.callback;
+                if ('callback' in options)
+                    this.moveCallback = options.callback;
                 // TODO:add interpolation using Neville.  How?  easiest is add interpolation to path before start
                 // if ('interpolate' in options) interpolate = options.interpolate;
             }
 
 
-            // call the traverse function
-            traversePathWithPromise(traversePath, time / traversePath.length, (coord) => {
-                // console.log(`Processing: ${coord}`);
-                this.setPosition(coord, true);  // no events during transit
-                this.board.update(this);
+            if (this.movePath.length > 0) {         // existing move in progress
+                this.movePath = traversePath;       // set the new path and return ??
+                return;                             // promise is still outstanding
+            }
 
-            }).then(() => {
-                // console.log("Traversal complete.");
-                this.board.update(this);
-                if (Type.isFunction(doneCallback));
-                doneCallback();
+            // no move currently in progress
+            this.movePath = traversePath;           // set the new path and return a promise
+            return new Promise((resolve, reject) => {
+                this.moveInterval = setInterval(() => {
+                    if (this.movePath.length > 0) {
+                        let coord = this.movePath.shift();
+                        this.setPosition(coord, true);  // no events during transit
+                        this.board.update(this);
+                    }
+                    if (this.movePath.length === 0) {   // now shorter than previous test
+                        clearInterval(this.moveInterval);
+                        resolve();
+                        if (Type.isFunction(this.moveCallback)) {
+                            this.moveCallback(); // invoke the callback
+                        }
+                    }
+                }, stepTime);
             });
         },
 
 
 
+
         // Not yet working
-        __evt__update3D: function (oc) {}
+        __evt__update3D: function (oc) { }
     }
 );
 
@@ -849,3 +880,4 @@ JXG.createPoint3D = function (board, parents, attributes) {
 };
 
 JXG.registerElement("point3d", JXG.createPoint3D);
+
