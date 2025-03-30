@@ -35,6 +35,7 @@ Improvements
 - Adapt 3D info box style
 - Enhance element `measure`
 - `moveTo`, `visit`, `moveAlong` are available as promises: `moveToES6`, `visitES6`, `moveAlongES6`
+- Improved precision for implicit curves
 - API docs
 - Zoom attributes may be functions now
 - Add logo images to the JSXGraph repository
