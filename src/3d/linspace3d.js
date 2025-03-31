@@ -860,7 +860,14 @@ JXG.Plane3D = function (view, point, dir1, range_u, dir2, range_v, attributes) {
      */
     this.vec2 = [0, 0, 0, 0];
 
-    this.grid = null;
+    /**
+     * Mesh (grid) element of the plane.
+     *
+     * @name Plane3D#mesh3d
+     * @type Mesh3D
+     * @private
+     */
+    this.mesh3d = null;
 
     /**
      * Normal vector of the plane. Left hand side of the Hesse normal form.
@@ -1615,7 +1622,7 @@ JXG.createPlane3D = function (board, parents, attributes) {
         attr,
         point, point2, point3,
         dir1, dir2, range_u, range_v,
-        el, grid,
+        el, mesh3d,
         base = null,
         transform = null;
 
@@ -1708,7 +1715,7 @@ JXG.createPlane3D = function (board, parents, attributes) {
         Math.abs(el.range_v[1]) !== Infinity
     ) {
         attr = Type.copyAttributes(attr.mesh3d, board.options, 'mesh3d');
-        grid = view.create('mesh3d', [
+        mesh3d = view.create('mesh3d', [
             function () {
                 return point.coords;
             },
@@ -1718,11 +1725,12 @@ JXG.createPlane3D = function (board, parents, attributes) {
             el.range_u,
             el.range_v
         ], attr);
-        el.grid = grid;
-        el.addChild(grid);
-        el.inherits.push(grid);
-        grid.setParents(el);
-        el.grid.view = view;
+        el.mesh3d = mesh3d;
+        el.addChild(mesh3d);
+        el.inherits.push(mesh3d);           // TODO Does not work
+        el.element2D.inherits.push(mesh3d); // Does work - instead
+        mesh3d.setParents(el);
+        el.mesh3d.view = view;
     }
 
     el.element2D.prepareUpdate().update();
