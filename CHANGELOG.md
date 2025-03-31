@@ -10,7 +10,6 @@ New features
 - CSS classes for every element (SVG only). This allows the application of SVG filters
 - Depth ordering of 3D elements: Generalize font/back detection of 3D points to other elements
 - 3D transformations for point3d, line3d, plane3d, curve3d, surface3d, polyhedron3d. Still missing are: circle3d, polygon3d, text3d, ticks3d
-- `plane3d`: enable construction by three points
 - Shader for polyhedron3d
 - 2D transformations: new type `matrix`
 
@@ -20,6 +19,7 @@ Improvements
 - API docs
 - Massive speed improvements when changing the 3D view
 - Refactor 3D elements. Among other things: use of homogeneous coordinates internally everywhere.
+- `plane3d`: enable construction by three points
 - new math methods: `matMatAdd`, `matNumberMult`, `vecMatMult`, `trace` of a matrix
 - Keyboard navigation, also for 3D views
 - Improved convex hull algorithm
