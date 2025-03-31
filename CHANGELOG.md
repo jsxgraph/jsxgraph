@@ -4,32 +4,43 @@
 New features
 -----------
 
-- Attribute functions support the targeted geometry element as parameter
 - New element `polyhedron3d`
+- Depth ordering of 3D elements: Generalize font/back detection of 3D points to other elements
+- 3D transformations for point3d, line3d, plane3d, curve3d, surface3d, polyhedron3d. Not supported, yet: circle3d, polygon3d, text3d, ticks3d
+- Shader attributes for polyhedron3d
+- Attribute functions support the targeted geometry element as parameter
 - ARIA attributes for every element (SVG only)
 - CSS classes for every element (SVG only). This allows the application of SVG filters
 - Depth ordering of 3D elements: Generalize font/back detection of 3D points to other elements
 - 3D transformations for point3d, line3d, plane3d, curve3d, surface3d, polyhedron3d. Still missing are: circle3d, polygon3d, text3d, ticks3d
 - Shader for polyhedron3d
 - 2D transformations: new type `matrix`
+- 2D and 3D curves by array of coordinates
 
 Improvements
 ------------
 
-- API docs
-- Massive speed improvements when changing the 3D view
+- Massive speed improvements when rotating the 3D view
 - Refactor 3D elements. Among other things: use of homogeneous coordinates internally everywhere.
-- `plane3d`: enable construction by three points
-- new math methods: `matMatAdd`, `matNumberMult`, `vecMatMult`, `trace` of a matrix
-- Keyboard navigation, also for 3D views
+- 3D view sliders can be positioned by attributes
+- New methods in `JXG.Math`: `matMatAdd`, `matNumberMult`, `vecMatMult`, `trace` of a matrix
+- New method `JXG.Math.Geometry.isConvex`
+- Keyboard navigation, including 3D views
+- Position label by `position`, `distance` attributes for `angle`, `arc`, and `sector`
 - Improved convex hull algorithm
+- Much improved element `legend`
 - Groups: allow texts and images as members
 - JessieCode: enable numbers in scientific notation
 - Enable glider on `sphere3d` elements
-- `plane3d`: allow `line3d` as defining element
+- `plane3d`: allow `line3d` as defining element and also enable construction by three points
 - Improved dragging of 3D points
 - Adapt 3D info box style
 - Enhance element `measure`
+- `moveTo`, `visit`, `moveAlong` are available as promises: `moveToES6`, `visitES6`, `moveAlongES6`
+- Improved precision for implicit curves
+- API docs
+- Zoom attributes may be functions now
+- Add logo images to the JSXGraph repository
 
 Bug fixes
 ---------
@@ -47,6 +58,7 @@ Bug fixes
 - toLowerCase in `setAttribute()`
 - Slider handling of snapWidth
 - Handling of maxBoundingBox
+- Implicit plotting
 
 1.10.1
 ===
