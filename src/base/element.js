@@ -1151,12 +1151,11 @@ JXG.extend(
                                 attributes[Options.shortcuts[key][i]] = attributes[key];
                             }
                         }
+                        delete attributes[key]; // Remove shortcut
                     }
                     for (j = 0; j < subattr.length; j++) {
                         if (Type.isObject(attributes[subattr[j]])) {
-                            attributes[subattr[j]] = this.resolveShortcuts(
-                                attributes[subattr[j]]
-                            );
+                            attributes[subattr[j]] = this.resolveShortcuts(attributes[subattr[j]]);
                         }
                     }
                 }
