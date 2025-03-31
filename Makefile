@@ -62,7 +62,8 @@ ESLINTFLAGS=
 
 PRETTIERFLAGS=-w --print-width 96 --tab-width 4 --trailing-comma none
 
-READERSOUT=tmpreaders/geonext.min.js tmpreaders/geogebra.min.js tmpreaders/intergeo.min.js tmpreaders/sketch.min.js
+READERSOUT=tmpreaders/geonext.min.js tmpreaders/geogebra.min.js tmpreaders/intergeo.min.js
+# tmpreaders/sketch.min.js
 
 # Rules
 all: core readers docs

@@ -38,7 +38,7 @@ import JXG from "../jxg.js";
 var major = 1,
     minor = 11,
     patch = 0,
-    add = 'pre', // 'dev' 'beta'
+    add = '', // 'dev' 'beta'
     version = major + '.' + minor + '.' + patch + (add ? '-' + add : ''),
     constants;
 
