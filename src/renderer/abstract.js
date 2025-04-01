@@ -1351,7 +1351,7 @@ JXG.extend(
         },
 
         /**
-         * Updates font-size, color and opacity propertiey and CSS style properties of a {@link JXG.Text} node.
+         * Updates font-size, color and opacity properties and CSS style properties of a {@link JXG.Text} node.
          * This function is also called by highlight() and nohighlight().
          * @param {JXG.Text} el Reference to the {@link JXG.Text} object, that has to be updated.
          * @param {Boolean} doHighlight
@@ -1407,13 +1407,13 @@ JXG.extend(
                     );
                     // Set the CSS style properties - without deleting other properties
                     if (cssString !== "" && el.visPropOld[styleList[style]] !== cssString) {
+                        // console.log(">", el.visPropOld[styleList[style]], cssString)
                         cssList = this._css2js(cssString);
                         for (node = 0; node < lenN; node++) {
                             if (Type.exists(el[nodeList[node]])) {
                                 for (prop in cssList) {
                                     if (cssList.hasOwnProperty(prop)) {
-                                        el[nodeList[node]].style[cssList[prop].key] =
-                                            cssList[prop].val;
+                                        el[nodeList[node]].style[cssList[prop].key] = cssList[prop].val;
                                     }
                                 }
                             }
