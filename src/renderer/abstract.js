@@ -1406,19 +1406,19 @@ JXG.extend(
                         (doHighlight ? 'highlight' : '') + styleList[style]
                     );
                     // Set the CSS style properties - without deleting other properties
-                    if (cssString !== "" && el.visPropOld[styleList[style]] !== cssString) {
-                        // console.log(">", el.visPropOld[styleList[style]], cssString)
-                        cssList = this._css2js(cssString);
-                        for (node = 0; node < lenN; node++) {
-                            if (Type.exists(el[nodeList[node]])) {
+                    for (node = 0; node < lenN; node++) {
+                        if (Type.exists(el[nodeList[node]])) {
+                            if (cssString !== "" && el.visPropOld[styleList[style] + '_' + node] !== cssString) {
+                                cssList = this._css2js(cssString);
                                 for (prop in cssList) {
                                     if (cssList.hasOwnProperty(prop)) {
                                         el[nodeList[node]].style[cssList[prop].key] = cssList[prop].val;
                                     }
                                 }
+                                el.visPropOld[styleList[style] + '_' + node] = cssString;
                             }
                         }
-                        el.visPropOld[styleList[style]] = cssString;
+                        // el.visPropOld[styleList[style]] = cssString;
                     }
                 }
 
