@@ -105,7 +105,7 @@
 					</tr>
 				</thead>
 				<tbody>
-					<tr>
+					<tr data-constructor="{+data.alias+} data-signature="{+makeSignature(data.params)+}">
 						<td class="attributes">{!
 							if (data.isPrivate) output += "&lt;private&gt; ";
 							if (data.isInner) output += "&lt;inner&gt; ";
@@ -135,7 +135,7 @@
 					</thead>
 					<tbody>
 					<for each="member" in="ownAttributes">
-						<tr>
+						<tr data-attributes="{+member.name+}" data-type="{+member.type+}">
 							<td class="attributes">{!
 								if (member.isPrivate) output += "&lt;private&gt; ";
 								if (member.isInner) output += "&lt;inner&gt; ";
@@ -198,7 +198,7 @@
 					</thead>
 					<tbody>
 					<for each="member" in="ownProperties">
-						<tr>
+						<tr data-fields="{+member.name+} data-type="{+member.type+}">
 							<td class="attributes">{!
 								if (member.isPrivate) output += "&lt;private&gt; ";
 								if (member.isInner) output += "&lt;inner&gt; ";
@@ -261,7 +261,7 @@
 					</thead>
 					<tbody>
 					<for each="member" in="ownMethods">
-						<tr>
+   						<tr data-methods="{+member.name+}" data-returns="{+member.type+}" data-signature='{+makeMethodSignature(member.params)+}'>
 							<td class="attributes">{!
 								if (member.isPrivate) output += "&lt;private&gt; ";
 								if (member.isInner) output += "&lt;inner&gt; ";
@@ -321,7 +321,7 @@
 					</thead>
 					<tbody>
 					<for each="member" in="ownEvents">
-						<tr>
+   						<tr data-events="{+member.name+}">
 							<td class="attributes">{!
 								if (member.isPrivate) output += "&lt;private&gt; ";
 								if (member.isInner) output += "&lt;inner&gt; ";

@@ -224,6 +224,13 @@ function makeSignature(params) {
 	return signature;
 }
 
+
+/** Build output for displaying method parameters.  Just return JSON, this is not visible in the web page. */
+function makeMethodSignature(params) {
+    return JSON.stringify(params);
+}
+
+
 /** Find symbol {@link ...} strings in text and turn into html links */
 function resolveLinks(str, from) {
 	str = str.replace(/\{@link ([^} ]+) ?\}/gi,
