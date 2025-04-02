@@ -2895,8 +2895,9 @@ JXG.extend(
 
             ta = 'none';   // JSXGraph catches all user touch events
             if (this.mode === this.BOARD_MODE_NONE &&
-                Type.evaluate(this.attr.browserpan) &&
-                !(Type.evaluate(this.attr.pan.enabled) && !Type.evaluate(this.attr.pan.needtwofingers))
+                Type.evaluate(this.attr.browserpan) === true &&
+                Type.evaluate(this.attr.pan.enabled) === false &&
+                Type.evaluate(this.attr.pan.needtwofingers) === false
             ) {
                 // ta = 'pan-x pan-y';  // JSXGraph allows browser scrolling
                 ta = 'auto';  // JSXGraph allows browser scrolling
