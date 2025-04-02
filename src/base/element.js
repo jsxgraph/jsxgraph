@@ -1151,7 +1151,6 @@ JXG.extend(
                                 attributes[Options.shortcuts[key][i]] = attributes[key];
                             }
                         }
-                        delete attributes[key]; // Remove shortcut
                     }
                     for (j = 0; j < subattr.length; j++) {
                         if (Type.isObject(attributes[subattr[j]])) {
@@ -1502,7 +1501,9 @@ JXG.extend(
                                             : value;
                                 this._set(key, value);
                             } else {
-                                JXG.warn("attribute '" + key + "' does not accept type '" + (typeof value) + "' of value " + value + ".");
+                                if (!(key in Options.shortcuts)) {
+                                    JXG.warn("attribute '" + key + "' does not accept type '" + (typeof value) + "' of value " + value + ".");
+                                }
                             }
                             break;
                     }
