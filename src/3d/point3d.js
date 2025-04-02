@@ -108,6 +108,17 @@ JXG.Point3D = function (view, F, slide, attributes) {
      */
     this.position = [];
 
+    /**
+     * An array of coordinates for moveTo().  An in-progress move can be updated or cancelled by updating or clearing this array.  Use moveTo() instead of
+     * accessing this array directly.
+     * @type Array
+     * @private
+     */
+    this.movePath = [];
+    this.moveCallback = null;
+    this.moveInterval = null;
+
+
     this._c2d = null;
 
     this.methodMap = Type.deepCopy(this.methodMap, {
@@ -286,7 +297,7 @@ JXG.extend(
          */
         setPosition: function (coords, noevent) {
             var c = this.coords;
-                // oc = this.coords.slice(); // Copy of original values
+            // oc = this.coords.slice(); // Copy of original values
 
             if (coords.length === 3) {
                 // Euclidean coordinates
@@ -447,8 +458,234 @@ JXG.extend(
             }
         },
 
+
+
+        /**
+        * Starts an animated point movement towards the given coordinates <tt>where</tt>.
+        * The animation is done after <tt>time</tt> milliseconds.
+        * If the second parameter is not given or is equal to 0, coordinates are changed without animation.
+        * @param {Array} where Array containing the target coordinate in cartesian or homogenous form.
+        * @param {Number} [time] Number of milliseconds the animation should last.
+        * @param {Object} [options] Optional settings for the animation
+        * @param {function} [options.callback] A function that is called as soon as the animation is finished.
+        * @param {String} [options.effect='<>'|'>'|'<'] animation effects like speed fade in and out. possible values are
+        * '<>' for speed increase on start and slow down at the end (default), '<' for speed up, '>' for slow down, and '--' for constant speed during
+        * the whole animation.
+        * @see JXG.Point3D#moveAlong
+        * @see JXG.Point#moveTo
+        * @example
+        * // visit a coordinate, then use callback to visit a second coordinate.
+        * const board = JXG.JSXGraph.initBoard('jxgbox')
+        * var view = board.create(
+        *     'view3d',
+        *     [[-6, -3], [8, 8],
+        *     [[-3, 3], [-3, 3], [-3, 3]]]);
+        *
+        *  let A = view.create('point3d', [0, 0, 0]);
+        *
+        *  // move A with callbacks
+        *  board.create('button', [-4, 4.3, 'callbacks', () => {
+        *    A.moveTo([3, 3, 3], 3000,
+        *       {
+        *          callback: () => A.moveTo([-3, -3, -3], 3000, {
+        *              callback: () => A.moveTo([0, 0, 0],1000), effect: '<'
+        *          }),
+        *          effect: '>'
+        *       })
+        *     }])
+        *
+        *   // move A with async/await
+        *   board.create('button', [-3, 4.3, 'async/await', async () => {
+        *       await A.moveTo([3, 3, 3], 3000, { effect: '>' });
+        *       await A.moveTo([-3, -3, -3], 3000, { effect: '<' });
+        *       A.moveTo([0, 0, 0],1000)
+        *   }])
+        *  </pre><div id="JXG0f35a50e-e99d-11e8-a1ca-cba3b0c2aad4" class="jxgbox" style="width: 300px; height: 300px;"></div>
+        * <script type="text/javascript">
+        * {
+        * const board = JXG.JSXGraph.initBoard('JXG0f35a50e-e99d-11e8-a1ca-cba3b0c2aad4')
+        * var view = board.create(
+        *     'view3d',
+        *     [[-6, -3], [8, 8],
+        *     [[-3, 3], [-3, 3], [-3, 3]]]);
+        *
+        * let A = view.create('point3d', [0, 0, 0]);
+        *  // move A with callbacks
+        *  board.create('button', [-4, 4.3, 'callbacks', () => {
+        *    A.moveTo([3, 3, 3], 3000,
+        *       {
+        *          callback: () => A.moveTo([-3, -3, -3], 3000, {
+        *              callback: () => A.moveTo([0, 0, 0],1000), effect: '<'
+        *          }),
+        *          effect: '>'
+        *       })
+        *     }])
+        *
+        *   // move A with async/await
+        *   board.create('button', [-1, 4.3, 'async/await', async () => {
+        *       await A.moveTo([3, 3, 3], 3000, { effect: '>' });
+        *       await A.moveTo([-3, -3, -3], 3000, { effect: '<' });
+        *       A.moveTo([0, 0, 0],1000)
+        *   }])
+        * }
+        * </script><pre>
+        */
+        moveTo: function (where, time, options) {
+            options = options || {};
+
+            var i,
+                steps = Math.ceil(time / this.board.attr.animationdelay),
+                X = where[0],
+                Y = where[1],
+                Z = where[2],
+                dX = this.coords[1] - X,
+                dY = this.coords[2] - Y,
+                dZ = this.coords[3] - Z,
+                doneCallback = () => { },
+                stepFun;
+
+            if (options.callback)
+                doneCallback = options.callback;  // unload
+
+
+            /** @ignore */
+            stepFun = function (i) {
+                var x = i / steps;  // absolute progress of the animatin
+
+                if (options.effect) {
+                    if (options.effect === "<>") {
+                        return Math.pow(Math.sin((x * Math.PI) / 2), 2);
+                    }
+                    if (options.effect === "<") {   // cubic ease in
+                        return x * x * x;
+                    }
+                    if (options.effect === ">") {   // cubic ease out
+                        return 1 - Math.pow(1 - x, 3);
+                    }
+                    if (options.effect === "==") {
+                        return i / steps;       // linear
+                    }
+                    throw new Error("valid effects are '==', '<>', '>', and '<'.");
+                }
+                return i / steps;  // default
+            };
+
+            // immediate move, no time
+            if (
+                !Type.exists(time) ||
+                time === 0
+                // check for tiny move, is this necessary?
+                // Math.abs(where.usrCoords[0] - this.coords.usrCoords[0]) > Mat.eps
+            ) {
+                this.setPosition([X, Y, Z], true);  // no event here
+                return this.board.update(this);
+            }
+
+            // In case there is no callback and we are already at the endpoint we can stop here
+            if (
+                !Type.exists(options.callback) &&
+                Math.abs(dX) < Mat.eps &&
+                Math.abs(dY) < Mat.eps &&
+                Math.abs(dZ) < Mat.eps
+            ) {
+                return this;
+            }
+
+            this.animationPath = [];
+            for (i = steps; i >= 0; i--) {
+                this.animationPath[steps - i] = [
+                    X + dX * stepFun(i),
+                    Y + dY * stepFun(i),
+                    Z + dZ * stepFun(i)
+                ];
+            }
+
+            return this.moveAlong(this.animationPath, time,
+                { callback: doneCallback });
+
+        },
+
+        /**
+         * Move along a path defined by an array of coordinates
+         * @param {number[][]} [traversePath] Array of path coordinates (either cartesian or homogenous).
+         * @param {number} [time] Number of milliseconds the animation should last.
+         * @param {Object} [options] 'callback' and 'interpolate'.  see {@link JXG.CoordsElement#moveAlong},
+         * @example
+         *const board = JXG.JSXGraph.initBoard('jxgbox')
+         *var view = board.create(
+         *    'view3d',
+         *    [[-6, -3], [8, 8],
+         *    [[-3, 3], [-3, 3], [-3, 3]]]);
+         *
+         * board.create('button', [-4, 4.5, 'start', () => {
+         *      let A = view.create('point3d', [0, 0, 0]);
+         *      A.moveAlong([[3, 3, 3], [-2, -1, -2], [-1, -1, -1], [-1, -2, 1]], 3000,
+         *         { callback: () => board.create('text', [-4, 4, 'done!']) })
+         *}])
+         *
+         * </pre><div id="JXGa45032e5-a517-4f1d-868a-abc698d344cf" class="jxgbox" style="width: 300px; height: 300px;"></div>
+         * <script type="text/javascript">
+         *     (function() {
+         * const board = JXG.JSXGraph.initBoard("JXGa45032e5-a517-4f1d-868a-abc698d344cf")
+         * var view = board.create(
+         *     'view3d',
+         *     [[-6, -3], [8, 8],
+         *     [[-3, 3], [-3, 3], [-3, 3]]]);
+         *
+         * board.create('button', [-4, 4.5, 'start', () => {
+         *      let A = view.create('point3d', [0, 0, 0]);
+         *      A.moveAlong([[3, 3, 3], [-2, -1, -2], [-1, -1, -1], [-1, -2, 1]], 3000,
+         *       { callback: () => board.create('text', [-4, 4, 'done!']) })
+         * }])
+         *
+         * })();
+         *
+         * </script><pre>
+         *
+         */
+        moveAlong: function (traversePath, time, options) {
+            let stepTime = time/traversePath.length;   // will be same as this.board.attr.animationdelay if called by MoveTo
+
+
+            // unload the options
+            if (Type.isObject(options)) {
+                if ('callback' in options)
+                    this.moveCallback = options.callback;
+                // TODO:add interpolation using Neville.  How?  easiest is add interpolation to path before start
+                // if ('interpolate' in options) interpolate = options.interpolate;
+            }
+
+
+            if (this.movePath.length > 0) {         // existing move in progress
+                this.movePath = traversePath;       // set the new path and return ??
+                return;                             // promise is still outstanding
+            }
+
+            // no move currently in progress
+            this.movePath = traversePath;           // set the new path and return a promise
+            return new Promise((resolve, reject) => {
+                this.moveInterval = setInterval(() => {
+                    if (this.movePath.length > 0) {
+                        let coord = this.movePath.shift();
+                        this.setPosition(coord, true);  // no events during transit
+                        this.board.update(this);
+                    }
+                    if (this.movePath.length === 0) {   // now shorter than previous test
+                        clearInterval(this.moveInterval);
+                        resolve();
+                        if (Type.isFunction(this.moveCallback)) {
+                            this.moveCallback(); // invoke the callback
+                        }
+                    }
+                }, stepTime);
+            });
+        },
+
+
+
+
         // Not yet working
-        __evt__update3D: function (oc) {}
+        __evt__update3D: function (oc) { }
     }
 );
 
@@ -603,11 +840,11 @@ JXG.createPoint3D = function (board, parents, attributes) {
     } else {
         throw new Error(
             "JSXGraph: Can't create point3d with parent types '" +
-                typeof parents[1] +
-                "' and '" +
-                typeof parents[2] +
-                "'." +
-                "\nPossible parent types: [[x,y,z]], [x,y,z], or [[x,y,z], slide], () => [x, y, z], or [point, transformation(s)]"
+            typeof parents[1] +
+            "' and '" +
+            typeof parents[2] +
+            "'." +
+            "\nPossible parent types: [[x,y,z]], [x,y,z], or [[x,y,z], slide], () => [x, y, z], or [point, transformation(s)]"
         );
         //  "\nPossible parent types: [[x,y,z]], [x,y,z], [element,transformation]"); // TODO
     }
@@ -643,3 +880,4 @@ JXG.createPoint3D = function (board, parents, attributes) {
 };
 
 JXG.registerElement("point3d", JXG.createPoint3D);
+
