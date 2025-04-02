@@ -227,7 +227,15 @@ function makeSignature(params) {
 
 /** Build output for displaying method parameters.  Just return JSON, this is not visible in the web page. */
 function makeMethodSignature(params) {
-    return JSON.stringify(params);
+    let json = JSON.stringify(params);
+
+    json = json.replaceAll("\"", "&quot;")
+    json = json.replaceAll("<", "&lt;")
+    json = json.replaceAll(">", "&gt;")
+    json = json.replaceAll("'", "&#39;")
+    json = json.replaceAll("&", "&amp;")
+
+    return json;
 }
 
 
