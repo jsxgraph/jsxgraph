@@ -955,7 +955,7 @@ JXG.extend(
     },
 
     removeObject: function (object, saveMethod) {
-        var i;
+        var i, el;
 
         // this.board.removeObject(object, saveMethod);
         if (Type.isArray(object)) {
@@ -974,12 +974,12 @@ JXG.extend(
         }
 
         try {
-            //     // remove all children.
-            //     for (el in object.childElements) {
-            //         if (object.childElements.hasOwnProperty(el)) {
-            //             object.childElements[el].board.removeObject(object.childElements[el]);
-            //         }
-            //     }
+            // Remove all children.
+            for (el in object.childElements) {
+                if (object.childElements.hasOwnProperty(el)) {
+                    this.removeObject(object.childElements[el]);
+                }
+            }
 
             delete this.objects[object.id];
         } catch (e) {
@@ -989,6 +989,14 @@ JXG.extend(
         // this.update();
 
         this.board.removeObject(object, saveMethod);
+
+        // delete this.depthOrdered[12][0];
+        // delete this.depthOrdered[12][1];
+        // delete this.depthOrdered[12][2];
+        // delete this.depthOrdered[12][3];
+        // delete this.depthOrdered[12][4];
+        // delete this.depthOrdered[12][5];
+        // console.log(this.depthOrdered[12])
 
         return this;
     },
