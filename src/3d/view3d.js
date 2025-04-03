@@ -2726,6 +2726,7 @@ JXG.createView3D = function (board, parents, attributes) {
     // Set special infobox attributes of view3d.infobox
     // Using setAttribute() is not possible here, since we have to
     // avoid a call of board.update().
+    // The drawback is that we can not use shortcuts
     view.board.infobox.visProp = Type.merge(view.board.infobox.visProp, attr.infobox);
 
     // 3d infobox: drag direction and coordinates
