@@ -113,12 +113,12 @@ JXG.Options = {
 
         /**
          * Enable browser scrolling on touch interfaces if the user double taps into an empty region
-         * of the board.
+         * of the board. In turn, browser scrolling is deactivated as soon as a JSXGraph element is dragged.
          *
          * <ul>
          * <li> Implemented for pointer touch devices - not with mouse, pen or old iOS touch.
          * <li> It only works if browserPan:true
-         * <li> One finger action by the settings "pan.enabled:true" and "pan.needTwoFingers:false" has priority
+         * <li> One finger action by the settings "pan.enabled:true" and "pan.needTwoFingers:false" has priority.
          * </ul>
          *
          * @name JXG.Board#browserPan
