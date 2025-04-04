@@ -1151,7 +1151,6 @@ JXG.extend(
                                 attributes[Options.shortcuts[key][i]] = attributes[key];
                             }
                         }
-                        delete attributes[key]; // Remove shortcut
                     }
                     for (j = 0; j < subattr.length; j++) {
                         if (Type.isObject(attributes[subattr[j]])) {
@@ -1273,7 +1272,7 @@ JXG.extend(
                     // Otherwise, the value of label would be {visible:false} only.
                     if (Type.isObject(value) && Type.exists(this.visProp[key])) {
                         // this.visProp[key] = Type.merge(this.visProp[key], value);
-                        if (!Type.isObject(this.visProp[key]) && Type.isObject(value)) {
+                        if (!Type.isObject(this.visProp[key]) && value !== null && Type.isObject(value)) {
                             // Handle cases like key=firstarrow and
                             // firstarrow==false and value = { type:1 }.
                             // That is a primitive type is replaced by an object.
@@ -1502,7 +1501,9 @@ JXG.extend(
                                             : value;
                                 this._set(key, value);
                             } else {
-                                JXG.warn("attribute '" + key + "' does not accept type '" + (typeof value) + "' of value " + value + ".");
+                                if (!(key in Options.shortcuts)) {
+                                    JXG.warn("attribute '" + key + "' does not accept type '" + (typeof value) + "' of value " + value + ".");
+                                }
                             }
                             break;
                     }
