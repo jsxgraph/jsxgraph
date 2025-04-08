@@ -917,6 +917,13 @@ JXG.extend(
             for (i = 0; i < layers.length; i++) {
                 lay = layers[i];
                 this.depthOrdered[lay].sort(this.compareDepth.bind(this));
+                // DEBUG
+                // if (this.depthOrdered[lay].length > 0) {
+                //     for (let k = 0; k < this.depthOrdered[lay].length; k++) {
+                //         let o = this.depthOrdered[lay][k]
+                //         console.log(o.visProp.fillcolor, o.zIndex)
+                //     }
+                // }
                 this.depthOrdered[lay].forEach((el) => this.board.renderer.setLayer(el.element2D, lay));
                 // this.depthOrdered[lay].forEach((el) => console.log(el.zIndex));
             }
