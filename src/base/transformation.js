@@ -550,15 +550,28 @@ JXG.extend(
                     this.matrix[2][2] = co;
                 };
             } else if (type === 'rotate') {
-                if (params.length === 2) {
-                    this.evalParam = Type.createEvalFunction(board, params, 2);
+                if (params.length >= 2) {
+                    this.evalParam = Type.createEvalFunction(board, params, params.length);
                 }
                 this.update = function () {
                     var a = this.evalParam(0), // angle
                         n = this.evalParam(1), // normal
+                        p = [1, 0, 0, 0],
                         co = Math.cos(a),
                         si = Math.sin(a),
                         n1, n2, n3,
+                        m1 = [
+                            [1, 0, 0, 0],
+                            [0, 1, 0, 0],
+                            [0, 0, 1, 0],
+                            [0, 0, 0, 1]
+                        ],
+                        m2 = [
+                            [1, 0, 0, 0],
+                            [0, 1, 0, 0],
+                            [0, 0, 1, 0],
+                            [0, 0, 0, 1]
+                        ],
                         nrm = Mat.norm(n);
 
                     if (n.length === 3) {
@@ -570,13 +583,28 @@ JXG.extend(
                         n2 = n[2] / nrm;
                         n3 = n[3] / nrm;
                     }
+                    if (params.length === 3) {
+                        p = this.evalParam(2);
+                        if (p.length === 3) {
+                            p.unshift(1)
+                        }
+                        m1[1][0] = -p[1];
+                        m1[2][0] = -p[2];
+                        m1[3][0] = -p[3];
 
+                        m2[1][0] = p[1];
+                        m2[2][0] = p[2];
+                        m2[3][0] = p[3];
+                    }
+                
                     this.matrix = [
                         [1, 0, 0, 0],
                         [0, n1 * n1 * (1 - co) +      co, n1 * n2 * (1 - co) - n3 * si, n1 * n3 * (1 - co) + n2 * si],
                         [0, n2 * n1 * (1 - co) + n3 * si, n2 * n2 * (1 - co) +      co, n2 * n3 * (1 - co) - n1 * si],
                         [0, n3 * n1 * (1 - co) - n2 * si, n3 * n2 * (1 - co) + n1 * si, n3 * n3 * (1 - co) +      co]
                     ];
+                    this.matrix = Mat.matMatMult(this.matrix, m1);
+                    this.matrix = Mat.matMatMult(m2, this.matrix);
                 };
             }
         },
