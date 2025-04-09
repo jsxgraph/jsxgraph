@@ -3433,10 +3433,12 @@ JXG.createImplicitCurve = function (board, parents, attributes) {
     // c.domain = board.getBoundingBox();
     c.domain = null;
     if (parents.length === 5) {
-        c.domain = [parents[3], parents[4]];
+        c.domain = [[Math.min(parents[3][0], parents[3][1]),Math.max(parents[3][0], parents[3][1])],
+            [Math.min(parents[4][0], parents[4][1]),Math.max(parents[4][0], parents[4][1])]];
         // c.visProp.margin = 0;
     } else if (parents.length === 3) {
-        c.domain = [parents[1], parents[2]];
+        c.domain = [[Math.min(parents[1][0], parents[1][1]),Math.max(parents[1][0], parents[1][1])],
+            [Math.min(parents[2][0], parents[2][1]),Math.max(parents[2][0], parents[2][1])]];
         // c.visProp.margin = 0;
     }
 
