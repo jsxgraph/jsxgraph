@@ -1,3 +1,19 @@
+1.11.1
+===
+
+Improvements
+------------
+
+- Board attribute `browserPan`: support object variant `{ enabled: true }`
+
+Bug fixes
+---------
+
+- Fix backwards compatibility for color value `null`
+- `setAttribute`: conflict with shortcut names 
+- `view3d.removeObject`
+
+
 1.11.0
 ===
 
