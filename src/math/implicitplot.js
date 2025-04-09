@@ -539,10 +539,12 @@ Type.extend(
          */
         tracing: function (u0, direction) {
             var u = [],
+                ulast = [],
+                numofpoints,
                 v = [],
                 v_start = [],
                 w = [],
-                t_u, t_v, t_u_0,
+                t_u, t_v, t_u_0,tloc,
                 A,
                 grad,
                 nrm,
@@ -820,6 +822,52 @@ Type.extend(
                 u[0] <= this.bbox[2] &&
                 u[1] >= this.bbox[3]
             );
+            /* clipping to bounding box, last may be outside, interpolate between second last und last point */
+            numofpoints = pathX.length;
+            ulast=[pathX[numofpoints-2],pathY[numofpoints-2]];
+            /* if u[0] is outside x interval in bounding box, interpolate to the box. */
+            if (u[0] < this.bbox[0]) {
+            if (u[0] !== ulast[0]) {
+                tloc = (this.bbox[0] - ulast[0]) / (u[0] - ulast[0]);
+                if (u[1] !== ulast[1]) {
+                u[1] = ulast[1] + tloc * (u[1] - ulast[1]);
+                }
+            }
+            u[0] = this.bbox[0];
+            }
+            if (u[0] > this.bbox[2]) {
+                if (u[0] !== ulast[0]) {
+                    tloc = (this.bbox[2] - ulast[0]) / (u[0] - ulast[0]);
+                    if (u[1] !== ulast[1]) {
+                    u[1] = ulast[1] + tloc * (u[1] - ulast[1]);
+                    }
+                }
+                u[0] = this.bbox[2];
+            }
+
+            /* if u[1] is outside y interval in bounding box, interpolate to the box. */
+            if (u[1] < this.bbox[3]) {
+                if (u[1] !== ulast[1]) {
+                    tloc = (this.bbox[3] - ulast[1]) / (u[1] - ulast[1]);
+                    if (u[0] !== ulast[0]) {
+                    u[0] = ulast[0] + tloc * (u[0] - ulast[0]);
+                    }
+                }
+                u[1] = this.bbox[3];
+            }
+            if (u[1] > this.bbox[1]) {
+                if (u[1] !== ulast[1]) {
+                    tloc = (this.bbox[1] - ulast[1]) / (u[1] - ulast[1]);
+                    if (u[0] !== ulast[0]) {
+                    u[0] = ulast[0] + tloc * (u[0] - ulast[0]);
+                    }
+                }
+                u[1] = this.bbox[1];
+            }
+
+            /* update last point */
+            pathX[numofpoints-1]=u[0];
+            pathY[numofpoints-1]=u[1];
 
             // if (!loop_closed) {
             //     console.log("No loop", steps);
