@@ -1243,16 +1243,16 @@ JXG.registerElement('transform', JXG.createTransform);
  * </pre>
  * </dd>
  * <dt><b><tt>type:"rotate"</tt></b></dt><dd><b>a, n, [p=[0,0,0]]</b> angle (in radians), normal, [point].
- * Rotate with angle a around the normal vector n.
+ * Rotate with angle a around the normal vector n through the point p.
  * </dd>
  * <dt><b><tt>type:"rotateX"</tt></b></dt><dd><b>a, [p=[0,0,0]]</b> angle (in radians), [point].
- * Rotate with angle a around the normal vector (1, 0, 0).
+ * Rotate with angle a around the normal vector (1, 0, 0) through the point p.
  * </dd>
  * <dt><b><tt>type:"rotateY"</tt></b></dt><dd><b>a, [p=[0,0,0]]</b> angle (in radians), [point].
- * Rotate with angle a around the normal vector (0, 1, 0).
+ * Rotate with angle a around the normal vector (0, 1, 0) through the point p.
  * </dd>
  * <dt><b><tt>type:"rotateZ"</tt></b></dt><dd><b>a, [p=[0,0,0]]</b> angle (in radians), [point].
- * Rotate with angle a around the normal vector (0, 0, 1).
+ * Rotate with angle a around the normal vector (0, 0, 1) through the point p.
  * </dd>
  * </dl>
  * @example
