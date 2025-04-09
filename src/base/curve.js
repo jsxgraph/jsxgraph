@@ -3214,11 +3214,9 @@ JXG.registerElement("boxplot", JXG.createBoxPlot);
  * @param {Array|Function} [rangex=boundingbox] Optional array of length 2
  * of the form [x_min, x_max] setting the domain of the x coordinate of the implicit curve.
  * If not supplied, the board's boundingbox (+ the attribute "margin") is taken.
- * For algorithmic reasons, the plotted curve mighty slightly overflow the given domain.
  * @param {Array|Function} [rangey=boundingbox] Optional array of length 2
  * of the form [y_min, y_max] setting the domain of the y coordinate of the implicit curve.
  * If not supplied, the board's boundingbox (+ the attribute "margin") is taken.
- * For algorithmic reasons, the plotted curve mighty slightly overflow the given domain.
  * @augments JXG.Curve
  * @constructor
  * @type JXG.Curve
@@ -3433,13 +3431,15 @@ JXG.createImplicitCurve = function (board, parents, attributes) {
     // c.domain = board.getBoundingBox();
     c.domain = null;
     if (parents.length === 5) {
-        c.domain = [[Math.min(parents[3][0], parents[3][1]),Math.max(parents[3][0], parents[3][1])],
-            [Math.min(parents[4][0], parents[4][1]),Math.max(parents[4][0], parents[4][1])]];
-        // c.visProp.margin = 0;
+        c.domain = [parents[3], parents[4]];
+        //     [Math.min(parents[3][0], parents[3][1]), Math.max(parents[3][0], parents[3][1])],
+        //     [Math.min(parents[4][0], parents[4][1]), Math.max(parents[4][0], parents[4][1])]
+        // ];
     } else if (parents.length === 3) {
-        c.domain = [[Math.min(parents[1][0], parents[1][1]),Math.max(parents[1][0], parents[1][1])],
-            [Math.min(parents[2][0], parents[2][1]),Math.max(parents[2][0], parents[2][1])]];
-        // c.visProp.margin = 0;
+        c.domain = [parents[1], parents[2]];
+        //     [Math.min(parents[1][0], parents[1][1]), Math.max(parents[1][0], parents[1][1])],
+        //     [Math.min(parents[2][0], parents[2][1]), Math.max(parents[2][0], parents[2][1])]
+        // ];
     }
 
     /**
@@ -3462,7 +3462,13 @@ JXG.createImplicitCurve = function (board, parents, attributes) {
         } else {
             rx = Type.evaluate(this.domain[0]);
             ry = Type.evaluate(this.domain[1]);
-            bbox = [rx[0], ry[1], rx[1], ry[0]];
+            bbox = [
+                Math.min(rx[0], rx[1]),
+                Math.max(ry[0], ry[1]),
+                Math.max(rx[0], rx[1]),
+                Math.min(ry[0], ry[1])
+                // rx[0], ry[1], rx[1], ry[0]
+            ];
         }
 
         cfg = {
