@@ -507,50 +507,22 @@ JXG.extend(
                     this.matrix[3][3] = z;
                 };
             } else if (type === 'rotateX') {
-                if (params.length > 0 && params.length <= 2) {
-                    this.evalParam = Type.createEvalFunction(board, params, 1);
-                }
-
-                this.update = function () {
-                    var a = this.evalParam(0),
-                        co = Math.cos(a),
-                        si = Math.sin(a);
-
-                    this.matrix[2][2] = co;
-                    this.matrix[2][3] = -si;
-                    this.matrix[3][2] = si;
-                    this.matrix[3][3] = co;
-                };
+                params.splice(1, 0, [1, 0, 0]);
+                this.setMatrix3D(view, 'rotate', params);
             } else if (type === 'rotateY') {
-                if (params.length > 0 && params.length <= 2) {
-                    this.evalParam = Type.createEvalFunction(board, params, 1);
-                }
-                this.update = function () {
-                    var a = this.evalParam(0),
-                        co = Math.cos(a),
-                        si = Math.sin(a);
-
-                    this.matrix[1][1] = co;
-                    this.matrix[1][3] = si;
-                    this.matrix[3][1] = -si;
-                    this.matrix[3][3] = co;
-                };
+                params.splice(1, 0, [0, 1, 0]);
+                this.setMatrix3D(view, 'rotate', params);
             } else if (type === 'rotateZ') {
-                if (params.length > 0 && params.length <= 2) {
-                    this.evalParam = Type.createEvalFunction(board, params, 1);
-                }
-                this.update = function () {
-                    var a = this.evalParam(0),
-                        co = Math.cos(a),
-                        si = Math.sin(a);
-
-                    this.matrix[1][1] = co;
-                    this.matrix[1][2] = -si;
-                    this.matrix[2][1] = si;
-                    this.matrix[2][2] = co;
-                };
+                params.splice(1, 0, [0, 0, 1]);
+                this.setMatrix3D(view, 'rotate', params);
             } else if (type === 'rotate') {
-                if (params.length >= 2) {
+                if (params.length < 2) {
+                    throw new Error("JSXGraph: 3D rotate transformation needs 2 or 3 parameters.");
+                }
+                if (params.length === 3 && !Type.isFunction(params[2]) && !Type.isArray(params[2])) {
+                    this.evalParam = Type.createEvalFunction(board, params, 2);
+                    params[2] = view.select(params[2]);
+                } else {
                     this.evalParam = Type.createEvalFunction(board, params, params.length);
                 }
                 this.update = function () {
@@ -584,9 +556,13 @@ JXG.extend(
                         n3 = n[3] / nrm;
                     }
                     if (params.length === 3) {
-                        p = this.evalParam(2);
+                        if (params.length === 3 && Type.exists(params[2].is3D)) {
+                            p = params[2].coords.slice();
+                        } else {
+                            p = this.evalParam(2);
+                        }
                         if (p.length === 3) {
-                            p.unshift(1)
+                            p.unshift(1);
                         }
                         m1[1][0] = -p[1];
                         m1[2][0] = -p[2];
@@ -596,7 +572,7 @@ JXG.extend(
                         m2[2][0] = p[2];
                         m2[3][0] = p[3];
                     }
-                
+
                     this.matrix = [
                         [1, 0, 0, 0],
                         [0, n1 * n1 * (1 - co) +      co, n1 * n2 * (1 - co) - n3 * si, n1 * n3 * (1 - co) + n2 * si],
@@ -1266,17 +1242,17 @@ JXG.registerElement('transform', JXG.createTransform);
  * ( 0  0  0  c)   ( z )
  * </pre>
  * </dd>
- * <dt><b><tt>type:"rotate"</tt></b></dt><dd><b>a, n</b> angle (in radians), normal.
- * Rotate with angle a around the normal vector n.
+ * <dt><b><tt>type:"rotate"</tt></b></dt><dd><b>a, n, [p=[0,0,0]]</b> angle (in radians), normal, [point].
+ * Rotate with angle a around the normal vector n through the point p.
  * </dd>
- * <dt><b><tt>type:"rotateX"</tt></b></dt><dd><b>a</b> angle (in radians).
- * Rotate with angle a around the normal vector (1, 0, 0).
+ * <dt><b><tt>type:"rotateX"</tt></b></dt><dd><b>a, [p=[0,0,0]]</b> angle (in radians), [point].
+ * Rotate with angle a around the normal vector (1, 0, 0) through the point p.
  * </dd>
- * <dt><b><tt>type:"rotateY"</tt></b></dt><dd><b>a</b> angle (in radians).
- * Rotate with angle a around the normal vector (0, 1, 0).
+ * <dt><b><tt>type:"rotateY"</tt></b></dt><dd><b>a, [p=[0,0,0]]</b> angle (in radians), [point].
+ * Rotate with angle a around the normal vector (0, 1, 0) through the point p.
  * </dd>
- * <dt><b><tt>type:"rotateZ"</tt></b></dt><dd><b>a</b> angle (in radians).
- * Rotate with angle a around the normal vector (0, 0, 1).
+ * <dt><b><tt>type:"rotateZ"</tt></b></dt><dd><b>a, [p=[0,0,0]]</b> angle (in radians), [point].
+ * Rotate with angle a around the normal vector (0, 0, 1) through the point p.
  * </dd>
  * </dl>
  * @example
@@ -1295,9 +1271,10 @@ JXG.registerElement('transform', JXG.createTransform);
  *
  *    view.create('point3d', [p1, t1], { name: 'translate fixed', size: 5 });
  *    view.create('point3d', [p1, t2], { name: 'translate by func', size: 5 });
-</pre><div id="JXG6c7d7404-758a-44eb-802c-0001" class="jxgbox" style="width: 300px; height: 300px;"></div>
+ * </pre><div id="JXG6c7d7404-758a-44eb-802c-0001" class="jxgbox" style="width: 300px; height: 300px;"></div>
  * <script type="text/javascript">
- *    var board = JXG.JSXGraph.initBoard('JXG6c7d7404-758a-44eb-802c-0001')
+ *    var board = JXG.JSXGraph.initBoard('JXG6c7d7404-758a-44eb-802c-0001',
+ *             {boundingbox: [-8, 8, 8,-8], pan: {enabled: false}, axis: false, showcopyright: false, shownavigation: false});
  *    var bound = [-5, 5];
  *    var view = board.create('view3d',
  *        [[-6, -3], [8, 8],
@@ -1316,8 +1293,6 @@ JXG.registerElement('transform', JXG.createTransform);
  * </script><pre>
  *
  */
-
-
 JXG.createTransform3D = function (board, parents, attributes) {
     return new JXG.Transformation(board, attributes.type, parents, true);
 };
