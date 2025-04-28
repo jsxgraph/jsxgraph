@@ -691,7 +691,24 @@ JXG.extend(Options, {
         tabindex: null,
         needsRegularUpdate: true,
 
-        visible: "inherit"
+        /**
+         * Step width of the mesh in the direction of the first spanning vector.
+         * @type {Number}
+         * @name Mesh3D#stepWidthU
+         * @default 1
+         *
+         */
+        stepWidthU: 1,
+
+        /**
+         * Step width of the mesh in the direction of the second spanning vector.
+         *
+         * @type {Number}
+         * @name Mesh3D#stepWidthV
+         * @default 1
+         *
+         */
+        stepWidthV: 1
 
         /**#@-*/
     },
@@ -708,6 +725,7 @@ JXG.extend(Options, {
         highlight: false,
         tabindex: null,
         needsRegularUpdate: true,
+        visible: true,
 
         gradient: "linear",
         gradientSecondColor: "#ffffff",
@@ -724,6 +742,7 @@ JXG.extend(Options, {
          * @default see {@link Mesh3D}
          */
         mesh3d: {
+            visible: "inherit"
         },
 
         /**
@@ -1083,6 +1102,8 @@ JXG.extend(Options, {
          *          <li><tt>start</tt>: Start value.
          *      </ul>
          *      'min' and 'max' are used only if trackball is not enabled.
+         *     Additionally, the attributes 'slider.point1.pos' and 'slider.point2.pos' control the position of the slider. Possible
+         *     values are 'auto' or an array [x, y] of length 2 for the position in user coordinates (or a function returning such an array).
          * </ul>
          *
          * @name View3D#az
@@ -1094,8 +1115,14 @@ JXG.extend(Options, {
          *      slider: {
          *          visible: true,
          *          style: 6,
-         *          point1: {frozen: true},
-         *          point2: {frozen: true},
+         *          point1: {
+         *              pos: 'auto',
+         *              frozen: false
+         *          },
+         *          point2: {
+         *              pos: 'auto',
+         *              frozen: false
+         *          },
          *          min: 0,
          *          max: 2 * Math.PI,
          *          start: 1.0
@@ -1152,8 +1179,14 @@ JXG.extend(Options, {
             slider: {
                 visible: 'inherit',
                 style: 6,
-                point1: { frozen: true },
-                point2: { frozen: true },
+                point1: {
+                    pos: 'auto',
+                    frozen: false
+                },
+                point2: {
+                    pos: 'auto',
+                    frozen: false
+                },
                 min: 0,
                 max: 2 * Math.PI,
                 start: 1.0
@@ -1184,7 +1217,9 @@ JXG.extend(Options, {
          *          <li><tt>max</tt>: Maximum value.
          *          <li><tt>start</tt>: Start value.
          *      </ul>
-         *      'min' and 'max' are used only if trackball is not enabled.
+         *     'min' and 'max' are used only if trackball is not enabled.
+         *     Additionally, the attributes 'slider.point1.pos' and 'slider.point2.pos' control the position of the slider. Possible
+         *     values are 'auto' or an array [x, y] of length 2 for the position in user coordinates (or a function returning such an array).
          * </ul>
          *
          * @name View3D#el
@@ -1196,8 +1231,14 @@ JXG.extend(Options, {
          *      slider: {
          *          visible: true,
          *          style: 6,
-         *          point1: {frozen: true},
-         *          point2: {frozen: true},
+         *          point1: {
+         *              pos: 'auto',
+         *              frozen: false
+         *          },
+         *          point2: {
+         *              pos: 'auto',
+         *              frozen: false
+         *          },
          *          min: 0,
          *          max: 2 * Math.PI,
          *          start: 0.3
@@ -1253,8 +1294,14 @@ JXG.extend(Options, {
             slider: {
                 visible: 'inherit',
                 style: 6,
-                point1: { frozen: true },
-                point2: { frozen: true },
+                point1: {
+                    frozen: false,
+                    pos: 'auto'
+                },
+                point2: {
+                    frozen: false,
+                    pos: 'auto'
+                },
                 min: 0,
                 max: 2 * Math.PI,
                 start: 0.3
@@ -1286,6 +1333,8 @@ JXG.extend(Options, {
          *          <li><tt>start</tt>: Start value.
          *      </ul>
          *      'min' and 'max' are used only if trackball is not enabled.
+         *     Additionally, the attributes 'slider.point1.pos' and 'slider.point2.pos' control the position of the slider. Possible
+         *     values are 'auto' or an array [x, y] of length 2 for the position in user coordinates (or a function returning such an array).
          * </ul>
          *
          * @name View3D#bank
@@ -1297,8 +1346,14 @@ JXG.extend(Options, {
          *      slider: {
          *          visible: true,
          *          style: 6,
-         *          point1: {frozen: true},
-         *          point2: {frozen: true},
+         *          point1: {
+         *              pos: 'auto',
+         *              frozen: false
+         *          },
+         *          point2: {
+         *              pos: 'auto',
+         *              frozen: false
+         *          },
          *          min: 0,
          *          max: 2 * Math.PI,
          *          start: 0.3
@@ -1354,8 +1409,14 @@ JXG.extend(Options, {
             slider: {
                 visible: 'inherit',
                 style: 6,
-                point1: { frozen: true },
-                point2: { frozen: true },
+                point1: {
+                    frozen: false,
+                    pos: 'auto'
+                },
+                point2: {
+                    frozen: false,
+                    pos: 'auto'
+                },
                 min: -Math.PI,
                 max:  Math.PI,
                 start: 0.0

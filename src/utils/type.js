@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2024
+    Copyright 2008-2025
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -396,7 +396,7 @@ JXG.extend(
                 deps = {};
 
             for (i = 0; i < n; i++) {
-                f[i] = JXG.createFunction(param[i], board);
+                f[i] = this.createFunction(param[i], board);
                 for (e in f[i].deps) {
                     deps[e] = f[i].deps;
                 }
@@ -438,15 +438,15 @@ JXG.extend(
             } else if (this.isFunction(term)) {
                 f = term;
                 f.deps = (this.isObject(term.deps)) ? term.deps : {};
-            } else if (this.isNumber(term)) {
+            } else if (this.isNumber(term) || this.isArray(term)) {
                 /** @ignore */
                 f = function () { return term; };
                 f.deps = {};
-            // } else if (this.isString(term)) {
-            //     // In case of string function like fontsize
-            //     /** @ignore */
-            //     f = function () { return term; };
-            //     f.deps = {};
+                // } else if (this.isString(term)) {
+                //     // In case of string function like fontsize
+                //     /** @ignore */
+                //     f = function () { return term; };
+                //     f.deps = {};
             }
 
             if (f !== null) {
@@ -580,9 +580,19 @@ JXG.extend(
                     );
                 }
 
-                if (this.isArray(parents[i]) && parents[i].length > 1) {
+                if (this.isArray(parents[i]) && parents[i].length > 0 && parents[i].every((x)=>this.isArray(x) && this.isNumber(x[0]))) {
+                    // Testing for array-of-arrays-of-numbers, like [[1,2,3],[2,3,4]]
+                    for (j = 0; j < parents[i].length; j++) {
+                        points.push(view.create("point3d", parents[i][j], attr));;
+                        points[points.length - 1]._is_new = true;
+                    }
+                } else if (this.isArray(parents[i]) &&  parents[i].every((x)=> this.isNumber(x) || this.isFunction(x))) {
+                    // Single array [1,2,3]
                     points.push(view.create("point3d", parents[i], attr));
                     points[points.length - 1]._is_new = true;
+
+                } else if (this.isPoint3D(parents[i])) {
+                    points.push(parents[i]);
                 } else if (this.isFunction(parents[i])) {
                     val = parents[i]();
                     if (this.isArray(val) && val.length > 1) {

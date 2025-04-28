@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2024
+    Copyright 2008-2025
         Matthias Ehmann,
         Carsten Miller,
         Andreas Walter,
@@ -917,6 +917,13 @@ JXG.extend(
             for (i = 0; i < layers.length; i++) {
                 lay = layers[i];
                 this.depthOrdered[lay].sort(this.compareDepth.bind(this));
+                // DEBUG
+                // if (this.depthOrdered[lay].length > 0) {
+                //     for (let k = 0; k < this.depthOrdered[lay].length; k++) {
+                //         let o = this.depthOrdered[lay][k]
+                //         console.log(o.visProp.fillcolor, o.zIndex)
+                //     }
+                // }
                 this.depthOrdered[lay].forEach((el) => this.board.renderer.setLayer(el.element2D, lay));
                 // this.depthOrdered[lay].forEach((el) => console.log(el.zIndex));
             }
@@ -955,7 +962,7 @@ JXG.extend(
     },
 
     removeObject: function (object, saveMethod) {
-        var i;
+        var i, el;
 
         // this.board.removeObject(object, saveMethod);
         if (Type.isArray(object)) {
@@ -974,12 +981,12 @@ JXG.extend(
         }
 
         try {
-            //     // remove all children.
-            //     for (el in object.childElements) {
-            //         if (object.childElements.hasOwnProperty(el)) {
-            //             object.childElements[el].board.removeObject(object.childElements[el]);
-            //         }
-            //     }
+            // Remove all children.
+            for (el in object.childElements) {
+                if (object.childElements.hasOwnProperty(el)) {
+                    this.removeObject(object.childElements[el]);
+                }
+            }
 
             delete this.objects[object.id];
         } catch (e) {
@@ -989,6 +996,14 @@ JXG.extend(
         // this.update();
 
         this.board.removeObject(object, saveMethod);
+
+        // delete this.depthOrdered[12][0];
+        // delete this.depthOrdered[12][1];
+        // delete this.depthOrdered[12][2];
+        // delete this.depthOrdered[12][3];
+        // delete this.depthOrdered[12][4];
+        // delete this.depthOrdered[12][5];
+        // console.log(this.depthOrdered[12])
 
         return this;
     },
@@ -1573,8 +1588,8 @@ JXG.extend(
         var i_u, i_v, u, v,
             c2d, delta_u, delta_v,
             p = [0, 0, 0],
-            steps_u = interval_u[2],
-            steps_v = interval_v[2],
+            steps_u = Type.evaluate(interval_u[2]),
+            steps_v = Type.evaluate(interval_v[2]),
             dataX = [],
             dataY = [];
 
@@ -2482,11 +2497,112 @@ JXG.extend(
  *     })();
  *
  * </script><pre>
+ * @example
+ * var bound = [-5, 5];
+ * var view = board.create('view3d',
+ *     [[-6, -3], [8, 8],
+ *     [bound, bound, bound]],
+ *     {
+ *         projection: 'central',
+ *         az: {
+ *             slider: {
+ *                 visible: true,
+ *                 point1: {
+ *                     pos: [5, -4]
+ *                 },
+ *                 point2: {
+ *                     pos: [5, 4]
+ *                 },
+ *                 label: {anchorX: 'middle'}
+ *             }
+ *         },
+ *         el: {
+ *             slider: {
+ *                 visible: true,
+ *                 point1: {
+ *                     pos: [6, -5]
+ *                 },
+ *                 point2: {
+ *                     pos: [6, 3]
+ *                 },
+ *                 label: {anchorX: 'middle'}
+ *             }
+ *         },
+ *         bank: {
+ *             slider: {
+ *                 visible: true,
+ *                 point1: {
+ *                     pos: [7, -6]
+ *                 },
+ *                 point2: {
+ *                     pos: [7, 2]
+ *                 },
+ *                 label: {anchorX: 'middle'}
+ *             }
+ *         }
+ *     });
+ *
+ *
+ * </pre><div id="JXGe181cc55-271b-419b-84fd-622326fd1d1a" class="jxgbox" style="width: 300px; height: 300px;"></div>
+ * <script type="text/javascript">
+ *     (function() {
+ *         var board = JXG.JSXGraph.initBoard('JXGe181cc55-271b-419b-84fd-622326fd1d1a',
+ *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
+ *     var bound = [-5, 5];
+ *     var view = board.create('view3d',
+ *         [[-6, -3], [8, 8],
+ *         [bound, bound, bound]],
+ *         {
+ *             projection: 'central',
+ *             az: {
+ *                 slider: {
+ *                     visible: true,
+ *                     point1: {
+ *                         pos: [5, -4]
+ *                     },
+ *                     point2: {
+ *                         pos: [5, 4]
+ *                     },
+ *                     label: {anchorX: 'middle'}
+ *                 }
+ *             },
+ *             el: {
+ *                 slider: {
+ *                     visible: true,
+ *                     point1: {
+ *                         pos: [6, -5]
+ *                     },
+ *                     point2: {
+ *                         pos: [6, 3]
+ *                     },
+ *                     label: {anchorX: 'middle'}
+ *                 }
+ *             },
+ *             bank: {
+ *                 slider: {
+ *                     visible: true,
+ *                     point1: {
+ *                         pos: [7, -6]
+ *                     },
+ *                     point2: {
+ *                         pos: [7, 2]
+ *                     },
+ *                     label: {anchorX: 'middle'}
+ *                 }
+ *             }
+ *         });
+ *
+ *
+ *     })();
+ *
+ * </script><pre>
+ *
  *
  */
 JXG.createView3D = function (board, parents, attributes) {
     var view, attr, attr_az, attr_el, attr_bank,
         x, y, w, h,
+        p1, p2, v,
         coords = parents[0], // llft corner
         size = parents[1]; // [w, h]
 
@@ -2508,6 +2624,21 @@ JXG.createView3D = function (board, parents, attributes) {
     attr_bank = Type.copyAttributes(attr, board.options, 'view3d', 'bank', 'slider');
     attr_bank.name = 'bank';
 
+    v = Type.evaluate(attr_az.point1.pos);
+    if (!Type.isArray(v)) {
+        // 'auto'
+        p1 = [x - 1, y - 2];
+    } else {
+        p1 = v;
+    }
+    v = Type.evaluate(attr_az.point2.pos);
+    if (!Type.isArray(v)) {
+        // 'auto'
+        p2 = [x + w + 1, y - 2];
+    } else {
+        p2 = v;
+    }
+
     /**
      * Slider to adapt azimuth angle
      * @name JXG.View3D#az_slide
@@ -2516,8 +2647,7 @@ JXG.createView3D = function (board, parents, attributes) {
     view.az_slide = board.create(
         'slider',
         [
-            [x - 1, y - 2],
-            [x + w + 1, y - 2],
+            p1, p2,
             [
                 Type.evaluate(attr_az.min),
                 Type.evaluate(attr_az.start),
@@ -2529,6 +2659,21 @@ JXG.createView3D = function (board, parents, attributes) {
     view.inherits.push(view.az_slide);
     view.az_slide.elType = 'view3d_slider'; // Used in board.prepareUpdate()
 
+    v = Type.evaluate(attr_el.point1.pos);
+    if (!Type.isArray(v)) {
+        // 'auto'
+        p1 = [x - 1, y];
+    } else {
+        p1 = v;
+    }
+    v = Type.evaluate(attr_el.point2.pos);
+    if (!Type.isArray(v)) {
+        // 'auto'
+        p2 = [x - 1, y + h];
+    } else {
+        p2 = v;
+    }
+
     /**
      * Slider to adapt elevation angle
      *
@@ -2538,8 +2683,7 @@ JXG.createView3D = function (board, parents, attributes) {
     view.el_slide = board.create(
         'slider',
         [
-            [x - 1, y],
-            [x - 1, y + h],
+            p1, p2,
             [
                 Type.evaluate(attr_el.min),
                 Type.evaluate(attr_el.start),
@@ -2550,6 +2694,21 @@ JXG.createView3D = function (board, parents, attributes) {
     view.inherits.push(view.el_slide);
     view.el_slide.elType = 'view3d_slider'; // Used in board.prepareUpdate()
 
+    v = Type.evaluate(attr_bank.point1.pos);
+    if (!Type.isArray(v)) {
+        // 'auto'
+        p1 = [x - 1, y + h + 2];
+    } else {
+        p1 = v;
+    }
+    v = Type.evaluate(attr_bank.point2.pos);
+    if (!Type.isArray(v)) {
+        // 'auto'
+        p2 = [x + w + 1, y + h + 2];
+    } else {
+        p2 = v;
+    }
+
     /**
      * Slider to adjust bank angle
      *
@@ -2559,8 +2718,7 @@ JXG.createView3D = function (board, parents, attributes) {
     view.bank_slide = board.create(
         'slider',
         [
-            [x - 1, y + h + 2],
-            [x + w + 1, y + h + 2],
+            p1, p2,
             [
                 Type.evaluate(attr_bank.min),
                 Type.evaluate(attr_bank.start),
@@ -2575,6 +2733,7 @@ JXG.createView3D = function (board, parents, attributes) {
     // Set special infobox attributes of view3d.infobox
     // Using setAttribute() is not possible here, since we have to
     // avoid a call of board.update().
+    // The drawback is that we can not use shortcuts
     view.board.infobox.visProp = Type.merge(view.board.infobox.visProp, attr.infobox);
 
     // 3d infobox: drag direction and coordinates
@@ -2602,7 +2761,7 @@ JXG.createView3D = function (board, parents, attributes) {
             }
         }
 
-        if (p) {
+        if (p && Type.exists(p.element2D)) {
             foot = [1, 0, 0, p.coords[3]];
             view._w0 = Mat.innerProduct(view.matrix3D[0], foot, 4);
 

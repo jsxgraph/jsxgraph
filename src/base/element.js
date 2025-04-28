@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2024
+    Copyright 2008-2025
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -414,7 +414,7 @@ JXG.extend(
             var el, el2;
 
             this.childElements[obj.id] = obj;
-            this.addDescendants(obj);
+            this.addDescendants(obj);  // TODO TomBerend removed this. Check if it is possible.
             obj.ancestors[this.id] = this;
 
             for (el in this.descendants) {
@@ -1154,9 +1154,7 @@ JXG.extend(
                     }
                     for (j = 0; j < subattr.length; j++) {
                         if (Type.isObject(attributes[subattr[j]])) {
-                            attributes[subattr[j]] = this.resolveShortcuts(
-                                attributes[subattr[j]]
-                            );
+                            attributes[subattr[j]] = this.resolveShortcuts(attributes[subattr[j]]);
                         }
                     }
                 }
@@ -1274,7 +1272,7 @@ JXG.extend(
                     // Otherwise, the value of label would be {visible:false} only.
                     if (Type.isObject(value) && Type.exists(this.visProp[key])) {
                         // this.visProp[key] = Type.merge(this.visProp[key], value);
-                        if (!Type.isObject(this.visProp[key]) && Type.isObject(value)) {
+                        if (!Type.isObject(this.visProp[key]) && value !== null && Type.isObject(value)) {
                             // Handle cases like key=firstarrow and
                             // firstarrow==false and value = { type:1 }.
                             // That is a primitive type is replaced by an object.
@@ -1503,7 +1501,9 @@ JXG.extend(
                                             : value;
                                 this._set(key, value);
                             } else {
-                                JXG.warn("attribute '" + key + "' does not accept type '" + (typeof value) + "' of value " + value + ".");
+                                if (!(key in Options.shortcuts)) {
+                                    JXG.warn("attribute '" + key + "' does not accept type '" + (typeof value) + "' of value " + value + ".");
+                                }
                             }
                             break;
                     }
@@ -2136,10 +2136,10 @@ JXG.extend(
 
         /**
          * @ignore
-         * @private
          * Snaps the element to the grid. Only works for points, lines and circles. Points will snap to the grid
          * as defined in their properties {@link JXG.Point#snapSizeX} and {@link JXG.Point#snapSizeY}. Lines and circles
          * will snap their parent points to the grid, if they have {@link JXG.Point#snapToGrid} set to true.
+         * @private
          * @returns {JXG.GeometryElement} Reference to the element.
          */
         snapToGrid: function () {

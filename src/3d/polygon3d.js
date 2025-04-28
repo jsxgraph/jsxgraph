@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2024
+    Copyright 2008-2025
         Matthias Ehmann,
         Aaron Fenyes,
         Carsten Miller,
@@ -165,6 +165,10 @@ JXG.createPolygon3D = function (board, parents, attributes) {
             }
             points.push(board.create('point3d', [obj.vertices[i], parents[2]], attr_points));
         }
+    } else if (Type.isArray(parents[1]) && parents[1].every((x) => Type.isPoint3D(x))) {
+        // array of points [A, B, C]
+        // TODO mixing points and coords arrays
+        points = parents[1];
     } else {
         points = Type.providePoints3D(view, parents.slice(1), attributes, 'polygon3d', ['vertices']);
         if (points === false) {
@@ -189,11 +193,11 @@ JXG.createPolygon3D = function (board, parents, attributes) {
 
     // Put the points in their positions
     if (is_transform) {
-      el.prepareUpdate().update().updateVisibility().updateRenderer();
-      le = obj.vertices.length - 1;
-      for (i = 0; i < le; i++) {
-          points[i].prepareUpdate().update().updateVisibility().updateRenderer();
-      }
+        el.prepareUpdate().update().updateVisibility().updateRenderer();
+        le = obj.vertices.length - 1;
+        for (i = 0; i < le; i++) {
+            points[i].prepareUpdate().update().updateVisibility().updateRenderer();
+        }
     }
 
     return el;

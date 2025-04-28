@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2024
+    Copyright 2008-2025
         Matthias Ehmann,
         Aaron Fenyes,
         Carsten Miller,
@@ -146,7 +146,7 @@ JXG.extend(
             } else if (Type.isFunction(this.direction)) {
                 this.vec = Type.evaluate(this.direction);
                 if (this.vec.length === 3) {
-                    this.vec.unshift(1);
+                    this.vec.unshift(0);
                 }
             } else {
                 if (this.direction.length === 3) {
@@ -860,7 +860,14 @@ JXG.Plane3D = function (view, point, dir1, range_u, dir2, range_v, attributes) {
      */
     this.vec2 = [0, 0, 0, 0];
 
-    this.grid = null;
+    /**
+     * Mesh (grid) element of the plane.
+     *
+     * @name Plane3D#mesh3d
+     * @type Mesh3D
+     * @private
+     */
+    this.mesh3d = null;
 
     /**
      * Normal vector of the plane. Left hand side of the Hesse normal form.
@@ -981,7 +988,7 @@ JXG.extend(
             } else if (Type.isFunction(this.direction1)) {
                 this.vec1 = Type.evaluate(this.direction1);
                 if (this.vec1.length === 3) {
-                    this.vec1.unshift(1);
+                    this.vec1.unshift(0);
                 }
             } else {
                 s = 0;
@@ -999,7 +1006,7 @@ JXG.extend(
             } else if (Type.isFunction(this.direction2)) {
                 this.vec2 = Type.evaluate(this.direction2);
                 if (this.vec2.length === 3) {
-                    this.vec2.unshift(1);
+                    this.vec2.unshift(0);
                 }
             } else {
                 s = 0;
@@ -1293,7 +1300,6 @@ JXG.extend(
  * clear if the input arrays have to be interpreted as points or directions.
  * <p>
  * All coordinate arrays can be supplied as functions returning a coordinate array.
- * Planes defined by three points are always infinite.
  *
  * @pseudo
  * @name  Plane3D
@@ -1616,13 +1622,14 @@ JXG.createPlane3D = function (board, parents, attributes) {
         attr,
         point, point2, point3,
         dir1, dir2, range_u, range_v,
-        el, grid,
+        el, mesh3d,
         base = null,
         transform = null;
 
     attr = Type.copyAttributes(attributes, board.options, 'plane3d');
-    if (parents.length === 4 &&
-        (attr.threepoints || Type.isPoint3D(parents[2]) || Type.isPoint3D(parents[3]))
+    if (//parents.length === 4 &&
+        // ()
+        attr.threepoints || Type.isPoint3D(parents[2]) || Type.isPoint3D(parents[3])
     ) {
         // Three points
         point = Type.providePoints3D(view, [parents[1]], attributes, 'plane3d', ['point1'])[0];
@@ -1634,12 +1641,13 @@ JXG.createPlane3D = function (board, parents, attributes) {
         dir2 = function() {
             return [point3.X() - point.X(), point3.Y() - point.Y(), point3.Z() - point.Z()];
         };
-        range_u = [-Infinity, Infinity];
-        range_v = [-Infinity, Infinity];
+        range_u = parents[4] || [-Infinity, Infinity];
+        range_v = parents[5] || [-Infinity, Infinity];
     } else {
         if (parents[1].type === Const.OBJECT_TYPE_PLANE3D &&
             Type.isTransformationOrArray(parents[2])
         ) {
+            // Plane + transformation
             base = parents[1];
             transform = parents[2];
 
@@ -1649,6 +1657,7 @@ JXG.createPlane3D = function (board, parents, attributes) {
             range_u = parents[3] || [-Infinity, Infinity];
             range_v = parents[4] || [-Infinity, Infinity];
         } else {
+            // Point, direction and ranges
             point = Type.providePoints3D(view, [parents[1]], attributes, 'plane3d', ['point'])[0];
             dir1 = parents[2];
             dir2 = parents[3];
@@ -1699,25 +1708,29 @@ JXG.createPlane3D = function (board, parents, attributes) {
     el.inherits.push(el.element2D);
     el.element2D.setParents(el);
 
-    attr = Type.copyAttributes(attributes.mesh3d, board.options, 'mesh3d');
     if (
         Math.abs(el.range_u[0]) !== Infinity &&
         Math.abs(el.range_u[1]) !== Infinity &&
         Math.abs(el.range_v[0]) !== Infinity &&
         Math.abs(el.range_v[1]) !== Infinity
     ) {
-        grid = view.create('mesh3d', [
+        attr = Type.copyAttributes(attr.mesh3d, board.options, 'mesh3d');
+        mesh3d = view.create('mesh3d', [
             function () {
                 return point.coords;
             },
-            dir1, range_u, dir2, range_v
-        ], attr
-        );
-        el.grid = grid;
-        el.addChild(grid);
-        el.inherits.push(grid);
-        grid.setParents(el);
-        el.grid.view = view;
+            // dir1, dir2, range_u, range_v
+            function() { return el.vec1; },
+            function() { return el.vec2; },
+            el.range_u,
+            el.range_v
+        ], attr);
+        el.mesh3d = mesh3d;
+        el.addChild(mesh3d);
+        el.inherits.push(mesh3d);           // TODO Does not work
+        el.element2D.inherits.push(mesh3d); // Does work - instead
+        mesh3d.setParents(el);
+        el.mesh3d.view = view;
     }
 
     el.element2D.prepareUpdate().update();

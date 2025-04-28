@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2024
+    Copyright 2008-2025
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -1956,9 +1956,9 @@ JXG.extend(
          * let [A, B, C, D] = ['==', '<>', '<', '>'].map((s) => board.create('point', [4, yInit--], { name: s, label: { fontSize: 24 } }))
          * let seg = board.create('segment', [A, [() => A.X(), 0]])  // shows linear
          *
-         *let isLeftRight = true;
-         *let buttonMove = board.create('button', [-2, 4, 'left',
-         *() => {
+         * let isLeftRight = true;
+         * let buttonMove = board.create('button', [-2, 4, 'left',
+         * () => {
          *    isLeftRight = !isLeftRight;
          *    buttonMove.rendNodeButton.innerHTML = isLeftRight ? 'left' : 'right'
          *    let x = isLeftRight ? 4 : -4
@@ -1969,7 +1969,7 @@ JXG.extend(
          *    C.moveTo([x, 1], 1000, { callback: () => C.setAttribute({ face: sym, size: 5 }), effect: "<" })
          *    D.moveTo([x, 0], 1000, { callback: () => D.setAttribute({ face: sym, size: 5 }), effect: ">" })
          *
-         *}])
+         * }]);
          *
          * </pre><div id="JXG0f35a50e-e99d-11e8-a1ca-04d3b0c2aad4" class="jxgbox" style="width: 300px; height: 300px;"></div>
          * <script type="text/javascript">
@@ -1979,9 +1979,9 @@ JXG.extend(
          * let [A, B, C, D] = ['==', '<>', '<', '>'].map((s) => board.create('point', [4, yInit--], { name: s, label: { fontSize: 24 } }))
          * let seg = board.create('segment', [A, [() => A.X(), 0]])  // shows linear
          *
-         *let isLeftRight = true;
-         *let buttonMove = board.create('button', [-2, 4, 'left',
-         *() => {
+         * let isLeftRight = true;
+         * let buttonMove = board.create('button', [-2, 4, 'left',
+         * () => {
          *    isLeftRight = !isLeftRight;
          *    buttonMove.rendNodeButton.innerHTML = isLeftRight ? 'left' : 'right'
          *    let x = isLeftRight ? 4 : -4
@@ -1992,7 +1992,7 @@ JXG.extend(
          *    C.moveTo([x, 1], 1000, { callback: () => C.setAttribute({ face: sym, size: 5 }), effect: "<" })
          *    D.moveTo([x, 0], 1000, { callback: () => D.setAttribute({ face: sym, size: 5 }), effect: ">" })
          *
-         *}])
+         * }]);
          *}
          *</script><pre>
          */
@@ -2010,7 +2010,7 @@ JXG.extend(
                 dY = where.usrCoords[2] - Y,
                 /** @ignore */
                 stepFun = function (i) {
-                    let x = i / steps;  // absolute progress of the animatin
+                    var x = i / steps;  // absolute progress of the animatin
 
                     if (options.effect) {
                         if (options.effect === "<>") {
@@ -2190,6 +2190,24 @@ JXG.extend(
          * @param {Object} [options] Optional settings for the animation
          * @returns Promise
          * @see JXG.CoordsElement#moveAlong
+         * @example
+         * var A = board.create('point', [4, 4]);
+         * A.moveAlongES6([[3, -2], [4, 0], [3, 1], [4, 4]], 2000)
+         *     .then(() => A.moveToES6([-3, -3], 1000));
+         *
+         * </pre><div id="JXGa45032e5-a517-4f1d-868a-65d698d344cf" class="jxgbox" style="width: 300px; height: 300px;"></div>
+         * <script type="text/javascript">
+         *     (function() {
+         *         var board = JXG.JSXGraph.initBoard('JXGa45032e5-a517-4f1d-868a-65d698d344cf',
+         *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
+         *     var A = board.create('point', [4, 4]);
+         *     A.moveAlongES6([[3, -2], [4, 0], [3, 1], [4, 4]], 2000)
+         *         .then(() => A.moveToES6([-3, -3], 1000));
+         *
+         *     })();
+         *
+         * </script><pre>
+         *
          */
         moveAlongES6: function (path, time, options) {
             return new Promise((resolve, reject) => {
@@ -2212,6 +2230,67 @@ JXG.extend(
          * @param {Object} [options] Optional settings for the animation
          * @returns Promise
          * @see JXG.CoordsElement#moveTo
+         *
+         * @example
+         * var A = board.create('point', [4, 4]);
+         * A.moveToES6([-3, 3], 1000)
+         *     .then(() => A.moveToES6([-3, -3], 1000))
+         *     .then(() => A.moveToES6([3, -3], 1000))
+         *     .then(() => A.moveToES6([3, -3], 1000));
+         *
+         * </pre><div id="JXGabdc7771-34f0-4655-bb7b-fc329e773b89" class="jxgbox" style="width: 300px; height: 300px;"></div>
+         * <script type="text/javascript">
+         *     (function() {
+         *         var board = JXG.JSXGraph.initBoard('JXGabdc7771-34f0-4655-bb7b-fc329e773b89',
+         *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
+         *     var A = board.create('point', [4, 4]);
+         *     A.moveToES6([-3, 3], 1000)
+         *         .then(() => A.moveToES6([-3, -3], 1000))
+         *         .then(() => A.moveToES6([3, -3], 1000))
+         *         .then(() => A.moveToES6([3, -3], 1000));
+         *
+         *     })();
+         *
+         * </script><pre>
+         *
+         * @example
+         *         var A = board.create('point', [4, 4]);
+         *         A.moveToES6([-3, 3], 1000)
+         *             .then(function() {
+         *                 return A.moveToES6([-3, -3], 1000);
+         *             }).then(function() {
+         *                 return A.moveToES6([ 3, -3], 1000);
+         *             }).then(function() {
+         *                 return A.moveToES6([ 3, -3], 1000);
+         *             }).then(function() {
+         *                 return A.moveAlongES6([[3, -2], [4, 0], [3, 1], [4, 4]], 5000);
+         *             }).then(function() {
+         *                 return A.visitES6([-4, -4], 3000);
+         *             });
+         *
+         * </pre><div id="JXGa9439ce5-516d-4dba-9233-2a4ad9589995" class="jxgbox" style="width: 300px; height: 300px;"></div>
+         * <script type="text/javascript">
+         *     (function() {
+         *         var board = JXG.JSXGraph.initBoard('JXGa9439ce5-516d-4dba-9233-2a4ad9589995',
+         *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
+         *             var A = board.create('point', [4, 4]);
+         *             A.moveToES6([-3, 3], 1000)
+         *                 .then(function() {
+         *                     return A.moveToES6([-3, -3], 1000);
+         *                 }).then(function() {
+         *                     return A.moveToES6([ 3, -3], 1000);
+         *                 }).then(function() {
+         *                     return A.moveToES6([ 3, -3], 1000);
+         *                 }).then(function() {
+         *                     return A.moveAlongES6([[3, -2], [4, 0], [3, 1], [4, 4]], 5000);
+         *                 }).then(function() {
+         *                     return A.visitES6([-4, -4], 3000);
+         *                 });
+         *
+         *     })();
+         *
+         * </script><pre>
+         *
          */
         moveToES6: function (where, time, options) {
             return new Promise((resolve, reject) => {
@@ -2234,6 +2313,24 @@ JXG.extend(
          * @param {Object} [options] Optional settings for the animation
          * @returns Promise
          * @see JXG.CoordsElement#visit
+         * @example
+         * var A = board.create('point', [4, 4]);
+         * A.visitES6([-4, -4], 3000)
+         *     .then(() => A.moveToES6([-3, 3], 1000));
+         *
+         * </pre><div id="JXG640f1fd2-05ec-46cb-b977-36d96648ce41" class="jxgbox" style="width: 300px; height: 300px;"></div>
+         * <script type="text/javascript">
+         *     (function() {
+         *         var board = JXG.JSXGraph.initBoard('JXG640f1fd2-05ec-46cb-b977-36d96648ce41',
+         *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
+         *     var A = board.create('point', [4, 4]);
+         *     A.visitES6([-4, -4], 3000)
+         *         .then(() => A.moveToES6([-3, 3], 1000));
+         *
+         *     })();
+         *
+         * </script><pre>
+         *
          */
         visitES6: function (where, time, options) {
             return new Promise((resolve, reject) => {

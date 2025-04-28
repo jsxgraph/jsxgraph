@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2024
+    Copyright 2008-2025
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -2916,8 +2916,9 @@ JXG.extend(
 
             ta = 'none';   // JSXGraph catches all user touch events
             if (this.mode === this.BOARD_MODE_NONE &&
-                Type.evaluate(this.attr.browserpan) &&
-                !(Type.evaluate(this.attr.pan.enabled) && !Type.evaluate(this.attr.pan.needtwofingers))
+                (Type.evaluate(this.attr.browserpan) === true || Type.evaluate(this.attr.browserpan.enabled) === true) &&
+                // One-finger pan has priority over browserPan
+                (Type.evaluate(this.attr.pan.enabled) === false || Type.evaluate(this.attr.pan.needtwofingers) === true)
             ) {
                 // ta = 'pan-x pan-y';  // JSXGraph allows browser scrolling
                 ta = 'auto';  // JSXGraph allows browser scrolling
@@ -4297,7 +4298,7 @@ JXG.extend(
          * If necessary, also call setBoundingBox().
          * @param {Number} [width=this.containerObj.offsetWidth] Width of the container element
          * @param {Number} [height=this.containerObj.offsetHeight] Height of the container element
-         * @returns
+         * @returns {JXG.Board} Reference to the board
          *
          * @see JXG.Board#startResizeObserver
          * @see JXG.Board#resizeListener
@@ -4340,7 +4341,7 @@ JXG.extend(
 
             // If div is invisible - do nothing
             if (w <= 0 || h <= 0 || isNaN(w) || isNaN(h)) {
-                return;
+                return this;
             }
 
             // If bounding box is not yet initialized, do it now.
@@ -4352,7 +4353,7 @@ JXG.extend(
             // the last time. Note that if the div had display:none in the mean time,
             // we did not store this._prevDim.
             if (Type.exists(this._prevDim) && this._prevDim.w === w && this._prevDim.h === h) {
-                return;
+                return this;
             }
             // Set the size of the SVG or canvas element
             this.resizeContainer(w, h, true);
@@ -4360,6 +4361,7 @@ JXG.extend(
                 w: w,
                 h: h
             };
+            return this;
         },
 
         /**

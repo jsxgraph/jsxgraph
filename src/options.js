@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2024
+    Copyright 2008-2025
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -113,12 +113,12 @@ JXG.Options = {
 
         /**
          * Enable browser scrolling on touch interfaces if the user double taps into an empty region
-         * of the board.
+         * of the board. In turn, browser scrolling is deactivated as soon as a JSXGraph element is dragged.
          *
          * <ul>
          * <li> Implemented for pointer touch devices - not with mouse, pen or old iOS touch.
          * <li> It only works if browserPan:true
-         * <li> One finger action by the settings "pan.enabled:true" and "pan.needTwoFingers:false" has priority
+         * <li> One finger action by the settings "pan.enabled:true" and "pan.needTwoFingers:false" has priority.
          * </ul>
          *
          * @name JXG.Board#browserPan
@@ -5797,9 +5797,9 @@ JXG.Options = {
          *
          * @name ImplicitCurve#h_max
          * @type {Number|Function}
-         * @default 1
+         * @default 0.5
          */
-        h_max: 1,
+        h_max: 0.5,
 
         /**
          * Allowed distance (in user units multiplied by actual step width) to detect loop.
@@ -6428,7 +6428,7 @@ JXG.Options = {
 
     /* special legend options */
     legend: {
-        /**
+        /**#@+
          * @visprop
          */
 
@@ -6457,6 +6457,24 @@ JXG.Options = {
         colors: ['#B02B2C', '#3F4C6B', '#C79810', '#D15600', '#FFFF88', '#c3d9ff', '#4096EE', '#008C00'],
 
         /**
+         * Length of line in one legend entry
+         * @name Legend#lineLength
+         * @type Number
+         * @default 1
+         *
+         */
+        lineLength: 1,
+
+        /**
+         * (Circular) array of opacity for legend line stroke color for one legend entry.
+         * @name Legend#strokeOpacity
+         * @type Array
+         * @default [1]
+         *
+         */
+        strokeOpacity: [1],
+
+        /**
          * Height (in px) of one legend entry
          * @name Legend#rowHeight
          * @type Number
@@ -6465,7 +6483,25 @@ JXG.Options = {
          */
         rowHeight: 20,
 
-        strokeWidth: 5
+        /**
+         * Height (in px) of one legend entry
+         * @name Legend#strokeWidth
+         * @type Number
+         * @default 5
+         *
+         */
+        strokeWidth: 5,
+
+        /**
+         * The element is fixed and can not be dragged around. The legend will even stay at its position on zoom and
+         * moveOrigin events.
+         * @name Legend#frozen
+         * @type Boolean
+         * @default false
+         * @see JXG.GeometryElement#frozen
+         *
+         */
+        frozen: false
 
         /**#@-*/
     },

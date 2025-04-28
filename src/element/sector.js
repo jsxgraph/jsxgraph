@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2024
+    Copyright 2008-2025
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -42,6 +42,14 @@ import Type from "../utils/type.js";
 
 /**
  * @class A circular sector is a subarea of the area enclosed by a circle. It is enclosed by two radii and an arc.
+ * <p>
+ * The sector as curve consists of two legs and an arc. The curve length is 6. That means, a point with coordinates
+ * [sector.X(t), sector.Y(t)] is on
+ * <ul>
+ * <li> leg 1 if t is between 0 and 1,
+ * <li> the arc if t is between 1 and 5,
+ * <li> leg 2 if t is between 5 and 6.
+ * </ul>
  * @pseudo
  * @name Sector
  * @augments JXG.Curve
@@ -215,7 +223,8 @@ JXG.createSector = function (board, parents, attributes) {
     }
 
     attr = Type.copyAttributes(attributes, board.options, "sector");
-    el = board.create("curve", [[0], [0]], attr);
+    // The curve length is 6: 0-1: leg 1, 1-5: arc, 5-6: leg 2
+    el = board.create("curve", [[0], [0], 0, 6], attr);
     el.type = Const.OBJECT_TYPE_SECTOR;
     el.elType = "sector";
 
@@ -718,10 +727,9 @@ JXG.createSector = function (board, parents, attributes) {
      */
     el.getLabelAnchor = function () {
         var coords,
-            vec,
-            vecx,
-            vecy,
+            vec, vecx, vecy,
             len,
+            pos = this.label.evalVisProp('position'),
             angle = Geometry.rad(this.point2, this.point1, this.point3),
             dx = 13 / this.board.unitX,
             dy = 13 / this.board.unitY,
@@ -737,30 +745,38 @@ JXG.createSector = function (board, parents, attributes) {
         //    this.label.relativeCoords = new Coords(Const.COORDS_BY_SCREEN, [0, 0], this.board);
         //}
 
-        if ((vp_s === "minor" && angle > Math.PI) || (vp_s === "major" && angle < Math.PI)) {
-            angle = -(2 * Math.PI - angle);
+        if (
+            !Type.isString(pos) ||
+            (pos.indexOf('right') < 0 && pos.indexOf('left') < 0)
+        ) {
+
+            if ((vp_s === "minor" && angle > Math.PI) || (vp_s === "major" && angle < Math.PI)) {
+                angle = -(2 * Math.PI - angle);
+            }
+
+            coords = new Coords(
+                Const.COORDS_BY_USER,
+                [
+                    pmc[1] + Math.cos(angle * 0.5) * bxminusax - Math.sin(angle * 0.5) * byminusay,
+                    pmc[2] + Math.sin(angle * 0.5) * bxminusax + Math.cos(angle * 0.5) * byminusay
+                ],
+                this.board
+            );
+
+            vecx = coords.usrCoords[1] - pmc[1];
+            vecy = coords.usrCoords[2] - pmc[2];
+
+            len = Mat.hypot(vecx, vecy);
+            vecx = (vecx * (len + dx)) / len;
+            vecy = (vecy * (len + dy)) / len;
+            vec = [pmc[1] + vecx, pmc[2] + vecy];
+
+            l_vp.position = Geometry.calcLabelQuadrant(Geometry.rad([1, 0], [0, 0], vec));
+
+            return new Coords(Const.COORDS_BY_USER, vec, this.board);
+        } else {
+            return this.getLabelPosition(pos, this.label.evalVisProp('distance'));
         }
-
-        coords = new Coords(
-            Const.COORDS_BY_USER,
-            [
-                pmc[1] + Math.cos(angle * 0.5) * bxminusax - Math.sin(angle * 0.5) * byminusay,
-                pmc[2] + Math.sin(angle * 0.5) * bxminusax + Math.cos(angle * 0.5) * byminusay
-            ],
-            this.board
-        );
-
-        vecx = coords.usrCoords[1] - pmc[1];
-        vecy = coords.usrCoords[2] - pmc[2];
-
-        len = Mat.hypot(vecx, vecy);
-        vecx = (vecx * (len + dx)) / len;
-        vecy = (vecy * (len + dy)) / len;
-        vec = [pmc[1] + vecx, pmc[2] + vecy];
-
-        l_vp.position = Geometry.calcLabelQuadrant(Geometry.rad([1, 0], [0, 0], vec));
-
-        return new Coords(Const.COORDS_BY_USER, vec, this.board);
     };
 
     /**
@@ -1632,12 +1648,16 @@ JXG.createAngle = function (board, parents, attributes) {
 
         if (type === "none") {
             this.updateDataArrayNone();
+            this.maxX = function() { return 0; };
         } else if (type === "square") {
             this.updateDataArraySquare();
+            this.maxX = function() { return 4; };
         } else if (type === "sector") {
             this.updateDataArraySector();
+            this.maxX = function() { return 6; };
         } else if (type === "sectordot") {
             this.updateDataArraySector();
+            this.maxX = function() { return 6; };
             if (!this.dot.visProp.visible) {
                 this.dot.setAttribute({ visible: true });
             }
@@ -1774,6 +1794,7 @@ JXG.createAngle = function (board, parents, attributes) {
             dx = 12,
             A, B, r, d, a2, co, si, mat,
             vp_s = el.evalVisProp('selection'),
+            pos = this.label.evalVisProp('position'),
             l_vp = this.label ? this.label.visProp : this.visProp.label;
 
         // If this is uncommented, the angle label can not be dragged
@@ -1781,45 +1802,53 @@ JXG.createAngle = function (board, parents, attributes) {
         //    this.label.relativeCoords = new Coords(Const.COORDS_BY_SCREEN, [0, 0], this.board);
         //}
 
-        if (Type.exists(this.label) && Type.exists(this.label.visProp.fontsize)) {
-            dx = this.label.evalVisProp('fontsize');
+        if (
+            !Type.isString(pos) ||
+            (pos.indexOf('right') < 0 && pos.indexOf('left') < 0)
+        ) {
+
+            if (Type.exists(this.label) && Type.exists(this.label.visProp.fontsize)) {
+                dx = this.label.evalVisProp('fontsize');
+            }
+            dx /= this.board.unitX;
+
+            A = el.point2.coords.usrCoords;
+            B = el.point1.coords.usrCoords;
+            r = el.Radius();
+            d = Geometry.distance(A, B, 3);
+            a2 = Geometry.rad(el.point2, el.point1, el.point3);
+            if ((vp_s === "minor" && a2 > Math.PI) || (vp_s === "major" && a2 < Math.PI)) {
+                a2 = -(2 * Math.PI - a2);
+            }
+            a2 *= 0.5;
+            co = Math.cos(a2);
+            si = Math.sin(a2);
+
+            A = [1, B[1] + ((A[1] - B[1]) * r) / d, B[2] + ((A[2] - B[2]) * r) / d];
+
+            mat = [
+                [1, 0, 0],
+                [B[1] - 0.5 * B[1] * co + 0.5 * B[2] * si, co * 0.5, -si * 0.5],
+                [B[2] - 0.5 * B[1] * si - 0.5 * B[2] * co, si * 0.5, co * 0.5]
+            ];
+            vec = Mat.matVecMult(mat, A);
+            vec[1] /= vec[0];
+            vec[2] /= vec[0];
+            vec[0] /= vec[0];
+
+            d = Geometry.distance(vec, B, 3);
+            vec = [
+                vec[0],
+                B[1] + ((vec[1] - B[1]) * (r + dx)) / d,
+                B[2] + ((vec[2] - B[2]) * (r + dx)) / d
+            ];
+
+            l_vp.position = Geometry.calcLabelQuadrant(Geometry.rad([1, 0], [0, 0], vec));
+
+            return new Coords(Const.COORDS_BY_USER, vec, this.board);
+        } else {
+            return this.getLabelPosition(pos, this.label.evalVisProp('distance'));
         }
-        dx /= this.board.unitX;
-
-        A = el.point2.coords.usrCoords;
-        B = el.point1.coords.usrCoords;
-        r = el.Radius();
-        d = Geometry.distance(A, B, 3);
-        a2 = Geometry.rad(el.point2, el.point1, el.point3);
-        if ((vp_s === "minor" && a2 > Math.PI) || (vp_s === "major" && a2 < Math.PI)) {
-            a2 = -(2 * Math.PI - a2);
-        }
-        a2 *= 0.5;
-        co = Math.cos(a2);
-        si = Math.sin(a2);
-
-        A = [1, B[1] + ((A[1] - B[1]) * r) / d, B[2] + ((A[2] - B[2]) * r) / d];
-
-        mat = [
-            [1, 0, 0],
-            [B[1] - 0.5 * B[1] * co + 0.5 * B[2] * si, co * 0.5, -si * 0.5],
-            [B[2] - 0.5 * B[1] * si - 0.5 * B[2] * co, si * 0.5, co * 0.5]
-        ];
-        vec = Mat.matVecMult(mat, A);
-        vec[1] /= vec[0];
-        vec[2] /= vec[0];
-        vec[0] /= vec[0];
-
-        d = Geometry.distance(vec, B, 3);
-        vec = [
-            vec[0],
-            B[1] + ((vec[1] - B[1]) * (r + dx)) / d,
-            B[2] + ((vec[2] - B[2]) * (r + dx)) / d
-        ];
-
-        l_vp.position = Geometry.calcLabelQuadrant(Geometry.rad([1, 0], [0, 0], vec));
-
-        return new Coords(Const.COORDS_BY_USER, vec, this.board);
     };
 
     el.methodMap = Type.deepCopy(el.methodMap, {

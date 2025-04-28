@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2024
+    Copyright 2008-2025
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -1112,12 +1112,72 @@ JXG.extend(
             }
         },
 
+        /**
+         * Position a curve label according to the attributes "position" and distance.
+         * This function is also used for angle, arc and sector.
+         *
+         * @param {String} pos
+         * @param {Number} distance
+         * @returns {JXG.Coords}
+         */
+        getLabelPosition: function(pos, distance) {
+            var x, y, xy,
+                c, d, e,
+                lbda,
+                t, dx, dy,
+                dist = 1.5;
+
+            xy = Type.parsePosition(pos);
+            lbda = Type.parseNumber(xy.pos, this.maxX() - this.minX(), 1);
+
+            if (xy.pos.indexOf('fr') < 0 &&
+                xy.pos.indexOf('%') < 0) {
+                // 'px' or numbers are not supported
+                lbda = 0;
+            }
+
+            t = this.minX() + lbda;
+            x = this.X(t);
+            y = this.Y(t);
+            c = (new Coords(Const.COORDS_BY_USER, [x, y], this.board)).scrCoords;
+
+            e = Mat.eps;
+            if (t < this.minX() + e) {
+                dx = (this.X(t + e) - this.X(t)) / e;
+                dy = (this.Y(t + e) - this.Y(t)) / e;
+            } else if (t > this.maxX() - e) {
+                dx = (this.X(t) - this.X(t - e)) / e;
+                dy = (this.Y(t) - this.Y(t - e)) / e;
+            } else {
+                dx = 0.5 * (this.X(t + e) - this.X(t - e)) / e;
+                dy = 0.5 * (this.Y(t + e) - this.Y(t - e)) / e;
+            }
+            d = Mat.hypot(dx, dy);
+
+            if (xy.side === 'left') {
+                dy *= -1;
+            } else {
+                dx *= -1;
+            }
+
+            // Position left or right
+
+            if (Type.exists(this.label)) {
+                dist = 0.5 * distance / d;
+            }
+
+            x = c[1] + dy * this.label.size[0] * dist;
+            y = c[2] - dx * this.label.size[1] * dist;
+
+            return new Coords(Const.COORDS_BY_SCREEN, [x, y], this.board);
+        },
+
         // documented in geometry element
         getLabelAnchor: function () {
             var x, y, pos,
-                xy, lbda, e,
-                t, dx, dy, d,
-                dist = 1.5,
+                // xy, lbda, e,
+                // t, dx, dy, d,
+                // dist = 1.5,
                 c,
                 ax = 0.05 * this.board.canvasWidth,
                 ay = 0.05 * this.board.canvasHeight,
@@ -1169,49 +1229,50 @@ JXG.extend(
                 }
             } else {
                 // New positioning
-                xy = Type.parsePosition(pos);
-                lbda = Type.parseNumber(xy.pos, this.maxX() - this.minX(), 1);
+                return this.getLabelPosition(pos, this.label.evalVisProp('distance'));
+                // xy = Type.parsePosition(pos);
+                // lbda = Type.parseNumber(xy.pos, this.maxX() - this.minX(), 1);
 
-                if (xy.pos.indexOf('fr') < 0 &&
-                    xy.pos.indexOf('%') < 0) {
-                    // 'px' or numbers are not supported
-                    lbda = 0;
-                }
+                // if (xy.pos.indexOf('fr') < 0 &&
+                //     xy.pos.indexOf('%') < 0) {
+                //     // 'px' or numbers are not supported
+                //     lbda = 0;
+                // }
 
-                t = this.minX() + lbda;
-                x = this.X(t);
-                y = this.Y(t);
-                c = (new Coords(Const.COORDS_BY_USER, [x, y], this.board)).scrCoords;
+                // t = this.minX() + lbda;
+                // x = this.X(t);
+                // y = this.Y(t);
+                // c = (new Coords(Const.COORDS_BY_USER, [x, y], this.board)).scrCoords;
 
-                e = Mat.eps;
-                if (t < this.minX() + e) {
-                    dx = (this.X(t + e) - this.X(t)) / e;
-                    dy = (this.Y(t + e) - this.Y(t)) / e;
-                } else if (t > this.maxX() - e) {
-                    dx = (this.X(t) - this.X(t - e)) / e;
-                    dy = (this.Y(t) - this.Y(t - e)) / e;
-                } else {
-                    dx = 0.5 * (this.X(t + e) - this.X(t - e)) / e;
-                    dy = 0.5 * (this.Y(t + e) - this.Y(t - e)) / e;
-                }
-                d = Mat.hypot(dx, dy);
+                // e = Mat.eps;
+                // if (t < this.minX() + e) {
+                //     dx = (this.X(t + e) - this.X(t)) / e;
+                //     dy = (this.Y(t + e) - this.Y(t)) / e;
+                // } else if (t > this.maxX() - e) {
+                //     dx = (this.X(t) - this.X(t - e)) / e;
+                //     dy = (this.Y(t) - this.Y(t - e)) / e;
+                // } else {
+                //     dx = 0.5 * (this.X(t + e) - this.X(t - e)) / e;
+                //     dy = 0.5 * (this.Y(t + e) - this.Y(t - e)) / e;
+                // }
+                // d = Mat.hypot(dx, dy);
 
-                if (xy.side === 'left') {
-                    dy *= -1;
-                } else {
-                    dx *= -1;
-                }
+                // if (xy.side === 'left') {
+                //     dy *= -1;
+                // } else {
+                //     dx *= -1;
+                // }
 
-                // Position left or right
+                // // Position left or right
 
-                if (Type.exists(this.label)) {
-                    dist = 0.5 * this.label.evalVisProp('distance') / d;
-                }
+                // if (Type.exists(this.label)) {
+                //     dist = 0.5 * this.label.evalVisProp('distance') / d;
+                // }
 
-                x = c[1] + dy * this.label.size[0] * dist;
-                y = c[2] - dx * this.label.size[1] * dist;
+                // x = c[1] + dy * this.label.size[0] * dist;
+                // y = c[2] - dx * this.label.size[1] * dist;
 
-                return new Coords(Const.COORDS_BY_SCREEN, [x, y], this.board);
+                // return new Coords(Const.COORDS_BY_SCREEN, [x, y], this.board);
 
             }
             c = new Coords(Const.COORDS_BY_SCREEN, [x, y], this.board, false);
@@ -3153,11 +3214,9 @@ JXG.registerElement("boxplot", JXG.createBoxPlot);
  * @param {Array|Function} [rangex=boundingbox] Optional array of length 2
  * of the form [x_min, x_max] setting the domain of the x coordinate of the implicit curve.
  * If not supplied, the board's boundingbox (+ the attribute "margin") is taken.
- * For algorithmic reasons, the plotted curve mighty slightly overflow the given domain.
  * @param {Array|Function} [rangey=boundingbox] Optional array of length 2
  * of the form [y_min, y_max] setting the domain of the y coordinate of the implicit curve.
  * If not supplied, the board's boundingbox (+ the attribute "margin") is taken.
- * For algorithmic reasons, the plotted curve mighty slightly overflow the given domain.
  * @augments JXG.Curve
  * @constructor
  * @type JXG.Curve
@@ -3338,7 +3397,11 @@ JXG.createImplicitCurve = function (board, parents, attributes) {
      * @function
      * @returns {Number}
      */
-    c.dfx = Type.createFunction(parents[1], board, 'x, y');
+    if (parents.length === 5 || Type.isString(parents[1]) || Type.isFunction(parents[1])) {
+        c.dfx = Type.createFunction(parents[1], board, 'x, y');
+    } else {
+        c.dfx = null;
+    }
 
     /**
      * Partial derivative in the second variable of
@@ -3350,7 +3413,11 @@ JXG.createImplicitCurve = function (board, parents, attributes) {
      * @function
      * @returns {Number}
      */
-    c.dfy = Type.createFunction(parents[2], board, 'x, y');
+    if (parents.length === 5 || Type.isString(parents[2]) || Type.isFunction(parents[2])) {
+        c.dfy = Type.createFunction(parents[2], board, 'x, y');
+    } else {
+        c.dfy = null;
+    }
 
     /**
      * Defines a domain for searching f(x,y)=0. Default is null, meaning
@@ -3365,10 +3432,14 @@ JXG.createImplicitCurve = function (board, parents, attributes) {
     c.domain = null;
     if (parents.length === 5) {
         c.domain = [parents[3], parents[4]];
-        // c.visProp.margin = 0;
+        //     [Math.min(parents[3][0], parents[3][1]), Math.max(parents[3][0], parents[3][1])],
+        //     [Math.min(parents[4][0], parents[4][1]), Math.max(parents[4][0], parents[4][1])]
+        // ];
     } else if (parents.length === 3) {
         c.domain = [parents[1], parents[2]];
-        // c.visProp.margin = 0;
+        //     [Math.min(parents[1][0], parents[1][1]), Math.max(parents[1][0], parents[1][1])],
+        //     [Math.min(parents[2][0], parents[2][1]), Math.max(parents[2][0], parents[2][1])]
+        // ];
     }
 
     /**
@@ -3391,7 +3462,13 @@ JXG.createImplicitCurve = function (board, parents, attributes) {
         } else {
             rx = Type.evaluate(this.domain[0]);
             ry = Type.evaluate(this.domain[1]);
-            bbox = [rx[0], ry[1], rx[1], ry[0]];
+            bbox = [
+                Math.min(rx[0], rx[1]),
+                Math.max(ry[0], ry[1]),
+                Math.max(rx[0], rx[1]),
+                Math.min(ry[0], ry[1])
+                // rx[0], ry[1], rx[1], ry[0]
+            ];
         }
 
         cfg = {
