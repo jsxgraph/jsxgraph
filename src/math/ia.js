@@ -107,8 +107,8 @@ JXG.Math.DoubleBits = function () {
             this.pack = toDoubleBE;
             this.lo = lowUintBE;
             this.hi = highUintBE;
-        // } else {
-        //     hasTypedArrays = false;
+            // } else {
+            //     hasTypedArrays = false;
         }
     }
 
@@ -300,7 +300,7 @@ JXG.extend(MatInterval.prototype, {
  *
  * let A = JXG.Math.IntervalArithmetic.mul(L, W)
  *
- * console.log('area:', A)       //  {hi: 2.0015002500000003, lo: 1.99850025}
+ * console.log('area:', A) // [2.0015002500000003, lo: 1.99850025}
  * </pre>
  *
  */
