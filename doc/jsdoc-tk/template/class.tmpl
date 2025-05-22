@@ -105,7 +105,7 @@
 					</tr>
 				</thead>
 				<tbody>
-					<tr data-constructor="{+data.alias+} data-signature="{+makeSignature(data.params)+}">
+					<tr data-constructor="{+data.alias+}" data-description="{+resolveLinks(summarize(data.desc))+}">
 						<td class="attributes">{!
 							if (data.isPrivate) output += "&lt;private&gt; ";
 							if (data.isInner) output += "&lt;inner&gt; ";
@@ -135,7 +135,9 @@
 					</thead>
 					<tbody>
 					<for each="member" in="ownAttributes">
-						<tr data-attributes="{+member.name+}" data-type="{+member.type+}">
+						<tr data-attributes="{+member.name+}" data-type="{+member.type+}" data-description="{+member.desc+}" data-ignore="{!
+                                        if (member.isPrivate) output += "ignore";
+                                        if (member.deprecated) output += "ignore"; !}">
 							<td class="attributes">{!
 								if (member.isPrivate) output += "&lt;private&gt; ";
 								if (member.isInner) output += "&lt;inner&gt; ";
@@ -198,7 +200,11 @@
 					</thead>
 					<tbody>
 					<for each="member" in="ownProperties">
-						<tr data-fields="{+member.name+} data-type="{+member.type+}">
+						<tr data-fields="{+member.name+}" data-description="{+member.desc+}" data-type="{+member.type+}" data-ignore="{!
+                                        if (member.isPrivate) output += "ignore";
+                                        if (member.deprecated) output += "ignore";
+                                            !}">
+>
 							<td class="attributes">{!
 								if (member.isPrivate) output += "&lt;private&gt; ";
 								if (member.isInner) output += "&lt;inner&gt; ";
@@ -261,7 +267,11 @@
 					</thead>
 					<tbody>
 					<for each="member" in="ownMethods">
-   						<tr data-methods="{+member.name+}" data-returns="{+member.type+}" data-signature='{+makeMethodSignature(member.params)+}'>
+   						<tr data-methods="{+member.name+}" data-returns="{+member.type+}" data-signature="{+makeMethodSignature(member.params)+}" data-ignore="{!
+                                        if (member.isPrivate) output += "ignore";
+                                        if (member.deprecated) output += "ignore";
+                                            !}">
+
 							<td class="attributes">{!
 								if (member.isPrivate) output += "&lt;private&gt; ";
 								if (member.isInner) output += "&lt;inner&gt; ";
