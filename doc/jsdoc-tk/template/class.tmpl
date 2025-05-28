@@ -267,7 +267,7 @@
 					</thead>
 					<tbody>
 					<for each="member" in="ownMethods">
-   						<tr data-methods="{+member.name+}" data-returns="{+member.type+}" data-signature="{+makeMethodSignature(member.params)+}" data-ignore="{!
+   						<tr data-methods="{+member.name+}" data-returns="{+member.type+}" data-signature="{+makeMethodSignature(member.params)+}" data-description="{+member.desc+}" data-ignore="{!
                                         if (member.isPrivate) output += "ignore";
                                         if (member.deprecated) output += "ignore";
                                             !}">
