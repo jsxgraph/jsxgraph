@@ -203,7 +203,7 @@ JXG.SVGRenderer = function (container, dim) {
 
     /**
      * Combine arguments to a string, joined by empty string.
-     * Masks the container id with CSS.escape.
+     * The container id needs to be escaped, as it may contain URI-unsafe characters
      *
      * @params {String} str variable number of strings
      * @returns String
@@ -218,8 +218,8 @@ JXG.SVGRenderer = function (container, dim) {
         // ES6 would be [...arguments].join()
         var str = Array.prototype.slice.call(arguments).join('');
         // Mask special symbols like '/' and '\' in id
-        if (Type.exists(CSS) && Type.exists(CSS.escape)) {
-            str = CSS.escape(str);
+        if (Type.exists(encodeURIComponent)) {
+            str = encodeURIComponent(str);
         }
         return str;
     };
