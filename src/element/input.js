@@ -270,13 +270,25 @@ JXG.createInput = function (board, parents, attributes) {
     t.rendNodeTag.disabled = !!attr.disabled;
     t.rendNodeLabel.id = t.rendNode.id + "_label";
     t.rendNodeInput.id = t.rendNode.id + "_input";
-    t.rendNodeInput.setAttribute("aria-labelledby",t.rendNodeLabel.id);
+    t.rendNodeInput.setAttribute("aria-labelledby", t.rendNodeLabel.id);
 
     // 2. Set parents[3] (string|function) as label of the input element.
     // abstract.js selects the correct DOM element for the update
     t.setText(parents[3]);
 
     t._value = parents[2];
+
+    // 3.  capture keydown events on the input, and do not let them propagate.  The problem is that
+    // elevation controls on view3D use left and right, so editing the input triggers 3D pan.
+    t.rendNodeInput.addEventListener("keydown", (event) => {
+        // only trap left-and-right in case user wants input editing events
+        if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
+            event.stopPropagation();
+        }
+    });
+
+
+
 
     /**
     * @class
