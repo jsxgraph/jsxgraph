@@ -60,8 +60,6 @@ var priv = {
  * @class This element is used to provide a constructor for special texts containing a
  * HTML form input element.
  * For this element, the attribute "display" has to have the value 'html' (which is the default).
- * If the width of element is set with the attribute "cssStyle", the width of the
- * label must be added because cssStyle affects the surrounding div element.
  *
  * <p><b>Setting a CSS class:</b> The attribute <tt>cssClass</tt> affects the HTML div element that contains the input element. To change the CSS properties of the HTML input element a selector of the form
  * <tt>.myinput > input { ... }</tt> has to be used. See the analog example for buttons:
@@ -191,6 +189,21 @@ var priv = {
  *
  * </script><pre>
  *
+ * @example
+ * // change the width of an input field
+ *  let s = board.create('slider', [[-3, 3], [2, 3], [50, 100, 300]]);
+ *  let inp = board.create('input', [-6, 1, 'Math.sin(x)*x', 'f(x)='],{cssStyle:()=>'width:'+s.Value()+'px'});
+ *
+ * </pre><div id="JXG51c4d78b-a7ad-4c34-a983-b3ddae6192d7-1" class="jxgbox" style="width: 300px; height: 300px;"></div>
+ * <script type="text/javascript">
+ *     (function() {
+ *         var board = JXG.JSXGraph.initBoard('JXG51c4d78b-a7ad-4c34-a983-b3ddae6192d7-1',
+ *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
+ *  let s = board.create('slider', [[-3, 3], [2, 3], [50, 100, 300]]);
+ *  let inp = board.create('input', [-6, 1, 'Math.sin(x)*x', 'f(x)='],{cssStyle:()=>'width:'+s.Value()+'px'});
+ *     })();
+ *
+ * </script><pre>
  *
  * @example
  *   Apply CSS classes to label and input tag
