@@ -182,6 +182,11 @@ JXG.extend(
             r0 = Type.evaluate(r);
             r = this.view.intersectionLineCube(p, d, r0);
 
+            // Check if r is infinite. This happens
+            // if this.vec is the zero vector.
+            if (Math.abs(r) === Infinity) {
+                r = 0;
+            }
             return [
                 p[0] + d[0] * r,
                 p[1] + d[1] * r,
