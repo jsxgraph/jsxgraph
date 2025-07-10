@@ -699,7 +699,8 @@ JXG.extend(
  * @constructor
  * @throws {Exception} If the element cannot be constructed with the given parent
  * objects an exception is thrown.
- * @param {number,function_number,function_number,function_JXG.GeometryElement3D} x,y,z,[slide=undefined] The coordinates are given as x, y, z consisting of numbers or functions. If an optional 3D element "slide" is supplied, the point is a glider on that element.
+ * @param {number,function_number,function_number,function_JXG.GeometryElement3D} x,y,z,[slide=undefined] The coordinates are given as x, y, z consisting of numbers or functions. 
+ * If an optional 3D element "slide" is supplied, the point is a glider on that element. At the time of version v1.11, only elements of type line3d are supperted as glider hosts.
  * @param {array,function_JXG.GeometryElement3D} F,[slide=null] Alternatively, the coordinates can be supplied as
  *  <ul>
  *   <li>function returning an array [x,y,z] of length 3 of numbers or
