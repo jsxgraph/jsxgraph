@@ -34,19 +34,19 @@ Website
 - CDNs: Embed JSXGraph via
 
 ```html
-<script type="text/javascript" charset="UTF-8"
+<script charset="UTF-8"
  src="https://cdn.jsdelivr.net/npm/jsxgraph/distrib/jsxgraphcore.js"></script>
 <link rel="stylesheet"
- type="text/css" href="https://cdn.jsdelivr.net/npm/jsxgraph/distrib/jsxgraph.css" />
+ type="text/css" href="https://cdn.jsdelivr.net/npm/jsxgraph/distrib/jsxgraph.css">
  ```
 
 or
 
 ```html
-<script type="text/javascript" charset="UTF-8"
+<script charset="UTF-8"
  src="//cdnjs.cloudflare.com/ajax/libs/jsxgraph/1.4.6/jsxgraphcore.js"></script>
 <link rel="stylesheet"
- type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/jsxgraph/1.4.6/jsxgraph.css" />
+ type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/jsxgraph/1.4.6/jsxgraph.css">
 ```
 
 Please report bugs to our issue tracking system found at
@@ -72,7 +72,7 @@ __HTML template:__
     <meta charset="UTF-8">
     <title>JSXGraph template</title>
     <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
-    <link href="https://cdn.jsdelivr.net/npm/jsxgraph/distrib/jsxgraph.css" rel="stylesheet" type="text/css" />
+    <link href="https://cdn.jsdelivr.net/npm/jsxgraph/distrib/jsxgraph.css" rel="stylesheet" type="text/css">
     <script src="https://cdn.jsdelivr.net/npm/jsxgraph/distrib/jsxgraphcore.js" charset="UTF-8"></script>
 
     <!-- The next line is optional: MathJax -->
