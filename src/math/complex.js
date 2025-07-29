@@ -80,17 +80,17 @@ JXG.Complex = function (x, y) {
      */
     this.imaginary = y || 0;
 
-    /**
-     * Absolute value in the polar form of the complex number. Currently unused.
-     * @type Number
-     */
-    this.absval = 0;
+    // /**
+    //  * Absolute value in the polar form of the complex number. Currently unused.
+    //  * @type Number
+    //  */
+    // this.absval = 0;
 
-    /**
-     * Angle value in the polar form of the complex number. Currently unused.
-     * @type Number
-     */
-    this.angle = 0;
+    // /**
+    //  * Angle value in the polar form of the complex number. Currently unused.
+    //  * @type Number
+    //  */
+    // this.angle = 0;
 };
 
 JXG.extend(
@@ -207,7 +207,26 @@ JXG.extend(
             this.imaginary *= -1;
 
             return this;
+        },
+
+        /**
+         * Absolute value in the polar form, i.e. |z| of the complex number z.
+         * @returns Number
+         */
+        absval: function() {
+            var x = this.real,
+                y = this.imaginary;
+            return Math.sqrt(x * x + y * y);
+        },
+
+        /**
+         * Angle value in the polar form of the complex number (in radians).
+         * @returns Number
+         */
+        angle: function() {
+            return Math.atan2(this.imaginary, this.real);
         }
+
     }
 );
 
