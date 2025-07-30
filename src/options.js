@@ -2580,10 +2580,9 @@ JXG.Options = {
          *     }
          * });
          *
-         * // Generate a logarithmic labelling of the vertical axis.
+         * // Generate a logarithmic labelling of the vertical axis by defining the function generateLabelText directly.
          * board.defaultAxes.y.ticks[0].generateLabelText = function (tick, zero) {
-         *     var value = Math.pow(10, Math.round(tick.usrCoords[2] - zero.usrCoords[2])),
-         *         distance, labelText;
+         *     var value = Math.pow(10, Math.round(tick.usrCoords[2] - zero.usrCoords[2]));
          *     return this.formatLabelText(value);
          * };
          *
@@ -2610,14 +2609,77 @@ JXG.Options = {
          *
          *     // Generate a logarithmic labelling of the vertical axis.
          *     board.defaultAxes.y.ticks[0].generateLabelText = function (tick, zero) {
-         *         var value = Math.pow(10, Math.round(tick.usrCoords[2] - zero.usrCoords[2])),
-         *             distance, labelText;
+         *         var value = Math.pow(10, Math.round(tick.usrCoords[2] - zero.usrCoords[2]));
          *         return this.formatLabelText(value);
          *     };
          *
          *     })();
          *
          * </script><pre>
+         * @example
+         * // Generate a logarithmic labelling of the vertical axis by setting the attribute generateLabelText.
+         * const board = JXG.JSXGraph.initBoard('jxgbox', {
+         *   boundingBox: [-10, 10, 10, -10], axis: true,
+         *   defaultAxes: {
+         *     x: {
+         *       margin: -4,
+         *       ticks: {
+         *         minTicksDistance: 0,
+         *         minorTicks: 4,
+         *         ticksDistance: 3,
+         *         scale: Math.PI,
+         *         scaleSymbol: 'π',
+         *         insertTicks: true
+         *       }
+         *     },
+         *     y: {
+         *       ticks: {
+         *         // Generate a logarithmic labelling of the vertical axis.
+         *         generateLabelText: function (tick, zero) {
+         *           var value = Math.pow(10, Math.round(tick.usrCoords[2] - zero.usrCoords[2]));
+         *           return this.formatLabelText(value);
+         *         }
+         *       }
+         *     }
+         *   }
+         * });
+         *
+         * </pre><div id="JXGa2873c8f-df8d-4a1d-ae15-5f1bdc55a0e9" class="jxgbox" style="width: 300px; height: 300px;"></div>
+         * <script type="text/javascript">
+         *     (function() {
+         *         var board = JXG.JSXGraph.initBoard('JXGa2873c8f-df8d-4a1d-ae15-5f1bdc55a0e9',
+         *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
+         *
+         *         const board = JXG.JSXGraph.initBoard('jxgbox', {
+         *           boundingBox: [-10, 10, 10, -10], axis: true,
+         *           defaultAxes: {
+         *             x: {
+         *               margin: -4,
+         *               ticks: {
+         *                 minTicksDistance: 0,
+         *                 minorTicks: 4,
+         *                 ticksDistance: 3,
+         *                 scale: Math.PI,
+         *                 scaleSymbol: 'π',
+         *                 insertTicks: true
+         *               }
+         *             },
+         *             y: {
+         *               ticks: {
+         *                 // Generate a logarithmic labelling of the vertical axis.
+         *                 generateLabelText: function (tick, zero) {
+         *                   var value = Math.pow(10, Math.round(tick.usrCoords[2] - zero.usrCoords[2]));
+         *                   return this.formatLabelText(value);
+         *                 }
+         *               }
+         *             }
+         *           }
+         *         });
+         *
+         *     })();
+         *
+         * </script><pre>
+         *
          *
          */
         generateLabelText: null,
