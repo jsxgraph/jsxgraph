@@ -149,7 +149,7 @@ JXG.extend(
         },
 
         /**
-         * Update the 2d coordinates of the face
+         * Update the 2D coordinates of the face and determine it's z-index.
          * @function
          * @name Face3D#updateDataArray2D
          * @returns {Object} {X:[], Y:[]}
@@ -183,7 +183,8 @@ JXG.extend(
                     c3d = p.coords[face[j]];
                     c2d = this.view.project3DTo2D(c3d);
                     p.coords2D[face[j]] = c2d;
-                    p.zIndex[face[j]] = Mat.matVecMult(this.view.matrix3DRotShift, c3d)[3];
+                    // p.zIndex[face[j]] = Mat.matVecMult(this.view.matrix3DRotShift, c3d)[3];
+                    p.zIndex[face[j]] = Mat.innerProduct(this.view.matrix3DRotShift[3], c3d);
                 }
                 x.push(c2d[1]);
                 y.push(c2d[2]);

@@ -943,7 +943,7 @@ JXG.extend(
 
         if (this.shift !== undefined && this.evalVisProp('depthorder.enabled')) {
             // Update the zIndices of certain element types.
-            // We do it here in updateRenderer, because the the elements' positions
+            // We do it here in updateRenderer, because the elements' positions
             // are meanwhile updated.
             this.updateZIndices();
 

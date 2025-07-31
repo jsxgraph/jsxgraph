@@ -300,7 +300,8 @@ JXG.extend(
             c3d[1] *= 0.5;
             c3d[2] *= 0.5;
             c3d[3] *= 0.5;
-            this.zIndex = Mat.matVecMult(this.view.matrix3DRotShift, c3d)[3];
+            // this.zIndex = Mat.matVecMult(this.view.matrix3DRotShift, c3d)[3];
+            this.zIndex = Mat.innerProduct(this.view.matrix3DRotShift[3], c3d);
 
             return this;
         }

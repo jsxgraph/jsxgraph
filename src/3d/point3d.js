@@ -415,7 +415,8 @@ JXG.extend(
                     Const.COORDS_BY_USER,
                     this.view.project3DTo2D(c3d)
                 );
-                this.zIndex = Mat.matVecMult(this.view.matrix3DRotShift, c3d)[3];
+                // this.zIndex = Mat.matVecMult(this.view.matrix3DRotShift, c3d)[3];
+                this.zIndex = Mat.innerProduct(this.view.matrix3DRotShift[3], c3d);
             }
             this._c2d = this.element2D.coords.usrCoords.slice();
 
