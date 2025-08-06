@@ -807,7 +807,6 @@ JXG.extend(
                 // The transformations this.matrix3D and mat2D can not be combined at this point,
                 // since the projected vectors have to be normalized in between in project3DTo2D
                 this.viewPortTransform = mat2D;
-
                 objectToClip = this._updateCentralProjection();
                 // this.matrix3D is a 4x4 matrix
                 this.matrix3D = Mat.matMatMult(objectToClip, this.shift);
@@ -845,6 +844,22 @@ JXG.extend(
      * @returns Number
      */
     compareDepth: function (a, b) {
+        // return a.zIndex - b.zIndex;
+        // if (a.type !== Const.OBJECT_TYPE_PLANE3D && b.type !== Const.OBJECT_TYPE_PLANE3D) {
+        //     return a.zIndex - b.zIndex;
+        // } else if (a.type === Const.OBJECT_TYPE_PLANE3D) {
+        //     let bHesse = Mat.innerProduct(a.point.coords, a.normal, 4);
+        //     let po = Mat.innerProduct(b.coords, a.normal, 4);
+        //     let pos = Mat.innerProduct(this.boxToCam[3], a.normal, 4);
+        // console.log(this.boxToCam[3])
+        //     return pos - po;
+        // } else if (b.type === Const.OBJECT_TYPE_PLANE3D) {
+        //     let bHesse = Mat.innerProduct(b.point.coords, b.normal, 4);
+        //     let po = Mat.innerProduct(a.coords, a.normal, 4);
+        //     let pos = Mat.innerProduct(this.boxToCam[3], b.normal, 4);
+        //     console.log('b', pos, po, bHesse)
+        //     return -pos;
+        // }
         return a.zIndex - b.zIndex;
     },
 
@@ -899,6 +914,7 @@ JXG.extend(
                 el = this.objects[id];
                 if ((el.type === Const.OBJECT_TYPE_FACE3D ||
                     el.type === Const.OBJECT_TYPE_LINE3D ||
+                    // el.type === Const.OBJECT_TYPE_PLANE3D ||
                     el.type === Const.OBJECT_TYPE_POINT3D ||
                     el.type === Const.OBJECT_TYPE_POLYGON3D
                     ) &&
