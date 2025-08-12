@@ -5020,7 +5020,7 @@ JXG.Options = {
 
         /**
          * If set to true, this object is only evaluated once and not re-evaluated on update.
-         * This is necessary if you want to have a bord within a foreignObject of another board.
+         * This is necessary if you want to have a board within a foreignObject of another board.
          *
          * @name ForeignObject#evaluateOnlyOnce
          *
