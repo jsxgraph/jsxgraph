@@ -1468,7 +1468,7 @@ JXG.extend(
                     node = rendNode;
                 }
 
-                if (c !== "none") {
+                if (c !== "none" && c !== "" && c !== false) {
                     this._setAttribute(function () {
                         node.setAttributeNS(null, "fill", c);
                     }, el.visPropOld.fillcolor);

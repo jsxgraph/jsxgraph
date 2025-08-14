@@ -354,7 +354,7 @@ JXG.extend(
 
             // type is equal to 'fill' or 'stroke'
             rgba = el.evalVisProp(hl + type + 'color');
-            if (rgba !== "none" && rgba !== false) {
+            if (rgba !== "none" && rgba !== "" && rgba !== false) {
                 o = el.evalVisProp(hl + type + "opacity");
                 o = o > 0 ? o : 0;
 
