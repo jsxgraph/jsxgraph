@@ -45,8 +45,6 @@ JXG.Parse3D = {
     /**
      * Parser for the ASCII STL format, see https://en.wikipedia.org/wiki/STL_(file_format).
      * STL stands for stereo-lithography.
-     * <p>
-     * At the time being only the first model in the file will be returned.
      *
      * @param {String} str String containing STL file format
      * @returns {Array} [[vertices, faces], ...] as list of polyhedra. Each entry is the input for a polyhedron3d.
