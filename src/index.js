@@ -88,6 +88,7 @@ import './3d/face3d.js';
 import './3d/polyhedron3d.js';
 import './3d/sphere3d.js';
 import './3d/surface3d.js';
+import './parser/3dmodels.js';
 import './themes/mono_thin.js';
 
 // The following exports are used to restore granular objects.
