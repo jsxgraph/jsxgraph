@@ -941,7 +941,6 @@ JXG.extend(
                 //     }
                 // }
                 this.depthOrdered[lay].forEach((el) => this.board.renderer.setLayer(el.element2D, lay));
-                // this.depthOrdered[lay].forEach((el) => console.log(el.zIndex));
             }
         }
 
@@ -978,7 +977,7 @@ JXG.extend(
     },
 
     removeObject: function (object, saveMethod) {
-        var i, el;
+        var i, el, lay;
 
         // this.board.removeObject(object, saveMethod);
         if (Type.isArray(object)) {
@@ -1011,15 +1010,15 @@ JXG.extend(
 
         // this.update();
 
+        // Explicitely remove the SVG node
+        if (this.board.renderer.type === 'svg') {
+            lay = this.board.renderer.layer[object.element2D.visProp.layer];
+            if (Type.exists(lay)) {
+                lay.removeChild(object.element2D.rendNode);
+            }
+        }
         this.board.removeObject(object, saveMethod);
-
         // delete this.depthOrdered[12][0];
-        // delete this.depthOrdered[12][1];
-        // delete this.depthOrdered[12][2];
-        // delete this.depthOrdered[12][3];
-        // delete this.depthOrdered[12][4];
-        // delete this.depthOrdered[12][5];
-        // console.log(this.depthOrdered[12])
 
         return this;
     },
