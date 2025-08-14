@@ -249,6 +249,7 @@ JXG.extend(
             c2 = new Coords(Const.COORDS_BY_USER, [bb[2], bb[3]], el.board);
             dx = c2.scrCoords[1] - c1.scrCoords[1];
             dy = c2.scrCoords[2] - c1.scrCoords[2];
+
             x1s = c1.scrCoords[1] + dx * x1;
             y1s = c1.scrCoords[2] + dy * y1;
             x2s = c1.scrCoords[1] + dx * x2;
@@ -318,6 +319,7 @@ JXG.extend(
                     el.evalVisProp('gradientfr')
                 );
             }
+
             gradient.addColorStop(el.evalVisProp('gradientstartoffset'), col);
             gradient.addColorStop(
                 el.evalVisProp('gradientendoffset'),
