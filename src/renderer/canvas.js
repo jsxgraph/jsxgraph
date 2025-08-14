@@ -320,11 +320,13 @@ JXG.extend(
                 );
             }
 
-            gradient.addColorStop(el.evalVisProp('gradientstartoffset'), col);
-            gradient.addColorStop(
-                el.evalVisProp('gradientendoffset'),
-                el.evalVisProp('gradientsecondcolor')
-            );
+            if (col !== "none" && col !== "" && col !== false) {
+                gradient.addColorStop(el.evalVisProp('gradientstartoffset'), col);
+                gradient.addColorStop(
+                    el.evalVisProp('gradientendoffset'),
+                    el.evalVisProp('gradientsecondcolor')
+                );
+            }
             return gradient;
         },
 
