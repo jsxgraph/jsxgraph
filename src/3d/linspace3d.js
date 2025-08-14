@@ -648,7 +648,6 @@ JXG.createLine3D = function (board, parents, attributes) {
     } else {
         // Line defined by point, direction and range
 
-
         // Directions are handled as arrays of length 4, i.e. with homogeneous coordinates.
         if (base !== null) {
             point = Type.providePoints3D(view, [[0, 0, 0]], attributes, 'line3d', ['point'])[0];

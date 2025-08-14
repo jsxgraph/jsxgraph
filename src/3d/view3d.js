@@ -1011,6 +1011,7 @@ JXG.extend(
         // this.update();
 
         // Explicitely remove the SVG node
+        // This is necessary for line3d but not for point3d
         if (this.board.renderer.type === 'svg') {
             lay = this.board.renderer.layer[object.element2D.visProp.layer];
             if (Type.exists(lay)) {
