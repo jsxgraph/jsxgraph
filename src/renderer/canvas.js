@@ -376,11 +376,14 @@ JXG.extend(
                 hasColor = false;
             }
 
-            grad = el.evalVisProp('gradient');
-            if (grad === "linear" || grad === "radial") {
-                this.context.globalAlpha = oo;
-                this.context[targetType + "Style"] = this.updateGradient(el);
-                return hasColor;
+            if (type !== "stroke") {
+                // For the time being, gradients are only supported for fills
+                grad = el.evalVisProp('gradient');
+                if (grad === "linear" || grad === "radial") {
+                    this.context.globalAlpha = oo;
+                    this.context[targetType + "Style"] = this.updateGradient(el);
+                    return hasColor;
+                }
             }
 
             sw = parseFloat(el.evalVisProp(hl + 'strokewidth'));
@@ -987,6 +990,7 @@ JXG.extend(
 
             c1_org = new Coords(Const.COORDS_BY_USER, c1.usrCoords, el.board);
             c2_org = new Coords(Const.COORDS_BY_USER, c2.usrCoords, el.board);
+
 
             this.getPositionArrowHead(el, c1, c2, arrowData);
 
