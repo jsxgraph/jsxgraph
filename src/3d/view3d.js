@@ -901,7 +901,7 @@ JXG.extend(
 
     updateDepthOrdering: function () {
         var id, el,
-            i, layers, lay;
+            i, j, l, layers, lay;
 
         // Collect elements for depth ordering layer-wise
         layers = this.evalVisProp('depthorder.layers');
@@ -940,7 +940,12 @@ JXG.extend(
                 //         console.log(o.visProp.fillcolor, o.zIndex)
                 //     }
                 // }
-                this.depthOrdered[lay].forEach((el) => this.board.renderer.setLayer(el.element2D, lay));
+                l = this.depthOrdered[lay];
+                for (j = 0; j < l; j++) {
+                    this.board.renderer.setLayer(l[j].element2D, lay);
+                }
+                // this.depthOrdered[lay].forEach((el) => this.board.renderer.setLayer(el.element2D, lay));
+                // Attention: forEach prevents deleting an element
             }
         }
 
@@ -977,7 +982,7 @@ JXG.extend(
     },
 
     removeObject: function (object, saveMethod) {
-        var i, el, lay;
+        var i, el;
 
         // this.board.removeObject(object, saveMethod);
         if (Type.isArray(object)) {
@@ -1010,16 +1015,7 @@ JXG.extend(
 
         // this.update();
 
-        // Explicitely remove the SVG node
-        // This is necessary for line3d but not for point3d
-        if (this.board.renderer.type === 'svg') {
-            lay = this.board.renderer.layer[object.element2D.visProp.layer];
-            if (Type.exists(lay)) {
-                lay.removeChild(object.element2D.rendNode);
-            }
-        }
         this.board.removeObject(object, saveMethod);
-        // delete this.depthOrdered[12][0];
 
         return this;
     },
