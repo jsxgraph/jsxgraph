@@ -941,7 +941,7 @@ JXG.extend(
                 //     }
                 // }
                 l = this.depthOrdered[lay];
-                for (j = 0; j < l; j++) {
+                for (j = 0; j < l.length; j++) {
                     this.board.renderer.setLayer(l[j].element2D, lay);
                 }
                 // this.depthOrdered[lay].forEach((el) => this.board.renderer.setLayer(el.element2D, lay));
