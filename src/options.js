@@ -2539,7 +2539,17 @@ JXG.Options = {
          * @type Boolean
          * @default false
          */
-        withLabel: false
+        withLabel: false,
+
+        /**
+         * Decides if the element should be ignored when using auto positioning
+         * for some label.
+         * @name JXG.GeometryElement#ignoreForLabelAutoposition
+         * @type boolean
+         * @default false
+         * @see Label#autoPosition
+         */
+        ignoreForLabelAutoposition: false
 
         // close the meta tag
         /**#@-*/
@@ -2718,7 +2728,8 @@ JXG.Options = {
         label: {
             tabindex: null,
             layer: 7, // line
-            highlight: false
+            highlight: false,
+            autoPosition: false
         },
 
         /**
@@ -3567,7 +3578,9 @@ JXG.Options = {
         labelInArrow: true,
         minorTicksInMargin: false,
         majorTicksInMargin: true,
-        labelInMargin: true
+        labelInMargin: true,
+
+        ignoreForLabelAutoposition: true
 
         // close the meta tag
         /**#@-*/
@@ -4293,7 +4306,9 @@ JXG.Options = {
         label: {
             position: 'lft',
             offset: [10, 10]
-        }
+        },
+
+        ignoreForLabelAutoposition: true
 
         /**#@-*/
     },
@@ -6005,8 +6020,9 @@ JXG.Options = {
         transitionDuration: 0,
         needsRegularUpdate: false,
         tabindex: null,
-        viewport: [0, 0, 0, 0]
+        viewport: [0, 0, 0, 0],
 
+        ignoreForLabelAutoposition: true
         /**#@-*/
     },
 
@@ -6414,6 +6430,10 @@ JXG.Options = {
          * @name Label#autoPosition
          * @see Label#offset
          * @type Boolean
+         * @see GeometryElement#ignoreForLabelAutoposition
+         * @see Label#autoPositionMinDistance
+         * @see Label#autoPositionMaxDistance
+         * @see Label#autoPositionWhitelist
          * @default false
          *
          * @example
@@ -6455,6 +6475,7 @@ JXG.Options = {
          * @name Label#autoPositionMinDistance
          * @see Label#autoPosition
          * @see Label#autoPositionMaxDistance
+         * @see Label#autoPositionWhitelist
          * @type Number
          * @default 12
          *
@@ -6470,6 +6491,7 @@ JXG.Options = {
          * @name Label#autoPositionMaxDistance
          * @see Label#autoPosition
          * @see Label#autoPositionMinDistance
+         * @see Label#autoPositionWhitelist
          * @type Number
          * @default 28
          *
@@ -6481,6 +6503,8 @@ JXG.Options = {
          *
          * @name Label#autoPositionWhitelist
          * @see Label#autoPosition
+         * @see Label#autoPositionMinDistance
+         * @see Label#autoPositionMaxDistance
          * @type Array
          * @default []
          */
