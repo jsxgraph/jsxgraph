@@ -1125,8 +1125,8 @@ JXG.extend(
          *
          * An overlap occurs when either:
          * <ol>
-         * <li> For labels/points: Their bounding boxes intersect
-         * <li> For other objects: The object contains the center point of the box
+         *   <li> For labels/points: Their bounding boxes intersect
+         *   <li> For other objects: The object contains the center point of the box
          * </ol>
          *
          * @private
@@ -1267,7 +1267,7 @@ JXG.extend(
                 x += w / 2;
             }
 
-            // if the label was placed on the bottom side of the element, so the anchory is set to "top"
+            // If the label was placed on the bottom side of the element, so the anchory is set to "top"
             if (si < 0) {
                 cornerPoint[1] = y + h;
                 y += h / 2;
@@ -1276,7 +1276,7 @@ JXG.extend(
                 y -= h / 2;
             }
 
-            // if label was not in bounding box, score is reduced by 1
+            // If label was not in bounding box, score is reduced by 1
             if(
                 cornerPoint[0] < 0 ||
                 cornerPoint[0] > (boundingBox[2] - boundingBox[0]) * this.board.unitX ||
@@ -1286,41 +1286,42 @@ JXG.extend(
                 score -= 1;
             }
 
-            // per conflict, score is reduced by 1
+            // Per conflict, score is reduced by 1
             score -= this.getNumberOfConflicts(x, y, w, h, Type.evaluate(this.visProp.autopositionwhitelist));
 
-            // calculate displacement, minimum score is 0 if radius is minRadius, maximum score is < 1 when radius is maxRadius
+            // Calculate displacement, minimum score is 0 if radius is minRadius, maximum score is < 1 when radius is maxRadius
             score -= radius / this.evalVisProp("autopositionmindistance") / 10 - 0.1;
 
-            // calculate angle between current offset and new offset
+            // Calculate angle between current offset and new offset
             angleCurrentOffset = Math.atan2(currentOffset[1], currentOffset[0]);
 
-            // if angle is negative, add 2*PI to get positive angle
+            // If angle is negative, add 2*PI to get positive angle
             if (angleCurrentOffset < 0) {
                 angleCurrentOffset += 2 * Math.PI;
             }
 
-            // calculate displacement by angle between original label position and new label position, use cos to check if angle is on the right side
-            // if both angles are on the right side and more than 180° apart, add 2*PI. e.g. 0.1 and 6.1 are near each other
+            // Calculate displacement by angle between original label position and new label position, 
+            // use cos to check if angle is on the right side.
+            // If both angles are on the right side and more than 180° apart, add 2*PI. e.g. 0.1 and 6.1 are near each other
             if (co > 0 && Math.cos(angleCurrentOffset) > 0 && Math.abs(angle - angleCurrentOffset) > Math.PI) {
                 angleDifference = Math.abs(angle - angleCurrentOffset - 2 * Math.PI);
             } else {
                 angleDifference = Math.abs(angle - angleCurrentOffset);
             }
 
-            // minimum score is 0 if angle difference is 0, maximum score is pi / 10
+            // Minimum score is 0 if angle difference is 0, maximum score is pi / 10
             score -= angleDifference / 10;
 
             return score;
         },
 
         /**
-         * Automatically positions the label by finding the optimal position
-         * Aims to minimize conflicts while maintaining readability
-         *
-         * The method tests 60 different angles (0 to 2π) at 3 different distances (radii)
-         * It evaluates each position using calculateScore(radius, angle) and chooses the position with the highest score
-         * Then the label's anchor points and offset are adjusted accordingly
+         * Automatically positions the label by finding the optimal position.
+         * Aims to minimize conflicts while maintaining readability.
+         * <p>
+         * The method tests 60 different angles (0 to 2π) at 3 different distances (radii).
+         * It evaluates each position using calculateScore(radius, angle) and chooses the position with the highest score.
+         * Then the label's anchor points and offset are adjusted accordingly.
          *
          * @returns {JXG.Text} Reference to the text object.
          */
