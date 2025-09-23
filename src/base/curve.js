@@ -1124,11 +1124,20 @@ JXG.extend(
             var x, y, xy,
                 c, d, e,
                 lbda,
+                mi, ma, ar,
                 t, dx, dy,
                 dist = 1.5;
 
+            // Shrink domain if necessary
+            mi = this.minX();
+            ma = this.maxX();
+            ar = Numerics.findDomain(this.X, [mi, ma], null, false);
+            ar = Numerics.findDomain(this.Y, ar, null, false);
+            mi = Math.max(ar[0], ar[0]);
+            ma = Math.min(ar[1], ar[1]);
+
             xy = Type.parsePosition(pos);
-            lbda = Type.parseNumber(xy.pos, this.maxX() - this.minX(), 1);
+            lbda = Type.parseNumber(xy.pos, ma - mi, 1);
 
             if (xy.pos.indexOf('fr') < 0 &&
                 xy.pos.indexOf('%') < 0) {
@@ -1136,16 +1145,18 @@ JXG.extend(
                 lbda = 0;
             }
 
-            t = this.minX() + lbda;
+            t = mi + lbda;
+
+            // Fails if x or y are NaN
             x = this.X(t);
             y = this.Y(t);
             c = (new Coords(Const.COORDS_BY_USER, [x, y], this.board)).scrCoords;
 
             e = Mat.eps;
-            if (t < this.minX() + e) {
+            if (t < mi + e) {
                 dx = (this.X(t + e) - this.X(t)) / e;
                 dy = (this.Y(t + e) - this.Y(t)) / e;
-            } else if (t > this.maxX() - e) {
+            } else if (t > ma - e) {
                 dx = (this.X(t) - this.X(t - e)) / e;
                 dy = (this.Y(t) - this.Y(t - e)) / e;
             } else {
@@ -1172,7 +1183,7 @@ JXG.extend(
             return new Coords(Const.COORDS_BY_SCREEN, [x, y], this.board);
         },
 
-        // documented in geometry element
+        // documented in geometryElement
         getLabelAnchor: function () {
             var x, y, pos,
                 // xy, lbda, e,

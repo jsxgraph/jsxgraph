@@ -3659,13 +3659,15 @@ Mat.Numerics = {
      * Find a small enclosing interval of the domain of a function by
      * tightening the input interval x0.
      * <p>
-     * This is a helper function which is used in {@link JXG.Math.Numerics.fminbr}
-     * and {@link JXG.Math.Numerics.fzero}
+     * This is a helper function which is used in {@link JXG.Math.Numerics.fminbr},
+     * {@link JXG.Math.Numerics.fzero}, and  {@link JXG.Curve.getLabelPosition}
      * to avoid search in an interval where the function is mostly undefined.
      *
      * @param {function} f
      * @param {Array} x0 Start interval
      * @param {Object} context Parent object in case f is method of it
+     * @param {Boolean} [outer=true] if true take a proper enclosing array. If false return the domain such that the function is defined
+     * at its  borders.
      * @returns Array
      *
      * @example
@@ -3673,14 +3675,24 @@ Mat.Numerics = {
      * console.log(JXG.Math.Numerics.findDomain(f, [-5, 5]));
      *
      * // Output: [ -0.00020428174445492973, 5 ]
+     *
+     * @example
+     * var f = (x) => Math.sqrt(x);
+     * console.log(JXG.Math.Numerics.findDomain(f, [-5, 5], null, false));
+     *
+     * // Output: [ 0.00020428174562965915, 5 ]
      */
-    findDomain: function (f, x0, context) {
+    findDomain: function (f, x0, context, outer) {
         var a, b, c, fc,
             x,
             gr = 1 - 1 / 1.61803398875,
             eps = 0.001,
             cnt,
             max_cnt = 20;
+
+        if (outer === undefined) {
+            outer = true;
+        }
 
         if (!Type.isArray(x0) || x0.length < 2) {
             throw new Error(
@@ -3706,7 +3718,12 @@ Mat.Numerics = {
                 }
                 cnt++;
             }
-            x[0] = a;
+            if (outer) {
+                x[0] = a;
+            } else {
+                x[0] = b;
+            }
+            // x[0] = a;
         }
 
         a = x[0];
@@ -3726,8 +3743,14 @@ Mat.Numerics = {
                 }
                 cnt++;
             }
-            x[0] = b;
+            if (outer) {
+                x[1] = b;
+            } else {
+                x[1] = a;
+            }
+            // x[1] = b;
         }
+
         return x;
     },
 
