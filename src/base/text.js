@@ -1300,7 +1300,7 @@ JXG.extend(
                 angleCurrentOffset += 2 * Math.PI;
             }
 
-            // Calculate displacement by angle between original label position and new label position, 
+            // Calculate displacement by angle between original label position and new label position,
             // use cos to check if angle is on the right side.
             // If both angles are on the right side and more than 180° apart, add 2*PI. e.g. 0.1 and 6.1 are near each other
             if (co > 0 && Math.cos(angleCurrentOffset) > 0 && Math.abs(angle - angleCurrentOffset) > Math.PI) {
@@ -1338,6 +1338,15 @@ JXG.extend(
                 currentAngle,
                 numAngles = 60,
                 numRadius = 4;
+
+            if (
+                this === this.board.infobox ||
+                !this.element ||
+                !this.visPropCalc.visible ||
+                !this.evalVisProp('islabel')
+            ) {
+                return this;
+            }
 
             // Calculate current position
             currentRadius = Math.sqrt(currentOffset[0] * currentOffset[0] + currentOffset[1] * currentOffset[1]);
