@@ -5815,7 +5815,9 @@ JXG.extend(
          */
         updateRenderer: function () {
             var el,
-                len = this.objectsList.length;
+                len = this.objectsList.length,
+                autoPositionLabelList = [],
+                currentIndex, randomIndex;
 
             if (!this.renderer) {
                 return;
@@ -5838,8 +5840,30 @@ JXG.extend(
                 this.updateRendererCanvas();
             } else {
                 for (el = 0; el < len; el++) {
+                    if (this.objectsList[el].visProp.islabel && this.objectsList[el].visProp.autoposition) {
+                        autoPositionLabelList.push(el);
+                    } else {
                     this.objectsList[el].updateRenderer();
                 }
+            }
+
+                currentIndex = autoPositionLabelList.length;
+
+                // Randomize the order of the labels
+                while (currentIndex !== 0) {
+                    randomIndex = Math.floor(Math.random() * currentIndex);
+                    currentIndex--;
+                    [autoPositionLabelList[currentIndex], autoPositionLabelList[randomIndex]] = [autoPositionLabelList[randomIndex], autoPositionLabelList[currentIndex]];
+                }
+
+                for (el = 0; el < autoPositionLabelList.length; el++) {
+                    this.objectsList[autoPositionLabelList[el]].updateRenderer();
+                }
+                /*
+                for (el = autoPositionLabelList.length - 1; el >= 0; el--) {
+                    this.objectsList[autoPositionLabelList[el]].updateRenderer();
+                }
+                */
             }
             return this;
         },
