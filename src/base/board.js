@@ -475,6 +475,7 @@ JXG.Board = function (container, renderer, id,
     this.focusObjects = [];
 
     if (this.attr.showcopyright) {
+        this.renderer.displayLogo(Const.licenseLogo, parseInt(this.options.text.fontSize, 10), this);
         this.renderer.displayCopyright(Const.licenseText, parseInt(this.options.text.fontSize, 10));
     }
 
@@ -6641,6 +6642,7 @@ JXG.extend(
                             if (node) {
                                 node.style.display = ((Type.evaluate(value)) ? 'inline' : 'none');
                             } else if (Type.evaluate(value)) {
+                                this.renderer.displayLogo(Const.licenseLogo, parseInt(this.options.text.fontSize, 10));
                                 this.renderer.displayCopyright(Const.licenseText, parseInt(this.options.text.fontSize, 10));
                             }
                         }

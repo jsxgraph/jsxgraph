@@ -1137,12 +1137,31 @@ JXG.extend(
         displayCopyright: function (str, fontSize) {
             var context = this.context;
 
-            // this should be called on EVERY update, otherwise it won't be shown after the first update
+            // This should be called on EVERY update, otherwise it won't be shown after the first update
             context.save();
             context.font = fontSize + "px Arial";
             context.fillStyle = "#aaa";
             context.lineWidth = 0.5;
-            context.fillText(str, 10, 2 + fontSize);
+            context.fillText(str, 3 + 1.3 * fontSize, 2 + fontSize);
+            context.restore();
+        },
+
+        displayLogo: function (str, fontSize, board) {
+            var context = this.context;
+
+            if (!Type.exists(board._logo_image)) {
+                board._logo_image = new Image();
+                board._logo_image.src = str;
+            }
+            board._logo_image.onload = function() {
+                context.save();
+                context.globalAlpha = 0.3;
+                context.drawImage(board._logo_image, 3, 3, fontSize, fontSize);
+                context.restore();
+            };
+            context.save();
+            context.globalAlpha = 0.3;
+            context.drawImage(board._logo_image, 3, 3, fontSize, fontSize);
             context.restore();
         },
 
@@ -1631,6 +1650,7 @@ JXG.extend(
             this.context.clearRect(0, 0, this.canvasRoot.width, this.canvasRoot.height);
 
             if (board && board.attr.showcopyright) {
+                this.displayLogo(JXG.licenseLogo, 12, board);
                 this.displayCopyright(JXG.licenseText, 12);
             }
         },

@@ -1018,6 +1018,7 @@ JXG.extend(
          * @param {Number} fontsize Size of the font the copyright notice is written in
          */
         displayCopyright: function (str, fontsize) { /* stub */ },
+        displayLogo: function (str, fontsize) { /* stub */ },
 
         /**
          * An internal text is a {@link JXG.Text} element which is drawn using only
