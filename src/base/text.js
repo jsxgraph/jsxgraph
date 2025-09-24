@@ -29,6 +29,17 @@
     and <https://opensource.org/licenses/MIT/>.
  */
 
+/*
+    Some functionalities in this file were developed as part of a software project
+    with students. We would like to thank all contributors for their help:
+
+    Winter semester 2024/2025:
+        Philipp Ditz,
+        Florian Hein,
+        Pirmin Hinderling,
+        Tim Sauer
+ */
+
 /*global JXG: true, define: true, window: true*/
 /*jslint nomen: true, plusplus: true*/
 
