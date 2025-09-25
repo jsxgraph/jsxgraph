@@ -59,7 +59,7 @@ constants =
      * @name JXG.licenseText
      * @type String
      */
-    licenseText: "JSXGraph v" + version + " Copyright (C) https://jsxgraph.org",
+    licenseText: "JSXGraph v" + version + " \u00A9 jsxgraph.org",
 
     /**
      * JSXGraph logo: base64 data-URL of img/png/screen/jsxgraph-logo_black-square-solid.png
