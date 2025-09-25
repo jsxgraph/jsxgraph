@@ -68,13 +68,13 @@ import Point from "../base/point.js";
  *   })();
  * </script><pre>
  * @example
- * // Create a slider taking integer values between 1 and 50. Initial value is 50.
- * var s = board.create('slider', [[1, 3], [3, 1], [0, 10, 50]], {snapWidth: 1, ticks: { drawLabels: true }});
+ * // Create a slider taking integer values between 1 and 5. Initial value is 3.
+ * var s = board.create('slider', [[1, 3], [3, 1], [0, 3, 5]], {snapWidth: 1, ticks: { drawLabels: true }});
  * </pre><div class="jxgbox" id="JXGe17128e6-a25d-462a-9074-49460b0d66f4" style="width: 200px; height: 200px;"></div>
  * <script type="text/javascript">
  *   (function () {
  *     var board = JXG.JSXGraph.initBoard('JXGe17128e6-a25d-462a-9074-49460b0d66f4', {boundingbox: [-1, 5, 5, -1], axis: true, showcopyright: false, shownavigation: false});
- *     var s = board.create('slider', [[1, 3], [3, 1], [1, 10, 50]], {snapWidth: 1, ticks: { drawLabels: true }});
+ *     var s = board.create('slider', [[1, 3], [3, 1], [1, 3, 5]], {snapWidth: 1, ticks: { drawLabels: true }});
  *   })();
  * </script><pre>
  * @example
@@ -177,6 +177,35 @@ import Point from "../base/point.js";
  *         name:'a',
  *         point1: {frozen: true},
  *         point2: {frozen: true}
+ *     });
+ *
+ *     })();
+ *
+ * </script><pre>
+ *
+ * @example
+ * // Use MathJax for slider label (don't forget to load MathJax)
+ * var s = board.create('slider', [[-3, 2], [2, 2], [-10, 1, 10]], {
+ *     name: 'A^{(2)}',
+ *     suffixLabel: '\\(A^{(2)} = ',
+ *     unitLabel: ' \\;km/h ',
+ *     postLabel: '\\)',
+ *     label: {useMathJax: true}
+ * });
+ *
+ * </pre><div id="JXG76e78c5f-3598-4d44-b43f-1d78fd15302c" class="jxgbox" style="width: 300px; height: 300px;"></div>
+ * <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" id="MathJax-script"></script>
+ * <script type="text/javascript">
+ *     (function() {
+ *         var board = JXG.JSXGraph.initBoard('JXG76e78c5f-3598-4d44-b43f-1d78fd15302c',
+ *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
+ *     // Use MathJax for slider label (don't forget to load MathJax)
+ *     var s = board.create('slider', [[-3,2], [2,2],[-10,1,10]], {
+ *         name: 'A^{(2)}',
+ *         suffixLabel: '\\(A^{(2)} = ',
+ *         unitLabel: ' \\;km/h ',
+ *         postLabel: '\\)',
+ *         label: {useMathJax: true}
  *     });
  *
  *     })();

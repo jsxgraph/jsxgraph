@@ -6239,7 +6239,8 @@ JXG.Options = {
          *          The label is positioned x pixels from the starting point.
          *          For non-lines, 0% is taken instead.
          *   </ul>
-         *   'len' will fail if the domain of a curve is not connected.
+         *   If the domain of a curve is not connected, a position of the label close to the line
+         *   between the first and last point of the curve is chosen.
          * <li> 'side' is either 'left' or 'right'. The label is positioned to the left or right of the path, when moving from the
          * first point to the last. For circles, 'left' means inside of the circle, 'right' means outside of the circle.
          * The distance of the label from the path can be controlled by {@link Label#distance}.

@@ -1147,9 +1147,16 @@ JXG.extend(
 
             t = mi + lbda;
 
-            // Fails if x or y are NaN
             x = this.X(t);
             y = this.Y(t);
+            // If x or y are NaN, the label is set to the line
+            // between the first and last point.
+            if (isNaN(x + y)) {
+                lbda /= (ma - mi);
+                t = mi + lbda;
+                x = this.X(mi) + lbda * (this.X(ma) - this.X(mi));
+                y = this.Y(mi) + lbda * (this.Y(ma) - this.Y(mi));
+            }
             c = (new Coords(Const.COORDS_BY_USER, [x, y], this.board)).scrCoords;
 
             e = Mat.eps;
@@ -1163,6 +1170,8 @@ JXG.extend(
                 dx = 0.5 * (this.X(t + e) - this.X(t - e)) / e;
                 dy = 0.5 * (this.Y(t + e) - this.Y(t - e)) / e;
             }
+            dx = isNaN(dx) ? 1. : dx;
+            dy = isNaN(dy) ? 1. : dy;
             d = Mat.hypot(dx, dy);
 
             if (xy.side === 'left') {
