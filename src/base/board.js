@@ -4867,7 +4867,7 @@ JXG.extend(
                 el = this.objectsList[ob];
 
                 if (Type.exists(el.coords)) {
-                    if (el.evalVisProp('frozen')) {
+                    if (el.evalVisProp('frozen') === true) {
                         if (el.is3D) {
                             el.element2D.coords.screen2usr();
                         } else {
