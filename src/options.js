@@ -8438,6 +8438,7 @@ JXG.Options = {
             withLabel: false,
             visible: false,
             fixed: true,
+            // frozen: 'inherit',
             name: ''
         },
 
@@ -8453,6 +8454,7 @@ JXG.Options = {
             withLabel: false,
             visible: false,
             fixed: true,
+            // frozen: 'inherit',
             name: ''
         },
 
