@@ -474,8 +474,11 @@ JXG.Board = function (container, renderer, id,
      */
     this.focusObjects = [];
 
-    if (this.attr.showcopyright) {
+    if (this.attr.showlogo) {
         this.renderer.displayLogo(Const.licenseLogo, parseInt(this.options.text.fontSize, 10), this);
+    }
+
+    if (this.attr.showcopyright) {
         this.renderer.displayCopyright(Const.licenseText, parseInt(this.options.text.fontSize, 10));
     }
 
@@ -6598,7 +6601,7 @@ JXG.extend(
                         this.setBoundingBox(this.getBoundingBox(), value, 'keep');
                         break;
 
-                    /* eslint-disable no-fallthrough */
+                    // /* eslint-disable no-fallthrough */
                     case 'document':
                     case 'maxboundingbox':
                         this[key] = value;
@@ -6642,17 +6645,30 @@ JXG.extend(
                             if (node) {
                                 node.style.display = ((Type.evaluate(value)) ? 'inline' : 'none');
                             } else if (Type.evaluate(value)) {
-                                this.renderer.displayLogo(Const.licenseLogo, parseInt(this.options.text.fontSize, 10));
                                 this.renderer.displayCopyright(Const.licenseText, parseInt(this.options.text.fontSize, 10));
                             }
                         }
+                        break;
+
+                    case 'showlogo':
+                        if (this.renderer.type === 'svg') {
+                            node = this.containerObj.ownerDocument.getElementById(
+                                this.renderer.uniqName('licenseLogo')
+                            );
+                            if (node) {
+                                node.style.display = ((Type.evaluate(value)) ? 'inline' : 'none');
+                            } else if (Type.evaluate(value)) {
+                                this.renderer.displayLogo(Const.licenseLogo, parseInt(this.options.text.fontSize, 10));
+                            }
+                        }
+                        break;
 
                     default:
                         if (Type.exists(this.attr[key])) {
                             this._set(key, value);
                         }
                         break;
-                    /* eslint-enable no-fallthrough */
+                    // /* eslint-enable no-fallthrough */
                 }
             }
 

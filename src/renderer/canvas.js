@@ -1134,20 +1134,26 @@ JXG.extend(
         /* ********* Text related stuff *********** */
 
         // Already documented in JXG.AbstractRenderer
-        displayCopyright: function (str, fontSize) {
-            var context = this.context;
+        displayCopyright: function (str, fontsize) {
+            var context = this.context,
+                x = 5 + 1.8 * fontsize,
+                y = 5 + fontsize,
+                alpha = 0.2;
 
             // This should be called on EVERY update, otherwise it won't be shown after the first update
             context.save();
-            context.font = fontSize + "px Arial";
-            context.fillStyle = "#aaa";
+            context.font = fontsize + "px Arial";
+            context.globalAlpha = alpha;
             context.lineWidth = 0.5;
-            context.fillText(str, 3 + 1.3 * fontSize, 2 + fontSize);
+            context.fillText(str + '.', x, y); // Distinguish svg and canvas by this dot
             context.restore();
         },
 
-        displayLogo: function (str, fontSize, board) {
-            var context = this.context;
+        // Already documented in JXG.AbstractRenderer
+        displayLogo: function (str, fontsize, board) {
+            var context = this.context,
+                s = 1.5 * fontsize,
+                alpha = 0.2;
 
             if (!Type.exists(board._logo_image)) {
                 board._logo_image = new Image();
@@ -1155,13 +1161,13 @@ JXG.extend(
             }
             board._logo_image.onload = function() {
                 context.save();
-                context.globalAlpha = 0.3;
-                context.drawImage(board._logo_image, 3, 3, fontSize, fontSize);
+                context.globalAlpha = alpha;
+                context.drawImage(board._logo_image, 5, 5, s, s);
                 context.restore();
             };
             context.save();
-            context.globalAlpha = 0.3;
-            context.drawImage(board._logo_image, 3, 3, fontSize, fontSize);
+            context.globalAlpha = alpha;
+            context.drawImage(board._logo_image, 5, 5, s, s);
             context.restore();
         },
 
@@ -1649,8 +1655,11 @@ JXG.extend(
             this.context.save();
             this.context.clearRect(0, 0, this.canvasRoot.width, this.canvasRoot.height);
 
-            if (board && board.attr.showcopyright) {
+            if (board && board.attr.showlogo) {
                 this.displayLogo(JXG.licenseLogo, 12, board);
+            }
+
+            if (board && board.attr.showcopyright) {
                 this.displayCopyright(JXG.licenseText, 12);
             }
         },

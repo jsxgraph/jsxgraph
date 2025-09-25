@@ -605,31 +605,38 @@ JXG.extend(
 
         // Already documented in JXG.AbstractRenderer
         displayCopyright: function (str, fontsize) {
-            var node, t;
+            var node, t,
+                x = 5 + 1.8 * fontsize,
+                y = 5 + fontsize,
+                alpha = 0.2;
 
             node = this.createPrim("text", 'licenseText');
-            node.setAttributeNS(null, 'x', 3 + 1.3 * fontsize + 'px' /*'20px'*/);
-            node.setAttributeNS(null, 'y', 2 + fontsize + 'px');
+            node.setAttributeNS(null, 'x', x + 'px');
+            node.setAttributeNS(null, 'y', y + 'px');
             node.setAttributeNS(null, 'style', 'font-family:Arial,Helvetica,sans-serif; font-size:' +
-                fontsize + 'px; fill:#356AA0;  opacity:0.3;');
-            node.setAttributeNS(null, 'aria-hidden', 'true');  // should NEVER be in screen reader
+                fontsize + 'px; opacity:' + alpha + ';');
+                // fill:#356AA0;
+            node.setAttributeNS(null, 'aria-hidden', 'true');
 
             t = this.container.ownerDocument.createTextNode(str);
             node.appendChild(t);
             this.appendChildPrim(node, 0);
         },
 
+        // Already documented in JXG.AbstractRenderer
         displayLogo: function (str, fontsize) {
-            var node;
+            var node,
+                s = 1.5 * fontsize,
+                alpha = 0.2;
 
             node = this.createPrim("image", 'licenseLogo');
-            node.setAttributeNS(null, 'x', '3px');
-            node.setAttributeNS(null, 'y', '3px');
-            node.setAttributeNS(null, 'width', fontsize + 'px');
-            node.setAttributeNS(null, 'height', fontsize + 'px');
+            node.setAttributeNS(null, 'x', '5px');
+            node.setAttributeNS(null, 'y', '5px');
+            node.setAttributeNS(null, 'width', s + 'px');
+            node.setAttributeNS(null, 'height', s + 'px');
             node.setAttributeNS(null, "preserveAspectRatio", "none");
-            node.setAttributeNS(null, 'style', 'opacity:0.3;');
-            node.setAttributeNS(null, 'aria-hidden', 'true');  // should NEVER be in screen reader
+            node.setAttributeNS(null, 'style', 'opacity:' + alpha + ';');
+            node.setAttributeNS(null, 'aria-hidden', 'true');
 
             node.setAttributeNS(this.xlinkNamespace, "xlink:href", str);
             this.appendChildPrim(node, 0);

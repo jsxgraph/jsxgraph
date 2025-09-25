@@ -1016,8 +1016,18 @@ JXG.extend(
          * Shows a small copyright notice in the top left corner of the board.
          * @param {String} str The copyright notice itself
          * @param {Number} fontsize Size of the font the copyright notice is written in
+         * @see JXG.AbstractRenderer#displayLogo
+         * @see Text#fontSize
          */
         displayCopyright: function (str, fontsize) { /* stub */ },
+
+        /**
+         * Shows a small JSXGraph logo in the top left corner of the board.
+         * @param {String} str The data-URL of the logo
+         * @param {Number} fontsize Size of the font the copyright notice is written in
+         * @see JXG.AbstractRenderer#displayCopyright
+         * @see Text#fontSize
+         */
         displayLogo: function (str, fontsize) { /* stub */ },
 
         /**

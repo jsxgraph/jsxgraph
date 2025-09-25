@@ -1201,7 +1201,7 @@ JXG.Options = {
         showClearTraces: false,
 
         /**
-         * Show copyright string in canvas.
+         * Show copyright string in the top left corner of the board.
          *
          * @name JXG.Board#showCopyright
          * @type Boolean
@@ -1237,6 +1237,15 @@ JXG.Options = {
          * @default true
          */
         showInfobox: true,
+
+        /**
+         * Show JSXGraph logo in the top left corner of the board.
+         *
+         * @name JXG.Board#showLogo
+         * @type Boolean
+         * @default true
+         */
+        showLogo: true,
 
         /**
          * Display of navigation arrows and zoom buttons in the navigation bar.
