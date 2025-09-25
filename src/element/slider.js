@@ -172,8 +172,7 @@ import Point from "../base/point.js";
  * // Create a "frozen" slider
  * var sli = board.create('slider', [[-4, 4], [-1.5, 4], [-10, 1, 10]], {
  *     name:'a',
- *     point1: {frozen: true},
- *     point2: {frozen: true}
+ *     frozen: true
  * });
  *
  * </pre><div id="JXG23afea4f-2e91-4006-a505-2895033cf1fc" class="jxgbox" style="width: 300px; height: 300px;"></div>
@@ -183,8 +182,7 @@ import Point from "../base/point.js";
  *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
  *     var sli = board.create('slider', [[-4, 4], [-1.5, 4], [-10, 1, 10]], {
  *         name:'a',
- *         point1: {frozen: true},
- *         point2: {frozen: true}
+ *         frozen: true
  *     });
  *
  *     })();

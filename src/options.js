@@ -1729,7 +1729,6 @@ JXG.Options = {
          * If true the element is fixed and can not be dragged around. The element
          * will even stay at its position on zoom and moveOrigin events.
          * Only free elements like points, texts, images, curves can be frozen.
-         * For slider elements, the subobjects point1 and point2 have to be "frozen".
          *
          * @type Boolean
          * @default false
@@ -1739,8 +1738,7 @@ JXG.Options = {
          * var txt = board.create('text', [1, 2, 'Hello'], {frozen: true, fontSize: 24});
          * var sli = board.create('slider', [[-4, 4], [-1.5, 4], [-10, 1, 10]], {
          *     name:'a',
-         *     point1: {frozen: true},
-         *     point2: {frozen: true}
+         *     frozen: true
          * });
          *
          * </pre><div id="JXG02f88c9d-8c0a-4174-9219-f0ea43749159" class="jxgbox" style="width: 300px; height: 300px;"></div>
@@ -1751,8 +1749,7 @@ JXG.Options = {
          *     var txt = board.create('text', [1, 2, 'Hello'], {frozen: true, fontSize: 24});
          *     var sli = board.create('slider', [[-4, 4], [-1.5, 4], [-10, 1, 10]], {
          *         name:'a',
-         *         point1: {frozen: true},
-         *         point2: {frozen: true}
+         *         frozen: true
          *     });
          *
          *     })();
@@ -6591,7 +6588,7 @@ JXG.Options = {
         strokeWidth: 5,
 
         /**
-         * The element is fixed and can not be dragged around. The legend will even stay at its position on zoom and
+         * The element can be fixed and may not be dragged around. If true, the legend will even stay at its position on zoom and
          * moveOrigin events.
          * @name Legend#frozen
          * @type Boolean
@@ -8438,7 +8435,7 @@ JXG.Options = {
             withLabel: false,
             visible: false,
             fixed: true,
-            // frozen: 'inherit',
+            frozen: 'inherit',
             name: ''
         },
 
@@ -8454,7 +8451,7 @@ JXG.Options = {
             withLabel: false,
             visible: false,
             fixed: true,
-            // frozen: 'inherit',
+            frozen: 'inherit',
             name: ''
         },
 

@@ -1303,7 +1303,12 @@ JXG.extend(
 
         /**
          * Collects all elements below the current mouse pointer and fulfilling the following constraints:
-         * <ul><li>isDraggable</li><li>visible</li><li>not fixed</li><li>not frozen</li></ul>
+         * <ul>
+         * <li>isDraggable</li>
+         * <li>visible</li>
+         * <li>not fixed</li>
+         * <li>not frozen</li>
+         * </ul>
          * @param {Number} x Current mouse/touch coordinates
          * @param {Number} y current mouse/touch coordinates
          * @param {Object} evt An event object
@@ -4859,15 +4864,30 @@ JXG.extend(
          * @returns {JXG.Board} Reference to this board.
          **/
         updateCoords: function () {
-            var el,
-                ob,
+            var el, ob,
+                froz, e, o, f,
                 len = this.objectsList.length;
 
             for (ob = 0; ob < len; ob++) {
                 el = this.objectsList[ob];
 
                 if (Type.exists(el.coords)) {
-                    if (el.evalVisProp('frozen') === true) {
+                    froz = el.evalVisProp('frozen');
+                    if (froz === 'inherit') {
+                        // Search if a descendant of 'el' is set to 'frozen'.
+                        // If yes, set element 'el' as frozen, too.
+                        for (e in el.descendants/*el.childElements*/) {
+                            if (el.descendants.hasOwnProperty(e)) {
+                                o = el.descendants[e];
+                                f = o.evalVisProp('frozen');
+                                if (f === true) {
+                                    froz = true;
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                    if (froz === true) {
                         if (el.is3D) {
                             el.element2D.coords.screen2usr();
                         } else {
