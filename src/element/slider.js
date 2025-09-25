@@ -69,17 +69,25 @@ import Point from "../base/point.js";
  * </script><pre>
  * @example
  * // Create a slider taking integer values between 1 and 5. Initial value is 3.
- * var s = board.create('slider', [[1, 3], [3, 1], [0, 3, 5]], {snapWidth: 1, ticks: { drawLabels: true }});
+ * var s = board.create('slider', [[1, 3], [3, 1], [0, 3, 5]], {
+ *     snapWidth: 1,
+ *     minTicksDistance: 60,
+ *     drawLabels: false
+ * });
  * </pre><div class="jxgbox" id="JXGe17128e6-a25d-462a-9074-49460b0d66f4" style="width: 200px; height: 200px;"></div>
  * <script type="text/javascript">
  *   (function () {
  *     var board = JXG.JSXGraph.initBoard('JXGe17128e6-a25d-462a-9074-49460b0d66f4', {boundingbox: [-1, 5, 5, -1], axis: true, showcopyright: false, shownavigation: false});
- *     var s = board.create('slider', [[1, 3], [3, 1], [1, 3, 5]], {snapWidth: 1, ticks: { drawLabels: true }});
+ *     var s = board.create('slider', [[1, 3], [3, 1], [1, 3, 5]], {
+ *       snapWidth: 1,
+ *       minTicksDistance: 60,
+ *       drawLabels: false
+ *     });
  *   })();
  * </script><pre>
  * @example
  *     // Draggable slider
- *     var s1 = board.create('slider', [[-3,1], [2,1],[-10,1,10]], {
+ *     var s1 = board.create('slider', [[-3, 1], [2, 1],[-10, 1, 10]], {
  *         visible: true,
  *         snapWidth: 2,
  *         point1: {fixed: false},
