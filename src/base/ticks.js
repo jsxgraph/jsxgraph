@@ -958,7 +958,7 @@ JXG.extend(
                 this.setTicksSizeVariables(labelVal);
             }
 
-            ev_mt = this.evalVisProp('minorticks')
+            ev_mt = this.evalVisProp('minorticks');
             // Test if tick is a major tick.
             // This is the case if tickPosition/ticksDelta is
             // a multiple of the number of minorticks+1
