@@ -2390,7 +2390,7 @@ JXG.Options = {
          *
          * @name JXG.GeometryElement#tabindex
          * @type Number
-         * @default 0
+         * @default -1
          * @see JXG.Board#keyboard
          * @see JXG.GeometryElement#fixed
          * @see JXG.GeometryElement#visible
