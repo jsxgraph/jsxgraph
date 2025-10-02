@@ -474,7 +474,7 @@ JXG.Board = function (container, renderer, id,
      */
     this.focusObjects = [];
 
-    if (this.attr.showlogo) {
+    if (this.attr.showcopyright || this.attr.showlogo) {
         this.renderer.displayLogo(Const.licenseLogo, parseInt(this.options.text.fontSize, 10), this);
     }
 
@@ -6668,6 +6668,7 @@ JXG.extend(
                                 this.renderer.displayCopyright(Const.licenseText, parseInt(this.options.text.fontSize, 10));
                             }
                         }
+                        this._set(key, value);
                         break;
 
                     case 'showlogo':
@@ -6681,6 +6682,7 @@ JXG.extend(
                                 this.renderer.displayLogo(Const.licenseLogo, parseInt(this.options.text.fontSize, 10));
                             }
                         }
+                        this._set(key, value);
                         break;
 
                     default:

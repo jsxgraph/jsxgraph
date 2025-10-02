@@ -1655,7 +1655,7 @@ JXG.extend(
             this.context.save();
             this.context.clearRect(0, 0, this.canvasRoot.width, this.canvasRoot.height);
 
-            if (board && board.attr.showlogo) {
+            if (board && (board.attr.showcopyright || board.attr.showlogo)) {
                 this.displayLogo(JXG.licenseLogo, 12, board);
             }
 

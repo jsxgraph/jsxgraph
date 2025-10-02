@@ -1201,9 +1201,10 @@ JXG.Options = {
         showClearTraces: false,
 
         /**
-         * Show copyright string in the top left corner of the board.
+         * Show copyright string and logo in the top left corner of the board.
          *
          * @name JXG.Board#showCopyright
+         * @see JXG.Board#showLogo
          * @type Boolean
          * @default true
          */
@@ -1239,13 +1240,15 @@ JXG.Options = {
         showInfobox: true,
 
         /**
-         * Show JSXGraph logo in the top left corner of the board.
+         * Show JSXGraph logo in the top left corner of the board anyhow
+         * even if {@link JXG.Board#showCopyright} is false.
          *
          * @name JXG.Board#showLogo
          * @type Boolean
-         * @default true
+         * @default false
+         * @see JXG.Board#showCopyright
          */
-        showLogo: true,
+        showLogo: false,
 
         /**
          * Display of navigation arrows and zoom buttons in the navigation bar.
