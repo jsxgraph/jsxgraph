@@ -1136,8 +1136,8 @@ JXG.extend(
         // Already documented in JXG.AbstractRenderer
         displayCopyright: function (str, fontsize) {
             var context = this.context,
-                x = 5 + 1.8 * fontsize,
-                y = 5 + fontsize,
+                x = 4 + 1.8 * fontsize,
+                y = 6 + fontsize,
                 alpha = 0.2;
 
             // This should be called on EVERY update, otherwise it won't be shown after the first update
