@@ -5,7 +5,8 @@ New features
 -----------
 
 - New logo files
-- 3D STL parser for polyhedron3d
+- 3D: STL (ASCII) parser for polyhedron3d
+- 3D: new method polyhedron3d.toSTL()
 - New board attribute showLogo. Logic: showLogo OR showCopyright
 - Complex numbers: new methods abs(), angle()
 - New method: Line.getBoundingBox()
