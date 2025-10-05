@@ -1,3 +1,39 @@
+1.12.0
+===
+
+New features
+-----------
+
+- New logo files
+- 3D STL parser for polyhedron3d
+- New board attribute showLogo. Logic: showLogo OR showCopyright
+- Complex numbers: new methods abs(), angle()
+- New method: Line.getBoundingBox()
+- CoordsElements (points, texts, images): add parameter maxRounds to startAnimation
+
+Improvements
+------------
+
+- Simplify use of attribute frozen, especially for sliders
+- Improved autoposition algorithm for labels
+- Clipping of implicit curves
+- 3D rotations: enable rotation around point, rotation of general line
+- API docs: 3D transformations
+- Depth order: improved correctness and speed up
+- Shorten copyright string, add logo
+
+Bug fixes
+---------
+
+- Stop event propagation on input field
+- Arrow rendering
+- Vanishing 3D line
+- 3D removeObject()
+- Canvas renderer: gradient color on lines
+- Curve.findDomain(), Curve.getLabelPosition
+- Label positioning on disconnected curves
+
+
 1.11.1
 ===
 

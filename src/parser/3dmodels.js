@@ -88,8 +88,8 @@ JXG.Parse3D = {
      *             }
      *         );
      *
-     *         // Tetrahedron
-     *         var model = `solid m
+     *  // Tetrahedron
+     *  var model = `solid m
      *  facet normal 0 0 0
      *    outer loop
      *      vertex 0 0 0
@@ -120,7 +120,7 @@ JXG.Parse3D = {
      *   endfacet
      * endsolid m`;
      *
-     *         var m = JXG.Parse3D.STL(model);
+     * var m = JXG.Parse3D.STL(model);
      *
      *  for (let i = 0; i < m.length; i++) {
      *      view.create('polyhedron3d', m[i], {
@@ -180,8 +180,8 @@ JXG.Parse3D = {
      *                 }
      *             );
      *
-     *             // Tetrahedron
-     *             var model = `solid m
+     *   // Tetrahedron
+     *   var model = `solid m
      *      facet normal 0 0 0
      *        outer loop
      *          vertex 0 0 0
