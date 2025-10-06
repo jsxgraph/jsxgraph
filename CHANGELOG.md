@@ -4,9 +4,8 @@
 New features
 -----------
 
-- 3D: STL (ASCII) parser for polyhedron3d
-- 3D: new method polyhedron3d.toSTL()
-- New board attribute showLogo. Logic: showLogo OR showCopyright
+- 3D: STL file format (ASCII) parser / writer for polyhedron3d
+- New board attribute showLogo. Display logic is: showLogo OR showCopyright
 - Complex numbers: new methods abs(), angle()
 - New method: Line.getBoundingBox()
 - CoordsElements (points, texts, images): add parameter maxRounds to startAnimation
@@ -21,6 +20,7 @@ Improvements
 - API docs: 3D transformations
 - Depth order: improved correctness and speed up
 - Shorten copyright string, add logo
+- New favicon files
 
 Bug fixes
 ---------
