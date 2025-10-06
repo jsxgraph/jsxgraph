@@ -59,7 +59,6 @@ New features
 
 - New element `polyhedron3d`
 - Depth ordering of 3D elements: Generalize font/back detection of 3D points to other elements
-- Depth ordering of 3D elements: Generalize font/back detection of 3D points to other elements
 - Shader attributes for polyhedron3d
 - Shader for polyhedron3d
 - Attribute functions support the targeted geometry element as parameter
