@@ -68,18 +68,26 @@ import Point from "../base/point.js";
  *   })();
  * </script><pre>
  * @example
- * // Create a slider taking integer values between 1 and 50. Initial value is 50.
- * var s = board.create('slider', [[1, 3], [3, 1], [0, 10, 50]], {snapWidth: 1, ticks: { drawLabels: true }});
+ * // Create a slider taking integer values between 1 and 5. Initial value is 3.
+ * var s = board.create('slider', [[1, 3], [3, 1], [0, 3, 5]], {
+ *     snapWidth: 1,
+ *     minTicksDistance: 60,
+ *     drawLabels: false
+ * });
  * </pre><div class="jxgbox" id="JXGe17128e6-a25d-462a-9074-49460b0d66f4" style="width: 200px; height: 200px;"></div>
  * <script type="text/javascript">
  *   (function () {
  *     var board = JXG.JSXGraph.initBoard('JXGe17128e6-a25d-462a-9074-49460b0d66f4', {boundingbox: [-1, 5, 5, -1], axis: true, showcopyright: false, shownavigation: false});
- *     var s = board.create('slider', [[1, 3], [3, 1], [1, 10, 50]], {snapWidth: 1, ticks: { drawLabels: true }});
+ *     var s = board.create('slider', [[1, 3], [3, 1], [1, 3, 5]], {
+ *       snapWidth: 1,
+ *       minTicksDistance: 60,
+ *       drawLabels: false
+ *     });
  *   })();
  * </script><pre>
  * @example
  *     // Draggable slider
- *     var s1 = board.create('slider', [[-3,1], [2,1],[-10,1,10]], {
+ *     var s1 = board.create('slider', [[-3, 1], [2, 1],[-10, 1, 10]], {
  *         visible: true,
  *         snapWidth: 2,
  *         point1: {fixed: false},
@@ -164,8 +172,7 @@ import Point from "../base/point.js";
  * // Create a "frozen" slider
  * var sli = board.create('slider', [[-4, 4], [-1.5, 4], [-10, 1, 10]], {
  *     name:'a',
- *     point1: {frozen: true},
- *     point2: {frozen: true}
+ *     frozen: true
  * });
  *
  * </pre><div id="JXG23afea4f-2e91-4006-a505-2895033cf1fc" class="jxgbox" style="width: 300px; height: 300px;"></div>
@@ -175,8 +182,36 @@ import Point from "../base/point.js";
  *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
  *     var sli = board.create('slider', [[-4, 4], [-1.5, 4], [-10, 1, 10]], {
  *         name:'a',
- *         point1: {frozen: true},
- *         point2: {frozen: true}
+ *         frozen: true
+ *     });
+ *
+ *     })();
+ *
+ * </script><pre>
+ *
+ * @example
+ * // Use MathJax for slider label (don't forget to load MathJax)
+ * var s = board.create('slider', [[-3, 2], [2, 2], [-10, 1, 10]], {
+ *     name: 'A^{(2)}',
+ *     suffixLabel: '\\(A^{(2)} = ',
+ *     unitLabel: ' \\;km/h ',
+ *     postLabel: '\\)',
+ *     label: {useMathJax: true}
+ * });
+ *
+ * </pre><div id="JXG76e78c5f-3598-4d44-b43f-1d78fd15302c" class="jxgbox" style="width: 300px; height: 300px;"></div>
+ * <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" id="MathJax-script"></script>
+ * <script type="text/javascript">
+ *     (function() {
+ *         var board = JXG.JSXGraph.initBoard('JXG76e78c5f-3598-4d44-b43f-1d78fd15302c',
+ *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
+ *     // Use MathJax for slider label (don't forget to load MathJax)
+ *     var s = board.create('slider', [[-3,2], [2,2],[-10,1,10]], {
+ *         name: 'A^{(2)}',
+ *         suffixLabel: '\\(A^{(2)} = ',
+ *         unitLabel: ' \\;km/h ',
+ *         postLabel: '\\)',
+ *         label: {useMathJax: true}
  *     });
  *
  *     })();

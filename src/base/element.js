@@ -2388,7 +2388,7 @@ JXG.extend(
                     v = this.points[i].usrCoords[1];
                     bb[0] = v < bb[0] ? v : bb[0];
                     bb[2] = v > bb[2] ? v : bb[2];
-                    v = this.points[i].usrCoords[1];
+                    v = this.points[i].usrCoords[2];
                     bb[1] = v < bb[1] ? v : bb[1];
                     bb[3] = v > bb[3] ? v : bb[3];
                 }
@@ -2397,6 +2397,20 @@ JXG.extend(
                 y = this.Y();
                 r = this.evalVisProp('size');
                 bb = [x - r / this.board.unitX, y - r / this.board.unitY, x + r / this.board.unitX, y + r / this.board.unitY];
+            } else if (this.elementClass === Const.OBJECT_CLASS_LINE) {
+                v = this.point1.coords.usrCoords[1];
+                bb[0] = v < bb[0] ? v : bb[0];
+                bb[2] = v > bb[2] ? v : bb[2];
+                v = this.point1.coords.usrCoords[2];
+                bb[1] = v < bb[1] ? v : bb[1];
+                bb[3] = v > bb[3] ? v : bb[3];
+
+                v = this.point2.coords.usrCoords[1];
+                bb[0] = v < bb[0] ? v : bb[0];
+                bb[2] = v > bb[2] ? v : bb[2];
+                v = this.point2.coords.usrCoords[2];
+                bb[1] = v < bb[1] ? v : bb[1];
+                bb[3] = v > bb[3] ? v : bb[3];
             }
 
             return bb;

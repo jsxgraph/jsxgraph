@@ -474,6 +474,10 @@ JXG.Board = function (container, renderer, id,
      */
     this.focusObjects = [];
 
+    if (this.attr.showcopyright || this.attr.showlogo) {
+        this.renderer.displayLogo(Const.licenseLogo, parseInt(this.options.text.fontSize, 10), this);
+    }
+
     if (this.attr.showcopyright) {
         this.renderer.displayCopyright(Const.licenseText, parseInt(this.options.text.fontSize, 10));
     }
@@ -1299,7 +1303,12 @@ JXG.extend(
 
         /**
          * Collects all elements below the current mouse pointer and fulfilling the following constraints:
-         * <ul><li>isDraggable</li><li>visible</li><li>not fixed</li><li>not frozen</li></ul>
+         * <ul>
+         * <li>isDraggable</li>
+         * <li>visible</li>
+         * <li>not fixed</li>
+         * <li>not frozen</li>
+         * </ul>
          * @param {Number} x Current mouse/touch coordinates
          * @param {Number} y current mouse/touch coordinates
          * @param {Object} evt An event object
@@ -4855,15 +4864,30 @@ JXG.extend(
          * @returns {JXG.Board} Reference to this board.
          **/
         updateCoords: function () {
-            var el,
-                ob,
+            var el, ob,
+                froz, e, o, f,
                 len = this.objectsList.length;
 
             for (ob = 0; ob < len; ob++) {
                 el = this.objectsList[ob];
 
                 if (Type.exists(el.coords)) {
-                    if (el.evalVisProp('frozen')) {
+                    froz = el.evalVisProp('frozen');
+                    if (froz === 'inherit') {
+                        // Search if a descendant of 'el' is set to 'frozen'.
+                        // If yes, set element 'el' as frozen, too.
+                        for (e in el.descendants/*el.childElements*/) {
+                            if (el.descendants.hasOwnProperty(e)) {
+                                o = el.descendants[e];
+                                f = o.evalVisProp('frozen');
+                                if (f === true) {
+                                    froz = true;
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                    if (froz === true) {
                         if (el.is3D) {
                             el.element2D.coords.screen2usr();
                         } else {
@@ -6597,7 +6621,7 @@ JXG.extend(
                         this.setBoundingBox(this.getBoundingBox(), value, 'keep');
                         break;
 
-                    /* eslint-disable no-fallthrough */
+                    // /* eslint-disable no-fallthrough */
                     case 'document':
                     case 'maxboundingbox':
                         this[key] = value;
@@ -6644,13 +6668,29 @@ JXG.extend(
                                 this.renderer.displayCopyright(Const.licenseText, parseInt(this.options.text.fontSize, 10));
                             }
                         }
+                        this._set(key, value);
+                        break;
+
+                    case 'showlogo':
+                        if (this.renderer.type === 'svg') {
+                            node = this.containerObj.ownerDocument.getElementById(
+                                this.renderer.uniqName('licenseLogo')
+                            );
+                            if (node) {
+                                node.style.display = ((Type.evaluate(value)) ? 'inline' : 'none');
+                            } else if (Type.evaluate(value)) {
+                                this.renderer.displayLogo(Const.licenseLogo, parseInt(this.options.text.fontSize, 10));
+                            }
+                        }
+                        this._set(key, value);
+                        break;
 
                     default:
                         if (Type.exists(this.attr[key])) {
                             this._set(key, value);
                         }
                         break;
-                    /* eslint-enable no-fallthrough */
+                    // /* eslint-enable no-fallthrough */
                 }
             }
 

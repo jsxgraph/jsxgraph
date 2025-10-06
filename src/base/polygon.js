@@ -458,7 +458,7 @@ JXG.extend(
 
         /**
          * Bounding box of a polygon. The bounding box is an array of four numbers: the first two numbers
-         * determine the upper left corner, the last two number determine the lower right corner of the bounding box.
+         * determine the upper left corner, the last two numbers determine the lower right corner of the bounding box.
          *
          * The width and height of a polygon can then determined like this:
          * @example

@@ -814,7 +814,7 @@ JXG.extend(
                 b, d, dist,
                 scale,
                 numberMajorTicks = 5,
-                maxDist, minDist, ev_minti;
+                maxDist, minDist, ev_mt;
 
             if (this.evalVisProp('insertticks')) {
                 // Case of insertTicks==true:
@@ -826,13 +826,13 @@ JXG.extend(
 
                 maxDist = dist / (numberMajorTicks + 1) / scale;
                 minDist = this.evalVisProp('minticksdistance') / scale;
-                ev_minti = this.evalVisProp('minorticks');
+                ev_mt = this.evalVisProp('minorticks');
 
                 d = this.getXandYdeltas();
                 d.x *= this.board.unitX;
                 d.y *= this.board.unitY;
                 minDist /= Mat.hypot(d.x, d.y);
-                minDist *= (ev_minti + 1);
+                minDist *= (ev_mt + 1);
 
                 // Determine minimal delta to fulfill the minTicksDistance constraint
                 delta = Math.pow(10, Math.floor(Math.log(minDist) / Math.LN10));
@@ -849,6 +849,7 @@ JXG.extend(
                 } else if (2 * delta2 < maxDist) {
                     delta2 *= 2;
                 }
+
                 // Take the larger value of the two delta's, that is
                 // minTicksDistance has priority over numberMajorTicks
                 delta = Math.max(delta, delta2);
@@ -938,6 +939,7 @@ JXG.extend(
                 y,
                 tickCoords,
                 ti,
+                ev_mt,
                 isLabelPosition,
                 ticksPerLabel = this.evalVisProp('ticksperlabel'),
                 labelVal = null;
@@ -956,17 +958,16 @@ JXG.extend(
                 this.setTicksSizeVariables(labelVal);
             }
 
+            ev_mt = this.evalVisProp('minorticks');
             // Test if tick is a major tick.
             // This is the case if tickPosition/ticksDelta is
             // a multiple of the number of minorticks+1
             tickCoords.major =
-                Math.round(tickPosition / ticksDelta) %
-                (this.evalVisProp('minorticks') + 1) ===
-                0;
+                Math.round(tickPosition / ticksDelta) % (ev_mt + 1) === 0;
 
             if (!ticksPerLabel) {
                 // In case of null, 0 or false, majorTicks are labelled
-                ticksPerLabel = this.evalVisProp('minorticks') + 1;
+                ticksPerLabel = ev_mt + 1;
             }
             isLabelPosition = Math.round(tickPosition / ticksDelta) % ticksPerLabel === 0;
 

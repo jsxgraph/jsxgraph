@@ -1,3 +1,39 @@
+1.12.0
+===
+
+New features
+-----------
+
+- 3D: STL file format (ASCII) parser / writer for polyhedron3d
+- New board attribute showLogo. Display logic is: showLogo OR showCopyright
+- Complex numbers: new methods abs(), angle()
+- New method: Line.getBoundingBox()
+- CoordsElements (points, texts, images): add parameter maxRounds to startAnimation
+
+Improvements
+------------
+
+- Simplify use of attribute frozen, especially for sliders
+- Improved autoposition algorithm for labels
+- Clipping of implicit curves
+- 3D rotations: enable rotation around point, rotation of general line
+- API docs: 3D transformations
+- Depth order: improved correctness and speed up
+- Shorten copyright string, add logo
+- New favicon files
+
+Bug fixes
+---------
+
+- Stop event propagation on input field
+- Arrow rendering
+- Vanishing 3D line
+- 3D removeObject()
+- Canvas renderer: gradient color on lines
+- Curve.findDomain(), Curve.getLabelPosition
+- Label positioning on disconnected curves
+
+
 1.11.1
 ===
 
@@ -22,14 +58,13 @@ New features
 
 - New element `polyhedron3d`
 - Depth ordering of 3D elements: Generalize font/back detection of 3D points to other elements
-- 3D transformations for point3d, line3d, plane3d, curve3d, surface3d, polyhedron3d. Not supported, yet: circle3d, polygon3d, text3d, ticks3d
+- Depth ordering of 3D elements: Generalize font/back detection of 3D points to other elements
 - Shader attributes for polyhedron3d
+- Shader for polyhedron3d
 - Attribute functions support the targeted geometry element as parameter
 - ARIA attributes for every element (SVG only)
 - CSS classes for every element (SVG only). This allows the application of SVG filters
-- Depth ordering of 3D elements: Generalize font/back detection of 3D points to other elements
-- 3D transformations for point3d, line3d, plane3d, curve3d, surface3d, polyhedron3d. Still missing are: circle3d, polygon3d, text3d, ticks3d
-- Shader for polyhedron3d
+- 3D transformations for point3d, line3d, plane3d, curve3d, surface3d, polyhedron3d. Not supported, yet: circle3d, polygon3d, text3d, ticks3d
 - 2D transformations: new type `matrix`
 - 2D and 3D curves by array of coordinates
 

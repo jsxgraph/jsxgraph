@@ -305,7 +305,8 @@ JXG.extend(
             c3d[1] *= 0.5;
             c3d[2] *= 0.5;
             c3d[3] *= 0.5;
-            this.zIndex = Mat.matVecMult(this.view.matrix3DRotShift, c3d)[3];
+            // this.zIndex = Mat.matVecMult(this.view.matrix3DRotShift, c3d)[3];
+            this.zIndex = Mat.innerProduct(this.view.matrix3DRotShift[3], c3d);
 
             return this;
         }
@@ -646,7 +647,6 @@ JXG.createLine3D = function (board, parents, attributes) {
 
     } else {
         // Line defined by point, direction and range
-
 
         // Directions are handled as arrays of length 4, i.e. with homogeneous coordinates.
         if (base !== null) {

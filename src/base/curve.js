@@ -1124,11 +1124,20 @@ JXG.extend(
             var x, y, xy,
                 c, d, e,
                 lbda,
+                mi, ma, ar,
                 t, dx, dy,
                 dist = 1.5;
 
+            // Shrink domain if necessary
+            mi = this.minX();
+            ma = this.maxX();
+            ar = Numerics.findDomain(this.X, [mi, ma], null, false);
+            ar = Numerics.findDomain(this.Y, ar, null, false);
+            mi = Math.max(ar[0], ar[0]);
+            ma = Math.min(ar[1], ar[1]);
+
             xy = Type.parsePosition(pos);
-            lbda = Type.parseNumber(xy.pos, this.maxX() - this.minX(), 1);
+            lbda = Type.parseNumber(xy.pos, ma - mi, 1);
 
             if (xy.pos.indexOf('fr') < 0 &&
                 xy.pos.indexOf('%') < 0) {
@@ -1136,22 +1145,33 @@ JXG.extend(
                 lbda = 0;
             }
 
-            t = this.minX() + lbda;
+            t = mi + lbda;
+
             x = this.X(t);
             y = this.Y(t);
+            // If x or y are NaN, the label is set to the line
+            // between the first and last point.
+            if (isNaN(x + y)) {
+                lbda /= (ma - mi);
+                t = mi + lbda;
+                x = this.X(mi) + lbda * (this.X(ma) - this.X(mi));
+                y = this.Y(mi) + lbda * (this.Y(ma) - this.Y(mi));
+            }
             c = (new Coords(Const.COORDS_BY_USER, [x, y], this.board)).scrCoords;
 
             e = Mat.eps;
-            if (t < this.minX() + e) {
+            if (t < mi + e) {
                 dx = (this.X(t + e) - this.X(t)) / e;
                 dy = (this.Y(t + e) - this.Y(t)) / e;
-            } else if (t > this.maxX() - e) {
+            } else if (t > ma - e) {
                 dx = (this.X(t) - this.X(t - e)) / e;
                 dy = (this.Y(t) - this.Y(t - e)) / e;
             } else {
                 dx = 0.5 * (this.X(t + e) - this.X(t - e)) / e;
                 dy = 0.5 * (this.Y(t + e) - this.Y(t - e)) / e;
             }
+            dx = isNaN(dx) ? 1. : dx;
+            dy = isNaN(dy) ? 1. : dy;
             d = Mat.hypot(dx, dy);
 
             if (xy.side === 'left') {
@@ -1172,7 +1192,7 @@ JXG.extend(
             return new Coords(Const.COORDS_BY_SCREEN, [x, y], this.board);
         },
 
-        // documented in geometry element
+        // documented in geometryElement
         getLabelAnchor: function () {
             var x, y, pos,
                 // xy, lbda, e,
@@ -3214,11 +3234,9 @@ JXG.registerElement("boxplot", JXG.createBoxPlot);
  * @param {Array|Function} [rangex=boundingbox] Optional array of length 2
  * of the form [x_min, x_max] setting the domain of the x coordinate of the implicit curve.
  * If not supplied, the board's boundingbox (+ the attribute "margin") is taken.
- * For algorithmic reasons, the plotted curve mighty slightly overflow the given domain.
  * @param {Array|Function} [rangey=boundingbox] Optional array of length 2
  * of the form [y_min, y_max] setting the domain of the y coordinate of the implicit curve.
  * If not supplied, the board's boundingbox (+ the attribute "margin") is taken.
- * For algorithmic reasons, the plotted curve mighty slightly overflow the given domain.
  * @augments JXG.Curve
  * @constructor
  * @type JXG.Curve
@@ -3434,10 +3452,14 @@ JXG.createImplicitCurve = function (board, parents, attributes) {
     c.domain = null;
     if (parents.length === 5) {
         c.domain = [parents[3], parents[4]];
-        // c.visProp.margin = 0;
+        //     [Math.min(parents[3][0], parents[3][1]), Math.max(parents[3][0], parents[3][1])],
+        //     [Math.min(parents[4][0], parents[4][1]), Math.max(parents[4][0], parents[4][1])]
+        // ];
     } else if (parents.length === 3) {
         c.domain = [parents[1], parents[2]];
-        // c.visProp.margin = 0;
+        //     [Math.min(parents[1][0], parents[1][1]), Math.max(parents[1][0], parents[1][1])],
+        //     [Math.min(parents[2][0], parents[2][1]), Math.max(parents[2][0], parents[2][1])]
+        // ];
     }
 
     /**
@@ -3460,7 +3482,13 @@ JXG.createImplicitCurve = function (board, parents, attributes) {
         } else {
             rx = Type.evaluate(this.domain[0]);
             ry = Type.evaluate(this.domain[1]);
-            bbox = [rx[0], ry[1], rx[1], ry[0]];
+            bbox = [
+                Math.min(rx[0], rx[1]),
+                Math.max(ry[0], ry[1]),
+                Math.max(rx[0], rx[1]),
+                Math.min(ry[0], ry[1])
+                // rx[0], ry[1], rx[1], ry[0]
+            ];
         }
 
         cfg = {

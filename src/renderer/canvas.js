@@ -249,6 +249,7 @@ JXG.extend(
             c2 = new Coords(Const.COORDS_BY_USER, [bb[2], bb[3]], el.board);
             dx = c2.scrCoords[1] - c1.scrCoords[1];
             dy = c2.scrCoords[2] - c1.scrCoords[2];
+
             x1s = c1.scrCoords[1] + dx * x1;
             y1s = c1.scrCoords[2] + dy * y1;
             x2s = c1.scrCoords[1] + dx * x2;
@@ -318,11 +319,14 @@ JXG.extend(
                     el.evalVisProp('gradientfr')
                 );
             }
-            gradient.addColorStop(el.evalVisProp('gradientstartoffset'), col);
-            gradient.addColorStop(
-                el.evalVisProp('gradientendoffset'),
-                el.evalVisProp('gradientsecondcolor')
-            );
+
+            if (col !== "none" && col !== "" && col !== false) {
+                gradient.addColorStop(el.evalVisProp('gradientstartoffset'), col);
+                gradient.addColorStop(
+                    el.evalVisProp('gradientendoffset'),
+                    el.evalVisProp('gradientsecondcolor')
+                );
+            }
             return gradient;
         },
 
@@ -350,7 +354,7 @@ JXG.extend(
 
             // type is equal to 'fill' or 'stroke'
             rgba = el.evalVisProp(hl + type + 'color');
-            if (rgba !== "none" && rgba !== false) {
+            if (rgba !== "none" && rgba !== "" && rgba !== false) {
                 o = el.evalVisProp(hl + type + "opacity");
                 o = o > 0 ? o : 0;
 
@@ -372,11 +376,14 @@ JXG.extend(
                 hasColor = false;
             }
 
-            grad = el.evalVisProp('gradient');
-            if (grad === "linear" || grad === "radial") {
-                this.context.globalAlpha = oo;
-                this.context[targetType + "Style"] = this.updateGradient(el);
-                return hasColor;
+            if (type !== "stroke") {
+                // For the time being, gradients are only supported for fills
+                grad = el.evalVisProp('gradient');
+                if (grad === "linear" || grad === "radial") {
+                    this.context.globalAlpha = oo;
+                    this.context[targetType + "Style"] = this.updateGradient(el);
+                    return hasColor;
+                }
             }
 
             sw = parseFloat(el.evalVisProp(hl + 'strokewidth'));
@@ -984,6 +991,7 @@ JXG.extend(
             c1_org = new Coords(Const.COORDS_BY_USER, c1.usrCoords, el.board);
             c2_org = new Coords(Const.COORDS_BY_USER, c2.usrCoords, el.board);
 
+
             this.getPositionArrowHead(el, c1, c2, arrowData);
 
             this.context.beginPath();
@@ -1126,15 +1134,40 @@ JXG.extend(
         /* ********* Text related stuff *********** */
 
         // Already documented in JXG.AbstractRenderer
-        displayCopyright: function (str, fontSize) {
-            var context = this.context;
+        displayCopyright: function (str, fontsize) {
+            var context = this.context,
+                x = 4 + 1.8 * fontsize,
+                y = 6 + fontsize,
+                alpha = 0.2;
 
-            // this should be called on EVERY update, otherwise it won't be shown after the first update
+            // This should be called on EVERY update, otherwise it won't be shown after the first update
             context.save();
-            context.font = fontSize + "px Arial";
-            context.fillStyle = "#aaa";
+            context.font = fontsize + "px Arial";
+            context.globalAlpha = alpha;
             context.lineWidth = 0.5;
-            context.fillText(str, 10, 2 + fontSize);
+            context.fillText(str + '.', x, y); // Distinguish svg and canvas by this dot
+            context.restore();
+        },
+
+        // Already documented in JXG.AbstractRenderer
+        displayLogo: function (str, fontsize, board) {
+            var context = this.context,
+                s = 1.5 * fontsize,
+                alpha = 0.2;
+
+            if (!Type.exists(board._logo_image)) {
+                board._logo_image = new Image();
+                board._logo_image.src = str;
+            }
+            board._logo_image.onload = function() {
+                context.save();
+                context.globalAlpha = alpha;
+                context.drawImage(board._logo_image, 5, 5, s, s);
+                context.restore();
+            };
+            context.save();
+            context.globalAlpha = alpha;
+            context.drawImage(board._logo_image, 5, 5, s, s);
             context.restore();
         },
 
@@ -1621,6 +1654,10 @@ JXG.extend(
         suspendRedraw: function (board) {
             this.context.save();
             this.context.clearRect(0, 0, this.canvasRoot.width, this.canvasRoot.height);
+
+            if (board && (board.attr.showcopyright || board.attr.showlogo)) {
+                this.displayLogo(JXG.licenseLogo, 12, board);
+            }
 
             if (board && board.attr.showcopyright) {
                 this.displayCopyright(JXG.licenseText, 12);

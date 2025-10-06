@@ -1730,12 +1730,14 @@ JXG.extend(
         },
 
         /**
-         * Animate the point.
+         * Animate a point.
          * @param {Number|Function} direction The direction the glider is animated. Can be +1 or -1.
          * @param {Number|Function} stepCount The number of steps in which the parent element is divided.
          * Must be at least 1.
          * @param {Number|Function} delay Time in msec between two animation steps. Default is 250.
-         * @returns {JXG.CoordsElement} Reference to iself.
+         * @param {Number} [maxRounds=-1] The number of rounds the glider will be animated. The glider will run infinitely if
+         * maxRounds is negative or equal to Infinity.
+         * @returns {JXG.CoordsElement} Reference to itself.
          *
          * @name Glider#startAnimation
          * @see Glider#stopAnimation
@@ -1778,9 +1780,9 @@ JXG.extend(
          *
          * @example
          * // Divide the slider area into 20 steps and
-         * // visit every step 30 msec.
+         * // visit every step 30 msec. Stop after 2 rounds.
          * var n = board.create('slider',[[-2,4],[2,4],[1,5,100]],{name:'n'});
-         * n.startAnimation(1, 20, 30);
+         * n.startAnimation(1, 20, 30, 2);
          *
          * </pre><div id="JXG40ce04b8-e99c-11e8-a1ca-04d3b0c2aad3" class="jxgbox" style="width: 300px; height: 300px;"></div>
          * <script type="text/javascript">
@@ -1790,26 +1792,30 @@ JXG.extend(
          *     // Divide the slider area into 20 steps and
          *     // visit every step 30 msec.
          *     var n = board.create('slider',[[-2,4],[2,4],[1,5,100]],{name:'n'});
-         *     n.startAnimation(1, 20, 30);
+         *     n.startAnimation(1, 20, 30, 2);
          *
          *     })();
          * </script><pre>
          *
          */
-        startAnimation: function (direction, stepCount, delay) {
+        startAnimation: function (direction, stepCount, delay, maxRounds) {
             var dir = Type.evaluate(direction),
                 sc = Type.evaluate(stepCount),
                 that = this;
 
             delay = Type.evaluate(delay) || 250;
+            maxRounds = Type.evaluate(maxRounds);
+            maxRounds = (maxRounds !== 'undefined') ? maxRounds : -1;
 
-            if (this.type === Const.OBJECT_TYPE_GLIDER && !Type.exists(this.intervalCode)) {
+            if (this.type === Const.OBJECT_TYPE_GLIDER && !Type.exists(this.intervalCode) && maxRounds !== 0) {
+                this.roundsCount = 0;
                 this.intervalCode = window.setInterval(function () {
-                    that._anim(dir, sc);
+                    that._anim(dir, sc, maxRounds);
                 }, delay);
 
                 if (!Type.exists(this.intervalCount)) {
                     this.intervalCount = 0;
+
                 }
             }
             return this;
@@ -2350,17 +2356,25 @@ JXG.extend(
          * @param {Number} direction The direction the glider is animated.
          * @param {Number} stepCount The number of steps in which the parent element is divided.
          * Must be at least 1.
+         * @param {Number} [maxRounds=-1] The number of rounds the glider will be animated. The glider will run infinitely if
+         * maxRounds is negative or equal to Infinity.
          * @see JXG.CoordsElement#startAnimation
          * @see JXG.CoordsElement#stopAnimation
          * @private
          * @returns {JXG.CoordsElement} Reference to itself.
          */
-        _anim: function (direction, stepCount) {
+        _anim: function (direction, stepCount, maxRounds) {
             var dX, dY, alpha, startPoint, newX, radius, sp1c, sp2c, res;
 
             this.intervalCount += 1;
             if (this.intervalCount > stepCount) {
                 this.intervalCount = 0;
+
+                this.roundsCount += 1;
+                if (maxRounds > 0 && this.roundsCount >= maxRounds) {
+                    this.roundsCount = 0;
+                    return this.stopAnimation();
+                }
             }
 
             if (this.slideObject.elementClass === Const.OBJECT_CLASS_LINE) {

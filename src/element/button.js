@@ -249,7 +249,7 @@ JXG.createButton = function (board, parents, attributes) {
     //}
 
     // 1. Create empty button
-    par = [parents[0], parents[1], '<button type="button" style="width:100%;" tabindex="0"></button>'];
+    par = [parents[0], parents[1], '<button type="button" style="width:100%; height:100%;" tabindex="0"></button>'];
     t = board.create("text", par, attr);
     t.type = Type.OBJECT_TYPE_BUTTON;
 
@@ -264,7 +264,7 @@ JXG.createButton = function (board, parents, attributes) {
     // abstract.js selects the correct DOM element for the update
     t.setText(parents[2]);
 
-    // This sets the font-size of the button text
+    // This sets the font size of the button text
     t.visPropOld.fontsize = "0px";
     board.renderer.updateTextStyle(t, false);
 

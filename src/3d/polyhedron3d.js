@@ -114,7 +114,8 @@ JXG.Polyhedron3D = function (view, polyhedron, faces, attributes) {
 
     this.methodMap = Type.deepCopy(this.methodMap, {
         setAttribute: "setAttribute",
-        setParents: "setParents"
+        setParents: "setParents",
+        addTransform: "addTransform"
     });
 };
 JXG.Polyhedron3D.prototype = new JXG.GeometryElement();
@@ -124,6 +125,7 @@ JXG.extend(
     JXG.Polyhedron3D.prototype,
     /** @lends JXG.Polyhedron3D.prototype */ {
 
+        // Already documented in element3d.js
         addTransform: function (el, transform) {
             if (this.faces.length > 0 && el.faces.length > 0) {
                 this.faces[0].addTransform(el.faces[0], transform);
@@ -131,8 +133,40 @@ JXG.extend(
                 throw new Error("Adding transformation failed. At least one of the two polyhedra has no faces.");
             }
             return this;
-        }
+        },
 
+        /**
+         * Output polyhedron in ASCII STL format.
+         * Normals are ignored and output as 0 0 0.
+         *
+         * @param {String} name Set name of the model, overwrites property name
+         * @returns String
+         */
+        toSTL: function(name) {
+            var i, j, v, f, c, le,
+                txt = 'model ';
+
+            if (name === undefined) {
+                name = this.name;
+            }
+
+            txt += name + '\n';
+
+            for (i = 0; i < this.def.faces.length; i++) {
+                txt += ' facet normal 0 0 0\n  outer loop\n';
+                f = this.def.faces[i];
+                le = f.length;
+                v = this.def.coords;
+                for (j = 0; j < le; j++) {
+                    c = v[f[j]];
+                    txt += '   vertex ' + c[1] + ' ' + c[2] + ' ' + c[3] + '\n';
+                }
+                txt += '  endloop\n endfacet\n';
+            }
+            txt += 'endsolid ' + name + '\n';
+
+            return txt;
+        }
     }
 );
 
