@@ -144,7 +144,7 @@ JXG.extend(
          */
         toSTL: function(name) {
             var i, j, v, f, c, le,
-                txt = 'model ';
+                txt = 'solid ';
 
             if (name === undefined) {
                 name = this.name;
