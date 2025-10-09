@@ -1268,19 +1268,19 @@ JXG.registerElement('transform', JXG.createTransform);
  *         axesPosition: 'border' // 'center', 'none'
  *     }
  * );
- * 
+ *
  * var slider = board.create('slider', [[-4, 6], [0, 6], [0, 0, 5]]);
- * 
+ *
  * var p1 = view.create('point3d', [1, 2, 2], { name: 'drag me', size: 5 });
- * 
+ *
  * // Translate from p1 by fixed amount
  * var t1 = view.create('transform3d', [2, 3, 2], { type: 'translate' });
  * // Translate from p1 by dynamic amount
  * var t2 = view.create('transform3d', [() => slider.Value() + 3, 0, 0], { type: 'translate' });
- * 
+ *
  * view.create('point3d', [p1, t1], { name: 'translate fixed', size: 5 });
  * view.create('point3d', [p1, t2], { name: 'translate by func', size: 5 });
- * 
+ *
  * </pre><div id="JXG2409bb0a-90d7-4c1e-ae9f-85e8a776acec" class="jxgbox" style="width: 300px; height: 300px;"></div>
  * <script type="text/javascript">
  *     (function() {
@@ -1297,23 +1297,23 @@ JXG.registerElement('transform', JXG.createTransform);
  *             axesPosition: 'border' // 'center', 'none'
  *         }
  *     );
- *     
+ *
  *     var slider = board.create('slider', [[-4, 6], [0, 6], [0, 0, 5]]);
- *     
+ *
  *     var p1 = view.create('point3d', [1, 2, 2], { name: 'drag me', size: 5 });
- *     
+ *
  *     // Translate from p1 by fixed amount
  *     var t1 = view.create('transform3d', [2, 3, 2], { type: 'translate' });
  *     // Translate from p1 by dynamic amount
  *     var t2 = view.create('transform3d', [() => slider.Value() + 3, 0, 0], { type: 'translate' });
- *     
+ *
  *     view.create('point3d', [p1, t1], { name: 'translate fixed', size: 5 });
  *     view.create('point3d', [p1, t2], { name: 'translate by func', size: 5 });
- * 
+ *
  *     })();
- * 
+ *
  * </script><pre>
- * 
+ *
  */
 JXG.createTransform3D = function (board, parents, attributes) {
     return new JXG.Transformation(board, attributes.type, parents, true);
