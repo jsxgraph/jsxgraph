@@ -196,10 +196,7 @@ JXG.extend(
 
             func = Geometry.intersectionFunction(
                 this.board,
-                el1,
-                el2,
-                i,
-                j,
+                el1, el2, i, j,
                 this.visProp.alwaysintersect
             );
             this.addConstraint([func]);
