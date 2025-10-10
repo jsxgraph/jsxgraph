@@ -1784,6 +1784,7 @@ JXG.createAngle = function (board, parents, attributes) {
         return el.arc.Value(unit);
     };
 
+
     // documented in GeometryElement
     /**
      * @class
@@ -1794,8 +1795,9 @@ JXG.createAngle = function (board, parents, attributes) {
             dx = 12,
             A, B, r, d, a2, co, si, mat,
             vp_s = el.evalVisProp('selection'),
-            pos = this.label.evalVisProp('position'),
-            l_vp = this.label ? this.label.visProp : this.visProp.label;
+            l_vp = this.label ? this.label.visProp : this.visProp.label,
+            pos = (this.label) ?
+                    this.label.evalVisProp('position') : this.evalVisProp('label.position');
 
         // If this is uncommented, the angle label can not be dragged
         //if (Type.exists(this.label)) {
