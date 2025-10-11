@@ -2654,10 +2654,12 @@ JXG.extend(
                 m,
                 minX,
                 maxX,
+                // For short curve segments this may help
                 eps = 0.02,
                 end = 1.5,
                 endRed = 1.0,
                 endBlue = 1.0,
+
                 iFound = 0,
                 lenBlue = blue.numberPoints, //points.length,
                 lenRed = red.numberPoints; //points.length;
@@ -2705,6 +2707,13 @@ JXG.extend(
                             }
 
                             iFound++;
+                        } else {
+                            let c = Mat.crossProduct(
+                                [red2[0] - red1[0], red2[1] - red1[1], red2[2] - red1[2]],
+                                [blue2[0] - blue1[0], blue2[1] - blue1[1], blue2[2] - blue1[2]]
+                            )
+                            console.log(m[0][1], c)
+                            // console.log(m)
                         }
                     }
                 }

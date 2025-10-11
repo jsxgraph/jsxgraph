@@ -58,9 +58,9 @@ describe("Test geometry functions", function () {
     });
 
     it("intersectingFunctiongraphs", function () {
-        const f1 = board.create("functiongraph", ["(x-1)**1", -10, 10]); // The exponent 2 fails
-        const f2 = board.create("functiongraph", ["0", -10, 10]);
-        const inter = board.create("intersection", [f1, f2]);
+        var f1 = board.create("functiongraph", ["(x-1)**2", -10, 10]); // The exponent 2 fails
+        var f2 = board.create("functiongraph", ["0", -10, 10]);
+        var inter = board.create("intersection", [f1, f2]);
         // var c = JXG.Math.Geometry.meetCurveCurve(f1, f2, 0, 0, board).usrCoords;
         console.log('intersection', inter.X())
         expect(inter.X()).toBeCloseTo(1, 2);
