@@ -2407,7 +2407,7 @@ JXG.extend(
                 if (c1.bezierDegree === 3 || c2.bezierDegree === 3) {
                     co = this.meetBezierCurveRedBlueSegments(c1, c2, i);
                 } else {
-                    co = this.meetCurveRedBlueSegments(c1, c2, i);
+                    co = this.meetCurveRedBlueSegments(c1, c2, i, board);
                 }
                 // // We might add a Newton iteration if the segment search fails?
                 // // However, we would have to apply evt. transformations to the curves
@@ -2459,7 +2459,7 @@ JXG.extend(
 
         /**
          * Intersection of line and curve, continuous case.
-         * Finds the nr-the intersection point
+         * Finds the nr-th intersection point
          * Uses {@link JXG.Math.Geometry.meetCurveLineDiscrete} as a first approximation.
          * A more exact solution is then found with {@link JXG.Math.Numerics.root}.
          *
@@ -2643,8 +2643,9 @@ JXG.extend(
          * @param {JXG.Curve} red
          * @param {JXG.Curve} blue
          * @param {Number|Function} nr
+         * @param {JXG.Board} board Reference to a board object.
          */
-        meetCurveRedBlueSegments: function (red, blue, nr) {
+        meetCurveRedBlueSegments: function (red, blue, nr, board) {
             var i, j,
                 n = Type.evaluate(nr),
                 red1,
@@ -2652,50 +2653,69 @@ JXG.extend(
                 blue1,
                 blue2,
                 m,
-                minX,
-                maxX,
+                minX, maxX,
+                minY, maxY,
+
                 // For short curve segments this may help
-                eps = 0.02,
+                eps = 1 / board.unitX, //
+                start = -0.5,
                 end = 1.5,
+
+                shortRed = false,
+                shortBlue = false,
+                startRed = 0.0,
+                startBlue = 0.0,
                 endRed = 1.0,
                 endBlue = 1.0,
+                // ---
 
                 iFound = 0,
-                lenBlue = blue.numberPoints, //points.length,
-                lenRed = red.numberPoints; //points.length;
+                lenBlue = blue.numberPoints,
+                lenRed = red.numberPoints;
 
             if (lenBlue <= 1 || lenRed <= 1) {
                 return [0, NaN, NaN];
             }
 
+//var cnt = 0
             for (i = 1; i < lenRed; i++) {
                 red1 = red.points[i - 1].usrCoords;
                 red2 = red.points[i].usrCoords;
-                endRed = (this.distance(red1, red2, 3) < eps) ? end : 1.0;
+
+                shortRed = (this.distance(red1, red2, 3) < eps);
+                startRed = (shortRed) ? start : (0.0 - Mat.eps);
+                endRed = (shortRed) ? end : (1.0 + Mat.eps);
 
                 minX = Math.min(red1[1], red2[1]);
                 maxX = Math.max(red1[1], red2[1]);
+                minY = Math.min(red1[2], red2[2]);
+                maxY = Math.max(red1[2], red2[2]);
 
                 blue2 = blue.points[0].usrCoords;
                 for (j = 1; j < lenBlue; j++) {
                     blue1 = blue2;
                     blue2 = blue.points[j].usrCoords;
                     if (
-                        Math.min(blue1[1], blue2[1]) < maxX &&
-                        Math.max(blue1[1], blue2[1]) > minX
+                        Math.min(blue1[1], blue2[1]) < maxX + eps &&
+                        Math.max(blue1[1], blue2[1]) > minX - eps
+                        &&
+                        Math.min(blue1[2], blue2[2]) < maxY + eps &&
+                        Math.max(blue1[2], blue2[2]) > minY - eps
                     ) {
-                        endBlue = (this.distance(blue1, blue2, 3) < eps) ? end : 1.0;
 
+                        shortBlue = (this.distance(blue1, blue2, 3) < eps);
+                        startBlue = (shortBlue) ? start : (0.0 - Mat.eps);
+                        endBlue = (shortBlue) ? end : (1.0 + Mat.eps);
+//cnt++
                         m = this.meetSegmentSegment(red1, red2, blue1, blue2);
+                        // console.log(m[0][1], red1[1], blue1[1], m)
                         if (
-                            m[1] >= 0.0 &&
-                            m[2] >= 0.0 &&
+                            m[1] >= startRed && m[2] >= startBlue &&
                             // The two segments meet in the interior or at the start points
                             // ((m[1] < 1.0 && m[2] < 1.0) ||
                             (
                               (
-                                m[1] < endRed &&
-                                m[2] < endBlue
+                                m[1] <= endRed && m[2] <= endBlue
                               ) ||
                               // One of the curve is intersected in the very last point
                               (i === lenRed - 1 && m[1] === 1.0) ||
@@ -2703,6 +2723,7 @@ JXG.extend(
                             )
                         ) {
                             if (iFound === n) {
+//console.log('blue', blue.points.length, 'red', red.points.length, "Pairs:", cnt)
                                 return m[0];
                             }
 
@@ -2716,7 +2737,7 @@ JXG.extend(
                     }
                 }
             }
-
+//console.log('blue', blue.points.length, 'red', red.points.length, "Pairs:", cnt)
             return [0, NaN, NaN];
         },
 
