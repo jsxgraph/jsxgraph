@@ -1680,8 +1680,14 @@ JXG.extend(
         updateTransform: function (fromParent) {
             var c, i;
 
-            if (this.transformations.length === 0 || this.baseElement === null) {
+            if (this.transformations.length === 0) {
                 return this;
+            }
+
+            // This is the case for image and text rotations
+            // like in smartlabels
+            if (this.baseElement === null) {
+                this.baseElement = this;
             }
 
             // This method is called for non-points only.
