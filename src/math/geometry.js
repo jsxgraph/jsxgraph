@@ -2386,12 +2386,12 @@ JXG.extend(
         /**
          * Compute an intersection of the curves c1 and c2.
          * We want to find values t1, t2 such that
-         * c1(t1) = c2(t2), i.e. (c1_x(t1)-c2_x(t2),c1_y(t1)-c2_y(t2)) = (0,0).
+         * c1(t1) = c2(t2), i.e. (c1_x(t1) - c2_x(t2), c1_y(t1) - c2_y(t2)) = (0, 0).
          *
          * Methods: segment-wise intersections (default) or generalized Newton method.
          * @param {JXG.Curve} c1 Curve, Line or Circle
          * @param {JXG.Curve} c2 Curve, Line or Circle
-         * @param {Number|Function} nr the nr-th intersection point will be returned.
+         * @param {Number|Function} nr if method = 'segment', the nr-th intersection point will be returned, otherwise (in case of 'newton') nr is the start value for for the first curve.
          * @param {Number} t2ini not longer used.
          * @param {JXG.Board} [board=c1.board] Reference to a board object.
          * @param {String} [method='segment'] Intersection method, possible values are 'newton' and 'segment'.
@@ -2402,8 +2402,6 @@ JXG.extend(
                 i = Type.evaluate(nr);
 
             if (Type.exists(method) && method === "newton") {
-                // delete Numerics.generalizedNewton.t1memo;
-                // delete Numerics.generalizedNewton.t2memo;
                 co = Numerics.generalizedNewton(c1, c2, i, t2ini);
             } else {
                 if (c1.bezierDegree === 3 || c2.bezierDegree === 3) {

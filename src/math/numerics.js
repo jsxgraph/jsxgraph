@@ -1575,10 +1575,10 @@ Mat.Numerics = {
      * We want to find values t1, t2 such that
      * c1(t1) = c2(t2), i.e.
      * <br>
-     * (c1_x(t1)-c2_x(t2),c1_y(t1)-c2_y(t2)) = (0,0).
+     * (c1_x(t1) - c2_x(t2), c1_y(t1) - c2_y(t2)) = (0, 0).
      * <p>
      * We set
-     * (e,f) := (c1_x(t1)-c2_x(t2),c1_y(t1)-c2_y(t2))
+     * (e, f) := (c1_x(t1) - c2_x(t2), c1_y(t1) - c2_y(t2))
      * <p>
      * The Jacobian J is defined by
      * <pre>
@@ -1594,8 +1594,8 @@ Mat.Numerics = {
      * </ul>
      * The inverse J^(-1) of J is equal to
      * <pre>
-     *  (d, -b)/ (ad-bc)
-     *  (-c, a) / (ad-bc)
+     *  (d, -b) / (ad - bc)
+     *  (-c, a) / (ad - bc)
      * </pre>
      *
      * Then, (t1new, t2new) := (t1,t2) - J^(-1)*(e,f).
