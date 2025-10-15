@@ -1600,11 +1600,6 @@ Mat.Numerics = {
      *
      * Then, (t1new, t2new) := (t1,t2) - J^(-1)*(e,f).
      * <p>
-     * If the function meetCurveCurve has the properties
-     * t1memo and t2memo then these are taken as start values
-     * for the Newton algorithm.
-     * After stopping of the Newton algorithm the values of t1 and t2 are stored in
-     * t1memo and t2memo.
      *
      * @param {JXG.Curve} c1 Curve, Line or Circle
      * @param {JXG.Curve} c2 Curve, Line or Circle
@@ -1613,6 +1608,11 @@ Mat.Numerics = {
      * @returns {JXG.Coords} intersection point
      * @memberof JXG.Math.Numerics
      */
+    //  * If the function meetCurveCurve has the properties
+    //  * t1memo and t2memo then these are taken as start values
+    //  * for the Newton algorithm.
+    //  * After stopping of the Newton algorithm the values of t1 and t2 are stored in
+    //  * t1memo and t2memo.
     generalizedNewton: function (c1, c2, t1ini, t2ini) {
         var t1, t2,
             a, b, c, d, e, f,
@@ -1621,13 +1621,13 @@ Mat.Numerics = {
             D00, D01, D10, D11,
             count = 0;
 
-        if (this.generalizedNewton.t1memo) {
-            t1 = this.generalizedNewton.t1memo;
-            t2 = this.generalizedNewton.t2memo;
-        } else {
-            t1 = t1ini;
-            t2 = t2ini;
-        }
+        // if (this.generalizedNewton.t1memo) {
+        //     t1 = this.generalizedNewton.t1memo;
+        //     t2 = this.generalizedNewton.t2memo;
+        // } else {
+        t1 = t1ini;
+        t2 = t2ini;
+        // }
 
         e = c1.X(t1) - c2.X(t2);
         f = c1.Y(t1) - c2.Y(t2);
@@ -1652,8 +1652,8 @@ Mat.Numerics = {
             count += 1;
         }
 
-        this.generalizedNewton.t1memo = t1;
-        this.generalizedNewton.t2memo = t2;
+        // this.generalizedNewton.t1memo = t1;
+        // this.generalizedNewton.t2memo = t2;
 
         if (Math.abs(t1) < Math.abs(t2)) {
             return [c1.X(t1), c1.Y(t1)];

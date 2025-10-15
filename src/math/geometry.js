@@ -2402,6 +2402,8 @@ JXG.extend(
                 i = Type.evaluate(nr);
 
             if (Type.exists(method) && method === "newton") {
+                // delete Numerics.generalizedNewton.t1memo;
+                // delete Numerics.generalizedNewton.t2memo;
                 co = Numerics.generalizedNewton(c1, c2, i, t2ini);
             } else {
                 if (c1.bezierDegree === 3 || c2.bezierDegree === 3) {
@@ -2656,10 +2658,11 @@ JXG.extend(
                 minX, maxX,
                 minY, maxY,
 
-                // For short curve segments this may help
-                eps = 1 / board.unitX, //
-                start = -0.5,
-                end = 1.5,
+                // For short curve segments, we slightly enlarge
+                // the intersection regions in the segments from [0, 1] to [-0.3, 1.3]
+                eps = 1 / board.unitX,
+                start = -0.3,
+                end = 1.3,
 
                 shortRed = false,
                 shortBlue = false,
@@ -2683,8 +2686,8 @@ JXG.extend(
                 red2 = red.points[i].usrCoords;
 
                 shortRed = (this.distance(red1, red2, 3) < eps);
-                startRed = (shortRed) ? start : (0.0 - Mat.eps);
-                endRed = (shortRed) ? end : (1.0 + Mat.eps);
+                startRed = ((shortRed) ? start : 0.0) - Mat.eps;
+                endRed = ((shortRed) ? end : 1.0) + Mat.eps;
 
                 minX = Math.min(red1[1], red2[1]);
                 maxX = Math.max(red1[1], red2[1]);
@@ -2704,8 +2707,8 @@ JXG.extend(
                     ) {
 
                         shortBlue = (this.distance(blue1, blue2, 3) < eps);
-                        startBlue = (shortBlue) ? start : (0.0 - Mat.eps);
-                        endBlue = (shortBlue) ? end : (1.0 + Mat.eps);
+                        startBlue = ((shortBlue) ? start : 0.0) - Mat.eps;
+                        endBlue = ((shortBlue) ? end : 1.0) + Mat.eps;
 //cnt++
                         m = this.meetSegmentSegment(red1, red2, blue1, blue2);
                         // console.log(m[0][1], red1[1], blue1[1], m)
@@ -2714,12 +2717,10 @@ JXG.extend(
                             // The two segments meet in the interior or at the start points
                             // ((m[1] < 1.0 && m[2] < 1.0) ||
                             (
-                              (
-                                m[1] <= endRed && m[2] <= endBlue
-                              ) ||
+                              (m[1] <= endRed && m[2] <= endBlue) ||
                               // One of the curve is intersected in the very last point
-                              (i === lenRed - 1 && m[1] === 1.0) ||
-                              (j === lenBlue - 1 && m[2] === 1.0)
+                              (i === lenRed - 1 && (m[1] - 1.0) < Mat.eps) ||
+                              (j === lenBlue - 1 && (m[2] - 1.0) < Mat.eps)
                             )
                         ) {
                             if (iFound === n) {
