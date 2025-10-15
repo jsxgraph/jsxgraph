@@ -1571,7 +1571,7 @@ Mat.Numerics = {
 
     /**
      * Compute an intersection of the curves c1 and c2
-     * with a generalized Newton method.
+     * with a generalized Newton method (Newton-Raphson).
      * We want to find values t1, t2 such that
      * c1(t1) = c2(t2), i.e.
      * <br>
