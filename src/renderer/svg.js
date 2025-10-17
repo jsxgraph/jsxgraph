@@ -315,6 +315,7 @@ JXG.extend(
             }
             node2 = this.createPrim('marker', id);
 
+            // 'context-stroke': property is inherited from line or curve
             node2.setAttributeNS(null, 'fill', 'context-stroke');
             node2.setAttributeNS(null, 'fill-opacity', 'context-stroke');
             node2.setAttributeNS(null, 'stroke', 'context-stroke');
