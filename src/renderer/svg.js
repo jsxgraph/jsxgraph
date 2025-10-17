@@ -313,21 +313,17 @@ JXG.extend(
             if (Type.exists(type)) {
                 id += type;
             }
-            node2 = this.createPrim("marker", id);
+            node2 = this.createPrim('marker', id);
 
-            node2.setAttributeNS(null, "stroke", el.evalVisProp('strokecolor'));
-            node2.setAttributeNS(
-                null,
-                "stroke-opacity",
-                el.evalVisProp('strokeopacity')
-            );
-            node2.setAttributeNS(null, "fill", el.evalVisProp('strokecolor'));
-            node2.setAttributeNS(null, "fill-opacity", el.evalVisProp('strokeopacity'));
-            node2.setAttributeNS(null, "stroke-width", 0); // this is the stroke-width of the arrow head.
+            node2.setAttributeNS(null, 'fill', 'context-stroke');
+            node2.setAttributeNS(null, 'fill-opacity', 'context-stroke');
+            node2.setAttributeNS(null, 'stroke', 'context-stroke');
+            node2.setAttributeNS(null, 'stroke-opacity', 'context-stroke');
+            node2.setAttributeNS(null, 'stroke-width', 0); // this is the stroke-width of the arrow head.
             // Should be zero to simplify the calculations
 
-            node2.setAttributeNS(null, "orient", "auto");
-            node2.setAttributeNS(null, "markerUnits", "strokeWidth"); // 'strokeWidth' 'userSpaceOnUse');
+            node2.setAttributeNS(null, 'orient', 'auto');
+            node2.setAttributeNS(null, 'markerUnits', 'strokeWidth'); // 'strokeWidth' 'userSpaceOnUse');
 
             /*
                Types 1, 2:
@@ -352,7 +348,7 @@ JXG.extend(
                arrow head and line. This is not the case for curves, yet.
                Therefore, the offset refX has to be adapted to the path type.
             */
-            node3 = this.container.ownerDocument.createElementNS(this.svgNamespace, "path");
+            node3 = this.container.ownerDocument.createElementNS(this.svgNamespace, 'path');
             h = 5;
             if (idAppendix === "Start") {
                 // First arrow
@@ -475,11 +471,12 @@ JXG.extend(
                 }
             }
             if (type === 7) {
-                node2.setAttributeNS(null, "fill", "none");
-                node2.setAttributeNS(null, "stroke-width", 1); // this is the stroke-width of the arrow head.
+                node2.setAttributeNS(null, 'fill', 'none');
+                node2.setAttributeNS(null, 'stroke-width', 1); // this is the stroke-width of the arrow head.
             }
             node2.setAttributeNS(null, "refY", h);
             node2.setAttributeNS(null, "refX", v);
+            // this.setPropertyPrim(node2, 'class', el.evalVisProp('cssclass'));
 
             node2.appendChild(node3);
             return node2;
@@ -497,16 +494,15 @@ JXG.extend(
                 if (Type.isString(color)) {
                     if (type !== 7) {
                         this._setAttribute(function () {
-                            node.setAttributeNS(null, "stroke", color);
-                            node.setAttributeNS(null, "fill", color);
-                            node.setAttributeNS(null, "stroke-opacity", opacity);
-                            node.setAttributeNS(null, "fill-opacity", opacity);
+                            node.setAttributeNS(null, 'fill', 'context-stroke');
+                            node.setAttributeNS(null, 'stroke-opacity', 'context-stroke');
+                            node.setAttributeNS(null, 'fill-opacity', 'context-stroke');
                         }, el.visPropOld.fillcolor);
                     } else {
                         this._setAttribute(function () {
-                            node.setAttributeNS(null, "fill", "none");
-                            node.setAttributeNS(null, "stroke", color);
-                            node.setAttributeNS(null, "stroke-opacity", opacity);
+                            node.setAttributeNS(null, 'fill', 'none');
+                            node.setAttributeNS(null, 'stroke', 'context-stroke');
+                            node.setAttributeNS(null, 'stroke-opacity', 'context-stroke');
                         }, el.visPropOld.fillcolor);
                     }
                 }
