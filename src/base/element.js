@@ -1578,7 +1578,8 @@ JXG.extend(
          * @see JXG#evaluate
          */
         evalVisProp: function (key) {
-            var val, arr, i, le;
+            var val, arr, i, le,
+                e, o, found;
 
             key = key.toLowerCase();
             if (key.indexOf('.') === -1) {
@@ -1590,7 +1591,9 @@ JXG.extend(
                 le = arr.length;
                 val = this.visProp;
                 for (i = 0; i < le; i++) {
-                    val = val[arr[i]];
+                    if (Type.exists(val)) {
+                        val = val[arr[i]];
+                    }
                 }
             }
 
@@ -1612,6 +1615,28 @@ JXG.extend(
                 return val(this);
             }
             // val is not of type function
+
+            if (val === 'inherit') {
+                for (e in this.descendants) {
+                    if (this.descendants.hasOwnProperty(e)) {
+                        o = this.descendants[e];
+                        // Check if this is in inherits of one of its descendant
+                        found = false;
+                        le = o.inherits.length;
+                        for (i = 0; i < le; i++) {
+                            if (this.id === o.inherits[i].id) {
+                                found = true;
+                                break;
+                            }
+                        }
+                        if (found) {
+                            val = o.evalVisProp(key);
+                            break;
+                        }
+                    }
+                }
+            }
+
             return val;
         },
 

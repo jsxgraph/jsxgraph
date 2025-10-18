@@ -4865,31 +4865,13 @@ JXG.extend(
          **/
         updateCoords: function () {
             var el, ob,
-                froz, e, o, f,
                 len = this.objectsList.length;
 
             for (ob = 0; ob < len; ob++) {
                 el = this.objectsList[ob];
 
                 if (Type.exists(el.coords)) {
-                    froz = el.evalVisProp('frozen');
-                    console.log(el.id, froz);
-                    if (false && froz === 'inherit') {
-                        // Search if a descendant of 'el' is set to 'frozen'.
-                        // If yes, set element 'el' as frozen, too.
-                        for (e in el.descendants/*el.childElements*/) {
-                            if (el.descendants.hasOwnProperty(e)) {
-                                o = el.descendants[e];
-                                f = o.evalVisProp('frozen');
-                                if (f === true || f === false) {
-                                    froz = f;
-                                    break;
-                                }
-                            }
-                        }
-                    }
-                    console.log('\t', froz);
-                    if (froz || froz === true) {
+                    if (el.evalVisProp('frozen') === true) {
                         if (el.is3D) {
                             el.element2D.coords.screen2usr();
                         } else {

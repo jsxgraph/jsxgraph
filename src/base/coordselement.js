@@ -209,9 +209,7 @@ JXG.extend(
                 fromParent = false;
             }
 
-            console.log(this.id, this.updateConstraint.toString());
-            // if (!this.evalVisProp('frozen')) {
-            if (!Type.exists(this._initialized) || this.evalVisProp('frozen') !== true) {
+            if (this.evalVisProp('frozen') !== true) {
                 this.updateConstraint();
             }
 
@@ -235,10 +233,6 @@ JXG.extend(
                 }
             }
             this.updateTransform(fromParent);
-
-            if (!Type.exists(this._initialized)) {
-                this._initialized = true;
-            }
 
             return this;
         },
