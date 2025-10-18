@@ -4880,8 +4880,8 @@ JXG.extend(
                             if (el.descendants.hasOwnProperty(e)) {
                                 o = el.descendants[e];
                                 f = o.evalVisProp('frozen');
-                                if (f === true) {
-                                    froz = true;
+                                if (f === true || f === false) {
+                                    froz = f;
                                     break;
                                 }
                             }
