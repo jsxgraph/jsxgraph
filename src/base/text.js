@@ -682,7 +682,7 @@ JXG.extend(
             ) {
                 this.setAutoPosition().updateConstraint();
             }
-            return this.updateRendererGeneric("updateText");
+            return this.updateRendererGeneric('updateText');
         },
 
         /**
@@ -769,7 +769,7 @@ JXG.extend(
                     res = res.replace(/\\'/g, "'");
 
                     // GEONExT-Hack: apply rounding once only.
-                    if (res.indexOf("toFixed") < 0) {
+                    if (res.indexOf('toFixed') < 0) {
                         // output of a value tag
                         if (
                             Type.isNumber(
@@ -841,7 +841,7 @@ JXG.extend(
                     res = res.replace(/\\"/g, "'").replace(/\\'/g, "'");
 
                     // // Hack: apply rounding once only.
-                    // if (res.indexOf("toFixed") < 0) {
+                    // if (res.indexOf('toFixed') < 0) {
                     //     // Output of a value tag
                     //     // Run the JessieCode parser
                     //     if (
@@ -1171,7 +1171,7 @@ JXG.extend(
                     obj.visPropCalc.visible &&
                     obj !== this &&
                     whiteList.indexOf(obj.id) === -1 &&
-                    obj.evalVisProp("ignoreforlabelautoposition") !== true
+                    obj.evalVisProp('ignoreforlabelautoposition') !== true
                 ) {
                     // Save hasinnerpoints and temporarily disable to handle polygon areas
                     saveHasInnerPoints = obj.visProp.hasinnerpoints;
@@ -1254,7 +1254,7 @@ JXG.extend(
                 w = this.getSize()[0],
                 h = this.getSize()[1],
                 anchorCoords,
-                currentOffset = this.evalVisProp("offset"),
+                currentOffset = this.evalVisProp('offset'),
                 boundingBox = this.board.getBoundingBox();
 
             if (this.evalVisProp('islabel') && Type.exists(this.element)) {
@@ -1301,7 +1301,7 @@ JXG.extend(
             score -= this.getNumberOfConflicts(x, y, w, h, Type.evaluate(this.visProp.autopositionwhitelist));
 
             // Calculate displacement, minimum score is 0 if radius is minRadius, maximum score is < 1 when radius is maxRadius
-            score -= radius / this.evalVisProp("autopositionmindistance") / 10 - 0.1;
+            score -= radius / this.evalVisProp('autopositionmindistance') / 10 - 0.1;
 
             // Calculate angle between current offset and new offset
             angleCurrentOffset = Math.atan2(currentOffset[1], currentOffset[0]);
@@ -1340,11 +1340,11 @@ JXG.extend(
             var radius, angle, radiusStep,
                 i,
                 bestScore = -Infinity, bestRadius, bestAngle,
-                minRadius = this.evalVisProp("autopositionmindistance"),
-                maxRadius = this.evalVisProp("autopositionmaxdistance"),
+                minRadius = this.evalVisProp('autopositionmindistance'),
+                maxRadius = this.evalVisProp('autopositionmaxdistance'),
                 score,
                 co, si,
-                currentOffset = this.evalVisProp("offset"),
+                currentOffset = this.evalVisProp('offset'),
                 currentRadius,
                 currentAngle,
                 numAngles = 60,

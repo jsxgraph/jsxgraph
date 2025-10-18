@@ -59,11 +59,11 @@
                 this.board.unitX = 30;
                 this.board.unitY = 30;
 
-                this.readElements(this.tree.getElementsByTagName("elements"));
-                this.readConstraints(this.tree.getElementsByTagName("constraints"));
+                this.readElements(this.tree.getElementsByTagName('elements'));
+                this.readConstraints(this.tree.getElementsByTagName('constraints'));
                 this.cleanUp();
                 this.board.fullUpdate();
-                this.readDisplay(this.tree.getElementsByTagName("display"));
+                this.readDisplay(this.tree.getElementsByTagName('display'));
                 this.board.fullUpdate();
             },
 
@@ -94,7 +94,7 @@
                     // ignore, see this.addPolygonByVertices
                 } else {
                     JXG.debug(
-                        "Not implemented: " + node.nodeName + " " + node.getAttribute("id")
+                        "Not implemented: " + node.nodeName + " " + node.getAttribute('id')
                     );
                 }
             },
@@ -197,14 +197,14 @@
                     return;
                 }
 
-                this.objects[node.getAttribute("id")] = {
-                    id: node.getAttribute("id"),
+                this.objects[node.getAttribute('id')] = {
+                    id: node.getAttribute('id'),
                     coords: null
                 };
-                this.objects[node.getAttribute("id")].coords = parents;
-                this.objects[node.getAttribute("id")].id = node.getAttribute("id");
-                this.objects[node.getAttribute("id")].exists = false;
-                this.objects[node.getAttribute("id")].i2geoType = "point";
+                this.objects[node.getAttribute('id')].coords = parents;
+                this.objects[node.getAttribute('id')].id = node.getAttribute('id');
+                this.objects[node.getAttribute('id')].exists = false;
+                this.objects[node.getAttribute('id')].i2geoType = "point";
             },
 
             /**
@@ -215,8 +215,8 @@
             storeLine: function (node) {
                 var i, p, c, j;
 
-                this.objects[node.getAttribute("id")] = {
-                    id: node.getAttribute("id"),
+                this.objects[node.getAttribute('id')] = {
+                    id: node.getAttribute('id'),
                     coords: null
                 };
                 i = 0;
@@ -241,10 +241,10 @@
                             //}
                         }
                     }
-                    this.objects[node.getAttribute("id")].coords = c;
-                    this.objects[node.getAttribute("id")].id = node.getAttribute("id");
-                    this.objects[node.getAttribute("id")].exists = false;
-                    this.objects[node.getAttribute("id")].i2geoType = "line";
+                    this.objects[node.getAttribute('id')].coords = c;
+                    this.objects[node.getAttribute('id')].id = node.getAttribute('id');
+                    this.objects[node.getAttribute('id')].exists = false;
+                    this.objects[node.getAttribute('id')].i2geoType = "line";
                 }
             },
 
@@ -271,8 +271,8 @@
             storeConic: function (node) {
                 var i, j, p, c;
 
-                this.objects[node.getAttribute("id")] = {
-                    id: node.getAttribute("id"),
+                this.objects[node.getAttribute('id')] = {
+                    id: node.getAttribute('id'),
                     coords: null
                 };
                 i = 0;
@@ -298,10 +298,10 @@
                             //}
                         }
                     }
-                    this.objects[node.getAttribute("id")].coords = c;
-                    this.objects[node.getAttribute("id")].id = node.getAttribute("id");
-                    this.objects[node.getAttribute("id")].exists = false;
-                    this.objects[node.getAttribute("id")].i2geoType = "conic";
+                    this.objects[node.getAttribute('id')].coords = c;
+                    this.objects[node.getAttribute('id')].id = node.getAttribute('id');
+                    this.objects[node.getAttribute('id')].exists = false;
+                    this.objects[node.getAttribute('id')].i2geoType = "conic";
                 }
             },
 
@@ -1082,7 +1082,7 @@
                     this.board.containerObj.style.backgroundColor = node.firstChild.data;
                 } else if (node.nodeName === "style") {
                     // get the element
-                    el = this.board.select(node.getAttribute("ref"));
+                    el = this.board.select(node.getAttribute('ref'));
 
                     for (j = 0; j < node.childNodes.length; j++) {
                         if (node.childNodes[j].nodeType === 1) {

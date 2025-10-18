@@ -174,8 +174,8 @@ JXG.extend(
 
             // if (this.isNode()) {
             //     try {
-            //         // c = typeof module === "object" ? module.require("canvas") : $__canvas;
-            //         c = typeof module === "object" ? module.require("canvas") : import('canvas');
+            //         // c = typeof module === "object" ? module.require('canvas') : $__canvas;
+            //         c = typeof module === "object" ? module.require('canvas') : import('canvas');
             //         hasCanvas = !!c;
             //     } catch (err) {}
             // }
@@ -194,7 +194,7 @@ JXG.extend(
             }
 
             return (
-                hasCanvas || (this.isBrowser && !!document.createElement("canvas").getContext)
+                hasCanvas || (this.isBrowser && !!document.createElement('canvas').getContext)
             );
         },
 
@@ -266,7 +266,7 @@ JXG.extend(
         isAndroid: function () {
             return (
                 Type.exists(navigator) &&
-                navigator.userAgent.toLowerCase().indexOf("android") > -1
+                navigator.userAgent.toLowerCase().indexOf('android') > -1
             );
         },
 
@@ -287,8 +287,8 @@ JXG.extend(
         isApple: function () {
             return (
                 Type.exists(navigator) &&
-                (navigator.userAgent.indexOf("iPad") > -1 ||
-                    navigator.userAgent.indexOf("iPhone") > -1)
+                (navigator.userAgent.indexOf('iPad') > -1 ||
+                    navigator.userAgent.indexOf('iPhone') > -1)
             );
         },
 
@@ -313,7 +313,7 @@ JXG.extend(
                 typeof window === "object" &&
                 window.clientInformation &&
                 window.clientInformation.appVersion &&
-                window.clientInformation.appVersion.indexOf("MSAppHost") > -1
+                window.clientInformation.appVersion.indexOf('MSAppHost') > -1
             );
         },
 
@@ -325,8 +325,8 @@ JXG.extend(
         isMozilla: function () {
             return (
                 Type.exists(navigator) &&
-                navigator.userAgent.toLowerCase().indexOf("mozilla") > -1 &&
-                navigator.userAgent.toLowerCase().indexOf("apple") === -1
+                navigator.userAgent.toLowerCase().indexOf('mozilla') > -1 &&
+                navigator.userAgent.toLowerCase().indexOf('apple') === -1
             );
         },
 
@@ -338,10 +338,10 @@ JXG.extend(
         isFirefoxOS: function () {
             return (
                 Type.exists(navigator) &&
-                navigator.userAgent.toLowerCase().indexOf("android") === -1 &&
-                navigator.userAgent.toLowerCase().indexOf("apple") === -1 &&
-                navigator.userAgent.toLowerCase().indexOf("mobile") > -1 &&
-                navigator.userAgent.toLowerCase().indexOf("mozilla") > -1
+                navigator.userAgent.toLowerCase().indexOf('android') === -1 &&
+                navigator.userAgent.toLowerCase().indexOf('apple') === -1 &&
+                navigator.userAgent.toLowerCase().indexOf('mobile') > -1 &&
+                navigator.userAgent.toLowerCase().indexOf('mozilla') > -1
             );
         },
 
@@ -392,8 +392,8 @@ JXG.extend(
                 return 0;
             }
 
-            div = document.createElement("div");
-            all = div.getElementsByTagName("i");
+            div = document.createElement('div');
+            all = div.getElementsByTagName('i');
 
             do {
                 div.innerHTML = "<!--[if gt IE " + ++v + "]><" + "i><" + "/i><![endif]-->";
@@ -786,14 +786,14 @@ JXG.extend(
                         arr[j] = parseFloat(arr[j]);
                     }
 
-                    if (str.indexOf("matrix") === 0) {
+                    if (str.indexOf('matrix') === 0) {
                         cPos[0] += arr[4];
                         cPos[1] += arr[5];
-                    } else if (str.indexOf("translateX") === 0) {
+                    } else if (str.indexOf('translateX') === 0) {
                         cPos[0] += arr[0];
-                    } else if (str.indexOf("translateY") === 0) {
+                    } else if (str.indexOf('translateY') === 0) {
                         cPos[1] += arr[0];
-                    } else if (str.indexOf("translate") === 0) {
+                    } else if (str.indexOf('translate') === 0) {
                         cPos[0] += arr[0];
                         cPos[1] += arr[1];
                     }
@@ -842,7 +842,7 @@ JXG.extend(
                     st.getPropertyValue("-moz-transform") ||
                     st.getPropertyValue("-ms-transform") ||
                     st.getPropertyValue("-o-transform") ||
-                    st.getPropertyValue("transform");
+                    st.getPropertyValue('transform');
             } else {
                 // Take the first transformation matrix
                 len = t.length;
@@ -867,17 +867,17 @@ JXG.extend(
                         arr[j] = parseFloat(arr[j]);
                     }
 
-                    if (str.indexOf("matrix") === 0) {
+                    if (str.indexOf('matrix') === 0) {
                         mat = [
                             [1, 0, 0],
                             [0, arr[0], arr[1]],
                             [0, arr[2], arr[3]]
                         ];
-                    } else if (str.indexOf("scaleX") === 0) {
+                    } else if (str.indexOf('scaleX') === 0) {
                         mat[1][1] = arr[0];
-                    } else if (str.indexOf("scaleY") === 0) {
+                    } else if (str.indexOf('scaleY') === 0) {
                         mat[2][2] = arr[0];
-                    } else if (str.indexOf("scale") === 0) {
+                    } else if (str.indexOf('scale') === 0) {
                         mat[1][1] = arr[0];
                         mat[2][2] = arr[1];
                     }

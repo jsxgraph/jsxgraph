@@ -1074,7 +1074,7 @@ JXG.extend(
                 Env.isBrowser &&
                 this.type !== "no"
             ) {
-                node = this.container.ownerDocument.createElement("div");
+                node = this.container.ownerDocument.createElement('div');
                 //node = this.container.ownerDocument.createElementNS('http://www.w3.org/1999/xhtml', 'div'); //
                 node.style.position = "absolute";
                 node.className = el.evalVisProp('cssclass');
@@ -2093,7 +2093,7 @@ JXG.extend(
 
                     board_id = board_id || "";
 
-                    button = doc.createElement("span");
+                    button = doc.createElement('span');
                     button.innerHTML = label; // button.appendChild(doc.createTextNode(label));
 
                     // Style settings are superseded by adding the CSS class below
@@ -2133,7 +2133,7 @@ JXG.extend(
 
             if (Env.isBrowser && this.type !== "no") {
                 doc = board.containerObj.ownerDocument;
-                node = doc.createElement("div");
+                node = doc.createElement('div');
 
                 node.setAttribute("id", board.container + "_navigationbar");
 

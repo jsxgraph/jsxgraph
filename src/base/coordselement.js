@@ -209,7 +209,9 @@ JXG.extend(
                 fromParent = false;
             }
 
-            if (!this.evalVisProp('frozen')) {
+            console.log(this.id, this.updateConstraint.toString())
+            // if (!this.evalVisProp('frozen')) {
+            if (!Type.exists(this._initialized) || this.evalVisProp('frozen') !== true) {
                 this.updateConstraint();
             }
 
@@ -233,6 +235,10 @@ JXG.extend(
                 }
             }
             this.updateTransform(fromParent);
+
+            if (!Type.exists(this._initialized)) {
+                this._initialized = true;
+            }
 
             return this;
         },
@@ -1532,8 +1538,8 @@ JXG.extend(
                 newfuncs[i].origin = v;
             }
 
-            // Intersection function
             if (terms.length === 1) {
+                // Intersection function
                 this.updateConstraint = function () {
                     var c = newfuncs[0]();
 
@@ -1546,8 +1552,8 @@ JXG.extend(
                     }
                     return this;
                 };
-                // Euclidean coordinates
             } else if (terms.length === 2) {
+                // Euclidean coordinates
                 this.XEval = newfuncs[0];
                 this.YEval = newfuncs[1];
                 this.addParents([newfuncs[0].origin, newfuncs[1].origin]);
@@ -1559,8 +1565,8 @@ JXG.extend(
                     ]);
                     return this;
                 };
-                // Homogeneous coordinates
             } else {
+                // Homogeneous coordinates
                 this.ZEval = newfuncs[0];
                 this.XEval = newfuncs[1];
                 this.YEval = newfuncs[2];

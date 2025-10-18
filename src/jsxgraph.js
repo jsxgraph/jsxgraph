@@ -602,7 +602,7 @@ if (Env.isBrowser && typeof window === 'object' && typeof document === 'object')
                 cssClasses, bbox, axis, grid, code, src, request,
                 postpone = false,
 
-                scripts = document.getElementsByTagName("script"),
+                scripts = document.getElementsByTagName('script'),
                 init = function (code, type, bbox) {
                     var board = JXG.JSXGraph.initBoard(id, {
                         boundingbox: bbox,
@@ -612,7 +612,7 @@ if (Env.isBrowser && typeof window === 'object' && typeof document === 'object')
                         showReload: true
                     });
 
-                    if (type.toLowerCase().indexOf("script") > -1) {
+                    if (type.toLowerCase().indexOf('script') > -1) {
                         board.construct(code);
                     } else {
                         try {
@@ -666,7 +666,7 @@ if (Env.isBrowser && typeof window === 'object' && typeof document === 'object')
 
                     if (!Type.exists(id)) {
                         id = "jessiescript_autgen_jxg_" + i;
-                        div = document.createElement("div");
+                        div = document.createElement('div');
                         div.setAttribute("id", id);
 
                         txt = width !== "" ? "width:" + width + ";" : "";

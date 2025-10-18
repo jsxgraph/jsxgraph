@@ -58,7 +58,7 @@ JXG.SVGRenderer = function (container, dim) {
     this.type = "svg";
 
     this.isIE =
-        navigator.appVersion.indexOf("MSIE") !== -1 || navigator.userAgent.match(/Trident\//);
+        navigator.appVersion.indexOf('MSIE') !== -1 || navigator.userAgent.match(/Trident\//);
 
     /**
      * SVG root node
@@ -1294,7 +1294,7 @@ JXG.extend(
                     pStr += " ";
                 }
             }
-            if (pStr.indexOf("NaN") === -1) {
+            if (pStr.indexOf('NaN') === -1) {
                 node.setAttributeNS(null, "points", pStr);
             }
         },
@@ -2023,10 +2023,10 @@ JXG.extend(
         // _getDataUri: function (url, callback) {
         //     var image = new Image();
         //     image.onload = function () {
-        //         var canvas = document.createElement("canvas");
+        //         var canvas = document.createElement('canvas');
         //         canvas.width = this.naturalWidth; // or 'width' if you want a special/scaled size
         //         canvas.height = this.naturalHeight; // or 'height' if you want a special/scaled size
-        //         canvas.getContext("2d").drawImage(this, 0, 0);
+        //         canvas.getContext('2d').drawImage(this, 0, 0);
         //         callback(canvas.toDataURL("image/png"));
         //         canvas.remove();
         //     };
@@ -2036,19 +2036,19 @@ JXG.extend(
         _getImgDataURL: function (svgRoot) {
             var images, len, canvas, ctx, ur, i;
 
-            images = svgRoot.getElementsByTagName("image");
+            images = svgRoot.getElementsByTagName('image');
             len = images.length;
             if (len > 0) {
-                canvas = document.createElement("canvas");
+                canvas = document.createElement('canvas');
                 //img = new Image();
                 for (i = 0; i < len; i++) {
                     images[i].setAttribute("crossorigin", "anonymous");
                     //img.src = images[i].href;
                     //img.onload = function() {
                     // img.crossOrigin = "anonymous";
-                    ctx = canvas.getContext("2d");
-                    canvas.width = images[i].getAttribute("width");
-                    canvas.height = images[i].getAttribute("height");
+                    ctx = canvas.getContext('2d');
+                    canvas.width = images[i].getAttribute('width');
+                    canvas.height = images[i].getAttribute('height');
                     try {
                         ctx.drawImage(images[i], 0, 0, canvas.width, canvas.height);
 
@@ -2223,7 +2223,7 @@ JXG.extend(
             cv.width = cv.width;
             /* eslint-enable no-self-assign */
 
-            ctx = cv.getContext("2d");
+            ctx = cv.getContext('2d');
             if (w !== undefined && h !== undefined) {
                 cv.style.width = parseFloat(w) + "px";
                 cv.style.height = parseFloat(h) + "px";
@@ -2333,7 +2333,7 @@ JXG.extend(
 
             // Create div which contains canvas element and close button
             if (newImg) {
-                node = doc.createElement("div");
+                node = doc.createElement('div');
                 node.style.cssText = bas.css;
                 node.style.width = w + "px";
                 node.style.height = h + "px";
@@ -2348,7 +2348,7 @@ JXG.extend(
             if (!isDebug) {
                 // Create canvas element and add it to the DOM
                 // It will be removed after the image has been stored.
-                canvas = doc.createElement("canvas");
+                canvas = doc.createElement('canvas');
                 id = Math.random().toString(36).slice(2, 7);
                 canvas.setAttribute("id", id);
                 canvas.setAttribute("width", w);
@@ -2365,7 +2365,7 @@ JXG.extend(
 
             if (newImg) {
                 // Create close button
-                button = doc.createElement("span");
+                button = doc.createElement('span');
                 buttonText = doc.createTextNode("\u2716");
                 button.style.cssText = bas.cssButton;
                 button.appendChild(buttonText);

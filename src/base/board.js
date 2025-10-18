@@ -2022,21 +2022,21 @@ JXG.extend(
                 // On browser print:
                 // we need to call the listener when having @media: print.
                 try {
-                    // window.matchMedia("print").addEventListener('change', this.printListenerMatch.apply(this, arguments));
-                    window.matchMedia("print").addEventListener('change', this.printListenerMatch.bind(this));
-                    window.matchMedia("screen").addEventListener('change', this.printListenerMatch.bind(this));
+                    // window.matchMedia('print').addEventListener('change', this.printListenerMatch.apply(this, arguments));
+                    window.matchMedia('print').addEventListener('change', this.printListenerMatch.bind(this));
+                    window.matchMedia('screen').addEventListener('change', this.printListenerMatch.bind(this));
                     this.resizeHandlers.push('print');
                 } catch (err) {
                     JXG.debug("Error adding printListener", err);
                 }
                 // if (Type.isFunction(MediaQueryList.prototype.addEventListener)) {
-                //     window.matchMedia("print").addEventListener('change', function (mql) {
+                //     window.matchMedia('print').addEventListener('change', function (mql) {
                 //         if (mql.matches) {
                 //             that.printListener();
                 //         }
                 //     });
                 // } else if (Type.isFunction(MediaQueryList.prototype.addListener)) { // addListener might be deprecated
-                //     window.matchMedia("print").addListener(function (mql, ev) {
+                //     window.matchMedia('print').addListener(function (mql, ev) {
                 //         if (mql.matches) {
                 //             that.printListener(ev);
                 //         }
@@ -2074,8 +2074,8 @@ JXG.extend(
                             Env.removeEvent(window, 'scroll', this.scrollListener, this);
                             break;
                         case 'print':
-                            window.matchMedia("print").removeEventListener('change', this.printListenerMatch.bind(this), false);
-                            window.matchMedia("screen").removeEventListener('change', this.printListenerMatch.bind(this), false);
+                            window.matchMedia('print').removeEventListener('change', this.printListenerMatch.bind(this), false);
+                            window.matchMedia('screen').removeEventListener('change', this.printListenerMatch.bind(this), false);
                             break;
                         // case 'afterprint':
                         //     Env.removeEvent(window, 'afterprint', this.printListener, this);
@@ -4873,7 +4873,8 @@ JXG.extend(
 
                 if (Type.exists(el.coords)) {
                     froz = el.evalVisProp('frozen');
-                    if (froz === 'inherit') {
+                    console.log(el.id, froz)
+                    if (false && froz === 'inherit') {
                         // Search if a descendant of 'el' is set to 'frozen'.
                         // If yes, set element 'el' as frozen, too.
                         for (e in el.descendants/*el.childElements*/) {
@@ -4887,7 +4888,8 @@ JXG.extend(
                             }
                         }
                     }
-                    if (froz === true) {
+                    console.log('\t', froz)
+                    if (froz || froz === true) {
                         if (el.is3D) {
                             el.element2D.coords.screen2usr();
                         } else {
@@ -4900,7 +4902,6 @@ JXG.extend(
                             el.coords.usr2screen();
                             if (Type.exists(el.actualCoords)) {
                                 el.actualCoords.usr2screen();
-
                             }
                         }
                     }

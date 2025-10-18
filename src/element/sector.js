@@ -1555,7 +1555,7 @@ JXG.createAngle = function (board, parents, attributes) {
                 p.isDraggable = true;
                 p.parents = [];
 
-                p.coords.off("update");
+                p.coords.off('update');
             }
 
             this.hasFixedAngle = false;

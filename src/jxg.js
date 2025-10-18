@@ -275,8 +275,8 @@ jxg.extend(
         warn: function (warning) {
             if (typeof window === "object" && window.console && console.warn) {
                 console.warn("WARNING:", warning);
-            } else if (typeof document === "object" && document.getElementById("warning")) {
-                document.getElementById("debug").innerHTML += "WARNING: " + warning + "<br />";
+            } else if (typeof document === "object" && document.getElementById('warning')) {
+                document.getElementById('debug').innerHTML += "WARNING: " + warning + "<br />";
             }
         },
 
@@ -293,8 +293,8 @@ jxg.extend(
                 p = arguments[i];
                 if (typeof window === "object" && window.console && console.log) {
                     console.log(p);
-                } else if (typeof document === "object" && document.getElementById("debug")) {
-                    document.getElementById("debug").innerHTML += p + "<br/>";
+                } else if (typeof document === "object" && document.getElementById('debug')) {
+                    document.getElementById('debug').innerHTML += p + "<br/>";
                 }
             }
         },
@@ -312,7 +312,7 @@ jxg.extend(
             jxg.debugInt.apply(this, arguments);
 
             if (e && e.stack) {
-                jxg.debugInt("stacktrace");
+                jxg.debugInt('stacktrace');
                 jxg.debugInt(e.stack.split("\n").slice(1).join("\n"));
             }
         },

@@ -681,12 +681,12 @@ Type.extend(
                 // Predictor step
                 // if (true /*h < 2 * this.config.h_initial*/) {
                 // Euler
-                // console.log("euler")
+                // console.log('euler')
                 v[0] = u[0] + h * omega * t_u[0];
                 v[1] = u[1] + h * omega * t_u[1];
                 // } else {
                 //     // Heun
-                //     // console.log("heun")
+                //     // console.log('heun')
                 //     v[0] = u[0] + h * omega * t_u[0];
                 //     v[1] = u[1] + h * omega * t_u[1];
 

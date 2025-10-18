@@ -625,7 +625,7 @@ JXG.extend(
 
             d = this.childElements;
             for (prop in d) {
-                if (d.hasOwnProperty(prop) && prop.indexOf("Label") < 0) {
+                if (d.hasOwnProperty(prop) && prop.indexOf('Label') < 0) {
                     s++;
                 }
             }
@@ -1102,7 +1102,7 @@ JXG.extend(
             // and containing a RGBA string
             if (
                 this.visProp.hasOwnProperty(key) &&
-                key.indexOf("color") >= 0 &&
+                key.indexOf('color') >= 0 &&
                 Type.isString(value) &&
                 value.length === 9 &&
                 value.charAt(0) === "#"

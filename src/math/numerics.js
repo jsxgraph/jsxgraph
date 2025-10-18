@@ -1742,8 +1742,8 @@ Mat.Numerics = {
                     return num / denom;
                 };
             },
-            xfct = makeFct("X"),
-            yfct = makeFct("Y");
+            xfct = makeFct('X'),
+            yfct = makeFct('Y');
 
         return [
             xfct,
@@ -2485,8 +2485,8 @@ Mat.Numerics = {
         };
 
         return [
-            makeFct("X"),
-            makeFct("Y"),
+            makeFct('X'),
+            makeFct('Y'),
             0,
             function () {
                 return points.length - 1;
@@ -2707,8 +2707,8 @@ Mat.Numerics = {
             };
 
         return [
-            makeFct("X"),
-            makeFct("Y"),
+            makeFct('X'),
+            makeFct('Y'),
             0,
             function () {
                 return Math.floor(points.length / 3);
@@ -2831,8 +2831,8 @@ Mat.Numerics = {
             };
 
         return [
-            makeFct("X"),
-            makeFct("Y"),
+            makeFct('X'),
+            makeFct('Y'),
             0,
             function () {
                 return points.length - 1;

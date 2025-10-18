@@ -192,7 +192,7 @@ JXG.extend(
          * @private
          */
         updateRenderer: function () {
-            return this.updateRendererGeneric("updateForeignObject");
+            return this.updateRendererGeneric('updateForeignObject');
         },
 
         /**

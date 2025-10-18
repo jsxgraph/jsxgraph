@@ -108,11 +108,11 @@ JXG.Board.prototype.construct = function (string, mode, params, paraIn, macroNam
                     if (objName[0].search(/\./) != -1) {
                         prop = true;
 
-                        objName = objName[0].split(".");
+                        objName = objName[0].split('.');
                         propName = objName[objName.length - 1];
                         propName = propName.replace(/^\s+/, "").replace(/\s+$/, "");
                         objName.pop();
-                        objName = objName.join(".");
+                        objName = objName.join('.');
                         if (mode == "macro") {
                             for (j = 0; j < params.length; j++) {
                                 if (objName == params[j]) {

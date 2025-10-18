@@ -350,10 +350,10 @@
                 }
 
                 // Background image
-                if (JXG.exists(fileNode.getElementsByTagName("src")[0])) {
+                if (JXG.exists(fileNode.getElementsByTagName('src')[0])) {
                     tag = "src";
                 } else if (
-                    JXG.exists(fileNode.getElementsByTagName("image")[0]) &&
+                    JXG.exists(fileNode.getElementsByTagName('image')[0]) &&
                     JXG.exists(this.gEBTN(fileNode, "image"))
                 ) {
                     tag = "image";
@@ -497,8 +497,8 @@
                     conditions = "";
 
                 if (JXG.exists(node)) {
-                    for (i = 0; i < node.getElementsByTagName("data").length; i++) {
-                        ob = node.getElementsByTagName("data")[i];
+                    for (i = 0; i < node.getElementsByTagName('data').length; i++) {
+                        ob = node.getElementsByTagName('data')[i];
                         s = this.subtreeToString(ob);
                         conditions += s;
                     }
@@ -610,12 +610,12 @@
                         tmp = this.gEBTN(Data, "data", 0, false);
                         gxtEl.center = this.changeOriginIds(board, this.gEBTN(tmp, "midpoint"));
 
-                        if (tmp.getElementsByTagName("radius").length > 0) {
+                        if (tmp.getElementsByTagName('radius').length > 0) {
                             gxtEl.radius = this.changeOriginIds(
                                 board,
                                 this.gEBTN(tmp, "radius")
                             );
-                        } else if (tmp.getElementsByTagName("radiusvalue").length > 0) {
+                        } else if (tmp.getElementsByTagName('radiusvalue').length > 0) {
                             gxtEl.radius = this.gEBTN(tmp, "radiusvalue");
                         }
                         gxtEl = this.transformProperties(gxtEl);
@@ -674,7 +674,7 @@
                         gxtEl = this.visualProperties(gxtEl, Data);
                         gxtEl = this.firstLevelProperties(gxtEl, Data);
                         gxtEl.fixed = JXG.str2Bool(
-                            Data.getElementsByTagName("fix")[0].firstChild.data
+                            Data.getElementsByTagName('fix')[0].firstChild.data
                         );
                         gxtEl = this.readNodes(gxtEl, Data, "data");
                         gxtEl = this.transformProperties(gxtEl, "point");
@@ -686,14 +686,14 @@
                     case "intersection":
                         gxtEl.strokewidth = 1; // Old file format
                         gxtEl = this.readNodes(gxtEl, Data, "data");
-                        xmlNode = Data.getElementsByTagName("first")[1];
+                        xmlNode = Data.getElementsByTagName('first')[1];
 
                         gxtEl.outFirst = {};
                         gxtEl.outFirst = this.colorProperties(gxtEl.outFirst, xmlNode);
                         gxtEl.outFirst = this.visualProperties(gxtEl.outFirst, xmlNode);
                         gxtEl.outFirst = this.firstLevelProperties(gxtEl.outFirst, xmlNode);
                         gxtEl.outFirst.fixed = JXG.str2Bool(
-                            xmlNode.getElementsByTagName("fix")[0].firstChild.data
+                            xmlNode.getElementsByTagName('fix')[0].firstChild.data
                         );
                         gxtEl.outFirst = this.transformProperties(gxtEl.outFirst, "point");
                         gxtEl.first = this.changeOriginIds(board, gxtEl.first);
@@ -713,7 +713,7 @@
                                 inter.hideElement();
                             }
                         } else {
-                            xmlNode = Data.getElementsByTagName("last")[1];
+                            xmlNode = Data.getElementsByTagName('last')[1];
                             if (JXG.exists(xmlNode)) {
                                 gxtEl.outLast = {};
                                 gxtEl.outLast = this.colorProperties(gxtEl.outLast, xmlNode);
@@ -723,7 +723,7 @@
                                     xmlNode
                                 );
                                 gxtEl.outLast.fixed = JXG.str2Bool(
-                                    xmlNode.getElementsByTagName("fix")[0].firstChild.data
+                                    xmlNode.getElementsByTagName('fix')[0].firstChild.data
                                 );
                                 gxtEl.outLast = this.transformProperties(
                                     gxtEl.outLast,
@@ -750,7 +750,7 @@
                         gxtEl.defEl = [];
                         numberDefEls = 0;
                         xmlNode =
-                            Data.getElementsByTagName("data")[0].getElementsByTagName("input");
+                            Data.getElementsByTagName('data')[0].getElementsByTagName('input');
                         for (i = 0; i < xmlNode.length; i++) {
                             gxtEl.defEl[i] = xmlNode[i].firstChild.data;
                             numberDefEls = i + 1;
@@ -758,7 +758,7 @@
 
                         // every composition produces at least one element and the data for this element is stored
                         // in gxtEl.out. if additional elements are created their data is read in the according case.
-                        xmlNode = Data.getElementsByTagName("output")[0];
+                        xmlNode = Data.getElementsByTagName('output')[0];
                         gxtEl.out = {};
                         gxtEl.out = this.colorProperties(gxtEl.out, xmlNode);
                         gxtEl.out = this.visualProperties(gxtEl.out, xmlNode);
@@ -774,7 +774,7 @@
                             case "210070":
                                 gxtEl.out.fixed = this.gEBTN(xmlNode, "fix");
 
-                                xmlNode = Data.getElementsByTagName("output")[1];
+                                xmlNode = Data.getElementsByTagName('output')[1];
                                 gxtEl.outPoint = {};
                                 gxtEl.outPoint = this.defProperties(gxtEl.outPoint, xmlNode);
                                 gxtEl.outPoint = this.colorProperties(gxtEl.outPoint, xmlNode);
@@ -809,7 +809,7 @@
 
                             // CIRCUMCIRCLE
                             case "210090":
-                                xmlNode = Data.getElementsByTagName("output")[1];
+                                xmlNode = Data.getElementsByTagName('output')[1];
                                 gxtEl.outCircle = {};
                                 gxtEl.outCircle = this.defProperties(gxtEl.outCircle, xmlNode);
                                 gxtEl.outCircle = this.colorProperties(
@@ -913,7 +913,7 @@
                                 // output[0] was already read and is stored in gxtEl.out
                                 gxtEl.out.fixed = this.gEBTN(xmlNode, "fix");
 
-                                xmlNode = Data.getElementsByTagName("output")[1];
+                                xmlNode = Data.getElementsByTagName('output')[1];
                                 gxtEl.outLine = {};
                                 gxtEl.outLine = this.defProperties(gxtEl.outLine, xmlNode);
                                 gxtEl.outLine = this.colorProperties(gxtEl.outLine, xmlNode);
@@ -972,7 +972,7 @@
                                 c = [];
 
                                 for (i = 0; i < 4; i++) {
-                                    xmlNode[i] = Data.getElementsByTagName("output")[i];
+                                    xmlNode[i] = Data.getElementsByTagName('output')[i];
                                     gxtEl.out = {};
                                     gxtEl.out = this.defProperties(gxtEl.out, xmlNode[i]);
                                     gxtEl.out = this.colorProperties(gxtEl.out, xmlNode[i]);
@@ -1042,13 +1042,13 @@
                         for (
                             i = 0;
                             i <
-                            Data.getElementsByTagName("data")[0].getElementsByTagName("vertex")
+                            Data.getElementsByTagName('data')[0].getElementsByTagName('vertex')
                                 .length -
                                 1;
                             i++
                         ) {
                             dataVertex[i] =
-                                Data.getElementsByTagName("data")[0].getElementsByTagName(
+                                Data.getElementsByTagName('data')[0].getElementsByTagName(
                                     "vertex"
                                 )[i].firstChild.data;
                             dataVertex[i] = this.changeOriginIds(board, dataVertex[i]);
@@ -1058,25 +1058,25 @@
                             ids: [],
                             names: []
                         };
-                        for (i = 0; i < Data.getElementsByTagName("border").length; i++) {
+                        for (i = 0; i < Data.getElementsByTagName('border').length; i++) {
                             gxtEl.border[i] = {};
-                            xmlNode = Data.getElementsByTagName("border")[i];
+                            xmlNode = Data.getElementsByTagName('border')[i];
                             gxtEl.border[i].id =
-                                xmlNode.getElementsByTagName("id")[0].firstChild.data;
+                                xmlNode.getElementsByTagName('id')[0].firstChild.data;
                             gxtEl.borders.ids.push(gxtEl.border[i].id);
                             gxtEl.border[i].name =
-                                xmlNode.getElementsByTagName("name")[0].firstChild.data;
+                                xmlNode.getElementsByTagName('name')[0].firstChild.data;
                             gxtEl.borders.names.push(gxtEl.border[i].name);
 
                             gxtEl.border[i].straightFirst = JXG.str2Bool(
                                 xmlNode
-                                    .getElementsByTagName("straight")[0]
-                                    .getElementsByTagName("first")[0].firstChild.data
+                                    .getElementsByTagName('straight')[0]
+                                    .getElementsByTagName('first')[0].firstChild.data
                             );
                             gxtEl.border[i].straightLast = JXG.str2Bool(
                                 xmlNode
-                                    .getElementsByTagName("straight")[0]
-                                    .getElementsByTagName("last")[0].firstChild.data
+                                    .getElementsByTagName('straight')[0]
+                                    .getElementsByTagName('last')[0].firstChild.data
                             );
                             try {
                                 gxtEl.border[i].strokeWidth =
@@ -1085,42 +1085,42 @@
                                     )[0].firstChild.data;
                             } catch (ex) {
                                 gxtEl.border[i].strokeWidth =
-                                    xmlNode.getElementsByTagName("width")[0].firstChild.data;
+                                    xmlNode.getElementsByTagName('width')[0].firstChild.data;
                             }
                             try {
                                 gxtEl.border[i].dash = JXG.str2Bool(
-                                    xmlNode.getElementsByTagName("dash")[0].firstChild.data
+                                    xmlNode.getElementsByTagName('dash')[0].firstChild.data
                                 );
                             } catch (exc) {}
 
                             gxtEl.border[i].visible = JXG.str2Bool(
-                                xmlNode.getElementsByTagName("visible")[0].firstChild.data
+                                xmlNode.getElementsByTagName('visible')[0].firstChild.data
                             );
                             gxtEl.border[i].draft = JXG.str2Bool(
-                                xmlNode.getElementsByTagName("draft")[0].firstChild.data
+                                xmlNode.getElementsByTagName('draft')[0].firstChild.data
                             );
                             gxtEl.border[i].trace = JXG.str2Bool(
-                                xmlNode.getElementsByTagName("trace")[0].firstChild.data
+                                xmlNode.getElementsByTagName('trace')[0].firstChild.data
                             );
 
                             xmlNode =
-                                Data.getElementsByTagName("border")[i].getElementsByTagName(
+                                Data.getElementsByTagName('border')[i].getElementsByTagName(
                                     "color"
                                 )[0];
                             rgbo = JXG.rgba2rgbo(
-                                xmlNode.getElementsByTagName("stroke")[0].firstChild.data
+                                xmlNode.getElementsByTagName('stroke')[0].firstChild.data
                             );
                             gxtEl.border[i].strokeColor = rgbo[0];
                             gxtEl.border[i].strokeOpacity = rgbo[1];
 
                             rgbo = JXG.rgba2rgbo(
-                                xmlNode.getElementsByTagName("lighting")[0].firstChild.data
+                                xmlNode.getElementsByTagName('lighting')[0].firstChild.data
                             );
                             gxtEl.border[i].highlightStrokeColor = rgbo[0];
                             gxtEl.border[i].highlightStrokeOpacity = rgbo[1];
 
                             rgbo = JXG.rgba2rgbo(
-                                xmlNode.getElementsByTagName("fill")[0].firstChild.data
+                                xmlNode.getElementsByTagName('fill')[0].firstChild.data
                             );
                             gxtEl.border[i].fillColor = rgbo[0];
                             gxtEl.border[i].fillOpacity = rgbo[1];
@@ -1129,9 +1129,9 @@
                             gxtEl.border[i].highlightFillOpacity = gxtEl.border[i].fillOpacity;
 
                             gxtEl.border[i].labelColor =
-                                xmlNode.getElementsByTagName("label")[0].firstChild.data;
+                                xmlNode.getElementsByTagName('label')[0].firstChild.data;
                             gxtEl.border[i].colorDraft =
-                                xmlNode.getElementsByTagName("draft")[0].firstChild.data;
+                                xmlNode.getElementsByTagName('draft')[0].firstChild.data;
                         }
                         gxtEl = this.transformProperties(gxtEl);
                         p = board.create("polygon", dataVertex, gxtEl);
@@ -1156,7 +1156,7 @@
                         gxtEl = this.colorProperties(gxtEl, Data);
                         gxtEl = this.firstLevelProperties(gxtEl, Data);
                         gxtEl.funct =
-                            Data.getElementsByTagName("data")[0].getElementsByTagName(
+                            Data.getElementsByTagName('data')[0].getElementsByTagName(
                                 "function"
                             )[0].firstChild.data;
                         gxtEl.funct = board.jc.snippet(gxtEl.funct, true, "x", true);
@@ -1197,10 +1197,10 @@
 
                         // It seems that JSXGraph and GEONExT use opposite directions.
                         gxtEl.firstArrow = JXG.str2Bool(
-                            Data.getElementsByTagName("lastarrow")[0].firstChild.data
+                            Data.getElementsByTagName('lastarrow')[0].firstChild.data
                         );
                         gxtEl.lastArrow = JXG.str2Bool(
-                            Data.getElementsByTagName("firstarrow")[0].firstChild.data
+                            Data.getElementsByTagName('firstarrow')[0].firstChild.data
                         );
 
                         gxtEl = this.transformProperties(gxtEl);
@@ -1243,14 +1243,14 @@
                         gxtEl = this.readNodes(gxtEl, Data, "data");
                         try {
                             gxtEl.mpStr = this.subtreeToString(
-                                Data.getElementsByTagName("data")[0].getElementsByTagName(
+                                Data.getElementsByTagName('data')[0].getElementsByTagName(
                                     "mp"
                                 )[0]
                             );
                             gxtEl.mpStr = gxtEl.mpStr.replace(/<\/?mp>/g, "");
                         } catch (ex1) {
                             gxtEl.mpStr = this.subtreeToString(
-                                Data.getElementsByTagName("data")[0].getElementsByTagName(
+                                Data.getElementsByTagName('data')[0].getElementsByTagName(
                                     "content"
                                 )[0]
                             );
@@ -1259,12 +1259,12 @@
                         gxtEl.fixed = false;
                         try {
                             if (
-                                Data.getElementsByTagName("data")[0].getElementsByTagName(
+                                Data.getElementsByTagName('data')[0].getElementsByTagName(
                                     "parent"
                                 )[0].firstChild
                             ) {
                                 gxtEl.parent =
-                                    Data.getElementsByTagName("data")[0].getElementsByTagName(
+                                    Data.getElementsByTagName('data')[0].getElementsByTagName(
                                         "parent"
                                     )[0].firstChild.data;
                                 gxtEl.fixed = true;
@@ -1273,20 +1273,20 @@
 
                         try {
                             gxtEl.condition =
-                                Data.getElementsByTagName("condition")[0].firstChild.data;
+                                Data.getElementsByTagName('condition')[0].firstChild.data;
                         } catch (ex3) {
                             gxtEl.condition = "";
                         }
-                        gxtEl.content = Data.getElementsByTagName("content")[0].firstChild.data;
+                        gxtEl.content = Data.getElementsByTagName('content')[0].firstChild.data;
                         try {
-                            gxtEl.fixed = Data.getElementsByTagName("fix")[0].firstChild.data;
+                            gxtEl.fixed = Data.getElementsByTagName('fix')[0].firstChild.data;
                         } catch (ex4) {
                             gxtEl.fixed = false;
                         }
                         // not used: gxtEl.digits = Data.getElementsByTagName('cs')[0].firstChild.data;
                         try {
                             gxtEl.autodigits =
-                                Data.getElementsByTagName("digits")[0].firstChild.data;
+                                Data.getElementsByTagName('digits')[0].firstChild.data;
                         } catch (ex5) {
                             gxtEl.autodigits = 2;
                         }
@@ -1313,11 +1313,11 @@
                         gxtEl = this.firstLevelProperties(gxtEl, Data);
                         gxtEl = this.transformProperties(gxtEl);
                         gxtEl.functionx =
-                            Data.getElementsByTagName("functionx")[0].firstChild.data;
+                            Data.getElementsByTagName('functionx')[0].firstChild.data;
                         gxtEl.functiony =
-                            Data.getElementsByTagName("functiony")[0].firstChild.data;
-                        gxtEl.min = Data.getElementsByTagName("min")[0].firstChild.data;
-                        gxtEl.max = Data.getElementsByTagName("max")[0].firstChild.data;
+                            Data.getElementsByTagName('functiony')[0].firstChild.data;
+                        gxtEl.min = Data.getElementsByTagName('min')[0].firstChild.data;
+                        gxtEl.max = Data.getElementsByTagName('max')[0].firstChild.data;
                         gxtEl.fillColor = "none";
                         gxtEl.highlightFillColor = "none";
 
@@ -1338,9 +1338,9 @@
                         break;
                     case "tracecurve":
                         gxtEl.tracepoint =
-                            Data.getElementsByTagName("tracepoint")[0].firstChild.data;
+                            Data.getElementsByTagName('tracepoint')[0].firstChild.data;
                         gxtEl.traceslider =
-                            Data.getElementsByTagName("traceslider")[0].firstChild.data;
+                            Data.getElementsByTagName('traceslider')[0].firstChild.data;
                         board.create(
                             "tracecurve",
                             [gxtEl.traceslider, gxtEl.tracepoint],
@@ -1356,12 +1356,12 @@
                         for (
                             i = 0;
                             i <
-                            Data.getElementsByTagName("data")[0].getElementsByTagName("member")
+                            Data.getElementsByTagName('data')[0].getElementsByTagName('member')
                                 .length;
                             i++
                         ) {
                             gxtEl.members[i] =
-                                Data.getElementsByTagName("data")[0].getElementsByTagName(
+                                Data.getElementsByTagName('data')[0].getElementsByTagName(
                                     "member"
                                 )[i].firstChild.data;
                             gxtEl.members[i] = this.changeOriginIds(board, gxtEl.members[i]);
@@ -1398,7 +1398,7 @@
 
                 boardData = this.gEBTN(tree, "board", 0, false);
                 conditions = this.readConditions(
-                    boardData.getElementsByTagName("conditions")[0]
+                    boardData.getElementsByTagName('conditions')[0]
                 );
 
                 // set the board background color
@@ -1541,7 +1541,7 @@
                 }
                 board.containerObj.style.backgroundColor = JXG.rgba2rgbo(tmp)[0];
 
-                elChildNodes = tree.getElementsByTagName("elements")[0].childNodes;
+                elChildNodes = tree.getElementsByTagName('elements')[0].childNodes;
                 for (s = 0; s < elChildNodes.length; s++) {
                     this.readNode(elChildNodes, s, board);
                 }
@@ -1565,7 +1565,7 @@
 
             prepareString: function (fileStr) {
                 try {
-                    if (fileStr.indexOf("GEONEXT") < 0) {
+                    if (fileStr.indexOf('GEONEXT') < 0) {
                         // Base64 decoding
                         fileStr = this.decodeString(fileStr)[0][0];
                     }

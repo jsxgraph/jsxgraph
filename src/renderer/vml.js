@@ -203,7 +203,7 @@ JXG.extend(
         displayCopyright: function (str, fontsize) {
             var node, t;
 
-            node = this.createNode("textbox");
+            node = this.createNode('textbox');
             node.style.position = "absolute";
             this._setAttr(node, "id", this.container.id + "_" + "licenseText");
 
@@ -224,7 +224,7 @@ JXG.extend(
         // documented in AbstractRenderer
         drawInternalText: function (el) {
             var node;
-            node = this.createNode("textbox");
+            node = this.createNode('textbox');
             node.style.position = "absolute";
             el.rendNodeText = this.container.ownerDocument.createTextNode("");
             node.appendChild(el.rendNodeText);
@@ -362,7 +362,7 @@ JXG.extend(
             // IE 8: Bilder ueber data URIs werden bis 32kB unterstuetzt.
             var node;
 
-            node = this.container.ownerDocument.createElement("img");
+            node = this.container.ownerDocument.createElement('img');
             node.style.position = "absolute";
             this._setAttr(node, "id", this.container.id + "_" + el.id);
 
@@ -486,16 +486,16 @@ JXG.extend(
         createPrim: function (type, id) {
             var node,
                 pathNode,
-                fillNode = this.createNode("fill"),
-                strokeNode = this.createNode("stroke"),
-                shadowNode = this.createNode("shadow");
+                fillNode = this.createNode('fill'),
+                strokeNode = this.createNode('stroke'),
+                shadowNode = this.createNode('shadow');
 
             this._setAttr(fillNode, "id", this.container.id + "_" + id + "_fill");
             this._setAttr(strokeNode, "id", this.container.id + "_" + id + "_stroke");
             this._setAttr(shadowNode, "id", this.container.id + "_" + id + "_shadow");
 
             if (type === "circle" || type === "ellipse") {
-                node = this.createNode("oval");
+                node = this.createNode('oval');
                 node.appendChild(fillNode);
                 node.appendChild(strokeNode);
                 node.appendChild(shadowNode);
@@ -505,11 +505,11 @@ JXG.extend(
                 type === "shape" ||
                 type === "line"
             ) {
-                node = this.createNode("shape");
+                node = this.createNode('shape');
                 node.appendChild(fillNode);
                 node.appendChild(strokeNode);
                 node.appendChild(shadowNode);
-                pathNode = this.createNode("path");
+                pathNode = this.createNode('path');
                 this._setAttr(pathNode, "id", this.container.id + "_" + id + "_path");
                 node.appendChild(pathNode);
             } else {

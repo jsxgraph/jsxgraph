@@ -198,7 +198,7 @@ JXG.extend(
          * @private
          */
         updateRenderer: function () {
-            return this.updateRendererGeneric("updateImage");
+            return this.updateRendererGeneric('updateImage');
         },
 
         /**

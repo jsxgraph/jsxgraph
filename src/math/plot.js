@@ -358,7 +358,7 @@ Mat.Plot = {
         ) {
             pnt._t = t;
             curve.points.push(pnt);
-            this._lastCrds = pnt.copy("scrCoords");
+            this._lastCrds = pnt.copy('scrCoords');
         }
     },
 
@@ -647,7 +647,7 @@ Mat.Plot = {
             // h2,
             bbox, ret_arr;
 
-        //console.time("plot");
+        //console.time('plot');
         if (curve.board.updateQuality === curve.board.BOARD_QUALITY_LOW) {
             depth = curve.evalVisProp('recursiondepthlow') || 13;
             delta = 2;
@@ -709,17 +709,17 @@ Mat.Plot = {
         this._visibleArea = [ta, tb];
 
         // Start recursive plotting algorithm
-        a = pa.copy("scrCoords");
-        b = pb.copy("scrCoords");
+        a = pa.copy('scrCoords');
+        b = pb.copy('scrCoords');
         pa._t = ta;
         curve.points.push(pa);
-        this._lastCrds = pa.copy("scrCoords"); // Used in _insertPoint
+        this._lastCrds = pa.copy('scrCoords'); // Used in _insertPoint
         this._plotRecursive_v2(curve, a, ta, b, tb, depth, delta);
         pb._t = tb;
         curve.points.push(pb);
 
         curve.numberPoints = curve.points.length;
-        //console.timeEnd("plot");
+        //console.timeEnd('plot');
 
         return curve;
     },
@@ -784,8 +784,8 @@ Mat.Plot = {
         p2 = new Coords(Const.COORDS_BY_USER, [limes.right_x, limes.right_y], curve.board);
         p2._t = t;
         curve.points.push(p2);
-        this._lastScrCrds = p2.copy("scrCoords");
-        this._lastUsrCrds = p2.copy("usrCoords");
+        this._lastScrCrds = p2.copy('scrCoords');
+        this._lastUsrCrds = p2.copy('usrCoords');
     },
 
     /**
@@ -848,8 +848,8 @@ Mat.Plot = {
         p = new Coords(Const.COORDS_BY_SCREEN, pnt, curve.board);
         p._t = t;
         curve.points.push(p);
-        this._lastScrCrds = p.copy("scrCoords");
-        this._lastUsrCrds = p.copy("usrCoords");
+        this._lastScrCrds = p.copy('scrCoords');
+        this._lastUsrCrds = p.copy('usrCoords');
     },
 
     /**
@@ -1399,7 +1399,7 @@ Mat.Plot = {
             ret_arr;
 
         // console.log("-----------------------------------------------------------");
-        // console.time("plot");
+        // console.time('plot');
         if (curve.board.updateQuality === curve.board.BOARD_QUALITY_LOW) {
             depth = curve.evalVisProp('recursiondepthlow') || 14;
         } else {
@@ -1459,12 +1459,12 @@ Mat.Plot = {
         this._visibleArea = [ta, tb];
 
         // Start recursive plotting algorithm
-        a = pa.copy("scrCoords");
-        b = pb.copy("scrCoords");
+        a = pa.copy('scrCoords');
+        b = pb.copy('scrCoords');
         pa._t = ta;
         curve.points.push(pa);
-        this._lastScrCrds = pa.copy("scrCoords"); // Used in _insertPoint
-        this._lastUsrCrds = pa.copy("usrCoords"); // Used in _insertPoint
+        this._lastScrCrds = pa.copy('scrCoords'); // Used in _insertPoint
+        this._lastUsrCrds = pa.copy('usrCoords'); // Used in _insertPoint
 
         this._plotNonRecursive(curve, a, ta, b, tb, depth);
 
@@ -1472,7 +1472,7 @@ Mat.Plot = {
         curve.points.push(pb);
 
         curve.numberPoints = curve.points.length;
-        // console.timeEnd("plot");
+        // console.timeEnd('plot');
         // console.log("number of points:", this.numberPoints);
 
         return curve;

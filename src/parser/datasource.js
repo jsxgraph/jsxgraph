@@ -138,11 +138,11 @@ JXG.extend(
 
             if (Type.exists(table)) {
                 // extract the data
-                row = table.getElementsByTagName("tr");
+                row = table.getElementsByTagName('tr');
                 this.data = [];
 
                 for (i = 0; i < row.length; i++) {
-                    col = row[i].getElementsByTagName("td");
+                    col = row[i].getElementsByTagName('td');
                     this.data[i] = [];
 
                     for (j = 0; j < col.length; j++) {

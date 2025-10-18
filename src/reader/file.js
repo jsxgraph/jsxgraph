@@ -64,10 +64,10 @@ JXG.FileReader = {
             }
         } catch (e) {
             try {
-                request = new ActiveXObject("Msxml2.XMLHTTP");
+                request = new ActiveXObject('Msxml2.XMLHTTP');
             } catch (ex) {
                 try {
-                    request = new ActiveXObject("Microsoft.XMLHTTP");
+                    request = new ActiveXObject('Microsoft.XMLHTTP');
                 } catch (exc) {
                     request = false;
                 }

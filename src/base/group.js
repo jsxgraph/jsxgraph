@@ -308,8 +308,8 @@ JXG.extend(
                         return this;
                     }
                     s = Geometry.distance(obj.coords.usrCoords.slice(1), center) / s;
-                    sx = this.scaleDirections[drag.id].indexOf("x") >= 0 ? s : 1.0;
-                    sy = this.scaleDirections[drag.id].indexOf("y") >= 0 ? s : 1.0;
+                    sx = this.scaleDirections[drag.id].indexOf('x') >= 0 ? s : 1.0;
+                    sy = this.scaleDirections[drag.id].indexOf('y') >= 0 ? s : 1.0;
 
                     // Shift scale center to origin, scale and shift the scale center back.
                     t = this.board.create(

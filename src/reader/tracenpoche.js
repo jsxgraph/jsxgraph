@@ -583,9 +583,9 @@ JXG.TracenpocheReader = function (board, str) {
         symbol("]");
         symbol("}");
         symbol(",");
-        symbol("do");
-        symbol("to");
-        symbol("end");
+        symbol('do');
+        symbol('to');
+        symbol('end');
 
         constant("true", true);
         constant("false", false);
@@ -709,12 +709,12 @@ JXG.TracenpocheReader = function (board, str) {
                 varname;
 
             this.first = expression(0);
-            advance("to");
+            advance('to');
             this.second = expression(0);
-            advance("do");
+            advance('do');
             if (token.id === ";") advance(";");
             this.third = statements().join("\n");
-            advance("end");
+            advance('end');
             varname = scopeObjName + '["' + n.value + '"]';
             return (
                 "for (" +

@@ -778,7 +778,7 @@ JXG.extend(
                 // continuous x data
             } else {
                 if (this.evalVisProp('doadvancedplot')) {
-                    // console.time("plot");
+                    // console.time('plot');
 
                     if (version === 1 || this.evalVisProp('doadvancedplotold')) {
                         Plot.updateParametricCurveOld(this, mi, ma);
@@ -791,7 +791,7 @@ JXG.extend(
                     } else {
                         Plot.updateParametricCurve_v2(this, mi, ma);
                     }
-                    // console.timeEnd("plot");
+                    // console.timeEnd('plot');
                 } else {
                     if (this.board.updateQuality === this.board.BOARD_QUALITY_HIGH) {
                         this.numberPoints = this.evalVisProp('numberpointshigh');
@@ -832,10 +832,10 @@ JXG.extend(
                 this.evalVisProp('curvetype') !== "plot" &&
                 this.evalVisProp('rdpsmoothing')
             ) {
-                // console.time("rdp");
+                // console.time('rdp');
                 this.points = Numerics.RamerDouglasPeucker(this.points, 0.2);
                 this.numberPoints = this.points.length;
-                // console.timeEnd("rdp");
+                // console.timeEnd('rdp');
                 // console.log(this.numberPoints);
             }
 

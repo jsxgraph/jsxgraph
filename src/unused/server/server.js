@@ -217,7 +217,7 @@ JXG.Server = {
             AJAX = new XMLHttpRequest();
             AJAX.overrideMimeType("text/plain; charset=iso-8859-1");
         } else {
-            AJAX = new ActiveXObject("Microsoft.XMLHTTP");
+            AJAX = new ActiveXObject('Microsoft.XMLHTTP');
         }
         if (AJAX) {
             // POST is required if data sent to server is too long for a url.

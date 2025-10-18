@@ -48,14 +48,14 @@
         // this needs to be accessible from eval'd strings so we have to keep it in board
         this.board.ggb = {};
         this.format = parseFloat(
-            tree.getElementsByTagName("geogebra")[0].getAttribute("format")
+            tree.getElementsByTagName('geogebra')[0].getAttribute('format')
         );
         this.decimals = parseInt(
             tree
-                .getElementsByTagName("geogebra")[0]
-                .getElementsByTagName("kernel")[0]
-                .getElementsByTagName("decimals")[0]
-                .getAttribute("val"),
+                .getElementsByTagName('geogebra')[0]
+                .getElementsByTagName('kernel')[0]
+                .getElementsByTagName('decimals')[0]
+                .getAttribute('val'),
             10
         );
     };
@@ -2044,24 +2044,24 @@
                     r,
                     g,
                     b,
-                    objColor = Data.getElementsByTagName("objColor")[0],
-                    len = Data.getElementsByTagName("objColor").length > 0;
+                    objColor = Data.getElementsByTagName('objColor')[0],
+                    len = Data.getElementsByTagName('objColor').length > 0;
 
                 a =
-                    len && objColor.getAttribute("alpha")
-                        ? parseFloat(objColor.getAttribute("alpha"))
+                    len && objColor.getAttribute('alpha')
+                        ? parseFloat(objColor.getAttribute('alpha'))
                         : 0;
                 r =
-                    len && objColor.getAttribute("r")
-                        ? parseInt(objColor.getAttribute("r"), 10).toString(16)
+                    len && objColor.getAttribute('r')
+                        ? parseInt(objColor.getAttribute('r'), 10).toString(16)
                         : 0;
                 g =
-                    len && objColor.getAttribute("g")
-                        ? parseInt(objColor.getAttribute("g"), 10).toString(16)
+                    len && objColor.getAttribute('g')
+                        ? parseInt(objColor.getAttribute('g'), 10).toString(16)
                         : 0;
                 b =
-                    len && objColor.getAttribute("b")
-                        ? parseInt(objColor.getAttribute("b"), 10).toString(16)
+                    len && objColor.getAttribute('b')
+                        ? parseInt(objColor.getAttribute('b'), 10).toString(16)
                         : 0;
 
                 if (r.length === 1) {
@@ -2113,31 +2113,31 @@
                         z: 0
                     };
 
-                if (Data.getElementsByTagName("labelOffset")[0]) {
+                if (Data.getElementsByTagName('labelOffset')[0]) {
                     labelOffset.x =
                         parseFloat(
-                            Data.getElementsByTagName("labelOffset")[0].getAttribute("x")
+                            Data.getElementsByTagName('labelOffset')[0].getAttribute('x')
                         ) / this.board.unitX;
                     labelOffset.y =
                         parseFloat(
-                            Data.getElementsByTagName("labelOffset")[0].getAttribute("y")
+                            Data.getElementsByTagName('labelOffset')[0].getAttribute('y')
                         ) / this.board.unitY;
                 }
 
-                if (Data.getElementsByTagName("coords")[0]) {
+                if (Data.getElementsByTagName('coords')[0]) {
                     gxtEl.x = parseFloat(
-                        Data.getElementsByTagName("coords")[0].getAttribute("x")
+                        Data.getElementsByTagName('coords')[0].getAttribute('x')
                     );
                     gxtEl.y = parseFloat(
-                        Data.getElementsByTagName("coords")[0].getAttribute("y")
+                        Data.getElementsByTagName('coords')[0].getAttribute('y')
                     );
                     gxtEl.z = parseFloat(
-                        Data.getElementsByTagName("coords")[0].getAttribute("z")
+                        Data.getElementsByTagName('coords')[0].getAttribute('z')
                     );
-                } else if (Data.getElementsByTagName("startPoint")[0]) {
-                    if (Data.getElementsByTagName("startPoint")[0].getAttribute("exp")) {
+                } else if (Data.getElementsByTagName('startPoint')[0]) {
+                    if (Data.getElementsByTagName('startPoint')[0].getAttribute('exp')) {
                         a = this.board.select(
-                            Data.getElementsByTagName("startPoint")[0].getAttribute("exp")
+                            Data.getElementsByTagName('startPoint')[0].getAttribute('exp')
                         );
                         gxtEl.x = function () {
                             return a.X() + labelOffset.x;
@@ -2149,28 +2149,28 @@
                         gxtEl.z = false;
                     } else {
                         gxtEl.x = parseFloat(
-                            Data.getElementsByTagName("startPoint")[0].getAttribute("x")
+                            Data.getElementsByTagName('startPoint')[0].getAttribute('x')
                         );
                         gxtEl.y = parseFloat(
-                            Data.getElementsByTagName("startPoint")[0].getAttribute("y")
+                            Data.getElementsByTagName('startPoint')[0].getAttribute('y')
                         );
                         gxtEl.z = parseFloat(
-                            Data.getElementsByTagName("startPoint")[0].getAttribute("z")
+                            Data.getElementsByTagName('startPoint')[0].getAttribute('z')
                         );
                     }
-                } else if (Data.getElementsByTagName("absoluteScreenLocation")[0]) {
+                } else if (Data.getElementsByTagName('absoluteScreenLocation')[0]) {
                     tmp = new JXG.Coords(
                         JXG.COORDS_BY_SCREEN,
                         [
                             parseFloat(
                                 Data.getElementsByTagName(
                                     "absoluteScreenLocation"
-                                )[0].getAttribute("x")
+                                )[0].getAttribute('x')
                             ),
                             parseFloat(
                                 Data.getElementsByTagName(
                                     "absoluteScreenLocation"
-                                )[0].getAttribute("y")
+                                )[0].getAttribute('y')
                             )
                         ],
                         this.board
@@ -2192,29 +2192,29 @@
              * @returns {Object} object with according attributes
              */
             visualProperties: function (Data, attr) {
-                var show = Data.getElementsByTagName("show"),
-                    pointSize = Data.getElementsByTagName("pointSize"),
-                    pointStyle = Data.getElementsByTagName("pointStyle"),
-                    slopeTriangleSize = Data.getElementsByTagName("slopeTriangleSize"),
-                    lineStyle = Data.getElementsByTagName("lineStyle"),
-                    labelOffset = Data.getElementsByTagName("labelOffset"),
-                    trace = Data.getElementsByTagName("trace"),
-                    fix = Data.getElementsByTagName("fix");
+                var show = Data.getElementsByTagName('show'),
+                    pointSize = Data.getElementsByTagName('pointSize'),
+                    pointStyle = Data.getElementsByTagName('pointStyle'),
+                    slopeTriangleSize = Data.getElementsByTagName('slopeTriangleSize'),
+                    lineStyle = Data.getElementsByTagName('lineStyle'),
+                    labelOffset = Data.getElementsByTagName('labelOffset'),
+                    trace = Data.getElementsByTagName('trace'),
+                    fix = Data.getElementsByTagName('fix');
 
-                if (show.length > 0 && show[0].getAttribute("object")) {
-                    attr.visible = JXG.str2Bool(show[0].getAttribute("object"));
+                if (show.length > 0 && show[0].getAttribute('object')) {
+                    attr.visible = JXG.str2Bool(show[0].getAttribute('object'));
                 }
 
-                if (show.length > 0 && show[0].getAttribute("label")) {
-                    attr.withLabel = JXG.str2Bool(show[0].getAttribute("label"));
+                if (show.length > 0 && show[0].getAttribute('label')) {
+                    attr.withLabel = JXG.str2Bool(show[0].getAttribute('label'));
                 }
 
-                if (pointSize.length > 0 && pointSize[0].getAttribute("val")) {
-                    attr.size = parseInt(pointSize[0].getAttribute("val"), 10);
+                if (pointSize.length > 0 && pointSize[0].getAttribute('val')) {
+                    attr.size = parseInt(pointSize[0].getAttribute('val'), 10);
                 }
 
-                if (pointStyle.length > 0 && pointStyle[0].getAttribute("val")) {
-                    attr.styleGGB = parseInt(pointStyle[0].getAttribute("val"), 10);
+                if (pointStyle.length > 0 && pointStyle[0].getAttribute('val')) {
+                    attr.styleGGB = parseInt(pointStyle[0].getAttribute('val'), 10);
                 }
 
                 if (attr.styleGGB === 0 || attr.styleGGB === 2) {
@@ -2263,14 +2263,14 @@
                 }
 
                 if (slopeTriangleSize.length > 0) {
-                    attr.slopeWidth = slopeTriangleSize[0].getAttribute("val");
+                    attr.slopeWidth = slopeTriangleSize[0].getAttribute('val');
                 }
 
                 if (lineStyle.length > 0) {
                     attr.strokeWidth = Math.round(
-                        parseFloat(lineStyle[0].getAttribute("thickness")) / 2
+                        parseFloat(lineStyle[0].getAttribute('thickness')) / 2
                     );
-                    attr.dashGGB = lineStyle[0].getAttribute("type");
+                    attr.dashGGB = lineStyle[0].getAttribute('type');
                 }
 
                 if (attr.strokeWidth) {
@@ -2290,16 +2290,16 @@
                 }
 
                 if (labelOffset.length > 0) {
-                    attr.labelX = parseFloat(labelOffset[0].getAttribute("x"));
-                    attr.labelY = parseFloat(labelOffset[0].getAttribute("y"));
+                    attr.labelX = parseFloat(labelOffset[0].getAttribute('x'));
+                    attr.labelY = parseFloat(labelOffset[0].getAttribute('y'));
                 }
 
                 if (trace.length > 0) {
-                    attr.trace = trace[0].getAttribute("val");
+                    attr.trace = trace[0].getAttribute('val');
                 }
 
                 if (fix.length > 0) {
-                    attr.fixed = fix[0].getAttribute("val");
+                    attr.fixed = fix[0].getAttribute('val');
                 }
 
                 return attr;
@@ -2315,20 +2315,20 @@
                 var Data, i, j;
 
                 expr = expr || false;
-                for (i = 0; i < this.tree.getElementsByTagName("construction").length; i++) {
+                for (i = 0; i < this.tree.getElementsByTagName('construction').length; i++) {
                     if (expr === false) {
                         for (
                             j = 0;
                             j <
                             this.tree
-                                .getElementsByTagName("construction")
-                                [i].getElementsByTagName("element").length;
+                                .getElementsByTagName('construction')
+                                [i].getElementsByTagName('element').length;
                             j++
                         ) {
                             Data = this.tree
-                                .getElementsByTagName("construction")
-                                [i].getElementsByTagName("element")[j];
-                            if (name === Data.getAttribute("label")) {
+                                .getElementsByTagName('construction')
+                                [i].getElementsByTagName('element')[j];
+                            if (name === Data.getAttribute('label')) {
                                 return Data;
                             }
                         }
@@ -2337,18 +2337,18 @@
                             j = 0;
                             j <
                             this.tree
-                                .getElementsByTagName("construction")
-                                [i].getElementsByTagName("expression").length;
+                                .getElementsByTagName('construction')
+                                [i].getElementsByTagName('expression').length;
                             j++
                         ) {
                             Data = this.tree
-                                .getElementsByTagName("construction")
-                                [i].getElementsByTagName("expression")[j];
-                            if (name === Data.getAttribute("label")) {
+                                .getElementsByTagName('construction')
+                                [i].getElementsByTagName('expression')[j];
+                            if (name === Data.getAttribute('label')) {
                                 return Data;
                             }
-                            if (name === Data.getAttribute("exp")) {
-                                return this.getElement(Data.getAttribute("label"));
+                            if (name === Data.getAttribute('exp')) {
+                                return this.getElement(Data.getAttribute('label'));
                             }
                         }
                     }
@@ -2391,24 +2391,24 @@
                         var exp1 = this.ggbParse(name);
                         for (
                             i = 0;
-                            i < this.tree.getElementsByTagName("construction").length;
+                            i < this.tree.getElementsByTagName('construction').length;
                             i++
                         ) {
                             for (
                                 j = 0;
                                 j <
                                 this.tree
-                                    .getElementsByTagName("construction")
-                                    [i].getElementsByTagName("expression").length;
+                                    .getElementsByTagName('construction')
+                                    [i].getElementsByTagName('expression').length;
                                 j++
                             ) {
                                 Data = this.tree
-                                    .getElementsByTagName("construction")
-                                    [i].getElementsByTagName("expression")[j];
-                                var exp2 = this.ggbParse(Data.getAttribute("exp"));
+                                    .getElementsByTagName('construction')
+                                    [i].getElementsByTagName('expression')[j];
+                                var exp2 = this.ggbParse(Data.getAttribute('exp'));
                                 if (JXG.isArray(exp1) && JXG.isArray(exp2)) {
                                     if (exp1[0] == exp2[0] && exp1[1] == exp2[1]) {
-                                        input = this.getElement(Data.getAttribute("label"));
+                                        input = this.getElement(Data.getAttribute('label'));
                                     }
                                 }
                             }
@@ -2546,28 +2546,28 @@
              */
             writeBoard: function () {
                 var grid, // currently unused: snapToPoint,
-                    boardData = this.tree.getElementsByTagName("euclidianView")[0],
-                    coordSystem = boardData.getElementsByTagName("coordSystem")[0],
-                    gui = this.tree.getElementsByTagName("gui")[0],
-                    evSettings = boardData.getElementsByTagName("evSettings")[0];
+                    boardData = this.tree.getElementsByTagName('euclidianView')[0],
+                    coordSystem = boardData.getElementsByTagName('coordSystem')[0],
+                    gui = this.tree.getElementsByTagName('gui')[0],
+                    evSettings = boardData.getElementsByTagName('evSettings')[0];
 
                 this.board.origin = {};
                 this.board.origin.usrCoords = [1, 0, 0];
                 this.board.origin.scrCoords = [
                     1,
-                    parseInt(coordSystem.getAttribute("xZero"), 10),
-                    parseInt(coordSystem.getAttribute("yZero"), 10)
+                    parseInt(coordSystem.getAttribute('xZero'), 10),
+                    parseInt(coordSystem.getAttribute('yZero'), 10)
                 ];
-                this.board.unitX = coordSystem.getAttribute("scale")
-                    ? parseInt(coordSystem.getAttribute("scale"), 10)
+                this.board.unitX = coordSystem.getAttribute('scale')
+                    ? parseInt(coordSystem.getAttribute('scale'), 10)
                     : 1;
-                this.board.unitY = coordSystem.getAttribute("yscale")
-                    ? parseInt(coordSystem.getAttribute("yscale"), 10)
+                this.board.unitY = coordSystem.getAttribute('yscale')
+                    ? parseInt(coordSystem.getAttribute('yscale'), 10)
                     : this.board.unitX;
 
                 this.board.fontSize =
-                    gui && gui.getElementsByTagName("font")[0]
-                        ? parseInt(gui.getElementsByTagName("font")[0].getAttribute("size"), 10)
+                    gui && gui.getElementsByTagName('font')[0]
+                        ? parseInt(gui.getElementsByTagName('font')[0].getAttribute('size'), 10)
                         : 12;
 
                 // the new board storage
@@ -2577,15 +2577,15 @@
                 this.board.renderer.enhancedRendering = true;
 
                 // snap to point; value is never used?
-                //snapToPoint = (evSettings.getAttribute("pointCapturing") === "true");
+                //snapToPoint = (evSettings.getAttribute('pointCapturing') === "true");
 
                 grid =
-                    evSettings.getAttribute("grid") === "true"
-                        ? this.board.create("grid")
+                    evSettings.getAttribute('grid') === "true"
+                        ? this.board.create('grid')
                         : null;
 
-                if (evSettings.getAttribute("axes")) {
-                    if (evSettings.getAttribute("axes") === "true") {
+                if (evSettings.getAttribute('axes')) {
+                    if (evSettings.getAttribute('axes') === "true") {
                         this.ggbElements.xAxis = this.board.create(
                             "axis",
                             [
@@ -2701,9 +2701,9 @@
 
                 gxtEl.type =
                     element && element.attributes && !JXG.exists(cmd)
-                        ? element.getAttribute("type").toLowerCase()
+                        ? element.getAttribute('type').toLowerCase()
                         : cmd;
-                gxtEl.label = element.getAttribute("label");
+                gxtEl.label = element.getAttribute('label');
                 attr.name = gxtEl.label;
 
                 JXG.debug("Constructing " + attr.name + "(" + gxtEl.type + "):");
@@ -2715,7 +2715,7 @@
                         attr = this.visualProperties(element, attr);
 
                         if (this.getElement(attr.name, true)) {
-                            exp = this.getElement(attr.name, true).getAttribute("exp");
+                            exp = this.getElement(attr.name, true).getAttribute('exp');
                             coord = this.ggbParse(exp);
 
                             // this is parsed and verified by the parser unit above
@@ -2808,13 +2808,13 @@
                         if (typeof input === "undefined") {
                             input = [
                                 parseFloat(
-                                    element.getElementsByTagName("coords")[0].getAttribute("z")
+                                    element.getElementsByTagName('coords')[0].getAttribute('z')
                                 ),
                                 parseFloat(
-                                    element.getElementsByTagName("coords")[0].getAttribute("x")
+                                    element.getElementsByTagName('coords')[0].getAttribute('x')
                                 ),
                                 parseFloat(
-                                    element.getElementsByTagName("coords")[0].getAttribute("y")
+                                    element.getElementsByTagName('coords')[0].getAttribute('y')
                                 )
                             ];
                         } else if (
@@ -2859,13 +2859,13 @@
                         if (!input) {
                             input = [
                                 parseFloat(
-                                    element.getElementsByTagName("coords")[0].getAttribute("z")
+                                    element.getElementsByTagName('coords')[0].getAttribute('z')
                                 ),
                                 parseFloat(
-                                    element.getElementsByTagName("coords")[0].getAttribute("x")
+                                    element.getElementsByTagName('coords')[0].getAttribute('x')
                                 ),
                                 parseFloat(
-                                    element.getElementsByTagName("coords")[0].getAttribute("y")
+                                    element.getElementsByTagName('coords')[0].getAttribute('y')
                                 )
                             ];
                         } else if (
@@ -2937,7 +2937,7 @@
                                 borders[i - 1] = {};
                                 borderatts[i - 1] = {};
                                 borders[i - 1].id = "";
-                                borders[i - 1].name = output[i].getAttribute("label");
+                                borders[i - 1].name = output[i].getAttribute('label');
                                 borderatts[i - 1] = this.colorProperties(
                                     output[i],
                                     borderatts[i - 1]
@@ -2957,7 +2957,7 @@
                                 for (i = input[2] + 1; i < output.length; i++) {
                                     if (output[i].attributes) {
                                         points.push(
-                                            this.checkElement(output[i].getAttribute("label"))
+                                            this.checkElement(output[i].getAttribute('label'))
                                         );
                                     } else {
                                         points.push(output[i]);
@@ -3027,7 +3027,7 @@
                                 attr2 = {};
                                 attr2 = this.colorProperties(output[1], attr2);
                                 attr2 = this.visualProperties(output[1], attr2);
-                                attr2.name = output[1].getAttribute("label");
+                                attr2.name = output[1].getAttribute('label');
                                 p2 = this.board.create(
                                     "otherintersection",
                                     [input[0], input[1], p],
@@ -3110,60 +3110,60 @@
                         gxtEl = this.coordinates(gxtEl, element);
                         attr = this.visualProperties(element, attr);
 
-                        if (element.getElementsByTagName("startPoint")[0]) {
+                        if (element.getElementsByTagName('startPoint')[0]) {
                             if (input && input.length === 2) {
                                 e = this.checkElement(input[1].name);
                             } else {
                                 e = [
                                     parseFloat(
                                         element
-                                            .getElementsByTagName("coords")[0]
-                                            .getAttribute("x")
+                                            .getElementsByTagName('coords')[0]
+                                            .getAttribute('x')
                                     ),
                                     parseFloat(
                                         element
-                                            .getElementsByTagName("coords")[0]
-                                            .getAttribute("y")
+                                            .getElementsByTagName('coords')[0]
+                                            .getAttribute('y')
                                     )
                                 ];
                             }
 
                             if (
                                 element
-                                    .getElementsByTagName("startPoint")[0]
-                                    .getAttribute("x") &&
-                                element.getElementsByTagName("startPoint")[0].getAttribute("y")
+                                    .getElementsByTagName('startPoint')[0]
+                                    .getAttribute('x') &&
+                                element.getElementsByTagName('startPoint')[0].getAttribute('y')
                             ) {
                                 s = [
                                     parseFloat(
                                         element
-                                            .getElementsByTagName("startPoint")[0]
-                                            .getAttribute("x")
+                                            .getElementsByTagName('startPoint')[0]
+                                            .getAttribute('x')
                                     ),
                                     parseFloat(
                                         element
-                                            .getElementsByTagName("startPoint")[0]
-                                            .getAttribute("y")
+                                            .getElementsByTagName('startPoint')[0]
+                                            .getAttribute('y')
                                     )
                                 ];
                             } else if (
                                 element
-                                    .getElementsByTagName("startPoint")[0]
-                                    .getAttribute("exp")
+                                    .getElementsByTagName('startPoint')[0]
+                                    .getAttribute('exp')
                             ) {
                                 startpoint = element
-                                    .getElementsByTagName("startPoint")[0]
-                                    .getAttribute("exp");
+                                    .getElementsByTagName('startPoint')[0]
+                                    .getAttribute('exp');
                                 s = this.checkElement(startpoint);
                             }
                         } else if (input && input.length !== 0) {
                             s = input[0];
                             e = input[1];
                         } else {
-                            exp = this.getElement(element.getAttribute("label"), true);
+                            exp = this.getElement(element.getAttribute('label'), true);
                             if (exp) {
                                 // experimental
-                                exp = exp.getAttribute("exp");
+                                exp = exp.getAttribute('exp');
                                 exp = this.ggbParse(exp);
 
                                 // the input to these evals were verified by the parser unit above
@@ -3423,16 +3423,16 @@
                         try {
                             if (input && input.length === 5) {
                                 p = this.board.create("conic", input, attr);
-                            } else if (element.getElementsByTagName("matrix")) {
+                            } else if (element.getElementsByTagName('matrix')) {
                                 m = [];
                                 for (
                                     i = 0;
                                     i <
-                                    element.getElementsByTagName("matrix")[0].attributes.length;
+                                    element.getElementsByTagName('matrix')[0].attributes.length;
                                     i++
                                 ) {
                                     m[i] = parseFloat(
-                                        element.getElementsByTagName("matrix")[0].attributes[i]
+                                        element.getElementsByTagName('matrix')[0].attributes[i]
                                             .value
                                     );
                                 }
@@ -3551,7 +3551,7 @@
                                     attr2 = {};
                                     attr2 = this.colorProperties(output[1], attr2);
                                     attr2 = this.visualProperties(output[1], attr2);
-                                    attr2.name = output[1].getAttribute("label");
+                                    attr2.name = output[1].getAttribute('label');
                                     t2 = this.board.create("line", [input[0], i2], attr2);
                                     this.ggbElements[attr2.name] = t2;
                                     return [t1, t2];
@@ -3643,13 +3643,13 @@
                         }
                         break;
                     case "numeric":
-                        if (element.getElementsByTagName("slider").length === 0) {
+                        if (element.getElementsByTagName('slider').length === 0) {
                             // auxiliary doesn't exist in every numeric
                             //element.getElementsByTagName('auxiliary').length != 0 && element.getElementsByTagName('auxiliary')[0].attributes['val'].value == 'true') {
-                            exp = this.getElement(element.getAttribute("label"), true);
+                            exp = this.getElement(element.getAttribute('label'), true);
 
                             if (exp) {
-                                exp = exp.getAttribute("exp");
+                                exp = exp.getAttribute('exp');
                                 exp = this.functionParse("", exp);
                                 exp = this.ggbParse(exp);
                             }
@@ -3667,24 +3667,24 @@
                         attr = this.visualProperties(element, attr);
 
                         // it's a slider
-                        if (element.getElementsByTagName("slider").length === 1) {
+                        if (element.getElementsByTagName('slider').length === 1) {
                             sx = parseFloat(
-                                element.getElementsByTagName("slider")[0].getAttribute("x")
+                                element.getElementsByTagName('slider')[0].getAttribute('x')
                             );
                             sy = parseFloat(
-                                element.getElementsByTagName("slider")[0].getAttribute("y")
+                                element.getElementsByTagName('slider')[0].getAttribute('y')
                             );
                             length = parseFloat(
-                                element.getElementsByTagName("slider")[0].getAttribute("width")
+                                element.getElementsByTagName('slider')[0].getAttribute('width')
                             );
                             // are coordinates absolut?
                             if (
                                 element
-                                    .getElementsByTagName("slider")[0]
-                                    .getAttribute("absoluteScreenLocation") &&
+                                    .getElementsByTagName('slider')[0]
+                                    .getAttribute('absoluteScreenLocation') &&
                                 element
-                                    .getElementsByTagName("slider")[0]
-                                    .getAttribute("absoluteScreenLocation") === "true"
+                                    .getElementsByTagName('slider')[0]
+                                    .getAttribute('absoluteScreenLocation') === "true"
                             ) {
                                 tmp = new JXG.Coords(
                                     JXG.COORDS_BY_SCREEN,
@@ -3697,16 +3697,16 @@
 
                             if (
                                 element
-                                    .getElementsByTagName("slider")[0]
-                                    .getAttribute("horizontal") === "true"
+                                    .getElementsByTagName('slider')[0]
+                                    .getAttribute('horizontal') === "true"
                             ) {
                                 if (
                                     element
-                                        .getElementsByTagName("slider")[0]
-                                        .getAttribute("absoluteScreenLocation") &&
+                                        .getElementsByTagName('slider')[0]
+                                        .getAttribute('absoluteScreenLocation') &&
                                     element
-                                        .getElementsByTagName("slider")[0]
-                                        .getAttribute("absoluteScreenLocation") === "true"
+                                        .getElementsByTagName('slider')[0]
+                                        .getAttribute('absoluteScreenLocation') === "true"
                                 ) {
                                     length /= this.board.unitX;
                                 }
@@ -3715,11 +3715,11 @@
                             } else {
                                 if (
                                     element
-                                        .getElementsByTagName("slider")[0]
-                                        .getAttribute("absoluteScreenLocation") &&
+                                        .getElementsByTagName('slider')[0]
+                                        .getAttribute('absoluteScreenLocation') &&
                                     element
-                                        .getElementsByTagName("slider")[0]
-                                        .getAttribute("absoluteScreenLocation") === "true"
+                                        .getElementsByTagName('slider')[0]
+                                        .getAttribute('absoluteScreenLocation') === "true"
                                 ) {
                                     length /= this.board.unitY;
                                 }
@@ -3727,11 +3727,11 @@
                                 ey = sy + length;
                             }
 
-                            if (element.getElementsByTagName("animation")[0]) {
+                            if (element.getElementsByTagName('animation')[0]) {
                                 attr.snapWidth = parseFloat(
                                     element
-                                        .getElementsByTagName("animation")[0]
-                                        .getAttribute("step")
+                                        .getElementsByTagName('animation')[0]
+                                        .getAttribute('step')
                                 );
                             }
 
@@ -3746,18 +3746,18 @@
                                         [
                                             parseFloat(
                                                 element
-                                                    .getElementsByTagName("slider")[0]
-                                                    .getAttribute("min")
+                                                    .getElementsByTagName('slider')[0]
+                                                    .getAttribute('min')
                                             ),
                                             parseFloat(
                                                 element
-                                                    .getElementsByTagName("value")[0]
-                                                    .getAttribute("val")
+                                                    .getElementsByTagName('value')[0]
+                                                    .getAttribute('val')
                                             ),
                                             parseFloat(
                                                 element
-                                                    .getElementsByTagName("slider")[0]
-                                                    .getAttribute("max")
+                                                    .getElementsByTagName('slider')[0]
+                                                    .getAttribute('max')
                                             )
                                         ]
                                     ],
@@ -3855,7 +3855,7 @@
                         attr = this.visualProperties(element, attr);
 
                         if (this.getElement(attr.name, true)) {
-                            func = this.getElement(attr.name, true).getAttribute("exp");
+                            func = this.getElement(attr.name, true).getAttribute('exp');
                             func = this.functionParse("c", func);
                         } else {
                             func = input[0];
@@ -4078,13 +4078,13 @@
                         try {
                             /*jslint regexp:true*/
                             if (
-                                element.getElementsByTagName("isLaTeX")[0] &&
+                                element.getElementsByTagName('isLaTeX')[0] &&
                                 element
-                                    .getElementsByTagName("isLaTeX")[0]
-                                    .getAttribute("val") === "true"
+                                    .getElementsByTagName('isLaTeX')[0]
+                                    .getAttribute('val') === "true"
                             ) {
                                 this.board.options.text.useASCIIMathML = true;
-                                t = this.getElement(attr.name, true).getAttribute("exp");
+                                t = this.getElement(attr.name, true).getAttribute('exp');
 
                                 // here we're searching for patterns like
                                 //    " + ... + "
@@ -4135,10 +4135,10 @@
                                 );
                                 /*jslint evil:false, regexp:false*/
                             } else {
-                                JXG.debug(this.getElement(attr.name, true).getAttribute("exp"));
+                                JXG.debug(this.getElement(attr.name, true).getAttribute('exp'));
                                 t = this.functionParse(
                                     false,
-                                    this.getElement(attr.name, true).getAttribute("exp")
+                                    this.getElement(attr.name, true).getAttribute('exp')
                                 );
                                 t = this.ggbParse(t);
                                 JXG.debug(t[1]);
@@ -4182,7 +4182,7 @@
                         attr = this.visualProperties(element, attr);
 
                         for (i = 0; i < output.length; i++) {
-                            output[i] = this.checkElement(output[i].getAttribute("label"));
+                            output[i] = this.checkElement(output[i].getAttribute('label'));
                         }
 
                         if (JXG.isArray(input)) {
@@ -4288,9 +4288,9 @@
                 // speeding up the drawing process
                 //this.board.suspendUpdate();
 
-                constructions = this.tree.getElementsByTagName("construction");
+                constructions = this.tree.getElementsByTagName('construction');
                 for (t = 0; t < constructions.length; t++) {
-                    cmds = constructions[t].getElementsByTagName("command");
+                    cmds = constructions[t].getElementsByTagName('command');
                     for (s = 0; s < cmds.length; s++) {
                         Data = cmds[s];
 
@@ -4300,15 +4300,15 @@
                         input = [];
                         for (
                             i = 0;
-                            i < Data.getElementsByTagName("input")[0].attributes.length;
+                            i < Data.getElementsByTagName('input')[0].attributes.length;
                             i++
                         ) {
-                            el = Data.getElementsByTagName("input")[0].attributes[i].value;
+                            el = Data.getElementsByTagName('input')[0].attributes[i].value;
                             if (
                                 el.match(/\u00B0/) ||
                                 !el.match(/\D/) ||
                                 el.match(/Circle/) ||
-                                Data.getAttribute("name") === "Function" ||
+                                Data.getAttribute('name') === "Function" ||
                                 el === parseFloat(el)
                             ) {
                                 input[i] = el;
@@ -4320,14 +4320,14 @@
                         }
 
                         output = [];
-                        elname = Data.getElementsByTagName("output")[0].attributes[0].value;
+                        elname = Data.getElementsByTagName('output')[0].attributes[0].value;
 
                         for (
                             i = 0;
-                            i < Data.getElementsByTagName("output")[0].attributes.length;
+                            i < Data.getElementsByTagName('output')[0].attributes.length;
                             i++
                         ) {
-                            el = Data.getElementsByTagName("output")[0].attributes[i].value;
+                            el = Data.getElementsByTagName('output')[0].attributes[i].value;
                             output[i] = this.getElement(el);
                         }
 
@@ -4338,7 +4338,7 @@
                             this.ggbElements[elname] = this.writeElement(
                                 output,
                                 input,
-                                Data.getAttribute("name").toLowerCase()
+                                Data.getAttribute('name').toLowerCase()
                             );
 
                             /* register borders to according "parent" */
@@ -4353,17 +4353,17 @@
 
                     JXG.debug("Restesammler: ");
                     // create "single" elements which do not depend on any other
-                    elements = constructions[t].getElementsByTagName("element");
+                    elements = constructions[t].getElementsByTagName('element');
                     for (s = 0; s < elements.length; s++) {
                         Data = elements[s];
-                        el = Data.getAttribute("label");
+                        el = Data.getAttribute('label');
 
                         if (!JXG.exists(this.ggbElements[el]) || this.ggbElements === "") {
                             this.ggbElements[el] = this.writeElement(Data);
 
                             expr = this.getElement(el, true);
                             if (expr) {
-                                type = Data.getAttribute("type");
+                                type = Data.getAttribute('type');
 
                                 switch (type) {
                                     case "text":
@@ -4371,7 +4371,7 @@
                                         // this.ggbElements[el] = this.writeElement(this.ggbElements, this.board, expr, false, type);
                                         break;
                                     default:
-                                        this.ggbParse(expr.getAttribute("exp"), el);
+                                        this.ggbParse(expr.getAttribute('exp'), el);
                                         break;
                                 }
                             }
@@ -4440,7 +4440,7 @@
                     }
 
                     // Unzip
-                    fileStr = new JXG.Util.Unzip(bA).unzipFile("geogebra.xml");
+                    fileStr = new JXG.Util.Unzip(bA).unzipFile('geogebra.xml');
                 }
                 fileStr = JXG.Util.UTF8.decode(fileStr);
                 fileStr = this.utf8replace(fileStr);

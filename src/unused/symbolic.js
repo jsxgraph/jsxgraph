@@ -236,7 +236,7 @@ Mat.Symbolic = {
             rot = 0;
 
         if (Server.modules.geoloci === undef) {
-            Server.loadModule("geoloci");
+            Server.loadModule('geoloci');
         }
 
         if (Server.modules.geoloci === undef) {

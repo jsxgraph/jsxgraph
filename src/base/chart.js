@@ -1255,7 +1255,7 @@ JXG.createChart = function (board, parents, attributes) {
 
             for (i = 0; i < len; i++) {
                 x = [];
-                if (attr.chartstyle && attr.chartstyle.indexOf("bar") !== -1) {
+                if (attr.chartstyle && attr.chartstyle.indexOf('bar') !== -1) {
                     if (originalWidth) {
                         w = originalWidth;
                     } else {
@@ -1301,7 +1301,7 @@ JXG.createChart = function (board, parents, attributes) {
                     attr.highlightfillcolor = Color.hsv2rgb(((i + 1) / len) * 360, 0.9, 0.6);
                 }
 
-                if (attr.chartstyle && attr.chartstyle.indexOf("bar") !== -1) {
+                if (attr.chartstyle && attr.chartstyle.indexOf('bar') !== -1) {
                     charts.push(new JXG.Chart(board, [x, showRows[i]], attr));
                 } else {
                     charts.push(new JXG.Chart(board, [showRows[i]], attr));

@@ -80,11 +80,11 @@ JXG.CanvasRenderer = function (container, dim) {
         ].join("");
         this.canvasRoot = this.container.ownerDocument.getElementById(this.canvasId);
         this.canvasRoot.style.display = "block";
-        this.context = this.canvasRoot.getContext("2d");
+        this.context = this.canvasRoot.getContext('2d');
     } else if (Env.isNode()) {
         try {
             this.canvasRoot = JXG.createCanvas(500, 500);
-            this.context = this.canvasRoot.getContext("2d");
+            this.context = this.canvasRoot.getContext('2d');
         } catch (err) {
             throw new Error('JXG.createCanvas not available.\n' +
                 'Install the npm package `canvas`\n' +
@@ -142,7 +142,7 @@ JXG.extend(
                 if (doFill) {
                     context.lineTo(shape[0][0], shape[0][1]);
                     context.closePath();
-                    context.fill("evenodd");
+                    context.fill('evenodd');
                 } else {
                     context.stroke();
                 }
@@ -159,7 +159,7 @@ JXG.extend(
 
             context.save();
             if (this._setColor(el, "fill")) {
-                context.fill("evenodd");
+                context.fill('evenodd');
             }
             context.restore();
         },
@@ -1681,7 +1681,7 @@ JXG.extend(
                 this.canvasRoot.width = 2 * parseFloat(w);
                 this.canvasRoot.height = 2 * parseFloat(h);
             }
-            this.context = this.canvasRoot.getContext("2d");
+            this.context = this.canvasRoot.getContext('2d');
             // The width and height of the canvas is set to twice the CSS values,
             // followed by an appropriate scaling.
             // See https://stackoverflow.com/questions/22416462/canvas-element-with-blurred-lines

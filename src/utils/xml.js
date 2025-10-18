@@ -76,7 +76,7 @@ JXG.XML = {
                     var d;
 
                     if (typeof ActiveXObject === "function") {
-                        d = new ActiveXObject("MSXML.DomDocument");
+                        d = new ActiveXObject('MSXML.DomDocument');
                         d.loadXML(str);
                     }
 
