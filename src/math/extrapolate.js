@@ -242,12 +242,12 @@ Mat.Extrapolate = {
             w = this[method](v, n - 1, E);
             //console.log(n, x0 + h, v, w);
             if (isNaN(w)) {
-                result = "NaN";
+                result = 'NaN';
                 break;
             }
             if (v !== 0 && w / v > this.infty) {
                 estlim = w;
-                result = "infinite";
+                result = 'infinite';
                 break;
             }
             diff = w - estlim;
@@ -318,7 +318,7 @@ Mat.Extrapolate = {
             denom = [],
             result = "finite",
             h = h0,
-            transform = "u";
+            transform = 'u';
 
         step_type = step_type || 0;
 
@@ -328,9 +328,9 @@ Mat.Extrapolate = {
             v = f(x0 + h, true);
             delta = v - v_prev;
             if (Math.abs(delta) < 1) {
-                transform = "u";
+                transform = 'u';
             } else {
-                transform = "t";
+                transform = 't';
             }
             if (transform === 'u') {
                 omega = (beta + n) * delta; // u transformation
@@ -344,12 +344,12 @@ Mat.Extrapolate = {
             // console.log(n, delta, transform, x0 + h, v, w, diff);
 
             if (isNaN(w)) {
-                result = "NaN";
+                result = 'NaN';
                 break;
             }
             if (v !== 0 && w / v > this.infty) {
                 estlim = w;
-                result = "infinite";
+                result = 'infinite';
                 break;
             }
             if (Math.abs(diff) < 1e-7) {

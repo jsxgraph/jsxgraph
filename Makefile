@@ -6,7 +6,7 @@ MINIFYER=./node_modules/terser/bin/terser
 
 # Code quality
 LINT=./node_modules/.bin/jslint
-ESLINT=./node_modules/eslint/bin/eslint.js
+ESLINT=./node_modules/eslint/bin/eslint.js 
 HINT=./node_modules/.bin/jshint
 KARMA=node_modules/karma/bin/karma
 PRETTIER=./node_modules/.bin/prettier

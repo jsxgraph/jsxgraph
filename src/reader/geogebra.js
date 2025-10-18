@@ -404,7 +404,7 @@
                             }
                         } else {
                             if (v1 === 'PI') {
-                                return "Math.PI";
+                                return 'Math.PI'
                             }
 
                             a = this.checkElement(v1);
@@ -2002,13 +2002,13 @@
                 this.board.options.elements.strokeWidth = 1;
                 this.board.options.elements.withLabel = true;
 
-                this.board.options.point.face = "circle";
+                this.board.options.point.face = 'circle'
                 this.board.options.point.size = 3;
-                this.board.options.point.fillColor = "blue";
+                this.board.options.point.fillColor = 'blue'
                 this.board.options.point.fillOpacity = 1;
                 this.board.options.point.highlightFillOpacity = 1;
-                this.board.options.point.strokeColor = "black";
-                this.board.options.point.highlightStrokeColor = "black";
+                this.board.options.point.strokeColor = 'black'
+                this.board.options.point.highlightStrokeColor = 'black'
                 this.board.options.point.strokeWidth = 2;
 
                 this.board.options.line.strokeWidth = 1;
@@ -2218,46 +2218,46 @@
                 }
 
                 if (attr.styleGGB === 0 || attr.styleGGB === 2) {
-                    attr.face = "circle";
+                    attr.face = 'circle'
 
                     if (attr.styleGGB === 0) {
                         attr.fillColor = attr.strokeColor;
                         attr.fillOpacity = 1;
                         attr.highlightFillColor = attr.strokeColor;
                         attr.highlightFillOpacity = 1;
-                        attr.strokeColor = "black";
+                        attr.strokeColor = 'black'
                         attr.strokeWidth = 1;
                     } else if (attr.styleGGB === 2) {
-                        attr.fillColor = "none";
+                        attr.fillColor = 'none'
                     }
                 } else if (attr.styleGGB === 1) {
-                    attr.face = "x";
+                    attr.face = 'x'
                 } else if (attr.styleGGB === 3) {
                     attr.face = "+";
                     attr.strokeOpacity = 1;
                 } else if (attr.styleGGB === 4 || attr.styleGGB === 5) {
-                    attr.face = "diamond";
+                    attr.face = 'diamond'
 
                     if (attr.styleGGB === 4) {
                         attr.fillColor = attr.strokeColor;
                         attr.fillOpacity = 1;
                     } else if (attr.styleGGB === 5) {
-                        attr.fillColor = "none";
+                        attr.fillColor = 'none'
                     }
                 } else if (attr.styleGGB === 6) {
-                    attr.face = "triangleUp";
+                    attr.face = 'triangleUp'
                     attr.fillColor = attr.strokeColor;
                     attr.fillOpacity = 1;
                 } else if (attr.styleGGB === 7) {
-                    attr.face = "triangleDown";
+                    attr.face = 'triangleDown'
                     attr.fillColor = attr.strokeColor;
                     attr.fillOpacity = 1;
                 } else if (attr.styleGGB === 8) {
-                    attr.face = "triangleRight";
+                    attr.face = 'triangleRight'
                     attr.fillColor = attr.strokeColor;
                     attr.fillOpacity = 1;
                 } else if (attr.styleGGB === 9) {
-                    attr.face = "triangleLeft";
+                    attr.face = 'triangleLeft'
                     attr.fillColor = attr.strokeColor;
                     attr.fillOpacity = 1;
                 }
@@ -2728,12 +2728,12 @@
                         }
 
                         if (!JXG.exists(attr.styleGGB)) {
-                            attr.face = "circle";
+                            attr.face = 'circle'
                             attr.fillColor = attr.strokeColor;
                             attr.fillOpacity = 1;
                             attr.highlightFillColor = attr.strokeColor;
                             attr.highlightFillOpacity = 1;
-                            attr.strokeColor = "black";
+                            attr.strokeColor = 'black'
                             attr.strokeWidth = 1;
                         }
 
@@ -2821,7 +2821,7 @@
                             this.board.select(input[1].id).elementClass ===
                             JXG.OBJECT_CLASS_LINE
                         ) {
-                            type = "parallel";
+                            type = 'parallel'
                         }
 
                         try {
@@ -2855,7 +2855,7 @@
                         gxtEl = this.coordinates(gxtEl, element);
                         attr = this.visualProperties(element, attr);
 
-                        type = "line";
+                        type = 'line'
                         if (!input) {
                             input = [
                                 parseFloat(
@@ -2873,7 +2873,7 @@
                             JXG.OBJECT_CLASS_LINE
                         ) {
                             // Parallel line through point
-                            type = "parallel";
+                            type = 'parallel'
                         }
 
                         try {
@@ -2913,7 +2913,7 @@
                         // test if polygon is regular
                         if (input.length === 3 && output.length !== 4) {
                             input[2] = parseInt(input[2], 10);
-                            type = "regular";
+                            type = 'regular'
                         }
 
                         try {
@@ -3003,12 +3003,12 @@
                                     input[1].name
                             );
                             if (!JXG.exists(attr.styleGGB)) {
-                                attr.face = "circle";
+                                attr.face = 'circle'
                                 attr.fillColor = attr.strokeColor;
                                 attr.fillOpacity = 1;
                                 attr.highlightFillColor = attr.strokeColor;
                                 attr.highlightFillOpacity = 1;
-                                attr.strokeColor = "black";
+                                attr.strokeColor = 'black'
                                 attr.strokeWidth = 1;
                             }
 
@@ -3062,7 +3062,7 @@
                         board.elementsByName[attr.name] = p;
                     } else {*/
                             m = this.board.create("midpoint", input, { visible: "false" });
-                            attr.visible = "true";
+                            attr.visible = 'true'
                             p = this.board.create(
                                 "text",
                                 [
@@ -3212,15 +3212,15 @@
                             JXG.debug(
                                 "* Rotate: First: " + input[0].name + ", Second: " + input[1]
                             );
-                            attr.type = "rotate";
+                            attr.type = 'rotate'
 
                             if (!JXG.exists(attr.styleGGB)) {
-                                attr.face = "circle";
+                                attr.face = 'circle'
                                 attr.fillColor = attr.strokeColor;
                                 attr.fillOpacity = 1;
                                 attr.highlightFillColor = attr.strokeColor;
                                 attr.highlightFillOpacity = 1;
-                                attr.strokeColor = "black";
+                                attr.strokeColor = 'black'
                                 attr.strokeWidth = 1;
                             }
 
@@ -3246,7 +3246,7 @@
                             JXG.debug(
                                 "* Dilate: First: " + input[0].name + ", Second: " + input[1]
                             );
-                            attr.type = "rotate";
+                            attr.type = 'rotate'
                             d = parseInt(input[1], 10);
                             d1 = this.board.create("transform", [d, d], { type: "scale" });
                             d2 = this.board.create(
@@ -3263,12 +3263,12 @@
                             );
 
                             if (!JXG.exists(attr.styleGGB)) {
-                                attr.face = "circle";
+                                attr.face = 'circle'
                                 attr.fillColor = attr.strokeColor;
                                 attr.fillOpacity = 1;
                                 attr.highlightFillColor = attr.strokeColor;
                                 attr.highlightFillOpacity = 1;
-                                attr.strokeColor = "black";
+                                attr.strokeColor = 'black'
                                 attr.strokeWidth = 1;
                             }
                             p = this.board.create("point", [input[0], [d1, d2]], attr);
@@ -3300,12 +3300,12 @@
                             );
 
                             if (!JXG.exists(attr.styleGGB)) {
-                                attr.face = "circle";
+                                attr.face = 'circle'
                                 attr.fillColor = attr.strokeColor;
                                 attr.fillOpacity = 1;
                                 attr.highlightFillColor = attr.strokeColor;
                                 attr.highlightFillOpacity = 1;
-                                attr.strokeColor = "black";
+                                attr.strokeColor = 'black'
                                 attr.strokeWidth = 1;
                             }
                             p = this.board.create("point", [input[0], t], attr);
@@ -3323,13 +3323,13 @@
 
                         // Punktspiegelung
                         if (JXG.isPoint(this.board.select(input[1].id))) {
-                            type = "mirrorpoint";
+                            type = 'mirrorpoint'
                             // Achsenspiegelung
                         } else if (
                             this.board.select(input[1].id).elementClass ===
                             JXG.OBJECT_CLASS_LINE
                         ) {
-                            type = "reflection";
+                            type = 'reflection'
                         }
 
                         try {
@@ -3778,12 +3778,12 @@
 
                         try {
                             if (!JXG.exists(attr.styleGGB)) {
-                                attr.face = "circle";
+                                attr.face = 'circle'
                                 attr.fillColor = attr.strokeColor;
                                 attr.fillOpacity = 1;
                                 attr.highlightFillColor = attr.strokeColor;
                                 attr.highlightFillOpacity = 1;
-                                attr.strokeColor = "black";
+                                attr.strokeColor = 'black'
                                 attr.strokeWidth = 1;
                             }
                             p = this.board.create("midpoint", input, attr);
@@ -3811,12 +3811,12 @@
                         attr = this.visualProperties(element, attr);
                         try {
                             if (!JXG.exists(attr.styleGGB)) {
-                                attr.face = "circle";
+                                attr.face = 'circle'
                                 attr.fillColor = attr.strokeColor;
                                 attr.fillOpacity = 1;
                                 attr.highlightFillColor = attr.strokeColor;
                                 attr.highlightFillOpacity = 1;
-                                attr.strokeColor = "black";
+                                attr.strokeColor = 'black'
                                 attr.strokeWidth = 1;
                             }
                             p = this.board.create(
@@ -4414,7 +4414,7 @@
                     bA,
                     len,
                     fstr,
-                    isString = fileStr.slice(0, 2) !== "PK";
+                    isString = fileStr.slice(0, 2) !== 'PK'
 
                 // here we have to deal with two different base64 encoded streams
                 // first one: base64 encoded xml (geogebra's web export)

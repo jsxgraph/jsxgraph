@@ -111,7 +111,7 @@ JXG.Polygon = function (board, vertices, attributes) {
                 : attributes.visible;
 
             if (attr_line.strokecolor === false) {
-                attr_line.strokecolor = "none";
+                attr_line.strokecolor = 'none';
             }
 
             l = board.create("segment", [this.vertices[i], this.vertices[i + 1]], attr_line);
@@ -146,7 +146,7 @@ JXG.Polygon = function (board, vertices, attributes) {
     this.board.finalizeAdding(this);
 
     this.createGradient();
-    this.elType = "polygon";
+    this.elType = 'polygon';
 
     // create label
     this.createLabel();
@@ -1391,7 +1391,7 @@ JXG.createRegularPolygon = function (board, parents, attributes) {
 
     attr = Type.copyAttributes(attributes, board.options, 'regularpolygon');
     el = board.create("polygon", p, attr);
-    el.elType = "regularpolygon";
+    el.elType = 'regularpolygon';
 
     return el;
 };
@@ -1461,7 +1461,7 @@ JXG.createPolygonalChain = function (board, parents, attributes) {
 
     attr = Type.copyAttributes(attributes, board.options, 'polygonalchain');
     el = board.create("polygon", parents, attr);
-    el.elType = "polygonalchain";
+    el.elType = 'polygonalchain';
 
     // A polygonal chain is not necessarily closed.
     el.vertices.pop();

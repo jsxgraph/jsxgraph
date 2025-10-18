@@ -473,11 +473,11 @@ JXG.hsv2rgb = function (H, S, V) {
     }
 
     R = Math.round(R * 255).toString(16);
-    R = R.length === 2 ? R : R.length === 1 ? "0" + R : "00";
+    R = R.length === 2 ? R : R.length === 1 ? "0" + R : '00';
     G = Math.round(G * 255).toString(16);
-    G = G.length === 2 ? G : G.length === 1 ? "0" + G : "00";
+    G = G.length === 2 ? G : G.length === 1 ? "0" + G : '00';
     B = Math.round(B * 255).toString(16);
-    B = B.length === 2 ? B : B.length === 1 ? "0" + B : "00";
+    B = B.length === 2 ? B : B.length === 1 ? "0" + B : '00';
 
     return ["#", R, G, B].join("");
 };
@@ -708,7 +708,7 @@ JXG.rgb2bw = function (color) {
     var x,
         tmp,
         arr,
-        HexChars = "0123456789ABCDEF";
+        HexChars = '0123456789ABCDEF';
 
     if (color === 'none') {
         return color;
@@ -748,7 +748,7 @@ JXG.rgb2cb = function (color, deficiency) {
         b2,
         c2,
         inflection,
-        HexChars = "0123456789ABCDEF";
+        HexChars = '0123456789ABCDEF';
 
     if (color === 'none') {
         return color;
@@ -976,51 +976,51 @@ JXG.contrast = function (hexColor, darkColor, lightColor, threshold) {
  *
  */
 JXG.setClassicColors = function () {
-    JXG.Options.elements.strokeColor = "blue";
-    JXG.Options.elements.fillColor = "red";
-    JXG.Options.hatch.strokeColor = "blue";
+    JXG.Options.elements.strokeColor = 'blue';
+    JXG.Options.elements.fillColor = 'red';
+    JXG.Options.hatch.strokeColor = 'blue';
     JXG.Options.angle.fillColor = "#ff7f00";
     JXG.Options.angle.highlightFillColor = "#ff7f00";
     JXG.Options.angle.strokeColor = "#ff7f00";
-    JXG.Options.angle.label.strokeColor = "blue";
-    JXG.Options.arc.strokeColor = "blue";
-    JXG.Options.circle.center.fillColor = "red";
-    JXG.Options.circle.center.strokeColor = "blue";
-    JXG.Options.circumcircle.strokeColor = "blue";
-    JXG.Options.circumcircle.center.fillColor = "red";
-    JXG.Options.circumcircle.center.strokeColor = "blue";
-    JXG.Options.circumcirclearc.strokeColor = "blue";
-    JXG.Options.circumcirclesector.strokeColor = "blue";
-    JXG.Options.circumcirclesector.fillColor = "green";
-    JXG.Options.circumcirclesector.highlightFillColor = "green";
-    JXG.Options.conic.strokeColor = "blue";
-    JXG.Options.curve.strokeColor = "blue";
-    JXG.Options.incircle.strokeColor = "blue";
-    JXG.Options.incircle.center.fillColor = "red";
-    JXG.Options.incircle.center.strokeColor = "blue";
-    JXG.Options.inequality.fillColor = "red";
-    JXG.Options.integral.fillColor = "red";
-    JXG.Options.integral.curveLeft.color = "red";
-    JXG.Options.integral.curveRight.color = "red";
-    JXG.Options.line.strokeColor = "blue";
-    JXG.Options.point.fillColor = "red";
-    JXG.Options.point.strokeColor = "red";
-    JXG.Options.polygon.fillColor = "green";
-    JXG.Options.polygon.highlightFillColor = "green";
-    JXG.Options.polygon.vertices.strokeColor = "red";
-    JXG.Options.polygon.vertices.fillColor = "red";
-    JXG.Options.regularpolygon.fillColor = "green";
-    JXG.Options.regularpolygon.highlightFillColor = "green";
-    JXG.Options.regularpolygon.vertices.strokeColor = "red";
-    JXG.Options.regularpolygon.vertices.fillColor = "red";
-    JXG.Options.riemannsum.fillColor = "yellow";
-    JXG.Options.sector.fillColor = "green";
-    JXG.Options.sector.highlightFillColor = "green";
-    JXG.Options.semicircle.center.fillColor = "red";
-    JXG.Options.semicircle.center.strokeColor = "blue";
-    JXG.Options.slopetriangle.fillColor = "red";
-    JXG.Options.slopetriangle.highlightFillColor = "red";
-    JXG.Options.turtle.arrow.strokeColor = "blue";
+    JXG.Options.angle.label.strokeColor = 'blue';
+    JXG.Options.arc.strokeColor = 'blue';
+    JXG.Options.circle.center.fillColor = 'red';
+    JXG.Options.circle.center.strokeColor = 'blue';
+    JXG.Options.circumcircle.strokeColor = 'blue';
+    JXG.Options.circumcircle.center.fillColor = 'red';
+    JXG.Options.circumcircle.center.strokeColor = 'blue';
+    JXG.Options.circumcirclearc.strokeColor = 'blue';
+    JXG.Options.circumcirclesector.strokeColor = 'blue';
+    JXG.Options.circumcirclesector.fillColor = 'green';
+    JXG.Options.circumcirclesector.highlightFillColor = 'green';
+    JXG.Options.conic.strokeColor = 'blue';
+    JXG.Options.curve.strokeColor = 'blue';
+    JXG.Options.incircle.strokeColor = 'blue';
+    JXG.Options.incircle.center.fillColor = 'red';
+    JXG.Options.incircle.center.strokeColor = 'blue';
+    JXG.Options.inequality.fillColor = 'red';
+    JXG.Options.integral.fillColor = 'red';
+    JXG.Options.integral.curveLeft.color = 'red';
+    JXG.Options.integral.curveRight.color = 'red';
+    JXG.Options.line.strokeColor = 'blue';
+    JXG.Options.point.fillColor = 'red';
+    JXG.Options.point.strokeColor = 'red';
+    JXG.Options.polygon.fillColor = 'green';
+    JXG.Options.polygon.highlightFillColor = 'green';
+    JXG.Options.polygon.vertices.strokeColor = 'red';
+    JXG.Options.polygon.vertices.fillColor = 'red';
+    JXG.Options.regularpolygon.fillColor = 'green';
+    JXG.Options.regularpolygon.highlightFillColor = 'green';
+    JXG.Options.regularpolygon.vertices.strokeColor = 'red';
+    JXG.Options.regularpolygon.vertices.fillColor = 'red';
+    JXG.Options.riemannsum.fillColor = 'yellow';
+    JXG.Options.sector.fillColor = 'green';
+    JXG.Options.sector.highlightFillColor = 'green';
+    JXG.Options.semicircle.center.fillColor = 'red';
+    JXG.Options.semicircle.center.strokeColor = 'blue';
+    JXG.Options.slopetriangle.fillColor = 'red';
+    JXG.Options.slopetriangle.highlightFillColor = 'red';
+    JXG.Options.turtle.arrow.strokeColor = 'blue';
 };
 
 JXG.extend(

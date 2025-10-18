@@ -204,7 +204,7 @@
                 this.objects[node.getAttribute('id')].coords = parents;
                 this.objects[node.getAttribute('id')].id = node.getAttribute('id');
                 this.objects[node.getAttribute('id')].exists = false;
-                this.objects[node.getAttribute('id')].i2geoType = "point";
+                this.objects[node.getAttribute('id')].i2geoType = 'point'
             },
 
             /**
@@ -244,7 +244,7 @@
                     this.objects[node.getAttribute('id')].coords = c;
                     this.objects[node.getAttribute('id')].id = node.getAttribute('id');
                     this.objects[node.getAttribute('id')].exists = false;
-                    this.objects[node.getAttribute('id')].i2geoType = "line";
+                    this.objects[node.getAttribute('id')].i2geoType = 'line'
                 }
             },
 
@@ -301,7 +301,7 @@
                     this.objects[node.getAttribute('id')].coords = c;
                     this.objects[node.getAttribute('id')].id = node.getAttribute('id');
                     this.objects[node.getAttribute('id')].exists = false;
-                    this.objects[node.getAttribute('id')].i2geoType = "conic";
+                    this.objects[node.getAttribute('id')].i2geoType = 'conic'
                 }
             },
 
@@ -405,8 +405,8 @@
                 var s;
 
                 // Set the default colors of dependent elements
-                this.board.options.point.strokeColor = "blue";
-                this.board.options.point.fillColor = "blue";
+                this.board.options.point.strokeColor = 'blue'
+                this.board.options.point.fillColor = 'blue'
 
                 for (s = 0; s < tree[0].childNodes.length; s++) {
                     this.readConstraint(tree, s);
@@ -1089,34 +1089,34 @@
                             key = node.childNodes[j].nodeName;
                             val = node.childNodes[j].firstChild.data;
                             if (key === 'stroke') {
-                                key = "strokeColor";
+                                key = 'strokeColor'
                             } else if (key === "stroke-width" || key === "border-width") {
-                                key = "strokeWidth";
+                                key = 'strokeWidth'
                             } else if (key === 'fill') {
-                                key = "fillColor";
+                                key = 'fillColor'
                             } else if (key === "fill-opacity") {
-                                key = "fillOpacity";
+                                key = 'fillOpacity'
                             } else if (key === "border-opacity") {
-                                key = "strokeOpacity";
+                                key = 'strokeOpacity'
                             } else if (key === "point-size") {
-                                key = "size";
+                                key = 'size'
                             } else if (key === 'label') {
-                                key = "name";
+                                key = 'name'
                             } else if (key === "point-style") {
-                                key = "face";
+                                key = 'face'
                                 if (val === 'circle') {
-                                    val = "o";
+                                    val = 'o'
                                 } else if (val === 'cross') {
                                     val = "+";
                                 } else if (val === "x-mark") {
-                                    val = "x";
+                                    val = 'x'
                                 } else if (val === 'square') {
                                     val = "[]";
                                 } else if (val === 'triangle') {
-                                    val = "triangleup";
+                                    val = 'triangleup'
                                 } else if (val === 'point') {
                                     // Setting size to 1 is missing
-                                    val = "o";
+                                    val = 'o'
                                 } else {
                                     JXG.debug("Display: not implemented" + node.nodeName);
                                     // Missing:

@@ -188,7 +188,7 @@ JXG.extend(
                 //     throw new Error('JXG.createCanvas not available.\n' +
                 //         'Install the npm package `canvas`\n' +
                 //         'and call:\n' +
-                //         '    import { createCanvas } from "canvas.js";\n' +
+                //         '    import { createCanvas } from 'canvas.js'\n' +
                 //         '    JXG.createCanvas = createCanvas;\n');
                 // }
             }
@@ -461,9 +461,9 @@ JXG.extend(
             originalDisplay = els.display;
 
             // show element
-            els.visibility = "hidden";
-            els.position = "absolute";
-            els.display = "block";
+            els.visibility = 'hidden';
+            els.position = 'absolute';
+            els.display = 'block';
 
             // read the dimension
             originalWidth = element.clientWidth;

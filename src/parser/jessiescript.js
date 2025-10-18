@@ -61,7 +61,7 @@ JXG.Board.prototype.construct = function (string, mode, params, paraIn, macroNam
         propValue,
         attributes;
     if (!JXG.exists(mode)) {
-        mode = "normal";
+        mode = 'normal'
     } else {
         // mode = 'macro'
         createdNames = [];
@@ -527,10 +527,10 @@ JXG.Board.prototype.construct = function (string, mode, params, paraIn, macroNam
                             splitted[i].match(/\|([\|_])\s*\(\s*(\S*)\s*,\s*(\S*)\s*\)/);
                             type = RegExp.$1;
                             if (type == "|") {
-                                type = "parallel";
+                                type = 'parallel'
                             } else {
                                 // type == '_'
-                                type = "normal";
+                                type = 'normal'
                             }
                             defElements = [];
                             defElements[0] = RegExp.$2;
@@ -649,7 +649,7 @@ JXG.Board.prototype.construct = function (string, mode, params, paraIn, macroNam
                                     if (objName == possibleNames[j]) {
                                         attributes.text = "&" + objName + ";";
                                         attributes.name = "&" + objName + ";";
-                                        type = "greek";
+                                        type = 'greek'
                                         break;
                                     } else {
                                         if (j == possibleNames.length - 1) {

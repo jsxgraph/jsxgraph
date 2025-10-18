@@ -115,8 +115,8 @@ Mat.Symbolic = {
         }
 
         if (Type.isPoint(element)) {
-            element.symbolic.x = "x";
-            element.symbolic.y = "y";
+            element.symbolic.x = 'x'
+            element.symbolic.y = 'y'
         }
 
         return count;

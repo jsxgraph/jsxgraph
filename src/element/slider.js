@@ -482,7 +482,7 @@ JXG.createSlider = function (board, parents, attributes) {
 
                 if (dFull < Mat.eps || Math.abs(val) < Mat.eps) {
                     // Point is zero
-                    labelText = "0";
+                    labelText = '0';
                 } else {
                     labelText = this.formatLabelText(val);
                 }
@@ -542,7 +542,7 @@ JXG.createSlider = function (board, parents, attributes) {
     }
 
     // p3.type = Const.OBJECT_TYPE_SLIDER; // No! type has to be Const.OBJECT_TYPE_GLIDER
-    p3.elType = "slider";
+    p3.elType = 'slider';
     p3.parents = parents;
     p3.subs = {
         point1: p1,

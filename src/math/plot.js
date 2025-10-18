@@ -1333,14 +1333,14 @@ Mat.Plot = {
             a_nan = isNaN(a[1] + a[2]);
             b_nan = isNaN(b[1] + b[2]);
             if ((a_nan && !b_nan) || (!a_nan && b_nan)) {
-                may_be_special = "border";
+                may_be_special = 'border';
             } else if (
                 ds[0] > 0.66 * ds0 ||
                 ds[0] < this.cusp_threshold * (ds[1] + ds[2]) ||
                 ds[1] > 5 * ds[2] ||
                 ds[2] > 5 * ds[1]
             ) {
-                may_be_special = "cusp";
+                may_be_special = 'cusp';
             } else if (
                 ds[2] > this.jump_threshold * ds[0] ||
                 ds[1] > this.jump_threshold * ds[0] ||
@@ -1348,7 +1348,7 @@ Mat.Plot = {
                 ds[1] === Infinity ||
                 ds[2] === Infinity
             ) {
-                may_be_special = "jump";
+                may_be_special = 'jump';
             }
             isSmooth =
                 may_be_special === "" &&
@@ -1553,7 +1553,7 @@ Mat.Plot = {
         // or if a whole interval is problematic.
         // The latter is the case if the differences have many sign changes.
         for (j = 0; j < groups.length; j++) {
-            types[j] = "point";
+            types[j] = 'point';
             le1 = groups[j].length;
             if (le1 < 64) {
                 continue;
@@ -1567,7 +1567,7 @@ Mat.Plot = {
                 }
             }
             if (sgnChange * 6 > le1) {
-                types[j] = "interval";
+                types[j] = 'interval';
             }
         }
 
@@ -1666,7 +1666,7 @@ Mat.Plot = {
             };
 
         if (pos < 5) {
-            result.type = "borderleft";
+            result.type = 'borderleft';
             result.idx = 0;
             result.t = t_values[0];
             result.x = x_values[0];
@@ -1676,7 +1676,7 @@ Mat.Plot = {
             return result;
         }
         if (pos > len - 6) {
-            result.type = "borderright";
+            result.type = 'borderright';
             result.idx = full_len - 1;
             result.t = t_values[full_len - 1];
             result.x = x_values[full_len - 1];

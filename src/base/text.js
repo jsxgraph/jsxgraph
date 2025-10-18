@@ -129,7 +129,7 @@ JXG.Text = function (board, coords, attributes, content) {
     if (Type.isString(this.content)) {
         this.notifyParents(this.content);
     }
-    this.elType = "text";
+    this.elType = 'text';
 
     this.methodMap = Type.deepCopy(this.methodMap, {
         setText: "setTextJessieCode",
@@ -1088,16 +1088,16 @@ JXG.extend(
                 switch (this.visProp.position) {
                     case "top":
                     case "bot":
-                        return "middle";
+                        return 'middle';
                     case "rt":
                     case "lrt":
                     case "urt":
-                        return "left";
+                        return 'left';
                     case "lft":
                     case "llft":
                     case "ulft":
                     default:
-                        return "right";
+                        return 'right';
                 }
             }
             return a;
@@ -1116,15 +1116,15 @@ JXG.extend(
                     case "top":
                     case "ulft":
                     case "urt":
-                        return "bottom";
+                        return 'bottom';
                     case "bot":
                     case "lrt":
                     case "llft":
-                        return "top";
+                        return 'top';
                     case "rt":
                     case "lft":
                     default:
-                        return "middle";
+                        return 'middle';
                 }
             }
             return a;
@@ -1406,16 +1406,16 @@ JXG.extend(
 
             // If label is on the left side of the element, the anchorx is set to "right"
             if (co < 0) {
-                this.visProp.anchorx = "right";
+                this.visProp.anchorx = 'right';
             } else {
-                this.visProp.anchorx = "left";
+                this.visProp.anchorx = 'left';
             }
 
             // If label is on the bottom side of the element, so the anchory is set to "top"
             if (si < 0) {
-                this.visProp.anchory = "top";
+                this.visProp.anchory = 'top';
             } else {
-                this.visProp.anchory = "bottom";
+                this.visProp.anchory = 'bottom';
             }
 
             // Set offset
@@ -1566,11 +1566,11 @@ JXG.extend(
         //     this.visProp.offset = [r * co, r * si];
 
         //     if (co < -0.2) {
-        //         this.visProp.anchorx = "right";
+        //         this.visProp.anchorx = 'right'
         //     } else if (co > 0.2) {
-        //         this.visProp.anchorx = "left";
+        //         this.visProp.anchorx = 'left'
         //     } else {
-        //         this.visProp.anchorx = "middle";
+        //         this.visProp.anchorx = 'middle'
         //     }
 
         //     return this;
@@ -1773,9 +1773,9 @@ JXG.createHTMLSlider = function (board, parents, attributes) {
         JXG.debug(e);
     }
 
-    t.rendNodeRange.style.width = attr.widthrange + "px";
-    t.rendNodeRange.style.verticalAlign = "middle";
-    t.rendNodeOut.style.width = attr.widthout + "px";
+    t.rendNodeRange.style.width = attr.widthrange + 'px';
+    t.rendNodeRange.style.verticalAlign = 'middle';
+    t.rendNodeOut.style.width = attr.widthout + 'px';
 
     t._val = parents[1][1];
 

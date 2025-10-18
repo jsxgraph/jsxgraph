@@ -876,21 +876,21 @@
 
                 switch (colNr) {
                     case 0:
-                        return "white";
+                        return 'white'
                     case 1:
-                        return "black";
+                        return 'black'
                     case 2:
-                        return "red";
+                        return 'red'
                     case 3:
-                        return "blue";
+                        return 'blue'
                     case 4:
-                        return "green";
+                        return 'green'
                     case 5:
-                        return "yellow";
+                        return 'yellow'
                     case 6:
                         return "#ffafaf";
                     case 7:
-                        return "cyan";
+                        return 'cyan'
                     case 8:
                         return "#ffc800";
                     case 9:
@@ -921,7 +921,7 @@
                         return "#ffbd77";
                 }
 
-                return "black";
+                return 'black'
             },
 
             readPointProperties: function (dataLines, i) {
@@ -940,11 +940,11 @@
                 } while (dataLines[i].search(/pointborder/) === -1);
 
                 if (dataLines[i].search(/false/) !== -1) {
-                    border = "none";
+                    border = 'none'
                     labelcolor = objAppearance[0];
                 } else {
-                    border = "black";
-                    labelcolor = "black";
+                    border = 'black'
+                    labelcolor = 'black'
                 }
 
                 return [objAppearance, i, border, labelcolor];

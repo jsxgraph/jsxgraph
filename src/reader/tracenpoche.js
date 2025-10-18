@@ -387,7 +387,7 @@ JXG.TracenpocheReader = function (board, str) {
                 }
             } else if (a === "string" || a === 'number') {
                 o = symbol_table["(literal)"];
-                // a = "literal";
+                // a = 'literal'
             } else {
                 error(t, "Unexpected token.");
             }
@@ -481,7 +481,7 @@ JXG.TracenpocheReader = function (board, str) {
                 return this.value;
             };
             x.value = v;
-            x.arity = "name";
+            x.arity = 'name'
             return x;
         };
 
@@ -491,7 +491,7 @@ JXG.TracenpocheReader = function (board, str) {
                 this.value = symbol_table[this.id].value;
                 return this.value;
             };
-            x.arity = "function";
+            x.arity = 'function'
             x.value = v;
             return x;
         };
@@ -700,7 +700,7 @@ JXG.TracenpocheReader = function (board, str) {
             }
             advance("}");
             this.first = a;
-            this.arity = "unary";
+            this.arity = 'unary'
             return this;
         });
 
@@ -752,7 +752,7 @@ JXG.TracenpocheReader = function (board, str) {
             }
             advance("]");
             this.first = a;
-            this.arity = "unary";
+            this.arity = 'unary'
             return a.length == 0 ? null : a.length == 1 ? a[0] : a[0] + "?" + a[1] + ":" + a[2];
         });
 
@@ -789,7 +789,7 @@ JXG.TracenpocheReader = function (board, str) {
         var tep = {};
 
         // Set the default options
-        board.options.point.face = "x";
+        board.options.point.face = 'x'
         board.options.point.strokeColor = "#0000ff";
         board.options.point.strokeWidth = 1;
         board.options.line.strokeWidth = 1;

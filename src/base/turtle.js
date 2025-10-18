@@ -122,7 +122,7 @@ JXG.Turtle = function (board, parents, attributes) {
 
     this.turtleIsHidden = false;
     this.board = board;
-    this.visProp.curveType = "plot";
+    this.visProp.curveType = 'plot';
 
     // Save visProp in this._attributes.
     // this._attributes is overwritten by setPenSize, setPenColor...

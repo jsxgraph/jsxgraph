@@ -150,7 +150,7 @@ JXG.createOrthogonalProjection = function (board, parents, attributes) {
     }
     l.addChild(t);
 
-    t.elType = "orthogonalprojection";
+    t.elType = 'orthogonalprojection';
     t.setParents([p.id, t.id]);
 
     t.update();
@@ -296,7 +296,7 @@ JXG.createPerpendicular = function (board, parents, attributes) {
         attr
     );
 
-    pd.elType = "perpendicular";
+    pd.elType = 'perpendicular';
     pd.setParents([l.id, p.id]);
 
     if (Type.exists(p._is_new)) {
@@ -389,7 +389,7 @@ JXG.createPerpendicularPoint = function (board, parents, attributes) {
     }
     l.addChild(t);
 
-    t.elType = "perpendicularpoint";
+    t.elType = 'perpendicularpoint';
     t.setParents([p.id, l.id]);
 
     t.update();
@@ -551,7 +551,7 @@ JXG.createPerpendicularSegment = function (board, parents, attributes) {
     }
     l.addChild(pd);
 
-    pd.elType = "perpendicularsegment";
+    pd.elType = 'perpendicularsegment';
     pd.setParents([p.id, l.id]);
     pd.subs = {
         point: t
@@ -664,7 +664,7 @@ JXG.createMidpoint = function (board, parents, attributes) {
         b.addChild(el);
     }
 
-    el.elType = "midpoint";
+    el.elType = 'midpoint';
     el.setParents([a.id, b.id]);
 
     el.prepareUpdate().update();
@@ -831,7 +831,7 @@ JXG.createParallelPoint = function (board, parents, attributes) {
         c.addChild(p);
     }
 
-    p.elType = "parallelpoint";
+    p.elType = 'parallelpoint';
     p.setParents([a.id, b.id, c.id]);
 
     // required to set the coordinates because functions are considered as constraints. hence, the coordinates get set first after an update.
@@ -1019,7 +1019,7 @@ JXG.createParallel = function (board, parents, attributes) {
     // line creator also calls addChild
     pl = board.create("line", [p, pp], attr);
 
-    pl.elType = "parallel";
+    pl.elType = 'parallel';
     pl.subs = {
         point: pp
     };
@@ -1092,7 +1092,7 @@ JXG.createArrowParallel = function (board, parents, attributes) {
             straightLast: false
         });
         p.type = Const.OBJECT_TYPE_VECTOR;
-        p.elType = "arrowparallel";
+        p.elType = 'arrowparallel';
 
         // parents are set in createParallel
 
@@ -1182,7 +1182,7 @@ JXG.createBisector = function (board, parents, attributes) {
          */
         l.point = p;
 
-        l.elType = "bisector";
+        l.elType = 'bisector';
         l.setParents(parents);
         l.subs = {
             point: p
@@ -1340,7 +1340,7 @@ JXG.createAngularBisectorsOfTwoLines = function (board, parents, attributes) {
     g1.dump = false;
     g2.dump = false;
 
-    ret.elType = "bisectorlines";
+    ret.elType = 'bisectorlines';
     ret.setParents([l1.id, l2.id]);
     ret.subs = {
         line1: g1,
@@ -1486,7 +1486,7 @@ JXG.createCircumcenter = function (board, parents, attributes) {
             }
         }
 
-        p.elType = "circumcenter";
+        p.elType = 'circumcenter';
         p.setParents(parents);
 
         p.generatePolynomial = function () {
@@ -1602,7 +1602,7 @@ JXG.createIncenter = function (board, parents, attributes) {
             }
         }
 
-        p.elType = "incenter";
+        p.elType = 'incenter';
         p.setParents(parents);
     } else {
         throw new Error(
@@ -1673,7 +1673,7 @@ JXG.createCircumcircle = function (board, parents, attributes) {
         attr = Type.copyAttributes(attributes, board.options, 'circumcircle');
         c = JXG.createCircle(board, [p, parents[0]], attr);
 
-        c.elType = "circumcircle";
+        c.elType = 'circumcircle';
         c.setParents(parents);
         c.subs = {
             center: p
@@ -1772,7 +1772,7 @@ JXG.createIncircle = function (board, parents, attributes) {
             attr
         );
 
-        c.elType = "incircle";
+        c.elType = 'incircle';
         c.setParents(parents);
         for (i = 0; i < 3; i++) {
             if (Type.exists(parents[i]._is_new)) {
@@ -2009,7 +2009,7 @@ JXG.createReflection = function (board, parents, attributes) {
     }
     l.addChild(r);
 
-    r.elType = "reflection";
+    r.elType = 'reflection';
     r.addParents(l);
     r.prepareUpdate().update(); //.updateVisibility(r.evalVisProp('visible')).updateRenderer();
 
@@ -2223,7 +2223,7 @@ JXG.createMirrorElement = function (board, parents, attributes) {
     }
     m.addChild(r);
 
-    r.elType = "mirrorelement";
+    r.elType = 'mirrorelement';
     r.addParents(m);
     r.prepareUpdate().update();
 
@@ -2257,7 +2257,7 @@ JXG.createMirrorElement = function (board, parents, attributes) {
  */
 JXG.createMirrorPoint = function (board, parents, attributes) {
     var el = JXG.createMirrorElement(board, parents, attributes);
-    el.elType = "mirrorpoint";
+    el.elType = 'mirrorpoint';
     return el;
 };
 
@@ -2481,7 +2481,7 @@ JXG.createIntegral = function (board, parents, attributes) {
     pb_on_curve.dump = false;
     pb_on_axis.dump = false;
 
-    p.elType = "integral";
+    p.elType = 'integral';
     p.setParents([curve.id, interval]);
     p.subs = {
         curveLeft: pa_on_curve,

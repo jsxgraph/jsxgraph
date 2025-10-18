@@ -103,7 +103,7 @@ JXG.Server = {
             this.runningCalls[id].module = data.module;
         }
 
-        fileurl = JXG.serverBase + "JXGServer.py";
+        fileurl = JXG.serverBase + 'JXGServer.py'
         passdata =
             "action=" +
             escape(action) +

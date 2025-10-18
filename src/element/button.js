@@ -265,7 +265,7 @@ JXG.createButton = function (board, parents, attributes) {
     t.setText(parents[2]);
 
     // This sets the font size of the button text
-    t.visPropOld.fontsize = "0px";
+    t.visPropOld.fontsize = '0px';
     board.renderer.updateTextStyle(t, false);
 
     if (parents[3]) {

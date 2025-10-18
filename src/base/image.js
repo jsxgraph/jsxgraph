@@ -88,7 +88,7 @@ JXG.Image = function (board, coords, attributes, url, size) {
      */
     this.url = url;
 
-    this.elType = "image";
+    this.elType = 'image';
 
     // span contains the anchor point and the two vectors
     // spanning the image rectangle.

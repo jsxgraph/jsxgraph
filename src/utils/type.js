@@ -99,7 +99,7 @@ JXG.extend(
          * @returns {Boolean} True, if v is of type string.
          */
         isString: function (v) {
-            return typeof v === "string";
+            return typeof v === 'string';
         },
 
         /**
@@ -131,7 +131,7 @@ JXG.extend(
          * @returns {Boolean} True, if v is a function.
          */
         isFunction: function (v) {
-            return typeof v === "function";
+            return typeof v === 'function';
         },
 
         /**
@@ -150,7 +150,7 @@ JXG.extend(
                     v !== null &&
                     typeof v === "object" &&
                     typeof v.splice === "function" &&
-                    typeof v.join === "function";
+                    typeof v.join === 'function';
             }
 
             return r;
@@ -335,7 +335,7 @@ JXG.extend(
             }
 
             if (this.isString(s)) {
-                return s.toLowerCase() === "true";
+                return s.toLowerCase() === 'true';
             }
 
             return false;
@@ -1606,7 +1606,7 @@ JXG.extend(
 
                         return "{" + list.join(",") + "} ";
                     }
-                    return "null";
+                    return 'null';
                 case "string":
                     return "'" + obj.replace(/(["'])/g, "\\$1") + "'";
                 case "number":
@@ -1614,7 +1614,7 @@ JXG.extend(
                     return obj.toString();
             }
 
-            return "0";
+            return '0';
         },
 
         /**

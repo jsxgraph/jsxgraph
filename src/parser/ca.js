@@ -784,7 +784,7 @@ JXG.extend(
                                     if (node.children[1].length >= 2) {
                                         varname = node.children[1][1].value;
                                     } else {
-                                        varname = "x";
+                                        varname = 'x';
                                     }
                                 }
 

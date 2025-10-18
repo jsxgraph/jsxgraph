@@ -207,7 +207,7 @@ JXG.createCheckbox = function (board, parents, attributes) {
     t.setText(parents[2]);
 
     // This sets the font-size of the checkbox itself
-    t.visPropOld.fontsize = "0px";
+    t.visPropOld.fontsize = '0px';
     board.renderer.updateTextStyle(t, false);
 
     t.rendNodeCheckbox.checked = attr.checked;

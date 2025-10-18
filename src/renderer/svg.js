@@ -55,7 +55,7 @@ JXG.SVGRenderer = function (container, dim) {
     var i;
 
     // docstring in AbstractRenderer
-    this.type = "svg";
+    this.type = 'svg';
 
     this.isIE =
         navigator.appVersion.indexOf('MSIE') !== -1 || navigator.userAgent.match(/Trident\//);
@@ -87,17 +87,17 @@ JXG.SVGRenderer = function (container, dim) {
     this.container = container;
 
     // prepare the div container and the svg root node for use with JSXGraph
-    this.container.style.MozUserSelect = "none";
-    this.container.style.userSelect = "none";
+    this.container.style.MozUserSelect = 'none';
+    this.container.style.userSelect = 'none';
 
-    this.container.style.overflow = "hidden";
+    this.container.style.overflow = 'hidden';
     if (this.container.style.position === "") {
-        this.container.style.position = "relative";
+        this.container.style.position = 'relative';
     }
 
     this.svgRoot = this.container.ownerDocument.createElementNS(this.svgNamespace, 'svg');
-    this.svgRoot.style.overflow = "hidden";
-    this.svgRoot.style.display = "block";
+    this.svgRoot.style.overflow = 'hidden';
+    this.svgRoot.style.display = 'block';
     this.resize(dim.width, dim.height);
 
     //this.svgRoot.setAttributeNS(null, 'shape-rendering', 'crispEdge'); //'optimizeQuality'); //geometricPrecision');
@@ -646,7 +646,7 @@ JXG.extend(
             //node.setAttributeNS(null, "style", "alignment-baseline:middle"); // Not yet supported by Firefox
             // Preserve spaces
             //node.setAttributeNS("http://www.w3.org/XML/1998/namespace", "space", 'preserve');
-            node.style.whiteSpace = "nowrap";
+            node.style.whiteSpace = 'nowrap';
 
             el.rendNodeText = this.container.ownerDocument.createTextNode("");
             node.appendChild(el.rendNodeText);
@@ -814,9 +814,9 @@ JXG.extend(
         // Already documented in JXG.AbstractRenderer
         updateForeignObject: function (el) {
             if (el._useUserSize) {
-                el.rendNode.style.overflow = "hidden";
+                el.rendNode.style.overflow = 'hidden';
             } else {
-                el.rendNode.style.overflow = "visible";
+                el.rendNode.style.overflow = 'visible';
             }
 
             this.updateRectPrim(
@@ -853,7 +853,7 @@ JXG.extend(
         createPrim: function (type, id) {
             var node = this.container.ownerDocument.createElementNS(this.svgNamespace, type);
             node.setAttributeNS(null, "id", this.uniqName(id));
-            node.style.position = "absolute";
+            node.style.position = 'absolute';
             if (type === 'path') {
                 node.setAttributeNS(null, "stroke-linecap", 'round');
                 node.setAttributeNS(null, "stroke-linejoin", 'round');
@@ -1213,7 +1213,7 @@ JXG.extend(
                 maxSize = 5000.0,
                 pStr = "",
                 f = el.evalVisProp('strokewidth'),
-                isNoPlot = el.evalVisProp('curvetype') !== "plot";
+                isNoPlot = el.evalVisProp('curvetype') !== 'plot';
 
             if (el.numberPoints <= 0) {
                 return "";
@@ -1344,10 +1344,10 @@ JXG.extend(
                 node = el.rendNode;
                 if (val) {
                     node.setAttributeNS(null, "display", 'inline');
-                    node.style.visibility = "inherit";
+                    node.style.visibility = 'inherit';
                 } else {
                     node.setAttributeNS(null, "display", 'none');
-                    node.style.visibility = "hidden";
+                    node.style.visibility = 'hidden';
                 }
             }
         },
@@ -1649,7 +1649,7 @@ JXG.extend(
             //     el.evalVisProp('display') === "html"
             // ) {
             //     // transitionStr = " color " + duration + "ms," +
-            //     //     " opacity " + duration + "ms";
+            //     //     " opacity " + duration + 'ms'
             //     transitionStr = " all " + duration + "ms ease";
             // } else {
             //     transitionStr =
@@ -1661,7 +1661,7 @@ JXG.extend(
             //         " width " + duration + "ms," +
             //         " height " + duration + "ms," +
             //         " rx " + duration + "ms," +
-            //         " ry " + duration + "ms";
+            //         " ry " + duration + 'ms'
             // }
 
             if (Type.exists(props)) {
@@ -1773,7 +1773,7 @@ JXG.extend(
             // if (el && el.rendNode) {
             //     node = el.rendNode;
             //     node.setAttributeNS(null, 'display', 'inline');
-            //     node.style.visibility = "inherit";
+            //     node.style.visibility = 'inherit'
             // }
         },
 
@@ -2045,7 +2045,7 @@ JXG.extend(
                     images[i].setAttribute("crossorigin", 'anonymous');
                     //img.src = images[i].href;
                     //img.onload = function() {
-                    // img.crossOrigin = "anonymous";
+                    // img.crossOrigin = 'anonymous'
                     ctx = canvas.getContext('2d');
                     canvas.width = images[i].getAttribute('width');
                     canvas.height = images[i].getAttribute('height');
@@ -2225,8 +2225,8 @@ JXG.extend(
 
             ctx = cv.getContext('2d');
             if (w !== undefined && h !== undefined) {
-                cv.style.width = parseFloat(w) + "px";
-                cv.style.height = parseFloat(h) + "px";
+                cv.style.width = parseFloat(w) + 'px';
+                cv.style.height = parseFloat(h) + 'px';
                 // Scale twice the CSS size to make the image crisp
                 // cv.setAttribute('width', 2 * parseFloat(wOrg));
                 // cv.setAttribute('height', 2 * parseFloat(hOrg));
@@ -2323,8 +2323,8 @@ JXG.extend(
             if (imgId === undefined || imgId === "") {
                 newImg = true;
                 img = new Image(); //doc.createElement('img');
-                img.style.width = w + "px";
-                img.style.height = h + "px";
+                img.style.width = w + 'px';
+                img.style.height = h + 'px';
             } else {
                 newImg = false;
                 img = doc.getElementById(imgId);
@@ -2335,14 +2335,14 @@ JXG.extend(
             if (newImg) {
                 node = doc.createElement('div');
                 node.style.cssText = bas.css;
-                node.style.width = w + "px";
-                node.style.height = h + "px";
+                node.style.width = w + 'px';
+                node.style.height = h + 'px';
                 node.style.zIndex = this.container.style.zIndex + 120;
 
                 // Try to position the div exactly over the JSXGraph board
-                node.style.position = "absolute";
-                node.style.top = this.container.offsetTop + "px";
-                node.style.left = this.container.offsetLeft + "px";
+                node.style.position = 'absolute';
+                node.style.top = this.container.offsetTop + 'px';
+                node.style.left = this.container.offsetLeft + 'px';
             }
 
             if (!isDebug) {
@@ -2353,9 +2353,9 @@ JXG.extend(
                 canvas.setAttribute("id", id);
                 canvas.setAttribute("width", w);
                 canvas.setAttribute("height", h);
-                canvas.style.width = w + "px";
-                canvas.style.height = w + "px";
-                canvas.style.display = "none";
+                canvas.style.width = w + 'px';
+                canvas.style.height = w + 'px';
+                canvas.style.display = 'none';
                 parent.appendChild(canvas);
             } else {
                 // Debug: use canvas element 'jxgbox_canvas' from jsxdev/dump.html
@@ -2383,7 +2383,7 @@ JXG.extend(
             navbar = doc.getElementById(this.uniqName('navigationbar'));
             if (Type.exists(navbar)) {
                 navbarDisplay = navbar.style.display;
-                navbar.style.display = "none";
+                navbar.style.display = 'none';
                 insert = this.removeToInsertLater(navbar);
             }
 

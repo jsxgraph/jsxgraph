@@ -93,7 +93,7 @@ JXG.ForeignObject = function (board, coords, attributes, content, size) {
      */
     this.content = content;
 
-    this.elType = "foreignobject";
+    this.elType = 'foreignobject';
 
     // span contains the anchor point and the two vectors
     // spanning the foreignObject rectangle.

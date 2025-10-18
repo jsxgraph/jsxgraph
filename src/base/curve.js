@@ -110,7 +110,7 @@ JXG.Curve = function (board, parents, attributes) {
     if (Type.exists(parents[0])) {
         this.varname = parents[0];
     } else {
-        this.varname = "x";
+        this.varname = 'x';
     }
 
     // function graphs: "x"
@@ -129,7 +129,7 @@ JXG.Curve = function (board, parents, attributes) {
     this.board.finalizeAdding(this);
 
     this.createGradient();
-    this.elType = "curve";
+    this.elType = 'curve';
     this.createLabel();
 
     if (Type.isString(this.xterm)) {
@@ -1011,15 +1011,15 @@ JXG.extend(
 
                 this.numberPoints = this.dataX.length;
                 this.X = this.interpolationFunctionFromArray.apply(this, ["X"]);
-                this.visProp.curvetype = "plot";
+                this.visProp.curvetype = 'plot';
                 this.isDraggable = true;
             } else {
                 // Continuous data
                 this.X = Type.createFunction(xterm, this.board, varname);
                 if (Type.isString(xterm)) {
-                    this.visProp.curvetype = "functiongraph";
+                    this.visProp.curvetype = 'functiongraph';
                 } else if (Type.isFunction(xterm) || Type.isNumber(xterm)) {
-                    this.visProp.curvetype = "parameter";
+                    this.visProp.curvetype = 'parameter';
                 }
 
                 this.isDraggable = true;
@@ -1059,7 +1059,7 @@ JXG.extend(
                 };
                 this.Y.deps = fy.deps;
 
-                this.visProp.curvetype = "polar";
+                this.visProp.curvetype = 'polar';
             }
 
             // Set the upper and lower bounds for the parameter of the curve.
@@ -1767,7 +1767,7 @@ JXG.createFunctiongraph = function (board, parents, attributes) {
 
     attr = Type.copyAttributes(attributes, board.options, 'functiongraph');
     attr = Type.copyAttributes(attr, board.options, 'curve');
-    attr.curvetype = "functiongraph";
+    attr.curvetype = 'functiongraph';
     return new JXG.Curve(board, par, attr);
 };
 
@@ -1908,11 +1908,11 @@ JXG.createSpline = function (board, parents, attributes) {
     };
 
     attributes = Type.copyAttributes(attributes, board.options, 'curve');
-    attributes.curvetype = "functiongraph";
+    attributes.curvetype = 'functiongraph';
     ret = funcs();
     el = new JXG.Curve(board, ["x", "x", ret[0], ret[1], ret[2]], attributes);
     el.setParents(parents);
-    el.elType = "spline";
+    el.elType = 'spline';
 
     return el;
 };
@@ -2021,7 +2021,7 @@ JXG.createCardinalSpline = function (board, parents, attributes) {
 
     attributes = Type.copyAttributes(attributes, board.options, 'curve');
     attributes = Type.copyAttributes(attributes, board.options, 'cardinalspline');
-    attributes.curvetype = "parameter";
+    attributes.curvetype = 'parameter';
 
     p = parents[0];
     q = [];
@@ -2128,7 +2128,7 @@ JXG.createCardinalSpline = function (board, parents, attributes) {
             }
         }
     }
-    el.elType = "cardinalspline";
+    el.elType = 'cardinalspline';
 
     return el;
 };
@@ -2258,7 +2258,7 @@ JXG.createMetapostSpline = function (board, parents, attributes) {
 
     attributes = Type.copyAttributes(attributes, board.options, 'curve');
     attributes = Type.copyAttributes(attributes, board.options, 'metapostspline');
-    attributes.curvetype = "parameter";
+    attributes.curvetype = 'parameter';
 
     p = parents[0];
     q = [];
@@ -2370,7 +2370,7 @@ JXG.createMetapostSpline = function (board, parents, attributes) {
             points[i].addChild(el);
         }
     }
-    el.elType = "metapostspline";
+    el.elType = 'metapostspline';
 
     return el;
 };
@@ -2460,7 +2460,7 @@ JXG.createRiemannsum = function (board, parents, attributes) {
     var n, type, f, par, c, attr;
 
     attr = Type.copyAttributes(attributes, board.options, 'riemannsum');
-    attr.curvetype = "plot";
+    attr.curvetype = 'plot';
 
     f = parents[0];
     n = Type.createFunction(parents[1], board, "");
@@ -2577,7 +2577,7 @@ JXG.createTracecurve = function (board, parents, attributes) {
     }
 
     attr = Type.copyAttributes(attributes, board.options, 'tracecurve');
-    attr.curvetype = "plot";
+    attr.curvetype = 'plot';
     c = board.create("curve", [[0], [0]], attr);
 
     /**

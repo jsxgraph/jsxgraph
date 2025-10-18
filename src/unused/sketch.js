@@ -1650,7 +1650,7 @@
                             j += 1;
                         }
 
-                        str = "line";
+                        str = 'line'
                         str1 = "";
 
                         // the line's parents
@@ -1684,7 +1684,7 @@
                         }
 
                         if (!step.args.first && !step.args.last) {
-                            str = "segment";
+                            str = 'segment'
                         } else {
                             if (!step.args.first) {
                                 str1 = "straightFirst: " + step.args.first;
@@ -1785,7 +1785,7 @@
                         str1 = "";
                         // the line's parents
                         str2 = pid1 + ", " + pid2;
-                        str = "arrow";
+                        str = 'arrow'
 
                         // this is a corner case, we have to get rid of the ',' at the end
                         // simple solution: rebuild attrid

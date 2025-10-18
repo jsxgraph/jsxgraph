@@ -124,7 +124,7 @@ JXG.createArc = function (board, parents, attributes) {
     attr = Type.copyAttributes(attributes, board.options, 'arc');
     el = board.create("curve", [[0], [0], 0, 4], attr);
 
-    el.elType = "arc";
+    el.elType = 'arc';
     el.setParents(points);
 
     /**
@@ -512,7 +512,7 @@ JXG.createSemicircle = function (board, parents, attributes) {
 
     attr = Type.copyAttributes(attributes, board.options, 'semicircle');
     el = board.create("arc", [mp, points[1], points[0]], attr);
-    el.elType = "semicircle";
+    el.elType = 'semicircle';
     el.setParents([points[0].id, points[1].id]);
     el.subs = {
         midpoint: mp
@@ -588,7 +588,7 @@ JXG.createCircumcircleArc = function (board, parents, attributes) {
     attr.usedirection = true;
     el = board.create("arc", [mp, points[0], points[2], points[1]], attr);
 
-    el.elType = "circumcirclearc";
+    el.elType = 'circumcirclearc';
     el.setParents([points[0].id, points[1].id, points[2].id]);
     el.subs = {
         center: mp
@@ -641,7 +641,7 @@ JXG.registerElement("circumcirclearc", JXG.createCircumcircleArc);
  */
 
 JXG.createMinorArc = function (board, parents, attributes) {
-    attributes.selection = "minor";
+    attributes.selection = 'minor';
     return JXG.createArc(board, parents, attributes);
 };
 
@@ -679,7 +679,7 @@ JXG.registerElement("minorarc", JXG.createMinorArc);
  * </script><pre>
  */
 JXG.createMajorArc = function (board, parents, attributes) {
-    attributes.selection = "major";
+    attributes.selection = 'major';
     return JXG.createArc(board, parents, attributes);
 };
 

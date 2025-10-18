@@ -162,7 +162,7 @@
                         key = arr[n].nodeName;
 
                         if (key === 'width') {
-                            key = "strokewidth";
+                            key = 'strokewidth'
                         }
                         gxtEl[key] = arr[n].firstChild.data;
                     }
@@ -262,7 +262,7 @@
                     ];
 
                 gxtEl.strokeWidth = gxtEl.strokewidth;
-                gxtEl.face = facemap[parseInt(gxtEl.style, 10)] || "cross";
+                gxtEl.face = facemap[parseInt(gxtEl.style, 10)] || 'cross'
                 gxtEl.size = sizemap[parseInt(gxtEl.style, 10)] || 3;
 
                 gxtEl.straightFirst = JXG.str2Bool(gxtEl.straightFirst);
@@ -351,12 +351,12 @@
 
                 // Background image
                 if (JXG.exists(fileNode.getElementsByTagName('src')[0])) {
-                    tag = "src";
+                    tag = 'src'
                 } else if (
                     JXG.exists(fileNode.getElementsByTagName('image')[0]) &&
                     JXG.exists(this.gEBTN(fileNode, 'image'))
                 ) {
-                    tag = "image";
+                    tag = 'image'
                 } else {
                     return im;
                 }
@@ -1318,8 +1318,8 @@
                             Data.getElementsByTagName('functiony')[0].firstChild.data;
                         gxtEl.min = Data.getElementsByTagName('min')[0].firstChild.data;
                         gxtEl.max = Data.getElementsByTagName('max')[0].firstChild.data;
-                        gxtEl.fillColor = "none";
-                        gxtEl.highlightFillColor = "none";
+                        gxtEl.fillColor = 'none'
+                        gxtEl.highlightFillColor = 'none'
 
                         // intentional
                         /*jslint evil:true*/
@@ -1387,14 +1387,14 @@
                     tmp,
                     tree = this.tree,
                     board = this.board,
-                    strTrue = "true";
+                    strTrue = 'true'
 
                 // maybe this is not necessary as we already provide layer options for sectors and circles via JXG.Options but
                 // maybe these have to be the same for geonext.
                 board.options.layer.sector = board.options.layer.angle;
                 board.options.layer.circle = board.options.layer.angle;
 
-                board.options.line.label.position = "top";
+                board.options.line.label.position = 'top'
 
                 boardData = this.gEBTN(tree, "board", 0, false);
                 conditions = this.readConditions(

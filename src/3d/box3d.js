@@ -98,7 +98,7 @@ JXG.createAxes3D = function (board, parents, attributes) {
             axes[na].view = view;
         } else if (pos === 'border') {
             // Axes bordered
-            na += "Border";
+            na += 'Border';
             from = rear.slice();
             to = front.slice();
             if (dir === 'z') {
@@ -170,7 +170,7 @@ JXG.createAxes3D = function (board, parents, attributes) {
 
             attr = Type.copyAttributes(attributes, board.options, "axes3d", na);
             axes[na] = view.create("plane3d", [from, vec1, vec2, range1, range2], attr);
-            axes[na].elType = "axisplane3d";
+            axes[na].elType = 'axisplane3d';
         }
     }
 
@@ -182,7 +182,7 @@ JXG.createAxes3D = function (board, parents, attributes) {
             for (k = 1; k <= 2; k++) {
                 i1 = (i + k) % 3;
                 dir1 = directions[i1];
-                na = dir + "Plane" + sides[j] + dir1.toUpperCase() + "Axis";
+                na = dir + "Plane" + sides[j] + dir1.toUpperCase() + 'Axis';
                 na_parent = dir + "Plane" + sides[j];
 
                 from = [0, 0, 0];

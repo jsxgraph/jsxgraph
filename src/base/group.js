@@ -92,7 +92,7 @@ JXG.Group = function (board, id, name, objects, attributes) {
     this.coords = {};
     this.needsRegularUpdate = attributes.needsregularupdate;
 
-    this.rotationCenter = "centroid";
+    this.rotationCenter = 'centroid';
     this.scaleCenter = null;
     this.rotationPoints = [];
     this.translationPoints = [];
@@ -272,9 +272,9 @@ JXG.extend(
                 T.update();
             } else if (drag.action === "rotation" || drag.action === 'scaling') {
                 if (drag.action === 'rotation') {
-                    actionCenter = "rotationCenter";
+                    actionCenter = 'rotationCenter';
                 } else {
-                    actionCenter = "scaleCenter";
+                    actionCenter = 'scaleCenter';
                 }
 
                 // if (Type.isPoint(this.board, this[actionCenter])) {
@@ -410,21 +410,21 @@ JXG.extend(
 
             if (changed.length > 1) {
                 // More than one point moved => translation
-                action = "translation";
+                action = 'translation';
             } else {
                 // One point moved => we have to determine the type
                 if (
                     Type.isInArray(this.rotationPoints, obj) &&
                     Type.exists(this.rotationCenter)
                 ) {
-                    action = "rotation";
+                    action = 'rotation';
                 } else if (
                     Type.isInArray(this.scalePoints, obj) &&
                     Type.exists(this.scaleCenter)
                 ) {
-                    action = "scaling";
+                    action = 'scaling';
                 } else if (Type.isInArray(this.translationPoints, obj)) {
-                    action = "translation";
+                    action = 'translation';
                 }
             }
 
@@ -671,7 +671,7 @@ JXG.extend(
 
             len = objs.length;
             for (i = 0; i < len; ++i) {
-                this.scaleDirections[this.board.select(objs[i]).id] = direction || "xy";
+                this.scaleDirections[this.board.select(objs[i]).id] = direction || 'xy';
             }
 
             return this._setActionPoints("scale", objects);
@@ -685,7 +685,7 @@ JXG.extend(
          */
         addScalePoint: function (point, direction) {
             this._addActionPoint("scale", point);
-            this.scaleDirections[this.board.select(point).id] = direction || "xy";
+            this.scaleDirections[this.board.select(point).id] = direction || 'xy';
 
             return this;
         },
@@ -1057,7 +1057,7 @@ JXG.createGroup = function (board, parents, attributes) {
     var attr = Type.copyAttributes(attributes, board.options, 'group'),
         g = new JXG.Group(board, attr.id, attr.name, parents, attr);
 
-    g.elType = "group";
+    g.elType = 'group';
     g.setParents(parents);
 
     return g;

@@ -159,7 +159,7 @@ JXG.createTapemeasure = function (board, parents, attributes) {
     p1.dump = false;
     p2.dump = false;
 
-    li.elType = "tapemeasure";
+    li.elType = 'tapemeasure';
     li.getParents = function () {
         return [
             [p1.X(), p1.Y()],
@@ -388,7 +388,7 @@ JXG.createMeasurement = function (board, parents, attributes) {
     el.getMethod = function () {
         var method = term[0];
         if (method === 'V') {
-            method = "Value";
+            method = 'Value';
         }
         return method;
     };

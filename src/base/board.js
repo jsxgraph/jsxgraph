@@ -4873,7 +4873,7 @@ JXG.extend(
 
                 if (Type.exists(el.coords)) {
                     froz = el.evalVisProp('frozen');
-                    console.log(el.id, froz)
+                    console.log(el.id, froz);
                     if (false && froz === 'inherit') {
                         // Search if a descendant of 'el' is set to 'frozen'.
                         // If yes, set element 'el' as frozen, too.
@@ -4888,7 +4888,7 @@ JXG.extend(
                             }
                         }
                     }
-                    console.log('\t', froz)
+                    console.log('\t', froz);
                     if (froz || froz === true) {
                         if (el.is3D) {
                             el.element2D.coords.screen2usr();

@@ -159,7 +159,7 @@ JXG.Circle = function (board, method, par1, par2, attributes) {
     this.board.finalizeAdding(this);
 
     this.createGradient();
-    this.elType = "circle";
+    this.elType = 'circle';
     this.createLabel();
 
     if (Type.exists(this.center._is_new)) {
@@ -1040,7 +1040,7 @@ JXG.createCircle = function (board, parents, attributes) {
 
     el.isDraggable = isDraggable;
     el.setParents(p);
-    el.elType = "circle";
+    el.elType = 'circle';
     for (i = 0; i < p.length; i++) {
         if (Type.isPoint(p[i])) {
             el.inherits.push(p[i]);

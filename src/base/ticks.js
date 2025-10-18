@@ -154,7 +154,7 @@ JXG.Ticks = function (line, ticks, attributes) {
     this.labelCounter = 0;
 
     this.id = this.line.addTicks(this);
-    this.elType = "ticks";
+    this.elType = 'ticks';
     this.inherits.push(this.labels);
     this.board.setId(this, 'Ti');
 };
@@ -445,8 +445,8 @@ JXG.extend(
             this.dyMin *= (distMin / d) * this.board.unitY;
 
             // Grid-like ticks?
-            this.minStyle = this.evalVisProp('minorheight') < 0 ? "infinite" : "finite";
-            this.majStyle = this.evalVisProp('majorheight') < 0 ? "infinite" : "finite";
+            this.minStyle = this.evalVisProp('minorheight') < 0 ? "infinite" : 'finite';
+            this.majStyle = this.evalVisProp('majorheight') < 0 ? "infinite" : 'finite';
         },
 
         /**
@@ -1389,7 +1389,7 @@ JXG.extend(
             // Replace symbols like -,0,1,2,3,4,5,6,7,8,9 with their superscript version.
             // Gets rid of + symbol since there is no need for it anymore.
             returnString = returnString.replace(/e(.*)$/g, function (match, $1) {
-                var temp = "\u2022" + "10";
+                var temp = "\u2022" + '10';
                 // Note: Since board ticks do not support HTTP elements like <sub>, we need to replace
                 // all the numbers with superscript Unicode characters.
                 temp += $1
@@ -1430,7 +1430,7 @@ JXG.extend(
                 distance = this.getDistanceFromZero(zero, tick);
                 if (Math.abs(distance) < Mat.eps) {
                     // Point is zero
-                    return "0";
+                    return '0';
                 }
                 value = distance / this.evalVisProp('scale');
             }

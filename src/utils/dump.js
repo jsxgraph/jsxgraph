@@ -302,14 +302,14 @@ JXG.Dump = {
 
                     return "<<" + list.join(", ") + ">> ";
                 }
-                return "null";
+                return 'null';
             case "string":
                 return "'" + obj.replace(/\\/g, "\\\\").replace(/(["'])/g, "\\$1") + "'";
             case "number":
             case "boolean":
                 return obj.toString();
             case "null":
-                return "null";
+                return 'null';
         }
     },
 

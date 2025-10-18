@@ -52,12 +52,12 @@ import Numerics from "../math/numerics.js";
  * @deprecated
  */
 JXG.VMLRenderer = function (container) {
-    this.type = "vml";
+    this.type = 'vml';
 
     this.container = container;
-    this.container.style.overflow = "hidden";
+    this.container.style.overflow = 'hidden';
     if (this.container.style.position === "") {
-        this.container.style.position = "relative";
+        this.container.style.position = 'relative';
     }
     this.container.onselectstart = function () {
         return false;
@@ -204,7 +204,7 @@ JXG.extend(
             var node, t;
 
             node = this.createNode('textbox');
-            node.style.position = "absolute";
+            node.style.position = 'absolute';
             this._setAttr(node, "id", this.container.id + "_" + 'licenseText');
 
             node.style.left = 20;
@@ -225,7 +225,7 @@ JXG.extend(
         drawInternalText: function (el) {
             var node;
             node = this.createNode('textbox');
-            node.style.position = "absolute";
+            node.style.position = 'absolute';
             el.rendNodeText = this.container.ownerDocument.createTextNode("");
             node.appendChild(el.rendNodeText);
             this.appendChildPrim(node, 9);
@@ -314,11 +314,11 @@ JXG.extend(
                         : Math.floor(minX);
                 if (el.visPropOld.left !== ev_ax + v) {
                     if (offset[0] === 1) {
-                        el.rendNode.style.right = v + "px";
-                        el.rendNode.style.left = "auto";
+                        el.rendNode.style.right = v + 'px';
+                        el.rendNode.style.left = 'auto';
                     } else {
-                        el.rendNode.style.left = v + "px";
-                        el.rendNode.style.right = "auto";
+                        el.rendNode.style.left = v + 'px';
+                        el.rendNode.style.right = 'auto';
                     }
                     el.visPropOld.left = ev_ax + v;
                 }
@@ -330,11 +330,11 @@ JXG.extend(
                         : Math.floor(minY);
                 if (el.visPropOld.top !== ev_ay + v) {
                     if (offset[1] === 1) {
-                        el.rendNode.style.bottom = v + "px";
-                        el.rendNode.style.top = "auto";
+                        el.rendNode.style.bottom = v + 'px';
+                        el.rendNode.style.top = 'auto';
                     } else {
-                        el.rendNode.style.top = v + "px";
-                        el.rendNode.style.bottom = "auto";
+                        el.rendNode.style.top = v + 'px';
+                        el.rendNode.style.bottom = 'auto';
                     }
                     el.visPropOld.top = ev_ay + v;
                 }
@@ -363,7 +363,7 @@ JXG.extend(
             var node;
 
             node = this.container.ownerDocument.createElement('img');
-            node.style.position = "absolute";
+            node.style.position = 'absolute';
             this._setAttr(node, "id", this.container.id + "_" + el.id);
 
             this.container.appendChild(node);
@@ -436,8 +436,8 @@ JXG.extend(
                     maxY = Math.max(maxY, p[i][2]);
                     minY = Math.min(minY, p[i][2]);
                 }
-                node.style.left = Math.floor(minX) + "px";
-                node.style.top = Math.floor(minY) + "px";
+                node.style.left = Math.floor(minX) + 'px';
+                node.style.top = Math.floor(minY) + 'px';
 
                 node.filters.item(0).M11 = m[1][1];
                 node.filters.item(0).M12 = m[1][2];
@@ -519,9 +519,9 @@ JXG.extend(
                 node.appendChild(shadowNode);
             }
 
-            node.style.position = "absolute";
-            node.style.left = "0px";
-            node.style.top = "0px";
+            node.style.position = 'absolute';
+            node.style.left = '0px';
+            node.style.top = '0px';
             this._setAttr(node, "id", this.container.id + "_" + id);
 
             return node;
@@ -572,10 +572,10 @@ JXG.extend(
 
         // Already documented in JXG.AbstractRenderer
         updateEllipsePrim: function (node, x, y, rx, ry) {
-            node.style.left = Math.floor(x - rx) + "px";
-            node.style.top = Math.floor(y - ry) + "px";
-            node.style.width = Math.floor(Math.abs(rx) * 2) + "px";
-            node.style.height = Math.floor(Math.abs(ry) * 2) + "px";
+            node.style.left = Math.floor(x - rx) + 'px';
+            node.style.top = Math.floor(y - ry) + 'px';
+            node.style.width = Math.floor(Math.abs(rx) * 2) + 'px';
+            node.style.height = Math.floor(Math.abs(ry) * 2) + 'px';
         },
 
         // Already documented in JXG.AbstractRenderer
@@ -995,15 +995,15 @@ JXG.extend(
 
         // Already documented in JXG.AbstractRenderer
         updateRectPrim: function (node, x, y, w, h) {
-            node.style.left = Math.floor(x) + "px";
-            node.style.top = Math.floor(y) + "px";
+            node.style.left = Math.floor(x) + 'px';
+            node.style.top = Math.floor(y) + 'px';
 
             if (w >= 0) {
-                node.style.width = w + "px";
+                node.style.width = w + 'px';
             }
 
             if (h >= 0) {
-                node.style.height = h + "px";
+                node.style.height = h + 'px';
             }
         },
 
@@ -1018,13 +1018,13 @@ JXG.extend(
 
             switch (key) {
                 case "stroke":
-                    keyVml = "strokecolor";
+                    keyVml = 'strokecolor';
                     break;
                 case "stroke-width":
-                    keyVml = "strokeweight";
+                    keyVml = 'strokeweight';
                     break;
                 case "stroke-dasharray":
-                    keyVml = "dashstyle";
+                    keyVml = 'dashstyle';
                     break;
             }
 
@@ -1039,9 +1039,9 @@ JXG.extend(
             if (el && el.rendNode) {
                 el.visPropOld.visible = val;
                 if (val) {
-                    el.rendNode.style.visibility = "inherit";
+                    el.rendNode.style.visibility = 'inherit';
                 } else {
-                    el.rendNode.style.visibility = "hidden";
+                    el.rendNode.style.visibility = 'hidden';
                 }
             }
         },
@@ -1051,7 +1051,7 @@ JXG.extend(
             JXG.deprecated("Board.renderer.show()", "Board.renderer.display()");
 
             if (el && el.rendNode) {
-                el.rendNode.style.visibility = "inherit";
+                el.rendNode.style.visibility = 'inherit';
             }
         },
 
@@ -1060,7 +1060,7 @@ JXG.extend(
             JXG.deprecated("Board.renderer.hide()", "Board.renderer.display()");
 
             if (el && el.rendNode) {
-                el.rendNode.style.visibility = "hidden";
+                el.rendNode.style.visibility = 'hidden';
             }
         },
 
@@ -1287,7 +1287,7 @@ JXG.extend(
 
         // Already documented in JXG.AbstractRenderer
         suspendRedraw: function () {
-            this.container.style.display = "none";
+            this.container.style.display = 'none';
         },
 
         // Already documented in JXG.AbstractRenderer

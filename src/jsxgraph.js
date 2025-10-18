@@ -62,10 +62,10 @@ JXG.JSXGraph = {
      * @type String
      */
     rendererType: (function () {
-        Options.board.renderer = "no";
+        Options.board.renderer = 'no';
 
         if (Env.supportsVML()) {
-            Options.board.renderer = "vml";
+            Options.board.renderer = 'vml';
             // Ok, this is some real magic going on here. IE/VML always was so
             // terribly slow, except in one place: Examples placed in a moodle course
             // was almost as fast as in other browsers. So i grabbed all the css and
@@ -92,21 +92,21 @@ JXG.JSXGraph = {
         }
 
         if (Env.supportsCanvas()) {
-            Options.board.renderer = "canvas";
+            Options.board.renderer = 'canvas';
         }
 
         if (Env.supportsSVG()) {
-            Options.board.renderer = "svg";
+            Options.board.renderer = 'svg';
         }
 
         // we are inside node
         if (Env.isNode() && Env.supportsCanvas()) {
-            Options.board.renderer = "canvas";
+            Options.board.renderer = 'canvas';
         }
 
         if (Env.isNode() || Options.renderer === 'no') {
-            Options.text.display = "internal";
-            Options.infobox.display = "internal";
+            Options.text.display = 'internal';
+            Options.infobox.display = 'internal';
         }
 
         return Options.board.renderer;

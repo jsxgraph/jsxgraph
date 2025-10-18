@@ -66,7 +66,7 @@ JXG.Point = function (board, coordinates, attributes) {
     this.element = this.board.select(attributes.anchor);
     this.coordsConstructor(coordinates);
 
-    this.elType = "point";
+    this.elType = 'point';
 
     /* Register point at board. */
     this.id = this.board.setId(this, 'P');
@@ -215,7 +215,7 @@ JXG.extend(
             }
 
             this.type = Const.OBJECT_TYPE_INTERSECTION;
-            this.elType = "intersection";
+            this.elType = 'intersection';
             this.parents = [el1.id, el2.id, i, j];
 
             this.generatePolynomial = function () {
@@ -649,7 +649,7 @@ JXG.createIntersectionPoint = function (board, parents, attributes) {
     }
 
     el.type = Const.OBJECT_TYPE_INTERSECTION;
-    el.elType = "intersection";
+    el.elType = 'intersection';
     el.setParents([el1.id, el2.id]);
 
     /**
@@ -837,7 +837,7 @@ JXG.createOtherIntersectionPoint = function (board, parents, attributes) {
     el.addConstraint([func]);
 
     el.type = Const.OBJECT_TYPE_INTERSECTION;
-    el.elType = "otherintersection";
+    el.elType = 'otherintersection';
     el.setParents([el1.id, el2.id]);
     el.addParents(others);
 
@@ -993,7 +993,7 @@ JXG.createPolePoint = function (board, parents, attributes) {
         attributes
     );
 
-    el.elType = "polepoint";
+    el.elType = 'polepoint';
     el.setParents([el1.id, el2.id]);
 
     el1.addChild(el);

@@ -209,7 +209,7 @@ JXG.extend(
                 fromParent = false;
             }
 
-            console.log(this.id, this.updateConstraint.toString())
+            console.log(this.id, this.updateConstraint.toString());
             // if (!this.evalVisProp('frozen')) {
             if (!Type.exists(this._initialized) || this.evalVisProp('frozen') !== true) {
                 this.updateConstraint();
@@ -1376,13 +1376,13 @@ JXG.extend(
                 if (this.slideObjects.length === 0) {
                     this.type = this._org_type;
                     if (this.type === Const.OBJECT_TYPE_POINT) {
-                        this.elType = "point";
+                        this.elType = 'point';
                     } else if (this.elementClass === Const.OBJECT_CLASS_TEXT) {
-                        this.elType = "text";
+                        this.elType = 'text';
                     } else if (this.type === Const.OBJECT_TYPE_IMAGE) {
-                        this.elType = "image";
+                        this.elType = 'image';
                     } else if (this.type === Const.OBJECT_TYPE_FOREIGNOBJECT) {
-                        this.elType = "foreignobject";
+                        this.elType = 'foreignobject';
                     }
 
                     this.slideObject = null;
@@ -1416,7 +1416,7 @@ JXG.extend(
 
                     if (this.elementClass === Const.OBJECT_CLASS_POINT) {
                         this.type = Const.OBJECT_TYPE_POINT;
-                        this.elType = "point";
+                        this.elType = 'point';
                     }
 
                     this.XEval = function () {
@@ -1466,13 +1466,13 @@ JXG.extend(
             this.slideObjects = [];
             if (this.elementClass === Const.OBJECT_CLASS_POINT) {
                 this.type = Const.OBJECT_TYPE_POINT;
-                this.elType = "point";
+                this.elType = 'point';
             } else if (this.elementClass === Const.OBJECT_CLASS_TEXT) {
                 this.type = this._org_type;
-                this.elType = "text";
+                this.elType = 'text';
             } else if (this.elementClass === Const.OBJECT_CLASS_OTHER) {
                 this.type = this._org_type;
-                this.elType = "image";
+                this.elType = 'image';
             }
         },
 

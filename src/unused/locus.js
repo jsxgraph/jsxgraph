@@ -86,7 +86,7 @@ JXG.createLocus = function (board, parents, attributes) {
     c = board.create("curve", [[null], [null]], attributes);
     c.dontCallServer = false;
 
-    c.elType = "locus";
+    c.elType = 'locus'
     c.setParents([p.id]);
 
     /**

@@ -1718,7 +1718,7 @@ JXG.extend(
             this.visProp.lastarrow = lastArrow;
             if (lastArrow) {
                 this.type = Const.OBJECT_TYPE_VECTOR;
-                this.elType = "arrow";
+                this.elType = 'arrow';
             }
 
             this.prepareUpdate().update().updateVisibility().updateRenderer();
@@ -1750,7 +1750,7 @@ JXG.extend(
             // an exception here and simply output a warning via JXG.debug.
             if (JXG.elements.text) {
                 attr = Type.deepCopy(this.visProp.label, null);
-                attr.id = this.id + "Label";
+                attr.id = this.id + 'Label';
                 attr.isLabel = true;
                 attr.anchor = this;
                 attr.priv = this.visProp.priv;

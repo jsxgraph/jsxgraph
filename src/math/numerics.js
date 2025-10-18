@@ -2181,7 +2181,7 @@ Mat.Numerics = {
                 isLeading = true,
                 n, t, j, c;
 
-            param = param || "x";
+            param = param || 'x';
             if (dot === undefined) {
                 dot = " * ";
             }
@@ -2339,7 +2339,7 @@ Mat.Numerics = {
         }
 
         if (type === undefined) {
-            type = "uniform";
+            type = 'uniform';
         }
 
         /** @ignore */
@@ -2904,9 +2904,9 @@ Mat.Numerics = {
             }
             delta *= -1;
             if (type === 'lower') {
-                type = "upper";
+                type = 'upper';
             } else if (type === 'upper') {
-                type = "lower";
+                type = 'lower';
             }
         }
 

@@ -3538,7 +3538,7 @@ topState:function topState (n) {
         if (n >= 0) {
             return this.conditionStack[n];
         } else {
-            return "INITIAL";
+            return 'INITIAL'
         }
     },
 

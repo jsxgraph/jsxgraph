@@ -411,7 +411,7 @@ JXG.createInput = function (board, parents, attributes) {
     );
 
     // This sets the font-size of the input HTML element
-    t.visPropOld.fontsize = "0px";
+    t.visPropOld.fontsize = '0px';
     board.renderer.updateTextStyle(t, false);
 
     return t;

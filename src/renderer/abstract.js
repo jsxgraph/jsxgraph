@@ -294,7 +294,7 @@ JXG.extend(
             }
 
             if (!isTrace && Type.exists(el.board.highlightedObjects[el.id])) {
-                hl = "highlight";
+                hl = 'highlight';
             } else {
                 hl = "";
             }
@@ -319,13 +319,13 @@ JXG.extend(
 
             // Determine how the point looks like
             if (face === 'o') {
-                prim = "ellipse";
+                prim = 'ellipse';
             } else if (face === "[]") {
-                prim = "rect";
+                prim = 'rect';
             } else {
                 // cross/x, diamond/<>, triangleup/A/^, triangledown/v, triangleleft/<,
                 // triangleright/>, plus/+, |, -
-                prim = "path";
+                prim = 'path';
             }
 
             el.rendNode = this.appendChildPrim(
@@ -1076,7 +1076,7 @@ JXG.extend(
             ) {
                 node = this.container.ownerDocument.createElement('div');
                 //node = this.container.ownerDocument.createElementNS('http://www.w3.org/1999/xhtml', 'div'); //
-                node.style.position = "absolute";
+                node.style.position = 'absolute';
                 node.className = el.evalVisProp('cssclass');
 
                 level = el.evalVisProp('layer');
@@ -1146,16 +1146,16 @@ JXG.extend(
                         if (ax === 'right') {
                             // v = Math.floor(el.board.canvasWidth - c);
                             v = el.board.canvasWidth - c;
-                            to_h = "right";
+                            to_h = 'right';
                         } else if (ax === 'middle') {
                             // v = Math.floor(c - 0.5 * el.size[0]);
                             v = c - 0.5 * el.size[0];
-                            to_h = "center";
+                            to_h = 'center';
                         } else {
                             // 'left'
                             // v = Math.floor(c);
                             v = c;
-                            to_h = "left";
+                            to_h = 'left';
                         }
 
                         // This may be useful for foreignObj.
@@ -1165,11 +1165,11 @@ JXG.extend(
 
                         if (el.visPropOld.left !== ax + v) {
                             if (ax === 'right') {
-                                el.rendNode.style.right = v + "px";
-                                el.rendNode.style.left = "auto";
+                                el.rendNode.style.right = v + 'px';
+                                el.rendNode.style.left = 'auto';
                             } else {
-                                el.rendNode.style.left = v + "px";
-                                el.rendNode.style.right = "auto";
+                                el.rendNode.style.left = v + 'px';
+                                el.rendNode.style.right = 'auto';
                             }
                             el.visPropOld.left = ax + v;
                         }
@@ -1182,16 +1182,16 @@ JXG.extend(
                         if (ay === 'bottom') {
                             // v = Math.floor(el.board.canvasHeight - c);
                             v = el.board.canvasHeight - c;
-                            to_v = "bottom";
+                            to_v = 'bottom';
                         } else if (ay === 'middle') {
                             // v = Math.floor(c - 0.5 * el.size[1]);
                             v = c - 0.5 * el.size[1];
-                            to_v = "center";
+                            to_v = 'center';
                         } else {
                             // top
                             // v = Math.floor(c);
                             v = c;
-                            to_v = "top";
+                            to_v = 'top';
                         }
 
                         // This may be useful for foreignObj.
@@ -1201,11 +1201,11 @@ JXG.extend(
 
                         if (el.visPropOld.top !== ay + v) {
                             if (ay === 'bottom') {
-                                el.rendNode.style.top = "auto";
-                                el.rendNode.style.bottom = v + "px";
+                                el.rendNode.style.top = 'auto';
+                                el.rendNode.style.bottom = v + 'px';
                             } else {
-                                el.rendNode.style.bottom = "auto";
-                                el.rendNode.style.top = v + "px";
+                                el.rendNode.style.bottom = 'auto';
+                                el.rendNode.style.top = v + 'px';
                             }
                             el.visPropOld.top = ay + v;
                         }
@@ -2097,8 +2097,8 @@ JXG.extend(
                     button.innerHTML = label; // button.appendChild(doc.createTextNode(label));
 
                     // Style settings are superseded by adding the CSS class below
-                    button.style.paddingLeft = "7px";
-                    button.style.paddingRight = "7px";
+                    button.style.paddingLeft = '7px';
+                    button.style.paddingRight = '7px';
 
                     if (button.classList !== undefined) {
                         // classList not available in IE 9

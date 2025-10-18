@@ -158,8 +158,8 @@ JXG.extend(
          */
         drawLine: function (board, x, y, attributes) {
             // we don't want the line chart to be filled
-            attributes.fillcolor = "none";
-            attributes.highlightfillcolor = "none";
+            attributes.fillcolor = 'none';
+            attributes.highlightfillcolor = 'none';
 
             return board.create("curve", [x, y], attributes);
         },
@@ -176,8 +176,8 @@ JXG.extend(
          */
         drawSpline: function (board, x, y, attributes) {
             // we don't want the spline chart to be filled
-            attributes.fillColor = "none";
-            attributes.highlightfillcolor = "none";
+            attributes.fillColor = 'none';
+            attributes.highlightfillcolor = 'none';
 
             return board.create("spline", [x, y], attributes);
         },
@@ -199,8 +199,8 @@ JXG.extend(
             deg = Math.max(parseInt(deg, 10), 1) || 1;
 
             // never fill
-            attributes.fillcolor = "none";
-            attributes.highlightfillcolor = "none";
+            attributes.fillcolor = 'none';
+            attributes.highlightfillcolor = 'none';
 
             return board.create(
                 "functiongraph",
@@ -292,9 +292,9 @@ JXG.extend(
 
                     if (Type.exists(attr.labels) && Type.exists(attr.labels[i])) {
                         attrSub.anchorX = function (self) {
-                            return self.X() >= 0 ? "left" : "right";
+                            return self.X() >= 0 ? "left" : 'right';
                         };
-                        attrSub.anchorY = "middle";
+                        attrSub.anchorY = 'middle';
                         text = board.create("text", [yp, xp1, attr.labels[i]], attrSub);
                     }
                 } else {
@@ -305,9 +305,9 @@ JXG.extend(
                     p[3] = board.create("point", [xp2, 0], hiddenPoint);
 
                     if (Type.exists(attr.labels) && Type.exists(attr.labels[i])) {
-                        attrSub.anchorX = "middle";
+                        attrSub.anchorX = 'middle';
                         attrSub.anchorY = function (self) {
-                            return self.Y() >= 0 ? "bottom" : "top";
+                            return self.Y() >= 0 ? "bottom" : 'top';
                         };
                         text = board.create("text", [xp1, yp, attr.labels[i]], attrSub);
                     }
@@ -417,7 +417,7 @@ JXG.extend(
 
                     if (Type.exists(this.label)) {
                         this.label.rendNode.style.fontSize =
-                            s * this.label.evalVisProp('fontsize') + "px";
+                            s * this.label.evalVisProp('fontsize') + 'px';
                         this.label.fullUpdate();
                     }
 
@@ -846,7 +846,7 @@ JXG.extend(
                 }
             }
 
-            legend_position = attributes.legendposition || "none";
+            legend_position = attributes.legendposition || 'none';
             switch (legend_position) {
                 case "right":
                     lxoff = attributes.legendleftoffset || 2;
@@ -873,7 +873,7 @@ JXG.extend(
                 for (i = 0; i < 6; i++) {
                     cla[i] = 20 * i;
                 }
-                cla[0] = "0";
+                cla[0] = '0';
                 clabelArray = attributes.circlelabelarray || cla;
                 ncircles = clabelArray.length;
 
@@ -887,9 +887,9 @@ JXG.extend(
                 angle = start_angle + Math.PI / numofparams;
                 t = get_transform(angle, 0);
 
-                myAtts.fillcolor = "none";
-                myAtts.highlightfillcolor = "none";
-                myAtts.strokecolor = attributes.strokecolor || "black";
+                myAtts.fillcolor = 'none';
+                myAtts.highlightfillcolor = 'none';
+                myAtts.strokecolor = attributes.strokecolor || 'black';
                 myAtts.strokewidth = attributes.circlestrokewidth || 0.5;
                 myAtts.layer = 0;
 

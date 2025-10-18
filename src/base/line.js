@@ -112,7 +112,7 @@ JXG.Line = function (board, p1, p2, attributes) {
     this.board.renderer.drawLine(this);
     this.board.finalizeAdding(this);
 
-    this.elType = "line";
+    this.elType = 'line';
 
     /* Add line as child to defining points */
     if (this.point1._is_new) {
@@ -1515,7 +1515,7 @@ JXG.createSegment = function (board, parents, attributes) {
 
     }
 
-    el.elType = "segment";
+    el.elType = 'segment';
 
     return el;
 };
@@ -1560,7 +1560,7 @@ JXG.createArrow = function (board, parents, attributes) {
     el = board.create("line", parents, attr);
     //el.setArrow(false, true);
     el.type = Const.OBJECT_TYPE_VECTOR;
-    el.elType = "arrow";
+    el.elType = 'arrow';
 
     return el;
 };
@@ -1678,7 +1678,7 @@ JXG.createAxis = function (board, parents, attributes) {
      */
     axis.defaultTicks = board.create("ticks", [axis, ticksDist], attr.ticks);
     axis.defaultTicks.dump = false;
-    axis.elType = "axis";
+    axis.elType = 'axis';
     axis.subs = {
         ticks: axis.defaultTicks
     };
@@ -2277,7 +2277,7 @@ JXG.createTangent = function (board, parents, attributes) {
         throw new Error("JSXGraph: Couldn't create tangent with the given parents.");
     }
 
-    tangent.elType = "tangent";
+    tangent.elType = 'tangent';
     tangent.type = Const.OBJECT_TYPE_TANGENT;
     tangent.setParents(parents);
 
@@ -2684,7 +2684,7 @@ JXG.createNormal = function (board, parents, attributes) {
         );
     }
 
-    l.elType = "normal";
+    l.elType = 'normal';
     l.setParents(parents);
 
     if (Type.exists(p._is_new)) {
@@ -2771,7 +2771,7 @@ JXG.createRadicalAxis = function (board, parents, attributes) {
         attributes
     );
 
-    el.elType = "radicalaxis";
+    el.elType = 'radicalaxis';
     el.setParents([el1.id, el2.id]);
 
     el1.addChild(el);
@@ -2885,7 +2885,7 @@ JXG.createPolarLine = function (board, parents, attributes) {
     // Polar lines have been already provided in the tangent element.
     el = board.create("tangent", [el1, el2], attributes);
 
-    el.elType = "polarline";
+    el.elType = 'polarline';
     return el;
 };
 
