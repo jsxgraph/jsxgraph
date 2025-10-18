@@ -223,7 +223,7 @@
                         defPoints[0] = parseFloat(defPoints[0][0].slice(1));
                         defPoints[1] = parseFloat(defPoints[1][0]);
 
-                        if (dataLines[i][1] === "n") {
+                        if (dataLines[i][1] === 'n') {
                             defPoints[0] = -parseFloat(defPoints[0]);
                             defPoints[1] = -parseFloat(defPoints[1]);
                         }
@@ -663,7 +663,7 @@
                             objName = defPoints[0][0].slice(2, defPoints[0][0].length - 1);
                         }
 
-                        if (defPoints[0][1] === "null") {
+                        if (defPoints[0][1] === 'null') {
                             objName2 = "";
                         } else {
                             objName2 = defPoints[0][1].slice(1, defPoints[0][1].length - 1);
@@ -773,7 +773,7 @@
                             objName = defPoints[0][0].slice(2, defPoints[0][0].length - 1);
                         }
 
-                        if (defPoints[0][1] === "null") {
+                        if (defPoints[0][1] === 'null') {
                             objName2 = "";
                         } else {
                             objName2 = defPoints[0][1].slice(1, defPoints[0][1].length - 1);

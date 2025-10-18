@@ -618,7 +618,7 @@ Type.extend(
                         Mat.innerProduct(t_u, t_u_0, 2) > this.config.loop_dir
                     ) {
 
-                        // console.log("Loop detected after", steps, "steps");
+                        // console.log("Loop detected after", steps, 'steps');
                         // console.log("\t", "v", v, "u0:", u0)
                         // console.log("\t", "Dist(v, path0)", dist, config.loop_dist * h)
                         // console.log("\t", "t_u", t_u);

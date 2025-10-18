@@ -240,7 +240,7 @@ var priv = {
 JXG.createButton = function (board, parents, attributes) {
     var t,
         par,
-        attr = Type.copyAttributes(attributes, board.options, "button");
+        attr = Type.copyAttributes(attributes, board.options, 'button');
 
     //if (parents.length < 3) {
     //throw new Error("JSXGraph: Can't create button with parent types '" +

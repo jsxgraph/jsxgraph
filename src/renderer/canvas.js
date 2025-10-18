@@ -158,7 +158,7 @@ JXG.extend(
             var context = this.context;
 
             context.save();
-            if (this._setColor(el, "fill")) {
+            if (this._setColor(el, 'fill')) {
                 context.fill('evenodd');
             }
             context.restore();
@@ -303,12 +303,12 @@ JXG.extend(
             // op = op > 0 ? op : 0;
             col = el.evalVisProp('fillcolor');
 
-            if (ev_g === "linear") {
+            if (ev_g === 'linear') {
                 gradient = this.updateGradientAngle(
                     el,
                     el.evalVisProp('gradientangle')
                 );
-            } else if (ev_g === "radial") {
+            } else if (ev_g === 'radial') {
                 gradient = this.updateGradientCircle(
                     el,
                     el.evalVisProp('gradientcx'),
@@ -355,7 +355,7 @@ JXG.extend(
             // type is equal to 'fill' or 'stroke'
             rgba = el.evalVisProp(hl + type + 'color');
             if (rgba !== "none" && rgba !== "" && rgba !== false) {
-                o = el.evalVisProp(hl + type + "opacity");
+                o = el.evalVisProp(hl + type + 'opacity');
                 o = o > 0 ? o : 0;
 
                 if (rgba.length !== 9) {
@@ -376,10 +376,10 @@ JXG.extend(
                 hasColor = false;
             }
 
-            if (type !== "stroke") {
+            if (type !== 'stroke') {
                 // For the time being, gradients are only supported for fills
                 grad = el.evalVisProp('gradient');
-                if (grad === "linear" || grad === "radial") {
+                if (grad === "linear" || grad === 'radial') {
                     this.context.globalAlpha = oo;
                     this.context[targetType + "Style"] = this.updateGradient(el);
                     return hasColor;
@@ -428,7 +428,7 @@ JXG.extend(
                 this.context.lineDashArray = [];
             }
 
-            if (this._setColor(el, "stroke")) {
+            if (this._setColor(el, 'stroke')) {
                 context.stroke();
             }
 
@@ -503,7 +503,7 @@ JXG.extend(
                     }
 
                     context.save();
-                    if (this._setColor(el, "stroke", "fill")) {
+                    if (this._setColor(el, "stroke", 'fill')) {
                         context.fillRect(
                             scr[1] - size - stroke05,
                             scr[2] - size - stroke05,
@@ -513,7 +513,7 @@ JXG.extend(
                     }
                     context.restore();
                     context.save();
-                    this._setColor(el, "fill");
+                    this._setColor(el, 'fill');
                     context.fillRect(
                         scr[1] - size + stroke05,
                         scr[2] - size + stroke05,
@@ -932,8 +932,8 @@ JXG.extend(
                 }
 
                 context.save();
-                if (this._setColor(el, "stroke", "fill")) {
-                    this._setColor(el, "stroke");
+                if (this._setColor(el, "stroke", 'fill')) {
+                    this._setColor(el, 'stroke');
                     if (ev_fa) {
                         if (type_fa === 7) {
                             doFill = false;
@@ -1181,24 +1181,24 @@ JXG.extend(
 
             context.save();
             if (
-                this._setColor(el, "stroke", "fill") &&
+                this._setColor(el, "stroke", 'fill') &&
                 !isNaN(el.coords.scrCoords[1] + el.coords.scrCoords[2])
             ) {
                 context.font = (ev_fs > 0 ? ev_fs : 0) + fontUnit + " Arial";
 
                 this.transformRect(el, el.transformations);
-                if (ev_ax === "left") {
+                if (ev_ax === 'left') {
                     context.textAlign = "left";
-                } else if (ev_ax === "right") {
+                } else if (ev_ax === 'right') {
                     context.textAlign = "right";
-                } else if (ev_ax === "middle") {
+                } else if (ev_ax === 'middle') {
                     context.textAlign = "center";
                 }
-                if (ev_ay === "bottom") {
+                if (ev_ay === 'bottom') {
                     context.textBaseline = "bottom";
-                } else if (ev_ay === "top") {
+                } else if (ev_ay === 'top') {
                     context.textBaseline = "top";
-                } else if (ev_ay === "middle") {
+                } else if (ev_ay === 'middle') {
                     context.textBaseline = "middle";
                 }
                 context.fillText(el.plaintext, el.coords.scrCoords[1], el.coords.scrCoords[2]);
@@ -1533,7 +1533,7 @@ JXG.extend(
             if (len <= 0 || !el.visPropCalc.visible) {
                 return;
             }
-            if (el.elType === "polygonalchain") {
+            if (el.elType === 'polygonalchain') {
                 len++;
             }
 
@@ -1675,8 +1675,8 @@ JXG.extend(
                 this.canvasRoot.style.width = parseFloat(w) + "px";
                 this.canvasRoot.style.height = parseFloat(h) + "px";
 
-                this.canvasRoot.setAttribute("width", 2 * parseFloat(w) + "px");
-                this.canvasRoot.setAttribute("height", 2 * parseFloat(h) + "px");
+                this.canvasRoot.setAttribute("width", 2 * parseFloat(w) + 'px');
+                this.canvasRoot.setAttribute("height", 2 * parseFloat(h) + 'px');
             } else {
                 this.canvasRoot.width = 2 * parseFloat(w);
                 this.canvasRoot.height = 2 * parseFloat(h);

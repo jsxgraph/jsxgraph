@@ -56,7 +56,7 @@ JXG.Polygon = function (board, vertices, attributes) {
     this.constructor(board, attributes, Const.OBJECT_TYPE_POLYGON, Const.OBJECT_CLASS_AREA);
 
     var i, l, len, j, p,
-        attr_line = Type.copyAttributes(attributes, board.options, "polygon", "borders");
+        attr_line = Type.copyAttributes(attributes, board.options, "polygon", 'borders');
 
     this.withLines = attributes.withlines;
     this.attr_line = attr_line;
@@ -126,7 +126,7 @@ JXG.Polygon = function (board, vertices, attributes) {
 
     // Register polygon at board
     // This needs to be done BEFORE the points get this polygon added in their descendants list
-    this.id = this.board.setId(this, "Py");
+    this.id = this.board.setId(this, 'Py');
 
     // Add dependencies: either
     // - add polygon as child to an existing point
@@ -253,7 +253,7 @@ JXG.extend(
             }
 
             if (this.visPropCalc.visible) {
-                len = this.vertices.length - ((this.elType === "polygonalchain") ? 0 : 1);
+                len = this.vertices.length - ((this.elType === 'polygonalchain') ? 0 : 1);
                 this.isReal = true;
                 for (i = 0; i < len; ++i) {
                     if (!this.vertices[i].isReal) {
@@ -332,7 +332,7 @@ JXG.extend(
             return new Coords(Const.COORDS_BY_USER, [(a + x) * 0.5, (b + y) * 0.5], this.board);
         },
 
-        getLabelAnchor: JXG.shortcut(JXG.Polygon.prototype, "getTextAnchor"),
+        getLabelAnchor: JXG.shortcut(JXG.Polygon.prototype, 'getTextAnchor'),
 
         // documented in geometry element
         cloneToBackground: function () {
@@ -577,7 +577,7 @@ JXG.extend(
             var idx,
                 args = Array.prototype.slice.call(arguments);
 
-            if (this.elType === "polygonalchain") {
+            if (this.elType === 'polygonalchain') {
                 idx = this.vertices.length - 1;
             } else {
                 idx = this.vertices.length - 2;
@@ -625,7 +625,7 @@ JXG.extend(
             }
 
             last = this.vertices.length - 1;
-            if (this.elType === "polygon") {
+            if (this.elType === 'polygon') {
                 last--;
             }
 
@@ -649,7 +649,7 @@ JXG.extend(
 
             if (this.withLines) {
                 start = idx + 1;
-                if (this.elType === "polygon") {
+                if (this.elType === 'polygon') {
                     if (idx < 0) {
                         // Add point(s) in the front
                         this.vertices[this.vertices.length - 1] = this.vertices[0];
@@ -713,7 +713,7 @@ JXG.extend(
 
             // In case of polygon: remove the last vertex from the list of vertices since
             // it is identical to the first
-            if (this.elType === "polygon") {
+            if (this.elType === 'polygon') {
                 firstPoint = this.vertices.pop();
             }
 
@@ -735,7 +735,7 @@ JXG.extend(
 
             if (nidx.length === 0) {
                 // Wrong index, get out of here
-                if (this.elType === "polygon") {
+                if (this.elType === 'polygon') {
                     this.vertices.push(firstPoint);
                 }
                 return this;
@@ -797,7 +797,7 @@ JXG.extend(
                     for (j = partition[i][1] - 1; j < partition[i][0] + 1; j++) {
                         // special cases
                         if (j < 0) {
-                            if (this.elType === "polygon") {
+                            if (this.elType === 'polygon') {
                                 // First vertex is removed, so the last border has to be removed, too
                                 this.board.removeObject(this.borders[nborders.length - 1]);
                                 nborders[nborders.length - 1] = -1;
@@ -1221,7 +1221,7 @@ JXG.createPolygon = function (board, parents, attributes) {
         attr_points,
         is_transform = false;
 
-    attr = Type.copyAttributes(attributes, board.options, "polygon");
+    attr = Type.copyAttributes(attributes, board.options, 'polygon');
     obj = board.select(parents[0]);
     if (obj === null) {
         // This is necessary if the original polygon is defined in another board.
@@ -1234,7 +1234,7 @@ JXG.createPolygon = function (board, parents, attributes) {
     ) {
         is_transform = true;
         le = obj.vertices.length - 1;
-        attr_points = Type.copyAttributes(attributes, board.options, "polygon", "vertices");
+        attr_points = Type.copyAttributes(attributes, board.options, "polygon", 'vertices');
         for (i = 0; i < le; i++) {
             if (attr_points.withlabel) {
                 attr_points.name =
@@ -1251,7 +1251,7 @@ JXG.createPolygon = function (board, parents, attributes) {
         }
     }
 
-    attr = Type.copyAttributes(attributes, board.options, "polygon");
+    attr = Type.copyAttributes(attributes, board.options, 'polygon');
     el = new JXG.Polygon(board, points, attr);
     el.isDraggable = true;
 
@@ -1367,7 +1367,7 @@ JXG.createRegularPolygon = function (board, parents, attributes) {
         );
     }
 
-    attr = Type.copyAttributes(attributes, board.options, "regularpolygon", "vertices");
+    attr = Type.copyAttributes(attributes, board.options, "regularpolygon", 'vertices');
     for (i = 2; i < n; i++) {
         rot = board.create("transform", [Math.PI * (2 - (n - 2) / n), p[i - 1]], {
             type: "rotate"
@@ -1389,7 +1389,7 @@ JXG.createRegularPolygon = function (board, parents, attributes) {
         }
     }
 
-    attr = Type.copyAttributes(attributes, board.options, "regularpolygon");
+    attr = Type.copyAttributes(attributes, board.options, 'regularpolygon');
     el = board.create("polygon", p, attr);
     el.elType = "regularpolygon";
 
@@ -1459,7 +1459,7 @@ JXG.createRegularPolygon = function (board, parents, attributes) {
 JXG.createPolygonalChain = function (board, parents, attributes) {
     var attr, el;
 
-    attr = Type.copyAttributes(attributes, board.options, "polygonalchain");
+    attr = Type.copyAttributes(attributes, board.options, 'polygonalchain');
     el = board.create("polygon", parents, attr);
     el.elType = "polygonalchain";
 
@@ -1530,9 +1530,9 @@ JXG.createParallelogram = function (board, parents, attributes) {
         );
     }
 
-    attr_pp = Type.copyAttributes(attributes, board.options, "parallelogram", "parallelpoint");
+    attr_pp = Type.copyAttributes(attributes, board.options, "parallelogram", 'parallelpoint');
     pp = board.create('parallelpoint', points, attr_pp);
-    attr = Type.copyAttributes(attributes, board.options, "parallelogram");
+    attr = Type.copyAttributes(attributes, board.options, 'parallelogram');
     el = board.create('polygon', [points[0], points[1], pp, points[2]], attr);
 
     el.elType = 'parallelogram';

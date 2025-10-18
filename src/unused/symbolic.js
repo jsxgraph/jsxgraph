@@ -74,9 +74,9 @@ Mat.Symbolic = {
             makeCoords = function (num) {
                 var r;
 
-                if (append === "underscore") {
+                if (append === 'underscore') {
                     r = variable + "_{" + num + "}";
-                } else if (append === "brace") {
+                } else if (append === 'brace') {
                     r = variable + "[" + num + "]";
                 } else {
                     r = variable + num;
@@ -166,7 +166,7 @@ Mat.Symbolic = {
             result = [];
 
         if (generateCoords) {
-            this.generateSymbolicCoordinatesPartial(board, element, "u", "brace");
+            this.generateSymbolicCoordinatesPartial(board, element, "u", 'brace');
         }
 
         list[element.id] = element;
@@ -223,7 +223,7 @@ Mat.Symbolic = {
             tx,
             bol = board.options.locus,
             oldRadius = {},
-            numDependent = this.generateSymbolicCoordinatesPartial(board, point, "u", "brace"),
+            numDependent = this.generateSymbolicCoordinatesPartial(board, point, "u", 'brace'),
             xsye = new Coords(Const.COORDS_BY_USR, [0, 0], board),
             xeys = new Coords(
                 Const.COORDS_BY_USR,

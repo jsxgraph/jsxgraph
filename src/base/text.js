@@ -109,7 +109,7 @@ JXG.Text = function (board, coords, attributes, content) {
      * @type Array
      */
     this.size = [1.0, 1.0];
-    this.id = this.board.setId(this, "T");
+    this.id = this.board.setId(this, 'T');
 
     this.board.renderer.drawText(this);
     this.board.finalizeAdding(this);
@@ -141,7 +141,7 @@ JXG.Text = function (board, coords, attributes, content) {
 };
 
 JXG.Text.prototype = new GeometryElement();
-Type.copyPrototypeMethods(JXG.Text, CoordsElement, "coordsConstructor");
+Type.copyPrototypeMethods(JXG.Text, CoordsElement, 'coordsConstructor');
 
 JXG.extend(
     JXG.Text.prototype,
@@ -179,9 +179,9 @@ JXG.extend(
             }
 
             ax = this.getAnchorX();
-            if (ax === "right") {
+            if (ax === 'right') {
                 lft = this.coords.scrCoords[1] - this.size[0];
-            } else if (ax === "middle") {
+            } else if (ax === 'middle') {
                 lft = this.coords.scrCoords[1] - 0.5 * this.size[0];
             } else {
                 lft = this.coords.scrCoords[1];
@@ -189,16 +189,16 @@ JXG.extend(
             rt = lft + this.size[0];
 
             ay = this.getAnchorY();
-            if (ay === "top") {
+            if (ay === 'top') {
                 bot = this.coords.scrCoords[2] + this.size[1];
-            } else if (ay === "middle") {
+            } else if (ay === 'middle') {
                 bot = this.coords.scrCoords[2] + 0.5 * this.size[1];
             } else {
                 bot = this.coords.scrCoords[2];
             }
             top = bot - this.size[1];
 
-            if (this.evalVisProp('dragarea') === "all") {
+            if (this.evalVisProp('dragarea') === 'all') {
                 return x >= lft - r && x < rt + r && y >= top - r && y <= bot + r;
             }
             // e.g. 'small'
@@ -442,7 +442,7 @@ JXG.extend(
                 node,
                 ev_d = this.evalVisProp('display');
 
-            if (!Env.isBrowser || this.board.renderer.type === "no") {
+            if (!Env.isBrowser || this.board.renderer.type === 'no') {
                 return this;
             }
             node = this.rendNode;
@@ -450,7 +450,7 @@ JXG.extend(
             /**
              * offsetWidth and offsetHeight seem to be supported for internal vml elements by IE10+ in IE8 mode.
              */
-            if (ev_d === "html" || this.board.renderer.type === "vml") {
+            if (ev_d === "html" || this.board.renderer.type === 'vml') {
                 if (Type.exists(node.offsetWidth)) {
                     that = this;
                     window.setTimeout(function () {
@@ -474,8 +474,8 @@ JXG.extend(
                 } else {
                     this.size = this.crudeSizeEstimate();
                 }
-            } else if (ev_d === "internal") {
-                if (this.board.renderer.type === "svg") {
+            } else if (ev_d === 'internal') {
+                if (this.board.renderer.type === 'svg') {
                     that = this;
                     window.setTimeout(function () {
                         try {
@@ -485,7 +485,7 @@ JXG.extend(
                             that.updateRenderer();
                         } catch (e) {}
                     }, 0);
-                } else if (this.board.renderer.type === "canvas") {
+                } else if (this.board.renderer.type === 'canvas') {
                     this.size = this.crudeSizeEstimate();
                 }
             }
@@ -632,7 +632,7 @@ JXG.extend(
             this.updateCoords(fromParent);
             this.updateText();
 
-            if (this.evalVisProp('display') === "internal") {
+            if (this.evalVisProp('display') === 'internal') {
                 if (Type.isString(this.plaintext)) {
                     this.plaintext = this.utf8_decode(this.plaintext);
                 }
@@ -1084,7 +1084,7 @@ JXG.extend(
          */
         getAnchorX: function () {
             var a = this.evalVisProp('anchorx');
-            if (a === "auto") {
+            if (a === 'auto') {
                 switch (this.visProp.position) {
                     case "top":
                     case "bot":
@@ -1111,7 +1111,7 @@ JXG.extend(
          */
         getAnchorY: function () {
             var a = this.evalVisProp('anchory');
-            if (a === "auto") {
+            if (a === 'auto') {
                 switch (this.visProp.position) {
                     case "top":
                     case "ulft":
@@ -1659,7 +1659,7 @@ JXG.extend(
  */
 JXG.createText = function (board, parents, attributes) {
     var t,
-        attr = Type.copyAttributes(attributes, board.options, "text"),
+        attr = Type.copyAttributes(attributes, board.options, 'text'),
         coords = parents.slice(0, -1),
         content = parents[parents.length - 1];
 
@@ -1719,7 +1719,7 @@ JXG.registerElement("text", JXG.createText);
 JXG.createHTMLSlider = function (board, parents, attributes) {
     var t,
         par,
-        attr = Type.copyAttributes(attributes, board.options, "htmlslider");
+        attr = Type.copyAttributes(attributes, board.options, 'htmlslider');
 
     if (parents.length !== 2 || parents[0].length !== 2 || parents[1].length !== 3) {
         throw new Error(

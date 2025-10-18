@@ -156,7 +156,7 @@ JXG.Ticks = function (line, ticks, attributes) {
     this.id = this.line.addTicks(this);
     this.elType = "ticks";
     this.inherits.push(this.labels);
-    this.board.setId(this, "Ti");
+    this.board.setId(this, 'Ti');
 };
 
 JXG.Ticks.prototype = new GeometryElement();
@@ -316,7 +316,7 @@ JXG.extend(
                 dx = oldc.usrCoords[1] / c.usrCoords[1];
                 bb[0] *= dx;
                 bb[2] *= dx;
-                this.board.setBoundingBox(bb, this.board.keepaspectratio, "update");
+                this.board.setBoundingBox(bb, this.board.keepaspectratio, 'update');
             } else if (
                 Math.abs(this.line.stdform[2]) < Mat.eps &&
                 Math.abs(c.usrCoords[2] * oldc.usrCoords[2]) > Mat.eps
@@ -325,7 +325,7 @@ JXG.extend(
                 dy = oldc.usrCoords[2] / c.usrCoords[2];
                 bb[3] *= dy;
                 bb[1] *= dy;
-                this.board.setBoundingBox(bb, this.board.keepaspectratio, "update");
+                this.board.setBoundingBox(bb, this.board.keepaspectratio, 'update');
             }
 
             return this;
@@ -366,7 +366,7 @@ JXG.extend(
                 };
             }
 
-            if (this.evalVisProp('type') === "polar") {
+            if (this.evalVisProp('type') === 'polar') {
                 bb = this.board.getBoundingBox();
                 r_max = Math.max(
                     Mat.hypot(bb[0], bb[1]),
@@ -484,10 +484,10 @@ JXG.extend(
                 c2x = this.line.point2.coords.usrCoords[1];
                 c2y = this.line.point2.coords.usrCoords[2];
 
-                if (ev_a === "right") {
+                if (ev_a === 'right') {
                     return this.line.point2.coords;
                 }
-                if (ev_a === "middle") {
+                if (ev_a === 'middle') {
                     return new Coords(
                         Const.COORDS_BY_USER,
                         [(c1z + c2z) * 0.5, (c1x + c2x) * 0.5, (c1y + c2y) * 0.5],
@@ -509,9 +509,9 @@ JXG.extend(
             }
             mi = this.line.minX();
             ma = this.line.maxX();
-            if (ev_a === "right") {
+            if (ev_a === 'right') {
                 t = ma;
-            } else if (ev_a === "middle") {
+            } else if (ev_a === 'middle') {
                 t = (mi + ma) * 0.5;
             } else if (Type.isNumber(ev_a)) {
                 t = mi * (1 - ev_a) + ma * ev_a;
@@ -889,7 +889,7 @@ JXG.extend(
         //                 return ticksDelta;
         //             }
         //             // Seems to be ignored:
-        //             // bounds = this.getLowerAndUpperBounds(coordsZero, "ticksdistance");
+        //             // bounds = this.getLowerAndUpperBounds(coordsZero, 'ticksdistance');
 
         //             // distScr is the distance between two major Ticks in pixel
         //             nx = coordsZero.usrCoords[1] + deltas.x * ticksDelta;
@@ -1164,7 +1164,7 @@ JXG.extend(
             // For all ticks regardless if of finite or infinite
             // tick length the intersection with the canvas border is
             // computed.
-            if (major && this.evalVisProp('type') === "polar") {
+            if (major && this.evalVisProp('type') === 'polar') {
                 // polar style
                 bb = this.board.getBoundingBox();
                 full = 2.0 * Math.PI;
@@ -1352,11 +1352,11 @@ JXG.extend(
             }
 
             if (ev_s.length > 0) {
-                if (labelText === "1") {
+                if (labelText === '1') {
                     labelText = ev_s;
                 } else if (labelText === "-1") {
                     labelText = "-" + ev_s;
-                } else if (labelText !== "0") {
+                } else if (labelText !== '0') {
                     labelText = labelText + ev_s;
                 }
             }
@@ -1737,7 +1737,7 @@ JXG.extend(
 JXG.createTicks = function (board, parents, attributes) {
     var el,
         dist,
-        attr = Type.copyAttributes(attributes, board.options, "ticks");
+        attr = Type.copyAttributes(attributes, board.options, 'ticks');
 
     if (parents.length < 2) {
         dist = attr.ticksdistance; // Will be ignored anyhow and attr.ticksDistance will be used instead

@@ -77,7 +77,7 @@
                     return;
                 }
 
-                if (node.nodeName === "point") {
+                if (node.nodeName === 'point') {
                     this.storePoint(node);
                 } else if (
                     node.nodeName === "line" ||
@@ -86,9 +86,9 @@
                     node.nodeName === "vector"
                 ) {
                     this.storeLine(node);
-                } else if (node.nodeName === "circle") {
+                } else if (node.nodeName === 'circle') {
                     this.storeConic(node);
-                } else if (node.nodeName === "conic") {
+                } else if (node.nodeName === 'conic') {
                     this.storeConic(node);
                     //} else if (node.nodeName === 'polygon') {
                     // ignore, see this.addPolygonByVertices
@@ -130,12 +130,12 @@
                 if (p.nodeName === "homogeneous_coordinates") {
                     for (j = 0; j < p.childNodes.length; j++) {
                         if (p.childNodes[j].nodeType === 1) {
-                            if (p.childNodes[j].nodeName === "double") {
+                            if (p.childNodes[j].nodeName === 'double') {
                                 // content of <double>...</double>
                                 c.push(p.childNodes[j].firstChild.data);
-                            } else if (p.childNodes[j].nodeName === "complex") {
+                            } else if (p.childNodes[j].nodeName === 'complex') {
                                 for (l = 0; l < p.childNodes[j].childNodes.length; l++) {
-                                    if (p.childNodes[j].childNodes[l].nodeName === "double") {
+                                    if (p.childNodes[j].childNodes[l].nodeName === 'double') {
                                         c.push(p.childNodes[j].childNodes[l].firstChild.data);
                                     }
                                 }
@@ -232,7 +232,7 @@
                     c = [];
                     for (j = 0; j < p.childNodes.length; j++) {
                         if (p.childNodes[j].nodeType === 1) {
-                            if (p.childNodes[j].nodeName === "double") {
+                            if (p.childNodes[j].nodeName === 'double') {
                                 // content of <double>...</double>
                                 c.push(parseFloat(p.childNodes[j].firstChild.data));
                             }
@@ -284,12 +284,12 @@
                     p = node.childNodes[i];
                 }
 
-                if (p.nodeName === "matrix") {
+                if (p.nodeName === 'matrix') {
                     c = [];
 
                     for (j = 0; j < p.childNodes.length; j++) {
                         if (p.childNodes[j].nodeType === 1) {
-                            if (p.childNodes[j].nodeName === "double") {
+                            if (p.childNodes[j].nodeName === 'double') {
                                 // content of <double>...</double>
                                 c.push(parseFloat(p.childNodes[j].firstChild.data));
                             }
@@ -354,7 +354,7 @@
                     this.addAngularBisectorsOfTwoLines(node);
                 } else if (node.nodeName === "midpoint_of_two_points") {
                     this.addMidpointOfTwoPoints(node);
-                } else if (node.nodeName === "midpoint") {
+                } else if (node.nodeName === 'midpoint') {
                     this.addMidpointOfTwoPoints(node);
                 } else if (
                     node.nodeName === "midpoint_of_line_segment" ||
@@ -484,11 +484,11 @@
                 for (p in this.objects) {
                     if (this.objects.hasOwnProperty(p)) {
                         if (this.objects[p].exists === false) {
-                            if (this.objects[p].i2geoType === "point") {
+                            if (this.objects[p].i2geoType === 'point') {
                                 this.addPoint(this.objects[p]);
-                            } else if (this.objects[p].i2geoType === "line") {
+                            } else if (this.objects[p].i2geoType === 'line') {
                                 this.addLine(this.objects[p]);
-                            } else if (this.objects[p].i2geoType === "conic") {
+                            } else if (this.objects[p].i2geoType === 'conic') {
                                 this.addConic(this.objects[p]);
                             } else {
                                 JXG.debug(
@@ -1080,7 +1080,7 @@
 
                 if (node.nodeName === "background-color") {
                     this.board.containerObj.style.backgroundColor = node.firstChild.data;
-                } else if (node.nodeName === "style") {
+                } else if (node.nodeName === 'style') {
                     // get the element
                     el = this.board.select(node.getAttribute('ref'));
 
@@ -1088,11 +1088,11 @@
                         if (node.childNodes[j].nodeType === 1) {
                             key = node.childNodes[j].nodeName;
                             val = node.childNodes[j].firstChild.data;
-                            if (key === "stroke") {
+                            if (key === 'stroke') {
                                 key = "strokeColor";
                             } else if (key === "stroke-width" || key === "border-width") {
                                 key = "strokeWidth";
-                            } else if (key === "fill") {
+                            } else if (key === 'fill') {
                                 key = "fillColor";
                             } else if (key === "fill-opacity") {
                                 key = "fillOpacity";
@@ -1100,21 +1100,21 @@
                                 key = "strokeOpacity";
                             } else if (key === "point-size") {
                                 key = "size";
-                            } else if (key === "label") {
+                            } else if (key === 'label') {
                                 key = "name";
                             } else if (key === "point-style") {
                                 key = "face";
-                                if (val === "circle") {
+                                if (val === 'circle') {
                                     val = "o";
-                                } else if (val === "cross") {
+                                } else if (val === 'cross') {
                                     val = "+";
                                 } else if (val === "x-mark") {
                                     val = "x";
-                                } else if (val === "square") {
+                                } else if (val === 'square') {
                                     val = "[]";
-                                } else if (val === "triangle") {
+                                } else if (val === 'triangle') {
                                     val = "triangleup";
-                                } else if (val === "point") {
+                                } else if (val === 'point') {
                                     // Setting size to 1 is missing
                                     val = "o";
                                 } else {

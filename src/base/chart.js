@@ -137,7 +137,7 @@ JXG.Chart = function (board, parents, attributes) {
         }
         this.elements.push(c);
     }
-    this.id = this.board.setId(this, "Chart");
+    this.id = this.board.setId(this, 'Chart');
 
     return this.elements;
 };
@@ -245,7 +245,7 @@ JXG.extend(
                     name: ""
                 };
 
-            attr = Type.copyAttributes(attributes, board.options, "chart");
+            attr = Type.copyAttributes(attributes, board.options, 'chart');
 
             // Determine the width of the bars
             if (attr && attr.width) {
@@ -264,7 +264,7 @@ JXG.extend(
                 w *= 0.8;
             }
 
-            attrSub = Type.copyAttributes(attributes, board.options, "chart", "label");
+            attrSub = Type.copyAttributes(attributes, board.options, "chart", 'label');
 
             for (i = 0; i < x.length; i++) {
                 if (Type.isFunction(x[i])) {
@@ -283,7 +283,7 @@ JXG.extend(
                 }
                 yp = y[i];
 
-                if (attr.dir === "horizontal") {
+                if (attr.dir === 'horizontal') {
                     // horizontal bars
                     p[0] = board.create("point", [0, xp0], hiddenPoint);
                     p[1] = board.create("point", [yp, xp0], hiddenPoint);
@@ -1213,7 +1213,7 @@ JXG.createChart = function (board, parents, attributes) {
     if (parents.length === 1 && Type.isString(parents[0])) {
         if (Type.exists(table)) {
             // extract the data
-            attr = Type.copyAttributes(attributes, board.options, "chart");
+            attr = Type.copyAttributes(attributes, board.options, 'chart');
 
             table = new DataSource().loadFromTable(
                 parents[0],
@@ -1313,7 +1313,7 @@ JXG.createChart = function (board, parents, attributes) {
         return charts;
     }
 
-    attr = Type.copyAttributes(attributes, board.options, "chart");
+    attr = Type.copyAttributes(attributes, board.options, 'chart');
     return new JXG.Chart(board, parents, attr);
 };
 
@@ -1340,7 +1340,7 @@ JXG.Legend = function (board, coords, attributes) {
     /* Call the constructor of GeometryElement */
     this.constructor();
 
-    attr = Type.copyAttributes(attributes, board.options, "legend");
+    attr = Type.copyAttributes(attributes, board.options, 'legend');
 
     this.board = board;
     this.coords = new Coords(Const.COORDS_BY_USER, coords, this.board);
@@ -1357,13 +1357,13 @@ JXG.Legend = function (board, coords, attributes) {
     this.myAtts.frozen = attr.frozen || false ;
     this.style = attr.legendstyle || attr.style;
 
-    if (this.style === "vertical") {
+    if (this.style === 'vertical') {
         this.drawVerticalLegend(board, attr);
     } else {
         throw new Error("JSXGraph: Unknown legend style: " + this.style);
     }
 
-    this.id = this.board.setId(this, "Leg");
+    this.id = this.board.setId(this, 'Leg');
 
 };
 

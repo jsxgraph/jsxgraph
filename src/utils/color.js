@@ -285,7 +285,7 @@ JXG.rgbParser = function (color, ag, ab) {
         return values;
     }
 
-    if (typeof values === "string") {
+    if (typeof values === 'string') {
         color_string = values;
     }
 
@@ -687,7 +687,7 @@ JXG.rgba2rgbo = function (rgba) {
 JXG.rgbo2rgba = function (rgb, o) {
     var rgba;
 
-    if (rgb === "none" || rgb === "transparent") {
+    if (rgb === "none" || rgb === 'transparent') {
         return rgb;
     }
 
@@ -710,7 +710,7 @@ JXG.rgb2bw = function (color) {
         arr,
         HexChars = "0123456789ABCDEF";
 
-    if (color === "none") {
+    if (color === 'none') {
         return color;
     }
 
@@ -750,7 +750,7 @@ JXG.rgb2cb = function (color, deficiency) {
         inflection,
         HexChars = "0123456789ABCDEF";
 
-    if (color === "none") {
+    if (color === 'none') {
         return color;
     }
 

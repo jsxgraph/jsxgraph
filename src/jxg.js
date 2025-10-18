@@ -192,7 +192,7 @@ jxg.extend(
             for (i = 0; i < ext.length; i++) {
                 e = ext[i].toLowerCase();
 
-                if (typeof this.readers[e] !== "function") {
+                if (typeof this.readers[e] !== 'function') {
                     this.readers[e] = reader;
                 }
             }

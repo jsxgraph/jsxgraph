@@ -482,11 +482,11 @@ JXG.createGrid = function (board, parents, attributes) {
             majorStep = [majorStep[0], majorStep[0]];
         }
         if (Type.exists(gridX)) {
-            JXG.deprecated("gridX", "majorStep");
+            JXG.deprecated("gridX", 'majorStep');
             majorStep[0] = gridX;
         }
         if (Type.exists(gridY)) {
-            JXG.deprecated("gridY", "majorStep");
+            JXG.deprecated("gridY", 'majorStep');
             majorStep[1] = gridY;
         }
 

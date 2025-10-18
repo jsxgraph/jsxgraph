@@ -104,7 +104,7 @@ JXG.JSXGraph = {
             Options.board.renderer = "canvas";
         }
 
-        if (Env.isNode() || Options.renderer === "no") {
+        if (Env.isNode() || Options.renderer === 'no') {
             Options.text.display = "internal";
             Options.infobox.display = "internal";
         }
@@ -129,7 +129,7 @@ JXG.JSXGraph = {
 
         // Former version:
         // doc = doc || document
-        if ((!Type.exists(doc) || doc === false) && typeof document === "object") {
+        if ((!Type.exists(doc) || doc === false) && typeof document === 'object') {
             doc = document;
         }
 
@@ -145,15 +145,15 @@ JXG.JSXGraph = {
         }
 
         // If attrRenderer is not supplied take the first available renderer
-        if (attrRenderer === undefined || attrRenderer === "auto") {
+        if (attrRenderer === undefined || attrRenderer === 'auto') {
             attrRenderer = this.rendererType;
         }
         // create the renderer
-        if (attrRenderer === "svg") {
+        if (attrRenderer === 'svg') {
             renderer = new SVGRenderer(boxid, dim);
-        } else if (attrRenderer === "vml") {
+        } else if (attrRenderer === 'vml') {
             renderer = new VMLRenderer(boxid);
-        } else if (attrRenderer === "canvas") {
+        } else if (attrRenderer === 'canvas') {
             renderer = new CanvasRenderer(boxid, dim);
         } else {
             renderer = new NoRenderer();
@@ -189,7 +189,7 @@ JXG.JSXGraph = {
             key = list[i];
             attr[key] = Type.copyAttributes(attr, options, 'board', key);
         }
-        attr.navbar = Type.copyAttributes(attr.navbar, options, "navbar");
+        attr.navbar = Type.copyAttributes(attr.navbar, options, 'navbar');
 
         // Treat moveTarget separately, because deepCopy will not work here.
         // Reason: moveTarget will be an HTML node and it is prevented that Type.deepCopy will copy it.
@@ -242,7 +242,7 @@ JXG.JSXGraph = {
             }
 
         node_jsx = (Type.isString(container)) ? doc.getElementById(container) : container;
-        node_jsx.setAttribute("role", "region");
+        node_jsx.setAttribute("role", 'region');
         node_jsx.setAttribute("aria-label", attr.title);              // set by initBoard( {title:})
 
         // doc_glob = node_jsx.ownerDocument; // This is the window.document element, needed below.
@@ -261,7 +261,7 @@ JXG.JSXGraph = {
         var node, id, doc;
 
         doc = board.document || document;
-        if (typeof doc !== "object") {
+        if (typeof doc !== 'object') {
             return;
         }
 
@@ -543,7 +543,7 @@ JXG.JSXGraph = {
     freeBoard: function (board) {
         var el;
 
-        if (typeof board === "string") {
+        if (typeof board === 'string') {
             board = JXG.boards[board];
         }
 
@@ -642,7 +642,7 @@ if (Env.isBrowser && typeof window === 'object' && typeof document === 'object')
                     (type.toLowerCase() === "text/jessiescript" ||
                         type.toLowerCase() === "jessiescript" ||
                         type.toLowerCase() === "text/jessiecode" ||
-                        type.toLowerCase() === "jessiecode")
+                        type.toLowerCase() === 'jessiecode')
                 ) {
                     cssClasses = scripts[i].getAttribute("class", false) || "";
                     width = scripts[i].getAttribute("width", false) || "";
@@ -661,8 +661,8 @@ if (Env.isBrowser && typeof window === 'object' && typeof document === 'object')
                             bbox[j] = parseFloat(bbox[j]);
                         }
                     }
-                    axis = Type.str2Bool(scripts[i].getAttribute("axis", false) || "false");
-                    grid = Type.str2Bool(scripts[i].getAttribute("grid", false) || "false");
+                    axis = Type.str2Bool(scripts[i].getAttribute("axis", false) || 'false');
+                    grid = Type.str2Bool(scripts[i].getAttribute("grid", false) || 'false');
 
                     if (!Type.exists(id)) {
                         id = "jessiescript_autgen_jxg_" + i;
@@ -680,7 +680,7 @@ if (Env.isBrowser && typeof window === 'object' && typeof document === 'object')
                             document.body.insertBefore(div, scripts[i]);
                         } catch (e) {
                             // there's probably jquery involved...
-                            if (typeof jQuery === "object") {
+                            if (typeof jQuery === 'object') {
                                 jQuery(div).insertBefore(scripts[i]);
                             }
                         }

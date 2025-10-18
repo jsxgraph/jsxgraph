@@ -99,7 +99,7 @@ JXG.Image = function (board, coords, attributes, url, size) {
     ];
 
     //this.parent = board.select(attributes.anchor);
-    this.id = this.board.setId(this, "Im");
+    this.id = this.board.setId(this, 'Im');
 
     this.board.renderer.drawImage(this);
     this.board.finalizeAdding(this);
@@ -116,7 +116,7 @@ JXG.Image = function (board, coords, attributes, url, size) {
 };
 
 JXG.Image.prototype = new GeometryElement();
-Type.copyPrototypeMethods(JXG.Image, CoordsElement, "coordsConstructor");
+Type.copyPrototypeMethods(JXG.Image, CoordsElement, 'coordsConstructor');
 
 JXG.extend(
     JXG.Image.prototype,
@@ -405,7 +405,7 @@ JXG.createImage = function (board, parents, attributes) {
         coords = parents[1],
         size = parents[2];
 
-    attr = Type.copyAttributes(attributes, board.options, "image");
+    attr = Type.copyAttributes(attributes, board.options, 'image');
     im = CoordsElement.create(JXG.Image, board, coords, attr, url, size);
     if (!im) {
         throw new Error(

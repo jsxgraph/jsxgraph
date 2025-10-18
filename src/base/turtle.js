@@ -129,7 +129,7 @@ JXG.Turtle = function (board, parents, attributes) {
     // Setting the color or size affects the turtle from the time of
     // calling the method,
     // whereas Turtle.setAttribute affects all turtle curves.
-    this._attributes = Type.copyAttributes(this.visProp, board.options, "turtle");
+    this._attributes = Type.copyAttributes(this.visProp, board.options, 'turtle');
     delete this._attributes.id;
 
     x = 0;
@@ -841,7 +841,7 @@ JXG.extend(
                 return this.pos[0];
             }
 
-            return this.evalAt(t, "X");
+            return this.evalAt(t, 'X');
         },
 
         /**
@@ -854,7 +854,7 @@ JXG.extend(
             if (!Type.exists(t)) {
                 return this.pos[1];
             }
-            return this.evalAt(t, "Y");
+            return this.evalAt(t, 'Y');
         },
 
         /**
@@ -934,7 +934,7 @@ JXG.createTurtle = function (board, parents, attributes) {
     var attr;
     parents = parents || [];
 
-    attr = Type.copyAttributes(attributes, board.options, "turtle");
+    attr = Type.copyAttributes(attributes, board.options, 'turtle');
     return new JXG.Turtle(board, parents, attr);
 };
 

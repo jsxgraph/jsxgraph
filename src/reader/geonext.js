@@ -114,27 +114,27 @@
                 // and as gxtEl happens to be somewhat like an attributes object it's  just slightly different so we adjust it
                 // for downwards compatibility during the transformation of this reader we use both properties
 
-                rgbo = JXG.rgba2rgbo(this.gEBTN(color, "stroke"));
+                rgbo = JXG.rgba2rgbo(this.gEBTN(color, 'stroke'));
                 gxtEl.strokeColor = rgbo[0];
                 gxtEl.strokeOpacity = rgbo[1];
 
-                rgbo = JXG.rgba2rgbo(this.gEBTN(color, "lighting"));
+                rgbo = JXG.rgba2rgbo(this.gEBTN(color, 'lighting'));
                 gxtEl.highlightStrokeColor = rgbo[0];
                 gxtEl.highlightStrokeOpacity = rgbo[1];
 
-                rgbo = JXG.rgba2rgbo(this.gEBTN(color, "fill"));
+                rgbo = JXG.rgba2rgbo(this.gEBTN(color, 'fill'));
                 gxtEl.fillColor = rgbo[0];
                 gxtEl.fillOpacity = rgbo[1];
 
                 gxtEl.highlightFillColor = gxtEl.fillColor;
                 gxtEl.highlightFillOpacity = gxtEl.fillOpacity;
 
-                rgbo = JXG.rgba2rgbo(this.gEBTN(color, "label"));
+                rgbo = JXG.rgba2rgbo(this.gEBTN(color, 'label'));
                 gxtEl.labelColor = rgbo[0];
                 gxtEl.withLabel = rgbo[1] > 0;
                 gxtEl.labelOpacity = rgbo[1];
 
-                gxtEl.colorDraft = JXG.rgba2rgbo(this.gEBTN(color, "draft"))[0];
+                gxtEl.colorDraft = JXG.rgba2rgbo(this.gEBTN(color, 'draft'))[0];
 
                 // backwards compatibility
                 gxtEl.colorStroke = gxtEl.strokeColor;
@@ -161,7 +161,7 @@
                     ) {
                         key = arr[n].nodeName;
 
-                        if (key === "width") {
+                        if (key === 'width') {
                             key = "strokewidth";
                         }
                         gxtEl[key] = arr[n].firstChild.data;
@@ -192,17 +192,17 @@
                 ) {
                     gxtEl.name = "";
                 } else {
-                    gxtEl.name = this.gEBTN(Data, "name");
+                    gxtEl.name = this.gEBTN(Data, 'name');
                 }
 
-                gxtEl.id = this.gEBTN(Data, "id");
+                gxtEl.id = this.gEBTN(Data, 'id');
 
                 return gxtEl;
             },
 
             visualProperties: function (gxtEl, Data) {
-                gxtEl.visible = JXG.str2Bool(this.gEBTN(Data, "visible"));
-                gxtEl.trace = JXG.str2Bool(this.gEBTN(Data, "trace"));
+                gxtEl.visible = JXG.str2Bool(this.gEBTN(Data, 'visible'));
+                gxtEl.trace = JXG.str2Bool(this.gEBTN(Data, 'trace'));
 
                 return gxtEl;
             },
@@ -273,7 +273,7 @@
                 gxtEl.draft = JXG.str2Bool(gxtEl.draft);
                 gxtEl.trace = JXG.str2Bool(gxtEl.trace);
 
-                if (type === "point") {
+                if (type === 'point') {
                     // Fill properties are ignored by GEONExT
                     gxtEl.fillColor = gxtEl.strokeColor;
                     gxtEl.highlightFillColor = gxtEl.highlightStrokeColor;
@@ -281,7 +281,7 @@
                     gxtEl.highlightFillOpacity = gxtEl.highlightStrokeOpacity;
                 }
 
-                if (typeof gxtEl.label === "string") {
+                if (typeof gxtEl.label === 'string') {
                     delete gxtEl.label;
                 }
                 gxtEl.label = gxtEl.label || {
@@ -354,7 +354,7 @@
                     tag = "src";
                 } else if (
                     JXG.exists(fileNode.getElementsByTagName('image')[0]) &&
-                    JXG.exists(this.gEBTN(fileNode, "image"))
+                    JXG.exists(this.gEBTN(fileNode, 'image'))
                 ) {
                     tag = "image";
                 } else {
@@ -366,11 +366,11 @@
                     picStr = "data:image/png;base64," + picStr;
 
                     // Background image
-                    if (tag === "src") {
-                        x = this.gEBTN(fileNode, "x");
-                        y = this.gEBTN(fileNode, "y");
-                        w = this.gEBTN(fileNode, "width");
-                        h = this.gEBTN(fileNode, "height");
+                    if (tag === 'src') {
+                        x = this.gEBTN(fileNode, 'x');
+                        y = this.gEBTN(fileNode, 'y');
+                        w = this.gEBTN(fileNode, 'width');
+                        h = this.gEBTN(fileNode, 'height');
                         im = board.create("image", [picStr, [x, y], [w, h]], {
                             anchor: el,
                             layer: level
@@ -514,10 +514,10 @@
                 no = this.gEBTN(node, "viewport", 0, false);
 
                 if (no) {
-                    arr[0] = parseFloat(this.gEBTN(no, "left"));
-                    arr[1] = parseFloat(this.gEBTN(no, "top"));
-                    arr[2] = parseFloat(this.gEBTN(no, "right"));
-                    arr[3] = parseFloat(this.gEBTN(no, "bottom"));
+                    arr[0] = parseFloat(this.gEBTN(no, 'left'));
+                    arr[1] = parseFloat(this.gEBTN(no, 'top'));
+                    arr[2] = parseFloat(this.gEBTN(no, 'right'));
+                    arr[3] = parseFloat(this.gEBTN(no, 'bottom'));
                     return arr;
                 }
 
@@ -560,9 +560,9 @@
                         gxtEl = this.colorProperties(gxtEl, Data);
                         gxtEl = this.visualProperties(gxtEl, Data);
                         gxtEl = this.firstLevelProperties(gxtEl, Data);
-                        gxtEl = this.readNodes(gxtEl, Data, "data");
-                        gxtEl.fixed = JXG.str2Bool(this.gEBTN(Data, "fix"));
-                        gxtEl = this.transformProperties(gxtEl, "point");
+                        gxtEl = this.readNodes(gxtEl, Data, 'data');
+                        gxtEl.fixed = JXG.str2Bool(this.gEBTN(Data, 'fix'));
+                        gxtEl = this.transformProperties(gxtEl, 'point');
 
                         //try {
                         p = board.create(
@@ -584,14 +584,14 @@
                             0,
                             p
                         );
-                        this.printDebugMessage("debug", gxtEl, Data.nodeName, "OK");
+                        this.printDebugMessage("debug", gxtEl, Data.nodeName, 'OK');
                         break;
                     case "line":
                         gxtEl = this.colorProperties(gxtEl, Data);
                         gxtEl = this.visualProperties(gxtEl, Data);
                         gxtEl = this.firstLevelProperties(gxtEl, Data);
-                        gxtEl = this.readNodes(gxtEl, Data, "data");
-                        gxtEl = this.readNodes(gxtEl, Data, "straight", "straight");
+                        gxtEl = this.readNodes(gxtEl, Data, 'data');
+                        gxtEl = this.readNodes(gxtEl, Data, "straight", 'straight');
                         gxtEl = this.transformProperties(gxtEl);
 
                         gxtEl.first = this.changeOriginIds(board, gxtEl.first);
@@ -600,7 +600,7 @@
                         l = board.create("line", [gxtEl.first, gxtEl.last], gxtEl);
 
                         this.parseImage(board, Data, board.options.layer.image, 0, 0, 0, 0, l);
-                        this.printDebugMessage("debug", gxtEl, Data.nodeName, "OK");
+                        this.printDebugMessage("debug", gxtEl, Data.nodeName, 'OK');
                         break;
                     case "circle":
                         gxtEl = this.colorProperties(gxtEl, Data);
@@ -608,21 +608,21 @@
                         gxtEl = this.firstLevelProperties(gxtEl, Data);
 
                         tmp = this.gEBTN(Data, "data", 0, false);
-                        gxtEl.center = this.changeOriginIds(board, this.gEBTN(tmp, "midpoint"));
+                        gxtEl.center = this.changeOriginIds(board, this.gEBTN(tmp, 'midpoint'));
 
                         if (tmp.getElementsByTagName('radius').length > 0) {
                             gxtEl.radius = this.changeOriginIds(
                                 board,
-                                this.gEBTN(tmp, "radius")
+                                this.gEBTN(tmp, 'radius')
                             );
                         } else if (tmp.getElementsByTagName('radiusvalue').length > 0) {
-                            gxtEl.radius = this.gEBTN(tmp, "radiusvalue");
+                            gxtEl.radius = this.gEBTN(tmp, 'radiusvalue');
                         }
                         gxtEl = this.transformProperties(gxtEl);
                         c = board.create("circle", [gxtEl.center, gxtEl.radius], gxtEl);
 
                         this.parseImage(board, Data, board.options.layer.image, 0, 0, 0, 0, c);
-                        this.printDebugMessage("debug", gxtEl, Data.nodeName, "OK");
+                        this.printDebugMessage("debug", gxtEl, Data.nodeName, 'OK');
                         break;
                     case "slider":
                         gxtEl.strokewidth = 1; // Old file format
@@ -630,10 +630,10 @@
                         gxtEl = this.visualProperties(gxtEl, Data);
                         gxtEl = this.firstLevelProperties(gxtEl, Data);
 
-                        gxtEl = this.readNodes(gxtEl, Data, "data");
-                        gxtEl.fixed = JXG.str2Bool(this.gEBTN(Data, "fix"));
-                        gxtEl = this.readNodes(gxtEl, Data, "animate", "animate");
-                        gxtEl = this.transformProperties(gxtEl, "point");
+                        gxtEl = this.readNodes(gxtEl, Data, 'data');
+                        gxtEl.fixed = JXG.str2Bool(this.gEBTN(Data, 'fix'));
+                        gxtEl = this.readNodes(gxtEl, Data, "animate", 'animate');
+                        gxtEl = this.transformProperties(gxtEl, 'point');
                         try {
                             gxtEl.parent = this.changeOriginIds(board, gxtEl.parent);
                             gxtEl.isGeonext = true;
@@ -657,7 +657,7 @@
                                 p
                             );
 
-                            this.printDebugMessage("debug", gxtEl, Data.nodeName, "OK");
+                            this.printDebugMessage("debug", gxtEl, Data.nodeName, 'OK');
                         } catch (e) {
                             JXG.debug(
                                 "* Err:  Slider " +
@@ -676,16 +676,16 @@
                         gxtEl.fixed = JXG.str2Bool(
                             Data.getElementsByTagName('fix')[0].firstChild.data
                         );
-                        gxtEl = this.readNodes(gxtEl, Data, "data");
-                        gxtEl = this.transformProperties(gxtEl, "point");
+                        gxtEl = this.readNodes(gxtEl, Data, 'data');
+                        gxtEl = this.transformProperties(gxtEl, 'point');
 
                         p = board.create("point", [gxtEl.x, gxtEl.y], gxtEl);
                         this.parseImage(board, Data, board.options.layer.point, 0, 0, 0, 0, p);
-                        this.printDebugMessage("debug", gxtEl, Data.nodeName, "OK");
+                        this.printDebugMessage("debug", gxtEl, Data.nodeName, 'OK');
                         break;
                     case "intersection":
                         gxtEl.strokewidth = 1; // Old file format
-                        gxtEl = this.readNodes(gxtEl, Data, "data");
+                        gxtEl = this.readNodes(gxtEl, Data, 'data');
                         xmlNode = Data.getElementsByTagName('first')[1];
 
                         gxtEl.outFirst = {};
@@ -695,7 +695,7 @@
                         gxtEl.outFirst.fixed = JXG.str2Bool(
                             xmlNode.getElementsByTagName('fix')[0].firstChild.data
                         );
-                        gxtEl.outFirst = this.transformProperties(gxtEl.outFirst, "point");
+                        gxtEl.outFirst = this.transformProperties(gxtEl.outFirst, 'point');
                         gxtEl.first = this.changeOriginIds(board, gxtEl.first);
                         gxtEl.last = this.changeOriginIds(board, gxtEl.last);
 
@@ -709,7 +709,7 @@
                                 gxtEl.outFirst
                             );
                             /* for some reason this if is required */
-                            if (gxtEl.outFirst.visible === "false") {
+                            if (gxtEl.outFirst.visible === 'false') {
                                 inter.hideElement();
                             }
                         } else {
@@ -742,10 +742,10 @@
                                 );
                             }
                         }
-                        this.printDebugMessage("debug", gxtEl, Data.nodeName, "OK");
+                        this.printDebugMessage("debug", gxtEl, Data.nodeName, 'OK');
                         break;
                     case "composition":
-                        gxtEl = this.readNodes(gxtEl, Data, "data");
+                        gxtEl = this.readNodes(gxtEl, Data, 'data');
                         gxtEl = this.firstLevelProperties(gxtEl, Data);
                         gxtEl.defEl = [];
                         numberDefEls = 0;
@@ -772,7 +772,7 @@
                         switch (gxtEl.type) {
                             // ARROW_PARALLEL
                             case "210070":
-                                gxtEl.out.fixed = this.gEBTN(xmlNode, "fix");
+                                gxtEl.out.fixed = this.gEBTN(xmlNode, 'fix');
 
                                 xmlNode = Data.getElementsByTagName('output')[1];
                                 gxtEl.outPoint = {};
@@ -911,7 +911,7 @@
                             // PERPENDICULAR
                             case "210160":
                                 // output[0] was already read and is stored in gxtEl.out
-                                gxtEl.out.fixed = this.gEBTN(xmlNode, "fix");
+                                gxtEl.out.fixed = this.gEBTN(xmlNode, 'fix');
 
                                 xmlNode = Data.getElementsByTagName('output')[1];
                                 gxtEl.outLine = {};
@@ -962,10 +962,10 @@
                                 // Gliders on sectors also run through the borders.
                                 gxtEl.out = this.defProperties(gxtEl.out, xmlNode);
                                 gxtEl.out.firstArrow = JXG.str2Bool(
-                                    this.gEBTN(xmlNode, "firstarrow")
+                                    this.gEBTN(xmlNode, 'firstarrow')
                                 );
                                 gxtEl.out.lastArrow = JXG.str2Bool(
-                                    this.gEBTN(xmlNode, "lastarrow")
+                                    this.gEBTN(xmlNode, 'lastarrow')
                                 );
 
                                 xmlNode = [];
@@ -1031,7 +1031,7 @@
                                         " not implemented."
                                 );
                         }
-                        this.printDebugMessage("debug", gxtEl, Data.nodeName, "OK");
+                        this.printDebugMessage("debug", gxtEl, Data.nodeName, 'OK');
                         break;
                     case "polygon":
                         gxtEl = this.colorProperties(gxtEl, Data);
@@ -1150,7 +1150,7 @@
                             p.borders[i].setAttribute(gxtEl.border[i]);
                         }
 
-                        this.printDebugMessage("debug", gxtEl, Data.nodeName, "OK");
+                        this.printDebugMessage("debug", gxtEl, Data.nodeName, 'OK');
                         break;
                     case "graph":
                         gxtEl = this.colorProperties(gxtEl, Data);
@@ -1172,14 +1172,14 @@
                             visible: JXG.str2Bool(gxtEl.visible)
                         });
 
-                        this.printDebugMessage("debug", gxtEl, Data.nodeName, "OK");
+                        this.printDebugMessage("debug", gxtEl, Data.nodeName, 'OK');
                         break;
                     case "arrow":
                         gxtEl = this.colorProperties(gxtEl, Data);
                         gxtEl = this.visualProperties(gxtEl, Data);
                         gxtEl = this.firstLevelProperties(gxtEl, Data);
-                        gxtEl = this.readNodes(gxtEl, Data, "data");
-                        gxtEl = this.readNodes(gxtEl, Data, "straight", "straight");
+                        gxtEl = this.readNodes(gxtEl, Data, 'data');
+                        gxtEl = this.readNodes(gxtEl, Data, "straight", 'straight');
 
                         gxtEl = this.transformProperties(gxtEl);
                         gxtEl.first = this.changeOriginIds(board, gxtEl.first);
@@ -1187,13 +1187,13 @@
 
                         l = board.create("arrow", [gxtEl.first, gxtEl.last], gxtEl);
 
-                        this.printDebugMessage("debug", l, Data.nodeName, "OK");
+                        this.printDebugMessage("debug", l, Data.nodeName, 'OK');
                         break;
                     case "arc":
                         gxtEl = this.colorProperties(gxtEl, Data);
                         gxtEl = this.visualProperties(gxtEl, Data);
                         gxtEl = this.firstLevelProperties(gxtEl, Data);
-                        gxtEl = this.readNodes(gxtEl, Data, "data");
+                        gxtEl = this.readNodes(gxtEl, Data, 'data');
 
                         // It seems that JSXGraph and GEONExT use opposite directions.
                         gxtEl.firstArrow = JXG.str2Bool(
@@ -1215,13 +1215,13 @@
                             gxtEl
                         );
 
-                        this.printDebugMessage("debug", c, Data.nodeName, "OK");
+                        this.printDebugMessage("debug", c, Data.nodeName, 'OK');
                         break;
                     case "angle":
                         gxtEl = this.colorProperties(gxtEl, Data);
                         gxtEl = this.visualProperties(gxtEl, Data);
                         gxtEl = this.firstLevelProperties(gxtEl, Data);
-                        gxtEl = this.readNodes(gxtEl, Data, "data");
+                        gxtEl = this.readNodes(gxtEl, Data, 'data');
                         gxtEl = this.transformProperties(gxtEl);
                         gxtEl.radius *= 1.0;
 
@@ -1230,7 +1230,7 @@
                             [gxtEl.first, gxtEl.middle, gxtEl.last],
                             gxtEl
                         );
-                        this.printDebugMessage("debug", gxtEl, Data.nodeName, "OK");
+                        this.printDebugMessage("debug", gxtEl, Data.nodeName, 'OK');
                         break;
                     case "text":
                         if (gxtEl.id.match(/oldVersion/)) {
@@ -1240,7 +1240,7 @@
                         gxtEl = this.visualProperties(gxtEl, Data);
                         gxtEl = this.firstLevelProperties(gxtEl, Data);
 
-                        gxtEl = this.readNodes(gxtEl, Data, "data");
+                        gxtEl = this.readNodes(gxtEl, Data, 'data');
                         try {
                             gxtEl.mpStr = this.subtreeToString(
                                 Data.getElementsByTagName('data')[0].getElementsByTagName(
@@ -1334,7 +1334,7 @@
                             gxtEl
                         );
                         /*jslint evil:false*/
-                        this.printDebugMessage("debug", gxtEl, Data.nodeName, "OK");
+                        this.printDebugMessage("debug", gxtEl, Data.nodeName, 'OK');
                         break;
                     case "tracecurve":
                         gxtEl.tracepoint =
@@ -1346,7 +1346,7 @@
                             [gxtEl.traceslider, gxtEl.tracepoint],
                             gxtEl
                         );
-                        this.printDebugMessage("debug", gxtEl, Data.nodeName, "OK");
+                        this.printDebugMessage("debug", gxtEl, Data.nodeName, 'OK');
                         break;
                     case "group":
                         gxtEl = this.colorProperties(gxtEl, Data);
@@ -1368,7 +1368,7 @@
                         }
 
                         c = new JXG.Group(board, gxtEl.id, gxtEl.name, gxtEl.members);
-                        this.printDebugMessage("debug", gxtEl, Data.nodeName, "OK");
+                        this.printDebugMessage("debug", gxtEl, Data.nodeName, 'OK');
                         break;
                     default:
                         JXG.debug("* Err: " + Data.nodeName + " not yet implemented");
@@ -1412,8 +1412,8 @@
                 // resize board
                 if (board.attr.takeSizeFromFile) {
                     board.resizeContainer(
-                        this.gEBTN(boardData, "width"),
-                        this.gEBTN(boardData, "height")
+                        this.gEBTN(boardData, 'width'),
+                        this.gEBTN(boardData, 'height')
                     );
                 }
 
@@ -1426,8 +1426,8 @@
                 } else {
                     // zoom level
                     tmp = this.gEBTN(xmlNode, "zoom", 0, false);
-                    board.zoomX = parseFloat(this.gEBTN(tmp, "x"));
-                    board.zoomY = parseFloat(this.gEBTN(tmp, "y"));
+                    board.zoomX = parseFloat(this.gEBTN(tmp, 'x'));
+                    board.zoomY = parseFloat(this.gEBTN(tmp, 'y'));
 
                     // set the origin
                     tmp = this.gEBTN(xmlNode, "origin", 0, false);
@@ -1435,21 +1435,21 @@
                         usrCoords: [1, 0, 0],
                         scrCoords: [
                             1,
-                            parseFloat(this.gEBTN(tmp, "x")) * board.zoomX,
-                            parseFloat(this.gEBTN(tmp, "y")) * board.zoomY
+                            parseFloat(this.gEBTN(tmp, 'x')) * board.zoomX,
+                            parseFloat(this.gEBTN(tmp, 'y')) * board.zoomY
                         ]
                     };
 
                     // screen to user coordinates conversion
                     tmp = this.gEBTN(xmlNode, "unit", 0, false);
-                    board.unitX = parseFloat(this.gEBTN(tmp, "x")) * board.zoomX;
-                    board.unitY = parseFloat(this.gEBTN(tmp, "y")) * board.zoomY;
+                    board.unitX = parseFloat(this.gEBTN(tmp, 'x')) * board.zoomX;
+                    board.unitY = parseFloat(this.gEBTN(tmp, 'y')) * board.zoomY;
                 }
 
                 if (board.attr.takeSizeFromFile) {
                     board.resizeContainer(
-                        this.gEBTN(boardData, "width"),
-                        this.gEBTN(boardData, "height")
+                        this.gEBTN(boardData, 'width'),
+                        this.gEBTN(boardData, 'height')
                     );
                 }
 
@@ -1464,7 +1464,7 @@
                 // the id stored in the geonext file. if you know why this is required, please note it here.
                 delete JXG.boards[board.id];
 
-                board.id = this.gEBTN(boardData, "id");
+                board.id = this.gEBTN(boardData, 'id');
 
                 JXG.boards[board.id] = board;
 
@@ -1483,13 +1483,13 @@
                 );
 
                 board.options.point.snapToGrid =
-                    this.gEBTN(this.gEBTN(boardData, "coordinates", 0, false), "snap") ===
+                    this.gEBTN(this.gEBTN(boardData, "coordinates", 0, false), 'snap') ===
                     strTrue;
 
                 // If snapToGrid and snapToPoint are both true, point snapping is enabled
                 if (
                     board.options.point.snapToGrid &&
-                    this.gEBTN(this.gEBTN(boardData, "grid", 1, false), "pointsnap") === strTrue
+                    this.gEBTN(this.gEBTN(boardData, "grid", 1, false), 'pointsnap') === strTrue
                 ) {
                     board.options.point.snapToGrid = false;
                     board.options.point.snapToPoints = true;
@@ -1497,29 +1497,29 @@
                 }
 
                 xmlNode = this.gEBTN(boardData, "grid", 1, false);
-                tmp = this.gEBTN(xmlNode, "x");
+                tmp = this.gEBTN(xmlNode, 'x');
                 if (tmp) {
                     board.options.grid.gridX = 1 / parseFloat(tmp);
                     board.options.point.snapSizeX = 1 / parseFloat(tmp);
                 }
-                tmp = this.gEBTN(xmlNode, "y");
+                tmp = this.gEBTN(xmlNode, 'y');
                 if (tmp) {
                     board.options.grid.gridY = 1 / parseFloat(tmp);
                     board.options.point.snapSizeY = 1 / parseFloat(tmp);
                 }
 
-                board.options.grid.gridDash = JXG.str2Bool(this.gEBTN(xmlNode, "dash"));
+                board.options.grid.gridDash = JXG.str2Bool(this.gEBTN(xmlNode, 'dash'));
 
-                tmp = JXG.rgba2rgbo(this.gEBTN(xmlNode, "color"));
+                tmp = JXG.rgba2rgbo(this.gEBTN(xmlNode, 'color'));
                 board.options.grid.gridColor = tmp[0];
                 board.options.grid.gridOpacity = tmp[1];
 
                 xmlNode = this.gEBTN(boardData, "coordinates", 0, false);
-                if (this.gEBTN(xmlNode, "grid") === strTrue) {
+                if (this.gEBTN(xmlNode, 'grid') === strTrue) {
                     board.create("grid", []);
                 }
 
-                if (this.gEBTN(xmlNode, "coord") === strTrue) {
+                if (this.gEBTN(xmlNode, 'coord') === strTrue) {
                     // Hard coded default option
                     board.options.axis.ticks.majorHeight = 10;
 
@@ -1535,7 +1535,7 @@
                     ]);
                 }
 
-                tmp = this.gEBTN(this.gEBTN(boardData, "background", 0, false), "color");
+                tmp = this.gEBTN(this.gEBTN(boardData, "background", 0, false), 'color');
                 if (tmp.length === 8) {
                     tmp = "#" + tmp;
                 }
@@ -1721,7 +1721,7 @@
                     ],
                     list = arr.join("|"),
                     regex = "&lt;(/?(" + list + "))&gt;",
-                    expr = new RegExp(regex, "g");
+                    expr = new RegExp(regex, 'g');
 
                 // First, we convert all < to &lt; and > to &gt;
                 str = JXG.escapeHTML(str);

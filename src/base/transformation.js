@@ -219,13 +219,13 @@ JXG.extend(
 
             this.isNumericMatrix = true;
             for (i = 0; i < params.length; i++) {
-                if (typeof params[i] !== "number") {
+                if (typeof params[i] !== 'number') {
                     this.isNumericMatrix = false;
                     break;
                 }
             }
 
-            if (type === "translate") {
+            if (type === 'translate') {
                 if (params.length !== 2) {
                     throw new Error("JSXGraph: translate transformation needs 2 parameters.");
                 }
@@ -234,7 +234,7 @@ JXG.extend(
                     this.matrix[1][0] = this.evalParam(0);
                     this.matrix[2][0] = this.evalParam(1);
                 };
-            } else if (type === "scale") {
+            } else if (type === 'scale') {
                 if (params.length !== 2) {
                     throw new Error("JSXGraph: scale transformation needs 2 parameters.");
                 }
@@ -244,7 +244,7 @@ JXG.extend(
                     this.matrix[2][2] = this.evalParam(1); // y
                 };
                 // Input: line or two points
-            } else if (type === "reflect") {
+            } else if (type === 'reflect') {
                 // line or two points
                 if (params.length < 4) {
                     params[0] = board.select(params[0]);
@@ -304,7 +304,7 @@ JXG.extend(
                     this.matrix[2][0] =
                         yoff * (1 - this.matrix[2][2]) - xoff * this.matrix[2][1];
                 };
-            } else if (type === "rotate") {
+            } else if (type === 'rotate') {
                 if (params.length === 3) {
                     // angle, x, y
                     this.evalParam = Type.createEvalFunction(board, params, 3);
@@ -347,7 +347,7 @@ JXG.extend(
                         this.matrix[2][0] = y * (1 - co) - x * si;
                     }
                 };
-            } else if (type === "shear") {
+            } else if (type === 'shear') {
                 if (params.length !== 2) {
                     throw new Error("JSXGraph: shear transformation needs 2 parameters.");
                 }
@@ -357,7 +357,7 @@ JXG.extend(
                     this.matrix[1][2] = this.evalParam(0);
                     this.matrix[2][1] = this.evalParam(1);
                 };
-            } else if (type === "generic") {
+            } else if (type === 'generic') {
                 if (params.length !== 9) {
                     throw new Error("JSXGraph: generic transformation needs 9 parameters.");
                 }
@@ -375,7 +375,7 @@ JXG.extend(
                     this.matrix[2][1] = this.evalParam(7);
                     this.matrix[2][2] = this.evalParam(8);
                 };
-            } else if (type === "matrix") {
+            } else if (type === 'matrix') {
                 if (params.length !== 1) {
                     throw new Error("JSXGraph: transformation of type 'matrix' needs 1 parameter.");
                 }
@@ -476,13 +476,13 @@ JXG.extend(
 
             this.isNumericMatrix = true;
             for (i = 0; i < params.length; i++) {
-                if (typeof params[i] !== "number") {
+                if (typeof params[i] !== 'number') {
                     this.isNumericMatrix = false;
                     break;
                 }
             }
 
-            if (type === "translate") {
+            if (type === 'translate') {
                 if (params.length !== 3) {
                     throw new Error("JSXGraph: 3D translate transformation needs 3 parameters.");
                 }

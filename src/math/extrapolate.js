@@ -332,7 +332,7 @@ Mat.Extrapolate = {
             } else {
                 transform = "t";
             }
-            if (transform === "u") {
+            if (transform === 'u') {
                 omega = (beta + n) * delta; // u transformation
             } else {
                 omega = delta; // t transformation

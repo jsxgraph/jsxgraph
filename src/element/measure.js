@@ -81,18 +81,18 @@ JXG.createTapemeasure = function (board, parents, attributes) {
     pos1 = parents[1];
 
     // start point
-    attr = Type.copyAttributes(attributes, board.options, "tapemeasure", "point1");
+    attr = Type.copyAttributes(attributes, board.options, "tapemeasure", 'point1');
     p1 = board.create("point", pos0, attr);
 
     // end point
-    attr = Type.copyAttributes(attributes, board.options, "tapemeasure", "point2");
+    attr = Type.copyAttributes(attributes, board.options, "tapemeasure", 'point2');
     p2 = board.create("point", pos1, attr);
 
     p1.setAttribute({ignoredSnapToPoints: [p2.id]});
     p2.setAttribute({ignoredSnapToPoints: [p1.id]});
 
     // tape measure line
-    attr = Type.copyAttributes(attributes, board.options, "tapemeasure");
+    attr = Type.copyAttributes(attributes, board.options, 'tapemeasure');
     withTicks = attr.withticks;
     withText = attr.withlabel;
     digits = attr.digits;
@@ -126,7 +126,7 @@ JXG.createTapemeasure = function (board, parents, attributes) {
     }
 
     if (withTicks) {
-        attr = Type.copyAttributes(attributes, board.options, "tapemeasure", "ticks");
+        attr = Type.copyAttributes(attributes, board.options, "tapemeasure", 'ticks');
         //ticks  = 2;
         ti = board.create("ticks", [li, 0.1], attr);
         li.inherits.push(ti);
@@ -323,7 +323,7 @@ JXG.createMeasurement = function (board, parents, attributes) {
         x, y, term,
         i;
 
-    attr = Type.copyAttributes(attributes, board.options, "measurement");
+    attr = Type.copyAttributes(attributes, board.options, 'measurement');
 
     x = parents[0];
     y = parents[1];
@@ -387,7 +387,7 @@ JXG.createMeasurement = function (board, parents, attributes) {
 
     el.getMethod = function () {
         var method = term[0];
-        if (method === "V") {
+        if (method === 'V') {
             method = "Value";
         }
         return method;

@@ -69,7 +69,7 @@ JXG.Point = function (board, coordinates, attributes) {
     this.elType = "point";
 
     /* Register point at board. */
-    this.id = this.board.setId(this, "P");
+    this.id = this.board.setId(this, 'P');
     this.board.renderer.drawPoint(this);
     this.board.finalizeAdding(this);
 
@@ -81,7 +81,7 @@ JXG.Point = function (board, coordinates, attributes) {
  * Inherits here from {@link JXG.GeometryElement}.
  */
 JXG.Point.prototype = new GeometryElement();
-Type.copyPrototypeMethods(JXG.Point, CoordsElement, "coordsConstructor");
+Type.copyPrototypeMethods(JXG.Point, CoordsElement, 'coordsConstructor');
 
 JXG.extend(
     JXG.Point.prototype,
@@ -108,7 +108,7 @@ JXG.extend(
                 prec = this.board.options.precision.hasPoint;
             }
             r = parseFloat(this.evalVisProp('size'));
-            if (unit === "user") {
+            if (unit === 'user') {
                 r *= Math.sqrt(Math.abs(this.board.unitX * this.board.unitY));
             }
 
@@ -155,7 +155,7 @@ JXG.extend(
             this.transformations[0].update();
             if (this === this.baseElement) {
                 // Case of bindTo
-                c = this.transformations[0].apply(this, "self");
+                c = this.transformations[0].apply(this, 'self');
             } else {
                 c = this.transformations[0].apply(this.baseElement);
             }
@@ -490,7 +490,7 @@ JXG.extend(
 JXG.createPoint = function (board, parents, attributes) {
     var el, attr;
 
-    attr = Type.copyAttributes(attributes, board.options, "point");
+    attr = Type.copyAttributes(attributes, board.options, 'point');
     el = CoordsElement.create(JXG.Point, board, parents, attr);
     if (!el) {
         throw new Error(
@@ -563,7 +563,7 @@ JXG.createPoint = function (board, parents, attributes) {
 JXG.createGlider = function (board, parents, attributes) {
     var el,
         coords,
-        attr = Type.copyAttributes(attributes, board.options, "glider");
+        attr = Type.copyAttributes(attributes, board.options, 'glider');
 
     if (parents.length === 1) {
         coords = [0, 0];
@@ -618,7 +618,7 @@ JXG.createGlider = function (board, parents, attributes) {
 JXG.createIntersectionPoint = function (board, parents, attributes) {
     var el, el1, el2, func,
         i, j,
-        attr = Type.copyAttributes(attributes, board.options, "intersection");
+        attr = Type.copyAttributes(attributes, board.options, 'intersection');
 
     // make sure we definitely have the indices
     parents.push(0, 0);

@@ -7012,7 +7012,7 @@ JXG.Options = {
         baseUnit: '',
 
         /**
-         * This attribute expects an object that has the dimension numbers as keys (as integer or in the form of "dimxx")
+         * This attribute expects an object that has the dimension numbers as keys (as integer or in the form of 'dimxx')
          * and assigns a string to each dimension.
          * If a dimension has no specification, {@link Measurement#baseUnit} is used.
          *

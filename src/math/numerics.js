@@ -2406,7 +2406,7 @@ Mat.Numerics = {
                     coeffs[which] = [];
 
                     for (s = 0; s < len - 3; s++) {
-                        if (type === "centripetal") {
+                        if (type === 'centripetal') {
                             // The order is important, since p[0].coords === undefined
                             dt0 = p[s].Dist(p[s + 1]);
                             dt1 = p[s + 2].Dist(p[s + 1]);
@@ -2899,26 +2899,26 @@ Mat.Numerics = {
 
         if (delta < 0) {
             // delta is negative if the lower function term is evaluated
-            if (type !== "trapezoidal") {
+            if (type !== 'trapezoidal') {
                 x = x + delta;
             }
             delta *= -1;
-            if (type === "lower") {
+            if (type === 'lower') {
                 type = "upper";
-            } else if (type === "upper") {
+            } else if (type === 'upper') {
                 type = "lower";
             }
         }
 
         delta1 = delta * 0.01; // for 'lower' and 'upper'
 
-        if (type === "right") {
+        if (type === 'right') {
             y = f(x + delta);
-        } else if (type === "middle") {
+        } else if (type === 'middle') {
             y = f(x + delta * 0.5);
-        } else if (type === "left" || type === "trapezoidal") {
+        } else if (type === "left" || type === 'trapezoidal') {
             y = f(x);
-        } else if (type === "lower") {
+        } else if (type === 'lower') {
             y = f(x);
 
             for (x1 = x + delta1; x1 <= x + delta; x1 += delta1) {
@@ -2933,7 +2933,7 @@ Mat.Numerics = {
             if (y1 < y) {
                 y = y1;
             }
-        } else if (type === "upper") {
+        } else if (type === 'upper') {
             y = f(x);
 
             for (x1 = x + delta1; x1 <= x + delta; x1 += delta1) {
@@ -2947,9 +2947,9 @@ Mat.Numerics = {
             if (y1 > y) {
                 y = y1;
             }
-        } else if (type === "random") {
+        } else if (type === 'random') {
             y = f(x + delta * Math.random());
-        } else if (type === "simpson") {
+        } else if (type === 'simpson') {
             y = (f(x) + 4 * f(x + delta * 0.5) + f(x + delta)) / 6.0;
         } else {
             y = f(x); // default is lower
@@ -3007,7 +3007,7 @@ Mat.Numerics = {
 
         // "Upper" horizontal line defined by function
         for (i = 0; i < n; i++) {
-            if (type === "simpson") {
+            if (type === 'simpson') {
                 sum += this._riemannValue(x, f, type, delta) * delta;
 
                 h = delta * 0.5;
@@ -3031,7 +3031,7 @@ Mat.Numerics = {
                 yarr.push(y);
 
                 x += delta;
-                if (type === "trapezoidal") {
+                if (type === 'trapezoidal') {
                     f2 = f(x);
                     sum += (y + f2) * 0.5 * delta;
                     y = f2;
@@ -3078,7 +3078,7 @@ Mat.Numerics = {
 
                 x -= delta;
                 if (g) {
-                    if (type === "trapezoidal") {
+                    if (type === 'trapezoidal') {
                         f2 = g(x);
                         sum -= (y + f2) * 0.5 * delta;
                         y = f2;

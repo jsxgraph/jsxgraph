@@ -171,7 +171,7 @@ var priv = {
 JXG.createCheckbox = function (board, parents, attributes) {
     var t,
         par,
-        attr = Type.copyAttributes(attributes, board.options, "checkbox");
+        attr = Type.copyAttributes(attributes, board.options, 'checkbox');
 
     //if (parents.length !== 3) {
     //throw new Error("JSXGraph: Can't create checkbox with parent types '" +

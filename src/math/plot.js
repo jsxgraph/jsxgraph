@@ -666,7 +666,7 @@ Mat.Plot = {
 
         curve.points = [];
 
-        if (this.xterm === "x") {
+        if (this.xterm === 'x') {
             // For function graphs we can restrict the plot interval
             // to the visible area + plus margin
             bbox = curve.board.getBoundingBox();
@@ -1200,26 +1200,26 @@ Mat.Plot = {
         // From left
         res = Extrapolate.limit(t, -step, curve.X);
         x_l = res[0];
-        if (res[1] === "infinite") {
+        if (res[1] === 'infinite') {
             x_l = Math.sign(x_l) * Infinity;
         }
 
         res = Extrapolate.limit(t, -step, curve.Y);
         y_l = res[0];
-        if (res[1] === "infinite") {
+        if (res[1] === 'infinite') {
             y_l = Math.sign(y_l) * Infinity;
         }
 
         // From right
         res = Extrapolate.limit(t, step, curve.X);
         x_r = res[0];
-        if (res[1] === "infinite") {
+        if (res[1] === 'infinite') {
             x_r = Math.sign(x_r) * Infinity;
         }
 
         res = Extrapolate.limit(t, step, curve.Y);
         y_r = res[0];
-        if (res[1] === "infinite") {
+        if (res[1] === 'infinite') {
             y_r = Math.sign(y_r) * Infinity;
         }
 
@@ -1247,11 +1247,11 @@ Mat.Plot = {
     _getLimes: function (curve, ta, a, tc, c, tb, b, may_be_special, depth) {
         var t;
 
-        if (may_be_special === "border") {
+        if (may_be_special === 'border') {
             t = this._getBorderPos(curve, ta, a, tc, c, tb, b);
-        } else if (may_be_special === "cusp") {
+        } else if (may_be_special === 'cusp') {
             t = this._getCuspPos(curve, ta, tb);
-        } else if (may_be_special === "jump") {
+        } else if (may_be_special === 'jump') {
             t = this._getJumpPos(curve, ta, tb);
         }
         return this._getLimits(curve, t);
@@ -1416,7 +1416,7 @@ Mat.Plot = {
 
         curve.points = [];
 
-        if (curve.xterm === "x") {
+        if (curve.xterm === 'x') {
             // For function graphs we can restrict the plot interval
             // to the visible area +plus margin
             bbox = curve.board.getBoundingBox();
@@ -1982,7 +1982,7 @@ Mat.Plot = {
         // console.log("Last diffs", y_table[Math.min(level + 1, up)], "level", level + 1);
         // Analyze the groups which have been found.
         for (i = 0; i < groups.length; i++) {
-            if (types[i] === "interval") {
+            if (types[i] === 'interval') {
                 continue;
             }
             // console.log("Group", i, groups[i], types[i], level + 1)
@@ -2086,11 +2086,11 @@ Mat.Plot = {
         // console.log("Group:", group);
 
         h = comp.t_values[1] - comp.t_values[0];
-        if (group.type === "borderleft") {
+        if (group.type === 'borderleft') {
             t = comp.left_isNaN ? comp.left_t : group.t - h;
             t1 = t;
             t2 = t1 + h;
-        } else if (group.type === "borderright") {
+        } else if (group.type === 'borderright') {
             t = comp.right_isNaN ? comp.right_t : group.t + h;
             t2 = t;
             t1 = t2 - h;
@@ -2102,7 +2102,7 @@ Mat.Plot = {
         if (components2.length === 0) {
             return;
         }
-        if (group.type === "borderleft") {
+        if (group.type === 'borderleft') {
             t1 = components2[0].left_t;
             t2 = components2[0].t_values[0];
             h = components2[0].t_values[1] - components2[0].t_values[0];
@@ -2127,7 +2127,7 @@ Mat.Plot = {
             this._insertPoint_v4(curve, [1, x, y], t);
         }
 
-        if (group.type === "borderright") {
+        if (group.type === 'borderright') {
             t1 = components2[0].t_values[le - 1];
             t2 = components2[0].right_t;
             h = components2[0].t_values[1] - components2[0].t_values[0];
@@ -2418,7 +2418,7 @@ Mat.Plot = {
             // if (degree_y >= 0) {
             //     console.log("y polynomial of degree", degree_y);
             // }
-            if (groups.length === 0 || groups[0].type !== "borderleft") {
+            if (groups.length === 0 || groups[0].type !== 'borderleft') {
                 groups.unshift({
                     idx: 0,
                     t: comp.t_values[0],
@@ -2427,7 +2427,7 @@ Mat.Plot = {
                     type: "borderleft"
                 });
             }
-            if (groups[groups.length - 1].type !== "borderright") {
+            if (groups[groups.length - 1].type !== 'borderright') {
                 le = comp.t_values.length;
                 groups.push({
                     idx: le - 1,
@@ -2516,7 +2516,7 @@ Mat.Plot = {
                     //console.log("critical point / interval", groups[g]);
 
                     i = groups[g].idx;
-                    if (groups[g].type === "borderleft" || groups[g].type === "borderright") {
+                    if (groups[g].type === "borderleft" || groups[g].type === 'borderright') {
                         this.handleBorder(curve, comp, groups[g], x_table, y_table);
                     } else {
                         this._seconditeration_v4(curve, comp, groups[g], x_table, y_table);
@@ -2543,7 +2543,7 @@ Mat.Plot = {
     updateParametricCurve_v4: function (curve, mi, ma) {
         var ta, tb, w2, bbox;
 
-        if (curve.xterm === "x") {
+        if (curve.xterm === 'x') {
             // For function graphs we can restrict the plot interval
             // to the visible area +plus margin
             bbox = curve.board.getBoundingBox();

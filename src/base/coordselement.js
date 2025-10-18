@@ -1040,7 +1040,7 @@ JXG.extend(
 
                     if (Type.isPoint(pEl) && pEl !== this && pEl.visPropCalc.visible) {
                         pCoords = Geometry.projectPointToPoint(this, pEl, this.board);
-                        if (ev_au === "screen") {
+                        if (ev_au === 'screen') {
                             d = pCoords.distance(Const.COORDS_BY_SCREEN, this.coords);
                         } else {
                             d = pCoords.distance(Const.COORDS_BY_USER, this.coords);
@@ -1137,7 +1137,7 @@ JXG.extend(
                         );
                     }
 
-                    if (ev_au === "screen") {
+                    if (ev_au === 'screen') {
                         d = projCoords.distance(Const.COORDS_BY_SCREEN, this.coords);
                     } else {
                         d = projCoords.distance(Const.COORDS_BY_USER, this.coords);
@@ -1704,7 +1704,7 @@ JXG.extend(
             this.transformations[0].update();
             if (this === this.baseElement) {
                 // Case of bindTo
-                c = this.transformations[0].apply(this, "self");
+                c = this.transformations[0].apply(this, 'self');
             } else {
                 c = this.transformations[0].apply(this.baseElement);
             }

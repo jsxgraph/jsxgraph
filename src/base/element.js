@@ -215,7 +215,7 @@ JXG.GeometryElement = function (board, attributes, type, oclass) {
 
     /**
      * Inherits contains the subelements, which may have an attribute
-     * (in particular the attribute "visible") having value 'inherit'.
+     * (in particular the attribute 'visible') having value 'inherit'.
      * @type Object
      */
     this.inherits = [];
@@ -950,7 +950,7 @@ JXG.extend(
 
             // Set the visibility of the label if it inherits the attribute 'visible'
             if (this.hasLabel && Type.exists(this.label) && Type.exists(this.label.rendNode)) {
-                if (this.label.evalVisProp('visible') === "inherit") {
+                if (this.label.evalVisProp('visible') === 'inherit') {
                     this.label.setDisplayRendNode(val);
                 }
             }
@@ -1040,7 +1040,7 @@ JXG.extend(
                         if (Type.exists(this.hiddenByParent) && this.hiddenByParent) {
                             val = false;
                         }
-                        if (val !== "inherit") {
+                        if (val !== 'inherit') {
                             this.visPropCalc.visible = val;
                         }
                     }
@@ -1110,7 +1110,7 @@ JXG.extend(
                 value = Color.rgba2rgbo(value);
                 this.visProp[key] = value[0];
                 // Previously: *=. But then, we can only decrease opacity.
-                this.visProp[key.replace("color", "opacity")] = value[1];
+                this.visProp[key.replace("color", 'opacity')] = value[1];
             } else {
                 if (
                     value !== null &&
@@ -1193,7 +1193,7 @@ JXG.extend(
          */
         setName: function (str) {
             str = str.replace(/</g, "&lt;").replace(/>/g, "&gt;");
-            if (this.elType !== "slider") {
+            if (this.elType !== 'slider') {
                 this.setLabelText(str);
             }
             this.setAttribute({ name: str });
@@ -1416,7 +1416,7 @@ JXG.extend(
                         case "rotate":
                             if (
                                 (this.elementClass === Const.OBJECT_CLASS_TEXT &&
-                                    this.evalVisProp('display') === "internal") ||
+                                    this.evalVisProp('display') === 'internal') ||
                                 this.type === Const.OBJECT_TYPE_IMAGE
                             ) {
                                 this.addRotation(value);
@@ -1437,16 +1437,16 @@ JXG.extend(
                             if (value === "false" || value === false) {
                                 this.clearTrace();
                                 this.visProp.trace = false;
-                            } else if (value === "pause") {
+                            } else if (value === 'pause') {
                                 this.visProp.trace = false;
                             } else {
                                 this.visProp.trace = true;
                             }
                             break;
                         case "visible":
-                            if (value === "false") {
+                            if (value === 'false') {
                                 this.visProp.visible = false;
-                            } else if (value === "true") {
+                            } else if (value === 'true') {
                                 this.visProp.visible = true;
                             } else {
                                 this.visProp.visible = value;
@@ -1496,13 +1496,13 @@ JXG.extend(
                                     )
                                 )
                             ) {
-                                value = (value.toLowerCase && value.toLowerCase() === "false")
+                                value = (value.toLowerCase && value.toLowerCase() === 'false')
                                             ? false
                                             : value;
                                 this._set(key, value);
                             } else {
                                 if (!(key in Options.shortcuts)) {
-                                    JXG.warn("attribute '" + key + "' does not accept type '" + (typeof value) + "' of value " + value + ".");
+                                    JXG.warn("attribute '" + key + "' does not accept type '" + (typeof value) + "' of value " + value + '.');
                                 }
                             }
                             break;
@@ -1732,7 +1732,7 @@ JXG.extend(
          */
         createGradient: function () {
             var ev_g = this.evalVisProp('gradient');
-            if (ev_g === "linear" || ev_g === "radial") {
+            if (ev_g === "linear" || ev_g === 'radial') {
                 this.board.renderer.setGradient(this);
             }
         },

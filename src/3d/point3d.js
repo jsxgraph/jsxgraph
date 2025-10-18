@@ -49,7 +49,7 @@ import Geometry from "../math/geometry.js";
  */
 JXG.Point3D = function (view, F, slide, attributes) {
     this.constructor(view.board, attributes, Const.OBJECT_TYPE_POINT3D, Const.OBJECT_CLASS_3D);
-    this.constructor3D(view, "point3d");
+    this.constructor3D(view, 'point3d');
 
     this.board.finalizeAdding(this);
 
@@ -127,7 +127,7 @@ JXG.Point3D = function (view, F, slide, attributes) {
 };
 
 JXG.Point3D.prototype = new JXG.GeometryElement();
-Type.copyPrototypeMethods(JXG.Point3D, JXG.GeometryElement3D, "constructor3D");
+Type.copyPrototypeMethods(JXG.Point3D, JXG.GeometryElement3D, 'constructor3D');
 
 JXG.extend(
     JXG.Point3D.prototype,

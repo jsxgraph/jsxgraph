@@ -388,7 +388,7 @@ JXG.extend(
                 all,
                 v = 3;
 
-            if (typeof document !== "object") {
+            if (typeof document !== 'object') {
                 return 0;
             }
 
@@ -539,7 +539,7 @@ JXG.extend(
                 return;
             }
 
-            i = Type.indexOf(owner["x_internal" + type], fn, "origin");
+            i = Type.indexOf(owner["x_internal" + type], fn, 'origin');
 
             if (i === -1) {
                 JXG.debug("removeEvent: no such event function in internal list: " + fn);

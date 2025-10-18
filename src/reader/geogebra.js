@@ -364,7 +364,7 @@
                         v2 = v1.split("[");
                         s1 = v2[0];
                         s2 = v2[1].split("]")[0];
-                        if (s1.toLowerCase() === "name") {
+                        if (s1.toLowerCase() === 'name') {
                             return (
                                 "JXG.boards['" +
                                 this.board.id +
@@ -403,7 +403,7 @@
                                     return v1.toLowerCase() + "*(" + v2 + ")";
                             }
                         } else {
-                            if (v1 === "PI") {
+                            if (v1 === 'PI') {
                                 return "Math.PI";
                             }
 
@@ -2277,15 +2277,15 @@
                     attr.highlightStrokeWidth = attr.strokeWidth + 1;
                 }
 
-                if (attr.dashGGB === "0") {
+                if (attr.dashGGB === '0') {
                     attr.dash = 0;
-                } else if (attr.dashGGB === "10") {
+                } else if (attr.dashGGB === '10') {
                     attr.dash = 2;
-                } else if (attr.dashGGB === "15") {
+                } else if (attr.dashGGB === '15') {
                     attr.dash = 3;
-                } else if (attr.dashGGB === "20") {
+                } else if (attr.dashGGB === '20') {
                     attr.dash = 1;
-                } else if (attr.dashGGB === "30") {
+                } else if (attr.dashGGB === '30') {
                     attr.dash = 6;
                 }
 
@@ -2452,19 +2452,19 @@
 
                             // separate and replace function parameters
                             for (i = 0; i < vars.length; i++) {
-                                if (vars[i] === "x") {
+                                if (vars[i] === 'x') {
                                     expr = expr.replace(
                                         /(?![e])x(?!\()(?![p])/g,
                                         "__" + vars[i]
                                     );
-                                } else if (vars[i] === "y") {
+                                } else if (vars[i] === 'y') {
                                     expr = expr.replace(
                                         /(?![e])y(?!\()(?![p])/g,
                                         "__" + vars[i]
                                     );
                                 } else {
                                     expr = expr.replace(
-                                        new RegExp(vars[i], "g"),
+                                        new RegExp(vars[i], 'g'),
                                         "__" + vars[i]
                                     );
                                 }
@@ -2577,7 +2577,7 @@
                 this.board.renderer.enhancedRendering = true;
 
                 // snap to point; value is never used?
-                //snapToPoint = (evSettings.getAttribute('pointCapturing') === "true");
+                //snapToPoint = (evSettings.getAttribute('pointCapturing') === 'true');
 
                 grid =
                     evSettings.getAttribute('grid') === "true"
@@ -2585,7 +2585,7 @@
                         : null;
 
                 if (evSettings.getAttribute('axes')) {
-                    if (evSettings.getAttribute('axes') === "true") {
+                    if (evSettings.getAttribute('axes') === 'true') {
                         this.ggbElements.xAxis = this.board.create(
                             "axis",
                             [
@@ -2805,7 +2805,7 @@
                         gxtEl = this.coordinates(gxtEl, element);
                         attr = this.visualProperties(element, attr);
 
-                        if (typeof input === "undefined") {
+                        if (typeof input === 'undefined') {
                             input = [
                                 parseFloat(
                                     element.getElementsByTagName('coords')[0].getAttribute('z')
@@ -2950,7 +2950,7 @@
                             attr.borders = borders;
 
                             points = [];
-                            if (type === "regular") {
+                            if (type === 'regular') {
                                 points.push(input[0]);
                                 points.push(input[1]);
 
@@ -2965,13 +2965,13 @@
                                 }
                             } else {
                                 for (i = 0; i < input.length; i++) {
-                                    if (typeof input[i] === "object") {
+                                    if (typeof input[i] === 'object') {
                                         points.push(input[i]);
                                     }
                                 }
                             }
 
-                            if (type === "regular") {
+                            if (type === 'regular') {
                                 p = this.board.create("regularpolygon", points, attr);
                             } else {
                                 p = this.board.create("polygon", points, attr);
@@ -4092,7 +4092,7 @@
                                 rx = t.match(/(.*?)" \+ (.+) \+ "(.*)/);
                                 while (rx) {
                                     re2 = this.ggbParse(RegExp.$2);
-                                    if (typeof re2 === "string") {
+                                    if (typeof re2 === 'string') {
                                         res = res + RegExp.$1 + re2;
                                     } else {
                                         res =
@@ -4312,7 +4312,7 @@
                                 el === parseFloat(el)
                             ) {
                                 input[i] = el;
-                            } else if (el === "xAxis" || el === "yAxis") {
+                            } else if (el === "xAxis" || el === 'yAxis') {
                                 input[i] = this.ggbElements[el];
                             } else {
                                 input[i] = this.checkElement(el);
@@ -4391,7 +4391,7 @@
              */
             utf8replace: function (exp) {
                 exp = exp
-                    .replace(/\u03C0/g, "PI")
+                    .replace(/\u03C0/g, 'PI')
                     .replace(/\u00B2/g, "^2")
                     .replace(/\u00B3/g, "^3")
                     .replace(/\u225F/g, "==")
@@ -4425,7 +4425,7 @@
                     // first try to decode assuming we got a base64 encoded ggb file
                     fstr = JXG.Util.Base64.decode(fileStr);
 
-                    if (fstr.slice(0, 2) !== "PK") {
+                    if (fstr.slice(0, 2) !== 'PK') {
                         // ooops, that was no ggb file. try again with utf8 parameter set.
                         fstr = JXG.Util.Base64.decode(fileStr, true);
                     }

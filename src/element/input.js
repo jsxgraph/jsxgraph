@@ -259,7 +259,7 @@ var priv = {
 JXG.createInput = function (board, parents, attributes) {
     var t,
         par,
-        attr = Type.copyAttributes(attributes, board.options, "input");
+        attr = Type.copyAttributes(attributes, board.options, 'input');
 
     par = [
         parents[0],

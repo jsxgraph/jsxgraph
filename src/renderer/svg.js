@@ -95,7 +95,7 @@ JXG.SVGRenderer = function (container, dim) {
         this.container.style.position = "relative";
     }
 
-    this.svgRoot = this.container.ownerDocument.createElementNS(this.svgNamespace, "svg");
+    this.svgRoot = this.container.ownerDocument.createElementNS(this.svgNamespace, 'svg');
     this.svgRoot.style.overflow = "hidden";
     this.svgRoot.style.display = "block";
     this.resize(dim.width, dim.height);
@@ -109,7 +109,7 @@ JXG.SVGRenderer = function (container, dim) {
      * @type Node
      * @see https://www.w3.org/TR/SVG2/struct.html#DefsElement
      */
-    this.defs = this.container.ownerDocument.createElementNS(this.svgNamespace, "defs");
+    this.defs = this.container.ownerDocument.createElementNS(this.svgNamespace, 'defs');
     this.svgRoot.appendChild(this.defs);
 
     /**
@@ -264,7 +264,7 @@ JXG.SVGRenderer = function (container, dim) {
             this.svgNamespace,
             "foreignObject"
         );
-        this.foreignObjLayer.setAttribute("display", "none");
+        this.foreignObjLayer.setAttribute("display", 'none');
         this.foreignObjLayer.setAttribute("x", 0);
         this.foreignObjLayer.setAttribute("y", 0);
         this.foreignObjLayer.setAttribute("width", "100%");
@@ -351,7 +351,7 @@ JXG.extend(
             */
             node3 = this.container.ownerDocument.createElementNS(this.svgNamespace, 'path');
             h = 5;
-            if (idAppendix === "Start") {
+            if (idAppendix === 'Start') {
                 // First arrow
                 v = 0;
                 if (type === 2) {
@@ -529,7 +529,7 @@ JXG.extend(
                 node.setAttributeNS(null, "viewBox", 0 + " " + 0 + " " + s * 10 + " " + s * 10);
                 node.setAttributeNS(null, "markerHeight", d);
                 node.setAttributeNS(null, "markerWidth", d);
-                node.setAttributeNS(null, "display", "inherit");
+                node.setAttributeNS(null, "display", 'inherit');
                 // }
 
                 // if (this.isIE) {
@@ -586,7 +586,7 @@ JXG.extend(
             }
 
             node.setAttributeNS(null, "stroke", ticks.evalVisProp('strokecolor'));
-            node.setAttributeNS(null, "fill", "none");
+            node.setAttributeNS(null, "fill", 'none');
             // node.setAttributeNS(null, 'fill', ticks.evalVisProp('fillcolor'));
             // node.setAttributeNS(null, 'fill-opacity', ticks.evalVisProp('fillopacity'));
             node.setAttributeNS(
@@ -631,7 +631,7 @@ JXG.extend(
             node.setAttributeNS(null, 'y', '5px');
             node.setAttributeNS(null, 'width', s + 'px');
             node.setAttributeNS(null, 'height', s + 'px');
-            node.setAttributeNS(null, "preserveAspectRatio", "none");
+            node.setAttributeNS(null, "preserveAspectRatio", 'none');
             node.setAttributeNS(null, 'style', 'opacity:' + alpha + ';');
             node.setAttributeNS(null, 'aria-hidden', 'true');
 
@@ -645,7 +645,7 @@ JXG.extend(
 
             //node.setAttributeNS(null, "style", "alignment-baseline:middle"); // Not yet supported by Firefox
             // Preserve spaces
-            //node.setAttributeNS("http://www.w3.org/XML/1998/namespace", "space", "preserve");
+            //node.setAttributeNS("http://www.w3.org/XML/1998/namespace", "space", 'preserve');
             node.style.whiteSpace = "nowrap";
 
             el.rendNodeText = this.container.ownerDocument.createTextNode("");
@@ -663,7 +663,7 @@ JXG.extend(
                 ev_ay = el.getAnchorY();
 
             css = el.evalVisProp('cssclass');
-            if (el.rendNode.getAttributeNS(null, "class") !== css) {
+            if (el.rendNode.getAttributeNS(null, 'class') !== css) {
                 el.rendNode.setAttributeNS(null, "class", css);
                 el.needsSizeUpdate = true;
             }
@@ -672,14 +672,14 @@ JXG.extend(
                 // Horizontal
                 v = el.coords.scrCoords[1];
                 if (el.visPropOld.left !== ev_ax + v) {
-                    el.rendNode.setAttributeNS(null, "x", v + "px");
+                    el.rendNode.setAttributeNS(null, "x", v + 'px');
 
-                    if (ev_ax === "left") {
-                        el.rendNode.setAttributeNS(null, "text-anchor", "start");
-                    } else if (ev_ax === "right") {
-                        el.rendNode.setAttributeNS(null, "text-anchor", "end");
-                    } else if (ev_ax === "middle") {
-                        el.rendNode.setAttributeNS(null, "text-anchor", "middle");
+                    if (ev_ax === 'left') {
+                        el.rendNode.setAttributeNS(null, "text-anchor", 'start');
+                    } else if (ev_ax === 'right') {
+                        el.rendNode.setAttributeNS(null, "text-anchor", 'end');
+                    } else if (ev_ax === 'middle') {
+                        el.rendNode.setAttributeNS(null, "text-anchor", 'middle');
                     }
                     el.visPropOld.left = ev_ax + v;
                 }
@@ -687,26 +687,26 @@ JXG.extend(
                 // Vertical
                 v = el.coords.scrCoords[2];
                 if (el.visPropOld.top !== ev_ay + v) {
-                    el.rendNode.setAttributeNS(null, "y", v + this.vOffsetText * 0.5 + "px");
+                    el.rendNode.setAttributeNS(null, "y", v + this.vOffsetText * 0.5 + 'px');
 
                     // Not supported by IE, edge
-                    // el.rendNode.setAttributeNS(null, "dy", "0");
-                    // if (ev_ay === "bottom") {
+                    // el.rendNode.setAttributeNS(null, "dy", '0');
+                    // if (ev_ay === 'bottom') {
                     //     el.rendNode.setAttributeNS(null, 'dominant-baseline', 'text-after-edge');
-                    // } else if (ev_ay === "top") {
+                    // } else if (ev_ay === 'top') {
                     //     el.rendNode.setAttributeNS(null, 'dominant-baseline', 'text-before-edge');
-                    // } else if (ev_ay === "middle") {
+                    // } else if (ev_ay === 'middle') {
                     //     el.rendNode.setAttributeNS(null, 'dominant-baseline', 'middle');
                     // }
 
-                    if (ev_ay === "bottom") {
-                        el.rendNode.setAttributeNS(null, "dy", "0");
+                    if (ev_ay === 'bottom') {
+                        el.rendNode.setAttributeNS(null, "dy", '0');
                         el.rendNode.setAttributeNS(null, 'dominant-baseline', 'auto');
-                    } else if (ev_ay === "top") {
-                        el.rendNode.setAttributeNS(null, "dy", "1.6ex");
+                    } else if (ev_ay === 'top') {
+                        el.rendNode.setAttributeNS(null, "dy", '1.6ex');
                         el.rendNode.setAttributeNS(null, 'dominant-baseline', 'auto');
-                    } else if (ev_ay === "middle") {
-                        el.rendNode.setAttributeNS(null, "dy", "0.6ex");
+                    } else if (ev_ay === 'middle') {
+                        el.rendNode.setAttributeNS(null, "dy", '0.6ex');
                         el.rendNode.setAttributeNS(null, 'dominant-baseline', 'auto');
                     }
                     el.visPropOld.top = ev_ay + v;
@@ -735,7 +735,7 @@ JXG.extend(
         drawImage: function (el) {
             var node = this.createPrim("image", el.id);
 
-            node.setAttributeNS(null, "preserveAspectRatio", "none");
+            node.setAttributeNS(null, "preserveAspectRatio", 'none');
             this.appendChildPrim(node, el.evalVisProp('layer'));
             el.rendNode = node;
 
@@ -807,7 +807,7 @@ JXG.extend(
                 el.evalVisProp('layer')
             );
 
-            this.appendNodesToElement(el, "foreignObject");
+            this.appendNodesToElement(el, 'foreignObject');
             this.updateForeignObject(el);
         },
 
@@ -854,10 +854,10 @@ JXG.extend(
             var node = this.container.ownerDocument.createElementNS(this.svgNamespace, type);
             node.setAttributeNS(null, "id", this.uniqName(id));
             node.style.position = "absolute";
-            if (type === "path") {
-                node.setAttributeNS(null, "stroke-linecap", "round");
-                node.setAttributeNS(null, "stroke-linejoin", "round");
-                node.setAttributeNS(null, "fill-rule", "evenodd");
+            if (type === 'path') {
+                node.setAttributeNS(null, "stroke-linecap", 'round');
+                node.setAttributeNS(null, "stroke-linejoin", 'round');
+                node.setAttributeNS(null, "fill-rule", 'evenodd');
             }
 
             return node;
@@ -999,7 +999,7 @@ JXG.extend(
                 sqrt32 = size * Math.sqrt(3) * 0.5,
                 s05 = size * 0.5;
 
-            if (type === "x") {
+            if (type === 'x') {
                 s =
                     " M " +
                     (scr[1] - size) +
@@ -1092,7 +1092,7 @@ JXG.extend(
                     " " +
                     (scr[2] + s05) +
                     " Z "; // close path
-            } else if (type === "v") {
+            } else if (type === 'v') {
                 s =
                     " M " +
                     scr[1] +
@@ -1275,9 +1275,9 @@ JXG.extend(
                 scrCoords,
                 len = el.vertices.length;
 
-            node.setAttributeNS(null, "stroke", "none");
-            node.setAttributeNS(null, "fill-rule", "evenodd");
-            if (el.elType === "polygonalchain") {
+            node.setAttributeNS(null, "stroke", 'none');
+            node.setAttributeNS(null, "fill-rule", 'evenodd');
+            if (el.elType === 'polygonalchain') {
                 len++;
             }
 
@@ -1343,10 +1343,10 @@ JXG.extend(
                 el.visPropOld.visible = val;
                 node = el.rendNode;
                 if (val) {
-                    node.setAttributeNS(null, "display", "inline");
+                    node.setAttributeNS(null, "display", 'inline');
                     node.style.visibility = "inherit";
                 } else {
-                    node.setAttributeNS(null, "display", "none");
+                    node.setAttributeNS(null, "display", 'none');
                     node.style.visibility = "hidden";
                 }
             }
@@ -1417,7 +1417,7 @@ JXG.extend(
                 node, node2, node3,
                 ev_g = el.evalVisProp('gradient');
 
-            if (ev_g === "linear" || ev_g === "radial") {
+            if (ev_g === "linear" || ev_g === 'radial') {
                 node = this.createPrim(ev_g + "Gradient", el.id + "_gradient");
                 node2 = this.createPrim("stop", el.id + "_gradient1");
                 node3 = this.createPrim("stop", el.id + "_gradient2");
@@ -1434,7 +1434,7 @@ JXG.extend(
                 el.gradNode2 = node3;
                 el.gradNode = node;
             } else {
-                fillNode.removeAttributeNS(null, "style");
+                fillNode.removeAttributeNS(null, 'style');
             }
         },
 
@@ -1502,22 +1502,22 @@ JXG.extend(
                     }, el.visPropOld.fillopacity);
                     //node.style['opacity'] = oo;  // This would overwrite values set by CSS class.
                 } else {
-                    if (c === "none") {
+                    if (c === 'none') {
                         // This is done only for non-images
                         // because images have no fill color.
                         oo = 0;
                         // This is necessary if there is a foreignObject below.
-                        node.setAttributeNS(null, "pointer-events", "visibleStroke");
+                        node.setAttributeNS(null, "pointer-events", 'visibleStroke');
                     } else {
                         // This is the default
-                        node.setAttributeNS(null, "pointer-events", "visiblePainted");
+                        node.setAttributeNS(null, "pointer-events", 'visiblePainted');
                     }
                     this._setAttribute(function () {
                         node.setAttributeNS(null, "fill-opacity", oo);
                     }, el.visPropOld.fillopacity);
                 }
 
-                if (grad === "linear" || grad === "radial") {
+                if (grad === "linear" || grad === 'radial') {
                     this.updateGradient(el);
                 }
             }
@@ -1553,7 +1553,7 @@ JXG.extend(
                 node = el.rendNode;
 
                 if (el.elementClass === Const.OBJECT_CLASS_TEXT) {
-                    if (el.evalVisProp('display') === "html") {
+                    if (el.evalVisProp('display') === 'html') {
                         this._setAttribute(function () {
                             node.style.color = c;
                             node.style.opacity = oo;
@@ -1607,9 +1607,9 @@ JXG.extend(
             }
 
             node = el.rendNode;
-            this.setPropertyPrim(node, "stroked", "true");
+            this.setPropertyPrim(node, "stroked", 'true');
             if (Type.exists(w)) {
-                this.setPropertyPrim(node, "stroke-width", w + "px");
+                this.setPropertyPrim(node, "stroke-width", w + 'px');
 
                 // if (el.elementClass === Const.OBJECT_CLASS_CURVE ||
                 // el.elementClass === Const.OBJECT_CLASS_LINE) {
@@ -1758,7 +1758,7 @@ JXG.extend(
 
         // documented in JXG.AbstractRenderer
         setPropertyPrim: function (node, key, val) {
-            if (key === "stroked") {
+            if (key === 'stroked') {
                 return;
             }
             node.setAttributeNS(null, key, val);
@@ -1812,9 +1812,9 @@ JXG.extend(
                 "offset",
                 el.evalVisProp('gradientendoffset') * 100 + "%"
             );
-            if (ev_g === "linear") {
+            if (ev_g === 'linear') {
                 this.updateGradientAngle(el.gradNode, el.evalVisProp('gradientangle'));
-            } else if (ev_g === "radial") {
+            } else if (ev_g === 'radial') {
                 this.updateGradientCircle(
                     el.gradNode,
                     el.evalVisProp('gradientcx'),
@@ -1919,11 +1919,11 @@ JXG.extend(
                 node.setAttributeNS(null, "d", "M 0 0");
                 this.touchpoints.push(node);
 
-                this.setPropertyPrim(node, "stroked", "true");
-                this.setPropertyPrim(node, "stroke-width", "1px");
+                this.setPropertyPrim(node, "stroked", 'true');
+                this.setPropertyPrim(node, "stroke-width", '1px');
                 node.setAttributeNS(null, "stroke", "#000000");
                 node.setAttributeNS(null, "stroke-opacity", 1.0);
-                node.setAttributeNS(null, "display", "none");
+                node.setAttributeNS(null, "display", 'none');
 
                 na2 = "touchpoint2_" + i;
                 node = this.createPrim("ellipse", na2);
@@ -1931,30 +1931,30 @@ JXG.extend(
                 this.updateEllipsePrim(node, 0, 0, 0, 0);
                 this.touchpoints.push(node);
 
-                this.setPropertyPrim(node, "stroked", "true");
-                this.setPropertyPrim(node, "stroke-width", "1px");
+                this.setPropertyPrim(node, "stroked", 'true');
+                this.setPropertyPrim(node, "stroke-width", '1px');
                 node.setAttributeNS(null, "stroke", "#000000");
                 node.setAttributeNS(null, "stroke-opacity", 1.0);
                 node.setAttributeNS(null, "fill", "#ffffff");
                 node.setAttributeNS(null, "fill-opacity", 0.0);
 
-                node.setAttributeNS(null, "display", "none");
+                node.setAttributeNS(null, "display", 'none');
             }
         },
 
         // documented in JXG.AbstractRenderer
         showTouchpoint: function (i) {
             if (this.touchpoints && i >= 0 && 2 * i < this.touchpoints.length) {
-                this.touchpoints[2 * i].setAttributeNS(null, "display", "inline");
-                this.touchpoints[2 * i + 1].setAttributeNS(null, "display", "inline");
+                this.touchpoints[2 * i].setAttributeNS(null, "display", 'inline');
+                this.touchpoints[2 * i + 1].setAttributeNS(null, "display", 'inline');
             }
         },
 
         // documented in JXG.AbstractRenderer
         hideTouchpoint: function (i) {
             if (this.touchpoints && i >= 0 && 2 * i < this.touchpoints.length) {
-                this.touchpoints[2 * i].setAttributeNS(null, "display", "none");
-                this.touchpoints[2 * i + 1].setAttributeNS(null, "display", "none");
+                this.touchpoints[2 * i].setAttributeNS(null, "display", 'none');
+                this.touchpoints[2 * i + 1].setAttributeNS(null, "display", 'none');
             }
         },
 
@@ -2042,7 +2042,7 @@ JXG.extend(
                 canvas = document.createElement('canvas');
                 //img = new Image();
                 for (i = 0; i < len; i++) {
-                    images[i].setAttribute("crossorigin", "anonymous");
+                    images[i].setAttribute("crossorigin", 'anonymous');
                     //img.src = images[i].href;
                     //img.onload = function() {
                     // img.crossOrigin = "anonymous";
@@ -2122,7 +2122,7 @@ JXG.extend(
             // of an input element. Therefore, we do it "by hand".
             if (this.container.hasChildNodes() && Type.exists(this.foreignObjLayer)) {
                 if (!ignoreTexts) {
-                    this.foreignObjLayer.setAttribute("display", "inline");
+                    this.foreignObjLayer.setAttribute("display", 'inline');
                 }
                 while (svgRoot.nextSibling) {
                     // Copy all value attributes
@@ -2177,7 +2177,7 @@ JXG.extend(
                 while (this.foreignObjLayer.firstChild) {
                     this.container.appendChild(this.foreignObjLayer.firstChild);
                 }
-                this.foreignObjLayer.setAttribute("display", "none");
+                this.foreignObjLayer.setAttribute("display", 'none');
             }
 
             return "data:image/svg+xml;base64," + btoa(unescape(encodeURIComponent(svg)));
@@ -2313,7 +2313,7 @@ JXG.extend(
                 _copyCanvasToImg,
                 isDebug = false;
 
-            if (this.type === "no") {
+            if (this.type === 'no') {
                 return this;
             }
 

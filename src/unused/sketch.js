@@ -437,7 +437,7 @@
                     case JXG.GENTYPE_REFLECTION:
                     case JXG.GENTYPE_REFLECTION_ON_LINE:
                         // Polygon:
-                        if (step.args.type === "polygon") {
+                        if (step.args.type === 'polygon') {
                             set_str = "";
                             el = step.src_ids[step.src_ids.length - 1];
                             for (i = 1; i < step.src_ids.length - 1; i++) {
@@ -493,7 +493,7 @@
                             set_str += step.dest_id + ".hasInnerPoints = function() { " +
                                 "return !(" + step.dest_id + ".fillColor == 'transparent' || " + step.dest_id + ".fillColor == 'none' || " + step.dest_id + ".fillOpacity == 0); " +
                                 "}; "
-                        } else if (step.args.type === "line" || step.args.type === "vector") {
+                        } else if (step.args.type === "line" || step.args.type === 'vector') {
                             set_str = "";
                             el = step.src_ids[step.src_ids.length - 1];
                             // Create two end points.
@@ -520,7 +520,7 @@
                                     ">>;\n";
                             }
 
-                            if (step.args.type === "vector") {
+                            if (step.args.type === 'vector') {
                                 set_str +=
                                     assign +
                                     "arrow(" +
@@ -554,7 +554,7 @@
                                 set_str += ", withLabel: true";
                             }
                             set_str += ">>; ";
-                        } else if (step.args.type === "circle") {
+                        } else if (step.args.type === 'circle') {
                             set_str +=
                                 assign +
                                 "reflection(" +
@@ -633,7 +633,7 @@
 
                     case JXG.GENTYPE_MIRRORELEMENT:
                     case JXG.GENTYPE_REFLECTION_ON_POINT:
-                        if (step.args.type === "polygon") {
+                        if (step.args.type === 'polygon') {
                             set_str = "";
                             el = step.src_ids[step.src_ids.length - 1];
                             for (i = 1; i < step.src_ids.length - 1; i++) {
@@ -688,7 +688,7 @@
                             set_str += step.dest_id + ".hasInnerPoints = function() { " +
                                 "return !(" + step.dest_id + ".fillColor == 'transparent' || " + step.dest_id + ".fillColor == 'none' || " + step.dest_id + ".fillOpacity == 0); " +
                                 "}; "
-                        } else if (step.args.type === "line" || step.args.type === "vector") {
+                        } else if (step.args.type === "line" || step.args.type === 'vector') {
                             set_str = "";
                             el = step.src_ids[step.src_ids.length - 1];
                             // Create two end points.
@@ -715,7 +715,7 @@
                                     ">>;\n";
                             }
 
-                            if (step.args.type === "vector") {
+                            if (step.args.type === 'vector') {
                                 set_str +=
                                     assign +
                                     "arrow(" +
@@ -749,7 +749,7 @@
                                 set_str += ", withLabel: true";
                             }
                             set_str += ">>; ";
-                        } else if (step.args.type === "circle") {
+                        } else if (step.args.type === 'circle') {
                             set_str +=
                                 assign +
                                 "mirrorelement(" +
@@ -1962,7 +1962,7 @@
                             step.args.str +
                             ") <<";
                         set_str += attrid + "name: ''";
-                        if (typeof step.args.anchor != "undefined") {
+                        if (typeof step.args.anchor != 'undefined') {
                             set_str += ", anchor: " + step.args.anchor;
                         }
                         set_str += ">>; ";
@@ -2416,7 +2416,7 @@
                             "[" + pn(step.args.x2) + ", " + pn(step.args.y2) + "], " +
                             "[" + pn(step.args.min ?? step.args.start) + ", " + pn(step.args.start ?? step.args.ini) + ", " + pn(step.args.max ?? step.args.end) + "]) ";
                         set_str += "<<" + attrid;
-                        set_str += " snapWidth: " + pn(step.args.step ?? "0.1") + ", ";
+                        set_str += " snapWidth: " + pn(step.args.step ?? '0.1') + ", ";
                         set_str += "baseline: <<id: '" + step.dest_sub_ids[0] + "', name: ''>>, ";
                         set_str += "highline: <<id: '" + step.dest_sub_ids[1] + "', name: ''>>, ";
                         set_str += "point1: <<id: '" + step.dest_sub_ids[2] + "', name: ''>>, ";

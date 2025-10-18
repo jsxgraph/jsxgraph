@@ -30,10 +30,10 @@ JXG.TracenpocheReader = function (board, str) {
     this.content = str;
 
     this.tokenize = function (inputStr, prefix, suffix) {
-        if (typeof prefix !== "string") {
+        if (typeof prefix !== 'string') {
             prefix = "<>+-&";
         }
-        if (typeof suffix !== "string") {
+        if (typeof suffix !== 'string') {
             suffix = "=>&:";
         }
         var c; // The current character.
@@ -72,7 +72,7 @@ JXG.TracenpocheReader = function (board, str) {
                 // Ignore whitespace
                 i++;
                 c = inputStr.charAt(i);
-            } else if ((c >= "a" && c <= "z") || (c >= "A" && c <= "Z")) {
+            } else if ((c >= "a" && c <= 'z') || (c >= "A" && c <= 'Z')) {
                 // name
                 str = c;
                 i += 1;
@@ -85,9 +85,9 @@ JXG.TracenpocheReader = function (board, str) {
                     c = inputStr.charAt(i);
                     if (isSmallName) {
                         if (
-                            (c >= "a" && c <= "z") ||
-                            (c >= "A" && c <= "Z") ||
-                            (c >= "0" && c <= "9") ||
+                            (c >= "a" && c <= 'z') ||
+                            (c >= "A" && c <= 'Z') ||
+                            (c >= "0" && c <= '9') ||
                             c === "'" /*|| c === '_' */
                         ) {
                             str += c;
@@ -96,7 +96,7 @@ JXG.TracenpocheReader = function (board, str) {
                             break;
                         }
                     } else {
-                        if ((c >= "0" && c <= "9") || c === "'") {
+                        if ((c >= "0" && c <= '9') || c === "'") {
                             str += c;
                             i++;
                         } else {
@@ -114,7 +114,7 @@ JXG.TracenpocheReader = function (board, str) {
                     result.push(make("operator", "#"));
                 }
                 result.push(make("name", str));
-            } else if (c >= "0" && c <= "9") {
+            } else if (c >= "0" && c <= '9') {
                 // number
                 // A number cannot start with a decimal point. It must start with a digit,
                 // possibly '0'.
@@ -123,26 +123,26 @@ JXG.TracenpocheReader = function (board, str) {
                 for (;;) {
                     // Look for more digits
                     c = inputStr.charAt(i);
-                    if (c < "0" || c > "9") {
+                    if (c < "0" || c > '9') {
                         break;
                     }
                     i++;
                     str += c;
                 }
-                if (c === ".") {
+                if (c === '.') {
                     // Look for a decimal fraction part
                     i++;
                     str += c;
                     for (;;) {
                         c = inputStr.charAt(i);
-                        if (c < "0" || c > "9") {
+                        if (c < "0" || c > '9') {
                             break;
                         }
                         i++;
                         str += c;
                     }
                 }
-                if (c === "e" || c === "E") {
+                if (c === "e" || c === 'E') {
                     // Look for an exponent part.
                     i++;
                     str += c;
@@ -152,16 +152,16 @@ JXG.TracenpocheReader = function (board, str) {
                         str += c;
                         c = inputStr.charAt(i);
                     }
-                    if (c < "0" || c > "9") {
+                    if (c < "0" || c > '9') {
                         error("number", str, "Bad exponent");
                     }
                     do {
                         i++;
                         str += c;
                         c = inputStr.charAt(i);
-                    } while (c >= "0" && c <= "9");
+                    } while (c >= "0" && c <= '9');
                 }
-                if (c >= "a" && c <= "z") {
+                if (c >= "a" && c <= 'z') {
                     // Make sure the next character is not a letter
                     i++;
                     str += c;
@@ -375,17 +375,17 @@ JXG.TracenpocheReader = function (board, str) {
             token_nr++;
             v = t.value;
             a = t.type;
-            if (a === "name") {
+            if (a === 'name') {
                 o = symbol_table[v];
                 if (!o) {
                     o = variable(v);
                 }
-            } else if (a === "operator") {
+            } else if (a === 'operator') {
                 o = symbol_table[v];
                 if (!o) {
                     error(t, "Unknown operator.");
                 }
-            } else if (a === "string" || a === "number") {
+            } else if (a === "string" || a === 'number') {
                 o = symbol_table["(literal)"];
                 // a = "literal";
             } else {
@@ -448,7 +448,7 @@ JXG.TracenpocheReader = function (board, str) {
 
         var original_symbol = {
             nud: function () {
-                error(this, "Undefined.");
+                error(this, 'Undefined.');
             },
             led: function (left) {
                 error(this, "Missing operator.");
@@ -597,14 +597,14 @@ JXG.TracenpocheReader = function (board, str) {
             predefined(this.tepElements[i], "that." + this.tepElements[i]);
         }
 
-        constant("x", "x");
-        predefined("pi", "Math.PI");
-        predefined("sin", "Math.sin");
-        predefined("cos", "Math.cos");
-        predefined("tan", "Math.tan");
-        predefined("abs", "Math.abs");
-        predefined("racine", "Math.sqrt");
-        predefined("carre", "JXG.Math.carre");
+        constant("x", 'x');
+        predefined("pi", 'Math.PI');
+        predefined("sin", 'Math.sin');
+        predefined("cos", 'Math.cos');
+        predefined("tan", 'Math.tan');
+        predefined("abs", 'Math.abs');
+        predefined("racine", 'Math.sqrt');
+        predefined("carre", 'JXG.Math.carre');
 
         assignment("=");
 
@@ -785,7 +785,7 @@ JXG.TracenpocheReader = function (board, str) {
 
         var tokens = this.tokenize(this.data.slice(i, i2), "=<>!+-*&|/%^#", "=<>&|");
         this.board = board;
-        var s = this.parse(tokens, "tep");
+        var s = this.parse(tokens, 'tep');
         var tep = {};
 
         // Set the default options

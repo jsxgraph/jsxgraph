@@ -104,7 +104,7 @@ JXG.ForeignObject = function (board, coords, attributes, content, size) {
     // ];
     //this.parent = board.select(attributes.anchor);
 
-    this.id = this.board.setId(this, "Im");
+    this.id = this.board.setId(this, 'Im');
 
     this.board.renderer.drawForeignObject(this);
     this.board.finalizeAdding(this);
@@ -120,7 +120,7 @@ JXG.ForeignObject = function (board, coords, attributes, content, size) {
 };
 
 JXG.ForeignObject.prototype = new GeometryElement();
-Type.copyPrototypeMethods(JXG.ForeignObject, CoordsElement, "coordsConstructor");
+Type.copyPrototypeMethods(JXG.ForeignObject, CoordsElement, 'coordsConstructor');
 
 JXG.extend(
     JXG.ForeignObject.prototype,
@@ -456,7 +456,7 @@ JXG.createForeignObject = function (board, parents, attributes) {
         size = parents[2];
     }
 
-    attr = Type.copyAttributes(attributes, board.options, "foreignobject");
+    attr = Type.copyAttributes(attributes, board.options, 'foreignobject');
     fo = CoordsElement.create(JXG.ForeignObject, board, coords, attr, content, size);
     if (!fo) {
         throw new Error(

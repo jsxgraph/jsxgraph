@@ -87,7 +87,7 @@ class FFT(JXGServerModule):
         fname = pathtowavefiles + os.path.basename(name) + '.wav'
         fogg = pathtowavefiles + os.path.basename(name) + '.ogg'
         # read ogg
-        f = open(fogg, "r")
+        f = open(fogg, 'r')
         audio = f.read()
         audio = "data:audio/ogg;base64," + base64.b64encode(audio)
         resp.addData('audioB64', audio)
@@ -121,7 +121,7 @@ class FFT(JXGServerModule):
         w.close()
         ogg_process = subprocess.Popen(["oggenc", fname, "-Q", "-o", fogg], stdout=subprocess.PIPE, stdin=subprocess.PIPE, stderr=subprocess.PIPE, shell=False)
         output = ogg_process.communicate('')[0]
-        f = open(fogg, "r")
+        f = open(fogg, 'r')
         audio = f.read()
         audio = "data:audio/ogg;base64," + base64.b64encode(audio)
         resp.addData('audioB64', audio)

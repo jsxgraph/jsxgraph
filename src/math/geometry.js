@@ -2401,7 +2401,7 @@ JXG.extend(
             var co,
                 i = Type.evaluate(nr);
 
-            if (Type.exists(method) && method === "newton") {
+            if (Type.exists(method) && method === 'newton') {
                 co = Numerics.generalizedNewton(c1, c2, i, t2ini);
             } else {
                 if (c1.bezierDegree === 3 || c2.bezierDegree === 3) {
@@ -2825,7 +2825,7 @@ JXG.extend(
             }
 
             // Handle cases where at least one of the paths is empty
-            if (nr < 0 || JXG.Math.Clip.isEmptyCase(S, C, "intersection")) {
+            if (nr < 0 || JXG.Math.Clip.isEmptyCase(S, C, 'intersection')) {
                 return new Coords(Const.COORDS_BY_USER, [0, 0, 0], board);
             }
 
@@ -3587,7 +3587,7 @@ JXG.extend(
                 board = curve.board;
             }
 
-            if (curve.evalVisProp('curvetype') === "plot") {
+            if (curve.evalVisProp('curvetype') === 'plot') {
                 t = 0;
                 mindist = infty;
                 if (curve.numberPoints === 0) {
@@ -4391,7 +4391,7 @@ JXG.extend(
                     };
                 };
 
-            return [makeFct("X", "cos"), makeFct("Y", "sin"), 0, pi2];
+            return [makeFct("X", 'cos'), makeFct("Y", 'sin'), 0, pi2];
         }
 
     }

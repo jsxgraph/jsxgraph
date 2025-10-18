@@ -175,7 +175,7 @@ JXG.extend(
                 this.appendChildPrim(ticks.rendNode, ticks.evalVisProp('layer'));
             }
 
-            this._setAttr(ticks.rendNode, "stroked", "true");
+            this._setAttr(ticks.rendNode, "stroked", 'true');
             this._setAttr(
                 ticks.rendNode,
                 "strokecolor",
@@ -205,7 +205,7 @@ JXG.extend(
 
             node = this.createNode('textbox');
             node.style.position = "absolute";
-            this._setAttr(node, "id", this.container.id + "_" + "licenseText");
+            this._setAttr(node, "id", this.container.id + "_" + 'licenseText');
 
             node.style.left = 20;
             node.style.top = 2;
@@ -253,16 +253,16 @@ JXG.extend(
 
             if (!isNaN(el.coords.scrCoords[1] + el.coords.scrCoords[2])) {
                 // Horizontal
-                if (ev_ax === "right") {
+                if (ev_ax === 'right') {
                     offset[0] = 1;
-                } else if (ev_ax === "middle") {
+                } else if (ev_ax === 'middle') {
                     offset[0] = 0.5;
                 } // default (ev_ax === 'left') offset[0] = 0;
 
                 // Vertical
-                if (ev_ay === "bottom") {
+                if (ev_ay === 'bottom') {
                     offset[1] = 1;
-                } else if (ev_ay === "middle") {
+                } else if (ev_ay === 'middle') {
                     offset[1] = 0.5;
                 } // default (ev_ay === 'top') offset[1] = 0;
 
@@ -473,7 +473,7 @@ JXG.extend(
 
         // Already documented in JXG.AbstractRenderer
         appendNodesToElement: function (el, type) {
-            if (type === "shape" || type === "path" || type === "polygon") {
+            if (type === "shape" || type === "path" || type === 'polygon') {
                 el.rendNodePath = this.getElementById(el.id + "_path");
             }
             el.rendNodeFill = this.getElementById(el.id + "_fill");
@@ -494,7 +494,7 @@ JXG.extend(
             this._setAttr(strokeNode, "id", this.container.id + "_" + id + "_stroke");
             this._setAttr(shadowNode, "id", this.container.id + "_" + id + "_shadow");
 
-            if (type === "circle" || type === "ellipse") {
+            if (type === "circle" || type === 'ellipse') {
                 node = this.createNode('oval');
                 node.appendChild(fillNode);
                 node.appendChild(strokeNode);
@@ -546,24 +546,24 @@ JXG.extend(
 
             if (ev_fa) {
                 nodeStroke = el.rendNodeStroke;
-                this._setAttr(nodeStroke, "startarrow", "block");
-                this._setAttr(nodeStroke, "startarrowlength", "long");
+                this._setAttr(nodeStroke, "startarrow", 'block');
+                this._setAttr(nodeStroke, "startarrowlength", 'long');
             } else {
                 nodeStroke = el.rendNodeStroke;
                 if (Type.exists(nodeStroke)) {
-                    this._setAttr(nodeStroke, "startarrow", "none");
+                    this._setAttr(nodeStroke, "startarrow", 'none');
                 }
             }
 
             if (ev_la) {
                 nodeStroke = el.rendNodeStroke;
-                this._setAttr(nodeStroke, "id", this.container.id + "_" + el.id + "stroke");
-                this._setAttr(nodeStroke, "endarrow", "block");
-                this._setAttr(nodeStroke, "endarrowlength", "long");
+                this._setAttr(nodeStroke, "id", this.container.id + "_" + el.id + 'stroke');
+                this._setAttr(nodeStroke, "endarrow", 'block');
+                this._setAttr(nodeStroke, "endarrowlength", 'long');
             } else {
                 nodeStroke = el.rendNodeStroke;
                 if (Type.exists(nodeStroke)) {
-                    this._setAttr(nodeStroke, "endarrow", "none");
+                    this._setAttr(nodeStroke, "endarrow", 'none');
                 }
             }
             el.visPropOld.firstarrow = ev_fa;
@@ -624,7 +624,7 @@ JXG.extend(
                 s05 = size * 0.5,
                 r = this.resolution;
 
-            if (type === "x") {
+            if (type === 'x') {
                 s.push(
                     [
                         " m ",
@@ -709,7 +709,7 @@ JXG.extend(
                         " x e "
                     ].join("")
                 );
-            } else if (type === "v") {
+            } else if (type === 'v') {
                 s.push(
                     [
                         " m ",
@@ -961,7 +961,7 @@ JXG.extend(
                 scr,
                 pStr = [];
 
-            this._setAttr(node, "stroked", "false");
+            this._setAttr(node, "stroked", 'false');
             scr = el.vertices[0].coords.scrCoords;
 
             if (isNaN(scr[1] + scr[2])) {
@@ -1078,8 +1078,8 @@ JXG.extend(
             var nodeFill = el.rendNodeFill,
                 ev_g = el.evalVisProp('gradient');
 
-            if (ev_g === "linear") {
-                this._setAttr(nodeFill, "type", "gradient");
+            if (ev_g === 'linear') {
+                this._setAttr(nodeFill, "type", 'gradient');
                 this._setAttr(
                     nodeFill,
                     "color2",
@@ -1091,8 +1091,8 @@ JXG.extend(
                     el.evalVisProp('gradientsecondopacity')
                 );
                 this._setAttr(nodeFill, "angle", el.evalVisProp('gradientangle'));
-            } else if (ev_g === "radial") {
-                this._setAttr(nodeFill, "type", "gradientradial");
+            } else if (ev_g === 'radial') {
+                this._setAttr(nodeFill, "type", 'gradientradial');
                 this._setAttr(
                     nodeFill,
                     "color2",
@@ -1113,7 +1113,7 @@ JXG.extend(
                 );
                 this._setAttr(nodeFill, "focussize", "0,0");
             } else {
-                this._setAttr(nodeFill, "type", "solid");
+                this._setAttr(nodeFill, "type", 'solid');
             }
         },
 
@@ -1144,9 +1144,9 @@ JXG.extend(
                     oo = o * rgbo[1];
                 }
                 if (c === "none" || c === false) {
-                    this._setAttr(el.rendNode, "filled", "false");
+                    this._setAttr(el.rendNode, "filled", 'false');
                 } else {
-                    this._setAttr(el.rendNode, "filled", "true");
+                    this._setAttr(el.rendNode, "filled", 'true');
                     this._setAttr(el.rendNode, "fillcolor", c);
 
                     if (Type.exists(oo) && el.rendNodeFill) {
@@ -1224,7 +1224,7 @@ JXG.extend(
                     node.style.color = c;
                 } else {
                     if (c !== false) {
-                        this._setAttr(node, "stroked", "true");
+                        this._setAttr(node, "stroked", 'true');
                         this._setAttr(node, "strokecolor", c);
                     }
 
@@ -1248,12 +1248,12 @@ JXG.extend(
             }
 
             node = el.rendNode;
-            this.setPropertyPrim(node, "stroked", "true");
+            this.setPropertyPrim(node, "stroked", 'true');
 
             if (Type.exists(w)) {
                 this.setPropertyPrim(node, "stroke-width", w);
                 if (w === 0 && Type.exists(el.rendNodeStroke)) {
-                    this._setAttr(node, "stroked", "false");
+                    this._setAttr(node, "stroked", 'false');
                 }
             }
 
@@ -1270,12 +1270,12 @@ JXG.extend(
             }
 
             if (ev_s) {
-                this._setAttr(nodeShadow, "On", "True");
+                this._setAttr(nodeShadow, "On", 'True');
                 this._setAttr(nodeShadow, "Offset", "3pt,3pt");
                 this._setAttr(nodeShadow, "Opacity", "60%");
                 this._setAttr(nodeShadow, "Color", "#aaaaaa");
             } else {
-                this._setAttr(nodeShadow, "On", "False");
+                this._setAttr(nodeShadow, "On", 'False');
             }
 
             el.visPropOld.shadow = ev_s;
