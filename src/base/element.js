@@ -1054,7 +1054,7 @@ JXG.extend(
                             for (i = 0; i < len_s; i++) {
                                 if (
                                     Type.exists(obj[i]) /*&& Type.exists(obj[i].rendNode)*/ &&
-                                    obj[i].evalVisProp('visible') === "inherit"
+                                    obj[i].evalVisProp('visible') === 'inherit'
                                 ) {
                                     obj[i]
                                         .prepareUpdate()
@@ -1064,7 +1064,7 @@ JXG.extend(
                         } else {
                             if (
                                 Type.exists(obj) /*&& Type.exists(obj.rendNode)*/ &&
-                                obj.evalVisProp('visible') === "inherit"
+                                obj.evalVisProp('visible') === 'inherit'
                             ) {
                                 obj.prepareUpdate().updateVisibility(this.visPropCalc.visible);
                             }
@@ -1473,7 +1473,7 @@ JXG.extend(
                                     this.createLabel();
                                 }
                                 //this.label.showElement();
-                                this.label.setAttribute({ visible: "inherit" });
+                                this.label.setAttribute({ visible: 'inherit' });
                                 //this.label.setDisplayRendNode(this.evalVisProp('visible'));
                             }
                             this.hasLabel = value;
