@@ -5515,13 +5515,18 @@ JXG.extend(
         },
 
         /**
-         * Removes object from board and renderer.
+         * Removes object from board and from the renderer object.
          * <p>
-         * <b>Performance hints:</b> It is recommended to use the object's id.
-         * If many elements are removed, it is best to call <tt>board.suspendUpdate()</tt>
+         * <b>Performance hints:</b> It is recommended to use the JSXGraph object's id.
+         * If many elements are removed, it is best to either
+         * <ul>
+         *   <li> remove the whole array if the elements are contained in an array instead
+         *    of looping through the array OR
+         *   <li> call <tt>board.suspendUpdate()</tt>
          * before looping through the elements to be removed and call
          * <tt>board.unsuspendUpdate()</tt> after the loop. Further, it is advisable to loop
          * in reverse order, i.e. remove the object in reverse order of their creation time.
+         * </ul>
          * @param {JXG.GeometryElement|Array} object The object to remove or array of objects to be removed.
          * The element(s) is/are given by name, id or a reference.
          * @param {Boolean} saveMethod If true, the algorithm runs through all elements

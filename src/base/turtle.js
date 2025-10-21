@@ -418,14 +418,16 @@ JXG.extend(
          * @returns {JXG.Turtle} pointer to the turtle object
          */
         clearScreen: function () {
-            var i,
-                el,
-                len = this.objects.length;
-
-            for (i = 0; i < len; i++) {
-                el = this.objects[i];
-                this.board.removeObject(el);
-            }
+            // var i,
+            //     el,
+            //     len = this.objects.length;
+            // for (i = len - 1; i >= 0; i--) {
+            //     el = this.objects[i];
+            //     this.board.removeObject(el);
+            // }
+            // It is much faster to remove the whole array of pathes.
+            this.board.removeObject(this.objects);
+            this.objects = [];
 
             this.init(0, 0, 90);
             return this;
