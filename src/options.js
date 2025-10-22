@@ -3973,7 +3973,7 @@ JXG.Options = {
         highlightStrokeColor: '#888888',
 
         /**
-         * Is used to define the behaviour of the axis.
+         * Is used to define the behavior of the axis.
          * Settings in this attribute only have an effect if the axis is exactly horizontal or vertical.
          * Possible values are:
          * <ul>
