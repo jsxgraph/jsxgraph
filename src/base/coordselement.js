@@ -1953,7 +1953,7 @@ JXG.extend(
          * @param {Number} [time] Number of milliseconds the animation should last.
          * @param {Object} [options] Optional settings for the animation
          * @param {function} [options.callback] A function that is called as soon as the animation is finished.
-         * @param {String} [options.effect='<>'|'>'|'<'|'--'] animation effects like speed fade in and out. possible values are
+         * @param {String} [options.effect='<>'|'>'|'<'|'--'|'=='] animation effects like speed fade in and out. possible values are
          * '<>' for speed increase on start and slow down at the end (default), '<' for speed up, '>' for slow down, and '--' (or '==')
          * for constant speed during the whole animation.
          * @returns {JXG.CoordsElement} Reference to itself.
@@ -2083,9 +2083,9 @@ JXG.extend(
          * @param {Number} time Number of milliseconds the animation should last.
          * @param {Object} [options] Optional settings for the animation
          * @param {function} [options.callback] A function that is called as soon as the animation is finished.
-         * @param {String} [options.effect='<>'|'>'|'<'] animation effects like speed fade in and out. possible values are
-         * '<>' for speed increase on start and slow down at the end (default), '<' for speed up, '>' for slow down, and '--' for constant speed during
-         * the whole animation.
+         * @param {String} [options.effect='<>'|'>'|'<'|'=='|'--'] animation effects like speed fade in and out. possible values are
+         * '<>' for speed increase on start and slow down at the end (default), '<' for speed up, '>' for slow down, and '--' (or '==')
+         * for constant speed during the whole animation.
          * @param {Number} [options.repeat=1] How often this animation should be repeated.
          * @returns {JXG.CoordsElement} Reference to itself.
          * @see JXG.CoordsElement#moveAlong
