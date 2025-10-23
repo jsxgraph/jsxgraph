@@ -2037,7 +2037,9 @@ JXG.extend(
                         if (options.effect === "==" || options.effect === "--") {
                             return i / steps;       // linear
                         }
-                        throw new Error("Callback moveTo(): valid effects are '==', '--', '<>', '>', and '<', given is '" + options.effect + "'.");
+                        // throw new Error("Callback moveTo(): valid effects are '==', '--', '<>', '>', and '<', given is '" + options.effect + "'.");
+                        JXG.warn("Callback moveTo(): valid effects are '==', '--', '<>', '>', and '<', given is '" + options.effect + "'. Set it to '--'");
+                        options.effect = '--';
                     }
                     return i / steps;  // default
                 };
@@ -2160,8 +2162,9 @@ JXG.extend(
                         if (options.effect === "==" || options.effect === "--") {
                             return x;       // linear
                         }
-                        throw new Error("Callback visit(): valid effects are '==', '--', '<>', '>', and '<', given is '" + options.effect + "'.");
-
+                        // throw new Error("Callback visit(): valid effects are '==', '--', '<>', '>', and '<', given is '" + options.effect + "'.");
+                        JXG.warn("Callback visit(): valid effects are '==', '--', '<>', '>', and '<', given is '" + options.effect + "'. Set it to '--'");
+                        options.effect = '--';
                     }
                     return x;
                 };
