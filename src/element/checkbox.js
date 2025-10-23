@@ -197,7 +197,6 @@ JXG.createCheckbox = function (board, parents, attributes) {
     t.rendNodeTag = t.rendNodeCheckbox; // Needed for unified treatment in setAttribute
     t.rendNodeTag.disabled = !!attr.disabled;
 
-    // t.rendNodeLabel.innerHTML = parents[2];
     t.rendNodeCheckbox.id = t.rendNode.id + "_checkbox";
     t.rendNodeLabel.id = t.rendNode.id + "_label";
     t.rendNodeLabel.setAttribute("for", t.rendNodeCheckbox.id);

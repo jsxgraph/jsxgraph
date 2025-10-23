@@ -146,7 +146,7 @@ JXG.JessieCode = function (code, geonext) {
     this.isLHS = false;
 
     /**
-     * The id of an HTML node in which innerHTML all warnings are stored (if no <tt>console</tt> object is available).
+     * The id of an HTML node in which innerText all warnings are stored (if no <tt>console</tt> object is available).
      * @type String
      * @default 'jcwarn'
      */
@@ -194,7 +194,12 @@ JXG.JessieCode = function (code, geonext) {
     this.col = 1;
 
     if (JXG.CA) {
+        // Old simplifier
         this.CA = new JXG.CA(this.node, this.createNode, this);
+    }
+    if (JXG.CAS) {
+        // New simplifier
+        this.CAS = new JXG.CAS(this.node, this.createNode, this);
     }
 
     this.code = '';
@@ -814,6 +819,7 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
     _genericParse: function (code, cmd, geonext, dontstore) {
         var i, setTextBackup, ast, result,
             ccode = code.replace(/\r\n/g, '\n').split('\n'),
+            options = {},
             cleaned = [];
 
         if (!dontstore) {
@@ -843,12 +849,35 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
                 ast = this.CA.expandDerivatives(ast, null, ast);
                 ast = this.CA.removeTrivialNodes(ast);
             }
+            if (this.CAS) {
+                // Search for expression of form `D(f, x)` and determine the
+                // the derivative symbolically.
+                ast = this.CAS.expandDerivatives(ast, null, ast);
+
+                // options.method = options.method || "strong";
+                // options.form = options.form || "fractions";
+                // options.steps = options.steps || [];
+                // options.iterations = options.iterations || 1000;
+                // ast = this.CAS._simplify_aux(ast, options);
+            }
             switch (cmd) {
                 case 'parse':
                     result = this.execute(ast);
                     break;
                 case 'manipulate':
                     result = this.compile(ast);
+                    break;
+                case 'simplify':
+                    if (Type.exists(this.CAS)) {
+                        options.method = options.method || "strong";
+                        options.form = options.form || "fractions";
+                        options.steps = options.steps || [];
+                        options.iterations = options.iterations || 1000;
+                        ast = this.CAS.simplify(ast, options);
+                        result = this.CAS.compile(ast);
+                    } else {
+                        result = this.compile(ast);
+                    }
                     break;
                 case 'getAst':
                     result = ast;
@@ -898,6 +927,21 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
      */
     manipulate: function (code, geonext, dontstore) {
         return this._genericParse(code, 'manipulate', geonext, dontstore);
+    },
+
+    /**
+     * Manipulate JessieCode.
+     * This consists of generating an AST with parser.parse,
+     * apply simplifying rules from CAS
+     * and compile the AST back to JessieCode with minimal number of parentheses.
+     *
+     * @param {String} code             JessieCode code to be parsed
+     * @param {Boolean} [geonext=false] Geonext compatibility mode.
+     * @param {Boolean} [dontstore=false] If false, the code string is stored in this.code.
+     * @return {String}                 Simplified JessieCode code
+     */
+    simplify: function (code) {
+        return this._genericParse(code, 'simplify');
     },
 
     /**
@@ -1412,7 +1456,7 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
                         ret = this.execute(node.children[0]);
                         i = this.execute(node.children[1]);
 
-                        if (typeof i === 'number' && Math.abs(Math.round(i) - i) < Mat.eps) {
+                        if (typeof i === 'number' && Math.abs(Math.round(i) - i) < 1.e-12) {
                             ret = ret[i];
                         } else {
                             ret = undef;
@@ -1678,6 +1722,9 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
                         if (node.children[1]) {
                             ret += this.compile(node.children[1], js);
                         }
+                        break;
+                    case 'op_block':
+                        ret = '{\n' + this.compile(node.children[0], js) + ' }\n';
                         break;
                     case 'op_assign':
                         //e = this.compile(node.children[0], js);
@@ -1957,9 +2004,6 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
                 break;
         }
 
-        if (node.needsBrackets) {
-            ret = '{\n' + ret + ' }\n';
-        }
         if (node.needsAngleBrackets) {
             if (js) {
                 ret = '{\n' + ret + ' }\n';
@@ -2714,7 +2758,7 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
 
     /**
      * Output a debugging message. Uses debug console, if available. Otherwise an HTML element with the
-     * id "debug" and an innerHTML property is used.
+     * id "debug" and an innerText property is used.
      * @param {String} log
      * @private
      */
@@ -2722,7 +2766,7 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
         if (typeof console === 'object') {
             console.log(log);
         } else if (Env.isBrowser && document && document.getElementById('debug') !== null) {
-            document.getElementById('debug').innerHTML += log + '<br />';
+            document.getElementById('debug').innerText += log + '\n';
         }
     },
 
@@ -2744,7 +2788,7 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
         if (typeof console === 'object') {
             console.log('Warning(' + this.line + '): ' + msg);
         } else if (Env.isBrowser && document && document.getElementById(this.warnLog) !== null) {
-            document.getElementById(this.warnLog).innerHTML += 'Warning(' + this.line + '): ' + msg + '<br />';
+            document.getElementById(this.warnLog).innerText += 'Warning(' + this.line + '): ' + msg + '\n';
         }
     },
 
@@ -2889,7 +2933,7 @@ case 11: case 14:
  this.$ = AST.createNode(lc(_$[$0]), 'node_op', 'op_none');
 break;
 case 12:
- this.$ = $$[$0-1]; this.$.needsBrackets = true;
+ this.$ = AST.createNode(lc(_$[$0-2]), 'node_op', 'op_block', $$[$0-1]);
 break;
 case 13:
  this.$ = AST.createNode(lc(_$[$0-1]), 'node_op', 'op_none', $$[$0-1], $$[$0]);
@@ -3538,7 +3582,7 @@ topState:function topState (n) {
         if (n >= 0) {
             return this.conditionStack[n];
         } else {
-            return 'INITIAL'
+            return "INITIAL";
         }
     },
 

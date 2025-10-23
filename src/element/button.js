@@ -255,7 +255,6 @@ JXG.createButton = function (board, parents, attributes) {
 
     t.rendNodeButton = t.rendNode.childNodes[0];
     t.rendNodeButton.id = t.rendNode.id + "_button";
-    // t.rendNodeButton.innerHTML = parents[2];
 
     t.rendNodeTag = t.rendNodeButton; // Needed for unified treatment in setAttribute
     t.rendNodeTag.disabled = !!attr.disabled;

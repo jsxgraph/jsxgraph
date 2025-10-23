@@ -6601,7 +6601,7 @@ JXG.extend(
                         break;
                     case 'title':
                         this.document.getElementById(this.container + '_ARIAlabel')
-                            .innerHTML = value;
+                            .innerText = value;
                         this._set(key, value);
                         break;
                     case 'keepaspectratio':
@@ -6633,7 +6633,7 @@ JXG.extend(
                         node = this.containerObj.ownerDocument.getElementById(
                             this.container + '_navigation_' + key);
                         if (node && Type.exists(value.symbol)) {
-                            node.innerHTML = Type.evaluate(value.symbol);
+                            node.innerText = Type.evaluate(value.symbol);
                         }
                         this._set(key, value);
                         break;

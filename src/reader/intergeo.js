@@ -237,7 +237,7 @@
                                 c.push(parseFloat(p.childNodes[j].firstChild.data));
                             }
                             // else {
-                            //    $('debug').innerHTML += 'Not: '+ p.childNodes[j].nodeName + '<br>';  // <complex>
+                            //    $('debug').innerText += 'Not: '+ p.childNodes[j].nodeName + '\n';  // <complex>
                             //}
                         }
                     }
@@ -294,7 +294,7 @@
                                 c.push(parseFloat(p.childNodes[j].firstChild.data));
                             }
                             //else {
-                            //    $('debug').innerHTML += 'Not: '+ p.childNodes[j].nodeName + '<br>';  // <complex>
+                            //    $('debug').innerText += 'Not: '+ p.childNodes[j].nodeName + '\n';  // <complex>
                             //}
                         }
                     }

@@ -396,7 +396,7 @@ JXG.extend(
             all = div.getElementsByTagName('i');
 
             do {
-                div.innerHTML = "<!--[if gt IE " + ++v + "]><" + "i><" + "/i><![endif]-->";
+                div.innerHTML = "<!--[if gt IE " + (++v) + "]><" + "i><" + "/i><![endif]-->";
             } while (all[0]);
 
             return v > 4 ? v : undefined;

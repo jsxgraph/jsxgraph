@@ -1759,7 +1759,7 @@ JXG.createHTMLSlider = function (board, parents, attributes) {
     t.rendNodeLabel.id = t.rendNode.id + "_label";
 
     if (attr.withlabel) {
-        t.rendNodeLabel.innerHTML = t.name + "=";
+        t.rendNodeLabel.innerText = t.name + "=";
     }
 
     t.rendNodeOut = t.rendNodeForm.childNodes[2];

@@ -146,7 +146,7 @@ JXG.extend(
                     this.data[i] = [];
 
                     for (j = 0; j < col.length; j++) {
-                        cell = col[j].innerHTML;
+                        cell = col[j].innerText;
 
                         if (parseFloat(cell).toString() === cell) {
                             this.data[i][j] = parseFloat(cell);
