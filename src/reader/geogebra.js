@@ -4037,7 +4037,7 @@
                                         return p1.Y();
                                     },
                                     function () {
-                                        return "<br/>" + slopeWidth;
+                                        return "<br />" + slopeWidth;
                                     }
                                 ],
                                 attr

@@ -267,7 +267,7 @@ JXG.createInput = function (board, parents, attributes) {
         '<span style="display:inline; white-space:nowrap; padding:0px;">' +
         '<label></label><input type="text" maxlength="' +
         attr.maxlength +
-        '" style="width:100%"/>' +
+        '" style="width:100%" />' +
         "</span>"
     ];
 

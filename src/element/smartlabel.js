@@ -374,7 +374,7 @@ JXG.createSmartLabel = function (board, parents, attributes) {
                     if (mj) {
                         str = ['\\(', pre, '\\left(\\array{', x, '\\,', u, '\\\\ ', y, '\\,', u, '}\\right)', suf, '\\)'].join('');
                     } else {
-                        str = [pre, x, ' ', u, '<br/>', y, ' ', u, suf].join('');
+                        str = [pre, x, ' ', u, '<br />', y, ' ', u, suf].join('');
                     }
                 }
             } else {
