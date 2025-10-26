@@ -2965,7 +2965,7 @@
                                 }
                             } else {
                                 for (i = 0; i < input.length; i++) {
-                                    if (typeof input[i] === 'object') {
+                                    if (typeof input[i] === 'object' && input[i] !== null) {
                                         points.push(input[i]);
                                     }
                                 }

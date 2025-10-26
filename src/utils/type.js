@@ -1337,7 +1337,7 @@ JXG.extend(
         },
 
         /**
-         * Convert a n object to a new object containing only
+         * Convert an object to a new object containing only
          * lower case properties.
          *
          * @param {Object} obj
@@ -1363,8 +1363,7 @@ JXG.extend(
                     // We recurse into an object only if it is
                     // neither a DOM node nor an JSXGraph object
                     val = obj[key];
-                    if (typeof val === 'object' &&
-                        val !== null &&
+                    if (typeof val === 'object' && val !== null &&
                         !this.isArray(val) &&
                         !this.exists(val.nodeType) &&
                         !this.exists(val.board)) {
@@ -1738,7 +1737,7 @@ JXG.extend(
                 l = list.length,
                 result = [];
 
-            if (typeof filter !== "function" && typeof filter !== 'object') {
+            if (this.exists(filter) && typeof filter !== "function" && typeof filter !== 'object') {
                 return result;
             }
 

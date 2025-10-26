@@ -680,7 +680,7 @@ if (Env.isBrowser && typeof window === 'object' && typeof document === 'object')
                             document.body.insertBefore(div, scripts[i]);
                         } catch (e) {
                             // there's probably jquery involved...
-                            if (typeof jQuery === 'object') {
+                            if (Type.exists(jQuery) && typeof jQuery === 'object') {
                                 jQuery(div).insertBefore(scripts[i]);
                             }
                         }

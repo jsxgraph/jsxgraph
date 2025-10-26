@@ -2763,7 +2763,7 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
      * @private
      */
     _debug: function (log) {
-        if (typeof console === 'object') {
+        if (typeof console === 'object' && console !== null) {
             console.log(log);
         } else if (Env.isBrowser && document && document.getElementById('debug') !== null) {
             document.getElementById('debug').innerText += log + '\n';
@@ -2785,7 +2785,7 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
      * @param {String} msg
      */
     _warn: function (msg) {
-        if (typeof console === 'object') {
+        if (typeof console === 'object' && console !== null) {
             console.log('Warning(' + this.line + '): ' + msg);
         } else if (Env.isBrowser && document && document.getElementById(this.warnLog) !== null) {
             document.getElementById(this.warnLog).innerText += 'Warning(' + this.line + '): ' + msg + '\n';

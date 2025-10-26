@@ -938,7 +938,7 @@ JXG.extend(
                 doc,
                 crect,
                 // In ownerDoc we need the 'real' document object.
-                // The first version is used in the case of shadowDom,
+                // The first version is used in the case of shadowDOM,
                 // the second case in the 'normal' case.
                 ownerDoc = this.document.ownerDocument || this.document,
                 docElement = ownerDoc.documentElement || this.document.body.parentNode,

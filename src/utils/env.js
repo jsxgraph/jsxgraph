@@ -389,7 +389,7 @@ JXG.extend(
                 all,
                 v = 3;
 
-            if (typeof document !== 'object') {
+            if (document === null || typeof document !== 'object') {
                 return 0;
             }
 

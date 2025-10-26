@@ -141,7 +141,7 @@ JXG.Dump = {
             if (def.hasOwnProperty(p)) {
                 pl = p.toLowerCase();
 
-                if (typeof def[p] !== "object" && def[p] === copy[pl]) {
+                if (def[p] !== null && typeof def[p] !== "object" && def[p] === copy[pl]) {
                     // console.log("delete", p);
                     delete copy[pl];
                 }
