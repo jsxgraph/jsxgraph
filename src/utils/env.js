@@ -123,7 +123,8 @@ JXG.extend(
          * @type Boolean
          * @default false
          */
-        isBrowser: typeof window === "object" && typeof document === "object",
+        isBrowser: Type.exists(window) && Type.exists(document) &&
+            typeof window === "object" && typeof document === "object",
 
         /**
          * Features of ECMAScript 6+ are available.
