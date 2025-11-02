@@ -57,7 +57,7 @@ JXG.Surface3D = function (view, F, X, Y, Z, range_u, range_v, attributes) {
         Const.OBJECT_TYPE_SURFACE3D,
         Const.OBJECT_CLASS_3D
     );
-    this.constructor3D(view, "surface3d");
+    this.constructor3D(view, 'surface3d');
 
     this.board.finalizeAdding(this);
 
@@ -137,7 +137,7 @@ JXG.Surface3D = function (view, F, X, Y, Z, range_u, range_v, attributes) {
     });
 };
 JXG.Surface3D.prototype = new JXG.GeometryElement();
-Type.copyPrototypeMethods(JXG.Surface3D, JXG.GeometryElement3D, "constructor3D");
+Type.copyPrototypeMethods(JXG.Surface3D, JXG.GeometryElement3D, 'constructor3D');
 
 JXG.extend(
     JXG.Surface3D.prototype,
@@ -478,7 +478,7 @@ JXG.createParametricSurface3D = function (board, parents, attributes) {
         F = null;
     }
 
-    attr = Type.copyAttributes(attributes, board.options, "surface3d");
+    attr = Type.copyAttributes(attributes, board.options, 'surface3d');
     el = new JXG.Surface3D(view, F, X, Y, Z, range_u, range_v, attr);
 
     attr = el.setAttr2D(attr);

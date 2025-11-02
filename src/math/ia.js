@@ -243,7 +243,7 @@ JXG.extend(MatInterval.prototype, {
     },
 
     assign: function (lo, hi) {
-        if (typeof lo !== "number" || typeof hi !== "number") {
+        if (typeof lo !== "number" || typeof hi !== 'number') {
             throw new TypeError("JXG.Math.Interval#assign: arguments must be numbers");
         }
         if (isNaN(lo) || isNaN(hi) || lo > hi) {

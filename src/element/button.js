@@ -240,7 +240,7 @@ var priv = {
 JXG.createButton = function (board, parents, attributes) {
     var t,
         par,
-        attr = Type.copyAttributes(attributes, board.options, "button");
+        attr = Type.copyAttributes(attributes, board.options, 'button');
 
     //if (parents.length < 3) {
     //throw new Error("JSXGraph: Can't create button with parent types '" +
@@ -255,7 +255,6 @@ JXG.createButton = function (board, parents, attributes) {
 
     t.rendNodeButton = t.rendNode.childNodes[0];
     t.rendNodeButton.id = t.rendNode.id + "_button";
-    // t.rendNodeButton.innerHTML = parents[2];
 
     t.rendNodeTag = t.rendNodeButton; // Needed for unified treatment in setAttribute
     t.rendNodeTag.disabled = !!attr.disabled;
@@ -265,7 +264,7 @@ JXG.createButton = function (board, parents, attributes) {
     t.setText(parents[2]);
 
     // This sets the font size of the button text
-    t.visPropOld.fontsize = "0px";
+    t.visPropOld.fontsize = '0px';
     board.renderer.updateTextStyle(t, false);
 
     if (parents[3]) {

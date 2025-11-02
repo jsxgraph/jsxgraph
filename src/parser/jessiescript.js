@@ -61,7 +61,7 @@ JXG.Board.prototype.construct = function (string, mode, params, paraIn, macroNam
         propValue,
         attributes;
     if (!JXG.exists(mode)) {
-        mode = "normal";
+        mode = 'normal'
     } else {
         // mode = 'macro'
         createdNames = [];
@@ -108,12 +108,12 @@ JXG.Board.prototype.construct = function (string, mode, params, paraIn, macroNam
                     if (objName[0].search(/\./) != -1) {
                         prop = true;
 
-                        objName = objName[0].split(".");
+                        objName = objName[0].split('.');
                         propName = objName[objName.length - 1];
                         propName = propName.replace(/^\s+/, "").replace(/\s+$/, "");
                         objName.pop();
-                        objName = objName.join(".");
-                        if (mode == "macro") {
+                        objName = objName.join('.');
+                        if (mode == 'macro') {
                             for (j = 0; j < params.length; j++) {
                                 if (objName == params[j]) {
                                     objName = paraIn[j];
@@ -207,11 +207,11 @@ JXG.Board.prototype.construct = function (string, mode, params, paraIn, macroNam
                                     attributes.withLabel = true;
                                 }
                                 attributes.name = objName;
-                                if (mode == "macro") {
+                                if (mode == 'macro') {
                                     createdNames.push(objName);
                                 }
                             }
-                            if (mode == "macro") {
+                            if (mode == 'macro') {
                                 if (macroName != "") {
                                     for (j = 0; j < createdNames.length; j++) {
                                         // vorher oder nachher?
@@ -235,7 +235,7 @@ JXG.Board.prototype.construct = function (string, mode, params, paraIn, macroNam
                                     attributes.id = macroName + "." + objName;
                                 }
                             }
-                            if (typeof defElements == "string") {
+                            if (typeof defElements == 'string') {
                                 defElements = [
                                     JXG.getReference(this, defElements.charAt(0)),
                                     JXG.getReference(this, defElements.charAt(1))
@@ -267,7 +267,7 @@ JXG.Board.prototype.construct = function (string, mode, params, paraIn, macroNam
                                         defElements[j][0] = RegExp.$1;
                                         defElements[j][1] = RegExp.$2;
                                     } // sonst wird die Gerade durch zwei Punkte definiert, die einen Namen haben, der aus nur jeweils einem Buchstaben besteht
-                                    if (mode == "macro") {
+                                    if (mode == 'macro') {
                                         if (macroName != "") {
                                             for (k = 0; k < createdNames.length; k++) {
                                                 // vorher oder nachher?
@@ -290,7 +290,7 @@ JXG.Board.prototype.construct = function (string, mode, params, paraIn, macroNam
                                             }
                                         }
                                     }
-                                    if (typeof defElements[j] == "string") {
+                                    if (typeof defElements[j] == 'string') {
                                         defElements[j] = (function (el, board) {
                                             return function () {
                                                 return JXG.getReference(
@@ -313,7 +313,7 @@ JXG.Board.prototype.construct = function (string, mode, params, paraIn, macroNam
                                     defElements[j] = 1.0 * defElements[j];
                                 } else {
                                     // Element mit Name
-                                    if (mode == "macro") {
+                                    if (mode == 'macro') {
                                         if (macroName != "") {
                                             for (k = 0; k < createdNames.length; k++) {
                                                 // vorher oder nachher?
@@ -337,7 +337,7 @@ JXG.Board.prototype.construct = function (string, mode, params, paraIn, macroNam
                                     attributes.withLabel = true;
                                 }
                                 attributes.name = objName;
-                                if (mode == "macro") {
+                                if (mode == 'macro') {
                                     if (macroName != "") {
                                         attributes.id = macroName + "." + objName;
                                     }
@@ -358,7 +358,7 @@ JXG.Board.prototype.construct = function (string, mode, params, paraIn, macroNam
                             splitted[i].match(/^([A-Z]+\S*)\s*\(\s*(.*)\s*[,\|]\s*(.*)\s*\)$/);
                             objName = RegExp.$1; // Name
                             attributes.name = objName;
-                            if (mode == "macro") {
+                            if (mode == 'macro') {
                                 if (macroName != "") {
                                     attributes.id = macroName + "." + objName;
                                 }
@@ -401,7 +401,7 @@ JXG.Board.prototype.construct = function (string, mode, params, paraIn, macroNam
                                 defElements[2] = 0;
                             }
                             attributes.name = objName;
-                            if (mode == "macro") {
+                            if (mode == 'macro') {
                                 if (macroName != "") {
                                     for (k = 0; k < createdNames.length; k++) {
                                         // vorher oder nachher?
@@ -440,7 +440,7 @@ JXG.Board.prototype.construct = function (string, mode, params, paraIn, macroNam
                             defElements[1] = RegExp.$2;
                             defElements[0] = defElements[0].replace(/\s+$/, ""); // Leerzeichen am Ende entfernen
                             defElements[1] = defElements[1].replace(/^\s+/, ""); // Leerzeichen am Anfang entfernen
-                            if (mode == "macro") {
+                            if (mode == 'macro') {
                                 for (j = 0; j <= 1; j++) {
                                     if (macroName != "") {
                                         for (k = 0; k < createdNames.length; k++) {
@@ -468,7 +468,7 @@ JXG.Board.prototype.construct = function (string, mode, params, paraIn, macroNam
                             ) {
                                 if (objName != "") {
                                     attributes.name = objName;
-                                    if (mode == "macro") {
+                                    if (mode == 'macro') {
                                         if (macroName != "") {
                                             attributes.id = macroName + "." + objName;
                                         }
@@ -487,7 +487,7 @@ JXG.Board.prototype.construct = function (string, mode, params, paraIn, macroNam
                             } else {
                                 if (objName != "") {
                                     attributes.name = objName + "_1";
-                                    if (mode == "macro") {
+                                    if (mode == 'macro') {
                                         if (macroName != "") {
                                             attributes.id = macroName + "." + objName + "_1";
                                         }
@@ -505,7 +505,7 @@ JXG.Board.prototype.construct = function (string, mode, params, paraIn, macroNam
                                 }
                                 if (objName != "") {
                                     attributes.name = objName + "_2";
-                                    if (mode == "macro") {
+                                    if (mode == 'macro') {
                                         if (macroName != "") {
                                             attributes.id = macroName + "." + objName + "_2";
                                         }
@@ -527,15 +527,15 @@ JXG.Board.prototype.construct = function (string, mode, params, paraIn, macroNam
                             splitted[i].match(/\|([\|_])\s*\(\s*(\S*)\s*,\s*(\S*)\s*\)/);
                             type = RegExp.$1;
                             if (type == "|") {
-                                type = "parallel";
+                                type = 'parallel'
                             } else {
                                 // type == '_'
-                                type = "normal";
+                                type = 'normal'
                             }
                             defElements = [];
                             defElements[0] = RegExp.$2;
                             defElements[1] = RegExp.$3;
-                            if (mode == "macro") {
+                            if (mode == 'macro') {
                                 for (j = 0; j <= 1; j++) {
                                     if (macroName != "") {
                                         for (k = 0; k < createdNames.length; k++) {
@@ -558,7 +558,7 @@ JXG.Board.prototype.construct = function (string, mode, params, paraIn, macroNam
                                 if (!JXG.exists(attributes.withLabel)) {
                                     attributes.withLabel = true;
                                 }
-                                if (mode == "macro") {
+                                if (mode == 'macro') {
                                     if (macroName != "") {
                                         attributes.id = macroName + "." + objName;
                                     }
@@ -586,7 +586,7 @@ JXG.Board.prototype.construct = function (string, mode, params, paraIn, macroNam
                             defElements[0] = RegExp.$1;
                             defElements[1] = RegExp.$2;
                             defElements[2] = RegExp.$3;
-                            if (mode == "macro") {
+                            if (mode == 'macro') {
                                 for (j = 0; j <= 2; j++) {
                                     if (macroName != "") {
                                         for (k = 0; k < createdNames.length; k++) {
@@ -649,7 +649,7 @@ JXG.Board.prototype.construct = function (string, mode, params, paraIn, macroNam
                                     if (objName == possibleNames[j]) {
                                         attributes.text = "&" + objName + ";";
                                         attributes.name = "&" + objName + ";";
-                                        type = "greek";
+                                        type = 'greek'
                                         break;
                                     } else {
                                         if (j == possibleNames.length - 1) {
@@ -661,7 +661,7 @@ JXG.Board.prototype.construct = function (string, mode, params, paraIn, macroNam
                                 if (!JXG.exists(attributes.withLabel)) {
                                     attributes.withLabel = true;
                                 }
-                                if (mode == "macro") {
+                                if (mode == 'macro') {
                                     if (macroName != "") {
                                         attributes.id = macroName + "." + objName;
                                     }
@@ -690,7 +690,7 @@ JXG.Board.prototype.construct = function (string, mode, params, paraIn, macroNam
                             defElements[0] = (1.0 * RegExp.$1) / (1.0 * RegExp.$2);
                             defElements[1] = RegExp.$3;
                             defElements[2] = RegExp.$4;
-                            if (mode == "macro") {
+                            if (mode == 'macro') {
                                 for (j = 1; j <= 2; j++) {
                                     if (macroName != "") {
                                         for (k = 0; k < createdNames.length; k++) {
@@ -729,7 +729,7 @@ JXG.Board.prototype.construct = function (string, mode, params, paraIn, macroNam
                             })(defElements, this);
                             if (objName != "") {
                                 attributes.name = objName;
-                                if (mode == "macro") {
+                                if (mode == 'macro') {
                                     if (macroName != "") {
                                         attributes.id = macroName + "." + objName;
                                     }
@@ -782,7 +782,7 @@ JXG.Board.prototype.construct = function (string, mode, params, paraIn, macroNam
                                 defElements[j] = defElements[j]
                                     .replace(/^\s+/, "")
                                     .replace(/\s+$/, ""); // trim
-                                if (mode == "macro") {
+                                if (mode == 'macro') {
                                     if (macroName != "") {
                                         for (k = 0; k < createdNames.length; k++) {
                                             // vorher oder nachher?

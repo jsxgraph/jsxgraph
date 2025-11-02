@@ -957,7 +957,7 @@ JXG.extend(
             return this;
         }
 
-        // console.time("update")
+        // console.time('update')
         // Handle depth ordering
         this.depthOrdered = {};
 
@@ -975,7 +975,7 @@ JXG.extend(
                 this.updateDepthOrdering();
             }
         }
-        // console.timeEnd("update")
+        // console.timeEnd('update')
 
         this.needsUpdate = false;
         return this;

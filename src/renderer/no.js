@@ -69,7 +69,7 @@ JXG.NoRenderer = function () {
      * }
      * @type String
      */
-    this.type = "no";
+    this.type = 'no';
 };
 
 JXG.extend(

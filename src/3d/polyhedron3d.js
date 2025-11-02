@@ -43,7 +43,7 @@ JXG.Polyhedron3D = function (view, polyhedron, faces, attributes) {
         that = this;
 
     this.constructor(view.board, attributes, Const.OBJECT_TYPE_POLYHEDRON3D, Const.OBJECT_CLASS_3D);
-    this.constructor3D(view, "polyhedron3d");
+    this.constructor3D(view, 'polyhedron3d');
 
     this.board.finalizeAdding(this);
 
@@ -119,7 +119,7 @@ JXG.Polyhedron3D = function (view, polyhedron, faces, attributes) {
     });
 };
 JXG.Polyhedron3D.prototype = new JXG.GeometryElement();
-Type.copyPrototypeMethods(JXG.Polyhedron3D, JXG.GeometryElement3D, "constructor3D");
+Type.copyPrototypeMethods(JXG.Polyhedron3D, JXG.GeometryElement3D, 'constructor3D');
 
 JXG.extend(
     JXG.Polyhedron3D.prototype,
@@ -144,7 +144,7 @@ JXG.extend(
          */
         toSTL: function(name) {
             var i, j, v, f, c, le,
-                txt = 'model ';
+                txt = 'solid ';
 
             if (name === undefined) {
                 name = this.name;
@@ -656,7 +656,7 @@ JXG.createPolyhedron3D = function (board, parents, attributes) {
         polyhedron.faces = parents[2];
     }
 
-    attr_polyhedron = Type.copyAttributes(attributes, board.options, "polyhedron3d");
+    attr_polyhedron = Type.copyAttributes(attributes, board.options, 'polyhedron3d');
 
     console.time('polyhedron');
 
@@ -664,7 +664,7 @@ JXG.createPolyhedron3D = function (board, parents, attributes) {
     // Create face3d elements
     le = polyhedron.faces.length;
     for (i = 0; i < le; i++) {
-        attr = Type.copyAttributes(attributes, board.options, "face3d");
+        attr = Type.copyAttributes(attributes, board.options, 'face3d');
         if (attr_polyhedron.fillcolorarray.length > 0) {
             attr.fillcolor = attr_polyhedron.fillcolorarray[i % attr_polyhedron.fillcolorarray.length];
         }

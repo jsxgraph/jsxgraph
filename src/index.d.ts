@@ -1133,7 +1133,7 @@ declare namespace JXG {
         /**
          * If false the element won't be visible on the board, otherwise it is shown.
          */
-        visible?: boolean | BooleanFunction | "inherit";
+        visible?: boolean | BooleanFunction | 'inherit';
 
         /**
          * If true, a label will display the element's name.
@@ -1948,7 +1948,7 @@ declare namespace JXG {
         strokeColor?: string;
         strokeOpacity?: number;
         useMathJax?: boolean;
-        visible?: "inherit" | boolean;
+        visible?: 'inherit' | boolean;
     }
 
     export interface Legend extends GeometryElement {}
@@ -3344,7 +3344,7 @@ declare namespace JXG {
         // TODO: linear used in JSXGraph workshop Dec 16, 2020.
         type?: "line" | "linear" | "polar";
         useUnicodeMinus?: boolean;
-        visible?: "inherit" | boolean;
+        visible?: 'inherit' | boolean;
     }
 
     /**
@@ -3965,7 +3965,7 @@ declare namespace JXG {
             anchorY?: AnchorY;
             label?: LabelOptions;
             drawZero?: boolean;
-            visible?: "inherit";
+            visible?: 'inherit';
         };
     }
 

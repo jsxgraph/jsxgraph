@@ -57,6 +57,15 @@ describe("Test geometry functions", function () {
         expect(JXG.Math.Geometry.affineRatio(a, b, c)).toEqual(3);
     });
 
+    it("intersectingFunctiongraphs", function () {
+        var f1 = board.create("functiongraph", ["(x-1)**2", -10, 10]); // The exponent 2 fails
+        var f2 = board.create("functiongraph", ["0", -10, 10]);
+        var inter = board.create("intersection", [f1, f2]);
+        // var c = JXG.Math.Geometry.meetCurveCurve(f1, f2, 0, 0, board).usrCoords;
+        console.log('intersection', inter.X())
+        expect(inter.X()).toBeCloseTo(1, 2);
+    });
+
     it("meetSegmentSegment", function () {
         var res = JXG.Math.Geometry.meetSegmentSegment(
             [1, -1, -1],

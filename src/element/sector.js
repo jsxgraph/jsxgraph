@@ -205,7 +205,7 @@ JXG.createSector = function (board, parents, attributes) {
         (Type.isArray(parents[3]) || Type.isNumber(parents[3])) &&
         (Type.isNumber(parents[4]) || Type.isFunction(parents[4]) || Type.isString(parents[4]))
     ) {
-        type = "2lines";
+        type = '2lines';
     } else {
         points = Type.providePoints(board, parents, attributes, "sector", attrPoints);
         if (points === false) {
@@ -219,14 +219,14 @@ JXG.createSector = function (board, parents, attributes) {
                     "'."
             );
         }
-        type = "3points";
+        type = '3points';
     }
 
-    attr = Type.copyAttributes(attributes, board.options, "sector");
+    attr = Type.copyAttributes(attributes, board.options, 'sector');
     // The curve length is 6: 0-1: leg 1, 1-5: arc, 5-6: leg 2
     el = board.create("curve", [[0], [0], 0, 6], attr);
     el.type = Const.OBJECT_TYPE_SECTOR;
-    el.elType = "sector";
+    el.elType = 'sector';
 
     /**
      * Sets radius if the attribute `radius` has value 'auto'.
@@ -253,13 +253,13 @@ JXG.createSector = function (board, parents, attributes) {
         return Math.max(r1, Math.min(r2, r3));
     };
 
-    if (type === "2lines") {
+    if (type === '2lines') {
         /**
          * @ignore
          */
         el.Radius = function () {
             var r = Type.evaluate(parents[4]);
-            if (r === "auto") {
+            if (r === 'auto') {
                 return this.autoRadius();
             }
             return r;
@@ -424,8 +424,8 @@ JXG.createSector = function (board, parents, attributes) {
         // Arc does not work yet, since point1, point2 and point3 are
         // virtual points.
         //
-        // attr = Type.copyAttributes(attributes, board.options, "arc");
-        // attr = Type.copyAttributes(attr, board.options, "sector", "arc");
+        // attr = Type.copyAttributes(attributes, board.options, 'arc');
+        // attr = Type.copyAttributes(attr, board.options, "sector", 'arc');
         // attr.withlabel = false;
         // attr.name += "_arc";
         // // el.arc = board.create("arc", [el.point1, el.point2, el.point3], attr);
@@ -453,7 +453,7 @@ JXG.createSector = function (board, parents, attributes) {
         // el.addChild(el.arc);
 
         // end '2lines'
-    } else if (type === "3points") {
+    } else if (type === '3points') {
         /**
          * Midpoint of the sector.
          * @memberOf Sector.prototype
@@ -578,14 +578,14 @@ JXG.createSector = function (board, parents, attributes) {
     el.radiuspoint = el.point2;
     el.anglepoint = el.point3;
 
-    attr = Type.copyAttributes(attributes, board.options, "arc");
-    attr = Type.copyAttributes(attr, board.options, "sector", "arc");
+    attr = Type.copyAttributes(attributes, board.options, 'arc');
+    attr = Type.copyAttributes(attr, board.options, "sector", 'arc');
     attr.withlabel = false;
     // Minor or major arc:
     attr.selection = el.visProp.selection;
     attr.name += "_arc";
 
-    if (type === "2lines") {
+    if (type === '2lines') {
         el.updateDataArray();
         el.arc = board.create("arc", [
             function() {
@@ -809,7 +809,7 @@ JXG.createSector = function (board, parents, attributes) {
          */
         el.Radius = function () {
             var r = Type.evaluate(val);
-            if (r === "auto") {
+            if (r === 'auto') {
                 return this.autoRadius();
             }
             return r;
@@ -874,7 +874,7 @@ JXG.createSector = function (board, parents, attributes) {
         return this.L() + 2 * this.Radius();
     };
 
-    if (type === "3points") {
+    if (type === '3points') {
         /**
          * Moves the sector by the difference of two coordinates.
          * @memberOf Sector.prototype
@@ -955,7 +955,7 @@ JXG.registerElement("sector", JXG.createSector);
 JXG.createCircumcircleSector = function (board, parents, attributes) {
     var el, mp, attr, points;
 
-    points = Type.providePoints(board, parents, attributes, "point");
+    points = Type.providePoints(board, parents, attributes, 'point');
     if (points === false) {
         throw new Error(
             "JSXGraph: Can't create circumcircle sector with parent types '" +
@@ -971,10 +971,10 @@ JXG.createCircumcircleSector = function (board, parents, attributes) {
     mp = board.create("circumcenter", points.slice(0, 3), attr);
     mp.dump = false;
 
-    attr = Type.copyAttributes(attributes, board.options, "circumcirclesector");
+    attr = Type.copyAttributes(attributes, board.options, 'circumcirclesector');
     el = board.create("sector", [mp, points[0], points[2], points[1]], attr);
 
-    el.elType = "circumcirclesector";
+    el.elType = 'circumcirclesector';
     el.setParents(points);
 
     /**
@@ -1070,7 +1070,7 @@ JXG.registerElement("circumcirclesector", JXG.createCircumcircleSector);
  *
  */
 JXG.createMinorSector = function (board, parents, attributes) {
-    attributes.selection = "minor";
+    attributes.selection = 'minor';
     return JXG.createSector(board, parents, attributes);
 };
 
@@ -1108,7 +1108,7 @@ JXG.registerElement("minorsector", JXG.createMinorSector);
  * </script><pre>
  */
 JXG.createMajorSector = function (board, parents, attributes) {
-    attributes.selection = "major";
+    attributes.selection = 'major';
     return JXG.createSector(board, parents, attributes);
 };
 
@@ -1254,7 +1254,7 @@ JXG.createAngle = function (board, parents, attributes) {
     var el,
         radius, attr, attrsub,
         i, points,
-        type = "invalid";
+        type = 'invalid';
 
     // Two lines or three points?
     if (
@@ -1263,12 +1263,12 @@ JXG.createAngle = function (board, parents, attributes) {
         (Type.isArray(parents[2]) || Type.isNumber(parents[2])) &&
         (Type.isArray(parents[3]) || Type.isNumber(parents[3]))
     ) {
-        type = "2lines";
+        type = '2lines';
     } else {
         attr = {
             name: ''
         };
-        points = Type.providePoints(board, parents, attr, "point");
+        points = Type.providePoints(board, parents, attr, 'point');
         if (points === false) {
             throw new Error(
                 "JSXGraph: Can't create angle with parent types '" +
@@ -1280,10 +1280,10 @@ JXG.createAngle = function (board, parents, attributes) {
                     "'."
             );
         }
-        type = "3points";
+        type = '3points';
     }
 
-    attr = Type.copyAttributes(attributes, board.options, "angle");
+    attr = Type.copyAttributes(attributes, board.options, 'angle');
 
     //  If empty, create a new name
     if (!Type.exists(attr.name) /*|| attr.name === ""*/) {
@@ -1297,7 +1297,7 @@ JXG.createAngle = function (board, parents, attributes) {
     }
 
     board.suspendUpdate(); // Necessary for immediate availability of radius.
-    if (type === "2lines") {
+    if (type === '2lines') {
         // Angle defined by two lines
         parents.push(radius);
         el = board.create("sector", parents, attr);
@@ -1347,7 +1347,7 @@ JXG.createAngle = function (board, parents, attributes) {
         el.Radius = function () {
             // Set the angle radius, also @see @link Sector#autoRadius
             var r = Type.evaluate(radius);
-            if (r === "auto") {
+            if (r === 'auto') {
                 return el.autoRadius();
             }
             return r;
@@ -1555,7 +1555,7 @@ JXG.createAngle = function (board, parents, attributes) {
                 p.isDraggable = true;
                 p.parents = [];
 
-                p.coords.off("update");
+                p.coords.off('update');
             }
 
             this.hasFixedAngle = false;
@@ -1571,7 +1571,7 @@ JXG.createAngle = function (board, parents, attributes) {
         el.label.setText(el.evalVisProp('text'));
     }
 
-    el.elType = "angle";
+    el.elType = 'angle';
     el.type = Const.OBJECT_TYPE_ANGLE;
     el.subs = {};
 
@@ -1584,7 +1584,7 @@ JXG.createAngle = function (board, parents, attributes) {
             d1, d2, v, l1, l2,
             r = this.Radius();
 
-        if (type === "2lines") {
+        if (type === '2lines') {
             // This is necessary to update this.point1, this.point2, this.point3.
             this.updateDataArraySector();
         }
@@ -1646,16 +1646,16 @@ JXG.createAngle = function (board, parents, attributes) {
             type = this.evalVisProp('orthotype');
         }
 
-        if (type === "none") {
+        if (type === 'none') {
             this.updateDataArrayNone();
             this.maxX = function() { return 0; };
-        } else if (type === "square") {
+        } else if (type === 'square') {
             this.updateDataArraySquare();
             this.maxX = function() { return 4; };
-        } else if (type === "sector") {
+        } else if (type === 'sector') {
             this.updateDataArraySector();
             this.maxX = function() { return 6; };
-        } else if (type === "sectordot") {
+        } else if (type === 'sectordot') {
             this.updateDataArraySector();
             this.maxX = function() { return 6; };
             if (!this.dot.visProp.visible) {
@@ -1668,7 +1668,7 @@ JXG.createAngle = function (board, parents, attributes) {
         }
     };
 
-    attrsub = Type.copyAttributes(attributes, board.options, "angle", "dot");
+    attrsub = Type.copyAttributes(attributes, board.options, "angle", 'dot');
     /**
      * Indicates a right angle. Invisible by default, use <tt>dot.visible: true</tt> to show.
      * Though this dot indicates a right angle, it can be visible even if the angle is not a right
@@ -1718,7 +1718,7 @@ JXG.createAngle = function (board, parents, attributes) {
     el.dot.dump = false;
     el.subs.dot = el.dot;
 
-    if (type === "2lines") {
+    if (type === '2lines') {
         for (i = 0; i < 2; i++) {
             board.select(parents[i]).addChild(el.dot);
         }
@@ -1784,6 +1784,7 @@ JXG.createAngle = function (board, parents, attributes) {
         return el.arc.Value(unit);
     };
 
+
     // documented in GeometryElement
     /**
      * @class
@@ -1794,8 +1795,9 @@ JXG.createAngle = function (board, parents, attributes) {
             dx = 12,
             A, B, r, d, a2, co, si, mat,
             vp_s = el.evalVisProp('selection'),
-            pos = this.label.evalVisProp('position'),
-            l_vp = this.label ? this.label.visProp : this.visProp.label;
+            l_vp = this.label ? this.label.visProp : this.visProp.label,
+            pos = (this.label) ?
+                    this.label.evalVisProp('position') : this.evalVisProp('label.position');
 
         // If this is uncommented, the angle label can not be dragged
         //if (Type.exists(this.label)) {
@@ -1898,7 +1900,7 @@ JXG.registerElement("angle", JXG.createAngle);
 JXG.createNonreflexAngle = function (board, parents, attributes) {
     var el;
 
-    attributes.selection = "minor";
+    attributes.selection = 'minor';
     attributes = Type.copyAttributes(attributes, board.options, 'nonreflexangle');
     el = JXG.createAngle(board, parents, attributes);
 
@@ -1954,7 +1956,7 @@ JXG.registerElement("nonreflexangle", JXG.createNonreflexAngle);
 JXG.createReflexAngle = function (board, parents, attributes) {
     var el;
 
-    attributes.selection = "major";
+    attributes.selection = 'major';
     attributes = Type.copyAttributes(attributes, board.options, 'reflexangle');
     el = JXG.createAngle(board, parents, attributes);
 

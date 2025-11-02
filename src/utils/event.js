@@ -127,7 +127,7 @@ JXG.EventEmitter = {
         }
 
         if (handler) {
-            i = Type.indexOf(this.eventHandlers[event], handler, "handler");
+            i = Type.indexOf(this.eventHandlers[event], handler, 'handler');
             if (i > -1) {
                 this.eventHandlers[event].splice(i, 1);
             }

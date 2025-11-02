@@ -3973,7 +3973,7 @@ JXG.Options = {
         highlightStrokeColor: '#888888',
 
         /**
-         * Is used to define the behaviour of the axis.
+         * Is used to define the behavior of the axis.
          * Settings in this attribute only have an effect if the axis is exactly horizontal or vertical.
          * Possible values are:
          * <ul>
@@ -7012,7 +7012,7 @@ JXG.Options = {
         baseUnit: '',
 
         /**
-         * This attribute expects an object that has the dimension numbers as keys (as integer or in the form of "dimxx")
+         * This attribute expects an object that has the dimension numbers as keys (as integer or in the form of 'dimxx')
          * and assigns a string to each dimension.
          * If a dimension has no specification, {@link Measurement#baseUnit} is used.
          *

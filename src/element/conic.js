@@ -117,9 +117,9 @@ JXG.createEllipse = function (board, parents, attributes) {
         hasPointOrg,
         // focus 1 and focus 2
         F = [],
-        attr_foci = Type.copyAttributes(attributes, board.options, "conic", "foci"),
-        attr_center = Type.copyAttributes(attributes, board.options, "conic", "center"),
-        attr_curve = Type.copyAttributes(attributes, board.options, "conic");
+        attr_foci = Type.copyAttributes(attributes, board.options, "conic", 'foci'),
+        attr_center = Type.copyAttributes(attributes, board.options, "conic", 'center'),
+        attr_curve = Type.copyAttributes(attributes, board.options, 'conic');
 
     // The foci and the third point are either points or coordinate arrays.
     for (i = 0; i < 2; i++) {
@@ -367,9 +367,9 @@ JXG.createHyperbola = function (board, parents, attributes) {
         i,
         // focus 1 and focus 2
         F = [],
-        attr_foci = Type.copyAttributes(attributes, board.options, "conic", "foci"),
-        attr_center = Type.copyAttributes(attributes, board.options, "conic", "center"),
-        attr_curve = Type.copyAttributes(attributes, board.options, "conic");
+        attr_foci = Type.copyAttributes(attributes, board.options, "conic", 'foci'),
+        attr_center = Type.copyAttributes(attributes, board.options, "conic", 'center'),
+        attr_curve = Type.copyAttributes(attributes, board.options, 'conic');
 
     // The foci and the third point are either points or coordinate arrays.
     for (i = 0; i < 2; i++) {
@@ -602,9 +602,9 @@ JXG.createParabola = function (board, parents, attributes) {
         F1 = parents[0],
         // directrix
         l = parents[1],
-        attr_foci = Type.copyAttributes(attributes, board.options, "conic", "foci"),
-        attr_center = Type.copyAttributes(attributes, board.options, "conic", "center"),
-        attr_curve = Type.copyAttributes(attributes, board.options, "conic"),
+        attr_foci = Type.copyAttributes(attributes, board.options, "conic", 'foci'),
+        attr_center = Type.copyAttributes(attributes, board.options, "conic", 'center'),
+        attr_curve = Type.copyAttributes(attributes, board.options, 'conic'),
         attr_line;
 
     // focus 1 given by coordinates
@@ -632,7 +632,7 @@ JXG.createParabola = function (board, parents, attributes) {
 
     // Create line if given as array of two points.
     if (Type.isArray(l) && l.length === 2) {
-        attr_line = Type.copyAttributes(attributes, board.options, "conic", "line");
+        attr_line = Type.copyAttributes(attributes, board.options, "conic", 'line');
         l = board.create("line", l, attr_line);
     }
 
@@ -849,9 +849,9 @@ JXG.createConic = function (board, parents, attributes) {
         ],
         points = [],
         p = [],
-        attr_point = Type.copyAttributes(attributes, board.options, "conic", "point"),
-        attr_center = Type.copyAttributes(attributes, board.options, "conic", "center"),
-        attr_curve = Type.copyAttributes(attributes, board.options, "conic");
+        attr_point = Type.copyAttributes(attributes, board.options, "conic", 'point'),
+        attr_center = Type.copyAttributes(attributes, board.options, "conic", 'center'),
+        attr_curve = Type.copyAttributes(attributes, board.options, 'conic');
 
     if (parents.length === 5) {
         givenByPoints = true;

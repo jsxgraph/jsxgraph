@@ -121,10 +121,10 @@ JXG.createArc = function (board, parents, attributes) {
         );
     }
 
-    attr = Type.copyAttributes(attributes, board.options, "arc");
+    attr = Type.copyAttributes(attributes, board.options, 'arc');
     el = board.create("curve", [[0], [0], 0, 4], attr);
 
-    el.elType = "arc";
+    el.elType = 'arc';
     el.setParents(points);
 
     /**
@@ -494,7 +494,7 @@ JXG.createSemicircle = function (board, parents, attributes) {
     var el, mp, attr, points;
 
     // we need 2 points
-    points = Type.providePoints(board, parents, attributes, "point");
+    points = Type.providePoints(board, parents, attributes, 'point');
     if (points === false || points.length !== 2) {
         throw new Error(
             "JSXGraph: Can't create Semicircle with parent types '" +
@@ -506,13 +506,13 @@ JXG.createSemicircle = function (board, parents, attributes) {
         );
     }
 
-    attr = Type.copyAttributes(attributes, board.options, "semicircle", "center");
+    attr = Type.copyAttributes(attributes, board.options, "semicircle", 'center');
     mp = board.create("midpoint", points, attr);
     mp.dump = false;
 
-    attr = Type.copyAttributes(attributes, board.options, "semicircle");
+    attr = Type.copyAttributes(attributes, board.options, 'semicircle');
     el = board.create("arc", [mp, points[1], points[0]], attr);
-    el.elType = "semicircle";
+    el.elType = 'semicircle';
     el.setParents([points[0].id, points[1].id]);
     el.subs = {
         midpoint: mp
@@ -566,7 +566,7 @@ JXG.createCircumcircleArc = function (board, parents, attributes) {
     var el, mp, attr, points;
 
     // We need three points
-    points = Type.providePoints(board, parents, attributes, "point");
+    points = Type.providePoints(board, parents, attributes, 'point');
     if (points === false || points.length !== 3) {
         throw new Error(
             "JSXGraph: create Circumcircle Arc with parent types '" +
@@ -580,15 +580,15 @@ JXG.createCircumcircleArc = function (board, parents, attributes) {
         );
     }
 
-    attr = Type.copyAttributes(attributes, board.options, "circumcirclearc", "center");
+    attr = Type.copyAttributes(attributes, board.options, "circumcirclearc", 'center');
     mp = board.create("circumcenter", points, attr);
     mp.dump = false;
 
-    attr = Type.copyAttributes(attributes, board.options, "circumcirclearc");
+    attr = Type.copyAttributes(attributes, board.options, 'circumcirclearc');
     attr.usedirection = true;
     el = board.create("arc", [mp, points[0], points[2], points[1]], attr);
 
-    el.elType = "circumcirclearc";
+    el.elType = 'circumcirclearc';
     el.setParents([points[0].id, points[1].id, points[2].id]);
     el.subs = {
         center: mp
@@ -641,7 +641,7 @@ JXG.registerElement("circumcirclearc", JXG.createCircumcircleArc);
  */
 
 JXG.createMinorArc = function (board, parents, attributes) {
-    attributes.selection = "minor";
+    attributes.selection = 'minor';
     return JXG.createArc(board, parents, attributes);
 };
 
@@ -679,7 +679,7 @@ JXG.registerElement("minorarc", JXG.createMinorArc);
  * </script><pre>
  */
 JXG.createMajorArc = function (board, parents, attributes) {
-    attributes.selection = "major";
+    attributes.selection = 'major';
     return JXG.createArc(board, parents, attributes);
 };
 

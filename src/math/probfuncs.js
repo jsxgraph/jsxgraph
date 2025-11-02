@@ -309,7 +309,7 @@ Mat.ProbFuncs = {
      * @returns {Number}
      */
     _underflow: function (a) {
-        console.log("erfc", "UNDERFLOW");
+        console.log("erfc", 'UNDERFLOW');
         if (a < 0) {
             return 2.0;
         }
@@ -569,7 +569,7 @@ Mat.ProbFuncs = {
             return -Infinity; // -this.MAXNUM;
         }
         if (y0 >= 1.0) {
-            // console.log("ndtri", "DOMAIN");
+            // console.log("ndtri", 'DOMAIN');
             return Infinity; // this.MAXNUM;
         }
 

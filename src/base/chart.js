@@ -137,7 +137,7 @@ JXG.Chart = function (board, parents, attributes) {
         }
         this.elements.push(c);
     }
-    this.id = this.board.setId(this, "Chart");
+    this.id = this.board.setId(this, 'Chart');
 
     return this.elements;
 };
@@ -158,8 +158,8 @@ JXG.extend(
          */
         drawLine: function (board, x, y, attributes) {
             // we don't want the line chart to be filled
-            attributes.fillcolor = "none";
-            attributes.highlightfillcolor = "none";
+            attributes.fillcolor = 'none';
+            attributes.highlightfillcolor = 'none';
 
             return board.create("curve", [x, y], attributes);
         },
@@ -176,8 +176,8 @@ JXG.extend(
          */
         drawSpline: function (board, x, y, attributes) {
             // we don't want the spline chart to be filled
-            attributes.fillColor = "none";
-            attributes.highlightfillcolor = "none";
+            attributes.fillColor = 'none';
+            attributes.highlightfillcolor = 'none';
 
             return board.create("spline", [x, y], attributes);
         },
@@ -199,8 +199,8 @@ JXG.extend(
             deg = Math.max(parseInt(deg, 10), 1) || 1;
 
             // never fill
-            attributes.fillcolor = "none";
-            attributes.highlightfillcolor = "none";
+            attributes.fillcolor = 'none';
+            attributes.highlightfillcolor = 'none';
 
             return board.create(
                 "functiongraph",
@@ -245,7 +245,7 @@ JXG.extend(
                     name: ""
                 };
 
-            attr = Type.copyAttributes(attributes, board.options, "chart");
+            attr = Type.copyAttributes(attributes, board.options, 'chart');
 
             // Determine the width of the bars
             if (attr && attr.width) {
@@ -264,7 +264,7 @@ JXG.extend(
                 w *= 0.8;
             }
 
-            attrSub = Type.copyAttributes(attributes, board.options, "chart", "label");
+            attrSub = Type.copyAttributes(attributes, board.options, "chart", 'label');
 
             for (i = 0; i < x.length; i++) {
                 if (Type.isFunction(x[i])) {
@@ -283,7 +283,7 @@ JXG.extend(
                 }
                 yp = y[i];
 
-                if (attr.dir === "horizontal") {
+                if (attr.dir === 'horizontal') {
                     // horizontal bars
                     p[0] = board.create("point", [0, xp0], hiddenPoint);
                     p[1] = board.create("point", [yp, xp0], hiddenPoint);
@@ -292,9 +292,9 @@ JXG.extend(
 
                     if (Type.exists(attr.labels) && Type.exists(attr.labels[i])) {
                         attrSub.anchorX = function (self) {
-                            return self.X() >= 0 ? "left" : "right";
+                            return self.X() >= 0 ? "left" : 'right';
                         };
-                        attrSub.anchorY = "middle";
+                        attrSub.anchorY = 'middle';
                         text = board.create("text", [yp, xp1, attr.labels[i]], attrSub);
                     }
                 } else {
@@ -305,9 +305,9 @@ JXG.extend(
                     p[3] = board.create("point", [xp2, 0], hiddenPoint);
 
                     if (Type.exists(attr.labels) && Type.exists(attr.labels[i])) {
-                        attrSub.anchorX = "middle";
+                        attrSub.anchorX = 'middle';
                         attrSub.anchorY = function (self) {
-                            return self.Y() >= 0 ? "bottom" : "top";
+                            return self.Y() >= 0 ? "bottom" : 'top';
                         };
                         text = board.create("text", [xp1, yp, attr.labels[i]], attrSub);
                     }
@@ -417,7 +417,7 @@ JXG.extend(
 
                     if (Type.exists(this.label)) {
                         this.label.rendNode.style.fontSize =
-                            s * this.label.evalVisProp('fontsize') + "px";
+                            s * this.label.evalVisProp('fontsize') + 'px';
                         this.label.fullUpdate();
                     }
 
@@ -846,7 +846,7 @@ JXG.extend(
                 }
             }
 
-            legend_position = attributes.legendposition || "none";
+            legend_position = attributes.legendposition || 'none';
             switch (legend_position) {
                 case "right":
                     lxoff = attributes.legendleftoffset || 2;
@@ -873,7 +873,7 @@ JXG.extend(
                 for (i = 0; i < 6; i++) {
                     cla[i] = 20 * i;
                 }
-                cla[0] = "0";
+                cla[0] = '0';
                 clabelArray = attributes.circlelabelarray || cla;
                 ncircles = clabelArray.length;
 
@@ -887,9 +887,9 @@ JXG.extend(
                 angle = start_angle + Math.PI / numofparams;
                 t = get_transform(angle, 0);
 
-                myAtts.fillcolor = "none";
-                myAtts.highlightfillcolor = "none";
-                myAtts.strokecolor = attributes.strokecolor || "black";
+                myAtts.fillcolor = 'none';
+                myAtts.highlightfillcolor = 'none';
+                myAtts.strokecolor = attributes.strokecolor || 'black';
                 myAtts.strokewidth = attributes.circlestrokewidth || 0.5;
                 myAtts.layer = 0;
 
@@ -1213,7 +1213,7 @@ JXG.createChart = function (board, parents, attributes) {
     if (parents.length === 1 && Type.isString(parents[0])) {
         if (Type.exists(table)) {
             // extract the data
-            attr = Type.copyAttributes(attributes, board.options, "chart");
+            attr = Type.copyAttributes(attributes, board.options, 'chart');
 
             table = new DataSource().loadFromTable(
                 parents[0],
@@ -1255,7 +1255,7 @@ JXG.createChart = function (board, parents, attributes) {
 
             for (i = 0; i < len; i++) {
                 x = [];
-                if (attr.chartstyle && attr.chartstyle.indexOf("bar") !== -1) {
+                if (attr.chartstyle && attr.chartstyle.indexOf('bar') !== -1) {
                     if (originalWidth) {
                         w = originalWidth;
                     } else {
@@ -1301,7 +1301,7 @@ JXG.createChart = function (board, parents, attributes) {
                     attr.highlightfillcolor = Color.hsv2rgb(((i + 1) / len) * 360, 0.9, 0.6);
                 }
 
-                if (attr.chartstyle && attr.chartstyle.indexOf("bar") !== -1) {
+                if (attr.chartstyle && attr.chartstyle.indexOf('bar') !== -1) {
                     charts.push(new JXG.Chart(board, [x, showRows[i]], attr));
                 } else {
                     charts.push(new JXG.Chart(board, [showRows[i]], attr));
@@ -1313,7 +1313,7 @@ JXG.createChart = function (board, parents, attributes) {
         return charts;
     }
 
-    attr = Type.copyAttributes(attributes, board.options, "chart");
+    attr = Type.copyAttributes(attributes, board.options, 'chart');
     return new JXG.Chart(board, parents, attr);
 };
 
@@ -1340,7 +1340,7 @@ JXG.Legend = function (board, coords, attributes) {
     /* Call the constructor of GeometryElement */
     this.constructor();
 
-    attr = Type.copyAttributes(attributes, board.options, "legend");
+    attr = Type.copyAttributes(attributes, board.options, 'legend');
 
     this.board = board;
     this.coords = new Coords(Const.COORDS_BY_USER, coords, this.board);
@@ -1357,13 +1357,13 @@ JXG.Legend = function (board, coords, attributes) {
     this.myAtts.frozen = attr.frozen || false ;
     this.style = attr.legendstyle || attr.style;
 
-    if (this.style === "vertical") {
+    if (this.style === 'vertical') {
         this.drawVerticalLegend(board, attr);
     } else {
         throw new Error("JSXGraph: Unknown legend style: " + this.style);
     }
 
-    this.id = this.board.setId(this, "Leg");
+    this.id = this.board.setId(this, 'Leg');
 
 };
 
