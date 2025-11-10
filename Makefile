@@ -42,7 +42,8 @@ JSDOC=node ./node_modules/.bin/jsdoc
 #JSDOC2PTCH=doc/jsdoc-tk/patches
 JSDOCTPL=doc/jsdoc-tk/template
 JSDOCTPLSTAT=$(JSDOCTPL)/static
-JSDOCFLAGS=--verbose -p -t $(JSDOCTPL) -d $(TMP)/docs
+# JSDOCFLAGS=--verbose -p -t $(JSDOCTPL) -d $(TMP)/docs
+JSDOCFLAGS=--verbose -p -d $(TMP)/docs
 
 # Flags
 MKDIRFLAGS=-p
