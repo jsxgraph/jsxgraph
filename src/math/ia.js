@@ -286,7 +286,7 @@ JXG.extend(MatInterval.prototype, {
  * @name JXG.Math.IntervalArithmetic
  * @namespace
  * @exports Mat.IntervalArithmetic as JXG.Math.IntervalArithmetic
- * 
+ *
  * @description
  * Interval arithmetic is a technique used to mitigate rounding and measurement errors in mathematical computation
  * by computing function bounds. Instead of representing a value as a single number, interval arithmetic represents each value as a range.

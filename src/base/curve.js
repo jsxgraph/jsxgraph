@@ -405,7 +405,7 @@ JXG.extend(
         },
 
         /**
-         * Computes for equidistant points on the x-axis the values of the function
+         * Generates points of the curve to be plotted.
          * @returns {JXG.Curve} Reference to the curve object.
          * @see JXG.Curve#updateCurve
          */
@@ -739,9 +739,8 @@ JXG.extend(
             mi = this.minX();
             ma = this.maxX();
 
-            // Discrete data points
-            // x-coordinates are in an array
             if (Type.exists(this.dataX)) {
+                // Discrete data points, i.e. x-coordinates are given in an array
                 this.numberPoints = this.dataX.length;
                 len = this.numberPoints;
 
@@ -775,8 +774,9 @@ JXG.extend(
                     // this.updateTransform(this.points[i]);
                     suspendUpdate = true;
                 }
-                // continuous x data
+
             } else {
+                // Continuous x-data, i.e. given as a function
                 if (this.evalVisProp('doadvancedplot')) {
                     // console.time('plot');
 
