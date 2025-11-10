@@ -37,6 +37,13 @@ JSDOC2TPL=doc/jsdoc-tk/template
 JSDOC2TPLSTAT=$(JSDOC2TPL)/static
 JSDOC2FLAGS=-v -p -t=$(JSDOC2TPL) -d=$(TMP)/docs
 
+JSDOC=node ./node_modules/.bin/jsdoc
+#JSDOC2PLG=doc/jsdoc-tk/plugins
+#JSDOC2PTCH=doc/jsdoc-tk/patches
+JSDOCTPL=doc/jsdoc-tk/template
+JSDOCTPLSTAT=$(JSDOCTPL)/static
+JSDOCFLAGS=--verbose -p -t $(JSDOCTPL) -d $(TMP)/docs
+
 # Flags
 MKDIRFLAGS=-p
 RMFLAGS=-rf
@@ -127,14 +134,15 @@ docsonly:
 	# Update version number in line 2 of file doc/jsdoc-tk/template/static/header.html
 	sed -i '2s/.*/<h1>JSXGraph $(VERSION) Reference<\/h1>/' doc/jsdoc-tk/template/static/header.html
 
-	# Patch run.js
-	$(CP) $(JSDOC2PTCH)/*.js ./node_modules/jsdoc2/app
+	## Patch run.js
+	#$(CP) $(JSDOC2PTCH)/*.js ./node_modules/jsdoc2/app
 
-	# Update the plugin
-	$(CP) $(JSDOC2PLG)/*.js ./node_modules/jsdoc2/app/plugins/
+	## Update the plugin
+	#$(CP) $(JSDOC2PLG)/*.js ./node_modules/jsdoc2/app/plugins/
 
 	# Run node-jsdoc2
-	$(JSDOC2) $(JSDOC2FLAGS) $(FILELIST)
+	# $(JSDOC2) $(JSDOC2FLAGS) $(FILELIST)
+	$(JSDOC) $(JSDOCFLAGS) $(FILELIST)
 
 	# Compress the result: zip -r tmp/docs.zip tmp/docs/
 	$(CD) $(TMP) && $(ZIP) $(ZIPFLAGS) docs.zip docs/
