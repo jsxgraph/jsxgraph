@@ -2448,14 +2448,22 @@ JXG.extend(
 
                     return x * x + y * y;
                 };
+                // ff2 = function (t) {
+                //     var t1 = mi1 + t * (ma1 - mi1),
+                //         t2 = mi2 + t * (ma2 - mi2),
+                //         x = c1.X(t1) - c2.X(t2),
+                //         y = c1.Y(t1) - c2.Y(t2);
+
+                //     return x * x + y * y;
+                // };
 
             t = Numerics.root(ff, range);
-
             t1 = mi1 + t * (ma1 - mi1);
             t2 = mi2 + t * (ma2 - mi2);
-// console.log(t, t1, ff(t))
+// console.log(t, t1, ff(t), ff2(t))
+// console.log('\t', 1, c1.Ft(1))
+            co = c1.Ft(t1);
             // co = [1, c1.X(t1), c1.Y(t1)];
-            co = c1.Ft(t1); // [1, c1.X(t1), c1.Y(t1)];
             return [co, t1, t2, t, ff(t)];
         },
 
