@@ -231,6 +231,20 @@ JXG.extend(
             return 1;
         },
 
+        Ft: function(t) {
+            var c = [this.Z(t), this.X(t), this.Y(t)],
+                len = this.transformations.length;
+
+            if (len > 0) {
+                c = Mat.matVecMult(this.transformMat, c);
+            }
+            c[1] /= c[0];
+            c[2] /= c[0];
+            c[0] /= c[0];
+
+            return c;
+        },
+
         /**
          * Checks whether (x,y) is near the curve.
          * @param {Number} x Coordinate in x direction, screen coordinates.

@@ -2397,7 +2397,7 @@ JXG.extend(
          * @param {String} [method='segment'] Intersection method, possible values are 'newton' and 'segment'.
          * @returns {JXG.Coords} intersection point
          */
-        meetCurveCurve: function (c1, c2, nr, t2ini, board, method) {
+        meetCurveCurveORG: function (c1, c2, nr, t2ini, board, method) {
             var co,
                 i = Type.evaluate(nr);
 
@@ -2407,8 +2407,9 @@ JXG.extend(
                 if (c1.bezierDegree === 3 || c2.bezierDegree === 3) {
                     co = this.meetBezierCurveRedBlueSegments(c1, c2, i);
                 } else {
-                    co = this.meetCurveRedBlueSegments(c1, c2, i, board);
+                    co = this.meetCurveRedBlueSegments(c1, c2, i);
                 }
+
                 // // We might add a Newton iteration if the segment search fails?
                 // // However, we would have to apply evt. transformations to the curves
                 // if (co[0] === 0 && isNaN(co[1]) && isNaN(co[2])) {
@@ -2418,6 +2419,111 @@ JXG.extend(
 
             return new Coords(Const.COORDS_BY_USER, co, board);
         },
+
+        meetCurveCurveDiscrete: function (c1, c2, nr, board) {
+            var co;
+
+            if (c1.bezierDegree === 3 || c2.bezierDegree === 3) {
+                co = this.meetBezierCurveRedBlueSegments(c1, c2, nr);
+            } else {
+                co = this.meetCurveRedBlueSegments(c1, c2, nr);
+            }
+            return new Coords(Const.COORDS_BY_USER, co, board);
+        },
+
+        meetCurveCurveCont: function (c1, c2, range) {
+            var t, t1, t2,
+                co,
+                ma1 = c1.maxX(),
+                mi1 = c1.minX(),
+                ma2 = c2.maxX(),
+                mi2 = c2.minX(),
+                ff = function (t) {
+                    var t1 = mi1 + t * (ma1 - mi1),
+                        t2 = mi2 + t * (ma2 - mi2),
+                        f1 = c1.Ft(t1),
+                        f2 = c2.Ft(t2),
+                        x = f1[1] - f2[1],
+                        y = f1[2] - f2[2];
+
+                    return x * x + y * y;
+                };
+
+            t = Numerics.root(ff, range);
+
+            t1 = mi1 + t * (ma1 - mi1);
+            t2 = mi2 + t * (ma2 - mi2);
+// console.log(t, t1, ff(t))
+            // co = [1, c1.X(t1), c1.Y(t1)];
+            co = c1.Ft(t1); // [1, c1.X(t1), c1.Y(t1)];
+            return [co, t1, t2, t, ff(t)];
+        },
+
+        meetCurveCurveRecursive: function(c1, c2, low, up, i) {
+            var ret,
+                t, t1, t2,
+                delta = 0.01,
+                left = [],
+                right = [];
+
+            if (up < low) {
+                return [];
+            }
+
+// console.log('DO', low * 20 - 10, up * 20 - 10)
+            ret = this.meetCurveCurveCont(c1, c2, [low, up]);
+
+            if (ret[4] < Mat.eps) {
+                t = ret[3];
+                t1 = ret[1];
+                t2 = ret[2];
+            } else {
+                return [];
+            }
+
+            left = this.meetCurveCurveRecursive(c1, c2, low, t - delta, i);
+            if (left.length > 0 && t1 - left[left.length - 1] < Mat.eps) {
+                left.pop();
+            }
+
+            if (left.length + 1 - 1 >= i) {
+                return left.concat([t1]);
+            }
+
+            right = this.meetCurveCurveRecursive(c1, c2, t + delta, up, i);
+            if (right.length > 0 && right[0] - t1 < Mat.eps) {
+                right.shift();
+            }
+
+            return left.concat([t1]).concat(right);
+        },
+
+        // Line 1906; el1, el2, i, j board
+        meetCurveCurve: function (c1, c2, nr, t2ini, board, method) {
+            var co,
+                zeros,
+                i = Type.evaluate(nr);
+
+            if (Type.exists(c1.dataX) || Type.exists(c2.dataX)) {
+                // Discrete data points, i.e. x-coordinates of c1 or c2 are given in an array)
+                return this.meetCurveCurveDiscrete(c1, c2, i, board);
+            }
+
+            if (Type.exists(method) && method === 'newton') {
+                co = Numerics.generalizedNewton(c1, c2, i, t2ini);
+            } else {
+                zeros = this.meetCurveCurveRecursive(c1, c2, 0, 1, i);
+                if (zeros.length > i) {
+                    co = [1, c1.X(zeros[i]), c1.Y(zeros[i])];
+                } else {
+                    return [0, NaN, NaN];
+                }
+
+            }
+
+            return new Coords(Const.COORDS_BY_USER, co, board);
+        },
+
 
         /**
          * Intersection of curve with line,
@@ -2643,33 +2749,18 @@ JXG.extend(
          * @param {JXG.Curve} red
          * @param {JXG.Curve} blue
          * @param {Number|Function} nr
-         * @param {JXG.Board} board Reference to a board object.
          */
-        meetCurveRedBlueSegments: function (red, blue, nr, board) {
-            var i, j,
+        meetCurveRedBlueSegments: function (red, blue, nr) {
+            var i,
+                j,
                 n = Type.evaluate(nr),
                 red1,
                 red2,
                 blue1,
                 blue2,
                 m,
-                minX, maxX,
-                minY, maxY,
-
-                // For short curve segments, we slightly enlarge
-                // the intersection regions in the segments from [0, 1] to [-0.3, 1.3]
-                eps = 1 / board.unitX,
-                start = -0.3,
-                end = 1.3,
-
-                shortRed = false,
-                shortBlue = false,
-                startRed = 0.0,
-                startBlue = 0.0,
-                endRed = 1.0,
-                endBlue = 1.0,
-                // ---
-
+                minX,
+                maxX,
                 iFound = 0,
                 lenBlue = blue.numberPoints,
                 lenRed = red.numberPoints;
@@ -2678,65 +2769,39 @@ JXG.extend(
                 return [0, NaN, NaN];
             }
 
-//var cnt = 0
             for (i = 1; i < lenRed; i++) {
                 red1 = red.points[i - 1].usrCoords;
                 red2 = red.points[i].usrCoords;
-
-                shortRed = (this.distance(red1, red2, 3) < eps);
-                startRed = ((shortRed) ? start : 0.0) - Mat.eps;
-                endRed = ((shortRed) ? end : 1.0) + Mat.eps;
-
                 minX = Math.min(red1[1], red2[1]);
                 maxX = Math.max(red1[1], red2[1]);
-                minY = Math.min(red1[2], red2[2]);
-                maxY = Math.max(red1[2], red2[2]);
 
                 blue2 = blue.points[0].usrCoords;
                 for (j = 1; j < lenBlue; j++) {
                     blue1 = blue2;
                     blue2 = blue.points[j].usrCoords;
                     if (
-                        Math.min(blue1[1], blue2[1]) < maxX + eps &&
-                        Math.max(blue1[1], blue2[1]) > minX - eps
-                        &&
-                        Math.min(blue1[2], blue2[2]) < maxY + eps &&
-                        Math.max(blue1[2], blue2[2]) > minY - eps
+                        Math.min(blue1[1], blue2[1]) < maxX &&
+                        Math.max(blue1[1], blue2[1]) > minX
                     ) {
-
-                        shortBlue = (this.distance(blue1, blue2, 3) < eps);
-                        startBlue = ((shortBlue) ? start : 0.0) - Mat.eps;
-                        endBlue = ((shortBlue) ? end : 1.0) + Mat.eps;
-//cnt++
                         m = this.meetSegmentSegment(red1, red2, blue1, blue2);
-                        // console.log(m[0][1], red1[1], blue1[1], m)
                         if (
-                            m[1] >= startRed && m[2] >= startBlue &&
+                            m[1] >= 0.0 && m[2] >= 0.0 &&
                             // The two segments meet in the interior or at the start points
-                            // ((m[1] < 1.0 && m[2] < 1.0) ||
-                            (
-                              (m[1] <= endRed && m[2] <= endBlue) ||
+                            ((m[1] < 1.0 && m[2] < 1.0) ||
                               // One of the curve is intersected in the very last point
-                              (i === lenRed - 1 && (m[1] - 1.0) < Mat.eps) ||
-                              (j === lenBlue - 1 && (m[2] - 1.0) < Mat.eps)
-                            )
+                                (i === lenRed - 1 && m[1] === 1.0) ||
+                                (j === lenBlue - 1 && m[2] === 1.0))
                         ) {
                             if (iFound === n) {
-//console.log('blue', blue.points.length, 'red', red.points.length, "Pairs:", cnt)
                                 return m[0];
                             }
 
                             iFound++;
-                        // } else {
-                        //     let c = Mat.crossProduct(
-                        //         [red2[0] - red1[0], red2[1] - red1[1], red2[2] - red1[2]],
-                        //         [blue2[0] - blue1[0], blue2[1] - blue1[1], blue2[2] - blue1[2]]
-                        //     )
                         }
                     }
                 }
             }
-//console.log('blue', blue.points.length, 'red', red.points.length, "Pairs:", cnt)
+
             return [0, NaN, NaN];
         },
 
