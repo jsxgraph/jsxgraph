@@ -2431,25 +2431,30 @@ JXG.extend(
             return new Coords(Const.COORDS_BY_USER, co, board);
         },
 
-        meetCurveCurveCont: function (c1, c2, range, dir) {
+        meetCurveCurveCont: function (c1, c2, range) {
             var t, t1, t2,
                 co,
-                r, ta = [], con = [], // Cobyla
-                inphi = (Math.sqrt(5) - 1) * 0.5,
+                r,
+                // ta = [], con = [], // Cobyla
+                // inphi = (Math.sqrt(5) - 1) * 0.5,
                 ma1 = c1.maxX(),
                 mi1 = c1.minX(),
                 ma2 = c2.maxX(),
                 mi2 = c2.minX(),
-                ff = function (t) {
-                    var t1 = mi1 + t * (ma1 - mi1),
-                        t2 = mi2 + t * (ma2 - mi2),
-                        f1 = c1.Ft(t1),
-                        f2 = c2.Ft(t2),
-                        x = f1[1] - f2[1],
-                        y = f1[2] - f2[2];
+                mint1 = mi1 + range[0] * (ma1 - mi1),
+                maxt1 = mi1 + range[1] * (ma1 - mi1),
+                mint2 = mi2 + range[0] * (ma2 - mi2),
+                maxt2 = mi2 + range[1] * (ma2 - mi2),
+                // ff = function (t) {
+                //     var t1 = mi1 + t * (ma1 - mi1),
+                //         t2 = mi2 + t * (ma2 - mi2),
+                //         f1 = c1.Ft(t1),
+                //         f2 = c2.Ft(t2),
+                //         x = f1[1] - f2[1],
+                //         y = f1[2] - f2[2];
 
-                    return x * x + y * y;
-                },
+                //     return x * x + y * y;
+                // },
                 cob = function(n, m, ta, con) {
                     // var t1 = mi1 + t * (ma1 - mi1),
                     //     t2 = mi2 + t * (ma2 - mi2),
@@ -2461,7 +2466,13 @@ JXG.extend(
                         y = f1[2] - f2[2];
 
                     con[0] = x;
-                    con[1] = y;
+                    con[1] = -x;
+                    con[2] = y;
+                    con[3] = -y;
+                    con[4] = t1 - mint1;
+                    con[5] = maxt1 - t1;
+                    con[6] = t2 - mint2;
+                    con[7] = maxt2 - t2;
 
                     return x * x + y * y;
                 };
@@ -2473,41 +2484,44 @@ JXG.extend(
             // co = c1.Ft(t1);
             // return [co, t1, t2, t, Math.abs(ff(t))];
 
-            // Use cobyla
             t = (range[1] + range[0]) * 0.5;
             // t *= (dir === -1) ? (1 - inphi) : inphi;
             t1 = mi1 + t * (ma1 - mi1);
             t2 = mi2 + t * (ma2 - mi2);
-// console.log("\tCONT", range, t, t1, t2)            
-            
-            // ta[0] = t1;
-            // ta[1] = t2;
-            // r = JXG.Math.Nlp.FindMinimum(cob, 2,  2, ta, 1, 1.0e-6,  0,  100);
-            // t1 = ta[0];
-            // t2 = ta[1];
-            // t = (t1 - mi1) / (ma1 - mi1);
-            // if (r !== 0 || t < range[0] || t > range[1]) {
-            //     // Cobyla found solution outside of range
-            //     return [co, t1, t2, t, 10000];
-            // }
-            // return [co, t1, t2, t, cob(2, 2, ta, con)];
+// console.log("\tCONT", range, t, t1, t2)
 
-            r = Numerics.generalizedNewtonDamped(c1, c2, t1, t2, 0.4);
-            t1 = r[1];
-            t2 = r[2];
-            t = (t1 - mi1) / (ma1 - mi1);
+            // if (false) {
+            //     // Use cobyla
+            //     ta[0] = t1;
+            //     ta[1] = t2;
+            //     r = JXG.Math.Nlp.FindMinimum(cob, 2,  8, ta, 5, 1.0e-6, 0, 1000);
+            //     t1 = ta[0];
+            //     t2 = ta[1];
+            //     t = (t1 - mi1) / (ma1 - mi1);
+            //     if (r !== 0 || t < range[0] || t > range[1]) {
+            //         // Cobyla found solution outside of range
+            //         return [co, t1, t2, t, 10000];
+            //     }
+            //     return [co, t1, t2, t, cob(2, 2, ta, con)];
+            // } else {
+                // Use damped Newton
+                r = Numerics.generalizedNewtonDamped(c1, c2, t1, t2, 0.4);
+                t1 = r[1];
+                t2 = r[2];
+                t = (t1 - mi1) / (ma1 - mi1);
 // console.log('cont', r, t, 't1', t1, 't2', t2)
 
-            co = c1.Ft(t1);
-            if (t < range[0] || t > range[1]) {
-                // Cobyla found solution outside of range
-                return [co, t1, t2, t, 10000];
-            }
+                co = c1.Ft(t1);
+                if (t < range[0] || t > range[1]) {
+                    // Cobyla found solution outside of range
+                    return [co, t1, t2, t, 10000];
+                }
 
-            return [co, t1, t2, t, r[3]];
+                return [co, t1, t2, t, r[3]];
+            // }
         },
 
-        meetCurveCurveRecursive: function(c1, c2, low, up, i, dir) {
+        meetCurveCurveRecursive: function(c1, c2, low, up, i) {
             var ret,
                 t, t1, t2,
                 delta = 0.009, // Math.eps * 100,
@@ -2522,19 +2536,19 @@ JXG.extend(
 // console.log('DO', low * 20 - 10, up * 20 - 10)
 // console.log('DO', low, up)
 
-            ret = this.meetCurveCurveCont(c1, c2, [low, up], dir);
+            ret = this.meetCurveCurveCont(c1, c2, [low, up]);
 // console.log('rec', ret)
             if (ret[4] < Mat.eps) {
                 t = ret[3];
                 t1 = ret[1];
                 // t2 = ret[2];
-// console.log("\tFOUND", t, t1, c1.Ft(t1)[2])
+//console.log("\tFOUND", t, t1, c1.Ft(t1)[2])
             } else {
-// console.log("\tNot FOUND", ret)
+//console.log("\tNot FOUND", ret)
                 return [];
             }
 
-            left = this.meetCurveCurveRecursive(c1, c2, low, t - delta, i, -1);
+            left = this.meetCurveCurveRecursive(c1, c2, low, t - delta, i);
             if (left.length > 0 && t1 - left[left.length - 1] < Mat.eps) {
                 left.pop();
             }
@@ -2542,7 +2556,7 @@ JXG.extend(
                 return left.concat([t1]);
             }
 
-            right = this.meetCurveCurveRecursive(c1, c2, t + delta, up, i, 1);
+            right = this.meetCurveCurveRecursive(c1, c2, t + delta, up, i);
             if (right.length > 0 && right[0] - t1 < Mat.eps) {
                 right.shift();
             }

@@ -1669,6 +1669,7 @@ Mat.Numerics = {
             F,
             f1, f2,
             D00, D01, D10, D11,
+            eps = Mat.eps * Mat.eps,
             max_it = 40,
             count = 0;
 
@@ -1686,7 +1687,7 @@ Mat.Numerics = {
         D10 = this.D(c1.Y, c1);
         D11 = this.D(c2.Y, c2);
 
-        while (F > Mat.eps && count < max_it) {
+        while (F > eps && count < max_it) {
             a = D00(t1);
             b = -D01(t2);
             c = D10(t1);
@@ -1710,7 +1711,6 @@ Mat.Numerics = {
 
         // return [c2.X(t2), c2.Y(t2)];
     },
-
 
     /**
      * Returns the Lagrange polynomials for curves with equidistant nodes, see
