@@ -2081,7 +2081,7 @@ JXG.extend(
                     } else if (el1.elementClass === Const.OBJECT_CLASS_CURVE &&
                         [Const.OBJECT_CLASS_CURVE, Const.OBJECT_CLASS_CIRCLE].indexOf(el2.elementClass) >= 0) {
                         // curve, circle|curve
-                        c = that.meetCurveCurve(el1, el2, i, 0, board, 'segment');
+                        c = that.meetCurveCurve(el1, el2, i, 0, board);
                     } else if (el1.elementClass === Const.OBJECT_CLASS_CURVE && el2.elementClass === Const.OBJECT_CLASS_LINE) {
                         // curve, line
                         if (Type.exists(el1.dataX)) {
@@ -2091,13 +2091,20 @@ JXG.extend(
                         }
                     }
 
+                    if (c === undefined) {
+                        // Intersection point does not exist
+                        continue;
+                    }
+
                     // If the intersection is close to one of the points in other
                     // we have to search for another intersection point.
                     isClose = false;
                     for (k = 0; !isClose && k < le; k++) {
-                        d = c.distance(JXG.COORDS_BY_USER, others[k].coords);
-                        if (d < eps) {
-                            isClose = true;
+                        if (Type.exists(c) && Type.exists(c.distance)) {
+                            d = c.distance(JXG.COORDS_BY_USER, others[k].coords);
+                            if (d < eps) {
+                                isClose = true;
+                            }
                         }
                     }
                     if (!isClose) {
@@ -2440,42 +2447,42 @@ JXG.extend(
                 ma1 = c1.maxX(),
                 mi1 = c1.minX(),
                 ma2 = c2.maxX(),
-                mi2 = c2.minX(),
-                mint1 = mi1 + range[0] * (ma1 - mi1),
-                maxt1 = mi1 + range[1] * (ma1 - mi1),
-                mint2 = mi2 + range[0] * (ma2 - mi2),
-                maxt2 = mi2 + range[1] * (ma2 - mi2),
-                // ff = function (t) {
-                //     var t1 = mi1 + t * (ma1 - mi1),
-                //         t2 = mi2 + t * (ma2 - mi2),
-                //         f1 = c1.Ft(t1),
-                //         f2 = c2.Ft(t2),
-                //         x = f1[1] - f2[1],
-                //         y = f1[2] - f2[2];
+                mi2 = c2.minX();
+            // mint1 = mi1 + range[0] * (ma1 - mi1),
+            // maxt1 = mi1 + range[1] * (ma1 - mi1),
+            // mint2 = mi2 + range[0] * (ma2 - mi2),
+            // maxt2 = mi2 + range[1] * (ma2 - mi2),
+            // ff = function (t) {
+            //     var t1 = mi1 + t * (ma1 - mi1),
+            //         t2 = mi2 + t * (ma2 - mi2),
+            //         f1 = c1.Ft(t1),
+            //         f2 = c2.Ft(t2),
+            //         x = f1[1] - f2[1],
+            //         y = f1[2] - f2[2];
 
-                //     return x * x + y * y;
-                // },
-                cob = function(n, m, ta, con) {
-                    // var t1 = mi1 + t * (ma1 - mi1),
-                    //     t2 = mi2 + t * (ma2 - mi2),
-                    var t1 = ta[0],
-                        t2 = ta[1],
-                        f1 = c1.Ft(t1),
-                        f2 = c2.Ft(t2),
-                        x = f1[1] - f2[1],
-                        y = f1[2] - f2[2];
+            //     return x * x + y * y;
+            // },
+            // cob = function(n, m, ta, con) {
+            //     // var t1 = mi1 + t * (ma1 - mi1),
+            //     //     t2 = mi2 + t * (ma2 - mi2),
+            //     var t1 = ta[0],
+            //         t2 = ta[1],
+            //         f1 = c1.Ft(t1),
+            //         f2 = c2.Ft(t2),
+            //         x = f1[1] - f2[1],
+            //         y = f1[2] - f2[2];
 
-                    con[0] = x;
-                    con[1] = -x;
-                    con[2] = y;
-                    con[3] = -y;
-                    con[4] = t1 - mint1;
-                    con[5] = maxt1 - t1;
-                    con[6] = t2 - mint2;
-                    con[7] = maxt2 - t2;
+            //     con[0] = x;
+            //     con[1] = -x;
+            //     con[2] = y;
+            //     con[3] = -y;
+            //     con[4] = t1 - mint1;
+            //     con[5] = maxt1 - t1;
+            //     con[6] = t2 - mint2;
+            //     con[7] = maxt2 - t2;
 
-                    return x * x + y * y;
-                };
+            //     return x * x + y * y;
+            // };
 
             // One-dimensional - works only for functiongraphs without transformations
             // t = Numerics.root(ff, range);
@@ -2485,10 +2492,8 @@ JXG.extend(
             // return [co, t1, t2, t, Math.abs(ff(t))];
 
             t = (range[1] + range[0]) * inphi;
-            // t *= (dir === -1) ? (1 - inphi) : inphi;
             t1 = mi1 + t * (ma1 - mi1);
             t2 = mi2 + t * (ma2 - mi2);
-// console.log("\tCONT", range, t, t1, t2)
 
             // if (false) {
             //     // Use cobyla
@@ -2503,29 +2508,26 @@ JXG.extend(
             //         return [co, t1, t2, t, 10000];
             //     }
             //     return [co, t1, t2, t, cob(2, 2, ta, con)];
-            // } else {
-                // Use damped Newton
-                r = Numerics.generalizedNewtonDamped(c1, c2, t1, t2, inphi);
-                t1 = r[1];
-                t2 = r[2];
-                t = (t1 - mi1) / (ma1 - mi1);
-// console.log('\tcont', r, t, 't1', t1, 't2', t2)
+            // Use damped Newton
+            r = Numerics.generalizedNewtonDamped(c1, c2, t1, t2, inphi);
+            t1 = r[1];
+            t2 = r[2];
+            t = (t1 - mi1) / (ma1 - mi1);
 
-                co = c1.Ft(t1);
-                if (t < range[0] || t > range[1]) {
-                    // Cobyla found solution outside of range
-                    return [co, t1, t2, t, 10000];
-                }
+            co = c1.Ft(t1);
+            if (t < range[0] - Mat.eps || t > range[1] + Mat.eps) {
+                // Damped-Newton found solution outside of range
+                return [co, t1, t2, t, 10000];
+            }
 
-                return [co, t1, t2, t, r[3]];
-            // }
+            return [co, t1, t2, t, r[3]];
         },
 
         meetCurveCurveRecursive: function(c1, c2, low, up, i) {
             var ret,
-                t, t1, t2,
+                t, t1,
+                // t2,
                 delta = 0.005, // Math.eps * 100,
-                // inphi = (Math.sqrt(5) - 1) * 0.5,
                 left = [],
                 right = [];
 
