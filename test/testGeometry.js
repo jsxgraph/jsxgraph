@@ -66,6 +66,14 @@ describe("Test geometry functions", function () {
         expect(inter.X()).toBeCloseTo(1, 2);
     });
 
+    it("intersectingCurveCurve", function () {
+      const f1 = board.create("functiongraph", ["sin(x)", -10, 10], { fixed: false });
+      const f2 = board.create("functiongraph", ["0", -10, 10], {});
+
+      const inter = board.create("intersection", [f1, f2, 5]);
+      expect(inter.X()).toBeCloseTo(6.283184748989207, 4);
+    });
+
     it("meetSegmentSegment", function () {
         var res = JXG.Math.Geometry.meetSegmentSegment(
             [1, -1, -1],

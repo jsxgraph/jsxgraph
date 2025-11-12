@@ -2491,11 +2491,11 @@ JXG.extend(
             // co = c1.Ft(t1);
             // return [co, t1, t2, t, Math.abs(ff(t))];
 
-            t = (range[1] + range[0]) * inphi;
+            t = range[0] + (range[1] - range[0]) * (1 - inphi);
             t1 = mi1 + t * (ma1 - mi1);
             t2 = mi2 + t * (ma2 - mi2);
+// console.log("\t", range, (1-inphi), t, t1, t2)
 
-            // if (false) {
             //     // Use cobyla
             //     ta[0] = t1;
             //     ta[1] = t2;
@@ -2508,6 +2508,7 @@ JXG.extend(
             //         return [co, t1, t2, t, 10000];
             //     }
             //     return [co, t1, t2, t, cob(2, 2, ta, con)];
+
             // Use damped Newton
             r = Numerics.generalizedNewtonDamped(c1, c2, t1, t2, inphi);
             t1 = r[1];
