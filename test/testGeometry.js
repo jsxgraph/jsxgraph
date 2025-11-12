@@ -62,7 +62,7 @@ describe("Test geometry functions", function () {
         var f2 = board.create("functiongraph", ["0", -10, 10]);
         var inter = board.create("intersection", [f1, f2]);
         // var c = JXG.Math.Geometry.meetCurveCurve(f1, f2, 0, 0, board).usrCoords;
-        console.log('intersection', inter.X())
+        // console.log('intersection', inter.X())
         expect(inter.X()).toBeCloseTo(1, 2);
     });
 

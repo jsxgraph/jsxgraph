@@ -2436,7 +2436,7 @@ JXG.extend(
                 co,
                 r,
                 // ta = [], con = [], // Cobyla
-                // inphi = (Math.sqrt(5) - 1) * 0.5,
+                inphi = (Math.sqrt(5) - 1) * 0.5,
                 ma1 = c1.maxX(),
                 mi1 = c1.minX(),
                 ma2 = c2.maxX(),
@@ -2484,7 +2484,7 @@ JXG.extend(
             // co = c1.Ft(t1);
             // return [co, t1, t2, t, Math.abs(ff(t))];
 
-            t = (range[1] + range[0]) * 0.5;
+            t = (range[1] + range[0]) * inphi;
             // t *= (dir === -1) ? (1 - inphi) : inphi;
             t1 = mi1 + t * (ma1 - mi1);
             t2 = mi2 + t * (ma2 - mi2);
@@ -2505,11 +2505,11 @@ JXG.extend(
             //     return [co, t1, t2, t, cob(2, 2, ta, con)];
             // } else {
                 // Use damped Newton
-                r = Numerics.generalizedNewtonDamped(c1, c2, t1, t2, 0.4);
+                r = Numerics.generalizedNewtonDamped(c1, c2, t1, t2, inphi);
                 t1 = r[1];
                 t2 = r[2];
                 t = (t1 - mi1) / (ma1 - mi1);
-// console.log('cont', r, t, 't1', t1, 't2', t2)
+// console.log('\tcont', r, t, 't1', t1, 't2', t2)
 
                 co = c1.Ft(t1);
                 if (t < range[0] || t > range[1]) {
@@ -2524,7 +2524,7 @@ JXG.extend(
         meetCurveCurveRecursive: function(c1, c2, low, up, i) {
             var ret,
                 t, t1, t2,
-                delta = 0.009, // Math.eps * 100,
+                delta = 0.005, // Math.eps * 100,
                 // inphi = (Math.sqrt(5) - 1) * 0.5,
                 left = [],
                 right = [];
@@ -2537,14 +2537,14 @@ JXG.extend(
 // console.log('DO', low, up)
 
             ret = this.meetCurveCurveCont(c1, c2, [low, up]);
-// console.log('rec', ret)
+// console.log('\trec', ret)
             if (ret[4] < Mat.eps) {
                 t = ret[3];
                 t1 = ret[1];
                 // t2 = ret[2];
-//console.log("\tFOUND", t, t1, c1.Ft(t1)[2])
+// console.log("\tFOUND", t, t1, c1.Ft(t1)[2])
             } else {
-//console.log("\tNot FOUND", ret)
+// console.log("\tNot FOUND", ret)
                 return [];
             }
 
@@ -2580,8 +2580,8 @@ JXG.extend(
             } else {
 // console.time('cucu')
                 zeros = this.meetCurveCurveRecursive(c1, c2, 0, 1, i, -1);
-// console.log("-------------------------")
 // console.timeEnd('cucu')
+// console.log("-------------------------")
                 if (zeros.length > i) {
                     // co = [1, c1.X(zeros[i]), c1.Y(zeros[i])];
                     co = c1.Ft(zeros[i]);
