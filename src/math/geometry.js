@@ -2655,10 +2655,12 @@ JXG.extend(
             }
 
             // Outdated:
-            // if (Type.exists(method) && method === 'newton') {
-            //     co = Numerics.generalizedNewton(c1, c2, i, t2ini);
-            // } else {
-            // }
+            // Backwards compatibility if nr is not a positive integer then
+            // generalizedNewton is still used.
+            if (Type.exists(method) && method === 'newton' && i < 0 || parseInt(i) !== i) {
+                co = Numerics.generalizedNewton(c1, c2, i, t2ini);
+                return new Coords(Const.COORDS_BY_USER, co, board);
+            }
 
             // Method 'newton'
             // console.time('cucu')
@@ -2667,7 +2669,6 @@ JXG.extend(
             // console.log("-------------------------")
 
             if (zeros.length > i) {
-                // co = [1, c1.X(zeros[i]), c1.Y(zeros[i])];
                 co = c1.Ft(zeros[i]);
             } else {
                 return [0, NaN, NaN];
