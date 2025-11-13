@@ -934,17 +934,32 @@ JXG.extend(
          * @returns {Number} X(t) x-coordinate of the line treated as parametric curve.
          * */
         X: function (t) {
-            var x,
+            // var x,
+            //     c = this.point1.coords.usrCoords,
+            //     b = this.stdform[2];
+
+            // x = (Math.abs(c[0]) > Mat.eps) ? c[1] : c[1];
+            // t = (t - 0.5) * 2;
+
+            // return (1 - Math.abs(t)) * x - t * b;
+
+            var c1 = this.point1.coords.usrCoords,
+                c2 = this.point2.coords.usrCoords,
                 b = this.stdform[2];
 
-            x =
-                Math.abs(this.point1.coords.usrCoords[0]) > Mat.eps
-                    ? this.point1.coords.usrCoords[1]
-                    : this.point2.coords.usrCoords[1];
-
-            t = (t - 0.5) * 2;
-
-            return (1 - Math.abs(t)) * x - t * b;
+            if (c1[0] !== 0) {
+                if (c2[0] !== 0) {
+                    return c1[1] + (c2[1] - c1[1]) * t;
+                } else {
+                    return c1[1] + b * 1.e6 * t;
+                }
+            } else {
+                if (c1[0] !== 0) {
+                    return c2[1] - (c1[1] - c2[1]) * t;
+                } else {
+                    return c2[1] + b * 1.e6 * t;
+                }
+            }
         },
 
         /**
@@ -952,19 +967,35 @@ JXG.extend(
          * See {@link JXG.Line#X} for a detailed description.
          * @param {Number} t Parameter running from 0 to 1.
          * @returns {Number} Y(t) y-coordinate of the line treated as parametric curve.
+         * @see Line#X
          */
         Y: function (t) {
-            var y,
+            // var y,
+            //     c = this.point1.coords.usrCoords,
+            //     a = this.stdform[1];
+
+            // y = (Math.abs(c[0]) > Mat.eps) ? c[2] : c[2];
+            // t = (t - 0.5) * 2;
+
+            // return (1 - Math.abs(t)) * y + t * a;
+
+            var c1 = this.point1.coords.usrCoords,
+                c2 = this.point2.coords.usrCoords,
                 a = this.stdform[1];
 
-            y =
-                Math.abs(this.point1.coords.usrCoords[0]) > Mat.eps
-                    ? this.point1.coords.usrCoords[2]
-                    : this.point2.coords.usrCoords[2];
-
-            t = (t - 0.5) * 2;
-
-            return (1 - Math.abs(t)) * y + t * a;
+            if (c1[0] !== 0) {
+                if (c2[0] !== 0) {
+                    return c1[2] + (c2[2] - c1[2]) * t;
+                } else {
+                    return c1[2] - a * 1.e6 * t;
+                }
+            } else {
+                if (c1[0] !== 0) {
+                    return c2[2] - (c1[2] - c2[2]) * t;
+                } else {
+                    return c2[2] - a * 1.e6 * t;
+                }
+            }
         },
 
         /**
@@ -973,16 +1004,43 @@ JXG.extend(
          *
          * @param {Number} t Parameter running from 0 to 1.
          * @returns {Number} Z(t) z-coordinate of the line treated as parametric curve.
+         * @see Line#Z
          */
         Z: function (t) {
-            var z =
-                Math.abs(this.point1.coords.usrCoords[0]) > Mat.eps
-                    ? this.point1.coords.usrCoords[0]
-                    : this.point2.coords.usrCoords[0];
+            // var z,
+            //     c = this.point1.coords.usrCoords;
 
-            t = (t - 0.5) * 2;
+            // z = (Math.abs(c[0]) > Mat.eps) ? c[0] : c[0];
+            // t = (t - 0.5) * 2;
 
-            return (1 - Math.abs(t)) * z;
+            // return (1 - Math.abs(t)) * z;
+
+            var c1 = this.point1.coords.usrCoords,
+                c2 = this.point2.coords.usrCoords;
+
+            if (t === 1 && c1[0] * c2[0] === 0) {
+                return 0;
+            }
+            return 1;
+        },
+
+        /**
+         * Return the homogeneous coordinates of the line treated as curve at t - including all transformations
+         * applied to the curve.
+         * @param {Number} t A number
+         * @returns {Array} [Z(t), X(t), Y(t)]
+         * @see Line#X
+         */
+        Ft: function(t) {
+            var c = [this.Z(t), this.X(t), this.Y(t)];
+            c[1] /= c[0];
+            c[2] /= c[0];
+            c[0] /= c[0];
+            // c[0] = 1;
+            // c[1] = t;
+            // c[2] = 3;
+
+            return c;
         },
 
         /**
