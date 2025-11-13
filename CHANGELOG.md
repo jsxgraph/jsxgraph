@@ -4,8 +4,24 @@
 Improvements
 ------------
 
+- Tangential intersections between 'functiongraph's
+- Precision of `meetCurveCurve`
+- Add version string to jsxgraph.css
+- Security: replace some `innerHTML` by `innerText`
+- `moveTo()`, `visit()`: avoid throwing error
+- Speed up `turtle.clearScreen()`
+- arrow heads in SVG take CSS color of line
+
 Bug fixes
 ---------
+
+- Fix bug in API docs of ia.js
+- `isBrowser(undefined)`: return false
+- API docs: `options.effect` for `moveTo()`, `visit()`
+- Fix regression: handling of attribute 'frozen'
+- smartlabel on line was not rotated
+- smartlabels for angles
+- `polyhedron.toSTL()`: Replace model by solid
 
 1.12.0
 ===
