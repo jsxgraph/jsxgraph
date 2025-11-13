@@ -231,6 +231,12 @@ JXG.extend(
             return 1;
         },
 
+        /**
+         * Return the homogeneous coordinates of the curve at t - including all transformations
+         * applied to the curve.
+         * @param {Number} t A number between {@link JXG.Curve#minX} and {@link JXG.Curve#maxX}.
+         * @returns {Array} [Z(t), X(t), Y(t)] plus transformations
+         */
         Ft: function(t) {
             var c = [this.Z(t), this.X(t), this.Y(t)],
                 len = this.transformations.length;

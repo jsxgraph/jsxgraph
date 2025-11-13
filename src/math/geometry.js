@@ -2391,53 +2391,42 @@ JXG.extend(
         },
 
         /**
-         * Compute an intersection of the curves c1 and c2.
-         * We want to find values t1, t2 such that
-         * c1(t1) = c2(t2), i.e. (c1_x(t1) - c2_x(t2), c1_y(t1) - c2_y(t2)) = (0, 0).
+         * Segment-wise search for the nr-th intersection of two curves.
          *
-         * Methods: segment-wise intersections (default) or generalized Newton method.
          * @param {JXG.Curve} c1 Curve, Line or Circle
          * @param {JXG.Curve} c2 Curve, Line or Circle
-         * @param {Number|Function} nr if method = 'segment', the nr-th intersection point will be returned, otherwise (in case of 'newton') nr is the start value for for the first curve.
-         * @param {Number} t2ini not longer used.
-         * @param {JXG.Board} [board=c1.board] Reference to a board object.
-         * @param {String} [method='segment'] Intersection method, possible values are 'newton' and 'segment'.
-         * @returns {JXG.Coords} intersection point
+         * @param {Number} nr the nr-th intersection point will be returned
+         * @param {JXG.Board} [board=c1.board] Reference to a board object
+         * @returns {JXG.Coords} intersection as Coords object
+         *
+         * @private
+         * @see JXG.Math.Geometry.meetCurveCurve
          */
-        meetCurveCurveORG: function (c1, c2, nr, t2ini, board, method) {
+        meetCurveCurveDiscrete: function (c1, c2, nr, board) {
             var co,
                 i = Type.evaluate(nr);
 
-            if (Type.exists(method) && method === 'newton') {
-                co = Numerics.generalizedNewton(c1, c2, i, t2ini);
-            } else {
-                if (c1.bezierDegree === 3 || c2.bezierDegree === 3) {
-                    co = this.meetBezierCurveRedBlueSegments(c1, c2, i);
-                } else {
-                    co = this.meetCurveRedBlueSegments(c1, c2, i);
-                }
-
-                // // We might add a Newton iteration if the segment search fails?
-                // // However, we would have to apply evt. transformations to the curves
-                // if (co[0] === 0 && isNaN(co[1]) && isNaN(co[2])) {
-                //     co = Numerics.generalizedNewton(c1, c2, i, t2ini);
-                // }
-            }
-
-            return new Coords(Const.COORDS_BY_USER, co, board);
-        },
-
-        meetCurveCurveDiscrete: function (c1, c2, nr, board) {
-            var co;
-
             if (c1.bezierDegree === 3 || c2.bezierDegree === 3) {
-                co = this.meetBezierCurveRedBlueSegments(c1, c2, nr);
+                co = this.meetBezierCurveRedBlueSegments(c1, c2, i);
             } else {
-                co = this.meetCurveRedBlueSegments(c1, c2, nr);
+                co = this.meetCurveRedBlueSegments(c1, c2, i);
             }
             return new Coords(Const.COORDS_BY_USER, co, board);
         },
 
+        /**
+         * Apply Newton-Raphson to search for an intersection of two curves
+         * in a given range of the first curve.
+         * @param {JXG.Curve} c1 Curve, Line or Circle
+         * @param {JXG.Curve} c2 Curve, Line or Circle
+         * @param {Array} range Domain for the search of an intersection. The start value
+         * for the search is chosen to be inside of that range.
+         * @returns {Array} [[z, x, y], t1, t2, t, ||c1[t1]-c2[t2]||**2]. The last entry is set to
+         * 10000 if the intersection is outside of the given domain (range) for the first curve.
+         * @private
+         * @see JXG.Math.Geometry.meetCurveCurveRecursive
+         * @see JXG.Math.Numerics.generalizedDampedNewton
+         */
         meetCurveCurveCont: function (c1, c2, range) {
             var t, t1, t2,
                 co,
@@ -2494,7 +2483,7 @@ JXG.extend(
             t = range[0] + (range[1] - range[0]) * (1 - inphi);
             t1 = mi1 + t * (ma1 - mi1);
             t2 = mi2 + t * (ma2 - mi2);
-// console.log("\t", range, (1-inphi), t, t1, t2)
+            // console.log("\t", range, (1-inphi), t, t1, t2)
 
             //     // Use cobyla
             //     ta[0] = t1;
@@ -2510,7 +2499,7 @@ JXG.extend(
             //     return [co, t1, t2, t, cob(2, 2, ta, con)];
 
             // Use damped Newton
-            r = Numerics.generalizedNewtonDamped(c1, c2, t1, t2, inphi);
+            r = Numerics.generalizedDampedNewton(c1, c2, t1, t2, inphi);
             t1 = r[1];
             t2 = r[2];
             t = (t1 - mi1) / (ma1 - mi1);
@@ -2524,6 +2513,20 @@ JXG.extend(
             return [co, t1, t2, t, r[3]];
         },
 
+        /**
+         * Return a list of the (at most) first i intersection points of two curves.
+         *
+         * @param {JXG.Curve} c1 Curve, Line or Circle
+         * @param {JXG.Curve} c2 Curve, Line or Circle
+         * @param {Number} low Lower bound of the search domain (between [0, 1])
+         * @param {Number} up Upper bound of the search domain (between [0, 1])
+         * @param {Number} i Return a list of the first i intersection points
+         * @returns {Array} List of the first i intersection points, given by the parameter t.
+         *
+         * @private
+         * @see JXG.Math.Geometry.meetCurveCurveCont
+         * @see JXG.Math.Geometry.meetCurveCurve
+         */
         meetCurveCurveRecursive: function(c1, c2, low, up, i) {
             var ret,
                 t, t1,
@@ -2536,18 +2539,18 @@ JXG.extend(
                 return [];
             }
 
-// console.log('DO', low * 20 - 10, up * 20 - 10)
-// console.log('DO', low, up)
+            // console.log('DO', low * 20 - 10, up * 20 - 10)
+            // console.log('DO', low, up)
 
             ret = this.meetCurveCurveCont(c1, c2, [low, up]);
-// console.log('\trec', ret)
+            // console.log('\trec', ret)
             if (ret[4] < Mat.eps) {
                 t = ret[3];
                 t1 = ret[1];
                 // t2 = ret[2];
-// console.log("\tFOUND", t, t1, c1.Ft(t1)[2])
+                // console.log("\tFOUND", t, t1, c1.Ft(t1)[2])
             } else {
-// console.log("\tNot FOUND", ret)
+                // console.log("\tNot FOUND", ret)
                 return [];
             }
 
@@ -2567,36 +2570,85 @@ JXG.extend(
             return left.concat([t1]).concat(right);
         },
 
-        // Line 1906; el1, el2, i, j board
+        /**
+         * Compute an intersection of the curves c1 and c2.
+         * We want to find values t1, t2 such that
+         * c1(t1) = c2(t2), i.e. (c1_x(t1) - c2_x(t2), c1_y(t1) - c2_y(t2)) = (0, 0).
+         *
+         * Methods: segment-wise intersections or generalized damped Newton-Raphson method.
+         *
+         * Segment-wise intersection is more stable, but has problems with tangent points.
+         * Damped Newton-Raphson converges very rapidly but sometimes behaves chaotic.
+         *
+         * @param {JXG.Curve} c1 Curve, Line or Circle
+         * @param {JXG.Curve} c2 Curve, Line or Circle
+         * @param {Number|Function} nr the nr-th intersection point will be returned
+         * @param {Number} t2ini not longer used. Must be supplied and is ignored.
+         * @param {JXG.Board} [board=c1.board] Reference to a board object.
+         * @param {String} [method] Intersection method, possible values are 'newton' and 'segment'.
+         * If both curves are given by functions (assumed to be continuous), 'newton' is the default, otherwise
+         * 'segment' is the default.
+         * @returns {JXG.Coords} intersection point
+         *
+         * @see JXG.Math.Geometry.meetCurveCurveDiscrete
+         * @see JXG.Math.Geometry.meetCurveCurveRecursive
+         */
         meetCurveCurve: function (c1, c2, nr, t2ini, board, method) {
             var co,
                 zeros,
                 i = Type.evaluate(nr);
 
-            if (Type.exists(c1.dataX) || Type.exists(c2.dataX)) {
+            board = board || c1.board;
+
+            if (method === 'segment' || Type.exists(c1.dataX) || Type.exists(c2.dataX)) {
                 // Discrete data points, i.e. x-coordinates of c1 or c2 are given in an array)
                 return this.meetCurveCurveDiscrete(c1, c2, i, board);
             }
 
-            if (Type.exists(method) && method === 'newton') {
-                co = Numerics.generalizedNewton(c1, c2, i, t2ini);
-            } else {
-// console.time('cucu')
-                zeros = this.meetCurveCurveRecursive(c1, c2, 0, 1, i, -1);
-// console.timeEnd('cucu')
-// console.log("-------------------------")
-                if (zeros.length > i) {
-                    // co = [1, c1.X(zeros[i]), c1.Y(zeros[i])];
-                    co = c1.Ft(zeros[i]);
-                } else {
-                    return [0, NaN, NaN];
-                }
+            // Outdated:
+            // if (Type.exists(method) && method === 'newton') {
+            //     co = Numerics.generalizedNewton(c1, c2, i, t2ini);
+            // } else {
+            // }
 
+            // Method 'newton'
+            // console.time('cucu')
+            zeros = this.meetCurveCurveRecursive(c1, c2, 0, 1, i, -1);
+            // console.timeEnd('cucu')
+            // console.log("-------------------------")
+
+            if (zeros.length > i) {
+                // co = [1, c1.X(zeros[i]), c1.Y(zeros[i])];
+                co = c1.Ft(zeros[i]);
+            } else {
+                return [0, NaN, NaN];
             }
 
             return new Coords(Const.COORDS_BY_USER, co, board);
         },
 
+        // meetCurveCurveORG: function (c1, c2, nr, t2ini, board, method) {
+        //     var co,
+        //         i = Type.evaluate(nr);
+
+        //     if (Type.exists(method) && method === 'newton') {
+        //         co = Numerics.generalizedNewton(c1, c2, i, t2ini);
+        //     } else {
+        //         if (c1.bezierDegree === 3 || c2.bezierDegree === 3) {
+        //             co = this.meetBezierCurveRedBlueSegments(c1, c2, i);
+        //         } else {
+        //             co = this.meetCurveRedBlueSegments(c1, c2, i);
+        //         }
+
+        //         // // We might add a Newton iteration if the segment search fails?
+        //         // // However, we would have to apply evt. transformations to the curves
+        //         // if (co[0] === 0 && isNaN(co[1]) && isNaN(co[2])) {
+        //         //     co = Numerics.generalizedNewton(c1, c2, i, t2ini);
+        //         // }
+        //     }
+
+        //     return new Coords(Const.COORDS_BY_USER, co, board);
+        // },
 
         /**
          * Intersection of curve with line,

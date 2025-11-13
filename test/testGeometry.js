@@ -35,7 +35,8 @@ describe("Test geometry functions", function () {
         renderer: "svg",
         axis: false,
         grid: false,
-        boundingbox: [-8, 8, 8, -8],
+        // boundingbox: [-8, 8, 8, -8],
+        boundingbox: [-10, 10, 10, -10],
         resize: {enabled: false},
         showCopyright: false,
         showNavigation: false
@@ -71,7 +72,15 @@ describe("Test geometry functions", function () {
       const f2 = board.create("functiongraph", ["0", -10, 10], {});
 
       const inter = board.create("intersection", [f1, f2, 5]);
-      expect(inter.X()).toBeCloseTo(6.283184748989207, 4);
+      expect(inter.X()).toBeCloseTo(Math.PI * 2, 4);
+    });
+
+    it("intersectingCurveCurve 2", function () {
+      const f1 = board.create("functiongraph", ["sin(x)"], { fixed: false }); // ["sin(x)", -10, 10] fails
+      const f2 = board.create("functiongraph", ["0"], {});
+
+      const inter = board.create("intersection", [f1, f2, 6]);
+      expect(inter.X()).toBeCloseTo(Math.PI * 3, 4); // 9.42477796076938
     });
 
     it("meetSegmentSegment", function () {

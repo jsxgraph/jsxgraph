@@ -1662,7 +1662,20 @@ Mat.Numerics = {
         return [c2.X(t2), c2.Y(t2)];
     },
 
-    generalizedNewtonDamped: function (c1, c2, t1ini, t2ini, gamma) {
+    /**
+     * Apply damped Newton-Raphson algorithm to determine the intersection
+     * between the curve elements c1 and c2. Transformations of the curves
+     * are already taken into regard.
+     *
+     * @param {JXG.Curve} c1 Curve, Line or Circle
+     * @param {JXG.Curve} c2 Curve, Line or Circle
+     * @param {Number} t1ini Start value for curve c1
+     * @param {Number} t2ini Start value for curve c2
+     * @param {Number} gamma Damping factor, should be in the open interval (0, 1)
+     * @returns {Array} [f1, t1, t2, F]. f1 is the coordinate array of the intersection point,
+     * t1 and t2 are the parameters of the intersection for both curves, F is ||c1[t1]-c2[t2]||**2.
+     */
+    generalizedDampedNewton: function (c1, c2, t1ini, t2ini, gamma) {
         var t1, t2,
             a, b, c, d, e, f,
             disc,
