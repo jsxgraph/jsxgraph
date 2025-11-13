@@ -50,7 +50,7 @@ import Mat from "../math/math.js";
  */
 JXG.Face3D = function (view, polyhedron, faceNumber, attributes) {
     this.constructor(view.board, attributes, Const.OBJECT_TYPE_FACE3D, Const.OBJECT_CLASS_3D);
-    this.constructor3D(view, "face3d");
+    this.constructor3D(view, 'face3d');
 
     this.board.finalizeAdding(this);
 
@@ -106,7 +106,7 @@ JXG.Face3D = function (view, polyhedron, faceNumber, attributes) {
     });
 };
 JXG.Face3D.prototype = new JXG.GeometryElement();
-Type.copyPrototypeMethods(JXG.Face3D, JXG.GeometryElement3D, "constructor3D");
+Type.copyPrototypeMethods(JXG.Face3D, JXG.GeometryElement3D, 'constructor3D');
 
 JXG.extend(
     JXG.Face3D.prototype,
@@ -359,7 +359,7 @@ JXG.createFace3D = function (board, parents, attributes) {
         attr, el;
 
     // TODO Throw new Error
-    attr = Type.copyAttributes(attributes, board.options, "face3d");
+    attr = Type.copyAttributes(attributes, board.options, 'face3d');
     el = new JXG.Face3D(view, polyhedron, faceNumber, attr);
 
     attr = el.setAttr2D(attr);

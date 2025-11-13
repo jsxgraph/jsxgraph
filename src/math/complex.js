@@ -101,7 +101,7 @@ JXG.extend(
          * @returns {String} Formatted string containing the complex number in human readable form (algebraic form).
          */
         toString: function () {
-            return this.real + " + " + this.imaginary + "i";
+            return this.real + " + " + this.imaginary + 'i';
         },
 
         /**

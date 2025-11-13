@@ -41,7 +41,7 @@ JXG.Util.genUUID = function (prefix) {
         if (i === 8 || i === 13 || i === 18 || i === 23) {
             uuid[i] = "-";
         } else if (i === 14) {
-            uuid[i] = "4";
+            uuid[i] = '4';
         } else {
             if (rnd <= 0x02) {
                 rnd = (0x2000000 + Math.random() * 0x1000000) | 0;

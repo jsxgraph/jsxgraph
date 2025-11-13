@@ -54,7 +54,7 @@ JXG.Circle3D = function (view, center, normal, radius, attributes) {
     var altFrame1, that;
 
     this.constructor(view.board, attributes, Const.OBJECT_TYPE_CIRCLE3D, Const.OBJECT_CLASS_3D);
-    this.constructor3D(view, "circle3d");
+    this.constructor3D(view, 'circle3d');
 
     /**
      * The circle's center. Do not set this parameter directly, as that will break JSXGraph's update system.
@@ -154,7 +154,7 @@ JXG.Circle3D = function (view, center, normal, radius, attributes) {
     );
 };
 JXG.Circle3D.prototype = new JXG.GeometryElement();
-Type.copyPrototypeMethods(JXG.Circle3D, JXG.GeometryElement3D, "constructor3D");
+Type.copyPrototypeMethods(JXG.Circle3D, JXG.GeometryElement3D, 'constructor3D');
 
 JXG.extend(
     JXG.Circle3D.prototype,
@@ -380,7 +380,7 @@ JXG.createIntersectionCircle3D = function (board, parents, attributes) {
         el1 = parents[1],
         el2 = parents[2],
         ixnCircle, center, func,
-        attr = Type.copyAttributes(attributes, board.options, "intersectioncircle3d");
+        attr = Type.copyAttributes(attributes, board.options, 'intersectioncircle3d');
 
     func = Geometry.intersectionFunction3D(view, el1, el2);
     center = view.create('point3d', func[0], { visible: false });

@@ -278,7 +278,7 @@ JXG.extend(Options, {
          * @name View3D#xPlaneRearYAxis
          */
         xPlaneRearYAxis: {
-            visible: "inherit",
+            visible: 'inherit',
             strokeColor: "#888888",
             strokeWidth: 1
         },
@@ -288,7 +288,7 @@ JXG.extend(Options, {
          * @name View3D#xPlaneRearZAxis
          */
         xPlaneRearZAxis: {
-            visible: "inherit",
+            visible: 'inherit',
             strokeColor: "#888888",
             strokeWidth: 1
         },
@@ -298,7 +298,7 @@ JXG.extend(Options, {
          * @name View3D#xPlaneFrontYAxis
          */
         xPlaneFrontYAxis: {
-            visible: "inherit",
+            visible: 'inherit',
             strokeColor: "#888888",
             strokeWidth: 1
         },
@@ -308,7 +308,7 @@ JXG.extend(Options, {
          * @name View3D#xPlaneFrontZAxis
          */
         xPlaneFrontZAxis: {
-            visible: "inherit",
+            visible: 'inherit',
             strokeColor: "#888888",
             strokeWidth: 1
         },
@@ -319,7 +319,7 @@ JXG.extend(Options, {
          * @name View3D#yPlaneRearXAxis
          */
         yPlaneRearXAxis: {
-            visible: "inherit",
+            visible: 'inherit',
             strokeColor: "#888888",
             strokeWidth: 1
         },
@@ -329,7 +329,7 @@ JXG.extend(Options, {
          * @name View3D#yPlaneRearZAxis
          */
         yPlaneRearZAxis: {
-            visible: "inherit",
+            visible: 'inherit',
             strokeColor: "#888888",
             strokeWidth: 1
         },
@@ -339,7 +339,7 @@ JXG.extend(Options, {
          * @name View3D#yPlaneFrontXAxis
          */
         yPlaneFrontXAxis: {
-            visible: "inherit",
+            visible: 'inherit',
             strokeColor: "#888888",
             strokeWidth: 1
         },
@@ -349,7 +349,7 @@ JXG.extend(Options, {
          * @name View3D#yPlaneFrontZAxis
          */
         yPlaneFrontZAxis: {
-            visible: "inherit",
+            visible: 'inherit',
             strokeColor: "#888888",
             strokeWidth: 1
         },
@@ -360,7 +360,7 @@ JXG.extend(Options, {
          * @name View3D#zPlaneRearXAxis
          */
         zPlaneRearXAxis: {
-            visible: "inherit",
+            visible: 'inherit',
             strokeColor: "#888888",
             strokeWidth: 1
         },
@@ -370,7 +370,7 @@ JXG.extend(Options, {
          * @name View3D#zPlaneRearYAxis
          */
         zPlaneRearYAxis: {
-            visible: "inherit",
+            visible: 'inherit',
             strokeColor: "#888888",
             strokeWidth: 1
         },
@@ -380,7 +380,7 @@ JXG.extend(Options, {
          * @name View3D#zPlaneFrontXAxis
          */
         zPlaneFrontXAxis: {
-            visible: "inherit",
+            visible: 'inherit',
             strokeColor: "#888888",
             strokeWidth: 1
         },
@@ -390,7 +390,7 @@ JXG.extend(Options, {
          * @name View3D#zPlaneFrontYAxis
          */
         zPlaneFrontYAxis: {
-            visible: "inherit",
+            visible: 'inherit',
             strokeColor: "#888888",
             strokeWidth: 1
         }
@@ -742,7 +742,7 @@ JXG.extend(Options, {
          * @default see {@link Mesh3D}
          */
         mesh3d: {
-            visible: "inherit"
+            visible: 'inherit'
         },
 
         /**

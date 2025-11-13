@@ -209,7 +209,7 @@ JXG.extend(
                 fromParent = false;
             }
 
-            if (!this.evalVisProp('frozen')) {
+            if (this.evalVisProp('frozen') !== true) {
                 this.updateConstraint();
             }
 
@@ -1034,7 +1034,7 @@ JXG.extend(
 
                     if (Type.isPoint(pEl) && pEl !== this && pEl.visPropCalc.visible) {
                         pCoords = Geometry.projectPointToPoint(this, pEl, this.board);
-                        if (ev_au === "screen") {
+                        if (ev_au === 'screen') {
                             d = pCoords.distance(Const.COORDS_BY_SCREEN, this.coords);
                         } else {
                             d = pCoords.distance(Const.COORDS_BY_USER, this.coords);
@@ -1131,7 +1131,7 @@ JXG.extend(
                         );
                     }
 
-                    if (ev_au === "screen") {
+                    if (ev_au === 'screen') {
                         d = projCoords.distance(Const.COORDS_BY_SCREEN, this.coords);
                     } else {
                         d = projCoords.distance(Const.COORDS_BY_USER, this.coords);
@@ -1370,13 +1370,13 @@ JXG.extend(
                 if (this.slideObjects.length === 0) {
                     this.type = this._org_type;
                     if (this.type === Const.OBJECT_TYPE_POINT) {
-                        this.elType = "point";
+                        this.elType = 'point';
                     } else if (this.elementClass === Const.OBJECT_CLASS_TEXT) {
-                        this.elType = "text";
+                        this.elType = 'text';
                     } else if (this.type === Const.OBJECT_TYPE_IMAGE) {
-                        this.elType = "image";
+                        this.elType = 'image';
                     } else if (this.type === Const.OBJECT_TYPE_FOREIGNOBJECT) {
-                        this.elType = "foreignobject";
+                        this.elType = 'foreignobject';
                     }
 
                     this.slideObject = null;
@@ -1410,7 +1410,7 @@ JXG.extend(
 
                     if (this.elementClass === Const.OBJECT_CLASS_POINT) {
                         this.type = Const.OBJECT_TYPE_POINT;
-                        this.elType = "point";
+                        this.elType = 'point';
                     }
 
                     this.XEval = function () {
@@ -1460,13 +1460,13 @@ JXG.extend(
             this.slideObjects = [];
             if (this.elementClass === Const.OBJECT_CLASS_POINT) {
                 this.type = Const.OBJECT_TYPE_POINT;
-                this.elType = "point";
+                this.elType = 'point';
             } else if (this.elementClass === Const.OBJECT_CLASS_TEXT) {
                 this.type = this._org_type;
-                this.elType = "text";
+                this.elType = 'text';
             } else if (this.elementClass === Const.OBJECT_CLASS_OTHER) {
                 this.type = this._org_type;
-                this.elType = "image";
+                this.elType = 'image';
             }
         },
 
@@ -1532,8 +1532,8 @@ JXG.extend(
                 newfuncs[i].origin = v;
             }
 
-            // Intersection function
             if (terms.length === 1) {
+                // Intersection function
                 this.updateConstraint = function () {
                     var c = newfuncs[0]();
 
@@ -1546,8 +1546,8 @@ JXG.extend(
                     }
                     return this;
                 };
-                // Euclidean coordinates
             } else if (terms.length === 2) {
+                // Euclidean coordinates
                 this.XEval = newfuncs[0];
                 this.YEval = newfuncs[1];
                 this.addParents([newfuncs[0].origin, newfuncs[1].origin]);
@@ -1559,8 +1559,8 @@ JXG.extend(
                     ]);
                     return this;
                 };
-                // Homogeneous coordinates
             } else {
+                // Homogeneous coordinates
                 this.ZEval = newfuncs[0];
                 this.XEval = newfuncs[1];
                 this.YEval = newfuncs[2];
@@ -1680,8 +1680,14 @@ JXG.extend(
         updateTransform: function (fromParent) {
             var c, i;
 
-            if (this.transformations.length === 0 || this.baseElement === null) {
+            if (this.transformations.length === 0) {
                 return this;
+            }
+
+            // This is the case for image and text rotations
+            // like in smartlabels
+            if (this.baseElement === null) {
+                this.baseElement = this;
             }
 
             // This method is called for non-points only.
@@ -1692,7 +1698,7 @@ JXG.extend(
             this.transformations[0].update();
             if (this === this.baseElement) {
                 // Case of bindTo
-                c = this.transformations[0].apply(this, "self");
+                c = this.transformations[0].apply(this, 'self');
             } else {
                 c = this.transformations[0].apply(this.baseElement);
             }
@@ -1947,9 +1953,9 @@ JXG.extend(
          * @param {Number} [time] Number of milliseconds the animation should last.
          * @param {Object} [options] Optional settings for the animation
          * @param {function} [options.callback] A function that is called as soon as the animation is finished.
-         * @param {String} [options.effect='<>'|'>'|'<'] animation effects like speed fade in and out. possible values are
-         * '<>' for speed increase on start and slow down at the end (default), '<' for speed up, '>' for slow down, and '--' for constant speed during
-         * the whole animation.
+         * @param {String} [options.effect='<>'|'>'|'<'|'--'|'=='] animation effects like speed fade in and out. possible values are
+         * '<>' for speed increase on start and slow down at the end (default), '<' for speed up, '>' for slow down, and '--' (or '==')
+         * for constant speed during the whole animation.
          * @returns {JXG.CoordsElement} Reference to itself.
          * @see JXG.CoordsElement#setPosition
          * @see JXG.CoordsElement#moveAlong
@@ -2028,10 +2034,12 @@ JXG.extend(
                         if (options.effect === ">") {   // cubic ease out
                             return 1 - Math.pow(1 - x, 3);
                         }
-                        if (options.effect === "==") {
+                        if (options.effect === "==" || options.effect === "--") {
                             return i / steps;       // linear
                         }
-                        throw new Error("valid effects are '==', '<>', '>', and '<'.");
+                        // throw new Error("Callback moveTo(): valid effects are '==', '--', '<>', '>', and '<', given is '" + options.effect + "'.");
+                        JXG.warn("Callback moveTo(): valid effects are '==', '--', '<>', '>', and '<', given is '" + options.effect + "'. Set it to '--'");
+                        options.effect = '--';
                     }
                     return i / steps;  // default
                 };
@@ -2077,9 +2085,9 @@ JXG.extend(
          * @param {Number} time Number of milliseconds the animation should last.
          * @param {Object} [options] Optional settings for the animation
          * @param {function} [options.callback] A function that is called as soon as the animation is finished.
-         * @param {String} [options.effect='<>'|'>'|'<'] animation effects like speed fade in and out. possible values are
-         * '<>' for speed increase on start and slow down at the end (default), '<' for speed up, '>' for slow down, and '--' for constant speed during
-         * the whole animation.
+         * @param {String} [options.effect='<>'|'>'|'<'|'=='|'--'] animation effects like speed fade in and out. possible values are
+         * '<>' for speed increase on start and slow down at the end (default), '<' for speed up, '>' for slow down, and '--' (or '==')
+         * for constant speed during the whole animation.
          * @param {Number} [options.repeat=1] How often this animation should be repeated.
          * @returns {JXG.CoordsElement} Reference to itself.
          * @see JXG.CoordsElement#moveAlong
@@ -2151,11 +2159,12 @@ JXG.extend(
                         if (options.effect === ">") {   // cubic ease out
                             return 1 - Math.pow(1 - x, 3);
                         }
-                        if (options.effect === "==") {
+                        if (options.effect === "==" || options.effect === "--") {
                             return x;       // linear
                         }
-                        throw new Error("valid effects are '==', '<>', '>', and '<'.");
-
+                        // throw new Error("Callback visit(): valid effects are '==', '--', '<>', '>', and '<', given is '" + options.effect + "'.");
+                        JXG.warn("Callback visit(): valid effects are '==', '--', '<>', '>', and '<', given is '" + options.effect + "'. Set it to '--'");
+                        options.effect = '--';
                     }
                     return x;
                 };

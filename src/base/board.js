@@ -938,7 +938,7 @@ JXG.extend(
                 doc,
                 crect,
                 // In ownerDoc we need the 'real' document object.
-                // The first version is used in the case of shadowDom,
+                // The first version is used in the case of shadowDOM,
                 // the second case in the 'normal' case.
                 ownerDoc = this.document.ownerDocument || this.document,
                 docElement = ownerDoc.documentElement || this.document.body.parentNode,
@@ -2022,21 +2022,21 @@ JXG.extend(
                 // On browser print:
                 // we need to call the listener when having @media: print.
                 try {
-                    // window.matchMedia("print").addEventListener('change', this.printListenerMatch.apply(this, arguments));
-                    window.matchMedia("print").addEventListener('change', this.printListenerMatch.bind(this));
-                    window.matchMedia("screen").addEventListener('change', this.printListenerMatch.bind(this));
+                    // window.matchMedia('print').addEventListener('change', this.printListenerMatch.apply(this, arguments));
+                    window.matchMedia('print').addEventListener('change', this.printListenerMatch.bind(this));
+                    window.matchMedia('screen').addEventListener('change', this.printListenerMatch.bind(this));
                     this.resizeHandlers.push('print');
                 } catch (err) {
                     JXG.debug("Error adding printListener", err);
                 }
                 // if (Type.isFunction(MediaQueryList.prototype.addEventListener)) {
-                //     window.matchMedia("print").addEventListener('change', function (mql) {
+                //     window.matchMedia('print').addEventListener('change', function (mql) {
                 //         if (mql.matches) {
                 //             that.printListener();
                 //         }
                 //     });
                 // } else if (Type.isFunction(MediaQueryList.prototype.addListener)) { // addListener might be deprecated
-                //     window.matchMedia("print").addListener(function (mql, ev) {
+                //     window.matchMedia('print').addListener(function (mql, ev) {
                 //         if (mql.matches) {
                 //             that.printListener(ev);
                 //         }
@@ -2074,8 +2074,8 @@ JXG.extend(
                             Env.removeEvent(window, 'scroll', this.scrollListener, this);
                             break;
                         case 'print':
-                            window.matchMedia("print").removeEventListener('change', this.printListenerMatch.bind(this), false);
-                            window.matchMedia("screen").removeEventListener('change', this.printListenerMatch.bind(this), false);
+                            window.matchMedia('print').removeEventListener('change', this.printListenerMatch.bind(this), false);
+                            window.matchMedia('screen').removeEventListener('change', this.printListenerMatch.bind(this), false);
                             break;
                         // case 'afterprint':
                         //     Env.removeEvent(window, 'afterprint', this.printListener, this);
@@ -4865,29 +4865,13 @@ JXG.extend(
          **/
         updateCoords: function () {
             var el, ob,
-                froz, e, o, f,
                 len = this.objectsList.length;
 
             for (ob = 0; ob < len; ob++) {
                 el = this.objectsList[ob];
 
                 if (Type.exists(el.coords)) {
-                    froz = el.evalVisProp('frozen');
-                    if (froz === 'inherit') {
-                        // Search if a descendant of 'el' is set to 'frozen'.
-                        // If yes, set element 'el' as frozen, too.
-                        for (e in el.descendants/*el.childElements*/) {
-                            if (el.descendants.hasOwnProperty(e)) {
-                                o = el.descendants[e];
-                                f = o.evalVisProp('frozen');
-                                if (f === true) {
-                                    froz = true;
-                                    break;
-                                }
-                            }
-                        }
-                    }
-                    if (froz === true) {
+                    if (el.evalVisProp('frozen') === true) {
                         if (el.is3D) {
                             el.element2D.coords.screen2usr();
                         } else {
@@ -4900,7 +4884,6 @@ JXG.extend(
                             el.coords.usr2screen();
                             if (Type.exists(el.actualCoords)) {
                                 el.actualCoords.usr2screen();
-
                             }
                         }
                     }
@@ -5532,13 +5515,18 @@ JXG.extend(
         },
 
         /**
-         * Removes object from board and renderer.
+         * Removes object from board and from the renderer object.
          * <p>
-         * <b>Performance hints:</b> It is recommended to use the object's id.
-         * If many elements are removed, it is best to call <tt>board.suspendUpdate()</tt>
+         * <b>Performance hints:</b> It is recommended to use the JSXGraph object's id.
+         * If many elements are removed, it is best to either
+         * <ul>
+         *   <li> remove the whole array if the elements are contained in an array instead
+         *    of looping through the array OR
+         *   <li> call <tt>board.suspendUpdate()</tt>
          * before looping through the elements to be removed and call
          * <tt>board.unsuspendUpdate()</tt> after the loop. Further, it is advisable to loop
          * in reverse order, i.e. remove the object in reverse order of their creation time.
+         * </ul>
          * @param {JXG.GeometryElement|Array} object The object to remove or array of objects to be removed.
          * The element(s) is/are given by name, id or a reference.
          * @param {Boolean} saveMethod If true, the algorithm runs through all elements
@@ -6613,7 +6601,7 @@ JXG.extend(
                         break;
                     case 'title':
                         this.document.getElementById(this.container + '_ARIAlabel')
-                            .innerHTML = value;
+                            .innerText = value;
                         this._set(key, value);
                         break;
                     case 'keepaspectratio':
@@ -6645,7 +6633,7 @@ JXG.extend(
                         node = this.containerObj.ownerDocument.getElementById(
                             this.container + '_navigation_' + key);
                         if (node && Type.exists(value.symbol)) {
-                            node.innerHTML = Type.evaluate(value.symbol);
+                            node.innerText = Type.evaluate(value.symbol);
                         }
                         this._set(key, value);
                         break;

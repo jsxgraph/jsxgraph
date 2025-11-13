@@ -130,7 +130,7 @@ JXG.createSlopeTriangle = function (board, parents, attributes) {
         tglide = tangent.glider;
     } else if (parents.length === 1 && parents[0].type === Const.OBJECT_TYPE_GLIDER) {
         tglide = parents[0];
-        attr = Type.copyAttributes(attributes, board.options, "slopetriangle", "tangent");
+        attr = Type.copyAttributes(attributes, board.options, "slopetriangle", 'tangent');
         tangent = board.create("tangent", [tglide], attr);
         isPrivateTangent = true;
     } else if (
@@ -148,7 +148,7 @@ JXG.createSlopeTriangle = function (board, parents, attributes) {
         );
     }
 
-    attr = Type.copyAttributes(attributes, board.options, "slopetriangle", "basepoint");
+    attr = Type.copyAttributes(attributes, board.options, "slopetriangle", 'basepoint');
     basepoint = board.create(
         "point",
         [
@@ -159,13 +159,13 @@ JXG.createSlopeTriangle = function (board, parents, attributes) {
         attr
     );
 
-    attr = Type.copyAttributes(attributes, board.options, "slopetriangle", "baseline");
+    attr = Type.copyAttributes(attributes, board.options, "slopetriangle", 'baseline');
     baseline = board.create("line", [tglide, basepoint], attr);
 
-    attr = Type.copyAttributes(attributes, board.options, "slopetriangle", "glider");
+    attr = Type.copyAttributes(attributes, board.options, "slopetriangle", 'glider');
     glider = board.create("glider", [tglide.X() + 1, tglide.Y(), baseline], attr);
 
-    attr = Type.copyAttributes(attributes, board.options, "slopetriangle", "toppoint");
+    attr = Type.copyAttributes(attributes, board.options, "slopetriangle", 'toppoint');
     toppoint = board.create(
         "point",
         [
@@ -179,8 +179,8 @@ JXG.createSlopeTriangle = function (board, parents, attributes) {
         attr
     );
 
-    attr = Type.copyAttributes(attributes, board.options, "slopetriangle");
-    // attr.borders = Type.copyAttributes(attr.borders, board.options, "slopetriangle", "borders");
+    attr = Type.copyAttributes(attributes, board.options, 'slopetriangle');
+    // attr.borders = Type.copyAttributes(attr.borders, board.options, "slopetriangle", 'borders');
     el = board.create("polygon", [tglide, glider, toppoint], attr);
 
     /**
@@ -208,7 +208,7 @@ JXG.createSlopeTriangle = function (board, parents, attributes) {
     //el.borders[1].setArrow(false, {type: 2, size: 10});
     el.borders[2].setArrow(false, false);
 
-    attr = Type.copyAttributes(attributes, board.options, "slopetriangle", "label");
+    attr = Type.copyAttributes(attributes, board.options, "slopetriangle", 'label');
     //label = board.create("text", [
     //         function () {
     //             return glider.X() + 0.1;
@@ -223,12 +223,12 @@ JXG.createSlopeTriangle = function (board, parents, attributes) {
     //     attr
     // );
 
-    attr = Type.copyAttributes(attr, board.options, "label");
+    attr = Type.copyAttributes(attr, board.options, 'label');
     // Add label to vertical polygon edge
     attr.isLabel = true;
     attr.anchor = el.borders[1];
     attr.priv = el.borders[1].visProp.priv;
-    attr.id = el.borders[1].id + "Label";
+    attr.id = el.borders[1].id + 'Label';
 
     label = board.create("text", [0, 0, function () { return ""; }], attr);
     label.needsUpdate = true;

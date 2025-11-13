@@ -171,7 +171,7 @@ JXG.GeonextParser = {
         }
 
         // "" means not defined. Here, we replace it by 0
-        te = te.replace(/""/g, "0");
+        te = te.replace(/""/g, '0');
         while (i >= 0) {
             left = te.slice(0, i);
             right = te.slice(i + 3);
@@ -462,13 +462,13 @@ JXG.GeonextParser = {
 
         for (i = 0; i < from.length; i++) {
             // sin -> Math.sin and asin -> Math.asin
-            expr = new RegExp(["(\\W|^)(", from[i], ")"].join(""), "ig");
+            expr = new RegExp(["(\\W|^)(", from[i], ")"].join(""), 'ig');
             newterm = newterm.replace(expr, ["$1", to[i]].join(""));
         }
-        newterm = newterm.replace(/True/g, "true");
-        newterm = newterm.replace(/False/g, "false");
-        newterm = newterm.replace(/fasle/g, "false");
-        newterm = newterm.replace(/Pi/g, "PI");
+        newterm = newterm.replace(/True/g, 'true');
+        newterm = newterm.replace(/False/g, 'false');
+        newterm = newterm.replace(/fasle/g, 'false');
+        newterm = newterm.replace(/Pi/g, 'PI');
         newterm = newterm.replace(/"/g, "'");
 
         return newterm;
@@ -544,9 +544,9 @@ JXG.GeonextParser = {
         term = term.replace(/&amp;/g, "&");
         newterm = term;
         newterm = this.replaceNameById(newterm, board, true);
-        newterm = newterm.replace(/True/g, "true");
-        newterm = newterm.replace(/False/g, "false");
-        newterm = newterm.replace(/fasle/g, "false");
+        newterm = newterm.replace(/True/g, 'true');
+        newterm = newterm.replace(/False/g, 'false');
+        newterm = newterm.replace(/fasle/g, 'false');
 
         return newterm;
     }

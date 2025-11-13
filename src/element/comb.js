@@ -126,7 +126,7 @@ JXG.createComb = function (board, parents, attributes) {
     if (parents.length === 2) {
         // point 1 given by coordinates
         if (Type.isArray(parents[0]) && parents[0].length > 1) {
-            attr = Type.copyAttributes(attributes, board.options, "comb", "point1");
+            attr = Type.copyAttributes(attributes, board.options, "comb", 'point1');
             p1 = board.create("point", parents[0], attr);
         } else if (Type.isString(parents[0]) || Type.isPoint(parents[0])) {
             p1 = board.select(parents[0]);
@@ -137,7 +137,7 @@ JXG.createComb = function (board, parents, attributes) {
             parents[0]().length &&
             parents[0]().length >= 2
         ) {
-            attr = Type.copyAttributes(attributes, board.options, "comb", "point1");
+            attr = Type.copyAttributes(attributes, board.options, "comb", 'point1');
             p1 = JXG.createPoint(board, parents[0](), attr);
         } else {
             throw new Error(
@@ -152,7 +152,7 @@ JXG.createComb = function (board, parents, attributes) {
 
         // point 2 given by coordinates
         if (Type.isArray(parents[1]) && parents[1].length > 1) {
-            attr = Type.copyAttributes(attributes, board.options, "comb", "point2");
+            attr = Type.copyAttributes(attributes, board.options, "comb", 'point2');
             p2 = board.create("point", parents[1], attr);
         } else if (Type.isString(parents[1]) || Type.isPoint(parents[1])) {
             p2 = board.select(parents[1]);
@@ -163,7 +163,7 @@ JXG.createComb = function (board, parents, attributes) {
             parents[1]().length &&
             parents[1]().length >= 2
         ) {
-            attr = Type.copyAttributes(attributes, board.options, "comb", "point2");
+            attr = Type.copyAttributes(attributes, board.options, "comb", 'point2');
             p2 = JXG.createPoint(board, parents[1](), attr);
         } else {
             throw new Error(

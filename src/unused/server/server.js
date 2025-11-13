@@ -103,7 +103,7 @@ JXG.Server = {
             this.runningCalls[id].module = data.module;
         }
 
-        fileurl = JXG.serverBase + "JXGServer.py";
+        fileurl = JXG.serverBase + 'JXGServer.py'
         passdata =
             "action=" +
             escape(action) +
@@ -130,9 +130,9 @@ JXG.Server = {
                     ? window.JSON.parse(str)
                     : new Function("return " + str)();
 
-            if (data.type === "error") {
+            if (data.type === 'error') {
                 this.handleError(data);
-            } else if (data.type === "response") {
+            } else if (data.type === 'response') {
                 id = data.id;
 
                 // inject fields
@@ -142,7 +142,7 @@ JXG.Server = {
                         tmp.namespace +
                         (typeof new Function("return " + tmp.namespace)() === "object"
                             ? "."
-                            : ".prototype.") +
+                            : '.prototype.') +
                         tmp.name +
                         " = " +
                         tmp.value;
@@ -161,7 +161,7 @@ JXG.Server = {
                     inject =
                         "if(typeof JXG.Server.modules." +
                         this.runningCalls[id].module +
-                        ' == "undefined")' +
+                        ' == 'undefined')' +
                         "JXG.Server.modules." +
                         this.runningCalls[id].module +
                         " = {};";
@@ -185,7 +185,7 @@ JXG.Server = {
                         " = function (" +
                         tmp.parameters.join(",") +
                         ", __JXGSERVER_CB__, __JXGSERVER_SYNC) {" +
-                        'if(typeof __JXGSERVER_CB__ == "undefined") __JXGSERVER_CB__ = JXG.Server.modules.' +
+                        'if(typeof __JXGSERVER_CB__ == 'undefined') __JXGSERVER_CB__ = JXG.Server.modules.' +
                         this.runningCalls[id].module +
                         "." +
                         tmp.name +
@@ -217,7 +217,7 @@ JXG.Server = {
             AJAX = new XMLHttpRequest();
             AJAX.overrideMimeType("text/plain; charset=iso-8859-1");
         } else {
-            AJAX = new ActiveXObject("Microsoft.XMLHTTP");
+            AJAX = new ActiveXObject('Microsoft.XMLHTTP');
         }
         if (AJAX) {
             // POST is required if data sent to server is too long for a url.

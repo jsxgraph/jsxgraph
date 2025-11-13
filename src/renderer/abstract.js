@@ -294,7 +294,7 @@ JXG.extend(
             }
 
             if (!isTrace && Type.exists(el.board.highlightedObjects[el.id])) {
-                hl = "highlight";
+                hl = 'highlight';
             } else {
                 hl = "";
             }
@@ -318,14 +318,14 @@ JXG.extend(
                 face = Options.normalizePointFace(el.evalVisProp('face'));
 
             // Determine how the point looks like
-            if (face === "o") {
-                prim = "ellipse";
+            if (face === 'o') {
+                prim = 'ellipse';
             } else if (face === "[]") {
-                prim = "rect";
+                prim = 'rect';
             } else {
                 // cross/x, diamond/<>, triangleup/A/^, triangledown/v, triangleleft/<,
                 // triangleright/>, plus/+, |, -
-                prim = "path";
+                prim = 'path';
             }
 
             el.rendNode = this.appendChildPrim(
@@ -360,13 +360,13 @@ JXG.extend(
                 s1;
 
             if (!isNaN(el.coords.scrCoords[2] + el.coords.scrCoords[1])) {
-                if (unit === "user") {
+                if (unit === 'user') {
                     size *= Math.sqrt(Math.abs(el.board.unitX * el.board.unitY));
                 }
                 size *= !el.board || !zoom ? 1.0 : Math.sqrt(el.board.zoomX * el.board.zoomY);
                 s1 = size === 0 ? 0 : size + 1;
 
-                if (face === "o") {
+                if (face === 'o') {
                     // circle
                     this.updateEllipsePrim(
                         el.rendNode,
@@ -443,7 +443,7 @@ JXG.extend(
                 this.createPrim("line", el.id),
                 el.evalVisProp('layer')
             );
-            this.appendNodesToElement(el, "lines");
+            this.appendNodesToElement(el, 'lines');
             this.updateLine(el);
         },
 
@@ -474,7 +474,7 @@ JXG.extend(
                 this.createPrim("path", el.id),
                 el.evalVisProp('layer')
             );
-            this.appendNodesToElement(el, "path");
+            this.appendNodesToElement(el, 'path');
             this.updateCurve(el);
         },
 
@@ -763,7 +763,7 @@ JXG.extend(
                 d1x = d1y = d2x = d2y = 0.0;
                 d = c1.distance(Const.COORDS_BY_SCREEN, c2);
 
-                if (a.evFirst && el.board.renderer.type !== "vml") {
+                if (a.evFirst && el.board.renderer.type !== 'vml') {
                     if (d >= a.minLen) {
                         d1x = ((c2.scrCoords[1] - c1.scrCoords[1]) * a.offFirst) / d;
                         d1y = ((c2.scrCoords[2] - c1.scrCoords[2]) * a.offFirst) / d;
@@ -772,7 +772,7 @@ JXG.extend(
                     }
                 }
 
-                if (a.evLast && el.board.renderer.type !== "vml") {
+                if (a.evLast && el.board.renderer.type !== 'vml') {
                     if (d >= a.minLen) {
                         d2x = ((c2.scrCoords[1] - c1.scrCoords[1]) * a.offLast) / d;
                         d2y = ((c2.scrCoords[2] - c1.scrCoords[2]) * a.offLast) / d;
@@ -916,7 +916,7 @@ JXG.extend(
                 this.createPrim("path", el.id),
                 el.evalVisProp('layer')
             );
-            this.appendNodesToElement(el, "path");
+            this.appendNodesToElement(el, 'path');
         },
 
         /**
@@ -945,7 +945,7 @@ JXG.extend(
                 this.createPrim("ellipse", el.id),
                 el.evalVisProp('layer')
             );
-            this.appendNodesToElement(el, "ellipse");
+            this.appendNodesToElement(el, 'ellipse');
             this.updateEllipse(el);
         },
 
@@ -992,7 +992,7 @@ JXG.extend(
                 this.createPrim("polygon", el.id),
                 el.evalVisProp('layer')
             );
-            this.appendNodesToElement(el, "polygon");
+            this.appendNodesToElement(el, 'polygon');
             this.updatePolygon(el);
         },
 
@@ -1074,9 +1074,9 @@ JXG.extend(
                 Env.isBrowser &&
                 this.type !== "no"
             ) {
-                node = this.container.ownerDocument.createElement("div");
+                node = this.container.ownerDocument.createElement('div');
                 //node = this.container.ownerDocument.createElementNS('http://www.w3.org/1999/xhtml', 'div'); //
-                node.style.position = "absolute";
+                node.style.position = 'absolute';
                 node.className = el.evalVisProp('cssclass');
 
                 level = el.evalVisProp('layer');
@@ -1134,7 +1134,7 @@ JXG.extend(
             if (el.visPropCalc.visible) {
                 this.updateTextStyle(el, false);
 
-                if (el.evalVisProp('display') === "html" && this.type !== "no") {
+                if (el.evalVisProp('display') === "html" && this.type !== 'no') {
                     // Set the position
                     if (!isNaN(el.coords.scrCoords[1] + el.coords.scrCoords[2])) {
                         // Horizontal
@@ -1143,19 +1143,19 @@ JXG.extend(
                         c = Math.abs(c) < 1000000 ? c : 1000000;
                         ax = el.getAnchorX();
 
-                        if (ax === "right") {
+                        if (ax === 'right') {
                             // v = Math.floor(el.board.canvasWidth - c);
                             v = el.board.canvasWidth - c;
-                            to_h = "right";
-                        } else if (ax === "middle") {
+                            to_h = 'right';
+                        } else if (ax === 'middle') {
                             // v = Math.floor(c - 0.5 * el.size[0]);
                             v = c - 0.5 * el.size[0];
-                            to_h = "center";
+                            to_h = 'center';
                         } else {
                             // 'left'
                             // v = Math.floor(c);
                             v = c;
-                            to_h = "left";
+                            to_h = 'left';
                         }
 
                         // This may be useful for foreignObj.
@@ -1164,12 +1164,12 @@ JXG.extend(
                         //}
 
                         if (el.visPropOld.left !== ax + v) {
-                            if (ax === "right") {
-                                el.rendNode.style.right = v + "px";
-                                el.rendNode.style.left = "auto";
+                            if (ax === 'right') {
+                                el.rendNode.style.right = v + 'px';
+                                el.rendNode.style.left = 'auto';
                             } else {
-                                el.rendNode.style.left = v + "px";
-                                el.rendNode.style.right = "auto";
+                                el.rendNode.style.left = v + 'px';
+                                el.rendNode.style.right = 'auto';
                             }
                             el.visPropOld.left = ax + v;
                         }
@@ -1179,19 +1179,19 @@ JXG.extend(
                         c = Math.abs(c) < 1000000 ? c : 1000000;
                         ay = el.getAnchorY();
 
-                        if (ay === "bottom") {
+                        if (ay === 'bottom') {
                             // v = Math.floor(el.board.canvasHeight - c);
                             v = el.board.canvasHeight - c;
-                            to_v = "bottom";
-                        } else if (ay === "middle") {
+                            to_v = 'bottom';
+                        } else if (ay === 'middle') {
                             // v = Math.floor(c - 0.5 * el.size[1]);
                             v = c - 0.5 * el.size[1];
-                            to_v = "center";
+                            to_v = 'center';
                         } else {
                             // top
                             // v = Math.floor(c);
                             v = c;
-                            to_v = "top";
+                            to_v = 'top';
                         }
 
                         // This may be useful for foreignObj.
@@ -1200,12 +1200,12 @@ JXG.extend(
                         //}
 
                         if (el.visPropOld.top !== ay + v) {
-                            if (ay === "bottom") {
-                                el.rendNode.style.top = "auto";
-                                el.rendNode.style.bottom = v + "px";
+                            if (ay === 'bottom') {
+                                el.rendNode.style.top = 'auto';
+                                el.rendNode.style.bottom = v + 'px';
                             } else {
-                                el.rendNode.style.bottom = "auto";
-                                el.rendNode.style.top = v + "px";
+                                el.rendNode.style.bottom = 'auto';
+                                el.rendNode.style.top = v + 'px';
                             }
                             el.visPropOld.top = ay + v;
                         }
@@ -1407,7 +1407,7 @@ JXG.extend(
             //  VML        +         +
             //  canvas     +         -
             //  no         -         -
-            if (this.type !== "no" && (display === "html" || this.type !== "canvas")) {
+            if (this.type !== "no" && (display === "html" || this.type !== 'canvas')) {
                 for (style = 0; style < lenS; style++) {
                     // First set cssString to
                     // ev.cssdefaultstyle of ev.highlightcssdefaultstyle,
@@ -1457,7 +1457,7 @@ JXG.extend(
             this.setTabindex(el);
 
             this.setObjectTransition(el);
-            if (display === "html" && this.type !== "no") {
+            if (display === "html" && this.type !== 'no') {
                 // Set new CSS class
                 if (el.visPropOld.cssclass !== css) {
                     el.rendNode.className = css;
@@ -2093,12 +2093,12 @@ JXG.extend(
 
                     board_id = board_id || "";
 
-                    button = doc.createElement("span");
+                    button = doc.createElement('span');
                     button.innerHTML = label; // button.appendChild(doc.createTextNode(label));
 
                     // Style settings are superseded by adding the CSS class below
-                    button.style.paddingLeft = "7px";
-                    button.style.paddingRight = "7px";
+                    button.style.paddingLeft = '7px';
+                    button.style.paddingRight = '7px';
 
                     if (button.classList !== undefined) {
                         // classList not available in IE 9
@@ -2131,9 +2131,9 @@ JXG.extend(
                     Env.addEvent(button, "touchstart", cancelbubble, board);
                 };
 
-            if (Env.isBrowser && this.type !== "no") {
+            if (Env.isBrowser && this.type !== 'no') {
                 doc = board.containerObj.ownerDocument;
-                node = doc.createElement("div");
+                node = doc.createElement('div');
 
                 node.setAttribute("id", board.container + "_navigationbar");
 
@@ -2202,14 +2202,14 @@ JXG.extend(
 
                 if (board.attr.shownavigation) {
                     if (board.attr.showzoom) {
-                        createButton("\u2013", board.zoomOut, board.container, "out");
-                        createButton("o", board.zoom100, board.container, "100");
-                        createButton("+", board.zoomIn, board.container, "in");
+                        createButton("\u2013", board.zoomOut, board.container, 'out');
+                        createButton("o", board.zoom100, board.container, '100');
+                        createButton("+", board.zoomIn, board.container, 'in');
                     }
-                    createButton("\u2190", board.clickLeftArrow, board.container, "left");
-                    createButton("\u2193", board.clickUpArrow, board.container, "down"); // Down arrow
-                    createButton("\u2191", board.clickDownArrow, board.container, "up"); // Up arrow
-                    createButton("\u2192", board.clickRightArrow, board.container, "right");
+                    createButton("\u2190", board.clickLeftArrow, board.container, 'left');
+                    createButton("\u2193", board.clickUpArrow, board.container, 'down'); // Down arrow
+                    createButton("\u2191", board.clickDownArrow, board.container, 'up'); // Up arrow
+                    createButton("\u2192", board.clickRightArrow, board.container, 'right');
                 }
             }
         },

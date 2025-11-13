@@ -35,7 +35,8 @@ describe("Test geometry functions", function () {
         renderer: "svg",
         axis: false,
         grid: false,
-        boundingbox: [-8, 8, 8, -8],
+        // boundingbox: [-8, 8, 8, -8],
+        boundingbox: [-10, 10, 10, -10],
         resize: {enabled: false},
         showCopyright: false,
         showNavigation: false
@@ -55,6 +56,31 @@ describe("Test geometry functions", function () {
             c = [1, 3, 0];
 
         expect(JXG.Math.Geometry.affineRatio(a, b, c)).toEqual(3);
+    });
+
+    it("intersectingFunctiongraphs", function () {
+        var f1 = board.create("functiongraph", ["(x-1)**2", -10, 10]); // The exponent 2 fails
+        var f2 = board.create("functiongraph", ["0", -10, 10]);
+        var inter = board.create("intersection", [f1, f2]);
+        // var c = JXG.Math.Geometry.meetCurveCurve(f1, f2, 0, 0, board).usrCoords;
+        // console.log('intersection', inter.X())
+        expect(inter.X()).toBeCloseTo(1, 2);
+    });
+
+    it("intersectingCurveCurve", function () {
+      const f1 = board.create("functiongraph", ["sin(x)", -10, 10], { fixed: false });
+      const f2 = board.create("functiongraph", ["0", -10, 10], {});
+
+      const inter = board.create("intersection", [f1, f2, 5]);
+      expect(inter.X()).toBeCloseTo(Math.PI * 2, 4);
+    });
+
+    it("intersectingCurveCurve 2", function () {
+      const f1 = board.create("functiongraph", ["sin(x)"], { fixed: false }); // ["sin(x)", -10, 10] fails
+      const f2 = board.create("functiongraph", ["0"], {});
+
+      const inter = board.create("intersection", [f1, f2, 6]);
+      expect(inter.X()).toBeCloseTo(Math.PI * 3, 4); // 9.42477796076938
     });
 
     it("meetSegmentSegment", function () {

@@ -259,7 +259,7 @@ var priv = {
 JXG.createInput = function (board, parents, attributes) {
     var t,
         par,
-        attr = Type.copyAttributes(attributes, board.options, "input");
+        attr = Type.copyAttributes(attributes, board.options, 'input');
 
     par = [
         parents[0],
@@ -267,7 +267,7 @@ JXG.createInput = function (board, parents, attributes) {
         '<span style="display:inline; white-space:nowrap; padding:0px;">' +
         '<label></label><input type="text" maxlength="' +
         attr.maxlength +
-        '" style="width:100%"/>' +
+        '" style="width:100%" />' +
         "</span>"
     ];
 
@@ -277,7 +277,6 @@ JXG.createInput = function (board, parents, attributes) {
 
     t.rendNodeLabel = t.rendNode.childNodes[0].childNodes[0];
     t.rendNodeInput = t.rendNode.childNodes[0].childNodes[1];
-    // t.rendNodeLabel.innerHTML = parents[3];
     t.rendNodeInput.value = parents[2];
     t.rendNodeTag = t.rendNodeInput; // Needed for unified treatment in setAttribute
     t.rendNodeTag.disabled = !!attr.disabled;
@@ -411,7 +410,7 @@ JXG.createInput = function (board, parents, attributes) {
     );
 
     // This sets the font-size of the input HTML element
-    t.visPropOld.fontsize = "0px";
+    t.visPropOld.fontsize = '0px';
     board.renderer.updateTextStyle(t, false);
 
     return t;

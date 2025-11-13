@@ -45,7 +45,7 @@ def import_module(plugin, resp):
     return tp
 
 def load_module(req, resp):
-    plugin = req.getValue("module", "none")
+    plugin = req.getValue("module", 'none')
     tp = import_module(plugin, resp)
 
     if resp._type != 'error':

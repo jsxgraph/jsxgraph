@@ -108,11 +108,11 @@ JXG.Line = function (board, p1, p2, attributes) {
     this.parentPolygon = null;
 
     /* Register line at board */
-    this.id = this.board.setId(this, "L");
+    this.id = this.board.setId(this, 'L');
     this.board.renderer.drawLine(this);
     this.board.finalizeAdding(this);
 
-    this.elType = "line";
+    this.elType = 'line';
 
     /* Add line as child to defining points */
     if (this.point1._is_new) {
@@ -1175,7 +1175,7 @@ JXG.createLine = function (board, parents, attributes) {
     if (parents.length === 2) {
         // The line is defined by two points or coordinates of two points.
         // In the latter case, the points are created.
-        attr = Type.copyAttributes(attributes, board.options, "line", "point1");
+        attr = Type.copyAttributes(attributes, board.options, "line", 'point1');
         if (Type.isArray(parents[0]) && parents[0].length > 1) {
             p1 = board.create("point", parents[0], attr);
         } else if (Type.isString(parents[0]) || Type.isPoint(parents[0])) {
@@ -1205,7 +1205,7 @@ JXG.createLine = function (board, parents, attributes) {
         }
 
         // point 2 given by coordinates
-        attr = Type.copyAttributes(attributes, board.options, "line", "point2");
+        attr = Type.copyAttributes(attributes, board.options, "line", 'point2');
         if (doTransform) {
             p2 = board.create("point", [parents[0].point2, parents[1]], attr);
         } else if (Type.isArray(parents[1]) && parents[1].length > 1) {
@@ -1233,7 +1233,7 @@ JXG.createLine = function (board, parents, attributes) {
             );
         }
 
-        attr = Type.copyAttributes(attributes, board.options, "line");
+        attr = Type.copyAttributes(attributes, board.options, 'line');
         el = new JXG.Line(board, p1, p2, attr);
 
         if (constrained) {
@@ -1276,7 +1276,7 @@ JXG.createLine = function (board, parents, attributes) {
         }
 
         // point 1 is the midpoint between (0, c, -b) and point 2. => point1 is finite.
-        attr = Type.copyAttributes(attributes, board.options, "line", "point1");
+        attr = Type.copyAttributes(attributes, board.options, "line", 'point1');
         if (isDraggable) {
             p1 = board.create("point", [
                 c[2]() * c[2]() + c[1]() * c[1](),
@@ -1298,7 +1298,7 @@ JXG.createLine = function (board, parents, attributes) {
         }
 
         // point 2: (b^2+c^2,-ba+c,-ca-b)
-        attr = Type.copyAttributes(attributes, board.options, "line", "point2");
+        attr = Type.copyAttributes(attributes, board.options, "line", 'point2');
         if (isDraggable) {
             p2 = board.create("point", [
                 c[2]() * c[2]() + c[1]() * c[1](),
@@ -1323,7 +1323,7 @@ JXG.createLine = function (board, parents, attributes) {
         // need to compute the initial position of the two points p1 and p2.
         p1.prepareUpdate().update();
         p2.prepareUpdate().update();
-        attr = Type.copyAttributes(attributes, board.options, "line");
+        attr = Type.copyAttributes(attributes, board.options, 'line');
         el = new JXG.Line(board, p1, p2, attr);
         // Not yet working, because the points are not draggable.
         el.isDraggable = isDraggable;
@@ -1338,7 +1338,7 @@ JXG.createLine = function (board, parents, attributes) {
         Type.isPoint(parents[0]()[1])
     ) {
         ps = parents[0]();
-        attr = Type.copyAttributes(attributes, board.options, "line");
+        attr = Type.copyAttributes(attributes, board.options, 'line');
         el = new JXG.Line(board, ps[0], ps[1], attr);
         el.constrained = true;
         el.funps = parents[0];
@@ -1353,7 +1353,7 @@ JXG.createLine = function (board, parents, attributes) {
     ) {
         ps = parents[0];
 
-        attr = Type.copyAttributes(attributes, board.options, "line", "point1");
+        attr = Type.copyAttributes(attributes, board.options, "line", 'point1');
         p1 = board.create("point", [
             function () {
                 var c = ps();
@@ -1366,7 +1366,7 @@ JXG.createLine = function (board, parents, attributes) {
             }
         ], attr);
 
-        attr = Type.copyAttributes(attributes, board.options, "line", "point2");
+        attr = Type.copyAttributes(attributes, board.options, "line", 'point2');
         p2 = board.create("point", [
             function () {
                 var c = ps();
@@ -1379,7 +1379,7 @@ JXG.createLine = function (board, parents, attributes) {
             }
         ], attr);
 
-        attr = Type.copyAttributes(attributes, board.options, "line");
+        attr = Type.copyAttributes(attributes, board.options, 'line');
         el = new JXG.Line(board, p1, p2, attr);
 
         el.constrained = true;
@@ -1466,7 +1466,7 @@ JXG.createSegment = function (board, parents, attributes) {
 
     attributes.straightFirst = false;
     attributes.straightLast = false;
-    attr = Type.copyAttributes(attributes, board.options, "segment");
+    attr = Type.copyAttributes(attributes, board.options, 'segment');
 
     el = board.create("line", parents.slice(0, 2), attr);
 
@@ -1515,7 +1515,7 @@ JXG.createSegment = function (board, parents, attributes) {
 
     }
 
-    el.elType = "segment";
+    el.elType = 'segment';
 
     return el;
 };
@@ -1556,11 +1556,11 @@ JXG.createArrow = function (board, parents, attributes) {
 
     attributes.straightFirst = false;
     attributes.straightLast = false;
-    attr = Type.copyAttributes(attributes, board.options, "arrow");
+    attr = Type.copyAttributes(attributes, board.options, 'arrow');
     el = board.create("line", parents, attr);
     //el.setArrow(false, true);
     el.type = Const.OBJECT_TYPE_VECTOR;
-    el.elType = "arrow";
+    el.elType = 'arrow';
 
     return el;
 };
@@ -1631,7 +1631,7 @@ JXG.createAxis = function (board, parents, attributes) {
         ancestor, ticksDist;
 
     // Create line
-    attr = Type.copyAttributes(attributes, board.options, "axis");
+    attr = Type.copyAttributes(attributes, board.options, 'axis');
     try {
         axis = board.create("line", parents, attr);
     } catch (err) {
@@ -1678,7 +1678,7 @@ JXG.createAxis = function (board, parents, attributes) {
      */
     axis.defaultTicks = board.create("ticks", [axis, ticksDist], attr.ticks);
     axis.defaultTicks.dump = false;
-    axis.elType = "axis";
+    axis.elType = 'axis';
     axis.subs = {
         ticks: axis.defaultTicks
     };
@@ -2277,7 +2277,7 @@ JXG.createTangent = function (board, parents, attributes) {
         throw new Error("JSXGraph: Couldn't create tangent with the given parents.");
     }
 
-    tangent.elType = "tangent";
+    tangent.elType = 'tangent';
     tangent.type = Const.OBJECT_TYPE_TANGENT;
     tangent.setParents(parents);
 
@@ -2330,11 +2330,11 @@ JXG.createNormal = function (board, parents, attributes) {
         // Two arguments: (point,line), (point,circle), (line,point) or (circle,point)
     } else if (parents.length === 2) {
         if (Type.isPointType(board, parents[0])) {
-            p = Type.providePoints(board, [parents[0]], attributes, "point")[0];
+            p = Type.providePoints(board, [parents[0]], attributes, 'point')[0];
             c = parents[1];
         } else if (Type.isPointType(board, parents[1])) {
             c = parents[0];
-            p = Type.providePoints(board, [parents[1]], attributes, "point")[0];
+            p = Type.providePoints(board, [parents[1]], attributes, 'point')[0];
         } else {
             throw new Error(
                 "JSXGraph: Can't create normal with parent types '" +
@@ -2356,10 +2356,10 @@ JXG.createNormal = function (board, parents, attributes) {
         );
     }
 
-    attr = Type.copyAttributes(attributes, board.options, "normal");
+    attr = Type.copyAttributes(attributes, board.options, 'normal');
     if (c.elementClass === Const.OBJECT_CLASS_LINE) {
         // Private point
-        attrp = Type.copyAttributes(attributes, board.options, "normal", "point");
+        attrp = Type.copyAttributes(attributes, board.options, "normal", 'point');
         pp = board.create(
             "point",
             [
@@ -2684,7 +2684,7 @@ JXG.createNormal = function (board, parents, attributes) {
         );
     }
 
-    l.elType = "normal";
+    l.elType = 'normal';
     l.setParents(parents);
 
     if (Type.exists(p._is_new)) {
@@ -2771,7 +2771,7 @@ JXG.createRadicalAxis = function (board, parents, attributes) {
         attributes
     );
 
-    el.elType = "radicalaxis";
+    el.elType = 'radicalaxis';
     el.setParents([el1.id, el2.id]);
 
     el1.addChild(el);
@@ -2885,7 +2885,7 @@ JXG.createPolarLine = function (board, parents, attributes) {
     // Polar lines have been already provided in the tangent element.
     el = board.create("tangent", [el1, el2], attributes);
 
-    el.elType = "polarline";
+    el.elType = 'polarline';
     return el;
 };
 

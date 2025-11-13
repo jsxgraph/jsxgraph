@@ -80,7 +80,7 @@ JXG.createAxes3D = function (board, parents, attributes) {
     }
 
     // Main 3D axes
-    attr = Type.copyAttributes(attributes, board.options, "axes3d");
+    attr = Type.copyAttributes(attributes, board.options, 'axes3d');
     // Position of the main axes can not be changed during run time
     pos = attr.axesposition;
 
@@ -89,7 +89,7 @@ JXG.createAxes3D = function (board, parents, attributes) {
         dir = directions[i];
         na = dir + suffixAxis;
 
-        if (pos === "center") {
+        if (pos === 'center') {
             // Axes centered
             from = [0, 0, 0];
             to = [0, 0, 0];
@@ -98,7 +98,7 @@ JXG.createAxes3D = function (board, parents, attributes) {
             axes[na].view = view;
         } else if (pos === 'border') {
             // Axes bordered
-            na += "Border";
+            na += 'Border';
             from = rear.slice();
             to = front.slice();
             if (dir === 'z') {
@@ -155,7 +155,7 @@ JXG.createAxes3D = function (board, parents, attributes) {
         dir = directions[i];
         for (j = 0; j < sides.length; j++) {
             // Run through ['Rear', 'Front']
-            // attr = Type.copyAttributes(attributes, board.options, "axes3d");
+            // attr = Type.copyAttributes(attributes, board.options, 'axes3d');
 
             na = dir + "Plane" + sides[j];
 
@@ -170,7 +170,7 @@ JXG.createAxes3D = function (board, parents, attributes) {
 
             attr = Type.copyAttributes(attributes, board.options, "axes3d", na);
             axes[na] = view.create("plane3d", [from, vec1, vec2, range1, range2], attr);
-            axes[na].elType = "axisplane3d";
+            axes[na].elType = 'axisplane3d';
         }
     }
 
@@ -182,7 +182,7 @@ JXG.createAxes3D = function (board, parents, attributes) {
             for (k = 1; k <= 2; k++) {
                 i1 = (i + k) % 3;
                 dir1 = directions[i1];
-                na = dir + "Plane" + sides[j] + dir1.toUpperCase() + "Axis";
+                na = dir + "Plane" + sides[j] + dir1.toUpperCase() + 'Axis';
                 na_parent = dir + "Plane" + sides[j];
 
                 from = [0, 0, 0];
@@ -230,7 +230,7 @@ JXG.createAxis3D = function (board, parents, attributes) {
         el;
 
     // Use 2D points to create axis
-    attr = Type.copyAttributes(attributes.point1, board.options, "axis3d", "point1");
+    attr = Type.copyAttributes(attributes.point1, board.options, "axis3d", 'point1');
     attr.element3d = true;  // Needed to avoid update during change of view
     el_start = view.create(
         "point",
@@ -249,7 +249,7 @@ JXG.createAxis3D = function (board, parents, attributes) {
         attr
     );
 
-    attr = Type.copyAttributes(attributes.point2, board.options, "axis3d", "point2");
+    attr = Type.copyAttributes(attributes.point2, board.options, "axis3d", 'point2');
     attr.element3d = true;  // Needed to avoid update during change of view
     el_end = view.create(
         "point",
@@ -268,7 +268,7 @@ JXG.createAxis3D = function (board, parents, attributes) {
         attr
     );
 
-    attr = Type.copyAttributes(attributes, board.options, "axis3d");
+    attr = Type.copyAttributes(attributes, board.options, 'axis3d');
     attr.element3d = true;  // Needed to avoid update during change of view
     el = view.create("arrow", [el_start, el_end], attr);
 

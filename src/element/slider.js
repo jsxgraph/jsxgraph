@@ -231,7 +231,7 @@ JXG.createSlider = function (board, parents, attributes) {
         snapWidth, sw, s,
         attr;
 
-    attr = Type.copyAttributes(attributes, board.options, "slider");
+    attr = Type.copyAttributes(attributes, board.options, 'slider');
     withTicks = attr.withticks;
     withText = attr.withlabel;
     snapWidth = attr.snapwidth;
@@ -267,7 +267,7 @@ JXG.createSlider = function (board, parents, attributes) {
     starty = pos0[1] + ((pos1[1] - pos0[1]) * (s - smin)) / (smax - smin);
 
     // glider point
-    // attr = Type.copyAttributes(attributes, board.options, "slider");
+    // attr = Type.copyAttributes(attributes, board.options, 'slider');
     // overwrite this in any case; the sliders label is a special text element, not the gliders label.
     // this will be set back to true after the text was created (and only if withlabel was true initially).
     attr.withlabel = false;
@@ -276,7 +276,7 @@ JXG.createSlider = function (board, parents, attributes) {
     p3.setAttribute({ snapwidth: snapWidth, snapvalues: snapValues, snapvaluedistance: snapValueDistance });
 
     // Segment from start point to glider point: highline
-    // attr = Type.copyAttributes(attributes, board.options, "slider", "highline");
+    // attr = Type.copyAttributes(attributes, board.options, "slider", 'highline');
     l2 = board.create("segment", [p1, p3], attr.highline);
 
     /**
@@ -471,7 +471,7 @@ JXG.createSlider = function (board, parents, attributes) {
     if (withTicks) {
         // Function to generate correct label texts
 
-        // attr = Type.copyAttributes(attributes, board.options, "slider", "ticks");
+        // attr = Type.copyAttributes(attributes, board.options, "slider", 'ticks');
         if (!Type.exists(attr.generatelabeltext)) {
             attr.ticks.generateLabelText = function (tick, zero, value) {
                 var labelText,
@@ -482,7 +482,7 @@ JXG.createSlider = function (board, parents, attributes) {
 
                 if (dFull < Mat.eps || Math.abs(val) < Mat.eps) {
                     // Point is zero
-                    labelText = "0";
+                    labelText = '0';
                 } else {
                     labelText = this.formatLabelText(val);
                 }
@@ -542,7 +542,7 @@ JXG.createSlider = function (board, parents, attributes) {
     }
 
     // p3.type = Const.OBJECT_TYPE_SLIDER; // No! type has to be Const.OBJECT_TYPE_GLIDER
-    p3.elType = "slider";
+    p3.elType = 'slider';
     p3.parents = parents;
     p3.subs = {
         point1: p1,

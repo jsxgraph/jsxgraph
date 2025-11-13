@@ -482,11 +482,11 @@ JXG.createGrid = function (board, parents, attributes) {
             majorStep = [majorStep[0], majorStep[0]];
         }
         if (Type.exists(gridX)) {
-            JXG.deprecated("gridX", "majorStep");
+            JXG.deprecated("gridX", 'majorStep');
             majorStep[0] = gridX;
         }
         if (Type.exists(gridY)) {
-            JXG.deprecated("gridY", "majorStep");
+            JXG.deprecated("gridY", 'majorStep');
             majorStep[1] = gridY;
         }
 
@@ -547,10 +547,10 @@ JXG.createGrid = function (board, parents, attributes) {
         // considered to be in pixel, while parseNumber expects user coords.
         // Therefore, we have to add 'px'.
         if (Type.isNumber(majorSize[0], true)) {
-            majorSize[0] = majorSize[0] + "px";
+            majorSize[0] = majorSize[0] + 'px';
         }
         if (Type.isNumber(majorSize[1], true)) {
-            majorSize[1] = majorSize[1] + "px";
+            majorSize[1] = majorSize[1] + 'px';
         }
         majorSize[0] = Type.parseNumber(majorSize[0], majorStep[0], 1 / this.board.unitX);
         majorSize[1] = Type.parseNumber(majorSize[1], majorStep[1], 1 / this.board.unitY);
@@ -719,10 +719,10 @@ JXG.createGrid = function (board, parents, attributes) {
         // considered to be in pixel, while parseNumber expects user coords.
         // Therefore, we have to add 'px'.
         if (Type.isNumber(minorSize[0], true)) {
-            minorSize[0] = minorSize[0] + "px";
+            minorSize[0] = minorSize[0] + 'px';
         }
         if (Type.isNumber(minorSize[1], true)) {
-            minorSize[1] = minorSize[1] + "px";
+            minorSize[1] = minorSize[1] + 'px';
         }
         minorSize[0] = Type.parseNumber(minorSize[0], minorStep[0], 1 / this.board.unitX);
         minorSize[1] = Type.parseNumber(minorSize[1], minorStep[1], 1 / this.board.unitY);

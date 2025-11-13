@@ -199,7 +199,7 @@ Mat.Clip = {
                     Q._end = false;
                 }
 
-                if (P.data.alpha === 0.0 && P.data.type === "T") {
+                if (P.data.alpha === 0.0 && P.data.type === 'T') {
                     // console.log("SKIP", P.coords.usrCoords, P.data.type, P.neighbour.data.type);
                     Q.intersection = true;
                     Q.data = P.data;
@@ -432,13 +432,13 @@ Mat.Clip = {
                     (res[1] === Infinity && res[2] === Infinity && Mat.norm(res[0], 3) < eps)
                 ) {
                     crds = new Coords(Const.COORDS_BY_USER, res[0], board);
-                    type = "X";
+                    type = 'X';
 
                     // Handle degenerated cases
                     if (Math.abs(res[1]) * d1 < eps || Math.abs(res[2]) * d2 < eps) {
                         // Crossing / bouncing at vertex or
                         // end of delayed crossing / bouncing
-                        type = "T";
+                        type = 'T';
                         if (Math.abs(res[1]) * d1 < eps) {
                             res[1] = 0;
                         }
@@ -478,7 +478,7 @@ Mat.Clip = {
                             // console.log((j + 1) % C_le, Cj1)
                         }
                         if (alpha >= 0 && alpha < 1) {
-                            type = "T";
+                            type = 'T';
                             crds = new Coords(Const.COORDS_BY_USER, Si, board);
                             res[1] = 0;
                             res[2] = alpha;
@@ -503,7 +503,7 @@ Mat.Clip = {
                             // console.log("alpha Cj", alpha, Si, Geometry.distance(Si, Cj, 3));
                         }
                         if (Geometry.distance(Si, Cj, 3) > eps && alpha >= 0 && alpha < 1) {
-                            type = "T";
+                            type = 'T';
                             crds = new Coords(Const.COORDS_BY_USER, Cj, board);
                             res[1] = alpha;
                             res[2] = 0;
@@ -581,15 +581,15 @@ Mat.Clip = {
         // Left turn
         if (s3 >= 0) {
             if (s1 >= 0 && s2 >= 0) {
-                return "left";
+                return 'left';
             }
-            return "right";
+            return 'right';
         }
         // Right turn
         if (s1 >= 0 || s2 >= 0) {
-            return "left";
+            return 'left';
         }
-        return "right";
+        return 'right';
     },
 
     /**
@@ -625,7 +625,7 @@ Mat.Clip = {
             if (DEBUG) {
                 console.log("Inspect P:", P.coords.usrCoords, P.data ? P.data.type : " ");
             }
-            if (P.intersection && P.data.type === "T") {
+            if (P.intersection && P.data.type === 'T') {
                 // Handle the degenerate cases
                 // Decide if they are (delayed) bouncing or crossing intersections
                 Pp = P._next.coords.usrCoords; // P+
@@ -746,9 +746,9 @@ Mat.Clip = {
                             this._getPosition(Pm, Qm, Q.coords.usrCoords, Qp) !==
                             this._getPosition(Pp, Qm, Q.coords.usrCoords, Qp)
                         ) {
-                            P.data.type = "X";
+                            P.data.type = 'X';
                         } else {
-                            P.data.type = "B";
+                            P.data.type = 'B';
                         }
                     }
                 }
@@ -821,7 +821,7 @@ Mat.Clip = {
         while (endless) {
             if (P.intersection === true) {
                 if (DEBUG) {
-                    if (P.data.type === "T") {
+                    if (P.data.type === 'T') {
                         console.log(
                             "Degenerate point",
                             P.coords.usrCoords,
@@ -832,8 +832,8 @@ Mat.Clip = {
                         console.log("Intersection point", P.coords.usrCoords, P.data.type);
                     }
                 }
-                if (P.data.type === "T") {
-                    if (P.delayedStatus[0] !== "on" && P.delayedStatus[1] === "on") {
+                if (P.data.type === 'T') {
+                    if (P.delayedStatus[0] !== "on" && P.delayedStatus[1] === 'on') {
                         // First point of intersection chain
                         intersection_chain = true;
                         P_start = P;
@@ -844,7 +844,7 @@ Mat.Clip = {
                         P.delayedStatus[1] === "on"
                     ) {
                         // Interior of intersection chain
-                        P.data.type = "B";
+                        P.data.type = 'B';
                         if (DEBUG) {
                             console.log("Interior", P.coords.usrCoords);
                         }
@@ -857,8 +857,8 @@ Mat.Clip = {
                         intersection_chain = false;
                         if (start_status === P.delayedStatus[1]) {
                             // Intersection chain is delayed bouncing
-                            P_start.data.type = "DB";
-                            P.data.type = "DB";
+                            P_start.data.type = 'DB';
+                            P.data.type = 'DB';
                             if (DEBUG) {
                                 console.log(
                                     "Chain: delayed bouncing",
@@ -869,8 +869,8 @@ Mat.Clip = {
                             }
                         } else {
                             // Intersection chain is delayed crossing
-                            P_start.data.type = "DX";
-                            P.data.type = "DX";
+                            P_start.data.type = 'DX';
+                            P.data.type = 'DX';
                             if (DEBUG) {
                                 console.log(
                                     "Chain: delayed crossing",
@@ -997,11 +997,11 @@ Mat.Clip = {
         }
         if (Geometry.windingNumber(P.coords.usrCoords, path) === 0) {
             // Outside
-            status = "entry";
+            status = 'entry';
             // console.log(P.coords.usrCoords, ' is outside')
         } else {
             // Inside
-            status = "exit";
+            status = 'exit';
             // console.log(P.coords.usrCoords, ' is inside')
         }
 
@@ -1076,21 +1076,21 @@ Mat.Clip = {
                         // We end the intersection chain here and
                         // mark this event by setting intersection_chain = 2.
                         chain_start.entry_exit = status;
-                        if (status === "exit") {
-                            chain_start.data.type = "X";
+                        if (status === 'exit') {
+                            chain_start.data.type = 'X';
                         }
                         intersection_chain = 2;
                     }
 
-                    if (P.data.type === "X" || P.data.type === "DB") {
+                    if (P.data.type === "X" || P.data.type === 'DB') {
                         P.entry_exit = status;
-                        status = status === "entry" ? "exit" : "entry";
+                        status = status === "entry" ? "exit" : 'entry';
                         if (DEBUG) {
                             console.log("mark:", P.coords.usrCoords, P.data.type, P.entry_exit);
                         }
                     }
 
-                    if (P.data.type === "DX") {
+                    if (P.data.type === 'DX') {
                         if (intersection_chain === 0) {
                             // Start of intersection chain.
                             // No active intersection chain yet,
@@ -1110,12 +1110,12 @@ Mat.Clip = {
                             // End of delayed crossing chain reached
                             P.entry_exit = status;
                             chain_start.entry_exit = status;
-                            if (status === "exit") {
-                                chain_start.data.type = "X";
+                            if (status === 'exit') {
+                                chain_start.data.type = 'X';
                             } else {
-                                P.data.type = "X";
+                                P.data.type = 'X';
                             }
-                            status = status === "entry" ? "exit" : "entry";
+                            status = status === "entry" ? "exit" : 'entry';
 
                             if (DEBUG) {
                                 console.log(
@@ -1137,8 +1137,8 @@ Mat.Clip = {
                             // The delayed crossing had been interrupted by a crossing intersection.
                             // Now we treat the end of the delayed crossing as regular crossing.
                             P.entry_exit = status;
-                            P.data.type = "X";
-                            status = status === "entry" ? "exit" : "entry";
+                            P.data.type = 'X';
+                            status = status === "entry" ? "exit" : 'entry';
                             chain_start = null;
                             intersection_chain = 0;
                         }
@@ -1165,7 +1165,7 @@ Mat.Clip = {
     _stayOnPath: function (P, status) {
         var stay = true;
 
-        if (P.intersection && P.data.type !== "B") {
+        if (P.intersection && P.data.type !== 'B') {
             stay = status === P.entry_exit;
         }
         return stay;
@@ -1287,10 +1287,10 @@ Mat.Clip = {
                 // and the current intersection node is of type entry, we go forward.
                 //
                 if (
-                    (clip_type === "intersection" && current.entry_exit === "entry") ||
-                    (clip_type === "union" && current.entry_exit === "exit") ||
+                    (clip_type === "intersection" && current.entry_exit === 'entry') ||
+                    (clip_type === "union" && current.entry_exit === 'exit') ||
                     (clip_type === "difference" &&
-                        (P === S) === (current.entry_exit === "exit"))
+                        (P === S) === (current.entry_exit === 'exit'))
                 ) {
                     if (DEBUG) {
                         console.log("Go forward on", current.data.pathname, current.entry_exit);
@@ -1457,7 +1457,7 @@ Mat.Clip = {
 
         // Handle trivial cases
         if (S.length === 0) {
-            if (clip_type === "union") {
+            if (clip_type === 'union') {
                 // S cup C = C
                 path = C;
             } else {
@@ -1467,7 +1467,7 @@ Mat.Clip = {
             return this._getCoordsArrays(path, true);
         }
         if (C.length === 0) {
-            if (clip_type === "intersection") {
+            if (clip_type === 'intersection') {
                 // S cap C = {}
                 path = [];
             } else {
@@ -1508,10 +1508,10 @@ Mat.Clip = {
             if (Geometry.windingNumber(Q.coords.usrCoords, S) !== 0) {
                 // C is inside of S, i.e. C subset of S
 
-                if (clip_type === "union") {
+                if (clip_type === 'union') {
                     Type.concat(path, S);
                     path.push(S[0]);
-                } else if (clip_type === "difference") {
+                } else if (clip_type === 'difference') {
                     Type.concat(path, S);
                     path.push(S[0]);
                     if (Geometry.signedPolygon(S) * Geometry.signedPolygon(C) > 0) {
@@ -1520,17 +1520,17 @@ Mat.Clip = {
                     }
                     path.push([NaN, NaN]);
                 }
-                if (clip_type === "difference" || clip_type === "intersection") {
+                if (clip_type === "difference" || clip_type === 'intersection') {
                     Type.concat(path, C);
                     path.push(C[0]);
                     doClose = false;
                 }
             } else {
                 // The curves are disjoint
-                if (clip_type === "difference") {
+                if (clip_type === 'difference') {
                     Type.concat(path, S);
                     doClose = true;
-                } else if (clip_type === "union") {
+                } else if (clip_type === 'union') {
                     Type.concat(path, S);
                     path.push(S[0]);
                     path.push([NaN, NaN]);
@@ -1540,10 +1540,10 @@ Mat.Clip = {
             }
         } else {
             // S inside of C, i.e. S subset of C
-            if (clip_type === "intersection") {
+            if (clip_type === 'intersection') {
                 Type.concat(path, S);
                 doClose = true;
-            } else if (clip_type === "union") {
+            } else if (clip_type === 'union') {
                 Type.concat(path, C);
                 path.push(C[0]);
             }
@@ -1566,7 +1566,7 @@ Mat.Clip = {
             sum = 0;
 
         for (i = 0; i < le; i++) {
-            if (intersections[i].data.type === "X") {
+            if (intersections[i].data.type === 'X') {
                 sum++;
             }
         }

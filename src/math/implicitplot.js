@@ -618,7 +618,7 @@ Type.extend(
                         Mat.innerProduct(t_u, t_u_0, 2) > this.config.loop_dir
                     ) {
 
-                        // console.log("Loop detected after", steps, "steps");
+                        // console.log("Loop detected after", steps, 'steps');
                         // console.log("\t", "v", v, "u0:", u0)
                         // console.log("\t", "Dist(v, path0)", dist, config.loop_dist * h)
                         // console.log("\t", "t_u", t_u);
@@ -681,12 +681,12 @@ Type.extend(
                 // Predictor step
                 // if (true /*h < 2 * this.config.h_initial*/) {
                 // Euler
-                // console.log("euler")
+                // console.log('euler')
                 v[0] = u[0] + h * omega * t_u[0];
                 v[1] = u[1] + h * omega * t_u[1];
                 // } else {
                 //     // Heun
-                //     // console.log("heun")
+                //     // console.log('heun')
                 //     v[0] = u[0] + h * omega * t_u[0];
                 //     v[1] = u[1] + h * omega * t_u[1];
 

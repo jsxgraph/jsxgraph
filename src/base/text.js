@@ -109,7 +109,7 @@ JXG.Text = function (board, coords, attributes, content) {
      * @type Array
      */
     this.size = [1.0, 1.0];
-    this.id = this.board.setId(this, "T");
+    this.id = this.board.setId(this, 'T');
 
     this.board.renderer.drawText(this);
     this.board.finalizeAdding(this);
@@ -129,7 +129,7 @@ JXG.Text = function (board, coords, attributes, content) {
     if (Type.isString(this.content)) {
         this.notifyParents(this.content);
     }
-    this.elType = "text";
+    this.elType = 'text';
 
     this.methodMap = Type.deepCopy(this.methodMap, {
         setText: "setTextJessieCode",
@@ -141,7 +141,7 @@ JXG.Text = function (board, coords, attributes, content) {
 };
 
 JXG.Text.prototype = new GeometryElement();
-Type.copyPrototypeMethods(JXG.Text, CoordsElement, "coordsConstructor");
+Type.copyPrototypeMethods(JXG.Text, CoordsElement, 'coordsConstructor');
 
 JXG.extend(
     JXG.Text.prototype,
@@ -179,9 +179,9 @@ JXG.extend(
             }
 
             ax = this.getAnchorX();
-            if (ax === "right") {
+            if (ax === 'right') {
                 lft = this.coords.scrCoords[1] - this.size[0];
-            } else if (ax === "middle") {
+            } else if (ax === 'middle') {
                 lft = this.coords.scrCoords[1] - 0.5 * this.size[0];
             } else {
                 lft = this.coords.scrCoords[1];
@@ -189,16 +189,16 @@ JXG.extend(
             rt = lft + this.size[0];
 
             ay = this.getAnchorY();
-            if (ay === "top") {
+            if (ay === 'top') {
                 bot = this.coords.scrCoords[2] + this.size[1];
-            } else if (ay === "middle") {
+            } else if (ay === 'middle') {
                 bot = this.coords.scrCoords[2] + 0.5 * this.size[1];
             } else {
                 bot = this.coords.scrCoords[2];
             }
             top = bot - this.size[1];
 
-            if (this.evalVisProp('dragarea') === "all") {
+            if (this.evalVisProp('dragarea') === 'all') {
                 return x >= lft - r && x < rt + r && y >= top - r && y <= bot + r;
             }
             // e.g. 'small'
@@ -442,7 +442,7 @@ JXG.extend(
                 node,
                 ev_d = this.evalVisProp('display');
 
-            if (!Env.isBrowser || this.board.renderer.type === "no") {
+            if (!Env.isBrowser || this.board.renderer.type === 'no') {
                 return this;
             }
             node = this.rendNode;
@@ -450,7 +450,7 @@ JXG.extend(
             /**
              * offsetWidth and offsetHeight seem to be supported for internal vml elements by IE10+ in IE8 mode.
              */
-            if (ev_d === "html" || this.board.renderer.type === "vml") {
+            if (ev_d === "html" || this.board.renderer.type === 'vml') {
                 if (Type.exists(node.offsetWidth)) {
                     that = this;
                     window.setTimeout(function () {
@@ -474,8 +474,8 @@ JXG.extend(
                 } else {
                     this.size = this.crudeSizeEstimate();
                 }
-            } else if (ev_d === "internal") {
-                if (this.board.renderer.type === "svg") {
+            } else if (ev_d === 'internal') {
+                if (this.board.renderer.type === 'svg') {
                     that = this;
                     window.setTimeout(function () {
                         try {
@@ -485,7 +485,7 @@ JXG.extend(
                             that.updateRenderer();
                         } catch (e) {}
                     }, 0);
-                } else if (this.board.renderer.type === "canvas") {
+                } else if (this.board.renderer.type === 'canvas') {
                     this.size = this.crudeSizeEstimate();
                 }
             }
@@ -632,7 +632,7 @@ JXG.extend(
             this.updateCoords(fromParent);
             this.updateText();
 
-            if (this.evalVisProp('display') === "internal") {
+            if (this.evalVisProp('display') === 'internal') {
                 if (Type.isString(this.plaintext)) {
                     this.plaintext = this.utf8_decode(this.plaintext);
                 }
@@ -682,7 +682,7 @@ JXG.extend(
             ) {
                 this.setAutoPosition().updateConstraint();
             }
-            return this.updateRendererGeneric("updateText");
+            return this.updateRendererGeneric('updateText');
         },
 
         /**
@@ -769,7 +769,7 @@ JXG.extend(
                     res = res.replace(/\\'/g, "'");
 
                     // GEONExT-Hack: apply rounding once only.
-                    if (res.indexOf("toFixed") < 0) {
+                    if (res.indexOf('toFixed') < 0) {
                         // output of a value tag
                         if (
                             Type.isNumber(
@@ -841,7 +841,7 @@ JXG.extend(
                     res = res.replace(/\\"/g, "'").replace(/\\'/g, "'");
 
                     // // Hack: apply rounding once only.
-                    // if (res.indexOf("toFixed") < 0) {
+                    // if (res.indexOf('toFixed') < 0) {
                     //     // Output of a value tag
                     //     // Run the JessieCode parser
                     //     if (
@@ -1084,20 +1084,20 @@ JXG.extend(
          */
         getAnchorX: function () {
             var a = this.evalVisProp('anchorx');
-            if (a === "auto") {
+            if (a === 'auto') {
                 switch (this.visProp.position) {
                     case "top":
                     case "bot":
-                        return "middle";
+                        return 'middle';
                     case "rt":
                     case "lrt":
                     case "urt":
-                        return "left";
+                        return 'left';
                     case "lft":
                     case "llft":
                     case "ulft":
                     default:
-                        return "right";
+                        return 'right';
                 }
             }
             return a;
@@ -1111,20 +1111,20 @@ JXG.extend(
          */
         getAnchorY: function () {
             var a = this.evalVisProp('anchory');
-            if (a === "auto") {
+            if (a === 'auto') {
                 switch (this.visProp.position) {
                     case "top":
                     case "ulft":
                     case "urt":
-                        return "bottom";
+                        return 'bottom';
                     case "bot":
                     case "lrt":
                     case "llft":
-                        return "top";
+                        return 'top';
                     case "rt":
                     case "lft":
                     default:
-                        return "middle";
+                        return 'middle';
                 }
             }
             return a;
@@ -1171,7 +1171,7 @@ JXG.extend(
                     obj.visPropCalc.visible &&
                     obj !== this &&
                     whiteList.indexOf(obj.id) === -1 &&
-                    obj.evalVisProp("ignoreforlabelautoposition") !== true
+                    obj.evalVisProp('ignoreforlabelautoposition') !== true
                 ) {
                     // Save hasinnerpoints and temporarily disable to handle polygon areas
                     saveHasInnerPoints = obj.visProp.hasinnerpoints;
@@ -1254,7 +1254,7 @@ JXG.extend(
                 w = this.getSize()[0],
                 h = this.getSize()[1],
                 anchorCoords,
-                currentOffset = this.evalVisProp("offset"),
+                currentOffset = this.evalVisProp('offset'),
                 boundingBox = this.board.getBoundingBox();
 
             if (this.evalVisProp('islabel') && Type.exists(this.element)) {
@@ -1301,7 +1301,7 @@ JXG.extend(
             score -= this.getNumberOfConflicts(x, y, w, h, Type.evaluate(this.visProp.autopositionwhitelist));
 
             // Calculate displacement, minimum score is 0 if radius is minRadius, maximum score is < 1 when radius is maxRadius
-            score -= radius / this.evalVisProp("autopositionmindistance") / 10 - 0.1;
+            score -= radius / this.evalVisProp('autopositionmindistance') / 10 - 0.1;
 
             // Calculate angle between current offset and new offset
             angleCurrentOffset = Math.atan2(currentOffset[1], currentOffset[0]);
@@ -1340,11 +1340,11 @@ JXG.extend(
             var radius, angle, radiusStep,
                 i,
                 bestScore = -Infinity, bestRadius, bestAngle,
-                minRadius = this.evalVisProp("autopositionmindistance"),
-                maxRadius = this.evalVisProp("autopositionmaxdistance"),
+                minRadius = this.evalVisProp('autopositionmindistance'),
+                maxRadius = this.evalVisProp('autopositionmaxdistance'),
                 score,
                 co, si,
-                currentOffset = this.evalVisProp("offset"),
+                currentOffset = this.evalVisProp('offset'),
                 currentRadius,
                 currentAngle,
                 numAngles = 60,
@@ -1406,16 +1406,16 @@ JXG.extend(
 
             // If label is on the left side of the element, the anchorx is set to "right"
             if (co < 0) {
-                this.visProp.anchorx = "right";
+                this.visProp.anchorx = 'right';
             } else {
-                this.visProp.anchorx = "left";
+                this.visProp.anchorx = 'left';
             }
 
             // If label is on the bottom side of the element, so the anchory is set to "top"
             if (si < 0) {
-                this.visProp.anchory = "top";
+                this.visProp.anchory = 'top';
             } else {
-                this.visProp.anchory = "bottom";
+                this.visProp.anchory = 'bottom';
             }
 
             // Set offset
@@ -1566,11 +1566,11 @@ JXG.extend(
         //     this.visProp.offset = [r * co, r * si];
 
         //     if (co < -0.2) {
-        //         this.visProp.anchorx = "right";
+        //         this.visProp.anchorx = 'right'
         //     } else if (co > 0.2) {
-        //         this.visProp.anchorx = "left";
+        //         this.visProp.anchorx = 'left'
         //     } else {
-        //         this.visProp.anchorx = "middle";
+        //         this.visProp.anchorx = 'middle'
         //     }
 
         //     return this;
@@ -1659,7 +1659,7 @@ JXG.extend(
  */
 JXG.createText = function (board, parents, attributes) {
     var t,
-        attr = Type.copyAttributes(attributes, board.options, "text"),
+        attr = Type.copyAttributes(attributes, board.options, 'text'),
         coords = parents.slice(0, -1),
         content = parents[parents.length - 1];
 
@@ -1719,7 +1719,7 @@ JXG.registerElement("text", JXG.createText);
 JXG.createHTMLSlider = function (board, parents, attributes) {
     var t,
         par,
-        attr = Type.copyAttributes(attributes, board.options, "htmlslider");
+        attr = Type.copyAttributes(attributes, board.options, 'htmlslider');
 
     if (parents.length !== 2 || parents[0].length !== 2 || parents[1].length !== 3) {
         throw new Error(
@@ -1759,7 +1759,7 @@ JXG.createHTMLSlider = function (board, parents, attributes) {
     t.rendNodeLabel.id = t.rendNode.id + "_label";
 
     if (attr.withlabel) {
-        t.rendNodeLabel.innerHTML = t.name + "=";
+        t.rendNodeLabel.innerText = t.name + "=";
     }
 
     t.rendNodeOut = t.rendNodeForm.childNodes[2];
@@ -1773,9 +1773,9 @@ JXG.createHTMLSlider = function (board, parents, attributes) {
         JXG.debug(e);
     }
 
-    t.rendNodeRange.style.width = attr.widthrange + "px";
-    t.rendNodeRange.style.verticalAlign = "middle";
-    t.rendNodeOut.style.width = attr.widthout + "px";
+    t.rendNodeRange.style.width = attr.widthrange + 'px';
+    t.rendNodeRange.style.verticalAlign = 'middle';
+    t.rendNodeOut.style.width = attr.widthout + 'px';
 
     t._val = parents[1][1];
 
