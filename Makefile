@@ -173,6 +173,9 @@ lint:
 eslint:
 	$(ESLINT) $(ESLINTFLAGS) $(LINTLIST)
 
-# test:
-test:core
+test: core
 	$(KARMA) start karma/karma.conf.js
+
+testchromium: core
+	export CHROME_BIN=/usr/bin/chromium; $(KARMA) start karma/karma.conf.js
+	
