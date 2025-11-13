@@ -393,7 +393,7 @@ JXG.JSXGraph = {
      *     boundingbox: [-5, 5, 5, -5],
      *     intl: {
      *         enabled: false,
-     *         locale: 'de-DE'
+     *         locale: 'en-EN'
      *     },
      *     keepaspectratio: true,
      *     axis: true,
