@@ -279,23 +279,213 @@ JXG.JSXGraph = {
 
     /**
      * Initialize a new board.
+     *
      * @param {String|Object} box id of or reference to the HTML element in which the board is painted.
-     * @param {Object} attributes An object that sets some of the board properties. Most of these properties can be set via JXG.Options.
-     * @param {Array} [attributes.boundingbox=[-5, 5, 5, -5]] An array containing four numbers describing the left, top, right and bottom boundary of the board in user coordinates
-     * @param {Boolean} [attributes.keepaspectratio=false] If <tt>true</tt>, the bounding box is adjusted to the same aspect ratio as the aspect ratio of the div containing the board.
-     * @param {Boolean} [attributes.showCopyright=false] Show the copyright string in the top left corner.
-     * @param {Boolean} [attributes.showNavigation=false] Show the navigation buttons in the bottom right corner.
-     * @param {Object} [attributes.zoom] Allow the user to zoom with the mouse wheel or the two-fingers-zoom gesture.
-     * @param {Object} [attributes.pan] Allow the user to pan with shift+drag mouse or two-fingers-pan gesture.
-     * @param {Object} [attributes.drag] Allow the user to drag objects with a pointer device.
-     * @param {Object} [attributes.keyboard] Allow the user to drag objects with arrow keys on keyboard.
-     * @param {Boolean} [attributes.axis=false] If set to true, show the axis. Can also be set to an object that is given to both axes as an attribute object.
-     * @param {Boolean|Object} [attributes.grid] If set to true, shows the grid. Can also be set to an object that is given to the grid as its attribute object.
-     * @param {Boolean} [attributes.registerEvents=true] Register mouse / touch events.
+     * @param {Object} attributes An object that sets some of the board properties.
+     * See {@link JXG.Board} for a list of available attributes of the board.
+     * Most of these attributes can also be set via {@link JXG.Options},
+     *
      * @returns {JXG.Board} Reference to the created board.
      *
      * @see JXG.AbstractRenderer#drawNavigationBar
+     * @example
+     * var board = JXG.JSXGraph.initBoard('jxgbox', {
+     *     boundingbox: [-10, 5, 10, -5],
+     *     keepaspectratio: false,
+     *     axis: true
+     * });
+     *
+     * </pre><div id="JXGc0f76e98-20bc-4224-9016-7ffa10770dff" class="jxgbox" style="width: 600px; height: 300px;"></div>
+     * <script type="text/javascript">
+     *     (function() {
+     *         var board = JXG.JSXGraph.initBoard('JXGc0f76e98-20bc-4224-9016-7ffa10770dff', {
+     *         boundingbox: [-10, 5, 10, -5],
+     *         keepaspectratio: false,
+     *         axis: true
+     *     });
+     *
+     *     })();
+     *
+     * </script><pre>
+     *
+     *
+     * @example
+     * const board = JXG.JSXGraph.initBoard('jxgbox', {
+     *   boundingbox: [-10, 10, 10, -10],
+     *   axis: true,
+     *   showCopyright: true,
+     *   showFullscreen: true,
+     *   showScreenshot: false,
+     *   showClearTraces: false,
+     *   showInfobox: false,
+     *   showNavigation: true,
+     *   grid: false,
+     *   defaultAxes: {
+     *     x: {
+     *       withLabel: true,
+     *       label: {
+     *         position: '95% left',
+     *         offset: [-10, 10]
+     *       },
+     *       lastArrow: {
+     *         type: 4,
+     *         size: 10
+     *       }
+     *     },
+     *     y: {
+     *       withLabel: true,
+     *       label: {
+     *         position: '0.90fr right',
+     *         offset: [6, -6]
+     *       },
+     *       lastArrow: {
+     *         type: 4,
+     *         size: 10
+     *       }
+     *     }
+     *   }
+     * });
+     *
+     * </pre><div id="JXG4ced167d-3235-48bc-84e9-1a28fce00f6a" class="jxgbox" style="width: 300px; height: 300px;"></div>
+     * <script type="text/javascript">
+     *     (function() {
+     *         var board = JXG.JSXGraph.initBoard('JXG4ced167d-3235-48bc-84e9-1a28fce00f6a', {
+     *       boundingbox: [-10, 10, 10, -10],
+     *       axis: true,
+     *       showCopyright: true,
+     *       showFullscreen: true,
+     *       showScreenshot: false,
+     *       showClearTraces: false,
+     *       showInfobox: false,
+     *       showNavigation: true,
+     *       grid: false,
+     *       defaultAxes: {
+     *         x: {
+     *           withLabel: true,
+     *           label: {
+     *             position: '95% left',
+     *             offset: [0, 0]
+     *           },
+     *           lastArrow: {
+     *             type: 4,
+     *             size: 10
+     *           }
+     *         },
+     *         y: {
+     *           withLabel: true,
+     *           label: {
+     *             position: '0.90fr right',
+     *             offset: [0, 0]
+     *           },
+     *           lastArrow: {
+     *             type: 4,
+     *             size: 10
+     *           }
+     *         }
+     *       }
+     *     });
+     *
+     *     })();
+     *
+     * </script><pre>
+     * @example
+     * const board = JXG.JSXGraph.initBoard('jxgbox', {
+     *     boundingbox: [-5, 5, 5, -5],
+     *     intl: {
+     *         enabled: false,
+     *         locale: 'de-DE'
+     *     },
+     *     keepaspectratio: true,
+     *     axis: true,
+     *     defaultAxes: {
+     *         x: {
+     *             ticks: {
+     *                 intl: {
+     *                         enabled: true,
+     *                         options: {
+     *                             style: 'unit',
+     *                             unit: 'kilometer-per-hour',
+     *                             unitDisplay: 'narrow'
+     *                         }
+     *                 }
+     *             }
+     *         },
+     *         y: {
+     *             ticks: {
+     *             }
+     *         }
+     *     },
+     *     infobox: {
+     *         fontSize: 20,
+     *         intl: {
+     *             enabled: true,
+     *             options: {
+     *                 minimumFractionDigits: 4,
+     *                 maximumFractionDigits: 5
+     *             }
+     *         }
+     *     }
+     * });
+     *
+     * </pre><div id="JXGdac54e59-f1e8-4fa6-bbcc-7486f7f6f960" class="jxgbox" style="width: 600px; height: 600px;"></div>
+     * <script type="text/javascript">
+     *     (function() {
+     *         var board = JXG.JSXGraph.initBoard('JXGdac54e59-f1e8-4fa6-bbcc-7486f7f6f960', {
+     *         boundingbox: [-5, 5, 5, -5],
+     *         intl: {
+     *             enabled: false,
+     *             locale: 'en-EN'
+     *         },
+     *         keepaspectratio: true,
+     *         axis: true,
+     *         defaultAxes: {
+     *             x: {
+     *                 ticks: {
+     *                     intl: {
+     *                             enabled: true,
+     *                             options: {
+     *                                 style: 'unit',
+     *                                 unit: 'kilometer-per-hour',
+     *                                 unitDisplay: 'narrow'
+     *                             }
+     *                     }
+     *                 }
+     *             },
+     *             y: {
+     *                 ticks: {
+     *                 }
+     *             }
+     *         },
+     *         infobox: {
+     *             fontSize: 20,
+     *             intl: {
+     *                 enabled: true,
+     *                 options: {
+     *                     minimumFractionDigits: 4,
+     *                     maximumFractionDigits: 5
+     *                 }
+     *             }
+     *         }
+     *     });
+     *
+     *     })();
+     *
+     * </script><pre>
+     *
+     *
      */
+    //  *
+    //  * @param {Array} [attributes.boundingbox=[-5, 5, 5, -5]] An array containing four numbers describing the left, top, right and bottom boundary of the board in user coordinates
+    //  * @param {Boolean} [attributes.keepaspectratio=false] If <tt>true</tt>, the bounding box is adjusted to the same aspect ratio as the aspect ratio of the div containing the board.
+    //  * @param {Boolean} [attributes.showCopyright=false] Show the copyright string in the top left corner.
+    //  * @param {Boolean} [attributes.showNavigation=false] Show the navigation buttons in the bottom right corner.
+    //  * @param {Object} [attributes.zoom] Allow the user to zoom with the mouse wheel or the two-fingers-zoom gesture.
+    //  * @param {Object} [attributes.pan] Allow the user to pan with shift+drag mouse or two-fingers-pan gesture.
+    //  * @param {Object} [attributes.drag] Allow the user to drag objects with a pointer device.
+    //  * @param {Object} [attributes.keyboard] Allow the user to drag objects with arrow keys on keyboard.
+    //  * @param {Boolean} [attributes.axis=false] If set to true, show the axis. Can also be set to an object that is given to both axes as an attribute object.
+    //  * @param {Boolean|Object} [attributes.grid] If set to true, shows the grid. Can also be set to an object that is given to the grid as its attribute object.
+    //  * @param {Boolean} [attributes.registerEvents=true] Register mouse / touch events.
     initBoard: function (box, attributes) {
         var originX, originY, unitX, unitY, w, h,
             offX = 0, offY = 0,
