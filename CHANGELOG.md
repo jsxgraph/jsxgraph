@@ -4,6 +4,7 @@
 Improvements
 ------------
 
+- API docs of `initBoard`: link to all available attributes
 - Tangential intersections between 'functiongraph's
 - Precision of `meetCurveCurve`
 - Add version string to jsxgraph.css
