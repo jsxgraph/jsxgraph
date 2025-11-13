@@ -1705,6 +1705,7 @@ Mat.Numerics = {
             b = -D01(t2);
             c = D10(t1);
             d = -D11(t2);
+
             disc = a * d - b * c;
             t1 -= gamma * (d * e - b * f) / disc;
             t2 -= gamma * (a * f - c * e) / disc;

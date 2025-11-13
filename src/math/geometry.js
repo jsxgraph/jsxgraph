@@ -2392,6 +2392,7 @@ JXG.extend(
 
         /**
          * Segment-wise search for the nr-th intersection of two curves.
+         * testSegment is always assumed to be true.
          *
          * @param {JXG.Curve} c1 Curve, Line or Circle
          * @param {JXG.Curve} c2 Curve, Line or Circle
@@ -2421,57 +2422,24 @@ JXG.extend(
          * @param {JXG.Curve} c2 Curve, Line or Circle
          * @param {Array} range Domain for the search of an intersection. The start value
          * for the search is chosen to be inside of that range.
+         * @param {Boolean} testSegment If true require that t1 and t2 are inside of the allowed bounds.
          * @returns {Array} [[z, x, y], t1, t2, t, ||c1[t1]-c2[t2]||**2]. The last entry is set to
          * 10000 if the intersection is outside of the given domain (range) for the first curve.
          * @private
          * @see JXG.Math.Geometry.meetCurveCurveRecursive
          * @see JXG.Math.Numerics.generalizedDampedNewton
+         * @see JXG.Math.Geometry.meetCurveCurveCobyla
          */
-        meetCurveCurveCont: function (c1, c2, range) {
+        meetCurveCurveNewton: function (c1, c2, range, testSegment) {
             var t, t1, t2,
                 co,
                 r,
-                // ta = [], con = [], // Cobyla
                 inphi = (Math.sqrt(5) - 1) * 0.5,
+                eps2 = Mat.eps, // Math.sqrt(Mat.eps),
                 ma1 = c1.maxX(),
                 mi1 = c1.minX(),
                 ma2 = c2.maxX(),
                 mi2 = c2.minX();
-            // mint1 = mi1 + range[0] * (ma1 - mi1),
-            // maxt1 = mi1 + range[1] * (ma1 - mi1),
-            // mint2 = mi2 + range[0] * (ma2 - mi2),
-            // maxt2 = mi2 + range[1] * (ma2 - mi2),
-            // ff = function (t) {
-            //     var t1 = mi1 + t * (ma1 - mi1),
-            //         t2 = mi2 + t * (ma2 - mi2),
-            //         f1 = c1.Ft(t1),
-            //         f2 = c2.Ft(t2),
-            //         x = f1[1] - f2[1],
-            //         y = f1[2] - f2[2];
-
-            //     return x * x + y * y;
-            // },
-            // cob = function(n, m, ta, con) {
-            //     // var t1 = mi1 + t * (ma1 - mi1),
-            //     //     t2 = mi2 + t * (ma2 - mi2),
-            //     var t1 = ta[0],
-            //         t2 = ta[1],
-            //         f1 = c1.Ft(t1),
-            //         f2 = c2.Ft(t2),
-            //         x = f1[1] - f2[1],
-            //         y = f1[2] - f2[2];
-
-            //     con[0] = x;
-            //     con[1] = -x;
-            //     con[2] = y;
-            //     con[3] = -y;
-            //     con[4] = t1 - mint1;
-            //     con[5] = maxt1 - t1;
-            //     con[6] = t2 - mint2;
-            //     con[7] = maxt2 - t2;
-
-            //     return x * x + y * y;
-            // };
 
             // One-dimensional - works only for functiongraphs without transformations
             // t = Numerics.root(ff, range);
@@ -2483,34 +2451,114 @@ JXG.extend(
             t = range[0] + (range[1] - range[0]) * (1 - inphi);
             t1 = mi1 + t * (ma1 - mi1);
             t2 = mi2 + t * (ma2 - mi2);
-            // console.log("\t", range, (1-inphi), t, t1, t2)
-
-            //     // Use cobyla
-            //     ta[0] = t1;
-            //     ta[1] = t2;
-            //     r = JXG.Math.Nlp.FindMinimum(cob, 2,  8, ta, 5, 1.0e-6, 0, 1000);
-            //     t1 = ta[0];
-            //     t2 = ta[1];
-            //     t = (t1 - mi1) / (ma1 - mi1);
-            //     if (r !== 0 || t < range[0] || t > range[1]) {
-            //         // Cobyla found solution outside of range
-            //         return [co, t1, t2, t, 10000];
-            //     }
-            //     return [co, t1, t2, t, cob(2, 2, ta, con)];
+// console.log("\t", range, t, t1, t2)
 
             // Use damped Newton
             r = Numerics.generalizedDampedNewton(c1, c2, t1, t2, inphi);
             t1 = r[1];
             t2 = r[2];
             t = (t1 - mi1) / (ma1 - mi1);
+// console.log("\tout", range, t, t1, t2)
 
             co = c1.Ft(t1);
-            if (t < range[0] - Mat.eps || t > range[1] + Mat.eps) {
+//   console.log("t1", t1, mi1, ma1, "t2", t2, mi2-eps2, ma2+eps2,
+//                     t1 < mi1 - eps2, t1 > ma1 + eps2,
+//                     t2 < mi2 - eps2, t2 > ma2 + eps2
+//                 )
+            if (t < range[0] - Mat.eps || t > range[1] + Mat.eps ||
+                (testSegment &&
+                    (t1 < mi1 - eps2 || t1 > ma1 + eps2 ||
+                     t2 < mi2 - eps2 || t2 > ma2 + eps2)
+                )
+            ) {
                 // Damped-Newton found solution outside of range
                 return [co, t1, t2, t, 10000];
             }
 
             return [co, t1, t2, t, r[3]];
+        },
+
+        /**
+         * Experimental!
+         * Apply Cobyla to search for an intersection of two curves in a given range of the first curve.
+         *
+         * @param {JXG.Curve} c1 Curve, Line or Circle
+         * @param {JXG.Curve} c2 Curve, Line or Circle
+         * @param {Array} range Domain for the search of an intersection. The start value
+         * for the search is chosen to be inside of that range.
+         * @param {Boolean} testSegment If true require that t1 and t2 are inside of the allowed bounds.
+         * @returns [[z, x, y], t1, t2, t, ||c1[t1]-c2[t2]||**2]. The last entry is set to
+         * 10000 if the intersection is outside of the given domain (range) for the first curve.
+         * @private
+         * @see JXG.Math.Geometry.meetCurveCurveRecursive
+         * @see JXG.Math.Nlp.FindMinimum
+         * @see JXG.Math.Geometry.meetCurveCurveNewton
+         */
+        meetCurveCurveCobyla: function (c1, c2, range, testSegment) {
+            var t, t1, t2,
+                co,
+                r,
+                ta = [], con = [],
+                inphi = (Math.sqrt(5) - 1) * 0.5,
+                eps2 = Mat.eps,
+                ma1 = c1.maxX(),
+                mi1 = c1.minX(),
+                ma2 = c2.maxX(),
+                mi2 = c2.minX(),
+
+                mint1 = mi1 + range[0] * (ma1 - mi1),
+                maxt1 = mi1 + range[1] * (ma1 - mi1),
+                mint2 = mi2 + range[0] * (ma2 - mi2),
+                maxt2 = mi2 + range[1] * (ma2 - mi2),
+
+                cob = function (n, m, ta, con) {
+                    var t1 = ta[0],
+                        t2 = ta[1],
+                        f1 = c1.Ft(t1),
+                        f2 = c2.Ft(t2),
+                        x = f1[1] - f2[1],
+                        y = f1[2] - f2[2];
+
+                    con[0] = x;
+                    con[1] = -x;
+                    con[2] = y;
+                    con[3] = -y;
+                    con[4] = t1 - mint1;
+                    con[5] = maxt1 - t1;
+                    con[6] = t2 - mint2;
+                    con[7] = maxt2 - t2;
+
+                    return x * x + y * y;
+                };
+
+            t = range[0] + (range[1] - range[0]) * (1 - inphi);
+            t1 = mi1 + t * (ma1 - mi1);
+            t2 = mi2 + t * (ma2 - mi2);
+            // console.log("\tCobyla start", range, t, t1, t2)
+            // console.log("\t", mint1, maxt1, mint2, maxt2)
+
+            ta[0] = t1;
+            ta[1] = t2;
+            r = JXG.Math.Nlp.FindMinimum(cob, 2, 8, ta, 5, 1.0e-6, 0, 1000);
+            t1 = ta[0];
+            t2 = ta[1];
+            t = (t1 - mi1) / (ma1 - mi1);
+            //   console.log("\tt1", t1, mi1, ma1, "t2", t2, mi2-eps2, ma2+eps2,
+            //                     t1 < mi1 - eps2, t1 > ma1 + eps2,
+            //                     t2 < mi2 - eps2, t2 > ma2 + eps2
+            //                 )
+
+            if (r !== 0 ||
+                t < range[0] - Mat.eps || t > range[1] + Mat.eps ||
+                (testSegment &&
+                    (t1 < mi1 - eps2 || t1 > ma1 + eps2 ||
+                     t2 < mi2 - eps2 || t2 > ma2 + eps2)
+                )
+            ) {
+                // Cobyla found solution outside of range
+                return [co, t1, t2, t, 10000];
+            }
+            return [co, t1, t2, t, cob(2, 8, ta, con)];
         },
 
         /**
@@ -2524,10 +2572,10 @@ JXG.extend(
          * @returns {Array} List of the first i intersection points, given by the parameter t.
          *
          * @private
-         * @see JXG.Math.Geometry.meetCurveCurveCont
+         * @see JXG.Math.Geometry.meetCurveCurveNewton
          * @see JXG.Math.Geometry.meetCurveCurve
          */
-        meetCurveCurveRecursive: function(c1, c2, low, up, i) {
+        meetCurveCurveRecursive: function(c1, c2, low, up, i, testSegment) {
             var ret,
                 t, t1,
                 // t2,
@@ -2542,8 +2590,10 @@ JXG.extend(
             // console.log('DO', low * 20 - 10, up * 20 - 10)
             // console.log('DO', low, up)
 
-            ret = this.meetCurveCurveCont(c1, c2, [low, up]);
+            ret = this.meetCurveCurveNewton(c1, c2, [low, up], testSegment);
+            // ret = this.meetCurveCurveCobyla(c1, c2, [low, up], testSegment);
             // console.log('\trec', ret)
+
             if (ret[4] < Mat.eps) {
                 t = ret[3];
                 t1 = ret[1];
@@ -2554,7 +2604,7 @@ JXG.extend(
                 return [];
             }
 
-            left = this.meetCurveCurveRecursive(c1, c2, low, t - delta, i);
+            left = this.meetCurveCurveRecursive(c1, c2, low, t - delta, i, testSegment);
             if (left.length > 0 && t1 - left[left.length - 1] < Mat.eps) {
                 left.pop();
             }
@@ -2562,7 +2612,7 @@ JXG.extend(
                 return left.concat([t1]);
             }
 
-            right = this.meetCurveCurveRecursive(c1, c2, t + delta, up, i);
+            right = this.meetCurveCurveRecursive(c1, c2, t + delta, up, i, testSegment);
             if (right.length > 0 && right[0] - t1 < Mat.eps) {
                 right.shift();
             }
@@ -2593,13 +2643,12 @@ JXG.extend(
          * @see JXG.Math.Geometry.meetCurveCurveDiscrete
          * @see JXG.Math.Geometry.meetCurveCurveRecursive
          */
-        meetCurveCurve: function (c1, c2, nr, t2ini, board, method) {
+        meetCurveCurve: function (c1, c2, nr, t2ini, board, method, testSegment) {
             var co,
                 zeros,
                 i = Type.evaluate(nr);
 
             board = board || c1.board;
-
             if (method === 'segment' || Type.exists(c1.dataX) || Type.exists(c2.dataX)) {
                 // Discrete data points, i.e. x-coordinates of c1 or c2 are given in an array)
                 return this.meetCurveCurveDiscrete(c1, c2, i, board);
@@ -2613,7 +2662,7 @@ JXG.extend(
 
             // Method 'newton'
             // console.time('cucu')
-            zeros = this.meetCurveCurveRecursive(c1, c2, 0, 1, i, -1);
+            zeros = this.meetCurveCurveRecursive(c1, c2, 0, 1, i, testSegment);
             // console.timeEnd('cucu')
             // console.log("-------------------------")
 
@@ -2683,7 +2732,13 @@ JXG.extend(
                 li = el1;
             }
 
-            v = this.meetCurveLineDiscrete(cu, li, nr, board, !alwaysIntersect);
+            if (Type.exists(cu.dataX)) {
+                // We use the discrete version if
+                //   the curve is not a parametric curve, e.g. implicit plots
+                v = this.meetCurveLineDiscrete(cu, li, nr, board, !alwaysIntersect);
+            } else {
+                v = this.meetCurveCurve(cu, li, nr, 0, board, 'newton', !alwaysIntersect);
+            }
 
             return v;
         },
