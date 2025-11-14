@@ -207,7 +207,7 @@ JXG.Math = {
     identity: function (n, m) {
         var r, i;
 
-        if (m === undef && typeof m !== "number") {
+        if (m === undef && typeof m !== 'number') {
             m = n;
         }
 
@@ -1402,7 +1402,7 @@ JXG.Math = {
     toGL: function (m) {
         var v, i, j;
 
-        if (typeof Float32Array === "function") {
+        if (typeof Float32Array === 'function') {
             v = new Float32Array(16);
         } else {
             v = new Array(16);

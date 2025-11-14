@@ -52,12 +52,12 @@ import Numerics from "../math/numerics.js";
  * @deprecated
  */
 JXG.VMLRenderer = function (container) {
-    this.type = "vml";
+    this.type = 'vml';
 
     this.container = container;
-    this.container.style.overflow = "hidden";
+    this.container.style.overflow = 'hidden';
     if (this.container.style.position === "") {
-        this.container.style.position = "relative";
+        this.container.style.position = 'relative';
     }
     this.container.onselectstart = function () {
         return false;
@@ -175,7 +175,7 @@ JXG.extend(
                 this.appendChildPrim(ticks.rendNode, ticks.evalVisProp('layer'));
             }
 
-            this._setAttr(ticks.rendNode, "stroked", "true");
+            this._setAttr(ticks.rendNode, "stroked", 'true');
             this._setAttr(
                 ticks.rendNode,
                 "strokecolor",
@@ -203,9 +203,9 @@ JXG.extend(
         displayCopyright: function (str, fontsize) {
             var node, t;
 
-            node = this.createNode("textbox");
-            node.style.position = "absolute";
-            this._setAttr(node, "id", this.container.id + "_" + "licenseText");
+            node = this.createNode('textbox');
+            node.style.position = 'absolute';
+            this._setAttr(node, "id", this.container.id + "_" + 'licenseText');
 
             node.style.left = 20;
             node.style.top = 2;
@@ -224,8 +224,8 @@ JXG.extend(
         // documented in AbstractRenderer
         drawInternalText: function (el) {
             var node;
-            node = this.createNode("textbox");
-            node.style.position = "absolute";
+            node = this.createNode('textbox');
+            node.style.position = 'absolute';
             el.rendNodeText = this.container.ownerDocument.createTextNode("");
             node.appendChild(el.rendNodeText);
             this.appendChildPrim(node, 9);
@@ -253,16 +253,16 @@ JXG.extend(
 
             if (!isNaN(el.coords.scrCoords[1] + el.coords.scrCoords[2])) {
                 // Horizontal
-                if (ev_ax === "right") {
+                if (ev_ax === 'right') {
                     offset[0] = 1;
-                } else if (ev_ax === "middle") {
+                } else if (ev_ax === 'middle') {
                     offset[0] = 0.5;
                 } // default (ev_ax === 'left') offset[0] = 0;
 
                 // Vertical
-                if (ev_ay === "bottom") {
+                if (ev_ay === 'bottom') {
                     offset[1] = 1;
-                } else if (ev_ay === "middle") {
+                } else if (ev_ay === 'middle') {
                     offset[1] = 0.5;
                 } // default (ev_ay === 'top') offset[1] = 0;
 
@@ -314,11 +314,11 @@ JXG.extend(
                         : Math.floor(minX);
                 if (el.visPropOld.left !== ev_ax + v) {
                     if (offset[0] === 1) {
-                        el.rendNode.style.right = v + "px";
-                        el.rendNode.style.left = "auto";
+                        el.rendNode.style.right = v + 'px';
+                        el.rendNode.style.left = 'auto';
                     } else {
-                        el.rendNode.style.left = v + "px";
-                        el.rendNode.style.right = "auto";
+                        el.rendNode.style.left = v + 'px';
+                        el.rendNode.style.right = 'auto';
                     }
                     el.visPropOld.left = ev_ax + v;
                 }
@@ -330,11 +330,11 @@ JXG.extend(
                         : Math.floor(minY);
                 if (el.visPropOld.top !== ev_ay + v) {
                     if (offset[1] === 1) {
-                        el.rendNode.style.bottom = v + "px";
-                        el.rendNode.style.top = "auto";
+                        el.rendNode.style.bottom = v + 'px';
+                        el.rendNode.style.top = 'auto';
                     } else {
-                        el.rendNode.style.top = v + "px";
-                        el.rendNode.style.bottom = "auto";
+                        el.rendNode.style.top = v + 'px';
+                        el.rendNode.style.bottom = 'auto';
                     }
                     el.visPropOld.top = ev_ay + v;
                 }
@@ -362,8 +362,8 @@ JXG.extend(
             // IE 8: Bilder ueber data URIs werden bis 32kB unterstuetzt.
             var node;
 
-            node = this.container.ownerDocument.createElement("img");
-            node.style.position = "absolute";
+            node = this.container.ownerDocument.createElement('img');
+            node.style.position = 'absolute';
             this._setAttr(node, "id", this.container.id + "_" + el.id);
 
             this.container.appendChild(node);
@@ -436,8 +436,8 @@ JXG.extend(
                     maxY = Math.max(maxY, p[i][2]);
                     minY = Math.min(minY, p[i][2]);
                 }
-                node.style.left = Math.floor(minX) + "px";
-                node.style.top = Math.floor(minY) + "px";
+                node.style.left = Math.floor(minX) + 'px';
+                node.style.top = Math.floor(minY) + 'px';
 
                 node.filters.item(0).M11 = m[1][1];
                 node.filters.item(0).M12 = m[1][2];
@@ -473,7 +473,7 @@ JXG.extend(
 
         // Already documented in JXG.AbstractRenderer
         appendNodesToElement: function (el, type) {
-            if (type === "shape" || type === "path" || type === "polygon") {
+            if (type === "shape" || type === "path" || type === 'polygon') {
                 el.rendNodePath = this.getElementById(el.id + "_path");
             }
             el.rendNodeFill = this.getElementById(el.id + "_fill");
@@ -486,16 +486,16 @@ JXG.extend(
         createPrim: function (type, id) {
             var node,
                 pathNode,
-                fillNode = this.createNode("fill"),
-                strokeNode = this.createNode("stroke"),
-                shadowNode = this.createNode("shadow");
+                fillNode = this.createNode('fill'),
+                strokeNode = this.createNode('stroke'),
+                shadowNode = this.createNode('shadow');
 
             this._setAttr(fillNode, "id", this.container.id + "_" + id + "_fill");
             this._setAttr(strokeNode, "id", this.container.id + "_" + id + "_stroke");
             this._setAttr(shadowNode, "id", this.container.id + "_" + id + "_shadow");
 
-            if (type === "circle" || type === "ellipse") {
-                node = this.createNode("oval");
+            if (type === "circle" || type === 'ellipse') {
+                node = this.createNode('oval');
                 node.appendChild(fillNode);
                 node.appendChild(strokeNode);
                 node.appendChild(shadowNode);
@@ -505,11 +505,11 @@ JXG.extend(
                 type === "shape" ||
                 type === "line"
             ) {
-                node = this.createNode("shape");
+                node = this.createNode('shape');
                 node.appendChild(fillNode);
                 node.appendChild(strokeNode);
                 node.appendChild(shadowNode);
-                pathNode = this.createNode("path");
+                pathNode = this.createNode('path');
                 this._setAttr(pathNode, "id", this.container.id + "_" + id + "_path");
                 node.appendChild(pathNode);
             } else {
@@ -519,9 +519,9 @@ JXG.extend(
                 node.appendChild(shadowNode);
             }
 
-            node.style.position = "absolute";
-            node.style.left = "0px";
-            node.style.top = "0px";
+            node.style.position = 'absolute';
+            node.style.left = '0px';
+            node.style.top = '0px';
             this._setAttr(node, "id", this.container.id + "_" + id);
 
             return node;
@@ -546,24 +546,24 @@ JXG.extend(
 
             if (ev_fa) {
                 nodeStroke = el.rendNodeStroke;
-                this._setAttr(nodeStroke, "startarrow", "block");
-                this._setAttr(nodeStroke, "startarrowlength", "long");
+                this._setAttr(nodeStroke, "startarrow", 'block');
+                this._setAttr(nodeStroke, "startarrowlength", 'long');
             } else {
                 nodeStroke = el.rendNodeStroke;
                 if (Type.exists(nodeStroke)) {
-                    this._setAttr(nodeStroke, "startarrow", "none");
+                    this._setAttr(nodeStroke, "startarrow", 'none');
                 }
             }
 
             if (ev_la) {
                 nodeStroke = el.rendNodeStroke;
-                this._setAttr(nodeStroke, "id", this.container.id + "_" + el.id + "stroke");
-                this._setAttr(nodeStroke, "endarrow", "block");
-                this._setAttr(nodeStroke, "endarrowlength", "long");
+                this._setAttr(nodeStroke, "id", this.container.id + "_" + el.id + 'stroke');
+                this._setAttr(nodeStroke, "endarrow", 'block');
+                this._setAttr(nodeStroke, "endarrowlength", 'long');
             } else {
                 nodeStroke = el.rendNodeStroke;
                 if (Type.exists(nodeStroke)) {
-                    this._setAttr(nodeStroke, "endarrow", "none");
+                    this._setAttr(nodeStroke, "endarrow", 'none');
                 }
             }
             el.visPropOld.firstarrow = ev_fa;
@@ -572,10 +572,10 @@ JXG.extend(
 
         // Already documented in JXG.AbstractRenderer
         updateEllipsePrim: function (node, x, y, rx, ry) {
-            node.style.left = Math.floor(x - rx) + "px";
-            node.style.top = Math.floor(y - ry) + "px";
-            node.style.width = Math.floor(Math.abs(rx) * 2) + "px";
-            node.style.height = Math.floor(Math.abs(ry) * 2) + "px";
+            node.style.left = Math.floor(x - rx) + 'px';
+            node.style.top = Math.floor(y - ry) + 'px';
+            node.style.width = Math.floor(Math.abs(rx) * 2) + 'px';
+            node.style.height = Math.floor(Math.abs(ry) * 2) + 'px';
         },
 
         // Already documented in JXG.AbstractRenderer
@@ -624,7 +624,7 @@ JXG.extend(
                 s05 = size * 0.5,
                 r = this.resolution;
 
-            if (type === "x") {
+            if (type === 'x') {
                 s.push(
                     [
                         " m ",
@@ -709,7 +709,7 @@ JXG.extend(
                         " x e "
                     ].join("")
                 );
-            } else if (type === "v") {
+            } else if (type === 'v') {
                 s.push(
                     [
                         " m ",
@@ -961,7 +961,7 @@ JXG.extend(
                 scr,
                 pStr = [];
 
-            this._setAttr(node, "stroked", "false");
+            this._setAttr(node, "stroked", 'false');
             scr = el.vertices[0].coords.scrCoords;
 
             if (isNaN(scr[1] + scr[2])) {
@@ -995,15 +995,15 @@ JXG.extend(
 
         // Already documented in JXG.AbstractRenderer
         updateRectPrim: function (node, x, y, w, h) {
-            node.style.left = Math.floor(x) + "px";
-            node.style.top = Math.floor(y) + "px";
+            node.style.left = Math.floor(x) + 'px';
+            node.style.top = Math.floor(y) + 'px';
 
             if (w >= 0) {
-                node.style.width = w + "px";
+                node.style.width = w + 'px';
             }
 
             if (h >= 0) {
-                node.style.height = h + "px";
+                node.style.height = h + 'px';
             }
         },
 
@@ -1018,13 +1018,13 @@ JXG.extend(
 
             switch (key) {
                 case "stroke":
-                    keyVml = "strokecolor";
+                    keyVml = 'strokecolor';
                     break;
                 case "stroke-width":
-                    keyVml = "strokeweight";
+                    keyVml = 'strokeweight';
                     break;
                 case "stroke-dasharray":
-                    keyVml = "dashstyle";
+                    keyVml = 'dashstyle';
                     break;
             }
 
@@ -1039,9 +1039,9 @@ JXG.extend(
             if (el && el.rendNode) {
                 el.visPropOld.visible = val;
                 if (val) {
-                    el.rendNode.style.visibility = "inherit";
+                    el.rendNode.style.visibility = 'inherit';
                 } else {
-                    el.rendNode.style.visibility = "hidden";
+                    el.rendNode.style.visibility = 'hidden';
                 }
             }
         },
@@ -1051,7 +1051,7 @@ JXG.extend(
             JXG.deprecated("Board.renderer.show()", "Board.renderer.display()");
 
             if (el && el.rendNode) {
-                el.rendNode.style.visibility = "inherit";
+                el.rendNode.style.visibility = 'inherit';
             }
         },
 
@@ -1060,7 +1060,7 @@ JXG.extend(
             JXG.deprecated("Board.renderer.hide()", "Board.renderer.display()");
 
             if (el && el.rendNode) {
-                el.rendNode.style.visibility = "hidden";
+                el.rendNode.style.visibility = 'hidden';
             }
         },
 
@@ -1078,8 +1078,8 @@ JXG.extend(
             var nodeFill = el.rendNodeFill,
                 ev_g = el.evalVisProp('gradient');
 
-            if (ev_g === "linear") {
-                this._setAttr(nodeFill, "type", "gradient");
+            if (ev_g === 'linear') {
+                this._setAttr(nodeFill, "type", 'gradient');
                 this._setAttr(
                     nodeFill,
                     "color2",
@@ -1091,8 +1091,8 @@ JXG.extend(
                     el.evalVisProp('gradientsecondopacity')
                 );
                 this._setAttr(nodeFill, "angle", el.evalVisProp('gradientangle'));
-            } else if (ev_g === "radial") {
-                this._setAttr(nodeFill, "type", "gradientradial");
+            } else if (ev_g === 'radial') {
+                this._setAttr(nodeFill, "type", 'gradientradial');
                 this._setAttr(
                     nodeFill,
                     "color2",
@@ -1113,7 +1113,7 @@ JXG.extend(
                 );
                 this._setAttr(nodeFill, "focussize", "0,0");
             } else {
-                this._setAttr(nodeFill, "type", "solid");
+                this._setAttr(nodeFill, "type", 'solid');
             }
         },
 
@@ -1144,9 +1144,9 @@ JXG.extend(
                     oo = o * rgbo[1];
                 }
                 if (c === "none" || c === false) {
-                    this._setAttr(el.rendNode, "filled", "false");
+                    this._setAttr(el.rendNode, "filled", 'false');
                 } else {
-                    this._setAttr(el.rendNode, "filled", "true");
+                    this._setAttr(el.rendNode, "filled", 'true');
                     this._setAttr(el.rendNode, "fillcolor", c);
 
                     if (Type.exists(oo) && el.rendNodeFill) {
@@ -1224,7 +1224,7 @@ JXG.extend(
                     node.style.color = c;
                 } else {
                     if (c !== false) {
-                        this._setAttr(node, "stroked", "true");
+                        this._setAttr(node, "stroked", 'true');
                         this._setAttr(node, "strokecolor", c);
                     }
 
@@ -1248,12 +1248,12 @@ JXG.extend(
             }
 
             node = el.rendNode;
-            this.setPropertyPrim(node, "stroked", "true");
+            this.setPropertyPrim(node, "stroked", 'true');
 
             if (Type.exists(w)) {
                 this.setPropertyPrim(node, "stroke-width", w);
                 if (w === 0 && Type.exists(el.rendNodeStroke)) {
-                    this._setAttr(node, "stroked", "false");
+                    this._setAttr(node, "stroked", 'false');
                 }
             }
 
@@ -1270,12 +1270,12 @@ JXG.extend(
             }
 
             if (ev_s) {
-                this._setAttr(nodeShadow, "On", "True");
+                this._setAttr(nodeShadow, "On", 'True');
                 this._setAttr(nodeShadow, "Offset", "3pt,3pt");
                 this._setAttr(nodeShadow, "Opacity", "60%");
                 this._setAttr(nodeShadow, "Color", "#aaaaaa");
             } else {
-                this._setAttr(nodeShadow, "On", "False");
+                this._setAttr(nodeShadow, "On", 'False');
             }
 
             el.visPropOld.shadow = ev_s;
@@ -1287,7 +1287,7 @@ JXG.extend(
 
         // Already documented in JXG.AbstractRenderer
         suspendRedraw: function () {
-            this.container.style.display = "none";
+            this.container.style.display = 'none';
         },
 
         // Already documented in JXG.AbstractRenderer

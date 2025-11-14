@@ -43,7 +43,7 @@ import Coords from "../base/coords.js";
 import Mat from "../math/math.js";
 import Geometry from "../math/geometry.js";
 import Numerics from "../math/numerics.js";
-// import $__canvas from "canvas.js";
+// import $__canvas from 'canvas.js'
 
 /**
  * Uses HTML Canvas to implement the rendering methods defined in {@link JXG.AbstractRenderer}.
@@ -57,7 +57,7 @@ import Numerics from "../math/numerics.js";
  * @see JXG.AbstractRenderer
  */
 JXG.CanvasRenderer = function (container, dim) {
-    this.type = "canvas";
+    this.type = 'canvas';
 
     this.canvasRoot = null;
     this.suspendHandle = null;
@@ -67,29 +67,29 @@ JXG.CanvasRenderer = function (container, dim) {
 
     if (Env.isBrowser) {
         this.container = container;
-        this.container.style.MozUserSelect = "none";
-        this.container.style.userSelect = "none";
+        this.container.style.MozUserSelect = 'none';
+        this.container.style.userSelect = 'none';
 
-        this.container.style.overflow = "hidden";
+        this.container.style.overflow = 'hidden';
         if (this.container.style.position === "") {
-            this.container.style.position = "relative";
+            this.container.style.position = 'relative';
         }
 
         this.container.innerHTML = [
             '<canvas id="', this.canvasId, '" width="', dim.width, 'px" height="', dim.height, 'px"></canvas>'
         ].join("");
         this.canvasRoot = this.container.ownerDocument.getElementById(this.canvasId);
-        this.canvasRoot.style.display = "block";
-        this.context = this.canvasRoot.getContext("2d");
+        this.canvasRoot.style.display = 'block';
+        this.context = this.canvasRoot.getContext('2d');
     } else if (Env.isNode()) {
         try {
             this.canvasRoot = JXG.createCanvas(500, 500);
-            this.context = this.canvasRoot.getContext("2d");
+            this.context = this.canvasRoot.getContext('2d');
         } catch (err) {
             throw new Error('JXG.createCanvas not available.\n' +
                 'Install the npm package `canvas`\n' +
                 'and call:\n' +
-                '    import { createCanvas } from "canvas.js";\n' +
+                '    import { createCanvas } from "canvas.js"\n' +
                 '    JXG.createCanvas = createCanvas;\n');
         }
     }
@@ -142,7 +142,7 @@ JXG.extend(
                 if (doFill) {
                     context.lineTo(shape[0][0], shape[0][1]);
                     context.closePath();
-                    context.fill("evenodd");
+                    context.fill('evenodd');
                 } else {
                     context.stroke();
                 }
@@ -158,8 +158,8 @@ JXG.extend(
             var context = this.context;
 
             context.save();
-            if (this._setColor(el, "fill")) {
-                context.fill("evenodd");
+            if (this._setColor(el, 'fill')) {
+                context.fill('evenodd');
             }
             context.restore();
         },
@@ -249,6 +249,7 @@ JXG.extend(
             c2 = new Coords(Const.COORDS_BY_USER, [bb[2], bb[3]], el.board);
             dx = c2.scrCoords[1] - c1.scrCoords[1];
             dy = c2.scrCoords[2] - c1.scrCoords[2];
+
             x1s = c1.scrCoords[1] + dx * x1;
             y1s = c1.scrCoords[2] + dy * y1;
             x2s = c1.scrCoords[1] + dx * x2;
@@ -302,12 +303,12 @@ JXG.extend(
             // op = op > 0 ? op : 0;
             col = el.evalVisProp('fillcolor');
 
-            if (ev_g === "linear") {
+            if (ev_g === 'linear') {
                 gradient = this.updateGradientAngle(
                     el,
                     el.evalVisProp('gradientangle')
                 );
-            } else if (ev_g === "radial") {
+            } else if (ev_g === 'radial') {
                 gradient = this.updateGradientCircle(
                     el,
                     el.evalVisProp('gradientcx'),
@@ -318,11 +319,14 @@ JXG.extend(
                     el.evalVisProp('gradientfr')
                 );
             }
-            gradient.addColorStop(el.evalVisProp('gradientstartoffset'), col);
-            gradient.addColorStop(
-                el.evalVisProp('gradientendoffset'),
-                el.evalVisProp('gradientsecondcolor')
-            );
+
+            if (col !== "none" && col !== "" && col !== false) {
+                gradient.addColorStop(el.evalVisProp('gradientstartoffset'), col);
+                gradient.addColorStop(
+                    el.evalVisProp('gradientendoffset'),
+                    el.evalVisProp('gradientsecondcolor')
+                );
+            }
             return gradient;
         },
 
@@ -343,15 +347,15 @@ JXG.extend(
                 c, o, oo,
                 grad;
 
-            type = type || "stroke";
+            type = type || 'stroke';
             targetType = targetType || type;
 
             hl = this._getHighlighted(el);
 
             // type is equal to 'fill' or 'stroke'
             rgba = el.evalVisProp(hl + type + 'color');
-            if (rgba !== "none" && rgba !== false) {
-                o = el.evalVisProp(hl + type + "opacity");
+            if (rgba !== "none" && rgba !== "" && rgba !== false) {
+                o = el.evalVisProp(hl + type + 'opacity');
                 o = o > 0 ? o : 0;
 
                 if (rgba.length !== 9) {
@@ -372,11 +376,14 @@ JXG.extend(
                 hasColor = false;
             }
 
-            grad = el.evalVisProp('gradient');
-            if (grad === "linear" || grad === "radial") {
-                this.context.globalAlpha = oo;
-                this.context[targetType + "Style"] = this.updateGradient(el);
-                return hasColor;
+            if (type !== 'stroke') {
+                // For the time being, gradients are only supported for fills
+                grad = el.evalVisProp('gradient');
+                if (grad === "linear" || grad === 'radial') {
+                    this.context.globalAlpha = oo;
+                    this.context[targetType + "Style"] = this.updateGradient(el);
+                    return hasColor;
+                }
             }
 
             sw = parseFloat(el.evalVisProp(hl + 'strokewidth'));
@@ -421,7 +428,7 @@ JXG.extend(
                 this.context.lineDashArray = [];
             }
 
-            if (this._setColor(el, "stroke")) {
+            if (this._setColor(el, 'stroke')) {
                 context.stroke();
             }
 
@@ -476,8 +483,8 @@ JXG.extend(
                     context.lineTo(scr[1] + size, scr[2] + size);
                     context.moveTo(scr[1] + size, scr[2] - size);
                     context.lineTo(scr[1] - size, scr[2] + size);
-                    context.lineCap = "round";
-                    context.lineJoin = "round";
+                    context.lineCap = 'round';
+                    context.lineJoin = 'round';
                     context.closePath();
                     this._stroke(el);
                     break;
@@ -496,7 +503,7 @@ JXG.extend(
                     }
 
                     context.save();
-                    if (this._setColor(el, "stroke", "fill")) {
+                    if (this._setColor(el, "stroke", 'fill')) {
                         context.fillRect(
                             scr[1] - size - stroke05,
                             scr[2] - size - stroke05,
@@ -506,7 +513,7 @@ JXG.extend(
                     }
                     context.restore();
                     context.save();
-                    this._setColor(el, "fill");
+                    this._setColor(el, 'fill');
                     context.fillRect(
                         scr[1] - size + stroke05,
                         scr[2] - size + stroke05,
@@ -522,8 +529,8 @@ JXG.extend(
                     context.lineTo(scr[1] + size, scr[2]);
                     context.moveTo(scr[1], scr[2] - size);
                     context.lineTo(scr[1], scr[2] + size);
-                    context.lineCap = "round";
-                    context.lineJoin = "round";
+                    context.lineCap = 'round';
+                    context.lineJoin = 'round';
                     context.closePath();
                     this._stroke(el);
                     break;
@@ -532,8 +539,8 @@ JXG.extend(
                     context.beginPath();
                     context.moveTo(scr[1], scr[2] - size);
                     context.lineTo(scr[1], scr[2] + size);
-                    context.lineCap = "round";
-                    context.lineJoin = "round";
+                    context.lineCap = 'round';
+                    context.lineJoin = 'round';
                     context.closePath();
                     this._stroke(el);
                     break;
@@ -542,8 +549,8 @@ JXG.extend(
                     context.beginPath();
                     context.moveTo(scr[1] - size, scr[2]);
                     context.lineTo(scr[1] + size, scr[2]);
-                    context.lineCap = "round";
-                    context.lineJoin = "round";
+                    context.lineCap = 'round';
+                    context.lineJoin = 'round';
                     context.closePath();
                     this._stroke(el);
                     break;
@@ -925,8 +932,8 @@ JXG.extend(
                 }
 
                 context.save();
-                if (this._setColor(el, "stroke", "fill")) {
-                    this._setColor(el, "stroke");
+                if (this._setColor(el, "stroke", 'fill')) {
+                    this._setColor(el, 'stroke');
                     if (ev_fa) {
                         if (type_fa === 7) {
                             doFill = false;
@@ -983,6 +990,7 @@ JXG.extend(
 
             c1_org = new Coords(Const.COORDS_BY_USER, c1.usrCoords, el.board);
             c2_org = new Coords(Const.COORDS_BY_USER, c2.usrCoords, el.board);
+
 
             this.getPositionArrowHead(el, c1, c2, arrowData);
 
@@ -1046,7 +1054,7 @@ JXG.extend(
             //         this.updateText(ticks.labels[i]);
             //     }
             // }
-            context.lineCap = "round";
+            context.lineCap = 'round';
             this._stroke(ticks);
         },
 
@@ -1126,15 +1134,40 @@ JXG.extend(
         /* ********* Text related stuff *********** */
 
         // Already documented in JXG.AbstractRenderer
-        displayCopyright: function (str, fontSize) {
-            var context = this.context;
+        displayCopyright: function (str, fontsize) {
+            var context = this.context,
+                x = 4 + 1.8 * fontsize,
+                y = 6 + fontsize,
+                alpha = 0.2;
 
-            // this should be called on EVERY update, otherwise it won't be shown after the first update
+            // This should be called on EVERY update, otherwise it won't be shown after the first update
             context.save();
-            context.font = fontSize + "px Arial";
-            context.fillStyle = "#aaa";
+            context.font = fontsize + "px Arial";
+            context.globalAlpha = alpha;
             context.lineWidth = 0.5;
-            context.fillText(str, 10, 2 + fontSize);
+            context.fillText(str + '.', x, y); // Distinguish svg and canvas by this dot
+            context.restore();
+        },
+
+        // Already documented in JXG.AbstractRenderer
+        displayLogo: function (str, fontsize, board) {
+            var context = this.context,
+                s = 1.5 * fontsize,
+                alpha = 0.2;
+
+            if (!Type.exists(board._logo_image)) {
+                board._logo_image = new Image();
+                board._logo_image.src = str;
+            }
+            board._logo_image.onload = function() {
+                context.save();
+                context.globalAlpha = alpha;
+                context.drawImage(board._logo_image, 5, 5, s, s);
+                context.restore();
+            };
+            context.save();
+            context.globalAlpha = alpha;
+            context.drawImage(board._logo_image, 5, 5, s, s);
             context.restore();
         },
 
@@ -1148,25 +1181,25 @@ JXG.extend(
 
             context.save();
             if (
-                this._setColor(el, "stroke", "fill") &&
+                this._setColor(el, "stroke", 'fill') &&
                 !isNaN(el.coords.scrCoords[1] + el.coords.scrCoords[2])
             ) {
                 context.font = (ev_fs > 0 ? ev_fs : 0) + fontUnit + " Arial";
 
                 this.transformRect(el, el.transformations);
-                if (ev_ax === "left") {
-                    context.textAlign = "left";
-                } else if (ev_ax === "right") {
-                    context.textAlign = "right";
-                } else if (ev_ax === "middle") {
-                    context.textAlign = "center";
+                if (ev_ax === 'left') {
+                    context.textAlign = 'left';
+                } else if (ev_ax === 'right') {
+                    context.textAlign = 'right';
+                } else if (ev_ax === 'middle') {
+                    context.textAlign = 'center';
                 }
-                if (ev_ay === "bottom") {
-                    context.textBaseline = "bottom";
-                } else if (ev_ay === "top") {
-                    context.textBaseline = "top";
-                } else if (ev_ay === "middle") {
-                    context.textBaseline = "middle";
+                if (ev_ay === 'bottom') {
+                    context.textBaseline = 'bottom';
+                } else if (ev_ay === 'top') {
+                    context.textBaseline = 'top';
+                } else if (ev_ay === 'middle') {
+                    context.textBaseline = 'middle';
                 }
                 context.fillText(el.plaintext, el.coords.scrCoords[1], el.coords.scrCoords[2]);
             }
@@ -1412,8 +1445,8 @@ JXG.extend(
                     i += 1;
                 }
             }
-            context.lineCap = "round";
-            context.lineJoin = "round";
+            context.lineCap = 'round';
+            context.lineJoin = 'round';
             this._fill(el);
             this._stroke(el);
         },
@@ -1482,8 +1515,8 @@ JXG.extend(
                     }
                 }
             }
-            context.lineCap = "round";
-            context.lineJoin = "round";
+            context.lineCap = 'round';
+            context.lineJoin = 'round';
             this._fill(el);
             this._stroke(el);
         },
@@ -1500,7 +1533,7 @@ JXG.extend(
             if (len <= 0 || !el.visPropCalc.visible) {
                 return;
             }
-            if (el.elType === "polygonalchain") {
+            if (el.elType === 'polygonalchain') {
                 len++;
             }
 
@@ -1534,9 +1567,9 @@ JXG.extend(
             if (el && el.rendNode) {
                 el.visPropOld.visible = val;
                 if (val) {
-                    el.rendNode.style.visibility = "inherit";
+                    el.rendNode.style.visibility = 'inherit';
                 } else {
-                    el.rendNode.style.visibility = "hidden";
+                    el.rendNode.style.visibility = 'hidden';
                 }
             }
         },
@@ -1546,7 +1579,7 @@ JXG.extend(
             JXG.deprecated("Board.renderer.show()", "Board.renderer.display()");
 
             if (Type.exists(el.rendNode)) {
-                el.rendNode.style.visibility = "inherit";
+                el.rendNode.style.visibility = 'inherit';
             }
         },
 
@@ -1555,7 +1588,7 @@ JXG.extend(
             JXG.deprecated("Board.renderer.hide()", "Board.renderer.display()");
 
             if (Type.exists(el.rendNode)) {
-                el.rendNode.style.visibility = "hidden";
+                el.rendNode.style.visibility = 'hidden';
             }
         },
 
@@ -1622,6 +1655,10 @@ JXG.extend(
             this.context.save();
             this.context.clearRect(0, 0, this.canvasRoot.width, this.canvasRoot.height);
 
+            if (board && (board.attr.showcopyright || board.attr.showlogo)) {
+                this.displayLogo(JXG.licenseLogo, 12, board);
+            }
+
             if (board && board.attr.showcopyright) {
                 this.displayCopyright(JXG.licenseText, 12);
             }
@@ -1635,16 +1672,16 @@ JXG.extend(
         // document in AbstractRenderer
         resize: function (w, h) {
             if (this.container) {
-                this.canvasRoot.style.width = parseFloat(w) + "px";
-                this.canvasRoot.style.height = parseFloat(h) + "px";
+                this.canvasRoot.style.width = parseFloat(w) + 'px';
+                this.canvasRoot.style.height = parseFloat(h) + 'px';
 
-                this.canvasRoot.setAttribute("width", 2 * parseFloat(w) + "px");
-                this.canvasRoot.setAttribute("height", 2 * parseFloat(h) + "px");
+                this.canvasRoot.setAttribute("width", 2 * parseFloat(w) + 'px');
+                this.canvasRoot.setAttribute("height", 2 * parseFloat(h) + 'px');
             } else {
                 this.canvasRoot.width = 2 * parseFloat(w);
                 this.canvasRoot.height = 2 * parseFloat(h);
             }
-            this.context = this.canvasRoot.getContext("2d");
+            this.context = this.canvasRoot.getContext('2d');
             // The width and height of the canvas is set to twice the CSS values,
             // followed by an appropriate scaling.
             // See https://stackoverflow.com/questions/22416462/canvas-element-with-blurred-lines

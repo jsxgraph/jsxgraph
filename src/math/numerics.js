@@ -1571,14 +1571,14 @@ Mat.Numerics = {
 
     /**
      * Compute an intersection of the curves c1 and c2
-     * with a generalized Newton method.
+     * with a generalized Newton method (Newton-Raphson).
      * We want to find values t1, t2 such that
      * c1(t1) = c2(t2), i.e.
      * <br>
-     * (c1_x(t1)-c2_x(t2),c1_y(t1)-c2_y(t2)) = (0,0).
+     * (c1_x(t1) - c2_x(t2), c1_y(t1) - c2_y(t2)) = (0, 0).
      * <p>
      * We set
-     * (e,f) := (c1_x(t1)-c2_x(t2),c1_y(t1)-c2_y(t2))
+     * (e, f) := (c1_x(t1) - c2_x(t2), c1_y(t1) - c2_y(t2))
      * <p>
      * The Jacobian J is defined by
      * <pre>
@@ -1594,17 +1594,12 @@ Mat.Numerics = {
      * </ul>
      * The inverse J^(-1) of J is equal to
      * <pre>
-     *  (d, -b)/ (ad-bc)
-     *  (-c, a) / (ad-bc)
+     *  (d, -b) / (ad - bc)
+     *  (-c, a) / (ad - bc)
      * </pre>
      *
      * Then, (t1new, t2new) := (t1,t2) - J^(-1)*(e,f).
      * <p>
-     * If the function meetCurveCurve has the properties
-     * t1memo and t2memo then these are taken as start values
-     * for the Newton algorithm.
-     * After stopping of the Newton algorithm the values of t1 and t2 are stored in
-     * t1memo and t2memo.
      *
      * @param {JXG.Curve} c1 Curve, Line or Circle
      * @param {JXG.Curve} c2 Curve, Line or Circle
@@ -1613,6 +1608,11 @@ Mat.Numerics = {
      * @returns {JXG.Coords} intersection point
      * @memberof JXG.Math.Numerics
      */
+    //  * If the function meetCurveCurve has the properties
+    //  * t1memo and t2memo then these are taken as start values
+    //  * for the Newton algorithm.
+    //  * After stopping of the Newton algorithm the values of t1 and t2 are stored in
+    //  * t1memo and t2memo.
     generalizedNewton: function (c1, c2, t1ini, t2ini) {
         var t1, t2,
             a, b, c, d, e, f,
@@ -1621,13 +1621,13 @@ Mat.Numerics = {
             D00, D01, D10, D11,
             count = 0;
 
-        if (this.generalizedNewton.t1memo) {
-            t1 = this.generalizedNewton.t1memo;
-            t2 = this.generalizedNewton.t2memo;
-        } else {
-            t1 = t1ini;
-            t2 = t2ini;
-        }
+        // if (this.generalizedNewton.t1memo) {
+        //     t1 = this.generalizedNewton.t1memo;
+        //     t2 = this.generalizedNewton.t2memo;
+        // } else {
+        t1 = t1ini;
+        t2 = t2ini;
+        // }
 
         e = c1.X(t1) - c2.X(t2);
         f = c1.Y(t1) - c2.Y(t2);
@@ -1652,14 +1652,78 @@ Mat.Numerics = {
             count += 1;
         }
 
-        this.generalizedNewton.t1memo = t1;
-        this.generalizedNewton.t2memo = t2;
+        // this.generalizedNewton.t1memo = t1;
+        // this.generalizedNewton.t2memo = t2;
 
         if (Math.abs(t1) < Math.abs(t2)) {
             return [c1.X(t1), c1.Y(t1)];
         }
 
         return [c2.X(t2), c2.Y(t2)];
+    },
+
+    /**
+     * Apply damped Newton-Raphson algorithm to determine the intersection
+     * between the curve elements c1 and c2. Transformations of the curves
+     * are already taken into regard.
+     *
+     * @param {JXG.Curve} c1 Curve, Line or Circle
+     * @param {JXG.Curve} c2 Curve, Line or Circle
+     * @param {Number} t1ini Start value for curve c1
+     * @param {Number} t2ini Start value for curve c2
+     * @param {Number} gamma Damping factor, should be in the open interval (0, 1)
+     * @returns {Array} [f1, t1, t2, F]. f1 is the coordinate array of the intersection point,
+     * t1 and t2 are the parameters of the intersection for both curves, F is ||c1[t1]-c2[t2]||**2.
+     */
+    generalizedDampedNewton: function (c1, c2, t1ini, t2ini, gamma) {
+        var t1, t2,
+            a, b, c, d, e, f,
+            disc,
+            F,
+            f1, f2,
+            D00, D01, D10, D11,
+            eps = Mat.eps * Mat.eps,
+            max_it = 40,
+            count = 0;
+
+        t1 = t1ini;
+        t2 = t2ini;
+
+        f1 = c1.Ft(t1);
+        f2 = c2.Ft(t2);
+        e = f1[1] - f2[1];
+        f = f1[2] - f2[2];
+        F = e * e + f * f;
+
+        D00 = this.D(c1.X, c1);
+        D01 = this.D(c2.X, c2);
+        D10 = this.D(c1.Y, c1);
+        D11 = this.D(c2.Y, c2);
+
+        while (F > eps && count < max_it) {
+            a = D00(t1);
+            b = -D01(t2);
+            c = D10(t1);
+            d = -D11(t2);
+
+            disc = a * d - b * c;
+            t1 -= gamma * (d * e - b * f) / disc;
+            t2 -= gamma * (a * f - c * e) / disc;
+            f1 = c1.Ft(t1);
+            f2 = c2.Ft(t2);
+            e = f1[1] - f2[1];
+            f = f1[2] - f2[2];
+            F = e * e + f * f;
+            count += 1;
+        }
+
+        f1 = c1.Ft(t1);
+        return [f1, t1, t2, F];
+        // if (Math.abs(t1) < Math.abs(t2)) {
+        //     return [c1.X(t1), c1.Y(t1)];
+        // }
+
+        // return [c2.X(t2), c2.Y(t2)];
     },
 
     /**
@@ -1742,8 +1806,8 @@ Mat.Numerics = {
                     return num / denom;
                 };
             },
-            xfct = makeFct("X"),
-            yfct = makeFct("Y");
+            xfct = makeFct('X'),
+            yfct = makeFct('Y');
 
         return [
             xfct,
@@ -2181,7 +2245,7 @@ Mat.Numerics = {
                 isLeading = true,
                 n, t, j, c;
 
-            param = param || "x";
+            param = param || 'x';
             if (dot === undefined) {
                 dot = " * ";
             }
@@ -2339,7 +2403,7 @@ Mat.Numerics = {
         }
 
         if (type === undefined) {
-            type = "uniform";
+            type = 'uniform';
         }
 
         /** @ignore */
@@ -2406,7 +2470,7 @@ Mat.Numerics = {
                     coeffs[which] = [];
 
                     for (s = 0; s < len - 3; s++) {
-                        if (type === "centripetal") {
+                        if (type === 'centripetal') {
                             // The order is important, since p[0].coords === undefined
                             dt0 = p[s].Dist(p[s + 1]);
                             dt1 = p[s + 2].Dist(p[s + 1]);
@@ -2485,8 +2549,8 @@ Mat.Numerics = {
         };
 
         return [
-            makeFct("X"),
-            makeFct("Y"),
+            makeFct('X'),
+            makeFct('Y'),
             0,
             function () {
                 return points.length - 1;
@@ -2707,8 +2771,8 @@ Mat.Numerics = {
             };
 
         return [
-            makeFct("X"),
-            makeFct("Y"),
+            makeFct('X'),
+            makeFct('Y'),
             0,
             function () {
                 return Math.floor(points.length / 3);
@@ -2831,8 +2895,8 @@ Mat.Numerics = {
             };
 
         return [
-            makeFct("X"),
-            makeFct("Y"),
+            makeFct('X'),
+            makeFct('Y'),
             0,
             function () {
                 return points.length - 1;
@@ -2899,26 +2963,26 @@ Mat.Numerics = {
 
         if (delta < 0) {
             // delta is negative if the lower function term is evaluated
-            if (type !== "trapezoidal") {
+            if (type !== 'trapezoidal') {
                 x = x + delta;
             }
             delta *= -1;
-            if (type === "lower") {
-                type = "upper";
-            } else if (type === "upper") {
-                type = "lower";
+            if (type === 'lower') {
+                type = 'upper';
+            } else if (type === 'upper') {
+                type = 'lower';
             }
         }
 
         delta1 = delta * 0.01; // for 'lower' and 'upper'
 
-        if (type === "right") {
+        if (type === 'right') {
             y = f(x + delta);
-        } else if (type === "middle") {
+        } else if (type === 'middle') {
             y = f(x + delta * 0.5);
-        } else if (type === "left" || type === "trapezoidal") {
+        } else if (type === "left" || type === 'trapezoidal') {
             y = f(x);
-        } else if (type === "lower") {
+        } else if (type === 'lower') {
             y = f(x);
 
             for (x1 = x + delta1; x1 <= x + delta; x1 += delta1) {
@@ -2933,7 +2997,7 @@ Mat.Numerics = {
             if (y1 < y) {
                 y = y1;
             }
-        } else if (type === "upper") {
+        } else if (type === 'upper') {
             y = f(x);
 
             for (x1 = x + delta1; x1 <= x + delta; x1 += delta1) {
@@ -2947,9 +3011,9 @@ Mat.Numerics = {
             if (y1 > y) {
                 y = y1;
             }
-        } else if (type === "random") {
+        } else if (type === 'random') {
             y = f(x + delta * Math.random());
-        } else if (type === "simpson") {
+        } else if (type === 'simpson') {
             y = (f(x) + 4 * f(x + delta * 0.5) + f(x + delta)) / 6.0;
         } else {
             y = f(x); // default is lower
@@ -3007,7 +3071,7 @@ Mat.Numerics = {
 
         // "Upper" horizontal line defined by function
         for (i = 0; i < n; i++) {
-            if (type === "simpson") {
+            if (type === 'simpson') {
                 sum += this._riemannValue(x, f, type, delta) * delta;
 
                 h = delta * 0.5;
@@ -3031,7 +3095,7 @@ Mat.Numerics = {
                 yarr.push(y);
 
                 x += delta;
-                if (type === "trapezoidal") {
+                if (type === 'trapezoidal') {
                     f2 = f(x);
                     sum += (y + f2) * 0.5 * delta;
                     y = f2;
@@ -3078,7 +3142,7 @@ Mat.Numerics = {
 
                 x -= delta;
                 if (g) {
-                    if (type === "trapezoidal") {
+                    if (type === 'trapezoidal') {
                         f2 = g(x);
                         sum -= (y + f2) * 0.5 * delta;
                         y = f2;
@@ -3659,13 +3723,15 @@ Mat.Numerics = {
      * Find a small enclosing interval of the domain of a function by
      * tightening the input interval x0.
      * <p>
-     * This is a helper function which is used in {@link JXG.Math.Numerics.fminbr}
-     * and {@link JXG.Math.Numerics.fzero}
+     * This is a helper function which is used in {@link JXG.Math.Numerics.fminbr},
+     * {@link JXG.Math.Numerics.fzero}, and  {@link JXG.Curve.getLabelPosition}
      * to avoid search in an interval where the function is mostly undefined.
      *
      * @param {function} f
      * @param {Array} x0 Start interval
      * @param {Object} context Parent object in case f is method of it
+     * @param {Boolean} [outer=true] if true take a proper enclosing array. If false return the domain such that the function is defined
+     * at its  borders.
      * @returns Array
      *
      * @example
@@ -3673,14 +3739,24 @@ Mat.Numerics = {
      * console.log(JXG.Math.Numerics.findDomain(f, [-5, 5]));
      *
      * // Output: [ -0.00020428174445492973, 5 ]
+     *
+     * @example
+     * var f = (x) => Math.sqrt(x);
+     * console.log(JXG.Math.Numerics.findDomain(f, [-5, 5], null, false));
+     *
+     * // Output: [ 0.00020428174562965915, 5 ]
      */
-    findDomain: function (f, x0, context) {
+    findDomain: function (f, x0, context, outer) {
         var a, b, c, fc,
             x,
             gr = 1 - 1 / 1.61803398875,
             eps = 0.001,
             cnt,
             max_cnt = 20;
+
+        if (outer === undefined) {
+            outer = true;
+        }
 
         if (!Type.isArray(x0) || x0.length < 2) {
             throw new Error(
@@ -3706,7 +3782,12 @@ Mat.Numerics = {
                 }
                 cnt++;
             }
-            x[0] = a;
+            if (outer) {
+                x[0] = a;
+            } else {
+                x[0] = b;
+            }
+            // x[0] = a;
         }
 
         a = x[0];
@@ -3726,8 +3807,14 @@ Mat.Numerics = {
                 }
                 cnt++;
             }
-            x[0] = b;
+            if (outer) {
+                x[1] = b;
+            } else {
+                x[1] = a;
+            }
+            // x[1] = b;
         }
+
         return x;
     },
 

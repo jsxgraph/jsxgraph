@@ -49,7 +49,7 @@ import Geometry from "../math/geometry.js";
  */
 JXG.Point3D = function (view, F, slide, attributes) {
     this.constructor(view.board, attributes, Const.OBJECT_TYPE_POINT3D, Const.OBJECT_CLASS_3D);
-    this.constructor3D(view, "point3d");
+    this.constructor3D(view, 'point3d');
 
     this.board.finalizeAdding(this);
 
@@ -127,7 +127,7 @@ JXG.Point3D = function (view, F, slide, attributes) {
 };
 
 JXG.Point3D.prototype = new JXG.GeometryElement();
-Type.copyPrototypeMethods(JXG.Point3D, JXG.GeometryElement3D, "constructor3D");
+Type.copyPrototypeMethods(JXG.Point3D, JXG.GeometryElement3D, 'constructor3D');
 
 JXG.extend(
     JXG.Point3D.prototype,
@@ -415,7 +415,8 @@ JXG.extend(
                     Const.COORDS_BY_USER,
                     this.view.project3DTo2D(c3d)
                 );
-                this.zIndex = Mat.matVecMult(this.view.matrix3DRotShift, c3d)[3];
+                // this.zIndex = Mat.matVecMult(this.view.matrix3DRotShift, c3d)[3];
+                this.zIndex = Mat.innerProduct(this.view.matrix3DRotShift[3], c3d);
             }
             this._c2d = this.element2D.coords.usrCoords.slice();
 
@@ -699,7 +700,8 @@ JXG.extend(
  * @constructor
  * @throws {Exception} If the element cannot be constructed with the given parent
  * objects an exception is thrown.
- * @param {number,function_number,function_number,function_JXG.GeometryElement3D} x,y,z,[slide=undefined] The coordinates are given as x, y, z consisting of numbers or functions. If an optional 3D element "slide" is supplied, the point is a glider on that element.
+ * @param {number,function_number,function_number,function_JXG.GeometryElement3D} x,y,z,[slide=undefined] The coordinates are given as x, y, z consisting of numbers or functions.
+ * If an optional 3D element "slide" is supplied, the point is a glider on that element. At the time of version v1.11, only elements of type line3d are supperted as glider hosts.
  * @param {array,function_JXG.GeometryElement3D} F,[slide=null] Alternatively, the coordinates can be supplied as
  *  <ul>
  *   <li>function returning an array [x,y,z] of length 3 of numbers or

@@ -182,6 +182,11 @@ JXG.extend(
             r0 = Type.evaluate(r);
             r = this.view.intersectionLineCube(p, d, r0);
 
+            // Check if r is infinite. This happens
+            // if this.vec is the zero vector.
+            if (Math.abs(r) === Infinity) {
+                r = 0;
+            }
             return [
                 p[0] + d[0] * r,
                 p[1] + d[1] * r,
@@ -300,7 +305,8 @@ JXG.extend(
             c3d[1] *= 0.5;
             c3d[2] *= 0.5;
             c3d[3] *= 0.5;
-            this.zIndex = Mat.matVecMult(this.view.matrix3DRotShift, c3d)[3];
+            // this.zIndex = Mat.matVecMult(this.view.matrix3DRotShift, c3d)[3];
+            this.zIndex = Mat.innerProduct(this.view.matrix3DRotShift[3], c3d);
 
             return this;
         }
@@ -641,7 +647,6 @@ JXG.createLine3D = function (board, parents, attributes) {
 
     } else {
         // Line defined by point, direction and range
-
 
         // Directions are handled as arrays of length 4, i.e. with homogeneous coordinates.
         if (base !== null) {
@@ -1820,7 +1825,7 @@ JXG.createIntersectionLine3D = function (board, parents, attributes) {
         el1 = parents[1],
         el2 = parents[2],
         ixnLine, i, func,
-        attr = Type.copyAttributes(attributes, board.options, "intersectionline3d"),
+        attr = Type.copyAttributes(attributes, board.options, 'intersectionline3d'),
         pts = [];
 
     func = Geometry.intersectionFunction3D(view, el1, el2);

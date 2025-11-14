@@ -106,7 +106,7 @@ JXG.Dump = {
      * @returns {String} " + s + "
      */
     str: function (s) {
-        if (typeof s === "string" && s.slice(0, 7) !== "function") {
+        if (typeof s === "string" && s.slice(0, 7) !== 'function') {
             s = '"' + s + '"';
         }
 
@@ -141,7 +141,7 @@ JXG.Dump = {
             if (def.hasOwnProperty(p)) {
                 pl = p.toLowerCase();
 
-                if (typeof def[p] !== "object" && def[p] === copy[pl]) {
+                if (def[p] !== null && typeof def[p] !== "object" && def[p] === copy[pl]) {
                     // console.log("delete", p);
                     delete copy[pl];
                 }
@@ -246,7 +246,7 @@ JXG.Dump = {
             }
         }
 
-        this.deleteMarkers(board, "dumped");
+        this.deleteMarkers(board, 'dumped');
 
         return {
             elements: elementList,
@@ -302,14 +302,14 @@ JXG.Dump = {
 
                     return "<<" + list.join(", ") + ">> ";
                 }
-                return "null";
+                return 'null';
             case "string":
                 return "'" + obj.replace(/\\/g, "\\\\").replace(/(["'])/g, "\\$1") + "'";
             case "number":
             case "boolean":
                 return obj.toString();
             case "null":
-                return "null";
+                return 'null';
         }
     },
 
@@ -337,7 +337,7 @@ JXG.Dump = {
                 "s" + i + " = " + elements[i].type + "(" + elements[i].parents.join(", ") + ") " + this.toJCAN(elements[i].attributes).replace(/\n/, "\\n") + ";"
             );
 
-            if (elements[i].type === "axis") {
+            if (elements[i].type === 'axis') {
                 // Handle the case that remove[All]Ticks had been called.
                 id = elements[i].attributes.id;
                 if (board.objects[id].defaultTicks === null) {
@@ -386,7 +386,7 @@ JXG.Dump = {
             dump = this.dump(board),
             script = [];
 
-        dump.methods = this.setBoundingBox(dump.methods, board, "board");
+        dump.methods = this.setBoundingBox(dump.methods, board, 'board');
 
         elements = dump.elements;
 
@@ -401,7 +401,7 @@ JXG.Dump = {
                     ");"
             );
 
-            if (elements[i].type === "axis") {
+            if (elements[i].type === 'axis') {
                 // Handle the case that remove[All]Ticks had been called.
                 id = elements[i].attributes.id;
                 if (board.objects[id].defaultTicks === null) {

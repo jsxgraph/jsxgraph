@@ -99,7 +99,7 @@ JXG.extend(
          * @returns {Boolean} True, if v is of type string.
          */
         isString: function (v) {
-            return typeof v === "string";
+            return typeof v === 'string';
         },
 
         /**
@@ -131,7 +131,7 @@ JXG.extend(
          * @returns {Boolean} True, if v is a function.
          */
         isFunction: function (v) {
-            return typeof v === "function";
+            return typeof v === 'function';
         },
 
         /**
@@ -150,7 +150,7 @@ JXG.extend(
                     v !== null &&
                     typeof v === "object" &&
                     typeof v.splice === "function" &&
-                    typeof v.join === "function";
+                    typeof v.join === 'function';
             }
 
             return r;
@@ -259,7 +259,7 @@ JXG.extend(
                 if (this.isArray(v) && v.length > 0) {
                     return this.isTransformationOrArray(v[0]);
                 }
-                if (typeof v === "object") {
+                if (typeof v === 'object') {
                     return v.type === Const.OBJECT_TYPE_TRANSFORMATION;
                 }
             }
@@ -330,12 +330,12 @@ JXG.extend(
                 return true;
             }
 
-            if (typeof s === "boolean") {
+            if (typeof s === 'boolean') {
                 return s;
             }
 
             if (this.isString(s)) {
-                return s.toLowerCase() === "true";
+                return s.toLowerCase() === 'true';
             }
 
             return false;
@@ -877,11 +877,11 @@ JXG.extend(
             }
 
             // Shift
-            value = value.toString().split("e");
+            value = value.toString().split('e');
             value = Math[type](+(value[0] + "e" + (value[1] ? +value[1] - exp : -exp)));
 
             // Shift back
-            value = value.toString().split("e");
+            value = value.toString().split('e');
             return +(value[0] + "e" + (value[1] ? +value[1] + exp : exp));
         },
 
@@ -1222,7 +1222,7 @@ JXG.extend(
                 for (i = 0; i < obj.length; i++) {
                     prop = obj[i];
                     // Attention: typeof null === 'object'
-                    if (prop !== null && typeof prop === "object") {
+                    if (prop !== null && typeof prop === 'object') {
                         // We certainly do not want to recurse into a JSXGraph object.
                         // This would for sure result in an infinite recursion.
                         // As alternative we copy the id of the object.
@@ -1241,7 +1241,7 @@ JXG.extend(
                     if (obj.hasOwnProperty(i)) {
                         i2 = toLower ? i.toLowerCase() : i;
                         prop = obj[i];
-                        if (prop !== null && typeof prop === "object") {
+                        if (prop !== null && typeof prop === 'object') {
                             if (this.exists(prop.board)) {
                                 c[i2] = prop.id;
                             } else {
@@ -1258,7 +1258,7 @@ JXG.extend(
                         i2 = toLower ? i.toLowerCase() : i;
 
                         prop = obj2[i];
-                        if (prop !== null && typeof prop === "object") {
+                        if (prop !== null && typeof prop === 'object') {
                             if (this.isArray(prop) || !this.exists(c[i2])) {
                                 c[i2] = this.deepCopy(prop, {}, toLower);
                             } else {
@@ -1337,7 +1337,7 @@ JXG.extend(
         },
 
         /**
-         * Convert a n object to a new object containing only
+         * Convert an object to a new object containing only
          * lower case properties.
          *
          * @param {Object} obj
@@ -1363,8 +1363,7 @@ JXG.extend(
                     // We recurse into an object only if it is
                     // neither a DOM node nor an JSXGraph object
                     val = obj[key];
-                    if (typeof val === 'object' &&
-                        val !== null &&
+                    if (typeof val === 'object' && val !== null &&
                         !this.isArray(val) &&
                         !this.exists(val.nodeType) &&
                         !this.exists(val.board)) {
@@ -1453,7 +1452,7 @@ JXG.extend(
                 this.mergeAttr(a, o, true);
             }
 
-            if (arguments[2] === "board") {
+            if (arguments[2] === 'board') {
                 // For board attributes we are done now.
                 return a;
             }
@@ -1606,7 +1605,7 @@ JXG.extend(
 
                         return "{" + list.join(",") + "} ";
                     }
-                    return "null";
+                    return 'null';
                 case "string":
                     return "'" + obj.replace(/(["'])/g, "\\$1") + "'";
                 case "number":
@@ -1614,7 +1613,7 @@ JXG.extend(
                     return obj.toString();
             }
 
-            return "0";
+            return '0';
         },
 
         /**
@@ -1738,7 +1737,7 @@ JXG.extend(
                 l = list.length,
                 result = [];
 
-            if (typeof filter !== "function" && typeof filter !== "object") {
+            if (this.exists(filter) && typeof filter !== "function" && typeof filter !== 'object') {
                 return result;
             }
 
@@ -1746,24 +1745,24 @@ JXG.extend(
                 pass = true;
                 item = list[i];
 
-                if (typeof filter === "object") {
+                if (typeof filter === 'object') {
                     for (f in filter) {
                         if (filter.hasOwnProperty(f)) {
                             flower = f.toLowerCase();
 
-                            if (typeof item[f] === "function") {
+                            if (typeof item[f] === 'function') {
                                 value = item[f]();
                             } else {
                                 value = item[f];
                             }
 
-                            if (item.visProp && typeof item.visProp[flower] === "function") {
+                            if (item.visProp && typeof item.visProp[flower] === 'function') {
                                 visPropValue = item.visProp[flower]();
                             } else {
                                 visPropValue = item.visProp && item.visProp[flower];
                             }
 
-                            if (typeof filter[f] === "function") {
+                            if (typeof filter[f] === 'function') {
                                 pass = filter[f](value) || filter[f](visPropValue);
                             } else {
                                 pass = value === filter[f] || visPropValue === filter[f];
@@ -1774,7 +1773,7 @@ JXG.extend(
                             }
                         }
                     }
-                } else if (typeof filter === "function") {
+                } else if (typeof filter === 'function') {
                     pass = filter(item);
                 }
 
@@ -1881,7 +1880,7 @@ JXG.extend(
                 );
             }
 
-            if (str && typeof str === "string") {
+            if (str && typeof str === 'string') {
                 str = str.replace(/</g, "&lt;").replace(/>/g, "&gt;");
             }
 
@@ -1894,7 +1893,7 @@ JXG.extend(
          * @returns {*} s.Value() if s is an element of type slider, s otherwise
          */
         evalSlider: function (s) {
-            if (s && s.type === Const.OBJECT_TYPE_GLIDER && typeof s.Value === "function") {
+            if (s && s.type === Const.OBJECT_TYPE_GLIDER && typeof s.Value === 'function') {
                 return s.Value();
             }
 

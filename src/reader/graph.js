@@ -69,7 +69,7 @@
                 splitted.shift();
 
                 // second  line: graph/digraph?
-                if (splitted[0] == "digraph") {
+                if (splitted[0] == 'digraph') {
                     directed = true;
                 } else {
                     directed = false;

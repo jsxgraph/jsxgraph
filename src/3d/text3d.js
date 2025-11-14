@@ -50,7 +50,7 @@ import Type from "../utils/type.js";
  */
 JXG.Text3D = function (view, F, text, slide, attributes) {
     this.constructor(view.board, attributes, Const.OBJECT_TYPE_TEXT3D, Const.OBJECT_CLASS_3D);
-    this.constructor3D(view, "text3d");
+    this.constructor3D(view, 'text3d');
 
     this.board.finalizeAdding(this);
 
@@ -152,7 +152,7 @@ JXG.Text3D = function (view, F, text, slide, attributes) {
     });
 };
 JXG.Text3D.prototype = new JXG.GeometryElement();
-Type.copyPrototypeMethods(JXG.Text3D, JXG.GeometryElement3D, "constructor3D");
+Type.copyPrototypeMethods(JXG.Text3D, JXG.GeometryElement3D, 'constructor3D');
 
 JXG.extend(
     JXG.Text3D.prototype,
@@ -326,7 +326,8 @@ JXG.extend(
                     Const.COORDS_BY_USER,
                     this.view.project3DTo2D(c3d)
                 );
-                this.zIndex = Mat.matVecMult(this.view.matrix3DRotShift, c3d)[3];
+                // this.zIndex = Mat.matVecMult(this.view.matrix3DRotShift, c3d)[3];
+                this.zIndex = Mat.innerProduct(this.view.matrix3DRotShift[3], c3d);
                 this.element2D.prepareUpdate().update();
             }
             this._c2d = this.element2D.coords.usrCoords.slice();

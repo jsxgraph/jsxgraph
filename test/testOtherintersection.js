@@ -114,4 +114,16 @@ describe("Test otherintersection functions", function () {
         expect(p2.Y()).toBeCloseTo(-0.5, 4);
     });
 
+    it("Other intersection circle-curve", function () {
+
+        var c1 = board.create('circle', [[0, 0], 3]);
+
+        var A = board.create('point', [0, 2]);
+        var c2 = board.create('functiongraph', [(x) => -(x ** 2) + 2 * A.X() * x + A.Y() - A.X() ** 2]);
+        var p1 = board.create('intersection', [c1, c2], { color: 'black' });
+        var p2 = board.create('otherintersection', [c1, c2, [p1]]);
+        expect(p2.X()).toBeCloseTo(2.0472281349142505, 4);
+        expect(p2.Y()).toBeCloseTo(-2.1911512307913723, 4);
+    });
+
 });

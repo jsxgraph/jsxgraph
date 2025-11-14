@@ -35,8 +35,8 @@ p {
 /* ----------------------- */
 
 #header h1 {
-    font-size: 2.5em; 
-    background-image:url(static/logo.png); 
+    font-size: 2.5em;
+    background-image:url(static/logo.png);
     background-repeat:no-repeat;
     height: 72px;
     padding-left: 84px;
@@ -88,6 +88,10 @@ pre.code
 {
 	margin-left: 260px;
 	width: 800px;
+}
+
+.wrapper {
+	display: flex;
 }
 
 .details {
@@ -187,7 +191,7 @@ ul.inheritsList
 }
 
 .detailList {
-	margin-left: 20px; 
+	margin-left: 20px;
 	line-height: 1.5;
 }
 .detailList dt { margin-left: 20px; }

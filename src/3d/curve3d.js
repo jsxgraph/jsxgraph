@@ -51,7 +51,7 @@ import Mat from "../math/math.js";
  */
 JXG.Curve3D = function (view, F, X, Y, Z, range, attributes) {
     this.constructor(view.board, attributes, Const.OBJECT_TYPE_CURVE3D, Const.OBJECT_CLASS_3D);
-    this.constructor3D(view, "curve3d");
+    this.constructor3D(view, 'curve3d');
 
     this.board.finalizeAdding(this);
 
@@ -123,7 +123,7 @@ JXG.Curve3D = function (view, F, X, Y, Z, range, attributes) {
     });
 };
 JXG.Curve3D.prototype = new JXG.GeometryElement();
-Type.copyPrototypeMethods(JXG.Curve3D, JXG.GeometryElement3D, "constructor3D");
+Type.copyPrototypeMethods(JXG.Curve3D, JXG.GeometryElement3D, 'constructor3D');
 
 JXG.extend(
     JXG.Curve3D.prototype,
@@ -422,7 +422,7 @@ JXG.createCurve3D = function (board, parents, attributes) {
     }
     // TODO Throw new Error
 
-    attr = Type.copyAttributes(attributes, board.options, "curve3d");
+    attr = Type.copyAttributes(attributes, board.options, 'curve3d');
     el = new JXG.Curve3D(view, F, X, Y, Z, range, attr);
 
     attr = el.setAttr2D(attr);

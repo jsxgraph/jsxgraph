@@ -1201,9 +1201,10 @@ JXG.Options = {
         showClearTraces: false,
 
         /**
-         * Show copyright string in canvas.
+         * Show copyright string and logo in the top left corner of the board.
          *
          * @name JXG.Board#showCopyright
+         * @see JXG.Board#showLogo
          * @type Boolean
          * @default true
          */
@@ -1237,6 +1238,17 @@ JXG.Options = {
          * @default true
          */
         showInfobox: true,
+
+        /**
+         * Show JSXGraph logo in the top left corner of the board anyhow
+         * even if {@link JXG.Board#showCopyright} is false.
+         *
+         * @name JXG.Board#showLogo
+         * @type Boolean
+         * @default false
+         * @see JXG.Board#showCopyright
+         */
+        showLogo: false,
 
         /**
          * Display of navigation arrows and zoom buttons in the navigation bar.
@@ -1720,7 +1732,6 @@ JXG.Options = {
          * If true the element is fixed and can not be dragged around. The element
          * will even stay at its position on zoom and moveOrigin events.
          * Only free elements like points, texts, images, curves can be frozen.
-         * For slider elements, the subobjects point1 and point2 have to be "frozen".
          *
          * @type Boolean
          * @default false
@@ -1730,8 +1741,7 @@ JXG.Options = {
          * var txt = board.create('text', [1, 2, 'Hello'], {frozen: true, fontSize: 24});
          * var sli = board.create('slider', [[-4, 4], [-1.5, 4], [-10, 1, 10]], {
          *     name:'a',
-         *     point1: {frozen: true},
-         *     point2: {frozen: true}
+         *     frozen: true
          * });
          *
          * </pre><div id="JXG02f88c9d-8c0a-4174-9219-f0ea43749159" class="jxgbox" style="width: 300px; height: 300px;"></div>
@@ -1742,8 +1752,7 @@ JXG.Options = {
          *     var txt = board.create('text', [1, 2, 'Hello'], {frozen: true, fontSize: 24});
          *     var sli = board.create('slider', [[-4, 4], [-1.5, 4], [-10, 1, 10]], {
          *         name:'a',
-         *         point1: {frozen: true},
-         *         point2: {frozen: true}
+         *         frozen: true
          *     });
          *
          *     })();
@@ -2384,7 +2393,7 @@ JXG.Options = {
          *
          * @name JXG.GeometryElement#tabindex
          * @type Number
-         * @default 0
+         * @default -1
          * @see JXG.Board#keyboard
          * @see JXG.GeometryElement#fixed
          * @see JXG.GeometryElement#visible
@@ -2539,7 +2548,17 @@ JXG.Options = {
          * @type Boolean
          * @default false
          */
-        withLabel: false
+        withLabel: false,
+
+        /**
+         * Decides if the element should be ignored when using auto positioning
+         * for some label.
+         * @name JXG.GeometryElement#ignoreForLabelAutoposition
+         * @type boolean
+         * @default false
+         * @see Label#autoPosition
+         */
+        ignoreForLabelAutoposition: false
 
         // close the meta tag
         /**#@-*/
@@ -2580,10 +2599,9 @@ JXG.Options = {
          *     }
          * });
          *
-         * // Generate a logarithmic labelling of the vertical axis.
+         * // Generate a logarithmic labelling of the vertical axis by defining the function generateLabelText directly.
          * board.defaultAxes.y.ticks[0].generateLabelText = function (tick, zero) {
-         *     var value = Math.pow(10, Math.round(tick.usrCoords[2] - zero.usrCoords[2])),
-         *         distance, labelText;
+         *     var value = Math.pow(10, Math.round(tick.usrCoords[2] - zero.usrCoords[2]));
          *     return this.formatLabelText(value);
          * };
          *
@@ -2610,14 +2628,77 @@ JXG.Options = {
          *
          *     // Generate a logarithmic labelling of the vertical axis.
          *     board.defaultAxes.y.ticks[0].generateLabelText = function (tick, zero) {
-         *         var value = Math.pow(10, Math.round(tick.usrCoords[2] - zero.usrCoords[2])),
-         *             distance, labelText;
+         *         var value = Math.pow(10, Math.round(tick.usrCoords[2] - zero.usrCoords[2]));
          *         return this.formatLabelText(value);
          *     };
          *
          *     })();
          *
          * </script><pre>
+         * @example
+         * // Generate a logarithmic labelling of the vertical axis by setting the attribute generateLabelText.
+         * const board = JXG.JSXGraph.initBoard('jxgbox', {
+         *   boundingBox: [-10, 10, 10, -10], axis: true,
+         *   defaultAxes: {
+         *     x: {
+         *       margin: -4,
+         *       ticks: {
+         *         minTicksDistance: 0,
+         *         minorTicks: 4,
+         *         ticksDistance: 3,
+         *         scale: Math.PI,
+         *         scaleSymbol: 'π',
+         *         insertTicks: true
+         *       }
+         *     },
+         *     y: {
+         *       ticks: {
+         *         // Generate a logarithmic labelling of the vertical axis.
+         *         generateLabelText: function (tick, zero) {
+         *           var value = Math.pow(10, Math.round(tick.usrCoords[2] - zero.usrCoords[2]));
+         *           return this.formatLabelText(value);
+         *         }
+         *       }
+         *     }
+         *   }
+         * });
+         *
+         * </pre><div id="JXGa2873c8f-df8d-4a1d-ae15-5f1bdc55a0e9" class="jxgbox" style="width: 300px; height: 300px;"></div>
+         * <script type="text/javascript">
+         *     (function() {
+         *         var board = JXG.JSXGraph.initBoard('JXGa2873c8f-df8d-4a1d-ae15-5f1bdc55a0e9',
+         *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
+         *
+         *         const board = JXG.JSXGraph.initBoard('jxgbox', {
+         *           boundingBox: [-10, 10, 10, -10], axis: true,
+         *           defaultAxes: {
+         *             x: {
+         *               margin: -4,
+         *               ticks: {
+         *                 minTicksDistance: 0,
+         *                 minorTicks: 4,
+         *                 ticksDistance: 3,
+         *                 scale: Math.PI,
+         *                 scaleSymbol: 'π',
+         *                 insertTicks: true
+         *               }
+         *             },
+         *             y: {
+         *               ticks: {
+         *                 // Generate a logarithmic labelling of the vertical axis.
+         *                 generateLabelText: function (tick, zero) {
+         *                   var value = Math.pow(10, Math.round(tick.usrCoords[2] - zero.usrCoords[2]));
+         *                   return this.formatLabelText(value);
+         *                 }
+         *               }
+         *             }
+         *           }
+         *         });
+         *
+         *     })();
+         *
+         * </script><pre>
+         *
          *
          */
         generateLabelText: null,
@@ -2656,7 +2737,8 @@ JXG.Options = {
         label: {
             tabindex: null,
             layer: 7, // line
-            highlight: false
+            highlight: false,
+            autoPosition: false
         },
 
         /**
@@ -3505,7 +3587,9 @@ JXG.Options = {
         labelInArrow: true,
         minorTicksInMargin: false,
         majorTicksInMargin: true,
-        labelInMargin: true
+        labelInMargin: true,
+
+        ignoreForLabelAutoposition: true
 
         // close the meta tag
         /**#@-*/
@@ -3889,7 +3973,7 @@ JXG.Options = {
         highlightStrokeColor: '#888888',
 
         /**
-         * Is used to define the behaviour of the axis.
+         * Is used to define the behavior of the axis.
          * Settings in this attribute only have an effect if the axis is exactly horizontal or vertical.
          * Possible values are:
          * <ul>
@@ -4231,7 +4315,9 @@ JXG.Options = {
         label: {
             position: 'lft',
             offset: [10, 10]
-        }
+        },
+
+        ignoreForLabelAutoposition: true
 
         /**#@-*/
     },
@@ -4958,7 +5044,7 @@ JXG.Options = {
 
         /**
          * If set to true, this object is only evaluated once and not re-evaluated on update.
-         * This is necessary if you want to have a bord within a foreignObject of another board.
+         * This is necessary if you want to have a board within a foreignObject of another board.
          *
          * @name ForeignObject#evaluateOnlyOnce
          *
@@ -5943,8 +6029,9 @@ JXG.Options = {
         transitionDuration: 0,
         needsRegularUpdate: false,
         tabindex: null,
-        viewport: [0, 0, 0, 0]
+        viewport: [0, 0, 0, 0],
 
+        ignoreForLabelAutoposition: true
         /**#@-*/
     },
 
@@ -6152,6 +6239,8 @@ JXG.Options = {
          *          The label is positioned x pixels from the starting point.
          *          For non-lines, 0% is taken instead.
          *   </ul>
+         *   If the domain of a curve is not connected, a position of the label close to the line
+         *   between the first and last point of the curve is chosen.
          * <li> 'side' is either 'left' or 'right'. The label is positioned to the left or right of the path, when moving from the
          * first point to the last. For circles, 'left' means inside of the circle, 'right' means outside of the circle.
          * The distance of the label from the path can be controlled by {@link Label#distance}.
@@ -6352,6 +6441,10 @@ JXG.Options = {
          * @name Label#autoPosition
          * @see Label#offset
          * @type Boolean
+         * @see GeometryElement#ignoreForLabelAutoposition
+         * @see Label#autoPositionMinDistance
+         * @see Label#autoPositionMaxDistance
+         * @see Label#autoPositionWhitelist
          * @default false
          *
          * @example
@@ -6393,6 +6486,7 @@ JXG.Options = {
          * @name Label#autoPositionMinDistance
          * @see Label#autoPosition
          * @see Label#autoPositionMaxDistance
+         * @see Label#autoPositionWhitelist
          * @type Number
          * @default 12
          *
@@ -6408,6 +6502,7 @@ JXG.Options = {
          * @name Label#autoPositionMaxDistance
          * @see Label#autoPosition
          * @see Label#autoPositionMinDistance
+         * @see Label#autoPositionWhitelist
          * @type Number
          * @default 28
          *
@@ -6419,6 +6514,8 @@ JXG.Options = {
          *
          * @name Label#autoPositionWhitelist
          * @see Label#autoPosition
+         * @see Label#autoPositionMinDistance
+         * @see Label#autoPositionMaxDistance
          * @type Array
          * @default []
          */
@@ -6494,7 +6591,7 @@ JXG.Options = {
         strokeWidth: 5,
 
         /**
-         * The element is fixed and can not be dragged around. The legend will even stay at its position on zoom and
+         * The element can be fixed and may not be dragged around. If true, the legend will even stay at its position on zoom and
          * moveOrigin events.
          * @name Legend#frozen
          * @type Boolean
@@ -6915,7 +7012,7 @@ JXG.Options = {
         baseUnit: '',
 
         /**
-         * This attribute expects an object that has the dimension numbers as keys (as integer or in the form of "dimxx")
+         * This attribute expects an object that has the dimension numbers as keys (as integer or in the form of 'dimxx')
          * and assigns a string to each dimension.
          * If a dimension has no specification, {@link Measurement#baseUnit} is used.
          *
@@ -8341,6 +8438,7 @@ JXG.Options = {
             withLabel: false,
             visible: false,
             fixed: true,
+            frozen: 'inherit',
             name: ''
         },
 
@@ -8356,6 +8454,7 @@ JXG.Options = {
             withLabel: false,
             visible: false,
             fixed: true,
+            frozen: 'inherit',
             name: ''
         },
 

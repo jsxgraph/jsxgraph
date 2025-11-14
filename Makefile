@@ -114,7 +114,7 @@ beta: docs
 
 docs: core docsonly
 
-docsonly: 
+docsonly:
 	# Set up tmp dir
 	$(MKDIR) $(MKDIRFLAGS) $(TMP)
 	$(MKDIR) $(MKDIRFLAGS) $(OUTPUT)
@@ -174,5 +174,5 @@ eslint:
 	$(ESLINT) $(ESLINTFLAGS) $(LINTLIST)
 
 # test:
-test: core
+test:core
 	$(KARMA) start karma/karma.conf.js

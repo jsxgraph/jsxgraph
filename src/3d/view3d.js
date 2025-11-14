@@ -807,7 +807,6 @@ JXG.extend(
                 // The transformations this.matrix3D and mat2D can not be combined at this point,
                 // since the projected vectors have to be normalized in between in project3DTo2D
                 this.viewPortTransform = mat2D;
-
                 objectToClip = this._updateCentralProjection();
                 // this.matrix3D is a 4x4 matrix
                 this.matrix3D = Mat.matMatMult(objectToClip, this.shift);
@@ -845,6 +844,22 @@ JXG.extend(
      * @returns Number
      */
     compareDepth: function (a, b) {
+        // return a.zIndex - b.zIndex;
+        // if (a.type !== Const.OBJECT_TYPE_PLANE3D && b.type !== Const.OBJECT_TYPE_PLANE3D) {
+        //     return a.zIndex - b.zIndex;
+        // } else if (a.type === Const.OBJECT_TYPE_PLANE3D) {
+        //     let bHesse = Mat.innerProduct(a.point.coords, a.normal, 4);
+        //     let po = Mat.innerProduct(b.coords, a.normal, 4);
+        //     let pos = Mat.innerProduct(this.boxToCam[3], a.normal, 4);
+        // console.log(this.boxToCam[3])
+        //     return pos - po;
+        // } else if (b.type === Const.OBJECT_TYPE_PLANE3D) {
+        //     let bHesse = Mat.innerProduct(b.point.coords, b.normal, 4);
+        //     let po = Mat.innerProduct(a.coords, a.normal, 4);
+        //     let pos = Mat.innerProduct(this.boxToCam[3], b.normal, 4);
+        //     console.log('b', pos, po, bHesse)
+        //     return -pos;
+        // }
         return a.zIndex - b.zIndex;
     },
 
@@ -886,7 +901,7 @@ JXG.extend(
 
     updateDepthOrdering: function () {
         var id, el,
-            i, layers, lay;
+            i, j, l, layers, lay;
 
         // Collect elements for depth ordering layer-wise
         layers = this.evalVisProp('depthorder.layers');
@@ -899,6 +914,7 @@ JXG.extend(
                 el = this.objects[id];
                 if ((el.type === Const.OBJECT_TYPE_FACE3D ||
                     el.type === Const.OBJECT_TYPE_LINE3D ||
+                    // el.type === Const.OBJECT_TYPE_PLANE3D ||
                     el.type === Const.OBJECT_TYPE_POINT3D ||
                     el.type === Const.OBJECT_TYPE_POLYGON3D
                     ) &&
@@ -924,8 +940,12 @@ JXG.extend(
                 //         console.log(o.visProp.fillcolor, o.zIndex)
                 //     }
                 // }
-                this.depthOrdered[lay].forEach((el) => this.board.renderer.setLayer(el.element2D, lay));
-                // this.depthOrdered[lay].forEach((el) => console.log(el.zIndex));
+                l = this.depthOrdered[lay];
+                for (j = 0; j < l.length; j++) {
+                    this.board.renderer.setLayer(l[j].element2D, lay);
+                }
+                // this.depthOrdered[lay].forEach((el) => this.board.renderer.setLayer(el.element2D, lay));
+                // Attention: forEach prevents deleting an element
             }
         }
 
@@ -937,13 +957,13 @@ JXG.extend(
             return this;
         }
 
-        // console.time("update")
+        // console.time('update')
         // Handle depth ordering
         this.depthOrdered = {};
 
         if (this.shift !== undefined && this.evalVisProp('depthorder.enabled')) {
             // Update the zIndices of certain element types.
-            // We do it here in updateRenderer, because the the elements' positions
+            // We do it here in updateRenderer, because the elements' positions
             // are meanwhile updated.
             this.updateZIndices();
 
@@ -955,7 +975,7 @@ JXG.extend(
                 this.updateDepthOrdering();
             }
         }
-        // console.timeEnd("update")
+        // console.timeEnd('update')
 
         this.needsUpdate = false;
         return this;
@@ -996,14 +1016,6 @@ JXG.extend(
         // this.update();
 
         this.board.removeObject(object, saveMethod);
-
-        // delete this.depthOrdered[12][0];
-        // delete this.depthOrdered[12][1];
-        // delete this.depthOrdered[12][2];
-        // delete this.depthOrdered[12][3];
-        // delete this.depthOrdered[12][4];
-        // delete this.depthOrdered[12][5];
-        // console.log(this.depthOrdered[12])
 
         return this;
     },

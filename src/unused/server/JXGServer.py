@@ -24,7 +24,7 @@ def default_action(req, resp):
     action = req.getvalue('action', 'empty')
     resp.error("action \"" + action + "\" is undefined")
     return resp.dump()
-    
+
 def import_module(plugin, resp):
     try:
         __import__(plugin, None, None, [''])
@@ -45,7 +45,7 @@ def import_module(plugin, resp):
     return tp
 
 def load_module(req, resp):
-    plugin = req.getValue("module", "none")
+    plugin = req.getValue("module", 'none')
     tp = import_module(plugin, resp)
 
     if resp._type != 'error':

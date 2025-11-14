@@ -92,7 +92,7 @@ JXG.Group = function (board, id, name, objects, attributes) {
     this.coords = {};
     this.needsRegularUpdate = attributes.needsregularupdate;
 
-    this.rotationCenter = "centroid";
+    this.rotationCenter = 'centroid';
     this.scaleCenter = null;
     this.rotationPoints = [];
     this.translationPoints = [];
@@ -238,7 +238,7 @@ JXG.extend(
             }
 
             drag = this._update_find_drag_type();
-            if (drag.action === "nothing") {
+            if (drag.action === 'nothing') {
                 this._updateCoordsCache(drag.id);
                 return this;
             }
@@ -250,7 +250,7 @@ JXG.extend(
             // Translation is handled by direct coordinate manipulation for points.
             // For images and texts, all translation, scaling and rotation is
             // done by binding a transformation to the element.
-            if (drag.action === "translation") {
+            if (drag.action === 'translation') {
                 t = [
                     obj.coords.usrCoords[1] - this.coords[drag.id].usrCoords[1],
                     obj.coords.usrCoords[2] - this.coords[drag.id].usrCoords[2]
@@ -270,17 +270,17 @@ JXG.extend(
                 // For images and texts
                 T = this.board.create("transform", t, { type: "translate" });
                 T.update();
-            } else if (drag.action === "rotation" || drag.action === "scaling") {
-                if (drag.action === "rotation") {
-                    actionCenter = "rotationCenter";
+            } else if (drag.action === "rotation" || drag.action === 'scaling') {
+                if (drag.action === 'rotation') {
+                    actionCenter = 'rotationCenter';
                 } else {
-                    actionCenter = "scaleCenter";
+                    actionCenter = 'scaleCenter';
                 }
 
                 // if (Type.isPoint(this.board, this[actionCenter])) {
                 if (Type.exists(this[actionCenter].coords)) {
                     center = this[actionCenter].coords.usrCoords.slice(1);
-                } else if (this[actionCenter] === "centroid") {
+                } else if (this[actionCenter] === 'centroid') {
                     center = this._update_centroid_center();
                 } else if (Type.isArray(this[actionCenter])) {
                     center = this[actionCenter];
@@ -292,7 +292,7 @@ JXG.extend(
                     return this;
                 }
 
-                if (drag.action === "rotation") {
+                if (drag.action === 'rotation') {
                     alpha = Geometry.rad(
                         this.coords[drag.id].usrCoords.slice(1),
                         center,
@@ -302,14 +302,14 @@ JXG.extend(
                         type: "rotate"
                     });
                     t.update(); // t.update initializes t.matrix, which is needed if the action element is the first group element.
-                } else if (drag.action === "scaling") {
+                } else if (drag.action === 'scaling') {
                     s = Geometry.distance(this.coords[drag.id].usrCoords.slice(1), center);
                     if (Math.abs(s) < Mat.eps) {
                         return this;
                     }
                     s = Geometry.distance(obj.coords.usrCoords.slice(1), center) / s;
-                    sx = this.scaleDirections[drag.id].indexOf("x") >= 0 ? s : 1.0;
-                    sy = this.scaleDirections[drag.id].indexOf("y") >= 0 ? s : 1.0;
+                    sx = this.scaleDirections[drag.id].indexOf('x') >= 0 ? s : 1.0;
+                    sy = this.scaleDirections[drag.id].indexOf('y') >= 0 ? s : 1.0;
 
                     // Shift scale center to origin, scale and shift the scale center back.
                     t = this.board.create(
@@ -410,21 +410,21 @@ JXG.extend(
 
             if (changed.length > 1) {
                 // More than one point moved => translation
-                action = "translation";
+                action = 'translation';
             } else {
                 // One point moved => we have to determine the type
                 if (
                     Type.isInArray(this.rotationPoints, obj) &&
                     Type.exists(this.rotationCenter)
                 ) {
-                    action = "rotation";
+                    action = 'rotation';
                 } else if (
                     Type.isInArray(this.scalePoints, obj) &&
                     Type.exists(this.scaleCenter)
                 ) {
-                    action = "scaling";
+                    action = 'scaling';
                 } else if (Type.isInArray(this.translationPoints, obj)) {
-                    action = "translation";
+                    action = 'translation';
                 }
             }
 
@@ -478,7 +478,7 @@ JXG.extend(
                         // This is done in the subsequent call of board.updateElements()
                         // in Group.update() above.
                         if (obj.id !== drag.id) {
-                            if (drag.action === "translation") {
+                            if (drag.action === 'translation') {
                                 if (!Type.isInArray(drag.changed, obj.id)) {
                                     if (obj.elementClass === Const.OBJECT_CLASS_POINT) {
                                         obj.coords.setCoordinates(Const.COORDS_BY_USER, [
@@ -496,7 +496,7 @@ JXG.extend(
                                 }
                             }
                         } else {
-                            if (drag.action === "rotation" || drag.action === "scaling") {
+                            if (drag.action === "rotation" || drag.action === 'scaling') {
                                 obj.coords.setCoordinates(
                                     Const.COORDS_BY_USER,
                                     Mat.matVecMult(t.matrix, this.coords[obj.id].usrCoords)
@@ -671,7 +671,7 @@ JXG.extend(
 
             len = objs.length;
             for (i = 0; i < len; ++i) {
-                this.scaleDirections[this.board.select(objs[i]).id] = direction || "xy";
+                this.scaleDirections[this.board.select(objs[i]).id] = direction || 'xy';
             }
 
             return this._setActionPoints("scale", objects);
@@ -685,7 +685,7 @@ JXG.extend(
          */
         addScalePoint: function (point, direction) {
             this._addActionPoint("scale", point);
-            this.scaleDirections[this.board.select(point).id] = direction || "xy";
+            this.scaleDirections[this.board.select(point).id] = direction || 'xy';
 
             return this;
         },
@@ -1054,10 +1054,10 @@ JXG.extend(
  * </script><pre>
  */
 JXG.createGroup = function (board, parents, attributes) {
-    var attr = Type.copyAttributes(attributes, board.options, "group"),
+    var attr = Type.copyAttributes(attributes, board.options, 'group'),
         g = new JXG.Group(board, attr.id, attr.name, parents, attr);
 
-    g.elType = "group";
+    g.elType = 'group';
     g.setParents(parents);
 
     return g;

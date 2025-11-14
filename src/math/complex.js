@@ -80,17 +80,17 @@ JXG.Complex = function (x, y) {
      */
     this.imaginary = y || 0;
 
-    /**
-     * Absolute value in the polar form of the complex number. Currently unused.
-     * @type Number
-     */
-    this.absval = 0;
+    // /**
+    //  * Absolute value in the polar form of the complex number. Currently unused.
+    //  * @type Number
+    //  */
+    // this.absval = 0;
 
-    /**
-     * Angle value in the polar form of the complex number. Currently unused.
-     * @type Number
-     */
-    this.angle = 0;
+    // /**
+    //  * Angle value in the polar form of the complex number. Currently unused.
+    //  * @type Number
+    //  */
+    // this.angle = 0;
 };
 
 JXG.extend(
@@ -101,7 +101,7 @@ JXG.extend(
          * @returns {String} Formatted string containing the complex number in human readable form (algebraic form).
          */
         toString: function () {
-            return this.real + " + " + this.imaginary + "i";
+            return this.real + " + " + this.imaginary + 'i';
         },
 
         /**
@@ -207,7 +207,26 @@ JXG.extend(
             this.imaginary *= -1;
 
             return this;
+        },
+
+        /**
+         * Absolute value in the polar form, i.e. |z| of the complex number z.
+         * @returns Number
+         */
+        abs: function() {
+            var x = this.real,
+                y = this.imaginary;
+            return Math.sqrt(x * x + y * y);
+        },
+
+        /**
+         * Angle value in the polar form of the complex number (in radians).
+         * @returns Number
+         */
+        angle: function() {
+            return Math.atan2(this.imaginary, this.real);
         }
+
     }
 );
 
@@ -222,7 +241,8 @@ JXG.extend(
  *    z = JXG.C.add(z1, z1);</pre>
  * z1 and z2 here remain unmodified. With the object oriented approach above this
  * section the code would look like:
- * <pre class="code">   var z1 = new JXG.Complex(1, 0);
+ * <pre class="code">
+ *    var z1 = new JXG.Complex(1, 0);
  *    var z2 = new JXG.Complex(0, 1);
  *    var z = new JXG.Complex(z1);
  *    z.add(z2);</pre>
@@ -296,11 +316,20 @@ JXG.C.conj = function (z1) {
  */
 JXG.C.abs = function (z1) {
     var z = new JXG.Complex(z1);
+    // z.conj();
+    // z.mult(z1);
+    // return Math.sqrt(z.real);
+    return z.abs();
+};
 
-    z.conj();
-    z.mult(z1);
-
-    return Math.sqrt(z.real);
+/**
+ * Angle of a complex number (in radians).
+ * @param {JXG.Complex|Number} z1 Complex number
+ * @returns {Number} real number equal to the angle value of the given parameter.
+ */
+JXG.C.angle = function (z1) {
+    var z = new JXG.Complex(z1);
+    return z.angle();
 };
 
 /**

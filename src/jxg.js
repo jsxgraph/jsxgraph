@@ -192,7 +192,7 @@ jxg.extend(
             for (i = 0; i < ext.length; i++) {
                 e = ext[i].toLowerCase();
 
-                if (typeof this.readers[e] !== "function") {
+                if (typeof this.readers[e] !== 'function') {
                     this.readers[e] = reader;
                 }
             }
@@ -269,14 +269,14 @@ jxg.extend(
         /**
          * Outputs a warning via console.warn(), if available. If console.warn() is
          * unavailable this function will look for an HTML element with the id 'warning'
-         * and append the warning to this element's innerHTML.
+         * and append the warning to this element's innerText.
          * @param {String} warning The warning text
          */
         warn: function (warning) {
             if (typeof window === "object" && window.console && console.warn) {
                 console.warn("WARNING:", warning);
-            } else if (typeof document === "object" && document.getElementById("warning")) {
-                document.getElementById("debug").innerHTML += "WARNING: " + warning + "<br />";
+            } else if (typeof document === "object" && document.getElementById('warning')) {
+                document.getElementById('debug').innerText += "WARNING: " + warning + '\n';
             }
         },
 
@@ -293,8 +293,8 @@ jxg.extend(
                 p = arguments[i];
                 if (typeof window === "object" && window.console && console.log) {
                     console.log(p);
-                } else if (typeof document === "object" && document.getElementById("debug")) {
-                    document.getElementById("debug").innerHTML += p + "<br/>";
+                } else if (typeof document === "object" && document.getElementById('debug')) {
+                    document.getElementById('debug').innerText += p + '\n';
                 }
             }
         },
@@ -312,7 +312,7 @@ jxg.extend(
             jxg.debugInt.apply(this, arguments);
 
             if (e && e.stack) {
-                jxg.debugInt("stacktrace");
+                jxg.debugInt('stacktrace');
                 jxg.debugInt(e.stack.split("\n").slice(1).join("\n"));
             }
         },

@@ -1,4 +1,6 @@
 /*
+    v1.12.1dev
+
     Copyright 2008-2025
         Matthias Ehmann,
         Michael Gerhaeuser,
@@ -179,7 +181,7 @@
     height: 100%;
 }
 
-/* Classes forn smartlabels */
+/* Classes for smartlabels */
 
 .smart-label-solid {
     padding: 1px 7px 1px 7px;

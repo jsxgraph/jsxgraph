@@ -123,7 +123,8 @@ JXG.extend(
          * @type Boolean
          * @default false
          */
-        isBrowser: typeof window === "object" && typeof document === "object",
+        isBrowser: Type.exists(window) && Type.exists(document) &&
+            typeof window === "object" && typeof document === "object",
 
         /**
          * Features of ECMAScript 6+ are available.
@@ -174,8 +175,8 @@ JXG.extend(
 
             // if (this.isNode()) {
             //     try {
-            //         // c = typeof module === "object" ? module.require("canvas") : $__canvas;
-            //         c = typeof module === "object" ? module.require("canvas") : import('canvas');
+            //         // c = typeof module === "object" ? module.require('canvas') : $__canvas;
+            //         c = typeof module === "object" ? module.require('canvas') : import('canvas');
             //         hasCanvas = !!c;
             //     } catch (err) {}
             // }
@@ -188,13 +189,13 @@ JXG.extend(
                 //     throw new Error('JXG.createCanvas not available.\n' +
                 //         'Install the npm package `canvas`\n' +
                 //         'and call:\n' +
-                //         '    import { createCanvas } from "canvas.js";\n' +
+                //         '    import { createCanvas } from 'canvas.js'\n' +
                 //         '    JXG.createCanvas = createCanvas;\n');
                 // }
             }
 
             return (
-                hasCanvas || (this.isBrowser && !!document.createElement("canvas").getContext)
+                hasCanvas || (this.isBrowser && !!document.createElement('canvas').getContext)
             );
         },
 
@@ -266,7 +267,7 @@ JXG.extend(
         isAndroid: function () {
             return (
                 Type.exists(navigator) &&
-                navigator.userAgent.toLowerCase().indexOf("android") > -1
+                navigator.userAgent.toLowerCase().indexOf('android') > -1
             );
         },
 
@@ -287,8 +288,8 @@ JXG.extend(
         isApple: function () {
             return (
                 Type.exists(navigator) &&
-                (navigator.userAgent.indexOf("iPad") > -1 ||
-                    navigator.userAgent.indexOf("iPhone") > -1)
+                (navigator.userAgent.indexOf('iPad') > -1 ||
+                    navigator.userAgent.indexOf('iPhone') > -1)
             );
         },
 
@@ -313,7 +314,7 @@ JXG.extend(
                 typeof window === "object" &&
                 window.clientInformation &&
                 window.clientInformation.appVersion &&
-                window.clientInformation.appVersion.indexOf("MSAppHost") > -1
+                window.clientInformation.appVersion.indexOf('MSAppHost') > -1
             );
         },
 
@@ -325,8 +326,8 @@ JXG.extend(
         isMozilla: function () {
             return (
                 Type.exists(navigator) &&
-                navigator.userAgent.toLowerCase().indexOf("mozilla") > -1 &&
-                navigator.userAgent.toLowerCase().indexOf("apple") === -1
+                navigator.userAgent.toLowerCase().indexOf('mozilla') > -1 &&
+                navigator.userAgent.toLowerCase().indexOf('apple') === -1
             );
         },
 
@@ -338,10 +339,10 @@ JXG.extend(
         isFirefoxOS: function () {
             return (
                 Type.exists(navigator) &&
-                navigator.userAgent.toLowerCase().indexOf("android") === -1 &&
-                navigator.userAgent.toLowerCase().indexOf("apple") === -1 &&
-                navigator.userAgent.toLowerCase().indexOf("mobile") > -1 &&
-                navigator.userAgent.toLowerCase().indexOf("mozilla") > -1
+                navigator.userAgent.toLowerCase().indexOf('android') === -1 &&
+                navigator.userAgent.toLowerCase().indexOf('apple') === -1 &&
+                navigator.userAgent.toLowerCase().indexOf('mobile') > -1 &&
+                navigator.userAgent.toLowerCase().indexOf('mozilla') > -1
             );
         },
 
@@ -388,15 +389,15 @@ JXG.extend(
                 all,
                 v = 3;
 
-            if (typeof document !== "object") {
+            if (document === null || typeof document !== 'object') {
                 return 0;
             }
 
-            div = document.createElement("div");
-            all = div.getElementsByTagName("i");
+            div = document.createElement('div');
+            all = div.getElementsByTagName('i');
 
             do {
-                div.innerHTML = "<!--[if gt IE " + ++v + "]><" + "i><" + "/i><![endif]-->";
+                div.innerHTML = "<!--[if gt IE " + (++v) + "]><" + "i><" + "/i><![endif]-->";
             } while (all[0]);
 
             return v > 4 ? v : undefined;
@@ -461,9 +462,9 @@ JXG.extend(
             originalDisplay = els.display;
 
             // show element
-            els.visibility = "hidden";
-            els.position = "absolute";
-            els.display = "block";
+            els.visibility = 'hidden';
+            els.position = 'absolute';
+            els.display = 'block';
 
             // read the dimension
             originalWidth = element.clientWidth;
@@ -539,7 +540,7 @@ JXG.extend(
                 return;
             }
 
-            i = Type.indexOf(owner["x_internal" + type], fn, "origin");
+            i = Type.indexOf(owner["x_internal" + type], fn, 'origin');
 
             if (i === -1) {
                 JXG.debug("removeEvent: no such event function in internal list: " + fn);
@@ -836,14 +837,14 @@ JXG.extend(
                         arr[j] = parseFloat(arr[j]);
                     }
 
-                    if (str.indexOf("matrix") === 0) {
+                    if (str.indexOf('matrix') === 0) {
                         cPos[0] += arr[4];
                         cPos[1] += arr[5];
-                    } else if (str.indexOf("translateX") === 0) {
+                    } else if (str.indexOf('translateX') === 0) {
                         cPos[0] += arr[0];
-                    } else if (str.indexOf("translateY") === 0) {
+                    } else if (str.indexOf('translateY') === 0) {
                         cPos[1] += arr[0];
-                    } else if (str.indexOf("translate") === 0) {
+                    } else if (str.indexOf('translate') === 0) {
                         cPos[0] += arr[0];
                         cPos[1] += arr[1];
                     }
@@ -892,7 +893,7 @@ JXG.extend(
                     st.getPropertyValue("-moz-transform") ||
                     st.getPropertyValue("-ms-transform") ||
                     st.getPropertyValue("-o-transform") ||
-                    st.getPropertyValue("transform");
+                    st.getPropertyValue('transform');
             } else {
                 // Take the first transformation matrix
                 len = t.length;
@@ -917,17 +918,17 @@ JXG.extend(
                         arr[j] = parseFloat(arr[j]);
                     }
 
-                    if (str.indexOf("matrix") === 0) {
+                    if (str.indexOf('matrix') === 0) {
                         mat = [
                             [1, 0, 0],
                             [0, arr[0], arr[1]],
                             [0, arr[2], arr[3]]
                         ];
-                    } else if (str.indexOf("scaleX") === 0) {
+                    } else if (str.indexOf('scaleX') === 0) {
                         mat[1][1] = arr[0];
-                    } else if (str.indexOf("scaleY") === 0) {
+                    } else if (str.indexOf('scaleY') === 0) {
                         mat[2][2] = arr[0];
-                    } else if (str.indexOf("scale") === 0) {
+                    } else if (str.indexOf('scale') === 0) {
                         mat[1][1] = arr[0];
                         mat[2][2] = arr[1];
                     }

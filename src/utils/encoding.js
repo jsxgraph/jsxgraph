@@ -51,7 +51,7 @@ JXG.Util.UTF8 = {
 
         // See
         // http://ecmanaut.blogspot.ca/2006/07/encoding-decoding-utf8-in-javascript.html
-        if (typeof unescape === "function" && typeof encodeURIComponent === "function") {
+        if (typeof unescape === "function" && typeof encodeURIComponent === 'function') {
             return unescape(encodeURIComponent(string));
         }
 

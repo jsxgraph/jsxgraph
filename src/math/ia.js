@@ -107,8 +107,8 @@ JXG.Math.DoubleBits = function () {
             this.pack = toDoubleBE;
             this.lo = lowUintBE;
             this.hi = highUintBE;
-        // } else {
-        //     hasTypedArrays = false;
+            // } else {
+            //     hasTypedArrays = false;
         }
     }
 
@@ -243,7 +243,7 @@ JXG.extend(MatInterval.prototype, {
     },
 
     assign: function (lo, hi) {
-        if (typeof lo !== "number" || typeof hi !== "number") {
+        if (typeof lo !== "number" || typeof hi !== 'number') {
             throw new TypeError("JXG.Math.Interval#assign: arguments must be numbers");
         }
         if (isNaN(lo) || isNaN(hi) || lo > hi) {
@@ -285,6 +285,26 @@ JXG.extend(MatInterval.prototype, {
  * Object for interval arithmetics.
  * @name JXG.Math.IntervalArithmetic
  * @namespace
+ * @exports Mat.IntervalArithmetic as JXG.Math.IntervalArithmetic
+ *
+ * @description
+ * Interval arithmetic is a technique used to mitigate rounding and measurement errors in mathematical computation
+ * by computing function bounds. Instead of representing a value as a single number, interval arithmetic represents each value as a range.
+ * <br><br>
+ *
+ * For example, we wish to calculate the area of a rectangle from direct measurements using a standard meter stick with an uncertainty
+ * of 0.0005 m (half the “least count measurement” of 1 mm). We measure one side nominally as L=1,
+ * so 0.9995 ≤ L ≤ 1.0005, the other nominally as W=2 so the interval is [1.9995, 2.0005].
+ *
+ * <pre>
+ * let L = JXG.Math.IntervalArithmetic.Interval(0.9995, 1.0005)
+ * let W = JXG.Math.IntervalArithmetic.Interval(1.9995, 2.0005)
+ *
+ * let A = JXG.Math.IntervalArithmetic.mul(L, W)
+ *
+ * console.log('area:', A) // {hi: 2.0015002500000003, lo: 1.99850025}
+ * </pre>
+ *
  */
 JXG.Math.IntervalArithmetic = {
     Interval: function (lo, hi) {

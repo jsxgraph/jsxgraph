@@ -60,8 +60,6 @@ var priv = {
  * @class This element is used to provide a constructor for special texts containing a
  * HTML form input element.
  * For this element, the attribute "display" has to have the value 'html' (which is the default).
- * If the width of element is set with the attribute "cssStyle", the width of the
- * label must be added because cssStyle affects the surrounding div element.
  *
  * <p><b>Setting a CSS class:</b> The attribute <tt>cssClass</tt> affects the HTML div element that contains the input element. To change the CSS properties of the HTML input element a selector of the form
  * <tt>.myinput > input { ... }</tt> has to be used. See the analog example for buttons:
@@ -191,6 +189,21 @@ var priv = {
  *
  * </script><pre>
  *
+ * @example
+ * // change the width of an input field
+ *  let s = board.create('slider', [[-3, 3], [2, 3], [50, 100, 300]]);
+ *  let inp = board.create('input', [-6, 1, 'Math.sin(x)*x', 'f(x)='],{cssStyle:()=>'width:'+s.Value()+'px'});
+ *
+ * </pre><div id="JXG51c4d78b-a7ad-4c34-a983-b3ddae6192d7-1" class="jxgbox" style="width: 300px; height: 300px;"></div>
+ * <script type="text/javascript">
+ *     (function() {
+ *         var board = JXG.JSXGraph.initBoard('JXG51c4d78b-a7ad-4c34-a983-b3ddae6192d7-1',
+ *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
+ *  let s = board.create('slider', [[-3, 3], [2, 3], [50, 100, 300]]);
+ *  let inp = board.create('input', [-6, 1, 'Math.sin(x)*x', 'f(x)='],{cssStyle:()=>'width:'+s.Value()+'px'});
+ *     })();
+ *
+ * </script><pre>
  *
  * @example
  *   Apply CSS classes to label and input tag
@@ -246,7 +259,7 @@ var priv = {
 JXG.createInput = function (board, parents, attributes) {
     var t,
         par,
-        attr = Type.copyAttributes(attributes, board.options, "input");
+        attr = Type.copyAttributes(attributes, board.options, 'input');
 
     par = [
         parents[0],
@@ -254,7 +267,7 @@ JXG.createInput = function (board, parents, attributes) {
         '<span style="display:inline; white-space:nowrap; padding:0px;">' +
         '<label></label><input type="text" maxlength="' +
         attr.maxlength +
-        '" style="width:100%"/>' +
+        '" style="width:100%" />' +
         "</span>"
     ];
 
@@ -264,19 +277,30 @@ JXG.createInput = function (board, parents, attributes) {
 
     t.rendNodeLabel = t.rendNode.childNodes[0].childNodes[0];
     t.rendNodeInput = t.rendNode.childNodes[0].childNodes[1];
-    // t.rendNodeLabel.innerHTML = parents[3];
     t.rendNodeInput.value = parents[2];
     t.rendNodeTag = t.rendNodeInput; // Needed for unified treatment in setAttribute
     t.rendNodeTag.disabled = !!attr.disabled;
     t.rendNodeLabel.id = t.rendNode.id + "_label";
     t.rendNodeInput.id = t.rendNode.id + "_input";
-    t.rendNodeInput.setAttribute("aria-labelledby",t.rendNodeLabel.id);
+    t.rendNodeInput.setAttribute("aria-labelledby", t.rendNodeLabel.id);
 
     // 2. Set parents[3] (string|function) as label of the input element.
     // abstract.js selects the correct DOM element for the update
     t.setText(parents[3]);
 
     t._value = parents[2];
+
+    // 3.  capture keydown events on the input, and do not let them propagate.  The problem is that
+    // elevation controls on view3D use left and right, so editing the input triggers 3D pan.
+    t.rendNodeInput.addEventListener("keydown", (event) => {
+        // only trap left-and-right in case user wants input editing events
+        if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
+            event.stopPropagation();
+        }
+    });
+
+
+
 
     /**
     * @class
@@ -386,7 +410,7 @@ JXG.createInput = function (board, parents, attributes) {
     );
 
     // This sets the font-size of the input HTML element
-    t.visPropOld.fontsize = "0px";
+    t.visPropOld.fontsize = '0px';
     board.renderer.updateTextStyle(t, false);
 
     return t;

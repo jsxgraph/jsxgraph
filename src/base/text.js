@@ -29,6 +29,17 @@
     and <https://opensource.org/licenses/MIT/>.
  */
 
+/*
+    Some functionalities in this file were developed as part of a software project
+    with students. We would like to thank all contributors for their help:
+
+    Winter semester 2024/2025:
+        Philipp Ditz,
+        Florian Hein,
+        Pirmin Hinderling,
+        Tim Sauer
+ */
+
 /*global JXG: true, define: true, window: true*/
 /*jslint nomen: true, plusplus: true*/
 
@@ -98,7 +109,7 @@ JXG.Text = function (board, coords, attributes, content) {
      * @type Array
      */
     this.size = [1.0, 1.0];
-    this.id = this.board.setId(this, "T");
+    this.id = this.board.setId(this, 'T');
 
     this.board.renderer.drawText(this);
     this.board.finalizeAdding(this);
@@ -118,7 +129,7 @@ JXG.Text = function (board, coords, attributes, content) {
     if (Type.isString(this.content)) {
         this.notifyParents(this.content);
     }
-    this.elType = "text";
+    this.elType = 'text';
 
     this.methodMap = Type.deepCopy(this.methodMap, {
         setText: "setTextJessieCode",
@@ -130,7 +141,7 @@ JXG.Text = function (board, coords, attributes, content) {
 };
 
 JXG.Text.prototype = new GeometryElement();
-Type.copyPrototypeMethods(JXG.Text, CoordsElement, "coordsConstructor");
+Type.copyPrototypeMethods(JXG.Text, CoordsElement, 'coordsConstructor');
 
 JXG.extend(
     JXG.Text.prototype,
@@ -168,9 +179,9 @@ JXG.extend(
             }
 
             ax = this.getAnchorX();
-            if (ax === "right") {
+            if (ax === 'right') {
                 lft = this.coords.scrCoords[1] - this.size[0];
-            } else if (ax === "middle") {
+            } else if (ax === 'middle') {
                 lft = this.coords.scrCoords[1] - 0.5 * this.size[0];
             } else {
                 lft = this.coords.scrCoords[1];
@@ -178,16 +189,16 @@ JXG.extend(
             rt = lft + this.size[0];
 
             ay = this.getAnchorY();
-            if (ay === "top") {
+            if (ay === 'top') {
                 bot = this.coords.scrCoords[2] + this.size[1];
-            } else if (ay === "middle") {
+            } else if (ay === 'middle') {
                 bot = this.coords.scrCoords[2] + 0.5 * this.size[1];
             } else {
                 bot = this.coords.scrCoords[2];
             }
             top = bot - this.size[1];
 
-            if (this.evalVisProp('dragarea') === "all") {
+            if (this.evalVisProp('dragarea') === 'all') {
                 return x >= lft - r && x < rt + r && y >= top - r && y <= bot + r;
             }
             // e.g. 'small'
@@ -431,7 +442,7 @@ JXG.extend(
                 node,
                 ev_d = this.evalVisProp('display');
 
-            if (!Env.isBrowser || this.board.renderer.type === "no") {
+            if (!Env.isBrowser || this.board.renderer.type === 'no') {
                 return this;
             }
             node = this.rendNode;
@@ -439,7 +450,7 @@ JXG.extend(
             /**
              * offsetWidth and offsetHeight seem to be supported for internal vml elements by IE10+ in IE8 mode.
              */
-            if (ev_d === "html" || this.board.renderer.type === "vml") {
+            if (ev_d === "html" || this.board.renderer.type === 'vml') {
                 if (Type.exists(node.offsetWidth)) {
                     that = this;
                     window.setTimeout(function () {
@@ -463,8 +474,8 @@ JXG.extend(
                 } else {
                     this.size = this.crudeSizeEstimate();
                 }
-            } else if (ev_d === "internal") {
-                if (this.board.renderer.type === "svg") {
+            } else if (ev_d === 'internal') {
+                if (this.board.renderer.type === 'svg') {
                     that = this;
                     window.setTimeout(function () {
                         try {
@@ -474,7 +485,7 @@ JXG.extend(
                             that.updateRenderer();
                         } catch (e) {}
                     }, 0);
-                } else if (this.board.renderer.type === "canvas") {
+                } else if (this.board.renderer.type === 'canvas') {
                     this.size = this.crudeSizeEstimate();
                 }
             }
@@ -621,7 +632,7 @@ JXG.extend(
             this.updateCoords(fromParent);
             this.updateText();
 
-            if (this.evalVisProp('display') === "internal") {
+            if (this.evalVisProp('display') === 'internal') {
                 if (Type.isString(this.plaintext)) {
                     this.plaintext = this.utf8_decode(this.plaintext);
                 }
@@ -671,7 +682,7 @@ JXG.extend(
             ) {
                 this.setAutoPosition().updateConstraint();
             }
-            return this.updateRendererGeneric("updateText");
+            return this.updateRendererGeneric('updateText');
         },
 
         /**
@@ -758,7 +769,7 @@ JXG.extend(
                     res = res.replace(/\\'/g, "'");
 
                     // GEONExT-Hack: apply rounding once only.
-                    if (res.indexOf("toFixed") < 0) {
+                    if (res.indexOf('toFixed') < 0) {
                         // output of a value tag
                         if (
                             Type.isNumber(
@@ -830,7 +841,7 @@ JXG.extend(
                     res = res.replace(/\\"/g, "'").replace(/\\'/g, "'");
 
                     // // Hack: apply rounding once only.
-                    // if (res.indexOf("toFixed") < 0) {
+                    // if (res.indexOf('toFixed') < 0) {
                     //     // Output of a value tag
                     //     // Run the JessieCode parser
                     //     if (
@@ -1073,20 +1084,20 @@ JXG.extend(
          */
         getAnchorX: function () {
             var a = this.evalVisProp('anchorx');
-            if (a === "auto") {
+            if (a === 'auto') {
                 switch (this.visProp.position) {
                     case "top":
                     case "bot":
-                        return "middle";
+                        return 'middle';
                     case "rt":
                     case "lrt":
                     case "urt":
-                        return "left";
+                        return 'left';
                     case "lft":
                     case "llft":
                     case "ulft":
                     default:
-                        return "right";
+                        return 'right';
                 }
             }
             return a;
@@ -1100,20 +1111,20 @@ JXG.extend(
          */
         getAnchorY: function () {
             var a = this.evalVisProp('anchory');
-            if (a === "auto") {
+            if (a === 'auto') {
                 switch (this.visProp.position) {
                     case "top":
                     case "ulft":
                     case "urt":
-                        return "bottom";
+                        return 'bottom';
                     case "bot":
                     case "lrt":
                     case "llft":
-                        return "top";
+                        return 'top';
                     case "rt":
                     case "lft":
                     default:
-                        return "middle";
+                        return 'middle';
                 }
             }
             return a;
@@ -1123,6 +1134,12 @@ JXG.extend(
          * Computes the number of overlaps of a box of w pixels width, h pixels height
          * and center (x, y)
          *
+         * An overlap occurs when either:
+         * <ol>
+         *   <li> For labels/points: Their bounding boxes intersect
+         *   <li> For other objects: The object contains the center point of the box
+         * </ol>
+         *
          * @private
          * @param  {Number} x x-coordinate of the center (screen coordinates)
          * @param  {Number} y y-coordinate of the center (screen coordinates)
@@ -1131,145 +1148,433 @@ JXG.extend(
          * @param  {Array} [whiteList] array of ids which should be ignored
          * @return {Number}   Number of overlapping elements
          */
-        getNumberOfConflicts: function (x, y, w, h, whiteList) {
+        getNumberOfConflicts: function(x, y, w, h, whiteList) {
             whiteList = whiteList || [];
             var count = 0,
-                i, obj, le,
-                savePointPrecision,
-                saveHasInnerPoints;
+                i, obj,
+                coords,
+                saveHasInnerPoints,
+                savePointPrecision = this.board.options.precision.hasPoint,
+                objCenterX, objCenterY,
+                objWidth, objHeight;
 
-            // Set the precision of hasPoint to half the max if label isn't too long
-            savePointPrecision = this.board.options.precision.hasPoint;
+            // set a new precision for hasPoint
             // this.board.options.precision.hasPoint = Math.max(w, h) * 0.5;
-            this.board.options.precision.hasPoint = (w + h) * 0.25;
-            // TODO:
-            // Make it compatible with the objects' visProp.precision attribute
-            for (i = 0, le = this.board.objectsList.length; i < le; i++) {
+            this.board.options.precision.hasPoint = (w + h) * 0.3;
+
+            // loop over all objects
+            for (i = 0; i < this.board.objectsList.length; i++) {
                 obj = this.board.objectsList[i];
-                saveHasInnerPoints = obj.visProp.hasinnerpoints;
-                obj.visProp.hasinnerpoints = false;
+
+                //Skip the object if it is not meant to influence label position
                 if (
                     obj.visPropCalc.visible &&
-                    obj.elType !== "axis" &&
-                    obj.elType !== "ticks" &&
-                    obj !== this.board.infobox &&
                     obj !== this &&
-                    obj.hasPoint(x, y) &&
-                    whiteList.indexOf(obj.id) === -1
+                    whiteList.indexOf(obj.id) === -1 &&
+                    obj.evalVisProp('ignoreforlabelautoposition') !== true
                 ) {
-                    count++;
+                    // Save hasinnerpoints and temporarily disable to handle polygon areas
+                    saveHasInnerPoints = obj.visProp.hasinnerpoints;
+                    obj.visProp.hasinnerpoints = false;
+
+                    // If is label or point use other conflict detection
+                    if (
+                        obj.visProp.islabel ||
+                        obj.elementClass === Const.OBJECT_CLASS_POINT
+                    ) {
+                        // get coords and size of the object
+                        coords = obj.coords.scrCoords;
+                        objCenterX = coords[1];
+                        objCenterY = coords[2];
+                        objWidth = obj.size[0];
+                        objHeight = obj.size[1];
+
+                        // move coords to the center of the label
+                        if (obj.visProp.islabel) {
+                            // Vertical adjustment
+                            if (obj.visProp.anchory === 'top') {
+                                objCenterY = objCenterY + objHeight / 2;
+                            } else {
+                                objCenterY = objCenterY - objHeight / 2;
+                            }
+
+                            // Horizontal adjustment
+                            if (obj.visProp.anchorx === 'left') {
+                                objCenterX = objCenterX + objWidth / 2;
+                            } else {
+                                objCenterX = objCenterX - objWidth / 2;
+                            }
+                        } else {
+                            // Points are treated dimensionless
+                            objWidth = 0;
+                            objHeight = 0;
+                        }
+
+                        // Check for overlap
+                        if (
+                            Math.abs(objCenterX - x) < (w + objWidth) / 2 &&
+                            Math.abs(objCenterY - y) < (h + objHeight) / 2
+                        ) {
+                            count++;
+                        }
+
+                        //if not label or point check conflict with hasPoint
+                    } else if (obj.hasPoint(x, y)) {
+                        count++;
+                    }
+
+                    // Restore original hasinnerpoints
+                    obj.visProp.hasinnerpoints = saveHasInnerPoints;
                 }
-                obj.visProp.hasinnerpoints = saveHasInnerPoints;
             }
+
+            // Restore original precision
             this.board.options.precision.hasPoint = savePointPrecision;
 
             return count;
         },
+        /**
+         * Calculates the score of a label position with a given radius and angle. The score is calculated by the following rules:
+         * <ul>
+         * <li> the maximum score is 0
+         * <li> if the label is outside of the bounding box, the score is reduced by 1
+         * <li> for each conflict, the score is reduced by 1
+         * <li> the score is reduced by the displacement (angle difference between old and new position) of the label
+         * <li> the score is reduced by the angle between the original label position and the new label position
+         * </ul>
+         *
+         * @param {number} radius radius in pixels
+         * @param {number} angle angle in radians
+         * @returns {number} Position score, higher values indicate better positions
+         */
+        calculateScore: function(radius, angle) {
+            var x, y, co, si, angleCurrentOffset, angleDifference,
+                score = 0,
+                cornerPoint = [0,0],
+                w = this.getSize()[0],
+                h = this.getSize()[1],
+                anchorCoords,
+                currentOffset = this.evalVisProp('offset'),
+                boundingBox = this.board.getBoundingBox();
+
+            if (this.evalVisProp('islabel') && Type.exists(this.element)) {
+                anchorCoords = this.element.getLabelAnchor().scrCoords;
+            } else {
+                return 0;
+            }
+            co = Math.cos(angle);
+            si = Math.sin(angle);
+
+            // calculate new position with srccoords, radius and angle
+            x = anchorCoords[1] + radius * co;
+            y = anchorCoords[2] - radius * si;
+
+            // if the label was placed on the left side of the element, the anchorx is set to "right"
+            if (co < 0) {
+                cornerPoint[0] = x - w;
+                x -= w / 2;
+            } else {
+                cornerPoint[0] = x + w;
+                x += w / 2;
+            }
+
+            // If the label was placed on the bottom side of the element, so the anchory is set to "top"
+            if (si < 0) {
+                cornerPoint[1] = y + h;
+                y += h / 2;
+            } else {
+                cornerPoint[1] = y - h;
+                y -= h / 2;
+            }
+
+            // If label was not in bounding box, score is reduced by 1
+            if(
+                cornerPoint[0] < 0 ||
+                cornerPoint[0] > (boundingBox[2] - boundingBox[0]) * this.board.unitX ||
+                cornerPoint[1] < 0 ||
+                cornerPoint[1] > (boundingBox[1] - boundingBox[3]) * this.board.unitY
+            ) {
+                score -= 1;
+            }
+
+            // Per conflict, score is reduced by 1
+            score -= this.getNumberOfConflicts(x, y, w, h, Type.evaluate(this.visProp.autopositionwhitelist));
+
+            // Calculate displacement, minimum score is 0 if radius is minRadius, maximum score is < 1 when radius is maxRadius
+            score -= radius / this.evalVisProp('autopositionmindistance') / 10 - 0.1;
+
+            // Calculate angle between current offset and new offset
+            angleCurrentOffset = Math.atan2(currentOffset[1], currentOffset[0]);
+
+            // If angle is negative, add 2*PI to get positive angle
+            if (angleCurrentOffset < 0) {
+                angleCurrentOffset += 2 * Math.PI;
+            }
+
+            // Calculate displacement by angle between original label position and new label position,
+            // use cos to check if angle is on the right side.
+            // If both angles are on the right side and more than 180° apart, add 2*PI. e.g. 0.1 and 6.1 are near each other
+            if (co > 0 && Math.cos(angleCurrentOffset) > 0 && Math.abs(angle - angleCurrentOffset) > Math.PI) {
+                angleDifference = Math.abs(angle - angleCurrentOffset - 2 * Math.PI);
+            } else {
+                angleDifference = Math.abs(angle - angleCurrentOffset);
+            }
+
+            // Minimum score is 0 if angle difference is 0, maximum score is pi / 10
+            score -= angleDifference / 10;
+
+            return score;
+        },
 
         /**
-         * Sets the offset of a label element to the position with the least number
-         * of overlaps with other elements, while retaining the distance to its
-         * anchor element. Twelve different angles are possible.
+         * Automatically positions the label by finding the optimal position.
+         * Aims to minimize conflicts while maintaining readability.
+         * <p>
+         * The method tests 60 different angles (0 to 2π) at 3 different distances (radii).
+         * It evaluates each position using calculateScore(radius, angle) and chooses the position with the highest score.
+         * Then the label's anchor points and offset are adjusted accordingly.
          *
          * @returns {JXG.Text} Reference to the text object.
          */
-        setAutoPosition: function () {
-            var x, y, cx, cy,
-                anchorCoords,
-                // anchorX, anchorY,
-                w = this.size[0],
-                h = this.size[1],
-                start_angle, angle,
-                optimum = {
-                    conflicts: Infinity,
-                    angle: 0,
-                    r: 0
-                },
-                max_r, delta_r,
-                conflicts, offset, r,
-                num_positions = 12,
-                step = (2 * Math.PI) / num_positions,
-                j, dx, dy, co, si;
+        setAutoPosition: function() {
+            var radius, angle, radiusStep,
+                i,
+                bestScore = -Infinity, bestRadius, bestAngle,
+                minRadius = this.evalVisProp('autopositionmindistance'),
+                maxRadius = this.evalVisProp('autopositionmaxdistance'),
+                score,
+                co, si,
+                currentOffset = this.evalVisProp('offset'),
+                currentRadius,
+                currentAngle,
+                numAngles = 60,
+                numRadius = 4;
 
             if (
                 this === this.board.infobox ||
+                !this.element ||
                 !this.visPropCalc.visible ||
-                !this.evalVisProp('islabel') ||
-                !this.element
+                !this.evalVisProp('islabel')
             ) {
                 return this;
             }
 
-            // anchorX = this.evalVisProp('anchorx');
-            // anchorY = this.evalVisProp('anchory');
-            offset = this.evalVisProp('offset');
-            anchorCoords = this.element.getLabelAnchor();
-            cx = anchorCoords.scrCoords[1];
-            cy = anchorCoords.scrCoords[2];
+            // Calculate current position
+            currentRadius = Math.sqrt(currentOffset[0] * currentOffset[0] + currentOffset[1] * currentOffset[1]);
+            currentAngle = Math.atan2(currentOffset[1], currentOffset[0]);
 
-            // Set dx, dy as the relative position of the center of the label
-            // to its anchor element ignoring anchorx and anchory.
-            dx = offset[0];
-            dy = offset[1];
-
-            conflicts = this.getNumberOfConflicts(cx + dx, cy - dy, w, h, this.evalVisProp('autopositionwhitelist'));
-            if (conflicts === 0) {
+            if (this.calculateScore(currentRadius, currentAngle) === 0) {
                 return this;
             }
-            // console.log(this.id, conflicts, w, h);
-            // r = Geometry.distance([0, 0], offset, 2);
 
-            r = this.evalVisProp('autopositionmindistance');
-            max_r = this.evalVisProp('autopositionmaxdistance');
-            delta_r = 0.2 * r;
+            // Initialize search at min radius
+            radius = minRadius;
+            // Calculate step size
+            radiusStep = (maxRadius - minRadius) / (numRadius - 1);
 
-            start_angle = Math.atan2(dy, dx);
+            // Test the different radii
+            while (maxRadius - radius > -0.01) {
 
-            optimum.conflicts = conflicts;
-            optimum.angle = start_angle;
-            optimum.r = r;
+                // Radius gets bigger so just check if its smaller than maxnumber of angles.
+                for (i = 0; i < numAngles; i++) {
 
-            while (optimum.conflicts > 0 && r <= max_r) {
-                for (
-                    j = 1, angle = start_angle + step;
-                    j < num_positions && optimum.conflicts > 0;
-                    j++
-                ) {
-                    co = Math.cos(angle);
-                    si = Math.sin(angle);
+                    // calculate angle
+                    angle = i / numAngles * 2 * Math.PI;
 
-                    x = cx + r * co;
-                    y = cy - r * si;
+                    // calculate score
+                    score = this.calculateScore(radius, angle);
 
-                    conflicts = this.getNumberOfConflicts(x, y, w, h, this.evalVisProp('autopositionwhitelist'));
-                    if (conflicts < optimum.conflicts) {
-                        optimum.conflicts = conflicts;
-                        optimum.angle = angle;
-                        optimum.r = r;
+                    // if score is better than bestScore, set bestAngle, bestRadius and bestScore
+                    if (score > bestScore) {
+                        bestAngle = angle;
+                        bestRadius = radius;
+                        bestScore = score;
                     }
-                    if (optimum.conflicts === 0) {
+
+                    // if bestScore is 0, break, because it can't get better
+                    if (bestScore === 0) {
+                        radius = maxRadius;
                         break;
                     }
-                    angle += step;
                 }
-                r += delta_r;
-            }
-            // console.log(this.id, "after", optimum)
-            r = optimum.r;
-            co = Math.cos(optimum.angle);
-            si = Math.sin(optimum.angle);
-            this.visProp.offset = [r * co, r * si];
 
-            if (co < -0.2) {
-                this.visProp.anchorx = "right";
-            } else if (co > 0.2) {
-                this.visProp.anchorx = "left";
-            } else {
-                this.visProp.anchorx = "middle";
+                radius += radiusStep;
             }
+
+            co = Math.cos(bestAngle);
+            si = Math.sin(bestAngle);
+
+            // If label is on the left side of the element, the anchorx is set to "right"
+            if (co < 0) {
+                this.visProp.anchorx = 'right';
+            } else {
+                this.visProp.anchorx = 'left';
+            }
+
+            // If label is on the bottom side of the element, so the anchory is set to "top"
+            if (si < 0) {
+                this.visProp.anchory = 'top';
+            } else {
+                this.visProp.anchory = 'bottom';
+            }
+
+            // Set offset
+            this.visProp.offset = [bestRadius * co, bestRadius * si];
 
             return this;
         }
+
+        // /**
+        //  * Computes the number of overlaps of a box of w pixels width, h pixels height
+        //  * and center (x, y)
+        //  *
+        //  * @private
+        //  * @param  {Number} x x-coordinate of the center (screen coordinates)
+        //  * @param  {Number} y y-coordinate of the center (screen coordinates)
+        //  * @param  {Number} w width of the box in pixel
+        //  * @param  {Number} h width of the box in pixel
+        //  * @param  {Array} [whiteList] array of ids which should be ignored
+        //  * @return {Number}   Number of overlapping elements
+        //  */
+        // getNumberOfConflicts: function (x, y, w, h, whiteList) {
+        //     whiteList = whiteList || [];
+        //     var count = 0,
+        //         i, obj, le,
+        //         savePointPrecision,
+        //         saveHasInnerPoints;
+
+        //     // Set the precision of hasPoint to half the max if label isn't too long
+        //     savePointPrecision = this.board.options.precision.hasPoint;
+        //     // this.board.options.precision.hasPoint = Math.max(w, h) * 0.5;
+        //     this.board.options.precision.hasPoint = (w + h) * 0.25;
+        //     // TODO:
+        //     // Make it compatible with the objects' visProp.precision attribute
+        //     for (i = 0, le = this.board.objectsList.length; i < le; i++) {
+        //         obj = this.board.objectsList[i];
+        //         saveHasInnerPoints = obj.visProp.hasinnerpoints;
+        //         obj.visProp.hasinnerpoints = false;
+        //         if (
+        //             obj.visPropCalc.visible &&
+        //             obj.elType !== "axis" &&
+        //             obj.elType !== "ticks" &&
+        //             obj !== this.board.infobox &&
+        //             obj !== this &&
+        //             obj.hasPoint(x, y) &&
+        //             whiteList.indexOf(obj.id) === -1
+        //         ) {
+        //             count++;
+        //         }
+        //         obj.visProp.hasinnerpoints = saveHasInnerPoints;
+        //     }
+        //     this.board.options.precision.hasPoint = savePointPrecision;
+
+        //     return count;
+        // },
+
+        // /**
+        //  * Sets the offset of a label element to the position with the least number
+        //  * of overlaps with other elements, while retaining the distance to its
+        //  * anchor element. Twelve different angles are possible.
+        //  *
+        //  * @returns {JXG.Text} Reference to the text object.
+        //  */
+        // setAutoPosition: function () {
+        //     var x, y, cx, cy,
+        //         anchorCoords,
+        //         // anchorX, anchorY,
+        //         w = this.size[0],
+        //         h = this.size[1],
+        //         start_angle, angle,
+        //         optimum = {
+        //             conflicts: Infinity,
+        //             angle: 0,
+        //             r: 0
+        //         },
+        //         max_r, delta_r,
+        //         conflicts, offset, r,
+        //         num_positions = 12,
+        //         step = (2 * Math.PI) / num_positions,
+        //         j, dx, dy, co, si;
+
+        //     if (
+        //         this === this.board.infobox ||
+        //         !this.visPropCalc.visible ||
+        //         !this.evalVisProp('islabel') ||
+        //         !this.element
+        //     ) {
+        //         return this;
+        //     }
+
+        //     // anchorX = this.evalVisProp('anchorx');
+        //     // anchorY = this.evalVisProp('anchory');
+        //     offset = this.evalVisProp('offset');
+        //     anchorCoords = this.element.getLabelAnchor();
+        //     cx = anchorCoords.scrCoords[1];
+        //     cy = anchorCoords.scrCoords[2];
+
+        //     // Set dx, dy as the relative position of the center of the label
+        //     // to its anchor element ignoring anchorx and anchory.
+        //     dx = offset[0];
+        //     dy = offset[1];
+
+        //     conflicts = this.getNumberOfConflicts(cx + dx, cy - dy, w, h, this.evalVisProp('autopositionwhitelist'));
+        //     if (conflicts === 0) {
+        //         return this;
+        //     }
+        //     // console.log(this.id, conflicts, w, h);
+        //     // r = Geometry.distance([0, 0], offset, 2);
+
+        //     r = this.evalVisProp('autopositionmindistance');
+        //     max_r = this.evalVisProp('autopositionmaxdistance');
+        //     delta_r = 0.2 * r;
+
+        //     start_angle = Math.atan2(dy, dx);
+
+        //     optimum.conflicts = conflicts;
+        //     optimum.angle = start_angle;
+        //     optimum.r = r;
+
+        //     while (optimum.conflicts > 0 && r <= max_r) {
+        //         for (
+        //             j = 1, angle = start_angle + step;
+        //             j < num_positions && optimum.conflicts > 0;
+        //             j++
+        //         ) {
+        //             co = Math.cos(angle);
+        //             si = Math.sin(angle);
+
+        //             x = cx + r * co;
+        //             y = cy - r * si;
+
+        //             conflicts = this.getNumberOfConflicts(x, y, w, h, this.evalVisProp('autopositionwhitelist'));
+        //             if (conflicts < optimum.conflicts) {
+        //                 optimum.conflicts = conflicts;
+        //                 optimum.angle = angle;
+        //                 optimum.r = r;
+        //             }
+        //             if (optimum.conflicts === 0) {
+        //                 break;
+        //             }
+        //             angle += step;
+        //         }
+        //         r += delta_r;
+        //     }
+        //     // console.log(this.id, "after", optimum)
+        //     r = optimum.r;
+        //     co = Math.cos(optimum.angle);
+        //     si = Math.sin(optimum.angle);
+        //     this.visProp.offset = [r * co, r * si];
+
+        //     if (co < -0.2) {
+        //         this.visProp.anchorx = 'right'
+        //     } else if (co > 0.2) {
+        //         this.visProp.anchorx = 'left'
+        //     } else {
+        //         this.visProp.anchorx = 'middle'
+        //     }
+
+        //     return this;
+        // }
     }
 );
 
@@ -1354,7 +1659,7 @@ JXG.extend(
  */
 JXG.createText = function (board, parents, attributes) {
     var t,
-        attr = Type.copyAttributes(attributes, board.options, "text"),
+        attr = Type.copyAttributes(attributes, board.options, 'text'),
         coords = parents.slice(0, -1),
         content = parents[parents.length - 1];
 
@@ -1414,7 +1719,7 @@ JXG.registerElement("text", JXG.createText);
 JXG.createHTMLSlider = function (board, parents, attributes) {
     var t,
         par,
-        attr = Type.copyAttributes(attributes, board.options, "htmlslider");
+        attr = Type.copyAttributes(attributes, board.options, 'htmlslider');
 
     if (parents.length !== 2 || parents[0].length !== 2 || parents[1].length !== 3) {
         throw new Error(
@@ -1454,7 +1759,7 @@ JXG.createHTMLSlider = function (board, parents, attributes) {
     t.rendNodeLabel.id = t.rendNode.id + "_label";
 
     if (attr.withlabel) {
-        t.rendNodeLabel.innerHTML = t.name + "=";
+        t.rendNodeLabel.innerText = t.name + "=";
     }
 
     t.rendNodeOut = t.rendNodeForm.childNodes[2];
@@ -1468,9 +1773,9 @@ JXG.createHTMLSlider = function (board, parents, attributes) {
         JXG.debug(e);
     }
 
-    t.rendNodeRange.style.width = attr.widthrange + "px";
-    t.rendNodeRange.style.verticalAlign = "middle";
-    t.rendNodeOut.style.width = attr.widthout + "px";
+    t.rendNodeRange.style.width = attr.widthrange + 'px';
+    t.rendNodeRange.style.verticalAlign = 'middle';
+    t.rendNodeOut.style.width = attr.widthout + 'px';
 
     t._val = parents[1][1];
 
