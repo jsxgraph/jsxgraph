@@ -317,9 +317,9 @@ JXG.extend(
 
             // 'context-stroke': property is inherited from line or curve
             node2.setAttributeNS(null, 'fill', 'context-stroke');
-            node2.setAttributeNS(null, 'fill-opacity', 'context-stroke');
             node2.setAttributeNS(null, 'stroke', 'context-stroke');
-            node2.setAttributeNS(null, 'stroke-opacity', 'context-stroke');
+            // node2.setAttributeNS(null, 'fill-opacity', 'context-stroke'); // Not available
+            // node2.setAttributeNS(null, 'stroke-opacity', 'context-stroke');
             node2.setAttributeNS(null, 'stroke-width', 0); // this is the stroke-width of the arrow head.
             // Should be zero to simplify the calculations
 
@@ -911,14 +911,15 @@ JXG.extend(
                         this.defs.appendChild(node2);
                     }
                     el.rendNodeTriangleStart = node2;
-                    el.rendNode.setAttributeNS(null, "marker-start", this.toURL(str));
+                    el.rendNode.setAttributeNS(null, 'marker-start', this.toURL(str));
                 }
             } else {
                 if (Type.exists(node2)) {
                     this.remove(node2);
                     el.rendNodeTriangleStart = null;
                 }
-                el.rendNode.setAttributeNS(null, "marker-start", null);
+                // el.rendNode.setAttributeNS(null, "marker-start", null);
+                el.rendNode.removeAttributeNS(null, 'marker-start');
             }
 
             node2 = el.rendNodeTriangleEnd;
@@ -942,7 +943,8 @@ JXG.extend(
                     this.remove(node2);
                     el.rendNodeTriangleEnd = null;
                 }
-                el.rendNode.setAttributeNS(null, "marker-end", null);
+                // el.rendNode.setAttributeNS(null, "marker-end", null);
+                el.rendNode.removeAttributeNS(null, "marker-end");
             }
         },
 
