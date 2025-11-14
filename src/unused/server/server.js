@@ -161,7 +161,7 @@ JXG.Server = {
                     inject =
                         "if(typeof JXG.Server.modules." +
                         this.runningCalls[id].module +
-                        ' == 'undefined')' +
+                        " == 'undefined')" +
                         "JXG.Server.modules." +
                         this.runningCalls[id].module +
                         " = {};";
@@ -185,7 +185,7 @@ JXG.Server = {
                         " = function (" +
                         tmp.parameters.join(",") +
                         ", __JXGSERVER_CB__, __JXGSERVER_SYNC) {" +
-                        'if(typeof __JXGSERVER_CB__ == 'undefined') __JXGSERVER_CB__ = JXG.Server.modules.' +
+                        "if(typeof __JXGSERVER_CB__ == 'undefined') __JXGSERVER_CB__ = JXG.Server.modules." +
                         this.runningCalls[id].module +
                         "." +
                         tmp.name +
