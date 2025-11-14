@@ -2418,6 +2418,7 @@ JXG.extend(
         /**
          * Apply Newton-Raphson to search for an intersection of two curves
          * in a given range of the first curve.
+         *
          * @param {JXG.Curve} c1 Curve, Line or Circle
          * @param {JXG.Curve} c2 Curve, Line or Circle
          * @param {Array} range Domain for the search of an intersection. The start value
@@ -2426,16 +2427,19 @@ JXG.extend(
          * @returns {Array} [[z, x, y], t1, t2, t, ||c1[t1]-c2[t2]||**2]. The last entry is set to
          * 10000 if the intersection is outside of the given domain (range) for the first curve.
          * @private
-         * @see JXG.Math.Geometry.meetCurveCurveRecursive
+         * @see JXG.Math.Geometry._meetCurveCurveRecursive
+         * @see JXG.Math.Geometry._meetCurveCurveIterative
          * @see JXG.Math.Numerics.generalizedDampedNewton
          * @see JXG.Math.Geometry.meetCurveCurveCobyla
          */
-        meetCurveCurveNewton: function (c1, c2, range, testSegment) {
-            var t, t1, t2,
-                co,
-                r,
+        meetCurveCurveNewton: function (c1, c2, range1, range2, testSegment) {
+            var t1, t2,
+                co, r,
                 inphi = (Math.sqrt(5) - 1) * 0.5,
-                eps2 = Mat.eps, // Math.sqrt(Mat.eps),
+                damp = 0.85, // (
+                eps3 = Mat.eps * Mat.eps * Mat.eps,
+                eps2 = Mat.eps * Mat.eps,
+
                 ma1 = c1.maxX(),
                 mi1 = c1.minX(),
                 ma2 = c2.maxX(),
@@ -2445,37 +2449,43 @@ JXG.extend(
             // t = Numerics.root(ff, range);
             // t1 = mi1 + t * (ma1 - mi1);
             // t2 = mi2 + t * (ma2 - mi2);
-            // co = c1.Ft(t1);
+            // co = c1.Ft(t1);                t1 < range1[0] - Mat.eps || t1 > range1[1] + Mat.eps ||
+
             // return [co, t1, t2, t, Math.abs(ff(t))];
 
-            t = range[0] + (range[1] - range[0]) * (1 - inphi);
-            t1 = mi1 + t * (ma1 - mi1);
-            t2 = mi2 + t * (ma2 - mi2);
-// console.log("\t", range, t, t1, t2)
+            // t1 = mi1 + t * (ma1 - mi1);
+            // t2 = mi2 + t * (ma2 - mi2);
+            t1 = range1[0] + (range1[1] - range1[0]) * (1 - inphi);
+            t2 = range2[0] + (range2[1] - range2[0]) * (1 - inphi);
+// console.log("\tin", range1, t1, t2)
 
             // Use damped Newton
-            r = Numerics.generalizedDampedNewton(c1, c2, t1, t2, inphi);
+            r = Numerics.generalizedDampedNewton(c1, c2, t1, t2, damp, eps3);
+            // r: [f1, t1, t2, F]
             t1 = r[1];
             t2 = r[2];
-            t = (t1 - mi1) / (ma1 - mi1);
-// console.log("\tout", range, t, t1, t2)
 
             co = c1.Ft(t1);
-//   console.log("t1", t1, mi1, ma1, "t2", t2, mi2-eps2, ma2+eps2,
-//                     t1 < mi1 - eps2, t1 > ma1 + eps2,
-//                     t2 < mi2 - eps2, t2 > ma2 + eps2
+// console.log("\tout", range1, t1, t2, co[2])
+// console.log("\tt1", t1, range1[0], range1[1], "t2", t2, range2[0], range2[1],
+//                 t1 < range1[0] - Mat.eps, t1 > range1[1] + Mat.eps,
+//                 t2 < range2[0] - Mat.eps, t2 > range2[1] + Mat.eps,
 //                 )
-            if (t < range[0] - Mat.eps || t > range[1] + Mat.eps ||
+
+            if (
+                t1 < range1[0] - Mat.eps || t1 > range1[1] + Mat.eps ||
+                t2 < range2[0] - Mat.eps || t2 > range2[1] + Mat.eps ||
                 (testSegment &&
                     (t1 < mi1 - eps2 || t1 > ma1 + eps2 ||
                      t2 < mi2 - eps2 || t2 > ma2 + eps2)
                 )
             ) {
                 // Damped-Newton found solution outside of range
-                return [co, t1, t2, t, 10000];
+                return [co, t1, t2, 10000];
             }
+// console.log(t1, r[3])
 
-            return [co, t1, t2, t, r[3]];
+            return [co, t1, t2, r[3]];
         },
 
         /**
@@ -2490,26 +2500,31 @@ JXG.extend(
          * @returns [[z, x, y], t1, t2, t, ||c1[t1]-c2[t2]||**2]. The last entry is set to
          * 10000 if the intersection is outside of the given domain (range) for the first curve.
          * @private
-         * @see JXG.Math.Geometry.meetCurveCurveRecursive
+         * @see JXG.Math.Geometry._meetCurveCurveRecursive
+         * @see JXG.Math.Geometry._meetCurveCurveIterative
          * @see JXG.Math.Nlp.FindMinimum
          * @see JXG.Math.Geometry.meetCurveCurveNewton
          */
-        meetCurveCurveCobyla: function (c1, c2, range, testSegment) {
-            var t, t1, t2,
+        meetCurveCurveCobyla: function (c1, c2, range1, range2, testSegment) {
+            var t1, t2,
                 co,
                 r,
                 ta = [], con = [],
                 inphi = (Math.sqrt(5) - 1) * 0.5,
-                eps2 = Mat.eps,
+                eps2 = Mat.eps * Mat.eps,
                 ma1 = c1.maxX(),
                 mi1 = c1.minX(),
                 ma2 = c2.maxX(),
                 mi2 = c2.minX(),
 
-                mint1 = mi1 + range[0] * (ma1 - mi1),
-                maxt1 = mi1 + range[1] * (ma1 - mi1),
-                mint2 = mi2 + range[0] * (ma2 - mi2),
-                maxt2 = mi2 + range[1] * (ma2 - mi2),
+                // mint1 = mi1 + range1[0] * (ma1 - mi1),
+                // maxt1 = mi1 + range1[1] * (ma1 - mi1),
+                // mint2 = mi2 + range2[0] * (ma2 - mi2),
+                // maxt2 = mi2 + range2[1] * (ma2 - mi2),
+                mint1 = range1[0],
+                maxt1 = range1[1],
+                mint2 = range2[0],
+                maxt2 = range2[1],
 
                 cob = function (n, m, ta, con) {
                     var t1 = ta[0],
@@ -2531,10 +2546,13 @@ JXG.extend(
                     return x * x + y * y;
                 };
 
-            t = range[0] + (range[1] - range[0]) * (1 - inphi);
-            t1 = mi1 + t * (ma1 - mi1);
-            t2 = mi2 + t * (ma2 - mi2);
-            // console.log("\tCobyla start", range, t, t1, t2)
+            // t = range[0] + (range[1] - range[0]) * (1 - inphi);
+            // t1 = mi1 + t * (ma1 - mi1);
+            // t2 = mi2 + t * (ma2 - mi2);
+            t1 = range1[0] + (range1[1] - range1[0]) * (1 - inphi);
+            t2 = range2[0] + (range2[1] - range2[0]) * (1 - inphi);
+
+            // console.log("\tCobyla start", range1, range2, t1, t2)
             // console.log("\t", mint1, maxt1, mint2, maxt2)
 
             ta[0] = t1;
@@ -2542,82 +2560,185 @@ JXG.extend(
             r = JXG.Math.Nlp.FindMinimum(cob, 2, 8, ta, 5, 1.0e-6, 0, 1000);
             t1 = ta[0];
             t2 = ta[1];
-            t = (t1 - mi1) / (ma1 - mi1);
+            // t = (t1 - mi1) / (ma1 - mi1);
             //   console.log("\tt1", t1, mi1, ma1, "t2", t2, mi2-eps2, ma2+eps2,
             //                     t1 < mi1 - eps2, t1 > ma1 + eps2,
             //                     t2 < mi2 - eps2, t2 > ma2 + eps2
             //                 )
 
+            co = c1.Ft(t1);
             if (r !== 0 ||
-                t < range[0] - Mat.eps || t > range[1] + Mat.eps ||
+                // t < range1[0] - Mat.eps || t > range1[1] + Mat.eps ||
+                t1 < range1[0] - Mat.eps || t1 > range1[1] + Mat.eps ||
+                t2 < range2[0] - Mat.eps || t2 > range2[1] + Mat.eps ||
                 (testSegment &&
                     (t1 < mi1 - eps2 || t1 > ma1 + eps2 ||
                      t2 < mi2 - eps2 || t2 > ma2 + eps2)
                 )
             ) {
+                // t = (t1 - mi1) / (ma1 - mi1);
                 // Cobyla found solution outside of range
-                return [co, t1, t2, t, 10000];
+                return [co, t1, t2, 10000];
             }
-            return [co, t1, t2, t, cob(2, 8, ta, con)];
+            return [co, t1, t2, cob(2, 8, ta, con)];
         },
 
         /**
          * Return a list of the (at most) first i intersection points of two curves.
+         * Computed recursively.
          *
          * @param {JXG.Curve} c1 Curve, Line or Circle
          * @param {JXG.Curve} c2 Curve, Line or Circle
          * @param {Number} low Lower bound of the search domain (between [0, 1])
          * @param {Number} up Upper bound of the search domain (between [0, 1])
          * @param {Number} i Return a list of the first i intersection points
+         * @param {Boolean} testSegment If true require that t1 and t2 are inside of the allowed bounds.
          * @returns {Array} List of the first i intersection points, given by the parameter t.
          *
          * @private
          * @see JXG.Math.Geometry.meetCurveCurveNewton
          * @see JXG.Math.Geometry.meetCurveCurve
          */
-        meetCurveCurveRecursive: function(c1, c2, low, up, i, testSegment) {
+        _meetCurveCurveRecursive: function(c1, c2, range1, range2, i, testSegment) {
             var ret,
-                t, t1,
-                // t2,
-                delta = 0.005, // Math.eps * 100,
+                t1, t2,
+                low1, low2, up1, up2,
+                delta = 0.001, // Math.eps * 100,
+                zeros = [],
                 left = [],
                 right = [];
 
-            if (up < low) {
+            low1 = range1[0];
+            up1 = range1[1];
+            low2 = range2[0];
+            up2 = range2[1];
+            if (up1 < low1 || up2 < low2) {
                 return [];
             }
 
-            // console.log('DO', low * 20 - 10, up * 20 - 10)
-            // console.log('DO', low, up)
+            // console.log('DO', [low1, up1], [low2, up2])
 
-            ret = this.meetCurveCurveNewton(c1, c2, [low, up], testSegment);
+            ret = this.meetCurveCurveNewton(c1, c2, range1, range2, testSegment);
+            // ret = this.meetCurveCurveCobyla(c1, c2, range1, range2, testSegment);
+            // ret = this.meetCurveCurveNewton(c1, c2, [low, up], testSegment);
             // ret = this.meetCurveCurveCobyla(c1, c2, [low, up], testSegment);
             // console.log('\trec', ret)
 
-            if (ret[4] < Mat.eps) {
-                t = ret[3];
+            if (ret[3] < Mat.eps) {
                 t1 = ret[1];
-                // t2 = ret[2];
-                // console.log("\tFOUND", t, t1, c1.Ft(t1)[2])
+                t2 = ret[2];
+                // console.log("\tFOUND", t1, t2, c1.Ft(t1)[2])
             } else {
-                // console.log("\tNot FOUND", ret)
+                t1 = ret[1];
+                // console.log("\tNot FOUND", ret, c1.Ft(t1)[2])
                 return [];
             }
 
-            left = this.meetCurveCurveRecursive(c1, c2, low, t - delta, i, testSegment);
-            if (left.length > 0 && t1 - left[left.length - 1] < Mat.eps) {
-                left.pop();
+            // left = this._meetCurveCurveRecursive(c1, c2, low, t - delta, i, testSegment);
+            // if (left.length > 0 && t1 - left[left.length - 1] < Mat.eps) {
+            //     left.pop();
+            // }
+            zeros = [t1];
+            left = this._meetCurveCurveRecursive(c1, c2, [low1, t1 - delta], [low2, t2 - delta], i, testSegment);
+            zeros = left.concat(zeros);
+            left = this._meetCurveCurveRecursive(c1, c2, [low1, t1 - delta], [t2 + delta, up2], i, testSegment);
+            zeros = left.concat(zeros);
+
+            // console.log('\t>', zeros, '\n\t<', Type.toUniqueArrayFloat(zeros, Mat.eps))
+            zeros = Type.toUniqueArrayFloat(zeros, Mat.eps);
+
+            if (zeros.length + 1 - 1 >= i) {
+                return zeros;
             }
-            if (left.length + 1 - 1 >= i) {
-                return left.concat([t1]);
+            // if (left.length > 0 && t1 - left[left.length - 1] < Mat.eps) {
+            //     left.pop();
+            // }
+            // if (left.length + 1 - 1 >= i) {
+            //     return left.concat([t1]);
+            // }
+
+            // right = this._meetCurveCurveRecursive(c1, c2, t + delta, up, i, testSegment);
+            // if (right.length > 0 && right[0] - t1 < Mat.eps) {
+            //     right.shift();
+            // }
+            // right = this._meetCurveCurveRecursive(c1, c2, [t1 + delta, up2], [low2, up2], i, testSegment);
+            // if (right.length > 0 && right[0] - t1 < Mat.eps) {
+            //     right.shift();
+            // }
+            // return left.concat([t1]).concat(right);
+            // right = this._meetCurveCurveRecursive(c1, c2, [t1 + delta, up2], [low2, up2], i, testSegment);
+            // zeros = zeros.concat(right);
+            right = this._meetCurveCurveRecursive(c1, c2, [t1 + delta, up2], [t2 + delta, up2], i, testSegment);
+            zeros = zeros.concat(right);
+            right = this._meetCurveCurveRecursive(c1, c2, [t1 + delta, up2], [low2, t2 - delta], i, testSegment);
+            zeros = zeros.concat(right);
+
+            return Type.toUniqueArrayFloat(zeros, Mat.eps);
+        },
+
+        /**
+         * Return a list of the (at most) first i intersection points of two curves.
+         * Computed iteratively.
+         *
+         * @param {JXG.Curve} c1 Curve, Line or Circle
+         * @param {JXG.Curve} c2 Curve, Line or Circle
+         * @param {Number} low Lower bound of the search domain (between [0, 1])
+         * @param {Number} up Upper bound of the search domain (between [0, 1])
+         * @param {Number} i Return a list of the first i intersection points
+         * @param {Boolean} testSegment If true require that t1 and t2 are inside of the allowed bounds.
+         * @returns {Array} List of the first i intersection points, given by the parameter t.
+         * @private
+         * @see JXG.Math.Geometry.meetCurveCurveNewton
+         * @see JXG.Math.Geometry.meetCurveCurve
+         */
+        _meetCurveCurveIterative: function(c1, c2, range1, range2, i, testSegment) {
+            var ret,
+                t1,// t2,
+                low1, low2, up1, up2,
+                // delta = 0.005,
+                eps = Mat.eps * 100,
+
+                j1, j2,
+                steps = 20,
+                d1, d2,
+
+                zeros = [];
+
+            low1 = range1[0];
+            up1 = range1[1];
+            low2 = range2[0];
+            up2 = range2[1];
+            if (up1 < low1 || up2 < low2) {
+                return [];
             }
 
-            right = this.meetCurveCurveRecursive(c1, c2, t + delta, up, i, testSegment);
-            if (right.length > 0 && right[0] - t1 < Mat.eps) {
-                right.shift();
+            // console.log('DO iterative', [low1, up1], [low2, up2])
+
+            d1 = (up1 - low1) / steps;
+            d2 = (up2 - low2) / steps;
+            for (j1 = 0; j1 < steps; j1++) {
+                for (j2 = 0; j2 < steps; j2++) {
+
+                    ret = this.meetCurveCurveNewton(c1, c2,
+                        [low1 + j1 * d1, low1 + (j1 + 1) * d1],
+                        [low2 + j2 * d2, low2 + (j2 + 1) * d2],
+                        testSegment);
+
+                    if (ret[3] < Mat.eps) {
+                        t1 = ret[1];
+                        // t2 = ret[2];
+                        // console.log("\tFOUND", t1, t2, c1.Ft(t1)[2])
+                        zeros = zeros.concat([t1]);
+                        zeros = Type.toUniqueArrayFloat(zeros, eps);
+                        // console.log(zeros, i)
+                        if (zeros.length > i) {
+                            return zeros;
+                        }
+                    }
+                }
             }
 
-            return left.concat([t1]).concat(right);
+            return zeros;
         },
 
         /**
@@ -2641,11 +2762,13 @@ JXG.extend(
          * @returns {JXG.Coords} intersection point
          *
          * @see JXG.Math.Geometry.meetCurveCurveDiscrete
-         * @see JXG.Math.Geometry.meetCurveCurveRecursive
+         * @see JXG.Math.Geometry._meetCurveCurveRecursive
+         * @see JXG.Math.Geometry.meetCurveCurveIterative
          */
         meetCurveCurve: function (c1, c2, nr, t2ini, board, method, testSegment) {
             var co,
                 zeros,
+                mi1, ma1, mi2, ma2,
                 i = Type.evaluate(nr);
 
             board = board || c1.board;
@@ -2662,9 +2785,17 @@ JXG.extend(
                 return new Coords(Const.COORDS_BY_USER, co, board);
             }
 
+
             // Method 'newton'
+            mi1 = c1.minX();
+            ma1 = c1.maxX();
+            mi2 = c2.minX();
+            ma2 = c2.maxX();
+
+
             // console.time('cucu')
-            zeros = this.meetCurveCurveRecursive(c1, c2, 0, 1, i, testSegment);
+            // zeros = this._meetCurveCurveRecursive(c1, c2, [mi1, ma1], [mi2, ma2], i, testSegment);
+            zeros = this._meetCurveCurveIterative(c1, c2, [mi1, ma1], [mi2, ma2], i, testSegment);
             // console.timeEnd('cucu')
             // console.log("-------------------------")
 

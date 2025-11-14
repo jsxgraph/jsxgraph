@@ -1666,23 +1666,25 @@ Mat.Numerics = {
      * Apply damped Newton-Raphson algorithm to determine the intersection
      * between the curve elements c1 and c2. Transformations of the curves
      * are already taken into regard.
+     * <p>
+     * We use a very high accuracy: Mat.eps**3
      *
      * @param {JXG.Curve} c1 Curve, Line or Circle
      * @param {JXG.Curve} c2 Curve, Line or Circle
      * @param {Number} t1ini Start value for curve c1
      * @param {Number} t2ini Start value for curve c2
      * @param {Number} gamma Damping factor, should be in the open interval (0, 1)
+     * @param {Number} eps Stop if function value is smaller than eps
      * @returns {Array} [f1, t1, t2, F]. f1 is the coordinate array of the intersection point,
      * t1 and t2 are the parameters of the intersection for both curves, F is ||c1[t1]-c2[t2]||**2.
      */
-    generalizedDampedNewton: function (c1, c2, t1ini, t2ini, gamma) {
+    generalizedDampedNewton: function (c1, c2, t1ini, t2ini, gamma, eps) {
         var t1, t2,
             a, b, c, d, e, f,
             disc,
             F,
             f1, f2,
             D00, D01, D10, D11,
-            eps = Mat.eps * Mat.eps,
             max_it = 40,
             count = 0;
 
@@ -1716,6 +1718,7 @@ Mat.Numerics = {
             F = e * e + f * f;
             count += 1;
         }
+        // console.log(count)
 
         f1 = c1.Ft(t1);
         return [f1, t1, t2, F];
