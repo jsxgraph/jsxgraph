@@ -1722,11 +1722,6 @@ Mat.Numerics = {
 
         f1 = c1.Ft(t1);
         return [f1, t1, t2, F];
-        // if (Math.abs(t1) < Math.abs(t2)) {
-        //     return [c1.X(t1), c1.Y(t1)];
-        // }
-
-        // return [c2.X(t2), c2.Y(t2)];
     },
 
     /**

@@ -2767,10 +2767,10 @@ JXG.extend(
             ma2 = c2.maxX();
 
 
-            // console.time('cucu')
+            console.time('cucu')
             // zeros = this._meetCurveCurveRecursive(c1, c2, [mi1, ma1], [mi2, ma2], i, testSegment);
             zeros = this._meetCurveCurveIterative(c1, c2, [mi1, ma1], [mi2, ma2], i, testSegment);
-            // console.timeEnd('cucu')
+            console.timeEnd('cucu')
             // console.log("-------------------------")
 
             if (zeros.length > i) {
