@@ -2585,7 +2585,7 @@ JXG.extend(
 
         /**
          * Return a list of the (at most) first i intersection points of two curves.
-         * Computed recursively.
+         * Computed recursively. It seems that _meetCurveCurveIterative is more stable.
          *
          * @param {JXG.Curve} c1 Curve, Line or Circle
          * @param {JXG.Curve} c2 Curve, Line or Circle
@@ -2620,8 +2620,6 @@ JXG.extend(
 
             ret = this.meetCurveCurveNewton(c1, c2, range1, range2, testSegment);
             // ret = this.meetCurveCurveCobyla(c1, c2, range1, range2, testSegment);
-            // ret = this.meetCurveCurveNewton(c1, c2, [low, up], testSegment);
-            // ret = this.meetCurveCurveCobyla(c1, c2, [low, up], testSegment);
             // console.log('\trec', ret)
 
             if (ret[3] < Mat.eps) {
@@ -2634,10 +2632,6 @@ JXG.extend(
                 return [];
             }
 
-            // left = this._meetCurveCurveRecursive(c1, c2, low, t - delta, i, testSegment);
-            // if (left.length > 0 && t1 - left[left.length - 1] < Mat.eps) {
-            //     left.pop();
-            // }
             zeros = [t1];
             left = this._meetCurveCurveRecursive(c1, c2, [low1, t1 - delta], [low2, t2 - delta], i, testSegment);
             zeros = left.concat(zeros);
@@ -2650,24 +2644,7 @@ JXG.extend(
             if (zeros.length + 1 - 1 >= i) {
                 return zeros;
             }
-            // if (left.length > 0 && t1 - left[left.length - 1] < Mat.eps) {
-            //     left.pop();
-            // }
-            // if (left.length + 1 - 1 >= i) {
-            //     return left.concat([t1]);
-            // }
 
-            // right = this._meetCurveCurveRecursive(c1, c2, t + delta, up, i, testSegment);
-            // if (right.length > 0 && right[0] - t1 < Mat.eps) {
-            //     right.shift();
-            // }
-            // right = this._meetCurveCurveRecursive(c1, c2, [t1 + delta, up2], [low2, up2], i, testSegment);
-            // if (right.length > 0 && right[0] - t1 < Mat.eps) {
-            //     right.shift();
-            // }
-            // return left.concat([t1]).concat(right);
-            // right = this._meetCurveCurveRecursive(c1, c2, [t1 + delta, up2], [low2, up2], i, testSegment);
-            // zeros = zeros.concat(right);
             right = this._meetCurveCurveRecursive(c1, c2, [t1 + delta, up2], [t2 + delta, up2], i, testSegment);
             zeros = zeros.concat(right);
             right = this._meetCurveCurveRecursive(c1, c2, [t1 + delta, up2], [low2, t2 - delta], i, testSegment);
@@ -2695,13 +2672,10 @@ JXG.extend(
             var ret,
                 t1,// t2,
                 low1, low2, up1, up2,
-                // delta = 0.005,
-                eps = Mat.eps * 100,
-
+                eps = Mat.eps * 100, // Minimum difference between zeros
                 j1, j2,
                 steps = 20,
                 d1, d2,
-
                 zeros = [];
 
             low1 = range1[0];
