@@ -68,6 +68,7 @@
     "jasmine-core": "^3.10.1",
     "jsdoc": "^4.0.5",
     "docdash": "^2.0.2",
+    "clean-jsdoc-theme": "4.3.0",
     "jshint": "^2.13.1",
     "jslint": "^0.12.1",
     "karma": "^6.4.3",
