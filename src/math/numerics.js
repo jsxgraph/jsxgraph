@@ -1684,7 +1684,7 @@ Mat.Numerics = {
             disc,
             F,
             f1, f2,
-            D00, D01, D10, D11,
+            D, Dt,
             max_it = 40,
             count = 0;
 
@@ -1697,28 +1697,38 @@ Mat.Numerics = {
         f = f1[2] - f2[2];
         F = e * e + f * f;
 
-        D00 = this.D(c1.X, c1);
-        D01 = this.D(c2.X, c2);
-        D10 = this.D(c1.Y, c1);
-        D11 = this.D(c2.Y, c2);
+        D = function(t1, t2) {
+            var h = Mat.eps,
+                f1_1 = c1.Ft(t1 - h),
+                f1_2 = c1.Ft(t1 + h),
+                f2_1 = c2.Ft(t2 - h),
+                f2_2 = c2.Ft(t2 + h);
+            return [
+                [ (f1_2[1] - f1_1[1]) / (2 * h),
+                 -(f2_2[1] - f2_1[1]) / (2 * h)],
+                [ (f1_2[2] - f1_1[2]) / (2 * h),
+                 -(f2_2[2] - f2_1[2]) / (2 * h)]
+            ];
+        };
 
         while (F > eps && count < max_it) {
-            a = D00(t1);
-            b = -D01(t2);
-            c = D10(t1);
-            d = -D11(t2);
+            Dt = D(t1, t2);
+            a = Dt[0][0];
+            b = Dt[0][1];
+            c = Dt[1][0];
+            d = Dt[1][1];
 
             disc = a * d - b * c;
             t1 -= gamma * (d * e - b * f) / disc;
             t2 -= gamma * (a * f - c * e) / disc;
             f1 = c1.Ft(t1);
             f2 = c2.Ft(t2);
+
             e = f1[1] - f2[1];
             f = f1[2] - f2[2];
             F = e * e + f * f;
             count += 1;
         }
-        // console.log(count)
 
         f1 = c1.Ft(t1);
         return [f1, t1, t2, F];
