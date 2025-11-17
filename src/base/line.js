@@ -1069,6 +1069,10 @@ JXG.extend(
 );
 
 /**
+ * @typedef {(array|function)} PointLike Something with a coordinate array
+ */
+
+/**
  * @class A general line is given by two points or three coordinates.
  * By setting additional properties a line can be used as an arrow and/or axis.
  * @pseudo
@@ -1077,6 +1081,8 @@ JXG.extend(
  * @constructor
  * @type JXG.Line
  * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
+ * 
+ * @param {...PointLike} point1 The first points
  * @param {JXG.Point,array,function_JXG.Point,array,function} point1,point2 Parent elements can be two elements either of type {@link JXG.Point} or array of
  * numbers describing the coordinates of a point. In the latter case the point will be constructed automatically as a fixed invisible point.
  * It is possible to provide a function returning an array or a point, instead of providing an array or a point.
