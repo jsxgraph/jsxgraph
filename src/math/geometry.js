@@ -2627,29 +2627,6 @@ JXG.extend(
             return new Coords(Const.COORDS_BY_USER, co, board);
         },
 
-        // meetCurveCurveORG: function (c1, c2, nr, t2ini, board, method) {
-        //     var co,
-        //         i = Type.evaluate(nr);
-
-        //     if (Type.exists(method) && method === 'newton') {
-        //         co = Numerics.generalizedNewton(c1, c2, i, t2ini);
-        //     } else {
-        //         if (c1.bezierDegree === 3 || c2.bezierDegree === 3) {
-        //             co = this.meetBezierCurveRedBlueSegments(c1, c2, i);
-        //         } else {
-        //             co = this.meetCurveRedBlueSegments(c1, c2, i);
-        //         }
-
-        //         // // We might add a Newton iteration if the segment search fails?
-        //         // // However, we would have to apply evt. transformations to the curves
-        //         // if (co[0] === 0 && isNaN(co[1]) && isNaN(co[2])) {
-        //         //     co = Numerics.generalizedNewton(c1, c2, i, t2ini);
-        //         // }
-        //     }
-
-        //     return new Coords(Const.COORDS_BY_USER, co, board);
-        // },
-
         /**
          * Intersection of curve with line,
          * Order of input does not matter for el1 and el2.
