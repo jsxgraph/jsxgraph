@@ -2593,76 +2593,6 @@ JXG.extend(
 
         /**
          * Return a list of the (at most) first i intersection points of two curves.
-         * Computed recursively. It seems that _meetCurveCurveIterative is more stable.
-         *
-         * @param {JXG.Curve} c1 Curve, Line or Circle
-         * @param {JXG.Curve} c2 Curve, Line or Circle
-         * @param {Number} low Lower bound of the search domain (between [0, 1])
-         * @param {Number} up Upper bound of the search domain (between [0, 1])
-         * @param {Number} i Return a list of the first i intersection points
-         * @param {Boolean} testSegment If true require that t1 and t2 are inside of the allowed bounds.
-         * @returns {Array} List of the first i intersection points, given by the parameter t.
-         *
-         * @private
-         * @see JXG.Math.Geometry.meetCurveCurveNewton
-         * @see JXG.Math.Geometry.meetCurveCurve
-         */
-        _meetCurveCurveRecursive: function(c1, c2, range1, range2, i, testSegment) {
-            var ret,
-                t1, t2,
-                low1, low2, up1, up2,
-                delta = 0.001, // Math.eps * 100,
-                zeros = [],
-                left = [],
-                right = [];
-
-            low1 = range1[0];
-            up1 = range1[1];
-            low2 = range2[0];
-            up2 = range2[1];
-            if (up1 < low1 || up2 < low2) {
-                return [];
-            }
-
-            // console.log('DO', [low1, up1], [low2, up2])
-
-            ret = this.meetCurveCurveNewton(c1, c2, range1, range2, testSegment);
-            // ret = this.meetCurveCurveCobyla(c1, c2, range1, range2, testSegment);
-            // console.log('\trec', ret)
-
-            if (ret[3] < Mat.eps) {
-                t1 = ret[1];
-                t2 = ret[2];
-                // console.log("\tFOUND", t1, t2, c1.Ft(t1)[2])
-            } else {
-                t1 = ret[1];
-                // console.log("\tNot FOUND", ret, c1.Ft(t1)[2])
-                return [];
-            }
-
-            zeros = [t1];
-            left = this._meetCurveCurveRecursive(c1, c2, [low1, t1 - delta], [low2, t2 - delta], i, testSegment);
-            zeros = left.concat(zeros);
-            left = this._meetCurveCurveRecursive(c1, c2, [low1, t1 - delta], [t2 + delta, up2], i, testSegment);
-            zeros = left.concat(zeros);
-
-            // console.log('\t>', zeros, '\n\t<', Type.toUniqueArrayFloat(zeros, Mat.eps))
-            zeros = Type.toUniqueArrayFloat(zeros, Mat.eps);
-
-            if (zeros.length + 1 - 1 >= i) {
-                return zeros;
-            }
-
-            right = this._meetCurveCurveRecursive(c1, c2, [t1 + delta, up2], [t2 + delta, up2], i, testSegment);
-            zeros = zeros.concat(right);
-            right = this._meetCurveCurveRecursive(c1, c2, [t1 + delta, up2], [low2, t2 - delta], i, testSegment);
-            zeros = zeros.concat(right);
-
-            return Type.toUniqueArrayFloat(zeros, Mat.eps);
-        },
-
-        /**
-         * Return a list of the (at most) first i intersection points of two curves.
          * Computed iteratively.
          *
          * @param {JXG.Curve} c1 Curve, Line or Circle
@@ -2728,14 +2658,20 @@ JXG.extend(
          * We want to find values t1, t2 such that
          * c1(t1) = c2(t2), i.e. (c1_x(t1) - c2_x(t2), c1_y(t1) - c2_y(t2)) = (0, 0).
          *
-         * Methods: segment-wise intersections or generalized damped Newton-Raphson method.
+         * Available methods:
+         * <ul>
+         *  <li> discrete, segment-wise intersections
+         *  <li> generalized damped Newton-Raphson
+         * </ul>
          *
          * Segment-wise intersection is more stable, but has problems with tangent points.
          * Damped Newton-Raphson converges very rapidly but sometimes behaves chaotic.
          *
          * @param {JXG.Curve} c1 Curve, Line or Circle
          * @param {JXG.Curve} c2 Curve, Line or Circle
-         * @param {Number|Function} nr the nr-th intersection point will be returned
+         * @param {Number|Function} nr the nr-th intersection point will be returned. For backwards compatibility:
+         * if method='newton' and nr is not an integer, {@link JXG.Math.Numerics.generalizedNewton} is called
+         * directly with nr as start value (not recommended).
          * @param {Number} t2ini not longer used. Must be supplied and is ignored.
          * @param {JXG.Board} [board=c1.board] Reference to a board object.
          * @param {String} [method] Intersection method, possible values are 'newton' and 'segment'.
@@ -2767,19 +2703,15 @@ JXG.extend(
                 return new Coords(Const.COORDS_BY_USER, co, board);
             }
 
-
             // Method 'newton'
             mi1 = c1.minX();
             ma1 = c1.maxX();
             mi2 = c2.minX();
             ma2 = c2.maxX();
 
-
-            // console.time('cucu')
-            // zeros = this._meetCurveCurveRecursive(c1, c2, [mi1, ma1], [mi2, ma2], i, testSegment);
+            // console.time('curvecurve')
             zeros = this._meetCurveCurveIterative(c1, c2, [mi1, ma1], [mi2, ma2], i, testSegment);
-            // console.timeEnd('cucu')
-            // console.log("-------------------------")
+            // console.timeEnd('curvecurve')
 
             if (zeros.length > i) {
                 co = c1.Ft(zeros[i]);
