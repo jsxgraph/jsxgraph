@@ -2443,34 +2443,42 @@ JXG.extend(
                 ma1 = c1.maxX(),
                 mi1 = c1.minX(),
                 ma2 = c2.maxX(),
-                mi2 = c2.minX();
+                mi2 = c2.minX(),
 
-            // One-dimensional - works only for functiongraphs without transformations
-            // t = Numerics.root(ff, range);
-            // t1 = mi1 + t * (ma1 - mi1);
-            // t2 = mi2 + t * (ma2 - mi2);
-            // co = c1.Ft(t1);                t1 < range1[0] - Mat.eps || t1 > range1[1] + Mat.eps ||
+                F = function(t, n) {
+                    var f1 = c1.Ft(t[0]),
+                        f2 = c2.Ft(t[1]),
+                        e = f1[1] - f2[1],
+                        f = f1[2] - f2[2];
 
-            // return [co, t1, t2, t, Math.abs(ff(t))];
+                    return [e, f];
+                },
+                D = function(t, n) {
+                    var h = Mat.eps,
+                        h2 = 2 * h,
+                        f1_1 = c1.Ft(t[0] - h),
+                        f1_2 = c1.Ft(t[0] + h),
+                        f2_1 = c2.Ft(t[1] - h),
+                        f2_2 = c2.Ft(t[1] + h);
+                    return [
+                        [ (f1_2[1] - f1_1[1]) / h2,
+                         -(f2_2[1] - f2_1[1]) / h2],
+                        [ (f1_2[2] - f1_1[2]) / h2,
+                         -(f2_2[2] - f2_1[2]) / h2]
+                    ];
+                };
 
-            // t1 = mi1 + t * (ma1 - mi1);
-            // t2 = mi2 + t * (ma2 - mi2);
             t1 = range1[0] + (range1[1] - range1[0]) * (1 - inphi);
             t2 = range2[0] + (range2[1] - range2[0]) * (1 - inphi);
-// console.log("\tin", range1, t1, t2)
 
             // Use damped Newton
-            r = Numerics.generalizedDampedNewton(c1, c2, t1, t2, damp, eps3);
-            // r: [f1, t1, t2, F]
-            t1 = r[1];
-            t2 = r[2];
+            // r = Numerics.generalizedDampedNewtonCurves(c1, c2, t1, t2, damp, eps3);
+            r = Numerics.generalizedDampedNewton(F, D, 2, [t1, t2], damp, eps3, 40);
+            // r: [t1, t2, F2]
 
+            t1 = r[0][0];
+            t2 = r[0][1];
             co = c1.Ft(t1);
-// console.log("\tout", range1, t1, t2, co[2])
-// console.log("\tt1", t1, range1[0], range1[1], "t2", t2, range2[0], range2[1],
-//                 t1 < range1[0] - Mat.eps, t1 > range1[1] + Mat.eps,
-//                 t2 < range2[0] - Mat.eps, t2 > range2[1] + Mat.eps,
-//                 )
 
             if (
                 t1 < range1[0] - Mat.eps || t1 > range1[1] + Mat.eps ||
@@ -2485,7 +2493,7 @@ JXG.extend(
             }
 // console.log(t1, r[3])
 
-            return [co, t1, t2, r[3]];
+            return [co, t1, t2, r[1]];
         },
 
         /**
