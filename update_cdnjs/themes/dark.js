@@ -26,7 +26,7 @@ JXG.Options = JXG.merge(JXG.Options, {
         highlightFillColor: "#eeeeee",
         strokeColor: "white",
         highlightStrokeColor: "white",
-        showInfobox: "inherit"
+        showInfobox: 'inherit'
     },
 
     line: {
