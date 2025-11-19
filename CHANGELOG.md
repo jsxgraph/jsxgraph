@@ -1,3 +1,29 @@
+1.12.1
+===
+
+Improvements
+------------
+
+- API docs of `initBoard`: link to all available attributes
+- Add version string to jsxgraph.css
+- Tangential intersections between 'functiongraph' elements
+- Precision of `meetCurveCurve`
+- Arrow heads in SVG take CSS color of line
+- Security: replace some `innerHTML` by `innerText`
+- `moveTo()`, `visit()`: avoid throwing error
+- Speed up `turtle.clearScreen()`
+
+Bug fixes
+---------
+
+- Fix bug in API docs of ia.js
+- `isBrowser(undefined)`: return false
+- Fix regression: handling of attribute 'frozen'
+- smartlabel on line was not rotated
+- smartlabel for angles
+- `polyhedron.toSTL()`: Replace "model" by "solid"
+- API docs: correct description `options.effect` for `moveTo()`, `visit()`
+
 1.12.0
 ===
 

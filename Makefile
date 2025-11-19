@@ -75,6 +75,8 @@ core:
 	$(WEBPACK) --config config/webpack.config.js
 	# Update version number in line 2 of file COPYRIGHT
 	sed -i '2s/.*/    JSXGraph $(VERSION)/' COPYRIGHT
+	# Update version number in line 2 of file jsxgraph.css
+	sed -i '2s/.*/    JSXGraph $(VERSION)/' $(OUTPUT)/jsxgraph.css
 	# Prepend file to the jsxgraphcore.* files
 	cat COPYRIGHT $(OUTPUT)/jsxgraphcore.js >$(OUTPUT)/tmp.file; mv $(OUTPUT)/tmp.file $(OUTPUT)/jsxgraphcore.js
 	cat COPYRIGHT $(OUTPUT)/jsxgraphcore.mjs >$(OUTPUT)/tmp.file; mv $(OUTPUT)/tmp.file $(OUTPUT)/jsxgraphcore.mjs
@@ -173,6 +175,9 @@ lint:
 eslint:
 	$(ESLINT) $(ESLINTFLAGS) $(LINTLIST)
 
-# test:
-test:core
+test: core
 	$(KARMA) start karma/karma.conf.js
+
+testchromium: core
+	export CHROME_BIN=/usr/bin/chromium; $(KARMA) start karma/karma.conf.js
+	

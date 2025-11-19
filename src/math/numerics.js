@@ -1608,11 +1608,6 @@ Mat.Numerics = {
      * @returns {JXG.Coords} intersection point
      * @memberof JXG.Math.Numerics
      */
-    //  * If the function meetCurveCurve has the properties
-    //  * t1memo and t2memo then these are taken as start values
-    //  * for the Newton algorithm.
-    //  * After stopping of the Newton algorithm the values of t1 and t2 are stored in
-    //  * t1memo and t2memo.
     generalizedNewton: function (c1, c2, t1ini, t2ini) {
         var t1, t2,
             a, b, c, d, e, f,
@@ -1666,23 +1661,25 @@ Mat.Numerics = {
      * Apply damped Newton-Raphson algorithm to determine the intersection
      * between the curve elements c1 and c2. Transformations of the curves
      * are already taken into regard.
+     * <p>
+     * We use a very high accuracy: Mat.eps**3
      *
+     * @deprecated
      * @param {JXG.Curve} c1 Curve, Line or Circle
      * @param {JXG.Curve} c2 Curve, Line or Circle
      * @param {Number} t1ini Start value for curve c1
      * @param {Number} t2ini Start value for curve c2
      * @param {Number} gamma Damping factor, should be in the open interval (0, 1)
-     * @returns {Array} [f1, t1, t2, F]. f1 is the coordinate array of the intersection point,
-     * t1 and t2 are the parameters of the intersection for both curves, F is ||c1[t1]-c2[t2]||**2.
+     * @param {Number} eps Stop if function value is smaller than eps
+     * @returns {Array} [t1, t2, F2], where t1 and t2 are the parameters of the intersection for both curves, F2 is ||c1[t1]-c2[t2]||**2.
      */
-    generalizedDampedNewton: function (c1, c2, t1ini, t2ini, gamma) {
+    generalizedDampedNewtonCurves: function (c1, c2, t1ini, t2ini, gamma, eps) {
         var t1, t2,
             a, b, c, d, e, f,
             disc,
-            F,
+            F2,
             f1, f2,
-            D00, D01, D10, D11,
-            eps = Mat.eps * Mat.eps,
+            D, Dt,
             max_it = 40,
             count = 0;
 
@@ -1693,37 +1690,123 @@ Mat.Numerics = {
         f2 = c2.Ft(t2);
         e = f1[1] - f2[1];
         f = f1[2] - f2[2];
-        F = e * e + f * f;
+        F2 = e * e + f * f;
 
-        D00 = this.D(c1.X, c1);
-        D01 = this.D(c2.X, c2);
-        D10 = this.D(c1.Y, c1);
-        D11 = this.D(c2.Y, c2);
+        D = function(t1, t2) {
+            var h = Mat.eps,
+                f1_1 = c1.Ft(t1 - h),
+                f1_2 = c1.Ft(t1 + h),
+                f2_1 = c2.Ft(t2 - h),
+                f2_2 = c2.Ft(t2 + h);
+            return [
+                [ (f1_2[1] - f1_1[1]) / (2 * h),
+                 -(f2_2[1] - f2_1[1]) / (2 * h)],
+                [ (f1_2[2] - f1_1[2]) / (2 * h),
+                 -(f2_2[2] - f2_1[2]) / (2 * h)]
+            ];
+        };
 
-        while (F > eps && count < max_it) {
-            a = D00(t1);
-            b = -D01(t2);
-            c = D10(t1);
-            d = -D11(t2);
+        while (F2 > eps && count < max_it) {
+            Dt = D(t1, t2);
+            a = Dt[0][0];
+            b = Dt[0][1];
+            c = Dt[1][0];
+            d = Dt[1][1];
 
             disc = a * d - b * c;
             t1 -= gamma * (d * e - b * f) / disc;
             t2 -= gamma * (a * f - c * e) / disc;
             f1 = c1.Ft(t1);
             f2 = c2.Ft(t2);
+
             e = f1[1] - f2[1];
             f = f1[2] - f2[2];
-            F = e * e + f * f;
+            F2 = e * e + f * f;
             count += 1;
         }
 
-        f1 = c1.Ft(t1);
-        return [f1, t1, t2, F];
-        // if (Math.abs(t1) < Math.abs(t2)) {
-        //     return [c1.X(t1), c1.Y(t1)];
-        // }
+        return [t1, t2, F2];
+    },
 
-        // return [c2.X(t2), c2.Y(t2)];
+    /**
+     * Apply the damped Newton-Raphson algorithm to determine to find a root of a
+     * function F: R^n to R^n.
+     *
+     * @param {Function} F Function with n parameters, returns a vactor of length n.
+     * @param {Function} D Function returning the Jacobian matrix (n \times n) of F
+     * @param {Number} n
+     * @param {Array} t_ini Array of length n, containing start values
+     * @param {Number} gamma Damping factor should be between 0 and 1. If equal to 1,
+     * the algorithm is Newton-Raphson.
+     * @param {Number} eps The algorithm stops if the square norm of the root is less than this eps
+     * or if the maximum number of steps is reached.
+     * @param {Number} [max_steps=40] maximum number of steps
+     * @returns {Array} [t, F2] array of length, containing t, the approximation of the root (array of length n),
+     * and the square norm of F(t).
+     */
+    generalizedDampedNewton: function (F, D, n, t_ini, gamma, eps, max_steps) {
+        var i,
+            t = [],
+            a, b, c, d, e, f,
+            disc,
+            Ft, Dt,
+            F2, vec,
+            count = 0;
+
+        max_steps = max_steps || 40;
+
+        t = t_ini.slice(0, n);
+        Ft = F(t, n);
+
+        if (n === 2) {
+            // Special case n = 2
+            Ft = F(t, n);
+            e = Ft[0];
+            f = Ft[1];
+            F2 = e * e + f * f;
+
+            while (F2 > eps && count < max_steps) {
+                Dt = D(t, n);
+
+                a = Dt[0][0];
+                b = Dt[0][1];
+                c = Dt[1][0];
+                d = Dt[1][1];
+
+                disc = a * d - b * c;
+                t[0] -= gamma * (d * e - b * f) / disc;
+                t[1] -= gamma * (a * f - c * e) / disc;
+
+                Ft = F(t, n);
+                e = Ft[0];
+                f = Ft[1];
+                F2 = e * e + f * f;
+
+                count += 1;
+            }
+
+            return [t, F2];
+        } else {
+            // General case, arbitrary n
+            Ft = F(t, n);
+            F2 = Mat.innerProduct(Ft, Ft, n);
+
+            while (F2 > eps && count < max_steps) {
+                Dt = Mat.inverse(D(t, n));
+
+                vec = Mat.matVecMult(Dt, Ft);
+                for (i = 0; i < n; i++) {
+                    t[i] -= gamma * vec[i];
+                }
+
+                Ft = F(t, n);
+                F2 = Mat.innerProduct(Ft, Ft, n);
+
+                count += 1;
+            }
+
+            return [t, F2];
+        }
     },
 
     /**

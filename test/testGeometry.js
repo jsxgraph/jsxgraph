@@ -33,7 +33,7 @@ describe("Test geometry functions", function () {
         '<div id="jxgbox" style="width: 100px; height: 100px;"></div>';
     board = JXG.JSXGraph.initBoard("jxgbox", {
         renderer: "svg",
-        axis: false,
+        axis: true,
         grid: false,
         // boundingbox: [-8, 8, 8, -8],
         boundingbox: [-10, 10, 10, -10],
@@ -76,11 +76,28 @@ describe("Test geometry functions", function () {
     });
 
     it("intersectingCurveCurve 2", function () {
-      const f1 = board.create("functiongraph", ["sin(x)"], { fixed: false }); // ["sin(x)", -10, 10] fails
-      const f2 = board.create("functiongraph", ["0"], {});
+        const f1 = board.create("functiongraph", ["sin(x)"], { fixed: false }); // ["sin(x)", -10, 10] fails
+        const f2 = board.create("functiongraph", ["0"], {});
 
-      const inter = board.create("intersection", [f1, f2, 6]);
-      expect(inter.X()).toBeCloseTo(Math.PI * 3, 4); // 9.42477796076938
+        const inter = board.create("intersection", [f1, f2, 6]);
+        expect(inter.X()).toBeCloseTo(Math.PI * 3, 4); // 9.42477796076938
+    });
+
+    it("intersectingCurveLine", function () {
+        const f1 = board.create("functiongraph", ["(x + 1)**2 * (x - 1)**2", -10, 10], {});
+        // const f2 = board.create("functiongraph", ["0", -10, 10], {});
+        const f2 = board.defaultAxes.x;
+
+        const inter1 = board.create("point", [
+            () => JXG.Math.Geometry.meetCurveCurve(f1, f2, -1.5, 0, f1.board, 'newton')
+        ], { name: 'A' });
+
+        const inter2 = board.create("point", [
+            () => JXG.Math.Geometry.meetCurveCurve(f1, f2, 1.5, 1, f1.board, 'newton')
+        ], { name: 'B' });
+
+        expect(inter1.X()).toBeCloseTo(-1.0116589163799947, 4);
+        expect(inter2.X()).toBeCloseTo(1.0116589163799947, 4);
     });
 
     it("meetSegmentSegment", function () {

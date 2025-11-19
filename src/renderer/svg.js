@@ -317,9 +317,9 @@ JXG.extend(
 
             // 'context-stroke': property is inherited from line or curve
             node2.setAttributeNS(null, 'fill', 'context-stroke');
-            node2.setAttributeNS(null, 'fill-opacity', 'context-stroke');
             node2.setAttributeNS(null, 'stroke', 'context-stroke');
-            node2.setAttributeNS(null, 'stroke-opacity', 'context-stroke');
+            // node2.setAttributeNS(null, 'fill-opacity', 'context-stroke'); // Not available
+            // node2.setAttributeNS(null, 'stroke-opacity', 'context-stroke');
             node2.setAttributeNS(null, 'stroke-width', 0); // this is the stroke-width of the arrow head.
             // Should be zero to simplify the calculations
 
@@ -496,14 +496,14 @@ JXG.extend(
                     if (type !== 7) {
                         this._setAttribute(function () {
                             node.setAttributeNS(null, 'fill', 'context-stroke');
-                            node.setAttributeNS(null, 'stroke-opacity', 'context-stroke');
-                            node.setAttributeNS(null, 'fill-opacity', 'context-stroke');
+                            // node.setAttributeNS(null, 'stroke-opacity', 'context-stroke');
+                            // node.setAttributeNS(null, 'fill-opacity', 'context-stroke');
                         }, el.visPropOld.fillcolor);
                     } else {
                         this._setAttribute(function () {
                             node.setAttributeNS(null, 'fill', 'none');
                             node.setAttributeNS(null, 'stroke', 'context-stroke');
-                            node.setAttributeNS(null, 'stroke-opacity', 'context-stroke');
+                            // node.setAttributeNS(null, 'stroke-opacity', 'context-stroke');
                         }, el.visPropOld.fillcolor);
                     }
                 }
@@ -589,11 +589,7 @@ JXG.extend(
             node.setAttributeNS(null, "fill", 'none');
             // node.setAttributeNS(null, 'fill', ticks.evalVisProp('fillcolor'));
             // node.setAttributeNS(null, 'fill-opacity', ticks.evalVisProp('fillopacity'));
-            node.setAttributeNS(
-                null,
-                "stroke-opacity",
-                ticks.evalVisProp('strokeopacity')
-            );
+            node.setAttributeNS(null, 'stroke-opacity', ticks.evalVisProp('strokeopacity'));
             node.setAttributeNS(null, "stroke-width", ticks.evalVisProp('strokewidth'));
             this.updatePathPrim(node, tickStr, ticks.board);
         },
@@ -911,14 +907,15 @@ JXG.extend(
                         this.defs.appendChild(node2);
                     }
                     el.rendNodeTriangleStart = node2;
-                    el.rendNode.setAttributeNS(null, "marker-start", this.toURL(str));
+                    el.rendNode.setAttributeNS(null, 'marker-start', this.toURL(str));
                 }
             } else {
                 if (Type.exists(node2)) {
                     this.remove(node2);
                     el.rendNodeTriangleStart = null;
                 }
-                el.rendNode.setAttributeNS(null, "marker-start", null);
+                // el.rendNode.setAttributeNS(null, "marker-start", null);
+                el.rendNode.removeAttributeNS(null, 'marker-start');
             }
 
             node2 = el.rendNodeTriangleEnd;
@@ -942,7 +939,8 @@ JXG.extend(
                     this.remove(node2);
                     el.rendNodeTriangleEnd = null;
                 }
-                el.rendNode.setAttributeNS(null, "marker-end", null);
+                // el.rendNode.setAttributeNS(null, "marker-end", null);
+                el.rendNode.removeAttributeNS(null, "marker-end");
             }
         },
 
@@ -1513,7 +1511,7 @@ JXG.extend(
                         node.setAttributeNS(null, "pointer-events", 'visiblePainted');
                     }
                     this._setAttribute(function () {
-                        node.setAttributeNS(null, "fill-opacity", oo);
+                        node.setAttributeNS(null, 'fill-opacity', oo);
                     }, el.visPropOld.fillopacity);
                 }
 
@@ -1560,14 +1558,14 @@ JXG.extend(
                         }, el.visPropOld.strokecolor);
                     } else {
                         this._setAttribute(function () {
-                            node.setAttributeNS(null, "style", "fill:" + c);
-                            node.setAttributeNS(null, "style", "fill-opacity:" + oo);
+                            node.setAttributeNS(null, 'fill', c);
+                            node.setAttributeNS(null, 'fill-opacity', oo);
                         }, el.visPropOld.strokecolor);
                     }
                 } else {
                     this._setAttribute(function () {
                         node.setAttributeNS(null, "stroke", c);
-                        node.setAttributeNS(null, "stroke-opacity", oo);
+                        node.setAttributeNS(null, 'stroke-opacity', oo);
                     }, el.visPropOld.strokecolor);
                 }
 
@@ -1922,7 +1920,7 @@ JXG.extend(
                 this.setPropertyPrim(node, "stroked", 'true');
                 this.setPropertyPrim(node, "stroke-width", '1px');
                 node.setAttributeNS(null, "stroke", "#000000");
-                node.setAttributeNS(null, "stroke-opacity", 1.0);
+                node.setAttributeNS(null, 'stroke-opacity', 1.0);
                 node.setAttributeNS(null, "display", 'none');
 
                 na2 = "touchpoint2_" + i;
@@ -1934,10 +1932,9 @@ JXG.extend(
                 this.setPropertyPrim(node, "stroked", 'true');
                 this.setPropertyPrim(node, "stroke-width", '1px');
                 node.setAttributeNS(null, "stroke", "#000000");
-                node.setAttributeNS(null, "stroke-opacity", 1.0);
                 node.setAttributeNS(null, "fill", "#ffffff");
-                node.setAttributeNS(null, "fill-opacity", 0.0);
-
+                node.setAttributeNS(null, 'stroke-opacity', 1.0);
+                node.setAttributeNS(null, 'fill-opacity', 0.0);
                 node.setAttributeNS(null, "display", 'none');
             }
         },
