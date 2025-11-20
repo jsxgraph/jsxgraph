@@ -1,6 +1,6 @@
 #!/bin/sh
 
-node ./node_modules/.bin/jsdoc --verbose -p -t node_modules/clean-jsdoc-theme -d tmp/docs src/jxg.js src/base/line.js src/options.js
+node ./node_modules/.bin/jsdoc --verbose -p -t node_modules/clean-jsdoc-theme -d tmp/docs src/jxg.js src/base/line.js src/element/arc.js src/options.js
 
 # docdash
 # clean-jsdoc-theme
