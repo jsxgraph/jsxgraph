@@ -704,8 +704,8 @@ JXG.extend(
         },
 
         /**
-         * Generates a copy of an array and removes the duplicate entries. The original
-         * Array will be altered.
+         * Generates a copy of an array and removes the duplicate entries.
+         * The original array will be altered.
          * @param {Array} arr
          * @returns {Array}
          *
@@ -759,7 +759,7 @@ JXG.extend(
          * Generates a sorted copy of an array containing numbers and removes the duplicate entries up to a supplied precision eps.
          * An array element arr[i] will be removed if abs(arr[i] - arr[i-1]) is less than eps.
          *
-         * The original Array will stay unaltered.
+         * The original array will stay unaltered.
          * @param {Array} arr
          * @returns {Array}
          *
