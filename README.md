@@ -16,21 +16,24 @@ to optimize the performance.
 *JSXGraph* supports multi-touch events and runs on all major browsers, even on very old IEs.
 
 *JSXGraph* is developed at the
-Lehrstuhl für Mathematik und ihre Didaktik
-University of Bayreuth, Germany
+[Lehrstuhl für Mathematik und ihre Didaktik](https://www.dmi.uni-bayreuth.de/de/index.html) and the [Center of Mobile Learning with Digital Technology](https://mobile-learning.uni-bayreuth.de/), 
+University of Bayreuth, 95447 Bayreuth, Germany
 
 Website
 -------
 
 - Project web site: https://jsxgraph.org/
-- Project wiki with hundreds of examples: https://jsxgraph.org/wiki/
+- Hundreds of examples:
+  - https://jsxgraph.org/share/
+  - https://jsxgraph.org/wiki/
 - GitHub project site: https://github.com/jsxgraph/jsxgraph
-- Mailing List/Google Group: https://groups.google.com/group/jsxgraph
-- JSXGraph questions at https://stackoverflow.com/search?tab=newest&q=jsxgraph
-- jsFiddle template: https://jsfiddle.net/8kep9syd/
-- YouTube channel: https://www.youtube.com/channel/UCANBFoVoOyW2eNyTvx-VZdQ
-- Moodle filter: https://github.com/jsxgraph/moodle-filter_jsxgraph
+- Discuss: https://forum.jsxgraph.org
+- Stackoverflow: JSXGraph questions at https://stackoverflow.com/search?tab=newest&q=jsxgraph
+- jsFiddle template: [https://jsfiddle.net/8kep9syd/](https://jsfiddle.net/my0fkdb6/1/)
+- YouTube channel: [https://www.youtube.com/@jsxgraph4224](https://www.youtube.com/@jsxgraph4224)
+- Moodle filter: https://moodle.org/plugins/filter_jsxgraph and https://github.com/jsxgraph/moodle-filter_jsxgraph
 - (outdated: SourceForge project site: https://sf.net/projects/jsxgraph)
+- (outdated: Google Group `https://groups.google.com/group/jsxgraph`)
 - CDNs: Embed JSXGraph via
 
 ```html
@@ -44,9 +47,9 @@ or
 
 ```html
 <script charset="UTF-8"
- src="//cdnjs.cloudflare.com/ajax/libs/jsxgraph/1.4.6/jsxgraphcore.js"></script>
+ src="//cdnjs.cloudflare.com/ajax/libs/jsxgraph/[versionnumber]/jsxgraphcore.js"></script>
 <link rel="stylesheet"
- type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/jsxgraph/1.4.6/jsxgraph.css">
+ type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/jsxgraph/[versionnumber]/jsxgraph.css">
 ```
 
 Please report bugs to our issue tracking system found at
