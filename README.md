@@ -18,7 +18,7 @@ to optimize the performance.
 [Lehrstuhl für Mathematik und ihre Didaktik](https://www.dmi.uni-bayreuth.de/de/index.html) and the [Center of Mobile Learning with Digital Technology](https://mobile-learning.uni-bayreuth.de/), 
 University of Bayreuth, 95447 Bayreuth, Germany
 
-Website
+Links
 -------
 
 - Project web site: https://jsxgraph.org/
