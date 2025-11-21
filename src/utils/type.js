@@ -708,6 +708,8 @@ JXG.extend(
          * Array will be altered.
          * @param {Array} arr
          * @returns {Array}
+         *
+         * @see JXG.toUniqueArrayFloat
          */
         uniqueArray: function (arr) {
             var i,
@@ -753,6 +755,20 @@ JXG.extend(
             return ret;
         },
 
+        /**
+         * Generates a sorted copy of an array containing numbers and removes the duplicate entries up to a supplied precision eps.
+         * An array element arr[i] will be removed if abs(arr[i] - arr[i-1]) is less than eps.
+         *
+         * The original Array will stay unaltered.
+         * @param {Array} arr
+         * @returns {Array}
+         *
+         * @param {Array} arr Array of numbers
+         * @param {Number} eps Precision
+         * @returns {Array}
+         *
+         * @see JXG.uniqueArray
+         */
         toUniqueArrayFloat: function (arr, eps) {
             var a,
                 i, le;
@@ -761,7 +777,7 @@ JXG.extend(
             //     a = arr.toSorted(function(a, b) { return a - b; });
             // } else {
             // }
-            // Backwards compatibility
+            // Backwards compatibility to avoid toSorted
             a = arr.slice();
             a.sort(function (a, b) { return a - b; });
             le = a.length;
