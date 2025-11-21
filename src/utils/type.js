@@ -767,6 +767,11 @@ JXG.extend(
          * @param {Number} eps Precision
          * @returns {Array}
          *
+         * @example
+         * var arr = [2.3, 4, Math.PI, 2.300001, Math.PI+0.000000001];
+         * console.log(JXG.toUniqueArrayFloat(arr, 0.00001));
+         * // Output: Array(3) [ 2.3, 3.141592653589793, 4 ]
+         *
          * @see JXG.uniqueArray
          */
         toUniqueArrayFloat: function (arr, eps) {
