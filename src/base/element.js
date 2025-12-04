@@ -549,7 +549,7 @@ JXG.extend(
             for (i = 0; i < function_array.length; i++) {
                 for (e in function_array[i].deps) {
                     obj = function_array[i].deps[e];
-                    this.addParents(obj);
+                    // this.addParents(obj);
                     obj.addChild(this);
                 }
             }
