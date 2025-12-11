@@ -303,7 +303,7 @@ JXG.extend(
             var is = ('GestureEvent' in window) && // Desktop and mobile
                     (
                         ('ongesturechange' in window) || // mobile webkit browsers and webview iOS
-                        (window !== 'undefined' && // Desktop Safari
+                        (window !== undefined && // Desktop Safari
                          'safari' in window &&
                          'pushNotification' in window.safari)
                     );
