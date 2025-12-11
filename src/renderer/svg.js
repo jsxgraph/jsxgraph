@@ -316,8 +316,15 @@ JXG.extend(
             node2 = this.createPrim('marker', id);
 
             // 'context-stroke': property is inherited from line or curve
-            node2.setAttributeNS(null, 'fill', 'context-stroke');
-            node2.setAttributeNS(null, 'stroke', 'context-stroke');
+            if (JXG.isWebkitApple()) {
+                // 2025: Safari does not support 'context-stroke'
+                node2.setAttributeNS(null, 'fill', el.evalVisProp('strokecolor'));
+                node2.setAttributeNS(null, 'stroke', el.evalVisProp('strokecolor'));
+            } else {
+                node2.setAttributeNS(null, 'fill', 'context-stroke');
+                node2.setAttributeNS(null, 'stroke', 'context-stroke');
+            }
+
             // node2.setAttributeNS(null, 'fill-opacity', 'context-stroke'); // Not available
             // node2.setAttributeNS(null, 'stroke-opacity', 'context-stroke');
             node2.setAttributeNS(null, 'stroke-width', 0); // this is the stroke-width of the arrow head.
@@ -495,15 +502,21 @@ JXG.extend(
                 if (Type.isString(color)) {
                     if (type !== 7) {
                         this._setAttribute(function () {
-                            node.setAttributeNS(null, 'fill', 'context-stroke');
-                            // node.setAttributeNS(null, 'stroke-opacity', 'context-stroke');
-                            // node.setAttributeNS(null, 'fill-opacity', 'context-stroke');
+                            if (JXG.isWebkitApple()) {
+                                // 2025: Safari does not support 'context-stroke'
+                                node.setAttributeNS(null, 'fill', color);
+                            } else {
+                                node.setAttributeNS(null, 'fill', 'context-stroke');
+                            }
                         }, el.visPropOld.fillcolor);
                     } else {
                         this._setAttribute(function () {
                             node.setAttributeNS(null, 'fill', 'none');
-                            node.setAttributeNS(null, 'stroke', 'context-stroke');
-                            // node.setAttributeNS(null, 'stroke-opacity', 'context-stroke');
+                            if (JXG.isWebkitApple()) {
+                                node.setAttributeNS(null, 'stroke', color);
+                            } else {
+                                node.setAttributeNS(null, 'stroke', 'context-stroke');
+                            }
                         }, el.visPropOld.fillcolor);
                     }
                 }
