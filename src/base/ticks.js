@@ -1734,7 +1734,7 @@ JXG.extend(
  *
  * @example
  * // TODO
- * 
+ *
  */
 JXG.createTicks = function (board, parents, attributes) {
     var el,
