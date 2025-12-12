@@ -347,6 +347,206 @@ jxg.extend(
             jxg.debugInt.apply(this, arguments);
         },
 
+        /**
+         * Initialize a new board.
+         * Alias of {@link JXG.JSXGraph.initBoard}.
+         * @param {String|Object} box id of or reference to the HTML element in which the board is painted.
+         * @param {Object} attributes An object that sets some of the board properties.
+         * See {@link JXG.Board} for a list of available attributes of the board.
+         * Most of these attributes can also be set via {@link JXG.Options},
+         *
+         * @returns {JXG.Board} Reference to the created board.
+         *
+         * @see JXG.AbstractRenderer#drawNavigationBar
+         * @example
+         * var board = JXG.JSXGraph.initBoard('jxgbox', {
+         *     boundingbox: [-10, 5, 10, -5],
+         *     keepaspectratio: false,
+         *     axis: true
+         * });
+         *
+         * </pre><div id="JXG79b42d26-b664-451d-96b4-08bc25dd87d3" class="jxgbox" style="width: 600px; height: 300px;"></div>
+         * <script type="text/javascript">
+         *     (function() {
+         *         var board = JXG.JSXGraph.initBoard('JXG79b42d26-b664-451d-96b4-08bc25dd87d3', {
+         *         boundingbox: [-10, 5, 10, -5],
+         *         keepaspectratio: false,
+         *         axis: true
+         *     });
+         *
+         *     })();
+         *
+         * </script><pre>
+         *
+         *
+         * @example
+         * const board = JXG.JSXGraph.initBoard('jxgbox', {
+         *   boundingbox: [-10, 10, 10, -10],
+         *   axis: true,
+         *   showCopyright: true,
+         *   showFullscreen: true,
+         *   showScreenshot: false,
+         *   showClearTraces: false,
+         *   showInfobox: false,
+         *   showNavigation: true,
+         *   grid: false,
+         *   defaultAxes: {
+         *     x: {
+         *       withLabel: true,
+         *       label: {
+         *         position: '95% left',
+         *         offset: [-10, 10]
+         *       },
+         *       lastArrow: {
+         *         type: 4,
+         *         size: 10
+         *       }
+         *     },
+         *     y: {
+         *       withLabel: true,
+         *       label: {
+         *         position: '0.90fr right',
+         *         offset: [6, -6]
+         *       },
+         *       lastArrow: {
+         *         type: 4,
+         *         size: 10
+         *       }
+         *     }
+         *   }
+         * });
+         *
+         * </pre><div id="JXGd7a7705b-35bb-4193-bbd4-3e3fd92eb92c" class="jxgbox" style="width: 300px; height: 300px;"></div>
+         * <script type="text/javascript">
+         *     (function() {
+         *         var board = JXG.JSXGraph.initBoard('JXGd7a7705b-35bb-4193-bbd4-3e3fd92eb92c', {
+         *       boundingbox: [-10, 10, 10, -10],
+         *       axis: true,
+         *       showCopyright: true,
+         *       showFullscreen: true,
+         *       showScreenshot: false,
+         *       showClearTraces: false,
+         *       showInfobox: false,
+         *       showNavigation: true,
+         *       grid: false,
+         *       defaultAxes: {
+         *         x: {
+         *           withLabel: true,
+         *           label: {
+         *             position: '95% left',
+         *             offset: [0, 0]
+         *           },
+         *           lastArrow: {
+         *             type: 4,
+         *             size: 10
+         *           }
+         *         },
+         *         y: {
+         *           withLabel: true,
+         *           label: {
+         *             position: '0.90fr right',
+         *             offset: [0, 0]
+         *           },
+         *           lastArrow: {
+         *             type: 4,
+         *             size: 10
+         *           }
+         *         }
+         *       }
+         *     });
+         *
+         *     })();
+         *
+         * </script><pre>
+         * @example
+         * const board = JXG.JSXGraph.initBoard('jxgbox', {
+         *     boundingbox: [-5, 5, 5, -5],
+         *     intl: {
+         *         enabled: false,
+         *         locale: 'en-EN'
+         *     },
+         *     keepaspectratio: true,
+         *     axis: true,
+         *     defaultAxes: {
+         *         x: {
+         *             ticks: {
+         *                 intl: {
+         *                         enabled: true,
+         *                         options: {
+         *                             style: 'unit',
+         *                             unit: 'kilometer-per-hour',
+         *                             unitDisplay: 'narrow'
+         *                         }
+         *                 }
+         *             }
+         *         },
+         *         y: {
+         *             ticks: {
+         *             }
+         *         }
+         *     },
+         *     infobox: {
+         *         fontSize: 20,
+         *         intl: {
+         *             enabled: true,
+         *             options: {
+         *                 minimumFractionDigits: 4,
+         *                 maximumFractionDigits: 5
+         *             }
+         *         }
+         *     }
+         * });
+         *
+         * </pre><div id="JXGd84f4c84-f900-4d33-b001-e5f5f3ab0dd2" class="jxgbox" style="width: 600px; height: 600px;"></div>
+         * <script type="text/javascript">
+         *     (function() {
+         *         var board = JXG.JSXGraph.initBoard('JXGd84f4c84-f900-4d33-b001-e5f5f3ab0dd2', {
+         *         boundingbox: [-5, 5, 5, -5],
+         *         intl: {
+         *             enabled: false,
+         *             locale: 'en-EN'
+         *         },
+         *         keepaspectratio: true,
+         *         axis: true,
+         *         defaultAxes: {
+         *             x: {
+         *                 ticks: {
+         *                     intl: {
+         *                             enabled: true,
+         *                             options: {
+         *                                 style: 'unit',
+         *                                 unit: 'kilometer-per-hour',
+         *                                 unitDisplay: 'narrow'
+         *                             }
+         *                     }
+         *                 }
+         *             },
+         *             y: {
+         *                 ticks: {
+         *                 }
+         *             }
+         *         },
+         *         infobox: {
+         *             fontSize: 20,
+         *             intl: {
+         *                 enabled: true,
+         *                 options: {
+         *                     minimumFractionDigits: 4,
+         *                     maximumFractionDigits: 5
+         *                 }
+         *             }
+         *         }
+         *     });
+         *
+         *     })();
+         *
+         * </script><pre>
+         *
+         */
+        init: function (box, attributes) {
+            return this.JSXGraph.initBoard(box, attributes);
+        },
+
         themes: {}
     }
 );

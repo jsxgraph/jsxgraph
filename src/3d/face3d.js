@@ -297,6 +297,48 @@ JXG.extend(
             return this;
         },
 
+        // To be merged with View3d.getRotationFromAngles
+        getRotationFromAngles: function (angles) {
+            var a, e, b, f,
+                cosBank, sinBank,
+                mat = [
+                    [1, 0, 0, 0],
+                    [0, 1, 0, 0],
+                    [0, 0, 1, 0],
+                    [0, 0, 0, 1]
+                ];
+
+            // mat projects homogeneous 3D coords in View3D
+            // to homogeneous 2D coordinates in the board
+            a = angles.az;
+            e = angles.el;
+            b = angles.bank;
+            f = -Math.sin(e);
+
+            mat[1][1] = -Math.cos(a);
+            mat[1][2] = Math.sin(a);
+            mat[1][3] = 0;
+
+            mat[2][1] = f * Math.sin(a);
+            mat[2][2] = f * Math.cos(a);
+            mat[2][3] = Math.cos(e);
+
+            mat[3][1] = Math.cos(e) * Math.sin(a);
+            mat[3][2] = Math.cos(e) * Math.cos(a);
+            mat[3][3] = Math.sin(e);
+
+            cosBank = Math.cos(b);
+            sinBank = Math.sin(b);
+            mat = Mat.matMatMult([
+                [1, 0, 0, 0],
+                [0, cosBank, sinBank, 0],
+                [0, -sinBank, cosBank, 0],
+                [0, 0, 0, 1]
+            ], mat);
+
+            return mat;
+        },
+
         /**
          * Determines the lightness of the face (in the HSL color scheme).
          * <p>
@@ -309,6 +351,7 @@ JXG.extend(
         shader: function() {
             var hue, sat, light, angle, hsl,
                 // bb = this.view.bbox3D,
+                sun,// angles,
                 minFace, maxFace,
                 minLight, maxLight;
 
@@ -320,8 +363,18 @@ JXG.extend(
                 maxLight = this.evalVisProp('shader.maxlightness');
 
                 if (this.evalVisProp('shader.type').toLowerCase() === 'angle') {
-                    // Angle normal / eye
-                    angle = Mat.innerProduct(this.view.matrix3DRotShift[3], this.normal);
+                    // Default: angle normal / eye
+                    sun = this.view.matrix3DRotShift[3];
+                    // Below: move sun away from eye
+                    // angles = {
+                    //     az: this.view.angles.az - 45 * Math.PI / 180, // [0, 360]
+                    //     el: this.view.angles.el + 0 * Math.PI / 180,  // [-45,45]
+                    //     bank: this.view.angles.bank
+                    // };
+                    // sun = this.getRotationFromAngles(angles)[3];
+
+                    // angle = Mat.innerProduct(this.view.matrix3DRotShift[3], this.normal);
+                    angle = Mat.innerProduct(sun, this.normal);
                     angle = Math.abs(angle);
                     light = minLight + (maxLight - minLight) * angle;
                 } else {
