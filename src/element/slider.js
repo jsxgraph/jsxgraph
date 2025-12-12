@@ -586,10 +586,10 @@ JXG.createSlider = function (board, parents, attributes) {
     p3.prepareUpdate().update();
     if (!board.isSuspendedUpdate) {
         p3.updateVisibility().updateRenderer();
-        p3.baseline.updateVisibility().updateRenderer();
+        p3.baseline.prepareUpdate().updateVisibility().updateRenderer(); // prepareUpdate needed because needsRegularUpdate==false
         p3.highline.updateVisibility().updateRenderer();
         if (withTicks) {
-            p3.ticks.updateVisibility().updateRenderer();
+            p3.prepareUpdate().ticks.updateVisibility().updateRenderer();
         }
     }
 

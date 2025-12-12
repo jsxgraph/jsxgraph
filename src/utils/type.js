@@ -753,6 +753,27 @@ JXG.extend(
             return ret;
         },
 
+        toUniqueArrayFloat: function (arr, eps) {
+            var a,
+                i, le;
+
+            // if (false && Type.exists(arr.toSorted)) {
+            //     a = arr.toSorted(function(a, b) { return a - b; });
+            // } else {
+            // }
+            // Backwards compatibility
+            a = arr.slice();
+            a.sort(function (a, b) { return a - b; });
+            le = a.length;
+            for (i = le - 1; i > 0; i--) {
+                if (Math.abs(a[i] - a[i - 1]) < eps) {
+                    a.splice(i, 1);
+                }
+            }
+            return a;
+        },
+
+
         /**
          * Checks if an array contains an element equal to <tt>val</tt> but does not check the type!
          * @param {Array} arr

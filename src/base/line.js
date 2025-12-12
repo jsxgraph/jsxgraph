@@ -951,13 +951,13 @@ JXG.extend(
                 if (c2[0] !== 0) {
                     return c1[1] + (c2[1] - c1[1]) * t;
                 } else {
-                    return c1[1] + b * 1.e6 * t;
+                    return c1[1] + b * 1.e5 * t;
                 }
             } else {
                 if (c1[0] !== 0) {
                     return c2[1] - (c1[1] - c2[1]) * t;
                 } else {
-                    return c2[1] + b * 1.e6 * t;
+                    return c2[1] + b * 1.e5 * t;
                 }
             }
         },
@@ -987,13 +987,13 @@ JXG.extend(
                 if (c2[0] !== 0) {
                     return c1[2] + (c2[2] - c1[2]) * t;
                 } else {
-                    return c1[2] - a * 1.e6 * t;
+                    return c1[2] - a * 1.e5 * t;
                 }
             } else {
                 if (c1[0] !== 0) {
                     return c2[2] - (c1[2] - c2[2]) * t;
                 } else {
-                    return c2[2] - a * 1.e6 * t;
+                    return c2[2] - a * 1.e5 * t;
                 }
             }
         },
