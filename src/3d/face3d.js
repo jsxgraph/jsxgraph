@@ -351,7 +351,7 @@ JXG.extend(
         shader: function() {
             var hue, sat, light, angle, hsl,
                 // bb = this.view.bbox3D,
-                sun,// angles,
+                sun, angles,
                 minFace, maxFace,
                 minLight, maxLight;
 
@@ -363,15 +363,18 @@ JXG.extend(
                 maxLight = this.evalVisProp('shader.maxlightness');
 
                 if (this.evalVisProp('shader.type').toLowerCase() === 'angle') {
-                    // Default: angle normal / eye
-                    sun = this.view.matrix3DRotShift[3];
-                    // Below: move sun away from eye
-                    // angles = {
-                    //     az: this.view.angles.az - 45 * Math.PI / 180, // [0, 360]
-                    //     el: this.view.angles.el + 0 * Math.PI / 180,  // [-45,45]
-                    //     bank: this.view.angles.bank
-                    // };
-                    // sun = this.getRotationFromAngles(angles)[3];
+                    if (true) {
+                        // Default: angle normal / eye
+                        sun = this.view.matrix3DRotShift[3];
+                    } else {
+                        // Below: move sun away from eye
+                        angles = {
+                            az: this.view.angles.az - 45 * Math.PI / 180, // [0, 360]
+                            el: this.view.angles.el + 10 * Math.PI / 180,  // [-45,45]
+                            bank: this.view.angles.bank
+                        };
+                        sun = this.getRotationFromAngles(angles)[3];
+                    }
 
                     // angle = Mat.innerProduct(this.view.matrix3DRotShift[3], this.normal);
                     angle = Mat.innerProduct(sun, this.normal);
