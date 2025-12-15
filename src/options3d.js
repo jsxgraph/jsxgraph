@@ -607,9 +607,9 @@ JXG.extend(Options, {
                 type: 1,// 1: lighting==camera (default),
                         // 2: Fixed: angle(object, camera),
                         // 3: Fixed: angle(lighting, camera)
-                az: 120,
-                el: 0,
-                bank: 0,
+                az: 120, // TODO use radians, ignored for type==1
+                el: 0,   // TODO use radians, ignored for type==1
+                bank: 45, // TODO use radians, ignored for type==1, type==3
                 dir: -1  // Default: -1
             }
         }
