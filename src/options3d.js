@@ -601,7 +601,17 @@ JXG.extend(Options, {
             hue: 60,         // yellow
             saturation: 90,
             minLightness: 30,
-            maxLightness: 90
+            maxLightness: 90,
+
+            light: {
+                type: 1,// 1: lighting==camera (default),
+                        // 2: Fixed: angle(object, camera),
+                        // 3: Fixed: angle(lighting, camera)
+                az: 120,
+                el: 0,
+                bank: 0,
+                dir: -1  // Default: -1
+            }
         }
 
         /**#@-*/

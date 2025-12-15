@@ -352,9 +352,10 @@ JXG.extend(
             var hue, sat, light, angle, hsl,
                 // bb = this.view.bbox3D,
                 sun, angles,
+                abs,
+                lightObj,
                 minFace, maxFace,
                 minLight, maxLight;
-
 
             if (this.evalVisProp('shader.enabled')) {
                 hue = this.evalVisProp('shader.hue');
@@ -363,22 +364,38 @@ JXG.extend(
                 maxLight = this.evalVisProp('shader.maxlightness');
 
                 if (this.evalVisProp('shader.type').toLowerCase() === 'angle') {
-                    if (true) {
-                        // Default: angle normal / eye
-                        sun = this.view.matrix3DRotShift[3];
-                    } else {
-                        // Below: move sun away from eye
-                        angles = {
-                            az: this.view.angles.az - 45 * Math.PI / 180, // [0, 360]
-                            el: this.view.angles.el + 10 * Math.PI / 180,  // [-45,45]
-                            bank: this.view.angles.bank
-                        };
-                        sun = this.getRotationFromAngles(angles)[3];
+                    lightObj = this.evalVisProp('shader.light');
+
+                    switch (lightObj.type) {
+                        // 1: lighting==camera (default),
+                        // 2: Fixed: angle(object, camera),
+                        // 3: Fixed: angle(lighting, camera)
+                        case 2: // Fixed: angle(object, camera)
+                            angles = {
+                                az: lightObj.az * Math.PI / 180,
+                                el: lightObj.el * Math.PI / 180,
+                                bank: lightObj.bank * Math.PI / 180
+                            };
+                            sun = this.getRotationFromAngles(angles)[3];
+                            abs = lightObj.dir;
+                            break;
+                        case 3: // Fixed: angle(lighting, camera)
+                            angles = {
+                                az: this.view.angles.az + lightObj.az * Math.PI / 180,
+                                el: this.view.angles.el + lightObj.el * Math.PI / 180,
+                                bank: this.view.angles.bank
+                            };
+                            sun = this.getRotationFromAngles(angles)[3];
+                            abs = lightObj.dir;
+                            break;
+                        default: // Fixed: angle(lighting, camera) = 0
+                            sun = this.view.matrix3DRotShift[3];
+                            abs = lightObj.dir;
                     }
 
                     // angle = Mat.innerProduct(this.view.matrix3DRotShift[3], this.normal);
                     angle = Mat.innerProduct(sun, this.normal);
-                    angle = Math.abs(angle);
+                    angle = (abs === 0) ? Math.abs(angle) : ((abs < 0) ? -angle : angle);
                     light = minLight + (maxLight - minLight) * angle;
                 } else {
                     // zIndex
