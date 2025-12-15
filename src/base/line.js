@@ -1069,11 +1069,22 @@ JXG.extend(
 );
 
 /**
- * @typedef {(array|function)} PointLike Something with a coordinate array
+ * @typedef {(JXG.Point|array|function)} PointLike Point, array, or function returning an array
+ */
+/**
+ * @typedef {(Number|function)} NumberLike Number or function returning a number
  */
 
+//  * @param {PointLike} point1 The first points
+//  * @param {JXG.Point,array,function_JXG.Point,array,function} point1,point2 Parent elements can be two elements either of type {@link JXG.Point} or array of
+//  * numbers describing the coordinates of a point. In the latter case the point will be constructed automatically as a fixed invisible point.
+//  * It is possible to provide a function returning an array or a point, instead of providing an array or a point.
+//  * @param {Number,function_Number,function_Number,function} a,b,c A line can also be created providing three numbers. The line is then described by
+//  * the set of solutions of the equation <tt>a*z+b*x+c*y = 0</tt>. For all finite points, z is normalized to the value 1.
+//  * It is possible to provide three functions returning numbers, too.
+//  * @param {function} f This function must return an array containing three numbers forming the line's homogeneous coordinates.
 /**
- * @class A general line is given by two points or three coordinates.
+ * @class JSXGraph Line class: A general line is given by two points or three coordinates.
  * By setting additional properties a line can be used as an arrow and/or axis.
  * @pseudo
  * @name Line
@@ -1082,14 +1093,26 @@ JXG.extend(
  * @type JXG.Line
  * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
  * 
- * @param {...PointLike} point1 The first points
- * @param {JXG.Point,array,function_JXG.Point,array,function} point1,point2 Parent elements can be two elements either of type {@link JXG.Point} or array of
+ * @param {PointLike} point1 Parent elements can be two elements either of type {@link JXG.Point} or array of
  * numbers describing the coordinates of a point. In the latter case the point will be constructed automatically as a fixed invisible point.
  * It is possible to provide a function returning an array or a point, instead of providing an array or a point.
- * @param {Number,function_Number,function_Number,function} a,b,c A line can also be created providing three numbers. The line is then described by
+ * @param {PointLike} point2 Parent elements can be two elements either of type {@link JXG.Point} or array of
+ * numbers describing the coordinates of a point. In the latter case the point will be constructed automatically as a fixed invisible point.
+ * It is possible to provide a function returning an array or a point, instead of providing an array or a point.
+ * 
+ * @param {NumberLike} a A line can also be created providing three numbers. The line is then described by
  * the set of solutions of the equation <tt>a*z+b*x+c*y = 0</tt>. For all finite points, z is normalized to the value 1.
  * It is possible to provide three functions returning numbers, too.
+ * @param {NumberLike} b A line can also be created providing three numbers. The line is then described by
+ * the set of solutions of the equation <tt>a*z+b*x+c*y = 0</tt>. For all finite points, z is normalized to the value 1.
+ * It is possible to provide three functions returning numbers, too.
+ * @param {NumberLike} c A line can also be created providing three numbers. The line is then described by
+ * the set of solutions of the equation <tt>a*z+b*x+c*y = 0</tt>. For all finite points, z is normalized to the value 1.
+ * It is possible to provide three functions returning numbers, too.
+ * ---
  * @param {function} f This function must return an array containing three numbers forming the line's homogeneous coordinates.
+ * 
+ * 
  * <p>
  * Additionally, a line can be created by providing a line and a transformation (or an array of transformations).
  * Then, the result is a line which is the transformation of the supplied line.
