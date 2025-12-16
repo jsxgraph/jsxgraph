@@ -295,13 +295,23 @@ JXG.extend(
 
         /**
          * Detects if the user is using Safari on an Apple device.
+         * See https://evilmartians.com/chronicles/how-to-detect-safari-and-ios-versions-with-ease (2025)
          * @returns {Boolean}
          * @deprecated
          */
         isWebkitApple: function () {
-            return (
-                this.isApple() && navigator.userAgent.search(/Mobile\/[0-9A-Za-z.]*Safari/) > -1
-            );
+            var is = ('GestureEvent' in window) && // Desktop and mobile
+                    (
+                        ('ongesturechange' in window) || // mobile webkit browsers and webview iOS
+                        (window !== undefined && // Desktop Safari
+                         'safari' in window &&
+                         'pushNotification' in window.safari)
+                    );
+            return is;
+
+            // return (
+            //     this.isApple() && navigator.userAgent.search(/Mobile\/[0-9A-Za-z.]*Safari/) > -1
+            // );
         },
 
         /**

@@ -9,28 +9,30 @@ About
 *JSXGraph* is a cross-browser library for interactive geometry, function plotting,
 charting, and data visualization in a web browser. It is implemented completely
 in JavaScript, does not rely on any other library, and uses SVG, canvas, or even the venerable VML.
-*JSXGraph* is easy to embed and has a small footprint: approx. 200 KByte if
-embedded in a web page. No plug-ins are required! Special care has been taken
+*JSXGraph* is easy to embed and has a small footprint. No plug-ins are required! Special care has been taken
 to optimize the performance.
 
-*JSXGraph* supports multi-touch events and runs on all major browsers, even on very old IEs.
+*JSXGraph* supports multi-touch events and runs on all major browsers.
 
 *JSXGraph* is developed at the
-Lehrstuhl für Mathematik und ihre Didaktik
-University of Bayreuth, Germany
+[Lehrstuhl für Mathematik und ihre Didaktik](https://www.dmi.uni-bayreuth.de/de/index.html) and the [Center of Mobile Learning with Digital Technology](https://mobile-learning.uni-bayreuth.de/), 
+University of Bayreuth, 95447 Bayreuth, Germany
 
-Website
+Links
 -------
 
 - Project web site: https://jsxgraph.org/
-- Project wiki with hundreds of examples: https://jsxgraph.org/wiki/
+- Hundreds of examples:
+  - https://jsxgraph.org/share/
+  - https://jsxgraph.org/wiki/
 - GitHub project site: https://github.com/jsxgraph/jsxgraph
-- Mailing List/Google Group: https://groups.google.com/group/jsxgraph
-- JSXGraph questions at https://stackoverflow.com/search?tab=newest&q=jsxgraph
-- jsFiddle template: https://jsfiddle.net/8kep9syd/
-- YouTube channel: https://www.youtube.com/channel/UCANBFoVoOyW2eNyTvx-VZdQ
-- Moodle filter: https://github.com/jsxgraph/moodle-filter_jsxgraph
+- Discuss: https://forum.jsxgraph.org
+- Stackoverflow: https://stackoverflow.com/search?tab=newest&q=jsxgraph
+- jsFiddle template: [https://jsfiddle.net/8kep9syd/](https://jsfiddle.net/my0fkdb6/1/)
+- YouTube channel: [https://www.youtube.com/@jsxgraph4224](https://www.youtube.com/@jsxgraph4224)
+- Moodle filter: https://moodle.org/plugins/filter_jsxgraph and https://github.com/jsxgraph/moodle-filter_jsxgraph
 - (outdated: SourceForge project site: https://sf.net/projects/jsxgraph)
+- (outdated: Google Group `https://groups.google.com/group/jsxgraph`)
 - CDNs: Embed JSXGraph via
 
 ```html
@@ -44,9 +46,9 @@ or
 
 ```html
 <script charset="UTF-8"
- src="//cdnjs.cloudflare.com/ajax/libs/jsxgraph/1.4.6/jsxgraphcore.js"></script>
+ src="//cdnjs.cloudflare.com/ajax/libs/jsxgraph/[versionnumber]/jsxgraphcore.js"></script>
 <link rel="stylesheet"
- type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/jsxgraph/1.4.6/jsxgraph.css">
+ type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/jsxgraph/[versionnumber]/jsxgraph.css">
 ```
 
 Please report bugs to our issue tracking system found at
@@ -74,14 +76,10 @@ __HTML template:__
     <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
     <link href="https://cdn.jsdelivr.net/npm/jsxgraph/distrib/jsxgraph.css" rel="stylesheet" type="text/css">
     <script src="https://cdn.jsdelivr.net/npm/jsxgraph/distrib/jsxgraphcore.js" charset="UTF-8"></script>
-
-    <!-- The next line is optional: MathJax -->
-    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" id="MathJax-script" async></script>
   </head>
+
   <body>
-
   <div id="jxgbox" class="jxgbox" style="max-width:800px; aspect-ratio: 1/1;"></div>
-
   <script>
     var board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox: [-8, 8, 8, -8]});
     var p = board.create('point', [1, 3], {name: 'point'});
@@ -117,7 +115,7 @@ Plug-ins
 --------
 
 - [JSXGraph filter for moodle and formulas](https://moodle.org/plugins/filter_jsxgraph)
-- [JSXGraph is in included in STACK](https://stack-assessment.org/)
+- [JSXGraph comes already included with STACK assessment](https://stack-assessment.org/)
 - Mediawiki plug-in is available in the folder `plugins`
 - [JSXGraph in Jupyter](https://pypi.org/project/jsxgraph-magic/)
 - ...
