@@ -604,12 +604,12 @@ JXG.extend(Options, {
             maxLightness: 90,
 
             light: {
-                type: 1,// 1: lighting==camera (default),
-                        // 2: Fixed: angle(object, camera),
-                        // 3: Fixed: angle(lighting, camera)
-                az: 120, // TODO use radians, ignored for type==1
-                el: 0,   // TODO use radians, ignored for type==1
-                bank: 45, // TODO use radians, ignored for type==1, type==3
+                type: 3,// 1: lighting==camera,
+                        // 2: Fixed: angle(light, object),
+                        // 3: Fixed: angle(light, camera) (default)
+                az: -45, // TODO use radians, ignored for type==1
+                el: 20,  // TODO use radians, ignored for type==1
+                bank: 0, // TODO use radians, ignored for type==1, type==3
                 dir: -1  // Default: -1
             }
         }
