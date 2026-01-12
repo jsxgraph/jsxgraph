@@ -1,3 +1,8 @@
+1.12.2
+===
+
+Unnecessary zip files have been removed to be below the maximum size of the repository, e.g. of jsdelivr.
+
 1.12.1
 ===
 
@@ -72,7 +77,7 @@ Bug fixes
 ---------
 
 - Fix backwards compatibility for color value `null`
-- `setAttribute`: conflict with shortcut names 
+- `setAttribute`: conflict with shortcut names
 - `view3d.removeObject`
 
 
