@@ -4074,6 +4074,11 @@ JXG.extend(
                 return false;
             }
 
+            // Tab key should be handled by the browser
+            if (evt.keyCode === 9) {
+                return false;
+            }
+
             // dx = Math.round(dx * u) / u;
             // dy = Math.round(dy * u) / u;
 
