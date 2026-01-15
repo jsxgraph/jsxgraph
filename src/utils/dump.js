@@ -158,16 +158,17 @@ JXG.Dump = {
      * @returns {Object} An attributes object.
      */
     prepareAttributes: function (board, obj) {
-        var a, s;
+        var a, s, o;
 
-        a = this.minimizeObject(obj.getAttributes(), JXG.Options[obj.elType]);
+        o = JXG.Options[obj.elType] || {};
+        a = this.minimizeObject(obj.getAttributes(), o);
 
         for (s in obj.subs) {
             if (obj.subs.hasOwnProperty(s)) {
                 a[s] = this.minimizeObject(
                     obj.subs[s].getAttributes(),
-                    JXG.Options[obj.elType][s],
-                    JXG.Options[obj.subs[s].elType]
+                    o[s],
+                    JXG.Options[obj.subs[s].elType] || {}
                 );
                 a[s].id = obj.subs[s].id;
                 a[s].name = obj.subs[s].name;
