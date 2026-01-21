@@ -754,7 +754,7 @@ JXG.extend(
          * Possible values are {@link JXG.COORDS_BY_USER} and {@link JXG.COORDS_BY_SCREEN}.
          * @param {Array} coords coordinates in screen/user units
          * @param {Array} oldcoords previous coordinates in screen/user units
-         * @returns {JXG.GeometryElement} this element
+         * @returns {JXG.GeometryElement} {JXG.GeometryElement} A reference to the object
          */
         setPositionDirectly: function (method, coords, oldcoords) {
             var c = new Coords(method, coords, this.board, false),
@@ -762,6 +762,56 @@ JXG.extend(
                 dc = Statistics.subtract(c.usrCoords, oldc.usrCoords);
 
             this.setPosition(Const.COORDS_BY_USER, dc);
+
+            return this;
+        },
+
+        /**
+         * Moves the element to the top of its layer. Works only for SVG renderer and for simple elements
+         * consisting of one SVG node.
+         *
+         * @returns {JXG.GeometryElement} {JXG.GeometryElement} A reference to the object
+         * @example
+         *   // Move one of the points 'A' or ''B' to make
+         *   // their midpoint visible.
+         *   const point1 = board.create("point", [-3, 1]);
+         *   const point2 = board.create("point", [2,  1]);
+         *   var mid = board.create("midpoint", [point1, point2]);
+         *   const point3 = board.create("point", [-0.5, 1], {size: 10, color: 'blue'});
+         *
+         *   mid.coords.on('update', function() {
+         *       mid.toTopOfLayer();
+         *   });
+         *   point3.coords.on('update', function() {
+         *       point3.toTopOfLayer();
+         *   });
+         *
+         * </pre><div id="JXG97a85991-8a1d-4a8b-9d19-2c921c0a70a9" class="jxgbox" style="width: 300px; height: 300px;"></div>
+         * <script type="text/javascript">
+         *     (function() {
+         *         var board = JXG.JSXGraph.initBoard('JXG97a85991-8a1d-4a8b-9d19-2c921c0a70a9',
+         *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
+         *             const point1 = board.create("point", [-3, 1]);
+         *             const point2 = board.create("point", [2,  1]);
+         *             var mid = board.create("midpoint", [point1, point2]);
+         *             const point3 = board.create("point", [-0.5, 1], {size: 10, color: 'blue'});
+         *
+         *             mid.coords.on('update', function() {
+         *                 mid.toTopOfLayer();
+         *             });
+         *             point3.coords.on('update', function() {
+         *                 point3.toTopOfLayer();
+         *             });
+         *
+         *     })();
+         *
+         * </script><pre>
+         *
+         */
+        toTopOfLayer: function() {
+            if (this.board.renderer.type === 'svg' && Type.exists(this.rendNode)) {
+                this.rendNode.parentNode.appendChild(this.rendNode);
+            }
 
             return this;
         },
