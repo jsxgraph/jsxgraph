@@ -1407,13 +1407,20 @@ JXG.extend(
             }
 
             // Move drag element to the top of the layer
-            if (this.renderer.type === 'svg' &&
-                Type.exists(collect[0]) &&
-                collect[0].evalVisProp('dragtotopoflayer') &&
-                collect.length === 1 &&
-                Type.exists(collect[0].rendNode)
+            if (this.renderer.type === 'svg' && Type.exists(collect[0]) &&
+                collect.length === 1 && Type.exists(collect[0].rendNode)
             ) {
-                collect[0].rendNode.parentNode.appendChild(collect[0].rendNode);
+                // Move object to top
+                if (collect[0].evalVisProp('dragtotopoflayer')) {
+                    collect[0].rendNode.parentNode.appendChild(collect[0].rendNode);
+                }
+                // Move object's label to top
+                if (collect[0].hasLabel &&
+                    collect[0].label.evalVisProp('display') === 'html' &&
+                    collect[0].label.evalVisProp('dragtotopoflayer')
+                ) {
+                    collect[0].label.rendNode.parentNode.appendChild(collect[0].label.rendNode);
+                }
             }
 
             // // Init rotation angle and scale factor for two finger movements
