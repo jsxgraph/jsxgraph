@@ -794,7 +794,6 @@ JXG.extend(
             return a;
         },
 
-
         /**
          * Checks if an array contains an element equal to <tt>val</tt> but does not check the type!
          * @param {Array} arr
