@@ -113,6 +113,14 @@ JXG.Dump = {
         return s;
     },
 
+    /**
+     * Recursively determine the difference between objects
+     * instance and def.
+     * @param {Object} instance
+     * @param {Object} def
+     * @param {String} pre
+     * @returns
+     */
     _minimizeSubObject: function(instance, def, pre) {
         var p, pl, del,
             deleteAll = true,
@@ -121,29 +129,34 @@ JXG.Dump = {
         for (p in def) {
             if (def.hasOwnProperty(p)) {
                 pl = p.toLowerCase();
-                console.log(pre + 'Test', pl, typeof def[p])
+                // console.log(pre + 'Test', pl, typeof def[p])
 
-                if (def[p] === copy[pl]) {
-                    console.log(pre + "\tdelete", p)
+                if ((def[p] === copy[pl]) || (!Type.exists(def[p]) && !Type.exists(copy[pl])) ) {
+                    // Equality is determined for strings and numbers.
+                    // For different arrays or objects, '===' is always false.
+
+                    // console.log(pre + "\tdelete", p)
                     delete copy[pl];
                 } else if (Type.isArray(def[p]) && Type.isArray(copy[pl])) {
+                    // Compare two arrays
                     if (Type.cmpArrays(copy[pl], def[p])) {
-                        console.log(pre + "\t\tdelete ARR", p);
+                        // console.log(pre + "\t\tdelete ARR", p);
                         delete copy[pl];
                     } else {
                         deleteAll = false;
                     }
                 } else {
-                    if (def[p] !== null && typeof def[p] === 'object' &&
+                    if (Type.exists(def[p]) && typeof def[p] === 'object' &&
                         Type.exists(copy[pl]) && typeof copy[pl] === 'object'
                     ) {
+                        // Recursively compare two objects
                         del = this._minimizeSubObject(copy[pl], def[p], pre + '\t');
                         if (del) {
-                            console.log(pre + "--> delete obj", p)
+                            // console.log(pre + "--> delete obj", p)
                             delete copy[pl];
                         } else {
-                            console.log(pre + '|')
-                            console.log(def[p], copy[pl])
+                            // console.log(pre + '|')
+                            // console.log(def[p], copy[pl])
                             deleteAll = false;
                         }
                     } else {
@@ -153,10 +166,13 @@ JXG.Dump = {
             }
         }
         if (deleteAll && Object.keys(def).length === 0 && Object.keys(copy).length !== 0) {
+            // If def is empty and copy is non-empty, we keep copy.
+            // This is the case if copy is filled with from an inherited element,
+            // like label is inherited from text.
             deleteAll = false;
         }
 
-        console.log(pre + 'deleteAll', deleteAll)
+        // console.log(pre + 'deleteAll', deleteAll)
         return deleteAll;
     },
 
@@ -190,6 +206,7 @@ JXG.Dump = {
         }
 
         /*
+        // Original
         for (p in def) {
             if (def.hasOwnProperty(p)) {
                 pl = p.toLowerCase();
