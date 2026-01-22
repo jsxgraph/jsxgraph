@@ -167,7 +167,7 @@ JXG.Dump = {
         }
         if (deleteAll && Object.keys(def).length === 0 && Object.keys(copy).length !== 0) {
             // If def is empty and copy is non-empty, we keep copy.
-            // This is the case if copy is filled with from an inherited element,
+            // This is the case if copy is filled with entries from an inherited element,
             // like label is inherited from text.
             deleteAll = false;
         }
