@@ -3130,7 +3130,7 @@ Mat.Numerics = {
     riemann: function (gf, n, type, start, end) {
         var i, delta,
             k, a, b, c, f0, f1, f2, xx, h,
-            steps = 30, // Fixed step width for Simpson's rule
+            steps = 30, // Constant step width for Simpson's rule
             xarr = [],
             yarr = [],
             x = start,
@@ -3152,7 +3152,8 @@ Mat.Numerics = {
 
         delta = (end - start) / n;
 
-        // "Upper" horizontal line defined by function
+        // Horizontal lines defined by function
+        // Go forward
         for (i = 0; i < n; i++) {
             if (type === 'simpson') {
                 sum += this._riemannValue(x, f, type, delta) * delta;
@@ -3185,15 +3186,12 @@ Mat.Numerics = {
                 } else {
                     sum += y * delta;
                 }
-
-                xarr.push(x);
-                yarr.push(y);
             }
             xarr.push(x);
             yarr.push(y);
         }
 
-        // "Lower" horizontal line
+        // Horizontal lines defined by x-axis or second function
         // Go backwards
         for (i = 0; i < n; i++) {
             if (type === "simpson" && g) {
@@ -3237,9 +3235,14 @@ Mat.Numerics = {
             xarr.push(x);
             yarr.push(y);
 
-            // Draw the vertical lines
+            // Close rectangle
             xarr.push(x);
-            yarr.push(f(x));
+            if (type === 'simpson') {
+                yarr.push(f(x));
+            } else {
+                y = this._riemannValue(x, f, type, delta);
+                yarr.push(y);
+            }
         }
 
         return [xarr, yarr, sum];
