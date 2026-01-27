@@ -447,6 +447,7 @@ JXG.extend(
             }
             node = this.rendNode;
 
+
             /**
              * offsetWidth and offsetHeight seem to be supported for internal vml elements by IE10+ in IE8 mode.
              */
@@ -455,6 +456,20 @@ JXG.extend(
                     that = this;
                     window.setTimeout(function () {
                         that.size = [node.offsetWidth, node.offsetHeight];
+
+                        // This would be the way to determine the height of a MathJax formula
+                        // rendered with SVG (i.e. using tex-svg-nofont).
+                        // This is needed if the text element's anchorY === 'middle'
+                        // and the text is included in a board.renderer.dumpToDataURI() call
+                        // with MathJax formulas.
+                        // if (Type.exists(node.firstChild) && node.firstChild.nodeName === 'MJX-CONTAINER' &&
+                        //     Type.exists(node.firstChild.firstChild && node.firstChild.firstChild.nodeName === 'SVG')
+                        // ) {
+                        //     // console.log(that.visProp.fontsize * 0.5)
+                        //     // that.size[1] -= that.visProp.fontsize;
+                        //     that.size = [node.firstChild.firstChild.scrollWidth, node.firstChild.firstChild.scrollHeight];
+                        // }
+
                         that.needsUpdate = true;
                         that.updateRenderer();
                     }, 0);
