@@ -466,7 +466,7 @@ JXG.extend(
                         //     Type.exists(node.firstChild.firstChild && node.firstChild.firstChild.nodeName === 'SVG')
                         // ) {
                         //     // console.log(that.visProp.fontsize * 0.5)
-                        //     // that.size[1] -= that.visProp.fontsize;
+                        //     // that.size[1] += 2 * that.visProp.fontsize;
                         //     that.size = [node.firstChild.firstChild.scrollWidth, node.firstChild.firstChild.scrollHeight];
                         // }
 
