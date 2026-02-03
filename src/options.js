@@ -4382,7 +4382,7 @@ JXG.Options = {
          */
 
         /**
-         *  Direction of the box plot: 'vertical' or 'horizontal'
+         *  Direction of the boxplot: 'vertical' or 'horizontal'
          *
          * @type String
          * @name Boxplot#dir
@@ -4398,6 +4398,23 @@ JXG.Options = {
          * @default 0.5
          */
         smallWidth: 0.5,
+
+        /**
+         * Size and face of outliers. Size is the point size in pixel.
+         * Possible values for face are 'o' (default), '[]', '<>', '<<>>', '+', 'x'.
+         * See {@link JXG.Grid} for these names ('o' here is 'regpol' of the grid).
+         *
+         * @type Object
+         * @name Boxplot#outlier
+         * @default <pre>{
+         *   size: 3,
+         *   face: 'o'
+         *  }</pre>
+         */
+        outlier: {
+            size: 3,
+            face: 'o'
+        },
 
         strokeWidth: 2,
         strokeColor: Color.palette.blue,
