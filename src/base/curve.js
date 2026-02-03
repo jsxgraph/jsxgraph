@@ -3048,7 +3048,7 @@ JXG.registerElement("curveunion", JXG.createCurveUnion);
 // JXG.registerElement("curveconcat", JXG.createCurveConcat);
 
 /**
- * @class Vertical or horizontal boxplot or also called box and whisker plot to present numerical data through their quartiles.
+ * @class Vertical or horizontal boxplot or also called box-and-whisker plot to present numerical data through their quartiles.
  * The direction of the boxplot is controlled by the attribute "dir". Internally, a boxplot is realized with a single JSXGraph curve.
  * <p>
  * Given a data set, the input array Q for the boxplot can be computed e.g. with the method {@link JXG.Math.Statistics.percentile}.
