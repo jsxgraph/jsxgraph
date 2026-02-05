@@ -4401,7 +4401,7 @@ JXG.Options = {
 
         /**
          * Size and face of outliers. Size is the point size in pixel.
-         * Possible values for face are 'o' (default), '[]', '<>', '<<>>', '+', 'x'.
+         * Possible values for face are 'o' (default), '[]', '<>', '<<>>', '+', 'x', '-', '|'.
          * See {@link JXG.Grid} for these names ('o' here is 'regpol' of the grid).
          *
          * @type Object

@@ -3267,6 +3267,16 @@ JXG.createBoxPlot = function (board, parents, attributes) {
                         v1.push(x - sx, x + sx, NaN, x, x, NaN);
                         v2.push(y, y, NaN, y - sy, y + sy, NaN);
                         break;
+                    case '-':
+                    case 'minus':
+                        v1.push(x - sx, x + sx, NaN);
+                        v2.push(y, y, NaN);
+                        break;
+                    case '|':
+                    case 'divide':
+                        v1.push(x, x, NaN);
+                        v2.push(y - sy, y + sy, NaN);
+                        break;
                     default:
                     case 'o':
                     case 'circle':
