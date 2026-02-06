@@ -1553,6 +1553,7 @@ JXG.extend(
             }
 
             if (
+                drag.elementClass === Const.OBJECT_CLASS_CURVE ||
                 drag.elementClass === Const.OBJECT_CLASS_LINE ||
                 drag.type === Const.OBJECT_TYPE_POLYGON
             ) {
@@ -1651,7 +1652,9 @@ JXG.extend(
                 t = this.create('transform', T, { type: 'generic' });
                 t.update();
 
-                if (drag.elementClass === Const.OBJECT_CLASS_LINE) {
+                if (drag.elementClass === Const.OBJECT_CLASS_CURVE) {
+                    t.bindTo(drag);
+                } else if (drag.elementClass === Const.OBJECT_CLASS_LINE) {
                     ar = [];
                     if (drag.point1.draggable()) {
                         ar.push(drag.point1);
