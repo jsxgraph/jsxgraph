@@ -585,6 +585,7 @@ JXG.createSector = function (board, parents, attributes) {
     attr.withlabel = false;
     // Minor or major arc:
     attr.selection = el.visProp.selection;
+    attr.orientation = el.visProp.orientation;
     attr.name += "_arc";
 
     if (type === '2lines') {
@@ -1514,6 +1515,10 @@ JXG.createAngle = function (board, parents, attributes) {
                 q = this.radiuspoint;
 
             if (p.draggable()) {
+                if (this.evalVisProp('orientation') === 'clockwise') {
+                    console.log("setAngle not yet implemented for 'clockwise'");
+                }
+
                 t1 = this.board.create("transform", [val, this.center], {
                     type: "rotate"
                 });
