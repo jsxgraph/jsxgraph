@@ -1510,16 +1510,23 @@ JXG.createAngle = function (board, parents, attributes) {
          */
         el.setAngle = function (val) {
             var t1, t2,
-                val2,
+                phi, phiInv,
                 p = this.anglepoint,
                 q = this.radiuspoint;
 
             if (p.draggable()) {
+
                 if (this.evalVisProp('orientation') === 'clockwise') {
-                    console.log("setAngle not yet implemented for 'clockwise'");
+                    phi = function() {
+                        return Math.PI * 2 - Type.evaluate(val);
+                    };
+                } else {
+                    phi = function() {
+                        return Type.evaluate(val);
+                    };
                 }
 
-                t1 = this.board.create("transform", [val, this.center], {
+                t1 = this.board.create("transform", [phi, this.center], {
                     type: "rotate"
                 });
                 p.addTransform(q, t1);
@@ -1528,22 +1535,10 @@ JXG.createAngle = function (board, parents, attributes) {
                 t1.update();
                 p.moveTo(Mat.matVecMult(t1.matrix, q.coords.usrCoords));
 
-                if (Type.isFunction(val)) {
-                    /**
-                     * @ignore
-                     */
-                    val2 = function () {
-                        return Math.PI * 2 - val();
-                    };
-                } else {
-                    /**
-                     * @ignore
-                     */
-                    val2 = function () {
-                        return Math.PI * 2 - val;
-                    };
-                }
-                t2 = this.board.create("transform", [val2, this.center], {
+                phiInv = function () {
+                    return Math.PI * 2 - phi();
+                };
+                t2 = this.board.create("transform", [phiInv, this.center], {
                     type: "rotate"
                 });
                 p.coords.on("update", function () {
