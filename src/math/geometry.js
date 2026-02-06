@@ -2167,6 +2167,11 @@ JXG.extend(
                 beta = this.rad(arc.radiuspoint, arc.center, arc.anglepoint),
                 ev_s = arc.evalVisProp('selection');
 
+            if (arc.evalVisProp('orientation') === 'clockwise') {
+                angle = 2 * Math.PI - angle;
+                beta = 2 * Math.PI - beta;
+            }
+
             if ((ev_s === "minor" && beta > Math.PI) || (ev_s === "major" && beta < Math.PI)) {
                 alpha = beta;
                 beta = 2 * Math.PI;

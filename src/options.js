@@ -3729,7 +3729,15 @@ JXG.Options = {
          */
         radius: 'auto',
 
-        orientation: 'counterClockwise',
+        /**
+         * Orientation of the angle: 'clockwise' or 'counterclockwise' (default).
+         *
+         * @type {String}
+         * @name Angle#orientation
+         * @default 'counterclockwise'
+         * @visprop
+         */
+        orientation: 'counterclockwise',
 
         /**
          * Display type of the angle field. Possible values are
@@ -3831,7 +3839,7 @@ JXG.Options = {
          */
         arc: {
             visible: false,
-            orientation: 'counterClockwise',
+            orientation: 'counterclockwise',
             fillColor: 'none'
         }
 
@@ -3853,7 +3861,14 @@ JXG.Options = {
          */
         selection: 'auto',
 
-        orientation: 'counterClockwise',
+        /**
+         * Orientation of the arc: 'clockwise' or 'counterclockwise' (default).
+         *
+         * @type {String}
+         * @name Arc#orientation
+         * @default 'counterclockwise'
+         */
+        orientation: 'counterclockwise',
 
         /**
          * If <tt>true</tt>, moving the mouse over inner points triggers hasPoint.
@@ -8081,6 +8096,15 @@ JXG.Options = {
          * @default 'auto'
          */
         selection: 'auto',
+
+        /**
+         * Orientation of the sector: 'clockwise' or 'counterclockwise' (default).
+         *
+         * @type {String}
+         * @name Sector#orientation
+         * @default 'counterclockwise'
+         */
+        orientation: 'counterclockwise',
 
         /**
          * Attributes for sub-element arc. It is only available, if the sector is defined by three points.
