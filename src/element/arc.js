@@ -198,7 +198,9 @@ JXG.createArc = function (board, parents, attributes) {
             ev_s = this.evalVisProp('selection');
 
         phi = Geometry.rad(A, B, C);
-        if ((ev_s === "minor" && phi > Math.PI) || (ev_s === "major" && phi < Math.PI)) {
+        if ((ev_s === "minor" && phi > Math.PI) || (ev_s === "major" && phi < Math.PI) ||
+            (ev_s === "auto" && this.evalVisProp('orientation') === 'clockwise')
+        ) {
             sgn = -1;
         }
 
