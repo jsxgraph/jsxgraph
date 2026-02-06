@@ -281,6 +281,10 @@ JXG.createArc = function (board, parents, attributes) {
 
         rad = rad || Geometry.rad(this.radiuspoint, this.center, this.anglepoint);
 
+        if (el.evalVisProp('orientation') === 'clockwise') {
+            rad = 2 * Math.PI - rad;
+        }
+
         unit = unit || 'length';
         unit = unit.toLocaleLowerCase();
         if (unit === '' || unit.indexOf('len') === 0) {
