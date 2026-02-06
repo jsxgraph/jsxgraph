@@ -531,7 +531,9 @@ JXG.createSector = function (board, parents, attributes) {
             }
 
             phi = Geometry.rad(A, B, C);
-            if ((vp_s === "minor" && phi > Math.PI) || (vp_s === "major" && phi < Math.PI)) {
+            if ((vp_s === "minor" && phi > Math.PI) || (vp_s === "major" && phi < Math.PI) ||
+                (vp_s === "auto" && this.evalVisProp('orientation') === 'clockwise')
+            ) {
                 sgn = -1;
             }
 
@@ -611,13 +613,18 @@ JXG.createSector = function (board, parents, attributes) {
         el.arc = board.create("arc", [
             el.point1, // Center
             function() {
-                var d = el.point2.Dist(el.point1);
+                var d = el.point2.Dist(el.point1),
+                A, B;
+
+                A = el.point1;
+                B = el.point2;
                 if (d === 0) {
-                    return [el.point1.X(), el.point1.Y()];
+                    return [A.X(), A.Y()];
                 }
+
                 return [
-                    el.point1.X() + el.Radius() * (el.point2.X() - el.point1.X()) / d,
-                    el.point1.Y() + el.Radius() * (el.point2.Y() - el.point1.Y()) / d
+                    A.X() + el.Radius() * (B.X() - A.X()) / d,
+                    A.Y() + el.Radius() * (B.Y() - A.Y()) / d
                 ];
             },
             el.point3
@@ -652,7 +659,9 @@ JXG.createSector = function (board, parents, attributes) {
             alpha = 0;
             beta = Geometry.rad(this.point2, this.center, this.point3);
 
-            if ((vp_s === "minor" && beta > Math.PI) || (vp_s === "major" && beta < Math.PI)) {
+            if ((vp_s === "minor" && beta > Math.PI) || (vp_s === "major" && beta < Math.PI)
+                // || (vp_s === "auto" && this.evalVisProp('orientation') === 'clockwise')
+            ) {
                 alpha = beta;
                 beta = 2 * Math.PI;
             }
@@ -689,7 +698,9 @@ JXG.createSector = function (board, parents, attributes) {
             alpha = 0.0;
             beta = Geometry.rad(this.radiuspoint, this.center, this.anglepoint);
 
-            if ((vp_s === "minor" && beta > Math.PI) || (vp_s === "major" && beta < Math.PI)) {
+            if ((vp_s === "minor" && beta > Math.PI) || (vp_s === "major" && beta < Math.PI)
+                // || (vp_s === "auto" && this.evalVisProp('orientation') === 'clockwise')
+            ) {
                 alpha = beta;
                 beta = 2 * Math.PI;
             }
@@ -750,7 +761,9 @@ JXG.createSector = function (board, parents, attributes) {
             (pos.indexOf('right') < 0 && pos.indexOf('left') < 0)
         ) {
 
-            if ((vp_s === "minor" && angle > Math.PI) || (vp_s === "major" && angle < Math.PI)) {
+            if ((vp_s === "minor" && angle > Math.PI) || (vp_s === "major" && angle < Math.PI)
+                // || (vp_s === "auto" && this.evalVisProp('orientation') === 'clockwise')
+            ) {
                 angle = -(2 * Math.PI - angle);
             }
 
@@ -1363,24 +1376,27 @@ JXG.createAngle = function (board, parents, attributes) {
                 C = this.point3,
                 r = this.Radius(),
                 d = B.Dist(A),
+                a, b, c,
                 ar,
                 phi,
                 sgn = 1,
                 vp_s = this.evalVisProp('selection');
 
             phi = Geometry.rad(A, B, C);
-            if ((vp_s === "minor" && phi > Math.PI) || (vp_s === "major" && phi < Math.PI)) {
+            if ((vp_s === "minor" && phi > Math.PI) || (vp_s === "major" && phi < Math.PI) ||
+                (vp_s === "auto" && this.evalVisProp('orientation') === 'clockwise')
+            ) {
                 sgn = -1;
             }
 
-            A = A.coords.usrCoords;
-            B = B.coords.usrCoords;
-            C = C.coords.usrCoords;
+            a = A.coords.usrCoords;
+            b = B.coords.usrCoords;
+            c = C.coords.usrCoords;
 
-            A = [1, B[1] + ((A[1] - B[1]) * r) / d, B[2] + ((A[2] - B[2]) * r) / d];
-            C = [1, B[1] + ((C[1] - B[1]) * r) / d, B[2] + ((C[2] - B[2]) * r) / d];
+            a = [1, b[1] + ((a[1] - b[1]) * r) / d, b[2] + ((a[2] - b[2]) * r) / d];
+            c = [1, b[1] + ((c[1] - b[1]) * r) / d, b[2] + ((c[2] - b[2]) * r) / d];
 
-            ar = Geometry.bezierArc(A, B, C, true, sgn);
+            ar = Geometry.bezierArc(a, b, c, true, sgn);
 
             this.dataX = ar[0];
             this.dataY = ar[1];
@@ -1638,7 +1654,9 @@ JXG.createAngle = function (board, parents, attributes) {
             deg = Geometry.trueAngle(this.point2, this.point1, this.point3),
             vp_s = this.evalVisProp('selection');
 
-        if ((vp_s === "minor" && deg > 180.0) || (vp_s === "major" && deg < 180.0)) {
+        if ((vp_s === "minor" && deg > 180.0) || (vp_s === "major" && deg < 180.0)
+            || (vp_s === "auto" && this.evalVisProp('orientation') === 'clockwise')
+        ) {
             deg = 360.0 - deg;
         }
 
@@ -1694,7 +1712,9 @@ JXG.createAngle = function (board, parents, attributes) {
                 a2 = Geometry.rad(el.point2, el.point1, el.point3);
 
                 vp_s = el.evalVisProp('selection');
-                if ((vp_s === "minor" && a2 > Math.PI) || (vp_s === "major" && a2 < Math.PI)) {
+                if ((vp_s === "minor" && a2 > Math.PI) || (vp_s === "major" && a2 < Math.PI)
+                    || (vp_s === "auto" && el.evalVisProp('orientation') === 'clockwise')
+                ) {
                     a2 = -(2 * Math.PI - a2);
                 }
                 a2 *= 0.5;
@@ -1819,7 +1839,9 @@ JXG.createAngle = function (board, parents, attributes) {
             r = el.Radius();
             d = Geometry.distance(A, B, 3);
             a2 = Geometry.rad(el.point2, el.point1, el.point3);
-            if ((vp_s === "minor" && a2 > Math.PI) || (vp_s === "major" && a2 < Math.PI)) {
+            if ((vp_s === "minor" && a2 > Math.PI) || (vp_s === "major" && a2 < Math.PI)
+                || (vp_s === "auto" && el.evalVisProp('orientation') === 'clockwise')
+            ) {
                 a2 = -(2 * Math.PI - a2);
             }
             a2 *= 0.5;

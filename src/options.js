@@ -3729,6 +3729,8 @@ JXG.Options = {
          */
         radius: 'auto',
 
+        orientation: 'counterClockwise',
+
         /**
          * Display type of the angle field. Possible values are
          * 'sector' or 'sectordot' or 'square' or 'none'.
@@ -3829,6 +3831,7 @@ JXG.Options = {
          */
         arc: {
             visible: false,
+            orientation: 'counterClockwise',
             fillColor: 'none'
         }
 
@@ -3849,6 +3852,8 @@ JXG.Options = {
          * @default 'auto'
          */
         selection: 'auto',
+
+        orientation: 'counterClockwise',
 
         /**
          * If <tt>true</tt>, moving the mouse over inner points triggers hasPoint.
