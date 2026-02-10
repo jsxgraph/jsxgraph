@@ -123,7 +123,9 @@ JXG.extend(
          * @type Boolean
          * @default false
          */
-        isBrowser: Type.exists(window) && Type.exists(document) &&
+        // isBrowser: Type.exists(window) && Type.exists(document) &&
+        //     typeof window === "object" && typeof document === "object",
+        isBrowser: typeof window !== 'undefined' && typeof document !== 'undefined' &&
             typeof window === "object" && typeof document === "object",
 
         /**
@@ -399,7 +401,7 @@ JXG.extend(
                 all,
                 v = 3;
 
-            if (document === null || typeof document !== 'object') {
+            if (typeof document === 'undefined' || document === null || typeof document !== 'object') {
                 return 0;
             }
 
