@@ -58,7 +58,8 @@ JXG.SVGRenderer = function (container, dim) {
     this.type = 'svg';
 
     this.isIE =
-        navigator.appVersion.indexOf('MSIE') !== -1 || navigator.userAgent.match(/Trident\//);
+        typeof navigator !== 'undefined' &&
+        (navigator.appVersion.indexOf('MSIE') !== -1 || navigator.userAgent.match(/Trident\//));
 
     /**
      * SVG root node
