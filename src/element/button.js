@@ -38,6 +38,7 @@
 
 import JXG from "../jxg.js";
 import Env from "../utils/env.js";
+import Text from "../base/text.js";
 import Type from "../utils/type.js";
 
 var priv = {
@@ -240,6 +241,7 @@ var priv = {
 JXG.createButton = function (board, parents, attributes) {
     var t,
         par,
+        setTextBackup,
         attr = Type.copyAttributes(attributes, board.options, 'button');
 
     //if (parents.length < 3) {
@@ -248,10 +250,17 @@ JXG.createButton = function (board, parents, attributes) {
     //    "\nPossible parents are: [x, y, label, handler]");
     //}
 
+    // Make sure the setText method is the original one. The JessieCode parser changes it during parsing.
+    setTextBackup = Text.prototype.setText;
+    Text.prototype.setText = Text.prototype._setText;
+
     // 1. Create empty button
     par = [parents[0], parents[1], '<button type="button" style="width:100%; height:100%;" tabindex="0"></button>'];
     t = board.create("text", par, attr);
     t.type = Type.OBJECT_TYPE_BUTTON;
+
+    // Restore whichever setText method was set before this contructor was called.
+    Text.prototype.setText = setTextBackup;
 
     t.rendNodeButton = t.rendNode.childNodes[0];
     t.rendNodeButton.id = t.rendNode.id + "_button";
