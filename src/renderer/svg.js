@@ -250,16 +250,33 @@ JXG.SVGRenderer = function (container, dim) {
     this.createClip = function() {
         var id = this.uniqName('ClipFull'),
             node1 = this.container.ownerDocument.createElementNS(this.svgNamespace, 'clipPath'),
-            node2 = this.container.ownerDocument.createElementNS(this.svgNamespace, 'rect');
+            node2 = this.container.ownerDocument.createElementNS(this.svgNamespace, 'rect'),
+            style, rx, ry;
         node1.setAttributeNS(null, 'id', id);
         node2.setAttributeNS(null, 'x', 0);
         node2.setAttributeNS(null, 'y', 0);
-        node2.setAttributeNS(null, 'width', 600);
-        node2.setAttributeNS(null, 'height', 600);
+        node2.setAttributeNS(null, 'width', dim.width);
+        node2.setAttributeNS(null, 'height', dim.height);
+
+        style = getComputedStyle(this.container);
+        rx = Type.exists(style['border-radius']) ? parseFloat(style['border-radius']) : 0;
+        ry = rx;
+        node2.setAttributeNS(null, 'rx', rx);
+        node2.setAttributeNS(null, 'ry', ry);
+
         node1.appendChild(node2);
         return node1;
     };
     this.defs.appendChild(this.createClip());
+
+    this.setClipPath = function(el, val) {
+        if (val) {
+            el.rendNode.style.clipPath = this.toURL(this.uniqName('ClipFull'));
+        } else {
+            delete el.rendNode.style.clipPath;
+        }
+        return this;
+    };
 
     /**
      * JSXGraph uses a layer system to sort the elements on the board. This puts certain types of elements in front
@@ -619,6 +636,8 @@ JXG.extend(
             // node.setAttributeNS(null, 'fill-opacity', ticks.evalVisProp('fillopacity'));
             node.setAttributeNS(null, 'stroke-opacity', ticks.evalVisProp('strokeopacity'));
             node.setAttributeNS(null, "stroke-width", ticks.evalVisProp('strokewidth'));
+
+            this.setClipPath(ticks, ticks.evalVisProp('clip'));
             this.updatePathPrim(node, tickStr, ticks.board);
         },
 

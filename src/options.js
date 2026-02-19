@@ -1557,6 +1557,8 @@ JXG.Options = {
             live: 'assertive' // 'assertive', 'polite', 'none'
         },
 
+        clip: true,
+
         /**
          * Apply CSS classes to an element in non-highlighted view. It is possible to supply one or more
          * CSS classes separated by blanks.

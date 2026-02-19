@@ -210,6 +210,9 @@ JXG.extend(
                 not = not || {};
 
                 this.setObjectTransition(el);
+
+                this.setClipPath(el, !!el.evalVisProp('clip'));
+
                 if (!el.evalVisProp('draft')) {
                     if (!not.stroke) {
                         if (el.highlighted) {
@@ -1912,6 +1915,7 @@ JXG.extend(
          */
         setBuffering: function (node, type) { /* stub */ },
 
+        setClipPath: function(el, val) { /* stub */ },
         /**
          * Sets CSS classes for elements (relevant for SVG only).
          *

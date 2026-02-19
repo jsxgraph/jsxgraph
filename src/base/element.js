@@ -1363,6 +1363,9 @@ JXG.extend(
                                 this.rendNodeCheckbox.checked = !!value;
                             }
                             break;
+                        case 'clip':
+                            this.board.renderer.setClipPath(this, !!value);
+                            break;
                         case "disabled":
                             // button, checkbox, input. Is not available on initial call.
                             if (Type.exists(this.rendNodeTag)) {
