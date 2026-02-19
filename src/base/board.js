@@ -1445,10 +1445,10 @@ JXG.extend(
          */
         moveObject: function (x, y, o, evt, type) {
             var newPos = new Coords(
-                Const.COORDS_BY_SCREEN,
-                this.getScrCoordsOfMouse(x, y),
-                this
-            ),
+                    Const.COORDS_BY_SCREEN,
+                    this.getScrCoordsOfMouse(x, y),
+                    this
+                ),
                 drag,
                 dragScrCoords,
                 newDragScrCoords;
@@ -3108,9 +3108,9 @@ JXG.extend(
             // Ignore pointer move event if too close at the border
             // and setPointerCapture is off
             if (Type.evaluate(this.attr.movetarget) === null &&
-                pos[0] <= eps || pos[1] <= eps ||
-                pos[0] >= this.canvasWidth - eps ||
-                pos[1] >= this.canvasHeight - eps
+                (pos[0] <= eps || pos[1] <= eps ||
+                 pos[0] >= this.canvasWidth - eps ||
+                 pos[1] >= this.canvasHeight - eps)
             ) {
                 return this.mode === this.BOARD_MODE_NONE;
             }
