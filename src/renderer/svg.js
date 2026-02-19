@@ -226,8 +226,7 @@ JXG.SVGRenderer = function (container, dim) {
     };
 
     /**
-     * Combine arguments to an URL string of the form
-     * url(#...)
+     * Combine arguments to an URL string of the form url(#...)
      * Masks the container id. Calls {@link JXG.SVGRenderer#toStr}.
      *
      * @params {String} str variable number of strings
@@ -248,6 +247,20 @@ JXG.SVGRenderer = function (container, dim) {
     /* Default shadow filter */
     this.defs.appendChild(this.createShadowFilter(this.uniqName('f1'), 'none', 1, 0.1, 3, [5, 5]));
 
+    this.createClip = function() {
+        var id = this.uniqName('ClipFull'),
+            node1 = this.container.ownerDocument.createElementNS(this.svgNamespace, 'clipPath'),
+            node2 = this.container.ownerDocument.createElementNS(this.svgNamespace, 'rect');
+        node1.setAttributeNS(null, 'id', id);
+        node2.setAttributeNS(null, 'x', 0);
+        node2.setAttributeNS(null, 'y', 0);
+        node2.setAttributeNS(null, 'width', 600);
+        node2.setAttributeNS(null, 'height', 600);
+        node1.appendChild(node2);
+        return node1;
+    };
+    this.defs.appendChild(this.createClip());
+
     /**
      * JSXGraph uses a layer system to sort the elements on the board. This puts certain types of elements in front
      * of other types of elements. For the order used see {@link JXG.Options.layer}. The number of layers is documented
@@ -257,6 +270,7 @@ JXG.SVGRenderer = function (container, dim) {
     this.layer = [];
     for (i = 0; i < Options.layer.numlayers; i++) {
         this.layer[i] = this.container.ownerDocument.createElementNS(this.svgNamespace, 'g');
+        // this.layer[i].style.clipPath = this.toURL(this.uniqName('ClipFull'));
         this.svgRoot.appendChild(this.layer[i]);
     }
 
