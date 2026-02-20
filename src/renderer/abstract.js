@@ -699,6 +699,9 @@ JXG.extend(
             c1 = new Coords(Const.COORDS_BY_USER, el.point1.coords.usrCoords, el.board);
             c2 = new Coords(Const.COORDS_BY_USER, el.point2.coords.usrCoords, el.board);
             margin = el.evalVisProp('margin');
+            if (!el.evalVisProp('clip')) {
+                margin += 4096;
+            }
             Geometry.calcStraight(el, c1, c2, margin);
 
             this.handleTouchpoints(el, c1, c2, arrowData);
