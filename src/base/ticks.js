@@ -1287,7 +1287,7 @@ JXG.extend(
                 }
 
                 // Check if (parts of) the tick is inside the canvas.
-                if (this._isInsideCanvas(x, y)) {
+                if (!this.evalVisProp('clip') || this._isInsideCanvas(x, y)) {
                     return [x, y, major];
                 }
             }
@@ -1459,7 +1459,7 @@ JXG.extend(
             ya = [tick.scrCoords[2], tick.scrCoords[2]];
             m = fs === undefined ? 12 : fs;
             m *= 0.5;
-            if (!this._isInsideCanvas(xa, ya, m)) {
+            if (!this.evalVisProp('clip') || !this._isInsideCanvas(xa, ya, m)) {
                 return null;
             }
 
