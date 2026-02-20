@@ -1105,6 +1105,7 @@ JXG.extend(
          * at two positions: [x[0], y[0]] and [x[1], y[1]] in screen coordinates.
          * @param  {Array}  x Array of length two
          * @param  {Array}  y Array of length two
+         * @param {Number} [m=0] Optional margin
          * @return {Boolean}   true if parts of the tick are inside of the canvas or on the boundary.
          */
         _isInsideCanvas: function (x, y, m) {

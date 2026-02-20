@@ -269,6 +269,7 @@ JXG.SVGRenderer = function (container, dim) {
     };
     this.defs.appendChild(this.createClip());
 
+    // Already documented in JXG.AbstractRenderer
     this.setClipPath = function(el, val) {
         if (val) {
             el.rendNode.style.clipPath = this.toURL(this.uniqName('ClipFull'));

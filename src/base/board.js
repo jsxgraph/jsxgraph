@@ -2106,8 +2106,8 @@ JXG.extend(
                     Env.addEvent(this.containerObj, 'MSPointerDown', this.pointerDownListener, this);
                     Env.addEvent(moveTarget, 'MSPointerMove', this.pointerMoveListener, this);
                 } else {
-                    Env.addEvent(this.containerObj, 'pointerdown', this.pointerDownListener, this);
-                    // Env.addEvent(moveTarget, 'pointerdown', this.pointerDownListener, this);
+                    // Env.addEvent(this.containerObj, 'pointerdown', this.pointerDownListener, this);
+                    Env.addEvent(moveTarget, 'pointerdown', this.pointerDownListener, this);
                     Env.addEvent(moveTarget, 'pointermove', this.pointerMoveListener, this);
                     Env.addEvent(moveTarget, 'pointerleave', this.pointerLeaveListener, this);
                     Env.addEvent(moveTarget, 'click', this.pointerClickListener, this);

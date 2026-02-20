@@ -1915,7 +1915,14 @@ JXG.extend(
          */
         setBuffering: function (node, type) { /* stub */ },
 
+        /**
+         * Clip element to the JSXGraph container element (div). To be precise: to the SVG node.
+         *
+         * @param {JXG.GeometryElement} el Reference of the object
+         * @param {Boolean} val true: clip to the JSXGraph div, false: do not clip
+         */
         setClipPath: function(el, val) { /* stub */ },
+
         /**
          * Sets CSS classes for elements (relevant for SVG only).
          *
