@@ -253,11 +253,13 @@ JXG.SVGRenderer = function (container, dim) {
             node2 = this.container.ownerDocument.createElementNS(this.svgNamespace, 'rect'),
             style, rx, ry;
         node1.setAttributeNS(null, 'id', id);
+
         node2.setAttributeNS(null, 'x', 0);
         node2.setAttributeNS(null, 'y', 0);
         node2.setAttributeNS(null, 'width', dim.width);
         node2.setAttributeNS(null, 'height', dim.height);
 
+        // Inherit border-radius
         style = getComputedStyle(this.container);
         rx = Type.exists(style['border-radius']) ? parseFloat(style['border-radius']) : 0;
         ry = rx;
