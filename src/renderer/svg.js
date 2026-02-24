@@ -673,6 +673,7 @@ JXG.extend(
                 alpha = 0.2;
 
             node = this.createPrim("image", 'licenseLogo');
+
             node.setAttributeNS(null, 'x', '5px');
             node.setAttributeNS(null, 'y', '5px');
             node.setAttributeNS(null, 'width', s + 'px');
@@ -681,7 +682,9 @@ JXG.extend(
             node.setAttributeNS(null, 'style', 'opacity:' + alpha + ';');
             node.setAttributeNS(null, 'aria-hidden', 'true');
 
-            node.setAttributeNS(this.xlinkNamespace, "xlink:href", str);
+            node.setAttributeNS(this.xlinkNamespace, 'xlink:href', str); // Deprecated
+            node.setAttributeNS(null, 'href', str);
+
             this.appendChildPrim(node, 0);
         },
 
@@ -828,7 +831,8 @@ JXG.extend(
 
             if (el._src !== url) {
                 el.imgIsLoaded = false;
-                el.rendNode.setAttributeNS(this.xlinkNamespace, "xlink:href", url);
+                el.rendNode.setAttributeNS(this.xlinkNamespace, 'xlink:href', url); // Deprecated
+                el.rendNode.setAttributeNS(null, 'href', url);
                 el._src = url;
 
                 return true;
@@ -2081,18 +2085,28 @@ JXG.extend(
         // },
 
         _getImgDataURL: function (svgRoot) {
-            var images, len, canvas, ctx, ur, i;
+            var images, len, canvas, ctx, ur, i,
+                str;
 
             images = svgRoot.getElementsByTagName('image');
             len = images.length;
             if (len > 0) {
                 canvas = document.createElement('canvas');
-                //img = new Image();
+
                 for (i = 0; i < len; i++) {
+                    if (images[i].attributes.getNamedItem('href') !== null) {
+                        str = images[i].attributes.getNamedItem('href').value;
+                    } else {
+                        // Deprecated approach
+                        str = images[i].attributes.getNamedItemNS(this.xlinkNamespace, 'xlink:href').value;
+                    }
+
+                    // If the image is already a data-URI we are done
+                    if (str.indexOf('data:image') === 0) {
+                        continue;
+                    }
+
                     images[i].setAttribute("crossorigin", 'anonymous');
-                    //img.src = images[i].href;
-                    //img.onload = function() {
-                    // img.crossOrigin = 'anonymous'
                     ctx = canvas.getContext('2d');
                     canvas.width = images[i].getAttribute('width');
                     canvas.height = images[i].getAttribute('height');
@@ -2101,7 +2115,8 @@ JXG.extend(
 
                         // If the image is not png, the format must be specified here
                         ur = canvas.toDataURL();
-                        images[i].setAttribute("xlink:href", ur);
+                        images[i].setAttribute('xlink:href', ur); // Deprecated
+                        images[i].setAttribute('href', ur);
                     } catch (err) {
                         console.log("CORS problem! Image can not be used", err);
                     }
@@ -2178,6 +2193,7 @@ JXG.extend(
                 }
             }
 
+            // Dump all image tags
             this._getImgDataURL(svgRoot);
 
             // Convert the SVG graphic into a string containing SVG code

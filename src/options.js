@@ -1240,8 +1240,11 @@ JXG.Options = {
         showInfobox: true,
 
         /**
-         * Show JSXGraph logo in the top left corner of the board anyhow
-         * even if {@link JXG.Board#showCopyright} is false.
+         * The JSXGraph logo in the top left corner of the board is shown as soon as
+         * {@link JXG.Board#showCopyright} is true.
+         * <p>
+         * If {@link JXG.Board#showCopyright} is false, the logo can be shown anyhow
+         * by setting showLogo to true.
          *
          * @name JXG.Board#showLogo
          * @type Boolean
