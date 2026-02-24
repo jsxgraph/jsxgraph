@@ -583,9 +583,9 @@ JXG.createSector = function (board, parents, attributes) {
     attr = Type.copyAttributes(attributes, board.options, 'arc');
     attr = Type.copyAttributes(attr, board.options, "sector", 'arc');
     attr.withlabel = false;
+
     // Minor or major arc:
     attr.selection = el.visProp.selection;
-    attr.orientation = el.visProp.orientation;
     attr.name += "_arc";
 
     if (type === '2lines') {
@@ -632,6 +632,7 @@ JXG.createSector = function (board, parents, attributes) {
         ], attr);
     }
     el.addChild(el.arc);
+    el.inherits.push(el.arc);
 
     // Default hasPoint method. Documented in geometry element
     el.hasPointCurve = function (x, y) {

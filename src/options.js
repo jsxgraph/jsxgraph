@@ -3841,7 +3841,7 @@ JXG.Options = {
          */
         arc: {
             visible: false,
-            orientation: 'counterclockwise',
+            orientation: 'inherit',
             fillColor: 'none'
         }
 
@@ -8137,6 +8137,8 @@ JXG.Options = {
             fillColor: 'none',
             withLabel: false,
             name: '',
+
+            orientation: 'inherit',
 
             center: {
                 visible: false,

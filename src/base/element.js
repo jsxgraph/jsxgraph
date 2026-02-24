@@ -1632,7 +1632,10 @@ JXG.extend(
          */
         evalVisProp: function (key) {
             var val, arr, i, le,
-                e, o, found;
+                e, o, found,
+                // Handle 'inherit':
+                lists = [this.decendants, this.ancestors],
+                entry, list;
 
             key = key.toLowerCase();
             if (key.indexOf('.') === -1) {
@@ -1670,10 +1673,15 @@ JXG.extend(
             // val is not of type function
 
             if (val === 'inherit') {
-                for (e in this.descendants) {
-                    if (this.descendants.hasOwnProperty(e)) {
-                        o = this.descendants[e];
-                        // Check if this is in inherits of one of its descendant
+
+
+
+                for (entry in lists) if (lists.hasOwnProperty(entry)) {
+                    list = lists[entry];
+                    found = false;
+                    for (e in list) if (list.hasOwnProperty(e)) {
+                        o = list[e];
+                        // Check if this is in inherits of one of its descendant/ancestors
                         found = false;
                         le = o.inherits.length;
                         for (i = 0; i < le; i++) {
@@ -1686,6 +1694,9 @@ JXG.extend(
                             val = o.evalVisProp(key);
                             break;
                         }
+                    }
+                    if (found) {
+                        break;
                     }
                 }
             }
