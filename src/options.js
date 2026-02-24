@@ -3733,11 +3733,62 @@ JXG.Options = {
 
         /**
          * Orientation of the angle: 'clockwise' or 'counterclockwise' (default).
+         * <p>
+         * If the attribute 'selection' is set to 'minor' or 'major' and
+         * "the other" angle sector is to be taken, the orientation of the angle switches, too.
+         * <p>
+         * Apart from 'selection' having value 'minor' or 'major', the value of the angle
+         * is always the (positive) angle value of the visible sector - independent of
+         * orientation.
          *
          * @type {String}
          * @name Angle#orientation
          * @default 'counterclockwise'
          * @visprop
+         * @example
+         *
+         * var p1, p2, p3, a;
+         * p1 = board.create('point', [0, 0]);
+         * p2 = board.create('point', [4, 0]);
+         * p3 = board.create('point', [3, 3]);
+         * a = board.create('angle', [p2, p1, p3], {
+         *     name: '&phi;',
+         *     radius: 2,
+         *     // selection: 'minor',
+         *     orientation: 'clockwise',
+         *     arc: {
+         *         visible: true,
+         *         strokeWidth: 4,
+         *         lastArrow: true,
+         *     }
+         * });
+         *
+         * </pre><div id="JXG95f40aa1-971c-400a-9c21-39695ef15333" class="jxgbox" style="width: 300px; height: 300px;"></div>
+         * <script type="text/javascript">
+         *     (function() {
+         *         var board = JXG.JSXGraph.initBoard('JXG95f40aa1-971c-400a-9c21-39695ef15333',
+         *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
+         *
+         *             var p1, p2, p3, a;
+         *             p1 = board.create('point', [0, 0]);
+         *             p2 = board.create('point', [4, 0]);
+         *             p3 = board.create('point', [3, 3]);
+         *             a = board.create('angle', [p2, p1, p3], {
+         *                 name: '&phi;',
+         *                 radius: 2,
+         *                 // selection: 'minor',
+         *                 orientation: 'clockwise',
+         *                 arc: {
+         *                     visible: true,
+         *                     strokeWidth: 4,
+         *                     lastArrow: true,
+         *                 }
+         *             });
+         *
+         *     })();
+         *
+         * </script><pre>
+         *
          */
         orientation: 'counterclockwise',
 
@@ -3865,10 +3916,52 @@ JXG.Options = {
 
         /**
          * Orientation of the arc: 'clockwise' or 'counterclockwise' (default).
+         * <p>
+         * If the attribute 'selection' is set to 'minor' or 'major' and
+         * "the other" arc is to be taken, the orientation of the arc switches, too.
          *
          * @type {String}
          * @name Arc#orientation
          * @default 'counterclockwise'
+         *
+         * @example
+         * var p1, p2, p3, a;
+         * p1 = board.create('point', [0, 0]);
+         * p2 = board.create('point', [4, 0]);
+         * p3 = board.create('point', [3, 3]);
+         * board.create('arc', [p1, p2, p3], {
+         *     dash: 3,
+         *     name: 'a',
+         *     withLabel: true,
+         *     strokeColor: 'black',
+         *     strokeWidth: 3,
+         *     orientation: 'clockwise',
+         *     lastArrow: true
+         * });
+         *
+         * </pre><div id="JXG06bf7a84-4d95-469b-9e80-9fdd3e458232" class="jxgbox" style="width: 300px; height: 300px;"></div>
+         * <script type="text/javascript">
+         *     (function() {
+         *         var board = JXG.JSXGraph.initBoard('JXG06bf7a84-4d95-469b-9e80-9fdd3e458232',
+         *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
+         *             var p1, p2, p3, a;
+         *             p1 = board.create('point', [0, 0]);
+         *             p2 = board.create('point', [4, 0]);
+         *             p3 = board.create('point', [3, 3]);
+         *             board.create('arc', [p1, p2, p3], {
+         *                 dash: 3,
+         *                 name: 'a',
+         *                 withLabel: true,
+         *                 strokeColor: 'black',
+         *                 strokeWidth: 3,
+         *                 orientation: 'clockwise',
+         *                 lastArrow: true
+         *             });
+         *
+         *     })();
+         *
+         * </script><pre>
+         *
          */
         orientation: 'counterclockwise',
 
@@ -8118,10 +8211,54 @@ JXG.Options = {
 
         /**
          * Orientation of the sector: 'clockwise' or 'counterclockwise' (default).
+         * <p>
+         * If the attribute 'selection' is set to 'minor' or 'major' and
+         * "the other" angle sector is to be taken, the orientation of the angle switches, too.
          *
          * @type {String}
          * @name Sector#orientation
          * @default 'counterclockwise'
+         *
+         * @example
+         * var p1, p2, p3, a;
+         * p1 = board.create('point', [0, 0]);
+         * p2 = board.create('point', [4, 0]);
+         * p3 = board.create('point', [3, 3]);
+         * a = board.create('sector', [p1, p2, p3], {
+         *     name: '&phi;',
+         *     // selection: 'minor',
+         *     orientation: 'clockwise',
+         *     arc: {
+         *         visible: true,
+         *         strokeWidth: 4,
+         *         lastArrow: true,
+         *     }
+         * });
+         *
+         * </pre><div id="JXG6be31123-f142-4151-92c7-91786ab87cf3" class="jxgbox" style="width: 300px; height: 300px;"></div>
+         * <script type="text/javascript">
+         *     (function() {
+         *         var board = JXG.JSXGraph.initBoard('JXG6be31123-f142-4151-92c7-91786ab87cf3',
+         *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
+         *             var p1, p2, p3, a;
+         *             p1 = board.create('point', [0, 0]);
+         *             p2 = board.create('point', [4, 0]);
+         *             p3 = board.create('point', [3, 3]);
+         *             a = board.create('sector', [p1, p2, p3], {
+         *                 name: '&phi;',
+         *                 // selection: 'minor',
+         *                 orientation: 'clockwise',
+         *                 arc: {
+         *                     visible: true,
+         *                     strokeWidth: 4,
+         *                     lastArrow: true,
+         *                 }
+         *             });
+         *
+         *     })();
+         *
+         * </script><pre>
+         *
          */
         orientation: 'counterclockwise',
 
