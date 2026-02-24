@@ -533,9 +533,24 @@ JXG.createSector = function (board, parents, attributes) {
             }
 
             phi = Geometry.rad(A, B, C);
-            if ((vp_s === 'minor' && phi > Math.PI) || (vp_s === 'major' && phi < Math.PI) || (vp_s === 'auto' && vp_o === 'clockwise')) {
+            if (
+                (vp_o === 'counterclockwise' &&
+                    ((vp_s === 'minor' && phi > Math.PI) ||
+                     (vp_s === 'major' && phi < Math.PI))
+                ) ||
+                (vp_o === 'clockwise' &&
+                    ((vp_s === 'auto') ||
+                    (vp_s === 'minor' && phi > Math.PI) ||
+                    (vp_s === 'major' && phi < Math.PI))
+                )
+            ) {
                 sgn = -1;
             }
+            // if ((vp_s === 'minor' && phi > Math.PI) ||
+            //     (vp_s === 'major' && phi < Math.PI) ||
+            //     (vp_s === 'auto' && vp_o === 'clockwise')) {
+            //     sgn = -1;
+            // }
 
             // This is true for circumCircleSectors. In that case there is
             // a fourth parent element: [midpoint, point1, point3, point2]
