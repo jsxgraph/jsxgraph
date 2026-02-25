@@ -1119,8 +1119,54 @@ JXG.extend(
         },
 
         /**
+         * Update CSS property clip-path to HTML texts if `overflow:hidden`
+         * has to be avoided.
+         *
+         * TODO clipping for transformed texts
+         *
+         * @param {JXG.Text} el Reference to an {@link JXG.Text} object that has to be clipped.
+         * @see Text
+         * @see JXG.Text
+         */
+        updateClipPath: function(el) {
+            var x, y, x2, y2,
+                w = el.rendNode.offsetWidth,
+                h = el.rendNode.offsetHeight,
+                is = el.rendNode.style.inset.split(' '),
+                cw = el.board.canvasWidth,
+                ch = el.board.canvasHeight;
+
+            // console.log(el.evalVisProp('clip'))
+            if (!el.evalVisProp('clip')) {
+                return;
+            }
+            if (is[3] !== 'auto') {
+                x = parseFloat(is[3]);
+                x2 = cw - x;
+            } else {
+                x2 = parseFloat(is[1]) + w;
+                x = cw - x2;
+            }
+            // console.log(x, w, x2)
+
+            if (is[0] !== 'auto') {
+                y = parseFloat(is[0]);
+                y2 = ch - y;
+            } else {
+                y2 = parseFloat(is[2]) + h;
+                y = ch - y2;
+            }
+            // console.log(y, h, y2)
+
+            el.rendNode.style.clipPath = 'rect(' + (-y) + 'px ' // top
+                                        + (x2) + 'px '         // right
+                                        + (y2) + 'px '         // bottom
+                                        + (-x) + 'px)';        // left
+        },
+
+        /**
          * Updates visual properties of an already existing {@link JXG.Text} element.
-         * @param {JXG.Text} el Reference to an {@link JXG.Text} object, that has to be updated.
+         * @param {JXG.Text} el Reference to an {@link JXG.Text} object that has to be updated.
          * @see Text
          * @see JXG.Text
          * @see JXG.AbstractRenderer#drawText
@@ -1325,6 +1371,8 @@ JXG.extend(
                         el.rendNode.style['transform-origin'] = to_h + ' ' + to_v;
                     }
                     this.transformRect(el, el.transformations);
+
+                    this.updateClipPath(el);
                 } else {
                     this.updateInternalText(el);
                 }
