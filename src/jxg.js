@@ -548,7 +548,7 @@ jxg.extend(
         },
 
         /**
-         * Create in a div-element another div containing a JSXGraph board. By setting the attribute "clip" to false for selected
+         * Create a JSXGraph div element inside of a given div. By setting the attribute "clip" to false for selected
          * elements (like sliders and texts), these elements can be positioned outside of the JSXGraph board. For those elements,
          * the setting of the attributes "frozen:true, fixed:true" is recommended to make their position independent from zooming
          * or panning the board coordinates.
@@ -561,6 +561,96 @@ jxg.extend(
          * Most of these attributes can also be set globally via {@link JXG.Options}.
          *
          * @returns {JXG.Board} Reference to the created board.
+         *
+         * @example
+         *
+         * &lt;style&gt;
+         * .container {
+         *   display: flex;
+         *   align-items: center;
+         *   justify-content: center;
+         *   width: 800px;
+         *   height: 500px;
+         *   overflow: hidden;
+         *   border: 1px black solid;
+         *   border-radius: 10px;
+         *   background-color: #eee;
+         * }
+         * &lt;/style&gt;
+         * &lt;div id="container" class="container"&gt;&lt;/div&gt;
+         * &lt;script type="text/javascript"&gt;
+         *        const board = JXG.initAppBox('container', {
+         *            jxgbox: {
+         *                style: "width:640px;  aspect-ratio:2/1; background-color: white",
+         *                cssClass: "",
+         *                id: 'jxgbox'
+         *            },
+         *            boundingbox: [-5, 5, 5, -5],
+         *            axis: true,
+         *            showFullScreen: true
+         *        });
+         *
+         *        const point1 = board.create("point", [4, 1], { name: 'A' });
+         *        const point2 = board.create("point", [3, -1], {name: 'B'});
+         *        const point3 = board.create("point", [6, -1], { clip: false });
+         *
+         *        var sl = board.create('slider', [[-3, -6], [-1, -6], [-5, 1, 5]], {
+         *            clip: false,
+         *            size: 16,
+         *            face: '[]',
+         *            name: 's',
+         *            frozen: true
+         *        });
+         *
+         *        var graph = board.create("functiongraph", ['s.Value() * x^3'], { clip: true });
+         *
+         * &lt;/script&gt;
+         * </pre>
+         * <style>
+         * .container {
+         *   display: flex;
+         *   align-items: center;
+         *   justify-content: center;
+         *   width: 800px;
+         *   height: 500px;
+         *   overflow: hidden;
+         *   border: 1px black solid;
+         *   border-radius: 10px;
+         *   background-color: #eee;
+         * }
+         * </style>
+         * <div id="JXGd1c7bf6a-a571-4392-a289-e4ef44d57c88" class="container"></div>
+         * <script type="text/javascript">
+         *     (function() {
+         *        const board = JXG.initAppBox('JXGd1c7bf6a-a571-4392-a289-e4ef44d57c88', {
+         *            jxgbox: {
+         *                style: "width:640px;  aspect-ratio:2/1; background-color: white",
+         *                cssClass: "",
+         *                id: 'xxx'
+         *            },
+         *            boundingbox: [-5, 5, 5, -5],
+         *            axis: true,
+         *            showFullScreen: true
+         *        });
+         *
+         *        const point1 = board.create("point", [4, 1], { name: 'A' });
+         *        const point2 = board.create("point", [3, -1], {name: 'B'});
+         *        const point3 = board.create("point", [6, -1], { clip: false });
+         *
+         *        var sl = board.create('slider', [[-3, -6], [-1, -6], [-5, 1, 5]], {
+         *            clip: false,
+         *            size: 16,
+         *            face: '[]',
+         *            name: 's',
+         *            frozen: true
+         *        });
+         *
+         *        var graph = board.create("functiongraph", ['s.Value() * x^3'], { clip: true });
+         *
+         *     })();
+         *
+         * </script><pre>
+         *
          */
         initAppBox: function (box, attributes) {
             var node, id, jxg_id, innerdiv,
