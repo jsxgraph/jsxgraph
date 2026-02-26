@@ -6330,6 +6330,7 @@ JXG.Options = {
          */
 
         visible: 'inherit',
+        clip: 'inherit',
         strokeColor: '#000000',
         strokeOpacity: 1,
         highlightStrokeOpacity: 0.666666,

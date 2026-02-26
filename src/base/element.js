@@ -1364,7 +1364,8 @@ JXG.extend(
                             }
                             break;
                         case 'clip':
-                            this.board.renderer.setClipPath(this, !!value);
+                            this._set(key, value);
+                            // this.board.renderer.setClipPath(this, !!value);
                             break;
                         case "disabled":
                             // button, checkbox, input. Is not available on initial call.
@@ -1475,6 +1476,15 @@ JXG.extend(
                                 this.addRotation(value);
                             }
                             break;
+                        case "straightfirst":
+                        case "straightlast":
+                            this._set(key, value);
+                            for (j in this.childElements) {
+                                if (this.childElements.hasOwnProperty(j) && this.childElements[j].elType === 'glider') {
+                                    this.childElements[j].fullUpdate();
+                                }
+                            }
+                            break;
                         case "tabindex":
                             if (Type.exists(this.rendNode)) {
                                 this.rendNode.setAttribute("tabindex", value);
@@ -1530,15 +1540,6 @@ JXG.extend(
                                 //this.label.setDisplayRendNode(this.evalVisProp('visible'));
                             }
                             this.hasLabel = value;
-                            break;
-                        case "straightfirst":
-                        case "straightlast":
-                            this._set(key, value);
-                            for (j in this.childElements) {
-                                if (this.childElements.hasOwnProperty(j) && this.childElements[j].elType === 'glider') {
-                                    this.childElements[j].fullUpdate();
-                                }
-                            }
                             break;
                         default:
                             if (Type.exists(this.visProp[key]) &&

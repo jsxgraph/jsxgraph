@@ -276,7 +276,7 @@ JXG.SVGRenderer = function (container, dim) {
         if (val) {
             el.rendNode.style.clipPath = this.toURL(this.uniqName('ClipFull'));
         } else {
-            delete el.rendNode.style.clipPath;
+            el.rendNode.style.removeProperty('clip-path');
         }
         return this;
     };

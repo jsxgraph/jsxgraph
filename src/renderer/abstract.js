@@ -211,6 +211,8 @@ JXG.extend(
 
                 this.setObjectTransition(el);
 
+                // Set clip-path
+                // The clip-path of the label is handled in updateText()
                 this.setClipPath(el, !!el.evalVisProp('clip'));
 
                 if (!el.evalVisProp('draft')) {
@@ -1128,7 +1130,7 @@ JXG.extend(
          * @see Text
          * @see JXG.Text
          */
-        updateClipPath: function(el) {
+        updateClipPath: function(el, val) {
             var x, y, x2, y2,
                 w = el.rendNode.offsetWidth,
                 h = el.rendNode.offsetHeight,
@@ -1136,8 +1138,12 @@ JXG.extend(
                 cw = el.board.canvasWidth,
                 ch = el.board.canvasHeight;
 
-            // console.log(el.evalVisProp('clip'))
-            if (!el.evalVisProp('clip')) {
+            if (val === undefined) {
+                val = el.evalVisProp('clip');
+            }
+
+            if (!val) {
+                el.rendNode.style.removeProperty('clip-path');
                 return;
             }
             if (is[3] !== 'auto') {
@@ -1147,7 +1153,6 @@ JXG.extend(
                 x2 = parseFloat(is[1]) + w;
                 x = cw - x2;
             }
-            // console.log(x, w, x2)
 
             if (is[0] !== 'auto') {
                 y = parseFloat(is[0]);
@@ -1156,7 +1161,6 @@ JXG.extend(
                 y2 = parseFloat(is[2]) + h;
                 y = ch - y2;
             }
-            // console.log(y, h, y2)
 
             el.rendNode.style.clipPath = 'rect(' + (-y) + 'px ' // top
                                         + (x2) + 'px '         // right
@@ -1372,7 +1376,12 @@ JXG.extend(
                     }
                     this.transformRect(el, el.transformations);
 
-                    this.updateClipPath(el);
+                    if (el.visProp.islabel && Type.exists(el.visProp.anchor) &&
+                        el.evalVisProp('clip') === 'inherit') {
+                        this.updateClipPath(el, !!el.visProp.anchor.evalVisProp('clip'));
+                    } else {
+                        this.updateClipPath(el);
+                    }
                 } else {
                     this.updateInternalText(el);
                 }
