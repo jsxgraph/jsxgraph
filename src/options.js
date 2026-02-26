@@ -658,7 +658,6 @@ JXG.Options = {
             id: 'jxgbox',
             style: 'width: 500px;  aspect-ratio: 1/1; overflow: visible',
             cssClass: 'jxgbox'
-
         },
 
         /**
