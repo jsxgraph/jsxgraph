@@ -556,7 +556,7 @@ jxg.extend(
          * However, not all elements will look good if displayed outside of the JSXGraph board - be careful.
          *
          * @param {String|Object} box id of or reference to the HTML element in which the board is painted into a sub-element of type div.
-         * @param {Object} attributes An object that sets some of the board properties and properties of the sub-element containing the board ("jxgbox").
+         * @param {Object} attributes An object that sets some of the board properties and properties of the sub-element containing the board.
          * See {@link JXG.Board} for a list of available attributes of the board.
          * Most of these attributes can also be set globally via {@link JXG.Options}.
          *
