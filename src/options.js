@@ -8658,6 +8658,7 @@ JXG.Options = {
         baseline: {
             needsRegularUpdate: false,
             visible: 'inherit',
+            clip: 'inherit',
             fixed: true,
             scalable: false,
             tabindex: null,
@@ -8676,6 +8677,7 @@ JXG.Options = {
         ticks: {
             needsRegularUpdate: false,
             fixed: true,
+            clip: 'inherit',
 
             // Label drawing
             drawLabels: false,
@@ -8710,6 +8712,7 @@ JXG.Options = {
         highline: {
             strokeWidth: 3,
             visible: 'inherit',
+            clip: 'inherit',
             fixed: true,
             tabindex: null,
             name: '',
@@ -8725,6 +8728,7 @@ JXG.Options = {
          */
         label: {
             visible: 'inherit',
+            clip: 'inherit',
             strokeColor: '#000000'
         },
 

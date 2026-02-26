@@ -1635,7 +1635,7 @@ JXG.extend(
             var val, arr, i, le,
                 e, o, found,
                 // Handle 'inherit':
-                lists = [this.decendants, this.ancestors],
+                lists = [this.descendants, this.ancestors],
                 entry, list;
 
             key = key.toLowerCase();
@@ -1674,12 +1674,10 @@ JXG.extend(
             // val is not of type function
 
             if (val === 'inherit') {
-
-
-
                 for (entry in lists) if (lists.hasOwnProperty(entry)) {
                     list = lists[entry];
                     found = false;
+                    // list is descendant or ancestors
                     for (e in list) if (list.hasOwnProperty(e)) {
                         o = list[e];
                         // Check if this is in inherits of one of its descendant/ancestors
