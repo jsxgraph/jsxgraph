@@ -1127,6 +1127,7 @@ JXG.extend(
          * TODO clipping for transformed texts
          *
          * @param {JXG.Text} el Reference to an {@link JXG.Text} object that has to be clipped.
+         * @param {Boolean} [val=undefined] Set an explicit value, overwrites the element's attribute 'clip'. This is useful for handling the value 'inherit'.
          * @see Text
          * @see JXG.Text
          */

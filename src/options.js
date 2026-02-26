@@ -644,6 +644,24 @@ JXG.Options = {
         },
 
         /**
+         * Attributes for the div containing the JSXGraph board - in case
+         * the board has been constructed by `JXG.initAppBox`
+         * @type {Object}
+         * @name JXG.Board#jxgbox
+         * @default <pre>{
+         *   id: 'jxgbox',
+         *   style: 'width: 500px;  aspect-ratio: 1/1; overflow: visible',
+         *   cssClass: 'jxgbox'
+         * }</pre>
+         */
+        jxgbox: {
+            id: 'jxgbox',
+            style: 'width: 500px;  aspect-ratio: 1/1; overflow: visible',
+            cssClass: 'jxgbox'
+
+        },
+
+        /**
          * If set to true, the ratio between horizontal and vertical unit sizes
          * stays constant - independent of size changes of the hosting HTML div element.
          * <p>

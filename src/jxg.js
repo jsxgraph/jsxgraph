@@ -353,7 +353,7 @@ jxg.extend(
          * @param {String|Object} box id of or reference to the HTML element in which the board is painted.
          * @param {Object} attributes An object that sets some of the board properties.
          * See {@link JXG.Board} for a list of available attributes of the board.
-         * Most of these attributes can also be set via {@link JXG.Options},
+         * Most of these attributes can also be set globally via {@link JXG.Options}.
          *
          * @returns {JXG.Board} Reference to the created board.
          *
@@ -545,6 +545,63 @@ jxg.extend(
          */
         init: function (box, attributes) {
             return this.JSXGraph.initBoard(box, attributes);
+        },
+
+        /**
+         * Create in a div-element another div containing a JSXGraph board. By setting the attribute "clip" to false for selected
+         * elements (like sliders and texts), these elements can be positioned outside of the JSXGraph board. For those elements,
+         * the setting of the attributes "frozen:true, fixed:true" is recommended to make their position independent from zooming
+         * or panning the board coordinates.
+         * <p>
+         * However, not all elements will look good if displayed outside of the JSXGraph board - be careful.
+         *
+         * @param {String|Object} box id of or reference to the HTML element in which the board is painted into a sub-element of type div.
+         * @param {Object} attributes An object that sets some of the board properties and properties of the sub-element containing the board ("jxgbox").
+         * See {@link JXG.Board} for a list of available attributes of the board.
+         * Most of these attributes can also be set globally via {@link JXG.Options}.
+         *
+         * @returns {JXG.Board} Reference to the created board.
+         */
+        initAppBox: function (box, attributes) {
+            var node, id, jxg_id, innerdiv,
+                attr, board;
+
+            if (!JXG.isBrowser) {
+                throw new Error("JSXGraph: JXG.initAppBox needs a browser");
+            }
+            if (JXG.isString(box)) {
+                // Hosting div is given as string
+                node = document.getElementById(box);
+                id = box;
+            } else {
+                // Hosting div is given as object pointer
+                node = box;
+                id = box.getAttribute('id');
+            }
+
+            innerdiv = document.createElement("div");
+
+            attr = JXG.copyAttributes(attributes, JXG.Options, 'jxgbox').jxgbox;
+
+            jxg_id = ((id !== null) ? id + '_' : '') + attr.id;
+            innerdiv.setAttribute('id', jxg_id);
+            innerdiv.className += 'jxgbox ';
+            innerdiv.className += attr.cssclass;
+            innerdiv.style = attr.style;
+
+            node.appendChild(innerdiv);
+            attributes.moveTarget = node;
+
+            board = this.init(innerdiv, attributes);
+
+            innerdiv.style.overflow = 'visible';
+            if (board.renderer.type === 'svg') {
+                board.renderer.svgRoot.style.overflow = 'visible';
+            } else {
+                throw new Error("JSXGraph: JXG.initAppBox needs SVG renderer");
+            }
+
+            return board;
         },
 
         themes: {}
