@@ -766,6 +766,7 @@ JXG.extend(
                 el.htmlStr = content;
             }
             this.transformRect(el, el.transformations);
+            this.setClipPath(el, !!el.evalVisProp('clip'));
         },
 
         /**
