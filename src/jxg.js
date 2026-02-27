@@ -359,7 +359,7 @@ jxg.extend(
          *
          * @see JXG.AbstractRenderer#drawNavigationBar
          * @example
-         * var board = JXG.JSXGraph.initBoard('jxgbox', {
+         * var board = JXG.init('jxgbox', {
          *     boundingbox: [-10, 5, 10, -5],
          *     keepaspectratio: false,
          *     axis: true
@@ -368,7 +368,7 @@ jxg.extend(
          * </pre><div id="JXG79b42d26-b664-451d-96b4-08bc25dd87d3" class="jxgbox" style="width: 600px; height: 300px;"></div>
          * <script type="text/javascript">
          *     (function() {
-         *         var board = JXG.JSXGraph.initBoard('JXG79b42d26-b664-451d-96b4-08bc25dd87d3', {
+         *         var board = JXG.init('JXG79b42d26-b664-451d-96b4-08bc25dd87d3', {
          *         boundingbox: [-10, 5, 10, -5],
          *         keepaspectratio: false,
          *         axis: true
@@ -380,7 +380,7 @@ jxg.extend(
          *
          *
          * @example
-         * const board = JXG.JSXGraph.initBoard('jxgbox', {
+         * const board = JXG.init('jxgbox', {
          *   boundingbox: [-10, 10, 10, -10],
          *   axis: true,
          *   showCopyright: true,
@@ -419,7 +419,7 @@ jxg.extend(
          * </pre><div id="JXGd7a7705b-35bb-4193-bbd4-3e3fd92eb92c" class="jxgbox" style="width: 300px; height: 300px;"></div>
          * <script type="text/javascript">
          *     (function() {
-         *         var board = JXG.JSXGraph.initBoard('JXGd7a7705b-35bb-4193-bbd4-3e3fd92eb92c', {
+         *       var board = JXG.init('JXGd7a7705b-35bb-4193-bbd4-3e3fd92eb92c', {
          *       boundingbox: [-10, 10, 10, -10],
          *       axis: true,
          *       showCopyright: true,
@@ -459,7 +459,7 @@ jxg.extend(
          *
          * </script><pre>
          * @example
-         * const board = JXG.JSXGraph.initBoard('jxgbox', {
+         * const board = JXG.init('jxgbox', {
          *     boundingbox: [-5, 5, 5, -5],
          *     intl: {
          *         enabled: false,
@@ -500,7 +500,7 @@ jxg.extend(
          * </pre><div id="JXGd84f4c84-f900-4d33-b001-e5f5f3ab0dd2" class="jxgbox" style="width: 600px; height: 600px;"></div>
          * <script type="text/javascript">
          *     (function() {
-         *         var board = JXG.JSXGraph.initBoard('JXGd84f4c84-f900-4d33-b001-e5f5f3ab0dd2', {
+         *         var board = JXG.init('JXGd84f4c84-f900-4d33-b001-e5f5f3ab0dd2', {
          *         boundingbox: [-5, 5, 5, -5],
          *         intl: {
          *             enabled: false,
