@@ -554,8 +554,8 @@ jxg.extend(
          * one possibility. The CSS for the inner div, hosting the JSXGraph board, is supplied by the attributes
          *  <pre>
          *   jxgbox: {
-         *       style: "width:640px;  aspect-ratio:2/1; background-color: white",
-         *       cssClass: "",
+         *       style: 'width:640px;  aspect-ratio:2/1; background-color: white',
+         *       cssClass: '',
          *       id: 'jxgbox'
          *   }
          * </pre>
@@ -577,6 +577,7 @@ jxg.extend(
          *
          * @example
          *
+         * // Styling of the outer div
          * &lt;style&gt;
          * .container {
          *   display: flex;
@@ -594,8 +595,9 @@ jxg.extend(
          * &lt;script type="text/javascript"&gt;
          *        const board = JXG.initAppBox('container', {
          *            jxgbox: {
-         *                style: "width:640px;  aspect-ratio:2/1; background-color: white",
-         *                cssClass: "",
+         *                // Styling of the inner div
+         *                style: 'width:640px;  aspect-ratio:2/1; background-color: white',
+         *                cssClass: '',
          *                id: 'jxgbox'
          *            },
          *            boundingbox: [-5, 5, 5, -5],
@@ -609,10 +611,10 @@ jxg.extend(
          *
          *        var sl = board.create('slider', [[-3, -6], [-1, -6], [-5, 1, 5]], {
          *            clip: false,
+         *            frozen: true,
          *            size: 16,
          *            face: '[]',
-         *            name: 's',
-         *            frozen: true
+         *            name: 's'
          *        });
          *
          *        var graph = board.create("functiongraph", ['s.Value() * x^3'], { clip: true });
