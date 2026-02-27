@@ -548,7 +548,20 @@ jxg.extend(
         },
 
         /**
-         * Create a JSXGraph div element inside of a given div. By setting the attribute "clip" to false for selected
+         * Create a JSXGraph div element containing a JSXGraph board inside of a user supplied div.
+         * <p>
+         * The styling of the supplied div is up to the user, see the style-tag in the example below for
+         * one possibility. The CSS for the inner div, hosting the JSXGraph board, is supplied by the attributes
+         *  <pre>
+         *   jxgbox: {
+         *       style: "width:640px;  aspect-ratio:2/1; background-color: white",
+         *       cssClass: "",
+         *       id: 'jxgbox'
+         *   }
+         * </pre>
+         * i.e. the div's style-attribute and a list of classes (separated by blanks) can be given.
+         * <p>
+         * By setting the attribute "clip" to false for selected
          * elements (like sliders and texts), these elements can be positioned outside of the JSXGraph board. For those elements,
          * the setting of the attributes "frozen:true, fixed:true" is recommended to make their position independent from zooming
          * or panning the board coordinates.
