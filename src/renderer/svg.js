@@ -281,6 +281,12 @@ JXG.SVGRenderer = function (container, dim) {
         return this;
     };
 
+    /**
+     * Update the filter node which does the clipping of elements (beside HTML texts) outside of the SVG.
+     * It is called in procedure resize().
+     * @param {Number} w
+     * @param {Number} h
+     */
     this.updateClipPathRect = function(w, h) {
         var id = this.uniqName('ClipFull'),
             node = this.container.ownerDocument.getElementById(id).firstChild;
@@ -1970,7 +1976,7 @@ JXG.extend(
             this.svgRoot.setAttribute("width", parseFloat(w));
             this.svgRoot.setAttribute("height", parseFloat(h));
             if (Type.exists(this.updateClipPathRect)) {
-                // Update clip-path of the SVG box
+                // Update clip-path element of the SVG box
                 this.updateClipPathRect(w, h);
             }
         },
