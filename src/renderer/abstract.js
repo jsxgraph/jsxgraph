@@ -37,7 +37,6 @@
     newcap:   AsciiMathMl exposes non-constructor functions beginning with upper case letters
 */
 /*jslint nomen: true, plusplus: true, newcap: true, unparam: true*/
-/*eslint no-unused-vars: "off"*/
 
 /**
  * @fileoverview JSXGraph can use various technologies to render the contents of a construction, e.g.
