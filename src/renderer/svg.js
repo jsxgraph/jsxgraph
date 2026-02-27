@@ -281,6 +281,16 @@ JXG.SVGRenderer = function (container, dim) {
         return this;
     };
 
+    this.updateClipPathRect = function(w, h) {
+        var id = this.uniqName('ClipFull'),
+            node = this.container.ownerDocument.getElementById(id).firstChild;
+
+        if (Type.exists(node)) {
+            node.setAttributeNS(null, 'width', w);
+            node.setAttributeNS(null, 'height', h);
+        }
+    };
+
     /**
      * JSXGraph uses a layer system to sort the elements on the board. This puts certain types of elements in front
      * of other types of elements. For the order used see {@link JXG.Options.layer}. The number of layers is documented
@@ -1959,6 +1969,10 @@ JXG.extend(
         resize: function (w, h) {
             this.svgRoot.setAttribute("width", parseFloat(w));
             this.svgRoot.setAttribute("height", parseFloat(h));
+            if (Type.exists(this.updateClipPathRect)) {
+                // Update clip-path of the SVG box
+                this.updateClipPathRect(w, h);
+            }
         },
 
         // documented in JXG.AbstractRenderer
