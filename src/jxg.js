@@ -669,6 +669,7 @@ jxg.extend(
          */
         initAppBox: function (box, attributes) {
             var node, id, jxg_id, innerdiv,
+                obb, bb, w, h,// rect,
                 attr, board;
 
             if (!JXG.isBrowser) {
@@ -686,13 +687,32 @@ jxg.extend(
 
             innerdiv = document.createElement("div");
 
-            attr = JXG.copyAttributes(attributes, JXG.Options, 'jxgbox').jxgbox;
+            attr = JXG.copyAttributes(attributes, JXG.Options, 'board').jxgbox;
 
             jxg_id = ((id !== null) ? id + '_' : '') + attr.id;
             innerdiv.setAttribute('id', jxg_id);
             innerdiv.className += 'jxgbox ';
             innerdiv.className += attr.cssclass;
             innerdiv.style = attr.style;
+
+            obb = attr.outerbox;
+            if (obb !== null && JXG.isArray(obb)) {
+                bb = JXG.copyAttributes(attributes, JXG.Options, 'board').boundingbox;
+                node.style.position = 'relative';
+                w = obb[2] - obb[0];
+                h = obb[1] - obb[3];
+                innerdiv.style.position = 'absolute';
+                innerdiv.style.left = (100 * (bb[0] - obb[0]) / w) + '%';
+                innerdiv.style.top = (100 * (obb[1] - bb[1]) / h) + '%';
+                innerdiv.style.width = (100 * (bb[2] - bb[0]) / w) + '%';
+                innerdiv.style.height = (100 * (bb[1] - bb[3]) / h) + '%';
+
+                // rect = node.getBoundingClientRect();
+                // innerdiv.style.left = ((bb[0] - obb[0]) / w * rect.width) + 'px';
+                // innerdiv.style.top = ((obb[1] - bb[1]) / h * rect.height) + 'px';
+                // innerdiv.style.width = ((bb[2] - bb[0]) / w * rect.width) + 'px';
+                // innerdiv.style.height = ((bb[1] - bb[3]) / h * rect.height) + 'px';
+            }
 
             node.appendChild(innerdiv);
             attributes.moveTarget = node;
