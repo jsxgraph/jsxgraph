@@ -2103,7 +2103,8 @@ JXG.extend(
 
                 if (window.navigator.msPointerEnabled) {
                     // IE10-
-                    Env.addEvent(this.containerObj, 'MSPointerDown', this.pointerDownListener, this);
+                    // Env.addEvent(this.containerObj, 'MSPointerDown', this.pointerDownListener, this);
+                    Env.addEvent(moveTarget, 'MSPointerDown', this.pointerDownListener, this);
                     Env.addEvent(moveTarget, 'MSPointerMove', this.pointerMoveListener, this);
                 } else {
                     // Env.addEvent(this.containerObj, 'pointerdown', this.pointerDownListener, this);
@@ -2132,7 +2133,8 @@ JXG.extend(
             if (!this.hasMouseHandlers && Env.isBrowser) {
                 var moveTarget = this.attr.movetarget || this.containerObj;
 
-                Env.addEvent(this.containerObj, 'mousedown', this.mouseDownListener, this);
+                // Env.addEvent(this.containerObj, 'mousedown', this.mouseDownListener, this);
+                Env.addEvent(moveTarget, 'mousedown', this.mouseDownListener, this);
                 Env.addEvent(moveTarget, 'mousemove', this.mouseMoveListener, this);
                 Env.addEvent(moveTarget, 'click', this.mouseClickListener, this);
                 Env.addEvent(moveTarget, 'dblclick', this.mouseDblClickListener, this);
@@ -2152,7 +2154,8 @@ JXG.extend(
             if (!this.hasTouchHandlers && Env.isBrowser) {
                 var moveTarget = this.attr.movetarget || this.containerObj;
 
-                Env.addEvent(this.containerObj, 'touchstart', this.touchStartListener, this);
+                // Env.addEvent(this.containerObj, 'touchstart', this.touchStartListener, this);
+                Env.addEvent(moveTarget, 'touchstart', this.touchStartListener, this);
                 Env.addEvent(moveTarget, 'touchmove', this.touchMoveListener, this);
 
                 /*
@@ -2256,10 +2259,12 @@ JXG.extend(
 
                 if (window.navigator.msPointerEnabled) {
                     // IE10-
-                    Env.removeEvent(this.containerObj, 'MSPointerDown', this.pointerDownListener, this);
+                    // Env.removeEvent(this.containerObj, 'MSPointerDown', this.pointerDownListener, this);
+                    Env.removeEvent(moveTarget, 'MSPointerDown', this.pointerDownListener, this);
                     Env.removeEvent(moveTarget, 'MSPointerMove', this.pointerMoveListener, this);
                 } else {
-                    Env.removeEvent(this.containerObj, 'pointerdown', this.pointerDownListener, this);
+                    // Env.removeEvent(this.containerObj, 'pointerdown', this.pointerDownListener, this);
+                    Env.removeEvent(moveTarget, 'pointerdown', this.pointerDownListener, this);
                     Env.removeEvent(moveTarget, 'pointermove', this.pointerMoveListener, this);
                     Env.removeEvent(moveTarget, 'pointerleave', this.pointerLeaveListener, this);
                     Env.removeEvent(moveTarget, 'click', this.pointerClickListener, this);
@@ -2293,7 +2298,8 @@ JXG.extend(
             if (this.hasMouseHandlers && Env.isBrowser) {
                 var moveTarget = this.attr.movetarget || this.containerObj;
 
-                Env.removeEvent(this.containerObj, 'mousedown', this.mouseDownListener, this);
+                // Env.removeEvent(this.containerObj, 'mousedown', this.mouseDownListener, this);
+                Env.removeEvent(moveTarget, 'mousedown', this.mouseDownListener, this);
                 Env.removeEvent(moveTarget, 'mousemove', this.mouseMoveListener, this);
                 Env.removeEvent(moveTarget, 'click', this.mouseClickListener, this);
                 Env.removeEvent(moveTarget, 'dblclick', this.mouseDblClickListener, this);
@@ -2324,7 +2330,8 @@ JXG.extend(
             if (this.hasTouchHandlers && Env.isBrowser) {
                 var moveTarget = this.attr.movetarget || this.containerObj;
 
-                Env.removeEvent(this.containerObj, 'touchstart', this.touchStartListener, this);
+                // Env.removeEvent(this.containerObj, 'touchstart', this.touchStartListener, this);
+                Env.removeEvent(moveTarget, 'touchstart', this.touchStartListener, this);
                 Env.removeEvent(moveTarget, 'touchmove', this.touchMoveListener, this);
 
                 if (this.hasTouchEnd) {
