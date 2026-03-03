@@ -3051,25 +3051,23 @@ JXG.registerElement("curveunion", JXG.createCurveUnion);
  * @class Vertical or horizontal boxplot or also called box-and-whisker plot to present numerical data through their quartiles.
  * The direction of the boxplot is controlled by the attribute "dir". Internally, a boxplot is realized with a single JSXGraph curve.
  * <p>
- * Given a data set, the input array Q for the boxplot can be computed e.g. with the method {@link JXG.Math.Statistics.percentile}.
+ * Given a data set, the input array Q for the boxplot can be computed e.g. with the method {@link JXG.Math.Statistics.boxplot}.
  *
  * @example
  * var data = [57, 57, 57, 58, 63, 66, 66, 67, 67, 68, 69, 70, 70, 70, 70, 72, 73, 75, 75, 76, 76, 78, 79, 81];
- * var Q = [];
- *
- * Q[0] = JXG.Math.Statistics.min(data);
- * Q = Q.concat(JXG.Math.Statistics.percentile(data, [25, 50, 75]));
- * Q[4] = JXG.Math.Statistics.max(data);
+ * var Q = JXG.Math.Statistics.boxplot(data);
+ * var b = board.create('boxplot', [Q, 2, 4]);
  *
  * @pseudo
  * @name Boxplot
  * @param {Array} quantiles Array containing five quantiles (e.g. min, first quartile, median, third quartile, maximum) and an optional array with outlier values. The elements of this array can be of type number, function or string. The optional aub-array outlier is an array of numbers or a function returning an array of numbers.
  * @param {Number|Function} axis Axis position of the boxplot
- * @param {Number|Function} width Width of the rectangle part of the boxplot. The width of the first and 4th quantile
+ * @param {Number|Function} width Width of the rectangle part of the boxplot. The width of the first and 3th quartile
  * is relative to this width and can be controlled by the attribute "smallWidth".
  * @augments JXG.Curve
  * @constructor
  * @type JXG.Curve
+ * @see JXG.Math.Statistics#boxplot
  *
  * @example
  * var Q = [ -1, 2, 3, 3.5, 5 ];
@@ -3107,12 +3105,7 @@ JXG.registerElement("curveunion", JXG.createCurveUnion);
  *
  * @example
  * var data = [57, 57, 57, 58, 63, 66, 66, 67, 67, 68, 69, 70, 70, 70, 70, 72, 73, 75, 75, 76, 76, 78, 79, 81];
- * var Q = [];
- *
- * Q[0] = JXG.Math.Statistics.min(data);
- * Q = Q.concat(JXG.Math.Statistics.percentile(data, [25, 50, 75]));
- * Q[4] = JXG.Math.Statistics.max(data);
- *
+ * var Q = JXG.Math.Statistics.boxplot(data);
  * var b = board.create('boxplot', [Q, 0, 3]);
  *
  * </pre><div id="JXGef079e76-ae99-41e4-af29-1d07d83bf85a" class="jxgbox" style="width: 300px; height: 300px;"></div>
@@ -3121,12 +3114,7 @@ JXG.registerElement("curveunion", JXG.createCurveUnion);
  *         var board = JXG.JSXGraph.initBoard('JXGef079e76-ae99-41e4-af29-1d07d83bf85a',
  *             {boundingbox: [-5,90,5,30], axis: true, showcopyright: false, shownavigation: false});
  *     var data = [57, 57, 57, 58, 63, 66, 66, 67, 67, 68, 69, 70, 70, 70, 70, 72, 73, 75, 75, 76, 76, 78, 79, 81];
- *     var Q = [];
- *
- *     Q[0] = JXG.Math.Statistics.min(data);
- *     Q = Q.concat(JXG.Math.Statistics.percentile(data, [25, 50, 75]));
- *     Q[4] = JXG.Math.Statistics.max(data);
- *
+ *     var Q = JXG.Math.Statistics.boxplot(data, [25, 50, 75]);
  *     var b = board.create('boxplot', [Q, 0, 3]);
  *
  *     })();
