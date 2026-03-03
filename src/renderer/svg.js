@@ -2195,7 +2195,7 @@ JXG.extend(
         dumpToDataURI: function (ignoreTexts) {
             var svgRoot = this.svgRoot,
                 btoa = window.btoa || Base64.encode,
-                svg, i, len,
+                svg, i, len, str,
                 values = [];
 
             // Move all HTML tags (beside the SVG root) of the container
@@ -2267,8 +2267,10 @@ JXG.extend(
             // Parameter for btoa(): Replace utf-16 chars by their numerical entity
             // In particular, this is necessary for the coyright sign
             // From https://stackoverflow.com/questions/23223718/failed-to-execute-btoa-on-window-the-string-to-be-encoded-contains-characte/26603875#26603875
-            return "data:image/svg+xml;base64," + btoa(svg.replace(/[\u00A0-\u2666]/g, function(c) { return '&#' + c.charCodeAt(0) + ';'; }));
-            // return "data:image/svg+xml;base64," + btoa(unescape(encodeURIComponent(svg))); // unescape is deprecated and can handle utf-16 chars only partially
+
+            // str = btoa(svg.replace(/[\u00A0-\u2666]/g, function(c) { return '&#' + c.charCodeAt(0) + ';'; })); // Fails for MathJax-SVG
+            str = btoa(unescape(encodeURIComponent(svg))); // unescape is deprecated and can handle utf-16 chars only partially
+            return "data:image/svg+xml;base64," + str;
         },
 
         /**

@@ -359,7 +359,7 @@ jxg.extend(
          *
          * @see JXG.AbstractRenderer#drawNavigationBar
          * @example
-         * var board = JXG.init('jxgbox', {
+         * var board = JXG.board('jxgbox', {
          *     boundingbox: [-10, 5, 10, -5],
          *     keepaspectratio: false,
          *     axis: true
@@ -368,7 +368,7 @@ jxg.extend(
          * </pre><div id="JXG79b42d26-b664-451d-96b4-08bc25dd87d3" class="jxgbox" style="width: 600px; height: 300px;"></div>
          * <script type="text/javascript">
          *     (function() {
-         *         var board = JXG.init('JXG79b42d26-b664-451d-96b4-08bc25dd87d3', {
+         *         var board = JXG.board('JXG79b42d26-b664-451d-96b4-08bc25dd87d3', {
          *         boundingbox: [-10, 5, 10, -5],
          *         keepaspectratio: false,
          *         axis: true
@@ -380,7 +380,7 @@ jxg.extend(
          *
          *
          * @example
-         * const board = JXG.init('jxgbox', {
+         * const board = JXG.board('jxgbox', {
          *   boundingbox: [-10, 10, 10, -10],
          *   axis: true,
          *   showCopyright: true,
@@ -419,7 +419,7 @@ jxg.extend(
          * </pre><div id="JXGd7a7705b-35bb-4193-bbd4-3e3fd92eb92c" class="jxgbox" style="width: 300px; height: 300px;"></div>
          * <script type="text/javascript">
          *     (function() {
-         *       var board = JXG.init('JXGd7a7705b-35bb-4193-bbd4-3e3fd92eb92c', {
+         *       var board = JXG.board('JXGd7a7705b-35bb-4193-bbd4-3e3fd92eb92c', {
          *       boundingbox: [-10, 10, 10, -10],
          *       axis: true,
          *       showCopyright: true,
@@ -459,7 +459,7 @@ jxg.extend(
          *
          * </script><pre>
          * @example
-         * const board = JXG.init('jxgbox', {
+         * const board = JXG.board('jxgbox', {
          *     boundingbox: [-5, 5, 5, -5],
          *     intl: {
          *         enabled: false,
@@ -500,7 +500,7 @@ jxg.extend(
          * </pre><div id="JXGd84f4c84-f900-4d33-b001-e5f5f3ab0dd2" class="jxgbox" style="width: 600px; height: 600px;"></div>
          * <script type="text/javascript">
          *     (function() {
-         *         var board = JXG.init('JXGd84f4c84-f900-4d33-b001-e5f5f3ab0dd2', {
+         *         var board = JXG.board('JXGd84f4c84-f900-4d33-b001-e5f5f3ab0dd2', {
          *         boundingbox: [-5, 5, 5, -5],
          *         intl: {
          *             enabled: false,
@@ -543,7 +543,7 @@ jxg.extend(
          * </script><pre>
          *
          */
-        init: function (box, attributes) {
+        board: function (box, attributes) {
             return this.JSXGraph.initBoard(box, attributes);
         },
 
@@ -593,7 +593,7 @@ jxg.extend(
          * &lt;/style&gt;
          * &lt;div id="container" class="container"&gt;&lt;/div&gt;
          * &lt;script type="text/javascript"&gt;
-         *        const board = JXG.initAppBox('container', {
+         *        const board = JXG.appBox('container', {
          *            jxgbox: {
          *                // Styling of the inner div
          *                style: 'width:640px;  aspect-ratio:2/1; background-color: white',
@@ -637,7 +637,7 @@ jxg.extend(
          * <div id="JXGd1c7bf6a-a571-4392-a289-e4ef44d57c88" class="container"></div>
          * <script type="text/javascript">
          *     (function() {
-         *        const board = JXG.initAppBox('JXGd1c7bf6a-a571-4392-a289-e4ef44d57c88', {
+         *        const board = JXG.appBox('JXGd1c7bf6a-a571-4392-a289-e4ef44d57c88', {
          *            jxgbox: {
          *                style: "width:640px;  aspect-ratio:2/1; background-color: white",
          *                cssClass: "",
@@ -667,13 +667,13 @@ jxg.extend(
          * </script><pre>
          *
          */
-        initAppBox: function (box, attributes) {
+        appBox: function (box, attributes) {
             var node, id, jxg_id, innerdiv,
                 obb, bb, w, h,// rect,
                 attr, board;
 
             if (!JXG.isBrowser) {
-                throw new Error("JSXGraph: JXG.initAppBox needs a browser");
+                throw new Error("JSXGraph: JXG.appBox needs a browser");
             }
             if (JXG.isString(box)) {
                 // Hosting div is given as string
@@ -717,13 +717,13 @@ jxg.extend(
             node.appendChild(innerdiv);
             attributes.moveTarget = node;
 
-            board = this.init(innerdiv, attributes);
+            board = this.board(innerdiv, attributes);
 
             innerdiv.style.overflow = 'visible';
             if (board.renderer.type === 'svg') {
                 board.renderer.svgRoot.style.overflow = 'visible';
             } else {
-                throw new Error("JSXGraph: JXG.initAppBox needs SVG renderer");
+                throw new Error("JSXGraph: JXG.appBox needs SVG renderer");
             }
 
             return board;
