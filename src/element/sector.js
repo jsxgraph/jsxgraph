@@ -523,7 +523,8 @@ JXG.createSector = function (board, parents, attributes) {
                 a, b, c,
                 phi,
                 sgn = 1,
-                vp_s = this.evalVisProp('selection');
+                vp_s = this.evalVisProp('selection'),
+                vp_o = this.evalVisProp('orientation');
 
             if (!A.isReal || !B.isReal || !C.isReal) {
                 this.dataX = [NaN];
@@ -600,7 +601,6 @@ JXG.createSector = function (board, parents, attributes) {
 
     // Minor or major arc:
     attr.selection = el.visProp.selection;
-    attr.orientation = el.visProp.orientation;
     attr.name += "_arc";
 
     if (type === '2lines') {
