@@ -582,6 +582,75 @@ JXG.extend(
                     this.matrix = Mat.matMatMult(this.matrix, m1);
                     this.matrix = Mat.matMatMult(m2, this.matrix);
                 };
+            } else if (type === 'affine') {
+                if (params.length !== 9) {
+                    throw new Error("JSXGraph: 3D transformation of type 'affine' needs 9 parameters.");
+                }
+
+                this.evalParam = Type.createEvalFunction(board, params, 9);
+                this.update = function () {
+                    this.matrix[1][1] = this.evalParam(0);
+                    this.matrix[1][2] = this.evalParam(1);
+                    this.matrix[1][3] = this.evalParam(2);
+                    this.matrix[2][1] = this.evalParam(3);
+                    this.matrix[2][2] = this.evalParam(4);
+                    this.matrix[2][3] = this.evalParam(5);
+                    this.matrix[3][1] = this.evalParam(6);
+                    this.matrix[3][2] = this.evalParam(7);
+                    this.matrix[3][3] = this.evalParam(8);
+                };
+            } else if (type === 'affinematrix') {
+                if (params.length !== 1) {
+                    throw new Error("JSXGraph: 3D transformation of type 'affinematrix' needs 1 parameter.");
+                }
+
+                this.evalParam = params[0].slice();
+                this.update = function () {
+                    var i, j;
+                    for (i = 0; i < 3; i++) {
+                        for (j = 0; j < 3; j++) {
+                            this.matrix[i + 1][j + 1] = Type.evaluate(this.evalParam[i][j]);
+                        }
+                    }
+                };
+            } else if (type === 'generic') {
+                if (params.length !== 16) {
+                    throw new Error("JSXGraph: 3D transformation of type 'generic' needs 16 parameters.");
+                }
+
+                this.evalParam = Type.createEvalFunction(board, params, 6);
+                this.update = function () {
+                    this.matrix[0][0] = this.evalParam(0);
+                    this.matrix[0][1] = this.evalParam(1);
+                    this.matrix[0][2] = this.evalParam(2);
+                    this.matrix[0][3] = this.evalParam(3);
+                    this.matrix[1][0] = this.evalParam(4);
+                    this.matrix[1][1] = this.evalParam(5);
+                    this.matrix[1][2] = this.evalParam(6);
+                    this.matrix[1][3] = this.evalParam(7);
+                    this.matrix[2][0] = this.evalParam(8);
+                    this.matrix[2][1] = this.evalParam(9);
+                    this.matrix[2][2] = this.evalParam(10);
+                    this.matrix[2][3] = this.evalParam(11);
+                    this.matrix[3][0] = this.evalParam(12);
+                    this.matrix[3][1] = this.evalParam(13);
+                    this.matrix[3][2] = this.evalParam(14);
+                    this.matrix[3][3] = this.evalParam(15);
+                };
+            } else if (type === 'matrix') {
+                if (params.length !== 1) {
+                    throw new Error("JSXGraph: 3D transformation of type 'matrix' needs 1 parameter.");
+                }
+
+                this.evalParam = params[0].slice();
+                this.update = function () {
+                    var i, j;
+                    for (i = 0; i < 4; i++) {
+                        for (j = 0; j < 4; j++) {
+                            this.matrix[i][j] = Type.evaluate(this.evalParam[i][j]);
+                        }
+                    }
+                };
             }
         },
 
