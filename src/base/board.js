@@ -3266,12 +3266,7 @@ JXG.extend(
                     Env.removeEvent(this.document, 'MSPointerUp', this.pointerUpListener, this);
                 } else {
                     Env.removeEvent(this.document, 'pointerup', this.pointerUpListener, this);
-                    Env.removeEvent(
-                        this.document,
-                        'pointercancel',
-                        this.pointerUpListener,
-                        this
-                    );
+                    Env.removeEvent(this.document, 'pointercancel', this.pointerUpListener, this);
                 }
                 this.hasPointerUp = false;
             }
