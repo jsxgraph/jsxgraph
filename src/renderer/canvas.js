@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2025
+    Copyright 2008-2026
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -1155,6 +1155,9 @@ JXG.extend(
                 s = 1.5 * fontsize,
                 alpha = 0.2;
 
+            if (!Type.isBrowser) {
+                return;
+            }
             if (!Type.exists(board._logo_image)) {
                 board._logo_image = new Image();
                 board._logo_image.src = str;

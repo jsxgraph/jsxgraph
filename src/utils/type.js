@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2025
+    Copyright 2008-2026
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -793,7 +793,6 @@ JXG.extend(
             }
             return a;
         },
-
 
         /**
          * Checks if an array contains an element equal to <tt>val</tt> but does not check the type!

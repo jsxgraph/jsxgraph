@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2025
+    Copyright 2008-2026
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -644,6 +644,25 @@ JXG.Options = {
         },
 
         /**
+         * Attributes for the div containing the JSXGraph board - in case
+         * the board has been constructed by `JXG.initAppBox`
+         * @type {Object}
+         * @name JXG.Board#jxgbox
+         * @default <pre>{
+         *   id: 'jxgbox',
+         *   outerbox: null,
+         *   style: 'width: 500px;  aspect-ratio: 1/1; overflow: visible',
+         *   cssClass: 'jxgbox'
+         * }</pre>
+         */
+        jxgbox: {
+            id: 'jxgbox',
+            outerbox: null,
+            style: 'width: 500px;  aspect-ratio: 1/1; overflow: visible',
+            cssClass: 'jxgbox'
+        },
+
+        /**
          * If set to true, the ratio between horizontal and vertical unit sizes
          * stays constant - independent of size changes of the hosting HTML div element.
          * <p>
@@ -1240,8 +1259,11 @@ JXG.Options = {
         showInfobox: true,
 
         /**
-         * Show JSXGraph logo in the top left corner of the board anyhow
-         * even if {@link JXG.Board#showCopyright} is false.
+         * The JSXGraph logo in the top left corner of the board is shown as soon as
+         * {@link JXG.Board#showCopyright} is true.
+         * <p>
+         * If {@link JXG.Board#showCopyright} is false, the logo can be shown anyhow
+         * by setting showLogo to true.
          *
          * @name JXG.Board#showLogo
          * @type Boolean
@@ -1556,6 +1578,8 @@ JXG.Options = {
             label: '',
             live: 'assertive' // 'assertive', 'polite', 'none'
         },
+
+        clip: true,
 
         /**
          * Apply CSS classes to an element in non-highlighted view. It is possible to supply one or more
@@ -3731,11 +3755,62 @@ JXG.Options = {
 
         /**
          * Orientation of the angle: 'clockwise' or 'counterclockwise' (default).
+         * <p>
+         * If the attribute 'selection' is set to 'minor' or 'major' and
+         * "the other" angle sector is to be taken, the orientation of the angle switches, too.
+         * <p>
+         * Apart from 'selection' having value 'minor' or 'major', the value of the angle
+         * is always the (positive) angle value of the visible sector - independent of
+         * orientation.
          *
          * @type {String}
          * @name Angle#orientation
          * @default 'counterclockwise'
          * @visprop
+         * @example
+         *
+         * var p1, p2, p3, a;
+         * p1 = board.create('point', [0, 0]);
+         * p2 = board.create('point', [4, 0]);
+         * p3 = board.create('point', [3, 3]);
+         * a = board.create('angle', [p2, p1, p3], {
+         *     name: '&phi;',
+         *     radius: 2,
+         *     // selection: 'minor',
+         *     orientation: 'clockwise',
+         *     arc: {
+         *         visible: true,
+         *         strokeWidth: 4,
+         *         lastArrow: true,
+         *     }
+         * });
+         *
+         * </pre><div id="JXG95f40aa1-971c-400a-9c21-39695ef15333" class="jxgbox" style="width: 300px; height: 300px;"></div>
+         * <script type="text/javascript">
+         *     (function() {
+         *         var board = JXG.JSXGraph.initBoard('JXG95f40aa1-971c-400a-9c21-39695ef15333',
+         *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
+         *
+         *             var p1, p2, p3, a;
+         *             p1 = board.create('point', [0, 0]);
+         *             p2 = board.create('point', [4, 0]);
+         *             p3 = board.create('point', [3, 3]);
+         *             a = board.create('angle', [p2, p1, p3], {
+         *                 name: '&phi;',
+         *                 radius: 2,
+         *                 // selection: 'minor',
+         *                 orientation: 'clockwise',
+         *                 arc: {
+         *                     visible: true,
+         *                     strokeWidth: 4,
+         *                     lastArrow: true,
+         *                 }
+         *             });
+         *
+         *     })();
+         *
+         * </script><pre>
+         *
          */
         orientation: 'counterclockwise',
 
@@ -3839,7 +3914,7 @@ JXG.Options = {
          */
         arc: {
             visible: false,
-            orientation: 'counterclockwise',
+            orientation: 'inherit',
             fillColor: 'none'
         }
 
@@ -3863,10 +3938,52 @@ JXG.Options = {
 
         /**
          * Orientation of the arc: 'clockwise' or 'counterclockwise' (default).
+         * <p>
+         * If the attribute 'selection' is set to 'minor' or 'major' and
+         * "the other" arc is to be taken, the orientation of the arc switches, too.
          *
          * @type {String}
          * @name Arc#orientation
          * @default 'counterclockwise'
+         *
+         * @example
+         * var p1, p2, p3, a;
+         * p1 = board.create('point', [0, 0]);
+         * p2 = board.create('point', [4, 0]);
+         * p3 = board.create('point', [3, 3]);
+         * board.create('arc', [p1, p2, p3], {
+         *     dash: 3,
+         *     name: 'a',
+         *     withLabel: true,
+         *     strokeColor: 'black',
+         *     strokeWidth: 3,
+         *     orientation: 'clockwise',
+         *     lastArrow: true
+         * });
+         *
+         * </pre><div id="JXG06bf7a84-4d95-469b-9e80-9fdd3e458232" class="jxgbox" style="width: 300px; height: 300px;"></div>
+         * <script type="text/javascript">
+         *     (function() {
+         *         var board = JXG.JSXGraph.initBoard('JXG06bf7a84-4d95-469b-9e80-9fdd3e458232',
+         *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
+         *             var p1, p2, p3, a;
+         *             p1 = board.create('point', [0, 0]);
+         *             p2 = board.create('point', [4, 0]);
+         *             p3 = board.create('point', [3, 3]);
+         *             board.create('arc', [p1, p2, p3], {
+         *                 dash: 3,
+         *                 name: 'a',
+         *                 withLabel: true,
+         *                 strokeColor: 'black',
+         *                 strokeWidth: 3,
+         *                 orientation: 'clockwise',
+         *                 lastArrow: true
+         *             });
+         *
+         *     })();
+         *
+         * </script><pre>
+         *
          */
         orientation: 'counterclockwise',
 
@@ -4402,7 +4519,7 @@ JXG.Options = {
          */
 
         /**
-         *  Direction of the box plot: 'vertical' or 'horizontal'
+         *  Direction of the boxplot: 'vertical' or 'horizontal'
          *
          * @type String
          * @name Boxplot#dir
@@ -4418,6 +4535,23 @@ JXG.Options = {
          * @default 0.5
          */
         smallWidth: 0.5,
+
+        /**
+         * Size and face of outliers. Size is the point size in pixel.
+         * Possible values for face are 'o' (default), '[]', '<>', '<<>>', '+', 'x', '-', '|'.
+         * See {@link JXG.Grid} for these names ('o' here is 'regpol' of the grid).
+         *
+         * @type Object
+         * @name Boxplot#outlier
+         * @default <pre>{
+         *   size: 3,
+         *   face: 'o'
+         *  }</pre>
+         */
+        outlier: {
+            size: 3,
+            face: 'o'
+        },
 
         strokeWidth: 2,
         strokeColor: Color.palette.blue,
@@ -6215,6 +6349,7 @@ JXG.Options = {
          */
 
         visible: 'inherit',
+        clip: 'inherit',
         strokeColor: '#000000',
         strokeOpacity: 1,
         highlightStrokeOpacity: 0.666666,
@@ -8099,10 +8234,54 @@ JXG.Options = {
 
         /**
          * Orientation of the sector: 'clockwise' or 'counterclockwise' (default).
+         * <p>
+         * If the attribute 'selection' is set to 'minor' or 'major' and
+         * "the other" angle sector is to be taken, the orientation of the angle switches, too.
          *
          * @type {String}
          * @name Sector#orientation
          * @default 'counterclockwise'
+         *
+         * @example
+         * var p1, p2, p3, a;
+         * p1 = board.create('point', [0, 0]);
+         * p2 = board.create('point', [4, 0]);
+         * p3 = board.create('point', [3, 3]);
+         * a = board.create('sector', [p1, p2, p3], {
+         *     name: '&phi;',
+         *     // selection: 'minor',
+         *     orientation: 'clockwise',
+         *     arc: {
+         *         visible: true,
+         *         strokeWidth: 4,
+         *         lastArrow: true,
+         *     }
+         * });
+         *
+         * </pre><div id="JXG6be31123-f142-4151-92c7-91786ab87cf3" class="jxgbox" style="width: 300px; height: 300px;"></div>
+         * <script type="text/javascript">
+         *     (function() {
+         *         var board = JXG.JSXGraph.initBoard('JXG6be31123-f142-4151-92c7-91786ab87cf3',
+         *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
+         *             var p1, p2, p3, a;
+         *             p1 = board.create('point', [0, 0]);
+         *             p2 = board.create('point', [4, 0]);
+         *             p3 = board.create('point', [3, 3]);
+         *             a = board.create('sector', [p1, p2, p3], {
+         *                 name: '&phi;',
+         *                 // selection: 'minor',
+         *                 orientation: 'clockwise',
+         *                 arc: {
+         *                     visible: true,
+         *                     strokeWidth: 4,
+         *                     lastArrow: true,
+         *                 }
+         *             });
+         *
+         *     })();
+         *
+         * </script><pre>
+         *
          */
         orientation: 'counterclockwise',
 
@@ -8118,6 +8297,8 @@ JXG.Options = {
             fillColor: 'none',
             withLabel: false,
             name: '',
+
+            orientation: 'inherit',
 
             center: {
                 visible: false,
@@ -8496,6 +8677,7 @@ JXG.Options = {
         baseline: {
             needsRegularUpdate: false,
             visible: 'inherit',
+            clip: 'inherit',
             fixed: true,
             scalable: false,
             tabindex: null,
@@ -8514,6 +8696,7 @@ JXG.Options = {
         ticks: {
             needsRegularUpdate: false,
             fixed: true,
+            clip: 'inherit',
 
             // Label drawing
             drawLabels: false,
@@ -8548,6 +8731,7 @@ JXG.Options = {
         highline: {
             strokeWidth: 3,
             visible: 'inherit',
+            clip: 'inherit',
             fixed: true,
             tabindex: null,
             name: '',
@@ -8563,6 +8747,7 @@ JXG.Options = {
          */
         label: {
             visible: 'inherit',
+            clip: 'inherit',
             strokeColor: '#000000'
         },
 
@@ -9800,7 +9985,7 @@ JXG.Options = {
 
         /**
          * Determines the rendering method of the text. Possible values
-         * include <tt>'html'</tt> and <tt>'internal</tt>.
+         * include <tt>'html'</tt> and <tt>'internal'</tt>.
          *
          * @name display
          * @memberOf Text.prototype

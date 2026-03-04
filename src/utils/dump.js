@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2025
+    Copyright 2008-2026
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -114,6 +114,69 @@ JXG.Dump = {
     },
 
     /**
+     * Recursively determine the difference between objects
+     * instance and def.
+     * @param {Object} instance
+     * @param {Object} def
+     * @param {String} pre
+     * @returns
+     */
+    _minimizeSubObject: function(instance, def, pre) {
+        var p, pl, del,
+            deleteAll = true,
+            copy = instance;
+
+        for (p in def) {
+            if (def.hasOwnProperty(p)) {
+                pl = p.toLowerCase();
+                // console.log(pre + 'Test', pl, typeof def[p])
+
+                if ((def[p] === copy[pl]) || (!Type.exists(def[p]) && !Type.exists(copy[pl])) ) {
+                    // Equality is determined for strings and numbers.
+                    // For different arrays or objects, '===' is always false.
+
+                    // console.log(pre + "\tdelete", p)
+                    delete copy[pl];
+                } else if (Type.isArray(def[p]) && Type.isArray(copy[pl])) {
+                    // Compare two arrays
+                    if (Type.cmpArrays(copy[pl], def[p])) {
+                        // console.log(pre + "\t\tdelete ARR", p);
+                        delete copy[pl];
+                    } else {
+                        deleteAll = false;
+                    }
+                } else {
+                    if (Type.exists(def[p]) && typeof def[p] === 'object' &&
+                        Type.exists(copy[pl]) && typeof copy[pl] === 'object'
+                    ) {
+                        // Recursively compare two objects
+                        del = this._minimizeSubObject(copy[pl], def[p], pre + '\t');
+                        if (del) {
+                            // console.log(pre + "--> delete obj", p)
+                            delete copy[pl];
+                        } else {
+                            // console.log(pre + '|')
+                            // console.log(def[p], copy[pl])
+                            deleteAll = false;
+                        }
+                    } else {
+                        deleteAll = false;
+                    }
+                }
+            }
+        }
+        if (deleteAll && Object.keys(def).length === 0 && Object.keys(copy).length !== 0) {
+            // If def is empty and copy is non-empty, we keep copy.
+            // This is the case if copy is filled with entries from an inherited element,
+            // like label is inherited from text.
+            deleteAll = false;
+        }
+
+        // console.log(pre + 'deleteAll', deleteAll)
+        return deleteAll;
+    },
+
+    /**
      * Eliminate default values given by {@link JXG.Options} from the attributes object.
      * @param {Object} instance Attribute object of the element
      * @param {Object} s Arbitrary number of objects <tt>instance</tt> will be compared to. Usually these are
@@ -121,9 +184,7 @@ JXG.Dump = {
      * @returns {Object} Minimal attributes object
      */
     minimizeObject: function (instance, s) {
-        var p,
-            pl,
-            i,
+        var i, del,
             def = {},
             copy = Type.deepCopy(instance),
             defaults = [];
@@ -133,21 +194,30 @@ JXG.Dump = {
         }
 
         def = Type.deepCopy(def, JXG.Options.elements, true);
-        for (i = defaults.length; i > 0; i--) {
-            def = Type.deepCopy(def, defaults[i - 1], true);
+        for (i = defaults.length - 1; i >= 0; i--) {
+            def = Type.deepCopy(def, defaults[i], true);
         }
 
+        // console.log('element', copy)
+        // console.log('default', def)
+        del = this._minimizeSubObject(copy, def, ' ');
+        if (del === true) {
+            copy = {};
+        }
+
+        /*
+        // Original
         for (p in def) {
             if (def.hasOwnProperty(p)) {
                 pl = p.toLowerCase();
 
-                if (def[p] !== null && typeof def[p] !== "object" && def[p] === copy[pl]) {
-                    // console.log("delete", p);
-                    delete copy[pl];
-                }
+                // Original. Does not work for gradient: null
+                // if (def[p] !== null && typeof def[p] !== "object" && def[p] === copy[pl]) {
+                //     delete copy[pl];
+                // }
             }
         }
-
+        */
         return copy;
     },
 

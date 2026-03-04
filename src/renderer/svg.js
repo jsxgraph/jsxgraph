@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2025
+    Copyright 2008-2026
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -58,7 +58,8 @@ JXG.SVGRenderer = function (container, dim) {
     this.type = 'svg';
 
     this.isIE =
-        navigator.appVersion.indexOf('MSIE') !== -1 || navigator.userAgent.match(/Trident\//);
+        typeof navigator !== 'undefined' &&
+        (navigator.appVersion.indexOf('MSIE') !== -1 || navigator.userAgent.match(/Trident\//));
 
     /**
      * SVG root node
@@ -225,8 +226,7 @@ JXG.SVGRenderer = function (container, dim) {
     };
 
     /**
-     * Combine arguments to an URL string of the form
-     * url(#...)
+     * Combine arguments to an URL string of the form url(#...)
      * Masks the container id. Calls {@link JXG.SVGRenderer#toStr}.
      *
      * @params {String} str variable number of strings
@@ -247,6 +247,56 @@ JXG.SVGRenderer = function (container, dim) {
     /* Default shadow filter */
     this.defs.appendChild(this.createShadowFilter(this.uniqName('f1'), 'none', 1, 0.1, 3, [5, 5]));
 
+    this.createClip = function() {
+        var id = this.uniqName('ClipFull'),
+            node1 = this.container.ownerDocument.createElementNS(this.svgNamespace, 'clipPath'),
+            node2 = this.container.ownerDocument.createElementNS(this.svgNamespace, 'rect'),
+            style, rx, ry;
+        node1.setAttributeNS(null, 'id', id);
+
+        node2.setAttributeNS(null, 'x', 0);
+        node2.setAttributeNS(null, 'y', 0);
+        node2.setAttributeNS(null, 'width', dim.width);
+        node2.setAttributeNS(null, 'height', dim.height);
+
+        // Inherit border-radius
+        style = getComputedStyle(this.container);
+        rx = Type.exists(style['border-radius']) ? parseFloat(style['border-radius']) : 0;
+        ry = rx;
+        node2.setAttributeNS(null, 'rx', rx);
+        node2.setAttributeNS(null, 'ry', ry);
+
+        node1.appendChild(node2);
+        return node1;
+    };
+    this.defs.appendChild(this.createClip());
+
+    // Already documented in JXG.AbstractRenderer
+    this.setClipPath = function(el, val) {
+        if (val) {
+            el.rendNode.style.clipPath = this.toURL(this.uniqName('ClipFull'));
+        } else {
+            el.rendNode.style.removeProperty('clip-path');
+        }
+        return this;
+    };
+
+    /**
+     * Update the filter node which does the clipping of elements (beside HTML texts) outside of the SVG.
+     * It is called in procedure resize().
+     * @param {Number} w
+     * @param {Number} h
+     */
+    this.updateClipPathRect = function(w, h) {
+        var id = this.uniqName('ClipFull'),
+            node = this.container.ownerDocument.getElementById(id).firstChild;
+
+        if (Type.exists(node)) {
+            node.setAttributeNS(null, 'width', w);
+            node.setAttributeNS(null, 'height', h);
+        }
+    };
+
     /**
      * JSXGraph uses a layer system to sort the elements on the board. This puts certain types of elements in front
      * of other types of elements. For the order used see {@link JXG.Options.layer}. The number of layers is documented
@@ -256,6 +306,7 @@ JXG.SVGRenderer = function (container, dim) {
     this.layer = [];
     for (i = 0; i < Options.layer.numlayers; i++) {
         this.layer[i] = this.container.ownerDocument.createElementNS(this.svgNamespace, 'g');
+        // this.layer[i].style.clipPath = this.toURL(this.uniqName('ClipFull'));
         this.svgRoot.appendChild(this.layer[i]);
     }
 
@@ -604,6 +655,8 @@ JXG.extend(
             // node.setAttributeNS(null, 'fill-opacity', ticks.evalVisProp('fillopacity'));
             node.setAttributeNS(null, 'stroke-opacity', ticks.evalVisProp('strokeopacity'));
             node.setAttributeNS(null, "stroke-width", ticks.evalVisProp('strokewidth'));
+
+            this.setClipPath(ticks, ticks.evalVisProp('clip'));
             this.updatePathPrim(node, tickStr, ticks.board);
         },
 
@@ -636,6 +689,7 @@ JXG.extend(
                 alpha = 0.2;
 
             node = this.createPrim("image", 'licenseLogo');
+
             node.setAttributeNS(null, 'x', '5px');
             node.setAttributeNS(null, 'y', '5px');
             node.setAttributeNS(null, 'width', s + 'px');
@@ -644,7 +698,9 @@ JXG.extend(
             node.setAttributeNS(null, 'style', 'opacity:' + alpha + ';');
             node.setAttributeNS(null, 'aria-hidden', 'true');
 
-            node.setAttributeNS(this.xlinkNamespace, "xlink:href", str);
+            node.setAttributeNS(this.xlinkNamespace, 'xlink:href', str); // Deprecated
+            node.setAttributeNS(null, 'href', str);
+
             this.appendChildPrim(node, 0);
         },
 
@@ -726,6 +782,7 @@ JXG.extend(
                 el.htmlStr = content;
             }
             this.transformRect(el, el.transformations);
+            this.setClipPath(el, !!el.evalVisProp('clip'));
         },
 
         /**
@@ -791,7 +848,8 @@ JXG.extend(
 
             if (el._src !== url) {
                 el.imgIsLoaded = false;
-                el.rendNode.setAttributeNS(this.xlinkNamespace, "xlink:href", url);
+                el.rendNode.setAttributeNS(this.xlinkNamespace, 'xlink:href', url); // Deprecated
+                el.rendNode.setAttributeNS(null, 'href', url);
                 el._src = url;
 
                 return true;
@@ -1917,6 +1975,10 @@ JXG.extend(
         resize: function (w, h) {
             this.svgRoot.setAttribute("width", parseFloat(w));
             this.svgRoot.setAttribute("height", parseFloat(h));
+            if (Type.exists(this.updateClipPathRect)) {
+                // Update clip-path element of the SVG box
+                this.updateClipPathRect(w, h);
+            }
         },
 
         // documented in JXG.AbstractRenderer
@@ -2044,18 +2106,28 @@ JXG.extend(
         // },
 
         _getImgDataURL: function (svgRoot) {
-            var images, len, canvas, ctx, ur, i;
+            var images, len, canvas, ctx, ur, i,
+                str;
 
             images = svgRoot.getElementsByTagName('image');
             len = images.length;
             if (len > 0) {
                 canvas = document.createElement('canvas');
-                //img = new Image();
+
                 for (i = 0; i < len; i++) {
+                    if (images[i].attributes.getNamedItem('href') !== null) {
+                        str = images[i].attributes.getNamedItem('href').value;
+                    } else {
+                        // Deprecated approach
+                        str = images[i].attributes.getNamedItemNS(this.xlinkNamespace, 'xlink:href').value;
+                    }
+
+                    // If the image is already a data-URI we are done
+                    if (str.indexOf('data:image') === 0) {
+                        continue;
+                    }
+
                     images[i].setAttribute("crossorigin", 'anonymous');
-                    //img.src = images[i].href;
-                    //img.onload = function() {
-                    // img.crossOrigin = 'anonymous'
                     ctx = canvas.getContext('2d');
                     canvas.width = images[i].getAttribute('width');
                     canvas.height = images[i].getAttribute('height');
@@ -2064,7 +2136,8 @@ JXG.extend(
 
                         // If the image is not png, the format must be specified here
                         ur = canvas.toDataURL();
-                        images[i].setAttribute("xlink:href", ur);
+                        images[i].setAttribute('xlink:href', ur); // Deprecated
+                        images[i].setAttribute('href', ur);
                     } catch (err) {
                         console.log("CORS problem! Image can not be used", err);
                     }
@@ -2122,7 +2195,7 @@ JXG.extend(
         dumpToDataURI: function (ignoreTexts) {
             var svgRoot = this.svgRoot,
                 btoa = window.btoa || Base64.encode,
-                svg, i, len,
+                svg, i, len, str,
                 values = [];
 
             // Move all HTML tags (beside the SVG root) of the container
@@ -2141,6 +2214,7 @@ JXG.extend(
                 }
             }
 
+            // Dump all image tags
             this._getImgDataURL(svgRoot);
 
             // Convert the SVG graphic into a string containing SVG code
@@ -2190,7 +2264,13 @@ JXG.extend(
                 this.foreignObjLayer.setAttribute("display", 'none');
             }
 
-            return "data:image/svg+xml;base64," + btoa(unescape(encodeURIComponent(svg)));
+            // Parameter for btoa(): Replace utf-16 chars by their numerical entity
+            // In particular, this is necessary for the coyright sign
+            // From https://stackoverflow.com/questions/23223718/failed-to-execute-btoa-on-window-the-string-to-be-encoded-contains-characte/26603875#26603875
+
+            // str = btoa(svg.replace(/[\u00A0-\u2666]/g, function(c) { return '&#' + c.charCodeAt(0) + ';'; })); // Fails for MathJax-SVG
+            str = btoa(unescape(encodeURIComponent(svg))); // unescape is deprecated and can handle utf-16 chars only partially
+            return "data:image/svg+xml;base64," + str;
         },
 
         /**

@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2025
+    Copyright 2008-2026
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -523,8 +523,7 @@ JXG.createSector = function (board, parents, attributes) {
                 a, b, c,
                 phi,
                 sgn = 1,
-                vp_s = this.evalVisProp('selection'),
-                vp_o = this.evalVisProp('orientation');
+                vp_s = this.evalVisProp('selection');
 
             if (!A.isReal || !B.isReal || !C.isReal) {
                 this.dataX = [NaN];
@@ -533,9 +532,24 @@ JXG.createSector = function (board, parents, attributes) {
             }
 
             phi = Geometry.rad(A, B, C);
-            if ((vp_s === 'minor' && phi > Math.PI) || (vp_s === 'major' && phi < Math.PI) || (vp_s === 'auto' && vp_o === 'clockwise')) {
+            if (
+                (vp_o === 'counterclockwise' &&
+                    ((vp_s === 'minor' && phi > Math.PI) ||
+                     (vp_s === 'major' && phi < Math.PI))
+                ) ||
+                (vp_o === 'clockwise' &&
+                    ((vp_s === 'auto') ||
+                    (vp_s === 'minor' && phi > Math.PI) ||
+                    (vp_s === 'major' && phi < Math.PI))
+                )
+            ) {
                 sgn = -1;
             }
+            // if ((vp_s === 'minor' && phi > Math.PI) ||
+            //     (vp_s === 'major' && phi < Math.PI) ||
+            //     (vp_s === 'auto' && vp_o === 'clockwise')) {
+            //     sgn = -1;
+            // }
 
             // This is true for circumCircleSectors. In that case there is
             // a fourth parent element: [midpoint, point1, point3, point2]
@@ -583,6 +597,7 @@ JXG.createSector = function (board, parents, attributes) {
     attr = Type.copyAttributes(attributes, board.options, 'arc');
     attr = Type.copyAttributes(attr, board.options, "sector", 'arc');
     attr.withlabel = false;
+
     // Minor or major arc:
     attr.selection = el.visProp.selection;
     attr.orientation = el.visProp.orientation;
@@ -632,6 +647,7 @@ JXG.createSector = function (board, parents, attributes) {
         ], attr);
     }
     el.addChild(el.arc);
+    el.inherits.push(el.arc);
 
     // Default hasPoint method. Documented in geometry element
     el.hasPointCurve = function (x, y) {

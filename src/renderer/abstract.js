@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2025
+    Copyright 2008-2026
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -37,7 +37,6 @@
     newcap:   AsciiMathMl exposes non-constructor functions beginning with upper case letters
 */
 /*jslint nomen: true, plusplus: true, newcap: true, unparam: true*/
-/*eslint no-unused-vars: "off"*/
 
 /**
  * @fileoverview JSXGraph can use various technologies to render the contents of a construction, e.g.
@@ -210,6 +209,11 @@ JXG.extend(
                 not = not || {};
 
                 this.setObjectTransition(el);
+
+                // Set clip-path
+                // The clip-path of the label is handled in updateText()
+                this.setClipPath(el, !!el.evalVisProp('clip'));
+
                 if (!el.evalVisProp('draft')) {
                     if (!not.stroke) {
                         if (el.highlighted) {
@@ -696,6 +700,9 @@ JXG.extend(
             c1 = new Coords(Const.COORDS_BY_USER, el.point1.coords.usrCoords, el.board);
             c2 = new Coords(Const.COORDS_BY_USER, el.point2.coords.usrCoords, el.board);
             margin = el.evalVisProp('margin');
+            if (!el.evalVisProp('clip')) {
+                margin += 4096;
+            }
             Geometry.calcStraight(el, c1, c2, margin);
 
             this.handleTouchpoints(el, c1, c2, arrowData);
@@ -1113,8 +1120,57 @@ JXG.extend(
         },
 
         /**
+         * Update CSS property clip-path to HTML texts if `overflow:hidden`
+         * has to be avoided.
+         *
+         * TODO clipping for transformed texts
+         *
+         * @param {JXG.Text} el Reference to an {@link JXG.Text} object that has to be clipped.
+         * @param {Boolean} [val=undefined] Set an explicit value, overwrites the element's attribute 'clip'. This is useful for handling the value 'inherit'.
+         * @see Text
+         * @see JXG.Text
+         */
+        updateClipPath: function(el, val) {
+            var x, y, x2, y2,
+                w = el.rendNode.offsetWidth,
+                h = el.rendNode.offsetHeight,
+                is = el.rendNode.style.inset.split(' '),
+                cw = el.board.canvasWidth,
+                ch = el.board.canvasHeight;
+
+            if (val === undefined) {
+                val = el.evalVisProp('clip');
+            }
+
+            if (!val) {
+                el.rendNode.style.removeProperty('clip-path');
+                return;
+            }
+            if (is[3] !== 'auto') {
+                x = parseFloat(is[3]);
+                x2 = cw - x;
+            } else {
+                x2 = parseFloat(is[1]) + w;
+                x = cw - x2;
+            }
+
+            if (is[0] !== 'auto') {
+                y = parseFloat(is[0]);
+                y2 = ch - y;
+            } else {
+                y2 = parseFloat(is[2]) + h;
+                y = ch - y2;
+            }
+
+            el.rendNode.style.clipPath = 'rect(' + (-y) + 'px ' // top
+                                        + (x2) + 'px '         // right
+                                        + (y2) + 'px '         // bottom
+                                        + (-x) + 'px)';        // left
+        },
+
+        /**
          * Updates visual properties of an already existing {@link JXG.Text} element.
-         * @param {JXG.Text} el Reference to an {@link JXG.Text} object, that has to be updated.
+         * @param {JXG.Text} el Reference to an {@link JXG.Text} object that has to be updated.
          * @see Text
          * @see JXG.Text
          * @see JXG.AbstractRenderer#drawText
@@ -1319,6 +1375,13 @@ JXG.extend(
                         el.rendNode.style['transform-origin'] = to_h + ' ' + to_v;
                     }
                     this.transformRect(el, el.transformations);
+
+                    if (el.visProp.islabel && Type.exists(el.visProp.anchor) &&
+                        el.evalVisProp('clip') === 'inherit') {
+                        this.updateClipPath(el, !!el.visProp.anchor.evalVisProp('clip'));
+                    } else {
+                        this.updateClipPath(el);
+                    }
                 } else {
                     this.updateInternalText(el);
                 }
@@ -1911,6 +1974,14 @@ JXG.extend(
          *   {@link https://www.w3.org/TR/SVGTiny12/painting.html#BufferedRenderingProperty}.
          */
         setBuffering: function (node, type) { /* stub */ },
+
+        /**
+         * Clip element to the JSXGraph container element (div). To be precise: to the SVG node.
+         *
+         * @param {JXG.GeometryElement} el Reference of the object
+         * @param {Boolean} val true: clip to the JSXGraph div, false: do not clip
+         */
+        setClipPath: function(el, val) { /* stub */ },
 
         /**
          * Sets CSS classes for elements (relevant for SVG only).

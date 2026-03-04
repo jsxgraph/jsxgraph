@@ -1,5 +1,5 @@
 /*
- Copyright 2008-2025
+ Copyright 2008-2026
  Matthias Ehmann,
  Carsten Miller,
  Reinhard Oldenburg,
