@@ -212,6 +212,17 @@ JXG.View3D = function (board, parents, attributes) {
      */
     this.trackballEnabled = false;
 
+    /**
+     * Store last position of pointer.
+     * This is the successor to use evt.movementX/Y which caused problems on firefox
+     * @type Object
+     * @private
+     */
+    this._lastPos = {
+        x: 0,
+        y: 0
+    };
+
     this.timeoutAzimuth = null;
 
     this.zIndexMin = Infinity;
@@ -1779,9 +1790,12 @@ JXG.extend(
         var smax = this.az_slide._smax,
             smin = this.az_slide._smin,
             speed = (smax - smin) / this.board.canvasWidth * (this.evalVisProp('az.pointer.speed')),
-            delta = evt.movementX,
+            delta, // = evt.movementX,
             az = this.az_slide.Value(),
             el = this.el_slide.Value();
+
+        delta = evt.screenX - this._lastPos.x;
+        this._lastPos.x = evt.screenX;
 
         // Doesn't allow navigation if another moving event is triggered
         if (this.board.mode === this.board.BOARD_MODE_DRAG) {
@@ -1799,6 +1813,7 @@ JXG.extend(
         }
 
         if (this.evalVisProp('az.pointer.enabled') && (delta !== 0) && evt.key == null) {
+            // delta *= (Math.abs(delta) > 100) ? 0.03 : 1;
             az += delta * speed;
         }
 
@@ -1830,9 +1845,12 @@ JXG.extend(
         var smax = this.el_slide._smax,
             smin = this.el_slide._smin,
             speed = (smax - smin) / this.board.canvasHeight * this.evalVisProp('el.pointer.speed'),
-            delta = evt.movementY,
+            delta, // = evt.movementY,
             az = this.az_slide.Value(),
             el = this.el_slide.Value();
+
+        delta = evt.screenY - this._lastPos.y;
+        this._lastPos.y = evt.screenY;
 
         // Doesn't allow navigation if another moving event is triggered
         if (this.board.mode === this.board.BOARD_MODE_DRAG) {
@@ -1850,6 +1868,7 @@ JXG.extend(
         }
 
         if (this.evalVisProp('el.pointer.enabled') && (delta !== 0) && evt.key == null) {
+            // delta *= (Math.abs(delta) > 100) ? 0.05 : 1;
             el += delta * speed;
         }
 
@@ -1882,7 +1901,7 @@ JXG.extend(
         var smax = this.bank_slide._smax,
             smin = this.bank_slide._smin,
             step, speed,
-            delta = evt.deltaY,
+            delta = evt.deltaY, // Wheel event
             bank = this.bank_slide.Value();
 
         // Doesn't allow navigation if another moving event is triggered
@@ -1933,14 +1952,20 @@ JXG.extend(
      */
     _trackballHandler: function (evt) {
         var pos = this.board.getMousePosition(evt),
-            x, y, center;
+            x, y, dx, dy, center;
 
         center = new Coords(Const.COORDS_BY_USER, [this.llftCorner[0] + this.size[0] * 0.5, this.llftCorner[1] + this.size[1] * 0.5], this.board);
         x = pos[0] - center.scrCoords[1];
         y = pos[1] - center.scrCoords[2];
+
+        dx = evt.screenX - this._lastPos.x;
+        dy = evt.screenY - this._lastPos.y;
+        this._lastPos.x = evt.screenX;
+        this._lastPos.y = evt.screenY;
+
         this._trackball = {
-            dx: evt.movementX,
-            dy: -evt.movementY,
+            dx: dx,
+            dy: -dy,
             x: x,
             y: -y
         };
@@ -1968,6 +1993,9 @@ JXG.extend(
         }
 
         this.board._change3DView = true;
+
+        this._lastPos.x = evt.screenX;
+        this._lastPos.y = evt.screenY;
 
         if (this.evalVisProp('trackball.enabled')) {
             neededButton = this.evalVisProp('trackball.button');
