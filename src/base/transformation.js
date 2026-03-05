@@ -199,6 +199,20 @@ JXG.extend(
          * ( 0  b  1)   ( y )
          * </pre>
          *
+         * <p>Generic affine transformation (4 parameters):
+         * <pre>
+         * ( 1  0  0 )   ( z )
+         * ( 0  a  b ) * ( x )
+         * ( 0  c  d )   ( y )
+         * </pre>
+         *
+         * <p>Affine 2x2 matrix:
+         * <pre>
+         * ( 1  0  0 )   ( z )
+         * ( 0  M    ) * ( x )
+         * ( 0       )   ( y )
+         * </pre>
+         *
          * <p>Generic transformation (9 parameters):
          * <pre>
          * ( a  b  c )   ( z )
@@ -206,7 +220,7 @@ JXG.extend(
          * ( g  h  i )   ( y )
          * </pre>
          *
-         * <p>Matrix:
+         * <p>3x3 Matrix:
          * <pre>
          * (         )   ( z )
          * (    M    ) * ( x )
@@ -357,6 +371,33 @@ JXG.extend(
                     this.matrix[1][2] = this.evalParam(0);
                     this.matrix[2][1] = this.evalParam(1);
                 };
+            } else if (type === 'affine') {
+                if (params.length !== 4) {
+                    throw new Error("JSXGraph: affine transformation needs 4 parameters.");
+                }
+
+                this.evalParam = Type.createEvalFunction(board, params, 9);
+
+                this.update = function () {
+                    this.matrix[1][1] = this.evalParam(0);
+                    this.matrix[1][2] = this.evalParam(1);
+                    this.matrix[2][1] = this.evalParam(2);
+                    this.matrix[2][2] = this.evalParam(3);
+                };
+            } else if (type === 'affinematrix') {
+                if (params.length !== 1) {
+                    throw new Error("JSXGraph: transformation of type 'matrix' needs 1 parameter.");
+                }
+
+                this.evalParam = params[0].slice();
+                this.update = function () {
+                    var i, j;
+                    for (i = 0; i < 2; i++) {
+                        for (j = 0; j < 2; j++) {
+                            this.matrix[i + 1][j + 1] = Type.evaluate(this.evalParam[i][j]);
+                        }
+                    }
+                };
             } else if (type === 'generic') {
                 if (params.length !== 9) {
                     throw new Error("JSXGraph: generic transformation needs 9 parameters.");
@@ -441,33 +482,65 @@ JXG.extend(
          * <p>
          * rotateX: a rotation matrix with angle a (in Radians)
          * <pre>
-         * ( 1    0        0             )   ( z )
+         * ( 1    0        0             )   ( w )
          * ( 0    1        0         0   ) * ( x )
-         * ( 0    0      cos(a)   -sin(a)) * ( x )
-         * ( 0    0      sin(a)   cos(a) )   ( y )
+         * ( 0    0      cos(a)   -sin(a)) * ( y )
+         * ( 0    0      sin(a)   cos(a) )   ( z )
          * </pre>
          *
          * <p>
          * rotateY: a rotation matrix with angle a (in Radians)
          * <pre>
-         * ( 1      0       0           )   ( z )
+         * ( 1      0       0           )   ( w )
          * ( 0    cos(a)    0    -sin(a)) * ( x )
-         * ( 0      0       1       0   ) * ( x )
-         * ( 0    sin(a)    0    cos(a) )   ( y )
+         * ( 0      0       1       0   ) * ( y )
+         * ( 0    sin(a)    0    cos(a) )   ( z )
          * </pre>
          *
          * <p>
          * rotateZ: a rotation matrix with angle a (in Radians)
          * <pre>
-         * ( 1      0                0  )   ( z )
+         * ( 1      0                0  )   ( w )
          * ( 0    cos(a)   -sin(a)   0  ) * ( x )
          * ( 0    sin(a)   cos(a)    0  )   ( y )
-         * ( 0      0         0      1  ) * ( x )
+         * ( 0      0         0      1  ) * ( z )
          * </pre>
          *
          * <p>
          * rotate: a rotation matrix with angle a (in Radians)
          * and normal <i>n</i>.
+         *
+         * <p>Generic affine transformation (9 parameters):
+         * <pre>
+         * ( 1  0  0  0 )   ( w )
+         * ( 0  a  b  c ) * ( x )
+         * ( 0  d  e  f )   ( y )
+         * ( 0  g  h  i )   ( z )
+         * </pre>
+         *
+         * <p>Affine 3x3 matrix:
+         * <pre>
+         * ( 1  0  0  0 )   ( w )
+         * ( 0          ) * ( x )
+         * ( 0     M    )   ( y )
+         * ( 0          ) * ( z )
+         * </pre>
+         *
+         * <p>Generic transformation (16 parameters):
+         * <pre>
+         * ( a  b  c  d )   ( w )
+         * ( e  f  ...  ) * ( x )
+         * (    ...     )   ( y )
+         * (    ...   p )   ( z )
+         * </pre>
+         *
+         * <p>Generic 4x4 matrix:
+         * <pre>
+         * (            )   ( w )
+         * (     M      ) * ( x )
+         * (            )   ( y )
+         * (            ) * ( z )
+         * </pre>
          *
          */
         setMatrix3D: function(view, type, params) {
