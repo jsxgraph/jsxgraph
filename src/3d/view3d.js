@@ -1798,7 +1798,7 @@ JXG.extend(
         this._lastPos.x = evt.screenX;
 
         // Doesn't allow navigation if another moving event is triggered
-        if (this.board.mode === this.board.BOARD_MODE_DRAG) {
+        if (this.board.mode === this.board.BOARD_MODE_DRAG || !this.board._change3DView) {
             return this;
         }
 
@@ -1853,7 +1853,7 @@ JXG.extend(
         this._lastPos.y = evt.screenY;
 
         // Doesn't allow navigation if another moving event is triggered
-        if (this.board.mode === this.board.BOARD_MODE_DRAG) {
+        if (this.board.mode === this.board.BOARD_MODE_DRAG || !this.board._change3DView) {
             return this;
         }
 
@@ -1905,7 +1905,7 @@ JXG.extend(
             bank = this.bank_slide.Value();
 
         // Doesn't allow navigation if another moving event is triggered
-        if (this.board.mode === this.board.BOARD_MODE_DRAG) {
+        if (this.board.mode === this.board.BOARD_MODE_DRAG || !this.board._change3DView) {
             return this;
         }
 
@@ -2098,7 +2098,7 @@ JXG.extend(
         }
         Env.removeEvent(document, 'pointerup', this.pointerUpHandler, this);
         this.board._change3DView = false;
-
+        this.board.mode = this.board.BOARD_MODE_NONE;
     }
 });
 

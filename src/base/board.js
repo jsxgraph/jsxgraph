@@ -1298,6 +1298,7 @@ JXG.extend(
             this.drag_dy = y - this.origin.scrCoords[2];
 
             this.mode = this.BOARD_MODE_MOVE_ORIGIN;
+            this._change3DView = false;
             this.updateQuality = this.BOARD_QUALITY_LOW;
         },
 
@@ -2560,6 +2561,7 @@ JXG.extend(
             this.initMoveOrigin(pos[0], pos[1]);
 
             this.mode = this.BOARD_MODE_ZOOM;
+            this._change3DView = false;
             return false;
         },
 
