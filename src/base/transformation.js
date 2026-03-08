@@ -42,7 +42,7 @@ import Mat from "../math/math.js";
 import Type from "../utils/type.js";
 
 /**
- * A transformation consists of a 3x3 matrix, i.e. it is a projective transformation.
+ * A (2D) transformation consists of a 3x3 matrix, i.e. it is a projective transformation.
  * @class Creates a new transformation object. Do not use this constructor to create a transformation.
  * Use {@link JXG.Board#create} with
  * type {@link Transformation} instead.
@@ -79,7 +79,7 @@ import Type from "../utils/type.js";
  * A rotation matrix with angle a (in Radians)
  * <pre>
  * ( 1    0        0      )   ( z )
- * ( 0    cos(a)   -sin(a)) * ( x )
+ * ( 0    cos(a)  -sin(a) ) * ( x )
  * ( 0    sin(a)   cos(a) )   ( y )
  * </pre>
  *
@@ -91,13 +91,33 @@ import Type from "../utils/type.js";
  * ( 0  b  1)   ( y )
  * </pre>
  *
- * <p>Generic transformation:
+ * <p>Generic affine transformation (4 parameters):
+ * <pre>
+ * ( 1  0  0 )   ( z )
+ * ( 0  a  b ) * ( x )
+ * ( 0  c  d )   ( y )
+ * </pre>
+ *
+ * <p>Affine 2x2 matrix:
+ * <pre>
+ * ( 1  0  0 )   ( z )
+ * ( 0  M    ) * ( x )
+ * ( 0       )   ( y )
+ * </pre>
+ *
+ * <p>Generic transformation (9 parameters):
  * <pre>
  * ( a  b  c )   ( z )
  * ( d  e  f ) * ( x )
  * ( g  h  i )   ( y )
  * </pre>
  *
+ * <p>3x3 Matrix:
+ * <pre>
+ * (         )   ( z )
+ * (    M    ) * ( x )
+ * (         )   ( y )
+ * </pre>
  */
 JXG.Transformation = function (board, type, params, is3D) {
     this.elementClass = Const.OBJECT_CLASS_OTHER;
@@ -187,7 +207,7 @@ JXG.extend(
          * A rotation matrix with angle a (in Radians)
          * <pre>
          * ( 1    0        0      )   ( z )
-         * ( 0    cos(a)   -sin(a)) * ( x )
+         * ( 0    cos(a)  -sin(a) ) * ( x )
          * ( 0    sin(a)   cos(a) )   ( y )
          * </pre>
          *
@@ -484,7 +504,7 @@ JXG.extend(
          * <pre>
          * ( 1    0        0             )   ( w )
          * ( 0    1        0         0   ) * ( x )
-         * ( 0    0      cos(a)   -sin(a)) * ( y )
+         * ( 0    0      cos(a)  -sin(a) )   ( y )
          * ( 0    0      sin(a)   cos(a) )   ( z )
          * </pre>
          *
@@ -492,8 +512,8 @@ JXG.extend(
          * rotateY: a rotation matrix with angle a (in Radians)
          * <pre>
          * ( 1      0       0           )   ( w )
-         * ( 0    cos(a)    0    -sin(a)) * ( x )
-         * ( 0      0       1       0   ) * ( y )
+         * ( 0    cos(a)    0   -sin(a) ) * ( x )
+         * ( 0      0       1       0   )   ( y )
          * ( 0    sin(a)    0    cos(a) )   ( z )
          * </pre>
          *
@@ -501,9 +521,9 @@ JXG.extend(
          * rotateZ: a rotation matrix with angle a (in Radians)
          * <pre>
          * ( 1      0                0  )   ( w )
-         * ( 0    cos(a)   -sin(a)   0  ) * ( x )
+         * ( 0    cos(a)  -sin(a)    0  ) * ( x )
          * ( 0    sin(a)   cos(a)    0  )   ( y )
-         * ( 0      0         0      1  ) * ( z )
+         * ( 0      0         0      1  )   ( z )
          * </pre>
          *
          * <p>
@@ -523,7 +543,7 @@ JXG.extend(
          * ( 1  0  0  0 )   ( w )
          * ( 0          ) * ( x )
          * ( 0     M    )   ( y )
-         * ( 0          ) * ( z )
+         * ( 0          )   ( z )
          * </pre>
          *
          * <p>Generic transformation (16 parameters):
@@ -539,7 +559,7 @@ JXG.extend(
          * (            )   ( w )
          * (     M      ) * ( x )
          * (            )   ( y )
-         * (            ) * ( z )
+         * (            )   ( z )
          * </pre>
          *
          */
@@ -975,7 +995,7 @@ JXG.extend(
  * The transformation matrix for angle a and rotating around (0, 0) has the form:
  * <pre>
  * ( 1    0        0      )   ( z )
- * ( 0    cos(a)   -sin(a)) * ( x )
+ * ( 0    cos(a)  -sin(a) ) * ( x )
  * ( 0    sin(a)   cos(a) )   ( y )
  * </pre>
  * </dd>
@@ -993,6 +1013,22 @@ JXG.extend(
  *      <li> <b>p, q</b> two point elements,
  *      <li> <b>p_x, p_y, q_x, q_y</b> four numbers or functions  determining a line through points (p_x, p_y) and (q_x, q_y).
  *    </ul>
+ * </dd>
+ * <dt><b><tt>type:"affine"</tt></b></dt><dd><b>a, b, c, d</b> (numbers or functions>.
+ * The transformation matrix has the form
+ * <pre>
+ * ( 1  0  0 )   ( z )
+ * ( 0  a  b ) * ( x )
+ * ( 0  c  d )   ( y )
+ * </pre>
+ * </dd>
+ * <dt><b><tt>type:"affinematrix"</tt></b></dt><dd><b>M</b> 2x2 matrix containing numbers or functions.
+ * The full transformation matrix has the form
+ * <pre>
+ * ( 1  0  0 )   ( z )
+ * ( 0  M    ) * ( x )
+ * ( 0       )   ( y )
+ * </pre>
  * </dd>
  * <dt><b><tt>type:"generic"</tt></b></dt><dd><b>a, b, c, d, e, f, g, h, i</b> Nine matrix entries (numbers or functions)
  *  for a generic projective transformation.
@@ -1363,6 +1399,10 @@ JXG.registerElement('transform', JXG.createTransform);
  * <li> 'rotateX'
  * <li> 'rotateY'
  * <li> 'rotateZ'
+ * <li> 'affine'
+ * <li> 'affinematrix'
+ * <li> 'generic'
+ * <li> 'matrix'
  * </ul>
  * <p>Valid parameters for these types are:
  * <dl>
@@ -1396,6 +1436,42 @@ JXG.registerElement('transform', JXG.createTransform);
  * <dt><b><tt>type:"rotateZ"</tt></b></dt><dd><b>a, [p=[0,0,0]]</b> angle (in radians), [point].
  * Rotate with angle a around the normal vector (0, 0, 1) through the point p.
  * </dd>
+ * <dt><b><tt>type:"affine"</tt></b></dt><dd><b>a,b,...,i</b> generic affine transformation (9 parameters, numbers or functions).
+ * The full transformation matrix has the form
+ * <pre>
+ * ( 1  0  0  0 )   ( w )
+ * ( 0  a  b  c ) * ( x )
+ * ( 0  d  e  f )   ( y )
+ * ( 0  g  h  i )   ( z )
+ * </pre>
+ * </dd>
+ * <dt><b><tt>type:"affinematrix"</tt></b></dt><dd><b>M</b> generic affine 3x3 transformation matrix (containing numbers or functions).
+ * The full transformation matrix has the form
+ * <pre>
+ * ( 1  0  0  0 )   ( w )
+ * ( 0          ) * ( x )
+ * ( 0     M    )   ( y )
+ * ( 0          )   ( z )
+ * </pre>
+ * </dd>
+ * <dt><b><tt>type:"generic"</tt></b></dt><dd><b>a,b,...,p</b> generic transformation (16 parameters, numbers or functions).
+ * The full transformation matrix has the form
+ * <pre>
+ * ( a  b  c  d )   ( w )
+ * ( e  f  ...  ) * ( x )
+ * (    ...     )   ( y )
+ * (    ...   p )   ( z )
+ * </pre>
+ * </dd>
+ * <dt><b><tt>type:"matrix"</tt></b></dt><dd><b>M</b> generic 4x4 transformation matrix (containing numbers or functions).
+ * The full transformation matrix has the form
+ * <pre>
+ * (            )   ( w )
+ * (     M      ) * ( x )
+ * (            )   ( y )
+ * (            )   ( z )
+ * </pre>
+ * </dd>
  * </dl>
  *
  * @example
@@ -1427,7 +1503,7 @@ JXG.registerElement('transform', JXG.createTransform);
  * <script type="text/javascript">
  *     (function() {
  *         var board = JXG.JSXGraph.initBoard('JXG2409bb0a-90d7-4c1e-ae9f-85e8a776acec',
- *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
+ *             {boundingbox: [-8, 8, 8,-8], axis: false, showcopyright: false, shownavigation: false});
  *     var bound = [-5, 5];
  *     var view = board.create('view3d',
  *         [
