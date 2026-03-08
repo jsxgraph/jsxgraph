@@ -67,7 +67,7 @@
     "http-server": "^14.1.1",
     "jasmine-core": "^3.10.1",
     "jsdoc2": "^2.4.0",
-    "jshint": "^2.13.1",
+    "jshint": "^0.5.9",
     "jslint": "^0.12.1",
     "karma": "^6.4.3",
     "karma-chrome-launcher": "^3.2.0",
