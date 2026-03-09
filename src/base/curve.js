@@ -2884,7 +2884,6 @@ JXG.createCurveIntersection = function (board, parents, attributes) {
      */
     c.updateDataArray = function () {
         var a = Clip.intersection(parents[0], parents[1], this.board);
-        console.log(a[0].length)
         this.dataX = a[0];
         this.dataY = a[1];
     };
