@@ -842,10 +842,6 @@ JXG.extend(
                         }
                     }
                 }
-
-                // for (i = 0; i < len; i++) {
-                //     this.updateTransform(this.points[i]);
-                // }
             }
 
             if (

@@ -4811,7 +4811,7 @@ Mat.Numerics = {
             // Only proceed if something is left
             if (i < len && k > i) {
                 newPts = [];
-                newPts[0] = pts[i];
+                newPts.push(pts[i]);
                 this._RDP(pts, i, k, eps, newPts);
                 allPts = allPts.concat(newPts);
             }
