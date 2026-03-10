@@ -845,7 +845,7 @@ JXG.extend(
             }
 
             if (
-                this.evalVisProp('curvetype') !== "plot" &&
+                // this.evalVisProp('curvetype') !== "plot" &&
                 this.evalVisProp('rdpsmoothing')
             ) {
                 // console.time('rdp');
