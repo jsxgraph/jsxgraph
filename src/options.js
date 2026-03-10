@@ -5149,6 +5149,8 @@ JXG.Options = {
          */
         plotVersion: 2,
 
+        RDPsmoothing: false,
+
         /**
          * Configure arrow head at the start position for curve.
          * Recommended arrow head type is 7.
