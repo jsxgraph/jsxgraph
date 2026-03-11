@@ -842,14 +842,10 @@ JXG.extend(
                         }
                     }
                 }
-
-                // for (i = 0; i < len; i++) {
-                //     this.updateTransform(this.points[i]);
-                // }
             }
 
             if (
-                this.evalVisProp('curvetype') !== "plot" &&
+                // this.evalVisProp('curvetype') !== "plot" &&
                 this.evalVisProp('rdpsmoothing')
             ) {
                 // console.time('rdp');

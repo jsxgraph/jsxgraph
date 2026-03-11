@@ -790,12 +790,6 @@ JXG.extend(
             len = Math.min(len, el.points.length);
 
             if (el.bezierDegree === 1) {
-                /*
-                if (isNotPlot && el.board.options.curve.RDPsmoothing) {
-                    el.points = Numerics.RamerDouglasPeucker(el.points, 1.0);
-                }
-                */
-
                 for (i = 0; i < len; i++) {
                     scr = el.points[i].scrCoords;
                     if (isNaN(scr[1]) || isNaN(scr[2])) {

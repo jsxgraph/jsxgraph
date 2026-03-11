@@ -4660,6 +4660,124 @@ Mat.Numerics = {
     },
 
     /**
+     * A subroutine of {@link JXG.Math.Numerics.RamerDouglasPeucker}.
+     * It searches for the point between index i and j which
+     * has the largest distance from the line between the points i and j.
+     * @param {Array} pts Array of {@link JXG.Coords}
+     * @param {Number} i Index of a point in pts
+     * @param {Number} j Index of a point in pts
+     * @private
+     * @see JXG.Math.Numerics._RDP
+     * @see JXG.Math.Numerics.RamerDouglasPeucker
+     */
+    _RDPfindSplit: function (pts, i, j) {
+        var d, k, ci, cj, ck,
+            x0, y0, x1, y1,
+            den, lbda,
+            eps = Mat.eps * Mat.eps,
+            huge = 10000,
+            dist = 0,
+            f = i;
+
+        if (j - i < 2) {
+            return [-1.0, 0];
+        }
+
+        ci = pts[i].scrCoords;
+        cj = pts[j].scrCoords;
+
+        if (isNaN(ci[1]) || isNaN(ci[2])) {
+            return [NaN, i];
+        }
+        if (isNaN(cj[1]) || isNaN(cj[2])) {
+            return [NaN, j];
+        }
+
+        for (k = i + 1; k < j; k++) {
+            ck = pts[k].scrCoords;
+            if (isNaN(ck[1]) || isNaN(ck[2])) {
+                return [NaN, k];
+            }
+
+            x0 = ck[1] - ci[1];
+            y0 = ck[2] - ci[2];
+            x1 = cj[1] - ci[1];
+            y1 = cj[2] - ci[2];
+            x0 = x0 === Infinity ? huge : x0;
+            y0 = y0 === Infinity ? huge : y0;
+            x1 = x1 === Infinity ? huge : x1;
+            y1 = y1 === Infinity ? huge : y1;
+            x0 = x0 === -Infinity ? -huge : x0;
+            y0 = y0 === -Infinity ? -huge : y0;
+            x1 = x1 === -Infinity ? -huge : x1;
+            y1 = y1 === -Infinity ? -huge : y1;
+            den = x1 * x1 + y1 * y1;
+
+            if (den > eps) {
+                lbda = (x0 * x1 + y0 * y1) / den;
+
+                if (lbda < 0.0) {
+                    lbda = 0.0;
+                } else if (lbda > 1.0) {
+                    lbda = 1.0;
+                }
+
+                x0 = x0 - lbda * x1;
+                y0 = y0 - lbda * y1;
+                d = x0 * x0 + y0 * y0;
+            } else {
+                lbda = 0.0;
+                d = x0 * x0 + y0 * y0;
+            }
+
+            if (d > dist) {
+                dist = d;
+                f = k;
+            }
+        }
+        return [Math.sqrt(dist), f];
+    },
+
+    /**
+     * A private subroutine of {@link JXG.Math.Numerics.RamerDouglasPeucker}.
+     * It runs recursively through the point set and searches the
+     * point which has the largest distance from the line between the first point and
+     * the last point. If the distance from the line is greater than eps, this point is
+     * included in our new point set otherwise it is discarded.
+     * If it is taken, we recursively apply the subroutine to the point set before
+     * and after the chosen point.
+     * @param {Array} pts Array of {@link JXG.Coords}
+     * @param {Number} i Index of an element of pts
+     * @param {Number} j Index of an element of pts
+     * @param {Number} eps If the absolute value of a given number <tt>x</tt> is smaller than <tt>eps</tt> it is considered to be equal <tt>0</tt>.
+     * @param {Array} newPts Array of {@link JXG.Coords}
+     * @private
+     * @see JXG.Math.Numerics._RDPfindSplit
+     * @see JXG.Math.Numerics.RamerDouglasPeucker
+     */
+    _RDP: function (pts, i, j, eps, newPts) {
+        var result = this._RDPfindSplit(pts, i, j),
+            k = result[1];
+
+        if (isNaN(result[0])) {
+            this._RDP(pts, i, k - 1, eps, newPts);
+            newPts.push(pts[k]);
+            do {
+                ++k;
+            } while (k <= j && isNaN(pts[k].scrCoords[1] + pts[k].scrCoords[2]));
+            if (k <= j) {
+                newPts.push(pts[k]);
+            }
+            this._RDP(pts, k + 1, j, eps, newPts);
+        } else if (result[0] > eps) {
+            this._RDP(pts, i, k, eps, newPts);
+            this._RDP(pts, k, j, eps, newPts);
+        } else {
+            newPts.push(pts[j]);
+        }
+    },
+
+    /**
      * Implements the Ramer-Douglas-Peucker algorithm.
      * It discards points which are not necessary from the polygonal line defined by the point array
      * pts. The computation is done in screen coordinates.
@@ -4673,122 +4791,7 @@ Mat.Numerics = {
         var allPts = [],
             newPts = [],
             i, k, len,
-            endless = true,
-
-            /**
-             * findSplit() is a subroutine of {@link JXG.Math.Numerics.RamerDouglasPeucker}.
-             * It searches for the point between index i and j which
-             * has the largest distance from the line between the points i and j.
-             * @param {Array} pts Array of {@link JXG.Coords}
-             * @param {Number} i Index of a point in pts
-             * @param {Number} j Index of a point in pts
-             * @ignore
-             * @private
-             */
-            findSplit = function (pts, i, j) {
-                var d, k, ci, cj, ck,
-                    x0, y0, x1, y1,
-                    den, lbda,
-                    eps = Mat.eps * Mat.eps,
-                    huge = 10000,
-                    dist = 0,
-                    f = i;
-
-                if (j - i < 2) {
-                    return [-1.0, 0];
-                }
-
-                ci = pts[i].scrCoords;
-                cj = pts[j].scrCoords;
-
-                if (isNaN(ci[1]) || isNaN(ci[2])) {
-                    return [NaN, i];
-                }
-                if (isNaN(cj[1]) || isNaN(cj[2])) {
-                    return [NaN, j];
-                }
-
-                for (k = i + 1; k < j; k++) {
-                    ck = pts[k].scrCoords;
-                    if (isNaN(ck[1]) || isNaN(ck[2])) {
-                        return [NaN, k];
-                    }
-
-                    x0 = ck[1] - ci[1];
-                    y0 = ck[2] - ci[2];
-                    x1 = cj[1] - ci[1];
-                    y1 = cj[2] - ci[2];
-                    x0 = x0 === Infinity ? huge : x0;
-                    y0 = y0 === Infinity ? huge : y0;
-                    x1 = x1 === Infinity ? huge : x1;
-                    y1 = y1 === Infinity ? huge : y1;
-                    x0 = x0 === -Infinity ? -huge : x0;
-                    y0 = y0 === -Infinity ? -huge : y0;
-                    x1 = x1 === -Infinity ? -huge : x1;
-                    y1 = y1 === -Infinity ? -huge : y1;
-                    den = x1 * x1 + y1 * y1;
-
-                    if (den > eps) {
-                        lbda = (x0 * x1 + y0 * y1) / den;
-
-                        if (lbda < 0.0) {
-                            lbda = 0.0;
-                        } else if (lbda > 1.0) {
-                            lbda = 1.0;
-                        }
-
-                        x0 = x0 - lbda * x1;
-                        y0 = y0 - lbda * y1;
-                        d = x0 * x0 + y0 * y0;
-                    } else {
-                        lbda = 0.0;
-                        d = x0 * x0 + y0 * y0;
-                    }
-
-                    if (d > dist) {
-                        dist = d;
-                        f = k;
-                    }
-                }
-                return [Math.sqrt(dist), f];
-            },
-            /**
-             * RDP() is a private subroutine of {@link JXG.Math.Numerics.RamerDouglasPeucker}.
-             * It runs recursively through the point set and searches the
-             * point which has the largest distance from the line between the first point and
-             * the last point. If the distance from the line is greater than eps, this point is
-             * included in our new point set otherwise it is discarded.
-             * If it is taken, we recursively apply the subroutine to the point set before
-             * and after the chosen point.
-             * @param {Array} pts Array of {@link JXG.Coords}
-             * @param {Number} i Index of an element of pts
-             * @param {Number} j Index of an element of pts
-             * @param {Number} eps If the absolute value of a given number <tt>x</tt> is smaller than <tt>eps</tt> it is considered to be equal <tt>0</tt>.
-             * @param {Array} newPts Array of {@link JXG.Coords}
-             * @ignore
-             * @private
-             */
-            RDP = function (pts, i, j, eps, newPts) {
-                var result = findSplit(pts, i, j),
-                    k = result[1];
-
-                if (isNaN(result[0])) {
-                    RDP(pts, i, k - 1, eps, newPts);
-                    newPts.push(pts[k]);
-                    do {
-                        ++k;
-                    } while (k <= j && isNaN(pts[k].scrCoords[1] + pts[k].scrCoords[2]));
-                    if (k <= j) {
-                        newPts.push(pts[k]);
-                    }
-                    RDP(pts, k + 1, j, eps, newPts);
-                } else if (result[0] > eps) {
-                    RDP(pts, i, k, eps, newPts);
-                    RDP(pts, k, j, eps, newPts);
-                } else {
-                    newPts.push(pts[j]);
-                }
-            };
+            endless = true;
 
         len = pts.length;
 
@@ -4808,8 +4811,8 @@ Mat.Numerics = {
             // Only proceed if something is left
             if (i < len && k > i) {
                 newPts = [];
-                newPts[0] = pts[i];
-                RDP(pts, i, k, eps, newPts);
+                newPts.push(pts[i]);
+                this._RDP(pts, i, k, eps, newPts);
                 allPts = allPts.concat(newPts);
             }
             if (i >= len) {

@@ -5150,6 +5150,17 @@ JXG.Options = {
         plotVersion: 2,
 
         /**
+         * Remove data points from the curve which do not influence
+         * its appearance. In some cases this makes JSXGraph run much faster.
+         * Implements the Ramer-Douglas-Peucker algorithm.
+         *
+         * @name Curve#RDPsmoothing
+         * @type Boolean
+         * @default false
+         */
+        RDPsmoothing: false,
+
+        /**
          * Configure arrow head at the start position for curve.
          * Recommended arrow head type is 7.
          *

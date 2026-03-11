@@ -1673,7 +1673,11 @@ JXG.extend(
             }
             // val is not of type function
 
-            if (val === 'inherit') {
+            if (val === 'inherit' &&
+                // Exceptions:
+                (key !== 'visible' &&   // 'visible' is treated separately (for historic reasons)
+                 key !== 'showinfobox') // 'inherits' from board (not any ancestor or descendant)
+            ) {
                 for (entry in lists) if (lists.hasOwnProperty(entry)) {
                     list = lists[entry];
                     found = false;
