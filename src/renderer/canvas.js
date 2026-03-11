@@ -1374,7 +1374,7 @@ JXG.extend(
                 symbl = "L",
                 symbc = "C",
                 nextSymb = symbm,
-                maxSize = 5000.0,
+                maxSize = Env.maxScreenCoord,
                 context = this.context;
 
             if (el.numberPoints <= 0) {
@@ -1455,7 +1455,7 @@ JXG.extend(
                 symbm = "M",
                 symbl = "C",
                 nextSymb = symbm,
-                maxSize = 5000.0,
+                maxSize = Env.maxScreenCoord,
                 f = el.evalVisProp('strokewidth'),
                 isNoPlot = el.evalVisProp('curvetype') !== "plot",
                 context = this.context;

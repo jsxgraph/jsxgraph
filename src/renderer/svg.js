@@ -36,6 +36,7 @@ import JXG from "../jxg.js";
 import Options from "../options.js";
 import AbstractRenderer from "./abstract.js";
 import Const from "../base/constants.js";
+import Env from "../utils/env.js";
 import Type from "../utils/type.js";
 import Color from "../utils/color.js";
 import Base64 from "../utils/base64.js";
@@ -1219,7 +1220,7 @@ JXG.extend(
                 symbl = " L ",
                 symbc = " C ",
                 nextSymb = symbm,
-                maxSize = 5000.0,
+                maxSize = Env.maxScreenCoord,
                 pStr = "";
 
             if (el.numberPoints <= 0) {
@@ -1279,7 +1280,7 @@ JXG.extend(
                 symbm = " M ",
                 symbl = " C ",
                 nextSymb = symbm,
-                maxSize = 5000.0,
+                maxSize = Env.maxScreenCoord,
                 pStr = "",
                 f = el.evalVisProp('strokewidth'),
                 isNoPlot = el.evalVisProp('curvetype') !== 'plot';

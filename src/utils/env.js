@@ -58,6 +58,13 @@ JXG.extendConstants(
 JXG.extend(
     JXG,
     /** @lends JXG */ {
+
+        /**
+         * Upper bound on pixel coordinates. This is used in svg and canvas renderer
+         * and in Numerics.RamerDouglasPeucker.
+         */
+        maxScreenCoord: 5000,
+
         /**
          * Determines whether evt is a touch event.
          * @param evt {Event}

@@ -4790,6 +4790,7 @@ Mat.Numerics = {
     RamerDouglasPeucker: function (pts, eps) {
         var allPts = [],
             newPts = [],
+            bound = Env.maxScreenCoord,
             i, k, len,
             endless = true;
 
@@ -4798,12 +4799,22 @@ Mat.Numerics = {
         i = 0;
         while (endless) {
             // Search for the next point without NaN coordinates
-            while (i < len && isNaN(pts[i].scrCoords[1] + pts[i].scrCoords[2])) {
+            while (i < len && (
+                    isNaN(pts[i].scrCoords[1] + pts[i].scrCoords[2]) ||
+                    Math.abs(pts[i].scrCoords[1]) >= bound ||
+                    Math.abs(pts[i].scrCoords[2]) >= bound
+                )
+            ) {
                 i += 1;
             }
             // Search for the next position of a NaN point
             k = i + 1;
-            while (k < len && !isNaN(pts[k].scrCoords[1] + pts[k].scrCoords[2])) {
+            while (k < len && (
+                   !isNaN(pts[k].scrCoords[1] + pts[k].scrCoords[2]) &&
+                    Math.abs(pts[k].scrCoords[1]) < bound &&
+                    Math.abs(pts[k].scrCoords[2]) < bound
+                )
+            ) {
                 k += 1;
             }
             k--;
