@@ -610,38 +610,6 @@ JXG.extend(
         },
 
         /**
-         * Sorts coords such that coords with lower x-values come first.
-         * If the x values are equal, sort the coords such that those with smaller y values come first.
-         *
-         * Bubble sort.
-         *
-         * The given parameter is manipulated
-         *
-         * @param {[JXG.Coords]} coordsArr
-         * @returns {[JXG.Coords]}
-         */
-        sortXY: function (coordsArr) {
-            let tmp, i, j;
-
-            for (i = 0; i < coordsArr.length; i++) {
-                for (j = i + 1; j < coordsArr.length; j++) {
-
-                    if (
-                        coordsArr[j].usrCoords[1] < coordsArr[i].usrCoords[1] ||
-                        (coordsArr[j].usrCoords[1] === coordsArr[i].usrCoords[1] && coordsArr[j].usrCoords[2] < coordsArr[i].usrCoords[2])
-                    ) {
-                        tmp = coordsArr[j];
-                        coordsArr[j] = coordsArr[i];
-                        coordsArr[i] = tmp;
-                    }
-
-                }
-            }
-
-            return coordsArr;
-        },
-
-        /**
          * Signed triangle area of the three points given. It can also be used
          * to test the orientation of the triangle.
          * <ul>
