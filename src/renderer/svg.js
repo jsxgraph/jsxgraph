@@ -1239,13 +1239,17 @@ JXG.extend(
                         // Chrome has problems with values being too far away.
                         // scr[1] = Math.max(Math.min(scr[1], maxSize), -maxSize);
                         // scr[2] = Math.max(Math.min(scr[2], maxSize), -maxSize);
-                        sc1 = Math.max(Math.min(scr[1], maxSize), -maxSize);
-                        sc2 = Math.max(Math.min(scr[2], maxSize), -maxSize);
+                        // sc1 = Math.max(Math.min(scr[1], maxSize), -maxSize);
+                        // sc2 = Math.max(Math.min(scr[2], maxSize), -maxSize);
+                        sc1 = scr[1];
+                        sc2 = scr[2];
+                        // if (Math.abs(sc1) <= maxSize && Math.abs(sc2) <= maxSize) {
+                        // }
 
                         // Attention: first coordinate may be inaccurate if far way
                         //pStr += [nextSymb, scr[1], ' ', scr[2]].join('');
                         // pStr += nextSymb + scr[1] + " " + scr[2]; // Seems to be faster now (webkit and firefox)
-                        pStr += nextSymb + sc1+ " " + sc2; // Seems to be faster now (webkit and firefox)
+                        pStr += nextSymb + sc1 + " " + sc2; // Seems to be faster now (webkit and firefox)
                         nextSymb = symbl;
                     }
                 }
