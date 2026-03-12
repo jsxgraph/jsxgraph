@@ -1216,15 +1216,15 @@ JXG.extend(
             var i,
                 scr, sc1, sc2,
                 len,
-                symbm = " M ",
-                symbl = " L ",
-                symbc = " C ",
+                symbm = ' M ',
+                symbl = ' L ',
+                symbc = ' C ',
                 nextSymb = symbm,
                 maxSize = Env.maxScreenCoord,
-                pStr = "";
+                pStr = '';
 
             if (el.numberPoints <= 0) {
-                return "";
+                return '';
             }
 
             len = Math.min(el.points.length, el.numberPoints);
@@ -1241,15 +1241,14 @@ JXG.extend(
                         // scr[2] = Math.max(Math.min(scr[2], maxSize), -maxSize);
                         // sc1 = Math.max(Math.min(scr[1], maxSize), -maxSize);
                         // sc2 = Math.max(Math.min(scr[2], maxSize), -maxSize);
-                        sc1 = scr[1];
-                        sc2 = scr[2];
-                        // if (Math.abs(sc1) <= maxSize && Math.abs(sc2) <= maxSize) {
+                        sc1 = scr[1].toFixed(2);
+                        sc2 = scr[2].toFixed(2);
+                        // if (i==0 || i == len - 1 || Math.abs(sc1) <= maxSize && Math.abs(sc2) <= maxSize) {
                         // }
-
                         // Attention: first coordinate may be inaccurate if far way
                         //pStr += [nextSymb, scr[1], ' ', scr[2]].join('');
-                        // pStr += nextSymb + scr[1] + " " + scr[2]; // Seems to be faster now (webkit and firefox)
-                        pStr += nextSymb + sc1 + " " + sc2; // Seems to be faster now (webkit and firefox)
+                        // pStr += nextSymb + scr[1] + ' ' + scr[2]; // Seems to be faster now (webkit and firefox)
+                        pStr += nextSymb + sc1 + ' ' + sc2;   // Seems to be faster now (webkit and firefox)
                         nextSymb = symbl;
                     }
                 }
@@ -1257,18 +1256,20 @@ JXG.extend(
                 i = 0;
                 while (i < len) {
                     scr = el.points[i].scrCoords;
-                    if (isNaN(scr[1]) || isNaN(scr[2])) {
+                    sc1 = scr[1];
+                    sc2 = scr[2];
+                    if (isNaN(sc1) || isNaN(sc2)) {
                         // PenUp
                         nextSymb = symbm;
                     } else {
-                        pStr += nextSymb + scr[1] + " " + scr[2];
+                        pStr += nextSymb + sc1 + ' ' + sc2;
                         if (nextSymb === symbc) {
                             i += 1;
                             scr = el.points[i].scrCoords;
-                            pStr += " " + scr[1] + " " + scr[2];
+                            pStr += ' ' + scr[1] + ' ' + scr[2];
                             i += 1;
                             scr = el.points[i].scrCoords;
-                            pStr += " " + scr[1] + " " + scr[2];
+                            pStr += ' ' + scr[1] + ' ' + scr[2];
                         }
                         nextSymb = symbc;
                     }
@@ -1284,16 +1285,16 @@ JXG.extend(
                 scr, sc1, sc2,
                 lx, ly,
                 len,
-                symbm = " M ",
-                symbl = " C ",
+                symbm = ' M ',
+                symbl = ' C ',
                 nextSymb = symbm,
-                maxSize = Env.maxScreenCoord,
-                pStr = "",
+                // maxSize = Env.maxScreenCoord,
+                pStr = '',
                 f = el.evalVisProp('strokewidth'),
                 isNoPlot = el.evalVisProp('curvetype') !== 'plot';
 
             if (el.numberPoints <= 0) {
-                return "";
+                return '';
             }
 
             if (isNoPlot && el.board.options.curve.RDPsmoothing) {
@@ -1313,34 +1314,28 @@ JXG.extend(
                         // Chrome has problems with values being too far away.
                         // scr[1] = Math.max(Math.min(scr[1], maxSize), -maxSize);
                         // scr[2] = Math.max(Math.min(scr[2], maxSize), -maxSize);
-                        sc1 = Math.max(Math.min(scr[1], maxSize), -maxSize);
-                        sc2 = Math.max(Math.min(scr[2], maxSize), -maxSize);
+                        // sc1 = Math.max(Math.min(scr[1], maxSize), -maxSize);
+                        // sc2 = Math.max(Math.min(scr[2], maxSize), -maxSize);
+                        sc1 = scr[1];
+                        sc2 = scr[2];
 
                         // Attention: first coordinate may be inaccurate if far way
                         if (nextSymb === symbm) {
                             //pStr += [nextSymb, scr[1], ' ', scr[2]].join('');
-                            // pStr += nextSymb + scr[1] + " " + scr[2]; // Seems to be faster now (webkit and firefox)
-                            pStr += nextSymb + sc1 + " " + sc2; // Seems to be faster now (webkit and firefox)
+                            pStr += nextSymb + sc1 + ' ' + sc2;   // Seems to be faster now (webkit and firefox)
                         } else {
                             k = 2 * j;
                             pStr += [
                                 nextSymb,
-                                // lx + (scr[1] - lx) * 0.333 + f * (k * Math.random() - j), " ",
-                                // ly + (scr[2] - ly) * 0.333 + f * (k * Math.random() - j), " ",
-                                // lx + (scr[1] - lx) * 0.666 + f * (k * Math.random() - j), " ",
-                                // ly + (scr[2] - ly) * 0.666 + f * (k * Math.random() - j), " ",
-                                // scr[1], " ", scr[2]
-                                lx + (sc1 - lx) * 0.333 + f * (k * Math.random() - j), " ",
-                                ly + (sc2 - ly) * 0.333 + f * (k * Math.random() - j), " ",
-                                lx + (sc1 - lx) * 0.666 + f * (k * Math.random() - j), " ",
-                                ly + (sc2 - ly) * 0.666 + f * (k * Math.random() - j), " ",
-                                sc1, " ", sc2
-                            ].join("");
+                                lx + (sc1 - lx) * 0.333 + f * (k * Math.random() - j), ' ',
+                                ly + (sc2 - ly) * 0.333 + f * (k * Math.random() - j), ' ',
+                                lx + (sc1 - lx) * 0.666 + f * (k * Math.random() - j), ' ',
+                                ly + (sc2 - ly) * 0.666 + f * (k * Math.random() - j), ' ',
+                                sc1, ' ', sc2
+                            ].join('');
                         }
 
                         nextSymb = symbl;
-                        // lx = scr[1];
-                        // ly = scr[2];
                         lx = sc1;
                         ly = sc2;
                     }
