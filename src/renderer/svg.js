@@ -1070,143 +1070,45 @@ JXG.extend(
                 s05 = size * 0.5;
 
             if (type === 'x') {
-                s =
-                    " M " +
-                    (scr[1] - size) +
-                    " " +
-                    (scr[2] - size) +
-                    " L " +
-                    (scr[1] + size) +
-                    " " +
-                    (scr[2] + size) +
-                    " M " +
-                    (scr[1] + size) +
-                    " " +
-                    (scr[2] - size) +
-                    " L " +
-                    (scr[1] - size) +
-                    " " +
-                    (scr[2] + size);
-            } else if (type === "+") {
-                s =
-                    " M " +
-                    (scr[1] - size) +
-                    " " +
-                    scr[2] +
-                    " L " +
-                    (scr[1] + size) +
-                    " " +
-                    scr[2] +
-                    " M " +
-                    scr[1] +
-                    " " +
-                    (scr[2] - size) +
-                    " L " +
-                    scr[1] +
-                    " " +
-                    (scr[2] + size);
-            } else if (type === "|") {
-                s =
-                    " M " +
-                    scr[1] +
-                    " " +
-                    (scr[2] - size) +
-                    " L " +
-                    scr[1] +
-                    " " +
-                    (scr[2] + size);
-            } else if (type === "-") {
-                s =
-                    " M " +
-                    (scr[1] - size) +
-                    " " +
-                    scr[2] +
-                    " L " +
-                    (scr[1] + size) +
-                    " " +
-                    scr[2];
-            } else if (type === "<>" || type === "<<>>") {
-                if (type === "<<>>") {
+                s = ' M ' + (scr[1] - size) + ' ' + (scr[2] - size) +
+                    ' L ' + (scr[1] + size) + ' ' + (scr[2] + size) +
+                    ' M ' + (scr[1] + size) + ' ' + (scr[2] - size) +
+                    ' L ' + (scr[1] - size) + ' ' + (scr[2] + size);
+            } else if (type === '+') {
+                s = ' M ' + (scr[1] - size) + ' ' + scr[2] +
+                    ' L ' + (scr[1] + size) + ' ' + scr[2] +
+                    ' M ' + scr[1] + ' ' + (scr[2] - size) +
+                    ' L ' + scr[1] + ' ' + (scr[2] + size);
+            } else if (type === '|') {
+                s = ' M ' + scr[1] + ' ' + (scr[2] - size) +
+                    ' L ' + scr[1] + ' ' + (scr[2] + size);
+            } else if (type === '-') {
+                s = ' M ' + (scr[1] - size) + ' ' + scr[2] +
+                    ' L ' + (scr[1] + size) + ' ' + scr[2];
+            } else if (type === '<>' || type === '<<>>') {
+                if (type === '<<>>') {
                     size *= 1.41;
                 }
-                s =
-                    " M " +
-                    (scr[1] - size) +
-                    " " +
-                    scr[2] +
-                    " L " +
-                    scr[1] +
-                    " " +
-                    (scr[2] + size) +
-                    " L " +
-                    (scr[1] + size) +
-                    " " +
-                    scr[2] +
-                    " L " +
-                    scr[1] +
-                    " " +
-                    (scr[2] - size) +
-                    " Z ";
-                } else if (type === "^") {
-                    s =
-                    " M " +
-                    scr[1] +
-                    " " +
-                    (scr[2] - size) +
-                    " L " +
-                    (scr[1] - sqrt32) +
-                    " " +
-                    (scr[2] + s05) +
-                    " L " +
-                    (scr[1] + sqrt32) +
-                    " " +
-                    (scr[2] + s05) +
-                    " Z "; // close path
+                s = ' M ' + (scr[1] - size) + ' ' + scr[2] +
+                    ' L ' + scr[1] + ' ' + (scr[2] + size) +
+                    ' L ' + (scr[1] + size) + ' ' + scr[2] +
+                    ' L ' + scr[1] + ' ' + (scr[2] - size) +' Z ';
+            } else if (type === '^') {
+                s = ' M ' + scr[1] + ' ' + (scr[2] - size) +
+                    ' L ' + (scr[1] - sqrt32) + ' ' + (scr[2] + s05) +
+                    ' L ' + (scr[1] + sqrt32) + ' ' + (scr[2] + s05) +' Z '; // close path
             } else if (type === 'v') {
-                s =
-                    " M " +
-                    scr[1] +
-                    " " +
-                    (scr[2] + size) +
-                    " L " +
-                    (scr[1] - sqrt32) +
-                    " " +
-                    (scr[2] - s05) +
-                    " L " +
-                    (scr[1] + sqrt32) +
-                    " " +
-                    (scr[2] - s05) +
-                    " Z ";
-            } else if (type === ">") {
-                s =
-                    " M " +
-                    (scr[1] + size) +
-                    " " +
-                    scr[2] +
-                    " L " +
-                    (scr[1] - s05) +
-                    " " +
-                    (scr[2] - sqrt32) +
-                    " L " +
-                    (scr[1] - s05) +
-                    " " +
-                    (scr[2] + sqrt32) +
-                    " Z ";
-            } else if (type === "<") {
-                s =
-                    " M " +
-                    (scr[1] - size) +
-                    " " +
-                    scr[2] +
-                    " L " +
-                    (scr[1] + s05) +
-                    " " +
-                    (scr[2] - sqrt32) +
-                    " L " +
-                    (scr[1] + s05) +
-                    " " +
-                    (scr[2] + sqrt32) +
-                    " Z ";
+                s = ' M ' + scr[1] + ' ' + (scr[2] + size) +
+                    ' L ' + (scr[1] - sqrt32) + ' ' + (scr[2] - s05) +
+                    ' L ' + (scr[1] + sqrt32) + ' ' + (scr[2] - s05) + ' Z ';
+            } else if (type === '>') {
+                s = ' M ' + (scr[1] + size) + ' ' + scr[2] +
+                    ' L ' + (scr[1] - s05) + ' ' + (scr[2] - sqrt32) +
+                    ' L ' + (scr[1] - s05) + ' ' + (scr[2] + sqrt32) + ' Z ';
+            } else if (type === '<') {
+                s = ' M ' + (scr[1] - size) + ' ' + scr[2] +
+                    ' L ' + (scr[1] + s05) + ' ' + (scr[2] - sqrt32) +
+                    ' L ' + (scr[1] + s05) + ' ' + (scr[2] + sqrt32) + ' Z ';
             }
             return s;
         },
