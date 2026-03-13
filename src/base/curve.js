@@ -845,11 +845,11 @@ JXG.extend(
             }
 
             if (
+                this.bezierDegree === 1 &&
                 // this.evalVisProp('curvetype') !== "plot" &&
                 this.evalVisProp('rdpsmoothing')
             ) {
                 // console.time('rdp');
-    // console.log('-------------------', this.id, this.elType)
                 this.points = Numerics.RamerDouglasPeucker(this.points, 0.2);
                 this.numberPoints = this.points.length;
                 // console.timeEnd('rdp');

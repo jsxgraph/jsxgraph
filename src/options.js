@@ -5152,13 +5152,17 @@ JXG.Options = {
         /**
          * Remove data points from the curve which do not influence
          * its appearance. In some cases this makes JSXGraph run much faster.
+         * <p>
+         * In certain cases this attribute causes problems, like for
+         * conic elements, curve intersection/union/difference
+         * <p>
          * Implements the Ramer-Douglas-Peucker algorithm.
          *
          * @name Curve#RDPsmoothing
          * @type Boolean
          * @default false
          */
-        RDPsmoothing: true,
+        RDPsmoothing: false,
 
         /**
          * Configure arrow head at the start position for curve.
@@ -5227,6 +5231,19 @@ JXG.Options = {
          * @visprop
          */
 
+        /**
+         * Remove data points from the function graph which do not influence
+         * its appearance. In some cases this makes JSXGraph run much faster,
+         * especially if this function graph has glider points or has dependent
+         * curves like inequality or curve intersection/union/difference.
+         * <p>
+         * Implements the Ramer-Douglas-Peucker algorithm.
+         *
+         * @name Functiongraph#RDPsmoothing
+         * @type Boolean
+         * @default true
+         */
+        RDPsmoothing: true
 
         /**#@-*/
     },
