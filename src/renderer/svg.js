@@ -36,7 +36,7 @@ import JXG from "../jxg.js";
 import Options from "../options.js";
 import AbstractRenderer from "./abstract.js";
 import Const from "../base/constants.js";
-import Env from "../utils/env.js";
+// import Env from "../utils/env.js";
 import Type from "../utils/type.js";
 import Color from "../utils/color.js";
 import Base64 from "../utils/base64.js";
@@ -1116,13 +1116,16 @@ JXG.extend(
         // Already documented in JXG.AbstractRenderer
         updatePathStringPrim: function (el) {
             var i,
-                scr, sc1, sc2,
+                scr, scx, scy,
                 len,
                 symbm = ' M ',
                 symbl = ' L ',
                 symbc = ' C ',
                 nextSymb = symbm,
-                maxSize = Env.maxScreenCoord,
+                // M = Env.maxScreenCoord,
+                // d, z1, scr1, lbda, mu,
+                // xt, xb, yt, yb,
+                // xl, xr, yl, yr,
                 pStr = '';
 
             if (el.numberPoints <= 0) {
@@ -1139,18 +1142,52 @@ JXG.extend(
                         nextSymb = symbm;
                     } else {
                         // Chrome has problems with values being too far away.
-                        // scr[1] = Math.max(Math.min(scr[1], maxSize), -maxSize);
-                        // scr[2] = Math.max(Math.min(scr[2], maxSize), -maxSize);
-                        // sc1 = Math.max(Math.min(scr[1], maxSize), -maxSize);
-                        // sc2 = Math.max(Math.min(scr[2], maxSize), -maxSize);
-                        sc1 = scr[1].toFixed(2);
-                        sc2 = scr[2].toFixed(2);
-                        // if (i==0 || i == len - 1 || Math.abs(sc1) <= maxSize && Math.abs(sc2) <= maxSize) {
+                        // In early implementations it was recommended to restrict numbers to abs value 5000,
+                        // see https://oreillymedia.github.io/Using_SVG/extras/ch08-precision.html#:~:text=If%20you%20are%20creating%20a,no%20bigger%20than%20%C2%B15%2C000.
+                        // Attention: there may be conflicts with RDP smoothing.
+                        //
+                        // March 2026: This restriction seems to be osbsolete.
+                        // Meanwhile all major browsers support 32 floats, see
+                        // https://www.w3.org/TR/SVG/types.html, section "4.2.1. Real number precision"
+                        //
+                        // Change in-place:
+                        // scr[1] = Math.max(Math.min(scr[1], M), -M);
+                        // scr[2] = Math.max(Math.min(scr[2], M), -M);
+                        // Change not in-place (preferred 2026):
+                        // sc1 = Math.max(Math.min(scr[1], M), -M);
+                        // sc2 = Math.max(Math.min(scr[2], M), -M);
+                        //
+                        scx = scr[1];
+                        scy = scr[2];
+
+                        // Some first steps to project coordinates to the virtual
+                        // clip box [-5000, 5000, 5000, -5000].
+                        // But - hopefully - we do not need to develop this anymore.
+                        // Intersections with the clip box.
+                        // Todo: choose the right one.
+                        // if (i > 0) {
+                        //     scr1 = el.points[i - 1].scrCoords;
+                        //     d = sc2 - scr1[2];
+                        //     if (d !== 0) {
+                        //         lbda = (M - scr1[2]) / d;
+                        //         xt = scr1[1] + lbda * (sc1 - scr1[1]); yt = M;
+
+                        //         lbda = (-M - scr1[2]) / d;
+                        //         xb = scr1[1] + lbda * (sc1 - scr1[1]); yb = -M;
+                        //     }
+                        //     d = sc1 - scr1[1];
+                        //     if (d !== 0) {
+                        //         lbda = (M - scr1[2]) / d;
+                        //         yr = scr1[2] + lbda * (sc2 - scr1[2]); xr = M;
+                        //         lbda = (-M - scr1[2]) / d;
+                        //         yl = scr1[2] + lbda * (sc2 - scr1[2]); xl = -M;
+                        //     }
                         // }
+                        //
                         // Attention: first coordinate may be inaccurate if far way
-                        //pStr += [nextSymb, scr[1], ' ', scr[2]].join('');
-                        // pStr += nextSymb + scr[1] + ' ' + scr[2]; // Seems to be faster now (webkit and firefox)
-                        pStr += nextSymb + sc1 + ' ' + sc2;   // Seems to be faster now (webkit and firefox)
+                        // pStr += [nextSymb, scr[1], ' ', scr[2]].join('');
+                        // pStr += nextSymb + scr[1] + ' ' + scr[2]; // '+' seems to be faster than 'join' now (webkit and firefox)
+                        pStr += nextSymb + scx + ' ' + scy; // '+' seems to be faster than 'join' now (webkit and firefox)
                         nextSymb = symbl;
                     }
                 }
@@ -1158,13 +1195,13 @@ JXG.extend(
                 i = 0;
                 while (i < len) {
                     scr = el.points[i].scrCoords;
-                    sc1 = scr[1];
-                    sc2 = scr[2];
-                    if (isNaN(sc1) || isNaN(sc2)) {
+                    scx = scr[1];
+                    scy = scr[2];
+                    if (isNaN(scx) || isNaN(scy)) {
                         // PenUp
                         nextSymb = symbm;
                     } else {
-                        pStr += nextSymb + sc1 + ' ' + sc2;
+                        pStr += nextSymb + scx + ' ' + scy;
                         if (nextSymb === symbc) {
                             i += 1;
                             scr = el.points[i].scrCoords;
@@ -1190,7 +1227,7 @@ JXG.extend(
                 symbm = ' M ',
                 symbl = ' C ',
                 nextSymb = symbm,
-                // maxSize = Env.maxScreenCoord,
+                // M = Env.maxScreenCoord,
                 pStr = '',
                 f = el.evalVisProp('strokewidth'),
                 isNoPlot = el.evalVisProp('curvetype') !== 'plot';
@@ -1214,10 +1251,10 @@ JXG.extend(
                         nextSymb = symbm;
                     } else {
                         // Chrome has problems with values being too far away.
-                        // scr[1] = Math.max(Math.min(scr[1], maxSize), -maxSize);
-                        // scr[2] = Math.max(Math.min(scr[2], maxSize), -maxSize);
-                        // sc1 = Math.max(Math.min(scr[1], maxSize), -maxSize);
-                        // sc2 = Math.max(Math.min(scr[2], maxSize), -maxSize);
+                        // scr[1] = Math.max(Math.min(scr[1], M), -M);
+                        // scr[2] = Math.max(Math.min(scr[2], M), -M);
+                        // sc1 = Math.max(Math.min(scr[1], M), -M);
+                        // sc2 = Math.max(Math.min(scr[2], M), -M);
                         sc1 = scr[1];
                         sc2 = scr[2];
 

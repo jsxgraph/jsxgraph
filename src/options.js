@@ -5158,7 +5158,7 @@ JXG.Options = {
          * @type Boolean
          * @default false
          */
-        RDPsmoothing: false,
+        RDPsmoothing: true,
 
         /**
          * Configure arrow head at the start position for curve.

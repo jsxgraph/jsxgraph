@@ -1374,7 +1374,7 @@ JXG.extend(
                 symbl = "L",
                 symbc = "C",
                 nextSymb = symbm,
-                maxSize = Env.maxScreenCoord,
+                // M = Env.maxScreenCoord,
                 context = this.context;
 
             if (el.numberPoints <= 0) {
@@ -1393,17 +1393,19 @@ JXG.extend(
                         nextSymb = symbm;
                     } else {
                         // Chrome has problems with values  being too far away.
-                        if (scr[1] > maxSize) {
-                            scr[1] = maxSize;
-                        } else if (scr[1] < -maxSize) {
-                            scr[1] = -maxSize;
-                        }
+                        // 2026: seems to be obsolete, see comments in SVG.updatePathStringPrim
+                        // If needed, it should be adapted to not do changes in place, see svg
+                        // if (scr[1] > M) {
+                        //     scr[1] = M;
+                        // } else if (scr[1] < -M) {
+                        //     scr[1] = -M;
+                        // }
 
-                        if (scr[2] > maxSize) {
-                            scr[2] = maxSize;
-                        } else if (scr[2] < -maxSize) {
-                            scr[2] = -maxSize;
-                        }
+                        // if (scr[2] > M) {
+                        //     scr[2] = M;
+                        // } else if (scr[2] < -M) {
+                        //     scr[2] = -M;
+                        // }
 
                         if (nextSymb === symbm) {
                             context.moveTo(scr[1], scr[2]);
@@ -1455,7 +1457,7 @@ JXG.extend(
                 symbm = "M",
                 symbl = "C",
                 nextSymb = symbm,
-                maxSize = Env.maxScreenCoord,
+                // M = Env.maxScreenCoord,
                 f = el.evalVisProp('strokewidth'),
                 isNoPlot = el.evalVisProp('curvetype') !== "plot",
                 context = this.context;
@@ -1481,17 +1483,19 @@ JXG.extend(
                         nextSymb = symbm;
                     } else {
                         // Chrome has problems with values being too far away.
-                        if (scr[1] > maxSize) {
-                            scr[1] = maxSize;
-                        } else if (scr[1] < -maxSize) {
-                            scr[1] = -maxSize;
-                        }
+                        // 2026: seems to be obsolete, see comments in SVG.updatePathStringPrim
+                        // If needed, it should be adapted to not do changes in place, see svg
+                        // if (scr[1] > M) {
+                        //     scr[1] = M;
+                        // } else if (scr[1] < -M) {
+                        //     scr[1] = -M;
+                        // }
 
-                        if (scr[2] > maxSize) {
-                            scr[2] = maxSize;
-                        } else if (scr[2] < -maxSize) {
-                            scr[2] = -maxSize;
-                        }
+                        // if (scr[2] > M) {
+                        //     scr[2] = M;
+                        // } else if (scr[2] < -M) {
+                        //     scr[2] = -M;
+                        // }
 
                         if (nextSymb === symbm) {
                             context.moveTo(scr[1], scr[2]);

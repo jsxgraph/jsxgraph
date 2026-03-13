@@ -4796,7 +4796,6 @@ Mat.Numerics = {
     RamerDouglasPeucker: function (pts, eps) {
         var allPts = [],
             newPts = [],
-            //bound = Env.maxScreenCoord + Mat.eps,
             i, k, len,
             endless = true;
 
@@ -4805,35 +4804,19 @@ Mat.Numerics = {
         i = 0;
         while (endless) {
             // Search for the next point without NaN coordinates
-            while (i < len && (
-                    isNaN(pts[i].scrCoords[1] + pts[i].scrCoords[2])
-                    // ||
-                    // Math.abs(pts[i].scrCoords[1]) >= bound ||
-                    // Math.abs(pts[i].scrCoords[2]) >= bound
-                )
-            ) {
+            while (i < len && isNaN(pts[i].scrCoords[1] + pts[i].scrCoords[2])) {
                 i += 1;
             }
-//if (i < len)  console.log(pts[i].usrCoords)
+
             // Search for the next position of a NaN point
             k = i + 1;
-            while (k < len && (
-                   !isNaN(pts[k].scrCoords[1] + pts[k].scrCoords[2])
-                //    &&
-                //    Math.abs(pts[k].scrCoords[1]) < bound &&
-                //    Math.abs(pts[k].scrCoords[2]) < bound
-                )
-            ) {
+            while (k < len && !isNaN(pts[k].scrCoords[1] + pts[k].scrCoords[2])) {
                 k += 1;
             }
             k--;
-//if (k < len)  console.log(pts[k].usrCoords)
-//console.log('i', i, 'k', k, len, i < len && k > i)
 
             // Only proceed if something is left
             if (i < len && k > i) {
-                // newPts = [];
-                // newPts.push(pts[i]);
                 newPts = [pts[i]];
                 this._RDP(pts, i, k, eps, newPts);
                 allPts = allPts.concat(newPts);
@@ -4843,7 +4826,6 @@ Mat.Numerics = {
             }
             // Push the NaN point
             if (k < len - 1 && isNaN(pts[k + 1].scrCoords[1] + pts[k + 1].scrCoords[2])) {
-//console.log('pNaN', k+1, pts[k + 1].usrCoords)
                 allPts.push(pts[k + 1]);
             }
             i = k + 1;
