@@ -34,7 +34,7 @@
 /*eslint no-loss-of-precision: off */
 
 /**
- * @fileoverview In this file the namespace Math.Numerics is defined, which holds numerical
+ * @fileoverview In this file the namespace JXG.Math.Numerics is defined, which holds numerical
  * algorithms for solving linear equations etc.
  */
 
