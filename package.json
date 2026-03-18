@@ -60,9 +60,9 @@
   "devDependencies": {
     "@eslint/eslintrc": "^3.1.0",
     "@eslint/js": "^9.4.0",
-    "eslint": ">=8.14.0",
-    "eslint-config-prettier": "^8.5.0",
-    "eslint-plugin-prettier": "^4.2.1",
+    "eslint": ">=10.0.3",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-prettier": "^5.5",
     "globals": "^15.4.0",
     "http-server": "^14.1.1",
     "jasmine-core": "^3.10.1",
@@ -74,9 +74,9 @@
     "karma-jasmine": "^5.1.0",
     "npmignore": "^0.3.1",
     "path-browserify": "^1.0.1",
-    "prettier": "^2.7.1",
+    "prettier": "^3.8.1",
     "terser": "^5.10.0",
-    "webpack": "^5.38.1",
+    "webpack": "^5.105.4",
     "webpack-cli": "^4.9.2"
   },
   "engines": {
