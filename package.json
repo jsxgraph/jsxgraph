@@ -92,6 +92,6 @@
     "test": "make test"
   },
   "dependencies": {
-    "jsxgraph": "^1.11.0-beta2"
+    "jsxgraph": "^1.12.0"
   }
 }
