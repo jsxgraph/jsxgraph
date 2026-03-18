@@ -363,13 +363,13 @@ Mat.Tiling = {
      * @param {Number} z
      * @returns {Array} dynamicPoints array of [x, y, z] coordinates
      */
-    calculateZCoord: function (surface, mathFunc, z) {
+    calculateZCoord: function (surface, el) {
         var dynamicPoints = [], i;
 
         for (i = 0; i < surface[0].length; i++) {
             dynamicPoints.push(
-                (function (x, y) {
-                    return () => [x, y, mathFunc(x, y) + z];
+                (function (u, v) {
+                    return function(x, y) { return el.F(u, v); };
                 })(surface[0][i][0], surface[0][i][1])
             ); // Capture values explicitly
         }

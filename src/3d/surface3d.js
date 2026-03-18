@@ -32,6 +32,7 @@ import JXG from "../jxg.js";
 import Const from "../base/constants.js";
 import Mat from "../math/math.js";
 import Geometry from "../math/geometry.js";
+import Tiling from "../math/tiling.js";
 import Type from "../utils/type.js";
 
 /**
@@ -450,6 +451,7 @@ JXG.createParametricSurface3D = function (board, parents, attributes) {
         range_u, range_v, attr,
         base = null,
         transform = null,
+        coords, surface, steps, style,
         el;
 
     if (parents.length === 3) {
@@ -507,12 +509,69 @@ JXG.createParametricSurface3D = function (board, parents, attributes) {
         el.element2D.updateVisibility().updateRenderer();
     }
 
+    style = el.evalVisProp('style');
+    if (style !== "wireframe") {
+        el.element2D.setAttribute({ visible: false });
+    }
+    if (style === 'triangle') {
+        // Check for style of functiongraph3d: triangle
+        // In case style is set to triangle,
+        // uses triangulation to create a polyhedron representing the surface3d
+
+        // Steps used for triangulation is chosen as the maximum of stepsU and stepsV (see options3d)
+        steps = Math.max(el.evalVisProp('stepsu'), el.evalVisProp('stepsv'));
+
+        // Uses steps and range of surface3d to create a base of triangles across the visible area of the surface3d object
+        surface = Tiling.triangulation(
+            [el.range_u[0], el.range_v[0]],
+            [el.range_u[0], el.range_v[1]],
+            [el.range_u[1], el.range_v[1]],
+            [el.range_u[1], el.range_v[0]],
+            steps
+        );
+
+        // CalculateZCoord is used to attribute a third coordinate to the 2d-points created with triangulation
+        // these points are realized as functions to enable dynamic changes to the surface3d
+        // saves the dynamic points in coords
+        coords = Tiling.calculateZCoord(surface, el);
+
+        // Reincorporate the dynamic points in coords into surface
+        surface = [coords, surface[1]];
+
+        // create the polyhedron representing the functiongraph3d
+        el.triangle = view.create("polyhedron3d", surface, attr.triangle);
+    } else if (el.evalVisProp('style') === "rectangle") {
+        // Check for style of functiongraph3d: rectangle
+        // In case style is set to rectangle,
+        // uses rectangulation to create a polyhedron representing the surface3d
+
+        // Use stepsU, stepsV (see options3d) and range of surface3d to create a base of rectangles across the visible area of the surface3d object
+        surface = Tiling.rectangulation(
+            [el.range_u[0], el.range_v[0]],
+            [el.range_u[0], el.range_v[1]],
+            [el.range_u[1], el.range_v[1]],
+            [el.range_u[1], el.range_v[0]],
+            el.visProp.stepsu,
+            el.visProp.stepsv
+        );
+
+        // calculateZCoord is used to attribute a third coordinate to the 2d-points created with rectangulation
+        // these points are realized as functions to enable dynamic changes to the functiongraph3d
+        // saves the dynamic points in coords
+        coords = Tiling.calculateZCoord(surface, el);
+
+        // Reincorporate the dynamic points in coords into surface
+        surface = [coords, surface[1]];
+        // Create the polyhedron representing the functiongraph3d
+        el.rectangle = view.create("polyhedron3d", surface, attr.rectangle);
+    }
+
     return el;
 };
 JXG.registerElement("parametricsurface3d", JXG.createParametricSurface3D);
 
 /**
- * @class A 3D functiongraph  visualizes a map (x, y) &rarr; f(x, y).
+ * @class A 3D functiongraph visualizes a map (x, y) &rarr; f(x, y).
  * The graph is a {@link Curve3D} element.
  * @pseudo
  * @description A 3D function graph is defined by a function
