@@ -4670,10 +4670,10 @@ Mat.Numerics = {
      * @see JXG.Math.Numerics._RDP
      * @see JXG.Math.Numerics.RamerDouglasPeucker
      */
-    _RDPfindSplit: function (pts, i, j) {
+    _RDPfindSplit: function (pts, i, j, usr) {
         var d, k, ci, cj, ck,
             x0, y0, x1, y1,
-            den, lbda,
+            den, den_line, lbda,
             eps = Mat.eps * Mat.eps,
             huge = 10000,
             dist = 0,
@@ -4683,10 +4683,14 @@ Mat.Numerics = {
             return [-1.0, 0];
         }
 
-        ci = pts[i].scrCoords;
-        cj = pts[j].scrCoords;
-    // ci = pts[i].usrCoords;
-    // cj = pts[j].usrCoords;
+        // Start and end points
+        if (usr) {
+            ci = pts[i].usrCoords;
+            cj = pts[j].usrCoords;
+        } else {
+            ci = pts[i].scrCoords;
+            cj = pts[j].scrCoords;
+        }
 
         if (isNaN(ci[1]) || isNaN(ci[2])) {
             return [NaN, i];
@@ -4695,26 +4699,28 @@ Mat.Numerics = {
             return [NaN, j];
         }
 
+        x1 = cj[1] - ci[1];
+        y1 = cj[2] - ci[2];
+        x1 = (x1 === Infinity) ? huge : x1;
+        x1 = (x1 === -Infinity) ? -huge : x1;
+        y1 = (y1 === Infinity) ? huge : y1;
+        y1 = (y1 === -Infinity) ? -huge : y1;
+        den = x1 * x1 + y1 * y1;
+
+        // Find minimum distance
         for (k = i + 1; k < j; k++) {
-            ck = pts[k].scrCoords;
-    //ck = pts[k].usrCoords;
+            ck = (usr) ? pts[k].usrCoords : pts[k].scrCoords;
+
             if (isNaN(ck[1]) || isNaN(ck[2])) {
                 return [NaN, k];
             }
 
             x0 = ck[1] - ci[1];
             y0 = ck[2] - ci[2];
-            x1 = cj[1] - ci[1];
-            y1 = cj[2] - ci[2];
-            x0 = x0 === Infinity ? huge : x0;
-            y0 = y0 === Infinity ? huge : y0;
-            x1 = x1 === Infinity ? huge : x1;
-            y1 = y1 === Infinity ? huge : y1;
-            x0 = x0 === -Infinity ? -huge : x0;
-            y0 = y0 === -Infinity ? -huge : y0;
-            x1 = x1 === -Infinity ? -huge : x1;
-            y1 = y1 === -Infinity ? -huge : y1;
-            den = x1 * x1 + y1 * y1;
+            x0 = (x0 === Infinity) ? huge : x0;
+            y0 = (y0 === Infinity) ? huge : y0;
+            x0 = (x0 === -Infinity) ? -huge : x0;
+            y0 = (y0 === -Infinity) ? -huge : y0;
 
             if (den > eps) {
                 lbda = (x0 * x1 + y0 * y1) / den;
@@ -4727,11 +4733,8 @@ Mat.Numerics = {
 
                 x0 = x0 - lbda * x1;
                 y0 = y0 - lbda * y1;
-                d = x0 * x0 + y0 * y0;
-            } else {
-                lbda = 0.0;
-                d = x0 * x0 + y0 * y0;
             }
+            d = x0 * x0 + y0 * y0;
 
             if (d > dist) {
                 dist = d;
@@ -4764,13 +4767,11 @@ Mat.Numerics = {
 
         if (isNaN(result[0])) {
             this._RDP(pts, i, k - 1, eps, newPts);
-//console.log('p', k, pts[k].usrCoords)
             newPts.push(pts[k]);
             do {
                 ++k;
             } while (k <= j && isNaN(pts[k].scrCoords[1] + pts[k].scrCoords[2]));
             if (k <= j) {
-//console.log('p', k, pts[k].usrCoords)
                 newPts.push(pts[k]);
             }
             this._RDP(pts, k + 1, j, eps, newPts);
@@ -4778,7 +4779,6 @@ Mat.Numerics = {
             this._RDP(pts, i, k, eps, newPts);
             this._RDP(pts, k, j, eps, newPts);
         } else {
-//console.log('p', j, pts[j].usrCoords, '(j)')
             newPts.push(pts[j]);
         }
     },
@@ -4826,6 +4826,74 @@ Mat.Numerics = {
             }
             // Push the NaN point
             if (k < len - 1 && isNaN(pts[k + 1].scrCoords[1] + pts[k + 1].scrCoords[2])) {
+                allPts.push(pts[k + 1]);
+            }
+            i = k + 1;
+        }
+
+        return allPts;
+    },
+
+    _RDPUsrCrds: function (pts, i, j, eps_x, eps_y, newPts) {
+        var result = this._RDPfindSplit(pts, i, j),
+            k = result[1];
+
+        if (isNaN(result[0])) {
+            this._RDP(pts, i, k - 1, eps, newPts);
+            newPts.push(pts[k]);
+            do {
+                ++k;
+            } while (k <= j && isNaN(pts[k].scrCoords[1] + pts[k].scrCoords[2]));
+            if (k <= j) {
+                newPts.push(pts[k]);
+            }
+            this._RDP(pts, k + 1, j, eps, newPts);
+        } else if (result[0] > eps) {
+            this._RDP(pts, i, k, eps, newPts);
+            this._RDP(pts, k, j, eps, newPts);
+        } else {
+            newPts.push(pts[j]);
+        }
+    },
+
+    RamerDouglasPeuckerUsrCrds: function(pts, epx_x, epx_y) {
+        var allPts = [], // New point array
+            newPts = [], // New points from one component
+            i, k, len,
+            endless = true;
+
+        len = pts.length;
+
+        i = 0;
+        while (endless) {
+            // Search for the next point without NaN coordinates,
+            // i.e. the next component
+            while (i < len && isNaN(pts[i].usrCoords[1] + pts[i].usrCoords[2])) {
+                i += 1;
+            }
+
+            // Search for the next position of a NaN point,
+            // i.e. the end of the component
+            k = i + 1;
+            while (k < len && !isNaN(pts[k].usrCoords[1] + pts[k].usrCoords[2])) {
+                k += 1;
+            }
+            k--;
+
+            // Only proceed if something is left
+            if (i < len && k > i) {
+                newPts = [pts[i]];
+                this._RDPUsrCrds(pts, i, k, eps, newPts);
+                allPts = allPts.concat(newPts);
+            }
+
+            if (i >= len) {
+                // We are done
+                break;
+            }
+
+            // Push the NaN point to keep the components separated
+            if (k < len - 1 && isNaN(pts[k + 1].usrCoords[1] + pts[k + 1].usrCoords[2])) {
                 allPts.push(pts[k + 1]);
             }
             i = k + 1;
