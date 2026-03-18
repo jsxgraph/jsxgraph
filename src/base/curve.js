@@ -750,6 +750,7 @@ JXG.extend(
         updateCurve: function () {
             var i, len, mi, ma,
                 x, y,
+                bb, eps,
                 version = this.visProp.plotversion,
                 //t1, t2, l1,
                 suspendUpdate = false;
@@ -850,7 +851,18 @@ JXG.extend(
                 this.evalVisProp('rdpsmoothing')
             ) {
                 // console.time('rdp');
-                this.points = Numerics.RamerDouglasPeucker(this.points, 0.2);
+                // RDP in screen coords:
+                // this.points = Numerics.RamerDouglasPeucker(this.points, 0.2);
+
+                // RDP in user coords:
+                // Use a default size of 800 x 800 pixel and
+                // maximum distance of 0.2 pixel:
+                // Determine the geometric mean M of the horizontal and vertical box size in user coords, i.e.
+                // 1 u = 1000 / M px => 1 px = M / 1000 u => eps := 0.2 * M / 800
+                bb = this.board.getBoundingBox();
+                eps = 0.2 * Math.sqrt((bb[2] - bb[0]) * (bb[1] - bb[3])) * 0.00125;
+                this.points = Numerics.RamerDouglasPeucker(this.points, eps, true);
+
                 this.numberPoints = this.points.length;
                 // console.timeEnd('rdp');
                 // console.log(this.numberPoints);

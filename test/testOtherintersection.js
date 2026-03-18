@@ -122,8 +122,11 @@ describe("Test otherintersection functions", function () {
         var c2 = board.create('functiongraph', [(x) => -(x ** 2) + 2 * A.X() * x + A.Y() - A.X() ** 2]);
         var p1 = board.create('intersection', [c1, c2], { color: 'black' });
         var p2 = board.create('otherintersection', [c1, c2, [p1]]);
-        expect(p2.X()).toBeCloseTo(2.0285713861245918, 3);
-        expect(p2.Y()).toBeCloseTo(-2.2089395562537772, 3);
+
+        // expect(p2.X()).toBeCloseTo(2.0285713861245918, 3);
+        // expect(p2.Y()).toBeCloseTo(-2.2089395562537772, 3);
+        expect(p2.X()).toBeCloseTo(2.0471376565059347, 3); // RDP
+        expect(p2.Y()).toBeCloseTo(-2.191237497664158, 3);
     });
 
 });

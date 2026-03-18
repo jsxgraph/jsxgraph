@@ -4666,6 +4666,7 @@ Mat.Numerics = {
      * @param {Array} pts Array of {@link JXG.Coords}
      * @param {Number} i Index of a point in pts
      * @param {Number} j Index of a point in pts
+     * @param {Boolean} [usr=false] Search minimal distance in user coords
      * @private
      * @see JXG.Math.Numerics._RDP
      * @see JXG.Math.Numerics.RamerDouglasPeucker
@@ -4673,7 +4674,7 @@ Mat.Numerics = {
     _RDPfindSplit: function (pts, i, j, usr) {
         var d, k, ci, cj, ck,
             x0, y0, x1, y1,
-            den, den_line, lbda,
+            den, lbda,
             eps = Mat.eps * Mat.eps,
             huge = 10000,
             dist = 0,
@@ -4757,27 +4758,33 @@ Mat.Numerics = {
      * @param {Number} j Index of an element of pts
      * @param {Number} eps If the absolute value of a given number <tt>x</tt> is smaller than <tt>eps</tt> it is considered to be equal <tt>0</tt>.
      * @param {Array} newPts Array of {@link JXG.Coords}
+     * @param {Boolean} [usr=false] Search minimal distance in user coords
+     *
      * @private
      * @see JXG.Math.Numerics._RDPfindSplit
      * @see JXG.Math.Numerics.RamerDouglasPeucker
      */
-    _RDP: function (pts, i, j, eps, newPts) {
-        var result = this._RDPfindSplit(pts, i, j),
-            k = result[1];
+    _RDP: function (pts, i, j, eps, newPts, usr) {
+        var result = this._RDPfindSplit(pts, i, j, usr),
+            k = result[1],
+            isnan;
 
         if (isNaN(result[0])) {
-            this._RDP(pts, i, k - 1, eps, newPts);
+            this._RDP(pts, i, k - 1, eps, newPts, usr);
             newPts.push(pts[k]);
             do {
                 ++k;
-            } while (k <= j && isNaN(pts[k].scrCoords[1] + pts[k].scrCoords[2]));
+                isnan = (usr) ?
+                    isNaN(pts[k].usrCoords[1] + pts[k].usrCoords[2]) :
+                    isNaN(pts[k].scrCoords[1] + pts[k].scrCoords[2]);
+            } while (k <= j && isnan);
             if (k <= j) {
                 newPts.push(pts[k]);
             }
-            this._RDP(pts, k + 1, j, eps, newPts);
+            this._RDP(pts, k + 1, j, eps, newPts, usr);
         } else if (result[0] > eps) {
-            this._RDP(pts, i, k, eps, newPts);
-            this._RDP(pts, k, j, eps, newPts);
+            this._RDP(pts, i, k, eps, newPts, usr);
+            this._RDP(pts, k, j, eps, newPts, usr);
         } else {
             newPts.push(pts[j]);
         }
@@ -4790,10 +4797,11 @@ Mat.Numerics = {
      * Average runtime is O(nlog(n)), worst case runtime is O(n^2), where n is the number of points.
      * @param {Array} pts Array of {@link JXG.Coords}
      * @param {Number} eps If the absolute value of a given number <tt>x</tt> is smaller than <tt>eps</tt> it is considered to be equal <tt>0</tt>.
+     * @param {Boolean} [usr=false] Minimize number of points using user coords
      * @returns {Array} An array containing points which represent an apparently identical curve as the points of pts do, but contains fewer points.
      * @memberof JXG.Math.Numerics
      */
-    RamerDouglasPeucker: function (pts, eps) {
+    RamerDouglasPeucker: function (pts, eps, usr) {
         var allPts = [],
             newPts = [],
             i, k, len,
@@ -4818,7 +4826,7 @@ Mat.Numerics = {
             // Only proceed if something is left
             if (i < len && k > i) {
                 newPts = [pts[i]];
-                this._RDP(pts, i, k, eps, newPts);
+                this._RDP(pts, i, k, eps, newPts, usr);
                 allPts = allPts.concat(newPts);
             }
             if (i >= len) {
@@ -4826,74 +4834,6 @@ Mat.Numerics = {
             }
             // Push the NaN point
             if (k < len - 1 && isNaN(pts[k + 1].scrCoords[1] + pts[k + 1].scrCoords[2])) {
-                allPts.push(pts[k + 1]);
-            }
-            i = k + 1;
-        }
-
-        return allPts;
-    },
-
-    _RDPUsrCrds: function (pts, i, j, eps_x, eps_y, newPts) {
-        var result = this._RDPfindSplit(pts, i, j),
-            k = result[1];
-
-        if (isNaN(result[0])) {
-            this._RDP(pts, i, k - 1, eps, newPts);
-            newPts.push(pts[k]);
-            do {
-                ++k;
-            } while (k <= j && isNaN(pts[k].scrCoords[1] + pts[k].scrCoords[2]));
-            if (k <= j) {
-                newPts.push(pts[k]);
-            }
-            this._RDP(pts, k + 1, j, eps, newPts);
-        } else if (result[0] > eps) {
-            this._RDP(pts, i, k, eps, newPts);
-            this._RDP(pts, k, j, eps, newPts);
-        } else {
-            newPts.push(pts[j]);
-        }
-    },
-
-    RamerDouglasPeuckerUsrCrds: function(pts, epx_x, epx_y) {
-        var allPts = [], // New point array
-            newPts = [], // New points from one component
-            i, k, len,
-            endless = true;
-
-        len = pts.length;
-
-        i = 0;
-        while (endless) {
-            // Search for the next point without NaN coordinates,
-            // i.e. the next component
-            while (i < len && isNaN(pts[i].usrCoords[1] + pts[i].usrCoords[2])) {
-                i += 1;
-            }
-
-            // Search for the next position of a NaN point,
-            // i.e. the end of the component
-            k = i + 1;
-            while (k < len && !isNaN(pts[k].usrCoords[1] + pts[k].usrCoords[2])) {
-                k += 1;
-            }
-            k--;
-
-            // Only proceed if something is left
-            if (i < len && k > i) {
-                newPts = [pts[i]];
-                this._RDPUsrCrds(pts, i, k, eps, newPts);
-                allPts = allPts.concat(newPts);
-            }
-
-            if (i >= len) {
-                // We are done
-                break;
-            }
-
-            // Push the NaN point to keep the components separated
-            if (k < len - 1 && isNaN(pts[k + 1].usrCoords[1] + pts[k + 1].usrCoords[2])) {
                 allPts.push(pts[k + 1]);
             }
             i = k + 1;
