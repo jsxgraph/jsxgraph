@@ -1046,7 +1046,7 @@ JXG.extend(Options, {
          *     });
          *
          * // Function F to be plotted
-         * var F = (x, y) => y-x;
+         * var F = (x, y) => y - x;
          *
          * // 3D surface
          * var c = view.create('functiongraph3d', [
@@ -1077,7 +1077,7 @@ JXG.extend(Options, {
          *         });
          *
          *     // Function F to be plotted
-         *     var F = (x, y) => y-x;
+         *     var F = (x, y) => y - x;
          *
          *     // 3D surface
          *     var c = view.create('functiongraph3d', [
@@ -1092,7 +1092,7 @@ JXG.extend(Options, {
          *     });
          *     })();
          */
-        rectangle: { strokeWidth: 0, fillColorArray: ["white", "black"] },
+        rectangle: { strokeWidth: 0, fillColorArray: ['white', JXG.palette.blue] },
 
         /**
          * Number of intervals the mesh is divided into in direction of parameter u.
