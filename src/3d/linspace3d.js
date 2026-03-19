@@ -598,7 +598,6 @@ JXG.createLine3D = function (board, parents, attributes) {
         );
 
         /**
-         * @class
          * @ignore
          */
         endpoints[0].F = function () {
@@ -610,7 +609,6 @@ JXG.createLine3D = function (board, parents, attributes) {
         };
 
         /**
-         * @class
          * @ignore
          */
         endpoints[1].F = function () {
@@ -686,7 +684,6 @@ JXG.createLine3D = function (board, parents, attributes) {
 
         // Now set the real points which define the line
         /**
-         * @class
          * @ignore
          */
         points[0].F = function () {
@@ -696,7 +693,6 @@ JXG.createLine3D = function (board, parents, attributes) {
         point1 = points[0];
 
         /**
-         * @class
          * @ignore
          */
         points[1].F = function () {

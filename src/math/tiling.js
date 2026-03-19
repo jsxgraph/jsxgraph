@@ -46,8 +46,9 @@ import Mat from "./math.js";
  */
 Mat.Tiling = {
     /**
-     * A function, which is used to triangulate a given rectangle. The rectangle is triangulated in rows.
-     * The number of triangles depends on steps.
+     * A function which is used to triangulate a given rectangle.
+     * The rectangle is triangulated in rows.
+     * The number of triangles depends on parameter steps.
      * The rectangle is represented by the four points (arrays of coordinates) given as parameters.
      * @name triangulation
      * @param {Array} p1
@@ -56,24 +57,35 @@ Mat.Tiling = {
      * @param {Array} p4
      * @param {Number} steps
      * @returns [coords,faces]
+     * @memberof JXG.Math.Tiling
      *
      * @throws {Exception} if the given object- represented by 4 points- is no rectangle ,an exception is thrown
      * @example
-     * var surface = triangulation([0,0], [0,4], [2,4], [2,0], 6);
-     * for(var i=0;i<surface[1].length;i++)
-     * {board.create('polygon',[surface[0][surface[1][i][0]],surface[0][surface[1][i][1]],surface[0][surface[1][i][2]]);}
+     * var i,
+     *     surface = JXG.Math.Tiling.triangulation([0,0], [0,4], [2,4], [2,0], 6);
+     * for (i = 0; i < surface[1].length; i++) {
+     *     board.create('polygon',[
+     *         surface[0][surface[1][i][0]],
+     *         surface[0][surface[1][i][1]],
+     *         surface[0][surface[1][i][2]]
+     *     ]);
+     * }
      *
      *
      * </pre><div id="JXG948307f3-fc6b-4dc6-92d6-40eaa7918ee0" class="jxgbox" style="width: 300px; height: 300px;"></div>
      * <script type="text/javascript">
      *     (function() {
      *         var board = JXG.JSXGraph.initBoard('JXG948307f3-fc6b-4dc6-92d6-40eaa7918ee0',
-     *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
-     *     var surface =triangulation([0,0],[0,4],[2,4],[2,0],6);
-     *     for(var i=0;i<surface[1].length;i++)
-     *     {board.create('polygon',[surface[0][surface[1][i][0]],surface[0][surface[1][i][1]],surface[0][surface[1][i][2]]]);}
-     *
-     *
+     *             {boundingbox: [-1, 5, 3,-1], axis: true, showcopyright: false, shownavigation: false});
+     *     var i,
+     *         surface = JXG.Math.Tiling.triangulation([0,0],[0,4],[2,4],[2,0],6);
+     *     for (i = 0; i < surface[1].length; i++) {
+     *         board.create('polygon',[
+     *             surface[0][surface[1][i][0]],
+     *             surface[0][surface[1][i][1]],
+     *             surface[0][surface[1][i][2]]
+     *         ]);
+     *     }
      *     })();
      *
      * </script><pre>
@@ -221,11 +233,14 @@ Mat.Tiling = {
     },
 
     /**
-     * @description A function, which is used to rectangulate a given rectangle. The rectangle is rectangulated in rows.The number of rectangles the original rectangle is divided into depends on stepsU and stepsV.
-     * The rectangle is represented by the 4 points (arrays of coordinates) given as parameters.
+     * A function, which is used to rectangulate a given rectangle.
+     * The rectangle is rectangulated in rows. The number of rectangles the original
+     * rectangle is divided into depends on the parameters stepsU and stepsV.
+     * The rectangle is represented by the 4 points (arrays of coordinates) given as
+     * parameters.
      * @name rectangulation
      * @type Array
-     * @throws {Exception} if the given object- represented by 4 points- is no rectangle ,is exception is thrown
+     * @throws {Exception} if the given object - represented by four points - is no rectangle, exception is thrown
      * @param {Array} p1
      * @param {Array} p2
      * @param {Array} p3
@@ -233,19 +248,35 @@ Mat.Tiling = {
      * @param {Number} stepsU
      * @param {Number} stepsV
      * @returns [coords,faces]
+     * @memberof JXG.Math.Tiling
+     *
      * @example
-     * var surface =rectangulation([0,0],[0,5],[2,5],[2,0],6,6);
-     * for(var i=0;i<surface[1].length;i++)
-     * {board.create('polygon',[surface[0][surface[1][i][0]],surface[0][surface[1][i][1]],surface[0][surface[1][i][2]],surface[0][surface[1][i][3]]);}
+     * var i,
+     *     surface = JXG.Math.Toiling.rectangulation([0,0], [0,5], [2,5], [2,0], 6, 6);
+     * for (i = 0; i < surface[1].length; i++) {
+     *     board.create('polygon',[
+     *         surface[0][surface[1][i][0]],
+     *         surface[0][surface[1][i][1]],
+     *         surface[0][surface[1][i][2]],
+     *         surface[0][surface[1][i][3]]
+     *     ]);
+     * }
      *
      * </pre><div id="JXG05cfba29-be76-482f-9d49-8ee4c36033e4" class="jxgbox" style="width: 300px; height: 300px;"></div>
      * <script type="text/javascript">
      *     (function() {
      *         var board = JXG.JSXGraph.initBoard('JXG05cfba29-be76-482f-9d49-8ee4c36033e4',
-     *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
-     *     var surface =rectangulation([0,0],[0,5],[2,5],[2,0],6,6);
-     *     for(var i=0;i<surface[1].length;i++)
-     *     {board.create('polygon',[surface[0][surface[1][i][0]],surface[0][surface[1][i][1]],surface[0][surface[1][i][2]],surface[0][surface[1][i][3]]);}
+     *             {boundingbox: [-1, 6, 6,-1], axis: true, showcopyright: false, shownavigation: false});
+     *     var i,
+     *         surface = JXG.Math.Tiling.rectangulation([0,0],[0,5],[2,5],[2,0],6,6);
+     *     for (i=0; i<surface[1].length; i++) {
+     *         board.create('polygon',[
+     *            surface[0][surface[1][i][0]],
+     *            surface[0][surface[1][i][1]],
+     *            surface[0][surface[1][i][2]],
+     *            surface[0][surface[1][i][3]]
+     *         ]);
+     *     }
      *
      *     })();
      *
@@ -361,6 +392,9 @@ Mat.Tiling = {
      * @param {Array} surface
      * @param {Parametricsurface3d} el
      * @returns {Array} dynamicPoints array of [x, y, z] coordinates
+     *
+     * @private
+     * @memberof JXG.Math.Tiling
      */
     mapMeshTo3D: function (surface, el) {
         var dynamicPoints = [], i;
