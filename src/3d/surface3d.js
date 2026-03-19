@@ -530,10 +530,10 @@ JXG.createParametricSurface3D = function (board, parents, attributes) {
             steps
         );
 
-        // CalculateZCoord is used to attribute a third coordinate to the 2d-points created with triangulation
+        // mapMeshTo3D is used to attribute a third coordinate to the 2d-points created with triangulation
         // these points are realized as functions to enable dynamic changes to the surface3d
         // saves the dynamic points in coords
-        coords = Tiling.calculateZCoord(surface, el);
+        coords = Tiling.mapMeshTo3D(surface, el);
 
         // Reincorporate the dynamic points in coords into surface
         surface = [coords, surface[1]];
@@ -555,10 +555,10 @@ JXG.createParametricSurface3D = function (board, parents, attributes) {
             el.visProp.stepsv
         );
 
-        // calculateZCoord is used to attribute a third coordinate to the 2d-points created with rectangulation
+        // mapMeshTo3D is used to attribute a third coordinate to the 2d-points created with rectangulation
         // these points are realized as functions to enable dynamic changes to the functiongraph3d
         // saves the dynamic points in coords
-        coords = Tiling.calculateZCoord(surface, el);
+        coords = Tiling.mapMeshTo3D(surface, el);
 
         // Reincorporate the dynamic points in coords into surface
         surface = [coords, surface[1]];

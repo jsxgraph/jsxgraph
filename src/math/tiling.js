@@ -357,12 +357,12 @@ Mat.Tiling = {
      * to return an array of three coordinates.
      * This allows the recognition and proper visualization of changes to the underlying
      * mathematical function.
-     * @name calculateZCoord
+     * @name mapMeshTo3D
      * @param {Array} surface
      * @param {Parametricsurface3d} el
      * @returns {Array} dynamicPoints array of [x, y, z] coordinates
      */
-    calculateZCoord: function (surface, el) {
+    mapMeshTo3D: function (surface, el) {
         var dynamicPoints = [], i;
 
         for (i = 0; i < surface[0].length; i++) {
