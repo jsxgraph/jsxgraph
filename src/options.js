@@ -5150,8 +5150,11 @@ JXG.Options = {
         plotVersion: 2,
 
         /**
-         * Remove data points from the curve which do not influence
+         * Polyline simplification, i.e. remove data points from the curve which do not influence
          * its appearance. In some cases this makes JSXGraph run much faster.
+         * The "smoothing" in the name is misleading, actually it does the contrary. But
+         * for historical reasons we stay with it. A better name would be
+         * RDPsimplification.
          * <p>
          * In certain cases this attribute causes problems, like for
          * conic elements, curve intersection/union/difference
