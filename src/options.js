@@ -5164,8 +5164,23 @@ JXG.Options = {
          * @name Curve#RDPsmoothing
          * @type Boolean
          * @default false
+         * @see Curve#RDPthreshold
+         *
          */
         RDPsmoothing: false,
+
+        /**
+         * Threshold when to stop eliminating points in polyline simplification with the Ramer-Douglas-Peucker algorithm.
+         * This number affects simplification with user coordinates, but corresponds to the distance of a point to a
+         * line in pixel if the JSXGraph board has size 800x800 pixel and the pixel per unit both horizontally and vertically
+         * are roughly equal (For the latter, the geometric mean is taken).
+         *
+         * @name Curve#RDPthreshold
+         * @type Number
+         * @default 0.2
+         * @see Curve#RDPsmoothing
+         */
+        RDPthreshold: 0.2,
 
         /**
          * Configure arrow head at the start position for curve.
@@ -5245,6 +5260,8 @@ JXG.Options = {
          * @name Functiongraph#RDPsmoothing
          * @type Boolean
          * @default true
+         * @see Curve#RDPsmoothing
+         * @see Curve#RDPthreshold
          */
         RDPsmoothing: true
 

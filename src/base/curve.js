@@ -860,7 +860,7 @@ JXG.extend(
                 // Determine the geometric mean M of the horizontal and vertical box size in user coords, i.e.
                 // 1 u = 1000 / M px => 1 px = M / 1000 u => eps := 0.2 * M / 800
                 bb = this.board.getBoundingBox();
-                eps = 0.2 * Math.sqrt((bb[2] - bb[0]) * (bb[1] - bb[3])) * 0.00125;
+                eps = this.evalVisProp('rdpthreshold') * Math.sqrt((bb[2] - bb[0]) * (bb[1] - bb[3])) * 0.00125;
                 this.points = Numerics.RamerDouglasPeucker(this.points, eps, true);
 
                 this.numberPoints = this.points.length;
