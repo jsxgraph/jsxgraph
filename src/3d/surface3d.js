@@ -125,6 +125,18 @@ JXG.Surface3D = function (view, F, X, Y, Z, range_u, range_v, attributes) {
         }
     }
 
+    /**
+     * If the surface is constructed with attribute `style:'triangle'` or `style:'rectangle'`,
+     * a polyhodron3d-element is used for visualization.
+     *
+     * @name polyhedron
+     * @memberOf JXG.Surface3D
+     * @type Polyhedron3D
+     * @default null
+     * @private
+     */
+    this.polyhedron = null;
+
     this.range_u = range_u;
     this.range_v = range_v;
 
@@ -513,25 +525,41 @@ JXG.createParametricSurface3D = function (board, parents, attributes) {
     if (style !== "wireframe") {
         el.element2D.setAttribute({ visible: false });
     }
-    if (style === 'triangle') {
-        // Check for style of functiongraph3d: triangle
-        // In case style is set to triangle,
-        // uses triangulation to create a polyhedron representing the surface3d
+    if (style === 'triangle' || style === 'rectangle') {
+        if (style === 'triangle') {
+            // Check for style of functiongraph3d: triangle
+            // In case style is set to triangle, we use JXG.Math.Tiling.triangulation
+            // to create a polyhedron representing the surface3d
 
-        // Steps used for triangulation is chosen as the maximum of stepsU and stepsV (see options3d)
-        steps = Math.max(el.evalVisProp('stepsu'), el.evalVisProp('stepsv'));
+            // Steps used for triangulation is chosen as the maximum of stepsU and stepsV (see options3d)
+            steps = Math.max(el.evalVisProp('stepsu'), el.evalVisProp('stepsv'));
 
-        // Uses steps and range of surface3d to create a base of triangles across the visible area of the surface3d object
-        surface = Tiling.triangulation(
-            [el.range_u[0], el.range_v[0]],
-            [el.range_u[0], el.range_v[1]],
-            [el.range_u[1], el.range_v[1]],
-            [el.range_u[1], el.range_v[0]],
-            steps
-        );
+            // Uses steps and range of surface3d to create a base of triangles across the visible area of the surface3d object
+            surface = Tiling.triangulation(
+                [el.range_u[0], el.range_v[0]],
+                [el.range_u[0], el.range_v[1]],
+                [el.range_u[1], el.range_v[1]],
+                [el.range_u[1], el.range_v[0]],
+                steps
+            );
 
-        // mapMeshTo3D is used to attribute a third coordinate to the 2d-points created with triangulation
-        // these points are realized as functions to enable dynamic changes to the surface3d
+        } else if (el.evalVisProp('style') === "rectangle") {
+            // Check for style of functiongraph3d: rectangle
+            // In case style is set to rectangle, we use JXG.Math.Tiling.rectangulation
+            // to create a polyhedron representing the surface3d
+
+            // Use stepsU, stepsV (see options3d) and range of surface3d to create a base of rectangles across the visible area of the surface3d object
+            surface = Tiling.rectangulation(
+                [el.range_u[0], el.range_v[0]],
+                [el.range_u[0], el.range_v[1]],
+                [el.range_u[1], el.range_v[1]],
+                [el.range_u[1], el.range_v[0]],
+                el.visProp.stepsu,
+                el.visProp.stepsv
+            );
+        }
+        // mapMeshTo3D is used to map the 2d-points created with triangulation / rectangulation to 3D.
+        // These points are realized as functions to enable dynamic changes to the surface3d
         // saves the dynamic points in coords
         coords = Tiling.mapMeshTo3D(surface, el);
 
@@ -539,31 +567,9 @@ JXG.createParametricSurface3D = function (board, parents, attributes) {
         surface = [coords, surface[1]];
 
         // create the polyhedron representing the functiongraph3d
-        el.triangle = view.create("polyhedron3d", surface, attr.polyhedron);
-    } else if (el.evalVisProp('style') === "rectangle") {
-        // Check for style of functiongraph3d: rectangle
-        // In case style is set to rectangle,
-        // uses rectangulation to create a polyhedron representing the surface3d
-
-        // Use stepsU, stepsV (see options3d) and range of surface3d to create a base of rectangles across the visible area of the surface3d object
-        surface = Tiling.rectangulation(
-            [el.range_u[0], el.range_v[0]],
-            [el.range_u[0], el.range_v[1]],
-            [el.range_u[1], el.range_v[1]],
-            [el.range_u[1], el.range_v[0]],
-            el.visProp.stepsu,
-            el.visProp.stepsv
-        );
-
-        // mapMeshTo3D is used to attribute a third coordinate to the 2d-points created with rectangulation
-        // these points are realized as functions to enable dynamic changes to the functiongraph3d
-        // saves the dynamic points in coords
-        coords = Tiling.mapMeshTo3D(surface, el);
-
-        // Reincorporate the dynamic points in coords into surface
-        surface = [coords, surface[1]];
-        // Create the polyhedron representing the functiongraph3d
-        el.rectangle = view.create("polyhedron3d", surface, attr.polyhedron);
+        el.polyhedron = view.create("polyhedron3d", surface, attr.polyhedron);
+        el.addChild(el.polyhedron);
+        el.polyhedron.addParents(el);
     }
 
     return el;
