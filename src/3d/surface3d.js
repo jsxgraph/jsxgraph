@@ -539,7 +539,7 @@ JXG.createParametricSurface3D = function (board, parents, attributes) {
         surface = [coords, surface[1]];
 
         // create the polyhedron representing the functiongraph3d
-        el.triangle = view.create("polyhedron3d", surface, attr.triangle);
+        el.triangle = view.create("polyhedron3d", surface, attr.polyhedron);
     } else if (el.evalVisProp('style') === "rectangle") {
         // Check for style of functiongraph3d: rectangle
         // In case style is set to rectangle,
@@ -563,7 +563,7 @@ JXG.createParametricSurface3D = function (board, parents, attributes) {
         // Reincorporate the dynamic points in coords into surface
         surface = [coords, surface[1]];
         // Create the polyhedron representing the functiongraph3d
-        el.rectangle = view.create("polyhedron3d", surface, attr.rectangle);
+        el.rectangle = view.create("polyhedron3d", surface, attr.polyhedron);
     }
 
     return el;

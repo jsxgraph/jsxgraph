@@ -604,13 +604,13 @@ JXG.extend(Options, {
             maxLightness: 90,
 
             light: {
-                type: 3,// 1: lighting==camera,
+                type: 1,// 1: lighting==camera,
                         // 2: Fixed: angle(light, object),
                         // 3: Fixed: angle(light, camera) (default)
                 az: -45, // TODO use radians, ignored for type==1
                 el: 20,  // TODO use radians, ignored for type==1
                 bank: 0, // TODO use radians, ignored for type==1, type==3
-                dir: -1  // Default: -1
+                dir: 1  // Default: -1
             }
         }
 
@@ -882,12 +882,23 @@ JXG.extend(Options, {
         strokeWidth: 1,
 
         /**
-         * Description of how the mesh is visualized. Possible values are 'wireframe', 'rectangle', 'triangle'
+         * Description of how the mesh is visualized. Possible values are 'wireframe', 'rectangle', 'triangle'.
+         * In case of `style:'wireframe'`, a rectangular mesh is displayed, the number of steps is determined by
+         * the attributes `stepsU` and `stepsV`. Further, the attributes `strokeWidth` and `strokeColor`, ...
+         * determine the style of the mesh.
+         * <p>
+         * In case of `style:'triangle'` or `style:'rectangle'` a polyhedron3d element is displayed, using the
+         * attributes `stepsU` and `stepsV`. In case of `triangle`, the number of steps is max(stepsU, stepsV).
+         * <p>
+         * All other attributes of the polyhedron3d have to be set inside of `polyhedron`, including `strokeWidth`
+         * and `strokeColor`. The wireframe settings for these attributes are ignored.
+         *
          * @type String
          * @name ParametricSurface3D#style
          * @default 'wireframe'
-         * @example
+         * @see ParametricSurface3D#polyhedron
          *
+         * @example
          *
          * var view = board.create('view3d',
          *     [
@@ -936,103 +947,18 @@ JXG.extend(Options, {
          *     // 3D surface
          *     var c = view.create('functiongraph3d', [
          *         F,
-         *         box, // () => [-s.Value()*5, s.Value() * 5],
-         *         box, // () => [-s.Value()*5, s.Value() * 5],
+         *         box,
+         *         box
          *     ], {
          *         strokeWidth: 0.5,
-         *         stepsU: 70,
-         *         stepsV: 70,
-         *          style: 'wireframe'
+         *         stepsU: 50,
+         *         stepsV: 50,
+         *         style: 'wireframe'
          *     });
          *     })();
          *
          * </script><pre>
          *
-         */
-        style: "wireframe",
-
-        /**
-         * Contains an array (fillColorArray) listing colors for alternatively coloring the triangles used for parqueting if style is set to „triangle“.
-         * Also contains the width of the line between the triangles used for parqueting (strokeWidth).
-         * Specifications are
-         * <ul>
-         *  <li>strokewidth: 0
-         *  <li>fillColorArray: ['white', 'black']
-         * </ul>
-         * @type {object}
-         * @name ParametricSurface3D#triangle
-         * @default <tt>{strokewidth: 0, fillColorArray: ['white', 'black'] }</tt>
-         * @example
-         * var F = (x, y) => Math.cos(x * y / 4);
-         *
-         * var view = board.create('view3d',
-         *  [
-         *  [-6, -3], [8, 8],
-         *  [[-5, 5], [-5, 5], [-5, 5]]
-         *        ],
-         *         {
-         *            xPlaneRear: {visible: false},
-         *           yPlaneRear: {visible: false},
-         *          });
-         *
-         * // 3D surface
-         * var c = view.create('functiongraph3d', [
-         * F,
-         * [-5, 5],
-         * [-5, 5], ]
-         * , {
-         *strokeWidth: 0,
-         *steps: 60,
-         *style:triangle
-         * });
-         *
-         * </pre><div id="JXG8123a727-adef-4c10-83e6-d4f5e2203f68" class="jxgbox" style="width: 300px; height: 300px;"></div>
-         * <script type="text/javascript">
-         *     (function() {
-         *         var board = JXG.JSXGraph.initBoard('JXG8123a727-adef-4c10-83e6-d4f5e2203f68',
-         *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
-         *
-         *     var F = (x, y) => x*x+y*y;
-         *     var box = [-5, 5];
-         *     var view = board.create('view3d',
-         *      [
-         *      [-6, -3], [8, 8],
-         *      [box, box, box]
-         *            ],
-         *             {
-         *                xPlaneRear: {visible: false},
-         *               yPlaneRear: {visible: false},
-         *              });
-         *
-         *     // 3D surface
-         *     var c = view.create('functiongraph3d', [
-         *     F,
-         *     box,
-         *     box,
-         *     , {
-         *     strokeWidth: 0.5,
-         *     steps:70,
-         *     style:'triangle'
-         *     });
-         *
-         *     })();
-         *
-         * </script><pre>
-         *
-         */
-        triangle: { strokeWidth: 0, fillColorArray: ["white", "black"] },
-
-        /**
-         * Contains an array (fillColorArray) listing colors for alternatively coloring the rectangles used for parqueting if style is set to „rectangle“.
-         * Also contains the width of the line between the rectangles used for parqueting (strokeWidth).
-         * Specifications are
-         * <ul>
-         *  <li>strokewidth: 0
-         *  <li>fillColorArray: ['white', 'black']
-         * </ul>
-         * @type {object}
-         * @name ParametricSurface3D#rectangle
-         * @default <tt>{strokewidth: 0, fillColorArray: ['white', 'black'] }</tt>
          * @example
          *
          * var view = board.create('view3d',
@@ -1046,7 +972,7 @@ JXG.extend(Options, {
          *     });
          *
          * // Function F to be plotted
-         * var F = (x, y) => y - x;
+         * var F = (x, y) => Math.cos(x * y / 4);
          *
          * // 3D surface
          * var c = view.create('functiongraph3d', [
@@ -1054,16 +980,15 @@ JXG.extend(Options, {
          *     [-5, 5],
          *     [-5, 5],
          * ], {
-         *     strokeWidth: 0.5,
-         *     stepsU: 70,
-         *     stepsV: 70,
-         *     style:'rectangle'
+         *     stepsU: 15,
+         *     stepsV: 15,
+         *     style:'triangle'
          * });
          *
-         * </pre><div id="JXG87646dd4-9fe5-4c21-8734-089abc612519" class="jxgbox" style="width: 500px; height: 500px;"></div>
+         * </pre><div id="JXG6591ae99-1319-4cd7-b035-465484ad27d2" class="jxgbox" style="width: 500px; height: 500px;"></div>
          * <script type="text/javascript">
          *     (function() {
-         *         var board = JXG.JSXGraph.initBoard('JXG87646dd4-9fe5-4c21-8734-089abc612519',
+         *         var board = JXG.JSXGraph.initBoard('JXG6591ae99-1319-4cd7-b035-465484ad27d2',
          *             {boundingbox: [-8, 8, 8,-8], axis: false, pan: {enabled: false}, showcopyright: false, shownavigation: false});
          *     var box = [-5, 5];
          *     var view = board.create('view3d',
@@ -1077,22 +1002,222 @@ JXG.extend(Options, {
          *         });
          *
          *     // Function F to be plotted
-         *     var F = (x, y) => y - x;
+         *     var F = (x, y) => Math.cos(x * y / 4);
          *
          *     // 3D surface
          *     var c = view.create('functiongraph3d', [
          *         F,
-         *         box, // () => [-s.Value()*5, s.Value() * 5],
-         *         box, // () => [-s.Value()*5, s.Value() * 5],
+         *         box,
+         *         box
          *     ], {
-         *         strokeWidth: 0.5,
-         *         stepsU: 70,
-         *         stepsV: 70,
+         *         stepsU: 15,
+         *         stepsV: 15,
+         *         style: 'triangle'
+         *     });
+         *     })();
+         *
+         * </script><pre>
+         *
+         * @example
+         *
+         * var view = board.create('view3d',
+         *     [
+         *         [-6, -3], [8, 8],
+         *         [[-5, 5], [-5, 5], [-5, 5]]
+         *     ],
+         *     {
+         *         xPlaneRear: {visible: false},
+         *         yPlaneRear: {visible: false},
+         *     });
+         *
+         * // Function F to be plotted
+         * var F = (x, y) => Math.cos(x * y / 4);
+         *
+         * // 3D surface
+         * var c = view.create('functiongraph3d', [
+         *     F,
+         *     [-5, 5],
+         *     [-5, 5],
+         * ], {
+         *     stepsU: 15,
+         *     stepsV: 15,
+         *     style:'rectangle'
+         * });
+         *
+         * </pre><div id="JXG6bebc69d-95fd-4923-9689-29461bb21471" class="jxgbox" style="width: 500px; height: 500px;"></div>
+         * <script type="text/javascript">
+         *     (function() {
+         *         var board = JXG.JSXGraph.initBoard('JXG6bebc69d-95fd-4923-9689-29461bb21471',
+         *             {boundingbox: [-8, 8, 8,-8], axis: false, pan: {enabled: false}, showcopyright: false, shownavigation: false});
+         *     var box = [-5, 5];
+         *     var view = board.create('view3d',
+         *         [
+         *             [-6, -3], [8, 8],
+         *             [box, box, box]
+         *         ],
+         *         {
+         *             xPlaneRear: {visible: false},
+         *             yPlaneRear: {visible: false},
+         *         });
+         *
+         *     // Function F to be plotted
+         *     var F = (x, y) => Math.cos(x * y / 4);
+         *
+         *     // 3D surface
+         *     var c = view.create('functiongraph3d', [
+         *         F,
+         *         box,
+         *         box
+         *     ], {
+         *         stepsU: 15,
+         *         stepsV: 15,
+         *         style: 'rectangle'
+         *     });
+         *     })();
+         *
+         * </script><pre>
+         */
+        style: 'wireframe',
+
+        /**
+         * Attributes for the polyhedron3d in case `style='triangle'` or `style='rectangle'`.
+         * Specifications are e.g.
+         * <ul>
+         *  <li>strokewidth: 0
+         *  <li>fillColorArray: ['white', JXG.palette.blue]
+         * </ul>
+         * @type {object}
+         * @name ParametricSurface3D#polyhedron
+         * @default <pre>{strokewidth: 0, fillColorArray: ['white', 'black'] }</pre>
+         * @see ParametricSurface3D#style
+         *
+         * @example
+         * var F = (x, y) => Math.cos(x * y / 4);
+         *
+         * var view = board.create('view3d', [
+         *    [-6, -3], [8, 8],
+         *    [[-5, 5], [-5, 5], [-5, 5]]
+         *  ], {
+         *    xPlaneRear: {visible: false},
+         *    yPlaneRear: {visible: false},
+         *    depthOrder: {enabled: true}
+         *  });
+         *
+         * // 3D surface
+         * var c = view.create('functiongraph3d', [F, [-5, 5], [-5, 5]], {
+         *    strokeWidth: 1, // ignored
+         *    stepsU: 10,
+         *    stepsV: 10,
+         *    style:triangle,
+         *    polyhedron: {
+         *        layer: 12,
+         *        strokeWidth: 0, // has priority
+         *        fillOpacity: 0.9,
+         *        shader: {
+         *            enabled: true,
+         *            hue: 20,
+         *            saturation: 90,
+         *            minlightness: 50,
+         *            maxLightness: 80
+         *        }
+         *    }
+         * });
+         *
+         * </pre><div id="JXG8123a727-adef-4c10-83e6-d4f5e2203f68" class="jxgbox" style="width: 300px; height: 300px;"></div>
+         * <script type="text/javascript">
+         *     (function() {
+         *         var board = JXG.JSXGraph.initBoard('JXG8123a727-adef-4c10-83e6-d4f5e2203f68',
+         *             {boundingbox: [-8, 8, 8,-8], axis: false, pan: {enabled: false}, showcopyright: false, shownavigation: false});
+         *
+         *     var F = (x, y) => Math.cos(x * y / 4);
+         *     var box = [-5, 5];
+         *     var view = board.create('view3d',
+         *      [
+         *      [-6, -3], [8, 8],
+         *      [box, box, box]
+         *            ],
+         *             {
+         *               xPlaneRear: {visible: false},
+         *               yPlaneRear: {visible: false},
+         *               depthOrder: {enabled: true}
+         *     });
+         *
+         *     // 3D surface
+         *     var c = view.create('functiongraph3d', [F, box, box], {
+         *       strokeWidth: 0.5,
+         *       stepsU: 10,
+         *       stepsV: 10,
+         *       style:'triangle',
+         *       polyhedron: {
+         *           layer: 12,
+         *           strokeWidth: 0,
+         *           fillOpacity: 0.9,
+         *           shader: {
+         *               enabled: true,
+         *               hue: 20,
+         *               saturation: 90,
+         *               minlightness: 50,
+         *               maxLightness: 80
+         *           }
+         *       }
+         *     });
+         *
+         *     })();
+         *
+         * </script><pre>
+         *
+         * @example
+         *
+         * var view = board.create('view3d',
+         *     [
+         *         [-6, -3], [8, 8],
+         *         [[-5, 5], [-5, 5], [-5, 5]]
+         *     ], {
+         *         xPlaneRear: {visible: false},
+         *         yPlaneRear: {visible: false}
+         *     });
+         *
+         * // Function F to be plotted
+         * var F = (x, y) => y - x;
+         *
+         * // 3D surface
+         * var c = view.create('functiongraph3d', [F, [-5, 5], [-5, 5]], {
+         *     stepsU: 9,
+         *     stepsV: 9,
+         *     style:'rectangle'
+         * });
+         *
+         * </pre><div id="JXG87646dd4-9fe5-4c21-8734-089abc612519" class="jxgbox" style="width: 500px; height: 500px;"></div>
+         * <script type="text/javascript">
+         *     (function() {
+         *         var board = JXG.JSXGraph.initBoard('JXG87646dd4-9fe5-4c21-8734-089abc612519',
+         *             {boundingbox: [-8, 8, 8,-8], axis: false, pan: {enabled: false}, showcopyright: false, shownavigation: false});
+         *     var box = [-5, 5];
+         *     var view = board.create('view3d',
+         *         [
+         *             [-6, -3], [8, 8],
+         *             [box, box, box]
+         *         ], {
+         *             xPlaneRear: {visible: false},
+         *             yPlaneRear: {visible: false}
+         *         });
+         *
+         *     // Function F to be plotted
+         *     var F = (x, y) => y - x;
+         *
+         *     // 3D surface
+         *     var c = view.create('functiongraph3d', [F, box, box], {
+         *         stepsU: 9,
+         *         stepsV: 9,
          *         style:'rectangle'
          *     });
          *     })();
+         * </script><pre>
          */
-        rectangle: { strokeWidth: 0, fillColorArray: ['white', JXG.palette.blue] },
+        polyhedron: {
+            strokeWidth: 0,
+            fillColorArray: ['white', JXG.palette.blue]
+        },
 
         /**
          * Number of intervals the mesh is divided into in direction of parameter u.

@@ -48,7 +48,7 @@ Mat.Tiling = {
     /**
      * A function, which is used to triangulate a given rectangle. The rectangle is triangulated in rows.
      * The number of triangles depends on steps.
-     * The rectangle is represented by the 4 points (arrays of coordinates) given as parameters.
+     * The rectangle is represented by the four points (arrays of coordinates) given as parameters.
      * @name triangulation
      * @param {Array} p1
      * @param {Array} p2
@@ -349,9 +349,9 @@ Mat.Tiling = {
 
     /**
      * This function creates an array of dynamic 3-dimensional points
-     * based on an array of pairs of 2 coordinates.
+     * based on an array of pairs of two coordinates.
      * It uses a mathematical function to assign a third coordinate (the z-coordinate)
-     * to each pair of 2 coordinates.
+     * to each pair of two coordinates.
      * The 3-dimensional points are not stored directly.
      * Instead the array stores JavaScript functions that utilize the mentioned mathematical function
      * to return an array of three coordinates.
@@ -359,8 +359,7 @@ Mat.Tiling = {
      * mathematical function.
      * @name calculateZCoord
      * @param {Array} surface
-     * @param {Function} mathFunc
-     * @param {Number} z
+     * @param {Parametricsurface3d} el
      * @returns {Array} dynamicPoints array of [x, y, z] coordinates
      */
     calculateZCoord: function (surface, el) {
