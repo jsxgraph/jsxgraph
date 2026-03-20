@@ -214,6 +214,11 @@ JXG.JSXGraph = {
         board.resizeContainer(dimensions.width, dimensions.height, true, true);
         board._createSelectionPolygon(attr);
         board.renderer.drawNavigationBar(board, attr.navbar);
+
+        if (attr.background !== '') {
+            board.containerObj.style.background = attr.background;   // Set background
+        }
+
         JXG.boards[board.id] = board;
     },
 
@@ -495,13 +500,13 @@ JXG.JSXGraph = {
             theme = {},
             board;
 
-        attributes = attributes || {};
+        attributes = attributes || {}; // User supplied attributes
         // Merge a possible theme
         if (attributes.theme !== 'default' && Type.exists(JXG.themes[attributes.theme])) {
             theme = JXG.themes[attributes.theme];
         }
-        options = Type.deepCopy(Options, theme, true);
-        attr = this._setAttributes(attributes, options);
+        options = Type.deepCopy(Options, theme, true);    // Copy global options
+        attr = this._setAttributes(attributes, options);  // Merge user supplied attributes into global options
 
         dimensions = Env.getDimensions(box, attr.document);
 

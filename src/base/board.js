@@ -6604,6 +6604,11 @@ JXG.extend(
                             // TODO
                         }
                         break;
+                    case 'background':
+                        console.log(this.containerObj)
+                        this.containerObj.style = value;
+                        this._set(key, value);
+                        break;
                     case 'boundingbox':
                         this.setBoundingBox(value, this.keepaspectratio);
                         this._set(key, value);

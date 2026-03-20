@@ -90,6 +90,18 @@ JXG.Options = {
         axis: false,
 
         /**
+         * CSS attribute to set the background of the JSXgraph div element.
+         * This string overwrites the `background` property of the CSS style
+         * of the JSXGraph div. See {@link https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/background}
+         * for an overview of possibilities.
+         *
+         * @name JXG.Board#background
+         * @type String
+         * @default ''
+         */
+        background: '',
+
+        /**
          * Bounding box of the visible area in user coordinates.
          * It is an array consisting of four values:
          * [x<sub>1</sub>, y<sub>1</sub>, x<sub>2</sub>, y<sub>2</sub>]
