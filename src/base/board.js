@@ -6606,6 +6606,7 @@ JXG.extend(
                     case 'cssstyle':
                         lst = Type.css2js(value);
                         node = this.containerObj;
+                        // node = this.renderer.svgRoot;
                         for (e in lst) if (lst.hasOwnProperty(e)) {
                             pair = lst[e];
                             node.style[pair.key] = pair.val;
