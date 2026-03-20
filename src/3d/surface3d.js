@@ -463,7 +463,7 @@ JXG.createParametricSurface3D = function (board, parents, attributes) {
         range_u, range_v, attr,
         base = null,
         transform = null,
-        coords, surface, steps, style,
+        coords, surface, steps, tiling,
         el;
 
     if (parents.length === 3) {
@@ -521,14 +521,14 @@ JXG.createParametricSurface3D = function (board, parents, attributes) {
         el.element2D.updateVisibility().updateRenderer();
     }
 
-    style = el.evalVisProp('style');
-    if (style !== "wireframe") {
+    tiling = el.evalVisProp('tiling');
+    if (tiling !== "wireframe") {
         el.element2D.setAttribute({ visible: false });
     }
-    if (style === 'triangle' || style === 'rectangle') {
-        if (style === 'triangle') {
-            // Check for style of functiongraph3d: triangle
-            // In case style is set to triangle, we use JXG.Math.Tiling.triangulation
+    if (tiling === 'triangle' || tiling === 'rectangle') {
+        if (tiling === 'triangle') {
+            // Check for tiling of surface: triangle
+            // In case tiling is set to triangle, we use JXG.Math.Tiling.triangulation
             // to create a polyhedron representing the surface3d
 
             // Steps used for triangulation is chosen as the maximum of stepsU and stepsV (see options3d)
@@ -543,9 +543,9 @@ JXG.createParametricSurface3D = function (board, parents, attributes) {
                 steps
             );
 
-        } else if (el.evalVisProp('style') === "rectangle") {
-            // Check for style of functiongraph3d: rectangle
-            // In case style is set to rectangle, we use JXG.Math.Tiling.rectangulation
+        } else if (tiling === "rectangle") {
+            // Check for tiling of functiongraph3d: rectangle
+            // In case tiling is set to rectangle, we use JXG.Math.Tiling.rectangulation
             // to create a polyhedron representing the surface3d
 
             // Use stepsU, stepsV (see options3d) and range of surface3d to create a base of rectangles across the visible area of the surface3d object
@@ -567,7 +567,7 @@ JXG.createParametricSurface3D = function (board, parents, attributes) {
         surface = [coords, surface[1]];
 
         // create the polyhedron representing the functiongraph3d
-        el.polyhedron = view.create("polyhedron3d", surface, attr.polyhedron);
+        el.polyhedron = view.create('polyhedron3d', surface, attr.polyhedron);
         el.addChild(el.polyhedron);
         el.polyhedron.addParents(el);
     }

@@ -887,18 +887,18 @@ JXG.extend(Options, {
 
         /**
          * Description of how the mesh is visualized. Possible values are 'wireframe', 'rectangle', 'triangle'.
-         * In case of `style:'wireframe'`, a rectangular mesh is displayed, the number of steps is determined by
+         * In case of `tiling:'wireframe'`, a rectangular mesh is displayed, the number of steps is determined by
          * the attributes `stepsU` and `stepsV`. Further, the attributes `strokeWidth` and `strokeColor`, ...
          * determine the style of the mesh.
          * <p>
-         * In case of `style:'triangle'` or `style:'rectangle'` a polyhedron3d element is displayed, using the
+         * In case of `tiling:'triangle'` or `tiling:'rectangle'` a polyhedron3d element is displayed, using the
          * attributes `stepsU` and `stepsV`. In case of `triangle`, the number of steps is max(stepsU, stepsV).
          * <p>
          * All other attributes of the polyhedron3d have to be set inside of `polyhedron`, including `strokeWidth`
          * and `strokeColor`. The wireframe settings for these attributes are ignored.
          *
          * @type String
-         * @name ParametricSurface3D#style
+         * @name ParametricSurface3D#tiling
          * @default 'wireframe'
          * @see ParametricSurface3D#polyhedron
          *
@@ -926,7 +926,7 @@ JXG.extend(Options, {
          *     strokeWidth: 0.5,
          *     stepsU: 70,
          *     stepsV: 70,
-         *     style:'wireframe'
+         *     tiling:'wireframe'
          * });
          *
          * </pre><div id="JXG87646dd4-9fe5-4c21-8734-089abc612515" class="jxgbox" style="width: 500px; height: 500px;"></div>
@@ -957,7 +957,7 @@ JXG.extend(Options, {
          *         strokeWidth: 0.5,
          *         stepsU: 50,
          *         stepsV: 50,
-         *         style: 'wireframe'
+         *         tiling: 'wireframe'
          *     });
          *     })();
          *
@@ -986,7 +986,7 @@ JXG.extend(Options, {
          * ], {
          *     stepsU: 15,
          *     stepsV: 15,
-         *     style:'triangle'
+         *     tiling:'triangle'
          * });
          *
          * </pre><div id="JXG6591ae99-1319-4cd7-b035-465484ad27d2" class="jxgbox" style="width: 500px; height: 500px;"></div>
@@ -1016,7 +1016,7 @@ JXG.extend(Options, {
          *     ], {
          *         stepsU: 15,
          *         stepsV: 15,
-         *         style: 'triangle'
+         *         tiling: 'triangle'
          *     });
          *     })();
          *
@@ -1045,7 +1045,7 @@ JXG.extend(Options, {
          * ], {
          *     stepsU: 15,
          *     stepsV: 15,
-         *     style:'rectangle'
+         *     tiling: 'rectangle'
          * });
          *
          * </pre><div id="JXG6bebc69d-95fd-4923-9689-29461bb21471" class="jxgbox" style="width: 500px; height: 500px;"></div>
@@ -1075,13 +1075,13 @@ JXG.extend(Options, {
          *     ], {
          *         stepsU: 15,
          *         stepsV: 15,
-         *         style: 'rectangle'
+         *         tiling: 'rectangle'
          *     });
          *     })();
          *
          * </script><pre>
          */
-        style: 'wireframe',
+        tiling: 'wireframe',
 
         /**
          * Attributes for the polyhedron3d in case `style='triangle'` or `style='rectangle'`.
@@ -1112,7 +1112,7 @@ JXG.extend(Options, {
          *    strokeWidth: 1, // ignored
          *    stepsU: 10,
          *    stepsV: 10,
-         *    style:triangle,
+         *    tiling: 'triangle',
          *    polyhedron: {
          *        layer: 12,
          *        strokeWidth: 0, // has priority
@@ -1151,7 +1151,7 @@ JXG.extend(Options, {
          *       strokeWidth: 0.5,
          *       stepsU: 10,
          *       stepsV: 10,
-         *       style:'triangle',
+         *       tiling: 'triangle',
          *       polyhedron: {
          *           layer: 12,
          *           strokeWidth: 0,
@@ -1188,7 +1188,7 @@ JXG.extend(Options, {
          * var c = view.create('functiongraph3d', [F, [-5, 5], [-5, 5]], {
          *     stepsU: 9,
          *     stepsV: 9,
-         *     style:'rectangle'
+         *     tiling: 'rectangle'
          * });
          *
          * </pre><div id="JXG87646dd4-9fe5-4c21-8734-089abc612519" class="jxgbox" style="width: 500px; height: 500px;"></div>
@@ -1213,7 +1213,7 @@ JXG.extend(Options, {
          *     var c = view.create('functiongraph3d', [F, box, box], {
          *         stepsU: 9,
          *         stepsV: 9,
-         *         style:'rectangle'
+         *         tiling: 'rectangle'
          *     });
          *     })();
          * </script><pre>
