@@ -6558,10 +6558,10 @@ JXG.extend(
          *
          *
          */
-        setAttribute: function (attr) {
+        setAttribute: function (attr, force) {
             var i, arg, pair,
                 key, value, oldvalue,// j, le,
-                node,
+                node, lst, e,
                 attributes = {};
 
             // Normalize the user input
@@ -6588,9 +6588,8 @@ JXG.extend(
                 value = (value.toLowerCase && value.toLowerCase() === 'false')
                     ? false
                     : value;
-
                 oldvalue = this.attr[key];
-                if (oldvalue === value) {
+                if (!force && oldvalue === value) {
                     continue;
                 }
                 switch (key) {
@@ -6604,8 +6603,14 @@ JXG.extend(
                             // TODO
                         }
                         break;
-                    case 'background':
-                        this.containerObj.style.background = value;
+                    case 'cssstyle':
+                        lst = Type.css2js(value);
+                        node = this.containerObj;
+                        for (e in lst) if (lst.hasOwnProperty(e)) {
+                            pair = lst[e];
+                            node.style[pair.key] = pair.val;
+                        }
+
                         this._set(key, value);
                         break;
                     case 'boundingbox':
@@ -6704,10 +6709,11 @@ JXG.extend(
             }
 
             // Redraw navbar to handle the remaining show* attributes
-            this.containerObj.ownerDocument.getElementById(
-                this.container + "_navigationbar"
-            ).remove();
-            this.renderer.drawNavigationBar(this, this.attr.navbar);
+            node = this.containerObj.ownerDocument.getElementById(this.container + "_navigationbar");
+            if (Type.exists(node)) {
+                node.remove();
+                this.renderer.drawNavigationBar(this, this.attr.navbar);
+            }
 
             this.triggerEventHandlers(["attribute"], [attributes, this]);
             this.fullUpdate();

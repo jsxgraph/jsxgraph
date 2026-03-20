@@ -215,10 +215,6 @@ JXG.JSXGraph = {
         board._createSelectionPolygon(attr);
         board.renderer.drawNavigationBar(board, attr.navbar);
 
-        if (attr.background !== '') {
-            board.containerObj.style.background = attr.background;   // Set background
-        }
-
         JXG.boards[board.id] = board;
     },
 
@@ -613,6 +609,9 @@ JXG.JSXGraph = {
             board.create("grid", [], typeof attr.grid === "object" ? attr.grid : {});
         }
         board.unsuspendUpdate();
+
+        // Set CSS styles of JSXGraph div
+        board.setAttribute({cssStyle: attr.cssstyle}, true);
 
         return board;
     },

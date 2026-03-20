@@ -896,6 +896,8 @@ JXG.extend(Options, {
          * <p>
          * All other attributes of the polyhedron3d have to be set inside of `polyhedron`, including `strokeWidth`
          * and `strokeColor`. The wireframe settings for these attributes are ignored.
+         * <p>
+         * At the time being (v1.13+), this attribute is immutable.
          *
          * @type String
          * @name ParametricSurface3D#tiling
