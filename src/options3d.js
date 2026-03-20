@@ -452,6 +452,10 @@ JXG.extend(Options, {
          * By default (i.e. type:'angle'), the angle between the camera axis and the normal of the
          * face determines the lightness value of the HSL color. Otherwise, the
          * zIndex of the face determines the lightness value of the HSL color.
+         * <p>
+         * Note that shading needs a lot of computing resources, in particular for
+         * SVG rendering. Setting `renderer:'canvas'` will allow to rotate the viewport
+         * much faster.
          *
          * @type Object
          * @name Face3D#shader
