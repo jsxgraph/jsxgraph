@@ -6440,7 +6440,8 @@ JXG.extend(
          * </ul>
          * Some board attributes are immutable, like e.g. the renderer type.
          *
-         * @param {Object} attributes An object with attributes.
+         * @param {Object} attributes An object with attributes
+         * @param {Boolean} [force=false] if true the attributes are set regardless of the previous setting was identical.
          * @returns {JXG.Board} Reference to the board
          *
          * @example
