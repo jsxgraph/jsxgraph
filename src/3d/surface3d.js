@@ -556,8 +556,7 @@ JXG.createParametricSurface3D = function (board, parents, attributes) {
                 [el.range_u[0], el.range_v[1]],
                 [el.range_u[1], el.range_v[1]],
                 [el.range_u[1], el.range_v[0]],
-                el.visProp.stepsu,
-                el.visProp.stepsv
+                el.evalVisProp('stepsu'), el.evalVisProp('stepsv')
             );
         }
         // mapMeshTo3D is used to map the 2d-points created with triangulation / rectangulation to 3D.

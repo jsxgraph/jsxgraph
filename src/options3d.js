@@ -733,7 +733,7 @@ JXG.extend(Options, {
          */
 
         layer: 12,
-        strokeWidth: 0,
+        strokeWidth: 1,
         strokeColor: "black",
         strokeOpacity: 1,
         highlight: false,
@@ -757,6 +757,20 @@ JXG.extend(Options, {
          */
         mesh3d: {
             visible: 'inherit'
+        },
+
+        stepsU: 6,
+        stepsV: 6,
+        polyhedron: {
+            enabled: false,
+            layer: 12,
+            visible: 'inherit',
+            strokeWidth: 0.4,
+            strokeOpacity: 0.7,
+            strokeColor: '#aaaaaa',
+            fillOpacity: 0.35,
+            // fillColorArray: ['none', '#e7e7e7']
+            fillColorArray: ['#e7e7e7']
         },
 
         /**
