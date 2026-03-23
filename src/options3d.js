@@ -892,7 +892,7 @@ JXG.extend(Options, {
          * determine the style of the mesh.
          * <p>
          * In case of `tiling:'triangle'` or `tiling:'rectangle'` a polyhedron3d element is displayed, using the
-         * attributes `stepsU` and `stepsV`. In case of `triangle`, the number of steps is max(stepsU, stepsV).
+         * attributes `stepsU` and `stepsV`. In case of `triangle`, equilateral triangles are created if stepsV==0.
          * <p>
          * All other attributes of the polyhedron3d have to be set inside of `polyhedron`, including `strokeWidth`
          * and `strokeColor`. The wireframe settings for these attributes are ignored.
