@@ -293,6 +293,9 @@ JXG.extend(
             if (this.needsUpdate) {
                 this.needsUpdate = false;
                 this.shader();
+
+                // Experiment with linearGradient
+                // this.element2D.rendNode.setAttributeNS(null, 'fill', 'url(#jxgbox_g1)');
             }
             return this;
         },

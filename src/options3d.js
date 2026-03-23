@@ -744,8 +744,8 @@ JXG.extend(Options, {
         gradient: "linear",
         gradientSecondColor: "#ffffff",
         gradientAngle: Math.PI,
-        fillColor: "#a7a7a7",
-        fillOpacity: 0.6,
+        fillColor: "#bbbbbb",
+        fillOpacity: 0.3,
 
         /**
          * Optional 3D mesh of a finite plane.
@@ -762,13 +762,12 @@ JXG.extend(Options, {
         stepsU: 6,
         stepsV: 6,
         polyhedron: {
-            enabled: false,
             layer: 12,
             visible: 'inherit',
             strokeWidth: 0.4,
             strokeOpacity: 0.7,
-            strokeColor: '#aaaaaa',
-            fillOpacity: 0.35,
+            strokeColor: '#cccccc',
+            fillOpacity: 0.30,
             // fillColorArray: ['none', '#e7e7e7']
             fillColorArray: ['#e7e7e7']
         },
