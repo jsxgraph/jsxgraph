@@ -463,7 +463,8 @@ JXG.createParametricSurface3D = function (board, parents, attributes) {
         range_u, range_v, attr,
         base = null,
         transform = null,
-        coords, surface, steps, tiling,
+        coords, surface,// steps,
+        tiling,
         el;
 
     if (parents.length === 3) {
@@ -532,7 +533,7 @@ JXG.createParametricSurface3D = function (board, parents, attributes) {
             // to create a polyhedron representing the surface3d
 
             // Steps used for triangulation is chosen as the maximum of stepsU and stepsV (see options3d)
-            steps = Math.max(el.evalVisProp('stepsu'), el.evalVisProp('stepsv'));
+            // steps = Math.max(el.evalVisProp('stepsu'), el.evalVisProp('stepsv'));
 
             // Uses steps and range of surface3d to create a base of triangles across the visible area of the surface3d object
             surface = Tiling.triangulation(
@@ -540,7 +541,8 @@ JXG.createParametricSurface3D = function (board, parents, attributes) {
                 [el.range_u[0], el.range_v[1]],
                 [el.range_u[1], el.range_v[1]],
                 [el.range_u[1], el.range_v[0]],
-                steps
+                // Given ratio or equilateral triangle if stepsV==0
+                el.evalVisProp('stepsu'), el.evalVisProp('stepsv')
             );
 
         } else if (tiling === "rectangle") {
