@@ -299,7 +299,7 @@ JXG.extend(Options, {
             stepsV: 10,
             tiling: 'rectangle',
             polyhedron: {
-                visible: true,
+                visible: false, // 'inherit',
                 strokeWidth: 1,
                 shader: {
                     enabled: true,
@@ -329,7 +329,7 @@ JXG.extend(Options, {
             stepsV: 10,
             tiling: 'rectangle',
             polyhedron: {
-                visible: true,
+                visible: false, // 'inherit',
                 strokeWidth: 1,
                 shader: {
                     enabled: true,
@@ -359,7 +359,7 @@ JXG.extend(Options, {
             stepsV: 10,
             tiling: 'rectangle',
             polyhedron: {
-                visible: true,
+                visible: false, // 'inherit',
                 strokeWidth: 1,
                 shader: {
                     enabled: true,
