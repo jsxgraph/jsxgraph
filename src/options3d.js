@@ -34,7 +34,12 @@ JXG.extend(Options, {
          * @name View3D#xAxis
          * @see View3D#axesPosition
          */
-        xAxis: { visible: true, point2: { name: "x" }, strokeColor: JXG.palette.red },
+        xAxis: {
+            visible: true,
+            layer: 12,
+            point2: { name: "x" },
+            strokeColor: JXG.palette.red
+        },
 
         /**
          * Attributes of the centered 3D y-axis.
@@ -43,7 +48,12 @@ JXG.extend(Options, {
          * @name View3D#yAxis
          * @see View3D#axesPosition
          */
-        yAxis: { visible: true, point2: { name: "y" }, strokeColor: JXG.palette.green },
+        yAxis: {
+            visible: true,
+            layer: 12,
+            point2: { name: "y" },
+            strokeColor: JXG.palette.green
+        },
 
         /**
          * Attributes of the centered 3D z-axis.
@@ -52,7 +62,12 @@ JXG.extend(Options, {
          * @name View3D#zAxis
          * @see View3D#axesPosition
          */
-        zAxis: { visible: true, point2: { name: "z" }, strokeColor: JXG.palette.blue },
+        zAxis: {
+            visible: true,
+            layer: 12,
+            point2: { name: "z" },
+            strokeColor: JXG.palette.blue
+        },
 
         /**
          * Attributes of the 3D x-axis at the border.

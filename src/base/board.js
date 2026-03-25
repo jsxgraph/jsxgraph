@@ -5943,11 +5943,13 @@ JXG.extend(
                     return a.visProp.element3d.zIndex - b.visProp.element3d.zIndex;
                 };
 
-            // Only one view3d element is supported. Get the depth orderer layers and
+            // Only one view3d element is supported. Get the depth order layers and
             // update the zIndices of the 3D elements.
             for (el = 0; el < olen; el++) {
                 pEl = this.objectsList[el];
-                if (pEl.elType === 'view3d' && pEl.evalVisProp('depthorder.enabled')) {
+                if (pEl.elType === 'view3d' &&
+                    pEl.evalVisProp('depthorder.enabled')
+                ) {
                     depth_order_layers = pEl.evalVisProp('depthorder.layers');
                     pEl.updateRenderer();
                     break;
@@ -5957,7 +5959,13 @@ JXG.extend(
             objects_sorted = this.objectsList.toSorted(_compareFn);
             olen = objects_sorted.length;
             for (el = 0; el < olen; el++) {
-                objects_sorted[el].prepareUpdate().updateRenderer();
+                if (objects_sorted[el].type !== Const.OBJECT_TYPE_FACE3D &&
+                    objects_sorted[el].type !== Const.OBJECT_TYPE_POLYHEDRON3D
+                ) {
+                    console.log(objects_sorted[el].type)
+                    objects_sorted[el].prepareUpdate().updateRenderer();
+
+                }
             }
 
             // for (i = 0; i < len; i++) {

@@ -881,8 +881,9 @@ JXG.extend(
                 el = this.objects[id];
                 // Update zIndex of less frequent objects line3d and polygon3d
                 // The other elements (point3d, face3d) do this in their update method.
-                if ((el.type === Const.OBJECT_TYPE_LINE3D ||
-                    el.type === Const.OBJECT_TYPE_POLYGON3D
+                if ((
+                        el.type === Const.OBJECT_TYPE_LINE3D ||
+                        el.type === Const.OBJECT_TYPE_POLYGON3D
                     ) &&
                     Type.exists(el.element2D) &&
                     el.element2D.evalVisProp('visible')
@@ -900,6 +901,7 @@ JXG.extend(
                 el = this.objects[id];
                 if (Type.exists(el.shader)) {
                     if (!el.evalVisProp('shader.fixed')) {
+                    console.log('shade')
                         v = el.shader();
                     } else {
                         v = el.zIndex;
@@ -934,7 +936,8 @@ JXG.extend(
                     el.type === Const.OBJECT_TYPE_POLYGON3D
                     ) &&
                     Type.exists(el.element2D) &&
-                    el.element2D.evalVisProp('visible')
+                    el.element2D.visPropCalc.visible
+                    // el.element2D.evalVisProp('visible')
                 ) {
                     lay = el.element2D.evalVisProp('layer');
                     if (layers.indexOf(lay) >= 0) {
