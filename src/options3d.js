@@ -382,7 +382,7 @@ JXG.extend(Options, {
         xPlaneRearYAxis: {
             visible: 'inherit',
             strokeColor: "#888888",
-            strokeWidth: 1.5,
+            strokeWidth: 1.2,
             layer: 12
         },
         /**
@@ -393,7 +393,7 @@ JXG.extend(Options, {
         xPlaneRearZAxis: {
             visible: 'inherit',
             strokeColor: "#888888",
-            strokeWidth: 1.5,
+            strokeWidth: 1.2,
             layer: 12
         },
         /**
@@ -404,7 +404,7 @@ JXG.extend(Options, {
         xPlaneFrontYAxis: {
             visible: 'inherit',
             strokeColor: "#888888",
-            strokeWidth: 1.5,
+            strokeWidth: 1.2,
             layer: 12
         },
         /**
@@ -415,7 +415,7 @@ JXG.extend(Options, {
         xPlaneFrontZAxis: {
             visible: 'inherit',
             strokeColor: "#888888",
-            strokeWidth: 1.5,
+            strokeWidth: 1.2,
             layer: 12
         },
         /**
@@ -426,7 +426,7 @@ JXG.extend(Options, {
         yPlaneRearXAxis: {
             visible: 'inherit',
             strokeColor: "#888888",
-            strokeWidth: 1.5,
+            strokeWidth: 1.2,
             layer: 12
         },
         /**
@@ -437,7 +437,7 @@ JXG.extend(Options, {
         yPlaneRearZAxis: {
             visible: 'inherit',
             strokeColor: "#888888",
-            strokeWidth: 1.5,
+            strokeWidth: 1.2,
             layer: 12
         },
         /**
@@ -448,7 +448,7 @@ JXG.extend(Options, {
         yPlaneFrontXAxis: {
             visible: 'inherit',
             strokeColor: "#888888",
-            strokeWidth: 1.5,
+            strokeWidth: 1.2,
             layer: 12
         },
         /**
@@ -459,7 +459,7 @@ JXG.extend(Options, {
         yPlaneFrontZAxis: {
             visible: 'inherit',
             strokeColor: "#888888",
-            strokeWidth: 1.5,
+            strokeWidth: 1.2,
             layer: 12
         },
 
@@ -471,7 +471,7 @@ JXG.extend(Options, {
         zPlaneRearXAxis: {
             visible: 'inherit',
             strokeColor: "#888888",
-            strokeWidth: 1.5,
+            strokeWidth: 1.2,
             layer: 12
         },
         /**
@@ -482,7 +482,7 @@ JXG.extend(Options, {
         zPlaneRearYAxis: {
             visible: 'inherit',
             strokeColor: "#888888",
-            strokeWidth: 1.5,
+            strokeWidth: 1.2,
             layer: 12
         },
         /**
@@ -493,7 +493,7 @@ JXG.extend(Options, {
         zPlaneFrontXAxis: {
             visible: 'inherit',
             strokeColor: "#888888",
-            strokeWidth: 1.5,
+            strokeWidth: 1.2,
             layer: 12
         },
         /**
@@ -504,7 +504,7 @@ JXG.extend(Options, {
         zPlaneFrontYAxis: {
             visible: 'inherit',
             strokeColor: "#888888",
-            strokeWidth: 1.5,
+            strokeWidth: 1.2,
             layer: 12
         }
 
