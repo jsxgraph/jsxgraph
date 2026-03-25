@@ -1773,8 +1773,7 @@ JXG.createPlane3D = function (board, parents, attributes) {
             surface = [coords, surface[1]];
             el.polyhedron = view.create('polyhedron3d', surface, attr.polyhedron);
             el.addChild(el.polyhedron);
-            el.inherits.push(el.polyhedron);            // TODO does not work
-            // el.element2D.inherits.push(el.polyhedron);  // Does not work
+            el.inherits.push(el.polyhedron);
             el.polyhedron.setParents(el);
         }
     }

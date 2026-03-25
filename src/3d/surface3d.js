@@ -460,7 +460,7 @@ JXG.extend(
 JXG.createParametricSurface3D = function (board, parents, attributes) {
     var view = parents[0],
         F, X, Y, Z,
-        range_u, range_v, attr,
+        range_u, range_v, attr, attr2d,
         base = null,
         transform = null,
         coords, surface,// steps,
@@ -496,8 +496,8 @@ JXG.createParametricSurface3D = function (board, parents, attributes) {
     attr = Type.copyAttributes(attributes, board.options, 'surface3d');
     el = new JXG.Surface3D(view, F, X, Y, Z, range_u, range_v, attr);
 
-    attr = el.setAttr2D(attr);
-    el.element2D = view.create("curve", [[], []], attr);
+    attr2d = el.setAttr2D(attr);
+    el.element2D = view.create("curve", [[], []], attr2d);
     el.element2D.view = view;
     if (base !== null) {
         el.addTransform(base, transform);
@@ -517,15 +517,15 @@ JXG.createParametricSurface3D = function (board, parents, attributes) {
     el.inherits.push(el.element2D);
     el.element2D.setParents(el);
 
+    tiling = el.evalVisProp('tiling');
+    if (tiling !== "wireframe") {
+        el.element2D.setAttribute({ visible: false });
+    }
     el.element2D.prepareUpdate().update();
     if (!board.isSuspendedUpdate) {
         el.element2D.updateVisibility().updateRenderer();
     }
 
-    tiling = el.evalVisProp('tiling');
-    if (tiling !== "wireframe") {
-        el.element2D.setAttribute({ visible: false });
-    }
     if (tiling === 'triangle' || tiling === 'rectangle') {
         if (tiling === 'triangle') {
             // Check for tiling of surface: triangle
@@ -567,10 +567,11 @@ JXG.createParametricSurface3D = function (board, parents, attributes) {
         // Reincorporate the dynamic points in coords into surface
         surface = [coords, surface[1]];
 
-        // create the polyhedron representing the functiongraph3d
+        // Create the polyhedron representing the functiongraph3d
         el.polyhedron = view.create('polyhedron3d', surface, attr.polyhedron);
         el.addChild(el.polyhedron);
-        el.polyhedron.addParents(el);
+        el.inherits.push(el.polyhedron);
+        el.polyhedron.setParents(el);
     }
 
     return el;

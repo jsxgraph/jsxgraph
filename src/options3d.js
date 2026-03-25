@@ -1007,6 +1007,7 @@ JXG.extend(Options, {
          * @visprop
          */
 
+        visible: true,
         layer: 12,
         highlight: false,
         tabindex: -1,
@@ -1243,7 +1244,6 @@ JXG.extend(Options, {
          *    stepsV: 10,
          *    tiling: 'triangle',
          *    polyhedron: {
-         *        layer: 12,
          *        strokeWidth: 0, // has priority
          *        fillOpacity: 0.9,
          *        shader: {
@@ -1282,7 +1282,6 @@ JXG.extend(Options, {
          *       stepsV: 10,
          *       tiling: 'triangle',
          *       polyhedron: {
-         *           layer: 12,
          *           strokeWidth: 0,
          *           fillOpacity: 0.9,
          *           shader: {
@@ -1348,8 +1347,22 @@ JXG.extend(Options, {
          * </script><pre>
          */
         polyhedron: {
-            strokeWidth: 0,
-            fillColorArray: ['white', JXG.palette.blue]
+            visible: 'inherit',
+            strokeWidth: 0.1,
+            fillOpacity: 0.8,
+            fillColorArray: ['white', JXG.palette.blue],
+            shader: {
+                enabled: false,
+                fixed: true,
+                hue: 60,     // yellow
+                saturation: 90,
+                minLightness: 55,
+                maxLightness: 90,
+
+                light: {
+                    dir: -1
+                }
+            }
         },
 
         /**
