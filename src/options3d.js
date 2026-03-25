@@ -214,8 +214,8 @@ JXG.extend(Options, {
                     type: 'zIndex',
                     hue: 0,
                     saturation: 0,
-                    minlightness: 45,
-                    maxLightness: 95
+                    minlightness: 65,
+                    maxLightness: 98
                 }
             }
         },
@@ -245,8 +245,8 @@ JXG.extend(Options, {
                     type: 'zIndex',
                     hue: 0,
                     saturation: 0,
-                    minlightness: 45,
-                    maxLightness: 95
+                    minlightness: 65,
+                    maxLightness: 98
                 }
             }
         },
@@ -276,8 +276,8 @@ JXG.extend(Options, {
                     type: 'zIndex',
                     hue: 0,
                     saturation: 0,
-                    minlightness: 45,
-                    maxLightness: 95
+                    minlightness: 65,
+                    maxLightness: 98
                 }
             }
         },
@@ -307,8 +307,8 @@ JXG.extend(Options, {
                     type: 'zIndex',
                     hue: 0,
                     saturation: 0,
-                    minlightness: 45,
-                    maxLightness: 95
+                    minlightness: 65,
+                    maxLightness: 98
                 }
             }
         },
@@ -337,8 +337,8 @@ JXG.extend(Options, {
                     type: 'zIndex',
                     hue: 0,
                     saturation: 0,
-                    minlightness: 45,
-                    maxLightness: 95
+                    minlightness: 65,
+                    maxLightness: 98
                 }
             }
         },
@@ -367,8 +367,8 @@ JXG.extend(Options, {
                     type: 'zIndex',
                     hue: 0,
                     saturation: 0,
-                    minlightness: 45,
-                    maxLightness: 95
+                    minlightness: 65,
+                    maxLightness: 98
                 }
             }
         },
