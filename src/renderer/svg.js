@@ -186,35 +186,6 @@ JXG.SVGRenderer = function (container, dim) {
         return filter;
     };
 
-    // this.createLinearGradient = function(id, col1, col2) {
-    //     var grad = this.container.ownerDocument.createElementNS(this.svgNamespace, 'linearGradient'),
-    //         stop1 = this.container.ownerDocument.createElementNS(this.svgNamespace, 'stop'),
-    //         stop2 = this.container.ownerDocument.createElementNS(this.svgNamespace, 'stop');
-
-    //     //  <linearGradient id="Orange_Gelb" x1="0" y1="0" x2="100%" y2="100%" gradientUnits="userSpaceOnUse">
-    //     //      <stop offset="0%" stop-color="#ffff25" />
-    //     //      <stop offset="100%" stop-color="#f71818" />
-    //     //  </linearGradient>
-
-    //     grad.setAttributeNS(null, 'id', id);
-    //     grad.setAttributeNS(null, 'x1', '0');
-    //     grad.setAttributeNS(null, 'y1', '0');
-    //     grad.setAttributeNS(null, 'x2', '100%');
-    //     grad.setAttributeNS(null, 'y2', '100%');
-    //     grad.setAttributeNS(null, 'gradientUnits', 'userSpaceOnUse');
-    //     // grad.setAttributeNS(null, 'gradientUnits', 'boundingBox');
-
-    //     stop1.setAttributeNS(null, 'offset', '0%');
-    //     stop1.setAttributeNS(null, 'stop-color', col1);
-    //     stop2.setAttributeNS(null, 'offset', '100%');
-    //     stop2.setAttributeNS(null, 'stop-color', col2);
-
-    //     grad.appendChild(stop1);
-    //     grad.appendChild(stop2);
-
-    //     return grad;
-    // };
-
     /**
      * Create a "unique" string id from the arguments of the function.
      * Concatenate all arguments by "_".
@@ -276,8 +247,6 @@ JXG.SVGRenderer = function (container, dim) {
 
     /* Default shadow filter */
     this.defs.appendChild(this.createShadowFilter(this.uniqName('f1'), 'none', 1, 0.1, 3, [5, 5]));
-
-    // this.defs.appendChild(this.createLinearGradient(this.uniqName('g1'), '#ffff00', '#ffffff'));
 
     this.createClip = function() {
         var id = this.uniqName('ClipFull'),
