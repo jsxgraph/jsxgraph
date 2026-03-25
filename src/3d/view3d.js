@@ -901,6 +901,8 @@ JXG.extend(
                 if (Type.exists(el.shader)) {
                     if (!el.evalVisProp('shader.fixed')) {
                         v = el.shader();
+                    } else {
+                        v = el.zIndex;
                     }
                     if (v < this.zIndexMin) {
                         this.zIndexMin = v;

@@ -1280,6 +1280,7 @@ JXG.extend(
         // Already documented in element3d.js
         updateRenderer: function () {
             this.needsUpdate = false;
+
             return this;
         },
 
