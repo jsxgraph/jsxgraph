@@ -195,12 +195,29 @@ JXG.extend(Options, {
          * @name View3D#xPlaneRear
          */
         xPlaneRear: {
-            visible: true,
+            visible: false,
             layer: 0,
             strokeWidth: 1,
             strokeColor: '#dddddd',
             fillColor: '#dddddd',
-            mesh3d: { layer: 1 }
+            mesh3d: { layer: 1 },
+
+            stepsU: 10,
+            stepsV: 10,
+            tiling: 'rectangle',
+            polyhedron: {
+                visible: true,
+                strokeWidth: 1,
+                shader: {
+                    enabled: true,
+                    fixed: true,
+                    type: 'zIndex',
+                    hue: 0,
+                    saturation: 0,
+                    minlightness: 45,
+                    maxLightness: 95
+                }
+            }
         },
 
         /**
@@ -209,12 +226,29 @@ JXG.extend(Options, {
          * @name View3D#yPlaneRear
          */
         yPlaneRear: {
-            visible: true,
+            visible: false,
             strokeWidth: 1,
             strokeColor: '#dddddd',
             fillColor: '#dddddd',
             layer: 0,
-            mesh3d: { layer: 1 }
+            mesh3d: { layer: 1 },
+
+            stepsU: 10,
+            stepsV: 10,
+            tiling: 'rectangle',
+            polyhedron: {
+                visible: true,
+                strokeWidth: 1,
+                shader: {
+                    enabled: true,
+                    fixed: true,
+                    type: 'zIndex',
+                    hue: 0,
+                    saturation: 0,
+                    minlightness: 45,
+                    maxLightness: 95
+                }
+            }
         },
 
         /**
@@ -228,7 +262,24 @@ JXG.extend(Options, {
             strokeColor: '#dddddd',
             fillColor: '#dddddd',
             layer: 0,
-            mesh3d: { layer: 1 }
+            mesh3d: { layer: 1 },
+
+            stepsU: 10,
+            stepsV: 10,
+            tiling: 'rectangle',
+            polyhedron: {
+                visible: true,
+                strokeWidth: 1,
+                shader: {
+                    enabled: true,
+                    fixed: true,
+                    type: 'zIndex',
+                    hue: 0,
+                    saturation: 0,
+                    minlightness: 45,
+                    maxLightness: 95
+                }
+            }
         },
 
         /**
@@ -242,7 +293,24 @@ JXG.extend(Options, {
             strokeColor: '#dddddd',
             fillColor: '#dddddd',
             layer: 0,
-            mesh3d: { layer: 1 }
+            mesh3d: { layer: 1 },
+
+            stepsU: 10,
+            stepsV: 10,
+            tiling: 'rectangle',
+            polyhedron: {
+                visible: true,
+                strokeWidth: 1,
+                shader: {
+                    enabled: true,
+                    fixed: true,
+                    type: 'zIndex',
+                    hue: 0,
+                    saturation: 0,
+                    minlightness: 45,
+                    maxLightness: 95
+                }
+            }
         },
         /**
          * Attributes of the 3D plane orthogonal to the y-axis at the "front" of the cube.
@@ -255,7 +323,24 @@ JXG.extend(Options, {
             strokeColor: '#dddddd',
             fillColor: '#dddddd',
             layer: 0,
-            mesh3d: { layer: 1 }
+            mesh3d: { layer: 1 },
+
+            stepsU: 10,
+            stepsV: 10,
+            tiling: 'rectangle',
+            polyhedron: {
+                visible: true,
+                strokeWidth: 1,
+                shader: {
+                    enabled: true,
+                    fixed: true,
+                    type: 'zIndex',
+                    hue: 0,
+                    saturation: 0,
+                    minlightness: 45,
+                    maxLightness: 95
+                }
+            }
         },
         /**
          * Attributes of the 3D plane orthogonal to the z-axis at the "front" of the cube.
@@ -268,7 +353,24 @@ JXG.extend(Options, {
             strokeColor: '#dddddd',
             fillColor: '#dddddd',
             layer: 0,
-            mesh3d: { layer: 1 }
+            mesh3d: { layer: 1 },
+
+            stepsU: 10,
+            stepsV: 10,
+            tiling: 'rectangle',
+            polyhedron: {
+                visible: true,
+                strokeWidth: 1,
+                shader: {
+                    enabled: true,
+                    fixed: true,
+                    type: 'zIndex',
+                    hue: 0,
+                    saturation: 0,
+                    minlightness: 45,
+                    maxLightness: 95
+                }
+            }
         },
 
         // Axes on the planes
@@ -280,7 +382,8 @@ JXG.extend(Options, {
         xPlaneRearYAxis: {
             visible: 'inherit',
             strokeColor: "#888888",
-            strokeWidth: 1
+            strokeWidth: 1.5,
+            layer: 12
         },
         /**
          * Attributes of the 3D z-axis on the 3D plane orthogonal to the x-axis at the "rear" of the cube.
@@ -290,7 +393,8 @@ JXG.extend(Options, {
         xPlaneRearZAxis: {
             visible: 'inherit',
             strokeColor: "#888888",
-            strokeWidth: 1
+            strokeWidth: 1.5,
+            layer: 12
         },
         /**
          * Attributes of the 3D y-axis on the 3D plane orthogonal to the x-axis at the "front" of the cube.
@@ -300,7 +404,8 @@ JXG.extend(Options, {
         xPlaneFrontYAxis: {
             visible: 'inherit',
             strokeColor: "#888888",
-            strokeWidth: 1
+            strokeWidth: 1.5,
+            layer: 12
         },
         /**
          * Attributes of the 3D z-axis on the 3D plane orthogonal to the x-axis at the "front" of the cube.
@@ -310,9 +415,9 @@ JXG.extend(Options, {
         xPlaneFrontZAxis: {
             visible: 'inherit',
             strokeColor: "#888888",
-            strokeWidth: 1
+            strokeWidth: 1.5,
+            layer: 12
         },
-
         /**
          * Attributes of the 3D x-axis on the 3D plane orthogonal to the y-axis at the "rear" of the cube.
          * @type Plane3D
@@ -321,7 +426,8 @@ JXG.extend(Options, {
         yPlaneRearXAxis: {
             visible: 'inherit',
             strokeColor: "#888888",
-            strokeWidth: 1
+            strokeWidth: 1.5,
+            layer: 12
         },
         /**
          * Attributes of the 3D z-axis on the 3D plane orthogonal to the y-axis at the "rear" of the cube.
@@ -331,7 +437,8 @@ JXG.extend(Options, {
         yPlaneRearZAxis: {
             visible: 'inherit',
             strokeColor: "#888888",
-            strokeWidth: 1
+            strokeWidth: 1.5,
+            layer: 12
         },
         /**
          * Attributes of the 3D x-axis on the 3D plane orthogonal to the y-axis at the "front" of the cube.
@@ -341,7 +448,8 @@ JXG.extend(Options, {
         yPlaneFrontXAxis: {
             visible: 'inherit',
             strokeColor: "#888888",
-            strokeWidth: 1
+            strokeWidth: 1.5,
+            layer: 12
         },
         /**
          * Attributes of the 3D z-axis on the 3D plane orthogonal to the y-axis at the "front" of the cube.
@@ -351,7 +459,8 @@ JXG.extend(Options, {
         yPlaneFrontZAxis: {
             visible: 'inherit',
             strokeColor: "#888888",
-            strokeWidth: 1
+            strokeWidth: 1.5,
+            layer: 12
         },
 
         /**
@@ -362,7 +471,8 @@ JXG.extend(Options, {
         zPlaneRearXAxis: {
             visible: 'inherit',
             strokeColor: "#888888",
-            strokeWidth: 1
+            strokeWidth: 1.5,
+            layer: 12
         },
         /**
          * Attributes of the 3D y-axis on the 3D plane orthogonal to the z-axis at the "rear" of the cube.
@@ -372,7 +482,8 @@ JXG.extend(Options, {
         zPlaneRearYAxis: {
             visible: 'inherit',
             strokeColor: "#888888",
-            strokeWidth: 1
+            strokeWidth: 1.5,
+            layer: 12
         },
         /**
          * Attributes of the 3D x-axis on the 3D plane orthogonal to the z-axis at the "front" of the cube.
@@ -382,7 +493,8 @@ JXG.extend(Options, {
         zPlaneFrontXAxis: {
             visible: 'inherit',
             strokeColor: "#888888",
-            strokeWidth: 1
+            strokeWidth: 1.5,
+            layer: 12
         },
         /**
          * Attributes of the 3D y-axis on the 3D plane orthogonal to the z-axis at the "front" of the cube.
@@ -392,7 +504,8 @@ JXG.extend(Options, {
         zPlaneFrontYAxis: {
             visible: 'inherit',
             strokeColor: "#888888",
-            strokeWidth: 1
+            strokeWidth: 1.5,
+            layer: 12
         }
 
         /**#@-*/
