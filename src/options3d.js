@@ -195,7 +195,7 @@ JXG.extend(Options, {
          * @name View3D#xPlaneRear
          */
         xPlaneRear: {
-            visible: false,
+            visible: true,
             layer: 0,
             strokeWidth: 1,
             strokeColor: '#dddddd',
@@ -206,7 +206,7 @@ JXG.extend(Options, {
             stepsV: 10,
             tiling: 'rectangle',
             polyhedron: {
-                visible: true,
+                visible: 'inherit',
                 strokeWidth: 1,
                 shader: {
                     enabled: true,
@@ -226,7 +226,7 @@ JXG.extend(Options, {
          * @name View3D#yPlaneRear
          */
         yPlaneRear: {
-            visible: false,
+            visible: true,
             strokeWidth: 1,
             strokeColor: '#dddddd',
             fillColor: '#dddddd',
@@ -237,7 +237,7 @@ JXG.extend(Options, {
             stepsV: 10,
             tiling: 'rectangle',
             polyhedron: {
-                visible: true,
+                visible: 'inherit',
                 strokeWidth: 1,
                 shader: {
                     enabled: true,
@@ -268,7 +268,7 @@ JXG.extend(Options, {
             stepsV: 10,
             tiling: 'rectangle',
             polyhedron: {
-                visible: true,
+                visible: 'inherit',
                 strokeWidth: 1,
                 shader: {
                     enabled: true,
@@ -299,7 +299,7 @@ JXG.extend(Options, {
             stepsV: 10,
             tiling: 'rectangle',
             polyhedron: {
-                visible: false, // 'inherit',
+                visible: 'inherit',
                 strokeWidth: 1,
                 shader: {
                     enabled: true,
@@ -329,7 +329,7 @@ JXG.extend(Options, {
             stepsV: 10,
             tiling: 'rectangle',
             polyhedron: {
-                visible: false, // 'inherit',
+                visible: 'inherit',
                 strokeWidth: 1,
                 shader: {
                     enabled: true,
@@ -359,7 +359,7 @@ JXG.extend(Options, {
             stepsV: 10,
             tiling: 'rectangle',
             polyhedron: {
-                visible: false, // 'inherit',
+                visible: 'inherit',
                 strokeWidth: 1,
                 shader: {
                     enabled: true,
