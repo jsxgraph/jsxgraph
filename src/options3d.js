@@ -602,6 +602,7 @@ JXG.extend(Options, {
         shader: {
             enabled: false,
             type: 'angle',   // 'angle', otherwise zIndex
+            fixed: false,    // If false, do shading during rotation of viewport
             hue: 60,         // yellow
             saturation: 90,
             minLightness: 30,

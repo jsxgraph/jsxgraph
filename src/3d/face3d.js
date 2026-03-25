@@ -353,7 +353,6 @@ JXG.extend(
          */
         shader: function() {
             var hue, sat, light, angle, hsl,
-                // bb = this.view.bbox3D,
                 sun, angles,
                 abs,
                 lightObj,
@@ -411,6 +410,7 @@ JXG.extend(
                 hsl = 'hsl(' + hue + ',' + sat +'%,' + light + '%)';
 
                 this.element2D.visProp.fillcolor = hsl;
+                this._shadingDone = true;
                 return this.zIndex;
             }
         }

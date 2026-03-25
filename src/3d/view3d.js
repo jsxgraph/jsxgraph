@@ -899,7 +899,9 @@ JXG.extend(
             if (this.objects.hasOwnProperty(id)) {
                 el = this.objects[id];
                 if (Type.exists(el.shader)) {
-                    v = el.shader();
+                    if (!el.evalVisProp('shader.fixed')) {
+                        v = el.shader();
+                    }
                     if (v < this.zIndexMin) {
                         this.zIndexMin = v;
                     } else if (v > this.zIndexMax) {
