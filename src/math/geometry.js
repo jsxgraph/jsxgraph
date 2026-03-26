@@ -3842,7 +3842,7 @@ JXG.extend(
                 minfunc = function (t) {
                     var dx, dy;
 
-                    if (t < minX_glob || t > curve.maxX_glob) {
+                    if (t < minX_glob || t > maxX_glob) {
                         return Infinity;
                     }
                     dx = x - curve.X(t);
