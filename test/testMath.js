@@ -170,8 +170,8 @@ describe("Test JXG.Math", function () {
 
     it("cot", function () {
         expect(JXG.Math.cot(Math.PI / 4)).toBeCloseTo(1, 15);
-        // cot(0): tan(0) = 0, so 1/0 = Infinity
-        expect(JXG.Math.cot(0)).toBe(Infinity);
+        // cot(0): tan(0) = 0, returns NaN
+        expect(JXG.Math.cot(0)).toBeNaN();
     });
 
     it("nthroot", function () {
@@ -190,8 +190,11 @@ describe("Test JXG.Math", function () {
         expect(JXG.Math.log(Math.E)).toBeCloseTo(1, 15);
         expect(JXG.Math.log(100, 10)).toBeCloseTo(2, 15);
         expect(JXG.Math.log(8, 2)).toBeCloseTo(3, 15);
-        // log base 1: Math.log(1) = 0, so division by zero yields Infinity
-        expect(JXG.Math.log(10, 1)).toBe(Infinity);
+        // log base 1 is undefined, returns NaN
+        expect(JXG.Math.log(10, 1)).toBeNaN();
+        // log base <= 0 is undefined, returns NaN
+        expect(JXG.Math.log(10, 0)).toBeNaN();
+        expect(JXG.Math.log(10, -2)).toBeNaN();
     });
 
     it("log10", function () {
