@@ -5872,9 +5872,9 @@ JXG.extend(
                     if (this.objectsList[el].visProp.islabel && this.objectsList[el].visProp.autoposition) {
                         autoPositionLabelList.push(el);
                     } else {
-                    this.objectsList[el].updateRenderer();
+                        this.objectsList[el].updateRenderer();
+                    }
                 }
-            }
 
                 currentIndex = autoPositionLabelList.length;
 
@@ -5967,12 +5967,11 @@ JXG.extend(
             objects_sorted = this.objectsList.toSorted(_compareFn);
             olen = objects_sorted.length;
             for (el = 0; el < olen; el++) {
-                if (objects_sorted[el].type !== Const.OBJECT_TYPE_FACE3D &&
-                    objects_sorted[el].type !== Const.OBJECT_TYPE_POLYHEDRON3D
+                if (
+                    objects_sorted[el].visPropCalc.visible &&
+                    objects_sorted[el].type !== Const.OBJECT_TYPE_FACE3D // For these, updateRenderer is triggered in polyhedron3d.updateRenderer
                 ) {
-                    console.log(objects_sorted[el].type)
                     objects_sorted[el].prepareUpdate().updateRenderer();
-
                 }
             }
 

@@ -899,12 +899,13 @@ JXG.extend(
         for (id in this.objects) {
             if (this.objects.hasOwnProperty(id)) {
                 el = this.objects[id];
-                if (Type.exists(el.shader)) {
-                    if (!el.evalVisProp('shader.fixed')) {
-                    console.log('shade')
-                        v = el.shader();
-                    } else {
+                if (el.visPropCalc.visible && Type.exists(el.shader)) {
+                    if (this.board._change3DView && el.evalVisProp('shader.fixed')) {
+                        // In case, 3D view is rotated and the shader is fixed
+                        // we can avoid the call of shader()
                         v = el.zIndex;
+                    } else {
+                        v = el.shader();
                     }
                     if (v < this.zIndexMin) {
                         this.zIndexMin = v;
@@ -988,7 +989,7 @@ JXG.extend(
             this.updateShaders();
 
             if (this.board.renderer && this.board.renderer.type === 'svg') {
-                // For SVG we update the DOM order
+                // For SVG we update the DOM order here.
                 // In canvas we sort the elements in board.updateRendererCanvas
                 this.updateDepthOrdering();
             }

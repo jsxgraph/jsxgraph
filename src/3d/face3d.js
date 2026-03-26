@@ -292,8 +292,6 @@ JXG.extend(
         updateRenderer: function () {
             if (this.needsUpdate) {
                 this.needsUpdate = false;
-console.log('c')
-                this.shader();
             }
             return this;
         },
