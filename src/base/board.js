@@ -5912,9 +5912,17 @@ JXG.extend(
                 // last = Number.NEGATIVE_INFINITY.toExponential,
                 depth_order_layers = [],
                 objects_sorted,
-                // Sort the elements for the canvas rendering according to
-                // their layer, _pos, depthOrder (with this priority)
-                // @private
+
+                /**
+                 * Function to sort elements for depth ordering in canvas renderer.
+                 * Only relevant for elements having a zIndex.
+                 * Sort the elements for the canvas rendering according to
+                 * their layer, _pos, depthOrder (with this priority).
+                 * @param {JXG.GeometryObject} a
+                 * @param {JXG.GeometryObject} b
+                 * @returns Number
+                 * @private
+                 */
                 _compareFn = function(a, b) {
                     if (a.visProp.layer !== b.visProp.layer) {
                         return a.visProp.layer - b.visProp.layer;
@@ -5967,26 +5975,6 @@ JXG.extend(
 
                 }
             }
-
-            // for (i = 0; i < len; i++) {
-            //     minim = Number.POSITIVE_INFINITY;
-
-            //     for (lay in layers) {
-            //         if (layers.hasOwnProperty(lay)) {
-            //             if (layers[lay] > last && layers[lay] < minim) {
-            //                 minim = layers[lay];
-            //             }
-            //         }
-            //     }
-
-            //     for (el = 0; el < olen; el++) {
-            //         pEl = this.objectsList[el];
-            //         if (pEl.visProp.layer === minim) {
-            //             pEl.prepareUpdate().updateRenderer();
-            //         }
-            //     }
-            //     last = minim;
-            // }
 
             return this;
         },

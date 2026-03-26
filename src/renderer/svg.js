@@ -287,14 +287,18 @@ JXG.SVGRenderer = function (container, dim) {
      * It is called in procedure resize().
      * @param {Number} w
      * @param {Number} h
+     * @see JXG.AbstractRenderer#setClipPath
      */
-    this.updateClipPathRect = function(w, h) {
+    this.updateClipPathRect = function (w, h) {
         var id = this.uniqName('ClipFull'),
-            node = this.container.ownerDocument.getElementById(id).firstChild;
+            node;
 
-        if (Type.exists(node)) {
-            node.setAttributeNS(null, 'width', w);
-            node.setAttributeNS(null, 'height', h);
+        if (Type.exists(this.container.ownerDocument.getElementById(id).firstChild)) {
+            node = this.container.ownerDocument.getElementById(id).firstChild;
+            if (Type.exists(node)) {
+                node.setAttributeNS(null, 'width', w);
+                node.setAttributeNS(null, 'height', h);
+            }
         }
     };
 
