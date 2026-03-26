@@ -1537,7 +1537,7 @@ JXG.extend(
                 angle += 2 * Math.PI;
             }
             q = Math.floor((angle + Math.PI / 8) / (Math.PI / 4)) % 8;
-            return ["rt", "urt", "top", "ulft", "lft", "llft", "lrt"][q];
+            return ["rt", "urt", "top", "ulft", "lft", "llft", "bot", "lrt"][q];
         },
 
         /**
