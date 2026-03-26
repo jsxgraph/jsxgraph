@@ -2354,7 +2354,7 @@ JXG.extend(
             // Radius is zero, return center of circle, if on other circle
             if (circ1[4] < Mat.eps) {
                 if (
-                    Math.abs(this.distance(circ1.slice(6, 2), circ2.slice(6, 8)) - circ2[4]) <
+                    Math.abs(this.distance(circ1.slice(6, 8), circ2.slice(6, 8)) - circ2[5]) <
                     Mat.eps
                 ) {
                     return new Coords(Const.COORDS_BY_USER, circ1.slice(6, 8), board);
@@ -2366,7 +2366,7 @@ JXG.extend(
             // Radius is zero, return center of circle, if on other circle
             if (circ2[4] < Mat.eps) {
                 if (
-                    Math.abs(this.distance(circ2.slice(6, 2), circ1.slice(6, 8)) - circ1[4]) <
+                    Math.abs(this.distance(circ2.slice(6, 8), circ1.slice(6, 8)) - circ1[5]) <
                     Mat.eps
                 ) {
                     return new Coords(Const.COORDS_BY_USER, circ2.slice(6, 8), board);
