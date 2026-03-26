@@ -165,6 +165,39 @@ describe("Test geometry functions", function () {
         expect(p.Y()).toBeCloseTo(1.1428571428571428, 7);
     });
 
+    it("meetCircleCircle: zero-radius circle on other circle", function () {
+        var c1 = board.create('circle', [[3, 0], 5]),
+            c2 = board.create('circle', [[3, 5], 0]),
+            res = JXG.Math.Geometry.meetCircleCircle(c1.stdform, c2.stdform, 0, board);
+
+        // c2 has radius 0 and its center (3,5) lies on c1 (center (3,0), radius 5)
+        expect(res.usrCoords[0]).toBeCloseTo(1, 10);
+        expect(res.usrCoords[1]).toBeCloseTo(3, 10);
+        expect(res.usrCoords[2]).toBeCloseTo(5, 10);
+    });
+
+    it("meetCircleCircle: zero-radius circle as first argument", function () {
+        var c1 = board.create('circle', [[3, 5], 0]),
+            c2 = board.create('circle', [[3, 0], 5]),
+            res = JXG.Math.Geometry.meetCircleCircle(c1.stdform, c2.stdform, 0, board);
+
+        // c1 has radius 0 and its center (3,5) lies on c2
+        expect(res.usrCoords[0]).toBeCloseTo(1, 10);
+        expect(res.usrCoords[1]).toBeCloseTo(3, 10);
+        expect(res.usrCoords[2]).toBeCloseTo(5, 10);
+    });
+
+    it("meetCircleCircle: zero-radius circle NOT on other circle", function () {
+        var c1 = board.create('circle', [[0, 0], 1]),
+            c2 = board.create('circle', [[5, 5], 0]),
+            res = JXG.Math.Geometry.meetCircleCircle(c1.stdform, c2.stdform, 0, board);
+
+        // c2 center (5,5) is not on c1 → should return [0,0,0]
+        expect(res.usrCoords[0]).toBeCloseTo(0, 10);
+        expect(res.usrCoords[1]).toBeCloseTo(0, 10);
+        expect(res.usrCoords[2]).toBeCloseTo(0, 10);
+    });
+
     it("bisectorParallels", function () {
         var li1, li2,
 
