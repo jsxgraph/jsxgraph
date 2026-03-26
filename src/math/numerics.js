@@ -2008,7 +2008,7 @@ Mat.Numerics = {
 
         for (i = 0; i < l; i++) {
             // is x0 in defining interval?
-            if (x0[i] < x[0] || x[i] > x[n - 1]) {
+            if (x0[i] < x[0] || x0[i] > x[n - 1]) {
                 return NaN;
             }
 
