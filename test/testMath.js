@@ -167,6 +167,40 @@ describe("Test JXG.Math", function () {
             }
         }
     });
+
+    it("cot", function () {
+        expect(JXG.Math.cot(Math.PI / 4)).toBeCloseTo(1, 15);
+        // cot(0): tan(0) = 0, so 1/0 = Infinity
+        expect(JXG.Math.cot(0)).toBe(Infinity);
+    });
+
+    it("nthroot", function () {
+        expect(JXG.Math.nthroot(16, 4)).toEqual(2);
+        expect(JXG.Math.nthroot(-27, 3)).toEqual(-3);
+        expect(JXG.Math.nthroot(-4, 2)).toBeNaN();
+        expect(JXG.Math.nthroot(0, 3)).toEqual(0);
+        // n = 0: guard check comes after 1/n, but still returns NaN
+        expect(JXG.Math.nthroot(8, 0)).toBeNaN();
+        // n negative or non-integer
+        expect(JXG.Math.nthroot(8, -1)).toBeNaN();
+        expect(JXG.Math.nthroot(8, 1.5)).toBeNaN();
+    });
+
+    it("log", function () {
+        expect(JXG.Math.log(Math.E)).toBeCloseTo(1, 15);
+        expect(JXG.Math.log(100, 10)).toBeCloseTo(2, 15);
+        expect(JXG.Math.log(8, 2)).toBeCloseTo(3, 15);
+        // log base 1: Math.log(1) = 0, so division by zero yields Infinity
+        expect(JXG.Math.log(10, 1)).toBe(Infinity);
+    });
+
+    it("log10", function () {
+        expect(JXG.Math.log10(1000)).toBeCloseTo(3, 15);
+    });
+
+    it("log2", function () {
+        expect(JXG.Math.log2(8)).toBeCloseTo(3, 15);
+    });
 });
 
 // TestCase("Math", {
