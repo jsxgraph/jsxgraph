@@ -309,7 +309,6 @@ Mat.ProbFuncs = {
      * @returns {Number}
      */
     _underflow: function (a) {
-        console.log("erfc", 'UNDERFLOW');
         if (a < 0) {
             return 2.0;
         }
