@@ -259,7 +259,7 @@ JXG.extend(
                 c[0] = coords[0];
                 c[1] = coords[1];
                 c[2] = coords[2];
-                c[3] = coords[2];
+                c[3] = coords[3];
                 this.normalizeCoords();
             }
 
