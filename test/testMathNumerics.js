@@ -143,6 +143,15 @@ describe("Test JXG.Math.Numerics", function () {
         expect(JXG.Math.Numerics.splineEval([1.5, 2.5], x, y, F)).toEqual([1.5, 2.5]);
     });
 
+    it("Spline evaluation: array with out-of-range value", function () {
+        var x = [1, 2, 3],
+            y = [1, 2, 3],
+            F = JXG.Math.Numerics.splineDef(x, y);
+
+        // Second element 4.0 is above x[2]=3, should return NaN
+        expect(JXG.Math.Numerics.splineEval([1.5, 4.0], x, y, F)).toBeNaN();
+    });
+
     it("General polynomial term", function () {
         var coeff = [5.12345, 4.12345, 3, 2, 1],
             deg = 4,
