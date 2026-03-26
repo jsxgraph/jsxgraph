@@ -265,6 +265,19 @@ describe("Test JXG.Math.Numerics", function () {
         expect(df(1)).toBeCloseTo(2, 10);
     });
 
+    it("Qag: integral of x^2 from 0 to 1", function () {
+        var f = function (x) { return x * x; };
+        expect(JXG.Math.Numerics.Qag([0, 1], f)).toBeCloseTo(1 / 3, 7);
+    });
+
+    it("Qag: integral requiring multiple bisections", function () {
+        // sin(x) over a wide interval forces the adaptive algorithm past the first iteration.
+        // integral of sin(x) from 0 to pi = 2
+        var f = function (x) { return Math.sin(x); };
+
+        expect(JXG.Math.Numerics.Qag([0, Math.PI], f)).toBeCloseTo(2, 7);
+    });
+
     it("Fzero", function () {
         var f = function (x) {
                 return x - 2;
