@@ -186,12 +186,10 @@ describe("Test JXG.Complex", function () {
     });
 
     it("div: by zero (complex 0+0i)", function () {
-        // Note: Math.eps is undefined (should be JXG.Math.eps),
-        // so the zero-guard does not trigger and 0/0 yields NaN.
         var z = new JXG.Complex(1, 2);
         z.div(new JXG.Complex(0, 0));
-        expect(z.real).toBeNaN();
-        expect(z.imaginary).toBeNaN();
+        expect(z.real).toBe(Infinity);
+        expect(z.imaginary).toBe(Infinity);
     });
 
     it("div: returns this (chaining)", function () {

@@ -170,7 +170,7 @@ JXG.extend(
             var denom, im, re;
 
             if (Type.isNumber(c)) {
-                if (Math.abs(c) < Math.eps) {
+                if (Math.abs(c) < JXG.Math.eps) {
                     this.real = Infinity;
                     this.imaginary = Infinity;
 
@@ -181,7 +181,7 @@ JXG.extend(
                 this.imaginary /= c;
             } else {
                 //  (a+ib)(x+iy) = ax-by + i(xb+ay)
-                if (Math.abs(c.real) < Math.eps && Math.abs(c.imaginary) < Math.eps) {
+                if (Math.abs(c.real) < JXG.Math.eps && Math.abs(c.imaginary) < JXG.Math.eps) {
                     this.real = Infinity;
                     this.imaginary = Infinity;
 
