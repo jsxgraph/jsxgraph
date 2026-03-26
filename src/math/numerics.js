@@ -1447,10 +1447,10 @@ Mat.Numerics = {
 
             ws.update(a1, b1, area1, error1, a2, b2, area2, error2);
             wsObj = ws.retrieve();
-            a_i = wsObj.a_i;
-            b_i = wsObj.b_i;
-            r_i = wsObj.r_i;
-            e_i = wsObj.e_i;
+            a_i = wsObj.a;
+            b_i = wsObj.b;
+            r_i = wsObj.r;
+            e_i = wsObj.e;
 
             iteration++;
         } while (iteration < limit && !error_type && errsum > tolerance);
@@ -2008,7 +2008,7 @@ Mat.Numerics = {
 
         for (i = 0; i < l; i++) {
             // is x0 in defining interval?
-            if (x0[i] < x[0] || x[i] > x[n - 1]) {
+            if (x0[i] < x[0] || x0[i] > x[n - 1]) {
                 return NaN;
             }
 
