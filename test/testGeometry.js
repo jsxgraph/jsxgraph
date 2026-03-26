@@ -538,6 +538,16 @@ describe("Test geometry functions", function () {
         expect(res[1]).toEqual(0);
     });
 
+    it("projectCoordsToCurve: result stays within curve domain", function () {
+        // functiongraph defined on [-2, 2]; project a point beyond the right boundary
+        var fg = board.create('functiongraph', [function (t) { return t * t; }, -2, 2]),
+            res = JXG.Math.Geometry.projectCoordsToCurve(5, 4, 2, fg, board),
+            t = res[1];
+
+        expect(t).toBeLessThanOrEqual(2);
+        expect(t).toBeGreaterThanOrEqual(-2);
+    });
+
     // --- Bezier ---
 
     it("bezierSegmentEval: t=0 → first control point", function () {
