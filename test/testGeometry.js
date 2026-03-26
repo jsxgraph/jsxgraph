@@ -370,16 +370,14 @@ describe("Test geometry functions", function () {
     });
 
     it("calcLabelQuadrant: negative angle", function () {
-        // -π/2 → +3π/2 internally → "lrt"
-        expect(JXG.Math.Geometry.calcLabelQuadrant(-Math.PI / 2)).toEqual("lrt");
+        // -π/2 → +3π/2 internally → "bot"
+        expect(JXG.Math.Geometry.calcLabelQuadrant(-Math.PI / 2)).toEqual("bot");
     });
 
-    it("calcLabelQuadrant: ~300° should return a string", function () {
-        // Angle near 5π/3 (300°) produces q=7 in the lookup.
-        // The lookup array needs 8 entries to match the % 8 modulo.
-        var result = JXG.Math.Geometry.calcLabelQuadrant(5 * Math.PI / 3);
-        expect(result).toBeDefined();
-        expect(typeof result).toEqual("string");
+    it("calcLabelQuadrant: bottom and lower-right quadrants", function () {
+        // 3π/2 (270°) → "bot", 5π/3 (300°) → "lrt"
+        expect(JXG.Math.Geometry.calcLabelQuadrant(3 * Math.PI / 2)).toEqual("bot");
+        expect(JXG.Math.Geometry.calcLabelQuadrant(5 * Math.PI / 3)).toEqual("lrt");
     });
 
     // --- Triangle / polygon orientation ---
