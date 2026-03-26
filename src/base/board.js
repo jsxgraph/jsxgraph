@@ -5923,31 +5923,38 @@ JXG.extend(
                  * @returns Number
                  * @private
                  */
-                _compareFn = function(a, b) {
+                _compareDepth = function(a, b) {
                     if (a.visProp.layer !== b.visProp.layer) {
+                        // For elements in different layers, the element in the
+                        // higher layer is in front.
                         return a.visProp.layer - b.visProp.layer;
                     }
 
-                    // The objects are in the same layer, but the layer is not depth ordered
+                    // From here on, both objects are in the same layer.
+
                     if (depth_order_layers.indexOf(a.visProp.layer) === -1) {
+                        // The layer is not depth ordered.
                         return a._pos - b._pos;
                     }
 
+                    // From here on, both objects are in the same layer
+                    // and the layer is depth ordered.
+
                     // The objects are in the same layer and the layer is depth ordered
-                    // We have to sort 2D elements according to the zIndices of
-                    // their 3D parents.
+                    // But neither element is the 2D element of a 3D element.
                     if (!a.visProp.element3d && !b.visProp.element3d) {
                         return a._pos - b._pos;
                     }
 
                     if (a.visProp.element3d && !b.visProp.element3d) {
-                        return -1;
+                        return 1; //-1;
                     }
 
-                    if (b.visProp.element3d && !a.visProp.element3d) {
+                    if (!a.visProp.element3d && b.visProp.element3d) {
                         return 1;
                     }
 
+                    // Finqally, both elements are 2D elements of a 3D element.
                     return a.visProp.element3d.zIndex - b.visProp.element3d.zIndex;
                 };
 
@@ -5964,7 +5971,10 @@ JXG.extend(
                 }
             }
 
-            objects_sorted = this.objectsList.toSorted(_compareFn);
+            // objects_sorted = this.objectsList.toSorted(_compareDepth);
+
+            // 3D elements are not rendered, but their subelements element2D
+            objects_sorted = this.objectsList.filter(function(e) { return !e.is3D; }).toSorted(_compareDepth);
             olen = objects_sorted.length;
             for (el = 0; el < olen; el++) {
                 if (

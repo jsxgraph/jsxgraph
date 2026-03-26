@@ -169,7 +169,7 @@ JXG.createAxes3D = function (board, parents, attributes) {
             range2 = [rear[i2], front[i2]];
 
             attr = Type.copyAttributes(attributes, board.options, "axes3d", na);
-            axes[na] = view.create("plane3d", [from, vec1, vec2, range1, range2], attr);
+            axes[na] = view.create('plane3d', [from, vec1, vec2, range1, range2], attr);
             axes[na].elType = 'axisplane3d';
         }
     }
@@ -196,7 +196,11 @@ JXG.createAxes3D = function (board, parents, attributes) {
                 axes[na] = view.create("axis3d", [from, to], attr);
                 axes[na].view = view;
                 axes[na_parent].addChild(axes[na]);
-                axes[na_parent].element2D.inherits.push(axes[na]); // TODO: Access of element2D is not nice
+                //if (Type.exists(axes[na_parent].element2D)) {
+                    // TODO: Access of element2D is not nice
+                    axes[na_parent].element2D.inherits.push(axes[na]);
+                //}
+
             }
         }
     }
@@ -269,7 +273,6 @@ JXG.createAxis3D = function (board, parents, attributes) {
     );
 
     attr = Type.copyAttributes(attributes, board.options, 'axis3d');
-    attr.element3d = true;  // Needed to avoid update during change of view
     el = view.create("arrow", [el_start, el_end], attr);
 
     return el;
