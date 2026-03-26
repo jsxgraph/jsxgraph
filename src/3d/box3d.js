@@ -75,7 +75,7 @@ JXG.createAxes3D = function (board, parents, attributes) {
     } else {
         for (i = 0; i < directions.length; i++) {
             rear[i] = parents[1][i];
-            front[i] = parents[2][1];
+            front[i] = parents[2][i];
         }
     }
 
