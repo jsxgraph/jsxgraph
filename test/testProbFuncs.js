@@ -101,6 +101,20 @@ describe("Test JXG.Math.ProbFuncs", function () {
         expect(JXG.Math.ProbFuncs.erfc(6)).toBeCloseTo(0, 12);
     });
 
+    it("erfc underflow for large arguments does not log to console", function () {
+        var originalLog = console.log;
+        var logged = false;
+        console.log = function () { logged = true; };
+        try {
+            // |a| > ~26.6 triggers the underflow path
+            expect(JXG.Math.ProbFuncs.erfc(30)).toBe(0.0);
+            expect(JXG.Math.ProbFuncs.erfc(-30)).toBe(2.0);
+            expect(logged).toBe(false);
+        } finally {
+            console.log = originalLog;
+        }
+    });
+
     // --- erfi (inverse error function) ---
 
     it("erfi(0) = 0", function () {
