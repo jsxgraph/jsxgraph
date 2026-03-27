@@ -222,7 +222,7 @@ JXG.extend(Options, {
             tiling: 'rectangle',
             polyhedron: {
                 visible: 'inherit',
-                strokeWidth: 1,
+                strokeWidth: 0.5,
                 shader: {
                     enabled: true,
                     fixed: true,
@@ -253,7 +253,7 @@ JXG.extend(Options, {
             tiling: 'rectangle',
             polyhedron: {
                 visible: 'inherit',
-                strokeWidth: 1,
+                strokeWidth: 0.5,
                 shader: {
                     enabled: true,
                     fixed: true,
@@ -284,7 +284,7 @@ JXG.extend(Options, {
             tiling: 'rectangle',
             polyhedron: {
                 visible: 'inherit',
-                strokeWidth: 1,
+                strokeWidth: 0.5,
                 shader: {
                     enabled: true,
                     fixed: true,
@@ -315,7 +315,7 @@ JXG.extend(Options, {
             tiling: 'rectangle',
             polyhedron: {
                 visible: 'inherit',
-                strokeWidth: 1,
+                strokeWidth: 0.5,
                 shader: {
                     enabled: true,
                     fixed: true,
@@ -345,7 +345,7 @@ JXG.extend(Options, {
             tiling: 'rectangle',
             polyhedron: {
                 visible: 'inherit',
-                strokeWidth: 1,
+                strokeWidth: 0.5,
                 shader: {
                     enabled: true,
                     fixed: true,
@@ -375,7 +375,7 @@ JXG.extend(Options, {
             tiling: 'rectangle',
             polyhedron: {
                 visible: 'inherit',
-                strokeWidth: 1,
+                strokeWidth: 0.5,
                 shader: {
                     enabled: true,
                     fixed: true,
@@ -396,7 +396,7 @@ JXG.extend(Options, {
          */
         xPlaneRearYAxis: {
             visible: 'inherit',
-            strokeColor: "#888888",
+            strokeColor: "#aaaaaa",
             strokeWidth: 1.2,
             layer: 12
         },
@@ -531,6 +531,7 @@ JXG.extend(Options, {
         fixed: true,
         strokeColor: "black",
         strokeWidth: 1,
+        lastArrow: true,
         tabindex: null,
 
         point1: { visible: false, name: "", withLabel: false },

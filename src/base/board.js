@@ -5947,7 +5947,7 @@ JXG.extend(
                     }
 
                     if (a.visProp.element3d && !b.visProp.element3d) {
-                        return 1; //-1;
+                        return -1;
                     }
 
                     if (!a.visProp.element3d && b.visProp.element3d) {
