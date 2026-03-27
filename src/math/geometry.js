@@ -815,7 +815,7 @@ JXG.extend(
                 c = ps[i];
                 if (N <= AklToussaint ||
                     // Discard inside of the octagon according to the Akl-Toussaint heuristic
-                    i in [mi_x_i, ma_x_i, mi_y_i, ma_y_i, mi_xpy_i, mi_xmy_i, ma_xpy_i, ma_xmy_i] ||
+                    [mi_x_i, ma_x_i, mi_y_i, ma_y_i, mi_xpy_i, mi_xmy_i, ma_xpy_i, ma_xmy_i].includes(i) ||
                     (mi_x_i !== mi_xmy_i && this.signedTriangle(ps[mi_x_i], ps[mi_xmy_i], c) >= -eps) ||
                     (mi_xmy_i !== ma_y_i && this.signedTriangle(ps[mi_xmy_i], ps[ma_y_i], c) >= -eps) ||
                     (ma_y_i !== ma_xpy_i && this.signedTriangle(ps[ma_y_i], ps[ma_xpy_i], c) >= -eps) ||
