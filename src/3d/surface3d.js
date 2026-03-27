@@ -580,7 +580,7 @@ JXG.createParametricSurface3D = function (board, parents, attributes) {
         attr.polyhedron.shader.enabled = false;
         attr.polyhedron.fillcolorarray = [
             (self) => {
-                var j,
+                var j, hsl,
                     ma = self.view.bbox3D[2][1] - self.view.bbox3D[2][0],
                     z = 0,
                     p = self.polyhedron,
@@ -595,7 +595,8 @@ JXG.createParametricSurface3D = function (board, parents, attributes) {
                 }
                 z = 300 * (1 - z / ma);
 
-                return `hsl(${z} 100% 50%)`;
+                hsl = JXG.hsv2hsl(z, 0.4, 0.7);
+                return `hsl(${z} ${hsl[1] * 100}% ${hsl[2] * 100}%)`;
             }
         ];
     } else if (style === 'shader') {
