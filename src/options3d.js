@@ -589,13 +589,24 @@ JXG.extend(Options, {
          * @type Object
          * @name Face3D#shader
          * @see View3D#depthOrder
-         * @default <pre>{
-         *  enabled: false,
-         *  type: 'angle',   // 'angle', otherwise zIndex
-         *  hue: 60,         // yellow
-         *  saturation: 90,
-         *  minLightness: 30,
-         *  maxLightness: 90
+         * @default <pre>shader: {
+         *   enabled: false,
+         *   fixed: true,    // If false, update shading during rotation of viewport
+         *   type: 'angle',  // 'angle', otherwise zIndex
+         *   hue: 60,        // yellow
+         *   saturation: 90,
+         *   minLightness: 30,
+         *   maxLightness: 90,
+         *
+         *   light: {
+         *       type: 1,// 1: lighting==camera,
+         *               // 2: Fixed: angle(light, object),
+         *               // 3: Fixed: angle(light, camera) (default)
+         *       az: -45, // TODO use radians, ignored for type==1
+         *       el: 20,  // TODO use radians, ignored for type==1
+         *       bank: 0, // TODO use radians, ignored for type==1, type==3
+         *       dir: -1  // -1, 0 (use abs), 1: Default: -1
+         *   }
          * }</pre>
          *
          * @example
@@ -730,9 +741,9 @@ JXG.extend(Options, {
          */
         shader: {
             enabled: false,
-            fixed: false,    // If false, do shading during rotation of viewport
-            type: 'angle',   // 'angle', otherwise zIndex
-            hue: 60,         // yellow
+            fixed: true,    // If false, update shading during rotation of viewport
+            type: 'angle',  // 'angle', otherwise zIndex
+            hue: 60,        // yellow
             saturation: 90,
             minLightness: 30,
             maxLightness: 90,
