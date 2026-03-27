@@ -464,7 +464,7 @@ JXG.createParametricSurface3D = function (board, parents, attributes) {
         base = null,
         transform = null,
         coords, surface,// steps,
-        tiling,
+        tiling, style,
         el;
 
     if (parents.length === 3) {
@@ -517,14 +517,18 @@ JXG.createParametricSurface3D = function (board, parents, attributes) {
     el.inherits.push(el.element2D);
     el.element2D.setParents(el);
 
-    tiling = el.evalVisProp('tiling');
-    if (tiling !== "wireframe") {
-        el.element2D.setAttribute({ visible: false });
-    }
+    el.element2D.setAttribute({ visible: false });
+    // tiling = el.evalVisProp('tiling');
+    // if (tiling !== "wireframe") {
+    //     el.element2D.setAttribute({ visible: false });
+    // }
     el.element2D.prepareUpdate().update();
     if (!board.isSuspendedUpdate) {
         el.element2D.updateVisibility().updateRenderer();
     }
+
+    tiling = el.evalVisProp('tiling');
+    style = el.evalVisProp('style');
 
     if (tiling === 'triangle' || tiling === 'rectangle') {
         if (tiling === 'triangle') {
@@ -559,20 +563,52 @@ JXG.createParametricSurface3D = function (board, parents, attributes) {
                 el.evalVisProp('stepsu'), el.evalVisProp('stepsv')
             );
         }
-        // mapMeshTo3D is used to map the 2d-points created with triangulation / rectangulation to 3D.
-        // These points are realized as functions to enable dynamic changes to the surface3d
-        // saves the dynamic points in coords
-        coords = Tiling.mapMeshTo3D(surface, el);
-
-        // Reincorporate the dynamic points in coords into surface
-        surface = [coords, surface[1]];
-
-        // Create the polyhedron representing the functiongraph3d
-        el.polyhedron = view.create('polyhedron3d', surface, attr.polyhedron);
-        el.addChild(el.polyhedron);
-        el.inherits.push(el.polyhedron);
-        el.polyhedron.setParents(el);
     }
+    // mapMeshTo3D is used to map the 2d-points created with triangulation / rectangulation to 3D.
+    // These points are realized as functions to enable dynamic changes to the surface3d
+    // saves the dynamic points in coords
+    coords = Tiling.mapMeshTo3D(surface, el);
+
+    // Reincorporate the dynamic points in coords into surface
+    surface = [coords, surface[1]];
+
+    // Set style
+    if (style === 'wireframe') {
+        attr.polyhedron.shader.enabled = false;
+        attr.polyhedron.fillcolorarray = ['none'];
+    } else if (style === 'colormap') {
+        attr.polyhedron.shader.enabled = false;
+        attr.polyhedron.fillcolorarray = [
+            (self) => {
+                var j,
+                    ma = self.view.bbox3D[2][1] - self.view.bbox3D[2][0],
+                    z = 0,
+                    p = self.polyhedron,
+                    face = p.faces[self.faceNumber],
+                    le = face.length;
+
+                if (le !== 0) {
+                    for (j = 0; j < le; j++) {
+                        z += p.coords[face[j]][3];
+                    }
+                    z /= le;
+                }
+                z = 300 * (1 - z / ma);
+
+                return `hsl(${z} 100% 50%)`;
+            }
+        ];
+    } else if (style === 'shader') {
+        attr.polyhedron.shader.enabled = true;
+    } else {
+        attr.polyhedron.shader.enabled = false;
+    }
+
+    // Create the polyhedron representing the parametricsurface3d
+    el.polyhedron = view.create('polyhedron3d', surface, attr.polyhedron);
+    el.addChild(el.polyhedron);
+    el.inherits.push(el.polyhedron);
+    el.polyhedron.setParents(el);
 
     return el;
 };
@@ -668,6 +704,7 @@ JXG.createFunctiongraph3D = function (board, parents, attributes) {
 
     el = view.create("parametricsurface3d", [X, Y, Z, range_u, range_v], attributes);
     el.elType = 'functiongraph3d';
+
     return el;
 };
 JXG.registerElement("functiongraph3d", JXG.createFunctiongraph3D);

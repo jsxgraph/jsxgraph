@@ -1238,7 +1238,8 @@ JXG.extend(Options, {
          *
          * </script><pre>
          */
-        tiling: 'wireframe',
+        style: 'wireframe', // 'colormap', 'shader', 'color'
+        tiling: 'rectangle', // 'triangle'
 
         /**
          * Attributes for the polyhedron3d in case `style='triangle'` or `style='rectangle'`.
