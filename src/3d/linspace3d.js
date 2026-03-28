@@ -1705,9 +1705,9 @@ JXG.createPlane3D = function (board, parents, attributes) {
      * @ignore
      */
     el.element2D.updateDataArray = function () {
-        var ret = el.updateDataArray();
-        this.dataX = ret.X;
-        this.dataY = ret.Y;
+        // var ret = el.updateDataArray();
+        // this.dataX = ret.X;
+        // this.dataY = ret.Y;
     };
     el.addChild(el.element2D);
     el.inherits.push(el.element2D);
