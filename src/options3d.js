@@ -1511,7 +1511,7 @@ JXG.extend(Options, {
          * </pre>
          */
         depthOrder: {
-            enabled: false,
+            enabled: true,
             layers: [12, 13]
         },
 
