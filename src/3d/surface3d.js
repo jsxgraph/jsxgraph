@@ -578,24 +578,44 @@ JXG.createParametricSurface3D = function (board, parents, attributes) {
         attr.polyhedron.fillcolorarray = ['none'];
     } else if (style === 'colormap') {
         attr.polyhedron.shader.enabled = false;
+
+        var m, ma, mi, ma_a, mi_a,
+            s, v;
+        m = el.evalVisProp('colormap.max');
+        ma = m[0];
+        ma_a = m[1];
+        m = el.evalVisProp('colormap.min');
+        mi = m[0];
+        mi_a = m[1];
+        s = el.evalVisProp('colormap.s');
+        v = el.evalVisProp('colormap.v');
+        
         attr.polyhedron.fillcolorarray = [
             (self) => {
                 var j, hsl,
-                    ma = self.view.bbox3D[2][1] - self.view.bbox3D[2][0],
+                    // ma = self.view.bbox3D[2][1] - self.view.bbox3D[2][0],
+                    // m, mi, ma_a, mi_a,
                     z = 0,
                     p = self.polyhedron,
                     face = p.faces[self.faceNumber],
                     le = face.length;
 
+                // m = self.evalVisProp('max');
+                // ma = m[0];
+                // ma_a = m[1];
+                // m = self.evalVisProp('min');
+                // mi = m[0];
+                // mi_a = m[1];
                 if (le !== 0) {
                     for (j = 0; j < le; j++) {
                         z += p.coords[face[j]][3];
                     }
                     z /= le;
                 }
-                z = 300 * (1 - z / ma);
+                // z = 300 * (1 - z / ma);
+                z = mi_a + (z - mi) * (ma_a - mi_a) / (ma - mi) ;
 
-                hsl = JXG.hsv2hsl(z, 0.4, 0.9);
+                hsl = JXG.hsv2hsl(z, s, v);
                 return `hsl(${z} ${hsl[1] * 100}% ${hsl[2] * 100}%)`;
             }
         ];

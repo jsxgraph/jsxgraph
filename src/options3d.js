@@ -1242,6 +1242,27 @@ JXG.extend(Options, {
         tiling: 'rectangle', // 'triangle'
 
         /**
+         * HSV color range for colormap. Supply lower bound [z_min, hue_min] on z-value and corresponding hue value, as well
+         * as upper bound [z_max, hue_max] on z-value and corresponding hue value. Further, give constant values for
+         * "saturation" and "value" of HSV.
+         *
+         * @type {object}
+         * @name ParametricSurface3D#colormap
+         * @default <pre>{
+         *   min: [-5, 190],
+         *   max: [5, 0],
+         *   s: 0.9,
+         *   v: 0.9
+         * }</pre>
+         */
+        colormap: {
+            min: [-5, 190],
+            max: [5, 0],
+            s: 0.9,
+            v: 0.9
+        },
+
+        /**
          * Attributes for the polyhedron3d in case `style='triangle'` or `style='rectangle'`.
          * Specifications are e.g.
          * <ul>
