@@ -595,7 +595,7 @@ JXG.createParametricSurface3D = function (board, parents, attributes) {
                 }
                 z = 300 * (1 - z / ma);
 
-                hsl = JXG.hsv2hsl(z, 0.4, 0.7);
+                hsl = JXG.hsv2hsl(z, 0.4, 0.9);
                 return `hsl(${z} ${hsl[1] * 100}% ${hsl[2] * 100}%)`;
             }
         ];
