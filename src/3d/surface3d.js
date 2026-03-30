@@ -465,6 +465,8 @@ JXG.createParametricSurface3D = function (board, parents, attributes) {
         transform = null,
         coords, surface,// steps,
         tiling, style,
+        // colormap:
+        m, ma, mi, ma_a, mi_a, s, v,
         el;
 
     if (parents.length === 3) {
@@ -504,31 +506,21 @@ JXG.createParametricSurface3D = function (board, parents, attributes) {
         el.addParents(base);
     }
 
+    tiling = el.evalVisProp('tiling');
+    style = el.evalVisProp('style');
+
     /**
      * @class
      * @ignore
      */
     el.element2D.updateDataArray = function () {
-        // var ret = el.updateDataArray2D();
-        // this.dataX = ret.X;
-        // this.dataY = ret.Y;
+        var ret = el.updateDataArray2D();
+        this.dataX = ret.X;
+        this.dataY = ret.Y;
     };
     el.addChild(el.element2D);
     el.inherits.push(el.element2D);
     el.element2D.setParents(el);
-
-    el.element2D.setAttribute({ visible: false });
-    // tiling = el.evalVisProp('tiling');
-    // if (tiling !== "wireframe") {
-    //     el.element2D.setAttribute({ visible: false });
-    // }
-    el.element2D.prepareUpdate().update();
-    if (!board.isSuspendedUpdate) {
-        el.element2D.updateVisibility().updateRenderer();
-    }
-
-    tiling = el.evalVisProp('tiling');
-    style = el.evalVisProp('style');
 
     if (tiling === 'triangle' || tiling === 'rectangle') {
         if (tiling === 'triangle') {
@@ -564,72 +556,80 @@ JXG.createParametricSurface3D = function (board, parents, attributes) {
             );
         }
     }
-    // mapMeshTo3D is used to map the 2d-points created with triangulation / rectangulation to 3D.
-    // These points are realized as functions to enable dynamic changes to the surface3d
-    // saves the dynamic points in coords
-    coords = Tiling.mapMeshTo3D(surface, el);
-
-    // Reincorporate the dynamic points in coords into surface
-    surface = [coords, surface[1]];
 
     // Set style
-    if (style === 'wireframe') {
-        attr.polyhedron.shader.enabled = false;
-        attr.polyhedron.fillcolorarray = ['none'];
-    } else if (style === 'colormap') {
-        attr.polyhedron.shader.enabled = false;
+    if (style !== 'wireframe') {
+        // attr.polyhedron.shader.enabled = false;
+        // attr.polyhedron.fillcolorarray = ['none'];
+        el.element2D.setAttribute({ visible: false });
 
-        var m, ma, mi, ma_a, mi_a,
-            s, v;
-        m = el.evalVisProp('colormap.max');
-        ma = m[0];
-        ma_a = m[1];
-        m = el.evalVisProp('colormap.min');
-        mi = m[0];
-        mi_a = m[1];
-        s = el.evalVisProp('colormap.s');
-        v = el.evalVisProp('colormap.v');
-        
-        attr.polyhedron.fillcolorarray = [
-            (self) => {
-                var j, hsl,
-                    // ma = self.view.bbox3D[2][1] - self.view.bbox3D[2][0],
-                    // m, mi, ma_a, mi_a,
-                    z = 0,
-                    p = self.polyhedron,
-                    face = p.faces[self.faceNumber],
-                    le = face.length;
+        // mapMeshTo3D is used to map the 2d-points created with triangulation / rectangulation to 3D.
+        // These points are realized as functions to enable dynamic changes to the surface3d
+        // saves the dynamic points in coords
+        coords = Tiling.mapMeshTo3D(surface, el);
 
-                // m = self.evalVisProp('max');
-                // ma = m[0];
-                // ma_a = m[1];
-                // m = self.evalVisProp('min');
-                // mi = m[0];
-                // mi_a = m[1];
-                if (le !== 0) {
-                    for (j = 0; j < le; j++) {
-                        z += p.coords[face[j]][3];
+        // Reincorporate the dynamic points in coords into surface
+        surface = [coords, surface[1]];
+
+        if (style === 'colormap') {
+            attr.polyhedron.shader.enabled = false;
+
+            m = el.evalVisProp('colormap.max');
+            ma = m[0];
+            ma_a = m[1];
+            m = el.evalVisProp('colormap.min');
+            mi = m[0];
+            mi_a = m[1];
+            s = el.evalVisProp('colormap.s');
+            v = el.evalVisProp('colormap.v');
+
+            attr.polyhedron.fillcolorarray = [
+                (self) => {
+                    var j, hsl,
+                        // ma = self.view.bbox3D[2][1] - self.view.bbox3D[2][0],
+                        // m, mi, ma_a, mi_a,
+                        z = 0,
+                        p = self.polyhedron,
+                        face = p.faces[self.faceNumber],
+                        le = face.length;
+
+                    // m = self.evalVisProp('max');
+                    // ma = m[0];
+                    // ma_a = m[1];
+                    // m = self.evalVisProp('min');
+                    // mi = m[0];
+                    // mi_a = m[1];
+                    if (le !== 0) {
+                        for (j = 0; j < le; j++) {
+                            z += p.coords[face[j]][3];
+                        }
+                        z /= le;
                     }
-                    z /= le;
+                    // z = 300 * (1 - z / ma);
+                    z = mi_a + (z - mi) * (ma_a - mi_a) / (ma - mi);
+
+                    hsl = JXG.hsv2hsl(z, s, v);
+                    return `hsl(${z} ${hsl[1] * 100}% ${hsl[2] * 100}%)`;
                 }
-                // z = 300 * (1 - z / ma);
-                z = mi_a + (z - mi) * (ma_a - mi_a) / (ma - mi) ;
+            ];
+        } else if (style === 'shader') {
+            attr.polyhedron.shader.enabled = true;
+        } else {
+            // colorarray
+            attr.polyhedron.shader.enabled = false;
+        }
 
-                hsl = JXG.hsv2hsl(z, s, v);
-                return `hsl(${z} ${hsl[1] * 100}% ${hsl[2] * 100}%)`;
-            }
-        ];
-    } else if (style === 'shader') {
-        attr.polyhedron.shader.enabled = true;
-    } else {
-        attr.polyhedron.shader.enabled = false;
+        // Create the polyhedron representing the parametricsurface3d
+        el.polyhedron = view.create('polyhedron3d', surface, attr.polyhedron);
+        el.addChild(el.polyhedron);
+        el.inherits.push(el.polyhedron);
+        el.polyhedron.setParents(el);
     }
-
-    // Create the polyhedron representing the parametricsurface3d
-    el.polyhedron = view.create('polyhedron3d', surface, attr.polyhedron);
-    el.addChild(el.polyhedron);
-    el.inherits.push(el.polyhedron);
-    el.polyhedron.setParents(el);
+    // Wireframe
+    el.element2D.prepareUpdate().update();
+    if (!board.isSuspendedUpdate) {
+        el.element2D.updateVisibility().updateRenderer();
+    }
 
     return el;
 };

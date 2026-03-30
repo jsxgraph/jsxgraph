@@ -1038,7 +1038,6 @@ JXG.extend(Options, {
         layer: 12,
         highlight: false,
         tabindex: -1,
-        strokeWidth: 1,
 
         /**
          * Description of how the mesh is visualized. Possible values are 'wireframe', 'rectangle', 'triangle'.
@@ -1240,6 +1239,9 @@ JXG.extend(Options, {
          */
         style: 'wireframe', // 'colormap', 'shader', 'color'
         tiling: 'rectangle', // 'triangle'
+
+        // Wireframe
+        strokeWidth: 0.75,
 
         /**
          * HSV color range for colormap. Supply lower bound [z_min, hue_min] on z-value and corresponding hue value, as well
