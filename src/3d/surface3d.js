@@ -523,43 +523,44 @@ JXG.createParametricSurface3D = function (board, parents, attributes) {
     el.inherits.push(el.element2D);
     el.element2D.setParents(el);
 
-    if (tiling === 'triangle' || tiling === 'rectangle') {
-        if (tiling === 'triangle') {
-            // Check for tiling of surface: triangle
-            // In case tiling is set to triangle, we use JXG.Math.Tiling.triangulation
-            // to create a polyhedron representing the surface3d
-
-            // Steps used for triangulation is chosen as the maximum of stepsU and stepsV (see options3d)
-            // steps = Math.max(el.evalVisProp('stepsu'), el.evalVisProp('stepsv'));
-
-            // Uses steps and range of surface3d to create a base of triangles across the visible area of the surface3d object
-            surface = Tiling.triangulation(
-                [el.range_u[0], el.range_v[0]],
-                [el.range_u[0], el.range_v[1]],
-                [el.range_u[1], el.range_v[1]],
-                [el.range_u[1], el.range_v[0]],
-                // Given ratio or equilateral triangle if stepsV==0
-                el.evalVisProp('stepsu'), el.evalVisProp('stepsv')
-            );
-
-        } else if (tiling === "rectangle") {
-            // Check for tiling of functiongraph3d: rectangle
-            // In case tiling is set to rectangle, we use JXG.Math.Tiling.rectangulation
-            // to create a polyhedron representing the surface3d
-
-            // Use stepsU, stepsV (see options3d) and range of surface3d to create a base of rectangles across the visible area of the surface3d object
-            surface = Tiling.rectangulation(
-                [el.range_u[0], el.range_v[0]],
-                [el.range_u[0], el.range_v[1]],
-                [el.range_u[1], el.range_v[1]],
-                [el.range_u[1], el.range_v[0]],
-                el.evalVisProp('stepsu'), el.evalVisProp('stepsv')
-            );
-        }
-    }
-
     // Set style
     if (type !== 'wireframe') {
+
+        if (tiling === 'triangle' || tiling === 'rectangle') {
+            if (tiling === 'triangle') {
+                // Check for tiling of surface: triangle
+                // In case tiling is set to triangle, we use JXG.Math.Tiling.triangulation
+                // to create a polyhedron representing the surface3d
+
+                // Steps used for triangulation is chosen as the maximum of stepsU and stepsV (see options3d)
+                // steps = Math.max(el.evalVisProp('stepsu'), el.evalVisProp('stepsv'));
+
+                // Uses steps and range of surface3d to create a base of triangles across the visible area of the surface3d object
+                surface = Tiling.triangulation(
+                    [el.range_u[0], el.range_v[0]],
+                    [el.range_u[0], el.range_v[1]],
+                    [el.range_u[1], el.range_v[1]],
+                    [el.range_u[1], el.range_v[0]],
+                    // Given ratio or equilateral triangle if stepsV==0
+                    el.evalVisProp('stepsu'), el.evalVisProp('stepsv')
+                );
+
+            } else if (tiling === "rectangle") {
+                // Check for tiling of functiongraph3d: rectangle
+                // In case tiling is set to rectangle, we use JXG.Math.Tiling.rectangulation
+                // to create a polyhedron representing the surface3d
+
+                // Use stepsU, stepsV (see options3d) and range of surface3d to create a base of rectangles across the visible area of the surface3d object
+                surface = Tiling.rectangulation(
+                    [el.range_u[0], el.range_v[0]],
+                    [el.range_u[0], el.range_v[1]],
+                    [el.range_u[1], el.range_v[1]],
+                    [el.range_u[1], el.range_v[0]],
+                    el.evalVisProp('stepsu'), el.evalVisProp('stepsv')
+                );
+            }
+        }
+
         // attr.polyhedron.shader.enabled = false;
         // attr.polyhedron.fillcolorarray = ['none'];
         el.element2D.setAttribute({ visible: false });
