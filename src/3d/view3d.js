@@ -1001,7 +1001,7 @@ JXG.extend(
     },
 
     removeObject: function (object, saveMethod) {
-        var i, el;
+        var i, el, le, o, fst, face;
 
         // this.board.removeObject(object, saveMethod);
         if (Type.isArray(object)) {
@@ -1025,6 +1025,37 @@ JXG.extend(
                 if (object.childElements.hasOwnProperty(el)) {
                     this.removeObject(object.childElements[el]);
                 }
+            }
+            if (object.type === Const.OBJECT_TYPE_POLYHEDRON3D) {
+                // Special treatment for polyhedron3d.
+                // With this we can avoid the time consuming addChild() calls.
+                le = object.faces.length;
+                if (le > 0) {
+                    fst = object.faces[0]._pos;
+                    fst = (object.faces[0].element2D._pos < fst) ? object.faces[0].element2D._pos : fst;
+                }
+                for (i = 0; i < le; i++) {
+                    face = object.faces[i];
+                    delete this.objects[face.id];
+
+                    // this.board.removeObject(face.element2D, saveMethod);
+                    delete this.board.objects[face.element2D.id];
+                    delete this.board.elementsByName[face.element2D.name];
+                    face.element2D.remove();
+                    this.board.objectsList.splice(face.element2D._pos, 1);
+
+                    delete this.board.objects[face.id];
+                    delete this.board.elementsByName[face.name];
+                    face.remove();
+                    this.board.objectsList.splice(face._pos, 1);
+                }
+                le = this.board.objectsList.length;
+                // Reindex the positions
+                for (i = fst; i < this.board.objectsList.length; i++) {
+                    o = this.board.objectsList[i];
+                    if (o._pos > -1) { o._pos = i; }
+                }
+                object.faces = [];
             }
 
             delete this.objects[object.id];

@@ -707,7 +707,8 @@ JXG.createPolyhedron3D = function (board, parents, attributes) {
     el.setParents(el); // Sets el as parent to all faces.
     for (i = 0; i < le; i++) {
         el.inherits.push(el.faces[i]);
-        el.addChild(el.faces[i]);
+        // el.addChild(el.faces[i]); // This takes very long time. We avoid it with
+                                     // a special treatment in removeObject
     }
     if (base !== null) {
         el.addTransform(base, transform);

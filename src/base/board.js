@@ -5435,7 +5435,7 @@ JXG.extend(
          * @private
          */
         _removeObj: function (object, saveMethod) {
-            var el, i;
+            var el, o, i;
 
             if (Type.isArray(object)) {
                 for (i = 0; i < object.length; i++) {
@@ -5504,8 +5504,12 @@ JXG.extend(
                 // remove the object itself from our control structures
                 if (object._pos > -1) {
                     this.objectsList.splice(object._pos, 1);
+                    // Quadratic complexity for reindexing the positions:
                     for (i = object._pos; i < this.objectsList.length; i++) {
-                        this.objectsList[i]._pos--;
+                        o = this.objectsList[i];
+                        if (o._pos > -1) {
+                            o._pos--;
+                        }
                     }
                 } else if (object.type !== Const.OBJECT_TYPE_TURTLE) {
                     JXG.debug(
