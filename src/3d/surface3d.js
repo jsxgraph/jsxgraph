@@ -171,6 +171,9 @@ JXG.extend(
                 u, v,
                 c3d = [1, 0, 0, 0];
 
+            if (this.evalVisProp('type') !== 'wireframe') {
+                return this;
+            }
             this.points = [];
 
             steps_u = Math.max(this.evalVisProp('stepsu'), 1);
@@ -406,11 +409,6 @@ JXG.extend(
         projectCoords: function (p, params) {
             return Geometry.projectCoordsToParametric(p, this, 2, params);
         }
-
-        // projectScreenCoords: function (pScr, params) {
-        //     this.initParamsIfNeeded(params);
-        //     return Geometry.projectScreenCoordsToParametric(pScr, this, params);
-        // }
     }
 );
 
