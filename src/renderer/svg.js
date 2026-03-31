@@ -944,13 +944,19 @@ JXG.extend(
 
         // Already documented in JXG.AbstractRenderer
         setLayer: function (el, level) {
+            var node;
             if (!Type.exists(level)) {
                 level = 0;
             } else if (level >= Options.layer.numlayers) {
                 level = Options.layer.numlayers - 1;
             }
 
-            this.layer[level].appendChild(el.rendNode);
+            node = this.layer[level];
+            if (Type.exists(node.moveBefore)) {
+                node.moveBefore(el.rendNode, null);
+            } else {
+                node.appendChild(el.rendNode);
+            }
         },
 
         // Already documented in JXG.AbstractRenderer
