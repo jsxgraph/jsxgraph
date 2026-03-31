@@ -156,6 +156,11 @@ JXG.extend(
     JXG.Surface3D.prototype,
     /** @lends JXG.Surface3D.prototype */ {
 
+        /**
+         * Update the 3D coordinates of the wireframe mesh.
+         * @returns {JXG.Surface3D} Reference to the element.
+         * @see JXG.Surface3D#updateCoords
+         */
         updateWireframe: function () {
             var steps_u, steps_v,
                 i_u, i_v,
@@ -168,8 +173,8 @@ JXG.extend(
 
             this.points = [];
 
-            steps_u = this.evalVisProp('stepsu');
-            steps_v = this.evalVisProp('stepsv');
+            steps_u = Math.max(this.evalVisProp('stepsu'), 1);
+            steps_v = Math.max(this.evalVisProp('stepsv'), 1);
             r_u = Type.evaluate(this.range_u);
             r_v = Type.evaluate(this.range_v);
             s_u = Type.evaluate(r_u[0]);
@@ -191,6 +196,14 @@ JXG.extend(
             return this;
         },
 
+        /**
+         * Update the coordinates of the wireframe model of the surface3d.
+         * Applies either transformation or updates wireframe coordinates.
+         *
+         * @returns {JXG.Surface3D} Reference to the element.
+         * @see JXG.Surface3D#updateWireframe
+         * @see JXG.Surface3D#updateTransform
+         */
         updateCoords: function () {
             if (this._F !== null) {
                 this.updateWireframe();
@@ -286,27 +299,33 @@ JXG.extend(
             var i, j, len_u, len_v,
                 dataX = [],
                 dataY = [],
-                c2d;
+                c2d,
+                steps_u = this.evalVisProp('stepsu'),
+                steps_v = this.evalVisProp('stepsv');
 
             len_u = this.points.length;
             if (len_u !== 0) {
                 len_v = this.points[0].length;
 
                 for (i = 0; i < len_u; i++) {
-                    for (j = 0; j < len_v; j++) {
-                        c2d = this.view.project3DTo2D(this.points[i][j]);
-                        dataX.push(c2d[1]);
-                        dataY.push(c2d[2]);
+                    if (steps_u > 0) { // If steps_u == 0: create 1 dimensional wireframe
+                        for (j = 0; j < len_v; j++) {
+                            c2d = this.view.project3DTo2D(this.points[i][j]);
+                            dataX.push(c2d[1]);
+                            dataY.push(c2d[2]);
+                        }
                     }
                     dataX.push(NaN);
                     dataY.push(NaN);
                 }
 
                 for (j = 0; j < len_v; j++) {
-                    for (i = 0; i < len_u; i++) {
-                        c2d = this.view.project3DTo2D(this.points[i][j]);
-                        dataX.push(c2d[1]);
-                        dataY.push(c2d[2]);
+                    if (steps_v > 0) { // If steps_v == 0: create 1 dimensional wireframe
+                        for (i = 0; i < len_u; i++) {
+                            c2d = this.view.project3DTo2D(this.points[i][j]);
+                            dataX.push(c2d[1]);
+                            dataY.push(c2d[2]);
+                        }
                     }
                     dataX.push(NaN);
                     dataY.push(NaN);

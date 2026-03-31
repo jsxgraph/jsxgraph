@@ -1422,6 +1422,7 @@ JXG.extend(Options, {
 
         /**
          * Number of intervals the mesh is divided into in direction of parameter u.
+         * If stepsU = 0 and type is 'wireframe' a 3D wireframe plot in one direction is created.
          * @type Number
          * @name ParametricSurface3D#stepsU
          */
@@ -1429,6 +1430,7 @@ JXG.extend(Options, {
 
         /**
          * Number of intervals the mesh is divided into in direction of parameter v.
+         * If stepsV = 0 and type is 'wireframe' a 3D wireframe plot in one direction is created.
          * @type Number
          * @name ParametricSurface3D#stepsV
          */
