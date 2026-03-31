@@ -888,7 +888,7 @@ JXG.extend(Options, {
         fillColor: "#bbbbbb",
         fillOpacity: 0.3,
 
-        type: 'wireframe', // 'wireframe', 'shader', 'colormap', 'colorarray'
+        type: 'shader', // 'wireframe', 'shader', 'colormap', 'colorarray'
         tiling: 'rectangle', // 'triangle', 'rectangle'
 
         /**

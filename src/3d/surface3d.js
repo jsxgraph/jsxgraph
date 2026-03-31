@@ -563,6 +563,8 @@ JXG.createParametricSurface3D = function (board, parents, attributes) {
         // attr.polyhedron.shader.enabled = false;
         // attr.polyhedron.fillcolorarray = ['none'];
         el.element2D.setAttribute({ visible: false });
+        // Eliminate the call to the expensive el.updateDataArray();
+        el.element2D.updateDataArray = function() {};
 
         // mapMeshTo3D is used to map the 2d-points created with triangulation / rectangulation to 3D.
         // These points are realized as functions to enable dynamic changes to the surface3d
