@@ -464,7 +464,7 @@ JXG.createParametricSurface3D = function (board, parents, attributes) {
         base = null,
         transform = null,
         coords, surface,// steps,
-        tiling, style,
+        tiling, type,
         // colormap:
         m, ma, mi, ma_a, mi_a, s, v,
         el;
@@ -498,6 +498,10 @@ JXG.createParametricSurface3D = function (board, parents, attributes) {
     attr = Type.copyAttributes(attributes, board.options, 'surface3d');
     el = new JXG.Surface3D(view, F, X, Y, Z, range_u, range_v, attr);
 
+    tiling = el.evalVisProp('tiling');
+    type = el.evalVisProp('type');
+
+    // Wireframe
     attr2d = el.setAttr2D(attr);
     el.element2D = view.create("curve", [[], []], attr2d);
     el.element2D.view = view;
@@ -505,9 +509,6 @@ JXG.createParametricSurface3D = function (board, parents, attributes) {
         el.addTransform(base, transform);
         el.addParents(base);
     }
-
-    tiling = el.evalVisProp('tiling');
-    style = el.evalVisProp('style');
 
     /**
      * @class
@@ -558,7 +559,7 @@ JXG.createParametricSurface3D = function (board, parents, attributes) {
     }
 
     // Set style
-    if (style !== 'wireframe') {
+    if (type !== 'wireframe') {
         // attr.polyhedron.shader.enabled = false;
         // attr.polyhedron.fillcolorarray = ['none'];
         el.element2D.setAttribute({ visible: false });
@@ -571,7 +572,7 @@ JXG.createParametricSurface3D = function (board, parents, attributes) {
         // Reincorporate the dynamic points in coords into surface
         surface = [coords, surface[1]];
 
-        if (style === 'colormap') {
+        if (type === 'colormap') {
             attr.polyhedron.shader.enabled = false;
 
             m = el.evalVisProp('colormap.max');
@@ -612,7 +613,7 @@ JXG.createParametricSurface3D = function (board, parents, attributes) {
                     return `hsl(${z} ${hsl[1] * 100}% ${hsl[2] * 100}%)`;
                 }
             ];
-        } else if (style === 'shader') {
+        } else if (type === 'shader') {
             attr.polyhedron.shader.enabled = true;
         } else {
             // colorarray

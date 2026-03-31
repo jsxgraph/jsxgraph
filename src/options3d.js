@@ -888,6 +888,9 @@ JXG.extend(Options, {
         fillColor: "#bbbbbb",
         fillOpacity: 0.3,
 
+        type: 'wireframe', // 'wireframe', 'shader', 'colormap', 'colorarray'
+        tiling: 'rectangle', // 'triangle', 'rectangle'
+
         /**
          * Optional 3D mesh of a finite plane.
          * It is not available if the plane is infinite (at initialization time) in any direction.
@@ -1237,11 +1240,12 @@ JXG.extend(Options, {
          *
          * </script><pre>
          */
-        style: 'wireframe', // 'colormap', 'shader', 'color'
+        type: 'wireframe', // 'colormap', 'shader', 'colorarray'
         tiling: 'rectangle', // 'triangle'
 
         // Wireframe
         strokeWidth: 0.75,
+        // --- end wireframe
 
         /**
          * HSV color range for colormap. Supply lower bound [z_min, hue_min] on z-value and corresponding hue value, as well

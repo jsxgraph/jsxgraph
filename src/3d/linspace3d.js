@@ -1627,7 +1627,7 @@ JXG.createPlane3D = function (board, parents, attributes) {
         dir1, dir2, range_u, range_v,
         el, mesh3d,
         surface, coords,
-        su, sv, tiling,
+        su, sv, type, tiling,
         base = null,
         transform = null;
 
@@ -1691,6 +1691,10 @@ JXG.createPlane3D = function (board, parents, attributes) {
     el = new JXG.Plane3D(view, point, dir1, range_u, dir2, range_v, attr);
     point.addChild(el);
 
+    type = el.evalVisProp('type');
+    tiling = el.evalVisProp('tiling');
+
+    // Path filled with gradient color
     attr = el.setAttr2D(attr);
     el.element2D = view.create('curve', [[], []], attr);
     el.element2D.view = view;
@@ -1705,9 +1709,9 @@ JXG.createPlane3D = function (board, parents, attributes) {
      * @ignore
      */
     el.element2D.updateDataArray = function () {
-        // var ret = el.updateDataArray();
-        // this.dataX = ret.X;
-        // this.dataY = ret.Y;
+        var ret = el.updateDataArray();
+        this.dataX = ret.X;
+        this.dataY = ret.Y;
     };
     el.addChild(el.element2D);
     el.inherits.push(el.element2D);
@@ -1719,9 +1723,8 @@ JXG.createPlane3D = function (board, parents, attributes) {
         Math.abs(el.range_v[0]) !== Infinity &&
         Math.abs(el.range_v[1]) !== Infinity
     ) {
-        tiling = el.evalVisProp('tiling');
 
-        if (tiling === "wireframe") {
+        if (type === 'wireframe') {
             attr = Type.copyAttributes(attr.mesh3d, board.options, 'mesh3d');
             mesh3d = view.create('mesh3d', [
                 function () {
@@ -1735,13 +1738,16 @@ JXG.createPlane3D = function (board, parents, attributes) {
             ], attr);
             el.mesh3d = mesh3d;
             el.addChild(mesh3d);
-            el.inherits.push(mesh3d);           // TODO Does not work
+            // el.inherits.push(mesh3d);           // TODO Does not work
             el.element2D.inherits.push(mesh3d); // Does work - instead
             mesh3d.setParents(el);
             el.mesh3d.view = view;
         } else {
             su = el.evalVisProp('stepsu');
             sv = el.evalVisProp('stepsv');
+
+            // Eliminate the call to the expensive el.updateDataArray();
+            el.element2D.updateDataArray = function() {};
 
             if (tiling === 'triangle') {
                 surface = Tiling.triangulation(
@@ -1778,6 +1784,7 @@ JXG.createPlane3D = function (board, parents, attributes) {
         }
     }
 
+    // Wireframe
     el.element2D.prepareUpdate().update();
     if (!board.isSuspendedUpdate) {
         el.element2D.updateVisibility().updateRenderer();
