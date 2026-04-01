@@ -1065,11 +1065,11 @@ JXG.extend(
         },
 
         // Already documented in JXG.AbstractRenderer
-        updatePathPrim: function (node, pointString) {
-            if (pointString === "") {
-                pointString = "M 0 0";
+        updatePathPrim: function (node, str) {
+            if (str === "") {
+                str = "M 0 0";
             }
-            node.setAttributeNS(null, "d", pointString);
+            node.setAttributeNS(null, "d", str);
         },
 
         // Already documented in JXG.AbstractRenderer

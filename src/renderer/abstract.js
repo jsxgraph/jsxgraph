@@ -490,7 +490,10 @@ JXG.extend(
          * @see JXG.AbstractRenderer#drawCurve
          */
         updateCurve: function (el) {
-            this._updateVisual(el);
+            if (!el.board._change3DView) {
+                // Do not update curves during rotation of a view3d - for speed reasons
+                this._updateVisual(el);
+            }
             this.updatePathWithArrowHeads(el); // Calls the renderer primitive
             this.setLineCap(el);
         },
