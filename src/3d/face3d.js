@@ -447,7 +447,10 @@ JXG.createFace3D = function (board, parents, attributes) {
         this.dataX = ret.X;
         this.dataY = ret.Y;
     };
+    // Deactivate hasPoint to increase speed.
+    // This might be too agressive
     el.element2D.hasPoint = function() {};
+
     el.addChild(el.element2D);
     el.inherits.push(el.element2D);
     el.element2D.setParents(el);
