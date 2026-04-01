@@ -251,6 +251,7 @@ JXG.extend(
                 face;
 
             if (this.needsUpdate && !this.view.board._change3DView) {
+                // Do not update face coordinates and normal during view rotation
                 phdr = this.polyhedron;
 
                 if (this.faceNumber === 0) {
