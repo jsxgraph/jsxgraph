@@ -1082,6 +1082,7 @@ JXG.extend(
     worldToFocal: function (pWorld, homog = true) {
         var k,
             pView = Mat.matVecMult(this.boxToCam, Mat.matVecMult(this.shift, pWorld));
+
         pView[3] -= pView[0] * this.focalDist;
         if (homog) {
             return pView;
