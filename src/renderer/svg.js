@@ -380,11 +380,12 @@ JXG.extend(
                 node2.setAttributeNS(null, 'fill', 'context-stroke');
                 node2.setAttributeNS(null, 'stroke', 'context-stroke');
             }
+            node2.setAttributeNS(null, 'stroke-width', 0); // this is the stroke-width of the arrow head.
 
             // node2.setAttributeNS(null, 'fill-opacity', 'context-stroke'); // Not available
             // node2.setAttributeNS(null, 'stroke-opacity', 'context-stroke');
             node2.setAttributeNS(null, 'stroke-width', 0); // this is the stroke-width of the arrow head.
-            // Should be zero to simplify the calculations
+                                                           // Should be zero to simplify the calculations
 
             node2.setAttributeNS(null, 'orient', 'auto');
             node2.setAttributeNS(null, 'markerUnits', 'strokeWidth'); // 'strokeWidth' 'userSpaceOnUse');
@@ -543,6 +544,10 @@ JXG.extend(
             // this.setPropertyPrim(node2, 'class', el.evalVisProp('cssclass'));
 
             node2.appendChild(node3);
+
+            // Set color and opacity
+            this._setArrowColor(node2, el.evalVisProp('strokecolor'), el.evalVisProp('strokeopacity'), el, type);
+
             return node2;
         },
 
@@ -558,6 +563,7 @@ JXG.extend(
                 if (Type.isString(color)) {
                     if (type !== 7) {
                         this._setAttribute(function () {
+                            node.setAttributeNS(null, 'fill-opacity', opacity);
                             if (JXG.isWebkitApple()) {
                                 // 2025: Safari does not support 'context-stroke'
                                 node.setAttributeNS(null, 'fill', color);
@@ -568,6 +574,7 @@ JXG.extend(
                     } else {
                         this._setAttribute(function () {
                             node.setAttributeNS(null, 'fill', 'none');
+                            node.setAttributeNS(null, 'stroke-opacity', opacity);
                             if (JXG.isWebkitApple()) {
                                 node.setAttributeNS(null, 'stroke', color);
                             } else {

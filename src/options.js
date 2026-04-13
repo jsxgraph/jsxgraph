@@ -7155,7 +7155,9 @@ JXG.Options = {
          * @name Line#touchLastPoint
          * @default false
          */
-        touchLastPoint: false
+        touchLastPoint: false,
+
+        transitionProperties: []
 
         /**#@-*/
     },
