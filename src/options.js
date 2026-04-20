@@ -8970,7 +8970,7 @@ JXG.Options = {
             },
             suffix: function (self) {
                 return self.slopetriangle.evalVisProp('suffix');
-            },
+            }
         },
 
         /**
