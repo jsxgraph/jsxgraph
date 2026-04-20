@@ -481,7 +481,7 @@ JXG.createSmartLabel = function (board, parents, attributes) {
 
         val = el.Value();
         digits = el.evalVisProp('digits');
-        u = el.evalVisProp('baseUnit');
+        u = el.Unit();
         pre = '';
         suf = '';
         dir = el.evalVisProp('dir');
@@ -492,11 +492,6 @@ JXG.createSmartLabel = function (board, parents, attributes) {
         }
         if (el.evalVisProp('showSuffix')) {
             suf = el.evalVisProp('suffix');
-        }
-
-        if (u === '' && el.evalVisProp('unit') !== '') {
-            // Backwards compatibility
-            u = el.evalVisProp('unit');
         }
 
         if (el.useLocale()) {
