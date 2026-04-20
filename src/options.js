@@ -9007,13 +9007,28 @@ JXG.Options = {
 
         /**
          * Measurement unit appended to the output text. For areas, the unit is squared automatically.
-         * Comes directly after the measurement value.
+         * Replaced by the attributes "baseUnit" and "units".
          *
          * @type {String|Function}
          * @name Smartlabel#unit
          * @default ''
+         * @see Smartlabel#baseUnit
+         * @see Smartlabel#units
+         * @deprecated
          */
         unit: '',
+
+        /**
+         * This specifies the unit of measurement in dimension 1 (e.g. length).
+         * A power is automatically added to the string.
+         * If you want to use different units for each dimension, see {@link Smartlabel#units}.
+         *
+         * @see Smartlabel#units
+         * @name Smartlabel#baseUnit
+         * @type String
+         * @default ''
+         */
+        baseUnit: '',
 
         /**
          * Prefix text for the smartlabel. Comes before the measurement value.

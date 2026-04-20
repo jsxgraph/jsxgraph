@@ -72,7 +72,7 @@ import Type from "../utils/type.js";
  *
  * @example
  * var p1 = board.create('point', [3, 4], {showInfobox: false, withLabel: false});
- * board.create('smartlabel', [p1], {digits: 1, unit: 'm', dir: 'col', useMathJax: false});
+ * board.create('smartlabel', [p1], {digits: 1, baseUnit: 'm', dir: 'col', useMathJax: false});
  *
  * </pre><div id="JXG30cd1f9e-7e78-48f3-91a2-9abd466a754f" class="jxgbox" style="width: 300px; height: 300px;"></div>
  * <script type="text/javascript">
@@ -80,7 +80,7 @@ import Type from "../utils/type.js";
  *         var board = JXG.JSXGraph.initBoard('JXG30cd1f9e-7e78-48f3-91a2-9abd466a754f',
  *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
  *     var p1 = board.create('point', [3, 4], {showInfobox: false, withLabel: false});
- *     board.create('smartlabel', [p1], {digits: 1, unit: 'cm', dir: 'col', useMathJax: false});
+ *     board.create('smartlabel', [p1], {digits: 1, baseUnit: 'cm', dir: 'col', useMathJax: false});
  *
  *     })();
  *
@@ -88,8 +88,8 @@ import Type from "../utils/type.js";
  *
  * @example
  * var s1 = board.create('line', [[-7, 2], [6, -6]], {point1: {visible:true}, point2: {visible:true}});
- * board.create('smartlabel', [s1], {unit: 'm', measure: 'length', prefix: 'L = ', useMathJax: false});
- * board.create('smartlabel', [s1], {unit: 'm',  measure: 'slope', prefix: '&Delta; = ', useMathJax: false});
+ * board.create('smartlabel', [s1], {baseUnit: 'm', measure: 'length', prefix: 'L = ', useMathJax: false});
+ * board.create('smartlabel', [s1], {baseUnit: 'm',  measure: 'slope', prefix: '&Delta; = ', useMathJax: false});
  *
  *
  * </pre><div id="JXGfb4423dc-ee3a-4122-a186-82123019a835" class="jxgbox" style="width: 300px; height: 300px;"></div>
@@ -98,8 +98,8 @@ import Type from "../utils/type.js";
  *         var board = JXG.JSXGraph.initBoard('JXGfb4423dc-ee3a-4122-a186-82123019a835',
  *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
  *     var s1 = board.create('line', [[-7, 2], [6, -6]], {point1: {visible:true}, point2: {visible:true}});
- *     board.create('smartlabel', [s1], {unit: 'm', measure: 'length', prefix: 'L = ', useMathJax: false});
- *     board.create('smartlabel', [s1], {unit: 'm',  measure: 'slope', prefix: '&Delta; = ', useMathJax: false});
+ *     board.create('smartlabel', [s1], {baseUnit: 'm', measure: 'length', prefix: 'L = ', useMathJax: false});
+ *     board.create('smartlabel', [s1], {baseUnit: 'm',  measure: 'slope', prefix: '&Delta; = ', useMathJax: false});
  *
  *
  *     })();
@@ -108,9 +108,9 @@ import Type from "../utils/type.js";
  *
  * @example
  * var c1 = board.create('circle', [[0, 1], [4, 1]], {point2: {visible: true}});
- * board.create('smartlabel', [c1], {unit: 'm', measure: 'perimeter', prefix: 'U = ', useMathJax: false});
- * board.create('smartlabel', [c1], {unit: 'm', measure: 'area', prefix: 'A = ', useMathJax: false});
- * board.create('smartlabel', [c1], {unit: 'm', measure: 'radius', prefix: 'R = ', useMathJax: false});
+ * board.create('smartlabel', [c1], {baseUnit: 'm', measure: 'perimeter', prefix: 'U = ', useMathJax: false});
+ * board.create('smartlabel', [c1], {baseUnit: 'm', measure: 'area', prefix: 'A = ', useMathJax: false});
+ * board.create('smartlabel', [c1], {baseUnit: 'm', measure: 'radius', prefix: 'R = ', useMathJax: false});
  *
  *
  * </pre><div id="JXG763c4700-8273-4eb7-9ed9-1dc6c2c52e93" class="jxgbox" style="width: 300px; height: 300px;"></div>
@@ -119,9 +119,9 @@ import Type from "../utils/type.js";
  *         var board = JXG.JSXGraph.initBoard('JXG763c4700-8273-4eb7-9ed9-1dc6c2c52e93',
  *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
  *     var c1 = board.create('circle', [[0, 1], [4, 1]], {point2: {visible: true}});
- *     board.create('smartlabel', [c1], {unit: 'm', measure: 'perimeter', prefix: 'U = ', useMathJax: false});
- *     board.create('smartlabel', [c1], {unit: 'm', measure: 'area', prefix: 'A = ', useMathJax: false});
- *     board.create('smartlabel', [c1], {unit: 'm', measure: 'radius', prefix: 'R = ', useMathJax: false});
+ *     board.create('smartlabel', [c1], {baseUnit: 'm', measure: 'perimeter', prefix: 'U = ', useMathJax: false});
+ *     board.create('smartlabel', [c1], {baseUnit: 'm', measure: 'area', prefix: 'A = ', useMathJax: false});
+ *     board.create('smartlabel', [c1], {baseUnit: 'm', measure: 'radius', prefix: 'R = ', useMathJax: false});
  *
  *
  *     })();
@@ -131,7 +131,7 @@ import Type from "../utils/type.js";
  * @example
  * var p2 = board.create('polygon', [[-6, -5], [7, -7], [-4, 3]], {});
  * board.create('smartlabel', [p2], {
- *     unit: 'm',
+ *     baseUnit: 'm',
  *     measure: 'area',
  *     prefix: 'A = ',
  *     cssClass: 'smart-label-pure smart-label-polygon',
@@ -152,7 +152,7 @@ import Type from "../utils/type.js";
  *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
  *     var p2 = board.create('polygon', [[-6, -5], [7, -7], [-4, 3]], {});
  *     board.create('smartlabel', [p2], {
- *         unit: 'm',
+ *         baseUnit: 'm',
  *         measure: 'area',
  *         prefix: 'A = ',
  *         cssClass: 'smart-label-pure smart-label-polygon',
@@ -172,7 +172,7 @@ import Type from "../utils/type.js";
  *
  * @example
  * var a1 = board.create('angle', [[1, -1], [1, 2], [1, 5]], {name: '&beta;', withLabel: false});
- * var sma = board.create('smartlabel', [a1], {digits: 1, prefix: a1.name + '=', unit: '°', useMathJax: false});
+ * var sma = board.create('smartlabel', [a1], {digits: 1, prefix: a1.name + '=', baseUnit: '°', useMathJax: false});
  *
  * </pre><div id="JXG48d6d1ae-e04a-45f4-a743-273976712c0b" class="jxgbox" style="width: 300px; height: 300px;"></div>
  * <script type="text/javascript">
@@ -180,7 +180,7 @@ import Type from "../utils/type.js";
  *         var board = JXG.JSXGraph.initBoard('JXG48d6d1ae-e04a-45f4-a743-273976712c0b',
  *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
  *     var a1 = board.create('angle', [[1, -1], [1, 2], [1, 5]], {name: '&beta;', withLabel: false});
- *     var sma = board.create('smartlabel', [a1], {digits: 1, prefix: a1.name + '=', unit: '°', useMathJax: false});
+ *     var sma = board.create('smartlabel', [a1], {digits: 1, prefix: a1.name + '=', baseUnit: '°', useMathJax: false});
  *
  *     })();
  *
@@ -336,10 +336,15 @@ JXG.createSmartLabel = function (board, parents, attributes) {
                 val,
                 txt = Type.evaluate(user_supplied_text),
                 digits = el.evalVisProp('digits'),
-                u = el.evalVisProp('unit'),
+                u = el.evalVisProp('baseUnit'),
                 pre = el.evalVisProp('prefix'),
                 suf = el.evalVisProp('suffix'),
                 mj = el.evalVisProp('usemathjax') || el.evalVisProp('usekatex');
+
+            if (u === '' && el.evalVisProp('unit') !== '') {
+                // Backwards compatibility
+                u = el.evalVisProp('unit');
+            }
 
             if (txt === '') {
                 if (el.useLocale()) {
@@ -370,12 +375,17 @@ JXG.createSmartLabel = function (board, parents, attributes) {
             var str = '',
                 txt = Type.evaluate(user_supplied_text),
                 digits = el.evalVisProp('digits'),
-                u = el.evalVisProp('unit'),
+                u = el.evalVisProp('baseUnit'),
                 pre = el.evalVisProp('prefix'),
                 suf = el.evalVisProp('suffix'),
                 dir = el.evalVisProp('dir'),
                 mj = el.evalVisProp('usemathjax') || el.evalVisProp('usekatex'),
                 x, y;
+
+            if (u === '' && el.evalVisProp('unit') !== '') {
+                // Backwards compatibility
+                u = el.evalVisProp('unit');
+            }
 
             if (el.useLocale()) {
                 x = el.formatNumberLocale(p.X(), digits);
