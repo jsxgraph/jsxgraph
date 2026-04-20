@@ -559,7 +559,7 @@ JXG.createSmartLabel = function (board, parents, attributes) {
             if (dir === 'row') {
                 str = [];
                 if (mj) {
-                    str.push('\\(', pre,);
+                    str.push('\\(', pre);
                     for (i = 0; i < val.length; i++) {
                         str.push(val[i], '\\,', u);
                         if (i < val.length - 1) {
