@@ -240,9 +240,13 @@ JXG.createSlopeTriangle = function (board, parents, attributes) {
     el.tangent = tangent;
     el._isPrivateTangent = isPrivateTangent;
 
-    //el.borders[0].setArrow(false, {type: 2, size: 10});
-    //el.borders[1].setArrow(false, {type: 2, size: 10});
-    el.borders[2].setArrow(false, false);
+    el.borderHorizontal = el.borders[0];
+    el.borderVertical = el.borders[1];
+    el.borderParallel = el.borders[2];
+
+    //el.borderHorizontal.setArrow(false, {type: 2, size: 10});
+    //el.borderVertical.setArrow(false, {type: 2, size: 10});
+    el.borderParallel.setArrow(false, false);
 
     attr = Type.copyAttributes(attributes, board.options, "slopetriangle", 'label');
     //label = board.create("text", [
@@ -262,16 +266,18 @@ JXG.createSlopeTriangle = function (board, parents, attributes) {
     attr = Type.copyAttributes(attr, board.options, 'label');
     // Add label to vertical polygon edge
     attr.isLabel = true;
-    attr.anchor = el.borders[1];
-    attr.priv = el.borders[1].visProp.priv;
-    attr.id = el.borders[1].id + 'Label';
+    attr.anchor = el.borderVertical;
+    attr.priv = el.borderVertical.visProp.priv;
+    attr.id = el.borderVertical.id + 'Label';
 
     label = board.create("text", [0, 0, function () { return ""; }], attr);
     label.needsUpdate = true;
     label.dump = false;
-    el.borders[1].label = label;
-    el.borders[1].hasLabel = true;
-    el.borders[1].visProp.withlabel = true;
+    el.borderVertical.label = label;
+    el.borderVertical.hasLabel = true;
+    el.borderVertical.visProp.withlabel = true;
+
+    el.borderVertical.slopetriangle = el;
 
     label.setText(function () {
         var prefix = '',
@@ -328,6 +334,9 @@ JXG.createSlopeTriangle = function (board, parents, attributes) {
         basepoint: "basepoint",
         baseline: "baseline",
         toppoint: "toppoint",
+        borderHorizontal: "borderHorizontal",
+        borderVertical: "borderVertical",
+        borderParallel: "borderParallel",
         label: "label",
         Value: "Value",
         V: "Value",
