@@ -207,11 +207,13 @@ JXG.createSmartLabel = function (board, parents, attributes) {
     p = parents[0];
     user_supplied_text = parents[1] || '';
 
+    attr = Type.copyAttributes(attributes, board.options, 'smartlabel');
+
     if (p.elementClass === Const.OBJECT_CLASS_POINT) {
-        attr = Type.copyAttributes(attributes, board.options, 'smartlabelpoint');
+        attr = Type.merge(attr, Type.copyAttributes(attributes, board.options, 'smartlabelpoint'));
 
     } else if (p.elementClass === Const.OBJECT_CLASS_LINE) {
-        attr = Type.copyAttributes(attributes, board.options, 'smartlabelline');
+        attr = Type.merge(attr, Type.copyAttributes(attributes, board.options, 'smartlabelline'));
         /**
          * @class
          * @ignore
@@ -244,7 +246,7 @@ JXG.createSmartLabel = function (board, parents, attributes) {
         attr.visible = function () { return (p.L() < 1.5) ? false : true; };
 
     } else if (p.elementClass === Const.OBJECT_CLASS_CIRCLE) {
-        attr = Type.copyAttributes(attributes, board.options, 'smartlabelcircle');
+        attr = Type.merge(attr, Type.copyAttributes(attributes, board.options, 'smartlabelcircle'));
         /**
          * @class
          * @ignore
@@ -252,9 +254,9 @@ JXG.createSmartLabel = function (board, parents, attributes) {
         attr.visible = function () { return (p.Radius() < 1.5) ? false : true; };
 
     } else if (p.type === Const.OBJECT_TYPE_POLYGON) {
-        attr = Type.copyAttributes(attributes, board.options, 'smartlabelpolygon');
+        attr = Type.merge(attr, Type.copyAttributes(attributes, board.options, 'smartlabelpolygon'));
     } else if (p.type === Const.OBJECT_TYPE_ANGLE) {
-        attr = Type.copyAttributes(attributes, board.options, 'smartlabelangle');
+        attr = Type.merge(attr, Type.copyAttributes(attributes, board.options, 'smartlabelangle'));
         /**
          * @class
          * @ignore

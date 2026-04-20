@@ -8959,23 +8959,8 @@ JXG.Options = {
         /**#@-*/
     },
 
-    /* special options for smartlabel of angle */
-    smartlabelangle: {
-        cssClass: 'smart-label-solid smart-label-angle',
-        highlightCssClass:'smart-label-solid smart-label-angle',
-        anchorX: 'left',
-        anchorY: 'middle',
-
-        unit: '',
-        prefix: '',
-        suffix: '',
-
-        measure: 'deg',
-        useMathJax: true
-    },
-
-    /* special options for smartlabel of circle */
-    smartlabelcircle: {
+    /* special general options for smartlabel */
+    smartlabel: {
         /**#@+
          * @visprop
          */
@@ -9004,7 +8989,7 @@ JXG.Options = {
          *  <li> ...</li>
          * </ul>
          */
-        cssClass: 'smart-label-solid smart-label-circle',
+        cssClass: 'smart-label-solid',
 
         /**
          * CSS classes for the smart label when highlighted.
@@ -9018,9 +9003,7 @@ JXG.Options = {
          *  <li> ...</li>
          * </ul>
          */
-        highlightCssClass:'smart-label-solid smart-label-circle',
-        anchorX: 'middle',
-        useMathJax: true,
+        highlightCssClass: 'smart-label-solid',
 
         /**
          * Measurement unit appended to the output text. For areas, the unit is squared automatically.
@@ -9071,18 +9054,41 @@ JXG.Options = {
          *   <li> 'deg' for angles</li>
          * </ul>
          */
-        measure: 'radius'
+        measure: 'deg',
+
+        useMathJax: true
 
         /**#@-*/
     },
 
+    /* special options for smartlabel of angle */
+    smartlabelangle: {
+        cssClass: 'smart-label-solid smart-label-angle',
+        highlightCssClass:'smart-label-solid smart-label-angle',
+        anchorX: 'left',
+        anchorY: 'middle'
+    },
+
+    /* special options for smartlabel of circle */
+    smartlabelcircle: {
+        cssClass: 'smart-label-solid smart-label-circle',
+        highlightCssClass:'smart-label-solid smart-label-circle',
+        anchorX: 'middle',
+
+        measure: 'radius'
+    },
+
     /* special options for smartlabel of line */
     smartlabelline: {
+        /**#@+
+         * @visprop
+         */
+
         cssClass: 'smart-label-solid smart-label-line',
         highlightCssClass:'smart-label-solid smart-label-line',
         anchorX: 'middle',
 
-        useMathJax: true,
+        measure: 'length',
 
         /**
          * Orientation of the smartlabel relative to the line.
@@ -9100,10 +9106,9 @@ JXG.Options = {
          * @name Smartlabel#orientation
          * @default 'parallel'
          */
-        orientation: 'parallel',
+        orientation: 'parallel'
 
-        unit: '',
-        measure: 'length'
+        /**#@-*/
     },
 
     /* special options for smartlabel of point */
@@ -9117,8 +9122,7 @@ JXG.Options = {
         anchorX: 'middle',
         anchorY: 'top',
 
-        useMathJax: true,
-
+        measure: '',
         /**
          * Display of point coordinates either as row vector or column vector.
          * Available values are 'row' or 'column'.
@@ -9126,16 +9130,7 @@ JXG.Options = {
          * @name Smartlabel#dir
          * @default 'row'
          */
-        dir: 'row',
-
-        /**
-         * Supply a unit suffix.
-         *
-         * @type String
-         * @name Smartlabel#unit
-         * @default ''
-         */
-        unit: ''
+        dir: 'row'
 
         /**#@-*/
     },
@@ -9146,9 +9141,6 @@ JXG.Options = {
         highlightCssClass:'smart-label-solid smart-label-polygon',
         anchorX: 'middle',
 
-        useMathJax: true,
-
-        unit: '',
         measure: 'area'
     },
 
