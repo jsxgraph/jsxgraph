@@ -337,9 +337,16 @@ JXG.createSmartLabel = function (board, parents, attributes) {
                 txt = Type.evaluate(user_supplied_text),
                 digits = el.evalVisProp('digits'),
                 u = el.evalVisProp('baseUnit'),
-                pre = el.evalVisProp('prefix'),
-                suf = el.evalVisProp('suffix'),
+                pre = '',
+                suf =  '',
                 mj = el.evalVisProp('usemathjax') || el.evalVisProp('usekatex');
+
+            if (el.evalVisProp('showPrefix')) {
+                pre = el.evalVisProp('prefix');
+            }
+            if (el.evalVisProp('showSuffix')) {
+                suf = el.evalVisProp('suffix');
+            }
 
             if (u === '' && el.evalVisProp('unit') !== '') {
                 // Backwards compatibility
@@ -376,11 +383,18 @@ JXG.createSmartLabel = function (board, parents, attributes) {
                 txt = Type.evaluate(user_supplied_text),
                 digits = el.evalVisProp('digits'),
                 u = el.evalVisProp('baseUnit'),
-                pre = el.evalVisProp('prefix'),
-                suf = el.evalVisProp('suffix'),
+                pre = '',
+                suf = '',
                 dir = el.evalVisProp('dir'),
                 mj = el.evalVisProp('usemathjax') || el.evalVisProp('usekatex'),
                 x, y;
+
+            if (el.evalVisProp('showPrefix')) {
+                pre = el.evalVisProp('prefix');
+            }
+            if (el.evalVisProp('showSuffix')) {
+                suf = el.evalVisProp('suffix');
+            }
 
             if (u === '' && el.evalVisProp('unit') !== '') {
                 // Backwards compatibility

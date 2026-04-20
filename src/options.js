@@ -9031,6 +9031,25 @@ JXG.Options = {
         baseUnit: '',
 
         /**
+         * Determines whether a prefix is displayed before the measurement value and unit.
+         *
+         * @see Smartlabel#prefix
+         * @name Smartlabel#showPrefix
+         * @type Boolean
+         * @default true
+         */
+        showPrefix: true,
+
+        /**
+         * Determines whether a suffix is displayed after the measurement value and unit.
+         *
+         * @see Smartlabel#suffix
+         * @name Smartlabel#showSuffix
+         * @type Boolean
+         * @default true
+         */
+        showSuffix: true,
+        /**
          * Prefix text for the smartlabel. Comes before the measurement value.
          *
          * @type {String|Function}
