@@ -231,6 +231,7 @@ JXG.createSlopeTriangle = function (board, parents, attributes) {
     attr.id = el.borders[1].id + 'Label';
 
     label = board.create("text", [0, 0, function () { return ""; }], attr);
+    label.elType = 'label';
     label.needsUpdate = true;
     label.dump = false;
     el.borders[1].label = label;
