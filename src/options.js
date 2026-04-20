@@ -8907,73 +8907,105 @@ JXG.Options = {
             visible: true,
             position: 'first',
 
-            /**
-             * This specifies the unit of slope triangle in dimension 1 (e.g. length).
-             * Of course a slope has no dimension. But this value will be used to determ unit of horizontal and vertical length.
-             * If you want to use different units for each dimension, see {@link Slopetriangle#units}.
-             *
-             *
-             * @see Slopetriangle#units
-             * @name Slopetriangle#baseUnit
-             * @type String
-             * @default ''
-             */
-            baseUnit: '',
+            digits: function (self) {
+                return self.slopetriangle.evalVisProp('digits');
+            },
+            baseUnit: function (self) {
+                return self.slopetriangle.evalVisProp('baseUnit');
+            },
+            units: function (self) {
+                return self.slopetriangle.evalVisProp('units');
+            },
+            showPrefix: function (self) {
+                return self.slopetriangle.evalVisProp('showPrefix');
+            },
+            showSuffix: function (self) {
+                return self.slopetriangle.evalVisProp('showSuffix');
+            },
+            prefix: function (self) {
+                return self.slopetriangle.evalVisProp('prefix');
+            },
+            suffix: function (self) {
+                return self.slopetriangle.evalVisProp('suffix');
+            },
+        },
 
-            /**
-             * This attribute expects an object that has the dimension numbers as keys (as integer or in the form of 'dimxx')
-             * and assigns a string to each dimension.
-             * Of course a slope has no dimension. But this value will be used to determ unit of horizontal and vertical length.
-             * If a dimension has no specification, {@link Slopetriangle#baseUnit} is used.
-             *
-             * @see Slopetriangle#baseUnit
-             * @name Slopetriangle#units
-             * @type Object
-             * @default {}
-             */
-            units: {},
+        /**
+         * Used to round texts given by a number.
+         *
+         * @memberOf Slopetriangle.prototype
+         * @name digits
+         * @type Number
+         * @default 2
+         */
+        digits: 2,
 
-            /**
-             * Determines whether a prefix is displayed before the slope triangle value and unit.
-             *
-             * @see Slopetriangle#prefix
-             * @name Slopetriangle#showPrefix
-             * @type Boolean
-             * @default false
-             */
-            showPrefix: true,
+        /**
+         * This specifies the unit of slope triangle in dimension 1 (e.g. length).
+         * Of course a slope has no dimension. But this value will be used to determ unit of horizontal and vertical length.
+         * If you want to use different units for each dimension, see {@link Slopetriangle#units}.
+         *
+         *
+         * @see Slopetriangle#units
+         * @name Slopetriangle#baseUnit
+         * @type String
+         * @default ''
+         */
+        baseUnit: '',
 
-            /**
-             * Determines whether a suffix is displayed after the slope triangle value and unit.
-             *
-             * @see Slopetriangle#suffix
-             * @name Slopetriangle#showSuffix
-             * @type Boolean
-             * @default false
-             */
-            showSuffix: true,
+        /**
+         * This attribute expects an object that has the dimension numbers as keys (as integer or in the form of 'dimxx')
+         * and assigns a string to each dimension.
+         * Of course a slope has no dimension. But this value will be used to determ unit of horizontal and vertical length.
+         * If a dimension has no specification, {@link Slopetriangle#baseUnit} is used.
+         *
+         * @see Slopetriangle#baseUnit
+         * @name Slopetriangle#units
+         * @type Object
+         * @default {}
+         */
+        units: {},
 
-            /**
-             * String that is displayed before the slope triangle and its unit.
-             *
-             * @see Slopetriangle#showPrefix
-             * @name Slopetriangle#prefix
-             * @type String
-             * @default ''
-             */
-            prefix: '',
+        /**
+         * Determines whether a prefix is displayed before the slope triangle value and unit.
+         *
+         * @see Slopetriangle#prefix
+         * @name Slopetriangle#showPrefix
+         * @type Boolean
+         * @default false
+         */
+        showPrefix: true,
 
-            /**
-             * String that is displayed after the slope triangle and its unit.
-             *
-             * @see Slopetriangle#showSuffix
-             * @name Slopetriangle#suffix
-             * @type String
-             * @default ''
-             */
-            suffix: ''
+        /**
+         * Determines whether a suffix is displayed after the slope triangle value and unit.
+         *
+         * @see Slopetriangle#suffix
+         * @name Slopetriangle#showSuffix
+         * @type Boolean
+         * @default false
+         */
+        showSuffix: true,
 
-        }
+        /**
+         * String that is displayed before the slope triangle and its unit.
+         *
+         * @see Slopetriangle#showPrefix
+         * @name Slopetriangle#prefix
+         * @type String
+         * @default ''
+         */
+        prefix: '',
+
+        /**
+         * String that is displayed after the slope triangle and its unit.
+         *
+         * @see Slopetriangle#showSuffix
+         * @name Slopetriangle#suffix
+         * @type String
+         * @default ''
+         */
+        suffix: ''
+
         /**#@-*/
     },
 
