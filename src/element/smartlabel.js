@@ -423,10 +423,49 @@ JXG.createSmartLabel = function (board, parents, attributes) {
         }
     };
 
+    el.Unit = function (dimension) {
+        var unit = '',
+            units = el.evalVisProp('units'),
+            dim = dimension,
+            dims = {}, i;
+
+        if (!Type.exists(dim)) {
+            dim = el.Dimension();
+        }
+
+        if (Type.isArray(dimension)) {
+            for (i = 0; i < dimension.length; i++) {
+                dims['dim' + dimension[i]] = el.Unit(dimension[i]);
+            }
+            return dims;
+        }
+
+        if (Type.isObject(units) && Type.exists(units[dim]) && units[dim] !== false) {
+            unit = el.eval(units[dim]);
+        } else if (Type.isObject(units) && Type.exists(units['dim' + dim]) && units['dim' + dim] !== false) {
+            // In some cases, object keys must not be numbers. This allows key 'dim1' instead of '1'.
+            unit = el.eval(units['dim' + dim]);
+        } else {
+            unit = el.evalVisProp('baseUnit');
+
+            if (unit === '' && el.evalVisProp('unit') !== '') {
+                // Backwards compatibility
+                unit = el.evalVisProp('unit');
+            }
+
+            if (dim === 0) {
+                unit = '';
+            } else if (dim > 1 && unit !== '') {
+                unit = unit + '^{' + dim + '}';
+            }
+        }
+
+        return unit;
+    };
+
     el.setText(function () {
         var str = '',
             val,
-            dim,
             txt = Type.evaluate(user_supplied_text),
             digits,
             u,
@@ -441,7 +480,6 @@ JXG.createSmartLabel = function (board, parents, attributes) {
         }
 
         val = el.Value();
-        dim = el.Dimension();
         digits = el.evalVisProp('digits');
         u = el.evalVisProp('baseUnit');
         pre = '';
@@ -526,7 +564,8 @@ JXG.createSmartLabel = function (board, parents, attributes) {
     el.methodMap = Type.deepCopy(el.methodMap, {
         Value: "Value",
         V: "Value",
-        Dimension: "Dimension"
+        Dimension: "Dimension",
+        Unit: "Unit"
     });
 
     return el;
