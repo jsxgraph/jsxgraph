@@ -1564,6 +1564,7 @@ JXG.extend(
                     label = JXG.createText(this.board, [ld.x, ld.y, ld.t], attr);
                     this.addChild(label);
                     label.setParents(this);
+                    label.elType = 'label';
                     label.isDraggable = false;
                     label.dump = false;
                     this.labels.push(label);

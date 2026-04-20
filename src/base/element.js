@@ -1862,6 +1862,7 @@ JXG.extend(
                         ],
                         attr
                     );
+                    this.label.elType = 'label';
                     this.label.needsUpdate = true;
                     this.label.dump = false;
                     this.label.fullUpdate();

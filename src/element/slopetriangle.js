@@ -182,6 +182,7 @@ JXG.createSlopeTriangle = function (board, parents, attributes) {
     attr = Type.copyAttributes(attributes, board.options, 'slopetriangle');
     // attr.borders = Type.copyAttributes(attr.borders, board.options, "slopetriangle", 'borders');
     el = board.create("polygon", [tglide, glider, toppoint], attr);
+    el.elType = 'slopetriangle';
 
     /**
      * Returns the value of the slope triangle, that is the slope of the tangent.
@@ -235,6 +236,7 @@ JXG.createSlopeTriangle = function (board, parents, attributes) {
     attr.id = el.borderVertical.id + 'Label';
 
     label = board.create("text", [0, 0, function () { return ""; }], attr);
+    label.elType = 'label';
     label.needsUpdate = true;
     label.dump = false;
     el.borderVertical.label = label;
