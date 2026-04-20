@@ -418,10 +418,10 @@ JXG.createMeasurement = function (board, parents, attributes) {
             val = el.Value(),
             i;
 
-        if (el.evalVisProp('showprefix')) {
+        if (el.evalVisProp('showPrefix')) {
             prefix = el.evalVisProp('prefix');
         }
-        if (el.evalVisProp('showsuffix')) {
+        if (el.evalVisProp('showSuffix')) {
             suffix = el.evalVisProp('suffix');
         }
 
