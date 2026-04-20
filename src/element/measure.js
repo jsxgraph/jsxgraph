@@ -369,7 +369,7 @@ JXG.createMeasurement = function (board, parents, attributes) {
             // In some cases, object keys must not be numbers. This allows key 'dim1' instead of '1'.
             unit = el.eval(units['dim' + dim]);
         } else {
-            unit = el.evalVisProp('baseunit');
+            unit = el.evalVisProp('baseUnit');
 
             if (dim === 0) {
                 unit = '';
@@ -418,10 +418,10 @@ JXG.createMeasurement = function (board, parents, attributes) {
             val = el.Value(),
             i;
 
-        if (el.evalVisProp('showprefix')) {
+        if (el.evalVisProp('showPrefix')) {
             prefix = el.evalVisProp('prefix');
         }
-        if (el.evalVisProp('showsuffix')) {
+        if (el.evalVisProp('showSuffix')) {
             suffix = el.evalVisProp('suffix');
         }
 

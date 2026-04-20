@@ -9026,23 +9026,8 @@ JXG.Options = {
         /**#@-*/
     },
 
-    /* special options for smartlabel of angle */
-    smartlabelangle: {
-        cssClass: 'smart-label-solid smart-label-angle',
-        highlightCssClass:'smart-label-solid smart-label-angle',
-        anchorX: 'left',
-        anchorY: 'middle',
-
-        unit: '',
-        prefix: '',
-        suffix: '',
-
-        measure: 'deg',
-        useMathJax: true
-    },
-
-    /* special options for smartlabel of circle */
-    smartlabelcircle: {
+    /* special general options for smartlabel */
+    smartlabel: {
         /**#@+
          * @visprop
          */
@@ -9071,7 +9056,7 @@ JXG.Options = {
          *  <li> ...</li>
          * </ul>
          */
-        cssClass: 'smart-label-solid smart-label-circle',
+        cssClass: 'smart-label-solid',
 
         /**
          * CSS classes for the smart label when highlighted.
@@ -9085,20 +9070,64 @@ JXG.Options = {
          *  <li> ...</li>
          * </ul>
          */
-        highlightCssClass:'smart-label-solid smart-label-circle',
-        anchorX: 'middle',
-        useMathJax: true,
+        highlightCssClass: 'smart-label-solid',
 
         /**
          * Measurement unit appended to the output text. For areas, the unit is squared automatically.
-         * Comes directly after the measurement value.
+         * Replaced by the attributes "baseUnit" and "units".
          *
          * @type {String|Function}
          * @name Smartlabel#unit
          * @default ''
+         * @see Smartlabel#baseUnit
+         * @see Smartlabel#units
+         * @deprecated
          */
         unit: '',
 
+        /**
+         * This specifies the unit of measurement in dimension 1 (e.g. length).
+         * A power is automatically added to the string.
+         * If you want to use different units for each dimension, see {@link Smartlabel#units}.
+         *
+         * @see Smartlabel#units
+         * @name Smartlabel#baseUnit
+         * @type String
+         * @default ''
+         */
+        baseUnit: '',
+
+        /**
+         * This attribute expects an object that has the dimension numbers as keys (as integer or in the form of 'dimxx')
+         * and assigns a string to each dimension.
+         * If a dimension has no specification, {@link Smartlabel#baseUnit} is used.
+         *
+         * @see Smartlabel#baseUnit
+         * @name Smartlabel#units
+         * @type Object
+         * @default {}
+         */
+        units: {},
+
+        /**
+         * Determines whether a prefix is displayed before the measurement value and unit.
+         *
+         * @see Smartlabel#prefix
+         * @name Smartlabel#showPrefix
+         * @type Boolean
+         * @default true
+         */
+        showPrefix: true,
+
+        /**
+         * Determines whether a suffix is displayed after the measurement value and unit.
+         *
+         * @see Smartlabel#suffix
+         * @name Smartlabel#showSuffix
+         * @type Boolean
+         * @default true
+         */
+        showSuffix: true,
         /**
          * Prefix text for the smartlabel. Comes before the measurement value.
          *
@@ -9138,21 +9167,61 @@ JXG.Options = {
          *   <li> 'deg' for angles</li>
          * </ul>
          */
-        measure: 'radius'
+        measure: 'deg',
+
+        useMathJax: true
 
         /**#@-*/
     },
 
+    /* special options for smartlabel of angle */
+    smartlabelangle: {
+        cssClass: 'smart-label-solid smart-label-angle',
+        highlightCssClass:'smart-label-solid smart-label-angle',
+        anchorX: 'left',
+        anchorY: 'middle'
+    },
+
+    /* special options for smartlabel of circle */
+    smartlabelcircle: {
+        cssClass: 'smart-label-solid smart-label-circle',
+        highlightCssClass:'smart-label-solid smart-label-circle',
+        anchorX: 'middle',
+
+        measure: 'radius'
+    },
+
     /* special options for smartlabel of line */
     smartlabelline: {
+        /**#@+
+         * @visprop
+         */
+
         cssClass: 'smart-label-solid smart-label-line',
         highlightCssClass:'smart-label-solid smart-label-line',
         anchorX: 'middle',
 
-        useMathJax: true,
+        measure: 'length',
 
-        unit: '',
-        measure: 'length'
+        /**
+         * Orientation of the smartlabel relative to the line.
+         * Available values are:
+         *  <ul>
+         *  <li> 'parallel' (default)</li>
+         *  <li> 'parallel-inverted' / 'inverted'</li>
+         *  <li> 'orthogonal'</li>
+         *  <li> 'orthogonal-inverted'</li>
+         *  <li> 'none' (smartlabe is always horizontal)</li>
+         * </ul>
+         * Dependent on this value the label is positioned differently on the line.
+         *
+         * @type String
+         * @name Smartlabel#orientation
+         * @default 'parallel'
+         */
+        orientation: 'parallel'
+
+        /**#@-*/
     },
 
     /* special options for smartlabel of point */
@@ -9166,8 +9235,7 @@ JXG.Options = {
         anchorX: 'middle',
         anchorY: 'top',
 
-        useMathJax: true,
-
+        measure: 'coords',
         /**
          * Display of point coordinates either as row vector or column vector.
          * Available values are 'row' or 'column'.
@@ -9175,16 +9243,7 @@ JXG.Options = {
          * @name Smartlabel#dir
          * @default 'row'
          */
-        dir: 'row',
-
-        /**
-         * Supply a unit suffix.
-         *
-         * @type String
-         * @name Smartlabel#unit
-         * @default ''
-         */
-        unit: ''
+        dir: 'row'
 
         /**#@-*/
     },
@@ -9195,9 +9254,6 @@ JXG.Options = {
         highlightCssClass:'smart-label-solid smart-label-polygon',
         anchorX: 'middle',
 
-        useMathJax: true,
-
-        unit: '',
         measure: 'area'
     },
 
