@@ -220,6 +220,8 @@ JXG.createSmartLabel = function (board, parents, attributes) {
             var orientation = self.evalVisProp('orientation'),
                 add;
             switch (orientation) {
+                case 'none':
+                    return 0;
                 case 'orthogonal':
                     add = 270;
                     break;

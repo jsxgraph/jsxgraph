@@ -9092,6 +9092,7 @@ JXG.Options = {
          *  <li> 'parallel-inverted' / 'inverted'</li>
          *  <li> 'orthogonal'</li>
          *  <li> 'orthogonal-inverted'</li>
+         *  <li> 'none' (smartlabe is always horizontal)</li>
          * </ul>
          * Dependent on this value the label is positioned differently on the line.
          *
