@@ -9084,6 +9084,23 @@ JXG.Options = {
 
         useMathJax: true,
 
+        /**
+         * Orientation of the smartlabel relative to the line.
+         * Available values are:
+         *  <ul>
+         *  <li> 'parallel' (default)</li>
+         *  <li> 'parallel-inverted' / 'inverted'</li>
+         *  <li> 'orthogonal'</li>
+         *  <li> 'orthogonal-inverted'</li>
+         * </ul>
+         * Dependent on this value the label is positioned differently on the line.
+         *
+         * @type String
+         * @name Smartlabel#orientation
+         * @default 'parallel'
+         */
+        orientation: 'parallel',
+
         unit: '',
         measure: 'length'
     },

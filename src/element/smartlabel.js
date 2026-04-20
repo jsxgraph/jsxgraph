@@ -216,8 +216,24 @@ JXG.createSmartLabel = function (board, parents, attributes) {
          * @class
          * @ignore
          */
-        attr.rotate = function () {
-            return (Math.atan(p.getSlope()) * 180 / Math.PI + 360) % 360;
+        attr.rotate = function (self) {
+            var orientation = self.evalVisProp('orientation'),
+                add;
+            switch (orientation) {
+                case 'orthogonal':
+                    add = 270;
+                    break;
+                case 'orthogonal-inverted':
+                    add = 90;
+                    break;
+                case 'parallel-inverted':
+                case 'inverted':
+                    add = 0;
+                    break;
+                default:
+                    add = 360;
+            }
+            return (Math.atan(p.getSlope()) * 180 / Math.PI + add) % 360;
         };
         /**
          * @class
