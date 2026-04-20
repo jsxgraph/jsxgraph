@@ -559,11 +559,27 @@ JXG.createSmartLabel = function (board, parents, attributes) {
         }
         if (Type.isArray(val)) {
             if (dir === 'row') {
+                str = [];
                 if (mj) {
-                    str = ['\\(', pre, x, '\\,', u, ' / ', y, '\\,', u, suf, '\\)'].join('');
+                    str.push('\\(', pre);
+                    for (i = 0; i < val.length; i++) {
+                        str.push(val[i], '\\,', u);
+                        if (i < val.length - 1) {
+                            str.push(' / ');
+                        }
+                    }
+                    str.push(suf, '\\)');
                 } else {
-                    str = [pre, x, ' ', u, ' / ', y, ' ', u, suf].join('');
+                    str.push(pre);
+                    for (i = 0; i < val.length; i++) {
+                        str.push(val[i], ' ', u);
+                        if (i < val.length - 1) {
+                            str.push(' / ');
+                        }
+                    }
+                    str.push(suf);
                 }
+                str = str.join('');
             } else if (dir.indexOf('col') === 0) { // Starts with 'col'
                 str = [];
                 if (mj) {
