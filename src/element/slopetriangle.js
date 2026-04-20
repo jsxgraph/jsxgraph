@@ -60,6 +60,32 @@ var priv = {
     Value: function () {
         return this.tangent.getSlope();
     },
+    Unit: function (dimension) {
+        var unit = '',
+            units = this.evalVisProp('units'),
+            dim = dimension;
+
+        if (!Type.exists(dim)) {
+            dim = 0;
+        }
+
+        if (Type.isObject(units) && Type.exists(units[dim]) && units[dim] !== false) {
+            unit = this.eval(units[dim]);
+        } else if (Type.isObject(units) && Type.exists(units['dim' + dim]) && units['dim' + dim] !== false) {
+            // In some cases, object keys must not be numbers. This allows key 'dim1' instead of '1'.
+            unit = this.eval(units['dim' + dim]);
+        } else {
+            unit = this.evalVisProp('baseunit');
+
+            if (dim === 0) {
+                unit = '';
+            } else if (dim > 1 && unit !== '') {
+                unit = unit + '^{' + dim + '}';
+            }
+        }
+
+        return unit;
+    },
     Direction: function() {
         return this.tangent.Direction();
     }
@@ -193,6 +219,16 @@ JXG.createSlopeTriangle = function (board, parents, attributes) {
     el.Value = priv.Value;
 
     /**
+     * Returns the unit of the slope triangle, of the slope of the tangent.
+     * Of course a slope has no dimension and though no unit. But this function will be used to determ unit of horizontal and vertical length.
+     * @name Unit
+     * @memberOf Slopetriangle.prototype
+     * @function
+     * @returns {Number} unit of the slope triangle.
+     */
+    el.Unit = priv.Unit;
+
+    /**
      * Returns the direction of the slope triangle, that is the direction of the tangent.
      * @name Direction
      * @memberOf Slopetriangle.prototype
@@ -237,13 +273,37 @@ JXG.createSlopeTriangle = function (board, parents, attributes) {
     el.borders[1].hasLabel = true;
     el.borders[1].visProp.withlabel = true;
 
-    label._setText(function () {
-        var digits = label.evalVisProp('digits');
+    label.setText(function () {
+        var prefix = '',
+            suffix = '',
+            digits = label.evalVisProp('digits'),
+            unit = el.Unit(),
+            val = el.Value();
 
-        if (label.useLocale()) {
-            return label.formatNumberLocale(el.Value(), digits);
+        if (label.evalVisProp('showprefix')) {
+            prefix = label.evalVisProp('prefix');
         }
-        return Type.toFixed(el.Value(), digits);
+        if (label.evalVisProp('showsuffix')) {
+            suffix = label.evalVisProp('suffix');
+        }
+
+        if (digits === 'none') {
+            // do nothing
+        } else if (digits === 'auto') {
+            if (label.useLocale()) {
+                val = label.formatNumberLocale(val);
+            } else {
+                val = Type.autoDigits(val);
+            }
+        } else {
+            if (label.useLocale()) {
+                val = label.formatNumberLocale(val, digits);
+            } else {
+                val = Type.toFixed(val, digits);
+            }
+        }
+
+        return prefix + val + unit + suffix;
     });
     label.fullUpdate();
 
@@ -271,6 +331,7 @@ JXG.createSlopeTriangle = function (board, parents, attributes) {
         label: "label",
         Value: "Value",
         V: "Value",
+        Unit: "Unit",
         Direction: "Direction"
     });
 

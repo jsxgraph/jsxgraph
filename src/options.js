@@ -8905,7 +8905,74 @@ JXG.Options = {
          */
         label: {
             visible: true,
-            position: 'first'
+            position: 'first',
+
+            /**
+             * This specifies the unit of slope triangle in dimension 1 (e.g. length).
+             * Of course a slope has no dimension. But this value will be used to determ unit of horizontal and vertical length.
+             * If you want to use different units for each dimension, see {@link Slopetriangle#units}.
+             *
+             *
+             * @see Slopetriangle#units
+             * @name Slopetriangle#baseUnit
+             * @type String
+             * @default ''
+             */
+            baseUnit: '',
+
+            /**
+             * This attribute expects an object that has the dimension numbers as keys (as integer or in the form of 'dimxx')
+             * and assigns a string to each dimension.
+             * Of course a slope has no dimension. But this value will be used to determ unit of horizontal and vertical length.
+             * If a dimension has no specification, {@link Slopetriangle#baseUnit} is used.
+             *
+             * @see Slopetriangle#baseUnit
+             * @name Slopetriangle#units
+             * @type Object
+             * @default {}
+             */
+            units: {},
+
+            /**
+             * Determines whether a prefix is displayed before the slope triangle value and unit.
+             *
+             * @see Slopetriangle#prefix
+             * @name Slopetriangle#showPrefix
+             * @type Boolean
+             * @default false
+             */
+            showPrefix: true,
+
+            /**
+             * Determines whether a suffix is displayed after the slope triangle value and unit.
+             *
+             * @see Slopetriangle#suffix
+             * @name Slopetriangle#showSuffix
+             * @type Boolean
+             * @default false
+             */
+            showSuffix: true,
+
+            /**
+             * String that is displayed before the slope triangle and its unit.
+             *
+             * @see Slopetriangle#showPrefix
+             * @name Slopetriangle#prefix
+             * @type String
+             * @default ''
+             */
+            prefix: '',
+
+            /**
+             * String that is displayed after the slope triangle and its unit.
+             *
+             * @see Slopetriangle#showSuffix
+             * @name Slopetriangle#suffix
+             * @type String
+             * @default ''
+             */
+            suffix: ''
+
         }
         /**#@-*/
     },
