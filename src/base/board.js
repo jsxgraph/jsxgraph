@@ -5435,7 +5435,7 @@ JXG.extend(
          * @private
          */
         _removeObj: function (object, saveMethod) {
-            var el, i;
+            var el, o, i;
 
             if (Type.isArray(object)) {
                 for (i = 0; i < object.length; i++) {
@@ -5504,8 +5504,12 @@ JXG.extend(
                 // remove the object itself from our control structures
                 if (object._pos > -1) {
                     this.objectsList.splice(object._pos, 1);
+                    // Quadratic complexity for reindexing the positions:
                     for (i = object._pos; i < this.objectsList.length; i++) {
-                        this.objectsList[i]._pos--;
+                        o = this.objectsList[i];
+                        if (o._pos > -1) {
+                            o._pos--;
+                        }
                     }
                 } else if (object.type !== Const.OBJECT_TYPE_TURTLE) {
                     JXG.debug(
@@ -5872,9 +5876,9 @@ JXG.extend(
                     if (this.objectsList[el].visProp.islabel && this.objectsList[el].visProp.autoposition) {
                         autoPositionLabelList.push(el);
                     } else {
-                    this.objectsList[el].updateRenderer();
+                        this.objectsList[el].updateRenderer();
+                    }
                 }
-            }
 
                 currentIndex = autoPositionLabelList.length;
 
@@ -5912,22 +5916,36 @@ JXG.extend(
                 // last = Number.NEGATIVE_INFINITY.toExponential,
                 depth_order_layers = [],
                 objects_sorted,
-                // Sort the elements for the canvas rendering according to
-                // their layer, _pos, depthOrder (with this priority)
-                // @private
-                _compareFn = function(a, b) {
+
+                /**
+                 * Function to sort elements for depth ordering in canvas renderer.
+                 * Only relevant for elements having a zIndex.
+                 * Sort the elements for the canvas rendering according to
+                 * their layer, _pos, depthOrder (with this priority).
+                 * @param {JXG.GeometryObject} a
+                 * @param {JXG.GeometryObject} b
+                 * @returns Number
+                 * @private
+                 */
+                _compareDepth = function(a, b) {
                     if (a.visProp.layer !== b.visProp.layer) {
+                        // For elements in different layers, the element in the
+                        // higher layer is in front.
                         return a.visProp.layer - b.visProp.layer;
                     }
 
-                    // The objects are in the same layer, but the layer is not depth ordered
+                    // From here on, both objects are in the same layer.
+
                     if (depth_order_layers.indexOf(a.visProp.layer) === -1) {
+                        // The layer is not depth ordered.
                         return a._pos - b._pos;
                     }
 
+                    // From here on, both objects are in the same layer
+                    // and the layer is depth ordered.
+
                     // The objects are in the same layer and the layer is depth ordered
-                    // We have to sort 2D elements according to the zIndices of
-                    // their 3D parents.
+                    // But neither element is the 2D element of a 3D element.
                     if (!a.visProp.element3d && !b.visProp.element3d) {
                         return a._pos - b._pos;
                     }
@@ -5936,49 +5954,40 @@ JXG.extend(
                         return -1;
                     }
 
-                    if (b.visProp.element3d && !a.visProp.element3d) {
+                    if (!a.visProp.element3d && b.visProp.element3d) {
                         return 1;
                     }
 
+                    // Finqally, both elements are 2D elements of a 3D element.
                     return a.visProp.element3d.zIndex - b.visProp.element3d.zIndex;
                 };
 
-            // Only one view3d element is supported. Get the depth orderer layers and
+            // Only one view3d element is supported. Get the depth order layers and
             // update the zIndices of the 3D elements.
             for (el = 0; el < olen; el++) {
                 pEl = this.objectsList[el];
-                if (pEl.elType === 'view3d' && pEl.evalVisProp('depthorder.enabled')) {
+                if (pEl.elType === 'view3d' &&
+                    pEl.evalVisProp('depthorder.enabled')
+                ) {
                     depth_order_layers = pEl.evalVisProp('depthorder.layers');
                     pEl.updateRenderer();
                     break;
                 }
             }
 
-            objects_sorted = this.objectsList.toSorted(_compareFn);
+            // objects_sorted = this.objectsList.toSorted(_compareDepth);
+
+            // 3D elements are not rendered, but their subelements element2D
+            objects_sorted = this.objectsList.filter(function(e) { return !e.is3D; }).toSorted(_compareDepth);
             olen = objects_sorted.length;
             for (el = 0; el < olen; el++) {
-                objects_sorted[el].prepareUpdate().updateRenderer();
+                if (
+                    objects_sorted[el].visPropCalc.visible &&
+                    objects_sorted[el].type !== Const.OBJECT_TYPE_FACE3D // For these, updateRenderer is triggered in polyhedron3d.updateRenderer
+                ) {
+                    objects_sorted[el].prepareUpdate().updateRenderer();
+                }
             }
-
-            // for (i = 0; i < len; i++) {
-            //     minim = Number.POSITIVE_INFINITY;
-
-            //     for (lay in layers) {
-            //         if (layers.hasOwnProperty(lay)) {
-            //             if (layers[lay] > last && layers[lay] < minim) {
-            //                 minim = layers[lay];
-            //             }
-            //         }
-            //     }
-
-            //     for (el = 0; el < olen; el++) {
-            //         pEl = this.objectsList[el];
-            //         if (pEl.visProp.layer === minim) {
-            //             pEl.prepareUpdate().updateRenderer();
-            //         }
-            //     }
-            //     last = minim;
-            // }
 
             return this;
         },
@@ -6440,7 +6449,8 @@ JXG.extend(
          * </ul>
          * Some board attributes are immutable, like e.g. the renderer type.
          *
-         * @param {Object} attributes An object with attributes.
+         * @param {Object} attributes An object with attributes
+         * @param {Boolean} [force=false] if true the attributes are set regardless of the previous setting was identical.
          * @returns {JXG.Board} Reference to the board
          *
          * @example
@@ -6558,10 +6568,10 @@ JXG.extend(
          *
          *
          */
-        setAttribute: function (attr) {
+        setAttribute: function (attr, force) {
             var i, arg, pair,
                 key, value, oldvalue,// j, le,
-                node,
+                node, lst, e,
                 attributes = {};
 
             // Normalize the user input
@@ -6588,9 +6598,8 @@ JXG.extend(
                 value = (value.toLowerCase && value.toLowerCase() === 'false')
                     ? false
                     : value;
-
                 oldvalue = this.attr[key];
-                if (oldvalue === value) {
+                if (!force && oldvalue === value) {
                     continue;
                 }
                 switch (key) {
@@ -6603,6 +6612,17 @@ JXG.extend(
                         } else {
                             // TODO
                         }
+                        break;
+                    case 'cssstyle':
+                        lst = Type.css2js(value);
+                        node = this.containerObj;
+                        // node = this.renderer.svgRoot;
+                        for (e in lst) if (lst.hasOwnProperty(e)) {
+                            pair = lst[e];
+                            node.style[pair.key] = pair.val;
+                        }
+
+                        this._set(key, value);
                         break;
                     case 'boundingbox':
                         this.setBoundingBox(value, this.keepaspectratio);
@@ -6700,10 +6720,11 @@ JXG.extend(
             }
 
             // Redraw navbar to handle the remaining show* attributes
-            this.containerObj.ownerDocument.getElementById(
-                this.container + "_navigationbar"
-            ).remove();
-            this.renderer.drawNavigationBar(this, this.attr.navbar);
+            node = this.containerObj.ownerDocument.getElementById(this.container + "_navigationbar");
+            if (Type.exists(node)) {
+                node.remove();
+                this.renderer.drawNavigationBar(this, this.attr.navbar);
+            }
 
             this.triggerEventHandlers(["attribute"], [attributes, this]);
             this.fullUpdate();

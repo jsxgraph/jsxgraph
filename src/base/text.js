@@ -274,7 +274,7 @@ JXG.extend(
                     } else if (ev_um || ev_uk) {
                         // MathJax or KaTeX
                         // Replace value-tags by functions
-                        // sketchofont is ignored
+                        // sketchoicon/sketchofont is ignored
                         this.content = this.valueTagToJessieCode(text);
                         if (!Type.isArray(this.content)) {
                             // For some reason we don't have to mask backslashes in an array of strings
@@ -970,8 +970,10 @@ JXG.extend(
         },
 
         /**
-         * Converts the sketchometry tag <sketchofont> to
+         * Converts the sketchometry tag <sketchoicon> to
          * HTML span tags with proper CSS formatting.
+         *
+         * Old tag was <sketchofont>.
          *
          * @param {String|Function|Number} s Text
          * @param {Boolean} escape Flag if ticks should be escaped. Escaping is necessary
@@ -990,6 +992,8 @@ JXG.extend(
                     t1 = this.escapeTicks(t1);
                     t2 = this.escapeTicks(t2);
                 }
+                s = s.replace(/(<|&lt;)sketchoicon(>|&gt;)/g, t1);
+                s = s.replace(/(<|&lt;)\/sketchoicon(>|&gt;)/g, t2);
                 s = s.replace(/(<|&lt;)sketchofont(>|&gt;)/g, t1);
                 s = s.replace(/(<|&lt;)\/sketchofont(>|&gt;)/g, t2);
             }

@@ -195,6 +195,16 @@ JXG.Options = {
         clickDelay: 600,
 
         /**
+         * CSS attributes for the JSXGraph div element.
+         *
+         * @name JXG.Board#cssStyle
+         * @type String
+         * @default ''
+         */
+        cssStyle: '',
+
+
+        /**
          * If false (default), JSXGraph follows the JavaScript standard and fires before a dblclick event two
          * click events.
          * <p>
@@ -5150,15 +5160,37 @@ JXG.Options = {
         plotVersion: 2,
 
         /**
-         * Remove data points from the curve which do not influence
+         * Polyline simplification, i.e. remove data points from the curve which do not influence
          * its appearance. In some cases this makes JSXGraph run much faster.
+         * The "smoothing" in the name is misleading, actually it does the contrary. But
+         * for historical reasons we stay with it. A better name would be
+         * RDPsimplification.
+         * <p>
+         * In certain cases this attribute causes problems, like for
+         * conic elements, curve intersection/union/difference
+         * <p>
          * Implements the Ramer-Douglas-Peucker algorithm.
          *
          * @name Curve#RDPsmoothing
          * @type Boolean
          * @default false
+         * @see Curve#RDPthreshold
+         *
          */
         RDPsmoothing: false,
+
+        /**
+         * Threshold when to stop eliminating points in polyline simplification with the Ramer-Douglas-Peucker algorithm.
+         * This number affects simplification with user coordinates, but corresponds to the distance of a point to a
+         * line in pixel if the JSXGraph board has size 800x800 pixel and the pixel per unit both horizontally and vertically
+         * are roughly equal (For the latter, the geometric mean is taken).
+         *
+         * @name Curve#RDPthreshold
+         * @type Number
+         * @default 0.2
+         * @see Curve#RDPsmoothing
+         */
+        RDPthreshold: 0.2,
 
         /**
          * Configure arrow head at the start position for curve.
@@ -5227,6 +5259,21 @@ JXG.Options = {
          * @visprop
          */
 
+        /**
+         * Remove data points from the function graph which do not influence
+         * its appearance. In some cases this makes JSXGraph run much faster,
+         * especially if this function graph has glider points or has dependent
+         * curves like inequality or curve intersection/union/difference.
+         * <p>
+         * Implements the Ramer-Douglas-Peucker algorithm.
+         *
+         * @name Functiongraph#RDPsmoothing
+         * @type Boolean
+         * @default true
+         * @see Curve#RDPsmoothing
+         * @see Curve#RDPthreshold
+         */
+        RDPsmoothing: true
 
         /**#@-*/
     },
@@ -7108,7 +7155,9 @@ JXG.Options = {
          * @name Line#touchLastPoint
          * @default false
          */
-        touchLastPoint: false
+        touchLastPoint: false,
+
+        transitionProperties: []
 
         /**#@-*/
     },

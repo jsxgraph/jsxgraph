@@ -40,6 +40,7 @@
 
 import JXG from "../jxg.js";
 import Type from "../utils/type.js";
+import Mat from "./math.js";
 
 /**
  * Creates a new complex number. See also {@link JXG.C}.
@@ -170,7 +171,7 @@ JXG.extend(
             var denom, im, re;
 
             if (Type.isNumber(c)) {
-                if (Math.abs(c) < Math.eps) {
+                if (Math.abs(c) < Mat.eps) {
                     this.real = Infinity;
                     this.imaginary = Infinity;
 
@@ -181,7 +182,7 @@ JXG.extend(
                 this.imaginary /= c;
             } else {
                 //  (a+ib)(x+iy) = ax-by + i(xb+ay)
-                if (Math.abs(c.real) < Math.eps && Math.abs(c.imaginary) < Math.eps) {
+                if (Math.abs(c.real) < Mat.eps && Math.abs(c.imaginary) < Mat.eps) {
                     this.real = Infinity;
                     this.imaginary = Infinity;
 

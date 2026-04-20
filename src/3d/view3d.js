@@ -881,8 +881,9 @@ JXG.extend(
                 el = this.objects[id];
                 // Update zIndex of less frequent objects line3d and polygon3d
                 // The other elements (point3d, face3d) do this in their update method.
-                if ((el.type === Const.OBJECT_TYPE_LINE3D ||
-                    el.type === Const.OBJECT_TYPE_POLYGON3D
+                if ((
+                        el.type === Const.OBJECT_TYPE_LINE3D ||
+                        el.type === Const.OBJECT_TYPE_POLYGON3D
                     ) &&
                     Type.exists(el.element2D) &&
                     el.element2D.evalVisProp('visible')
@@ -898,8 +899,14 @@ JXG.extend(
         for (id in this.objects) {
             if (this.objects.hasOwnProperty(id)) {
                 el = this.objects[id];
-                if (Type.exists(el.shader)) {
-                    v = el.shader();
+                if (el.visPropCalc.visible && Type.exists(el.shader)) {
+                    if (this.board._change3DView && el.evalVisProp('shader.fixed')) {
+                        // In case, 3D view is rotated and the shader is fixed
+                        // we can avoid the call of shader()
+                        v = el.zIndex;
+                    } else {
+                        v = el.shader();
+                    }
                     if (v < this.zIndexMin) {
                         this.zIndexMin = v;
                     } else if (v > this.zIndexMax) {
@@ -930,7 +937,8 @@ JXG.extend(
                     el.type === Const.OBJECT_TYPE_POLYGON3D
                     ) &&
                     Type.exists(el.element2D) &&
-                    el.element2D.evalVisProp('visible')
+                    el.element2D.visPropCalc.visible
+                    // el.element2D.evalVisProp('visible')
                 ) {
                     lay = el.element2D.evalVisProp('layer');
                     if (layers.indexOf(lay) >= 0) {
@@ -981,7 +989,7 @@ JXG.extend(
             this.updateShaders();
 
             if (this.board.renderer && this.board.renderer.type === 'svg') {
-                // For SVG we update the DOM order
+                // For SVG we update the DOM order here.
                 // In canvas we sort the elements in board.updateRendererCanvas
                 this.updateDepthOrdering();
             }
@@ -993,7 +1001,7 @@ JXG.extend(
     },
 
     removeObject: function (object, saveMethod) {
-        var i, el;
+        var i, el, le, o, fst, face;
 
         // this.board.removeObject(object, saveMethod);
         if (Type.isArray(object)) {
@@ -1017,6 +1025,37 @@ JXG.extend(
                 if (object.childElements.hasOwnProperty(el)) {
                     this.removeObject(object.childElements[el]);
                 }
+            }
+            if (object.type === Const.OBJECT_TYPE_POLYHEDRON3D) {
+                // Special treatment for polyhedron3d.
+                // With this we can avoid the time consuming addChild() calls.
+                le = object.faces.length;
+                if (le > 0) {
+                    fst = object.faces[0]._pos;
+                    fst = (object.faces[0].element2D._pos < fst) ? object.faces[0].element2D._pos : fst;
+                }
+                for (i = 0; i < le; i++) {
+                    face = object.faces[i];
+                    delete this.objects[face.id];
+
+                    // this.board.removeObject(face.element2D, saveMethod);
+                    delete this.board.objects[face.element2D.id];
+                    delete this.board.elementsByName[face.element2D.name];
+                    face.element2D.remove();
+                    this.board.objectsList.splice(face.element2D._pos, 1);
+
+                    delete this.board.objects[face.id];
+                    delete this.board.elementsByName[face.name];
+                    face.remove();
+                    this.board.objectsList.splice(face._pos, 1);
+                }
+                le = this.board.objectsList.length;
+                // Reindex the positions
+                for (i = fst; i < this.board.objectsList.length; i++) {
+                    o = this.board.objectsList[i];
+                    if (o._pos > -1) { o._pos = i; }
+                }
+                object.faces = [];
             }
 
             delete this.objects[object.id];
@@ -1043,6 +1082,7 @@ JXG.extend(
     worldToFocal: function (pWorld, homog = true) {
         var k,
             pView = Mat.matVecMult(this.boxToCam, Mat.matVecMult(this.shift, pWorld));
+
         pView[3] -= pView[0] * this.focalDist;
         if (homog) {
             return pView;
@@ -1779,6 +1819,70 @@ JXG.extend(
     },
 
     /**
+     * Controls 2-degree navigation in az direction using  pointer.
+     *
+     * @private
+     *
+     * @param {event} evt the pointer event
+     * @returns view
+     */
+    _az_elEventHandler: function (evt) {
+        var smax = this.az_slide._smax,
+            smin = this.az_slide._smin,
+            speed = (smax - smin) / this.board.canvasWidth * (this.evalVisProp('az.pointer.speed')),
+            deltaX, // = evt.movementX,
+            deltaY, // = evt.movementY
+            az = this.az_slide.Value(),
+            el = this.el_slide.Value();
+
+        deltaX = evt.screenX - this._lastPos.x;
+        this._lastPos.x = evt.screenX;
+        deltaY = evt.screenY - this._lastPos.y;
+        this._lastPos.y = evt.screenY;
+
+        // Doesn't allow navigation if another moving event is triggered
+        if (this.board.mode === this.board.BOARD_MODE_DRAG || !this.board._change3DView) {
+            return this;
+        }
+
+        if (this.evalVisProp('az.pointer.enabled') && (deltaX !== 0) && evt.key == null) {
+            // delta *= (Math.abs(delta) > 100) ? 0.03 : 1;
+            az += deltaX * speed;
+        }
+        if (this.evalVisProp('el.pointer.enabled') && (deltaY !== 0) && evt.key == null) {
+            el += deltaY * speed;
+        }
+
+        // Project the calculated az value to a usable value in the interval [smin,smax]
+        // Use modulo if continuous is true
+        if (this.evalVisProp('az.continuous')) {
+            az = Mat.wrap(az, smin, smax);
+        } else {
+            if (az > 0) {
+                az = Math.min(smax, az);
+            } else if (az < 0) {
+                az = Math.max(smin, az);
+            }
+        }
+        // Project the calculated el value to a usable value in the interval [smin,smax]
+        // Use modulo if continuous is true and the trackball is disabled
+        smax = this.el_slide._smax;
+        smin = this.el_slide._smin;
+        if (this.evalVisProp('el.continuous') && !this.trackballEnabled) {
+            el = Mat.wrap(el, smin, smax);
+        } else {
+            if (el > 0) {
+                el = Math.min(smax, el);
+            } else if (el < 0) {
+                el = Math.max(smin, el);
+            }
+        }
+
+        this.setView(az, el);
+        return this;
+    },
+
+    /**
      * Controls the navigation in az direction using either the keyboard or a pointer.
      *
      * @private
@@ -1983,6 +2087,7 @@ JXG.extend(
     pointerDownHandler: function (evt) {
         var neededButton, neededKey, target;
 
+        this._hasMoveAzEl = false;
         this._hasMoveAz = false;
         this._hasMoveEl = false;
         this._hasMoveBank = false;
@@ -2012,38 +2117,61 @@ JXG.extend(
                 this._hasMoveTrackball = true;
             }
         } else {
-            if (this.evalVisProp('az.pointer.enabled')) {
+            if (this.evalVisProp('az.pointer.enabled') && this.evalVisProp('el.pointer.enabled')) {
                 neededButton = this.evalVisProp('az.pointer.button');
                 neededKey = this.evalVisProp('az.pointer.key');
+                if (neededButton === this.evalVisProp('el.pointer.button') &&
+                    neededKey === this.evalVisProp('el.pointer.key')) {
 
-                // Move events for azimuth
-                if (
-                    (neededButton === -1 || neededButton === evt.button) &&
-                    (neededKey === 'none' || (neededKey.indexOf('shift') > -1 && evt.shiftKey) || (neededKey.indexOf('ctrl') > -1 && evt.ctrlKey))
-                ) {
-                    // If outside is true then the event listener is bound to the document, otherwise to the div
-                    target = (this.evalVisProp('az.pointer.outside')) ? document : this.board.containerObj;
-                    Env.addEvent(target, 'pointermove', this._azEventHandler, this);
-                    this._hasMoveAz = true;
+                    // Move events for azimuth and elevation
+                    if (
+                        (neededButton === -1 || neededButton === evt.button) &&
+                        (neededKey === 'none' || (neededKey.indexOf('shift') > -1 && evt.shiftKey) ||
+                            (neededKey.indexOf('ctrl') > -1 && evt.ctrlKey))
+                    ) {
+                        // If outside is true then the event listener is bound to the document, otherwise to the div
+                        target = (this.evalVisProp('az.pointer.outside')) ? document : this.board.containerObj;
+
+                        if (target === ((this.evalVisProp('el.pointer.outside')) ? document : this.board.containerObj)) {
+                            Env.addEvent(target, 'pointermove', this._az_elEventHandler, this);
+                            this._hasMoveAzEl = true;
+                        }
+                    }
                 }
             }
+            if (!this._hasMoveAzEl) {
+                if (this.evalVisProp('az.pointer.enabled')) {
+                    neededButton = this.evalVisProp('az.pointer.button');
+                    neededKey = this.evalVisProp('az.pointer.key');
 
-            if (this.evalVisProp('el.pointer.enabled')) {
-                neededButton = this.evalVisProp('el.pointer.button');
-                neededKey = this.evalVisProp('el.pointer.key');
+                    // Move events for azimuth
+                    if (
+                        (neededButton === -1 || neededButton === evt.button) &&
+                        (neededKey === 'none' || (neededKey.indexOf('shift') > -1 && evt.shiftKey) || (neededKey.indexOf('ctrl') > -1 && evt.ctrlKey))
+                    ) {
+                        // If outside is true then the event listener is bound to the document, otherwise to the div
+                        target = (this.evalVisProp('az.pointer.outside')) ? document : this.board.containerObj;
+                        Env.addEvent(target, 'pointermove', this._azEventHandler, this);
+                        this._hasMoveAz = true;
+                    }
+                }
 
-                // Events for elevation
-                if (
-                    (neededButton === -1 || neededButton === evt.button) &&
-                    (neededKey === 'none' || (neededKey.indexOf('shift') > -1 && evt.shiftKey) || (neededKey.indexOf('ctrl') > -1 && evt.ctrlKey))
-                ) {
-                    // If outside is true then the event listener is bound to the document, otherwise to the div
-                    target = (this.evalVisProp('el.pointer.outside')) ? document : this.board.containerObj;
-                    Env.addEvent(target, 'pointermove', this._elEventHandler, this);
-                    this._hasMoveEl = true;
+                if (this.evalVisProp('el.pointer.enabled')) {
+                    neededButton = this.evalVisProp('el.pointer.button');
+                    neededKey = this.evalVisProp('el.pointer.key');
+
+                    // Events for elevation
+                    if (
+                        (neededButton === -1 || neededButton === evt.button) &&
+                        (neededKey === 'none' || (neededKey.indexOf('shift') > -1 && evt.shiftKey) || (neededKey.indexOf('ctrl') > -1 && evt.ctrlKey))
+                    ) {
+                        // If outside is true then the event listener is bound to the document, otherwise to the div
+                        target = (this.evalVisProp('el.pointer.outside')) ? document : this.board.containerObj;
+                        Env.addEvent(target, 'pointermove', this._elEventHandler, this);
+                        this._hasMoveEl = true;
+                    }
                 }
             }
-
             if (this.evalVisProp('bank.pointer.enabled')) {
                 neededButton = this.evalVisProp('bank.pointer.button');
                 neededKey = this.evalVisProp('bank.pointer.key');
@@ -2076,6 +2204,11 @@ JXG.extend(
     pointerUpHandler: function (evt) {
         var target;
 
+        if (this._hasMoveAzEl) {
+            target = (this.evalVisProp('az.pointer.outside')) ? document : this.board.containerObj;
+            Env.removeEvent(target, 'pointermove', this._az_elEventHandler, this);
+            this._hasMoveAzEl = false;
+        }
         if (this._hasMoveAz) {
             target = (this.evalVisProp('az.pointer.outside')) ? document : this.board.containerObj;
             Env.removeEvent(target, 'pointermove', this._azEventHandler, this);

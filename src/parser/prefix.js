@@ -256,6 +256,7 @@ JXG.PrefixParser = {
                 case 'L':
                 case 'Length':
                 case 'Perimeter':
+                case 'Diameter':
                 case 'Radius':
                 case 'R':
                     res = 1;
