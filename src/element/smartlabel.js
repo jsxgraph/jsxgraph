@@ -241,7 +241,34 @@ JXG.createSmartLabel = function (board, parents, attributes) {
          * @class
          * @ignore
          */
-        attr.visible = function () { return (p.L() < 1.5) ? false : true; };
+        attr.visible = function (self) {
+            var orientation = self.evalVisProp('orientation'),
+                sizeLabel = self.getSize(),
+                sizeParent,
+                c1, c2,
+                dx, dy;
+
+            c1 = p.point1.coords.scrCoords;
+            c2 = p.point2.coords.scrCoords;
+            dx = c2[1] - c1[1];
+            dy = c2[2] - c1[2];
+            sizeParent = Math.floor(Math.sqrt(dx * dx + dy * dy));
+
+            switch (orientation) {
+                case 'parallel':
+                case 'parallel-inverted':
+                case 'inverted':
+                    return sizeLabel[0] < sizeParent * 0.7;
+
+                case 'orthogonal':
+                case 'orthogonal-inverted':
+                    return sizeLabel[1] < sizeParent * 0.7;
+
+                case 'none':
+                default:
+                    return p.L() >= 1.5;
+            }
+        };
 
     } else if (p.elementClass === Const.OBJECT_CLASS_CIRCLE) {
         attr = Type.merge(attr, Type.copyAttributes(attributes, board.options, 'smartlabelcircle'));
@@ -249,7 +276,24 @@ JXG.createSmartLabel = function (board, parents, attributes) {
          * @class
          * @ignore
          */
-        attr.visible = function () { return (p.Radius() < 1.5) ? false : true; };
+        attr.visible = function (self) {
+            var sizeLabel = self.getSize(),
+                sizeParent,
+                c1, c2,
+                dx, dy;
+
+            c1 = p.center.coords.scrCoords;
+            if (p.point2) {
+                c2 = p.point2.coords.scrCoords;
+            } else {
+                c2 = new JXG.Coords(JXG.COORDS_BY_USER, [p.center.coords.usrCoords[0], p.center.coords.usrCoords[1] + p.Radius()], p.board).scrCoords;
+            }
+            dx = c2[1] - c1[1];
+            dy = c2[2] - c1[2];
+            sizeParent = Math.floor(Math.sqrt(dx * dx + dy * dy)) * 2;
+
+            return sizeLabel[0] < sizeParent * 0.6;
+        };
 
     } else if (p.type === Const.OBJECT_TYPE_POLYGON) {
         attr = Type.merge(attr, Type.copyAttributes(attributes, board.options, 'smartlabelpolygon'));
