@@ -189,18 +189,16 @@ import Type from "../utils/type.js";
  */
 JXG.createSmartLabel = function (board, parents, attributes) {
     var el, attr,
-        p, user_supplied_text,
-        getTextFun, txt_fun;
+        p, user_supplied_text;
 
     if (parents.length === 0 || (
-        [Const.OBJECT_CLASS_POINT, Const.OBJECT_CLASS_LINE,Const.OBJECT_CLASS_CIRCLE].indexOf(parents[0].elementClass) < 0 &&
+        [Const.OBJECT_CLASS_POINT, Const.OBJECT_CLASS_LINE, Const.OBJECT_CLASS_CIRCLE].indexOf(parents[0].elementClass) < 0 &&
         [Const.OBJECT_TYPE_POLYGON, Const.OBJECT_TYPE_ANGLE].indexOf(parents[0].type) < 0
-        )
-    ) {
+    )) {
         throw new Error(
             "JSXGraph: Can't create smartlabel with parent types " +
-                "'" + typeof parents[0] + "', " +
-                "'" + typeof parents[1] + "'."
+            "'" + typeof parents[0] + "', " +
+            "'" + typeof parents[1] + "'."
         );
     }
 
@@ -279,155 +277,12 @@ JXG.createSmartLabel = function (board, parents, attributes) {
         };
     }
 
-    getTextFun = function (el, p, elType, mType) {
-        var measure;
-        switch (mType) {
-            case 'length':
-                /**
-                 * @ignore
-                 */
-                measure = function () { return p.L(); };
-                break;
-            case 'slope':
-                /**
-                 * @ignore
-                 */
-                measure = function () { return p.Slope(); };
-                break;
-            case 'area':
-                /**
-                 * @ignore
-                 */
-                measure = function () { return p.Area(); };
-                break;
-            case 'radius':
-                /**
-                 * @ignore
-                 */
-                measure = function () { return p.Radius(); };
-                break;
-            case 'perimeter':
-                /**
-                 * @ignore
-                 */
-                measure = function () { return p.Perimeter(); };
-                break;
-            case 'rad':
-                /**
-                 * @ignore
-                 */
-                measure = function () { return p.Value(); };
-                break;
-            case 'deg':
-                /**
-                 * @ignore
-                 */
-                measure = function () { return p.Value() * 180 / Math.PI; };
-                break;
-            default:
-                /**
-                 * @ignore
-                 */
-                measure = function () { return 0.0; };
-        }
-
-        return function () {
-            var str = '',
-                val,
-                txt = Type.evaluate(user_supplied_text),
-                digits = el.evalVisProp('digits'),
-                u = el.evalVisProp('baseUnit'),
-                pre = '',
-                suf =  '',
-                mj = el.evalVisProp('usemathjax') || el.evalVisProp('usekatex');
-
-            if (el.evalVisProp('showPrefix')) {
-                pre = el.evalVisProp('prefix');
-            }
-            if (el.evalVisProp('showSuffix')) {
-                suf = el.evalVisProp('suffix');
-            }
-
-            if (u === '' && el.evalVisProp('unit') !== '') {
-                // Backwards compatibility
-                u = el.evalVisProp('unit');
-            }
-
-            if (txt === '') {
-                if (el.useLocale()) {
-                    val = el.formatNumberLocale(measure(), digits);
-                } else {
-                    val = Type.toFixed(measure(), digits);
-                }
-                if (mj) {
-                    str = ['\\(', pre, val, '\\,', u, suf, '\\)'].join('');
-                } else {
-                    str = [pre, val, u, suf].join('');
-                }
-            } else {
-                str = txt;
-            }
-            return str;
-        };
-    };
-
     if (p.elementClass === Const.OBJECT_CLASS_POINT) {
         el = board.create('text', [
             function () { return p.X(); },
             function () { return p.Y(); },
             ''
         ], attr);
-
-        txt_fun = function () {
-            var str = '',
-                txt = Type.evaluate(user_supplied_text),
-                digits = el.evalVisProp('digits'),
-                u = el.evalVisProp('baseUnit'),
-                pre = '',
-                suf = '',
-                dir = el.evalVisProp('dir'),
-                mj = el.evalVisProp('usemathjax') || el.evalVisProp('usekatex'),
-                x, y;
-
-            if (el.evalVisProp('showPrefix')) {
-                pre = el.evalVisProp('prefix');
-            }
-            if (el.evalVisProp('showSuffix')) {
-                suf = el.evalVisProp('suffix');
-            }
-
-            if (u === '' && el.evalVisProp('unit') !== '') {
-                // Backwards compatibility
-                u = el.evalVisProp('unit');
-            }
-
-            if (el.useLocale()) {
-                x = el.formatNumberLocale(p.X(), digits);
-                y = el.formatNumberLocale(p.Y(), digits);
-            } else {
-                x = Type.toFixed(p.X(), digits);
-                y = Type.toFixed(p.Y(), digits);
-            }
-
-            if (txt === '') {
-                if (dir === 'row') {
-                    if (mj) {
-                        str = ['\\(', pre, x, '\\,', u, ' / ', y, '\\,', u, suf, '\\)'].join('');
-                    } else {
-                        str = [pre, x, ' ', u, ' / ', y, ' ', u, suf].join('');
-                    }
-                } else if (dir.indexOf('col') === 0) { // Starts with 'col'
-                    if (mj) {
-                        str = ['\\(', pre, '\\left(\\array{', x, '\\,', u, '\\\\ ', y, '\\,', u, '}\\right)', suf, '\\)'].join('');
-                    } else {
-                        str = [pre, x, ' ', u, '<br />', y, ' ', u, suf].join('');
-                    }
-                }
-            } else {
-                str = txt;
-            }
-            return str;
-        };
 
     } else if (p.elementClass === Const.OBJECT_CLASS_LINE) {
 
@@ -437,7 +292,6 @@ JXG.createSmartLabel = function (board, parents, attributes) {
                 function () { return (p.point1.Y() + p.point2.Y()) * 0.5; },
                 ''
             ], attr);
-            txt_fun = getTextFun(el, p, 'line', 'length');
 
         } else if (attr.measure === 'slope') {
             el = board.create('text', [
@@ -445,7 +299,6 @@ JXG.createSmartLabel = function (board, parents, attributes) {
                 function () { return (p.point1.Y() * 0.25 + p.point2.Y() * 0.75); },
                 ''
             ], attr);
-            txt_fun = getTextFun(el, p, 'line', 'slope');
         }
 
     } else if (p.elementClass === Const.OBJECT_CLASS_CIRCLE) {
@@ -455,7 +308,6 @@ JXG.createSmartLabel = function (board, parents, attributes) {
                 function () { return p.center.Y(); },
                 ''
             ], attr);
-            txt_fun = getTextFun(el, p, 'circle', 'radius');
 
         } else if (attr.measure === 'area') {
             el = board.create('text', [
@@ -463,14 +315,12 @@ JXG.createSmartLabel = function (board, parents, attributes) {
                 function () { return p.center.Y() + p.Radius() * 0.5; },
                 ''
             ], attr);
-            txt_fun = getTextFun(el, p, 'circle', 'area');
 
         } else if (attr.measure === 'circumference' || attr.measure === 'perimeter') {
             el = board.create('text', [
                 function () { return p.getLabelAnchor(); },
                 ''
             ], attr);
-            txt_fun = getTextFun(el, p, 'circle', 'perimeter');
 
         }
     } else if (p.type === Const.OBJECT_TYPE_POLYGON) {
@@ -479,7 +329,6 @@ JXG.createSmartLabel = function (board, parents, attributes) {
                 function () { return p.getTextAnchor(); },
                 ''
             ], attr);
-            txt_fun = getTextFun(el, p, 'polygon', 'area');
 
         } else if (attr.measure === 'perimeter') {
             el = board.create('text', [
@@ -496,7 +345,6 @@ JXG.createSmartLabel = function (board, parents, attributes) {
                 },
                 ''
             ], attr);
-            txt_fun = getTextFun(el, p, 'polygon', 'perimeter');
         }
 
     } else if (p.type === Const.OBJECT_TYPE_ANGLE) {
@@ -506,14 +354,149 @@ JXG.createSmartLabel = function (board, parents, attributes) {
             },
             ''
         ], attr);
-        txt_fun = getTextFun(el, p, 'angle', attr.measure);
     }
 
-    if (Type.exists(el)) {
-        el.setText(txt_fun);
-        p.addChild(el);
-        el.setParents([p]);
+    if (!Type.exists(el)) {
+        return el;
     }
+
+    el.Value = function () {
+        var mType = this.evalVisProp('measure');
+
+        switch (mType) {
+            case 'length':
+                return p.L();
+
+            case 'slope':
+                return p.Slope();
+
+            case 'area':
+                return p.Area();
+
+            case 'radius':
+                return p.Radius();
+
+            case 'perimeter':
+            case 'circumference':
+                return p.Perimeter();
+
+            case 'rad':
+                return p.Value();
+
+            case 'deg':
+                return p.Value() * 180 / Math.PI;
+
+            case 'coords':
+                return [p.X(), p.Y()];
+
+            default:
+                return 0.0;
+        }
+    };
+
+    el.setText(function () {
+        var str = '',
+            val,
+            txt = Type.evaluate(user_supplied_text),
+            digits,
+            u,
+            pre = '',
+            suf = '',
+            dir,
+            mj,
+            i;
+
+        if (txt === '') {
+
+            val = el.Value();
+            digits = el.evalVisProp('digits');
+            u = el.evalVisProp('baseUnit');
+            pre = '';
+            suf = '';
+            dir = el.evalVisProp('dir');
+            mj = el.evalVisProp('usemathjax') || el.evalVisProp('usekatex');
+
+            if (el.evalVisProp('showPrefix')) {
+                pre = el.evalVisProp('prefix');
+            }
+            if (el.evalVisProp('showSuffix')) {
+                suf = el.evalVisProp('suffix');
+            }
+
+            if (u === '' && el.evalVisProp('unit') !== '') {
+                // Backwards compatibility
+                u = el.evalVisProp('unit');
+            }
+
+            if (el.useLocale()) {
+                if (Type.isArray(val)) {
+                    for (i = 0; i < val.length; i++) {
+                        val[i] = el.formatNumberLocale(val[i], digits);
+                    }
+                } else {
+                    val = el.formatNumberLocale(val, digits);
+                }
+            } else {
+                if (Type.isArray(val)) {
+                    for (i = 0; i < val.length; i++) {
+                        val[i] = Type.toFixed(val[i], digits);
+                    }
+                } else {
+                    val = Type.toFixed(val, digits);
+                }
+            }
+            if (Type.isArray(val)) {
+                if (dir === 'row') {
+                    if (mj) {
+                        str = ['\\(', pre, x, '\\,', u, ' / ', y, '\\,', u, suf, '\\)'].join('');
+                    } else {
+                        str = [pre, x, ' ', u, ' / ', y, ' ', u, suf].join('');
+                    }
+                } else if (dir.indexOf('col') === 0) { // Starts with 'col'
+                    str = [];
+                    if (mj) {
+                        str.push('\\(', pre, '\\left(\\array{');
+                        for (i = 0; i < val.length; i++) {
+                            str.push(val[i], '\\,', u);
+                            if (i < val.length - 1) {
+                                str.push('\\\\ ');
+                            }
+                        }
+                        str.push('}\\right)', suf, '\\)');
+
+                    } else {
+                        str.push(pre);
+                        for (i = 0; i < val.length; i++) {
+                            str.push(val[i], ' ', u);
+                            if (i < val.length - 1) {
+                                str.push('<br />');
+                            }
+                        }
+                        str.push(suf);
+                    }
+                    str = str.join('');
+                }
+            } else {
+                if (mj) {
+                    str = ['\\(', pre, val, '\\,', u, suf, '\\)'].join('');
+                } else {
+                    str = [pre, val, u, suf].join('');
+                }
+            }
+
+        } else {
+            str = txt;
+        }
+        return str;
+    });
+
+    p.addChild(el);
+    el.setParents([p]);
+
+    el.methodMap = Type.deepCopy(el.methodMap, {
+        Value: "Value",
+        V: "Value"
+    });
 
     return el;
 };

@@ -9156,7 +9156,7 @@ JXG.Options = {
         anchorX: 'middle',
         anchorY: 'top',
 
-        measure: '',
+        measure: 'coords',
         /**
          * Display of point coordinates either as row vector or column vector.
          * Available values are 'row' or 'column'.
