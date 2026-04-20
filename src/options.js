@@ -9031,6 +9031,18 @@ JXG.Options = {
         baseUnit: '',
 
         /**
+         * This attribute expects an object that has the dimension numbers as keys (as integer or in the form of 'dimxx')
+         * and assigns a string to each dimension.
+         * If a dimension has no specification, {@link Smartlabel#baseUnit} is used.
+         *
+         * @see Smartlabel#baseUnit
+         * @name Smartlabel#units
+         * @type Object
+         * @default {}
+         */
+        units: {},
+
+        /**
          * Determines whether a prefix is displayed before the measurement value and unit.
          *
          * @see Smartlabel#prefix

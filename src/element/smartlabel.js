@@ -394,9 +394,39 @@ JXG.createSmartLabel = function (board, parents, attributes) {
         }
     };
 
+    el.Dimension = function () {
+        var mType = this.evalVisProp('measure');
+
+        switch (mType) {
+            case 'area':
+                return 2;
+
+            case 'length':
+            case 'radius':
+            case 'perimeter':
+            case 'circumference':
+                return 1;
+
+            case 'slope':
+                return 0;
+
+            case 'rad':
+            case 'deg':
+                // Angles in various units has dimension 0
+                return 0;
+
+            case 'coords':
+                return 1;
+
+            default:
+                return 0;
+        }
+    };
+
     el.setText(function () {
         var str = '',
             val,
+            dim,
             txt = Type.evaluate(user_supplied_text),
             digits,
             u,
@@ -406,87 +436,87 @@ JXG.createSmartLabel = function (board, parents, attributes) {
             mj,
             i;
 
-        if (txt === '') {
-
-            val = el.Value();
-            digits = el.evalVisProp('digits');
-            u = el.evalVisProp('baseUnit');
-            pre = '';
-            suf = '';
-            dir = el.evalVisProp('dir');
-            mj = el.evalVisProp('usemathjax') || el.evalVisProp('usekatex');
-
-            if (el.evalVisProp('showPrefix')) {
-                pre = el.evalVisProp('prefix');
-            }
-            if (el.evalVisProp('showSuffix')) {
-                suf = el.evalVisProp('suffix');
-            }
-
-            if (u === '' && el.evalVisProp('unit') !== '') {
-                // Backwards compatibility
-                u = el.evalVisProp('unit');
-            }
-
-            if (el.useLocale()) {
-                if (Type.isArray(val)) {
-                    for (i = 0; i < val.length; i++) {
-                        val[i] = el.formatNumberLocale(val[i], digits);
-                    }
-                } else {
-                    val = el.formatNumberLocale(val, digits);
-                }
-            } else {
-                if (Type.isArray(val)) {
-                    for (i = 0; i < val.length; i++) {
-                        val[i] = Type.toFixed(val[i], digits);
-                    }
-                } else {
-                    val = Type.toFixed(val, digits);
-                }
-            }
-            if (Type.isArray(val)) {
-                if (dir === 'row') {
-                    if (mj) {
-                        str = ['\\(', pre, x, '\\,', u, ' / ', y, '\\,', u, suf, '\\)'].join('');
-                    } else {
-                        str = [pre, x, ' ', u, ' / ', y, ' ', u, suf].join('');
-                    }
-                } else if (dir.indexOf('col') === 0) { // Starts with 'col'
-                    str = [];
-                    if (mj) {
-                        str.push('\\(', pre, '\\left(\\array{');
-                        for (i = 0; i < val.length; i++) {
-                            str.push(val[i], '\\,', u);
-                            if (i < val.length - 1) {
-                                str.push('\\\\ ');
-                            }
-                        }
-                        str.push('}\\right)', suf, '\\)');
-
-                    } else {
-                        str.push(pre);
-                        for (i = 0; i < val.length; i++) {
-                            str.push(val[i], ' ', u);
-                            if (i < val.length - 1) {
-                                str.push('<br />');
-                            }
-                        }
-                        str.push(suf);
-                    }
-                    str = str.join('');
-                }
-            } else {
-                if (mj) {
-                    str = ['\\(', pre, val, '\\,', u, suf, '\\)'].join('');
-                } else {
-                    str = [pre, val, u, suf].join('');
-                }
-            }
-
-        } else {
-            str = txt;
+        if (txt !== '') {
+            return txt;
         }
+
+        val = el.Value();
+        dim = el.Dimension();
+        digits = el.evalVisProp('digits');
+        u = el.evalVisProp('baseUnit');
+        pre = '';
+        suf = '';
+        dir = el.evalVisProp('dir');
+        mj = el.evalVisProp('usemathjax') || el.evalVisProp('usekatex');
+
+        if (el.evalVisProp('showPrefix')) {
+            pre = el.evalVisProp('prefix');
+        }
+        if (el.evalVisProp('showSuffix')) {
+            suf = el.evalVisProp('suffix');
+        }
+
+        if (u === '' && el.evalVisProp('unit') !== '') {
+            // Backwards compatibility
+            u = el.evalVisProp('unit');
+        }
+
+        if (el.useLocale()) {
+            if (Type.isArray(val)) {
+                for (i = 0; i < val.length; i++) {
+                    val[i] = el.formatNumberLocale(val[i], digits);
+                }
+            } else {
+                val = el.formatNumberLocale(val, digits);
+            }
+        } else {
+            if (Type.isArray(val)) {
+                for (i = 0; i < val.length; i++) {
+                    val[i] = Type.toFixed(val[i], digits);
+                }
+            } else {
+                val = Type.toFixed(val, digits);
+            }
+        }
+        if (Type.isArray(val)) {
+            if (dir === 'row') {
+                if (mj) {
+                    str = ['\\(', pre, x, '\\,', u, ' / ', y, '\\,', u, suf, '\\)'].join('');
+                } else {
+                    str = [pre, x, ' ', u, ' / ', y, ' ', u, suf].join('');
+                }
+            } else if (dir.indexOf('col') === 0) { // Starts with 'col'
+                str = [];
+                if (mj) {
+                    str.push('\\(', pre, '\\left(\\array{');
+                    for (i = 0; i < val.length; i++) {
+                        str.push(val[i], '\\,', u);
+                        if (i < val.length - 1) {
+                            str.push('\\\\ ');
+                        }
+                    }
+                    str.push('}\\right)', suf, '\\)');
+
+                } else {
+                    str.push(pre);
+                    for (i = 0; i < val.length; i++) {
+                        str.push(val[i], ' ', u);
+                        if (i < val.length - 1) {
+                            str.push('<br />');
+                        }
+                    }
+                    str.push(suf);
+                }
+                str = str.join('');
+            }
+        } else {
+            if (mj) {
+                str = ['\\(', pre, val, '\\,', u, suf, '\\)'].join('');
+            } else {
+                str = [pre, val, u, suf].join('');
+            }
+        }
+
         return str;
     });
 
@@ -495,7 +525,8 @@ JXG.createSmartLabel = function (board, parents, attributes) {
 
     el.methodMap = Type.deepCopy(el.methodMap, {
         Value: "Value",
-        V: "Value"
+        V: "Value",
+        Dimension: "Dimension"
     });
 
     return el;
