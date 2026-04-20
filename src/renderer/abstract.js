@@ -1389,42 +1389,6 @@ JXG.extend(
         },
 
         /**
-         * Converts string containing CSS properties into
-         * array with key-value pair objects.
-         *
-         * @example
-         * "color:blue; background-color:yellow" is converted to
-         * [{'color': 'blue'}, {'backgroundColor': 'yellow'}]
-         *
-         * @param  {String} cssString String containing CSS properties
-         * @return {Array}           Array of CSS key-value pairs
-         */
-        _css2js: function (cssString) {
-            var pairs = [],
-                i,
-                len,
-                key,
-                val,
-                s,
-                list = Type.trim(cssString).replace(/;$/, "").split(";");
-
-            len = list.length;
-            for (i = 0; i < len; ++i) {
-                if (Type.trim(list[i]) !== "") {
-                    s = list[i].split(":");
-                    key = Type.trim(
-                        s[0].replace(/-([a-z])/gi, function (match, char) {
-                            return char.toUpperCase();
-                        })
-                    );
-                    val = Type.trim(s[1]);
-                    pairs.push({ key: key, val: val });
-                }
-            }
-            return pairs;
-        },
-
-        /**
          * Updates font-size, color and opacity properties and CSS style properties of a {@link JXG.Text} node.
          * This function is also called by highlight() and nohighlight().
          * @param {JXG.Text} el Reference to the {@link JXG.Text} object, that has to be updated.
@@ -1447,7 +1411,7 @@ JXG.extend(
                 lenN = nodeList.length,
                 fontUnit = el.evalVisProp('fontunit'),
                 cssList,
-                prop,
+                prop, pair,
                 style,
                 cssString,
                 styleList = ["cssdefaultstyle", "cssstyle"],
@@ -1480,17 +1444,14 @@ JXG.extend(
                         (doHighlight ? 'highlight' : '') + styleList[style]
                     );
                     // Set the CSS style properties - without deleting other properties
-                    for (node = 0; node < lenN; node++) {
-                        if (Type.exists(el[nodeList[node]])) {
-                            if (cssString !== "" && el.visPropOld[styleList[style] + '_' + node] !== cssString) {
-                                cssList = this._css2js(cssString);
-                                for (prop in cssList) {
-                                    if (cssList.hasOwnProperty(prop)) {
-                                        el[nodeList[node]].style[cssList[prop].key] = cssList[prop].val;
-                                    }
-                                }
-                                el.visPropOld[styleList[style] + '_' + node] = cssString;
+                    for (node = 0; node < lenN; node++) if (Type.exists(el[nodeList[node]])) {
+                        if (cssString !== "" && el.visPropOld[styleList[style] + '_' + node] !== cssString) {
+                            cssList = Type.css2js(cssString);
+                            for (prop in cssList) if (cssList.hasOwnProperty(prop)) {
+                                pair = cssList[prop];
+                                el[nodeList[node]].style[pair.key] = pair.val;
                             }
+                            el.visPropOld[styleList[style] + '_' + node] = cssString;
                         }
                         // el.visPropOld[styleList[style]] = cssString;
                     }
@@ -1976,10 +1937,12 @@ JXG.extend(
         setBuffering: function (node, type) { /* stub */ },
 
         /**
-         * Clip element to the JSXGraph container element (div). To be precise: to the SVG node.
+         * Clip element to the JSXGraph container element (div). To be precise: to the SVG node
+         * in case of SVG rendering - the only renderer, where this is relevant.
          *
          * @param {JXG.GeometryElement} el Reference of the object
          * @param {Boolean} val true: clip to the JSXGraph div, false: do not clip
+         * @see JXG.SVGRenderer#setClipPathRect
          */
         setClipPath: function(el, val) { /* stub */ },
 

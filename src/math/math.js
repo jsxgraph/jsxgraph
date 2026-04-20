@@ -739,7 +739,11 @@ JXG.Math = {
      * @returns {Number} Cotangent of the given value.
      */
     cot: function (x) {
-        return 1 / Math.tan(x);
+        var t = Math.tan(x);
+        if (Math.abs(t) < this.eps) {
+            return NaN;
+        }
+        return 1 / t;
     },
 
     /**
@@ -765,11 +769,13 @@ JXG.Math = {
      * nthroot(-4, 2): NaN
      */
     nthroot: function (x, n) {
-        var inv = 1 / n;
+        var inv;
 
         if (n <= 0 || Math.floor(n) !== n) {
             return NaN;
         }
+
+        inv = 1 / n;
 
         if (x === 0.0) {
             return 0.0;
@@ -880,6 +886,9 @@ JXG.Math = {
      */
     log: function (x, b) {
         if (b !== undefined && Type.isNumber(b)) {
+            if (b <= 0 || Math.abs(b - 1) < this.eps) {
+                return NaN;
+            }
             return Math.log(x) / Math.log(b);
         }
 

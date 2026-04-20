@@ -1541,10 +1541,16 @@ JXG.createAngle = function (board, parents, attributes) {
             if (p.draggable()) {
 
                 if (this.evalVisProp('orientation') === 'clockwise') {
+                    /**
+                     * @ignore
+                     */
                     phi = function() {
                         return Math.PI * 2 - Type.evaluate(val);
                     };
                 } else {
+                    /**
+                     * @ignore
+                     */
                     phi = function() {
                         return Type.evaluate(val);
                     };

@@ -36,6 +36,7 @@ import JXG from "../jxg.js";
 import Options from "../options.js";
 import AbstractRenderer from "./abstract.js";
 import Const from "../base/constants.js";
+// import Env from "../utils/env.js";
 import Type from "../utils/type.js";
 import Color from "../utils/color.js";
 import Base64 from "../utils/base64.js";
@@ -286,14 +287,18 @@ JXG.SVGRenderer = function (container, dim) {
      * It is called in procedure resize().
      * @param {Number} w
      * @param {Number} h
+     * @see JXG.AbstractRenderer#setClipPath
      */
-    this.updateClipPathRect = function(w, h) {
+    this.updateClipPathRect = function (w, h) {
         var id = this.uniqName('ClipFull'),
-            node = this.container.ownerDocument.getElementById(id).firstChild;
+            node;
 
-        if (Type.exists(node)) {
-            node.setAttributeNS(null, 'width', w);
-            node.setAttributeNS(null, 'height', h);
+        if (Type.exists(this.container.ownerDocument.getElementById(id).firstChild)) {
+            node = this.container.ownerDocument.getElementById(id).firstChild;
+            if (Type.exists(node)) {
+                node.setAttributeNS(null, 'width', w);
+                node.setAttributeNS(null, 'height', h);
+            }
         }
     };
 
@@ -375,11 +380,12 @@ JXG.extend(
                 node2.setAttributeNS(null, 'fill', 'context-stroke');
                 node2.setAttributeNS(null, 'stroke', 'context-stroke');
             }
+            node2.setAttributeNS(null, 'stroke-width', 0); // this is the stroke-width of the arrow head.
 
             // node2.setAttributeNS(null, 'fill-opacity', 'context-stroke'); // Not available
             // node2.setAttributeNS(null, 'stroke-opacity', 'context-stroke');
             node2.setAttributeNS(null, 'stroke-width', 0); // this is the stroke-width of the arrow head.
-            // Should be zero to simplify the calculations
+                                                           // Should be zero to simplify the calculations
 
             node2.setAttributeNS(null, 'orient', 'auto');
             node2.setAttributeNS(null, 'markerUnits', 'strokeWidth'); // 'strokeWidth' 'userSpaceOnUse');
@@ -538,6 +544,10 @@ JXG.extend(
             // this.setPropertyPrim(node2, 'class', el.evalVisProp('cssclass'));
 
             node2.appendChild(node3);
+
+            // Set color and opacity
+            this._setArrowColor(node2, el.evalVisProp('strokecolor'), el.evalVisProp('strokeopacity'), el, type);
+
             return node2;
         },
 
@@ -553,6 +563,7 @@ JXG.extend(
                 if (Type.isString(color)) {
                     if (type !== 7) {
                         this._setAttribute(function () {
+                            node.setAttributeNS(null, 'fill-opacity', opacity);
                             if (JXG.isWebkitApple()) {
                                 // 2025: Safari does not support 'context-stroke'
                                 node.setAttributeNS(null, 'fill', color);
@@ -563,6 +574,7 @@ JXG.extend(
                     } else {
                         this._setAttribute(function () {
                             node.setAttributeNS(null, 'fill', 'none');
+                            node.setAttributeNS(null, 'stroke-opacity', opacity);
                             if (JXG.isWebkitApple()) {
                                 node.setAttributeNS(null, 'stroke', color);
                             } else {
@@ -939,13 +951,19 @@ JXG.extend(
 
         // Already documented in JXG.AbstractRenderer
         setLayer: function (el, level) {
+            var node;
             if (!Type.exists(level)) {
                 level = 0;
             } else if (level >= Options.layer.numlayers) {
                 level = Options.layer.numlayers - 1;
             }
 
-            this.layer[level].appendChild(el.rendNode);
+            node = this.layer[level];
+            if (Type.exists(node.moveBefore)) {
+                node.moveBefore(el.rendNode, null);
+            } else {
+                node.appendChild(el.rendNode);
+            }
         },
 
         // Already documented in JXG.AbstractRenderer
@@ -1054,11 +1072,11 @@ JXG.extend(
         },
 
         // Already documented in JXG.AbstractRenderer
-        updatePathPrim: function (node, pointString) {
-            if (pointString === "") {
-                pointString = "M 0 0";
+        updatePathPrim: function (node, str) {
+            if (str === "") {
+                str = "M 0 0";
             }
-            node.setAttributeNS(null, "d", pointString);
+            node.setAttributeNS(null, "d", str);
         },
 
         // Already documented in JXG.AbstractRenderer
@@ -1069,143 +1087,45 @@ JXG.extend(
                 s05 = size * 0.5;
 
             if (type === 'x') {
-                s =
-                    " M " +
-                    (scr[1] - size) +
-                    " " +
-                    (scr[2] - size) +
-                    " L " +
-                    (scr[1] + size) +
-                    " " +
-                    (scr[2] + size) +
-                    " M " +
-                    (scr[1] + size) +
-                    " " +
-                    (scr[2] - size) +
-                    " L " +
-                    (scr[1] - size) +
-                    " " +
-                    (scr[2] + size);
-            } else if (type === "+") {
-                s =
-                    " M " +
-                    (scr[1] - size) +
-                    " " +
-                    scr[2] +
-                    " L " +
-                    (scr[1] + size) +
-                    " " +
-                    scr[2] +
-                    " M " +
-                    scr[1] +
-                    " " +
-                    (scr[2] - size) +
-                    " L " +
-                    scr[1] +
-                    " " +
-                    (scr[2] + size);
-            } else if (type === "|") {
-                s =
-                    " M " +
-                    scr[1] +
-                    " " +
-                    (scr[2] - size) +
-                    " L " +
-                    scr[1] +
-                    " " +
-                    (scr[2] + size);
-            } else if (type === "-") {
-                s =
-                    " M " +
-                    (scr[1] - size) +
-                    " " +
-                    scr[2] +
-                    " L " +
-                    (scr[1] + size) +
-                    " " +
-                    scr[2];
-            } else if (type === "<>" || type === "<<>>") {
-                if (type === "<<>>") {
+                s = ' M ' + (scr[1] - size) + ' ' + (scr[2] - size) +
+                    ' L ' + (scr[1] + size) + ' ' + (scr[2] + size) +
+                    ' M ' + (scr[1] + size) + ' ' + (scr[2] - size) +
+                    ' L ' + (scr[1] - size) + ' ' + (scr[2] + size);
+            } else if (type === '+') {
+                s = ' M ' + (scr[1] - size) + ' ' + scr[2] +
+                    ' L ' + (scr[1] + size) + ' ' + scr[2] +
+                    ' M ' + scr[1] + ' ' + (scr[2] - size) +
+                    ' L ' + scr[1] + ' ' + (scr[2] + size);
+            } else if (type === '|') {
+                s = ' M ' + scr[1] + ' ' + (scr[2] - size) +
+                    ' L ' + scr[1] + ' ' + (scr[2] + size);
+            } else if (type === '-') {
+                s = ' M ' + (scr[1] - size) + ' ' + scr[2] +
+                    ' L ' + (scr[1] + size) + ' ' + scr[2];
+            } else if (type === '<>' || type === '<<>>') {
+                if (type === '<<>>') {
                     size *= 1.41;
                 }
-                s =
-                    " M " +
-                    (scr[1] - size) +
-                    " " +
-                    scr[2] +
-                    " L " +
-                    scr[1] +
-                    " " +
-                    (scr[2] + size) +
-                    " L " +
-                    (scr[1] + size) +
-                    " " +
-                    scr[2] +
-                    " L " +
-                    scr[1] +
-                    " " +
-                    (scr[2] - size) +
-                    " Z ";
-                } else if (type === "^") {
-                    s =
-                    " M " +
-                    scr[1] +
-                    " " +
-                    (scr[2] - size) +
-                    " L " +
-                    (scr[1] - sqrt32) +
-                    " " +
-                    (scr[2] + s05) +
-                    " L " +
-                    (scr[1] + sqrt32) +
-                    " " +
-                    (scr[2] + s05) +
-                    " Z "; // close path
+                s = ' M ' + (scr[1] - size) + ' ' + scr[2] +
+                    ' L ' + scr[1] + ' ' + (scr[2] + size) +
+                    ' L ' + (scr[1] + size) + ' ' + scr[2] +
+                    ' L ' + scr[1] + ' ' + (scr[2] - size) +' Z ';
+            } else if (type === '^') {
+                s = ' M ' + scr[1] + ' ' + (scr[2] - size) +
+                    ' L ' + (scr[1] - sqrt32) + ' ' + (scr[2] + s05) +
+                    ' L ' + (scr[1] + sqrt32) + ' ' + (scr[2] + s05) +' Z '; // close path
             } else if (type === 'v') {
-                s =
-                    " M " +
-                    scr[1] +
-                    " " +
-                    (scr[2] + size) +
-                    " L " +
-                    (scr[1] - sqrt32) +
-                    " " +
-                    (scr[2] - s05) +
-                    " L " +
-                    (scr[1] + sqrt32) +
-                    " " +
-                    (scr[2] - s05) +
-                    " Z ";
-            } else if (type === ">") {
-                s =
-                    " M " +
-                    (scr[1] + size) +
-                    " " +
-                    scr[2] +
-                    " L " +
-                    (scr[1] - s05) +
-                    " " +
-                    (scr[2] - sqrt32) +
-                    " L " +
-                    (scr[1] - s05) +
-                    " " +
-                    (scr[2] + sqrt32) +
-                    " Z ";
-            } else if (type === "<") {
-                s =
-                    " M " +
-                    (scr[1] - size) +
-                    " " +
-                    scr[2] +
-                    " L " +
-                    (scr[1] + s05) +
-                    " " +
-                    (scr[2] - sqrt32) +
-                    " L " +
-                    (scr[1] + s05) +
-                    " " +
-                    (scr[2] + sqrt32) +
-                    " Z ";
+                s = ' M ' + scr[1] + ' ' + (scr[2] + size) +
+                    ' L ' + (scr[1] - sqrt32) + ' ' + (scr[2] - s05) +
+                    ' L ' + (scr[1] + sqrt32) + ' ' + (scr[2] - s05) + ' Z ';
+            } else if (type === '>') {
+                s = ' M ' + (scr[1] + size) + ' ' + scr[2] +
+                    ' L ' + (scr[1] - s05) + ' ' + (scr[2] - sqrt32) +
+                    ' L ' + (scr[1] - s05) + ' ' + (scr[2] + sqrt32) + ' Z ';
+            } else if (type === '<') {
+                s = ' M ' + (scr[1] - size) + ' ' + scr[2] +
+                    ' L ' + (scr[1] + s05) + ' ' + (scr[2] - sqrt32) +
+                    ' L ' + (scr[1] + s05) + ' ' + (scr[2] + sqrt32) + ' Z ';
             }
             return s;
         },
@@ -1213,17 +1133,20 @@ JXG.extend(
         // Already documented in JXG.AbstractRenderer
         updatePathStringPrim: function (el) {
             var i,
-                scr,
+                scr, scx, scy,
                 len,
-                symbm = " M ",
-                symbl = " L ",
-                symbc = " C ",
+                symbm = ' M ',
+                symbl = ' L ',
+                symbc = ' C ',
                 nextSymb = symbm,
-                maxSize = 5000.0,
-                pStr = "";
+                // M = Env.maxScreenCoord,
+                // d, z1, scr1, lbda, mu,
+                // xt, xb, yt, yb,
+                // xl, xr, yl, yr,
+                pStr = '';
 
             if (el.numberPoints <= 0) {
-                return "";
+                return '';
             }
 
             len = Math.min(el.points.length, el.numberPoints);
@@ -1236,12 +1159,52 @@ JXG.extend(
                         nextSymb = symbm;
                     } else {
                         // Chrome has problems with values being too far away.
-                        scr[1] = Math.max(Math.min(scr[1], maxSize), -maxSize);
-                        scr[2] = Math.max(Math.min(scr[2], maxSize), -maxSize);
+                        // In early implementations it was recommended to restrict numbers to abs value 5000,
+                        // see https://oreillymedia.github.io/Using_SVG/extras/ch08-precision.html#:~:text=If%20you%20are%20creating%20a,no%20bigger%20than%20%C2%B15%2C000.
+                        // Attention: there may be conflicts with RDP smoothing.
+                        //
+                        // March 2026: This restriction seems to be osbsolete.
+                        // Meanwhile all major browsers support 32 floats, see
+                        // https://www.w3.org/TR/SVG/types.html, section "4.2.1. Real number precision"
+                        //
+                        // Change in-place:
+                        // scr[1] = Math.max(Math.min(scr[1], M), -M);
+                        // scr[2] = Math.max(Math.min(scr[2], M), -M);
+                        // Change not in-place (preferred 2026):
+                        // sc1 = Math.max(Math.min(scr[1], M), -M);
+                        // sc2 = Math.max(Math.min(scr[2], M), -M);
+                        //
+                        scx = scr[1];
+                        scy = scr[2];
 
+                        // Some first steps to project coordinates to the virtual
+                        // clip box [-5000, 5000, 5000, -5000].
+                        // But - hopefully - we do not need to develop this anymore.
+                        // Intersections with the clip box.
+                        // Todo: choose the right one.
+                        // if (i > 0) {
+                        //     scr1 = el.points[i - 1].scrCoords;
+                        //     d = sc2 - scr1[2];
+                        //     if (d !== 0) {
+                        //         lbda = (M - scr1[2]) / d;
+                        //         xt = scr1[1] + lbda * (sc1 - scr1[1]); yt = M;
+
+                        //         lbda = (-M - scr1[2]) / d;
+                        //         xb = scr1[1] + lbda * (sc1 - scr1[1]); yb = -M;
+                        //     }
+                        //     d = sc1 - scr1[1];
+                        //     if (d !== 0) {
+                        //         lbda = (M - scr1[2]) / d;
+                        //         yr = scr1[2] + lbda * (sc2 - scr1[2]); xr = M;
+                        //         lbda = (-M - scr1[2]) / d;
+                        //         yl = scr1[2] + lbda * (sc2 - scr1[2]); xl = -M;
+                        //     }
+                        // }
+                        //
                         // Attention: first coordinate may be inaccurate if far way
-                        //pStr += [nextSymb, scr[1], ' ', scr[2]].join('');
-                        pStr += nextSymb + scr[1] + " " + scr[2]; // Seems to be faster now (webkit and firefox)
+                        // pStr += [nextSymb, scr[1], ' ', scr[2]].join('');
+                        // pStr += nextSymb + scr[1] + ' ' + scr[2]; // '+' seems to be faster than 'join' now (webkit and firefox)
+                        pStr += nextSymb + scx + ' ' + scy; // '+' seems to be faster than 'join' now (webkit and firefox)
                         nextSymb = symbl;
                     }
                 }
@@ -1249,18 +1212,20 @@ JXG.extend(
                 i = 0;
                 while (i < len) {
                     scr = el.points[i].scrCoords;
-                    if (isNaN(scr[1]) || isNaN(scr[2])) {
+                    scx = scr[1];
+                    scy = scr[2];
+                    if (isNaN(scx) || isNaN(scy)) {
                         // PenUp
                         nextSymb = symbm;
                     } else {
-                        pStr += nextSymb + scr[1] + " " + scr[2];
+                        pStr += nextSymb + scx + ' ' + scy;
                         if (nextSymb === symbc) {
                             i += 1;
                             scr = el.points[i].scrCoords;
-                            pStr += " " + scr[1] + " " + scr[2];
+                            pStr += ' ' + scr[1] + ' ' + scr[2];
                             i += 1;
                             scr = el.points[i].scrCoords;
-                            pStr += " " + scr[1] + " " + scr[2];
+                            pStr += ' ' + scr[1] + ' ' + scr[2];
                         }
                         nextSymb = symbc;
                     }
@@ -1273,19 +1238,19 @@ JXG.extend(
         // Already documented in JXG.AbstractRenderer
         updatePathStringBezierPrim: function (el) {
             var i, j, k,
-                scr,
+                scr, sc1, sc2,
                 lx, ly,
                 len,
-                symbm = " M ",
-                symbl = " C ",
+                symbm = ' M ',
+                symbl = ' C ',
                 nextSymb = symbm,
-                maxSize = 5000.0,
-                pStr = "",
+                // M = Env.maxScreenCoord,
+                pStr = '',
                 f = el.evalVisProp('strokewidth'),
                 isNoPlot = el.evalVisProp('curvetype') !== 'plot';
 
             if (el.numberPoints <= 0) {
-                return "";
+                return '';
             }
 
             if (isNoPlot && el.board.options.curve.RDPsmoothing) {
@@ -1303,34 +1268,32 @@ JXG.extend(
                         nextSymb = symbm;
                     } else {
                         // Chrome has problems with values being too far away.
-                        scr[1] = Math.max(Math.min(scr[1], maxSize), -maxSize);
-                        scr[2] = Math.max(Math.min(scr[2], maxSize), -maxSize);
+                        // scr[1] = Math.max(Math.min(scr[1], M), -M);
+                        // scr[2] = Math.max(Math.min(scr[2], M), -M);
+                        // sc1 = Math.max(Math.min(scr[1], M), -M);
+                        // sc2 = Math.max(Math.min(scr[2], M), -M);
+                        sc1 = scr[1];
+                        sc2 = scr[2];
 
                         // Attention: first coordinate may be inaccurate if far way
                         if (nextSymb === symbm) {
                             //pStr += [nextSymb, scr[1], ' ', scr[2]].join('');
-                            pStr += nextSymb + scr[1] + " " + scr[2]; // Seems to be faster now (webkit and firefox)
+                            pStr += nextSymb + sc1 + ' ' + sc2;   // Seems to be faster now (webkit and firefox)
                         } else {
                             k = 2 * j;
                             pStr += [
                                 nextSymb,
-                                lx + (scr[1] - lx) * 0.333 + f * (k * Math.random() - j),
-                                " ",
-                                ly + (scr[2] - ly) * 0.333 + f * (k * Math.random() - j),
-                                " ",
-                                lx + (scr[1] - lx) * 0.666 + f * (k * Math.random() - j),
-                                " ",
-                                ly + (scr[2] - ly) * 0.666 + f * (k * Math.random() - j),
-                                " ",
-                                scr[1],
-                                " ",
-                                scr[2]
-                            ].join("");
+                                lx + (sc1 - lx) * 0.333 + f * (k * Math.random() - j), ' ',
+                                ly + (sc2 - ly) * 0.333 + f * (k * Math.random() - j), ' ',
+                                lx + (sc1 - lx) * 0.666 + f * (k * Math.random() - j), ' ',
+                                ly + (sc2 - ly) * 0.666 + f * (k * Math.random() - j), ' ',
+                                sc1, ' ', sc2
+                            ].join('');
                         }
 
                         nextSymb = symbl;
-                        lx = scr[1];
-                        ly = scr[2];
+                        lx = sc1;
+                        ly = sc2;
                     }
                 }
             }

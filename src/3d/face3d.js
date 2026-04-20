@@ -251,6 +251,7 @@ JXG.extend(
                 face;
 
             if (this.needsUpdate && !this.view.board._change3DView) {
+                // Do not update face coordinates and normal during view rotation
                 phdr = this.polyhedron;
 
                 if (this.faceNumber === 0) {
@@ -292,7 +293,6 @@ JXG.extend(
         updateRenderer: function () {
             if (this.needsUpdate) {
                 this.needsUpdate = false;
-                this.shader();
             }
             return this;
         },
@@ -350,7 +350,6 @@ JXG.extend(
          */
         shader: function() {
             var hue, sat, light, angle, hsl,
-                // bb = this.view.bbox3D,
                 sun, angles,
                 abs,
                 lightObj,
@@ -408,6 +407,7 @@ JXG.extend(
                 hsl = 'hsl(' + hue + ',' + sat +'%,' + light + '%)';
 
                 this.element2D.visProp.fillcolor = hsl;
+                this._shadingDone = true;
                 return this.zIndex;
             }
         }
@@ -448,6 +448,10 @@ JXG.createFace3D = function (board, parents, attributes) {
         this.dataX = ret.X;
         this.dataY = ret.Y;
     };
+    // Deactivate hasPoint to increase speed.
+    // This might be too agressive
+    el.element2D.hasPoint = function() {};
+
     el.addChild(el.element2D);
     el.inherits.push(el.element2D);
     el.element2D.setParents(el);

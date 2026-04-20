@@ -195,6 +195,16 @@ JXG.Options = {
         clickDelay: 600,
 
         /**
+         * CSS attributes for the JSXGraph div element.
+         *
+         * @name JXG.Board#cssStyle
+         * @type String
+         * @default ''
+         */
+        cssStyle: '',
+
+
+        /**
          * If false (default), JSXGraph follows the JavaScript standard and fires before a dblclick event two
          * click events.
          * <p>
@@ -5150,15 +5160,37 @@ JXG.Options = {
         plotVersion: 2,
 
         /**
-         * Remove data points from the curve which do not influence
+         * Polyline simplification, i.e. remove data points from the curve which do not influence
          * its appearance. In some cases this makes JSXGraph run much faster.
+         * The "smoothing" in the name is misleading, actually it does the contrary. But
+         * for historical reasons we stay with it. A better name would be
+         * RDPsimplification.
+         * <p>
+         * In certain cases this attribute causes problems, like for
+         * conic elements, curve intersection/union/difference
+         * <p>
          * Implements the Ramer-Douglas-Peucker algorithm.
          *
          * @name Curve#RDPsmoothing
          * @type Boolean
          * @default false
+         * @see Curve#RDPthreshold
+         *
          */
         RDPsmoothing: false,
+
+        /**
+         * Threshold when to stop eliminating points in polyline simplification with the Ramer-Douglas-Peucker algorithm.
+         * This number affects simplification with user coordinates, but corresponds to the distance of a point to a
+         * line in pixel if the JSXGraph board has size 800x800 pixel and the pixel per unit both horizontally and vertically
+         * are roughly equal (For the latter, the geometric mean is taken).
+         *
+         * @name Curve#RDPthreshold
+         * @type Number
+         * @default 0.2
+         * @see Curve#RDPsmoothing
+         */
+        RDPthreshold: 0.2,
 
         /**
          * Configure arrow head at the start position for curve.
@@ -5227,6 +5259,21 @@ JXG.Options = {
          * @visprop
          */
 
+        /**
+         * Remove data points from the function graph which do not influence
+         * its appearance. In some cases this makes JSXGraph run much faster,
+         * especially if this function graph has glider points or has dependent
+         * curves like inequality or curve intersection/union/difference.
+         * <p>
+         * Implements the Ramer-Douglas-Peucker algorithm.
+         *
+         * @name Functiongraph#RDPsmoothing
+         * @type Boolean
+         * @default true
+         * @see Curve#RDPsmoothing
+         * @see Curve#RDPthreshold
+         */
+        RDPsmoothing: true
 
         /**#@-*/
     },
@@ -7108,7 +7155,9 @@ JXG.Options = {
          * @name Line#touchLastPoint
          * @default false
          */
-        touchLastPoint: false
+        touchLastPoint: false,
+
+        transitionProperties: []
 
         /**#@-*/
     },
@@ -8905,8 +8954,75 @@ JXG.Options = {
          */
         label: {
             visible: true,
-            position: 'first'
-        }
+            position: 'first',
+
+            digits: function (self) {
+                return self.slopetriangle.evalVisProp('digits');
+            },
+            showPrefix: function (self) {
+                return self.slopetriangle.evalVisProp('showPrefix');
+            },
+            showSuffix: function (self) {
+                return self.slopetriangle.evalVisProp('showSuffix');
+            },
+            prefix: function (self) {
+                return self.slopetriangle.evalVisProp('prefix');
+            },
+            suffix: function (self) {
+                return self.slopetriangle.evalVisProp('suffix');
+            },
+        },
+
+        /**
+         * Used to round texts given by a number.
+         *
+         * @memberOf Slopetriangle.prototype
+         * @name digits
+         * @type Number
+         * @default 2
+         */
+        digits: 2,
+
+        /**
+         * Determines whether a prefix is displayed before the slope triangle value and unit.
+         *
+         * @see Slopetriangle#prefix
+         * @name Slopetriangle#showPrefix
+         * @type Boolean
+         * @default false
+         */
+        showPrefix: true,
+
+        /**
+         * Determines whether a suffix is displayed after the slope triangle value and unit.
+         *
+         * @see Slopetriangle#suffix
+         * @name Slopetriangle#showSuffix
+         * @type Boolean
+         * @default false
+         */
+        showSuffix: true,
+
+        /**
+         * String that is displayed before the slope triangle and its unit.
+         *
+         * @see Slopetriangle#showPrefix
+         * @name Slopetriangle#prefix
+         * @type String
+         * @default ''
+         */
+        prefix: '',
+
+        /**
+         * String that is displayed after the slope triangle and its unit.
+         *
+         * @see Slopetriangle#showSuffix
+         * @name Slopetriangle#suffix
+         * @type String
+         * @default ''
+         */
+        suffix: ''
+
         /**#@-*/
     },
 

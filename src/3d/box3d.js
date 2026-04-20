@@ -75,7 +75,7 @@ JXG.createAxes3D = function (board, parents, attributes) {
     } else {
         for (i = 0; i < directions.length; i++) {
             rear[i] = parents[1][i];
-            front[i] = parents[2][1];
+            front[i] = parents[2][i];
         }
     }
 
@@ -94,7 +94,7 @@ JXG.createAxes3D = function (board, parents, attributes) {
             from = [0, 0, 0];
             to = [0, 0, 0];
             to[i] = front[i];
-            axes[na] = view.create("axis3d", [from, to], attr[na.toLowerCase()]);
+            axes[na] = view.create('axis3d', [from, to], attr[na.toLowerCase()]);
             axes[na].view = view;
         } else if (pos === 'border') {
             // Axes bordered
@@ -113,7 +113,7 @@ JXG.createAxes3D = function (board, parents, attributes) {
             }
             to[i] = front[i];
             // attr[na.toLowerCase()].lastArrow = false;
-            axes[na] = view.create("axis3d", [from, to], attr[na.toLowerCase()]);
+            axes[na] = view.create('axis3d', [from, to], attr[na.toLowerCase()]);
             axes[na].view = view;
 
             ticks_attr = attr[na.toLowerCase()].ticks3d;
@@ -169,7 +169,7 @@ JXG.createAxes3D = function (board, parents, attributes) {
             range2 = [rear[i2], front[i2]];
 
             attr = Type.copyAttributes(attributes, board.options, "axes3d", na);
-            axes[na] = view.create("plane3d", [from, vec1, vec2, range1, range2], attr);
+            axes[na] = view.create('plane3d', [from, vec1, vec2, range1, range2], attr);
             axes[na].elType = 'axisplane3d';
         }
     }
@@ -196,7 +196,11 @@ JXG.createAxes3D = function (board, parents, attributes) {
                 axes[na] = view.create("axis3d", [from, to], attr);
                 axes[na].view = view;
                 axes[na_parent].addChild(axes[na]);
-                axes[na_parent].element2D.inherits.push(axes[na]); // TODO: Access of element2D is not nice
+                //if (Type.exists(axes[na_parent].element2D)) {
+                    // TODO: Access of element2D is not nice
+                    axes[na_parent].element2D.inherits.push(axes[na]);
+                //}
+
             }
         }
     }
@@ -222,59 +226,66 @@ JXG.registerElement("axes3d", JXG.createAxes3D);
  */
 JXG.createAxis3D = function (board, parents, attributes) {
     var view = parents[0],
-        attr,
-        start = parents[1],
-        end = parents[2],
-        el_start,
-        el_end,
-        el;
+        attr = Type.copyAttributes(attributes, board.options, 'axis3d');
 
-    // Use 2D points to create axis
-    attr = Type.copyAttributes(attributes.point1, board.options, "axis3d", 'point1');
-    attr.element3d = true;  // Needed to avoid update during change of view
-    el_start = view.create(
-        "point",
-        [
-            (function (xx, yy, zz) {
-                return function () {
-                    return view.project3DTo2D(xx, yy, zz)[1];
-                };
-            })(start[0], start[1], start[2]),
-            (function (xx, yy, zz) {
-                return function () {
-                    return view.project3DTo2D(xx, yy, zz)[2];
-                };
-            })(start[0], start[1], start[2])
-        ],
-        attr
-    );
-
-    attr = Type.copyAttributes(attributes.point2, board.options, "axis3d", 'point2');
-    attr.element3d = true;  // Needed to avoid update during change of view
-    el_end = view.create(
-        "point",
-        [
-            (function (xx, yy, zz) {
-                return function () {
-                    return view.project3DTo2D(xx, yy, zz)[1];
-                };
-            })(end[0], end[1], end[2]),
-            (function (xx, yy, zz) {
-                return function () {
-                    return view.project3DTo2D(xx, yy, zz)[2];
-                };
-            })(end[0], end[1], end[2])
-        ],
-        attr
-    );
-
-    attr = Type.copyAttributes(attributes, board.options, 'axis3d');
-    attr.element3d = true;  // Needed to avoid update during change of view
-    el = view.create("arrow", [el_start, el_end], attr);
-
-    return el;
+    return view.create('line3d', parents.slice(1), attr);
 };
-JXG.registerElement("axis3d", JXG.createAxis3D);
+JXG.registerElement('axis3d', JXG.createAxis3D);
+
+// JXG.createAxis3DOld = function (board, parents, attributes) {
+//     var view = parents[0],
+//         attr,
+//         start = parents[1],
+//         end = parents[2],
+//         el_start,
+//         el_end,
+//         el;
+//
+//     // Use 2D points to create axis
+//     attr = Type.copyAttributes(attributes.point1, board.options, "axis3d", 'point1');
+//     attr.element3d = true;  // Needed to avoid update during change of view
+//     el_start = view.create(
+//         "point",
+//         [
+//             (function (xx, yy, zz) {
+//                 return function () {
+//                     return view.project3DTo2D(xx, yy, zz)[1];
+//                 };
+//             })(start[0], start[1], start[2]),
+//             (function (xx, yy, zz) {
+//                 return function () {
+//                     return view.project3DTo2D(xx, yy, zz)[2];
+//                 };
+//             })(start[0], start[1], start[2])
+//         ],
+//         attr
+//     );
+//
+//     attr = Type.copyAttributes(attributes.point2, board.options, "axis3d", 'point2');
+//     attr.element3d = true;  // Needed to avoid update during change of view
+//     el_end = view.create(
+//         "point",
+//         [
+//             (function (xx, yy, zz) {
+//                 return function () {
+//                     return view.project3DTo2D(xx, yy, zz)[1];
+//                 };
+//             })(end[0], end[1], end[2]),
+//             (function (xx, yy, zz) {
+//                 return function () {
+//                     return view.project3DTo2D(xx, yy, zz)[2];
+//                 };
+//             })(end[0], end[1], end[2])
+//         ],
+//         attr
+//     );
+//
+//     attr = Type.copyAttributes(attributes, board.options, 'axis3d');
+//     attr.element3d = true;  // Needed to avoid update during change of view
+//     el = view.create("arrow", [el_start, el_end], attr);
+//
+//     return el;
+// };
 
 /**
  * @class Display a rectangular mesh on a 3D plane element.
