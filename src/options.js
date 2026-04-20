@@ -8910,12 +8910,6 @@ JXG.Options = {
             digits: function (self) {
                 return self.slopetriangle.evalVisProp('digits');
             },
-            baseUnit: function (self) {
-                return self.slopetriangle.evalVisProp('baseUnit');
-            },
-            units: function (self) {
-                return self.slopetriangle.evalVisProp('units');
-            },
             showPrefix: function (self) {
                 return self.slopetriangle.evalVisProp('showPrefix');
             },
@@ -8939,32 +8933,6 @@ JXG.Options = {
          * @default 2
          */
         digits: 2,
-
-        /**
-         * This specifies the unit of slope triangle in dimension 1 (e.g. length).
-         * Of course a slope has no dimension. But this value will be used to determ unit of horizontal and vertical length.
-         * If you want to use different units for each dimension, see {@link Slopetriangle#units}.
-         *
-         *
-         * @see Slopetriangle#units
-         * @name Slopetriangle#baseUnit
-         * @type String
-         * @default ''
-         */
-        baseUnit: '',
-
-        /**
-         * This attribute expects an object that has the dimension numbers as keys (as integer or in the form of 'dimxx')
-         * and assigns a string to each dimension.
-         * Of course a slope has no dimension. But this value will be used to determ unit of horizontal and vertical length.
-         * If a dimension has no specification, {@link Slopetriangle#baseUnit} is used.
-         *
-         * @see Slopetriangle#baseUnit
-         * @name Slopetriangle#units
-         * @type Object
-         * @default {}
-         */
-        units: {},
 
         /**
          * Determines whether a prefix is displayed before the slope triangle value and unit.
