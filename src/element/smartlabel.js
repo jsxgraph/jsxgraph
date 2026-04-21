@@ -401,8 +401,10 @@ JXG.createSmartLabel = function (board, parents, attributes) {
     }
 
     if (!Type.exists(el)) {
-        return el;
+        return null;
     }
+
+    el.elType = 'smartlabel';
 
     el.elType = 'smartlabel';
 
@@ -510,11 +512,9 @@ JXG.createSmartLabel = function (board, parents, attributes) {
     };
 
     el.setText(function () {
-        var str = '',
-            val,
+        var digits, val, u,
             txt = Type.evaluate(user_supplied_text),
-            digits,
-            u,
+            str = '',
             pre = '',
             suf = '',
             dir,
