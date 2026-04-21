@@ -57,7 +57,7 @@ var priv = {
             this.board.removeObject(this.tangent);
         }
     },
-    Value: function () {
+    Slope: function () {
         return this.tangent.getSlope();
     },
     deltaX: function () {
@@ -191,13 +191,13 @@ JXG.createSlopeTriangle = function (board, parents, attributes) {
     el.elType = 'slopetriangle';
 
     /**
-     * Returns the value of the slope triangle, that is the slope of the tangent.
-     * @name Value
+     * Returns the slope of the tangent.
+     * @name Slope
      * @memberOf Slopetriangle.prototype
      * @function
      * @returns {Number} slope of the tangent.
      */
-    el.Value = priv.Value;
+    el.Slope = priv.Slope;
 
     /**
      * Returns deltaX of the slope triangle, that is the slope of the tangent.
@@ -281,7 +281,7 @@ JXG.createSlopeTriangle = function (board, parents, attributes) {
         var prefix = '',
             suffix = '',
             digits = label.evalVisProp('digits'),
-            val = el.Value();
+            val = el.Slope();
 
         if (label.evalVisProp('showprefix')) {
             prefix = label.evalVisProp('prefix');
@@ -339,9 +339,9 @@ JXG.createSlopeTriangle = function (board, parents, attributes) {
         borderVertical: "borderVertical",
         borderParallel: "borderParallel",
         label: "label",
-        Value: "Value",
-        V: "Value",
-        Slope: "Value",
+        Value: "Slope",
+        V: "Slope",
+        Slope: "Slope",
         deltaX: "deltaX",
         deltaY: "deltaY",
         Direction: "Direction"
