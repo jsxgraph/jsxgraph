@@ -402,9 +402,9 @@ JXG.createSmartLabel = function (board, parents, attributes) {
 
     if (Type.exists(el)) {
         el.elType = 'smartlabel';
-        el.setText(txt_fun);
-        p.addChild(el);
-        el.setParents([p]);
+        // el.setText(txt_fun);
+        // p.addChild(el);
+        // el.setParents([p]);
     } else {
         return null;
     }
