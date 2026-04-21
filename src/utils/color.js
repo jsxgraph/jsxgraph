@@ -901,6 +901,28 @@ JXG.darkenColor = function (color, percent) {
 };
 
 /**
+ * Mix two colors together in variable proportion. Opacity is NOT included in the calculations.
+ * @param {String} color1
+ * @param {String} color2
+ * @param {Number} [percent=0.5] Balance point in percent.
+ * @returns {String}
+ */
+JXG.mixColor = function (color1, color2, percent) {
+    var rgb1 = JXG.rgbParser(color1),
+        rgb2 = JXG.rgbParser(color2),
+        rgb = [],
+        i;
+
+    percent = percent ?? 0.5;
+
+    for (i = 0; i < 3; i++) {
+        rgb[i] = parseInt(rgb1[i] * percent + rgb2[i] * (1 - percent));
+    }
+
+    return JXG.rgb2hex(rgb);
+};
+
+/**
  * Determines highlight color to a given color. Done by reducing (or increasing) the opacity.
  * @param {String} color HTML RGBA string containing the HTML color code.
  * @returns {String} Returns a HTML RGBA color string
