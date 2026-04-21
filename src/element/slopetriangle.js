@@ -269,6 +269,14 @@ JXG.createSlopeTriangle = function (board, parents, attributes) {
     el.borderVertical.hasLabel = true;
     el.borderVertical.visProp.withlabel = true;
 
+    el.borderVertical.slopetriangle = el;
+    el.borderHorizontal.slopetriangle = el;
+    glider.slopetriangle = el;
+    basepoint.slopetriangle = el;
+    baseline.slopetriangle = el;
+    toppoint.slopetriangle = el;
+    label.slopetriangle = el;
+
     label.setText(function () {
         var prefix = '',
             suffix = '',
@@ -305,14 +313,6 @@ JXG.createSlopeTriangle = function (board, parents, attributes) {
         return prefix + val + suffix;
     });
     label.fullUpdate();
-
-    el.borderVertical.slopetriangle = el;
-    el.borderHorizontal.slopetriangle = el;
-    el.glider.slopetriangle = el;
-    el.basepoint.slopetriangle = el;
-    el.baseline.slopetriangle = el;
-    el.toppoint.slopetriangle = el;
-    el.label.slopetriangle = el;
 
     el.glider = glider;
     el.basepoint = basepoint;
