@@ -405,6 +405,8 @@ JXG.createSmartLabel = function (board, parents, attributes) {
         el.setText(txt_fun);
         p.addChild(el);
         el.setParents([p]);
+    } else {
+        return null;
     }
 
     el.Value = function () {
@@ -511,11 +513,9 @@ JXG.createSmartLabel = function (board, parents, attributes) {
     };
 
     el.setText(function () {
-        var str = '',
-            val,
+        var digits, val, u,
             txt = Type.evaluate(user_supplied_text),
-            digits,
-            u,
+            str = '',
             pre = '',
             suf = '',
             dir,
