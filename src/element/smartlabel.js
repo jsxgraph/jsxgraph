@@ -408,6 +408,8 @@ JXG.createSmartLabel = function (board, parents, attributes) {
 
     el.elType = 'smartlabel';
 
+    el.parentObject = p;
+
     el.Value = function () {
         var mType = this.evalVisProp('measure');
 
@@ -627,7 +629,9 @@ JXG.createSmartLabel = function (board, parents, attributes) {
         Value: "Value",
         V: "Value",
         Dimension: "Dimension",
-        Unit: "Unit"
+        Unit: "Unit",
+        parent: "parentObject",
+        parentObject: "parentObject"
     });
 
     return el;
