@@ -300,6 +300,10 @@ JXG.createSlopeTriangle = function (board, parents, attributes) {
             }
         }
 
+        if (Type.isFunction(el.visProp.formatvalue)) {
+            val = el.visProp.formatvalue(el, val);
+        }
+
         return prefix + val + suffix;
     });
     label.fullUpdate();

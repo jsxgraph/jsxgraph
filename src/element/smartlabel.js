@@ -557,6 +557,11 @@ JXG.createSmartLabel = function (board, parents, attributes) {
                 val = Type.toFixed(val, digits);
             }
         }
+
+        if (Type.isFunction(el.visProp.formatvalue)) {
+            val = el.visProp.formatvalue(el, val);
+        }
+
         if (Type.isArray(val)) {
             if (dir === 'row') {
                 str = [];
