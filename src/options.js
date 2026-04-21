@@ -9160,6 +9160,19 @@ JXG.Options = {
         suffix: '',
 
         /**
+         * Function to format the value.
+         * If set to null, no formatting will happen.
+         *
+         * @name Smartlabel#formatValue
+         * @type Function
+         * @param {Smartlabel} self Pointer to the smartlabel object itself
+         * @param {Number|Array} val value (array, if coords)
+         * @returns String
+         * @default null
+         */
+        formatValue: null,
+
+        /**
          * Type of measurement.
          * Available values are:
          *  <ul>
