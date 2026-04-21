@@ -913,7 +913,8 @@ JXG.mixColor = function (color1, color2, percent) {
         rgb = [],
         i;
 
-    percent = percent ?? 0.5;
+    // percent = percent ?? 0.5;
+    percent = (percent !== undefined && percent !== null) ? percent : 0.5;
 
     for (i = 0; i < 3; i++) {
         rgb[i] = parseInt(rgb1[i] * percent + rgb2[i] * (1 - percent));

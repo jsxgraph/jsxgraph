@@ -60,7 +60,13 @@ var priv = {
     Value: function () {
         return this.tangent.getSlope();
     },
-    Direction: function() {
+    deltaX: function () {
+        return this.borderHorizontal.Direction()[0];
+    },
+    deltaY: function () {
+        return this.borderVertical.Direction()[1];
+    },
+    Direction: function () {
         return this.tangent.Direction();
     }
 };
@@ -143,8 +149,8 @@ JXG.createSlopeTriangle = function (board, parents, attributes) {
     } else {
         throw new Error(
             "JSXGraph: Can't create slope triangle with parent types '" +
-                typeof parents[0] +
-                "'."
+            typeof parents[0] +
+            "'."
         );
     }
 
@@ -192,6 +198,26 @@ JXG.createSlopeTriangle = function (board, parents, attributes) {
      * @returns {Number} slope of the tangent.
      */
     el.Value = priv.Value;
+
+    /**
+     * Returns deltaX of the slope triangle, that is the slope of the tangent.
+     * This value is less than 0 if the line points to the left.
+     * @name deltaX
+     * @memberOf Slopetriangle.prototype
+     * @function
+     * @returns {Number}
+     */
+    el.deltaX = priv.deltaX;
+
+    /**
+     * Returns deltaY of the slope triangle, that is the slope of the tangent.
+     * This value is less than 0 if the line points to the bottom.
+     * @name deltaY
+     * @memberOf Slopetriangle.prototype
+     * @function
+     * @returns {Number}
+     */
+    el.deltaY = priv.deltaY;
 
     /**
      * Returns the direction of the slope triangle, that is the direction of the tangent.
@@ -305,6 +331,8 @@ JXG.createSlopeTriangle = function (board, parents, attributes) {
         label: "label",
         Value: "Value",
         V: "Value",
+        deltaX: "deltaX",
+        deltaY: "deltaY",
         Direction: "Direction"
     });
 
