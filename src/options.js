@@ -8954,8 +8954,75 @@ JXG.Options = {
          */
         label: {
             visible: true,
-            position: 'first'
-        }
+            position: 'first',
+
+            digits: function (self) {
+                return self.slopetriangle.evalVisProp('digits');
+            },
+            showPrefix: function (self) {
+                return self.slopetriangle.evalVisProp('showPrefix');
+            },
+            showSuffix: function (self) {
+                return self.slopetriangle.evalVisProp('showSuffix');
+            },
+            prefix: function (self) {
+                return self.slopetriangle.evalVisProp('prefix');
+            },
+            suffix: function (self) {
+                return self.slopetriangle.evalVisProp('suffix');
+            }
+        },
+
+        /**
+         * Used to round texts given by a number.
+         *
+         * @memberOf Slopetriangle.prototype
+         * @name digits
+         * @type Number
+         * @default 2
+         */
+        digits: 2,
+
+        /**
+         * Determines whether a prefix is displayed before the slope triangle value and unit.
+         *
+         * @see Slopetriangle#prefix
+         * @name Slopetriangle#showPrefix
+         * @type Boolean
+         * @default false
+         */
+        showPrefix: true,
+
+        /**
+         * Determines whether a suffix is displayed after the slope triangle value and unit.
+         *
+         * @see Slopetriangle#suffix
+         * @name Slopetriangle#showSuffix
+         * @type Boolean
+         * @default false
+         */
+        showSuffix: true,
+
+        /**
+         * String that is displayed before the slope triangle and its unit.
+         *
+         * @see Slopetriangle#showPrefix
+         * @name Slopetriangle#prefix
+         * @type String
+         * @default ''
+         */
+        prefix: '',
+
+        /**
+         * String that is displayed after the slope triangle and its unit.
+         *
+         * @see Slopetriangle#showSuffix
+         * @name Slopetriangle#suffix
+         * @type String
+         * @default ''
+         */
+        suffix: ''
+
         /**#@-*/
     },
 
