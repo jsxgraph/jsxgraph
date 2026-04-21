@@ -270,6 +270,12 @@ JXG.createSlopeTriangle = function (board, parents, attributes) {
     el.borderVertical.visProp.withlabel = true;
 
     el.borderVertical.slopetriangle = el;
+    el.borderHorizontal.slopetriangle = el;
+    glider.slopetriangle = el;
+    basepoint.slopetriangle = el;
+    baseline.slopetriangle = el;
+    toppoint.slopetriangle = el;
+    label.slopetriangle = el;
 
     label.setText(function () {
         var prefix = '',
