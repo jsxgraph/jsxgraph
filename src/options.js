@@ -9021,7 +9021,20 @@ JXG.Options = {
          * @type String
          * @default ''
          */
-        suffix: ''
+        suffix: '',
+
+        /**
+         * Function to format the value.
+         * If set to null, no formatting will happen.
+         *
+         * @name Slopetriangle#formatValue
+         * @type Function
+         * @param {Slopetriangle} self Pointer to the slopetriangle object itself
+         * @param {Number} val value
+         * @returns String
+         * @default null
+         */
+        formatValue: null
 
         /**#@-*/
     },
@@ -9167,7 +9180,7 @@ JXG.Options = {
          *   <li> 'deg' for angles</li>
          * </ul>
          */
-        measure: 'deg',
+        measure: '',
 
         useMathJax: true
 
