@@ -243,6 +243,7 @@ JXG.createSmartLabel = function (board, parents, attributes) {
          */
         attr.visible = function (self) {
             var orientation = self.evalVisProp('orientation'),
+                thres = self.evalVisProp('visibleThreshold'),
                 sizeLabel = self.getSize(),
                 sizeParent,
                 c1, c2,
@@ -258,11 +259,11 @@ JXG.createSmartLabel = function (board, parents, attributes) {
                 case 'parallel':
                 case 'parallel-inverted':
                 case 'inverted':
-                    return sizeLabel[0] < sizeParent * 0.7;
+                    return sizeLabel[0] < sizeParent * thres;
 
                 case 'orthogonal':
                 case 'orthogonal-inverted':
-                    return sizeLabel[1] < sizeParent * 0.7;
+                    return sizeLabel[1] < sizeParent * thres;
 
                 case 'none':
                 default:
@@ -278,6 +279,7 @@ JXG.createSmartLabel = function (board, parents, attributes) {
          */
         attr.visible = function (self) {
             var sizeLabel = self.getSize(),
+                thres = self.evalVisProp('visibleThreshold'),
                 sizeParent,
                 c1, c2,
                 dx, dy;
@@ -292,7 +294,7 @@ JXG.createSmartLabel = function (board, parents, attributes) {
             dy = c2[2] - c1[2];
             sizeParent = Math.floor(Math.sqrt(dx * dx + dy * dy)) * 2;
 
-            return sizeLabel[0] < sizeParent * 0.6;
+            return sizeLabel[0] < sizeParent * thres;
         };
 
     } else if (p.type === Const.OBJECT_TYPE_POLYGON) {
