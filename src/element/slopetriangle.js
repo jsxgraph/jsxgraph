@@ -341,6 +341,7 @@ JXG.createSlopeTriangle = function (board, parents, attributes) {
         label: "label",
         Value: "Value",
         V: "Value",
+        Slope: "Value",
         deltaX: "deltaX",
         deltaY: "deltaY",
         Direction: "Direction"
