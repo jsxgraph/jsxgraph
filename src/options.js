@@ -9188,7 +9188,9 @@ JXG.Options = {
         highlightCssClass:'smart-label-solid smart-label-circle',
         anchorX: 'middle',
 
-        measure: 'radius'
+        measure: 'radius',
+
+        visibleThreshold: 0.6
     },
 
     /* special options for smartlabel of line */
@@ -9219,7 +9221,21 @@ JXG.Options = {
          * @name Smartlabel#orientation
          * @default 'parallel'
          */
-        orientation: 'parallel'
+        orientation: 'parallel',
+
+        /**
+         * Smartlabels of circles and lines are hidden automatically, if there is not enough space.
+         * This value (between 0 and 1) controls, how much percent of the line length or circle diameter
+         * the label is allowed to take place
+         *
+         * @type String
+         * @name Smartlabel#visibleThreshold
+         * @default <ul>
+         *     <li>0.7 for lines</li>
+         *     <li>0.6 for angles</li>
+         * </ul>
+         */
+        visibleThreshold: 0.7
 
         /**#@-*/
     },
