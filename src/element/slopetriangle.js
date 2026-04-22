@@ -60,6 +60,9 @@ var priv = {
     Slope: function () {
         return this.tangent.getSlope();
     },
+    Angle: function () {
+        return this.tangent.getAngle();
+    },
     DeltaX: function () {
         return this.borderHorizontal.Direction()[0];
     },
@@ -198,6 +201,15 @@ JXG.createSlopeTriangle = function (board, parents, attributes) {
      * @returns {Number} slope of the tangent.
      */
     el.Slope = priv.Slope;
+
+    /**
+     * Returns the angle between the tangent and the x-axis.
+     * @name Angle
+     * @memberOf Slopetriangle.prototype
+     * @function
+     * @returns {Number}
+     */
+    el.Angle = priv.Angle;
 
     /**
      * Returns &delta;x of the slope triangle, that is the slope of the tangent.
@@ -342,6 +354,7 @@ JXG.createSlopeTriangle = function (board, parents, attributes) {
         Value: "Slope",
         V: "Slope",
         Slope: "Slope",
+        Angle: "Angle",
         DeltaX: "DeltaX",
         DeltaY: "DeltaY",
         Direction: "Direction"
