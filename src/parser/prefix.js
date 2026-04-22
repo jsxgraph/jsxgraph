@@ -254,6 +254,7 @@ JXG.PrefixParser = {
 
             switch (fun) {
                 case 'Slope':
+                case 'Angle':
                     res = 0;
                     break;
                 case 'L':
