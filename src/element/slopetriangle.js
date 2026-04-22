@@ -57,13 +57,13 @@ var priv = {
             this.board.removeObject(this.tangent);
         }
     },
-    Value: function () {
+    Slope: function () {
         return this.tangent.getSlope();
     },
-    deltaX: function () {
+    DeltaX: function () {
         return this.borderHorizontal.Direction()[0];
     },
-    deltaY: function () {
+    DeltaY: function () {
         return this.borderVertical.Direction()[1];
     },
     Direction: function () {
@@ -191,33 +191,33 @@ JXG.createSlopeTriangle = function (board, parents, attributes) {
     el.elType = 'slopetriangle';
 
     /**
-     * Returns the value of the slope triangle, that is the slope of the tangent.
-     * @name Value
+     * Returns the slope of the tangent.
+     * @name Slope
      * @memberOf Slopetriangle.prototype
      * @function
      * @returns {Number} slope of the tangent.
      */
-    el.Value = priv.Value;
+    el.Slope = priv.Slope;
 
     /**
-     * Returns deltaX of the slope triangle, that is the slope of the tangent.
+     * Returns &delta;x of the slope triangle, that is the slope of the tangent.
      * This value is less than 0 if the line points to the left.
-     * @name deltaX
+     * @name DeltaX
      * @memberOf Slopetriangle.prototype
      * @function
      * @returns {Number}
      */
-    el.deltaX = priv.deltaX;
+    el.DeltaX = priv.DeltaX;
 
     /**
-     * Returns deltaY of the slope triangle, that is the slope of the tangent.
+     * Returns &delta;y of the slope triangle, that is the slope of the tangent.
      * This value is less than 0 if the line points to the bottom.
-     * @name deltaY
+     * @name DeltaY
      * @memberOf Slopetriangle.prototype
      * @function
      * @returns {Number}
      */
-    el.deltaY = priv.deltaY;
+    el.DeltaY = priv.DeltaY;
 
     /**
      * Returns the direction of the slope triangle, that is the direction of the tangent.
@@ -281,7 +281,7 @@ JXG.createSlopeTriangle = function (board, parents, attributes) {
         var prefix = '',
             suffix = '',
             digits = label.evalVisProp('digits'),
-            val = el.Value();
+            val = el.Slope();
 
         if (label.evalVisProp('showprefix')) {
             prefix = label.evalVisProp('prefix');
@@ -339,11 +339,11 @@ JXG.createSlopeTriangle = function (board, parents, attributes) {
         borderVertical: "borderVertical",
         borderParallel: "borderParallel",
         label: "label",
-        Value: "Value",
-        V: "Value",
-        Slope: "Value",
-        deltaX: "deltaX",
-        deltaY: "deltaY",
+        Value: "Slope",
+        V: "Slope",
+        Slope: "Slope",
+        DeltaX: "DeltaX",
+        DeltaY: "DeltaY",
         Direction: "Direction"
     });
 
