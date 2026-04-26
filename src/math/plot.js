@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2025
+    Copyright 2008-2026
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -648,20 +648,21 @@ Mat.Plot = {
             bbox, ret_arr;
 
         //console.time('plot');
-        if (curve.board.updateQuality === curve.board.BOARD_QUALITY_LOW) {
-            depth = curve.evalVisProp('recursiondepthlow') || 13;
-            delta = 2;
-            // this.smoothLevel = 5; //depth - 7;
-            this.smoothLevel = depth - 6;
-            this.jumpLevel = 3;
-        } else {
+        // Switching BOARD_QUALITY_LOW/HIGH makes gliders jump
+        // if (curve.board.updateQuality === curve.board.BOARD_QUALITY_LOW) {
+        //     depth = curve.evalVisProp('recursiondepthlow') || 13;
+        //     delta = 2;
+        //     // this.smoothLevel = 5; //depth - 7;
+        //     this.smoothLevel = depth - 6;
+        //     this.jumpLevel = 3;
+        // } else {
             depth = curve.evalVisProp('recursiondepthhigh') || 17;
             delta = 2;
             // smoothLevel has to be small for graphs in a huge interval.
             // this.smoothLevel = 3; //depth - 7; // 9
             this.smoothLevel = depth - 9; // 9
             this.jumpLevel = 2;
-        }
+        // }
         this.nanLevel = depth - 4;
 
         curve.points = [];
@@ -1400,11 +1401,11 @@ Mat.Plot = {
 
         // console.log("-----------------------------------------------------------");
         // console.time('plot');
-        if (curve.board.updateQuality === curve.board.BOARD_QUALITY_LOW) {
-            depth = curve.evalVisProp('recursiondepthlow') || 14;
-        } else {
+        // if (curve.board.updateQuality === curve.board.BOARD_QUALITY_LOW) {
+        //     depth = curve.evalVisProp('recursiondepthlow') || 14;
+        // } else {
             depth = curve.evalVisProp('recursiondepthhigh') || 17;
-        }
+        // }
 
         // smoothLevel has to be small for graphs in a huge interval.
         this.smoothLevel = 7; //depth - 10;

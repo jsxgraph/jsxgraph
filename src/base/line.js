@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2025
+    Copyright 2008-2026
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -555,10 +555,32 @@ JXG.extend(
 
         /**
          * Determines the angle between the positive x axis and the line.
+         * @param {String} [unit='radians'] Unit of the returned values. Possible units are
+         * <ul>
+         * <li> 'radians' (default): angle value in radians
+         * <li> 'degrees': angle value in degrees
+         * <li> 'semicircle': angle value in radians as a multiple of &pi;, e.g. if the angle is 1.5&pi;, 1.5 will be returned.
+         * <li> 'circle': angle value in radians as a multiple of 2&pi;
+         * </ul>
          * @returns {Number}
          */
-        getAngle: function () {
-            return Math.atan2(-this.stdform[1], this.stdform[2]);
+        getAngle: function (unit) {
+            var val,
+                rad = Math.atan2(-this.stdform[1], this.stdform[2]);
+
+            unit = unit.toLocaleLowerCase();
+
+            if (unit === '' || unit.indexOf('rad') === 0) {
+                val = rad;
+            } else if (unit.indexOf('deg') === 0) {
+                val = rad * 180 / Math.PI;
+            } else if (unit.indexOf('sem') === 0) {
+                val = rad / Math.PI;
+            } else if (unit.indexOf('cir') === 0) {
+                val = rad * 0.5 / Math.PI;
+            }
+
+            return val;
         },
 
         /**
@@ -885,7 +907,7 @@ JXG.extend(
                         v = Mat.crossProduct(v, c1.usrCoords);
                         c2 = Geometry.meetLineLine(v, this.stdform, 0, this.board);
                         */
-                        c2 = Geometry.projectPointToLine({ coords: c1 }, this, this.board);
+                        c2 = Geometry.projectPointToLine({coords: c1}, this, this.board);
 
                         dc = Statistics.subtract(
                             [1, Math.round(x / sX) * sX, Math.round(y / sY) * sY],
@@ -1031,7 +1053,7 @@ JXG.extend(
          * @returns {Array} [Z(t), X(t), Y(t)]
          * @see Line#X
          */
-        Ft: function(t) {
+        Ft: function (t) {
             var c = [this.Z(t), this.X(t), this.Y(t)];
             c[1] /= c[0];
             c[2] /= c[0];
@@ -2534,7 +2556,6 @@ JXG.createNormal = function (board, parents, attributes) {
                     p1, p2, t, A, B, C, D, dx, dy, d,
                     li, p_org, pp,
                     points, le;
-
 
                 if (c.bezierDegree === 1) {
                     if (i === c.numberPoints - 1) {

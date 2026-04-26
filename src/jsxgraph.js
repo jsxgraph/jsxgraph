@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2025
+    Copyright 2008-2026
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -214,6 +214,7 @@ JXG.JSXGraph = {
         board.resizeContainer(dimensions.width, dimensions.height, true, true);
         board._createSelectionPolygon(attr);
         board.renderer.drawNavigationBar(board, attr.navbar);
+
         JXG.boards[board.id] = board;
     },
 
@@ -495,13 +496,13 @@ JXG.JSXGraph = {
             theme = {},
             board;
 
-        attributes = attributes || {};
+        attributes = attributes || {}; // User supplied attributes
         // Merge a possible theme
         if (attributes.theme !== 'default' && Type.exists(JXG.themes[attributes.theme])) {
             theme = JXG.themes[attributes.theme];
         }
-        options = Type.deepCopy(Options, theme, true);
-        attr = this._setAttributes(attributes, options);
+        options = Type.deepCopy(Options, theme, true);    // Copy global options
+        attr = this._setAttributes(attributes, options);  // Merge user supplied attributes into global options
 
         dimensions = Env.getDimensions(box, attr.document);
 
@@ -608,6 +609,9 @@ JXG.JSXGraph = {
             board.create("grid", [], typeof attr.grid === "object" ? attr.grid : {});
         }
         board.unsuspendUpdate();
+
+        // Set CSS styles of JSXGraph div
+        board.setAttribute({cssStyle: attr.cssstyle}, true);
 
         return board;
     },

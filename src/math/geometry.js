@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2025
+    Copyright 2008-2026
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -607,38 +607,6 @@ JXG.extend(
             }
 
             return ps;
-        },
-
-        /**
-         * Sorts coords such that coords with lower x-values come first.
-         * If the x values are equal, sort the coords such that those with smaller y values come first.
-         *
-         * Bubble sort.
-         *
-         * The given parameter is manipulated
-         *
-         * @param {[JXG.Coords]} coordsArr
-         * @returns {[JXG.Coords]}
-         */
-        sortXY: function (coordsArr) {
-            let tmp, i, j;
-
-            for (i = 0; i < coordsArr.length; i++) {
-                for (j = i + 1; j < coordsArr.length; j++) {
-
-                    if (
-                        coordsArr[j].usrCoords[1] < coordsArr[i].usrCoords[1] ||
-                        (coordsArr[j].usrCoords[1] === coordsArr[i].usrCoords[1] && coordsArr[j].usrCoords[2] < coordsArr[i].usrCoords[2])
-                    ) {
-                        tmp = coordsArr[j];
-                        coordsArr[j] = coordsArr[i];
-                        coordsArr[i] = tmp;
-                    }
-
-                }
-            }
-
-            return coordsArr;
         },
 
         /**
@@ -1569,7 +1537,7 @@ JXG.extend(
                 angle += 2 * Math.PI;
             }
             q = Math.floor((angle + Math.PI / 8) / (Math.PI / 4)) % 8;
-            return ["rt", "urt", "top", "ulft", "lft", "llft", "lrt"][q];
+            return ["rt", "urt", "top", "ulft", "lft", "llft", "bot", "lrt"][q];
         },
 
         /**
@@ -2167,6 +2135,11 @@ JXG.extend(
                 beta = this.rad(arc.radiuspoint, arc.center, arc.anglepoint),
                 ev_s = arc.evalVisProp('selection');
 
+            if (arc.evalVisProp('orientation') === 'clockwise') {
+                angle = 2 * Math.PI - angle;
+                beta = 2 * Math.PI - beta;
+            }
+
             if ((ev_s === "minor" && beta > Math.PI) || (ev_s === "major" && beta < Math.PI)) {
                 alpha = beta;
                 beta = 2 * Math.PI;
@@ -2386,7 +2359,7 @@ JXG.extend(
             // Radius is zero, return center of circle, if on other circle
             if (circ1[4] < Mat.eps) {
                 if (
-                    Math.abs(this.distance(circ1.slice(6, 2), circ2.slice(6, 8)) - circ2[4]) <
+                    Math.abs(this.distance(circ1.slice(6, 8), circ2.slice(6, 8)) - circ2[5]) <
                     Mat.eps
                 ) {
                     return new Coords(Const.COORDS_BY_USER, circ1.slice(6, 8), board);
@@ -2398,7 +2371,7 @@ JXG.extend(
             // Radius is zero, return center of circle, if on other circle
             if (circ2[4] < Mat.eps) {
                 if (
-                    Math.abs(this.distance(circ2.slice(6, 2), circ1.slice(6, 8)) - circ1[4]) <
+                    Math.abs(this.distance(circ2.slice(6, 8), circ1.slice(6, 8)) - circ1[5]) <
                     Mat.eps
                 ) {
                     return new Coords(Const.COORDS_BY_USER, circ2.slice(6, 8), board);
@@ -3874,7 +3847,7 @@ JXG.extend(
                 minfunc = function (t) {
                     var dx, dy;
 
-                    if (t < minX_glob || t > curve.maxX_glob) {
+                    if (t < minX_glob || t > maxX_glob) {
                         return Infinity;
                     }
                     dx = x - curve.X(t);

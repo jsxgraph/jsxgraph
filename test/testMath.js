@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2025
+    Copyright 2008-2026
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -166,6 +166,43 @@ describe("Test JXG.Math", function () {
                 );
             }
         }
+    });
+
+    it("cot", function () {
+        expect(JXG.Math.cot(Math.PI / 4)).toBeCloseTo(1, 15);
+        // cot(0): tan(0) = 0, returns NaN
+        expect(JXG.Math.cot(0)).toBeNaN();
+    });
+
+    it("nthroot", function () {
+        expect(JXG.Math.nthroot(16, 4)).toEqual(2);
+        expect(JXG.Math.nthroot(-27, 3)).toEqual(-3);
+        expect(JXG.Math.nthroot(-4, 2)).toBeNaN();
+        expect(JXG.Math.nthroot(0, 3)).toEqual(0);
+        // n = 0: guard check comes after 1/n, but still returns NaN
+        expect(JXG.Math.nthroot(8, 0)).toBeNaN();
+        // n negative or non-integer
+        expect(JXG.Math.nthroot(8, -1)).toBeNaN();
+        expect(JXG.Math.nthroot(8, 1.5)).toBeNaN();
+    });
+
+    it("log", function () {
+        expect(JXG.Math.log(Math.E)).toBeCloseTo(1, 15);
+        expect(JXG.Math.log(100, 10)).toBeCloseTo(2, 15);
+        expect(JXG.Math.log(8, 2)).toBeCloseTo(3, 15);
+        // log base 1 is undefined, returns NaN
+        expect(JXG.Math.log(10, 1)).toBeNaN();
+        // log base <= 0 is undefined, returns NaN
+        expect(JXG.Math.log(10, 0)).toBeNaN();
+        expect(JXG.Math.log(10, -2)).toBeNaN();
+    });
+
+    it("log10", function () {
+        expect(JXG.Math.log10(1000)).toBeCloseTo(3, 15);
+    });
+
+    it("log2", function () {
+        expect(JXG.Math.log2(8)).toBeCloseTo(3, 15);
     });
 });
 

@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2025
+    Copyright 2008-2026
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -195,10 +195,12 @@ JXG.createArc = function (board, parents, attributes) {
             A = this.radiuspoint,
             B = this.center,
             C = this.anglepoint,
-            ev_s = this.evalVisProp('selection');
+            a, b, c,
+            vp_s = this.evalVisProp('selection'),
+            vp_o = this.evalVisProp('orientation');
 
         phi = Geometry.rad(A, B, C);
-        if ((ev_s === "minor" && phi > Math.PI) || (ev_s === "major" && phi < Math.PI)) {
+        if ((vp_s === 'minor' && phi > Math.PI) || (vp_s === 'major' && phi < Math.PI) || (vp_s === 'auto' && vp_o === 'clockwise')) {
             sgn = -1;
         }
 
@@ -219,11 +221,11 @@ JXG.createArc = function (board, parents, attributes) {
             }
         }
 
-        A = A.coords.usrCoords;
-        B = B.coords.usrCoords;
-        C = C.coords.usrCoords;
+        a = A.coords.usrCoords;
+        b = B.coords.usrCoords;
+        c = C.coords.usrCoords;
 
-        ar = Geometry.bezierArc(A, B, C, false, sgn);
+        ar = Geometry.bezierArc(a, b, c, false, sgn);
 
         this.dataX = ar[0];
         this.dataY = ar[1];
@@ -277,7 +279,13 @@ JXG.createArc = function (board, parents, attributes) {
     el.Value = function (unit, rad) {
         var val;
 
-        rad = rad || Geometry.rad(this.radiuspoint, this.center, this.anglepoint);
+        if (rad === undefined) {
+            rad = Geometry.rad(this.radiuspoint, this.center, this.anglepoint);
+
+            if (this.evalVisProp('orientation') === 'clockwise') {
+                rad = 2 * Math.PI - rad;
+            }
+        }
 
         unit = unit || 'length';
         unit = unit.toLocaleLowerCase();
@@ -397,7 +405,8 @@ JXG.createArc = function (board, parents, attributes) {
             pmc = this.center.coords.usrCoords,
             bxminusax = p2c[1] - pmc[1],
             byminusay = p2c[2] - pmc[2],
-            ev_s = this.evalVisProp('selection'),
+            vp_s = this.evalVisProp('selection'),
+            vp_o = this.evalVisProp('orientation'),
             l_vp = this.label ? this.label.visProp : this.visProp.label;
 
         // If this is uncommented, the angle label can not be dragged
@@ -410,7 +419,7 @@ JXG.createArc = function (board, parents, attributes) {
             (pos.indexOf('right') < 0 && pos.indexOf('left') < 0)
         ) {
 
-            if ((ev_s === "minor" && angle > Math.PI) || (ev_s === "major" && angle < Math.PI)) {
+            if ((vp_s === 'minor' && angle > Math.PI) || (vp_s === 'major' && angle < Math.PI) || (vp_s === 'auto' && vp_o === 'clockwise')) {
                 angle = -(2 * Math.PI - angle);
             }
 

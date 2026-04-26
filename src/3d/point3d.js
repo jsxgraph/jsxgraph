@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2025
+    Copyright 2008-2026
         Matthias Ehmann,
         Carsten Miller,
         Andreas Walter,
@@ -35,7 +35,7 @@ import Mat from "../math/math.js";
 import Geometry from "../math/geometry.js";
 
 /**
- * A 3D point is the basic geometric element.
+ * A 3D point is a basic geometric element.
  * @class Creates a new 3D point object. Do not use this constructor to create a 3D point. Use {@link JXG.View3D#create} with
  * type {@link Point3D} instead.
  * @augments JXG.GeometryElement3D
@@ -44,7 +44,7 @@ import Geometry from "../math/geometry.js";
  * @param {Function|Array} F Array of numbers, array of functions or function returning an array with defines the user coordinates of the point.
  * @param {JXG.GeometryElement3D} slide Object the 3D point should be bound to. If null, the point is a free point.
  * @param {Object} attributes An object containing visual properties like in {@link JXG.Options#point3d} and
- * {@link JXG.Options#elements}, and optional a name and an id.
+ * {@link JXG.Options#elements}, and optionally a name and an id.
  * @see JXG.Board#generateName
  */
 JXG.Point3D = function (view, F, slide, attributes) {
@@ -310,7 +310,7 @@ JXG.extend(
                 c[0] = coords[0];
                 c[1] = coords[1];
                 c[2] = coords[2];
-                c[3] = coords[2];
+                c[3] = coords[3];
                 this.normalizeCoords();
             }
 

@@ -34,7 +34,12 @@ JXG.extend(Options, {
          * @name View3D#xAxis
          * @see View3D#axesPosition
          */
-        xAxis: { visible: true, point2: { name: "x" }, strokeColor: JXG.palette.red },
+        xAxis: {
+            visible: true,
+            layer: 12,
+            point2: { name: "x" },
+            strokeColor: JXG.palette.red
+        },
 
         /**
          * Attributes of the centered 3D y-axis.
@@ -43,7 +48,12 @@ JXG.extend(Options, {
          * @name View3D#yAxis
          * @see View3D#axesPosition
          */
-        yAxis: { visible: true, point2: { name: "y" }, strokeColor: JXG.palette.green },
+        yAxis: {
+            visible: true,
+            layer: 12,
+            point2: { name: "y" },
+            strokeColor: JXG.palette.green
+        },
 
         /**
          * Attributes of the centered 3D z-axis.
@@ -52,7 +62,12 @@ JXG.extend(Options, {
          * @name View3D#zAxis
          * @see View3D#axesPosition
          */
-        zAxis: { visible: true, point2: { name: "z" }, strokeColor: JXG.palette.blue },
+        zAxis: {
+            visible: true,
+            layer: 12,
+            point2: { name: "z" },
+            strokeColor: JXG.palette.blue
+        },
 
         /**
          * Attributes of the 3D x-axis at the border.
@@ -200,7 +215,24 @@ JXG.extend(Options, {
             strokeWidth: 1,
             strokeColor: '#dddddd',
             fillColor: '#dddddd',
-            mesh3d: { layer: 1 }
+            mesh3d: { layer: 1 },
+
+            stepsU: 10,
+            stepsV: 10,
+            tiling: 'rectangle',
+            polyhedron: {
+                visible: 'inherit',
+                strokeWidth: 0.5,
+                shader: {
+                    enabled: true,
+                    fixed: true,
+                    type: 'zIndex',
+                    hue: 0,
+                    saturation: 0,
+                    minlightness: 65,
+                    maxLightness: 98
+                }
+            }
         },
 
         /**
@@ -214,7 +246,24 @@ JXG.extend(Options, {
             strokeColor: '#dddddd',
             fillColor: '#dddddd',
             layer: 0,
-            mesh3d: { layer: 1 }
+            mesh3d: { layer: 1 },
+
+            stepsU: 10,
+            stepsV: 10,
+            tiling: 'rectangle',
+            polyhedron: {
+                visible: 'inherit',
+                strokeWidth: 0.5,
+                shader: {
+                    enabled: true,
+                    fixed: true,
+                    type: 'zIndex',
+                    hue: 0,
+                    saturation: 0,
+                    minlightness: 65,
+                    maxLightness: 98
+                }
+            }
         },
 
         /**
@@ -228,7 +277,24 @@ JXG.extend(Options, {
             strokeColor: '#dddddd',
             fillColor: '#dddddd',
             layer: 0,
-            mesh3d: { layer: 1 }
+            mesh3d: { layer: 1 },
+
+            stepsU: 10,
+            stepsV: 10,
+            tiling: 'rectangle',
+            polyhedron: {
+                visible: 'inherit',
+                strokeWidth: 0.5,
+                shader: {
+                    enabled: true,
+                    fixed: true,
+                    type: 'zIndex',
+                    hue: 0,
+                    saturation: 0,
+                    minlightness: 65,
+                    maxLightness: 98
+                }
+            }
         },
 
         /**
@@ -242,7 +308,24 @@ JXG.extend(Options, {
             strokeColor: '#dddddd',
             fillColor: '#dddddd',
             layer: 0,
-            mesh3d: { layer: 1 }
+            mesh3d: { layer: 1 },
+
+            stepsU: 10,
+            stepsV: 10,
+            tiling: 'rectangle',
+            polyhedron: {
+                visible: 'inherit',
+                strokeWidth: 0.5,
+                shader: {
+                    enabled: true,
+                    fixed: true,
+                    type: 'zIndex',
+                    hue: 0,
+                    saturation: 0,
+                    minlightness: 65,
+                    maxLightness: 98
+                }
+            }
         },
         /**
          * Attributes of the 3D plane orthogonal to the y-axis at the "front" of the cube.
@@ -255,7 +338,24 @@ JXG.extend(Options, {
             strokeColor: '#dddddd',
             fillColor: '#dddddd',
             layer: 0,
-            mesh3d: { layer: 1 }
+            mesh3d: { layer: 1 },
+
+            stepsU: 10,
+            stepsV: 10,
+            tiling: 'rectangle',
+            polyhedron: {
+                visible: 'inherit',
+                strokeWidth: 0.5,
+                shader: {
+                    enabled: true,
+                    fixed: true,
+                    type: 'zIndex',
+                    hue: 0,
+                    saturation: 0,
+                    minlightness: 65,
+                    maxLightness: 98
+                }
+            }
         },
         /**
          * Attributes of the 3D plane orthogonal to the z-axis at the "front" of the cube.
@@ -268,7 +368,24 @@ JXG.extend(Options, {
             strokeColor: '#dddddd',
             fillColor: '#dddddd',
             layer: 0,
-            mesh3d: { layer: 1 }
+            mesh3d: { layer: 1 },
+
+            stepsU: 10,
+            stepsV: 10,
+            tiling: 'rectangle',
+            polyhedron: {
+                visible: 'inherit',
+                strokeWidth: 0.5,
+                shader: {
+                    enabled: true,
+                    fixed: true,
+                    type: 'zIndex',
+                    hue: 0,
+                    saturation: 0,
+                    minlightness: 65,
+                    maxLightness: 98
+                }
+            }
         },
 
         // Axes on the planes
@@ -279,8 +396,9 @@ JXG.extend(Options, {
          */
         xPlaneRearYAxis: {
             visible: 'inherit',
-            strokeColor: "#888888",
-            strokeWidth: 1
+            strokeColor: "#aaaaaa",
+            strokeWidth: 1.2,
+            layer: 12
         },
         /**
          * Attributes of the 3D z-axis on the 3D plane orthogonal to the x-axis at the "rear" of the cube.
@@ -290,7 +408,8 @@ JXG.extend(Options, {
         xPlaneRearZAxis: {
             visible: 'inherit',
             strokeColor: "#888888",
-            strokeWidth: 1
+            strokeWidth: 1.2,
+            layer: 12
         },
         /**
          * Attributes of the 3D y-axis on the 3D plane orthogonal to the x-axis at the "front" of the cube.
@@ -300,7 +419,8 @@ JXG.extend(Options, {
         xPlaneFrontYAxis: {
             visible: 'inherit',
             strokeColor: "#888888",
-            strokeWidth: 1
+            strokeWidth: 1.2,
+            layer: 12
         },
         /**
          * Attributes of the 3D z-axis on the 3D plane orthogonal to the x-axis at the "front" of the cube.
@@ -310,9 +430,9 @@ JXG.extend(Options, {
         xPlaneFrontZAxis: {
             visible: 'inherit',
             strokeColor: "#888888",
-            strokeWidth: 1
+            strokeWidth: 1.2,
+            layer: 12
         },
-
         /**
          * Attributes of the 3D x-axis on the 3D plane orthogonal to the y-axis at the "rear" of the cube.
          * @type Plane3D
@@ -321,7 +441,8 @@ JXG.extend(Options, {
         yPlaneRearXAxis: {
             visible: 'inherit',
             strokeColor: "#888888",
-            strokeWidth: 1
+            strokeWidth: 1.2,
+            layer: 12
         },
         /**
          * Attributes of the 3D z-axis on the 3D plane orthogonal to the y-axis at the "rear" of the cube.
@@ -331,7 +452,8 @@ JXG.extend(Options, {
         yPlaneRearZAxis: {
             visible: 'inherit',
             strokeColor: "#888888",
-            strokeWidth: 1
+            strokeWidth: 1.2,
+            layer: 12
         },
         /**
          * Attributes of the 3D x-axis on the 3D plane orthogonal to the y-axis at the "front" of the cube.
@@ -341,7 +463,8 @@ JXG.extend(Options, {
         yPlaneFrontXAxis: {
             visible: 'inherit',
             strokeColor: "#888888",
-            strokeWidth: 1
+            strokeWidth: 1.2,
+            layer: 12
         },
         /**
          * Attributes of the 3D z-axis on the 3D plane orthogonal to the y-axis at the "front" of the cube.
@@ -351,7 +474,8 @@ JXG.extend(Options, {
         yPlaneFrontZAxis: {
             visible: 'inherit',
             strokeColor: "#888888",
-            strokeWidth: 1
+            strokeWidth: 1.2,
+            layer: 12
         },
 
         /**
@@ -362,7 +486,8 @@ JXG.extend(Options, {
         zPlaneRearXAxis: {
             visible: 'inherit',
             strokeColor: "#888888",
-            strokeWidth: 1
+            strokeWidth: 1.2,
+            layer: 12
         },
         /**
          * Attributes of the 3D y-axis on the 3D plane orthogonal to the z-axis at the "rear" of the cube.
@@ -372,7 +497,8 @@ JXG.extend(Options, {
         zPlaneRearYAxis: {
             visible: 'inherit',
             strokeColor: "#888888",
-            strokeWidth: 1
+            strokeWidth: 1.2,
+            layer: 12
         },
         /**
          * Attributes of the 3D x-axis on the 3D plane orthogonal to the z-axis at the "front" of the cube.
@@ -382,7 +508,8 @@ JXG.extend(Options, {
         zPlaneFrontXAxis: {
             visible: 'inherit',
             strokeColor: "#888888",
-            strokeWidth: 1
+            strokeWidth: 1.2,
+            layer: 12
         },
         /**
          * Attributes of the 3D y-axis on the 3D plane orthogonal to the z-axis at the "front" of the cube.
@@ -392,7 +519,8 @@ JXG.extend(Options, {
         zPlaneFrontYAxis: {
             visible: 'inherit',
             strokeColor: "#888888",
-            strokeWidth: 1
+            strokeWidth: 1.2,
+            layer: 12
         }
 
         /**#@-*/
@@ -403,6 +531,7 @@ JXG.extend(Options, {
         fixed: true,
         strokeColor: "black",
         strokeWidth: 1,
+        lastArrow: true,
         tabindex: null,
 
         point1: { visible: false, name: "", withLabel: false },
@@ -452,17 +581,32 @@ JXG.extend(Options, {
          * By default (i.e. type:'angle'), the angle between the camera axis and the normal of the
          * face determines the lightness value of the HSL color. Otherwise, the
          * zIndex of the face determines the lightness value of the HSL color.
+         * <p>
+         * Note that shading needs a lot of computing resources, in particular for
+         * SVG rendering. Setting `renderer:'canvas'` will allow to rotate the viewport
+         * much faster.
          *
          * @type Object
          * @name Face3D#shader
          * @see View3D#depthOrder
-         * @default <pre>{
-         *  enabled: false,
-         *  type: 'angle',   // 'angle', otherwise zIndex
-         *  hue: 60,         // yellow
-         *  saturation: 90,
-         *  minLightness: 30,
-         *  maxLightness: 90
+         * @default <pre>shader: {
+         *   enabled: false,
+         *   fixed: true,    // If false, update shading during rotation of viewport
+         *   type: 'angle',  // 'angle', otherwise zIndex
+         *   hue: 60,        // yellow
+         *   saturation: 90,
+         *   minLightness: 30,
+         *   maxLightness: 90,
+         *
+         *   light: {
+         *       type: 1,// 1: lighting==camera,
+         *               // 2: Fixed: angle(light, object),
+         *               // 3: Fixed: angle(light, camera) (default)
+         *       az: -45, // TODO use radians, ignored for type==1
+         *       el: 20,  // TODO use radians, ignored for type==1
+         *       bank: 0, // TODO use radians, ignored for type==1, type==3
+         *       dir: -1  // -1, 0 (use abs), 1: Default: -1
+         *   }
          * }</pre>
          *
          * @example
@@ -597,11 +741,22 @@ JXG.extend(Options, {
          */
         shader: {
             enabled: false,
-            type: 'angle',   // 'angle', otherwise zIndex
-            hue: 60,         // yellow
+            fixed: true,    // If false, update shading during rotation of viewport
+            type: 'angle',  // 'angle', otherwise zIndex
+            hue: 60,        // yellow
             saturation: 90,
             minLightness: 30,
-            maxLightness: 90
+            maxLightness: 90,
+
+            light: {
+                type: 1,// 1: lighting==camera,
+                        // 2: Fixed: angle(light, object),
+                        // 3: Fixed: angle(light, camera) (default)
+                az: -45, // TODO use radians, ignored for type==1
+                el: 20,  // TODO use radians, ignored for type==1
+                bank: 0, // TODO use radians, ignored for type==1, type==3
+                dir: -1  // -1, 0 (use abs), 1: Default: -1
+            }
         }
 
         /**#@-*/
@@ -719,7 +874,7 @@ JXG.extend(Options, {
          */
 
         layer: 12,
-        strokeWidth: 0,
+        strokeWidth: 1,
         strokeColor: "black",
         strokeOpacity: 1,
         highlight: false,
@@ -730,8 +885,11 @@ JXG.extend(Options, {
         gradient: "linear",
         gradientSecondColor: "#ffffff",
         gradientAngle: Math.PI,
-        fillColor: "#a7a7a7",
-        fillOpacity: 0.6,
+        fillColor: "#bbbbbb",
+        fillOpacity: 0.3,
+
+        type: 'shader', // 'wireframe', 'shader', 'colormap', 'colorarray'
+        tiling: 'rectangle', // 'triangle', 'rectangle'
 
         /**
          * Optional 3D mesh of a finite plane.
@@ -743,6 +901,19 @@ JXG.extend(Options, {
          */
         mesh3d: {
             visible: 'inherit'
+        },
+
+        stepsU: 6,
+        stepsV: 6,
+        polyhedron: {
+            layer: 12,
+            visible: 'inherit',
+            strokeWidth: 0.4,
+            strokeOpacity: 0.7,
+            strokeColor: '#cccccc',
+            fillOpacity: 0.30,
+            // fillColorArray: ['none', '#e7e7e7']
+            fillColorArray: ['#e7e7e7']
         },
 
         /**
@@ -866,13 +1037,392 @@ JXG.extend(Options, {
          * @visprop
          */
 
+        visible: true,
         layer: 12,
         highlight: false,
         tabindex: -1,
-        strokeWidth: 1,
+
+        /**
+         * Description of how the mesh is visualized. Possible values are 'wireframe', 'rectangle', 'triangle'.
+         * In case of `tiling:'wireframe'`, a rectangular mesh is displayed, the number of steps is determined by
+         * the attributes `stepsU` and `stepsV`. Further, the attributes `strokeWidth` and `strokeColor`, ...
+         * determine the style of the mesh.
+         * <p>
+         * In case of `tiling:'triangle'` or `tiling:'rectangle'` a polyhedron3d element is displayed, using the
+         * attributes `stepsU` and `stepsV`. In case of `triangle`, equilateral triangles are created if stepsV==0.
+         * <p>
+         * All other attributes of the polyhedron3d have to be set inside of `polyhedron`, including `strokeWidth`
+         * and `strokeColor`. The wireframe settings for these attributes are ignored.
+         * <p>
+         * At the time being (v1.13+), this attribute is immutable.
+         *
+         * @type String
+         * @name ParametricSurface3D#tiling
+         * @default 'wireframe'
+         * @see ParametricSurface3D#polyhedron
+         *
+         * @example
+         *
+         * var view = board.create('view3d',
+         *     [
+         *         [-6, -3], [8, 8],
+         *         [[-5, 5], [-5, 5], [-5, 5]]
+         *     ],
+         *     {
+         *         xPlaneRear: {visible: false},
+         *         yPlaneRear: {visible: false},
+         *     });
+         *
+         * // Function F to be plotted
+         * var F = (x, y) => Math.cos(x * y / 4);
+         *
+         * // 3D surface
+         * var c = view.create('functiongraph3d', [
+         *     F,
+         *     [-5, 5],
+         *     [-5, 5],
+         * ], {
+         *     strokeWidth: 0.5,
+         *     stepsU: 70,
+         *     stepsV: 70,
+         *     tiling:'wireframe'
+         * });
+         *
+         * </pre><div id="JXG87646dd4-9fe5-4c21-8734-089abc612515" class="jxgbox" style="width: 500px; height: 500px;"></div>
+         * <script type="text/javascript">
+         *     (function() {
+         *         var board = JXG.JSXGraph.initBoard('JXG87646dd4-9fe5-4c21-8734-089abc612515',
+         *             {boundingbox: [-8, 8, 8,-8], axis: false, pan: {enabled: false}, showcopyright: false, shownavigation: false});
+         *     var box = [-5, 5];
+         *     var view = board.create('view3d',
+         *         [
+         *             [-6, -3], [8, 8],
+         *             [box, box, box]
+         *         ],
+         *         {
+         *             xPlaneRear: {visible: false},
+         *             yPlaneRear: {visible: false},
+         *         });
+         *
+         *     // Function F to be plotted
+         *     var F = (x, y) => Math.cos(x * y / 4);
+         *
+         *     // 3D surface
+         *     var c = view.create('functiongraph3d', [
+         *         F,
+         *         box,
+         *         box
+         *     ], {
+         *         strokeWidth: 0.5,
+         *         stepsU: 50,
+         *         stepsV: 50,
+         *         tiling: 'wireframe'
+         *     });
+         *     })();
+         *
+         * </script><pre>
+         *
+         * @example
+         *
+         * var view = board.create('view3d',
+         *     [
+         *         [-6, -3], [8, 8],
+         *         [[-5, 5], [-5, 5], [-5, 5]]
+         *     ],
+         *     {
+         *         xPlaneRear: {visible: false},
+         *         yPlaneRear: {visible: false},
+         *     });
+         *
+         * // Function F to be plotted
+         * var F = (x, y) => Math.cos(x * y / 4);
+         *
+         * // 3D surface
+         * var c = view.create('functiongraph3d', [
+         *     F,
+         *     [-5, 5],
+         *     [-5, 5],
+         * ], {
+         *     stepsU: 15,
+         *     stepsV: 15,
+         *     tiling:'triangle'
+         * });
+         *
+         * </pre><div id="JXG6591ae99-1319-4cd7-b035-465484ad27d2" class="jxgbox" style="width: 500px; height: 500px;"></div>
+         * <script type="text/javascript">
+         *     (function() {
+         *         var board = JXG.JSXGraph.initBoard('JXG6591ae99-1319-4cd7-b035-465484ad27d2',
+         *             {boundingbox: [-8, 8, 8,-8], axis: false, pan: {enabled: false}, showcopyright: false, shownavigation: false});
+         *     var box = [-5, 5];
+         *     var view = board.create('view3d',
+         *         [
+         *             [-6, -3], [8, 8],
+         *             [box, box, box]
+         *         ],
+         *         {
+         *             xPlaneRear: {visible: false},
+         *             yPlaneRear: {visible: false},
+         *         });
+         *
+         *     // Function F to be plotted
+         *     var F = (x, y) => Math.cos(x * y / 4);
+         *
+         *     // 3D surface
+         *     var c = view.create('functiongraph3d', [
+         *         F,
+         *         box,
+         *         box
+         *     ], {
+         *         stepsU: 15,
+         *         stepsV: 15,
+         *         tiling: 'triangle'
+         *     });
+         *     })();
+         *
+         * </script><pre>
+         *
+         * @example
+         *
+         * var view = board.create('view3d',
+         *     [
+         *         [-6, -3], [8, 8],
+         *         [[-5, 5], [-5, 5], [-5, 5]]
+         *     ],
+         *     {
+         *         xPlaneRear: {visible: false},
+         *         yPlaneRear: {visible: false},
+         *     });
+         *
+         * // Function F to be plotted
+         * var F = (x, y) => Math.cos(x * y / 4);
+         *
+         * // 3D surface
+         * var c = view.create('functiongraph3d', [
+         *     F,
+         *     [-5, 5],
+         *     [-5, 5],
+         * ], {
+         *     stepsU: 15,
+         *     stepsV: 15,
+         *     tiling: 'rectangle'
+         * });
+         *
+         * </pre><div id="JXG6bebc69d-95fd-4923-9689-29461bb21471" class="jxgbox" style="width: 500px; height: 500px;"></div>
+         * <script type="text/javascript">
+         *     (function() {
+         *         var board = JXG.JSXGraph.initBoard('JXG6bebc69d-95fd-4923-9689-29461bb21471',
+         *             {boundingbox: [-8, 8, 8,-8], axis: false, pan: {enabled: false}, showcopyright: false, shownavigation: false});
+         *     var box = [-5, 5];
+         *     var view = board.create('view3d',
+         *         [
+         *             [-6, -3], [8, 8],
+         *             [box, box, box]
+         *         ],
+         *         {
+         *             xPlaneRear: {visible: false},
+         *             yPlaneRear: {visible: false},
+         *         });
+         *
+         *     // Function F to be plotted
+         *     var F = (x, y) => Math.cos(x * y / 4);
+         *
+         *     // 3D surface
+         *     var c = view.create('functiongraph3d', [
+         *         F,
+         *         box,
+         *         box
+         *     ], {
+         *         stepsU: 15,
+         *         stepsV: 15,
+         *         tiling: 'rectangle'
+         *     });
+         *     })();
+         *
+         * </script><pre>
+         */
+        type: 'wireframe', // 'colormap', 'shader', 'colorarray'
+        tiling: 'rectangle', // 'triangle'
+
+        // Wireframe
+        strokeWidth: 0.75,
+        // --- end wireframe
+
+        /**
+         * HSV color range for colormap. Supply lower bound [z_min, hue_min] on z-value and corresponding hue value, as well
+         * as upper bound [z_max, hue_max] on z-value and corresponding hue value. Further, give constant values for
+         * "saturation" and "value" of HSV.
+         *
+         * @type {object}
+         * @name ParametricSurface3D#colormap
+         * @default <pre>{
+         *   min: [-5, 190],
+         *   max: [5, 0],
+         *   s: 0.9,
+         *   v: 0.9
+         * }</pre>
+         */
+        colormap: {
+            min: [-5, 190],
+            max: [5, 0],
+            s: 0.9,
+            v: 0.9
+        },
+
+        /**
+         * Attributes for the polyhedron3d in case `style='triangle'` or `style='rectangle'`.
+         * Specifications are e.g.
+         * <ul>
+         *  <li>strokewidth: 0
+         *  <li>fillColorArray: ['white', JXG.palette.blue]
+         * </ul>
+         * @type {object}
+         * @name ParametricSurface3D#polyhedron
+         * @default <pre>{strokewidth: 0, fillColorArray: ['white', 'black'] }</pre>
+         * @see ParametricSurface3D#style
+         *
+         * @example
+         * var F = (x, y) => Math.cos(x * y / 4);
+         *
+         * var view = board.create('view3d', [
+         *    [-6, -3], [8, 8],
+         *    [[-5, 5], [-5, 5], [-5, 5]]
+         *  ], {
+         *    xPlaneRear: {visible: false},
+         *    yPlaneRear: {visible: false},
+         *    depthOrder: {enabled: true}
+         *  });
+         *
+         * // 3D surface
+         * var c = view.create('functiongraph3d', [F, [-5, 5], [-5, 5]], {
+         *    strokeWidth: 1, // ignored
+         *    stepsU: 10,
+         *    stepsV: 10,
+         *    tiling: 'triangle',
+         *    polyhedron: {
+         *        strokeWidth: 0, // has priority
+         *        fillOpacity: 0.9,
+         *        shader: {
+         *            enabled: true,
+         *            hue: 20,
+         *            saturation: 90,
+         *            minlightness: 50,
+         *            maxLightness: 80
+         *        }
+         *    }
+         * });
+         *
+         * </pre><div id="JXG8123a727-adef-4c10-83e6-d4f5e2203f68" class="jxgbox" style="width: 300px; height: 300px;"></div>
+         * <script type="text/javascript">
+         *     (function() {
+         *         var board = JXG.JSXGraph.initBoard('JXG8123a727-adef-4c10-83e6-d4f5e2203f68',
+         *             {boundingbox: [-8, 8, 8,-8], axis: false, pan: {enabled: false}, showcopyright: false, shownavigation: false});
+         *
+         *     var F = (x, y) => Math.cos(x * y / 4);
+         *     var box = [-5, 5];
+         *     var view = board.create('view3d',
+         *      [
+         *      [-6, -3], [8, 8],
+         *      [box, box, box]
+         *            ],
+         *             {
+         *               xPlaneRear: {visible: false},
+         *               yPlaneRear: {visible: false},
+         *               depthOrder: {enabled: true}
+         *     });
+         *
+         *     // 3D surface
+         *     var c = view.create('functiongraph3d', [F, box, box], {
+         *       strokeWidth: 0.5,
+         *       stepsU: 10,
+         *       stepsV: 10,
+         *       tiling: 'triangle',
+         *       polyhedron: {
+         *           strokeWidth: 0,
+         *           fillOpacity: 0.9,
+         *           shader: {
+         *               enabled: true,
+         *               hue: 20,
+         *               saturation: 90,
+         *               minlightness: 50,
+         *               maxLightness: 80
+         *           }
+         *       }
+         *     });
+         *
+         *     })();
+         *
+         * </script><pre>
+         *
+         * @example
+         *
+         * var view = board.create('view3d',
+         *     [
+         *         [-6, -3], [8, 8],
+         *         [[-5, 5], [-5, 5], [-5, 5]]
+         *     ], {
+         *         xPlaneRear: {visible: false},
+         *         yPlaneRear: {visible: false}
+         *     });
+         *
+         * // Function F to be plotted
+         * var F = (x, y) => y - x;
+         *
+         * // 3D surface
+         * var c = view.create('functiongraph3d', [F, [-5, 5], [-5, 5]], {
+         *     stepsU: 9,
+         *     stepsV: 9,
+         *     tiling: 'rectangle'
+         * });
+         *
+         * </pre><div id="JXG87646dd4-9fe5-4c21-8734-089abc612519" class="jxgbox" style="width: 500px; height: 500px;"></div>
+         * <script type="text/javascript">
+         *     (function() {
+         *         var board = JXG.JSXGraph.initBoard('JXG87646dd4-9fe5-4c21-8734-089abc612519',
+         *             {boundingbox: [-8, 8, 8,-8], axis: false, pan: {enabled: false}, showcopyright: false, shownavigation: false});
+         *     var box = [-5, 5];
+         *     var view = board.create('view3d',
+         *         [
+         *             [-6, -3], [8, 8],
+         *             [box, box, box]
+         *         ], {
+         *             xPlaneRear: {visible: false},
+         *             yPlaneRear: {visible: false}
+         *         });
+         *
+         *     // Function F to be plotted
+         *     var F = (x, y) => y - x;
+         *
+         *     // 3D surface
+         *     var c = view.create('functiongraph3d', [F, box, box], {
+         *         stepsU: 9,
+         *         stepsV: 9,
+         *         tiling: 'rectangle'
+         *     });
+         *     })();
+         * </script><pre>
+         */
+        polyhedron: {
+            visible: 'inherit',
+            strokeWidth: 0.1,
+            fillOpacity: 0.8,
+            fillColorArray: ['white', JXG.palette.blue],
+            shader: {
+                enabled: false,
+                fixed: true,
+                hue: 60,     // yellow
+                saturation: 90,
+                minLightness: 55,
+                maxLightness: 90,
+
+                light: {
+                    dir: -1
+                }
+            }
+        },
 
         /**
          * Number of intervals the mesh is divided into in direction of parameter u.
+         * If stepsU = 0 and type is 'wireframe' a 3D wireframe plot in one direction is created.
          * @type Number
          * @name ParametricSurface3D#stepsU
          */
@@ -880,6 +1430,7 @@ JXG.extend(Options, {
 
         /**
          * Number of intervals the mesh is divided into in direction of parameter v.
+         * If stepsV = 0 and type is 'wireframe' a 3D wireframe plot in one direction is created.
          * @type Number
          * @name ParametricSurface3D#stepsV
          */
@@ -989,7 +1540,7 @@ JXG.extend(Options, {
          * </pre>
          */
         depthOrder: {
-            enabled: false,
+            enabled: true,
             layers: [12, 13]
         },
 

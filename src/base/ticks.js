@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2025
+    Copyright 2008-2026
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -1105,6 +1105,7 @@ JXG.extend(
          * at two positions: [x[0], y[0]] and [x[1], y[1]] in screen coordinates.
          * @param  {Array}  x Array of length two
          * @param  {Array}  y Array of length two
+         * @param {Number} [m=0] Optional margin
          * @return {Boolean}   true if parts of the tick are inside of the canvas or on the boundary.
          */
         _isInsideCanvas: function (x, y, m) {
@@ -1286,7 +1287,7 @@ JXG.extend(
                 }
 
                 // Check if (parts of) the tick is inside the canvas.
-                if (this._isInsideCanvas(x, y)) {
+                if (!this.evalVisProp('clip') || this._isInsideCanvas(x, y)) {
                     return [x, y, major];
                 }
             }
@@ -1458,7 +1459,7 @@ JXG.extend(
             ya = [tick.scrCoords[2], tick.scrCoords[2]];
             m = fs === undefined ? 12 : fs;
             m *= 0.5;
-            if (!this._isInsideCanvas(xa, ya, m)) {
+            if (!this.evalVisProp('clip') || !this._isInsideCanvas(xa, ya, m)) {
                 return null;
             }
 
@@ -1563,6 +1564,7 @@ JXG.extend(
                     label = JXG.createText(this.board, [ld.x, ld.y, ld.t], attr);
                     this.addChild(label);
                     label.setParents(this);
+                    label.elType = 'label';
                     label.isDraggable = false;
                     label.dump = false;
                     this.labels.push(label);

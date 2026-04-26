@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2025
+    Copyright 2008-2026
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -274,7 +274,7 @@ JXG.extend(
                     } else if (ev_um || ev_uk) {
                         // MathJax or KaTeX
                         // Replace value-tags by functions
-                        // sketchofont is ignored
+                        // sketchoicon/sketchofont is ignored
                         this.content = this.valueTagToJessieCode(text);
                         if (!Type.isArray(this.content)) {
                             // For some reason we don't have to mask backslashes in an array of strings
@@ -447,6 +447,7 @@ JXG.extend(
             }
             node = this.rendNode;
 
+
             /**
              * offsetWidth and offsetHeight seem to be supported for internal vml elements by IE10+ in IE8 mode.
              */
@@ -455,6 +456,20 @@ JXG.extend(
                     that = this;
                     window.setTimeout(function () {
                         that.size = [node.offsetWidth, node.offsetHeight];
+
+                        // This would be the way to determine the height of a MathJax formula
+                        // rendered with SVG (i.e. using tex-svg-nofont).
+                        // This is needed if the text element's anchorY === 'middle'
+                        // and the text is included in a board.renderer.dumpToDataURI() call
+                        // with MathJax formulas.
+                        // if (Type.exists(node.firstChild) && node.firstChild.nodeName === 'MJX-CONTAINER' &&
+                        //     Type.exists(node.firstChild.firstChild && node.firstChild.firstChild.nodeName === 'SVG')
+                        // ) {
+                        //     // console.log(that.visProp.fontsize * 0.5)
+                        //     // that.size[1] += 2 * that.visProp.fontsize;
+                        //     that.size = [node.firstChild.firstChild.scrollWidth, node.firstChild.firstChild.scrollHeight];
+                        // }
+
                         that.needsUpdate = true;
                         that.updateRenderer();
                     }, 0);
@@ -955,8 +970,10 @@ JXG.extend(
         },
 
         /**
-         * Converts the sketchometry tag <sketchofont> to
+         * Converts the sketchometry tag <sketchoicon> to
          * HTML span tags with proper CSS formatting.
+         *
+         * Old tag was <sketchofont>.
          *
          * @param {String|Function|Number} s Text
          * @param {Boolean} escape Flag if ticks should be escaped. Escaping is necessary
@@ -975,6 +992,8 @@ JXG.extend(
                     t1 = this.escapeTicks(t1);
                     t2 = this.escapeTicks(t2);
                 }
+                s = s.replace(/(<|&lt;)sketchoicon(>|&gt;)/g, t1);
+                s = s.replace(/(<|&lt;)\/sketchoicon(>|&gt;)/g, t2);
                 s = s.replace(/(<|&lt;)sketchofont(>|&gt;)/g, t1);
                 s = s.replace(/(<|&lt;)\/sketchofont(>|&gt;)/g, t2);
             }

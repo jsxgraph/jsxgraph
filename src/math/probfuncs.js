@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2025
+    Copyright 2008-2026
         Matthias Ehmann,
         Carsten Miller,
         Andreas Walter,
@@ -309,7 +309,6 @@ Mat.ProbFuncs = {
      * @returns {Number}
      */
     _underflow: function (a) {
-        console.log("erfc", 'UNDERFLOW');
         if (a < 0) {
             return 2.0;
         }

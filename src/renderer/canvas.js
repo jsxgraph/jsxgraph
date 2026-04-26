@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2025
+    Copyright 2008-2026
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -1155,6 +1155,9 @@ JXG.extend(
                 s = 1.5 * fontsize,
                 alpha = 0.2;
 
+            if (!Type.isBrowser) {
+                return;
+            }
             if (!Type.exists(board._logo_image)) {
                 board._logo_image = new Image();
                 board._logo_image.src = str;
@@ -1371,7 +1374,7 @@ JXG.extend(
                 symbl = "L",
                 symbc = "C",
                 nextSymb = symbm,
-                maxSize = 5000.0,
+                // M = Env.maxScreenCoord,
                 context = this.context;
 
             if (el.numberPoints <= 0) {
@@ -1382,12 +1385,6 @@ JXG.extend(
             context.beginPath();
 
             if (el.bezierDegree === 1) {
-                /*
-                if (isNotPlot && el.board.options.curve.RDPsmoothing) {
-                    el.points = Numerics.RamerDouglasPeucker(el.points, 0.5);
-                }
-                */
-
                 for (i = 0; i < len; i++) {
                     scr = el.points[i].scrCoords;
 
@@ -1396,17 +1393,19 @@ JXG.extend(
                         nextSymb = symbm;
                     } else {
                         // Chrome has problems with values  being too far away.
-                        if (scr[1] > maxSize) {
-                            scr[1] = maxSize;
-                        } else if (scr[1] < -maxSize) {
-                            scr[1] = -maxSize;
-                        }
+                        // 2026: seems to be obsolete, see comments in SVG.updatePathStringPrim
+                        // If needed, it should be adapted to not do changes in place, see svg
+                        // if (scr[1] > M) {
+                        //     scr[1] = M;
+                        // } else if (scr[1] < -M) {
+                        //     scr[1] = -M;
+                        // }
 
-                        if (scr[2] > maxSize) {
-                            scr[2] = maxSize;
-                        } else if (scr[2] < -maxSize) {
-                            scr[2] = -maxSize;
-                        }
+                        // if (scr[2] > M) {
+                        //     scr[2] = M;
+                        // } else if (scr[2] < -M) {
+                        //     scr[2] = -M;
+                        // }
 
                         if (nextSymb === symbm) {
                             context.moveTo(scr[1], scr[2]);
@@ -1458,7 +1457,7 @@ JXG.extend(
                 symbm = "M",
                 symbl = "C",
                 nextSymb = symbm,
-                maxSize = 5000.0,
+                // M = Env.maxScreenCoord,
                 f = el.evalVisProp('strokewidth'),
                 isNoPlot = el.evalVisProp('curvetype') !== "plot",
                 context = this.context;
@@ -1484,17 +1483,19 @@ JXG.extend(
                         nextSymb = symbm;
                     } else {
                         // Chrome has problems with values being too far away.
-                        if (scr[1] > maxSize) {
-                            scr[1] = maxSize;
-                        } else if (scr[1] < -maxSize) {
-                            scr[1] = -maxSize;
-                        }
+                        // 2026: seems to be obsolete, see comments in SVG.updatePathStringPrim
+                        // If needed, it should be adapted to not do changes in place, see svg
+                        // if (scr[1] > M) {
+                        //     scr[1] = M;
+                        // } else if (scr[1] < -M) {
+                        //     scr[1] = -M;
+                        // }
 
-                        if (scr[2] > maxSize) {
-                            scr[2] = maxSize;
-                        } else if (scr[2] < -maxSize) {
-                            scr[2] = -maxSize;
-                        }
+                        // if (scr[2] > M) {
+                        //     scr[2] = M;
+                        // } else if (scr[2] < -M) {
+                        //     scr[2] = -M;
+                        // }
 
                         if (nextSymb === symbm) {
                             context.moveTo(scr[1], scr[2]);

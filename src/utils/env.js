@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2025
+    Copyright 2008-2026
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -58,6 +58,16 @@ JXG.extendConstants(
 JXG.extend(
     JXG,
     /** @lends JXG */ {
+
+        /**
+         * Upper bound on pixel coordinates. This is used in svg and canvas renderer to avoid limitations on numbers there.
+         * 2026: seems to be obsolete. Browser implementations support 32 floating point values.
+         * <p>
+         * 1.13+: unused
+         * @private
+         */
+        maxScreenCoord: 5000,
+
         /**
          * Determines whether evt is a touch event.
          * @param evt {Event}
@@ -123,7 +133,9 @@ JXG.extend(
          * @type Boolean
          * @default false
          */
-        isBrowser: Type.exists(window) && Type.exists(document) &&
+        // isBrowser: Type.exists(window) && Type.exists(document) &&
+        //     typeof window === "object" && typeof document === "object",
+        isBrowser: typeof window !== 'undefined' && typeof document !== 'undefined' &&
             typeof window === "object" && typeof document === "object",
 
         /**
@@ -399,7 +411,7 @@ JXG.extend(
                 all,
                 v = 3;
 
-            if (document === null || typeof document !== 'object') {
+            if (typeof document === 'undefined' || document === null || typeof document !== 'object') {
                 return 0;
             }
 

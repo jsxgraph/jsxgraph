@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2025
+    Copyright 2008-2026
         Matthias Ehmann,
         Carsten Miller,
         Andreas Walter,
@@ -94,12 +94,12 @@ describe("Test otherintersection functions", function () {
         var curve = board.create('implicitcurve', ['-(y**2) + x**3 - 2 * x + 1'], { strokeWidth: 2 });
         var A = board.create('glider', [-1.5, 1, curve]);
         // var A = board.create('glider', [0.37396780454687994, 0.5499649305598868, curve]);
-        var B = board.create('glider', [0.4367895281858512, 0.4571951924120887, curve]);
+        var B = board.create('glider', [0.4360489385133631, 0.4567255578708666, curve]);
         var line = board.create('line', [A, B], { color: 'black', strokeWidth: 1 });
         var C = board.create('otherintersection', [curve, line, [A, B]], { precision: 0.01 });
 
-        expect(C.X()).toBeCloseTo(1.0674492869432997, 3);
-        expect(C.Y()).toBeCloseTo(0.2845868237650837, 3);
+        expect(C.X()).toBeCloseTo(1.0676200600387042, 3);
+        expect(C.Y()).toBeCloseTo(0.28451328791650443, 3);
     });
 
     it("Other intersection curve-curve", function () {
@@ -122,8 +122,11 @@ describe("Test otherintersection functions", function () {
         var c2 = board.create('functiongraph', [(x) => -(x ** 2) + 2 * A.X() * x + A.Y() - A.X() ** 2]);
         var p1 = board.create('intersection', [c1, c2], { color: 'black' });
         var p2 = board.create('otherintersection', [c1, c2, [p1]]);
-        expect(p2.X()).toBeCloseTo(2.0472281349142505, 4);
-        expect(p2.Y()).toBeCloseTo(-2.1911512307913723, 4);
+
+        // expect(p2.X()).toBeCloseTo(2.0285713861245918, 3);
+        // expect(p2.Y()).toBeCloseTo(-2.2089395562537772, 3);
+        expect(p2.X()).toBeCloseTo(2.0471376565059347, 3); // RDP
+        expect(p2.Y()).toBeCloseTo(-2.191237497664158, 3);
     });
 
 });

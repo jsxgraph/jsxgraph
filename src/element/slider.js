@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2025
+    Copyright 2008-2026
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -434,6 +434,9 @@ JXG.createSlider = function (board, parents, attributes) {
         // reset the withlabel attribute
         p3.visProp.withlabel = true;
         p3.hasLabel = true;
+        p3.inherits.push(t);
+        t.addParents(p3);
+        p3.addChild(t);
     }
 
     /**

@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2025
+    Copyright 2008-2026
         Matthias Ehmann,
         Carsten Miller,
         Andreas Walter,
@@ -119,6 +119,7 @@ JXG.extend(JXG.GeometryElement3D.prototype, {
                 key = i.replace(/\s+/g, "").toLowerCase();
                 value = attributes[i];
                 switch (key) {
+                    case "fillColor":
                     case "numberpointshigh":
                     case "stepsu":
                     case "stepsv":

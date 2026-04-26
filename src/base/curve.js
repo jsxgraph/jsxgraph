@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2025
+    Copyright 2008-2026
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -750,6 +750,7 @@ JXG.extend(
         updateCurve: function () {
             var i, len, mi, ma,
                 x, y,
+                bb, eps,
                 version = this.visProp.plotversion,
                 //t1, t2, l1,
                 suspendUpdate = false;
@@ -842,18 +843,26 @@ JXG.extend(
                         }
                     }
                 }
-
-                // for (i = 0; i < len; i++) {
-                //     this.updateTransform(this.points[i]);
-                // }
             }
 
             if (
-                this.evalVisProp('curvetype') !== "plot" &&
+                this.bezierDegree === 1 &&
+                // this.evalVisProp('curvetype') !== "plot" &&
                 this.evalVisProp('rdpsmoothing')
             ) {
                 // console.time('rdp');
-                this.points = Numerics.RamerDouglasPeucker(this.points, 0.2);
+                // RDP in screen coords:
+                // this.points = Numerics.RamerDouglasPeucker(this.points, 0.2);
+
+                // RDP in user coords:
+                // Use a default size of 800 x 800 pixel and
+                // maximum distance of 0.2 pixel:
+                // Determine the geometric mean M of the horizontal and vertical box size in user coords, i.e.
+                // 1 u = 1000 / M px => 1 px = M / 1000 u => eps := 0.2 * M / 800
+                bb = this.board.getBoundingBox();
+                eps = this.evalVisProp('rdpthreshold') * Math.sqrt((bb[2] - bb[0]) * (bb[1] - bb[3])) * 0.00125;
+                this.points = Numerics.RamerDouglasPeucker(this.points, eps, true);
+
                 this.numberPoints = this.points.length;
                 // console.timeEnd('rdp');
                 // console.log(this.numberPoints);
@@ -3048,17 +3057,26 @@ JXG.registerElement("curveunion", JXG.createCurveUnion);
 // JXG.registerElement("curveconcat", JXG.createCurveConcat);
 
 /**
- * @class Vertical or horizontal box plot curve to present numerical data through their quartiles.
- * The direction of the box plot is controlled by the attribute "dir".
+ * @class Vertical or horizontal boxplot or also called box-and-whisker plot to present numerical data through their quartiles.
+ * The direction of the boxplot is controlled by the attribute "dir". Internally, a boxplot is realized with a single JSXGraph curve.
+ * <p>
+ * Given a data set, the input array Q for the boxplot can be computed e.g. with the method {@link JXG.Math.Statistics.boxplot}.
+ *
+ * @example
+ * var data = [57, 57, 57, 58, 63, 66, 66, 67, 67, 68, 69, 70, 70, 70, 70, 72, 73, 75, 75, 76, 76, 78, 79, 81];
+ * var Q = JXG.Math.Statistics.boxplot(data);
+ * var b = board.create('boxplot', [Q, 2, 4]);
+ *
  * @pseudo
  * @name Boxplot
- * @param {Array} quantiles Array containing at least five quantiles. The elements can be of type number, function or string.
- * @param {Number|Function} axis Axis position of the box plot
- * @param {Number|Function} width Width of the rectangle part of the box plot. The width of the first and 4th quantile
+ * @param {Array} quantiles Array containing five quantiles (e.g. min, first quartile, median, third quartile, maximum) and an optional array with outlier values. The elements of this array can be of type number, function or string. The optional aub-array outlier is an array of numbers or a function returning an array of numbers.
+ * @param {Number|Function} axis Axis position of the boxplot
+ * @param {Number|Function} width Width of the rectangle part of the boxplot. The width of the first and 3th quartile
  * is relative to this width and can be controlled by the attribute "smallWidth".
  * @augments JXG.Curve
  * @constructor
  * @type JXG.Curve
+ * @see JXG.Math.Statistics#boxplot
  *
  * @example
  * var Q = [ -1, 2, 3, 3.5, 5 ];
@@ -3078,16 +3096,17 @@ JXG.registerElement("curveunion", JXG.createCurveUnion);
  * </script><pre>
  *
  * @example
- * var Q = [ -1, 2, 3, 3.5, 5 ];
- * var b = board.create('boxplot', [Q, 3, 4], {dir: 'horizontal', smallWidth: 0.25, color:'red'});
+ * // With outliers
+ * var Q = [ -1, 2, 3, 3.5, 5, [-4, -6] ];
+ * var b = board.create('boxplot', [Q, 3, 4], {dir: 'horizontal', width: 2, smallWidth: 0.25, color:'red'});
  *
  * </pre><div id="JXG0deb9cb2-84bc-470d-a6db-8be9a5694813" class="jxgbox" style="width: 300px; height: 300px;"></div>
  * <script type="text/javascript">
  *     (function() {
  *         var board = JXG.JSXGraph.initBoard('JXG0deb9cb2-84bc-470d-a6db-8be9a5694813',
  *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
- *     var Q = [ -1, 2, 3, 3.5, 5 ];
- *     var b = board.create('boxplot', [Q, 3, 4], {dir: 'horizontal', smallWidth: 0.25, color:'red'});
+ *     var Q = [ -1, 2, 3, 3.5, 5, [-4, -6] ];
+ *     var b = board.create('boxplot', [Q, 3, 4], {dir: 'horizontal', width: 2, smallWidth: 0.25, color:'red'});
  *
  *     })();
  *
@@ -3095,12 +3114,7 @@ JXG.registerElement("curveunion", JXG.createCurveUnion);
  *
  * @example
  * var data = [57, 57, 57, 58, 63, 66, 66, 67, 67, 68, 69, 70, 70, 70, 70, 72, 73, 75, 75, 76, 76, 78, 79, 81];
- * var Q = [];
- *
- * Q[0] = JXG.Math.Statistics.min(data);
- * Q = Q.concat(JXG.Math.Statistics.percentile(data, [25, 50, 75]));
- * Q[4] = JXG.Math.Statistics.max(data);
- *
+ * var Q = JXG.Math.Statistics.boxplot(data);
  * var b = board.create('boxplot', [Q, 0, 3]);
  *
  * </pre><div id="JXGef079e76-ae99-41e4-af29-1d07d83bf85a" class="jxgbox" style="width: 300px; height: 300px;"></div>
@@ -3109,12 +3123,7 @@ JXG.registerElement("curveunion", JXG.createCurveUnion);
  *         var board = JXG.JSXGraph.initBoard('JXGef079e76-ae99-41e4-af29-1d07d83bf85a',
  *             {boundingbox: [-5,90,5,30], axis: true, showcopyright: false, shownavigation: false});
  *     var data = [57, 57, 57, 58, 63, 66, 66, 67, 67, 68, 69, 70, 70, 70, 70, 72, 73, 75, 75, 76, 76, 78, 79, 81];
- *     var Q = [];
- *
- *     Q[0] = JXG.Math.Statistics.min(data);
- *     Q = Q.concat(JXG.Math.Statistics.percentile(data, [25, 50, 75]));
- *     Q[4] = JXG.Math.Statistics.max(data);
- *
+ *     var Q = JXG.Math.Statistics.boxplot(data, [25, 50, 75]);
  *     var b = board.create('boxplot', [Q, 0, 3]);
  *
  *     })();
@@ -3150,13 +3159,13 @@ JXG.createBoxPlot = function (board, parents, attributes) {
 
     if (parents.length !== 3) {
         throw new Error(
-            "JSXGraph: Can't create box plot with given parent'" +
+            "JSXGraph: Can't create boxplot with given parent'" +
             "\nPossible parent types: [array, number|function, number|function] containing quantiles, axis, width"
         );
     }
     if (parents[0].length < 5) {
         throw new Error(
-            "JSXGraph: Can't create box plot with given parent[0]'" +
+            "JSXGraph: Can't create boxplot with given parent[0]'" +
             "\nparent[0] has to contain at least 5 quantiles."
         );
     }
@@ -3175,7 +3184,8 @@ JXG.createBoxPlot = function (board, parents, attributes) {
      * @ignore
      */
     box.updateDataArray = function () {
-        var v1, v2, l1, l2, r1, r2, w2, dir, x;
+        var v1, v2, l1, l2, r1, r2, w2, dir, x,
+            i, le, q5, y, sx, sy, sx2, sy2, t, f;
 
         w2 = this.evalVisProp('smallwidth');
         dir = this.evalVisProp('dir');
@@ -3206,6 +3216,77 @@ JXG.createBoxPlot = function (board, parents, attributes) {
             this.Q[4](),
             this.Q[4]()
         ];
+
+        // Outliers
+        if (this.Q.length > 5 && Type.isArray(this.Q[5]())) {
+            v1.push(NaN);
+            v2.push(NaN);
+
+            f = this.evalVisProp('outlier.face');
+
+            if (dir === 'vertical') {
+                sx = this.evalVisProp('outlier.size') / this.board.unitX;
+                sy = this.evalVisProp('outlier.size') / this.board.unitY;
+            } else {
+                sy = this.evalVisProp('outlier.size') / this.board.unitX;
+                sx = this.evalVisProp('outlier.size') / this.board.unitY;
+            }
+            sx2 = sx * Math.sqrt(2);
+            sy2 = sy * Math.sqrt(2);
+
+            q5 = this.Q[5]();
+            le = q5.length;
+            for (i = 0; i < le; i++) {
+                y = q5[i];
+                switch (f) {
+                    case 'x':
+                    case 'cross':
+                        v1.push(x - sx, x + sx, NaN, x - sx, x + sx, NaN);
+                        v2.push(y + sy, y - sy, NaN, y - sy, y + sy, NaN);
+                        break;
+                    case '[]':
+                    case 'square':
+                        v1.push(x - sx, x + sx, x + sx, x - sx, x - sx, NaN);
+                        v2.push(y + sy, y + sy, y - sy, y - sy, y + sy, NaN);
+                        break;
+                    case '<>':
+                    case 'diamond':
+                        v1.push(x, x + sx, x, x - sx, x, NaN);
+                        v2.push(y + sy, y, y - sy, y, y + sy, NaN);
+                        break;
+                    case '<<>>':
+                    case 'diamond2':
+                        v1.push(x, x + sx2, x, x - sx2, x, NaN);
+                        v2.push(y + sy2, y, y - sy2, y, y + sy2, NaN);
+                        break;
+                    case '+':
+                    case 'plus':
+                        v1.push(x - sx, x + sx, NaN, x, x, NaN);
+                        v2.push(y, y, NaN, y - sy, y + sy, NaN);
+                        break;
+                    case '-':
+                    case 'minus':
+                        v1.push(x - sx, x + sx, NaN);
+                        v2.push(y, y, NaN);
+                        break;
+                    case '|':
+                    case 'divide':
+                        v1.push(x, x, NaN);
+                        v2.push(y - sy, y + sy, NaN);
+                        break;
+                    default:
+                    case 'o':
+                    case 'circle':
+                        for (t = 0; t <= 2 * Math.PI; t += (2 * Math.PI) / 17) {
+                            v1.push(x - sx * Math.sin(t));
+                            v2.push(y - sy * Math.cos(t));
+                        }
+                        v1.push(NaN);
+                        v2.push(NaN);
+                }
+            }
+        }
+
         if (dir === 'vertical') {
             this.dataX = v1;
             this.dataY = v2;

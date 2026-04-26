@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2025
+    Copyright 2008-2026
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -2815,13 +2815,16 @@ JXG.createInequality = function (board, parents, attributes) {
                 last,
                 len,
                 i,
+                miv = Infinity,
+                mav = -Infinity,
+                p,
                 mi = parents[0].minX(),
                 ma = parents[0].maxX(),
                 curve_mi,
                 curve_ma,
                 firstx,
                 lastx,
-                enlarge = (bbox[1] - bbox[3]) * 0.3, // enlarge the bbox vertically by this amount
+                enlarge = (bbox[1] - bbox[3]) * 1, // enlarge the bbox vertically by this amount
                 inverse = this.evalVisProp('inverse');
 
             // inverse == true <=> Fill area with y >= f(x)
@@ -2879,9 +2882,20 @@ JXG.createInequality = function (board, parents, attributes) {
 
                 points.push([1, curve_mi, bbox[infty]]);
                 points.push([1, curve_mi, parents[0].points[first].usrCoords[2]]);
+
                 for (i = first; i <= last; i++) {
+                    p = parents[0].points[i].usrCoords;
                     points.push(parents[0].points[i].usrCoords);
+                    miv = (p[2] < miv) ? p[2] : miv;
+                    mav = (p[2] > mav) ? p[2] : mav;
                 }
+
+                if (infty === 1) {
+                    points[0][2] = mav + enlarge;
+                } else {
+                     points[0][2] = miv - enlarge;
+                }
+
                 points.push([1, curve_ma, parents[0].points[last].usrCoords[2]]);
                 points.push([1, curve_ma, bbox[infty]]);
                 points.push(points[0]);

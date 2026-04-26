@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2025
+    Copyright 2008-2026
         Matthias Ehmann,
         Carsten Miller,
         Alfred Wassermann
@@ -238,6 +238,7 @@ Type.extend(
                 dataY = [],
                 ret = [],
                 num_components = 0,
+                max_level = 8,
 
                 delta,
                 that = this,
@@ -270,7 +271,7 @@ Type.extend(
                     ret = this.searchLine(
                         fmi_x, fma_x, x,
                         [mi_y, ma_y], 'vertical',
-                        num_components, dataX, dataY, 20);
+                        num_components, dataX, dataY, max_level);
 
                     if (ret !== false) {
                         dataX = ret[0];
@@ -289,7 +290,7 @@ Type.extend(
                     ret = this.searchLine(
                         fmi_y, fma_y, y,
                         [mi_x, ma_x], 'horizontal',
-                        num_components, dataX, dataY, 20);
+                        num_components, dataX, dataY, max_level);
 
                     if (ret !== false) {
                         dataX = ret[0];
@@ -370,7 +371,7 @@ Type.extend(
 
                 if (is_in) {
                     if (DEBUG) {
-                        console.log("Found in quadtree", u0);
+                        console.log("Found in quadtree", u0, "level:", level);
                     }
                 } else {
                     if (DEBUG) {

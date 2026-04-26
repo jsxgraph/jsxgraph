@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2025
+    Copyright 2008-2026
         Matthias Ehmann,
         Carsten Miller,
         Alfred Wassermann
@@ -72,7 +72,7 @@ import Type from "../utils/type.js";
  *
  * @example
  * var p1 = board.create('point', [3, 4], {showInfobox: false, withLabel: false});
- * board.create('smartlabel', [p1], {digits: 1, unit: 'm', dir: 'col', useMathJax: false});
+ * board.create('smartlabel', [p1], {digits: 1, baseUnit: 'm', dir: 'col', useMathJax: false});
  *
  * </pre><div id="JXG30cd1f9e-7e78-48f3-91a2-9abd466a754f" class="jxgbox" style="width: 300px; height: 300px;"></div>
  * <script type="text/javascript">
@@ -80,7 +80,7 @@ import Type from "../utils/type.js";
  *         var board = JXG.JSXGraph.initBoard('JXG30cd1f9e-7e78-48f3-91a2-9abd466a754f',
  *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
  *     var p1 = board.create('point', [3, 4], {showInfobox: false, withLabel: false});
- *     board.create('smartlabel', [p1], {digits: 1, unit: 'cm', dir: 'col', useMathJax: false});
+ *     board.create('smartlabel', [p1], {digits: 1, baseUnit: 'cm', dir: 'col', useMathJax: false});
  *
  *     })();
  *
@@ -88,8 +88,8 @@ import Type from "../utils/type.js";
  *
  * @example
  * var s1 = board.create('line', [[-7, 2], [6, -6]], {point1: {visible:true}, point2: {visible:true}});
- * board.create('smartlabel', [s1], {unit: 'm', measure: 'length', prefix: 'L = ', useMathJax: false});
- * board.create('smartlabel', [s1], {unit: 'm',  measure: 'slope', prefix: '&Delta; = ', useMathJax: false});
+ * board.create('smartlabel', [s1], {baseUnit: 'm', measure: 'length', prefix: 'L = ', useMathJax: false});
+ * board.create('smartlabel', [s1], {baseUnit: 'm',  measure: 'slope', prefix: '&Delta; = ', useMathJax: false});
  *
  *
  * </pre><div id="JXGfb4423dc-ee3a-4122-a186-82123019a835" class="jxgbox" style="width: 300px; height: 300px;"></div>
@@ -98,8 +98,8 @@ import Type from "../utils/type.js";
  *         var board = JXG.JSXGraph.initBoard('JXGfb4423dc-ee3a-4122-a186-82123019a835',
  *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
  *     var s1 = board.create('line', [[-7, 2], [6, -6]], {point1: {visible:true}, point2: {visible:true}});
- *     board.create('smartlabel', [s1], {unit: 'm', measure: 'length', prefix: 'L = ', useMathJax: false});
- *     board.create('smartlabel', [s1], {unit: 'm',  measure: 'slope', prefix: '&Delta; = ', useMathJax: false});
+ *     board.create('smartlabel', [s1], {baseUnit: 'm', measure: 'length', prefix: 'L = ', useMathJax: false});
+ *     board.create('smartlabel', [s1], {baseUnit: 'm',  measure: 'slope', prefix: '&Delta; = ', useMathJax: false});
  *
  *
  *     })();
@@ -108,9 +108,9 @@ import Type from "../utils/type.js";
  *
  * @example
  * var c1 = board.create('circle', [[0, 1], [4, 1]], {point2: {visible: true}});
- * board.create('smartlabel', [c1], {unit: 'm', measure: 'perimeter', prefix: 'U = ', useMathJax: false});
- * board.create('smartlabel', [c1], {unit: 'm', measure: 'area', prefix: 'A = ', useMathJax: false});
- * board.create('smartlabel', [c1], {unit: 'm', measure: 'radius', prefix: 'R = ', useMathJax: false});
+ * board.create('smartlabel', [c1], {baseUnit: 'm', measure: 'perimeter', prefix: 'U = ', useMathJax: false});
+ * board.create('smartlabel', [c1], {baseUnit: 'm', measure: 'area', prefix: 'A = ', useMathJax: false});
+ * board.create('smartlabel', [c1], {baseUnit: 'm', measure: 'radius', prefix: 'R = ', useMathJax: false});
  *
  *
  * </pre><div id="JXG763c4700-8273-4eb7-9ed9-1dc6c2c52e93" class="jxgbox" style="width: 300px; height: 300px;"></div>
@@ -119,9 +119,9 @@ import Type from "../utils/type.js";
  *         var board = JXG.JSXGraph.initBoard('JXG763c4700-8273-4eb7-9ed9-1dc6c2c52e93',
  *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
  *     var c1 = board.create('circle', [[0, 1], [4, 1]], {point2: {visible: true}});
- *     board.create('smartlabel', [c1], {unit: 'm', measure: 'perimeter', prefix: 'U = ', useMathJax: false});
- *     board.create('smartlabel', [c1], {unit: 'm', measure: 'area', prefix: 'A = ', useMathJax: false});
- *     board.create('smartlabel', [c1], {unit: 'm', measure: 'radius', prefix: 'R = ', useMathJax: false});
+ *     board.create('smartlabel', [c1], {baseUnit: 'm', measure: 'perimeter', prefix: 'U = ', useMathJax: false});
+ *     board.create('smartlabel', [c1], {baseUnit: 'm', measure: 'area', prefix: 'A = ', useMathJax: false});
+ *     board.create('smartlabel', [c1], {baseUnit: 'm', measure: 'radius', prefix: 'R = ', useMathJax: false});
  *
  *
  *     })();
@@ -131,7 +131,7 @@ import Type from "../utils/type.js";
  * @example
  * var p2 = board.create('polygon', [[-6, -5], [7, -7], [-4, 3]], {});
  * board.create('smartlabel', [p2], {
- *     unit: 'm',
+ *     baseUnit: 'm',
  *     measure: 'area',
  *     prefix: 'A = ',
  *     cssClass: 'smart-label-pure smart-label-polygon',
@@ -152,7 +152,7 @@ import Type from "../utils/type.js";
  *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
  *     var p2 = board.create('polygon', [[-6, -5], [7, -7], [-4, 3]], {});
  *     board.create('smartlabel', [p2], {
- *         unit: 'm',
+ *         baseUnit: 'm',
  *         measure: 'area',
  *         prefix: 'A = ',
  *         cssClass: 'smart-label-pure smart-label-polygon',
@@ -172,7 +172,7 @@ import Type from "../utils/type.js";
  *
  * @example
  * var a1 = board.create('angle', [[1, -1], [1, 2], [1, 5]], {name: '&beta;', withLabel: false});
- * var sma = board.create('smartlabel', [a1], {digits: 1, prefix: a1.name + '=', unit: '°', useMathJax: false});
+ * var sma = board.create('smartlabel', [a1], {digits: 1, prefix: a1.name + '=', baseUnit: '°', useMathJax: false});
  *
  * </pre><div id="JXG48d6d1ae-e04a-45f4-a743-273976712c0b" class="jxgbox" style="width: 300px; height: 300px;"></div>
  * <script type="text/javascript">
@@ -180,7 +180,7 @@ import Type from "../utils/type.js";
  *         var board = JXG.JSXGraph.initBoard('JXG48d6d1ae-e04a-45f4-a743-273976712c0b',
  *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
  *     var a1 = board.create('angle', [[1, -1], [1, 2], [1, 5]], {name: '&beta;', withLabel: false});
- *     var sma = board.create('smartlabel', [a1], {digits: 1, prefix: a1.name + '=', unit: '°', useMathJax: false});
+ *     var sma = board.create('smartlabel', [a1], {digits: 1, prefix: a1.name + '=', baseUnit: '°', useMathJax: false});
  *
  *     })();
  *
@@ -189,52 +189,118 @@ import Type from "../utils/type.js";
  */
 JXG.createSmartLabel = function (board, parents, attributes) {
     var el, attr,
-        p, user_supplied_text,
-        getTextFun, txt_fun;
+        p, user_supplied_text;
 
     if (parents.length === 0 || (
-        [Const.OBJECT_CLASS_POINT, Const.OBJECT_CLASS_LINE,Const.OBJECT_CLASS_CIRCLE].indexOf(parents[0].elementClass) < 0 &&
+        [Const.OBJECT_CLASS_POINT, Const.OBJECT_CLASS_LINE, Const.OBJECT_CLASS_CIRCLE].indexOf(parents[0].elementClass) < 0 &&
         [Const.OBJECT_TYPE_POLYGON, Const.OBJECT_TYPE_ANGLE].indexOf(parents[0].type) < 0
-        )
-    ) {
+    )) {
         throw new Error(
             "JSXGraph: Can't create smartlabel with parent types " +
-                "'" + typeof parents[0] + "', " +
-                "'" + typeof parents[1] + "'."
+            "'" + typeof parents[0] + "', " +
+            "'" + typeof parents[1] + "'."
         );
     }
 
     p = parents[0];
     user_supplied_text = parents[1] || '';
 
+    attr = Type.copyAttributes(attributes, board.options, 'smartlabel');
+
     if (p.elementClass === Const.OBJECT_CLASS_POINT) {
-        attr = Type.copyAttributes(attributes, board.options, 'smartlabelpoint');
+        attr = Type.merge(attr, Type.copyAttributes(attributes, board.options, 'smartlabelpoint'));
 
     } else if (p.elementClass === Const.OBJECT_CLASS_LINE) {
-        attr = Type.copyAttributes(attributes, board.options, 'smartlabelline');
+        attr = Type.merge(attr, Type.copyAttributes(attributes, board.options, 'smartlabelline'));
         /**
          * @class
          * @ignore
          */
-        attr.rotate = function () { return Math.atan(p.getSlope()) * 180 / Math.PI; };
+        attr.rotate = function (self) {
+            var orientation = self.evalVisProp('orientation'),
+                add;
+            switch (orientation) {
+                case 'none':
+                    return 0;
+                case 'orthogonal':
+                    add = 270;
+                    break;
+                case 'orthogonal-inverted':
+                    add = 90;
+                    break;
+                case 'parallel-inverted':
+                case 'inverted':
+                    add = 0;
+                    break;
+                default:
+                    add = 360;
+            }
+            return (Math.atan(p.getSlope()) * 180 / Math.PI + add) % 360;
+        };
         /**
          * @class
          * @ignore
          */
-        attr.visible = function () { return (p.L() < 1.5) ? false : true; };
+        attr.visible = function (self) {
+            var orientation = self.evalVisProp('orientation'),
+                thres = self.evalVisProp('visibleThreshold'),
+                sizeLabel = self.getSize(),
+                sizeParent,
+                c1, c2,
+                dx, dy;
+
+            c1 = p.point1.coords.scrCoords;
+            c2 = p.point2.coords.scrCoords;
+            dx = c2[1] - c1[1];
+            dy = c2[2] - c1[2];
+            sizeParent = Math.floor(Math.sqrt(dx * dx + dy * dy));
+
+            switch (orientation) {
+                case 'parallel':
+                case 'parallel-inverted':
+                case 'inverted':
+                    return sizeLabel[0] < sizeParent * thres;
+
+                case 'orthogonal':
+                case 'orthogonal-inverted':
+                    return sizeLabel[1] < sizeParent * thres;
+
+                case 'none':
+                default:
+                    return p.L() >= 1.5;
+            }
+        };
 
     } else if (p.elementClass === Const.OBJECT_CLASS_CIRCLE) {
-        attr = Type.copyAttributes(attributes, board.options, 'smartlabelcircle');
+        attr = Type.merge(attr, Type.copyAttributes(attributes, board.options, 'smartlabelcircle'));
         /**
          * @class
          * @ignore
          */
-        attr.visible = function () { return (p.Radius() < 1.5) ? false : true; };
+        attr.visible = function (self) {
+            var sizeLabel = self.getSize(),
+                thres = self.evalVisProp('visibleThreshold'),
+                sizeParent,
+                c1, c2,
+                dx, dy;
+
+            c1 = p.center.coords.scrCoords;
+            if (p.point2) {
+                c2 = p.point2.coords.scrCoords;
+            } else {
+                c2 = new JXG.Coords(JXG.COORDS_BY_USER, [p.center.coords.usrCoords[0], p.center.coords.usrCoords[1] + p.Radius()], p.board).scrCoords;
+            }
+            dx = c2[1] - c1[1];
+            dy = c2[2] - c1[2];
+            sizeParent = Math.floor(Math.sqrt(dx * dx + dy * dy)) * 2;
+
+            return sizeLabel[0] < sizeParent * thres;
+        };
 
     } else if (p.type === Const.OBJECT_TYPE_POLYGON) {
-        attr = Type.copyAttributes(attributes, board.options, 'smartlabelpolygon');
+        attr = Type.merge(attr, Type.copyAttributes(attributes, board.options, 'smartlabelpolygon'));
     } else if (p.type === Const.OBJECT_TYPE_ANGLE) {
-        attr = Type.copyAttributes(attributes, board.options, 'smartlabelangle');
+        attr = Type.merge(attr, Type.copyAttributes(attributes, board.options, 'smartlabelangle'));
         /**
          * @class
          * @ignore
@@ -242,7 +308,7 @@ JXG.createSmartLabel = function (board, parents, attributes) {
         attr.rotate = function () {
             var c1 = p.center.coords.usrCoords,
                 c2 = p.getLabelAnchor().usrCoords,
-                v = Math.atan2(c2[2] - c1[2], c2[1] - c1[1]) * 180 / Math.PI;
+                v = (Math.atan2(c2[2] - c1[2], c2[1] - c1[1]) * 180 / Math.PI + 360) % 360;
             return (v > 90 && v < 270) ? v + 180 : v;
         };
         /**
@@ -252,90 +318,10 @@ JXG.createSmartLabel = function (board, parents, attributes) {
         attr.anchorX = function () {
             var c1 = p.center.coords.usrCoords,
                 c2 = p.getLabelAnchor().usrCoords,
-                v = Math.atan2(c2[2] - c1[2], c2[1] - c1[1]) * 180 / Math.PI;
+                v = (Math.atan2(c2[2] - c1[2], c2[1] - c1[1]) * 180 / Math.PI + 360) % 360;
             return (v > 90 && v < 270) ? 'right' : 'left';
         };
     }
-
-    getTextFun = function (el, p, elType, mType) {
-        var measure;
-        switch (mType) {
-            case 'length':
-                /**
-                 * @ignore
-                 */
-                measure = function () { return p.L(); };
-                break;
-            case 'slope':
-                /**
-                 * @ignore
-                 */
-                measure = function () { return p.Slope(); };
-                break;
-            case 'area':
-                /**
-                 * @ignore
-                 */
-                measure = function () { return p.Area(); };
-                break;
-            case 'radius':
-                /**
-                 * @ignore
-                 */
-                measure = function () { return p.Radius(); };
-                break;
-            case 'perimeter':
-                /**
-                 * @ignore
-                 */
-                measure = function () { return p.Perimeter(); };
-                break;
-            case 'rad':
-                /**
-                 * @ignore
-                 */
-                measure = function () { return p.Value(); };
-                break;
-            case 'deg':
-                /**
-                 * @ignore
-                 */
-                measure = function () { return p.Value() * 180 / Math.PI; };
-                break;
-            default:
-                /**
-                 * @ignore
-                 */
-                measure = function () { return 0.0; };
-        }
-
-        return function () {
-            var str = '',
-                val,
-                txt = Type.evaluate(user_supplied_text),
-                digits = el.evalVisProp('digits'),
-                u = el.evalVisProp('unit'),
-                pre = el.evalVisProp('prefix'),
-                suf = el.evalVisProp('suffix'),
-                mj = el.evalVisProp('usemathjax') || el.evalVisProp('usekatex');
-
-            if (txt === '') {
-                if (el.useLocale()) {
-                    val = el.formatNumberLocale(measure(), digits);
-                } else {
-                    val = Type.toFixed(measure(), digits);
-                }
-                if (mj) {
-                    str = ['\\(', pre, val, '\\,', u, suf, '\\)'].join('');
-                } else {
-                    str = [pre, val, u, suf].join('');
-                }
-            } else {
-                str = txt;
-            }
-            return str;
-        };
-    };
 
     if (p.elementClass === Const.OBJECT_CLASS_POINT) {
         el = board.create('text', [
@@ -343,45 +329,6 @@ JXG.createSmartLabel = function (board, parents, attributes) {
             function () { return p.Y(); },
             ''
         ], attr);
-
-        txt_fun = function () {
-            var str = '',
-                txt = Type.evaluate(user_supplied_text),
-                digits = el.evalVisProp('digits'),
-                u = el.evalVisProp('unit'),
-                pre = el.evalVisProp('prefix'),
-                suf = el.evalVisProp('suffix'),
-                dir = el.evalVisProp('dir'),
-                mj = el.evalVisProp('usemathjax') || el.evalVisProp('usekatex'),
-                x, y;
-
-            if (el.useLocale()) {
-                x = el.formatNumberLocale(p.X(), digits);
-                y = el.formatNumberLocale(p.Y(), digits);
-            } else {
-                x = Type.toFixed(p.X(), digits);
-                y = Type.toFixed(p.Y(), digits);
-            }
-
-            if (txt === '') {
-                if (dir === 'row') {
-                    if (mj) {
-                        str = ['\\(', pre, x, '\\,', u, ' / ', y, '\\,', u, suf, '\\)'].join('');
-                    } else {
-                        str = [pre, x, ' ', u, ' / ', y, ' ', u, suf].join('');
-                    }
-                } else if (dir.indexOf('col') === 0) { // Starts with 'col'
-                    if (mj) {
-                        str = ['\\(', pre, '\\left(\\array{', x, '\\,', u, '\\\\ ', y, '\\,', u, '}\\right)', suf, '\\)'].join('');
-                    } else {
-                        str = [pre, x, ' ', u, '<br />', y, ' ', u, suf].join('');
-                    }
-                }
-            } else {
-                str = txt;
-            }
-            return str;
-        };
 
     } else if (p.elementClass === Const.OBJECT_CLASS_LINE) {
 
@@ -391,7 +338,6 @@ JXG.createSmartLabel = function (board, parents, attributes) {
                 function () { return (p.point1.Y() + p.point2.Y()) * 0.5; },
                 ''
             ], attr);
-            txt_fun = getTextFun(el, p, 'line', 'length');
 
         } else if (attr.measure === 'slope') {
             el = board.create('text', [
@@ -399,7 +345,6 @@ JXG.createSmartLabel = function (board, parents, attributes) {
                 function () { return (p.point1.Y() * 0.25 + p.point2.Y() * 0.75); },
                 ''
             ], attr);
-            txt_fun = getTextFun(el, p, 'line', 'slope');
         }
 
     } else if (p.elementClass === Const.OBJECT_CLASS_CIRCLE) {
@@ -409,7 +354,6 @@ JXG.createSmartLabel = function (board, parents, attributes) {
                 function () { return p.center.Y(); },
                 ''
             ], attr);
-            txt_fun = getTextFun(el, p, 'circle', 'radius');
 
         } else if (attr.measure === 'area') {
             el = board.create('text', [
@@ -417,14 +361,12 @@ JXG.createSmartLabel = function (board, parents, attributes) {
                 function () { return p.center.Y() + p.Radius() * 0.5; },
                 ''
             ], attr);
-            txt_fun = getTextFun(el, p, 'circle', 'area');
 
         } else if (attr.measure === 'circumference' || attr.measure === 'perimeter') {
             el = board.create('text', [
                 function () { return p.getLabelAnchor(); },
                 ''
             ], attr);
-            txt_fun = getTextFun(el, p, 'circle', 'perimeter');
 
         }
     } else if (p.type === Const.OBJECT_TYPE_POLYGON) {
@@ -433,7 +375,6 @@ JXG.createSmartLabel = function (board, parents, attributes) {
                 function () { return p.getTextAnchor(); },
                 ''
             ], attr);
-            txt_fun = getTextFun(el, p, 'polygon', 'area');
 
         } else if (attr.measure === 'perimeter') {
             el = board.create('text', [
@@ -450,7 +391,6 @@ JXG.createSmartLabel = function (board, parents, attributes) {
                 },
                 ''
             ], attr);
-            txt_fun = getTextFun(el, p, 'polygon', 'perimeter');
         }
 
     } else if (p.type === Const.OBJECT_TYPE_ANGLE) {
@@ -460,14 +400,239 @@ JXG.createSmartLabel = function (board, parents, attributes) {
             },
             ''
         ], attr);
-        txt_fun = getTextFun(el, p, 'angle', attr.measure);
     }
 
-    if (Type.exists(el)) {
-        el.setText(txt_fun);
-        p.addChild(el);
-        el.setParents([p]);
+    if (!Type.exists(el)) {
+        return null;
     }
+
+    el.elType = 'smartlabel';
+
+    el.parentObject = p;
+
+    el.Value = function () {
+        var mType = this.evalVisProp('measure');
+
+        switch (mType) {
+            case 'length':
+                return p.L();
+
+            case 'slope':
+                return p.Slope();
+
+            case 'area':
+                return p.Area();
+
+            case 'radius':
+                return p.Radius();
+
+            case 'perimeter':
+            case 'circumference':
+                return p.Perimeter();
+
+            case 'rad':
+                return p.Value();
+
+            case 'deg':
+                return p.Value() * 180 / Math.PI;
+
+            case 'coords':
+                return [p.X(), p.Y()];
+
+            default:
+                return 0.0;
+        }
+    };
+
+    el.Dimension = function () {
+        var mType = this.evalVisProp('measure');
+
+        switch (mType) {
+            case 'area':
+                return 2;
+
+            case 'length':
+            case 'radius':
+            case 'perimeter':
+            case 'circumference':
+                return 1;
+
+            case 'slope':
+                return 0;
+
+            case 'rad':
+            case 'deg':
+                // Angles in various units has dimension 0
+                return 0;
+
+            case 'coords':
+                return 1;
+
+            default:
+                return 0;
+        }
+    };
+
+    el.Unit = function (dimension) {
+        var unit = '',
+            units = el.evalVisProp('units'),
+            dim = dimension,
+            dims = {}, i;
+
+        if (!Type.exists(dim)) {
+            dim = el.Dimension();
+        }
+
+        if (Type.isArray(dimension)) {
+            for (i = 0; i < dimension.length; i++) {
+                dims['dim' + dimension[i]] = el.Unit(dimension[i]);
+            }
+            return dims;
+        }
+
+        if (Type.isObject(units) && Type.exists(units[dim]) && units[dim] !== false) {
+            unit = el.eval(units[dim]);
+        } else if (Type.isObject(units) && Type.exists(units['dim' + dim]) && units['dim' + dim] !== false) {
+            // In some cases, object keys must not be numbers. This allows key 'dim1' instead of '1'.
+            unit = el.eval(units['dim' + dim]);
+        } else {
+            unit = el.evalVisProp('baseUnit');
+
+            if (unit === '' && el.evalVisProp('unit') !== '') {
+                // Backwards compatibility
+                unit = el.evalVisProp('unit');
+            }
+
+            if (dim === 0) {
+                unit = '';
+            } else if (dim > 1 && unit !== '') {
+                unit = unit + '^{' + dim + '}';
+            }
+        }
+
+        return unit;
+    };
+
+    el.setText(function () {
+        var digits, val, u,
+            txt = Type.evaluate(user_supplied_text),
+            str = '',
+            pre = '',
+            suf = '',
+            dir,
+            mj,
+            i;
+
+        if (txt !== '') {
+            return txt;
+        }
+
+        val = el.Value();
+        digits = el.evalVisProp('digits');
+        u = el.Unit();
+        pre = '';
+        suf = '';
+        dir = el.evalVisProp('dir');
+        mj = el.evalVisProp('usemathjax') || el.evalVisProp('usekatex');
+
+        if (el.evalVisProp('showPrefix')) {
+            pre = el.evalVisProp('prefix');
+        }
+        if (el.evalVisProp('showSuffix')) {
+            suf = el.evalVisProp('suffix');
+        }
+
+        if (el.useLocale()) {
+            if (Type.isArray(val)) {
+                for (i = 0; i < val.length; i++) {
+                    val[i] = el.formatNumberLocale(val[i], digits);
+                }
+            } else {
+                val = el.formatNumberLocale(val, digits);
+            }
+        } else {
+            if (Type.isArray(val)) {
+                for (i = 0; i < val.length; i++) {
+                    val[i] = Type.toFixed(val[i], digits);
+                }
+            } else {
+                val = Type.toFixed(val, digits);
+            }
+        }
+
+        if (Type.isFunction(el.visProp.formatvalue)) {
+            val = el.visProp.formatvalue(el, val);
+        }
+
+        if (Type.isArray(val)) {
+            if (dir === 'row') {
+                str = [];
+                if (mj) {
+                    str.push('\\(', pre);
+                    for (i = 0; i < val.length; i++) {
+                        str.push(val[i], '\\,', u);
+                        if (i < val.length - 1) {
+                            str.push(' / ');
+                        }
+                    }
+                    str.push(suf, '\\)');
+                } else {
+                    str.push(pre);
+                    for (i = 0; i < val.length; i++) {
+                        str.push(val[i], ' ', u);
+                        if (i < val.length - 1) {
+                            str.push(' / ');
+                        }
+                    }
+                    str.push(suf);
+                }
+                str = str.join('');
+            } else if (dir.indexOf('col') === 0) { // Starts with 'col'
+                str = [];
+                if (mj) {
+                    str.push('\\(', pre, '\\left(\\array{');
+                    for (i = 0; i < val.length; i++) {
+                        str.push(val[i], '\\,', u);
+                        if (i < val.length - 1) {
+                            str.push('\\\\ ');
+                        }
+                    }
+                    str.push('}\\right)', suf, '\\)');
+
+                } else {
+                    str.push(pre);
+                    for (i = 0; i < val.length; i++) {
+                        str.push(val[i], ' ', u);
+                        if (i < val.length - 1) {
+                            str.push('<br />');
+                        }
+                    }
+                    str.push(suf);
+                }
+                str = str.join('');
+            }
+        } else {
+            if (mj) {
+                str = ['\\(', pre, val, '\\,', u, suf, '\\)'].join('');
+            } else {
+                str = [pre, val, u, suf].join('');
+            }
+        }
+
+        return str;
+    });
+
+    p.addChild(el);
+    el.setParents([p]);
+
+    el.methodMap = Type.deepCopy(el.methodMap, {
+        Value: "Value",
+        V: "Value",
+        Dimension: "Dimension",
+        Unit: "Unit",
+        parent: "parentObject",
+        parentObject: "parentObject"
+    });
 
     return el;
 };

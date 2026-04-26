@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2025
+    Copyright 2008-2026
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -193,6 +193,16 @@ JXG.Options = {
          * @see JXG.Board#dblClickSuppressClick
          */
         clickDelay: 600,
+
+        /**
+         * CSS attributes for the JSXGraph div element.
+         *
+         * @name JXG.Board#cssStyle
+         * @type String
+         * @default ''
+         */
+        cssStyle: '',
+
 
         /**
          * If false (default), JSXGraph follows the JavaScript standard and fires before a dblclick event two
@@ -641,6 +651,25 @@ JXG.Options = {
          */
         intl: {
             enabled: false
+        },
+
+        /**
+         * Attributes for the div containing the JSXGraph board - in case
+         * the board has been constructed by `JXG.initAppBox`
+         * @type {Object}
+         * @name JXG.Board#jxgbox
+         * @default <pre>{
+         *   id: 'jxgbox',
+         *   outerbox: null,
+         *   style: 'width: 500px;  aspect-ratio: 1/1; overflow: visible',
+         *   cssClass: 'jxgbox'
+         * }</pre>
+         */
+        jxgbox: {
+            id: 'jxgbox',
+            outerbox: null,
+            style: 'width: 500px;  aspect-ratio: 1/1; overflow: visible',
+            cssClass: 'jxgbox'
         },
 
         /**
@@ -1240,8 +1269,11 @@ JXG.Options = {
         showInfobox: true,
 
         /**
-         * Show JSXGraph logo in the top left corner of the board anyhow
-         * even if {@link JXG.Board#showCopyright} is false.
+         * The JSXGraph logo in the top left corner of the board is shown as soon as
+         * {@link JXG.Board#showCopyright} is true.
+         * <p>
+         * If {@link JXG.Board#showCopyright} is false, the logo can be shown anyhow
+         * by setting showLogo to true.
          *
          * @name JXG.Board#showLogo
          * @type Boolean
@@ -1556,6 +1588,8 @@ JXG.Options = {
             label: '',
             live: 'assertive' // 'assertive', 'polite', 'none'
         },
+
+        clip: true,
 
         /**
          * Apply CSS classes to an element in non-highlighted view. It is possible to supply one or more
@@ -3730,6 +3764,67 @@ JXG.Options = {
         radius: 'auto',
 
         /**
+         * Orientation of the angle: 'clockwise' or 'counterclockwise' (default).
+         * <p>
+         * If the attribute 'selection' is set to 'minor' or 'major' and
+         * "the other" angle sector is to be taken, the orientation of the angle switches, too.
+         * <p>
+         * Apart from 'selection' having value 'minor' or 'major', the value of the angle
+         * is always the (positive) angle value of the visible sector - independent of
+         * orientation.
+         *
+         * @type {String}
+         * @name Angle#orientation
+         * @default 'counterclockwise'
+         * @visprop
+         * @example
+         *
+         * var p1, p2, p3, a;
+         * p1 = board.create('point', [0, 0]);
+         * p2 = board.create('point', [4, 0]);
+         * p3 = board.create('point', [3, 3]);
+         * a = board.create('angle', [p2, p1, p3], {
+         *     name: '&phi;',
+         *     radius: 2,
+         *     // selection: 'minor',
+         *     orientation: 'clockwise',
+         *     arc: {
+         *         visible: true,
+         *         strokeWidth: 4,
+         *         lastArrow: true,
+         *     }
+         * });
+         *
+         * </pre><div id="JXG95f40aa1-971c-400a-9c21-39695ef15333" class="jxgbox" style="width: 300px; height: 300px;"></div>
+         * <script type="text/javascript">
+         *     (function() {
+         *         var board = JXG.JSXGraph.initBoard('JXG95f40aa1-971c-400a-9c21-39695ef15333',
+         *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
+         *
+         *             var p1, p2, p3, a;
+         *             p1 = board.create('point', [0, 0]);
+         *             p2 = board.create('point', [4, 0]);
+         *             p3 = board.create('point', [3, 3]);
+         *             a = board.create('angle', [p2, p1, p3], {
+         *                 name: '&phi;',
+         *                 radius: 2,
+         *                 // selection: 'minor',
+         *                 orientation: 'clockwise',
+         *                 arc: {
+         *                     visible: true,
+         *                     strokeWidth: 4,
+         *                     lastArrow: true,
+         *                 }
+         *             });
+         *
+         *     })();
+         *
+         * </script><pre>
+         *
+         */
+        orientation: 'counterclockwise',
+
+        /**
          * Display type of the angle field. Possible values are
          * 'sector' or 'sectordot' or 'square' or 'none'.
          *
@@ -3829,6 +3924,7 @@ JXG.Options = {
          */
         arc: {
             visible: false,
+            orientation: 'inherit',
             fillColor: 'none'
         }
 
@@ -3849,6 +3945,57 @@ JXG.Options = {
          * @default 'auto'
          */
         selection: 'auto',
+
+        /**
+         * Orientation of the arc: 'clockwise' or 'counterclockwise' (default).
+         * <p>
+         * If the attribute 'selection' is set to 'minor' or 'major' and
+         * "the other" arc is to be taken, the orientation of the arc switches, too.
+         *
+         * @type {String}
+         * @name Arc#orientation
+         * @default 'counterclockwise'
+         *
+         * @example
+         * var p1, p2, p3, a;
+         * p1 = board.create('point', [0, 0]);
+         * p2 = board.create('point', [4, 0]);
+         * p3 = board.create('point', [3, 3]);
+         * board.create('arc', [p1, p2, p3], {
+         *     dash: 3,
+         *     name: 'a',
+         *     withLabel: true,
+         *     strokeColor: 'black',
+         *     strokeWidth: 3,
+         *     orientation: 'clockwise',
+         *     lastArrow: true
+         * });
+         *
+         * </pre><div id="JXG06bf7a84-4d95-469b-9e80-9fdd3e458232" class="jxgbox" style="width: 300px; height: 300px;"></div>
+         * <script type="text/javascript">
+         *     (function() {
+         *         var board = JXG.JSXGraph.initBoard('JXG06bf7a84-4d95-469b-9e80-9fdd3e458232',
+         *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
+         *             var p1, p2, p3, a;
+         *             p1 = board.create('point', [0, 0]);
+         *             p2 = board.create('point', [4, 0]);
+         *             p3 = board.create('point', [3, 3]);
+         *             board.create('arc', [p1, p2, p3], {
+         *                 dash: 3,
+         *                 name: 'a',
+         *                 withLabel: true,
+         *                 strokeColor: 'black',
+         *                 strokeWidth: 3,
+         *                 orientation: 'clockwise',
+         *                 lastArrow: true
+         *             });
+         *
+         *     })();
+         *
+         * </script><pre>
+         *
+         */
+        orientation: 'counterclockwise',
 
         /**
          * If <tt>true</tt>, moving the mouse over inner points triggers hasPoint.
@@ -4382,7 +4529,7 @@ JXG.Options = {
          */
 
         /**
-         *  Direction of the box plot: 'vertical' or 'horizontal'
+         *  Direction of the boxplot: 'vertical' or 'horizontal'
          *
          * @type String
          * @name Boxplot#dir
@@ -4398,6 +4545,23 @@ JXG.Options = {
          * @default 0.5
          */
         smallWidth: 0.5,
+
+        /**
+         * Size and face of outliers. Size is the point size in pixel.
+         * Possible values for face are 'o' (default), '[]', '<>', '<<>>', '+', 'x', '-', '|'.
+         * See {@link JXG.Grid} for these names ('o' here is 'regpol' of the grid).
+         *
+         * @type Object
+         * @name Boxplot#outlier
+         * @default <pre>{
+         *   size: 3,
+         *   face: 'o'
+         *  }</pre>
+         */
+        outlier: {
+            size: 3,
+            face: 'o'
+        },
 
         strokeWidth: 2,
         strokeColor: Color.palette.blue,
@@ -4996,6 +5160,39 @@ JXG.Options = {
         plotVersion: 2,
 
         /**
+         * Polyline simplification, i.e. remove data points from the curve which do not influence
+         * its appearance. In some cases this makes JSXGraph run much faster.
+         * The "smoothing" in the name is misleading, actually it does the contrary. But
+         * for historical reasons we stay with it. A better name would be
+         * RDPsimplification.
+         * <p>
+         * In certain cases this attribute causes problems, like for
+         * conic elements, curve intersection/union/difference
+         * <p>
+         * Implements the Ramer-Douglas-Peucker algorithm.
+         *
+         * @name Curve#RDPsmoothing
+         * @type Boolean
+         * @default false
+         * @see Curve#RDPthreshold
+         *
+         */
+        RDPsmoothing: false,
+
+        /**
+         * Threshold when to stop eliminating points in polyline simplification with the Ramer-Douglas-Peucker algorithm.
+         * This number affects simplification with user coordinates, but corresponds to the distance of a point to a
+         * line in pixel if the JSXGraph board has size 800x800 pixel and the pixel per unit both horizontally and vertically
+         * are roughly equal (For the latter, the geometric mean is taken).
+         *
+         * @name Curve#RDPthreshold
+         * @type Number
+         * @default 0.2
+         * @see Curve#RDPsmoothing
+         */
+        RDPthreshold: 0.2,
+
+        /**
          * Configure arrow head at the start position for curve.
          * Recommended arrow head type is 7.
          *
@@ -5062,6 +5259,21 @@ JXG.Options = {
          * @visprop
          */
 
+        /**
+         * Remove data points from the function graph which do not influence
+         * its appearance. In some cases this makes JSXGraph run much faster,
+         * especially if this function graph has glider points or has dependent
+         * curves like inequality or curve intersection/union/difference.
+         * <p>
+         * Implements the Ramer-Douglas-Peucker algorithm.
+         *
+         * @name Functiongraph#RDPsmoothing
+         * @type Boolean
+         * @default true
+         * @see Curve#RDPsmoothing
+         * @see Curve#RDPthreshold
+         */
+        RDPsmoothing: true
 
         /**#@-*/
     },
@@ -6195,6 +6407,7 @@ JXG.Options = {
          */
 
         visible: 'inherit',
+        clip: 'inherit',
         strokeColor: '#000000',
         strokeOpacity: 1,
         highlightStrokeOpacity: 0.666666,
@@ -6942,7 +7155,9 @@ JXG.Options = {
          * @name Line#touchLastPoint
          * @default false
          */
-        touchLastPoint: false
+        touchLastPoint: false,
+
+        transitionProperties: []
 
         /**#@-*/
     },
@@ -8078,6 +8293,59 @@ JXG.Options = {
         selection: 'auto',
 
         /**
+         * Orientation of the sector: 'clockwise' or 'counterclockwise' (default).
+         * <p>
+         * If the attribute 'selection' is set to 'minor' or 'major' and
+         * "the other" angle sector is to be taken, the orientation of the angle switches, too.
+         *
+         * @type {String}
+         * @name Sector#orientation
+         * @default 'counterclockwise'
+         *
+         * @example
+         * var p1, p2, p3, a;
+         * p1 = board.create('point', [0, 0]);
+         * p2 = board.create('point', [4, 0]);
+         * p3 = board.create('point', [3, 3]);
+         * a = board.create('sector', [p1, p2, p3], {
+         *     name: '&phi;',
+         *     // selection: 'minor',
+         *     orientation: 'clockwise',
+         *     arc: {
+         *         visible: true,
+         *         strokeWidth: 4,
+         *         lastArrow: true,
+         *     }
+         * });
+         *
+         * </pre><div id="JXG6be31123-f142-4151-92c7-91786ab87cf3" class="jxgbox" style="width: 300px; height: 300px;"></div>
+         * <script type="text/javascript">
+         *     (function() {
+         *         var board = JXG.JSXGraph.initBoard('JXG6be31123-f142-4151-92c7-91786ab87cf3',
+         *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
+         *             var p1, p2, p3, a;
+         *             p1 = board.create('point', [0, 0]);
+         *             p2 = board.create('point', [4, 0]);
+         *             p3 = board.create('point', [3, 3]);
+         *             a = board.create('sector', [p1, p2, p3], {
+         *                 name: '&phi;',
+         *                 // selection: 'minor',
+         *                 orientation: 'clockwise',
+         *                 arc: {
+         *                     visible: true,
+         *                     strokeWidth: 4,
+         *                     lastArrow: true,
+         *                 }
+         *             });
+         *
+         *     })();
+         *
+         * </script><pre>
+         *
+         */
+        orientation: 'counterclockwise',
+
+        /**
          * Attributes for sub-element arc. It is only available, if the sector is defined by three points.
          *
          * @type Arc
@@ -8089,6 +8357,8 @@ JXG.Options = {
             fillColor: 'none',
             withLabel: false,
             name: '',
+
+            orientation: 'inherit',
 
             center: {
                 visible: false,
@@ -8467,6 +8737,7 @@ JXG.Options = {
         baseline: {
             needsRegularUpdate: false,
             visible: 'inherit',
+            clip: 'inherit',
             fixed: true,
             scalable: false,
             tabindex: null,
@@ -8485,6 +8756,7 @@ JXG.Options = {
         ticks: {
             needsRegularUpdate: false,
             fixed: true,
+            clip: 'inherit',
 
             // Label drawing
             drawLabels: false,
@@ -8519,6 +8791,7 @@ JXG.Options = {
         highline: {
             strokeWidth: 3,
             visible: 'inherit',
+            clip: 'inherit',
             fixed: true,
             tabindex: null,
             name: '',
@@ -8534,6 +8807,7 @@ JXG.Options = {
          */
         label: {
             visible: 'inherit',
+            clip: 'inherit',
             strokeColor: '#000000'
         },
 
@@ -8680,28 +8954,93 @@ JXG.Options = {
          */
         label: {
             visible: true,
-            position: 'first'
-        }
+            position: 'first',
+
+            digits: function (self) {
+                return self.slopetriangle.evalVisProp('digits');
+            },
+            showPrefix: function (self) {
+                return self.slopetriangle.evalVisProp('showPrefix');
+            },
+            showSuffix: function (self) {
+                return self.slopetriangle.evalVisProp('showSuffix');
+            },
+            prefix: function (self) {
+                return self.slopetriangle.evalVisProp('prefix');
+            },
+            suffix: function (self) {
+                return self.slopetriangle.evalVisProp('suffix');
+            }
+        },
+
+        /**
+         * Used to round texts given by a number.
+         *
+         * @memberOf Slopetriangle.prototype
+         * @name digits
+         * @type Number
+         * @default 2
+         */
+        digits: 2,
+
+        /**
+         * Determines whether a prefix is displayed before the slope triangle value and unit.
+         *
+         * @see Slopetriangle#prefix
+         * @name Slopetriangle#showPrefix
+         * @type Boolean
+         * @default false
+         */
+        showPrefix: true,
+
+        /**
+         * Determines whether a suffix is displayed after the slope triangle value and unit.
+         *
+         * @see Slopetriangle#suffix
+         * @name Slopetriangle#showSuffix
+         * @type Boolean
+         * @default false
+         */
+        showSuffix: true,
+
+        /**
+         * String that is displayed before the slope triangle and its unit.
+         *
+         * @see Slopetriangle#showPrefix
+         * @name Slopetriangle#prefix
+         * @type String
+         * @default ''
+         */
+        prefix: '',
+
+        /**
+         * String that is displayed after the slope triangle and its unit.
+         *
+         * @see Slopetriangle#showSuffix
+         * @name Slopetriangle#suffix
+         * @type String
+         * @default ''
+         */
+        suffix: '',
+
+        /**
+         * Function to format the value.
+         * If set to null, no formatting will happen.
+         *
+         * @name Slopetriangle#formatValue
+         * @type Function
+         * @param {Slopetriangle} self Pointer to the slopetriangle object itself
+         * @param {Number} val value
+         * @returns String
+         * @default null
+         */
+        formatValue: null
+
         /**#@-*/
     },
 
-    /* special options for smartlabel of angle */
-    smartlabelangle: {
-        cssClass: 'smart-label-solid smart-label-angle',
-        highlightCssClass:'smart-label-solid smart-label-angle',
-        anchorX: 'left',
-        anchorY: 'middle',
-
-        unit: '',
-        prefix: '',
-        suffix: '',
-
-        measure: 'deg',
-        useMathJax: true
-    },
-
-    /* special options for smartlabel of circle */
-    smartlabelcircle: {
+    /* special general options for smartlabel */
+    smartlabel: {
         /**#@+
          * @visprop
          */
@@ -8730,7 +9069,7 @@ JXG.Options = {
          *  <li> ...</li>
          * </ul>
          */
-        cssClass: 'smart-label-solid smart-label-circle',
+        cssClass: 'smart-label-solid',
 
         /**
          * CSS classes for the smart label when highlighted.
@@ -8744,20 +9083,64 @@ JXG.Options = {
          *  <li> ...</li>
          * </ul>
          */
-        highlightCssClass:'smart-label-solid smart-label-circle',
-        anchorX: 'middle',
-        useMathJax: true,
+        highlightCssClass: 'smart-label-solid',
 
         /**
          * Measurement unit appended to the output text. For areas, the unit is squared automatically.
-         * Comes directly after the measurement value.
+         * Replaced by the attributes "baseUnit" and "units".
          *
          * @type {String|Function}
          * @name Smartlabel#unit
          * @default ''
+         * @see Smartlabel#baseUnit
+         * @see Smartlabel#units
+         * @deprecated
          */
         unit: '',
 
+        /**
+         * This specifies the unit of measurement in dimension 1 (e.g. length).
+         * A power is automatically added to the string.
+         * If you want to use different units for each dimension, see {@link Smartlabel#units}.
+         *
+         * @see Smartlabel#units
+         * @name Smartlabel#baseUnit
+         * @type String
+         * @default ''
+         */
+        baseUnit: '',
+
+        /**
+         * This attribute expects an object that has the dimension numbers as keys (as integer or in the form of 'dimxx')
+         * and assigns a string to each dimension.
+         * If a dimension has no specification, {@link Smartlabel#baseUnit} is used.
+         *
+         * @see Smartlabel#baseUnit
+         * @name Smartlabel#units
+         * @type Object
+         * @default {}
+         */
+        units: {},
+
+        /**
+         * Determines whether a prefix is displayed before the measurement value and unit.
+         *
+         * @see Smartlabel#prefix
+         * @name Smartlabel#showPrefix
+         * @type Boolean
+         * @default true
+         */
+        showPrefix: true,
+
+        /**
+         * Determines whether a suffix is displayed after the measurement value and unit.
+         *
+         * @see Smartlabel#suffix
+         * @name Smartlabel#showSuffix
+         * @type Boolean
+         * @default true
+         */
+        showSuffix: true,
         /**
          * Prefix text for the smartlabel. Comes before the measurement value.
          *
@@ -8775,6 +9158,19 @@ JXG.Options = {
          * @default ''
          */
         suffix: '',
+
+        /**
+         * Function to format the value.
+         * If set to null, no formatting will happen.
+         *
+         * @name Smartlabel#formatValue
+         * @type Function
+         * @param {Smartlabel} self Pointer to the smartlabel object itself
+         * @param {Number|Array} val value (array, if coords)
+         * @returns String
+         * @default null
+         */
+        formatValue: null,
 
         /**
          * Type of measurement.
@@ -8797,21 +9193,77 @@ JXG.Options = {
          *   <li> 'deg' for angles</li>
          * </ul>
          */
-        measure: 'radius'
+        measure: '',
+
+        useMathJax: true
 
         /**#@-*/
     },
 
+    /* special options for smartlabel of angle */
+    smartlabelangle: {
+        cssClass: 'smart-label-solid smart-label-angle',
+        highlightCssClass:'smart-label-solid smart-label-angle',
+        anchorX: 'left',
+        anchorY: 'middle'
+    },
+
+    /* special options for smartlabel of circle */
+    smartlabelcircle: {
+        cssClass: 'smart-label-solid smart-label-circle',
+        highlightCssClass:'smart-label-solid smart-label-circle',
+        anchorX: 'middle',
+
+        measure: 'radius',
+
+        visibleThreshold: 0.6
+    },
+
     /* special options for smartlabel of line */
     smartlabelline: {
+        /**#@+
+         * @visprop
+         */
+
         cssClass: 'smart-label-solid smart-label-line',
         highlightCssClass:'smart-label-solid smart-label-line',
         anchorX: 'middle',
 
-        useMathJax: true,
+        measure: 'length',
 
-        unit: '',
-        measure: 'length'
+        /**
+         * Orientation of the smartlabel relative to the line.
+         * Available values are:
+         *  <ul>
+         *  <li> 'parallel' (default)</li>
+         *  <li> 'parallel-inverted' / 'inverted'</li>
+         *  <li> 'orthogonal'</li>
+         *  <li> 'orthogonal-inverted'</li>
+         *  <li> 'none' (smartlabe is always horizontal)</li>
+         * </ul>
+         * Dependent on this value the label is positioned differently on the line.
+         *
+         * @type String
+         * @name Smartlabel#orientation
+         * @default 'parallel'
+         */
+        orientation: 'parallel',
+
+        /**
+         * Smartlabels of circles and lines are hidden automatically, if there is not enough space.
+         * This value (between 0 and 1) controls, how much percent of the line length or circle diameter
+         * the label is allowed to take place
+         *
+         * @type String
+         * @name Smartlabel#visibleThreshold
+         * @default <ul>
+         *     <li>0.7 for lines</li>
+         *     <li>0.6 for angles</li>
+         * </ul>
+         */
+        visibleThreshold: 0.7
+
+        /**#@-*/
     },
 
     /* special options for smartlabel of point */
@@ -8825,8 +9277,7 @@ JXG.Options = {
         anchorX: 'middle',
         anchorY: 'top',
 
-        useMathJax: true,
-
+        measure: 'coords',
         /**
          * Display of point coordinates either as row vector or column vector.
          * Available values are 'row' or 'column'.
@@ -8834,16 +9285,7 @@ JXG.Options = {
          * @name Smartlabel#dir
          * @default 'row'
          */
-        dir: 'row',
-
-        /**
-         * Supply a unit suffix.
-         *
-         * @type String
-         * @name Smartlabel#unit
-         * @default ''
-         */
-        unit: ''
+        dir: 'row'
 
         /**#@-*/
     },
@@ -8854,9 +9296,6 @@ JXG.Options = {
         highlightCssClass:'smart-label-solid smart-label-polygon',
         anchorX: 'middle',
 
-        useMathJax: true,
-
-        unit: '',
         measure: 'area'
     },
 
@@ -9771,7 +10210,7 @@ JXG.Options = {
 
         /**
          * Determines the rendering method of the text. Possible values
-         * include <tt>'html'</tt> and <tt>'internal</tt>.
+         * include <tt>'html'</tt> and <tt>'internal'</tt>.
          *
          * @name display
          * @memberOf Text.prototype

@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2025
+    Copyright 2008-2026
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -399,6 +399,21 @@ JXG.hex2rgb = function (hex) {
 };
 
 /**
+ * Converts HSV color to HSL color.
+ * From {@link https://en.wikipedia.org/wiki/HSL_and_HSV}.
+ * @param {Number} H value between 0 and 360
+ * @param {Number} S value between 0.0 (shade of gray) to 1.0 (pure color)
+ * @param {Number} V value between 0.0 (black) to 1.0 (white)
+ * @returns {Array} Contains the numbers h, s, and l value in this order.
+ */
+JXG.hsv2hsl = function(H, S, V) {
+    var SL,
+        L = V * (1 - S * 0.5);
+    SL = (L === 0 || L === 1) ? 0 : ((V - L ) / Math.min(L, 1 - L));
+    return [H, SL, L];
+};
+
+/**
  * Converts HSV color to RGB color.
  * Based on C Code in "Computer Graphics -- Principles and Practice,"
  * Foley et al, 1996, p. 593.
@@ -490,7 +505,7 @@ JXG.hsv2rgb = function (H, S, V) {
  * expects the parameters ag and ab. See <a href="https://www.had2know.org/technology/hsv-rgb-conversion-formula-calculator.html">https://www.had2know.org/technology/hsv-rgb-conversion-formula-calculator.html</a>.
  * @param {Number} ag
  * @param {Number} ab
- * @returns {Array} Contains the h, s, and v value in this order.
+ * @returns {Array} Contains the numbers h, s, and v value in this order.
  *
  */
 JXG.rgb2hsv = function (color, ag, ab) {
@@ -883,6 +898,29 @@ JXG.lightenColor = function (color, percent) {
  */
 JXG.darkenColor = function (color, percent) {
     return JXG.shadeColor(color, -1 * percent);
+};
+
+/**
+ * Mix two colors together in variable proportion. Opacity is NOT included in the calculations.
+ * @param {String} color1
+ * @param {String} color2
+ * @param {Number} [percent=0.5] Balance point in percent.
+ * @returns {String}
+ */
+JXG.mixColor = function (color1, color2, percent) {
+    var rgb1 = JXG.rgbParser(color1),
+        rgb2 = JXG.rgbParser(color2),
+        rgb = [],
+        i;
+
+    // percent = percent ?? 0.5;
+    percent = (percent !== undefined && percent !== null) ? percent : 0.5;
+
+    for (i = 0; i < 3; i++) {
+        rgb[i] = parseInt(rgb1[i] * percent + rgb2[i] * (1 - percent));
+    }
+
+    return JXG.rgb2hex(rgb);
 };
 
 /**

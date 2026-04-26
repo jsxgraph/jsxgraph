@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2025
+    Copyright 2008-2026
         Matthias Ehmann,
         Aaron Fenyes,
         Carsten Miller,
@@ -38,6 +38,7 @@ import Const from '../base/constants.js';
 import Type from '../utils/type.js';
 import Mat from '../math/math.js';
 import Geometry from '../math/geometry.js';
+import Tiling from '../math/tiling.js';
 
 // -----------------------
 //  Lines
@@ -598,7 +599,6 @@ JXG.createLine3D = function (board, parents, attributes) {
         );
 
         /**
-         * @class
          * @ignore
          */
         endpoints[0].F = function () {
@@ -610,7 +610,6 @@ JXG.createLine3D = function (board, parents, attributes) {
         };
 
         /**
-         * @class
          * @ignore
          */
         endpoints[1].F = function () {
@@ -686,7 +685,6 @@ JXG.createLine3D = function (board, parents, attributes) {
 
         // Now set the real points which define the line
         /**
-         * @class
          * @ignore
          */
         points[0].F = function () {
@@ -696,7 +694,6 @@ JXG.createLine3D = function (board, parents, attributes) {
         point1 = points[0];
 
         /**
-         * @class
          * @ignore
          */
         points[1].F = function () {
@@ -1283,6 +1280,7 @@ JXG.extend(
         // Already documented in element3d.js
         updateRenderer: function () {
             this.needsUpdate = false;
+
             return this;
         },
 
@@ -1628,6 +1626,8 @@ JXG.createPlane3D = function (board, parents, attributes) {
         point, point2, point3,
         dir1, dir2, range_u, range_v,
         el, mesh3d,
+        surface, coords,
+        su, sv, type, tiling,
         base = null,
         transform = null;
 
@@ -1691,6 +1691,10 @@ JXG.createPlane3D = function (board, parents, attributes) {
     el = new JXG.Plane3D(view, point, dir1, range_u, dir2, range_v, attr);
     point.addChild(el);
 
+    type = el.evalVisProp('type');
+    tiling = el.evalVisProp('tiling');
+
+    // Path filled with gradient color
     attr = el.setAttr2D(attr);
     el.element2D = view.create('curve', [[], []], attr);
     el.element2D.view = view;
@@ -1719,25 +1723,68 @@ JXG.createPlane3D = function (board, parents, attributes) {
         Math.abs(el.range_v[0]) !== Infinity &&
         Math.abs(el.range_v[1]) !== Infinity
     ) {
-        attr = Type.copyAttributes(attr.mesh3d, board.options, 'mesh3d');
-        mesh3d = view.create('mesh3d', [
-            function () {
-                return point.coords;
-            },
-            // dir1, dir2, range_u, range_v
-            function() { return el.vec1; },
-            function() { return el.vec2; },
-            el.range_u,
-            el.range_v
-        ], attr);
-        el.mesh3d = mesh3d;
-        el.addChild(mesh3d);
-        el.inherits.push(mesh3d);           // TODO Does not work
-        el.element2D.inherits.push(mesh3d); // Does work - instead
-        mesh3d.setParents(el);
-        el.mesh3d.view = view;
+
+        if (type === 'wireframe') {
+            attr = Type.copyAttributes(attr.mesh3d, board.options, 'mesh3d');
+            mesh3d = view.create('mesh3d', [
+                function () {
+                    return point.coords;
+                },
+                // dir1, dir2, range_u, range_v
+                function() { return el.vec1; },
+                function() { return el.vec2; },
+                el.range_u,
+                el.range_v
+            ], attr);
+            el.mesh3d = mesh3d;
+            el.addChild(mesh3d);
+            // el.inherits.push(mesh3d);           // TODO Does not work
+            el.element2D.inherits.push(mesh3d); // Does work - instead
+            mesh3d.setParents(el);
+            el.mesh3d.view = view;
+        } else {
+            su = el.evalVisProp('stepsu');
+            sv = el.evalVisProp('stepsv');
+
+            // Eliminate the call to the expensive el.updateDataArray();
+            el.element2D.updateDataArray = function() {};
+
+            if (tiling === 'triangle') {
+                surface = Tiling.triangulation(
+                    [el.range_u[0], el.range_v[0]],
+                    [el.range_u[0], el.range_v[1]],
+                    [el.range_u[1], el.range_v[1]],
+                    [el.range_u[1], el.range_v[0]],
+                    su, sv
+                );
+            } else {
+                surface = Tiling.rectangulation(
+                    [el.range_u[0], el.range_v[0]],
+                    [el.range_u[0], el.range_v[1]],
+                    [el.range_u[1], el.range_v[1]],
+                    [el.range_u[1], el.range_v[0]],
+                    su, sv
+                );
+
+            }
+            el.F = function (u, v) {
+                return [
+                    el.point.coords[0] + u * el.vec1[0] + v * el.vec2[0],
+                    el.point.coords[1] + u * el.vec1[1] + v * el.vec2[1],
+                    el.point.coords[2] + u * el.vec1[2] + v * el.vec2[2],
+                    el.point.coords[3] + u * el.vec1[3] + v * el.vec2[3]
+                ];
+            };
+            coords = Tiling.mapMeshTo3D(surface, el);
+            surface = [coords, surface[1]];
+            el.polyhedron = view.create('polyhedron3d', surface, attr.polyhedron);
+            el.addChild(el.polyhedron);
+            el.inherits.push(el.polyhedron);
+            el.polyhedron.setParents(el);
+        }
     }
 
+    // Wireframe
     el.element2D.prepareUpdate().update();
     if (!board.isSuspendedUpdate) {
         el.element2D.updateVisibility().updateRenderer();

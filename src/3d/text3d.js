@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2025
+    Copyright 2008-2026
         Matthias Ehmann,
         Carsten Miller,
         Andreas Walter,
@@ -259,7 +259,7 @@ JXG.extend(
                 c[0] = coords[0];
                 c[1] = coords[1];
                 c[2] = coords[2];
-                c[3] = coords[2];
+                c[3] = coords[3];
                 this.normalizeCoords();
             }
 

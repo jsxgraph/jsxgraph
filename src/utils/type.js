@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2025
+    Copyright 2008-2026
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -342,12 +342,17 @@ JXG.extend(
         },
 
         /**
-         * Converts a given CSS style string into a JavaScript object.
-         * @param {String} styles String containing CSS styles.
+         * Converts a given CSS style string into a JavaScript object. Uses JSON.parse.
+         * Has problems with CSS expressions containing blanks, like
+         * `background: #aaaaaa url("../jsxgraph/img/favicon.png")`.
+         *
+         * @param {String} cssString String containing CSS styles.
          * @returns {Object} Object containing CSS styles.
+         * @see JXG#css2js
+         * @deprecated
          */
-        cssParse: function (styles) {
-            var str = styles;
+        cssParse: function (cssString) {
+            var str = cssString;
             if (!this.isString(str)) return {};
 
             str = str.replace(/\s*;\s*$/g, '');
@@ -357,6 +362,39 @@ JXG.extend(
             str = '{"' + str + '"}';
 
             return JSON.parse(str);
+        },
+
+        /**
+         * Converts string containing CSS properties into
+         * array with key-value pair objects.
+         *
+         * @example
+         * "color:blue; background-color:yellow" is converted to
+         * [{'color': 'blue'}, {'backgroundColor': 'yellow'}]
+         *
+         * @param  {String} cssString String containing CSS properties
+         * @return {Array} Array of CSS key-value pairs
+         */
+        css2js: function (cssString) {
+            var pairs = [],
+                i, len,
+                key, val,
+                s,
+                list = JXG.trim(cssString).replace(/;$/, "").split(";");
+
+            len = list.length;
+            for (i = 0; i < len; ++i) {
+                if (JXG.trim(list[i]) !== "") {
+                    s = list[i].split(":");
+                    key = JXG.trim(
+                        // CSS syntax to camel case: font-family -> fontFamily
+                        s[0].replace(/-([a-z])/gi, function (match, char) { return char.toUpperCase(); })
+                    );
+                    val = JXG.trim(s[1]);
+                    pairs.push({ key: key, val: val });
+                }
+            }
+            return pairs;
         },
 
         /**
@@ -793,7 +831,6 @@ JXG.extend(
             }
             return a;
         },
-
 
         /**
          * Checks if an array contains an element equal to <tt>val</tt> but does not check the type!

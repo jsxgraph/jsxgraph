@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2025
+    Copyright 2008-2026
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -38,6 +38,7 @@
 
 import JXG from "../jxg.js";
 import Env from "../utils/env.js";
+import Text from "../base/text.js";
 import Type from "../utils/type.js";
 
 /**
@@ -259,6 +260,7 @@ var priv = {
 JXG.createInput = function (board, parents, attributes) {
     var t,
         par,
+        setTextBackup,
         attr = Type.copyAttributes(attributes, board.options, 'input');
 
     par = [
@@ -271,9 +273,16 @@ JXG.createInput = function (board, parents, attributes) {
         "</span>"
     ];
 
+    // Make sure the setText method is the original one. The JessieCode parser changes it during parsing.
+    setTextBackup = Text.prototype.setText;
+    Text.prototype.setText = Text.prototype._setText;
+
     // 1. Create input element with empty label
     t = board.create("text", par, attr);
     t.type = Type.OBJECT_TYPE_INPUT;
+
+    // Restore whichever setText method was set before this contructor was called.
+    Text.prototype.setText = setTextBackup;
 
     t.rendNodeLabel = t.rendNode.childNodes[0].childNodes[0];
     t.rendNodeInput = t.rendNode.childNodes[0].childNodes[1];

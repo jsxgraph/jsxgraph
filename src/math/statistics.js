@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2025
+    Copyright 2008-2026
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -124,6 +124,24 @@ Mat.Statistics = {
         return 0.0;
     },
 
+    _getPercentiles: function(arr, p) {
+        var i, idx,
+            per, len,
+            res = [];
+
+        len = arr.length;
+        for (i = 0; i < p.length; i++) {
+            per = len * p[i] * 0.01;
+            idx = parseInt(per, 10);
+            if (idx === per) {
+                res.push((arr[idx - 1] + arr[idx]) * 0.5);
+            } else {
+                res.push(arr[idx]);
+            }
+        }
+        return res;
+    },
+
     /**
      * The P-th percentile ( <i>0 < P ≤ 100</i> ) of a list of <i>N</i> ordered values (sorted from least to greatest)
      * is the smallest value in the list such that no more than <i>P</i> percent of the data is strictly less
@@ -137,48 +155,113 @@ Mat.Statistics = {
      * is returned.
      */
     percentile: function (arr, percentile) {
-        var tmp,
-            len,
-            i,
-            p,
+        var tmp, p,
+            res = [];
+
+        if (!Type.exists(arr.length) || arr.length === 0) {
+            JXG.warn('JXG.Math.Statistics.percentile: no data array given.');
+            return 0.0;
+        }
+
+        // Sort data array into tmp
+        if (ArrayBuffer.isView(arr)) {
+            tmp = new Float64Array(arr);
+            tmp.sort();
+        } else {
+            tmp = arr.slice(0);
+            tmp.sort(function (a, b) {
+                return a - b;
+            });
+        }
+        // Remove NaNs
+        tmp = tmp.filter(function(val) { return !isNaN(val); });
+
+        // Normalize percentile to array
+        if (Type.isArray(percentile)) {
+            p = percentile;
+        } else {
+            p = [percentile];
+        }
+
+        // Determine percentiles
+        res = this._getPercentiles(tmp, p);
+
+        if (Type.isArray(percentile)) {
+            return res;
+        }
+        return res[0];
+    },
+
+    /**
+     * Compute the quartiles for the boxplot element, i.e. [min, 25% quartile, median 75% quartile, max, outliers].
+     * NaN entries are ignored. Data array arr need not be sorted.
+     *
+     * @param {Array} arr
+     * @param {Number} [coef=1.5] factor for the interquartile range. If 0: no outliers
+     * @returns {Array} quartile data: [min, 25%, 50%, 75%, max, [outliers]]
+     *
+     * @see Boxplot
+     */
+    boxplot: function (arr, coef) {
+        var tmp, inside, outlier,
+            len, val,
+            i, iqr,
             res = [],
-            per;
+            p = [25, 50, 75];
 
-        if (arr.length > 0) {
-            if (ArrayBuffer.isView(arr)) {
-                tmp = new Float64Array(arr);
-                tmp.sort();
-            } else {
-                tmp = arr.slice(0);
-                tmp.sort(function (a, b) {
-                    return a - b;
-                });
-            }
-            len = tmp.length;
+        if (!Type.exists(arr.length) || arr.length === 0) {
+            JXG.warn('JXG.Math.Statistics.boxplot: no data array given.');
+            return 0.0;
+        }
 
-            if (Type.isArray(percentile)) {
-                p = percentile;
-            } else {
-                p = [percentile];
-            }
+        if (!Type.isNumber(coef, false, false)) {
+            coef = 1.5;
+        }
 
-            for (i = 0; i < p.length; i++) {
-                per = len * p[i] * 0.01;
-                if (parseInt(per, 10) === per) {
-                    res.push((tmp[per - 1] + tmp[per]) * 0.5);
+        // Sort data array into tmp
+        if (ArrayBuffer.isView(arr)) {
+            tmp = new Float64Array(arr);
+            tmp.sort();
+        } else {
+            tmp = arr.slice(0);
+            tmp.sort(function (a, b) {
+                return a - b;
+            });
+        }
+        // Remove NaNs
+        tmp = tmp.filter(function(val) { return !isNaN(val); });
+        len = tmp.length;
+
+        // Determine outliers
+        res = this._getPercentiles(tmp, p);
+        iqr = coef * (res[2] - res[0]);
+
+        // Determine outliers
+        outlier = [];
+        if (coef === 0) {
+            // No outliers
+            inside = tmp;
+        } else {
+            inside = [];
+            for (i = 0; i < len; i++) {
+                val = tmp[i];
+                if (val >= res[0] - iqr && val <= res[2] + iqr) {
+                    inside.push(val);
                 } else {
-                    res.push(tmp[parseInt(per, 10)]);
+                    outlier. push(val);
                 }
-            }
-
-            if (Type.isArray(percentile)) {
-                return res;
-            } else {
-                return res[0];
             }
         }
 
-        return 0.0;
+        // Bootstrapping
+        // res = this._getPercentiles(inside, p);
+
+        // Add min, max, and outliers
+        res.unshift(this.min(inside));
+        res.push(this.max(inside));
+        res.push(outlier);
+
+        return res;
     },
 
     /**
