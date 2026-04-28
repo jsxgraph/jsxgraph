@@ -54,6 +54,8 @@ import Type from "../utils/type.js";
  * <li> 'reflect'
  * <li> 'rotate'
  * <li> 'shear'
+ * <li> 'affine'
+ * <li> 'affinematrix'
  * <li> 'generic'
  * <li> 'matrix'
  * </ul>
@@ -177,8 +179,15 @@ JXG.extend(
          * Set the transformation matrix for different types of standard transforms.
          * @param {JXG.Board} board
          * @param {String} type   Transformation type, possible values are
-         *                        'translate', 'scale', 'reflect', 'rotate',
-         *                        'shear', 'generic'.
+         *                        'translate',
+         *                        'scale',
+         *                        'reflect',
+         *                        'rotate',
+         *                        'shear',
+         *                        'affine',
+         *                        'affinematrix',
+         *                        'generic',
+         *                        'matrix'.
          * @param {Array} params Parameters for the various transformation types.
          *
          * <p>A transformation with a generic matrix looks like:
@@ -486,9 +495,16 @@ JXG.extend(
          * Set the 3D transformation matrix for different types of standard transforms.
          * @param {JXG.Board} board
          * @param {String} type   Transformation type, possible values are
-         *                        'translate', 'scale', 'rotate',
-         *                        'rotateX', 'rotateY', 'rotateZ',
-         *                        'shear', 'generic'.
+         *                         'translate',
+         *                         'scale',
+         *                         'rotateX',
+         *                         'rotateY',
+         *                         'rotateZ',
+         *                         'rotate',
+         *                         'affine',
+         *                         'affinematrix',
+         *                         'generic',
+         *                         'matrix'.
          * @param {Array} params Parameters for the various transformation types.
          *
          * <p>A transformation with a generic matrix looks like:
