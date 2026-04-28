@@ -489,6 +489,7 @@ JXG.extend(
 
             if (f !== null) {
                 f.origin = term;
+                f.variable = variableName;
             }
 
             return f;
