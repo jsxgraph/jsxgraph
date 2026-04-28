@@ -122,6 +122,8 @@ import Type from "../utils/type.js";
 JXG.Transformation = function (board, type, params, is3D) {
     this.elementClass = Const.OBJECT_CLASS_OTHER;
     this.type = Const.OBJECT_TYPE_TRANSFORMATION;
+    this.elType = '';             // will be set by setMatrix or setMatrix3D to transformation type
+    this.transformationType = ''; // will be set by setMatrix or setMatrix3D
 
     if (is3D) {
         this.is3D = true;
@@ -250,6 +252,23 @@ JXG.extend(
         setMatrix: function (board, type, params) {
             var i;
                 // e, obj; // Handle dependencies
+
+            if ([
+                'translate',
+                'scale',
+                'reflect',
+                'rotate',
+                'shear',
+                'affine',
+                'affinematrix',
+                'generic',
+                'matrix'
+            ].includes(type)) {
+                this.elType = type;
+                this.transformationType = type;
+            } else {
+                return;
+            }
 
             this.isNumericMatrix = true;
             for (i = 0; i < params.length; i++) {
@@ -566,6 +585,23 @@ JXG.extend(
         setMatrix3D: function(view, type, params) {
             var i,
                 board = view.board;
+
+            if ([
+                'translate',
+                'scale',
+                'rotateX',
+                'rotateY',
+                'rotateZ',
+                'rotate',
+                'affine',
+                'affinematrix',
+                'generic',
+                'matrix'
+            ].includes(type)) {
+                this.elType = type;
+            } else {
+                return;
+            }
 
             this.isNumericMatrix = true;
             for (i = 0; i < params.length; i++) {
