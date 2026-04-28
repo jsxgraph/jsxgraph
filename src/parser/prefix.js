@@ -253,12 +253,18 @@ JXG.PrefixParser = {
             fun = term[0];
 
             switch (fun) {
+                case 'Slope':
+                case 'Angle':
+                    res = 0;
+                    break;
                 case 'L':
                 case 'Length':
                 case 'Perimeter':
                 case 'Diameter':
                 case 'Radius':
                 case 'R':
+                case 'DeltaX':
+                case 'DeltaY':
                     res = 1;
                     break;
                 case 'Area':

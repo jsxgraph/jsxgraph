@@ -57,13 +57,16 @@ var priv = {
             this.board.removeObject(this.tangent);
         }
     },
-    Value: function () {
+    Slope: function () {
         return this.tangent.getSlope();
     },
-    deltaX: function () {
+    getAngle: function (unit) {
+        return this.tangent.getAngle(unit);
+    },
+    DeltaX: function () {
         return this.borderHorizontal.Direction()[0];
     },
-    deltaY: function () {
+    DeltaY: function () {
         return this.borderVertical.Direction()[1];
     },
     Direction: function () {
@@ -191,33 +194,49 @@ JXG.createSlopeTriangle = function (board, parents, attributes) {
     el.elType = 'slopetriangle';
 
     /**
-     * Returns the value of the slope triangle, that is the slope of the tangent.
-     * @name Value
+     * Returns the slope of the tangent.
+     * @name Slope
      * @memberOf Slopetriangle.prototype
      * @function
      * @returns {Number} slope of the tangent.
      */
-    el.Value = priv.Value;
+    el.Slope = priv.Slope;
 
     /**
-     * Returns deltaX of the slope triangle, that is the slope of the tangent.
+     * Returns the angle between the tangent and the x-axis.
+     * @name getAngle
+     * @memberOf Slopetriangle.prototype
+     * @function
+     * @param {String} [unit='radians'] Unit of the returned values. Possible units are
+     * <ul>
+     * <li> 'radians' (default): angle value in radians
+     * <li> 'degrees': angle value in degrees
+     * <li> 'semicircle': angle value in radians as a multiple of &pi;, e.g. if the angle is 1.5&pi;, 1.5 will be returned.
+     * <li> 'circle': angle value in radians as a multiple of 2&pi;
+     * </ul>
+     * @returns {Number}
+     */
+    el.getAngle = priv.getAngle;
+
+    /**
+     * Returns &delta;x of the slope triangle, that is the slope of the tangent.
      * This value is less than 0 if the line points to the left.
-     * @name deltaX
+     * @name DeltaX
      * @memberOf Slopetriangle.prototype
      * @function
      * @returns {Number}
      */
-    el.deltaX = priv.deltaX;
+    el.DeltaX = priv.DeltaX;
 
     /**
-     * Returns deltaY of the slope triangle, that is the slope of the tangent.
+     * Returns &delta;y of the slope triangle, that is the slope of the tangent.
      * This value is less than 0 if the line points to the bottom.
-     * @name deltaY
+     * @name DeltaY
      * @memberOf Slopetriangle.prototype
      * @function
      * @returns {Number}
      */
-    el.deltaY = priv.deltaY;
+    el.DeltaY = priv.DeltaY;
 
     /**
      * Returns the direction of the slope triangle, that is the direction of the tangent.
@@ -270,12 +289,18 @@ JXG.createSlopeTriangle = function (board, parents, attributes) {
     el.borderVertical.visProp.withlabel = true;
 
     el.borderVertical.slopetriangle = el;
+    el.borderHorizontal.slopetriangle = el;
+    glider.slopetriangle = el;
+    basepoint.slopetriangle = el;
+    baseline.slopetriangle = el;
+    toppoint.slopetriangle = el;
+    label.slopetriangle = el;
 
     label.setText(function () {
         var prefix = '',
             suffix = '',
             digits = label.evalVisProp('digits'),
-            val = el.Value();
+            val = el.Slope();
 
         if (label.evalVisProp('showprefix')) {
             prefix = label.evalVisProp('prefix');
@@ -298,6 +323,10 @@ JXG.createSlopeTriangle = function (board, parents, attributes) {
             } else {
                 val = Type.toFixed(val, digits);
             }
+        }
+
+        if (Type.isFunction(el.visProp.formatvalue)) {
+            val = el.visProp.formatvalue(el, val);
         }
 
         return prefix + val + suffix;
@@ -329,10 +358,13 @@ JXG.createSlopeTriangle = function (board, parents, attributes) {
         borderVertical: "borderVertical",
         borderParallel: "borderParallel",
         label: "label",
-        Value: "Value",
-        V: "Value",
-        deltaX: "deltaX",
-        deltaY: "deltaY",
+        Value: "Slope",
+        V: "Slope",
+        Slope: "Slope",
+        Angle: "getAngle",
+        getAngle: "getAngle",
+        DeltaX: "DeltaX",
+        DeltaY: "DeltaY",
         Direction: "Direction"
     });
 

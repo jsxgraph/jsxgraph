@@ -9021,7 +9021,20 @@ JXG.Options = {
          * @type String
          * @default ''
          */
-        suffix: ''
+        suffix: '',
+
+        /**
+         * Function to format the value.
+         * If set to null, no formatting will happen.
+         *
+         * @name Slopetriangle#formatValue
+         * @type Function
+         * @param {Slopetriangle} self Pointer to the slopetriangle object itself
+         * @param {Number} val value
+         * @returns String
+         * @default null
+         */
+        formatValue: null
 
         /**#@-*/
     },
@@ -9147,6 +9160,19 @@ JXG.Options = {
         suffix: '',
 
         /**
+         * Function to format the value.
+         * If set to null, no formatting will happen.
+         *
+         * @name Smartlabel#formatValue
+         * @type Function
+         * @param {Smartlabel} self Pointer to the smartlabel object itself
+         * @param {Number|Array} val value (array, if coords)
+         * @returns String
+         * @default null
+         */
+        formatValue: null,
+
+        /**
          * Type of measurement.
          * Available values are:
          *  <ul>
@@ -9167,7 +9193,7 @@ JXG.Options = {
          *   <li> 'deg' for angles</li>
          * </ul>
          */
-        measure: 'deg',
+        measure: '',
 
         useMathJax: true
 
