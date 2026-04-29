@@ -30,7 +30,8 @@ TMP=tmp
 BUILDREADERS=tmpreaders
 
 # API docs
-JSDOC2=node ./node_modules/.bin/jsdoc2
+#JSDOC2=node ./node_modules/.bin/jsdoc2
+JSDOC2=npx jsdoc2
 JSDOC2PLG=doc/jsdoc-tk/plugins
 JSDOC2PTCH=doc/jsdoc-tk/patches
 JSDOC2TPL=doc/jsdoc-tk/template
