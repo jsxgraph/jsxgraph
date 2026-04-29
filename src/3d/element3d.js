@@ -224,10 +224,11 @@ JXG.extend(JXG.GeometryElement3D.prototype, {
     },
 
     /**
-     * Project a 3D point to this element and update point.position.
-     * @param {Array} p 3D position of the point (array of length 3)
-     * @param {Array} params Changed in place to the new of the point in terms of the elements functions X, Y, Z.
-     * For example for a surface, params will contain values (u,v) such that the new 3D position
+     * Project a 3D point to this element and update point.position. This function computes the
+     * preimage (u,v) of a 3D position (1, X, Y, Z)
+     * @param {Array} p 3D position of the point (array of length 4, homogeneous coordinates)
+     * @param {Array} params Changed in place to the new parameters of the point in terms of the elements functions X, Y, Z.
+     * For example for a surface, params will contain values (u,v) such that the new 3D position is
      * p = [X(u, v), Z(u, v), Z(u, v)].
      * @returns {Array} 3D coordinates of the projected point with homogeneous coordinates of the form [1, x, y, z].
      */

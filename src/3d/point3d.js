@@ -368,40 +368,48 @@ JXG.extend(
                 // Update is called from board.updateElements, e.g. after manipulating a
                 // a slider or dragging a point.
                 // Usually this followed by an update call using the other branch below.
-                if (this.view.isVerticalDrag()) {
-                    // Drag the point in its vertical to the xy plane
-                    // If the point is outside of bbox3d,
-                    // c3d is already corrected.
-                    c3d = this.view.project2DTo3DVertical(this.element2D, this.coords);
+
+                if (this.slide) {
+                    this.coords = this.slide.projectScreenCoords([this.element2D.X(), this.element2D.Y()], this._params);
+                    this.element2D.coords.setCoordinates(
+                        Const.COORDS_BY_USER,
+                        this.view.project3DTo2D(this.coords)
+                    );
                 } else {
-                    // Drag the point in its xy plane
-                    foot = [1, 0, 0, this.coords[3]];
-                    c3d = this.view.project2DTo3DPlane(this.element2D, [1, 0, 0, 1], foot);
-                }
-
-                if (c3d[0] !== 0) {
-                    // Check if c3d is inside of view.bbox3d
-                    // Otherwise, the coords are now corrected.
-                    res = this.view.project3DToCube(c3d);
-                    this.coords = res[0];
-
-                    if (res[1]) {
-                        // The 3D coordinates have been corrected, now
-                        // also correct the 2D element.
-                        this.element2D.coords.setCoordinates(
-                            Const.COORDS_BY_USER,
-                            this.view.project3DTo2D(this.coords)
-                        );
+                    if (this.view.isVerticalDrag()) {
+                        // Drag the point in its vertical to the xy plane
+                        // If the point is outside of bbox3d,
+                        // c3d is already corrected.
+                        c3d = this.view.project2DTo3DVertical(this.element2D, this.coords);
+                    } else {
+                        // Drag the point in its xy plane
+                        foot = [1, 0, 0, this.coords[3]];
+                        c3d = this.view.project2DTo3DPlane(this.element2D, [1, 0, 0, 1], foot);
                     }
-                    if (this.slide) {
-                        this.coords = this.slide.projectCoords([1, this.X(), this.Y(), this.Z()], this.position);
-                        this.element2D.coords.setCoordinates(
-                            Const.COORDS_BY_USER,
-                            this.view.project3DTo2D(this.coords)
-                        );
+
+                    if (c3d[0] !== 0) {
+                        // Check if c3d is inside of view.bbox3d
+                        // Otherwise, the coords are now corrected.
+                        res = this.view.project3DToCube(c3d);
+                        this.coords = res[0];
+
+                        if (res[1]) {
+                            // The 3D coordinates have been corrected, now
+                            // also correct the 2D element.
+                            this.element2D.coords.setCoordinates(
+                                Const.COORDS_BY_USER,
+                                this.view.project3DTo2D(this.coords)
+                            );
+                        }
+                        if (this.slide) {
+                            this.coords = this.slide.projectCoords([1, this.X(), this.Y(), this.Z()], this.position);
+                            this.element2D.coords.setCoordinates(
+                                Const.COORDS_BY_USER,
+                                this.view.project3DTo2D(this.coords)
+                            );
+                        }
                     }
                 }
-
             } else {
                 // Update 2D point from its 3D view, e.g. when rotating the view
                 this.updateCoords()

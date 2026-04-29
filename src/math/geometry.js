@@ -4435,56 +4435,56 @@ JXG.extend(
         //  * the search. The parameters are modified in place during the search, ending up at the nearest point.
         //  * @returns {Array} Array of length 4 containing the coordinates of the nearest point on the curve or surface.
         //  */
-        // projectScreenCoordsToParametric: function (pScr, target, params) {
-        //     // The variables and parameters for the Cobyla constrained
-        //     // minimization algorithm are explained in the Cobyla.js comments
-        //     var rhobeg, // initial size of simplex (Cobyla)
-        //         rhoend, // finial size of simplex (Cobyla)
-        //         iprint = 0, // no console output (Cobyla)
-        //         maxfun = 200, // call objective function at most 200 times (Cobyla)
-        //         dim = params.length,
-        //         _minFunc; // objective function (Cobyla)
+        projectScreenCoordsToParametric: function (pScr, target, params) {
+            // The variables and parameters for the Cobyla constrained
+            // minimization algorithm are explained in the Cobyla.js comments
+            var rhobeg, // initial size of simplex (Cobyla)
+                rhoend, // finial size of simplex (Cobyla)
+                iprint = 0, // no console output (Cobyla)
+                maxfun = 200, // call objective function at most 200 times (Cobyla)
+                dim = params.length,
+                _minFunc; // objective function (Cobyla)
 
-        //     // adapt simplex size to parameter range
-        //     if (dim === 1) {
-        //         rhobeg = 0.1 * (target.range[1] - target.range[0]);
-        //     } else if (dim === 2) {
-        //         rhobeg = 0.1 * Math.min(
-        //             target.range_u[1] - target.range_u[0],
-        //             target.range_v[1] - target.range_v[0]
-        //         );
-        //     }
-        //     rhoend = rhobeg / 5e6;
+            // adapt simplex size to parameter range
+            if (dim === 1) {
+                rhobeg = 0.1 * (target.range[1] - target.range[0]);
+            } else if (dim === 2) {
+                rhobeg = 0.1 * Math.min(
+                    target.range_u[1] - target.range_u[0],
+                    target.range_v[1] - target.range_v[0]
+                );
+            }
+            rhoend = rhobeg / 5e6;
 
-        //     // minimize screen distance to cursor
-        //     _minFunc = function (n, m, w, con) {
-        //         var c3d = [
-        //             1,
-        //             target.X.apply(target, w),
-        //             target.Y.apply(target, w),
-        //             target.Z.apply(target, w)
-        //         ],
-        //         c2d = target.view.project3DTo2D(c3d),
-        //         xDiff = pScr[0] - c2d[1],
-        //         yDiff = pScr[1] - c2d[2];
+            // minimize screen distance to cursor
+            _minFunc = function (n, m, w, con) {
+                var c3d = [
+                    1,
+                    target.X.apply(target, w),
+                    target.Y.apply(target, w),
+                    target.Z.apply(target, w)
+                ],
+                c2d = target.view.project3DTo2D(c3d),
+                xDiff = pScr[0] - c2d[1],
+                yDiff = pScr[1] - c2d[2];
 
-        //         if (n === 1) {
-        //             con[0] = w[0] - target.range[0];
-        //             con[1] = -w[0] + target.range[1];
-        //         } else if (n === 2) {
-        //             con[0] = w[0] - target.range_u[0];
-        //             con[1] = -w[0] + target.range_u[1];
-        //             con[2] = w[1] - target.range_v[0];
-        //             con[3] = -w[1] + target.range_v[1];
-        //         }
+                if (n === 1) {
+                    con[0] = w[0] - target.range[0];
+                    con[1] = -w[0] + target.range[1];
+                } else if (n === 2) {
+                    con[0] = w[0] - target.range_u[0];
+                    con[1] = -w[0] + target.range_u[1];
+                    con[2] = w[1] - target.range_v[0];
+                    con[3] = -w[1] + target.range_v[1];
+                }
 
-        //         return xDiff * xDiff + yDiff * yDiff;
-        //     };
+                return xDiff * xDiff + yDiff * yDiff;
+            };
 
-        //     Mat.Nlp.FindMinimum(_minFunc, dim, 2 * dim, params, rhobeg, rhoend, iprint, maxfun);
+            Mat.Nlp.FindMinimum(_minFunc, dim, 2 * dim, params, rhobeg, rhoend, iprint, maxfun);
 
-        //     return [1, target.X.apply(target, params), target.Y.apply(target, params), target.Z.apply(target, params)];
-        // },
+            return [1, target.X.apply(target, params), target.Y.apply(target, params), target.Z.apply(target, params)];
+        },
 
         project3DTo3DPlane: function (point, normal, foot) {
             // TODO: homogeneous 3D coordinates

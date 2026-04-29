@@ -1285,6 +1285,16 @@ JXG.extend(
             return this;
         },
 
+        projectScreenCoords: function (pScr, params) {
+            if (params.length === 0) {
+                params.unshift(
+                    0.5 * (this.range_u[0] + this.range_u[1]),
+                    0.5 * (this.range_v[0] + this.range_v[1])
+                );
+            }
+            return Geometry.projectScreenCoordsToParametric(pScr, this, params);
+        },
+
         // Already documented in element3d.js
         projectCoords: function (p, params) {
             return Geometry.projectCoordsToParametric(p, this, 2, params);
