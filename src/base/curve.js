@@ -926,9 +926,6 @@ JXG.extend(
 
             for (i = 0; i < len; i++) {
                 this.transformations.push(list[i]);
-                // if (Type.exists(this.label)) {
-                //     this.label.transformations.push(list[i]);
-                // }
             }
 
             return this;
