@@ -4311,8 +4311,9 @@ JXG.extend(
         /**
          * Given the 2D screen coordinates of a point, finds the nearest point on the given
          * parametric curve or surface, and returns its view-space coordinates.
-         * @param {Array} p 3D coordinates for which the closest point on the curve point is searched.
+         * @param {Array} p Homogeneous 3D coordinates for which the closest point on the curve point is searched.
          * @param {JXG.Curve3D|JXG.Surface3D} target Parametric curve or surface to project to.
+         * @param {Number} n Dimension of the host element to which the coords are projected.
          * @param {Array} params New position of point on the target (i.e. it is a return value),
          * modified in place during the search, ending up at the nearest point.
          * Usually, point.position is supplied for params.
@@ -4334,12 +4335,11 @@ JXG.extend(
             // adapt simplex size to parameter range
             if (n === 1) {
                 r_u = [Type.evaluate(target.range[0]), Type.evaluate(target.range[1])];
-
                 rhobeg = 0.1 * (r_u[1] - r_u[0]);
+
             } else if (n === 2) {
                 r_u = [Type.evaluate(target.range_u[0]), Type.evaluate(target.range_u[1])];
                 r_v = [Type.evaluate(target.range_v[0]), Type.evaluate(target.range_v[1])];
-
                 rhobeg = 0.1 * Math.min(
                     r_u[1] - r_u[0],
                     r_v[1] - r_v[0]
@@ -4350,13 +4350,14 @@ JXG.extend(
             // Minimize distance of the new position to the original position
             _minFunc = function (n, m, w, con) {
                 var p_new = [
+                        1,
                         target.X.apply(target, w),
                         target.Y.apply(target, w),
                         target.Z.apply(target, w)
                     ],
-                    xDiff = p[0] - p_new[0],
-                    yDiff = p[1] - p_new[1],
-                    zDiff = p[2] - p_new[2];
+                    xDiff = p[1] - p_new[1],
+                    yDiff = p[2] - p_new[2],
+                    zDiff = p[3] - p_new[3];
 
                 if (m >= 2) {
                     con[0] =  w[0] - r_u[0];
@@ -4370,32 +4371,50 @@ JXG.extend(
                 return xDiff * xDiff + yDiff * yDiff + zDiff * zDiff;
             };
 
-            // First optimization without range constraints to give a smooth draag experience on
+            // First optimization without range constraints to give a smooth drag experience on
             // cyclic structures.
 
             // Set the start values
             if (params.length === 0) {
                 // If length > 0: take the previous position as start values for the optimization
                 params[0] = f * (r_u[0] + r_u[1]);
-                if (n === 2) { params[1] = f * (r_v[0] + r_v[1]); }
+                if (n === 2) {
+                    params[1] = f * (r_v[0] + r_v[1]);
+                }
+            } else {
+                params[0] = (params[0] <= r_u[0]) ? r_u[0] + Mat.eps : params[0];
+                params[0] = (params[0] >= r_u[1]) ? r_u[1] - Mat.eps : params[0];
+                if (n === 2) {
+                    params[1] = (params[1] <= r_v[0]) ? r_v[0] + Mat.eps : params[1];
+                    params[1] = (params[1] >= r_v[1]) ? r_v[1] - Mat.eps : params[1];
+                }
             }
-            Mat.Nlp.FindMinimum(_minFunc, n, 0, params, rhobeg, rhoend, iprint, maxfun);
+
+            Mat.Nlp.FindMinimum(_minFunc, n, m, params, rhobeg, rhoend, iprint, maxfun);
+
             // Update p which is used subsequently in _minFunc
-            p = [target.X.apply(target, params),
+            p = [
+                1,
+                target.X.apply(target, params),
                 target.Y.apply(target, params),
                 target.Z.apply(target, params)
             ];
 
-            // If the optimal params are outside of the rang
+            // If the optimal params are outside of the range:
             // Second optimization to obey the range constraints
 
             if (this._paramsOutOfRange(params, r_u, r_v)) {
                 // Set the start values again
-                params[0] = f * (r_u[0] + r_u[1]);
+                // params[0] = f * (r_u[0] + r_u[1]);
+                // if (n === 2) {
+                //     params[1] = f * (r_v[0] + r_v[1]);
+                // }
+                params[0] = (params[0] <= r_u[0]) ? r_u[0] + Mat.eps : params[0];
+                params[0] = (params[0] >= r_u[1]) ? r_u[1] - Mat.eps : params[0];
                 if (n === 2) {
-                    params[1] = f * (r_v[0] + r_v[1]);
+                    params[1] = (params[1] <= r_v[0]) ? r_v[0] + Mat.eps : params[1];
+                    params[1] = (params[1] >= r_v[1]) ? r_v[1] - Mat.eps : params[1];
                 }
-
                 Mat.Nlp.FindMinimum(_minFunc, n, m, params, rhobeg, rhoend, iprint, maxfun);
             }
 
