@@ -4392,7 +4392,9 @@ JXG.extend(
             if (this._paramsOutOfRange(params, r_u, r_v)) {
                 // Set the start values again
                 params[0] = f * (r_u[0] + r_u[1]);
-                if (n === 2) { params[1] = f * (r_v[0] + r_v[1]); }
+                if (n === 2) {
+                    params[1] = f * (r_v[0] + r_v[1]);
+                }
 
                 Mat.Nlp.FindMinimum(_minFunc, n, m, params, rhobeg, rhoend, iprint, maxfun);
             }
