@@ -926,9 +926,9 @@ JXG.extend(
 
             for (i = 0; i < len; i++) {
                 this.transformations.push(list[i]);
-                if (Type.exists(this.label)) {
-                    this.label.transformations.push(list[i]);
-                }
+                // if (Type.exists(this.label)) {
+                //     this.label.transformations.push(list[i]);
+                // }
             }
 
             return this;
@@ -1155,6 +1155,7 @@ JXG.extend(
         getLabelPosition: function(pos, distance) {
             var x, y, xy,
                 c, d, e,
+                c_t, c_te, c_ma, c_mi,
                 lbda,
                 mi, ma, ar,
                 t, dx, dy,
@@ -1165,42 +1166,59 @@ JXG.extend(
             ma = this.maxX();
             ar = Numerics.findDomain(this.X, [mi, ma], null, false);
             ar = Numerics.findDomain(this.Y, ar, null, false);
-            mi = Math.max(ar[0], ar[0]);
-            ma = Math.min(ar[1], ar[1]);
+            mi = Math.max(ar[0], ar[0]); // ???
+            ma = Math.min(ar[1], ar[1]); // ???
 
             xy = Type.parsePosition(pos);
             lbda = Type.parseNumber(xy.pos, ma - mi, 1);
 
-            if (xy.pos.indexOf('fr') < 0 &&
-                xy.pos.indexOf('%') < 0) {
-                // 'px' or numbers are not supported
+            if (xy.pos.indexOf('fr') < 0 && xy.pos.indexOf('%') < 0) {
+                // The unit has to be 'fr' or '%'. 'px' or plain numbers are not supported
                 lbda = 0;
             }
 
             t = mi + lbda;
 
-            x = this.X(t);
-            y = this.Y(t);
+            // x = this.X(t);
+            // y = this.Y(t);
+            c_t = this.Ft(t); // Include transformations
+            x = c_t[1];
+            y = c_t[2];
             // If x or y are NaN, the label is set to the line
             // between the first and last point.
             if (isNaN(x + y)) {
                 lbda /= (ma - mi);
                 t = mi + lbda;
-                x = this.X(mi) + lbda * (this.X(ma) - this.X(mi));
-                y = this.Y(mi) + lbda * (this.Y(ma) - this.Y(mi));
+
+                // x = this.X(mi) + lbda * (this.X(ma) - this.X(mi));
+                // y = this.Y(mi) + lbda * (this.Y(ma) - this.Y(mi));
+                c_mi = this.Ft(mi);
+                c_ma = this.Ft(ma);
+                x = c_mi[1] + lbda * (c_ma[1] - c_mi[1]);
+                y = c_mi[2] + lbda * (c_ma[2] - c_mi[2]);
             }
             c = (new Coords(Const.COORDS_BY_USER, [x, y], this.board)).scrCoords;
 
             e = Mat.eps;
             if (t < mi + e) {
-                dx = (this.X(t + e) - this.X(t)) / e;
-                dy = (this.Y(t + e) - this.Y(t)) / e;
+                // dx = (this.X(t + e) - this.X(t)) / e;
+                // dy = (this.Y(t + e) - this.Y(t)) / e;
+                c_te = this.Ft(t + e);
+                dx = (c_te[1] - c_t[1]) / e;
+                dy = (c_te[2] - c_t[2]) / e;
             } else if (t > ma - e) {
-                dx = (this.X(t) - this.X(t - e)) / e;
-                dy = (this.Y(t) - this.Y(t - e)) / e;
+                // dx = (this.X(t) - this.X(t - e)) / e;
+                // dy = (this.Y(t) - this.Y(t - e)) / e;
+                c_te = this.Ft(t - e);
+                dx = (c_t[1] - c_te[1]) / e;
+                dy = (c_t[2] - c_te[2]) / e;
             } else {
-                dx = 0.5 * (this.X(t + e) - this.X(t - e)) / e;
-                dy = 0.5 * (this.Y(t + e) - this.Y(t - e)) / e;
+                // dx = 0.5 * (this.X(t + e) - this.X(t - e)) / e;
+                // dy = 0.5 * (this.Y(t + e) - this.Y(t - e)) / e;
+                c_te = this.Ft(t + e);
+                c_t  = this.Ft(t - e);
+                dx = 0.5 * (c_te[1] - c_t[1]) / e;
+                dy = 0.5 * (c_te[2] - c_t[2]) / e;
             }
             dx = isNaN(dx) ? 1. : dx;
             dy = isNaN(dy) ? 1. : dy;
@@ -1280,52 +1298,8 @@ JXG.extend(
                         y = 0.5 * by;
                 }
             } else {
-                // New positioning
+                // New positioning, e.g. "25% left"
                 return this.getLabelPosition(pos, this.label.evalVisProp('distance'));
-                // xy = Type.parsePosition(pos);
-                // lbda = Type.parseNumber(xy.pos, this.maxX() - this.minX(), 1);
-
-                // if (xy.pos.indexOf('fr') < 0 &&
-                //     xy.pos.indexOf('%') < 0) {
-                //     // 'px' or numbers are not supported
-                //     lbda = 0;
-                // }
-
-                // t = this.minX() + lbda;
-                // x = this.X(t);
-                // y = this.Y(t);
-                // c = (new Coords(Const.COORDS_BY_USER, [x, y], this.board)).scrCoords;
-
-                // e = Mat.eps;
-                // if (t < this.minX() + e) {
-                //     dx = (this.X(t + e) - this.X(t)) / e;
-                //     dy = (this.Y(t + e) - this.Y(t)) / e;
-                // } else if (t > this.maxX() - e) {
-                //     dx = (this.X(t) - this.X(t - e)) / e;
-                //     dy = (this.Y(t) - this.Y(t - e)) / e;
-                // } else {
-                //     dx = 0.5 * (this.X(t + e) - this.X(t - e)) / e;
-                //     dy = 0.5 * (this.Y(t + e) - this.Y(t - e)) / e;
-                // }
-                // d = Mat.hypot(dx, dy);
-
-                // if (xy.side === 'left') {
-                //     dy *= -1;
-                // } else {
-                //     dx *= -1;
-                // }
-
-                // // Position left or right
-
-                // if (Type.exists(this.label)) {
-                //     dist = 0.5 * this.label.evalVisProp('distance') / d;
-                // }
-
-                // x = c[1] + dy * this.label.size[0] * dist;
-                // y = c[2] - dx * this.label.size[1] * dist;
-
-                // return new Coords(Const.COORDS_BY_SCREEN, [x, y], this.board);
-
             }
             c = new Coords(Const.COORDS_BY_SCREEN, [x, y], this.board, false);
             return Geometry.projectCoordsToCurve(
