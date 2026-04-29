@@ -908,7 +908,7 @@ JXG.extend(
     /** @lends JXG.Plane3D.prototype */ {
 
         /**
-         * Get coordinate array [x, y, z] of a point on the plane for parameters (u, v).
+         * Get coordinate array [1, x, y, z] of a point on the plane for parameters (u, v).
          *
          * @name Plane3D#F
          * @function
@@ -921,14 +921,15 @@ JXG.extend(
 
             v1 = this.vec1.slice();
             v2 = this.vec2.slice();
-            l1 = Mat.norm(v1, 3);
-            l2 = Mat.norm(v2, 3);
-            for (i = 0; i < 3; i++) {
+            l1 = Mat.norm(v1, 4);
+            l2 = Mat.norm(v2, 4);
+            for (i = 1; i < 4; i++) {
                 v1[i] /= l1;
                 v2[i] /= l2;
             }
 
             return [
+                1,
                 this.point.X() + u * v1[0] + v * v2[0],
                 this.point.Y() + u * v1[1] + v * v2[1],
                 this.point.Z() + u * v1[2] + v * v2[2]
@@ -945,7 +946,7 @@ JXG.extend(
          * @returns Number
          */
         X: function(u, v) {
-            return this.F(u, v)[0];
+            return this.F(u, v)[1];
         },
 
         /**
@@ -958,7 +959,7 @@ JXG.extend(
          * @returns Number
          */
         Y: function(u, v) {
-            return this.F(u, v)[1];
+            return this.F(u, v)[2];
         },
 
         /**
@@ -971,7 +972,7 @@ JXG.extend(
          * @returns Number
          */
         Z: function(u, v) {
-            return this.F(u, v)[2];
+            return this.F(u, v)[3];
         },
 
         /**
