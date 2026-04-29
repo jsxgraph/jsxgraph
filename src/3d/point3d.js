@@ -369,8 +369,10 @@ JXG.extend(
                 // a slider or dragging a point.
                 // Usually this followed by an update call using the other branch below.
 
-                if (this.slide) {
-                    this.coords = this.slide.projectScreenCoords([this.element2D.X(), this.element2D.Y()], this._params);
+                if (this.slide && this.slide.type === Const.OBJECT_TYPE_PLANE3D) {
+                    // Dragging 3D points with two degrees of freedom on a 3D plane.
+                    // On other slide object we still use the shift key, see below.
+                    this.coords = this.slide.projectScreenCoords([this.element2D.X(), this.element2D.Y()], this.position);
                     this.element2D.coords.setCoordinates(
                         Const.COORDS_BY_USER,
                         this.view.project3DTo2D(this.coords)
@@ -394,8 +396,7 @@ JXG.extend(
                         this.coords = res[0];
 
                         if (res[1]) {
-                            // The 3D coordinates have been corrected, now
-                            // also correct the 2D element.
+                            // The 3D coordinates have been corrected, now also correct the 2D element.
                             this.element2D.coords.setCoordinates(
                                 Const.COORDS_BY_USER,
                                 this.view.project3DTo2D(this.coords)

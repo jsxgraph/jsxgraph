@@ -4425,16 +4425,16 @@ JXG.extend(
             ];
         },
 
-        // /**
-        //  * Given a the screen coordinates of a point, finds the point on the
-        //  * given parametric curve or surface which is nearest in screen space,
-        //  * and returns its view-space coordinates.
-        //  * @param {Array} pScr Screen coordinates to project.
-        //  * @param {JXG.Curve3D|JXG.Surface3D} target Parametric curve or surface to project to.
-        //  * @param {Array} params Parameters of point on the target, initially specifying the starting point of
-        //  * the search. The parameters are modified in place during the search, ending up at the nearest point.
-        //  * @returns {Array} Array of length 4 containing the coordinates of the nearest point on the curve or surface.
-        //  */
+        /**
+         * Given a the screen coordinates of a point, finds the point on the
+         * given parametric curve or surface which is nearest in screen space,
+         * and returns its view-space coordinates.
+         * @param {Array} pScr Screen coordinates to project.
+         * @param {JXG.Plane3D|JXG.Curve3D|JXG.Surface3D} target Plane, parametric curve or surface to project to.
+         * @param {Array} params Parameters of point on the target, initially specifying the starting point of
+         * the search. The parameters are modified in place during the search, ending up at the nearest point.
+         * @returns {Array} Array of length 4 containing the coordinates of the nearest point on the curve or surface.
+         */
         projectScreenCoordsToParametric: function (pScr, target, params) {
             // The variables and parameters for the Cobyla constrained
             // minimization algorithm are explained in the Cobyla.js comments
@@ -4445,7 +4445,7 @@ JXG.extend(
                 dim = params.length,
                 _minFunc; // objective function (Cobyla)
 
-            // adapt simplex size to parameter range
+            // Adapt simplex size to parameter range
             if (dim === 1) {
                 rhobeg = 0.1 * (target.range[1] - target.range[0]);
             } else if (dim === 2) {
@@ -4456,7 +4456,7 @@ JXG.extend(
             }
             rhoend = rhobeg / 5e6;
 
-            // minimize screen distance to cursor
+            // Minimize screen distance to cursor
             _minFunc = function (n, m, w, con) {
                 var c3d = [
                     1,
