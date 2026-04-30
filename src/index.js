@@ -61,6 +61,7 @@ import './parser/datasource.js';
 import './parser/jessiecode.js';
 import './parser/prefix.js';
 import './parser/ca.js';
+import './parser/cas.js';
 import './utils/dump.js';
 import './renderer/svg.js';
 import './renderer/vml.js';

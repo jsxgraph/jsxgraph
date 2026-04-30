@@ -3406,7 +3406,7 @@ JXG.registerElement("boxplot", JXG.createBoxPlot);
  * for (let i = 0; i < niveauline.length; i++) {
  *     board.create("implicitcurve", [
  *         (x, y) => x ** .5 * y ** .5 - niveauline[i],
-           [0.25, 3], [0.5, 4] // Domain
+ [0.25, 3], [0.5, 4] // Domain
  *     ], {
  *         strokeWidth: 2,
  *         strokeColor: JXG.palette.red,
