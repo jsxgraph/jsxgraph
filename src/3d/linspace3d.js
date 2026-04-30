@@ -285,9 +285,19 @@ JXG.extend(
             return c3d;
         },
 
+        // Already documented in element3d.js
         projectScreenCoords: function (pScr) {
-            var end0 = this.getPointCoords(0),
-                end1 = this.getPointCoords(1);
+            var r = this.range,
+                f = 100000,
+                end0, end1;
+
+            r[0] = (r[0] ===  Infinity) ?  f : r[0];
+            r[0] = (r[0] === -Infinity) ? -f : r[0];
+            r[1] = (r[1] ===  Infinity) ?  f : r[1];
+            r[1] = (r[1] === -Infinity) ? -f : r[1];
+
+            end0 = this.getPointCoords(r[0]);
+            end1 = this.getPointCoords(r[1]);
 
             return this.view.projectScreenToSegment(pScr, end0, end1);
         },

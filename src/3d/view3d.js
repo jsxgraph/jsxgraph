@@ -1263,6 +1263,7 @@ JXG.extend(
 
         if (this.projectionType === 'central') {
             mid = [
+                1,
                 0.5 * (end0[0] + end1[0]),
                 0.5 * (end0[1] + end1[1]),
                 0.5 * (end0[2] + end1[2])
@@ -1293,9 +1294,9 @@ JXG.extend(
         t_clamped_co = 1 - t_clamped;
         return [
             1,
-            t_clamped_co * end0[0] + t_clamped * end1[0],
             t_clamped_co * end0[1] + t_clamped * end1[1],
-            t_clamped_co * end0[2] + t_clamped * end1[2]
+            t_clamped_co * end0[2] + t_clamped * end1[2],
+            t_clamped_co * end0[3] + t_clamped * end1[3]
         ];
     },
 

@@ -410,7 +410,7 @@ JXG.extend(
             return Geometry.projectCoordsToParametric(p, this, 2, params);
         }
 
-        // See element3d.js
+        // Use method from element3d.js
         // projectScreenCoords: function (pScr, params, cyclic) {
         //     // this.initParamsIfNeeded(params);
         //     return Geometry.projectScreenCoordsToParametric(pScr, this, params, cyclic);
