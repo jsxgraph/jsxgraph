@@ -4446,7 +4446,6 @@ JXG.extend(
                 r_u, r_v,
                 _minFunc; // objective function (Cobyla)
 
-
             // Adapt simplex size to parameter range
             if (dim === 1) {
                 r_u = [Type.evaluate(target.range[0]), Type.evaluate(target.range[1])];
@@ -4460,6 +4459,7 @@ JXG.extend(
                     r_v[1] - r_v[0]
                 );
             }
+
             rhoend = rhobeg / 5e6;
 
             // Minimize screen distance to cursor
@@ -4491,7 +4491,9 @@ JXG.extend(
                 // Cyclic
                 Mat.Nlp.FindMinimum(_minFunc, dim, 0 /*2 * dim*/, params, rhobeg, rhoend, iprint, maxfun);
                 params[0] = (params[0] + 20 * r_u[1]) % (r_u[1] - r_u[0]);
-                params[1] = (params[1] + 20 * r_v[1]) % (r_v[1] - r_v[0]);
+                if (dim === 2) {
+                    params[1] = (params[1] + 20 * r_v[1]) % (r_v[1] - r_v[0]);
+                }
             } else {
                 Mat.Nlp.FindMinimum(_minFunc, dim, 2 * dim, params, rhobeg, rhoend, iprint, maxfun);
             }

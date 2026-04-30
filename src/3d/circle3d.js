@@ -221,7 +221,7 @@ JXG.extend(
         updateNormal: function () {
             // evaluate normal direction
             var i, len,
-                eps = 1.e-12;
+                eps = Mat.eps * Mat.eps;
 
             this.normal = Type.evaluate(this.normalFunc);
 
@@ -254,11 +254,11 @@ JXG.extend(
             return this.curve.projectCoords(p, params);
         },
 
-        projectScreenCoords: function (pScr, params) {
+        projectScreenCoords: function (pScr, params, cyclic) {
             // We have to call `this.curve.projectScreenCoords` from the curve,
             // rather than the circle, to make `this` refer to the curve within
             // the call
-            return this.curve.projectScreenCoords(pScr, params);
+            return this.curve.projectScreenCoords(pScr, params, cyclic);
         }
     }
 );
@@ -290,6 +290,9 @@ JXG.createCircle3D = function (board, parents, attributes) {
         radius = parents[3],
         el;
 
+    if (Type.isArray(normal) && normal.length === 3) {
+        normal.unshift(0);
+    }
     // Create element
     el = new JXG.Circle3D(view, center, normal, radius, attr);
 
@@ -382,11 +385,11 @@ JXG.createIntersectionCircle3D = function (board, parents, attributes) {
         ixnCircle, center, func,
         attr = Type.copyAttributes(attributes, board.options, 'intersectioncircle3d');
 
-    func = Geometry.intersectionFunction3D(view, el1, el2);
-    center = view.create('point3d', func[0], { visible: false });
-    ixnCircle = view.create('circle3d', [center, func[1], func[2]], attr);
-
     try {
+        func = Geometry.intersectionFunction3D(view, el1, el2);
+        center = view.create('point3d', func[0], { visible: false });
+        ixnCircle = view.create('circle3d', [center, func[1], func[2]], attr);
+
         el1.addChild(ixnCircle);
         el2.addChild(ixnCircle);
     } catch (e) {
