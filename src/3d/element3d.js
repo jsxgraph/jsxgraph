@@ -30,6 +30,7 @@
 
 import JXG from "../jxg.js";
 import Type from "../utils/type.js";
+import Geometry from '../math/geometry.js';
 
 /**
  * Constructs a new GeometryElement3D object.
@@ -234,6 +235,18 @@ JXG.extend(JXG.GeometryElement3D.prototype, {
      */
     projectCoords: function(p, params) {
         /* stub */
+    },
+
+    /**
+     * 
+     * @param {*} pScr 
+     * @param {*} params 
+     * @returns 
+     */
+    // TODO Geometry.projectScreenCoordsToParametric uses range or (range_u and range_v) - depending on the dimension given in params
+    projectScreenCoords: function (pScr, params, cyclic) {
+        // this.initParamsIfNeeded(params);
+        return Geometry.projectScreenCoordsToParametric(pScr, this, params, cyclic);
     },
 
     // Documented in element.js

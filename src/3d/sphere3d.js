@@ -387,14 +387,14 @@ JXG.extend(
             return v;
         }
 
-        // projectScreenCoords: function (pScr, params) {
+        // projectScreenCoords: function (pScr, params, cyclic) {
         //     if (params.length === 0) {
         //         params.unshift(
         //             0.5 * (this.range_u[0] + this.range_u[1]),
         //             0.5 * (this.range_v[0] + this.range_v[1])
         //         );
         //     }
-        //     return Geometry.projectScreenCoordsToParametric(pScr, this, params);
+        //     return Geometry.projectScreenCoordsToParametric(pScr, this, params, cyclic);
         // }
     }
 );

@@ -285,12 +285,12 @@ JXG.extend(
             return c3d;
         },
 
-        // projectScreenCoords: function (pScr) {
-        //     var end0 = this.getPointCoords(0),
-        //         end1 = this.getPointCoords(1);
+        projectScreenCoords: function (pScr) {
+            var end0 = this.getPointCoords(0),
+                end1 = this.getPointCoords(1);
 
-        //     return this.view.projectScreenToSegment(pScr, end0, end1);
-        // },
+            return this.view.projectScreenToSegment(pScr, end0, end1);
+        },
 
         /**
          * Update the z-index of the line, i.e. the z-index of its midpoint.
@@ -1285,14 +1285,14 @@ JXG.extend(
             return this;
         },
 
-        projectScreenCoords: function (pScr, params) {
+        projectScreenCoords: function (pScr, params, cyclic) {
             if (params.length === 0) {
                 params.unshift(
                     0.5 * (this.range_u[0] + this.range_u[1]),
                     0.5 * (this.range_v[0] + this.range_v[1])
                 );
             }
-            return Geometry.projectScreenCoordsToParametric(pScr, this, params);
+            return Geometry.projectScreenCoordsToParametric(pScr, this, params, cyclic);
         },
 
         // Already documented in element3d.js

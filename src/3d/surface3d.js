@@ -409,6 +409,12 @@ JXG.extend(
         projectCoords: function (p, params) {
             return Geometry.projectCoordsToParametric(p, this, 2, params);
         }
+
+        // See element3d.js
+        // projectScreenCoords: function (pScr, params, cyclic) {
+        //     // this.initParamsIfNeeded(params);
+        //     return Geometry.projectScreenCoordsToParametric(pScr, this, params, cyclic);
+        // }        
     }
 );
 

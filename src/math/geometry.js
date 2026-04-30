@@ -4435,7 +4435,7 @@ JXG.extend(
          * the search. The parameters are modified in place during the search, ending up at the nearest point.
          * @returns {Array} Array of length 4 containing the coordinates of the nearest point on the curve or surface.
          */
-        projectScreenCoordsToParametric: function (pScr, target, params) {
+        projectScreenCoordsToParametric: function (pScr, target, params, cyclic) {
             // The variables and parameters for the Cobyla constrained
             // minimization algorithm are explained in the Cobyla.js comments
             var rhobeg, // initial size of simplex (Cobyla)
@@ -4443,15 +4443,21 @@ JXG.extend(
                 iprint = 0, // no console output (Cobyla)
                 maxfun = 200, // call objective function at most 200 times (Cobyla)
                 dim = params.length,
+                r_u, r_v,
                 _minFunc; // objective function (Cobyla)
+
 
             // Adapt simplex size to parameter range
             if (dim === 1) {
-                rhobeg = 0.1 * (target.range[1] - target.range[0]);
-            } else if (dim === 2) {
+                r_u = [Type.evaluate(target.range[0]), Type.evaluate(target.range[1])];
+                rhobeg = 0.1 * (r_u[1] - r_u[0]);
+            } else if (dim === 2) {                    [0, Math.PI]
+                r_u = [Type.evaluate(target.range_u[0]), Type.evaluate(target.range_u[1])];
+                r_v = [Type.evaluate(target.range_v[0]), Type.evaluate(target.range_v[1])];
+                
                 rhobeg = 0.1 * Math.min(
-                    target.range_u[1] - target.range_u[0],
-                    target.range_v[1] - target.range_v[0]
+                    r_u[1] - r_u[0],
+                    r_v[1] - r_v[0]
                 );
             }
             rhoend = rhobeg / 5e6;
@@ -4469,19 +4475,27 @@ JXG.extend(
                 yDiff = pScr[1] - c2d[2];
 
                 if (n === 1) {
-                    con[0] = w[0] - target.range[0];
-                    con[1] = -w[0] + target.range[1];
+                    con[0] = w[0] - r_u[0];
+                    con[1] = -w[0] + r_u[1];
                 } else if (n === 2) {
-                    con[0] = w[0] - target.range_u[0];
-                    con[1] = -w[0] + target.range_u[1];
-                    con[2] = w[1] - target.range_v[0];
-                    con[3] = -w[1] + target.range_v[1];
+                    con[0] = w[0] - r_u[0];
+                    con[1] = -w[0] + r_u[1];
+                    con[2] = w[1] - r_v[0];
+                    con[3] = -w[1] + r_v[1];
                 }
 
                 return xDiff * xDiff + yDiff * yDiff;
             };
 
-            Mat.Nlp.FindMinimum(_minFunc, dim, 2 * dim, params, rhobeg, rhoend, iprint, maxfun);
+            if (cyclic) {
+                // Cyclic
+                let res = Mat.Nlp.FindMinimum(_minFunc, dim, 0 /*2 * dim*/, params, rhobeg, rhoend, iprint, maxfun);
+                params[0] = (params[0] + 20 * r_u[1]) % (r_u[1] - r_u[0]);
+                params[1] = (params[1] + 20 * r_v[1]) % (r_v[1] - r_v[0]);
+            } else {
+                Mat.Nlp.FindMinimum(_minFunc, dim, 2 * dim, params, rhobeg, rhoend, iprint, maxfun);
+            }
+    console.log(params)
 
             return [1, target.X.apply(target, params), target.Y.apply(target, params), target.Z.apply(target, params)];
         },
