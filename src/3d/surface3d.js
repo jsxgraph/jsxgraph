@@ -414,7 +414,7 @@ JXG.extend(
         // projectScreenCoords: function (pScr, params, cyclic) {
         //     // this.initParamsIfNeeded(params);
         //     return Geometry.projectScreenCoordsToParametric(pScr, this, params, cyclic);
-        // }        
+        // }
     }
 );
 

@@ -4451,10 +4451,10 @@ JXG.extend(
             if (dim === 1) {
                 r_u = [Type.evaluate(target.range[0]), Type.evaluate(target.range[1])];
                 rhobeg = 0.1 * (r_u[1] - r_u[0]);
-            } else if (dim === 2) {                    [0, Math.PI]
+            } else if (dim === 2) {
                 r_u = [Type.evaluate(target.range_u[0]), Type.evaluate(target.range_u[1])];
                 r_v = [Type.evaluate(target.range_v[0]), Type.evaluate(target.range_v[1])];
-                
+
                 rhobeg = 0.1 * Math.min(
                     r_u[1] - r_u[0],
                     r_v[1] - r_v[0]
@@ -4489,13 +4489,12 @@ JXG.extend(
 
             if (cyclic) {
                 // Cyclic
-                let res = Mat.Nlp.FindMinimum(_minFunc, dim, 0 /*2 * dim*/, params, rhobeg, rhoend, iprint, maxfun);
+                Mat.Nlp.FindMinimum(_minFunc, dim, 0 /*2 * dim*/, params, rhobeg, rhoend, iprint, maxfun);
                 params[0] = (params[0] + 20 * r_u[1]) % (r_u[1] - r_u[0]);
                 params[1] = (params[1] + 20 * r_v[1]) % (r_v[1] - r_v[0]);
             } else {
                 Mat.Nlp.FindMinimum(_minFunc, dim, 2 * dim, params, rhobeg, rhoend, iprint, maxfun);
             }
-    console.log(params)
 
             return [1, target.X.apply(target, params), target.Y.apply(target, params), target.Z.apply(target, params)];
         },

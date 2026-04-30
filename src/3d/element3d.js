@@ -238,10 +238,10 @@ JXG.extend(JXG.GeometryElement3D.prototype, {
     },
 
     /**
-     * 
-     * @param {*} pScr 
-     * @param {*} params 
-     * @returns 
+     *
+     * @param {*} pScr
+     * @param {*} params
+     * @returns
      */
     // TODO Geometry.projectScreenCoordsToParametric uses range or (range_u and range_v) - depending on the dimension given in params
     projectScreenCoords: function (pScr, params, cyclic) {
