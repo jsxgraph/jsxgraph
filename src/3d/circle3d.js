@@ -252,14 +252,14 @@ JXG.extend(
             // than the circle's, to make `this` refer to the curve within the
             // call.
             return this.curve.projectCoords(p, params);
-        }
+        },
 
-        // projectScreenCoords: function (pScr, params) {
-        //     // we have to call `this.curve.projectScreenCoords` from the curve,
-        //     // rather than the circle, to make `this` refer to the curve within
-        //     // the call
-        //     return this.curve.projectScreenCoords(pScr, params);
-        // }
+        projectScreenCoords: function (pScr, params) {
+            // We have to call `this.curve.projectScreenCoords` from the curve,
+            // rather than the circle, to make `this` refer to the curve within
+            // the call
+            return this.curve.projectScreenCoords(pScr, params);
+        }
     }
 );
 
