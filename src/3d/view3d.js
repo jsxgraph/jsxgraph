@@ -1236,11 +1236,11 @@ JXG.extend(
      *
      * @param {Array} pScr The screen coordinates of the point to project.
      * @param {Array} end0 The world space coordinates of one end of the
-     * line segment.
+     * line segment (array of length 3).
      * @param {Array} end1 The world space coordinates of the other end of
-     * the line segment.
+     * the line segment (array of length 3).
      *
-     * @returns Homogeneous coordinates of the projection
+     * @returns {Array} Homogeneous coordinates of the projection
      */
     projectScreenToSegment: function (pScr, end0, end1) {
         var end0_2d = this.project3DTo2D(end0).slice(1, 3),
