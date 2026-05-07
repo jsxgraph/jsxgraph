@@ -1236,9 +1236,9 @@ JXG.extend(
      *
      * @param {Array} pScr The screen coordinates of the point to project.
      * @param {Array} end0 The world space coordinates of one end of the
-     * line segment (array of length 3).
+     * line segment (array of length 4).
      * @param {Array} end1 The world space coordinates of the other end of
-     * the line segment (array of length 3).
+     * the line segment (array of length 4).
      *
      * @returns {Array} Homogeneous coordinates of the projection
      */
@@ -1294,9 +1294,12 @@ JXG.extend(
         t_clamped_co = 1 - t_clamped;
         return [
             1,
-            t_clamped_co * end0[0] + t_clamped * end1[0],
             t_clamped_co * end0[1] + t_clamped * end1[1],
-            t_clamped_co * end0[2] + t_clamped * end1[2]
+            t_clamped_co * end0[2] + t_clamped * end1[2],
+            t_clamped_co * end0[3] + t_clamped * end1[3]
+            // t_clamped_co * end0[0] + t_clamped * end1[0],
+            // t_clamped_co * end0[1] + t_clamped * end1[1],
+            // t_clamped_co * end0[2] + t_clamped * end1[2]
         ];
     },
 
@@ -1312,8 +1315,8 @@ JXG.extend(
      */
     project2DTo3DVertical: function (point2d, base_c3d) {
         var pScr = point2d.coords.usrCoords.slice(1, 3),
-            end0 = [base_c3d[1], base_c3d[2], this.bbox3D[2][0]],
-            end1 = [base_c3d[1], base_c3d[2], this.bbox3D[2][1]];
+            end0 = [1, base_c3d[1], base_c3d[2], this.bbox3D[2][0]],
+            end1 = [1, base_c3d[1], base_c3d[2], this.bbox3D[2][1]];
 
         return this.projectScreenToSegment(pScr, end0, end1);
     },
