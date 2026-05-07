@@ -1231,8 +1231,11 @@ JXG.extend(
 
     /**
      * Project a point on the screen to the nearest point, in screen
-     * distance, on a line segment in 3d space. The inputs must be in
-     * ordinary coordinates, but the output is in homogeneous coordinates.
+     * distance, on a line segment in 3d space. The inputs and outputs
+     * are in homogeneous coordinates.
+     * <p>
+     * Used in View3d.project2DTo3DVertical() and
+     * Line3d.projectScreenCoords().
      *
      * @param {Array} pScr The screen coordinates of the point to project.
      * @param {Array} end0 The world space coordinates of one end of the
