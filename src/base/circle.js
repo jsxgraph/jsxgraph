@@ -107,7 +107,7 @@ JXG.Circle = function (board, method, par1, par2, attributes) {
     /** Radius of the circle
      * only set if method equals 'pointRadius'
      * @type Number
-     * @default null
+     * @default 0
      * @see JXG.Circle#method
      */
     this.radius = 0;
@@ -910,7 +910,7 @@ JXG.extend(
  * var c1 = board.create('circle', [[1.3, 1.3], [0, 1.3]], {strokeColor: 'black', center: {visible:true}});
  * var c2 = board.create('circle', [c1, t], {strokeColor: 'black'});
  *
- * </pre><div id="JXG0686a222-6339-11e8-9fb9-901b0e1b8723" class="jxgbox" style="width: 300px; height: 300px;"></div>
+ * <div id="JXG0686a222-6339-11e8-9fb9-901b0e1b8723" class="jxgbox" style="width: 300px; height: 300px;"></div>
  * <script type="text/javascript">
  *     (function() {
  *         var board = JXG.JSXGraph.initBoard('JXG0686a222-6339-11e8-9fb9-901b0e1b8723',
@@ -918,7 +918,7 @@ JXG.extend(
  *     var t = board.create('transform', [2, 1.5], {type: 'scale'});
  *     var c1 = board.create('circle', [[1.3, 1.3], [0, 1.3]], {strokeColor: 'black', center: {visible:true}});
  *     var c2 = board.create('circle', [c1, t], {strokeColor: 'black'});
- *
+ *</pre>
  *     })();
  *
  * </script><pre>

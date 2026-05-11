@@ -72,14 +72,14 @@ JXG.Line = function (board, p1, p2, attributes) {
     this.constructor(board, attributes, Const.OBJECT_TYPE_LINE, Const.OBJECT_CLASS_LINE);
 
     /**
-     * Startpoint of the line. You really should not set this field directly as it may break JSXGraph's
+     * Starting point of the line. You really should not set this field directly as it may break JSXGraph's
      * update system so your construction won't be updated properly.
      * @type JXG.Point
      */
     this.point1 = this.board.select(p1);
 
     /**
-     * Endpoint of the line. Just like {@link JXG.Line.point1} you shouldn't write this field directly.
+     * End point of the line. Just like {@link JXG.Line.point1} you shouldn't write this field directly.
      * @type JXG.Point
      */
     this.point2 = this.board.select(p2);

@@ -285,12 +285,22 @@ JXG.extend(
             return c3d;
         },
 
-        // projectScreenCoords: function (pScr) {
-        //     var end0 = this.getPointCoords(0),
-        //         end1 = this.getPointCoords(1);
+        // Already documented in element3d.js
+        projectScreenCoords: function (pScr) {
+            var r = this.range,
+                f = 100000,
+                end0, end1;
 
-        //     return this.view.projectScreenToSegment(pScr, end0, end1);
-        // },
+            r[0] = (r[0] ===  Infinity) ?  f : r[0];
+            r[0] = (r[0] === -Infinity) ? -f : r[0];
+            r[1] = (r[1] ===  Infinity) ?  f : r[1];
+            r[1] = (r[1] === -Infinity) ? -f : r[1];
+
+            end0 = this.getPointCoords(r[0]);
+            end1 = this.getPointCoords(r[1]);
+
+            return this.view.projectScreenToSegment(pScr, end0, end1);
+        },
 
         /**
          * Update the z-index of the line, i.e. the z-index of its midpoint.
@@ -908,7 +918,7 @@ JXG.extend(
     /** @lends JXG.Plane3D.prototype */ {
 
         /**
-         * Get coordinate array [x, y, z] of a point on the plane for parameters (u, v).
+         * Get coordinate array [1, x, y, z] of a point on the plane for parameters (u, v).
          *
          * @name Plane3D#F
          * @function
@@ -921,14 +931,15 @@ JXG.extend(
 
             v1 = this.vec1.slice();
             v2 = this.vec2.slice();
-            l1 = Mat.norm(v1, 3);
-            l2 = Mat.norm(v2, 3);
-            for (i = 0; i < 3; i++) {
+            l1 = Mat.norm(v1, 4);
+            l2 = Mat.norm(v2, 4);
+            for (i = 1; i < 4; i++) {
                 v1[i] /= l1;
                 v2[i] /= l2;
             }
 
             return [
+                1,
                 this.point.X() + u * v1[0] + v * v2[0],
                 this.point.Y() + u * v1[1] + v * v2[1],
                 this.point.Z() + u * v1[2] + v * v2[2]
@@ -945,7 +956,7 @@ JXG.extend(
          * @returns Number
          */
         X: function(u, v) {
-            return this.F(u, v)[0];
+            return this.F(u, v)[1];
         },
 
         /**
@@ -958,7 +969,7 @@ JXG.extend(
          * @returns Number
          */
         Y: function(u, v) {
-            return this.F(u, v)[1];
+            return this.F(u, v)[2];
         },
 
         /**
@@ -971,7 +982,7 @@ JXG.extend(
          * @returns Number
          */
         Z: function(u, v) {
-            return this.F(u, v)[2];
+            return this.F(u, v)[3];
         },
 
         /**
@@ -1283,6 +1294,17 @@ JXG.extend(
 
             return this;
         },
+
+        // Already documented in element3d.js
+        // projectScreenCoords: function (pScr, params, cyclic) {
+        //     if (params.length === 0) {
+        //         params.unshift(
+        //             0.5 * (this.range_u[0] + this.range_u[1]),
+        //             0.5 * (this.range_v[0] + this.range_v[1])
+        //         );
+        //     }
+        //     return Geometry.projectScreenCoordsToParametric(pScr, this, params, cyclic);
+        // },
 
         // Already documented in element3d.js
         projectCoords: function (p, params) {
