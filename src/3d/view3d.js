@@ -1231,16 +1231,19 @@ JXG.extend(
 
     /**
      * Project a point on the screen to the nearest point, in screen
-     * distance, on a line segment in 3d space. The inputs must be in
-     * ordinary coordinates, but the output is in homogeneous coordinates.
+     * distance, on a line segment in 3d space. The inputs and outputs
+     * are in homogeneous coordinates.
+     * <p>
+     * Used in View3d.project2DTo3DVertical() and
+     * Line3d.projectScreenCoords().
      *
      * @param {Array} pScr The screen coordinates of the point to project.
      * @param {Array} end0 The world space coordinates of one end of the
-     * line segment.
+     * line segment (array of length 4).
      * @param {Array} end1 The world space coordinates of the other end of
-     * the line segment.
+     * the line segment (array of length 4).
      *
-     * @returns Homogeneous coordinates of the projection
+     * @returns {Array} Homogeneous coordinates of the projection
      */
     projectScreenToSegment: function (pScr, end0, end1) {
         var end0_2d = this.project3DTo2D(end0).slice(1, 3),
@@ -1264,9 +1267,9 @@ JXG.extend(
         if (this.projectionType === 'central') {
             mid = [
                 1,
-                0.5 * (end0[0] + end1[0]),
                 0.5 * (end0[1] + end1[1]),
-                0.5 * (end0[2] + end1[2])
+                0.5 * (end0[2] + end1[2]),
+                0.5 * (end0[3] + end1[3])
             ];
             mid_2d = this.project3DTo2D(mid).slice(1, 3);
             mid_diff = [
@@ -1312,8 +1315,8 @@ JXG.extend(
      */
     project2DTo3DVertical: function (point2d, base_c3d) {
         var pScr = point2d.coords.usrCoords.slice(1, 3),
-            end0 = [base_c3d[1], base_c3d[2], this.bbox3D[2][0]],
-            end1 = [base_c3d[1], base_c3d[2], this.bbox3D[2][1]];
+            end0 = [1, base_c3d[1], base_c3d[2], this.bbox3D[2][0]],
+            end1 = [1, base_c3d[1], base_c3d[2], this.bbox3D[2][1]];
 
         return this.projectScreenToSegment(pScr, end0, end1);
     },
