@@ -1694,6 +1694,90 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
     },
 
     /**
+     * TODO
+     */
+    compileMinBraces: function (node, prev_op, position = -1) {
+        var i, compiled, list, my_priority;
+
+        if (!node) {
+            return '';
+        }
+
+        switch (String(node.type)) {
+            case "node_op":
+                switch (String(node.value)) {
+                    case "op_none":
+                        compiled = "";
+                        for (i = 0; i < node.children.length; i++) {
+                            compiled += this.compileMinBraces(node.children[i], "op_none") + "\n";
+                        }
+                        return compiled.trim();
+                    case "op_block":
+                        compiled = '{ ' + this.compileMinBraces(node.children[0], "op_none") + " }\n";
+                        return compiled.trim();
+                    case "op_assign":
+                        return this.compileMinBraces(node.children[0], "op_assign") + " = " + this.compileMinBraces(node.children[1], "op_assign");
+                    case "op_execfun":
+                        if (node.children.length !== 2) {
+                            return "<execfun?>";
+                        }
+                        return this.compileMinBraces(node.children[0]) + "(" + node.children[1].map(param => this.compileMinBraces(param, "op_execfun")).join() + ")";
+                    case "op_neg":
+                        if (this._get_priority(node) >= this._get_priority(node.children[0])) {
+                            compiled = "-(" + this.compileMinBraces(node.children[0], "op_neg") + ")";
+                        } else {
+                            compiled = "-" + this.compileMinBraces(node.children[0], "op_neg");
+                        }
+                        return compiled;
+                    case "op_map":
+                        return "map (" + node.children[0].join() + ") -> " + this.compileMinBraces(node.children[1], "op_map");
+                    case "op_function":
+                        return "function (" + node.children[0].join() + ") " + this.compileMinBraces(node.children[1]);
+                    case "op_return":
+                        return "return " + this.compileMinBraces(node.children[0]) + ";";
+                    case "op_array":
+                        list = [];
+                        for (i = 0; i < node.children[0].length; i++) {
+                            list.push(this.compileMinBraces(node.children[0][i]));
+                        }
+                        return '[' + list.join(', ') + ']';
+                    case "op_mul":
+                    case "op_add":
+                    case "op_sub":
+                    case "op_div":
+                    case "op_mod":
+                    case "op_exp":
+                        my_priority = this._get_priority(node);
+                        return node.children.map((child, i) => {
+                            let temp_str, childPriority;
+                            temp_str = this.compileMinBraces(child, node.value, i);
+                            childPriority = this._get_priority(child);
+                            if ((i === 0 && node.value === "op_exp") ||
+                                (i > 0 && (node.value === "op_sub" || node.value === "op_div" || node.value === "op_mod"))
+                            ) {
+                                return (my_priority >= childPriority) ? "(" + temp_str + ")" : temp_str;
+                            } else {
+                                return (my_priority > childPriority) ? "(" + temp_str + ")" : temp_str;
+                            }
+                        }).join(this._get_operator(node.value));
+                    default:
+                        console.error("unknown op: " + node.value);
+                        return "unknown_op";
+                }
+            case "node_var":
+            case "node_const_bool":
+                return node.value;
+            case "node_const":
+                return Number(node.value) < 0 && prev_op !== "op_execfun" && position !== 0 ? "(" + node.value + ")" : node.value;
+            case "node_str":
+                return '\'' + node.value + '\'';
+            default:
+                console.error("unknown type: " + node.type);
+                return "type";
+        }
+    },
+
+    /**
      * Compiles a parse tree back to JessieCode.
      * @param {Object} node
      * @param {Boolean} [js=false] Compile either to JavaScript or back to JessieCode (required for the UI).
