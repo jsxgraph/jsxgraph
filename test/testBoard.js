@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2023
+    Copyright 2008-2026
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -47,6 +47,7 @@ describe("Test board handling", function() {
         axis: false,
         grid: false,
         boundingbox: [-5, 5, 5, -5],
+        resize: {enabled: false},
         showCopyright: false,
         showNavigation: false
     });
@@ -55,7 +56,7 @@ describe("Test board handling", function() {
         var el = board.create('text', [0, 10, 'test']);
 
         board.suspendUpdate();
-        //Unfortunately, this test does not throw an error in test environment
+        // Unfortunately, this test does not throw an error in test environment
         JXG.JSXGraph.freeBoard(board);
     });
 

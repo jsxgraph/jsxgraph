@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Plane–plane intersection</title>
+    <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
+    <script type="text/javascript" src="../distrib/jsxgraphcore.js"></script>
+</head>
+<body>
+
+<div id="jxgbox" class="jxgbox" style="width:800px; height:800px; float:left"></div>
+
+<script type="text/javascript">
+    let board = JXG.JSXGraph.initBoard(
+        'jxgbox',
+        {
+            boundingbox: [-8, 8, 8,-8],
+            axis: false,
+            showcopyright: false,
+            shownavigation: false
+        }
+    );
+    let view = board.create(
+        'view3d',
+        [[-6, -3], [8, 8],
+        [[0, 3], [0, 3], [0, 3]]],
+        {
+            xPlaneRear: {fillOpacity: 0.2, gradient: null},
+            yPlaneRear: {fillOpacity: 0.2, gradient: null},
+            zPlaneRear: {fillOpacity: 0.2, gradient: null},
+            bank: {slider: {visible: true}}
+        }
+    );
+
+    // Two planes
+    let basePt = view.create(
+        'point3d',
+        [1, 1, 1],
+        {
+            withLabel: false,
+            size: 5,
+            strokeWidth: 1,
+            strokeColor: '#600030',
+            fillColor: 'white',
+            gradient: 'radial',
+            gradientSecondColor: '#a00050',
+            gradientFX: 0.7,
+            gradientFY: 0.3,
+            highlightStrokeColor: '#600030'
+       }
+    );
+    let p1 = view.create(
+        'plane3d',
+        [basePt, [1, 0, 0], [0, 1, 0]],
+        {
+            strokeWidth: 1,
+            strokeColor: '#0000ff',
+            strokeOpacity: 0.5,
+            fillColor: '#0000ff',
+            fillOpacity: 0.1,
+            gradient: null
+        }
+    );
+    let p2 = view.create(
+        'plane3d',
+        [basePt, [-2, 1, 1], [1, -2, 1]],
+        {
+            strokeWidth: 1,
+            strokeColor: '#00ff80',
+            strokeOpacity: 0.5,
+            fillColor: '#00ff80',
+            fillOpacity: 0.1,
+            gradient: null
+        }
+    );
+
+    // The line where the two planes intersect
+    view.create(
+        'intersectionline3d',
+        [p1, p2],
+        {
+            strokeOpacity: 0.5,
+            highlightStrokeColor: 'black',
+            highlightStrokeOpacity: 0.5
+        }
+    );
+</script>
+</body>
+</html>

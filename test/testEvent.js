@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2023
+    Copyright 2008-2026
         Matthias Ehmann,
         Carsten Miller,
         Andreas Walter,
@@ -41,6 +41,7 @@ describe("Test board events", function () {
         axis: false,
         grid: false,
         boundingbox: [0, 5, 5, 0],
+        resize: {enabled: false},
         keyboard: {
             enabled: true,
             dy: 20,

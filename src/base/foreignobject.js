@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2023
+    Copyright 2008-2026
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -36,13 +36,13 @@
  * @fileoverview In this file the ForeignObject element is defined.
  */
 
-import JXG from "../jxg";
-import Const from "./constants";
-import Coords from "./coords";
-import GeometryElement from "./element";
-import Mat from "../math/math";
-import Type from "../utils/type";
-import CoordsElement from "./coordselement";
+import JXG from "../jxg.js";
+import Const from "./constants.js";
+import Coords from "./coords.js";
+import GeometryElement from "./element.js";
+import Mat from "../math/math.js";
+import Type from "../utils/type.js";
+import CoordsElement from "./coordselement.js";
 
 /**
  * Construct and handle SVG foreignObjects.
@@ -93,7 +93,7 @@ JXG.ForeignObject = function (board, coords, attributes, content, size) {
      */
     this.content = content;
 
-    this.elType = "foreignobject";
+    this.elType = 'foreignobject';
 
     // span contains the anchor point and the two vectors
     // spanning the foreignObject rectangle.
@@ -104,19 +104,23 @@ JXG.ForeignObject = function (board, coords, attributes, content, size) {
     // ];
     //this.parent = board.select(attributes.anchor);
 
-    this.id = this.board.setId(this, "Im");
+    this.id = this.board.setId(this, 'Im');
 
     this.board.renderer.drawForeignObject(this);
     this.board.finalizeAdding(this);
 
     this.methodMap = JXG.deepCopy(this.methodMap, {
         addTransformation: "addTransform",
-        trans: "addTransform"
+        trans: "addTransform",
+        W: "W",
+        Width: "W",
+        H: "H",
+        Height: "H"
     });
 };
 
 JXG.ForeignObject.prototype = new GeometryElement();
-Type.copyPrototypeMethods(JXG.ForeignObject, CoordsElement, "coordsConstructor");
+Type.copyPrototypeMethods(JXG.ForeignObject, CoordsElement, 'coordsConstructor');
 
 JXG.extend(
     JXG.ForeignObject.prototype,
@@ -131,9 +135,9 @@ JXG.extend(
             var dx, dy, r, type, prec, c, v, p, dot,
                 len = this.transformations.length;
 
-            if (Type.isObject(Type.evaluate(this.visProp.precision))) {
+            if (Type.isObject(this.evalVisProp('precision'))) {
                 type = this.board._inputDevice;
-                prec = Type.evaluate(this.visProp.precision[type]);
+                prec = this.evalVisProp('precision.' + type);
             } else {
                 // 'inherit'
                 prec = this.board.options.precision.hasPoint;
@@ -188,7 +192,7 @@ JXG.extend(
          * @private
          */
         updateRenderer: function () {
-            return this.updateRendererGeneric("updateForeignObject");
+            return this.updateRendererGeneric('updateForeignObject');
         },
 
         /**
@@ -294,9 +298,9 @@ JXG.extend(
          * Set the width and height of the foreignObject. After setting a new size,
          * board.update() or foreignobject.fullUpdate()
          * has to be called to make the change visible.
-         * @param  {number, function, string} width  Number, function or string
+         * @param  {numbe|function|string} width  Number, function or string
          *                            that determines the new width of the foreignObject
-         * @param  {number, function, string} height Number, function or string
+         * @param  {number|function|string} height Number, function or string
          *                            that determines the new height of the foreignObject
          * @returns {JXG.ForeignObject} A reference to the element
          *
@@ -325,8 +329,7 @@ JXG.extend(
 );
 
 /**
- * @class This element is used to provide a constructor for arbitrary content in
- * an SVG foreignObject container.
+ * @class Display any HTML content in an SVG foreignObject container - even below other elements.
  * <p>
  * Instead of board.create('foreignobject') the shortcut board.create('fo') may be used.
  *
@@ -337,7 +340,6 @@ JXG.extend(
  * </p>
  *
  * @pseudo
- * @description
  * @name ForeignObject
  * @augments JXG.ForeignObject
  * @constructor
@@ -454,7 +456,7 @@ JXG.createForeignObject = function (board, parents, attributes) {
         size = parents[2];
     }
 
-    attr = Type.copyAttributes(attributes, board.options, "foreignobject");
+    attr = Type.copyAttributes(attributes, board.options, 'foreignobject');
     fo = CoordsElement.create(JXG.ForeignObject, board, coords, attr, content, size);
     if (!fo) {
         throw new Error(

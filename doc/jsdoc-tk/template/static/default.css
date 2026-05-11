@@ -90,6 +90,10 @@ pre.code
 	width: 800px;
 }
 
+.wrapper {
+	display: flex; 
+}
+
 .details {
     margin-top: 0.5em;
     margin-bottom: 0.5em;

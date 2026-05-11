@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2023
+    Copyright 2008-2026
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -37,9 +37,9 @@
  * manipulate polynomials.
  */
 
-import JXG from "../jxg";
-import Mat from "./math";
-import Type from "../utils/type";
+import JXG from "../jxg.js";
+import Mat from "./math.js";
+import Type from "../utils/type.js";
 
 /**
  * The JXG.Math.Poly namespace holds algorithms to create and manipulate polynomials.

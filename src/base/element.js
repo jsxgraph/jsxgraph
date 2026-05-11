@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2023
+    Copyright 2008-2026
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -32,19 +32,19 @@
 /*global JXG: true, define: true*/
 /*jslint nomen: true, plusplus: true, unparam: true*/
 
-import JXG from "../jxg";
-import Const from "./constants";
-import Coords from "./coords";
-import Mat from "../math/math";
-import Statistics from "../math/statistics";
-import Options from "../options";
-import EventEmitter from "../utils/event";
-import Color from "../utils/color";
-import Type from "../utils/type";
+import JXG from "../jxg.js";
+import Const from "./constants.js";
+import Coords from "./coords.js";
+import Mat from "../math/math.js";
+import Statistics from "../math/statistics.js";
+import Options from "../options.js";
+import EventEmitter from "../utils/event.js";
+import Color from "../utils/color.js";
+import Type from "../utils/type.js";
 
 /**
  * Constructs a new GeometryElement object.
- * @class This is the basic class for geometry elements like points, circles and lines.
+ * @class This is the parent class for all geometry elements like points, circles, lines, curves...
  * @constructor
  * @param {JXG.Board} board Reference to the board the element is constructed on.
  * @param {Object} attributes Hash of attributes and their values.
@@ -215,7 +215,7 @@ JXG.GeometryElement = function (board, attributes, type, oclass) {
 
     /**
      * Inherits contains the subelements, which may have an attribute
-     * (in particular the attribute "visible") having value 'inherit'.
+     * (in particular the attribute 'visible') having value 'inherit'.
      * @type Object
      */
     this.inherits = [];
@@ -265,6 +265,7 @@ JXG.GeometryElement = function (board, attributes, type, oclass) {
         label: "label",
         setName: "setName",
         getName: "getName",
+        Name: "getName",
         addTransform: "addTransform",
         setProperty: "setAttribute",
         setAttribute: "setAttribute",
@@ -275,7 +276,8 @@ JXG.GeometryElement = function (board, attributes, type, oclass) {
         trigger: "trigger",
         addTicks: "addTicks",
         removeTicks: "removeTicks",
-        removeAllTicks: "removeAllTicks"
+        removeAllTicks: "removeAllTicks",
+        Bounds: "bounds"
     };
 
     /**
@@ -326,6 +328,8 @@ JXG.GeometryElement = function (board, attributes, type, oclass) {
      * @default creation time
      */
     this.lastDragTime = new Date();
+
+    this.view = null;
 
     if (arguments.length > 0) {
         /**
@@ -393,7 +397,7 @@ JXG.GeometryElement = function (board, attributes, type, oclass) {
 
         this.visProp.draft = attr.draft && attr.draft.draft;
         //this.visProp.gradientangle = '270';
-        // this.visProp.gradientsecondopacity = Type.evaluate(this.visProp.fillopacity);
+        // this.visProp.gradientsecondopacity = this.evalVisProp('fillopacity');
         //this.visProp.gradientpositionx = 0.5;
         //this.visProp.gradientpositiony = 0.5;
     }
@@ -410,7 +414,7 @@ JXG.extend(
             var el, el2;
 
             this.childElements[obj.id] = obj;
-            this.addDescendants(obj);
+            this.addDescendants(obj);  // TODO TomBerend removed this. Check if it is possible.
             obj.ancestors[this.id] = this;
 
             for (el in this.descendants) {
@@ -440,11 +444,11 @@ JXG.extend(
         },
 
         /**
-         * Adds the given object to the descendants list of this object and all its child objects.
          * @param {JXG.GeometryElement} obj The element that is to be added to the descendants list.
          * @private
-         * @return
-         */
+         * @return this
+        */
+        // Adds the given object to the descendants list of this object and all its child objects.
         addDescendants: function (obj) {
             var el;
 
@@ -540,12 +544,12 @@ JXG.extend(
          * @returns {JXG.Object} reference to the object itself
          * @private
          */
-        addParentsFromJCFunctions: function(function_array) {
+        addParentsFromJCFunctions: function (function_array) {
             var i, e, obj;
             for (i = 0; i < function_array.length; i++) {
                 for (e in function_array[i].deps) {
                     obj = function_array[i].deps[e];
-                    this.addParents(obj);
+                    // this.addParents(obj);
                     obj.addChild(this);
                 }
             }
@@ -621,7 +625,7 @@ JXG.extend(
 
             d = this.childElements;
             for (prop in d) {
-                if (d.hasOwnProperty(prop) && prop.indexOf("Label") < 0) {
+                if (d.hasOwnProperty(prop) && prop.indexOf('Label') < 0) {
                     s++;
                 }
             }
@@ -656,7 +660,7 @@ JXG.extend(
         draggable: function () {
             return (
                 this.isDraggable &&
-                !Type.evaluate(this.visProp.fixed) &&
+                !this.evalVisProp('fixed') &&
                 // !this.visProp.frozen &&
                 this.type !== Const.OBJECT_TYPE_GLIDER
             );
@@ -669,13 +673,13 @@ JXG.extend(
          * Possible values are {@link JXG.COORDS_BY_USER} and {@link JXG.COORDS_BY_SCREEN}.
          * @param {Array} coords array of translation vector.
          * @returns {JXG.GeometryElement} Reference to the element object.
+         *
+         * @see JXG.GeometryElement3D#setPosition2D
          */
         setPosition: function (method, coords) {
             var parents = [],
                 el,
-                i,
-                len,
-                t;
+                i, len, t;
 
             if (!Type.exists(this.parents)) {
                 return this;
@@ -708,6 +712,18 @@ JXG.extend(
             len = parents.length;
             if (len > 0) {
                 t.applyOnce(parents);
+
+                // Handle dragging of a 3D element
+                if (Type.exists(this.view) && this.view.elType === 'view3d') {
+                    for (i = 0; i < this.parents.length; ++i) {
+                        // Search for the parent 3D element
+                        el = this.view.select(this.parents[i]);
+                        if (Type.exists(el.setPosition2D)) {
+                            el.setPosition2D(t);
+                        }
+                    }
+                }
+
             } else {
                 if (
                     this.transformations.length > 0 &&
@@ -738,7 +754,7 @@ JXG.extend(
          * Possible values are {@link JXG.COORDS_BY_USER} and {@link JXG.COORDS_BY_SCREEN}.
          * @param {Array} coords coordinates in screen/user units
          * @param {Array} oldcoords previous coordinates in screen/user units
-         * @returns {JXG.GeometryElement} this element
+         * @returns {JXG.GeometryElement} {JXG.GeometryElement} A reference to the object
          */
         setPositionDirectly: function (method, coords, oldcoords) {
             var c = new Coords(method, coords, this.board, false),
@@ -746,6 +762,56 @@ JXG.extend(
                 dc = Statistics.subtract(c.usrCoords, oldc.usrCoords);
 
             this.setPosition(Const.COORDS_BY_USER, dc);
+
+            return this;
+        },
+
+        /**
+         * Moves the element to the top of its layer. Works only for SVG renderer and for simple elements
+         * consisting of one SVG node.
+         *
+         * @returns {JXG.GeometryElement} {JXG.GeometryElement} A reference to the object
+         * @example
+         *   // Move one of the points 'A' or ''B' to make
+         *   // their midpoint visible.
+         *   const point1 = board.create("point", [-3, 1]);
+         *   const point2 = board.create("point", [2,  1]);
+         *   var mid = board.create("midpoint", [point1, point2]);
+         *   const point3 = board.create("point", [-0.5, 1], {size: 10, color: 'blue'});
+         *
+         *   mid.coords.on('update', function() {
+         *       mid.toTopOfLayer();
+         *   });
+         *   point3.coords.on('update', function() {
+         *       point3.toTopOfLayer();
+         *   });
+         *
+         * </pre><div id="JXG97a85991-8a1d-4a8b-9d19-2c921c0a70a9" class="jxgbox" style="width: 300px; height: 300px;"></div>
+         * <script type="text/javascript">
+         *     (function() {
+         *         var board = JXG.JSXGraph.initBoard('JXG97a85991-8a1d-4a8b-9d19-2c921c0a70a9',
+         *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
+         *             const point1 = board.create("point", [-3, 1]);
+         *             const point2 = board.create("point", [2,  1]);
+         *             var mid = board.create("midpoint", [point1, point2]);
+         *             const point3 = board.create("point", [-0.5, 1], {size: 10, color: 'blue'});
+         *
+         *             mid.coords.on('update', function() {
+         *                 mid.toTopOfLayer();
+         *             });
+         *             point3.coords.on('update', function() {
+         *                 point3.toTopOfLayer();
+         *             });
+         *
+         *     })();
+         *
+         * </script><pre>
+         *
+         */
+        toTopOfLayer: function() {
+            if (this.board.renderer.type === 'svg' && Type.exists(this.rendNode)) {
+                this.rendNode.parentNode.appendChild(this.rendNode);
+            }
 
             return this;
         },
@@ -855,7 +921,7 @@ JXG.extend(
          * @return {JXG.GeometryElement} Reference to the element
          */
         update: function () {
-            if (Type.evaluate(this.visProp.trace)) {
+            if (this.evalVisProp('trace')) {
                 this.cloneToBackground();
             }
             return this;
@@ -916,7 +982,7 @@ JXG.extend(
                         if (
                             Type.exists(obj[i]) &&
                             Type.exists(obj[i].rendNode) &&
-                            Type.evaluate(obj[i].visProp.visible) === 'inherit'
+                            obj[i].evalVisProp('visible') === 'inherit'
                         ) {
                             obj[i].setDisplayRendNode(val);
                         }
@@ -925,7 +991,7 @@ JXG.extend(
                     if (
                         Type.exists(obj) &&
                         Type.exists(obj.rendNode) &&
-                        Type.evaluate(obj.visProp.visible) === 'inherit'
+                        obj.evalVisProp('visible') === 'inherit'
                     ) {
                         obj.setDisplayRendNode(val);
                     }
@@ -934,7 +1000,7 @@ JXG.extend(
 
             // Set the visibility of the label if it inherits the attribute 'visible'
             if (this.hasLabel && Type.exists(this.label) && Type.exists(this.label.rendNode)) {
-                if (Type.evaluate(this.label.visProp.visible) === "inherit") {
+                if (this.label.evalVisProp('visible') === 'inherit') {
                     this.label.setDisplayRendNode(val);
                 }
             }
@@ -1009,43 +1075,49 @@ JXG.extend(
             var i, len, s, len_s, obj, val;
 
             if (this.needsUpdate) {
-                // Handle the element
-                if (parent_val !== undefined) {
-                    this.visPropCalc.visible = parent_val;
+                if (Type.exists(this.view) && this.view.evalVisProp('visible') === false) {
+                    // Handle hiding of view3d
+                    this.visPropCalc.visible = false;
+
                 } else {
-                    val = Type.evaluate(this.visProp.visible);
-
-                    // infobox uses hiddenByParent
-                    if (Type.exists(this.hiddenByParent) && this.hiddenByParent) {
-                        val = false;
-                    }
-                    if (val !== "inherit") {
-                        this.visPropCalc.visible = val;
-                    }
-                }
-
-                // Handle elements which inherit the visibility
-                len = this.inherits.length;
-                for (s = 0; s < len; s++) {
-                    obj = this.inherits[s];
-                    if (Type.isArray(obj)) {
-                        len_s = obj.length;
-                        for (i = 0; i < len_s; i++) {
-                            if (
-                                Type.exists(obj[i]) /*&& Type.exists(obj[i].rendNode)*/ &&
-                                Type.evaluate(obj[i].visProp.visible) === "inherit"
-                            ) {
-                                obj[i]
-                                    .prepareUpdate()
-                                    .updateVisibility(this.visPropCalc.visible);
-                            }
-                        }
+                    // Handle the element
+                    if (parent_val !== undefined) {
+                        this.visPropCalc.visible = parent_val;
                     } else {
-                        if (
-                            Type.exists(obj) /*&& Type.exists(obj.rendNode)*/ &&
-                            Type.evaluate(obj.visProp.visible) === "inherit"
-                        ) {
-                            obj.prepareUpdate().updateVisibility(this.visPropCalc.visible);
+                        val = this.evalVisProp('visible');
+
+                        // infobox uses hiddenByParent
+                        if (Type.exists(this.hiddenByParent) && this.hiddenByParent) {
+                            val = false;
+                        }
+                        if (val !== 'inherit') {
+                            this.visPropCalc.visible = val;
+                        }
+                    }
+
+                    // Handle elements which inherit the visibility
+                    len = this.inherits.length;
+                    for (s = 0; s < len; s++) {
+                        obj = this.inherits[s];
+                        if (Type.isArray(obj)) {
+                            len_s = obj.length;
+                            for (i = 0; i < len_s; i++) {
+                                if (
+                                    Type.exists(obj[i]) /*&& Type.exists(obj[i].rendNode)*/ &&
+                                    obj[i].evalVisProp('visible') === 'inherit'
+                                ) {
+                                    obj[i]
+                                        .prepareUpdate()
+                                        .updateVisibility(this.visPropCalc.visible);
+                                }
+                            }
+                        } else {
+                            if (
+                                Type.exists(obj) /*&& Type.exists(obj.rendNode)*/ &&
+                                obj.evalVisProp('visible') === 'inherit'
+                            ) {
+                                obj.prepareUpdate().updateVisibility(this.visPropCalc.visible);
+                            }
                         }
                     }
                 }
@@ -1054,7 +1126,7 @@ JXG.extend(
                 if (
                     Type.exists(this.label) &&
                     Type.exists(this.label.visProp) &&
-                    Type.evaluate(this.label.visProp.visible)
+                    this.label.evalVisProp('visible')
                 ) {
                     this.label.prepareUpdate().updateVisibility(this.visPropCalc.visible);
                 }
@@ -1064,6 +1136,9 @@ JXG.extend(
 
         /**
          * Sets the value of attribute <tt>key</tt> to <tt>value</tt>.
+         * Here, mainly hex strings for rga(a) colors are parsed and values of type object get a special treatment.
+         * Other values are just set to the key.
+         *
          * @param {String} key The attribute's name.
          * @param value The new value
          * @private
@@ -1077,7 +1152,7 @@ JXG.extend(
             // and containing a RGBA string
             if (
                 this.visProp.hasOwnProperty(key) &&
-                key.indexOf("color") >= 0 &&
+                key.indexOf('color') >= 0 &&
                 Type.isString(value) &&
                 value.length === 9 &&
                 value.charAt(0) === "#"
@@ -1085,7 +1160,7 @@ JXG.extend(
                 value = Color.rgba2rgbo(value);
                 this.visProp[key] = value[0];
                 // Previously: *=. But then, we can only decrease opacity.
-                this.visProp[key.replace("color", "opacity")] = value[1];
+                this.visProp[key.replace("color", 'opacity')] = value[1];
             } else {
                 if (
                     value !== null &&
@@ -1115,9 +1190,7 @@ JXG.extend(
          * @private
          */
         resolveShortcuts: function (attributes) {
-            var key,
-                i,
-                j,
+            var key, i, j,
                 subattr = ["traceattributes", "traceAttributes"];
 
             for (key in Options.shortcuts) {
@@ -1131,9 +1204,7 @@ JXG.extend(
                     }
                     for (j = 0; j < subattr.length; j++) {
                         if (Type.isObject(attributes[subattr[j]])) {
-                            attributes[subattr[j]] = this.resolveShortcuts(
-                                attributes[subattr[j]]
-                            );
+                            attributes[subattr[j]] = this.resolveShortcuts(attributes[subattr[j]]);
                         }
                     }
                 }
@@ -1172,7 +1243,7 @@ JXG.extend(
          */
         setName: function (str) {
             str = str.replace(/</g, "&lt;").replace(/>/g, "&gt;");
-            if (this.elType !== "slider") {
+            if (this.elType !== 'slider') {
                 this.setLabelText(str);
             }
             this.setAttribute({ name: str });
@@ -1250,7 +1321,14 @@ JXG.extend(
                     // Now, only the supplied label attributes are overwritten.
                     // Otherwise, the value of label would be {visible:false} only.
                     if (Type.isObject(value) && Type.exists(this.visProp[key])) {
-                        this.visProp[key] = Type.merge(this.visProp[key], value);
+                        // this.visProp[key] = Type.merge(this.visProp[key], value);
+                        if (!Type.isObject(this.visProp[key]) && value !== null && Type.isObject(value)) {
+                            // Handle cases like key=firstarrow and
+                            // firstarrow==false and value = { type:1 }.
+                            // That is a primitive type is replaced by an object.
+                            this.visProp[key] = {};
+                        }
+                        Type.mergeAttr(this.visProp[key], value);
 
                         // First, handle the special case
                         // ticks.setAttribute({label: {anchorX: "right", ..., visible: true});
@@ -1260,6 +1338,8 @@ JXG.extend(
                                 this.labels[j].setAttribute(value);
                             }
                         } else if (Type.exists(this[key])) {
+                            // Attribute looks like: point1: {...}
+                            // Handle this in the sub-element: this.point1.setAttribute({...})
                             if (Type.isArray(this[key])) {
                                 for (j = 0; j < this[key].length; j++) {
                                     this[key][j].setAttribute(value);
@@ -1267,24 +1347,66 @@ JXG.extend(
                             } else {
                                 this[key].setAttribute(value);
                             }
+                        } else {
+                            // Cases like firstarrow: {...}
+                            oldvalue = null;
+                            this.triggerEventHandlers(["attribute:" + key], [oldvalue, value, this]);
                         }
                         continue;
                     }
 
                     oldvalue = this.visProp[key];
                     switch (key) {
-                        case "name":
-                            oldvalue = this.name;
-                            delete this.board.elementsByName[this.name];
-                            this.name = value;
-                            this.board.elementsByName[this.name] = this;
+                        case "checked":
+                            // checkbox Is not available on initial call.
+                            if (Type.exists(this.rendNodeTag)) {
+                                this.rendNodeCheckbox.checked = !!value;
+                            }
                             break;
-                        case "needsregularupdate":
-                            this.needsRegularUpdate = !(value === "false" || value === false);
-                            this.board.renderer.setBuffering(
-                                this,
-                                this.needsRegularUpdate ? "auto" : "static"
-                            );
+                        case 'clip':
+                            this._set(key, value);
+                            // this.board.renderer.setClipPath(this, !!value);
+                            break;
+                        case "disabled":
+                            // button, checkbox, input. Is not available on initial call.
+                            if (Type.exists(this.rendNodeTag)) {
+                                this.rendNodeTag.disabled = !!value;
+                            }
+                            break;
+                        case "face":
+                            if (Type.isPoint(this)) {
+                                this.visProp.face = value;
+                                this.board.renderer.changePointStyle(this);
+                            }
+                            break;
+                        case "generatelabelvalue":
+                            if (
+                                this.type === Const.OBJECT_TYPE_TICKS &&
+                                Type.isFunction(value)
+                            ) {
+                                this.generateLabelValue = value;
+                            }
+                            break;
+                        case "gradient":
+                            this.visProp.gradient = value;
+                            this.board.renderer.setGradient(this);
+                            break;
+                        case "gradientsecondcolor":
+                            value = Color.rgba2rgbo(value);
+                            this.visProp.gradientsecondcolor = value[0];
+                            this.visProp.gradientsecondopacity = value[1];
+                            this.board.renderer.updateGradient(this);
+                            break;
+                        case "gradientsecondopacity":
+                            this.visProp.gradientsecondopacity = value;
+                            this.board.renderer.updateGradient(this);
+                            break;
+                        case "infoboxtext":
+                            if (Type.isString(value)) {
+                                this.infoboxText = value;
+                            } else {
+                                this.infoboxText = false;
+                            }
                             break;
                         case "labelcolor":
                             value = Color.rgba2rgbo(value);
@@ -1309,77 +1431,33 @@ JXG.extend(
                                 this.board.renderer.setObjectStrokeColor(this, value, opacity);
                             }
                             break;
-                        case "infoboxtext":
-                            if (Type.isString(value)) {
-                                this.infoboxText = value;
-                            } else {
-                                this.infoboxText = false;
+                        case "layer":
+                            this.board.renderer.setLayer(this, this.eval(value));
+                            this._set(key, value);
+                            break;
+                        case "maxlength":
+                            // input. Is not available on initial call.
+                            if (Type.exists(this.rendNodeTag)) {
+                                this.rendNodeTag.maxlength = !!value;
                             }
                             break;
-                        case "visible":
-                            if (value === "false") {
-                                this.visProp.visible = false;
-                            } else if (value === "true") {
-                                this.visProp.visible = true;
-                            } else {
-                                this.visProp.visible = value;
+                        case "name":
+                            oldvalue = this.name;
+                            delete this.board.elementsByName[this.name];
+                            this.name = value;
+                            this.board.elementsByName[this.name] = this;
+                            break;
+                        case "needsregularupdate":
+                            this.needsRegularUpdate = !(value === "false" || value === false);
+                            this.board.renderer.setBuffering(
+                                this,
+                                this.needsRegularUpdate ? "auto" : "static"
+                            );
+                            break;
+                        case "onpolygon":
+                            if (this.type === Const.OBJECT_TYPE_GLIDER) {
+                                this.onPolygon = !!value;
                             }
-
-                            this.setDisplayRendNode(Type.evaluate(this.visProp.visible));
-                            if (
-                                Type.evaluate(this.visProp.visible) &&
-                                Type.exists(this.updateSize)
-                            ) {
-                                this.updateSize();
-                            }
-
-                            break;
-                        case "face":
-                            if (Type.isPoint(this)) {
-                                this.visProp.face = value;
-                                this.board.renderer.changePointStyle(this);
-                            }
-                            break;
-                        case "trace":
-                            if (value === "false" || value === false) {
-                                this.clearTrace();
-                                this.visProp.trace = false;
-                            } else if (value === "pause") {
-                                this.visProp.trace = false;
-                            } else {
-                                this.visProp.trace = true;
-                            }
-                            break;
-                        case "gradient":
-                            this.visProp.gradient = value;
-                            this.board.renderer.setGradient(this);
-                            break;
-                        case "gradientsecondcolor":
-                            value = Color.rgba2rgbo(value);
-                            this.visProp.gradientsecondcolor = value[0];
-                            this.visProp.gradientsecondopacity = value[1];
-                            this.board.renderer.updateGradient(this);
-                            break;
-                        case "gradientsecondopacity":
-                            this.visProp.gradientsecondopacity = value;
-                            this.board.renderer.updateGradient(this);
-                            break;
-                        case "withlabel":
-                            this.visProp.withlabel = value;
-                            if (!Type.evaluate(value)) {
-                                if (this.label && this.hasLabel) {
-                                    //this.label.hideElement();
-                                    this.label.setAttribute({ visible: false });
-                                }
-                            } else {
-                                if (!this.label) {
-                                    this.createLabel();
-                                }
-                                //this.label.showElement();
-                                this.label.setAttribute({ visible: "inherit" });
-                                //this.label.setDisplayRendNode(Type.evaluate(this.visProp.visible));
-                            }
-                            this.hasLabel = value;
                             break;
                         case "radius":
                             if (
@@ -1392,51 +1470,20 @@ JXG.extend(
                         case "rotate":
                             if (
                                 (this.elementClass === Const.OBJECT_CLASS_TEXT &&
-                                    Type.evaluate(this.visProp.display) === "internal") ||
+                                    this.evalVisProp('display') === 'internal') ||
                                 this.type === Const.OBJECT_TYPE_IMAGE
                             ) {
                                 this.addRotation(value);
                             }
                             break;
-                        // case "ticksdistance":
-                        //     if (this.type === Const.OBJECT_TYPE_TICKS && Type.isNumber(value)) {
-                        //         this.ticksFunction = this.makeTicksFunction(value);
-                        //     }
-                        //     break;
-                        case "generatelabelvalue":
-                            if (
-                                this.type === Const.OBJECT_TYPE_TICKS &&
-                                Type.isFunction(value)
-                            ) {
-                                this.generateLabelValue = value;
-                            }
-                            break;
-                        case "onpolygon":
-                            if (this.type === Const.OBJECT_TYPE_GLIDER) {
-                                this.onPolygon = !!value;
-                            }
-                            break;
-                        case "disabled":
-                            // button, checkbox, input. Is not available on initial call.
-                            if (Type.exists(this.rendNodeTag)) {
-                                this.rendNodeTag.disabled = !!value;
-                            }
-                            break;
-                        case "checked":
-                            // checkbox Is not available on initial call.
-                            if (Type.exists(this.rendNodeTag)) {
-                                this.rendNodeCheckbox.checked = !!value;
-                            }
-                            break;
-                        case "maxlength":
-                            // input. Is not available on initial call.
-                            if (Type.exists(this.rendNodeTag)) {
-                                this.rendNodeTag.maxlength = !!value;
-                            }
-                            break;
-                        case "layer":
-                            this.board.renderer.setLayer(this, Type.evaluate(value));
+                        case "straightfirst":
+                        case "straightlast":
                             this._set(key, value);
+                            for (j in this.childElements) {
+                                if (this.childElements.hasOwnProperty(j) && this.childElements[j].elType === 'glider') {
+                                    this.childElements[j].fullUpdate();
+                                }
+                            }
                             break;
                         case "tabindex":
                             if (Type.exists(this.rendNode)) {
@@ -1444,20 +1491,73 @@ JXG.extend(
                                 this._set(key, value);
                             }
                             break;
-                        default:
+                        // case "ticksdistance":
+                        //     if (this.type === Const.OBJECT_TYPE_TICKS && Type.isNumber(value)) {
+                        //         this.ticksFunction = this.makeTicksFunction(value);
+                        //     }
+                        //     break;
+                        case "trace":
+                            if (value === "false" || value === false) {
+                                this.clearTrace();
+                                this.visProp.trace = false;
+                            } else if (value === 'pause') {
+                                this.visProp.trace = false;
+                            } else {
+                                this.visProp.trace = true;
+                            }
+                            break;
+                        case "visible":
+                            if (value === 'false') {
+                                this.visProp.visible = false;
+                            } else if (value === 'true') {
+                                this.visProp.visible = true;
+                            } else {
+                                this.visProp.visible = value;
+                            }
+
+                            this.setDisplayRendNode(this.evalVisProp('visible'));
                             if (
-                                Type.exists(this.visProp[key]) &&
-                                (!JXG.Validator[key] ||
-                                    (JXG.Validator[key] && JXG.Validator[key](value)) ||
-                                    (JXG.Validator[key] &&
-                                        Type.isFunction(value) &&
-                                        JXG.Validator[key](value())))
+                                this.evalVisProp('visible') &&
+                                Type.exists(this.updateSize)
                             ) {
-                                value =
-                                    value.toLowerCase && value.toLowerCase() === "false"
-                                        ? false
-                                        : value;
+                                this.updateSize();
+                            }
+
+                            break;
+                        case "withlabel":
+                            this.visProp.withlabel = value;
+                            if (!this.evalVisProp('withlabel')) {
+                                if (this.label && this.hasLabel) {
+                                    //this.label.hideElement();
+                                    this.label.setAttribute({ visible: false });
+                                }
+                            } else {
+                                if (!this.label) {
+                                    this.createLabel();
+                                }
+                                //this.label.showElement();
+                                this.label.setAttribute({ visible: 'inherit' });
+                                //this.label.setDisplayRendNode(this.evalVisProp('visible'));
+                            }
+                            this.hasLabel = value;
+                            break;
+                        default:
+                            if (Type.exists(this.visProp[key]) &&
+                                (!JXG.Validator[key] ||                                   // No validator for this key => OK
+                                    (JXG.Validator[key] && JXG.Validator[key](value)) ||  // Value passes the validator => OK
+                                    (JXG.Validator[key] &&                                // Value is function, function value passes the validator => OK
+                                        Type.isFunction(value) && JXG.Validator[key](value(this))
+                                    )
+                                )
+                            ) {
+                                value = (value.toLowerCase && value.toLowerCase() === 'false')
+                                            ? false
+                                            : value;
                                 this._set(key, value);
+                            } else {
+                                if (!(key in Options.shortcuts)) {
+                                    JXG.warn("attribute '" + key + "' does not accept type '" + (typeof value) + "' of value " + value + '.');
+                                }
                             }
                             break;
                     }
@@ -1467,10 +1567,13 @@ JXG.extend(
 
             this.triggerEventHandlers(["attribute"], [attributes, this]);
 
-            if (!Type.evaluate(this.visProp.needsregularupdate)) {
+            if (!this.evalVisProp('needsregularupdate')) {
                 this.board.fullUpdate();
             } else {
                 this.board.update(this);
+            }
+            if (this.elementClass === Const.OBJECT_CLASS_TEXT) {
+                this.updateSize();
             }
 
             return this;
@@ -1516,6 +1619,130 @@ JXG.extend(
         },
 
         /**
+         * Get value of an attribute. If the value that attribute is a function, call the function and return its value.
+         * In that case, the function is called with the GeometryElement as (only) parameter. For label elements (i.e.
+         * if the attribute "islabel" is true), the anchor element is supplied. The label element can be accessed as
+         * sub-object "label".
+         * If the attribute does not exist, undefined will be returned.
+         *
+         * @param {String} key Attribute key
+         * @returns {String|Number|Boolean} value of attribute "key" (evaluated in case of a function) or undefined
+         *
+         * @see GeometryElement#eval
+         * @see JXG#evaluate
+         */
+        evalVisProp: function (key) {
+            var val, arr, i, le,
+                e, o, found,
+                // Handle 'inherit':
+                lists = [this.descendants, this.ancestors],
+                entry, list;
+
+            key = key.toLowerCase();
+            if (key.indexOf('.') === -1) {
+                // e.g. 'visible'
+                val = this.visProp[key];
+            } else {
+                // e.g. label.visible
+                arr = key.split('.');
+                le = arr.length;
+                val = this.visProp;
+                for (i = 0; i < le; i++) {
+                    if (Type.exists(val)) {
+                        val = val[arr[i]];
+                    }
+                }
+            }
+
+            if (JXG.isFunction(val)) {
+                // For labels supply the anchor element as parameter.
+                if (this.visProp.islabel === true && Type.exists(this.visProp.anchor)) {
+                    // 3D: supply the 3D element
+                    if (this.visProp.anchor.visProp.element3d !== null) {
+                        return val(this.visProp.anchor.visProp.element3d);
+                    }
+                    // 2D: supply the 2D element
+                    return val(this.visProp.anchor);
+                }
+                // For 2D elements representing 3D elements, return the 3D element.
+                if (JXG.exists(this.visProp.element3d)) {
+                    return val(this.visProp.element3d);
+                }
+                // In all other cases, return the element itself
+                return val(this);
+            }
+            // val is not of type function
+
+            if (val === 'inherit' &&
+                // Exceptions:
+                (key !== 'visible' &&   // 'visible' is treated separately (for historic reasons)
+                 key !== 'showinfobox') // 'inherits' from board (not any ancestor or descendant)
+            ) {
+                for (entry in lists) if (lists.hasOwnProperty(entry)) {
+                    list = lists[entry];
+                    found = false;
+                    // list is descendant or ancestors
+                    for (e in list) if (list.hasOwnProperty(e)) {
+                        o = list[e];
+                        // Check if this is in inherits of one of its descendant/ancestors
+                        found = false;
+                        le = o.inherits.length;
+                        for (i = 0; i < le; i++) {
+                            if (this.id === o.inherits[i].id) {
+                                found = true;
+                                break;
+                            }
+                        }
+                        if (found) {
+                            val = o.evalVisProp(key);
+                            break;
+                        }
+                    }
+                    if (found) {
+                        break;
+                    }
+                }
+            }
+
+            return val;
+        },
+
+        /**
+         * Get value of a parameter. If the parameter is a function, call the function and return its value.
+         * In that case, the function is called with the GeometryElement as (only) parameter. For label elements (i.e.
+         * if the attribute "islabel" is true), the anchor element is supplied. The label of an element can be accessed as
+         * sub-object "label" then.
+         *
+         * @param {String|Number|Function|Object} val If not a function, it will be returned as is. If function it will be evaluated, where the GeometryElement is
+         * supplied as the (only) parameter of that function.
+         * @returns {String|Number|Object}
+         *
+         * @see GeometryElement#evalVisProp
+         * @see JXG#evaluate
+         */
+        eval: function(val) {
+            if (JXG.isFunction(val)) {
+                // For labels supply the anchor element as parameter.
+                if (this.visProp.islabel === true && Type.exists(this.visProp.anchor)) {
+                    // 3D: supply the 3D element
+                    if (this.visProp.anchor.visProp.element3d !== null) {
+                        return val(this.visProp.anchor.visProp.element3d);
+                    }
+                    // 2D: supply the 2D element
+                    return val(this.visProp.anchor);
+                }
+                // For 2D elements representing 3D elements, return the 3D element.
+                if (this.visProp.element3d !== null) {
+                    return val(this.visProp.element3d);
+                }
+                // In all other cases, return the element itself
+                return val(this);
+            }
+            // val is not of type function
+            return val;
+        },
+
+        /**
          * Set the dash style of an object. See {@link JXG.GeometryElement#dash}
          * for a list of available dash styles.
          * You should use {@link JXG.GeometryElement#setAttribute} instead of this method.
@@ -1542,7 +1769,8 @@ JXG.extend(
          * the renderer, to remove the element completely you should use {@link JXG.Board#removeObject}.
          */
         remove: function () {
-            this.board.renderer.remove(this.board.renderer.getElementById(this.id));
+            // this.board.renderer.remove(this.board.renderer.getElementById(this.id));
+            this.board.renderer.remove(this.rendNode);
 
             if (this.hasLabel) {
                 this.board.renderer.remove(this.board.renderer.getElementById(this.label.id));
@@ -1582,7 +1810,7 @@ JXG.extend(
             this.visProp.lastarrow = lastArrow;
             if (lastArrow) {
                 this.type = Const.OBJECT_TYPE_VECTOR;
-                this.elType = "arrow";
+                this.elType = 'arrow';
             }
 
             this.prepareUpdate().update().updateVisibility().updateRenderer();
@@ -1595,15 +1823,15 @@ JXG.extend(
          * @private
          */
         createGradient: function () {
-            var ev_g = Type.evaluate(this.visProp.gradient);
-            if (ev_g === "linear" || ev_g === "radial") {
+            var ev_g = this.evalVisProp('gradient');
+            if (ev_g === "linear" || ev_g === 'radial') {
                 this.board.renderer.setGradient(this);
             }
         },
 
         /**
          * Creates a label element for this geometry element.
-         * @see #addLabelToElement
+         * @see JXG.GeometryElement#addLabelToElement
          */
         createLabel: function () {
             var attr,
@@ -1614,7 +1842,7 @@ JXG.extend(
             // an exception here and simply output a warning via JXG.debug.
             if (JXG.elements.text) {
                 attr = Type.deepCopy(this.visProp.label, null);
-                attr.id = this.id + "Label";
+                attr.id = this.id + 'Label';
                 attr.isLabel = true;
                 attr.anchor = this;
                 attr.priv = this.visProp.priv;
@@ -1627,13 +1855,14 @@ JXG.extend(
                             0,
                             function () {
                                 if (Type.isFunction(that.name)) {
-                                    return that.name();
+                                    return that.name(that);
                                 }
                                 return that.name;
                             }
                         ],
                         attr
                     );
+                    this.label.elType = 'label';
                     this.label.needsUpdate = true;
                     this.label.dump = false;
                     this.label.fullUpdate();
@@ -1651,6 +1880,7 @@ JXG.extend(
 
         /**
          * Highlights the element.
+         * @private
          * @param {Boolean} [force=false] Force the highlighting
          * @returns {JXG.Board}
          */
@@ -1669,7 +1899,7 @@ JXG.extend(
             //    through dehighlightAll.
 
             // highlight only if not highlighted
-            if (Type.evaluate(this.visProp.highlight) && (!this.highlighted || force)) {
+            if (this.evalVisProp('highlight') && (!this.highlighted || force)) {
                 this.highlighted = true;
                 this.board.highlightedObjects[this.id] = this;
                 this.board.renderer.highlight(this);
@@ -1742,6 +1972,7 @@ JXG.extend(
          * @type String
          * @private
          * @ignore
+         * @deprecated
          * @returns JSON string containing element's properties.
          */
         toJSON: function () {
@@ -1839,7 +2070,7 @@ JXG.extend(
                     "transform",
                     [
                         function () {
-                            return (Type.evaluate(angle) * Math.PI) / 180;
+                            return (that.eval(angle) * Math.PI) / 180;
                         }
                     ],
                     { type: "rotate" }
@@ -1857,6 +2088,8 @@ JXG.extend(
 
         /**
          * Set the highlightStrokeColor of an element
+         * @ignore
+         * @name JXG.GeometryElement#highlightStrokeColorMethod
          * @param {String} sColor String which determines the stroke color of an object when its highlighted.
          * @see JXG.GeometryElement#highlightStrokeColor
          * @deprecated Use {@link JXG.GeometryElement#setAttribute}
@@ -1869,6 +2102,8 @@ JXG.extend(
 
         /**
          * Set the strokeColor of an element
+         * @ignore
+         * @name JXG.GeometryElement#strokeColorMethod
          * @param {String} sColor String which determines the stroke color of an object.
          * @see JXG.GeometryElement#strokeColor
          * @deprecated Use {@link JXG.GeometryElement#setAttribute}
@@ -1881,6 +2116,8 @@ JXG.extend(
 
         /**
          * Set the strokeWidth of an element
+         * @ignore
+         * @name JXG.GeometryElement#strokeWidthMethod
          * @param {Number} width Integer which determines the stroke width of an outline.
          * @see JXG.GeometryElement#strokeWidth
          * @deprecated Use {@link JXG.GeometryElement#setAttribute}
@@ -1893,6 +2130,8 @@ JXG.extend(
 
         /**
          * Set the fillColor of an element
+         * @ignore
+         * @name JXG.GeometryElement#fillColorMethod
          * @param {String} fColor String which determines the fill color of an object.
          * @see JXG.GeometryElement#fillColor
          * @deprecated Use {@link JXG.GeometryElement#setAttribute}
@@ -1905,6 +2144,8 @@ JXG.extend(
 
         /**
          * Set the highlightFillColor of an element
+         * @ignore
+         * @name JXG.GeometryElement#highlightFillColorMethod
          * @param {String} fColor String which determines the fill color of an object when its highlighted.
          * @see JXG.GeometryElement#highlightFillColor
          * @deprecated Use {@link JXG.GeometryElement#setAttribute}
@@ -1917,6 +2158,7 @@ JXG.extend(
 
         /**
          * Set the labelColor of an element
+         * @ignore
          * @param {String} lColor String which determines the text color of an object's label.
          * @see JXG.GeometryElement#labelColor
          * @deprecated Use {@link JXG.GeometryElement#setAttribute}
@@ -1929,6 +2171,8 @@ JXG.extend(
 
         /**
          * Set the dash type of an element
+         * @ignore
+         * @name JXG.GeometryElement#dashMethod
          * @param {Number} d Integer which determines the way of dashing an element's outline.
          * @see JXG.GeometryElement#dash
          * @deprecated Use {@link JXG.GeometryElement#setAttribute}
@@ -1941,6 +2185,8 @@ JXG.extend(
 
         /**
          * Set the visibility of an element
+         * @ignore
+         * @name JXG.GeometryElement#visibleMethod
          * @param {Boolean} v Boolean which determines whether the element is drawn.
          * @see JXG.GeometryElement#visible
          * @deprecated Use {@link JXG.GeometryElement#setAttribute}
@@ -1953,6 +2199,8 @@ JXG.extend(
 
         /**
          * Set the shadow of an element
+         * @ignore
+         * @name JXG.GeometryElement#shadowMethod
          * @param {Boolean} s Boolean which determines whether the element has a shadow or not.
          * @see JXG.GeometryElement#shadow
          * @deprecated Use {@link JXG.GeometryElement#setAttribute}
@@ -1980,9 +2228,11 @@ JXG.extend(
         },
 
         /**
+         * @ignore
          * Snaps the element to the grid. Only works for points, lines and circles. Points will snap to the grid
          * as defined in their properties {@link JXG.Point#snapSizeX} and {@link JXG.Point#snapSizeY}. Lines and circles
          * will snap their parent points to the grid, if they have {@link JXG.Point#snapToGrid} set to true.
+         * @private
          * @returns {JXG.GeometryElement} Reference to the element.
          */
         snapToGrid: function () {
@@ -1994,6 +2244,7 @@ JXG.extend(
          * as defined in their properties {@link JXG.Point#attractorDistance} and {@link JXG.Point#attractorUnit}.
          * Lines and circles
          * will snap their parent points to points.
+         * @private
          * @returns {JXG.GeometryElement} Reference to the element.
          */
         snapToPoints: function () {
@@ -2107,17 +2358,17 @@ JXG.extend(
         getSnapSizes: function () {
             var sX, sY, ticks;
 
-            sX = Type.evaluate(this.visProp.snapsizex);
-            sY = Type.evaluate(this.visProp.snapsizey);
+            sX = this.evalVisProp('snapsizex');
+            sY = this.evalVisProp('snapsizey');
 
             if (sX <= 0 && this.board.defaultAxes && this.board.defaultAxes.x.defaultTicks) {
                 ticks = this.board.defaultAxes.x.defaultTicks;
-                sX = ticks.ticksDelta * (Type.evaluate(ticks.visProp.minorticks) + 1);
+                sX = ticks.ticksDelta * (ticks.evalVisProp('minorticks') + 1);
             }
 
             if (sY <= 0 && this.board.defaultAxes && this.board.defaultAxes.y.defaultTicks) {
                 ticks = this.board.defaultAxes.y.defaultTicks;
-                sY = ticks.ticksDelta * (Type.evaluate(ticks.visProp.minorticks) + 1);
+                sY = ticks.ticksDelta * (ticks.evalVisProp('minorticks') + 1);
             }
 
             return [sX, sY];
@@ -2138,16 +2389,16 @@ JXG.extend(
                 mi, ma,
                 boardBB, res, sX, sY,
                 needsSnapToGrid = false,
-                attractToGrid = Type.evaluate(this.visProp.attracttogrid),
-                ev_au = Type.evaluate(this.visProp.attractorunit),
-                ev_ad = Type.evaluate(this.visProp.attractordistance);
+                attractToGrid = this.evalVisProp('attracttogrid'),
+                ev_au = this.evalVisProp('attractorunit'),
+                ev_ad = this.evalVisProp('attractordistance');
 
-            if (!Type.exists(this.coords) || Type.evaluate(this.visProp.fixed)) {
+            if (!Type.exists(this.coords) || this.evalVisProp('fixed')) {
                 return this;
             }
 
             needsSnapToGrid =
-                Type.evaluate(this.visProp.snaptogrid) || attractToGrid || force === true;
+                this.evalVisProp('snaptogrid') || attractToGrid || force === true;
 
             if (needsSnapToGrid) {
                 x = this.coords.usrCoords[1];
@@ -2200,11 +2451,8 @@ JXG.extend(
         },
 
         getBoundingBox: function () {
-            var i,
-                le,
-                v,
-                x,
-                y,
+            var i, le, v,
+                x, y, r,
                 bb = [Infinity, Infinity, -Infinity, -Infinity];
 
             if (this.type === Const.OBJECT_TYPE_POLYGON) {
@@ -2225,18 +2473,37 @@ JXG.extend(
                 y = this.center.Y();
                 bb = [x - this.radius, y + this.radius, x + this.radius, y - this.radius];
             } else if (this.elementClass === Const.OBJECT_CLASS_CURVE) {
-                le = this.vertices.length;
+                le = this.points.length;
                 if (le === 0) {
                     return bb;
                 }
                 for (i = 0; i < le; i++) {
-                    v = this.points[i].coords.usrCoords[1];
+                    v = this.points[i].usrCoords[1];
                     bb[0] = v < bb[0] ? v : bb[0];
                     bb[2] = v > bb[2] ? v : bb[2];
-                    v = this.points[i].coords.usrCoords[1];
+                    v = this.points[i].usrCoords[2];
                     bb[1] = v < bb[1] ? v : bb[1];
                     bb[3] = v > bb[3] ? v : bb[3];
                 }
+            } else if (this.elementClass === Const.OBJECT_CLASS_POINT) {
+                x = this.X();
+                y = this.Y();
+                r = this.evalVisProp('size');
+                bb = [x - r / this.board.unitX, y - r / this.board.unitY, x + r / this.board.unitX, y + r / this.board.unitY];
+            } else if (this.elementClass === Const.OBJECT_CLASS_LINE) {
+                v = this.point1.coords.usrCoords[1];
+                bb[0] = v < bb[0] ? v : bb[0];
+                bb[2] = v > bb[2] ? v : bb[2];
+                v = this.point1.coords.usrCoords[2];
+                bb[1] = v < bb[1] ? v : bb[1];
+                bb[3] = v > bb[3] ? v : bb[3];
+
+                v = this.point2.coords.usrCoords[1];
+                bb[0] = v < bb[0] ? v : bb[0];
+                bb[2] = v > bb[2] ? v : bb[2];
+                v = this.point2.coords.usrCoords[2];
+                bb[1] = v < bb[1] ? v : bb[1];
+                bb[3] = v > bb[3] ? v : bb[3];
             }
 
             return bb;
@@ -2262,17 +2529,17 @@ JXG.extend(
 
         /**
          * Format a number according to the locale set in the attribute "intl".
-         * If in the options of the intl-attribute "maximumFractionDigits" is not set, 
+         * If in the options of the intl-attribute "maximumFractionDigits" is not set,
          * the optional parameter digits is used instead.
          * See <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat/NumberFormat">https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat/NumberFormat</a>
          * for more  information about internationalization.
-         * 
+         *
          * @param {Number} value Number to be formatted
          * @param {Number} [digits=undefined] Optional number of digits
-         * @returns {String|Number} string containing the formatted number according to the locale 
+         * @returns {String|Number} string containing the formatted number according to the locale
          * or the number itself of the formatting is not possible.
          */
-        formatNumberLocale: function(value, digits) {
+        formatNumberLocale: function (value, digits) {
             var loc, opt, key,
                 optCalc = {},
                 // These options are case sensitive:
@@ -2293,24 +2560,23 @@ JXG.extend(
                     trailingzerodisplay: 'trailingZeroDisplay',
                     minimumintegerdigits: 'minimumIntegerDigits',
                     minimumsignificantdigits: 'minimumSignificantDigits',
-                    maximumsignificantdigits: 'maximumSignificantDigits',
+                    maximumsignificantdigits: 'maximumSignificantDigits'
                 };
 
             if (Type.exists(Intl) &&
-                this.useLocale())  {
+                this.useLocale()) {
 
-                loc = Type.evaluate(this.visProp.intl.locale) ||
-                        Type.evaluate(this.board.attr.intl.locale);
-                opt = Type.evaluate(this.visProp.intl.options) || {};
+                loc = this.evalVisProp('intl.locale') ||
+                    this.eval(this.board.attr.intl.locale);
+                opt = this.evalVisProp('intl.options') || {};
 
-                // Transfer back to camel case if necessary
-                // and evaluate
+                // Transfer back to camel case if necessary and evaluate
                 for (key in opt) {
                     if (opt.hasOwnProperty(key)) {
                         if (translate.hasOwnProperty(key)) {
-                            optCalc[translate[key]] = Type.evaluate(opt[key]);
+                            optCalc[translate[key]] = this.eval(opt[key]);
                         } else {
-                            optCalc[key] = Type.evaluate(opt[key]);
+                            optCalc[key] = this.eval(opt[key]);
                         }
                     }
                 }
@@ -2322,7 +2588,7 @@ JXG.extend(
                     optCalc[translate[key]] = digits;
 
                     // key = 'minimumfractiondigits';
-                    // if (!Type.exists(opt[key]) || Type.evaluate(opt[key]) > digits) {
+                    // if (!this.eval(opt[key]) || this.eval(opt[key]) > digits) {
                     //     optCalc[translate[key]] = digits;
                     // }
                 }
@@ -2335,12 +2601,12 @@ JXG.extend(
 
         /**
          * Checks if locale is enabled in the attribute. This may be in the attributes of the board,
-         * or in the attributes of the text. The latter has higher priority. The board attribute is taken if 
+         * or in the attributes of the text. The latter has higher priority. The board attribute is taken if
          * attribute "intl.enabled" of the text element is set to 'inherit'.
-         * 
+         *
          * @returns {Boolean} if locale can be used for number formatting.
          */
-        useLocale: function() {
+        useLocale: function () {
             var val;
 
             // Check if element supports intl
@@ -2350,7 +2616,7 @@ JXG.extend(
             }
 
             // Check if intl is supported explicitly enabled for this element
-            val = Type.evaluate(this.visProp.intl.enabled);
+            val = this.evalVisProp('intl.enabled');
 
             if (val === true) {
                 return true;
@@ -2358,7 +2624,7 @@ JXG.extend(
 
             // Check intl attribute of the board
             if (val === 'inherit') {
-                if (Type.evaluate(this.board.attr.intl.enabled) === true) {
+                if (this.eval(this.board.attr.intl.enabled) === true) {
                     return true;
                 }
             }
@@ -2378,7 +2644,7 @@ JXG.extend(
          * @name JXG.GeometryElement#over
          * @param {Event} e The browser's event object.
          */
-        __evt__over: function (e) {},
+        __evt__over: function (e) { },
 
         /**
          * @event
@@ -2386,7 +2652,7 @@ JXG.extend(
          * @name JXG.GeometryElement#mouseover
          * @param {Event} e The browser's event object.
          */
-        __evt__mouseover: function (e) {},
+        __evt__mouseover: function (e) { },
 
         /**
          * @event
@@ -2394,7 +2660,7 @@ JXG.extend(
          * @name JXG.GeometryElement#out
          * @param {Event} e The browser's event object.
          */
-        __evt__out: function (e) {},
+        __evt__out: function (e) { },
 
         /**
          * @event
@@ -2402,7 +2668,7 @@ JXG.extend(
          * @name JXG.GeometryElement#mouseout
          * @param {Event} e The browser's event object.
          */
-        __evt__mouseout: function (e) {},
+        __evt__mouseout: function (e) { },
 
         /**
          * @event
@@ -2410,7 +2676,7 @@ JXG.extend(
          * @name JXG.GeometryElement#move
          * @param {Event} e The browser's event object.
          */
-        __evt__move: function (e) {},
+        __evt__move: function (e) { },
 
         /**
          * @event
@@ -2418,7 +2684,7 @@ JXG.extend(
          * @name JXG.GeometryElement#mousemove
          * @param {Event} e The browser's event object.
          */
-        __evt__mousemove: function (e) {},
+        __evt__mousemove: function (e) { },
 
         /**
          * @event
@@ -2426,7 +2692,7 @@ JXG.extend(
          * @name JXG.GeometryElement#drag
          * @param {Event} e The browser's event object.
          */
-        __evt__drag: function (e) {},
+        __evt__drag: function (e) { },
 
         /**
          * @event
@@ -2434,7 +2700,7 @@ JXG.extend(
          * @name JXG.GeometryElement#mousedrag
          * @param {Event} e The browser's event object.
          */
-        __evt__mousedrag: function (e) {},
+        __evt__mousedrag: function (e) { },
 
         /**
          * @event
@@ -2442,7 +2708,7 @@ JXG.extend(
          * @name JXG.GeometryElement#pendrag
          * @param {Event} e The browser's event object.
          */
-        __evt__pendrag: function (e) {},
+        __evt__pendrag: function (e) { },
 
         /**
          * @event
@@ -2450,7 +2716,7 @@ JXG.extend(
          * @name JXG.GeometryElement#touchdrag
          * @param {Event} e The browser's event object.
          */
-        __evt__touchdrag: function (e) {},
+        __evt__touchdrag: function (e) { },
 
         /**
          * @event
@@ -2467,7 +2733,7 @@ JXG.extend(
          * @name JXG.GeometryElement#down
          * @param {Event} e The browser's event object.
          */
-        __evt__down: function (e) {},
+        __evt__down: function (e) { },
 
         /**
          * @event
@@ -2475,7 +2741,7 @@ JXG.extend(
          * @name JXG.GeometryElement#mousedown
          * @param {Event} e The browser's event object.
          */
-        __evt__mousedown: function (e) {},
+        __evt__mousedown: function (e) { },
 
         /**
          * @event
@@ -2483,7 +2749,7 @@ JXG.extend(
          * @name JXG.GeometryElement#pendown
          * @param {Event} e The browser's event object.
          */
-        __evt__pendown: function (e) {},
+        __evt__pendown: function (e) { },
 
         /**
          * @event
@@ -2491,7 +2757,61 @@ JXG.extend(
          * @name JXG.GeometryElement#touchdown
          * @param {Event} e The browser's event object.
          */
-        __evt__touchdown: function (e) {},
+        __evt__touchdown: function (e) { },
+
+        /**
+         * @event
+         * @description Whenever the user clicks on an element.
+         * @name JXG.Board#click
+         * @param {Event} e The browser's event object.
+         */
+        __evt__click: function (e) { },
+
+        /**
+         * @event
+         * @description Whenever the user double clicks on an element.
+         * This event works on desktop browser, but is undefined
+         * on mobile browsers.
+         * @name JXG.Board#dblclick
+         * @param {Event} e The browser's event object.
+         * @see JXG.Board#clickDelay
+         * @see JXG.Board#dblClickSuppressClick
+         */
+        __evt__dblclick: function (e) { },
+
+        /**
+         * @event
+         * @description Whenever the user clicks on an element with a mouse device.
+         * @name JXG.Board#mouseclick
+         * @param {Event} e The browser's event object.
+         */
+        __evt__mouseclick: function (e) { },
+
+        /**
+         * @event
+         * @description Whenever the user double clicks on an element with a mouse device.
+         * @name JXG.Board#mousedblclick
+         * @param {Event} e The browser's event object.
+         */
+        __evt__mousedblclick: function (e) { },
+
+        /**
+         * @event
+         * @description Whenever the user clicks on an element with a pointer device.
+         * @name JXG.Board#pointerclick
+         * @param {Event} e The browser's event object.
+         */
+        __evt__pointerclick: function (e) { },
+
+        /**
+         * @event
+         * @description Whenever the user double clicks on an element with a pointer device.
+         * This event works on desktop browser, but is undefined
+         * on mobile browsers.
+         * @name JXG.Board#pointerdblclick
+         * @param {Event} e The browser's event object.
+         */
+        __evt__pointerdblclick: function (e) { },
 
         /**
          * @event
@@ -2499,7 +2819,7 @@ JXG.extend(
          * @name JXG.GeometryElement#up
          * @param {Event} e The browser's event object.
          */
-        __evt__up: function (e) {},
+        __evt__up: function (e) { },
 
         /**
          * @event
@@ -2507,7 +2827,7 @@ JXG.extend(
          * @name JXG.GeometryElement#mouseup
          * @param {Event} e The browser's event object.
          */
-        __evt__mouseup: function (e) {},
+        __evt__mouseup: function (e) { },
 
         /**
          * @event
@@ -2515,7 +2835,7 @@ JXG.extend(
          * @name JXG.GeometryElement#penup
          * @param {Event} e The browser's event object.
          */
-        __evt__penup: function (e) {},
+        __evt__penup: function (e) { },
 
         /**
          * @event
@@ -2523,7 +2843,7 @@ JXG.extend(
          * @name JXG.GeometryElement#touchup
          * @param {Event} e The browser's event object.
          */
-        __evt__touchup: function (e) {},
+        __evt__touchup: function (e) { },
 
         /**
          * @event
@@ -2532,7 +2852,7 @@ JXG.extend(
          * @param {Object} o A list of changed attributes and their new value.
          * @param {Object} el Reference to the element
          */
-        __evt__attribute: function (o, el) {},
+        __evt__attribute: function (o, el) { },
 
         /**
          * @event
@@ -2544,12 +2864,12 @@ JXG.extend(
          * @param nval The new value
          * @param {Object} el Reference to the element
          */
-        __evt__attribute_: function (val, nval, el) {},
+        __evt__attribute_: function (val, nval, el) { },
 
         /**
          * @ignore
          */
-        __evt: function () {}
+        __evt: function () { }
         //endregion
     }
 );

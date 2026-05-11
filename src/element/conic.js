@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2023
+    Copyright 2008-2026
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -36,19 +36,18 @@
  * @fileoverview In this file the conic sections defined.
  */
 
-import JXG from "../jxg";
-import Const from "../base/constants";
-import Coords from "../base/coords";
-import Mat from "../math/math";
-import Numerics from "../math/numerics";
-import Geometry from "../math/geometry";
-import Type from "../utils/type";
+import JXG from "../jxg.js";
+import Const from "../base/constants.js";
+import Coords from "../base/coords.js";
+import Mat from "../math/math.js";
+import Numerics from "../math/numerics.js";
+import Geometry from "../math/geometry.js";
+import Type from "../utils/type.js";
 
 /**
- * @class This element is used to provide a constructor for an ellipse. An ellipse is given by two points (the foci) and a third point on the ellipse or
+ * @class An ellipse is a special conic section given by two points (the foci) and a third point on the ellipse or
  * the length of the major axis.
  * @pseudo
- * @description
  * @name Ellipse
  * @augments Conic
  * @constructor
@@ -118,9 +117,9 @@ JXG.createEllipse = function (board, parents, attributes) {
         hasPointOrg,
         // focus 1 and focus 2
         F = [],
-        attr_foci = Type.copyAttributes(attributes, board.options, "conic", "foci"),
-        attr_center = Type.copyAttributes(attributes, board.options, "conic", "center"),
-        attr_curve = Type.copyAttributes(attributes, board.options, "conic");
+        attr_foci = Type.copyAttributes(attributes, board.options, "conic", 'foci'),
+        attr_center = Type.copyAttributes(attributes, board.options, "conic", 'center'),
+        attr_curve = Type.copyAttributes(attributes, board.options, 'conic');
 
     // The foci and the third point are either points or coordinate arrays.
     for (i = 0; i < 2; i++) {
@@ -207,6 +206,10 @@ JXG.createEllipse = function (board, parents, attributes) {
         attr_center
     );
 
+    /**
+     * @class
+     * @ignore
+     */
     curve = board.create(
         "curve",
         [
@@ -291,11 +294,12 @@ JXG.createEllipse = function (board, parents, attributes) {
      * @param {Number} y Coordinate in y direction, screen coordinates.
      * @returns {Boolean} True if (x,y) is near the ellipse, False otherwise.
      * @private
+     * @ignore
      */
     curve.hasPoint = function (x, y) {
         var ac, bc, r, p, dist;
 
-        if (Type.evaluate(this.visProp.hasinnerpoints)) {
+        if (this.evalVisProp('hasinnerpoints')) {
             ac = F[0].coords;
             bc = F[1].coords;
             r = this.majorAxis();
@@ -323,10 +327,9 @@ JXG.createEllipse = function (board, parents, attributes) {
 };
 
 /**
- * @class This element is used to provide a constructor for an hyperbola. An hyperbola is given by two points (the foci) and a third point on the hyperbola or
+ * @class A hyperbola is a special conic section given by two points (the foci) and a third point on the hyperbola or
  * the length of the major axis.
  * @pseudo
- * @description
  * @name Hyperbola
  * @augments Conic
  * @constructor
@@ -364,9 +367,9 @@ JXG.createHyperbola = function (board, parents, attributes) {
         i,
         // focus 1 and focus 2
         F = [],
-        attr_foci = Type.copyAttributes(attributes, board.options, "conic", "foci"),
-        attr_center = Type.copyAttributes(attributes, board.options, "conic", "center"),
-        attr_curve = Type.copyAttributes(attributes, board.options, "conic");
+        attr_foci = Type.copyAttributes(attributes, board.options, "conic", 'foci'),
+        attr_center = Type.copyAttributes(attributes, board.options, "conic", 'center'),
+        attr_curve = Type.copyAttributes(attributes, board.options, 'conic');
 
     // The foci and the third point are either points or coordinate arrays.
     for (i = 0; i < 2; i++) {
@@ -453,6 +456,10 @@ JXG.createHyperbola = function (board, parents, attributes) {
         attr_center
     );
 
+    /**
+     * @class
+     * @ignore
+     */
     curve = board.create(
         "curve",
         [
@@ -543,13 +550,13 @@ JXG.createHyperbola = function (board, parents, attributes) {
 };
 
 /**
- * @class This element is used to provide a constructor for a parabola. A parabola is given by one point (the focus) and a line (the directrix).
+ * @class A parabola is a special conic section given by one point (the focus) and a line (the directrix).
  * @pseudo
- * @description
  * @name Parabola
  * @augments Conic
  * @constructor
- * @type JXG.Curve
+ * @type Object
+ * @description JXG.Curve
  * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
  * @param {JXG.Point,array_JXG.Line} point,line Parent elements are a point and a line or a pair of coordinates.
  * Optional parameters three and four are numbers which define the curve length (e.g. start/end). Default values are -pi and pi.
@@ -595,9 +602,9 @@ JXG.createParabola = function (board, parents, attributes) {
         F1 = parents[0],
         // directrix
         l = parents[1],
-        attr_foci = Type.copyAttributes(attributes, board.options, "conic", "foci"),
-        attr_center = Type.copyAttributes(attributes, board.options, "conic", "center"),
-        attr_curve = Type.copyAttributes(attributes, board.options, "conic"),
+        attr_foci = Type.copyAttributes(attributes, board.options, "conic", 'foci'),
+        attr_center = Type.copyAttributes(attributes, board.options, "conic", 'center'),
+        attr_curve = Type.copyAttributes(attributes, board.options, 'conic'),
         attr_line;
 
     // focus 1 given by coordinates
@@ -625,7 +632,7 @@ JXG.createParabola = function (board, parents, attributes) {
 
     // Create line if given as array of two points.
     if (Type.isArray(l) && l.length === 2) {
-        attr_line = Type.copyAttributes(attributes, board.options, "conic", "line");
+        attr_line = Type.copyAttributes(attributes, board.options, "conic", 'line');
         l = board.create("line", l, attr_line);
     }
 
@@ -654,7 +661,10 @@ JXG.createParabola = function (board, parents, attributes) {
         attr_center
     );
 
-    /** @ignore */
+    /**
+     * @class
+     * @ignore
+     */
     curve = board.create(
         "curve",
         [
@@ -760,15 +770,14 @@ JXG.createParabola = function (board, parents, attributes) {
 
 /**
  *
- * @class This element is used to provide a constructor for a generic conic section uniquely defined by five points or
- * a conic defined by the coefficients of the equation
- * <p><i>Ax<sup>2</sup>+ Bxy+Cy<sup>2</sup> + Dx + Ey + F = 0</i></p>.
- * Then the parameters are as follows:
+ * @class Create a generic conic section either by five points or the coefficients of the general conic's equation.
+ * If the conic section is defined by the coefficients of the equation
+ * <p><i>Ax<sup>2</sup>+ Bxy+Cy<sup>2</sup> + Dx + Ey + F = 0</i></p>
+ * then the parameters are as follows:
  * <pre>
  *     board.create('conic', [A, C, F, B/2, D/2, E/2]);
  * </pre>
  * @pseudo
- * @description
  * @name Conic
  * @augments JXG.Curve
  * @constructor
@@ -840,9 +849,9 @@ JXG.createConic = function (board, parents, attributes) {
         ],
         points = [],
         p = [],
-        attr_point = Type.copyAttributes(attributes, board.options, "conic", "point"),
-        attr_center = Type.copyAttributes(attributes, board.options, "conic", "center"),
-        attr_curve = Type.copyAttributes(attributes, board.options, "conic");
+        attr_point = Type.copyAttributes(attributes, board.options, "conic", 'point'),
+        attr_center = Type.copyAttributes(attributes, board.options, "conic", 'center'),
+        attr_curve = Type.copyAttributes(attributes, board.options, 'conic');
 
     if (parents.length === 5) {
         givenByPoints = true;
@@ -999,6 +1008,10 @@ JXG.createConic = function (board, parents, attributes) {
 
     // Here, the defining functions for the curve are just dummy functions.
     // In polarForm there is a reference to curve.quadraticform.
+    /**
+     * @class
+     * @ignore
+     */
     curve = board.create(
         "curve",
         [

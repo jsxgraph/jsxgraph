@@ -9,7 +9,7 @@
 // Definitions by: David Holmes https://github.com/geometryzen
 // Definitions: https://github.com/DefinitelyTyped/DefinitelyTyped
 //
-// Copyright 2015-2023 David Holmes, https://github.com/geometryzen
+// Copyright 2015-2024 David Holmes, https://github.com/geometryzen
 //
 
 /**
@@ -403,7 +403,9 @@ declare namespace JXG {
     export function isNumber(v: unknown): v is number;
     export function isObject(v: unknown): boolean;
     export function isPoint(v: unknown): v is Point;
+    export function isPoint3D(v: unknown): boolean;
     export function isPointType(v: unknown): boolean;
+    export function isPointType3D(v: unknown): boolean;
     export function isString(v: unknown): v is string;
     export function isTouchDevice(): boolean;
     export function isTransformationOrArray(v: unknown): boolean;
@@ -1131,7 +1133,7 @@ declare namespace JXG {
         /**
          * If false the element won't be visible on the board, otherwise it is shown.
          */
-        visible?: boolean | BooleanFunction | "inherit";
+        visible?: boolean | BooleanFunction | 'inherit';
 
         /**
          * If true, a label will display the element's name.
@@ -1719,7 +1721,7 @@ declare namespace JXG {
      */
     export interface BoxplotAttributes extends CurveAttributes {
         /**
-         * Direction of the box plot.
+         * Direction of the boxplot.
          */
         dir?: "horizontal" | "vertical";
         /**
@@ -1946,7 +1948,7 @@ declare namespace JXG {
         strokeColor?: string;
         strokeOpacity?: number;
         useMathJax?: boolean;
-        visible?: "inherit" | boolean;
+        visible?: 'inherit' | boolean;
     }
 
     export interface Legend extends GeometryElement {}
@@ -3342,7 +3344,7 @@ declare namespace JXG {
         // TODO: linear used in JSXGraph workshop Dec 16, 2020.
         type?: "line" | "linear" | "polar";
         useUnicodeMinus?: boolean;
-        visible?: "inherit" | boolean;
+        visible?: 'inherit' | boolean;
     }
 
     /**
@@ -3356,7 +3358,7 @@ declare namespace JXG {
         point1?: PointAttributes;
         point2?: PointAttributes;
         digits?: number;
-        ticks?: TicksAttributes;
+        ticks?: TicksOptions;
         withLabel?: boolean;
         withTicks?: boolean;
     }
@@ -3652,6 +3654,8 @@ declare namespace JXG {
         arrow?: ArrowOptions;
     }
 
+    export interface Circle3DAttributes extends GeometryElementAttributes {}
+
     export interface Curve3DAttributes extends CurveAttributes {}
 
     export interface Curve3D extends Curve {}
@@ -3675,6 +3679,8 @@ declare namespace JXG {
         Y(): number;
         Z(): number;
     }
+
+    export interface Sphere3DAttributes extends GeometryElementAttributes {}
 
     export interface View3DAttributes extends GeometryElementAttributes {
         axesPosition?: "center";
@@ -3713,6 +3719,11 @@ declare namespace JXG {
          */
         constructor(board: Board, parents: unknown[], attributes: View3DAttributes);
         create(
+            elementType: "circle3d",
+            parents: unknown[],
+            attributes?: Circle3DAttributes
+        ): Circle3D;
+        create(
             elementType: "curve3d",
             parents: unknown[],
             attributes?: Curve3DAttributes
@@ -3742,6 +3753,16 @@ declare namespace JXG {
             parents: unknown[],
             attributes?: Point3DAttributes
         ): Point3D;
+        create(
+            elementType: "polygon3d",
+            parents: unknown[],
+            attributes?: Polygon3DAttributes
+        ): Polygon3D;
+        create(
+            elementType: "sphere3d",
+            parents: unknown[],
+            attributes?: Sphere3DAttributes
+        ): Sphere3D;
         add(el: unknown): void;
         update(): this;
         updateRenderer(): this;
@@ -3778,6 +3799,7 @@ declare namespace JXG {
         | 'chart'
         | 'checkbox'
         | 'circle'
+        | 'circle3d'
         | 'circumcenter'
         | 'circumcircle'
         | 'circumcirclearc'
@@ -3806,6 +3828,8 @@ declare namespace JXG {
         | 'input'
         | 'integral'
         | 'intersection'
+        | 'intersectioncircle3d'
+        | 'intersectionline3d'
         | 'label'
         | 'legend'
         | 'line'
@@ -3833,6 +3857,7 @@ declare namespace JXG {
         | 'plot'
         | 'point'
         | 'point3d'
+        | 'polygon3d'
         | 'polarline'
         | 'polepoint'
         | 'polygon'
@@ -3847,6 +3872,7 @@ declare namespace JXG {
         | 'semicircle'
         | 'slider'
         | 'slopetriangle'
+        | 'sphere3d'
         | 'spline'
         | 'stepfunction'
         | 'tangent'
@@ -3939,7 +3965,7 @@ declare namespace JXG {
             anchorY?: AnchorY;
             label?: LabelOptions;
             drawZero?: boolean;
-            visible?: "inherit";
+            visible?: 'inherit';
         };
     }
 
@@ -6301,8 +6327,6 @@ declare namespace JXG {
          */
         percentile(arr: number[], percentile: number | number[]): number | number[];
     }
-
-    export type touchProperty = string;
 }
 
 /**

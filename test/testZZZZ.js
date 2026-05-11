@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2023
+    Copyright 2008-2026
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -48,6 +48,7 @@ describe("Further tests", function () {
         axis: false,
         grid: false,
         boundingbox: [-5, 5, 5, -5],
+        resize: {enabled: false},
         showCopyright: false,
         showNavigation: false
     });

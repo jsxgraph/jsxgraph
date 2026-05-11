@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2023
+    Copyright 2008-2026
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -39,17 +39,17 @@
  *
  */
 
-import JXG from "./jxg";
-import Env from "./utils/env";
-import Type from "./utils/type";
-import Mat from "./math/math";
-import Board from "./base/board";
-import FileReader from "./reader/file";
-import Options from "./options";
-import SVGRenderer from "./renderer/svg";
-import VMLRenderer from "./renderer/vml";
-import CanvasRenderer from "./renderer/canvas";
-import NoRenderer from "./renderer/no";
+import JXG from "./jxg.js";
+import Env from "./utils/env.js";
+import Type from "./utils/type.js";
+// import Mat from "./math/math.js";
+import Board from "./base/board.js";
+import FileReader from "./reader/file.js";
+import Options from "./options.js";
+import SVGRenderer from "./renderer/svg.js";
+import VMLRenderer from "./renderer/vml.js";
+import CanvasRenderer from "./renderer/canvas.js";
+import NoRenderer from "./renderer/no.js";
 
 /**
  * Constructs a new JSXGraph singleton object.
@@ -62,10 +62,10 @@ JXG.JSXGraph = {
      * @type String
      */
     rendererType: (function () {
-        Options.board.renderer = "no";
+        Options.board.renderer = 'no';
 
         if (Env.supportsVML()) {
-            Options.board.renderer = "vml";
+            Options.board.renderer = 'vml';
             // Ok, this is some real magic going on here. IE/VML always was so
             // terribly slow, except in one place: Examples placed in a moodle course
             // was almost as fast as in other browsers. So i grabbed all the css and
@@ -92,21 +92,21 @@ JXG.JSXGraph = {
         }
 
         if (Env.supportsCanvas()) {
-            Options.board.renderer = "canvas";
+            Options.board.renderer = 'canvas';
         }
 
         if (Env.supportsSVG()) {
-            Options.board.renderer = "svg";
+            Options.board.renderer = 'svg';
         }
 
         // we are inside node
         if (Env.isNode() && Env.supportsCanvas()) {
-            Options.board.renderer = "canvas";
+            Options.board.renderer = 'canvas';
         }
 
-        if (Env.isNode() || Options.renderer === "no") {
-            Options.text.display = "internal";
-            Options.infobox.display = "internal";
+        if (Env.isNode() || Options.renderer === 'no') {
+            Options.text.display = 'internal';
+            Options.infobox.display = 'internal';
         }
 
         return Options.board.renderer;
@@ -129,7 +129,7 @@ JXG.JSXGraph = {
 
         // Former version:
         // doc = doc || document
-        if ((!Type.exists(doc) || doc === false) && typeof document === "object") {
+        if ((!Type.exists(doc) || doc === false) && typeof document === 'object') {
             doc = document;
         }
 
@@ -145,15 +145,15 @@ JXG.JSXGraph = {
         }
 
         // If attrRenderer is not supplied take the first available renderer
-        if (attrRenderer === undefined || attrRenderer === "auto") {
+        if (attrRenderer === undefined || attrRenderer === 'auto') {
             attrRenderer = this.rendererType;
         }
         // create the renderer
-        if (attrRenderer === "svg") {
+        if (attrRenderer === 'svg') {
             renderer = new SVGRenderer(boxid, dim);
-        } else if (attrRenderer === "vml") {
+        } else if (attrRenderer === 'vml') {
             renderer = new VMLRenderer(boxid);
-        } else if (attrRenderer === "canvas") {
+        } else if (attrRenderer === 'canvas') {
             renderer = new CanvasRenderer(boxid, dim);
         } else {
             renderer = new NoRenderer();
@@ -170,16 +170,16 @@ JXG.JSXGraph = {
      *
      * @private
      */
-    _setAttributes: function (attributes) {
+    _setAttributes: function (attributes, options) {
         // merge attributes
-        var attr = Type.copyAttributes(attributes, Options, 'board'),
+        var attr = Type.copyAttributes(attributes, options, 'board'),
 
             // These attributes - which are objects - have to be copied separately.
             list = [
                 'drag', 'fullscreen',
                 'intl',
                 'keyboard', 'logging',
-                'navbar', 'pan', 'resize',
+                'pan', 'resize',
                 'screenshot', 'selection',
                 'zoom'
             ],
@@ -187,13 +187,14 @@ JXG.JSXGraph = {
 
         for (i = 0; i < len; i++) {
             key = list[i];
-            attr[key] = Type.copyAttributes(attr, Options, 'board', key);
+            attr[key] = Type.copyAttributes(attr, options, 'board', key);
         }
+        attr.navbar = Type.copyAttributes(attr.navbar, options, 'navbar');
 
         // Treat moveTarget separately, because deepCopy will not work here.
         // Reason: moveTarget will be an HTML node and it is prevented that Type.deepCopy will copy it.
         attr.movetarget =
-            attributes.moveTarget || attributes.movetarget || Options.board.moveTarget;
+            attributes.moveTarget || attributes.movetarget || options.board.moveTarget;
 
         return attr;
     },
@@ -213,6 +214,7 @@ JXG.JSXGraph = {
         board.resizeContainer(dimensions.width, dimensions.height, true, true);
         board._createSelectionPolygon(attr);
         board.renderer.drawNavigationBar(board, attr.navbar);
+
         JXG.boards[board.id] = board;
     },
 
@@ -225,12 +227,13 @@ JXG.JSXGraph = {
      */
     _setARIA: function (container, attr) {
         var doc = attr.document,
-            doc_glob,
-            node_jsx,
-            newNode,
-            parent,
-            id_label,
-            id_description;
+            node_jsx;
+            // Unused variables, made obsolete in db3e50f4dfa8b86b1ff619b578e243a97b41151c
+            // doc_glob,
+            // newNode,
+            // parent,
+            // id_label,
+            // id_description;
 
             if (typeof doc !== 'object') {
                 if (!Env.isBrowser) {
@@ -240,26 +243,12 @@ JXG.JSXGraph = {
             }
 
         node_jsx = (Type.isString(container)) ? doc.getElementById(container) : container;
-        doc_glob = node_jsx.ownerDocument; // This is the window.document element, needed below.
-        parent = node_jsx.parentNode;
+        node_jsx.setAttribute("role", 'region');
+        node_jsx.setAttribute("aria-label", attr.title);              // set by initBoard( {title:})
 
-        id_label = container + "_ARIAlabel";
-        id_description = container + "_ARIAdescription";
+        // doc_glob = node_jsx.ownerDocument; // This is the window.document element, needed below.
+        // parent = node_jsx.parentNode;
 
-        newNode = doc_glob.createElement("div");
-        newNode.innerHTML = attr.title;
-        newNode.setAttribute("id", id_label);
-        newNode.style.display = "none";
-        parent.insertBefore(newNode, node_jsx);
-
-        newNode = doc_glob.createElement("div");
-        newNode.innerHTML = attr.description;
-        newNode.setAttribute("id", id_description);
-        newNode.style.display = "none";
-        parent.insertBefore(newNode, node_jsx);
-
-        node_jsx.setAttribute("aria-labelledby", id_label);
-        node_jsx.setAttribute("aria-describedby", id_description);
     },
 
     /**
@@ -273,7 +262,7 @@ JXG.JSXGraph = {
         var node, id, doc;
 
         doc = board.document || document;
-        if (typeof doc !== "object") {
+        if (typeof doc !== 'object') {
             return;
         }
 
@@ -291,32 +280,229 @@ JXG.JSXGraph = {
 
     /**
      * Initialize a new board.
+     *
      * @param {String|Object} box id of or reference to the HTML element in which the board is painted.
-     * @param {Object} attributes An object that sets some of the board properties. Most of these properties can be set via JXG.Options.
-     * @param {Array} [attributes.boundingbox=[-5, 5, 5, -5]] An array containing four numbers describing the left, top, right and bottom boundary of the board in user coordinates
-     * @param {Boolean} [attributes.keepaspectratio=false] If <tt>true</tt>, the bounding box is adjusted to the same aspect ratio as the aspect ratio of the div containing the board.
-     * @param {Boolean} [attributes.showCopyright=false] Show the copyright string in the top left corner.
-     * @param {Boolean} [attributes.showNavigation=false] Show the navigation buttons in the bottom right corner.
-     * @param {Object} [attributes.zoom] Allow the user to zoom with the mouse wheel or the two-fingers-zoom gesture.
-     * @param {Object} [attributes.pan] Allow the user to pan with shift+drag mouse or two-fingers-pan gesture.
-     * @param {Object} [attributes.drag] Allow the user to drag objects with a pointer device.
-     * @param {Object} [attributes.keyboard] Allow the user to drag objects with arrow keys on keyboard.
-     * @param {Boolean} [attributes.axis=false] If set to true, show the axis. Can also be set to an object that is given to both axes as an attribute object.
-     * @param {Boolean|Object} [attributes.grid] If set to true, shows the grid. Can also be set to an object that is given to the grid as its attribute object.
-     * @param {Boolean} [attributes.registerEvents=true] Register mouse / touch events.
+     * @param {Object} attributes An object that sets some of the board properties.
+     * See {@link JXG.Board} for a list of available attributes of the board.
+     * Most of these attributes can also be set via {@link JXG.Options},
+     *
      * @returns {JXG.Board} Reference to the created board.
      *
      * @see JXG.AbstractRenderer#drawNavigationBar
+     * @example
+     * var board = JXG.JSXGraph.initBoard('jxgbox', {
+     *     boundingbox: [-10, 5, 10, -5],
+     *     keepaspectratio: false,
+     *     axis: true
+     * });
+     *
+     * </pre><div id="JXGc0f76e98-20bc-4224-9016-7ffa10770dff" class="jxgbox" style="width: 600px; height: 300px;"></div>
+     * <script type="text/javascript">
+     *     (function() {
+     *         var board = JXG.JSXGraph.initBoard('JXGc0f76e98-20bc-4224-9016-7ffa10770dff', {
+     *         boundingbox: [-10, 5, 10, -5],
+     *         keepaspectratio: false,
+     *         axis: true
+     *     });
+     *
+     *     })();
+     *
+     * </script><pre>
+     *
+     *
+     * @example
+     * const board = JXG.JSXGraph.initBoard('jxgbox', {
+     *   boundingbox: [-10, 10, 10, -10],
+     *   axis: true,
+     *   showCopyright: true,
+     *   showFullscreen: true,
+     *   showScreenshot: false,
+     *   showClearTraces: false,
+     *   showInfobox: false,
+     *   showNavigation: true,
+     *   grid: false,
+     *   defaultAxes: {
+     *     x: {
+     *       withLabel: true,
+     *       label: {
+     *         position: '95% left',
+     *         offset: [-10, 10]
+     *       },
+     *       lastArrow: {
+     *         type: 4,
+     *         size: 10
+     *       }
+     *     },
+     *     y: {
+     *       withLabel: true,
+     *       label: {
+     *         position: '0.90fr right',
+     *         offset: [6, -6]
+     *       },
+     *       lastArrow: {
+     *         type: 4,
+     *         size: 10
+     *       }
+     *     }
+     *   }
+     * });
+     *
+     * </pre><div id="JXG4ced167d-3235-48bc-84e9-1a28fce00f6a" class="jxgbox" style="width: 300px; height: 300px;"></div>
+     * <script type="text/javascript">
+     *     (function() {
+     *         var board = JXG.JSXGraph.initBoard('JXG4ced167d-3235-48bc-84e9-1a28fce00f6a', {
+     *       boundingbox: [-10, 10, 10, -10],
+     *       axis: true,
+     *       showCopyright: true,
+     *       showFullscreen: true,
+     *       showScreenshot: false,
+     *       showClearTraces: false,
+     *       showInfobox: false,
+     *       showNavigation: true,
+     *       grid: false,
+     *       defaultAxes: {
+     *         x: {
+     *           withLabel: true,
+     *           label: {
+     *             position: '95% left',
+     *             offset: [0, 0]
+     *           },
+     *           lastArrow: {
+     *             type: 4,
+     *             size: 10
+     *           }
+     *         },
+     *         y: {
+     *           withLabel: true,
+     *           label: {
+     *             position: '0.90fr right',
+     *             offset: [0, 0]
+     *           },
+     *           lastArrow: {
+     *             type: 4,
+     *             size: 10
+     *           }
+     *         }
+     *       }
+     *     });
+     *
+     *     })();
+     *
+     * </script><pre>
+     * @example
+     * const board = JXG.JSXGraph.initBoard('jxgbox', {
+     *     boundingbox: [-5, 5, 5, -5],
+     *     intl: {
+     *         enabled: false,
+     *         locale: 'en-EN'
+     *     },
+     *     keepaspectratio: true,
+     *     axis: true,
+     *     defaultAxes: {
+     *         x: {
+     *             ticks: {
+     *                 intl: {
+     *                         enabled: true,
+     *                         options: {
+     *                             style: 'unit',
+     *                             unit: 'kilometer-per-hour',
+     *                             unitDisplay: 'narrow'
+     *                         }
+     *                 }
+     *             }
+     *         },
+     *         y: {
+     *             ticks: {
+     *             }
+     *         }
+     *     },
+     *     infobox: {
+     *         fontSize: 20,
+     *         intl: {
+     *             enabled: true,
+     *             options: {
+     *                 minimumFractionDigits: 4,
+     *                 maximumFractionDigits: 5
+     *             }
+     *         }
+     *     }
+     * });
+     *
+     * </pre><div id="JXGdac54e59-f1e8-4fa6-bbcc-7486f7f6f960" class="jxgbox" style="width: 600px; height: 600px;"></div>
+     * <script type="text/javascript">
+     *     (function() {
+     *         var board = JXG.JSXGraph.initBoard('JXGdac54e59-f1e8-4fa6-bbcc-7486f7f6f960', {
+     *         boundingbox: [-5, 5, 5, -5],
+     *         intl: {
+     *             enabled: false,
+     *             locale: 'en-EN'
+     *         },
+     *         keepaspectratio: true,
+     *         axis: true,
+     *         defaultAxes: {
+     *             x: {
+     *                 ticks: {
+     *                     intl: {
+     *                             enabled: true,
+     *                             options: {
+     *                                 style: 'unit',
+     *                                 unit: 'kilometer-per-hour',
+     *                                 unitDisplay: 'narrow'
+     *                             }
+     *                     }
+     *                 }
+     *             },
+     *             y: {
+     *                 ticks: {
+     *                 }
+     *             }
+     *         },
+     *         infobox: {
+     *             fontSize: 20,
+     *             intl: {
+     *                 enabled: true,
+     *                 options: {
+     *                     minimumFractionDigits: 4,
+     *                     maximumFractionDigits: 5
+     *                 }
+     *             }
+     *         }
+     *     });
+     *
+     *     })();
+     *
+     * </script><pre>
+     *
+     *
      */
+    //  *
+    //  * @param {Array} [attributes.boundingbox=[-5, 5, 5, -5]] An array containing four numbers describing the left, top, right and bottom boundary of the board in user coordinates
+    //  * @param {Boolean} [attributes.keepaspectratio=false] If <tt>true</tt>, the bounding box is adjusted to the same aspect ratio as the aspect ratio of the div containing the board.
+    //  * @param {Boolean} [attributes.showCopyright=false] Show the copyright string in the top left corner.
+    //  * @param {Boolean} [attributes.showNavigation=false] Show the navigation buttons in the bottom right corner.
+    //  * @param {Object} [attributes.zoom] Allow the user to zoom with the mouse wheel or the two-fingers-zoom gesture.
+    //  * @param {Object} [attributes.pan] Allow the user to pan with shift+drag mouse or two-fingers-pan gesture.
+    //  * @param {Object} [attributes.drag] Allow the user to drag objects with a pointer device.
+    //  * @param {Object} [attributes.keyboard] Allow the user to drag objects with arrow keys on keyboard.
+    //  * @param {Boolean} [attributes.axis=false] If set to true, show the axis. Can also be set to an object that is given to both axes as an attribute object.
+    //  * @param {Boolean|Object} [attributes.grid] If set to true, shows the grid. Can also be set to an object that is given to the grid as its attribute object.
+    //  * @param {Boolean} [attributes.registerEvents=true] Register mouse / touch events.
     initBoard: function (box, attributes) {
         var originX, originY, unitX, unitY, w, h,
             offX = 0, offY = 0,
             renderer, dimensions, bbox,
             attr, axattr, axattr_x, axattr_y,
+            options,
+            theme = {},
             board;
 
-        attributes = attributes || {};
-        attr = this._setAttributes(attributes);
+        attributes = attributes || {}; // User supplied attributes
+        // Merge a possible theme
+        if (attributes.theme !== 'default' && Type.exists(JXG.themes[attributes.theme])) {
+            theme = JXG.themes[attributes.theme];
+        }
+        options = Type.deepCopy(Options, theme, true);    // Copy global options
+        attr = this._setAttributes(attributes, options);  // Merge user supplied attributes into global options
 
         dimensions = Env.getDimensions(box, attr.document);
 
@@ -343,8 +529,10 @@ JXG.JSXGraph = {
             // Size of HTML div.
             // If zero, the size is set to a small value to avoid
             // division by zero.
-            w = Math.max(parseInt(dimensions.width, 10), Mat.eps);
-            h = Math.max(parseInt(dimensions.height, 10), Mat.eps);
+            // w = Math.max(parseInt(dimensions.width, 10), Mat.eps);
+            // h = Math.max(parseInt(dimensions.height, 10), Mat.eps);
+            w = parseInt(dimensions.width, 10);
+            h = parseInt(dimensions.height, 10);
 
             if (Type.exists(bbox) && attr.keepaspectratio) {
                 /*
@@ -375,7 +563,8 @@ JXG.JSXGraph = {
         renderer = this.initRenderer(box, dimensions, attr.document, attr.renderer);
         this._setARIA(box, attr);
 
-        // create the board
+        // Create the board.
+        // board.options will contain the user supplied board attributes
         board = new Board(
             box,
             renderer,
@@ -394,14 +583,16 @@ JXG.JSXGraph = {
 
         this._fillBoard(board, attr, dimensions);
 
-        // create elements like axes, grid, navigation, ...
+        // Create elements like axes, grid, navigation, ...
         board.suspendUpdate();
+        attr = board.attr;
         if (attr.axis) {
             axattr = typeof attr.axis === "object" ? attr.axis : {};
 
             // The defaultAxes attributes are overwritten by user supplied axis object.
-            axattr_x = Type.deepCopy(Options.board.defaultAxes.x, axattr);
-            axattr_y = Type.deepCopy(Options.board.defaultAxes.y, axattr);
+            axattr_x = Type.deepCopy(options.board.defaultaxes.x, axattr);
+            axattr_y = Type.deepCopy(options.board.defaultaxes.y, axattr);
+
             // The user supplied defaultAxes attributes are merged in.
             if (attr.defaultaxes.x) {
                 axattr_x = Type.deepCopy(axattr_x, attr.defaultaxes.x);
@@ -411,27 +602,16 @@ JXG.JSXGraph = {
             }
 
             board.defaultAxes = {};
-            board.defaultAxes.x = board.create(
-                "axis",
-                [
-                    [0, 0],
-                    [1, 0]
-                ],
-                axattr_x
-            );
-            board.defaultAxes.y = board.create(
-                "axis",
-                [
-                    [0, 0],
-                    [0, 1]
-                ],
-                axattr_y
-            );
+            board.defaultAxes.x = board.create("axis", [[0, 0], [1, 0]], axattr_x);
+            board.defaultAxes.y = board.create("axis", [[0, 0], [0, 1]], axattr_y);
         }
         if (attr.grid) {
             board.create("grid", [], typeof attr.grid === "object" ? attr.grid : {});
         }
         board.unsuspendUpdate();
+
+        // Set CSS styles of JSXGraph div
+        board.setAttribute({cssStyle: attr.cssstyle}, true);
 
         return board;
     },
@@ -551,12 +731,13 @@ JXG.JSXGraph = {
 
     /**
      * Delete a board and all its contents.
-     * @param {JXG.Board,String} board id of or reference to the DOM element in which the board is drawn.
+     * @param {JXG.Board|String} board id of or reference to the DOM element in which the board is drawn.
+     *
      */
     freeBoard: function (board) {
         var el;
 
-        if (typeof board === "string") {
+        if (typeof board === 'string') {
             board = JXG.boards[board];
         }
 
@@ -615,7 +796,7 @@ if (Env.isBrowser && typeof window === 'object' && typeof document === 'object')
                 cssClasses, bbox, axis, grid, code, src, request,
                 postpone = false,
 
-                scripts = document.getElementsByTagName("script"),
+                scripts = document.getElementsByTagName('script'),
                 init = function (code, type, bbox) {
                     var board = JXG.JSXGraph.initBoard(id, {
                         boundingbox: bbox,
@@ -625,7 +806,7 @@ if (Env.isBrowser && typeof window === 'object' && typeof document === 'object')
                         showReload: true
                     });
 
-                    if (type.toLowerCase().indexOf("script") > -1) {
+                    if (type.toLowerCase().indexOf('script') > -1) {
                         board.construct(code);
                     } else {
                         try {
@@ -655,7 +836,7 @@ if (Env.isBrowser && typeof window === 'object' && typeof document === 'object')
                     (type.toLowerCase() === "text/jessiescript" ||
                         type.toLowerCase() === "jessiescript" ||
                         type.toLowerCase() === "text/jessiecode" ||
-                        type.toLowerCase() === "jessiecode")
+                        type.toLowerCase() === 'jessiecode')
                 ) {
                     cssClasses = scripts[i].getAttribute("class", false) || "";
                     width = scripts[i].getAttribute("width", false) || "";
@@ -674,12 +855,12 @@ if (Env.isBrowser && typeof window === 'object' && typeof document === 'object')
                             bbox[j] = parseFloat(bbox[j]);
                         }
                     }
-                    axis = Type.str2Bool(scripts[i].getAttribute("axis", false) || "false");
-                    grid = Type.str2Bool(scripts[i].getAttribute("grid", false) || "false");
+                    axis = Type.str2Bool(scripts[i].getAttribute("axis", false) || 'false');
+                    grid = Type.str2Bool(scripts[i].getAttribute("grid", false) || 'false');
 
                     if (!Type.exists(id)) {
                         id = "jessiescript_autgen_jxg_" + i;
-                        div = document.createElement("div");
+                        div = document.createElement('div');
                         div.setAttribute("id", id);
 
                         txt = width !== "" ? "width:" + width + ";" : "";
@@ -693,7 +874,7 @@ if (Env.isBrowser && typeof window === 'object' && typeof document === 'object')
                             document.body.insertBefore(div, scripts[i]);
                         } catch (e) {
                             // there's probably jquery involved...
-                            if (typeof jQuery === "object") {
+                            if (Type.exists(jQuery) && typeof jQuery === 'object') {
                                 jQuery(div).insertBefore(scripts[i]);
                             }
                         }

@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2023
+    Copyright 2008-2026
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -35,20 +35,23 @@
  * This object provides the coordinate handling of points, images and texts.
  */
 
-import JXG from "../jxg";
-import Mat from "../math/math";
-import Geometry from "../math/geometry";
-import Numerics from "../math/numerics";
-import Statistics from "../math/statistics";
-import Coords from "./coords";
-import Const from "./constants";
-import Type from "../utils/type";
+import JXG from "../jxg.js";
+import Mat from "../math/math.js";
+import Geometry from "../math/geometry.js";
+import Numerics from "../math/numerics.js";
+import Statistics from "../math/statistics.js";
+import Coords from "./coords.js";
+import Const from "./constants.js";
+import Type from "../utils/type.js";
 
 /**
- * An element containing coords is the basic geometric element. Based on points lines and circles can be constructed which can be intersected
- * which in turn are points again which can be used to construct new lines, circles, polygons, etc. This class holds methods for
+ * An element containing coords is a basic geometric element.
+ * This is a parent class for points, images and texts.
+ * It holds common methods for
  * all kind of coordinate elements like points, texts and images.
- * @class Creates a new coords element object. Do not use this constructor to create an element.
+ * It can not be used directly.
+ * @class Creates a new coords element object. It is a parent class for points, images and texts.
+ * Do not use this constructor to create an element.
  *
  * @private
  * @augments JXG.GeometryElement
@@ -72,7 +75,15 @@ JXG.CoordsElement = function (coordinates, isLabel) {
      * @private
      */
     this.coords = new Coords(Const.COORDS_BY_USER, coordinates, this.board);
+
+    // initialCoords and actualCoords are needed to handle transformations
+    // and dragging of objects simultaneously.
+    // actualCoords are needed for non-points since the visible objects
+    // is transformed in the renderer.
+    // For labels and other relative texts, actualCoords is ignored, see
+    // board.initMoveObject
     this.initialCoords = new Coords(Const.COORDS_BY_USER, coordinates, this.board);
+    this.actualCoords = new Coords(Const.COORDS_BY_USER, coordinates, this.board);
 
     /**
      * Relative position on a slide element (line, circle, curve) if element is a glider on this element.
@@ -153,12 +164,16 @@ JXG.CoordsElement = function (coordinates, isLabel) {
         makeIntersection: "makeIntersection",
         X: "X",
         Y: "Y",
+        Coords: "Coords",
         free: "free",
         setPosition: "setGliderPosition",
         setGliderPosition: "setGliderPosition",
         addConstraint: "addConstraint",
         dist: "Dist",
-        onPolygon: "onPolygon"
+        Dist: "Dist",
+        onPolygon: "onPolygon",
+        startAnimation: "startAnimation",
+        stopAnimation: "stopAnimation"
     });
 
     /*
@@ -194,7 +209,7 @@ JXG.extend(
                 fromParent = false;
             }
 
-            if (!Type.evaluate(this.visProp.frozen)) {
+            if (this.evalVisProp('frozen') !== true) {
                 this.updateConstraint();
             }
 
@@ -217,7 +232,6 @@ JXG.extend(
                     this.updateGlider();
                 }
             }
-
             this.updateTransform(fromParent);
 
             return this;
@@ -253,7 +267,7 @@ JXG.extend(
 
             this.needsUpdateFromParent = false;
             if (slide.elementClass === Const.OBJECT_CLASS_CIRCLE) {
-                if (Type.evaluate(this.visProp.isgeonext)) {
+                if (this.evalVisProp('isgeonext')) {
                     delta = 1.0;
                 }
                 newCoords = Geometry.projectPointToCircle(this, slide, this.board);
@@ -289,7 +303,7 @@ JXG.extend(
                             if (slide === poly.borders[i]) {
                                 slide =
                                     poly.borders[
-                                        (i - 1 + poly.borders.length) % poly.borders.length
+                                    (i - 1 + poly.borders.length) % poly.borders.length
                                     ];
                                 break;
                             }
@@ -299,7 +313,7 @@ JXG.extend(
                             if (slide === poly.borders[i]) {
                                 slide =
                                     poly.borders[
-                                        (i + 1 + poly.borders.length) % poly.borders.length
+                                    (i + 1 + poly.borders.length) % poly.borders.length
                                     ];
                                 break;
                             }
@@ -376,23 +390,23 @@ JXG.extend(
 
                 // Snap the glider to snap values.
                 snappedTo = this.findClosestSnapValue(newPos);
-                if(snappedTo !== null) {
-                    snapValues = Type.evaluate(this.visProp.snapvalues);
+                if (snappedTo !== null) {
+                    snapValues = this.evalVisProp('snapvalues');
                     newPos = (snapValues[snappedTo] - this._smin) / (this._smax - this._smin);
                     this.update(true);
                 } else {
-                    // Snap the glider point of the slider into its appropiate position
+                    // Snap the glider point of the slider into its appropriate position
                     // First, recalculate the new value of this.position
                     // Second, call update(fromParent==true) to make the positioning snappier.
-                    ev_sw = Type.evaluate(this.visProp.snapwidth);
+                    ev_sw = this.evalVisProp('snapwidth');
                     if (
-                        Type.evaluate(ev_sw) > 0.0 &&
-                        Math.abs(this._smax - this._smin) >= Mat.eps
+                        ev_sw > 0.0 && Math.abs(this._smax - this._smin) >= Mat.eps
                     ) {
                         newPos = Math.max(Math.min(newPos, 1), 0);
-
-                        v = newPos * (this._smax - this._smin) + this._smin;
-                        v = Math.round(v / ev_sw) * ev_sw;
+                        // v = newPos * (this._smax - this._smin) + this._smin;
+                        // v = Math.round(v / ev_sw) * ev_sw;
+                        v = newPos * (this._smax - this._smin);
+                        v = Math.round(v / ev_sw) * ev_sw + this._smin;
                         newPos = (v - this._smin) / (this._smax - this._smin);
                         this.update(true);
                     }
@@ -400,7 +414,7 @@ JXG.extend(
 
                 p1c = slide.point1.coords;
                 if (
-                    !Type.evaluate(slide.visProp.straightfirst) &&
+                    !slide.evalVisProp('straightfirst') &&
                     Math.abs(p1c.usrCoords[0]) > Mat.eps &&
                     newPos < 0
                 ) {
@@ -411,7 +425,7 @@ JXG.extend(
 
                 p2c = slide.point2.coords;
                 if (
-                    !Type.evaluate(slide.visProp.straightlast) &&
+                    !slide.evalVisProp('straightlast') &&
                     Math.abs(p2c.usrCoords[0]) > Mat.eps &&
                     newPos > 1
                 ) {
@@ -437,7 +451,7 @@ JXG.extend(
                     beta = Geometry.rad(slide.radiuspoint, slide.center, slide.anglepoint);
                     newPos = angle;
 
-                    ev_sw = Type.evaluate(slide.visProp.selection);
+                    ev_sw = slide.evalVisProp('selection');
                     if (
                         (ev_sw === "minor" && beta > Math.PI) ||
                         (ev_sw === "major" && beta < Math.PI)
@@ -475,6 +489,8 @@ JXG.extend(
                     // Handle the case if the curve comes from a transformation of a continuous curve.
                     if (slide.transformations.length > 0) {
                         isTransformed = false;
+                        // TODO this might buggy, see the recursion
+                        // in line.js getCurveTangentDir
                         res = slide.getTransformationSource();
                         if (res[0]) {
                             isTransformed = res[0];
@@ -549,14 +565,14 @@ JXG.extend(
          * @returns {Number} Index of the value to snap to, or null.
          * @private
          */
-        findClosestSnapValue: function(pos) {
+        findClosestSnapValue: function (pos) {
             var i, d,
                 snapValues, snapValueDistance,
                 snappedTo = null;
 
             // Snap the glider to snap values.
-            snapValues = Type.evaluate(this.visProp.snapvalues);
-            snapValueDistance = Type.evaluate(this.visProp.snapvaluedistance);
+            snapValues = this.evalVisProp('snapvalues');
+            snapValueDistance = this.evalVisProp('snapvaluedistance');
 
             if (Type.isArray(snapValues) &&
                 Math.abs(this._smax - this._smin) >= Mat.eps &&
@@ -593,7 +609,7 @@ JXG.extend(
 
             if (slide.elementClass === Const.OBJECT_CLASS_CIRCLE) {
                 r = slide.Radius();
-                if (Type.evaluate(this.visProp.isgeonext)) {
+                if (this.evalVisProp('isgeonext')) {
                     delta = 1.0;
                 }
                 c = [
@@ -708,7 +724,7 @@ JXG.extend(
                     }
 
                     delta = beta - alpha;
-                    if (Type.evaluate(this.visProp.isgeonext)) {
+                    if (this.evalVisProp('isgeonext')) {
                         delta = 1.0;
                     }
                     angle = this.position * delta;
@@ -846,6 +862,70 @@ JXG.extend(
         },
 
         /**
+         * Getter method for coordinates x, y and (optional) z.
+         * @param {Number|String} [digits='auto'] Truncating rule for the digits in the infobox.
+         * <ul>
+         * <li>'auto': done automatically by JXG.autoDigits()
+         * <li>'none': no truncation
+         * <li>number: truncate after "number digits" with JXG.toFixed()
+         * </ul>
+         * @param {Boolean} [withZ=false] If set to true the return value will be <tt>(x | y | z)</tt> instead of <tt>(x, y)</tt>.
+         * @returns {String} User coordinates of point.
+         */
+        Coords: function (withZ) {
+            if (withZ) {
+                return this.coords.usrCoords.slice();
+            }
+            return this.coords.usrCoords.slice(1);
+        },
+        // Coords: function (digits, withZ) {
+        //     var arr, sep;
+
+        //     digits = digits || 'auto';
+
+        //     if (withZ) {
+        //         sep = ' | ';
+        //     } else {
+        //         sep = ', ';
+        //     }
+
+        //     if (digits === 'none') {
+        //         arr = [this.X(), sep, this.Y()];
+        //         if (withZ) {
+        //             arr.push(sep, this.Z());
+        //         }
+
+        //     } else if (digits === 'auto') {
+        //         if (this.useLocale()) {
+        //             arr = [this.formatNumberLocale(this.X()), sep, this.formatNumberLocale(this.Y())];
+        //             if (withZ) {
+        //                 arr.push(sep, this.formatNumberLocale(this.Z()));
+        //             }
+        //         } else {
+        //             arr = [Type.autoDigits(this.X()), sep, Type.autoDigits(this.Y())];
+        //             if (withZ) {
+        //                 arr.push(sep, Type.autoDigits(this.Z()));
+        //             }
+        //         }
+
+        //     } else {
+        //         if (this.useLocale()) {
+        //             arr = [this.formatNumberLocale(this.X(), digits), sep, this.formatNumberLocale(this.Y(), digits)];
+        //             if (withZ) {
+        //                 arr.push(sep, this.formatNumberLocale(this.Z(), digits));
+        //             }
+        //         } else {
+        //             arr = [Type.toFixed(this.X(), digits), sep, Type.toFixed(this.Y(), digits)];
+        //             if (withZ) {
+        //                 arr.push(sep, Type.toFixed(this.Z(), digits));
+        //             }
+        //         }
+        //     }
+
+        //     return '(' + arr.join('') + ')';
+        // },
+
+        /**
          * New evaluation of the function term.
          * This is required for CAS-points: Their XTerm() method is
          * overwritten in {@link JXG.CoordsElement#addConstraint}.
@@ -883,7 +963,7 @@ JXG.extend(
 
         /**
          * Getter method for the distance to a second point, this is required for CAS-elements.
-         * Here, function inlining seems to be worthwile  (for plotting).
+         * Here, function inlining seems to be worthwile (for plotting).
          * @param {JXG.Point} point2 The point to which the distance shall be calculated.
          * @returns {Number} Distance in user coordinate to the given point
          */
@@ -896,7 +976,7 @@ JXG.extend(
 
         /**
          * Alias for {@link JXG.Element#handleSnapToGrid}
-         * @param {Boolean} force force snapping independent from what the snaptogrid attribute says
+         * @param {Boolean} force force snapping independent of what the snaptogrid attribute says
          * @returns {JXG.CoordsElement} Reference to this element
          */
         snapToGrid: function (force) {
@@ -908,8 +988,8 @@ JXG.extend(
          * {@link JXG.Point#attractorDistance}.
          * The function uses the coords object of the point as
          * its actual position.
-         * @param {Boolean} force force snapping independent from what the snaptogrid attribute says
-         * @returns {JXG.Point} Reference to this element
+         * @param {Boolean} force force snapping independent of what the snaptogrid attribute says
+         * @returns {JXG.CoordsElement} Reference to this element
          */
         handleSnapToPoints: function (force) {
             var i,
@@ -921,7 +1001,7 @@ JXG.extend(
                 c = null,
                 ev_au,
                 ev_ad,
-                ev_is2p = Type.evaluate(this.visProp.ignoredsnaptopoints),
+                ev_is2p = this.evalVisProp('ignoredsnaptopoints'),
                 len2,
                 j,
                 ignore = false;
@@ -932,9 +1012,9 @@ JXG.extend(
                 len2 = ev_is2p.length;
             }
 
-            if (Type.evaluate(this.visProp.snaptopoints) || force) {
-                ev_au = Type.evaluate(this.visProp.attractorunit);
-                ev_ad = Type.evaluate(this.visProp.attractordistance);
+            if (this.evalVisProp('snaptopoints') || force) {
+                ev_au = this.evalVisProp('attractorunit');
+                ev_ad = this.evalVisProp('attractordistance');
 
                 for (i = 0; i < len; i++) {
                     pEl = this.board.objectsList[i];
@@ -954,7 +1034,7 @@ JXG.extend(
 
                     if (Type.isPoint(pEl) && pEl !== this && pEl.visPropCalc.visible) {
                         pCoords = Geometry.projectPointToPoint(this, pEl, this.board);
-                        if (ev_au === "screen") {
+                        if (ev_au === 'screen') {
                             d = pCoords.distance(Const.COORDS_BY_SCREEN, this.coords);
                         } else {
                             d = pCoords.distance(Const.COORDS_BY_USER, this.coords);
@@ -978,8 +1058,8 @@ JXG.extend(
         /**
          * Alias for {@link JXG.CoordsElement#handleSnapToPoints}.
          *
-         * @param {Boolean} force force snapping independent from what the snaptogrid attribute says
-         * @returns {JXG.Point} Reference to this element
+         * @param {Boolean} force force snapping independent of what the snaptogrid attribute says
+         * @returns {JXG.CoordsElement} Reference to this element
          */
         snapToPoints: function (force) {
             return this.handleSnapToPoints(force);
@@ -993,7 +1073,7 @@ JXG.extend(
          * apart from one of its attractor elements.
          * If attractorDistance is equal to zero, the point stays in its
          * current form.
-         * @returns {JXG.Point} Reference to this element
+         * @returns {JXG.CoordsElement} Reference to this element
          */
         handleAttractors: function () {
             var i,
@@ -1001,10 +1081,10 @@ JXG.extend(
                 projCoords,
                 d = 0.0,
                 projection,
-                ev_au = Type.evaluate(this.visProp.attractorunit),
-                ev_ad = Type.evaluate(this.visProp.attractordistance),
-                ev_sd = Type.evaluate(this.visProp.snatchdistance),
-                ev_a = Type.evaluate(this.visProp.attractors),
+                ev_au = this.evalVisProp('attractorunit'),
+                ev_ad = this.evalVisProp('attractordistance'),
+                ev_sd = this.evalVisProp('snatchdistance'),
+                ev_a = this.evalVisProp('attractors'),
                 len = ev_a.length;
 
             if (ev_ad === 0.0) {
@@ -1023,10 +1103,10 @@ JXG.extend(
                             el.point1.coords.usrCoords,
                             el.point2.coords.usrCoords
                         );
-                        if (!Type.evaluate(el.visProp.straightfirst) && projection[1] < 0.0) {
+                        if (!el.evalVisProp('straightfirst') && projection[1] < 0.0) {
                             projCoords = el.point1.coords;
                         } else if (
-                            !Type.evaluate(el.visProp.straightlast) &&
+                            !el.evalVisProp('straightlast') &&
                             projection[1] > 1.0
                         ) {
                             projCoords = el.point2.coords;
@@ -1051,7 +1131,7 @@ JXG.extend(
                         );
                     }
 
-                    if (ev_au === "screen") {
+                    if (ev_au === 'screen') {
                         d = projCoords.distance(Const.COORDS_BY_SCREEN, this.coords);
                     } else {
                         d = projCoords.distance(Const.COORDS_BY_USER, this.coords);
@@ -1087,22 +1167,21 @@ JXG.extend(
         },
 
         /**
-         * Sets coordinates and calls the point's update() method.
+         * Sets coordinates and calls the elements's update() method.
          * @param {Number} method The type of coordinates used here.
          * Possible values are {@link JXG.COORDS_BY_USER} and {@link JXG.COORDS_BY_SCREEN}.
          * @param {Array} coords coordinates <tt>([z], x, y)</tt> in screen/user units
-         * @returns {JXG.Point} this element
+         * @returns {JXG.CoordsElement} this element
          */
         setPositionDirectly: function (method, coords) {
             var i,
-                c,
-                dc,
+                c, dc, m,
                 oldCoords = this.coords,
                 newCoords;
 
             if (this.relativeCoords) {
                 c = new Coords(method, coords, this.board);
-                if (Type.evaluate(this.visProp.islabel)) {
+                if (this.evalVisProp('islabel')) {
                     dc = Statistics.subtract(c.scrCoords, oldCoords.scrCoords);
                     this.relativeCoords.scrCoords[1] += dc[1];
                     this.relativeCoords.scrCoords[2] += dc[2];
@@ -1120,9 +1199,15 @@ JXG.extend(
             this.handleSnapToPoints();
             this.handleAttractors();
 
-            // Update the initial coordinates. This is needed for free points
-            // that have a transformation bound to it.
-            for (i = this.transformations.length - 1; i >= 0; i--) {
+            // Here, we set the object's "actualCoords", because
+            // coords and initialCoords coincide since transformations
+            // for these elements are handled in the renderers.
+            this.actualCoords.setCoordinates(Const.COORDS_BY_USER, this.coords.usrCoords);
+
+            // The element's coords have been set above to the new position `coords`.
+            // Now, determine the preimage of `coords`, prior to all transformations.
+            // This is needed for free elements that have a transformation bound to it.
+            if (this.transformations.length > 0) {
                 if (method === Const.COORDS_BY_SCREEN) {
                     newCoords = new Coords(method, coords, this.board).usrCoords;
                 } else {
@@ -1131,10 +1216,17 @@ JXG.extend(
                     }
                     newCoords = coords;
                 }
-                this.initialCoords.setCoordinates(
-                    Const.COORDS_BY_USER,
-                    Mat.matVecMult(Mat.inverse(this.transformations[i].matrix), newCoords)
-                );
+                m = [[1, 0, 0], [0, 1, 0], [0, 0, 1]];
+                for (i = 0; i < this.transformations.length; i++) {
+                    m = Mat.matMatMult(this.transformations[i].matrix, m);
+                }
+                newCoords = Mat.matVecMult(Mat.inverse(m), newCoords);
+
+                this.initialCoords.setCoordinates(Const.COORDS_BY_USER, newCoords);
+                if (this.elementClass !== Const.OBJECT_CLASS_POINT) {
+                    // This is necessary for images and texts.
+                    this.coords.setCoordinates(Const.COORDS_BY_USER, newCoords);
+                }
             }
             this.prepareUpdate().update();
 
@@ -1153,7 +1245,7 @@ JXG.extend(
          * @param {Number} method The type of coordinates used here.
          * Possible values are {@link JXG.COORDS_BY_USER} and {@link JXG.COORDS_BY_SCREEN}.
          * @param {Array} tv (x, y)
-         * @returns {JXG.Point}
+         * @returns {JXG.CoordsElement}
          */
         setPositionByTransform: function (method, tv) {
             var t;
@@ -1178,11 +1270,11 @@ JXG.extend(
         },
 
         /**
-         * Sets coordinates and calls the point's update() method.
+         * Sets coordinates and calls the element's update() method.
          * @param {Number} method The type of coordinates used here.
          * Possible values are {@link JXG.COORDS_BY_USER} and {@link JXG.COORDS_BY_SCREEN}.
          * @param {Array} coords coordinates in screen/user units
-         * @returns {JXG.Point}
+         * @returns {JXG.CoordsElement}
          */
         setPosition: function (method, coords) {
             return this.setPositionDirectly(method, coords);
@@ -1271,20 +1363,20 @@ JXG.extend(
                 // It may not be sufficient to remove the point from
                 // the list of childElement. For complex dependencies
                 // one may have to go to the list of ancestor and descendants.  A.W.
-                // Yes indeed, see #51 on github bugtracker
-                //  delete this.slideObject.childElements[this.id];
+                // Yes indeed, see #51 on github bug tracker
+                //   delete this.slideObject.childElements[this.id];
                 this.slideObject.removeChild(this);
 
                 if (this.slideObjects.length === 0) {
                     this.type = this._org_type;
                     if (this.type === Const.OBJECT_TYPE_POINT) {
-                        this.elType = "point";
+                        this.elType = 'point';
                     } else if (this.elementClass === Const.OBJECT_CLASS_TEXT) {
-                        this.elType = "text";
+                        this.elType = 'text';
                     } else if (this.type === Const.OBJECT_TYPE_IMAGE) {
-                        this.elType = "image";
+                        this.elType = 'image';
                     } else if (this.type === Const.OBJECT_TYPE_FOREIGNOBJECT) {
-                        this.elType = "foreignobject";
+                        this.elType = 'foreignobject';
                     }
 
                     this.slideObject = null;
@@ -1318,7 +1410,7 @@ JXG.extend(
 
                     if (this.elementClass === Const.OBJECT_CLASS_POINT) {
                         this.type = Const.OBJECT_TYPE_POINT;
-                        this.elType = "point";
+                        this.elType = 'point';
                     }
 
                     this.XEval = function () {
@@ -1361,19 +1453,20 @@ JXG.extend(
 
             // A free point does not depend on anything. Remove all ancestors.
             this.ancestors = {}; // only remove the reference
+            this.parents = [];
 
             // Completely remove all slideObjects of the element
             this.slideObject = null;
             this.slideObjects = [];
             if (this.elementClass === Const.OBJECT_CLASS_POINT) {
                 this.type = Const.OBJECT_TYPE_POINT;
-                this.elType = "point";
+                this.elType = 'point';
             } else if (this.elementClass === Const.OBJECT_CLASS_TEXT) {
                 this.type = this._org_type;
-                this.elType = "text";
+                this.elType = 'text';
             } else if (this.elementClass === Const.OBJECT_CLASS_OTHER) {
                 this.type = this._org_type;
-                this.elType = "image";
+                this.elType = 'image';
             }
         },
 
@@ -1439,8 +1532,8 @@ JXG.extend(
                 newfuncs[i].origin = v;
             }
 
-            // Intersection function
             if (terms.length === 1) {
+                // Intersection function
                 this.updateConstraint = function () {
                     var c = newfuncs[0]();
 
@@ -1453,8 +1546,8 @@ JXG.extend(
                     }
                     return this;
                 };
-                // Euclidean coordinates
             } else if (terms.length === 2) {
+                // Euclidean coordinates
                 this.XEval = newfuncs[0];
                 this.YEval = newfuncs[1];
                 this.addParents([newfuncs[0].origin, newfuncs[1].origin]);
@@ -1466,8 +1559,8 @@ JXG.extend(
                     ]);
                     return this;
                 };
-                // Homogeneous coordinates
             } else {
+                // Homogeneous coordinates
                 this.ZEval = newfuncs[0];
                 this.XEval = newfuncs[1];
                 this.YEval = newfuncs[2];
@@ -1527,8 +1620,8 @@ JXG.extend(
             this.XEval = function () {
                 var sx, coords, anchor, ev_o;
 
-                if (Type.evaluate(this.visProp.islabel)) {
-                    ev_o = Type.evaluate(this.visProp.offset);
+                if (this.evalVisProp('islabel')) {
+                    ev_o = this.evalVisProp('offset');
                     sx = parseFloat(ev_o[0]);
                     anchor = this.element.getLabelAnchor();
                     coords = new Coords(
@@ -1547,8 +1640,8 @@ JXG.extend(
             this.YEval = function () {
                 var sy, coords, anchor, ev_o;
 
-                if (Type.evaluate(this.visProp.islabel)) {
-                    ev_o = Type.evaluate(this.visProp.offset);
+                if (this.evalVisProp('islabel')) {
+                    ev_o = this.evalVisProp('offset');
                     sy = -parseFloat(ev_o[1]);
                     anchor = this.element.getLabelAnchor();
                     coords = new Coords(
@@ -1585,15 +1678,35 @@ JXG.extend(
          * @returns {JXG.CoordsElement} Reference to itself.
          */
         updateTransform: function (fromParent) {
-            var i;
+            var c, i;
 
             if (this.transformations.length === 0) {
                 return this;
             }
 
-            for (i = 0; i < this.transformations.length; i++) {
-                this.transformations[i].update();
+            // This is the case for image and text rotations
+            // like in smartlabels
+            if (this.baseElement === null) {
+                this.baseElement = this;
             }
+
+            // This method is called for non-points only.
+            // Here, we set the object's "actualCoords", because
+            // coords and initialCoords coincide since transformations
+            // for these elements are handled in the renderers.
+
+            this.transformations[0].update();
+            if (this === this.baseElement) {
+                // Case of bindTo
+                c = this.transformations[0].apply(this, 'self');
+            } else {
+                c = this.transformations[0].apply(this.baseElement);
+            }
+            for (i = 1; i < this.transformations.length; i++) {
+                this.transformations[i].update();
+                c = Mat.matVecMult(this.transformations[i].matrix, c);
+            }
+            this.actualCoords.setCoordinates(Const.COORDS_BY_USER, c);
 
             return this;
         },
@@ -1623,12 +1736,14 @@ JXG.extend(
         },
 
         /**
-         * Animate the point.
-         * @param {Number,Function} direction The direction the glider is animated. Can be +1 or -1.
-         * @param {Number,Function} stepCount The number of steps in which the parent element is divided.
+         * Animate a point.
+         * @param {Number|Function} direction The direction the glider is animated. Can be +1 or -1.
+         * @param {Number|Function} stepCount The number of steps in which the parent element is divided.
          * Must be at least 1.
-         * @param {Number,Function} delay Time in msec between two animation steps. Default is 250.
-         * @returns {JXG.CoordsElement} Reference to iself.
+         * @param {Number|Function} delay Time in msec between two animation steps. Default is 250.
+         * @param {Number} [maxRounds=-1] The number of rounds the glider will be animated. The glider will run infinitely if
+         * maxRounds is negative or equal to Infinity.
+         * @returns {JXG.CoordsElement} Reference to itself.
          *
          * @name Glider#startAnimation
          * @see Glider#stopAnimation
@@ -1654,12 +1769,26 @@ JXG.extend(
          *     })();
          *
          * </script><pre>
+         * @example
+         * //animate example closed curve
+         * var c1 = board.create('curve',[(u)=>4*Math.cos(u),(u)=>2*Math.sin(u)+2,0,2*Math.PI]);
+         * var p2 = board.create('glider', [c1]);
+         * var button1 = board.create('button', [1, 7, 'start animation',function(){p2.startAnimation(1,8)}]);
+         * var button2 = board.create('button', [1, 5, 'stop animation',function(){p2.stopAnimation()}]);
+         * </pre><div class="jxgbox" id="JXG10e885ea-b05d-4e7d-a473-bac2554bce68" style="width: 200px; height: 200px;"></div>
+         * <script type="text/javascript">
+         *   var gpex4_board = JXG.JSXGraph.initBoard('JXG10e885ea-b05d-4e7d-a473-bac2554bce68', {boundingbox: [-1, 10, 10, -1], axis: true, showcopyright: false, shownavigation: false});
+         *   var gpex4_c1 = gpex4_board.create('curve',[(u)=>4*Math.cos(u)+4,(u)=>2*Math.sin(u)+2,0,2*Math.PI]);
+         *   var gpex4_p2 = gpex4_board.create('glider', [gpex4_c1]);
+         *   gpex4_board.create('button', [1, 7, 'start animation',function(){gpex4_p2.startAnimation(1,8)}]);
+         *   gpex4_board.create('button', [1, 5, 'stop animation',function(){gpex4_p2.stopAnimation()}]);
+         * </script><pre>
          *
          * @example
          * // Divide the slider area into 20 steps and
-         * // visit every step 30 msec.
+         * // visit every step 30 msec. Stop after 2 rounds.
          * var n = board.create('slider',[[-2,4],[2,4],[1,5,100]],{name:'n'});
-         * n.startAnimation(1, 20, 30);
+         * n.startAnimation(1, 20, 30, 2);
          *
          * </pre><div id="JXG40ce04b8-e99c-11e8-a1ca-04d3b0c2aad3" class="jxgbox" style="width: 300px; height: 300px;"></div>
          * <script type="text/javascript">
@@ -1669,26 +1798,30 @@ JXG.extend(
          *     // Divide the slider area into 20 steps and
          *     // visit every step 30 msec.
          *     var n = board.create('slider',[[-2,4],[2,4],[1,5,100]],{name:'n'});
-         *     n.startAnimation(1, 20, 30);
+         *     n.startAnimation(1, 20, 30, 2);
          *
          *     })();
          * </script><pre>
          *
          */
-        startAnimation: function (direction, stepCount, delay) {
+        startAnimation: function (direction, stepCount, delay, maxRounds) {
             var dir = Type.evaluate(direction),
                 sc = Type.evaluate(stepCount),
                 that = this;
 
             delay = Type.evaluate(delay) || 250;
+            maxRounds = Type.evaluate(maxRounds);
+            maxRounds = (maxRounds !== 'undefined') ? maxRounds : -1;
 
-            if (this.type === Const.OBJECT_TYPE_GLIDER && !Type.exists(this.intervalCode)) {
+            if (this.type === Const.OBJECT_TYPE_GLIDER && !Type.exists(this.intervalCode) && maxRounds !== 0) {
+                this.roundsCount = 0;
                 this.intervalCode = window.setInterval(function () {
-                    that._anim(dir, sc);
+                    that._anim(dir, sc, maxRounds);
                 }, delay);
 
                 if (!Type.exists(this.intervalCount)) {
                     this.intervalCount = 0;
+
                 }
             }
             return this;
@@ -1724,8 +1857,9 @@ JXG.extend(
          * will interpolate the path
          * using {@link JXG.Math.Numerics.Neville}. Set this flag to false if you don't want to use interpolation.
          * @returns {JXG.CoordsElement} Reference to itself.
-         * @see JXG.CoordsElement#moveAlong
          * @see JXG.CoordsElement#moveTo
+         * @see JXG.CoordsElement#visit
+         * @see JXG.CoordsElement#moveAlongES6
          * @see JXG.GeometryElement#animate
          */
         moveAlong: function (path, time, options) {
@@ -1812,19 +1946,67 @@ JXG.extend(
         /**
          * Starts an animated point movement towards the given coordinates <tt>where</tt>.
          * The animation is done after <tt>time</tt> milliseconds.
-         * If the second parameter is not given or is equal to 0, setPosition() is called, see #setPosition,
+         * If the second parameter is not given or is equal to 0, setPosition() is called, see
+         * {@link JXG.CoordsElement#setPosition},
          * i.e. the coordinates are changed without animation.
          * @param {Array} where Array containing the x and y coordinate of the target location.
          * @param {Number} [time] Number of milliseconds the animation should last.
          * @param {Object} [options] Optional settings for the animation
          * @param {function} [options.callback] A function that is called as soon as the animation is finished.
-         * @param {String} [options.effect='<>'] animation effects like speed fade in and out. possible values are
-         * '<>' for speed increase on start and slow down at the end (default) and '--' for constant speed during
-         * the whole animation.
+         * @param {String} [options.effect='<>'|'>'|'<'|'--'|'=='] animation effects like speed fade in and out. possible values are
+         * '<>' for speed increase on start and slow down at the end (default), '<' for speed up, '>' for slow down, and '--' (or '==')
+         * for constant speed during the whole animation.
          * @returns {JXG.CoordsElement} Reference to itself.
+         * @see JXG.CoordsElement#setPosition
          * @see JXG.CoordsElement#moveAlong
          * @see JXG.CoordsElement#visit
+         * @see JXG.CoordsElement#moveToES6
          * @see JXG.GeometryElement#animate
+         * @example
+         * // moveTo() with different easing options and callback options
+         * let yInit = 3
+         * let [A, B, C, D] = ['==', '<>', '<', '>'].map((s) => board.create('point', [4, yInit--], { name: s, label: { fontSize: 24 } }))
+         * let seg = board.create('segment', [A, [() => A.X(), 0]])  // shows linear
+         *
+         * let isLeftRight = true;
+         * let buttonMove = board.create('button', [-2, 4, 'left',
+         * () => {
+         *    isLeftRight = !isLeftRight;
+         *    buttonMove.rendNodeButton.innerHTML = isLeftRight ? 'left' : 'right'
+         *    let x = isLeftRight ? 4 : -4
+         *    let sym = isLeftRight ? 'triangleleft' : 'triangleright'
+         *
+         *    A.moveTo([x, 3], 1000, { callback: () => A.setAttribute({ face: sym, size: 5 }) })
+         *    B.moveTo([x, 2], 1000, { callback: () => B.setAttribute({ face: sym, size: 5 }), effect: "<>" })
+         *    C.moveTo([x, 1], 1000, { callback: () => C.setAttribute({ face: sym, size: 5 }), effect: "<" })
+         *    D.moveTo([x, 0], 1000, { callback: () => D.setAttribute({ face: sym, size: 5 }), effect: ">" })
+         *
+         * }]);
+         *
+         * </pre><div id="JXG0f35a50e-e99d-11e8-a1ca-04d3b0c2aad4" class="jxgbox" style="width: 300px; height: 300px;"></div>
+         * <script type="text/javascript">
+         * {
+         * let board = JXG.JSXGraph.initBoard('JXG0f35a50e-e99d-11e8-a1ca-04d3b0c2aad4')
+         * let yInit = 3
+         * let [A, B, C, D] = ['==', '<>', '<', '>'].map((s) => board.create('point', [4, yInit--], { name: s, label: { fontSize: 24 } }))
+         * let seg = board.create('segment', [A, [() => A.X(), 0]])  // shows linear
+         *
+         * let isLeftRight = true;
+         * let buttonMove = board.create('button', [-2, 4, 'left',
+         * () => {
+         *    isLeftRight = !isLeftRight;
+         *    buttonMove.rendNodeButton.innerHTML = isLeftRight ? 'left' : 'right'
+         *    let x = isLeftRight ? 4 : -4
+         *    let sym = isLeftRight ? 'triangleleft' : 'triangleright'
+         *
+         *    A.moveTo([x, 3], 1000, { callback: () => A.setAttribute({ face: sym, size: 5 }) })
+         *    B.moveTo([x, 2], 1000, { callback: () => B.setAttribute({ face: sym, size: 5 }), effect: "<>" })
+         *    C.moveTo([x, 1], 1000, { callback: () => C.setAttribute({ face: sym, size: 5 }), effect: "<" })
+         *    D.moveTo([x, 0], 1000, { callback: () => D.setAttribute({ face: sym, size: 5 }), effect: ">" })
+         *
+         * }]);
+         *}
+         *</script><pre>
          */
         moveTo: function (where, time, options) {
             options = options || {};
@@ -1840,10 +2022,26 @@ JXG.extend(
                 dY = where.usrCoords[2] - Y,
                 /** @ignore */
                 stepFun = function (i) {
-                    if (options.effect && options.effect === "<>") {
-                        return Math.pow(Math.sin(((i / steps) * Math.PI) / 2), 2);
+                    var x = i / steps;  // absolute progress of the animatin
+
+                    if (options.effect) {
+                        if (options.effect === "<>") {
+                            return Math.pow(Math.sin((x * Math.PI) / 2), 2);
+                        }
+                        if (options.effect === "<") {   // cubic ease in
+                            return x * x * x;
+                        }
+                        if (options.effect === ">") {   // cubic ease out
+                            return 1 - Math.pow(1 - x, 3);
+                        }
+                        if (options.effect === "==" || options.effect === "--") {
+                            return i / steps;       // linear
+                        }
+                        // throw new Error("Callback moveTo(): valid effects are '==', '--', '<>', '>', and '<', given is '" + options.effect + "'.");
+                        JXG.warn("Callback moveTo(): valid effects are '==', '--', '<>', '>', and '<', given is '" + options.effect + "'. Set it to '--'");
+                        options.effect = '--';
                     }
-                    return i / steps;
+                    return i / steps;  // default
                 };
 
             if (
@@ -1887,14 +2085,53 @@ JXG.extend(
          * @param {Number} time Number of milliseconds the animation should last.
          * @param {Object} [options] Optional settings for the animation
          * @param {function} [options.callback] A function that is called as soon as the animation is finished.
-         * @param {String} [options.effect='<>'] animation effects like speed fade in and out. possible values are
-         * '<>' for speed increase on start and slow down at the end (default) and '--' for constant speed during
-         * the whole animation.
+         * @param {String} [options.effect='<>'|'>'|'<'|'=='|'--'] animation effects like speed fade in and out. possible values are
+         * '<>' for speed increase on start and slow down at the end (default), '<' for speed up, '>' for slow down, and '--' (or '==')
+         * for constant speed during the whole animation.
          * @param {Number} [options.repeat=1] How often this animation should be repeated.
          * @returns {JXG.CoordsElement} Reference to itself.
          * @see JXG.CoordsElement#moveAlong
          * @see JXG.CoordsElement#moveTo
+         * @see JXG.CoordsElement#visitES6
          * @see JXG.GeometryElement#animate
+         * @example
+         * // visit() with different easing options
+         * let yInit = 3
+         * let [A, B, C, D] = ['==', '<>', '<', '>'].map((s) => board.create('point', [4, yInit--], { name: s, label: { fontSize: 24 } }))
+         * let seg = board.create('segment', [A, [() => A.X(), 0]])  // shows linear
+         *
+         *let isLeftRight = true;
+         *let buttonVisit = board.create('button', [0, 4, 'visit',
+         *    () => {
+         *        let x = isLeftRight ? 4 : -4
+         *
+         *        A.visit([-x, 3], 4000, { effect: "==", repeat: 2 })  // linear
+         *        B.visit([-x, 2], 4000, { effect: "<>", repeat: 2 })
+         *        C.visit([-x, 1], 4000, { effect: "<", repeat: 2 })
+         *        D.visit([-x, 0], 4000, { effect: ">", repeat: 2 })
+         *    }])
+         *
+         * </pre><div id="JXG0f35a50e-e99d-11e8-a1ca-04d3b0c2aad5" class="jxgbox" style="width: 300px; height: 300px;"></div>
+         * <script type="text/javascript">
+         * {
+         *  let board = JXG.JSXGraph.initBoard('JXG0f35a50e-e99d-11e8-a1ca-04d3b0c2aad5')
+         * let yInit = 3
+         * let [A, B, C, D] = ['==', '<>', '<', '>'].map((s) => board.create('point', [4, yInit--], { name: s, label: { fontSize: 24 } }))
+         * let seg = board.create('segment', [A, [() => A.X(), 0]])  // shows linear
+         *
+         * let isLeftRight = true;
+         * let buttonVisit = board.create('button', [0, 4, 'visit',
+         *    () => {
+         *        let x = isLeftRight ? 4 : -4
+         *
+         *        A.visit([-x, 3], 4000, { effect: "==", repeat: 2 })  // linear
+         *        B.visit([-x, 2], 4000, { effect: "<>", repeat: 2 })
+         *        C.visit([-x, 1], 4000, { effect: "<", repeat: 2 })
+         *        D.visit([-x, 0], 4000, { effect: ">", repeat: 2 })
+         *    }])
+         *   }
+         * </script><pre>
+         *
          */
         visit: function (where, time, options) {
             where = new Coords(Const.COORDS_BY_USER, where, this.board);
@@ -1912,10 +2149,23 @@ JXG.extend(
                 stepFun = function (i) {
                     var x = i < steps / 2 ? (2 * i) / steps : (2 * (steps - i)) / steps;
 
-                    if (options.effect && options.effect === "<>") {
-                        return Math.pow(Math.sin((x * Math.PI) / 2), 2);
+                    if (options.effect) {
+                        if (options.effect === "<>") {        // slow at beginning and end
+                            return Math.pow(Math.sin((x * Math.PI) / 2), 2);
+                        }
+                        if (options.effect === "<") {   // cubic ease in
+                            return x * x * x;
+                        }
+                        if (options.effect === ">") {   // cubic ease out
+                            return 1 - Math.pow(1 - x, 3);
+                        }
+                        if (options.effect === "==" || options.effect === "--") {
+                            return x;       // linear
+                        }
+                        // throw new Error("Callback visit(): valid effects are '==', '--', '<>', '>', and '<', given is '" + options.effect + "'.");
+                        JXG.warn("Callback visit(): valid effects are '==', '--', '<>', '>', and '<', given is '" + options.effect + "'. Set it to '--'");
+                        options.effect = '--';
                     }
-
                     return x;
                 };
 
@@ -1948,21 +2198,192 @@ JXG.extend(
         },
 
         /**
+         * ES6 version of {@link JXG.CoordsElement#moveAlong} using a promise.
+         *
+         * @param {Array} where Array containing the x and y coordinate of the target location.
+         * @param {Number} [time] Number of milliseconds the animation should last.
+         * @param {Object} [options] Optional settings for the animation
+         * @returns Promise
+         * @see JXG.CoordsElement#moveAlong
+         * @example
+         * var A = board.create('point', [4, 4]);
+         * A.moveAlongES6([[3, -2], [4, 0], [3, 1], [4, 4]], 2000)
+         *     .then(() => A.moveToES6([-3, -3], 1000));
+         *
+         * </pre><div id="JXGa45032e5-a517-4f1d-868a-65d698d344cf" class="jxgbox" style="width: 300px; height: 300px;"></div>
+         * <script type="text/javascript">
+         *     (function() {
+         *         var board = JXG.JSXGraph.initBoard('JXGa45032e5-a517-4f1d-868a-65d698d344cf',
+         *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
+         *     var A = board.create('point', [4, 4]);
+         *     A.moveAlongES6([[3, -2], [4, 0], [3, 1], [4, 4]], 2000)
+         *         .then(() => A.moveToES6([-3, -3], 1000));
+         *
+         *     })();
+         *
+         * </script><pre>
+         *
+         */
+        moveAlongES6: function (path, time, options) {
+            return new Promise((resolve, reject) => {
+                if (Type.exists(options) && Type.exists(options.callback)) {
+                    options.callback = resolve;
+                } else {
+                    options = {
+                        callback: resolve
+                    };
+                }
+                this.moveAlong(path, time, options);
+            });
+        },
+
+        /**
+         * ES6 version of {@link JXG.CoordsElement#moveTo} using a promise.
+         *
+         * @param {Array} where Array containing the x and y coordinate of the target location.
+         * @param {Number} [time] Number of milliseconds the animation should last.
+         * @param {Object} [options] Optional settings for the animation
+         * @returns Promise
+         * @see JXG.CoordsElement#moveTo
+         *
+         * @example
+         * var A = board.create('point', [4, 4]);
+         * A.moveToES6([-3, 3], 1000)
+         *     .then(() => A.moveToES6([-3, -3], 1000))
+         *     .then(() => A.moveToES6([3, -3], 1000))
+         *     .then(() => A.moveToES6([3, -3], 1000));
+         *
+         * </pre><div id="JXGabdc7771-34f0-4655-bb7b-fc329e773b89" class="jxgbox" style="width: 300px; height: 300px;"></div>
+         * <script type="text/javascript">
+         *     (function() {
+         *         var board = JXG.JSXGraph.initBoard('JXGabdc7771-34f0-4655-bb7b-fc329e773b89',
+         *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
+         *     var A = board.create('point', [4, 4]);
+         *     A.moveToES6([-3, 3], 1000)
+         *         .then(() => A.moveToES6([-3, -3], 1000))
+         *         .then(() => A.moveToES6([3, -3], 1000))
+         *         .then(() => A.moveToES6([3, -3], 1000));
+         *
+         *     })();
+         *
+         * </script><pre>
+         *
+         * @example
+         *         var A = board.create('point', [4, 4]);
+         *         A.moveToES6([-3, 3], 1000)
+         *             .then(function() {
+         *                 return A.moveToES6([-3, -3], 1000);
+         *             }).then(function() {
+         *                 return A.moveToES6([ 3, -3], 1000);
+         *             }).then(function() {
+         *                 return A.moveToES6([ 3, -3], 1000);
+         *             }).then(function() {
+         *                 return A.moveAlongES6([[3, -2], [4, 0], [3, 1], [4, 4]], 5000);
+         *             }).then(function() {
+         *                 return A.visitES6([-4, -4], 3000);
+         *             });
+         *
+         * </pre><div id="JXGa9439ce5-516d-4dba-9233-2a4ad9589995" class="jxgbox" style="width: 300px; height: 300px;"></div>
+         * <script type="text/javascript">
+         *     (function() {
+         *         var board = JXG.JSXGraph.initBoard('JXGa9439ce5-516d-4dba-9233-2a4ad9589995',
+         *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
+         *             var A = board.create('point', [4, 4]);
+         *             A.moveToES6([-3, 3], 1000)
+         *                 .then(function() {
+         *                     return A.moveToES6([-3, -3], 1000);
+         *                 }).then(function() {
+         *                     return A.moveToES6([ 3, -3], 1000);
+         *                 }).then(function() {
+         *                     return A.moveToES6([ 3, -3], 1000);
+         *                 }).then(function() {
+         *                     return A.moveAlongES6([[3, -2], [4, 0], [3, 1], [4, 4]], 5000);
+         *                 }).then(function() {
+         *                     return A.visitES6([-4, -4], 3000);
+         *                 });
+         *
+         *     })();
+         *
+         * </script><pre>
+         *
+         */
+        moveToES6: function (where, time, options) {
+            return new Promise((resolve, reject) => {
+                if (Type.exists(options) && Type.exists(options.callback)) {
+                    options.callback = resolve;
+                } else {
+                    options = {
+                        callback: resolve
+                    };
+                }
+                this.moveTo(where, time, options);
+            });
+        },
+
+        /**
+         * ES6 version of {@link JXG.CoordsElement#moveVisit} using a promise.
+         *
+         * @param {Array} where Array containing the x and y coordinate of the target location.
+         * @param {Number} [time] Number of milliseconds the animation should last.
+         * @param {Object} [options] Optional settings for the animation
+         * @returns Promise
+         * @see JXG.CoordsElement#visit
+         * @example
+         * var A = board.create('point', [4, 4]);
+         * A.visitES6([-4, -4], 3000)
+         *     .then(() => A.moveToES6([-3, 3], 1000));
+         *
+         * </pre><div id="JXG640f1fd2-05ec-46cb-b977-36d96648ce41" class="jxgbox" style="width: 300px; height: 300px;"></div>
+         * <script type="text/javascript">
+         *     (function() {
+         *         var board = JXG.JSXGraph.initBoard('JXG640f1fd2-05ec-46cb-b977-36d96648ce41',
+         *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
+         *     var A = board.create('point', [4, 4]);
+         *     A.visitES6([-4, -4], 3000)
+         *         .then(() => A.moveToES6([-3, 3], 1000));
+         *
+         *     })();
+         *
+         * </script><pre>
+         *
+         */
+        visitES6: function (where, time, options) {
+            return new Promise((resolve, reject) => {
+                if (Type.exists(options) && Type.exists(options.callback)) {
+                    options.callback = resolve;
+                } else {
+                    options = {
+                        callback: resolve
+                    };
+                }
+                this.visit(where, time, options);
+            });
+        },
+
+        /**
          * Animates a glider. Is called by the browser after startAnimation is called.
          * @param {Number} direction The direction the glider is animated.
          * @param {Number} stepCount The number of steps in which the parent element is divided.
          * Must be at least 1.
-         * @see #startAnimation
-         * @see #stopAnimation
+         * @param {Number} [maxRounds=-1] The number of rounds the glider will be animated. The glider will run infinitely if
+         * maxRounds is negative or equal to Infinity.
+         * @see JXG.CoordsElement#startAnimation
+         * @see JXG.CoordsElement#stopAnimation
          * @private
          * @returns {JXG.CoordsElement} Reference to itself.
          */
-        _anim: function (direction, stepCount) {
+        _anim: function (direction, stepCount, maxRounds) {
             var dX, dY, alpha, startPoint, newX, radius, sp1c, sp2c, res;
 
             this.intervalCount += 1;
             if (this.intervalCount > stepCount) {
                 this.intervalCount = 0;
+
+                this.roundsCount += 1;
+                if (maxRounds > 0 && this.roundsCount >= maxRounds) {
+                    this.roundsCount = 0;
+                    return this.stopAnimation();
+                }
             }
 
             if (this.slideObject.elementClass === Const.OBJECT_CLASS_LINE) {
@@ -1985,16 +2406,12 @@ JXG.extend(
                 ]);
             } else if (this.slideObject.elementClass === Const.OBJECT_CLASS_CURVE) {
                 if (direction > 0) {
-                    newX = Math.round(
-                        (this.intervalCount / stepCount) * this.board.canvasWidth
-                    );
+                    newX = (this.slideObject.maxX() - this.slideObject.minX()) * this.intervalCount / stepCount + this.slideObject.minX();
                 } else {
-                    newX = Math.round(
-                        ((stepCount - this.intervalCount) / stepCount) * this.board.canvasWidth
-                    );
+                    newX = -(this.slideObject.maxX() - this.slideObject.minX()) * this.intervalCount / stepCount + this.slideObject.maxX();
                 }
+                this.coords.setCoordinates(Const.COORDS_BY_USER, [this.slideObject.X(newX), this.slideObject.Y(newX)]);
 
-                this.coords.setCoordinates(Const.COORDS_BY_SCREEN, [newX, 0]);
                 res = Geometry.projectPointToCurve(this, this.slideObject, this.board);
                 this.coords = res[0];
                 this.position = res[1];

@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2023
+    Copyright 2008-2026
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -32,8 +32,8 @@
 /*global JXG: true, define: true*/
 /*jslint nomen: true, plusplus: true, bitwise: true*/
 
-import JXG from "../jxg";
-import Encoding from "./encoding";
+import JXG from "../jxg.js";
+import Encoding from "./encoding.js";
 
 var alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/",
     pad = "=";

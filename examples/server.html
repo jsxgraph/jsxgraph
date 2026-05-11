@@ -2,22 +2,34 @@
 <head>
     <title>JSXGraph server/client infrastructure example</title>
     <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
-    <script type="text/javascript" src="prototype.js"></script>
-    <script type="text/javascript" src="../distrib/jsxgraphcore.js"></script>
+    <!-- <script type="text/javascript" src="../distrib/jsxgraphcore.js"></script> -->
 </head>
 <body>
 <h1>test</h1>
 
-<script type="text/javascript">
+<script type="module">
+    import JXG from '../src/index.js';
+
     JXG.serverBase = '../src/server/'
     JXG.Server.loadModule('jxgtestplugin');
-    JXG.Server.modules.jxgtestplugin.calcTest(10);
+    // JXG.Server.modules.jxgtestplugin.calcTest(10);
+
+    window.calculate = function () {
+        JXG.Server.loadModule('jxgtestplugin');
+        console.log(JXG.Server)
+        JXG.Server.modules.jxgtestplugin.calcTest(
+            parseFloat(document.getElementById('input').value)
+        );
+    };
 </script>
 
 <form>
 <input id="input" value="3" />
-<a href="#" onclick="JXG.Server.modules.jxgtestplugin.calcTest(parseFloat($('input').value));">Multiply with 3 on server</a><br />
+<a id="button" href="#">Multiply with 3 on server</a><br />
 </form>
 
+<script>
+    document.getElementById('button').addEventListener('click', window.calculate);
+</script>
 </body>
 </html>

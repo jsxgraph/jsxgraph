@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2023
+    Copyright 2008-2026
         Matthias Ehmann,
         Carsten Miller,
         Andreas Walter,
@@ -38,6 +38,7 @@ describe("Test ticks", function () {
     board = JXG.JSXGraph.initBoard("jxgbox", {
         boundingbox: [-4, 4, 4, -4],
         axis: true,
+        resize: {enabled: false},
         defaultAxes: {
             x: {
                 ticks: {

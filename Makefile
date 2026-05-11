@@ -6,7 +6,7 @@ MINIFYER=./node_modules/terser/bin/terser
 
 # Code quality
 LINT=./node_modules/.bin/jslint
-ESLINT=./node_modules/eslint/bin/eslint.js
+ESLINT=./node_modules/eslint/bin/eslint.js 
 HINT=./node_modules/.bin/jshint
 KARMA=node_modules/karma/bin/karma
 PRETTIER=./node_modules/.bin/prettier
@@ -30,7 +30,8 @@ TMP=tmp
 BUILDREADERS=tmpreaders
 
 # API docs
-JSDOC2=node ./node_modules/.bin/jsdoc2
+#JSDOC2=node ./node_modules/.bin/jsdoc2
+JSDOC2=npx jsdoc2
 JSDOC2PLG=doc/jsdoc-tk/plugins
 JSDOC2PTCH=doc/jsdoc-tk/patches
 JSDOC2TPL=doc/jsdoc-tk/template
@@ -48,28 +49,35 @@ VERSION=$(shell grep -o '"version": "[^"]*' package.json | grep -o '[^"]*$$')
 # List of all included JavaScript files - required for docs, linters, and to build the readers
 # Double quotes:
 # FILELIST=$(shell cat src/index.js | awk '/import/ {if (match($$0,/"\.(.+)"/,m)) print "src"m[1]".js" }')
-# Single quotes:
-FILELIST=$(shell cat src/index.js | awk '/import/ {if (match($$0,/\x27\.(.+)\x27/,m)) print "src"m[1]".js" }')
+# Single quotes: before endings .js have been added:
+# FILELIST=$(shell cat src/index.js | awk '/import/ {if (match($$0,/\x27\.(.+)\x27/,m)) print "src"m[1]".js" }')
+# Single quotes: after endings .js have been added:
+# Requires gawk!!!
+FILELIST=$(shell cat src/index.js | gawk '/import/ {if (match($$0,/\x27\.(.+)\x27/,m)) print "src"m[1] }')
 
 # Lintlist - jessiecode.js is developed externally (github:jsxgraph/jessiecode) and won't be linted in here
 LINTLIST=$(shell echo $(FILELIST) | sed 's/src\/parser\/jessiecode\.js//')
+# LINTLIST=$(shell echo $(FILELIST))
 LINTFLAGS=--bitwise true --white true --continue true
 ESLINTFLAGS=
 
 PRETTIERFLAGS=-w --print-width 96 --tab-width 4 --trailing-comma none
 
-READERSOUT=tmpreaders/geonext.min.js tmpreaders/geogebra.min.js tmpreaders/intergeo.min.js tmpreaders/sketch.min.js
+READERSOUT=tmpreaders/geonext.min.js tmpreaders/geogebra.min.js tmpreaders/intergeo.min.js
+# tmpreaders/sketch.min.js
 
 # Rules
 all: core readers docs
 
 core:
 	# Build uncompressed AND minified files
-	#   jsgraphsrc.js, jsxgraphsrc.mjs, jsxgraphcore.js, jsxgraphcore.mjs and
+	#   jsxgraphsrc.js, jsxgraphsrc.mjs, jsxgraphcore.js, jsxgraphcore.mjs and
 	# copy them to the distrib directory.
 	$(WEBPACK) --config config/webpack.config.js
 	# Update version number in line 2 of file COPYRIGHT
 	sed -i '2s/.*/    JSXGraph $(VERSION)/' COPYRIGHT
+	# Update version number in line 2 of file jsxgraph.css
+	sed -i '2s/.*/    JSXGraph $(VERSION)/' $(OUTPUT)/jsxgraph.css
 	# Prepend file to the jsxgraphcore.* files
 	cat COPYRIGHT $(OUTPUT)/jsxgraphcore.js >$(OUTPUT)/tmp.file; mv $(OUTPUT)/tmp.file $(OUTPUT)/jsxgraphcore.js
 	cat COPYRIGHT $(OUTPUT)/jsxgraphcore.mjs >$(OUTPUT)/tmp.file; mv $(OUTPUT)/tmp.file $(OUTPUT)/jsxgraphcore.mjs
@@ -107,7 +115,9 @@ beta: docs
 	cat COPYRIGHT $(BETA)/jsxgraphcore.js >$(BETA)/tmp.file; mv $(BETA)/tmp.file $(BETA)/jsxgraphcore.js
 	cat COPYRIGHT $(BETA)/jsxgraphcore.mjs >$(BETA)/tmp.file; mv $(BETA)/tmp.file $(BETA)/jsxgraphcore.mjs
 
-docs: core
+docs: core docsonly
+
+docsonly: 
 	# Set up tmp dir
 	$(MKDIR) $(MKDIRFLAGS) $(TMP)
 	$(MKDIR) $(MKDIRFLAGS) $(OUTPUT)
@@ -132,7 +142,6 @@ docs: core
 	# Compress the result: zip -r tmp/docs.zip tmp/docs/
 	$(CD) $(TMP) && $(ZIP) $(ZIPFLAGS) docs.zip docs/
 	$(CP) $(TMP)/docs.zip $(OUTPUT)/docs.zip
-
 	$(RM) $(RMFLAGS) tmp
 
 	# Test
@@ -169,3 +178,7 @@ eslint:
 
 test: core
 	$(KARMA) start karma/karma.conf.js
+
+testchromium: core
+	export CHROME_BIN=/usr/bin/chromium; $(KARMA) start karma/karma.conf.js
+	

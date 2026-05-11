@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2023
+    Copyright 2008-2026
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -34,14 +34,14 @@
 /*eslint no-loss-of-precision: off */
 
 /**
- * @fileoverview In this file the namespace Math.Numerics is defined, which holds numerical
+ * @fileoverview In this file the namespace JXG.Math.Numerics is defined, which holds numerical
  * algorithms for solving linear equations etc.
  */
 
-import JXG from "../jxg";
-import Type from "../utils/type";
-import Env from "../utils/env";
-import Mat from "./math";
+import JXG from "../jxg.js";
+import Type from "../utils/type.js";
+import Env from "../utils/env.js";
+import Mat from "./math.js";
 
 // Predefined butcher tableaus for the common Runge-Kutta method (fourth order), Heun method (second order), and Euler method (first order).
 var predefinedButcher = {
@@ -186,27 +186,24 @@ Mat.Numerics = {
     },
 
     /**
+     *  Gauss-Bareiss algorithm to compute the
+     *  determinant of matrix without fractions.
+     *  See Henri Cohen, "A Course in Computational
+     *  Algebraic Number Theory (Graduate texts
+     *  in mathematics; 138)", Springer-Verlag,
+     *  ISBN 3-540-55640-0 / 0-387-55640-0
+     *  Third, Corrected Printing 1996
+     *  "Algorithm 2.2.6", pg. 52-53
+     *
+     * @param {Array} mat Matrix
+     * @returns Number
      * @private
-     * Gauss-Bareiss algorithm to compute the
-     * determinant of matrix without fractions.
-     * See Henri Cohen, "A Course in Computational
-     * Algebraic Number Theory (Graduate texts
-     * in mathematics; 138)", Springer-Verlag,
-     * ISBN 3-540-55640-0 / 0-387-55640-0
-     * Third, Corrected Printing 1996
-     * "Algorithm 2.2.6", pg. 52-53
      * @memberof JXG.Math.Numerics
      */
     gaussBareiss: function (mat) {
-        var k,
-            c,
-            s,
-            i,
-            j,
-            p,
-            n,
-            M,
-            t,
+        var k, c, s,
+            i, j, p,
+            n, M, t,
             eps = Mat.eps;
 
         n = mat.length;
@@ -428,9 +425,9 @@ Mat.Numerics = {
             available_types = { trapez: true, simpson: true, milne: true },
             integration_type =
                 config &&
-                config.integration_type &&
-                available_types.hasOwnProperty(config.integration_type) &&
-                available_types[config.integration_type]
+                    config.integration_type &&
+                    available_types.hasOwnProperty(config.integration_type) &&
+                    available_types[config.integration_type]
                     ? config.integration_type
                     : "milne",
             step_size = (interval[1] - interval[0]) / number_of_nodes;
@@ -870,7 +867,7 @@ Mat.Numerics = {
      *
      * @param {Array} interval The integration interval, e.g. [0, 3].
      * @param {function} f A function which takes one argument of type number and returns a number.
-     * @param {Number} n order
+     * @param {Number} n order of approximation. Actually, n is the length of the array xgk. For example, for the 15-point Kronrod rule, n is equal to 8.
      * @param {Array} xgk Kronrod quadrature abscissae
      * @param {Array} wg Weights of the Gauss rule
      * @param {Array} wgk Weights of the Kronrod rule
@@ -896,13 +893,9 @@ Mat.Numerics = {
             result_asc = 0.0,
             mean = 0.0,
             err = 0.0,
-            j,
-            jtw,
+            j, jtw, jtwm1,
             abscissa,
-            fval1,
-            fval2,
-            fsum,
-            jtwm1,
+            fval1, fval2, fsum,
             fv1 = [],
             fv2 = [];
 
@@ -959,7 +952,7 @@ Mat.Numerics = {
     },
 
     /**
-     * 15 point Gauss-Kronrod quadrature algorithm, see the library QUADPACK
+     * 15-point Gauss-Kronrod quadrature algorithm, see the library QUADPACK
      * @param {Array} interval The integration interval, e.g. [0, 3].
      * @param {function} f A function which takes one argument of type number and returns a number.
      * @param {Object} resultObj Object returning resultObj.abserr, resultObj.resabs, resultObj.resasc. See the library
@@ -975,13 +968,13 @@ Mat.Numerics = {
                 L. W. Fullerton, Bell Labs, Nov. 1981. */
 
         var xgk =
-                /* abscissae of the 15-point kronrod rule */
-                [
-                    0.991455371120812639206854697526329, 0.949107912342758524526189684047851,
-                    0.864864423359769072789712788640926, 0.741531185599394439863864773280788,
-                    0.58608723546769113029414483825873, 0.405845151377397166906606412076961,
-                    0.207784955007898467600689403773245, 0.0
-                ],
+            /* abscissae of the 15-point kronrod rule */
+            [
+                0.991455371120812639206854697526329, 0.949107912342758524526189684047851,
+                0.864864423359769072789712788640926, 0.741531185599394439863864773280788,
+                0.58608723546769113029414483825873, 0.405845151377397166906606412076961,
+                0.207784955007898467600689403773245, 0.0
+            ],
             /* xgk[1], xgk[3], ... abscissae of the 7-point gauss rule.
                 xgk[0], xgk[2], ... abscissae to optimally extend the 7-point gauss rule */
 
@@ -1020,14 +1013,14 @@ Mat.Numerics = {
                 L. W. Fullerton, Bell Labs, Nov. 1981. */
 
         var xgk =
-                /* abscissae of the 21-point kronrod rule */
-                [
-                    0.995657163025808080735527280689003, 0.973906528517171720077964012084452,
-                    0.930157491355708226001207180059508, 0.865063366688984510732096688423493,
-                    0.780817726586416897063717578345042, 0.679409568299024406234327365114874,
-                    0.562757134668604683339000099272694, 0.433395394129247190799265943165784,
-                    0.294392862701460198131126603103866, 0.14887433898163121088482600112972, 0.0
-                ],
+            /* abscissae of the 21-point kronrod rule */
+            [
+                0.995657163025808080735527280689003, 0.973906528517171720077964012084452,
+                0.930157491355708226001207180059508, 0.865063366688984510732096688423493,
+                0.780817726586416897063717578345042, 0.679409568299024406234327365114874,
+                0.562757134668604683339000099272694, 0.433395394129247190799265943165784,
+                0.294392862701460198131126603103866, 0.14887433898163121088482600112972, 0.0
+            ],
             /* xgk[1], xgk[3], ... abscissae of the 10-point gauss rule.
                 xgk[0], xgk[2], ... abscissae to optimally extend the 10-point gauss rule */
             wg =
@@ -1068,17 +1061,17 @@ Mat.Numerics = {
                 L. W. Fullerton, Bell Labs, Nov. 1981. */
 
         var xgk =
-                /* abscissae of the 21-point kronrod rule */
-                [
-                    0.998002298693397060285172840152271, 0.987992518020485428489565718586613,
-                    0.967739075679139134257347978784337, 0.937273392400705904307758947710209,
-                    0.897264532344081900882509656454496, 0.848206583410427216200648320774217,
-                    0.790418501442465932967649294817947, 0.724417731360170047416186054613938,
-                    0.650996741297416970533735895313275, 0.570972172608538847537226737253911,
-                    0.485081863640239680693655740232351, 0.394151347077563369897207370981045,
-                    0.299180007153168812166780024266389, 0.201194093997434522300628303394596,
-                    0.101142066918717499027074231447392, 0.0
-                ],
+            /* abscissae of the 21-point kronrod rule */
+            [
+                0.998002298693397060285172840152271, 0.987992518020485428489565718586613,
+                0.967739075679139134257347978784337, 0.937273392400705904307758947710209,
+                0.897264532344081900882509656454496, 0.848206583410427216200648320774217,
+                0.790418501442465932967649294817947, 0.724417731360170047416186054613938,
+                0.650996741297416970533735895313275, 0.570972172608538847537226737253911,
+                0.485081863640239680693655740232351, 0.394151347077563369897207370981045,
+                0.299180007153168812166780024266389, 0.201194093997434522300628303394596,
+                0.101142066918717499027074231447392, 0.0
+            ],
             /* xgk[1], xgk[3], ... abscissae of the 10-point gauss rule.
                 xgk[0], xgk[2], ... abscissae to optimally extend the 10-point gauss rule */
             wg =
@@ -1454,10 +1447,10 @@ Mat.Numerics = {
 
             ws.update(a1, b1, area1, error1, a2, b2, area2, error2);
             wsObj = ws.retrieve();
-            a_i = wsObj.a_i;
-            b_i = wsObj.b_i;
-            r_i = wsObj.r_i;
-            e_i = wsObj.e_i;
+            a_i = wsObj.a;
+            b_i = wsObj.b;
+            r_i = wsObj.r;
+            e_i = wsObj.e;
 
             iteration++;
         } while (iteration < limit && !error_type && errsum > tolerance);
@@ -1557,12 +1550,18 @@ Mat.Numerics = {
      * is an alias for {@link JXG.Math.Numerics.chandrupatla}.
      * @param {function} f We search for a solution of f(x)=0.
      * @param {Number|Array} x initial guess for the root, i.e. starting value, or start interval enclosing the root.
+     * If x is an interval [a,b], it is required that f(a)f(b) <= 0, otherwise the minimum of f in [a, b] will be returned.
+     * If x is a number, the algorithms tries to enclose the root by an interval [a, b] containing x and the root and
+     * f(a)f(b) <= 0. If this fails, the algorithm falls back to Newton's method.
+     *
      * @param {Object} context optional object that is treated as "this" in the function body. This is useful if
      * the function is a method of an object and contains a reference to its parent object via "this".
      * @returns {Number} A root of the function f.
      *
      * @see JXG.Math.Numerics.chandrupatla
      * @see JXG.Math.Numerics.fzero
+     * @see JXG.Math.Numerics.polzeros
+     * @see JXG.Math.Numerics.Newton
      * @memberof JXG.Math.Numerics
      */
     root: function (f, x, context) {
@@ -1572,32 +1571,35 @@ Mat.Numerics = {
 
     /**
      * Compute an intersection of the curves c1 and c2
-     * with a generalized Newton method.
+     * with a generalized Newton method (Newton-Raphson).
      * We want to find values t1, t2 such that
      * c1(t1) = c2(t2), i.e.
-     * (c1_x(t1)-c2_x(t2),c1_y(t1)-c2_y(t2)) = (0,0).
+     * <br>
+     * (c1_x(t1) - c2_x(t2), c1_y(t1) - c2_y(t2)) = (0, 0).
+     * <p>
      * We set
-     * (e,f) := (c1_x(t1)-c2_x(t2),c1_y(t1)-c2_y(t2))
-     *
+     * (e, f) := (c1_x(t1) - c2_x(t2), c1_y(t1) - c2_y(t2))
+     * <p>
      * The Jacobian J is defined by
+     * <pre>
      * J = (a, b)
      *     (c, d)
+     * </pre>
      * where
-     * a = c1_x'(t1)
-     * b = -c2_x'(t2)
-     * c = c1_y'(t1)
-     * d = -c2_y'(t2)
-     *
+     * <ul>
+     * <li> a = c1_x'(t1)
+     * <li> b = -c2_x'(t2)
+     * <li> c = c1_y'(t1)
+     * <li> d = -c2_y'(t2)
+     * </ul>
      * The inverse J^(-1) of J is equal to
-     *  (d, -b)/
-     *  (-c, a) / (ad-bc)
+     * <pre>
+     *  (d, -b) / (ad - bc)
+     *  (-c, a) / (ad - bc)
+     * </pre>
      *
      * Then, (t1new, t2new) := (t1,t2) - J^(-1)*(e,f).
-     * If the function meetCurveCurve possesses the properties
-     * t1memo and t2memo then these are taken as start values
-     * for the Newton algorithm.
-     * After stopping of the Newton algorithm the values of t1 and t2 are stored in
-     * t1memo and t2memo.
+     * <p>
      *
      * @param {JXG.Curve} c1 Curve, Line or Circle
      * @param {JXG.Curve} c2 Curve, Line or Circle
@@ -1607,29 +1609,20 @@ Mat.Numerics = {
      * @memberof JXG.Math.Numerics
      */
     generalizedNewton: function (c1, c2, t1ini, t2ini) {
-        var t1,
-            t2,
-            a,
-            b,
-            c,
-            d,
+        var t1, t2,
+            a, b, c, d, e, f,
             disc,
-            e,
-            f,
             F,
-            D00,
-            D01,
-            D10,
-            D11,
+            D00, D01, D10, D11,
             count = 0;
 
-        if (this.generalizedNewton.t1memo) {
-            t1 = this.generalizedNewton.t1memo;
-            t2 = this.generalizedNewton.t2memo;
-        } else {
-            t1 = t1ini;
-            t2 = t2ini;
-        }
+        // if (this.generalizedNewton.t1memo) {
+        //     t1 = this.generalizedNewton.t1memo;
+        //     t2 = this.generalizedNewton.t2memo;
+        // } else {
+        t1 = t1ini;
+        t2 = t2ini;
+        // }
 
         e = c1.X(t1) - c2.X(t2);
         f = c1.Y(t1) - c2.Y(t2);
@@ -1654,14 +1647,166 @@ Mat.Numerics = {
             count += 1;
         }
 
-        this.generalizedNewton.t1memo = t1;
-        this.generalizedNewton.t2memo = t2;
+        // this.generalizedNewton.t1memo = t1;
+        // this.generalizedNewton.t2memo = t2;
 
         if (Math.abs(t1) < Math.abs(t2)) {
             return [c1.X(t1), c1.Y(t1)];
         }
 
         return [c2.X(t2), c2.Y(t2)];
+    },
+
+    /**
+     * Apply damped Newton-Raphson algorithm to determine the intersection
+     * between the curve elements c1 and c2. Transformations of the curves
+     * are already taken into regard.
+     * <p>
+     * We use a very high accuracy: Mat.eps**3
+     *
+     * @deprecated
+     * @param {JXG.Curve} c1 Curve, Line or Circle
+     * @param {JXG.Curve} c2 Curve, Line or Circle
+     * @param {Number} t1ini Start value for curve c1
+     * @param {Number} t2ini Start value for curve c2
+     * @param {Number} gamma Damping factor, should be in the open interval (0, 1)
+     * @param {Number} eps Stop if function value is smaller than eps
+     * @returns {Array} [t1, t2, F2], where t1 and t2 are the parameters of the intersection for both curves, F2 is ||c1[t1]-c2[t2]||**2.
+     */
+    generalizedDampedNewtonCurves: function (c1, c2, t1ini, t2ini, gamma, eps) {
+        var t1, t2,
+            a, b, c, d, e, f,
+            disc,
+            F2,
+            f1, f2,
+            D, Dt,
+            max_it = 40,
+            count = 0;
+
+        t1 = t1ini;
+        t2 = t2ini;
+
+        f1 = c1.Ft(t1);
+        f2 = c2.Ft(t2);
+        e = f1[1] - f2[1];
+        f = f1[2] - f2[2];
+        F2 = e * e + f * f;
+
+        D = function(t1, t2) {
+            var h = Mat.eps,
+                f1_1 = c1.Ft(t1 - h),
+                f1_2 = c1.Ft(t1 + h),
+                f2_1 = c2.Ft(t2 - h),
+                f2_2 = c2.Ft(t2 + h);
+            return [
+                [ (f1_2[1] - f1_1[1]) / (2 * h),
+                 -(f2_2[1] - f2_1[1]) / (2 * h)],
+                [ (f1_2[2] - f1_1[2]) / (2 * h),
+                 -(f2_2[2] - f2_1[2]) / (2 * h)]
+            ];
+        };
+
+        while (F2 > eps && count < max_it) {
+            Dt = D(t1, t2);
+            a = Dt[0][0];
+            b = Dt[0][1];
+            c = Dt[1][0];
+            d = Dt[1][1];
+
+            disc = a * d - b * c;
+            t1 -= gamma * (d * e - b * f) / disc;
+            t2 -= gamma * (a * f - c * e) / disc;
+            f1 = c1.Ft(t1);
+            f2 = c2.Ft(t2);
+
+            e = f1[1] - f2[1];
+            f = f1[2] - f2[2];
+            F2 = e * e + f * f;
+            count += 1;
+        }
+
+        return [t1, t2, F2];
+    },
+
+    /**
+     * Apply the damped Newton-Raphson algorithm to determine to find a root of a
+     * function F: R^n to R^n.
+     *
+     * @param {Function} F Function with n parameters, returns a vactor of length n.
+     * @param {Function} D Function returning the Jacobian matrix (n \times n) of F
+     * @param {Number} n
+     * @param {Array} t_ini Array of length n, containing start values
+     * @param {Number} gamma Damping factor should be between 0 and 1. If equal to 1,
+     * the algorithm is Newton-Raphson.
+     * @param {Number} eps The algorithm stops if the square norm of the root is less than this eps
+     * or if the maximum number of steps is reached.
+     * @param {Number} [max_steps=40] maximum number of steps
+     * @returns {Array} [t, F2] array of length, containing t, the approximation of the root (array of length n),
+     * and the square norm of F(t).
+     */
+    generalizedDampedNewton: function (F, D, n, t_ini, gamma, eps, max_steps) {
+        var i,
+            t = [],
+            a, b, c, d, e, f,
+            disc,
+            Ft, Dt,
+            F2, vec,
+            count = 0;
+
+        max_steps = max_steps || 40;
+
+        t = t_ini.slice(0, n);
+        Ft = F(t, n);
+
+        if (n === 2) {
+            // Special case n = 2
+            Ft = F(t, n);
+            e = Ft[0];
+            f = Ft[1];
+            F2 = e * e + f * f;
+
+            while (F2 > eps && count < max_steps) {
+                Dt = D(t, n);
+
+                a = Dt[0][0];
+                b = Dt[0][1];
+                c = Dt[1][0];
+                d = Dt[1][1];
+
+                disc = a * d - b * c;
+                t[0] -= gamma * (d * e - b * f) / disc;
+                t[1] -= gamma * (a * f - c * e) / disc;
+
+                Ft = F(t, n);
+                e = Ft[0];
+                f = Ft[1];
+                F2 = e * e + f * f;
+
+                count += 1;
+            }
+
+            return [t, F2];
+        } else {
+            // General case, arbitrary n
+            Ft = F(t, n);
+            F2 = Mat.innerProduct(Ft, Ft, n);
+
+            while (F2 > eps && count < max_steps) {
+                Dt = Mat.inverse(D(t, n));
+
+                vec = Mat.matVecMult(Dt, Ft);
+                for (i = 0; i < n; i++) {
+                    t[i] -= gamma * vec[i];
+                }
+
+                Ft = F(t, n);
+                F2 = Mat.innerProduct(Ft, Ft, n);
+
+                count += 1;
+            }
+
+            return [t, F2];
+        }
     },
 
     /**
@@ -1744,8 +1889,8 @@ Mat.Numerics = {
                     return num / denom;
                 };
             },
-            xfct = makeFct("X"),
-            yfct = makeFct("Y");
+            xfct = makeFct('X'),
+            yfct = makeFct('Y');
 
         return [
             xfct,
@@ -1762,7 +1907,7 @@ Mat.Numerics = {
      * @param {Array} x x values of knots
      * @param {Array} y y values of knots
      * @returns {Array} Second derivatives of the interpolated function at the knots.
-     * @see #splineEval
+     * @see JXG.Math.Numerics.splineEval
      * @memberof JXG.Math.Numerics
      */
     splineDef: function (x, y) {
@@ -1832,12 +1977,12 @@ Mat.Numerics = {
 
     /**
      * Evaluate points on spline.
-     * @param {Number,Array} x0 A single float value or an array of values to evaluate
+     * @param {Number|Array} x0 A single float value or an array of values to evaluate
      * @param {Array} x x values of knots
      * @param {Array} y y values of knots
      * @param {Array} F Second derivatives at knots, calculated by {@link JXG.Math.Numerics.splineDef}
-     * @see #splineDef
-     * @returns {Number,Array} A single value or an array, depending on what is given as x0.
+     * @see JXG.Math.Numerics.splineDef
+     * @returns {Number|Array} A single value or an array, depending on what is given as x0.
      * @memberof JXG.Math.Numerics
      */
     splineEval: function (x0, x, y, F) {
@@ -1863,7 +2008,7 @@ Mat.Numerics = {
 
         for (i = 0; i < l; i++) {
             // is x0 in defining interval?
-            if (x0[i] < x[0] || x[i] > x[n - 1]) {
+            if (x0[i] < x[0] || x0[i] > x[n - 1]) {
                 return NaN;
             }
 
@@ -1903,7 +2048,7 @@ Mat.Numerics = {
      * @param {Number} deg Degree of the polynomial
      * @param {String} varname Name of the variable (usually 'x')
      * @param {Number} prec Precision
-     * @returns {String} A string containg the function term of the polynomial.
+     * @returns {String} A string containing the function term of the polynomial.
      * @memberof JXG.Math.Numerics
      */
     generatePolynomialTerm: function (coeffs, deg, varname, prec) {
@@ -1911,12 +2056,12 @@ Mat.Numerics = {
             t = [];
 
         for (i = deg; i >= 0; i--) {
-            t = t.concat(["(", coeffs[i].toPrecision(prec), ")"]);
+            Type.concat(t, ["(", coeffs[i].toPrecision(prec), ")"]);
 
             if (i > 1) {
-                t = t.concat(["*", varname, "<sup>", i, "<", "/sup> + "]);
+                Type.concat(t, ["*", varname, "<sup>", i, "<", "/sup> + "]);
             } else if (i === 1) {
-                t = t.concat(["*", varname, " + "]);
+                Type.concat(t, ["*", varname, " + "]);
             }
         }
 
@@ -1929,7 +2074,8 @@ Mat.Numerics = {
      * Jean-Paul Berrut, Lloyd N. Trefethen: Barycentric Lagrange Interpolation,
      * SIAM Review, Vol 46, No 3, (2004) 501-517.
      * <p>
-     * It possesses the method getTerm() which returns the string containing the function term of the polynomial.
+     * It possesses the method getTerm() which returns the string containing the function term of the polynomial and
+     * the method getCoefficients() which returns an array containing the coefficients of the polynomial.
      * @param {Array} p Array of JXG.Points
      * @returns {function} A function of one parameter which returns the value of the polynomial, whose graph runs through the given points.
      * @memberof JXG.Math.Numerics
@@ -2043,12 +2189,12 @@ Mat.Numerics = {
          * Get the term of the Lagrange polynomial as string.
          * Calls {@link JXG.Math.Numerics#lagrangePolynomialTerm}.
          *
-         * @name JXG.Math.Numerics#lagrangePolynomial.getTerm
+         * @name JXG.Math.Numerics.lagrangePolynomial#getTerm
          * @param {Number} digits Number of digits of the coefficients
          * @param {String} param Variable name
          * @param {String} dot Dot symbol
          * @returns {String} containing the term of Lagrange polynomial as string.
-         * @see JXG.Math.Numerics#lagrangePolynomialTerm
+         * @see JXG.Math.Numerics.lagrangePolynomialTerm
          * @example
          * var points = [];
          * points[0] = board.create('point', [-1,2], {size:4});
@@ -2087,11 +2233,11 @@ Mat.Numerics = {
          * coefficient is at position 0.
          * Calls {@link JXG.Math.Numerics#lagrangePolynomialCoefficients}.
          *
-         * @name JXG.Math.Numerics#lagrangePolynomial.getCoefficients
+         * @name JXG.Math.Numerics.lagrangePolynomial#getCoefficients
          * @returns {Array} containing the coefficients of the Lagrange polynomial.
-         * @see JXG.Math.Numerics#lagrangePolynomial.getTerm
-         * @see JXG.Math.Numerics#lagrangePolynomialTerm
-         * @see JXG.Math.Numerics#lagrangePolynomialCoefficients
+         * @see JXG.Math.Numerics.lagrangePolynomial.getTerm
+         * @see JXG.Math.Numerics.lagrangePolynomialTerm
+         * @see JXG.Math.Numerics.lagrangePolynomialCoefficients
          * @example
          * var points = [];
          * points[0] = board.create('point', [-1,2], {size:4});
@@ -2182,7 +2328,7 @@ Mat.Numerics = {
                 isLeading = true,
                 n, t, j, c;
 
-            param = param || "x";
+            param = param || 'x';
             if (dot === undefined) {
                 dot = " * ";
             }
@@ -2265,9 +2411,9 @@ Mat.Numerics = {
                 zeroes = [],
                 coeffs = [],
                 coeffs_sum = [],
-                n, i, j, c, p;
+                i, j, c, p;
 
-            n = len - 1; // (Max) degree of the polynomial
+            // n = len - 1; // (Max) degree of the polynomial
             for (j = 0; j < len; j++) {
                 coeffs_sum[j] = 0;
             }
@@ -2340,7 +2486,7 @@ Mat.Numerics = {
         }
 
         if (type === undefined) {
-            type = "uniform";
+            type = 'uniform';
         }
 
         /** @ignore */
@@ -2407,7 +2553,7 @@ Mat.Numerics = {
                     coeffs[which] = [];
 
                     for (s = 0; s < len - 3; s++) {
-                        if (type === "centripetal") {
+                        if (type === 'centripetal') {
                             // The order is important, since p[0].coords === undefined
                             dt0 = p[s].Dist(p[s + 1]);
                             dt1 = p[s + 2].Dist(p[s + 1]);
@@ -2486,8 +2632,8 @@ Mat.Numerics = {
         };
 
         return [
-            makeFct("X"),
-            makeFct("Y"),
+            makeFct('X'),
+            makeFct('Y'),
             0,
             function () {
                 return points.length - 1;
@@ -2514,7 +2660,7 @@ Mat.Numerics = {
     /**
      * Computes the regression polynomial of a given degree through a given set of coordinates.
      * Returns the regression polynomial function.
-     * @param {Number,function,Slider} degree number, function or slider.
+     * @param {Number|function|Slider} degree number, function or slider.
      * Either
      * @param {Array} dataX Array containing either the x-coordinates of the data set or both coordinates in
      * an array of {@link JXG.Point}s or {@link JXG.Coords}.
@@ -2522,7 +2668,7 @@ Mat.Numerics = {
      * @param {Array} dataY Array containing the y-coordinates of the data set,
      * @returns {function} A function of one parameter which returns the value of the regression polynomial of the given degree.
      * It possesses the method getTerm() which returns the string containing the function term of the polynomial.
-     * The function returned will throw an exception, if the data set is malformed. 
+     * The function returned will throw an exception, if the data set is malformed.
      * @memberof JXG.Math.Numerics
      */
     regressionPolynomial: function (degree, dataX, dataY) {
@@ -2547,8 +2693,8 @@ Mat.Numerics = {
         } else {
             throw new Error(
                 "JSXGraph: Can't create regressionPolynomial from degree of type'" +
-                    typeof degree +
-                    "'."
+                typeof degree +
+                "'."
             );
         }
 
@@ -2646,7 +2792,6 @@ Mat.Numerics = {
 
             // Horner's scheme to evaluate polynomial
             s = coeffs[d];
-
             for (i = d - 1; i >= 0; i--) {
                 s = s * x + coeffs[i];
             }
@@ -2654,6 +2799,7 @@ Mat.Numerics = {
             return s;
         };
 
+        /** @ignore */
         fct.getTerm = function () {
             return term;
         };
@@ -2701,15 +2847,15 @@ Mat.Numerics = {
                     return (
                         t1 * t1 * (t1 * points[z][which]() + 3 * t0 * points[z + 1][which]()) +
                         (3 * t1 * points[z + 2][which]() + t0 * points[z + 3][which]()) *
-                            t0 *
-                            t0
+                        t0 *
+                        t0
                     );
                 };
             };
 
         return [
-            makeFct("X"),
-            makeFct("Y"),
+            makeFct('X'),
+            makeFct('Y'),
             0,
             function () {
                 return Math.floor(points.length / 3);
@@ -2832,8 +2978,8 @@ Mat.Numerics = {
             };
 
         return [
-            makeFct("X"),
-            makeFct("Y"),
+            makeFct('X'),
+            makeFct('Y'),
             0,
             function () {
                 return points.length - 1;
@@ -2884,14 +3030,15 @@ Mat.Numerics = {
     },
 
     /**
-     * Evaluate the function term for {@see #riemann}.
+     * Evaluate the function term for {@link JXG.Math.Numerics.riemann}.
      * @private
      * @param {Number} x function argument
      * @param {function} f JavaScript function returning a number
-     * @param {String} type Name of the Riemann sum type, e.g. 'lower', see {@see #riemann}.
+     * @param {String} type Name of the Riemann sum type, e.g. 'lower'.
      * @param {Number} delta Width of the bars in user coordinates
      * @returns {Number} Upper (delta > 0) or lower (delta < 0) value of the bar containing x of the Riemann sum.
-     *
+     * @see JXG.Math.Numerics.riemann
+     * @private
      * @memberof JXG.Math.Numerics
      */
     _riemannValue: function (x, f, type, delta) {
@@ -2899,26 +3046,26 @@ Mat.Numerics = {
 
         if (delta < 0) {
             // delta is negative if the lower function term is evaluated
-            if (type !== "trapezoidal") {
+            if (type !== 'trapezoidal') {
                 x = x + delta;
             }
             delta *= -1;
-            if (type === "lower") {
-                type = "upper";
-            } else if (type === "upper") {
-                type = "lower";
+            if (type === 'lower') {
+                type = 'upper';
+            } else if (type === 'upper') {
+                type = 'lower';
             }
         }
 
         delta1 = delta * 0.01; // for 'lower' and 'upper'
 
-        if (type === "right") {
+        if (type === 'right') {
             y = f(x + delta);
-        } else if (type === "middle") {
+        } else if (type === 'middle') {
             y = f(x + delta * 0.5);
-        } else if (type === "left" || type === "trapezoidal") {
+        } else if (type === "left" || type === 'trapezoidal') {
             y = f(x);
-        } else if (type === "lower") {
+        } else if (type === 'lower') {
             y = f(x);
 
             for (x1 = x + delta1; x1 <= x + delta; x1 += delta1) {
@@ -2933,7 +3080,7 @@ Mat.Numerics = {
             if (y1 < y) {
                 y = y1;
             }
-        } else if (type === "upper") {
+        } else if (type === 'upper') {
             y = f(x);
 
             for (x1 = x + delta1; x1 <= x + delta; x1 += delta1) {
@@ -2947,9 +3094,9 @@ Mat.Numerics = {
             if (y1 > y) {
                 y = y1;
             }
-        } else if (type === "random") {
+        } else if (type === 'random') {
             y = f(x + delta * Math.random());
-        } else if (type === "simpson") {
+        } else if (type === 'simpson') {
             y = (f(x) + 4 * f(x + delta * 0.5) + f(x + delta)) / 6.0;
         } else {
             y = f(x); // default is lower
@@ -2966,7 +3113,7 @@ Mat.Numerics = {
      * is replaced by a parabola or a secant. IN case of "simpson",
      * the parabola is approximated visually by a polygonal chain of fixed step width.
      *
-     * @param {Function,Array} f Function or array of two functions.
+     * @param {Function|Array} f Function or array of two functions.
      * If f is a function the integral of this function is approximated by the Riemann sum.
      * If f is an array consisting of two functions the area between the two functions is filled
      * by the Riemann sum bars.
@@ -2983,7 +3130,7 @@ Mat.Numerics = {
     riemann: function (gf, n, type, start, end) {
         var i, delta,
             k, a, b, c, f0, f1, f2, xx, h,
-            steps = 30, // Fixed step width for Simpson's rule
+            steps = 30, // Constant step width for Simpson's rule
             xarr = [],
             yarr = [],
             x = start,
@@ -3005,9 +3152,10 @@ Mat.Numerics = {
 
         delta = (end - start) / n;
 
-        // "Upper" horizontal line defined by function
+        // Horizontal lines defined by function
+        // Go forward
         for (i = 0; i < n; i++) {
-            if (type === "simpson") {
+            if (type === 'simpson') {
                 sum += this._riemannValue(x, f, type, delta) * delta;
 
                 h = delta * 0.5;
@@ -3031,22 +3179,19 @@ Mat.Numerics = {
                 yarr.push(y);
 
                 x += delta;
-                if (type === "trapezoidal") {
+                if (type === 'trapezoidal') {
                     f2 = f(x);
                     sum += (y + f2) * 0.5 * delta;
                     y = f2;
                 } else {
                     sum += y * delta;
                 }
-
-                xarr.push(x);
-                yarr.push(y);
             }
             xarr.push(x);
             yarr.push(y);
         }
 
-        // "Lower" horizontal line
+        // Horizontal lines defined by x-axis or second function
         // Go backwards
         for (i = 0; i < n; i++) {
             if (type === "simpson" && g) {
@@ -3078,7 +3223,7 @@ Mat.Numerics = {
 
                 x -= delta;
                 if (g) {
-                    if (type === "trapezoidal") {
+                    if (type === 'trapezoidal') {
                         f2 = g(x);
                         sum -= (y + f2) * 0.5 * delta;
                         y = f2;
@@ -3090,9 +3235,14 @@ Mat.Numerics = {
             xarr.push(x);
             yarr.push(y);
 
-            // Draw the vertical lines
+            // Close rectangle
             xarr.push(x);
-            yarr.push(f(x));
+            if (type === 'simpson') {
+                yarr.push(f(x));
+            } else {
+                y = this._riemannValue(x, f, type, delta);
+                yarr.push(y);
+            }
         }
 
         return [xarr, yarr, sum];
@@ -3125,7 +3275,7 @@ Mat.Numerics = {
     /**
      * Solve initial value problems numerically using <i>explicit</i> Runge-Kutta methods.
      * See {@link https://en.wikipedia.org/wiki/Runge-Kutta_methods} for more information on the algorithm.
-     * @param {object,String} butcher Butcher tableau describing the Runge-Kutta method to use. This can be either a string describing
+     * @param {object|String} butcher Butcher tableau describing the Runge-Kutta method to use. This can be either a string describing
      * a Runge-Kutta method with a Butcher tableau predefined in JSXGraph like 'euler', 'heun', 'rk4' or an object providing the structure
      * <pre>
      * {
@@ -3201,26 +3351,17 @@ Mat.Numerics = {
         }
         s = butcher.s;
 
-        // don't change x0, so copy it
-        // for (e = 0; e < dim; e++) {
-        //     x[e] = x0[e];
-        // }
+        // Don't change x0, so copy it
         x = x0.slice();
 
         for (i = 0; i <= N; i++) {
-            // Optimization doesn't work for ODEs plotted using time
-            //        if((i % quotient == 0) || (i == N-1)) {
-            // result[r] = [];
-            // for (e = 0; e < dim; e++) {
-            //     result[r][e] = x[e];
-            // }
             result[r] = x.slice();
 
-            r += 1;
+            r++;
             k = [];
 
             for (j = 0; j < s; j++) {
-                // init y = 0
+                // Init y = 0
                 for (e = 0; e < dim; e++) {
                     y[e] = 0.0;
                 }
@@ -3232,16 +3373,16 @@ Mat.Numerics = {
                     }
                 }
 
-                // add x(t) to y
+                // Add x(t) to y
                 for (e = 0; e < dim; e++) {
                     y[e] += x[e];
                 }
 
-                // calculate new k and add it to the k matrix
+                // Calculate new k and add it to the k matrix
                 k.push(f(t + butcher.c[j] * h, y));
             }
 
-            // init y = 0
+            // Init y = 0
             for (e = 0; e < dim; e++) {
                 y[e] = 0.0;
             }
@@ -3280,13 +3421,13 @@ Mat.Numerics = {
     maxIterationsMinimize: 500,
 
     /**
-     * Given a value x_0, this function tries to find a second value x_1 such that
+     * Given a number x_0, this function tries to find a second number x_1 such that
      * the function f has opposite signs at x_0 and x_1.
      * The return values have to be tested if the method succeeded.
      *
      * @param {Function} f Function, whose root is to be found
      * @param {Number} x0 Start value
-     * @param {Object} object Parent object in case f is method of it
+     * @param {Object} [context] Parent object in case f is method of it
      * @returns {Array} [x_0, f(x_0), x_1, f(x_1)] in case that x_0 <= x_1
      *   or [x_1, f(x_1), x_0, f(x_0)] in case that x_1 < x_0.
      *
@@ -3295,7 +3436,7 @@ Mat.Numerics = {
      *
      * @memberof JXG.Math.Numerics
      */
-    findBracket: function (f, x0, object) {
+    findBracket: function (f, x0, context) {
         var a, aa, fa, blist, b, fb, u, fu, i, len;
 
         if (Type.isArray(x0)) {
@@ -3303,7 +3444,7 @@ Mat.Numerics = {
         }
 
         a = x0;
-        fa = f.call(object, a);
+        fa = f.call(context, a);
         // nfev += 1;
 
         // Try to get b, by trying several values related to a
@@ -3334,7 +3475,7 @@ Mat.Numerics = {
 
         for (i = 0; i < len; i++) {
             b = blist[i];
-            fb = f.call(object, b);
+            fb = f.call(context, b);
             // nfev += 1;
 
             if (fa * fb <= 0) {
@@ -3357,8 +3498,11 @@ Mat.Numerics = {
      *
      * Find zero of an univariate function f.
      * @param {function} f Function, whose root is to be found
-     * @param {Array,Number} x0  Start value or start interval enclosing the root
-     * @param {Object} object Parent object in case f is method of it
+     * @param {Array|Number} x0  Start value or start interval enclosing the root.
+     * If x0 is an interval [a,b], it is required that f(a)f(b) <= 0, otherwise the minimum of f in [a, b] will be returned.
+     * If x0 is a number, the algorithms tries to enclose the root by an interval [a, b] containing x0 and the root and
+     * f(a)f(b) <= 0. If this fails, the algorithm falls back to Newton's method.
+     * @param {Object} [context] Parent object in case f is method of it
      * @returns {Number} the approximation of the root
      * Algorithm:
      *  Brent's root finder from
@@ -3373,22 +3517,18 @@ Mat.Numerics = {
      *
      * @see JXG.Math.Numerics.chandrupatla
      * @see JXG.Math.Numerics.root
+     * @see JXG.Math.Numerics.findBracket
+     * @see JXG.Math.Numerics.Newton
+     * @see JXG.Math.Numerics.fminbr
      * @memberof JXG.Math.Numerics
      */
-    fzero: function (f, x0, object) {
-        var a,
-            b,
-            c,
-            d,
-            e,
-            fa,
-            fb,
-            fc,
-            res,
+    fzero: function (f, x0, context) {
+        var a, b, c,
+            fa, fb, fc,
+            res, x00,
             prev_step,
-            t1,
+            t1, t2,
             cb,
-            t2,
             tol_act,   // Actual tolerance
             p,         // Interpolation step is calculated in the form p/q; division
             q,         // operations is delayed until the last moment
@@ -3405,14 +3545,18 @@ Mat.Numerics = {
                 );
             }
 
-            a = x0[0];
-            fa = f.call(object, a);
+            x00 = this.findDomain(f, x0, context);
+            a = x00[0];
+            b = x00[1];
+            // a = x0[0];
+            // b = x0[1];
+
+            fa = f.call(context, a);
             // nfev += 1;
-            b = x0[1];
-            fb = f.call(object, b);
+            fb = f.call(context, b);
             // nfev += 1;
         } else {
-            res = this.findBracket(f, x0, object);
+            res = this.findBracket(f, x0, context);
             a = res[0];
             fa = res[1];
             b = res[2];
@@ -3429,10 +3573,10 @@ Mat.Numerics = {
         if (fa * fb > 0) {
             // Bracketing not successful, fall back to Newton's method or to fminbr
             if (Type.isArray(x0)) {
-                return this.fminbr(f, [a, b], object);
+                return this.fminbr(f, [a, b], context);
             }
 
-            return this.Newton(f, a, object);
+            return this.Newton(f, a, context);
         }
 
         // OK, we have enclosed a zero of f.
@@ -3510,7 +3654,7 @@ Mat.Numerics = {
             a = b;
             fa = fb;
             b += new_step;
-            fb = f.call(object, b);
+            fb = f.call(context, b);
             // Do step to a new approxim.
             // nfev += 1;
 
@@ -3528,8 +3672,11 @@ Mat.Numerics = {
     /**
      * Find zero of an univariate function f.
      * @param {function} f Function, whose root is to be found
-     * @param {Array,Number} x0  Start value or start interval enclosing the root
-     * @param {Object} object Parent object in case f is method of it
+     * @param {Array|Number} x0  Start value or start interval enclosing the root.
+     * If x0 is an interval [a,b], it is required that f(a)f(b) <= 0, otherwise the minimum of f in [a, b] will be returned.
+     * If x0 is a number, the algorithms tries to enclose the root by an interval [a, b] containing x0 and the root and
+     * f(a)f(b) <= 0. If this fails, the algorithm falls back to Newton's method.
+     * @param {Object} [context] Parent object in case f is method of it
      * @returns {Number} the approximation of the root
      * Algorithm:
      * Chandrupatla's method, see
@@ -3544,9 +3691,12 @@ Mat.Numerics = {
      *
      * @see JXG.Math.Numerics.root
      * @see JXG.Math.Numerics.fzero
+     * @see JXG.Math.Numerics.findBracket
+     * @see JXG.Math.Numerics.Newton
+     * @see JXG.Math.Numerics.fminbr
      * @memberof JXG.Math.Numerics
      */
-    chandrupatla: function (f, x0, object) {
+    chandrupatla: function (f, x0, context) {
         var a, b, fa, fb,
             res,
             niter = 0,
@@ -3557,14 +3707,9 @@ Mat.Numerics = {
             dlt = 0.00001,
             x1, x2, x3, x,
             f1, f2, f3, y,
-            xm,
-            fm,
-            tol,
-            tl,
-            xi,
-            ph,
-            fl,
-            fh,
+            xm, fm,
+            tol, tl,
+            xi, ph, fl, fh,
             AL, A, B, C, D;
 
         if (Type.isArray(x0)) {
@@ -3575,13 +3720,13 @@ Mat.Numerics = {
             }
 
             a = x0[0];
-            fa = f.call(object, a);
+            fa = f.call(context, a);
             // nfev += 1;
             b = x0[1];
-            fb = f.call(object, b);
+            fb = f.call(context, b);
             // nfev += 1;
         } else {
-            res = this.findBracket(f, x0, object);
+            res = this.findBracket(f, x0, context);
             a = res[0];
             fa = res[1];
             b = res[2];
@@ -3591,10 +3736,10 @@ Mat.Numerics = {
         if (fa * fb > 0) {
             // Bracketing not successful, fall back to Newton's method or to fminbr
             if (Type.isArray(x0)) {
-                return this.fminbr(f, [a, b], object);
+                return this.fminbr(f, [a, b], context);
             }
 
-            return this.Newton(f, a, object);
+            return this.Newton(f, a, context);
         }
 
         x1 = a;
@@ -3603,7 +3748,7 @@ Mat.Numerics = {
         f2 = fb;
         do {
             x = x1 + t * (x2 - x1);
-            y = f.call(object, x);
+            y = f.call(context, x);
 
             // Arrange 2-1-3: 2-1 interval, 1 middle, 3 discarded point
             if (Math.sign(y) === Math.sign(f1)) {
@@ -3661,6 +3806,105 @@ Mat.Numerics = {
     },
 
     /**
+     * Find a small enclosing interval of the domain of a function by
+     * tightening the input interval x0.
+     * <p>
+     * This is a helper function which is used in {@link JXG.Math.Numerics.fminbr},
+     * {@link JXG.Math.Numerics.fzero}, and  {@link JXG.Curve.getLabelPosition}
+     * to avoid search in an interval where the function is mostly undefined.
+     *
+     * @param {function} f
+     * @param {Array} x0 Start interval
+     * @param {Object} context Parent object in case f is method of it
+     * @param {Boolean} [outer=true] if true take a proper enclosing array. If false return the domain such that the function is defined
+     * at its  borders.
+     * @returns Array
+     *
+     * @example
+     * var f = (x) => Math.sqrt(x);
+     * console.log(JXG.Math.Numerics.findDomain(f, [-5, 5]));
+     *
+     * // Output: [ -0.00020428174445492973, 5 ]
+     *
+     * @example
+     * var f = (x) => Math.sqrt(x);
+     * console.log(JXG.Math.Numerics.findDomain(f, [-5, 5], null, false));
+     *
+     * // Output: [ 0.00020428174562965915, 5 ]
+     */
+    findDomain: function (f, x0, context, outer) {
+        var a, b, c, fc,
+            x,
+            gr = 1 - 1 / 1.61803398875,
+            eps = 0.001,
+            cnt,
+            max_cnt = 20;
+
+        if (outer === undefined) {
+            outer = true;
+        }
+
+        if (!Type.isArray(x0) || x0.length < 2) {
+            throw new Error(
+                "JXG.Math.Numerics.findDomain: length of array x0 has to be at least two."
+            );
+        }
+
+        x = x0.slice();
+        a = x[0];
+        b = x[1];
+        fc = f.call(context, a);
+        if (isNaN(fc)) {
+            // Divide the interval with the golden ratio
+            // and keep a such that f(a) = NaN
+            cnt = 0;
+            while (b - a > eps && cnt < max_cnt) {
+                c = (b - a) * gr + a;
+                fc = f.call(context, c);
+                if (isNaN(fc)) {
+                    a = c;
+                } else {
+                    b = c;
+                }
+                cnt++;
+            }
+            if (outer) {
+                x[0] = a;
+            } else {
+                x[0] = b;
+            }
+            // x[0] = a;
+        }
+
+        a = x[0];
+        b = x[1];
+        fc = f.call(context, b);
+        if (isNaN(fc)) {
+            // Divide the interval with the golden ratio
+            // and keep b such that f(b) = NaN
+            cnt = 0;
+            while (b - a > eps && cnt < max_cnt) {
+                c = b - (b - a) * gr;
+                fc = f.call(context, c);
+                if (isNaN(fc)) {
+                    b = c;
+                } else {
+                    a = c;
+                }
+                cnt++;
+            }
+            if (outer) {
+                x[1] = b;
+            } else {
+                x[1] = a;
+            }
+            // x[1] = b;
+        }
+
+        return x;
+    },
+
+    /**
      *
      * Find minimum of an univariate function f.
      * <p>
@@ -3670,13 +3914,14 @@ Mat.Numerics = {
      *
      * @param {function} f Function, whose minimum is to be found
      * @param {Array} x0  Start interval enclosing the minimum
-     * @param {Object} context Parent object in case f is method of it
+     * @param {Object} [context] Parent object in case f is method of it
      * @returns {Number} the approximation of the minimum value position
      * @memberof JXG.Math.Numerics
      **/
     fminbr: function (f, x0, context) {
         var a, b, x, v, w,
             fx, fv, fw,
+            x00,
             range, middle_range, tol_act, new_step,
             p, q, t, ft,
             r = (3.0 - Math.sqrt(5.0)) * 0.5,      // Golden section ratio
@@ -3692,8 +3937,9 @@ Mat.Numerics = {
             );
         }
 
-        a = x0[0];
-        b = x0[1];
+        x00 = this.findDomain(f, x0, context);
+        a = x00[0];
+        b = x00[1];
         v = a + r * (b - a);
         fv = f.call(context, v);
 
@@ -3808,15 +4054,16 @@ Mat.Numerics = {
     },
 
     /**
+     * GLOMIN seeks a global minimum of a function F(X) in an interval [A,B]
+     * and is the adaption of the algorithm GLOMIN by Richard Brent.
      *
-     *   Purpose:
-     *
-     *   GLOMIN seeks a global minimum of a function F(X) in an interval [A,B].
+     * Here is the original documentation:
+     * <pre>
      *
      * Discussion:
      *
-     *  This function assumes that F(X) is twice continuously differentiable over [A,B]
-     * and that F''(X) <= M for all X in [A,B].
+     * This function assumes that F(X) is twice continuously differentiable over [A,B]
+     * and that |F''(X)| <= M for all X in [A,B].
      *
      * Licensing:
      *   This code is distributed under the GNU LGPL license.
@@ -3864,6 +4111,19 @@ Mat.Numerics = {
      *  for which F attains its global minimum value in [A,B].
      *
      *   Output, double GLOMIN, the value F(X).
+     * </pre>
+     *
+     * In JSXGraph, some parameters of the original algorithm are set to fixed values:
+     * <ul>
+     *  <li> M = 10000000.0
+     *  <li> C = A or B, depending if f(A) <= f(B)
+     *  <li> T = JXG.Math.eps
+     *  <li> E = JXG.Math.eps * JXG.Math.eps
+     *  <li> MACHEP = JXG.Math.eps * JXG.Math.eps * JXG.Math.eps
+     * </ul>
+     * @param {function} f Function, whose global minimum is to be found
+     * @param {Array} x0 Array of length 2 determining the interval [A, B] for which the global minimum is to be found
+     * @returns {Array} [x, y] x is the position of the global minimum and y = f(x).
      */
     glomin: function (f, x0) {
         var a0, a2, a3, d0, d1, d2, h,
@@ -4042,135 +4302,510 @@ Mat.Numerics = {
     },
 
     /**
-     * Implements the Ramer-Douglas-Peucker algorithm.
+     * Determine all roots of a polynomial with real or complex coefficients by using the
+     * iterative method attributed to Weierstrass, Durand, Kerner, Aberth, and Ehrlich. In particular,
+     * the iteration method with cubic convergence is used that is usually attributed to Ehrlich-Aberth.
+     * <p>
+     * The returned roots are sorted with respect to their real values.
+     * <p> This method makes use of the JSXGraph classes {@link JXG.Complex} and {@link JXG.C} to handle
+     * complex numbers.
+     *
+     * @param {Array} a Array of coefficients of the polynomial a[0] + a[1]*x+ a[2]*x**2...
+     * The coefficients are of type Number or JXG.Complex.
+     * @param {Number} [deg] Optional degree of the polynomial. Otherwise all entries are taken, with
+     * leading zeros removed.
+     * @param {Number} [tol=Number.EPSILON] Approximation tolerance
+     * @param {Number} [max_it=30] Maximum number of iterations
+     * @param {Array} [initial_values=null] Array of initial values for the roots. If not given,
+     * starting values are determined by the method of Ozawa.
+     * @returns {Array} Array of complex numbers (of JXG.Complex) approximating the roots of the polynomial.
+     * @memberof JXG.Math.Numerics
+     * @see JXG.Complex
+     * @see JXG.C
+     *
+     * @example
+     * // Polynomial p(z) = -1 + 1z^2
+     * var i, roots,
+     *     p = [-1, 0, 1];
+     *
+     * roots = JXG.Math.Numerics.polzeros(p);
+     * for (i = 0; i < roots.length; i++) {
+     *     console.log(i, roots[i].toString());
+     * }
+     * // Output:
+     *   0 -1 + -3.308722450212111e-24i
+     *   1 1 + 0i
+     *
+     * @example
+     * // Polynomial p(z) = -1 + 3z - 9z^2 + z^3 - 8z^6 + 9z^7 - 9z^8 + z^9
+     * var i, roots,
+     *     p = [-1, 3, -9, 1, 0, 0, -8, 9, -9, 1];
+     *
+     * roots = JXG.Math.Numerics.polzeros(p);
+     * for (i = 0; i < roots.length; i++) {
+     *     console.log(i, roots[i].toString());
+     * }
+     * // Output:
+     * 0 -0.7424155888401961 + 0.4950476539211721i
+     * 1 -0.7424155888401961 + -0.4950476539211721i
+     * 2 0.16674869833354108 + 0.2980502714610669i
+     * 3 0.16674869833354108 + -0.29805027146106694i
+     * 4 0.21429002063640837 + 1.0682775088132996i
+     * 5 0.21429002063640842 + -1.0682775088132999i
+     * 6 0.861375497926218 + -0.6259177003583295i
+     * 7 0.8613754979262181 + 0.6259177003583295i
+     * 8 8.000002743888055 + -1.8367099231598242e-40i
+     *
+     */
+    polzeros: function (coeffs, deg, tol, max_it, initial_values) {
+        var i, le, off, it,
+            debug = false,
+            cc = [],
+            obvious = [],
+            roots = [],
+
+            /**
+             * Horner method to evaluate polynomial or the derivative thereof for complex numbers,
+             * i.e. coefficients and variable are complex.
+             * @function
+             * @param {Array} a Array of complex coefficients of the polynomial a[0] + a[1]*x+ a[2]*x**2...
+             * @param {JXG.Complex} z Value for which the polynomial will be evaluated.
+             * @param {Boolean} [derivative=false] If true the derivative will be evaluated.
+             * @ignore
+             */
+            hornerComplex = function (a, z, derivative) {
+                var i, s,
+                    n = a.length - 1;
+
+                derivative = derivative || false;
+                if (derivative) {
+                    // s = n * a_n
+                    s = JXG.C.mult(n, a[n]);
+                    for (i = n - 1; i > 0; i--) {
+                        // s = s * z + i * a_i
+                        s.mult(z);
+                        s.add(JXG.C.mult(a[i], i));
+                    }
+                } else {
+                    // s = a_n
+                    s = JXG.C.copy(a[n]);
+                    for (i = n - 1; i >= 0; i--) {
+                        // s = s * z + a_i
+                        s.mult(z);
+                        s.add(a[i]);
+                    }
+                }
+                return s;
+            },
+
+            /**
+             * Horner method to evaluate reciprocal polynomial or the derivative thereof for complex numbers,
+             * i.e. coefficients and variable are complex.
+             * @function
+             * @param {Array} a Array of complex coefficients of the polynomial a[0] + a[1]*x+ a[2]*x**2...
+             * @param {JXG.Complex} z Value for which the reciprocal polynomial will be evaluated.
+             * @param {Boolean} [derivative=false] If true the derivative will be evaluated.
+             * @ignore
+             */
+            hornerRec = function (a, x, derivative) {
+                var i, s,
+                    n = a.length - 1;
+
+                derivative = derivative || false;
+                if (derivative) {
+                    // s = n * a_0
+                    s = JXG.C.mult(n, a[0]);
+                    for (i = n - 1; i > 0; i--) {
+                        // s = s * x + i * a_{n-i}
+                        s.mult(x);
+                        s.add(JXG.C.mult(a[n - i], i));
+                    }
+                } else {
+                    // s = a_0
+                    s = JXG.C.copy(a[0]);
+                    for (i = n - 1; i >= 0; i--) {
+                        // s = s * x + a_{n-i}
+                        s.mult(x);
+                        s.add(a[n - i]);
+                    }
+                }
+                return s;
+            },
+
+            /**
+             * Horner method to evaluate real polynomial at a real value.
+             * @function
+             * @param {Array} a Array of real coefficients of the polynomial a[0] + a[1]*x+ a[2]*x**2...
+             * @param {Number} z Value for which the polynomial will be evaluated.
+             * @ignore
+             */
+            horner = function (a, x) {
+                var i, s,
+                    n = a.length - 1;
+
+                s = a[n];
+                for (i = n - 1; i >= 0; i--) {
+                    s = s * x + a[i];
+                }
+                return s;
+            },
+
+            /**
+             * Determine start values for the Aberth iteration, see
+             * Ozawa, "An experimental study of the starting values
+             * of the Durand-Kerner-Aberth iteration" (1995).
+             *
+             * @function
+             * @param {Array} a Array of complex coefficients of the polynomial a[0] + a[1]*x+ a[2]*x**2...
+             * @returns {Array} Array Initial values for the roots.
+             * @ignore
+             */
+            initial_guess = function (a) {
+                var i, r,
+                    n = a.length - 1, // degree
+                    alpha1 = Math.PI * 2 / n,
+                    alpha0 = Math.PI / n * 0.5,
+                    b, z,
+                    init = [];
+
+
+                // From Ozawa, "An experimental study of the starting values
+                // of the Durand-Kerner-Aberth iteration" (1995)
+
+                // b is the arithmetic mean of the roots.
+                // With is Vieta's formula <https://en.wikipedia.org/wiki/Vieta%27s_formulas>
+                //   b = -a_{n-1} / (n * a_n)
+                b = JXG.C.mult(-1, a[n - 1]);
+                b.div(JXG.C.mult(n, a[n]));
+
+                // r is the geometric mean of the deviations |b - root_i|.
+                // Using
+                //   p(z) = a_n prod(z - root_i)
+                // and therefore
+                //   |p(b)| = |a_n| prod(|b - root_i|)
+                // we arrive at:
+                //   r = |p(b)/a_n|^(1/n)
+                z = JXG.C.div(hornerComplex(a, b), a[n]);
+                r = Math.pow(JXG.C.abs(z), 1 / n);
+                if (r === 0) { r = 1; }
+
+                for (i = 0; i < n; i++) {
+                    a = new JXG.Complex(r * Math.cos(alpha1 * i + alpha0), r * Math.sin(alpha1 * i + alpha0));
+                    init[i] = JXG.C.add(b, a);
+                }
+
+                return init;
+            },
+
+            /**
+             * Ehrlich-Aberth iteration. The stopping criterion is from
+             * D.A. Bini, "Numerical computation of polynomial zeros
+             * by means of Aberths's method", Numerical Algorithms (1996).
+             *
+             * @function
+             * @param {Array} a Array of complex coefficients of the polynomial a[0] + a[1]*x+ a[2]*x**2...
+             * @param {Number} mu Machine precision
+             * @param {Number} max_it Maximum number of iterations
+             * @param {Array} z Initial guess for the roots. Will be changed in place.
+             * @returns {Number} Number of iterations
+             * @ignore
+             */
+            aberthIteration = function (cc, mu, max_it, z) {
+                var k, i, j,
+                    done = [],
+                    cr = [],
+                    gamma, x,
+                    done_sum = 0,
+                    num, denom, s, pp,
+                    n = z.length;
+
+                for (i = 0; i < n; i++) {
+                    done.push(false);
+                }
+                for (i = 0; i < cc.length; i++) {
+                    cr.push(JXG.C.abs(cc[i]) * (4 * i + 1));
+                }
+                for (k = 0; k < max_it && done_sum < n; k++) {
+                    for (i = 0; i < n; i++) {
+                        if (done[i]) {
+                            continue;
+                        }
+                        num = hornerComplex(cc, z[i]);
+                        x = JXG.C.abs(z[i]);
+
+                        // Stopping criterion by D.A. Bini
+                        // "Numerical computation of polynomial zeros
+                        // by means of Aberths's method", Numerical Algorithms (1996).
+                        //
+                        if (JXG.C.abs(num) < mu * horner(cr, x)) {
+                            done[i] = true;
+                            done_sum++;
+                            if (done_sum === n) {
+                                break;
+                            }
+                            continue;
+                        }
+
+                        // num = P(z_i) / P'(z_i)
+                        if (x > 1) {
+                            gamma = JXG.C.div(1, z[i]);
+                            pp = hornerRec(cc, gamma, true);
+                            pp.div(hornerRec(cc, gamma));
+                            pp.mult(gamma);
+                            num = JXG.C.sub(n, pp);
+                            num = JXG.C.div(z[i], num);
+                        } else {
+                            num.div(hornerComplex(cc, z[i], true));
+                        }
+
+                        // denom = sum_{i\neq j} 1 / (z_i  - z_j)
+                        denom = new JXG.Complex(0);
+                        for (j = 0; j < n; j++) {
+                            if (j === i) {
+                                continue;
+                            }
+                            s = JXG.C.sub(z[i], z[j]);
+                            s = JXG.C.div(1, s);
+                            denom.add(s);
+                        }
+
+                        // num = num / 1 - num * sum_{i\neq j} 1 / (z_i - z_j)
+                        denom.mult(num);
+                        denom = JXG.C.sub(1, denom);
+                        num.div(denom);
+                        // z_i = z_i - num
+                        z[i].sub(num);
+                    }
+                }
+
+                return k;
+            };
+
+
+        tol = tol || Number.EPSILON;
+        max_it = max_it || 30;
+
+        le = coeffs.length;
+        if (JXG.isNumber(deg) && deg >= 0 && deg < le - 1) {
+            le = deg + 1;
+        }
+
+        // Convert coefficient array to complex numbers
+        for (i = 0; i < le; i++) {
+            cc.push(new JXG.Complex(coeffs[i]));
+        }
+
+        // Search for (multiple) roots at x=0
+        for (i = 0; i < le; i++) {
+            if (cc[i].real !== 0 || cc[i].imaginary !== 0) {
+                off = i;
+                break;
+            }
+        }
+
+        // Deflate root x=0, store roots at x=0 in obvious
+        for (i = 0; i < off; i++) {
+            obvious.push(new JXG.Complex(0));
+        }
+        cc = cc.slice(off);
+        le = cc.length;
+
+        // Remove leading zeros from the coefficient array
+        for (i = le - 1; i >= 0; i--) {
+            if (cc[i].real !== 0 || cc[i].imaginary !== 0) {
+                break;
+            }
+            cc.pop();
+        }
+        le = cc.length;
+        if (le === 0) {
+            return [];
+        }
+
+        // From now on we can assume that the
+        // constant coefficient and the leading coefficient
+        // are not zero.
+        if (initial_values) {
+            for (i = 0; i < le - 1; i++) {
+                roots.push(new JXG.Complex(initial_values[i]));
+            }
+        } else {
+            roots = initial_guess(cc);
+        }
+        it = aberthIteration(cc, tol, max_it, roots);
+
+        // Append the roots at x=0
+        roots = obvious.concat(roots);
+
+        if (debug) {
+            console.log("Iterations:", it);
+            console.log('Roots:');
+            for (i = 0; i < roots.length; i++) {
+                console.log(i, roots[i].toString(), JXG.C.abs(hornerComplex(cc, roots[i])));
+            }
+        }
+
+        // Sort roots according to their real part
+        roots.sort(function (a, b) {
+            if (a.real < b.real) {
+                return -1;
+            }
+            if (a.real > b.real) {
+                return 1;
+            }
+            return 0;
+        });
+
+        return roots;
+    },
+
+    /**
+     * A subroutine of {@link JXG.Math.Numerics.RamerDouglasPeucker}.
+     * It searches for the point between index i and j which
+     * has the largest distance from the line between the points i and j.
+     * @param {Array} pts Array of {@link JXG.Coords}
+     * @param {Number} i Index of a point in pts
+     * @param {Number} j Index of a point in pts
+     * @param {Boolean} [usr=false] Search minimal distance in user coords
+     * @private
+     * @see JXG.Math.Numerics._RDP
+     * @see JXG.Math.Numerics.RamerDouglasPeucker
+     */
+    _RDPfindSplit: function (pts, i, j, usr) {
+        var d, k, ci, cj, ck,
+            x0, y0, x1, y1,
+            den, lbda,
+            eps = Mat.eps * Mat.eps,
+            huge = 10000,
+            dist = 0,
+            f = i;
+
+        if (j - i < 2) {
+            return [-1.0, 0];
+        }
+
+        // Start and end points
+        if (usr) {
+            ci = pts[i].usrCoords;
+            cj = pts[j].usrCoords;
+        } else {
+            ci = pts[i].scrCoords;
+            cj = pts[j].scrCoords;
+        }
+
+        if (isNaN(ci[1]) || isNaN(ci[2])) {
+            return [NaN, i];
+        }
+        if (isNaN(cj[1]) || isNaN(cj[2])) {
+            return [NaN, j];
+        }
+
+        x1 = cj[1] - ci[1];
+        y1 = cj[2] - ci[2];
+        x1 = (x1 === Infinity) ? huge : x1;
+        x1 = (x1 === -Infinity) ? -huge : x1;
+        y1 = (y1 === Infinity) ? huge : y1;
+        y1 = (y1 === -Infinity) ? -huge : y1;
+        den = x1 * x1 + y1 * y1;
+
+        // Find minimum distance
+        for (k = i + 1; k < j; k++) {
+            ck = (usr) ? pts[k].usrCoords : pts[k].scrCoords;
+
+            if (isNaN(ck[1]) || isNaN(ck[2])) {
+                return [NaN, k];
+            }
+
+            x0 = ck[1] - ci[1];
+            y0 = ck[2] - ci[2];
+            x0 = (x0 === Infinity) ? huge : x0;
+            y0 = (y0 === Infinity) ? huge : y0;
+            x0 = (x0 === -Infinity) ? -huge : x0;
+            y0 = (y0 === -Infinity) ? -huge : y0;
+
+            if (den > eps) {
+                lbda = (x0 * x1 + y0 * y1) / den;
+
+                if (lbda < 0.0) {
+                    lbda = 0.0;
+                } else if (lbda > 1.0) {
+                    lbda = 1.0;
+                }
+
+                x0 = x0 - lbda * x1;
+                y0 = y0 - lbda * y1;
+            }
+            d = x0 * x0 + y0 * y0;
+
+            if (d > dist) {
+                dist = d;
+                f = k;
+            }
+        }
+        return [Math.sqrt(dist), f];
+    },
+
+    /**
+     * A private subroutine of {@link JXG.Math.Numerics.RamerDouglasPeucker}.
+     * It runs recursively through the point set and searches the
+     * point which has the largest distance from the line between the first point and
+     * the last point. If the distance from the line is greater than eps, this point is
+     * included in our new point set otherwise it is discarded.
+     * If it is taken, we recursively apply the subroutine to the point set before
+     * and after the chosen point.
+     * @param {Array} pts Array of {@link JXG.Coords}
+     * @param {Number} i Index of an element of pts
+     * @param {Number} j Index of an element of pts
+     * @param {Number} eps If the absolute value of a given number <tt>x</tt> is smaller than <tt>eps</tt> it is considered to be equal <tt>0</tt>.
+     * @param {Array} newPts Array of {@link JXG.Coords}
+     * @param {Boolean} [usr=false] Search minimal distance in user coords
+     *
+     * @private
+     * @see JXG.Math.Numerics._RDPfindSplit
+     * @see JXG.Math.Numerics.RamerDouglasPeucker
+     */
+    _RDP: function (pts, i, j, eps, newPts, usr) {
+        var result = this._RDPfindSplit(pts, i, j, usr),
+            k = result[1],
+            isnan;
+
+        if (isNaN(result[0])) {
+            this._RDP(pts, i, k - 1, eps, newPts, usr);
+            newPts.push(pts[k]);
+            do {
+                ++k;
+                isnan = (usr) ?
+                    isNaN(pts[k].usrCoords[1] + pts[k].usrCoords[2]) :
+                    isNaN(pts[k].scrCoords[1] + pts[k].scrCoords[2]);
+            } while (k <= j && isnan);
+            if (k <= j) {
+                newPts.push(pts[k]);
+            }
+            this._RDP(pts, k + 1, j, eps, newPts, usr);
+        } else if (result[0] > eps) {
+            this._RDP(pts, i, k, eps, newPts, usr);
+            this._RDP(pts, k, j, eps, newPts, usr);
+        } else {
+            newPts.push(pts[j]);
+        }
+    },
+
+    /**
+     * Polyline simplifcation withthe Ramer-Douglas-Peucker algorithm.
      * It discards points which are not necessary from the polygonal line defined by the point array
      * pts. The computation is done in screen coordinates.
      * Average runtime is O(nlog(n)), worst case runtime is O(n^2), where n is the number of points.
      * @param {Array} pts Array of {@link JXG.Coords}
      * @param {Number} eps If the absolute value of a given number <tt>x</tt> is smaller than <tt>eps</tt> it is considered to be equal <tt>0</tt>.
+     * @param {Boolean} [usr=false] Minimize number of points using user coords
      * @returns {Array} An array containing points which represent an apparently identical curve as the points of pts do, but contains fewer points.
      * @memberof JXG.Math.Numerics
      */
-    RamerDouglasPeucker: function (pts, eps) {
+    RamerDouglasPeucker: function (pts, eps, usr) {
         var allPts = [],
             newPts = [],
             i, k, len,
-            endless = true,
-
-            /**
-             * findSplit() is a subroutine of {@link JXG.Math.Numerics.RamerDouglasPeucker}.
-             * It searches for the point between index i and j which
-             * has the largest distance from the line between the points i and j.
-             * @param {Array} pts Array of {@link JXG.Coords}
-             * @param {Number} i Index of a point in pts
-             * @param {Number} j Index of a point in pts
-             * @ignore
-             * @private
-             */
-            findSplit = function (pts, i, j) {
-                var d, k, ci, cj, ck,
-                    x0, y0, x1, y1,
-                    den, lbda,
-                    eps = Mat.eps * Mat.eps,
-                    huge = 10000,
-                    dist = 0,
-                    f = i;
-
-                if (j - i < 2) {
-                    return [-1.0, 0];
-                }
-
-                ci = pts[i].scrCoords;
-                cj = pts[j].scrCoords;
-
-                if (isNaN(ci[1]) || isNaN(ci[2])) {
-                    return [NaN, i];
-                }
-                if (isNaN(cj[1]) || isNaN(cj[2])) {
-                    return [NaN, j];
-                }
-
-                for (k = i + 1; k < j; k++) {
-                    ck = pts[k].scrCoords;
-                    if (isNaN(ck[1]) || isNaN(ck[2])) {
-                        return [NaN, k];
-                    }
-
-                    x0 = ck[1] - ci[1];
-                    y0 = ck[2] - ci[2];
-                    x1 = cj[1] - ci[1];
-                    y1 = cj[2] - ci[2];
-                    x0 = x0 === Infinity ? huge : x0;
-                    y0 = y0 === Infinity ? huge : y0;
-                    x1 = x1 === Infinity ? huge : x1;
-                    y1 = y1 === Infinity ? huge : y1;
-                    x0 = x0 === -Infinity ? -huge : x0;
-                    y0 = y0 === -Infinity ? -huge : y0;
-                    x1 = x1 === -Infinity ? -huge : x1;
-                    y1 = y1 === -Infinity ? -huge : y1;
-                    den = x1 * x1 + y1 * y1;
-
-                    if (den > eps) {
-                        lbda = (x0 * x1 + y0 * y1) / den;
-
-                        if (lbda < 0.0) {
-                            lbda = 0.0;
-                        } else if (lbda > 1.0) {
-                            lbda = 1.0;
-                        }
-
-                        x0 = x0 - lbda * x1;
-                        y0 = y0 - lbda * y1;
-                        d = x0 * x0 + y0 * y0;
-                    } else {
-                        lbda = 0.0;
-                        d = x0 * x0 + y0 * y0;
-                    }
-
-                    if (d > dist) {
-                        dist = d;
-                        f = k;
-                    }
-                }
-                return [Math.sqrt(dist), f];
-            },
-            /**
-             * RDP() is a private subroutine of {@link JXG.Math.Numerics.RamerDouglasPeucker}.
-             * It runs recursively through the point set and searches the
-             * point which has the largest distance from the line between the first point and
-             * the last point. If the distance from the line is greater than eps, this point is
-             * included in our new point set otherwise it is discarded.
-             * If it is taken, we recursively apply the subroutine to the point set before
-             * and after the chosen point.
-             * @param {Array} pts Array of {@link JXG.Coords}
-             * @param {Number} i Index of an element of pts
-             * @param {Number} j Index of an element of pts
-             * @param {Number} eps If the absolute value of a given number <tt>x</tt> is smaller than <tt>eps</tt> it is considered to be equal <tt>0</tt>.
-             * @param {Array} newPts Array of {@link JXG.Coords}
-             * @ignore
-             * @private
-             */
-            RDP = function (pts, i, j, eps, newPts) {
-                var result = findSplit(pts, i, j),
-                    k = result[1];
-
-                if (isNaN(result[0])) {
-                    RDP(pts, i, k - 1, eps, newPts);
-                    newPts.push(pts[k]);
-                    do {
-                        ++k;
-                    } while (k <= j && isNaN(pts[k].scrCoords[1] + pts[k].scrCoords[2]));
-                    if (k <= j) {
-                        newPts.push(pts[k]);
-                    }
-                    RDP(pts, k + 1, j, eps, newPts);
-                } else if (result[0] > eps) {
-                    RDP(pts, i, k, eps, newPts);
-                    RDP(pts, k, j, eps, newPts);
-                } else {
-                    newPts.push(pts[j]);
-                }
-            };
+            endless = true;
 
         len = pts.length;
 
@@ -4180,6 +4815,7 @@ Mat.Numerics = {
             while (i < len && isNaN(pts[i].scrCoords[1] + pts[i].scrCoords[2])) {
                 i += 1;
             }
+
             // Search for the next position of a NaN point
             k = i + 1;
             while (k < len && !isNaN(pts[k].scrCoords[1] + pts[k].scrCoords[2])) {
@@ -4189,16 +4825,15 @@ Mat.Numerics = {
 
             // Only proceed if something is left
             if (i < len && k > i) {
-                newPts = [];
-                newPts[0] = pts[i];
-                RDP(pts, i, k, eps, newPts);
+                newPts = [pts[i]];
+                this._RDP(pts, i, k, eps, newPts, usr);
                 allPts = allPts.concat(newPts);
             }
             if (i >= len) {
                 break;
             }
             // Push the NaN point
-            if (k < len - 1) {
+            if (k < len - 1 && isNaN(pts[k + 1].scrCoords[1] + pts[k + 1].scrCoords[2])) {
                 allPts.push(pts[k + 1]);
             }
             i = k + 1;

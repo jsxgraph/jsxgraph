@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Circle in 3D</title>
+    <meta charset="utf-8">
+    <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
+    <script type="text/javascript" src="../distrib/jsxgraphcore.js"></script>
+</head>
+<body>
+
+<div id="jxgbox" class="jxgbox" style="width:800px; height:800px; float:left"></div>
+
+<script type="text/javascript">
+    let board = JXG.JSXGraph.initBoard(
+        'jxgbox',
+        {
+            boundingbox: [-8, 8, 8,-8],
+            axis: false,
+            showcopyright: false,
+            shownavigation: false
+        }
+    );
+    let view = board.create(
+        'view3d',
+        [[-6, -4], [8, 8],
+        [[0, 3], [0, 3], [0, 3]]],
+        {
+            xPlaneRear: {fillOpacity: 0.2, gradient: null},
+            yPlaneRear: {fillOpacity: 0.2, gradient: null},
+            zPlaneRear: {fillOpacity: 0.2, gradient: null},
+            bank: {slider: {visible: true}}
+        }
+    );
+
+    // Center
+    let center = view.create(
+        'point3d',
+        [1.5, 1.5, 1.5],
+        {
+            withLabel: false,
+            size: 5,
+            strokeWidth: 1,
+            strokeColor: '#600030',
+            fillColor: 'white',
+            gradient: 'radial',
+            gradientSecondColor: '#a00050',
+            gradientFX: 0.7,
+            gradientFY: 0.3,
+            highlightStrokeColor: '#600030'
+       }
+    );
+    
+    // Normal
+    let normalHandle = view.create(
+        'point3d',
+        [1.5, 2.5, 2.5],
+        {
+            withLabel: false,
+            size: 5,
+            strokeWidth: 1,
+            strokeColor: '#300060',
+            fillColor: 'white',
+            gradient: 'radial',
+            gradientSecondColor: '#5000a0',
+            gradientFX: 0.7,
+            gradientFY: 0.3,
+            highlightStrokeColor: '#300060'
+       }
+    );
+    let normalSeg = view.create('line3d', [center, normalHandle]);
+    normal = [
+        () => normalHandle.X() - center.X(),
+        () => normalHandle.Y() - center.Y(),
+        () => normalHandle.Z() - center.Z()
+    ];
+
+    // Radius slider
+    let radius = board.create(
+        'slider',
+        [
+            [-6, 7], [2, 7],
+            [0, 1, 2]
+        ], {
+            name: 'radius'
+        }
+    );
+
+    // Circle
+    let circle = view.create(
+        'circle3d',
+        [center, normal, () => radius.Value()]
+    );
+</script>
+</body>
+</html>

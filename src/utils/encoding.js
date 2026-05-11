@@ -1,7 +1,7 @@
 /*global JXG: true, define: true, escape: true, unescape: true*/
 /*jslint nomen: true, plusplus: true, bitwise: true*/
 
-import JXG from "../jxg";
+import JXG from "../jxg.js";
 
 // constants
 var UTF8_ACCEPT = 0,
@@ -51,7 +51,7 @@ JXG.Util.UTF8 = {
 
         // See
         // http://ecmanaut.blogspot.ca/2006/07/encoding-decoding-utf8-in-javascript.html
-        if (typeof unescape === "function" && typeof encodeURIComponent === "function") {
+        if (typeof unescape === "function" && typeof encodeURIComponent === 'function') {
             return unescape(encodeURIComponent(string));
         }
 

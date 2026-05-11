@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2023
+    Copyright 2008-2026
         Matthias Ehmann,
         Carsten Miller,
         Andreas Walter,
@@ -31,8 +31,8 @@
 /*jslint nomen: true, plusplus: true*/
 /*eslint no-loss-of-precision: off */
 
-import Mat from "./math";
-import Type from "../utils/type";
+import Mat from "./math.js";
+import Type from "../utils/type.js";
 
 /**
  * Probability functions, e.g. error function,
@@ -309,7 +309,6 @@ Mat.ProbFuncs = {
      * @returns {Number}
      */
     _underflow: function (a) {
-        console.log("erfc", "UNDERFLOW");
         if (a < 0) {
             return 2.0;
         }
@@ -569,7 +568,7 @@ Mat.ProbFuncs = {
             return -Infinity; // -this.MAXNUM;
         }
         if (y0 >= 1.0) {
-            // console.log("ndtri", "DOMAIN");
+            // console.log("ndtri", 'DOMAIN');
             return Infinity; // this.MAXNUM;
         }
 

@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2023
+    Copyright 2008-2026
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -64,8 +64,8 @@
  * by D.E. Knuth and J.D. Hobby.
  */
 
-import Type from "../utils/type";
-import Mat from "./math";
+import Type from "../utils/type.js";
+import Mat from "./math.js";
 
 /**
  * The JXG.Math.Metapost namespace holds algorithms translated from Metapost
@@ -752,6 +752,6 @@ Mat.Metapost = {
 
             return [x, y];
         }
-    };
+};
 
-    export default Mat.Metapost;
+export default Mat.Metapost;

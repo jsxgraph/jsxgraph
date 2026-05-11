@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2023
+    Copyright 2008-2026
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -37,18 +37,20 @@
  * style and functional properties that are required to draw an arc on a board.
  */
 
-import JXG from "../jxg";
-import Geometry from "../math/geometry";
-import Mat from "../math/math";
-import Coords from "../base/coords";
-import Circle from "../base/circle";
-import Type from "../utils/type";
-import Const from "../base/constants";
+import JXG from "../jxg.js";
+import Geometry from "../math/geometry.js";
+import Mat from "../math/math.js";
+import Coords from "../base/coords.js";
+import Circle from "../base/circle.js";
+import Type from "../utils/type.js";
+import Const from "../base/constants.js";
 
 /**
- * @class An arc is a segment of the circumference of a circle. It is defined by a center, one point that
+ * @class An arc is a partial circumference line of a circle.
+ * It is defined by a center, one point that
  * defines the radius, and a third point that defines the angle of the arc.
- *
+ * <p>
+ * As a curve the arc has curve length 6.
  * @pseudo
  * @name Arc
  * @augments Curve
@@ -119,10 +121,10 @@ JXG.createArc = function (board, parents, attributes) {
         );
     }
 
-    attr = Type.copyAttributes(attributes, board.options, "arc");
-    el = board.create("curve", [[0], [0]], attr);
+    attr = Type.copyAttributes(attributes, board.options, 'arc');
+    el = board.create("curve", [[0], [0], 0, 4], attr);
 
-    el.elType = "arc";
+    el.elType = 'arc';
     el.setParents(points);
 
     /**
@@ -178,25 +180,27 @@ JXG.createArc = function (board, parents, attributes) {
         el.anglepoint.addChild(el);
     }
 
-    // should be documented in options
-    el.useDirection = attr.usedirection;
+    // This attribute is necessary for circumCircleArcs
+    el.useDirection = attr.usedirection; // This makes the attribute immutable
 
     // documented in JXG.Curve
+    /**
+     * @class
+     * @ignore
+     */
     el.updateDataArray = function () {
-        var ar,
-            phi,
-            det,
-            p0c,
-            p1c,
-            p2c,
+        var ar, phi, det,
+            p0c, p1c, p2c,
             sgn = 1,
             A = this.radiuspoint,
             B = this.center,
             C = this.anglepoint,
-            ev_s = Type.evaluate(this.visProp.selection);
+            a, b, c,
+            vp_s = this.evalVisProp('selection'),
+            vp_o = this.evalVisProp('orientation');
 
         phi = Geometry.rad(A, B, C);
-        if ((ev_s === "minor" && phi > Math.PI) || (ev_s === "major" && phi < Math.PI)) {
+        if ((vp_s === 'minor' && phi > Math.PI) || (vp_s === 'major' && phi < Math.PI) || (vp_s === 'auto' && vp_o === 'clockwise')) {
             sgn = -1;
         }
 
@@ -217,11 +221,11 @@ JXG.createArc = function (board, parents, attributes) {
             }
         }
 
-        A = A.coords.usrCoords;
-        B = B.coords.usrCoords;
-        C = C.coords.usrCoords;
+        a = A.coords.usrCoords;
+        b = B.coords.usrCoords;
+        c = C.coords.usrCoords;
 
-        ar = Geometry.bezierArc(A, B, C, false, sgn);
+        ar = Geometry.bezierArc(a, b, c, false, sgn);
 
         this.dataX = ar[0];
         this.dataY = ar[1];
@@ -256,14 +260,59 @@ JXG.createArc = function (board, parents, attributes) {
     };
 
     /**
-     * Returns the length of the arc.
+     * Returns the length of the arc or the value of the angle spanned by the arc.
      * @memberOf Arc.prototype
      * @name Value
      * @function
-     * @returns {Number} The arc length
+     * @param {String} [unit='length'] Unit of the returned values. Possible units are
+     * <ul>
+     * <li> 'length' (default): length of the arc line
+     * <li> 'radians': angle spanned by the arc in radians
+     * <li> 'degrees': angle spanned by the arc in degrees
+     * <li> 'semicircle': angle spanned by the arc in radians as a multiple of &pi;, e.g. if the angle is 1.5&pi;, 1.5 will be returned.
+     * <li> 'circle': angle spanned by the arc in radians as a multiple of 2&pi;
+     * </ul>
+     * It is sufficient to supply the first three characters of the unit, e.g. 'len'.
+     * @param {Number} [rad=undefined] Value of angle which can be used instead of the generic one.
+     * @returns {Number} The arc length or the angle value in various units.
      */
-    el.Value = function () {
-        return this.Radius() * Geometry.rad(this.radiuspoint, this.center, this.anglepoint);
+    el.Value = function (unit, rad) {
+        var val;
+
+        if (rad === undefined) {
+            rad = Geometry.rad(this.radiuspoint, this.center, this.anglepoint);
+
+            if (this.evalVisProp('orientation') === 'clockwise') {
+                rad = 2 * Math.PI - rad;
+            }
+        }
+
+        unit = unit || 'length';
+        unit = unit.toLocaleLowerCase();
+        if (unit === '' || unit.indexOf('len') === 0) {
+            val = rad * this.Radius();
+        } else if (unit.indexOf('rad') === 0) {
+            val = rad;
+        } else if (unit.indexOf('deg') === 0) {
+            val = rad * 180 / Math.PI;
+        } else if (unit.indexOf('sem') === 0) {
+            val = rad / Math.PI;
+        } else if (unit.indexOf('cir') === 0) {
+            val = rad * 0.5 / Math.PI;
+        }
+
+        return val;
+    };
+
+    /**
+     * Arc length.
+     * @memberOf Arc.prototype
+     * @name L
+     * @returns {Number} Length of the arc.
+     * @see Arc#Value
+     */
+    el.L = function() {
+        return this.Value('length');
     };
 
     // documented in geometry element
@@ -277,13 +326,13 @@ JXG.createArc = function (board, parents, attributes) {
             type,
             r = this.Radius();
 
-        if (Type.evaluate(this.visProp.hasinnerpoints)) {
+        if (this.evalVisProp('hasinnerpoints')) {
             return this.hasPointSector(x, y);
         }
 
-        if (Type.isObject(Type.evaluate(this.visProp.precision))) {
+        if (Type.isObject(this.evalVisProp('precision'))) {
             type = this.board._inputDevice;
-            prec = Type.evaluate(this.visProp.precision[type]);
+            prec = this.evalVisProp('precision.' + type);
         } else {
             // 'inherit'
             prec = this.board.options.precision.hasPoint;
@@ -340,12 +389,15 @@ JXG.createArc = function (board, parents, attributes) {
     };
 
     // documented in geometry element
+    /**
+     * @class
+     * @ignore
+     */
     el.getLabelAnchor = function () {
         var coords,
-            vec,
-            vecx,
-            vecy,
+            vec, vecx, vecy,
             len,
+            pos = this.label.evalVisProp('position'),
             angle = Geometry.rad(this.radiuspoint, this.center, this.anglepoint),
             dx = 10 / this.board.unitX,
             dy = 10 / this.board.unitY,
@@ -353,7 +405,8 @@ JXG.createArc = function (board, parents, attributes) {
             pmc = this.center.coords.usrCoords,
             bxminusax = p2c[1] - pmc[1],
             byminusay = p2c[2] - pmc[2],
-            ev_s = Type.evaluate(this.visProp.selection),
+            vp_s = this.evalVisProp('selection'),
+            vp_o = this.evalVisProp('orientation'),
             l_vp = this.label ? this.label.visProp : this.visProp.label;
 
         // If this is uncommented, the angle label can not be dragged
@@ -361,30 +414,39 @@ JXG.createArc = function (board, parents, attributes) {
         //    this.label.relativeCoords = new Coords(Const.COORDS_BY_SCREEN, [0, 0], this.board);
         //}
 
-        if ((ev_s === "minor" && angle > Math.PI) || (ev_s === "major" && angle < Math.PI)) {
-            angle = -(2 * Math.PI - angle);
+        if (
+            !Type.isString(pos) ||
+            (pos.indexOf('right') < 0 && pos.indexOf('left') < 0)
+        ) {
+
+            if ((vp_s === 'minor' && angle > Math.PI) || (vp_s === 'major' && angle < Math.PI) || (vp_s === 'auto' && vp_o === 'clockwise')) {
+                angle = -(2 * Math.PI - angle);
+            }
+
+            coords = new Coords(
+                Const.COORDS_BY_USER,
+                [
+                    pmc[1] + Math.cos(angle * 0.5) * bxminusax - Math.sin(angle * 0.5) * byminusay,
+                    pmc[2] + Math.sin(angle * 0.5) * bxminusax + Math.cos(angle * 0.5) * byminusay
+                ],
+                this.board
+            );
+
+            vecx = coords.usrCoords[1] - pmc[1];
+            vecy = coords.usrCoords[2] - pmc[2];
+
+            len = Mat.hypot(vecx, vecy);
+            vecx = (vecx * (len + dx)) / len;
+            vecy = (vecy * (len + dy)) / len;
+            vec = [pmc[1] + vecx, pmc[2] + vecy];
+
+            l_vp.position = Geometry.calcLabelQuadrant(Geometry.rad([1, 0], [0, 0], vec));
+
+            return new Coords(Const.COORDS_BY_USER, vec, this.board);
+        } else {
+            return this.getLabelPosition(pos, this.label.evalVisProp('distance'));
         }
 
-        coords = new Coords(
-            Const.COORDS_BY_USER,
-            [
-                pmc[1] + Math.cos(angle * 0.5) * bxminusax - Math.sin(angle * 0.5) * byminusay,
-                pmc[2] + Math.sin(angle * 0.5) * bxminusax + Math.cos(angle * 0.5) * byminusay
-            ],
-            this.board
-        );
-
-        vecx = coords.usrCoords[1] - pmc[1];
-        vecy = coords.usrCoords[2] - pmc[2];
-
-        len = Mat.hypot(vecx, vecy);
-        vecx = (vecx * (len + dx)) / len;
-        vecy = (vecy * (len + dy)) / len;
-        vec = [pmc[1] + vecx, pmc[2] + vecy];
-
-        l_vp.position = Geometry.calcLabelQuadrant(Geometry.rad([1, 0], [0, 0], vec));
-
-        return new Coords(Const.COORDS_BY_USER, vec, this.board);
     };
 
     // documentation in jxg.circle
@@ -396,10 +458,12 @@ JXG.createArc = function (board, parents, attributes) {
     el.methodMap = JXG.deepCopy(el.methodMap, {
         getRadius: "getRadius",
         radius: "Radius",
+        Radius: "Radius",
         center: "center",
         radiuspoint: "radiuspoint",
         anglepoint: "anglepoint",
-        Value: "Value"
+        Value: "Value",
+        L: "L"
     });
 
     el.prepareUpdate().update();
@@ -439,7 +503,7 @@ JXG.createSemicircle = function (board, parents, attributes) {
     var el, mp, attr, points;
 
     // we need 2 points
-    points = Type.providePoints(board, parents, attributes, "point");
+    points = Type.providePoints(board, parents, attributes, 'point');
     if (points === false || points.length !== 2) {
         throw new Error(
             "JSXGraph: Can't create Semicircle with parent types '" +
@@ -451,13 +515,13 @@ JXG.createSemicircle = function (board, parents, attributes) {
         );
     }
 
-    attr = Type.copyAttributes(attributes, board.options, "semicircle", "center");
+    attr = Type.copyAttributes(attributes, board.options, "semicircle", 'center');
     mp = board.create("midpoint", points, attr);
     mp.dump = false;
 
-    attr = Type.copyAttributes(attributes, board.options, "semicircle");
+    attr = Type.copyAttributes(attributes, board.options, 'semicircle');
     el = board.create("arc", [mp, points[1], points[0]], attr);
-    el.elType = "semicircle";
+    el.elType = 'semicircle';
     el.setParents([points[0].id, points[1].id]);
     el.subs = {
         midpoint: mp
@@ -478,7 +542,7 @@ JXG.createSemicircle = function (board, parents, attributes) {
 JXG.registerElement("semicircle", JXG.createSemicircle);
 
 /**
- * @class A circumcircle arc is an {@link Arc} defined by three points. All three points lie on the arc.
+ * @class A partial circum circle through three points.
  * @pseudo
  * @name CircumcircleArc
  * @augments Arc
@@ -511,7 +575,7 @@ JXG.createCircumcircleArc = function (board, parents, attributes) {
     var el, mp, attr, points;
 
     // We need three points
-    points = Type.providePoints(board, parents, attributes, "point");
+    points = Type.providePoints(board, parents, attributes, 'point');
     if (points === false || points.length !== 3) {
         throw new Error(
             "JSXGraph: create Circumcircle Arc with parent types '" +
@@ -525,15 +589,15 @@ JXG.createCircumcircleArc = function (board, parents, attributes) {
         );
     }
 
-    attr = Type.copyAttributes(attributes, board.options, "circumcirclearc", "center");
+    attr = Type.copyAttributes(attributes, board.options, "circumcirclearc", 'center');
     mp = board.create("circumcenter", points, attr);
     mp.dump = false;
 
-    attr = Type.copyAttributes(attributes, board.options, "circumcirclearc");
+    attr = Type.copyAttributes(attributes, board.options, 'circumcirclearc');
     attr.usedirection = true;
     el = board.create("arc", [mp, points[0], points[2], points[1]], attr);
 
-    el.elType = "circumcirclearc";
+    el.elType = 'circumcirclearc';
     el.setParents([points[0].id, points[1].id, points[2].id]);
     el.subs = {
         center: mp
@@ -554,8 +618,8 @@ JXG.createCircumcircleArc = function (board, parents, attributes) {
 JXG.registerElement("circumcirclearc", JXG.createCircumcircleArc);
 
 /**
- * @class A minor arc is a segment of the circumference of a circle having measure less than or equal to
- * 180 degrees (pi radians). It is defined by a center, one point that
+ * @class A minor arc given by three points is that part of the circumference of a circle having
+ * measure at most 180 degrees (pi radians). It is defined by a center, one point that
  * defines the radius, and a third point that defines the angle of the arc.
  * @pseudo
  * @name MinorArc
@@ -586,15 +650,15 @@ JXG.registerElement("circumcirclearc", JXG.createCircumcircleArc);
  */
 
 JXG.createMinorArc = function (board, parents, attributes) {
-    attributes.selection = "minor";
+    attributes.selection = 'minor';
     return JXG.createArc(board, parents, attributes);
 };
 
 JXG.registerElement("minorarc", JXG.createMinorArc);
 
 /**
- * @class A major arc is a segment of the circumference of a circle having measure greater than or equal to
- * 180 degrees (pi radians). It is defined by a center, one point that
+ * @class A major arc given by three points is that part of the circumference of a circle having
+ * measure at least 180 degrees (pi radians). It is defined by a center, one point that
  * defines the radius, and a third point that defines the angle of the arc.
  * @pseudo
  * @name MajorArc
@@ -624,16 +688,8 @@ JXG.registerElement("minorarc", JXG.createMinorArc);
  * </script><pre>
  */
 JXG.createMajorArc = function (board, parents, attributes) {
-    attributes.selection = "major";
+    attributes.selection = 'major';
     return JXG.createArc(board, parents, attributes);
 };
 
 JXG.registerElement("majorarc", JXG.createMajorArc);
-
-// export default {
-//     createArc: JXG.createArc,
-//     createSemicircle: JXG.createSemicircle,
-//     createCircumcircleArc: JXG.createCircumcircleArc,
-//     createMinorArc: JXG.createMinorArc,
-//     createMajorArc: JXG.createMajorArc
-// };

@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2023
+    Copyright 2008-2026
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -30,30 +30,30 @@
 /*global JXG: true, define: true*/
 /*jslint nomen: true, plusplus: true*/
 
-import JXG from "../jxg";
-import Mat from "./math";
-import Type from "../utils/type";
+import JXG from "../jxg.js";
+import Mat from "./math.js";
+import Type from "../utils/type.js";
 
 JXG.Math.DoubleBits = function () {
-    var hasTypedArrays = false,
-        DOUBLE_VIEW = new Float64Array(1),
+    var DOUBLE_VIEW = new Float64Array(1),
         UINT_VIEW = new Uint32Array(DOUBLE_VIEW.buffer),
         doubleBitsLE,
         toDoubleLE,
         lowUintLE,
         highUintLE,
+        // doubleBits,
+        // toDouble,
+        // lowUint,
+        // highUint,
+        // hasTypedArrays = false,
         doubleBitsBE,
         toDoubleBE,
         lowUintBE,
-        highUintBE,
-        doubleBits,
-        toDouble,
-        lowUint,
-        highUint;
+        highUintBE;
 
     if (Float64Array !== undefined) {
         DOUBLE_VIEW[0] = 1.0;
-        hasTypedArrays = true;
+        // hasTypedArrays = true;
         if (UINT_VIEW[1] === 0x3ff00000) {
             // Use little endian
             doubleBitsLE = function (n) {
@@ -81,7 +81,7 @@ JXG.Math.DoubleBits = function () {
             this.lo = lowUintLE;
             this.hi = highUintLE;
         } else if (UINT_VIEW[0] === 0x3ff00000) {
-            //Use big endian
+            // Use big endian
             doubleBitsBE = function (n) {
                 DOUBLE_VIEW[0] = n;
                 return [UINT_VIEW[1], UINT_VIEW[0]];
@@ -107,8 +107,8 @@ JXG.Math.DoubleBits = function () {
             this.pack = toDoubleBE;
             this.lo = lowUintBE;
             this.hi = highUintBE;
-        } else {
-            hasTypedArrays = false;
+            // } else {
+            //     hasTypedArrays = false;
         }
     }
 
@@ -243,7 +243,7 @@ JXG.extend(MatInterval.prototype, {
     },
 
     assign: function (lo, hi) {
-        if (typeof lo !== "number" || typeof hi !== "number") {
+        if (typeof lo !== "number" || typeof hi !== 'number') {
             throw new TypeError("JXG.Math.Interval#assign: arguments must be numbers");
         }
         if (isNaN(lo) || isNaN(hi) || lo > hi) {
@@ -285,6 +285,26 @@ JXG.extend(MatInterval.prototype, {
  * Object for interval arithmetics.
  * @name JXG.Math.IntervalArithmetic
  * @namespace
+ * @exports Mat.IntervalArithmetic as JXG.Math.IntervalArithmetic
+ *
+ * @description
+ * Interval arithmetic is a technique used to mitigate rounding and measurement errors in mathematical computation
+ * by computing function bounds. Instead of representing a value as a single number, interval arithmetic represents each value as a range.
+ * <br><br>
+ *
+ * For example, we wish to calculate the area of a rectangle from direct measurements using a standard meter stick with an uncertainty
+ * of 0.0005 m (half the “least count measurement” of 1 mm). We measure one side nominally as L=1,
+ * so 0.9995 ≤ L ≤ 1.0005, the other nominally as W=2 so the interval is [1.9995, 2.0005].
+ *
+ * <pre>
+ * let L = JXG.Math.IntervalArithmetic.Interval(0.9995, 1.0005)
+ * let W = JXG.Math.IntervalArithmetic.Interval(1.9995, 2.0005)
+ *
+ * let A = JXG.Math.IntervalArithmetic.mul(L, W)
+ *
+ * console.log('area:', A) // {hi: 2.0015002500000003, lo: 1.99850025}
+ * </pre>
+ *
  */
 JXG.Math.IntervalArithmetic = {
     Interval: function (lo, hi) {

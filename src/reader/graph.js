@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2023
+    Copyright 2008-2026
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -69,7 +69,7 @@
                 splitted.shift();
 
                 // second  line: graph/digraph?
-                if (splitted[0] == "digraph") {
+                if (splitted[0] == 'digraph') {
                     directed = true;
                 } else {
                     directed = false;

@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2023
+    Copyright 2008-2026
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -36,10 +36,10 @@
  * @fileoverview Example file for a triangle implemented as a extension to JSXGraph.
  */
 
-import JXG from "../jxg";
-import Type from "../utils/type";
-import Const from "../base/constants";
-import Polygon from "../base/polygon";
+import JXG from "../jxg.js";
+import Type from "../utils/type.js";
+import Const from "../base/constants.js";
+import Polygon from "../base/polygon.js";
 
 var priv = {
     removeSlopeTriangle: function () {
@@ -57,13 +57,25 @@ var priv = {
             this.board.removeObject(this.tangent);
         }
     },
-    Value: function () {
+    Slope: function () {
         return this.tangent.getSlope();
+    },
+    getAngle: function (unit) {
+        return this.tangent.getAngle(unit);
+    },
+    DeltaX: function () {
+        return this.borderHorizontal.Direction()[0];
+    },
+    DeltaY: function () {
+        return this.borderVertical.Direction()[1];
+    },
+    Direction: function () {
+        return this.tangent.Direction();
     }
 };
 
 /**
- * @class Slope triangle for a point on a line.
+ * @class Slope triangle to visualize the slope of a tangent to a curve, circle or line.
  * @pseudo
  * @name Slopetriangle
  * @augments JXG.Line
@@ -127,7 +139,7 @@ JXG.createSlopeTriangle = function (board, parents, attributes) {
         tglide = tangent.glider;
     } else if (parents.length === 1 && parents[0].type === Const.OBJECT_TYPE_GLIDER) {
         tglide = parents[0];
-        attr = Type.copyAttributes(attributes, board.options, "slopetriangle", "tangent");
+        attr = Type.copyAttributes(attributes, board.options, "slopetriangle", 'tangent');
         tangent = board.create("tangent", [tglide], attr);
         isPrivateTangent = true;
     } else if (
@@ -140,12 +152,12 @@ JXG.createSlopeTriangle = function (board, parents, attributes) {
     } else {
         throw new Error(
             "JSXGraph: Can't create slope triangle with parent types '" +
-                typeof parents[0] +
-                "'."
+            typeof parents[0] +
+            "'."
         );
     }
 
-    attr = Type.copyAttributes(attributes, board.options, "slopetriangle", "basepoint");
+    attr = Type.copyAttributes(attributes, board.options, "slopetriangle", 'basepoint');
     basepoint = board.create(
         "point",
         [
@@ -156,13 +168,13 @@ JXG.createSlopeTriangle = function (board, parents, attributes) {
         attr
     );
 
-    attr = Type.copyAttributes(attributes, board.options, "slopetriangle", "baseline");
+    attr = Type.copyAttributes(attributes, board.options, "slopetriangle", 'baseline');
     baseline = board.create("line", [tglide, basepoint], attr);
 
-    attr = Type.copyAttributes(attributes, board.options, "slopetriangle", "glider");
+    attr = Type.copyAttributes(attributes, board.options, "slopetriangle", 'glider');
     glider = board.create("glider", [tglide.X() + 1, tglide.Y(), baseline], attr);
 
-    attr = Type.copyAttributes(attributes, board.options, "slopetriangle", "toppoint");
+    attr = Type.copyAttributes(attributes, board.options, "slopetriangle", 'toppoint');
     toppoint = board.create(
         "point",
         [
@@ -176,49 +188,148 @@ JXG.createSlopeTriangle = function (board, parents, attributes) {
         attr
     );
 
-    attr = Type.copyAttributes(attributes, board.options, "slopetriangle");
-    attr.borders = Type.copyAttributes(attr.borders, board.options, "slopetriangle", "borders");
+    attr = Type.copyAttributes(attributes, board.options, 'slopetriangle');
+    // attr.borders = Type.copyAttributes(attr.borders, board.options, "slopetriangle", 'borders');
     el = board.create("polygon", [tglide, glider, toppoint], attr);
+    el.elType = 'slopetriangle';
 
     /**
-     * Returns the value of the slope triangle, that is the slope of the tangent.
-     * @name Value
+     * Returns the slope of the tangent.
+     * @name Slope
      * @memberOf Slopetriangle.prototype
      * @function
      * @returns {Number} slope of the tangent.
      */
-    el.Value = priv.Value;
+    el.Slope = priv.Slope;
+
+    /**
+     * Returns the angle between the tangent and the x-axis.
+     * @name getAngle
+     * @memberOf Slopetriangle.prototype
+     * @function
+     * @param {String} [unit='radians'] Unit of the returned values. Possible units are
+     * <ul>
+     * <li> 'radians' (default): angle value in radians
+     * <li> 'degrees': angle value in degrees
+     * <li> 'semicircle': angle value in radians as a multiple of &pi;, e.g. if the angle is 1.5&pi;, 1.5 will be returned.
+     * <li> 'circle': angle value in radians as a multiple of 2&pi;
+     * </ul>
+     * @returns {Number}
+     */
+    el.getAngle = priv.getAngle;
+
+    /**
+     * Returns &delta;x of the slope triangle, that is the slope of the tangent.
+     * This value is less than 0 if the line points to the left.
+     * @name DeltaX
+     * @memberOf Slopetriangle.prototype
+     * @function
+     * @returns {Number}
+     */
+    el.DeltaX = priv.DeltaX;
+
+    /**
+     * Returns &delta;y of the slope triangle, that is the slope of the tangent.
+     * This value is less than 0 if the line points to the bottom.
+     * @name DeltaY
+     * @memberOf Slopetriangle.prototype
+     * @function
+     * @returns {Number}
+     */
+    el.DeltaY = priv.DeltaY;
+
+    /**
+     * Returns the direction of the slope triangle, that is the direction of the tangent.
+     * @name Direction
+     * @memberOf Slopetriangle.prototype
+     * @see Line#Direction
+     * @function
+     * @returns {Number} slope of the tangent.
+     */
+    el.Direction = priv.Direction;
     el.tangent = tangent;
     el._isPrivateTangent = isPrivateTangent;
 
-    //el.borders[0].setArrow(false, {type: 2, size: 10});
-    //el.borders[1].setArrow(false, {type: 2, size: 10});
-    el.borders[2].setArrow(false, false);
+    el.borderHorizontal = el.borders[0];
+    el.borderVertical = el.borders[1];
+    el.borderParallel = el.borders[2];
 
-    attr = Type.copyAttributes(attributes, board.options, "slopetriangle", "label");
-    label = board.create(
-        "text",
-        [
-            function () {
-                return glider.X() + 0.1;
-            },
-            function () {
-                return (glider.Y() + toppoint.Y()) * 0.5;
-            },
-            function () {
-                return "";
-            }
-        ],
-        attr
-    );
+    //el.borderHorizontal.setArrow(false, {type: 2, size: 10});
+    //el.borderVertical.setArrow(false, {type: 2, size: 10});
+    el.borderParallel.setArrow(false, false);
 
-    label._setText(function () {
-        var digits = Type.evaluate(label.visProp.digits);
+    attr = Type.copyAttributes(attributes, board.options, "slopetriangle", 'label');
+    //label = board.create("text", [
+    //         function () {
+    //             return glider.X() + 0.1;
+    //         },
+    //         function () {
+    //             return (glider.Y() + toppoint.Y()) * 0.5;
+    //         },
+    //         function () {
+    //             return "";
+    //         }
+    //     ],
+    //     attr
+    // );
 
-        if (label.useLocale()) {
-            return label.formatNumberLocale(el.Value(), digits);
+    attr = Type.copyAttributes(attr, board.options, 'label');
+    // Add label to vertical polygon edge
+    attr.isLabel = true;
+    attr.anchor = el.borderVertical;
+    attr.priv = el.borderVertical.visProp.priv;
+    attr.id = el.borderVertical.id + 'Label';
+
+    label = board.create("text", [0, 0, function () { return ""; }], attr);
+    label.elType = 'label';
+    label.needsUpdate = true;
+    label.dump = false;
+    el.borderVertical.label = label;
+    el.borderVertical.hasLabel = true;
+    el.borderVertical.visProp.withlabel = true;
+
+    el.borderVertical.slopetriangle = el;
+    el.borderHorizontal.slopetriangle = el;
+    glider.slopetriangle = el;
+    basepoint.slopetriangle = el;
+    baseline.slopetriangle = el;
+    toppoint.slopetriangle = el;
+    label.slopetriangle = el;
+
+    label.setText(function () {
+        var prefix = '',
+            suffix = '',
+            digits = label.evalVisProp('digits'),
+            val = el.Slope();
+
+        if (label.evalVisProp('showprefix')) {
+            prefix = label.evalVisProp('prefix');
         }
-        return Type.toFixed(el.Value(), digits);
+        if (label.evalVisProp('showsuffix')) {
+            suffix = label.evalVisProp('suffix');
+        }
+
+        if (digits === 'none') {
+            // do nothing
+        } else if (digits === 'auto') {
+            if (label.useLocale()) {
+                val = label.formatNumberLocale(val);
+            } else {
+                val = Type.autoDigits(val);
+            }
+        } else {
+            if (label.useLocale()) {
+                val = label.formatNumberLocale(val, digits);
+            } else {
+                val = Type.toFixed(val, digits);
+            }
+        }
+
+        if (Type.isFunction(el.visProp.formatvalue)) {
+            val = el.visProp.formatvalue(el, val);
+        }
+
+        return prefix + val + suffix;
     });
     label.fullUpdate();
 
@@ -243,9 +354,18 @@ JXG.createSlopeTriangle = function (board, parents, attributes) {
         basepoint: "basepoint",
         baseline: "baseline",
         toppoint: "toppoint",
+        borderHorizontal: "borderHorizontal",
+        borderVertical: "borderVertical",
+        borderParallel: "borderParallel",
         label: "label",
-        Value: "Value",
-        V: "Value"
+        Value: "Slope",
+        V: "Slope",
+        Slope: "Slope",
+        Angle: "getAngle",
+        getAngle: "getAngle",
+        DeltaX: "DeltaX",
+        DeltaY: "DeltaY",
+        Direction: "Direction"
     });
 
     el.remove = priv.removeSlopeTriangle;

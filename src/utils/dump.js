@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2023
+    Copyright 2008-2026
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -36,8 +36,8 @@
  * @fileoverview The JXG.Dump namespace provides methods to save a board to javascript.
  */
 
-import JXG from "../jxg";
-import Type from "./type";
+import JXG from "../jxg.js";
+import Type from "./type.js";
 
 /**
  * The JXG.Dump namespace provides classes and methods to save a board to javascript.
@@ -106,11 +106,74 @@ JXG.Dump = {
      * @returns {String} " + s + "
      */
     str: function (s) {
-        if (typeof s === "string" && s.substr(0, 7) !== "function") {
+        if (typeof s === "string" && s.slice(0, 7) !== 'function') {
             s = '"' + s + '"';
         }
 
         return s;
+    },
+
+    /**
+     * Recursively determine the difference between objects
+     * instance and def.
+     * @param {Object} instance
+     * @param {Object} def
+     * @param {String} pre
+     * @returns
+     */
+    _minimizeSubObject: function(instance, def, pre) {
+        var p, pl, del,
+            deleteAll = true,
+            copy = instance;
+
+        for (p in def) {
+            if (def.hasOwnProperty(p)) {
+                pl = p.toLowerCase();
+                // console.log(pre + 'Test', pl, typeof def[p])
+
+                if ((def[p] === copy[pl]) || (!Type.exists(def[p]) && !Type.exists(copy[pl])) ) {
+                    // Equality is determined for strings and numbers.
+                    // For different arrays or objects, '===' is always false.
+
+                    // console.log(pre + "\tdelete", p)
+                    delete copy[pl];
+                } else if (Type.isArray(def[p]) && Type.isArray(copy[pl])) {
+                    // Compare two arrays
+                    if (Type.cmpArrays(copy[pl], def[p])) {
+                        // console.log(pre + "\t\tdelete ARR", p);
+                        delete copy[pl];
+                    } else {
+                        deleteAll = false;
+                    }
+                } else {
+                    if (Type.exists(def[p]) && typeof def[p] === 'object' &&
+                        Type.exists(copy[pl]) && typeof copy[pl] === 'object'
+                    ) {
+                        // Recursively compare two objects
+                        del = this._minimizeSubObject(copy[pl], def[p], pre + '\t');
+                        if (del) {
+                            // console.log(pre + "--> delete obj", p)
+                            delete copy[pl];
+                        } else {
+                            // console.log(pre + '|')
+                            // console.log(def[p], copy[pl])
+                            deleteAll = false;
+                        }
+                    } else {
+                        deleteAll = false;
+                    }
+                }
+            }
+        }
+        if (deleteAll && Object.keys(def).length === 0 && Object.keys(copy).length !== 0) {
+            // If def is empty and copy is non-empty, we keep copy.
+            // This is the case if copy is filled with entries from an inherited element,
+            // like label is inherited from text.
+            deleteAll = false;
+        }
+
+        // console.log(pre + 'deleteAll', deleteAll)
+        return deleteAll;
     },
 
     /**
@@ -121,9 +184,7 @@ JXG.Dump = {
      * @returns {Object} Minimal attributes object
      */
     minimizeObject: function (instance, s) {
-        var p,
-            pl,
-            i,
+        var i, del,
             def = {},
             copy = Type.deepCopy(instance),
             defaults = [];
@@ -133,21 +194,30 @@ JXG.Dump = {
         }
 
         def = Type.deepCopy(def, JXG.Options.elements, true);
-        for (i = defaults.length; i > 0; i--) {
-            def = Type.deepCopy(def, defaults[i - 1], true);
+        for (i = defaults.length - 1; i >= 0; i--) {
+            def = Type.deepCopy(def, defaults[i], true);
         }
 
+        // console.log('element', copy)
+        // console.log('default', def)
+        del = this._minimizeSubObject(copy, def, ' ');
+        if (del === true) {
+            copy = {};
+        }
+
+        /*
+        // Original
         for (p in def) {
             if (def.hasOwnProperty(p)) {
                 pl = p.toLowerCase();
 
-                if (typeof def[p] !== "object" && def[p] === copy[pl]) {
-                    // console.log("delete", p);
-                    delete copy[pl];
-                }
+                // Original. Does not work for gradient: null
+                // if (def[p] !== null && typeof def[p] !== "object" && def[p] === copy[pl]) {
+                //     delete copy[pl];
+                // }
             }
         }
-
+        */
         return copy;
     },
 
@@ -158,16 +228,17 @@ JXG.Dump = {
      * @returns {Object} An attributes object.
      */
     prepareAttributes: function (board, obj) {
-        var a, s;
+        var a, s, o;
 
-        a = this.minimizeObject(obj.getAttributes(), JXG.Options[obj.elType]);
+        o = JXG.Options[obj.elType] || {};
+        a = this.minimizeObject(obj.getAttributes(), o);
 
         for (s in obj.subs) {
             if (obj.subs.hasOwnProperty(s)) {
                 a[s] = this.minimizeObject(
                     obj.subs[s].getAttributes(),
-                    JXG.Options[obj.elType][s],
-                    JXG.Options[obj.subs[s].elType]
+                    o[s],
+                    JXG.Options[obj.subs[s].elType] || {}
                 );
                 a[s].id = obj.subs[s].id;
                 a[s].name = obj.subs[s].name;
@@ -246,7 +317,7 @@ JXG.Dump = {
             }
         }
 
-        this.deleteMarkers(board, "dumped");
+        this.deleteMarkers(board, 'dumped');
 
         return {
             elements: elementList,
@@ -302,14 +373,14 @@ JXG.Dump = {
 
                     return "<<" + list.join(", ") + ">> ";
                 }
-                return "null";
+                return 'null';
             case "string":
                 return "'" + obj.replace(/\\/g, "\\\\").replace(/(["'])/g, "\\$1") + "'";
             case "number":
             case "boolean":
                 return obj.toString();
             case "null":
-                return "null";
+                return 'null';
         }
     },
 
@@ -337,7 +408,7 @@ JXG.Dump = {
                 "s" + i + " = " + elements[i].type + "(" + elements[i].parents.join(", ") + ") " + this.toJCAN(elements[i].attributes).replace(/\n/, "\\n") + ";"
             );
 
-            if (elements[i].type === "axis") {
+            if (elements[i].type === 'axis') {
                 // Handle the case that remove[All]Ticks had been called.
                 id = elements[i].attributes.id;
                 if (board.objects[id].defaultTicks === null) {
@@ -386,7 +457,7 @@ JXG.Dump = {
             dump = this.dump(board),
             script = [];
 
-        dump.methods = this.setBoundingBox(dump.methods, board, "board");
+        dump.methods = this.setBoundingBox(dump.methods, board, 'board');
 
         elements = dump.elements;
 
@@ -401,7 +472,7 @@ JXG.Dump = {
                     ");"
             );
 
-            if (elements[i].type === "axis") {
+            if (elements[i].type === 'axis') {
                 // Handle the case that remove[All]Ticks had been called.
                 id = elements[i].attributes.id;
                 if (board.objects[id].defaultTicks === null) {

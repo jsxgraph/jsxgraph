@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2023
+    Copyright 2008-2026
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -36,12 +36,17 @@
  * @fileoverview expect.js provides utilities for parameter magic by normalizing multi-type parameters.
  */
 
-import JXG from "../jxg";
-import Type from "./type";
-import Const from "../base/constants";
-import Coords from "../base/coords";
+import JXG from "../jxg.js";
+import Type from "./type.js";
+import Const from "../base/constants.js";
+import Coords from "../base/coords.js";
 
-var Expect = {
+/**
+ * The JXG.Expect namespace provides method to normalize access on coordinates,
+ * i.e. provides utilities for parameter magic by normalizing multi-type parameters.
+ * @namespace
+ */
+JXG.Expect = {
     /**
      * Apply an expect method on every element of an array.
      *
@@ -119,6 +124,4 @@ var Expect = {
     }
 };
 
-JXG.Expect = Expect;
-
-export default Expect;
+export default JXG.Expect;

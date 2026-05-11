@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2023
+    Copyright 2008-2026
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -30,16 +30,16 @@
 /*global JXG: true, define: true*/
 /*jslint nomen: true, plusplus: true*/
 
-import JXG from "../jxg";
-import Const from "../base/constants";
-import Coords from "../base/coords";
-import Mat from "./math";
-import Extrapolate from "./extrapolate";
-import Numerics from "./numerics";
-import Statistics from "./statistics";
-import Geometry from "./geometry";
-import IntervalArithmetic from "./ia";
-import Type from "../utils/type";
+import JXG from "../jxg.js";
+import Const from "../base/constants.js";
+import Coords from "../base/coords.js";
+import Mat from "./math.js";
+import Extrapolate from "./extrapolate.js";
+import Numerics from "./numerics.js";
+import Statistics from "./statistics.js";
+import Geometry from "./geometry.js";
+import IntervalArithmetic from "./ia.js";
+import Type from "../utils/type.js";
 
 /**
  * Functions for plotting of curves.
@@ -158,14 +158,8 @@ Mat.Plot = {
      * @returns {JXG.Curve} Reference to the curve object.
      */
     updateParametricCurveOld: function (curve, mi, ma) {
-        var i,
-            t,
-            d,
-            x,
-            y,
-            t0,
-            x0,
-            y0,
+        var i, t, d, x, y,
+            x0, y0,// t0,
             top,
             depth,
             MAX_DEPTH,
@@ -238,7 +232,7 @@ Mat.Plot = {
         suspendUpdate = true;
         x0 = po.scrCoords[1];
         y0 = po.scrCoords[2];
-        t0 = t;
+        // t0 = t;
 
         t = ma;
         po.setCoordinates(
@@ -312,7 +306,7 @@ Mat.Plot = {
 
             x0 = x;
             y0 = y;
-            t0 = t;
+            // t0 = t;
 
             top -= 1;
             x = pointStack[top][0];
@@ -364,7 +358,7 @@ Mat.Plot = {
         ) {
             pnt._t = t;
             curve.points.push(pnt);
-            this._lastCrds = pnt.copy("scrCoords");
+            this._lastCrds = pnt.copy('scrCoords');
         }
     },
 
@@ -404,7 +398,7 @@ Mat.Plot = {
      * Investigate a function term at the bounds of intervals where
      * the function is not defined, e.g. log(x) at x = 0.
      *
-     * c is inbetween a and b
+     * c is between a and b
      * @private
      * @param {JXG.Curve} curve JSXGraph curve element
      * @param {Array} a Screen coordinates of the left interval bound
@@ -417,22 +411,14 @@ Mat.Plot = {
      * @returns {JXG.Boolean} true if the point is inserted and the recursion should stop, false otherwise.
      */
     _borderCase: function (curve, a, b, c, ta, tb, tc, depth) {
-        var t,
-            pnt,
-            p,
+        var t, pnt, p,
             p_good = null,
             j,
             max_it = 30,
             is_undef = false,
-            t_nan,
-            t_real,
-            t_real2,
-            vx,
-            vy,
-            vx2,
-            vy2,
-            dx,
-            dy;
+            t_nan, t_real;// t_real2;
+            // dx, dy,
+            // vx, vy, vx2, vy2;
         // asymptote;
 
         if (depth <= 1) {
@@ -477,19 +463,19 @@ Mat.Plot = {
                 if (isNaN(a[1] + a[2]) && !isNaN(c[1] + c[2])) {
                     t_nan = ta;
                     t_real = tc;
-                    t_real2 = tb;
+                    // t_real2 = tb;
                 } else if (isNaN(b[1] + b[2]) && !isNaN(c[1] + c[2])) {
                     t_nan = tb;
                     t_real = tc;
-                    t_real2 = ta;
+                    // t_real2 = ta;
                 } else if (isNaN(c[1] + c[2]) && !isNaN(b[1] + b[2])) {
                     t_nan = tc;
                     t_real = tb;
-                    t_real2 = tb + (tb - tc);
+                    // t_real2 = tb + (tb - tc);
                 } else if (isNaN(c[1] + c[2]) && !isNaN(a[1] + a[2])) {
                     t_nan = tc;
                     t_real = ta;
-                    t_real2 = ta - (tc - ta);
+                    // t_real2 = ta - (tc - ta);
                 } else {
                     return false;
                 }
@@ -505,7 +491,7 @@ Mat.Plot = {
                 if (is_undef) {
                     t_nan = t;
                 } else {
-                    t_real2 = t_real;
+                    // t_real2 = t_real;
                     t_real = t;
                 }
                 ++j;
@@ -526,12 +512,12 @@ Mat.Plot = {
             // Now we approximate the derivative by computing the slope of the line through these two points
             // and test if it is "infinite", i.e larger than 400 in absolute values.
             //
-            vx = curve.X(t_real, true);
-            vx2 = curve.X(t_real2, true);
-            dx = (vx - vx2) / (t_real - t_real2);
-            vy = curve.Y(t_real, true);
-            vy2 = curve.Y(t_real2, true);
-            dy = (vy - vy2) / (t_real - t_real2);
+            // vx = curve.X(t_real, true);
+            // vx2 = curve.X(t_real2, true);
+            // vy = curve.Y(t_real, true);
+            // vy2 = curve.Y(t_real2, true);
+            // dx = (vx - vx2) / (t_real - t_real2);
+            // dy = (vy - vy2) / (t_real - t_real2);
 
             if (p_good !== null) {
                 this._insertPoint_v2(
@@ -650,45 +636,43 @@ Mat.Plot = {
      * @returns {JXG.Curve} Reference to the curve object.
      */
     updateParametricCurve_v2: function (curve, mi, ma) {
-        var ta,
-            tb,
-            a,
-            b,
+        var ta, tb,
+            a, b,
             suspendUpdate = false,
             pa = new Coords(Const.COORDS_BY_USER, [0, 0], curve.board, false),
             pb = new Coords(Const.COORDS_BY_USER, [0, 0], curve.board, false),
             depth,
             delta,
             w2,
-            h2,
-            bbox,
-            ret_arr;
+            // h2,
+            bbox, ret_arr;
 
-        //console.time("plot");
-        if (curve.board.updateQuality === curve.board.BOARD_QUALITY_LOW) {
-            depth = Type.evaluate(curve.visProp.recursiondepthlow) || 13;
-            delta = 2;
-            // this.smoothLevel = 5; //depth - 7;
-            this.smoothLevel = depth - 6;
-            this.jumpLevel = 3;
-        } else {
-            depth = Type.evaluate(curve.visProp.recursiondepthhigh) || 17;
+        //console.time('plot');
+        // Switching BOARD_QUALITY_LOW/HIGH makes gliders jump
+        // if (curve.board.updateQuality === curve.board.BOARD_QUALITY_LOW) {
+        //     depth = curve.evalVisProp('recursiondepthlow') || 13;
+        //     delta = 2;
+        //     // this.smoothLevel = 5; //depth - 7;
+        //     this.smoothLevel = depth - 6;
+        //     this.jumpLevel = 3;
+        // } else {
+            depth = curve.evalVisProp('recursiondepthhigh') || 17;
             delta = 2;
             // smoothLevel has to be small for graphs in a huge interval.
             // this.smoothLevel = 3; //depth - 7; // 9
             this.smoothLevel = depth - 9; // 9
             this.jumpLevel = 2;
-        }
+        // }
         this.nanLevel = depth - 4;
 
         curve.points = [];
 
-        if (this.xterm === "x") {
+        if (this.xterm === 'x') {
             // For function graphs we can restrict the plot interval
-            // to the visible area +plus margin
+            // to the visible area + plus margin
             bbox = curve.board.getBoundingBox();
             w2 = (bbox[2] - bbox[0]) * 0.3;
-            h2 = (bbox[1] - bbox[3]) * 0.3;
+            // h2 = (bbox[1] - bbox[3]) * 0.3;
             ta = Math.max(mi, bbox[0] - w2);
             tb = Math.min(ma, bbox[2] + w2);
         } else {
@@ -726,17 +710,17 @@ Mat.Plot = {
         this._visibleArea = [ta, tb];
 
         // Start recursive plotting algorithm
-        a = pa.copy("scrCoords");
-        b = pb.copy("scrCoords");
+        a = pa.copy('scrCoords');
+        b = pb.copy('scrCoords');
         pa._t = ta;
         curve.points.push(pa);
-        this._lastCrds = pa.copy("scrCoords"); // Used in _insertPoint
+        this._lastCrds = pa.copy('scrCoords'); // Used in _insertPoint
         this._plotRecursive_v2(curve, a, ta, b, tb, depth, delta);
         pb._t = tb;
         curve.points.push(pb);
 
         curve.numberPoints = curve.points.length;
-        //console.timeEnd("plot");
+        //console.timeEnd('plot');
 
         return curve;
     },
@@ -801,8 +785,8 @@ Mat.Plot = {
         p2 = new Coords(Const.COORDS_BY_USER, [limes.right_x, limes.right_y], curve.board);
         p2._t = t;
         curve.points.push(p2);
-        this._lastScrCrds = p2.copy("scrCoords");
-        this._lastUsrCrds = p2.copy("usrCoords");
+        this._lastScrCrds = p2.copy('scrCoords');
+        this._lastUsrCrds = p2.copy('usrCoords');
     },
 
     /**
@@ -865,8 +849,8 @@ Mat.Plot = {
         p = new Coords(Const.COORDS_BY_SCREEN, pnt, curve.board);
         p._t = t;
         curve.points.push(p);
-        this._lastScrCrds = p.copy("scrCoords");
-        this._lastUsrCrds = p.copy("usrCoords");
+        this._lastScrCrds = p.copy('scrCoords');
+        this._lastUsrCrds = p.copy('usrCoords');
     },
 
     /**
@@ -1111,21 +1095,16 @@ Mat.Plot = {
      * @private
      */
     _getBorderPos: function (curve, ta, a, tc, c, tb, b) {
-        var t,
-            pnt,
-            p,
-            j,
+        var t, pnt, p, j,
             max_it = 30,
             is_undef = false,
-            t_real2,
-            t_good,
-            t_bad;
+            t_good, t_bad;
 
         pnt = new Coords(Const.COORDS_BY_USER, [0, 0], curve.board, false);
         j = 0;
         // Bisect a, b and c until the point t_real is inside of the definition interval
         // and as close as possible at the boundary.
-        // t_real2 is the second closest point.
+        // (t_real2 is/was the second closest point).
         // There are four cases:
         //  a  |  c  |  b
         // ---------------
@@ -1137,19 +1116,15 @@ Mat.Plot = {
         if (isNaN(a[1] + a[2]) && !isNaN(c[1] + c[2])) {
             t_bad = ta;
             t_good = tc;
-            t_real2 = tb;
         } else if (isNaN(b[1] + b[2]) && !isNaN(c[1] + c[2])) {
             t_bad = tb;
             t_good = tc;
-            t_real2 = ta;
         } else if (isNaN(c[1] + c[2]) && !isNaN(b[1] + b[2])) {
             t_bad = tc;
             t_good = tb;
-            t_real2 = tb + (tb - tc);
         } else if (isNaN(c[1] + c[2]) && !isNaN(a[1] + a[2])) {
             t_bad = tc;
             t_good = ta;
-            t_real2 = ta - (tc - ta);
         } else {
             return false;
         }
@@ -1165,7 +1140,6 @@ Mat.Plot = {
             if (is_undef) {
                 t_bad = t;
             } else {
-                t_real2 = t_good;
                 t_good = t;
             }
             ++j;
@@ -1227,26 +1201,26 @@ Mat.Plot = {
         // From left
         res = Extrapolate.limit(t, -step, curve.X);
         x_l = res[0];
-        if (res[1] === "infinite") {
+        if (res[1] === 'infinite') {
             x_l = Math.sign(x_l) * Infinity;
         }
 
         res = Extrapolate.limit(t, -step, curve.Y);
         y_l = res[0];
-        if (res[1] === "infinite") {
+        if (res[1] === 'infinite') {
             y_l = Math.sign(y_l) * Infinity;
         }
 
         // From right
         res = Extrapolate.limit(t, step, curve.X);
         x_r = res[0];
-        if (res[1] === "infinite") {
+        if (res[1] === 'infinite') {
             x_r = Math.sign(x_r) * Infinity;
         }
 
         res = Extrapolate.limit(t, step, curve.Y);
         y_r = res[0];
-        if (res[1] === "infinite") {
+        if (res[1] === 'infinite') {
             y_r = Math.sign(y_r) * Infinity;
         }
 
@@ -1274,11 +1248,11 @@ Mat.Plot = {
     _getLimes: function (curve, ta, a, tc, c, tb, b, may_be_special, depth) {
         var t;
 
-        if (may_be_special === "border") {
+        if (may_be_special === 'border') {
             t = this._getBorderPos(curve, ta, a, tc, c, tb, b);
-        } else if (may_be_special === "cusp") {
+        } else if (may_be_special === 'cusp') {
             t = this._getCuspPos(curve, ta, tb);
-        } else if (may_be_special === "jump") {
+        } else if (may_be_special === 'jump') {
             t = this._getJumpPos(curve, ta, tb);
         }
         return this._getLimits(curve, t);
@@ -1360,14 +1334,14 @@ Mat.Plot = {
             a_nan = isNaN(a[1] + a[2]);
             b_nan = isNaN(b[1] + b[2]);
             if ((a_nan && !b_nan) || (!a_nan && b_nan)) {
-                may_be_special = "border";
+                may_be_special = 'border';
             } else if (
                 ds[0] > 0.66 * ds0 ||
                 ds[0] < this.cusp_threshold * (ds[1] + ds[2]) ||
                 ds[1] > 5 * ds[2] ||
                 ds[2] > 5 * ds[1]
             ) {
-                may_be_special = "cusp";
+                may_be_special = 'cusp';
             } else if (
                 ds[2] > this.jump_threshold * ds[0] ||
                 ds[1] > this.jump_threshold * ds[0] ||
@@ -1375,7 +1349,7 @@ Mat.Plot = {
                 ds[1] === Infinity ||
                 ds[2] === Infinity
             ) {
-                may_be_special = "jump";
+                may_be_special = 'jump';
             }
             isSmooth =
                 may_be_special === "" &&
@@ -1426,12 +1400,12 @@ Mat.Plot = {
             ret_arr;
 
         // console.log("-----------------------------------------------------------");
-        // console.time("plot");
-        if (curve.board.updateQuality === curve.board.BOARD_QUALITY_LOW) {
-            depth = Type.evaluate(curve.visProp.recursiondepthlow) || 14;
-        } else {
-            depth = Type.evaluate(curve.visProp.recursiondepthhigh) || 17;
-        }
+        // console.time('plot');
+        // if (curve.board.updateQuality === curve.board.BOARD_QUALITY_LOW) {
+        //     depth = curve.evalVisProp('recursiondepthlow') || 14;
+        // } else {
+            depth = curve.evalVisProp('recursiondepthhigh') || 17;
+        // }
 
         // smoothLevel has to be small for graphs in a huge interval.
         this.smoothLevel = 7; //depth - 10;
@@ -1443,7 +1417,7 @@ Mat.Plot = {
 
         curve.points = [];
 
-        if (curve.xterm === "x") {
+        if (curve.xterm === 'x') {
             // For function graphs we can restrict the plot interval
             // to the visible area +plus margin
             bbox = curve.board.getBoundingBox();
@@ -1486,12 +1460,12 @@ Mat.Plot = {
         this._visibleArea = [ta, tb];
 
         // Start recursive plotting algorithm
-        a = pa.copy("scrCoords");
-        b = pb.copy("scrCoords");
+        a = pa.copy('scrCoords');
+        b = pb.copy('scrCoords');
         pa._t = ta;
         curve.points.push(pa);
-        this._lastScrCrds = pa.copy("scrCoords"); // Used in _insertPoint
-        this._lastUsrCrds = pa.copy("usrCoords"); // Used in _insertPoint
+        this._lastScrCrds = pa.copy('scrCoords'); // Used in _insertPoint
+        this._lastUsrCrds = pa.copy('usrCoords'); // Used in _insertPoint
 
         this._plotNonRecursive(curve, a, ta, b, tb, depth);
 
@@ -1499,7 +1473,7 @@ Mat.Plot = {
         curve.points.push(pb);
 
         curve.numberPoints = curve.points.length;
-        // console.timeEnd("plot");
+        // console.timeEnd('plot');
         // console.log("number of points:", this.numberPoints);
 
         return curve;
@@ -1509,6 +1483,14 @@ Mat.Plot = {
     // Plot algorithm v4
     //----------------------------------------------------------------------
 
+    /**
+     * TODO
+     * @param {Array} vec
+     * @param {Number} le
+     * @param {Number} level
+     * @returns Object
+     * @private
+     */
     _criticalInterval: function (vec, le, level) {
         var i,
             j,
@@ -1572,7 +1554,7 @@ Mat.Plot = {
         // or if a whole interval is problematic.
         // The latter is the case if the differences have many sign changes.
         for (j = 0; j < groups.length; j++) {
-            types[j] = "point";
+            types[j] = 'point';
             le1 = groups[j].length;
             if (le1 < 64) {
                 continue;
@@ -1586,7 +1568,7 @@ Mat.Plot = {
                 }
             }
             if (sgnChange * 6 > le1) {
-                types[j] = "interval";
+                types[j] = 'interval';
             }
         }
 
@@ -1605,12 +1587,8 @@ Mat.Plot = {
     },
 
     findComponents: function (curve, mi, ma, steps) {
-        var i,
-            t,
-            le,
-            h,
-            x,
-            y,
+        var i, t, h,
+            x, y,
             components = [],
             comp,
             comp_nr = 0,
@@ -1689,7 +1667,7 @@ Mat.Plot = {
             };
 
         if (pos < 5) {
-            result.type = "borderleft";
+            result.type = 'borderleft';
             result.idx = 0;
             result.t = t_values[0];
             result.x = x_values[0];
@@ -1699,7 +1677,7 @@ Mat.Plot = {
             return result;
         }
         if (pos > len - 6) {
-            result.type = "borderright";
+            result.type = 'borderright';
             result.idx = full_len - 1;
             result.t = t_values[full_len - 1];
             result.x = x_values[full_len - 1];
@@ -1721,6 +1699,9 @@ Mat.Plot = {
         return s + table[0][idx];
     },
 
+    // Thiele's interpolation formula,
+    // https://en.wikipedia.org/wiki/Thiele%27s_interpolation_formula
+    // unused
     thiele: function (t, recip, t_values, idx, degree) {
         var i,
             v = 0.0;
@@ -1814,7 +1795,7 @@ Mat.Plot = {
 
             // Store point location which may be centered around
             // critical points.
-            // If the lebvel is suitable, step out of the loop.
+            // If the level is suitable, step out of the loop.
             groups = this._criticalPoints(y_diffs, le, level);
             if (groups === false) {
                 // Its seems, the degree of the polynomial is equal to level
@@ -2002,7 +1983,7 @@ Mat.Plot = {
         // console.log("Last diffs", y_table[Math.min(level + 1, up)], "level", level + 1);
         // Analyze the groups which have been found.
         for (i = 0; i < groups.length; i++) {
-            if (types[i] === "interval") {
+            if (types[i] === 'interval') {
                 continue;
             }
             // console.log("Group", i, groups[i], types[i], level + 1)
@@ -2056,7 +2037,9 @@ Mat.Plot = {
     },
 
     getInterval: function (curve, ta, tb) {
-        var t_int, x_int, y_int;
+        var t_int,
+            // x_int,
+            y_int;
 
         //console.log('critical point', ta, tb);
         IntervalArithmetic.disable();
@@ -2064,7 +2047,7 @@ Mat.Plot = {
         t_int = IntervalArithmetic.Interval(ta, tb);
         curve.board.mathLib = IntervalArithmetic;
         curve.board.mathLibJXG = IntervalArithmetic;
-        x_int = curve.X(t_int, true);
+        // x_int = curve.X(t_int, true);
         y_int = curve.Y(t_int, true);
         curve.board.mathLib = Math;
         curve.board.mathLibJXG = JXG.Math;
@@ -2104,11 +2087,11 @@ Mat.Plot = {
         // console.log("Group:", group);
 
         h = comp.t_values[1] - comp.t_values[0];
-        if (group.type === "borderleft") {
+        if (group.type === 'borderleft') {
             t = comp.left_isNaN ? comp.left_t : group.t - h;
             t1 = t;
             t2 = t1 + h;
-        } else if (group.type === "borderright") {
+        } else if (group.type === 'borderright') {
             t = comp.right_isNaN ? comp.right_t : group.t + h;
             t2 = t;
             t1 = t2 - h;
@@ -2120,7 +2103,7 @@ Mat.Plot = {
         if (components2.length === 0) {
             return;
         }
-        if (group.type === "borderleft") {
+        if (group.type === 'borderleft') {
             t1 = components2[0].left_t;
             t2 = components2[0].t_values[0];
             h = components2[0].t_values[1] - components2[0].t_values[0];
@@ -2145,7 +2128,7 @@ Mat.Plot = {
             this._insertPoint_v4(curve, [1, x, y], t);
         }
 
-        if (group.type === "borderright") {
+        if (group.type === 'borderright') {
             t1 = components2[0].t_values[le - 1];
             t2 = components2[0].right_t;
             h = components2[0].t_values[1] - components2[0].t_values[0];
@@ -2249,16 +2232,16 @@ Mat.Plot = {
             i1,
             i2,
             x,
-            y,
+            // y,
             lo,
             hi,
             d_lft,
             d_rgt,
             d_thresh = 100,
+            // d1,
+            // d2,
             di1 = 5,
-            di2 = 3,
-            d1,
-            d2;
+            di2 = 3;
 
         t = group.t;
         console.log("HandleSingularity at t =", t);
@@ -2388,13 +2371,13 @@ Mat.Plot = {
     /**
      * If the absolute maximum of the set of differences is larger than
      * criticalThreshold * median of these values, it is regarded as critical point.
-     * @see JXG.Math.Plot#_criticalInterval
+     * @see JXG.Math.Plot._criticalInterval
      */
     criticalThreshold: 1000,
 
     plot_v4: function (curve, ta, tb, steps) {
         var i,
-            j,
+            // j,
             le,
             components,
             idx,
@@ -2403,17 +2386,14 @@ Mat.Plot = {
             g,
             start,
             ret,
-            x_table,
-            y_table,
-            t,
-            t1,
-            t2,
-            good,
-            bad,
-            x_int,
+            x_table, y_table,
+            t, t1, t2,
+            // good,
+            // bad,
+            // x_int,
             y_int,
-            degree_x,
-            degree_y,
+            // degree_x,
+            // degree_y,
             h = (tb - ta) / steps,
             Ypl = function (x) {
                 return curve.Y(x, true);
@@ -2430,16 +2410,16 @@ Mat.Plot = {
             groups = ret[0];
             x_table = ret[1];
             y_table = ret[2];
-            degree_x = ret[3];
-            degree_y = ret[4];
 
+            // degree_x = ret[3];
+            // degree_y = ret[4];
             // if (degree_x >= 0) {
             //     console.log("x polynomial of degree", degree_x);
             // }
             // if (degree_y >= 0) {
             //     console.log("y polynomial of degree", degree_y);
             // }
-            if (groups.length === 0 || groups[0].type !== "borderleft") {
+            if (groups.length === 0 || groups[0].type !== 'borderleft') {
                 groups.unshift({
                     idx: 0,
                     t: comp.t_values[0],
@@ -2448,7 +2428,7 @@ Mat.Plot = {
                     type: "borderleft"
                 });
             }
-            if (groups[groups.length - 1].type !== "borderright") {
+            if (groups[groups.length - 1].type !== 'borderright') {
                 le = comp.t_values.length;
                 groups.push({
                     idx: le - 1,
@@ -2467,8 +2447,8 @@ Mat.Plot = {
                     le = groups[g].idx - 1;
                 }
 
-                good = 0;
-                bad = 0;
+                // good = 0;
+                // bad = 0;
                 // Insert all uncritical points until next critical point
                 for (i = start; i < le - 2; i++) {
                     this._insertPoint_v4(
@@ -2476,7 +2456,7 @@ Mat.Plot = {
                         [1, comp.x_values[i], comp.y_values[i]],
                         comp.t_values[i]
                     );
-                    j = Math.max(0, i - 2);
+                    // j = Math.max(0, i - 2);
                     // Add more points in critical intervals
                     if (
                         //degree_y === -1 && // No polynomial
@@ -2525,9 +2505,9 @@ Mat.Plot = {
                                 );
                             }
                         }
-                        bad++;
-                    } else {
-                        good++;
+                        // bad++;
+                    // } else {
+                        // good++;
                     }
                 }
                 // console.log("GOOD", good, "BAD", bad);
@@ -2537,7 +2517,7 @@ Mat.Plot = {
                     //console.log("critical point / interval", groups[g]);
 
                     i = groups[g].idx;
-                    if (groups[g].type === "borderleft" || groups[g].type === "borderright") {
+                    if (groups[g].type === "borderleft" || groups[g].type === 'borderright') {
                         this.handleBorder(curve, comp, groups[g], x_table, y_table);
                     } else {
                         this._seconditeration_v4(curve, comp, groups[g], x_table, y_table);
@@ -2564,7 +2544,7 @@ Mat.Plot = {
     updateParametricCurve_v4: function (curve, mi, ma) {
         var ta, tb, w2, bbox;
 
-        if (curve.xterm === "x") {
+        if (curve.xterm === 'x') {
             // For function graphs we can restrict the plot interval
             // to the visible area +plus margin
             bbox = curve.board.getBoundingBox();

@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Polygon in 3D</title>
+    <meta charset="utf-8">
+    <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
+    <script type="text/javascript" src="../distrib/jsxgraphcore.js"></script>
+</head>
+<body>
+
+<div id="jxgbox" class="jxgbox" style="width:800px; height:800px; float:left"></div>
+
+<script type="text/javascript">
+    let board = JXG.JSXGraph.initBoard(
+        'jxgbox',
+        {
+            boundingbox: [-8, 8, 8,-8],
+            axis: false,
+            showcopyright: false,
+            shownavigation: false
+        }
+    );
+    let view = board.create(
+        'view3d',
+        [[-6, -3], [8, 8],
+        [[0, 3], [0, 3], [0, 3]]],
+        {
+            xPlaneRear: {fillOpacity: 0.2, gradient: null},
+            yPlaneRear: {fillOpacity: 0.2, gradient: null},
+            zPlaneRear: {fillOpacity: 0.2, gradient: null},
+            depthOrderPoints: true
+        }
+    );
+
+    // Vertices of first polygon
+    let vertices1 = [];
+    coords1 = [
+        [2, 1, 1],
+        [2, 2, 1],
+        [1, 2, 1],
+        [1, 2, 2],
+        [1, 1, 2],
+        [1, 1, 1]
+    ];
+    colors1 = [
+        'orangered',
+        'gold',
+        'mediumseagreen',
+        'darkturquoise',
+        'purple',
+        'deeppink'
+    ];
+    for (i in coords1) {
+        vertices1.push(view.create(
+            'point3d',
+            coords1[i],
+            {
+                withLabel: false,
+                size: 5,
+                strokeColor: 'none',
+                fillColor: 'white',
+                gradient: 'radial',
+                gradientSecondColor: colors1[i],
+                gradientFX: 0.7,
+                gradientFY: 0.3,
+                highlightStrokeWidth: 1,
+                highlightStrokeColor: '#777'
+            }
+        ));
+    }
+
+    // First polygon
+    let polygon1 = view.create(
+        'polygon3d',
+        vertices1,
+        {
+            borders: {
+                strokeColor: '#777',
+                highlightStrokeColor: '#999'
+            }
+        }
+    );
+
+    // Second polygon
+    let coords2 = [
+        [0.5, 1.5, 1.5],
+        [1.5, 1.5, 1.5],
+        [1.5, 2.5, 1.5],
+        [0.5, 2.5, 1.5]
+    ];
+    let polygon2 = view.create(
+        'polygon3d',
+        coords2,
+        {
+            vertices: {
+                withLabel: false,
+                size: 3,
+                strokeColor: 'none',
+                fillColor: 'white',
+                gradient: 'radial',
+                gradientSecondColor: '#444',
+                gradientFX: 0.7,
+                gradientFY: 0.3,
+                highlightStrokeWidth: 1,
+                highlightStrokeColor: 'black'
+            },
+            borders: {
+                strokeColor: 'black',
+                highlightStrokeColor: 'gray'
+            }
+        }
+    );
+</script>
+</body>
+</html>

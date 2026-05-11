@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2023
+    Copyright 2008-2026
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -36,18 +36,18 @@
  * @fileoverview This file contains code for transformations of geometrical objects.
  */
 
-import JXG from "../jxg";
-import Const from "./constants";
-import Mat from "../math/math";
-import Type from "../utils/type";
+import JXG from "../jxg.js";
+import Const from "./constants.js";
+import Mat from "../math/math.js";
+import Type from "../utils/type.js";
 
 /**
- * A transformation consists of a 3x3 matrix, i.e. it is a projective transformation.
+ * A (2D) transformation consists of a 3x3 matrix, i.e. it is a projective transformation.
  * @class Creates a new transformation object. Do not use this constructor to create a transformation.
  * Use {@link JXG.Board#create} with
  * type {@link Transformation} instead.
  * @constructor
- * @param {JXG.Board} board The board the new circle is drawn on.
+ * @param {JXG.Board} board The board the transformation is part of.
  * @param {String} type Can be
  * <ul><li> 'translate'
  * <li> 'scale'
@@ -55,6 +55,7 @@ import Type from "../utils/type";
  * <li> 'rotate'
  * <li> 'shear'
  * <li> 'generic'
+ * <li> 'matrix'
  * </ul>
  * @param {Object} params The parameters depend on the transformation type
  *
@@ -78,7 +79,7 @@ import Type from "../utils/type";
  * A rotation matrix with angle a (in Radians)
  * <pre>
  * ( 1    0        0      )   ( z )
- * ( 0    cos(a)   -sin(a)) * ( x )
+ * ( 0    cos(a)  -sin(a) ) * ( x )
  * ( 0    sin(a)   cos(a) )   ( y )
  * </pre>
  *
@@ -90,32 +91,70 @@ import Type from "../utils/type";
  * ( 0  b  1)   ( y )
  * </pre>
  *
- * <p>Generic transformation:
+ * <p>Generic affine transformation (4 parameters):
+ * <pre>
+ * ( 1  0  0 )   ( z )
+ * ( 0  a  b ) * ( x )
+ * ( 0  c  d )   ( y )
+ * </pre>
+ *
+ * <p>Affine 2x2 matrix:
+ * <pre>
+ * ( 1  0  0 )   ( z )
+ * ( 0  M    ) * ( x )
+ * ( 0       )   ( y )
+ * </pre>
+ *
+ * <p>Generic transformation (9 parameters):
  * <pre>
  * ( a  b  c )   ( z )
  * ( d  e  f ) * ( x )
  * ( g  h  i )   ( y )
  * </pre>
  *
+ * <p>3x3 Matrix:
+ * <pre>
+ * (         )   ( z )
+ * (    M    ) * ( x )
+ * (         )   ( y )
+ * </pre>
  */
-JXG.Transformation = function (board, type, params) {
+JXG.Transformation = function (board, type, params, is3D) {
     this.elementClass = Const.OBJECT_CLASS_OTHER;
     this.type = Const.OBJECT_TYPE_TRANSFORMATION;
-    this.matrix = [
-        [1, 0, 0],
-        [0, 1, 0],
-        [0, 0, 1]
-    ];
+
+    if (is3D) {
+        this.is3D = true;
+        this.matrix = [
+            [1, 0, 0, 0],
+            [0, 1, 0, 0],
+            [0, 0, 1, 0],
+            [0, 0, 0, 1]
+        ];
+    } else {
+        this.is3D = false;
+        this.matrix = [
+            [1, 0, 0],
+            [0, 1, 0],
+            [0, 0, 1]
+        ];
+    }
+
     this.board = board;
     this.isNumericMatrix = false;
-    this.setMatrix(board, type, params);
+    if (this.is3D) {
+        this.setMatrix3D(params[0] /* view3d */, type, params.slice(1));
+    } else {
+        this.setMatrix(board, type, params);
+    }
 
     this.methodMap = {
         apply: "apply",
         applyOnce: "applyOnce",
         bindTo: "bindTo",
         bind: "bindTo",
-        melt: "melt"
+        melt: "melt",
+        meltTo: "meltTo"
     };
 };
 
@@ -140,19 +179,6 @@ JXG.extend(
          *                        'shear', 'generic'.
          * @param {Array} params Parameters for the various transformation types.
          *
-         * <p>These are
-         * @param {Array} x,y Shift vector (number or function) in case of 'translate'.
-         * @param {Array} scale_x,scale_y Scale vector (number or function) in case of 'scale'.
-         * @param {Array} line|point_pair|"four coordinates" In case of 'reflect' the parameters could
-         *                be a line, a pair of points or four number (or functions) p_x, p_y, q_x, q_y,
-         *                determining a line through points (p_x, p_y) and (q_x, q_y).
-         * @param {Array} angle,x,y|angle,[x,y] In case of 'rotate' the parameters are an angle or angle function,
-         *                returning the angle in Radians and - optionally - a coordinate pair or a point defining the
-         *                rotation center. If the rotation center is not given, the transformation rotates around (0,0).
-         * @param {Array} shear_x,shear_y Shear vector (number or function) in case of 'shear'.
-         * @param {Array} a,b,c,d,e,f,g,h,i Nine matrix entries (numbers or functions) for a generic
-         *                projective transformation  in case of 'generic'.
-         *
          * <p>A transformation with a generic matrix looks like:
          * <pre>
          * ( a  b  c )   ( z )
@@ -160,21 +186,80 @@ JXG.extend(
          * ( g  h  i )   ( y )
          * </pre>
          *
+         * The transformation matrix then looks like:
+         * <p>
+         * Translation matrix:
+         * <pre>
+         * ( 1  0  0)   ( z )
+         * ( a  1  0) * ( x )
+         * ( b  0  1)   ( y )
+         * </pre>
+         *
+         * <p>
+         * Scale matrix:
+         * <pre>
+         * ( 1  0  0)   ( z )
+         * ( 0  a  0) * ( x )
+         * ( 0  0  b)   ( y )
+         * </pre>
+         *
+         * <p>
+         * A rotation matrix with angle a (in Radians)
+         * <pre>
+         * ( 1    0        0      )   ( z )
+         * ( 0    cos(a)  -sin(a) ) * ( x )
+         * ( 0    sin(a)   cos(a) )   ( y )
+         * </pre>
+         *
+         * <p>
+         * Shear matrix:
+         * <pre>
+         * ( 1  0  0)   ( z )
+         * ( 0  1  a) * ( x )
+         * ( 0  b  1)   ( y )
+         * </pre>
+         *
+         * <p>Generic affine transformation (4 parameters):
+         * <pre>
+         * ( 1  0  0 )   ( z )
+         * ( 0  a  b ) * ( x )
+         * ( 0  c  d )   ( y )
+         * </pre>
+         *
+         * <p>Affine 2x2 matrix:
+         * <pre>
+         * ( 1  0  0 )   ( z )
+         * ( 0  M    ) * ( x )
+         * ( 0       )   ( y )
+         * </pre>
+         *
+         * <p>Generic transformation (9 parameters):
+         * <pre>
+         * ( a  b  c )   ( z )
+         * ( d  e  f ) * ( x )
+         * ( g  h  i )   ( y )
+         * </pre>
+         *
+         * <p>3x3 Matrix:
+         * <pre>
+         * (         )   ( z )
+         * (    M    ) * ( x )
+         * (         )   ( y )
+         * </pre>
          */
         setMatrix: function (board, type, params) {
             var i;
                 // e, obj; // Handle dependencies
 
             this.isNumericMatrix = true;
-
             for (i = 0; i < params.length; i++) {
-                if (typeof params[i] !== "number") {
+                if (typeof params[i] !== 'number') {
                     this.isNumericMatrix = false;
                     break;
                 }
             }
 
-            if (type === "translate") {
+            if (type === 'translate') {
                 if (params.length !== 2) {
                     throw new Error("JSXGraph: translate transformation needs 2 parameters.");
                 }
@@ -183,7 +268,7 @@ JXG.extend(
                     this.matrix[1][0] = this.evalParam(0);
                     this.matrix[2][0] = this.evalParam(1);
                 };
-            } else if (type === "scale") {
+            } else if (type === 'scale') {
                 if (params.length !== 2) {
                     throw new Error("JSXGraph: scale transformation needs 2 parameters.");
                 }
@@ -193,7 +278,7 @@ JXG.extend(
                     this.matrix[2][2] = this.evalParam(1); // y
                 };
                 // Input: line or two points
-            } else if (type === "reflect") {
+            } else if (type === 'reflect') {
                 // line or two points
                 if (params.length < 4) {
                     params[0] = board.select(params[0]);
@@ -229,7 +314,7 @@ JXG.extend(
                         );
                     }
 
-                    // Project origin to the line.  This gives a finite point p
+                    // Project origin to the line. This gives a finite point p
                     x = v[1];
                     y = v[2];
                     z = v[0];
@@ -253,12 +338,12 @@ JXG.extend(
                     this.matrix[2][0] =
                         yoff * (1 - this.matrix[2][2]) - xoff * this.matrix[2][1];
                 };
-            } else if (type === "rotate") {
-                // angle, x, y
+            } else if (type === 'rotate') {
                 if (params.length === 3) {
+                    // angle, x, y
                     this.evalParam = Type.createEvalFunction(board, params, 3);
-                    // angle, p or angle
                 } else if (params.length > 0 && params.length <= 2) {
+                    // angle, p or angle
                     this.evalParam = Type.createEvalFunction(board, params, 1);
 
                     if (params.length === 2 && !Type.isArray(params[1])) {
@@ -296,7 +381,7 @@ JXG.extend(
                         this.matrix[2][0] = y * (1 - co) - x * si;
                     }
                 };
-            } else if (type === "shear") {
+            } else if (type === 'shear') {
                 if (params.length !== 2) {
                     throw new Error("JSXGraph: shear transformation needs 2 parameters.");
                 }
@@ -306,7 +391,34 @@ JXG.extend(
                     this.matrix[1][2] = this.evalParam(0);
                     this.matrix[2][1] = this.evalParam(1);
                 };
-            } else if (type === "generic") {
+            } else if (type === 'affine') {
+                if (params.length !== 4) {
+                    throw new Error("JSXGraph: affine transformation needs 4 parameters.");
+                }
+
+                this.evalParam = Type.createEvalFunction(board, params, 9);
+
+                this.update = function () {
+                    this.matrix[1][1] = this.evalParam(0);
+                    this.matrix[1][2] = this.evalParam(1);
+                    this.matrix[2][1] = this.evalParam(2);
+                    this.matrix[2][2] = this.evalParam(3);
+                };
+            } else if (type === 'affinematrix') {
+                if (params.length !== 1) {
+                    throw new Error("JSXGraph: transformation of type 'matrix' needs 1 parameter.");
+                }
+
+                this.evalParam = params[0].slice();
+                this.update = function () {
+                    var i, j;
+                    for (i = 0; i < 2; i++) {
+                        for (j = 0; j < 2; j++) {
+                            this.matrix[i + 1][j + 1] = Type.evaluate(this.evalParam[i][j]);
+                        }
+                    }
+                };
+            } else if (type === 'generic') {
                 if (params.length !== 9) {
                     throw new Error("JSXGraph: generic transformation needs 9 parameters.");
                 }
@@ -324,6 +436,20 @@ JXG.extend(
                     this.matrix[2][1] = this.evalParam(7);
                     this.matrix[2][2] = this.evalParam(8);
                 };
+            } else if (type === 'matrix') {
+                if (params.length !== 1) {
+                    throw new Error("JSXGraph: transformation of type 'matrix' needs 1 parameter.");
+                }
+
+                this.evalParam = params[0].slice();
+                this.update = function () {
+                    var i, j;
+                    for (i = 0; i < 3; i++) {
+                        for (j = 0; j < 3; j++) {
+                            this.matrix[i][j] = Type.evaluate(this.evalParam[i][j]);
+                        }
+                    }
+                };
             }
 
             // Handle dependencies
@@ -338,27 +464,320 @@ JXG.extend(
         },
 
         /**
-         * Transform a GeometryElement:
+         * Set the 3D transformation matrix for different types of standard transforms.
+         * @param {JXG.Board} board
+         * @param {String} type   Transformation type, possible values are
+         *                        'translate', 'scale', 'rotate',
+         *                        'rotateX', 'rotateY', 'rotateZ',
+         *                        'shear', 'generic'.
+         * @param {Array} params Parameters for the various transformation types.
+         *
+         * <p>A transformation with a generic matrix looks like:
+         * <pre>
+         * ( a  b  c  d)   ( w )
+         * ( e  f  g  h) * ( x )
+         * ( i  j  k  l)   ( y )
+         * ( m  n  o  p)   ( z )
+         * </pre>
+         *
+         * The transformation matrix then looks like:
+         * <p>
+         * Translation matrix:
+         * <pre>
+         * ( 1  0  0  0)   ( w )
+         * ( a  1  0  0) * ( x )
+         * ( b  0  1  0)   ( y )
+         * ( c  0  0  1)   ( z )
+         * </pre>
+         *
+         * <p>
+         * Scale matrix:
+         * <pre>
+         * ( 1  0  0  0)   ( w )
+         * ( 0  a  0  0) * ( x )
+         * ( 0  0  b  0)   ( y )
+         * ( 0  0  0  c)   ( z )
+         * </pre>
+         *
+         * <p>
+         * rotateX: a rotation matrix with angle a (in Radians)
+         * <pre>
+         * ( 1    0        0             )   ( w )
+         * ( 0    1        0         0   ) * ( x )
+         * ( 0    0      cos(a)  -sin(a) )   ( y )
+         * ( 0    0      sin(a)   cos(a) )   ( z )
+         * </pre>
+         *
+         * <p>
+         * rotateY: a rotation matrix with angle a (in Radians)
+         * <pre>
+         * ( 1      0       0           )   ( w )
+         * ( 0    cos(a)    0   -sin(a) ) * ( x )
+         * ( 0      0       1       0   )   ( y )
+         * ( 0    sin(a)    0    cos(a) )   ( z )
+         * </pre>
+         *
+         * <p>
+         * rotateZ: a rotation matrix with angle a (in Radians)
+         * <pre>
+         * ( 1      0                0  )   ( w )
+         * ( 0    cos(a)  -sin(a)    0  ) * ( x )
+         * ( 0    sin(a)   cos(a)    0  )   ( y )
+         * ( 0      0         0      1  )   ( z )
+         * </pre>
+         *
+         * <p>
+         * rotate: a rotation matrix with angle a (in Radians)
+         * and normal <i>n</i>.
+         *
+         * <p>Generic affine transformation (9 parameters):
+         * <pre>
+         * ( 1  0  0  0 )   ( w )
+         * ( 0  a  b  c ) * ( x )
+         * ( 0  d  e  f )   ( y )
+         * ( 0  g  h  i )   ( z )
+         * </pre>
+         *
+         * <p>Affine 3x3 matrix:
+         * <pre>
+         * ( 1  0  0  0 )   ( w )
+         * ( 0          ) * ( x )
+         * ( 0     M    )   ( y )
+         * ( 0          )   ( z )
+         * </pre>
+         *
+         * <p>Generic transformation (16 parameters):
+         * <pre>
+         * ( a  b  c  d )   ( w )
+         * ( e  f  ...  ) * ( x )
+         * (    ...     )   ( y )
+         * (    ...   p )   ( z )
+         * </pre>
+         *
+         * <p>Generic 4x4 matrix:
+         * <pre>
+         * (            )   ( w )
+         * (     M      ) * ( x )
+         * (            )   ( y )
+         * (            )   ( z )
+         * </pre>
+         *
+         */
+        setMatrix3D: function(view, type, params) {
+            var i,
+                board = view.board;
+
+            this.isNumericMatrix = true;
+            for (i = 0; i < params.length; i++) {
+                if (typeof params[i] !== 'number') {
+                    this.isNumericMatrix = false;
+                    break;
+                }
+            }
+
+            if (type === 'translate') {
+                if (params.length !== 3) {
+                    throw new Error("JSXGraph: 3D translate transformation needs 3 parameters.");
+                }
+                this.evalParam = Type.createEvalFunction(board, params, 3);
+                this.update = function () {
+                    this.matrix[1][0] = this.evalParam(0);
+                    this.matrix[2][0] = this.evalParam(1);
+                    this.matrix[3][0] = this.evalParam(2);
+                };
+            } else if (type === 'scale') {
+                if (params.length !== 3 && params.length !== 4) {
+                    throw new Error("JSXGraph: 3D scale transformation needs either 3 or 4 parameters.");
+                }
+                this.evalParam = Type.createEvalFunction(board, params, 3);
+                this.update = function () {
+                    var x = this.evalParam(0),
+                        y = this.evalParam(1),
+                        z = this.evalParam(2);
+
+                    this.matrix[1][1] = x;
+                    this.matrix[2][2] = y;
+                    this.matrix[3][3] = z;
+                };
+            } else if (type === 'rotateX') {
+                params.splice(1, 0, [1, 0, 0]);
+                this.setMatrix3D(view, 'rotate', params);
+            } else if (type === 'rotateY') {
+                params.splice(1, 0, [0, 1, 0]);
+                this.setMatrix3D(view, 'rotate', params);
+            } else if (type === 'rotateZ') {
+                params.splice(1, 0, [0, 0, 1]);
+                this.setMatrix3D(view, 'rotate', params);
+            } else if (type === 'rotate') {
+                if (params.length < 2) {
+                    throw new Error("JSXGraph: 3D rotate transformation needs 2 or 3 parameters.");
+                }
+                if (params.length === 3 && !Type.isFunction(params[2]) && !Type.isArray(params[2])) {
+                    this.evalParam = Type.createEvalFunction(board, params, 2);
+                    params[2] = view.select(params[2]);
+                } else {
+                    this.evalParam = Type.createEvalFunction(board, params, params.length);
+                }
+                this.update = function () {
+                    var a = this.evalParam(0), // angle
+                        n = this.evalParam(1), // normal
+                        p = [1, 0, 0, 0],
+                        co = Math.cos(a),
+                        si = Math.sin(a),
+                        n1, n2, n3,
+                        m1 = [
+                            [1, 0, 0, 0],
+                            [0, 1, 0, 0],
+                            [0, 0, 1, 0],
+                            [0, 0, 0, 1]
+                        ],
+                        m2 = [
+                            [1, 0, 0, 0],
+                            [0, 1, 0, 0],
+                            [0, 0, 1, 0],
+                            [0, 0, 0, 1]
+                        ],
+                        nrm = Mat.norm(n);
+
+                    if (n.length === 3) {
+                        n1 = n[0] / nrm;
+                        n2 = n[1] / nrm;
+                        n3 = n[2] / nrm;
+                    } else {
+                        n1 = n[1] / nrm;
+                        n2 = n[2] / nrm;
+                        n3 = n[3] / nrm;
+                    }
+                    if (params.length === 3) {
+                        if (params.length === 3 && Type.exists(params[2].is3D)) {
+                            p = params[2].coords.slice();
+                        } else {
+                            p = this.evalParam(2);
+                        }
+                        if (p.length === 3) {
+                            p.unshift(1);
+                        }
+                        m1[1][0] = -p[1];
+                        m1[2][0] = -p[2];
+                        m1[3][0] = -p[3];
+
+                        m2[1][0] = p[1];
+                        m2[2][0] = p[2];
+                        m2[3][0] = p[3];
+                    }
+
+                    this.matrix = [
+                        [1, 0, 0, 0],
+                        [0, n1 * n1 * (1 - co) +      co, n1 * n2 * (1 - co) - n3 * si, n1 * n3 * (1 - co) + n2 * si],
+                        [0, n2 * n1 * (1 - co) + n3 * si, n2 * n2 * (1 - co) +      co, n2 * n3 * (1 - co) - n1 * si],
+                        [0, n3 * n1 * (1 - co) - n2 * si, n3 * n2 * (1 - co) + n1 * si, n3 * n3 * (1 - co) +      co]
+                    ];
+                    this.matrix = Mat.matMatMult(this.matrix, m1);
+                    this.matrix = Mat.matMatMult(m2, this.matrix);
+                };
+            } else if (type === 'affine') {
+                if (params.length !== 9) {
+                    throw new Error("JSXGraph: 3D transformation of type 'affine' needs 9 parameters.");
+                }
+
+                this.evalParam = Type.createEvalFunction(board, params, 9);
+                this.update = function () {
+                    this.matrix[1][1] = this.evalParam(0);
+                    this.matrix[1][2] = this.evalParam(1);
+                    this.matrix[1][3] = this.evalParam(2);
+                    this.matrix[2][1] = this.evalParam(3);
+                    this.matrix[2][2] = this.evalParam(4);
+                    this.matrix[2][3] = this.evalParam(5);
+                    this.matrix[3][1] = this.evalParam(6);
+                    this.matrix[3][2] = this.evalParam(7);
+                    this.matrix[3][3] = this.evalParam(8);
+                };
+            } else if (type === 'affinematrix') {
+                if (params.length !== 1) {
+                    throw new Error("JSXGraph: 3D transformation of type 'affinematrix' needs 1 parameter.");
+                }
+
+                this.evalParam = params[0].slice();
+                this.update = function () {
+                    var i, j;
+                    for (i = 0; i < 3; i++) {
+                        for (j = 0; j < 3; j++) {
+                            this.matrix[i + 1][j + 1] = Type.evaluate(this.evalParam[i][j]);
+                        }
+                    }
+                };
+            } else if (type === 'generic') {
+                if (params.length !== 16) {
+                    throw new Error("JSXGraph: 3D transformation of type 'generic' needs 16 parameters.");
+                }
+
+                this.evalParam = Type.createEvalFunction(board, params, 6);
+                this.update = function () {
+                    this.matrix[0][0] = this.evalParam(0);
+                    this.matrix[0][1] = this.evalParam(1);
+                    this.matrix[0][2] = this.evalParam(2);
+                    this.matrix[0][3] = this.evalParam(3);
+                    this.matrix[1][0] = this.evalParam(4);
+                    this.matrix[1][1] = this.evalParam(5);
+                    this.matrix[1][2] = this.evalParam(6);
+                    this.matrix[1][3] = this.evalParam(7);
+                    this.matrix[2][0] = this.evalParam(8);
+                    this.matrix[2][1] = this.evalParam(9);
+                    this.matrix[2][2] = this.evalParam(10);
+                    this.matrix[2][3] = this.evalParam(11);
+                    this.matrix[3][0] = this.evalParam(12);
+                    this.matrix[3][1] = this.evalParam(13);
+                    this.matrix[3][2] = this.evalParam(14);
+                    this.matrix[3][3] = this.evalParam(15);
+                };
+            } else if (type === 'matrix') {
+                if (params.length !== 1) {
+                    throw new Error("JSXGraph: 3D transformation of type 'matrix' needs 1 parameter.");
+                }
+
+                this.evalParam = params[0].slice();
+                this.update = function () {
+                    var i, j;
+                    for (i = 0; i < 4; i++) {
+                        for (j = 0; j < 4; j++) {
+                            this.matrix[i][j] = Type.evaluate(this.evalParam[i][j]);
+                        }
+                    }
+                };
+            }
+        },
+
+        /**
+         * Transform a point element, that are: {@link Point}, {@link Text}, {@link Image}, {@link Point3D}.
          * First, the transformation matrix is updated, then do the matrix-vector-multiplication.
+         * <p>
+         * Restricted to 2D transformations.
+         *
          * @private
          * @param {JXG.GeometryElement} p element which is transformed
          * @param {String} 'self' Apply the transformation to the initialCoords instead of the coords if this is set.
          * @returns {Array}
          */
         apply: function (p, self) {
-            this.update();
+            var c;
 
-            if (Type.exists(self)) {
-                return Mat.matVecMult(this.matrix, p.initialCoords.usrCoords);
+            this.update();
+            if (this.is3D) {
+                c = p.coords;
+            } else if (Type.exists(self)) {
+                c = p.initialCoords.usrCoords;
+            } else {
+                c = p.coords.usrCoords;
             }
-            return Mat.matVecMult(this.matrix, p.coords.usrCoords);
+
+            return Mat.matVecMult(this.matrix, c);
         },
 
         /**
-         * Applies a transformation once to a GeometryElement or an array of elements.
-         * If it is a free point, then it can be dragged around later
+         * Applies a transformation once to a point element, that are: {@link Point}, {@link Text}, {@link Image}, {@link Point3D} or to an array of such elements.
+         * If it is a free 2D point, then it can be dragged around later
          * and will overwrite the transformed coordinates.
-         * @param {JXG.Point,Array} p
+         * @param {JXG.Point|Array} p
          */
         applyOnce: function (p) {
             var c, len, i;
@@ -368,32 +787,100 @@ JXG.extend(
             }
 
             len = p.length;
-
             for (i = 0; i < len; i++) {
                 this.update();
-                c = Mat.matVecMult(this.matrix, p[i].coords.usrCoords);
-                p[i].coords.setCoordinates(Const.COORDS_BY_USER, c);
+                if (this.is3D) {
+                    p[i].coords = Mat.matVecMult(this.matrix, p[i].coords);
+                } else {
+                    c = Mat.matVecMult(this.matrix, p[i].coords.usrCoords);
+                    p[i].coords.setCoordinates(Const.COORDS_BY_USER, c);
+                }
             }
         },
 
         /**
          * Binds a transformation to a GeometryElement or an array of elements. In every update of the
          * GeometryElement(s), the transformation is executed. That means, in order to immediately
-         * apply the transformation, a call of board.update() has to follow.
-         * @param  {Array,JXG.Object} p JXG.Object or array of JXG.Object to
+         * apply the transformation after calling bindTo, a call of board.update() has to follow.
+         * <p>
+         * The transformation is simply appended to the existing list of transformations of the object.
+         * It is not fused (melt) with an existing transformation.
+         *
+         * @param  {Array|JXG.Object} el JXG.Object or array of JXG.Object to
          *                            which the transformation is bound to.
+         * @see JXG.Transformation.meltTo
          */
-        bindTo: function (p) {
+        bindTo: function (el) {
             var i, len;
-            if (Type.isArray(p)) {
-                len = p.length;
+            if (Type.isArray(el)) {
+                len = el.length;
 
                 for (i = 0; i < len; i++) {
-                    p[i].transformations.push(this);
+                    el[i].transformations.push(this);
                 }
             } else {
-                p.transformations.push(this);
+                el.transformations.push(this);
             }
+        },
+
+        /**
+         * Binds a transformation to a GeometryElement or an array of elements. In every update of the
+         * GeometryElement(s), the transformation is executed. That means, in order to immediately
+         * apply the transformation after calling meltTo, a call of board.update() has to follow.
+         * <p>
+         * In case the last transformation of the element and this transformation are static,
+         * i.e. the transformation matrices do not depend on other elements,
+         * the transformation will be fused into (multiplied with) the last transformation of
+         * the element. Thus, the list of transformations is kept small.
+         * If the transformation will be the first transformation ot the element, it will be cloned
+         * to prevent side effects.
+         *
+         * @param  {Array|JXG.Object} el JXG.Object or array of JXG.Objects to
+         *                            which the transformation is bound to.
+         *
+         * @see JXG.Transformation#bindTo
+         */
+        meltTo: function (el) {
+            var i, elt, t;
+
+            if (Type.isArray(el)) {
+                for (i = 0; i < el.length; i++) {
+                    this.meltTo(el[i]);
+                }
+            } else {
+                elt = el.transformations;
+                if (elt.length > 0 &&
+                    elt[elt.length - 1].isNumericMatrix &&
+                    this.isNumericMatrix
+                ) {
+                    elt[elt.length - 1].melt(this);
+                } else {
+                    // Use a clone of the transformation.
+                    // Otherwise, if the transformation is meltTo twice
+                    // the transformation will be changed.
+                    t = this.clone();
+                    elt.push(t);
+                }
+            }
+        },
+
+        /**
+         * Create a copy of the transformation in case it is static, i.e.
+         * if the transformation matrix does not depend on other elements.
+         * <p>
+         * If the transformation matrix is not static, null will be returned.
+         *
+         * @returns {JXG.Transformation}
+         */
+        clone: function() {
+            var t = null;
+
+            if (this.isNumericMatrix) {
+                t = new JXG.Transformation(this.board, 'none', []);
+                t.matrix = this.matrix.slice();
+            }
+
+            return t;
         },
 
         /**
@@ -413,7 +900,7 @@ JXG.extend(
 
         /**
          * Combine two transformations to one transformation. This only works if
-         * both of transformation matrices consist solely of numbers, and do not
+         * both of transformation matrices consist of numbers solely, and do not
          * contain functions.
          *
          * Multiplies the transformation with a transformation t from the left.
@@ -422,48 +909,21 @@ JXG.extend(
          * @returns {JXG.Transform} the transformation object.
          */
         melt: function (t) {
-            var res = [],
-                i,
-                len,
-                len0,
-                k,
-                s,
-                j;
-
-            len = t.matrix.length;
-            len0 = this.matrix[0].length;
-
-            for (i = 0; i < len; i++) {
-                res[i] = [];
-            }
+            var res = [];
 
             this.update();
             t.update();
 
-            for (i = 0; i < len; i++) {
-                for (j = 0; j < len0; j++) {
-                    s = 0;
-                    for (k = 0; k < len; k++) {
-                        s += t.matrix[i][k] * this.matrix[k][j];
-                    }
-                    res[i][j] = s;
-                }
-            }
+            res = Mat.matMatMult(t.matrix, this.matrix);
 
             this.update = function () {
-                var len = this.matrix.length,
-                    len0 = this.matrix[0].length;
-
-                for (i = 0; i < len; i++) {
-                    for (j = 0; j < len0; j++) {
-                        this.matrix[i][j] = res[i][j];
-                    }
-                }
+                this.matrix = res;
             };
+
             return this;
         },
 
-        // documented in element.js
+        // Documented in element.js
         // Not yet, since transformations are not listed in board.objects.
         getParents: function () {
             var p = [[].concat.apply([], this.matrix)];
@@ -478,13 +938,13 @@ JXG.extend(
 );
 
 /**
- * @class This element is used to provide projective transformations.
+ * @class Define projective 2D transformations like translation, rotation, reflection.
  * @pseudo
  * @description A transformation consists of a 3x3 matrix, i.e. it is a projective transformation.
  * <p>
  * Internally, a transformation is applied to an element by multiplying the 3x3 matrix from the left to
  * the homogeneous coordinates of the element. JSXGraph represents homogeneous coordinates in the order
- * (z, x, y). The matrix has the form 
+ * (z, x, y). The matrix has the form
  * <pre>
  * ( a  b  c )   ( z )
  * ( d  e  f ) * ( x )
@@ -494,60 +954,94 @@ JXG.extend(
  * In this case, finite points will stay finite. This is not the case for general projective coordinates.
  * <p>
  * Transformations acting on texts and images are considered to be affine, i.e. b and c are ignored.
- * 
+ *
  * @name Transformation
  * @augments JXG.Transformation
  * @constructor
  * @type JXG.Transformation
  * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
- * @param {numbers,functions} parameters The parameters depend on the transformation type, supplied as attribute 'type'.
+ * @param {number|function|JXG.GeometryElement} parameters The parameters depend on the transformation type, supplied as attribute 'type'.
  * Possible transformation types are
- * <ul><li> 'translate'
+ * <ul>
+ * <li> 'translate'
  * <li> 'scale'
  * <li> 'reflect'
  * <li> 'rotate'
  * <li> 'shear'
  * <li> 'generic'
+ * <li> 'matrix'
  * </ul>
- * The transformation matrix then looks like:
- * <p>
- * Translation matrix:
+ * <p>Valid parameters for these types are:
+ * <dl>
+ * <dt><b><tt>type:"translate"</tt></b></dt><dd><b>x, y</b> Translation vector (two numbers or functions).
+ * The transformation matrix for x = a and y = b has the form:
  * <pre>
  * ( 1  0  0)   ( z )
  * ( a  1  0) * ( x )
  * ( b  0  1)   ( y )
  * </pre>
- *
- * <p>
- * Scale matrix:
+ * </dd>
+ * <dt><b><tt>type:"scale"</tt></b></dt><dd><b>scale_x, scale_y</b> Scale vector (two numbers or functions).
+ * The transformation matrix for scale_x = a and scale_y = b has the form:
  * <pre>
  * ( 1  0  0)   ( z )
  * ( 0  a  0) * ( x )
  * ( 0  0  b)   ( y )
  * </pre>
- *
- * <p>
- * A rotation matrix with angle a (in Radians)
+ * </dd>
+ * <dt><b><tt>type:"rotate"</tt></b></dt><dd> <b>alpha, [point | x, y]</b> The parameters are the angle value in Radians
+ *     (a number or function), and optionally a coordinate pair (two numbers or functions) or a point element defining the
+ *                rotation center. If the rotation center is not given, the transformation rotates around (0,0).
+ * The transformation matrix for angle a and rotating around (0, 0) has the form:
  * <pre>
  * ( 1    0        0      )   ( z )
- * ( 0    cos(a)   -sin(a)) * ( x )
+ * ( 0    cos(a)  -sin(a) ) * ( x )
  * ( 0    sin(a)   cos(a) )   ( y )
  * </pre>
- *
- * <p>
- * Shear matrix:
+ * </dd>
+ * <dt><b><tt>type:"shear"</tt></b></dt><dd><b>shear_x, shear_y</b> Shear vector (two numbers or functions).
+ * The transformation matrix for shear_x = a and shear_y = b has the form:
  * <pre>
  * ( 1  0  0)   ( z )
  * ( 0  1  a) * ( x )
  * ( 0  b  1)   ( y )
  * </pre>
- *
- * <p>Generic transformation:
+ * </dd>
+ * <dt><b><tt>type:"reflect"</tt></b></dt><dd>The parameters can either be:
+ *    <ul>
+ *      <li> <b>line</b> a line element,
+ *      <li> <b>p, q</b> two point elements,
+ *      <li> <b>p_x, p_y, q_x, q_y</b> four numbers or functions  determining a line through points (p_x, p_y) and (q_x, q_y).
+ *    </ul>
+ * </dd>
+ * <dt><b><tt>type:"affine"</tt></b></dt><dd><b>a, b, c, d</b> (numbers or functions>.
+ * The transformation matrix has the form
+ * <pre>
+ * ( 1  0  0 )   ( z )
+ * ( 0  a  b ) * ( x )
+ * ( 0  c  d )   ( y )
+ * </pre>
+ * </dd>
+ * <dt><b><tt>type:"affinematrix"</tt></b></dt><dd><b>M</b> 2x2 matrix containing numbers or functions.
+ * The full transformation matrix has the form
+ * <pre>
+ * ( 1  0  0 )   ( z )
+ * ( 0  M    ) * ( x )
+ * ( 0       )   ( y )
+ * </pre>
+ * </dd>
+ * <dt><b><tt>type:"generic"</tt></b></dt><dd><b>a, b, c, d, e, f, g, h, i</b> Nine matrix entries (numbers or functions)
+ *  for a generic projective transformation.
+ * The matrix has the form
  * <pre>
  * ( a  b  c )   ( z )
  * ( d  e  f ) * ( x )
  * ( g  h  i )   ( y )
  * </pre>
+ * </dd>
+ * <dt><b><tt>type:"matrix"</tt></b></dt><dd><b>M</b> 3x3 transformation matrix containing numbers or functions</dd>
+ * </dl>
+ *
  *
  * @see JXG.Transformation#setMatrix
  *
@@ -670,6 +1164,41 @@ JXG.extend(
  * </script><pre>
  *
  * @example
+ * // Type: 'matrix'
+ *         var y = board.create('slider', [[-3, 1], [-3, 4], [0, 1, 6]]);
+ *         var t1 = board.create('transform', [
+ *             [
+ *                 [1, 0, 0],
+ *                 [0, 1, 0],
+ *                 [() => y.Value(), 0, 1]
+ *             ]
+ *         ], {type: 'matrix'});
+ *
+ *         var A = board.create('point', [2, -3]);
+ *         var B = board.create('point', [A, t1]);
+ *
+ * </pre><div id="JXGd2bfd46c-3c0c-45c5-a92b-583fad0eb3ec" class="jxgbox" style="width: 300px; height: 300px;"></div>
+ * <script type="text/javascript">
+ *     (function() {
+ *         var board = JXG.JSXGraph.initBoard('JXGd2bfd46c-3c0c-45c5-a92b-583fad0eb3ec',
+ *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
+ *             var y = board.create('slider', [[-3, 1], [-3, 4], [0, 1, 6]]);
+ *             var t1 = board.create('transform', [
+ *                 [
+ *                     [1, 0, 0],
+ *                     [0, 1, 0],
+ *                     [() => y.Value(), 0, 1]
+ *                 ]
+ *             ], {type: 'matrix'});
+ *
+ *             var A = board.create('point', [2, -3]);
+ *             var B = board.create('point', [A, t1]);
+ *
+ *     })();
+ *
+ * </script><pre>
+ *
+ * @example
  * // One time application of a transform to points A, B
  * var p1 = board.create('point', [1, 1]),
  *     p2 = board.create('point', [-1, -2]),
@@ -760,77 +1289,77 @@ JXG.extend(
  *
  * </script><pre>
  *
-     * @example
-     * // Text transformation
-     * var p0 = board.create('point', [0, 0], {name: 'p_0'});
-     * var p1 = board.create('point', [3, 0], {name: 'p_1'});
-     * var txt = board.create('text',[0.5, 0, 'Hello World'], {display:'html'});
-     * 
-     * // If p_0 is dragged, translate p_1 and text accordingly
-     * var tOff = board.create('transform', [() => p0.X(), () => p0.Y()], {type:'translate'});
-     * tOff.bindTo(txt);
-     * tOff.bindTo(p1);
-     * 
-     * // Rotate text around p_0 by dragging point p_1
-     * var tRot = board.create('transform', [
-     *     () => Math.atan2(p1.Y() - p0.Y(), p1.X() - p0.X()), p0], {type:'rotate'});
-     * tRot.bindTo(txt);
-     * 
-     * // Scale text by dragging point "p_1"
-     * // We do this by
-     * // - moving text by -p_0 (inverse of transformation tOff),
-     * // - scale the text (because scaling is relative to (0,0))
-     * // - move the text back by +p_0
-     * var tOffInv = board.create('transform', [
-     *         () => -p0.X(),
-     *         () => -p0.Y()
-     * ], {type:'translate'});
-     * var tScale = board.create('transform', [
-     *         // Some scaling factor
-     *         () => p1.Dist(p0) / 3,
-     *         () => p1.Dist(p0) / 3
-     * ], {type:'scale'});
-     * tOffInv.bindTo(txt); tScale.bindTo(txt); tOff.bindTo(txt);
-     * 
-     * </pre><div id="JXG50d6d546-3b91-41dd-8c0f-3eaa6cff7e66" class="jxgbox" style="width: 300px; height: 300px;"></div>
-     * <script type="text/javascript">
-     *     (function() {
-     *         var board = JXG.JSXGraph.initBoard('JXG50d6d546-3b91-41dd-8c0f-3eaa6cff7e66',
-     *             {boundingbox: [-5, 5, 5, -5], axis: true, showcopyright: false, shownavigation: false});
-     *     var p0 = board.create('point', [0, 0], {name: 'p_0'});
-     *     var p1 = board.create('point', [3, 0], {name: 'p_1'});
-     *     var txt = board.create('text',[0.5, 0, 'Hello World'], {display:'html'});
-     *     
-     *     // If p_0 is dragged, translate p_1 and text accordingly
-     *     var tOff = board.create('transform', [() => p0.X(), () => p0.Y()], {type:'translate'});
-     *     tOff.bindTo(txt);
-     *     tOff.bindTo(p1);
-     *     
-     *     // Rotate text around p_0 by dragging point p_1
-     *     var tRot = board.create('transform', [
-     *         () => Math.atan2(p1.Y() - p0.Y(), p1.X() - p0.X()), p0], {type:'rotate'});
-     *     tRot.bindTo(txt);
-     *     
-     *     // Scale text by dragging point "p_1"
-     *     // We do this by
-     *     // - moving text by -p_0 (inverse of transformation tOff),
-     *     // - scale the text (because scaling is relative to (0,0))
-     *     // - move the text back by +p_0
-     *     var tOffInv = board.create('transform', [
-     *             () => -p0.X(),
-     *             () => -p0.Y()
-     *     ], {type:'translate'});
-     *     var tScale = board.create('transform', [
-     *             // Some scaling factor
-     *             () => p1.Dist(p0) / 3,
-     *             () => p1.Dist(p0) / 3
-     *     ], {type:'scale'});
-     *     tOffInv.bindTo(txt); tScale.bindTo(txt); tOff.bindTo(txt);
-     * 
-     *     })();
-     * 
-     * </script><pre>
-     * 
+ * @example
+ * // Text transformation
+ * var p0 = board.create('point', [0, 0], {name: 'p_0'});
+ * var p1 = board.create('point', [3, 0], {name: 'p_1'});
+ * var txt = board.create('text',[0.5, 0, 'Hello World'], {display:'html'});
+ *
+ * // If p_0 is dragged, translate p_1 and text accordingly
+ * var tOff = board.create('transform', [() => p0.X(), () => p0.Y()], {type:'translate'});
+ * tOff.bindTo(txt);
+ * tOff.bindTo(p1);
+ *
+ * // Rotate text around p_0 by dragging point p_1
+ * var tRot = board.create('transform', [
+ *     () => Math.atan2(p1.Y() - p0.Y(), p1.X() - p0.X()), p0], {type:'rotate'});
+ * tRot.bindTo(txt);
+ *
+ * // Scale text by dragging point "p_1"
+ * // We do this by
+ * // - moving text by -p_0 (inverse of transformation tOff),
+ * // - scale the text (because scaling is relative to (0,0))
+ * // - move the text back by +p_0
+ * var tOffInv = board.create('transform', [
+ *         () => -p0.X(),
+ *         () => -p0.Y()
+ * ], {type:'translate'});
+ * var tScale = board.create('transform', [
+ *         // Some scaling factor
+ *         () => p1.Dist(p0) / 3,
+ *         () => p1.Dist(p0) / 3
+ * ], {type:'scale'});
+ * tOffInv.bindTo(txt); tScale.bindTo(txt); tOff.bindTo(txt);
+ *
+ * </pre><div id="JXG50d6d546-3b91-41dd-8c0f-3eaa6cff7e66" class="jxgbox" style="width: 300px; height: 300px;"></div>
+ * <script type="text/javascript">
+ *     (function() {
+ *         var board = JXG.JSXGraph.initBoard('JXG50d6d546-3b91-41dd-8c0f-3eaa6cff7e66',
+ *             {boundingbox: [-5, 5, 5, -5], axis: true, showcopyright: false, shownavigation: false});
+ *     var p0 = board.create('point', [0, 0], {name: 'p_0'});
+ *     var p1 = board.create('point', [3, 0], {name: 'p_1'});
+ *     var txt = board.create('text',[0.5, 0, 'Hello World'], {display:'html'});
+ *
+ *     // If p_0 is dragged, translate p_1 and text accordingly
+ *     var tOff = board.create('transform', [() => p0.X(), () => p0.Y()], {type:'translate'});
+ *     tOff.bindTo(txt);
+ *     tOff.bindTo(p1);
+ *
+ *     // Rotate text around p_0 by dragging point p_1
+ *     var tRot = board.create('transform', [
+ *         () => Math.atan2(p1.Y() - p0.Y(), p1.X() - p0.X()), p0], {type:'rotate'});
+ *     tRot.bindTo(txt);
+ *
+ *     // Scale text by dragging point "p_1"
+ *     // We do this by
+ *     // - moving text by -p_0 (inverse of transformation tOff),
+ *     // - scale the text (because scaling is relative to (0,0))
+ *     // - move the text back by +p_0
+ *     var tOffInv = board.create('transform', [
+ *             () => -p0.X(),
+ *             () => -p0.Y()
+ *     ], {type:'translate'});
+ *     var tScale = board.create('transform', [
+ *             // Some scaling factor
+ *             () => p1.Dist(p0) / 3,
+ *             () => p1.Dist(p0) / 3
+ *     ], {type:'scale'});
+ *     tOffInv.bindTo(txt); tScale.bindTo(txt); tOff.bindTo(txt);
+ *
+ *     })();
+ *
+ * </script><pre>
+ *
  */
 JXG.createTransform = function (board, parents, attributes) {
     return new JXG.Transformation(board, attributes.type, parents);
@@ -838,8 +1367,177 @@ JXG.createTransform = function (board, parents, attributes) {
 
 JXG.registerElement('transform', JXG.createTransform);
 
+/**
+ * @class Define projective 3D transformations like translation, rotation, reflection.
+ * @pseudo
+ * @description A transformation consists of a 4x4 matrix, i.e. it is a projective transformation.
+ * <p>
+ * Internally, a transformation is applied to an element by multiplying the 4x4 matrix from the left to
+ * the homogeneous coordinates of the element. JSXGraph represents homogeneous coordinates in the order
+ * (w, x, y, z). If the coordinate is a finite point, w=1. The matrix has the form
+ * <pre>
+ * ( a b c d)   ( w )
+ * ( e f g h) * ( x )
+ * ( i j k l)   ( y )
+ * ( m n o p)   ( z )
+ * </pre>
+ * where in general a=1. If b = c = d = 0, the transformation is called <i>affine</i>.
+ * In this case, finite points will stay finite. This is not the case for general projective coordinates.
+ * <p>
+ *
+ * @name Transformation3D
+ * @augments JXG.Transformation
+ * @constructor
+ * @type JXG.Transformation
+ * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
+ * @param {number|function|JXG.GeometryElement3D} parameters The parameters depend on the transformation type, supplied as attribute 'type'.
+ *  Possible transformation types are
+ * <ul>
+ * <li> 'translate'
+ * <li> 'scale'
+ * <li> 'rotate'
+ * <li> 'rotateX'
+ * <li> 'rotateY'
+ * <li> 'rotateZ'
+ * <li> 'affine'
+ * <li> 'affinematrix'
+ * <li> 'generic'
+ * <li> 'matrix'
+ * </ul>
+ * <p>Valid parameters for these types are:
+ * <dl>
+ * <dt><b><tt>type:"translate"</tt></b></dt><dd><b>x, y, z</b> Translation vector (three numbers or functions).
+ * The transformation matrix for x = a, y = b, and z = c has the form:
+ * <pre>
+ * ( 1  0  0  0)   ( w )
+ * ( a  1  0  0) * ( x )
+ * ( b  0  1  0)   ( y )
+ * ( c  0  0  c)   ( z )
+ * </pre>
+ * </dd>
+ * <dt><b><tt>type:"scale"</tt></b></dt><dd><b>scale_x, scale_y, scale_z</b> Scale vector (three numbers or functions).
+ * The transformation matrix for scale_x = a, scale_y = b, scale_z = c has the form:
+ * <pre>
+ * ( 1  0  0  0)   ( w )
+ * ( 0  a  0  0) * ( x )
+ * ( 0  0  b  0)   ( y )
+ * ( 0  0  0  c)   ( z )
+ * </pre>
+ * </dd>
+ * <dt><b><tt>type:"rotate"</tt></b></dt><dd><b>a, n, [p=[0,0,0]]</b> angle (in radians), normal, [point].
+ * Rotate with angle a around the normal vector n through the point p.
+ * </dd>
+ * <dt><b><tt>type:"rotateX"</tt></b></dt><dd><b>a, [p=[0,0,0]]</b> angle (in radians), [point].
+ * Rotate with angle a around the normal vector (1, 0, 0) through the point p.
+ * </dd>
+ * <dt><b><tt>type:"rotateY"</tt></b></dt><dd><b>a, [p=[0,0,0]]</b> angle (in radians), [point].
+ * Rotate with angle a around the normal vector (0, 1, 0) through the point p.
+ * </dd>
+ * <dt><b><tt>type:"rotateZ"</tt></b></dt><dd><b>a, [p=[0,0,0]]</b> angle (in radians), [point].
+ * Rotate with angle a around the normal vector (0, 0, 1) through the point p.
+ * </dd>
+ * <dt><b><tt>type:"affine"</tt></b></dt><dd><b>a,b,...,i</b> generic affine transformation (9 parameters, numbers or functions).
+ * The full transformation matrix has the form
+ * <pre>
+ * ( 1  0  0  0 )   ( w )
+ * ( 0  a  b  c ) * ( x )
+ * ( 0  d  e  f )   ( y )
+ * ( 0  g  h  i )   ( z )
+ * </pre>
+ * </dd>
+ * <dt><b><tt>type:"affinematrix"</tt></b></dt><dd><b>M</b> generic affine 3x3 transformation matrix (containing numbers or functions).
+ * The full transformation matrix has the form
+ * <pre>
+ * ( 1  0  0  0 )   ( w )
+ * ( 0          ) * ( x )
+ * ( 0     M    )   ( y )
+ * ( 0          )   ( z )
+ * </pre>
+ * </dd>
+ * <dt><b><tt>type:"generic"</tt></b></dt><dd><b>a,b,...,p</b> generic transformation (16 parameters, numbers or functions).
+ * The full transformation matrix has the form
+ * <pre>
+ * ( a  b  c  d )   ( w )
+ * ( e  f  ...  ) * ( x )
+ * (    ...     )   ( y )
+ * (    ...   p )   ( z )
+ * </pre>
+ * </dd>
+ * <dt><b><tt>type:"matrix"</tt></b></dt><dd><b>M</b> generic 4x4 transformation matrix (containing numbers or functions).
+ * The full transformation matrix has the form
+ * <pre>
+ * (            )   ( w )
+ * (     M      ) * ( x )
+ * (            )   ( y )
+ * (            )   ( z )
+ * </pre>
+ * </dd>
+ * </dl>
+ *
+ * @example
+ * var bound = [-5, 5];
+ * var view = board.create('view3d',
+ *     [
+ *         [-5, -5], [8, 8],
+ *         [bound, bound, bound]
+ *     ], {
+ *         projection: "central",
+ *         depthOrder: { enabled: true },
+ *         axesPosition: 'border' // 'center', 'none'
+ *     }
+ * );
+ *
+ * var slider = board.create('slider', [[-4, 6], [0, 6], [0, 0, 5]]);
+ *
+ * var p1 = view.create('point3d', [1, 2, 2], { name: 'drag me', size: 5 });
+ *
+ * // Translate from p1 by fixed amount
+ * var t1 = view.create('transform3d', [2, 3, 2], { type: 'translate' });
+ * // Translate from p1 by dynamic amount
+ * var t2 = view.create('transform3d', [() => slider.Value() + 3, 0, 0], { type: 'translate' });
+ *
+ * view.create('point3d', [p1, t1], { name: 'translate fixed', size: 5 });
+ * view.create('point3d', [p1, t2], { name: 'translate by func', size: 5 });
+ *
+ * </pre><div id="JXG2409bb0a-90d7-4c1e-ae9f-85e8a776acec" class="jxgbox" style="width: 300px; height: 300px;"></div>
+ * <script type="text/javascript">
+ *     (function() {
+ *         var board = JXG.JSXGraph.initBoard('JXG2409bb0a-90d7-4c1e-ae9f-85e8a776acec',
+ *             {boundingbox: [-8, 8, 8,-8], axis: false, showcopyright: false, shownavigation: false});
+ *     var bound = [-5, 5];
+ *     var view = board.create('view3d',
+ *         [
+ *             [-5, -5], [8, 8],
+ *             [bound, bound, bound]
+ *         ], {
+ *             projection: "central",
+ *             depthOrder: { enabled: true },
+ *             axesPosition: 'border' // 'center', 'none'
+ *         }
+ *     );
+ *
+ *     var slider = board.create('slider', [[-4, 6], [0, 6], [0, 0, 5]]);
+ *
+ *     var p1 = view.create('point3d', [1, 2, 2], { name: 'drag me', size: 5 });
+ *
+ *     // Translate from p1 by fixed amount
+ *     var t1 = view.create('transform3d', [2, 3, 2], { type: 'translate' });
+ *     // Translate from p1 by dynamic amount
+ *     var t2 = view.create('transform3d', [() => slider.Value() + 3, 0, 0], { type: 'translate' });
+ *
+ *     view.create('point3d', [p1, t1], { name: 'translate fixed', size: 5 });
+ *     view.create('point3d', [p1, t2], { name: 'translate by func', size: 5 });
+ *
+ *     })();
+ *
+ * </script><pre>
+ *
+ */
+JXG.createTransform3D = function (board, parents, attributes) {
+    return new JXG.Transformation(board, attributes.type, parents, true);
+};
+
+JXG.registerElement('transform3d', JXG.createTransform3D);
+
 export default JXG.Transformation;
-// export default {
-//     Transformation: JXG.Transformation,
-//     createTransform: JXG.createTransform
-// };
+

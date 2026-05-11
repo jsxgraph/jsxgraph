@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2023
+    Copyright 2008-2026
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -38,25 +38,25 @@
  * a board.
  */
 
-import JXG from "../jxg";
-import Mat from "../math/math";
-import Const from "../base/constants";
-import Coords from "../base/coords";
-import Type from "../utils/type";
-import Point from "../base/point";
+import JXG from "../jxg.js";
+import Mat from "../math/math.js";
+import Const from "../base/constants.js";
+import Coords from "../base/coords.js";
+import Type from "../utils/type.js";
+import Point from "../base/point.js";
 
 /**
  * @class A slider can be used to choose values from a given range of numbers.
  * @pseudo
- * @description
  * @name Slider
  * @augments Glider
  * @constructor
  * @type JXG.Point
  * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
- * @param {Array_Array_Array} start,end,data The first two arrays give the start and the end where the slider is drawn
+ * @param {Array_Array_Array} start,end,range The first two arrays give the start and the end where the slider is drawn
  * on the board. The third array gives the start and the end of the range the slider operates as the first resp. the
  * third component of the array. The second component of the third array gives its start value.
+ *
  * @example
  * // Create a slider with values between 1 and 10, initial position is 5.
  * var s = board.create('slider', [[1, 2], [3, 2], [1, 5, 10]]);
@@ -68,18 +68,26 @@ import Point from "../base/point";
  *   })();
  * </script><pre>
  * @example
- * // Create a slider taking integer values between 1 and 50. Initial value is 50.
- * var s = board.create('slider', [[1, 3], [3, 1], [0, 10, 50]], {snapWidth: 1, ticks: { drawLabels: true }});
+ * // Create a slider taking integer values between 1 and 5. Initial value is 3.
+ * var s = board.create('slider', [[1, 3], [3, 1], [0, 3, 5]], {
+ *     snapWidth: 1,
+ *     minTicksDistance: 60,
+ *     drawLabels: false
+ * });
  * </pre><div class="jxgbox" id="JXGe17128e6-a25d-462a-9074-49460b0d66f4" style="width: 200px; height: 200px;"></div>
  * <script type="text/javascript">
  *   (function () {
  *     var board = JXG.JSXGraph.initBoard('JXGe17128e6-a25d-462a-9074-49460b0d66f4', {boundingbox: [-1, 5, 5, -1], axis: true, showcopyright: false, shownavigation: false});
- *     var s = board.create('slider', [[1, 3], [3, 1], [1, 10, 50]], {snapWidth: 1, ticks: { drawLabels: true }});
+ *     var s = board.create('slider', [[1, 3], [3, 1], [1, 3, 5]], {
+ *       snapWidth: 1,
+ *       minTicksDistance: 60,
+ *       drawLabels: false
+ *     });
  *   })();
  * </script><pre>
  * @example
  *     // Draggable slider
- *     var s1 = board.create('slider', [[-3,1], [2,1],[-10,1,10]], {
+ *     var s1 = board.create('slider', [[-3, 1], [2, 1],[-10, 1, 10]], {
  *         visible: true,
  *         snapWidth: 2,
  *         point1: {fixed: false},
@@ -160,6 +168,57 @@ import Point from "../base/point";
  *
  * </script><pre>
  *
+ * @example
+ * // Create a "frozen" slider
+ * var sli = board.create('slider', [[-4, 4], [-1.5, 4], [-10, 1, 10]], {
+ *     name:'a',
+ *     frozen: true
+ * });
+ *
+ * </pre><div id="JXG23afea4f-2e91-4006-a505-2895033cf1fc" class="jxgbox" style="width: 300px; height: 300px;"></div>
+ * <script type="text/javascript">
+ *     (function() {
+ *         var board = JXG.JSXGraph.initBoard('JXG23afea4f-2e91-4006-a505-2895033cf1fc',
+ *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
+ *     var sli = board.create('slider', [[-4, 4], [-1.5, 4], [-10, 1, 10]], {
+ *         name:'a',
+ *         frozen: true
+ *     });
+ *
+ *     })();
+ *
+ * </script><pre>
+ *
+ * @example
+ * // Use MathJax for slider label (don't forget to load MathJax)
+ * var s = board.create('slider', [[-3, 2], [2, 2], [-10, 1, 10]], {
+ *     name: 'A^{(2)}',
+ *     suffixLabel: '\\(A^{(2)} = ',
+ *     unitLabel: ' \\;km/h ',
+ *     postLabel: '\\)',
+ *     label: {useMathJax: true}
+ * });
+ *
+ * </pre><div id="JXG76e78c5f-3598-4d44-b43f-1d78fd15302c" class="jxgbox" style="width: 300px; height: 300px;"></div>
+ * <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" id="MathJax-script"></script>
+ * <script type="text/javascript">
+ *     (function() {
+ *         var board = JXG.JSXGraph.initBoard('JXG76e78c5f-3598-4d44-b43f-1d78fd15302c',
+ *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
+ *     // Use MathJax for slider label (don't forget to load MathJax)
+ *     var s = board.create('slider', [[-3,2], [2,2],[-10,1,10]], {
+ *         name: 'A^{(2)}',
+ *         suffixLabel: '\\(A^{(2)} = ',
+ *         unitLabel: ' \\;km/h ',
+ *         postLabel: '\\)',
+ *         label: {useMathJax: true}
+ *     });
+ *
+ *     })();
+ *
+ * </script><pre>
+ *
+ *
  */
 JXG.createSlider = function (board, parents, attributes) {
     var pos0, pos1,
@@ -172,25 +231,22 @@ JXG.createSlider = function (board, parents, attributes) {
         snapWidth, sw, s,
         attr;
 
-    attr = Type.copyAttributes(attributes, board.options, "slider");
+    attr = Type.copyAttributes(attributes, board.options, 'slider');
     withTicks = attr.withticks;
     withText = attr.withlabel;
     snapWidth = attr.snapwidth;
     snapValues = attr.snapvalues;
     snapValueDistance = attr.snapvaluedistance;
 
-    // start point
-    attr = Type.copyAttributes(attributes, board.options, "slider", "point1");
-    p1 = board.create("point", parents[0], attr);
+    // Start point
+    p1 = board.create("point", parents[0], attr.point1);
 
-    // end point
-    attr = Type.copyAttributes(attributes, board.options, "slider", "point2");
-    p2 = board.create("point", parents[1], attr);
+    // End point
+    p2 = board.create("point", parents[1], attr.point2);
     //g = board.create('group', [p1, p2]);
 
     // Base line
-    attr = Type.copyAttributes(attributes, board.options, "slider", "baseline");
-    l1 = board.create("segment", [p1, p2], attr);
+    l1 = board.create("segment", [p1, p2], attr.baseline);
 
     // This is required for a correct projection of the glider onto the segment below
     l1.updateStdform();
@@ -203,22 +259,25 @@ JXG.createSlider = function (board, parents, attributes) {
     diff = smax - smin;
 
     sw = Type.evaluate(snapWidth);
-    s = sw === -1 ? start : Math.round(start / sw) * sw;
+    s = sw === -1 ?
+        start :
+        Math.round((start - smin)/ sw) * sw + smin;
+        // Math.round(start / sw) * sw;
     startx = pos0[0] + ((pos1[0] - pos0[0]) * (s - smin)) / (smax - smin);
     starty = pos0[1] + ((pos1[1] - pos0[1]) * (s - smin)) / (smax - smin);
 
     // glider point
-    attr = Type.copyAttributes(attributes, board.options, "slider");
+    // attr = Type.copyAttributes(attributes, board.options, 'slider');
     // overwrite this in any case; the sliders label is a special text element, not the gliders label.
     // this will be set back to true after the text was created (and only if withlabel was true initially).
-    attr.withLabel = false;
+    attr.withlabel = false;
     // gliders set snapwidth=-1 by default (i.e. deactivate them)
     p3 = board.create("glider", [startx, starty, l1], attr);
     p3.setAttribute({ snapwidth: snapWidth, snapvalues: snapValues, snapvaluedistance: snapValueDistance });
 
     // Segment from start point to glider point: highline
-    attr = Type.copyAttributes(attributes, board.options, "slider", "highline");
-    l2 = board.create("segment", [p1, p3], attr);
+    // attr = Type.copyAttributes(attributes, board.options, "slider", 'highline');
+    l2 = board.create("segment", [p1, p3], attr.highline);
 
     /**
      * Returns the current slider value.
@@ -229,31 +288,28 @@ JXG.createSlider = function (board, parents, attributes) {
      */
     p3.Value = function () {
         var d = this._smax - this._smin,
-            ev_sw = Type.evaluate(this.visProp.snapwidth);
-            // snapValues, i, v;
-
-        // snapValues = Type.evaluate(this.visProp.snapvalues);
-        // if (Type.isArray(snapValues)) {
-        //     for (i = 0; i < snapValues.length; i++) {
-        //         v = (snapValues[i] - this._smin) / (this._smax - this._smin);
-        //         if (this.position === v) {
-        //             return snapValues[i];
-        //         }
-        //     }
-        // }
+            ev_sw = this.evalVisProp('snapwidth');
 
         return ev_sw === -1
             ? this.position * d + this._smin
-            : Math.round((this.position * d + this._smin) / ev_sw) * ev_sw;
+            : Math.round((this.position * d) / ev_sw) * ev_sw  + this._smin;
     };
 
     p3.methodMap = Type.deepCopy(p3.methodMap, {
         Value: "Value",
         setValue: "setValue",
         smax: "_smax",
+        // Max: "_smax",
         smin: "_smin",
+        // Min: "_smin",
         setMax: "setMax",
-        setMin: "setMin"
+        setMin: "setMin",
+        point1: "point1",
+        point2: "point2",
+        baseline: "baseline",
+        highline: "highline",
+        ticks: "ticks",
+        label: "label"
     });
 
     /**
@@ -320,51 +376,51 @@ JXG.createSlider = function (board, parents, attributes) {
     };
 
     if (withText) {
-        attr = Type.copyAttributes(attributes, board.options, 'slider', 'label');
+        // attr = Type.copyAttributes(attributes, board.options, 'slider', 'label');
         t = board.create('text', [
-                function () {
-                    return (p2.X() - p1.X()) * 0.05 + p2.X();
-                },
-                function () {
-                    return (p2.Y() - p1.Y()) * 0.05 + p2.Y();
-                },
-                function () {
-                    var n,
-                        d = Type.evaluate(p3.visProp.digits),
-                        sl = Type.evaluate(p3.visProp.suffixlabel),
-                        ul = Type.evaluate(p3.visProp.unitlabel),
-                        pl = Type.evaluate(p3.visProp.postlabel);
+            function () {
+                return (p2.X() - p1.X()) * 0.05 + p2.X();
+            },
+            function () {
+                return (p2.Y() - p1.Y()) * 0.05 + p2.Y();
+            },
+            function () {
+                var n,
+                    d = p3.evalVisProp('digits'),
+                    sl = p3.evalVisProp('suffixlabel'),
+                    ul = p3.evalVisProp('unitlabel'),
+                    pl = p3.evalVisProp('postlabel');
 
-                    if (d === 2 && Type.evaluate(p3.visProp.precision) !== 2) {
-                        // Backwards compatibility
-                        d = Type.evaluate(p3.visProp.precision);
-                    }
-
-                    if (sl !== null) {
-                        n = sl;
-                    } else if (p3.name && p3.name !== "") {
-                        n = p3.name + " = ";
-                    } else {
-                        n = "";
-                    }
-
-                    if (p3.useLocale()) {
-                        n += p3.formatNumberLocale(p3.Value(), d);
-                    } else {
-                        n += Type.toFixed(p3.Value(), d);
-                    }
-
-                    if (ul !== null) {
-                        n += ul;
-                    }
-                    if (pl !== null) {
-                        n += pl;
-                    }
-
-                    return n;
+                if (d === 2 && p3.evalVisProp('precision') !== 2) {
+                    // Backwards compatibility
+                    d = p3.evalVisProp('precision');
                 }
-            ],
-            attr
+
+                if (sl !== null) {
+                    n = sl;
+                } else if (p3.name && p3.name !== "") {
+                    n = p3.name + " = ";
+                } else {
+                    n = "";
+                }
+
+                if (p3.useLocale()) {
+                    n += p3.formatNumberLocale(p3.Value(), d);
+                } else {
+                    n += Type.toFixed(p3.Value(), d);
+                }
+
+                if (ul !== null) {
+                    n += ul;
+                }
+                if (pl !== null) {
+                    n += pl;
+                }
+
+                return n;
+            }
+        ],
+            attr.label
         );
 
         /**
@@ -378,6 +434,9 @@ JXG.createSlider = function (board, parents, attributes) {
         // reset the withlabel attribute
         p3.visProp.withlabel = true;
         p3.hasLabel = true;
+        p3.inherits.push(t);
+        t.addParents(p3);
+        p3.addChild(t);
     }
 
     /**
@@ -415,9 +474,9 @@ JXG.createSlider = function (board, parents, attributes) {
     if (withTicks) {
         // Function to generate correct label texts
 
-        attr = Type.copyAttributes(attributes, board.options, "slider", "ticks");
+        // attr = Type.copyAttributes(attributes, board.options, "slider", 'ticks');
         if (!Type.exists(attr.generatelabeltext)) {
-            attr.generateLabelText = function (tick, zero, value) {
+            attr.ticks.generateLabelText = function (tick, zero, value) {
                 var labelText,
                     dFull = p3.point1.Dist(p3.point2),
                     smin = p3._smin,
@@ -426,7 +485,7 @@ JXG.createSlider = function (board, parents, attributes) {
 
                 if (dFull < Mat.eps || Math.abs(val) < Mat.eps) {
                     // Point is zero
-                    labelText = "0";
+                    labelText = '0';
                 } else {
                     labelText = this.formatLabelText(val);
                 }
@@ -451,7 +510,7 @@ JXG.createSlider = function (board, parents, attributes) {
                     return (d / dFull) * diff + smin;
                 }
             ],
-            attr
+            attr.ticks
         );
 
         /**
@@ -490,7 +549,8 @@ JXG.createSlider = function (board, parents, attributes) {
         t.slider = p3;
     }
 
-    p3.elType = "slider";
+    // p3.type = Const.OBJECT_TYPE_SLIDER; // No! type has to be Const.OBJECT_TYPE_GLIDER
+    p3.elType = 'slider';
     p3.parents = parents;
     p3.subs = {
         point1: p1,
@@ -499,6 +559,9 @@ JXG.createSlider = function (board, parents, attributes) {
         highLine: l2
     };
     p3.inherits.push(p1, p2, l1, l2);
+    // Remove inherits to avoid circular inherits.
+    l1.inherits = [];
+    l2.inherits = [];
 
     if (withTicks) {
         ti.dump = false;
@@ -517,7 +580,7 @@ JXG.createSlider = function (board, parents, attributes) {
     p3.baseline.on("up", function (evt) {
         var pos, c;
 
-        if (Type.evaluate(p3.visProp.moveonup) && !Type.evaluate(p3.visProp.fixed)) {
+        if (p3.evalVisProp('moveonup') && !p3.evalVisProp('fixed')) {
             pos = l1.board.getMousePosition(evt, 0);
             c = new Coords(Const.COORDS_BY_SCREEN, pos, this.board);
             p3.moveTo([c.usrCoords[1], c.usrCoords[2]]);
@@ -525,44 +588,16 @@ JXG.createSlider = function (board, parents, attributes) {
         }
     });
 
-    // Save the visibility attribute of the sub-elements
-    // for (el in p3.subs) {
-    //     p3.subs[el].status = {
-    //         visible: p3.subs[el].visProp.visible
-    //     };
-    // }
-
-    // p3.hideElement = function () {
-    //     var el;
-    //     GeometryElement.prototype.hideElement.call(this);
-    //
-    //     for (el in this.subs) {
-    //         // this.subs[el].status.visible = this.subs[el].visProp.visible;
-    //         this.subs[el].hideElement();
-    //     }
-    // };
-
-    //         p3.showElement = function () {
-    //             var el;
-    //             GeometryElement.prototype.showElement.call(this);
-    //
-    //             for (el in this.subs) {
-    // //                if (this.subs[el].status.visible) {
-    //                 this.subs[el].showElement();
-    // //                }
-    //             }
-    //         };
-
     // This is necessary to show baseline, highline and ticks
     // when opening the board in case the visible attributes are set
     // to 'inherit'.
     p3.prepareUpdate().update();
     if (!board.isSuspendedUpdate) {
         p3.updateVisibility().updateRenderer();
-        p3.baseline.updateVisibility().updateRenderer();
+        p3.baseline.prepareUpdate().updateVisibility().updateRenderer(); // prepareUpdate needed because needsRegularUpdate==false
         p3.highline.updateVisibility().updateRenderer();
         if (withTicks) {
-            p3.ticks.updateVisibility().updateRenderer();
+            p3.prepareUpdate().ticks.updateVisibility().updateRenderer();
         }
     }
 

@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2023
+    Copyright 2008-2026
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -32,16 +32,24 @@
 /*global JXG: true, define: true*/
 /*jslint nomen: true, plusplus: true*/
 
-import JXG from "../jxg";
-import Geometry from "../math/geometry";
-import Mat from "../math/math";
-import Statistics from "../math/statistics";
-import Coords from "../base/coords";
-import Const from "../base/constants";
-import Type from "../utils/type";
+import JXG from "../jxg.js";
+import Geometry from "../math/geometry.js";
+import Mat from "../math/math.js";
+import Statistics from "../math/statistics.js";
+import Coords from "../base/coords.js";
+import Const from "../base/constants.js";
+import Type from "../utils/type.js";
 
 /**
  * @class A circular sector is a subarea of the area enclosed by a circle. It is enclosed by two radii and an arc.
+ * <p>
+ * The sector as curve consists of two legs and an arc. The curve length is 6. That means, a point with coordinates
+ * [sector.X(t), sector.Y(t)] is on
+ * <ul>
+ * <li> leg 1 if t is between 0 and 1,
+ * <li> the arc if t is between 1 and 5,
+ * <li> leg 2 if t is between 5 and 6.
+ * </ul>
  * @pseudo
  * @name Sector
  * @augments JXG.Curve
@@ -58,7 +66,9 @@ import Type from "../utils/type";
  * <p>
  * Second possibility of input parameters are:
  * @param {JXG.Line_JXG.Line_array,number_array,number_number,function} line, line2, coords1 or direction1, coords2 or direction2, radius The sector is defined by two lines.
- * The two legs which define the sector are given by two coordinates arrays which are project initially two the two lines or by two directions (+/- 1).
+ * The two legs which define the sector are given by two coordinates arrays which are projected initially to the two lines or by
+ * two directions (+/- 1). If the two lines are parallel, two of the defining points on different lines have to coincide.
+ * This will be the center of the sector.
  * The last parameter is the radius of the sector.
  * <p>In this case, the sector will <b>not</b> have an arc as sub-object.
  *
@@ -181,9 +191,9 @@ JXG.createSector = function (board, parents, attributes) {
     var el,
         attr,
         i,
+        eps = 1.0e-14,
         type = "invalid",
-        s,
-        v,
+        s, v,
         attrPoints = ["center", "radiusPoint", "anglePoint"],
         points;
 
@@ -195,7 +205,7 @@ JXG.createSector = function (board, parents, attributes) {
         (Type.isArray(parents[3]) || Type.isNumber(parents[3])) &&
         (Type.isNumber(parents[4]) || Type.isFunction(parents[4]) || Type.isString(parents[4]))
     ) {
-        type = "2lines";
+        type = '2lines';
     } else {
         points = Type.providePoints(board, parents, attributes, "sector", attrPoints);
         if (points === false) {
@@ -209,13 +219,14 @@ JXG.createSector = function (board, parents, attributes) {
                     "'."
             );
         }
-        type = "3points";
+        type = '3points';
     }
 
-    attr = Type.copyAttributes(attributes, board.options, "sector");
-    el = board.create("curve", [[0], [0]], attr);
+    attr = Type.copyAttributes(attributes, board.options, 'sector');
+    // The curve length is 6: 0-1: leg 1, 1-5: arc, 5-6: leg 2
+    el = board.create("curve", [[0], [0], 0, 6], attr);
     el.type = Const.OBJECT_TYPE_SECTOR;
-    el.elType = "sector";
+    el.elType = 'sector';
 
     /**
      * Sets radius if the attribute `radius` has value 'auto'.
@@ -242,13 +253,13 @@ JXG.createSector = function (board, parents, attributes) {
         return Math.max(r1, Math.min(r2, r3));
     };
 
-    if (type === "2lines") {
+    if (type === '2lines') {
         /**
          * @ignore
          */
         el.Radius = function () {
             var r = Type.evaluate(parents[4]);
-            if (r === "auto") {
+            if (r === 'auto') {
                 return this.autoRadius();
             }
             return r;
@@ -265,8 +276,26 @@ JXG.createSector = function (board, parents, attributes) {
         el.point2 = { visProp: {} };
         el.point3 = { visProp: {} };
 
-        /* Intersection point */
+        // Intersection point, just used locally for direction1 and  direction2
         s = Geometry.meetLineLine(el.line1.stdform, el.line2.stdform, 0, board);
+        if (Geometry.distance(s.usrCoords, [0, 0, 0], 3) < eps) {
+            // Parallel lines
+            if (
+                el.line1.point1.Dist(el.line2.point1) < eps ||
+                el.line1.point1.Dist(el.line2.point2) < eps
+            ) {
+                s = el.line1.point1.coords;
+            } else if (
+                el.line1.point2.Dist(el.line2.point1) < eps ||
+                el.line1.point2.Dist(el.line2.point1) < eps
+            ) {
+                s = el.line1.point2.coords;
+            } else {
+                console.log(
+                    "JSXGraph warning: Can't create Sector from parallel lines with no common defining point."
+                );
+            }
+        }
 
         if (Type.isArray(parents[2])) {
             /* project p1 to l1 */
@@ -316,10 +345,21 @@ JXG.createSector = function (board, parents, attributes) {
             el.direction2 = parents[3] >= 0 ? 1 : -1;
         }
 
+        el.methodMap = JXG.deepCopy(el.methodMap, {
+            arc: "arc",
+            center: "center",
+            line1: "line1",
+            line2: "line2"
+        });
+
+        /**
+         * @class
+         * @ignore
+         */
         el.updateDataArray = function () {
             var r,
-                l1,
-                l2,
+                l1, l2,
+                eps = 1.0e-14,
                 A = [0, 0, 0],
                 B = [0, 0, 0],
                 C = [0, 0, 0],
@@ -330,8 +370,23 @@ JXG.createSector = function (board, parents, attributes) {
 
             // Intersection point of the lines
             B = Mat.crossProduct(l1.stdform, l2.stdform);
+            if (Geometry.distance(B, [0, 0, 0], 3) < eps) {
+                // Parallel lines
+                if (
+                    l1.point1.Dist(l2.point1) < eps ||
+                    l1.point1.Dist(l2.point2) < eps
+                ) {
+                    B = l1.point1.coords.usrCoords;
+                } else if (
+                    l1.point2.Dist(l2.point1) < eps ||
+                    l1.point2.Dist(l2.point1) < eps
+                ) {
+                    B = l1.point2.coords.usrCoords;
+                } else {
+                }
+            }
 
-            if (Math.abs(B[0]) > Mat.eps * Mat.eps) {
+            if (Math.abs(B[0]) > eps) {
                 B[1] /= B[0];
                 B[2] /= B[0];
                 B[0] /= B[0];
@@ -369,9 +424,9 @@ JXG.createSector = function (board, parents, attributes) {
         // Arc does not work yet, since point1, point2 and point3 are
         // virtual points.
         //
-        // attr = Type.copyAttributes(attributes, board.options, "arc");
-        // attr = Type.copyAttributes(attr, board.options, "sector", "arc");
-        // attr.withLabel = false;
+        // attr = Type.copyAttributes(attributes, board.options, 'arc');
+        // attr = Type.copyAttributes(attr, board.options, "sector", 'arc');
+        // attr.withlabel = false;
         // attr.name += "_arc";
         // // el.arc = board.create("arc", [el.point1, el.point2, el.point3], attr);
         // // The arc's radius is always the radius of sector.
@@ -397,16 +452,8 @@ JXG.createSector = function (board, parents, attributes) {
         // ], attr);
         // el.addChild(el.arc);
 
-        el.methodMap = JXG.deepCopy(el.methodMap, {
-            radius: "Radius",
-            getRadius: "Radius",
-            setRadius: "setRadius"
-        });
-
-        //    el.prepareUpdate().update();
-
         // end '2lines'
-    } else if (type === "3points") {
+    } else if (type === '3points') {
         /**
          * Midpoint of the sector.
          * @memberOf Sector.prototype
@@ -442,7 +489,7 @@ JXG.createSector = function (board, parents, attributes) {
         }
 
         // useDirection is necessary for circumCircleSectors
-        el.useDirection = attributes.usedirection;
+        el.useDirection = attributes.usedirection; // this makes the attribute immutable
         el.setParents(points);
 
         /**
@@ -460,28 +507,24 @@ JXG.createSector = function (board, parents, attributes) {
             arc: "arc",
             center: "center",
             radiuspoint: "radiuspoint",
-            anglepoint: "anglepoint",
-            radius: "Radius",
-            getRadius: "Radius",
-            setRadius: "setRadius"
+            anglepoint: "anglepoint"
         });
 
         /**
-         * documented in JXG.Curve
+         * @class
          * @ignore
          */
         el.updateDataArray = function () {
-            var ar,
-                det,
-                p0c,
-                p1c,
-                p2c,
+            var ar, det,
+                p0c, p1c, p2c,
                 A = this.point2,
                 B = this.point1,
                 C = this.point3,
+                a, b, c,
                 phi,
                 sgn = 1,
-                vp_s = Type.evaluate(this.visProp.selection);
+                vp_s = this.evalVisProp('selection'),
+                vp_o = this.evalVisProp('orientation');
 
             if (!A.isReal || !B.isReal || !C.isReal) {
                 this.dataX = [NaN];
@@ -490,9 +533,24 @@ JXG.createSector = function (board, parents, attributes) {
             }
 
             phi = Geometry.rad(A, B, C);
-            if ((vp_s === "minor" && phi > Math.PI) || (vp_s === "major" && phi < Math.PI)) {
+            if (
+                (vp_o === 'counterclockwise' &&
+                    ((vp_s === 'minor' && phi > Math.PI) ||
+                     (vp_s === 'major' && phi < Math.PI))
+                ) ||
+                (vp_o === 'clockwise' &&
+                    ((vp_s === 'auto') ||
+                    (vp_s === 'minor' && phi > Math.PI) ||
+                    (vp_s === 'major' && phi < Math.PI))
+                )
+            ) {
                 sgn = -1;
             }
+            // if ((vp_s === 'minor' && phi > Math.PI) ||
+            //     (vp_s === 'major' && phi < Math.PI) ||
+            //     (vp_s === 'auto' && vp_o === 'clockwise')) {
+            //     sgn = -1;
+            // }
 
             // This is true for circumCircleSectors. In that case there is
             // a fourth parent element: [midpoint, point1, point3, point2]
@@ -510,11 +568,11 @@ JXG.createSector = function (board, parents, attributes) {
                 }
             }
 
-            A = A.coords.usrCoords;
-            B = B.coords.usrCoords;
-            C = C.coords.usrCoords;
+            a = A.coords.usrCoords;
+            b = B.coords.usrCoords;
+            c = C.coords.usrCoords;
 
-            ar = Geometry.bezierArc(A, B, C, true, sgn);
+            ar = Geometry.bezierArc(a, b, c, true, sgn);
 
             this.dataX = ar[0];
             this.dataY = ar[1];
@@ -537,12 +595,15 @@ JXG.createSector = function (board, parents, attributes) {
     el.radiuspoint = el.point2;
     el.anglepoint = el.point3;
 
-    attr = Type.copyAttributes(attributes, board.options, "arc");
-    attr = Type.copyAttributes(attr, board.options, "sector", "arc");
-    attr.withLabel = false;
+    attr = Type.copyAttributes(attributes, board.options, 'arc');
+    attr = Type.copyAttributes(attr, board.options, "sector", 'arc');
+    attr.withlabel = false;
+
+    // Minor or major arc:
+    attr.selection = el.visProp.selection;
     attr.name += "_arc";
 
-    if (type === "2lines") {
+    if (type === '2lines') {
         el.updateDataArray();
         el.arc = board.create("arc", [
             function() {
@@ -560,7 +621,7 @@ JXG.createSector = function (board, parents, attributes) {
             },
             function() {
                 return el.point3.coords.usrCoords;
-            }, // Center
+            } // Center
         ], attr);
     } else {
         // The arc's radius is always the radius of sector.
@@ -568,19 +629,25 @@ JXG.createSector = function (board, parents, attributes) {
         el.arc = board.create("arc", [
             el.point1, // Center
             function() {
-                var d = el.point2.Dist(el.point1);
+                var d = el.point2.Dist(el.point1),
+                A, B;
+
+                A = el.point1;
+                B = el.point2;
                 if (d === 0) {
-                    return [el.point1.X(), el.point1.Y()];
+                    return [A.X(), A.Y()];
                 }
+
                 return [
-                    el.point1.X() + el.Radius() * (el.point2.X() - el.point1.X()) / d,
-                    el.point1.Y() + el.Radius() * (el.point2.Y() - el.point1.Y()) / d
+                    A.X() + el.Radius() * (B.X() - A.X()) / d,
+                    A.Y() + el.Radius() * (B.Y() - A.Y()) / d
                 ];
             },
             el.point3
         ], attr);
     }
     el.addChild(el.arc);
+    el.inherits.push(el.arc);
 
     // Default hasPoint method. Documented in geometry element
     el.hasPointCurve = function (x, y) {
@@ -593,23 +660,30 @@ JXG.createSector = function (board, parents, attributes) {
             r = this.Radius(),
             dist = this.center.coords.distance(Const.COORDS_BY_USER, checkPoint),
             has,
-            vp_s = Type.evaluate(this.visProp.selection);
+            vp_s = this.evalVisProp('selection'),
+            vp_o = this.evalVisProp('orientation');
 
-        if (Type.isObject(Type.evaluate(this.visProp.precision))) {
+        if (Type.isObject(this.evalVisProp('precision'))) {
             type = this.board._inputDevice;
-            prec = Type.evaluate(this.visProp.precision[type]);
+            prec = this.evalVisProp('precision.' + type);
         } else {
             // 'inherit'
             prec = this.board.options.precision.hasPoint;
         }
         prec /= Math.min(Math.abs(this.board.unitX), Math.abs(this.board.unitY));
         has = Math.abs(dist - r) < prec;
+
         if (has) {
             angle = Geometry.rad(this.point2, this.center, checkPoint.usrCoords.slice(1));
             alpha = 0;
             beta = Geometry.rad(this.point2, this.center, this.point3);
 
-            if ((vp_s === "minor" && beta > Math.PI) || (vp_s === "major" && beta < Math.PI)) {
+            if (vp_o === 'clockwise') {
+                angle = 2 * Math.PI - angle;
+                beta = 2 * Math.PI - beta;
+            }
+
+            if ((vp_s === 'minor' && beta > Math.PI) || (vp_s === 'major' && beta < Math.PI)) {
                 alpha = beta;
                 beta = 2 * Math.PI;
             }
@@ -639,17 +713,24 @@ JXG.createSector = function (board, parents, attributes) {
             alpha,
             beta,
             has = dist < r,
-            vp_s = Type.evaluate(this.visProp.selection);
+            vp_s = this.evalVisProp('selection'),
+            vp_o = this.evalVisProp('orientation');
 
         if (has) {
             angle = Geometry.rad(this.radiuspoint, this.center, checkPoint.usrCoords.slice(1));
             alpha = 0.0;
             beta = Geometry.rad(this.radiuspoint, this.center, this.anglepoint);
 
-            if ((vp_s === "minor" && beta > Math.PI) || (vp_s === "major" && beta < Math.PI)) {
+            if (vp_o === 'clockwise') {
+                angle = 2 * Math.PI - angle;
+                beta = 2 * Math.PI - beta;
+            }
+
+            if ((vp_s === 'minor' && beta > Math.PI) || (vp_s === 'major' && beta < Math.PI)) {
                 alpha = beta;
                 beta = 2 * Math.PI;
             }
+
             //if (angle > Geometry.rad(this.point2, this.point1, this.point3)) {
             if (angle < alpha || angle > beta) {
                 has = false;
@@ -660,8 +741,8 @@ JXG.createSector = function (board, parents, attributes) {
 
     el.hasPoint = function (x, y) {
         if (
-            Type.evaluate(this.visProp.highlightonsector) ||
-            Type.evaluate(this.visProp.hasinnerpoints)
+            this.evalVisProp('highlightonsector') ||
+            this.evalVisProp('hasinnerpoints')
         ) {
             return this.hasPointSector(x, y);
         }
@@ -677,13 +758,16 @@ JXG.createSector = function (board, parents, attributes) {
     // documented in GeometryElement
     // this method is very similar to arc.getLabelAnchor()
     // there are some additions in the arc version though, mainly concerning
-    // "major" and "minor" arcs. but maybe these methods can be merged.
+    // 'major' and 'minor' arcs. Maybe these methods can be merged.
+    /**
+     * @class
+     * @ignore
+     */
     el.getLabelAnchor = function () {
         var coords,
-            vec,
-            vecx,
-            vecy,
+            vec, vecx, vecy,
             len,
+            pos = this.label.evalVisProp('position'),
             angle = Geometry.rad(this.point2, this.point1, this.point3),
             dx = 13 / this.board.unitX,
             dy = 13 / this.board.unitY,
@@ -691,7 +775,8 @@ JXG.createSector = function (board, parents, attributes) {
             pmc = this.point1.coords.usrCoords,
             bxminusax = p2c[1] - pmc[1],
             byminusay = p2c[2] - pmc[2],
-            vp_s = Type.evaluate(this.visProp.selection),
+            vp_s = this.evalVisProp('selection'),
+            vp_o = this.evalVisProp('orientation'),
             l_vp = this.label ? this.label.visProp : this.visProp.label;
 
         // If this is uncommented, the angle label can not be dragged
@@ -699,36 +784,47 @@ JXG.createSector = function (board, parents, attributes) {
         //    this.label.relativeCoords = new Coords(Const.COORDS_BY_SCREEN, [0, 0], this.board);
         //}
 
-        if ((vp_s === "minor" && angle > Math.PI) || (vp_s === "major" && angle < Math.PI)) {
-            angle = -(2 * Math.PI - angle);
+        if (
+            !Type.isString(pos) ||
+            (pos.indexOf('right') < 0 && pos.indexOf('left') < 0)
+        ) {
+
+            if ((vp_s === 'minor' && angle > Math.PI) || (vp_s === 'major' && angle < Math.PI) || (vp_s === 'auto' && vp_o === 'clockwise')) {
+                angle = -(2 * Math.PI - angle);
+            }
+
+            coords = new Coords(
+                Const.COORDS_BY_USER,
+                [
+                    pmc[1] + Math.cos(angle * 0.5) * bxminusax - Math.sin(angle * 0.5) * byminusay,
+                    pmc[2] + Math.sin(angle * 0.5) * bxminusax + Math.cos(angle * 0.5) * byminusay
+                ],
+                this.board
+            );
+
+            vecx = coords.usrCoords[1] - pmc[1];
+            vecy = coords.usrCoords[2] - pmc[2];
+
+            len = Mat.hypot(vecx, vecy);
+            vecx = (vecx * (len + dx)) / len;
+            vecy = (vecy * (len + dy)) / len;
+            vec = [pmc[1] + vecx, pmc[2] + vecy];
+
+            l_vp.position = Geometry.calcLabelQuadrant(Geometry.rad([1, 0], [0, 0], vec));
+
+            return new Coords(Const.COORDS_BY_USER, vec, this.board);
+        } else {
+            return this.getLabelPosition(pos, this.label.evalVisProp('distance'));
         }
-
-        coords = new Coords(
-            Const.COORDS_BY_USER,
-            [
-                pmc[1] + Math.cos(angle * 0.5) * bxminusax - Math.sin(angle * 0.5) * byminusay,
-                pmc[2] + Math.sin(angle * 0.5) * bxminusax + Math.cos(angle * 0.5) * byminusay
-            ],
-            this.board
-        );
-
-        vecx = coords.usrCoords[1] - pmc[1];
-        vecy = coords.usrCoords[2] - pmc[2];
-
-        len = Mat.hypot(vecx, vecy);
-        vecx = (vecx * (len + dx)) / len;
-        vecy = (vecy * (len + dy)) / len;
-        vec = [pmc[1] + vecx, pmc[2] + vecy];
-
-        l_vp.position = Geometry.calcLabelQuadrant(Geometry.rad([1, 0], [0, 0], vec));
-
-        return new Coords(Const.COORDS_BY_USER, vec, this.board);
     };
 
     /**
      * Overwrite the Radius method of the sector.
      * Used in {@link GeometryElement#setAttribute}.
-     * @param {Number, Function} value New radius.
+     * @memberOf Sector.prototype
+     * @name setRadius
+     * @param {Number|Function} value New radius.
+     * @function
      */
     el.setRadius = function (val) {
         var res,
@@ -752,7 +848,7 @@ JXG.createSector = function (board, parents, attributes) {
          */
         el.Radius = function () {
             var r = Type.evaluate(val);
-            if (r === "auto") {
+            if (r === 'auto') {
                 return this.autoRadius();
             }
             return r;
@@ -769,13 +865,66 @@ JXG.createSector = function (board, parents, attributes) {
     };
 
     /**
-     * Moves the sector by the difference of two coordinates.
-     * @param {Number} method The type of coordinates used here. Possible values are {@link JXG.COORDS_BY_USER} and {@link JXG.COORDS_BY_SCREEN}.
-     * @param {Array} coords coordinates in screen/user units
-     * @param {Array} oldcoords previous coordinates in screen/user units
-     * @returns {JXG.Curve} this element
+     * Length of the sector's arc or the angle in various units, see {@link Arc#Value}.
+     * @memberOf Sector.prototype
+     * @name Value
+     * @function
+     * @param {String} unit
+     * @returns {Number} The arc length or the angle value in various units.
+     * @see Arc#Value
      */
-    if (type === "3points") {
+    el.Value = function(unit) {
+        return this.arc.Value(unit);
+    };
+
+    /**
+     * Arc length.
+     * @memberOf Sector.prototype
+     * @name L
+     * @returns {Number} Length of the sector's arc.
+     * @function
+     * @see Arc#L
+     */
+    el.L = function() {
+        return this.arc.L();
+    };
+
+    /**
+     * Area of the sector.
+     * @memberOf Sector.prototype
+     * @name Area
+     * @function
+     * @returns {Number} The area of the sector.
+     */
+    el.Area = function () {
+        var r = this.Radius();
+
+        return 0.5 * r * r * this.Value('radians');
+    };
+
+    /**
+     * Sector perimeter, i.e. arc length plus 2 * radius.
+     * @memberOf Sector.prototype
+     * @name Perimeter
+     * @function
+     * @returns {Number} Perimeter of sector.
+     */
+    el.Perimeter = function () {
+        return this.L() + 2 * this.Radius();
+    };
+
+    if (type === '3points') {
+        /**
+         * Moves the sector by the difference of two coordinates.
+         * @memberOf Sector.prototype
+         * @name setPositionDirectly
+         * @function
+         * @param {Number} method The type of coordinates used here. Possible values are {@link JXG.COORDS_BY_USER} and {@link JXG.COORDS_BY_SCREEN}.
+         * @param {Array} coords coordinates in screen/user units
+         * @param {Array} oldcoords previous coordinates in screen/user units
+         * @returns {JXG.Curve} this element
+         * @private
+         */
         el.setPositionDirectly = function (method, coords, oldcoords) {
             var dc, t,
                 c = new Coords(method, coords, this.board),
@@ -793,7 +942,16 @@ JXG.createSector = function (board, parents, attributes) {
         };
     }
 
-    // el.prepareUpdate().update();
+    el.methodMap = JXG.deepCopy(el.methodMap, {
+        radius: "Radius",
+        Radius: "Radius",
+        getRadius: "Radius",
+        setRadius: "setRadius",
+        Value: "Value",
+        L: "L",
+        Area: "Area",
+        Perimeter: "Perimeter"
+    });
 
     return el;
 };
@@ -801,8 +959,10 @@ JXG.createSector = function (board, parents, attributes) {
 JXG.registerElement("sector", JXG.createSector);
 
 /**
- * @class A circumcircle sector is different from a {@link Sector} mostly in the way the parent elements are interpreted.
- * At first, the circum centre is determined from the three given points. Then the sector is drawn from <tt>p1</tt> through
+ * @class A sector whose arc is a circum circle arc through three points.
+ * A circumcircle sector is different from a {@link Sector} mostly in the way the parent elements are interpreted.
+ * At first, the circum center is determined from the three given points.
+ * Then the sector is drawn from <tt>p1</tt> through
  * <tt>p2</tt> to <tt>p3</tt>.
  * @pseudo
  * @name CircumcircleSector
@@ -834,7 +994,7 @@ JXG.registerElement("sector", JXG.createSector);
 JXG.createCircumcircleSector = function (board, parents, attributes) {
     var el, mp, attr, points;
 
-    points = Type.providePoints(board, parents, attributes, "point");
+    points = Type.providePoints(board, parents, attributes, 'point');
     if (points === false) {
         throw new Error(
             "JSXGraph: Can't create circumcircle sector with parent types '" +
@@ -850,10 +1010,10 @@ JXG.createCircumcircleSector = function (board, parents, attributes) {
     mp = board.create("circumcenter", points.slice(0, 3), attr);
     mp.dump = false;
 
-    attr = Type.copyAttributes(attributes, board.options, "circumcirclesector");
+    attr = Type.copyAttributes(attributes, board.options, 'circumcirclesector');
     el = board.create("sector", [mp, points[0], points[2], points[1]], attr);
 
-    el.elType = "circumcirclesector";
+    el.elType = 'circumcirclesector';
     el.setParents(points);
 
     /**
@@ -873,7 +1033,7 @@ JXG.createCircumcircleSector = function (board, parents, attributes) {
 JXG.registerElement("circumcirclesector", JXG.createCircumcircleSector);
 
 /**
- * @class A minor sector is a sector of a circle having measure less than or equal to
+ * @class A minor sector is a sector of a circle having measure at most
  * 180 degrees (pi radians). It is defined by a center, one point that
  * defines the radius, and a third point that defines the angle of the sector.
  * @pseudo
@@ -949,14 +1109,14 @@ JXG.registerElement("circumcirclesector", JXG.createCircumcircleSector);
  *
  */
 JXG.createMinorSector = function (board, parents, attributes) {
-    attributes.selection = "minor";
+    attributes.selection = 'minor';
     return JXG.createSector(board, parents, attributes);
 };
 
 JXG.registerElement("minorsector", JXG.createMinorSector);
 
 /**
- * @class A major sector is a sector of a circle having measure greater than or equal to
+ * @class A major sector is a sector of a circle having measure at least
  * 180 degrees (pi radians). It is defined by a center, one point that
  * defines the radius, and a third point that defines the angle of the sector.
  * @pseudo
@@ -987,20 +1147,26 @@ JXG.registerElement("minorsector", JXG.createMinorSector);
  * </script><pre>
  */
 JXG.createMajorSector = function (board, parents, attributes) {
-    attributes.selection = "major";
+    attributes.selection = 'major';
     return JXG.createSector(board, parents, attributes);
 };
 
 JXG.registerElement("majorsector", JXG.createMajorSector);
 
 /**
- * @class The angle element is used to denote an angle defined by three points. Visually it is just a {@link Sector}
+ * @class Angle sector defined by three points or two lines.
+ * Visually it is just a {@link Sector}
  * element with a radius not defined by the parent elements but by an attribute <tt>radius</tt>. As opposed to the sector,
  * an angle has two angle points and no radius point.
  * Sector is displayed if type=="sector".
  * If type=="square", instead of a sector a parallelogram is displayed.
- * In case of type=="auto", a square is displayed if the angle is near orthogonal.
- * If no name is provided the angle label is automatically set to a lower greek letter.
+ * In case of type=="auto", a square is displayed if the angle is near orthogonal. The precision
+ * to decide if an angle is orthogonal is determined by the attribute
+ * {@link Angle#orthoSensitivity}.
+ * <p>
+ * If no name is provided the angle label is automatically set to a lower greek letter. If no label should be displayed use
+ * the attribute <tt>withLabel:false</tt> or set the name attribute to the empty string.
+ *
  * @pseudo
  * @name Angle
  * @augments Sector
@@ -1127,7 +1293,7 @@ JXG.createAngle = function (board, parents, attributes) {
     var el,
         radius, attr, attrsub,
         i, points,
-        type = "invalid";
+        type = 'invalid';
 
     // Two lines or three points?
     if (
@@ -1136,12 +1302,12 @@ JXG.createAngle = function (board, parents, attributes) {
         (Type.isArray(parents[2]) || Type.isNumber(parents[2])) &&
         (Type.isArray(parents[3]) || Type.isNumber(parents[3]))
     ) {
-        type = "2lines";
+        type = '2lines';
     } else {
         attr = {
             name: ''
-        }
-        points = Type.providePoints(board, parents, attr, "point");
+        };
+        points = Type.providePoints(board, parents, attr, 'point');
         if (points === false) {
             throw new Error(
                 "JSXGraph: Can't create angle with parent types '" +
@@ -1153,13 +1319,13 @@ JXG.createAngle = function (board, parents, attributes) {
                     "'."
             );
         }
-        type = "3points";
+        type = '3points';
     }
 
-    attr = Type.copyAttributes(attributes, board.options, "angle");
+    attr = Type.copyAttributes(attributes, board.options, 'angle');
 
     //  If empty, create a new name
-    if (!Type.exists(attr.name) || attr.name === "") {
+    if (!Type.exists(attr.name) /*|| attr.name === ""*/) {
         attr.name = board.generateName({ type: Const.OBJECT_TYPE_ANGLE });
     }
 
@@ -1169,15 +1335,30 @@ JXG.createAngle = function (board, parents, attributes) {
         radius = 0;
     }
 
-    if (type === "2lines") {
+    board.suspendUpdate(); // Necessary for immediate availability of radius.
+    if (type === '2lines') {
+        // Angle defined by two lines
         parents.push(radius);
         el = board.create("sector", parents, attr);
+        /**
+         * @class
+         * @ignore
+         */
         el.updateDataArraySector = el.updateDataArray;
 
         // TODO
+        /**
+         * @class
+         * @ignore
+         */
         el.setAngle = function (val) {};
+        /**
+         * @class
+         * @ignore
+         */
         el.free = function (val) {};
     } else {
+        // Angle defined by three points
         el = board.create("sector", [points[1], points[0], points[2]], attr);
         el.arc.visProp.priv = true;
 
@@ -1205,36 +1386,42 @@ JXG.createAngle = function (board, parents, attributes) {
         el.Radius = function () {
             // Set the angle radius, also @see @link Sector#autoRadius
             var r = Type.evaluate(radius);
-            if (r === "auto") {
+            if (r === 'auto') {
                 return el.autoRadius();
             }
             return r;
         };
 
+        /**
+         * @class
+         * @ignore
+         */
         el.updateDataArraySector = function () {
             var A = this.point2,
                 B = this.point1,
                 C = this.point3,
                 r = this.Radius(),
                 d = B.Dist(A),
+                a, b, c,
                 ar,
                 phi,
                 sgn = 1,
-                vp_s = Type.evaluate(this.visProp.selection);
+                vp_s = this.evalVisProp('selection'),
+                vp_o = this.evalVisProp('orientation');
 
             phi = Geometry.rad(A, B, C);
-            if ((vp_s === "minor" && phi > Math.PI) || (vp_s === "major" && phi < Math.PI)) {
+            if ((vp_s === 'minor' && phi > Math.PI) || (vp_s === 'major' && phi < Math.PI) || (vp_s === 'auto' && vp_o === 'clockwise')) {
                 sgn = -1;
             }
 
-            A = A.coords.usrCoords;
-            B = B.coords.usrCoords;
-            C = C.coords.usrCoords;
+            a = A.coords.usrCoords;
+            b = B.coords.usrCoords;
+            c = C.coords.usrCoords;
 
-            A = [1, B[1] + ((A[1] - B[1]) * r) / d, B[2] + ((A[2] - B[2]) * r) / d];
-            C = [1, B[1] + ((C[1] - B[1]) * r) / d, B[2] + ((C[2] - B[2]) * r) / d];
+            a = [1, b[1] + ((a[1] - b[1]) * r) / d, b[2] + ((a[2] - b[2]) * r) / d];
+            c = [1, b[1] + ((c[1] - b[1]) * r) / d, b[2] + ((c[2] - b[2]) * r) / d];
 
-            ar = Geometry.bezierArc(A, B, C, true, sgn);
+            ar = Geometry.bezierArc(a, b, c, true, sgn);
 
             this.dataX = ar[0];
             this.dataY = ar[1];
@@ -1347,12 +1534,29 @@ JXG.createAngle = function (board, parents, attributes) {
          */
         el.setAngle = function (val) {
             var t1, t2,
-                val2,
+                phi, phiInv,
                 p = this.anglepoint,
                 q = this.radiuspoint;
 
             if (p.draggable()) {
-                t1 = this.board.create("transform", [val, this.center], {
+
+                if (this.evalVisProp('orientation') === 'clockwise') {
+                    /**
+                     * @ignore
+                     */
+                    phi = function() {
+                        return Math.PI * 2 - Type.evaluate(val);
+                    };
+                } else {
+                    /**
+                     * @ignore
+                     */
+                    phi = function() {
+                        return Type.evaluate(val);
+                    };
+                }
+
+                t1 = this.board.create("transform", [phi, this.center], {
                     type: "rotate"
                 });
                 p.addTransform(q, t1);
@@ -1361,30 +1565,21 @@ JXG.createAngle = function (board, parents, attributes) {
                 t1.update();
                 p.moveTo(Mat.matVecMult(t1.matrix, q.coords.usrCoords));
 
-                if (Type.isFunction(val)) {
-                    /**
-                     * @ignore
-                     */
-                    val2 = function () {
-                        return Math.PI * 2 - val();
-                    };
-                } else {
-                    /**
-                     * @ignore
-                     */
-                    val2 = function () {
-                        return Math.PI * 2 - val;
-                    };
-                }
-                t2 = this.board.create("transform", [val2, this.center], {
+                phiInv = function () {
+                    return Math.PI * 2 - phi();
+                };
+                t2 = this.board.create("transform", [phiInv, this.center], {
                     type: "rotate"
                 });
                 p.coords.on("update", function () {
                     t2.update();
-                    q.moveTo(Mat.matVecMult(t2.matrix, p.coords.usrCoords));
+                    // q.moveTo(Mat.matVecMult(t2.matrix, p.coords.usrCoords));
+                    q.setPositionDirectly(Const.COORDS_BY_USER, Mat.matVecMult(t2.matrix, p.coords.usrCoords));
                 });
 
                 p.setParents(q);
+
+                this.hasFixedAngle = true;
             }
             return this;
         };
@@ -1406,8 +1601,10 @@ JXG.createAngle = function (board, parents, attributes) {
                 p.isDraggable = true;
                 p.parents = [];
 
-                p.coords.off("update");
+                p.coords.off('update');
             }
+
+            this.hasFixedAngle = false;
 
             return this;
         };
@@ -1417,19 +1614,23 @@ JXG.createAngle = function (board, parents, attributes) {
 
     // GEONExT compatible labels.
     if (Type.exists(el.visProp.text)) {
-        el.label.setText(Type.evaluate(el.visProp.text));
+        el.label.setText(el.evalVisProp('text'));
     }
 
-    el.elType = "angle";
+    el.elType = 'angle';
     el.type = Const.OBJECT_TYPE_ANGLE;
     el.subs = {};
 
+    /**
+     * @class
+     * @ignore
+     */
     el.updateDataArraySquare = function () {
         var A, B, C,
             d1, d2, v, l1, l2,
             r = this.Radius();
 
-        if (type === "2lines") {
+        if (type === '2lines') {
             // This is necessary to update this.point1, this.point2, this.point3.
             this.updateDataArraySector();
         }
@@ -1464,33 +1665,46 @@ JXG.createAngle = function (board, parents, attributes) {
         this.bezierDegree = 1;
     };
 
+    /**
+     * @class
+     * @ignore
+     */
     el.updateDataArrayNone = function () {
         this.dataX = [NaN];
         this.dataY = [NaN];
         this.bezierDegree = 1;
     };
 
+    /**
+     * @class
+     * @ignore
+     */
     el.updateDataArray = function () {
-        var type = Type.evaluate(this.visProp.type),
+        var type = this.evalVisProp('type'),
             deg = Geometry.trueAngle(this.point2, this.point1, this.point3),
-            vp_s = Type.evaluate(this.visProp.selection);
+            vp_s = this.evalVisProp('selection'),
+            vp_o = this.evalVisProp('orientation');
 
-        if ((vp_s === "minor" && deg > 180.0) || (vp_s === "major" && deg < 180.0)) {
+        if ((vp_s === 'minor' && deg > 180.0) || (vp_s === 'major' && deg < 180.0) || (vp_s === 'auto' &&  vp_o === 'clockwise')) {
             deg = 360.0 - deg;
         }
 
-        if (Math.abs(deg - 90.0) < Type.evaluate(this.visProp.orthosensitivity) + Mat.eps) {
-            type = Type.evaluate(this.visProp.orthotype);
+        if (Math.abs(deg - 90.0) < this.evalVisProp('orthosensitivity') + Mat.eps) {
+            type = this.evalVisProp('orthotype');
         }
 
-        if (type === "none") {
+        if (type === 'none') {
             this.updateDataArrayNone();
-        } else if (type === "square") {
+            this.maxX = function() { return 0; };
+        } else if (type === 'square') {
             this.updateDataArraySquare();
-        } else if (type === "sector") {
+            this.maxX = function() { return 4; };
+        } else if (type === 'sector') {
             this.updateDataArraySector();
-        } else if (type === "sectordot") {
+            this.maxX = function() { return 6; };
+        } else if (type === 'sectordot') {
             this.updateDataArraySector();
+            this.maxX = function() { return 6; };
             if (!this.dot.visProp.visible) {
                 this.dot.setAttribute({ visible: true });
             }
@@ -1501,7 +1715,7 @@ JXG.createAngle = function (board, parents, attributes) {
         }
     };
 
-    attrsub = Type.copyAttributes(attributes, board.options, "angle", "dot");
+    attrsub = Type.copyAttributes(attributes, board.options, "angle", 'dot');
     /**
      * Indicates a right angle. Invisible by default, use <tt>dot.visible: true</tt> to show.
      * Though this dot indicates a right angle, it can be visible even if the angle is not a right
@@ -1514,7 +1728,7 @@ JXG.createAngle = function (board, parents, attributes) {
         "point",
         [
             function () {
-                var A, B, r, d, a2, co, si, mat, vp_s;
+                var A, B, r, d, a2, co, si, mat, vp_s, vp_o;
 
                 if (Type.exists(el.dot) && !el.dot.visProp.visible) {
                     return [0, 0];
@@ -1526,8 +1740,9 @@ JXG.createAngle = function (board, parents, attributes) {
                 d = Geometry.distance(A, B, 3);
                 a2 = Geometry.rad(el.point2, el.point1, el.point3);
 
-                vp_s = Type.evaluate(el.visProp.selection);
-                if ((vp_s === "minor" && a2 > Math.PI) || (vp_s === "major" && a2 < Math.PI)) {
+                vp_s = el.evalVisProp('selection');
+                vp_o = el.evalVisProp('orientation');
+                if ((vp_s === 'minor' && a2 > Math.PI) || (vp_s === 'major' && a2 < Math.PI) || (vp_s === 'auto' && vp_o === 'clockwise')) {
                     a2 = -(2 * Math.PI - a2);
                 }
                 a2 *= 0.5;
@@ -1551,7 +1766,7 @@ JXG.createAngle = function (board, parents, attributes) {
     el.dot.dump = false;
     el.subs.dot = el.dot;
 
-    if (type === "2lines") {
+    if (type === '2lines') {
         for (i = 0; i < 2; i++) {
             board.select(parents[i]).addChild(el.dot);
         }
@@ -1560,75 +1775,136 @@ JXG.createAngle = function (board, parents, attributes) {
             board.select(points[i]).addChild(el.dot);
         }
     }
+    board.unsuspendUpdate();
+
+    /**
+     * Returns the value of the angle.
+     * @memberOf Angle.prototype
+     * @name Value
+     * @function
+     * @param {String} [unit='length'] Unit of the returned values. Possible units are
+     * <ul>
+     * <li> 'radians' (default): angle value in radians
+     * <li> 'degrees': angle value in degrees
+     * <li> 'semicircle': angle value in radians as a multiple of &pi;, e.g. if the angle is 1.5&pi;, 1.5 will be returned.
+     * <li> 'circle': angle value in radians as a multiple of 2&pi;
+     * <li> 'length': length of the arc line of the angle
+     * </ul>
+     * It is sufficient to supply the first three characters of the unit, e.g. 'len'.
+     * @returns {Number} angle value in various units.
+     * @see Sector#L
+     * @see Arc#Value
+     * @example
+     * var A, B, C, ang,
+     *     r = 0.5;
+     * A = board.create("point", [3, 0]);
+     * B = board.create("point", [0, 0]);
+     * C = board.create("point", [2, 2]);
+     * ang = board.create("angle", [A, B, C], {radius: r});
+     *
+     * console.log(ang.Value());
+     * // Output Math.PI * 0.25
+     *
+     * console.log(ang.Value('radian'));
+     * // Output Math.PI * 0.25
+     *
+     * console.log(ang.Value('degree');
+     * // Output 45
+     *
+     * console.log(ang.Value('semicircle'));
+     * // Output 0.25
+     *
+     * console.log(ang.Value('circle'));
+     * // Output 0.125
+     *
+     * console.log(ang.Value('length'));
+     * // Output r * Math.PI * 0.25
+     *
+     * console.log(ang.L());
+     * // Output r * Math.PI * 0.25
+     *
+     */
+    el.Value = function(unit) {
+        unit = unit || 'radians';
+        if (unit === '') {
+            unit = 'radians';
+        }
+        return el.arc.Value(unit);
+    };
+
 
     // documented in GeometryElement
+    /**
+     * @class
+     * @ignore
+     */
     el.getLabelAnchor = function () {
         var vec,
             dx = 12,
             A, B, r, d, a2, co, si, mat,
-            vp_s = Type.evaluate(el.visProp.selection),
-            l_vp = this.label ? this.label.visProp : this.visProp.label;
+            vp_s = el.evalVisProp('selection'),
+            vp_o = el.evalVisProp('orientation'),
+            l_vp = this.label ? this.label.visProp : this.visProp.label,
+            pos = (this.label) ?
+                    this.label.evalVisProp('position') : this.evalVisProp('label.position');
 
         // If this is uncommented, the angle label can not be dragged
         //if (Type.exists(this.label)) {
         //    this.label.relativeCoords = new Coords(Const.COORDS_BY_SCREEN, [0, 0], this.board);
         //}
 
-        if (Type.exists(this.label) && Type.exists(this.label.visProp.fontsize)) {
-            dx = Type.evaluate(this.label.visProp.fontsize);
+        if (
+            !Type.isString(pos) ||
+            (pos.indexOf('right') < 0 && pos.indexOf('left') < 0)
+        ) {
+
+            if (Type.exists(this.label) && Type.exists(this.label.visProp.fontsize)) {
+                dx = this.label.evalVisProp('fontsize');
+            }
+            dx /= this.board.unitX;
+
+            A = el.point2.coords.usrCoords;
+            B = el.point1.coords.usrCoords;
+            r = el.Radius();
+            d = Geometry.distance(A, B, 3);
+            a2 = Geometry.rad(el.point2, el.point1, el.point3);
+            if ((vp_s === 'minor' && a2 > Math.PI) || (vp_s === 'major' && a2 < Math.PI) || (vp_s === 'auto' && vp_o === 'clockwise')) {
+                a2 = -(2 * Math.PI - a2);
+            }
+            a2 *= 0.5;
+            co = Math.cos(a2);
+            si = Math.sin(a2);
+
+            A = [1, B[1] + ((A[1] - B[1]) * r) / d, B[2] + ((A[2] - B[2]) * r) / d];
+
+            mat = [
+                [1, 0, 0],
+                [B[1] - 0.5 * B[1] * co + 0.5 * B[2] * si, co * 0.5, -si * 0.5],
+                [B[2] - 0.5 * B[1] * si - 0.5 * B[2] * co, si * 0.5, co * 0.5]
+            ];
+            vec = Mat.matVecMult(mat, A);
+            vec[1] /= vec[0];
+            vec[2] /= vec[0];
+            vec[0] /= vec[0];
+
+            d = Geometry.distance(vec, B, 3);
+            vec = [
+                vec[0],
+                B[1] + ((vec[1] - B[1]) * (r + dx)) / d,
+                B[2] + ((vec[2] - B[2]) * (r + dx)) / d
+            ];
+
+            l_vp.position = Geometry.calcLabelQuadrant(Geometry.rad([1, 0], [0, 0], vec));
+
+            return new Coords(Const.COORDS_BY_USER, vec, this.board);
+        } else {
+            return this.getLabelPosition(pos, this.label.evalVisProp('distance'));
         }
-        dx /= this.board.unitX;
-
-        A = el.point2.coords.usrCoords;
-        B = el.point1.coords.usrCoords;
-        r = el.Radius();
-        d = Geometry.distance(A, B, 3);
-        a2 = Geometry.rad(el.point2, el.point1, el.point3);
-        if ((vp_s === "minor" && a2 > Math.PI) || (vp_s === "major" && a2 < Math.PI)) {
-            a2 = -(2 * Math.PI - a2);
-        }
-        a2 *= 0.5;
-        co = Math.cos(a2);
-        si = Math.sin(a2);
-
-        A = [1, B[1] + ((A[1] - B[1]) * r) / d, B[2] + ((A[2] - B[2]) * r) / d];
-
-        mat = [
-            [1, 0, 0],
-            [B[1] - 0.5 * B[1] * co + 0.5 * B[2] * si, co * 0.5, -si * 0.5],
-            [B[2] - 0.5 * B[1] * si - 0.5 * B[2] * co, si * 0.5, co * 0.5]
-        ];
-        vec = Mat.matVecMult(mat, A);
-        vec[1] /= vec[0];
-        vec[2] /= vec[0];
-        vec[0] /= vec[0];
-
-        d = Geometry.distance(vec, B, 3);
-        vec = [
-            vec[0],
-            B[1] + ((vec[1] - B[1]) * (r + dx)) / d,
-            B[2] + ((vec[2] - B[2]) * (r + dx)) / d
-        ];
-
-        l_vp.position = Geometry.calcLabelQuadrant(Geometry.rad([1, 0], [0, 0], vec));
-
-        return new Coords(Const.COORDS_BY_USER, vec, this.board);
-    };
-
-    /**
-     * Returns the value of the angle in Radians.
-     * @memberOf Angle.prototype
-     * @name Value
-     * @function
-     * @returns {Number} The angle value in Radians
-     */
-    el.Value = function () {
-        return Geometry.rad(this.point2, this.point1, this.point3);
     };
 
     el.methodMap = Type.deepCopy(el.methodMap, {
-        Value: "Value",
         setAngle: "setAngle",
+        Value: "Value",
         free: "free"
     });
 
@@ -1638,7 +1914,7 @@ JXG.createAngle = function (board, parents, attributes) {
 JXG.registerElement("angle", JXG.createAngle);
 
 /**
- * @class A non-reflex angle is the acute or obtuse instance of an angle.
+ * @class A non-reflex angle is the instance of an angle that is at most 180°.
  * It is defined by a center, one point that
  * defines the radius, and a third point that defines the angle of the sector.
  * @pseudo
@@ -1673,14 +1949,20 @@ JXG.registerElement("angle", JXG.createAngle);
 JXG.createNonreflexAngle = function (board, parents, attributes) {
     var el;
 
-    attributes.selection = "minor";
+    attributes.selection = 'minor';
     attributes = Type.copyAttributes(attributes, board.options, 'nonreflexangle');
     el = JXG.createAngle(board, parents, attributes);
 
     // Documented in createAngle
-    el.Value = function () {
-        var v = Geometry.rad(this.point2, this.point1, this.point3);
-        return v < Math.PI ? v : 2.0 * Math.PI - v;
+    el.Value = function (unit) {
+        var rad = Geometry.rad(this.point2, this.point1, this.point3);
+        unit = unit || 'radians';
+        if (unit === '') {
+            unit = 'radians';
+        }
+        rad = (rad < Math.PI) ? rad : 2.0 * Math.PI - rad;
+
+        return this.arc.Value(unit, rad);
     };
     return el;
 };
@@ -1688,7 +1970,7 @@ JXG.createNonreflexAngle = function (board, parents, attributes) {
 JXG.registerElement("nonreflexangle", JXG.createNonreflexAngle);
 
 /**
- * @class A reflex angle is the neither acute nor obtuse instance of an angle.
+ * @class A reflex angle is the instance of an angle that is larger than 180°.
  * It is defined by a center, one point that
  * defines the radius, and a third point that defines the angle of the sector.
  * @pseudo
@@ -1723,26 +2005,23 @@ JXG.registerElement("nonreflexangle", JXG.createNonreflexAngle);
 JXG.createReflexAngle = function (board, parents, attributes) {
     var el;
 
-    attributes.selection = "major";
+    attributes.selection = 'major';
     attributes = Type.copyAttributes(attributes, board.options, 'reflexangle');
     el = JXG.createAngle(board, parents, attributes);
 
     // Documented in createAngle
-    el.Value = function () {
-        var v = Geometry.rad(this.point2, this.point1, this.point3);
-        return v >= Math.PI ? v : 2.0 * Math.PI - v;
+    el.Value = function (unit) {
+        var rad = Geometry.rad(this.point2, this.point1, this.point3);
+        unit = unit || 'radians';
+        if (unit === '') {
+            unit = 'radians';
+        }
+        rad = (rad >= Math.PI) ? rad : 2.0 * Math.PI - rad;
+
+        return this.arc.Value(unit, rad);
     };
+
     return el;
 };
 
 JXG.registerElement("reflexangle", JXG.createReflexAngle);
-
-// export default {
-//     createSector: JXG.createSector,
-//     createCircumcircleSector: JXG.createCircumcircleSector,
-//     createMinorSector: JXG.createMinorSector,
-//     createMajorSector: JXG.createMajorSector,
-//     createAngle: JXG.createAngle,
-//     createReflexAngle: JXG.createReflexAngle,
-//     createNonreflexAngle: JXG.createNonreflexAngle
-// };

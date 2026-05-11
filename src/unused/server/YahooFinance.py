@@ -1,6 +1,6 @@
 from JXGServerModule import JXGServerModule
 import JXG
-import urllib2, httplib, StringIO, gzip
+import urllib.request, urllib.error, urllib.parse, http.client, io, gzip
 import datetime, math, random
 
 class YahooFinance(JXGServerModule):
@@ -22,14 +22,14 @@ class YahooFinance(JXGServerModule):
     def _getData(self, share):
         #httplib.HTTPConnection.debuglevel = 1
         # todo: adjust the s parameter to input the share given with parameter share
-        request = urllib2.Request('http://finance.yahoo.com/d/quotes.csv?s=' + share.lower() + '&f=sl1d1t1c1ohgv&e=.csv')
+        request = urllib.request.Request('http://finance.yahoo.com/d/quotes.csv?s=' + share.lower() + '&f=sl1d1t1c1ohgv&e=.csv')
         # accept compressed data
         request.add_header('Accept-encoding', 'gzip')
-        opener = urllib2.build_opener()
+        opener = urllib.request.build_opener()
         f = opener.open(request)
 
         compresseddata = f.read()
-        compressedstream = StringIO.StringIO(compresseddata)
+        compressedstream = io.StringIO(compresseddata)
         gzipper = gzip.GzipFile(fileobj=compressedstream)
         try:
             data = gzipper.read()

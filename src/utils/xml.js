@@ -1,5 +1,5 @@
 /*
- Copyright 2008-2023
+ Copyright 2008-2026
  Matthias Ehmann,
  Michael Gerhaeuser,
  Carsten Miller,
@@ -32,8 +32,8 @@
 /*global JXG: true, define: true, DOMParser: true, ActiveXObject: true*/
 /*jslint nomen: true, plusplus: true*/
 
-import JXG from "../jxg";
-import Type from "./type";
+import JXG from "../jxg.js";
+import Type from "./type.js";
 
 /**
  * Holds browser independent xml parsing routines. Won't work in environments other than browsers.
@@ -67,7 +67,7 @@ JXG.XML = {
 
         // DOMParser is a function in all browsers, except older IE and Safari.
         // In IE it does not exists (workaround in else branch), in Safari it's an object.
-        if (typeof DOMParser === "function" || typeof DOMParser === "object") {
+        if (typeof DOMParser === "function" || typeof DOMParser === 'object') {
             DP = DOMParser;
         } else {
             // IE workaround, since there is no DOMParser
@@ -75,8 +75,8 @@ JXG.XML = {
                 this.parseFromString = function (str) {
                     var d;
 
-                    if (typeof ActiveXObject === "function") {
-                        d = new ActiveXObject("MSXML.DomDocument");
+                    if (typeof ActiveXObject === 'function') {
+                        d = new ActiveXObject('MSXML.DomDocument');
                         d.loadXML(str);
                     }
 

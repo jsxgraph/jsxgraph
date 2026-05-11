@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2023
+    Copyright 2008-2026
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -32,18 +32,18 @@
 /*global JXG: true, define: true, AMprocessNode: true, document: true, Image: true, module: true, require: true */
 /*jslint nomen: true, plusplus: true, newcap:true*/
 
-import JXG from "../jxg";
-import AbstractRenderer from "./abstract";
-import Const from "../base/constants";
-import Env from "../utils/env";
-import Type from "../utils/type";
-import UUID from "../utils/uuid";
-import Color from "../utils/color";
-import Coords from "../base/coords";
-import Mat from "../math/math";
-import Geometry from "../math/geometry";
-import Numerics from "../math/numerics";
-// import $__canvas from "canvas";
+import JXG from "../jxg.js";
+import AbstractRenderer from "./abstract.js";
+import Const from "../base/constants.js";
+import Env from "../utils/env.js";
+import Type from "../utils/type.js";
+import UUID from "../utils/uuid.js";
+import Color from "../utils/color.js";
+import Coords from "../base/coords.js";
+import Mat from "../math/math.js";
+import Geometry from "../math/geometry.js";
+import Numerics from "../math/numerics.js";
+// import $__canvas from 'canvas.js'
 
 /**
  * Uses HTML Canvas to implement the rendering methods defined in {@link JXG.AbstractRenderer}.
@@ -57,7 +57,7 @@ import Numerics from "../math/numerics";
  * @see JXG.AbstractRenderer
  */
 JXG.CanvasRenderer = function (container, dim) {
-    this.type = "canvas";
+    this.type = 'canvas';
 
     this.canvasRoot = null;
     this.suspendHandle = null;
@@ -67,29 +67,29 @@ JXG.CanvasRenderer = function (container, dim) {
 
     if (Env.isBrowser) {
         this.container = container;
-        this.container.style.MozUserSelect = "none";
-        this.container.style.userSelect = "none";
+        this.container.style.MozUserSelect = 'none';
+        this.container.style.userSelect = 'none';
 
-        this.container.style.overflow = "hidden";
+        this.container.style.overflow = 'hidden';
         if (this.container.style.position === "") {
-            this.container.style.position = "relative";
+            this.container.style.position = 'relative';
         }
 
         this.container.innerHTML = [
             '<canvas id="', this.canvasId, '" width="', dim.width, 'px" height="', dim.height, 'px"></canvas>'
         ].join("");
         this.canvasRoot = this.container.ownerDocument.getElementById(this.canvasId);
-        this.canvasRoot.style.display = "block";
-        this.context = this.canvasRoot.getContext("2d");
+        this.canvasRoot.style.display = 'block';
+        this.context = this.canvasRoot.getContext('2d');
     } else if (Env.isNode()) {
         try {
             this.canvasRoot = JXG.createCanvas(500, 500);
-            this.context = this.canvasRoot.getContext("2d");
+            this.context = this.canvasRoot.getContext('2d');
         } catch (err) {
             throw new Error('JXG.createCanvas not available.\n' +
                 'Install the npm package `canvas`\n' +
                 'and call:\n' +
-                '    import { createCanvas } from "canvas";\n' +
+                '    import { createCanvas } from "canvas.js"\n' +
                 '    JXG.createCanvas = createCanvas;\n');
         }
     }
@@ -142,7 +142,7 @@ JXG.extend(
                 if (doFill) {
                     context.lineTo(shape[0][0], shape[0][1]);
                     context.closePath();
-                    context.fill("evenodd");
+                    context.fill('evenodd');
                 } else {
                     context.stroke();
                 }
@@ -158,8 +158,8 @@ JXG.extend(
             var context = this.context;
 
             context.save();
-            if (this._setColor(el, "fill")) {
-                context.fill("evenodd");
+            if (this._setColor(el, 'fill')) {
+                context.fill('evenodd');
             }
             context.restore();
         },
@@ -219,18 +219,11 @@ JXG.extend(
                 co = Math.cos(-radians),
                 si = Math.sin(-radians),
                 bb = el.getBoundingBox(),
-                c1,
-                c2,
-                x1,
-                x2,
-                y1,
-                y2,
-                x1s,
-                x2s,
-                y1s,
-                y2s,
-                dx,
-                dy;
+                c1, c2,
+                x1, x2,
+                y1, y2,
+                x1s, x2s, y1s, y2s,
+                dx, dy;
 
             if (Math.abs(co) > Math.abs(si)) {
                 f /= Math.abs(co);
@@ -256,6 +249,7 @@ JXG.extend(
             c2 = new Coords(Const.COORDS_BY_USER, [bb[2], bb[3]], el.board);
             dx = c2.scrCoords[1] - c1.scrCoords[1];
             dy = c2.scrCoords[2] - c1.scrCoords[2];
+
             x1s = c1.scrCoords[1] + dx * x1;
             y1s = c1.scrCoords[2] + dy * y1;
             x2s = c1.scrCoords[1] + dx * x2;
@@ -278,16 +272,10 @@ JXG.extend(
          */
         updateGradientCircle: function (el, cx, cy, r, fx, fy, fr) {
             var bb = el.getBoundingBox(),
-                c1,
-                c2,
-                cxs,
-                cys,
-                rs,
-                fxs,
-                fys,
-                frs,
-                dx,
-                dy;
+                c1, c2,
+                cxs, cys, rs,
+                fxs, fys, frs,
+                dx, dy;
 
             c1 = new Coords(Const.COORDS_BY_USER, [bb[0], bb[1]], el.board);
             c2 = new Coords(Const.COORDS_BY_USER, [bb[2], bb[3]], el.board);
@@ -308,34 +296,37 @@ JXG.extend(
         updateGradient: function (el) {
             var col,
                 // op,
-                ev_g = Type.evaluate(el.visProp.gradient),
+                ev_g = el.evalVisProp('gradient'),
                 gradient;
 
-            // op = Type.evaluate(el.visProp.fillopacity);
+            // op = el.evalVisProp('fillopacity');
             // op = op > 0 ? op : 0;
-            col = Type.evaluate(el.visProp.fillcolor);
+            col = el.evalVisProp('fillcolor');
 
-            if (ev_g === "linear") {
+            if (ev_g === 'linear') {
                 gradient = this.updateGradientAngle(
                     el,
-                    Type.evaluate(el.visProp.gradientangle)
+                    el.evalVisProp('gradientangle')
                 );
-            } else if (ev_g === "radial") {
+            } else if (ev_g === 'radial') {
                 gradient = this.updateGradientCircle(
                     el,
-                    Type.evaluate(el.visProp.gradientcx),
-                    Type.evaluate(el.visProp.gradientcy),
-                    Type.evaluate(el.visProp.gradientr),
-                    Type.evaluate(el.visProp.gradientfx),
-                    Type.evaluate(el.visProp.gradientfy),
-                    Type.evaluate(el.visProp.gradientfr)
+                    el.evalVisProp('gradientcx'),
+                    el.evalVisProp('gradientcy'),
+                    el.evalVisProp('gradientr'),
+                    el.evalVisProp('gradientfx'),
+                    el.evalVisProp('gradientfy'),
+                    el.evalVisProp('gradientfr')
                 );
             }
-            gradient.addColorStop(Type.evaluate(el.visProp.gradientstartoffset), col);
-            gradient.addColorStop(
-                Type.evaluate(el.visProp.gradientendoffset),
-                Type.evaluate(el.visProp.gradientsecondcolor)
-            );
+
+            if (col !== "none" && col !== "" && col !== false) {
+                gradient.addColorStop(el.evalVisProp('gradientstartoffset'), col);
+                gradient.addColorStop(
+                    el.evalVisProp('gradientendoffset'),
+                    el.evalVisProp('gradientsecondcolor')
+                );
+            }
             return gradient;
         },
 
@@ -351,40 +342,29 @@ JXG.extend(
          */
         _setColor: function (el, type, targetType) {
             var hasColor = true,
-                ev = el.visProp,
-                hl,
-                sw,
-                rgba,
-                rgbo,
-                c,
-                o,
-                oo,
+                lc, hl, sw,
+                rgba, rgbo,
+                c, o, oo,
                 grad;
 
-            type = type || "stroke";
+            type = type || 'stroke';
             targetType = targetType || type;
 
             hl = this._getHighlighted(el);
 
-            grad = Type.evaluate(el.visProp.gradient);
-            if (grad === "linear" || grad === "radial") {
-                // TODO: opacity
-                this.context[targetType + "Style"] = this.updateGradient(el);
-                return hasColor;
-            }
-
             // type is equal to 'fill' or 'stroke'
-            rgba = Type.evaluate(ev[hl + type + "color"]);
-            if (rgba !== "none" && rgba !== false) {
-                o = Type.evaluate(ev[hl + type + "opacity"]);
+            rgba = el.evalVisProp(hl + type + 'color');
+            if (rgba !== "none" && rgba !== "" && rgba !== false) {
+                o = el.evalVisProp(hl + type + 'opacity');
                 o = o > 0 ? o : 0;
 
-                // RGB, not RGBA
                 if (rgba.length !== 9) {
+                    // RGB
                     c = rgba;
                     oo = o;
                     // True RGBA, not RGB
                 } else {
+                    // RGBA
                     rgbo = Color.rgba2rgbo(rgba);
                     c = rgbo[0];
                     oo = o * rgbo[1];
@@ -396,7 +376,17 @@ JXG.extend(
                 hasColor = false;
             }
 
-            sw = parseFloat(Type.evaluate(ev[hl + "strokewidth"]));
+            if (type !== 'stroke') {
+                // For the time being, gradients are only supported for fills
+                grad = el.evalVisProp('gradient');
+                if (grad === "linear" || grad === 'radial') {
+                    this.context.globalAlpha = oo;
+                    this.context[targetType + "Style"] = this.updateGradient(el);
+                    return hasColor;
+                }
+            }
+
+            sw = parseFloat(el.evalVisProp(hl + 'strokewidth'));
             if (type === "stroke" && !isNaN(sw)) {
                 if (sw === 0) {
                     this.context.globalAlpha = 0;
@@ -405,8 +395,9 @@ JXG.extend(
                 }
             }
 
-            if (type === "stroke" && ev.linecap !== undefined && ev.linecap !== "") {
-                this.context.lineCap = ev.linecap;
+            lc = el.evalVisProp('linecap');
+            if (type === "stroke" && lc !== undefined && lc !== "") {
+                this.context.lineCap = lc;
             }
 
             return hasColor;
@@ -419,9 +410,9 @@ JXG.extend(
          */
         _stroke: function (el) {
             var context = this.context,
-                ev_dash = Type.evaluate(el.visProp.dash),
-                ds = Type.evaluate(el.visProp.dashscale),
-                sw = ds ? 0.5 * Type.evaluate(el.visProp.strokewidth) : 1;
+                ev_dash = el.evalVisProp('dash'),
+                ds = el.evalVisProp('dashscale'),
+                sw = ds ? 0.5 * el.evalVisProp('strokewidth') : 1;
 
             context.save();
 
@@ -437,7 +428,7 @@ JXG.extend(
                 this.context.lineDashArray = [];
             }
 
-            if (this._setColor(el, "stroke")) {
+            if (this._setColor(el, 'stroke')) {
                 context.stroke();
             }
 
@@ -468,18 +459,16 @@ JXG.extend(
             return rv;
         },
 
-        /* ******************************** *
-         *    Point drawing and updating    *
-         * ******************************** */
+        /* ********* Point related stuff *********** */
 
         // documented in AbstractRenderer
         drawPoint: function (el) {
-            var f = Type.evaluate(el.visProp.face),
-                size = Type.evaluate(el.visProp.size),
+            var f = el.evalVisProp('face'),
+                size = el.evalVisProp('size'),
                 scr = el.coords.scrCoords,
                 sqrt32 = size * Math.sqrt(3) * 0.5,
                 s05 = size * 0.5,
-                stroke05 = parseFloat(Type.evaluate(el.visProp.strokewidth)) / 2.0,
+                stroke05 = parseFloat(el.evalVisProp('strokewidth')) / 2.0,
                 context = this.context;
 
             if (!el.visPropCalc.visible) {
@@ -494,8 +483,8 @@ JXG.extend(
                     context.lineTo(scr[1] + size, scr[2] + size);
                     context.moveTo(scr[1] + size, scr[2] - size);
                     context.lineTo(scr[1] - size, scr[2] + size);
-                    context.lineCap = "round";
-                    context.lineJoin = "round";
+                    context.lineCap = 'round';
+                    context.lineJoin = 'round';
                     context.closePath();
                     this._stroke(el);
                     break;
@@ -514,7 +503,7 @@ JXG.extend(
                     }
 
                     context.save();
-                    if (this._setColor(el, "stroke", "fill")) {
+                    if (this._setColor(el, "stroke", 'fill')) {
                         context.fillRect(
                             scr[1] - size - stroke05,
                             scr[2] - size - stroke05,
@@ -524,7 +513,7 @@ JXG.extend(
                     }
                     context.restore();
                     context.save();
-                    this._setColor(el, "fill");
+                    this._setColor(el, 'fill');
                     context.fillRect(
                         scr[1] - size + stroke05,
                         scr[2] - size + stroke05,
@@ -540,8 +529,8 @@ JXG.extend(
                     context.lineTo(scr[1] + size, scr[2]);
                     context.moveTo(scr[1], scr[2] - size);
                     context.lineTo(scr[1], scr[2] + size);
-                    context.lineCap = "round";
-                    context.lineJoin = "round";
+                    context.lineCap = 'round';
+                    context.lineJoin = 'round';
                     context.closePath();
                     this._stroke(el);
                     break;
@@ -550,8 +539,8 @@ JXG.extend(
                     context.beginPath();
                     context.moveTo(scr[1], scr[2] - size);
                     context.lineTo(scr[1], scr[2] + size);
-                    context.lineCap = "round";
-                    context.lineJoin = "round";
+                    context.lineCap = 'round';
+                    context.lineJoin = 'round';
                     context.closePath();
                     this._stroke(el);
                     break;
@@ -560,8 +549,8 @@ JXG.extend(
                     context.beginPath();
                     context.moveTo(scr[1] - size, scr[2]);
                     context.lineTo(scr[1] + size, scr[2]);
-                    context.lineCap = "round";
-                    context.lineJoin = "round";
+                    context.lineCap = 'round';
+                    context.lineJoin = 'round';
                     context.closePath();
                     this._stroke(el);
                     break;
@@ -631,9 +620,7 @@ JXG.extend(
             this.drawPoint(el);
         },
 
-        /* ******************************** *
-         *           Lines                  *
-         * ******************************** */
+        /* ********* Line related stuff *********** */
 
         /**
          * Draws arrows of an element (usually a line) in canvas renderer.
@@ -644,14 +631,9 @@ JXG.extend(
          * @private
          */
         drawArrows: function (el, scr1, scr2, hl, a) {
-            var x1,
-                y1,
-                x2,
-                y2,
-                w0,
-                w,
-                arrowHead,
-                arrowTail,
+            var x1, y1, x2, y2,
+                w, w0,
+                arrowHead, arrowTail,
                 context = this.context,
                 size = 6,
                 type = 1,
@@ -660,19 +642,15 @@ JXG.extend(
                 degree_fa = 1,
                 degree_la = 1,
                 doFill,
-                i,
-                len,
-                d1x,
-                d1y,
-                d2x,
-                d2y,
+                i, len,
+                d1x, d1y,
+                d2x, d2y,
                 last,
-                ang1,
-                ang2,
+                ang1, ang2,
                 ev_fa = a.evFirst,
                 ev_la = a.evLast;
 
-            if (Type.evaluate(el.visProp.strokecolor) !== "none" && (ev_fa || ev_la)) {
+            if (el.evalVisProp('strokecolor') !== "none" && (ev_fa || ev_la)) {
                 if (el.elementClass === Const.OBJECT_CLASS_LINE) {
                     x1 = scr1.scrCoords[1];
                     y1 = scr1.scrCoords[2];
@@ -703,7 +681,7 @@ JXG.extend(
                     }
                 }
 
-                w0 = Type.evaluate(el.visProp[hl + "strokewidth"]);
+                w0 = el.evalVisProp(hl + 'strokewidth');
 
                 if (ev_fa) {
                     size = a.sizeFirst;
@@ -954,8 +932,8 @@ JXG.extend(
                 }
 
                 context.save();
-                if (this._setColor(el, "stroke", "fill")) {
-                    this._setColor(el, "stroke");
+                if (this._setColor(el, "stroke", 'fill')) {
+                    this._setColor(el, 'stroke');
                     if (ev_fa) {
                         if (type_fa === 7) {
                             doFill = false;
@@ -1001,7 +979,7 @@ JXG.extend(
             }
 
             hl = this._getHighlighted(el);
-            w = Type.evaluate(el.visProp[hl + "strokewidth"]);
+            w = el.evalVisProp(hl + 'strokewidth');
             arrowData = this.getArrowHeadData(el, w, hl);
 
             if (arrowData.evFirst || arrowData.evLast) {
@@ -1012,6 +990,7 @@ JXG.extend(
 
             c1_org = new Coords(Const.COORDS_BY_USER, c1.usrCoords, el.board);
             c2_org = new Coords(Const.COORDS_BY_USER, c2.usrCoords, el.board);
+
 
             this.getPositionArrowHead(el, c1, c2, arrowData);
 
@@ -1075,26 +1054,24 @@ JXG.extend(
             //         this.updateText(ticks.labels[i]);
             //     }
             // }
-            context.lineCap = "round";
+            context.lineCap = 'round';
             this._stroke(ticks);
         },
 
-        /* **************************
-         *    Curves
-         * **************************/
+        /* ********* Curve related stuff *********** */
 
         // documented in AbstractRenderer
         drawCurve: function (el) {
             var hl, w, arrowData;
 
-            if (Type.evaluate(el.visProp.handdrawing)) {
+            if (el.evalVisProp('handdrawing')) {
                 this.updatePathStringBezierPrim(el);
             } else {
                 this.updatePathStringPrim(el);
             }
             if (el.numberPoints > 1) {
                 hl = this._getHighlighted(el);
-                w = Type.evaluate(el.visProp[hl + "strokewidth"]);
+                w = el.evalVisProp(hl + 'strokewidth');
                 arrowData = this.getArrowHeadData(el, w, hl);
                 if (
                     arrowData.evFirst /* && obj.sFirst > 0*/ ||
@@ -1110,9 +1087,7 @@ JXG.extend(
             this.drawCurve(el);
         },
 
-        /* **************************
-         *    Circle related stuff
-         * **************************/
+        /* ********* Circle related stuff *********** */
 
         // documented in AbstractRenderer
         drawEllipse: function (el) {
@@ -1152,58 +1127,82 @@ JXG.extend(
             return this.drawEllipse(el);
         },
 
-        /* **************************
-         *    Polygon
-         * **************************/
+        /* ********* Polygon related stuff *********** */
 
         // nothing here, using AbstractRenderer implementations
 
-        /* **************************
-         *    Text related stuff
-         * **************************/
+        /* ********* Text related stuff *********** */
 
         // Already documented in JXG.AbstractRenderer
-        displayCopyright: function (str, fontSize) {
-            var context = this.context;
+        displayCopyright: function (str, fontsize) {
+            var context = this.context,
+                x = 4 + 1.8 * fontsize,
+                y = 6 + fontsize,
+                alpha = 0.2;
 
-            // this should be called on EVERY update, otherwise it won't be shown after the first update
+            // This should be called on EVERY update, otherwise it won't be shown after the first update
             context.save();
-            context.font = fontSize + "px Arial";
-            context.fillStyle = "#aaa";
+            context.font = fontsize + "px Arial";
+            context.globalAlpha = alpha;
             context.lineWidth = 0.5;
-            context.fillText(str, 10, 2 + fontSize);
+            context.fillText(str + '.', x, y); // Distinguish svg and canvas by this dot
+            context.restore();
+        },
+
+        // Already documented in JXG.AbstractRenderer
+        displayLogo: function (str, fontsize, board) {
+            var context = this.context,
+                s = 1.5 * fontsize,
+                alpha = 0.2;
+
+            if (!Type.isBrowser) {
+                return;
+            }
+            if (!Type.exists(board._logo_image)) {
+                board._logo_image = new Image();
+                board._logo_image.src = str;
+            }
+            board._logo_image.onload = function() {
+                context.save();
+                context.globalAlpha = alpha;
+                context.drawImage(board._logo_image, 5, 5, s, s);
+                context.restore();
+            };
+            context.save();
+            context.globalAlpha = alpha;
+            context.drawImage(board._logo_image, 5, 5, s, s);
             context.restore();
         },
 
         // Already documented in JXG.AbstractRenderer
         drawInternalText: function (el) {
-            var ev_fs = Type.evaluate(el.visProp.fontsize),
-                fontUnit = Type.evaluate(el.visProp.fontunit),
+            var ev_fs = el.evalVisProp('fontsize'),
+                fontUnit = el.evalVisProp('fontunit'),
                 ev_ax = el.getAnchorX(),
                 ev_ay = el.getAnchorY(),
                 context = this.context;
 
             context.save();
             if (
-                this._setColor(el, "stroke", "fill") &&
+                this._setColor(el, "stroke", 'fill') &&
                 !isNaN(el.coords.scrCoords[1] + el.coords.scrCoords[2])
             ) {
                 context.font = (ev_fs > 0 ? ev_fs : 0) + fontUnit + " Arial";
 
-                this.transformImage(el, el.transformations);
-                if (ev_ax === "left") {
-                    context.textAlign = "left";
-                } else if (ev_ax === "right") {
-                    context.textAlign = "right";
-                } else if (ev_ax === "middle") {
-                    context.textAlign = "center";
+                this.transformRect(el, el.transformations);
+                if (ev_ax === 'left') {
+                    context.textAlign = 'left';
+                } else if (ev_ax === 'right') {
+                    context.textAlign = 'right';
+                } else if (ev_ax === 'middle') {
+                    context.textAlign = 'center';
                 }
-                if (ev_ay === "bottom") {
-                    context.textBaseline = "bottom";
-                } else if (ev_ay === "top") {
-                    context.textBaseline = "top";
-                } else if (ev_ay === "middle") {
-                    context.textBaseline = "middle";
+                if (ev_ay === 'bottom') {
+                    context.textBaseline = 'bottom';
+                } else if (ev_ay === 'top') {
+                    context.textBaseline = 'top';
+                } else if (ev_ay === 'middle') {
+                    context.textBaseline = 'middle';
                 }
                 context.fillText(el.plaintext, el.coords.scrCoords[1], el.coords.scrCoords[2]);
             }
@@ -1219,10 +1218,10 @@ JXG.extend(
         // documented in JXG.AbstractRenderer
         // Only necessary for texts
         setObjectStrokeColor: function (el, color, opacity) {
-            var rgba = Type.evaluate(color),
+            var rgba = color,
                 c,
                 rgbo,
-                o = Type.evaluate(opacity),
+                o = opacity,
                 oo,
                 node;
 
@@ -1248,7 +1247,7 @@ JXG.extend(
                 node = el.rendNode;
                 if (
                     el.elementClass === Const.OBJECT_CLASS_TEXT &&
-                    Type.evaluate(el.visProp.display) === "html"
+                    el.evalVisProp('display') === "html"
                 ) {
                     node.style.color = c;
                     node.style.opacity = oo;
@@ -1259,9 +1258,7 @@ JXG.extend(
             el.visPropOld.strokeopacity = o;
         },
 
-        /* **************************
-         *    Image related stuff
-         * **************************/
+        /* ********* Image related stuff *********** */
 
         // Already documented in JXG.AbstractRenderer
         drawImage: function (el) {
@@ -1278,7 +1275,7 @@ JXG.extend(
         // Already documented in JXG.AbstractRenderer
         updateImage: function (el) {
             var context = this.context,
-                o = Type.evaluate(el.visProp.fillopacity),
+                o = el.evalVisProp('fillopacity'),
                 paintImg = Type.bind(function () {
                     el.imgIsLoaded = true;
                     if (el.size[0] <= 0 || el.size[1] <= 0) {
@@ -1287,8 +1284,8 @@ JXG.extend(
                     context.save();
                     context.globalAlpha = o;
                     // If det(el.transformations)=0, FireFox 3.6. breaks down.
-                    // This is tested in transformImage
-                    this.transformImage(el, el.transformations);
+                    // This is tested in transformRect
+                    this.transformRect(el, el.transformations);
                     context.drawImage(
                         el.rendNode,
                         el.coords.scrCoords[1],
@@ -1309,7 +1306,7 @@ JXG.extend(
         },
 
         // Already documented in JXG.AbstractRenderer
-        transformImage: function (el, t) {
+        transformRect: function (el, t) {
             var m, s, cx, cy, node,
                 len = t.length,
                 ctx = this.context;
@@ -1323,11 +1320,11 @@ JXG.extend(
                         node.style.transform = s;
                         cx = -el.coords.scrCoords[1];
                         cy = -el.coords.scrCoords[2];
-                        switch (Type.evaluate(el.visProp.anchorx)) {
+                        switch (el.evalVisProp('anchorx')) {
                             case 'right': cx += el.size[0]; break;
                             case 'middle': cx += el.size[0] * 0.5; break;
                         }
-                        switch (Type.evaluate(el.visProp.anchory)) {
+                        switch (el.evalVisProp('anchory')) {
                             case 'bottom': cy += el.size[1]; break;
                             case 'middle': cy += el.size[1] * 0.5; break;
                         }
@@ -1345,7 +1342,7 @@ JXG.extend(
         updateImageURL: function (el) {
             var url;
 
-            url = Type.evaluate(el.url);
+            url = el.eval(el.url);
             if (el._src !== url) {
                 el.imgIsLoaded = false;
                 el.rendNode.src = url;
@@ -1356,9 +1353,7 @@ JXG.extend(
             return false;
         },
 
-        /* **************************
-         * Render primitive objects
-         * **************************/
+        /* ********* Render primitive objects *********** */
 
         // documented in AbstractRenderer
         remove: function (shape) {
@@ -1379,7 +1374,7 @@ JXG.extend(
                 symbl = "L",
                 symbc = "C",
                 nextSymb = symbm,
-                maxSize = 5000.0,
+                // M = Env.maxScreenCoord,
                 context = this.context;
 
             if (el.numberPoints <= 0) {
@@ -1390,12 +1385,6 @@ JXG.extend(
             context.beginPath();
 
             if (el.bezierDegree === 1) {
-                /*
-                if (isNotPlot && el.board.options.curve.RDPsmoothing) {
-                    el.points = Numerics.RamerDouglasPeucker(el.points, 0.5);
-                }
-                */
-
                 for (i = 0; i < len; i++) {
                     scr = el.points[i].scrCoords;
 
@@ -1404,17 +1393,19 @@ JXG.extend(
                         nextSymb = symbm;
                     } else {
                         // Chrome has problems with values  being too far away.
-                        if (scr[1] > maxSize) {
-                            scr[1] = maxSize;
-                        } else if (scr[1] < -maxSize) {
-                            scr[1] = -maxSize;
-                        }
+                        // 2026: seems to be obsolete, see comments in SVG.updatePathStringPrim
+                        // If needed, it should be adapted to not do changes in place, see svg
+                        // if (scr[1] > M) {
+                        //     scr[1] = M;
+                        // } else if (scr[1] < -M) {
+                        //     scr[1] = -M;
+                        // }
 
-                        if (scr[2] > maxSize) {
-                            scr[2] = maxSize;
-                        } else if (scr[2] < -maxSize) {
-                            scr[2] = -maxSize;
-                        }
+                        // if (scr[2] > M) {
+                        //     scr[2] = M;
+                        // } else if (scr[2] < -M) {
+                        //     scr[2] = -M;
+                        // }
 
                         if (nextSymb === symbm) {
                             context.moveTo(scr[1], scr[2]);
@@ -1453,26 +1444,22 @@ JXG.extend(
                     i += 1;
                 }
             }
-            context.lineCap = "round";
+            context.lineCap = 'round';
+            context.lineJoin = 'round';
             this._fill(el);
             this._stroke(el);
         },
 
         // Already documented in JXG.AbstractRenderer
         updatePathStringBezierPrim: function (el) {
-            var i,
-                j,
-                k,
-                scr,
-                lx,
-                ly,
-                len,
+            var i, j, k,
+                scr, lx, ly, len,
                 symbm = "M",
                 symbl = "C",
                 nextSymb = symbm,
-                maxSize = 5000.0,
-                f = Type.evaluate(el.visProp.strokewidth),
-                isNoPlot = Type.evaluate(el.visProp.curvetype) !== "plot",
+                // M = Env.maxScreenCoord,
+                f = el.evalVisProp('strokewidth'),
+                isNoPlot = el.evalVisProp('curvetype') !== "plot",
                 context = this.context;
 
             if (el.numberPoints <= 0) {
@@ -1496,17 +1483,19 @@ JXG.extend(
                         nextSymb = symbm;
                     } else {
                         // Chrome has problems with values being too far away.
-                        if (scr[1] > maxSize) {
-                            scr[1] = maxSize;
-                        } else if (scr[1] < -maxSize) {
-                            scr[1] = -maxSize;
-                        }
+                        // 2026: seems to be obsolete, see comments in SVG.updatePathStringPrim
+                        // If needed, it should be adapted to not do changes in place, see svg
+                        // if (scr[1] > M) {
+                        //     scr[1] = M;
+                        // } else if (scr[1] < -M) {
+                        //     scr[1] = -M;
+                        // }
 
-                        if (scr[2] > maxSize) {
-                            scr[2] = maxSize;
-                        } else if (scr[2] < -maxSize) {
-                            scr[2] = -maxSize;
-                        }
+                        // if (scr[2] > M) {
+                        //     scr[2] = M;
+                        // } else if (scr[2] < -M) {
+                        //     scr[2] = -M;
+                        // }
 
                         if (nextSymb === symbm) {
                             context.moveTo(scr[1], scr[2]);
@@ -1527,7 +1516,8 @@ JXG.extend(
                     }
                 }
             }
-            context.lineCap = "round";
+            context.lineCap = 'round';
+            context.lineJoin = 'round';
             this._fill(el);
             this._stroke(el);
         },
@@ -1544,7 +1534,7 @@ JXG.extend(
             if (len <= 0 || !el.visPropCalc.visible) {
                 return;
             }
-            if (el.elType === "polygonalchain") {
+            if (el.elType === 'polygonalchain') {
                 len++;
             }
 
@@ -1571,16 +1561,16 @@ JXG.extend(
             }
         },
 
-        // **************************  Set Attributes *************************
+        /* ********* Set attributes *********** */
 
         // Already documented in JXG.AbstractRenderer
         display: function (el, val) {
             if (el && el.rendNode) {
                 el.visPropOld.visible = val;
                 if (val) {
-                    el.rendNode.style.visibility = "inherit";
+                    el.rendNode.style.visibility = 'inherit';
                 } else {
-                    el.rendNode.style.visibility = "hidden";
+                    el.rendNode.style.visibility = 'hidden';
                 }
             }
         },
@@ -1590,7 +1580,7 @@ JXG.extend(
             JXG.deprecated("Board.renderer.show()", "Board.renderer.display()");
 
             if (Type.exists(el.rendNode)) {
-                el.rendNode.style.visibility = "inherit";
+                el.rendNode.style.visibility = 'inherit';
             }
         },
 
@@ -1599,7 +1589,7 @@ JXG.extend(
             JXG.deprecated("Board.renderer.hide()", "Board.renderer.display()");
 
             if (Type.exists(el.rendNode)) {
-                el.rendNode.style.visibility = "hidden";
+                el.rendNode.style.visibility = 'hidden';
             }
         },
 
@@ -1608,10 +1598,10 @@ JXG.extend(
             // var // col,
             //     op;
 
-            // op = Type.evaluate(el.visProp.fillopacity);
+            // op = el.evalVisProp('fillopacity');
             // op = op > 0 ? op : 0;
 
-            // col = Type.evaluate(el.visProp.fillcolor);
+            // col = el.evalVisProp('fillcolor');
         },
 
         // documented in AbstractRenderer
@@ -1631,7 +1621,7 @@ JXG.extend(
         highlight: function (obj) {
             if (
                 obj.elementClass === Const.OBJECT_CLASS_TEXT &&
-                Type.evaluate(obj.visProp.display) === "html"
+                obj.evalVisProp('display') === "html"
             ) {
                 this.updateTextStyle(obj, true);
             } else {
@@ -1647,7 +1637,7 @@ JXG.extend(
         noHighlight: function (obj) {
             if (
                 obj.elementClass === Const.OBJECT_CLASS_TEXT &&
-                Type.evaluate(obj.visProp.display) === "html"
+                obj.evalVisProp('display') === "html"
             ) {
                 this.updateTextStyle(obj, false);
             } else {
@@ -1659,14 +1649,16 @@ JXG.extend(
             return this;
         },
 
-        /* **************************
-         * renderer control
-         * **************************/
+        /* ********* Renderer control *********** */
 
         // documented in AbstractRenderer
         suspendRedraw: function (board) {
             this.context.save();
             this.context.clearRect(0, 0, this.canvasRoot.width, this.canvasRoot.height);
+
+            if (board && (board.attr.showcopyright || board.attr.showlogo)) {
+                this.displayLogo(JXG.licenseLogo, 12, board);
+            }
 
             if (board && board.attr.showcopyright) {
                 this.displayCopyright(JXG.licenseText, 12);
@@ -1681,16 +1673,16 @@ JXG.extend(
         // document in AbstractRenderer
         resize: function (w, h) {
             if (this.container) {
-                this.canvasRoot.style.width = parseFloat(w) + "px";
-                this.canvasRoot.style.height = parseFloat(h) + "px";
+                this.canvasRoot.style.width = parseFloat(w) + 'px';
+                this.canvasRoot.style.height = parseFloat(h) + 'px';
 
-                this.canvasRoot.setAttribute("width", 2 * parseFloat(w) + "px");
-                this.canvasRoot.setAttribute("height", 2 * parseFloat(h) + "px");
+                this.canvasRoot.setAttribute("width", 2 * parseFloat(w) + 'px');
+                this.canvasRoot.setAttribute("height", 2 * parseFloat(h) + 'px');
             } else {
                 this.canvasRoot.width = 2 * parseFloat(w);
                 this.canvasRoot.height = 2 * parseFloat(h);
             }
-            this.context = this.canvasRoot.getContext("2d");
+            this.context = this.canvasRoot.getContext('2d');
             // The width and height of the canvas is set to twice the CSS values,
             // followed by an appropriate scaling.
             // See https://stackoverflow.com/questions/22416462/canvas-element-with-blurred-lines

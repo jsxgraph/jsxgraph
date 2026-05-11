@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2023
+    Copyright 2008-2026
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -38,12 +38,12 @@
  * @author graphjs
  */
 
-import Const from "../base/constants";
-import Coords from "../base/coords";
-import Mat from "./math";
-import Geometry from "./geometry";
-import Server from "../server/server";
-import Type from "../utils/type";
+import Const from "../base/constants.js";
+import Coords from "../base/coords.js";
+import Mat from "./math.js";
+import Geometry from "./geometry.js";
+import Server from "../server/server.js";
+import Type from "../utils/type.js";
 
 var undef;
 
@@ -74,9 +74,9 @@ Mat.Symbolic = {
             makeCoords = function (num) {
                 var r;
 
-                if (append === "underscore") {
+                if (append === 'underscore') {
                     r = variable + "_{" + num + "}";
-                } else if (append === "brace") {
+                } else if (append === 'brace') {
                     r = variable + "[" + num + "]";
                 } else {
                     r = variable + num;
@@ -115,8 +115,8 @@ Mat.Symbolic = {
         }
 
         if (Type.isPoint(element)) {
-            element.symbolic.x = "x";
-            element.symbolic.y = "y";
+            element.symbolic.x = 'x'
+            element.symbolic.y = 'y'
         }
 
         return count;
@@ -166,7 +166,7 @@ Mat.Symbolic = {
             result = [];
 
         if (generateCoords) {
-            this.generateSymbolicCoordinatesPartial(board, element, "u", "brace");
+            this.generateSymbolicCoordinatesPartial(board, element, "u", 'brace');
         }
 
         list[element.id] = element;
@@ -223,7 +223,7 @@ Mat.Symbolic = {
             tx,
             bol = board.options.locus,
             oldRadius = {},
-            numDependent = this.generateSymbolicCoordinatesPartial(board, point, "u", "brace"),
+            numDependent = this.generateSymbolicCoordinatesPartial(board, point, "u", 'brace'),
             xsye = new Coords(Const.COORDS_BY_USR, [0, 0], board),
             xeys = new Coords(
                 Const.COORDS_BY_USR,
@@ -236,7 +236,7 @@ Mat.Symbolic = {
             rot = 0;
 
         if (Server.modules.geoloci === undef) {
-            Server.loadModule("geoloci");
+            Server.loadModule('geoloci');
         }
 
         if (Server.modules.geoloci === undef) {

@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2023
+    Copyright 2008-2026
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -38,21 +38,21 @@
  * used to manage a geonext board like managing geometric elements, managing mouse and touch events, etc.
  */
 
-import JXG from '../jxg';
-import Const from './constants';
-import Coords from './coords';
-import Options from '../options';
-import Numerics from '../math/numerics';
-import Mat from '../math/math';
-import Geometry from '../math/geometry';
-import Complex from '../math/complex';
-import Statistics from '../math/statistics';
-import JessieCode from '../parser/jessiecode';
-import Color from '../utils/color';
-import Type from '../utils/type';
-import EventEmitter from '../utils/event';
-import Env from '../utils/env';
-import Composition from './composition';
+import JXG from '../jxg.js';
+import Const from './constants.js';
+import Coords from './coords.js';
+import Options from '../options.js';
+import Numerics from '../math/numerics.js';
+import Mat from '../math/math.js';
+import Geometry from '../math/geometry.js';
+import Complex from '../math/complex.js';
+import Statistics from '../math/statistics.js';
+import JessieCode from '../parser/jessiecode.js';
+import Color from '../utils/color.js';
+import Type from '../utils/type.js';
+import EventEmitter from '../utils/event.js';
+import Env from '../utils/env.js';
+import Composition from './composition.js';
 
 /**
  * Constructs a new Board object.
@@ -61,7 +61,8 @@ import Composition from './composition';
  * Please use {@link JXG.JSXGraph.initBoard} to initialize a board.
  * @constructor
  * @param {String|Object} container The id of or reference to the HTML DOM element
- * the board is drawn in. This is usually a HTML div.
+ * the board is drawn in. This is usually a HTML div. If it is the reference to an HTML element and this element does not have an attribute "id",
+ * this attribute "id" is set to a random value.
  * @param {JXG.AbstractRenderer} renderer The reference of a renderer.
  * @param {String} id Unique identifier for the board, may be an empty string or null or even undefined.
  * @param {JXG.Coords} origin The coordinates where the origin is placed, in user coordinates.
@@ -144,6 +145,12 @@ JXG.Board = function (container, renderer, id,
     this.container = ''; // container
 
     /**
+     * ID of the board
+     * @type String
+     */
+    this.id = '';
+
+    /**
      * Pointer to the html element containing the board.
      * @type Object
      */
@@ -154,19 +161,32 @@ JXG.Board = function (container, renderer, id,
         // Hosting div is given as string
         this.container = container; // container
         this.containerObj = (Env.isBrowser ? this.document.getElementById(this.container) : null);
+
     } else if (Env.isBrowser) {
+
         // Hosting div is given as object pointer
         this.containerObj = container;
         this.container = this.containerObj.getAttribute('id');
         if (this.container === null) {
-            // Set random id to this.container,
-            // but not to the DOM element
-            this.container = 'null' + parseInt(Math.random() * 100000000).toString();
+            // Set random ID to this.container, but not to the DOM element
+
+            this.container = 'null' + parseInt(Math.random() * 16777216).toString();
         }
     }
 
     if (Env.isBrowser && renderer.type !== 'no' && this.containerObj === null) {
         throw new Error('\nJSXGraph: HTML container element "' + container + '" not found.');
+    }
+
+    // TODO
+    // Why do we need this.id AND this.container?
+    // There was never a board attribute "id".
+    // The origin seems to be that in the geonext renderer we use a separate id, extracted from the GEONExT file.
+    if (Type.exists(id) && id !== '' && Env.isBrowser && !Type.exists(this.document.getElementById(id))) {
+        // If the given id is not valid, generate an unique id
+        this.id = id;
+    } else {
+        this.id = this.generateId();
     }
 
     /**
@@ -186,11 +206,20 @@ JXG.Board = function (container, renderer, id,
     this.grids = [];
 
     /**
-     * Some standard options
+     * Copy of the default options
      * @type JXG.Options
      */
-    this.options = Type.deepCopy(Options);
+    this.options = Type.deepCopy(Options);  // A possible theme is not yet merged in
+
+    /**
+     * Board attributes
+     * @type Object
+     */
     this.attr = attributes;
+
+    if (this.attr.theme !== 'default' && Type.exists(JXG.themes[this.attr.theme])) {
+        Type.mergeAttr(this.options, JXG.themes[this.attr.theme], true);
+    }
 
     /**
      * Dimension of the board.
@@ -198,7 +227,6 @@ JXG.Board = function (container, renderer, id,
      * @type Number
      */
     this.dimension = 2;
-
     this.jc = new JessieCode();
     this.jc.use(this);
 
@@ -268,13 +296,6 @@ JXG.Board = function (container, renderer, id,
      * @private
      */
     this.canvasHeight = canvasHeight;
-
-    // If the given id is not valid, generate an unique id
-    if (Type.exists(id) && id !== '' && Env.isBrowser && !Type.exists(this.document.getElementById(id))) {
-        this.id = id;
-    } else {
-        this.id = this.generateId();
-    }
 
     EventEmitter.eventify(this);
 
@@ -444,6 +465,7 @@ JXG.Board = function (container, renderer, id,
      * @type Array
      */
     this.downObjects = [];
+    this.clickObjects = {};
 
     /**
      * Collects all elements that have keyboard focus. Should be either one or no element.
@@ -451,6 +473,10 @@ JXG.Board = function (container, renderer, id,
      * @type Array
      */
     this.focusObjects = [];
+
+    if (this.attr.showcopyright || this.attr.showlogo) {
+        this.renderer.displayLogo(Const.licenseLogo, parseInt(this.options.text.fontSize, 10), this);
+    }
 
     if (this.attr.showcopyright) {
         this.renderer.displayCopyright(Const.licenseText, parseInt(this.options.text.fontSize, 10));
@@ -481,10 +507,10 @@ JXG.Board = function (container, renderer, id,
     /**
      * If GEONExT constructions are displayed, then this property should be set to true.
      * At the moment there should be no difference. But this may change.
-     * This is set in {@link JXG.GeonextReader#readGeonext}.
+     * This is set in {@link JXG.GeonextReader.readGeonext}.
      * @type Boolean
      * @default false
-     * @see JXG.GeonextReader#readGeonext
+     * @see JXG.GeonextReader.readGeonext
      */
     this.geonextCompatibilityMode = false;
 
@@ -516,6 +542,13 @@ JXG.Board = function (container, renderer, id,
     this.hasPointerHandlers = false;
 
     /**
+     * A flag which stores if the board registered zoom events, i.e. mouse wheel scroll events.
+     * @type Boolean
+     * @default false
+     */
+    this.hasWheelHandlers = false;
+
+    /**
      * A flag which tells if the board the JXG.Board#mouseUpListener is currently registered.
      * @type Boolean
      * @default false
@@ -535,6 +568,13 @@ JXG.Board = function (container, renderer, id,
      * @default false
      */
     this.hasPointerUp = false;
+
+    /**
+     * Array containing the events related to resizing that have event listeners.
+     * @type Array
+     * @default []
+     */
+    this.resizeHandlers = [];
 
     /**
      * Offset for large coords elements like images
@@ -592,6 +632,17 @@ JXG.Board = function (container, renderer, id,
     this._isResizing = false;
 
     /**
+     * A flag which tells us if the update is triggered by a change of the
+     * 3D view. In that case we only have to update the projection of
+     * the 3D elements and can avoid a full board update.
+     *
+     * @type Boolean
+     * @private
+     * @default false
+     */
+    this._change3DView = false;
+
+    /**
      * A bounding box for the selection
      * @type Array
      * @default [ [0,0], [0,0] ]
@@ -614,14 +665,47 @@ JXG.Board = function (container, renderer, id,
     this.mathLib = Math;        // Math or JXG.Math.IntervalArithmetic
     this.mathLibJXG = JXG.Math; // JXG.Math or JXG.Math.IntervalArithmetic
 
-    if (this.attr.registerevents) {
-        this.addEventHandlers();
+    if (this.attr.registerevents === true) {
+        this.attr.registerevents = {
+            fullscreen: true,
+            keyboard: true,
+            pointer: true,
+            resize: true,
+            wheel: true
+        };
+    } else if (typeof this.attr.registerevents === 'object') {
+        if (!Type.exists(this.attr.registerevents.fullscreen)) {
+            this.attr.registerevents.fullscreen = true;
+        }
+        if (!Type.exists(this.attr.registerevents.keyboard)) {
+            this.attr.registerevents.keyboard = true;
+        }
+        if (!Type.exists(this.attr.registerevents.pointer)) {
+            this.attr.registerevents.pointer = true;
+        }
+        if (!Type.exists(this.attr.registerevents.resize)) {
+            this.attr.registerevents.resize = true;
+        }
+        if (!Type.exists(this.attr.registerevents.wheel)) {
+            this.attr.registerevents.wheel = true;
+        }
     }
-    if (this.attr.registerresizeevent) {
-        this.addResizeEventHandlers();
-    }
-    if (this.attr.registerfullscreenevent) {
-        this.addFullscreenEventHandlers();
+    if (this.attr.registerevents !== false) {
+        if (this.attr.registerevents.fullscreen) {
+            this.addFullscreenEventHandlers();
+        }
+        if (this.attr.registerevents.keyboard) {
+            this.addKeyboardEventHandlers();
+        }
+        if (this.attr.registerevents.pointer) {
+            this.addEventHandlers();
+        }
+        if (this.attr.registerevents.resize) {
+            this.addResizeEventHandlers();
+        }
+        if (this.attr.registerevents.wheel) {
+            this.addWheelEventHandlers();
+        }
     }
 
     this.methodMap = {
@@ -630,8 +714,13 @@ JXG.Board = function (container, renderer, id,
         on: 'on',
         off: 'off',
         trigger: 'trigger',
-        setView: 'setBoundingBox',
+        setAttribute: 'setAttribute',
         setBoundingBox: 'setBoundingBox',
+        setView: 'setBoundingBox',
+        getBoundingBox: 'getBoundingBox',
+        BoundingBox: 'getBoundingBox',
+        getView: 'getBoundingBox',
+        View: 'getBoundingBox',
         migratePoint: 'migratePoint',
         colorblind: 'emulateColorblindness',
         suspendUpdate: 'suspendUpdate',
@@ -694,6 +783,7 @@ JXG.extend(
 
             if (
                 !Type.isPoint(object) &&
+                !Type.isPoint3D(object) &&
                 object.elementClass !== Const.OBJECT_CLASS_LINE &&
                 object.type !== Const.OBJECT_TYPE_ANGLE
             ) {
@@ -747,7 +837,7 @@ JXG.extend(
 
             // as long as we don't have a unique id generate a new one
             while (Type.exists(JXG.boards['jxgBoard' + r])) {
-                r = Math.round(Math.random() * 65535);
+                r = Math.round(Math.random() * 16777216);
             }
 
             return 'jxgBoard' + r;
@@ -791,7 +881,7 @@ JXG.extend(
          * @param {Object} obj The object to add.
          */
         finalizeAdding: function (obj) {
-            if (Type.evaluate(obj.visProp.visible) === false) {
+            if (obj.evalVisProp('visible') === false) {
                 this.renderer.display(obj, false);
             }
         },
@@ -799,8 +889,8 @@ JXG.extend(
         finalizeLabel: function (obj) {
             if (
                 obj.hasLabel &&
-                !Type.evaluate(obj.label.visProp.islabel) &&
-                Type.evaluate(obj.label.visProp.visible) === false
+                !obj.label.evalVisProp('islabel') &&
+                obj.label.evalVisProp('visible') === false
             ) {
                 this.renderer.display(obj.label, false);
             }
@@ -848,13 +938,12 @@ JXG.extend(
                 doc,
                 crect,
                 // In ownerDoc we need the 'real' document object.
-                // The first version is used in the case of shadowDom,
+                // The first version is used in the case of shadowDOM,
                 // the second case in the 'normal' case.
                 ownerDoc = this.document.ownerDocument || this.document,
                 docElement = ownerDoc.documentElement || this.document.body.parentNode,
                 docBody = ownerDoc.body,
                 container = this.containerObj,
-                // viewport, content,
                 zoom,
                 o;
 
@@ -875,7 +964,6 @@ JXG.extend(
             // Check if getBoundingClientRect exists. If so, use this as this covers *everything*
             // even CSS3D transformations etc.
             // Supported by all browsers but IE 6, 7.
-
             if (container.getBoundingClientRect) {
                 crect = container.getBoundingClientRect();
 
@@ -967,6 +1055,198 @@ JXG.extend(
         },
 
         /**
+         * This function divides the board into 9 sections and returns an array <tt>[u,v]</tt> which symbolizes the location of <tt>position</tt>.
+         * Optional a <tt>margin</tt> to the inner of the board is respected.<br>
+         *
+         * @name Board#getPointLoc
+         * @param {Array} position Array of requested position <tt>[x, y]</tt> or <tt>[w, x, y]</tt>.
+         * @param {Array|Number} [margin] Optional margin for the inner of the board: <tt>[top, right, bottom, left]</tt>. A single number <tt>m</tt> is interpreted as <tt>[m, m, m, m]</tt>.
+         * @returns {Array} [u,v] with the following meanings:
+         * <pre>
+         *     v    u > |   -1    |    0   |    1   |
+         * ------------------------------------------
+         *     1        | [-1,1]  |  [0,1] |  [1,1] |
+         * ------------------------------------------
+         *     0        | [-1,0]  |  Board |  [1,0] |
+         * ------------------------------------------
+         *    -1        | [-1,-1] | [0,-1] | [1,-1] |
+         * </pre>
+         * Positions inside the board (minus margin) return the value <tt>[0,0]</tt>.
+         *
+         * @example
+         *      var point1, point2, point3, point4, margin,
+         *             p1Location, p2Location, p3Location, p4Location,
+         *             helppoint1, helppoint2, helppoint3, helppoint4;
+         *
+         *      // margin to make the boundingBox virtually smaller
+         *      margin = [2,2,2,2];
+         *
+         *      // Points which are seen on screen
+         *      point1 = board.create('point', [0,0]);
+         *      point2 = board.create('point', [0,7]);
+         *      point3 = board.create('point', [7,7]);
+         *      point4 = board.create('point', [-7,-5]);
+         *
+         *      p1Location = board.getPointLoc(point1.coords.usrCoords, margin);
+         *      p2Location = board.getPointLoc(point2.coords.usrCoords, margin);
+         *      p3Location = board.getPointLoc(point3.coords.usrCoords, margin);
+         *      p4Location = board.getPointLoc(point4.coords.usrCoords, margin);
+         *
+         *      // Text seen on screen
+         *      board.create('text', [1,-1, "getPointLoc(A): " + "[" + p1Location + "]"])
+         *      board.create('text', [1,-2, "getPointLoc(B): " + "[" + p2Location + "]"])
+         *      board.create('text', [1,-3, "getPointLoc(C): " + "[" + p3Location + "]"])
+         *      board.create('text', [1,-4, "getPointLoc(D): " + "[" + p4Location + "]"])
+         *
+         *
+         *      // Helping points that are used to create the helping lines
+         *      helppoint1 = board.create('point', [(function (){
+         *          var bbx = board.getBoundingBox();
+         *          return [bbx[2] - 2, bbx[1] -2];
+         *      })], {
+         *          visible: false,
+         *      })
+         *
+         *      helppoint2 = board.create('point', [(function (){
+         *          var bbx = board.getBoundingBox();
+         *          return [bbx[0] + 2, bbx[1] -2];
+         *      })], {
+         *          visible: false,
+         *      })
+         *
+         *      helppoint3 = board.create('point', [(function (){
+         *          var bbx = board.getBoundingBox();
+         *          return [bbx[0]+ 2, bbx[3] + 2];
+         *      })],{
+         *          visible: false,
+         *      })
+         *
+         *      helppoint4 = board.create('point', [(function (){
+         *          var bbx = board.getBoundingBox();
+         *          return [bbx[2] -2, bbx[3] + 2];
+         *      })], {
+         *          visible: false,
+         *      })
+         *
+         *      // Helping lines to visualize the 9 sectors and the margin
+         *      board.create('line', [helppoint1, helppoint2]);
+         *      board.create('line', [helppoint2, helppoint3]);
+         *      board.create('line', [helppoint3, helppoint4]);
+         *      board.create('line', [helppoint4, helppoint1]);
+         *
+         * </pre><div id="JXG4b3efef5-839d-4fac-bad1-7a14c0a89c70" class="jxgbox" style="width: 500px; height: 500px;"></div>
+         * <script type="text/javascript">
+         *     (function() {
+         *         var board = JXG.JSXGraph.initBoard('JXG4b3efef5-839d-4fac-bad1-7a14c0a89c70',
+         *             {boundingbox: [-8, 8, 8,-8], maxboundingbox: [-7.5,7.5,7.5,-7.5], axis: true, showcopyright: false, shownavigation: false, showZoom: false});
+         *     var point1, point2, point3, point4, margin,
+         *             p1Location, p2Location, p3Location, p4Location,
+         *             helppoint1, helppoint2, helppoint3, helppoint4;
+         *
+         *      // margin to make the boundingBox virtually smaller
+         *      margin = [2,2,2,2];
+         *
+         *      // Points which are seen on screen
+         *      point1 = board.create('point', [0,0]);
+         *      point2 = board.create('point', [0,7]);
+         *      point3 = board.create('point', [7,7]);
+         *      point4 = board.create('point', [-7,-5]);
+         *
+         *      p1Location = board.getPointLoc(point1.coords.usrCoords, margin);
+         *      p2Location = board.getPointLoc(point2.coords.usrCoords, margin);
+         *      p3Location = board.getPointLoc(point3.coords.usrCoords, margin);
+         *      p4Location = board.getPointLoc(point4.coords.usrCoords, margin);
+         *
+         *      // Text seen on screen
+         *      board.create('text', [1,-1, "getPointLoc(A): " + "[" + p1Location + "]"])
+         *      board.create('text', [1,-2, "getPointLoc(B): " + "[" + p2Location + "]"])
+         *      board.create('text', [1,-3, "getPointLoc(C): " + "[" + p3Location + "]"])
+         *      board.create('text', [1,-4, "getPointLoc(D): " + "[" + p4Location + "]"])
+         *
+         *
+         *      // Helping points that are used to create the helping lines
+         *      helppoint1 = board.create('point', [(function (){
+         *          var bbx = board.getBoundingBox();
+         *          return [bbx[2] - 2, bbx[1] -2];
+         *      })], {
+         *          visible: false,
+         *      })
+         *
+         *      helppoint2 = board.create('point', [(function (){
+         *          var bbx = board.getBoundingBox();
+         *          return [bbx[0] + 2, bbx[1] -2];
+         *      })], {
+         *          visible: false,
+         *      })
+         *
+         *      helppoint3 = board.create('point', [(function (){
+         *          var bbx = board.getBoundingBox();
+         *          return [bbx[0]+ 2, bbx[3] + 2];
+         *      })],{
+         *          visible: false,
+         *      })
+         *
+         *      helppoint4 = board.create('point', [(function (){
+         *          var bbx = board.getBoundingBox();
+         *          return [bbx[2] -2, bbx[3] + 2];
+         *      })], {
+         *          visible: false,
+         *      })
+         *
+         *      // Helping lines to visualize the 9 sectors and the margin
+         *      board.create('line', [helppoint1, helppoint2]);
+         *      board.create('line', [helppoint2, helppoint3]);
+         *      board.create('line', [helppoint3, helppoint4]);
+         *      board.create('line', [helppoint4, helppoint1]);
+         *  })();
+         *
+         * </script><pre>
+         *
+         */
+        getPointLoc: function (position, margin) {
+            var bbox, pos, res, marg;
+
+            bbox = this.getBoundingBox();
+            pos = position;
+            if (pos.length === 2) {
+                pos.unshift(undefined);
+            }
+            res = [0, 0];
+            marg = margin || 0;
+            if (Type.isNumber(marg)) {
+                marg = [marg, marg, marg, marg];
+            }
+
+            if (pos[1] > (bbox[2] - marg[1])) {
+                res[0] = 1;
+            }
+            if (pos[1] < (bbox[0] + marg[3])) {
+                res[0] = -1;
+            }
+
+            if (pos[2] > (bbox[1] - marg[0])) {
+                res[1] = 1;
+            }
+            if (pos[2] < (bbox[3] + marg[2])) {
+                res[1] = -1;
+            }
+
+            return res;
+        },
+
+        /**
+         * This function calculates where the origin is located (@link Board#getPointLoc).
+         * Optional a <tt>margin</tt> to the inner of the board is respected.<br>
+         *
+         * @name Board#getLocationOrigin
+         * @param {Array|Number} [margin] Optional margin for the inner of the board: <tt>[top, right, bottom, left]</tt>. A single number <tt>m</tt> is interpreted as <tt>[m, m, m, m]</tt>.
+         * @returns {Array} [u,v] which shows where the origin is located (@link Board#getPointLoc).
+         */
+        getLocationOrigin: function (margin) {
+            return this.getPointLoc([0, 0], margin);
+        },
+
+        /**
          * Get the position of the pointing device in screen coordinates, relative to the upper left corner
          * of the host tag.
          * @param {Event} e Event object given by the browser.
@@ -982,12 +1262,19 @@ JXG.extend(
             // Position of cursor using clientX/Y
             absPos = Env.getPosition(e, i, this.document);
 
-            /**
-             * In case there has been no down event before.
-             */
-            if (!Type.exists(this.cssTransMat)) {
-                this.updateCSSTransforms();
-            }
+            // Old:
+            // This seems to be obsolete anyhow:
+            // "In case there has been no down event before."
+            // if (!Type.exists(this.cssTransMat)) {
+            // this.updateCSSTransforms();
+            // }
+            // New:
+            // We have to update the CSS transform matrix all the time,
+            // since libraries like ZIMJS do not notify JSXGraph about a change.
+            // In particular, sending a resize event event to JSXGraph
+            // would be necessary.
+            this.updateCSSTransforms();
+
             // Position relative to the top left corner
             v = [1, absPos[0] - cPos[0], absPos[1] - cPos[1]];
             v = Mat.matVecMult(this.cssTransMat, v);
@@ -1011,12 +1298,18 @@ JXG.extend(
             this.drag_dy = y - this.origin.scrCoords[2];
 
             this.mode = this.BOARD_MODE_MOVE_ORIGIN;
+            this._change3DView = false;
             this.updateQuality = this.BOARD_QUALITY_LOW;
         },
 
         /**
          * Collects all elements below the current mouse pointer and fulfilling the following constraints:
-         * <ul><li>isDraggable</li><li>visible</li><li>not fixed</li><li>not frozen</li></ul>
+         * <ul>
+         * <li>isDraggable</li>
+         * <li>visible</li>
+         * <li>not fixed</li>
+         * <li>not frozen</li>
+         * </ul>
          * @param {Number} x Current mouse/touch coordinates
          * @param {Number} y current mouse/touch coordinates
          * @param {Object} evt An event object
@@ -1052,7 +1345,7 @@ JXG.extend(
                     ((this.geonextCompatibilityMode &&
                         (Type.isPoint(pEl) || pEl.elementClass === Const.OBJECT_CLASS_TEXT)) ||
                         !this.geonextCompatibilityMode) &&
-                    !Type.evaluate(pEl.visProp.fixed)
+                    !pEl.evalVisProp('fixed')
                     /*(!pEl.visProp.frozen) &&*/
                 ) {
                     // Elements in the highest layer get priority.
@@ -1073,19 +1366,22 @@ JXG.extend(
                         ) {
                             dragEl = pEl;
                             collect.push(dragEl);
+
                             // Save offset for large coords elements.
                             if (Type.exists(dragEl.coords)) {
-                                offset.push(
-                                    Statistics.subtract(dragEl.coords.scrCoords.slice(1), [
-                                        x,
-                                        y
-                                    ])
-                                );
+                                if (dragEl.elementClass === Const.OBJECT_CLASS_POINT ||
+                                    dragEl.relativeCoords    // Relative texts like labels
+                                ) {
+                                    offset.push(Statistics.subtract(dragEl.coords.scrCoords.slice(1), [x, y]));
+                                } else {
+                                   // Images and texts
+                                    offset.push(Statistics.subtract(dragEl.actualCoords.scrCoords.slice(1), [x, y]));
+                                }
                             } else {
                                 offset.push([0, 0]);
                             }
 
-                            // we can't drop out of this loop because of the event handling system
+                            // We can't drop out of this loop because of the event handling system
                             //if (this.attr.takefirst) {
                             //    return collect;
                             //}
@@ -1112,13 +1408,20 @@ JXG.extend(
             }
 
             // Move drag element to the top of the layer
-            if (this.renderer.type === 'svg' &&
-                Type.exists(collect[0]) &&
-                Type.evaluate(collect[0].visProp.dragtotopoflayer) &&
-                collect.length === 1 &&
-                Type.exists(collect[0].rendNode)
+            if (this.renderer.type === 'svg' && Type.exists(collect[0]) &&
+                collect.length === 1 && Type.exists(collect[0].rendNode)
             ) {
-                collect[0].rendNode.parentNode.appendChild(collect[0].rendNode);
+                // Move object to top
+                if (collect[0].evalVisProp('dragtotopoflayer')) {
+                    collect[0].rendNode.parentNode.appendChild(collect[0].rendNode);
+                }
+                // Move object's label to top
+                if (collect[0].hasLabel &&
+                    collect[0].label.evalVisProp('display') === 'html' &&
+                    collect[0].label.evalVisProp('dragtotopoflayer')
+                ) {
+                    collect[0].label.rendNode.parentNode.appendChild(collect[0].label.rendNode);
+                }
             }
 
             // // Init rotation angle and scale factor for two finger movements
@@ -1143,10 +1446,10 @@ JXG.extend(
          */
         moveObject: function (x, y, o, evt, type) {
             var newPos = new Coords(
-                Const.COORDS_BY_SCREEN,
-                this.getScrCoordsOfMouse(x, y),
-                this
-            ),
+                    Const.COORDS_BY_SCREEN,
+                    this.getScrCoordsOfMouse(x, y),
+                    this
+                ),
                 drag,
                 dragScrCoords,
                 newDragScrCoords;
@@ -1163,7 +1466,8 @@ JXG.extend(
 
             this.addLogEntry('drag', drag, newPos.usrCoords.slice(1));
 
-            // Store the position.
+            // Store the position and add the correctionvector from the mouse
+            // position to the object's coords.
             this.drag_position = [newPos.scrCoords[1], newPos.scrCoords[2]];
             this.drag_position = Statistics.add(this.drag_position, this._drag_offset);
 
@@ -1175,7 +1479,7 @@ JXG.extend(
             // We have to distinguish between CoordsElements and other elements like lines.
             // The latter need the difference between two move events.
             if (Type.exists(drag.coords)) {
-                drag.setPositionDirectly(Const.COORDS_BY_SCREEN, this.drag_position);
+                drag.setPositionDirectly(Const.COORDS_BY_SCREEN, this.drag_position, [x, y]);
             } else {
                 this.displayInfobox(false);
                 // Hide infobox in case the user has touched an intersection point
@@ -1210,8 +1514,8 @@ JXG.extend(
                 dragScrCoords[2] !== newDragScrCoords[2]
             ) {
                 drag.triggerEventHandlers([type + 'drag', 'drag'], [evt]);
-
-                this.update();
+                // Update all elements of the board
+                this.update(drag);
             }
             drag.highlight(true);
             this.triggerEventHandlers(['mousehit', 'hit'], [evt, drag]);
@@ -1258,7 +1562,7 @@ JXG.extend(
          * @param {Object} finger1 Actual and previous position of finger 1
          * @param {Boolean} scalable Flag if element may be scaled
          * @param {Boolean} rotatable Flag if element may be rotated
-         * @returns
+         * @returns {Array}
          */
         getTwoFingerTransform(finger1, finger2, scalable, rotatable) {
             var crd,
@@ -1318,7 +1622,7 @@ JXG.extend(
          */
         twoFingerTouchObject: function (tar, drag, id) {
             var t, T,
-                ar, i, len, vp,
+                ar, i, len,
                 snap = false;
 
             if (
@@ -1329,8 +1633,8 @@ JXG.extend(
 
                 T = this.getTwoFingerTransform(
                     tar[0], tar[1],
-                    Type.evaluate(drag.visProp.scalable),
-                    Type.evaluate(drag.visProp.rotatable));
+                    drag.evalVisProp('scalable'),
+                    drag.evalVisProp('rotatable'));
                 t = this.create('transform', T, { type: 'generic' });
                 t.update();
 
@@ -1345,12 +1649,10 @@ JXG.extend(
                     t.applyOnce(ar);
                 } else if (drag.type === Const.OBJECT_TYPE_POLYGON) {
                     len = drag.vertices.length - 1;
-                    vp = drag.visProp;
-                    snap = Type.evaluate(vp.snaptogrid) || Type.evaluate(vp.snaptopoints);
+                    snap = drag.evalVisProp('snaptogrid') || drag.evalVisProp('snaptopoints');
                     for (i = 0; i < len && !snap; ++i) {
-                        vp = drag.vertices[i].visProp;
-                        snap = snap || Type.evaluate(vp.snaptogrid) || Type.evaluate(vp.snaptopoints);
-                        snap = snap || (!drag.vertices[i].draggable())
+                        snap = snap || drag.vertices[i].evalVisProp('snaptogrid') || drag.vertices[i].evalVisProp('snaptopoints');
+                        snap = snap || (!drag.vertices[i].draggable());
                     }
                     if (!snap) {
                         ar = [];
@@ -1370,7 +1672,7 @@ JXG.extend(
 
         /*
          * Moves, rotates and scales a circle with two fingers.
-         * @param {Array} tar Array conatining touch event objects: {JXG.Board#touches.targets}.
+         * @param {Array} tar Array containing touch event objects: {JXG.Board#touches.targets}.
          * @param {object} drag The object that is dragged:
          * @param {Number} id pointerId of the event. In case of old touch event this is emulated.
          */
@@ -1410,7 +1712,7 @@ JXG.extend(
                 });
                 t2 = this.create('transform', [alpha], { type: 'rotate' });
                 t1.melt(t2);
-                if (Type.evaluate(drag.visProp.scalable)) {
+                if (drag.evalVisProp('scalable')) {
                     d = Geometry.distance(fix, np) / Geometry.distance(fix, op);
                     t3 = this.create('transform', [d, d], { type: 'scale' });
                     t1.melt(t3);
@@ -1581,7 +1883,7 @@ JXG.extend(
          * @return {Boolean}   returns if the origin is moved.
          */
         touchStartMoveOriginOneFinger: function (evt) {
-            var touches = evt[JXG.touchProperty],
+            var touches = evt['touches'],
                 conditions,
                 pos;
 
@@ -1631,8 +1933,22 @@ JXG.extend(
          **********************************************************/
 
         /**
+         * Suppresses the default event handling.
+         * Used for context menu.
+         *
+         * @param {Event} e
+         * @returns {Boolean} false
+         */
+        suppressDefault: function (e) {
+            if (Type.exists(e)) {
+                e.preventDefault();
+            }
+            return false;
+        },
+
+        /**
          * Add all possible event handlers to the board object
-         * which move objects, i.e. mouse, pointer and touch events.
+         * that move objects, i.e. mouse, pointer and touch events.
          */
         addEventHandlers: function () {
             if (Env.supportsPointerEvents()) {
@@ -1642,32 +1958,60 @@ JXG.extend(
                 this.addTouchEventHandlers();
             }
 
+            if (this.containerObj !== null) {
+                // this.containerObj.oncontextmenu = this.suppressDefault;
+                Env.addEvent(this.containerObj, 'contextmenu', this.suppressDefault, this);
+            }
+
             // This one produces errors on IE
             // // Env.addEvent(this.containerObj, 'contextmenu', function (e) { e.preventDefault(); return false;}, this);
             // This one works on IE, Firefox and Chromium with default configurations. On some Safari
             // or Opera versions the user must explicitly allow the deactivation of the context menu.
-            if (this.containerObj !== null) {
-                this.containerObj.oncontextmenu = function (e) {
-                    if (Type.exists(e)) {
-                        e.preventDefault();
-                    }
-                    return false;
-                };
-            }
-
-            this.addKeyboardEventHandlers();
         },
 
         /**
-         * Add resize event handlers
+         * Remove all event handlers from the board object
+         */
+        removeEventHandlers: function () {
+            if ((this.hasPointerHandlers || this.hasMouseHandlers || this.hasTouchHandlers) &&
+                this.containerObj !== null
+            ) {
+                Env.removeEvent(this.containerObj, 'contextmenu', this.suppressDefault, this);
+            }
+
+            this.removeMouseEventHandlers();
+            this.removeTouchEventHandlers();
+            this.removePointerEventHandlers();
+
+            this.removeFullscreenEventHandlers();
+            this.removeKeyboardEventHandlers();
+            this.removeResizeEventHandlers();
+
+            // if (Env.isBrowser) {
+            //     if (Type.exists(this.resizeObserver)) {
+            //         this.stopResizeObserver();
+            //     } else {
+            //         Env.removeEvent(window, 'resize', this.resizeListener, this);
+            //         this.stopIntersectionObserver();
+            //     }
+            //     Env.removeEvent(window, 'scroll', this.scrollListener, this);
+            // }
+        },
+
+        /**
+         * Add resize related event handlers
          *
          */
         addResizeEventHandlers: function () {
+            // var that = this;
+
+            this.resizeHandlers = [];
             if (Env.isBrowser) {
                 try {
                     // Supported by all new browsers
                     // resizeObserver: triggered if size of the JSXGraph div changes.
                     this.startResizeObserver();
+                    this.resizeHandlers.push('resizeobserver');
                 } catch (err) {
                     // Certain Safari and edge version do not support
                     // resizeObserver, but intersectionObserver.
@@ -1675,35 +2019,81 @@ JXG.extend(
                     Env.addEvent(window, 'resize', this.resizeListener, this);
                     // intersectionObserver: triggered if JSXGraph becomes visible.
                     this.startIntersectionObserver();
+                    this.resizeHandlers.push('resize');
                 }
                 // Scroll event: needs to be captured since on mobile devices
                 // sometimes a header bar is displayed / hidden, which triggers a
                 // resize event.
                 Env.addEvent(window, 'scroll', this.scrollListener, this);
+                this.resizeHandlers.push('scroll');
+
+                // On browser print:
+                // we need to call the listener when having @media: print.
+                try {
+                    // window.matchMedia('print').addEventListener('change', this.printListenerMatch.apply(this, arguments));
+                    window.matchMedia('print').addEventListener('change', this.printListenerMatch.bind(this));
+                    window.matchMedia('screen').addEventListener('change', this.printListenerMatch.bind(this));
+                    this.resizeHandlers.push('print');
+                } catch (err) {
+                    JXG.debug("Error adding printListener", err);
+                }
+                // if (Type.isFunction(MediaQueryList.prototype.addEventListener)) {
+                //     window.matchMedia('print').addEventListener('change', function (mql) {
+                //         if (mql.matches) {
+                //             that.printListener();
+                //         }
+                //     });
+                // } else if (Type.isFunction(MediaQueryList.prototype.addListener)) { // addListener might be deprecated
+                //     window.matchMedia('print').addListener(function (mql, ev) {
+                //         if (mql.matches) {
+                //             that.printListener(ev);
+                //         }
+                //     });
+                // }
+
+                // When closing the print dialog we again have to resize.
+                // Env.addEvent(window, 'afterprint', this.printListener, this);
+                // this.resizeHandlers.push('afterprint');
             }
         },
 
         /**
-         * Remove all event handlers from the board object
+         * Remove resize related event handlers
+         *
          */
-        removeEventHandlers: function () {
-            this.removeMouseEventHandlers();
-            this.removeTouchEventHandlers();
-            this.removePointerEventHandlers();
-
-            this.removeFullscreenEventHandlers();
-            this.removeKeyboardEventHandlers();
-
-            if (Env.isBrowser) {
-                if (Type.exists(this.resizeObserver)) {
-                    this.stopResizeObserver();
-                } else {
-                    Env.removeEvent(window, 'resize', this.resizeListener, this);
-                    this.stopIntersectionObserver();
+        removeResizeEventHandlers: function () {
+            var i, e;
+            if (this.resizeHandlers.length > 0 && Env.isBrowser) {
+                for (i = 0; i < this.resizeHandlers.length; i++) {
+                    e = this.resizeHandlers[i];
+                    switch (e) {
+                        case 'resizeobserver':
+                            if (Type.exists(this.resizeObserver)) {
+                                this.stopResizeObserver();
+                            }
+                            break;
+                        case 'resize':
+                            Env.removeEvent(window, 'resize', this.resizeListener, this);
+                            if (Type.exists(this.intersectionObserver)) {
+                                this.stopIntersectionObserver();
+                            }
+                            break;
+                        case 'scroll':
+                            Env.removeEvent(window, 'scroll', this.scrollListener, this);
+                            break;
+                        case 'print':
+                            window.matchMedia('print').removeEventListener('change', this.printListenerMatch.bind(this), false);
+                            window.matchMedia('screen').removeEventListener('change', this.printListenerMatch.bind(this), false);
+                            break;
+                        // case 'afterprint':
+                        //     Env.removeEvent(window, 'afterprint', this.printListener, this);
+                        //     break;
+                    }
                 }
-                Env.removeEvent(window, 'scroll', this.scrollListener, this);
+                this.resizeHandlers = [];
             }
         },
+
 
         /**
          * Registers pointer event handlers.
@@ -1714,20 +2104,23 @@ JXG.extend(
 
                 if (window.navigator.msPointerEnabled) {
                     // IE10-
-                    Env.addEvent(this.containerObj, 'MSPointerDown', this.pointerDownListener, this);
+                    // Env.addEvent(this.containerObj, 'MSPointerDown', this.pointerDownListener, this);
+                    Env.addEvent(moveTarget, 'MSPointerDown', this.pointerDownListener, this);
                     Env.addEvent(moveTarget, 'MSPointerMove', this.pointerMoveListener, this);
                 } else {
-                    Env.addEvent(this.containerObj, 'pointerdown', this.pointerDownListener, this);
+                    // Env.addEvent(this.containerObj, 'pointerdown', this.pointerDownListener, this);
+                    Env.addEvent(moveTarget, 'pointerdown', this.pointerDownListener, this);
                     Env.addEvent(moveTarget, 'pointermove', this.pointerMoveListener, this);
                     Env.addEvent(moveTarget, 'pointerleave', this.pointerLeaveListener, this);
+                    Env.addEvent(moveTarget, 'click', this.pointerClickListener, this);
+                    Env.addEvent(moveTarget, 'dblclick', this.pointerDblClickListener, this);
                 }
-                Env.addEvent(this.containerObj, 'mousewheel', this.mouseWheelListener, this);
-                Env.addEvent(this.containerObj, 'DOMMouseScroll', this.mouseWheelListener, this);
 
                 if (this.containerObj !== null) {
                     // This is needed for capturing touch events.
                     // It is in jsxgraph.css, for ms-touch-action...
                     this.containerObj.style.touchAction = 'none';
+                    // this.containerObj.style.touchAction = 'auto';
                 }
 
                 this.hasPointerHandlers = true;
@@ -1741,11 +2134,11 @@ JXG.extend(
             if (!this.hasMouseHandlers && Env.isBrowser) {
                 var moveTarget = this.attr.movetarget || this.containerObj;
 
-                Env.addEvent(this.containerObj, 'mousedown', this.mouseDownListener, this);
+                // Env.addEvent(this.containerObj, 'mousedown', this.mouseDownListener, this);
+                Env.addEvent(moveTarget, 'mousedown', this.mouseDownListener, this);
                 Env.addEvent(moveTarget, 'mousemove', this.mouseMoveListener, this);
-
-                Env.addEvent(this.containerObj, 'mousewheel', this.mouseWheelListener, this);
-                Env.addEvent(this.containerObj, 'DOMMouseScroll', this.mouseWheelListener, this);
+                Env.addEvent(moveTarget, 'click', this.mouseClickListener, this);
+                Env.addEvent(moveTarget, 'dblclick', this.mouseDblClickListener, this);
 
                 this.hasMouseHandlers = true;
             }
@@ -1762,7 +2155,8 @@ JXG.extend(
             if (!this.hasTouchHandlers && Env.isBrowser) {
                 var moveTarget = this.attr.movetarget || this.containerObj;
 
-                Env.addEvent(this.containerObj, 'touchstart', this.touchStartListener, this);
+                // Env.addEvent(this.containerObj, 'touchstart', this.touchStartListener, this);
+                Env.addEvent(moveTarget, 'touchstart', this.touchStartListener, this);
                 Env.addEvent(moveTarget, 'touchmove', this.touchMoveListener, this);
 
                 /*
@@ -1774,6 +2168,17 @@ JXG.extend(
                 */
 
                 this.hasTouchHandlers = true;
+            }
+        },
+
+        /**
+         * Registers pointer event handlers.
+         */
+        addWheelEventHandlers: function () {
+            if (!this.hasWheelHandlers && Env.isBrowser) {
+                Env.addEvent(this.containerObj, 'mousewheel', this.mouseWheelListener, this);
+                Env.addEvent(this.containerObj, 'DOMMouseScroll', this.mouseWheelListener, this);
+                this.hasWheelHandlers = true;
             }
         },
 
@@ -1800,6 +2205,9 @@ JXG.extend(
             }
         },
 
+        /**
+         * Register keyboard event handlers.
+         */
         addKeyboardEventHandlers: function () {
             if (this.attr.keyboard.enabled && !this.hasKeyboardHandlers && Env.isBrowser) {
                 Env.addEvent(this.containerObj, 'keydown', this.keyDownListener, this);
@@ -1852,16 +2260,22 @@ JXG.extend(
 
                 if (window.navigator.msPointerEnabled) {
                     // IE10-
-                    Env.removeEvent(this.containerObj, 'MSPointerDown', this.pointerDownListener, this);
+                    // Env.removeEvent(this.containerObj, 'MSPointerDown', this.pointerDownListener, this);
+                    Env.removeEvent(moveTarget, 'MSPointerDown', this.pointerDownListener, this);
                     Env.removeEvent(moveTarget, 'MSPointerMove', this.pointerMoveListener, this);
                 } else {
-                    Env.removeEvent(this.containerObj, 'pointerdown', this.pointerDownListener, this);
+                    // Env.removeEvent(this.containerObj, 'pointerdown', this.pointerDownListener, this);
+                    Env.removeEvent(moveTarget, 'pointerdown', this.pointerDownListener, this);
                     Env.removeEvent(moveTarget, 'pointermove', this.pointerMoveListener, this);
                     Env.removeEvent(moveTarget, 'pointerleave', this.pointerLeaveListener, this);
+                    Env.removeEvent(moveTarget, 'click', this.pointerClickListener, this);
+                    Env.removeEvent(moveTarget, 'dblclick', this.pointerDblClickListener, this);
                 }
 
-                Env.removeEvent(this.containerObj, 'mousewheel', this.mouseWheelListener, this);
-                Env.removeEvent(this.containerObj, 'DOMMouseScroll', this.mouseWheelListener, this);
+                if (this.hasWheelHandlers) {
+                    Env.removeEvent(this.containerObj, 'mousewheel', this.mouseWheelListener, this);
+                    Env.removeEvent(this.containerObj, 'DOMMouseScroll', this.mouseWheelListener, this);
+                }
 
                 if (this.hasPointerUp) {
                     if (window.navigator.msPointerEnabled) {
@@ -1885,21 +2299,26 @@ JXG.extend(
             if (this.hasMouseHandlers && Env.isBrowser) {
                 var moveTarget = this.attr.movetarget || this.containerObj;
 
-                Env.removeEvent(this.containerObj, 'mousedown', this.mouseDownListener, this);
+                // Env.removeEvent(this.containerObj, 'mousedown', this.mouseDownListener, this);
+                Env.removeEvent(moveTarget, 'mousedown', this.mouseDownListener, this);
                 Env.removeEvent(moveTarget, 'mousemove', this.mouseMoveListener, this);
+                Env.removeEvent(moveTarget, 'click', this.mouseClickListener, this);
+                Env.removeEvent(moveTarget, 'dblclick', this.mouseDblClickListener, this);
 
                 if (this.hasMouseUp) {
                     Env.removeEvent(this.document, 'mouseup', this.mouseUpListener, this);
                     this.hasMouseUp = false;
                 }
 
-                Env.removeEvent(this.containerObj, 'mousewheel', this.mouseWheelListener, this);
-                Env.removeEvent(
-                    this.containerObj,
-                    'DOMMouseScroll',
-                    this.mouseWheelListener,
-                    this
-                );
+                if (this.hasWheelHandlers) {
+                    Env.removeEvent(this.containerObj, 'mousewheel', this.mouseWheelListener, this);
+                    Env.removeEvent(
+                        this.containerObj,
+                        'DOMMouseScroll',
+                        this.mouseWheelListener,
+                        this
+                    );
+                }
 
                 this.hasMouseHandlers = false;
             }
@@ -1912,7 +2331,8 @@ JXG.extend(
             if (this.hasTouchHandlers && Env.isBrowser) {
                 var moveTarget = this.attr.movetarget || this.containerObj;
 
-                Env.removeEvent(this.containerObj, 'touchstart', this.touchStartListener, this);
+                // Env.removeEvent(this.containerObj, 'touchstart', this.touchStartListener, this);
+                Env.removeEvent(moveTarget, 'touchstart', this.touchStartListener, this);
                 Env.removeEvent(moveTarget, 'touchmove', this.touchMoveListener, this);
 
                 if (this.hasTouchEnd) {
@@ -1989,6 +2409,7 @@ JXG.extend(
                 zx = this.attr.zoom.factorx,
                 zy = this.attr.zoom.factory,
                 factor, dist, theta, bound,
+                zoomCenter,
                 doZoom = false,
                 dx, dy, cx, cy;
 
@@ -2061,6 +2482,7 @@ JXG.extend(
 
             } else if (this.attr.zoom.enabled && Math.abs(factor - 1.0) < 0.5) {
                 doZoom = false;
+                zoomCenter = this.attr.zoom.center;
                 // Pinch detected
                 if (this.attr.zoom.pinchhorizontal || this.attr.zoom.pinchvertical) {
                     dx = Math.abs(evt.touches[0].clientX - evt.touches[1].clientX);
@@ -2069,14 +2491,17 @@ JXG.extend(
                     bound = (Math.PI * this.attr.zoom.pinchsensitivity) / 90.0;
                 }
 
-                if (this.attr.zoom.pinchhorizontal && theta < bound) {
+                if (!this.keepaspectratio &&
+                    this.attr.zoom.pinchhorizontal &&
+                    theta < bound) {
                     this.attr.zoom.factorx = factor;
                     this.attr.zoom.factory = 1.0;
                     cx = 0;
                     cy = 0;
                     doZoom = true;
-                } else if (
-                    this.attr.zoom.pinchvertical && Math.abs(theta - Math.PI * 0.5) < bound
+                } else if (!this.keepaspectratio &&
+                    this.attr.zoom.pinchvertical &&
+                    Math.abs(theta - Math.PI * 0.5) < bound
                 ) {
                     this.attr.zoom.factorx = 1.0;
                     this.attr.zoom.factory = factor;
@@ -2092,7 +2517,11 @@ JXG.extend(
                 }
 
                 if (doZoom) {
-                    this.zoomIn(cx, cy);
+                    if (zoomCenter === 'board') {
+                        this.zoomIn();
+                    } else { // including zoomCenter === 'auto'
+                        this.zoomIn(cx, cy);
+                    }
 
                     // Restore zoomFactors
                     this.attr.zoom.factorx = zx;
@@ -2132,6 +2561,7 @@ JXG.extend(
             this.initMoveOrigin(pos[0], pos[1]);
 
             this.mode = this.BOARD_MODE_ZOOM;
+            this._change3DView = false;
             return false;
         },
 
@@ -2304,8 +2734,7 @@ JXG.extend(
          * @param {Event} evt The browsers event object.
          * @param {Object} object If the object to be dragged is already known, it can be submitted via this parameter
          * @param {Boolean} [allowDefaultEventHandling=false] If true event is not canceled, i.e. prevent call of evt.preventDefault()
-         * @returns {Boolean} false if the the first finger event is sent twice, or not a browser, or
-         *  or in selection mode. Otherwise returns true.
+         * @returns {Boolean} false if the first finger event is sent twice, or not a browser, or in selection mode. Otherwise returns true.
          */
         pointerDownListener: function (evt, object, allowDefaultEventHandling) {
             var i, j, k, pos,
@@ -2376,7 +2805,7 @@ JXG.extend(
             //    b. if an object is found, check the number of pointers. If appropriate, add the pointer.
             pos = this.getMousePosition(evt);
 
-            // selection
+            // Handle selection rectangle
             this._testForSelection(evt);
             if (this.selectingMode) {
                 this._startSelecting(pos);
@@ -2424,7 +2853,7 @@ JXG.extend(
                     }
                 }
                 if (!found) {
-                    // An new element hae been touched.
+                    // A new element has been touched.
                     k = 0;
                     j =
                         this.touches.push({
@@ -2442,10 +2871,8 @@ JXG.extend(
                 // this could get us new trouble: input fields, links and drop down boxes placed as text
                 // on the board don't work anymore.
                 if (evt && evt.preventDefault && !allowDefaultEventHandling) {
-                    evt.preventDefault();
                     // All browser supporting pointer events know preventDefault()
-                    // } else if (window.event) {
-                    //     window.event.returnValue = false;
+                    evt.preventDefault();
                 }
             }
 
@@ -2491,18 +2918,144 @@ JXG.extend(
 
             // Allow browser scrolling
             // For this: pan by one finger has to be disabled
-            ta = 'none';             // JSXGraph catches all user touch events
+
+            ta = 'none';   // JSXGraph catches all user touch events
             if (this.mode === this.BOARD_MODE_NONE &&
-                Type.evaluate(this.attr.browserpan) &&
-                !(Type.evaluate(this.attr.pan.enabled) && !Type.evaluate(this.attr.pan.needtwofingers))
+                (Type.evaluate(this.attr.browserpan) === true || Type.evaluate(this.attr.browserpan.enabled) === true) &&
+                // One-finger pan has priority over browserPan
+                (Type.evaluate(this.attr.pan.enabled) === false || Type.evaluate(this.attr.pan.needtwofingers) === true)
             ) {
-                ta = 'pan-x pan-y';  // JSXGraph allows browser scrolling
+                // ta = 'pan-x pan-y';  // JSXGraph allows browser scrolling
+                ta = 'auto';  // JSXGraph allows browser scrolling
             }
             this.containerObj.style.touchAction = ta;
 
             this.triggerEventHandlers(['touchstart', 'down', 'pointerdown', 'MSPointerDown'], [evt]);
 
             return true;
+        },
+
+        /**
+         * Internal handling of click events for pointers and mouse.
+         *
+         * @param {Event} evt The browsers event object.
+         * @param {Array} evtArray list of event names
+         * @private
+         */
+        _handleClicks: function(evt, evtArray) {
+            var that = this,
+                el, delay, suppress;
+
+            if (this.selectingMode) {
+                evt.stopPropagation();
+                return;
+            }
+
+            delay = Type.evaluate(this.attr.clickdelay);
+            suppress = Type.evaluate(this.attr.dblclicksuppressclick);
+
+            if (suppress) {
+                // dblclick suppresses previous click events
+                this._preventSingleClick = false;
+
+                // Wait if there is a dblclick event.
+                // If not fire a click event
+                this._singleClickTimer = setTimeout(function() {
+                    if (!that._preventSingleClick) {
+                        // Fire click event and remove element from click list
+                        that.triggerEventHandlers(evtArray, [evt]);
+                        for (el in that.clickObjects) {
+                            if (that.clickObjects.hasOwnProperty(el)) {
+                                that.clickObjects[el].triggerEventHandlers(evtArray, [evt]);
+                                delete that.clickObjects[el];
+                            }
+                        }
+                    }
+                }, delay);
+            } else {
+                // dblclick is preceded by two click events
+
+                // Fire click events
+                that.triggerEventHandlers(evtArray, [evt]);
+                for (el in that.clickObjects) {
+                    if (that.clickObjects.hasOwnProperty(el)) {
+                        that.clickObjects[el].triggerEventHandlers(evtArray, [evt]);
+                    }
+                }
+
+                // Clear list of clicked elements with a delay
+                setTimeout(function() {
+                    for (el in that.clickObjects) {
+                        if (that.clickObjects.hasOwnProperty(el)) {
+                            delete that.clickObjects[el];
+                        }
+                    }
+                }, delay);
+            }
+            evt.stopPropagation();
+        },
+
+        /**
+         * Internal handling of dblclick events for pointers and mouse.
+         *
+         * @param {Event} evt The browsers event object.
+         * @param {Array} evtArray list of event names
+         * @private
+         */
+        _handleDblClicks: function(evt, evtArray) {
+            var el;
+
+            if (this.selectingMode) {
+                evt.stopPropagation();
+                return;
+            }
+
+            // Notify that a dblclick has happened
+            this._preventSingleClick = true;
+            clearTimeout(this._singleClickTimer);
+
+            // Fire dblclick event
+            this.triggerEventHandlers(evtArray, [evt]);
+            for (el in this.clickObjects) {
+                if (this.clickObjects.hasOwnProperty(el)) {
+                    this.clickObjects[el].triggerEventHandlers(evtArray, [evt]);
+                    delete this.clickObjects[el];
+                }
+            }
+
+            evt.stopPropagation();
+        },
+
+        /**
+         * This method is called by the browser when a pointer device clicks on the screen.
+         * @param {Event} evt The browsers event object.
+         */
+        pointerClickListener: function (evt) {
+            this._handleClicks(evt, ['click', 'pointerclick']);
+        },
+
+        /**
+         * This method is called by the browser when a pointer device double clicks on the screen.
+         * @param {Event} evt The browsers event object.
+         */
+        pointerDblClickListener: function (evt) {
+            this._handleDblClicks(evt, ['dblclick', 'pointerdblclick']);
+        },
+
+        /**
+         * This method is called by the browser when the mouse device clicks on the screen.
+         * @param {Event} evt The browsers event object.
+         */
+        mouseClickListener: function (evt) {
+            this._handleClicks(evt, ['click', 'mouseclick']);
+        },
+
+        /**
+         * This method is called by the browser when the mouse device double clicks on the screen.
+         * @param {Event} evt The browsers event object.
+         */
+        mouseDblClickListener: function (evt) {
+            this._handleDblClicks(evt, ['dblclick', 'mousedblclick']);
         },
 
         // /**
@@ -2565,9 +3118,9 @@ JXG.extend(
             // Ignore pointer move event if too close at the border
             // and setPointerCapture is off
             if (Type.evaluate(this.attr.movetarget) === null &&
-                pos[0] <= eps || pos[1] <= eps ||
-                pos[0] >= this.canvasWidth - eps ||
-                pos[1] >= this.canvasHeight - eps
+                (pos[0] <= eps || pos[1] <= eps ||
+                 pos[0] >= this.canvasWidth - eps ||
+                 pos[1] >= this.canvasHeight - eps)
             ) {
                 return this.mode === this.BOARD_MODE_NONE;
             }
@@ -2639,7 +3192,7 @@ JXG.extend(
          * @returns {Boolean}
          */
         pointerUpListener: function (evt) {
-            var i, j, found,
+            var i, j, found, eh,
                 touchTargets,
                 updateNeeded = false;
 
@@ -2693,6 +3246,17 @@ JXG.extend(
                             this.downObjects[i].snapToPoints();
                             updateNeeded = true;
                         }
+
+                        // Check if we have to keep the element for a click or dblclick event
+                        // Otherwise remove it from downObjects
+                        eh = this.downObjects[i].eventHandlers;
+                        if ((Type.exists(eh.click) && eh.click.length > 0) ||
+                            (Type.exists(eh.pointerclick) && eh.pointerclick.length > 0) ||
+                            (Type.exists(eh.dblclick) && eh.dblclick.length > 0) ||
+                            (Type.exists(eh.pointerdblclick) && eh.pointerdblclick.length > 0)
+                        ) {
+                            this.clickObjects[this.downObjects[i].id] = this.downObjects[i];
+                        }
                         this.downObjects.splice(i, 1);
                     }
                 }
@@ -2704,12 +3268,7 @@ JXG.extend(
                     Env.removeEvent(this.document, 'MSPointerUp', this.pointerUpListener, this);
                 } else {
                     Env.removeEvent(this.document, 'pointerup', this.pointerUpListener, this);
-                    Env.removeEvent(
-                        this.document,
-                        'pointercancel',
-                        this.pointerUpListener,
-                        this
-                    );
+                    Env.removeEvent(this.document, 'pointercancel', this.pointerUpListener, this);
                 }
                 this.hasPointerUp = false;
             }
@@ -2754,17 +3313,12 @@ JXG.extend(
          * @returns {Boolean} ...
          */
         touchStartListener: function (evt) {
-            var i,
-                pos,
-                elements,
-                j,
-                k,
+            var i, j, k,
+                pos, elements, obj,
                 eps = this.options.precision.touch,
-                obj,
+                evtTouches = evt['touches'],
                 found,
-                targets,
-                evtTouches = evt[JXG.touchProperty],
-                target,
+                targets, target,
                 touchTargets;
 
             if (!this.hasTouchEnd) {
@@ -2991,7 +3545,7 @@ JXG.extend(
                 pos1,
                 pos2,
                 touchTargets,
-                evtTouches = evt[JXG.touchProperty];
+                evtTouches = evt['touches'];
 
             if (!this.checkFrameRate(evt)) {
                 return false;
@@ -3132,7 +3686,7 @@ JXG.extend(
                 tmpTouches = [],
                 found,
                 foundNumber,
-                evtTouches = evt && evt[JXG.touchProperty],
+                evtTouches = evt && evt['touches'],
                 touchTargets,
                 updateNeeded = false;
 
@@ -3315,7 +3869,6 @@ JXG.extend(
                 this.mode = this.BOARD_MODE_NONE;
                 result = true;
             } else {
-                /** @ignore */
                 this.mouse = {
                     obj: null,
                     targets: [
@@ -3452,7 +4005,6 @@ JXG.extend(
             }
 
             // release dragged mouse object
-            /** @ignore */
             this.mouse = null;
         },
 
@@ -3462,6 +4014,8 @@ JXG.extend(
          * @returns {Boolean}
          */
         mouseWheelListener: function (evt) {
+            var wd, zoomCenter, pos;
+
             if (!this.attr.zoom.enabled ||
                 !this.attr.zoom.wheel ||
                 !this._isRequiredKeyPressed(evt, 'zoom')) {
@@ -3470,13 +4024,20 @@ JXG.extend(
             }
 
             evt = evt || window.event;
-            var wd = evt.detail ? -evt.detail : evt.wheelDelta / 40,
-                pos = new Coords(Const.COORDS_BY_SCREEN, this.getMousePosition(evt), this);
+            wd = evt.detail ? -evt.detail : evt.wheelDelta / 40;
+            zoomCenter = this.attr.zoom.center;
 
+            if (zoomCenter === 'board') {
+                pos = [];
+            } else { // including zoomCenter === 'auto'
+                pos = new Coords(Const.COORDS_BY_SCREEN, this.getMousePosition(evt), this).usrCoords;
+            }
+
+            // pos == [] does not throw an error
             if (wd > 0) {
-                this.zoomIn(pos.usrCoords[1], pos.usrCoords[2]);
+                this.zoomIn(pos[1], pos[2]);
             } else {
-                this.zoomOut(pos.usrCoords[1], pos.usrCoords[2]);
+                this.zoomOut(pos[1], pos[2]);
             }
 
             this.triggerEventHandlers(['mousewheel'], [evt]);
@@ -3489,7 +4050,7 @@ JXG.extend(
          * Allow moving of JSXGraph elements with arrow keys.
          * The selection of the element is done with the tab key. For this,
          * the attribute 'tabindex' of the element has to be set to some number (default=0).
-         * tabindex corresponds to the HTML attribute of the same name.
+         * tabindex corresponds to the HTML and SVG attribute of the same name.
          * <p>
          * Panning of the construction is done with arrow keys
          * if the pan key (shift or ctrl - depending on the board attributes) is pressed.
@@ -3525,10 +4086,15 @@ JXG.extend(
                 return false;
             }
 
+            // Tab key should be handled by the browser
+            if (evt.keyCode === 9) {
+                return false;
+            }
+
             // dx = Math.round(dx * u) / u;
             // dy = Math.round(dy * u) / u;
 
-            // An element of type input or textarea has foxus, get out of here.
+            // An element of type input or textarea has focus, get out of here.
             doc = this.containerObj.shadowRoot || document;
             if (doc.activeElement) {
                 el = doc.activeElement;
@@ -3582,33 +4148,35 @@ JXG.extend(
                 } else {
                     done = false;
                 }
-            } else {
-                // Adapt dx, dy to snapToGrid and attractToGrid
+            } else if (!evt.shiftKey && !evt.ctrlKey) {         // Move an element if neither shift or ctrl are pressed
+                // Adapt dx, dy to snapToGrid and attractToGrid.
                 // snapToGrid has priority.
                 if (Type.exists(el.visProp)) {
                     if (
                         Type.exists(el.visProp.snaptogrid) &&
                         el.visProp.snaptogrid &&
-                        Type.evaluate(el.visProp.snapsizex) &&
-                        Type.evaluate(el.visProp.snapsizey)
+                        el.evalVisProp('snapsizex') &&
+                        el.evalVisProp('snapsizey')
                     ) {
                         // Adapt dx, dy such that snapToGrid is possible
                         res = el.getSnapSizes();
                         sX = res[0];
                         sY = res[1];
-                        dx = Math.max(sX, dx);
-                        dy = Math.max(sY, dy);
+                        // If snaptogrid is true,
+                        // we can only jump from grid point to grid point.
+                        dx = sX;
+                        dy = sY;
                     } else if (
                         Type.exists(el.visProp.attracttogrid) &&
                         el.visProp.attracttogrid &&
-                        Type.evaluate(el.visProp.attractordistance) &&
-                        Type.evaluate(el.visProp.attractorunit)
+                        el.evalVisProp('attractordistance') &&
+                        el.evalVisProp('attractorunit')
                     ) {
                         // Adapt dx, dy such that attractToGrid is possible
-                        sX = 1.1 * Type.evaluate(el.visProp.attractordistance);
+                        sX = 1.1 * el.evalVisProp('attractordistance');
                         sY = sX;
 
-                        if (Type.evaluate(el.visProp.attractorunit) === 'screen') {
+                        if (el.evalVisProp('attractorunit') === 'screen') {
                             sX /= this.unitX;
                             sY /= this.unitX;
                         }
@@ -3639,10 +4207,8 @@ JXG.extend(
                         (Type.isPoint(el) ||
                             el.elementClass === Const.OBJECT_CLASS_TEXT)
                     ) || !this.geonextCompatibilityMode) &&
-                    !Type.evaluate(el.visProp.fixed)
+                    !el.evalVisProp('fixed')
                 ) {
-
-
                     this.mode = this.BOARD_MODE_DRAG;
                     if (Type.exists(el.coords)) {
                         dir[0] += actPos[0];
@@ -3696,6 +4262,7 @@ JXG.extend(
                 return false;
             }
 
+            // Get JSXGraph id from node id
             id = id_node.replace(this.containerObj.id + '_', '');
             el = this.select(id);
             if (Type.exists(el.highlight)) {
@@ -3730,10 +4297,13 @@ JXG.extend(
 
         /**
          * Update the width and height of the JSXGraph container div element.
-         * Read actual values with getBoundingClientRect(),
+         * If width and height are not supplied, read actual values with offsetWidth/Height,
          * and call board.resizeContainer() with this values.
          * <p>
          * If necessary, also call setBoundingBox().
+         * @param {Number} [width=this.containerObj.offsetWidth] Width of the container element
+         * @param {Number} [height=this.containerObj.offsetHeight] Height of the container element
+         * @returns {JXG.Board} Reference to the board
          *
          * @see JXG.Board#startResizeObserver
          * @see JXG.Board#resizeListener
@@ -3741,18 +4311,28 @@ JXG.extend(
          * @see JXG.Board#setBoundingBox
          *
          */
-        updateContainerDims: function () {
-            var w, h,
-                bb, css,
+        updateContainerDims: function (width, height) {
+            var w = width,
+                h = height,
+                // bb,
+                css,
                 width_adjustment, height_adjustment;
 
-            // Get size of the board's container div
-            bb = this.containerObj.getBoundingClientRect();
-            w = bb.width;
-            h = bb.height;
+            if (width === undefined) {
+                // Get size of the board's container div
+                //
+                // offsetWidth/Height ignores CSS transforms,
+                // getBoundingClientRect includes CSS transforms
+                //
+                // bb = this.containerObj.getBoundingClientRect();
+                // w = bb.width;
+                // h = bb.height;
+                w = this.containerObj.offsetWidth;
+                h = this.containerObj.offsetHeight;
+            }
 
-            // Subtract the border size
-            if (window && window.getComputedStyle) {
+            if (width === undefined && window && window.getComputedStyle) {
+                // Subtract the border size
                 css = window.getComputedStyle(this.containerObj, null);
                 width_adjustment = parseFloat(css.getPropertyValue('border-left-width')) + parseFloat(css.getPropertyValue('border-right-width'));
                 if (!isNaN(width_adjustment)) {
@@ -3766,7 +4346,7 @@ JXG.extend(
 
             // If div is invisible - do nothing
             if (w <= 0 || h <= 0 || isNaN(w) || isNaN(h)) {
-                return;
+                return this;
             }
 
             // If bounding box is not yet initialized, do it now.
@@ -3778,15 +4358,15 @@ JXG.extend(
             // the last time. Note that if the div had display:none in the mean time,
             // we did not store this._prevDim.
             if (Type.exists(this._prevDim) && this._prevDim.w === w && this._prevDim.h === h) {
-                return;
+                return this;
             }
-
             // Set the size of the SVG or canvas element
             this.resizeContainer(w, h, true);
             this._prevDim = {
                 w: w,
                 h: h
             };
+            return this;
         },
 
         /**
@@ -3812,12 +4392,15 @@ JXG.extend(
             }
 
             this.resizeObserver = new ResizeObserver(function (entries) {
+                var bb;
                 if (!that._isResizing) {
                     that._isResizing = true;
+                    bb = entries[0].contentRect;
                     window.setTimeout(function () {
                         try {
-                            that.updateContainerDims();
-                        } catch (err) {
+                            that.updateContainerDims(bb.width, bb.height);
+                        } catch (e) {
+                            JXG.debug(e);   // Used to log errors during board.update()
                             that.stopResizeObserver();
                         } finally {
                             that._isResizing = false;
@@ -3931,6 +4514,24 @@ JXG.extend(
             }
         },
 
+        /**
+         * Update the container before and after printing.
+         * @param {Event} [evt]
+         */
+        printListener: function(evt) {
+            this.updateContainerDims();
+        },
+
+        /**
+         * Wrapper for printListener to be used in mediaQuery matches.
+         * @param {MediaQueryList} mql
+         */
+        printListenerMatch: function (mql) {
+            if (mql.matches) {
+                this.printListener();
+            }
+        },
+
         /**********************************************************
          *
          * End of Event Handlers
@@ -4027,7 +4628,7 @@ JXG.extend(
             var x, y, xc, yc,
                 vpinfoboxdigits,
                 distX, distY,
-                vpsi = Type.evaluate(el.visProp.showinfobox);
+                vpsi = el.evalVisProp('showinfobox');
 
             if ((!Type.evaluate(this.attr.showinfobox) && vpsi === 'inherit') || !vpsi) {
                 return this;
@@ -4036,15 +4637,15 @@ JXG.extend(
             if (Type.isPoint(el)) {
                 xc = el.coords.usrCoords[1];
                 yc = el.coords.usrCoords[2];
-                distX = Type.evaluate(this.infobox.visProp.distancex);
-                distY = Type.evaluate(this.infobox.visProp.distancey);
+                distX = this.infobox.evalVisProp('distancex');
+                distY = this.infobox.evalVisProp('distancey');
 
                 this.infobox.setCoords(
                     xc + distX / this.unitX,
                     yc + distY / this.unitY
                 );
 
-                vpinfoboxdigits = Type.evaluate(el.visProp.infoboxdigits);
+                vpinfoboxdigits = el.evalVisProp('infoboxdigits');
                 if (typeof el.infoboxText !== 'string') {
                     if (vpinfoboxdigits === 'auto') {
                         if (this.infobox.useLocale()) {
@@ -4280,15 +4881,14 @@ JXG.extend(
          * @returns {JXG.Board} Reference to this board.
          **/
         updateCoords: function () {
-            var el,
-                ob,
+            var el, ob,
                 len = this.objectsList.length;
 
             for (ob = 0; ob < len; ob++) {
                 el = this.objectsList[ob];
 
                 if (Type.exists(el.coords)) {
-                    if (Type.evaluate(el.visProp.frozen)) {
+                    if (el.evalVisProp('frozen') === true) {
                         if (el.is3D) {
                             el.element2D.coords.screen2usr();
                         } else {
@@ -4299,6 +4899,9 @@ JXG.extend(
                             el.element2D.coords.usr2screen();
                         } else {
                             el.coords.usr2screen();
+                            if (Type.exists(el.actualCoords)) {
+                                el.actualCoords.usr2screen();
+                            }
                         }
                     }
                 }
@@ -4334,10 +4937,10 @@ JXG.extend(
                     this
                 ).usrCoords;
                 if (
-                    ul[1] < this.maxboundingbox[0] ||
-                    ul[2] > this.maxboundingbox[1] ||
-                    lr[1] > this.maxboundingbox[2] ||
-                    lr[2] < this.maxboundingbox[3]
+                    ul[1] < this.maxboundingbox[0] - Mat.eps ||
+                    ul[2] > this.maxboundingbox[1] + Mat.eps ||
+                    lr[1] > this.maxboundingbox[2] + Mat.eps ||
+                    lr[2] < this.maxboundingbox[3] - Mat.eps
                 ) {
                     this.origin.scrCoords[1] = ox;
                     this.origin.scrCoords[2] = oy;
@@ -4518,22 +5121,53 @@ JXG.extend(
          * @returns {JXG.Board} Reference to the board.
          */
         calculateSnapSizes: function () {
-            var p1 = new Coords(Const.COORDS_BY_USER, [0, 0], this),
-                p2 = new Coords(
-                    Const.COORDS_BY_USER,
-                    [this.options.grid.gridX, this.options.grid.gridY],
-                    this
-                ),
-                x = p1.scrCoords[1] - p2.scrCoords[1],
-                y = p1.scrCoords[2] - p2.scrCoords[2];
+            var p1, p2,
+                bbox = this.getBoundingBox(),
+                gridStep = Type.evaluate(this.options.grid.majorStep),
+                gridX = Type.evaluate(this.options.grid.gridX),
+                gridY = Type.evaluate(this.options.grid.gridY),
+                x, y;
 
-            this.options.grid.snapSizeX = this.options.grid.gridX;
+            if (!Type.isArray(gridStep)) {
+                gridStep = [gridStep, gridStep];
+            }
+            if (gridStep.length < 2) {
+                gridStep = [gridStep[0], gridStep[0]];
+            }
+            if (Type.exists(gridX)) {
+                gridStep[0] = gridX;
+            }
+            if (Type.exists(gridY)) {
+                gridStep[1] = gridY;
+            }
+
+            if (gridStep[0] === 'auto') {
+                gridStep[0] = 1;
+            } else {
+                gridStep[0] = Type.parseNumber(gridStep[0], Math.abs(bbox[1] - bbox[3]), 1 / this.unitX);
+            }
+            if (gridStep[1] === 'auto') {
+                gridStep[1] = 1;
+            } else {
+                gridStep[1] = Type.parseNumber(gridStep[1], Math.abs(bbox[0] - bbox[2]), 1 / this.unitY);
+            }
+
+            p1 = new Coords(Const.COORDS_BY_USER, [0, 0], this);
+            p2 = new Coords(
+                Const.COORDS_BY_USER,
+                [gridStep[0], gridStep[1]],
+                this
+            );
+            x = p1.scrCoords[1] - p2.scrCoords[1];
+            y = p1.scrCoords[2] - p2.scrCoords[2];
+
+            this.options.grid.snapSizeX = gridStep[0];
             while (Math.abs(x) > 25) {
                 this.options.grid.snapSizeX *= 2;
                 x /= 2;
             }
 
-            this.options.grid.snapSizeY = this.options.grid.gridY;
+            this.options.grid.snapSizeY = gridStep[1];
             while (Math.abs(y) > 25) {
                 this.options.grid.snapSizeY *= 2;
                 y /= 2;
@@ -4561,17 +5195,18 @@ JXG.extend(
          */
         zoomIn: function (x, y) {
             var bb = this.getBoundingBox(),
-                zX = this.attr.zoom.factorx,
-                zY = this.attr.zoom.factory,
+                zX = Type.evaluate(this.attr.zoom.factorx),
+                zY =  Type.evaluate(this.attr.zoom.factory),
                 dX = (bb[2] - bb[0]) * (1.0 - 1.0 / zX),
                 dY = (bb[1] - bb[3]) * (1.0 - 1.0 / zY),
                 lr = 0.5,
                 tr = 0.5,
-                mi = this.attr.zoom.eps || this.attr.zoom.min || 0.001; // this.attr.zoom.eps is deprecated
+                ma = Type.evaluate(this.attr.zoom.max),
+                mi =  Type.evaluate(this.attr.zoom.eps) || Type.evaluate(this.attr.zoom.min) || 0.001; // this.attr.zoom.eps is deprecated
 
             if (
-                (this.zoomX > this.attr.zoom.max && zX > 1.0) ||
-                (this.zoomY > this.attr.zoom.max && zY > 1.0) ||
+                (this.zoomX > ma && zX > 1.0) ||
+                (this.zoomY > ma && zY > 1.0) ||
                 (this.zoomX < mi && zX < 1.0) || // zoomIn is used for all zooms on touch devices
                 (this.zoomY < mi && zY < 1.0)
             ) {
@@ -4606,13 +5241,13 @@ JXG.extend(
          */
         zoomOut: function (x, y) {
             var bb = this.getBoundingBox(),
-                zX = this.attr.zoom.factorx,
-                zY = this.attr.zoom.factory,
+                zX = Type.evaluate(this.attr.zoom.factorx),
+                zY = Type.evaluate(this.attr.zoom.factory),
                 dX = (bb[2] - bb[0]) * (1.0 - zX),
                 dY = (bb[1] - bb[3]) * (1.0 - zY),
                 lr = 0.5,
                 tr = 0.5,
-                mi = this.attr.zoom.eps || this.attr.zoom.min || 0.001; // this.attr.zoom.eps is deprecated
+                mi = Type.evaluate(this.attr.zoom.eps) || Type.evaluate(this.attr.zoom.min) || 0.001; // this.attr.zoom.eps is deprecated
 
             if (this.zoomX < mi || this.zoomY < mi) {
                 return this;
@@ -4718,14 +5353,11 @@ JXG.extend(
          * @returns {JXG.Board} Reference to the board.
          */
         zoomElements: function (elements) {
-            var i,
-                e,
+            var i, e,
                 box,
                 newBBox = [Infinity, -Infinity, -Infinity, Infinity],
-                cx,
-                cy,
-                dx,
-                dy,
+                cx, cy,
+                dx, dy,
                 d;
 
             if (!Type.isArray(elements) || elements.length === 0) {
@@ -4790,29 +5422,24 @@ JXG.extend(
         },
 
         /**
-         * Removes object from board and renderer.
-         * <p>
-         * <b>Performance hints:</b> It is recommended to use the object's id.
-         * If many elements are removed, it is best to call <tt>board.suspendUpdate()</tt>
-         * before looping through the elements to be removed and call
-         * <tt>board.unsuspendUpdate()</tt> after the loop. Further, it is advisable to loop
-         * in reverse order, i.e. remove the object in reverse order of their creation time.
+         * Inner, recursive method of removeObject.
          *
          * @param {JXG.GeometryElement|Array} object The object to remove or array of objects to be removed.
          * The element(s) is/are given by name, id or a reference.
-         * @param {Boolean} saveMethod If true, the algorithm runs through all elements
-         * and tests if the element to be deleted is a child element. If yes, it will be
-         * removed from the list of child elements. If false (default), the element
+         * @param {Boolean} [saveMethod=false] If saveMethod=true, the algorithm runs through all elements
+         * and tests if the element to be deleted is a child element. If this is the case, it will be
+         * removed from the list of child elements. If saveMethod=false (default), the element
          * is removed from the lists of child elements of all its ancestors.
-         * This should be much faster.
+         * The latter should be much faster.
          * @returns {JXG.Board} Reference to the board
+         * @private
          */
-        removeObject: function (object, saveMethod) {
-            var el, i;
+        _removeObj: function (object, saveMethod) {
+            var el, o, i;
 
             if (Type.isArray(object)) {
                 for (i = 0; i < object.length; i++) {
-                    this.removeObject(object[i]);
+                    this._removeObj(object[i], saveMethod);
                 }
 
                 return this;
@@ -4820,7 +5447,7 @@ JXG.extend(
 
             object = this.select(object);
 
-            // If the object which is about to be removed unknown or a string, do nothing.
+            // If the object which is about to be removed is unknown or a string, do nothing.
             // it is a string if a string was given and could not be resolved to an element.
             if (!Type.exists(object) || Type.isString(object)) {
                 return this;
@@ -4830,14 +5457,14 @@ JXG.extend(
                 // remove all children.
                 for (el in object.childElements) {
                     if (object.childElements.hasOwnProperty(el)) {
-                        object.childElements[el].board.removeObject(object.childElements[el]);
+                        object.childElements[el].board._removeObj(object.childElements[el]);
                     }
                 }
 
                 // Remove all children in elements like turtle
                 for (el in object.objects) {
                     if (object.objects.hasOwnProperty(el)) {
-                        object.objects[el].board.removeObject(object.objects[el]);
+                        object.objects[el].board._removeObj(object.objects[el]);
                     }
                 }
 
@@ -4877,8 +5504,12 @@ JXG.extend(
                 // remove the object itself from our control structures
                 if (object._pos > -1) {
                     this.objectsList.splice(object._pos, 1);
+                    // Quadratic complexity for reindexing the positions:
                     for (i = object._pos; i < this.objectsList.length; i++) {
-                        this.objectsList[i]._pos--;
+                        o = this.objectsList[i];
+                        if (o._pos > -1) {
+                            o._pos--;
+                        }
                     }
                 } else if (object.type !== Const.OBJECT_TYPE_TURTLE) {
                     JXG.debug(
@@ -4889,7 +5520,7 @@ JXG.extend(
                 delete this.objects[object.id];
                 delete this.elementsByName[object.name];
 
-                if (object.visProp && Type.evaluate(object.visProp.trace)) {
+                if (object.visProp && object.evalVisProp('trace')) {
                     object.clearTrace();
                 }
 
@@ -4901,8 +5532,45 @@ JXG.extend(
                 JXG.debug(object.id + ': Could not be removed: ' + e);
             }
 
-            this.update();
+            return this;
+        },
 
+        /**
+         * Removes object from board and from the renderer object.
+         * <p>
+         * <b>Performance hints:</b> It is recommended to use the JSXGraph object's id.
+         * If many elements are removed, it is best to either
+         * <ul>
+         *   <li> remove the whole array if the elements are contained in an array instead
+         *    of looping through the array OR
+         *   <li> call <tt>board.suspendUpdate()</tt>
+         * before looping through the elements to be removed and call
+         * <tt>board.unsuspendUpdate()</tt> after the loop. Further, it is advisable to loop
+         * in reverse order, i.e. remove the object in reverse order of their creation time.
+         * </ul>
+         * @param {JXG.GeometryElement|Array} object The object to remove or array of objects to be removed.
+         * The element(s) is/are given by name, id or a reference.
+         * @param {Boolean} saveMethod If true, the algorithm runs through all elements
+         * and tests if the element to be deleted is a child element. If yes, it will be
+         * removed from the list of child elements. If false (default), the element
+         * is removed from the lists of child elements of all its ancestors.
+         * This should be much faster.
+         * @returns {JXG.Board} Reference to the board
+         */
+        removeObject: function (object, saveMethod) {
+            var i;
+
+            this.renderer.suspendRedraw(this);
+            if (Type.isArray(object)) {
+                for (i = 0; i < object.length; i++) {
+                    this._removeObj(object[i], saveMethod);
+                }
+            } else {
+                this._removeObj(object, saveMethod);
+            }
+            this.renderer.unsuspendRedraw();
+
+            this.update();
             return this;
         },
 
@@ -4998,8 +5666,10 @@ JXG.extend(
                 box = this.getBoundingBox();    // This is the actual bounding box.
             }
 
-            this.canvasWidth = Math.max(parseFloat(canvasWidth), Mat.eps);
-            this.canvasHeight = Math.max(parseFloat(canvasHeight), Mat.eps);
+            // this.canvasWidth = Math.max(parseFloat(canvasWidth), Mat.eps);
+            // this.canvasHeight = Math.max(parseFloat(canvasHeight), Mat.eps);
+            this.canvasWidth = parseFloat(canvasWidth);
+            this.canvasHeight = parseFloat(canvasHeight);
 
             if (!dontset) {
                 this.containerObj.style.width = this.canvasWidth + 'px';
@@ -5010,8 +5680,8 @@ JXG.extend(
             if (!dontSetBoundingBox) {
                 this.setBoundingBox(box, this.keepaspectratio, 'keep');
             } else {
-                oX = (this.canvasWidth - oldWidth) / 2;
-                oY = (this.canvasHeight - oldHeight) / 2;
+                oX = (this.canvasWidth - oldWidth) * 0.5;
+                oY = (this.canvasHeight - oldHeight) * 0.5;
 
                 this.moveOrigin(
                     this.origin.scrCoords[1] + oX,
@@ -5077,10 +5747,11 @@ JXG.extend(
 
         /**
          * Sets for all objects the needsUpdate flag to 'true'.
+         * @param{JXG.GeometryElement} [drag=undefined] Optional element that is dragged.
          * @returns {JXG.Board} Reference to the board
          */
-        prepareUpdate: function () {
-            var el,
+        prepareUpdate: function (drag) {
+            var el, i,
                 pEl,
                 len = this.objectsList.length;
 
@@ -5092,7 +5763,29 @@ JXG.extend(
 
             for (el = 0; el < len; el++) {
                 pEl = this.objectsList[el];
-                pEl.needsUpdate = pEl.needsRegularUpdate || this.needsFullUpdate;
+                if (this._change3DView ||
+                    (Type.exists(drag) && drag.elType === 'view3d_slider')
+                ) {
+                    // The 3D view has changed. No elements are recomputed,
+                    // only 3D elements are projected to the new view.
+                    pEl.needsUpdate =
+                        pEl.visProp.element3d ||
+                        pEl.elType === 'view3d' ||
+                        pEl.elType === 'view3d_slider' ||
+                        this.needsFullUpdate;
+
+                    // Special case sphere3d in central projection:
+                    // We have to update the defining points of the ellipse
+                    if (pEl.visProp.element3d &&
+                        pEl.visProp.element3d.type === Const.OBJECT_TYPE_SPHERE3D
+                        ) {
+                        for (i = 0; i < pEl.parents.length; i++) {
+                            this.objects[pEl.parents[i]].needsUpdate = true;
+                        }
+                    }
+                } else {
+                    pEl.needsUpdate = pEl.needsRegularUpdate || this.needsFullUpdate;
+                }
             }
 
             for (el in this.groups) {
@@ -5127,7 +5820,6 @@ JXG.extend(
                 }
             }
             */
-
             for (el = 0; el < this.objectsList.length; el++) {
                 pEl = this.objectsList[el];
                 if (this.needsFullUpdate && pEl.elementClass === Const.OBJECT_CLASS_TEXT) {
@@ -5156,7 +5848,9 @@ JXG.extend(
          */
         updateRenderer: function () {
             var el,
-                len = this.objectsList.length;
+                len = this.objectsList.length,
+                autoPositionLabelList = [],
+                currentIndex, randomIndex;
 
             if (!this.renderer) {
                 return;
@@ -5179,8 +5873,30 @@ JXG.extend(
                 this.updateRendererCanvas();
             } else {
                 for (el = 0; el < len; el++) {
-                    this.objectsList[el].updateRenderer();
+                    if (this.objectsList[el].visProp.islabel && this.objectsList[el].visProp.autoposition) {
+                        autoPositionLabelList.push(el);
+                    } else {
+                        this.objectsList[el].updateRenderer();
+                    }
                 }
+
+                currentIndex = autoPositionLabelList.length;
+
+                // Randomize the order of the labels
+                while (currentIndex !== 0) {
+                    randomIndex = Math.floor(Math.random() * currentIndex);
+                    currentIndex--;
+                    [autoPositionLabelList[currentIndex], autoPositionLabelList[randomIndex]] = [autoPositionLabelList[randomIndex], autoPositionLabelList[currentIndex]];
+                }
+
+                for (el = 0; el < autoPositionLabelList.length; el++) {
+                    this.objectsList[autoPositionLabelList[el]].updateRenderer();
+                }
+                /*
+                for (el = autoPositionLabelList.length - 1; el >= 0; el--) {
+                    this.objectsList[autoPositionLabelList[el]].updateRenderer();
+                }
+                */
             }
             return this;
         },
@@ -5192,37 +5908,87 @@ JXG.extend(
          * @returns {JXG.Board} Reference to the board
          */
         updateRendererCanvas: function () {
-            var el,
-                pEl,
-                i,
-                mini,
-                la,
+            var el, pEl,
                 olen = this.objectsList.length,
-                layers = this.options.layer,
-                len = this.options.layer.numlayers,
-                last = Number.NEGATIVE_INFINITY;
+                // i, minim, lay,
+                // layers = this.options.layer,
+                // len = this.options.layer.numlayers,
+                // last = Number.NEGATIVE_INFINITY.toExponential,
+                depth_order_layers = [],
+                objects_sorted,
 
-            for (i = 0; i < len; i++) {
-                mini = Number.POSITIVE_INFINITY;
-
-                for (la in layers) {
-                    if (layers.hasOwnProperty(la)) {
-                        if (layers[la] > last && layers[la] < mini) {
-                            mini = layers[la];
-                        }
+                /**
+                 * Function to sort elements for depth ordering in canvas renderer.
+                 * Only relevant for elements having a zIndex.
+                 * Sort the elements for the canvas rendering according to
+                 * their layer, _pos, depthOrder (with this priority).
+                 * @param {JXG.GeometryObject} a
+                 * @param {JXG.GeometryObject} b
+                 * @returns Number
+                 * @private
+                 */
+                _compareDepth = function(a, b) {
+                    if (a.visProp.layer !== b.visProp.layer) {
+                        // For elements in different layers, the element in the
+                        // higher layer is in front.
+                        return a.visProp.layer - b.visProp.layer;
                     }
-                }
 
-                last = mini;
+                    // From here on, both objects are in the same layer.
 
-                for (el = 0; el < olen; el++) {
-                    pEl = this.objectsList[el];
-
-                    if (pEl.visProp.layer === mini) {
-                        pEl.prepareUpdate().updateRenderer();
+                    if (depth_order_layers.indexOf(a.visProp.layer) === -1) {
+                        // The layer is not depth ordered.
+                        return a._pos - b._pos;
                     }
+
+                    // From here on, both objects are in the same layer
+                    // and the layer is depth ordered.
+
+                    // The objects are in the same layer and the layer is depth ordered
+                    // But neither element is the 2D element of a 3D element.
+                    if (!a.visProp.element3d && !b.visProp.element3d) {
+                        return a._pos - b._pos;
+                    }
+
+                    if (a.visProp.element3d && !b.visProp.element3d) {
+                        return -1;
+                    }
+
+                    if (!a.visProp.element3d && b.visProp.element3d) {
+                        return 1;
+                    }
+
+                    // Finqally, both elements are 2D elements of a 3D element.
+                    return a.visProp.element3d.zIndex - b.visProp.element3d.zIndex;
+                };
+
+            // Only one view3d element is supported. Get the depth order layers and
+            // update the zIndices of the 3D elements.
+            for (el = 0; el < olen; el++) {
+                pEl = this.objectsList[el];
+                if (pEl.elType === 'view3d' &&
+                    pEl.evalVisProp('depthorder.enabled')
+                ) {
+                    depth_order_layers = pEl.evalVisProp('depthorder.layers');
+                    pEl.updateRenderer();
+                    break;
                 }
             }
+
+            // objects_sorted = this.objectsList.toSorted(_compareDepth);
+
+            // 3D elements are not rendered, but their subelements element2D
+            objects_sorted = this.objectsList.filter(function(e) { return !e.is3D; }).toSorted(_compareDepth);
+            olen = objects_sorted.length;
+            for (el = 0; el < olen; el++) {
+                if (
+                    objects_sorted[el].visPropCalc.visible &&
+                    objects_sorted[el].type !== Const.OBJECT_TYPE_FACE3D // For these, updateRenderer is triggered in polyhedron3d.updateRenderer
+                ) {
+                    objects_sorted[el].prepareUpdate().updateRenderer();
+                }
+            }
+
             return this;
         },
 
@@ -5345,7 +6111,7 @@ JXG.extend(
                 insert = this.renderer.removeToInsertLater(this.renderer.svgRoot);
             }
 
-            this.prepareUpdate().updateElements(drag).updateConditions();
+            this.prepareUpdate(drag).updateElements(drag).updateConditions();
 
             this.renderer.suspendRedraw(this);
             this.updateRenderer();
@@ -5365,7 +6131,7 @@ JXG.extend(
                 if (Type.exists(b) && b !== this) {
                     b.updateQuality = this.updateQuality;
                     b.prepareUpdate().updateElements().updateConditions();
-                    b.renderer.suspendRedraw();
+                    b.renderer.suspendRedraw(this);
                     b.updateRenderer();
                     b.renderer.unsuspendRedraw();
                     b.triggerEventHandlers(['update'], []);
@@ -5445,6 +6211,7 @@ JXG.extend(
                     Type.isString(parents[i]) &&
                     !(elementType === 'text' && i === 2) &&
                     !(elementType === 'solidofrevolution3d' && i === 2) &&
+                    !(elementType === 'text3d' && (i === 2 || i === 4)) &&
                     !(
                         (elementType === 'input' ||
                             elementType === 'checkbox' ||
@@ -5452,10 +6219,16 @@ JXG.extend(
                         (i === 2 || i === 3)
                     ) &&
                     !(elementType === 'curve' /*&& i > 0*/) && // Allow curve plots with jessiecode, parents[0] is the
-                    // variable name
-                    !(elementType === 'functiongraph') // Prevent problems with function terms like 'x'
+                                                               // variable name
+                    !(elementType === 'functiongraph') && // Prevent problems with function terms like 'x', 'y'
+                    !(elementType === 'implicitcurve')
                 ) {
-                    parents[i] = this.select(parents[i]);
+                    if (i > 0 && parents[0].elType === 'view3d') {
+                        // 3D elements are based on 3D elements, only
+                        parents[i] = parents[0].select(parents[i]);
+                    } else {
+                        parents[i] = this.select(parents[i]);
+                    }
                 }
             }
 
@@ -5539,17 +6312,17 @@ JXG.extend(
                 offY = 0,
                 zoom_ratio = 1,
                 ratio, dx, dy, prev_w, prev_h,
-                dim = Env.getDimensions(this.container, this.document);
+                dim = Env.getDimensions(this.containerObj, this.document);
 
             if (!Type.isArray(bbox)) {
                 return this;
             }
 
             if (
-                bbox[0] < this.maxboundingbox[0] ||
-                bbox[1] > this.maxboundingbox[1] ||
-                bbox[2] > this.maxboundingbox[2] ||
-                bbox[3] < this.maxboundingbox[3]
+                bbox[0] < this.maxboundingbox[0] - Mat.eps ||
+                bbox[1] > this.maxboundingbox[1] + Mat.eps ||
+                bbox[2] > this.maxboundingbox[2] + Mat.eps ||
+                bbox[3] < this.maxboundingbox[3] - Mat.eps
             ) {
                 return this;
             }
@@ -5565,7 +6338,14 @@ JXG.extend(
             w = this.canvasWidth;
             h = this.canvasHeight;
             if (keepaspectratio) {
-                ratio = ux / uy;            // Keep this ratio if aspectratio==true
+                if (this.keepaspectratio) {
+                    ratio = ux / uy;        // Keep this ratio if keepaspectratio was true
+                    if (isNaN(ratio)) {
+                        ratio = 1.0;
+                    }
+                } else {
+                    ratio = 1.0;
+                }
                 if (setZoom === 'keep') {
                     zoom_ratio = this.zoomX / this.zoomY;
                 }
@@ -5627,7 +6407,6 @@ JXG.extend(
                     [this.canvasWidth, this.canvasHeight],
                     this
                 ).usrCoords;
-
             return [ul[1], ul[2], lr[1], lr[2]];
         },
 
@@ -5670,7 +6449,8 @@ JXG.extend(
          * </ul>
          * Some board attributes are immutable, like e.g. the renderer type.
          *
-         * @param {Object} attributes An object with attributes.
+         * @param {Object} attributes An object with attributes
+         * @param {Boolean} [force=false] if true the attributes are set regardless of the previous setting was identical.
          * @returns {JXG.Board} Reference to the board
          *
          * @example
@@ -5788,10 +6568,10 @@ JXG.extend(
          *
          *
          */
-        setAttribute: function (attr) {
+        setAttribute: function (attr, force) {
             var i, arg, pair,
-                key, value, oldvalue, // j, le,
-                node,
+                key, value, oldvalue,// j, le,
+                node, lst, e,
                 attributes = {};
 
             // Normalize the user input
@@ -5818,8 +6598,10 @@ JXG.extend(
                 value = (value.toLowerCase && value.toLowerCase() === 'false')
                     ? false
                     : value;
-
                 oldvalue = this.attr[key];
+                if (!force && oldvalue === value) {
+                    continue;
+                }
                 switch (key) {
                     case 'axis':
                         if (value === false) {
@@ -5830,6 +6612,17 @@ JXG.extend(
                         } else {
                             // TODO
                         }
+                        break;
+                    case 'cssstyle':
+                        lst = Type.css2js(value);
+                        node = this.containerObj;
+                        // node = this.renderer.svgRoot;
+                        for (e in lst) if (lst.hasOwnProperty(e)) {
+                            pair = lst[e];
+                            node.style[pair.key] = pair.val;
+                        }
+
+                        this._set(key, value);
                         break;
                     case 'boundingbox':
                         this.setBoundingBox(value, this.keepaspectratio);
@@ -5843,25 +6636,17 @@ JXG.extend(
                             this.defaultAxes.y.setAttribute(value.y);
                         }
                         break;
-                    case 'description':
-                        this.document.getElementById(this.container + '_ARIAdescription')
-                            .innerHTML = value;
-                        this._set(key, value);
-                        break;
                     case 'title':
                         this.document.getElementById(this.container + '_ARIAlabel')
-                            .innerHTML = value;
+                            .innerText = value;
                         this._set(key, value);
                         break;
                     case 'keepaspectratio':
-                        // Does not work, yet.
                         this._set(key, value);
-                        oldvalue = this.getBoundingBox();
-                        this.setBoundingBox([0, this.canvasHeight, this.canvasWidth, 0], false, 'keep');
-                        this.setBoundingBox(oldvalue, value, 'keep');
+                        this.setBoundingBox(this.getBoundingBox(), value, 'keep');
                         break;
 
-                    /* eslint-disable no-fallthrough */
+                    // /* eslint-disable no-fallthrough */
                     case 'document':
                     case 'maxboundingbox':
                         this[key] = value;
@@ -5876,8 +6661,6 @@ JXG.extend(
                         break;
 
                     case 'registerevents':
-                    case 'registerfullscreenevent':
-                    case 'registerresizeevent':
                     case 'renderer':
                         // immutable, i.e. ignored
                         break;
@@ -5887,7 +6670,7 @@ JXG.extend(
                         node = this.containerObj.ownerDocument.getElementById(
                             this.container + '_navigation_' + key);
                         if (node && Type.exists(value.symbol)) {
-                            node.innerHTML = Type.evaluate(value.symbol);
+                            node.innerText = Type.evaluate(value.symbol);
                         }
                         this._set(key, value);
                         break;
@@ -5910,21 +6693,38 @@ JXG.extend(
                                 this.renderer.displayCopyright(Const.licenseText, parseInt(this.options.text.fontSize, 10));
                             }
                         }
+                        this._set(key, value);
+                        break;
+
+                    case 'showlogo':
+                        if (this.renderer.type === 'svg') {
+                            node = this.containerObj.ownerDocument.getElementById(
+                                this.renderer.uniqName('licenseLogo')
+                            );
+                            if (node) {
+                                node.style.display = ((Type.evaluate(value)) ? 'inline' : 'none');
+                            } else if (Type.evaluate(value)) {
+                                this.renderer.displayLogo(Const.licenseLogo, parseInt(this.options.text.fontSize, 10));
+                            }
+                        }
+                        this._set(key, value);
+                        break;
 
                     default:
                         if (Type.exists(this.attr[key])) {
                             this._set(key, value);
                         }
                         break;
-                    /* eslint-enable no-fallthrough */
+                    // /* eslint-enable no-fallthrough */
                 }
             }
 
             // Redraw navbar to handle the remaining show* attributes
-            this.containerObj.ownerDocument.getElementById(
-                this.container + "_navigationbar"
-            ).remove();
-            this.renderer.drawNavigationBar(this, this.attr.navbar);
+            node = this.containerObj.ownerDocument.getElementById(this.container + "_navigationbar");
+            if (Type.exists(node)) {
+                node.remove();
+                this.renderer.drawNavigationBar(this, this.attr.navbar);
+            }
 
             this.triggerEventHandlers(["attribute"], [attributes, this]);
             this.fullUpdate();
@@ -6068,7 +6868,7 @@ JXG.extend(
 
         /**
          * Migrate the dependency properties of the point src
-         * to the point dest and  delete the point src.
+         * to the point dest and delete the point src.
          * For example, a circle around the point src
          * receives the new center dest. The old center src
          * will be deleted.
@@ -6189,19 +6989,19 @@ JXG.extend(
                         }
                         o.setAttribute({
                             strokecolor: Color.rgb2cb(
-                                Type.evaluate(o.visPropOriginal.strokecolor),
+                                o.eval(o.visPropOriginal.strokecolor),
                                 deficiency
                             ),
                             fillcolor: Color.rgb2cb(
-                                Type.evaluate(o.visPropOriginal.fillcolor),
+                                o.eval(o.visPropOriginal.fillcolor),
                                 deficiency
                             ),
                             highlightstrokecolor: Color.rgb2cb(
-                                Type.evaluate(o.visPropOriginal.highlightstrokecolor),
+                                o.eval(o.visPropOriginal.highlightstrokecolor),
                                 deficiency
                             ),
                             highlightfillcolor: Color.rgb2cb(
-                                Type.evaluate(o.visPropOriginal.highlightfillcolor),
+                                o.eval(o.visPropOriginal.highlightfillcolor),
                                 deficiency
                             )
                         });
@@ -6679,6 +7479,63 @@ JXG.extend(
 
         /**
          * @event
+         * @description Whenever the user clicks on the board.
+         * @name JXG.Board#click
+         * @see JXG.Board#clickDelay
+         * @param {Event} e The browser's event object.
+         */
+        __evt__click: function (e) { },
+
+        /**
+         * @event
+         * @description Whenever the user double clicks on the board.
+         * This event works on desktop browser, but is undefined
+         * on mobile browsers.
+         * @name JXG.Board#dblclick
+         * @see JXG.Board#clickDelay
+         * @see JXG.Board#dblClickSuppressClick
+         * @param {Event} e The browser's event object.
+         */
+        __evt__dblclick: function (e) { },
+
+        /**
+         * @event
+         * @description Whenever the user clicks on the board with a mouse device.
+         * @name JXG.Board#mouseclick
+         * @param {Event} e The browser's event object.
+         */
+        __evt__mouseclick: function (e) { },
+
+        /**
+         * @event
+         * @description Whenever the user double clicks on the board with a mouse device.
+         * @name JXG.Board#mousedblclick
+         * @see JXG.Board#clickDelay
+         * @param {Event} e The browser's event object.
+         */
+        __evt__mousedblclick: function (e) { },
+
+        /**
+         * @event
+         * @description Whenever the user clicks on the board with a pointer device.
+         * @name JXG.Board#pointerclick
+         * @param {Event} e The browser's event object.
+         */
+        __evt__pointerclick: function (e) { },
+
+        /**
+         * @event
+         * @description Whenever the user double clicks on the board with a pointer device.
+         * This event works on desktop browser, but is undefined
+         * on mobile browsers.
+         * @name JXG.Board#pointerdblclick
+         * @see JXG.Board#clickDelay
+         * @param {Event} e The browser's event object.
+         */
+        __evt__pointerdblclick: function (e) { },
+
+        /**
+         * @event
          * @description This event is fired whenever the user is moving the finger or mouse pointer over the board.
          * @name JXG.Board#move
          * @param {Event} e The browser's event object.
@@ -6992,7 +7849,7 @@ JXG.extend(
                 inner_node._cssFullscreenStore = {
                     w: dim.width,
                     h: dim.height
-                }
+                };
             }
 
             // Wrap a div around the JSXGraph div.

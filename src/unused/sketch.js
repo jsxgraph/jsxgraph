@@ -1,5 +1,5 @@
 /*
- Copyright 2008-2023
+ Copyright 2008-2026
  Matthias Ehmann,
  Michael Gerhaeuser,
  Carsten Miller,
@@ -35,6 +35,112 @@
 
 (function () {
     "use strict";
+
+    JXG.extendConstants(JXG, {
+        GENTYPE_ABC: 1, // unused
+        GENTYPE_AXIS: 2,
+        GENTYPE_MID: 3,
+
+        GENTYPE_REFLECTION: 4,
+        GENTYPE_MIRRORELEMENT: 5,
+
+        GENTYPE_REFLECTION_ON_LINE: 4,
+        GENTYPE_REFLECTION_ON_POINT: 5,
+        GENTYPE_TANGENT: 6,
+        GENTYPE_PARALLEL: 7,
+        GENTYPE_BISECTORLINES: 8,
+        GENTYPE_BOARDIMG: 9,
+        GENTYPE_BISECTOR: 10,
+        GENTYPE_NORMAL: 11,
+        GENTYPE_POINT: 12,
+        GENTYPE_GLIDER: 13,
+        GENTYPE_INTERSECTION: 14,
+        GENTYPE_CIRCLE: 15,
+        /**
+         * @ignore @deprecated NOT USED ANY MORE SINCE SKETCHOMETRY 2.0 (only for old constructions needed)
+         */
+        GENTYPE_CIRCLE2POINTS: 16,
+
+        GENTYPE_LINE: 17,
+        GENTYPE_TRIANGLE: 18,
+        GENTYPE_QUADRILATERAL: 19,
+        GENTYPE_TEXT: 20,
+        GENTYPE_POLYGON: 21,
+        GENTYPE_REGULARPOLYGON: 22,
+        GENTYPE_SECTOR: 23,
+        GENTYPE_ANGLE: 24,
+        GENTYPE_PLOT: 25,
+        GENTYPE_SLIDER: 26,
+        GENTYPE_TRUNCATE: 27,
+        GENTYPE_JCODE: 28,
+        GENTYPE_MOVEMENT: 29,
+        GENTYPE_COMBINED: 30,
+        GENTYPE_RULER: 31,
+        GENTYPE_SLOPETRIANGLE: 32,
+        GENTYPE_PERPSEGMENT: 33,
+        GENTYPE_LABELMOVEMENT: 34,
+        GENTYPE_VECTOR: 35,
+        GENTYPE_NONREFLEXANGLE: 36,
+        GENTYPE_REFLEXANGLE: 37,
+        GENTYPE_PATH: 38,
+        GENTYPE_DERIVATIVE: 39,
+        // 40 // unused ...
+        GENTYPE_DELETE: 41,
+        GENTYPE_COPY: 42,
+        GENTYPE_MIRROR: 43,
+        GENTYPE_ROTATE: 44,
+        GENTYPE_ABLATION: 45,
+        GENTYPE_MIGRATE: 46,
+        GENTYPE_VECTORCOPY: 47,
+        GENTYPE_POLYGONCOPY: 48,
+        //        GENTYPE_TRANSFORM: 48, // unused
+        // 49 ... 50 // unused ...
+
+        // IMPORTANT:
+        // ----------
+        // For being able to differentiate between the (GUI-specific) CTX and
+        // (CORE-specific) non-CTX steps, the non-CTX steps MUST NOT be changed
+        // to values > 50.
+
+        GENTYPE_CTX_TYPE_G: 51,
+        GENTYPE_CTX_TYPE_P: 52,
+        GENTYPE_CTX_TRACE: 53,
+        GENTYPE_CTX_VISIBILITY: 54,
+        GENTYPE_CTX_CCVISIBILITY: 55, // unused
+        GENTYPE_CTX_MPVISIBILITY: 56,
+        GENTYPE_CTX_WITHLABEL: 57,
+        GENTYPE_CTX_LABEL: 58,
+        GENTYPE_CTX_FIXED: 59,
+        GENTYPE_CTX_STROKEWIDTH: 60,
+        GENTYPE_CTX_LABELSIZE: 61,
+        GENTYPE_CTX_SIZE: 62,
+        GENTYPE_CTX_FACE: 63,
+        GENTYPE_CTX_STRAIGHT: 64,
+        GENTYPE_CTX_ARROW: 65,
+        GENTYPE_CTX_COLOR: 66,
+        GENTYPE_CTX_RADIUS: 67,
+        GENTYPE_CTX_COORDS: 68,
+        GENTYPE_CTX_TEXT: 69,
+        GENTYPE_CTX_ANGLERADIUS: 70,
+        GENTYPE_CTX_DOTVISIBILITY: 71,
+        GENTYPE_CTX_FILLOPACITY: 72,
+        GENTYPE_CTX_PLOT: 73,
+        GENTYPE_CTX_SCALE: 74,
+        GENTYPE_CTX_SLIDER_BOUND: 75,
+        GENTYPE_CTX_POINT1: 76,
+        GENTYPE_CTX_POINT2: 77,
+        GENTYPE_CTX_LABELSTICKY: 78,
+        GENTYPE_CTX_TYPE_I: 79,
+        GENTYPE_CTX_HASINNERPOINTS: 80,
+        GENTYPE_CTX_SLIDER_STEP: 81,
+        GENTYPE_CTX_SNAPTOGRID: 82,
+        GENTYPE_CTX_SNAPTOPOINTS: 83,
+        GENTYPE_CTX_STROKEDASH: 84,
+        GENTYPE_CTX_SLIDER_VALUE: 85,
+        GENTYPE_CTX_SECTORBORDERS: 86,
+        GENTYPE_CTX_CURVETAU: 87,
+        GENTYPE_CTX_SLIDER_POS: 88
+    });
 
     // this is a small workaround to adapt the SketchReader to our new file API
     // we don't have to change anything in sketchometry.
@@ -331,7 +437,7 @@
                     case JXG.GENTYPE_REFLECTION:
                     case JXG.GENTYPE_REFLECTION_ON_LINE:
                         // Polygon:
-                        if (step.args.type === "polygon") {
+                        if (step.args.type === 'polygon') {
                             set_str = "";
                             el = step.src_ids[step.src_ids.length - 1];
                             for (i = 1; i < step.src_ids.length - 1; i++) {
@@ -387,7 +493,7 @@
                             set_str += step.dest_id + ".hasInnerPoints = function() { " +
                                 "return !(" + step.dest_id + ".fillColor == 'transparent' || " + step.dest_id + ".fillColor == 'none' || " + step.dest_id + ".fillOpacity == 0); " +
                                 "}; "
-                        } else if (step.args.type === "line" || step.args.type === "vector") {
+                        } else if (step.args.type === "line" || step.args.type === 'vector') {
                             set_str = "";
                             el = step.src_ids[step.src_ids.length - 1];
                             // Create two end points.
@@ -414,7 +520,7 @@
                                     ">>;\n";
                             }
 
-                            if (step.args.type === "vector") {
+                            if (step.args.type === 'vector') {
                                 set_str +=
                                     assign +
                                     "arrow(" +
@@ -448,7 +554,7 @@
                                 set_str += ", withLabel: true";
                             }
                             set_str += ">>; ";
-                        } else if (step.args.type === "circle") {
+                        } else if (step.args.type === 'circle') {
                             set_str +=
                                 assign +
                                 "reflection(" +
@@ -527,7 +633,7 @@
 
                     case JXG.GENTYPE_MIRRORELEMENT:
                     case JXG.GENTYPE_REFLECTION_ON_POINT:
-                        if (step.args.type === "polygon") {
+                        if (step.args.type === 'polygon') {
                             set_str = "";
                             el = step.src_ids[step.src_ids.length - 1];
                             for (i = 1; i < step.src_ids.length - 1; i++) {
@@ -582,7 +688,7 @@
                             set_str += step.dest_id + ".hasInnerPoints = function() { " +
                                 "return !(" + step.dest_id + ".fillColor == 'transparent' || " + step.dest_id + ".fillColor == 'none' || " + step.dest_id + ".fillOpacity == 0); " +
                                 "}; "
-                        } else if (step.args.type === "line" || step.args.type === "vector") {
+                        } else if (step.args.type === "line" || step.args.type === 'vector') {
                             set_str = "";
                             el = step.src_ids[step.src_ids.length - 1];
                             // Create two end points.
@@ -609,7 +715,7 @@
                                     ">>;\n";
                             }
 
-                            if (step.args.type === "vector") {
+                            if (step.args.type === 'vector') {
                                 set_str +=
                                     assign +
                                     "arrow(" +
@@ -643,7 +749,7 @@
                                 set_str += ", withLabel: true";
                             }
                             set_str += ">>; ";
-                        } else if (step.args.type === "circle") {
+                        } else if (step.args.type === 'circle') {
                             set_str +=
                                 assign +
                                 "mirrorelement(" +
@@ -1544,7 +1650,7 @@
                             j += 1;
                         }
 
-                        str = "line";
+                        str = 'line'
                         str1 = "";
 
                         // the line's parents
@@ -1578,7 +1684,7 @@
                         }
 
                         if (!step.args.first && !step.args.last) {
-                            str = "segment";
+                            str = 'segment'
                         } else {
                             if (!step.args.first) {
                                 str1 = "straightFirst: " + step.args.first;
@@ -1679,7 +1785,7 @@
                         str1 = "";
                         // the line's parents
                         str2 = pid1 + ", " + pid2;
-                        str = "arrow";
+                        str = 'arrow'
 
                         // this is a corner case, we have to get rid of the ',' at the end
                         // simple solution: rebuild attrid
@@ -1839,9 +1945,9 @@
 
                     case JXG.GENTYPE_TEXT:
                         if (
-                            step.args.str.substr(0, 1) !== "'" &&
-                            step.args.str.substr(0, 1) !== '"' &&
-                            step.args.str.substr(0, 8) !== "function"
+                            step.args.str.slice(0, 1) !== "'" &&
+                            step.args.str.slice(0, 1) !== '"' &&
+                            step.args.str.slice(0, 8) !== "function"
                         ) {
                             step.args.str = "'" + step.args.str + "'";
                         }
@@ -1856,7 +1962,7 @@
                             step.args.str +
                             ") <<";
                         set_str += attrid + "name: ''";
-                        if (typeof step.args.anchor != "undefined") {
+                        if (typeof step.args.anchor != 'undefined') {
                             set_str += ", anchor: " + step.args.anchor;
                         }
                         set_str += ">>; ";
@@ -2310,7 +2416,7 @@
                             "[" + pn(step.args.x2) + ", " + pn(step.args.y2) + "], " +
                             "[" + pn(step.args.min ?? step.args.start) + ", " + pn(step.args.start ?? step.args.ini) + ", " + pn(step.args.max ?? step.args.end) + "]) ";
                         set_str += "<<" + attrid;
-                        set_str += " snapWidth: " + pn(step.args.step ?? "0.1") + ", ";
+                        set_str += " snapWidth: " + pn(step.args.step ?? '0.1') + ", ";
                         set_str += "baseline: <<id: '" + step.dest_sub_ids[0] + "', name: ''>>, ";
                         set_str += "highline: <<id: '" + step.dest_sub_ids[1] + "', name: ''>>, ";
                         set_str += "point1: <<id: '" + step.dest_sub_ids[2] + "', name: ''>>, ";

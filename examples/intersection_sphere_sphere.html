@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Sphere–sphere intersection</title>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
+    <script type="text/javascript" src="../distrib/jsxgraphcore.js"></script>
+</head>
+<body>
+
+<div>
+    <label for="proj">Projection:</label>
+    <select id="proj" oninput="inputProjectionType();">
+        <option value="parallel">Parallel</option>
+        <option value="central">Central</option>
+    </select>
+</div>
+<div id="jxgbox" class="jxgbox" style="width:800px; height:800px; float:left"></div>
+
+<script type="text/javascript">
+    let board = JXG.JSXGraph.initBoard(
+        'jxgbox',
+        {
+            boundingbox: [-8, 8, 8,-8],
+            axis: false,
+            showcopyright: false,
+            shownavigation: false
+        }
+    );
+    let view = board.create(
+        'view3d',
+        [[-6, -4], [8, 8],
+        [[0, 5], [0, 5], [0, 5]]],
+        {
+            xPlaneRear: {fillOpacity: 0.2, gradient: null},
+            yPlaneRear: {fillOpacity: 0.2, gradient: null},
+            zPlaneRear: {fillOpacity: 0.2, gradient: null},
+            bank: {slider: {visible: true}},
+            depthOrderPoints: true
+        }
+    );
+
+    // Radius balance slider
+    let balance = board.create(
+        'slider',
+        [
+            [-6, 7], [2, 7],
+            [-1, 0, 1]
+        ], {
+            name: 'radius balance'
+        }
+    );
+
+    // Two centers
+    let center1 = view.create(
+        'point3d',
+        [2, 2.5, 2.5],
+        {
+            withLabel: false,
+            size: 5,
+            strokeWidth: 1,
+            strokeColor: '#600030',
+            fillColor: 'white',
+            gradient: 'radial',
+            gradientSecondColor: '#a00050',
+            gradientFX: 0.7,
+            gradientFY: 0.3,
+            highlightStrokeColor: '#600030'
+       }
+    );
+    let center2 = view.create(
+        'point3d',
+        [3, 2.5, 2.5],
+        {
+            withLabel: false,
+            size: 5,
+            strokeWidth: 1,
+            strokeColor: '#600030',
+            fillColor: 'white',
+            gradient: 'radial',
+            gradientSecondColor: '#a00050',
+            gradientFX: 0.7,
+            gradientFY: 0.3,
+            highlightStrokeColor: '#600030'
+       }
+    );
+    
+    // Two spheres
+    let sphere1 = view.create(
+        'sphere3d',
+        [center1, () => Math.pow(2, 0.5*balance.Value())],
+        {
+            strokeColor: '#0000ff',
+            strokeOpacity: 0.5,
+            fillColor: 'white',
+            gradient: 'radial',
+            gradientSecondColor: '#0000ff',
+            gradientFX: 0.7,
+            gradientFY: 0.3,
+            fillOpacity: 0.2
+        }
+    );
+    let sphere2 = view.create(
+        'sphere3d',
+        [center2, () => Math.pow(2, -0.5*balance.Value())],
+        {
+            strokeColor: '#00ff80',
+            strokeOpacity: 0.5,
+            fillColor: 'white',
+            gradient: 'radial',
+            gradientSecondColor: '#00ff80',
+            gradientFX: 0.7,
+            gradientFY: 0.3,
+            fillOpacity: 0.2
+        }
+    );
+
+    // Intersection circle
+    let ixnCircle = view.create(
+        'intersectioncircle3d',
+        [sphere1, sphere2],
+        {
+            strokeColor: 'black',
+            strokeOpacity: 0.5
+        }
+    );
+
+    proj = document.querySelector('#proj');
+    function inputProjectionType() {
+        view.setAttribute({'projection': proj.value});
+    }
+    inputProjectionType();
+</script>
+</body>
+</html>

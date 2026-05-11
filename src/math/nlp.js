@@ -1,5 +1,5 @@
 /*
- Copyright 2008-2023
+ Copyright 2008-2026
  Matthias Ehmann,
  Carsten Miller,
  Reinhard Oldenburg,
@@ -41,7 +41,7 @@
  * Copyright (c) 2012 Anders Gustafsson, Cureos AB.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files
- * (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge,
+ * (the 'Software'), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge,
  * publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so,
  * subject to the following conditions:
  *
@@ -78,9 +78,9 @@
 /*global JXG: true, define: true*/
 /*jslint nomen: true, plusplus: true, continue: true*/
 
-import JXG from "../jxg";
-import Mat from "./math";
-// import Type from "../utils/type";
+import JXG from "../jxg.js";
+import Mat from "./math.js";
+// import Type from "../utils/type.js";
 
 /**
  * The JXG.Math.Nlp namespace holds numerical algorithms for non-linear optimization.

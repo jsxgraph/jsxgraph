@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2023
+    Copyright 2008-2026
         Matthias Ehmann,
         Carsten Miller,
         Andreas Walter,
@@ -28,22 +28,20 @@
  */
 /*global JXG:true, define: true*/
 
-import JXG from "../jxg";
-import Type from "../utils/type";
+import JXG from "../jxg.js";
+import Type from "../utils/type.js";
+import Geometry from '../math/geometry.js';
 
 /**
  * Constructs a new GeometryElement3D object.
  * @class This is the basic class for 3D geometry elements like Point3D and Line3D.
  * @constructor
+ * @augments JXG.GeometryElement
+ *
  * @param {string} elType
- * @borrows JXG.EventEmitter#on as this.on
- * @borrows JXG.EventEmitter#off as this.off
- * @borrows JXG.EventEmitter#triggerEventHandlers as this.triggerEventHandlers
- * @borrows JXG.EventEmitter#eventHandlers as this.eventHandlers
  */
 JXG.GeometryElement3D = function (view, elType) {
     this.elType = elType;
-    this.id = this.board.setId(this, elType);
 
     /**
      * Pointer to the view3D in which the element is constructed
@@ -52,11 +50,14 @@ JXG.GeometryElement3D = function (view, elType) {
      */
     this.view = view;
 
+    this.id = this.view.board.setId(this, elType);
+
     /**
      * Link to the 2D element(s) used to visualize the 3D element
      * in a view. In case, there are several 2D elements, it is an array.
      *
-     * @type JXG.GeometryElement,Array
+     * @type Array
+     * @description JXG.GeometryElement,Array
      * @private
      *
      * @example
@@ -72,6 +73,8 @@ JXG.GeometryElement3D = function (view, elType) {
      */
     this.is3D = true;
 
+    this.zIndex = 0.0;
+
     this.view.objects[this.id] = this;
 
     if (this.name !== "") {
@@ -85,6 +88,8 @@ JXG.extend(JXG.GeometryElement3D.prototype, {
         var attr2D = attr3D;
 
         attr2D.name = this.name;
+        attr2D.element3d = this;
+        attr2D.id = null; // The 2D element's id may not be controlled by the user.
 
         return attr2D;
     },
@@ -115,6 +120,7 @@ JXG.extend(JXG.GeometryElement3D.prototype, {
                 key = i.replace(/\s+/g, "").toLowerCase();
                 value = attributes[i];
                 switch (key) {
+                    case "fillColor":
                     case "numberpointshigh":
                     case "stepsu":
                     case "stepsv":
@@ -181,7 +187,69 @@ JXG.extend(JXG.GeometryElement3D.prototype, {
         }
 
         return attr;
-    }
+    },
+
+    // /**
+    //  * Add transformations to this element.
+    //  * @param {JXG.GeometryElement} el
+    //  * @param {JXG.Transformation|Array} transform Either one {@link JXG.Transformation}
+    //  * or an array of {@link JXG.Transformation}s.
+    //  * @returns {JXG.CoordsElement} Reference to itself.
+    //  */
+    addTransformGeneric: function (el, transform) {
+        var i,
+            list = Type.isArray(transform) ? transform : [transform],
+            len = list.length;
+
+        // There is only one baseElement possible
+        if (this.transformations.length === 0) {
+            this.baseElement = el;
+        }
+
+        for (i = 0; i < len; i++) {
+            this.transformations.push(list[i]);
+        }
+
+        return this;
+    },
+
+    /**
+     * Set position of the 2D element. This is a
+     * callback function, executed in {@link JXG.GeometryElement#setPosition}.
+     * @param {JXG.Transform} t transformation
+     * @private
+     * @see JXG.GeometryElement#setPosition
+     */
+    setPosition2D: function(t) {
+        /* stub */
+    },
+
+    /**
+     * Project a 3D point to this element and update point.position. This function computes the
+     * preimage (u,v) of a 3D position (1, X, Y, Z)
+     * @param {Array} p 3D position of the point (array of length 4, homogeneous coordinates)
+     * @param {Array} params Changed in place to the new parameters of the point in terms of the elements functions X, Y, Z.
+     * For example for a surface, params will contain values (u,v) such that the new 3D position is
+     * p = [X(u, v), Z(u, v), Z(u, v)].
+     * @returns {Array} 3D coordinates of the projected point with homogeneous coordinates of the form [1, x, y, z].
+     */
+    projectCoords: function(p, params) {
+        /* stub */
+    },
+
+    /**
+     *
+     * @param {*} pScr
+     * @param {*} params
+     * @returns
+     */
+    // TODO check if Geometry.projectScreenCoordsToParametric has range or (range_u and range_v) - depending on the dimension given in params
+    projectScreenCoords: function (pScr, params, cyclic) {
+        return Geometry.projectScreenCoordsToParametric(pScr, this, params, cyclic);
+    },
+
+    // Documented in element.js
+    remove: function() {}
 
 });
 

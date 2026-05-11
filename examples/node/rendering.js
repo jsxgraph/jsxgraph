@@ -1,16 +1,17 @@
 /*
  * A very basic node.js example that supports rendering to bitmap graphics.
  * This requires the canvas module for node.js (https://npmjs.org/package/canvas)
- * 
- * Known issues: This doesn't work right now because for unknown reasons the infobox enforces HTML rendering.
- * If initInfobox is changed such that it returns without creating a text element it works.
  */
 
 // use the (minified) core, i.e. jsxgraph in one single file, built with r.js
-//var JXG = require('../../build/bin/jsxgraphcore.js');
+//var JXG = require('../../distrib/jsxgraphcore.js');
 
 // use the dev version
-var JXG = require('../../src/jsxgraphnode.js');
+var JXG = require('../../distrib/jsxgraphsrc.js');
+
+var canvas = require('canvas');
+JXG.createCanvas = canvas.createCanvas;
+
 
 console.log('version', JXG.version);
 console.log('text display', JXG.Options.text.display);

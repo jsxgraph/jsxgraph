@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2023
+    Copyright 2008-2026
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -36,13 +36,13 @@
  * @fileoverview In this file the geometry element Image is defined.
  */
 
-import JXG from "../jxg";
-import Const from "./constants";
-import Coords from "./coords";
-import GeometryElement from "./element";
-import Mat from "../math/math";
-import Type from "../utils/type";
-import CoordsElement from "./coordselement";
+import JXG from "../jxg.js";
+import Const from "./constants.js";
+import Coords from "./coords.js";
+import GeometryElement from "./element.js";
+import Mat from "../math/math.js";
+import Type from "../utils/type.js";
+import CoordsElement from "./coordselement.js";
 
 /**
  * Construct and handle images
@@ -88,7 +88,7 @@ JXG.Image = function (board, coords, attributes, url, size) {
      */
     this.url = url;
 
-    this.elType = "image";
+    this.elType = 'image';
 
     // span contains the anchor point and the two vectors
     // spanning the image rectangle.
@@ -99,19 +99,24 @@ JXG.Image = function (board, coords, attributes, url, size) {
     ];
 
     //this.parent = board.select(attributes.anchor);
-    this.id = this.board.setId(this, "Im");
+    this.id = this.board.setId(this, 'Im');
 
     this.board.renderer.drawImage(this);
     this.board.finalizeAdding(this);
 
     this.methodMap = JXG.deepCopy(this.methodMap, {
         addTransformation: "addTransform",
-        trans: "addTransform"
+        trans: "addTransform",
+        W: "W",
+        Width: "W",
+        H: "H",
+        Height: "H",
+        setSize: "setSize"
     });
 };
 
 JXG.Image.prototype = new GeometryElement();
-Type.copyPrototypeMethods(JXG.Image, CoordsElement, "coordsConstructor");
+Type.copyPrototypeMethods(JXG.Image, CoordsElement, 'coordsConstructor');
 
 JXG.extend(
     JXG.Image.prototype,
@@ -134,9 +139,9 @@ JXG.extend(
                 dot,
                 len = this.transformations.length;
 
-            if (Type.isObject(Type.evaluate(this.visProp.precision))) {
+            if (Type.isObject(this.evalVisProp('precision'))) {
                 type = this.board._inputDevice;
-                prec = Type.evaluate(this.visProp.precision[type]);
+                prec = this.evalVisProp('precision.' + type);
             } else {
                 // 'inherit'
                 prec = this.board.options.precision.hasPoint;
@@ -193,7 +198,7 @@ JXG.extend(
          * @private
          */
         updateRenderer: function () {
-            return this.updateRendererGeneric("updateImage");
+            return this.updateRendererGeneric('updateImage');
         },
 
         /**
@@ -219,8 +224,7 @@ JXG.extend(
          *
          */
         updateSpan: function () {
-            var i,
-                j,
+            var i, j,
                 len = this.transformations.length,
                 v = [];
 
@@ -235,7 +239,6 @@ JXG.extend(
                 v[0] = [this.Z(), this.X(), this.Y()];
                 v[1] = [this.Z(), this.X() + this.W(), this.Y()];
                 v[2] = [this.Z(), this.X(), this.Y() + this.H()];
-
                 // Transform the three corners
                 for (i = 0; i < len; i++) {
                     for (j = 0; j < 3; j++) {
@@ -290,9 +293,9 @@ JXG.extend(
          * Set the width and height of the image. After setting a new size,
          * board.update() or image.fullUpdate()
          * has to be called to make the change visible.
-         * @param  {number, function, string} width  Number, function or string
+         * @param  {number|function|string} width  Number, function or string
          *                            that determines the new width of the image
-         * @param  {number, function, string} height Number, function or string
+         * @param  {number|function|string} height Number, function or string
          *                            that determines the new height of the image
          * @returns {JXG.GeometryElement} A reference to the element
          *
@@ -368,9 +371,8 @@ JXG.extend(
 );
 
 /**
- * @class Displays an image.
+ * @class Display of an external image.
  * @pseudo
- * @description
  * @name Image
  * @type JXG.Image
  * @augments JXG.Image
@@ -403,7 +405,7 @@ JXG.createImage = function (board, parents, attributes) {
         coords = parents[1],
         size = parents[2];
 
-    attr = Type.copyAttributes(attributes, board.options, "image");
+    attr = Type.copyAttributes(attributes, board.options, 'image');
     im = CoordsElement.create(JXG.Image, board, coords, attr, url, size);
     if (!im) {
         throw new Error(

@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2023
+    Copyright 2008-2026
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -32,11 +32,11 @@
 /*global JXG: true, define: true, AMprocessNode: true, MathJax: true, document: true */
 /*jslint nomen: true, plusplus: true*/
 
-import JXG from "../jxg";
-import Const from "./constants";
-import EventEmitter from "../utils/event";
-import Type from "../utils/type";
-import Mat from "../math/math";
+import JXG from "../jxg.js";
+import Const from "./constants.js";
+import EventEmitter from "../utils/event.js";
+import Type from "../utils/type.js";
+import Mat from "../math/math.js";
 
 /**
  * @fileoverview In this file the Coords object is defined, a class to manage all
@@ -51,11 +51,7 @@ import Mat from "../math/math";
  * @param {Number} method The type of coordinates given by the user. Accepted values are <b>COORDS_BY_SCREEN</b> and <b>COORDS_BY_USER</b>.
  * @param {Array} coordinates An array of affine coordinates.
  * @param {JXG.Board} board A reference to a board.
- * @oaram {Boolean} [emitter=true]
- * @borrows JXG.EventEmitter#on as this.on
- * @borrows JXG.EventEmitter#off as this.off
- * @borrows JXG.EventEmitter#triggerEventHandlers as this.triggerEventHandlers
- * @borrows JXG.EventEmitter#eventHandlers as this.eventHandlers
+ * @param {Boolean} [emitter=true]
  * @constructor
  */
 JXG.Coords = function (method, coordinates, board, emitter) {

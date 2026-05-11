@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2023
+    Copyright 2008-2026
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -36,8 +36,8 @@
  * @fileoverview In this file the EventEmitter interface is defined.
  */
 
-import JXG from "../jxg";
-import Type from "./type";
+import JXG from "../jxg.js";
+import Type from "./type.js";
 
 /**
  * Event namespace
@@ -89,10 +89,10 @@ JXG.EventEmitter = {
      * Register a new event handler. For a list of possible events see documentation
      * of the elements and objects implementing
      * the {@link EventEmitter} interface.
-     * 
-     * As of version 1.5.0, it is only possible to access the element via "this" if the event listener 
+     *
+     * As of version 1.5.0, it is only possible to access the element via "this" if the event listener
      * is supplied as regular JavaScript function and not as arrow function.
-     * 
+     *
      * @param {String} event
      * @param {Function} handler
      * @param {Object} [context] The context the handler will be called in, default is the element itself.
@@ -127,7 +127,7 @@ JXG.EventEmitter = {
         }
 
         if (handler) {
-            i = Type.indexOf(this.eventHandlers[event], handler, "handler");
+            i = Type.indexOf(this.eventHandlers[event], handler, 'handler');
             if (i > -1) {
                 this.eventHandlers[event].splice(i, 1);
             }
@@ -152,7 +152,9 @@ JXG.EventEmitter = {
      * @param {Object} o
      */
     eventify: function (o) {
-        o.eventHandlers = {};
+        o.eventHandlers = {
+            clicks: 0 // Needed to handle dblclicks
+        };
         o.on = this.on;
         o.off = this.off;
         o.triggerEventHandlers = this.trigger;

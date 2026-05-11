@@ -1,5 +1,5 @@
 /*
-    Copyright 2018-2023
+    Copyright 2018-2026
         Alfred Wassermann,
         Tigran Saluev
 
@@ -32,11 +32,12 @@
  * @fileoverview In this file the Comb element is defined.
  */
 
-import JXG from "../jxg";
-import Type from "../utils/type";
+import JXG from "../jxg.js";
+import Type from "../utils/type.js";
 
 /**
- * @class A comb to display domains of inequalities.
+ * @class A marker to display domains of inequalities.
+ * The comb element is defined by two points.
  * @pseudo
  * @name Comb
  * @augments JXG.Curve
@@ -125,7 +126,7 @@ JXG.createComb = function (board, parents, attributes) {
     if (parents.length === 2) {
         // point 1 given by coordinates
         if (Type.isArray(parents[0]) && parents[0].length > 1) {
-            attr = Type.copyAttributes(attributes, board.options, "comb", "point1");
+            attr = Type.copyAttributes(attributes, board.options, "comb", 'point1');
             p1 = board.create("point", parents[0], attr);
         } else if (Type.isString(parents[0]) || Type.isPoint(parents[0])) {
             p1 = board.select(parents[0]);
@@ -136,7 +137,7 @@ JXG.createComb = function (board, parents, attributes) {
             parents[0]().length &&
             parents[0]().length >= 2
         ) {
-            attr = Type.copyAttributes(attributes, board.options, "comb", "point1");
+            attr = Type.copyAttributes(attributes, board.options, "comb", 'point1');
             p1 = JXG.createPoint(board, parents[0](), attr);
         } else {
             throw new Error(
@@ -151,7 +152,7 @@ JXG.createComb = function (board, parents, attributes) {
 
         // point 2 given by coordinates
         if (Type.isArray(parents[1]) && parents[1].length > 1) {
-            attr = Type.copyAttributes(attributes, board.options, "comb", "point2");
+            attr = Type.copyAttributes(attributes, board.options, "comb", 'point2');
             p2 = board.create("point", parents[1], attr);
         } else if (Type.isString(parents[1]) || Type.isPoint(parents[1])) {
             p2 = board.select(parents[1]);
@@ -162,7 +163,7 @@ JXG.createComb = function (board, parents, attributes) {
             parents[1]().length &&
             parents[1]().length >= 2
         ) {
-            attr = Type.copyAttributes(attributes, board.options, "comb", "point2");
+            attr = Type.copyAttributes(attributes, board.options, "comb", 'point2');
             p2 = JXG.createPoint(board, parents[1](), attr);
         } else {
             throw new Error(
@@ -188,9 +189,10 @@ JXG.createComb = function (board, parents, attributes) {
 
     attr = Type.copyAttributes(attributes, board.options, 'comb');
     // Type.merge(attr, Type.copyAttributes(attributes, board.options, 'comb', 'curve'));
-    c = board.create('curve', [[0], [0]], attr);
+     c = board.create('curve', [[0], [0]], attr);
 
     /**
+     * @class
      * @ignore
      */
     c.updateDataArray = function () {
@@ -201,10 +203,10 @@ JXG.createComb = function (board, parents, attributes) {
             p2_inner = p2,
             ds, angle, width;
 
-        ds = Type.evaluate(c.visProp.frequency);
-        angle = -Type.evaluate(c.visProp.angle);
-        width = Type.evaluate(c.visProp.width);
-        if (Type.evaluate(c.visProp.reverse)) {
+        ds = c.evalVisProp('frequency');
+        angle = -c.evalVisProp('angle');
+        width = c.evalVisProp('width');
+        if (c.evalVisProp('reverse')) {
             p1_inner = p2;
             p2_inner = p1;
             angle = -angle;

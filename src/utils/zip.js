@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2023
+    Copyright 2008-2026
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -40,7 +40,7 @@
  * @fileoverview Utilities for uncompressing and base64 decoding
  */
 
-import JXG from "../jxg";
+import JXG from "../jxg.js";
 
 // Zip routine constants
 

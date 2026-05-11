@@ -1,5 +1,5 @@
 /*
- Copyright 2008-2023
+ Copyright 2008-2026
  Matthias Ehmann,
  Michael Gerhaeuser,
  Carsten Miller,
@@ -32,9 +32,9 @@
 /*global JXG: true, define: true*/
 /*jslint nomen: true, plusplus: true*/
 
-import JXG from "../jxg";
-import Symbolic from "../math/symbolic";
-import Type from "../utils/type";
+import JXG from "../jxg.js";
+import Symbolic from "../math/symbolic.js";
+import Type from "../utils/type.js";
 
 /**
  * @class This element is used to visualize the locus of a given dependent point.
@@ -86,7 +86,7 @@ JXG.createLocus = function (board, parents, attributes) {
     c = board.create("curve", [[null], [null]], attributes);
     c.dontCallServer = false;
 
-    c.elType = "locus";
+    c.elType = 'locus'
     c.setParents([p.id]);
 
     /**

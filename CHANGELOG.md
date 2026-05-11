@@ -1,3 +1,421 @@
+1.12.2
+===
+
+Unnecessary zip files have been removed to be below the maximum size of the repository, e.g. of jsdelivr.
+
+1.12.1
+===
+
+Improvements
+------------
+
+- API docs of `initBoard`: link to all available attributes
+- Add version string to jsxgraph.css
+- Tangential intersections between 'functiongraph' elements
+- Precision of `meetCurveCurve`
+- Arrow heads in SVG take CSS color of line
+- Security: replace some `innerHTML` by `innerText`
+- `moveTo()`, `visit()`: avoid throwing error
+- Speed up `turtle.clearScreen()`
+
+Bug fixes
+---------
+
+- Fix bug in API docs of ia.js
+- `isBrowser(undefined)`: return false
+- Fix regression: handling of attribute 'frozen'
+- smartlabel on line was not rotated
+- smartlabel for angles
+- `polyhedron.toSTL()`: Replace "model" by "solid"
+- API docs: correct description `options.effect` for `moveTo()`, `visit()`
+
+1.12.0
+===
+
+New features
+-----------
+
+- 3D: STL file format (ASCII) parser / writer for polyhedron3d
+- New board attribute showLogo. Display logic is: showLogo OR showCopyright
+- Complex numbers: new methods abs(), angle()
+- New method: Line.getBoundingBox()
+- CoordsElements (points, texts, images): add parameter maxRounds to startAnimation
+
+Improvements
+------------
+
+- Simplify use of attribute frozen, especially for sliders
+- Improved autoposition algorithm for labels
+- Clipping of implicit curves
+- 3D rotations: enable rotation around point, rotation of general line
+- API docs: 3D transformations
+- Depth order: improved correctness and speed up
+- Shorten copyright string, add logo
+- New favicon files
+
+Bug fixes
+---------
+
+- Stop event propagation on input field
+- Arrow rendering
+- Vanishing 3D line
+- 3D removeObject()
+- Canvas renderer: gradient color on lines
+- Curve.findDomain(), Curve.getLabelPosition
+- Label positioning on disconnected curves
+
+
+1.11.1
+===
+
+Improvements
+------------
+
+- Board attribute `browserPan`: support object variant `{ enabled: true }`
+
+Bug fixes
+---------
+
+- Fix backwards compatibility for color value `null`
+- `setAttribute`: conflict with shortcut names
+- `view3d.removeObject`
+
+
+1.11.0
+===
+
+New features
+-----------
+
+- New element `polyhedron3d`
+- Depth ordering of 3D elements: Generalize font/back detection of 3D points to other elements
+- Shader attributes for polyhedron3d
+- Shader for polyhedron3d
+- Attribute functions support the targeted geometry element as parameter
+- ARIA attributes for every element (SVG only)
+- CSS classes for every element (SVG only). This allows the application of SVG filters
+- 3D transformations for point3d, line3d, plane3d, curve3d, surface3d, polyhedron3d. Not supported, yet: circle3d, polygon3d, text3d, ticks3d
+- 2D transformations: new type `matrix`
+- 2D and 3D curves by array of coordinates
+
+Improvements
+------------
+
+- Massive speed improvements when rotating the 3D view
+- Refactor 3D elements. Among other things: use of homogeneous coordinates internally everywhere.
+- 3D view sliders can be positioned by attributes
+- New methods in `JXG.Math`: `matMatAdd`, `matNumberMult`, `vecMatMult`, `trace` of a matrix
+- New method `JXG.Math.Geometry.isConvex`
+- Keyboard navigation, including 3D views
+- Position label by `position`, `distance` attributes for `angle`, `arc`, and `sector`
+- Improved convex hull algorithm
+- Much improved element `legend`
+- Groups: allow texts and images as members
+- JessieCode: enable numbers in scientific notation
+- Enable glider on `sphere3d` elements
+- `plane3d`: allow `line3d` as defining element and also enable construction by three points
+- Improved dragging of 3D points
+- Adapt 3D info box style
+- Enhance element `measure`
+- `moveTo`, `visit`, `moveAlong` are available as promises: `moveToES6`, `visitES6`, `moveAlongES6`
+- Improved precision for implicit curves
+- API docs
+- Zoom attributes may be functions now
+- Add logo images to the JSXGraph repository
+
+Bug fixes
+---------
+
+- Arrow heads on Safari
+- Fix regression: sphere3d
+- Remove singularity in sphere central projection
+- Dragging of labels
+- Screenshot of elements with gradient colors
+- User defined ids of 3D elements
+- Canvas: use `linejoin:round` for curves
+- Radial gradient of points in canvas
+- Update problems of integral elements
+- Angle for parallel lines
+- toLowerCase in `setAttribute()`
+- Slider handling of snapWidth
+- Handling of maxBoundingBox
+- Implicit plotting
+
+1.10.1
+===
+
+Improvements
+------------
+
+- Angle element: allow empty string as name
+- Better control on animation speed with `<` and `>`
+- `JXG.Math.Statistics.histogram`: count of long tail elements not in histogram range
+- Prevent dragging of 3D points out of the `view3d` box.
+- API docs
+- Retire python2 server module
+- Remove unused file `src/index2.js`
+
+Bug fixes
+---------
+
+- 'Glider' on function graph did not respect domain
+- Visibility issues in 3D with `axesPosition: 'border'`
+- Initial camera position in `view3d`
+- Crash if 3D plane does not intersect 3D view
+- `vectorfield3d`: allow function returning three values as parameter
+- Inheritance of 3D axis options
+- `text3d`: string from function call
+
+1.10.0
+===
+
+New features
+-----------
+
+- New element `tangentTo`
+- New element `text3d`
+- New element `ticks3d`
+- Support 3d axes position `'border'`
+- New random numbers with Pareto distribution
+
+Improvements
+------------
+
+- `JXG.Math.Numerics.histogram`: cumulative version
+- Gradual improvement of 3D functionality
+- Enable dragging of 3D lines
+- Stability of `JXG.Math.Numerics.fzero`, `JXG.Math.Numerics.fminbr`
+- Stability of implicit curves
+- Implicit curves: add parameters `rangex` and `rangey`
+- Enable input of points for `JXG.Math.Geometry.det3p`
+- Add attribute `autoPositionMaxDistance` to labels
+- Unit tests for tangents and normals
+- API docs
+- Makefile: force use of gawk
+
+Bug fixes
+---------
+
+- Glider on parametrized curves
+- Line label
+- 3D view attributes
+- 3D infobox and drag icons with katex and mathjax
+- `removeAllTicks()`
+- `SVG.dumpToCanvas`, `SVG.dumpToDataURI`
+- Transformation of images. Disable viewport attempt
+- Zooming with ID in JSXGraph div
+- Tangents and normals on transformed curves
+
+1.9.2
+===
+
+New features
+-----------
+
+- New view3d attribute `depthOrderPoints` to adapt z-ordering of 3D points
+- 3D: Add third view3d slider `bank`
+- Allow hiding of view3d
+- New GeometryElement attribute `nonnegativeOnly`
+
+Improvements
+------------
+
+- Improve coords projection to function graph
+- 3D: Trackball navigation
+- 3D: Change default color of axes
+- Resizing of the container
+- Printing from browser
+- Tangents on curves
+- API docs
+- Prefix parser for measurements
+- Refactor resize events
+
+Bug fixes
+---------
+
+- Prevent infinite growing of a board by resizeObserver
+- JessieCode: using slider by name only
+- Fix regression in parallelogram
+- SVG resize
+- Set arrow head
+- Merge of attributes
+- isPoint3D
+- `JXG.toFraction()`
+- `curve.moveTo()`
+- Automatic label placement
+- disable resizeObserver in unit tests
+- Glider and tangents on arcs and sectors
+
+1.9.1
+===
+
+Bug fixes
+---------
+
+- `import` of JessieCode
+- Handling of label attributes
+
+1.9.0
+===
+
+New features
+-----------
+
+- 3D: now, beside parallel projection also central projection is supported
+- new element `sphere3d`
+- new element `intersectionline3d`
+- new element `circle3d`
+- new gliders: point3d can glide on lines and curves
+- new element `intersectioncircle3d`
+- new element `polygon3d`
+- new version of `otherintersection`
+- new 3D control: virtual trackball
+- new label positioning for lines, circles and curves
+- random numbers for uniform, normal, exponential, beta, gamma, chi-square, F, T, binomial, geometric, hypergeometric, Poisson distribution
+- new function `JXG.Math.Statistics.histogram`
+- new math function `JXG.Math.gamma`
+
+Improvements
+------------
+
+- API docs
+- in default mode, `click` and dblclick` events follow JavaScript standard
+- new default for numbers as texts: 'formatNumber:false'
+- grid: new default is `drawZero:true`
+- grid: `size` has unit pixel now
+- grid themes
+- use file name ending `.js` in all import statements
+- speed improvement: reduce `concat` by `Type.concat`
+- new 3D examples in `examples/`
+- mark ancient browser detection methods as deprecated
+- add more exports to `index.js`
+- board zoom center can be either the mouse pointer position (or midpoint of two finger touches) or the center of the board
+
+Bug fixes
+---------
+
+- keyboard control 3D view
+- lower / upper case  problem in `providePoints`
+- setting of Riemann sum type
+- grid: handling of attributes
+- grid: remove unused unit `abs`
+- 3D elevation speed
+- grid: remove redundant lines
+- sector arc
+- 3D axes were not fixed
+- slider label
+- glider handling
+- slider handling in JessieCode
+- remove use of `String.at()` (moodle problem)
+- remove const `JXG.touchProperty`
+- toggling of arrow heads
+- tapemeasure
+- toFraction
+
+1.8.0
+===
+
+New features
+-----------
+
+- Element `grid` has been completely overhauled with many additional features
+- Element `axis` has been completely overhauled with many additional features
+- Pointer and keyboard control of 3D views.
+- New events `click` and `dblclick` on desktop browsers
+- Tick labels can now be displayed as fractions
+
+Improvements
+------------
+
+- API docs
+- Lines: new method `Direction`
+- New method `Math.roundToStep`
+- New method '`JXG.parseNumber` to handle various unit numbers in strings
+- New method `JXG.parsePosition` to handle combinations of position options in strings
+- New methods `JXG.Math.decToFraction` and `JXG.toFraction` to convert float to fraction
+- New text attribute `formatNumber`
+- Various new features in the `measurement` element
+- String positioning in SVG
+- Add various geometry methods to JessieCode
+- 3D: elevation now runs from 0 to 2pi
+- "arrowparallel": is of type `vector` now
+
+Bug fixes
+---------
+
+- Handling of font size after call of `setAttribute`
+- Slope triangle: handling of label
+- Implicit curve handling of string input
+- Ticks of tape measures
+- dragging of 3D points
+
+1.7.0
+===
+
+New features
+-----------
+
+- New element `implicitcurve`: plot curve given by an equation F(x, y) = 0
+- New element `parallelogram`
+- New element `measurement` and new simple prefix parser
+- New element `vectorfield3d`
+- Add board attribute `theme`
+- Add theme `mono_thin`
+- New function `JXG.stack2jsxgraph`
+- New method JXG.Math.Numerics.polzeros
+- Extend method `Value` for angle, arc and sector.
+- New method `Coords` for point, image and text
+
+Improvements
+------------
+
+- New function `JXG.Math.Geometry.distPointSegment`: computes distance point from segment
+- New function `JXG.Math.Numerics.glomin`: Brent's global minimizer
+- New function `JXG.Math.hypot`: Euclidean length of a vector
+- New function `JXG.Math.hstep`: Heaviside unit step function
+- New function `JXG.Math.Numerics.polzeros` to compute all zeros (including the complex ones) of a polynomial
+- New quadtree implementation `BoxQuadtree` for storing segments
+- Add new point face `<<>>` or `diamond2` (enlarged to match size of `[]`)
+- API reference: many bug fixes, improvements, many new examples
+- Improve Jessiecode support in text elements
+- JessieCode support of available functions and methods
+- Angle element: set correct radius in sub-object arc
+- Remove `bst.js` and `heap.js` from core
+- Adapt mediawiki plug-in for the latest version of mediawiki
+- Improve fullscreen mode
+- JessieCode: improved handling of expressions containing a slider value `a`
+- Defining points of axes
+- Curves: set default values for min and max values of the parameter
+- Attribute handling
+- Massive speed up of `board.removeObject`
+- Allow change of arrow heads with `setAttribute`
+- Navigation buttons: individual CSS classes
+- Refactor `board.registerEvents`
+- Refactor JavaScript (replace `String.substr()`)
+- New method for complex numbers: `JXG.C.copy`
+- Arc: add method 'L'
+- Sector: add methods Area and Perimeter
+
+Bug fixes
+---------
+
+- Address many eslint warnings
+- Tangent on sector
+- Intersection curve, circle
+- Use absolute lengths for circle construction by radius and fixed segment lengths
+- pinch-to-zoom
+- function plot algorithm
+- Retire `geonext2js`
+- Symbolic derivatives
+- Circum circle handling
+- slopetriangle: attribute borders
+- `glider.free`
+- Remove `jsxcompressor.min.js` from version control
+- super- und sub-scripts without TeX
+- `inequality`: attribute `inverse`
+- Handling of lower case in `deepCopy`, `copyAttributes`
+- ES6 support of JSXGraph
+
 1.6.2
 ====
 

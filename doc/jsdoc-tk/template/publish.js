@@ -34,7 +34,7 @@ function publish(symbolSet) {
 		quit();
 	}
 
-	// some ustility filters
+	// some utility filters
 	function hasNoParent($) {return ($.memberOf == "")}
 	function isaFile($) {return ($.is("FILE"))}
 	function isaClass($) {return ($.is("CONSTRUCTOR") || $.isNamespace)}
@@ -223,6 +223,21 @@ function makeSignature(params) {
 	")";
 	return signature;
 }
+
+
+/** Build output for displaying method parameters.  Just return JSON, this is not visible in the web page. */
+function makeMethodSignature(params) {
+    let json = JSON.stringify(params);
+
+    json = json.replaceAll("\"", "&quot;")
+    json = json.replaceAll("<", "&lt;")
+    json = json.replaceAll(">", "&gt;")
+    json = json.replaceAll("'", "&#39;")
+    json = json.replaceAll("&", "&amp;")
+
+    return json;
+}
+
 
 /** Find symbol {@link ...} strings in text and turn into html links */
 function resolveLinks(str, from) {

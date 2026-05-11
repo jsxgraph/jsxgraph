@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2023
+    Copyright 2008-2026
         Matthias Ehmann,
         Carsten Miller,
         Alfred Wassermann
@@ -28,11 +28,11 @@
 
 "use strict";
 
-import Type from "../utils/type";
-import Mat from "./math";
-import Geometry from "./geometry";
-import Numerics from "./numerics";
-import Quadtree from "./bqdt";
+import Type from "../utils/type.js";
+import Mat from "./math.js";
+import Geometry from "./geometry.js";
+import Numerics from "./numerics.js";
+import Quadtree from "./bqdt.js";
 
 /**
  * Plotting of curves which are given implicitly as the set of points solving an equation
@@ -55,8 +55,8 @@ import Quadtree from "./bqdt";
  * @param {Object} config Configuration object. Default:
  * <pre>
  *  {
- *      resolution_out: 5,    // Distance between vertical lines to search for components
- *      resolution_in: 5,     // Distance between vertical lines to search for components
+ *      resolution_out: 5,    // Horizontal resolution: distance between vertical lines to search for components
+ *      resolution_in: 5,     // Vertical resolution to search for components
  *      max_steps: 1024,      // Max number of points in one call of tracing
  *      alpha_0: 0.05,        // Angle between two successive tangents: smoothness of curve
  *
@@ -178,10 +178,10 @@ Mat.ImplicitPlot = function (bbox, config, f, dfx, dfy) {
         kappa_0: 0.2,         // Inverse of planned number of Newton steps
         delta_0: 0.05,        // Distance of predictor point to curve
 
-        h_initial: 0.1,       // Initial stepwidth
+        h_initial: 0.1,       // Initial step width
         h_critical: 0.001,    // If h is below this threshold we bail out
-        h_max: 1,             // Maximal value of h (user units)
-        loop_dist: 0.09,      // Allowed distance (multiplied by actual stepwidth) to detect loop
+        h_max: 1,             // Maximum value of h (user units)
+        loop_dist: 0.09,      // Allowed distance (multiplied by actual step width) to detect loop
         loop_dir: 0.99,       // Should be > 0.95
         loop_detection: true, // Use Gosper's loop detector
         unitX: 10,            // unitX of board
@@ -201,7 +201,7 @@ Mat.ImplicitPlot = function (bbox, config, f, dfx, dfy) {
         this.dfx = function (x, y) {
             var h = Mat.eps * Mat.eps;
             return (this.f(x + h, y) - this.f(x - h, y)) * 0.5 / h;
-        }
+        };
     }
 
     if (Type.isFunction(dfy)) {
@@ -210,7 +210,7 @@ Mat.ImplicitPlot = function (bbox, config, f, dfx, dfy) {
         this.dfy = function (x, y) {
             var h = Mat.eps * Mat.eps;
             return (this.f(x, y + h) - this.f(x, y - h)) * 0.5 / h;
-        }
+        };
     }
 
     this.bbox = bbox;
@@ -226,7 +226,7 @@ Type.extend(
         /**
          * Implicit plotting method.
          *
-         * @returns {Array} consisting of [dataX, dataY, number_of_components]-
+         * @returns {Array} consisting of [dataX, dataY, number_of_components]
          */
         plot: function () {
             var // components = [],
@@ -238,6 +238,7 @@ Type.extend(
                 dataY = [],
                 ret = [],
                 num_components = 0,
+                max_level = 8,
 
                 delta,
                 that = this,
@@ -270,7 +271,7 @@ Type.extend(
                     ret = this.searchLine(
                         fmi_x, fma_x, x,
                         [mi_y, ma_y], 'vertical',
-                        num_components, dataX, dataY);
+                        num_components, dataX, dataY, max_level);
 
                     if (ret !== false) {
                         dataX = ret[0];
@@ -289,7 +290,7 @@ Type.extend(
                     ret = this.searchLine(
                         fmi_y, fma_y, y,
                         [mi_x, ma_x], 'horizontal',
-                        num_components, dataX, dataY);
+                        num_components, dataX, dataY, max_level);
 
                     if (ret !== false) {
                         dataX = ret[0];
@@ -314,11 +315,12 @@ Type.extend(
          * @param {Number} num_components Number of components before search
          * @param {Array} dataX x-coordinates of points so far
          * @param {Array} dataY y-coordinates of points so far
+         * @param {Number} level Recursion level
          * @returns {Array} consisting of [dataX, dataY, number_of_components]-
          * @private
          */
         searchLine: function (fmi, fma, fix, interval, dir,
-            num_components, dataX, dataY) {
+            num_components, dataX, dataY, level) {
             var t_mi, t_ma, t,
                 ft,
                 mi, ma, tmp, m,
@@ -369,14 +371,14 @@ Type.extend(
 
                 if (is_in) {
                     if (DEBUG) {
-                        console.log("Found in quadtree", u0);
+                        console.log("Found in quadtree", u0, "level:", level);
                     }
                 } else {
                     if (DEBUG) {
                         console.log("Not in quadtree", u0, dataX.length);
                     }
                     ret = this.traceComponent(u0, 1);
-                    if (ret.length > 0) {
+                    if (ret[0].length > 0) {
                         // Add jump in curve
                         if (num_components > 0) {
                             dataX.push(NaN);
@@ -398,16 +400,16 @@ Type.extend(
                         }
 
                         num_components++;
-                        dataX = dataX.concat(ret[0]);
-                        dataY = dataY.concat(ret[1]);
+                        Type.concat(dataX, ret[0]);
+                        Type.concat(dataY, ret[1]);
                     }
                 }
 
                 m = t - delta * 0.01;
-                if (m - b > delta) {
+                if (m - b > delta && level > 0) {
                     ret = this.searchLine(
                         fmi, fma, fix, [b, m], dir,
-                        num_components, dataX, dataY);
+                        num_components, dataX, dataY, level - 1);
                     if (ret !== false) {
                         dataX = ret[0];
                         dataY = ret[1];
@@ -415,10 +417,10 @@ Type.extend(
                     }
                 }
                 m = t + delta * 0.01;
-                if (e - m > delta) {
+                if (e - m > delta  && level > 0) {
                     ret = this.searchLine(
                         fmi, fma, fix, [m, e], dir,
-                        num_components, dataX, dataY);
+                        num_components, dataX, dataY, level - 1);
                     if (ret !== false) {
                         dataX = ret[0];
                         dataY = ret[1];
@@ -488,7 +490,7 @@ Type.extend(
                 // console.log("Could not start tracing due to singularity")
             } else {
                 // console.log("Trace from", [arr[0][0], arr[1][0]], "to", [arr[0][arr[0].length - 1], arr[1][arr[1].length - 1]],
-                //     "num points:", arr[0].length);
+                //    "num points:", arr[0].length);
                 dataX = arr[0];
                 dataY = arr[1];
             }
@@ -511,7 +513,7 @@ Type.extend(
                 }
             }
 
-            if (dataX.length < 6) {
+            if (dataX.length > 0 && dataX.length < 6) {
                 // Solitary point
                 dataX.push(dataX[dataX.length - 1]);
                 dataY.push(dataY[dataY.length - 1]);
@@ -538,10 +540,12 @@ Type.extend(
          */
         tracing: function (u0, direction) {
             var u = [],
+                ulast = [],
+                len,
                 v = [],
                 v_start = [],
                 w = [],
-                t_u, t_v, t_u_0,
+                t_u, t_v, t_u_0, tloc,
                 A,
                 grad,
                 nrm,
@@ -615,7 +619,7 @@ Type.extend(
                         Mat.innerProduct(t_u, t_u_0, 2) > this.config.loop_dir
                     ) {
 
-                        // console.log("Loop detected after", steps, "steps");
+                        // console.log("Loop detected after", steps, 'steps');
                         // console.log("\t", "v", v, "u0:", u0)
                         // console.log("\t", "Dist(v, path0)", dist, config.loop_dist * h)
                         // console.log("\t", "t_u", t_u);
@@ -678,12 +682,12 @@ Type.extend(
                 // Predictor step
                 // if (true /*h < 2 * this.config.h_initial*/) {
                 // Euler
-                // console.log("euler")
+                // console.log('euler')
                 v[0] = u[0] + h * omega * t_u[0];
                 v[1] = u[1] + h * omega * t_u[1];
                 // } else {
                 //     // Heun
-                //     // console.log("heun")
+                //     // console.log('heun')
                 //     v[0] = u[0] + h * omega * t_u[0];
                 //     v[1] = u[1] + h * omega * t_u[1];
 
@@ -724,7 +728,7 @@ Type.extend(
                     k++;
                 } while (k < 20 &&
                     Math.abs(this.f(v[0], v[1])) > this.config.tol_newton
-                )
+                );
 
                 delta = k0;
                 if (k > 1) {
@@ -818,7 +822,55 @@ Type.extend(
                 u[1] <= this.bbox[1] &&
                 u[0] <= this.bbox[2] &&
                 u[1] >= this.bbox[3]
-            )
+            );
+
+            // Clipping to bounding box, last may be outside, interpolate between second last und last point
+            len = pathX.length;
+            ulast = [pathX[len - 2], pathY[len - 2]];
+
+            // If u[0] is outside x-interval in bounding box, interpolate to the box.
+            if (u[0] < this.bbox[0]) {
+                if (u[0] !== ulast[0]) {
+                    tloc = (this.bbox[0] - ulast[0]) / (u[0] - ulast[0]);
+                    if (u[1] !== ulast[1]) {
+                        u[1] = ulast[1] + tloc * (u[1] - ulast[1]);
+                    }
+                }
+                u[0] = this.bbox[0];
+            }
+            if (u[0] > this.bbox[2]) {
+                if (u[0] !== ulast[0]) {
+                    tloc = (this.bbox[2] - ulast[0]) / (u[0] - ulast[0]);
+                    if (u[1] !== ulast[1]) {
+                        u[1] = ulast[1] + tloc * (u[1] - ulast[1]);
+                    }
+                }
+                u[0] = this.bbox[2];
+            }
+
+            // If u[1] is outside y-interval in bounding box, interpolate to the box.
+            if (u[1] < this.bbox[3]) {
+                if (u[1] !== ulast[1]) {
+                    tloc = (this.bbox[3] - ulast[1]) / (u[1] - ulast[1]);
+                    if (u[0] !== ulast[0]) {
+                        u[0] = ulast[0] + tloc * (u[0] - ulast[0]);
+                    }
+                }
+                u[1] = this.bbox[3];
+            }
+            if (u[1] > this.bbox[1]) {
+                if (u[1] !== ulast[1]) {
+                    tloc = (this.bbox[1] - ulast[1]) / (u[1] - ulast[1]);
+                    if (u[0] !== ulast[0]) {
+                        u[0] = ulast[0] + tloc * (u[0] - ulast[0]);
+                    }
+                }
+                u[1] = this.bbox[1];
+            }
+
+            // Update last point
+            pathX[len - 1] = u[0];
+            pathY[len - 1] = u[1];
 
             // if (!loop_closed) {
             //     console.log("No loop", steps);

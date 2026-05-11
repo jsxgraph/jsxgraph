@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2023
+    Copyright 2008-2026
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -39,9 +39,9 @@
  * Stoyan Stefanov <sstoo@gmail.com> (see https://www.phpied.com/rgb-color-parser-in-javascript/)
  */
 
-import JXG from "../jxg";
-import Type from "./type";
-import Mat from "../math/math";
+import JXG from "../jxg.js";
+import Type from "./type.js";
+import Mat from "../math/math.js";
 
 // private constants and helper functions
 
@@ -184,6 +184,7 @@ var simpleColors = {
         thistle: "d8bfd8",
         tomato: "ff6347",
         turquoise: "40e0d0",
+        venetianred: "ae181e",
         violet: "ee82ee",
         violetred: "d02090",
         wheat: "f5deb3",
@@ -232,7 +233,7 @@ var simpleColors = {
  * Converts a valid HTML/CSS color string into a rgb value array. This is the base
  * function for the following wrapper functions which only adjust the output to
  * different flavors like an object, string or hex values.
- * @param {String,Array,Number} color A valid HTML or CSS styled color value, e.g. '#12ab21', '#abc', 'black',
+ * @param {String|Array|Number} color A valid HTML or CSS styled color value, e.g. '#12ab21', '#abc', 'black'
  * or 'rgb(12, 132, 233)'. This can also be an array containing three color values either from 0.0 to 1.0 or
  * from 0 to 255. They will be interpreted as red, green, and blue values. In case this is a number this method
  * expects the parameters ag and ab.
@@ -284,14 +285,14 @@ JXG.rgbParser = function (color, ag, ab) {
         return values;
     }
 
-    if (typeof values === "string") {
+    if (typeof values === 'string') {
         color_string = values;
     }
 
     // strip any leading #
     if (color_string.charAt(0) === "#") {
         // remove # if any
-        color_string = color_string.substr(1, 6);
+        color_string = color_string.slice(1, 7);
     }
 
     color_string = color_string.replace(/ /g, "").toLowerCase();
@@ -326,9 +327,15 @@ JXG.rgbParser = function (color, ag, ab) {
     return [r, g, b];
 };
 
+JXG.isColor = function (strColor) {
+    var s = new Option().style;
+    s.color = strColor;
+    return s.color !== '';
+};
+
 /**
  * Converts a valid HTML/CSS color string into a string of the 'rgb(r, g, b)' format.
- * @param {String,Array,Number} color A valid HTML or CSS styled color value, e.g. '#12ab21', '#abc', 'black',
+ * @param {String|Array|Number} color A valid HTML or CSS styled color value, e.g. '#12ab21', '#abc', 'black'
  * or 'rgb(12, 132, 233)'. This can also be an array containing three color values either from 0.0 to 1.0 or
  * from 0 to 255. They will be interpreted as red, green, and blue values. In case this is a number this method
  * expects the parameters ag and ab.
@@ -346,7 +353,7 @@ JXG.rgb2css = function (color, ag, ab) {
 
 /**
  * Converts a valid HTML/CSS color string into a HTML rgb string.
- * @param {String,Array,Number} color A valid HTML or CSS styled color value, e.g. '#12ab21', '#abc', 'black',
+ * @param {String|Array|Number} color A valid HTML or CSS styled color value, e.g. '#12ab21', '#abc', 'black'
  * or 'rgb(12, 132, 233)'. This can also be an array containing three color values either from 0.0 to 1.0 or
  * from 0 to 255. They will be interpreted as red, green, and blue values. In case this is a number this method
  * expects the parameters ag and ab.
@@ -389,6 +396,21 @@ JXG.rgb2hex = function (color, ag, ab) {
 JXG.hex2rgb = function (hex) {
     JXG.deprecated("JXG.hex2rgb()", "JXG.rgb2css()");
     return JXG.rgb2css(hex);
+};
+
+/**
+ * Converts HSV color to HSL color.
+ * From {@link https://en.wikipedia.org/wiki/HSL_and_HSV}.
+ * @param {Number} H value between 0 and 360
+ * @param {Number} S value between 0.0 (shade of gray) to 1.0 (pure color)
+ * @param {Number} V value between 0.0 (black) to 1.0 (white)
+ * @returns {Array} Contains the numbers h, s, and l value in this order.
+ */
+JXG.hsv2hsl = function(H, S, V) {
+    var SL,
+        L = V * (1 - S * 0.5);
+    SL = (L === 0 || L === 1) ? 0 : ((V - L ) / Math.min(L, 1 - L));
+    return [H, SL, L];
 };
 
 /**
@@ -466,25 +488,25 @@ JXG.hsv2rgb = function (H, S, V) {
     }
 
     R = Math.round(R * 255).toString(16);
-    R = R.length === 2 ? R : R.length === 1 ? "0" + R : "00";
+    R = R.length === 2 ? R : R.length === 1 ? "0" + R : '00';
     G = Math.round(G * 255).toString(16);
-    G = G.length === 2 ? G : G.length === 1 ? "0" + G : "00";
+    G = G.length === 2 ? G : G.length === 1 ? "0" + G : '00';
     B = Math.round(B * 255).toString(16);
-    B = B.length === 2 ? B : B.length === 1 ? "0" + B : "00";
+    B = B.length === 2 ? B : B.length === 1 ? "0" + B : '00';
 
     return ["#", R, G, B].join("");
 };
 
 /**
  * Converts a color from the RGB color space into the HSV space. Input can be any valid HTML/CSS color definition.
- * @param {String,Array,Number} color A valid HTML or CSS styled color value, e.g. '#12ab21', '#abc', 'black',
+ * @param {String|Array|Number} color A valid HTML or CSS styled color value, e.g. '#12ab21', '#abc', 'black'
  * or 'rgb(12, 132, 233)'. This can also be an array containing three color values either from 0.0 to 1.0 or
  * from 0 to 255. They will be interpreted as red, green, and blue values. In case this is a number this method
- * expects the parameters ag and ab.
+ * expects the parameters ag and ab. See <a href="https://www.had2know.org/technology/hsv-rgb-conversion-formula-calculator.html">https://www.had2know.org/technology/hsv-rgb-conversion-formula-calculator.html</a>.
  * @param {Number} ag
  * @param {Number} ab
- * @returns {Array} Contains the h, s, and v value in this order.
- * @see https://www.had2know.org/technology/hsv-rgb-conversion-formula-calculator.html
+ * @returns {Array} Contains the numbers h, s, and v value in this order.
+ *
  */
 JXG.rgb2hsv = function (color, ag, ab) {
     var r, g, b, fr, fg, fb, fmax, fmin, h, s, v, max, min;
@@ -536,7 +558,7 @@ JXG.rgb2hsv = function (color, ag, ab) {
 
 /**
  * Converts a color from the RGB color space into the LMS space. Input can be any valid HTML/CSS color definition.
- * @param {String,Array,Number} color A valid HTML or CSS styled color value, e.g. '#12ab21', '#abc', 'black',
+ * @param {String|Array|Number} color A valid HTML or CSS styled color value, e.g. '#12ab21', '#abc', 'black'
  * or 'rgb(12, 132, 233)'. This can also be an array containing three color values either from 0.0 to 1.0 or
  * from 0 to 255. They will be interpreted as red, green, and blue values. In case this is a number this method
  * expects the parameters ag and ab.
@@ -660,8 +682,8 @@ JXG.rgba2rgbo = function (rgba) {
     var opacity;
 
     if (rgba.length === 9 && rgba.charAt(0) === "#") {
-        opacity = parseInt(rgba.substr(7, 2).toUpperCase(), 16) / 255;
-        rgba = rgba.substr(0, 7);
+        opacity = parseInt(rgba.slice(7, 9).toUpperCase(), 16) / 255;
+        rgba = rgba.slice(0, 7);
     } else {
         opacity = 1;
     }
@@ -671,14 +693,16 @@ JXG.rgba2rgbo = function (rgba) {
 
 /**
  * Generates a RGBA color value like #112233AA from it's RGB and opacity parts.
- * @param {String} rgb A RGB color value.
+ * @param {String|Array} rgb A valid HTML or CSS styled color value, e.g. '#12ab21', '#abc', 'black'
+ * or 'rgb(12, 132, 233)'. This can also be an array containing three color values either from 0.0 to 1.0 or
+ * from 0 to 255. They will be interpreted as red, green, and blue values.
  * @param {Number} o The desired opacity >=0, <=1.
  * @returns {String} The RGBA color value.
  */
 JXG.rgbo2rgba = function (rgb, o) {
     var rgba;
 
-    if (rgb === "none") {
+    if (rgb === "none" || rgb === 'transparent') {
         return rgb;
     }
 
@@ -687,7 +711,7 @@ JXG.rgbo2rgba = function (rgb, o) {
         rgba = "0" + rgba;
     }
 
-    return rgb + rgba;
+    return JXG.rgb2hex(rgb) + rgba;
 };
 
 /**
@@ -699,9 +723,9 @@ JXG.rgb2bw = function (color) {
     var x,
         tmp,
         arr,
-        HexChars = "0123456789ABCDEF";
+        HexChars = '0123456789ABCDEF';
 
-    if (color === "none") {
+    if (color === 'none') {
         return color;
     }
 
@@ -739,9 +763,9 @@ JXG.rgb2cb = function (color, deficiency) {
         b2,
         c2,
         inflection,
-        HexChars = "0123456789ABCDEF";
+        HexChars = '0123456789ABCDEF';
 
-    if (color === "none") {
+    if (color === 'none') {
         return color;
     }
 
@@ -819,6 +843,84 @@ JXG.rgb2cb = function (color, deficiency) {
     color += tmp;
 
     return color;
+};
+
+/**
+ * Lightens (percent > 0) or darkens (percent < 0) the color by the specified factor.
+ * @param {String} color
+ * @param {Number} percent
+ * @returns {String}
+ */
+JXG.shadeColor = function (color, percent) {
+    var arr = JXG.rgbParser(color),
+        r = arr[0],
+        g = arr[1],
+        b = arr[2];
+
+    r = parseInt(r + 255 * percent);
+    g = parseInt(g + 255 * percent);
+    b = parseInt(b + 255 * percent);
+
+    r = (r > 0) ? r : 0;
+    g = (g > 0) ? g : 0;
+    b = (b > 0) ? b : 0;
+
+    r = (r < 255) ? r : 255;
+    g = (g < 255) ? g : 255;
+    b = (b < 255) ? b : 255;
+
+    r = Math.round(r);
+    g = Math.round(g);
+    b = Math.round(b);
+
+    return JXG.rgb2hex([r, g, b]);
+};
+
+/**
+ * Lightens the color by the specified factor.
+ * @param {String} color
+ * @param {Number} percent
+ * @returns {String}
+ *
+ * @see JXG.shadeColor
+ */
+JXG.lightenColor = function (color, percent) {
+    return JXG.shadeColor(color, percent);
+};
+
+/**
+ * Darkens the color by the specified factor.
+ * @param {String} color
+ * @param {Number} percent
+ * @returns {String}
+ *
+ * @see JXG.shadeColor
+ */
+JXG.darkenColor = function (color, percent) {
+    return JXG.shadeColor(color, -1 * percent);
+};
+
+/**
+ * Mix two colors together in variable proportion. Opacity is NOT included in the calculations.
+ * @param {String} color1
+ * @param {String} color2
+ * @param {Number} [percent=0.5] Balance point in percent.
+ * @returns {String}
+ */
+JXG.mixColor = function (color1, color2, percent) {
+    var rgb1 = JXG.rgbParser(color1),
+        rgb2 = JXG.rgbParser(color2),
+        rgb = [],
+        i;
+
+    // percent = percent ?? 0.5;
+    percent = (percent !== undefined && percent !== null) ? percent : 0.5;
+
+    for (i = 0; i < 3; i++) {
+        rgb[i] = parseInt(rgb1[i] * percent + rgb2[i] * (1 - percent));
+    }
+
+    return JXG.rgb2hex(rgb);
 };
 
 /**
@@ -912,51 +1014,51 @@ JXG.contrast = function (hexColor, darkColor, lightColor, threshold) {
  *
  */
 JXG.setClassicColors = function () {
-    JXG.Options.elements.strokeColor = "blue";
-    JXG.Options.elements.fillColor = "red";
-    JXG.Options.hatch.strokeColor = "blue";
+    JXG.Options.elements.strokeColor = 'blue';
+    JXG.Options.elements.fillColor = 'red';
+    JXG.Options.hatch.strokeColor = 'blue';
     JXG.Options.angle.fillColor = "#ff7f00";
     JXG.Options.angle.highlightFillColor = "#ff7f00";
     JXG.Options.angle.strokeColor = "#ff7f00";
-    JXG.Options.angle.label.strokeColor = "blue";
-    JXG.Options.arc.strokeColor = "blue";
-    JXG.Options.circle.center.fillColor = "red";
-    JXG.Options.circle.center.strokeColor = "blue";
-    JXG.Options.circumcircle.strokeColor = "blue";
-    JXG.Options.circumcircle.center.fillColor = "red";
-    JXG.Options.circumcircle.center.strokeColor = "blue";
-    JXG.Options.circumcirclearc.strokeColor = "blue";
-    JXG.Options.circumcirclesector.strokeColor = "blue";
-    JXG.Options.circumcirclesector.fillColor = "green";
-    JXG.Options.circumcirclesector.highlightFillColor = "green";
-    JXG.Options.conic.strokeColor = "blue";
-    JXG.Options.curve.strokeColor = "blue";
-    JXG.Options.incircle.strokeColor = "blue";
-    JXG.Options.incircle.center.fillColor = "red";
-    JXG.Options.incircle.center.strokeColor = "blue";
-    JXG.Options.inequality.fillColor = "red";
-    JXG.Options.integral.fillColor = "red";
-    JXG.Options.integral.curveLeft.color = "red";
-    JXG.Options.integral.curveRight.color = "red";
-    JXG.Options.line.strokeColor = "blue";
-    JXG.Options.point.fillColor = "red";
-    JXG.Options.point.strokeColor = "red";
-    JXG.Options.polygon.fillColor = "green";
-    JXG.Options.polygon.highlightFillColor = "green";
-    JXG.Options.polygon.vertices.strokeColor = "red";
-    JXG.Options.polygon.vertices.fillColor = "red";
-    JXG.Options.regularpolygon.fillColor = "green";
-    JXG.Options.regularpolygon.highlightFillColor = "green";
-    JXG.Options.regularpolygon.vertices.strokeColor = "red";
-    JXG.Options.regularpolygon.vertices.fillColor = "red";
-    JXG.Options.riemannsum.fillColor = "yellow";
-    JXG.Options.sector.fillColor = "green";
-    JXG.Options.sector.highlightFillColor = "green";
-    JXG.Options.semicircle.center.fillColor = "red";
-    JXG.Options.semicircle.center.strokeColor = "blue";
-    JXG.Options.slopetriangle.fillColor = "red";
-    JXG.Options.slopetriangle.highlightFillColor = "red";
-    JXG.Options.turtle.arrow.strokeColor = "blue";
+    JXG.Options.angle.label.strokeColor = 'blue';
+    JXG.Options.arc.strokeColor = 'blue';
+    JXG.Options.circle.center.fillColor = 'red';
+    JXG.Options.circle.center.strokeColor = 'blue';
+    JXG.Options.circumcircle.strokeColor = 'blue';
+    JXG.Options.circumcircle.center.fillColor = 'red';
+    JXG.Options.circumcircle.center.strokeColor = 'blue';
+    JXG.Options.circumcirclearc.strokeColor = 'blue';
+    JXG.Options.circumcirclesector.strokeColor = 'blue';
+    JXG.Options.circumcirclesector.fillColor = 'green';
+    JXG.Options.circumcirclesector.highlightFillColor = 'green';
+    JXG.Options.conic.strokeColor = 'blue';
+    JXG.Options.curve.strokeColor = 'blue';
+    JXG.Options.incircle.strokeColor = 'blue';
+    JXG.Options.incircle.center.fillColor = 'red';
+    JXG.Options.incircle.center.strokeColor = 'blue';
+    JXG.Options.inequality.fillColor = 'red';
+    JXG.Options.integral.fillColor = 'red';
+    JXG.Options.integral.curveLeft.color = 'red';
+    JXG.Options.integral.curveRight.color = 'red';
+    JXG.Options.line.strokeColor = 'blue';
+    JXG.Options.point.fillColor = 'red';
+    JXG.Options.point.strokeColor = 'red';
+    JXG.Options.polygon.fillColor = 'green';
+    JXG.Options.polygon.highlightFillColor = 'green';
+    JXG.Options.polygon.vertices.strokeColor = 'red';
+    JXG.Options.polygon.vertices.fillColor = 'red';
+    JXG.Options.regularpolygon.fillColor = 'green';
+    JXG.Options.regularpolygon.highlightFillColor = 'green';
+    JXG.Options.regularpolygon.vertices.strokeColor = 'red';
+    JXG.Options.regularpolygon.vertices.fillColor = 'red';
+    JXG.Options.riemannsum.fillColor = 'yellow';
+    JXG.Options.sector.fillColor = 'green';
+    JXG.Options.sector.highlightFillColor = 'green';
+    JXG.Options.semicircle.center.fillColor = 'red';
+    JXG.Options.semicircle.center.strokeColor = 'blue';
+    JXG.Options.slopetriangle.fillColor = 'red';
+    JXG.Options.slopetriangle.highlightFillColor = 'red';
+    JXG.Options.turtle.arrow.strokeColor = 'blue';
 };
 
 JXG.extend(

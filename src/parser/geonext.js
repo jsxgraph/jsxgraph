@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2023
+    Copyright 2008-2026
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -32,9 +32,9 @@
 /*global JXG: true, define: true*/
 /*jslint nomen: true, plusplus: true*/
 
-import JXG from "../jxg";
-import Const from "../base/constants";
-import Type from "../utils/type";
+import JXG from "../jxg.js";
+import Const from "../base/constants.js";
+import Type from "../utils/type.js";
 
 /**
  * Parser helper routines. The methods in here are for parsing expressions in Geonext Syntax.
@@ -93,7 +93,7 @@ JXG.GeonextParser = {
                     // Search for F or p.M before (...)^
                     pre = left.substring(0, pos + 1);
                     p = pos;
-                    while (p >= 0 && pre.substr(p, 1).match(/([\w.]+)/)) {
+                    while (p >= 0 && pre.slice(p, p + 1).match(/([\w.]+)/)) {
                         leftop = RegExp.$1 + leftop;
                         p -= 1;
                     }
@@ -171,7 +171,7 @@ JXG.GeonextParser = {
         }
 
         // "" means not defined. Here, we replace it by 0
-        te = te.replace(/""/g, "0");
+        te = te.replace(/""/g, '0');
         while (i >= 0) {
             left = te.slice(0, i);
             right = te.slice(i + 3);
@@ -452,7 +452,7 @@ JXG.GeonextParser = {
         term = term.replace(/&gt;/g, ">");
         term = term.replace(/&amp;/g, "&");
 
-        // Umwandeln der GEONExT-Syntax in JavaScript-Syntax
+        // Convert GEONExT syntax to JavaScript syntax
         newterm = term;
         newterm = this.replaceNameById(newterm, board);
         newterm = this.replaceIf(newterm);
@@ -462,13 +462,13 @@ JXG.GeonextParser = {
 
         for (i = 0; i < from.length; i++) {
             // sin -> Math.sin and asin -> Math.asin
-            expr = new RegExp(["(\\W|^)(", from[i], ")"].join(""), "ig");
+            expr = new RegExp(["(\\W|^)(", from[i], ")"].join(""), 'ig');
             newterm = newterm.replace(expr, ["$1", to[i]].join(""));
         }
-        newterm = newterm.replace(/True/g, "true");
-        newterm = newterm.replace(/False/g, "false");
-        newterm = newterm.replace(/fasle/g, "false");
-        newterm = newterm.replace(/Pi/g, "PI");
+        newterm = newterm.replace(/True/g, 'true');
+        newterm = newterm.replace(/False/g, 'false');
+        newterm = newterm.replace(/fasle/g, 'false');
+        newterm = newterm.replace(/Pi/g, 'PI');
         newterm = newterm.replace(/"/g, "'");
 
         return newterm;
@@ -494,7 +494,7 @@ JXG.GeonextParser = {
             if (elements.hasOwnProperty(el)) {
                 if (el !== me.name) {
                     if (elements[el].elementClass === Const.OBJECT_CLASS_TEXT) {
-                        if (!Type.evaluate(elements[el].visProp.islabel)) {
+                        if (!elements[el].evalVisProp('islabel')) {
                             elmask = el.replace(/\[/g, "\\[");
                             elmask = elmask.replace(/\]/g, "\\]");
 
@@ -544,9 +544,9 @@ JXG.GeonextParser = {
         term = term.replace(/&amp;/g, "&");
         newterm = term;
         newterm = this.replaceNameById(newterm, board, true);
-        newterm = newterm.replace(/True/g, "true");
-        newterm = newterm.replace(/False/g, "false");
-        newterm = newterm.replace(/fasle/g, "false");
+        newterm = newterm.replace(/True/g, 'true');
+        newterm = newterm.replace(/False/g, 'false');
+        newterm = newterm.replace(/fasle/g, 'false');
 
         return newterm;
     }

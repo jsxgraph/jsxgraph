@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2023
+    Copyright 2008-2026
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -36,11 +36,16 @@
  * @fileoverview In this file the Text element is defined.
  */
 
-import JXG from "../jxg";
-import Env from "../utils/env";
-import Type from "../utils/type";
+import JXG from "../jxg.js";
+import Env from "../utils/env.js";
+import Text from "../base/text.js";
+import Type from "../utils/type.js";
 
 var priv = {
+    /**
+     * @class
+     * @ignore
+     */
     CheckboxChangeEventHandler: function () {
         this._value = this.rendNodeCheckbox.checked;
         this.board.update();
@@ -48,16 +53,18 @@ var priv = {
 };
 
 /**
- * @class This element is used to provide a constructor for special texts containing a
- * form checkbox element.
- * <p>
+ * @class A text element that contains an HTML checkbox tag.
  * For this element, the attribute "display" has to have the value 'html' (which is the default).
- * <p>
+ *
+ * <p><b>Setting a CSS class:</b> The attribute <tt>cssClass</tt> affects the HTML div element that contains the checkbox element. To change the CSS properties of the HTML checkbox element a selector of the form
+ * <tt>.mycheck > checkbox { ... }</tt> has to be used. See the analog example for buttons:
+ * {@link Button}.
+ *
+ * <p><b>Access the checkbox element with JavaScript:</b>
  * The underlying HTML checkbox element can be accessed through the sub-object 'rendNodeCheck', e.g. to
  * add event listeners.
- * 
+ *
  * @pseudo
- * @description
  * @name Checkbox
  * @augments Text
  * @constructor
@@ -141,7 +148,7 @@ var priv = {
  *                 b1.setText('Texts are changed');
  *             }],
  *             {cssStyle: 'width:200px'});
- * 
+ *
  * </pre><div id="JXG31c6d070-354b-4f09-aab9-9aaa796f730c" class="jxgbox" style="width: 300px; height: 300px;"></div>
  * <script type="text/javascript">
  *     (function() {
@@ -156,16 +163,17 @@ var priv = {
  *                     b1.setText('Texts are changed');
  *                 }],
  *                 {cssStyle: 'width:200px'});
- * 
+ *
  *     })();
- * 
+ *
  * </script><pre>
- * 
+ *
  */
 JXG.createCheckbox = function (board, parents, attributes) {
     var t,
         par,
-        attr = Type.copyAttributes(attributes, board.options, "checkbox");
+        setTextBackup,
+        attr = Type.copyAttributes(attributes, board.options, 'checkbox');
 
     //if (parents.length !== 3) {
     //throw new Error("JSXGraph: Can't create checkbox with parent types '" +
@@ -181,9 +189,17 @@ JXG.createCheckbox = function (board, parents, attributes) {
             "</span>"
     ];
 
+    // Make sure the setText method is the original one. The JessieCode parser changes it during parsing.
+    setTextBackup = Text.prototype.setText;
+    Text.prototype.setText = Text.prototype._setText;
+
     // 1. Create checkbox element with empty label
     t = board.create("text", par, attr);
     t.type = Type.OBJECT_TYPE_CHECKBOX;
+
+    // Restore whichever setText method was set before this contructor was called.
+    Text.prototype.setText = setTextBackup;
+
 
     t.rendNodeCheckbox = t.rendNode.childNodes[0].childNodes[0];
     t.rendNodeLabel = t.rendNode.childNodes[0].childNodes[1];
@@ -191,7 +207,6 @@ JXG.createCheckbox = function (board, parents, attributes) {
     t.rendNodeTag = t.rendNodeCheckbox; // Needed for unified treatment in setAttribute
     t.rendNodeTag.disabled = !!attr.disabled;
 
-    // t.rendNodeLabel.innerHTML = parents[2];
     t.rendNodeCheckbox.id = t.rendNode.id + "_checkbox";
     t.rendNodeLabel.id = t.rendNode.id + "_label";
     t.rendNodeLabel.setAttribute("for", t.rendNodeCheckbox.id);
@@ -201,7 +216,7 @@ JXG.createCheckbox = function (board, parents, attributes) {
     t.setText(parents[2]);
 
     // This sets the font-size of the checkbox itself
-    t.visPropOld.fontsize = "0px";
+    t.visPropOld.fontsize = '0px';
     board.renderer.updateTextStyle(t, false);
 
     t.rendNodeCheckbox.checked = attr.checked;
@@ -219,6 +234,10 @@ JXG.createCheckbox = function (board, parents, attributes) {
         return this._value;
     };
 
+     /**
+     * @class
+     * @ignore
+     */
     t.update = function () {
         if (this.needsUpdate) {
             JXG.Text.prototype.update.call(this);

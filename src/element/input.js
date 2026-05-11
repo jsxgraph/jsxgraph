@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2023
+    Copyright 2008-2026
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -36,14 +36,21 @@
  * @fileoverview In this file the Text element is defined.
  */
 
-import JXG from "../jxg";
-import Env from "../utils/env";
-import Type from "../utils/type";
+import JXG from "../jxg.js";
+import Env from "../utils/env.js";
+import Text from "../base/text.js";
+import Type from "../utils/type.js";
 
 /**
+ * @class
  * @ignore
  */
 var priv = {
+    /**
+    * @class
+    * @ignore
+    */
+
     InputInputEventHandler: function (evt) {
         this._value = this.rendNodeInput.value;
         this.board.update();
@@ -53,17 +60,17 @@ var priv = {
 /**
  * @class This element is used to provide a constructor for special texts containing a
  * HTML form input element.
- * <p>
- * If the width of element is set with the attribute "cssStyle", the width of the
- * label must be added.
- * <p>
  * For this element, the attribute "display" has to have the value 'html' (which is the default).
- * <p>
- * The underlying HTML input field can be accessed through the sub-object 'rendNodeInput', e.g. to
+ *
+ * <p><b>Setting a CSS class:</b> The attribute <tt>cssClass</tt> affects the HTML div element that contains the input element. To change the CSS properties of the HTML input element a selector of the form
+ * <tt>.myinput > input { ... }</tt> has to be used. See the analog example for buttons:
+ * {@link Button}.
+ *
+ * <p><b>Access the input element with JavaScript:</b>
+ * The underlying HTML button element can be accessed through the sub-object 'rendNodeInput', e.g. to
  * add event listeners.
- * 
+ *
  * @pseudo
- * @description
  * @name Input
  * @augments Text
  * @constructor
@@ -124,19 +131,19 @@ var priv = {
  *      t1_board.update();
  *  }
  * </script><pre>
- * 
+ *
  * @example
  * // Add the `keyup` event to an input field
  * var A = board.create('point', [3, -2]);
  * var i = board.create('input', [-4, -4, "1", "x "]);
- * 
+ *
  * i.rendNodeInput.addEventListener("keyup", ( function () {
  *    var x = parseFloat(this.value);
  *    if (!isNaN(x)) {
  * 	   A.moveTo([x, 3], 100);
  *    }
  * }));
- * 
+ *
  * </pre><div id="JXG81c84fa7-3f36-4874-9e0f-d4b9e93e755b" class="jxgbox" style="width: 300px; height: 300px;"></div>
  * <script type="text/javascript">
  *     (function() {
@@ -144,28 +151,28 @@ var priv = {
  *             {boundingbox: [-5, 5, 5, -5], axis: true, showcopyright: false, shownavigation: false});
  *     var A = board.create('point', [3, -2]);
  *     var i = board.create('input', [-4, -4, "1", "x "]);
- *     
+ *
  *     i.rendNodeInput.addEventListener("keyup", ( function () {
  *        var x = parseFloat(this.value);
  *        if (!isNaN(x)) {
  *     	    A.moveTo([x, 3], 100);
  *        }
  *     }));
- * 
+ *
  *     })();
- * 
+ *
  * </script><pre>
- * 
+ *
  * @example
  * // Add the `change` event to an input field
  * var A = board.create('point', [3, -2]);
  * var i = board.create('input', [-4, -4, "1", "x "]);
- * 
+ *
  * i.rendNodeInput.addEventListener("change", ( function () {
  *    var x = parseFloat(i.Value());
  *    A.moveTo([x, 2], 100);
  * }));
- * 
+ *
  * </pre><div id="JXG51c4d78b-a7ad-4c34-a983-b3ddae6192d7" class="jxgbox" style="width: 300px; height: 300px;"></div>
  * <script type="text/javascript">
  *     (function() {
@@ -173,29 +180,44 @@ var priv = {
  *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
  *     var A = board.create('point', [3, -2]);
  *     var i = board.create('input', [-4, -4, "1", "x "]);
- *     
+ *
  *     i.rendNodeInput.addEventListener("change", ( function () {
  *        var x = parseFloat(i.Value());
  *        A.moveTo([x, 2], 100);
  *     }));
- * 
+ *
  *     })();
- * 
+ *
  * </script><pre>
- * 
- * 
+ *
+ * @example
+ * // change the width of an input field
+ *  let s = board.create('slider', [[-3, 3], [2, 3], [50, 100, 300]]);
+ *  let inp = board.create('input', [-6, 1, 'Math.sin(x)*x', 'f(x)='],{cssStyle:()=>'width:'+s.Value()+'px'});
+ *
+ * </pre><div id="JXG51c4d78b-a7ad-4c34-a983-b3ddae6192d7-1" class="jxgbox" style="width: 300px; height: 300px;"></div>
+ * <script type="text/javascript">
+ *     (function() {
+ *         var board = JXG.JSXGraph.initBoard('JXG51c4d78b-a7ad-4c34-a983-b3ddae6192d7-1',
+ *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
+ *  let s = board.create('slider', [[-3, 3], [2, 3], [50, 100, 300]]);
+ *  let inp = board.create('input', [-6, 1, 'Math.sin(x)*x', 'f(x)='],{cssStyle:()=>'width:'+s.Value()+'px'});
+ *     })();
+ *
+ * </script><pre>
+ *
  * @example
  *   Apply CSS classes to label and input tag
  *     &lt;style&gt;
  *         div.JXGtext_inp {
  *             font-weight: bold;
  *         }
- * 
+ *
  *         // Label
  *         div.JXGtext_inp > span > span {
  *             padding: 3px;
  *         }
- * 
+ *
  *         // Input field
  *         div.JXGtext_inp > span > input {
  *             width: 100px;
@@ -203,21 +225,21 @@ var priv = {
  *             border-radius: 25px;
  *         }
  *     &lt;/style&gt;
- * 
+ *
  * var inp = board.create('input', [-6, 1, 'x', 'y'], {
  *      CssClass: 'JXGtext_inp', HighlightCssClass: 'JXGtext_inp'
  * });
- * 
+ *
  * </pre>
  *         <style>
  *             div.JXGtext_inp {
  *                 font-weight: bold;
  *             }
- *     
+ *
  *             div.JXGtext_inp > span > span {
  *                 padding: 3px;
  *             }
- *     
+ *
  *             div.JXGtext_inp > span > input {
  *                 width: 100px;
  *                 border: solid 4px red;
@@ -230,44 +252,69 @@ var priv = {
  *         var board = JXG.JSXGraph.initBoard('JXGa3642ebd-a7dc-41ac-beb2-0c9e705ab8b4',
  *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
  *         var inp = board.create('input', [-6, 1, 'x', 'y'], {CssClass: 'JXGtext_inp', HighlightCssClass: 'JXGtext_inp'});
- * 
+ *
  *     })();
  * </script><pre>
- * 
+ *
  */
 JXG.createInput = function (board, parents, attributes) {
     var t,
         par,
-        attr = Type.copyAttributes(attributes, board.options, "input");
+        setTextBackup,
+        attr = Type.copyAttributes(attributes, board.options, 'input');
 
     par = [
         parents[0],
         parents[1],
         '<span style="display:inline; white-space:nowrap; padding:0px;">' +
-            '<span></span><input type="text" maxlength="' +
-            attr.maxlength +
-            '" style="width:100%"/>' +
-            "</span>"
+        '<label></label><input type="text" maxlength="' +
+        attr.maxlength +
+        '" style="width:100%" />' +
+        "</span>"
     ];
+
+    // Make sure the setText method is the original one. The JessieCode parser changes it during parsing.
+    setTextBackup = Text.prototype.setText;
+    Text.prototype.setText = Text.prototype._setText;
 
     // 1. Create input element with empty label
     t = board.create("text", par, attr);
     t.type = Type.OBJECT_TYPE_INPUT;
 
+    // Restore whichever setText method was set before this contructor was called.
+    Text.prototype.setText = setTextBackup;
+
     t.rendNodeLabel = t.rendNode.childNodes[0].childNodes[0];
     t.rendNodeInput = t.rendNode.childNodes[0].childNodes[1];
-    // t.rendNodeLabel.innerHTML = parents[3];
     t.rendNodeInput.value = parents[2];
     t.rendNodeTag = t.rendNodeInput; // Needed for unified treatment in setAttribute
     t.rendNodeTag.disabled = !!attr.disabled;
     t.rendNodeLabel.id = t.rendNode.id + "_label";
     t.rendNodeInput.id = t.rendNode.id + "_input";
+    t.rendNodeInput.setAttribute("aria-labelledby", t.rendNodeLabel.id);
 
     // 2. Set parents[3] (string|function) as label of the input element.
     // abstract.js selects the correct DOM element for the update
     t.setText(parents[3]);
 
     t._value = parents[2];
+
+    // 3.  capture keydown events on the input, and do not let them propagate.  The problem is that
+    // elevation controls on view3D use left and right, so editing the input triggers 3D pan.
+    t.rendNodeInput.addEventListener("keydown", (event) => {
+        // only trap left-and-right in case user wants input editing events
+        if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
+            event.stopPropagation();
+        }
+    });
+
+
+
+
+    /**
+    * @class
+    * @ignore
+    */
     t.update = function () {
         if (this.needsUpdate) {
             JXG.Text.prototype.update.call(this);
@@ -327,6 +374,12 @@ JXG.createInput = function (board, parents, attributes) {
      * </script><pre>
      *
      */
+
+    /**
+    * @class
+    * @ignore
+    */
+
     t.set = function (val) {
         this._value = val;
         this.rendNodeInput.value = val;
@@ -366,7 +419,7 @@ JXG.createInput = function (board, parents, attributes) {
     );
 
     // This sets the font-size of the input HTML element
-    t.visPropOld.fontsize = "0px";
+    t.visPropOld.fontsize = '0px';
     board.renderer.updateTextStyle(t, false);
 
     return t;

@@ -1,5 +1,16 @@
 # JSXGraph server scripts
 
+__Update 18.10.2024__
+
+Since v1.10.1 this module is retired !
+
+The server module needs a complete rewrite. The installation is error prone,
+since python 3.13 the module `cgi` is not longer supported.
+A modern implementation would use a different approach with nodejs or
+a comparable system for python.
+
+## Description
+
 JSXGraph is a cross-browser library for interactive geometry, function plotting,
 graphs, and data visualization in a web browser. It is implemented completely in
 JavaScript and uses SVG and VML.
@@ -11,35 +22,35 @@ plot that points in JSXGraph.
 
 Scripts available:
 
--   jxggroebner.py
+- `jxggroebner.py`
 
 ## General configuration
 
-By default server scripts are stored in the server subdirectory of the JavaScript
+By default server scripts are stored in the subdirectory `server` of the JavaScript
 files. If you want the scripts in another place you'll have to adjust
-JXG.serverBase
-either directly in JSX source (loadjsxgraph[InOneFile].js) or by setting it in a
-javascript in your page after loading jsxgraph.
+`JXG.serverBase`
+either directly in JSX source (loadjsxgraph[InOneFile].js) or by setting it with
+javascript in your page after loading JSXGraph.
 
 ## jxggroebner.py
 
--   **Required software**
+- __Required software__
 
-    -   CoCoA (https://cocoa.dima.unige.it/)
-    -   Python (https://python.org/)
-    -   numpy (https://numpy.scipy.org/)
-    -   matplotlib (https://matplotlib.sourceforge.net/)
+    - CoCoA (https://cocoa.dima.unige.it/)
+    - Python (https://python.org/)
+    - numpy (https://numpy.scipy.org/)
+    - matplotlib (https://matplotlib.sourceforge.net/)
 
--   **Setup**
+- __Setup__
 
 Install CoCoA so it can be started by just typing cocoa in a terminal or adjust
-the configuration in jsxgroebner.py. Install all of the python packages.
+the configuration in `jsxgroebner.py`. Install all of the python packages.
 
 Your webserver has to be configured to execute python .py scripts as cgi, e.g.
 for Apache you have to configure
 
-         Options +ExecCGI
-         AddHandler cgi-script .py
+    Options +ExecCGI
+    AddHandler cgi-script .py
 
 for the directory JSXGraph server scripts are in.
 

@@ -8,7 +8,7 @@ class Request(object):
         self._id = id
         self._data = data
 
-    def getValue(self, item, default = "empty"):
+    def getValue(self, item, default = 'empty'):
         if item == 'action':
             return self._action
         elif item == 'id':

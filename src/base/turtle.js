@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2023
+    Copyright 2008-2026
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -38,11 +38,11 @@
  * @author A.W.
  */
 
-import JXG from "../jxg";
-import Const from "./constants";
-import Mat from "../math/math";
-import GeometryElement from "./element";
-import Type from "../utils/type";
+import JXG from "../jxg.js";
+import Const from "./constants.js";
+import Mat from "../math/math.js";
+import GeometryElement from "./element.js";
+import Type from "../utils/type.js";
 
 /**
  * Constructs a new Turtle object.
@@ -122,14 +122,14 @@ JXG.Turtle = function (board, parents, attributes) {
 
     this.turtleIsHidden = false;
     this.board = board;
-    this.visProp.curveType = "plot";
+    this.visProp.curveType = 'plot';
 
     // Save visProp in this._attributes.
     // this._attributes is overwritten by setPenSize, setPenColor...
     // Setting the color or size affects the turtle from the time of
     // calling the method,
     // whereas Turtle.setAttribute affects all turtle curves.
-    this._attributes = Type.copyAttributes(this.visProp, board.options, "turtle");
+    this._attributes = Type.copyAttributes(this.visProp, board.options, 'turtle');
     delete this._attributes.id;
 
     x = 0;
@@ -174,8 +174,10 @@ JXG.Turtle = function (board, parents, attributes) {
             lt: 'left',
             penUp: 'penUp',
             pu: 'penUp',
+            up: 'penUp',
             penDown: 'penDown',
             pd: 'penDown',
+            down: 'penDown',
             clearScreen: 'clearScreen',
             cs: 'clearScreen',
             clean: 'clean',
@@ -183,19 +185,29 @@ JXG.Turtle = function (board, parents, attributes) {
             home: 'home',
             hideTurtle: 'hideTurtle',
             ht: 'hideTurtle',
+            hide: 'hideTurtle',
             showTurtle: 'showTurtle',
             st: 'showTurtle',
+            show: 'showTurtle',
             penSize: 'setPenSize',
+            setPenSize: 'setPenSize',
             penColor: 'setPenColor',
+            setPenColor: 'setPenColor',
+            highlightPenColor: 'setHighlightPenColor',
+            setHighlightPenColor: 'setHighlightPenColor',
             getPenColor: 'getPenColor',
+            Color: 'getPenColor',
             getHighlightPenColor: 'getHighlightPenColor',
+            HighlightColor: 'getHighlightPenColor',
             getPenSize: 'getPenSize',
+            Size: 'getPenSize',
             pushTurtle: 'pushTurtle',
             push: 'pushTurtle',
             popTurtle: 'popTurtle',
             pop: 'popTurtle',
             lookTo: 'lookTo',
             pos: 'pos',
+            Pos: 'pos',
             moveTo: 'moveTo',
             X: 'X',
             Y: 'Y'
@@ -406,14 +418,16 @@ JXG.extend(
          * @returns {JXG.Turtle} pointer to the turtle object
          */
         clearScreen: function () {
-            var i,
-                el,
-                len = this.objects.length;
-
-            for (i = 0; i < len; i++) {
-                el = this.objects[i];
-                this.board.removeObject(el);
-            }
+            // var i,
+            //     el,
+            //     len = this.objects.length;
+            // for (i = len - 1; i >= 0; i--) {
+            //     el = this.objects[i];
+            //     this.board.removeObject(el);
+            // }
+            // It is much faster to remove the whole array of pathes.
+            this.board.removeObject(this.objects);
+            this.objects = [];
 
             this.init(0, 0, 90);
             return this;
@@ -492,8 +506,8 @@ JXG.extend(
 
         /**
          * Get attribute of the last turtle curve object.
-         * 
-         * @param {String} key 
+         *
+         * @param {String} key
          * @returns attribute value
          * @private
          */
@@ -505,7 +519,7 @@ JXG.extend(
             } else {
                 pos = le - 1;
             }
-            return Type.evaluate(this.objects[pos].visProp[key]);
+            return this.objects[pos].evalVisProp(key);
         },
 
         /**
@@ -829,7 +843,7 @@ JXG.extend(
                 return this.pos[0];
             }
 
-            return this.evalAt(t, "X");
+            return this.evalAt(t, 'X');
         },
 
         /**
@@ -842,7 +856,7 @@ JXG.extend(
             if (!Type.exists(t)) {
                 return this.pos[1];
             }
-            return this.evalAt(t, "Y");
+            return this.evalAt(t, 'Y');
         },
 
         /**
@@ -905,7 +919,7 @@ JXG.extend(
 );
 
 /**
- * @class This element is used to provide a constructor for a turtle.
+ * @class A turtle is a graphic paradigm similar to the programming languages Logo or PostScript.
  * @pseudo
  * @description  Creates a new turtle
  * @name Turtle
@@ -922,7 +936,7 @@ JXG.createTurtle = function (board, parents, attributes) {
     var attr;
     parents = parents || [];
 
-    attr = Type.copyAttributes(attributes, board.options, "turtle");
+    attr = Type.copyAttributes(attributes, board.options, 'turtle');
     return new JXG.Turtle(board, parents, attr);
 };
 

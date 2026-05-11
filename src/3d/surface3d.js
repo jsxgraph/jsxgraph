@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2023
+    Copyright 2008-2026
         Matthias Ehmann,
         Carsten Miller,
         Andreas Walter,
@@ -28,9 +28,12 @@
  */
 /*global JXG:true, define: true*/
 
-import JXG from "../jxg";
-import Const from "../base/constants";
-import Type from "../utils/type";
+import JXG from "../jxg.js";
+import Const from "../base/constants.js";
+import Mat from "../math/math.js";
+import Geometry from "../math/geometry.js";
+import Tiling from "../math/tiling.js";
+import Type from "../utils/type.js";
 
 /**
  * Constructor for 3D surfaces.
@@ -55,93 +58,368 @@ JXG.Surface3D = function (view, F, X, Y, Z, range_u, range_v, attributes) {
         Const.OBJECT_TYPE_SURFACE3D,
         Const.OBJECT_CLASS_3D
     );
-    this.constructor3D(view, "surface3d");
+    this.constructor3D(view, 'surface3d');
 
     this.board.finalizeAdding(this);
 
-    this.F = F;
+    /**
+     * Internal function defining the surface
+     * without applying any transformations.
+     *
+     * @function
+     * @param {Number} u
+     * @param {Number} v
+     * @returns Array [x, y, z] of length 3
+     * @private
+     */
+    this._F = F;
 
     /**
-     * Function which maps (u, v) to x; i.e. it defines the x-coordinate of the surface
+     * Internal function which maps (u, v) to x; i.e. it defines the x-coordinate of the surface
+     * without applying any transformations.
      * @function
+     * @param {Number} u
+     * @param {Number} v
      * @returns Number
+     * @private
      */
-    this.X = X;
+    this._X = X;
 
     /**
-     * Function which maps (u, v) to y; i.e. it defines the y-coordinate of the surface
+     * Internal function which maps (u, v) to y; i.e. it defines the y-coordinate of the surface
+     * without applying any transformations.
      * @function
+     * @param {Number} u
+     * @param {Number} v
      * @returns Number
+     * @private
      */
-    this.Y = Y;
+    this._Y = Y;
 
     /**
-     * Function which maps (u, v) to z; i.e. it defines the x-coordinate of the surface
+     * Internal function which maps (u, v) to z; i.e. it defines the z-coordinate of the surface
+     * without applying any transformations.
      * @function
+     * @param {Number} u
+     * @param {Number} v
      * @returns Number
+     * @private
      */
-    this.Z = Z;
+    this._Z = Z;
 
-    if (this.F !== null) {
-        this.X = function (u, v) {
-            return this.F(u, v)[0];
+    if (this._F !== null) {
+        this._X = function (u, v) {
+            return this._F(u, v)[0];
         };
-        this.Y = function (u, v) {
-            return this.F(u, v)[1];
+        this._Y = function (u, v) {
+            return this._F(u, v)[1];
         };
-        this.Z = function (u, v) {
-            return this.F(u, v)[2];
+        this._Z = function (u, v) {
+            return this._F(u, v)[2];
         };
+    } else {
+        if (this._X !== null) {
+            this._F = function(u, v) {
+                return [this._X(u, v), this._Y(u, v), this._Z(u, v)];
+            };
+        }
     }
+
+    /**
+     * If the surface is constructed with attribute `style:'triangle'` or `style:'rectangle'`,
+     * a polyhodron3d-element is used for visualization.
+     *
+     * @name polyhedron
+     * @memberOf JXG.Surface3D
+     * @type Polyhedron3D
+     * @default null
+     * @private
+     */
+    this.polyhedron = null;
 
     this.range_u = range_u;
     this.range_v = range_v;
+
+    this.dataX = null;
+    this.dataY = null;
+    this.dataZ = null;
+    this.points = [];
 
     this.methodMap = Type.deepCopy(this.methodMap, {
         // TODO
     });
 };
 JXG.Surface3D.prototype = new JXG.GeometryElement();
-Type.copyPrototypeMethods(JXG.Surface3D, JXG.GeometryElement3D, "constructor3D");
+Type.copyPrototypeMethods(JXG.Surface3D, JXG.GeometryElement3D, 'constructor3D');
 
 JXG.extend(
     JXG.Surface3D.prototype,
     /** @lends JXG.Surface3D.prototype */ {
 
         /**
-         * @ignore
+         * Update the 3D coordinates of the wireframe mesh.
+         * @returns {JXG.Surface3D} Reference to the element.
+         * @see JXG.Surface3D#updateCoords
          */
-        updateDataArray: function () {
-            var steps_u = Type.evaluate(this.visProp.stepsu),
-                steps_v = Type.evaluate(this.visProp.stepsv),
-                r_u = Type.evaluate(this.range_u),
-                r_v = Type.evaluate(this.range_v),
-                func,
-                res;
+        updateWireframe: function () {
+            var steps_u, steps_v,
+                i_u, i_v,
+                r_u, r_v,
+                s_u, s_v,
+                e_u, e_v,
+                delta_u, delta_v,
+                u, v,
+                c3d = [1, 0, 0, 0];
 
-            if (this.F !== null) {
-                func = this.F;
-            } else {
-                func = [this.X, this.Y, this.Z];
+            if (this.evalVisProp('type') !== 'wireframe') {
+                return this;
             }
-            res = this.view.getMesh(func, r_u.concat([steps_u]), r_v.concat([steps_v]));
+            this.points = [];
 
-            return { X: res[0], Y: res[1] };
+            steps_u = Math.max(this.evalVisProp('stepsu'), 1);
+            steps_v = Math.max(this.evalVisProp('stepsv'), 1);
+            r_u = Type.evaluate(this.range_u);
+            r_v = Type.evaluate(this.range_v);
+            s_u = Type.evaluate(r_u[0]);
+            s_v = Type.evaluate(r_v[0]);
+            e_u = Type.evaluate(r_u[1]);
+            e_v = Type.evaluate(r_v[1]);
+            delta_u = (e_u - s_u) / (steps_u);
+            delta_v = (e_v - s_v) / (steps_v);
+
+            for (i_u = 0, u = s_u; i_u <= steps_u; i_u++, u += delta_u) {
+                this.points.push([]);
+                for (i_v = 0, v = s_v; i_v <= steps_v; i_v++, v += delta_v) {
+                    c3d = this.F(u, v);
+                    c3d.unshift(1);
+                    this.points[i_u].push(c3d);
+                }
+            }
+
+            return this;
         },
 
+        /**
+         * Update the coordinates of the wireframe model of the surface3d.
+         * Applies either transformation or updates wireframe coordinates.
+         *
+         * @returns {JXG.Surface3D} Reference to the element.
+         * @see JXG.Surface3D#updateWireframe
+         * @see JXG.Surface3D#updateTransform
+         */
+        updateCoords: function () {
+            if (this._F !== null) {
+                this.updateWireframe();
+            } else {
+                this.updateTransform();
+            }
+            return this;
+        },
+
+        /**
+         * Generic function which evaluates the function term of the surface
+         * and applies its transformations.
+         * @param {Number} u
+         * @param {Number} v
+         * @returns
+         */
+        evalF: function(u, v) {
+            var t, i,
+                c3d = [0, 0, 0, 0];
+
+            if (this.transformations.length === 0 || !Type.exists(this.baseElement)) {
+                c3d = this._F(u, v);
+                return c3d;
+            }
+
+            t = this.transformations;
+            for (i = 0; i < t.length; i++) {
+                t[i].update();
+            }
+
+            if (this === this.baseElement) {
+                c3d = this._F(u, v);
+            } else {
+                c3d = this.baseElement.evalF(u, v);
+            }
+            c3d.unshift(1);
+            c3d = Mat.matVecMult(t[0].matrix, c3d);
+            for (i = 1; i < t.length; i++) {
+                c3d = Mat.matVecMult(t[i].matrix, c3d);
+            }
+
+            return c3d.slice(1);
+        },
+
+        /**
+         * Function defining the surface plus applying transformations.
+         * @param {Number} u
+         * @param {Number} v
+        * @returns Array [x, y, z] of length 3
+         */
+        F: function(u, v) {
+            return this.evalF(u, v);
+        },
+
+        /**
+        * Function which maps (u, v) to z; i.e. it defines the x-coordinate of the surface
+        * plus applying transformations.
+        * @param {Number} u
+        * @param {Number} v
+        * @returns Number
+        */
+        X: function(u, v) {
+            return this.evalF(u, v)[0];
+        },
+
+        /**
+        * Function which maps (u, v) to y; i.e. it defines the y-coordinate of the surface
+        * plus applying transformations.
+        * @param {Number} u
+        * @param {Number} v
+        * @returns Number
+        */
+        Y: function(u, v) {
+            return this.evalF(u, v)[1];
+        },
+
+        /**
+        * Function which maps (u, v) to z; i.e. it defines the z-coordinate of the surface
+        * plus applying transformations.
+        * @param {Number} u
+        * @param {Number} v
+        * @returns Number
+        */
+        Z: function(u, v) {
+            return this.evalF(u, v)[2];
+        },
+
+        /**
+         * @class
+         * @ignore
+         */
+        updateDataArray2D: function () {
+            var i, j, len_u, len_v,
+                dataX = [],
+                dataY = [],
+                c2d,
+                steps_u = this.evalVisProp('stepsu'),
+                steps_v = this.evalVisProp('stepsv');
+
+            len_u = this.points.length;
+            if (len_u !== 0) {
+                len_v = this.points[0].length;
+
+                for (i = 0; i < len_u; i++) {
+                    if (steps_u > 0) { // If steps_u == 0: create 1 dimensional wireframe
+                        for (j = 0; j < len_v; j++) {
+                            c2d = this.view.project3DTo2D(this.points[i][j]);
+                            dataX.push(c2d[1]);
+                            dataY.push(c2d[2]);
+                        }
+                    }
+                    dataX.push(NaN);
+                    dataY.push(NaN);
+                }
+
+                for (j = 0; j < len_v; j++) {
+                    if (steps_v > 0) { // If steps_v == 0: create 1 dimensional wireframe
+                        for (i = 0; i < len_u; i++) {
+                            c2d = this.view.project3DTo2D(this.points[i][j]);
+                            dataX.push(c2d[1]);
+                            dataY.push(c2d[2]);
+                        }
+                    }
+                    dataX.push(NaN);
+                    dataY.push(NaN);
+                }
+            }
+
+            return {X: dataX, Y: dataY};
+        },
+
+        addTransform: function (el, transform) {
+            this.addTransformGeneric(el, transform);
+            return this;
+        },
+
+        updateTransform: function () {
+            var t, c, i, j, k,
+                len_u, len_v;
+
+            if (this.transformations.length === 0 || this.baseElement === null ||
+                Type.exists(this._F) // Transformations have only to be applied here
+                                     // if the curve is defined by arrays
+            ) {
+                return this;
+            }
+
+            t = this.transformations;
+            for (i = 0; i < t.length; i++) {
+                t[i].update();
+            }
+            if (this !== this.baseElement) {
+                this.points = [];
+            }
+
+            len_u = this.baseElement.points.length;
+            if (len_u > 0) {
+                len_v = this.baseElement.points[0].length;
+                for (i = 0; i < len_u; i++) {
+                    if (this !== this.baseElement) {
+                        this.points.push([]);
+                    }
+                    for (j = 0; j < len_v; j++) {
+                        if (this === this.baseElement) {
+                            c = this.points[i][j];
+                        } else {
+                            c = this.baseElement.points[i][j];
+                        }
+                        for (k = 0; k < t.length; k++) {
+                            c = Mat.matVecMult(t[k].matrix, c);
+                        }
+
+                        if (this === this.baseElement) {
+                            this.points[i][j] = c;
+                        } else {
+                            this.points[i].push(c);
+                        }
+                    }
+                }
+            }
+
+            return this;
+        },
+
+        updateDataArray: function() { /* stub */ },
+
         update: function () {
+            if (this.needsUpdate) {
+                this.updateDataArray();
+                this.updateCoords();
+            }
             return this;
         },
 
         updateRenderer: function () {
             this.needsUpdate = false;
             return this;
+        },
+
+        projectCoords: function (p, params) {
+            return Geometry.projectCoordsToParametric(p, this, 2, params);
         }
+
+        // Use method from element3d.js
+        // projectScreenCoords: function (pScr, params, cyclic) {
+        //     // this.initParamsIfNeeded(params);
+        //     return Geometry.projectScreenCoordsToParametric(pScr, this, params, cyclic);
+        // }
     }
 );
 
 /**
- * @class This element creates a 3D parametric surface.
+ * @class A 3D parametric surface visualizes a map (u, v) &rarr; [X(u, v), Y(u, v), Z(u, v)].
  * @pseudo
  * @description A 3D parametric surface is defined by a function
  *    <i>F: R<sup>2</sup> &rarr; R<sup>3</sup></i>.
@@ -180,7 +458,7 @@ JXG.extend(
  * <script type="text/javascript">
  *     (function() {
  *         var board = JXG.JSXGraph.initBoard('JXG52da0ecc-1ba9-4d41-850c-36e5120025a5',
- *             {boundingbox: [-8, 8, 8,-8], axis: false, showcopyright: false, shownavigation: false});
+ *             {boundingbox: [-8, 8, 8,-8], axis: false, pan: {enabled: false}, showcopyright: false, shownavigation: false});
  *     var view = board.create('view3d',
  *            [[-6, -3], [8, 8],
  *            [[-5, 5], [-5, 5], [-5, 5]]]);
@@ -205,9 +483,25 @@ JXG.extend(
 JXG.createParametricSurface3D = function (board, parents, attributes) {
     var view = parents[0],
         F, X, Y, Z,
-        range_u, range_v, attr, el;
+        range_u, range_v, attr, attr2d,
+        base = null,
+        transform = null,
+        coords, surface,// steps,
+        tiling, type,
+        // colormap:
+        m, ma, mi, ma_a, mi_a, s, v,
+        el;
 
-    if (parents.length === 4) {
+    if (parents.length === 3) {
+        base = parents[1];
+        transform = parents[2];
+        F = null;
+        X = null;
+        Y = null;
+        Z = null;
+
+    } else if (parents.length === 4) {
+        // [view, F, range_u, range_v]
         F = parents[1];
         range_u = parents[2];
         range_v = parents[3];
@@ -215,6 +509,7 @@ JXG.createParametricSurface3D = function (board, parents, attributes) {
         Y = null;
         Z = null;
     } else {
+        // [view, X, Y, Z, range_u, range_v]
         X = parents[1];
         Y = parents[2];
         Z = parents[3];
@@ -223,17 +518,27 @@ JXG.createParametricSurface3D = function (board, parents, attributes) {
         F = null;
     }
 
-    attr = Type.copyAttributes(attributes, board.options, "surface3d");
+    attr = Type.copyAttributes(attributes, board.options, 'surface3d');
     el = new JXG.Surface3D(view, F, X, Y, Z, range_u, range_v, attr);
 
-    attr = el.setAttr2D(attr);
-    el.element2D = view.create("curve", [[], []], attr);
+    tiling = el.evalVisProp('tiling');
+    type = el.evalVisProp('type');
+
+    // Wireframe
+    attr2d = el.setAttr2D(attr);
+    el.element2D = view.create("curve", [[], []], attr2d);
+    el.element2D.view = view;
+    if (base !== null) {
+        el.addTransform(base, transform);
+        el.addParents(base);
+    }
 
     /**
+     * @class
      * @ignore
      */
     el.element2D.updateDataArray = function () {
-        var ret = el.updateDataArray();
+        var ret = el.updateDataArray2D();
         this.dataX = ret.X;
         this.dataY = ret.Y;
     };
@@ -241,6 +546,112 @@ JXG.createParametricSurface3D = function (board, parents, attributes) {
     el.inherits.push(el.element2D);
     el.element2D.setParents(el);
 
+    // Set style
+    if (type !== 'wireframe') {
+
+        if (tiling === 'triangle' || tiling === 'rectangle') {
+            if (tiling === 'triangle') {
+                // Check for tiling of surface: triangle
+                // In case tiling is set to triangle, we use JXG.Math.Tiling.triangulation
+                // to create a polyhedron representing the surface3d
+
+                // Steps used for triangulation is chosen as the maximum of stepsU and stepsV (see options3d)
+                // steps = Math.max(el.evalVisProp('stepsu'), el.evalVisProp('stepsv'));
+
+                // Uses steps and range of surface3d to create a base of triangles across the visible area of the surface3d object
+                surface = Tiling.triangulation(
+                    [el.range_u[0], el.range_v[0]],
+                    [el.range_u[0], el.range_v[1]],
+                    [el.range_u[1], el.range_v[1]],
+                    [el.range_u[1], el.range_v[0]],
+                    // Given ratio or equilateral triangle if stepsV==0
+                    el.evalVisProp('stepsu'), el.evalVisProp('stepsv')
+                );
+
+            } else if (tiling === "rectangle") {
+                // Check for tiling of functiongraph3d: rectangle
+                // In case tiling is set to rectangle, we use JXG.Math.Tiling.rectangulation
+                // to create a polyhedron representing the surface3d
+
+                // Use stepsU, stepsV (see options3d) and range of surface3d to create a base of rectangles across the visible area of the surface3d object
+                surface = Tiling.rectangulation(
+                    [el.range_u[0], el.range_v[0]],
+                    [el.range_u[0], el.range_v[1]],
+                    [el.range_u[1], el.range_v[1]],
+                    [el.range_u[1], el.range_v[0]],
+                    el.evalVisProp('stepsu'), el.evalVisProp('stepsv')
+                );
+            }
+        }
+
+        // attr.polyhedron.shader.enabled = false;
+        // attr.polyhedron.fillcolorarray = ['none'];
+        el.element2D.setAttribute({ visible: false });
+        // Eliminate the call to the expensive el.updateDataArray();
+        el.element2D.updateDataArray = function() {};
+
+        // mapMeshTo3D is used to map the 2d-points created with triangulation / rectangulation to 3D.
+        // These points are realized as functions to enable dynamic changes to the surface3d
+        // saves the dynamic points in coords
+        coords = Tiling.mapMeshTo3D(surface, el);
+
+        // Reincorporate the dynamic points in coords into surface
+        surface = [coords, surface[1]];
+
+        if (type === 'colormap') {
+            attr.polyhedron.shader.enabled = false;
+
+            // Static
+            m = el.evalVisProp('colormap.max');
+            ma = m[0];
+            ma_a = m[1];
+            m = el.evalVisProp('colormap.min');
+            mi = m[0];
+            mi_a = m[1];
+            s = el.evalVisProp('colormap.s');
+            v = el.evalVisProp('colormap.v');
+
+            attr.polyhedron.fillcolorarray = [];
+            attr.polyhedron.fillcolor = (self) => {
+                    var j, hsl,
+                        z = 0,
+                        p = self.polyhedron,
+                        face = p.faces[self.faceNumber],
+                        le = face.length;
+
+                    // Dynamic version
+                    // m = self.evalVisProp('max');
+                    // ma = m[0];
+                    // ma_a = m[1];
+                    // m = self.evalVisProp('min');
+                    // mi = m[0];
+                    // mi_a = m[1];
+                    if (le !== 0) {
+                        for (j = 0; j < le; j++) {
+                            z += p.coords[face[j]][3];
+                        }
+                        z /= le;
+                    }
+                    z = mi_a + (z - mi) * (ma_a - mi_a) / (ma - mi);
+
+                    // hsl = JXG.hsv2hsl(z, el.evalVisProp('colormap.s'), el.evalVisProp('colormap.v')); // Dynamic version - slower
+                    hsl = JXG.hsv2hsl(z, s, v);
+                    return `hsl(${z} ${hsl[1] * 100}% ${hsl[2] * 100}%)`;
+                };
+        } else if (type === 'shader') {
+            attr.polyhedron.shader.enabled = true;
+        } else {
+            // colorarray
+            attr.polyhedron.shader.enabled = false;
+        }
+
+        // Create the polyhedron representing the parametricsurface3d
+        el.polyhedron = view.create('polyhedron3d', surface, attr.polyhedron);
+        el.addChild(el.polyhedron);
+        el.inherits.push(el.polyhedron);
+        el.polyhedron.setParents(el);
+    }
+    // Wireframe
     el.element2D.prepareUpdate().update();
     if (!board.isSuspendedUpdate) {
         el.element2D.updateVisibility().updateRenderer();
@@ -251,7 +662,8 @@ JXG.createParametricSurface3D = function (board, parents, attributes) {
 JXG.registerElement("parametricsurface3d", JXG.createParametricSurface3D);
 
 /**
- * @class This element creates a 3D function graph.
+ * @class A 3D functiongraph visualizes a map (x, y) &rarr; f(x, y).
+ * The graph is a {@link Curve3D} element.
  * @pseudo
  * @description A 3D function graph is defined by a function
  *    <i>F: R<sup>2</sup> &rarr; R</i>.
@@ -261,7 +673,7 @@ JXG.registerElement("parametricsurface3d", JXG.createParametricSurface3D);
  * @constructor
  * @type Object
  * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
- * @param {Function_Array_Array} F,rangeX,rangeY  F(x,y) is a function returning a number, rangeX is the array containing
+ * @param {Function,String_Array_Array} F,rangeX,rangeY  F(x,y) is a function returning a number (or a JessieCode string), rangeX is the array containing
  * lower and upper bound for the range of x, rangeY is the array containing
  * lower and upper bound for the range of y.
  * @example
@@ -294,7 +706,7 @@ JXG.registerElement("parametricsurface3d", JXG.createParametricSurface3D);
  * <script type="text/javascript">
  *     (function() {
  *         var board = JXG.JSXGraph.initBoard('JXG87646dd4-9fe5-4c21-8734-089abc612515',
- *             {boundingbox: [-8, 8, 8,-8], axis: false, showcopyright: false, shownavigation: false});
+ *             {boundingbox: [-8, 8, 8,-8], axis: false, pan: {enabled: false}, showcopyright: false, shownavigation: false});
  *     var box = [-5, 5];
  *     var view = board.create('view3d',
  *         [
@@ -332,10 +744,14 @@ JXG.createFunctiongraph3D = function (board, parents, attributes) {
         Y = function (u, v) {
             return v;
         },
-        Z = parents[1],
+        Z = Type.createFunction(parents[1], board, 'x, y'),
         range_u = parents[2],
-        range_v = parents[3];
+        range_v = parents[3],
+        el;
 
-    return view.create("parametricsurface3d", [X, Y, Z, range_u, range_v], attributes);
+    el = view.create("parametricsurface3d", [X, Y, Z, range_u, range_v], attributes);
+    el.elType = 'functiongraph3d';
+
+    return el;
 };
 JXG.registerElement("functiongraph3d", JXG.createFunctiongraph3D);

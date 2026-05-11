@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2023
+    Copyright 2008-2026
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -39,32 +39,42 @@
  * the browser runs on is a tablet/cell or a desktop computer.
  */
 
-import JXG from "../jxg";
-import Type from "./type";
+import JXG from "../jxg.js";
+import Type from "./type.js";
 
 JXG.extendConstants(
     JXG,
     /** @lends JXG */ {
-        /**
-         * Determines the property that stores the relevant information in the event object.
-         * @type String
-         * @default 'touches'
-         * @private
-         */
-        touchProperty: "touches"
+        // /**
+        //  * Determines the property that stores the relevant information in the event object.
+        //  * @type String
+        //  * @default 'touches'
+        //  * @private
+        //  */
+        // touchProperty: "touches"
     }
 );
 
 JXG.extend(
     JXG,
     /** @lends JXG */ {
+
+        /**
+         * Upper bound on pixel coordinates. This is used in svg and canvas renderer to avoid limitations on numbers there.
+         * 2026: seems to be obsolete. Browser implementations support 32 floating point values.
+         * <p>
+         * 1.13+: unused
+         * @private
+         */
+        maxScreenCoord: 5000,
+
         /**
          * Determines whether evt is a touch event.
          * @param evt {Event}
          * @returns {Boolean}
          */
         isTouchEvent: function (evt) {
-            return JXG.exists(evt[JXG.touchProperty]);
+            return JXG.exists(evt['touches']); // Old iOS touch events
         },
 
         /**
@@ -95,7 +105,7 @@ JXG.extend(
             var n = -1;
 
             if (JXG.isTouchEvent(evt)) {
-                n = evt[JXG.touchProperty].length;
+                n = evt['touches'].length;
             }
 
             return n;
@@ -123,7 +133,10 @@ JXG.extend(
          * @type Boolean
          * @default false
          */
-        isBrowser: typeof window === "object" && typeof document === "object",
+        // isBrowser: Type.exists(window) && Type.exists(document) &&
+        //     typeof window === "object" && typeof document === "object",
+        isBrowser: typeof window !== 'undefined' && typeof document !== 'undefined' &&
+            typeof window === "object" && typeof document === "object",
 
         /**
          * Features of ECMAScript 6+ are available.
@@ -174,8 +187,8 @@ JXG.extend(
 
             // if (this.isNode()) {
             //     try {
-            //         // c = typeof module === "object" ? module.require("canvas") : $__canvas;
-            //         c = typeof module === "object" ? module.require("canvas") : import('canvas');
+            //         // c = typeof module === "object" ? module.require('canvas') : $__canvas;
+            //         c = typeof module === "object" ? module.require('canvas') : import('canvas');
             //         hasCanvas = !!c;
             //     } catch (err) {}
             // }
@@ -188,13 +201,13 @@ JXG.extend(
                 //     throw new Error('JXG.createCanvas not available.\n' +
                 //         'Install the npm package `canvas`\n' +
                 //         'and call:\n' +
-                //         '    import { createCanvas } from "canvas";\n' +
+                //         '    import { createCanvas } from 'canvas.js'\n' +
                 //         '    JXG.createCanvas = createCanvas;\n');
                 // }
             }
 
             return (
-                hasCanvas || (this.isBrowser && !!document.createElement("canvas").getContext)
+                hasCanvas || (this.isBrowser && !!document.createElement('canvas').getContext)
             );
         },
 
@@ -261,17 +274,19 @@ JXG.extend(
         /**
          * Detects if the user is using an Android powered device.
          * @returns {Boolean}
+         * @deprecated
          */
         isAndroid: function () {
             return (
                 Type.exists(navigator) &&
-                navigator.userAgent.toLowerCase().indexOf("android") > -1
+                navigator.userAgent.toLowerCase().indexOf('android') > -1
             );
         },
 
         /**
          * Detects if the user is using the default Webkit browser on an Android powered device.
          * @returns {Boolean}
+         * @deprecated
          */
         isWebkitAndroid: function () {
             return this.isAndroid() && navigator.userAgent.indexOf(" AppleWebKit/") > -1;
@@ -280,82 +295,131 @@ JXG.extend(
         /**
          * Detects if the user is using a Apple iPad / iPhone.
          * @returns {Boolean}
+         * @deprecated
          */
         isApple: function () {
             return (
                 Type.exists(navigator) &&
-                (navigator.userAgent.indexOf("iPad") > -1 ||
-                    navigator.userAgent.indexOf("iPhone") > -1)
+                (navigator.userAgent.indexOf('iPad') > -1 ||
+                    navigator.userAgent.indexOf('iPhone') > -1)
             );
         },
 
         /**
          * Detects if the user is using Safari on an Apple device.
+         * See https://evilmartians.com/chronicles/how-to-detect-safari-and-ios-versions-with-ease (2025)
          * @returns {Boolean}
+         * @deprecated
          */
         isWebkitApple: function () {
-            return (
-                this.isApple() && navigator.userAgent.search(/Mobile\/[0-9A-Za-z.]*Safari/) > -1
-            );
+            var is = ('GestureEvent' in window) && // Desktop and mobile
+                    (
+                        ('ongesturechange' in window) || // mobile webkit browsers and webview iOS
+                        (window !== undefined && // Desktop Safari
+                         'safari' in window &&
+                         'pushNotification' in window.safari)
+                    );
+            return is;
+
+            // return (
+            //     this.isApple() && navigator.userAgent.search(/Mobile\/[0-9A-Za-z.]*Safari/) > -1
+            // );
         },
 
         /**
          * Returns true if the run inside a Windows 8 "Metro" App.
          * @returns {Boolean}
+         * @deprecated
          */
         isMetroApp: function () {
             return (
                 typeof window === "object" &&
                 window.clientInformation &&
                 window.clientInformation.appVersion &&
-                window.clientInformation.appVersion.indexOf("MSAppHost") > -1
+                window.clientInformation.appVersion.indexOf('MSAppHost') > -1
             );
         },
 
         /**
          * Detects if the user is using a Mozilla browser
          * @returns {Boolean}
+         * @deprecated
          */
         isMozilla: function () {
             return (
                 Type.exists(navigator) &&
-                navigator.userAgent.toLowerCase().indexOf("mozilla") > -1 &&
-                navigator.userAgent.toLowerCase().indexOf("apple") === -1
+                navigator.userAgent.toLowerCase().indexOf('mozilla') > -1 &&
+                navigator.userAgent.toLowerCase().indexOf('apple') === -1
             );
         },
 
         /**
          * Detects if the user is using a firefoxOS powered device.
          * @returns {Boolean}
+         * @deprecated
          */
         isFirefoxOS: function () {
             return (
                 Type.exists(navigator) &&
-                navigator.userAgent.toLowerCase().indexOf("android") === -1 &&
-                navigator.userAgent.toLowerCase().indexOf("apple") === -1 &&
-                navigator.userAgent.toLowerCase().indexOf("mobile") > -1 &&
-                navigator.userAgent.toLowerCase().indexOf("mozilla") > -1
+                navigator.userAgent.toLowerCase().indexOf('android') === -1 &&
+                navigator.userAgent.toLowerCase().indexOf('apple') === -1 &&
+                navigator.userAgent.toLowerCase().indexOf('mobile') > -1 &&
+                navigator.userAgent.toLowerCase().indexOf('mozilla') > -1
             );
+        },
+
+        /**
+         * Detects if the user is using a desktop device, see <a href="https://stackoverflow.com/a/61073480">https://stackoverflow.com/a/61073480</a>.
+         * @returns {boolean}
+         *
+         * @deprecated
+         */
+        isDesktop: function () {
+            return true;
+            // console.log("isDesktop", screen.orientation);
+            // const navigatorAgent =
+            //     navigator.userAgent || navigator.vendor || window.opera;
+            // return !(
+            //     /(android|bb\d+|meego).+mobile|avantgo|bada\/|blackberry|blazer|compal|elaine|fennec|hiptop|iemobile|ip(hone|od)|iris|kindle|lge |maemo|midp|mmp|mobile.+firefox|netfront|opera m(ob|in)i|palm( os)?|phone|p(ixi|re)\/|plucker|pocket|psp|series([46])0|symbian|treo|up\.(browser|link)|vodafone|wap|windows ce|xda|xiino|android|ipad|playbook|silk/i.test(
+            //         navigatorAgent
+            //     ) ||
+            //     /1207|6310|6590|3gso|4thp|50[1-6]i|770s|802s|a wa|abac|ac(er|oo|s-)|ai(ko|rn)|al(av|ca|co)|amoi|an(ex|ny|yw)|aptu|ar(ch|go)|as(te|us)|attw|au(di|-m|r |s )|avan|be(ck|ll|nq)|bi(lb|rd)|bl(ac|az)|br([ev])w|bumb|bw-([nu])|c55\/|capi|ccwa|cdm-|cell|chtm|cldc|cmd-|co(mp|nd)|craw|da(it|ll|ng)|dbte|dc-s|devi|dica|dmob|do([cp])o|ds(12|-d)|el(49|ai)|em(l2|ul)|er(ic|k0)|esl8|ez([4-7]0|os|wa|ze)|fetc|fly([-_])|g1 u|g560|gene|gf-5|g-mo|go(\.w|od)|gr(ad|un)|haie|hcit|hd-([mpt])|hei-|hi(pt|ta)|hp( i|ip)|hs-c|ht(c([- _agpst])|tp)|hu(aw|tc)|i-(20|go|ma)|i230|iac([ \-/])|ibro|idea|ig01|ikom|im1k|inno|ipaq|iris|ja([tv])a|jbro|jemu|jigs|kddi|keji|kgt([ /])|klon|kpt |kwc-|kyo([ck])|le(no|xi)|lg( g|\/([klu])|50|54|-[a-w])|libw|lynx|m1-w|m3ga|m50\/|ma(te|ui|xo)|mc(01|21|ca)|m-cr|me(rc|ri)|mi(o8|oa|ts)|mmef|mo(01|02|bi|de|do|t([- ov])|zz)|mt(50|p1|v )|mwbp|mywa|n10[0-2]|n20[2-3]|n30([02])|n50([025])|n7(0([01])|10)|ne(([cm])-|on|tf|wf|wg|wt)|nok([6i])|nzph|o2im|op(ti|wv)|oran|owg1|p800|pan([adt])|pdxg|pg(13|-([1-8]|c))|phil|pire|pl(ay|uc)|pn-2|po(ck|rt|se)|prox|psio|pt-g|qa-a|qc(07|12|21|32|60|-[2-7]|i-)|qtek|r380|r600|raks|rim9|ro(ve|zo)|s55\/|sa(ge|ma|mm|ms|ny|va)|sc(01|h-|oo|p-)|sdk\/|se(c([-01])|47|mc|nd|ri)|sgh-|shar|sie([-m])|sk-0|sl(45|id)|sm(al|ar|b3|it|t5)|so(ft|ny)|sp(01|h-|v-|v )|sy(01|mb)|t2(18|50)|t6(00|10|18)|ta(gt|lk)|tcl-|tdg-|tel([im])|tim-|t-mo|to(pl|sh)|ts(70|m-|m3|m5)|tx-9|up(\.b|g1|si)|utst|v400|v750|veri|vi(rg|te)|vk(40|5[0-3]|-v)|vm40|voda|vulc|vx(52|53|60|61|70|80|81|83|85|98)|w3c([- ])|webc|whit|wi(g |nc|nw)|wmlb|wonu|x700|yas-|your|zeto|zte-/i.test(
+            //         navigatorAgent.substr(0, 4)
+            //     )
+            // );
+        },
+
+        /**
+         * Detects if the user is using a mobile device, see <a href="https://stackoverflow.com/questions/25542814/html5-detecting-if-youre-on-mobile-or-pc-with-javascript">https://stackoverflow.com/questions/25542814/html5-detecting-if-youre-on-mobile-or-pc-with-javascript</a>.
+         * @returns {boolean}
+         *
+         * @deprecated
+         *
+         */
+        isMobile: function () {
+            return true;
+            // return Type.exists(navigator) && /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
         },
 
         /**
          * Internet Explorer version. Works only for IE > 4.
          * @type Number
+         * @deprecated
          */
         ieVersion: (function () {
             var div,
                 all,
                 v = 3;
 
-            if (typeof document !== "object") {
+            if (typeof document === 'undefined' || document === null || typeof document !== 'object') {
                 return 0;
             }
 
-            div = document.createElement("div");
-            all = div.getElementsByTagName("i");
+            div = document.createElement('div');
+            all = div.getElementsByTagName('i');
 
             do {
-                div.innerHTML = "<!--[if gt IE " + ++v + "]><" + "i><" + "/i><![endif]-->";
+                div.innerHTML = "<!--[if gt IE " + (++v) + "]><" + "i><" + "/i><![endif]-->";
             } while (all[0]);
 
             return v > 4 ? v : undefined;
@@ -420,9 +484,9 @@ JXG.extend(
             originalDisplay = els.display;
 
             // show element
-            els.visibility = "hidden";
-            els.position = "absolute";
-            els.display = "block";
+            els.visibility = 'hidden';
+            els.position = 'absolute';
+            els.display = 'block';
 
             // read the dimension
             originalWidth = element.clientWidth;
@@ -489,7 +553,7 @@ JXG.extend(
             }
 
             if (!Type.exists(owner["x_internal" + type])) {
-                JXG.debug("no such type: " + type);
+                JXG.debug("removeEvent: no such type: " + type);
                 return;
             }
 
@@ -498,7 +562,7 @@ JXG.extend(
                 return;
             }
 
-            i = Type.indexOf(owner["x_internal" + type], fn, "origin");
+            i = Type.indexOf(owner["x_internal" + type], fn, 'origin');
 
             if (i === -1) {
                 JXG.debug("removeEvent: no such event function in internal list: " + fn);
@@ -516,7 +580,7 @@ JXG.extend(
                     obj.detachEvent("on" + type, owner["x_internal" + type][i]);
                 }
             } catch (e) {
-                JXG.debug("event not registered in browser: (" + type + " -- " + fn + ")");
+                JXG.debug("removeEvent: event not registered in browser: (" + type + " -- " + fn + ")");
             }
 
             owner["x_internal" + type].splice(i, 1);
@@ -565,7 +629,7 @@ JXG.extend(
             }
 
             doc = doc || document;
-            evtTouches = e[JXG.touchProperty];
+            evtTouches = e['touches']; // iOS touch events
 
             // touchend events have their position in "changedTouches"
             if (Type.exists(evtTouches) && evtTouches.length === 0) {
@@ -745,14 +809,14 @@ JXG.extend(
                         arr[j] = parseFloat(arr[j]);
                     }
 
-                    if (str.indexOf("matrix") === 0) {
+                    if (str.indexOf('matrix') === 0) {
                         cPos[0] += arr[4];
                         cPos[1] += arr[5];
-                    } else if (str.indexOf("translateX") === 0) {
+                    } else if (str.indexOf('translateX') === 0) {
                         cPos[0] += arr[0];
-                    } else if (str.indexOf("translateY") === 0) {
+                    } else if (str.indexOf('translateY') === 0) {
                         cPos[1] += arr[0];
-                    } else if (str.indexOf("translate") === 0) {
+                    } else if (str.indexOf('translate') === 0) {
                         cPos[0] += arr[0];
                         cPos[1] += arr[1];
                     }
@@ -777,15 +841,8 @@ JXG.extend(
          * @returns {Array} 3x3 transformation matrix without translation part. See {@link JXG.Board#updateCSSTransforms}.
          */
         getCSSTransformMatrix: function (obj) {
-            var i,
-                j,
-                str,
-                arrstr,
-                start,
-                len,
-                len2,
-                arr,
-                st,
+            var i, j, str, arrstr, arr,
+                start, len, len2, st,
                 doc = obj.ownerDocument,
                 t = [
                     "transform",
@@ -808,7 +865,7 @@ JXG.extend(
                     st.getPropertyValue("-moz-transform") ||
                     st.getPropertyValue("-ms-transform") ||
                     st.getPropertyValue("-o-transform") ||
-                    st.getPropertyValue("transform");
+                    st.getPropertyValue('transform');
             } else {
                 // Take the first transformation matrix
                 len = t.length;
@@ -820,6 +877,7 @@ JXG.extend(
                 }
             }
 
+            // Convert and reorder the matrix for JSXGraph
             if (str !== "") {
                 start = str.indexOf("(");
 
@@ -832,17 +890,17 @@ JXG.extend(
                         arr[j] = parseFloat(arr[j]);
                     }
 
-                    if (str.indexOf("matrix") === 0) {
+                    if (str.indexOf('matrix') === 0) {
                         mat = [
                             [1, 0, 0],
                             [0, arr[0], arr[1]],
                             [0, arr[2], arr[3]]
                         ];
-                    } else if (str.indexOf("scaleX") === 0) {
+                    } else if (str.indexOf('scaleX') === 0) {
                         mat[1][1] = arr[0];
-                    } else if (str.indexOf("scaleY") === 0) {
+                    } else if (str.indexOf('scaleY') === 0) {
                         mat[2][2] = arr[0];
-                    } else if (str.indexOf("scale") === 0) {
+                    } else if (str.indexOf('scale') === 0) {
                         mat[1][1] = arr[0];
                         mat[2][2] = arr[1];
                     }
@@ -877,7 +935,7 @@ JXG.extend(
          */
         timedChunk: function (items, process, context, callback) {
             //create a clone of the original
-            var todo = items.concat(),
+            var todo = items.slice(),
                 timerFun = function () {
                     var start = +new Date();
 

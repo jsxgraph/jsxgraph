@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2023
+    Copyright 2008-2026
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -33,12 +33,12 @@
 /*global JXG: true, define: true*/
 /*jslint nomen: true, plusplus: true*/
 
-import JXG from "../jxg";
+import JXG from "../jxg.js";
 
 var major = 1,
-    minor = 7,
+    minor = 13,
     patch = 0,
-    add = 'dev', //'dev' 'beta'
+    add = 'beta1', // 'dev' 'beta'
     version = major + '.' + minor + '.' + patch + (add ? '-' + add : ''),
     constants;
 
@@ -59,7 +59,15 @@ constants =
      * @name JXG.licenseText
      * @type String
      */
-    licenseText: "JSXGraph v" + version + " Copyright (C) see https://jsxgraph.org",
+    licenseText: "JSXGraph v" + version + " \u00A9 jsxgraph.org",
+
+    /**
+     * JSXGraph logo: base64 data-URL of img/png/screen/jsxgraph-logo_black-square-solid.svg
+     *
+     * @name JXG.licenseLogo
+     * @type String
+     */
+    licenseLogo: 'data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz48c3ZnIGlkPSJMb2dvIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxNzAuMDc4NzQwMiAxNzAuMDc4NzQwMiI+PHBhdGggZD0iTTY1LjE5NzM0NzMsMTEuMzM4NTgyN2MtOS42NjE5ODczLDAtMTguMzExMDM1Miw0LjQxNzcyNDYtMjQuMDM0NzksMTEuMzM4ODY3MmgxMDYuMjM5ODY4MnYxMDYuMjM5MDEzN2M2LjkyMDY1NDMtNS43MjM4NzcsMTEuMzM3ODkwNi0xNC4zNzI4MDI3LDExLjMzNzg5MDYtMjQuMDM0NDIzOFYxMS4zMzg1ODI3aC05My41NDI5Njg4WiIvPjxwYXRoIGQ9Ik0xMS4zMzg1ODI3LDY1LjE5Njc5OHY5My41NDM0NTdoOTMuNTQyOTY4OGMxNy4xOTMzNTk0LDAsMzEuMTgxNjQwNi0xMy45ODc3OTMsMzEuMTgxNjQwNi0zMS4xODExNTIzVjM0LjAxNTY0NTdINDIuNTIwMjIzM2MtMTcuMTkzMzU5NCwwLTMxLjE4MTY0MDYsMTMuOTg3NzkzLTMxLjE4MTY0MDYsMzEuMTgxMTUyM1pNODUuMDM5NzU0NiwxMzguODk3OTY5OUgzMS4xODEzNTYxdi01My44NTgzOTg0aDExLjMzNzg5MDZ2NDIuNTE5NTMxMmg0Mi41MjA1MDc4djExLjMzODg2NzJaTTkyLjEyNTY5MjEsNTEuMDIzNDU4MmMxNC44NDg2MzI4LDAsMjYuOTI4NzEwOSwxMi4wODA1NjY0LDI2LjkyODcxMDksMjYuOTI5MTk5MnMtMTIuMDgwMDc4MSwyNi45MjkxOTkyLTI2LjkyODcxMDksMjYuOTI5MTk5Mi0yNi45Mjg3MTA5LTEyLjA4MDU2NjQtMjYuOTI4NzEwOS0yNi45MjkxOTkyLDEyLjA4MDA3ODEtMjYuOTI5MTk5MiwyNi45Mjg3MTA5LTI2LjkyOTE5OTJaIi8+PHBhdGggZD0iTTkyLjEyNTY5MjEsOTMuNTQyOTg5NGM4LjU5NjY3OTcsMCwxNS41OTA4MjAzLTYuOTkzNjUyMywxNS41OTA4MjAzLTE1LjU5MDMzMnMtNi45OTQxNDA2LTE1LjU5MDMzMi0xNS41OTA4MjAzLTE1LjU5MDMzMi0xNS41OTA4MjAzLDYuOTkzNjUyMy0xNS41OTA4MjAzLDE1LjU5MDMzMiw2Ljk5NDE0MDYsMTUuNTkwMzMyLDE1LjU5MDgyMDMsMTUuNTkwMzMyWiIvPjwvc3ZnPg==',
 
     /**
      *  Constant: user coordinates relative to the coordinates system defined by the bounding box.
@@ -88,7 +96,7 @@ constants =
     OBJECT_TYPE_IMAGE: 10,
     OBJECT_TYPE_LINE: 11,
     OBJECT_TYPE_POINT: 12,
-    OBJECT_TYPE_SLIDER: 13,
+    OBJECT_TYPE_SLIDER: 13,// unused
     OBJECT_TYPE_CAS: 14,
     OBJECT_TYPE_GXTCAS: 15,
     OBJECT_TYPE_POLYGON: 16,
@@ -115,6 +123,17 @@ constants =
     OBJECT_TYPE_CURVE3D: 36,
     OBJECT_TYPE_SURFACE3D: 37,
 
+    OBJECT_TYPE_MEASUREMENT: 38,
+
+    OBJECT_TYPE_INTERSECTION_LINE3D: 39,
+    OBJECT_TYPE_SPHERE3D: 40,
+    OBJECT_TYPE_CIRCLE3D: 41,
+    OBJECT_TYPE_INTERSECTION_CIRCLE3D: 42,
+    OBJECT_TYPE_TEXT3D: 43,
+    OBJECT_TYPE_FACE3D: 44,
+    OBJECT_TYPE_POLYHEDRON3D: 45,
+    OBJECT_TYPE_POLYGON3D: 46,
+
     // IMPORTANT:
     // ----------
     // For being able to differentiate between the (sketchometry specific) SPECIAL_OBJECT_TYPEs and
@@ -129,112 +148,7 @@ constants =
     OBJECT_CLASS_AREA: 5,
     OBJECT_CLASS_OTHER: 6,
     OBJECT_CLASS_TEXT: 7,
-    OBJECT_CLASS_3D: 8,
-
-    // SketchReader constants
-    GENTYPE_ABC: 1, // unused
-    GENTYPE_AXIS: 2,
-    GENTYPE_MID: 3,
-
-    GENTYPE_REFLECTION: 4,
-    GENTYPE_MIRRORELEMENT: 5,
-
-    GENTYPE_REFLECTION_ON_LINE: 4,
-    GENTYPE_REFLECTION_ON_POINT: 5,
-    GENTYPE_TANGENT: 6,
-    GENTYPE_PARALLEL: 7,
-    GENTYPE_BISECTORLINES: 8,
-    GENTYPE_BOARDIMG: 9,
-    GENTYPE_BISECTOR: 10,
-    GENTYPE_NORMAL: 11,
-    GENTYPE_POINT: 12,
-    GENTYPE_GLIDER: 13,
-    GENTYPE_INTERSECTION: 14,
-    GENTYPE_CIRCLE: 15,
-    /**
-     * @ignore @deprecated NOT USED ANY MORE SINCE SKETCHOMETRY 2.0 (only for old constructions needed)
-     */
-    GENTYPE_CIRCLE2POINTS: 16,
-
-    GENTYPE_LINE: 17,
-    GENTYPE_TRIANGLE: 18,
-    GENTYPE_QUADRILATERAL: 19,
-    GENTYPE_TEXT: 20,
-    GENTYPE_POLYGON: 21,
-    GENTYPE_REGULARPOLYGON: 22,
-    GENTYPE_SECTOR: 23,
-    GENTYPE_ANGLE: 24,
-    GENTYPE_PLOT: 25,
-    GENTYPE_SLIDER: 26,
-    GENTYPE_TRUNCATE: 27,
-    GENTYPE_JCODE: 28,
-    GENTYPE_MOVEMENT: 29,
-    GENTYPE_COMBINED: 30,
-    GENTYPE_RULER: 31,
-    GENTYPE_SLOPETRIANGLE: 32,
-    GENTYPE_PERPSEGMENT: 33,
-    GENTYPE_LABELMOVEMENT: 34,
-    GENTYPE_VECTOR: 35,
-    GENTYPE_NONREFLEXANGLE: 36,
-    GENTYPE_REFLEXANGLE: 37,
-    GENTYPE_PATH: 38,
-    GENTYPE_DERIVATIVE: 39,
-    // 40 // unused ...
-    GENTYPE_DELETE: 41,
-    GENTYPE_COPY: 42,
-    GENTYPE_MIRROR: 43,
-    GENTYPE_ROTATE: 44,
-    GENTYPE_ABLATION: 45,
-    GENTYPE_MIGRATE: 46,
-    GENTYPE_VECTORCOPY: 47,
-    GENTYPE_POLYGONCOPY: 48,
-    //        GENTYPE_TRANSFORM: 48, // unused
-    // 49 ... 50 // unused ...
-
-    // IMPORTANT:
-    // ----------
-    // For being able to differentiate between the (GUI-specific) CTX and
-    // (CORE-specific) non-CTX steps, the non-CTX steps MUST NOT be changed
-    // to values > 50.
-
-    GENTYPE_CTX_TYPE_G: 51,
-    GENTYPE_CTX_TYPE_P: 52,
-    GENTYPE_CTX_TRACE: 53,
-    GENTYPE_CTX_VISIBILITY: 54,
-    GENTYPE_CTX_CCVISIBILITY: 55, // unused
-    GENTYPE_CTX_MPVISIBILITY: 56,
-    GENTYPE_CTX_WITHLABEL: 57,
-    GENTYPE_CTX_LABEL: 58,
-    GENTYPE_CTX_FIXED: 59,
-    GENTYPE_CTX_STROKEWIDTH: 60,
-    GENTYPE_CTX_LABELSIZE: 61,
-    GENTYPE_CTX_SIZE: 62,
-    GENTYPE_CTX_FACE: 63,
-    GENTYPE_CTX_STRAIGHT: 64,
-    GENTYPE_CTX_ARROW: 65,
-    GENTYPE_CTX_COLOR: 66,
-    GENTYPE_CTX_RADIUS: 67,
-    GENTYPE_CTX_COORDS: 68,
-    GENTYPE_CTX_TEXT: 69,
-    GENTYPE_CTX_ANGLERADIUS: 70,
-    GENTYPE_CTX_DOTVISIBILITY: 71,
-    GENTYPE_CTX_FILLOPACITY: 72,
-    GENTYPE_CTX_PLOT: 73,
-    GENTYPE_CTX_SCALE: 74,
-    GENTYPE_CTX_SLIDER_BOUND: 75,
-    GENTYPE_CTX_POINT1: 76,
-    GENTYPE_CTX_POINT2: 77,
-    GENTYPE_CTX_LABELSTICKY: 78,
-    GENTYPE_CTX_TYPE_I: 79,
-    GENTYPE_CTX_HASINNERPOINTS: 80,
-    GENTYPE_CTX_SLIDER_STEP: 81,
-    GENTYPE_CTX_SNAPTOGRID: 82,
-    GENTYPE_CTX_SNAPTOPOINTS: 83,
-    GENTYPE_CTX_STROKEDASH: 84,
-    GENTYPE_CTX_SLIDER_VALUE: 85,
-    GENTYPE_CTX_SECTORBORDERS: 86,
-    GENTYPE_CTX_CURVETAU: 87,
-    GENTYPE_CTX_SLIDER_POS: 88
+    OBJECT_CLASS_3D: 8
 };
 
 JXG.extendConstants(JXG, constants);

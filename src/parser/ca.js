@@ -33,14 +33,14 @@
  * @fileoverview Here, the computer algebra algorithms are implemented.
  */
 
-import JXG from "../jxg";
-import Type from "../utils/type";
-// import Const from "../base/constants";
-// import Text from "../base/text";
-// import Mat from "../math/math";
-// import Geometry from "../math/geometry";
-// import Statistics from "../math/statistics";
-// import Env from "../utils/env";
+import JXG from "../jxg.js";
+import Type from "../utils/type.js";
+// import Const from "../base/constants.js";
+// import Text from "../base/text.js";
+// import Mat from "../math/math.js";
+// import Geometry from "../math/geometry.js";
+// import Statistics from "../math/statistics.js";
+// import Env from "../utils/env.js";
 
 /**
  * A JessieCode object provides an interface to the parser and stores all variables and objects used within a JessieCode script.
@@ -121,7 +121,7 @@ JXG.extend(
                         this.createNode(
                             "node_op",
                             "op_execfun",
-                            this.createNode("node_var", "sqrt"),
+                            this.createNode("node_var", 'sqrt'),
                             [
                                 this.createNode(
                                     "node_op",
@@ -157,7 +157,7 @@ JXG.extend(
                     newNode = this.createNode(
                         "node_op",
                         "op_execfun",
-                        this.createNode("node_var", "cos"),
+                        this.createNode("node_var", 'cos'),
                         Type.deepCopy(arg)
                     );
                     break;
@@ -169,7 +169,7 @@ JXG.extend(
                         this.createNode(
                             "node_op",
                             "op_execfun",
-                            this.createNode("node_var", "sin"),
+                            this.createNode("node_var", 'sin'),
                             Type.deepCopy(arg)
                         )
                     );
@@ -186,7 +186,7 @@ JXG.extend(
                             this.createNode(
                                 "node_op",
                                 "op_execfun",
-                                this.createNode("node_var", "cos"),
+                                this.createNode("node_var", 'cos'),
                                 Type.deepCopy(arg)
                             ),
                             this.createNode("node_const", 2)
@@ -208,7 +208,7 @@ JXG.extend(
                                 this.createNode(
                                     "node_op",
                                     "op_execfun",
-                                    this.createNode("node_var", "sin"),
+                                    this.createNode("node_var", 'sin'),
                                     Type.deepCopy(arg)
                                 ),
                                 this.createNode("node_const", 2)
@@ -258,7 +258,7 @@ JXG.extend(
                                 this.createNode(
                                     "node_op",
                                     "op_execfun",
-                                    this.createNode("node_var", "log"),
+                                    this.createNode("node_var", 'log'),
                                     [Type.deepCopy(node.children[1][0])]
                                 )
                             )
@@ -318,7 +318,7 @@ JXG.extend(
                         this.createNode(
                             "node_op",
                             "op_execfun",
-                            this.createNode("node_var", "sqrt"),
+                            this.createNode("node_var", 'sqrt'),
                             [
                                 this.createNode(
                                     "node_op",
@@ -347,7 +347,7 @@ JXG.extend(
                             this.createNode(
                                 "node_op",
                                 "op_execfun",
-                                this.createNode("node_var", "sqrt"),
+                                this.createNode("node_var", 'sqrt'),
                                 [
                                     this.createNode(
                                         "node_op",
@@ -414,7 +414,7 @@ JXG.extend(
                     newNode = this.createNode(
                         "node_op",
                         "op_execfun",
-                        this.createNode("node_var", "cosh"),
+                        this.createNode("node_var", 'cosh'),
                         [Type.deepCopy(arg[0])]
                     );
                     break;
@@ -423,7 +423,7 @@ JXG.extend(
                     newNode = this.createNode(
                         "node_op",
                         "op_execfun",
-                        this.createNode("node_var", "sinh"),
+                        this.createNode("node_var", 'sinh'),
                         [Type.deepCopy(arg[0])]
                     );
                     break;
@@ -439,7 +439,7 @@ JXG.extend(
                             this.createNode(
                                 "node_op",
                                 "op_execfun",
-                                this.createNode("node_var", "tanh"),
+                                this.createNode("node_var", 'tanh'),
                                 [Type.deepCopy(arg[0])]
                             ),
                             this.createNode("node_const", 2.0)
@@ -455,7 +455,7 @@ JXG.extend(
                         this.createNode(
                             "node_op",
                             "op_execfun",
-                            this.createNode("node_var", "sqrt"),
+                            this.createNode("node_var", 'sqrt'),
                             [
                                 this.createNode(
                                     "node_op",
@@ -481,7 +481,7 @@ JXG.extend(
                         this.createNode(
                             "node_op",
                             "op_execfun",
-                            this.createNode("node_var", "sqrt"),
+                            this.createNode("node_var", 'sqrt'),
                             [
                                 this.createNode(
                                     "node_op",
@@ -548,7 +548,7 @@ JXG.extend(
                         */
                         case "op_execfun":
                             // f'(g(x))g'(x)
-                            if (node.children[0].value == "pow") {
+                            if (node.children[0].value == 'pow') {
                                 newNode = this.deriveElementary(node, varname);
                             } else {
                                 if (node.children[1].length === 0) {
@@ -660,7 +660,7 @@ JXG.extend(
                                         this.createNode(
                                             "node_op",
                                             "op_execfun",
-                                            this.createNode("node_var", "log"),
+                                            this.createNode("node_var", 'log'),
                                             [Type.deepCopy(node.children[0])]
                                         )
                                     )
@@ -696,14 +696,15 @@ JXG.extend(
         /**
          * f = map (x) -> x*sin(x);
          * Usages:
-         * h = D(f, x);
-         * h = map (x) -> D(f, x);
-         *
+         *   h = D(f, x);
+         *   h = map (x) -> D(f, x);
+         * or
+         *   D(x^2, x);
          */
         expandDerivatives: function (node, parent, ast) {
             var len, i, j, mapNode, codeNode,
                 ret, node2, newNode, mapName,
-                varname, vArray, order;
+                varname, vArray, order, isMap;
 
             ret = 0;
             if (!node) {
@@ -736,16 +737,32 @@ JXG.extend(
                 case "node_op":
                     switch (node.value) {
                         case "op_execfun":
-                            if (node.children[0] && node.children[0].value === "D") {
+                            if (node.children[0] && node.children[0].value === 'D') {
+                                /*
+                                 * Distinguish the cases:
+                                 *   D(f, x) where f is map -> isMap = true
+                                 * and
+                                 *   D(2*x, x), D(sin(x), x), ...  -> isMap = false
+                                 */
+                                isMap = false;
                                 if (node.children[1][0].type == "node_var") {
+                                    mapName = node.children[1][0].value;
+                                    mapNode = this.findMapNode(mapName, ast);
+                                    if (mapNode !== null) {
+                                        isMap = true;
+                                    }
+                                }
+
+                                if (isMap) {
                                     /*
-                                     * Derive map, that is compute D(f,x)
+                                     * Derivative of map, that is compute D(f,x)
                                      * where e.g. f = map (x) -> x^2
                                      *
                                      * First step: find node where the map is defined
                                      */
-                                    mapName = node.children[1][0].value;
-                                    mapNode = this.findMapNode(mapName, ast);
+                                    // Already done above
+                                    // mapName = node.children[1][0].value;
+                                    // mapNode = this.findMapNode(mapName, ast);
                                     vArray = mapNode.children[0];
 
                                     // Variable name for differentiation
@@ -757,8 +774,8 @@ JXG.extend(
                                     codeNode = mapNode.children[1];
                                 } else {
                                     /*
-                                     * Derive expression, e.g.
-                                     *     D(2*x, x)
+                                     * Derivative of expression, e.g.
+                                     *     D(2*x, x) or D(sin(x), x)
                                      */
                                     codeNode = node.children[1][0];
                                     vArray = ["x"];
@@ -767,7 +784,7 @@ JXG.extend(
                                     if (node.children[1].length >= 2) {
                                         varname = node.children[1][1].value;
                                     } else {
-                                        varname = "x";
+                                        varname = 'x';
                                     }
                                 }
 
@@ -1563,7 +1580,7 @@ JXG.extend(
                         node.value = 0.0;
                         return node;
                     }
-                    if (arg[0].type == "node_var" && arg[0].value == "PI") {
+                    if (arg[0].type == "node_var" && arg[0].value == 'PI') {
                         node.type = "node_const";
                         node.value = 0.0;
                         return node;
@@ -1592,7 +1609,7 @@ JXG.extend(
                         node.value = 1.0;
                         return node;
                     }
-                    if (arg[0].type == "node_var" && arg[0].value == "PI") {
+                    if (arg[0].type == "node_var" && arg[0].value == 'PI') {
                         node.type = "node_op";
                         node.value = "op_neg";
                         node.children = [this.createNode("node_const", 1.0)];

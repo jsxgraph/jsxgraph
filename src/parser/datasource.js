@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2023
+    Copyright 2008-2026
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -37,8 +37,8 @@
  * javascript arrays and HTML tables.
  */
 
-import JXG from "../jxg";
-import Type from "../utils/type";
+import JXG from "../jxg.js";
+import Type from "../utils/type.js";
 
 JXG.DataSource = function () {
     this.data = [];
@@ -138,15 +138,15 @@ JXG.extend(
 
             if (Type.exists(table)) {
                 // extract the data
-                row = table.getElementsByTagName("tr");
+                row = table.getElementsByTagName('tr');
                 this.data = [];
 
                 for (i = 0; i < row.length; i++) {
-                    col = row[i].getElementsByTagName("td");
+                    col = row[i].getElementsByTagName('td');
                     this.data[i] = [];
 
                     for (j = 0; j < col.length; j++) {
-                        cell = col[j].innerHTML;
+                        cell = col[j].innerText;
 
                         if (parseFloat(cell).toString() === cell) {
                             this.data[i][j] = parseFloat(cell);

@@ -13,7 +13,7 @@
 /*global JXG: true, define: true*/
 /*jslint nomen: true, plusplus: true, bitwise: true*/
 
-import JXG from "../jxg";
+import JXG from "../jxg.js";
 
 // constants
 var uuidCharsStr = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz",
@@ -33,7 +33,7 @@ JXG.Util.genUUID = function (prefix) {
 
     prefix = prefix || "";
 
-    if (prefix !== "" && prefix.substr(prefix.length - 1) !== "-") {
+    if (prefix !== "" && prefix.slice(prefix.length - 1) !== "-") {
         prefix = prefix + "-";
     }
 
@@ -41,7 +41,7 @@ JXG.Util.genUUID = function (prefix) {
         if (i === 8 || i === 13 || i === 18 || i === 23) {
             uuid[i] = "-";
         } else if (i === 14) {
-            uuid[i] = "4";
+            uuid[i] = '4';
         } else {
             if (rnd <= 0x02) {
                 rnd = (0x2000000 + Math.random() * 0x1000000) | 0;

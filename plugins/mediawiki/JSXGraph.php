@@ -1,6 +1,6 @@
 <?php
 /*
-    Copyright 2008-2023
+    Copyright 2008-2026
         Alfred Wassermann,
         Peter Wilfahrt
 

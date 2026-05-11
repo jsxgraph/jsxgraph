@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Plane–sphere intersection</title>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
+    <script type="text/javascript" src="../distrib/jsxgraphcore.js"></script>
+</head>
+<body>
+
+<div id="jxgbox" class="jxgbox" style="width:800px; height:800px; float:left"></div>
+
+<script type="text/javascript">
+    let board = JXG.JSXGraph.initBoard(
+        'jxgbox',
+        {
+            boundingbox: [-8, 8, 8,-8],
+            axis: false,
+            showcopyright: false,
+            shownavigation: false
+        }
+    );
+    let view = board.create(
+        'view3d',
+        [[-6, -3], [8, 8],
+        [[0, 3], [0, 3], [0, 3]]],
+        {
+            xPlaneRear: {fillOpacity: 0.2, gradient: null},
+            yPlaneRear: {fillOpacity: 0.2, gradient: null},
+            zPlaneRear: {fillOpacity: 0.2, gradient: null},
+            bank: {slider: {visible: true}}
+        }
+    );
+
+    // Control sliders
+    let offset = board.create(
+        'slider',
+        [
+            [-6, 7.5], [2, 7.5],
+            [0, 4/3, 3]
+        ], {
+            name: 'plane offset'
+        }
+    );
+    let radius = board.create(
+        'slider',
+        [
+            [-6, 7], [2, 7],
+            [0, 2/3, 1]
+        ], {
+            name: 'sphere radius'
+        }
+    );
+
+    // Plane
+    let basePt = view.create(
+        'point3d',
+        [
+            () => offset.Value(),
+            () => offset.Value(),
+            () => offset.Value()
+        ],
+        {visible: false}
+    );
+    let plane = view.create(
+        'plane3d',
+        [basePt, [-2, 1, 1], [1, -2, 1]],
+        {
+            strokeWidth: 1,
+            strokeColor: '#00ff80',
+            strokeOpacity: 0.5,
+            fillColor: '#00ff80',
+            fillOpacity: 0.1,
+            gradient: null
+        }
+    );
+
+    // Spheres
+    let center = view.create(
+        'point3d',
+        [1.5, 1.5, 1.5],
+        {
+            withLabel: false,
+            size: 5,
+            strokeWidth: 1,
+            strokeColor: '#600030',
+            fillColor: 'white',
+            gradient: 'radial',
+            gradientSecondColor: '#a00050',
+            gradientFX: 0.7,
+            gradientFY: 0.3,
+            highlightStrokeColor: '#600030'
+       }
+    );
+    let sphere = view.create(
+    'sphere3d',
+        [center, () => radius.Value()],
+        {
+            strokeColor: '#0000ff',
+            strokeOpacity: 0.5,
+            fillColor: 'white',
+            gradient: 'radial',
+            gradientSecondColor: '#0000ff',
+            gradientFX: 0.7,
+            gradientFY: 0.3,
+            fillOpacity: 0.2
+        }
+    );
+
+    // Intersection circle
+    let ixnCircle = view.create(
+        'intersectioncircle3d',
+        [plane, sphere],
+        {
+            strokeColor: 'black',
+            strokeOpacity: 0.5
+        }
+    );
+</script>
+</body>
+</html>

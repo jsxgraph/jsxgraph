@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2023
+    Copyright 2008-2026
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -32,13 +32,13 @@
 /*global JXG:true, define: true*/
 /*jslint nomen: true, plusplus: true*/
 
-import JXG from "../jxg";
-import Const from "./constants";
-import Coords from "./coords";
-import Statistics from "../math/statistics";
-import Geometry from "../math/geometry";
-import Type from "../utils/type";
-import GeometryElement from "./element";
+import JXG from "../jxg.js";
+import Const from "./constants.js";
+import Coords from "./coords.js";
+import Statistics from "../math/statistics.js";
+import Geometry from "../math/geometry.js";
+import Type from "../utils/type.js";
+import GeometryElement from "./element.js";
 
 /**
  * Creates a new instance of JXG.Polygon.
@@ -56,13 +56,16 @@ JXG.Polygon = function (board, vertices, attributes) {
     this.constructor(board, attributes, Const.OBJECT_TYPE_POLYGON, Const.OBJECT_CLASS_AREA);
 
     var i, l, len, j, p,
-        attr_line = Type.copyAttributes(attributes, board.options, "polygon", "borders");
+        attr_line = Type.copyAttributes(attributes, board.options, "polygon", 'borders');
 
     this.withLines = attributes.withlines;
     this.attr_line = attr_line;
 
     /**
      * References to the points defining the polygon. The last vertex is the same as the first vertex.
+     * Compared to the 3D {@link JXG.Polygon3D#vertices}, it contains one point more, i.e. for a quadrangle
+     * 'vertices' contains five points, the last one being
+     * a copy of the first one. In a 3D quadrangle, 'vertices' will contain four points.
      * @type Array
      */
     this.vertices = [];
@@ -87,7 +90,7 @@ JXG.Polygon = function (board, vertices, attributes) {
     }
 
     /**
-     * References to the border lines of the polygon.
+     * References to the border lines (edges) of the polygon.
      * @type Array
      */
     this.borders = [];
@@ -108,7 +111,7 @@ JXG.Polygon = function (board, vertices, attributes) {
                 : attributes.visible;
 
             if (attr_line.strokecolor === false) {
-                attr_line.strokecolor = "none";
+                attr_line.strokecolor = 'none';
             }
 
             l = board.create("segment", [this.vertices[i], this.vertices[i + 1]], attr_line);
@@ -123,7 +126,7 @@ JXG.Polygon = function (board, vertices, attributes) {
 
     // Register polygon at board
     // This needs to be done BEFORE the points get this polygon added in their descendants list
-    this.id = this.board.setId(this, "Py");
+    this.id = this.board.setId(this, 'Py');
 
     // Add dependencies: either
     // - add polygon as child to an existing point
@@ -143,7 +146,7 @@ JXG.Polygon = function (board, vertices, attributes) {
     this.board.finalizeAdding(this);
 
     this.createGradient();
-    this.elType = "polygon";
+    this.elType = 'polygon';
 
     // create label
     this.createLabel();
@@ -155,12 +158,12 @@ JXG.Polygon = function (board, vertices, attributes) {
         Area: "Area",
         Perimeter: "Perimeter",
         L: "Perimeter",
-        Length: "Perimeter",
-        boundingBox: "boundingBox",
-        bounds: "bounds",
+        boundingBox: "bounds",
+        BoundingBox: "bounds",
         addPoints: "addPoints",
         insertPoints: "insertPoints",
-        removePoints: "removePoints"
+        removePoints: "removePoints",
+        Intersect: "intersect"
     });
 };
 
@@ -206,7 +209,7 @@ JXG.extend(
          *
          */
         pnpoly: function (x_in, y_in, coord_type) {
-            return Geometry.pnpoly(x_in, y_in, this.vertices, coord_type);
+            return Geometry.pnpoly(x_in, y_in, this.vertices, coord_type, this.board);
         },
 
         /**
@@ -218,7 +221,7 @@ JXG.extend(
         hasPoint: function (x, y) {
             var i, len;
 
-            if (Type.evaluate(this.visProp.hasinnerpoints)) {
+            if (this.evalVisProp('hasinnerpoints')) {
                 // All points of the polygon trigger hasPoint: inner and boundary points
                 if (this.pnpoly(x, y)) {
                     return true;
@@ -250,7 +253,7 @@ JXG.extend(
             }
 
             if (this.visPropCalc.visible) {
-                len = this.vertices.length - ((this.elType === "polygonalchain") ? 0 : 1);
+                len = this.vertices.length - ((this.elType === 'polygonalchain') ? 0 : 1);
                 this.isReal = true;
                 for (i = 0; i < len; ++i) {
                     if (!this.vertices[i].isReal) {
@@ -329,25 +332,14 @@ JXG.extend(
             return new Coords(Const.COORDS_BY_USER, [(a + x) * 0.5, (b + y) * 0.5], this.board);
         },
 
-        getLabelAnchor: JXG.shortcut(JXG.Polygon.prototype, "getTextAnchor"),
+        getLabelAnchor: JXG.shortcut(JXG.Polygon.prototype, 'getTextAnchor'),
 
         // documented in geometry element
         cloneToBackground: function () {
-            var copy = {},
-                er;
+            var er,
+                copy = Type.getCloneObject(this);
 
-            copy.id = this.id + "T" + this.numTraces;
-            this.numTraces++;
             copy.vertices = this.vertices;
-            copy.visProp = Type.deepCopy(this.visProp, this.visProp.traceattributes, true);
-            copy.visProp.layer = this.board.options.layer.trace;
-            copy.board = this.board;
-            Type.clearVisPropOld(copy);
-
-            copy.visPropCalc = {
-                visible: Type.evaluate(copy.visProp.visible)
-            };
-
             er = this.board.renderer.enhancedRendering;
             this.board.renderer.enhancedRendering = true;
             this.board.renderer.drawPolygon(copy);
@@ -466,7 +458,7 @@ JXG.extend(
 
         /**
          * Bounding box of a polygon. The bounding box is an array of four numbers: the first two numbers
-         * determine the upper left corner, the last two number determine the lower right corner of the bounding box.
+         * determine the upper left corner, the last two numbers determine the lower right corner of the bounding box.
          *
          * The width and height of a polygon can then determined like this:
          * @example
@@ -585,7 +577,7 @@ JXG.extend(
             var idx,
                 args = Array.prototype.slice.call(arguments);
 
-            if (this.elType === "polygonalchain") {
+            if (this.elType === 'polygonalchain') {
                 idx = this.vertices.length - 1;
             } else {
                 idx = this.vertices.length - 2;
@@ -633,7 +625,7 @@ JXG.extend(
             }
 
             last = this.vertices.length - 1;
-            if (this.elType === "polygon") {
+            if (this.elType === 'polygon') {
                 last--;
             }
 
@@ -657,7 +649,7 @@ JXG.extend(
 
             if (this.withLines) {
                 start = idx + 1;
-                if (this.elType === "polygon") {
+                if (this.elType === 'polygon') {
                     if (idx < 0) {
                         // Add point(s) in the front
                         this.vertices[this.vertices.length - 1] = this.vertices[0];
@@ -721,7 +713,7 @@ JXG.extend(
 
             // In case of polygon: remove the last vertex from the list of vertices since
             // it is identical to the first
-            if (this.elType === "polygon") {
+            if (this.elType === 'polygon') {
                 firstPoint = this.vertices.pop();
             }
 
@@ -743,7 +735,7 @@ JXG.extend(
 
             if (nidx.length === 0) {
                 // Wrong index, get out of here
-                if (this.elType === "polygon") {
+                if (this.elType === 'polygon') {
                     this.vertices.push(firstPoint);
                 }
                 return this;
@@ -805,7 +797,7 @@ JXG.extend(
                     for (j = partition[i][1] - 1; j < partition[i][0] + 1; j++) {
                         // special cases
                         if (j < 0) {
-                            if (this.elType === "polygon") {
+                            if (this.elType === 'polygon') {
                                 // First vertex is removed, so the last border has to be removed, too
                                 this.board.removeObject(this.borders[nborders.length - 1]);
                                 nborders[nborders.length - 1] = -1;
@@ -889,7 +881,7 @@ JXG.extend(
         snapToGrid: function () {
             var i, force;
 
-            if (Type.evaluate(this.visProp.snaptogrid)) {
+            if (this.evalVisProp('snaptogrid')) {
                 force = true;
             } else {
                 force = false;
@@ -1123,7 +1115,9 @@ JXG.extend(
 );
 
 /**
- * @class A polygon is an area enclosed by a set of border lines which are determined by
+ * @class A polygon is a plane figure made up of line segments (the borders) connected
+ * to form a closed polygonal chain.
+ * It is determined by
  * <ul>
  *    <li> a list of points or
  *    <li> a list of coordinate arrays or
@@ -1227,7 +1221,7 @@ JXG.createPolygon = function (board, parents, attributes) {
         attr_points,
         is_transform = false;
 
-    attr = Type.copyAttributes(attributes, board.options, "polygon");
+    attr = Type.copyAttributes(attributes, board.options, 'polygon');
     obj = board.select(parents[0]);
     if (obj === null) {
         // This is necessary if the original polygon is defined in another board.
@@ -1240,7 +1234,7 @@ JXG.createPolygon = function (board, parents, attributes) {
     ) {
         is_transform = true;
         le = obj.vertices.length - 1;
-        attr_points = Type.copyAttributes(attributes, board.options, "polygon", "vertices");
+        attr_points = Type.copyAttributes(attributes, board.options, "polygon", 'vertices');
         for (i = 0; i < le; i++) {
             if (attr_points.withlabel) {
                 attr_points.name =
@@ -1257,7 +1251,7 @@ JXG.createPolygon = function (board, parents, attributes) {
         }
     }
 
-    attr = Type.copyAttributes(attributes, board.options, "polygon");
+    attr = Type.copyAttributes(attributes, board.options, 'polygon');
     el = new JXG.Polygon(board, points, attr);
     el.isDraggable = true;
 
@@ -1274,7 +1268,9 @@ JXG.createPolygon = function (board, parents, attributes) {
 };
 
 /**
- * @class Constructs a regular polygon. It needs two points which define the base line and the number of vertices.
+ * @class A regular polygon is a polygon that is
+ * direct equiangular (all angles are equal in measure) and equilateral (all sides have the same length).
+ * It needs two points which define the base line and the number of vertices.
  * @pseudo
  * @description Constructs a regular polygon. It needs two points which define the base line and the number of vertices, or a set of points.
  * @constructor
@@ -1371,7 +1367,7 @@ JXG.createRegularPolygon = function (board, parents, attributes) {
         );
     }
 
-    attr = Type.copyAttributes(attributes, board.options, "regularpolygon", "vertices");
+    attr = Type.copyAttributes(attributes, board.options, "regularpolygon", 'vertices');
     for (i = 2; i < n; i++) {
         rot = board.create("transform", [Math.PI * (2 - (n - 2) / n), p[i - 1]], {
             type: "rotate"
@@ -1393,15 +1389,16 @@ JXG.createRegularPolygon = function (board, parents, attributes) {
         }
     }
 
-    attr = Type.copyAttributes(attributes, board.options, "regularpolygon");
+    attr = Type.copyAttributes(attributes, board.options, 'regularpolygon');
     el = board.create("polygon", p, attr);
-    el.elType = "regularpolygon";
+    el.elType = 'regularpolygon';
 
     return el;
 };
 
 /**
- * @class  A polygonal chain is a connected series of line segments determined by
+ * @class  A polygonal chain is a connected series of line segments (borders).
+ * It is determined by
  * <ul>
  *    <li> a list of points or
  *    <li> a list of coordinate arrays or
@@ -1462,9 +1459,9 @@ JXG.createRegularPolygon = function (board, parents, attributes) {
 JXG.createPolygonalChain = function (board, parents, attributes) {
     var attr, el;
 
-    attr = Type.copyAttributes(attributes, board.options, "polygonalchain");
+    attr = Type.copyAttributes(attributes, board.options, 'polygonalchain');
     el = board.create("polygon", parents, attr);
-    el.elType = "polygonalchain";
+    el.elType = 'polygonalchain';
 
     // A polygonal chain is not necessarily closed.
     el.vertices.pop();
@@ -1475,7 +1472,7 @@ JXG.createPolygonalChain = function (board, parents, attributes) {
 };
 
 /**
- * @class Parallelogram element. This is a quadrilateral with parallel opposite sides.
+ * @class A quadrilateral polygon with parallel opposite sides.
  * @pseudo
  * @description Constructs a parallelogram. As input, three points or coordinate arrays are expected.
  * @constructor
@@ -1533,10 +1530,12 @@ JXG.createParallelogram = function (board, parents, attributes) {
         );
     }
 
-    attr_pp = Type.copyAttributes(attributes, board.options, "parallelogram", ["parallelpoint"]);
+    attr_pp = Type.copyAttributes(attributes, board.options, "parallelogram", 'parallelpoint');
     pp = board.create('parallelpoint', points, attr_pp);
-    attr = Type.copyAttributes(attributes, board.options, "parallelogram");
+    attr = Type.copyAttributes(attributes, board.options, 'parallelogram');
     el = board.create('polygon', [points[0], points[1], pp, points[2]], attr);
+
+    el.elType = 'parallelogram';
 
     /**
      * Parallel point which makes the quadrilateral a parallelogram. Can also be accessed with

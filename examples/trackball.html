@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Trackball</title>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
+    <script type="text/javascript" src="../distrib/jsxgraphcore.js"></script>
+</head>
+<body>
+
+<div>
+    <label for="ori-ctl">Orientation control:</label>
+    <select id="ori-ctl" oninput="inputOriCtl();">
+        <option value="trackball">Virtual trackball</option>
+        <option value="angles">Tait–Bryan angles</option>
+    </select>
+</div>
+<div id="jxgbox" class="jxgbox" style="width:800px; height:800px; float:left"></div>
+
+<script type="text/javascript">
+    let board = JXG.JSXGraph.initBoard(
+        'jxgbox',
+        {
+            boundingbox: [-8, 8, 8,-8],
+            axis: false,
+            showcopyright: false,
+            shownavigation: false
+        }
+    );
+    let view = board.create(
+        'view3d',
+        [[-6, -3], [8, 8],
+        [[0, 5], [0, 5], [0, 5]]],
+        {
+            xPlaneRear: {fillOpacity: 0.2, gradient: null},
+            yPlaneRear: {fillOpacity: 0.2, gradient: null},
+            zPlaneRear: {fillOpacity: 0.2, gradient: null},
+            axis: true,
+            axesPosition: 'center',
+            xAxis: {
+                name: 'x',
+                strokeColor: 'red',
+                strokeWidth: 3,
+                withLabel: true,
+                label:{position: 'last', autoPosition: true}
+            },
+            yAxis: {
+                name: 'y',
+                strokeColor: 'green',
+                strokeWidth: 3,
+                withLabel: true,
+                label:{position: 'last', autoPosition: true}
+            },
+            zAxis: {
+                name: 'z',
+                strokeColor: 'blue',
+                strokeWidth: 3,
+                withLabel: true,
+                label:{position: 'last', autoPosition: true}
+            },
+            projection: 'central',
+            az: {
+                slider: {min: -0.75*Math.PI, max: 1.25*Math.PI}
+            },
+            bank: {
+                slider: {min: -(4/3)*Math.PI, max: (2/3)*Math.PI, visible: true}
+            }
+        }
+    );
+
+    let ori_ctl = document.querySelector('#ori-ctl');
+    function inputOriCtl() {
+        view.setAttribute({'trackball': {enabled: ori_ctl.value === 'trackball'}});
+    }
+    inputOriCtl();
+</script>
+</body>
+</html>

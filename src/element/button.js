@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2023
+    Copyright 2008-2026
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -36,9 +36,10 @@
  * @fileoverview In this file the Text element is defined.
  */
 
-import JXG from "../jxg";
-import Env from "../utils/env";
-import Type from "../utils/type";
+import JXG from "../jxg.js";
+import Env from "../utils/env.js";
+import Text from "../base/text.js";
+import Type from "../utils/type.js";
 
 var priv = {
     ButtonClickEventHandler: function () {
@@ -50,16 +51,17 @@ var priv = {
 };
 
 /**
- * @class This element is used to provide a constructor for special texts containing a
- * form button element.
- * <p>
+ * @class A text element that contains an HTML button tag.
  * For this element, the attribute "display" has to have the value 'html' (which is the default).
- * <p>
+ *
+ * <p><b>Setting a CSS class:</b> The attribute <tt>cssClass</tt> affects the HTML div element that contains the button element. To change the CSS properties of the HTML button element a selector of the form
+ * <tt>.mybutton > button { ... }</tt> has to be used. See the example below.
+ *
+ * <p><b>Access the button element with JavaScript:</b>
  * The underlying HTML button element can be accessed through the sub-object 'rendNodeButton', e.g. to
  * add event listeners.
  *
  * @pseudo
- * @description
  * @name Button
  * @augments Text
  * @constructor
@@ -159,15 +161,15 @@ var priv = {
  * </script><pre>
  *
  * @example
- *         var i1 = board.create('input', [-3, 4, 'sin(x)', 'f(x)='], {cssStyle: 'width:4em', maxlength: 2});
- *         var c1 = board.create('checkbox', [-3, 2, 'label 1'], {});
- *         var b1 = board.create('button', [-3, -1, 'Change texts', function () {
- *                 i1.setText('g(x)');
- *                 i1.set('cos(x)');
- *                 c1.setText('label 2');
- *                 b1.setText('Texts are changed');
- *             }],
- *             {cssStyle: 'width:400px'});
+ * var i1 = board.create('input', [-3, 4, 'sin(x)', 'f(x)='], {cssStyle: 'width:4em', maxlength: 2});
+ * var c1 = board.create('checkbox', [-3, 2, 'label 1'], {});
+ * var b1 = board.create('button', [-3, -1, 'Change texts', function () {
+ *         i1.setText('g(x)');
+ *         i1.set('cos(x)');
+ *         c1.setText('label 2');
+ *         b1.setText('Texts are changed');
+ *     }],
+ *     {cssStyle: 'width:200px'});
  *
  * </pre><div id="JXG11cac8ff-2354-47e7-9da4-eb928e53de05" class="jxgbox" style="width: 300px; height: 300px;"></div>
  * <script type="text/javascript">
@@ -182,7 +184,54 @@ var priv = {
  *                     c1.setText('label 2');
  *                     b1.setText('Texts are changed');
  *                 }],
- *                 {cssStyle: 'width:400px'});
+ *                 {cssStyle: 'width:200px'});
+ *
+ *     })();
+ *
+ * </script><pre>
+ *
+ * @example
+ * // Set the CSS class of the button
+ *
+ * // CSS:
+ * &lt;style&gt;
+ * .mybutton > button {
+ *   background-color: #04AA6D;
+ *   border: none;
+ *   color: white;
+ *   padding: 1px 3px;
+ *   text-align: center;
+ *   text-decoration: none;
+ *   display: inline-block;
+ *   font-size: 16px;
+ * }
+ * &lt;/style&gt;
+ *
+ * // JavaScript:
+ * var button = board.create('button',
+ *     [1, 4, 'answers', function () {}],
+ *     {cssClass:'mybutton', highlightCssClass: 'mybutton'});
+ *
+ * </pre>
+ * <style>
+ * .mybutton > button {
+ *   background-color: #04AA6D;
+ *   border: none;
+ *   color: white;
+ *   padding: 1px 3px;
+ *   text-align: center;
+ *   text-decoration: none;
+ *   display: inline-block;
+ *   font-size: 16px;
+ * }
+ * </style>
+ * <div id="JXG2da6cf73-8c2e-495c-bd31-42de43b71cf8" class="jxgbox" style="width: 300px; height: 300px;"></div>
+ * <script type="text/javascript">
+ *     (function() {
+ *         var board = JXG.JSXGraph.initBoard('JXG2da6cf73-8c2e-495c-bd31-42de43b71cf8',
+ *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
+ *       var button = board.create('button', [1, 4, 'answers', function () {
+ *       }], {cssClass:'mybutton', highlightCssClass: 'mybutton'});
  *
  *     })();
  *
@@ -192,7 +241,8 @@ var priv = {
 JXG.createButton = function (board, parents, attributes) {
     var t,
         par,
-        attr = Type.copyAttributes(attributes, board.options, "button");
+        setTextBackup,
+        attr = Type.copyAttributes(attributes, board.options, 'button');
 
     //if (parents.length < 3) {
     //throw new Error("JSXGraph: Can't create button with parent types '" +
@@ -200,14 +250,20 @@ JXG.createButton = function (board, parents, attributes) {
     //    "\nPossible parents are: [x, y, label, handler]");
     //}
 
+    // Make sure the setText method is the original one. The JessieCode parser changes it during parsing.
+    setTextBackup = Text.prototype.setText;
+    Text.prototype.setText = Text.prototype._setText;
+
     // 1. Create empty button
-    par = [parents[0], parents[1], '<button type="button" style="width:100%;"></button>'];
+    par = [parents[0], parents[1], '<button type="button" style="width:100%; height:100%;" tabindex="0"></button>'];
     t = board.create("text", par, attr);
     t.type = Type.OBJECT_TYPE_BUTTON;
 
+    // Restore whichever setText method was set before this contructor was called.
+    Text.prototype.setText = setTextBackup;
+
     t.rendNodeButton = t.rendNode.childNodes[0];
     t.rendNodeButton.id = t.rendNode.id + "_button";
-    // t.rendNodeButton.innerHTML = parents[2];
 
     t.rendNodeTag = t.rendNodeButton; // Needed for unified treatment in setAttribute
     t.rendNodeTag.disabled = !!attr.disabled;
@@ -216,8 +272,8 @@ JXG.createButton = function (board, parents, attributes) {
     // abstract.js selects the correct DOM element for the update
     t.setText(parents[2]);
 
-    // This sets the font-size of the button text
-    t.visPropOld.fontsize = "0px";
+    // This sets the font size of the button text
+    t.visPropOld.fontsize = '0px';
     board.renderer.updateTextStyle(t, false);
 
     if (parents[3]) {

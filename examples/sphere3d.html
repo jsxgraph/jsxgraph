@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Sphere</title>
+    <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
+    <script type="text/javascript" src="../distrib/jsxgraphcore.js"></script>
+</head>
+<body>
+
+<div id="jxgbox" class="jxgbox" style="width:800px; height:800px; float:left"></div>
+
+<script type="text/javascript">
+    let board = JXG.JSXGraph.initBoard(
+        'jxgbox',
+        {
+            boundingbox: [-8, 8, 8,-8],
+            axis: false,
+            showcopyright: false,
+            shownavigation: false
+        }
+    );
+    let view = board.create(
+        'view3d',
+        [[-6, -3], [8, 8],
+        [[0, 3], [0, 3], [0, 3]]],
+        {
+            xPlaneRear: {fillOpacity: 0.2, gradient: null},
+            yPlaneRear: {fillOpacity: 0.2, gradient: null},
+            zPlaneRear: {fillOpacity: 0.2, gradient: null},
+            bank: {slider: {visible: true}}
+        }
+    );
+
+    // Two points
+    let center = view.create(
+        'point3d',
+        [1.5, 1.5, 1.5],
+        {
+            withLabel: false,
+            size: 5,
+            strokeWidth: 1,
+            strokeColor: '#600030',
+            fillColor: 'white',
+            gradient: 'radial',
+            gradientSecondColor: '#a00050',
+            gradientFX: 0.7,
+            gradientFY: 0.3,
+            highlightStrokeColor: '#600030'
+       }
+    );
+    let point = view.create(
+        'point3d',
+        [2, 1.5, 1.5],
+        {
+            withLabel: false,
+            size: 5,
+            strokeWidth: 1,
+            strokeColor: '#600030',
+            fillColor: 'white',
+            gradient: 'radial',
+            gradientSecondColor: '#a00050',
+            gradientFX: 0.7,
+            gradientFY: 0.3,
+            highlightStrokeColor: '#600030'
+       }
+    );
+
+    // Sphere
+    let sphere = view.create(
+        'sphere3d',
+        [center, point],
+        {
+            strokeColor: '#00ff80',
+            fillColor: 'white',
+            gradient: 'radial',
+            gradientSecondColor: '#00ff80',
+            gradientFX: 0.7,
+            gradientFY: 0.3,
+            fillOpacity: 0.4
+        }
+    );
+</script>
+</body>
+</html>

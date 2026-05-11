@@ -2,7 +2,7 @@ module.exports = {
     "env": {
         "browser": true,
         "commonjs": true,
-        "es2021": true
+        "es2022": true // ecma 13
     },
     "extends": "eslint:recommended",
     "parserOptions": {
@@ -10,14 +10,19 @@ module.exports = {
         "sourceType": "module"
     },
     "rules": {
-        "eqeqeq": ["error", "smart"],
-        "no-trailing-spaces": ["warn", { "ignoreComments": true }],
-        "one-var": ["warn", "always"],
-        "no-unused-vars": ["warn", { "vars": "local", "args": "none"}],
-        "no-redeclare": ["error", { "builtinGlobals": false }],
-        "no-prototype-builtins": "off",
         "no-empty": "off",
-        "no-constant-binary-expression": "error"
+        "no-prototype-builtins": "off",
+
+        "comma-dangle": ["error", "never"],
+        "eqeqeq": ["error", "smart"],
+        "no-constant-binary-expression": "error",
+        "no-redeclare": ["error", { "builtinGlobals": false }],
+        "no-sequences": ["error"],
+        "semi": ["error", "always"],
+
+        "no-trailing-spaces": ["warn", { "ignoreComments": false }],
+        "no-unused-vars": ["warn", { "vars": "local", "args": "none"}],
+        "one-var": ["warn", "always"],
     },
     "globals": {
         "JXG": "readonly"

@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Parametric surface</title>
+    <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
+    <script type="text/javascript" src="../distrib/jsxgraphcore.js"></script>
+</head>
+<body>
+
+<div id="jxgbox" class="jxgbox" style="width:800px; height:800px; float:left"></div>
+
+<script type="text/javascript">
+    let board = JXG.JSXGraph.initBoard('jxgbox',
+        {boundingbox: [-8, 8, 8,-8], axis: false, showcopyright: false, shownavigation: false});
+    let view = board.create('view3d',
+        [[-6, -4], [8, 8],
+        [[0, 2], [0, 2], [0, 2]]],
+        {bank: {slider: {visible: true}}}
+    );
+
+    // Twist slider
+    let twist = board.create(
+        'slider',
+        [
+            [-6, 7], [2, 7],
+            [-1, 0.8, 1]
+        ], {
+            name: 'twist'
+        }
+    );
+
+    // Parametric surface, based on a modified Hammer projection
+    let rModHammer = (u, v) => Math.sin(u)*Math.cos(v) / Math.sqrt(1 + 3*Math.cos(u)*Math.cos(v));
+    let zModHammer = (u, v) => Math.sin(v) / Math.sqrt(1 + 3*Math.cos(u)*Math.cos(v));
+    let twistFn = (u) => twist.Value() * Math.PI/2 * Math.tanh(2*u);
+    let surface = view.create('parametricsurface3d', [
+        (u, v) => 1 + Math.cos(twistFn(v)) * rModHammer(u, v),
+        (u, v) => 1 + Math.sin(twistFn(v)) * rModHammer(u, v),
+        (u, v) => 1 + zModHammer(u, v),
+        [-Math.PI/3, Math.PI/3],
+        [-Math.PI/2, Math.PI/2]
+    ], {
+        strokeColor: '#b080f0',
+        stepsU: 40,
+        stepsV: 60
+    });
+</script>
+</body>
+</html>

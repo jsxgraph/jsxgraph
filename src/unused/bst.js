@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2023
+    Copyright 2008-2026
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -32,8 +32,8 @@
 /*global JXG:true, define: true*/
 /*jslint nomen: true, plusplus: true*/
 
-import Mat from "./math";
-import Type from "../utils/type";
+import Mat from "./math.js";
+import Type from "../utils/type.js";
 
 /**
  * Balanced binary search tree

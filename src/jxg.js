@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2023
+    Copyright 2008-2026
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -53,14 +53,16 @@
  */
 var jxg = {};
 
-// Make sure JXG.extend is not defined
-// If jsxgraph is loaded via loadjsxgraph.js, this is required, but JXG.extend will be undefined
-// If jsxgraph is compiled as an amd module, it is possible that another jsxgraph version is already loaded and we
+// Make sure JXG.extend is not defined.
+// If JSXGraph is compiled as an amd module, it is possible that another JSXGraph version is already loaded and we
 // therefore must not re-use the global JXG variable. But in this case JXG.extend will already be defined.
 // This is the reason for this check.
-if (typeof JXG === "object" && !JXG.extend) {
-    jxg = JXG;
-}
+// The try-statement is necessary, otherwise an error is thrown in certain imports, e.g. in deno.
+try {
+    if (typeof JXG === "object" && !JXG.extend) {
+        jxg = JXG;
+    }
+} catch (e) {}
 
 // We need the following two methods "extend" and "shortcut" to create the JXG object via JXG.extend.
 
@@ -190,7 +192,7 @@ jxg.extend(
             for (i = 0; i < ext.length; i++) {
                 e = ext[i].toLowerCase();
 
-                if (typeof this.readers[e] !== "function") {
+                if (typeof this.readers[e] !== 'function') {
                     this.readers[e] = reader;
                 }
             }
@@ -267,14 +269,14 @@ jxg.extend(
         /**
          * Outputs a warning via console.warn(), if available. If console.warn() is
          * unavailable this function will look for an HTML element with the id 'warning'
-         * and append the warning to this element's innerHTML.
+         * and append the warning to this element's innerText.
          * @param {String} warning The warning text
          */
         warn: function (warning) {
             if (typeof window === "object" && window.console && console.warn) {
                 console.warn("WARNING:", warning);
-            } else if (typeof document === "object" && document.getElementById("warning")) {
-                document.getElementById("debug").innerHTML += "WARNING: " + warning + "<br />";
+            } else if (typeof document === "object" && document.getElementById('warning')) {
+                document.getElementById('debug').innerText += "WARNING: " + warning + '\n';
             }
         },
 
@@ -282,7 +284,7 @@ jxg.extend(
          * Add something to the debug log. If available a JavaScript debug console is used. Otherwise
          * we're looking for a HTML div with id "debug". If this doesn't exist, too, the output is omitted.
          * @param s An arbitrary number of parameters.
-         * @see JXG#debugWST
+         * @see JXG.debugWST
          */
         debugInt: function (s) {
             var i, p;
@@ -291,8 +293,8 @@ jxg.extend(
                 p = arguments[i];
                 if (typeof window === "object" && window.console && console.log) {
                     console.log(p);
-                } else if (typeof document === "object" && document.getElementById("debug")) {
-                    document.getElementById("debug").innerHTML += p + "<br/>";
+                } else if (typeof document === "object" && document.getElementById('debug')) {
+                    document.getElementById('debug').innerText += p + '\n';
                 }
             }
         },
@@ -302,7 +304,7 @@ jxg.extend(
          * we're looking for a HTML div with id "debug". If this doesn't exist, too, the output is omitted.
          * This method adds a stack trace (if available).
          * @param s An arbitrary number of parameters.
-         * @see JXG#debug
+         * @see JXG.debug
          */
         debugWST: function (s) {
             var e = new Error();
@@ -310,7 +312,7 @@ jxg.extend(
             jxg.debugInt.apply(this, arguments);
 
             if (e && e.stack) {
-                jxg.debugInt("stacktrace");
+                jxg.debugInt('stacktrace');
                 jxg.debugInt(e.stack.split("\n").slice(1).join("\n"));
             }
         },
@@ -321,7 +323,7 @@ jxg.extend(
          * This method adds a line of the stack trace (if available).
          *
          * @param s An arbitrary number of parameters.
-         * @see JXG#debug
+         * @see JXG.debug
          */
         debugLine: function (s) {
             var e = new Error();
@@ -337,13 +339,397 @@ jxg.extend(
          * Add something to the debug log. If available a JavaScript debug console is used. Otherwise
          * we're looking for a HTML div with id "debug". If this doesn't exist, too, the output is omitted.
          * @param s An arbitrary number of parameters.
-         * @see JXG#debugWST
-         * @see JXG#debugLine
-         * @see JXG#debugInt
+         * @see JXG.debugWST
+         * @see JXG.debugLine
+         * @see JXG.debugInt
          */
         debug: function (s) {
             jxg.debugInt.apply(this, arguments);
-        }
+        },
+
+        /**
+         * Initialize a new board.
+         * Alias of {@link JXG.JSXGraph.initBoard}.
+         * @param {String|Object} box id of or reference to the HTML element in which the board is painted.
+         * @param {Object} attributes An object that sets some of the board properties.
+         * See {@link JXG.Board} for a list of available attributes of the board.
+         * Most of these attributes can also be set globally via {@link JXG.Options}.
+         *
+         * @returns {JXG.Board} Reference to the created board.
+         *
+         * @see JXG.AbstractRenderer#drawNavigationBar
+         * @example
+         * var board = JXG.board('jxgbox', {
+         *     boundingbox: [-10, 5, 10, -5],
+         *     keepaspectratio: false,
+         *     axis: true
+         * });
+         *
+         * </pre><div id="JXG79b42d26-b664-451d-96b4-08bc25dd87d3" class="jxgbox" style="width: 600px; height: 300px;"></div>
+         * <script type="text/javascript">
+         *     (function() {
+         *         var board = JXG.board('JXG79b42d26-b664-451d-96b4-08bc25dd87d3', {
+         *         boundingbox: [-10, 5, 10, -5],
+         *         keepaspectratio: false,
+         *         axis: true
+         *     });
+         *
+         *     })();
+         *
+         * </script><pre>
+         *
+         *
+         * @example
+         * const board = JXG.board('jxgbox', {
+         *   boundingbox: [-10, 10, 10, -10],
+         *   axis: true,
+         *   showCopyright: true,
+         *   showFullscreen: true,
+         *   showScreenshot: false,
+         *   showClearTraces: false,
+         *   showInfobox: false,
+         *   showNavigation: true,
+         *   grid: false,
+         *   defaultAxes: {
+         *     x: {
+         *       withLabel: true,
+         *       label: {
+         *         position: '95% left',
+         *         offset: [-10, 10]
+         *       },
+         *       lastArrow: {
+         *         type: 4,
+         *         size: 10
+         *       }
+         *     },
+         *     y: {
+         *       withLabel: true,
+         *       label: {
+         *         position: '0.90fr right',
+         *         offset: [6, -6]
+         *       },
+         *       lastArrow: {
+         *         type: 4,
+         *         size: 10
+         *       }
+         *     }
+         *   }
+         * });
+         *
+         * </pre><div id="JXGd7a7705b-35bb-4193-bbd4-3e3fd92eb92c" class="jxgbox" style="width: 300px; height: 300px;"></div>
+         * <script type="text/javascript">
+         *     (function() {
+         *       var board = JXG.board('JXGd7a7705b-35bb-4193-bbd4-3e3fd92eb92c', {
+         *       boundingbox: [-10, 10, 10, -10],
+         *       axis: true,
+         *       showCopyright: true,
+         *       showFullscreen: true,
+         *       showScreenshot: false,
+         *       showClearTraces: false,
+         *       showInfobox: false,
+         *       showNavigation: true,
+         *       grid: false,
+         *       defaultAxes: {
+         *         x: {
+         *           withLabel: true,
+         *           label: {
+         *             position: '95% left',
+         *             offset: [0, 0]
+         *           },
+         *           lastArrow: {
+         *             type: 4,
+         *             size: 10
+         *           }
+         *         },
+         *         y: {
+         *           withLabel: true,
+         *           label: {
+         *             position: '0.90fr right',
+         *             offset: [0, 0]
+         *           },
+         *           lastArrow: {
+         *             type: 4,
+         *             size: 10
+         *           }
+         *         }
+         *       }
+         *     });
+         *
+         *     })();
+         *
+         * </script><pre>
+         * @example
+         * const board = JXG.board('jxgbox', {
+         *     boundingbox: [-5, 5, 5, -5],
+         *     intl: {
+         *         enabled: false,
+         *         locale: 'en-EN'
+         *     },
+         *     keepaspectratio: true,
+         *     axis: true,
+         *     defaultAxes: {
+         *         x: {
+         *             ticks: {
+         *                 intl: {
+         *                         enabled: true,
+         *                         options: {
+         *                             style: 'unit',
+         *                             unit: 'kilometer-per-hour',
+         *                             unitDisplay: 'narrow'
+         *                         }
+         *                 }
+         *             }
+         *         },
+         *         y: {
+         *             ticks: {
+         *             }
+         *         }
+         *     },
+         *     infobox: {
+         *         fontSize: 20,
+         *         intl: {
+         *             enabled: true,
+         *             options: {
+         *                 minimumFractionDigits: 4,
+         *                 maximumFractionDigits: 5
+         *             }
+         *         }
+         *     }
+         * });
+         *
+         * </pre><div id="JXGd84f4c84-f900-4d33-b001-e5f5f3ab0dd2" class="jxgbox" style="width: 600px; height: 600px;"></div>
+         * <script type="text/javascript">
+         *     (function() {
+         *         var board = JXG.board('JXGd84f4c84-f900-4d33-b001-e5f5f3ab0dd2', {
+         *         boundingbox: [-5, 5, 5, -5],
+         *         intl: {
+         *             enabled: false,
+         *             locale: 'en-EN'
+         *         },
+         *         keepaspectratio: true,
+         *         axis: true,
+         *         defaultAxes: {
+         *             x: {
+         *                 ticks: {
+         *                     intl: {
+         *                             enabled: true,
+         *                             options: {
+         *                                 style: 'unit',
+         *                                 unit: 'kilometer-per-hour',
+         *                                 unitDisplay: 'narrow'
+         *                             }
+         *                     }
+         *                 }
+         *             },
+         *             y: {
+         *                 ticks: {
+         *                 }
+         *             }
+         *         },
+         *         infobox: {
+         *             fontSize: 20,
+         *             intl: {
+         *                 enabled: true,
+         *                 options: {
+         *                     minimumFractionDigits: 4,
+         *                     maximumFractionDigits: 5
+         *                 }
+         *             }
+         *         }
+         *     });
+         *
+         *     })();
+         *
+         * </script><pre>
+         *
+         */
+        board: function (box, attributes) {
+            return this.JSXGraph.initBoard(box, attributes);
+        },
+
+        /**
+         * Create a JSXGraph div element containing a JSXGraph board inside of a user supplied div.
+         * <p>
+         * The styling of the supplied div is up to the user, see the style-tag in the example below for
+         * one possibility. The CSS for the inner div, hosting the JSXGraph board, is supplied by the attributes
+         *  <pre>
+         *   jxgbox: {
+         *       style: 'width:640px;  aspect-ratio:2/1; background-color: white',
+         *       cssClass: '',
+         *       id: 'jxgbox'
+         *   }
+         * </pre>
+         * i.e. the div's style-attribute and a list of classes (separated by blanks) can be given.
+         * <p>
+         * By setting the attribute "clip" to false for selected
+         * elements (like sliders and texts), these elements can be positioned outside of the JSXGraph board. For those elements,
+         * the setting of the attributes "frozen:true, fixed:true" is recommended to make their position independent from zooming
+         * or panning the board coordinates.
+         * <p>
+         * However, not all elements will look good if displayed outside of the JSXGraph board - be careful.
+         *
+         * @param {String|Object} box id of or reference to the HTML element in which the board is painted into a sub-element of type div.
+         * @param {Object} attributes An object that sets some of the board properties and properties of the sub-element containing the board.
+         * See {@link JXG.Board} for a list of available attributes of the board.
+         * Most of these attributes can also be set globally via {@link JXG.Options}.
+         *
+         * @returns {JXG.Board} Reference to the created board.
+         *
+         * @example
+         *
+         * // Styling of the outer div
+         * &lt;style&gt;
+         * .container {
+         *   display: flex;
+         *   align-items: center;
+         *   justify-content: center;
+         *   width: 800px;
+         *   height: 500px;
+         *   overflow: hidden;
+         *   border: 1px black solid;
+         *   border-radius: 10px;
+         *   background-color: #eee;
+         * }
+         * &lt;/style&gt;
+         * &lt;div id="container" class="container"&gt;&lt;/div&gt;
+         * &lt;script type="text/javascript"&gt;
+         *        const board = JXG.appBox('container', {
+         *            jxgbox: {
+         *                // Styling of the inner div
+         *                style: 'width:640px;  aspect-ratio:2/1; background-color: white',
+         *                cssClass: '',
+         *                id: 'jxgbox'
+         *            },
+         *            boundingbox: [-5, 5, 5, -5],
+         *            axis: true,
+         *            showFullScreen: true
+         *        });
+         *
+         *        const point1 = board.create("point", [4, 1], { name: 'A' });
+         *        const point2 = board.create("point", [3, -1], {name: 'B'});
+         *        const point3 = board.create("point", [6, -1], { clip: false });
+         *
+         *        var sl = board.create('slider', [[-3, -6], [-1, -6], [-5, 1, 5]], {
+         *            clip: false,
+         *            frozen: true,
+         *            size: 16,
+         *            face: '[]',
+         *            name: 's'
+         *        });
+         *
+         *        var graph = board.create("functiongraph", ['s.Value() * x^3'], { clip: true });
+         *
+         * &lt;/script&gt;
+         * </pre>
+         * <style>
+         * .container {
+         *   display: flex;
+         *   align-items: center;
+         *   justify-content: center;
+         *   width: 800px;
+         *   height: 500px;
+         *   overflow: hidden;
+         *   border: 1px black solid;
+         *   border-radius: 10px;
+         *   background-color: #eee;
+         * }
+         * </style>
+         * <div id="JXGd1c7bf6a-a571-4392-a289-e4ef44d57c88" class="container"></div>
+         * <script type="text/javascript">
+         *     (function() {
+         *        const board = JXG.appBox('JXGd1c7bf6a-a571-4392-a289-e4ef44d57c88', {
+         *            jxgbox: {
+         *                style: "width:640px;  aspect-ratio:2/1; background-color: white",
+         *                cssClass: "",
+         *                id: 'xxx'
+         *            },
+         *            boundingbox: [-5, 5, 5, -5],
+         *            axis: true,
+         *            showFullScreen: true
+         *        });
+         *
+         *        const point1 = board.create("point", [4, 1], { name: 'A' });
+         *        const point2 = board.create("point", [3, -1], {name: 'B'});
+         *        const point3 = board.create("point", [6, -1], { clip: false });
+         *
+         *        var sl = board.create('slider', [[-3, -6], [-1, -6], [-5, 1, 5]], {
+         *            clip: false,
+         *            size: 16,
+         *            face: '[]',
+         *            name: 's',
+         *            frozen: true
+         *        });
+         *
+         *        var graph = board.create("functiongraph", ['s.Value() * x^3'], { clip: true });
+         *
+         *     })();
+         *
+         * </script><pre>
+         *
+         */
+        appBox: function (box, attributes) {
+            var node, id, jxg_id, innerdiv,
+                obb, bb, w, h,// rect,
+                attr, board;
+
+            if (!JXG.isBrowser) {
+                throw new Error("JSXGraph: JXG.appBox needs a browser");
+            }
+            if (JXG.isString(box)) {
+                // Hosting div is given as string
+                node = document.getElementById(box);
+                id = box;
+            } else {
+                // Hosting div is given as object pointer
+                node = box;
+                id = box.getAttribute('id');
+            }
+
+            innerdiv = document.createElement("div");
+
+            attr = JXG.copyAttributes(attributes, JXG.Options, 'board').jxgbox;
+
+            jxg_id = ((id !== null) ? id + '_' : '') + attr.id;
+            innerdiv.setAttribute('id', jxg_id);
+            innerdiv.className += 'jxgbox ';
+            innerdiv.className += attr.cssclass;
+            innerdiv.style = attr.style;
+
+            obb = attr.outerbox;
+            if (obb !== null && JXG.isArray(obb)) {
+                bb = JXG.copyAttributes(attributes, JXG.Options, 'board').boundingbox;
+                node.style.position = 'relative';
+                w = obb[2] - obb[0];
+                h = obb[1] - obb[3];
+                innerdiv.style.position = 'absolute';
+                innerdiv.style.left = (100 * (bb[0] - obb[0]) / w) + '%';
+                innerdiv.style.top = (100 * (obb[1] - bb[1]) / h) + '%';
+                innerdiv.style.width = (100 * (bb[2] - bb[0]) / w) + '%';
+                innerdiv.style.height = (100 * (bb[1] - bb[3]) / h) + '%';
+
+                // rect = node.getBoundingClientRect();
+                // innerdiv.style.left = ((bb[0] - obb[0]) / w * rect.width) + 'px';
+                // innerdiv.style.top = ((obb[1] - bb[1]) / h * rect.height) + 'px';
+                // innerdiv.style.width = ((bb[2] - bb[0]) / w * rect.width) + 'px';
+                // innerdiv.style.height = ((bb[1] - bb[3]) / h * rect.height) + 'px';
+            }
+
+            node.appendChild(innerdiv);
+            attributes.moveTarget = node;
+
+            board = this.board(innerdiv, attributes);
+
+            innerdiv.style.overflow = 'visible';
+            if (board.renderer.type === 'svg') {
+                board.renderer.svgRoot.style.overflow = 'visible';
+            } else {
+                throw new Error("JSXGraph: JXG.appBox needs SVG renderer");
+            }
+
+            return board;
+        },
+
+        themes: {}
     }
 );
 

@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2023
+    Copyright 2008-2026
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -37,7 +37,6 @@
     newcap:   AsciiMathMl exposes non-constructor functions beginning with upper case letters
 */
 /*jslint nomen: true, plusplus: true, newcap: true, unparam: true*/
-/*eslint no-unused-vars: "off"*/
 
 /**
  * @fileoverview JSXGraph can use various technologies to render the contents of a construction, e.g.
@@ -47,14 +46,14 @@
  * renderers is the class AbstractRenderer defined in this file.
  */
 
-import JXG from "../jxg";
-import Options from "../options";
-import Coords from "../base/coords";
-import Const from "../base/constants";
-import Mat from "../math/math";
-import Geometry from "../math/geometry";
-import Type from "../utils/type";
-import Env from "../utils/env";
+import JXG from "../jxg.js";
+import Options from "../options.js";
+import Coords from "../base/coords.js";
+import Const from "../base/constants.js";
+import Mat from "../math/math.js";
+import Geometry from "../math/geometry.js";
+import Type from "../utils/type.js";
+import Env from "../utils/env.js";
 
 /**
  * <p>This class defines the interface to the graphics part of JSXGraph. This class is an abstract class, it
@@ -189,17 +188,13 @@ JXG.AbstractRenderer = function () {
         [20, 5, 10, 5],
         [0, 5]
     ];
-
 };
 
 JXG.extend(
     JXG.AbstractRenderer.prototype,
     /** @lends JXG.AbstractRenderer.prototype */ {
-        /* ******************************** *
-         *    private methods               *
-         *    should not be called from     *
-         *    outside AbstractRenderer      *
-         * ******************************** */
+
+        /* ********* Private methods *********** */
 
         /**
          * Update visual properties, but only if {@link JXG.AbstractRenderer#enhancedRendering} or <tt>enhanced</tt> is set to true.
@@ -213,24 +208,28 @@ JXG.extend(
             if (enhanced || this.enhancedRendering) {
                 not = not || {};
 
-                this.setObjectViewport(el);
                 this.setObjectTransition(el);
-                if (!Type.evaluate(el.visProp.draft)) {
+
+                // Set clip-path
+                // The clip-path of the label is handled in updateText()
+                this.setClipPath(el, !!el.evalVisProp('clip'));
+
+                if (!el.evalVisProp('draft')) {
                     if (!not.stroke) {
                         if (el.highlighted) {
                             this.setObjectStrokeColor(
                                 el,
-                                el.visProp.highlightstrokecolor,
-                                el.visProp.highlightstrokeopacity
+                                el.evalVisProp('highlightstrokecolor'),
+                                el.evalVisProp('highlightstrokeopacity')
                             );
-                            this.setObjectStrokeWidth(el, el.visProp.highlightstrokewidth);
+                            this.setObjectStrokeWidth(el, el.evalVisProp('highlightstrokewidth'));
                         } else {
                             this.setObjectStrokeColor(
                                 el,
-                                el.visProp.strokecolor,
-                                el.visProp.strokeopacity
+                                el.evalVisProp('strokecolor'),
+                                el.evalVisProp('strokeopacity')
                             );
-                            this.setObjectStrokeWidth(el, el.visProp.strokewidth);
+                            this.setObjectStrokeWidth(el, el.evalVisProp('strokewidth'));
                         }
                     }
 
@@ -238,14 +237,14 @@ JXG.extend(
                         if (el.highlighted) {
                             this.setObjectFillColor(
                                 el,
-                                el.visProp.highlightfillcolor,
-                                el.visProp.highlightfillopacity
+                                el.evalVisProp('highlightfillcolor'),
+                                el.evalVisProp('highlightfillopacity')
                             );
                         } else {
                             this.setObjectFillColor(
                                 el,
-                                el.visProp.fillcolor,
-                                el.visProp.fillopacity
+                                el.evalVisProp('fillcolor'),
+                                el.evalVisProp('fillopacity')
                             );
                         }
                     }
@@ -269,6 +268,16 @@ JXG.extend(
                 } else {
                     this.setDraft(el);
                 }
+
+                if (el.highlighted) {
+                    this.setCssClass(el, el.evalVisProp('highlightcssclass'));
+                } else {
+                    this.setCssClass(el, el.evalVisProp('cssclass'));
+                }
+
+                if (el.evalVisProp('aria.enabled')) {
+                    this.setARIA(el);
+                }
             }
         },
 
@@ -289,16 +298,14 @@ JXG.extend(
             }
 
             if (!isTrace && Type.exists(el.board.highlightedObjects[el.id])) {
-                hl = "highlight";
+                hl = 'highlight';
             } else {
                 hl = "";
             }
             return hl;
         },
 
-        /* ******************************** *
-         *    Point drawing and updating    *
-         * ******************************** */
+        /* ********* Point related stuff *********** */
 
         /**
          * Draws a point on the {@link JXG.Board}.
@@ -310,28 +317,28 @@ JXG.extend(
          */
         drawPoint: function (el) {
             var prim,
-                // sometimes el is not a real point and lacks the methods of a JXG.Point instance,
+                // Sometimes el is not a real point and lacks the methods of a JXG.Point instance,
                 // in these cases to not use el directly.
-                face = Options.normalizePointFace(Type.evaluate(el.visProp.face));
+                face = Options.normalizePointFace(el.evalVisProp('face'));
 
-            // determine how the point looks like
-            if (face === "o") {
-                prim = "ellipse";
+            // Determine how the point looks like
+            if (face === 'o') {
+                prim = 'ellipse';
             } else if (face === "[]") {
-                prim = "rect";
+                prim = 'rect';
             } else {
                 // cross/x, diamond/<>, triangleup/A/^, triangledown/v, triangleleft/<,
                 // triangleright/>, plus/+, |, -
-                prim = "path";
+                prim = 'path';
             }
 
             el.rendNode = this.appendChildPrim(
                 this.createPrim(prim, el.id),
-                Type.evaluate(el.visProp.layer)
+                el.evalVisProp('layer')
             );
             this.appendNodesToElement(el, prim);
 
-            // adjust visual propertys
+            // Adjust visual properties
             this._updateVisual(el, { dash: true, shadow: true }, true);
 
             // By now we only created the xml nodes and set some styles, in updatePoint
@@ -348,22 +355,22 @@ JXG.extend(
          * @see JXG.AbstractRenderer#changePointStyle
          */
         updatePoint: function (el) {
-            var size = Type.evaluate(el.visProp.size),
+            var size = el.evalVisProp('size'),
                 // sometimes el is not a real point and lacks the methods of a JXG.Point instance,
                 // in these cases to not use el directly.
-                face = Options.normalizePointFace(Type.evaluate(el.visProp.face)),
-                unit = Type.evaluate(el.visProp.sizeunit),
-                zoom = Type.evaluate(el.visProp.zoom),
+                face = Options.normalizePointFace(el.evalVisProp('face')),
+                unit = el.evalVisProp('sizeunit'),
+                zoom = el.evalVisProp('zoom'),
                 s1;
 
             if (!isNaN(el.coords.scrCoords[2] + el.coords.scrCoords[1])) {
-                if (unit === "user") {
+                if (unit === 'user') {
                     size *= Math.sqrt(Math.abs(el.board.unitX * el.board.unitY));
                 }
                 size *= !el.board || !zoom ? 1.0 : Math.sqrt(el.board.zoomX * el.board.zoomY);
                 s1 = size === 0 ? 0 : size + 1;
 
-                if (face === "o") {
+                if (face === 'o') {
                     // circle
                     this.updateEllipsePrim(
                         el.rendNode,
@@ -421,14 +428,12 @@ JXG.extend(
                 this.display(el, false);
             }
 
-            if (Type.evaluate(el.visProp.draft)) {
+            if (el.evalVisProp('draft')) {
                 this.setDraft(el);
             }
         },
 
-        /* ******************************** *
-         *           Lines                  *
-         * ******************************** */
+        /* ********* Line related stuff *********** */
 
         /**
          * Draws a line on the {@link JXG.Board}.
@@ -440,9 +445,9 @@ JXG.extend(
         drawLine: function (el) {
             el.rendNode = this.appendChildPrim(
                 this.createPrim("line", el.id),
-                Type.evaluate(el.visProp.layer)
+                el.evalVisProp('layer')
             );
-            this.appendNodesToElement(el, "lines");
+            this.appendNodesToElement(el, 'lines');
             this.updateLine(el);
         },
 
@@ -459,9 +464,7 @@ JXG.extend(
             this.setLineCap(el);
         },
 
-        /* **************************
-         *    Curves
-         * **************************/
+        /* ********* Curve related stuff *********** */
 
         /**
          * Draws a {@link JXG.Curve} on the {@link JXG.Board}.
@@ -473,9 +476,9 @@ JXG.extend(
         drawCurve: function (el) {
             el.rendNode = this.appendChildPrim(
                 this.createPrim("path", el.id),
-                Type.evaluate(el.visProp.layer)
+                el.evalVisProp('layer')
             );
-            this.appendNodesToElement(el, "path");
+            this.appendNodesToElement(el, 'path');
             this.updateCurve(el);
         },
 
@@ -492,9 +495,7 @@ JXG.extend(
             this.setLineCap(el);
         },
 
-        /* **************************
-         *    Arrow heads and related stuff
-         * **************************/
+        /* ********* Arrow heads and related stuff *********** */
 
         /**
          * Handles arrow heads of a line or curve element and calls the renderer primitive.
@@ -513,24 +514,23 @@ JXG.extend(
          * @see JXG.AbstractRenderer#getArrowHeadData
          */
         updatePathWithArrowHeads: function (el, doHighlight) {
-            var ev = el.visProp,
-                hl = doHighlight ? 'highlight' : '',
+            var hl = doHighlight ? 'highlight' : '',
                 w,
                 arrowData;
 
-            if (doHighlight && ev.highlightstrokewidth) {
+            if (doHighlight && el.evalVisProp('highlightstrokewidth')) {
                 w = Math.max(
-                    Type.evaluate(ev.highlightstrokewidth),
-                    Type.evaluate(ev.strokewidth)
+                    el.evalVisProp('highlightstrokewidth'),
+                    el.evalVisProp('strokewidth')
                 );
             } else {
-                w = Type.evaluate(ev.strokewidth);
+                w = el.evalVisProp('strokewidth');
             }
 
             // Get information if there are arrow heads and how large they are.
             arrowData = this.getArrowHeadData(el, w, hl);
 
-            // Create the SVG nodes if neccessary
+            // Create the SVG nodes if necessary
             this.makeArrows(el, arrowData);
 
             // Draw the paths with arrow heads
@@ -565,8 +565,8 @@ JXG.extend(
                 offLast = 0,
                 sizeFirst = 0,
                 sizeLast = 0,
-                ev_fa = Type.evaluate(el.visProp.firstarrow),
-                ev_la = Type.evaluate(el.visProp.lastarrow),
+                ev_fa = el.evalVisProp('firstarrow'),
+                ev_la = el.evalVisProp('lastarrow'),
                 off,
                 size;
 
@@ -578,7 +578,7 @@ JXG.extend(
             */
             if (ev_fa || ev_la) {
                 if (Type.exists(ev_fa.type)) {
-                    typeFirst = Type.evaluate(ev_fa.type);
+                    typeFirst = el.eval(ev_fa.type);
                 } else {
                     if (el.elementClass === Const.OBJECT_CLASS_LINE) {
                         typeFirst = 1;
@@ -587,7 +587,7 @@ JXG.extend(
                     }
                 }
                 if (Type.exists(ev_la.type)) {
-                    typeLast = Type.evaluate(ev_la.type);
+                    typeLast = el.eval(ev_la.type);
                 } else {
                     if (el.elementClass === Const.OBJECT_CLASS_LINE) {
                         typeLast = 1;
@@ -599,10 +599,10 @@ JXG.extend(
                 if (ev_fa) {
                     size = 6;
                     if (Type.exists(ev_fa.size)) {
-                        size = Type.evaluate(ev_fa.size);
+                        size = el.eval(ev_fa.size);
                     }
                     if (hl !== "" && Type.exists(ev_fa[hl + "size"])) {
-                        size = Type.evaluate(ev_fa[hl + "size"]);
+                        size = el.eval(ev_fa[hl + "size"]);
                     }
 
                     off = strokewidth * size;
@@ -629,10 +629,10 @@ JXG.extend(
                 if (ev_la) {
                     size = 6;
                     if (Type.exists(ev_la.size)) {
-                        size = Type.evaluate(ev_la.size);
+                        size = el.eval(ev_la.size);
                     }
                     if (hl !== "" && Type.exists(ev_la[hl + "size"])) {
-                        size = Type.evaluate(ev_la[hl + "size"]);
+                        size = el.eval(ev_la[hl + "size"]);
                     }
                     off = strokewidth * size;
                     if (typeLast === 2) {
@@ -699,7 +699,10 @@ JXG.extend(
 
             c1 = new Coords(Const.COORDS_BY_USER, el.point1.coords.usrCoords, el.board);
             c2 = new Coords(Const.COORDS_BY_USER, el.point2.coords.usrCoords, el.board);
-            margin = Type.evaluate(el.visProp.margin);
+            margin = el.evalVisProp('margin');
+            if (!el.evalVisProp('clip')) {
+                margin += 4096;
+            }
             Geometry.calcStraight(el, c1, c2, margin);
 
             this.handleTouchpoints(el, c1, c2, arrowData);
@@ -731,7 +734,7 @@ JXG.extend(
          *
          */
         updatePath: function (el) {
-            if (Type.evaluate(el.visProp.handdrawing)) {
+            if (el.evalVisProp('handdrawing')) {
                 this.updatePathPrim(el.rendNode, this.updatePathStringBezierPrim(el), el.board);
             } else {
                 this.updatePathPrim(el.rendNode, this.updatePathStringPrim(el), el.board);
@@ -767,7 +770,7 @@ JXG.extend(
                 d1x = d1y = d2x = d2y = 0.0;
                 d = c1.distance(Const.COORDS_BY_SCREEN, c2);
 
-                if (a.evFirst && el.board.renderer.type !== "vml") {
+                if (a.evFirst && el.board.renderer.type !== 'vml') {
                     if (d >= a.minLen) {
                         d1x = ((c2.scrCoords[1] - c1.scrCoords[1]) * a.offFirst) / d;
                         d1y = ((c2.scrCoords[2] - c1.scrCoords[2]) * a.offFirst) / d;
@@ -776,7 +779,7 @@ JXG.extend(
                     }
                 }
 
-                if (a.evLast && el.board.renderer.type !== "vml") {
+                if (a.evLast && el.board.renderer.type !== 'vml') {
                     if (d >= a.minLen) {
                         d2x = ((c2.scrCoords[1] - c1.scrCoords[1]) * a.offLast) / d;
                         d2y = ((c2.scrCoords[2] - c1.scrCoords[2]) * a.offLast) / d;
@@ -816,23 +819,23 @@ JXG.extend(
             if (a.evFirst || a.evLast) {
                 d = d1x = d1y = d2x = d2y = 0.0;
 
-                s1 = Type.evaluate(el.point1.visProp.size) +
-                    Type.evaluate(el.point1.visProp.strokewidth);
+                s1 = el.point1.evalVisProp('size') +
+                    el.point1.evalVisProp('strokewidth');
 
-                s2 = Type.evaluate(el.point2.visProp.size) +
-                    Type.evaluate(el.point2.visProp.strokewidth);
+                s2 = el.point2.evalVisProp('size') +
+                    el.point2.evalVisProp('strokewidth');
 
                 // Handle touchlastpoint /touchfirstpoint
-                if (a.evFirst && Type.evaluate(el.visProp.touchfirstpoint) &&
-                        Type.evaluate(el.point1.visProp.visible)) {
+                if (a.evFirst && el.evalVisProp('touchfirstpoint') &&
+                        el.point1.evalVisProp('visible')) {
                     d = c1.distance(Const.COORDS_BY_SCREEN, c2);
                     //if (d > s) {
                     d1x = ((c2.scrCoords[1] - c1.scrCoords[1]) * s1) / d;
                     d1y = ((c2.scrCoords[2] - c1.scrCoords[2]) * s1) / d;
                     //}
                 }
-                if (a.evLast && Type.evaluate(el.visProp.touchlastpoint) &&
-                        Type.evaluate(el.point2.visProp.visible)) {
+                if (a.evLast && el.evalVisProp('touchlastpoint') &&
+                        el.point2.evalVisProp('visible')) {
                     d = c1.distance(Const.COORDS_BY_SCREEN, c2);
                     //if (d > s) {
                     d2x = ((c2.scrCoords[1] - c1.scrCoords[1]) * s2) / d;
@@ -902,13 +905,9 @@ JXG.extend(
          * @see JXG.Line
          * @see JXG.AbstractRenderer#updateLine
          */
-        setLineCap: function (el) {
-            /* stub */
-        },
+        setLineCap: function (el) { /* stub */ },
 
-        /* **************************
-         *    Ticks related stuff
-         * **************************/
+        /* ********* Ticks related stuff *********** */
 
         /**
          * Creates a rendering node for ticks added to a line.
@@ -922,28 +921,24 @@ JXG.extend(
         drawTicks: function (el) {
             el.rendNode = this.appendChildPrim(
                 this.createPrim("path", el.id),
-                Type.evaluate(el.visProp.layer)
+                el.evalVisProp('layer')
             );
-            this.appendNodesToElement(el, "path");
+            this.appendNodesToElement(el, 'path');
         },
 
         /**
          * Update {@link Ticks} on a {@link JXG.Line}. This method is only a stub and has to be implemented
          * in any descendant renderer class.
-         * @param {JXG.Ticks} element Reference of a ticks object that has to be updated.
+         * @param {JXG.Ticks} el Reference of a ticks object that has to be updated.
          * @see Line
          * @see Ticks
          * @see JXG.Line
          * @see JXG.Ticks
          * @see JXG.AbstractRenderer#drawTicks
          */
-        updateTicks: function (element) {
-            /* stub */
-        },
+        updateTicks: function (el) { /* stub */ },
 
-        /* **************************
-         *    Circle related stuff
-         * **************************/
+        /* ********* Circle related stuff *********** */
 
         /**
          * Draws a {@link JXG.Circle}
@@ -955,9 +950,9 @@ JXG.extend(
         drawEllipse: function (el) {
             el.rendNode = this.appendChildPrim(
                 this.createPrim("ellipse", el.id),
-                Type.evaluate(el.visProp.layer)
+                el.evalVisProp('layer')
             );
-            this.appendNodesToElement(el, "ellipse");
+            this.appendNodesToElement(el, 'ellipse');
             this.updateEllipse(el);
         },
 
@@ -990,9 +985,7 @@ JXG.extend(
             this.setLineCap(el);
         },
 
-        /* **************************
-         *   Polygon related stuff
-         * **************************/
+        /* ********* Polygon related stuff *********** */
 
         /**
          * Draws a {@link JXG.Polygon} on the {@link JXG.Board}.
@@ -1004,9 +997,9 @@ JXG.extend(
         drawPolygon: function (el) {
             el.rendNode = this.appendChildPrim(
                 this.createPrim("polygon", el.id),
-                Type.evaluate(el.visProp.layer)
+                el.evalVisProp('layer')
             );
-            this.appendNodesToElement(el, "polygon");
+            this.appendNodesToElement(el, 'polygon');
             this.updatePolygon(el);
         },
 
@@ -1024,24 +1017,31 @@ JXG.extend(
             this.updatePolygonPrim(el.rendNode, el);
         },
 
-        /* **************************
-         *    Text related stuff
-         * **************************/
+        /* ********* Text related stuff *********** */
 
         /**
          * Shows a small copyright notice in the top left corner of the board.
          * @param {String} str The copyright notice itself
          * @param {Number} fontsize Size of the font the copyright notice is written in
+         * @see JXG.AbstractRenderer#displayLogo
+         * @see Text#fontSize
          */
-        displayCopyright: function (str, fontsize) {
-            /* stub */
-        },
+        displayCopyright: function (str, fontsize) { /* stub */ },
+
+        /**
+         * Shows a small JSXGraph logo in the top left corner of the board.
+         * @param {String} str The data-URL of the logo
+         * @param {Number} fontsize Size of the font the copyright notice is written in
+         * @see JXG.AbstractRenderer#displayCopyright
+         * @see Text#fontSize
+         */
+        displayLogo: function (str, fontsize) { /* stub */ },
 
         /**
          * An internal text is a {@link JXG.Text} element which is drawn using only
          * the given renderer but no HTML. This method is only a stub, the drawing
          * is done in the special renderers.
-         * @param {JXG.Text} element Reference to a {@link JXG.Text} object
+         * @param {JXG.Text} el Reference to a {@link JXG.Text} object
          * @see Text
          * @see JXG.Text
          * @see JXG.AbstractRenderer#updateInternalText
@@ -1049,13 +1049,11 @@ JXG.extend(
          * @see JXG.AbstractRenderer#updateText
          * @see JXG.AbstractRenderer#updateTextStyle
          */
-        drawInternalText: function (element) {
-            /* stub */
-        },
+        drawInternalText: function (el) { /* stub */ },
 
         /**
          * Updates visual properties of an already existing {@link JXG.Text} element.
-         * @param {JXG.Text} element Reference to an {@link JXG.Text} object, that has to be updated.
+         * @param {JXG.Text} el Reference to an {@link JXG.Text} object, that has to be updated.
          * @see Text
          * @see JXG.Text
          * @see JXG.AbstractRenderer#drawInternalText
@@ -1063,9 +1061,7 @@ JXG.extend(
          * @see JXG.AbstractRenderer#updateText
          * @see JXG.AbstractRenderer#updateTextStyle
          */
-        updateInternalText: function (element) {
-            /* stub */
-        },
+        updateInternalText: function (el) { /* stub */ },
 
         /**
          * Displays a {@link JXG.Text} on the {@link JXG.Board} by putting a HTML div over it.
@@ -1081,16 +1077,16 @@ JXG.extend(
             var node, z, level, ev_visible;
 
             if (
-                Type.evaluate(el.visProp.display) === "html" &&
+                el.evalVisProp('display') === "html" &&
                 Env.isBrowser &&
                 this.type !== "no"
             ) {
-                node = this.container.ownerDocument.createElement("div");
+                node = this.container.ownerDocument.createElement('div');
                 //node = this.container.ownerDocument.createElementNS('http://www.w3.org/1999/xhtml', 'div'); //
-                node.style.position = "absolute";
-                node.className = Type.evaluate(el.visProp.cssclass);
+                node.style.position = 'absolute';
+                node.className = el.evalVisProp('cssclass');
 
-                level = Type.evaluate(el.visProp.layer);
+                level = el.evalVisProp('layer');
                 if (!Type.exists(level)) {
                     // trace nodes have level not set
                     level = 0;
@@ -1115,7 +1111,7 @@ JXG.extend(
 
             // Set el.visPropCalc.visible
             if (el.visProp.islabel && Type.exists(el.visProp.anchor)) {
-                ev_visible = Type.evaluate(el.visProp.anchor.visProp.visible);
+                ev_visible = el.visProp.anchor.evalVisProp('visible');
                 el.prepareUpdate().updateVisibility(ev_visible);
             } else {
                 el.prepareUpdate().updateVisibility();
@@ -1124,8 +1120,57 @@ JXG.extend(
         },
 
         /**
+         * Update CSS property clip-path to HTML texts if `overflow:hidden`
+         * has to be avoided.
+         *
+         * TODO clipping for transformed texts
+         *
+         * @param {JXG.Text} el Reference to an {@link JXG.Text} object that has to be clipped.
+         * @param {Boolean} [val=undefined] Set an explicit value, overwrites the element's attribute 'clip'. This is useful for handling the value 'inherit'.
+         * @see Text
+         * @see JXG.Text
+         */
+        updateClipPath: function(el, val) {
+            var x, y, x2, y2,
+                w = el.rendNode.offsetWidth,
+                h = el.rendNode.offsetHeight,
+                is = el.rendNode.style.inset.split(' '),
+                cw = el.board.canvasWidth,
+                ch = el.board.canvasHeight;
+
+            if (val === undefined) {
+                val = el.evalVisProp('clip');
+            }
+
+            if (!val) {
+                el.rendNode.style.removeProperty('clip-path');
+                return;
+            }
+            if (is[3] !== 'auto') {
+                x = parseFloat(is[3]);
+                x2 = cw - x;
+            } else {
+                x2 = parseFloat(is[1]) + w;
+                x = cw - x2;
+            }
+
+            if (is[0] !== 'auto') {
+                y = parseFloat(is[0]);
+                y2 = ch - y;
+            } else {
+                y2 = parseFloat(is[2]) + h;
+                y = ch - y2;
+            }
+
+            el.rendNode.style.clipPath = 'rect(' + (-y) + 'px ' // top
+                                        + (x2) + 'px '         // right
+                                        + (y2) + 'px '         // bottom
+                                        + (-x) + 'px)';        // left
+        },
+
+        /**
          * Updates visual properties of an already existing {@link JXG.Text} element.
-         * @param {JXG.Text} el Reference to an {@link JXG.Text} object, that has to be updated.
+         * @param {JXG.Text} el Reference to an {@link JXG.Text} object that has to be updated.
          * @see Text
          * @see JXG.Text
          * @see JXG.AbstractRenderer#drawText
@@ -1136,7 +1181,7 @@ JXG.extend(
         updateText: function (el) {
             var content = el.plaintext,
                 v, c,
-                parentNode,
+                parentNode, node,
                 // scale, vshift,
                 // id, wrap_id,
                 ax, ay, angle, co, si,
@@ -1145,7 +1190,7 @@ JXG.extend(
             if (el.visPropCalc.visible) {
                 this.updateTextStyle(el, false);
 
-                if (Type.evaluate(el.visProp.display) === "html" && this.type !== "no") {
+                if (el.evalVisProp('display') === "html" && this.type !== 'no') {
                     // Set the position
                     if (!isNaN(el.coords.scrCoords[1] + el.coords.scrCoords[2])) {
                         // Horizontal
@@ -1154,19 +1199,19 @@ JXG.extend(
                         c = Math.abs(c) < 1000000 ? c : 1000000;
                         ax = el.getAnchorX();
 
-                        if (ax === "right") {
+                        if (ax === 'right') {
                             // v = Math.floor(el.board.canvasWidth - c);
                             v = el.board.canvasWidth - c;
-                            to_h = "right";
-                        } else if (ax === "middle") {
+                            to_h = 'right';
+                        } else if (ax === 'middle') {
                             // v = Math.floor(c - 0.5 * el.size[0]);
                             v = c - 0.5 * el.size[0];
-                            to_h = "center";
+                            to_h = 'center';
                         } else {
                             // 'left'
                             // v = Math.floor(c);
                             v = c;
-                            to_h = "left";
+                            to_h = 'left';
                         }
 
                         // This may be useful for foreignObj.
@@ -1175,12 +1220,12 @@ JXG.extend(
                         //}
 
                         if (el.visPropOld.left !== ax + v) {
-                            if (ax === "right") {
-                                el.rendNode.style.right = v + "px";
-                                el.rendNode.style.left = "auto";
+                            if (ax === 'right') {
+                                el.rendNode.style.right = v + 'px';
+                                el.rendNode.style.left = 'auto';
                             } else {
-                                el.rendNode.style.left = v + "px";
-                                el.rendNode.style.right = "auto";
+                                el.rendNode.style.left = v + 'px';
+                                el.rendNode.style.right = 'auto';
                             }
                             el.visPropOld.left = ax + v;
                         }
@@ -1190,19 +1235,19 @@ JXG.extend(
                         c = Math.abs(c) < 1000000 ? c : 1000000;
                         ay = el.getAnchorY();
 
-                        if (ay === "bottom") {
+                        if (ay === 'bottom') {
                             // v = Math.floor(el.board.canvasHeight - c);
                             v = el.board.canvasHeight - c;
-                            to_v = "bottom";
-                        } else if (ay === "middle") {
+                            to_v = 'bottom';
+                        } else if (ay === 'middle') {
                             // v = Math.floor(c - 0.5 * el.size[1]);
                             v = c - 0.5 * el.size[1];
-                            to_v = "center";
+                            to_v = 'center';
                         } else {
                             // top
                             // v = Math.floor(c);
                             v = c;
-                            to_v = "top";
+                            to_v = 'top';
                         }
 
                         // This may be useful for foreignObj.
@@ -1211,12 +1256,12 @@ JXG.extend(
                         //}
 
                         if (el.visPropOld.top !== ay + v) {
-                            if (ay === "bottom") {
-                                el.rendNode.style.top = "auto";
-                                el.rendNode.style.bottom = v + "px";
+                            if (ay === 'bottom') {
+                                el.rendNode.style.top = 'auto';
+                                el.rendNode.style.bottom = v + 'px';
                             } else {
-                                el.rendNode.style.bottom = "auto";
-                                el.rendNode.style.top = v + "px";
+                                el.rendNode.style.bottom = 'auto';
+                                el.rendNode.style.top = v + 'px';
                             }
                             el.visPropOld.top = ay + v;
                         }
@@ -1247,8 +1292,8 @@ JXG.extend(
                         }
                         el.htmlStr = content;
 
-                        if (Type.evaluate(el.visProp.usemathjax)) {
-                            // Typesetting directly might not work because mathjax was not loaded completely
+                        if (el.evalVisProp('usemathjax')) {
+                            // Typesetting directly might not work because MathJax was not loaded completely
                             try {
                                 if (MathJax.typeset) {
                                     // Version 3
@@ -1276,18 +1321,36 @@ JXG.extend(
                             } catch (e) {
                                 JXG.debug("MathJax (not yet) loaded");
                             }
-                        } else if (Type.evaluate(el.visProp.usekatex)) {
+                        } else if (el.evalVisProp('usekatex')) {
                             try {
-                                /* eslint-disable no-undef */
-                                katex.render(content, el.rendNode, {
-                                    macros: Type.evaluate(el.visProp.katexmacros),
-                                    throwOnError: false
-                                });
-                                /* eslint-enable no-undef */
+                                // Checkboxes et. al. do not possess rendNodeLabel during the first update.
+                                // In this case node will be undefined and not rendered by KaTeX.
+                                if (el.rendNode.innerHTML.indexOf('<span') === 0 &&
+                                    el.rendNode.innerHTML.indexOf('<label') > 0 &&
+                                    (
+                                        el.rendNode.innerHTML.indexOf('<checkbox') > 0 ||
+                                        el.rendNode.innerHTML.indexOf('<input') > 0
+                                    )
+                                 ) {
+                                    node = el.rendNodeLabel;
+                                } else if (el.rendNode.innerHTML.indexOf('<button') === 0) {
+                                    node = el.rendNodeButton;
+                                } else {
+                                    node = el.rendNode;
+                                }
+
+                                if (node) {
+                                    /* eslint-disable no-undef */
+                                    katex.render(content, node, {
+                                        macros: el.evalVisProp('katexmacros'),
+                                        throwOnError: false
+                                    });
+                                    /* eslint-enable no-undef */
+                                }
                             } catch (e) {
                                 JXG.debug("KaTeX not loaded (yet)");
                             }
-                        } else if (Type.evaluate(el.visProp.useasciimathml)) {
+                        } else if (el.evalVisProp('useasciimathml')) {
                             // This is not a constructor.
                             // See http://asciimath.org/ for more information
                             // about AsciiMathML and the project's source code.
@@ -1299,7 +1362,7 @@ JXG.extend(
                         }
                     }
 
-                    angle = Type.evaluate(el.visProp.rotate);
+                    angle = el.evalVisProp('rotate');
                     if (angle !== 0) {
                         // Don't forget to convert to rad
                         angle *= (Math.PI / 180);
@@ -1311,7 +1374,14 @@ JXG.extend(
                             ')';
                         el.rendNode.style['transform-origin'] = to_h + ' ' + to_v;
                     }
-                    this.transformImage(el, el.transformations);
+                    this.transformRect(el, el.transformations);
+
+                    if (el.visProp.islabel && Type.exists(el.visProp.anchor) &&
+                        el.evalVisProp('clip') === 'inherit') {
+                        this.updateClipPath(el, !!el.visProp.anchor.evalVisProp('clip'));
+                    } else {
+                        this.updateClipPath(el);
+                    }
                 } else {
                     this.updateInternalText(el);
                 }
@@ -1319,43 +1389,7 @@ JXG.extend(
         },
 
         /**
-         * Converts string containing CSS properties into
-         * array with key-value pair objects.
-         *
-         * @example
-         * "color:blue; background-color:yellow" is converted to
-         * [{'color': 'blue'}, {'backgroundColor': 'yellow'}]
-         *
-         * @param  {String} cssString String containing CSS properties
-         * @return {Array}           Array of CSS key-value pairs
-         */
-        _css2js: function (cssString) {
-            var pairs = [],
-                i,
-                len,
-                key,
-                val,
-                s,
-                list = Type.trim(cssString).replace(/;$/, "").split(";");
-
-            len = list.length;
-            for (i = 0; i < len; ++i) {
-                if (Type.trim(list[i]) !== "") {
-                    s = list[i].split(":");
-                    key = Type.trim(
-                        s[0].replace(/-([a-z])/gi, function (match, char) {
-                            return char.toUpperCase();
-                        })
-                    );
-                    val = Type.trim(s[1]);
-                    pairs.push({ key: key, val: val });
-                }
-            }
-            return pairs;
-        },
-
-        /**
-         * Updates font-size, color and opacity propertiey and CSS style properties of a {@link JXG.Text} node.
+         * Updates font-size, color and opacity properties and CSS style properties of a {@link JXG.Text} node.
          * This function is also called by highlight() and nohighlight().
          * @param {JXG.Text} el Reference to the {@link JXG.Text} object, that has to be updated.
          * @param {Boolean} doHighlight
@@ -1369,30 +1403,28 @@ JXG.extend(
          */
         updateTextStyle: function (el, doHighlight) {
             var fs,
-                so,
-                sc,
+                so, sc,
                 css,
                 node,
-                ev = el.visProp,
-                display = Env.isBrowser ? ev.display : "internal",
+                display = Env.isBrowser ? el.visProp.display : "internal",
                 nodeList = ["rendNode", "rendNodeTag", "rendNodeLabel"],
                 lenN = nodeList.length,
-                fontUnit = Type.evaluate(ev.fontunit),
+                fontUnit = el.evalVisProp('fontunit'),
                 cssList,
-                prop,
+                prop, pair,
                 style,
                 cssString,
                 styleList = ["cssdefaultstyle", "cssstyle"],
                 lenS = styleList.length;
 
             if (doHighlight) {
-                sc = ev.highlightstrokecolor;
-                so = ev.highlightstrokeopacity;
-                css = ev.highlightcssclass;
+                sc = el.evalVisProp('highlightstrokecolor');
+                so = el.evalVisProp('highlightstrokeopacity');
+                css = el.evalVisProp('highlightcssclass');
             } else {
-                sc = ev.strokecolor;
-                so = ev.strokeopacity;
-                css = ev.cssclass;
+                sc = el.evalVisProp('strokecolor');
+                so = el.evalVisProp('strokeopacity');
+                css = el.evalVisProp('cssclass');
             }
 
             // This part is executed for all text elements except internal texts in canvas.
@@ -1402,32 +1434,30 @@ JXG.extend(
             //  VML        +         +
             //  canvas     +         -
             //  no         -         -
-            if (this.type !== "no" && (display === "html" || this.type !== "canvas")) {
+            if (this.type !== "no" && (display === "html" || this.type !== 'canvas')) {
                 for (style = 0; style < lenS; style++) {
                     // First set cssString to
                     // ev.cssdefaultstyle of ev.highlightcssdefaultstyle,
                     // then to
                     // ev.cssstyle of ev.highlightcssstyle
-                    cssString = Type.evaluate(
-                        ev[(doHighlight ? "highlight" : "") + styleList[style]]
+                    cssString = el.evalVisProp(
+                        (doHighlight ? 'highlight' : '') + styleList[style]
                     );
-                    if (cssString !== "" && el.visPropOld[styleList[style]] !== cssString) {
-                        cssList = this._css2js(cssString);
-                        for (node = 0; node < lenN; node++) {
-                            if (Type.exists(el[nodeList[node]])) {
-                                for (prop in cssList) {
-                                    if (cssList.hasOwnProperty(prop)) {
-                                        el[nodeList[node]].style[cssList[prop].key] =
-                                            cssList[prop].val;
-                                    }
-                                }
+                    // Set the CSS style properties - without deleting other properties
+                    for (node = 0; node < lenN; node++) if (Type.exists(el[nodeList[node]])) {
+                        if (cssString !== "" && el.visPropOld[styleList[style] + '_' + node] !== cssString) {
+                            cssList = Type.css2js(cssString);
+                            for (prop in cssList) if (cssList.hasOwnProperty(prop)) {
+                                pair = cssList[prop];
+                                el[nodeList[node]].style[pair.key] = pair.val;
                             }
+                            el.visPropOld[styleList[style] + '_' + node] = cssString;
                         }
-                        el.visPropOld[styleList[style]] = cssString;
+                        // el.visPropOld[styleList[style]] = cssString;
                     }
                 }
 
-                fs = Type.evaluate(ev.fontsize);
+                fs = el.evalVisProp('fontsize');
                 if (el.visPropOld.fontsize !== fs) {
                     el.needsSizeUpdate = true;
                     try {
@@ -1451,8 +1481,7 @@ JXG.extend(
             this.setTabindex(el);
 
             this.setObjectTransition(el);
-            if (display === "html" && this.type !== "no") {
-                this.setObjectViewport(el, true);
+            if (display === "html" && this.type !== 'no') {
                 // Set new CSS class
                 if (el.visPropOld.cssclass !== css) {
                     el.rendNode.className = css;
@@ -1462,6 +1491,10 @@ JXG.extend(
                 this.setObjectStrokeColor(el, sc, so);
             } else {
                 this.updateInternalTextStyle(el, sc, so);
+            }
+
+            if (el.evalVisProp('aria.enabled')) {
+                this.setARIA(el);
             }
 
             return this;
@@ -1479,21 +1512,17 @@ JXG.extend(
             this.setObjectStrokeColor(el, strokeColor, strokeOpacity);
         },
 
-        /* **************************
-         *    Image related stuff
-         * **************************/
+        /* ********* Image related stuff *********** */
 
         /**
          * Draws an {@link JXG.Image} on a board; This is just a template that has to be implemented by special
          * renderers.
-         * @param {JXG.Image} element Reference to the image object that is to be drawn
+         * @param {JXG.Image} el Reference to the image object that is to be drawn
          * @see Image
          * @see JXG.Image
          * @see JXG.AbstractRenderer#updateImage
          */
-        drawImage: function (element) {
-            /* stub */
-        },
+        drawImage: function (el) { /* stub */ },
 
         /**
          * Updates the properties of an {@link JXG.Image} element.
@@ -1512,7 +1541,7 @@ JXG.extend(
             );
 
             this.updateImageURL(el);
-            this.transformImage(el, el.transformations);
+            this.transformRect(el, el.transformations);
             this._updateVisual(el, { stroke: true, dash: true }, true);
         },
 
@@ -1525,7 +1554,7 @@ JXG.extend(
          * @param {JXG.GeometryElement} el A JSXGraph element. We only need its board property.
          * @param {Array} transformations An array of JXG.Transformations.
          * @returns {Array} A matrix represented by a two dimensional array of numbers.
-         * @see JXG.AbstractRenderer#transformImage
+         * @see JXG.AbstractRenderer#transformRect
          */
         joinTransforms: function (el, transformations) {
             var i,
@@ -1533,25 +1562,7 @@ JXG.extend(
                 oy = el.board.origin.scrCoords[2],
                 ux = el.board.unitX,
                 uy = el.board.unitY,
-                // Translate to 0,0 in screen coords
-                /*
-                m = [[1, 0, 0], [0, 1, 0], [0, 0, 1]],
-                mpre1 =  [[1,   0, 0],
-                    [-ox, 1, 0],
-                    [-oy, 0, 1]],
-                // Scale
-                mpre2 =  [[1, 0,     0],
-                    [0, 1 / ux,  0],
-                    [0, 0, -1 / uy]],
-                // Scale back
-                mpost2 = [[1, 0,   0],
-                    [0, ux,  0],
-                    [0, 0, -uy]],
-                // Translate back
-                mpost1 = [[1,  0, 0],
-                    [ox, 1, 0],
-                    [oy, 0, 1]],
-                */
+
                 len = transformations.length,
                 // Translate to 0,0 in screen coords and then scale
                 m = [
@@ -1561,11 +1572,7 @@ JXG.extend(
                 ];
 
             for (i = 0; i < len; i++) {
-                //m = Mat.matMatMult(mpre1, m);
-                //m = Mat.matMatMult(mpre2, m);
                 m = Mat.matMatMult(transformations[i].matrix, m);
-                //m = Mat.matMatMult(mpost2, m);
-                //m = Mat.matMatMult(mpost1, m);
             }
             // Scale back and then translate back
             m = Mat.matMatMult(
@@ -1583,25 +1590,21 @@ JXG.extend(
          * Applies transformations on images and text elements. This method has to implemented in
          * all descendant classes where text and image transformations are to be supported.
          * <p>
-         * Only affine transformation are supported, no proper projective transformations. This means, the 
+         * Only affine transformation are supported, no proper projective transformations. This means, the
          * respective entries of the transformation matrix are simply ignored.
-         * 
-         * @param {JXG.Image|JXG.Text} element A {@link JXG.Image} or {@link JXG.Text} object.
+         *
+         * @param {JXG.Image|JXG.Text} el A {@link JXG.Image} or {@link JXG.Text} object.
          * @param {Array} transformations An array of {@link JXG.Transformation} objects. This is usually the
          * transformations property of the given element <tt>el</tt>.
          */
-        transformImage: function (element, transformations) {
-            /* stub */
-        },
+        transformRect: function (el, transformations) { /* stub */ },
 
         /**
          * If the URL of the image is provided by a function the URL has to be updated during updateImage()
-         * @param {JXG.Image} element Reference to an image object.
+         * @param {JXG.Image} el Reference to an image object.
          * @see JXG.AbstractRenderer#updateImage
          */
-        updateImageURL: function (element) {
-            /* stub */
-        },
+        updateImageURL: function (el) { /* stub */ },
 
         /**
          * Updates CSS style properties of a {@link JXG.Image} node.
@@ -1618,22 +1621,18 @@ JXG.extend(
          * @see JXG.AbstractRenderer#noHighlight
          */
         updateImageStyle: function (el, doHighlight) {
-            el.rendNode.className = Type.evaluate(
-                doHighlight ? el.visProp.highlightcssclass : el.visProp.cssclass
+            el.rendNode.className = el.evalVisProp(
+                doHighlight ? 'highlightcssclass' : 'cssclass'
             );
         },
 
-        drawForeignObject: function (el) {
-            /* stub */
-        },
+        drawForeignObject: function (el) { /* stub */ },
 
         updateForeignObject: function (el) {
             /* stub */
         },
 
-        /* **************************
-         * Render primitive objects
-         * **************************/
+        /* ********* Render primitive objects *********** */
 
         /**
          * Appends a node to a specific layer level. This is just an abstract method and has to be implemented
@@ -1642,19 +1641,15 @@ JXG.extend(
          * @param {Number} level The layer the node is attached to. This is the index of the layer in
          * {@link JXG.SVGRenderer#layer} or the <tt>z-index</tt> style property of the node in VMLRenderer.
          */
-        appendChildPrim: function (node, level) {
-            /* stub */
-        },
+        appendChildPrim: function (node, level) { /* stub */ },
 
         /**
          * Stores the rendering nodes. This is an abstract method which has to be implemented in all renderers that use
          * the <tt>createPrim</tt> method.
-         * @param {JXG.GeometryElement} element A JSXGraph element.
+         * @param {JXG.GeometryElement} el A JSXGraph element.
          * @param {String} type The XML node name. Only used in VMLRenderer.
          */
-        appendNodesToElement: function (element, type) {
-            /* stub */
-        },
+        appendNodesToElement: function (el, type) { /* stub */ },
 
         /**
          * Creates a node of a given type with a given id.
@@ -1662,29 +1657,22 @@ JXG.extend(
          * @param {String} id Set the id attribute to this.
          * @returns {Node} Reference to the created node.
          */
-        createPrim: function (type, id) {
-            /* stub */
-            return null;
-        },
+        createPrim: function (type, id) { /* stub */ return null; },
 
         /**
          * Removes an element node. Just a stub.
          * @param {Node} node The node to remove.
          */
-        remove: function (node) {
-            /* stub */
-        },
+        remove: function (node) { /* stub */ },
 
         /**
          * Can be used to create the nodes to display arrows. This is an abstract method which has to be implemented
          * in any descendant renderer.
-         * @param {JXG.GeometryElement} element The element the arrows are to be attached to.
+         * @param {JXG.GeometryElement} el The element the arrows are to be attached to.
          * @param {Object} arrowData Data concerning possible arrow heads
          *
          */
-        makeArrows: function (element, arrowData) {
-            /* stub */
-        },
+        makeArrows: function (el, arrowData) { /* stub */ },
 
         /**
          * Updates width of an arrow DOM node. Used in
@@ -1692,9 +1680,7 @@ JXG.extend(
          * @param {Number} width
          * @param {Node} parentNode Used in IE only
          */
-        _setArrowWidth: function (node, width, parentNode) {
-            /* stub */
-        },
+        _setArrowWidth: function (node, width, parentNode) { /* stub */ },
 
         /**
          * Updates an ellipse node primitive. This is an abstract method which has to be implemented in all renderers
@@ -1705,9 +1691,7 @@ JXG.extend(
          * @param {Number} rx The x-axis radius.
          * @param {Number} ry The y-axis radius.
          */
-        updateEllipsePrim: function (node, x, y, rx, ry) {
-            /* stub */
-        },
+        updateEllipsePrim: function (node, x, y, rx, ry) { /* stub */ },
 
         /**
          * Refreshes a line node. This is an abstract method which has to be implemented in all renderers that use
@@ -1719,9 +1703,7 @@ JXG.extend(
          * @param {Number} p2y The second point's y coordinate.
          * @param {JXG.Board} board
          */
-        updateLinePrim: function (node, p1x, p1y, p2x, p2y, board) {
-            /* stub */
-        },
+        updateLinePrim: function (node, p1x, p1y, p2x, p2y, board) { /* stub */ },
 
         /**
          * Updates a path element. This is an abstract method which has to be implemented in all renderers that use
@@ -1731,54 +1713,44 @@ JXG.extend(
          * depends on the rendering engine.
          * @param {JXG.Board} board Reference to the element's board.
          */
-        updatePathPrim: function (node, pathString, board) {
-            /* stub */
-        },
+        updatePathPrim: function (node, pathString, board) { /* stub */ },
 
         /**
          * Builds a path data string to draw a point with a face other than <em>rect</em> and <em>circle</em>. Since
          * the format of such a string usually depends on the renderer this method
          * is only an abstract method. Therefore, it has to be implemented in the descendant renderer itself unless
          * the renderer does not use the createPrim interface but the draw* interfaces to paint.
-         * @param {JXG.Point} element The point element
+         * @param {JXG.Point} el The point element
          * @param {Number} size A positive number describing the size. Usually the half of the width and height of
          * the drawn point.
          * @param {String} type A string describing the point's face. This method only accepts the shortcut version of
          * each possible face: <tt>x, +, |, -, [], <>, <<>>,^, v, >, < </tt>
          */
-        updatePathStringPoint: function (element, size, type) {
-            /* stub */
-        },
+        updatePathStringPoint: function (el, size, type) { /* stub */ },
 
         /**
          * Builds a path data string from a {@link JXG.Curve} element. Since the path data strings heavily depend on the
          * underlying rendering technique this method is just a stub. Although such a path string is of no use for the
          * CanvasRenderer, this method is used there to draw a path directly.
-         * @param element
+         * @param {JXG.GeometryElement} el
          */
-        updatePathStringPrim: function (element) {
-            /* stub */
-        },
+        updatePathStringPrim: function (el) { /* stub */ },
 
         /**
          * Builds a path data string from a {@link JXG.Curve} element such that the curve looks like hand drawn. Since
          * the path data strings heavily depend on the underlying rendering technique this method is just a stub.
          * Although such a path string is of no use for the CanvasRenderer, this method is used there to draw a path
          * directly.
-         * @param element
+         * @param  {JXG.GeometryElement} el
          */
-        updatePathStringBezierPrim: function (element) {
-            /* stub */
-        },
+        updatePathStringBezierPrim: function (el) { /* stub */ },
 
         /**
          * Update a polygon primitive.
          * @param {Node} node
-         * @param {JXG.Polygon} element A JSXGraph element of type {@link JXG.Polygon}
+         * @param {JXG.Polygon} el A JSXGraph element of type {@link JXG.Polygon}
          */
-        updatePolygonPrim: function (node, element) {
-            /* stub */
-        },
+        updatePolygonPrim: function (node, el) { /* stub */ },
 
         /**
          * Update a rectangle primitive. This is used only for points with face of type 'rect'.
@@ -1788,72 +1760,171 @@ JXG.extend(
          * @param {Number} w Width of the rectangle.
          * @param {Number} h The rectangle's height.
          */
-        updateRectPrim: function (node, x, y, w, h) {
-            /* stub */
-        },
+        updateRectPrim: function (node, x, y, w, h) { /* stub */ },
 
-        /* **************************
-         *  Set Attributes
-         * **************************/
-
-        /**
-         * Sets a node's attribute.
-         * @param {Node} node The node that is to be updated.
-         * @param {String} key Name of the attribute.
-         * @param {String} val New value for the attribute.
-         */
-        setPropertyPrim: function (node, key, val) {
-            /* stub */
-        },
-
-        setTabindex: function (element) {
-            var val;
-            if (element.board.attr.keyboard.enabled && Type.exists(element.rendNode)) {
-                val = Type.evaluate(element.visProp.tabindex);
-                if (!element.visPropCalc.visible || Type.evaluate(element.visProp.fixed)) {
-                    val = null;
-                }
-                if (val !== element.visPropOld.tabindex) {
-                    element.rendNode.setAttribute("tabindex", val);
-                    element.visPropOld.tabindex = val;
-                }
-            }
-        },
+        /* ********* Set attributes *********** */
 
         /**
          * Shows or hides an element on the canvas; Only a stub, requires implementation in the derived renderer.
-         * @param {JXG.GeometryElement} element Reference to the object that has to appear.
+         * @param {JXG.GeometryElement} el Reference to the object that has to appear.
          * @param {Boolean} value true to show the element, false to hide the element.
          */
-        display: function (element, value) {
-            if (element) {
-                element.visPropOld.visible = value;
+        display: function (el, value) {
+            if (el) {
+                el.visPropOld.visible = value;
             }
-        },
-
-        /**
-         * Shows a hidden element on the canvas; Only a stub, requires implementation in the derived renderer.
-         *
-         * Please use JXG.AbstractRenderer#display instead
-         * @param {JXG.GeometryElement} element Reference to the object that has to appear.
-         * @see JXG.AbstractRenderer#hide
-         * @deprecated
-         */
-        show: function (element) {
-            /* stub */
         },
 
         /**
          * Hides an element on the canvas; Only a stub, requires implementation in the derived renderer.
          *
          * Please use JXG.AbstractRenderer#display instead
-         * @param {JXG.GeometryElement} element Reference to the geometry element that has to disappear.
+         * @param {JXG.GeometryElement} el Reference to the geometry element that has to disappear.
          * @see JXG.AbstractRenderer#show
          * @deprecated
          */
-        hide: function (element) {
-            /* stub */
+        hide: function (el) { /* stub */ },
+
+        /**
+         * Highlights an object, i.e. changes the current colors of the object to its highlighting colors
+         * and highlighting strokewidth.
+         * @param {JXG.GeometryElement} el Reference of the object that will be highlighted.
+         * @param {Boolean} [suppressHighlightStrokeWidth=undefined] If undefined or false, highlighting also changes strokeWidth. This might not be
+         * the cases for polygon borders. Thus, if a polygon is highlighted, its polygon borders change strokeWidth only if the polygon attribute
+         * highlightByStrokeWidth == true.
+         * @returns {JXG.AbstractRenderer} Reference to the renderer
+         * @see JXG.AbstractRenderer#updateTextStyle
+         */
+        highlight: function (el, suppressHighlightStrokeWidth) {
+            var i, do_hl, sw;
+
+            this.setObjectTransition(el);
+            if (!el.visProp.draft) {
+                if (el.type === Const.OBJECT_TYPE_POLYGON) {
+                    this.setObjectFillColor(el, el.evalVisProp('highlightfillcolor'), el.evalVisProp('highlightfillopacity'));
+                    do_hl = el.evalVisProp('highlightbystrokewidth');
+                    for (i = 0; i < el.borders.length; i++) {
+                        this.highlight(el.borders[i], !do_hl);
+                    }
+                } else {
+                    if (el.elementClass === Const.OBJECT_CLASS_TEXT) {
+                        this.updateTextStyle(el, true);
+                    } else if (el.type === Const.OBJECT_TYPE_IMAGE) {
+                        this.updateImageStyle(el, true);
+                        this.setObjectFillColor(
+                            el,
+                            el.evalVisProp('highlightfillcolor'),
+                            el.evalVisProp('highlightfillopacity')
+                        );
+                    } else {
+                        this.setObjectStrokeColor(
+                            el,
+                            el.evalVisProp('highlightstrokecolor'),
+                            el.evalVisProp('highlightstrokeopacity')
+                        );
+                        this.setObjectFillColor(
+                            el,
+                            el.evalVisProp('highlightfillcolor'),
+                            el.evalVisProp('highlightfillopacity')
+                        );
+                    }
+                }
+
+                // Highlight strokeWidth is suppressed if
+                // parameter suppressHighlightStrokeWidth is false or undefined.
+                // suppressHighlightStrokeWidth is false if polygon attribute
+                // highlightbystrokewidth is true.
+                if (!suppressHighlightStrokeWidth && el.evalVisProp('highlightstrokewidth')) {
+                    sw = Math.max(
+                        el.evalVisProp('highlightstrokewidth'),
+                        el.evalVisProp('strokewidth')
+                    );
+                    this.setObjectStrokeWidth(el, sw);
+                    if (
+                        el.elementClass === Const.OBJECT_CLASS_LINE ||
+                        el.elementClass === Const.OBJECT_CLASS_CURVE
+                    ) {
+                        this.updatePathWithArrowHeads(el, true);
+                    }
+                }
+            }
+            this.setCssClass(el, el.evalVisProp('highlightcssclass'));
+
+            return this;
         },
+
+        /**
+         * Uses the normal colors of an object, i.e. the opposite of {@link JXG.AbstractRenderer#highlight}.
+         * @param {JXG.GeometryElement} el Reference of the object that will get its normal colors.
+         * @returns {JXG.AbstractRenderer} Reference to the renderer
+         * @see JXG.AbstractRenderer#updateTextStyle
+         */
+        noHighlight: function (el) {
+            var i, sw;
+
+            this.setObjectTransition(el);
+            if (!el.evalVisProp('draft')) {
+                if (el.type === Const.OBJECT_TYPE_POLYGON) {
+                    this.setObjectFillColor(el, el.evalVisProp('fillcolor'), el.evalVisProp('fillopacity'));
+                    for (i = 0; i < el.borders.length; i++) {
+                        this.noHighlight(el.borders[i]);
+                    }
+                } else {
+                    if (el.elementClass === Const.OBJECT_CLASS_TEXT) {
+                        this.updateTextStyle(el, false);
+                    } else if (el.type === Const.OBJECT_TYPE_IMAGE) {
+                        this.updateImageStyle(el, false);
+                        this.setObjectFillColor(el, el.evalVisProp('fillcolor'), el.evalVisProp('fillopacity'));
+                    } else {
+                        this.setObjectStrokeColor(el, el.evalVisProp('strokecolor'), el.evalVisProp('strokeopacity'));
+                        this.setObjectFillColor(el, el.evalVisProp('fillcolor'), el.evalVisProp('fillopacity'));
+                    }
+                }
+
+                sw = el.evalVisProp('strokewidth');
+                this.setObjectStrokeWidth(el, sw);
+                if (
+                    el.elementClass === Const.OBJECT_CLASS_LINE ||
+                    el.elementClass === Const.OBJECT_CLASS_CURVE
+                ) {
+                    this.updatePathWithArrowHeads(el, false);
+                }
+            }
+            this.setCssClass(el, el.evalVisProp('cssclass'));
+
+            return this;
+        },
+
+        /**
+         * Puts an object from draft mode back into normal mode.
+         * @param {JXG.GeometryElement} el Reference of the object that no longer is in draft mode.
+         */
+        removeDraft: function (el) {
+            this.setObjectTransition(el);
+            if (el.type === Const.OBJECT_TYPE_POLYGON) {
+                this.setObjectFillColor(el, el.evalVisProp('fillcolor'), el.evalVisProp('fillopacity'));
+            } else {
+                if (el.type === Const.OBJECT_CLASS_POINT) {
+                    this.setObjectFillColor(el, el.evalVisProp('fillcolor'), el.evalVisProp('fillopacity'));
+                }
+                this.setObjectStrokeColor(el, el.evalVisProp('strokecolor'), el.evalVisProp('strokeopacity'));
+                this.setObjectStrokeWidth(el, el.evalVisProp('strokewidth'));
+            }
+        },
+
+        /**
+         * Set ARIA related properties of an element. The attribute "aria" of an element contains at least the
+         * properties "enabled", "label", and "live". Additionally, all available properties from
+         * {@link https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA} may be set.
+         * <p>
+         * In JSXGraph, the available properties are used without the leading 'aria-'.
+         * For example, the value of the JSXGraph attribute 'aria.label' will be set to the
+         * HTML attribute 'aria-label'.
+         *
+         * @param {JXG.GeometryElement} el Reference of the object that wants new
+         *        ARIA attributes.
+         */
+        setARIA: function(el) { /* stub */ },
 
         /**
          * Sets the buffering as recommended by SVGWG. Until now only Opera supports this and will be ignored by other
@@ -1863,17 +1934,32 @@ JXG.extend(
          * @param {String} type Either 'auto', 'dynamic', or 'static'. For an explanation see
          *   {@link https://www.w3.org/TR/SVGTiny12/painting.html#BufferedRenderingProperty}.
          */
-        setBuffering: function (node, type) {
-            /* stub */
-        },
+        setBuffering: function (node, type) { /* stub */ },
+
+        /**
+         * Clip element to the JSXGraph container element (div). To be precise: to the SVG node
+         * in case of SVG rendering - the only renderer, where this is relevant.
+         *
+         * @param {JXG.GeometryElement} el Reference of the object
+         * @param {Boolean} val true: clip to the JSXGraph div, false: do not clip
+         * @see JXG.SVGRenderer#setClipPathRect
+         */
+        setClipPath: function(el, val) { /* stub */ },
+
+        /**
+         * Sets CSS classes for elements (relevant for SVG only).
+         *
+         * @param {JXG.GeometryElement} el Reference of the object that wants a
+         *         new set of CSS classes.
+         * @param {String} cssClass String containing a space separated list of CSS classes.
+         */
+        setCssClass: function (el, cssClass) { /* stub */ },
 
         /**
          * Sets an element's dash style.
-         * @param {JXG.GeometryElement} element An JSXGraph element.
+         * @param {JXG.GeometryElement} el An JSXGraph element.
          */
-        setDashStyle: function (element) {
-            /* stub */
-        },
+        setDashStyle: function (el) { /* stub */ },
 
         /**
          * Puts an object into draft mode, i.e. it's visual appearance will be changed. For GEONE<sub>x</sub>T backwards
@@ -1881,13 +1967,12 @@ JXG.extend(
          * @param {JXG.GeometryElement} el Reference of the object that is in draft mode.
          */
         setDraft: function (el) {
-            if (!Type.evaluate(el.visProp.draft)) {
+            if (!el.evalVisProp('draft')) {
                 return;
             }
             var draftColor = el.board.options.elements.draft.color,
                 draftOpacity = el.board.options.elements.draft.opacity;
 
-                this.setObjectViewport(el);
                 this.setObjectTransition(el);
             if (el.type === Const.OBJECT_TYPE_POLYGON) {
                 this.setObjectFillColor(el, draftColor, draftOpacity);
@@ -1903,234 +1988,97 @@ JXG.extend(
         },
 
         /**
-         * Puts an object from draft mode back into normal mode.
-         * @param {JXG.GeometryElement} el Reference of the object that no longer is in draft mode.
-         */
-        removeDraft: function (el) {
-            this.setObjectViewport(el);
-            this.setObjectTransition(el);
-            if (el.type === Const.OBJECT_TYPE_POLYGON) {
-                this.setObjectFillColor(el, el.visProp.fillcolor, el.visProp.fillopacity);
-            } else {
-                if (el.type === Const.OBJECT_CLASS_POINT) {
-                    this.setObjectFillColor(el, el.visProp.fillcolor, el.visProp.fillopacity);
-                }
-                this.setObjectStrokeColor(el, el.visProp.strokecolor, el.visProp.strokeopacity);
-                this.setObjectStrokeWidth(el, el.visProp.strokewidth);
-            }
-        },
-
-        /**
          * Sets up nodes for rendering a gradient fill.
-         * @param element
+         * @param {JXG.GeometryElement}  el Reference of the object which gets the gradient
          */
-        setGradient: function (element) {
-            /* stub */
-        },
+        setGradient: function (el) { /* stub */ },
 
         /**
-         * Updates the gradient fill.
-         * @param {JXG.GeometryElement} element An JSXGraph element with an area that can be filled.
+         * Move element into new layer. This is trivial for canvas, but needs more effort in SVG.
+         * Does not work dynamically, i.e. if level is a function.
+         *
+         * @param {JXG.GeometryElement} el Element which is put into different layer
+         * @param {Number} value Layer number
+         * @private
          */
-        updateGradient: function (element) {
-            /* stub */
-        },
-
-        /**
-         * Sets the transition duration (in milliseconds) for fill color and stroke
-         * color and opacity.
-         * @param {JXG.GeometryElement} element Reference of the object that wants a
-         *         new transition duration.
-         * @param {Number} duration (Optional) duration in milliseconds. If not given,
-         *        element.visProp.transitionDuration is taken. This is the default.
-         */
-        setObjectTransition: function (element, duration) {
-            /* stub */
-        },
-
-        /**
-         * 
-         * @param {*} element 
-         * @param {*} isHTML 
-         */
-        setObjectViewport: function (element, isHTML) {
-            /* stub */
-        },
+        setLayer: function (el, level) { /* stub */ },
 
         /**
          * Sets an objects fill color.
-         * @param {JXG.GeometryElement} element Reference of the object that wants a new fill color.
+         * @param {JXG.GeometryElement} el Reference of the object that wants a new fill color.
          * @param {String} color Color in a HTML/CSS compatible format. If you don't want any fill color at all, choose
          * 'none'.
          * @param {Number} opacity Opacity of the fill color. Must be between 0 and 1.
          */
-        setObjectFillColor: function (element, color, opacity) {
-            /* stub */
-        },
+        setObjectFillColor: function (el, color, opacity) { /* stub */ },
 
         /**
          * Changes an objects stroke color to the given color.
-         * @param {JXG.GeometryElement} element Reference of the {@link JXG.GeometryElement} that gets a new stroke
+         * @param {JXG.GeometryElement} el Reference of the {@link JXG.GeometryElement} that gets a new stroke
          * color.
          * @param {String} color Color value in a HTML compatible format, e.g. <strong>#00ff00</strong> or
          * <strong>green</strong> for green.
          * @param {Number} opacity Opacity of the fill color. Must be between 0 and 1.
          */
-        setObjectStrokeColor: function (element, color, opacity) {
-            /* stub */
-        },
+        setObjectStrokeColor: function (el, color, opacity) { /* stub */ },
 
         /**
          * Sets an element's stroke width.
-         * @param {JXG.GeometryElement} element Reference to the geometry element.
+         * @param {JXG.GeometryElement} el Reference to the geometry element.
          * @param {Number} width The new stroke width to be assigned to the element.
          */
-        setObjectStrokeWidth: function (element, width) {
-            /* stub */
-        },
+        setObjectStrokeWidth: function (el, width) { /* stub */ },
+
+        /**
+         * Sets the transition duration (in milliseconds) for fill color and stroke
+         * color and opacity.
+         * @param {JXG.GeometryElement} el Reference of the object that wants a
+         *         new transition duration.
+         * @param {Number} duration (Optional) duration in milliseconds. If not given,
+         *        element.visProp.transitionDuration is taken. This is the default.
+         */
+        setObjectTransition: function (el, duration) { /* stub */ },
+
+        /**
+         * Sets a node's attribute.
+         * @param {Node} node The node that is to be updated.
+         * @param {String} key Name of the attribute.
+         * @param {String} val New value for the attribute.
+         */
+        setPropertyPrim: function (node, key, val) { /* stub */ },
 
         /**
          * Sets the shadow properties to a geometry element. This method is only a stub, it is implemented in the actual
          * renderers.
-         * @param {JXG.GeometryElement} element Reference to a geometry object, that should get a shadow
+         * @param {JXG.GeometryElement} el Reference to a geometry object, that should get a shadow
          */
-        setShadow: function (element) {
-            /* stub */
-        },
+        setShadow: function (el) { /* stub */ },
 
         /**
-         * Highlights an object, i.e. changes the current colors of the object to its highlighting colors
-         * and highlighting strokewidth.
-         * @param {JXG.GeometryElement} el Reference of the object that will be highlighted.
-         * @param {Boolean} [suppressHighlightStrokeWidth=undefined] If undefined or false, highlighting also changes strokeWidth. This might not be
-         * the cases for polygon borders. Thus, if a polygon is highlighted, its polygon borders change strokeWidth only if the polygon attribute
-         * highlightByStrokeWidth == true.
-         * @returns {JXG.AbstractRenderer} Reference to the renderer
-         * @see JXG.AbstractRenderer#updateTextStyle
+         * Set the attribute `tabindex` to the attribute `tabindex` of an element.
+         * This is only relevant for the SVG renderer.
+         *
+         * @param {JXG.GeometryElement} el
          */
-        highlight: function (el, suppressHighlightStrokeWidth) {
-            var i, do_hl,
-                ev = el.visProp,
-                sw;
-
-            this.setObjectViewport(el);
-            this.setObjectTransition(el);
-            if (!ev.draft) {
-                if (el.type === Const.OBJECT_TYPE_POLYGON) {
-                    this.setObjectFillColor(el, ev.highlightfillcolor, ev.highlightfillopacity);
-                    do_hl = Type.evaluate(ev.highlightbystrokewidth);
-                    for (i = 0; i < el.borders.length; i++) {
-                        this.highlight(el.borders[i], !do_hl);
-                    }
-                    /*
-                    for (i = 0; i < el.borders.length; i++) {
-                        this.setObjectStrokeColor(
-                            el.borders[i],
-                            el.borders[i].visProp.highlightstrokecolor,
-                            el.borders[i].visProp.highlightstrokeopacity
-                        );
-                    }
-                    */
-                } else {
-                    if (el.elementClass === Const.OBJECT_CLASS_TEXT) {
-                        this.updateTextStyle(el, true);
-                    } else if (el.type === Const.OBJECT_TYPE_IMAGE) {
-                        this.updateImageStyle(el, true);
-                        this.setObjectFillColor(
-                            el,
-                            ev.highlightfillcolor,
-                            ev.highlightfillopacity
-                        );
-                    } else {
-                        this.setObjectStrokeColor(
-                            el,
-                            ev.highlightstrokecolor,
-                            ev.highlightstrokeopacity
-                        );
-                        this.setObjectFillColor(
-                            el,
-                            ev.highlightfillcolor,
-                            ev.highlightfillopacity
-                        );
-                    }
-                }
-
-                // Highlight strokeWidth is suppressed if
-                // parameter suppressHighlightStrokeWidth is false or undefined.
-                // suppressHighlightStrokeWidth is false if polygon attribute
-                // highlightbystrokewidth is true.
-                if (ev.highlightstrokewidth && !suppressHighlightStrokeWidth) {
-                    sw = Math.max(
-                        Type.evaluate(ev.highlightstrokewidth),
-                        Type.evaluate(ev.strokewidth)
-                    );
-                    this.setObjectStrokeWidth(el, sw);
-                    if (
-                        el.elementClass === Const.OBJECT_CLASS_LINE ||
-                        el.elementClass === Const.OBJECT_CLASS_CURVE
-                    ) {
-                        this.updatePathWithArrowHeads(el, true);
-                    }
-                }
-            }
-
-            return this;
-        },
+        setTabindex: function (el) { /* stub */ },
 
         /**
-         * Uses the normal colors of an object, i.e. the opposite of {@link JXG.AbstractRenderer#highlight}.
-         * @param {JXG.GeometryElement} el Reference of the object that will get its normal colors.
-         * @returns {JXG.AbstractRenderer} Reference to the renderer
-         * @see JXG.AbstractRenderer#updateTextStyle
+         * Shows a hidden element on the canvas; Only a stub, requires implementation in the derived renderer.
+         *
+         * Please use JXG.AbstractRenderer#display instead
+         * @param {JXG.GeometryElement} el Reference to the object that has to appear.
+         * @see JXG.AbstractRenderer#hide
+         * @deprecated
          */
-        noHighlight: function (el) {
-            var i,
-                ev = el.visProp,
-                sw;
+        show: function (el) { /* stub */ },
 
-            this.setObjectViewport(el);
-            this.setObjectTransition(el);
-            if (!Type.evaluate(el.visProp.draft)) {
-                if (el.type === Const.OBJECT_TYPE_POLYGON) {
-                    this.setObjectFillColor(el, ev.fillcolor, ev.fillopacity);
-                    for (i = 0; i < el.borders.length; i++) {
-                        this.noHighlight(el.borders[i]);
-                    }
-                    // for (i = 0; i < el.borders.length; i++) {
-                    //     this.setObjectStrokeColor(
-                    //         el.borders[i],
-                    //         el.borders[i].visProp.strokecolor,
-                    //         el.borders[i].visProp.strokeopacity
-                    //     );
-                    // }
-                } else {
-                    if (el.elementClass === Const.OBJECT_CLASS_TEXT) {
-                        this.updateTextStyle(el, false);
-                    } else if (el.type === Const.OBJECT_TYPE_IMAGE) {
-                        this.updateImageStyle(el, false);
-                        this.setObjectFillColor(el, ev.fillcolor, ev.fillopacity);
-                    } else {
-                        this.setObjectStrokeColor(el, ev.strokecolor, ev.strokeopacity);
-                        this.setObjectFillColor(el, ev.fillcolor, ev.fillopacity);
-                    }
-                }
+        /**
+         * Updates the gradient fill.
+         * @param {JXG.GeometryElement} el An JSXGraph element with an area that can be filled.
+         */
+        updateGradient: function (el) { /* stub */ },
 
-                sw = Type.evaluate(ev.strokewidth);
-                this.setObjectStrokeWidth(el, sw);
-                if (
-                    el.elementClass === Const.OBJECT_CLASS_LINE ||
-                    el.elementClass === Const.OBJECT_CLASS_CURVE
-                ) {
-                    this.updatePathWithArrowHeads(el, false);
-                }
-            }
-
-            return this;
-        },
-
-        /* **************************
-         * renderer control
-         * **************************/
+        /* ********* Renderer control *********** */
 
         /**
          * Stop redraw. This method is called before every update, so a non-vector-graphics based renderer can use this
@@ -2138,17 +2086,13 @@ JXG.extend(
          * should implement, if appropriate.
          * @see JXG.AbstractRenderer#unsuspendRedraw
          */
-        suspendRedraw: function () {
-            /* stub */
-        },
+        suspendRedraw: function () { /* stub */ },
 
         /**
          * Restart redraw. This method is called after updating all the rendering node attributes.
          * @see JXG.AbstractRenderer#suspendRedraw
          */
-        unsuspendRedraw: function () {
-            /* stub */
-        },
+        unsuspendRedraw: function () { /* stub */ },
 
         /**
          * The tiny zoom bar shown on the bottom of a board (if board attribute "showNavigation" is true).
@@ -2178,25 +2122,28 @@ JXG.extend(
                         e.cancelBubble = true;
                     }
                 },
-                createButton = function (label, handler, id) {
+                createButton = function (label, handler, board_id, type) {
                     var button;
 
-                    id = id || "";
+                    board_id = board_id || "";
 
-                    button = doc.createElement("span");
+                    button = doc.createElement('span');
                     button.innerHTML = label; // button.appendChild(doc.createTextNode(label));
 
                     // Style settings are superseded by adding the CSS class below
-                    button.style.paddingLeft = "7px";
-                    button.style.paddingRight = "7px";
+                    button.style.paddingLeft = '7px';
+                    button.style.paddingRight = '7px';
 
                     if (button.classList !== undefined) {
                         // classList not available in IE 9
                         button.classList.add("JXG_navigation_button");
+                        button.classList.add("JXG_navigation_button_" + type);
                     }
                     // button.setAttribute('tabindex', 0);
 
-                    button.setAttribute("id", id);
+                    button.setAttribute("id", board_id + '_navigation_' + type);
+                    button.setAttribute("aria-hidden", 'true');   // navigation buttons should never appear in screen reader
+
                     node.appendChild(button);
 
                     Env.addEvent(
@@ -2218,9 +2165,9 @@ JXG.extend(
                     Env.addEvent(button, "touchstart", cancelbubble, board);
                 };
 
-            if (Env.isBrowser && this.type !== "no") {
+            if (Env.isBrowser && this.type !== 'no') {
                 doc = board.containerObj.ownerDocument;
-                node = doc.createElement("div");
+                node = doc.createElement('div');
 
                 node.setAttribute("id", board.container + "_navigationbar");
 
@@ -2248,7 +2195,7 @@ JXG.extend(
                         function () {
                             board.toFullscreen(board.attr.fullscreen.id);
                         },
-                        board.container + "_navigation_fullscreen"
+                        board.container, "fullscreen"
                     );
                 }
 
@@ -2260,7 +2207,7 @@ JXG.extend(
                                 board.renderer.screenshot(board, "", false);
                             }, 330);
                         },
-                        board.container + "_navigation_screenshot"
+                        board.container, "screenshot"
                     );
                 }
 
@@ -2273,51 +2220,30 @@ JXG.extend(
                         function () {
                             board.reload();
                         },
-                        board.container + "_navigation_reload"
+                        board.container, "reload"
                     );
                 }
 
                 if (board.attr.showcleartraces) {
                     // clear traces symbol (otimes): \u27F2
-                    createButton(
-                        "\u2297",
+                    createButton("\u2297",
                         function () {
                             board.clearTraces();
                         },
-                        board.container + "_navigation_cleartraces"
+                        board.container, "cleartraces"
                     );
                 }
 
                 if (board.attr.shownavigation) {
                     if (board.attr.showzoom) {
-                        createButton(
-                            "\u2013",
-                            board.zoomOut,
-                            board.container + "_navigation_out"
-                        );
-                        createButton("o", board.zoom100, board.container + "_navigation_100");
-                        createButton("+", board.zoomIn, board.container + "_navigation_in");
+                        createButton("\u2013", board.zoomOut, board.container, 'out');
+                        createButton("o", board.zoom100, board.container, '100');
+                        createButton("+", board.zoomIn, board.container, 'in');
                     }
-                    createButton(
-                        "\u2190",
-                        board.clickLeftArrow,
-                        board.container + "_navigation_left"
-                    );
-                    createButton(
-                        "\u2193",
-                        board.clickUpArrow,
-                        board.container + "_navigation_down"
-                    ); // Down arrow
-                    createButton(
-                        "\u2191",
-                        board.clickDownArrow,
-                        board.container + "_navigation_up"
-                    ); // Up arrow
-                    createButton(
-                        "\u2192",
-                        board.clickRightArrow,
-                        board.container + "_navigation_right"
-                    );
+                    createButton("\u2190", board.clickLeftArrow, board.container, 'left');
+                    createButton("\u2193", board.clickUpArrow, board.container, 'down'); // Down arrow
+                    createButton("\u2191", board.clickDownArrow, board.container, 'up'); // Up arrow
+                    createButton("\u2192", board.clickRightArrow, board.container, 'right');
                 }
             }
         },
@@ -2373,34 +2299,34 @@ JXG.extend(
          * @param {Number} w New width
          * @param {Number} h New height
          */
-        resize: function (w, h) {
-            /* stub */
-        },
+        resize: function (w, h) { /* stub */ },
 
         /**
          * Create crosshair elements (Fadenkreuz) for presentations.
          * @param {Number} n Number of crosshairs.
          */
-        createTouchpoints: function (n) {},
+        createTouchpoints: function (n) { /* stub */ },
 
         /**
          * Show a specific crosshair.
          * @param {Number} i Number of the crosshair to show
          */
-        showTouchpoint: function (i) {},
+        showTouchpoint: function (i) { /* stub */ },
 
         /**
          * Hide a specific crosshair.
          * @param {Number} i Number of the crosshair to show
          */
-        hideTouchpoint: function (i) {},
+        hideTouchpoint: function (i) { /* stub */ },
 
         /**
          * Move a specific crosshair.
          * @param {Number} i Number of the crosshair to show
          * @param {Array} pos New positon in screen coordinates
          */
-        updateTouchpoint: function (i, pos) {},
+        updateTouchpoint: function (i, pos) { /* stub */ },
+
+        /* ********* Dump related stuff *********** */
 
         /**
          * Convert SVG construction to base64 encoded SVG data URL.
@@ -2408,7 +2334,7 @@ JXG.extend(
          *
          * @see JXG.SVGRenderer#dumpToDataURI
          */
-        dumpToDataURI: function (_ignoreTexts) {},
+        dumpToDataURI: function (_ignoreTexts) { /* stub */ },
 
         /**
          * Convert SVG construction to canvas.
@@ -2416,7 +2342,7 @@ JXG.extend(
          *
          * @see JXG.SVGRenderer#dumpToCanvas
          */
-        dumpToCanvas: function (canvasId, w, h, _ignoreTexts) {},
+        dumpToCanvas: function (canvasId, w, h, _ignoreTexts) { /* stub */ },
 
         /**
          * Display SVG image in html img-tag which enables
@@ -2424,17 +2350,8 @@ JXG.extend(
          *
          * See JXG.SVGRenderer#screenshot
          */
-        screenshot: function (board) {},
+        screenshot: function (board) { /* stub */ }
 
-        /**
-         * Move element into new layer. This is trivial for canvas, but needs more effort in SVG.
-         * Does not work dynamically, i.e. if level is a function.
-         *
-         * @param {JXG.GeometryElement} el Element which is put into different layer
-         * @param {Number} value Layer number
-         * @private
-         */
-        setLayer: function (el, level) {}
     }
 );
 

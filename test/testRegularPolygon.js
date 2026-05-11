@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2023
+    Copyright 2008-2026
         Matthias Ehmann,
         Carsten Miller,
         Andreas Walter,
@@ -40,6 +40,7 @@ describe("Test regular polygons", function () {
         axis: false,
         grid: false,
         boundingbox: [-10, 10, 10, -10],
+        resize: {enabled: false},
         keyboard: {
             enabled: true,
             dy: 20,

@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2023
+    Copyright 2008-2026
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -38,18 +38,20 @@
  * stuff like intersection points, angles, midpoint, and so on.
  */
 
-import JXG from "../jxg";
-import Const from "../base/constants";
-import Coords from "../base/coords";
-import Mat from "./math";
-import Numerics from "./numerics";
-import Type from "../utils/type";
-import Expect from "../utils/expect";
+import JXG from "../jxg.js";
+import Const from "../base/constants.js";
+import Coords from "../base/coords.js";
+import Mat from "./math.js";
+import Stat from "../math/statistics.js";
+import Numerics from "./numerics.js";
+import Type from "../utils/type.js";
+import Expect from "../utils/expect.js";
 
 /**
  * Math.Geometry namespace definition. This namespace holds geometrical algorithms,
  * especially intersection algorithms.
  * @name JXG.Math.Geometry
+ * @exports Mat.Geometry as JXG.Math.Geometry
  * @namespace
  */
 Mat.Geometry = {};
@@ -65,12 +67,12 @@ JXG.extend(
 
         /**
          * Calculates the angle defined by the points A, B, C.
-         * @param {JXG.Point,Array} A A point  or [x,y] array.
-         * @param {JXG.Point,Array} B Another point or [x,y] array.
-         * @param {JXG.Point,Array} C A circle - no, of course the third point or [x,y] array.
+         * @param {JXG.Point|Array} A A point  or [x,y] array.
+         * @param {JXG.Point|Array} B Another point or [x,y] array.
+         * @param {JXG.Point|Array} C A circle - no, of course the third point or [x,y] array.
          * @deprecated Use {@link JXG.Math.Geometry.rad} instead.
-         * @see #rad
-         * @see #trueAngle
+         * @see JXG.Math.Geometry.rad
+         * @see JXG.Math.Geometry.trueAngle
          * @returns {Number} The angle in radian measure.
          */
         angle: function (A, B, C) {
@@ -117,10 +119,10 @@ JXG.extend(
 
         /**
          * Calculates the angle defined by the three points A, B, C if you're going from A to C around B counterclockwise.
-         * @param {JXG.Point,Array} A Point or [x,y] array
-         * @param {JXG.Point,Array} B Point or [x,y] array
-         * @param {JXG.Point,Array} C Point or [x,y] array
-         * @see #rad
+         * @param {JXG.Point|Array} A Point or [x,y] array
+         * @param {JXG.Point|Array} B Point or [x,y] array
+         * @param {JXG.Point|Array} C Point or [x,y] array
+         * @see JXG.Math.Geometry.rad
          * @returns {Number} The angle in degrees.
          */
         trueAngle: function (A, B, C) {
@@ -129,10 +131,10 @@ JXG.extend(
 
         /**
          * Calculates the internal angle defined by the three points A, B, C if you're going from A to C around B counterclockwise.
-         * @param {JXG.Point,Array} A Point or [x,y] array
-         * @param {JXG.Point,Array} B Point or [x,y] array
-         * @param {JXG.Point,Array} C Point or [x,y] array
-         * @see #trueAngle
+         * @param {JXG.Point|Array} A Point or [x,y] array
+         * @param {JXG.Point|Array} B Point or [x,y] array
+         * @param {JXG.Point|Array} C Point or [x,y] array
+         * @see JXG.Math.Geometry.trueAngle
          * @returns {Number} Angle in radians.
          */
         rad: function (A, B, C) {
@@ -557,6 +559,7 @@ JXG.extend(
 
         /**
          * Sort vertices counter clockwise starting with the first point.
+         * Used in Polygon.sutherlandHodgman, Geometry.signedPolygon.
          *
          * @param {Array} p An array containing {@link JXG.Point}, {@link JXG.Coords}, and/or arrays.
          *
@@ -571,7 +574,7 @@ JXG.extend(
             // If the last point equals the first point, we take the last point out of the array.
             // It may be that the several points at the end of the array are equal to the first point.
             // The polygonal chain is been closed by JSXGraph, but this may also have been done by the user.
-            // Therefore, we use a while lopp to pop the last points.
+            // Therefore, we use a while loop to pop the last points.
             while (
                 ps[0][0] === ps[N - 1][0] &&
                 ps[0][1] === ps[N - 1][1] &&
@@ -580,16 +583,6 @@ JXG.extend(
                 lastPoint = ps.pop();
                 N--;
             }
-            // Find the point with the lowest y value
-            // for (i = 1; i < N; i++) {
-            //     if ((ps[i][2] < ps[0][2]) ||
-            //         // if the current and the lowest point have the same y value, pick the one with
-            //         // the lowest x value.
-            //         (Math.abs(ps[i][2] - ps[0][2]) < Mat.eps && ps[i][1] < ps[0][1])) {
-            //         console.log(i, 0);
-            //         ps = Type.swap(ps, i, 0);
-            //     }
-            // }
 
             ll = ps[0];
             // Sort ps in increasing order of the angle between a point and the first point ll.
@@ -598,14 +591,13 @@ JXG.extend(
             // on the same horizontal line.
             ps.sort(function (a, b) {
                 var rad1 =
-                    a[2] === ll[2] && a[1] === ll[1]
-                        ? -Infinity
-                        : Math.atan2(a[2] - ll[2], a[1] - ll[1]),
+                        (a[2] === ll[2] && a[1] === ll[1])
+                            ? -Infinity
+                            : Math.atan2(a[2] - ll[2], a[1] - ll[1]),
                     rad2 =
-                        b[2] === ll[2] && b[1] === ll[1]
+                        (b[2] === ll[2] && b[1] === ll[1])
                             ? -Infinity
                             : Math.atan2(b[2] - ll[2], b[1] - ll[1]);
-
                 return rad1 - rad2;
             });
 
@@ -618,7 +610,13 @@ JXG.extend(
         },
 
         /**
-         * Signed triangle area of the three points given.
+         * Signed triangle area of the three points given. It can also be used
+         * to test the orientation of the triangle.
+         * <ul>
+         * <li> If the return value is < 0, then the point p2 is left of the line [p1, p3] (i.e p3 is right from [p1, p2]).
+         * <li> If the return value is > 0, then the point p2 is right of the line [p1, p3] (i.e p3 is left from [p1, p2]).
+         * <li> If the return value is = 0, then the points p1, p2, p3 are collinear.
+         * </ul>
          *
          * @param {JXG.Point|JXG.Coords|Array} p1
          * @param {JXG.Point|JXG.Coords|Array} p2
@@ -630,12 +628,11 @@ JXG.extend(
             var A = Expect.coordsArray(p1),
                 B = Expect.coordsArray(p2),
                 C = Expect.coordsArray(p3);
-
             return 0.5 * ((B[1] - A[1]) * (C[2] - A[2]) - (B[2] - A[2]) * (C[1] - A[1]));
         },
 
         /**
-         * Determine the signed area of a non-selfintersecting polygon.
+         * Determine the signed area of a non-self-intersecting polygon.
          * Surveyor's Formula
          *
          * @param {Array} p An array containing {@link JXG.Point}, {@link JXG.Coords}, and/or arrays.
@@ -671,36 +668,505 @@ JXG.extend(
         },
 
         /**
-         * Calculate the complex hull of a point cloud.
+         * Calculate the complex hull of a point cloud by the Graham scan algorithm.
          *
          * @param {Array} points An array containing {@link JXG.Point}, {@link JXG.Coords}, and/or arrays.
          *
-         * @returns {Array}
+         * @returns {Array} List of objects <pre>{i: index, c: coords}</pre> containing the convex hull points
+         *  in form of the index in the original input array and a coords array.
+         *
+         * @example
+         *     // Static example
+         *
+         *     var i, hull,
+         *       p = [],
+         *       q = [];
+         *
+         *     p.push( board.create('point', [4, 0], {withLabel:false }) );
+         *     p.push( board.create('point', [0, 4], {withLabel:false }) );
+         *     p.push( board.create('point', [0, 0], {withLabel:false }) );
+         *     p.push([-1, 0]);
+         *     p.push([-3, -3]);
+         *
+         *     hull = JXG.Math.Geometry.GrahamScan(p);
+         *     for (i = 0; i < hull.length; i++) {
+         *       console.log(hull[i]);
+         *       q.push(hull[i].c);
+         *     }
+         *     board.create('polygon', q);
+         *     // Output:
+         *     // { i: 4, c: [1, -3, 3]}
+         *     // { i: 0, c: [1, 4, 0]}
+         *     // { i: 1, c: [1, 0, 4]}
+         *
+         * </pre><div id="JXGb310b874-595e-4020-b0c2-566482797836" class="jxgbox" style="width: 300px; height: 300px;"></div>
+         * <script type="text/javascript">
+         *     (function() {
+         *         var board = JXG.JSXGraph.initBoard('JXGb310b874-595e-4020-b0c2-566482797836',
+         *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
+         *         var i, hull,
+         *           p = [],
+         *           q = [];
+         *
+         *         p.push( board.create('point', [4, 0], {withLabel:false }) );
+         *         p.push( board.create('point', [0, 4], {withLabel:false }) );
+         *         p.push( board.create('point', [0, 0], {withLabel:false }) );
+         *         p.push([-1, 0]);
+         *         p.push([-3, -3]);
+         *
+         *         hull = JXG.Math.Geometry.GrahamScan(p);
+         *         for (i = 0; i < hull.length; i++) {
+         *           console.log(hull[i]);
+         *           q.push(hull[i].c);
+         *         }
+         *         board.create('polygon', q);
+         *
+         *     })();
+         *
+         * </script><pre>
+         *
          */
         GrahamScan: function (points) {
-            var i,
-                M = 1,
-                ps = Expect.each(points, Expect.coordsArray),
-                N = ps.length;
+            var i, M, o,
+                mi_idx,
+                mi_x, mi_y, ma_x, ma_y,
+                mi_xpy, mi_xmy, ma_xpy, ma_xmy,
+                mi_x_i, ma_x_i, mi_y_i, ma_y_i,
+                mi_xpy_i, mi_xmy_i, ma_xpy_i, ma_xmy_i,
+                v, c,
+                eps = Mat.eps * Mat.eps,
+                that = this,
+                ps_idx = [],
+                stack = [],
+                ps = Expect.each(points, Expect.coordsArray), // New array object, i.e. a copy of the input array.
+                N,
+                AklToussaint = 1024;  // This is a rough threshold where the heuristic pays off.
 
-            ps = this.sortVertices(ps);
             N = ps.length;
-
-            for (i = 2; i < N; i++) {
-                while (this.signedTriangle(ps[M - 1], ps[M], ps[i]) <= 0) {
-                    if (M > 1) {
-                        M -= 1;
-                    } else if (i === N - 1) {
-                        break;
-                    }
-                    i += 1;
-                }
-
-                M += 1;
-                ps = Type.swap(ps, M, i);
+            if (N === 0) {
+                return [];
             }
 
-            return ps.slice(0, M);
+            if (N > AklToussaint) {
+                //
+                // Akl-Toussaint heuristic
+                // Determine an irregular convex octagon whose inside can be discarded.
+                //
+                mi_x = ps[0][1];
+                ma_x = mi_x;
+                mi_y = ps[0][2];
+                ma_y = mi_y;
+
+                mi_xmy = ps[0][1] - ps[0][2];
+                ma_xmy = mi_xmy;
+                mi_xpy = ps[0][1] + ps[0][2];
+                ma_xpy = mi_xpy;
+
+                mi_x_i = 0;
+                ma_x_i = 0;
+                mi_y_i = 0;
+                ma_y_i = 0;
+
+                mi_xmy_i = 0;
+                ma_xmy_i = 0;
+                mi_xpy_i = 0;
+                ma_xpy_i = 0;
+                for (i = 1; i < N; i++) {
+                    v = ps[i][1];
+                    if (v < mi_x) {
+                        mi_x = v;
+                        mi_x_i = i;
+                    } else if (v > ma_x) {
+                        ma_x = v;
+                        ma_x_i = i;
+                    }
+
+                    v = ps[i][2];
+                    if (v < mi_y) {
+                        mi_y = v;
+                        mi_y_i = i;
+                    } else if (v > ma_y) {
+                        ma_y = v;
+                        ma_y_i = i;
+                    }
+
+                    v = ps[i][1] - ps[i][2];
+                    if (v < mi_xmy) {
+                        mi_xmy = v;
+                        mi_xmy_i = i;
+                    } else if (v > ma_xmy) {
+                        ma_xmy = v;
+                        ma_xmy_i = i;
+                    }
+
+                    v = ps[i][1] + ps[i][2];
+                    if (v < mi_xpy) {
+                        mi_xpy = v;
+                        mi_xpy_i = i;
+                    } else if (v > ma_xpy) {
+                        ma_xpy = v;
+                        ma_xpy_i = i;
+                    }
+                }
+            }
+
+            // Keep track of the indices of the input points.
+            for (i = 0; i < N; i++) {
+                c = ps[i];
+                if (N <= AklToussaint ||
+                    // Discard inside of the octagon according to the Akl-Toussaint heuristic
+                    i in [mi_x_i, ma_x_i, mi_y_i, ma_y_i, mi_xpy_i, mi_xmy_i, ma_xpy_i, ma_xmy_i] ||
+                    (mi_x_i !== mi_xmy_i && this.signedTriangle(ps[mi_x_i], ps[mi_xmy_i], c) >= -eps) ||
+                    (mi_xmy_i !== ma_y_i && this.signedTriangle(ps[mi_xmy_i], ps[ma_y_i], c) >= -eps) ||
+                    (ma_y_i !== ma_xpy_i && this.signedTriangle(ps[ma_y_i], ps[ma_xpy_i], c) >= -eps) ||
+                    (ma_xpy_i !== ma_x_i && this.signedTriangle(ps[ma_xpy_i], ps[ma_x_i], c) >= -eps) ||
+                    (ma_x_i !== ma_xmy_i && this.signedTriangle(ps[ma_x_i], ps[ma_xmy_i], c) >= -eps) ||
+                    (ma_xmy_i !== mi_y_i && this.signedTriangle(ps[ma_xmy_i], ps[mi_y_i], c) >= -eps) ||
+                    (mi_y_i !== mi_xpy_i && this.signedTriangle(ps[mi_y_i], ps[mi_xpy_i], c) >= -eps) ||
+                    (mi_xpy_i !== mi_x_i && this.signedTriangle(ps[mi_xpy_i], ps[mi_x_i], c) >= -eps)
+                ) {
+                    ps_idx.push({
+                        i: i,
+                        c: c
+                    });
+                }
+            }
+            N = ps_idx.length;
+
+            // Find the point with the lowest y value
+            mi_idx = 0;
+            mi_x = ps_idx[0].c[1];
+            mi_y = ps_idx[0].c[2];
+            for (i = 1; i < N; i++) {
+                if ((ps_idx[i].c[2] < mi_y) || (ps_idx[i].c[2] === mi_y && ps_idx[i].c[1] < mi_x)) {
+                    mi_x = ps_idx[i].c[1];
+                    mi_y = ps_idx[i].c[2];
+                    mi_idx = i;
+                }
+            }
+            ps_idx = Type.swap(ps_idx, mi_idx, 0);
+
+            // Our origin o, i.e. the first point.
+            o = ps_idx[0].c;
+
+            // Sort according to the angle around o.
+            ps_idx.sort(function(a_obj, b_obj) {
+                var a = a_obj.c,
+                    b = b_obj.c,
+                    v = that.signedTriangle(o, a, b);
+
+                if (v === 0) {
+                    // if o, a, b are collinear, the point which is further away
+                    // from o is considered greater.
+                    return Mat.hypot(a[1] - o[1], a[2] - o[2]) - Mat.hypot(b[1] - o[1], b[2] - o[2]);
+                }
+
+                // if v < 0, a is to the left of [o, b], i.e. angle(a) > angle(b)
+                return -v;
+            });
+
+            // Do the Graham scan.
+            M = 0;
+            for (i = 0; i < N; i++) {
+                while (M > 1 && this.signedTriangle(stack[M - 2].c, stack[M - 1].c, ps_idx[i].c) <= 0) {
+                    // stack[M - 1] is to the left of stack[M - 1], ps[i]: discard it
+                    stack.pop();
+                    M--;
+                }
+                stack.push(ps_idx[i]);
+                M++;
+            }
+
+            return stack;
+        },
+
+        // Original method
+        // GrahamScan: function (points, indices) {
+        //     var i,
+        //         M = 1,
+        //         ps = Expect.each(points, Expect.coordsArray),
+        //         N = ps.length;
+        //     ps = this.sortVertices(ps);
+        //     N = ps.length;
+        //     for (i = 2; i < N; i++) {
+        //         while (this.signedTriangle(ps[M - 1], ps[M], ps[i]) <= 0) {
+        //             if (M > 1) {
+        //                 M -= 1;
+        //             } else if (i === N - 1) {
+        //                 break;
+        //             }
+        //             i += 1;
+        //         }
+        //         M += 1;
+        //         ps = Type.swap(ps, M, i);
+        //         indices = Type.swap(indices, M, i);
+        //     }
+        //     return ps.slice(0, M);
+        // },
+
+        /**
+         * Calculate the complex hull of a point cloud by the Graham scan algorithm.
+         *
+         * @param {Array} points An array containing {@link JXG.Point}, {@link JXG.Coords}, and/or arrays.
+         * @param {Boolean} [returnCoords=false] If true, return an array of coords. Otherwise return a list of pointers
+         * to the input list elements. That is, if the input is a list of {@link JXG.Point} elements, the returned list
+         * will contain the points that form the convex hull.
+         * @returns {Array} List containing the convex hull. Format depends on returnCoords.
+         * @see JXG.Math.Geometry.GrahamScan
+         *
+         * @example
+         *     // Static example
+         *     var i, hull,
+         *         p = [];
+         *
+         *     p.push( board.create('point', [4, 0], {withLabel:false }) );
+         *     p.push( board.create('point', [0, 4], {withLabel:false }) );
+         *     p.push( board.create('point', [0, 0], {withLabel:false }) );
+         *     p.push( board.create('point', [1, 1], {withLabel:false }) );
+         *     hull = JXG.Math.Geometry.convexHull(p);
+         *     for (i = 0; i < hull.length; i++) {
+         *       hull[i].setAttribute({color: 'blue'});
+         *     }
+         *
+         * </pre><div id="JXGdfc76123-81b8-4250-96f9-419253bd95dd" class="jxgbox" style="width: 300px; height: 300px;"></div>
+         * <script type="text/javascript">
+         *     (function() {
+         *         var board = JXG.JSXGraph.initBoard('JXGdfc76123-81b8-4250-96f9-419253bd95dd',
+         *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
+         *         var i, hull,
+         *             p = [];
+         *
+         *         p.push( board.create('point', [4, 0], {withLabel:false }) );
+         *         p.push( board.create('point', [0, 4], {withLabel:false }) );
+         *         p.push( board.create('point', [0, 0], {withLabel:false }) );
+         *         p.push( board.create('point', [1, 1], {withLabel:false }) );
+         *         hull = JXG.Math.Geometry.convexHull(p);
+         *         for (i = 0; i < hull.length; i++) {
+         *           hull[i].setAttribute({color: 'blue'});
+         *         }
+         *
+         *     })();
+         *
+         * </script><pre>
+         *
+         * @example
+         *     // Dynamic version using returnCoords==true: drag the points
+         *     var p = [];
+         *
+         *     p.push( board.create('point', [4, 0], {withLabel:false }) );
+         *     p.push( board.create('point', [0, 4], {withLabel:false }) );
+         *     p.push( board.create('point', [0, 0], {withLabel:false }) );
+         *     p.push( board.create('point', [1, 1], {withLabel:false }) );
+         *
+         *     var c = board.create('curve', [[], []], {fillColor: 'yellow', fillOpacity: 0.3});
+         *     c.updateDataArray = function() {
+         *       var i,
+         *         hull = JXG.Math.Geometry.convexHull(p, true);
+         *
+         *       this.dataX = [];
+         *       this.dataY = [];
+         *
+         *       for (i = 0; i < hull.length; i ++) {
+         *         this.dataX.push(hull[i][1]);
+         *         this.dataY.push(hull[i][2]);
+         *       }
+         *       this.dataX.push(hull[0][1]);
+         *       this.dataY.push(hull[0][2]);
+         *     };
+         *     board.update();
+         *
+         * </pre><div id="JXG61e51909-da0b-432f-9aa7-9fb0c8bb01c9" class="jxgbox" style="width: 300px; height: 300px;"></div>
+         * <script type="text/javascript">
+         *     (function() {
+         *         var board = JXG.JSXGraph.initBoard('JXG61e51909-da0b-432f-9aa7-9fb0c8bb01c9',
+         *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
+         *         var p = [];
+         *
+         *         p.push( board.create('point', [4, 0], {withLabel:false }) );
+         *         p.push( board.create('point', [0, 4], {withLabel:false }) );
+         *         p.push( board.create('point', [0, 0], {withLabel:false }) );
+         *         p.push( board.create('point', [1, 1], {withLabel:false }) );
+         *
+         *         var c = board.create('curve', [[], []], {fillColor: 'yellow', fillOpacity: 0.3});
+         *         c.updateDataArray = function() {
+         *           var i,
+         *             hull = JXG.Math.Geometry.convexHull(p, true);
+         *
+         *           this.dataX = [];
+         *           this.dataY = [];
+         *
+         *           for (i = 0; i < hull.length; i ++) {
+         *             this.dataX.push(hull[i][1]);
+         *             this.dataY.push(hull[i][2]);
+         *           }
+         *           this.dataX.push(hull[0][1]);
+         *           this.dataY.push(hull[0][2]);
+         *         };
+         *         board.update();
+         *
+         *
+         *     })();
+         *
+         * </script><pre>
+         *
+         */
+        convexHull: function(points, returnCoords) {
+            var i, hull,
+                res = [];
+
+            hull = this.GrahamScan(points);
+            for (i = 0; i < hull.length; i++) {
+                if (returnCoords) {
+                    res.push(hull[i].c);
+                } else {
+                    res.push(points[hull[i].i]);
+                }
+            }
+            return res;
+        },
+
+        // /**
+        //  * Determine if a polygon or a path element is convex, non-convex or complex which are defined like this:
+        //  * <ul>
+        //  * <li> A polygon is convex if for every pair of points, the line segment connecting them does not intersect
+        //  * an edge of the polygon in one point.
+        //  * A single line segment or a a single point is considered as convex. A necessary condition for a polygon
+        //  * to be convex that the angle sum of its interior angles equals &plusmn; 2 &pi;.
+        //  * <li> A polygon is non-convex, if it does not self-intersect, but is not convex.
+        //  * <li> A polygon is complex if its the angle sum is not equal to &plusmn; 2 &pi;.
+        //  * That is, there must be self-intersection (contiguous coincident points in the path are not treated as self-intersection).
+        //  * </ul>
+        //  * A path  element might be specified as an array of coordinate arrays or {@link JXG.Coords}.
+        //  *
+        //  * @param {Array|Polygon|PolygonalChain} points Polygon or list of coordinates
+        //  * @returns {Number} -1: if complex, 0: if non-convex, 1: if convex
+        //  */
+        /**
+         * Determine if a polygon or a path element is convex:
+         * <p>
+         * A polygon is convex if for every pair of points, the line segment connecting them does not intersect
+         * an edge of the polygon in one point.
+         * A single line segment, a single point, or the empty set is considered as convex. A necessary condition for a polygon
+         * to be convex that the angle sum of its interior angles equals &plusmn; 2 &pi;.
+         * <p>
+         * A path  element might be specified as an array of coordinate arrays or {@link JXG.Coords}.
+         * See the discussion at <a href="https://stackoverflow.com/questions/471962/how-do-i-efficiently-determine-if-a-polygon-is-convex-non-convex-or-complex">stackoverflow</a>.
+         *
+         * @param {Array|Polygon|PolygonalChain} points Polygon or list of coordinates
+         * @returns {Boolean} true if convex
+         *
+         * @example
+         * var pol = board.create('polygon', [
+         *     [-1, -1],
+         *     [3, -1],
+         *     [4, 2],
+         *     [3, 3],
+         *     [0, 4],
+         *     [-3, 1]
+         * ], {
+         *     vertices: {
+         *         color: 'blue',
+         *         snapToGrid: true
+         *     }
+         * });
+         *
+         * console.log(JXG.Math.Geometry.isConvex(pol));
+         * // > true
+         *
+         *
+         *
+         * </pre><div id="JXG9b43cc53-15b4-49be-92cc-2a1dfc06665b" class="jxgbox" style="width: 300px; height: 300px;"></div>
+         * <script type="text/javascript">
+         *     (function() {
+         *         var board = JXG.JSXGraph.initBoard('JXG9b43cc53-15b4-49be-92cc-2a1dfc06665b',
+         *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
+         *     var pol = board.create('polygon', [
+         *         [-1, -1],
+         *         [3, -1],
+         *         [4, 2],
+         *         [3, 3],
+         *         [0, 4],
+         *         [-3, 1]
+         *     ], {
+         *         vertices: {
+         *             color: 'blue',
+         *             snapToGrid: true
+         *         }
+         *     });
+         *
+         *     console.log(JXG.Math.Geometry.isConvex(pol));
+         *
+         *
+         *
+         *     })();
+         *
+         * </script><pre>
+         *
+         */
+        isConvex: function(points) {
+            var ps, le, i,
+                eps = Mat.eps * Mat.eps,
+                old_x, old_y, old_dir,
+                new_x, new_y, new_dir,
+                angle,
+                orient,
+                angle_sum = 0.0;
+
+            if (Type.isArray(points)) {
+                ps = Expect.each(points, Expect.coordsArray);
+            } else if (Type.exists(points.type) && points.type === Const.OBJECT_TYPE_POLYGON) {
+                ps = Expect.each(points.vertices, Expect.coordsArray);
+            }
+            le = ps.length;
+            if (le === 0) {
+                // Empty set is convex
+                return true;
+            }
+            if (le < 3) {
+                // Segments and points are convex
+                return true;
+            }
+
+            orient = null;
+            old_x = ps[le - 2][1];
+            old_y = ps[le - 2][2];
+            new_x = ps[le - 1][1];
+            new_y = ps[le - 1][2];
+            new_dir = Math.atan2(new_y - old_y, new_x - old_x);
+            for (i = 0; i < le; i++) {
+                old_x = new_x;
+                old_y = new_y;
+                old_dir = new_dir;
+                new_x = ps[i][1];
+                new_y = ps[i][2];
+                if (old_x === new_x && old_y === new_y) {
+                    // Repeated consecutive points are ignored
+                    continue;
+                }
+                new_dir = Math.atan2(new_y - old_y, new_x - old_x);
+                angle = new_dir - old_dir;
+                if (angle <= -Math.PI) {
+                    angle += 2 * Math.PI;
+                } else if (angle > Math.PI) {
+                    angle -= 2 * Math.PI;
+                }
+                if (orient === null) {
+                    if (angle === 0.0) {
+                        continue;
+                    }
+                    orient = (angle > 0) ? 1 : -1;
+                } else {
+                    if (orient * angle < -eps) {
+                        return false;
+                    }
+                }
+                angle_sum += angle;
+            }
+
+            if ((Math.abs(angle_sum / (2 * Math.PI)) - 1) < eps) {
+                return true;
+            }
+            return false;
         },
 
         /**
@@ -725,9 +1191,7 @@ JXG.extend(
                 intersect2,
                 straightFirst,
                 straightLast,
-                c,
-                p1,
-                p2;
+                c, p1, p2;
 
             if (!Type.exists(margin)) {
                 // Enlarge the drawable region slightly. This hides the small sides
@@ -735,8 +1199,8 @@ JXG.extend(
                 margin = 10;
             }
 
-            straightFirst = Type.evaluate(el.visProp.straightfirst);
-            straightLast = Type.evaluate(el.visProp.straightlast);
+            straightFirst = el.evalVisProp('straightfirst');
+            straightLast = el.evalVisProp('straightlast');
 
             // If one of the point is an ideal point in homogeneous coordinates
             // drawing of line segments or rays are not possible.
@@ -761,7 +1225,7 @@ JXG.extend(
             c[1] = el.stdform[1] / el.board.unitX;
             c[2] = -el.stdform[2] / el.board.unitY;
 
-            // p1=p2
+            // If p1=p2
             if (isNaN(c[0] + c[1] + c[2])) {
                 return;
             }
@@ -901,8 +1365,8 @@ JXG.extend(
                 takePoint1 = false,
                 takePoint2 = false;
 
-            straightFirst = Type.evaluate(el.visProp.straightfirst);
-            straightLast = Type.evaluate(el.visProp.straightlast);
+            straightFirst = el.evalVisProp('straightfirst');
+            straightLast = el.evalVisProp('straightlast');
 
             // If one of the point is an ideal point in homogeneous coordinates
             // drawing of line segments or rays are not possible.
@@ -1073,7 +1537,7 @@ JXG.extend(
                 angle += 2 * Math.PI;
             }
             q = Math.floor((angle + Math.PI / 8) / (Math.PI / 4)) % 8;
-            return ["rt", "urt", "top", "ulft", "lft", "llft", "lrt"][q];
+            return ["rt", "urt", "top", "ulft", "lft", "llft", "bot", "lrt"][q];
         },
 
         /**
@@ -1154,16 +1618,36 @@ JXG.extend(
          * Determinant of three points in the Euclidean plane.
          * Zero, if the points are collinear. Used to determine of a point q is left or
          * right to a segment defined by points p1 and p2.
+         * <p>
+         * Non-homogeneous version.
          *
-         * @param  {Array} p1 Coordinates of the first point of the segment. Array of length 3. First coordinate is equal to 1.
-         * @param  {Array} p2 Coordinates of the second point of the segment. Array of length 3. First coordinate is equal to 1.
-         * @param  {Array} q Coordinates of the point. Array of length 3. First coordinate is equal to 1.
+         * @param  {Array|JXG.Point} p1 First point or its coordinates of the segment. Point object or array of length 3. First (homogeneous) coordinate is equal to 1.
+         * @param  {Array|JXG.Point} p2 Second point or its coordinates of the segment. Point object or array of length 3. First (homogeneous) coordinate is equal to 1.
+         * @param  {Array|JXG.Point} q Point or its coordinates. Point object or array of length 3. First (homogeneous) coordinate is equal to 1.
          * @return {Number} Signed area of the triangle formed by these three points.
          *
-         * @see #windingNumber
+         * @see JXG.Math.Geometry.windingNumber
          */
         det3p: function (p1, p2, q) {
-            return (p1[1] - q[1]) * (p2[2] - q[2]) - (p2[1] - q[1]) * (p1[2] - q[2]);
+            var pp1, pp2, qq;
+
+            if (Type.isPoint(p1)) {
+                pp1 = p1.Coords(true);
+            } else {
+                pp1 = p1;
+            }
+            if (Type.isPoint(p2)) {
+                pp2 = p2.Coords(true);
+            } else {
+                pp2 = p2;
+            }
+            if (Type.isPoint(q)) {
+                qq = q.Coords(true);
+            } else {
+                qq = q;
+            }
+
+            return (pp1[1] - qq[1]) * (pp2[2] - qq[2]) - (pp2[1] - qq[1]) * (pp1[2] - qq[2]);
         },
 
         /**
@@ -1305,18 +1789,19 @@ JXG.extend(
          * @param {Number} [coord_type=JXG.COORDS_BY_SCREEN] Type of coordinates used here.
          *   Possible values are <b>JXG.COORDS_BY_USER</b> and <b>JXG.COORDS_BY_SCREEN</b>.
          *   Default value is JXG.COORDS_BY_SCREEN.
+         * @param {JXG.Board} board Board object
          *
          * @returns {Boolean} if (x_in, y_in) is inside of the polygon.
-         * @see JXG.Polygon.hasPoint
-         * @see JXG.Polygon.pnpoly
-         * @see #windingNumber
+         * @see JXG.Polygon#hasPoint
+         * @see JXG.Polygon#pnpoly
+         * @see JXG.Math.Geometry.windingNumber
          *
          * @example
          * var pol = board.create('polygon', [[-1,2], [2,2], [-1,4]]);
          * var p = board.create('point', [4, 3]);
          * var txt = board.create('text', [-1, 0.5, function() {
          *   return 'Point A is inside of the polygon = ' +
-         *     JXG.Math.Geometry.pnpoly(p.X(), p.Y(), JXG.COORDS_BY_USER, pol.vertices);
+         *     JXG.Math.Geometry.pnpoly(p.X(), p.Y(), pol.vertices, JXG.COORDS_BY_USER, board);
          * }]);
          *
          * </pre><div id="JXG4656ed42-f965-4e35-bb66-c334a4529683" class="jxgbox" style="width: 300px; height: 300px;"></div>
@@ -1327,7 +1812,7 @@ JXG.extend(
          *     var pol = board.create('polygon', [[-1,2], [2,2], [-1,4]]);
          *     var p = board.create('point', [4, 3]);
          *     var txt = board.create('text', [-1, 0.5, function() {
-         *     		return 'Point A is inside of the polygon = ' + JXG.Math.Geometry.pnpoly(p.X(), p.Y(), JXG.COORDS_BY_USER, pol.vertices);
+         *     		return 'Point A is inside of the polygon = ' + JXG.Math.Geometry.pnpoly(p.X(), p.Y(), pol.vertices, JXG.COORDS_BY_USER, board);
          *     }]);
          *
          *     })();
@@ -1335,20 +1820,14 @@ JXG.extend(
          * </script><pre>
          *
          */
-        pnpoly: function (x_in, y_in, path, coord_type) {
-            var i,
-                j,
-                len,
-                x,
-                y,
-                crds,
+        pnpoly: function (x_in, y_in, path, coord_type, board) {
+            var i, j, vi, vj, len,
+                x, y, crds,
                 v = path,
-                vi,
-                vj,
                 isIn = false;
 
             if (coord_type === Const.COORDS_BY_USER) {
-                crds = new Coords(Const.COORDS_BY_USER, [x_in, y_in], this.board);
+                crds = new Coords(Const.COORDS_BY_USER, [x_in, y_in], board);
                 x = crds.scrCoords[1];
                 y = crds.scrCoords[2];
             } else {
@@ -1381,17 +1860,18 @@ JXG.extend(
 
         /**
          * Generate the function which computes the coordinates of the intersection point.
-         * Primarily used in {@link JXG.Point#createIntersectionPoint}.
+         * Primarily used in {@link JXG.Point.createIntersectionPoint}.
          * @param {JXG.Board} board object
          * @param {JXG.Line,JXG.Circle_JXG.Line,JXG.Circle_Number|Function} el1,el2,i The result will be a intersection point on el1 and el2.
          * i determines the intersection point if two points are available: <ul>
          *   <li>i==0: use the positive square root,</li>
          *   <li>i==1: use the negative square root.</li></ul>
-         * See further {@link JXG.Point#createIntersectionPoint}.
          * @param {Boolean} alwaysintersect. Flag that determines if segments and arc can have an outer intersection point
          * on their defining line or circle.
          * @returns {Function} Function returning a {@link JXG.Coords} object that determines
          * the intersection point.
+         *
+         * @see JXG.Point.createIntersectionPoint
          */
         intersectionFunction: function (board, el1, el2, i, j, alwaysintersect) {
             var func,
@@ -1451,10 +1931,10 @@ JXG.extend(
                     // line - path
                     /** @ignore */
                     func = function () {
-                        var first1 = Type.evaluate(el1.visProp.straightfirst),
-                            last1 = Type.evaluate(el1.visProp.straightlast),
-                            first2 = Type.evaluate(el2.visProp.straightfirst),
-                            last2 = Type.evaluate(el2.visProp.straightlast),
+                        var first1 = el1.evalVisProp('straightfirst'),
+                            last1 = el1.evalVisProp('straightlast'),
+                            first2 = el2.evalVisProp('straightfirst'),
+                            last2 = el2.evalVisProp('straightlast'),
                             a_not;
 
                         a_not = (!Type.evaluate(alwaysintersect) && (!first1 || !last1 || !first2 || !last2));
@@ -1462,11 +1942,12 @@ JXG.extend(
                     };
                 } else if (el2.elementClass === Const.OBJECT_CLASS_LINE) {
                     // path - line
+                    /** @ignore */
                     func = function () {
-                        var first1 = Type.evaluate(el1.visProp.straightfirst),
-                            last1 = Type.evaluate(el1.visProp.straightlast),
-                            first2 = Type.evaluate(el2.visProp.straightfirst),
-                            last2 = Type.evaluate(el2.visProp.straightlast),
+                        var first1 = el1.evalVisProp('straightfirst'),
+                            last1 = el1.evalVisProp('straightlast'),
+                            first2 = el2.evalVisProp('straightfirst'),
+                            last2 = el2.evalVisProp('straightlast'),
                             a_not;
 
                         a_not = (!Type.evaluate(alwaysintersect) && (!first1 || !last1 || !first2 || !last2));
@@ -1488,10 +1969,10 @@ JXG.extend(
                 func = function () {
                     var res,
                         c,
-                        first1 = Type.evaluate(el1.visProp.straightfirst),
-                        last1 = Type.evaluate(el1.visProp.straightlast),
-                        first2 = Type.evaluate(el2.visProp.straightfirst),
-                        last2 = Type.evaluate(el2.visProp.straightlast);
+                        first1 = el1.evalVisProp('straightfirst'),
+                        last1 = el1.evalVisProp('straightlast'),
+                        first2 = el2.evalVisProp('straightfirst'),
+                        last2 = el2.evalVisProp('straightlast');
 
                     /**
                      * If one of the lines is a segment or ray and
@@ -1542,8 +2023,8 @@ JXG.extend(
                         return res;
                     }
                     if (el1.elementClass === Const.OBJECT_CLASS_LINE) {
-                        first = Type.evaluate(el1.visProp.straightfirst);
-                        last = Type.evaluate(el1.visProp.straightlast);
+                        first = el1.evalVisProp('straightfirst');
+                        last = el1.evalVisProp('straightlast');
                         if (!first || !last) {
                             r = that.affineRatio(el1.point1.coords, el1.point2.coords, res);
                             if ((!last && r > 1 + Mat.eps) || (!first && r < 0 - Mat.eps)) {
@@ -1552,8 +2033,8 @@ JXG.extend(
                         }
                     }
                     if (el2.elementClass === Const.OBJECT_CLASS_LINE) {
-                        first = Type.evaluate(el2.visProp.straightfirst);
-                        last = Type.evaluate(el2.visProp.straightlast);
+                        first = el2.evalVisProp('straightfirst');
+                        last = el2.evalVisProp('straightlast');
                         if (!first || !last) {
                             r = that.affineRatio(el2.point1.coords, el2.point2.coords, res);
                             if ((!last && r > 1 + Mat.eps) || (!first && r < 0 - Mat.eps)) {
@@ -1577,6 +2058,67 @@ JXG.extend(
             return func;
         },
 
+        otherIntersectionFunction: function (input, others, alwaysintersect, precision) {
+            var func, board,
+                el1, el2,
+                that = this;
+
+            el1 = input[0];
+            el2 = input[1];
+            board = el1.board;
+            /** @ignore */
+            func = function () {
+                var i, k, c, d,
+                    isClose,
+                    le = others.length,
+                    eps = Type.evaluate(precision);
+
+                for (i = le; i >= 0; i--) {
+                    if (el1.elementClass === Const.OBJECT_CLASS_CIRCLE &&
+                        [Const.OBJECT_CLASS_CIRCLE, Const.OBJECT_CLASS_LINE].indexOf(el2.elementClass) >= 0) {
+                        // circle, circle|line
+                        c = that.meet(el1.stdform, el2.stdform, i, board);
+                    } else if (el1.elementClass === Const.OBJECT_CLASS_CURVE &&
+                        [Const.OBJECT_CLASS_CURVE, Const.OBJECT_CLASS_CIRCLE].indexOf(el2.elementClass) >= 0) {
+                        // curve, circle|curve
+                        c = that.meetCurveCurve(el1, el2, i, 0, board);
+                    } else if (el1.elementClass === Const.OBJECT_CLASS_CURVE && el2.elementClass === Const.OBJECT_CLASS_LINE) {
+                        // curve, line
+                        if (Type.exists(el1.dataX)) {
+                            c = JXG.Math.Geometry.meetCurveLine(el1, el2, i, el1.board, Type.evaluate(alwaysintersect));
+                        } else {
+                            c = JXG.Math.Geometry.meetCurveLineContinuous(el1, el2, i, el1.board);
+                        }
+                    }
+
+                    if (c === undefined) {
+                        // Intersection point does not exist
+                        continue;
+                    }
+
+                    // If the intersection is close to one of the points in other
+                    // we have to search for another intersection point.
+                    isClose = false;
+                    for (k = 0; !isClose && k < le; k++) {
+                        if (Type.exists(c) && Type.exists(c.distance)) {
+                            d = c.distance(JXG.COORDS_BY_USER, others[k].coords);
+                            if (d < eps) {
+                                isClose = true;
+                            }
+                        }
+                    }
+                    if (!isClose) {
+                        // We are done, the intersection is away from any other
+                        // intersection point.
+                        return c;
+                    }
+                }
+                // Otherwise we return the last intersection point
+                return c;
+            };
+            return func;
+        },
+
         /**
          * Returns true if the coordinates are on the arc element,
          * false otherwise. Usually, coords is an intersection
@@ -1591,7 +2133,12 @@ JXG.extend(
             var angle = this.rad(arc.radiuspoint, arc.center, coords.usrCoords.slice(1)),
                 alpha = 0.0,
                 beta = this.rad(arc.radiuspoint, arc.center, arc.anglepoint),
-                ev_s = Type.evaluate(arc.visProp.selection);
+                ev_s = arc.evalVisProp('selection');
+
+            if (arc.evalVisProp('orientation') === 'clockwise') {
+                angle = 2 * Math.PI - angle;
+                beta = 2 * Math.PI - beta;
+            }
 
             if ((ev_s === "minor" && beta > Math.PI) || (ev_s === "major" && beta < Math.PI)) {
                 alpha = beta;
@@ -1646,8 +2193,7 @@ JXG.extend(
             var s = [],
                 intersect1,
                 intersect2,
-                i,
-                j;
+                i, j;
 
             if (!Type.exists(margin)) {
                 margin = 0;
@@ -1714,9 +2260,10 @@ JXG.extend(
                 }
             }
 
-            intersect1 = new Coords(Const.COORDS_BY_SCREEN, intersect1.slice(1), board);
-            intersect2 = new Coords(Const.COORDS_BY_SCREEN, intersect2.slice(1), board);
-            return [intersect1, intersect2];
+            return [
+                new Coords(Const.COORDS_BY_SCREEN, intersect1.slice(1), board),
+                new Coords(Const.COORDS_BY_SCREEN, intersect2.slice(1), board)
+            ];
         },
 
         /**
@@ -1812,7 +2359,7 @@ JXG.extend(
             // Radius is zero, return center of circle, if on other circle
             if (circ1[4] < Mat.eps) {
                 if (
-                    Math.abs(this.distance(circ1.slice(6, 2), circ2.slice(6, 8)) - circ2[4]) <
+                    Math.abs(this.distance(circ1.slice(6, 8), circ2.slice(6, 8)) - circ2[5]) <
                     Mat.eps
                 ) {
                     return new Coords(Const.COORDS_BY_USER, circ1.slice(6, 8), board);
@@ -1824,7 +2371,7 @@ JXG.extend(
             // Radius is zero, return center of circle, if on other circle
             if (circ2[4] < Mat.eps) {
                 if (
-                    Math.abs(this.distance(circ2.slice(6, 2), circ1.slice(6, 8)) - circ1[4]) <
+                    Math.abs(this.distance(circ2.slice(6, 8), circ1.slice(6, 8)) - circ1[5]) <
                     Mat.eps
                 ) {
                     return new Coords(Const.COORDS_BY_USER, circ2.slice(6, 8), board);
@@ -1849,30 +2396,237 @@ JXG.extend(
         },
 
         /**
-         * Compute an intersection of the curves c1 and c2.
-         * We want to find values t1, t2 such that
-         * c1(t1) = c2(t2), i.e. (c1_x(t1)-c2_x(t2),c1_y(t1)-c2_y(t2)) = (0,0).
+         * Segment-wise search for the nr-th intersection of two curves.
+         * testSegment is always assumed to be true.
          *
-         * Methods: segment-wise intersections (default) or generalized Newton method.
          * @param {JXG.Curve} c1 Curve, Line or Circle
          * @param {JXG.Curve} c2 Curve, Line or Circle
-         * @param {Number|Function} nr the nr-th intersection point will be returned.
-         * @param {Number} t2ini not longer used.
-         * @param {JXG.Board} [board=c1.board] Reference to a board object.
-         * @param {String} [method='segment'] Intersection method, possible values are 'newton' and 'segment'.
-         * @returns {JXG.Coords} intersection point
+         * @param {Number} nr the nr-th intersection point will be returned
+         * @param {JXG.Board} [board=c1.board] Reference to a board object
+         * @returns {JXG.Coords} intersection as Coords object
+         *
+         * @private
+         * @see JXG.Math.Geometry.meetCurveCurve
          */
-        meetCurveCurve: function (c1, c2, nr, t2ini, board, method) {
-            var co;
+        meetCurveCurveDiscrete: function (c1, c2, nr, board) {
+            var co,
+                i = Type.evaluate(nr);
 
-            if (Type.exists(method) && method === "newton") {
-                co = Numerics.generalizedNewton(c1, c2, Type.evaluate(nr), t2ini);
+            if (c1.bezierDegree === 3 || c2.bezierDegree === 3) {
+                co = this.meetBezierCurveRedBlueSegments(c1, c2, i);
             } else {
-                if (c1.bezierDegree === 3 || c2.bezierDegree === 3) {
-                    co = this.meetBezierCurveRedBlueSegments(c1, c2, nr);
-                } else {
-                    co = this.meetCurveRedBlueSegments(c1, c2, nr);
+                co = this.meetCurveRedBlueSegments(c1, c2, i);
+            }
+            return new Coords(Const.COORDS_BY_USER, co, board);
+        },
+
+        /**
+         * Apply Newton-Raphson to search for an intersection of two curves
+         * in a given range of the first curve.
+         *
+         * @param {JXG.Curve} c1 Curve, Line or Circle
+         * @param {JXG.Curve} c2 Curve, Line or Circle
+         * @param {Array} range Domain for the search of an intersection. The start value
+         * for the search is chosen to be inside of that range.
+         * @param {Boolean} testSegment If true require that t1 and t2 are inside of the allowed bounds.
+         * @returns {Array} [[z, x, y], t1, t2, t, ||c1[t1]-c2[t2]||**2]. The last entry is set to
+         * 10000 if the intersection is outside of the given domain (range) for the first curve.
+         * @private
+         * @see JXG.Math.Geometry._meetCurveCurveRecursive
+         * @see JXG.Math.Geometry._meetCurveCurveIterative
+         * @see JXG.Math.Numerics.generalizedDampedNewton
+         * @see JXG.Math.Geometry.meetCurveCurveCobyla
+         */
+        meetCurveCurveNewton: function (c1, c2, range1, range2, testSegment) {
+            var t1, t2,
+                co, r,
+                inphi = (Math.sqrt(5) - 1) * 0.5,
+                damp = 0.85, // (
+                eps3 = Mat.eps * Mat.eps * Mat.eps,
+                eps2 = Mat.eps * Mat.eps,
+
+                ma1 = c1.maxX(),
+                mi1 = c1.minX(),
+                ma2 = c2.maxX(),
+                mi2 = c2.minX(),
+
+                F = function(t, n) {
+                    var f1 = c1.Ft(t[0]),
+                        f2 = c2.Ft(t[1]),
+                        e = f1[1] - f2[1],
+                        f = f1[2] - f2[2];
+
+                    return [e, f];
+                },
+                D = function(t, n) {
+                    var h = Mat.eps,
+                        h2 = 2 * h,
+                        f1_1 = c1.Ft(t[0] - h),
+                        f1_2 = c1.Ft(t[0] + h),
+                        f2_1 = c2.Ft(t[1] - h),
+                        f2_2 = c2.Ft(t[1] + h);
+                    return [
+                        [ (f1_2[1] - f1_1[1]) / h2,
+                         -(f2_2[1] - f2_1[1]) / h2],
+                        [ (f1_2[2] - f1_1[2]) / h2,
+                         -(f2_2[2] - f2_1[2]) / h2]
+                    ];
+                };
+
+            t1 = range1[0] + (range1[1] - range1[0]) * (1 - inphi);
+            t2 = range2[0] + (range2[1] - range2[0]) * (1 - inphi);
+
+            // Use damped Newton
+            // r = Numerics.generalizedDampedNewtonCurves(c1, c2, t1, t2, damp, eps3);
+            r = Numerics.generalizedDampedNewton(F, D, 2, [t1, t2], damp, eps3, 40);
+            // r: [t1, t2, F2]
+
+            t1 = r[0][0];
+            t2 = r[0][1];
+            co = c1.Ft(t1);
+
+            if (
+                t1 < range1[0] - Mat.eps || t1 > range1[1] + Mat.eps ||
+                t2 < range2[0] - Mat.eps || t2 > range2[1] + Mat.eps ||
+                (testSegment &&
+                    (t1 < mi1 - eps2 || t1 > ma1 + eps2 ||
+                     t2 < mi2 - eps2 || t2 > ma2 + eps2)
+                )
+            ) {
+                // Damped-Newton found solution outside of range
+                return [co, t1, t2, 10000];
+            }
+// console.log(t1, r[3])
+
+            return [co, t1, t2, r[1]];
+        },
+
+        /**
+         * Return a list of the (at most) first i intersection points of two curves.
+         * Computed iteratively.
+         *
+         * @param {JXG.Curve} c1 Curve, Line or Circle
+         * @param {JXG.Curve} c2 Curve, Line or Circle
+         * @param {Number} low Lower bound of the search domain (between [0, 1])
+         * @param {Number} up Upper bound of the search domain (between [0, 1])
+         * @param {Number} i Return a list of the first i intersection points
+         * @param {Boolean} testSegment If true require that t1 and t2 are inside of the allowed bounds.
+         * @returns {Array} List of the first i intersection points, given by the parameter t.
+         * @private
+         * @see JXG.Math.Geometry.meetCurveCurveNewton
+         * @see JXG.Math.Geometry.meetCurveCurve
+         */
+        _meetCurveCurveIterative: function(c1, c2, range1, range2, i, testSegment) {
+            var ret,
+                t1,// t2,
+                low1, low2, up1, up2,
+                eps = Mat.eps * 100, // Minimum difference between zeros
+                j1, j2,
+                steps = 20,
+                d1, d2,
+                zeros = [];
+
+            low1 = range1[0];
+            up1 = range1[1];
+            low2 = range2[0];
+            up2 = range2[1];
+            if (up1 < low1 || up2 < low2) {
+                return [];
+            }
+
+            // console.log('DO iterative', [low1, up1], [low2, up2])
+
+            d1 = (up1 - low1) / steps;
+            d2 = (up2 - low2) / steps;
+            for (j1 = 0; j1 < steps; j1++) {
+                for (j2 = 0; j2 < steps; j2++) {
+
+                    ret = this.meetCurveCurveNewton(c1, c2,
+                        [low1 + j1 * d1, low1 + (j1 + 1) * d1],
+                        [low2 + j2 * d2, low2 + (j2 + 1) * d2],
+                        testSegment);
+
+                    if (ret[3] < Mat.eps) {
+                        t1 = ret[1];
+                        // t2 = ret[2];
+                        // console.log("\tFOUND", t1, t2, c1.Ft(t1)[2])
+                        zeros = zeros.concat([t1]);
+                        zeros = Type.toUniqueArrayFloat(zeros, eps);
+                        // console.log(zeros, i)
+                        if (zeros.length > i) {
+                            return zeros;
+                        }
+                    }
                 }
+            }
+
+            return zeros;
+        },
+
+        /**
+         * Compute an intersection of the curves c1 and c2.
+         * We want to find values t1, t2 such that
+         * c1(t1) = c2(t2), i.e. (c1_x(t1) - c2_x(t2), c1_y(t1) - c2_y(t2)) = (0, 0).
+         *
+         * Available methods:
+         * <ul>
+         *  <li> discrete, segment-wise intersections
+         *  <li> generalized damped Newton-Raphson
+         * </ul>
+         *
+         * Segment-wise intersection is more stable, but has problems with tangent points.
+         * Damped Newton-Raphson converges very rapidly but sometimes behaves chaotic.
+         *
+         * @param {JXG.Curve} c1 Curve, Line or Circle
+         * @param {JXG.Curve} c2 Curve, Line or Circle
+         * @param {Number|Function} nr the nr-th intersection point will be returned. For backwards compatibility:
+         * if method='newton' and nr is not an integer, {@link JXG.Math.Numerics.generalizedNewton} is called
+         * directly with nr as start value (not recommended).
+         * @param {Number} t2ini not longer used. Must be supplied and is ignored.
+         * @param {JXG.Board} [board=c1.board] Reference to a board object.
+         * @param {String} [method] Intersection method, possible values are 'newton' and 'segment'.
+         * If both curves are given by functions (assumed to be continuous), 'newton' is the default, otherwise
+         * 'segment' is the default.
+         * @returns {JXG.Coords} intersection point
+         *
+         * @see JXG.Math.Geometry.meetCurveCurveDiscrete
+         * @see JXG.Math.Geometry._meetCurveCurveRecursive
+         * @see JXG.Math.Geometry.meetCurveCurveIterative
+         */
+        meetCurveCurve: function (c1, c2, nr, t2ini, board, method, testSegment) {
+            var co,
+                zeros,
+                mi1, ma1, mi2, ma2,
+                i = Type.evaluate(nr);
+
+            board = board || c1.board;
+            if (method === 'segment' || Type.exists(c1.dataX) || Type.exists(c2.dataX)) {
+                // Discrete data points, i.e. x-coordinates of c1 or c2 are given in an array)
+                return this.meetCurveCurveDiscrete(c1, c2, i, board);
+            }
+
+            // Outdated:
+            // Backwards compatibility if nr is not a positive integer then
+            // generalizedNewton is still used.
+            if (Type.exists(method) && method === 'newton' && i < 0 || parseInt(i) !== i) {
+                co = Numerics.generalizedNewton(c1, c2, i, t2ini);
+                return new Coords(Const.COORDS_BY_USER, co, board);
+            }
+
+            // Method 'newton'
+            mi1 = c1.minX();
+            ma1 = c1.maxX();
+            mi2 = c2.minX();
+            ma2 = c2.maxX();
+
+            // console.time('curvecurve')
+            zeros = this._meetCurveCurveIterative(c1, c2, [mi1, ma1], [mi2, ma2], i, testSegment);
+            // console.timeEnd('curvecurve')
+
+            if (zeros.length > i) {
+                co = c1.Ft(zeros[i]);
+            } else {
+                return [0, NaN, NaN];
             }
 
             return new Coords(Const.COORDS_BY_USER, co, board);
@@ -1886,8 +2640,8 @@ JXG.extend(
          * If higher precision is needed, {@link JXG.Math.Geometry.meetCurveLineContinuous}
          * has to be used.
          *
-         * @param {JXG.Curve,JXG.Line} el1 Curve or Line
-         * @param {JXG.Curve,JXG.Line} el2 Curve or Line
+         * @param {JXG.Curve|JXG.Line} el1 Curve or Line
+         * @param {JXG.Curve|JXG.Line} el2 Curve or Line
          * @param {Number|Function} nr the nr-th intersection point will be returned.
          * @param {JXG.Board} [board=el1.board] Reference to a board object.
          * @param {Boolean} alwaysIntersect If false just the segment between the two defining points are tested for intersection
@@ -1911,14 +2665,20 @@ JXG.extend(
                 li = el1;
             }
 
-            v = this.meetCurveLineDiscrete(cu, li, nr, board, !alwaysIntersect);
+            if (Type.exists(cu.dataX)) {
+                // We use the discrete version if
+                //   the curve is not a parametric curve, e.g. implicit plots
+                v = this.meetCurveLineDiscrete(cu, li, nr, board, !alwaysIntersect);
+            } else {
+                v = this.meetCurveCurve(cu, li, nr, 0, board, 'newton', !alwaysIntersect);
+            }
 
             return v;
         },
 
         /**
          * Intersection of line and curve, continuous case.
-         * Finds the nr-the intersection point
+         * Finds the nr-th intersection point
          * Uses {@link JXG.Math.Geometry.meetCurveLineDiscrete} as a first approximation.
          * A more exact solution is then found with {@link JXG.Math.Numerics.root}.
          *
@@ -1931,22 +2691,14 @@ JXG.extend(
          * @returns {JXG.Coords} Coords object containing the intersection.
          */
         meetCurveLineContinuous: function (cu, li, nr, board, testSegment) {
-            var t,
-                func0,
-                func1,
-                v,
-                x,
-                y,
-                z,
+            var func0, func1,
+                t, v, x, y, z,
                 eps = Mat.eps,
                 epsLow = Mat.eps,
                 steps,
                 delta,
-                tnew,
-                i,
-                tmin,
-                fmin,
-                ft;
+                tnew, tmin, fmin,
+                i, ft;
 
             v = this.meetCurveLineDiscrete(cu, li, nr, board, testSegment);
             x = v.usrCoords[1];
@@ -1958,9 +2710,10 @@ JXG.extend(
                 if (t > cu.maxX() || t < cu.minX()) {
                     return Infinity;
                 }
-                c1 = x - cu.X(t);
-                c2 = y - cu.Y(t);
+                c1 = cu.X(t) - x;
+                c2 = cu.Y(t) - y;
                 return c1 * c1 + c2 * c2;
+                // return c1 * (cu.X(t + h) - cu.X(t - h)) + c2 * (cu.Y(t + h) - cu.Y(t - h)) / h;
             };
 
             func1 = function (t) {
@@ -1972,7 +2725,6 @@ JXG.extend(
             steps = 50;
             delta = (cu.maxX() - cu.minX()) / steps;
             tnew = cu.minX();
-
             fmin = 0.0001; //eps;
             tmin = NaN;
             for (i = 0; i < steps; i++) {
@@ -2024,21 +2776,17 @@ JXG.extend(
          * the ideal point [0,1,0] is returned.
          */
         meetCurveLineDiscrete: function (cu, li, nr, board, testSegment) {
-            var i,
-                j,
+            var i, j,
                 n = Type.evaluate(nr),
-                p1,
-                p2,
-                p,
-                q,
+                p1, p2,
+                p, q,
                 lip1 = li.point1.coords.usrCoords,
                 lip2 = li.point2.coords.usrCoords,
-                d,
-                res,
+                d, res,
                 cnt = 0,
                 len = cu.numberPoints,
-                ev_sf = Type.evaluate(li.visProp.straightfirst),
-                ev_sl = Type.evaluate(li.visProp.straightlast);
+                ev_sf = li.evalVisProp('straightfirst'),
+                ev_sl = li.evalVisProp('straightlast');
 
             // In case, no intersection will be found we will take this
             q = new Coords(Const.COORDS_BY_USER, [0, NaN, NaN], board);
@@ -2103,7 +2851,7 @@ JXG.extend(
 
         /**
          * Find the n-th intersection point of two curves named red (first parameter) and blue (second parameter).
-         * We go through each segment of the red curve and search if there is an intersection with a segemnt of the blue curve.
+         * We go through each segment of the red curve and search if there is an intersection with a segment of the blue curve.
          * This double loop, i.e. the outer loop runs along the red curve and the inner loop runs along the blue curve, defines
          * the n-th intersection point. The segments are either line segments or Bezier curves of degree 3. This depends on
          * the property bezierDegree of the curves.
@@ -2127,8 +2875,8 @@ JXG.extend(
                 minX,
                 maxX,
                 iFound = 0,
-                lenBlue = blue.numberPoints, //points.length,
-                lenRed = red.numberPoints; //points.length;
+                lenBlue = blue.numberPoints,
+                lenRed = red.numberPoints;
 
             if (lenBlue <= 1 || lenRed <= 1) {
                 return [0, NaN, NaN];
@@ -2144,18 +2892,16 @@ JXG.extend(
                 for (j = 1; j < lenBlue; j++) {
                     blue1 = blue2;
                     blue2 = blue.points[j].usrCoords;
-
                     if (
                         Math.min(blue1[1], blue2[1]) < maxX &&
                         Math.max(blue1[1], blue2[1]) > minX
                     ) {
                         m = this.meetSegmentSegment(red1, red2, blue1, blue2);
                         if (
-                            m[1] >= 0.0 &&
-                            m[2] >= 0.0 &&
+                            m[1] >= 0.0 && m[2] >= 0.0 &&
                             // The two segments meet in the interior or at the start points
                             ((m[1] < 1.0 && m[2] < 1.0) ||
-                                // One of the curve is intersected in the very last point
+                              // One of the curve is intersected in the very last point
                                 (i === lenRed - 1 && m[1] === 1.0) ||
                                 (j === lenBlue - 1 && m[2] === 1.0))
                         ) {
@@ -2257,7 +3003,7 @@ JXG.extend(
             }
 
             // Handle cases where at least one of the paths is empty
-            if (nr < 0 || JXG.Math.Clip.isEmptyCase(S, C, "intersection")) {
+            if (nr < 0 || JXG.Math.Clip.isEmptyCase(S, C, 'intersection')) {
                 return new Coords(Const.COORDS_BY_USER, [0, 0, 0], board);
             }
 
@@ -2719,28 +3465,19 @@ JXG.extend(
          * @param {Number} sgn Wither 1 or -1. Needed for minor and major arcs. In case of doubt, use 1.
          */
         bezierArc: function (A, B, C, withLegs, sgn) {
-            var p1,
-                p2,
-                p3,
-                p4,
+            var p1, p2, p3, p4,
                 r,
-                phi,
-                beta,
-                PI2 = Math.PI * 0.5,
+                phi, beta, delta,
+                // PI2 = Math.PI * 0.5,
                 x = B[1],
                 y = B[2],
                 z = B[0],
                 dataX = [],
                 dataY = [],
-                co,
-                si,
-                ax,
-                ay,
-                bx,
-                by,
-                k,
-                v,
-                d,
+                co, si,
+                ax, ay,
+                bx, by,
+                k, v, d,
                 matrix;
 
             r = this.distance(B, A);
@@ -2753,6 +3490,12 @@ JXG.extend(
             if (sgn === -1) {
                 phi = 2 * Math.PI - phi;
             }
+
+            // Always divide the arc into four Bezier arcs.
+            // Otherwise, the position of gliders on this arc
+            // will be wrong.
+            delta = phi / 4;
+
 
             p1 = A;
             p1[1] /= p1[0];
@@ -2770,9 +3513,16 @@ JXG.extend(
             }
 
             while (phi > Mat.eps) {
-                if (phi > PI2) {
-                    beta = PI2;
-                    phi -= PI2;
+                // if (phi > PI2) {
+                //     beta = PI2;
+                //     phi -= PI2;
+                // } else {
+                //     beta = phi;
+                //     phi = 0;
+                // }
+                if (phi > delta) {
+                    beta = delta;
+                    phi -= delta;
                 } else {
                     beta = phi;
                     phi = 0;
@@ -2804,18 +3554,18 @@ JXG.extend(
                 p2 = [1, p1[1] - k * ay, p1[2] + k * ax];
                 p3 = [1, p4[1] + k * by, p4[2] - k * bx];
 
-                dataX = dataX.concat([p2[1], p3[1], p4[1]]);
-                dataY = dataY.concat([p2[2], p3[2], p4[2]]);
+                Type.concat(dataX, [p2[1], p3[1], p4[1]]);
+                Type.concat(dataY, [p2[2], p3[2], p4[2]]);
                 p1 = p4.slice(0);
             }
 
             if (withLegs) {
-                dataX = dataX.concat([
+                Type.concat(dataX, [
                     p4[1] + 0.333 * (x - p4[1]),
                     p4[1] + 0.666 * (x - p4[1]),
                     x
                 ]);
-                dataY = dataY.concat([
+                Type.concat(dataY, [
                     p4[2] + 0.333 * (y - p4[2]),
                     p4[2] + 0.666 * (y - p4[2]),
                     y
@@ -2833,7 +3583,7 @@ JXG.extend(
          * Calculates the coordinates of the projection of a given point on a given circle. I.o.w. the
          * nearest one of the two intersection points of the line through the given point and the circles
          * center.
-         * @param {JXG.Point,JXG.Coords} point Point to project or coords object to project.
+         * @param {JXG.Point|JXG.Coords} point Point to project or coords object to project.
          * @param {JXG.Circle} circle Circle on that the point is projected.
          * @param {JXG.Board} [board=point.board] Reference to the board
          * @returns {JXG.Coords} The coordinates of the projection of the given point on the given circle.
@@ -2966,7 +3716,7 @@ JXG.extend(
          * @param {JXG.Point} point Point to project.
          * @param {JXG.Curve} curve Curve on that the point is projected.
          * @param {JXG.Board} [board=point.board] Reference to a board.
-         * @see #projectCoordsToCurve
+         * @see JXG.Math.Geometry.projectCoordsToCurve
          * @returns {Array} [JXG.Coords, position] The coordinates of the projection of the given
          * point on the given graph and the relative position on the curve (real number).
          */
@@ -2977,9 +3727,13 @@ JXG.extend(
 
             var x = point.X(),
                 y = point.Y(),
-                t = point.position || 0.0,
-                result = this.projectCoordsToCurve(x, y, t, curve, board);
+                t = point.position,
+                result;
 
+            if (!Type.exists(t)) {
+                t = curve.evalVisProp('curvetype') === 'functiongraph' ? x : 0.0;
+            }
+            result = this.projectCoordsToCurve(x, y, t, curve, board);
             // point.position = result[1];
 
             return result;
@@ -2994,7 +3748,7 @@ JXG.extend(
          * @param {Number} t start value for newtons method
          * @param {JXG.Curve} curve Curve on that the point is projected.
          * @param {JXG.Board} [board=curve.board] Reference to a board.
-         * @see #projectPointToCurve
+         * @see JXG.Math.Geometry.projectPointToCurve
          * @returns {JXG.Coords} Array containing the coordinates of the projection of the given point on the given curve and
          * the position on the curve.
          */
@@ -3002,15 +3756,16 @@ JXG.extend(
             var newCoords, newCoordsObj,
                 i, j, mindist, dist, lbda,
                 v, coords, d, p1, p2, res, minfunc,
-                t_new, f_new, f_old,
-                delta, delta1, delta2, steps, minX, maxX,
+                t_new, f_new, f_old, dy,
+                delta, delta1, delta2, steps,
+                minX, maxX, minX_glob, maxX_glob,
                 infty = Number.POSITIVE_INFINITY;
 
             if (!Type.exists(board)) {
                 board = curve.board;
             }
 
-            if (Type.evaluate(curve.visProp.curvetype) === "plot") {
+            if (curve.evalVisProp('curvetype') === 'plot') {
                 t = 0;
                 mindist = infty;
                 if (curve.numberPoints === 0) {
@@ -3067,10 +3822,32 @@ JXG.extend(
                 newCoordsObj = new Coords(Const.COORDS_BY_USER, newCoords, board);
             } else {
                 // 'parameter', 'polar', 'functiongraph'
-                /** @ignore */
+
+                minX_glob = curve.minX();
+                maxX_glob = curve.maxX();
+                minX = minX_glob;
+                maxX = maxX_glob;
+
+                if (curve.evalVisProp('curvetype') === 'functiongraph') {
+                    // Restrict the possible position of t
+                    // to the projection of a circle to the x-axis (= t-axis)
+                    dy = Math.abs(y - curve.Y(x));
+                    if (!isNaN(dy)) {
+                        minX = x - dy;
+                        maxX = x + dy;
+                    }
+                }
+
+                /**
+                 * @ignore
+                 * Find t such that the Euclidean distance between
+                 * [x, y] and [curve.X(t), curve.Y(t)]
+                 * is minimized.
+                 */
                 minfunc = function (t) {
                     var dx, dy;
-                    if (t < curve.minX() || t > curve.maxX()) {
+
+                    if (t < minX_glob || t > maxX_glob) {
                         return Infinity;
                     }
                     dx = x - curve.X(t);
@@ -3078,14 +3855,12 @@ JXG.extend(
                     return dx * dx + dy * dy;
                 };
 
+                // Search t which minimizes minfunc(t)
+                // in discrete steps
                 f_old = minfunc(t);
                 steps = 50;
-                minX = curve.minX();
-                maxX = curve.maxX();
-
                 delta = (maxX - minX) / steps;
                 t_new = minX;
-
                 for (i = 0; i < steps; i++) {
                     f_new = minfunc(t_new);
 
@@ -3098,24 +3873,21 @@ JXG.extend(
                 }
 
                 // t = Numerics.root(Numerics.D(minfunc), t);
-                // Ensure that minfunc is defined on the
-                // enclsoing interval [t-delta1, t+delta2]
-                delta1 = delta;
-                for (i = 0;
-                    i < 20 && isNaN(minfunc(t - delta1));
-                    i++, delta1 *= 0.5);
 
+                // Ensure that minfunc is defined on the
+                // enclosing interval [t-delta1, t+delta2]
+                delta1 = delta;
+                for (i = 0; i < 20 && isNaN(minfunc(t - delta1)); i++, delta1 *= 0.5);
                 if (isNaN(minfunc(t - delta1))) {
                     delta1 = 0.0;
                 }
                 delta2 = delta;
-                for (i = 0;
-                    i < 20 && isNaN(minfunc(t + delta2));
-                    i++, delta2 *= 0.5);
+                for (i = 0; i < 20 && isNaN(minfunc(t + delta2)); i++, delta2 *= 0.5);
                 if (isNaN(minfunc(t + delta2))) {
                     delta2 = 0.0;
                 }
 
+                // Finally, apply mathemetical optimization in the determined interval
                 t = Numerics.fminbr(minfunc, [
                     Math.max(t - delta1, minX),
                     Math.min(t + delta2, maxX)
@@ -3133,8 +3905,9 @@ JXG.extend(
                 //         t = minX + t - maxX;
                 //     }
                 // } else {
-                t = t < minX ? minX : t;
-                t = t > maxX ? maxX : t;
+
+                t = t < minX_glob ? minX_glob : t;
+                t = t > maxX_glob ? maxX_glob : t;
                 // }
 
                 newCoordsObj = new Coords(
@@ -3367,6 +4140,415 @@ JXG.extend(
             return Mat.hypot(x, y);
         },
 
+        /* ***************************************/
+        /* *** 3D CALCULATIONS ****/
+        /* ***************************************/
+
+        /**
+         * Generate the function which computes the data of the intersection between
+         * <ul>
+         * <li> plane3d, plane3d,
+         * <li> plane3d, sphere3d,
+         * <li> sphere3d, plane3d,
+         * <li> sphere3d, sphere3d
+         * </ul>
+         *
+         * @param {JXG.GeometryElement3D} el1 Plane or sphere element
+         * @param {JXG.GeometryElement3D} el2 Plane or sphere element
+         * @returns {Array} of functions needed as input to create the intersecting line or circle.
+         *
+         */
+        intersectionFunction3D: function (view, el1, el2) {
+            var func,
+                that = this;
+
+            if (el1.type === Const.OBJECT_TYPE_PLANE3D) {
+                if (el2.type === Const.OBJECT_TYPE_PLANE3D) {
+                    // func = () => view.intersectionPlanePlane(el1, el2)[i];
+                    func = view.intersectionPlanePlane(el1, el2);
+                } else if (el2.type === Const.OBJECT_TYPE_SPHERE3D) {
+                    func = that.meetPlaneSphere(el1, el2);
+                }
+            } else if (el1.type === Const.OBJECT_TYPE_SPHERE3D) {
+                if (el2.type === Const.OBJECT_TYPE_PLANE3D) {
+                    func = that.meetPlaneSphere(el2, el1);
+                } else if (el2.type === Const.OBJECT_TYPE_SPHERE3D) {
+                    func = that.meetSphereSphere(el1, el2);
+                }
+            }
+
+            return func;
+        },
+
+        /**
+         * Intersecting point of three planes in 3D. The planes
+         * are given in Hesse normal form.
+         *
+         * @param {Array} n1 Hesse normal form vector of plane 1
+         * @param {Number} d1 Hesse normal form right hand side of plane 1
+         * @param {Array} n2 Hesse normal form vector of plane 2
+         * @param {Number} d2 Hesse normal form right hand side of plane 2
+         * @param {Array} n3 Hesse normal form vector of plane 1
+         * @param {Number} d3 Hesse normal form right hand side of plane 3
+         * @returns {Array} Coordinates array of length 4 of the intersecting point
+         */
+        meet3Planes: function (n1, d1, n2, d2, n3, d3) {
+            var p = [1, 0, 0, 0],
+                n31, n12, n23,
+                denom,
+                i;
+
+            n31 = Mat.crossProduct(n3.slice(1), n1.slice(1));
+            n12 = Mat.crossProduct(n1.slice(1), n2.slice(1));
+            n23 = Mat.crossProduct(n2.slice(1), n3.slice(1));
+
+            denom = Mat.innerProduct(n1.slice(1), n23, 3);
+            for (i = 0; i < 3; i++) {
+                p[i + 1] = (d1 * n23[i] + d2 * n31[i] + d3 * n12[i]) / denom;
+            }
+
+            return p;
+        },
+
+        /**
+         * Direction of intersecting line of two planes in 3D.
+         *
+         * @param {Array} v11 First vector spanning plane 1 (homogeneous coordinates)
+         * @param {Array} v12 Second vector spanning plane 1 (homogeneous coordinates)
+         * @param {Array} v21 First vector spanning plane 2 (homogeneous coordinates)
+         * @param {Array} v22 Second vector spanning plane 2 (homogeneous coordinates)
+         * @returns {Array} Coordinates array of length 4 of the direction  (homogeneous coordinates)
+         */
+        meetPlanePlane: function (v11, v12, v21, v22) {
+            var no1,
+                no2,
+                v, w;
+
+            v = v11.slice(1);
+            w = v12.slice(1);
+            no1 = Mat.crossProduct(v, w);
+
+            v = v21.slice(1);
+            w = v22.slice(1);
+            no2 = Mat.crossProduct(v, w);
+
+            w = Mat.crossProduct(no1, no2);
+            w.unshift(0);
+            return w;
+        },
+
+        meetPlaneSphere: function (el1, el2) {
+            var dis = function () {
+                    return Mat.innerProduct(el1.normal, el2.center.coords, 4) - el1.d;
+                };
+
+            return [
+                // Center
+                function() {
+                    return Mat.axpy(-dis(), el1.normal, el2.center.coords);
+                },
+                // Normal
+                el1.normal,
+                // Radius
+                function () {
+                    // Radius (returns NaN if spheres don't touch)
+                    var r = el2.Radius(),
+                        s = dis();
+                    return Math.sqrt(r * r - s * s);
+                }
+            ];
+        },
+
+        meetSphereSphere: function (el1, el2) {
+            var skew = function () {
+                    var dist = el1.center.distance(el2.center),
+                        r1 = el1.Radius(),
+                        r2 = el2.Radius();
+                    return (r1 - r2) * (r1 + r2) / (dist * dist);
+                };
+            return [
+                // Center
+                function () {
+                    var s = skew();
+                    return [
+                        1,
+                        0.5 * ((1 - s) * el1.center.coords[1] + (1 + s) * el2.center.coords[1]),
+                        0.5 * ((1 - s) * el1.center.coords[2] + (1 + s) * el2.center.coords[2]),
+                        0.5 * ((1 - s) * el1.center.coords[3] + (1 + s) * el2.center.coords[3])
+                    ];
+                },
+                // Normal
+                function() {
+                    return Stat.subtract(el2.center.coords, el1.center.coords);
+                },
+                // Radius
+                function () {
+                    // Radius (returns NaN if spheres don't touch)
+                    var dist = el1.center.distance(el2.center),
+                        r1 = el1.Radius(),
+                        r2 = el2.Radius(),
+                        s = skew(),
+                        rIxnSq = 0.5 * (r1 * r1 + r2 * r2 - 0.5 * dist * dist * (1 + s * s));
+                    return Math.sqrt(rIxnSq);
+                }
+            ];
+        },
+
+        /**
+         * Test if parameters are inside of allowed ranges
+         *
+         * @param {Array} params Array of length 1 or 2
+         * @param {Array} r_u First range
+         * @param {Array} [r_v] Second range
+         * @returns Boolean
+         * @private
+         */
+        _paramsOutOfRange: function(params, r_u, r_v) {
+            return params[0] < r_u[0] || params[0] > r_u[1] ||
+                (params.length > 1 && (params[1] < r_v[0] || params[1] > r_v[1]));
+        },
+
+        /**
+         * Given the 2D screen coordinates of a point, finds the nearest point on the given
+         * parametric curve or surface, and returns its view-space coordinates.
+         * @param {Array} p Homogeneous 3D coordinates for which the closest point on the curve point is searched.
+         * @param {JXG.Curve3D|JXG.Surface3D} target Parametric curve or surface to project to.
+         * @param {Number} n Dimension of the host element to which the coords are projected.
+         * @param {Array} params New position of point on the target (i.e. it is a return value),
+         * modified in place during the search, ending up at the nearest point.
+         * Usually, point.position is supplied for params.
+         *
+         * @returns {Array} Array of length 4 containing the coordinates of the nearest point on the curve or surface.
+         */
+        projectCoordsToParametric: function (p, target, n, params) {
+            // The variables and parameters for the Cobyla constrained
+            // minimization algorithm are explained in the Cobyla.js comments
+            var rhobeg,                // initial size of simplex (Cobyla)
+                rhoend,                // finial size of simplex (Cobyla)
+                iprint = 0,            // no console output (Cobyla)
+                maxfun = 200,          // call objective function at most 200 times (Cobyla)
+                _minFunc,              // Objective function for Cobyla
+                f = Math.random() * 0.01 + 0.5,
+                r_u, r_v,
+                m = 2 * n;
+
+            // adapt simplex size to parameter range
+            if (n === 1) {
+                r_u = [Type.evaluate(target.range[0]), Type.evaluate(target.range[1])];
+                rhobeg = 0.1 * (r_u[1] - r_u[0]);
+
+            } else if (n === 2) {
+                r_u = [Type.evaluate(target.range_u[0]), Type.evaluate(target.range_u[1])];
+                r_v = [Type.evaluate(target.range_v[0]), Type.evaluate(target.range_v[1])];
+                rhobeg = 0.1 * Math.min(
+                    r_u[1] - r_u[0],
+                    r_v[1] - r_v[0]
+                );
+            }
+            rhoend = rhobeg / 5e6;
+
+            // Minimize distance of the new position to the original position
+            _minFunc = function (n, m, w, con) {
+                var p_new = [
+                        1,
+                        target.X.apply(target, w),
+                        target.Y.apply(target, w),
+                        target.Z.apply(target, w)
+                    ],
+                    xDiff = p[1] - p_new[1],
+                    yDiff = p[2] - p_new[2],
+                    zDiff = p[3] - p_new[3];
+
+                if (m >= 2) {
+                    con[0] =  w[0] - r_u[0];
+                    con[1] = -w[0] + r_u[1];
+                }
+                if (m >= 4) {
+                    con[2] =  w[1] - r_v[0];
+                    con[3] = -w[1] + r_v[1];
+                }
+
+                return xDiff * xDiff + yDiff * yDiff + zDiff * zDiff;
+            };
+
+            // First optimization without range constraints to give a smooth drag experience on
+            // cyclic structures.
+
+            // Set the start values
+            if (params.length === 0) {
+                // If length > 0: take the previous position as start values for the optimization
+                params[0] = f * (r_u[0] + r_u[1]);
+                if (n === 2) {
+                    params[1] = f * (r_v[0] + r_v[1]);
+                }
+            } else {
+                params[0] = (params[0] <= r_u[0]) ? r_u[0] + Mat.eps : params[0];
+                params[0] = (params[0] >= r_u[1]) ? r_u[1] - Mat.eps : params[0];
+                if (n === 2) {
+                    params[1] = (params[1] <= r_v[0]) ? r_v[0] + Mat.eps : params[1];
+                    params[1] = (params[1] >= r_v[1]) ? r_v[1] - Mat.eps : params[1];
+                }
+            }
+
+            Mat.Nlp.FindMinimum(_minFunc, n, m, params, rhobeg, rhoend, iprint, maxfun);
+
+            // Update p which is used subsequently in _minFunc
+            p = [
+                1,
+                target.X.apply(target, params),
+                target.Y.apply(target, params),
+                target.Z.apply(target, params)
+            ];
+
+            // If the optimal params are outside of the range:
+            // Second optimization to obey the range constraints
+
+            if (this._paramsOutOfRange(params, r_u, r_v)) {
+                // Set the start values again
+                // params[0] = f * (r_u[0] + r_u[1]);
+                // if (n === 2) {
+                //     params[1] = f * (r_v[0] + r_v[1]);
+                // }
+                params[0] = (params[0] <= r_u[0]) ? r_u[0] + Mat.eps : params[0];
+                params[0] = (params[0] >= r_u[1]) ? r_u[1] - Mat.eps : params[0];
+                if (n === 2) {
+                    params[1] = (params[1] <= r_v[0]) ? r_v[0] + Mat.eps : params[1];
+                    params[1] = (params[1] >= r_v[1]) ? r_v[1] - Mat.eps : params[1];
+                }
+                Mat.Nlp.FindMinimum(_minFunc, n, m, params, rhobeg, rhoend, iprint, maxfun);
+            }
+
+            return [1,
+                target.X.apply(target, params),
+                target.Y.apply(target, params),
+                target.Z.apply(target, params)
+            ];
+        },
+
+        /**
+         * Given a the screen coordinates of a point, finds the point on the
+         * given parametric curve or surface which is nearest in screen space,
+         * and returns its view-space coordinates.
+         * @param {Array} pScr Screen coordinates to project.
+         * @param {JXG.Plane3D|JXG.Curve3D|JXG.Surface3D} target Plane, parametric curve or surface to project to.
+         * @param {Array} params Parameters of point on the target, initially specifying the starting point of
+         * the search. The parameters are modified in place during the search, ending up at the nearest point.
+         * @returns {Array} Array of length 4 containing the coordinates of the nearest point on the curve or surface.
+         */
+        projectScreenCoordsToParametric: function (pScr, target, params, cyclic) {
+            // The variables and parameters for the Cobyla constrained
+            // minimization algorithm are explained in the Cobyla.js comments
+            var rhobeg, // initial size of simplex (Cobyla)
+                rhoend, // finial size of simplex (Cobyla)
+                iprint = 0, // no console output (Cobyla)
+                maxfun = 200, // call objective function at most 200 times (Cobyla)
+                dim = params.length,
+                r_u, r_v,
+                _minFunc; // objective function (Cobyla)
+
+            // Adapt simplex size to parameter range
+            if (dim === 1) {
+                r_u = [Type.evaluate(target.range[0]), Type.evaluate(target.range[1])];
+                rhobeg = 0.1 * (r_u[1] - r_u[0]);
+            } else if (dim === 2) {
+                r_u = [Type.evaluate(target.range_u[0]), Type.evaluate(target.range_u[1])];
+                r_v = [Type.evaluate(target.range_v[0]), Type.evaluate(target.range_v[1])];
+
+                rhobeg = 0.1 * Math.min(
+                    r_u[1] - r_u[0],
+                    r_v[1] - r_v[0]
+                );
+            }
+
+            rhoend = rhobeg / 5e6;
+
+            // Minimize screen distance to cursor
+            _minFunc = function (n, m, w, con) {
+                var c3d = [
+                    1,
+                    target.X.apply(target, w),
+                    target.Y.apply(target, w),
+                    target.Z.apply(target, w)
+                ],
+                c2d = target.view.project3DTo2D(c3d),
+                xDiff = pScr[0] - c2d[1],
+                yDiff = pScr[1] - c2d[2];
+
+                if (n === 1) {
+                    con[0] = w[0] - r_u[0];
+                    con[1] = -w[0] + r_u[1];
+                } else if (n === 2) {
+                    con[0] = w[0] - r_u[0];
+                    con[1] = -w[0] + r_u[1];
+                    con[2] = w[1] - r_v[0];
+                    con[3] = -w[1] + r_v[1];
+                }
+
+                return xDiff * xDiff + yDiff * yDiff;
+            };
+
+            if (cyclic) {
+                // Cyclic
+                Mat.Nlp.FindMinimum(_minFunc, dim, 0 /*2 * dim*/, params, rhobeg, rhoend, iprint, maxfun);
+                params[0] = (params[0] + 20 * r_u[1]) % (r_u[1] - r_u[0]);
+                if (dim === 2) {
+                    params[1] = (params[1] + 20 * r_v[1]) % (r_v[1] - r_v[0]);
+                }
+            } else {
+                Mat.Nlp.FindMinimum(_minFunc, dim, 2 * dim, params, rhobeg, rhoend, iprint, maxfun);
+            }
+
+            return [1, target.X.apply(target, params), target.Y.apply(target, params), target.Z.apply(target, params)];
+        },
+
+        project3DTo3DPlane: function (point, normal, foot) {
+            // TODO: homogeneous 3D coordinates
+            var sol = [0, 0, 0],
+                le,
+                d1,
+                d2,
+                lbda;
+
+            foot = foot || [0, 0, 0];
+
+            le = Mat.norm(normal);
+            d1 = Mat.innerProduct(point, normal, 3);
+            d2 = Mat.innerProduct(foot, normal, 3);
+            // (point - lbda * normal / le) * normal / le == foot * normal / le
+            // => (point * normal - foot * normal) ==  lbda * le
+            lbda = (d1 - d2) / le;
+            sol = Mat.axpy(-lbda, normal, point);
+
+            return sol;
+        },
+
+        getPlaneBounds: function (v1, v2, q, s, e) {
+            var s1, s2, e1, e2, mat, rhs, sol;
+
+            if (v1[2] + v2[0] !== 0) {
+                mat = [
+                    [v1[0], v2[0]],
+                    [v1[1], v2[1]]
+                ];
+                rhs = [s - q[0], s - q[1]];
+
+                sol = Numerics.Gauss(mat, rhs);
+                s1 = sol[0];
+                s2 = sol[1];
+
+                rhs = [e - q[0], e - q[1]];
+                sol = Numerics.Gauss(mat, rhs);
+                e1 = sol[0];
+                e2 = sol[1];
+                return [s1, e1, s2, e2];
+            }
+            return null;
+        },
+
+        /* ***************************************/
+        /* *** Various ****/
+        /* ***************************************/
+
         /**
          * Helper function to create curve which displays a Reuleaux polygons.
          * @param {Array} points Array of points which should be the vertices of the Reuleaux polygon. Typically,
@@ -3423,92 +4605,9 @@ JXG.extend(
                     };
                 };
 
-            return [makeFct("X", "cos"), makeFct("Y", "sin"), 0, pi2];
-        },
-
-        meet3Planes: function (n1, d1, n2, d2, n3, d3) {
-            var p = [0, 0, 0],
-                n31,
-                n12,
-                n23,
-                denom,
-                i;
-
-            n31 = Mat.crossProduct(n3, n1);
-            n12 = Mat.crossProduct(n1, n2);
-            n23 = Mat.crossProduct(n2, n3);
-            denom = Mat.innerProduct(n1, n23, 3);
-            for (i = 0; i < 3; i++) {
-                p[i] = (d1 * n23[i] + d2 * n31[i] + d3 * n12[i]) / denom;
-            }
-            return p;
-        },
-
-        meetPlanePlane: function (v11, v12, v21, v22) {
-            var i,
-                no1,
-                no2,
-                v = [0, 0, 0],
-                w = [0, 0, 0];
-
-            for (i = 0; i < 3; i++) {
-                v[i] = Type.evaluate(v11[i]);
-                w[i] = Type.evaluate(v12[i]);
-            }
-            no1 = Mat.crossProduct(v, w);
-
-            for (i = 0; i < 3; i++) {
-                v[i] = Type.evaluate(v21[i]);
-                w[i] = Type.evaluate(v22[i]);
-            }
-            no2 = Mat.crossProduct(v, w);
-
-            return Mat.crossProduct(no1, no2);
-        },
-
-        project3DTo3DPlane: function (point, normal, foot) {
-            // TODO: homogeneous 3D coordinates
-            var sol = [0, 0, 0],
-                le,
-                d1,
-                d2,
-                lbda;
-
-            foot = foot || [0, 0, 0];
-
-            le = Mat.norm(normal);
-            d1 = Mat.innerProduct(point, normal, 3);
-            d2 = Mat.innerProduct(foot, normal, 3);
-            // (point - lbda * normal / le) * normal / le == foot * normal / le
-            // => (point * normal - foot * normal) ==  lbda * le
-            lbda = (d1 - d2) / le;
-            sol = Mat.axpy(-lbda, normal, point);
-
-            return sol;
-        },
-
-        getPlaneBounds: function (v1, v2, q, s, e) {
-            var s1, s2, e1, e2, mat, rhs, sol;
-
-            if (v1[2] + v2[0] !== 0) {
-                mat = [
-                    [v1[0], v2[0]],
-                    [v1[1], v2[1]]
-                ];
-                rhs = [s - q[0], s - q[1]];
-
-                sol = Numerics.Gauss(mat, rhs);
-                s1 = sol[0];
-                s2 = sol[1];
-
-                rhs = [e - q[0], e - q[1]];
-                sol = Numerics.Gauss(mat, rhs);
-                e1 = sol[0];
-                e2 = sol[1];
-                return [s1, e1, s2, e2];
-            }
-            return null;
+            return [makeFct("X", 'cos'), makeFct("Y", 'sin'), 0, pi2];
         }
+
     }
 );
 

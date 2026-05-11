@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2023
+    Copyright 2008-2026
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -32,11 +32,11 @@
 /*global JXG:true, define: true, ActiveXObject:true, jxgBinFileReader:true, DOMParser:true, XMLHttpRequest:true, document:true, navigator:true*/
 /*jslint nomen: true, plusplus: true*/
 
-import JXG from "../jxg";
-import Env from "../utils/env";
-import Type from "../utils/type";
-import Encoding from "../utils/encoding";
-import Base64 from "../utils/base64";
+import JXG from "../jxg.js";
+import Env from "../utils/env.js";
+import Type from "../utils/type.js";
+import Encoding from "../utils/encoding.js";
+import Base64 from "../utils/base64.js";
 
 /**
  * The FileReader object bundles the file input capabilities of JSXGraph.
@@ -57,17 +57,17 @@ JXG.FileReader = {
 
         try {
             request = new XMLHttpRequest();
-            if (format.toLowerCase() === "raw") {
+            if (format.toLowerCase() === 'raw') {
                 request.overrideMimeType("text/plain; charset=" + encoding);
             } else {
                 request.overrideMimeType("text/xml; charset=" + encoding);
             }
         } catch (e) {
             try {
-                request = new ActiveXObject("Msxml2.XMLHTTP");
+                request = new ActiveXObject('Msxml2.XMLHTTP');
             } catch (ex) {
                 try {
-                    request = new ActiveXObject("Microsoft.XMLHTTP");
+                    request = new ActiveXObject('Microsoft.XMLHTTP');
                 } catch (exc) {
                     request = false;
                 }
@@ -79,7 +79,7 @@ JXG.FileReader = {
         }
 
         request.open("GET", url, async);
-        if (format.toLowerCase() === "raw") {
+        if (format.toLowerCase() === 'raw') {
             this.cbp = function () {
                 var req = request;
                 if (req.readyState === 4) {
@@ -141,7 +141,7 @@ JXG.FileReader = {
             async = true;
         }
 
-        if (format.toLowerCase() === "raw") {
+        if (format.toLowerCase() === 'raw') {
             this.cbp = function (e) {
                 board(e.target.result);
             };
@@ -157,7 +157,7 @@ JXG.FileReader = {
 
         var reader = new FileReader();
         reader.onload = this.cb;
-        if (format.toLowerCase() === "raw") {
+        if (format.toLowerCase() === 'raw') {
             reader.readAsText(url);
         } else {
             reader.readAsText(url, encoding);
@@ -214,7 +214,7 @@ JXG.FileReader = {
         if (Type.exists(Reader)) {
             read = new Reader(board, str);
             read.read();
-        } else if (format === "jessiecode") {
+        } else if (format === 'jessiecode') {
         } else {
             throw new Error("JSXGraph: There is no reader available for '" + format + "'.");
         }

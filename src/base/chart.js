@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2023
+    Copyright 2008-2026
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -32,24 +32,24 @@
 /*global JXG: true, define: true, document: true*/
 /*jslint nomen: true, plusplus: true*/
 
-import JXG from "../jxg";
-import Numerics from "../math/numerics";
-import Statistics from "../math/statistics";
-import Const from "./constants";
-import Coords from "./coords";
-import GeometryElement from "./element";
-import DataSource from "../parser/datasource";
-import Color from "../utils/color";
-import Type from "../utils/type";
-import Env from "../utils/env";
-// import Curve from "./curve";
-// import Point from "./point";
-// import Text from "./text";
-// import Polygon from "./polygon";
-// import Sector from "../element/sector";
-// import Transform from "./transformation";
-// import Line from "./line";
-// import Circle from "./circle";
+import JXG from "../jxg.js";
+import Numerics from "../math/numerics.js";
+import Const from "./constants.js";
+import Coords from "./coords.js";
+import GeometryElement from "./element.js";
+import DataSource from "../parser/datasource.js";
+import Color from "../utils/color.js";
+import Type from "../utils/type.js";
+import Env from "../utils/env.js";
+// import Statistics from "../math/statistics.js";
+// import Curve from "./curve.js";
+// import Point from "./point.js";
+// import Text from "./text.js";
+// import Polygon from "./polygon.js";
+// import Sector from "../element/sector.js";
+// import Transform from "./transformation.js";
+// import Line from "./line.js";
+// import Circle from "./circle.js";
 
 /**
  *
@@ -58,7 +58,7 @@ import Env from "../utils/env";
  * Use {@link JXG.Board#create} with type {@link Chart} instead.
  * @constructor
  * @augments JXG.GeometryElement
- * @param {String,JXG.Board} board The board the new chart is drawn on.
+ * @param {String|JXG.Board} board The board the new chart is drawn on.
  * @param {Array} parent data arrays for the chart
  * @param {Object} attributes Javascript object containing attributes like name, id and colors.
  *
@@ -137,7 +137,7 @@ JXG.Chart = function (board, parents, attributes) {
         }
         this.elements.push(c);
     }
-    this.id = this.board.setId(this, "Chart");
+    this.id = this.board.setId(this, 'Chart');
 
     return this.elements;
 };
@@ -150,7 +150,7 @@ JXG.extend(
         /**
          * Create line chart defined by two data arrays.
          *
-         * @param  {String,JXG.Board} board      The board the chart is drawn on
+         * @param  {String|JXG.Board} board      The board the chart is drawn on
          * @param  {Array} x          Array of x-coordinates
          * @param  {Array} y          Array of y-coordinates
          * @param  {Object} attributes  Javascript object containing attributes like colors
@@ -158,8 +158,8 @@ JXG.extend(
          */
         drawLine: function (board, x, y, attributes) {
             // we don't want the line chart to be filled
-            attributes.fillcolor = "none";
-            attributes.highlightfillcolor = "none";
+            attributes.fillcolor = 'none';
+            attributes.highlightfillcolor = 'none';
 
             return board.create("curve", [x, y], attributes);
         },
@@ -168,7 +168,7 @@ JXG.extend(
          * Create line chart that consists of a natural spline curve
          * defined by two data arrays.
          *
-         * @param  {String,JXG.Board} board      The board the chart is drawn on
+         * @param  {String|JXG.Board} board      The board the chart is drawn on
          * @param  {Array} x          Array of x-coordinates
          * @param  {Array} y          Array of y-coordinates
          * @param  {Object} attributes Javascript object containing attributes like colors
@@ -176,8 +176,8 @@ JXG.extend(
          */
         drawSpline: function (board, x, y, attributes) {
             // we don't want the spline chart to be filled
-            attributes.fillColor = "none";
-            attributes.highlightfillcolor = "none";
+            attributes.fillColor = 'none';
+            attributes.highlightfillcolor = 'none';
 
             return board.create("spline", [x, y], attributes);
         },
@@ -187,7 +187,7 @@ JXG.extend(
          * defined by two data arrays. The degree of the polynomial is supplied
          * through the attribute "degree" in attributes.
          *
-         * @param  {String,JXG.Board} board      The board the chart is drawn on
+         * @param  {String|JXG.Board} board      The board the chart is drawn on
          * @param  {Array} x          Array of x-coordinates
          * @param  {Array} y          Array of y-coordinates
          * @param  {Object} attributes Javascript object containing attributes like colors
@@ -199,8 +199,8 @@ JXG.extend(
             deg = Math.max(parseInt(deg, 10), 1) || 1;
 
             // never fill
-            attributes.fillcolor = "none";
-            attributes.highlightfillcolor = "none";
+            attributes.fillcolor = 'none';
+            attributes.highlightfillcolor = 'none';
 
             return board.create(
                 "functiongraph",
@@ -219,21 +219,15 @@ JXG.extend(
          * <li> labels: array of labels
          * </ul>
          *
-         * @param  {String,JXG.Board} board      The board the chart is drawn on
+         * @param  {String|JXG.Board} board      The board the chart is drawn on
          * @param  {Array} x          Array of x-coordinates
          * @param  {Array} y          Array of y-coordinates
          * @param  {Object} attributes Javascript object containing attributes like colors
          * @returns {Array}    Array of JXG polygons defining the bars
          */
         drawBar: function (board, x, y, attributes) {
-            var i,
-                strwidth,
-                text,
-                w,
-                xp0,
-                xp1,
-                xp2,
-                yp,
+            var i, text, w,
+                xp0, xp1, xp2, yp,
                 colors,
                 pols = [],
                 p = [],
@@ -251,7 +245,7 @@ JXG.extend(
                     name: ""
                 };
 
-            attr = Type.copyAttributes(attributes, board.options, "chart");
+            attr = Type.copyAttributes(attributes, board.options, 'chart');
 
             // Determine the width of the bars
             if (attr && attr.width) {
@@ -270,7 +264,7 @@ JXG.extend(
                 w *= 0.8;
             }
 
-            attrSub = Type.copyAttributes(attributes, board.options, "chart", "label");
+            attrSub = Type.copyAttributes(attributes, board.options, "chart", 'label');
 
             for (i = 0; i < x.length; i++) {
                 if (Type.isFunction(x[i])) {
@@ -289,7 +283,7 @@ JXG.extend(
                 }
                 yp = y[i];
 
-                if (attr.dir === "horizontal") {
+                if (attr.dir === 'horizontal') {
                     // horizontal bars
                     p[0] = board.create("point", [0, xp0], hiddenPoint);
                     p[1] = board.create("point", [yp, xp0], hiddenPoint);
@@ -297,13 +291,11 @@ JXG.extend(
                     p[3] = board.create("point", [0, xp2], hiddenPoint);
 
                     if (Type.exists(attr.labels) && Type.exists(attr.labels[i])) {
-                        attrSub.anchorY = "middle";
+                        attrSub.anchorX = function (self) {
+                            return self.X() >= 0 ? "left" : 'right';
+                        };
+                        attrSub.anchorY = 'middle';
                         text = board.create("text", [yp, xp1, attr.labels[i]], attrSub);
-                        text.visProp.anchorx = (function (txt) {
-                            return function () {
-                                return txt.X() >= 0 ? "left" : "right";
-                            };
-                        })(text);
                     }
                 } else {
                     // vertical bars
@@ -313,15 +305,11 @@ JXG.extend(
                     p[3] = board.create("point", [xp2, 0], hiddenPoint);
 
                     if (Type.exists(attr.labels) && Type.exists(attr.labels[i])) {
-                        attrSub.anchorX = "middle";
-
+                        attrSub.anchorX = 'middle';
+                        attrSub.anchorY = function (self) {
+                            return self.Y() >= 0 ? "bottom" : 'top';
+                        };
                         text = board.create("text", [xp1, yp, attr.labels[i]], attrSub);
-
-                        text.visProp.anchory = (function (txt) {
-                            return function () {
-                                return txt.Y() >= 0 ? "bottom" : "top";
-                            };
-                        })(text);
                     }
                 }
 
@@ -333,6 +321,7 @@ JXG.extend(
                 pols[i] = board.create("polygon", p, attr);
                 if (Type.exists(attr.labels) && Type.exists(attr.labels[i])) {
                     pols[i].text = text;
+                    pols[i].addChild(text);
                 }
             }
 
@@ -347,7 +336,7 @@ JXG.extend(
          * <li> infoboxArray (Array): Texts for the infobox
          * </ul>
          *
-         * @param  {String,JXG.Board} board      The board the chart is drawn on
+         * @param  {String|JXG.Board} board      The board the chart is drawn on
          * @param  {Array} x          Array of x-coordinates
          * @param  {Array} y          Array of y-coordinates
          * @param  {Object} attributes Javascript object containing attributes like colors
@@ -383,7 +372,7 @@ JXG.extend(
          * <li> highlightOnSector (Boolean)
          * </ul>
          *
-         * @param  {String,JXG.Board} board      The board the chart is drawn on
+         * @param  {String|JXG.Board} board      The board the chart is drawn on
          * @param  {Array} y          Array of x-coordinates
          * @param  {Object} attributes Javascript object containing attributes like colors
          * @returns {Object}  with keys: "{sectors, points, midpoint}"
@@ -393,7 +382,7 @@ JXG.extend(
                 center,
                 p = [],
                 sector = [],
-                s = Statistics.sum(y),
+                // s = Statistics.sum(y),
                 colorArray = attributes.colors,
                 highlightColorArray = attributes.highlightcolors,
                 labelArray = attributes.labels,
@@ -428,7 +417,7 @@ JXG.extend(
 
                     if (Type.exists(this.label)) {
                         this.label.rendNode.style.fontSize =
-                            s * Type.evaluate(this.label.visProp.fontsize) + "px";
+                            s * this.label.evalVisProp('fontsize') + 'px';
                         this.label.fullUpdate();
                     }
 
@@ -553,7 +542,7 @@ JXG.extend(
          * <li> circleStrokeWidth
          * </ul>
          *
-         * @param  {String,JXG.Board} board      The board the chart is drawn on
+         * @param  {String|JXG.Board} board      The board the chart is drawn on
          * @param  {Array} parents    Array of coordinates, e.g. [[x1, y1, z1], [x2, y2, z2], [x3, y3, z3]]
          * @param  {Object} attributes Javascript object containing attributes like colors
          * @returns {Object} with keys "{circles, lines, points, midpoint, polygons}"
@@ -577,7 +566,7 @@ JXG.extend(
                 ends,
                 labelArray,
                 colorArray,
-                highlightColorArray,
+                // highlightColorArray,
                 radius,
                 myAtts,
                 cent,
@@ -606,11 +595,8 @@ JXG.extend(
                 data,
                 len = parents.length,
                 get_anchor = function () {
-                    var x1,
-                        x2,
-                        y1,
-                        y2,
-                        relCoords = Type.evaluate(this.visProp.label.offset).slice(0);
+                    var x1, x2, y1, y2,
+                        relCoords = this.evalVisProp('label.offset).slice(0');
 
                     x1 = this.point1.X();
                     x2 = this.point2.X();
@@ -763,7 +749,7 @@ JXG.extend(
             // labels for legend
             labelArray = attributes.labelarray || la;
             colorArray = attributes.colors;
-            highlightColorArray = attributes.highlightcolors;
+            // highlightColorArray = attributes.highlightcolors;
             radius = attributes.radius || 10;
             sw = attributes.strokewidth || 1;
 
@@ -860,7 +846,7 @@ JXG.extend(
                 }
             }
 
-            legend_position = attributes.legendposition || "none";
+            legend_position = attributes.legendposition || 'none';
             switch (legend_position) {
                 case "right":
                     lxoff = attributes.legendleftoffset || 2;
@@ -887,7 +873,7 @@ JXG.extend(
                 for (i = 0; i < 6; i++) {
                     cla[i] = 20 * i;
                 }
-                cla[0] = "0";
+                cla[0] = '0';
                 clabelArray = attributes.circlelabelarray || cla;
                 ncircles = clabelArray.length;
 
@@ -901,9 +887,9 @@ JXG.extend(
                 angle = start_angle + Math.PI / numofparams;
                 t = get_transform(angle, 0);
 
-                myAtts.fillcolor = "none";
-                myAtts.highlightfillcolor = "none";
-                myAtts.strokecolor = attributes.strokecolor || "black";
+                myAtts.fillcolor = 'none';
+                myAtts.highlightfillcolor = 'none';
+                myAtts.strokecolor = attributes.strokecolor || 'black';
                 myAtts.strokewidth = attributes.circlestrokewidth || 0.5;
                 myAtts.layer = 0;
 
@@ -966,9 +952,8 @@ JXG.extend(
 );
 
 /**
- * @class Constructor for a chart.
+ * @class Various types of charts for data visualization.
  * @pseudo
- * @description
  * @name Chart
  * @augments JXG.Chart
  * @constructor
@@ -1228,7 +1213,7 @@ JXG.createChart = function (board, parents, attributes) {
     if (parents.length === 1 && Type.isString(parents[0])) {
         if (Type.exists(table)) {
             // extract the data
-            attr = Type.copyAttributes(attributes, board.options, "chart");
+            attr = Type.copyAttributes(attributes, board.options, 'chart');
 
             table = new DataSource().loadFromTable(
                 parents[0],
@@ -1270,7 +1255,7 @@ JXG.createChart = function (board, parents, attributes) {
 
             for (i = 0; i < len; i++) {
                 x = [];
-                if (attr.chartstyle && attr.chartstyle.indexOf("bar") !== -1) {
+                if (attr.chartstyle && attr.chartstyle.indexOf('bar') !== -1) {
                     if (originalWidth) {
                         w = originalWidth;
                     } else {
@@ -1316,7 +1301,7 @@ JXG.createChart = function (board, parents, attributes) {
                     attr.highlightfillcolor = Color.hsv2rgb(((i + 1) / len) * 360, 0.9, 0.6);
                 }
 
-                if (attr.chartstyle && attr.chartstyle.indexOf("bar") !== -1) {
+                if (attr.chartstyle && attr.chartstyle.indexOf('bar') !== -1) {
                     charts.push(new JXG.Chart(board, [x, showRows[i]], attr));
                 } else {
                     charts.push(new JXG.Chart(board, [showRows[i]], attr));
@@ -1328,7 +1313,7 @@ JXG.createChart = function (board, parents, attributes) {
         return charts;
     }
 
-    attr = Type.copyAttributes(attributes, board.options, "chart");
+    attr = Type.copyAttributes(attributes, board.options, 'chart');
     return new JXG.Chart(board, parents, attr);
 };
 
@@ -1336,17 +1321,16 @@ JXG.registerElement("chart", JXG.createChart);
 
 /**
  * Legend for chart
- * TODO
  *
  * The Legend class is a basic class for legends.
- * @class Creates a new Lgend object. Do not use this constructor to create a legend.
+ * @class Creates a new Legend object. Do not use this constructor to create a legend.
  * Use {@link JXG.Board#create} with type {@link Legend} instead.
  * <p>
  * The legend object consists of segements with labels. These lines can be
- * access with the property "lines" of the element.
+ * accessed with the property "lines" of the element.
  * @constructor
  * @augments JXG.GeometryElement
- * @param {String,JXG.Board} board The board the new legend is drawn on.
+ * @param {String|JXG.Board} board The board the new legend is drawn on.
  * @param {Array} coords Coordinates of the left top point of the legend.
  * @param  {Object} attributes Attributes of the legend
  */
@@ -1356,26 +1340,31 @@ JXG.Legend = function (board, coords, attributes) {
     /* Call the constructor of GeometryElement */
     this.constructor();
 
-    attr = Type.copyAttributes(attributes, board.options, "legend");
+    attr = Type.copyAttributes(attributes, board.options, 'legend');
 
     this.board = board;
     this.coords = new Coords(Const.COORDS_BY_USER, coords, this.board);
     this.myAtts = {};
     this.label_array = attr.labelarray || attr.labels;
     this.color_array = attr.colorarray || attr.colors;
+    this.opacy_array = attr.strokeopacity || [1];
     this.lines = [];
     this.myAtts.strokewidth = attr.strokewidth || 5;
     this.myAtts.straightfirst = false;
     this.myAtts.straightlast = false;
     this.myAtts.withlabel = true;
     this.myAtts.fixed = true;
+    this.myAtts.frozen = attr.frozen || false ;
     this.style = attr.legendstyle || attr.style;
 
-    if (this.style === "vertical") {
+    if (this.style === 'vertical') {
         this.drawVerticalLegend(board, attr);
     } else {
         throw new Error("JSXGraph: Unknown legend style: " + this.style);
     }
+
+    this.id = this.board.setId(this, 'Leg');
+
 };
 
 JXG.Legend.prototype = new GeometryElement();
@@ -1384,7 +1373,7 @@ JXG.Legend.prototype = new GeometryElement();
  * Draw a vertical legend.
  *
  * @private
- * @param  {String,JXG.Board} board      The board the legend is drawn on
+ * @param  {String|JXG.Board} board      The board the legend is drawn on
  * @param  {Object} attributes Attributes of the legend
  */
 JXG.Legend.prototype.drawVerticalLegend = function (board, attributes) {
@@ -1404,6 +1393,8 @@ JXG.Legend.prototype.drawVerticalLegend = function (board, attributes) {
         this.myAtts.name = this.label_array[i];
         this.myAtts.strokecolor = this.color_array[i % this.color_array.length];
         this.myAtts.highlightstrokecolor = this.color_array[i % this.color_array.length];
+        this.myAtts.strokeopacity = this.opacy_array[i % this.opacy_array.length];
+        this.myAtts.highlightstrokeopacity = this.opacy_array[i % this.opacy_array.length];
         this.myAtts.label = {
             offset: [10, 0],
             strokeColor: this.color_array[i % this.color_array.length],
@@ -1419,17 +1410,23 @@ JXG.Legend.prototype.drawVerticalLegend = function (board, attributes) {
             this.myAtts
         );
 
+        if (this.myAtts.frozen){
+            this.lines[i].setAttribute({ point1: { frozen: true }, point2: { frozen: true } });
+        }
+
         this.lines[i].getLabelAnchor = getLabelAnchor;
         this.lines[i]
             .prepareUpdate()
             .update()
-            .updateVisibility(Type.evaluate(this.lines[i].visProp.visible))
+            .updateVisibility(this.lines[i].evalVisProp('visible'))
             .updateRenderer();
+
+        this.addChild(this.lines[i]);
     }
 };
 
 /**
- * @class This element is used to provide a constructor for a chart legend.
+ * @class Creates a legend for a chart element.
  * Parameter is a pair of coordinates. The label names and  the label colors are
  * supplied in the attributes:
  * <ul>
@@ -1437,12 +1434,14 @@ JXG.Legend.prototype.drawVerticalLegend = function (board, attributes) {
  * <li> labelArray (Array): alternative array for label names (has precedence over 'labels')
  * <li> colors (Array): array of color values
  * <li> colorArray (Array): alternative array for color values (has precedence over 'colors')
+ * <li> opacities (Array): opacity of a line in the legend
  * <li> legendStyle or style: at the time being only 'vertical' is supported.
- * <li> rowHeight.
+ * <li> rowHeight: height of an entry in the legend (in px)
+ * <li> linelenght: length of a line in the legend (measured in the coordinate system)
+ * <li> frozen (Boolean, false):
  * </ul>
  *
  * @pseudo
- * @description
  * @name Legend
  * @augments JXG.Legend
  * @constructor
@@ -1475,6 +1474,74 @@ JXG.Legend.prototype.drawVerticalLegend = function (board, attributes) {
  *     })();
  *
  * </script><pre>
+ *
+ * @example
+ *   var inputFun, cf = [], cf2 = [], niveaunum,
+ *     niveauline = [], niveauopac = [],legend;
+ *
+ *   inputFun = "x^2/2-2*x*y+y^2/2";
+ *   niveauline = [-3,-2,-1,-0.5, 0, 1,2,3];
+ *   niveaunum = niveauline.length;
+ *   for (let i = 0; JXG.Math.lt(i, niveaunum); i++) {
+ *     let niveaui = niveauline[i];
+ *     niveauopac.push(((i + 1) / (niveaunum + 1)));
+ *     cf.push(board.create("implicitcurve", [
+ *       inputFun + "-(" + niveaui.toFixed(2) + ")", [-2, 2], [-2, 2]], {
+ *       strokeWidth: 2,
+ *       strokeColor: JXG.palette.red,
+ *       strokeOpacity: niveauopac[i],
+ *       needsRegularUpdate: false,
+ *       name: "niveau"+i,
+ *       visible: true
+ *     }));
+ *   }
+ *   legend = board.create('legend', [-1.75, 1.75], {
+ *     labels: niveauline,
+ *     colors: [cf[0].visProp.strokecolor],
+ *     strokeOpacity: niveauopac,
+ *     linelength: 0.2,
+ *     frozen:true
+ *   }
+ *   );
+ *
+ *
+ * </pre><div id="JXG079fce93-07b9-426f-a267-ab9c1253e435" class="jxgbox" style="width: 300px; height: 300px;"></div>
+ * <script type="text/javascript">
+ *     (function() {
+ *         var board = JXG.JSXGraph.initBoard('JXG079fce93-07b9-426f-a267-ab9c1253e435',
+ *             {boundingbox: [-2, 2, 2, -2], axis: true, showcopyright: false, shownavigation: false});
+ *       var board, inputFun, cf = [], cf2 = [], niveaunum,
+ *         niveauline = [], niveauopac = [],legend;
+ *
+ *       inputFun = "x^2/2-2*x*y+y^2/2";
+ *       niveauline = [-3,-2,-1,-0.5, 0, 1,2,3];
+ *       niveaunum = niveauline.length;
+ *       for (let i = 0; JXG.Math.lt(i, niveaunum); i++) {
+ *         let niveaui = niveauline[i];
+ *         niveauopac.push(((i + 1) / (niveaunum + 1)));
+ *         cf.push(board.create("implicitcurve", [
+ *           inputFun + "-(" + niveaui.toFixed(2) + ")", [-2, 2], [-2, 2]], {
+ *           strokeWidth: 2,
+ *           strokeColor: JXG.palette.red,
+ *           strokeOpacity: niveauopac[i],
+ *           needsRegularUpdate: false,
+ *           name: "niveau"+i,
+ *           visible: true
+ *         }));
+ *       }
+ *       legend = board.create('legend', [-1.75, 1.75], {
+ *         labels: niveauline,
+ *         colors: [cf[0].visProp.strokecolor],
+ *         strokeOpacity: niveauopac,
+ *         linelength: 0.2,
+ *         frozen:true
+ *       }
+ *       );
+ *
+ *
+ *     })();
+ *
+ * </script>
  *
  *
  */
