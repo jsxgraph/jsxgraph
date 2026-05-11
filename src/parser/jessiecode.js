@@ -1694,105 +1694,65 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
     },
 
     /**
-     * TODO
-     */
-    compileMinBraces: function (node, prev_op, position = -1) {
-        var i, compiled, list, my_priority;
-
-        if (!node) {
-            return '';
-        }
-
-        switch (String(node.type)) {
-            case "node_op":
-                switch (String(node.value)) {
-                    case "op_none":
-                        compiled = "";
-                        for (i = 0; i < node.children.length; i++) {
-                            compiled += this.compileMinBraces(node.children[i], "op_none") + "\n";
-                        }
-                        return compiled.trim();
-                    case "op_block":
-                        compiled = '{ ' + this.compileMinBraces(node.children[0], "op_none") + " }\n";
-                        return compiled.trim();
-                    case "op_assign":
-                        return this.compileMinBraces(node.children[0], "op_assign") + " = " + this.compileMinBraces(node.children[1], "op_assign");
-                    case "op_execfun":
-                        if (node.children.length !== 2) {
-                            return "<execfun?>";
-                        }
-                        return this.compileMinBraces(node.children[0]) + "(" + node.children[1].map(param => this.compileMinBraces(param, "op_execfun")).join() + ")";
-                    case "op_neg":
-                        if (this._get_priority(node) >= this._get_priority(node.children[0])) {
-                            compiled = "-(" + this.compileMinBraces(node.children[0], "op_neg") + ")";
-                        } else {
-                            compiled = "-" + this.compileMinBraces(node.children[0], "op_neg");
-                        }
-                        return compiled;
-                    case "op_map":
-                        return "map (" + node.children[0].join() + ") -> " + this.compileMinBraces(node.children[1], "op_map");
-                    case "op_function":
-                        return "function (" + node.children[0].join() + ") " + this.compileMinBraces(node.children[1]);
-                    case "op_return":
-                        return "return " + this.compileMinBraces(node.children[0]) + ";";
-                    case "op_array":
-                        list = [];
-                        for (i = 0; i < node.children[0].length; i++) {
-                            list.push(this.compileMinBraces(node.children[0][i]));
-                        }
-                        return '[' + list.join(', ') + ']';
-                    case "op_mul":
-                    case "op_add":
-                    case "op_sub":
-                    case "op_div":
-                    case "op_mod":
-                    case "op_exp":
-                        my_priority = this._get_priority(node);
-                        return node.children.map((child, i) => {
-                            let temp_str, childPriority;
-                            temp_str = this.compileMinBraces(child, node.value, i);
-                            childPriority = this._get_priority(child);
-                            if ((i === 0 && node.value === "op_exp") ||
-                                (i > 0 && (node.value === "op_sub" || node.value === "op_div" || node.value === "op_mod"))
-                            ) {
-                                return (my_priority >= childPriority) ? "(" + temp_str + ")" : temp_str;
-                            } else {
-                                return (my_priority > childPriority) ? "(" + temp_str + ")" : temp_str;
-                            }
-                        }).join(this._get_operator(node.value));
-                    default:
-                        console.error("unknown op: " + node.value);
-                        return "unknown_op";
-                }
-            case "node_var":
-            case "node_const_bool":
-                return node.value;
-            case "node_const":
-                return Number(node.value) < 0 && prev_op !== "op_execfun" && position !== 0 ? "(" + node.value + ")" : node.value;
-            case "node_str":
-                return '\'' + node.value + '\'';
-            default:
-                console.error("unknown type: " + node.type);
-                return "type";
-        }
-    },
-
-    /**
      * Compiles a parse tree back to JessieCode.
      * @param {Object} ast
      * @param {Boolean} [js=false] Compile either to JavaScript or back to JessieCode (required for the UI).
+     * @param {Boolean} [jcMinBrac=false] When compiling to JessieCode, use minimal amount of braces?
      * @returns Something
      * @private
      */
-    compile: function (ast, js) {
+    compile: function (ast, js, jcMinBrac) {
         var that = this;
 
         if (!Type.exists(js)) {
             js = false;
         }
+        if (!Type.exists(jcMinBrac)) {
+            jcMinBrac = false;
+        }
 
-        function compile(node) {
-            var e, i, list, scope,
+        // node_const/node_var >> op_execfun >> op_neg >> op_exp >> op_mul/op_div >> op_add/op_sub >> op_map >> op_assign
+        function prio (node) {
+            switch (node.type) {
+                case "node_const":
+                case "node_const_bool":
+                case "node_str":
+                case "node_var":
+                    return 10;
+                case "node_op":
+                    switch (node.value) {
+                        case "op_none":
+                            return 0;
+                        case "op_assign":
+                            return 1;
+                        case "op_map":
+                        case "op_function":
+                        case "op_return":
+                            return 2;
+                        case "op_add":
+                        case "op_sub":
+                            return 3;
+                        case "op_mul":
+                        case "op_div":
+                        case "op_mod":
+                            return 5;
+                        case "op_neg":
+                            return 4;
+                        case "op_exp":
+                            return 6;
+                        case "op_array":
+                        case "op_execfun":
+                            return 7;
+                        default:
+                            return 0;
+                    }
+                default:
+                    return 0;
+            }
+        }
+
+        function compile(node, prevOp, position = -1) {
+            var e, i, list, scope, prioParent, prioChild,
                 ret = '';
 
             if (!node) {
@@ -1804,85 +1764,85 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
                     switch (node.value) {
                         case 'op_none':
                             if (node.children[0]) {
-                                ret = compile(node.children[0]);
+                                ret = compile(node.children[0], "op_none");
                             }
                             if (node.children[1]) {
-                                ret += compile(node.children[1]);
+                                ret += compile(node.children[1], "op_none");
                             }
                             break;
                         case 'op_block':
-                            ret = '{\n' + compile(node.children[0]) + ' }\n';
+                            ret = '{\n' + compile(node.children[0], "op_block") + ' }\n';
                             break;
                         case 'op_assign':
                             if (js) {
                                 e = that.getLHSCompiler(node.children[0], js);
                                 if (Type.isArray(e)) {
-                                    ret = '$jc$.setProp(' + e[0] + ', ' + e[1] + ', ' + compile(node.children[1]) + ');\n';
+                                    ret = '$jc$.setProp(' + e[0] + ', ' + e[1] + ', ' + compile(node.children[1], "op_assign") + ');\n';
                                 } else {
                                     if (that.isLocalVariable(e) !== that.scope) {
                                         that.scope.locals[e] = true;
                                     }
-                                    ret = '$jc$.scopes[' + that.scope.id + '].locals[\'' + e + '\'] = ' + compile(node.children[1]) + ';\n';
+                                    ret = '$jc$.scopes[' + that.scope.id + '].locals[\'' + e + '\'] = ' + compile(node.children[1], "op_assign") + ';\n';
                                 }
                             } else {
-                                e = compile(node.children[0]);
-                                ret = e + ' = ' + compile(node.children[1]) + ';\n';
+                                e = compile(node.children[0], "op_assign");
+                                ret = e + ' = ' + compile(node.children[1], "op_assign") + ';\n';
                             }
                             break;
                         case 'op_if':
-                            ret = ' if (' + compile(node.children[0]) + ') ' + compile(node.children[1]);
+                            ret = ' if (' + compile(node.children[0], "op_if") + ') ' + compile(node.children[1], "op_if");
                             break;
                         case 'op_if_else':
-                            ret = ' if (' + compile(node.children[0]) + ')' + compile(node.children[1]);
-                            ret += ' else ' + compile(node.children[2]);
+                            ret = ' if (' + compile(node.children[0], "op_if_else") + ')' + compile(node.children[1], "op_if_else");
+                            ret += ' else ' + compile(node.children[2], "op_if_else");
                             break;
                         case 'op_conditional':
-                            ret = '((' + compile(node.children[0]) + ')?(' + compile(node.children[1]);
-                            ret += '):(' + compile(node.children[2]) + '))';
+                            ret = '((' + compile(node.children[0], "op_conditional") + ')?(' + compile(node.children[1], "op_conditional");
+                            ret += '):(' + compile(node.children[2], "op_conditional") + '))';
                             break;
                         case 'op_while':
-                            ret = ' while (' + compile(node.children[0]) + ') {\n' + compile(node.children[1]) + '}\n';
+                            ret = ' while (' + compile(node.children[0], "op_while") + ') {\n' + compile(node.children[1], "op_while") + '}\n';
                             break;
                         case 'op_do':
-                            ret = ' do {\n' + compile(node.children[0]) + '} while (' + compile(node.children[1]) + ');\n';
+                            ret = ' do {\n' + compile(node.children[0], "op_do") + '} while (' + compile(node.children[1], "op_do") + ');\n';
                             break;
                         case 'op_for':
                             //ret = ' for (' + compile(node.children[0]) + '; ' + compile(node.children[1]) + '; ' + compile(node.children[2]) + ') {\n' + compile(node.children[3]) + '\n}\n';
-                            ret = ' for (' + compile(node.children[0]) +               // Assignment ends with ";"
-                                compile(node.children[1]) + '; ' +         // Logical test comes without ";"
-                                compile(node.children[2]).slice(0, -2) +   // Counting comes with ";" which has to be removed
-                                ') {\n' + compile(node.children[3]) + '\n}\n';
+                            ret = ' for (' + compile(node.children[0], "op_for") +   // Assignment ends with ";"
+                                compile(node.children[1], "op_for") + '; ' +         // Logical test comes without ";"
+                                compile(node.children[2], "op_for").slice(0, -2) +   // Counting comes with ";" which has to be removed
+                                ') {\n' + compile(node.children[3], "op_for") + '\n}\n';
                             break;
                         case 'op_proplst':
                             if (node.children[0]) {
-                                ret = compile(node.children[0]) + ', ';
+                                ret = compile(node.children[0], "op_proplst") + ', ';
                             }
 
-                            ret += compile(node.children[1]);
+                            ret += compile(node.children[1], "op_proplst");
                             break;
                         case 'op_prop':
                             // child 0: Identifier
                             // child 1: Value
-                            ret = node.children[0] + ': ' + compile(node.children[1]);
+                            ret = node.children[0] + ': ' + compile(node.children[1], "op_prop");
                             break;
                         case 'op_emptyobject':
                             ret = js ? '{}' : '<< >>';
                             break;
                         case 'op_proplst_val':
-                            ret = compile(node.children[0]);
+                            ret = compile(node.children[0], "op_proplst_val");
                             break;
                         case 'op_array':
                             list = [];
                             for (i = 0; i < node.children[0].length; i++) {
-                                list.push(compile(node.children[0][i]));
+                                list.push(compile(node.children[0][i], "op_array"));
                             }
                             ret = '[' + list.join(', ') + ']';
                             break;
                         case 'op_extvalue':
-                            ret = compile(node.children[0]) + '[' + compile(node.children[1]) + ']';
+                            ret = compile(node.children[0], "op_extvalue") + '[' + compile(node.children[1], "op_extvalue") + ']';
                             break;
                         case 'op_return':
-                            ret = ' return ' + compile(node.children[0]) + ';\n';
+                            ret = ' return ' + compile(node.children[0], "op_return") + ';\n';
                             break;
                         case 'op_map':
                             if (!node.children[1].isMath && node.children[1].type !== 'node_var') {
@@ -1891,9 +1851,9 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
 
                             list = node.children[0];
                             if (js) {
-                                ret = ' $jc$.makeMap(function (' + list.join(', ') + ') { return ' + compile(node.children[1]) + '; })';
+                                ret = ' $jc$.makeMap(function (' + list.join(', ') + ') { return ' + compile(node.children[1], "op_map") + '; })';
                             } else {
-                                ret = 'map (' + list.join(', ') + ') -> ' + compile(node.children[1]);
+                                ret = 'map (' + list.join(', ') + ') -> ' + compile(node.children[1], "op_map");
                             }
 
                             break;
@@ -1903,7 +1863,7 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
                             if (js) {
                                 ret = that.functionCodeJS(node);
                             } else {
-                                ret = ' function (' + list.join(', ') + ') ' + compile(node.children[1]);
+                                ret = ' function (' + list.join(', ') + ') ' + compile(node.children[1], "op_function");
                             }
                             that.popScope();
                             break;
@@ -1916,7 +1876,7 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
                             if (node.children[2]) {
                                 list = [];
                                 for (i = 0; i < node.children[2].length; i++) {
-                                    list.push(compile(node.children[2][i]));
+                                    list.push(compile(node.children[2][i], "op_execfun"));
                                 }
 
                                 if (js) {
@@ -1928,9 +1888,9 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
                             node.children[0].withProps = !!node.children[2];
                             list = [];
                             for (i = 0; i < node.children[1].length; i++) {
-                                list.push(compile(node.children[1][i]));
+                                list.push(compile(node.children[1][i], "op_execfun"));
                             }
-                            ret = compile(node.children[0]) + '(' + list.join(', ') + (node.children[2] && js ? ', ' + e : '') + ')' + (node.children[2] && !js ? ' ' + e : '');
+                            ret = compile(node.children[0], "op_execfun") + '(' + list.join(', ') + (node.children[2] && js ? ', ' + e : '') + ')' + (node.children[2] && !js ? ' ' + e : '');
                             if (js) {
                                 // Inserting a newline here allows simultaneously
                                 // - procedural calls like Q.moveTo(...); and
@@ -1941,14 +1901,14 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
 
                             // save us a function call when compiled to javascript
                             if (js && node.children[0].value === '$') {
-                                ret = '$jc$.board.objects[' + compile(node.children[1][0]) + ']';
+                                ret = '$jc$.board.objects[' + compile(node.children[1][0], "op_execfun") + ']';
                             }
                             break;
                         case 'op_property':
                             if (js && node.children[1] !== 'X' && node.children[1] !== 'Y') {
-                                ret = '$jc$.resolveProperty(' + compile(node.children[0]) + ', \'' + node.children[1] + '\', true)';
+                                ret = '$jc$.resolveProperty(' + compile(node.children[0], "op_property") + ', \'' + node.children[1] + '\', true)';
                             } else {
-                                ret = compile(node.children[0]) + '.' + node.children[1];
+                                ret = compile(node.children[0], "op_property") + '.' + node.children[1];
                             }
                             break;
                         case 'op_use':
@@ -1969,101 +1929,182 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
                                 ret = 'remove(';
                             }
 
-                            ret += compile(node.children[0]) + ')';
+                            ret += compile(node.children[0], "op_delete") + ')';
                             break;
                         case 'op_eq':
-                            ret = '(' + compile(node.children[0]) + ' === ' + compile(node.children[1]) + ')';
+                            ret = '(' + compile(node.children[0], "op_eq") + ' === ' + compile(node.children[1], "op_eq") + ')';
                             break;
                         case 'op_neq':
-                            ret = '(' + compile(node.children[0]) + ' !== ' + compile(node.children[1]) + ')';
+                            ret = '(' + compile(node.children[0], "op_neq") + ' !== ' + compile(node.children[1], "op_neq") + ')';
                             break;
                         case 'op_approx':
-                            ret = '(' + compile(node.children[0]) + ' ~= ' + compile(node.children[1]) + ')';
+                            ret = '(' + compile(node.children[0], "op_approx") + ' ~= ' + compile(node.children[1], "op_approx") + ')';
                             break;
                         case 'op_gt':
                             if (js) {
-                                ret = '$jc$.gt(' + compile(node.children[0]) + ', ' + compile(node.children[1]) + ')';
+                                ret = '$jc$.gt(' + compile(node.children[0], "op_gt") + ', ' + compile(node.children[1], "op_gt") + ')';
                             } else {
-                                ret = '(' + compile(node.children[0]) + ' > ' + compile(node.children[1]) + ')';
+                                ret = '(' + compile(node.children[0], "op_gt") + ' > ' + compile(node.children[1], "op_gt") + ')';
                             }
                             break;
                         case 'op_lt':
                             if (js) {
-                                ret = '$jc$.lt(' + compile(node.children[0]) + ', ' + compile(node.children[1]) + ')';
+                                ret = '$jc$.lt(' + compile(node.children[0], "op_lt") + ', ' + compile(node.children[1], "op_lt") + ')';
                             } else {
-                                ret = '(' + compile(node.children[0]) + ' < ' + compile(node.children[1]) + ')';
+                                ret = '(' + compile(node.children[0], "op_lt") + ' < ' + compile(node.children[1], "op_lt") + ')';
                             }
                             break;
                         case 'op_geq':
                             if (js) {
-                                ret = '$jc$.geq(' + compile(node.children[0]) + ', ' + compile(node.children[1]) + ')';
+                                ret = '$jc$.geq(' + compile(node.children[0], "op_geq") + ', ' + compile(node.children[1], "op_geq") + ')';
                             } else {
-                                ret = '(' + compile(node.children[0]) + ' >= ' + compile(node.children[1]) + ')';
+                                ret = '(' + compile(node.children[0], "op_geq") + ' >= ' + compile(node.children[1], "op_geq") + ')';
                             }
                             break;
                         case 'op_leq':
                             if (js) {
-                                ret = '$jc$.leq(' + compile(node.children[0]) + ', ' + compile(node.children[1]) + ')';
+                                ret = '$jc$.leq(' + compile(node.children[0], "op_leq") + ', ' + compile(node.children[1], "op_leq") + ')';
                             } else {
-                                ret = '(' + compile(node.children[0]) + ' <= ' + compile(node.children[1]) + ')';
+                                ret = '(' + compile(node.children[0], "op_leq") + ' <= ' + compile(node.children[1], "op_leq") + ')';
                             }
                             break;
                         case 'op_or':
-                            ret = '(' + compile(node.children[0]) + ' || ' + compile(node.children[1]) + ')';
+                            ret = '(' + compile(node.children[0], "op_or") + ' || ' + compile(node.children[1], "op_or") + ')';
                             break;
                         case 'op_and':
-                            ret = '(' + compile(node.children[0]) + ' && ' + compile(node.children[1]) + ')';
+                            ret = '(' + compile(node.children[0], "op_and") + ' && ' + compile(node.children[1], "op_and") + ')';
                             break;
                         case 'op_not':
-                            ret = '!(' + compile(node.children[0]) + ')';
+                            ret = '!(' + compile(node.children[0], "op_not") + ')';
                             break;
-                        case 'op_add':
+                        case "op_add":
                             if (js) {
-                                ret = '$jc$.add(' + compile(node.children[0]) + ', ' + compile(node.children[1]) + ')';
+                                ret = '$jc$.add(' + compile(node.children[0], "op_add") + ', ' + compile(node.children[1], "op_add") + ')';
+                            } else if (!jcMinBrac) {
+                                ret = '(' + compile(node.children[0], "op_add") + ' + ' + compile(node.children[1], "op_add") + ')';
                             } else {
-                                ret = '(' + compile(node.children[0]) + ' + ' + compile(node.children[1]) + ')';
+                                prioParent = prio(node);
+
+                                e = compile(node.children[0], "op_add");
+                                prioChild = prio(node.children[0]);
+                                ret = prioParent > prioChild ? "(" + e + ")" : e;
+
+                                ret += ' + ';
+
+                                e = compile(node.children[1], "op_add");
+                                prioChild = prio(node.children[1]);
+                                ret += prioParent > prioChild ? "(" + e + ")" : e;
                             }
                             break;
                         case 'op_sub':
                             if (js) {
-                                ret = '$jc$.sub(' + compile(node.children[0]) + ', ' + compile(node.children[1]) + ')';
+                                ret = '$jc$.sub(' + compile(node.children[0], "op_sub") + ', ' + compile(node.children[1], "op_sub") + ')';
+                            } else if (!jcMinBrac) {
+                                ret = '(' + compile(node.children[0], "op_sub") + ' - ' + compile(node.children[1], "op_sub") + ')';
                             } else {
-                                ret = '(' + compile(node.children[0]) + ' - ' + compile(node.children[1]) + ')';
+                                prioParent = prio(node);
+
+                                e = compile(node.children[0], "op_sub");
+                                prioChild = prio(node.children[0]);
+                                ret = prioParent > prioChild ? "(" + e + ")" : e;
+
+                                ret += ' - ';
+
+                                e = compile(node.children[1], "op_sub");
+                                prioChild = prio(node.children[1]);
+                                ret += prioParent >= prioChild ? "(" + e + ")" : e;
                             }
                             break;
                         case 'op_div':
                             if (js) {
-                                ret = '$jc$.div(' + compile(node.children[0]) + ', ' + compile(node.children[1]) + ')';
+                                ret = '$jc$.div(' + compile(node.children[0], "op_div") + ', ' + compile(node.children[1], "op_div") + ')';
+                            } else if (!jcMinBrac) {
+                                ret = '(' + compile(node.children[0], "op_div") + ' / ' + compile(node.children[1], "op_div") + ')';
                             } else {
-                                ret = '(' + compile(node.children[0]) + ' / ' + compile(node.children[1]) + ')';
+                                prioParent = prio(node);
+
+                                e = compile(node.children[0], "op_div");
+                                prioChild = prio(node.children[0]);
+                                ret = prioParent > prioChild ? "(" + e + ")" : e;
+
+                                ret += ' / ';
+
+                                e = compile(node.children[1], "op_div");
+                                prioChild = prio(node.children[1]);
+                                ret += prioParent >= prioChild ? "(" + e + ")" : e;
                             }
                             break;
                         case 'op_mod':
                             if (js) {
-                                ret = '$jc$.mod(' + compile(node.children[0]) + ', ' + compile(node.children[1]) + ', true)';
+                                ret = '$jc$.mod(' + compile(node.children[0], "op_mod") + ', ' + compile(node.children[1], "op_mod") + ', true)';
+                            } else if (!jcMinBrac) {
+                                ret = '(' + compile(node.children[0], "op_mod") + ' % ' + compile(node.children[1], "op_mod") + ')';
                             } else {
-                                ret = '(' + compile(node.children[0]) + ' % ' + compile(node.children[1]) + ')';
+                                prioParent = prio(node);
+
+                                e = compile(node.children[0], "op_mod");
+                                prioChild = prio(node.children[0]);
+                                ret = prioParent > prioChild ? "(" + e + ")" : e;
+
+                                ret += ' % ';
+
+                                e = compile(node.children[1], "op_mod");
+                                prioChild = prio(node.children[1]);
+                                ret += prioParent >= prioChild ? "(" + e + ")" : e;
                             }
                             break;
                         case 'op_mul':
                             if (js) {
-                                ret = '$jc$.mul(' + compile(node.children[0]) + ', ' + compile(node.children[1]) + ')';
+                                ret = '$jc$.mul(' + compile(node.children[0], "op_mul") + ', ' + compile(node.children[1], "op_mul") + ')';
+                            } else if (!jcMinBrac) {
+                                ret = '(' + compile(node.children[0], "op_mul") + ' * ' + compile(node.children[1], "op_mul") + ')';
                             } else {
-                                ret = '(' + compile(node.children[0]) + ' * ' + compile(node.children[1]) + ')';
+                                prioParent = prio(node);
+
+                                e = compile(node.children[0], "op_mul");
+                                prioChild = prio(node.children[0]);
+                                ret = prioParent > prioChild ? "(" + e + ")" : e;
+
+                                ret += ' * ';
+
+                                e = compile(node.children[1], "op_mul");
+                                prioChild = prio(node.children[1]);
+                                ret += prioParent > prioChild ? "(" + e + ")" : e;
                             }
                             break;
                         case 'op_exp':
                             if (js) {
-                                ret = '$jc$.pow(' + compile(node.children[0]) + ', ' + compile(node.children[1]) + ')';
+                                ret = '$jc$.pow(' + compile(node.children[0], "op_exp") + ', ' + compile(node.children[1], "op_exp") + ')';
+                            } else if (!jcMinBrac) {
+                                ret = '(' + compile(node.children[0], "op_exp") + '^' + compile(node.children[1], "op_exp") + ')';
                             } else {
-                                ret = '(' + compile(node.children[0]) + '^' + compile(node.children[1]) + ')';
+                                prioParent = prio(node);
+
+                                e = compile(node.children[0], "op_exp");
+                                prioChild = prio(node.children[0]);
+                                ret = prioParent >= prioChild ? "(" + e + ")" : e;
+
+                                ret += '^';
+
+                                e = compile(node.children[1], "op_exp");
+                                prioChild = prio(node.children[1]);
+                                ret += prioParent > prioChild ? "(" + e + ")" : e;
                             }
                             break;
                         case 'op_neg':
                             if (js) {
-                                ret = '$jc$.neg(' + compile(node.children[0]) + ')';
+                                ret = '$jc$.neg(' + compile(node.children[0], "op_neg") + ')';
+                            } else if (!jcMinBrac) {
+                                ret = '(-' + compile(node.children[0], "op_neg") + ')';
                             } else {
-                                ret = '(-' + compile(node.children[0]) + ')';
+                                prioParent = prio(node);
+                                prioChild = prio(node.children[0]);
+                                e = compile(node.children[0], "op_neg");
+                                if (prioParent >= prioChild) {
+                                    ret = '-(' + e + ')';
+                                } else {
+                                    ret = '-' + e;
+                                }
                             }
                             break;
                     }
@@ -2078,7 +2119,15 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
                     break;
 
                 case 'node_const':
-                    ret = node.value;
+                    if (js) {
+                        ret = node.value;
+                    } else {
+                        if (jcMinBrac && parseFloat(node.value) < 0 && prevOp !== "op_execfun" && position !== 0) {
+                            ret = "(" + node.value + ")";
+                        } else {
+                            ret = node.value;
+                        }
+                    }
                     break;
 
                 case 'node_const_bool':
