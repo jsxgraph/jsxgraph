@@ -2157,10 +2157,6 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
                     break;
             }
 
-            if (jcMinParens && Type.isString(ret)) {
-                ret = ret.trim();
-            }
-
             if (node.needsAngleBrackets) {
                 if (js) {
                     ret = '{\n' + ret + ' }\n';
