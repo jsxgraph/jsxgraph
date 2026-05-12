@@ -879,6 +879,10 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
                         result = this.compile(ast);
                     }
                     break;
+                case 'minParens':
+                case 'minParentheses':
+                    result = this.compile(ast, false, true);
+                    break;
                 case 'getAst':
                     result = ast;
                     break;
@@ -942,6 +946,18 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
      */
     simplify: function (code) {
         return this._genericParse(code, 'simplify');
+    },
+
+    /**
+     * Manipulate JessieCode.
+     * This consists of generating an AST with parser.parse,
+     * and compile the AST back to JessieCode with minimal number of parentheses.
+     *
+     * @param {String} code             JessieCode code to be parsed
+     * @return {String}                 Simplified JessieCode code
+     */
+    minParentheses: function (code) {
+        return this._genericParse(code, 'minParentheses');
     },
 
     /**
