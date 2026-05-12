@@ -235,7 +235,7 @@ JXG.extend(
                 if (Type.exists(this[what].name)) {
                    delete this.elementsByName[this[what].name];
                 }
-                Type.removeElementFromArray(this.objectsList, this[what])
+                Type.removeElementFromArray(this.objectsList, this[what]);
                 if (this.hasOwnProperty("methodMap")) {
                     delete this.methodMap[what];
                 }
