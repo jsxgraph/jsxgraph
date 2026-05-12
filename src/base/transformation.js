@@ -147,18 +147,18 @@ JXG.Transformation = function (board, type, params, is3D) {
     } else {
         this.setMatrix(board, type, params);
     }
-
-    this.methodMap = {
-        apply: "apply",
-        applyOnce: "applyOnce",
-        bindTo: "bindTo",
-        bind: "bindTo",
-        melt: "melt",
-        meltTo: "meltTo"
-    };
 };
 
 JXG.Transformation.prototype = {};
+
+Type.copyMethodMap(JXG.Transformation, {
+    apply: "apply",
+    applyOnce: "applyOnce",
+    bindTo: "bindTo",
+    bind: "bindTo",
+    melt: "melt",
+    meltTo: "meltTo"
+});
 
 JXG.extend(
     JXG.Transformation.prototype,

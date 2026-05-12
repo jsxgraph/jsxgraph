@@ -117,13 +117,13 @@ JXG.Curve3D = function (view, F, X, Y, Z, range, attributes) {
     }
 
     this.range = range;
-
-    this.methodMap = Type.deepCopy(this.methodMap, {
-        // TODO
-    });
 };
 JXG.Curve3D.prototype = new JXG.GeometryElement();
+
 Type.copyPrototypeMethods(JXG.Curve3D, JXG.GeometryElement3D, 'constructor3D');
+Type.copyMethodMap(JXG.Curve3D, {
+    // TODO
+});
 
 JXG.extend(
     JXG.Curve3D.prototype,
@@ -675,7 +675,7 @@ JXG.createVectorfield3D = function (board, parents, attributes) {
         }
     };
 
-    el.methodMap = Type.deepCopy(el.methodMap, {
+    Type.extendInstanceMethodMap(el, {
         setF: "setF"
     });
 

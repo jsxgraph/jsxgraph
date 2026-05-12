@@ -348,7 +348,9 @@ JXG.createSlopeTriangle = function (board, parents, attributes) {
     };
     el.inherits.push(glider, basepoint, baseline, toppoint, label);
 
-    el.methodMap = JXG.deepCopy(el.methodMap, {
+    el.remove = priv.removeSlopeTriangle;
+
+    Type.extendInstanceMethodMap(el, {
         tangent: "tangent",
         glider: "glider",
         basepoint: "basepoint",
@@ -367,8 +369,6 @@ JXG.createSlopeTriangle = function (board, parents, attributes) {
         DeltaY: "DeltaY",
         Direction: "Direction"
     });
-
-    el.remove = priv.removeSlopeTriangle;
 
     return el;
 };

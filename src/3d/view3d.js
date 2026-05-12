@@ -231,12 +231,12 @@ JXG.View3D = function (board, parents, attributes) {
     this.id = this.board.setId(this, 'V');
     this.board.finalizeAdding(this);
     this.elType = 'view3d';
-
-    this.methodMap = Type.deepCopy(this.methodMap, {
-        // TODO
-    });
 };
+
 JXG.View3D.prototype = new GeometryElement();
+Type.copyMethodMap(JXG.View3D, {
+    // TODO
+});
 
 JXG.extend(
     JXG.View3D.prototype, /** @lends JXG.View3D.prototype */ {

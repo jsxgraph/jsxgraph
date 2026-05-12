@@ -725,40 +725,40 @@ JXG.Board = function (container, renderer, id,
             this.addWheelEventHandlers();
         }
     }
-
-    this.methodMap = {
-        update: 'update',
-        fullUpdate: 'fullUpdate',
-        on: 'on',
-        off: 'off',
-        trigger: 'trigger',
-        setAttribute: 'setAttribute',
-        setBoundingBox: 'setBoundingBox',
-        setView: 'setBoundingBox',
-        getBoundingBox: 'getBoundingBox',
-        BoundingBox: 'getBoundingBox',
-        getView: 'getBoundingBox',
-        View: 'getBoundingBox',
-        migratePoint: 'migratePoint',
-        colorblind: 'emulateColorblindness',
-        suspendUpdate: 'suspendUpdate',
-        unsuspendUpdate: 'unsuspendUpdate',
-        clearTraces: 'clearTraces',
-        left: 'clickLeftArrow',
-        right: 'clickRightArrow',
-        up: 'clickUpArrow',
-        down: 'clickDownArrow',
-        zoomIn: 'zoomIn',
-        zoomOut: 'zoomOut',
-        zoom100: 'zoom100',
-        zoomElements: 'zoomElements',
-        scale: 'scale',
-        scaleX: 'scaleX',
-        scaleY: 'scaleY',
-        remove: 'removeObject',
-        removeObject: 'removeObject'
-    };
 };
+
+Type.copyMethodMap(JXG.Board, {
+    update: 'update',
+    fullUpdate: 'fullUpdate',
+    on: 'on',
+    off: 'off',
+    trigger: 'trigger',
+    setAttribute: 'setAttribute',
+    setBoundingBox: 'setBoundingBox',
+    setView: 'setBoundingBox',
+    getBoundingBox: 'getBoundingBox',
+    BoundingBox: 'getBoundingBox',
+    getView: 'getBoundingBox',
+    View: 'getBoundingBox',
+    migratePoint: 'migratePoint',
+    colorblind: 'emulateColorblindness',
+    suspendUpdate: 'suspendUpdate',
+    unsuspendUpdate: 'unsuspendUpdate',
+    clearTraces: 'clearTraces',
+    left: 'clickLeftArrow',
+    right: 'clickRightArrow',
+    up: 'clickUpArrow',
+    down: 'clickDownArrow',
+    zoomIn: 'zoomIn',
+    zoomOut: 'zoomOut',
+    zoom100: 'zoom100',
+    zoomElements: 'zoomElements',
+    scale: 'scale',
+    scaleX: 'scaleX',
+    scaleY: 'scaleY',
+    remove: 'removeObject',
+    removeObject: 'removeObject'
+});
 
 JXG.extend(
     JXG.Board.prototype,

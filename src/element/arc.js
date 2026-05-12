@@ -455,7 +455,9 @@ JXG.createArc = function (board, parents, attributes) {
     // documentation in jxg.circle
     el.updateStdform = Circle.prototype.updateStdform;
 
-    el.methodMap = JXG.deepCopy(el.methodMap, {
+    el.prepareUpdate().update();
+
+    Type.extendInstanceMethodMap(el, {
         getRadius: "getRadius",
         radius: "Radius",
         Radius: "Radius",
@@ -466,7 +468,6 @@ JXG.createArc = function (board, parents, attributes) {
         L: "L"
     });
 
-    el.prepareUpdate().update();
     return el;
 };
 
