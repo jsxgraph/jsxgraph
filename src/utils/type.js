@@ -1572,8 +1572,59 @@ JXG.extend(
             subObject.prototype[constructorName] = superObject.prototype.constructor;
             for (key in superObject.prototype) {
                 if (superObject.prototype.hasOwnProperty(key)) {
-                    subObject.prototype[key] = superObject.prototype[key];
+                    if (key === 'methodMap') {
+                        JXG.copyMethodMap(subObject, superObject.prototype.methodMap);
+                    } else {
+                        subObject.prototype[key] = superObject.prototype[key];
+                    }
                 }
+            }
+        },
+
+        /**
+         * Create a copy of methodMap in "objectClass.prototype" and optional extend it.
+         * If objectClass.prototype.methodMap does not exist, it will be initialized.
+         *
+         * The methodMap determines which methods can be called from within JessieCode and under which name it
+         * can be used. The map is saved in an object, the name of a property is the name of the method used in JessieCode,
+         * the value of a property is the name of the method in JavaScript.
+         *
+         * @param {Object} objectClass
+         * @param {Object} [extension]
+         * @private
+         */
+        copyMethodMap: function (objectClass, extension) {
+            extension = extension || {};
+
+            objectClass.prototype.methodMap = objectClass.prototype.methodMap || {};
+            objectClass.prototype.methodMap = this.deepCopy(objectClass.prototype.methodMap, extension);
+        },
+
+        /**
+         * Copy methodMap of "object.prototype" to objects instance and optional extend it.
+         * If extension is of type String and extensionValue is defined, a key-value-pair is added.
+         *
+         * The methodMap determines which methods can be called from within JessieCode and under which name it
+         * can be used. The map is saved in an object, the name of a property is the name of the method used in JessieCode,
+         * the value of a property is the name of the method in JavaScript.
+         *
+         * @param {Object} object
+         * @param {Object|String} [extension]
+         * @param {String} [extensionValue]
+         * @private
+         */
+        extendInstanceMethodMap: function (object, extension, extensionValue) {
+            extension = extension || {};
+
+            // Create own copy only if instance still uses prototype version
+            if (!object.hasOwnProperty("methodMap")) {
+                object.methodMap = Object.assign({}, object.methodMap);
+            }
+
+            if (this.isObject(extension)) {
+                object.methodMap = this.deepCopy(object.methodMap, extension);
+            } else if (this.isString(extension) && this.exists(extensionValue)) {
+                object.methodMap[extension] = extensionValue;
             }
         },
 
