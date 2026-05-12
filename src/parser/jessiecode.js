@@ -940,8 +940,6 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
      * and compile the AST back to JessieCode with minimal number of parentheses.
      *
      * @param {String} code             JessieCode code to be parsed
-     * @param {Boolean} [geonext=false] Geonext compatibility mode.
-     * @param {Boolean} [dontstore=false] If false, the code string is stored in this.code.
      * @return {String}                 Simplified JessieCode code
      */
     simplify: function (code) {
@@ -1713,22 +1711,22 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
      * Compiles a parse tree back to JessieCode.
      * @param {Object} ast
      * @param {Boolean} [js=false] Compile either to JavaScript or back to JessieCode (required for the UI).
-     * @param {Boolean} [jcMinBrac=false] When compiling to JessieCode, use minimal amount of braces?
+     * @param {Boolean} [jcMinParens=false] When compiling to JessieCode, use minimal amount of parentheses?
      * @returns Something
      * @private
      */
-    compile: function (ast, js, jcMinBrac) {
+    compile: function (ast, js, jcMinParens) {
         var that = this;
 
         if (!Type.exists(js)) {
             js = false;
         }
-        if (!Type.exists(jcMinBrac)) {
-            jcMinBrac = false;
+        if (!Type.exists(jcMinParens)) {
+            jcMinParens = false;
         }
 
         // node_const/node_var >> op_execfun >> op_neg >> op_exp >> op_mul/op_div >> op_add/op_sub >> op_map >> op_assign
-        function prio (node) {
+        function prio(node) {
             switch (node.type) {
                 case "node_const":
                 case "node_const_bool":
@@ -1996,7 +1994,7 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
                         case "op_add":
                             if (js) {
                                 ret = '$jc$.add(' + compile(node.children[0], "op_add") + ', ' + compile(node.children[1], "op_add") + ')';
-                            } else if (!jcMinBrac) {
+                            } else if (!jcMinParens) {
                                 ret = '(' + compile(node.children[0], "op_add") + ' + ' + compile(node.children[1], "op_add") + ')';
                             } else {
                                 prioParent = prio(node);
@@ -2015,7 +2013,7 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
                         case 'op_sub':
                             if (js) {
                                 ret = '$jc$.sub(' + compile(node.children[0], "op_sub") + ', ' + compile(node.children[1], "op_sub") + ')';
-                            } else if (!jcMinBrac) {
+                            } else if (!jcMinParens) {
                                 ret = '(' + compile(node.children[0], "op_sub") + ' - ' + compile(node.children[1], "op_sub") + ')';
                             } else {
                                 prioParent = prio(node);
@@ -2034,7 +2032,7 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
                         case 'op_div':
                             if (js) {
                                 ret = '$jc$.div(' + compile(node.children[0], "op_div") + ', ' + compile(node.children[1], "op_div") + ')';
-                            } else if (!jcMinBrac) {
+                            } else if (!jcMinParens) {
                                 ret = '(' + compile(node.children[0], "op_div") + ' / ' + compile(node.children[1], "op_div") + ')';
                             } else {
                                 prioParent = prio(node);
@@ -2053,7 +2051,7 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
                         case 'op_mod':
                             if (js) {
                                 ret = '$jc$.mod(' + compile(node.children[0], "op_mod") + ', ' + compile(node.children[1], "op_mod") + ', true)';
-                            } else if (!jcMinBrac) {
+                            } else if (!jcMinParens) {
                                 ret = '(' + compile(node.children[0], "op_mod") + ' % ' + compile(node.children[1], "op_mod") + ')';
                             } else {
                                 prioParent = prio(node);
@@ -2072,7 +2070,7 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
                         case 'op_mul':
                             if (js) {
                                 ret = '$jc$.mul(' + compile(node.children[0], "op_mul") + ', ' + compile(node.children[1], "op_mul") + ')';
-                            } else if (!jcMinBrac) {
+                            } else if (!jcMinParens) {
                                 ret = '(' + compile(node.children[0], "op_mul") + ' * ' + compile(node.children[1], "op_mul") + ')';
                             } else {
                                 prioParent = prio(node);
@@ -2091,7 +2089,7 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
                         case 'op_exp':
                             if (js) {
                                 ret = '$jc$.pow(' + compile(node.children[0], "op_exp") + ', ' + compile(node.children[1], "op_exp") + ')';
-                            } else if (!jcMinBrac) {
+                            } else if (!jcMinParens) {
                                 ret = '(' + compile(node.children[0], "op_exp") + '^' + compile(node.children[1], "op_exp") + ')';
                             } else {
                                 prioParent = prio(node);
@@ -2110,7 +2108,7 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
                         case 'op_neg':
                             if (js) {
                                 ret = '$jc$.neg(' + compile(node.children[0], "op_neg") + ')';
-                            } else if (!jcMinBrac) {
+                            } else if (!jcMinParens) {
                                 ret = '(-' + compile(node.children[0], "op_neg") + ')';
                             } else {
                                 prioParent = prio(node);
@@ -2138,7 +2136,7 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
                     if (js) {
                         ret = node.value;
                     } else {
-                        if (jcMinBrac && parseFloat(node.value) < 0 && prevOp !== "op_execfun" && position !== 0) {
+                        if (jcMinParens && parseFloat(node.value) < 0 && prevOp !== "op_execfun" && position !== 0) {
                             ret = "(" + node.value + ")";
                         } else {
                             ret = node.value;
@@ -2155,7 +2153,7 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
                     break;
             }
 
-            if (jcMinBrac) {
+            if (jcMinParens && Type.isString(ret)) {
                 ret = ret.trim();
             }
 
@@ -2170,7 +2168,7 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
             return ret;
         }
 
-        return compile(ast);
+        return compile(ast, "");
     },
 
     /**
