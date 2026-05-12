@@ -811,18 +811,22 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
      * manipulate the AST according to the second parameter "cmd".
      * @param  {String} code      JessieCode code to be parsed
      * @param  {String} cmd       Type of manipulation to be done with AST
-     * @param {Boolean} [geonext=false] Geonext compatibility mode.
-     * @param {Boolean} [dontstore=false] If false, the code string is stored in this.code,
-     *  i.e. in the JessieCode object, e.g. in board.jc.
+     * @param {Object} [options]  Object with attributes <ul>
+     *     <li>{Boolean} [geonext=false]     Geonext compatibility mode.</li>
+     *     <li>{Boolean} [dontstore=false]   If false, the code string is stored in this.code, i.e. in the JessieCode object, e.g. in board.jc.</li>
+     *     </ul>
      * @return {Object} Returns result of computation as directed in cmd.
      */
-    _genericParse: function (code, cmd, geonext, dontstore) {
+    _genericParse: function (code, cmd, options) {
         var i, setTextBackup, ast, result,
             ccode = code.replace(/\r\n/g, '\n').split('\n'),
-            options = {},
             cleaned = [];
 
-        if (!dontstore) {
+        if (!Type.exists(options)) {
+            options = {};
+        }
+
+        if (!options.dontstore) {
             this.code += code + '\n';
         }
 
@@ -832,12 +836,12 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
         }
 
         try {
-            if (!Type.exists(geonext)) {
-                geonext = false;
+            if (!Type.exists(options.geonext)) {
+                options.geonext = false;
             }
 
             for (i = 0; i < ccode.length; i++) {
-                if (geonext) {
+                if (options.geonext) {
                     ccode[i] = JXG.GeonextParser.geonext2JS(ccode[i], this.board);
                 }
                 cleaned.push(ccode[i]);
@@ -915,7 +919,7 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
      * @return {Object}                 Parse JessieCode code and execute it.
      */
     parse: function (code, geonext, dontstore) {
-        return this._genericParse(code, 'parse', geonext, dontstore);
+        return this._genericParse(code, 'parse', {geonext: geonext, dontstore: dontstore});
     },
 
     /**
@@ -930,7 +934,7 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
      * @return {String}                 Simplified JessieCode code
      */
     manipulate: function (code, geonext, dontstore) {
-        return this._genericParse(code, 'manipulate', geonext, dontstore);
+        return this._genericParse(code, 'manipulate', {geonext: geonext, dontstore: dontstore});
     },
 
     /**
@@ -968,7 +972,7 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
      * @return {Node}  AST
      */
     getAST: function (code, geonext, dontstore) {
-        return this._genericParse(code, 'getAst', geonext, dontstore);
+        return this._genericParse(code, 'getAst', {geonext: geonext, dontstore: dontstore});
     },
 
     /**
