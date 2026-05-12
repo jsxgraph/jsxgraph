@@ -1560,9 +1560,9 @@ JXG.extend(
          * Copy all prototype methods from object "superObject" to object
          * "subObject". The constructor of superObject will be available
          * in subObject as subObject.constructor[constructorName].
-         * @param {Object} subObj A JavaScript object which receives new methods.
-         * @param {Object} superObj A JavaScript object which lends its prototype methods to subObject
-         * @returns {String} constructorName Under this name the constructor of superObj will be available
+         * @param {Object} subObject A JavaScript object which receives new methods.
+         * @param {Object} superObject A JavaScript object which lends its prototype methods to subObject
+         * @param {String} constructorName Under this name the constructor of superObj will be available
          * in subObject.
          * @private
          */
