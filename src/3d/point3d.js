@@ -118,16 +118,15 @@ JXG.Point3D = function (view, F, slide, attributes) {
     this.moveCallback = null;
     this.moveInterval = null;
 
-
     this._c2d = null;
-
-    this.methodMap = Type.deepCopy(this.methodMap, {
-        // TODO
-    });
 };
 
 JXG.Point3D.prototype = new JXG.GeometryElement();
+
 Type.copyPrototypeMethods(JXG.Point3D, JXG.GeometryElement3D, 'constructor3D');
+Type.copyMethodMap(JXG.Point3D, {
+    // TODO
+});
 
 JXG.extend(
     JXG.Point3D.prototype,

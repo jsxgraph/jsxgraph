@@ -134,15 +134,16 @@ JXG.Sphere3D = function (view, method, par1, par2, attributes) {
             this.point2.addChild(this);
         }
     }
-
-    this.methodMap = Type.deepCopy(this.methodMap, {
-        center: "center",
-        point2: "point2",
-        Radius: "Radius"
-    });
 };
+
 JXG.Sphere3D.prototype = new JXG.GeometryElement();
+
 Type.copyPrototypeMethods(JXG.Sphere3D, JXG.GeometryElement3D, 'constructor3D');
+Type.copyMethodMap(JXG.Sphere3D, {
+    center: "center",
+    point2: "point2",
+    Radius: "Radius"
+});
 
 JXG.extend(
     JXG.Sphere3D.prototype,

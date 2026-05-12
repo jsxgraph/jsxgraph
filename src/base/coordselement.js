@@ -152,30 +152,6 @@ JXG.CoordsElement = function (coordinates, isLabel) {
     this.Xjc = null;
     this.Yjc = null;
 
-    // documented in GeometryElement
-    this.methodMap = Type.deepCopy(this.methodMap, {
-        move: "moveTo",
-        moveTo: "moveTo",
-        moveAlong: "moveAlong",
-        visit: "visit",
-        glide: "makeGlider",
-        makeGlider: "makeGlider",
-        intersect: "makeIntersection",
-        makeIntersection: "makeIntersection",
-        X: "X",
-        Y: "Y",
-        Coords: "Coords",
-        free: "free",
-        setPosition: "setGliderPosition",
-        setGliderPosition: "setGliderPosition",
-        addConstraint: "addConstraint",
-        dist: "Dist",
-        Dist: "Dist",
-        onPolygon: "onPolygon",
-        startAnimation: "startAnimation",
-        stopAnimation: "stopAnimation"
-    });
-
     /*
      * this.element may have been set by the object constructor.
      */
@@ -184,6 +160,29 @@ JXG.CoordsElement = function (coordinates, isLabel) {
     }
     this.isDraggable = true;
 };
+
+Type.copyMethodMap(JXG.CoordsElement, {
+    move: "moveTo",
+    moveTo: "moveTo",
+    moveAlong: "moveAlong",
+    visit: "visit",
+    glide: "makeGlider",
+    makeGlider: "makeGlider",
+    intersect: "makeIntersection",
+    makeIntersection: "makeIntersection",
+    X: "X",
+    Y: "Y",
+    Coords: "Coords",
+    free: "free",
+    setPosition: "setGliderPosition",
+    setGliderPosition: "setGliderPosition",
+    addConstraint: "addConstraint",
+    dist: "Dist",
+    Dist: "Dist",
+    onPolygon: "onPolygon",
+    startAnimation: "startAnimation",
+    stopAnimation: "stopAnimation"
+});
 
 JXG.extend(
     JXG.CoordsElement.prototype,

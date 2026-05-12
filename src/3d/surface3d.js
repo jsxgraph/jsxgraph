@@ -144,13 +144,14 @@ JXG.Surface3D = function (view, F, X, Y, Z, range_u, range_v, attributes) {
     this.dataY = null;
     this.dataZ = null;
     this.points = [];
-
-    this.methodMap = Type.deepCopy(this.methodMap, {
-        // TODO
-    });
 };
+
 JXG.Surface3D.prototype = new JXG.GeometryElement();
+
 Type.copyPrototypeMethods(JXG.Surface3D, JXG.GeometryElement3D, 'constructor3D');
+Type.copyMethodMap(JXG.Surface3D, {
+    // TODO
+});
 
 JXG.extend(
     JXG.Surface3D.prototype,

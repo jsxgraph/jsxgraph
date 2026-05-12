@@ -117,13 +117,13 @@ JXG.Line3D = function (view, point, direction, range, attributes) {
     this.point2 = null;
 
     this.board.finalizeAdding(this);
-
-    this.methodMap = Type.deepCopy(this.methodMap, {
-        // TODO
-    });
 };
 JXG.Line3D.prototype = new JXG.GeometryElement();
+
 Type.copyPrototypeMethods(JXG.Line3D, JXG.GeometryElement3D, 'constructor3D');
+Type.copyMethodMap(JXG.Line3D, {
+    // TODO
+});
 
 JXG.extend(
     JXG.Line3D.prototype,
@@ -905,13 +905,14 @@ JXG.Plane3D = function (view, point, dir1, range_u, dir2, range_v, attributes) {
 
     this.updateCoords();
     this.updateNormal();
-
-    this.methodMap = Type.deepCopy(this.methodMap, {
-        // TODO
-    });
 };
+
 JXG.Plane3D.prototype = new JXG.GeometryElement();
+
 Type.copyPrototypeMethods(JXG.Plane3D, JXG.GeometryElement3D, 'constructor3D');
+Type.copyMethodMap(JXG.Plane3D, {
+    // TODO
+});
 
 JXG.extend(
     JXG.Plane3D.prototype,

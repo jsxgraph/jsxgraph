@@ -138,18 +138,18 @@ JXG.Curve = function (board, parents, attributes) {
     if (Type.isString(this.yterm)) {
         this.notifyParents(this.yterm);
     }
-
-    this.methodMap = Type.deepCopy(this.methodMap, {
-        generateTerm: "generateTerm",
-        setTerm: "generateTerm",
-        move: "moveTo",
-        moveTo: "moveTo",
-        MinX: "minX",
-        MaxX: "maxX"
-    });
 };
 
 JXG.Curve.prototype = new GeometryElement();
+
+Type.copyMethodMap(JXG.Curve, {
+    generateTerm: "generateTerm",
+    setTerm: "generateTerm",
+    move: "moveTo",
+    moveTo: "moveTo",
+    MinX: "minX",
+    MaxX: "maxX"
+});
 
 JXG.extend(
     JXG.Curve.prototype,

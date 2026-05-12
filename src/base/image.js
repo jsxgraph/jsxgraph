@@ -103,20 +103,20 @@ JXG.Image = function (board, coords, attributes, url, size) {
 
     this.board.renderer.drawImage(this);
     this.board.finalizeAdding(this);
-
-    this.methodMap = JXG.deepCopy(this.methodMap, {
-        addTransformation: "addTransform",
-        trans: "addTransform",
-        W: "W",
-        Width: "W",
-        H: "H",
-        Height: "H",
-        setSize: "setSize"
-    });
 };
 
 JXG.Image.prototype = new GeometryElement();
+
 Type.copyPrototypeMethods(JXG.Image, CoordsElement, 'coordsConstructor');
+Type.copyMethodMap(JXG.Image, {
+    addTransformation: "addTransform",
+    trans: "addTransform",
+    W: "W",
+    Width: "W",
+    H: "H",
+    Height: "H",
+    setSize: "setSize"
+});
 
 JXG.extend(
     JXG.Image.prototype,
