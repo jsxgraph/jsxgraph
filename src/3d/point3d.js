@@ -334,6 +334,16 @@ JXG.extend(
             return this;
         },
 
+        removeTransform: function (transform) {
+            this.removeTransformGeneric(transform);
+            return this;
+        },
+
+        clearTransforms: function () {
+            this.clearTransformsGeneric();
+            return this;
+        },
+
         updateTransform: function () {
             var c, i;
 

@@ -625,6 +625,24 @@ JXG.extend(
         },
 
         /**
+         * Remove transformations of this element.
+         * @param {JXG.Transformation|Array} transform Either one {@link JXG.Transformation}
+         * or an array of {@link JXG.Transformation}s.
+         * @returns {JXG.GeometryElement} Reference to the element.
+         */
+        removeTransform: function (transform) {
+            return this;
+        },
+
+        /**
+         * Remove all {@link JXG.Transformation}s of this element.
+         * @returns {JXG.GeometryElement} Reference to the element.
+         */
+        clearTransforms: function () {
+            return this;
+        },
+
+        /**
          * Decides whether an element can be dragged. This is used in
          * {@link JXG.GeometryElement#setPositionDirectly} methods
          * where all parent elements are checked if they may be dragged, too.
@@ -2864,6 +2882,8 @@ Type.copyMethodMap(JXG.GeometryElement, {
     getName: "getName",
     Name: "getName",
     addTransform: "addTransform",
+    removeTransform: "removeTransform",
+    clearTransforms: "clearTransforms",
     setProperty: "setAttribute",
     setAttribute: "setAttribute",
     addChild: "addChild",
