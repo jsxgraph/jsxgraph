@@ -863,6 +863,26 @@ JXG.extend(
             return this;
         },
 
+        removeTransform: function (transform) {
+            var i,
+                list = Type.isArray(transform) ? transform : [transform],
+                len = list.length;
+
+            for (i = 0; i < len; i++) {
+                Type.removeElementFromArray(this.point1.transformations, list[i]);
+                Type.removeElementFromArray(this.point2.transformations, list[i]);
+            }
+
+            return this;
+        },
+
+        clearTransforms: function () {
+            this.point1.transformations = [];
+            this.point2.transformations = [];
+
+            return this;
+        },
+
         // see GeometryElement.js
         snapToGrid: function (pos) {
             var c1, c2, dc, t, ticks, x, y, sX, sY;

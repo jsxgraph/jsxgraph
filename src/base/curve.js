@@ -931,6 +931,24 @@ JXG.extend(
             return this;
         },
 
+        removeTransform: function (transform) {
+            var i,
+                list = Type.isArray(transform) ? transform : [transform],
+                len = list.length;
+
+            for (i = 0; i < len; i++) {
+                Type.removeElementFromArray(this.transformations, list[i]);
+            }
+
+            return this;
+        },
+
+        clearTransforms: function () {
+            this.transformations = [];
+
+            return this;
+        },
+
         /**
          * Generate the method curve.X() in case curve.dataX is an array
          * and generate the method curve.Y() in case curve.dataY is an array.

@@ -270,15 +270,31 @@ JXG.extend(
         },
 
         addTransform: function (transform) {
-            var i;
+            var i,
+                list = Type.isArray(transform) ? transform : [transform],
+                len = list.length;
 
-            if (Type.isArray(transform)) {
-                for (i = 0; i < transform.length; i++) {
-                    this.transformations.push(transform[i]);
-                }
-            } else {
-                this.transformations.push(transform);
+            for (i = 0; i < len; i++) {
+                this.transformations.push(list[i]);
             }
+
+            return this;
+        },
+
+        removeTransform: function (transform) {
+            var i,
+                list = Type.isArray(transform) ? transform : [transform],
+                len = list.length;
+
+            for (i = 0; i < len; i++) {
+                Type.removeElementFromArray(this.transformations, list[i]);
+            }
+
+            return this;
+        },
+
+        clearTransforms: function () {
+            this.transformations = [];
 
             return this;
         },
