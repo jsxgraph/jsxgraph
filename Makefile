@@ -43,6 +43,17 @@ MKDIRFLAGS=-p
 RMFLAGS=-rf
 ZIPFLAGS=-r
 
+# Search for header less browser
+TEST_BROWSER=
+ifeq ($(shell which chrome | wc -l), '1')
+  TEST_BROWSER=chrome;
+else 
+	ifeq ($(shell which chromium | wc -l), '1')
+  		TEST_BROWSER=chromium;
+	endif
+endif
+
+
 # Extract version number from package.json
 VERSION=$(shell grep -o '"version": "[^"]*' package.json | grep -o '[^"]*$$')
 
@@ -176,8 +187,17 @@ lint:
 eslint:
 	$(ESLINT) $(ESLINTFLAGS) $(LINTLIST)
 
-test: core
+test: #core
+ifeq ($(TEST_BROWSER),chrome)  
+	@echo "Use chrome"
 	$(KARMA) start karma/karma.conf.js
+else if ($(TEST_BROWSER),chromium)  
+	@echo "Use chromium"
+	export CHROME_BIN=/usr/bin/chromium; $(KARMA) start karma/karma.conf.js
+else
+	@echo "No suitable browser (chrome or chromium) installed $(TEST_BROWSER)"
+endif
+
 
 testchromium: core
 	export CHROME_BIN=/usr/bin/chromium; $(KARMA) start karma/karma.conf.js
