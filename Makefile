@@ -191,11 +191,13 @@ test: #core
 ifeq ($(TEST_BROWSER),chrome)  
 	@echo "Use chrome"
 	$(KARMA) start karma/karma.conf.js
-else if ($(TEST_BROWSER),chromium)  
+else 
+ifeq ($(TEST_BROWSER),chromium)  
 	@echo "Use chromium"
 	export CHROME_BIN=/usr/bin/chromium; $(KARMA) start karma/karma.conf.js
 else
 	@echo "No suitable browser (chrome or chromium) installed $(TEST_BROWSER)"
+endif
 endif
 
 
