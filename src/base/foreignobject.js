@@ -108,19 +108,19 @@ JXG.ForeignObject = function (board, coords, attributes, content, size) {
 
     this.board.renderer.drawForeignObject(this);
     this.board.finalizeAdding(this);
-
-    this.methodMap = JXG.deepCopy(this.methodMap, {
-        addTransformation: "addTransform",
-        trans: "addTransform",
-        W: "W",
-        Width: "W",
-        H: "H",
-        Height: "H"
-    });
 };
 
 JXG.ForeignObject.prototype = new GeometryElement();
+
 Type.copyPrototypeMethods(JXG.ForeignObject, CoordsElement, 'coordsConstructor');
+Type.copyMethodMap(JXG.ForeignObject, {
+    addTransformation: "addTransform",
+    trans: "addTransform",
+    W: "W",
+    Width: "W",
+    H: "H",
+    Height: "H"
+});
 
 JXG.extend(
     JXG.ForeignObject.prototype,

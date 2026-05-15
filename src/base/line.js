@@ -137,27 +137,27 @@ JXG.Line = function (board, p1, p2, attributes) {
 
     // create Label
     this.createLabel();
-
-    this.methodMap = JXG.deepCopy(this.methodMap, {
-        point1: "point1",
-        point2: "point2",
-        getSlope: "Slope",
-        Slope: "Slope",
-        Direction: "Direction",
-        getRise: "getRise",
-        Rise: "getRise",
-        getYIntersect: "getRise",
-        YIntersect: "getRise",
-        getAngle: "getAngle",
-        Angle: "getAngle",
-        L: "L",
-        length: "L",
-        setFixedLength: "setFixedLength",
-        setStraight: "setStraight"
-    });
 };
 
 JXG.Line.prototype = new GeometryElement();
+
+Type.copyMethodMap(JXG.Line, {
+    point1: "point1",
+    point2: "point2",
+    getSlope: "Slope",
+    Slope: "Slope",
+    Direction: "Direction",
+    getRise: "getRise",
+    Rise: "getRise",
+    getYIntersect: "getRise",
+    YIntersect: "getRise",
+    getAngle: "getAngle",
+    Angle: "getAngle",
+    L: "L",
+    length: "L",
+    setFixedLength: "setFixedLength",
+    setStraight: "setStraight"
+});
 
 JXG.extend(
     JXG.Line.prototype,

@@ -625,7 +625,7 @@ JXG.createSmartLabel = function (board, parents, attributes) {
     p.addChild(el);
     el.setParents([p]);
 
-    el.methodMap = Type.deepCopy(el.methodMap, {
+    Type.extendInstanceMethodMap(el, {
         Value: "Value",
         V: "Value",
         Dimension: "Dimension",

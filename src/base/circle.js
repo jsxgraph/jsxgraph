@@ -183,24 +183,24 @@ JXG.Circle = function (board, method, par1, par2, attributes) {
             this.point2.addChild(this);
         }
     }
-
-    this.methodMap = Type.deepCopy(this.methodMap, {
-        setRadius: "setRadius",
-        getRadius: "getRadius",
-        Area: "Area",
-        area: "Area",
-        Perimeter: "Perimeter",
-        Circumference: "Perimeter",
-        radius: "Radius",
-        Radius: "Radius",
-        Diameter: "Diameter",
-        center: "center",
-        line: "line",
-        point2: "point2"
-    });
 };
 
 JXG.Circle.prototype = new GeometryElement();
+
+Type.copyMethodMap(JXG.Circle, {
+    setRadius: "setRadius",
+    getRadius: "getRadius",
+    Area: "Area",
+    area: "Area",
+    Perimeter: "Perimeter",
+    Circumference: "Perimeter",
+    radius: "Radius",
+    Radius: "Radius",
+    Diameter: "Diameter",
+    center: "center",
+    line: "line",
+    point2: "point2"
+});
 
 JXG.extend(
     JXG.Circle.prototype,
