@@ -717,6 +717,32 @@ JXG.extend(
             return this;
         },
 
+        removeTransform: function (transform) {
+            var i,
+                list = Type.isArray(transform) ? transform : [transform],
+                len = list.length;
+
+            for (i = 0; i < len; i++) {
+                Type.removeElementFromArray(this.center.transformations, list[i]);
+
+                if (this.method === 'twoPoints') {
+                    Type.removeElementFromArray(this.point2.transformations, list[i]);
+                }
+            }
+
+            return this;
+        },
+
+        clearTransforms: function () {
+            this.center.transformations = [];
+
+            if (this.method === 'twoPoints') {
+                this.point2.transformations = [];
+            }
+
+            return this;
+        },
+
         // see element.js
         snapToGrid: function () {
             var forceIt = this.evalVisProp('snaptogrid');

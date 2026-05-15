@@ -203,6 +203,20 @@ JXG.extend(
             return this;
         },
 
+        removeTransform: function (transform) {
+            this.point.removeTransform(transform);
+            this.removeTransformGeneric(transform);
+
+            return this;
+        },
+
+        clearTransforms: function () {
+            this.point.clearTransformsGeneric();
+            this.clearTransformsGeneric();
+
+            return this;
+        },
+
         updateTransform: function () {
             var c, i;
 
@@ -1250,6 +1264,20 @@ JXG.extend(
         addTransform: function (el, transform) {
             this.addTransformGeneric(el, transform);
             this.point.addTransform(el.point, transform);
+            return this;
+        },
+
+        removeTransform: function (transform) {
+            this.removeTransformGeneric(transform);
+            this.point.removeTransform(transform);
+
+            return this;
+        },
+
+        clearTransforms: function () {
+            this.clearTransformsGeneric();
+            this.point.clearTransformsGeneric();
+
             return this;
         },
 

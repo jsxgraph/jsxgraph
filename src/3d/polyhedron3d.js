@@ -142,7 +142,9 @@ Type.copyPrototypeMethods(JXG.Polyhedron3D, JXG.GeometryElement3D, 'constructor3
 Type.copyMethodMap(JXG.Polyhedron3D, {
     setAttribute: "setAttribute",
     setParents: "setParents",
-    addTransform: "addTransform"
+    addTransform: "addTransform",
+    removeTransform: "removeTransform",
+    clearTransforms: "clearTransforms"
 });
 
 JXG.extend(
@@ -155,6 +157,26 @@ JXG.extend(
                 this.faces[0].addTransform(el.faces[0], transform);
             } else {
                 throw new Error("Adding transformation failed. At least one of the two polyhedra has no faces.");
+            }
+            return this;
+        },
+
+        // Already documented in element3d.js
+        removeTransform: function (transform) {
+            if (this.faces.length > 0) {
+                this.faces[0].removeTransform(transform);
+            } else {
+                throw new Error("Removing transformation failed. The polyhedron has no faces.");
+            }
+            return this;
+        },
+
+        // Already documented in element3d.js
+        clearTransforms: function () {
+            if (this.faces.length > 0) {
+                this.faces[0].clearTransforms();
+            } else {
+                throw new Error("Removing transformation failed. The polyhedron has no faces.");
             }
             return this;
         },

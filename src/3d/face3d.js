@@ -211,6 +211,20 @@ JXG.extend(
             return this;
         },
 
+        removeTransform: function (transform) {
+            if (this.faceNumber === 0) {
+                this.removeTransformGeneric(transform);
+            }
+            return this;
+        },
+
+        clearTransforms: function () {
+            if (this.faceNumber === 0) {
+                this.clearTransformsGeneric();
+            }
+            return this;
+        },
+
         updateTransform: function () {
             var t, c, i, j, b;
 
