@@ -177,8 +177,18 @@ eslint:
 	$(ESLINT) $(ESLINTFLAGS) $(LINTLIST)
 
 test: core
+ifeq ($(shell which google-chrome | wc -l), 1)
+	@echo "Use google chrome"
 	$(KARMA) start karma/karma.conf.js
+else
+ifeq ($(shell which chromium | wc -l), 1)
+	@echo "Use chromium"
+	export CHROME_BIN=/usr/bin/chromium; $(KARMA) start karma/karma.conf.js
+else
+	@echo "No suitable browser (chrome or chromium) installed"
+endif
+endif
 
 testchromium: core
 	export CHROME_BIN=/usr/bin/chromium; $(KARMA) start karma/karma.conf.js
-	
+
