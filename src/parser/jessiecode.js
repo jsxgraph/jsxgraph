@@ -883,9 +883,8 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
                         result = this.compile(ast);
                     }
                     break;
-                case 'minParens':
-                case 'minParentheses':
-                    result = this.compile(ast, false, true);
+                case 'format':
+                    result = this.compile(ast, false, options.minParentheses, options.constToFixed);
                     break;
                 case 'getAst':
                     result = ast;
@@ -951,15 +950,39 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
     },
 
     /**
+     * Format JessieCode.
+     * This consists of generating an AST with parser.parse,
+     * and compile the AST back to JessieCode with options.
+     *
+     * @param {String} code             JessieCode code to be parsed
+     * @param {Object} options          <ul>
+     *     <li>{Boolean} [minParentheses=false]              Use minimal number of parentheses.</li>
+     *     <li>{Number|Function} [constToFixed=false]   Format constant numbers with fixed amount of digits.</li>
+     *     </ul>
+     * @return {String}                 Manipulated JessieCode string. This is no necessarily a parsable JessieCode code!
+     */
+    format: function (code, options) {
+        var opt = {};
+
+        // For security. Remove the following lines to allow every options object.
+        opt.minParentheses = options.minParentheses;
+        opt.constToFixed = options.constToFixed;
+
+        return this._genericParse(code, 'format', opt);
+    },
+
+    /**
      * Manipulate JessieCode.
      * This consists of generating an AST with parser.parse,
      * and compile the AST back to JessieCode with minimal number of parentheses.
      *
      * @param {String} code             JessieCode code to be parsed
      * @return {String}                 Simplified JessieCode code
+     * @deprecated
      */
     minParentheses: function (code) {
-        return this._genericParse(code, 'minParentheses');
+        this._warn('Function \'minParentheses\' is deprecated. Please use \'format\' instead.');
+        return this._genericParse(code, 'format', {minParentheses: true});
     },
 
     /**
@@ -1716,10 +1739,11 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
      * @param {Object} ast
      * @param {Boolean} [js=false] Compile either to JavaScript or back to JessieCode (required for the UI).
      * @param {Boolean} [jcMinParens=false] When compiling to JessieCode, use minimal amount of parentheses?
+     * @param {Boolean|Number|Function} [constToFixed=false] When compiling to JessieCode, use this number or function to format constant values.
      * @returns Something
      * @private
      */
-    compile: function (ast, js, jcMinParens) {
+    compile: function (ast, js, jcMinParens, constToFixed) {
         var that = this;
 
         if (!Type.exists(js)) {
@@ -1727,6 +1751,9 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
         }
         if (!Type.exists(jcMinParens)) {
             jcMinParens = false;
+        }
+        if (!Type.exists(constToFixed)) {
+            constToFixed = false;
         }
 
         // node_const/node_var >> op_execfun >> op_neg >> op_exp >> op_mul/op_div >> op_add/op_sub >> op_map >> op_assign
@@ -1771,7 +1798,7 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
 
         function compile(node, prevOp, position = -1) {
             var e, i, list, scope, prioParent, prioChild,
-                ret = '';
+                ret = '', c;
 
             if (!node) {
                 return ret;
@@ -2140,10 +2167,21 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
                     if (js) {
                         ret = node.value;
                     } else {
-                        if (jcMinParens && parseFloat(node.value) < 0 && prevOp !== "op_execfun" && position !== 0) {
-                            ret = "(" + node.value + ")";
+                        c = node.value;
+                        if (constToFixed !== false && Type.isNumber(c) && (prevOp !== "op_exp" || Math.round(c) - c !== 0)) {
+                            c = parseFloat(c);
+                            if (Type.isNumber(constToFixed)) {
+                                c = Type.toFixed(c, constToFixed);
+                            } else if (Type.isFunction(constToFixed)) {
+                                c = constToFixed(c);
+                            } else {
+                                c = node.value;
+                            }
+                        }
+                        if (jcMinParens && parseFloat(c) < 0 && prevOp !== "op_execfun" && position !== 0) {
+                            ret = "(" + c + ")";
                         } else {
-                            ret = node.value;
+                            ret = c;
                         }
                     }
                     break;
