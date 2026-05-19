@@ -884,7 +884,7 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
                     }
                     break;
                 case 'format':
-                    result = this.compile(ast, false, options.minParentheses, options.constToFixed);
+                    result = this.compile(ast, false, options);
                     break;
                 case 'getAst':
                     result = ast;
@@ -1738,23 +1738,26 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
      * Compiles a parse tree back to JessieCode.
      * @param {Object} ast
      * @param {Boolean} [js=false] Compile either to JavaScript or back to JessieCode (required for the UI).
-     * @param {Boolean} [jcMinParens=false] When compiling to JessieCode, use minimal amount of parentheses?
-     * @param {Boolean|Number|Function} [constToFixed=false] When compiling to JessieCode, use this number or function to format constant values.
+     * @param {Object} [format] Options for formatting the output. Depending on some options, the function might return a not re-parsable string. This format options have only effect on JessieCode output.<ul>
+     *     <li>{Boolean} [minParentheses=false]                  Use minimal amount of parentheses?</li>
+     *     <li>{Boolean|Number|Function} [constToFixed=false] Use this number or function to format constant values.</li>
+     *     </ul>
      * @returns Something
      * @private
      */
-    compile: function (ast, js, jcMinParens, constToFixed) {
+    compile: function (ast, js, format) {
         var that = this;
 
         if (!Type.exists(js)) {
             js = false;
         }
-        if (!Type.exists(jcMinParens)) {
-            jcMinParens = false;
+        if (!Type.exists(format) || !Type.isObject(format)) {
+            format = {};
         }
-        if (!Type.exists(constToFixed)) {
-            constToFixed = false;
-        }
+        format = Type.deepCopy({
+            minParentheses: false,
+            constToFixed: false
+        }, format);
 
         // node_const/node_var >> op_execfun >> op_neg >> op_exp >> op_mul/op_div >> op_add/op_sub >> op_map >> op_assign
         function prio(node) {
@@ -2025,7 +2028,7 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
                         case "op_add":
                             if (js) {
                                 ret = '$jc$.add(' + compile(node.children[0], "op_add") + ', ' + compile(node.children[1], "op_add") + ')';
-                            } else if (!jcMinParens) {
+                            } else if (!format.minParentheses) {
                                 ret = '(' + compile(node.children[0], "op_add") + ' + ' + compile(node.children[1], "op_add") + ')';
                             } else {
                                 prioParent = prio(node);
@@ -2044,7 +2047,7 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
                         case 'op_sub':
                             if (js) {
                                 ret = '$jc$.sub(' + compile(node.children[0], "op_sub") + ', ' + compile(node.children[1], "op_sub") + ')';
-                            } else if (!jcMinParens) {
+                            } else if (!format.minParentheses) {
                                 ret = '(' + compile(node.children[0], "op_sub") + ' - ' + compile(node.children[1], "op_sub") + ')';
                             } else {
                                 prioParent = prio(node);
@@ -2063,7 +2066,7 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
                         case 'op_div':
                             if (js) {
                                 ret = '$jc$.div(' + compile(node.children[0], "op_div") + ', ' + compile(node.children[1], "op_div") + ')';
-                            } else if (!jcMinParens) {
+                            } else if (!format.minParentheses) {
                                 ret = '(' + compile(node.children[0], "op_div") + ' / ' + compile(node.children[1], "op_div") + ')';
                             } else {
                                 prioParent = prio(node);
@@ -2082,7 +2085,7 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
                         case 'op_mod':
                             if (js) {
                                 ret = '$jc$.mod(' + compile(node.children[0], "op_mod") + ', ' + compile(node.children[1], "op_mod") + ', true)';
-                            } else if (!jcMinParens) {
+                            } else if (!format.minParentheses) {
                                 ret = '(' + compile(node.children[0], "op_mod") + ' % ' + compile(node.children[1], "op_mod") + ')';
                             } else {
                                 prioParent = prio(node);
@@ -2101,7 +2104,7 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
                         case 'op_mul':
                             if (js) {
                                 ret = '$jc$.mul(' + compile(node.children[0], "op_mul") + ', ' + compile(node.children[1], "op_mul") + ')';
-                            } else if (!jcMinParens) {
+                            } else if (!format.minParentheses) {
                                 ret = '(' + compile(node.children[0], "op_mul") + ' * ' + compile(node.children[1], "op_mul") + ')';
                             } else {
                                 prioParent = prio(node);
@@ -2120,7 +2123,7 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
                         case 'op_exp':
                             if (js) {
                                 ret = '$jc$.pow(' + compile(node.children[0], "op_exp") + ', ' + compile(node.children[1], "op_exp") + ')';
-                            } else if (!jcMinParens) {
+                            } else if (!format.minParentheses) {
                                 ret = '(' + compile(node.children[0], "op_exp") + '^' + compile(node.children[1], "op_exp") + ')';
                             } else {
                                 prioParent = prio(node);
@@ -2139,7 +2142,7 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
                         case 'op_neg':
                             if (js) {
                                 ret = '$jc$.neg(' + compile(node.children[0], "op_neg") + ')';
-                            } else if (!jcMinParens) {
+                            } else if (!format.minParentheses) {
                                 ret = '(-' + compile(node.children[0], "op_neg") + ')';
                             } else {
                                 prioParent = prio(node);
@@ -2166,23 +2169,24 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
                 case 'node_const':
                     if (js) {
                         ret = node.value;
-                    } else {
-                        c = node.value;
-                        if (constToFixed !== false && Type.isNumber(c) && (prevOp !== "op_exp" || Math.round(c) - c !== 0)) {
-                            c = parseFloat(c);
-                            if (Type.isNumber(constToFixed)) {
-                                c = Type.toFixed(c, constToFixed);
-                            } else if (Type.isFunction(constToFixed)) {
-                                c = constToFixed(c);
-                            } else {
-                                c = node.value;
-                            }
-                        }
-                        if (jcMinParens && parseFloat(c) < 0 && prevOp !== "op_execfun" && position !== 0) {
-                            ret = "(" + c + ")";
+                        break;
+                    }
+
+                    c = node.value;
+                    if (format.constToFixed !== false && Type.isNumber(c) && (prevOp !== "op_exp" || Math.round(c) - c !== 0)) {
+                        c = parseFloat(c);
+                        if (Type.isNumber(format.constToFixed)) {
+                            c = Type.toFixed(c, format.constToFixed);
+                        } else if (Type.isFunction(format.constToFixed)) {
+                            c = format.constToFixed(c);
                         } else {
-                            ret = c;
+                            c = node.value;
                         }
+                    }
+                    if (format.minParentheses && parseFloat(c) < 0 && prevOp !== "op_execfun" && position !== 0) {
+                        ret = "(" + c + ")";
+                    } else {
+                        ret = c;
                     }
                     break;
 
