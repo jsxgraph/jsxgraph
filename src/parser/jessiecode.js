@@ -836,12 +836,8 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
         }
 
         try {
-            if (!Type.exists(options.geonext)) {
-                options.geonext = false;
-            }
-
             for (i = 0; i < ccode.length; i++) {
-                if (options.geonext) {
+                if (!!options.geonext) {
                     ccode[i] = JXG.GeonextParser.geonext2JS(ccode[i], this.board);
                 }
                 cleaned.push(ccode[i]);
@@ -954,21 +950,12 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
      * This consists of generating an AST with parser.parse,
      * and compile the AST back to JessieCode with options.
      *
-     * @param {String} code             JessieCode code to be parsed
-     * @param {Object} options          <ul>
-     *     <li>{Boolean} [minParentheses=false]              Use minimal number of parentheses.</li>
-     *     <li>{Number|Function} [constToFixed=false]   Format constant numbers with fixed amount of digits.</li>
-     *     </ul>
-     * @return {String}                 Manipulated JessieCode string. This is no necessarily a parsable JessieCode code!
+     * @param {String} code      JessieCode code to be parsed.
+     * @param {Object} options   For possible options see param "format" in {@link JXG.JessieCode#compile}.
+     * @return {String}          Manipulated JessieCode string. This is no necessarily a parsable JessieCode code!
      */
     format: function (code, options) {
-        var opt = {};
-
-        // For security. Remove the following lines to allow every options object.
-        opt.minParentheses = options.minParentheses;
-        opt.constToFixed = options.constToFixed;
-
-        return this._genericParse(code, 'format', opt);
+        return this._genericParse(code, 'format', options);
     },
 
     /**
@@ -1739,8 +1726,9 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
      * @param {Object} ast
      * @param {Boolean} [js=false] Compile either to JavaScript or back to JessieCode (required for the UI).
      * @param {Object} [format] Options for formatting the output. Depending on some options, the function might return a not re-parsable string. This format options have only effect on JessieCode output.<ul>
-     *     <li>{Boolean} [minParentheses=false]                  Use minimal amount of parentheses?</li>
+     *     <li>{Boolean} [minParentheses=false]               Use minimal amount of parentheses?</li>
      *     <li>{Boolean|Number|Function} [constToFixed=false] Use this number or function to format constant values.</li>
+     *     <li>{Boolean} [printable=false]                    Adds additional signs or parentheses, e.g. x^0.5 --> x^{0.5}.</li>
      *     </ul>
      * @returns Something
      * @private
@@ -1756,7 +1744,8 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
         }
         format = Type.deepCopy({
             minParentheses: false,
-            constToFixed: false
+            constToFixed: false,
+            printable: false
         }, format);
 
         // node_const/node_var >> op_execfun >> op_neg >> op_exp >> op_mul/op_div >> op_add/op_sub >> op_map >> op_assign
@@ -2122,19 +2111,19 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
                             break;
                         case 'op_exp':
                             if (js) {
-                                ret = '$jc$.pow(' + compile(node.children[0], "op_exp") + ', ' + compile(node.children[1], "op_exp") + ')';
+                                ret = '$jc$.pow(' + compile(node.children[0], "op_exp", 0) + ', ' + compile(node.children[1], "op_exp", 1) + ')';
                             } else if (!format.minParentheses) {
-                                ret = '(' + compile(node.children[0], "op_exp") + '^' + compile(node.children[1], "op_exp") + ')';
+                                ret = '(' + compile(node.children[0], "op_exp", 0) + '^' + compile(node.children[1], "op_exp", 1) + ')';
                             } else {
                                 prioParent = prio(node);
 
-                                e = compile(node.children[0], "op_exp");
+                                e = compile(node.children[0], "op_exp", 0);
                                 prioChild = prio(node.children[0]);
                                 ret = prioParent >= prioChild ? "(" + e + ")" : e;
 
                                 ret += '^';
 
-                                e = compile(node.children[1], "op_exp");
+                                e = compile(node.children[1], "op_exp", 1);
                                 prioChild = prio(node.children[1]);
                                 ret += prioParent > prioChild ? "(" + e + ")" : e;
                             }
@@ -2173,7 +2162,11 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
                     }
 
                     c = node.value;
-                    if (format.constToFixed !== false && Type.isNumber(c) && (prevOp !== "op_exp" || Math.round(c) - c !== 0)) {
+                    if (
+                        format.constToFixed !== false &&
+                        Type.isNumber(c) &&
+                        !(prevOp === "op_exp" && position === 1) // exponents will not be formatted
+                    ) {
                         c = parseFloat(c);
                         if (Type.isNumber(format.constToFixed)) {
                             c = Type.toFixed(c, format.constToFixed);
@@ -2205,6 +2198,14 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
                 } else {
                     ret = '<< ' + ret + ' >>\n';
                 }
+            }
+
+            if (format.printable && prevOp === "op_exp" && position === 1) {
+                ret = '{' + ret + '}';
+            }
+
+            if (format.printable && Type.isString(ret)) {
+                ret = ret.replaceAll('\n', '');
             }
 
             return ret;
