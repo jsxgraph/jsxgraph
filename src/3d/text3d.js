@@ -146,13 +146,14 @@ JXG.Text3D = function (view, F, text, slide, attributes) {
     this.position = [];
 
     this._c2d = null;
-
-    this.methodMap = Type.deepCopy(this.methodMap, {
-        // TODO
-    });
 };
+
 JXG.Text3D.prototype = new JXG.GeometryElement();
+
 Type.copyPrototypeMethods(JXG.Text3D, JXG.GeometryElement3D, 'constructor3D');
+Type.copyMethodMap(JXG.Text3D, {
+    // TODO
+});
 
 JXG.extend(
     JXG.Text3D.prototype,

@@ -100,13 +100,14 @@ JXG.Face3D = function (view, polyhedron, faceNumber, attributes) {
     if (this.faceNumber === 0) {
         this.updateCoords();
     }
-
-    this.methodMap = Type.deepCopy(this.methodMap, {
-        // TODO
-    });
 };
+
 JXG.Face3D.prototype = new JXG.GeometryElement();
+
 Type.copyPrototypeMethods(JXG.Face3D, JXG.GeometryElement3D, 'constructor3D');
+Type.copyMethodMap(JXG.Face3D, {
+    // TODO
+});
 
 JXG.extend(
     JXG.Face3D.prototype,
@@ -206,6 +207,20 @@ JXG.extend(
         addTransform: function (el, transform) {
             if (this.faceNumber === 0) {
                 this.addTransformGeneric(el, transform);
+            }
+            return this;
+        },
+
+        removeTransform: function (transform) {
+            if (this.faceNumber === 0) {
+                this.removeTransformGeneric(transform);
+            }
+            return this;
+        },
+
+        clearTransforms: function () {
+            if (this.faceNumber === 0) {
+                this.clearTransformsGeneric();
             }
             return this;
         },

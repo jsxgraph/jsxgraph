@@ -134,15 +134,18 @@ JXG.Polyhedron3D = function (view, polyhedron, faces, attributes) {
     for (e = 0; e < genericMethods.length; e++) {
         this[genericMethods[e]] = generateMethod(genericMethods[e]);
     }
-
-    this.methodMap = Type.deepCopy(this.methodMap, {
-        setAttribute: "setAttribute",
-        setParents: "setParents",
-        addTransform: "addTransform"
-    });
 };
+
 JXG.Polyhedron3D.prototype = new JXG.GeometryElement();
+
 Type.copyPrototypeMethods(JXG.Polyhedron3D, JXG.GeometryElement3D, 'constructor3D');
+Type.copyMethodMap(JXG.Polyhedron3D, {
+    setAttribute: "setAttribute",
+    setParents: "setParents",
+    addTransform: "addTransform",
+    removeTransform: "removeTransform",
+    clearTransforms: "clearTransforms"
+});
 
 JXG.extend(
     JXG.Polyhedron3D.prototype,
@@ -154,6 +157,26 @@ JXG.extend(
                 this.faces[0].addTransform(el.faces[0], transform);
             } else {
                 throw new Error("Adding transformation failed. At least one of the two polyhedra has no faces.");
+            }
+            return this;
+        },
+
+        // Already documented in element3d.js
+        removeTransform: function (transform) {
+            if (this.faces.length > 0) {
+                this.faces[0].removeTransform(transform);
+            } else {
+                throw new Error("Removing transformation failed. The polyhedron has no faces.");
+            }
+            return this;
+        },
+
+        // Already documented in element3d.js
+        clearTransforms: function () {
+            if (this.faces.length > 0) {
+                this.faces[0].clearTransforms();
+            } else {
+                throw new Error("Removing transformation failed. The polyhedron has no faces.");
             }
             return this;
         },

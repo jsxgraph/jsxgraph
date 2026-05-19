@@ -345,13 +345,6 @@ JXG.createSector = function (board, parents, attributes) {
             el.direction2 = parents[3] >= 0 ? 1 : -1;
         }
 
-        el.methodMap = JXG.deepCopy(el.methodMap, {
-            arc: "arc",
-            center: "center",
-            line1: "line1",
-            line2: "line2"
-        });
-
         /**
          * @class
          * @ignore
@@ -452,6 +445,13 @@ JXG.createSector = function (board, parents, attributes) {
         // ], attr);
         // el.addChild(el.arc);
 
+        Type.extendInstanceMethodMap(el, {
+            arc: "arc",
+            center: "center",
+            line1: "line1",
+            line2: "line2"
+        });
+
         // end '2lines'
     } else if (type === '3points') {
         /**
@@ -502,13 +502,6 @@ JXG.createSector = function (board, parents, attributes) {
             el.point4 = points[3];
             el.point4.addChild(el);
         }
-
-        el.methodMap = JXG.deepCopy(el.methodMap, {
-            arc: "arc",
-            center: "center",
-            radiuspoint: "radiuspoint",
-            anglepoint: "anglepoint"
-        });
 
         /**
          * @class
@@ -589,6 +582,14 @@ JXG.createSector = function (board, parents, attributes) {
         el.Radius = function () {
             return this.point2.Dist(this.point1);
         };
+
+        Type.extendInstanceMethodMap(el, {
+            arc: "arc",
+            center: "center",
+            radiuspoint: "radiuspoint",
+            anglepoint: "anglepoint"
+        });
+
     } // end '3points'
 
     el.center = el.point1;
@@ -942,7 +943,7 @@ JXG.createSector = function (board, parents, attributes) {
         };
     }
 
-    el.methodMap = JXG.deepCopy(el.methodMap, {
+    Type.extendInstanceMethodMap(el, {
         radius: "Radius",
         Radius: "Radius",
         getRadius: "Radius",
@@ -1902,7 +1903,7 @@ JXG.createAngle = function (board, parents, attributes) {
         }
     };
 
-    el.methodMap = Type.deepCopy(el.methodMap, {
+    Type.extendInstanceMethodMap(el, {
         setAngle: "setAngle",
         Value: "Value",
         free: "free"

@@ -117,13 +117,13 @@ JXG.Line3D = function (view, point, direction, range, attributes) {
     this.point2 = null;
 
     this.board.finalizeAdding(this);
-
-    this.methodMap = Type.deepCopy(this.methodMap, {
-        // TODO
-    });
 };
 JXG.Line3D.prototype = new JXG.GeometryElement();
+
 Type.copyPrototypeMethods(JXG.Line3D, JXG.GeometryElement3D, 'constructor3D');
+Type.copyMethodMap(JXG.Line3D, {
+    // TODO
+});
 
 JXG.extend(
     JXG.Line3D.prototype,
@@ -199,6 +199,20 @@ JXG.extend(
         addTransform: function (el, transform) {
             this.point.addTransform(el.point, transform);
             this.addTransformGeneric(el, transform);
+
+            return this;
+        },
+
+        removeTransform: function (transform) {
+            this.point.removeTransform(transform);
+            this.removeTransformGeneric(transform);
+
+            return this;
+        },
+
+        clearTransforms: function () {
+            this.point.clearTransformsGeneric();
+            this.clearTransformsGeneric();
 
             return this;
         },
@@ -285,12 +299,22 @@ JXG.extend(
             return c3d;
         },
 
-        // projectScreenCoords: function (pScr) {
-        //     var end0 = this.getPointCoords(0),
-        //         end1 = this.getPointCoords(1);
+        // Already documented in element3d.js
+        projectScreenCoords: function (pScr) {
+            var r = this.range,
+                f = 100000,
+                end0, end1;
 
-        //     return this.view.projectScreenToSegment(pScr, end0, end1);
-        // },
+            r[0] = (r[0] ===  Infinity) ?  f : r[0];
+            r[0] = (r[0] === -Infinity) ? -f : r[0];
+            r[1] = (r[1] ===  Infinity) ?  f : r[1];
+            r[1] = (r[1] === -Infinity) ? -f : r[1];
+
+            end0 = this.getPointCoords(r[0]);
+            end1 = this.getPointCoords(r[1]);
+
+            return this.view.projectScreenToSegment(pScr, end0, end1);
+        },
 
         /**
          * Update the z-index of the line, i.e. the z-index of its midpoint.
@@ -895,20 +919,21 @@ JXG.Plane3D = function (view, point, dir1, range_u, dir2, range_v, attributes) {
 
     this.updateCoords();
     this.updateNormal();
-
-    this.methodMap = Type.deepCopy(this.methodMap, {
-        // TODO
-    });
 };
+
 JXG.Plane3D.prototype = new JXG.GeometryElement();
+
 Type.copyPrototypeMethods(JXG.Plane3D, JXG.GeometryElement3D, 'constructor3D');
+Type.copyMethodMap(JXG.Plane3D, {
+    // TODO
+});
 
 JXG.extend(
     JXG.Plane3D.prototype,
     /** @lends JXG.Plane3D.prototype */ {
 
         /**
-         * Get coordinate array [x, y, z] of a point on the plane for parameters (u, v).
+         * Get coordinate array [1, x, y, z] of a point on the plane for parameters (u, v).
          *
          * @name Plane3D#F
          * @function
@@ -921,14 +946,15 @@ JXG.extend(
 
             v1 = this.vec1.slice();
             v2 = this.vec2.slice();
-            l1 = Mat.norm(v1, 3);
-            l2 = Mat.norm(v2, 3);
-            for (i = 0; i < 3; i++) {
+            l1 = Mat.norm(v1, 4);
+            l2 = Mat.norm(v2, 4);
+            for (i = 1; i < 4; i++) {
                 v1[i] /= l1;
                 v2[i] /= l2;
             }
 
             return [
+                1,
                 this.point.X() + u * v1[0] + v * v2[0],
                 this.point.Y() + u * v1[1] + v * v2[1],
                 this.point.Z() + u * v1[2] + v * v2[2]
@@ -945,7 +971,7 @@ JXG.extend(
          * @returns Number
          */
         X: function(u, v) {
-            return this.F(u, v)[0];
+            return this.F(u, v)[1];
         },
 
         /**
@@ -958,7 +984,7 @@ JXG.extend(
          * @returns Number
          */
         Y: function(u, v) {
-            return this.F(u, v)[1];
+            return this.F(u, v)[2];
         },
 
         /**
@@ -971,7 +997,7 @@ JXG.extend(
          * @returns Number
          */
         Z: function(u, v) {
-            return this.F(u, v)[2];
+            return this.F(u, v)[3];
         },
 
         /**
@@ -1241,6 +1267,20 @@ JXG.extend(
             return this;
         },
 
+        removeTransform: function (transform) {
+            this.removeTransformGeneric(transform);
+            this.point.removeTransform(transform);
+
+            return this;
+        },
+
+        clearTransforms: function () {
+            this.clearTransformsGeneric();
+            this.point.clearTransformsGeneric();
+
+            return this;
+        },
+
         // Already documented in element3d.js
         updateTransform: function () {
             var c1, c2, i;
@@ -1283,6 +1323,17 @@ JXG.extend(
 
             return this;
         },
+
+        // Already documented in element3d.js
+        // projectScreenCoords: function (pScr, params, cyclic) {
+        //     if (params.length === 0) {
+        //         params.unshift(
+        //             0.5 * (this.range_u[0] + this.range_u[1]),
+        //             0.5 * (this.range_v[0] + this.range_v[1])
+        //         );
+        //     }
+        //     return Geometry.projectScreenCoordsToParametric(pScr, this, params, cyclic);
+        // },
 
         // Already documented in element3d.js
         projectCoords: function (p, params) {

@@ -972,7 +972,18 @@ JXG.extend(Options, {
         highlightStrokeColor: "#555555",
         gradientFX: 0.7,
         gradientFY: 0.3,
-        needsRegularUpdate: true
+        needsRegularUpdate: true,
+
+        /**
+         * If the point is bound to another  element ("glides" on that element)
+         * and if the bound reaches the boundary, the point may start cyclically
+         * at the ozher side of the boundary - like one expects from a glider on a sphere.
+         * For this, set cyclic to true.
+         * @type Boolean
+         * @name Point3D#cyclic
+         * @default false
+         */
+        cyclic: false
     },
 
     polygon3d: {

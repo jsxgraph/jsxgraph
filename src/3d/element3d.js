@@ -30,6 +30,7 @@
 
 import JXG from "../jxg.js";
 import Type from "../utils/type.js";
+import Geometry from '../math/geometry.js';
 
 /**
  * Constructs a new GeometryElement3D object.
@@ -212,6 +213,29 @@ JXG.extend(JXG.GeometryElement3D.prototype, {
         return this;
     },
 
+    removeTransformGeneric: function (transform) {
+        var i,
+            list = Type.isArray(transform) ? transform : [transform],
+            len = list.length;
+
+        for (i = 0; i < len; i++) {
+            Type.removeElementFromArray(this.transformations, list[i]);
+        }
+
+        if (this.transformations.length === 0) {
+            this.baseElement = null;
+        }
+
+        return this;
+    },
+
+    clearTransforms: function () {
+        this.transformations = [];
+        this.baseElement = null;
+
+        return this;
+    },
+
     /**
      * Set position of the 2D element. This is a
      * callback function, executed in {@link JXG.GeometryElement#setPosition}.
@@ -224,15 +248,27 @@ JXG.extend(JXG.GeometryElement3D.prototype, {
     },
 
     /**
-     * Project a 3D point to this element and update point.position.
-     * @param {Array} p 3D position of the point (array of length 3)
-     * @param {Array} params Changed in place to the new of the point in terms of the elements functions X, Y, Z.
-     * For example for a surface, params will contain values (u,v) such that the new 3D position
+     * Project a 3D point to this element and update point.position. This function computes the
+     * preimage (u,v) of a 3D position (1, X, Y, Z)
+     * @param {Array} p 3D position of the point (array of length 4, homogeneous coordinates)
+     * @param {Array} params Changed in place to the new parameters of the point in terms of the elements functions X, Y, Z.
+     * For example for a surface, params will contain values (u,v) such that the new 3D position is
      * p = [X(u, v), Z(u, v), Z(u, v)].
      * @returns {Array} 3D coordinates of the projected point with homogeneous coordinates of the form [1, x, y, z].
      */
     projectCoords: function(p, params) {
         /* stub */
+    },
+
+    /**
+     *
+     * @param {*} pScr
+     * @param {*} params
+     * @returns
+     */
+    // TODO check if Geometry.projectScreenCoordsToParametric has range or (range_u and range_v) - depending on the dimension given in params
+    projectScreenCoords: function (pScr, params, cyclic) {
+        return Geometry.projectScreenCoordsToParametric(pScr, this, params, cyclic);
     },
 
     // Documented in element.js

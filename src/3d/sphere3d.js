@@ -134,15 +134,16 @@ JXG.Sphere3D = function (view, method, par1, par2, attributes) {
             this.point2.addChild(this);
         }
     }
-
-    this.methodMap = Type.deepCopy(this.methodMap, {
-        center: "center",
-        point2: "point2",
-        Radius: "Radius"
-    });
 };
+
 JXG.Sphere3D.prototype = new JXG.GeometryElement();
+
 Type.copyPrototypeMethods(JXG.Sphere3D, JXG.GeometryElement3D, 'constructor3D');
+Type.copyMethodMap(JXG.Sphere3D, {
+    center: "center",
+    point2: "point2",
+    Radius: "Radius"
+});
 
 JXG.extend(
     JXG.Sphere3D.prototype,
@@ -387,14 +388,14 @@ JXG.extend(
             return v;
         }
 
-        // projectScreenCoords: function (pScr, params) {
+        // projectScreenCoords: function (pScr, params, cyclic) {
         //     if (params.length === 0) {
         //         params.unshift(
         //             0.5 * (this.range_u[0] + this.range_u[1]),
         //             0.5 * (this.range_v[0] + this.range_v[1])
         //         );
         //     }
-        //     return Geometry.projectScreenCoordsToParametric(pScr, this, params);
+        //     return Geometry.projectScreenCoordsToParametric(pScr, this, params, cyclic);
         // }
     }
 );

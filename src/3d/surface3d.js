@@ -144,13 +144,14 @@ JXG.Surface3D = function (view, F, X, Y, Z, range_u, range_v, attributes) {
     this.dataY = null;
     this.dataZ = null;
     this.points = [];
-
-    this.methodMap = Type.deepCopy(this.methodMap, {
-        // TODO
-    });
 };
+
 JXG.Surface3D.prototype = new JXG.GeometryElement();
+
 Type.copyPrototypeMethods(JXG.Surface3D, JXG.GeometryElement3D, 'constructor3D');
+Type.copyMethodMap(JXG.Surface3D, {
+    // TODO
+});
 
 JXG.extend(
     JXG.Surface3D.prototype,
@@ -343,6 +344,16 @@ JXG.extend(
             return this;
         },
 
+        removeTransform: function (transform) {
+            this.removeTransformGeneric(transform);
+            return this;
+        },
+
+        clearTransforms: function () {
+            this.clearTransformsGeneric();
+            return this;
+        },
+
         updateTransform: function () {
             var t, c, i, j, k,
                 len_u, len_v;
@@ -409,6 +420,12 @@ JXG.extend(
         projectCoords: function (p, params) {
             return Geometry.projectCoordsToParametric(p, this, 2, params);
         }
+
+        // Use method from element3d.js
+        // projectScreenCoords: function (pScr, params, cyclic) {
+        //     // this.initParamsIfNeeded(params);
+        //     return Geometry.projectScreenCoordsToParametric(pScr, this, params, cyclic);
+        // }
     }
 );
 
