@@ -5097,8 +5097,8 @@ JXG.Options = {
          */
         axes: {
             ticks: {
-                majorHeight: Options.ticks.majorHeight,
-                minorHeight: Options.ticks.minorHeight
+                majorHeight: 10, // from Options.ticks.majorHeight
+                minorHeight: 4 // from Options.ticks.minorHeight
             }
         },
 
