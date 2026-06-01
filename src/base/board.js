@@ -1652,6 +1652,7 @@ JXG.extend(
          */
         twoFingerTouchObject: function (tar, drag, id) {
             var t, T,
+                transformations,
                 ar, i, len,
                 combine,
                 snap = false;
@@ -1670,9 +1671,33 @@ JXG.extend(
                 T = this.getTwoFingerTransform(
                     tar[0], tar[1],
                     drag.evalVisProp('scalable'),
-                    drag.evalVisProp('rotatable'));
-                t = this.create('transform', T, { type: 'generic' });
-                t.update();
+                    drag.evalVisProp('rotatable'),
+                    combine);
+
+                if (combine) {
+                    t = this.create('transform', T, { type: 'generic' });
+                    t.update();
+                    transformations = [t];
+
+                } else {
+                    transformations = [];
+
+                    if (Type.exists(T.translate)) {
+                        t = this.create('transform', T.translate, {type: 'translate'});
+                        t.update();
+                        transformations.push(t);
+                    }
+                    if (Type.exists(T.rotate)) {
+                        t = this.create('transform', T.rotate, {type: 'rotate'});
+                        t.update();
+                        transformations.push(t);
+                    }
+                    if (Type.exists(T.scale)) {
+                        t = this.create('transform', T.scale, {type: 'scale'});
+                        t.update();
+                        transformations.push(t);
+                    }
+                }
 
                 if (drag.elementClass === Const.OBJECT_CLASS_LINE) {
                     ar = [];
@@ -1682,7 +1707,9 @@ JXG.extend(
                     if (drag.point2.draggable()) {
                         ar.push(drag.point2);
                     }
-                    t.applyOnce(ar);
+                    for (i = 0; i < transformations.length; i++) {
+                        transformations[i].applyOnce(ar);
+                    }
                 } else if (drag.type === Const.OBJECT_TYPE_POLYGON) {
                     len = drag.vertices.length - 1;
                     snap = drag.evalVisProp('snaptogrid') || drag.evalVisProp('snaptopoints');
@@ -1697,10 +1724,14 @@ JXG.extend(
                                 ar.push(drag.vertices[i]);
                             }
                         }
-                        t.applyOnce(ar);
+                        for (i = 0; i < transformations.length; i++) {
+                            transformations[i].applyOnce(ar);
+                        }
                     }
                 } else if (drag.elementClass === Const.OBJECT_CLASS_CURVE) {
-                    t.bindTo(drag);
+                    for (i = 0; i < transformations.length; i++) {
+                        transformations[i].meltTo(drag);
+                    }
                 }
 
                 this.update();
