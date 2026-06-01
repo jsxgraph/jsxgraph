@@ -94,7 +94,7 @@ import Type from "../utils/type.js";
  * ( 0  b  1)   ( y )
  * </pre>
  *
- * <p>Generic affine transformation (4 parameters):
+ * <p>Affine transformation (4 parameters):
  * <pre>
  * ( 1  0  0 )   ( z )
  * ( 0  a  b ) * ( x )
@@ -441,8 +441,7 @@ JXG.extend(
                     throw new Error("JSXGraph: affine transformation needs 4 parameters.");
                 }
 
-                this.evalParam = Type.createEvalFunction(board, params, 9);
-
+                this.evalParam = Type.createEvalFunction(board, params, 4);
                 this.update = function () {
                     this.matrix[1][1] = this.evalParam(0);
                     this.matrix[1][2] = this.evalParam(1);
@@ -1097,7 +1096,7 @@ JXG.extend(
  *      <li> <b>p_x, p_y, q_x, q_y</b> four numbers or functions  determining a line through points (p_x, p_y) and (q_x, q_y).
  *    </ul>
  * </dd>
- * <dt><b><tt>type:"affine"</tt></b></dt><dd><b>a, b, c, d</b> (numbers or functions>.
+ * <dt><b><tt>type:"affine"</tt></b></dt><dd><b>a, b, c, d</b> (numbers or functions).
  * The transformation matrix has the form
  * <pre>
  * ( 1  0  0 )   ( z )
