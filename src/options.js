@@ -2276,6 +2276,21 @@ JXG.Options = {
         scalable: true,
 
         /**
+         * Determines whether two-finger manipulation of this object may result in one transformation
+         * or separate transformations for translate, rotate and scale.
+         *
+         * For better performance we highly recommend to use "true".
+         *
+         * @type Boolean
+         * @default true
+         * @name JXG.GeometryElement#combineTwoFingerTransform
+         * @see JXG.GeometryElement#fixed
+         * @see JXG.GeometryElement#scalable
+         * @see JXG.GeometryElement#rotatable
+         */
+        combineTwoFingerTransform: true,
+
+        /**
          * If enabled:true the (stroke) element will get a customized shadow.
          * <p>
          * Customize <i>color</i> and <i>opacity</i>:

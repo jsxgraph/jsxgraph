@@ -1653,6 +1653,7 @@ JXG.extend(
         twoFingerTouchObject: function (tar, drag, id) {
             var t, T,
                 ar, i, len,
+                combine,
                 snap = false;
 
             if (
@@ -1660,6 +1661,11 @@ JXG.extend(
                 Type.exists(tar[1]) &&
                 !isNaN(tar[0].Xprev + tar[0].Yprev + tar[1].Xprev + tar[1].Yprev)
             ) {
+
+                combine = drag.evalVisProp('combineTwoFingerTransform');
+                if (!Type.exists(combine)) {
+                    combine = true;
+                }
 
                 T = this.getTwoFingerTransform(
                     tar[0], tar[1],
