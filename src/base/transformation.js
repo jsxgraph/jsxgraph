@@ -931,7 +931,10 @@ JXG.extend(
                 }
             } else {
                 elt = el.transformations;
-                if (elt.length > 0 &&
+
+                if (elt.length === 0) { // first transformation cannot be melted
+                    this.bindTo(el);
+                } else if (elt.length > 0 &&
                     elt[elt.length - 1].isNumericMatrix &&
                     this.isNumericMatrix
                 ) {
