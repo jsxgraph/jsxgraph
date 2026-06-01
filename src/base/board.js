@@ -1675,7 +1675,12 @@ JXG.extend(
                     combine);
 
                 if (combine) {
-                    t = this.create('transform', T, { type: 'generic' });
+                    t = this.create('transform', [
+                        T[3], // tx
+                        T[6], // ty
+                        T[4], // C
+                        T[7] // S
+                    ], {type: 'twofingermove'});
                     t.update();
                     transformations = [t];
 

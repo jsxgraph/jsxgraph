@@ -56,6 +56,7 @@ import Type from "../utils/type.js";
  * <li> 'shear'
  * <li> 'affine'
  * <li> 'affinematrix'
+ * <li> 'twofingermove'
  * <li> 'generic'
  * <li> 'matrix'
  * </ul>
@@ -105,6 +106,13 @@ import Type from "../utils/type.js";
  * ( 1  0  0 )   ( z )
  * ( 0  M    ) * ( x )
  * ( 0       )   ( y )
+ * </pre>
+ *
+ * <p>A 'twofingermove' transformation (4 parameters):
+ * <pre>
+ * ( 1  0  0 )   ( z )
+ * ( a  c -d ) * ( x )
+ * ( b  d  c )   ( y )
  * </pre>
  *
  * <p>Generic transformation (9 parameters):
@@ -186,6 +194,7 @@ JXG.extend(
          *                        'shear',
          *                        'affine',
          *                        'affinematrix',
+         *                        'twofingermove',
          *                        'generic',
          *                        'matrix'.
          * @param {Array} params Parameters for the various transformation types.
@@ -244,6 +253,13 @@ JXG.extend(
          * ( 0       )   ( y )
          * </pre>
          *
+         * <p>A 'twofingermove' transformation (4 parameters):
+         * <pre>
+         * ( 1  0  0 )   ( z )
+         * ( a  c -d ) * ( x )
+         * ( b  d  c )   ( y )
+         * </pre>
+         *
          * <p>Generic transformation (9 parameters):
          * <pre>
          * ( a  b  c )   ( z )
@@ -270,6 +286,7 @@ JXG.extend(
                 'shear',
                 'affine',
                 'affinematrix',
+                'twofingermove',
                 'generic',
                 'matrix'
             ].includes(type)) {
@@ -445,6 +462,20 @@ JXG.extend(
                             this.matrix[i + 1][j + 1] = Type.evaluate(this.evalParam[i][j]);
                         }
                     }
+                };
+            } else if (type === 'twofingermove') {
+                if (params.length !== 4) {
+                    throw new Error("JSXGraph: 'twofingermove' transformation needs 4 parameters.");
+                }
+
+                this.evalParam = Type.createEvalFunction(board, params, 4);
+                this.update = function () {
+                    this.matrix[1][0] = this.evalParam(0);
+                    this.matrix[2][0] = this.evalParam(1);
+                    this.matrix[1][1] = this.evalParam(2);
+                    this.matrix[2][2] = this.evalParam(2);
+                    this.matrix[2][1] = this.evalParam(3);
+                    this.matrix[1][2] = -1 * this.evalParam(3);
                 };
             } else if (type === 'generic') {
                 if (params.length !== 9) {
@@ -1080,6 +1111,14 @@ JXG.extend(
  * ( 1  0  0 )   ( z )
  * ( 0  M    ) * ( x )
  * ( 0       )   ( y )
+ * </pre>
+ * </dd>
+ * <dt><b><tt>type:"twofingermove"</tt></b></dt><dd><b>a, b, c, d</b> (numbers or functions).
+ * The transformation matrix has the form
+ * <pre>
+ * ( 1  0  0 )   ( z )
+ * ( a  c -d ) * ( x )
+ * ( b  d  c )   ( y )
  * </pre>
  * </dd>
  * <dt><b><tt>type:"generic"</tt></b></dt><dd><b>a, b, c, d, e, f, g, h, i</b> Nine matrix entries (numbers or functions)
