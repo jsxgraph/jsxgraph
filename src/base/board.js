@@ -1680,7 +1680,7 @@ JXG.extend(
                         T[6], // ty
                         T[4], // C
                         T[7] // S
-                    ], {type: 'twofingermove'});
+                    ], {type: 'twofinger'});
                     t.update();
                     transformations = [t];
 

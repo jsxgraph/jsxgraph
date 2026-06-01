@@ -56,7 +56,7 @@ import Type from "../utils/type.js";
  * <li> 'shear'
  * <li> 'affine'
  * <li> 'affinematrix'
- * <li> 'twofingermove'
+ * <li> 'twofinger'
  * <li> 'generic'
  * <li> 'matrix'
  * </ul>
@@ -108,7 +108,7 @@ import Type from "../utils/type.js";
  * ( 0       )   ( y )
  * </pre>
  *
- * <p>A 'twofingermove' transformation (4 parameters):
+ * <p>A 'twofinger' transformation (4 parameters):
  * <pre>
  * ( 1  0  0 )   ( z )
  * ( a  c -d ) * ( x )
@@ -194,7 +194,7 @@ JXG.extend(
          *                        'shear',
          *                        'affine',
          *                        'affinematrix',
-         *                        'twofingermove',
+         *                        'twofinger',
          *                        'generic',
          *                        'matrix'.
          * @param {Array} params Parameters for the various transformation types.
@@ -253,7 +253,7 @@ JXG.extend(
          * ( 0       )   ( y )
          * </pre>
          *
-         * <p>A 'twofingermove' transformation (4 parameters):
+         * <p>A 'twofinger' transformation (4 parameters):
          * <pre>
          * ( 1  0  0 )   ( z )
          * ( a  c -d ) * ( x )
@@ -286,7 +286,7 @@ JXG.extend(
                 'shear',
                 'affine',
                 'affinematrix',
-                'twofingermove',
+                'twofinger',
                 'generic',
                 'matrix'
             ].includes(type)) {
@@ -462,9 +462,9 @@ JXG.extend(
                         }
                     }
                 };
-            } else if (type === 'twofingermove') {
+            } else if (type === 'twofinger') {
                 if (params.length !== 4) {
-                    throw new Error("JSXGraph: 'twofingermove' transformation needs 4 parameters.");
+                    throw new Error("JSXGraph: 'twofinger' transformation needs 4 parameters.");
                 }
 
                 this.evalParam = Type.createEvalFunction(board, params, 4);
@@ -1115,7 +1115,7 @@ JXG.extend(
  * ( 0       )   ( y )
  * </pre>
  * </dd>
- * <dt><b><tt>type:"twofingermove"</tt></b></dt><dd><b>a, b, c, d</b> (numbers or functions).
+ * <dt><b><tt>type:"twofinger"</tt></b></dt><dd><b>a, b, c, d</b> (numbers or functions).
  * The transformation matrix has the form
  * <pre>
  * ( 1  0  0 )   ( z )
