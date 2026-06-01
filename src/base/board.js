@@ -1560,18 +1560,23 @@ JXG.extend(
          * See also https://math.stackexchange.com/questions/4010538/solve-for-2d-translation-rotation-and-scale-given-two-touch-point-movements
          *
          * @param {Object} finger1 Actual and previous position of finger 1
-         * @param {Object} finger1 Actual and previous position of finger 1
+         * @param {Object} finger2 Actual and previous position of finger 2
          * @param {Boolean} scalable Flag if element may be scaled
          * @param {Boolean} rotatable Flag if element may be rotated
+         * @param {Boolean} [combined=true] Flag if the result should be one or multiple separated matrices.
          * @returns {Array}
          */
-        getTwoFingerTransform(finger1, finger2, scalable, rotatable) {
+        getTwoFingerTransform: function (finger1, finger2, scalable, rotatable, combined) {
             var crd,
                 x1, y1, x2, y2,
                 dx, dy,
                 xx1, yy1, xx2, yy2,
                 dxx, dyy,
                 C, S, LL, tx, ty, lbda;
+
+            if (!Type.exists(combined)) {
+                combined = true;
+            }
 
             crd = new Coords(Const.COORDS_BY_SCREEN, [finger1.Xprev, finger1.Yprev], this).usrCoords;
             x1 = crd[1];
@@ -1595,20 +1600,44 @@ JXG.extend(
             LL = dx * dx + dy * dy;
             C = (dxx * dx + dyy * dy) / LL;
             S = (dyy * dx - dxx * dy) / LL;
+
+            lbda = Mat.hypot(C, S);
             if (!scalable) {
-                lbda = Mat.hypot(C, S);
                 C /= lbda;
                 S /= lbda;
+                lbda = 1;
             }
             if (!rotatable) {
                 S = 0;
             }
+
             tx = 0.5 * (xx1 + xx2 - C * (x1 + x2) + S * (y1 + y2));
             ty = 0.5 * (yy1 + yy2 - S * (x1 + x2) - C * (y1 + y2));
 
-            return [1, 0, 0,
-                tx, C, -S,
-                ty, S, C];
+            if (combined) {
+                return [1, 0, 0,
+                    tx, C, -S,
+                    ty, S, C];
+            }
+
+            return {
+                translate: (tx !== 0 || ty !== 0)
+                    ? [tx, ty]
+                    : null,
+
+                rotate: (rotatable && S !== 0)
+                    ? [Math.atan2(S, C)]
+                    : null,
+
+                scale: (scalable && lbda !== 1)
+                    ? [lbda, lbda]
+                    : null,
+
+                combined: [1, 0, 0,
+                    tx, C, -S,
+                    ty, S, C]
+                // combined = translation * rotation * scale
+            };
         },
 
         /**
