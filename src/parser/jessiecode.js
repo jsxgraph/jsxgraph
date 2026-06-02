@@ -959,20 +959,6 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
     },
 
     /**
-     * Manipulate JessieCode.
-     * This consists of generating an AST with parser.parse,
-     * and compile the AST back to JessieCode with minimal number of parentheses.
-     *
-     * @param {String} code             JessieCode code to be parsed
-     * @return {String}                 Simplified JessieCode code
-     * @deprecated
-     */
-    minParentheses: function (code) {
-        this._warn('Function \'minParentheses\' is deprecated. Please use \'format\' instead.');
-        return this._genericParse(code, 'format', {minParentheses: true});
-    },
-
-    /**
      * Get abstract syntax tree (AST) from JessieCode code.
      * This consists of generating an AST with parser.parse.
      *
@@ -1789,8 +1775,8 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
         }
 
         function compile(node, prevOp, position = -1) {
-            var e, i, list, scope, prioParent, prioChild,
-                ret = '', c;
+            var e, i, c, list, scope, prioParent, prioChild,
+                ret = '';
 
             if (!node) {
                 return ret;
