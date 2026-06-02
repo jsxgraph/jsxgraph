@@ -615,6 +615,7 @@ JXG.extend(
                 'matrix'
             ].includes(type)) {
                 this.elType = type;
+                this.transformationType = type;
             } else {
                 return;
             }
