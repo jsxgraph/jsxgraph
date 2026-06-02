@@ -836,12 +836,8 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
         }
 
         try {
-            if (!Type.exists(options.geonext)) {
-                options.geonext = false;
-            }
-
             for (i = 0; i < ccode.length; i++) {
-                if (options.geonext) {
+                if (!!options.geonext) {
                     ccode[i] = JXG.GeonextParser.geonext2JS(ccode[i], this.board);
                 }
                 cleaned.push(ccode[i]);
@@ -883,9 +879,8 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
                         result = this.compile(ast);
                     }
                     break;
-                case 'minParens':
-                case 'minParentheses':
-                    result = this.compile(ast, false, true);
+                case 'format':
+                    result = this.compile(ast, false, options);
                     break;
                 case 'getAst':
                     result = ast;
@@ -951,15 +946,16 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
     },
 
     /**
-     * Manipulate JessieCode.
+     * Format JessieCode.
      * This consists of generating an AST with parser.parse,
-     * and compile the AST back to JessieCode with minimal number of parentheses.
+     * and compile the AST back to JessieCode with options.
      *
-     * @param {String} code             JessieCode code to be parsed
-     * @return {String}                 Simplified JessieCode code
+     * @param {String} code      JessieCode code to be parsed.
+     * @param {Object} options   For possible options see param "format" in {@link JXG.JessieCode#compile}.
+     * @return {String}          Manipulated JessieCode string. This is no necessarily a parsable JessieCode code!
      */
-    minParentheses: function (code) {
-        return this._genericParse(code, 'minParentheses');
+    format: function (code, options) {
+        return this._genericParse(code, 'format', options);
     },
 
     /**
@@ -1715,19 +1711,28 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
      * Compiles a parse tree back to JessieCode.
      * @param {Object} ast
      * @param {Boolean} [js=false] Compile either to JavaScript or back to JessieCode (required for the UI).
-     * @param {Boolean} [jcMinParens=false] When compiling to JessieCode, use minimal amount of parentheses?
+     * @param {Object} [format] Options for formatting the output. Depending on some options, the function might return a not re-parsable string. This format options have only effect on JessieCode output.<ul>
+     *     <li>{Boolean} [minParentheses=false]               Use minimal amount of parentheses?</li>
+     *     <li>{Boolean|Number|Function} [constToFixed=false] Use this number or function to format constant values.</li>
+     *     <li>{Boolean} [printable=false]                    Adds additional signs or parentheses, e.g. x^0.5 --> x^{0.5}.</li>
+     *     </ul>
      * @returns Something
      * @private
      */
-    compile: function (ast, js, jcMinParens) {
+    compile: function (ast, js, format) {
         var that = this;
 
         if (!Type.exists(js)) {
             js = false;
         }
-        if (!Type.exists(jcMinParens)) {
-            jcMinParens = false;
+        if (!Type.exists(format) || !Type.isObject(format)) {
+            format = {};
         }
+        format = Type.deepCopy({
+            minParentheses: false,
+            constToFixed: false,
+            printable: false
+        }, format);
 
         // node_const/node_var >> op_execfun >> op_neg >> op_exp >> op_mul/op_div >> op_add/op_sub >> op_map >> op_assign
         function prio(node) {
@@ -1770,7 +1775,7 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
         }
 
         function compile(node, prevOp, position = -1) {
-            var e, i, list, scope, prioParent, prioChild,
+            var e, i, c, list, scope, prioParent, prioChild,
                 ret = '';
 
             if (!node) {
@@ -1998,7 +2003,7 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
                         case "op_add":
                             if (js) {
                                 ret = '$jc$.add(' + compile(node.children[0], "op_add") + ', ' + compile(node.children[1], "op_add") + ')';
-                            } else if (!jcMinParens) {
+                            } else if (!format.minParentheses) {
                                 ret = '(' + compile(node.children[0], "op_add") + ' + ' + compile(node.children[1], "op_add") + ')';
                             } else {
                                 prioParent = prio(node);
@@ -2017,7 +2022,7 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
                         case 'op_sub':
                             if (js) {
                                 ret = '$jc$.sub(' + compile(node.children[0], "op_sub") + ', ' + compile(node.children[1], "op_sub") + ')';
-                            } else if (!jcMinParens) {
+                            } else if (!format.minParentheses) {
                                 ret = '(' + compile(node.children[0], "op_sub") + ' - ' + compile(node.children[1], "op_sub") + ')';
                             } else {
                                 prioParent = prio(node);
@@ -2036,7 +2041,7 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
                         case 'op_div':
                             if (js) {
                                 ret = '$jc$.div(' + compile(node.children[0], "op_div") + ', ' + compile(node.children[1], "op_div") + ')';
-                            } else if (!jcMinParens) {
+                            } else if (!format.minParentheses) {
                                 ret = '(' + compile(node.children[0], "op_div") + ' / ' + compile(node.children[1], "op_div") + ')';
                             } else {
                                 prioParent = prio(node);
@@ -2055,7 +2060,7 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
                         case 'op_mod':
                             if (js) {
                                 ret = '$jc$.mod(' + compile(node.children[0], "op_mod") + ', ' + compile(node.children[1], "op_mod") + ', true)';
-                            } else if (!jcMinParens) {
+                            } else if (!format.minParentheses) {
                                 ret = '(' + compile(node.children[0], "op_mod") + ' % ' + compile(node.children[1], "op_mod") + ')';
                             } else {
                                 prioParent = prio(node);
@@ -2074,7 +2079,7 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
                         case 'op_mul':
                             if (js) {
                                 ret = '$jc$.mul(' + compile(node.children[0], "op_mul") + ', ' + compile(node.children[1], "op_mul") + ')';
-                            } else if (!jcMinParens) {
+                            } else if (!format.minParentheses) {
                                 ret = '(' + compile(node.children[0], "op_mul") + ' * ' + compile(node.children[1], "op_mul") + ')';
                             } else {
                                 prioParent = prio(node);
@@ -2092,19 +2097,19 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
                             break;
                         case 'op_exp':
                             if (js) {
-                                ret = '$jc$.pow(' + compile(node.children[0], "op_exp") + ', ' + compile(node.children[1], "op_exp") + ')';
-                            } else if (!jcMinParens) {
-                                ret = '(' + compile(node.children[0], "op_exp") + '^' + compile(node.children[1], "op_exp") + ')';
+                                ret = '$jc$.pow(' + compile(node.children[0], "op_exp", 0) + ', ' + compile(node.children[1], "op_exp", 1) + ')';
+                            } else if (!format.minParentheses) {
+                                ret = '(' + compile(node.children[0], "op_exp", 0) + '^' + compile(node.children[1], "op_exp", 1) + ')';
                             } else {
                                 prioParent = prio(node);
 
-                                e = compile(node.children[0], "op_exp");
+                                e = compile(node.children[0], "op_exp", 0);
                                 prioChild = prio(node.children[0]);
                                 ret = prioParent >= prioChild ? "(" + e + ")" : e;
 
                                 ret += '^';
 
-                                e = compile(node.children[1], "op_exp");
+                                e = compile(node.children[1], "op_exp", 1);
                                 prioChild = prio(node.children[1]);
                                 ret += prioParent > prioChild ? "(" + e + ")" : e;
                             }
@@ -2112,7 +2117,7 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
                         case 'op_neg':
                             if (js) {
                                 ret = '$jc$.neg(' + compile(node.children[0], "op_neg") + ')';
-                            } else if (!jcMinParens) {
+                            } else if (!format.minParentheses) {
                                 ret = '(-' + compile(node.children[0], "op_neg") + ')';
                             } else {
                                 prioParent = prio(node);
@@ -2139,12 +2144,28 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
                 case 'node_const':
                     if (js) {
                         ret = node.value;
-                    } else {
-                        if (jcMinParens && parseFloat(node.value) < 0 && prevOp !== "op_execfun" && position !== 0) {
-                            ret = "(" + node.value + ")";
+                        break;
+                    }
+
+                    c = node.value;
+                    if (
+                        format.constToFixed !== false &&
+                        Type.isNumber(c) &&
+                        !(prevOp === "op_exp" && position === 1) // exponents will not be formatted
+                    ) {
+                        c = parseFloat(c);
+                        if (Type.isNumber(format.constToFixed)) {
+                            c = Type.toFixed(c, format.constToFixed);
+                        } else if (Type.isFunction(format.constToFixed)) {
+                            c = format.constToFixed(c);
                         } else {
-                            ret = node.value;
+                            c = node.value;
                         }
+                    }
+                    if (format.minParentheses && parseFloat(c) < 0 && prevOp !== "op_execfun" && position !== 0) {
+                        ret = "(" + c + ")";
+                    } else {
+                        ret = c;
                     }
                     break;
 
@@ -2163,6 +2184,14 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
                 } else {
                     ret = '<< ' + ret + ' >>\n';
                 }
+            }
+
+            if (format.printable && prevOp === "op_exp" && position === 1) {
+                ret = '{' + ret + '}';
+            }
+
+            if (format.printable && Type.isString(ret)) {
+                ret = ret.replaceAll('\n', '');
             }
 
             return ret;
