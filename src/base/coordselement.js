@@ -1735,6 +1735,40 @@ JXG.extend(
         },
 
         /**
+         * Remove transformations of this element.
+         * @param {JXG.Transformation|Array} transform Either one {@link JXG.Transformation}
+         * or an array of {@link JXG.Transformation}s.
+         * @returns {JXG.CoordsElement} Reference to itself.
+         */
+        removeTransform: function ( transform) {
+            var i,
+                list = Type.isArray(transform) ? transform : [transform],
+                len = list.length;
+
+            for (i = 0; i < len; i++) {
+                Type.removeElementFromArray(this.transformations, list[i]);
+            }
+
+            if (this.transformations.length === 0) {
+                this.baseElement = null;
+            }
+
+            return this;
+        },
+
+        /**
+         * Remove all {@link JXG.Transformation}s of this element.
+         * @param {JXG.GeometryElement} el
+         * @returns {JXG.CoordsElement} Reference to itself.
+         */
+        clearTransforms: function () {
+            this.transformations = [];
+            this.baseElement = null;
+
+            return this;
+        },
+
+        /**
          * Animate a point.
          * @param {Number|Function} direction The direction the glider is animated. Can be +1 or -1.
          * @param {Number|Function} stepCount The number of steps in which the parent element is divided.

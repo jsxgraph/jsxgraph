@@ -273,6 +273,18 @@ JXG.extend(
             return this;
         },
 
+        // Already documented in GeometryElement
+        removeTransform: function (transform) {
+            this.removeTransformGeneric(transform);
+            return this;
+        },
+
+        // Already documented in GeometryElement
+        clearTransforms: function () {
+            this.clearTransformsGeneric();
+            return this;
+        },
+
         /**
          *
          * @returns {JXG.Curve3D} Reference to itself

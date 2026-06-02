@@ -213,6 +213,29 @@ JXG.extend(JXG.GeometryElement3D.prototype, {
         return this;
     },
 
+    removeTransformGeneric: function (transform) {
+        var i,
+            list = Type.isArray(transform) ? transform : [transform],
+            len = list.length;
+
+        for (i = 0; i < len; i++) {
+            Type.removeElementFromArray(this.transformations, list[i]);
+        }
+
+        if (this.transformations.length === 0) {
+            this.baseElement = null;
+        }
+
+        return this;
+    },
+
+    clearTransforms: function () {
+        this.transformations = [];
+        this.baseElement = null;
+
+        return this;
+    },
+
     /**
      * Set position of the 2D element. This is a
      * callback function, executed in {@link JXG.GeometryElement#setPosition}.
