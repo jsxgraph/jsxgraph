@@ -183,24 +183,24 @@ JXG.Circle = function (board, method, par1, par2, attributes) {
             this.point2.addChild(this);
         }
     }
-
-    this.methodMap = Type.deepCopy(this.methodMap, {
-        setRadius: "setRadius",
-        getRadius: "getRadius",
-        Area: "Area",
-        area: "Area",
-        Perimeter: "Perimeter",
-        Circumference: "Perimeter",
-        radius: "Radius",
-        Radius: "Radius",
-        Diameter: "Diameter",
-        center: "center",
-        line: "line",
-        point2: "point2"
-    });
 };
 
 JXG.Circle.prototype = new GeometryElement();
+
+Type.copyMethodMap(JXG.Circle, {
+    setRadius: "setRadius",
+    getRadius: "getRadius",
+    Area: "Area",
+    area: "Area",
+    Perimeter: "Perimeter",
+    Circumference: "Perimeter",
+    radius: "Radius",
+    Radius: "Radius",
+    Diameter: "Diameter",
+    center: "center",
+    line: "line",
+    point2: "point2"
+});
 
 JXG.extend(
     JXG.Circle.prototype,
@@ -712,6 +712,32 @@ JXG.extend(
                 if (this.method === 'twoPoints') {
                     this.point2.transformations.push(list[i]);
                 }
+            }
+
+            return this;
+        },
+
+        removeTransform: function (transform) {
+            var i,
+                list = Type.isArray(transform) ? transform : [transform],
+                len = list.length;
+
+            for (i = 0; i < len; i++) {
+                Type.removeElementFromArray(this.center.transformations, list[i]);
+
+                if (this.method === 'twoPoints') {
+                    Type.removeElementFromArray(this.point2.transformations, list[i]);
+                }
+            }
+
+            return this;
+        },
+
+        clearTransforms: function () {
+            this.center.transformations = [];
+
+            if (this.method === 'twoPoints') {
+                this.point2.transformations = [];
             }
 
             return this;

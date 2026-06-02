@@ -114,19 +114,19 @@ JXG.Group = function (board, id, name, objects, attributes) {
             this.addPoint(obj);
         }
     }
-
-    this.methodMap = {
-        ungroup: "ungroup",
-        add: "addPoint",
-        addPoint: "addPoint",
-        addPoints: "addPoints",
-        addGroup: "addGroup",
-        remove: "removePoint",
-        removePoint: "removePoint",
-        setAttribute: "setAttribute",
-        setProperty: "setAttribute"
-    };
 };
+
+Type.copyMethodMap(JXG.Group, {
+    ungroup: "ungroup",
+    add: "addPoint",
+    addPoint: "addPoint",
+    addPoints: "addPoints",
+    addGroup: "addGroup",
+    remove: "removePoint",
+    removePoint: "removePoint",
+    setAttribute: "setAttribute",
+    setProperty: "setAttribute"
+});
 
 JXG.extend(
     JXG.Group.prototype,

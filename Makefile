@@ -6,7 +6,7 @@ MINIFYER=./node_modules/terser/bin/terser
 
 # Code quality
 LINT=./node_modules/.bin/jslint
-ESLINT=./node_modules/eslint/bin/eslint.js 
+ESLINT=./node_modules/eslint/bin/eslint.js
 HINT=./node_modules/.bin/jshint
 KARMA=node_modules/karma/bin/karma
 PRETTIER=./node_modules/.bin/prettier
@@ -117,7 +117,7 @@ beta: docs
 
 docs: core docsonly
 
-docsonly: 
+docsonly:
 	# Set up tmp dir
 	$(MKDIR) $(MKDIRFLAGS) $(TMP)
 	$(MKDIR) $(MKDIRFLAGS) $(OUTPUT)
@@ -177,8 +177,18 @@ eslint:
 	$(ESLINT) $(ESLINTFLAGS) $(LINTLIST)
 
 test: core
+ifeq ($(shell which google-chrome | wc -l), 1)
+	@echo "Use google chrome"
 	$(KARMA) start karma/karma.conf.js
+else
+ifeq ($(shell which chromium | wc -l), 1)
+	@echo "Use chromium"
+	export CHROME_BIN=/usr/bin/chromium; $(KARMA) start karma/karma.conf.js
+else
+	@echo "No suitable browser (chrome or chromium) installed"
+endif
+endif
 
 testchromium: core
 	export CHROME_BIN=/usr/bin/chromium; $(KARMA) start karma/karma.conf.js
-	
+

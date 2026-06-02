@@ -138,18 +138,18 @@ JXG.Curve = function (board, parents, attributes) {
     if (Type.isString(this.yterm)) {
         this.notifyParents(this.yterm);
     }
-
-    this.methodMap = Type.deepCopy(this.methodMap, {
-        generateTerm: "generateTerm",
-        setTerm: "generateTerm",
-        move: "moveTo",
-        moveTo: "moveTo",
-        MinX: "minX",
-        MaxX: "maxX"
-    });
 };
 
 JXG.Curve.prototype = new GeometryElement();
+
+Type.copyMethodMap(JXG.Curve, {
+    generateTerm: "generateTerm",
+    setTerm: "generateTerm",
+    move: "moveTo",
+    moveTo: "moveTo",
+    MinX: "minX",
+    MaxX: "maxX"
+});
 
 JXG.extend(
     JXG.Curve.prototype,
@@ -927,6 +927,24 @@ JXG.extend(
             for (i = 0; i < len; i++) {
                 this.transformations.push(list[i]);
             }
+
+            return this;
+        },
+
+        removeTransform: function (transform) {
+            var i,
+                list = Type.isArray(transform) ? transform : [transform],
+                len = list.length;
+
+            for (i = 0; i < len; i++) {
+                Type.removeElementFromArray(this.transformations, list[i]);
+            }
+
+            return this;
+        },
+
+        clearTransforms: function () {
+            this.transformations = [];
 
             return this;
         },

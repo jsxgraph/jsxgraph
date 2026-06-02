@@ -130,18 +130,18 @@ JXG.Text = function (board, coords, attributes, content) {
         this.notifyParents(this.content);
     }
     this.elType = 'text';
-
-    this.methodMap = Type.deepCopy(this.methodMap, {
-        setText: "setTextJessieCode",
-        // free: 'free',
-        move: "setCoords",
-        Size: "getSize",
-        setAutoPosition: "setAutoPosition"
-    });
 };
 
 JXG.Text.prototype = new GeometryElement();
+
 Type.copyPrototypeMethods(JXG.Text, CoordsElement, 'coordsConstructor');
+Type.copyMethodMap(JXG.Text, {
+    setText: "setTextJessieCode",
+    // free: 'free',
+    move: "setCoords",
+    Size: "getSize",
+    setAutoPosition: "setAutoPosition"
+});
 
 JXG.extend(
     JXG.Text.prototype,

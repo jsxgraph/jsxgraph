@@ -255,32 +255,6 @@ JXG.GeometryElement = function (board, attributes, type, oclass) {
     this.stdform = [1, 0, 0, 0, 1, 1, 0, 0];
 
     /**
-     * The methodMap determines which methods can be called from within JessieCode and under which name it
-     * can be used. The map is saved in an object, the name of a property is the name of the method used in JessieCode,
-     * the value of a property is the name of the method in JavaScript.
-     * @type Object
-     */
-    this.methodMap = {
-        setLabel: "setLabel",
-        label: "label",
-        setName: "setName",
-        getName: "getName",
-        Name: "getName",
-        addTransform: "addTransform",
-        setProperty: "setAttribute",
-        setAttribute: "setAttribute",
-        addChild: "addChild",
-        animate: "animate",
-        on: "on",
-        off: "off",
-        trigger: "trigger",
-        addTicks: "addTicks",
-        removeTicks: "removeTicks",
-        removeAllTicks: "removeAllTicks",
-        Bounds: "bounds"
-    };
-
-    /**
      * Quadratic form representation of circles (and conics)
      * @type Array
      * @default [[1,0,0],[0,1,0],[0,0,1]]
@@ -647,6 +621,24 @@ JXG.extend(
          * @returns {JXG.GeometryElement} Reference to the element.
          */
         addTransform: function (transform) {
+            return this;
+        },
+
+        /**
+         * Remove transformations of this element.
+         * @param {JXG.Transformation|Array} transform Either one {@link JXG.Transformation}
+         * or an array of {@link JXG.Transformation}s.
+         * @returns {JXG.GeometryElement} Reference to the element.
+         */
+        removeTransform: function (transform) {
+            return this;
+        },
+
+        /**
+         * Remove all {@link JXG.Transformation}s of this element.
+         * @returns {JXG.GeometryElement} Reference to the element.
+         */
+        clearTransforms: function () {
             return this;
         },
 
@@ -2632,6 +2624,15 @@ JXG.extend(
             return false;
         },
 
+        // for documentation purposes
+        /**
+         * The methodMap determines which methods can be called from within JessieCode and under which name it
+         * can be used. The map is saved in an object, the name of a property is the name of the method used in JessieCode,
+         * the value of a property is the name of the method in JavaScript.
+         * @type Object
+         */
+        methodMap: {},
+
         /* **************************
          *     EVENT DEFINITION
          * for documentation purposes
@@ -2873,6 +2874,28 @@ JXG.extend(
         //endregion
     }
 );
+
+Type.copyMethodMap(JXG.GeometryElement, {
+    setLabel: "setLabel",
+    label: "label",
+    setName: "setName",
+    getName: "getName",
+    Name: "getName",
+    addTransform: "addTransform",
+    removeTransform: "removeTransform",
+    clearTransforms: "clearTransforms",
+    setProperty: "setAttribute",
+    setAttribute: "setAttribute",
+    addChild: "addChild",
+    animate: "animate",
+    on: "on",
+    off: "off",
+    trigger: "trigger",
+    addTicks: "addTicks",
+    removeTicks: "removeTicks",
+    removeAllTicks: "removeAllTicks",
+    Bounds: "bounds"
+});
 
 export default JXG.GeometryElement;
 // const GeometryElement = JXG.GeometryElement;

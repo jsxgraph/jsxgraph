@@ -137,27 +137,27 @@ JXG.Line = function (board, p1, p2, attributes) {
 
     // create Label
     this.createLabel();
-
-    this.methodMap = JXG.deepCopy(this.methodMap, {
-        point1: "point1",
-        point2: "point2",
-        getSlope: "Slope",
-        Slope: "Slope",
-        Direction: "Direction",
-        getRise: "getRise",
-        Rise: "getRise",
-        getYIntersect: "getRise",
-        YIntersect: "getRise",
-        getAngle: "getAngle",
-        Angle: "getAngle",
-        L: "L",
-        length: "L",
-        setFixedLength: "setFixedLength",
-        setStraight: "setStraight"
-    });
 };
 
 JXG.Line.prototype = new GeometryElement();
+
+Type.copyMethodMap(JXG.Line, {
+    point1: "point1",
+    point2: "point2",
+    getSlope: "Slope",
+    Slope: "Slope",
+    Direction: "Direction",
+    getRise: "getRise",
+    Rise: "getRise",
+    getYIntersect: "getRise",
+    YIntersect: "getRise",
+    getAngle: "getAngle",
+    Angle: "getAngle",
+    L: "L",
+    length: "L",
+    setFixedLength: "setFixedLength",
+    setStraight: "setStraight"
+});
 
 JXG.extend(
     JXG.Line.prototype,
@@ -859,6 +859,26 @@ JXG.extend(
             // var list = Type.isArray(transform) ? transform : [transform];
             // this.point1.addTransform(this, list);
             // this.point2.addTransform(this, list);
+
+            return this;
+        },
+
+        removeTransform: function (transform) {
+            var i,
+                list = Type.isArray(transform) ? transform : [transform],
+                len = list.length;
+
+            for (i = 0; i < len; i++) {
+                Type.removeElementFromArray(this.point1.transformations, list[i]);
+                Type.removeElementFromArray(this.point2.transformations, list[i]);
+            }
+
+            return this;
+        },
+
+        clearTransforms: function () {
+            this.point1.transformations = [];
+            this.point2.transformations = [];
 
             return this;
         },

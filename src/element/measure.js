@@ -132,7 +132,7 @@ JXG.createTapemeasure = function (board, parents, attributes) {
         li.inherits.push(ti);
     }
 
-    // override the segments's remove method to ensure the removal of all elements
+    // override the segments' remove method to ensure the removal of all elements
     /** @ignore */
     li.remove = function () {
         if (withTicks) {
@@ -176,10 +176,6 @@ JXG.createTapemeasure = function (board, parents, attributes) {
         ti.dump = false;
     }
 
-    li.methodMap = JXG.deepCopy(li.methodMap, {
-        Value: "Value"
-    });
-
     li.prepareUpdate().update();
     if (!board.isSuspendedUpdate) {
         li.updateVisibility().updateRenderer();
@@ -187,6 +183,10 @@ JXG.createTapemeasure = function (board, parents, attributes) {
         li.point1.updateVisibility().updateRenderer();
         li.point2.updateVisibility().updateRenderer();
     }
+
+    Type.extendInstanceMethodMap(li, {
+        Value: "Value"
+    });
 
     return li;
 };
@@ -486,7 +486,7 @@ JXG.createMeasurement = function (board, parents, attributes) {
         return prefix + val + unit + suffix;
     });
 
-    el.methodMap = Type.deepCopy(el.methodMap, {
+    Type.extendInstanceMethodMap(el, {
         Value: "Value",
         V: "Value",
         Dimension: "Dimension",
