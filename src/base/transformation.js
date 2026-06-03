@@ -1074,7 +1074,23 @@ JXG.extend(
          * @returns {JXG.Transform} the transformation object.
          */
         melt: function (t) {
+            const closedTypes = [
+                'translate',
+                'scale',
+                'affine',
+                'affinematrix',
+                'generic',
+                'matrix'
+            ];
             var res = [];
+
+            // helper: check pure 2D rotation around origin (no translation)
+            function is2dPureRotate0(obj) {
+                return obj && !obj.is3D &&
+                    obj.transformationType === 'rotate' &&
+                    Math.abs(obj.matrix[1][0]) < Mat.eps &&
+                    Math.abs(obj.matrix[2][0]) < Mat.eps;
+            }
 
             this.update();
             t.update();
@@ -1084,12 +1100,21 @@ JXG.extend(
             this.update = function () {
                 this.matrix = res;
             };
-
-            if (this.transformationType !== t.transformationType) {
-                this.transformationType = "melted";
-            }
-
             delete this.evalParam;
+
+            if (
+                this.transformationType === t.transformationType &&
+                closedTypes.includes(this.transformationType)
+            ) {
+                // keep type
+            } else if (
+                is2dPureRotate0(this) &&
+                is2dPureRotate0(t)
+            ) {
+                // keep type 'rotate'
+            } else {
+                this.transformationType = 'melted';
+            }
 
             return this;
         },
