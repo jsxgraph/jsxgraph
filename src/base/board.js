@@ -1734,9 +1734,7 @@ JXG.extend(
             ) {
 
                 combine = drag.evalVisProp('combineTwoFingerTransform');
-                if (!Type.exists(combine)) {
-                    combine = true;
-                }
+                if (Type.isString(combine)) combine = combine.toLowerCase();
 
                 T = this.getTwoFingerTransforms(
                     tar[0], tar[1],
@@ -1744,7 +1742,7 @@ JXG.extend(
                     drag.evalVisProp('rotatable')
                 );
 
-                if (combine) {
+                if (combine === true || combine === 'all' || combine === 'nomelt') {
                     t = this.create('transform', T.twofingers, {type: 'twofingers'});
                     t.update();
                     transformations = [t];
@@ -1799,7 +1797,14 @@ JXG.extend(
                     }
                 } else if (drag.elementClass === Const.OBJECT_CLASS_CURVE) {
                     for (i = 0; i < transformations.length; i++) {
-                        transformations[i].meltTo(drag);
+                        if (
+                           // drag.transformations.length === null ||
+                            combine === false || combine === "none" || combine === "nomelt"
+                        ) {
+                            transformations[i].bindTo(drag);
+                        } else {
+                            transformations[i].meltTo(drag);
+                        }
                     }
                 }
 
