@@ -1038,6 +1038,7 @@ JXG.extend(
         clone: function () {
             var t = null;
 
+            this.update();
             if (this.isNumericMatrix) {
                 t = new JXG.Transformation(this.board, 'none', []);
                 t.matrix = this.matrix.slice();
