@@ -1584,7 +1584,7 @@ JXG.extend(
          *         </pre>
          *     </li>
          *     <li>
-         *         <b>twofinger</b>: Array
+         *         <b>twofingers</b>: Array
          *         <pre>
          *           [tx, ty, sx, sy, r]
          *         </pre>
@@ -1611,7 +1611,7 @@ JXG.extend(
          * @returns {Object} Transformation parameters <ul>
          *     <li><tt>{Array} generic</tt> Array of length 9</li>
          *     <li><tt>{Array} affine</tt> Array of length 6</li>
-         *     <li><tt>{Array} twofinger</tt> Array of length 5</li>
+         *     <li><tt>{Array} twofingers</tt> Array of length 5</li>
          *     <li><tt>{Array|null} translate</tt> Array of length 2</li>
          *     <li><tt>{Array|null} scale</tt> Array of length 2</li>
          *     <li><tt>{Array|null} rotate</tt> Array of length 1</li>
@@ -1673,7 +1673,7 @@ JXG.extend(
                     ty, S, C
                 ],
 
-                twofinger: [
+                twofingers: [
                     tx,ty,
                     lbda, lbda,
                     Math.atan2(S, C)
@@ -1745,13 +1745,12 @@ JXG.extend(
                 );
 
                 if (combine) {
-                    t = this.create('transform', T.twofinger, {type: 'twofinger'});
+                    t = this.create('transform', T.twofingers, {type: 'twofingers'});
                     t.update();
                     transformations = [t];
 
                 } else {
                     transformations = [];
-
                     if (Type.exists(T.translate)) {
                         t = this.create('transform', T.translate, {type: 'translate'});
                         t.update();

@@ -56,7 +56,7 @@ import Type from "../utils/type.js";
  * <li> 'shear'
  * <li> 'affine'
  * <li> 'affinematrix'
- * <li> 'twofinger'
+ * <li> 'twofingers'
  * <li> 'generic'
  * <li> 'matrix'
  * </ul>
@@ -120,7 +120,7 @@ import Type from "../utils/type.js";
  * (         )   ( y )
  * </pre>
  *
- * <p>A 'twofinger' transformation consists of 5 parameters: <ul>
+ * <p>A 'twofingers' transformation consists of 5 parameters: <ul>
  * <li>translation in directions x and y (tx, ty),</li>
  * <li>scaling in directions x and y (sx, sy) and</li>
  * <li>rotation with angle r (in Radians)</li>
@@ -211,7 +211,7 @@ JXG.extend(
          *                        'shear',
          *                        'affine',
          *                        'affinematrix',
-         *                        'twofinger',
+         *                        'twofingers',
          *                        'generic',
          *                        'matrix'.
          * @param {Array} params Parameters for the various transformation types.
@@ -284,7 +284,7 @@ JXG.extend(
          * (         )   ( y )
          * </pre>
          *
-         * <p>A 'twofinger' transformation consists of 5 parameters: <ul>
+         * <p>A 'twofingers' transformation consists of 5 parameters: <ul>
          * <li>translation in directions x and y (tx, ty),</li>
          * <li>scaling in directions x and y (sx, sy) and</li>
          * <li>rotation with angle r (in Radians)</li>
@@ -328,7 +328,7 @@ JXG.extend(
                 'shear',
                 'affine',
                 'affinematrix',
-                'twofinger',
+                'twofingers',
                 'generic',
                 'matrix'
             ].includes(type)) {
@@ -522,9 +522,9 @@ JXG.extend(
                 } else {
                     throw new Error("JSXGraph: transformation of type 'affinematrix' needs a 2x2 or a 2x3 matrix as parameter.");
                 }
-            } else if (type === 'twofinger') {
+            } else if (type === 'twofingers') {
                 if (params.length !== 5) {
-                    throw new Error("JSXGraph: 'twofinger' transformation needs 5 parameters.");
+                    throw new Error("JSXGraph: 'twofingers' transformation needs 5 parameters.");
                 }
 
                 this.evalParam = Type.createEvalFunction(board, params, 5);
@@ -1239,7 +1239,7 @@ JXG.extend(
                         ];
                     }
 
-                } else if (type === 'twofinger') {
+                } else if (type === 'twofingers') {
                     sx = Mat.hypot(
                         this.matrix[1][1],
                         this.matrix[2][1]
@@ -1429,7 +1429,7 @@ JXG.extend(
  * <li> 'shear'
  * <li> 'affine'
  * <li> 'affinematrix'
- * <li> 'twofinger'
+ * <li> 'twofingers'
  * <li> 'generic'
  * <li> 'matrix'
  * </ul>
@@ -1506,7 +1506,7 @@ JXG.extend(
  * (         )   ( y )
  * </pre>
  * </dd>
- * <dt><b><tt>type:"twofinger"</tt></b></dt><dd> <b>tx, ty, sx, sy, r</b> The parameters are <ul>
+ * <dt><b><tt>type:"twofingers"</tt></b></dt><dd> <b>tx, ty, sx, sy, r</b> The parameters are <ul>
  * <li>translation in directions x and y (tx, ty; numbers or functions),</li>
  * <li>scaling in directions x and y (sx, sy; numbers or functions) and</li>
  * <li>rotation with angle r (in Radians; number or function)</li>
