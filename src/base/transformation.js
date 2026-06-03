@@ -119,13 +119,6 @@ import Type from "../utils/type.js";
  * (         )   ( y )
  * </pre>
  *
- * <p>A 'twofinger' transformation (4 parameters):
- * <pre>
- * ( 1  0  0 )   ( z )
- * ( a  c -d ) * ( x )
- * ( b  d  c )   ( y )
- * </pre>
- *
  * <p>Generic transformation (9 parameters):
  * <pre>
  * ( a  b  c )   ( z )
@@ -278,6 +271,17 @@ JXG.extend(
          * (         )   ( y )
          * </pre>
          *
+         * <p>A 'twofinger' transformation consists of 5 parameters: <ul>
+         * <li>translation in directions x and y (tx, ty),</li>
+         * <li>scaling in directions x and y (sx, sy) and</li>
+         * <li>rotation with angle r (in Radians)</li>
+         * </ul>
+         * <pre>
+         * ( 1    0           0         )   ( z )
+         * ( tx   sx*cos(r)  -sy*sin(r) ) * ( x )
+         * ( ty   sx*sin(r)   sy*cos(r) )   ( y )
+         * </pre>
+         *
          * <p>Generic transformation (9 parameters):
          * <pre>
          * ( a  b  c )   ( z )
@@ -295,6 +299,14 @@ JXG.extend(
         setMatrix: function (board, type, params) {
             var i;
 
+            this.isNumericMatrix = true;
+            for (i = 0; i < params.length; i++) {
+                if (typeof params[i] !== 'number') {
+                    this.isNumericMatrix = false;
+                    break;
+                }
+            }
+
             if ([
                 'translate',
                 'scale',
@@ -309,14 +321,6 @@ JXG.extend(
                 this.transformationType = type;
             } else {
                 return;
-            }
-
-            this.isNumericMatrix = true;
-            for (i = 0; i < params.length; i++) {
-                if (typeof params[i] !== 'number') {
-                    this.isNumericMatrix = false;
-                    break;
-                }
             }
 
             if (type === 'translate') {
@@ -676,6 +680,14 @@ JXG.extend(
             var i,
                 board = view.board;
 
+            this.isNumericMatrix = true;
+            for (i = 0; i < params.length; i++) {
+                if (typeof params[i] !== 'number') {
+                    this.isNumericMatrix = false;
+                    break;
+                }
+            }
+
             if ([
                 'translate',
                 'scale',
@@ -691,14 +703,6 @@ JXG.extend(
                 this.transformationType = type;
             } else {
                 return;
-            }
-
-            this.isNumericMatrix = true;
-            for (i = 0; i < params.length; i++) {
-                if (typeof params[i] !== 'number') {
-                    this.isNumericMatrix = false;
-                    break;
-                }
             }
 
             if (type === 'translate') {
@@ -991,7 +995,7 @@ JXG.extend(
          * i.e. the transformation matrices do not depend on other elements,
          * the transformation will be fused into (multiplied with) the last transformation of
          * the element. Thus, the list of transformations is kept small.
-         * If the transformation will be the first transformation ot the element, it will be cloned
+         * If the transformation will be the first transformation of the element, it will be cloned
          * to prevent side effects.
          *
          * @param  {Array|JXG.Object} el JXG.Object or array of JXG.Objects to
@@ -1008,7 +1012,7 @@ JXG.extend(
                 }
             } else {
                 elt = el.transformations;
-                if (elt.length > 0 &&
+               if (elt.length > 0 &&
                     elt[elt.length - 1].isNumericMatrix &&
                     this.isNumericMatrix
                 ) {
@@ -1079,6 +1083,10 @@ JXG.extend(
             this.update = function () {
                 this.matrix = res;
             };
+
+            if (this.transformationType !== t.transformationType) {
+                this.transformationType = "melted";
+            }
 
             return this;
         },
