@@ -930,6 +930,7 @@ JXG.extend(
             if (this.isNumericMatrix) {
                 t = new JXG.Transformation(this.board, 'none', []);
                 t.matrix = this.matrix.slice();
+                t.transformationType = this.transformationType;
             }
 
             return t;
