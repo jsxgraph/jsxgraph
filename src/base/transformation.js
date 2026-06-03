@@ -1129,6 +1129,257 @@ JXG.extend(
             return this;
         },
 
+        getParams: function () {
+            let i, j, len,
+                sx, sy, angle,
+                co, si, tx, ty, det, x, y,
+                type = this.transformationType,
+                res = [];
+
+            if (Type.exists(this.evalParam) && Type.exists(this.evalParam.n)) {
+                len = this.evalParam.n;
+                for (i = 0; i < len; i++) {
+                    res[i] = this.evalParam(i);
+                }
+
+            } else if (!this.is3D) {
+                if (type === 'translate') {
+                    res = [
+                        this.matrix[1][0],
+                        this.matrix[2][0]
+                    ];
+
+                } else if (type === 'reflect') {
+                    // Not uniquely recoverable in general.
+
+                } else if (type === 'rotate') {
+                    co = this.matrix[1][1];
+                    si = this.matrix[2][1];
+                    tx = this.matrix[1][0];
+                    ty = this.matrix[2][0];
+
+                    angle = Math.atan2(si, co);
+
+                    det = (1 - co) * (1 - co) + si * si;
+
+                    if (Math.abs(det) < Mat.eps) {
+                        res = [angle];
+                    } else {
+                        x = ((1 - co) * tx - si * ty) / det;
+                        y = (si * tx + (1 - co) * ty) / det;
+
+                        if (Math.abs(x) < Mat.eps) {
+                            x = 0;
+                        }
+                        if (Math.abs(y) < Mat.eps) {
+                            y = 0;
+                        }
+
+                        res = [angle, x, y];
+                    }
+
+                } else if (type === 'shear') {
+                    res = [
+                        this.matrix[1][2],
+                        this.matrix[2][1]
+                    ];
+
+                } else if (type === 'affine') {
+                    if (
+                        this.matrix[1][0] === 0 &&
+                        this.matrix[2][0] === 0
+                    ) {
+                        res = [
+                            this.matrix[1][1],
+                            this.matrix[1][2],
+                            this.matrix[2][1],
+                            this.matrix[2][2]
+                        ];
+                    } else {
+                        res = [
+                            this.matrix[1][0],
+                            this.matrix[1][1],
+                            this.matrix[1][2],
+
+                            this.matrix[2][0],
+                            this.matrix[2][1],
+                            this.matrix[2][2]
+                        ];
+                    }
+
+                } else if (type === 'affinematrix') {
+                    if (
+                        this.matrix[1][0] === 0 &&
+                        this.matrix[2][0] === 0
+                    ) {
+                        res = [
+                            [
+                                this.matrix[1][1],
+                                this.matrix[1][2]
+                            ],
+                            [
+                                this.matrix[2][1],
+                                this.matrix[2][2]
+                            ]
+                        ];
+                    } else {
+                        res = [
+                            [
+                                this.matrix[1][0],
+                                this.matrix[1][1],
+                                this.matrix[1][2]
+                            ],
+                            [
+                                this.matrix[2][0],
+                                this.matrix[2][1],
+                                this.matrix[2][2]
+                            ]
+                        ];
+                    }
+
+                } else if (type === 'twofinger') {
+                    sx = Mat.hypot(
+                        this.matrix[1][1],
+                        this.matrix[2][1]
+                    );
+                    sy = Mat.hypot(
+                        this.matrix[1][2],
+                        this.matrix[2][2]
+                    );
+                    angle = Math.atan2(
+                        this.matrix[2][1],
+                        this.matrix[1][1]
+                    );
+                    res = [
+                        this.matrix[1][0],
+                        this.matrix[2][0],
+                        sx,
+                        sy,
+                        angle
+                    ];
+
+                } else if (type === 'generic') {
+                    for (i = 0; i < 3; i++) {
+                        for (j = 0; j < 3; j++) {
+                            res.push(this.matrix[i][j]);
+                        }
+                    }
+
+                } else if (type === 'matrix') {
+                    res = this.matrix.slice();
+                }
+
+            } else {
+                if (type === 'translate') {
+                    res = [
+                        this.matrix[1][0],
+                        this.matrix[2][0],
+                        this.matrix[3][0]
+                    ];
+
+                } else if (type === 'scale') {
+                    res = [
+                        this.matrix[1][1],
+                        this.matrix[2][2],
+                        this.matrix[3][3]
+                    ];
+
+                } else if (type === 'rotateX') {
+                    angle = Math.atan2(
+                        this.matrix[3][2],
+                        this.matrix[2][2]
+                    );
+                    res = [angle];
+
+                } else if (type === 'rotateY') {
+                    angle = Math.atan2(
+                        this.matrix[1][3],
+                        this.matrix[1][1]
+                    );
+                    res = [angle];
+
+                } else if (type === 'rotateZ') {
+                    angle = Math.atan2(
+                        this.matrix[2][1],
+                        this.matrix[1][1]
+                    );
+                    res = [angle];
+
+                } else if (type === 'rotate') {
+                    // Not uniquely recoverable in general.
+
+                } else if (type === 'affine') {
+                    if (
+                        this.matrix[1][0] === 0 &&
+                        this.matrix[2][0] === 0 &&
+                        this.matrix[3][0] === 0
+                    ) {
+                        res = [
+                            this.matrix[1][1],
+                            this.matrix[1][2],
+                            this.matrix[1][3],
+
+                            this.matrix[2][1],
+                            this.matrix[2][2],
+                            this.matrix[2][3],
+
+                            this.matrix[3][1],
+                            this.matrix[3][2],
+                            this.matrix[3][3]
+                        ];
+                    } else {
+                        res = [
+                            this.matrix[1][0],
+                            this.matrix[1][1],
+                            this.matrix[1][2],
+                            this.matrix[1][3],
+
+                            this.matrix[2][0],
+                            this.matrix[2][1],
+                            this.matrix[2][2],
+                            this.matrix[2][3],
+
+                            this.matrix[3][0],
+                            this.matrix[3][1],
+                            this.matrix[3][2],
+                            this.matrix[3][3]
+                        ];
+                    }
+
+                } else if (type === 'affinematrix') {
+                    if (
+                        this.matrix[1][0] === 0 &&
+                        this.matrix[2][0] === 0 &&
+                        this.matrix[3][0] === 0
+                    ) {
+                        res = [
+                            [this.matrix[1][1], this.matrix[1][2], this.matrix[1][3]],
+                            [this.matrix[2][1], this.matrix[2][2], this.matrix[2][3]],
+                            [this.matrix[3][1], this.matrix[3][2], this.matrix[3][3]]
+                        ];
+                    } else {
+                        res = [
+                            [this.matrix[1][0], this.matrix[1][1], this.matrix[1][2], this.matrix[1][3]],
+                            [this.matrix[2][0], this.matrix[2][1], this.matrix[2][2], this.matrix[2][3]],
+                            [this.matrix[3][0], this.matrix[3][1], this.matrix[3][2], this.matrix[3][3]]
+                        ];
+                    }
+
+                } else if (type === 'generic') {
+                    for (i = 0; i < 4; i++) {
+                        for (j = 0; j < 4; j++) {
+                            res.push(this.matrix[i][j]);
+                        }
+                    }
+
+                } else if (type === 'matrix') {
+                    res = this.matrix.slice();
+                }
+            }
+
+            return res;
+        },
+
         // Documented in element.js
         // Not yet, since transformations are not listed in board.objects.
         getParents: function () {
