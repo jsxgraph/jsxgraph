@@ -1049,7 +1049,7 @@ JXG.extend(
             } else {
                 elt = el.transformations;
 
-               if (elt.length > 0 &&
+                if (elt.length > 0 &&
                     elt[elt.length - 1].isNumericMatrix &&
                     this.isNumericMatrix
                 ) {
@@ -1075,6 +1075,7 @@ JXG.extend(
         clone: function () {
             var t = null;
 
+            this.update();
             if (this.isNumericMatrix) {
                 t = new JXG.Transformation(this.board, 'none', []);
                 t.matrix = this.matrix.slice();
