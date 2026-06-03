@@ -1089,6 +1089,8 @@ JXG.extend(
                 this.transformationType = "melted";
             }
 
+            delete this.evalParam;
+
             return this;
         },
 
