@@ -93,18 +93,37 @@ import Type from "../utils/type.js";
  * ( 0  b  1)   ( y )
  * </pre>
  *
- * <p>Generic affine transformation (4 parameters):
+ * <p>Affine transformation (4 or 6 parameters):
  * <pre>
  * ( 1  0  0 )   ( z )
  * ( 0  a  b ) * ( x )
  * ( 0  c  d )   ( y )
  * </pre>
+ * or (including translation)
+ * <pre>
+ * ( 1  0  0 )   ( z )
+ * ( a  b  c ) * ( x )
+ * ( d  e  f )   ( y )
+ * </pre>
  *
- * <p>Affine 2x2 matrix:
+ * <p>Affine 2x2 or 2x3 matrix:
  * <pre>
  * ( 1  0  0 )   ( z )
  * ( 0  M    ) * ( x )
  * ( 0       )   ( y )
+ * </pre>
+ * or (including translation)
+ * <pre>
+ * ( 1  0  0 )   ( z )
+ * ( M       ) * ( x )
+ * (         )   ( y )
+ * </pre>
+ *
+ * <p>A 'twofinger' transformation (4 parameters):
+ * <pre>
+ * ( 1  0  0 )   ( z )
+ * ( a  c -d ) * ( x )
+ * ( b  d  c )   ( y )
  * </pre>
  *
  * <p>Generic transformation (9 parameters):
@@ -238,11 +257,25 @@ JXG.extend(
          * ( 0  c  d )   ( y )
          * </pre>
          *
+         * <p>Generic affine transformation (6 parameters, including translation):
+         * <pre>
+         * ( 1  0  0 )   ( z )
+         * ( a  b  c ) * ( x )
+         * ( d  e  f )   ( y )
+         * </pre>
+         *
          * <p>Affine 2x2 matrix:
          * <pre>
          * ( 1  0  0 )   ( z )
          * ( 0  M    ) * ( x )
          * ( 0       )   ( y )
+         * </pre>
+         *
+         * <p>Affine 2x3 matrix (including translation):
+         * <pre>
+         * ( 1  0  0 )   ( z )
+         * (    M    ) * ( x )
+         * (         )   ( y )
          * </pre>
          *
          * <p>Generic transformation (9 parameters):
@@ -261,7 +294,6 @@ JXG.extend(
          */
         setMatrix: function (board, type, params) {
             var i;
-                // e, obj; // Handle dependencies
 
             if ([
                 'translate',
@@ -420,32 +452,58 @@ JXG.extend(
                     this.matrix[2][1] = this.evalParam(1);
                 };
             } else if (type === 'affine') {
-                if (params.length !== 4) {
-                    throw new Error("JSXGraph: affine transformation needs 4 parameters.");
+                if (params.length !== 4 && params.length !== 6) {
+                    throw new Error("JSXGraph: affine transformation needs 4 or 6 parameters.");
                 }
 
-                this.evalParam = Type.createEvalFunction(board, params, 9);
-
-                this.update = function () {
-                    this.matrix[1][1] = this.evalParam(0);
-                    this.matrix[1][2] = this.evalParam(1);
-                    this.matrix[2][1] = this.evalParam(2);
-                    this.matrix[2][2] = this.evalParam(3);
-                };
+                if (params.length === 4) {
+                    this.evalParam = Type.createEvalFunction(board, params, 4);
+                    this.update = function () {
+                        this.matrix[1][1] = this.evalParam(0);
+                        this.matrix[1][2] = this.evalParam(1);
+                        this.matrix[2][1] = this.evalParam(2);
+                        this.matrix[2][2] = this.evalParam(3);
+                    };
+                } else if (params.length === 6) {
+                    this.evalParam = Type.createEvalFunction(board, params, 6);
+                    this.update = function () {
+                        this.matrix[1][0] = this.evalParam(0);
+                        this.matrix[1][1] = this.evalParam(1);
+                        this.matrix[1][2] = this.evalParam(2);
+                        this.matrix[2][0] = this.evalParam(3);
+                        this.matrix[2][1] = this.evalParam(4);
+                        this.matrix[2][2] = this.evalParam(5);
+                    };
+                } else {
+                    throw new Error("JSXGraph: affine transformation needs 4 or 6 parameters.");
+                }
             } else if (type === 'affinematrix') {
                 if (params.length !== 1) {
-                    throw new Error("JSXGraph: transformation of type 'matrix' needs 1 parameter.");
+                    throw new Error("JSXGraph: transformation of type 'affinematrix' needs 1 parameter.");
                 }
 
                 this.evalParam = params[0].slice();
-                this.update = function () {
-                    var i, j;
-                    for (i = 0; i < 2; i++) {
-                        for (j = 0; j < 2; j++) {
-                            this.matrix[i + 1][j + 1] = Type.evaluate(this.evalParam[i][j]);
+                if (this.evalParam.length === 2 && this.evalParam[0].length === 2) { // 2x2 matrix
+                    this.update = function () {
+                        var i, j;
+                        for (i = 0; i < 2; i++) {
+                            for (j = 0; j < 2; j++) {
+                                this.matrix[i + 1][j + 1] = Type.evaluate(this.evalParam[i][j]);
+                            }
                         }
-                    }
-                };
+                    };
+                } else if (this.evalParam.length === 2 && this.evalParam[0].length === 3) { // 2x3 matrix
+                    this.update = function () {
+                        var i, j;
+                        for (i = 0; i < 2; i++) {
+                            for (j = 0; j < 3; j++) {
+                                this.matrix[i + 1][j] = Type.evaluate(this.evalParam[i][j]);
+                            }
+                        }
+                    };
+                } else {
+                    throw new Error("JSXGraph: transformation of type 'affinematrix' needs a 2x2 or a 2x3 matrix as parameter.");
+                }
             } else if (type === 'generic') {
                 if (params.length !== 9) {
                     throw new Error("JSXGraph: generic transformation needs 9 parameters.");
@@ -573,12 +631,28 @@ JXG.extend(
          * ( 0  g  h  i )   ( z )
          * </pre>
          *
+         * <p>Generic affine transformation (12 parameters, including translation):
+         * <pre>
+         * ( 1  0  0  0 )   ( w )
+         * ( a  b  c  d ) * ( x )
+         * ( e  f  g  h )   ( y )
+         * ( i  j  k  l )   ( z )
+         * </pre>
+         *
          * <p>Affine 3x3 matrix:
          * <pre>
          * ( 1  0  0  0 )   ( w )
          * ( 0          ) * ( x )
          * ( 0     M    )   ( y )
          * ( 0          )   ( z )
+         * </pre>
+         *
+         * <p>Affine 3x4 matrix (including translation):
+         * <pre>
+         * ( 1  0  0  0 )   ( w )
+         * (            ) * ( x )
+         * (     M      )   ( y )
+         * (            )   ( z )
          * </pre>
          *
          * <p>Generic transformation (16 parameters):
@@ -598,7 +672,7 @@ JXG.extend(
          * </pre>
          *
          */
-        setMatrix3D: function(view, type, params) {
+        setMatrix3D: function (view, type, params) {
             var i,
                 board = view.board;
 
@@ -728,36 +802,69 @@ JXG.extend(
                     this.matrix = Mat.matMatMult(m2, this.matrix);
                 };
             } else if (type === 'affine') {
-                if (params.length !== 9) {
-                    throw new Error("JSXGraph: 3D transformation of type 'affine' needs 9 parameters.");
+                if (params.length !== 9 && params.length !== 12) {
+                    throw new Error("JSXGraph: 3D transformation of type 'affine' needs 9 or 12 parameters.");
                 }
 
-                this.evalParam = Type.createEvalFunction(board, params, 9);
-                this.update = function () {
-                    this.matrix[1][1] = this.evalParam(0);
-                    this.matrix[1][2] = this.evalParam(1);
-                    this.matrix[1][3] = this.evalParam(2);
-                    this.matrix[2][1] = this.evalParam(3);
-                    this.matrix[2][2] = this.evalParam(4);
-                    this.matrix[2][3] = this.evalParam(5);
-                    this.matrix[3][1] = this.evalParam(6);
-                    this.matrix[3][2] = this.evalParam(7);
-                    this.matrix[3][3] = this.evalParam(8);
-                };
+                if (params.length === 9) {
+                    this.evalParam = Type.createEvalFunction(board, params, 9);
+                    this.update = function () {
+                        this.matrix[1][1] = this.evalParam(0);
+                        this.matrix[1][2] = this.evalParam(1);
+                        this.matrix[1][3] = this.evalParam(2);
+                        this.matrix[2][1] = this.evalParam(3);
+                        this.matrix[2][2] = this.evalParam(4);
+                        this.matrix[2][3] = this.evalParam(5);
+                        this.matrix[3][1] = this.evalParam(6);
+                        this.matrix[3][2] = this.evalParam(7);
+                        this.matrix[3][3] = this.evalParam(8);
+                    };
+                } else if (params.length === 12) {
+                    this.evalParam = Type.createEvalFunction(board, params, 12);
+                    this.update = function () {
+                        this.matrix[1][0] = this.evalParam(0);
+                        this.matrix[1][1] = this.evalParam(1);
+                        this.matrix[1][2] = this.evalParam(2);
+                        this.matrix[1][3] = this.evalParam(3);
+                        this.matrix[2][0] = this.evalParam(4);
+                        this.matrix[2][1] = this.evalParam(5);
+                        this.matrix[2][2] = this.evalParam(6);
+                        this.matrix[2][3] = this.evalParam(7);
+                        this.matrix[3][0] = this.evalParam(8);
+                        this.matrix[3][1] = this.evalParam(9);
+                        this.matrix[3][2] = this.evalParam(10);
+                        this.matrix[3][3] = this.evalParam(11);
+                    };
+                } else {
+                    throw new Error("JSXGraph: 3D transformation of type 'affine' needs 9 or 12 parameters.");
+                }
             } else if (type === 'affinematrix') {
                 if (params.length !== 1) {
                     throw new Error("JSXGraph: 3D transformation of type 'affinematrix' needs 1 parameter.");
                 }
 
                 this.evalParam = params[0].slice();
-                this.update = function () {
-                    var i, j;
-                    for (i = 0; i < 3; i++) {
-                        for (j = 0; j < 3; j++) {
-                            this.matrix[i + 1][j + 1] = Type.evaluate(this.evalParam[i][j]);
+                if (this.evalParam.length === 3 && this.evalParam[0].length === 3) { // 3x3 matrix
+                    this.update = function () {
+                        var i, j;
+                        for (i = 0; i < 3; i++) {
+                            for (j = 0; j < 3; j++) {
+                                this.matrix[i + 1][j + 1] = Type.evaluate(this.evalParam[i][j]);
+                            }
                         }
-                    }
-                };
+                    };
+                } else if (this.evalParam.length === 3 && this.evalParam[0].length === 4) { // 3x4 matrix
+                    this.update = function () {
+                        var i, j;
+                        for (i = 0; i < 3; i++) {
+                            for (j = 0; j < 4; j++) {
+                                this.matrix[i + 1][j] = Type.evaluate(this.evalParam[i][j]);
+                            }
+                        }
+                    };
+                } else {
+                    throw new Error("JSXGraph: 3D transformation of type 'affinematrix' needs a 3x3 or a 3x4 matrix as parameter.");
+                }
             } else if (type === 'generic') {
                 if (params.length !== 16) {
                     throw new Error("JSXGraph: 3D transformation of type 'generic' needs 16 parameters.");
@@ -924,7 +1031,7 @@ JXG.extend(
          *
          * @returns {JXG.Transformation}
          */
-        clone: function() {
+        clone: function () {
             var t = null;
 
             if (this.isNumericMatrix) {
@@ -1021,6 +1128,8 @@ JXG.extend(
  * <li> 'reflect'
  * <li> 'rotate'
  * <li> 'shear'
+ * <li> 'affine'
+ * <li> 'affinematrix'
  * <li> 'generic'
  * <li> 'matrix'
  * </ul>
@@ -1067,7 +1176,7 @@ JXG.extend(
  *      <li> <b>p_x, p_y, q_x, q_y</b> four numbers or functions  determining a line through points (p_x, p_y) and (q_x, q_y).
  *    </ul>
  * </dd>
- * <dt><b><tt>type:"affine"</tt></b></dt><dd><b>a, b, c, d</b> (numbers or functions>.
+ * <dt><b><tt>type:"affine" (4 parameters)</tt></b></dt><dd><b>a, b, c, d</b> (numbers or functions).
  * The transformation matrix has the form
  * <pre>
  * ( 1  0  0 )   ( z )
@@ -1075,12 +1184,26 @@ JXG.extend(
  * ( 0  c  d )   ( y )
  * </pre>
  * </dd>
- * <dt><b><tt>type:"affinematrix"</tt></b></dt><dd><b>M</b> 2x2 matrix containing numbers or functions.
+ * <dt><b><tt>type:"affine" (6 parameters)</tt></b></dt><dd><b>a, b, c, d, e, f</b> (numbers or functions).
+ * The transformation matrix has the form
+ * <pre>
+ * ( 1  0  0 )   ( z )
+ * ( a  b  c ) * ( x )
+ * ( d  e  f )   ( y )
+ * </pre>
+ * </dd>
+ * <dt><b><tt>type:"affinematrix"</tt></b></dt><dd><b>M</b> 2x2 or 2x3 matrix containing numbers or functions.
  * The full transformation matrix has the form
  * <pre>
  * ( 1  0  0 )   ( z )
  * ( 0  M    ) * ( x )
  * ( 0       )   ( y )
+ * </pre>
+ * or (with translation)
+ * <pre>
+ * ( 1  0  0 )   ( z )
+ * (    M    ) * ( x )
+ * (         )   ( y )
  * </pre>
  * </dd>
  * <dt><b><tt>type:"generic"</tt></b></dt><dd><b>a, b, c, d, e, f, g, h, i</b> Nine matrix entries (numbers or functions)
@@ -1489,7 +1612,7 @@ JXG.registerElement('transform', JXG.createTransform);
  * <dt><b><tt>type:"rotateZ"</tt></b></dt><dd><b>a, [p=[0,0,0]]</b> angle (in radians), [point].
  * Rotate with angle a around the normal vector (0, 0, 1) through the point p.
  * </dd>
- * <dt><b><tt>type:"affine"</tt></b></dt><dd><b>a,b,...,i</b> generic affine transformation (9 parameters, numbers or functions).
+ * <dt><b><tt>type:"affine"</tt></b></dt><dd><b>a,b,...,i (, j ,k, l)</b> generic affine transformation (9 or 12 parameters, numbers or functions).
  * The full transformation matrix has the form
  * <pre>
  * ( 1  0  0  0 )   ( w )
@@ -1497,14 +1620,28 @@ JXG.registerElement('transform', JXG.createTransform);
  * ( 0  d  e  f )   ( y )
  * ( 0  g  h  i )   ( z )
  * </pre>
+ * or (with translation)
+ * <pre>
+ * ( 1  0  0  0 )   ( w )
+ * ( a  b  c  d ) * ( x )
+ * ( e  f  g  h )   ( y )
+ * ( i  j  k  l )   ( z )
+ * </pre>
  * </dd>
- * <dt><b><tt>type:"affinematrix"</tt></b></dt><dd><b>M</b> generic affine 3x3 transformation matrix (containing numbers or functions).
+ * <dt><b><tt>type:"affinematrix"</tt></b></dt><dd><b>M</b> generic affine 3x3 or 3x4 transformation matrix (containing numbers or functions).
  * The full transformation matrix has the form
  * <pre>
  * ( 1  0  0  0 )   ( w )
  * ( 0          ) * ( x )
  * ( 0     M    )   ( y )
  * ( 0          )   ( z )
+ * </pre>
+ * or (with translation)
+ * <pre>
+ * ( 1  0  0  0 )   ( w )
+ * (            ) * ( x )
+ * (     M      )   ( y )
+ * (            )   ( z )
  * </pre>
  * </dd>
  * <dt><b><tt>type:"generic"</tt></b></dt><dd><b>a,b,...,p</b> generic transformation (16 parameters, numbers or functions).
