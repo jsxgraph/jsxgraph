@@ -833,9 +833,9 @@ JXG.extend(
 
                     this.matrix = [
                         [1, 0, 0, 0],
-                        [0, n1 * n1 * (1 - co) + co, n1 * n2 * (1 - co) - n3 * si, n1 * n3 * (1 - co) + n2 * si],
-                        [0, n2 * n1 * (1 - co) + n3 * si, n2 * n2 * (1 - co) + co, n2 * n3 * (1 - co) - n1 * si],
-                        [0, n3 * n1 * (1 - co) - n2 * si, n3 * n2 * (1 - co) + n1 * si, n3 * n3 * (1 - co) + co]
+                        [0, n1 * n1 * (1 - co) +      co, n1 * n2 * (1 - co) - n3 * si, n1 * n3 * (1 - co) + n2 * si],
+                        [0, n2 * n1 * (1 - co) + n3 * si, n2 * n2 * (1 - co) +      co, n2 * n3 * (1 - co) - n1 * si],
+                        [0, n3 * n1 * (1 - co) - n2 * si, n3 * n2 * (1 - co) + n1 * si, n3 * n3 * (1 - co) +      co]
                     ];
                     this.matrix = Mat.matMatMult(this.matrix, m1);
                     this.matrix = Mat.matMatMult(m2, this.matrix);
