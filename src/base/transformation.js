@@ -1064,6 +1064,15 @@ JXG.extend(
          * @returns {JXG.Transform} the transformation object.
          */
         melt: function (t) {
+            const closedTypes = [
+                'translate',
+                'scale',
+                'affine',
+                'affinematrix',
+                'generic',
+                'matrix'
+                // 'rotate' is handled separately
+            ];
             var res = [];
 
             this.update();
@@ -1074,6 +1083,26 @@ JXG.extend(
             this.update = function () {
                 this.matrix = res;
             };
+            delete this.evalParam;
+
+            if (
+                this.transformationType === t.transformationType &&
+                closedTypes.includes(this.transformationType)
+            ) {
+                // keep type
+
+            } else if (
+                !this.is3D && !t.is3D &&
+                this.transformationType === 'rotate' && t.transformationType === 'rotate' &&
+                // rotation around 0,0
+                Math.abs(this.matrix[1][0]) < Mat.eps && Math.abs(this.matrix[2][0]) < Mat.eps &&
+                Math.abs(t.matrix[1][0]) < Mat.eps && Math.abs(t.matrix[2][0]) < Mat.eps
+            ) {
+                // keep type 'rotate'
+
+            } else {
+                this.transformationType = 'melted';
+            }
 
             return this;
         },
