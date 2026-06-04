@@ -1612,9 +1612,11 @@ JXG.extend(
          *     <li><tt>{Array} generic</tt> Array of length 9</li>
          *     <li><tt>{Array} affine</tt> Array of length 6</li>
          *     <li><tt>{Array} twofingers</tt> Array of length 4</li>
-         *     <li><tt>{Array|null} translate</tt> Array of length 2</li>
-         *     <li><tt>{Array|null} scale</tt> Array of length 2</li>
-         *     <li><tt>{Array|null} rotate</tt> Array of length 1</li>
+         *     <li><tt>{Object} single</tt><ul>
+         *          <li><tt>{Array|null} translate</tt> Array of length 2</li>
+         *          <li><tt>{Array|null} scale</tt> Array of length 2</li>
+         *          <li><tt>{Array|null} rotate</tt> Array of length 1</li>
+         *     </ul></li>
          *     </ul>
          */
         getTwoFingerTransforms: function (finger1, finger2, scalable, rotatable) {
@@ -1724,9 +1726,7 @@ JXG.extend(
          */
         twoFingerTouchObject: function (tar, drag, id) {
             var t, T,
-                transformations,
                 ar, i, len,
-                combine,
                 snap = false;
 
             if (
