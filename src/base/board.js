@@ -1679,17 +1679,19 @@ JXG.extend(
                     Math.atan2(S, C)
                 ],
 
-                translate: (tx !== 0 || ty !== 0)
-                    ? [tx, ty]
-                    : null,
+                single: {
+                    translate: (tx !== 0 || ty !== 0)
+                        ? [tx, ty]
+                        : null,
 
-                scale: (scalable && lbda !== 1)
-                    ? [lbda, lbda]
-                    : null,
+                    scale: (scalable && lbda !== 1)
+                        ? [lbda, lbda]
+                        : null,
 
-                rotate: (rotatable && S !== 0)
-                    ? [Math.atan2(S, C)]
-                    : null
+                    rotate: (rotatable && S !== 0)
+                        ? [Math.atan2(S, C)]
+                        : null
+                }
             };
         },
 
@@ -1733,38 +1735,13 @@ JXG.extend(
                 !isNaN(tar[0].Xprev + tar[0].Yprev + tar[1].Xprev + tar[1].Yprev)
             ) {
 
-                combine = drag.evalVisProp('combineTwoFingerTransform');
-                if (Type.isString(combine)) combine = combine.toLowerCase();
-
                 T = this.getTwoFingerTransforms(
                     tar[0], tar[1],
                     drag.evalVisProp('scalable'),
                     drag.evalVisProp('rotatable')
                 );
-
-                if (combine === true || combine === 'all' || combine === 'nomelt') {
-                    t = this.create('transform', T.twofingers, {type: 'twofingers'});
-                    t.update();
-                    transformations = [t];
-
-                } else {
-                    transformations = [];
-                    if (Type.exists(T.translate)) {
-                        t = this.create('transform', T.translate, {type: 'translate'});
-                        t.update();
-                        transformations.push(t);
-                    }
-                    if (Type.exists(T.rotate)) {
-                        t = this.create('transform', T.rotate, {type: 'rotate'});
-                        t.update();
-                        transformations.push(t);
-                    }
-                    if (Type.exists(T.scale)) {
-                        t = this.create('transform', T.scale, {type: 'scale'});
-                        t.update();
-                        transformations.push(t);
-                    }
-                }
+                t = this.create('transform', T.twofingers, {type: 'twofingers'});
+                t.update();
 
                 if (drag.elementClass === Const.OBJECT_CLASS_LINE) {
                     ar = [];
@@ -1774,9 +1751,7 @@ JXG.extend(
                     if (drag.point2.draggable()) {
                         ar.push(drag.point2);
                     }
-                    for (i = 0; i < transformations.length; i++) {
-                        transformations[i].applyOnce(ar);
-                    }
+                    t.applyOnce(ar);
                 } else if (drag.type === Const.OBJECT_TYPE_POLYGON) {
                     len = drag.vertices.length - 1;
                     snap = drag.evalVisProp('snaptogrid') || drag.evalVisProp('snaptopoints');
@@ -1791,20 +1766,7 @@ JXG.extend(
                                 ar.push(drag.vertices[i]);
                             }
                         }
-                        for (i = 0; i < transformations.length; i++) {
-                            transformations[i].applyOnce(ar);
-                        }
-                    }
-                } else if (drag.elementClass === Const.OBJECT_CLASS_CURVE) {
-                    for (i = 0; i < transformations.length; i++) {
-                        if (
-                           // drag.transformations.length === null ||
-                            combine === false || combine === "none" || combine === "nomelt"
-                        ) {
-                            transformations[i].bindTo(drag);
-                        } else {
-                            transformations[i].meltTo(drag);
-                        }
+                        t.applyOnce(ar);
                     }
                 } else if (drag.elementClass === Const.OBJECT_CLASS_CURVE) {
                     t.meltTo(drag);

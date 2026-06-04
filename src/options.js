@@ -2276,38 +2276,6 @@ JXG.Options = {
         scalable: true,
 
         /**
-         * Determines whether two-finger manipulation of this object may result in one transformation
-         * or separate transformations for translate, rotate and scale.
-         *
-         * Possible values are <ul>
-         *     <li>
-         *         <tt>'all'</tt> or <tt>true</tt>:
-         *         The whole movement results in one singe transformation of type 'twofingers'.
-         *         This is melted to existing transformations.
-         *         <b>For better performance we highly recommend to use this.</b>
-         *     </li>
-         *     <li>
-         *         <tt>'nomelt'</tt>:
-         *         The whole movement results in one singe transformation of type 'twofingers'.
-         *         This is bound (not melted!) to existing transformations.
-         *     </li>
-         *     <li>
-         *         <tt>'none'</tt> or <tt>false</tt>:
-         *         The movement is split in transformations 'translate', 'rotate' and 'scale'.
-         *         These are bound (not melted!) to existing transformations.
-         *     </li>
-         * </ul>
-         *
-         * @type Boolean|String
-         * @default true
-         * @name JXG.GeometryElement#combineTwoFingerTransform
-         * @see JXG.GeometryElement#fixed
-         * @see JXG.GeometryElement#scalable
-         * @see JXG.GeometryElement#rotatable
-         */
-        combineTwoFingerTransform: true,
-
-        /**
          * If enabled:true the (stroke) element will get a customized shadow.
          * <p>
          * Customize <i>color</i> and <i>opacity</i>:
