@@ -124,8 +124,9 @@ import Type from "../utils/type.js";
 JXG.Transformation = function (board, type, params, is3D) {
     this.elementClass = Const.OBJECT_CLASS_OTHER;
     this.type = Const.OBJECT_TYPE_TRANSFORMATION;
-    this.elType = '';             // will be set by setMatrix or setMatrix3D to transformation type
-    this.transformationType = ''; // will be set by setMatrix or setMatrix3D
+    this.elType = '';
+
+    this.transformationType = 'none'; // will be set by setMatrix or setMatrix3D
 
     if (is3D) {
         this.is3D = true;
@@ -260,7 +261,14 @@ JXG.extend(
          */
         setMatrix: function (board, type, params) {
             var i;
-                // e, obj; // Handle dependencies
+
+            this.isNumericMatrix = true;
+            for (i = 0; i < params.length; i++) {
+                if (typeof params[i] !== 'number') {
+                    this.isNumericMatrix = false;
+                    break;
+                }
+            }
 
             if ([
                 'translate',
@@ -273,18 +281,9 @@ JXG.extend(
                 'generic',
                 'matrix'
             ].includes(type)) {
-                this.elType = type;
                 this.transformationType = type;
             } else {
                 return;
-            }
-
-            this.isNumericMatrix = true;
-            for (i = 0; i < params.length; i++) {
-                if (typeof params[i] !== 'number') {
-                    this.isNumericMatrix = false;
-                    break;
-                }
             }
 
             if (type === 'translate') {
@@ -598,9 +597,17 @@ JXG.extend(
          * </pre>
          *
          */
-        setMatrix3D: function(view, type, params) {
+        setMatrix3D: function (view, type, params) {
             var i,
                 board = view.board;
+
+            this.isNumericMatrix = true;
+            for (i = 0; i < params.length; i++) {
+                if (typeof params[i] !== 'number') {
+                    this.isNumericMatrix = false;
+                    break;
+                }
+            }
 
             if ([
                 'translate',
@@ -614,18 +621,9 @@ JXG.extend(
                 'generic',
                 'matrix'
             ].includes(type)) {
-                this.elType = type;
                 this.transformationType = type;
             } else {
                 return;
-            }
-
-            this.isNumericMatrix = true;
-            for (i = 0; i < params.length; i++) {
-                if (typeof params[i] !== 'number') {
-                    this.isNumericMatrix = false;
-                    break;
-                }
             }
 
             if (type === 'translate') {
@@ -885,7 +883,7 @@ JXG.extend(
          * i.e. the transformation matrices do not depend on other elements,
          * the transformation will be fused into (multiplied with) the last transformation of
          * the element. Thus, the list of transformations is kept small.
-         * If the transformation will be the first transformation ot the element, it will be cloned
+         * If the transformation will be the first transformation of the element, it will be cloned
          * to prevent side effects.
          *
          * @param  {Array|JXG.Object} el JXG.Object or array of JXG.Objects to
@@ -902,6 +900,7 @@ JXG.extend(
                 }
             } else {
                 elt = el.transformations;
+
                 if (elt.length > 0 &&
                     elt[elt.length - 1].isNumericMatrix &&
                     this.isNumericMatrix
@@ -925,12 +924,14 @@ JXG.extend(
          *
          * @returns {JXG.Transformation}
          */
-        clone: function() {
+        clone: function () {
             var t = null;
 
+            this.update();
             if (this.isNumericMatrix) {
                 t = new JXG.Transformation(this.board, 'none', []);
                 t.matrix = this.matrix.slice();
+                t.transformationType = this.transformationType;
             }
 
             return t;
