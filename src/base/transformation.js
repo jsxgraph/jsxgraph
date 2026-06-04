@@ -1118,16 +1118,9 @@ JXG.extend(
                 'twofingers', // is reversable because sx = sy
                 'generic',
                 'matrix'
+                // 'rotate' is handled separately
             ];
             var res = [];
-
-            // helper: check pure 2D rotation around origin (no translation)
-            function is2dPureRotate0(obj) {
-                return obj && !obj.is3D &&
-                    obj.transformationType === 'rotate' &&
-                    Math.abs(obj.matrix[1][0]) < Mat.eps &&
-                    Math.abs(obj.matrix[2][0]) < Mat.eps;
-            }
 
             this.update();
             t.update();
@@ -1144,11 +1137,16 @@ JXG.extend(
                 closedTypes.includes(this.transformationType)
             ) {
                 // keep type
+
             } else if (
-                is2dPureRotate0(this) &&
-                is2dPureRotate0(t)
+                !this.is3D && !t.is3D &&
+                this.transformationType === 'rotate' && t.transformationType === 'rotate' &&
+                // rotation around 0,0
+                Math.abs(this.matrix[1][0]) < Mat.eps && Math.abs(this.matrix[2][0]) < Mat.eps &&
+                Math.abs(t.matrix[1][0]) < Mat.eps && Math.abs(t.matrix[2][0]) < Mat.eps
             ) {
                 // keep type 'rotate'
+
             } else {
                 this.transformationType = 'melted';
             }
@@ -1169,12 +1167,9 @@ JXG.extend(
                     res[i] = this.evalParam(i);
                 }
 
-            } else if (!this.is3D) {
+            } else if (!this.is3D) { ////////////////////////// 2D
                 if (type === 'translate') {
-                    res = [
-                        this.matrix[1][0],
-                        this.matrix[2][0]
-                    ];
+                    res = [this.matrix[1][0], this.matrix[2][0]];
 
                 } else if (type === 'reflect') {
                     // Not uniquely recoverable in general.
@@ -1184,9 +1179,7 @@ JXG.extend(
                     si = this.matrix[2][1];
                     tx = this.matrix[1][0];
                     ty = this.matrix[2][0];
-
                     angle = Math.atan2(si, co);
-
                     det = (1 - co) * (1 - co) + si * si;
 
                     if (Math.abs(det) < Mat.eps) {
@@ -1206,31 +1199,20 @@ JXG.extend(
                     }
 
                 } else if (type === 'shear') {
-                    res = [
-                        this.matrix[1][2],
-                        this.matrix[2][1]
-                    ];
+                    res = [this.matrix[1][2], this.matrix[2][1]];
 
                 } else if (type === 'affine') {
                     if (
-                        this.matrix[1][0] === 0 &&
-                        this.matrix[2][0] === 0
+                        this.matrix[1][0] === 0 && this.matrix[2][0] === 0
                     ) {
                         res = [
-                            this.matrix[1][1],
-                            this.matrix[1][2],
-                            this.matrix[2][1],
-                            this.matrix[2][2]
+                            this.matrix[1][1], this.matrix[1][2],
+                            this.matrix[2][1], this.matrix[2][2]
                         ];
                     } else {
                         res = [
-                            this.matrix[1][0],
-                            this.matrix[1][1],
-                            this.matrix[1][2],
-
-                            this.matrix[2][0],
-                            this.matrix[2][1],
-                            this.matrix[2][2]
+                            this.matrix[1][0], this.matrix[1][1], this.matrix[1][2],
+                            this.matrix[2][0], this.matrix[2][1], this.matrix[2][2]
                         ];
                     }
 
@@ -1240,27 +1222,13 @@ JXG.extend(
                         this.matrix[2][0] === 0
                     ) {
                         res = [
-                            [
-                                this.matrix[1][1],
-                                this.matrix[1][2]
-                            ],
-                            [
-                                this.matrix[2][1],
-                                this.matrix[2][2]
-                            ]
+                            [this.matrix[1][1], this.matrix[1][2]],
+                            [this.matrix[2][1], this.matrix[2][2]]
                         ];
                     } else {
                         res = [
-                            [
-                                this.matrix[1][0],
-                                this.matrix[1][1],
-                                this.matrix[1][2]
-                            ],
-                            [
-                                this.matrix[2][0],
-                                this.matrix[2][1],
-                                this.matrix[2][2]
-                            ]
+                            [this.matrix[1][0], this.matrix[1][1], this.matrix[1][2]],
+                            [this.matrix[2][0], this.matrix[2][1], this.matrix[2][2]]
                         ];
                     }
 
@@ -1289,20 +1257,12 @@ JXG.extend(
                     res = this.matrix.slice();
                 }
 
-            } else {
+            } else { ////////////////////////////////////////// 3D
                 if (type === 'translate') {
-                    res = [
-                        this.matrix[1][0],
-                        this.matrix[2][0],
-                        this.matrix[3][0]
-                    ];
+                    res = [this.matrix[1][0], this.matrix[2][0], this.matrix[3][0]];
 
                 } else if (type === 'scale') {
-                    res = [
-                        this.matrix[1][1],
-                        this.matrix[2][2],
-                        this.matrix[3][3]
-                    ];
+                    res = [this.matrix[1][1], this.matrix[2][2], this.matrix[3][3]];
 
                 } else if (type === 'rotateX') {
                     angle = Math.atan2(
@@ -1335,34 +1295,15 @@ JXG.extend(
                         this.matrix[3][0] === 0
                     ) {
                         res = [
-                            this.matrix[1][1],
-                            this.matrix[1][2],
-                            this.matrix[1][3],
-
-                            this.matrix[2][1],
-                            this.matrix[2][2],
-                            this.matrix[2][3],
-
-                            this.matrix[3][1],
-                            this.matrix[3][2],
-                            this.matrix[3][3]
+                            this.matrix[1][1], this.matrix[1][2], this.matrix[1][3],
+                            this.matrix[2][1], this.matrix[2][2], this.matrix[2][3],
+                            this.matrix[3][1], this.matrix[3][2], this.matrix[3][3]
                         ];
                     } else {
                         res = [
-                            this.matrix[1][0],
-                            this.matrix[1][1],
-                            this.matrix[1][2],
-                            this.matrix[1][3],
-
-                            this.matrix[2][0],
-                            this.matrix[2][1],
-                            this.matrix[2][2],
-                            this.matrix[2][3],
-
-                            this.matrix[3][0],
-                            this.matrix[3][1],
-                            this.matrix[3][2],
-                            this.matrix[3][3]
+                            this.matrix[1][0], this.matrix[1][1], this.matrix[1][2], this.matrix[1][3],
+                            this.matrix[2][0], this.matrix[2][1], this.matrix[2][2], this.matrix[2][3],
+                            this.matrix[3][0], this.matrix[3][1], this.matrix[3][2], this.matrix[3][3]
                         ];
                     }
 
