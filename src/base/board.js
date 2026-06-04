@@ -1586,7 +1586,7 @@ JXG.extend(
          *     <li>
          *         <b>twofingers</b>: Array
          *         <pre>
-         *           [tx, ty, sx, sy, r]
+         *           [tx, ty, s, r]
          *         </pre>
          *     </li>
          *     <li>
@@ -1611,7 +1611,7 @@ JXG.extend(
          * @returns {Object} Transformation parameters <ul>
          *     <li><tt>{Array} generic</tt> Array of length 9</li>
          *     <li><tt>{Array} affine</tt> Array of length 6</li>
-         *     <li><tt>{Array} twofingers</tt> Array of length 5</li>
+         *     <li><tt>{Array} twofingers</tt> Array of length 4</li>
          *     <li><tt>{Array|null} translate</tt> Array of length 2</li>
          *     <li><tt>{Array|null} scale</tt> Array of length 2</li>
          *     <li><tt>{Array|null} rotate</tt> Array of length 1</li>
@@ -1675,7 +1675,7 @@ JXG.extend(
 
                 twofingers: [
                     tx,ty,
-                    lbda, lbda,
+                    lbda,
                     Math.atan2(S, C)
                 ],
 

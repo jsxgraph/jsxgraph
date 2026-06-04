@@ -120,15 +120,15 @@ import Type from "../utils/type.js";
  * (         )   ( y )
  * </pre>
  *
- * <p>A 'twofingers' transformation consists of 5 parameters: <ul>
+ * <p>A 'twofingers' transformation consists of 4 parameters: <ul>
  * <li>translation in directions x and y (tx, ty),</li>
- * <li>scaling in directions x and y (sx, sy) and</li>
+ * <li>scaling (s) equally in both the x and y directions and</li>
  * <li>rotation with angle r (in Radians)</li>
  * </ul>
  * <pre>
- * ( 1    0           0         )   ( z )
- * ( tx   sx*cos(r)  -sy*sin(r) ) * ( x )
- * ( ty   sx*sin(r)   sy*cos(r) )   ( y )
+ * ( 1    0          0        )   ( z )
+ * ( tx   s*cos(r)  -s*sin(r) ) * ( x )
+ * ( ty   s*sin(r)   s*cos(r) )   ( y )
  * </pre>
  *
  * <p>Generic transformation (9 parameters):
@@ -284,15 +284,15 @@ JXG.extend(
          * (         )   ( y )
          * </pre>
          *
-         * <p>A 'twofingers' transformation consists of 5 parameters: <ul>
+         * <p>A 'twofingers' transformation consists of 4 parameters: <ul>
          * <li>translation in directions x and y (tx, ty),</li>
-         * <li>scaling in directions x and y (sx, sy) and</li>
+         * <li>scaling (s) equally in both the x and y directions</li>
          * <li>rotation with angle r (in Radians)</li>
          * </ul>
          * <pre>
-         * ( 1    0           0         )   ( z )
-         * ( tx   sx*cos(r)  -sy*sin(r) ) * ( x )
-         * ( ty   sx*sin(r)   sy*cos(r) )   ( y )
+         * ( 1    0          0        )   ( z )
+         * ( tx   s*cos(r)  -s*sin(r) ) * ( x )
+         * ( ty   s*sin(r)   s*cos(r) )   ( y )
          * </pre>
          *
          * <p>Generic transformation (9 parameters):
@@ -523,26 +523,25 @@ JXG.extend(
                     throw new Error("JSXGraph: transformation of type 'affinematrix' needs a 2x2 or a 2x3 matrix as parameter.");
                 }
             } else if (type === 'twofingers') {
-                if (params.length !== 5) {
-                    throw new Error("JSXGraph: 'twofingers' transformation needs 5 parameters.");
+                if (params.length !== 4) {
+                    throw new Error("JSXGraph: 'twofingers' transformation needs 4 parameters.");
                 }
 
-                this.evalParam = Type.createEvalFunction(board, params, 5);
+                this.evalParam = Type.createEvalFunction(board, params, 4);
                 this.update = function () {
                     var tx = this.evalParam(0),
                         ty = this.evalParam(1),
-                        sx = this.evalParam(2),
-                        sy = this.evalParam(3),
-                        r = this.evalParam(4),
+                        s = this.evalParam(2),
+                        r = this.evalParam(3),
                         co = Math.cos(r),
                         si = Math.sin(r);
 
                     this.matrix[1][0] = tx;
-                    this.matrix[1][1] = sx * co;
-                    this.matrix[1][2] = -sy * si;
+                    this.matrix[1][1] = s * co;
+                    this.matrix[1][2] = -s * si;
                     this.matrix[2][0] = ty;
-                    this.matrix[2][1] = sx * si;
-                    this.matrix[2][2] = sy * co;
+                    this.matrix[2][1] = s * si;
+                    this.matrix[2][2] = s * co;
                 };
             } else if (type === 'generic') {
                 if (params.length !== 9) {
@@ -834,9 +833,9 @@ JXG.extend(
 
                     this.matrix = [
                         [1, 0, 0, 0],
-                        [0, n1 * n1 * (1 - co) +      co, n1 * n2 * (1 - co) - n3 * si, n1 * n3 * (1 - co) + n2 * si],
-                        [0, n2 * n1 * (1 - co) + n3 * si, n2 * n2 * (1 - co) +      co, n2 * n3 * (1 - co) - n1 * si],
-                        [0, n3 * n1 * (1 - co) - n2 * si, n3 * n2 * (1 - co) + n1 * si, n3 * n3 * (1 - co) +      co]
+                        [0, n1 * n1 * (1 - co) + co, n1 * n2 * (1 - co) - n3 * si, n1 * n3 * (1 - co) + n2 * si],
+                        [0, n2 * n1 * (1 - co) + n3 * si, n2 * n2 * (1 - co) + co, n2 * n3 * (1 - co) - n1 * si],
+                        [0, n3 * n1 * (1 - co) - n2 * si, n3 * n2 * (1 - co) + n1 * si, n3 * n3 * (1 - co) + co]
                     ];
                     this.matrix = Mat.matMatMult(this.matrix, m1);
                     this.matrix = Mat.matMatMult(m2, this.matrix);
@@ -1116,6 +1115,7 @@ JXG.extend(
                 'scale',
                 'affine',
                 'affinematrix',
+                'twofingers', // is reversable because sx = sy
                 'generic',
                 'matrix'
             ];
@@ -1158,7 +1158,7 @@ JXG.extend(
 
         getParams: function () {
             let i, j, len,
-                sx, sy, angle,
+                angle,
                 co, si, tx, ty, det, x, y,
                 type = this.transformationType,
                 res = [];
@@ -1265,24 +1265,17 @@ JXG.extend(
                     }
 
                 } else if (type === 'twofingers') {
-                    sx = Mat.hypot(
-                        this.matrix[1][1],
-                        this.matrix[2][1]
-                    );
-                    sy = Mat.hypot(
-                        this.matrix[1][2],
-                        this.matrix[2][2]
-                    );
-                    angle = Math.atan2(
-                        this.matrix[2][1],
-                        this.matrix[1][1]
-                    );
                     res = [
-                        this.matrix[1][0],
-                        this.matrix[2][0],
-                        sx,
-                        sy,
-                        angle
+                        this.matrix[1][0], // tx
+                        this.matrix[2][0], // ty
+                        Mat.hypot(         // s
+                            this.matrix[1][1],
+                            this.matrix[2][1]
+                        ),
+                        Math.atan2(        // angle
+                            this.matrix[2][1],
+                            this.matrix[1][1]
+                        )
                     ];
 
                 } else if (type === 'generic') {
@@ -1531,9 +1524,9 @@ JXG.extend(
  * (         )   ( y )
  * </pre>
  * </dd>
- * <dt><b><tt>type:"twofingers"</tt></b></dt><dd> <b>tx, ty, sx, sy, r</b> The parameters are <ul>
+ * <dt><b><tt>type:"twofingers"</tt></b></dt><dd> <b>tx, ty, s, r</b> The parameters are <ul>
  * <li>translation in directions x and y (tx, ty; numbers or functions),</li>
- * <li>scaling in directions x and y (sx, sy; numbers or functions) and</li>
+ * <li>scaling equally in both the x and y directions (s; numbers or functions) and</li>
  * <li>rotation with angle r (in Radians; number or function)</li>
  * </ul>
  * The transformation matrix has the form:
