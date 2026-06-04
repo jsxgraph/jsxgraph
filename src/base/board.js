@@ -1806,6 +1806,8 @@ JXG.extend(
                             transformations[i].meltTo(drag);
                         }
                     }
+                } else if (drag.elementClass === Const.OBJECT_CLASS_CURVE) {
+                    t.meltTo(drag);
                 }
 
                 this.update();

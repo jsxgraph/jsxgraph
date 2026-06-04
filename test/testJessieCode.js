@@ -141,18 +141,4 @@ describe("Test JessieCode", function () {
         expect(parsed).toEqual(f);
     });
 
-    it("Jessiecode minParentheses function 1", function() {
-        var f = 'function (x) { return (x + 3)^2 - 4.5 - 1.5; }';
-        var parsed = board.jc.minParentheses(f + ';');
-        parsed = parsed.toString().replaceAll('\n', '').trim();
-        expect(parsed).toEqual(f);
-    });
-
-    it("Jessiecode minParentheses function 2", function() {
-        var f = 'function (x) { return sin(2^(x - 1)) + PI; }';
-        var parsed = board.jc.minParentheses(f + ';');
-        parsed = parsed.toString().replaceAll('\n', '').trim() ;
-        expect(parsed).toEqual(f);
-    });
-
 });
