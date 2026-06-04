@@ -1115,7 +1115,7 @@ JXG.extend(
                 'scale',
                 'affine',
                 'affinematrix',
-                'twofingers', // is reversable because sx = sy
+                'twofingers', // is reversible because sx = sy
                 'generic',
                 'matrix'
                 // 'rotate' is handled separately
@@ -1472,9 +1472,9 @@ JXG.extend(
  * </ul>
  * The transformation matrix has the form:
  * <pre>
- * ( 1    0           0         )   ( z )
- * ( tx   sx*cos(r)  -sy*sin(r) ) * ( x )
- * ( ty   sx*sin(r)   sy*cos(r) )   ( y )
+ * ( 1    0          0        )   ( z )
+ * ( tx   s*cos(r)  -s*sin(r) ) * ( x )
+ * ( ty   s*sin(r)   s*cos(r) )   ( y )
  * </pre>
  * </dd>
  * <dt><b><tt>type:"generic"</tt></b></dt><dd><b>a, b, c, d, e, f, g, h, i</b> Nine matrix entries (numbers or functions)
