@@ -1708,7 +1708,7 @@ JXG.extend(
 
                 dist: dist,
                 dx: dx,
-                dy: dy,
+                dy: dy
             };
         },
 
