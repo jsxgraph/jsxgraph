@@ -1567,9 +1567,8 @@ JXG.extend(
          *
          * @param {Event} evt
          * @param {Number} [pinchDirSensitivity=5] Sensitivity (in degrees) for recognizing horizontal or vertical pinch gestures.
+         * @param {Boolean} [stayPinchXY=false]
          * @param {Boolean} [allowPan=true]
-         * @param {Boolean} [panPinchExclusive=true]
-         * @param {Boolean} [filterSmallMovements=false]
          * @returns {Object|null} <ul>
          *     <li>{Boolean} isPinch</li>
          *     <li>{Boolean} isPinchVertical</li>
@@ -1592,7 +1591,7 @@ JXG.extend(
          * @see JXG.Board.gestureChangeListener
          * @see JXG.Board.twoFingerTouchObject
          */
-        twoFingerGesture: function (evt, pinchDirSensitivity, allowPan, panPinchExclusive, filterSmallMovements) {
+        twoFingerGesture: function (evt, pinchDirSensitivity,  stayPinchXY, allowPan) {
             var mi = 10,
                 dir1, dir2,
                 movementAngle,
@@ -1610,14 +1609,11 @@ JXG.extend(
                 return null;
             }
 
-            if (!Type.exists(filterSmallMovements)) {
-                filterSmallMovements = false;
-            }
             if (!Type.exists(allowPan)) {
                 allowPan = true;
             }
-            if (!Type.exists(panPinchExclusive)) {
-                panPinchExclusive = true;
+            if (!Type.exists(stayPinchXY)) {
+                stayPinchXY = false;
             }
             if (!Type.exists(pinchDirSensitivity)) {
                 pinchDirSensitivity = 5;
@@ -1649,7 +1645,6 @@ JXG.extend(
             ];
 
             if (
-                filterSmallMovements &&
                 dir1[0] * dir1[0] + dir1[1] * dir1[1] < mi * mi &&
                 dir2[0] * dir2[0] + dir2[1] * dir2[1] < mi * mi
             ) {
@@ -1657,12 +1652,12 @@ JXG.extend(
             }
 
             // Compute the angle of the two finger directions
-            movementAngle = Geometry.rad(dir1, [0, 0], dir2);
+            movementAngle = Math.abs(Geometry.rad(dir1, [0, 0], dir2));
 
             if (this.isPreviousGesture !== 'pan') {
                 if (
-                    Math.abs(movementAngle) > Math.PI * 0.2 &&
-                    Math.abs(movementAngle) < Math.PI * 1.8
+                    movementAngle > Math.PI * 0.2 &&
+                    movementAngle < Math.PI * 1.8
                 ) {
                     isPinch = true;
                 }
@@ -1672,14 +1667,25 @@ JXG.extend(
                 ) {
                     isPinch = true;
                 }
-                if (isPinch) {
+                if (
+                    isPinch ||
+                    (stayPinchXY && (this.isPreviousGesture === 'scaleX' || this.isPreviousGesture === 'scaleY'))
+                ) {
+                    isPinch = true;
+                    isPinchHorizontal =  this.isPreviousGesture === 'scaleX' || fingerLineAngle < pinchDirSensitivity;
+                    isPinchVertical = this.isPreviousGesture === 'scaleY' || Math.abs(fingerLineAngle - Math.PI * 0.5) < pinchDirSensitivity;
+
                     factor = evt.scale / this.prevScale;
-                    isPinchHorizontal = fingerLineAngle < pinchDirSensitivity;
-                    isPinchVertical = Math.abs(fingerLineAngle - Math.PI * 0.5) < pinchDirSensitivity;
+                }
+                if (isPinchHorizontal && stayPinchXY) {
+                    this.isPreviousGesture = 'scaleX';
+                }
+                if (isPinchVertical && stayPinchXY) {
+                    this.isPreviousGesture = 'scaleY';
                 }
             }
 
-            isPan = allowPan && (panPinchExclusive ? !isPinch : true);
+            isPan = allowPan && !isPinch;
 
             this.prevCoords = [p1, p2];
             this.prevScale = evt.scale;
