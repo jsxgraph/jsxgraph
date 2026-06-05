@@ -1524,30 +1524,42 @@ JXG.extend(
         },
 
         /**
-         * Saves values in this.prevCoords, this.prevScale, this.prevDist and this.isPreviousGesture
-         * if the new values are not null.
+         * Initializes this.prevCoords, this.prevScale, this.prevDist and this.isPreviousGesture.
          * This is necessary for {@link JXG.Board.twoFingerGesture}.
          *
-         * @param {Array|null} coords
-         * @param {Number|null} scale
-         * @param {Number|null} dist
-         * @param {String|null} gesture
+         * @param {Event} evt
          * @see JXG.Board.twoFingerGesture
-         * @see JXG.Board.saveTwoFingerGesture
+         * @see JXG.Board.pointerDownListener
+         * @see JXG.Board.touchStartListener
+         * @see JXG.Board.gestureStartListener
+         *
+         * @private
          */
-        saveTwoFingerPinch: function (coords, scale, dist, gesture) {
-            if (Type.exists(coords)) {
-                this.prevCoords = coords;
+        twoFingerGestureStart: function (evt) {
+            if (!Type.exists(evt.touches) ||
+                evt.touches.length < 2) {
+                delete this.prevCoords;
+                delete this.prevScale;
+                this.prevDist = 1;
+                this.isPreviousGesture = 'none';
+                return;
             }
-            if (Type.exists(scale)) {
-                this.prevScale = scale;
-            }
-            if (Type.exists(dist)) { // Android pinch to zoom
-                this.prevDist = dist;
-            }
-            if (Type.exists(gesture)) {
-                this.isPreviousGesture = gesture;
-            }
+
+            this.prevCoords = [
+                [evt.touches[0].clientX, evt.touches[0].clientY],
+                [evt.touches[1].clientX, evt.touches[1].clientY]
+            ];
+
+            this.prevScale = 1.0;
+
+            // Android pinch to zoom
+            this.prevDist = Geometry.distance(
+                [evt.touches[0].clientX, evt.touches[0].clientY],
+                [evt.touches[1].clientX, evt.touches[1].clientY],
+                2
+            );
+
+            this.isPreviousGesture = 'none';
         },
 
         /**
@@ -1562,6 +1574,7 @@ JXG.extend(
          *     <li>{Number} dist</li>
          *     <li>{Number} angle</li>
          *     </ul>
+         * @see JXG.Board.twoFingerGestureStart
          * @see JXG.Board.gestureChangeListener
          * @see JXG.Board.twoFingerTouchObject
          */
@@ -1627,13 +1640,11 @@ JXG.extend(
 
             factor = evt.scale / this.prevScale;
 
-            this.saveTwoFingerPinch(
-                [ // coords
-                    [evt.touches[0].clientX, evt.touches[0].clientY],
-                    [evt.touches[1].clientX, evt.touches[1].clientY]
-                ],
-                evt.scale // scale
-            );
+            this.prevCoords = [
+                [evt.touches[0].clientX, evt.touches[0].clientY],
+                [evt.touches[1].clientX, evt.touches[1].clientY]
+            ];
+            this.prevScale = evt.scale;
 
             return {
                 isPinch: isPinch,
@@ -2724,19 +2735,10 @@ JXG.extend(
             var pos;
 
             evt.preventDefault();
-            this.saveTwoFingerPinch(
-                [ // coords
-                    [evt.touches[0].clientX, evt.touches[0].clientY],
-                    [evt.touches[1].clientX, evt.touches[1].clientY]
-                ],
-                1.0, // scale
-                Geometry.distance( // dist (Android pinch to zoom)
-                    [evt.touches[0].clientX, evt.touches[0].clientY],
-                    [evt.touches[1].clientX, evt.touches[1].clientY],
-                    2
-                ),
-                'none' // gesture
-            );
+
+            // If we use alleGestures, gestureStartListener is calles directly.
+            // So we have to initialize (again).
+            this.twoFingerGestureStart(evt);
 
             // If pinch-to-zoom is interpreted as panning
             // we have to prepare move origin
@@ -3084,18 +3086,21 @@ JXG.extend(
                 ) {
                     // Empty by purpose
                 } else if (
-                    evt.touches.length === 2 &&
-                    (this.mode === this.BOARD_MODE_NONE ||
-                        this.mode === this.BOARD_MODE_MOVE_ORIGIN)
+                    evt.touches.length === 2
                 ) {
-                    // 2. case: two fingers: pinch to zoom or pan with two fingers needed.
-                    // This happens when the second finger hits the device. First, the
-                    // 'one finger pan mode' has to be cancelled.
-                    if (this.mode === this.BOARD_MODE_MOVE_ORIGIN) {
-                        this.originMoveEnd();
-                    }
+                    // 2. case: two fingers.
+                    // Pinch or pan with two fingers for zoom or manupulating objects.
+                    this.twoFingerGestureStart(evt);
 
-                    this.gestureStartListener(evt);
+                    if( this.mode === this.BOARD_MODE_NONE ||
+                        this.mode === this.BOARD_MODE_MOVE_ORIGIN) {
+                        // This happens when the second finger hits the device. First, the
+                        // 'one finger pan mode' has to be cancelled.
+                        if (this.mode === this.BOARD_MODE_MOVE_ORIGIN) {
+                            this.originMoveEnd();
+                        }
+                        this.gestureStartListener(evt);
+                    }
                 }
             }
 
@@ -3703,13 +3708,19 @@ JXG.extend(
                 (this.mode === this.BOARD_MODE_NONE ||
                     this.mode === this.BOARD_MODE_MOVE_ORIGIN)
             ) {
-                // 2. case: two fingers: pinch to zoom or pan with two fingers needed.
-                // This happens when the second finger hits the device. First, the
-                // 'one finger pan mode' has to be cancelled.
-                if (this.mode === this.BOARD_MODE_MOVE_ORIGIN) {
-                    this.originMoveEnd();
+                // 2. case: two fingers.
+                // Pinch or pan with two fingers for zoom or manupulating objects.
+                this.twoFingerGestureStart(evt);
+
+                if( this.mode === this.BOARD_MODE_NONE ||
+                    this.mode === this.BOARD_MODE_MOVE_ORIGIN) {
+                    // This happens when the second finger hits the device. First, the
+                    // 'one finger pan mode' has to be cancelled.
+                    if (this.mode === this.BOARD_MODE_MOVE_ORIGIN) {
+                        this.originMoveEnd();
+                    }
+                    this.gestureStartListener(evt);
                 }
-                this.gestureStartListener(evt);
             }
 
             this.options.precision.hasPoint = this.options.precision.mouse;
