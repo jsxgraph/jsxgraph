@@ -1176,6 +1176,9 @@ JXG.extend(
                 if (type === 'translate') {
                     res = [this.matrix[1][0], this.matrix[2][0]];
 
+                } else if (type === 'scale') {
+                    res = [this.matrix[1][1], this.matrix[2][2]];
+
                 } else if (type === 'reflect') {
                     // Not uniquely recoverable in general.
 
