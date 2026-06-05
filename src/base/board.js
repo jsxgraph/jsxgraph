@@ -1545,20 +1545,8 @@ JXG.extend(
             if (Type.exists(dist)) { // Android pinch to zoom
                 this.prevDist = dist;
             }
-            this.saveTwoFingerGesture(gesture);
-        },
-
-        /**
-         * Saves value in this.isPreviousGesture if it exists.
-         * This is necessary for {@link JXG.Board.twoFingerGesture}.
-         *
-         * @param {String|null} value
-         * @see JXG.Board.twoFingerGesture
-         * @see JXG.Board.saveTwoFingerGesture
-         */
-        saveTwoFingerGesture: function (value) {
-            if (Type.exists(value)) {
-                this.isPreviousGesture = value;
+            if (Type.exists(gesture)) {
+                this.isPreviousGesture = gesture;
             }
         },
 
@@ -2671,7 +2659,7 @@ JXG.extend(
 
             if (this.attr.pan.enabled && this.attr.pan.needtwofingers && !gesture.isPinch) {
                 // Pan detected
-                this.saveTwoFingerGesture('pan');
+                this.isPreviousGesture = 'pan';
                 this.moveOrigin(c.scrCoords[1], c.scrCoords[2], true);
 
             } else if (this.attr.zoom.enabled && Math.abs(gesture.factor - 1.0) < 0.5) {
