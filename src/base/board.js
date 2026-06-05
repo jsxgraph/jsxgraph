@@ -1617,24 +1617,10 @@ JXG.extend(
 
             p1 = this.getMousePosition(evt, 0);
             p2 = this.getMousePosition(evt, 1);
-            center = new Coords(
-                Const.COORDS_BY_SCREEN,
-                [
-                    0.5 * (p1[0] + p2[0]),
-                    0.5 * (p1[1] + p2[1])
-                ],
-                this
-            );
-            p1 = new Coords(Const.COORDS_BY_SCREEN, p1, this);
-            p2 = new Coords(Const.COORDS_BY_SCREEN, p2, this);
 
-            dist = Geometry.distance(
-                [evt.touches[0].clientX, evt.touches[0].clientY],
-                [evt.touches[1].clientX, evt.touches[1].clientY],
-                2
-            );
-            dx = Math.abs(evt.touches[0].clientX - evt.touches[1].clientX);
-            dy = Math.abs(evt.touches[0].clientY - evt.touches[1].clientY);
+            dist = Geometry.distance(p1, p2, 2);
+            dx = Math.abs(p1[0] - p2[0]);
+            dy = Math.abs(p1[1] - p2[1]);
             fingerLineAngle = Math.abs(Math.atan2(dy, dx));
 
             // Android pinch to zoom
@@ -1645,12 +1631,12 @@ JXG.extend(
             }
 
             dir1 = [
-                evt.touches[0].clientX - this.prevCoords[0][0],
-                evt.touches[0].clientY - this.prevCoords[0][1]
+                p1[0] - this.prevCoords[0][0],
+                p1[1] - this.prevCoords[0][1]
             ];
             dir2 = [
-                evt.touches[1].clientX - this.prevCoords[1][0],
-                evt.touches[1].clientY - this.prevCoords[1][1]
+                p2[0] - this.prevCoords[1][0],
+                p2[1] - this.prevCoords[1][1]
             ];
 
             if (
@@ -1685,15 +1671,23 @@ JXG.extend(
 
             isPan = allowPan && !isPinch;
 
-            this.prevCoords = [
-                [evt.touches[0].clientX, evt.touches[0].clientY],
-                [evt.touches[1].clientX, evt.touches[1].clientY]
-            ];
+            this.prevCoords = [p1, p2];
             this.prevScale = evt.scale;
             if (isPan) {
                 // if pan is detected once, stay to pan
                 this.isPreviousGesture = 'pan';
             }
+
+            center = new Coords(
+                Const.COORDS_BY_SCREEN,
+                [
+                    0.5 * (p1[0] + p2[0]),
+                    0.5 * (p1[1] + p2[1])
+                ],
+                this
+            );
+            p1 = new Coords(Const.COORDS_BY_SCREEN, p1, this);
+            p2 = new Coords(Const.COORDS_BY_SCREEN, p2, this);
 
             return {
                 isPinch: isPinch,
