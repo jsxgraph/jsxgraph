@@ -1524,6 +1524,36 @@ JXG.extend(
         },
 
         /**
+         * Saves value in this.prevCoords, this.prevScale, this.prevDist and this.isPreviousGesture if the new values are not null.
+         * This is necessary for {@link JXG.Board.twoFingerPinch}.
+         *
+         * @param {Array|null} coords
+         * @param {Number|null} scale
+         * @param {Number|null} dist
+         * @param {String|null} gesture
+         * @see JXG.Board.twoFingerPinch
+         */
+        saveTwoFingerPinch: function (coords, scale, dist, gesture) {
+            if (Type.exists(coords)) {
+                this.prevCoords = coords;
+            }
+            if (Type.exists(scale)) {
+                this.prevScale = scale;
+            }
+            if (Type.exists(dist)) { // Android pinch to zoom
+                this.prevDist = dist;
+            }
+            this.saveTwoFingerGesture(gesture);
+        },
+
+        saveTwoFingerGesture: function (gesture) {
+            if (Type.exists(gesture)) {
+                this.isPreviousGesture = gesture;
+            }
+        },
+
+
+        /**
          * Moves elements in multitouch mode.
          * @param {Array} p1 x,y coordinates of first touch
          * @param {Array} p2 x,y coordinates of second touch
@@ -2585,7 +2615,7 @@ JXG.extend(
 
             if (this.attr.pan.enabled && this.attr.pan.needtwofingers && !isPinch) {
                 // Pan detected
-                this.isPreviousGesture = 'pan';
+                this.saveTwoFingerGesture('pan');
                 this.moveOrigin(c.scrCoords[1], c.scrCoords[2], true);
 
             } else if (this.attr.zoom.enabled && Math.abs(factor - 1.0) < 0.5) {
@@ -2650,18 +2680,19 @@ JXG.extend(
             var pos;
 
             evt.preventDefault();
-            this.prevScale = 1.0;
-            // Android pinch to zoom
-            this.prevDist = Geometry.distance(
-                [evt.touches[0].clientX, evt.touches[0].clientY],
-                [evt.touches[1].clientX, evt.touches[1].clientY],
-                2
+            this.saveTwoFingerPinch(
+                [ // coords
+                    [evt.touches[0].clientX, evt.touches[0].clientY],
+                    [evt.touches[1].clientX, evt.touches[1].clientY]
+                ],
+                1.0, // scale
+                Geometry.distance( // dist (Android pinch to zoom)
+                    [evt.touches[0].clientX, evt.touches[0].clientY],
+                    [evt.touches[1].clientX, evt.touches[1].clientY],
+                    2
+                ),
+                'none' // gesture
             );
-            this.prevCoords = [
-                [evt.touches[0].clientX, evt.touches[0].clientY],
-                [evt.touches[1].clientX, evt.touches[1].clientY]
-            ];
-            this.isPreviousGesture = 'none';
 
             // If pinch-to-zoom is interpreted as panning
             // we have to prepare move origin
