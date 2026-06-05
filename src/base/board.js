@@ -2708,9 +2708,8 @@ JXG.extend(
                 // Save zoomFactors
                 zx = this.attr.zoom.factorx,
                 zy = this.attr.zoom.factory,
-                zoomCenter,
-                doZoom = false,
-                cx, cy;
+                zoomCenter, cx, cy,
+                doZoom = false;
 
             if (this.mode !== this.BOARD_MODE_ZOOM) {
                 return true;
@@ -2728,7 +2727,7 @@ JXG.extend(
 
             if (gesture.isPan && !gesture.isPinch) {
                 // Pan detected
-                this.moveOrigin(gesture.p1.scrCoords[1], gesture.p1.scrCoords[2], true);
+                this.moveOrigin(gesture.center.scrCoords[1], gesture.center.scrCoords[2], true);
 
             } else if (this.attr.zoom.enabled && gesture.isPinch && Math.abs(gesture.factor - 1.0) < 0.5) {
                 // Pinch detected
@@ -2758,15 +2757,23 @@ JXG.extend(
                 } else if (this.attr.zoom.pinch) {
                     this.attr.zoom.factorx = gesture.factor;
                     this.attr.zoom.factory = gesture.factor;
-                    cx = gesture.p1.usrCoords[1];
-                    cy = gesture.p1.usrCoords[2];
+                    if (zoomCenter === 'auto' || zoomCenter === 'center') {
+                        cx = gesture.center.usrCoords[1];
+                        cy = gesture.center.usrCoords[2];
+                    } else if (zoomCenter === 'first') {
+                        cx = gesture.p1.usrCoords[1];
+                        cy = gesture.p1.usrCoords[2];
+                    } else if (zoomCenter === 'second') {
+                        cx = gesture.p2.usrCoords[1];
+                        cy = gesture.p2.usrCoords[2];
+                    }
                     doZoom = true;
                 }
 
                 if (doZoom) {
                     if (zoomCenter === 'board') {
                         this.zoomIn();
-                    } else { // including zoomCenter === 'auto'
+                    } else { // including zoomCenter === 'auto', 'first', 'second'
                         this.zoomIn(cx, cy);
                     }
 
@@ -4278,7 +4285,7 @@ JXG.extend(
 
             if (zoomCenter === 'board') {
                 pos = [];
-            } else { // including zoomCenter === 'auto'
+            } else { // including zoomCenter === 'auto', 'first', 'second'
                 pos = new Coords(Const.COORDS_BY_SCREEN, this.getMousePosition(evt), this).usrCoords;
             }
 
