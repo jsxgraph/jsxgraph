@@ -2144,6 +2144,18 @@ JXG.Options = {
         lineCap: 'butt',
 
         /**
+         * If this is set to true, transform.meltTo(this) will only melt the nre transformation,
+         * if it has the same time as the last one. If not, it is bound to this.
+         *
+         * <b>We highly recommend to use the default value.</b>
+         *
+         * @type Boolean
+         * @default false
+         * @see JXG.Transformation#meltTo
+         */
+        meltOnlySameTransformationType: false,
+
+        /**
          * If this is set to true, the element is updated in every update
          * call of the board. If set to false, the element is updated only after
          * zoom events or more generally, when the bounding box has been changed.
