@@ -1039,7 +1039,8 @@ JXG.extend(
          * @see JXG.Transformation#bindTo
          */
         meltTo: function (el) {
-            var i, elt, t;
+            var i, elt, t,
+                meltSameType = el.evalVisProp('meltOnlySameTransformationType');
 
             if (Type.isArray(el)) {
                 for (i = 0; i < el.length; i++) {
@@ -1052,7 +1053,11 @@ JXG.extend(
                     elt[elt.length - 1].isNumericMatrix &&
                     this.isNumericMatrix
                 ) {
-                    elt[elt.length - 1].melt(this);
+                    if (meltSameType && elt[elt.length - 1].transformationType !== this.transformationType) {
+                        this.bindTo(el);
+                    } else {
+                        elt[elt.length - 1].melt(this);
+                    }
                 } else {
                     // Use a clone of the transformation.
                     // Otherwise, if the transformation is meltTo twice
