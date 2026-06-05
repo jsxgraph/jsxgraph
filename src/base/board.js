@@ -1526,13 +1526,13 @@ JXG.extend(
         /**
          * Saves values in this.prevCoords, this.prevScale, this.prevDist and this.isPreviousGesture
          * if the new values are not null.
-         * This is necessary for {@link JXG.Board.twoFingerPinch}.
+         * This is necessary for {@link JXG.Board.twoFingerGesture}.
          *
          * @param {Array|null} coords
          * @param {Number|null} scale
          * @param {Number|null} dist
          * @param {String|null} gesture
-         * @see JXG.Board.twoFingerPinch
+         * @see JXG.Board.twoFingerGesture
          * @see JXG.Board.saveTwoFingerGesture
          */
         saveTwoFingerPinch: function (coords, scale, dist, gesture) {
@@ -1550,10 +1550,10 @@ JXG.extend(
 
         /**
          * Saves value in this.isPreviousGesture if it exists.
-         * This is necessary for {@link JXG.Board.twoFingerPinch}.
+         * This is necessary for {@link JXG.Board.twoFingerGesture}.
          *
          * @param {String|null} value
-         * @see JXG.Board.twoFingerPinch
+         * @see JXG.Board.twoFingerGesture
          * @see JXG.Board.saveTwoFingerGesture
          */
         saveTwoFingerGesture: function (value) {
@@ -1577,7 +1577,7 @@ JXG.extend(
          * @see JXG.Board.gestureChangeListener
          * @see JXG.Board.twoFingerTouchObject
          */
-        twoFingerPinch: function (evt) {
+        twoFingerGesture: function (evt) {
             var mi = 10,
                 dir1 = [],
                 dir2 = [],
@@ -1754,7 +1754,7 @@ JXG.extend(
          *     </ul>
          */
         getTwoFingerTransforms: function (finger1, finger2, scalable, rotatable, evt) {
-            var pinch,
+            var gesture,
                 crd,
                 x1, y1, x2, y2,
                 dx, dy,
@@ -1762,8 +1762,8 @@ JXG.extend(
                 dxx, dyy,
                 C, S, LL, tx, ty, lbda;
 
-            pinch = this.twoFingerPinch(evt);
-           // console.log(pinch);
+            gesture = this.twoFingerGesture(evt);
+            // console.log(gesture);
 
             crd = new Coords(Const.COORDS_BY_SCREEN, [finger1.Xprev, finger1.Yprev], this).usrCoords;
             x1 = crd[1];
@@ -2647,8 +2647,8 @@ JXG.extend(
          * @returns {Boolean}
          */
         gestureChangeListener: function (evt) {
-            var c,
-                pinch,
+            var gesture,
+                c,
                 // Save zoomFactors
                 zx = this.attr.zoom.factorx,
                 zy = this.attr.zoom.factory,
@@ -2662,19 +2662,19 @@ JXG.extend(
             }
             evt.preventDefault();
 
-            pinch = this.twoFingerPinch(evt);
-            if (Type.isEmpty(pinch)) {
+            gesture = this.twoFingerGesture(evt);
+            if (Type.isEmpty(gesture)) {
                 return false;
             }
 
             c = new Coords(Const.COORDS_BY_SCREEN, this.getMousePosition(evt, 0), this);
 
-            if (this.attr.pan.enabled && this.attr.pan.needtwofingers && !pinch.isPinch) {
+            if (this.attr.pan.enabled && this.attr.pan.needtwofingers && !gesture.isPinch) {
                 // Pan detected
                 this.saveTwoFingerGesture('pan');
                 this.moveOrigin(c.scrCoords[1], c.scrCoords[2], true);
 
-            } else if (this.attr.zoom.enabled && Math.abs(pinch.factor - 1.0) < 0.5) {
+            } else if (this.attr.zoom.enabled && Math.abs(gesture.factor - 1.0) < 0.5) {
                 doZoom = false;
                 zoomCenter = this.attr.zoom.center;
                 // Pinch detected
@@ -2698,13 +2698,13 @@ JXG.extend(
                     Math.abs(theta - Math.PI * 0.5) < bound
                 ) {
                     this.attr.zoom.factorx = 1.0;
-                    this.attr.zoom.factory = pinch.factor;
+                    this.attr.zoom.factory = gesture.factor;
                     cx = 0;
                     cy = 0;
                     doZoom = true;
                 } else if (this.attr.zoom.pinch) {
-                    this.attr.zoom.factorx = pinch.factor;
-                    this.attr.zoom.factory = pinch.factor;
+                    this.attr.zoom.factorx = gesture.factor;
+                    this.attr.zoom.factory = gesture.factor;
                     cx = c.usrCoords[1];
                     cy = c.usrCoords[2];
                     doZoom = true;
