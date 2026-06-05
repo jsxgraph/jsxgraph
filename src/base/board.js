@@ -1573,17 +1573,17 @@ JXG.extend(
          *     <li>{Boolean} isPinchVertical</li>
          *     <li>{Boolean} isPinchHorizontal</li>
          *     <li>{Boolean} isPan</li>
-         *     <li>{Array} dir1</li>
-         *     <li>{Array} dir2</li>
-         *     <li>{Number} movementAngle (in Radians)</li>
-         *     <li>{Number} factor</li>
-         *     <li>{Number} dx</li>
-         *     <li>{Number} dy</li>
-         *     <li>{Number} fingerLineAngle</li>
-         *     <li>{JXG.Coords} center</li>
-         *     <li>{JXG.Coords} p1</li>
-         *     <li>{JXG.Coords} p2</li>
-         *     <li>{Number} dist</li>
+         *     <li>{Array} dir1 Movement of finger 1 (respecting previous position)</li>
+         *     <li>{Array} dir2 Movement of finger 2 (respecting previous position)</li>
+         *     <li>{Number} movementAngle Angle of the two finger directions (in Radians)</li>
+         *     <li>{Number} factor Pinching factor.</li>
+         *     <li>{Number} fingerLineAngle Angle of the line between finger 1 and 2.</li>
+         *     <li>{JXG.Coords} center Position between finger 1 and 2.</li>
+         *     <li>{JXG.Coords} f1 Position of finger 1.</li>
+         *     <li>{JXG.Coords} f2 Position of finger 2.</li>
+         *     <li>{Number} dist Distance between finger 1 and 2</li>
+         *     <li>{Number} dx Distance between finger 1 and 2 (x direction)</li>
+         *     <li>{Number} dy Distance between finger 1 and 2 (y direction)</li>
          *     </ul>
          * @see JXG.Board.twoFingerGestureStart
          * @see JXG.Board.gestureChangeListener
@@ -1700,14 +1700,15 @@ JXG.extend(
                 movementAngle: movementAngle,
 
                 factor: factor,
-                dx: dx,
-                dy: dy,
 
                 fingerLineAngle: fingerLineAngle,
                 center: center,
                 p1: p1,
                 p2: p2,
+
                 dist: dist,
+                dx: dx,
+                dy: dy,
             };
         },
 
