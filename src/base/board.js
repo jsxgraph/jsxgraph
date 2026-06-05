@@ -1634,10 +1634,9 @@ JXG.extend(
 
         /**
          * Moves elements in multitouch mode.
-         * @param {Array} p1 x,y coordinates of first touch
-         * @param {Array} p2 x,y coordinates of second touch
          * @param {Object} o The touch object that is dragged: {JXG.Board#touches}.
-         * @param {Object} evt The event object that lead to this movement.
+         * @param {String} id pointerId of the event. In case of old touch event this is emulated.
+         * @param {Event} evt The event object that lead to this movement.
          */
         twoFingerMove: function (o, id, evt) {
             var drag;
@@ -1653,9 +1652,9 @@ JXG.extend(
                 drag.elementClass === Const.OBJECT_CLASS_LINE ||
                 drag.type === Const.OBJECT_TYPE_POLYGON
             ) {
-                this.twoFingerTouchObject(o.targets, drag, id);
+                this.twoFingerTouchObject(o.targets, drag, id, evt);
             } else if (drag.elementClass === Const.OBJECT_CLASS_CIRCLE) {
-                this.twoFingerTouchCircle(o.targets, drag, id);
+                this.twoFingerTouchCircle(o.targets, drag, id, evt);
             }
 
             if (evt) {
@@ -1717,6 +1716,7 @@ JXG.extend(
          * @param {Object} finger2 Actual and previous position of finger 2
          * @param {Boolean} scalable Flag if element may be scaled
          * @param {Boolean} rotatable Flag if element may be rotated
+         * @param {Event} evt The event object that lead to this movement.
          * @returns {Object} Transformation parameters <ul>
          *     <li><tt>{Array} generic</tt> Array of length 9</li>
          *     <li><tt>{Array} affine</tt> Array of length 6</li>
@@ -1728,8 +1728,8 @@ JXG.extend(
          *     </ul></li>
          *     </ul>
          */
-        getTwoFingerTransforms: function (finger1, finger2, scalable, rotatable) {
             var crd,
+        getTwoFingerTransforms: function (finger1, finger2, scalable, rotatable, evt) {
                 x1, y1, x2, y2,
                 dx, dy,
                 xx1, yy1, xx2, yy2,
@@ -1832,8 +1832,9 @@ JXG.extend(
          * @param {Array} tar Array containing touch event objects: {JXG.Board#touches.targets}.
          * @param {object} drag The object that is dragged:
          * @param {Number} id pointerId of the event. In case of old touch event this is emulated.
+         * @param {Event} evt The event object that lead to this movement.
          */
-        twoFingerTouchObject: function (tar, drag, id) {
+        twoFingerTouchObject: function (tar, drag, id, evt) {
             var t, T,
                 ar, i, len,
                 snap = false;
@@ -1847,7 +1848,8 @@ JXG.extend(
                 T = this.getTwoFingerTransforms(
                     tar[0], tar[1],
                     drag.evalVisProp('scalable'),
-                    drag.evalVisProp('rotatable')
+                    drag.evalVisProp('rotatable'),
+                    evt
                 );
                 t = this.create('transform', T.twofingers, {type: 'twofingers'});
                 t.update();
@@ -1891,8 +1893,9 @@ JXG.extend(
          * @param {Array} tar Array containing touch event objects: {JXG.Board#touches.targets}.
          * @param {object} drag The object that is dragged:
          * @param {Number} id pointerId of the event. In case of old touch event this is emulated.
+         * @param {Event} evt The event object that lead to this movement.
          */
-        twoFingerTouchCircle: function (tar, drag, id) {
+        twoFingerTouchCircle: function (tar, drag, id, evt) {
             var fixEl, moveEl, np, op, fix, d, alpha, t1, t2, t3, t4;
 
             if (drag.method === 'pointCircle' || drag.method === 'pointLine') {
