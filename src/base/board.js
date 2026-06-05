@@ -1566,8 +1566,9 @@ JXG.extend(
          * Gives information about a two finger gesture.
          *
          * @param {Event} evt
-         * @param {Boolean} [allowPan=true]
          * @param {Number} [pinchDirSensitivity=5] Sensitivity (in degrees) for recognizing horizontal or vertical pinch gestures.
+         * @param {Boolean} [allowPan=true]
+         * @param {Boolean} [panPinchExclusive=true]
          * @param {Boolean} [filterSmallMovements=false]
          * @returns {Object|null} <ul>
          *     <li>{Boolean} isPinch</li>
@@ -1591,7 +1592,7 @@ JXG.extend(
          * @see JXG.Board.gestureChangeListener
          * @see JXG.Board.twoFingerTouchObject
          */
-        twoFingerGesture: function (evt, allowPan, pinchDirSensitivity, filterSmallMovements) {
+        twoFingerGesture: function (evt, pinchDirSensitivity, allowPan, panPinchExclusive, filterSmallMovements) {
             var mi = 10,
                 dir1, dir2,
                 movementAngle,
@@ -1614,6 +1615,9 @@ JXG.extend(
             }
             if (!Type.exists(allowPan)) {
                 allowPan = true;
+            }
+            if (!Type.exists(panPinchExclusive)) {
+                panPinchExclusive = true;
             }
             if (!Type.exists(pinchDirSensitivity)) {
                 pinchDirSensitivity = 5;
@@ -1675,7 +1679,7 @@ JXG.extend(
                 }
             }
 
-            isPan = allowPan && !isPinch;
+            isPan = allowPan && (panPinchExclusive ? !isPinch : true);
 
             this.prevCoords = [p1, p2];
             this.prevScale = evt.scale;
@@ -1802,7 +1806,7 @@ JXG.extend(
          * @param {Object} finger2 Actual and previous position of finger 2
          * @param {Boolean} scalable Flag if element may be scaled
          * @param {Boolean} rotatable Flag if element may be rotated
-         * @param {Event} evt The event object that lead to this movement.
+         * @param {Event} [evt] The event object that lead to this movement.
          * @returns {Object} Transformation parameters <ul>
          *     <li><tt>{Array} generic</tt> Array of length 9</li>
          *     <li><tt>{Array} affine</tt> Array of length 6</li>
@@ -2717,8 +2721,9 @@ JXG.extend(
 
             gesture = this.twoFingerGesture(
                 evt,
-                this.attr.pan.enabled && this.attr.pan.needtwofingers,
                 this.attr.zoom.pinchsensitivity,
+                this.attr.pan.enabled && this.attr.pan.needtwofingers,
+                true,
                 true
             );
             if (!Type.exists(gesture)) {
