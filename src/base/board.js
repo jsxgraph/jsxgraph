@@ -1608,7 +1608,6 @@ JXG.extend(
          * @param {Object} finger2 Actual and previous position of finger 2
          * @param {Boolean} scalable Flag if element may be scaled
          * @param {Boolean} rotatable Flag if element may be rotated
-         * @param {Event} evt The event object that lead to this movement.
          * @returns {Object} Transformation parameters <ul>
          *     <li><tt>{Array} generic</tt> Array of length 9</li>
          *     <li><tt>{Array} affine</tt> Array of length 6</li>
@@ -1620,7 +1619,7 @@ JXG.extend(
          *     </ul></li>
          *     </ul>
          */
-        getTwoFingerTransforms: function (finger1, finger2, scalable, rotatable, evt) {
+        getTwoFingerTransforms: function (finger1, finger2, scalable, rotatable) {
             var gesture,
                 crd,
                 x1, y1, x2, y2,
@@ -1628,11 +1627,6 @@ JXG.extend(
                 xx1, yy1, xx2, yy2,
                 dxx, dyy,
                 C, S, LL, tx, ty, lbda;
-
-            gesture = this.twoFingerGesture(evt);
-            if (Type.isEmpty(gesture)) {
-                return false;
-            }
 
             crd = new Coords(Const.COORDS_BY_SCREEN, [finger1.Xprev, finger1.Yprev], this).usrCoords;
             x1 = crd[1];
@@ -1742,11 +1736,12 @@ JXG.extend(
                 !isNaN(tar[0].Xprev + tar[0].Yprev + tar[1].Xprev + tar[1].Yprev)
             ) {
 
-                T = this.getTwoFingerTransform(
+                T = this.getTwoFingerTransforms(
                     tar[0], tar[1],
                     drag.evalVisProp('scalable'),
-                    drag.evalVisProp('rotatable'));
-                t = this.create('transform', T, { type: 'generic' });
+                    drag.evalVisProp('rotatable')
+                );
+                t = this.create('transform', T.twofingers, {type: 'twofingers'});
                 t.update();
 
                 if (drag.elementClass === Const.OBJECT_CLASS_LINE) {
