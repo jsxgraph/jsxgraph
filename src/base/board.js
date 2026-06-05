@@ -1524,11 +1524,215 @@ JXG.extend(
         },
 
         /**
+         * Initializes this.prevCoords, this.prevScale, this.prevDist and this.isPreviousGesture.
+         * This is necessary for {@link JXG.Board.twoFingerGesture}.
+         *
+         * @param {Event} evt
+         * @see JXG.Board.twoFingerGesture
+         * @see JXG.Board.pointerDownListener
+         * @see JXG.Board.touchStartListener
+         * @see JXG.Board.gestureStartListener
+         *
+         * @private
+         */
+        twoFingerGestureStart: function (evt) {
+            if (!Type.exists(evt.touches) ||
+                evt.touches.length < 2) {
+                delete this.prevCoords;
+                delete this.prevScale;
+                this.prevDist = 1;
+                this.isPreviousGesture = 'none';
+                return;
+            }
+
+            this.prevCoords = [
+                [evt.touches[0].clientX, evt.touches[0].clientY],
+                [evt.touches[1].clientX, evt.touches[1].clientY]
+            ];
+
+            this.prevScale = 1.0;
+
+            // Android pinch to zoom
+            this.prevDist = Geometry.distance(
+                [evt.touches[0].clientX, evt.touches[0].clientY],
+                [evt.touches[1].clientX, evt.touches[1].clientY],
+                2
+            );
+
+            this.isPreviousGesture = 'none';
+        },
+
+        /**
+         * Gives information about a two finger gesture.
+         *
+         * @param {Event} evt
+         * @param {Number} [pinchDirSensitivity=5] Sensitivity (in degrees) for recognizing horizontal or vertical pinch gestures.
+         * @param {Boolean} [stayPinchXY=false]
+         * @param {Boolean} [allowPan=true]
+         * @returns {Object|null} <ul>
+         *     <li>{Boolean} isPinch</li>
+         *     <li>{Boolean} isPinchVertical</li>
+         *     <li>{Boolean} isPinchHorizontal</li>
+         *     <li>{Boolean} isPan</li>
+         *     <li>{Array} dir1 Movement of finger 1 (respecting previous position)</li>
+         *     <li>{Array} dir2 Movement of finger 2 (respecting previous position)</li>
+         *     <li>{Number} movementAngle Angle of the two finger directions (in Radians)</li>
+         *     <li>{Number} factor Pinching factor.</li>
+         *     <li>{Number} fingerLineAngle Angle of the line between finger 1 and 2.</li>
+         *     <li>{JXG.Coords} center Position between finger 1 and 2.</li>
+         *     <li>{JXG.Coords} f1 Position of finger 1.</li>
+         *     <li>{JXG.Coords} f2 Position of finger 2.</li>
+         *     <li>{Number} dist Distance between finger 1 and 2</li>
+         *     <li>{Number} dx Distance between finger 1 and 2 (x direction)</li>
+         *     <li>{Number} dy Distance between finger 1 and 2 (y direction)</li>
+         *     </ul>
+         *     In case of an error or early exit (filterSmallMovements) the return is null.
+         * @see JXG.Board.twoFingerGestureStart
+         * @see JXG.Board.gestureChangeListener
+         * @see JXG.Board.twoFingerTouchObject
+         */
+        twoFingerGesture: function (evt, pinchDirSensitivity,  stayPinchXY, allowPan) {
+            var mi = 10,
+                dir1, dir2,
+                movementAngle,
+                dist, dx, dy, fingerLineAngle,
+                factor = 0,
+                p1, p2, center,
+                isPinchVertical = false,
+                isPinchHorizontal = false,
+                isPinch = false,
+                isPan = false;
+
+            if (!Type.exists(this.prevCoords) ||
+                !Type.exists(evt.touches) ||
+                evt.touches.length < 2) {
+                return null;
+            }
+
+            if (!Type.exists(allowPan)) {
+                allowPan = true;
+            }
+            if (!Type.exists(stayPinchXY)) {
+                stayPinchXY = false;
+            }
+            if (!Type.exists(pinchDirSensitivity)) {
+                pinchDirSensitivity = 5;
+            }
+            pinchDirSensitivity = (Math.PI * pinchDirSensitivity) / 90.0;
+
+            p1 = this.getMousePosition(evt, 0);
+            p2 = this.getMousePosition(evt, 1);
+
+            dist = Geometry.distance(p1, p2, 2);
+            dx = Math.abs(p1[0] - p2[0]);
+            dy = Math.abs(p1[1] - p2[1]);
+            fingerLineAngle = Math.abs(Math.atan2(dy, dx));
+
+            // Android pinch to zoom
+            // evt.scale was available in iOS touch events (pre iOS 13)
+            // evt.scale is undefined in Android
+            if (evt.scale === undefined) {
+                evt.scale = dist / this.prevDist;
+            }
+
+            dir1 = [
+                p1[0] - this.prevCoords[0][0],
+                p1[1] - this.prevCoords[0][1]
+            ];
+            dir2 = [
+                p2[0] - this.prevCoords[1][0],
+                p2[1] - this.prevCoords[1][1]
+            ];
+
+            if (
+                dir1[0] * dir1[0] + dir1[1] * dir1[1] < mi * mi &&
+                dir2[0] * dir2[0] + dir2[1] * dir2[1] < mi * mi
+            ) {
+                return null; // too small movement of fingers
+            }
+
+            // Compute the angle of the two finger directions
+            movementAngle = Math.abs(Geometry.rad(dir1, [0, 0], dir2));
+
+            if (this.isPreviousGesture !== 'pan') {
+                if (
+                    movementAngle > Math.PI * 0.2 &&
+                    movementAngle < Math.PI * 1.8
+                ) {
+                    isPinch = true;
+                }
+                if (
+                    !isPinch && // fallback
+                    (Math.abs(evt.scale) < 0.77 || Math.abs(evt.scale) > 1.3)
+                ) {
+                    isPinch = true;
+                }
+                if (
+                    isPinch ||
+                    (stayPinchXY && (this.isPreviousGesture === 'scaleX' || this.isPreviousGesture === 'scaleY'))
+                ) {
+                    isPinch = true;
+                    isPinchHorizontal =  this.isPreviousGesture === 'scaleX' || fingerLineAngle < pinchDirSensitivity;
+                    isPinchVertical = this.isPreviousGesture === 'scaleY' || Math.abs(fingerLineAngle - Math.PI * 0.5) < pinchDirSensitivity;
+
+                    factor = evt.scale / this.prevScale;
+                }
+                if (isPinchHorizontal && stayPinchXY) {
+                    this.isPreviousGesture = 'scaleX';
+                }
+                if (isPinchVertical && stayPinchXY) {
+                    this.isPreviousGesture = 'scaleY';
+                }
+            }
+
+            isPan = allowPan && !isPinch;
+
+            this.prevCoords = [p1, p2];
+            this.prevScale = evt.scale;
+            if (isPan) {
+                // if pan is detected once, stay to pan
+                this.isPreviousGesture = 'pan';
+            }
+
+            center = new Coords(
+                Const.COORDS_BY_SCREEN,
+                [
+                    0.5 * (p1[0] + p2[0]),
+                    0.5 * (p1[1] + p2[1])
+                ],
+                this
+            );
+            p1 = new Coords(Const.COORDS_BY_SCREEN, p1, this);
+            p2 = new Coords(Const.COORDS_BY_SCREEN, p2, this);
+
+            return {
+                isPinch: isPinch,
+                isPinchVertical: isPinchVertical,
+                isPinchHorizontal: isPinchHorizontal,
+                isPan: isPan,
+
+                dir1: dir1,
+                dir2: dir2,
+                movementAngle: movementAngle,
+
+                factor: factor,
+
+                fingerLineAngle: fingerLineAngle,
+                center: center,
+                p1: p1,
+                p2: p2,
+
+                dist: dist,
+                dx: dx,
+                dy: dy
+            };
+        },
+
+        /**
          * Moves elements in multitouch mode.
-         * @param {Array} p1 x,y coordinates of first touch
-         * @param {Array} p2 x,y coordinates of second touch
          * @param {Object} o The touch object that is dragged: {JXG.Board#touches}.
-         * @param {Object} evt The event object that lead to this movement.
+         * @param {String} id pointerId of the event. In case of old touch event this is emulated.
+         * @param {Event} evt The event object that lead to this movement.
          */
         twoFingerMove: function (o, id, evt) {
             var drag;
@@ -1540,12 +1744,13 @@ JXG.extend(
             }
 
             if (
+                drag.elementClass === Const.OBJECT_CLASS_CURVE ||
                 drag.elementClass === Const.OBJECT_CLASS_LINE ||
                 drag.type === Const.OBJECT_TYPE_POLYGON
             ) {
-                this.twoFingerTouchObject(o.targets, drag, id);
+                this.twoFingerTouchObject(o.targets, drag, id, evt);
             } else if (drag.elementClass === Const.OBJECT_CLASS_CIRCLE) {
-                this.twoFingerTouchCircle(o.targets, drag, id);
+                this.twoFingerTouchCircle(o.targets, drag, id, evt);
             }
 
             if (evt) {
@@ -1554,17 +1759,72 @@ JXG.extend(
         },
 
         /**
-         * Compute the transformation matrix to move an element according to the
+         * Compute the transformation parameters to move an element according to the
          * previous and actual positions of finger 1 and finger 2.
          * See also https://math.stackexchange.com/questions/4010538/solve-for-2d-translation-rotation-and-scale-given-two-touch-point-movements
          *
+         * Each two finger movement consists of <ul>
+         * <li>translation in directions x and y (tx, ty),</li>
+         * <li>scaling in directions x and y (sx, sy) and</li>
+         * <li>rotation with angle r (in Radians)</li>
+         * </ul>
+         *
+         * The result can be used to create transformation(s) that represent the movement.
+         * Possible combinations, using the attributes of the return value, are:
+         * <ul>
+         *     <li>
+         *         <b>generic</b>: Array
+         *         <pre>
+         *           [1, 0, 0,
+         *           tx, sx*cos(r), -sy*sin(r),
+         *           ty, sx*sos(r), sy*cos(r)]
+         *         </pre>
+         *     </li>
+         *     <li>
+         *         <b>affine</b>: Array
+         *         <pre>
+         *           [tx, sx*cos(r), -sy*sin(r),
+         *           ty, sx*sos(r), sy*cos(r)]
+         *         </pre>
+         *     </li>
+         *     <li>
+         *         <b>twofingers</b>: Array
+         *         <pre>
+         *           [tx, ty, s, r]
+         *         </pre>
+         *     </li>
+         *     <li>
+         *         <b>translation * scale * rotation</b>: Arrays
+         *         <pre>
+         *           [tx, ty]
+         *         </pre>,
+         *         <pre>
+         *           [sx, sy]
+         *         </pre> and
+         *         <pre>
+         *           [r]
+         *         </pre>
+         *         If one of these transformations does not exist, the value is null.
+         *     </li>
+         * </ul>
+         *
          * @param {Object} finger1 Actual and previous position of finger 1
-         * @param {Object} finger1 Actual and previous position of finger 1
+         * @param {Object} finger2 Actual and previous position of finger 2
          * @param {Boolean} scalable Flag if element may be scaled
          * @param {Boolean} rotatable Flag if element may be rotated
-         * @returns {Array}
+         * @param {Event} [evt] The event object that lead to this movement.
+         * @returns {Object} Transformation parameters <ul>
+         *     <li><tt>{Array} generic</tt> Array of length 9</li>
+         *     <li><tt>{Array} affine</tt> Array of length 6</li>
+         *     <li><tt>{Array} twofingers</tt> Array of length 4</li>
+         *     <li><tt>{Object} single</tt><ul>
+         *          <li><tt>{Array|null} translate</tt> Array of length 2</li>
+         *          <li><tt>{Array|null} scale</tt> Array of length 2</li>
+         *          <li><tt>{Array|null} rotate</tt> Array of length 1</li>
+         *     </ul></li>
+         *     </ul>
          */
-        getTwoFingerTransform(finger1, finger2, scalable, rotatable) {
+        getTwoFingerTransforms: function (finger1, finger2, scalable, rotatable, evt) {
             var crd,
                 x1, y1, x2, y2,
                 dx, dy,
@@ -1594,20 +1854,69 @@ JXG.extend(
             LL = dx * dx + dy * dy;
             C = (dxx * dx + dyy * dy) / LL;
             S = (dyy * dx - dxx * dy) / LL;
+
+            lbda = Mat.hypot(C, S);
             if (!scalable) {
-                lbda = Mat.hypot(C, S);
                 C /= lbda;
                 S /= lbda;
+                lbda = 1;
             }
             if (!rotatable) {
                 S = 0;
             }
+
             tx = 0.5 * (xx1 + xx2 - C * (x1 + x2) + S * (y1 + y2));
             ty = 0.5 * (yy1 + yy2 - S * (x1 + x2) - C * (y1 + y2));
 
-            return [1, 0, 0,
-                tx, C, -S,
-                ty, S, C];
+            return {
+                generic: [
+                    1, 0, 0,
+                    tx, C, -S,
+                    ty, S, C
+                ],
+
+                affine: [
+                    tx, C, -S,
+                    ty, S, C
+                ],
+
+                twofingers: [
+                    tx, ty,
+                    lbda,
+                    Math.atan2(S, C)
+                ],
+
+                single: {
+                    translate: (tx !== 0 || ty !== 0)
+                        ? [tx, ty]
+                        : null,
+
+                    scale: (scalable && lbda !== 1)
+                        ? [lbda, lbda]
+                        : null,
+
+                    rotate: (rotatable && S !== 0)
+                        ? [Math.atan2(S, C)]
+                        : null
+                }
+            };
+        },
+
+        /**
+         * Compute the (generic) transformation matrix (as array) to move an element according to the
+         * previous and actual positions of finger 1 and finger 2.
+         *
+         * @see  JXG.Board#getTwoFingerTransforms
+         *
+         * @param {Object} finger1 Actual and previous position of finger 1
+         * @param {Object} finger2 Actual and previous position of finger 2
+         * @param {Boolean} scalable Flag if element may be scaled
+         * @param {Boolean} rotatable Flag if element may be rotated
+         * @returns {Array}
+         * @deprecated
+         */
+        getTwoFingerTransform: function (finger1, finger2, scalable, rotatable) {
+            return this.getTwoFingerTransforms(finger1, finger2, scalable, rotatable).generic;
         },
 
         /**
@@ -1619,8 +1928,9 @@ JXG.extend(
          * @param {Array} tar Array containing touch event objects: {JXG.Board#touches.targets}.
          * @param {object} drag The object that is dragged:
          * @param {Number} id pointerId of the event. In case of old touch event this is emulated.
+         * @param {Event} evt The event object that lead to this movement.
          */
-        twoFingerTouchObject: function (tar, drag, id) {
+        twoFingerTouchObject: function (tar, drag, id, evt) {
             var t, T,
                 ar, i, len,
                 snap = false;
@@ -1631,11 +1941,13 @@ JXG.extend(
                 !isNaN(tar[0].Xprev + tar[0].Yprev + tar[1].Xprev + tar[1].Yprev)
             ) {
 
-                T = this.getTwoFingerTransform(
+                T = this.getTwoFingerTransforms(
                     tar[0], tar[1],
                     drag.evalVisProp('scalable'),
-                    drag.evalVisProp('rotatable'));
-                t = this.create('transform', T, { type: 'generic' });
+                    drag.evalVisProp('rotatable'),
+                    evt
+                );
+                t = this.create('transform', T.twofingers, {type: 'twofingers'});
                 t.update();
 
                 if (drag.elementClass === Const.OBJECT_CLASS_LINE) {
@@ -1663,6 +1975,8 @@ JXG.extend(
                         }
                         t.applyOnce(ar);
                     }
+                } else if (drag.elementClass === Const.OBJECT_CLASS_CURVE) {
+                    t.meltTo(drag);
                 }
 
                 this.update();
@@ -1675,8 +1989,9 @@ JXG.extend(
          * @param {Array} tar Array containing touch event objects: {JXG.Board#touches.targets}.
          * @param {object} drag The object that is dragged:
          * @param {Number} id pointerId of the event. In case of old touch event this is emulated.
+         * @param {Event} evt The event object that lead to this movement.
          */
-        twoFingerTouchCircle: function (tar, drag, id) {
+        twoFingerTouchCircle: function (tar, drag, id, evt) {
             var fixEl, moveEl, np, op, fix, d, alpha, t1, t2, t3, t4;
 
             if (drag.method === 'pointCircle' || drag.method === 'pointLine') {
@@ -2399,127 +2714,78 @@ JXG.extend(
          * @returns {Boolean}
          */
         gestureChangeListener: function (evt) {
-            var c,
-                dir1 = [],
-                dir2 = [],
-                angle,
-                mi = 10,
-                isPinch = false,
+            var gesture,
                 // Save zoomFactors
                 zx = this.attr.zoom.factorx,
                 zy = this.attr.zoom.factory,
-                factor, dist, theta, bound,
-                zoomCenter,
-                doZoom = false,
-                dx, dy, cx, cy;
+                zoomCenter, cx, cy,
+                doZoom = false;
 
             if (this.mode !== this.BOARD_MODE_ZOOM) {
                 return true;
             }
             evt.preventDefault();
 
-            dist = Geometry.distance(
-                [evt.touches[0].clientX, evt.touches[0].clientY],
-                [evt.touches[1].clientX, evt.touches[1].clientY],
-                2
+            gesture = this.twoFingerGesture(
+                evt,
+                this.attr.zoom.pinchsensitivity,
+                this.attr.pan.enabled && this.attr.pan.needtwofingers,
+                true,
+                true
             );
-
-            // Android pinch to zoom
-            // evt.scale was available in iOS touch events (pre iOS 13)
-            // evt.scale is undefined in Android
-            if (evt.scale === undefined) {
-                evt.scale = dist / this.prevDist;
-            }
-
-            if (!Type.exists(this.prevCoords)) {
-                return false;
-            }
-            // Compute the angle of the two finger directions
-            dir1 = [
-                evt.touches[0].clientX - this.prevCoords[0][0],
-                evt.touches[0].clientY - this.prevCoords[0][1]
-            ];
-            dir2 = [
-                evt.touches[1].clientX - this.prevCoords[1][0],
-                evt.touches[1].clientY - this.prevCoords[1][1]
-            ];
-
-            if (
-                dir1[0] * dir1[0] + dir1[1] * dir1[1] < mi * mi &&
-                dir2[0] * dir2[0] + dir2[1] * dir2[1] < mi * mi
-            ) {
+            if (!Type.exists(gesture)) {
                 return false;
             }
 
-            angle = Geometry.rad(dir1, [0, 0], dir2);
-            if (
-                this.isPreviousGesture !== 'pan' &&
-                Math.abs(angle) > Math.PI * 0.2 &&
-                Math.abs(angle) < Math.PI * 1.8
-            ) {
-                isPinch = true;
-            }
-
-            if (this.isPreviousGesture !== 'pan' && !isPinch) {
-                if (Math.abs(evt.scale) < 0.77 || Math.abs(evt.scale) > 1.3) {
-                    isPinch = true;
-                }
-            }
-
-            factor = evt.scale / this.prevScale;
-            this.prevScale = evt.scale;
-            this.prevCoords = [
-                [evt.touches[0].clientX, evt.touches[0].clientY],
-                [evt.touches[1].clientX, evt.touches[1].clientY]
-            ];
-
-            c = new Coords(Const.COORDS_BY_SCREEN, this.getMousePosition(evt, 0), this);
-
-            if (this.attr.pan.enabled && this.attr.pan.needtwofingers && !isPinch) {
+            if (gesture.isPan && !gesture.isPinch) {
                 // Pan detected
-                this.isPreviousGesture = 'pan';
-                this.moveOrigin(c.scrCoords[1], c.scrCoords[2], true);
+                this.moveOrigin(gesture.center.scrCoords[1], gesture.center.scrCoords[2], true);
 
-            } else if (this.attr.zoom.enabled && Math.abs(factor - 1.0) < 0.5) {
+            } else if (this.attr.zoom.enabled && gesture.isPinch && Math.abs(gesture.factor - 1.0) < 0.5) {
+                // Pinch detected
                 doZoom = false;
                 zoomCenter = this.attr.zoom.center;
-                // Pinch detected
-                if (this.attr.zoom.pinchhorizontal || this.attr.zoom.pinchvertical) {
-                    dx = Math.abs(evt.touches[0].clientX - evt.touches[1].clientX);
-                    dy = Math.abs(evt.touches[0].clientY - evt.touches[1].clientY);
-                    theta = Math.abs(Math.atan2(dy, dx));
-                    bound = (Math.PI * this.attr.zoom.pinchsensitivity) / 90.0;
-                }
 
-                if (!this.keepaspectratio &&
+                if (
+                    !this.keepaspectratio &&
                     this.attr.zoom.pinchhorizontal &&
-                    theta < bound) {
-                    this.attr.zoom.factorx = factor;
+                    gesture.isPinchHorizontal
+                ) {
+                    this.attr.zoom.factorx = gesture.factor;
                     this.attr.zoom.factory = 1.0;
                     cx = 0;
                     cy = 0;
                     doZoom = true;
-                } else if (!this.keepaspectratio &&
+                } else if (
+                    !this.keepaspectratio &&
                     this.attr.zoom.pinchvertical &&
-                    Math.abs(theta - Math.PI * 0.5) < bound
+                    gesture.isPinchVertical
                 ) {
                     this.attr.zoom.factorx = 1.0;
-                    this.attr.zoom.factory = factor;
+                    this.attr.zoom.factory = gesture.factor;
                     cx = 0;
                     cy = 0;
                     doZoom = true;
                 } else if (this.attr.zoom.pinch) {
-                    this.attr.zoom.factorx = factor;
-                    this.attr.zoom.factory = factor;
-                    cx = c.usrCoords[1];
-                    cy = c.usrCoords[2];
+                    this.attr.zoom.factorx = gesture.factor;
+                    this.attr.zoom.factory = gesture.factor;
+                    if (zoomCenter === 'auto' || zoomCenter === 'center') {
+                        cx = gesture.center.usrCoords[1];
+                        cy = gesture.center.usrCoords[2];
+                    } else if (zoomCenter === 'first') {
+                        cx = gesture.p1.usrCoords[1];
+                        cy = gesture.p1.usrCoords[2];
+                    } else if (zoomCenter === 'second') {
+                        cx = gesture.p2.usrCoords[1];
+                        cy = gesture.p2.usrCoords[2];
+                    }
                     doZoom = true;
                 }
 
                 if (doZoom) {
                     if (zoomCenter === 'board') {
                         this.zoomIn();
-                    } else { // including zoomCenter === 'auto'
+                    } else { // including zoomCenter === 'auto', 'first', 'second'
                         this.zoomIn(cx, cy);
                     }
 
@@ -2542,18 +2808,10 @@ JXG.extend(
             var pos;
 
             evt.preventDefault();
-            this.prevScale = 1.0;
-            // Android pinch to zoom
-            this.prevDist = Geometry.distance(
-                [evt.touches[0].clientX, evt.touches[0].clientY],
-                [evt.touches[1].clientX, evt.touches[1].clientY],
-                2
-            );
-            this.prevCoords = [
-                [evt.touches[0].clientX, evt.touches[0].clientY],
-                [evt.touches[1].clientX, evt.touches[1].clientY]
-            ];
-            this.isPreviousGesture = 'none';
+
+            // If we use alleGestures, gestureStartListener is calles directly.
+            // So we have to initialize (again).
+            this.twoFingerGestureStart(evt);
 
             // If pinch-to-zoom is interpreted as panning
             // we have to prepare move origin
@@ -2901,18 +3159,21 @@ JXG.extend(
                 ) {
                     // Empty by purpose
                 } else if (
-                    evt.touches.length === 2 &&
-                    (this.mode === this.BOARD_MODE_NONE ||
-                        this.mode === this.BOARD_MODE_MOVE_ORIGIN)
+                    evt.touches.length === 2
                 ) {
-                    // 2. case: two fingers: pinch to zoom or pan with two fingers needed.
-                    // This happens when the second finger hits the device. First, the
-                    // 'one finger pan mode' has to be cancelled.
-                    if (this.mode === this.BOARD_MODE_MOVE_ORIGIN) {
-                        this.originMoveEnd();
-                    }
+                    // 2. case: two fingers.
+                    // Pinch or pan with two fingers for zoom or manupulating objects.
+                    this.twoFingerGestureStart(evt);
 
-                    this.gestureStartListener(evt);
+                    if( this.mode === this.BOARD_MODE_NONE ||
+                        this.mode === this.BOARD_MODE_MOVE_ORIGIN) {
+                        // This happens when the second finger hits the device. First, the
+                        // 'one finger pan mode' has to be cancelled.
+                        if (this.mode === this.BOARD_MODE_MOVE_ORIGIN) {
+                            this.originMoveEnd();
+                        }
+                        this.gestureStartListener(evt);
+                    }
                 }
             }
 
@@ -3133,6 +3394,12 @@ JXG.extend(
                     [evt, this.mode]
                 );
             } else if (!this.mouseOriginMove(evt)) {
+
+                if (this._getPointerInputDevice(evt) === 'touch') {
+                    this._pointerStorePosition(evt);
+                    evt.touches = this._board_touches;
+                }
+
                 if (this.mode === this.BOARD_MODE_DRAG) {
                     // Run through all jsxgraph elements which are touched by at least one finger.
                     for (i = 0; i < this.touches.length; i++) {
@@ -3160,13 +3427,8 @@ JXG.extend(
                         }
                     }
                 } else {
-                    if (this._getPointerInputDevice(evt) === 'touch') {
-                        this._pointerStorePosition(evt);
-
-                        if (this._board_touches.length === 2) {
-                            evt.touches = this._board_touches;
-                            this.gestureChangeListener(evt);
-                        }
+                    if (this._getPointerInputDevice(evt) === 'touch' && this._board_touches.length === 2) {
+                        this.gestureChangeListener(evt);
                     }
 
                     // Move event without dragging an element
@@ -3519,13 +3781,19 @@ JXG.extend(
                 (this.mode === this.BOARD_MODE_NONE ||
                     this.mode === this.BOARD_MODE_MOVE_ORIGIN)
             ) {
-                // 2. case: two fingers: pinch to zoom or pan with two fingers needed.
-                // This happens when the second finger hits the device. First, the
-                // 'one finger pan mode' has to be cancelled.
-                if (this.mode === this.BOARD_MODE_MOVE_ORIGIN) {
-                    this.originMoveEnd();
+                // 2. case: two fingers.
+                // Pinch or pan with two fingers for zoom or manupulating objects.
+                this.twoFingerGestureStart(evt);
+
+                if( this.mode === this.BOARD_MODE_NONE ||
+                    this.mode === this.BOARD_MODE_MOVE_ORIGIN) {
+                    // This happens when the second finger hits the device. First, the
+                    // 'one finger pan mode' has to be cancelled.
+                    if (this.mode === this.BOARD_MODE_MOVE_ORIGIN) {
+                        this.originMoveEnd();
+                    }
+                    this.gestureStartListener(evt);
                 }
-                this.gestureStartListener(evt);
             }
 
             this.options.precision.hasPoint = this.options.precision.mouse;
@@ -4029,7 +4297,7 @@ JXG.extend(
 
             if (zoomCenter === 'board') {
                 pos = [];
-            } else { // including zoomCenter === 'auto'
+            } else { // including zoomCenter === 'auto', 'first', 'second'
                 pos = new Coords(Const.COORDS_BY_SCREEN, this.getMousePosition(evt), this).usrCoords;
             }
 
