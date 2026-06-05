@@ -1552,6 +1552,85 @@ JXG.extend(
             }
         },
 
+        twoFingerPinch: function (evt) {
+            var mi = 10,
+                dir1 = [],
+                dir2 = [],
+                angle,
+                factor,
+                dist,
+                isPinch = false;
+
+            if (!Type.exists(this.prevCoords) ||
+                !Type.exists(evt.touches) ||
+                evt.touches.length < 2) {
+                return {};
+            }
+
+            dist = Geometry.distance(
+                [evt.touches[0].clientX, evt.touches[0].clientY],
+                [evt.touches[1].clientX, evt.touches[1].clientY],
+                2
+            );
+
+            // Android pinch to zoom
+            // evt.scale was available in iOS touch events (pre iOS 13)
+            // evt.scale is undefined in Android
+            if (evt.scale === undefined) {
+                evt.scale = dist / this.prevDist;
+            }
+
+            // Compute the angle of the two finger directions
+            dir1 = [
+                evt.touches[0].clientX - this.prevCoords[0][0],
+                evt.touches[0].clientY - this.prevCoords[0][1]
+            ];
+            dir2 = [
+                evt.touches[1].clientX - this.prevCoords[1][0],
+                evt.touches[1].clientY - this.prevCoords[1][1]
+            ];
+
+            if (
+                dir1[0] * dir1[0] + dir1[1] * dir1[1] < mi * mi &&
+                dir2[0] * dir2[0] + dir2[1] * dir2[1] < mi * mi
+            ) {
+                return {}; // too small movement
+            }
+
+            angle = Geometry.rad(dir1, [0, 0], dir2);
+            if (
+                this.isPreviousGesture !== 'pan' &&
+                Math.abs(angle) > Math.PI * 0.2 &&
+                Math.abs(angle) < Math.PI * 1.8
+            ) {
+                isPinch = true;
+            }
+
+            if (this.isPreviousGesture !== 'pan' && !isPinch) {
+                if (Math.abs(evt.scale) < 0.77 || Math.abs(evt.scale) > 1.3) {
+                    isPinch = true;
+                }
+            }
+
+            factor = evt.scale / this.prevScale;
+
+            this.saveTwoFingerPinch(
+                [ // coords
+                    [evt.touches[0].clientX, evt.touches[0].clientY],
+                    [evt.touches[1].clientX, evt.touches[1].clientY]
+                ],
+                evt.scale // scale
+            );
+
+            return {
+                isPinch: isPinch,
+                factor: factor,
+                dir1: dir1,
+                dir2: dir2,
+                dist: dist,
+                angle: angle
+            };
+        },
 
         /**
          * Moves elements in multitouch mode.
@@ -2537,15 +2616,11 @@ JXG.extend(
          */
         gestureChangeListener: function (evt) {
             var c,
-                dir1 = [],
-                dir2 = [],
-                angle,
-                mi = 10,
-                isPinch = false,
+                pinch,
                 // Save zoomFactors
                 zx = this.attr.zoom.factorx,
                 zy = this.attr.zoom.factory,
-                factor, dist, theta, bound,
+                theta, bound,
                 zoomCenter,
                 doZoom = false,
                 dx, dy, cx, cy;
@@ -2555,69 +2630,19 @@ JXG.extend(
             }
             evt.preventDefault();
 
-            dist = Geometry.distance(
-                [evt.touches[0].clientX, evt.touches[0].clientY],
-                [evt.touches[1].clientX, evt.touches[1].clientY],
-                2
-            );
-
-            // Android pinch to zoom
-            // evt.scale was available in iOS touch events (pre iOS 13)
-            // evt.scale is undefined in Android
-            if (evt.scale === undefined) {
-                evt.scale = dist / this.prevDist;
-            }
-
-            if (!Type.exists(this.prevCoords)) {
+            pinch = this.twoFingerPinch(evt);
+            if (Type.isEmpty(pinch)) {
                 return false;
             }
-            // Compute the angle of the two finger directions
-            dir1 = [
-                evt.touches[0].clientX - this.prevCoords[0][0],
-                evt.touches[0].clientY - this.prevCoords[0][1]
-            ];
-            dir2 = [
-                evt.touches[1].clientX - this.prevCoords[1][0],
-                evt.touches[1].clientY - this.prevCoords[1][1]
-            ];
-
-            if (
-                dir1[0] * dir1[0] + dir1[1] * dir1[1] < mi * mi &&
-                dir2[0] * dir2[0] + dir2[1] * dir2[1] < mi * mi
-            ) {
-                return false;
-            }
-
-            angle = Geometry.rad(dir1, [0, 0], dir2);
-            if (
-                this.isPreviousGesture !== 'pan' &&
-                Math.abs(angle) > Math.PI * 0.2 &&
-                Math.abs(angle) < Math.PI * 1.8
-            ) {
-                isPinch = true;
-            }
-
-            if (this.isPreviousGesture !== 'pan' && !isPinch) {
-                if (Math.abs(evt.scale) < 0.77 || Math.abs(evt.scale) > 1.3) {
-                    isPinch = true;
-                }
-            }
-
-            factor = evt.scale / this.prevScale;
-            this.prevScale = evt.scale;
-            this.prevCoords = [
-                [evt.touches[0].clientX, evt.touches[0].clientY],
-                [evt.touches[1].clientX, evt.touches[1].clientY]
-            ];
 
             c = new Coords(Const.COORDS_BY_SCREEN, this.getMousePosition(evt, 0), this);
 
-            if (this.attr.pan.enabled && this.attr.pan.needtwofingers && !isPinch) {
+            if (this.attr.pan.enabled && this.attr.pan.needtwofingers && !pinch.isPinch) {
                 // Pan detected
                 this.saveTwoFingerGesture('pan');
                 this.moveOrigin(c.scrCoords[1], c.scrCoords[2], true);
 
-            } else if (this.attr.zoom.enabled && Math.abs(factor - 1.0) < 0.5) {
+            } else if (this.attr.zoom.enabled && Math.abs(pinch.factor - 1.0) < 0.5) {
                 doZoom = false;
                 zoomCenter = this.attr.zoom.center;
                 // Pinch detected
@@ -2631,7 +2656,7 @@ JXG.extend(
                 if (!this.keepaspectratio &&
                     this.attr.zoom.pinchhorizontal &&
                     theta < bound) {
-                    this.attr.zoom.factorx = factor;
+                    this.attr.zoom.factorx = pinch.factor;
                     this.attr.zoom.factory = 1.0;
                     cx = 0;
                     cy = 0;
@@ -2641,13 +2666,13 @@ JXG.extend(
                     Math.abs(theta - Math.PI * 0.5) < bound
                 ) {
                     this.attr.zoom.factorx = 1.0;
-                    this.attr.zoom.factory = factor;
+                    this.attr.zoom.factory = pinch.factor;
                     cx = 0;
                     cy = 0;
                     doZoom = true;
                 } else if (this.attr.zoom.pinch) {
-                    this.attr.zoom.factorx = factor;
-                    this.attr.zoom.factory = factor;
+                    this.attr.zoom.factorx = pinch.factor;
+                    this.attr.zoom.factory = pinch.factor;
                     cx = c.usrCoords[1];
                     cy = c.usrCoords[2];
                     doZoom = true;
