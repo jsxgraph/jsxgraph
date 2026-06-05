@@ -1809,18 +1809,12 @@ JXG.extend(
          *     </ul>
          */
         getTwoFingerTransforms: function (finger1, finger2, scalable, rotatable, evt) {
-            var gesture,
-                crd,
+            var crd,
                 x1, y1, x2, y2,
                 dx, dy,
                 xx1, yy1, xx2, yy2,
                 dxx, dyy,
                 C, S, LL, tx, ty, lbda;
-
-            gesture = this.twoFingerGesture(evt);
-            if (Type.isEmpty(gesture)) {
-                return false;
-            }
 
             crd = new Coords(Const.COORDS_BY_SCREEN, [finger1.Xprev, finger1.Yprev], this).usrCoords;
             x1 = crd[1];
@@ -1871,7 +1865,7 @@ JXG.extend(
                 ],
 
                 twofingers: [
-                    tx,ty,
+                    tx, ty,
                     lbda,
                     Math.atan2(S, C)
                 ],
