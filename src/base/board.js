@@ -3241,6 +3241,12 @@ JXG.extend(
                     [evt, this.mode]
                 );
             } else if (!this.mouseOriginMove(evt)) {
+
+                if (this._getPointerInputDevice(evt) === 'touch') {
+                    this._pointerStorePosition(evt);
+                    evt.touches = this._board_touches;
+                }
+
                 if (this.mode === this.BOARD_MODE_DRAG) {
                     // Run through all jsxgraph elements which are touched by at least one finger.
                     for (i = 0; i < this.touches.length; i++) {
@@ -3268,13 +3274,8 @@ JXG.extend(
                         }
                     }
                 } else {
-                    if (this._getPointerInputDevice(evt) === 'touch') {
-                        this._pointerStorePosition(evt);
-
-                        if (this._board_touches.length === 2) {
-                            evt.touches = this._board_touches;
-                            this.gestureChangeListener(evt);
-                        }
+                    if (this._getPointerInputDevice(evt) === 'touch' && this._board_touches.length === 2) {
+                        this.gestureChangeListener(evt);
                     }
 
                     // Move event without dragging an element
