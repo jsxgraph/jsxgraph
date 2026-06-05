@@ -1555,23 +1555,84 @@ JXG.extend(
         },
 
         /**
-         * Compute the transformation matrix to move an element according to the
+         * Compute the transformation parameters to move an element according to the
          * previous and actual positions of finger 1 and finger 2.
          * See also https://math.stackexchange.com/questions/4010538/solve-for-2d-translation-rotation-and-scale-given-two-touch-point-movements
          *
+         * Each two finger movement consists of <ul>
+         * <li>translation in directions x and y (tx, ty),</li>
+         * <li>scaling in directions x and y (sx, sy) and</li>
+         * <li>rotation with angle r (in Radians)</li>
+         * </ul>
+         *
+         * The result can be used to create transformation(s) that represent the movement.
+         * Possible combinations, using the attributes of the return value, are:
+         * <ul>
+         *     <li>
+         *         <b>generic</b>: Array
+         *         <pre>
+         *           [1, 0, 0,
+         *           tx, sx*cos(r), -sy*sin(r),
+         *           ty, sx*sos(r), sy*cos(r)]
+         *         </pre>
+         *     </li>
+         *     <li>
+         *         <b>affine</b>: Array
+         *         <pre>
+         *           [tx, sx*cos(r), -sy*sin(r),
+         *           ty, sx*sos(r), sy*cos(r)]
+         *         </pre>
+         *     </li>
+         *     <li>
+         *         <b>twofingers</b>: Array
+         *         <pre>
+         *           [tx, ty, s, r]
+         *         </pre>
+         *     </li>
+         *     <li>
+         *         <b>translation * scale * rotation</b>: Arrays
+         *         <pre>
+         *           [tx, ty]
+         *         </pre>,
+         *         <pre>
+         *           [sx, sy]
+         *         </pre> and
+         *         <pre>
+         *           [r]
+         *         </pre>
+         *         If one of these transformations does not exist, the value is null.
+         *     </li>
+         * </ul>
+         *
          * @param {Object} finger1 Actual and previous position of finger 1
-         * @param {Object} finger1 Actual and previous position of finger 1
+         * @param {Object} finger2 Actual and previous position of finger 2
          * @param {Boolean} scalable Flag if element may be scaled
          * @param {Boolean} rotatable Flag if element may be rotated
-         * @returns {Array}
+         * @param {Event} evt The event object that lead to this movement.
+         * @returns {Object} Transformation parameters <ul>
+         *     <li><tt>{Array} generic</tt> Array of length 9</li>
+         *     <li><tt>{Array} affine</tt> Array of length 6</li>
+         *     <li><tt>{Array} twofingers</tt> Array of length 4</li>
+         *     <li><tt>{Object} single</tt><ul>
+         *          <li><tt>{Array|null} translate</tt> Array of length 2</li>
+         *          <li><tt>{Array|null} scale</tt> Array of length 2</li>
+         *          <li><tt>{Array|null} rotate</tt> Array of length 1</li>
+         *     </ul></li>
+         *     </ul>
          */
-        getTwoFingerTransform(finger1, finger2, scalable, rotatable) {
-            var crd,
+        getTwoFingerTransforms: function (finger1, finger2, scalable, rotatable, evt) {
+            var gesture,
+                crd,
                 x1, y1, x2, y2,
                 dx, dy,
                 xx1, yy1, xx2, yy2,
                 dxx, dyy,
                 C, S, LL, tx, ty, lbda;
+
+            gesture = this.twoFingerGesture(evt);
+            if (Type.isEmpty(gesture)) {
+                return false;
+            }
 
             crd = new Coords(Const.COORDS_BY_SCREEN, [finger1.Xprev, finger1.Yprev], this).usrCoords;
             x1 = crd[1];
@@ -1595,20 +1656,69 @@ JXG.extend(
             LL = dx * dx + dy * dy;
             C = (dxx * dx + dyy * dy) / LL;
             S = (dyy * dx - dxx * dy) / LL;
+
+            lbda = Mat.hypot(C, S);
             if (!scalable) {
-                lbda = Mat.hypot(C, S);
                 C /= lbda;
                 S /= lbda;
+                lbda = 1;
             }
             if (!rotatable) {
                 S = 0;
             }
+
             tx = 0.5 * (xx1 + xx2 - C * (x1 + x2) + S * (y1 + y2));
             ty = 0.5 * (yy1 + yy2 - S * (x1 + x2) - C * (y1 + y2));
 
-            return [1, 0, 0,
-                tx, C, -S,
-                ty, S, C];
+            return {
+                generic: [
+                    1, 0, 0,
+                    tx, C, -S,
+                    ty, S, C
+                ],
+
+                affine: [
+                    tx, C, -S,
+                    ty, S, C
+                ],
+
+                twofingers: [
+                    tx,ty,
+                    lbda,
+                    Math.atan2(S, C)
+                ],
+
+                single: {
+                    translate: (tx !== 0 || ty !== 0)
+                        ? [tx, ty]
+                        : null,
+
+                    scale: (scalable && lbda !== 1)
+                        ? [lbda, lbda]
+                        : null,
+
+                    rotate: (rotatable && S !== 0)
+                        ? [Math.atan2(S, C)]
+                        : null
+                }
+            };
+        },
+
+        /**
+         * Compute the (generic) transformation matrix (as array) to move an element according to the
+         * previous and actual positions of finger 1 and finger 2.
+         *
+         * @see  JXG.Board#getTwoFingerTransforms
+         *
+         * @param {Object} finger1 Actual and previous position of finger 1
+         * @param {Object} finger2 Actual and previous position of finger 2
+         * @param {Boolean} scalable Flag if element may be scaled
+         * @param {Boolean} rotatable Flag if element may be rotated
+         * @returns {Array}
+         * @deprecated
+         */
+        getTwoFingerTransform: function (finger1, finger2, scalable, rotatable) {
+            return this.getTwoFingerTransforms(finger1, finger2, scalable, rotatable).generic;
         },
 
         /**
