@@ -1568,7 +1568,8 @@ JXG.extend(
          * @param {Event} evt
          * @param {Boolean} [allowPan=true]
          * @param {Number} [pinchDirSensitivity=5] Sensitivity (in degrees) for recognizing horizontal or vertical pinch gestures.
-         * @returns {Object} <ul>
+         * @param {Boolean} [filterSmallMovements=false]
+         * @returns {Object|null} <ul>
          *     <li>{Boolean} isPinch</li>
          *     <li>{Boolean} isPinchVertical</li>
          *     <li>{Boolean} isPinchHorizontal</li>
@@ -1585,11 +1586,12 @@ JXG.extend(
          *     <li>{Number} dx Distance between finger 1 and 2 (x direction)</li>
          *     <li>{Number} dy Distance between finger 1 and 2 (y direction)</li>
          *     </ul>
+         *     In case of an error or early exit (filterSmallMovements) the return is null.
          * @see JXG.Board.twoFingerGestureStart
          * @see JXG.Board.gestureChangeListener
          * @see JXG.Board.twoFingerTouchObject
          */
-        twoFingerGesture: function (evt, allowPan, pinchDirSensitivity) {
+        twoFingerGesture: function (evt, allowPan, pinchDirSensitivity, filterSmallMovements) {
             var mi = 10,
                 dir1, dir2,
                 movementAngle,
@@ -1604,9 +1606,12 @@ JXG.extend(
             if (!Type.exists(this.prevCoords) ||
                 !Type.exists(evt.touches) ||
                 evt.touches.length < 2) {
-                return {};
+                return null;
             }
 
+            if (!Type.exists(filterSmallMovements)) {
+                filterSmallMovements = false;
+            }
             if (!Type.exists(allowPan)) {
                 allowPan = true;
             }
@@ -1640,10 +1645,11 @@ JXG.extend(
             ];
 
             if (
+                filterSmallMovements &&
                 dir1[0] * dir1[0] + dir1[1] * dir1[1] < mi * mi &&
                 dir2[0] * dir2[0] + dir2[1] * dir2[1] < mi * mi
             ) {
-                return {}; // too small movement of fingers
+                return null; // too small movement of fingers
             }
 
             // Compute the angle of the two finger directions
@@ -2713,9 +2719,10 @@ JXG.extend(
             gesture = this.twoFingerGesture(
                 evt,
                 this.attr.pan.enabled && this.attr.pan.needtwofingers,
-                this.attr.zoom.pinchsensitivity
+                this.attr.zoom.pinchsensitivity,
+                true
             );
-            if (Type.isEmpty(gesture)) {
+            if (!Type.exists(gesture)) {
                 return false;
             }
 
