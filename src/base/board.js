@@ -1708,7 +1708,7 @@ JXG.extend(
 
                 dist: dist,
                 dx: dx,
-                dy: dy,
+                dy: dy
             };
         },
 
@@ -1788,7 +1788,7 @@ JXG.extend(
          *         <pre>
          *           [r]
          *         </pre>
-         *         If one of these transfomrations does not exist, the value is null.
+         *         If one of these transformations does not exist, the value is null.
          *     </li>
          * </ul>
          *
