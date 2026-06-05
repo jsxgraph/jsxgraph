@@ -56,6 +56,7 @@ import Type from "../utils/type.js";
  * <li> 'shear'
  * <li> 'affine'
  * <li> 'affinematrix'
+ * <li> 'twofingers'
  * <li> 'generic'
  * <li> 'matrix'
  * </ul>
@@ -117,6 +118,17 @@ import Type from "../utils/type.js";
  * ( 1  0  0 )   ( z )
  * ( M       ) * ( x )
  * (         )   ( y )
+ * </pre>
+ *
+ * <p>A 'twofingers' transformation consists of 4 parameters: <ul>
+ * <li>translation in directions x and y (tx, ty),</li>
+ * <li>scaling (s) equally in both the x and y directions and</li>
+ * <li>rotation with angle r (in Radians)</li>
+ * </ul>
+ * <pre>
+ * ( 1    0          0        )   ( z )
+ * ( tx   s*cos(r)  -s*sin(r) ) * ( x )
+ * ( ty   s*sin(r)   s*cos(r) )   ( y )
  * </pre>
  *
  * <p>Generic transformation (9 parameters):
@@ -199,6 +211,7 @@ JXG.extend(
          *                        'shear',
          *                        'affine',
          *                        'affinematrix',
+         *                        'twofingers',
          *                        'generic',
          *                        'matrix'.
          * @param {Array} params Parameters for the various transformation types.
@@ -271,6 +284,17 @@ JXG.extend(
          * (         )   ( y )
          * </pre>
          *
+         * <p>A 'twofingers' transformation consists of 4 parameters: <ul>
+         * <li>translation in directions x and y (tx, ty),</li>
+         * <li>scaling (s) equally in both the x and y directions</li>
+         * <li>rotation with angle r (in Radians)</li>
+         * </ul>
+         * <pre>
+         * ( 1    0          0        )   ( z )
+         * ( tx   s*cos(r)  -s*sin(r) ) * ( x )
+         * ( ty   s*sin(r)   s*cos(r) )   ( y )
+         * </pre>
+         *
          * <p>Generic transformation (9 parameters):
          * <pre>
          * ( a  b  c )   ( z )
@@ -304,6 +328,7 @@ JXG.extend(
                 'shear',
                 'affine',
                 'affinematrix',
+                'twofingers',
                 'generic',
                 'matrix'
             ].includes(type)) {
@@ -497,6 +522,27 @@ JXG.extend(
                 } else {
                     throw new Error("JSXGraph: transformation of type 'affinematrix' needs a 2x2 or a 2x3 matrix as parameter.");
                 }
+            } else if (type === 'twofingers') {
+                if (params.length !== 4) {
+                    throw new Error("JSXGraph: 'twofingers' transformation needs 4 parameters.");
+                }
+
+                this.evalParam = Type.createEvalFunction(board, params, 4);
+                this.update = function () {
+                    var tx = this.evalParam(0),
+                        ty = this.evalParam(1),
+                        s = this.evalParam(2),
+                        r = this.evalParam(3),
+                        co = Math.cos(r),
+                        si = Math.sin(r);
+
+                    this.matrix[1][0] = tx;
+                    this.matrix[1][1] = s * co;
+                    this.matrix[1][2] = -s * si;
+                    this.matrix[2][0] = ty;
+                    this.matrix[2][1] = s * si;
+                    this.matrix[2][2] = s * co;
+                };
             } else if (type === 'generic') {
                 if (params.length !== 9) {
                     throw new Error("JSXGraph: generic transformation needs 9 parameters.");
@@ -1069,6 +1115,7 @@ JXG.extend(
                 'scale',
                 'affine',
                 'affinematrix',
+                'twofingers', // is reversible because sx = sy
                 'generic',
                 'matrix'
                 // 'rotate' is handled separately
@@ -1154,6 +1201,7 @@ JXG.extend(
  * <li> 'shear'
  * <li> 'affine'
  * <li> 'affinematrix'
+ * <li> 'twofingers'
  * <li> 'generic'
  * <li> 'matrix'
  * </ul>
@@ -1228,6 +1276,18 @@ JXG.extend(
  * ( 1  0  0 )   ( z )
  * (    M    ) * ( x )
  * (         )   ( y )
+ * </pre>
+ * </dd>
+ * <dt><b><tt>type:"twofingers"</tt></b></dt><dd> <b>tx, ty, s, r</b> The parameters are <ul>
+ * <li>translation in directions x and y (tx, ty; numbers or functions),</li>
+ * <li>scaling equally in both the x and y directions (s; numbers or functions) and</li>
+ * <li>rotation with angle r (in Radians; number or function)</li>
+ * </ul>
+ * The transformation matrix has the form:
+ * <pre>
+ * ( 1    0          0        )   ( z )
+ * ( tx   s*cos(r)  -s*sin(r) ) * ( x )
+ * ( ty   s*sin(r)   s*cos(r) )   ( y )
  * </pre>
  * </dd>
  * <dt><b><tt>type:"generic"</tt></b></dt><dd><b>a, b, c, d, e, f, g, h, i</b> Nine matrix entries (numbers or functions)
