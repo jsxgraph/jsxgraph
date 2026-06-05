@@ -1815,78 +1815,77 @@ JXG.extend(
          *     </ul>
          */
         getTwoFingerTransforms: function (finger1, finger2, scalable, rotatable, evt) {
-            var crd,
-                x1, y1, x2, y2,
-                dx, dy,
-                xx1, yy1, xx2, yy2,
-                dxx, dyy,
-                C, S, LL, tx, ty, lbda;
+            var p1Old, p2Old,
+                p1New, p2New,
+                dxOld, dyOld,
+                dxNew, dyNew,
+                distSqOld,
+                co, si,
+                scale,
+                tx, ty,
+                angle;
 
-            crd = new Coords(Const.COORDS_BY_SCREEN, [finger1.Xprev, finger1.Yprev], this).usrCoords;
-            x1 = crd[1];
-            y1 = crd[2];
-            crd = new Coords(Const.COORDS_BY_SCREEN, [finger2.Xprev, finger2.Yprev], this).usrCoords;
-            x2 = crd[1];
-            y2 = crd[2];
+            // coords
+            p1Old = new Coords(Const.COORDS_BY_SCREEN, [finger1.Xprev, finger1.Yprev], this).usrCoords;
+            p2Old = new Coords(Const.COORDS_BY_SCREEN, [finger2.Xprev, finger2.Yprev], this).usrCoords;
+            p1New = new Coords(Const.COORDS_BY_SCREEN, [finger1.X, finger1.Y], this).usrCoords;
+            p2New = new Coords(Const.COORDS_BY_SCREEN, [finger2.X, finger2.Y], this).usrCoords;
 
-            crd = new Coords(Const.COORDS_BY_SCREEN, [finger1.X, finger1.Y], this).usrCoords;
-            xx1 = crd[1];
-            yy1 = crd[2];
-            crd = new Coords(Const.COORDS_BY_SCREEN, [finger2.X, finger2.Y], this).usrCoords;
-            xx2 = crd[1];
-            yy2 = crd[2];
+            // distances
+            dxOld = p2Old[1] - p1Old[1];
+            dyOld = p2Old[2] - p1Old[2];
+            dxNew = p2New[1] - p1New[1];
+            dyNew = p2New[2] - p1New[2];
 
-            dx = x2 - x1;
-            dy = y2 - y1;
-            dxx = xx2 - xx1;
-            dyy = yy2 - yy1;
+            distSqOld = dxOld * dxOld + dyOld * dyOld;
 
-            LL = dx * dx + dy * dy;
-            C = (dxx * dx + dyy * dy) / LL;
-            S = (dyy * dx - dxx * dy) / LL;
+            // sin and cos of rotation and scaling
+            co = (dxNew * dxOld + dyNew * dyOld) / distSqOld;
+            si = (dyNew * dxOld - dxNew * dyOld) / distSqOld;
 
-            lbda = Mat.hypot(C, S);
+            scale = Mat.hypot(co, si);
+
             if (!scalable) {
-                C /= lbda;
-                S /= lbda;
-                lbda = 1;
+                co /= scale;
+                si /= scale;
+                scale = 1;
             }
             if (!rotatable) {
-                S = 0;
+                si = 0;
             }
 
-            tx = 0.5 * (xx1 + xx2 - C * (x1 + x2) + S * (y1 + y2));
-            ty = 0.5 * (yy1 + yy2 - S * (x1 + x2) - C * (y1 + y2));
+            // additional params
+            tx = 0.5 * (p1New[1] + p2New[1] - (co * (p1Old[1] + p2Old[1]) - si * (p1Old[2] + p2Old[2])));
+            ty = 0.5 * (p1New[2] + p2New[2] - (si * (p1Old[1] + p2Old[1]) + co * (p1Old[2] + p2Old[2])));
+            angle = Math.atan2(si, co);
 
             return {
                 generic: [
                     1, 0, 0,
-                    tx, C, -S,
-                    ty, S, C
+                    tx, co, -si,
+                    ty, si, co
                 ],
 
                 affine: [
-                    tx, C, -S,
-                    ty, S, C
+                    tx, co, -si,
+                    ty, si, co
                 ],
 
                 twofingers: [
                     tx, ty,
-                    lbda,
-                    Math.atan2(S, C)
+                    scale,
+                    angle
                 ],
 
                 single: {
                     translate: (tx !== 0 || ty !== 0)
                         ? [tx, ty]
                         : null,
-
-                    scale: (scalable && lbda !== 1)
-                        ? [lbda, lbda]
+                    scale: (scalable && scale !== 1)
+                        ? [scale, scale]
                         : null,
-
-                    rotate: (rotatable && S !== 0)
-                        ? [Math.atan2(S, C)]
+                    rotate: (rotatable && si !== 0)
+                        ? [angle]
                         : null
                 }
             };
