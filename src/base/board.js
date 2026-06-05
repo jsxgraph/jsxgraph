@@ -1524,7 +1524,8 @@ JXG.extend(
         },
 
         /**
-         * Saves value in this.prevCoords, this.prevScale, this.prevDist and this.isPreviousGesture if the new values are not null.
+         * Saves values in this.prevCoords, this.prevScale, this.prevDist and this.isPreviousGesture
+         * if the new values are not null.
          * This is necessary for {@link JXG.Board.twoFingerPinch}.
          *
          * @param {Array|null} coords
@@ -1532,6 +1533,7 @@ JXG.extend(
          * @param {Number|null} dist
          * @param {String|null} gesture
          * @see JXG.Board.twoFingerPinch
+         * @see JXG.Board.saveTwoFingerGesture
          */
         saveTwoFingerPinch: function (coords, scale, dist, gesture) {
             if (Type.exists(coords)) {
@@ -1546,12 +1548,35 @@ JXG.extend(
             this.saveTwoFingerGesture(gesture);
         },
 
-        saveTwoFingerGesture: function (gesture) {
-            if (Type.exists(gesture)) {
-                this.isPreviousGesture = gesture;
+        /**
+         * Saves value in this.isPreviousGesture if it exists.
+         * This is necessary for {@link JXG.Board.twoFingerPinch}.
+         *
+         * @param {String|null} value
+         * @see JXG.Board.twoFingerPinch
+         * @see JXG.Board.saveTwoFingerGesture
+         */
+        saveTwoFingerGesture: function (value) {
+            if (Type.exists(value)) {
+                this.isPreviousGesture = value;
             }
         },
 
+        /**
+         * Gives information about a two finger gesture.
+         *
+         * @param {Event} evt
+         * @returns {Object} <ul>
+         *     <li>{Boolean} isPinch</li>
+         *     <li>{Number} factor</li>
+         *     <li>{Array} dir1</li>
+         *     <li>{Array} dir2</li>
+         *     <li>{Number} dist</li>
+         *     <li>{Number} angle</li>
+         *     </ul>
+         * @see JXG.Board.gestureChangeListener
+         * @see JXG.Board.twoFingerTouchObject
+         */
         twoFingerPinch: function (evt) {
             var mi = 10,
                 dir1 = [],
@@ -1728,13 +1753,17 @@ JXG.extend(
          *     </ul></li>
          *     </ul>
          */
-            var crd,
         getTwoFingerTransforms: function (finger1, finger2, scalable, rotatable, evt) {
+            var pinch,
+                crd,
                 x1, y1, x2, y2,
                 dx, dy,
                 xx1, yy1, xx2, yy2,
                 dxx, dyy,
                 C, S, LL, tx, ty, lbda;
+
+            pinch = this.twoFingerPinch(evt);
+           // console.log(pinch);
 
             crd = new Coords(Const.COORDS_BY_SCREEN, [finger1.Xprev, finger1.Yprev], this).usrCoords;
             x1 = crd[1];
