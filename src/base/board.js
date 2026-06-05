@@ -1825,7 +1825,8 @@ JXG.extend(
          *     </ul>
          */
         getTwoFingerTransforms: function (finger1, finger2, scalable, rotatable, evt) {
-            var p1Old, p2Old,
+            var gesture,
+                p1Old, p2Old,
                 p1New, p2New,
                 dxOld, dyOld,
                 dxNew, dyNew,
@@ -1833,7 +1834,24 @@ JXG.extend(
                 co, si,
                 scale,
                 tx, ty,
-                angle;
+                angle,
+                scaleX, scaleY;
+
+            if (Type.exists(evt)) {
+                gesture = this.twoFingerGesture(evt, 7, true,true);
+                if(!Type.exists(gesture)) {
+                    return {
+                        generic: null,
+                        affine: null,
+                        twofingers: null,
+                        single: {
+                            translate: null,
+                            scale: null,
+                            rotate: null
+                        }
+                    }
+                }
+            }
 
             // coords
             p1Old = new Coords(Const.COORDS_BY_SCREEN, [finger1.Xprev, finger1.Yprev], this).usrCoords;
@@ -1868,6 +1886,68 @@ JXG.extend(
             tx = 0.5 * (p1New[1] + p2New[1] - (co * (p1Old[1] + p2Old[1]) - si * (p1Old[2] + p2Old[2])));
             ty = 0.5 * (p1New[2] + p2New[2] - (si * (p1Old[1] + p2Old[1]) + co * (p1Old[2] + p2Old[2])));
             angle = Math.atan2(si, co);
+
+            // Special handling based on gesture classification
+            if (Type.exists(gesture)) {
+
+                // PAN only -> translation + rotation, but no scaling
+                if (gesture.isPan && !gesture.isPinch) {
+                    scale = 1;
+                    co /= Mat.hypot(co, si);
+                    si /= Mat.hypot(co, si);
+                }
+
+                // PINCH only -> anisotropic scaling via single transforms
+                else if (gesture.isPinch && !gesture.isPan) {
+
+                    scaleX = 1;
+                    scaleY = 1;
+
+                    if (gesture.isPinchHorizontal && Math.abs(dxOld) > Mat.eps) {
+                        scaleX = dxNew / dxOld;
+                    }
+
+                    if (gesture.isPinchVertical && Math.abs(dyOld) > Mat.eps) {
+                        scaleY = dyNew / dyOld;
+                    }
+
+                    if (!gesture.isPinchHorizontal && !gesture.isPinchVertical) {
+                        scaleX = scale;
+                        scaleY = scale;
+                    }
+
+                    return {
+                        generic: [
+                            1, 0, 0,
+                            tx, co, -si,
+                            ty, si, co
+                        ],
+
+                        affine: [
+                            tx, co, -si,
+                            ty, si, co
+                        ],
+
+                        twofingers: !gesture.isPinchHorizontal && !gesture.isPinchVertical
+                            ? [
+                                tx, ty,
+                                scale,
+                                0
+                            ]
+                            : null,
+
+                        single: {
+                            translate: null,
+                            scale: (scalable && (scaleX !== 1 || scaleY !== 1))
+                                ? [scaleX, scaleY]
+                                : null,
+                            rotate: null
+                        }
+                    };
+                }
+
+                // PINCH + PAN -> unchanged original behaviour
+            }
 
             return {
                 generic: [
@@ -1930,7 +2010,7 @@ JXG.extend(
          * @param {Event} evt The event object that lead to this movement.
          */
         twoFingerTouchObject: function (tar, drag, id, evt) {
-            var t, T,
+            var t, T, transformations,
                 ar, i, len,
                 snap = false;
 
@@ -1946,8 +2026,30 @@ JXG.extend(
                     drag.evalVisProp('rotatable'),
                     evt
                 );
-                t = this.create('transform', T.twofingers, {type: 'twofingers'});
-                t.update();
+
+                if (Type.exists(T)&&Type.exists(T.twofingers)) {
+                    transformations = [
+                        this.create('transform', T.twofingers, {type: 'twofingers'})
+                    ];
+
+                } else if(Type.exists(T)&&Type.exists(T.single)) {
+                    transformations = [];
+                    if (Type.exists(T.single.scale)) {
+                        transformations.push(
+                            this.create('transform', T.single.scale, {type: 'scale'})
+                        );
+                    }
+                    if (Type.exists(T.single.rotate)) {
+                        transformations.push(
+                            this.create('transform', T.single.rotate, {type: 'rotate'})
+                        );
+                    }
+                    if (Type.exists(T.single.translate)) {
+                        transformations.push(
+                            this.create('transform', T.single.translate, {type: 'translate'})
+                        );
+                    }
+                }
 
                 if (drag.elementClass === Const.OBJECT_CLASS_LINE) {
                     ar = [];
@@ -1957,7 +2059,10 @@ JXG.extend(
                     if (drag.point2.draggable()) {
                         ar.push(drag.point2);
                     }
-                    t.applyOnce(ar);
+                    for (i = 0; i < transformations.length; i++) {
+                        transformations[i].update();
+                        transformations[i].applyOnce(ar);
+                    }
                 } else if (drag.type === Const.OBJECT_TYPE_POLYGON) {
                     len = drag.vertices.length - 1;
                     snap = drag.evalVisProp('snaptogrid') || drag.evalVisProp('snaptopoints');
@@ -1972,10 +2077,16 @@ JXG.extend(
                                 ar.push(drag.vertices[i]);
                             }
                         }
-                        t.applyOnce(ar);
+                        for (i = 0; i < transformations.length; i++) {
+                            transformations[i].update();
+                            transformations[i].applyOnce(ar);
+                        }
                     }
                 } else if (drag.elementClass === Const.OBJECT_CLASS_CURVE) {
-                    t.meltTo(drag);
+                    for (i = 0; i < transformations.length; i++) {
+                        transformations[i].update();
+                        transformations[i].meltTo(drag);
+                    }
                 }
 
                 this.update();
@@ -2728,9 +2839,8 @@ JXG.extend(
             gesture = this.twoFingerGesture(
                 evt,
                 this.attr.zoom.pinchsensitivity,
-                this.attr.pan.enabled && this.attr.pan.needtwofingers,
-                true,
-                true
+                false,
+                this.attr.pan.enabled && this.attr.pan.needtwofingers
             );
             if (!Type.exists(gesture)) {
                 return false;
