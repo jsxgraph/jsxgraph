@@ -1367,7 +1367,7 @@ JXG.extend(
                             dragEl = pEl;
                             collect.push(dragEl);
 
-                            // Save offset for large coords elements.
+                            // Store offset for large coords elements.
                             if (Type.exists(dragEl.coords)) {
                                 if (dragEl.elementClass === Const.OBJECT_CLASS_POINT ||
                                     dragEl.relativeCoords    // Relative texts like labels

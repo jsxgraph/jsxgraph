@@ -3604,7 +3604,7 @@ test_match:function(match, indexed_rule) {
             backup;
 
         if (this.options.backtrack_lexer) {
-            // save context
+            // store context
             backup = {
                 yylineno: this.yylineno,
                 yylloc: {

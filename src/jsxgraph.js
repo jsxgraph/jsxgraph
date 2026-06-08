@@ -54,7 +54,7 @@ import NoRenderer from "./renderer/no.js";
 /**
  * Constructs a new JSXGraph singleton object.
  * @class The JXG.JSXGraph singleton stores all properties required
- * to load, save, create and free a board.
+ * to load, store, create and free a board.
  */
 JXG.JSXGraph = {
     /**
