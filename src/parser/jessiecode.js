@@ -278,7 +278,7 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
         var s = this.scope.previous;
 
         // make sure the global scope is not lost
-        this.scope = s !== null ? s : this.scope;
+        this.scope = (s !== null) ? s : this.scope;
 
         return this.scope;
     },
@@ -327,7 +327,7 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
                             attr = {};
                         }
                         if (attr.name === undefined && attr.id === undefined) {
-                            attr.name = (that.lhs[that.scope.id] !== 0 ? that.lhs[that.scope.id] : '');
+                            attr.name = ((that.lhs[that.scope.id] !== 0) ? that.lhs[that.scope.id] : '');
                         }
                         return that.board.create(vname, parameters, attr);
                     };
@@ -760,18 +760,18 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
             //   stay !o.isDraggable, update the given coord by overwriting X/YEval
 
             if (o.isDraggable && typeof value === 'number') {
-                x = what === 'x' ? value : o.X();
-                y = what === 'y' ? value : o.Y();
+                x = (what === 'x') ? value : o.X();
+                y = (what === 'y') ? value : o.Y();
 
                 o.setPosition(Const.COORDS_BY_USER, [x, y]);
             } else if (o.isDraggable && (typeof value === 'function' || typeof value === 'string')) {
-                x = what === 'x' ? value : o.coords.usrCoords[1];
-                y = what === 'y' ? value : o.coords.usrCoords[2];
+                x = (what === 'x') ? value : o.coords.usrCoords[1];
+                y = (what === 'y') ? value : o.coords.usrCoords[2];
 
                 o.addConstraint([x, y]);
             } else if (!o.isDraggable) {
-                x = what === 'x' ? value : o.XEval.origin;
-                y = what === 'y' ? value : o.YEval.origin;
+                x = (what === 'x') ? value : o.XEval.origin;
+                y = (what === 'y') ? value : o.YEval.origin;
 
                 o.addConstraint([x, y]);
             }
@@ -1127,7 +1127,7 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
         // If callValue: get handle to this node_var and call its Value method.
         // Otherwise return the object.
         node = this.createNode('node_op', 'op_execfun',
-            this.createNode('node_var', (callValue === true ? '$value' : '$')),
+            this.createNode('node_var', ((callValue === true) ? '$value' : '$')),
             [this.createNode('node_str', el.id)]);
 
         node.replaced = true;
@@ -1343,7 +1343,7 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
         } else if (node.type === 'node_op' && node.value === 'op_extvalue') {
             res = [
                 this.compile(node.children[0], js),
-                node.children[1].type === 'node_const' ? node.children[1].value : this.compile(node.children[1], js)
+                (node.children[1].type === 'node_const') ? node.children[1].value : this.compile(node.children[1], js)
             ];
         } else {
             throw new Error('Syntax error: Invalid left-hand side of assignment.');
@@ -1913,7 +1913,7 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
                             for (i = 0; i < node.children[1].length; i++) {
                                 list.push(compile(node.children[1][i], "op_execfun"));
                             }
-                            ret = compile(node.children[0], "op_execfun") + '(' + list.join(', ') + (node.children[2] && js ? ', ' + e : '') + ')' + (node.children[2] && !js ? ' ' + e : '');
+                            ret = compile(node.children[0], "op_execfun") + '(' + list.join(', ') + (node.children[2] && js ? ', ' + e : '') + ')' + ((node.children[2] && !js) ? ' ' + e : '');
                             if (js) {
                                 // Inserting a newline here allows simultaneously
                                 // - procedural calls like Q.moveTo(...); and
@@ -2010,13 +2010,13 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
 
                                 e = compile(node.children[0], "op_add");
                                 prioChild = prio(node.children[0]);
-                                ret = prioParent > prioChild ? "(" + e + ")" : e;
+                                ret = (prioParent > prioChild) ? "(" + e + ")" : e;
 
                                 ret += ' + ';
 
                                 e = compile(node.children[1], "op_add");
                                 prioChild = prio(node.children[1]);
-                                ret += prioParent > prioChild ? "(" + e + ")" : e;
+                                ret += (prioParent > prioChild) ? "(" + e + ")" : e;
                             }
                             break;
                         case 'op_sub':
@@ -2029,13 +2029,13 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
 
                                 e = compile(node.children[0], "op_sub");
                                 prioChild = prio(node.children[0]);
-                                ret = prioParent > prioChild ? "(" + e + ")" : e;
+                                ret = (prioParent > prioChild) ? "(" + e + ")" : e;
 
                                 ret += ' - ';
 
                                 e = compile(node.children[1], "op_sub");
                                 prioChild = prio(node.children[1]);
-                                ret += prioParent >= prioChild ? "(" + e + ")" : e;
+                                ret += (prioParent >= prioChild) ? "(" + e + ")" : e;
                             }
                             break;
                         case 'op_div':
@@ -2048,13 +2048,13 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
 
                                 e = compile(node.children[0], "op_div");
                                 prioChild = prio(node.children[0]);
-                                ret = prioParent > prioChild ? "(" + e + ")" : e;
+                                ret = (prioParent > prioChild) ? "(" + e + ")" : e;
 
                                 ret += ' / ';
 
                                 e = compile(node.children[1], "op_div");
                                 prioChild = prio(node.children[1]);
-                                ret += prioParent >= prioChild ? "(" + e + ")" : e;
+                                ret += (prioParent >= prioChild) ? "(" + e + ")" : e;
                             }
                             break;
                         case 'op_mod':
@@ -2067,13 +2067,13 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
 
                                 e = compile(node.children[0], "op_mod");
                                 prioChild = prio(node.children[0]);
-                                ret = prioParent > prioChild ? "(" + e + ")" : e;
+                                ret = (prioParent > prioChild) ? "(" + e + ")" : e;
 
                                 ret += ' % ';
 
                                 e = compile(node.children[1], "op_mod");
                                 prioChild = prio(node.children[1]);
-                                ret += prioParent >= prioChild ? "(" + e + ")" : e;
+                                ret += (prioParent >= prioChild) ? "(" + e + ")" : e;
                             }
                             break;
                         case 'op_mul':
@@ -2086,13 +2086,13 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
 
                                 e = compile(node.children[0], "op_mul");
                                 prioChild = prio(node.children[0]);
-                                ret = prioParent > prioChild ? "(" + e + ")" : e;
+                                ret = (prioParent > prioChild) ? "(" + e + ")" : e;
 
                                 ret += ' * ';
 
                                 e = compile(node.children[1], "op_mul");
                                 prioChild = prio(node.children[1]);
-                                ret += prioParent > prioChild ? "(" + e + ")" : e;
+                                ret += (prioParent > prioChild) ? "(" + e + ")" : e;
                             }
                             break;
                         case 'op_exp':
@@ -2105,13 +2105,13 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
 
                                 e = compile(node.children[0], "op_exp", 0);
                                 prioChild = prio(node.children[0]);
-                                ret = prioParent >= prioChild ? "(" + e + ")" : e;
+                                ret = (prioParent >= prioChild) ? "(" + e + ")" : e;
 
                                 ret += '^';
 
                                 e = compile(node.children[1], "op_exp", 1);
                                 prioChild = prio(node.children[1]);
-                                ret += prioParent > prioChild ? "(" + e + ")" : e;
+                                ret += (prioParent > prioChild) ? "(" + e + ")" : e;
                             }
                             break;
                         case 'op_neg':
@@ -3604,7 +3604,7 @@ test_match:function(match, indexed_rule) {
             backup;
 
         if (this.options.backtrack_lexer) {
-            // store context
+            // save context
             backup = {
                 yylineno: this.yylineno,
                 yylloc: {
