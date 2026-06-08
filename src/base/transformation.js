@@ -271,17 +271,6 @@ JXG.extend(
          * (         )   ( y )
          * </pre>
          *
-         * <p>A 'twofinger' transformation consists of 5 parameters: <ul>
-         * <li>translation in directions x and y (tx, ty),</li>
-         * <li>scaling in directions x and y (sx, sy) and</li>
-         * <li>rotation with angle r (in Radians)</li>
-         * </ul>
-         * <pre>
-         * ( 1    0           0         )   ( z )
-         * ( tx   sx*cos(r)  -sy*sin(r) ) * ( x )
-         * ( ty   sx*sin(r)   sy*cos(r) )   ( y )
-         * </pre>
-         *
          * <p>Generic transformation (9 parameters):
          * <pre>
          * ( a  b  c )   ( z )
@@ -1226,27 +1215,6 @@ JXG.extend(
                             ]
                         ];
                     }
-
-                } else if (type === 'twofinger') {
-                    sx = Mat.hypot(
-                        this.matrix[1][1],
-                        this.matrix[2][1]
-                    );
-                    sy = Mat.hypot(
-                        this.matrix[1][2],
-                        this.matrix[2][2]
-                    );
-                    angle = Math.atan2(
-                        this.matrix[2][1],
-                        this.matrix[1][1]
-                    );
-                    res = [
-                        this.matrix[1][0],
-                        this.matrix[2][0],
-                        sx,
-                        sy,
-                        angle
-                    ];
 
                 } else if (type === 'generic') {
                     for (i = 0; i < 3; i++) {
