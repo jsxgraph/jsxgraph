@@ -2101,19 +2101,26 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
                             if (js) {
                                 ret = '$jc$.pow(' + compile(node.children[0], "op_exp", 0) + ', ' + compile(node.children[1], "op_exp", 1) + ')';
                             } else if (!format.minParentheses) {
-                                ret = '(' + compile(node.children[0], "op_exp", 0) + '^' + compile(node.children[1], "op_exp", 1) + ')';
+                                ret = '('
+                                    + compile(node.children[0], "op_exp", 0)
+                                    + '^' + compile(node.children[1], "op_exp", 1)
+                                    + ')';
                             } else {
                                 prioParent = prio(node);
 
                                 e = compile(node.children[0], "op_exp", 0);
                                 prioChild = prio(node.children[0]);
-                                ret = (prioParent >= prioChild) ? "(" + e + ")" : e;
+                                ret = (prioParent >= prioChild)
+                                    ? "(" + e + ")"
+                                    : e;
 
                                 ret += '^';
 
                                 e = compile(node.children[1], "op_exp", 1);
                                 prioChild = prio(node.children[1]);
-                                ret += (prioParent > prioChild) ? "(" + e + ")" : e;
+                                ret += (prioParent > prioChild && !(format.printable && e[0] === '{' && e[e.length - 1] === '}'))
+                                    ? "(" + e + ")"
+                                    : e;
                             }
                             break;
                         case 'op_neg':
