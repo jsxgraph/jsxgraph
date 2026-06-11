@@ -705,7 +705,7 @@ Mat.Plot = {
         pb.setCoordinates(Const.COORDS_BY_SCREEN, ret_arr[0], false);
         tb = ret_arr[1];
 
-        // Save the visible area.
+        // Store the visible area.
         // This can be used in Curve.hasPoint().
         this._visibleArea = [ta, tb];
 
@@ -1455,7 +1455,7 @@ Mat.Plot = {
         pb.setCoordinates(Const.COORDS_BY_SCREEN, ret_arr[0], false);
         tb = ret_arr[1];
 
-        // Save the visible area.
+        // Store the visible area.
         // This can be used in Curve.hasPoint().
         this._visibleArea = [ta, tb];
 

@@ -478,7 +478,7 @@ JXG.extend(
             // hence we show the element temporarily
             els = element.style;
 
-            // save style
+            // store style
             originalVisibility = els.visibility;
             originalPosition = els.position;
             originalDisplay = els.display;

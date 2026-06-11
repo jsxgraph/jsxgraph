@@ -127,7 +127,7 @@ Mat.Numerics = {
                         Type.swap(Acopy, i, j);
                         Type.swap(x, i, j);
                     } else {
-                        // Saves the L matrix of the LR-decomposition. unnecessary.
+                        // Stores the L matrix of the LR-decomposition. Unnecessary.
                         Acopy[i][j] /= Acopy[j][j];
                         // Transform right-hand-side b
                         x[i] -= Acopy[i][j] * x[j];

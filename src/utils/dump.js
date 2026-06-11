@@ -262,7 +262,7 @@ JXG.Dump = {
     },
 
     /**
-     * Generate a save-able structure with all elements. This is used by {@link JXG.Dump#toJessie} and
+     * Generate a store-able structure with all elements. This is used by {@link JXG.Dump#toJessie} and
      * {@link JXG.Dump#toJavaScript} to generate the script.
      * @param {JXG.Board} board
      * @returns {Array} An array with all metadata necessary to save the construction.
@@ -385,7 +385,7 @@ JXG.Dump = {
     },
 
     /**
-     * Saves the construction in <tt>board</tt> to JessieCode.
+     * Exports the construction in <tt>board</tt> to JessieCode.
      * @param {JXG.Board} board
      * @returns {String} JessieCode
      */
@@ -446,7 +446,7 @@ JXG.Dump = {
     },
 
     /**
-     * Saves the construction in <tt>board</tt> to JavaScript.
+     * Exports the construction in <tt>board</tt> to JavaScript.
      * @param {JXG.Board} board
      * @returns {String} JavaScript
      */

@@ -602,8 +602,8 @@ JXG.createParametricSurface3D = function (board, parents, attributes) {
         el.element2D.updateDataArray = function() {};
 
         // mapMeshTo3D is used to map the 2d-points created with triangulation / rectangulation to 3D.
-        // These points are realized as functions to enable dynamic changes to the surface3d
-        // saves the dynamic points in coords
+        // These points are realized as functions to enable dynamic changes to the surface3d,
+        // stores the dynamic points in coords
         coords = Tiling.mapMeshTo3D(surface, el);
 
         // Reincorporate the dynamic points in coords into surface

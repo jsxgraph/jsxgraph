@@ -296,22 +296,6 @@ JXG.extend(
                 }
             }
 
-            if ([
-                'translate',
-                'scale',
-                'reflect',
-                'rotate',
-                'shear',
-                'affine',
-                'affinematrix',
-                'generic',
-                'matrix'
-            ].includes(type)) {
-                this.transformationType = type;
-            } else {
-                return;
-            }
-
             if (type === 'translate') {
                 if (params.length !== 2) {
                     throw new Error("JSXGraph: translate transformation needs 2 parameters.");
@@ -529,7 +513,10 @@ JXG.extend(
                         }
                     }
                 };
+            } else {
+                return;
             }
+            this.transformationType = type;
 
             // Handle dependencies
             // NO: transformations do not have method addParents
@@ -675,23 +662,6 @@ JXG.extend(
                     this.isNumericMatrix = false;
                     break;
                 }
-            }
-
-            if ([
-                'translate',
-                'scale',
-                'rotateX',
-                'rotateY',
-                'rotateZ',
-                'rotate',
-                'affine',
-                'affinematrix',
-                'generic',
-                'matrix'
-            ].includes(type)) {
-                this.transformationType = type;
-            } else {
-                return;
             }
 
             if (type === 'translate') {
@@ -896,7 +866,10 @@ JXG.extend(
                         }
                     }
                 };
+            } else {
+                return;
             }
+            this.transformationType = type;
         },
 
         /**
@@ -1001,7 +974,8 @@ JXG.extend(
                 }
             } else {
                 elt = el.transformations;
-               if (elt.length > 0 &&
+
+                if (elt.length > 0 &&
                     elt[elt.length - 1].isNumericMatrix &&
                     this.isNumericMatrix
                 ) {

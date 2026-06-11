@@ -227,7 +227,7 @@ JXG.createEllipse = function (board, parents, attributes) {
 
     curve.majorAxis = majorAxis;
 
-    // Save the original hasPoint method. It will be called inside of the new hasPoint method.
+    // Store the original hasPoint method. It will be called inside of the new hasPoint method.
     hasPointOrg = curve.hasPoint;
 
     /** @ignore */
