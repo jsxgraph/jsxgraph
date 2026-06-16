@@ -29,6 +29,7 @@ JXG.extend(Options, {
         // Main axes
         /**
          * Attributes of the centered 3D x-axis.
+         * Suppress label with `withLabel: false`.
          *
          * @type Line3D
          * @name View3D#xAxis
@@ -45,6 +46,7 @@ JXG.extend(Options, {
 
         /**
          * Attributes of the centered 3D y-axis.
+         * Suppress label with `withLabel: false`.
          *
          * @type Line3D
          * @name View3D#yAxis
@@ -61,6 +63,7 @@ JXG.extend(Options, {
 
         /**
          * Attributes of the centered 3D z-axis.
+         * Suppress label with `withLabel: false`.
          *
          * @type Line3D
          * @name View3D#zAxis
