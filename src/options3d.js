@@ -232,6 +232,10 @@ JXG.extend(Options, {
             polyhedron: {
                 visible: 'inherit',
                 strokeWidth: 0.5,
+                strokeOpacity: 0.7,
+                strokeColor: '#cccccc',
+                fillOpacity: 0.30,
+                fillColorArray: ['#e7e7e7'],
                 shader: {
                     enabled: true,
                     fixed: true,
@@ -263,6 +267,10 @@ JXG.extend(Options, {
             polyhedron: {
                 visible: 'inherit',
                 strokeWidth: 0.5,
+                strokeOpacity: 0.7,
+                strokeColor: '#cccccc',
+                fillOpacity: 0.30,
+                fillColorArray: ['#e7e7e7'],
                 shader: {
                     enabled: true,
                     fixed: true,
@@ -294,6 +302,10 @@ JXG.extend(Options, {
             polyhedron: {
                 visible: 'inherit',
                 strokeWidth: 0.5,
+                strokeOpacity: 0.7,
+                strokeColor: '#cccccc',
+                fillOpacity: 0.30,
+                fillColorArray: ['#e7e7e7'],
                 shader: {
                     enabled: true,
                     fixed: true,
@@ -918,15 +930,33 @@ JXG.extend(Options, {
 
         stepsU: 6,
         stepsV: 6,
+
+        colormap: {
+            min: [-5, 190],
+            max: [5, 0],
+            s: 0.9,
+            v: 0.9
+        },
+
+        // From surface3d
         polyhedron: {
             layer: 12,
             visible: 'inherit',
-            strokeWidth: 0.4,
-            strokeOpacity: 0.7,
-            strokeColor: '#cccccc',
-            fillOpacity: 0.30,
-            // fillColorArray: ['none', '#e7e7e7']
-            fillColorArray: ['#e7e7e7']
+            strokeWidth: 0.1,
+            fillOpacity: 0.8,
+            fillColorArray: ['white', JXG.palette.blue],
+            shader: {
+                enabled: false,
+                fixed: true,
+                hue: 60,     // yellow
+                saturation: 90,
+                minLightness: 55,
+                maxLightness: 90,
+
+                light: {
+                    dir: -1
+                }
+            }
         },
 
         /**

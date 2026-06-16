@@ -1679,6 +1679,8 @@ JXG.createPlane3D = function (board, parents, attributes) {
         el, mesh3d,
         surface, coords,
         su, sv, type, tiling,
+        m, ma, mi, ma_a, mi_a, s, v,
+        ru0, ru1, rv0, rv1,
         base = null,
         transform = null;
 
@@ -1768,14 +1770,15 @@ JXG.createPlane3D = function (board, parents, attributes) {
     el.inherits.push(el.element2D);
     el.element2D.setParents(el);
 
-    if (
+    if ( /*true || */(
         Math.abs(el.range_u[0]) !== Infinity &&
         Math.abs(el.range_u[1]) !== Infinity &&
         Math.abs(el.range_v[0]) !== Infinity &&
         Math.abs(el.range_v[1]) !== Infinity
-    ) {
+    )) {
 
         if (type === 'wireframe') {
+            // Uses mesh3d
             attr = Type.copyAttributes(attr.mesh3d, board.options, 'mesh3d');
             mesh3d = view.create('mesh3d', [
                 function () {
@@ -1800,24 +1803,35 @@ JXG.createPlane3D = function (board, parents, attributes) {
             // Eliminate the call to the expensive el.updateDataArray();
             el.element2D.updateDataArray = function() {};
 
+            ru0 = el.range_u[0];
+            ru1 = el.range_u[1];
+            rv0 = el.range_v[0];
+            rv1 = el.range_v[1];
+            ru0 = (Math.abs(ru0) === Infinity) ? -2 : ru0;
+            ru1 = (Math.abs(ru1) === Infinity) ? 2 : ru1;
+            rv0 = (Math.abs(rv0) === Infinity) ? -2 : rv0;
+            rv1 = (Math.abs(rv1) === Infinity) ? 2 : rv1;
+
             if (tiling === 'triangle') {
                 surface = Tiling.triangulation(
-                    [el.range_u[0], el.range_v[0]],
-                    [el.range_u[0], el.range_v[1]],
-                    [el.range_u[1], el.range_v[1]],
-                    [el.range_u[1], el.range_v[0]],
+                    [ru0, rv0],
+                    [ru0, rv1],
+                    [ru1, rv1],
+                    [ru1, rv0],
                     su, sv
                 );
             } else {
                 surface = Tiling.rectangulation(
-                    [el.range_u[0], el.range_v[0]],
-                    [el.range_u[0], el.range_v[1]],
-                    [el.range_u[1], el.range_v[1]],
-                    [el.range_u[1], el.range_v[0]],
+                    [ru0, rv0],
+                    [ru0, rv1],
+                    [ru1, rv1],
+                    [ru1, rv0],
                     su, sv
                 );
 
             }
+            //console.log(view.bbox3D, surface)
+
             el.F = function (u, v) {
                 return [
                     el.point.coords[0] + u * el.vec1[0] + v * el.vec2[0],
@@ -1827,7 +1841,56 @@ JXG.createPlane3D = function (board, parents, attributes) {
                 ];
             };
             coords = Tiling.mapMeshTo3D(surface, el);
+
             surface = [coords, surface[1]];
+
+            if (type === 'colormap') {
+                attr.polyhedron.shader.enabled = false;
+
+                // Static
+                m = el.evalVisProp('colormap.max');
+                ma = m[0];
+                ma_a = m[1];
+                m = el.evalVisProp('colormap.min');
+                mi = m[0];
+                mi_a = m[1];
+                s = el.evalVisProp('colormap.s');
+                v = el.evalVisProp('colormap.v');
+
+                attr.polyhedron.fillcolorarray = [];
+                attr.polyhedron.fillcolor = (self) => {
+                    var j, hsl,
+                        z = 0,
+                        p = self.polyhedron,
+                        face = p.faces[self.faceNumber],
+                        le = face.length;
+
+                    // Dynamic version
+                    // m = self.evalVisProp('max');
+                    // ma = m[0];
+                    // ma_a = m[1];
+                    // m = self.evalVisProp('min');
+                    // mi = m[0];
+                    // mi_a = m[1];
+                    if (le !== 0) {
+                        for (j = 0; j < le; j++) {
+                            z += p.coords[face[j]][3];
+                        }
+                        z /= le;
+                    }
+                    z = mi_a + (z - mi) * (ma_a - mi_a) / (ma - mi);
+
+                    // hsl = JXG.hsv2hsl(z, el.evalVisProp('colormap.s'), el.evalVisProp('colormap.v')); // Dynamic version - slower
+                    hsl = JXG.hsv2hsl(z, s, v);
+                    return `hsl(${z} ${hsl[1] * 100}% ${hsl[2] * 100}%)`;
+                };
+            } else if (type === 'shader') {
+                attr.polyhedron.shader.enabled = true;
+            } else {
+                // colorarray
+                attr.polyhedron.shader.enabled = false;
+            }
+
             el.polyhedron = view.create('polyhedron3d', surface, attr.polyhedron);
             el.addChild(el.polyhedron);
             el.inherits.push(el.polyhedron);
