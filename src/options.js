@@ -5087,7 +5087,7 @@ JXG.Options = {
          * @name Curve#label
          */
         label: {
-            position: 'lft'
+            position: 'rt'
         },
 
         /**
@@ -5258,6 +5258,16 @@ JXG.Options = {
         /**#@+
          * @visprop
          */
+
+        /**
+         * Attributes for functiongraph label.
+         *
+         * @type Label
+         * @name Functiongraph#label
+         */
+        label: {
+            position: 'rt'
+        },
 
         /**
          * Remove data points from the function graph which do not influence

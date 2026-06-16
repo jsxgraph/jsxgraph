@@ -1264,10 +1264,12 @@ JXG.extend(
                 // t, dx, dy, d,
                 // dist = 1.5,
                 c,
-                ax = 0.05 * this.board.canvasWidth,
-                ay = 0.05 * this.board.canvasHeight,
-                bx = 0.95 * this.board.canvasWidth,
-                by = 0.95 * this.board.canvasHeight;
+                lo = 0.1,
+                up = 0.9,
+                ax = lo * this.board.canvasWidth,
+                ay = lo * this.board.canvasHeight,
+                bx = up * this.board.canvasWidth,
+                by = up * this.board.canvasHeight;
 
             if (!Type.exists(this.label)) {
                 return new Coords(Const.COORDS_BY_SCREEN, [NaN, NaN], this.board);
@@ -1278,6 +1280,7 @@ JXG.extend(
             }
 
             if (pos.indexOf('right') < 0 && pos.indexOf('left') < 0) {
+                // Old system
                 switch (this.evalVisProp('label.position')) {
                     case "ulft":
                         x = ax;
