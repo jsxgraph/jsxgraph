@@ -35,9 +35,11 @@ JXG.extend(Options, {
          * @see View3D#axesPosition
          */
         xAxis: {
+            name: 'X',
+            withlabel: true,
             visible: true,
             layer: 12,
-            point2: { name: "x" },
+            point2: { name: 'x' }, // Obsolete
             strokeColor: JXG.palette.red
         },
 
@@ -49,9 +51,11 @@ JXG.extend(Options, {
          * @see View3D#axesPosition
          */
         yAxis: {
+            name: 'Y',
+            withlabel: true,
             visible: true,
             layer: 12,
-            point2: { name: "y" },
+            point2: { name: 'y' }, // Obsolete
             strokeColor: JXG.palette.green
         },
 
@@ -63,9 +67,11 @@ JXG.extend(Options, {
          * @see View3D#axesPosition
          */
         zAxis: {
+            name: 'Z',
             visible: true,
+            withlabel: true,
             layer: 12,
-            point2: { name: "z" },
+            point2: { name: '' }, // Obsolete
             strokeColor: JXG.palette.blue
         },
 
@@ -533,6 +539,10 @@ JXG.extend(Options, {
         strokeWidth: 1,
         lastArrow: true,
         tabindex: null,
+        label: {
+            position: '103% left',
+            offset: [0, 0]
+        },
 
         point1: { visible: false, name: "", withLabel: false },
         point2: { visible: false, name: "", withLabel: false, label: { visible: true } }
