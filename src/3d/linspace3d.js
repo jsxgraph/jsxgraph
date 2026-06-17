@@ -1107,11 +1107,11 @@ JXG.extend(
                 this.elType !== 'axisplane3d' &&
                 view.defaultAxes &&
                 Type.evaluate(this.range_u[0]) === -Infinity &&
-                Type.evaluate(this.range_u[1]) === Infinity &&
+                Type.evaluate(this.range_u[1]) ===  Infinity &&
                 Type.evaluate(this.range_v[0]) === -Infinity &&
-                Type.evaluate(this.range_v[1]) === Infinity
+                Type.evaluate(this.range_v[1]) ===  Infinity
             ) {
-                // Determine the intersections of the new plane with
+                // Determine the intersections of the plane with
                 // the view bbox3d.
                 //
                 // Start with the rear plane.
@@ -1680,7 +1680,7 @@ JXG.createPlane3D = function (board, parents, attributes) {
         surface, coords,
         su, sv, type, tiling,
         m, ma, mi, ma_a, mi_a, s, v,
-        ru0, ru1, rv0, rv1,
+        ru0, ru1, rv0, rv1, bb, size,
         base = null,
         transform = null;
 
@@ -1770,12 +1770,12 @@ JXG.createPlane3D = function (board, parents, attributes) {
     el.inherits.push(el.element2D);
     el.element2D.setParents(el);
 
-    if ( /*true || */(
+    if (
         Math.abs(el.range_u[0]) !== Infinity &&
         Math.abs(el.range_u[1]) !== Infinity &&
         Math.abs(el.range_v[0]) !== Infinity &&
         Math.abs(el.range_v[1]) !== Infinity
-    )) {
+    ) {
 
         if (type === 'wireframe') {
             // Uses mesh3d
@@ -1807,10 +1807,14 @@ JXG.createPlane3D = function (board, parents, attributes) {
             ru1 = el.range_u[1];
             rv0 = el.range_v[0];
             rv1 = el.range_v[1];
-            ru0 = (Math.abs(ru0) === Infinity) ? -2 : ru0;
-            ru1 = (Math.abs(ru1) === Infinity) ? 2 : ru1;
-            rv0 = (Math.abs(rv0) === Infinity) ? -2 : rv0;
-            rv1 = (Math.abs(rv1) === Infinity) ? 2 : rv1;
+
+            // // Attempt to handle infinite planes
+            // bb = el.view.bbox3D;
+            // size = 0.5 * Math.sqrt((bb[0][0] - bb[0][1])**2 + (bb[1][0] - bb[1][1])**2 + (bb[2][0] - bb[2][1])**2);
+            // ru0 = (Math.abs(ru0) === Infinity) ? -size : ru0;
+            // ru1 = (Math.abs(ru1) === Infinity) ? size : ru1;
+            // rv0 = (Math.abs(rv0) === Infinity) ? -size : rv0;
+            // rv1 = (Math.abs(rv1) === Infinity) ? size : rv1;
 
             if (tiling === 'triangle') {
                 surface = Tiling.triangulation(
@@ -1830,7 +1834,6 @@ JXG.createPlane3D = function (board, parents, attributes) {
                 );
 
             }
-            //console.log(view.bbox3D, surface)
 
             el.F = function (u, v) {
                 return [
