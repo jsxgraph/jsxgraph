@@ -55,6 +55,7 @@ import Env from "../utils/env.js";
 import Type from "../utils/type.js";
 import Mat from "../math/math.js";
 import CoordsElement from "./coordselement.js";
+import AMserver from "../utils/asciimath.js"
 
 var priv = {
     /**
@@ -240,7 +241,11 @@ JXG.extend(
                  */
                 this.updateText = function () {
                     resolvedText = text().toString(); // Evaluate function
-                    if (ev_p && !ev_um && !ev_uk) {
+
+                    if (resolvedText.slice(0, 1) == '`') {  // Found AsciiMath,
+                        this.plaintext = AMserver.parseMath(resolvedText.slice(1));
+
+                    } else if (ev_p && !ev_um && !ev_uk) {
                         this.plaintext = this.replaceSub(
                             this.replaceSup(
                                 this.convertGeonextAndSketchometry2CSS(resolvedText, false)
@@ -287,12 +292,18 @@ JXG.extend(
                             this.content = this.content.replace(/\\/g, "\\\\"); // Replace single backslash by double
                         }
                     } else {
-                        // No TeX involved.
+                        // either full AsciiMath or PoorMansLatex
+                        if (text.slice(0, 1) == '`') {  // Found AsciiMath,
+                            text=  AMserver.parseMath(text.slice(1))  // remove the ` that starts AsciiMath
+                            // substitute " as if processed by JessieCode
+                            this.content = ["\"" +text.split('"').join('%22')  + "\""] // slow version of replaceAll
+                        } else {
                         // Converts GEONExT syntax into JavaScript string
                         // Short math is allowed
                         // Replace value-tags by functions
                         // Avoid geonext2JS calls
                         this.content = this.poorMansTeX(this.valueTagToJessieCode(text));
+                        }
                     }
                     convertJessieCode = true;
                 } else {
