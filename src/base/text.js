@@ -55,7 +55,7 @@ import Env from "../utils/env.js";
 import Type from "../utils/type.js";
 import Mat from "../math/math.js";
 import CoordsElement from "./coordselement.js";
-import AMserver from "../utils/asciimath.js"
+import AMserver from "../utils/asciimath.js";
 
 var priv = {
     /**
@@ -242,7 +242,7 @@ JXG.extend(
                 this.updateText = function () {
                     resolvedText = text().toString(); // Evaluate function
 
-                    if (resolvedText.slice(0, 1) == '`') {  // Found AsciiMath,
+                    if (resolvedText.slice(0, 1) === '`') {  // Found AsciiMath,
                         this.plaintext = AMserver.parseMath(resolvedText.slice(1));
 
                     } else if (ev_p && !ev_um && !ev_uk) {
@@ -293,10 +293,10 @@ JXG.extend(
                         }
                     } else {
                         // either full AsciiMath or PoorMansLatex
-                        if (text.slice(0, 1) == '`') {  // Found AsciiMath,
-                            text=  AMserver.parseMath(text.slice(1))  // remove the ` that starts AsciiMath
+                        if (text.slice(0, 1) === '`') {  // Found AsciiMath,
+                            text=  AMserver.parseMath(text.slice(1));  // remove the ` that starts AsciiMath
                             // substitute " as if processed by JessieCode
-                            this.content = ["\"" +text.split('"').join('%22')  + "\""] // slow version of replaceAll
+                            this.content = ["\"" +text.split('"').join('%22')  + "\""]; // slow version of replaceAll
                         } else {
                         // Converts GEONExT syntax into JavaScript string
                         // Short math is allowed
