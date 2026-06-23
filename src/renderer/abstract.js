@@ -1355,7 +1355,7 @@ JXG.extend(
                             // See http://asciimath.org/ for more information
                             // about AsciiMathML and the project's source code.
                             try {
-                                AMprocessNode(el.rendNode, false);
+                                asciimath.AMprocessNode(el.rendNode, false);
                             } catch (e) {
                                 JXG.debug("AsciiMathML not loaded (yet)");
                             }

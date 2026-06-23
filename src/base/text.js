@@ -224,6 +224,7 @@ JXG.extend(
                 ev_p = this.evalVisProp('parse'),
                 ev_um = this.evalVisProp('usemathjax'),
                 ev_uk = this.evalVisProp('usekatex'),
+                ev_ua = this.evalVisProp('useasciimathml'),
                 convertJessieCode = false;
 
             this.orgText = text;
@@ -242,10 +243,13 @@ JXG.extend(
                 this.updateText = function () {
                     resolvedText = text().toString(); // Evaluate function
 
+                    if (ev_ua) {
+                        resolvedText = "`" + resolvedText + "`";
+                    }
+
                     if (resolvedText.slice(0, 1) === '`') {  // Found AsciiMath,
                         this.plaintext = AMserver.parseMath(resolvedText.slice(1));
-
-                    } else if (ev_p && !ev_um && !ev_uk) {
+                    } else if (ev_p && !ev_um && !ev_uk && !ev_ua) {
                         this.plaintext = this.replaceSub(
                             this.replaceSup(
                                 this.convertGeonextAndSketchometry2CSS(resolvedText, false)
@@ -272,11 +276,13 @@ JXG.extend(
                         }
                     }
                 } else if (Type.isString(text) && ev_p) {
-                    if (this.evalVisProp('useasciimathml')) {
+                    if (ev_ua) {
                         // ASCIIMathML
                         // value-tags are not supported
-                        this.content = "'`" + text + "`'";
-                    } else if (ev_um || ev_uk) {
+                        text = "`" + text + "`";
+                    }
+
+                    if (ev_um || ev_uk) {
                         // MathJax or KaTeX
                         // Replace value-tags by functions
                         // sketchoicon/sketchofont is ignored
@@ -294,15 +300,15 @@ JXG.extend(
                     } else {
                         // either full AsciiMath or PoorMansLatex
                         if (text.slice(0, 1) === '`') {  // Found AsciiMath,
-                            text=  AMserver.parseMath(text.slice(1));  // remove the ` that starts AsciiMath
+                            text = AMserver.parseMath(text.slice(1));  // remove the ` that starts AsciiMath
                             // substitute " as if processed by JessieCode
-                            this.content = ["\"" +text.split('"').join('%22')  + "\""]; // slow version of replaceAll
+                            this.content = ["\"" + text.split('"').join('%22')  + "\""]; // slow version of replaceAll
                         } else {
-                        // Converts GEONExT syntax into JavaScript string
-                        // Short math is allowed
-                        // Replace value-tags by functions
-                        // Avoid geonext2JS calls
-                        this.content = this.poorMansTeX(this.valueTagToJessieCode(text));
+                            // Converts GEONExT syntax into JavaScript string
+                            // Short math is allowed
+                            // Replace value-tags by functions
+                            // Avoid geonext2JS calls
+                            this.content = this.poorMansTeX(this.valueTagToJessieCode(text));
                         }
                     }
                     convertJessieCode = true;

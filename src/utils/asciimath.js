@@ -87,7 +87,7 @@ JXG.AsciiMath = JXG.AsciiMath || {};
 
 /**
  * @fileoverview This file contains a library for rendering ASCIIMath.
- * There are two classes:  AMNode andJXG.AMserver.  OnlyJXG.AMserver is exposed.
+ * There are two classes:  AMNode andJXG.AMserver.  Only JXG.AMserver is exposed.
  */
 
 
