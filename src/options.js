@@ -203,7 +203,6 @@ JXG.Options = {
          */
         cssStyle: '',
 
-
         /**
          * If false (default), JSXGraph follows the JavaScript standard and fires before a dblclick event two
          * click events.

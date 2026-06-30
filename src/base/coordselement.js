@@ -2005,14 +2005,14 @@ JXG.extend(
          * let buttonMove = board.create('button', [-2, 4, 'left',
          * () => {
          *    isLeftRight = !isLeftRight;
-         *    buttonMove.rendNodeButton.innerHTML = isLeftRight ? 'left' : 'right'
-         *    let x = isLeftRight ? 4 : -4
-         *    let sym = isLeftRight ? 'triangleleft' : 'triangleright'
+         *    buttonMove.rendNodeButton.innerHTML = isLeftRight ? 'left' : 'right';
+         *    let x = isLeftRight ? 4 : -4;
+         *    let sym = isLeftRight ? 'triangleleft' : 'triangleright';
          *
-         *    A.moveTo([x, 3], 1000, { callback: () => A.setAttribute({ face: sym, size: 5 }) })
-         *    B.moveTo([x, 2], 1000, { callback: () => B.setAttribute({ face: sym, size: 5 }), effect: "<>" })
-         *    C.moveTo([x, 1], 1000, { callback: () => C.setAttribute({ face: sym, size: 5 }), effect: "<" })
-         *    D.moveTo([x, 0], 1000, { callback: () => D.setAttribute({ face: sym, size: 5 }), effect: ">" })
+         *    A.moveTo([x, 3], 1000, { callback: () => A.setAttribute({ face: sym, size: 5 }) });
+         *    B.moveTo([x, 2], 1000, { callback: () => B.setAttribute({ face: sym, size: 5 }), effect: "<>" });
+         *    C.moveTo([x, 1], 1000, { callback: () => C.setAttribute({ face: sym, size: 5 }), effect: "<" });
+         *    D.moveTo([x, 0], 1000, { callback: () => D.setAttribute({ face: sym, size: 5 }), effect: ">" });
          *
          * }]);
          *
@@ -2028,14 +2028,14 @@ JXG.extend(
          * let buttonMove = board.create('button', [-2, 4, 'left',
          * () => {
          *    isLeftRight = !isLeftRight;
-         *    buttonMove.rendNodeButton.innerHTML = isLeftRight ? 'left' : 'right'
-         *    let x = isLeftRight ? 4 : -4
-         *    let sym = isLeftRight ? 'triangleleft' : 'triangleright'
+         *    buttonMove.rendNodeButton.innerHTML = isLeftRight ? 'left' : 'right';
+         *    let x = isLeftRight ? 4 : -4;
+         *    let sym = isLeftRight ? 'triangleleft' : 'triangleright';
          *
-         *    A.moveTo([x, 3], 1000, { callback: () => A.setAttribute({ face: sym, size: 5 }) })
-         *    B.moveTo([x, 2], 1000, { callback: () => B.setAttribute({ face: sym, size: 5 }), effect: "<>" })
-         *    C.moveTo([x, 1], 1000, { callback: () => C.setAttribute({ face: sym, size: 5 }), effect: "<" })
-         *    D.moveTo([x, 0], 1000, { callback: () => D.setAttribute({ face: sym, size: 5 }), effect: ">" })
+         *    A.moveTo([x, 3], 1000, { callback: () => A.setAttribute({ face: sym, size: 5 }) });
+         *    B.moveTo([x, 2], 1000, { callback: () => B.setAttribute({ face: sym, size: 5 }), effect: "<>" });
+         *    C.moveTo([x, 1], 1000, { callback: () => C.setAttribute({ face: sym, size: 5 }), effect: "<" });
+         *    D.moveTo([x, 0], 1000, { callback: () => D.setAttribute({ face: sym, size: 5 }), effect: ">" });
          *
          * }]);
          *}
