@@ -2432,7 +2432,6 @@ JXG.extend(
          * @returns {Array} [[z, x, y], t1, t2, t, ||c1[t1]-c2[t2]||**2]. The last entry is set to
          * 10000 if the intersection is outside of the given domain (range) for the first curve.
          * @private
-         * @see JXG.Math.Geometry._meetCurveCurveRecursive
          * @see JXG.Math.Geometry._meetCurveCurveIterative
          * @see JXG.Math.Numerics.generalizedDampedNewton
          * @see JXG.Math.Geometry.meetCurveCurveCobyla
@@ -2587,11 +2586,11 @@ JXG.extend(
          * @param {String} [method] Intersection method, possible values are 'newton' and 'segment'.
          * If both curves are given by functions (assumed to be continuous), 'newton' is the default, otherwise
          * 'segment' is the default.
+         * @parame {Boolean} testSegment If true require that the intersection is inside of the allowed bounds for both elements (in _meetCurveCurveIterative)
          * @returns {JXG.Coords} intersection point
          *
          * @see JXG.Math.Geometry.meetCurveCurveDiscrete
-         * @see JXG.Math.Geometry._meetCurveCurveRecursive
-         * @see JXG.Math.Geometry.meetCurveCurveIterative
+         * @see JXG.Math.Geometry._meetCurveCurveIterative
          */
         meetCurveCurve: function (c1, c2, nr, t2ini, board, method, testSegment) {
             var co,
@@ -2670,7 +2669,8 @@ JXG.extend(
                 //   the curve is not a parametric curve, e.g. implicit plots
                 v = this.meetCurveLineDiscrete(cu, li, nr, board, !alwaysIntersect);
             } else {
-                v = this.meetCurveCurve(cu, li, nr, 0, board, 'newton', !alwaysIntersect);
+                v = this.meetCurveLineContinuous(cu, li, nr, board, !alwaysIntersect);
+                // v = this.meetCurveCurve(cu, li, nr, 0, board, 'newton', !alwaysIntersect);
             }
 
             return v;

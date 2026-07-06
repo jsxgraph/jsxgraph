@@ -6396,9 +6396,14 @@ JXG.Options = {
 
         /**
          * Used in {@link JXG.Intersection}.
-         * This flag sets the behaviour of intersection points of e.g.
-         * two segments. If true, the intersection is treated as intersection of lines. If false
-         * the intersection point exists if the segments intersect setwise.
+         * This flag sets the behaviour of intersection points of a segment with another object.
+         * If true, the segment is treated as an (infinte) line. If false
+         * the intersection point exists if the segment intersects the other object setwise.
+         * <p>
+         * Here, JSXGraph distinguishes whether the object is a segment or a line wlement that
+         * is displayed as a segment (with staightFirst = straightLast = true).
+         * In the latter case, the object is always treated like an infinite line, regardless if
+         * it appears like a segment or an infinite line.
          *
          * @name Intersection.alwaysIntersect
          * @type Boolean
