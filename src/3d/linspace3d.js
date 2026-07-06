@@ -1680,7 +1680,8 @@ JXG.createPlane3D = function (board, parents, attributes) {
         surface, coords,
         su, sv, type, tiling,
         m, ma, mi, ma_a, mi_a, s, v,
-        ru0, ru1, rv0, rv1, bb, size,
+        ru0, ru1, rv0, rv1,
+        // bb, size,
         base = null,
         transform = null;
 
@@ -1832,7 +1833,6 @@ JXG.createPlane3D = function (board, parents, attributes) {
                     [ru1, rv0],
                     su, sv
                 );
-
             }
 
             el.F = function (u, v) {
