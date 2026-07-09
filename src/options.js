@@ -5011,6 +5011,195 @@ JXG.Options = {
         /**#@-*/
     },
 
+    /* special coordinatesystem options */
+    coordinatesystem: {
+
+        /**
+         * This attribute controls whether the ticks on both axes are evenly spaced.
+         * The tick intervals of the x- and y-axes are always compared.
+         * Here, you can specify whether to use the<ul>
+         *     <li>smaller ('min'),</li>
+         *     <li>larger ('max') or</li>
+         *     <li>different values ('individual').</li>
+         * </ul>
+         *
+         * @name CoordinateSystem#ticksFrequency
+         * @type String
+         * @default 'individual'
+         */
+        ticksFrequency: 'individual',
+
+        /**
+         * Here, you can specify attributes for the "origin" point
+         * if it was not already passed as a parent during the creation.
+         *
+         * @name CoordinateSystem#origin
+         * @type Object
+         * @default <pre>{
+         *             name: 'origin',
+         *             withLabel: false,
+         *             visible: false,
+         *         }</pre>
+         */
+        origin: {
+            name: 'origin',
+            withLabel: false,
+            visible: false
+        },
+
+        /**
+         * Here, you can specify attributes for the point of the x direction
+         * if it was not already passed as a parent during the creation.
+         *
+         * @name CoordinateSystem#directionX
+         * @type Object
+         * @default <pre>{
+         *             name: 'directionX',
+         *             withLabel: false,
+         *             visible: false,
+         *         }</pre>
+         */
+        directionX: {
+            name: 'directionX',
+            withLabel: false,
+            visible: false
+        },
+
+        /**
+         * Here, you can specify attributes for the point of the y direction
+         * if it was not already passed as a parent during the creation.
+         *
+         * @name CoordinateSystem#directionY
+         * @type Object
+         * @default <pre>{
+         *             name: 'directionY',
+         *             withLabel: false,
+         *             visible: false,
+         *         }</pre>
+         */
+        directionY: {
+            name: 'directionY',
+            withLabel: false,
+            visible: false
+        },
+
+        /**
+         * Here, you can specify attributes for both axes.
+         *
+         * @name CoordinateSystem#axes
+         * @type Object
+         * @default <pre>{
+         *            ...
+         *         }</pre>
+         * @see CoordinateSystem#x
+         * @see CoordinateSystem#y
+         */
+        axes: {
+            ticks: {
+                majorHeight: 10, // from Options.ticks.majorHeight
+                minorHeight: 4 // from Options.ticks.minorHeight
+            }
+        },
+
+        /**
+         * Here, you can specify attributes for the x-axis in particular.
+         *
+         * @name CoordinateSystem#x
+         * @type Object
+         * @default <pre>{
+         *            name: 'x',
+         *            ...
+         *         }</pre>
+         * @see CoordinateSystem#axes
+         * @see CoordinateSystem#y
+         */
+        x: {
+            name: 'x',
+            fixed: true,
+            needsRegularUpdate: false,
+            withLabel: true,
+            label: {
+                position: 'last',
+                anchorX: 'right',
+                anchorY: 'top',
+                offset: [5, -10]
+            },
+            ticks: {
+                visible: 'inherit',
+                tickEndings: [0, 1],
+                majorTickEndings: [1, 1],
+                drawLabels: true,
+                label: {
+                    visible: 'inherit',
+                    anchorX: 'middle',
+                    anchorY: 'top',
+                    offset: [0, -10]
+                }
+            }
+        },
+
+        /**
+         * Here, you can specify attributes for the y-axis in particular.
+         *
+         * @name CoordinateSystem#y
+         * @type Object
+         * @default <pre>{
+         *            name: 'y',
+         *            ...
+         *         }</pre>
+         * @see CoordinateSystem#axes
+         * @see CoordinateSystem#x
+         */
+        y: {
+            name: 'y',
+            fixed: true,
+            needsRegularUpdate: false,
+            withLabel: true,
+            label: {
+                position: 'last',
+                anchorX: 'right',
+                anchorY: 'top',
+                offset: [-15, 10]
+            },
+            ticks: {
+                visible: 'inherit',
+                tickEndings: [1, 0],
+                majorTickEndings: [1, 1],
+                drawLabels: true,
+                label: {
+                    visible: 'inherit',
+                    anchorX: 'right',
+                    anchorY: 'middle',
+                    offset: [-10, 0]
+                }
+            }
+        },
+
+        /**
+         * Here, you can specify attributes for the grid.
+         *
+         * @name CoordinateSystem#grid
+         * @type Object
+         * @default <pre>{
+         *            name: 'grid',
+         *            ...
+         *         }</pre>
+         */
+        grid: {
+            name: 'grid',
+
+            major: {
+                drawZero: null
+            },
+
+            minor: {
+                drawZero: null
+            }
+        }
+
+        /**#@-*/
+    },
+
     /* special curve options */
     curve: {
         /**#@+
