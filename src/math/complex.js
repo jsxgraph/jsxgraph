@@ -144,7 +144,7 @@ JXG.extend(
          * @returns {JXG.Complex} Reference to this complex number
          */
         mult: function (c) {
-            var re, im;
+            var re, im, c_re, c_im;
 
             if (Type.isNumber(c)) {
                 this.real *= c;
@@ -152,10 +152,14 @@ JXG.extend(
             } else {
                 re = this.real;
                 im = this.imaginary;
+                c_re = c.real;
+                c_im = c.imaginary;
 
                 //  (a+ib)(x+iy) = ax-by + i(xb+ay)
-                this.real = re * c.real - im * c.imaginary;
-                this.imaginary = re * c.imaginary + im * c.real;
+                // this.real = re * c.real - im * c.imaginary;
+                // this.imaginary = re * c.imaginary + im * c.real;
+                this.real = re * c_re - im * c_im;
+                this.imaginary = re * c_im + im * c_re;
             }
 
             return this;
@@ -168,7 +172,8 @@ JXG.extend(
          * @returns {JXG.Complex} Reference to this complex number
          */
         div: function (c) {
-            var denom, im, re;
+            var denom, im, re, c_re, c_im,
+                eps = Mat.eps * Mat.eps;
 
             if (Type.isNumber(c)) {
                 if (Math.abs(c) < Mat.eps) {
@@ -182,19 +187,21 @@ JXG.extend(
                 this.imaginary /= c;
             } else {
                 //  (a+ib)(x+iy) = ax-by + i(xb+ay)
-                if (Math.abs(c.real) < Mat.eps && Math.abs(c.imaginary) < Mat.eps) {
+                c_re = c.real;
+                c_im = c.imaginary;
+                if (Math.abs(c_re) < eps && Math.abs(c_im) < eps) {
                     this.real = Infinity;
                     this.imaginary = Infinity;
 
                     return this;
                 }
 
-                denom = c.real * c.real + c.imaginary * c.imaginary;
+                denom = c_re * c_re + c_im * c_im;
 
                 re = this.real;
                 im = this.imaginary;
-                this.real = (re * c.real + im * c.imaginary) / denom;
-                this.imaginary = (im * c.real - re * c.imaginary) / denom;
+                this.real = (re * c_re + im * c_im) / denom;
+                this.imaginary = (im * c_re - re * c_im) / denom;
             }
 
             return this;
