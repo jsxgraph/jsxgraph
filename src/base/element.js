@@ -524,13 +524,12 @@ JXG.extend(
             for (i = 0; i < function_array.length; i++) {
                 for (e in function_array[i].deps) {
                     obj = function_array[i].deps[e];
-                    // 4.12.2025:
+                    // 4.12.2025, 14.7.2026
                     // addParents had to be removed since the type
                     // of dependency is not clear.
                     // Here, we have a functional dependency, not a geometric one.
-                    // addChild add the two elements to decendants and ancestors. It should
-                    // not call addParents() becaus this would imply a
-                    // geometric dependency.
+                    // addChild() adds the elements obj and this to both, decendants and ancestors.
+                    // It should not call addParents() because this would imply a geometric dependency.
                     // this.addParents(obj);
                     obj.addChild(this);
                 }
