@@ -472,6 +472,9 @@ JXG.Dump = {
             elements = dump.elements;
 
         for (i = 0; i < elements.length; i++) {
+            elements[i].properties = {};
+            elements[i].ancestors = [];
+
             el = board.objects[elements[i].attributes.id];
             if (Type.exists(el)) {
                 for (c in el.childElements) {
@@ -480,10 +483,21 @@ JXG.Dump = {
                     }
                 }
                 elements[i].children = Type.uniqueArray(elements[i].children);
+
                 // For JSON: draggable is draggable AND visible
-                elements[i].isDraggable = el.isDraggable && el.visPropCalc.visible;
+                elements[i].properties.isDraggable = el.isDraggable && el.visPropCalc.visible;
+                elements[i].properties.elType = el.elType;
+
+                //console.log(el.ancestors)
+                for (c in el.ancestors) {
+                    if (el.ancestors.hasOwnProperty(c) && el.ancestors[c].dump) {
+                        elements[i].ancestors.push(c);
+                    }
+                }
+                elements[i].ancestors = Type.uniqueArray(elements[i].ancestors);
             }
         }
+        dump.userLog = board.userLog.slice();
 
         if (asObj === true) {
             return dump;
