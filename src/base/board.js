@@ -1540,6 +1540,7 @@ JXG.extend(
             }
 
             if (
+                drag.elementClass === Const.OBJECT_CLASS_CURVE ||
                 drag.elementClass === Const.OBJECT_CLASS_LINE ||
                 drag.type === Const.OBJECT_TYPE_POLYGON
             ) {
@@ -1663,6 +1664,8 @@ JXG.extend(
                         }
                         t.applyOnce(ar);
                     }
+                } else if (drag.elementClass === Const.OBJECT_CLASS_CURVE) {
+                    t.meltTo(drag);
                 }
 
                 this.update();
