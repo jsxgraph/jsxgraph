@@ -289,6 +289,7 @@ JXG.Dump = {
             if (!obj.dumped && obj.dump) {
                 element.type = obj.getType();
                 element.parents = obj.getParents().slice();
+                element.children = [];
 
                 // Extract coordinates of a point
                 if (element.type === "point" && element.parents[0] === 1) {
@@ -466,11 +467,26 @@ JXG.Dump = {
      * @see JXG.Dump#toJavaScript
      */
     toJSON: function(board, asObj) {
-        var obj = this.dump(board);
-        if (asObj === true) {
-            return obj;
+        var dump = this.dump(board),
+            i, el, c,
+            elements = dump.elements;
+
+        for (i = 0; i < elements.length; i++) {
+            el = board.objects[elements[i].attributes.id];
+            if (Type.exists(el)) {
+                for (c in el.childElements) {
+                    if (el.childElements.hasOwnProperty(c) && el.childElements[c].dump) {
+                        elements[i].children.push(c);
+                    }
+                }
+                elements[i].children = Type.uniqueArray(elements[i].children);
+            }
         }
-        return JSON.stringify(obj);
+
+        if (asObj === true) {
+            return dump;
+        }
+        return JSON.stringify(dump);
     },
 
     /**
