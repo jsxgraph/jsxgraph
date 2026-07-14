@@ -265,12 +265,14 @@ JXG.Dump = {
      * Generate a store-able structure with all elements. This is used by {@link JXG.Dump#toJessie} and
      * {@link JXG.Dump#toJavaScript} to generate the script.
      * @param {JXG.Board} board
+     * @param {Boolean} [json=false] If a JavaScript object for JSON should be returned then do
+     * not enclose strings in quotes.
      * @returns {Array} An array with all metadata necessary to save the construction.
      * @see JXG.Dump#toJSON
      * @see JXG.Dump#toJavaScript
      * @see JXG.Dump#toJessie
      */
-    dump: function (board) {
+    dump: function (board, json) {
         var e,
             obj,
             element,
@@ -298,6 +300,7 @@ JXG.Dump = {
 
                 for (s = 0; s < element.parents.length; s++) {
                     if (
+                        !(json === true) && // This is needed for toJSON
                         Type.isString(element.parents[s]) &&
                         element.parents[s][0] !== "'" &&
                         element.parents[s][0] !== '"'
@@ -467,7 +470,7 @@ JXG.Dump = {
      * @see JXG.Dump#toJavaScript
      */
     toJSON: function(board, asObj) {
-        var dump = this.dump(board),
+        var dump = this.dump(board, true),
             i, el, c,
             elements = dump.elements;
 
