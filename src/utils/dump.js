@@ -300,7 +300,7 @@ JXG.Dump = {
 
                 for (s = 0; s < element.parents.length; s++) {
                     if (
-                        !(json === true) && // This is needed for toJSON
+                        !(json === true) && // This is needed in Dump.toJSON()
                         Type.isString(element.parents[s]) &&
                         element.parents[s][0] !== "'" &&
                         element.parents[s][0] !== '"'

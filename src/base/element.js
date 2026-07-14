@@ -523,6 +523,9 @@ JXG.extend(
             for (i = 0; i < function_array.length; i++) {
                 for (e in function_array[i].deps) {
                     obj = function_array[i].deps[e];
+                    // 4.12.2025: addParents had to be removed since the type
+                    // of dependency is not clear. Should a parent be moved
+                    // when the child is moved? Both answers are valid.
                     // this.addParents(obj);
                     obj.addChild(this);
                 }
