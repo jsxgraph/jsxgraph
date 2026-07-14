@@ -480,7 +480,7 @@ JXG.Dump = {
                     }
                 }
                 elements[i].children = Type.uniqueArray(elements[i].children);
-                // console.log(el.id, el.isDraggable)
+                // For JSON: draggable is draggable AND visible
                 elements[i].isDraggable = el.isDraggable && el.visPropCalc.visible;
             }
         }
