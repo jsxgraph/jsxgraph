@@ -266,6 +266,9 @@ JXG.Dump = {
      * {@link JXG.Dump#toJavaScript} to generate the script.
      * @param {JXG.Board} board
      * @returns {Array} An array with all metadata necessary to save the construction.
+     * @see JXG.Dump#toJSON
+     * @see JXG.Dump#toJavaScript
+     * @see JXG.Dump#toJessie
      */
     dump: function (board) {
         var e,
@@ -387,7 +390,10 @@ JXG.Dump = {
     /**
      * Exports the construction in <tt>board</tt> to JessieCode.
      * @param {JXG.Board} board
-     * @returns {String} JessieCode
+     * @returns {String} The construction as JessieCode code
+     * @see JXG.Dump#dump
+     * @see JXG.Dump#toJSON
+     * @see JXG.Dump#toJavaScript
      */
     toJessie: function (board) {
         var i,
@@ -405,7 +411,9 @@ JXG.Dump = {
                 script.push("// " + elements[i].attributes.name);
             }
             script.push(
-                "s" + i + " = " + elements[i].type + "(" + elements[i].parents.join(", ") + ") " + this.toJCAN(elements[i].attributes).replace(/\n/, "\\n") + ";"
+                "s" + i + " = " + elements[i].type +
+                    "(" + elements[i].parents.join(", ") + ") " +
+                    this.toJCAN(elements[i].attributes).replace(/\n/, "\\n") + ";"
             );
 
             if (elements[i].type === 'axis') {
@@ -446,9 +454,32 @@ JXG.Dump = {
     },
 
     /**
+     * Export the construction as JSON string. Wrapper of {@link JXG.Dump#dump}, i.e.
+     * a store-able structure with all elements.
+     *
+     * @param {JXG.Board} board
+     * @param {Boolean} [asObj=false] If false, return a JSON string, else return a JavaScript object.
+     * @returns {String} The construction as JSON string (or object)
+     *
+     * @see JXG.Dump#dump
+     * @see JXG.Dump#toJessie
+     * @see JXG.Dump#toJavaScript
+     */
+    toJSON: function(board, asObj) {
+        var obj = this.dump(board);
+        if (asObj === true) {
+            return obj;
+        }
+        return JSON.stringify(obj);
+    },
+
+    /**
      * Exports the construction in <tt>board</tt> to JavaScript.
      * @param {JXG.Board} board
-     * @returns {String} JavaScript
+     * @returns {String} The construction as JavaScript code
+     * @see JXG.Dump#dump
+     * @see JXG.Dump#toJSON
+     * @see JXG.Dump#toJessie
      */
     toJavaScript: function (board) {
         var i,
