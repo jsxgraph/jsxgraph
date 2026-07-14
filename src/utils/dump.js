@@ -480,6 +480,8 @@ JXG.Dump = {
                     }
                 }
                 elements[i].children = Type.uniqueArray(elements[i].children);
+                // console.log(el.id, el.isDraggable)
+                elements[i].isDraggable = el.isDraggable && el.visPropCalc.visible;
             }
         }
 
