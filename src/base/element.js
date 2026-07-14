@@ -513,6 +513,7 @@ JXG.extend(
 
         /**
          * Add dependence on elements in JessieCode functions.
+         *
          * @param {Array} function_array Array of functions containing potential properties "deps" with
          * elements the function depends on.
          * @returns {JXG.Object} reference to the object itself
@@ -523,9 +524,13 @@ JXG.extend(
             for (i = 0; i < function_array.length; i++) {
                 for (e in function_array[i].deps) {
                     obj = function_array[i].deps[e];
-                    // 4.12.2025: addParents had to be removed since the type
-                    // of dependency is not clear. Should a parent be moved
-                    // when the child is moved? Both answers are valid.
+                    // 4.12.2025:
+                    // addParents had to be removed since the type
+                    // of dependency is not clear.
+                    // Here, we have a functional dependency, not a geometric one.
+                    // addChild add the two elements to decendants and ancestors. It should
+                    // not call addParents() becaus this would imply a
+                    // geometric dependency.
                     // this.addParents(obj);
                     obj.addChild(this);
                 }
