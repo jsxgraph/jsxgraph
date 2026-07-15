@@ -1215,6 +1215,28 @@ JXG.Options = {
         },
 
         /**
+         * Control the sketchcurves for pointer device or first and second finger.
+         * @name JXG.Board#sketches
+         * @type Object
+         * @default <pre>{
+         *   enabled: true,
+         *   sketch: {
+         *     0: {visible: false},
+         *     1: {visible: false}
+         *   }
+         * }</pre>
+         *
+         * @see SketchCurve
+         */
+        sketches: {
+            enabled: true,
+            sketch: {
+                0: {visible: false},
+                1: {visible: false}
+            }
+        },
+
+        /**
          * Show a button which allows to clear all traces of a board.
          * This button can be accessed by JavaScript or CSS with
          * the ID <tt>"{board_id}_navigation_button_cleartraces"</tt> or by the CSS classes
@@ -2506,7 +2528,7 @@ JXG.Options = {
         traceAttributes: {},
 
         /**
-         * Transition duration (in milliseconds) for certain cahnges of properties like color and opacity.
+         * Transition duration (in milliseconds) for certain changes of properties like color and opacity.
          * The properties can be set in the attribute transitionProperties
          * Works in SVG renderer, only.
          * @type Number
@@ -8474,6 +8496,40 @@ JXG.Options = {
             highlightStrokeColor: Color.palette.red,
             name: ''
         }
+
+        /**#@-*/
+    },
+
+    /* special sketchcurve options */
+    sketchcurve: {
+        /**#@+
+         * @visprop
+         */
+
+        visible: true,
+        strokeColor: JXG.palette.red,
+        highlight: false,
+        strokeWidth: 1,
+        lineCap: 'round',
+
+        // Not yet implemented:
+        // gradient: 'linear',
+        // gradientSecondColor: 'rgba(255, 0, 0, 0)',
+
+        /**
+         * On up event immediately delete sketch curve
+         * @type {number}
+         * @name SketchCurve#deleteOnUp
+         * @default false
+         */
+        deleteOnUp: false,
+
+        /**
+         * Set max number of points of a sketch curve. No limit if set to null.
+         * @type {number}
+         * @name SketchCurve#maxLength
+         */
+        maxLength: null
 
         /**#@-*/
     },

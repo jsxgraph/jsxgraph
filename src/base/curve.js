@@ -3629,6 +3629,33 @@ JXG.createImplicitCurve = function (board, parents, attributes) {
 
 JXG.registerElement("implicitcurve", JXG.createImplicitCurve);
 
+/**
+ * @class Sketch a curve by dragging the pointer device on the board.
+ * If enabled:true, it is always done even if the curve is invisible.
+ * A JSXGraph borad contains a length two array board.sketches
+ * with two sketchcurves.
+ *
+ * @pseudo
+ * @name SketchCurve
+ * @augments JXG.Curve
+ * @constructor
+ * @type JXG.Curve
+ * @see JXG.Board#sketches
+ * @see JXG.Board#sketch
+ * @private
+ */
+JXG.createSketchCurve = function (board, parents, attributes) {
+    var c, attr;
+
+    attr = Type.copyAttributes(attributes, board.options, 'sketchcurve');
+    c = board.create("curve", [[], []], attr);
+
+    c.elType = 'sketchcurve';
+
+    return c;
+};
+
+JXG.registerElement("sketchcurve", JXG.createSketchCurve);
 
 export default JXG.Curve;
 
