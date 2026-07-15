@@ -672,10 +672,8 @@ JXG.Board = function (container, renderer, id,
      *      axis: true,
      *      sketches: {
      *          enabled: true,
-     *          sketch: [
-     *              {strokeWidth: 2, visible: true, maxLength: 20},
-     *              {strokeWidth: 3, visible: true}
-     *          ]
+     *          0: {strokeWidth: 2, visible: true, maxLength: 20},
+     *          1: {strokeWidth: 3, visible: true}
      *      }
      *  });
      *
@@ -697,10 +695,8 @@ JXG.Board = function (container, renderer, id,
      *                 axis: true,
      *                 sketches: {
      *                     enabled: true,
-     *                     sketch: [
-     *                         {strokeWidth: 2, visible: true, maxLength: 20},
-     *                         {strokeWidth: 3, visible: true}
-     *                     ]
+     *                     0: {strokeWidth: 2, visible: true, maxLength: 20},
+     *                     1: {strokeWidth: 3, visible: true}
      *                 }
      *             });
      *  // Use event handler to access the actual curve
@@ -721,20 +717,9 @@ JXG.Board = function (container, renderer, id,
      * @see SketchCurve
      * @see JXG.Board#sketch
      */
-
-    // Type.copyAttributes(this.attr.sketches.sketch[0], this.options, 'sketchcurve')
-    // console.log(Type.copyAttributes(this.attr.sketches.sketch[0], this.options, 'sketchcurve'))
-    // this.sketches = [
-    //     this.create('sketchcurve', [],
-    //         Type.copyAttributes(this.attr.sketches.sketch[0], this.options, 'sketchcurve')
-    //     ),
-    //     this.create('sketchcurve', [],
-    //         Type.copyAttributes(this.attr.sketches.sketch[1], this.options, 'sketchcurve')
-    //     )
-    // ];
     this.sketches = [
-        this.create('sketchcurve', [], this.attr.sketches.sketch[0]),
-        this.create('sketchcurve', [], this.attr.sketches.sketch[1])
+        this.create('sketchcurve', [], this.attr.sketches[0]),
+        this.create('sketchcurve', [], this.attr.sketches[1])
     ];
 
     /**

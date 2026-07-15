@@ -1220,20 +1220,16 @@ JXG.Options = {
          * @type Object
          * @default <pre>{
          *   enabled: true,
-         *   sketch: {
-         *     0: {visible: false},
-         *     1: {visible: false}
-         *   }
+         *   0: {visible: false},
+         *   1: {visible: false}
          * }</pre>
          *
          * @see SketchCurve
          */
         sketches: {
             enabled: true,
-            sketch: {
-                0: {visible: false},
-                1: {visible: false}
-            }
+            0: {visible: false},
+            1: {visible: false}
         },
 
         /**
