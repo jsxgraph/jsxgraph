@@ -99,10 +99,25 @@ JXG.extend(
     /** @lends JXG.Complex.prototype */ {
         /**
          * Converts a complex number into a string.
+         * @param {Number} [digits=null] number of digits if not null
          * @returns {String} Formatted string containing the complex number in human readable form (algebraic form).
          */
-        toString: function () {
-            return this.real + " + " + this.imaginary + 'i';
+        toString: function (digits) {
+            var op = (this.imaginary < 0) ? ' - ' : ' + ',
+                im = Math.abs(this.imaginary);
+
+            if (digits !== null) {
+                return this.real.toFixed(digits) + op + im.toFixed(digits) + 'i';
+            }
+            return this.real + op + im + 'i';
+        },
+
+        /**
+         * Return real and imaginary parts of a complex number as array of length 2.
+         * @returns [complex.real,complex.imaginary];
+         */
+        toArray: function() {
+            return [this.real, this.imaginary];
         },
 
         /**
