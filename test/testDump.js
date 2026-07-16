@@ -56,9 +56,15 @@ describe("Test JXG.Dump", function () {
         expect(txt.indexOf("point(2, 1) <<")).toBeGreaterThan(-1);
         expect(txt.indexOf('text(1, 3, 2, "test") <<')).not.toBeNull();
 
-        expect(txt.match(/line\("jxgBoard\d+P3", "jxgBoard\d+P4"\) <</).length).toBeGreaterThan(0);
-        expect(txt.match(/circle\("jxgBoard\d+P1", 5\) <</).length).not.toBeNull();
-        expect(txt.match(/circle\("jxgBoard\d+P8", 5\) <</)).not.toBeNull();
+        // 16.7.2026:
+        // Before we added 2 board.sketches
+        // expect(txt.match(/line\("jxgBoard\d+P3", "jxgBoard\d+P4"\) <</).length).toBeGreaterThan(0);
+        // expect(txt.match(/circle\("jxgBoard\d+P1", 5\) <</).length).not.toBeNull();
+        // expect(txt.match(/circle\("jxgBoard\d+P8", 5\) <</)).not.toBeNull();
+        // After we added 2 board.sketches
+        expect(txt.match(/line\("jxgBoard\d+P5", "jxgBoard\d+P6"\) <</).length).toBeGreaterThan(0);
+        expect(txt.match(/circle\("jxgBoard\d+P3", 5\) <</).length).not.toBeNull();
+        expect(txt.match(/circle\("jxgBoard\d+P10", 5\) <</)).not.toBeNull();
 
         // id = board.id;
         // re = new RegExp(String.raw`line\("${id}P3", "${id}P4"\) <<`, "g");
