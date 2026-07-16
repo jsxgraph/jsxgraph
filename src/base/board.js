@@ -717,17 +717,20 @@ JXG.Board = function (container, renderer, id,
      * @see SketchCurve
      * @see JXG.Board#sketch
      */
-    this.sketches = [
-        this.create('sketchcurve', [], this.attr.sketches[0]),
-        this.create('sketchcurve', [], this.attr.sketches[1])
-    ];
+    this.sketches = [null, null];
+    // this.sketches = [
+    //     this.create('sketchcurve', [], this.attr.sketches[0]),
+    //     this.create('sketchcurve', [], this.attr.sketches[1])
+    // ];
+    // this.sketches[0].dump = false;
+    // this.sketches[1].dump = false;
 
     /**
      * Alias for the first sketchcurve, i.e. for board.sketches[0].
      * @type {JXG.Curve}
      * @see JXG.Board#sketches
      */
-    this.sketch = this.sketches[0];
+    this.sketch = null; //this.sketches[0];
 
     this.isSketching = [false, false];
 
@@ -7490,9 +7493,11 @@ JXG.extend(
                 // Only first and second finger are stored
                 c = this.getUsrCoordsOfMouse(evt);
                 i = (evt.isPrimary) ? 0 : 1;
-                this.sketches[i].dataX = [c[0]];
-                this.sketches[i].dataY = [c[1]];
-                this.isSketching[i] = true;
+                if (Type.exists(this.sketches[i])) {
+                    this.sketches[i].dataX = [c[0]];
+                    this.sketches[i].dataY = [c[1]];
+                    this.isSketching[i] = true;
+                }
             }
         },
 
@@ -7503,20 +7508,19 @@ JXG.extend(
             // Only first and second finger are stored
             i = (evt.isPrimary) ? 0 : 1;
             if (this.attr.sketches.enabled && this.isSketching[i] === true) {
-                c = this.getUsrCoordsOfMouse(evt);
-                this.sketches[i].dataX.push(c[0]);
-                this.sketches[i].dataY.push(c[1]);
+                if (Type.exists(this.sketches[i])) {
+                    c = this.getUsrCoordsOfMouse(evt);
+                    this.sketches[i].dataX.push(c[0]);
+                    this.sketches[i].dataY.push(c[1]);
 
-                len = this.sketches[i].evalVisProp('maxlength');
-                if (len !== null && this.sketches[i].dataX.length > len) {
-                    this.sketches[i].dataX = this.sketches[i].dataX.slice(-len);
-                    this.sketches[i].dataY = this.sketches[i].dataY.slice(-len);
-                }
-                if (this.sketches[i].evalVisProp('visible')) {
-                    // Update just the sketchcurve:
-                    // this.sketches[i].prepareUpdate().update().updateVisibility().updateRenderer();
-                    // Update the full board:
-                    this.update();
+                    len = this.sketches[i].evalVisProp('maxlength');
+                    if (len !== null && this.sketches[i].dataX.length > len) {
+                        this.sketches[i].dataX = this.sketches[i].dataX.slice(-len);
+                        this.sketches[i].dataY = this.sketches[i].dataY.slice(-len);
+                    }
+                    if (this.sketches[i].evalVisProp('visible')) {
+                        this.update();
+                    }
                 }
             }
         },
@@ -7527,10 +7531,12 @@ JXG.extend(
             // Stop sketching into this.sketches
             i = (evt.isPrimary) ? 0 : 1;
             if (this.attr.sketches.enabled) {
-                this.isSketching[i] = false;
-                if (this.sketches[i].evalVisProp('deleteOnUp')) {
-                    this.sketches[i].dataX = [];
-                    this.sketches[i].dataY = [];
+                if (Type.exists(this.sketches[i])) {
+                    this.isSketching[i] = false;
+                    if (this.sketches[i].evalVisProp('deleteOnUp')) {
+                        this.sketches[i].dataX = [];
+                        this.sketches[i].dataY = [];
+                    }
                 }
             }
         },

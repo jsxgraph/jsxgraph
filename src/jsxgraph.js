@@ -608,6 +608,15 @@ JXG.JSXGraph = {
         if (attr.grid) {
             board.create("grid", [], typeof attr.grid === "object" ? attr.grid : {});
         }
+
+        board.sketches = [
+            board.create('sketchcurve', [], board.attr.sketches[0]),
+            board.create('sketchcurve', [], board.attr.sketches[1])
+        ];
+        board.sketches[0].dump = false;
+        board.sketches[1].dump = false;
+        board.sketch = board.sketches[0];
+
         board.unsuspendUpdate();
 
         // Set CSS styles of JSXGraph div

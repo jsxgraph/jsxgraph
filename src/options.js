@@ -1228,8 +1228,8 @@ JXG.Options = {
          */
         sketches: {
             enabled: true,
-            0: {visible: false},
-            1: {visible: false}
+            0: {/*id: 'sketchcurve0',*/ visible: false},
+            1: {/*id: 'sketchcurve1',*/ visible: false}
         },
 
         /**
